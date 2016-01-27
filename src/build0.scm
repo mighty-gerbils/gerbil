@@ -1,6 +1,6 @@
-#!/usr/bin/env gsi-script
-
 (##namespace (""))
+
+(define file-list ".build.stage0")
 
 (define (displayln . args)
   (for-each display args)
@@ -15,9 +15,8 @@
     (if (not (zero? (process-status proc)))
       (error "Compilation error; gsc exit with nonzero status" modf))))
 
-(define (main file-list)
-  (let ((files (open-input-file file-list)))
-    (let lp ()
-      (let ((next (read-line files)))
-        (if (not (eof-object? next))
-          (begin (compile next) (lp)))))))
+(let ((files (open-input-file file-list)))
+  (let lp ()
+    (let ((next (read-line files)))
+      (if (not (eof-object? next))
+        (begin (compile next) (lp))))))
