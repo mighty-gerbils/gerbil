@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ -z "$GERBIL_HOME" ]; then
+    GERBIL_HOME=$(dirname $(cd ${0%/*} && echo $PWD))
+    export GERBIL_HOME
+fi
+
+if [ $# -gt 0 ]; then
+    case $1 in
+        -:*)
+            GSIOPTIONS=$1
+            shift
+            ;;
+    esac
+fi
+
+if [[ "x" = "x$@" ]]; then
+    gsi $GSIOPTIONS $GERBIL_HOME/lib/gxi-init -
+else
+    gsi $GSIOPTIONS $GERBIL_HOME/lib/gxi-init "$@"
+fi
+

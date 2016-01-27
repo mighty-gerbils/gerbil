@@ -1,0 +1,122 @@
+prelude: :gerbil/core
+package: gerbil/expander
+namespace: gx
+
+(%#begin (%#export #t)
+         (%#import
+          :gerbil/expander/common
+          :gerbil/expander/stx
+          :gerbil/expander/core)
+         (%#define-runtime core-expand-begin% gx#core-expand-begin%)
+         (%#define-runtime
+          core-expand-begin-syntax%
+          gx#core-expand-begin-syntax%)
+         (%#define-runtime
+          core-expand-begin-foreign%
+          gx#core-expand-begin-foreign%)
+         (%#define-runtime
+          core-expand-begin-annotation%
+          gx#core-expand-begin-annotation%)
+         (%#define-runtime core-expand-local-block gx#core-expand-local-block)
+         (%#define-runtime core-expand-declare% gx#core-expand-declare%)
+         (%#define-runtime core-expand-extern% gx#core-expand-extern%)
+         (%#define-runtime
+          core-expand-define-values%
+          gx#core-expand-define-values%)
+         (%#define-runtime
+          core-expand-define-runtime%
+          gx#core-expand-define-runtime%)
+         (%#define-runtime
+          core-expand-define-syntax%
+          gx#core-expand-define-syntax%)
+         (%#define-runtime
+          core-expand-define-alias%
+          gx#core-expand-define-alias%)
+         (%#define-runtime core-expand-lambda% gx#core-expand-lambda%)
+         (%#define-runtime
+          core-expand-case-lambda%
+          gx#core-expand-case-lambda%)
+         (%#define-runtime core-expand-let-values% gx#core-expand-let-values%)
+         (%#define-runtime
+          core-expand-letrec-values%
+          gx#core-expand-letrec-values%)
+         (%#define-runtime
+          core-expand-letrec*-values%
+          gx#core-expand-letrec*-values%)
+         (%#define-runtime core-expand-let-bind? gx#core-expand-let-bind?)
+         (%#define-runtime
+          core-expand-let-bind-expression
+          gx#core-expand-let-bind-expression)
+         (%#define-runtime
+          core-expand-let-bind-values!
+          gx#core-expand-let-bind-values!)
+         (%#define-runtime
+          core-expand-let-bind-quote
+          gx#core-expand-let-bind-quote)
+         (%#define-runtime core-expand-let-syntax% gx#core-expand-let-syntax%)
+         (%#define-runtime
+          core-expand-letrec-syntax%
+          gx#core-expand-letrec-syntax%)
+         (%#define-runtime
+          core-expand-let-bind-syntax?
+          gx#core-expand-let-bind-syntax?)
+         (%#define-runtime
+          core-expand-let-bind-syntax-expression
+          gx#core-expand-let-bind-syntax-expression)
+         (%#define-runtime
+          core-expand-let-bind-syntax!
+          gx#core-expand-let-bind-syntax!)
+         (%#define-runtime core-expand-expression% gx#core-expand-expression%)
+         (%#define-runtime core-expand-quote% gx#core-expand-quote%)
+         (%#define-runtime
+          core-expand-quote-syntax%
+          gx#core-expand-quote-syntax%)
+         (%#define-runtime core-expand-call% gx#core-expand-call%)
+         (%#define-runtime core-expand-if% gx#core-expand-if%)
+         (%#define-runtime core-expand-ref% gx#core-expand-ref%)
+         (%#define-runtime core-expand-setq% gx#core-expand-setq%)
+         (%#define-runtime macro-expand-extern gx#macro-expand-extern)
+         (%#define-runtime
+          macro-expand-define-values
+          gx#macro-expand-define-values)
+         (%#define-runtime
+          macro-expand-define-syntax
+          gx#macro-expand-define-syntax)
+         (%#define-runtime
+          macro-expand-define-alias
+          gx#macro-expand-define-alias)
+         (%#define-runtime macro-expand-lambda% gx#macro-expand-lambda%)
+         (%#define-runtime
+          macro-expand-case-lambda
+          gx#macro-expand-case-lambda)
+         (%#define-runtime macro-expand-let-values gx#macro-expand-let-values)
+         (%#define-runtime
+          macro-expand-letrec-values
+          gx#macro-expand-letrec-values)
+         (%#define-runtime
+          macro-expand-letrec*-values
+          gx#macro-expand-letrec*-values)
+         (%#define-runtime macro-expand-if gx#macro-expand-if)
+         (%#define-runtime free-identifier=? gx#free-identifier=?)
+         (%#define-runtime bound-identifier=? gx#bound-identifier=?)
+         (%#define-runtime underscore? gx#underscore?)
+         (%#define-runtime ellipsis? gx#ellipsis?)
+         (%#define-runtime user-binding-identifier gx#user-binding-identifier)
+         (%#define-runtime
+          check-duplicate-identifiers
+          gx#check-duplicate-identifiers)
+         (%#define-runtime core-bind-values? gx#core-bind-values?)
+         (%#define-runtime core-bind-values! gx#core-bind-values!)
+         (%#define-runtime core-quote-bind-values gx#core-quote-bind-values)
+         (%#define-runtime core-runtime-ref? gx#core-runtime-ref?)
+         (%#define-runtime core-quote-runtime-ref gx#core-quote-runtime-ref)
+         (%#define-runtime core-bind-runtime! gx#core-bind-runtime!)
+         (%#define-runtime
+          core-bind-runtime-reference!
+          gx#core-bind-runtime-reference!)
+         (%#define-runtime core-bind-extern! gx#core-bind-extern!)
+         (%#define-runtime core-bind-syntax! gx#core-bind-syntax!)
+         (%#define-runtime core-bind-root-syntax! gx#core-bind-root-syntax!)
+         (%#define-runtime core-bind-alias! gx#core-bind-alias!)
+         (%#define-runtime make-binding-id gx#make-binding-id))
+(%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/top__0"))

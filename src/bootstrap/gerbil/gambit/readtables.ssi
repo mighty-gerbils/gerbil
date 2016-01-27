@@ -1,0 +1,29 @@
+prelude: :gerbil/core
+package: gerbil/gambit
+namespace: gerbil/gambit/readtables
+
+(%#begin (%#export #t)
+         (%#extern
+          (current-readtable current-readtable)
+          (readtable? readtable?)
+          (readtable-case-conversion? readtable-case-conversion?)
+          (readtable-case-conversion?-set readtable-case-conversion?-set)
+          (readtable-keywords-allowed? readtable-keywords-allowed?)
+          (readtable-keywords-allowed?-set readtable-keywords-allowed?-set)
+          (readtable-sharing-allowed? readtable-sharing-allowed?)
+          (readtable-sharing-allowed?-set readtable-sharing-allowed?-set)
+          (readtable-eval-allowed? readtable-eval-allowed?)
+          (readtable-eval-allowed?-set readtable-eval-allowed?-set)
+          (readtable-write-cdr-read-macros? readtable-write-cdr-read-macros?)
+          (readtable-write-cdr-read-macros?-set
+           readtable-write-cdr-read-macros?-set)
+          (readtable-write-extended-read-macros?
+           readtable-write-extended-read-macros?)
+          (readtable-write-extended-read-macros?-set
+           readtable-write-extended-read-macros?-set)
+          (readtable-max-write-level readtable-max-write-level)
+          (readtable-max-write-level-set readtable-max-write-level-set)
+          (readtable-max-write-length readtable-max-write-length)
+          (readtable-max-write-length-set readtable-max-write-length-set)
+          (readtable-max-unescaped-char readtable-max-unescaped-char)
+          (readtable-max-unescaped-char-set readtable-max-unescaped-char-set)))

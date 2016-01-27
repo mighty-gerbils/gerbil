@@ -1,0 +1,368 @@
+prelude: :gerbil/core
+package: gerbil/expander
+namespace: gx
+
+(%#begin (%#export #t)
+         (%#import :gerbil/expander/common :gerbil/expander/stx)
+         (%#define-runtime
+          current-expander-context
+          gx#current-expander-context)
+         (%#define-runtime current-expander-marks gx#current-expander-marks)
+         (%#define-runtime current-expander-phi gx#current-expander-phi)
+         (%#define-runtime current-expander-path gx#current-expander-path)
+         (%#define-runtime current-expander-eval gx#current-expander-eval)
+         (%#define-runtime
+          current-expander-compile
+          gx#current-expander-compile)
+         (%#define-runtime
+          current-expander-module-eval
+          gx#current-expander-module-eval)
+         (%#define-runtime
+          current-expander-module-import
+          gx#current-expander-module-import)
+         (%#define-runtime
+          current-expander-module-prelude
+          gx#current-expander-module-prelude)
+         (%#define-runtime
+          current-expander-module-registry
+          gx#current-expander-module-registry)
+         (%#define-runtime
+          current-expander-module-library-path
+          gx#current-expander-module-library-path)
+         (%#define-runtime expander-context::t gx#expander-context::t)
+         (%#define-runtime expander-context? gx#expander-context?)
+         (%#define-runtime make-expander-context gx#make-expander-context)
+         (%#define-runtime expander-context-id gx#expander-context-id)
+         (%#define-runtime expander-context-table gx#expander-context-table)
+         (%#define-runtime
+          expander-context-id-set!
+          gx#expander-context-id-set!)
+         (%#define-runtime
+          expander-context-table-set!
+          gx#expander-context-table-set!)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref _gx#load-module)
+                           (%#quote "gerbil/expander/core__1")))
+                  (%#define-syntax
+                   expander-context
+                   |gx[:0:]#expander-context|))
+         (%#define-runtime root-context::t gx#root-context::t)
+         (%#define-runtime root-context? gx#root-context?)
+         (%#define-runtime make-root-context gx#make-root-context)
+         (%#define-syntax root-context |gx[:0:]#root-context|)
+         (%#define-runtime phi-context::t gx#phi-context::t)
+         (%#define-runtime phi-context? gx#phi-context?)
+         (%#define-runtime make-phi-context gx#make-phi-context)
+         (%#define-runtime phi-context-super gx#phi-context-super)
+         (%#define-runtime phi-context-up gx#phi-context-up)
+         (%#define-runtime phi-context-down gx#phi-context-down)
+         (%#define-runtime phi-context-super-set! gx#phi-context-super-set!)
+         (%#define-runtime phi-context-up-set! gx#phi-context-up-set!)
+         (%#define-runtime phi-context-down-set! gx#phi-context-down-set!)
+         (%#define-syntax phi-context |gx[:0:]#phi-context|)
+         (%#define-runtime top-context::t gx#top-context::t)
+         (%#define-runtime top-context? gx#top-context?)
+         (%#define-runtime make-top-context gx#make-top-context)
+         (%#define-syntax top-context |gx[:0:]#top-context|)
+         (%#define-runtime module-context::t gx#module-context::t)
+         (%#define-runtime module-context? gx#module-context?)
+         (%#define-runtime make-module-context gx#make-module-context)
+         (%#define-runtime module-context-ns gx#module-context-ns)
+         (%#define-runtime module-context-path gx#module-context-path)
+         (%#define-runtime module-context-import gx#module-context-import)
+         (%#define-runtime module-context-export gx#module-context-export)
+         (%#define-runtime module-context-e gx#module-context-e)
+         (%#define-runtime module-context-code gx#module-context-code)
+         (%#define-runtime module-context-ns-set! gx#module-context-ns-set!)
+         (%#define-runtime
+          module-context-path-set!
+          gx#module-context-path-set!)
+         (%#define-runtime
+          module-context-import-set!
+          gx#module-context-import-set!)
+         (%#define-runtime
+          module-context-export-set!
+          gx#module-context-export-set!)
+         (%#define-runtime module-context-e-set! gx#module-context-e-set!)
+         (%#define-runtime
+          module-context-code-set!
+          gx#module-context-code-set!)
+         (%#define-syntax module-context |gx[:0:]#module-context|)
+         (%#define-runtime prelude-context::t gx#prelude-context::t)
+         (%#define-runtime prelude-context? gx#prelude-context?)
+         (%#define-runtime make-prelude-context gx#make-prelude-context)
+         (%#define-runtime prelude-context-path gx#prelude-context-path)
+         (%#define-runtime prelude-context-import gx#prelude-context-import)
+         (%#define-runtime prelude-context-e gx#prelude-context-e)
+         (%#define-runtime
+          prelude-context-path-set!
+          gx#prelude-context-path-set!)
+         (%#define-runtime
+          prelude-context-import-set!
+          gx#prelude-context-import-set!)
+         (%#define-runtime prelude-context-e-set! gx#prelude-context-e-set!)
+         (%#define-syntax prelude-context |gx[:0:]#prelude-context|)
+         (%#define-runtime local-context::t gx#local-context::t)
+         (%#define-runtime local-context? gx#local-context?)
+         (%#define-runtime make-local-context gx#make-local-context)
+         (%#define-syntax local-context |gx[:0:]#local-context|)
+         (%#define-runtime phi-context:::init! gx#phi-context:::init!)
+         (%#define-runtime local-context:::init! gx#local-context:::init!)
+         (%#define-runtime binding::t gx#binding::t)
+         (%#define-runtime binding? gx#binding?)
+         (%#define-runtime make-binding gx#make-binding)
+         (%#define-runtime binding-id gx#binding-id)
+         (%#define-runtime binding-key gx#binding-key)
+         (%#define-runtime binding-phi gx#binding-phi)
+         (%#define-runtime binding-id-set! gx#binding-id-set!)
+         (%#define-runtime binding-key-set! gx#binding-key-set!)
+         (%#define-runtime binding-phi-set! gx#binding-phi-set!)
+         (%#define-syntax binding |gx[:0:]#binding|)
+         (%#define-runtime runtime-binding::t gx#runtime-binding::t)
+         (%#define-runtime runtime-binding? gx#runtime-binding?)
+         (%#define-runtime make-runtime-binding gx#make-runtime-binding)
+         (%#define-syntax runtime-binding |gx[:0:]#runtime-binding|)
+         (%#define-runtime local-binding::t gx#local-binding::t)
+         (%#define-runtime local-binding? gx#local-binding?)
+         (%#define-runtime make-local-binding gx#make-local-binding)
+         (%#define-syntax local-binding |gx[:0:]#local-binding|)
+         (%#define-runtime top-binding::t gx#top-binding::t)
+         (%#define-runtime top-binding? gx#top-binding?)
+         (%#define-runtime make-top-binding gx#make-top-binding)
+         (%#define-syntax top-binding |gx[:0:]#top-binding|)
+         (%#define-runtime module-binding::t gx#module-binding::t)
+         (%#define-runtime module-binding? gx#module-binding?)
+         (%#define-runtime make-module-binding gx#make-module-binding)
+         (%#define-runtime module-binding-context gx#module-binding-context)
+         (%#define-runtime
+          module-binding-context-set!
+          gx#module-binding-context-set!)
+         (%#define-syntax module-binding |gx[:0:]#module-binding|)
+         (%#define-runtime extern-binding::t gx#extern-binding::t)
+         (%#define-runtime extern-binding? gx#extern-binding?)
+         (%#define-runtime make-extern-binding gx#make-extern-binding)
+         (%#define-syntax extern-binding |gx[:0:]#extern-binding|)
+         (%#define-runtime syntax-binding::t gx#syntax-binding::t)
+         (%#define-runtime syntax-binding? gx#syntax-binding?)
+         (%#define-runtime make-syntax-binding gx#make-syntax-binding)
+         (%#define-runtime syntax-binding-e gx#syntax-binding-e)
+         (%#define-runtime syntax-binding-e-set! gx#syntax-binding-e-set!)
+         (%#define-syntax syntax-binding |gx[:0:]#syntax-binding|)
+         (%#define-runtime import-binding::t gx#import-binding::t)
+         (%#define-runtime import-binding? gx#import-binding?)
+         (%#define-runtime make-import-binding gx#make-import-binding)
+         (%#define-runtime import-binding-e gx#import-binding-e)
+         (%#define-runtime import-binding-context gx#import-binding-context)
+         (%#define-runtime import-binding-weak? gx#import-binding-weak?)
+         (%#define-runtime import-binding-e-set! gx#import-binding-e-set!)
+         (%#define-runtime
+          import-binding-context-set!
+          gx#import-binding-context-set!)
+         (%#define-runtime
+          import-binding-weak?-set!
+          gx#import-binding-weak?-set!)
+         (%#define-syntax import-binding |gx[:0:]#import-binding|)
+         (%#define-runtime alias-binding::t gx#alias-binding::t)
+         (%#define-runtime alias-binding? gx#alias-binding?)
+         (%#define-runtime make-alias-binding gx#make-alias-binding)
+         (%#define-runtime alias-binding-e gx#alias-binding-e)
+         (%#define-runtime alias-binding-e-set! gx#alias-binding-e-set!)
+         (%#define-syntax alias-binding |gx[:0:]#alias-binding|)
+         (%#define-runtime expander::t gx#expander::t)
+         (%#define-runtime expander? gx#expander?)
+         (%#define-runtime make-expander gx#make-expander)
+         (%#define-runtime expander-e gx#expander-e)
+         (%#define-runtime expander-e-set! gx#expander-e-set!)
+         (%#define-syntax expander |gx[:0:]#expander|)
+         (%#define-runtime core-expander::t gx#core-expander::t)
+         (%#define-runtime core-expander? gx#core-expander?)
+         (%#define-runtime make-core-expander gx#make-core-expander)
+         (%#define-runtime core-expander-id gx#core-expander-id)
+         (%#define-runtime
+          core-expander-compile-top
+          gx#core-expander-compile-top)
+         (%#define-runtime core-expander-id-set! gx#core-expander-id-set!)
+         (%#define-runtime
+          core-expander-compile-top-set!
+          gx#core-expander-compile-top-set!)
+         (%#define-syntax core-expander |gx[:0:]#core-expander|)
+         (%#define-runtime expression-form::t gx#expression-form::t)
+         (%#define-runtime expression-form? gx#expression-form?)
+         (%#define-runtime make-expression-form gx#make-expression-form)
+         (%#define-syntax expression-form |gx[:0:]#expression-form|)
+         (%#define-runtime special-form::t gx#special-form::t)
+         (%#define-runtime special-form? gx#special-form?)
+         (%#define-runtime make-special-form gx#make-special-form)
+         (%#define-syntax special-form |gx[:0:]#special-form|)
+         (%#define-runtime definition-form::t gx#definition-form::t)
+         (%#define-runtime definition-form? gx#definition-form?)
+         (%#define-runtime make-definition-form gx#make-definition-form)
+         (%#define-syntax definition-form |gx[:0:]#definition-form|)
+         (%#define-runtime top-special-form::t gx#top-special-form::t)
+         (%#define-runtime top-special-form? gx#top-special-form?)
+         (%#define-runtime make-top-special-form gx#make-top-special-form)
+         (%#define-syntax top-special-form |gx[:0:]#top-special-form|)
+         (%#define-runtime module-special-form::t gx#module-special-form::t)
+         (%#define-runtime module-special-form? gx#module-special-form?)
+         (%#define-runtime
+          make-module-special-form
+          gx#make-module-special-form)
+         (%#define-syntax module-special-form |gx[:0:]#module-special-form|)
+         (%#define-runtime feature-expander::t gx#feature-expander::t)
+         (%#define-runtime feature-expander? gx#feature-expander?)
+         (%#define-runtime make-feature-expander gx#make-feature-expander)
+         (%#define-syntax feature-expander |gx[:0:]#feature-expander|)
+         (%#define-runtime
+          private-feature-expander::t
+          gx#private-feature-expander::t)
+         (%#define-runtime
+          private-feature-expander?
+          gx#private-feature-expander?)
+         (%#define-runtime
+          make-private-feature-expander
+          gx#make-private-feature-expander)
+         (%#define-syntax
+          private-feature-expander
+          |gx[:0:]#private-feature-expander|)
+         (%#define-runtime reserved-expander::t gx#reserved-expander::t)
+         (%#define-runtime reserved-expander? gx#reserved-expander?)
+         (%#define-runtime make-reserved-expander gx#make-reserved-expander)
+         (%#define-syntax reserved-expander |gx[:0:]#reserved-expander|)
+         (%#define-runtime macro-expander::t gx#macro-expander::t)
+         (%#define-runtime macro-expander? gx#macro-expander?)
+         (%#define-runtime make-macro-expander gx#make-macro-expander)
+         (%#define-syntax macro-expander |gx[:0:]#macro-expander|)
+         (%#define-runtime
+          rename-macro-expander::t
+          gx#rename-macro-expander::t)
+         (%#define-runtime rename-macro-expander? gx#rename-macro-expander?)
+         (%#define-runtime
+          make-rename-macro-expander
+          gx#make-rename-macro-expander)
+         (%#define-syntax
+          rename-macro-expander
+          |gx[:0:]#rename-macro-expander|)
+         (%#define-runtime user-expander::t gx#user-expander::t)
+         (%#define-runtime user-expander? gx#user-expander?)
+         (%#define-runtime make-user-expander gx#make-user-expander)
+         (%#define-runtime user-expander-context gx#user-expander-context)
+         (%#define-runtime user-expander-phi gx#user-expander-phi)
+         (%#define-runtime
+          user-expander-context-set!
+          gx#user-expander-context-set!)
+         (%#define-runtime user-expander-phi-set! gx#user-expander-phi-set!)
+         (%#define-syntax user-expander |gx[:0:]#user-expander|)
+         (%#define-runtime expander-mark::t gx#expander-mark::t)
+         (%#define-runtime expander-mark? gx#expander-mark?)
+         (%#define-runtime make-expander-mark gx#make-expander-mark)
+         (%#define-runtime expander-mark-subst gx#expander-mark-subst)
+         (%#define-runtime expander-mark-context gx#expander-mark-context)
+         (%#define-runtime expander-mark-phi gx#expander-mark-phi)
+         (%#define-runtime expander-mark-trace gx#expander-mark-trace)
+         (%#define-runtime
+          expander-mark-subst-set!
+          gx#expander-mark-subst-set!)
+         (%#define-runtime
+          expander-mark-context-set!
+          gx#expander-mark-context-set!)
+         (%#define-runtime expander-mark-phi-set! gx#expander-mark-phi-set!)
+         (%#define-runtime
+          expander-mark-trace-set!
+          gx#expander-mark-trace-set!)
+         (%#define-syntax expander-mark |gx[:0:]#expander-mark|)
+         (%#define-runtime syntax-error::t gx#syntax-error::t)
+         (%#define-runtime syntax-error? gx#syntax-error?)
+         (%#define-runtime make-syntax-error gx#make-syntax-error)
+         (%#define-runtime syntax-error-context gx#syntax-error-context)
+         (%#define-runtime syntax-error-marks gx#syntax-error-marks)
+         (%#define-runtime syntax-error-phi gx#syntax-error-phi)
+         (%#define-runtime
+          syntax-error-context-set!
+          gx#syntax-error-context-set!)
+         (%#define-runtime syntax-error-marks-set! gx#syntax-error-marks-set!)
+         (%#define-runtime syntax-error-phi-set! gx#syntax-error-phi-set!)
+         (%#define-syntax syntax-error |gx[:0:]#syntax-error|)
+         (%#define-runtime raise-syntax-error gx#raise-syntax-error)
+         (%#define-runtime eval-syntax gx#eval-syntax)
+         (%#define-runtime eval-syntax* gx#eval-syntax*)
+         (%#define-runtime core-expand gx#core-expand)
+         (%#define-runtime core-expand-top gx#core-expand-top)
+         (%#define-runtime core-expand-expression gx#core-expand-expression)
+         (%#define-runtime
+          core-expand-expression+1
+          gx#core-expand-expression+1)
+         (%#define-runtime core-expand* gx#core-expand*)
+         (%#define-runtime core-expand1 gx#core-expand1)
+         (%#define-runtime core-expand-head gx#core-expand-head)
+         (%#define-runtime core-expand-block gx#core-expand-block)
+         (%#define-runtime core-expand-block* gx#core-expand-block*)
+         (%#define-runtime
+          core-expand-cond-expand%
+          gx#core-expand-cond-expand%)
+         (%#define-runtime core-expand-include% gx#core-expand-include%)
+         (%#define-runtime core-apply-expander gx#core-apply-expander)
+         (%#define-runtime
+          expander::apply-macro-expander
+          gx#expander::apply-macro-expander)
+         (%#define-runtime
+          macro-expander::apply-macro-expander
+          gx#macro-expander::apply-macro-expander)
+         (%#define-runtime
+          core-expander::apply-macro-expander
+          gx#core-expander::apply-macro-expander)
+         (%#define-runtime
+          top-special-form::apply-macro-expander
+          gx#top-special-form::apply-macro-expander)
+         (%#define-runtime
+          module-special-form::apply-macro-expander
+          gx#module-special-form::apply-macro-expander)
+         (%#define-runtime
+          rename-macro-expander::apply-macro-expander
+          gx#rename-macro-expander::apply-macro-expander)
+         (%#define-runtime
+          core-apply-user-expander
+          gx#core-apply-user-expander)
+         (%#define-runtime core-apply-user-macro gx#core-apply-user-macro)
+         (%#define-runtime
+          user-expander::apply-macro-expander
+          gx#user-expander::apply-macro-expander)
+         (%#define-runtime resolve-identifier gx#resolve-identifier)
+         (%#define-runtime bind-identifier! gx#bind-identifier!)
+         (%#define-runtime core-resolve-identifier gx#core-resolve-identifier)
+         (%#define-runtime core-resolve-binding gx#core-resolve-binding)
+         (%#define-runtime core-bind! gx#core-bind!)
+         (%#define-runtime core-identifier-key gx#core-identifier-key)
+         (%#define-runtime core-context-shift gx#core-context-shift)
+         (%#define-runtime core-context-get gx#core-context-get)
+         (%#define-runtime core-context-put! gx#core-context-put!)
+         (%#define-runtime core-context-resolve gx#core-context-resolve)
+         (%#define-runtime core-context-bind! gx#core-context-bind!)
+         (%#define-runtime core-context-top gx#core-context-top)
+         (%#define-runtime core-context-root gx#core-context-root)
+         (%#define-runtime core-context-rebind? gx#core-context-rebind?)
+         (%#define-runtime core-context-namespace gx#core-context-namespace)
+         (%#define-runtime expander-binding? gx#expander-binding?)
+         (%#define-runtime core-expander-binding? gx#core-expander-binding?)
+         (%#define-runtime
+          expression-form-binding?
+          gx#expression-form-binding?)
+         (%#define-runtime special-form-binding? gx#special-form-binding?)
+         (%#define-runtime feature-binding? gx#feature-binding?)
+         (%#define-runtime
+          private-feature-binding?
+          gx#private-feature-binding?)
+         (%#define-runtime core-bound-identifier? gx#core-bound-identifier?)
+         (%#define-runtime core-identifier=? gx#core-identifier=?)
+         (%#define-runtime core-extern-symbol? gx#core-extern-symbol?)
+         (%#define-runtime core-quote-syntax gx#core-quote-syntax)
+         (%#define-runtime core-cons gx#core-cons)
+         (%#define-runtime core-list gx#core-list)
+         (%#define-runtime core-cons* gx#core-cons*)
+         (%#define-runtime core-resolve-path gx#core-resolve-path)
+         (%#define-runtime syntax-local-rewrap gx#syntax-local-rewrap)
+         (%#define-runtime syntax-local-unwrap gx#syntax-local-unwrap)
+         (%#define-runtime syntax-local-introduce gx#syntax-local-introduce)
+         (%#define-runtime syntax-local-e gx#syntax-local-e)
+         (%#define-runtime syntax-local-value gx#syntax-local-value)
+         (%#define-runtime raise-syntax-ref-error gx#raise-syntax-ref-error))
+(%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/core__0"))

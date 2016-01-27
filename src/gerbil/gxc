@@ -1,0 +1,53 @@
+#!/usr/bin/env gxi-script
+;; -*- Gerbil -*-
+
+(import :gerbil/compiler)
+
+(def (parse-args args)
+  (def outdir #f)
+  (def invoke-gsc #t)
+  (def keep-scm #f)
+  (def verbose #f)
+  (def gsc-options #f)
+  
+  (def (make-opts)
+    [invoke-gsc: invoke-gsc 
+     keep-scm: keep-scm 
+     verbose: verbose 
+     gsc-options: gsc-options
+     output-dir: outdir])
+  
+  (let lp ((rest args))
+    (match rest
+      ([arg . rest]
+       (case arg
+         (("-d")
+          (match rest
+            ([dir . rest]
+             (set! outdir dir)
+             (lp rest))))
+         (("-S")
+          (set! invoke-gsc #f)
+          (lp rest))
+         (("-s")
+          (set! keep-scm #t)
+          (lp rest))
+         (("-g")
+          (set! keep-scm #t)
+          (set! gsc-options ["-debug"])
+          (lp rest))
+         (("-v")
+          (set! verbose #t)
+          (lp rest))
+         (else
+          (if (and (not (string-empty? arg))
+                   (eq? (string-ref arg 0) #\-))
+            (error "Unexpected option" arg)
+            (values (make-opts) (cons arg rest))))))
+      (else
+       (values (make-opts) args)))))
+
+(def (main . args)
+  (let ((values opts files) (parse-args args))
+    (for-each (cut compile-file <> opts) 
+              (filter (? (not string-empty?)) files))))

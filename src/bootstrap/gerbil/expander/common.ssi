@@ -1,0 +1,12 @@
+prelude: :gerbil/core
+package: gerbil/expander
+namespace: gx
+
+(%#begin (%#export #t)
+         (%#import (in: :gerbil/core <expander-runtime>))
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref _gx#load-module)
+                           (%#quote "gerbil/expander/common__1")))
+                  (%#define-syntax <error> |gx[:0:]#<error>|))
+         (%#define-syntax AST |gx[:0:]#AST|)
+         (%#define-syntax core-syntax-case |gx[:0:]#core-syntax-case|))

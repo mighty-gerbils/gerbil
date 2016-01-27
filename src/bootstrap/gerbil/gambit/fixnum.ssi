@@ -1,0 +1,22 @@
+prelude: :gerbil/core
+package: gerbil/gambit
+namespace: gerbil/gambit/fixnum
+
+(%#begin (%#export #t)
+         (%#extern
+          (fxarithmetic-shift-left fxarithmetic-shift-left)
+          (fxarithmetic-shift-right fxarithmetic-shift-right)
+          (fxbit-count fxbit-count)
+          (fxfirst-bit-set fxfirst-bit-set)
+          (fxif fxif)
+          (fxlength fxlength)
+          (fxquotient fxquotient)
+          (fxremainder fxremainder)
+          (fxwrap* fxwrap*)
+          (fxwrap+ fxwrap+)
+          (fxwrap- fxwrap-)
+          (fxwrapabs fxwrapabs)
+          (fxwraparithmetic-shift fxwraparithmetic-shift)
+          (fxwraparithmetic-shift-left fxwraparithmetic-shift-left)
+          (fxwraplogical-shift-right fxwraplogical-shift-right)
+          (fxwrapquotient fxwrapquotient)))

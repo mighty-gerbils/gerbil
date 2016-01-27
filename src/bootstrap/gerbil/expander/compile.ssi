@@ -1,0 +1,84 @@
+prelude: :gerbil/core
+package: gerbil/expander
+namespace: gx
+
+(%#begin (%#export #t)
+         (%#import
+          :gerbil/expander/common
+          :gerbil/expander/stx
+          :gerbil/expander/core)
+         (%#define-runtime core-compile-top-syntax gx#core-compile-top-syntax)
+         (%#define-runtime
+          core-expander::compile-top-syntax
+          gx#core-expander::compile-top-syntax)
+         (%#define-runtime core-compile-top-error gx#core-compile-top-error)
+         (%#define-runtime core-compile-top-begin% gx#core-compile-top-begin%)
+         (%#define-runtime
+          core-compile-top-begin-syntax%
+          gx#core-compile-top-begin-syntax%)
+         (%#define-runtime
+          core-compile-top-begin-foreign%
+          gx#core-compile-top-begin-foreign%)
+         (%#define-runtime
+          core-compile-top-import%
+          gx#core-compile-top-import%)
+         (%#define-runtime
+          core-compile-top-module%
+          gx#core-compile-top-module%)
+         (%#define-runtime
+          core-compile-top-export%
+          gx#core-compile-top-export%)
+         (%#define-runtime
+          core-compile-top-provide%
+          gx#core-compile-top-provide%)
+         (%#define-runtime
+          core-compile-top-extern%
+          gx#core-compile-top-extern%)
+         (%#define-runtime
+          core-compile-top-define-values%
+          gx#core-compile-top-define-values%)
+         (%#define-runtime
+          core-compile-top-define-syntax%
+          gx#core-compile-top-define-syntax%)
+         (%#define-runtime
+          core-compile-top-define-alias%
+          gx#core-compile-top-define-alias%)
+         (%#define-runtime
+          core-compile-top-define-runtime%
+          gx#core-compile-top-define-runtime%)
+         (%#define-runtime
+          core-compile-top-declare%
+          gx#core-compile-top-declare%)
+         (%#define-runtime
+          core-compile-top-lambda%
+          gx#core-compile-top-lambda%)
+         (%#define-runtime
+          core-compile-top-lambda-clause
+          gx#core-compile-top-lambda-clause)
+         (%#define-runtime
+          core-compile-top-case-lambda%
+          gx#core-compile-top-case-lambda%)
+         (%#define-runtime
+          core-compile-top-let-values%
+          gx#core-compile-top-let-values%)
+         (%#define-runtime
+          core-compile-top-letrec-values%
+          gx#core-compile-top-letrec-values%)
+         (%#define-runtime
+          core-compile-top-letrec*-values%
+          gx#core-compile-top-letrec*-values%)
+         (%#define-runtime core-compile-top-quote% gx#core-compile-top-quote%)
+         (%#define-runtime
+          core-compile-top-quote-syntax%
+          gx#core-compile-top-quote-syntax%)
+         (%#define-runtime core-compile-top-call% gx#core-compile-top-call%)
+         (%#define-runtime core-compile-top-if% gx#core-compile-top-if%)
+         (%#define-runtime core-compile-top-ref% gx#core-compile-top-ref%)
+         (%#define-runtime core-compile-top-setq% gx#core-compile-top-setq%)
+         (%#define-runtime
+          core-compile-top-runtime-ref
+          gx#core-compile-top-runtime-ref)
+         (%#define-runtime
+          core-compile-top-runtime-bind
+          gx#core-compile-top-runtime-bind))
+(%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/compile__0"))

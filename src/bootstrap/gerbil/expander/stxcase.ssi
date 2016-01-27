@@ -1,0 +1,36 @@
+prelude: :gerbil/core
+package: gerbil/expander
+namespace: gx
+
+(%#begin (%#import
+          :gerbil/expander/common
+          :gerbil/expander/stx
+          :gerbil/expander/core
+          :gerbil/expander/top)
+         (%#export #t)
+         (%#define-runtime syntax-pattern::t gx#syntax-pattern::t)
+         (%#define-runtime syntax-pattern? gx#syntax-pattern?)
+         (%#define-runtime make-syntax-pattern gx#make-syntax-pattern)
+         (%#define-runtime syntax-pattern-id gx#syntax-pattern-id)
+         (%#define-runtime syntax-pattern-depth gx#syntax-pattern-depth)
+         (%#define-runtime syntax-pattern-id-set! gx#syntax-pattern-id-set!)
+         (%#define-runtime
+          syntax-pattern-depth-set!
+          gx#syntax-pattern-depth-set!)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref _gx#load-module)
+                           (%#quote "gerbil/expander/stxcase__1")))
+                  (%#define-syntax syntax-pattern |gx[:0:]#syntax-pattern|))
+         (%#define-runtime
+          syntax-pattern::apply-macro-expander
+          gx#syntax-pattern::apply-macro-expander)
+         (%#define-runtime macro-expand-syntax gx#macro-expand-syntax)
+         (%#define-runtime
+          macro-expand-syntax-case
+          gx#macro-expand-syntax-case)
+         (%#define-runtime syntax-local-pattern? gx#syntax-local-pattern?)
+         (%#define-runtime
+          syntax-check-splice-targets
+          gx#syntax-check-splice-targets)
+         (%#define-runtime syntax-split-splice gx#syntax-split-splice))
+(%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/stxcase__0"))

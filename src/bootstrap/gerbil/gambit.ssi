@@ -1,0 +1,36 @@
+prelude: :gerbil/core
+package: gerbil
+namespace: gerbil/gambit
+
+(%#begin (%#import
+          :gerbil/gambit/threads
+          :gerbil/gambit/continuations
+          :gerbil/gambit/bits
+          :gerbil/gambit/fixnum
+          :gerbil/gambit/flonum
+          :gerbil/gambit/random
+          :gerbil/gambit/hvectors
+          :gerbil/gambit/ports
+          :gerbil/gambit/readtables
+          :gerbil/gambit/hash
+          :gerbil/gambit/exceptions
+          :gerbil/gambit/os
+          :gerbil/gambit/system
+          :gerbil/gambit/foreign
+          :gerbil/gambit/misc)
+         (%#export
+          (import: :gerbil/gambit/threads)
+          (import: :gerbil/gambit/continuations)
+          (import: :gerbil/gambit/bits)
+          (import: :gerbil/gambit/fixnum)
+          (import: :gerbil/gambit/flonum)
+          (import: :gerbil/gambit/random)
+          (import: :gerbil/gambit/hvectors)
+          (import: :gerbil/gambit/ports)
+          (import: :gerbil/gambit/readtables)
+          (import: :gerbil/gambit/hash)
+          (import: :gerbil/gambit/exceptions)
+          (import: :gerbil/gambit/os)
+          (import: :gerbil/gambit/system)
+          (import: :gerbil/gambit/foreign)
+          (import: :gerbil/gambit/misc)))

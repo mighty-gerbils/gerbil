@@ -1,0 +1,22 @@
+prelude: :gerbil/core
+package: gerbil/expander
+namespace: gx
+
+(%#begin (%#export #t)
+         (%#import
+          :gerbil/expander/common
+          :gerbil/expander/core
+          :gerbil/expander/top
+          :gerbil/expander/module
+          :gerbil/expander/compile)
+         (%#define-runtime *core-syntax-expanders* gx#*core-syntax-expanders*)
+         (%#define-runtime *core-macro-expanders* gx#*core-macro-expanders*)
+         (%#define-runtime root-context:::init! gx#root-context:::init!)
+         (%#define-runtime top-context:::init! gx#top-context:::init!)
+         (%#define-runtime
+          expander-context::bind-core-syntax-expanders!
+          gx#expander-context::bind-core-syntax-expanders!)
+         (%#define-runtime
+          expander-context::bind-core-macro-expanders!
+          gx#expander-context::bind-core-macro-expanders!))
+(%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/root__0"))

@@ -1,0 +1,1445 @@
+prelude: :<root>
+package: gerbil
+namespace: gerbil/core
+
+(%#begin (%#export
+          #t
+          (import: (in: #f <runtime>))
+          (import: (in: #f <sugar>))
+          (import: (in: #f <MOP>))
+          (import: (in: #f <match>))
+          (import: (in: #f <more-sugar>))
+          (import: (in: #f <module-sugar>))
+          (phi: 1 (import: (in: #f <runtime>)))
+          (phi: 1 (import: (in: #f <sugar>)))
+          (phi: 1 (import: (in: #f <MOP>)))
+          (phi: 1 (import: (in: #f <match>)))
+          (phi: 1 (import: (in: #f <more-sugar>)))
+          (phi: 1 (import: (in: #f <expander-runtime>)))
+          (phi: 1 (import: (in: #f <syntax-case>)))
+          (phi: 1 (import: (in: #f <syntax-sugar>)))
+          (phi: 1 (import: (in: #f <more-syntax-sugar>))))
+         (%#provide gerbil-core)
+         (%#module
+          <r5rs-runtime>
+          (%#begin (%#export #t)
+                   (%#extern
+                    (eq? eq?)
+                    (eqv? eqv?)
+                    (equal? equal?)
+                    (number? number?)
+                    (complex? complex?)
+                    (real? real?)
+                    (rational? rational?)
+                    (integer? integer?)
+                    (exact? exact?)
+                    (inexact? inexact?)
+                    (= =)
+                    (< <)
+                    (> >)
+                    (<= <=)
+                    (>= >=)
+                    (zero? zero?)
+                    (positive? positive?)
+                    (negative? negative?)
+                    (odd? odd?)
+                    (even? even?)
+                    (max max)
+                    (min min)
+                    (+ +)
+                    (* *)
+                    (- -)
+                    (/ /)
+                    (abs abs)
+                    (quotient quotient)
+                    (remainder remainder)
+                    (modulo modulo)
+                    (gcd gcd)
+                    (lcm lcm)
+                    (floor floor)
+                    (ceiling ceiling)
+                    (truncate truncate)
+                    (round round)
+                    (numerator numerator)
+                    (denumenator denumenator)
+                    (rationalize rationalize)
+                    (exp exp)
+                    (log log)
+                    (sin sin)
+                    (cos cos)
+                    (tan tan)
+                    (asin asin)
+                    (acos acos)
+                    (atan atan)
+                    (sqrt sqrt)
+                    (expt expt)
+                    (make-rectangular make-rectangular)
+                    (make-polar make-polar)
+                    (real-part real-part)
+                    (imag-part imag-part)
+                    (magnitude magnitude)
+                    (angle angle)
+                    (exact->inexact exact->inexact)
+                    (inexact->exact inexact->exact)
+                    (number->string number->string)
+                    (string->number string->number)
+                    (not not)
+                    (boolean? boolean?)
+                    (pair? pair?)
+                    (cons cons)
+                    (car car)
+                    (cdr cdr)
+                    (set-car! set-car!)
+                    (set-cdr! set-cdr!)
+                    (caar caar)
+                    (cadr cadr)
+                    (cdar cdar)
+                    (cddr cddr)
+                    (caaar caaar)
+                    (cadar cadar)
+                    (caadr caadr)
+                    (caddr caddr)
+                    (cdaar cdaar)
+                    (cddar cddar)
+                    (cdadr cdadr)
+                    (cdddr cdddr)
+                    (caaaar caaaar)
+                    (caadar caadar)
+                    (caaadr caaadr)
+                    (caaddr caaddr)
+                    (cadaar cadaar)
+                    (caddar caddar)
+                    (cadadr cadadr)
+                    (cadddr cadddr)
+                    (cdaaar cdaaar)
+                    (cdadar cdadar)
+                    (cdaadr cdaadr)
+                    (cdaddr cdaddr)
+                    (cddaar cddaar)
+                    (cdddar cdddar)
+                    (cddadr cddadr)
+                    (cddddr cddddr)
+                    (null? null?)
+                    (list? list?)
+                    (list list)
+                    (length length)
+                    (append append)
+                    (reverse reverse)
+                    (list-tail list-tail)
+                    (list-ref list-ref)
+                    (memq memq)
+                    (memv memv)
+                    (member member)
+                    (assq assq)
+                    (assv assv)
+                    (assoc assoc)
+                    (symbol? symbol?)
+                    (symbol->string symbol->string)
+                    (string->symbol string->symbol)
+                    (char? char?)
+                    (char=? char=?)
+                    (char<? char<?)
+                    (char>? char>?)
+                    (char<=? char<=?)
+                    (char>=? char>=?)
+                    (char-ci=? char-ci=?)
+                    (char-ci<? char-ci<?)
+                    (char-ci>? char-ci>?)
+                    (char-ci<=? char-ci<=?)
+                    (char-ci>=? char-ci>=?)
+                    (char-alphabetic? char-alphabetic?)
+                    (char-numeric? char-numeric?)
+                    (char-whitespace? char-whitespace?)
+                    (char-upper-case? char-upper-case?)
+                    (char-lower-case? char-lower-case?)
+                    (char->integer char->integer)
+                    (integer->char integer->char)
+                    (char-upcase char-upcase)
+                    (char-downcase char-downcase)
+                    (string? string?)
+                    (make-string make-string)
+                    (string string)
+                    (string-length string-length)
+                    (string-ref string-ref)
+                    (string-set! string-set!)
+                    (string=? string=?)
+                    (string-ci=? string-ci=?)
+                    (string<? string<?)
+                    (string>? string>?)
+                    (string<=? string<=?)
+                    (string>=? string>=?)
+                    (string-ci<? string-ci<?)
+                    (string-ci>? string-ci>?)
+                    (string-ci<=? string-ci<=?)
+                    (string-ci>=? string-ci>=?)
+                    (substring substring)
+                    (string-append string-append)
+                    (string->list string->list)
+                    (list->string list->string)
+                    (string-copy string-copy)
+                    (string-fill! string-fill!)
+                    (vector? vector?)
+                    (make-vector make-vector)
+                    (vector vector)
+                    (vector-length vector-length)
+                    (vector-ref vector-ref)
+                    (vector-set! vector-set!)
+                    (vector->list vector->list)
+                    (list->vector list->vector)
+                    (vector-fill! vector-fill!)
+                    (procedure? procedure?)
+                    (apply apply)
+                    (map map)
+                    (for-each for-each)
+                    (force force)
+                    (call-with-current-continuation
+                     call-with-current-continuation)
+                    (call-with-values call-with-values)
+                    (values values)
+                    (dynamic-wind dynamic-wind)
+                    (call-with-input-file call-with-input-file)
+                    (call-with-output-file call-with-output-file)
+                    (input-port? input-port?)
+                    (output-port? output-port?)
+                    (current-input-port current-input-port)
+                    (current-output-port current-output-port)
+                    (with-input-from-file with-input-from-file)
+                    (with-output-to-file with-output-to-file)
+                    (open-input-file open-input-file)
+                    (open-output-file open-output-file)
+                    (close-input-port close-input-port)
+                    (close-output-port close-output-port)
+                    (read read)
+                    (read-char read-char)
+                    (peek-char peek-char)
+                    (eof-object? eof-object?)
+                    (char-ready? char-ready?)
+                    (write write)
+                    (display display)
+                    (newline newline)
+                    (write-char write-char)
+                    (load load))))
+         (%#module
+          <host-runtime>
+          (%#begin (%#export #t)
+                   (%#extern
+                    (immediate? immediate?)
+                    (finite? finite?)
+                    (infinite? infinite?)
+                    (nan? nan?)
+                    (1+ 1+)
+                    (1- 1-)
+                    (fx+ fx+)
+                    (fx1+ fx1+)
+                    (fx- fx-)
+                    (fx1- fx1-)
+                    (fx* fx*)
+                    (fx/ fx/)
+                    (fixnum? fixnum?)
+                    (nonnegative-fixnum? nonnegative-fixnum?)
+                    (fxzero? fxzero?)
+                    (fxpositive? fxpositive?)
+                    (fxnegative? fxnegative?)
+                    (fxodd? fxodd?)
+                    (fxeven? fxeven?)
+                    (fixnum->char fixnum->char)
+                    (char->fixnum char->fixnum)
+                    (fixnum->flonum fixnum->flonum)
+                    (fxmax fxmax)
+                    (fxmin fxmin)
+                    (fxabs fxabs)
+                    (fxnot fxnot)
+                    (fxand fxand)
+                    (fxior fxior)
+                    (fxxor fxxor)
+                    (fxand fxand)
+                    (fxmodulo fxmodulo)
+                    (fxbit-set? fxbit-set?)
+                    (fxarithmetic-shift fxarithmetic-shift)
+                    (fx< fx<)
+                    (fx<= fx<=)
+                    (fx= fx=)
+                    (fx>= fx>=)
+                    (fx> fx>)
+                    (flonum? flonum?)
+                    (fl+ fl+)
+                    (fl- fl-)
+                    (fl* fl*)
+                    (fl/ fl/)
+                    (fl< fl<)
+                    (fl<= fl<=)
+                    (fl= fl=)
+                    (fl>= fl>=)
+                    (fl> fl>)
+                    (flzero? flzero?)
+                    (flpositive? flpositive?)
+                    (flnegative? flnegative?)
+                    (flnan? flnan?)
+                    (flinfinite? flinfinite?)
+                    (flfinite? flfinite?)
+                    (flinteger? flinteger?)
+                    (flmax flmax)
+                    (flmin flmin)
+                    (box? box?)
+                    (box box)
+                    (unbox unbox)
+                    (set-box! set-box!)
+                    (make-list make-list)
+                    (cons* cons*)
+                    (foldl foldl)
+                    (foldr foldr)
+                    (andmap andmap)
+                    (ormap ormap)
+                    (filter filter)
+                    (filter-map filter-map)
+                    (iota iota)
+                    (last last)
+                    (last-pair last-pair)
+                    (memf memf)
+                    (assgetq assgetq)
+                    (find find)
+                    (remove remove)
+                    (remq remq)
+                    (remv remv)
+                    (remf remf)
+                    (pgetq pgetq)
+                    (pgetv pgetv)
+                    (pget pget)
+                    (subvector subvector)
+                    (subvector->list subvector->list)
+                    (subvector-fill! subvector-fill!)
+                    (vector-map vector-map)
+                    (vector-copy vector-copy)
+                    (vector-append vector-append)
+                    (true true)
+                    (true? true?)
+                    (false false)
+                    (void void)
+                    (void? void?)
+                    (identity identity)
+                    (dssl-object? dssl-object?)
+                    (dssl-key-object? dssl-key-object?)
+                    (dssl-rest-object? dssl-rest-object?)
+                    (dssl-optional-object? dssl-optional-object?)
+                    (values-count values-count)
+                    (values->list values->list)
+                    (make-hash-table make-hash-table)
+                    (make-hash-table-eq make-hash-table-eq)
+                    (make-hash-table-eqv make-hash-table-eqv)
+                    (hash-table? hash-table?)
+                    (hash->list hash->list)
+                    (hash->plist hash->plist)
+                    (list->hash-table list->hash-table)
+                    (list->hash-table-eq list->hash-table-eq)
+                    (list->hash-table-eqv list->hash-table-eqv)
+                    (plist->hash-table plist->hash-table)
+                    (plist->hash-table-eq plist->hash-table-eq)
+                    (plist->hash-table-eqv plist->hash-table-eqv)
+                    (hash-length hash-length)
+                    (hash-ref hash-ref)
+                    (hash-get hash-get)
+                    (hash-put! hash-put!)
+                    (hash-remove! hash-remove!)
+                    (hash-update! hash-update!)
+                    (hash-key? hash-key?)
+                    (hash-find hash-find)
+                    (hash-for-each hash-for-each)
+                    (hash-map hash-map)
+                    (hash-fold hash-fold)
+                    (hash-keys hash-keys)
+                    (hash-values hash-values)
+                    (hash-copy hash-copy)
+                    (hash-copy! hash-copy!)
+                    (uninterned-symbol? uninterned-symbol?)
+                    (interned-symbol? interned-symbol?)
+                    (gensym gensym)
+                    (make-symbol make-symbol)
+                    (make-uninterned-symbol make-uninterned-symbol)
+                    (symbol-hash symbol-hash)
+                    (keyword? keyword?)
+                    (uninterned-keyword? uninterned-keyword?)
+                    (interned-keyword? interned-keyword?)
+                    (keyword-hash keyword-hash)
+                    (string->bytes string->bytes)
+                    (bytes->string bytes->string)
+                    (string->keyword string->keyword)
+                    (keyword->string keyword->string)
+                    (make-uninterned-keyword make-uninterned-keyword)
+                    (symbol->keyword symbol->keyword)
+                    (keyword->symbol keyword->symbol)
+                    (substring->list substring->list)
+                    (substring-fill! substring-fill!)
+                    (string-map string-map)
+                    (string-index string-index)
+                    (string-rindex string-rindex)
+                    (string-split string-split)
+                    (string-join string-join)
+                    (string-empty? string-empty?)
+                    (struct-type? struct-type?)
+                    (class-type? class-type?)
+                    (make-struct-type make-struct-type)
+                    (make-struct-predicate make-struct-predicate)
+                    (make-struct-field-accessor make-struct-field-accessor)
+                    (make-struct-field-mutator make-struct-field-mutator)
+                    (struct-field-ref struct-field-ref)
+                    (struct-field-set! struct-field-set!)
+                    (direct-field-ref direct-field-ref)
+                    (direct-field-set! direct-field-set!)
+                    (make-class-type make-class-type)
+                    (make-class-predicate make-class-predicate)
+                    (make-class-slot-accessor make-class-slot-accessor)
+                    (make-class-slot-mutator make-class-slot-mutator)
+                    (class-slot-ref class-slot-ref)
+                    (class-slot-set! class-slot-set!)
+                    (direct-slot-ref direct-slot-ref)
+                    (direct-slot-set! direct-slot-set!)
+                    (object? object?)
+                    (object-type object-type)
+                    (struct-instance? struct-instance?)
+                    (struct-subtype? struct-subtype?)
+                    (struct-type-find struct-type-find)
+                    (class-instance? class-instance?)
+                    (class-subtype? class-subtype?)
+                    (class-type-find class-type-find)
+                    (class-type-find* class-type-find*)
+                    (direct-struct-instance? direct-struct-instance?)
+                    (direct-class-instance? direct-class-instance?)
+                    (make-object make-object)
+                    (struct->list struct->list)
+                    (class->list class->list)
+                    (make-struct-instance make-struct-instance)
+                    (make-direct-struct-instance make-direct-struct-instance)
+                    (make-class-instance make-class-instance)
+                    (make-direct-class-instance make-direct-class-instance)
+                    (direct-struct-instance-init! direct-struct-instance-init!)
+                    (direct-class-instance-init! direct-class-instance-init!)
+                    (direct-constructor-init! direct-constructor-init!)
+                    (slot-ref slot-ref)
+                    (slot-set! slot-set!)
+                    (call-method call-method)
+                    (bind-method! bind-method!)
+                    (method-ref method-ref)
+                    (direct-method-ref direct-method-ref)
+                    (bound-method-ref bound-method-ref)
+                    (find-method find-method)
+                    (find-next-method find-next-method)
+                    (struct-find-method struct-find-method)
+                    (struct-find-next-method struct-find-next-method)
+                    (class-find-method class-find-method)
+                    (class-find-next-method class-find-next-method)
+                    (class-find-next-method* class-find-next-method*)
+                    (current-error-port current-error-port)
+                    (make-promise make-promise)
+                    (promise? promise?)
+                    (make-parameter make-parameter)
+                    (call-with-parameters call-with-parameters)
+                    (call-with-escape call-with-escape)
+                    (with-unwind-protect with-unwind-protect)
+                    (current-exception-handler current-exception-handler)
+                    (with-exception-handler with-exception-handler)
+                    (with-catch with-catch)
+                    (error error)
+                    (raise raise)
+                    (raise-type-error raise-type-error)
+                    (error::t error::t)
+                    (type-error::t type-error::t)
+                    (error? error?)
+                    (type-error? type-error?)
+                    (error-trace error-trace)
+                    (error-message error-message)
+                    (error-irritants error-irritants)
+                    (exit exit)
+                    (getenv getenv)
+                    (setenv setenv)
+                    (current-directory current-directory)
+                    (create-directory create-directory)
+                    (create-directory* create-directory*)
+                    (delete-file delete-file)
+                    (copy-file copy-file)
+                    (rename-file rename-file)
+                    (delete-directory delete-directory)
+                    (directory-files directory-files)
+                    (file-exists? file-exists?)
+                    (file-newer? file-newer?)
+                    (file-type file-type)
+                    (path-expand path-expand)
+                    (path-normalize path-normalize)
+                    (path-extension path-extension)
+                    (path-strip-extension path-strip-extension)
+                    (path-directory path-directory)
+                    (path-strip-directory path-strip-directory)
+                    (path-strip-trailing-directory-separator
+                     path-strip-trailing-directory-separator)
+                    (AST::t AST::t)
+                    (AST? AST?)
+                    (AST-e AST-e)
+                    (AST-source AST-source)
+                    (make-AST make-AST)
+                    (read-syntax read-syntax)
+                    (read-syntax-from-file read-syntax-from-file)
+                    (source-location? source-location?)
+                    (source-location-path? source-location-path?)
+                    (source-location-path source-location-path)
+                    (displayln displayln)
+                    (display* display*)
+                    (load-module load-module)
+                    (keyword-dispatch keyword-dispatch))
+                   (%#define-alias transcript-on void)
+                   (%#define-alias transcript-off void)
+                   (%#define-alias car-set! set-car!)
+                   (%#define-alias cdr-set! set-cdr!)
+                   (%#define-alias box-set! set-box!)
+                   (%#define-alias call/cc call-with-current-continuation)
+                   (%#define-alias call/esc call-with-escape)
+                   (%#define-alias call/values call-with-values)
+                   (%#define-alias call/parameters call-with-parameters)))
+         (%#module
+          <runtime>
+          (%#begin (%#import (in: #f <r5rs-runtime>) (in: #f <host-runtime>))
+                   (%#export
+                    (import: (in: #f <r5rs-runtime>))
+                    (import: (in: #f <host-runtime>)))))
+         (%#module
+          <expander-runtime>
+          (%#begin (%#export #t)
+                   (%#extern
+                    (raise-syntax-error gx#raise-syntax-error)
+                    (syntax-error? gx#syntax-error?)
+                    (identifier? gx#identifier?)
+                    (identifier-list? gx#identifier-list?)
+                    (free-identifier=? gx#free-identifier=?)
+                    (bound-identifier=? gx#bound-identifier=?)
+                    (datum->syntax gx#datum->syntax)
+                    (syntax->datum gx#syntax->datum)
+                    (syntax-e gx#syntax-e)
+                    (syntax->list gx#syntax->list)
+                    (genident gx#genident)
+                    (gentemps gx#gentemps)
+                    (stx-identifier gx#stx-identifier)
+                    (stx-boolean? gx#stx-boolean?)
+                    (stx-keyword? gx#stx-keyword?)
+                    (stx-char? gx#stx-char?)
+                    (stx-number? gx#stx-number?)
+                    (stx-fixnum? gx#stx-fixnum?)
+                    (stx-string? gx#stx-string?)
+                    (stx-null? gx#stx-null?)
+                    (stx-pair? gx#stx-pair?)
+                    (stx-pair/null? gx#stx-pair/null?)
+                    (stx-list? gx#stx-list?)
+                    (stx-box? gx#stx-box?)
+                    (stx-vector? gx#stx-vector?)
+                    (stx-datum? gx#stx-datum?)
+                    (stx-eq? gx#stx-eq?)
+                    (stx-eqv? gx#stx-eqv?)
+                    (stx-equal? gx#stx-equal?)
+                    (stx-false? gx#stx-false?)
+                    (stx-e gx#stx-e)
+                    (stx-source gx#stx-source)
+                    (stx-wrap-source gx#stx-wrap-source)
+                    (stx-car gx#stx-car)
+                    (stx-cdr gx#stx-cdr)
+                    (stx-length gx#stx-length)
+                    (stx-for-each gx#stx-for-each)
+                    (stx-map gx#stx-map)
+                    (stx-foldl gx#stx-foldl)
+                    (stx-foldr gx#stx-foldr)
+                    (stx-reverse gx#stx-reverse)
+                    (stx-last gx#stx-last)
+                    (stx-last-pair gx#stx-last-pair)
+                    (stx-list-tail gx#stx-list-tail)
+                    (stx-list-ref gx#stx-list-ref)
+                    (stx-andmap gx#stx-andmap)
+                    (stx-ormap gx#stx-ormap)
+                    (stx-plist? gx#stx-plist?)
+                    (stx-getq gx#stx-getq)
+                    (macro-expand-syntax gx#macro-expand-syntax)
+                    (macro-expand-syntax-case gx#macro-expand-syntax-case)
+                    (syntax-pattern? gx#syntax-pattern?)
+                    (syntax-local-pattern? gx#syntax-local-pattern?)
+                    (make-syntax-pattern gx#make-syntax-pattern)
+                    (syntax-pattern-id gx#syntax-pattern-id)
+                    (syntax-pattern-depth gx#syntax-pattern-depth)
+                    (syntax-check-splice-targets
+                     gx#syntax-check-splice-targets)
+                    (syntax-split-splice gx#syntax-split-splice)
+                    (underscore? gx#underscore?)
+                    (ellipsis? gx#ellipsis?)
+                    (check-duplicate-identifiers
+                     gx#check-duplicate-identifiers)
+                    (current-expander-context gx#current-expander-context)
+                    (current-expander-marks gx#current-expander-marks)
+                    (current-expander-path gx#current-expander-path)
+                    (current-expander-phi gx#current-expander-phi)
+                    (local-context? gx#local-context?)
+                    (top-context? gx#top-context?)
+                    (module-context? gx#module-context?)
+                    (prelude-context? gx#prelude-context?)
+                    (make-local-context gx#make-local-context)
+                    (eval-syntax gx#eval-syntax)
+                    (core-expand gx#core-expand)
+                    (core-expand-head gx#core-expand-head)
+                    (core-expand-expression+1 gx#core-expand-expression+1)
+                    (import-module gx#import-module)
+                    (eval-module gx#eval-module)
+                    (core-library-module-path? gx#core-library-module-path?)
+                    (core-resolve-library-module-path
+                     gx#core-resolve-library-module-path)
+                    (core-resolve-module-path gx#core-resolve-module-path)
+                    (core-quote-syntax gx#core-quote-syntax)
+                    (core-identifier=? gx#core-identifier=?)
+                    (core-identifier-key gx#core-identifier-key)
+                    (core-apply-expander gx#core-apply-expander)
+                    (syntax-local-introduce gx#syntax-local-introduce)
+                    (syntax-local-rewrap gx#syntax-local-rewrap)
+                    (syntax-local-unwrap gx#syntax-local-unwrap)
+                    (syntax-local-e gx#syntax-local-e)
+                    (syntax-local-value gx#syntax-local-value)
+                    (resolve-identifier gx#resolve-identifier)
+                    (core-resolve-identifier gx#core-resolve-identifier)
+                    (binding? gx#binding?)
+                    (binding-id gx#binding-id)
+                    (runtime-binding? gx#runtime-binding?)
+                    (top-binding? gx#top-binding?)
+                    (module-binding? gx#module-binding?)
+                    (extern-binding? gx#extern-binding?)
+                    (syntax-binding? gx#syntax-binding?)
+                    (syntax-binding-e gx#syntax-binding-e)
+                    (alias-binding? gx#alias-binding?)
+                    (alias-binding-e gx#alias-binding-e)
+                    (import-binding? gx#import-binding?)
+                    (import-binding-e gx#import-binding-e)
+                    (expander? gx#expander?)
+                    (expander-binding? gx#expander-binding?)
+                    (expander-e gx#expander-e)
+                    (expander-binding-e gx#expander-binding-e)
+                    (feature-expander? gx#feature-expander?)
+                    (user-expander? gx#user-expander?)
+                    (make-user-expander gx#make-user-expander)
+                    (user-expander-context gx#user-expander-context)
+                    (user-expander-phi gx#user-expander-phi)
+                    (import-expander? gx#import-expander?)
+                    (make-import-expander gx#make-import-expander)
+                    (export-expander? gx#export-expander?)
+                    (make-export-expander gx#make-export-expander)
+                    (module-import? gx#module-import?)
+                    (make-module-import gx#make-module-import)
+                    (module-import-source gx#module-import-source)
+                    (module-import-name gx#module-import-name)
+                    (module-import-phi gx#module-import-phi)
+                    (module-import-weak? gx#module-import-weak?)
+                    (module-export? gx#module-export?)
+                    (make-module-export gx#make-module-export)
+                    (module-export-context gx#module-export-context)
+                    (module-export-key gx#module-export-key)
+                    (module-export-phi gx#module-export-phi)
+                    (module-export-name gx#module-export-name)
+                    (module-export-weak? gx#module-export-weak?)
+                    (import-set? gx#import-set?)
+                    (import-set-source gx#import-set-source)
+                    (import-set-phi gx#import-set-phi)
+                    (import-set-imports gx#import-set-imports)
+                    (export-set? gx#export-set?)
+                    (export-set-source gx#export-set-source)
+                    (export-set-phi gx#export-set-phi)
+                    (export-set-exports gx#export-set-exports)
+                    (core-resolve-module-export gx#core-resolve-module-export)
+                    (core-module-export->import gx#core-module-export->import)
+                    (core-expand-import-source gx#core-expand-import-source)
+                    (core-expand-export-source gx#core-expand-export-source))))
+         (%#import
+          (in: #f <runtime>)
+          (phi: 1 (in: #f <runtime>))
+          (phi: 1 (in: #f <expander-runtime>))
+          (phi: 2 (in: #f <runtime>))
+          (phi: 2 (in: #f <expander-runtime>))
+          (phi: 3 (in: #f <runtime>))
+          (phi: 3 (in: #f <expander-runtime>)))
+         (%#module
+          <syntax-case>
+          (%#begin (%#export #t)
+                   (%#import (in: #f <expander-runtime>))
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref _gx#load-module)
+                                     (%#quote "gerbil/core__1")))
+                            (%#define-syntax
+                             syntax
+                             |gerbil/core::<syntax-case>[:0:]#syntax|))
+                   (%#define-syntax
+                    syntax-case
+                    |gerbil/core::<syntax-case>[:0:]#syntax-case|)))
+         (%#import
+          (phi: 1 (in: #f <syntax-case>))
+          (phi: 2 (in: #f <syntax-case>)))
+         (%#module
+          <syntax-sugar>
+          (%#begin (%#export #t)
+                   (%#import
+                    (in: #f <expander-runtime>)
+                    (in: #f <syntax-case>))
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref _gx#load-module)
+                                     (%#quote "gerbil/core__2")))
+                            (%#define-syntax
+                             syntax-rules
+                             |gerbil/core::<syntax-sugar>[:0:]#syntax-rules|))
+                   (%#define-syntax
+                    with-syntax
+                    |gerbil/core::<syntax-sugar>[:0:]#with-syntax|)
+                   (%#define-syntax
+                    with-syntax*
+                    |gerbil/core::<syntax-sugar>[:0:]#with-syntax*|)))
+         (%#import
+          (phi: 1 (in: #f <syntax-sugar>))
+          (phi: 2 (in: #f <syntax-sugar>)))
+         (%#module
+          <sugar>
+          (%#begin (%#export
+                    (import: (in: #f <sugar:1>))
+                    (import: (in: #f <sugar:2>))
+                    (import: (in: #f <sugar:3>)))
+                   (%#module
+                    <sugar:1>
+                    (%#begin (%#export #t)
+                             (%#begin (%#begin-syntax
+                                       (%#call (%#ref _gx#load-module)
+                                               (%#quote "gerbil/core__3")))
+                                      (%#define-syntax
+                                       defrules
+                                       |gerbil/core::<sugar>::<sugar:1>[:0:]#defrules|))
+                             (%#define-syntax
+                              defsyntax%
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#defsyntax%|)
+                             (%#define-syntax
+                              defalias
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#defalias|)
+                             (%#define-syntax
+                              define
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#define|)
+                             (%#define-syntax
+                              let*-values
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#let*-values|)
+                             (%#define-syntax
+                              let
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#let|)
+                             (%#define-syntax
+                              let*
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#let*|)
+                             (%#define-syntax
+                              letrec
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#letrec|)
+                             (%#define-syntax
+                              letrec*
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#letrec*|)
+                             (%#define-syntax
+                              ~let
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#~let|)
+                             (%#define-syntax
+                              and
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#and|)
+                             (%#define-syntax
+                              or
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#or|)
+                             (%#define-syntax
+                              cond
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#cond|)
+                             (%#define-syntax
+                              when
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#when|)
+                             (%#define-syntax
+                              unless
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#unless|)
+                             (%#define-syntax
+                              syntax-error
+                              |gerbil/core::<sugar>::<sugar:1>[:0:]#syntax-error|)))
+                   (%#import (in: #f <sugar:1>) (phi: 1 (in: #f <sugar:1>)))
+                   (%#module
+                    <sugar:2>
+                    (%#begin (%#export #t)
+                             (%#begin (%#begin-syntax
+                                       (%#call (%#ref _gx#load-module)
+                                               (%#quote "gerbil/core__4")))
+                                      (%#define-syntax
+                                       lambda
+                                       |gerbil/core::<sugar>::<sugar:2>[:0:]#lambda|))
+                             (%#define-syntax
+                              def
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#def|)
+                             (%#define-syntax
+                              def*
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#def*|)
+                             (%#define-syntax
+                              defvalues
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#defvalues|)
+                             (%#define-syntax
+                              case
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#case|)
+                             (%#define-syntax
+                              ~case
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#~case|)
+                             (%#define-syntax
+                              ~case-test
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#~case-test|)
+                             (%#define-syntax
+                              do
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#do|)
+                             (%#define-syntax
+                              do-while
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#do-while|)
+                             (%#define-syntax
+                              begin0
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#begin0|)
+                             (%#define-syntax
+                              rec
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#rec|)
+                             (%#define-syntax
+                              alet
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#alet|)
+                             (%#define-syntax
+                              alet*
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#alet*|)
+                             (%#define-syntax
+                              @list
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#@list|)
+                             (%#define-syntax
+                              quasiquote
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#quasiquote|)
+                             (%#define-syntax
+                              delay
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#delay|)
+                             (%#define-syntax
+                              cut
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#cut|)
+                             (%#define-syntax
+                              <>
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#<>|)
+                             (%#define-syntax
+                              <...>
+                              |gerbil/core::<sugar>::<sugar:2>[:0:]#<...>|)))
+                   (%#import (in: #f <sugar:2>) (phi: 1 (in: #f <sugar:2>)))
+                   (%#module
+                    <sugar:3>
+                    (%#begin (%#export #t)
+                             (%#begin (%#begin-syntax
+                                       (%#call (%#ref _gx#load-module)
+                                               (%#quote "gerbil/core__5")))
+                                      (%#define-syntax
+                                       defsyntax
+                                       |gerbil/core::<sugar>::<sugar:3>[:0:]#defsyntax|))))
+                   (%#import (in: #f <sugar:3>))))
+         (%#import
+          (in: #f <sugar>)
+          (phi: 1 (in: #f <sugar>))
+          (phi: 2 (in: #f <sugar>)))
+         (%#module
+          <MOP>
+          (%#begin (%#export
+                    (import: (in: #f <MOP:1>))
+                    (import: (in: #f <MOP:2>))
+                    (phi: 1 (import: (in: #f <MOP:2>)))
+                    (phi: 1 (import: (in: #f <MOP:3>))))
+                   (%#module
+                    <MOP:1>
+                    (%#begin (%#export #t)
+                             (%#begin-syntax
+                              (%#call (%#ref _gx#load-module)
+                                      (%#quote "gerbil/core__6"))
+                              (%#define-runtime
+                               generate-typedef
+                               |gerbil/core::<MOP>::<MOP:1>[1]#generate-typedef|))
+                             (%#define-syntax
+                              defstruct-type
+                              |gerbil/core::<MOP>::<MOP:1>[:0:]#defstruct-type|)
+                             (%#define-syntax
+                              defclass-type
+                              |gerbil/core::<MOP>::<MOP:1>[:0:]#defclass-type|)))
+                   (%#import (in: #f <MOP:1>) (phi: 1 (in: #f <MOP:1>)))
+                   (%#module
+                    <MOP:2>
+                    (%#begin (%#export
+                              #t
+                              (spec:
+                               1
+                               runtime-type-info::t
+                               runtime-type-info::t)
+                              (spec: 1 runtime-type-info? runtime-type-info?)
+                              (spec:
+                               1
+                               runtime-struct-info::t
+                               runtime-struct-info::t)
+                              (spec:
+                               1
+                               runtime-struct-info?
+                               runtime-struct-info?)
+                              (spec:
+                               1
+                               runtime-class-info::t
+                               runtime-class-info::t)
+                              (spec: 1 runtime-class-info? runtime-class-info?)
+                              (spec:
+                               1
+                               expander-type-info::t
+                               expander-type-info::t)
+                              (spec: 1 expander-type-info? expander-type-info?)
+                              (spec:
+                               1
+                               extended-runtime-type-info::t
+                               extended-runtime-type-info::t)
+                              (spec:
+                               1
+                               extended-runtime-type-info?
+                               extended-runtime-type-info?)
+                              (spec:
+                               1
+                               extended-struct-info::t
+                               extended-struct-info::t)
+                              (spec:
+                               1
+                               extended-struct-info?
+                               extended-struct-info?)
+                              (spec:
+                               1
+                               extended-class-info::t
+                               extended-class-info::t)
+                              (spec:
+                               1
+                               extended-class-info?
+                               extended-class-info?)
+                              (spec:
+                               1
+                               runtime-rtd-exhibitor::t
+                               runtime-rtd-exhibitor::t)
+                              (spec:
+                               1
+                               runtime-type-exhibitor?
+                               runtime-type-exhibitor?)
+                              (spec:
+                               1
+                               runtime-struct-exhibitor::t
+                               runtime-struct-exhibitor::t)
+                              (spec:
+                               1
+                               runtime-struct-exhibitor?
+                               runtime-struct-exhibitor?)
+                              (spec:
+                               1
+                               runtime-class-exhibitor::t
+                               runtime-class-exhibitor::t)
+                              (spec:
+                               1
+                               runtime-class-exhibitor?
+                               runtime-class-exhibitor?)
+                              (spec:
+                               1
+                               runtime-type-identifier
+                               runtime-type-identifier)
+                              (spec:
+                               1
+                               runtime-type-identifier-set!
+                               runtime-type-identifier-set!)
+                              (spec:
+                               1
+                               runtime-type-exhibitor
+                               runtime-type-exhibitor)
+                              (spec:
+                               1
+                               runtime-type-exhibitor-set!
+                               runtime-type-exhibitor-set!)
+                              (spec: 1 runtime-type-id runtime-type-id)
+                              (spec:
+                               1
+                               runtime-type-id-set!
+                               runtime-type-id-set!)
+                              (spec: 1 runtime-type-super runtime-type-super)
+                              (spec:
+                               1
+                               runtime-type-super-set!
+                               runtime-type-super-set!)
+                              (spec: 1 runtime-type-name runtime-type-name)
+                              (spec:
+                               1
+                               runtime-type-name-set!
+                               runtime-type-name-set!)
+                              (spec: 1 runtime-type-ctor runtime-type-ctor)
+                              (spec:
+                               1
+                               runtime-type-ctor-set!
+                               runtime-type-ctor-set!)
+                              (spec: 1 runtime-type-plist runtime-type-plist)
+                              (spec:
+                               1
+                               runtime-type-plist-set!
+                               runtime-type-plist-set!)
+                              (spec:
+                               1
+                               runtime-struct-fields
+                               runtime-struct-fields)
+                              (spec:
+                               1
+                               runtime-struct-fields-set!
+                               runtime-struct-fields-set!)
+                              (spec: 1 runtime-class-slots runtime-class-slots)
+                              (spec:
+                               1
+                               runtime-class-slots-set!
+                               runtime-class-slots-set!)
+                              (spec:
+                               1
+                               expander-type-identifiers
+                               expander-type-identifiers)
+                              (spec:
+                               1
+                               expander-type-identifiers-set!
+                               expander-type-identifiers-set!)
+                              (spec:
+                               1
+                               make-runtime-struct-info
+                               make-runtime-struct-info)
+                              (spec:
+                               1
+                               make-runtime-class-info
+                               make-runtime-class-info)
+                              (spec:
+                               1
+                               make-extended-struct-info
+                               make-extended-struct-info)
+                              (spec:
+                               1
+                               make-extended-class-info
+                               make-extended-class-info)
+                              (spec:
+                               1
+                               make-runtime-struct-exhibitor
+                               make-runtime-struct-exhibitor)
+                              (spec:
+                               1
+                               make-runtime-class-exhibitor
+                               make-runtime-class-exhibitor)
+                              (spec:
+                               1
+                               syntax-local-type-info?
+                               syntax-local-type-info?)
+                              (spec:
+                               1
+                               syntax-local-struct-info?
+                               syntax-local-struct-info?)
+                              (spec:
+                               1
+                               syntax-local-class-info?
+                               syntax-local-class-info?)
+                              (spec:
+                               1
+                               runtime-type-exhibitor-e
+                               runtime-type-exhibitor-e))
+                             (%#begin-syntax
+                              (%#call (%#ref _gx#load-module)
+                                      (%#quote "gerbil/core__7"))
+                              (%#define-runtime
+                               runtime-type-info::t
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-info::t|)
+                              (%#define-runtime
+                               runtime-type-info?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-info?|)
+                              (%#define-runtime
+                               runtime-type-identifier
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-identifier|)
+                              (%#define-runtime
+                               runtime-type-identifier-set!
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-identifier-set!|)
+                              (%#define-runtime
+                               runtime-struct-info::t
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-info::t|)
+                              (%#define-runtime
+                               runtime-struct-info?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-info?|)
+                              (%#define-runtime
+                               make-runtime-struct-info
+                               |gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-info|)
+                              (%#define-runtime
+                               runtime-class-info::t
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-info::t|)
+                              (%#define-runtime
+                               runtime-class-info?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-info?|)
+                              (%#define-runtime
+                               make-runtime-class-info
+                               |gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-info|)
+                              (%#define-runtime
+                               expander-type-info::t
+                               |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info::t|)
+                              (%#define-runtime
+                               expander-type-info?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info?|)
+                              (%#define-runtime
+                               expander-type-identifiers
+                               |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-identifiers|)
+                              (%#define-runtime
+                               expander-type-identifiers-set!
+                               |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-identifiers-set!|)
+                              (%#define-runtime
+                               extended-runtime-type-info::t
+                               |gerbil/core::<MOP>::<MOP:2>[1]#extended-runtime-type-info::t|)
+                              (%#define-runtime
+                               extended-runtime-type-info?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#extended-runtime-type-info?|)
+                              (%#define-runtime
+                               runtime-type-exhibitor
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor|)
+                              (%#define-runtime
+                               runtime-type-exhibitor-set!
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor-set!|)
+                              (%#define-runtime
+                               extended-struct-info::t
+                               |gerbil/core::<MOP>::<MOP:2>[1]#extended-struct-info::t|)
+                              (%#define-runtime
+                               extended-struct-info?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#extended-struct-info?|)
+                              (%#define-runtime
+                               make-extended-struct-info
+                               |gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|)
+                              (%#define-runtime
+                               extended-class-info::t
+                               |gerbil/core::<MOP>::<MOP:2>[1]#extended-class-info::t|)
+                              (%#define-runtime
+                               extended-class-info?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#extended-class-info?|)
+                              (%#define-runtime
+                               make-extended-class-info
+                               |gerbil/core::<MOP>::<MOP:2>[1]#make-extended-class-info|)
+                              (%#define-runtime
+                               runtime-rtd-exhibitor::t
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|)
+                              (%#define-runtime
+                               runtime-type-exhibitor?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor?|)
+                              (%#define-runtime
+                               runtime-type-id
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-id|)
+                              (%#define-runtime
+                               runtime-type-super
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-super|)
+                              (%#define-runtime
+                               runtime-type-name
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-name|)
+                              (%#define-runtime
+                               runtime-type-ctor
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-ctor|)
+                              (%#define-runtime
+                               runtime-type-plist
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-plist|)
+                              (%#define-runtime
+                               runtime-type-id-set!
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-id-set!|)
+                              (%#define-runtime
+                               runtime-type-super-set!
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-super-set!|)
+                              (%#define-runtime
+                               runtime-type-name-set!
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-name-set!|)
+                              (%#define-runtime
+                               runtime-type-ctor-set!
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-ctor-set!|)
+                              (%#define-runtime
+                               runtime-type-plist-set!
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-plist-set!|)
+                              (%#define-runtime
+                               runtime-struct-exhibitor::t
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-exhibitor::t|)
+                              (%#define-runtime
+                               runtime-struct-exhibitor?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-exhibitor?|)
+                              (%#define-runtime
+                               make-runtime-struct-exhibitor
+                               |gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|)
+                              (%#define-runtime
+                               runtime-struct-fields
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-fields|)
+                              (%#define-runtime
+                               runtime-struct-fields-set!
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-fields-set!|)
+                              (%#define-runtime
+                               runtime-class-exhibitor::t
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-exhibitor::t|)
+                              (%#define-runtime
+                               runtime-class-exhibitor?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-exhibitor?|)
+                              (%#define-runtime
+                               make-runtime-class-exhibitor
+                               |gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-exhibitor|)
+                              (%#define-runtime
+                               runtime-class-slots
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-slots|)
+                              (%#define-runtime
+                               runtime-class-slots-set!
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-slots-set!|)
+                              (%#define-runtime
+                               syntax-local-type-info?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-type-info?|)
+                              (%#define-runtime
+                               syntax-local-struct-info?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-struct-info?|)
+                              (%#define-runtime
+                               syntax-local-class-info?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-class-info?|)
+                              (%#define-runtime
+                               runtime-type-exhibitor-e
+                               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor-e|)
+                              (%#define-runtime
+                               typedef-body?
+                               |gerbil/core::<MOP>::<MOP:2>[1]#typedef-body?|)
+                              (%#define-runtime
+                               generate-typedef
+                               |gerbil/core::<MOP>::<MOP:2>[1]#generate-typedef|))
+                             (%#define-syntax
+                              defstruct
+                              |gerbil/core::<MOP>::<MOP:2>[:0:]#defstruct|)
+                             (%#define-syntax
+                              defclass
+                              |gerbil/core::<MOP>::<MOP:2>[:0:]#defclass|)
+                             (%#define-syntax
+                              defmethod
+                              |gerbil/core::<MOP>::<MOP:2>[:0:]#defmethod|)
+                             (%#define-syntax
+                              @method
+                              |gerbil/core::<MOP>::<MOP:2>[:0:]#@method|)
+                             (%#define-syntax
+                              @
+                              |gerbil/core::<MOP>::<MOP:2>[:0:]#@|)
+                             (%#define-syntax
+                              @-set!
+                              |gerbil/core::<MOP>::<MOP:2>[:0:]#@-set!|)))
+                   (%#import (in: #f <MOP:2>) (phi: 1 (in: #f <MOP:2>)))
+                   (%#module
+                    <MOP:3>
+                    (%#begin (%#export (phi: 1 #t))
+                             (%#begin-syntax
+                              (%#call (%#ref _gx#load-module)
+                                      (%#quote "gerbil/core__8"))
+                              (%#begin (%#begin-syntax
+                                        (%#call (%#ref _gx#load-module)
+                                                (%#quote "gerbil/core__9")))
+                                       (%#define-syntax
+                                        runtime-type-info
+                                        |gerbil/core::<MOP>::<MOP:3>[:1:]#runtime-type-info|))
+                              (%#define-syntax
+                               runtime-struct-info
+                               |gerbil/core::<MOP>::<MOP:3>[:1:]#runtime-struct-info|)
+                              (%#define-syntax
+                               runtime-class-info
+                               |gerbil/core::<MOP>::<MOP:3>[:1:]#runtime-class-info|)
+                              (%#define-syntax
+                               expander-type-info
+                               |gerbil/core::<MOP>::<MOP:3>[:1:]#expander-type-info|)
+                              (%#define-syntax
+                               extended-runtime-type-info
+                               |gerbil/core::<MOP>::<MOP:3>[:1:]#extended-runtime-type-info|)
+                              (%#define-syntax
+                               extended-struct-info
+                               |gerbil/core::<MOP>::<MOP:3>[:1:]#extended-struct-info|)
+                              (%#define-syntax
+                               extended-class-info
+                               |gerbil/core::<MOP>::<MOP:3>[:1:]#extended-class-info|)
+                              (%#define-syntax
+                               runtime-rtd-exhibitor
+                               |gerbil/core::<MOP>::<MOP:3>[:1:]#runtime-rtd-exhibitor|)
+                              (%#define-syntax
+                               runtime-struct-exhibitor
+                               |gerbil/core::<MOP>::<MOP:3>[:1:]#runtime-struct-exhibitor|)
+                              (%#define-syntax
+                               runtime-class-exhibitor
+                               |gerbil/core::<MOP>::<MOP:3>[:1:]#runtime-class-exhibitor|)
+                              (%#define-runtime
+                               macro-object::t
+                               |gerbil/core::<MOP>::<MOP:3>[1]#macro-object::t|)
+                              (%#define-runtime
+                               macro-object?
+                               |gerbil/core::<MOP>::<MOP:3>[1]#macro-object?|)
+                              (%#define-runtime
+                               make-macro-object
+                               |gerbil/core::<MOP>::<MOP:3>[1]#make-macro-object|)
+                              (%#define-runtime
+                               macro-object-macro
+                               |gerbil/core::<MOP>::<MOP:3>[1]#macro-object-macro|)
+                              (%#define-runtime
+                               macro-object-macro-set!
+                               |gerbil/core::<MOP>::<MOP:3>[1]#macro-object-macro-set!|)
+                              (%#define-syntax
+                               macro-object
+                               |gerbil/core::<MOP>::<MOP:3>[:1:]#macro-object|)
+                              (%#define-runtime
+                               macro-object::apply-macro-expander
+                               |gerbil/core::<MOP>::<MOP:3>[1]#macro-object::apply-macro-expander|))))
+                   (%#import (in: #f <MOP:3>))))
+         (%#import
+          (in: #f <MOP>)
+          (phi: 1 (in: #f <MOP>))
+          (phi: 2 (in: #f <MOP>)))
+         (%#module
+          <match>
+          (%#begin (%#export
+                    #t
+                    (spec: 1 match-macro match-macro)
+                    (spec: 1 match-macro::t match-macro::t)
+                    (spec: 1 make-match-macro make-match-macro)
+                    (spec: 1 match-macro? match-macro?)
+                    (spec:
+                     1
+                     syntax-local-match-macro?
+                     syntax-local-match-macro?))
+                   (%#begin-syntax
+                    (%#call (%#ref _gx#load-module)
+                            (%#quote "gerbil/core__10"))
+                    (%#define-runtime
+                     match-macro::t
+                     |gerbil/core::<match>[1]#match-macro::t|)
+                    (%#define-runtime
+                     match-macro?
+                     |gerbil/core::<match>[1]#match-macro?|)
+                    (%#define-runtime
+                     make-match-macro
+                     |gerbil/core::<match>[1]#make-match-macro|)
+                    (%#begin (%#begin-syntax
+                              (%#call (%#ref _gx#load-module)
+                                      (%#quote "gerbil/core__11")))
+                             (%#define-syntax
+                              match-macro
+                              |gerbil/core::<match>[:1:]#match-macro|))
+                    (%#define-runtime
+                     syntax-local-match-macro?
+                     |gerbil/core::<match>[1]#syntax-local-match-macro?|)
+                    (%#define-runtime
+                     parse-match-pattern
+                     |gerbil/core::<match>[1]#parse-match-pattern|)
+                    (%#define-runtime
+                     match-pattern?
+                     |gerbil/core::<match>[1]#match-pattern?|)
+                    (%#define-runtime
+                     match-pattern-vars
+                     |gerbil/core::<match>[1]#match-pattern-vars|)
+                    (%#define-runtime
+                     generate-match1
+                     |gerbil/core::<match>[1]#generate-match1|)
+                    (%#define-runtime
+                     generate-match*
+                     |gerbil/core::<match>[1]#generate-match*|)
+                    (%#define-runtime
+                     generate-match
+                     |gerbil/core::<match>[1]#generate-match|))
+                   (%#define-syntax match |gerbil/core::<match>[:0:]#match|)
+                   (%#define-syntax match* |gerbil/core::<match>[:0:]#match*|)
+                   (%#define-syntax with |gerbil/core::<match>[:0:]#with|)
+                   (%#define-syntax with* |gerbil/core::<match>[:0:]#with*|)
+                   (%#define-syntax ? |gerbil/core::<match>[:0:]#?|)
+                   (%#define-syntax
+                    defsyntax-for-match
+                    |gerbil/core::<match>[:0:]#defsyntax-for-match|)
+                   (%#define-syntax
+                    defrules-for-match
+                    |gerbil/core::<match>[:0:]#defrules-for-match|)))
+         (%#import
+          (in: #f <match>)
+          (phi: 1 (in: #f <match>))
+          (phi: 2 (in: #f <match>)))
+         (%#module
+          <more-sugar>
+          (%#begin (%#export #t (phi: 1 #t))
+                   (%#begin-syntax
+                    (%#call (%#ref _gx#load-module)
+                            (%#quote "gerbil/core__12"))
+                    (%#define-runtime
+                     setq-macro::t
+                     |gerbil/core::<more-sugar>[1]#setq-macro::t|)
+                    (%#define-runtime
+                     setq-macro?
+                     |gerbil/core::<more-sugar>[1]#setq-macro?|)
+                    (%#define-runtime
+                     make-setq-macro
+                     |gerbil/core::<more-sugar>[1]#make-setq-macro|)
+                    (%#begin (%#begin-syntax
+                              (%#call (%#ref _gx#load-module)
+                                      (%#quote "gerbil/core__13")))
+                             (%#define-syntax
+                              setq-macro
+                              |gerbil/core::<more-sugar>[:1:]#setq-macro|))
+                    (%#define-runtime
+                     setf-macro::t
+                     |gerbil/core::<more-sugar>[1]#setf-macro::t|)
+                    (%#define-runtime
+                     setf-macro?
+                     |gerbil/core::<more-sugar>[1]#setf-macro?|)
+                    (%#define-runtime
+                     make-setf-macro
+                     |gerbil/core::<more-sugar>[1]#make-setf-macro|)
+                    (%#define-syntax
+                     setf-macro
+                     |gerbil/core::<more-sugar>[:1:]#setf-macro|)
+                    (%#define-runtime
+                     syntax-local-setf-macro?
+                     |gerbil/core::<more-sugar>[1]#syntax-local-setf-macro?|)
+                    (%#define-runtime
+                     syntax-local-setq-macro?
+                     |gerbil/core::<more-sugar>[1]#syntax-local-setq-macro?|))
+                   (%#define-syntax set! |gerbil/core::<more-sugar>[:0:]#set!|)
+                   (%#define-syntax
+                    values-set!
+                    |gerbil/core::<more-sugar>[:0:]#values-set!|)
+                   (%#define-syntax
+                    parameterize
+                    |gerbil/core::<more-sugar>[:0:]#parameterize|)
+                   (%#define-syntax
+                    let/cc
+                    |gerbil/core::<more-sugar>[:0:]#let/cc|)
+                   (%#define-syntax
+                    let/esc
+                    |gerbil/core::<more-sugar>[:0:]#let/esc|)
+                   (%#define-syntax
+                    catch
+                    |gerbil/core::<more-sugar>[:0:]#catch|)
+                   (%#define-syntax
+                    unwind-protect
+                    |gerbil/core::<more-sugar>[:0:]#unwind-protect|)))
+         (%#import
+          (in: #f <more-sugar>)
+          (phi: 1 (in: #f <more-sugar>))
+          (phi: 2 (in: #f <more-sugar>)))
+         (%#module
+          <more-syntax-sugar>
+          (%#begin (%#export #t)
+                   (%#import
+                    (in: #f <expander-runtime>)
+                    (in: #f <syntax-case>)
+                    (in: #f <syntax-sugar>)
+                    (phi: -1 (in: #f <more-sugar>)))
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref _gx#load-module)
+                                     (%#quote "gerbil/core__14")))
+                            (%#define-syntax
+                             identifier-rules
+                             |gerbil/core::<more-syntax-sugar>[:0:]#identifier-rules|))
+                   (%#define-syntax
+                    quasisyntax
+                    |gerbil/core::<more-syntax-sugar>[:0:]#quasisyntax|)))
+         (%#import
+          (phi: 1 (in: #f <more-syntax-sugar>))
+          (phi: 2 (in: #f <more-syntax-sugar>)))
+         (%#module
+          <module-sugar>
+          (%#begin (%#export #t)
+                   (%#begin (%#begin-syntax
+                             (%#call (%#ref _gx#load-module)
+                                     (%#quote "gerbil/core__15")))
+                            (%#define-syntax
+                             require
+                             |gerbil/core::<module-sugar>[:0:]#require|))
+                   (%#define-syntax
+                    defsyntax-for-import
+                    |gerbil/core::<module-sugar>[:0:]#defsyntax-for-import|)
+                   (%#define-syntax
+                    defsyntax-for-export
+                    |gerbil/core::<module-sugar>[:0:]#defsyntax-for-export|)
+                   (%#define-syntax
+                    only-in
+                    |gerbil/core::<module-sugar>[:0:]#only-in|)
+                   (%#define-syntax
+                    except-out
+                    |gerbil/core::<module-sugar>[:0:]#except-out|)))
+         (%#import (in: #f <module-sugar>)))

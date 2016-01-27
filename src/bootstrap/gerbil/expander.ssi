@@ -1,0 +1,23 @@
+prelude: :gerbil/core
+package: gerbil
+namespace: gerbil/expander
+
+(%#begin (%#provide gerbil-expander)
+         (%#import
+          :gerbil/expander/common
+          :gerbil/expander/stx
+          :gerbil/expander/core
+          :gerbil/expander/top
+          :gerbil/expander/module
+          :gerbil/expander/compile
+          :gerbil/expander/root
+          :gerbil/expander/stxcase)
+         (%#export
+          (import: :gerbil/expander/common)
+          (import: :gerbil/expander/stx)
+          (import: :gerbil/expander/core)
+          (import: :gerbil/expander/top)
+          (import: :gerbil/expander/module)
+          (import: :gerbil/expander/compile)
+          (import: :gerbil/expander/root)
+          (import: :gerbil/expander/stxcase)))
