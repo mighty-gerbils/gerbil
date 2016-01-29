@@ -7,21 +7,24 @@ package: std
         :gerbil/gambit/os)
 (export
   select
+  ! !! sync
   )
 
 ;; ~~lib/_gambit#.scm
-(extern namespace: #f macro-mutex-btq-owner macro-thread-end-condvar)
+(extern namespace: #f
+  macro-thread-end-condvar
+  macro-thread-exception?)
 
 ;;; low level event selection
 ;;  mutex:             becomes ready when the thread successfully acquires
 ;;  io-condvar:        becomes ready when wait-for-io returns
 ;;  [mutex . condvar]: unlocks mutex, becomes ready when condvar signals
 ;;  thread:            becomes ready thread completes
-(defstruct selection (e mutex condvar)
+(defstruct selection (e thread mutex condvar)
   id: std/event#selection::t)
 
 (def (select timeout selectors)
-  (let (sel (make-selection #f
+  (let (sel (make-selection #f (current-thread)
               (make-mutex 'select)
               (make-condition-variable 'select)))
     (let lp ((rest selectors) (threads []))
@@ -41,7 +44,6 @@ package: std
      (kill-selector-threads! threads)
      (raise e))
    (lambda ()
-     (mutex-lock! (selection-mutex sel))
      (for-each
        (lambda (thread)
          (thread-start! thread)
@@ -49,30 +51,35 @@ package: std
        threads)
 
      (let lp ()
-       (mutex-unlock! (selection-mutex sel) (selection-condvar sel))
        (mutex-lock! (selection-mutex sel))
        (or (selection-e sel)
-           (lp))))))
+           (begin
+             (mutex-unlock! (selection-mutex sel) (selection-condvar sel))
+             (lp)))))))
 
 (def (make-selector-thread sel selector)
   (cond
    ((mutex? selector)
     (make-thread
-     (lambda () (select1 sel selector mutex-selector-e mutex-selector-abort-e))
+     (lambda () (select1 sel selector mutex-select-e mutex-select-abort-e))
      'select-mutex))
    ((condition-variable? selector)
     (make-thread
-     (lambda () (select1 sel selector io-wait-selector-e void))
+     (lambda () (select1 sel selector io-wait-select-e void))
      'select-io-wait))
    ((and (pair? selector)
          (mutex? (car selector))
          (condition-variable? (cdr selector)))
     (make-thread
-     (lambda () (select1 sel selector condvar-selector-e void))
+     (lambda () (select1 sel selector condvar-select-e void))
      'select-condvar))
+   ((thread? selector)
+    (make-thread
+     (lambda () (select1 sel selector thread-select-e void))
+     'select-thread))
    ((or (real? selector) (time? selector))
     (make-thread
-     (lambda () (select1 sel selector timeout-selector-e void))
+     (lambda () (select1 sel selector timeout-select-e void))
      'select-timeout))
    (else
     (error "Bad selector" selector))))
@@ -81,13 +88,15 @@ package: std
   (let (threads (thread-receive)) ; receive the set of selector threads
     (with-catch
      (lambda (e)
-       (abort-e selector)
+       (abort-e sel selector)
        (raise e))
      (lambda ()
-       (select-e selector)
+       (select-e sel selector)
        (mutex-lock! (selection-mutex sel))
        (if (selection-e sel)
-         (abort-e selector)             ; race lost
+         (begin                         ; race lost
+           (mutex-unlock! (selection-mutex sel))
+           (abort-e sel selector))
          (begin                         ; race winner
            (set! (selection-e sel) selector)
            (kill-selector-threads! threads)
@@ -102,23 +111,36 @@ package: std
           (thread-interrupt! thread (lambda () (raise 'interrupt)))))
       threads)))
 
-(def (mutex-selector-e mutex)
-  (mutex-lock! mutex))
+(def (mutex-select-e sel mutex)
+  (mutex-lock! mutex #f (selection-thread sel)))
 
-(def (mutex-selector-abort-e mutex)
-  (let (owner (macro-mutex-btq-owner mutex))
-    (when (eq? owner (current-thread))
-      (mutex-unlock! mutex))))
+(def (mutex-select-abort-e sel mutex)
+  (when (eq? mutex (selection-e sel))
+    (mutex-unlock! mutex)))
 
-(def (io-wait-selector-e condvar)
+(def (io-wait-select-e sel condvar)
   (##wait-for-io! condvar #f))
 
-(def (condvar-selector-e selector)
+(def (condvar-select-e sel selector)
   (with ([mutex . condvar] selector)
     (mutex-unlock! mutex condvar)))
 
-(def (timeout-selector-e absrel-time)
+(def (timeout-select-e sel absrel-time)
   (thread-sleep! absrel-time))
+
+(def (thread-select-e sel thread)
+  (with-catch
+   (lambda (e)
+     (unless (macro-thread-exception? thread)
+       (raise e)))
+   (lambda () (thread-join! thread))))
 
 (def (thread-dead? thread)
   (not (macro-thread-end-condvar thread)))
+
+;;; Events and sync
+(def (sync . args)
+  (error "Implement me!!!"))
+
+(defrules ! ())
+(defrules !! ())
