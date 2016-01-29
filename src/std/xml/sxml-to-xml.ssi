@@ -1,0 +1,27 @@
+;;; -*- Gerbil -*-
+;;; (C) vyzo at hackzen.org
+;;; sxml-to-xml  interface
+package: std/xml
+namespace: std/xml/sxml-to-xml
+
+(export #t)
+(extern
+  sxml>>html*
+  sxml>>xhtml*
+  sxml>>xml*
+  sxml>>html-fast
+  sxml>>html
+  sxml>>xhtml-fast
+  sxml>>xhtml
+  sxml>>xml-fast
+  sxml>>xml
+  sxml>>pretty-xml-file
+  sxml>>pretty-xhtml-file
+  sxml->html-string-fragment
+  sxml->xml-string-fragment
+  sxml->xhtml-string
+  xml-declaration:xml1.0-utf8
+  xml-header:xhtml-1.0-transitional-en
+  )
+
+(load-module "std/xml/sxml-to-xml")

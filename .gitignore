@@ -1,0 +1,10 @@
+*~
+scratch
+gambit-source
+attic
+bin
+lib
+*.o
+*.o?
+*.so
+

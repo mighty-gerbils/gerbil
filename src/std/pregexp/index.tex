@@ -1,0 +1,1196 @@
+% Last change 2009-05-08
+\input tex2page
+\input plainsection
+\input btxmac
+\let\TZPtexlayout 0
+
+\sidemargin 1.75 true in
+
+\ifx\shipout\UNDEFINED
+
+\let\PRIMsection\section
+\def\section{\htmlpagebreak\PRIMsection}
+\fi
+\let\c\centerline
+\let\n\noindent
+\let\f\numberedfootnote
+
+%\let\q\scm
+\def\meta[#1]{{\em #1}}
+
+\title{pregexp: \\
+Portable Regular Expressions \\
+for Scheme and Common Lisp}
+
+\ifx\shipout\UnDeFiNeD
+\c{\urlh{pregexp.tar.bz2}{Download}}
+\fi
+
+\c{\urlh{../index.html}{Dorai
+Sitaram}}
+
+\bigskip
+
+\n \p{pregexp.scm} is a portable library for {\em
+regular expressions} (aka {\em regexps} or {\em
+regexes}) that runs in any Scheme
+that complies with R4RS, R5RS or R6RS~\cite{r6rs}.  It
+provides regular expressions
+modeled on
+Perl's~\cite{friedl:regex,pperl}, and includes such
+powerful directives as numeric and nongreedy
+quantifiers, capturing and non-capturing clustering,
+POSIX character classes, selective case- and
+space-insensitivity, backreferences, alternation,
+backtrack pruning,
+positive and negative lookahead and lookbehind, in
+addition to the more basic directives familiar to all
+regexp users.
+
+To use, simply load the file \p{pregexp.scm} into
+your Scheme.
+(Alternatively, if your dialect allows it, you can
+install \p{pregexp} as a {\em module} --- consult
+the file \url{INSTALL} in the distribution.)
+
+The file \p{pregexp.lisp} is the Common Lisp version
+of this library.  To use it, load it into your Common Lisp.
+(The descriptions and examples in this manual use Scheme
+syntax, but their
+translation to CL syntax is trivial.)
+
+\htmlonly
+
+\n{\bf Contents}
+
+\tableofcontents
+\endhtmlonly
+
+\section{Introduction}
+
+A {\em regexp} is a string that describes a pattern.  A
+regexp matcher tries to {\em match} this pattern
+against (a portion of) another string, which we
+will call the {\em text string}.  The text string
+is treated as raw text and not as a pattern.
+
+Most of the characters in a regexp pattern are meant to
+match occurrences of themselves in the text string.
+Thus, the pattern \q{"abc"} matches a string that
+contains the characters \p{a}, \p{b}, \p{c} in succession.
+
+In the regexp pattern, some characters  act as {\em
+metacharacters}, and some character sequences act as
+{\em metasequences}.  That is, they specify something
+other than their literal selves.  For example, in the
+pattern \q{"a.c"}, the characters \p{a} and \p{c} do
+stand for themselves but the {\em metacharacter} `\p{.}'
+can match {\em any} character (other than
+newline).  Therefore, the pattern \q{"a.c"}
+matches an \p{a}, followed by {\em any} character,
+followed by a \p{c}.
+
+If we needed to match the character `\p{.}' itself,
+we {\em escape} it, ie, precede it with a backslash
+(\p{\}).  The character sequence \p{\.} is thus a {\em
+metasequence}, since it doesn't match itself but rather
+just `\p{.}'.  So, to match \p{a} followed by a literal
+`\p{.}' followed by \p{c}, we use the regexp pattern
+\q{"a\\.c"}.\f{The double backslash is an artifact of
+Scheme strings, not the regexp pattern itself.  When we
+want a literal backslash inside a Scheme string, we
+must escape it so that it shows up in the string at
+all. Scheme strings use backslash as the escape
+character, so we end up with two backslashes --- one
+Scheme-string backslash to escape the regexp backslash,
+which then escapes the dot.  Another character that
+would need escaping inside a Scheme string is
+\ifx\newenvironment\PLAINTEX
+`\p{"}'.
+\else
+`{\tt"}'.\fi
+}
+Another example of a metasequence is \p{\t}, which is a
+readable way to represent the tab character.
+
+We will call the string representation of a regexp the
+{\em U-regexp}, where {\em U} can be taken to mean {\em
+Unix-style} or {\em universal}, because this
+notation for regexps is universally familiar.  Our
+implementation uses an intermediate tree-like
+representation called the {\em S-regexp}, where {\em S}
+can stand for {\em Scheme}, {\em symbolic}, or
+{\em s-expression}.  S-regexps are more verbose
+and less readable than U-regexps, but they are much
+easier for Scheme's recursive procedures to navigate.
+
+%\section{Regexp procedures provided by \p{pregexp.scm}}
+\section{Regexp procedures}
+
+\p{pregexp.scm}
+provides the procedures
+\q{pregexp}, \q{pregexp-match-positions},
+\q{pregexp-match}, \q{pregexp-split}, \q{pregexp-replace},
+\q{pregexp-replace*}, and \q{pregexp-quote}.
+All the identifiers introduced
+by \p{pregexp.scm} have the prefix \q{pregexp}, so they
+are unlikely to clash with other names in Scheme,
+including those of any natively provided regexp
+operators.
+
+\subsection{\q{pregexp}}
+
+The procedure \q{pregexp} takes
+a U-regexp, which is a string, and returns
+an S-regexp, which is a tree.
+
+\q{
+(pregexp "c.r")
+=> (:sub (:or (:seq #\c :any #\r)))
+}
+
+\n There is rarely any need to look at the S-regexps
+returned by \q{pregexp}.
+
+\subsection{\q{pregexp-match-positions}}
+
+The procedure \q{pregexp-match-positions} takes
+a
+regexp pattern and a text string, and returns a {\em
+match} if the regexp {\em matches} (some part of) the text string.
+
+The regexp may be either a U- or an S-regexp.
+(\q{pregexp-match-positions} will internally compile a
+U-regexp to an S-regexp before proceeding with the
+matching.  If you find yourself calling
+\q{pregexp-match-positions} repeatedly with the same
+U-regexp, it may be advisable to explicitly convert the
+latter into an S-regexp once beforehand, using
+\q{pregexp}, to save needless recompilation.)
+
+\q{pregexp-match-positions} returns \q{#f} if the regexp did not
+match the string; and a list of {\em index pairs} if it
+did match.  Eg,
+
+\q{
+(pregexp-match-positions "brain" "bird")
+=> #f
+
+(pregexp-match-positions "needle" "hay needle stack")
+=> ((4 . 10))
+}
+
+\n In the second example, the integers 4 and 10 identify
+the substring that was matched. 4 is the starting
+(inclusive) index and 10 the ending (exclusive) index of
+the matching substring.
+
+\q{
+(substring "hay needle stack" 4 10)
+=> "needle"
+}
+
+Here, \q{pregexp-match-positions}'s return list contains only
+one index pair, and that pair represents the entire
+substring matched by the regexp.  When we discuss
+{\em subpatterns} later, we will see how a single match
+operation can yield a list of {\em submatches}.
+
+\q{pregexp-match-positions} takes optional third
+and fourth arguments that specify the indices of
+the text string within which the matching should
+take place.
+
+\q{
+(pregexp-match-positions "needle"
+  "his hay needle stack -- my hay needle stack -- her hay needle stack"
+  24 43)
+=> ((31 . 37))
+}
+
+\n Note that the returned indices are still reckoned
+relative to the full text string.
+
+\subsection{\q{pregexp-match}}
+
+The procedure \q{pregexp-match} is called
+like \q{pregexp-match-positions}
+but instead of returning index pairs it returns the
+matching substrings:
+
+\q{
+(pregexp-match "brain" "bird")
+=> #f
+
+(pregexp-match "needle" "hay needle stack")
+=> ("needle")
+}
+
+\n \q{pregexp-match} also takes optional third and
+fourth arguments, with the same meaning as does
+\q{pregexp-match-positions}.
+
+\subsection{\q{pregexp-split}}
+
+The procedure \q{pregexp-split} takes
+two arguments, a
+regexp pattern and a text string, and returns a list of
+substrings of the text string, where the pattern identifies the
+delimiter separating the substrings.
+
+\q{
+(pregexp-split ":" "/bin:/usr/bin:/usr/bin/X11:/usr/local/bin")
+=> ("/bin" "/usr/bin" "/usr/bin/X11" "/usr/local/bin")
+
+(pregexp-split " " "pea soup")
+=> ("pea" "soup")
+}
+
+\n If the first argument can match an empty string, then
+the list of all the single-character substrings is returned.
+
+\q{
+(pregexp-split "" "smithereens")
+=> ("s" "m" "i" "t" "h" "e" "r" "e" "e" "n" "s")
+}
+
+\n To identify one-or-more spaces as the delimiter,
+take care to use the regexp \q{" +"}, not \q{" *"}.
+
+\q{
+(pregexp-split " +" "split pea     soup")
+=> ("split" "pea" "soup")
+
+(pregexp-split " *" "split pea     soup")
+=> ("s" "p" "l" "i" "t" "p" "e" "a" "s" "o" "u" "p")
+}
+
+\subsection{\q{pregexp-replace}}
+
+The procedure \q{pregexp-replace} replaces
+the
+matched portion of the text string by another
+string.  The first argument is the pattern,
+the second the text string, and the third
+is the {\em insert string} (string to be inserted).
+
+\q{
+(pregexp-replace "te" "liberte" "ty")
+=> "liberty"
+}
+
+\n If the pattern doesn't occur in the text
+string, the returned string is identical (\q{eq?})
+to the text string.
+
+\subsection{\q{pregexp-replace*}}
+
+The procedure \q{pregexp-replace*} replaces
+{\em all}
+matches in the text string by the insert
+string:
+
+\q{
+(pregexp-replace* "te" "liberte egalite fraternite" "ty")
+=> "liberty egality fratyrnity"
+}
+
+\n As with \q{pregexp-replace}, if the pattern doesn't
+occur in the text string, the returned string is
+identical (\q{eq?}) to the text string.
+
+\subsection{\q{pregexp-quote}}
+
+The procedure \q{pregexp-quote} takes
+an arbitrary string and returns a U-regexp
+(string) that precisely represents it.  In particular,
+characters in the input string that could serve as
+regexp metacharacters are escaped with a
+backslash, so that they safely match only themselves.
+
+\q{
+(pregexp-quote "cons")
+=> "cons"
+
+(pregexp-quote "list?")
+=> "list\\?"
+}
+
+\q{pregexp-quote} is useful when building a composite
+regexp from a mix of regexp strings and verbatim strings.
+
+\section{The regexp pattern language}
+
+Here is a complete description of the regexp pattern
+language recognized by the \q{pregexp} procedures.
+
+\subsection{Basic assertions}
+
+The {\em assertions} \p{^} and \p{$} identify the
+beginning and the end of the text string respectively.
+They ensure that their adjoining regexps match at
+one or other end of the text string.
+Examples:
+
+\q{
+(pregexp-match-positions "^contact" "first contact")
+=> #f
+}
+
+\n The regexp fails to match because \p{contact} does not
+occur at the beginning of the text string.
+
+\q{
+(pregexp-match-positions "laugh$" "laugh laugh laugh laugh")
+=> ((18 . 23))
+}
+
+\n The regexp matches the {\em last} \p{laugh}.
+
+The metasequence \p{\b} asserts that
+a {\em word boundary} exists.
+
+\q{
+(pregexp-match-positions "yack\\b" "yackety yack")
+=> ((8 . 12))
+}
+
+\n The \p{yack} in \p{yackety} doesn't end at a word
+boundary so it isn't matched.  The second \p{yack} does
+and is.
+
+The metasequence \p{\B} has the opposite effect
+to \p{\b}.   It asserts that a word boundary
+does not exist.
+
+\q{
+(pregexp-match-positions "an\\B" "an analysis")
+=> ((3 . 5))
+}
+
+\n The \p{an} that doesn't end in a word boundary
+is matched.
+
+\subsection{Characters and character classes}
+
+Typically a character in the regexp matches the same
+character in the text string.  Sometimes it is
+necessary or convenient to use a regexp
+metasequence to refer to a single character.
+Thus, metasequences \p{\n}, \p{\r}, \p{\t}, and \p{\.}
+match the newline, return, tab and period characters
+respectively.
+
+The {\em metacharacter} period (\p{.}) matches
+{\em any} character other than newline.
+
+\q{
+(pregexp-match "p.t" "pet")
+=> ("pet")
+}
+
+\n It also matches \p{pat}, \p{pit}, \p{pot}, \p{put},
+and \p{p8t} but not \p{peat} or \p{pfffft}.
+
+A {\em character class} matches any one character from
+a set of characters.  A typical format for this
+is the {\em bracketed character class} \p{[}...\p{]},
+which matches any one character from the non-empty sequence
+of characters enclosed within the brackets.\f{Requiring
+a bracketed character class to be non-empty is not a limitation,
+since an
+empty character class
+can be more easily represented by an empty string.}
+Thus \q{"p[aeiou]t"} matches \p{pat}, \p{pet}, \p{pit},
+\p{pot}, \p{put} and nothing else.
+
+Inside the brackets, a hyphen (\p{-}) between two
+characters specifies the ascii range between the characters.
+Eg, \q{"ta[b-dgn-p]"} matches \p{tab}, \p{tac}, \p{tad}, {\em and}
+\p{tag}, {\em and} \p{tan}, \p{tao}, \p{tap}.
+
+An initial caret (\p{^}) after the left bracket inverts
+the set specified by the rest of the contents, ie, it
+specifies the set of characters {\em other than} those
+identified in the brackets.  Eg, \q{"do[^g]"} matches
+all three-character sequences starting with \p{do}
+except \p{dog}.
+
+Note that the metacharacter \p{^} inside brackets means
+something quite different from what it means outside.
+Most other metacharacters (\p{.}, \p{*}, \p{+}, \p{?},
+etc) cease to be metacharacters when inside brackets,
+although you may still escape them for peace of
+mind.  \p{-} is a metacharacter only when it's
+inside brackets, and neither the first nor the last character.
+
+Bracketed character classes cannot contain other
+bracketed character classes (although they contain
+certain other types of character classes --- see
+below).  Thus a left bracket (\p{[})
+inside a bracketed character class doesn't have to be a
+metacharacter; it can stand for itself.  Eg,
+\q{"[a[b]"} matches \p{a}, \p{[}, and \p{b}.
+
+Furthermore, since empty bracketed character classes
+are disallowed, a right bracket (\p{]}) immediately occurring
+after the opening left bracket
+also doesn't need to be a metacharacter.  Eg,
+\q{"[]ab]"} matches \p{]}, \p{a}, and \p{b}.
+
+\subsubsection{Some frequently used character
+classes}
+
+Some standard character classes can be conveniently
+represented as metasequences instead of as explicit
+bracketed expressions.  \p{\d} matches a  digit
+(\p{[0-9]}); \p{\s} matches a whitespace character; and
+\p{\w} matches a character that could be part of a
+``word''.\f{Following regexp custom, we identify
+``word'' characters as
+\ifx\newenvironment\PLAINTEX
+\p{[A-Za-z0-9_]}\else
+{\tt[A-Za-z0-9\_]}\fi
+, although these
+are too restrictive for what a Schemer might consider a
+``word''.}
+
+The upper-case versions of these metasequences stand
+for the inversions of the corresponding character
+classes.  Thus \p{\D} matches a non-digit, \p{\S} a
+non-whitespace character, and \p{\W} a
+non-``word'' character.
+
+Remember to include a double backslash when putting
+these metasequences in a Scheme string:
+
+\q{
+(pregexp-match "\\d\\d"
+  "0 dear, 1 have 2 read catch 22 before 9")
+=> ("22")
+}
+
+These character classes can be used inside
+a bracketed expression.  Eg,
+\q{"[a-z\\d]"} matches a lower-case letter
+or a digit.
+
+\subsubsection{POSIX character classes}
+
+A {\em POSIX character class} is a special metasequence
+of the form \p{[:}...\p{:]} that can be used only
+inside a bracketed expression.  The POSIX classes
+supported are
+
+\medskip
+
+\halign{\indent #\hfil & \quad #\hfil \cr
+\p{[:alnum:]}  & letters and digits \cr
+\p{[:alpha:]}  & letters  \cr
+\p{[:algor:]}  & the letters \p{c}, \p{h}, \p{a} and \p{d} \cr
+\p{[:ascii:]}  & 7-bit ascii characters \cr
+\p{[:blank:]}  & widthful whitespace, ie, space and tab \cr
+\p{[:cntrl:]}  & ``control'' characters, viz, those with code \p{<} 32 \cr
+\p{[:digit:]}  & digits, same as \p{\d} \cr
+\p{[:graph:]}  & characters that use ink \cr
+\p{[:lower:]}  & lower-case letters \cr
+\p{[:print:]}  & ink-users plus widthful whitespace \cr
+\p{[:space:]}  & whitespace, same as \p{\s} \cr
+\p{[:upper:]}  & upper-case letters \cr
+\p{[:word:]}   & letters, digits, and underscore, same as \p{\w} \cr
+\p{[:xdigit:]} & hex digits \cr
+}
+
+\medskip
+
+\n For example, the regexp  \q{"[[:alpha:]_]"}
+matches a letter or underscore.
+
+\q{
+(pregexp-match "[[:alpha:]_]" "--x--")
+=> ("x")
+
+(pregexp-match "[[:alpha:]_]" "--_--")
+=> ("_")
+
+(pregexp-match "[[:alpha:]_]" "--:--")
+=> #f
+}
+
+The POSIX class notation is valid {\em only} inside a
+bracketed expression.  For instance, \p{[:alpha:]},
+when not inside a bracketed expression, will {\em not}
+be read as the letter class.
+Rather it is (from previous principles) the character
+class containing the characters \p{:}, \p{a}, \p{l},
+\p{p}, \p{h}.
+
+\q{
+(pregexp-match "[:alpha:]" "--a--")
+=> ("a")
+
+(pregexp-match "[:alpha:]" "--_--")
+=> #f
+}
+
+By placing a caret (\p{^}) immediately after
+\p{[:}, you get the inversion of that POSIX
+character class.  Thus, \p{[:^alpha]}
+is the class containing all characters
+except the letters.
+
+\subsection{Quantifiers}
+
+The {\em quantifiers} \p{*}, \p{+}, and
+\p{?} match respectively: zero or more, one or more,
+and zero or one instances of the preceding subpattern.
+
+\q{
+(pregexp-match-positions "c[ad]*r" "cadaddadddr")
+=> ((0 . 11))
+(pregexp-match-positions "c[ad]*r" "cr")
+=> ((0 . 2))
+
+(pregexp-match-positions "c[ad]+r" "cadaddadddr")
+=> ((0 . 11))
+(pregexp-match-positions "c[ad]+r" "cr")
+=> #f
+
+(pregexp-match-positions "c[ad]?r" "cadaddadddr")
+=> #f
+(pregexp-match-positions "c[ad]?r" "cr")
+=> ((0 . 2))
+(pregexp-match-positions "c[ad]?r" "car")
+=> ((0 . 3))
+}
+
+\subsubsection{Numeric quantifiers}
+
+You can use braces to specify much finer-tuned
+quantification than is possible with \p{*}, \p{+}, \p{?}.
+
+The quantifier \p{{m}} matches {\em exactly} \p{m}
+instances of the preceding {\em subpattern}.  \p{m}
+must be a nonnegative integer.
+
+The quantifier \p{{m,n}} matches at least \p{m}
+and at most \p{n} instances.  \p{m} and
+\p{n} are nonnegative integers with \p{m <=
+n}.  You may omit either or both numbers, in which case
+\p{m} defaults to 0 and \p{n} to
+infinity.
+
+It is evident that \p{+} and \p{?} are abbreviations
+for \p{{1,}} and \p{{0,1}} respectively.
+\p{*} abbreviates \p{{,}}, which is the same
+as \p{{0,}}.
+
+\q{
+(pregexp-match "[aeiou]{3}" "vacuous")
+=> ("uou")
+
+(pregexp-match "[aeiou]{3}" "evolve")
+=> #f
+
+(pregexp-match "[aeiou]{2,3}" "evolve")
+=> #f
+
+(pregexp-match "[aeiou]{2,3}" "zeugma")
+=> ("eu")
+}
+
+\subsubsection{Non-greedy quantifiers}
+
+The quantifiers described above are {\em greedy}, ie,
+they match the  maximal number of instances that would
+still lead to an overall match for the full pattern.
+
+\q{
+(pregexp-match "<.*>" "<tag1> <tag2> <tag3>")
+=> ("<tag1> <tag2> <tag3>")
+}
+
+To make these quantifiers {\em non-greedy}, append
+a \p{?} to them.  Non-greedy quantifiers match
+the minimal number of instances needed to ensure an
+overall match.
+
+\q{
+(pregexp-match "<.*?>" "<tag1> <tag2> <tag3>")
+=> ("<tag1>")
+}
+
+The non-greedy quantifiers are respectively:
+\p{*?}, \p{+?}, \p{??}, \p{{m}?}, \p{{m,n}?}.
+Note the two uses of the metacharacter \p{?}.
+
+\subsection{Clusters}
+
+{\em Clustering}, ie, enclosure within parens
+\p{(}...\p{)}, identifies the enclosed {\em subpattern}
+as a single entity.  It causes the matcher to {\em capture}
+the {\em submatch}, or the portion of the string
+matching the subpattern, in addition to the
+overall match.
+
+\q{
+(pregexp-match "([a-z]+) ([0-9]+), ([0-9]+)" "jan 1, 1970")
+=> ("jan 1, 1970" "jan" "1" "1970")
+}
+
+Clustering also causes a following quantifier to treat
+the entire enclosed subpattern as an entity.
+
+\q{
+(pregexp-match "(poo )*" "poo poo platter")
+=> ("poo poo " "poo ")
+}
+
+The number of submatches returned is always equal
+to the number of subpatterns specified in the
+regexp, even if a particular subpattern happens
+to match more than one substring or no substring
+at all.
+
+\q{
+(pregexp-match "([a-z ]+;)*" "lather; rinse; repeat;")
+=> ("lather; rinse; repeat;" " repeat;")
+}
+
+\n Here the \p{*}-quantified subpattern matches three
+times, but it is the last submatch that is returned.
+
+It is also possible for a quantified subpattern to
+fail to match, even if the overall pattern matches.
+In such cases, the failing submatch is represented
+by \q{#f}.
+
+\q{
+(define date-re
+  ;match `month year' or `month day, year'.
+  ;subpattern matches day, if present
+  (pregexp "([a-z]+) +([0-9]+,)? *([0-9]+)"))
+
+(pregexp-match date-re "jan 1, 1970")
+=> ("jan 1, 1970" "jan" "1," "1970")
+
+(pregexp-match date-re "jan 1970")
+=> ("jan 1970" "jan" #f "1970")
+}
+
+\subsubsection{Backreferences}
+
+Submatches can be used in the insert string argument of
+the procedures \q{pregexp-replace} and
+\q{pregexp-replace*}.  The insert string can use \p{\n}
+as a {\em backreference} to refer back to the {\em n}th
+submatch, ie, the substring that matched the {\em n}th
+subpattern.   \p{\0} refers to the entire match,
+and it can also be specified as \p{\&}.
+
+\q{
+(pregexp-replace "_(.+?)_"
+  "the _nina_, the _pinta_, and the _santa maria_"
+  "*\\1*")
+=> "the *nina*, the _pinta_, and the _santa maria_"
+
+(pregexp-replace* "_(.+?)_"
+  "the _nina_, the _pinta_, and the _santa maria_"
+  "*\\1*")
+=> "the *nina*, the *pinta*, and the *santa maria*"
+
+;recall: \S stands for non-whitespace character
+
+(pregexp-replace "(\\S+) (\\S+) (\\S+)"
+  "eat to live"
+  "\\3 \\2 \\1")
+=> "live to eat"
+}
+
+Use \p{\\} in the insert string to specify a literal
+backslash.  Also, \p{\$} stands for an empty string,
+and is useful for separating a backreference \p{\n}
+from an immediately following number.
+
+Backreferences can also be used within the regexp
+pattern to refer back to an already matched subpattern
+in the pattern.  \p{\n} stands for an exact repeat
+of the {\em n}th submatch.\f{\ifx\newenvironment\PLAINTEX
+\p{\0}\else
+{\tt\\0}\fi
+, which is useful in
+an insert string, makes no  sense within the regexp
+pattern, because the entire regexp has not matched yet
+that you could refer back to it.}
+
+\q{
+(pregexp-match "([a-z]+) and \\1"
+  "billions and billions")
+=> ("billions and billions" "billions")
+}
+
+\n Note that the backreference is not simply a repeat
+of the previous subpattern.  Rather it is a repeat of
+{\em the particular  substring already matched by the
+subpattern}.
+
+In the above example, the backreference can only match
+\p{billions}.  It will not match \p{millions}, even
+though the subpattern it harks back to --- \p{([a-z]+)}
+---  would have had no problem doing so:
+
+\q{
+(pregexp-match "([a-z]+) and \\1"
+  "billions and millions")
+=> #f
+}
+
+The following corrects doubled words:
+
+\q{
+(pregexp-replace* "(\\S+) \\1"
+  "now is the the time for all good men to to come to the aid of of the party"
+  "\\1")
+=> "now is the time for all good men to come to the aid of the party"
+}
+
+The following marks all immediately repeating patterns
+in a number string:
+
+\q{
+(pregexp-replace* "(\\d+)\\1"
+  "123340983242432420980980234"
+  "{\\1,\\1}")
+=> "12{3,3}40983{24,24}3242{098,098}0234"
+}
+
+\subsubsection{Non-capturing clusters}
+
+It is often required to specify a cluster
+(typically for quantification) but without triggering
+the capture of submatch information.  Such
+clusters are called {\em non-capturing}.  In such cases,
+use \p{(?:} instead of \p{(} as the cluster opener.  In
+the following example, the  non-capturing cluster
+eliminates the ``directory'' portion of a given
+pathname, and the capturing cluster  identifies the
+basename.
+
+\q{
+(pregexp-match "^(?:[a-z]*/)*([a-z]+)$"
+  "/usr/local/bin/mzscheme")
+=> ("/usr/local/bin/mzscheme" "mzscheme")
+}
+
+\subsubsection{Cloisters}
+
+The location between the \p{?} and the \p{:} of a
+non-capturing cluster is called a {\em cloister}.\f{A
+useful, if terminally cute, coinage from the abbots of
+Perl~\cite{pperl}.}  You can put {\em modifiers}
+there that will cause the enclustered subpattern to be
+treated specially.  The modifier \p{i} causes the
+subpattern to match {\em case-insensitively}:
+
+\q{
+(pregexp-match "(?i:hearth)" "HeartH")
+=> ("HeartH")
+}
+
+The modifier \p{x} causes the subpattern to match
+{\em space-insensitively}, ie, spaces and
+comments within the
+subpattern are ignored.  Comments are introduced
+as usual with a semicolon (\p{;}) and extend till
+the end of the line.  If you need
+to include a literal space or semicolon in
+a space-insensitized subpattern, escape it
+with a backslash.
+
+\q{
+(pregexp-match "(?x: a   lot)" "alot")
+=> ("alot")
+
+(pregexp-match "(?x: a  \\  lot)" "a lot")
+=> ("a lot")
+
+(pregexp-match "(?x:
+   a \\ man  \\; \\   ; ignore
+   a \\ plan \\; \\   ; me
+   a \\ canal         ; completely
+   )"
+ "a man; a plan; a canal")
+=> ("a man; a plan; a canal")
+}
+
+\n The global variable \q{*pregexp-comment-char*}
+contains the comment character (\q{#\;}).
+For Perl-like comments,
+
+\q{
+(set! *pregexp-comment-char* #\#)
+}
+
+You can put more than one modifier in the cloister.
+
+\q{
+(pregexp-match "(?ix:
+   a \\ man  \\; \\   ; ignore
+   a \\ plan \\; \\   ; me
+   a \\ canal         ; completely
+   )"
+ "A Man; a Plan; a Canal")
+=> ("A Man; a Plan; a Canal")
+}
+
+A minus sign before a modifier inverts its meaning.
+Thus, you can use \p{-i} and \p{-x} in a {\em
+subcluster} to overturn the insensitivities caused by an
+enclosing cluster.
+
+\q{
+(pregexp-match "(?i:the (?-i:TeX)book)"
+  "The TeXbook")
+=> ("The TeXbook")
+}
+
+\n This regexp will allow any casing for \p{the}
+and \p{book} but insists that \p{TeX} not be
+differently cased.
+
+\subsection{Alternation}
+\label{alternation}
+
+You can specify a list of {\em alternate}
+subpatterns by separating them by \p/|/.   The \p/|/
+separates subpatterns in the nearest enclosing cluster
+(or in the entire pattern string if there are no
+enclosing parens).
+
+\q@
+(pregexp-match "f(ee|i|o|um)" "a small, final fee")
+=> ("fi" "i")
+
+(pregexp-replace* "([yi])s(e[sdr]?|ing|ation)"
+   "it is energising to analyse an organisation
+   pulsing with noisy organisms"
+   "\\1z\\2")
+=> "it is energizing to analyze an organization
+   pulsing with noisy organisms"
+@
+
+Note again that if you wish
+to use clustering merely to specify a list of alternate
+subpatterns but do not want the submatch, use \p{(?:}
+instead of \p{(}.
+
+\q@
+(pregexp-match "f(?:ee|i|o|um)" "fun for all")
+=> ("fo")
+@
+
+An important thing to note about alternation is that
+the leftmost matching alternate is picked regardless of
+its length.  Thus, if one of the alternates is a prefix
+of a later alternate, the latter may not have
+a chance to match.
+
+\q@
+(pregexp-match "call|call-with-current-continuation"
+  "call-with-current-continuation")
+=> ("call")
+@
+
+To allow the longer alternate to have a shot at
+matching, place it before the shorter one:
+
+\q@
+(pregexp-match "call-with-current-continuation|call"
+  "call-with-current-continuation")
+=> ("call-with-current-continuation")
+@
+
+In any case, an overall match for the entire regexp is
+always preferred to an overall nonmatch.  In the
+following, the longer alternate still wins, because its
+preferred shorter prefix fails to yield an overall
+match.
+
+\q@
+(pregexp-match "(?:call|call-with-current-continuation) constrained"
+  "call-with-current-continuation constrained")
+=> ("call-with-current-continuation constrained")
+@
+
+\subsection{Backtracking}
+
+We've already seen that greedy quantifiers match
+the maximal number of times, but the overriding priority
+is that the overall match succeed.  Consider
+
+\q{
+(pregexp-match "a*a" "aaaa")
+}
+
+\n The regexp consists of two subregexps,
+\p{a*} followed by \p{a}.
+The subregexp \p{a*} cannot be allowed to match
+all four \p{a}'s in the text string \p{"aaaa"}, even though
+\p{*} is a greedy quantifier.  It may match only the first
+three, leaving the last one for the second subregexp.
+This ensures that the full regexp matches successfully.
+
+The regexp matcher accomplishes this via a process
+called {\em backtracking}.  The matcher
+tentatively allows the greedy quantifier
+to match all four \p{a}'s, but then when it becomes
+clear that the overall match is in jeopardy, it
+{\em backtracks} to a less greedy match of {\em
+three} \p{a}'s.  If even this fails, as in the
+call
+
+\q{
+(pregexp-match "a*aa" "aaaa")
+}
+
+\n the matcher backtracks even further.  Overall
+failure is conceded only when all possible backtracking
+has been tried with no success.
+
+Backtracking is not restricted to greedy quantifiers.
+Nongreedy quantifiers match as few instances as
+possible, and progressively backtrack to more and more
+instances in order to attain an overall match.  There
+is backtracking in alternation too, as the more
+rightward alternates are tried when locally successful
+leftward ones fail to yield an overall match.
+
+\subsubsection{Disabling backtracking}
+
+Sometimes it is efficient to disable backtracking.  For
+example, we may wish  to  {\em commit} to a choice, or
+we know that trying alternatives is fruitless.  A
+nonbacktracking regexp is enclosed in \p{(?>}...\p{)}.
+
+\q{
+(pregexp-match "(?>a+)." "aaaa")
+=> #f
+}
+
+In this call, the subregexp \p{?>a+} greedily matches
+all four \p{a}'s, and is denied the opportunity to
+backpedal.  So the overall match is denied.  The effect
+of the regexp is therefore to match one or more \p{a}'s
+followed by something that is definitely non-\p{a}.
+
+\subsection{Looking ahead and behind}
+
+You can have assertions in your pattern that look {\em
+ahead} or {\em behind} to ensure that a subpattern does
+or does not occur.   These ``look around'' assertions are
+specified by putting the subpattern checked for in a
+cluster whose leading characters are: \p{?=} (for positive
+lookahead), \p{?!} (negative lookahead), \p{?<=}
+(positive lookbehind), \p{?<!} (negative lookbehind).
+Note that the subpattern in the assertion  does not
+generate a match in the final result.  It merely allows
+or disallows the rest of the match.
+
+\subsubsection{Lookahead}
+
+Positive lookahead (\p{?=}) peeks ahead to ensure that
+its subpattern {\em could} match.
+
+\q{
+(pregexp-match-positions "grey(?=hound)"
+  "i left my grey socks at the greyhound")
+=> ((28 . 32))
+}
+
+\n The regexp \q{"grey(?=hound)"} matches \p{grey}, but
+{\em only} if it is followed by \p{hound}.  Thus, the first
+\p{grey} in the text string is not matched.
+
+Negative lookahead (\p{?!}) peeks ahead
+to ensure that its subpattern could not possibly match.
+
+\q{
+(pregexp-match-positions "grey(?!hound)"
+  "the gray greyhound ate the grey socks")
+=> ((27 . 31))
+}
+
+\n The regexp \q{"grey(?!hound)"} matches \p{grey}, but
+only if it is {\em not} followed by \p{hound}.  Thus
+the \p{grey} just before \p{socks} is matched.
+
+\subsubsection{Lookbehind}
+
+Positive lookbehind (\p{?<=}) checks that its subpattern {\em could} match
+immediately to the left of the current position in
+the text string.
+
+\q{
+(pregexp-match-positions "(?<=grey)hound"
+  "the hound in the picture is not a greyhound")
+=> ((38 . 43))
+}
+
+\n The regexp \p{(?<=grey)hound} matches \p{hound}, but only if it is
+preceded by \p{grey}.
+
+Negative lookbehind
+(\p{?<!}) checks that its subpattern
+could not possibly match immediately to the left.
+
+\q{
+(pregexp-match-positions "(?<!grey)hound"
+  "the greyhound in the picture is not a hound")
+=> ((38 . 43))
+}
+
+\n The regexp \p{(?<!grey)hound} matches \p{hound}, but only if
+it is {\em not} preceded by \p{grey}.
+
+Lookaheads and lookbehinds can be convenient when they
+are not confusing.
+
+\section{An extended example}
+
+Here's an extended example from
+Friedl~\cite[p 189]{friedl:regex}
+that covers many of the features described
+above.  The problem is to fashion a regexp that will
+match any and only IP addresses or {\em dotted
+quads}, ie, four numbers separated by three dots, with
+each number between 0 and 255.  We will use the
+commenting mechanism to build the final regexp with
+clarity.  First, a subregexp \q{n0-255} that matches 0
+through 255.
+
+\q{
+(define n0-255
+  "(?x:
+  \\d          ;  0 through   9
+  | \\d\\d     ; 00 through  99
+  | [01]\\d\\d ;000 through 199
+  | 2[0-4]\\d  ;200 through 249
+  | 25[0-5]    ;250 through 255
+  )")
+}
+
+\n The first two alternates simply get all single- and
+double-digit numbers.  Since 0-padding is allowed, we
+need to match both 1 and 01.  We need to be careful
+when getting 3-digit numbers, since numbers above 255
+must be excluded.  So we fashion alternates to get 000
+through 199, then 200 through 249, and finally 250
+through 255.\f{Note that
+\ifx\newenvironment\PLAINTEX
+\q{n0-255}
+\else
+\var{n0-255}
+\fi
+lists prefixes as
+preferred alternates, something we cautioned against in
+sec \ref{alternation}.  However, since we intend
+to anchor this subregexp explicitly to force an overall
+match, the order of the alternates does not matter.}
+
+An IP-address is a string that consists of
+four \q{n0-255}s with three dots separating
+them.
+
+\q{
+(define ip-re1
+  (string-append
+    "^"        ;nothing before
+    n0-255     ;the first n0-255,
+    "(?x:"     ;then the subpattern of
+    "\\."      ;a dot followed by
+    n0-255     ;an n0-255,
+    ")"        ;which is
+    "{3}"      ;repeated exactly 3 times
+    "$"        ;with nothing following
+    ))
+}
+
+\n Let's try it out.
+
+\q{
+(pregexp-match ip-re1
+  "1.2.3.4")
+=> ("1.2.3.4")
+
+(pregexp-match ip-re1
+  "55.155.255.265")
+=> #f
+}
+
+\n which is fine, except that we also
+have
+
+\q{
+(pregexp-match ip-re1
+  "0.00.000.00")
+=> ("0.00.000.00")
+}
+
+\n All-zero sequences are not valid IP addresses!
+Lookahead to the rescue.  Before starting to match
+\q{ip-re1}, we look ahead to ensure we don't have all
+zeros.  We could use positive lookahead
+to ensure there {\em is} a digit other than
+zero.
+
+\q{
+(define ip-re
+  (string-append
+    "(?=.*[1-9])" ;ensure there's a non-0 digit
+    ip-re1))
+}
+
+\n Or we could use negative lookahead to
+ensure that what's ahead isn't composed
+of {\em only} zeros and dots.
+
+\q{
+(define ip-re
+  (string-append
+    "(?![0.]*$)" ;not just zeros and dots
+                 ;(note: dot is not metachar inside [])
+    ip-re1))
+}
+
+\n The regexp \q{ip-re} will match
+all and only valid IP addresses.
+
+\q{
+(pregexp-match ip-re
+  "1.2.3.4")
+=> ("1.2.3.4")
+
+(pregexp-match ip-re
+  "0.0.0.0")
+=> #f
+}
+
+\section{References}
+
+%\nocite{sre,nregex,kleene:regexp}
+
+\thebibliography{99}
+\bibitem{friedl:regex} Jeffrey E. F. Friedl,
+\urlh{http://regex.info}{Mastering Regular Expressions}, 2/e, O'Reilly,
+2002.
+
+\bibitem{r6rs} Michael Sperber, R. Kent Dybvig, Matthew Flatt, and Anton
+van Straaten (eds.), \urlh{http://www.r6rs.org}{Revised$^6$ Report on the Algorithmic Language
+Scheme (``R6RS'')}, 2007.
+
+\bibitem{pperl} Larry Wall, Tom Christensen, and Jon Orwant,
+\urlh{http://oreilly.com/catalog/9780596000271}{Programming Perl},
+3/e, O'Reilly, 2000.
+\endthebibliography
+
+\bye

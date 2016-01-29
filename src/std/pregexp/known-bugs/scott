@@ -1,0 +1,73 @@
+From scott@james.com Mon Oct 28 18:19 EST 2002
+Received: from cliff2.gte.com (cliff2.gte.com [132.197.8.43])
+	by newman.gte.com (8.9.1/8.9.1) with ESMTP id SAA28882
+	for <ds26@labs.gte.com>; Mon, 28 Oct 2002 18:19:32 -0500 (EST)
+Received: from relay.gte.com (localhost [127.0.0.1])
+	by cliff2.gte.com (8.9.1/8.9.1) with ESMTP id SAA12791
+	for <ds26@ns.gte.com>; Mon, 28 Oct 2002 18:19:28 -0500 (EST)
+Received: from james.com ([64.139.25.230])
+	by relay.gte.com (8.9.1/8.9.1) with ESMTP id SAA17377
+	for <ds26@gte.com>; Mon, 28 Oct 2002 18:19:25 -0500 (EST)
+Received: from 12-235-88-243.client.attbi.com
+	([12.235.88.243] helo=scotts.james.com ident=mail)
+	by james.com with asmtp (Exim 4.05)
+	id 186JAP-0007xS-00; Mon, 28 Oct 2002 15:19:29 -0800
+Received: from scott by scotts.james.com with local (Exim 4.05)
+	id 186JAN-0000YW-00; Mon, 28 Oct 2002 15:19:27 -0800
+From: Scott Williams <Scott@james.com>
+To: ds26@gte.com
+CC: Manuel.Serrano@sophia.inria.fr, Scott Williams <scott@james.com>
+Subject: `i' modifier in pregexp cloister doesn't carry past closures
+Message-Id: <E186JAN-0000YW-00@scotts.james.com>
+Date: Mon, 28 Oct 2002 15:19:27 -0800
+Content-Type: text
+Content-Length: 1604
+Status: OR
+
+
+Would you please check this out?  The problem seems a bit complex, so
+I'm not sure I got the description right, but it should help with
+debugging.
+
+The case-folding `i' modifier, used within a cloister, only seems to
+apply up to an embedded closure.  This problem also seems to affect
+character classes within the regex controlled by the cloister, but
+following the closure.
+
+I seem to have this problem in both Bigloo and MzScheme, though I have
+not notified the MzScheme team.  If you have any more questions about
+this, please let me know.
+
+- Scott
+
+bigloo
+------------------------------------------------------------------------------
+Bigloo (2.5b)                                                            ,--^, 
+`a practical Scheme compiler'                                      _ ___/ /|/  
+Fri Sep 6 09:43:28 CEST 2002                                   ,;'( )__, ) '   
+Manuel Serrano                                                ;;  //   L__.    
+email:                                                        '   \    /  '    
+Manuel.Serrano@sophia.inria.fr                                     ^   ^       
+------------------------------------------------------------------------------
+
+Welcome to the interpreter
+
+1:=> (pregexp-match "^(?i:a B)$" "a b")
+(a b)
+1:=> (pregexp-match "^(?i:a.*B)$" "a b")
+#f
+1:=>  (pregexp-match "^(?i:a.*B)$" "a B")
+(a B)
+
+
+$ mzscheme
+Welcome to MzScheme version 202, Copyright (c) 1995-2002 PLT
+> (require (lib "pregexp.ss"))
+> (pregexp-match "^(?i:a B)$" "a b")
+("a b")
+> (pregexp-match "^(?i:a.*B)$" "a b")
+#f
+> (pregexp-match "^(?i:a.*B)$" "a B")
+("a B")
+
+

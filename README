@@ -1,0 +1,68 @@
+Gerbil is a meta-dialect of Scheme, designed around a multiresolution
+macro-system.
+
+The macro system is based on quote-syntax, and provides full the
+meta-syntactic tower with a native implementation of syntax-case, and
+a powerful module system similar to plt scheme's (sorry, racket)
+module system.  The main difference from plt's modules is that gerbil
+modules are single instantiation, supporting high performance ahead of
+time compilation.
+
+Gerbil has been my private scheme for many years and it supports
+multiple backends, but i have elected to base the primary version
+of gerbil on gambit.
+At the prompting of fare and mikael (they know who they are), who
+had seen private code, i decided to release it in public with a clean
+bootstrap version that bootstraps on gambit with a precompiled version
+of the macro system and compiler.
+That means that the macro system and gambit compiler is entirely
+self-hosted.
+
+---------------------------------------------------------------------
+The source code is distributed under the Gambit license; that means
+that Gerbil on Gambit is dual licensed under LGPLv2.1 and Apache 2.0.
+
+Gerbil's primary author and maintainer is vyzo-at-hackzen.org, aka in
+the Net as Dimitris Vyzovitis. The obligatory copyright notice, had I
+bothered polluted everything with more than a (C) vyzo at hackzen.org,
+would read like this:
+
+(C) 2007-2016 Dimitris Vyzovitis <vyzo -at- hackzen.org>
+Gerbil is Free Software, distributed under the GNU LGPLv2.1 or later
+or the Apache 2.0 license.
+
+---------------------------------------------------------------------
+Dependencies: I have tested the bootstrap with Gambit v4.8.4.
+The xml library in std requires libxml2 to build; comment it out xml
+stuffs in src/std/build.ss if you don't have it.
+Note that std is just an initial packaging of libraries that worked
+with the gambit bootstrap out of the box, i have several other
+libraries that i am still porting to Gerbil on Gambit from my various
+private versions of Gerbil.
+
+Build Instructions:
+$ cd src
+$ ./build.sh
+
+wait for a while and watch the output (or don't, it gets boring after
+a while :)
+
+To run the interpreter after the build is done:
+$ $GERBIL_HOME/bin/gxi
+
+Refer to src/gerbil/core.ss for the core macros and the general
+sources to get an idea of how it looks and how to get the most out of
+it.  
+
+This first release is intended to seasoned scheme hackers anyway,
+and you can find your way around the source code (which should be
+self-documenting, except for the really hairy parts).
+
+There is no further documentation at this point, because I haven't
+had the time to prepare some nice and coherent documentation that
+can help scheme neophytes (or people who like neat documentation
+before using a new scheme system; I hope to write some real
+documentation in the not-so-distant future.
+
+Patches (even for typos in the comments) are always welcome.
+No copyright assignment ever, you keep what you contribute.

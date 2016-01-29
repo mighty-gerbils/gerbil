@@ -1,0 +1,60 @@
+;;; -*- Gerbil -*-
+;;; (c) vyzo at hackzen.org
+;;; srfi implementation support libraries (mostly for Olin's code)
+package: std/srfi
+
+(export #t)
+
+(define (check-arg pred val caller)
+  (if (pred val) val
+      (error "Bad argument" val pred caller)))
+
+(defrules let-optionals ()
+  ((_ args opt-spec . body)
+   (apply (lambda opt-spec . body) args)))
+
+(defrules :optional ()
+  ((_ rest default-exp)
+   (let ((maybe-arg rest))
+     (cond
+      ((null? maybe-arg) default-exp)
+      ((null? (cdr maybe-arg)) (car maybe-arg))
+      (else (error "too many optional arguments" maybe-arg)))))
+  ((_ rest default-exp check-proc)
+   (let ((maybe-arg rest))
+     (cond
+      ((null? maybe-arg) default-exp)
+      ((null? (cdr maybe-arg))
+       (let ((val (car maybe-arg)))
+         (if (check-proc val) val
+             (error "argument out of domain" val))))
+      (else (error "too many optional arguments" maybe-arg))))))
+  
+(defrules really-let-optionals* ()
+  ((recur args ((var1 default1 typecheck ...) etc ...)
+          body1 ...)
+   (identifier? #'var1)
+   (call-with-values (lambda () (if (null? args)
+                             (values default1 '())
+                             (values (car args) (cdr args))))
+     (lambda (var1 rest)
+       (if (and typecheck ...)
+         (recur rest (etc ...)
+                body1 ...)
+         (error "argument out of domain" var1)))))
+  ((_ args (((var ...) proc)) body1 ...)
+   (stx-andmap identifier? #'(var ...))
+   (call-with-values (lambda () (apply proc args))
+     (lambda (var ...) body1 ...)))
+  ((_ args (rest) body1 ...)
+   (identifier? #'rest)
+   (let ((rest args)) body1 ...))
+  ((_ args () body1 ...)
+   (if (null? args) (begin body1 ...)
+       (error "Too many optional arguments." args))))
+
+(defrules let-optionals* ()
+  ((_ args vars&defaults body1 ...)
+   (let ((rest args))
+     (really-let-optionals* rest vars&defaults body1 ...))))
+

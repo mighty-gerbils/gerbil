@@ -1,0 +1,59 @@
+README
+pregexp
+Dorai Sitaram
+ds26gte at yahoo dot com
+
+-
+
+pregexp is a portable implementation of regular
+expressions (regexps) that runs in any R5RS- or
+R4RS-compliant implementation of the programming
+language Scheme.  The regexp notation supported is
+compatible with Perl's, and includes such
+powerful directives as 
+
+* numeric quantifiers
+* non-greedy quantifiers
+* POSIX character classes
+* non-capturing clusters (in addition to the usual 
+    capturing kind)
+* selective (ie, per-cluster) case-insensitivity
+* selective space-insensitivity (with provision 
+    for comments)
+* backreferences
+* alternation
+* backtrack pruning
+* lookahead (positive and negative)
+* lookbehind (positive and negative)
+
+This is in addition to the more basic directives
+familiar to all regexp users.
+
+To use, simply load the file `pregexp.scm' into your
+Scheme.  Alternatively, if your dialect allows it, you
+can install pregexp as a module -- consult the
+file `INSTALL'.
+
+However you load pregexp, you will now have
+access to the procedures
+
+* pregexp
+* pregexp-match-positions
+* pregexp-match
+* pregexp-split
+* pregexp-replace
+* pregexp-replace*
+
+The use of these procedures is described fully and with
+examples in the pregexp manual.  
+
+pregexp.lisp is a Common Lisp implementation of the same
+routines, with the same behavior (modulo transparent
+stuff like nil being the CL equivalent of #f).
+
+The pregexp distribution with documentation may be
+downloaded from a link provided in the pregexp manual
+on the World Wide Web at
+`http://www.ccs.neu.edu/~dorai/pregexp/index.html'.
+
+Last modified: 2009-05-08

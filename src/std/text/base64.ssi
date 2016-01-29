@@ -1,0 +1,17 @@
+;;; -*- Gerbil -*-
+;;; (C) vyzo at hackzen.org
+;;; base64 encoding
+package: std/text
+namespace: std/text/base64
+
+(export #t)
+(extern
+  base64-string->u8vector
+  base64-substring->u8vector
+  u8vector->base64-string
+  subu8vector->base64-string)
+(defalias base64-decode base64-string->u8vector)
+(defalias base64-decode-substring base64-substring->u8vector)
+(defalias base64-encode u8vector->base64-string)
+(defalias base64-encode-subu8vector subu8vector->base64-string)
+(load-module "std/text/base64")

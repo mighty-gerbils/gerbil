@@ -1,0 +1,413 @@
+Apr 12, 2008
+
+Rewrote pregexp.lisp (fka pregexp.cl) manually in Common
+Lisp instead of relying on scmxlate.  This is to exploit CL
+features like multiple values more fully than is possible
+with scmxlate, and also to provide human(e)ly readable CL.
+
+May 2, 2005
+
+PLT bug 7220 from Toni Wuersch: ^ and $ match the ends of the substring
+identified by pregexp-match-positions's optional args.
+
+Apr 25, 2005
+
+Allowing a greedy quantifier's operand to be empty can lead to infinite
+loops, e.g., (pregexp-match "(|)*" "").  Signal error when matching against
+such regexps.  Bug report from Dave Herman. 
+
+Signal error for non-existing backrefs _when matching_.  However, (pregexp
+"\\133") won't signal error.  Situation mentioned by Eli Barzilay.
+
+PLT bug 6114 (?): (pregexp "[") should give better error message.  The bug
+report from Brent Fulgham embeds \133 in the regexp, which MzScheme reads
+as [, and correctly triggers error.  Chicken, on the other hand, treats
+"\133" as "133".
+
+Apr 24, 2005
+
+*PLT bug 6114: Fails as described in MzScheme, but is OK in Chicken.
+
+*PLT bug 6116: Couldn't duplicate.
+
+*PLT bug 7220: I don't think it's a bug (and I like existing behavior).
+
+PLT bug 6478 from John Clements: Give a less lame error message
+for (pregexp-split #\: "foo:bar").
+
+PLT bug 7232 from Neil Van Dyke: Accept `-' as last character in character
+class.
+
+PLT bug 7233 from Edi Weitz: The 6442 bugfix solves this too.
+(pregexp-match "(a)|(b)" "b") should return two, not one, submatches.
+
+PLT bug 6442 from David T. Pierson: pregexp-match-positions should show
+submatch of #f for each subpattern, even if this subpattern is part of
+another subpattern that failed.  This required rewriting
+pregexp-match-positions[-aux].
+
+PLT bug 6095 from Neil W. Van Dyke: Accept `-' as first character in
+character class.  
+
+Dec 4, 2003
+
+pregexp-quote should quote ^ and $.  Bug report by John Gerard Malecki.
+
+June 3, 2003
+
+Add Gauche module version.
+
+1e9
+
+Feb 5, 2003
+
+(pregexp-replace* "^(.*)$" "foo" "abc\\1") shdn't loop
+forever but return "abcfoo" -- bug report relayed by John
+Malecki
+
+|||ly, (pregexp-replace* "(.*)$" "foo" "abc\\1" shdn't
+loop either.
+
+Dec 10, 2002
+
+PLT, Scsh, Guile ports cleanup
+
+1e8
+
+Nov 30, 2002
+
+pregexp-replace*, like pregexp-replace, should return
+original string if there was nothing to replace.
+Suggestion by John Gerard Malecki (johnm at artisan dot
+com).
+
+1e7
+
+Nov 28, 2002
+
+Added pregexp-quote at suggestion of Neil Van Dyke,
+(neil at neilvandyke dot org).
+
+Nov 26, 2002
+
+Added bugs/ subdirectory.
+
+
+1e6a
+
+Nov 21, 2002
+
+Simplified scmxlate config.
+
+Nov 17, 2002
+
+Added makefile for my own use.
+
+23 Mar 2002
+
+Modules shd export *pregexp-comment-char*
+
+20 Mar 2002
+
+Toss all the module-making scripts in favor of
+scmxlate
+
+2 Feb 2002
+
+Reorganize doc to be excerptable into the MzLib
+manual
+
+26 Jan 2002
+
+Make pregexp.scm loadable in Scsh.  Previously, code
+had assumed (char->integer #\nul) = 0, whereas it
+is 1000 for Scsh.
+
+Added script make-pregexp-module-for-scsh.
+
+21 Jan 2002
+
+Added scripts make-pregexp-module-for-plt and
+make-pregexp-module-for-guile, which provide a possibly
+cleaner access (no namespace pollution) to
+pregexp functionality for the Scheme dialects PLT and
+Guile.
+
+pregexp-split with first arg of " *" shouldn't
+return empty substrings -- pointed out by Rob Warnock.
+
+pregexp-split, note 1: If the text string starts
+with a non-empty delimiter, the first substring is
+considered to be an empty substring.  If the text
+string ends in a delimiter, the last substring is the
+one before it, not the empty substring after it.  This
+is probably arguable.  Anyway, it is Perl-like.  
+
+Note 2: If the textstring has nonzero leading
+space, and the delimiter matches just this space, then
+Perl doesn't consider the first substring to be the
+empty substring before the delimiter.  pregexp does.
+Perl's decision here seems too special-cased for space
+(since it doesn't hold for any other type of
+delimiter), so I haven't implemented it.  If you really
+want to prune leading space, it is easy to do so
+specifically by other means.
+
+v 1e6
+
+20 Jan 2002
+
+Treat (pregexp "") correctly.  Ie,
+(pregexp-match-positions "" "anything") should give ((0
+. 0)), not #f.
+
+Added pregexp-split procedure.  Given pat and str,
+returns the substrings of str that are separated by
+pat.  Special case (as in Perl): If pat is "",
+return all single-char substrings.
+
+v 1e5
+
+9 Dec 2001
+
+Use pregexp internal error message when
+incomplete character-class is supplied instead
+of bombing on a bad string-ref.  Suggested 
+by Manuel Serrano (Bigloo).
+
+Added pregexp-error procedure to accommodate
+above.  Unfortunately, there is no R5RS error
+procedure.
+
+v 1e4
+
+14 Oct 2001
+
+[] is not an empty character class!  It is an
+unfinished character class (ie, still waiting
+for a closing right-bracket) that contains 
+left-bracket.  Bug report from Matthew Riben
+(Matthew.Riben@SpirentCom.COM)
+
+v 1e3
+
+17 Dec 2000
+
+Tackle case/colon problem of string<->symbol
+conversion in the scm2cl translator instead
+of holding the Scheme code hostage to it
+
+v 1e2
+
+16 Dec 2000
+
+These are bugfixes that are CL-specific only.
+
+Reading [:alpha:] as ':alpha is made more
+explicit since CL can't do string<->symbol conversion
+as cleanly as Scheme (both because of case and 
+because of the colon)
+
+Also the scm2cl translator needed a fix for
+string->number.  string->number's translation uses
+read-from-string, which was erroring on "", so
+(string->number "") was erroring instead of returning
+#f.  Fix: Use opt arg that makes read-from-string
+return nil on eof.
+
+Included pregexp-test.cl, CL version of test
+suite.  Using scm2cl on pregexp-test.scm showed
+up another scm2cl error.  It was bombing on explicitly
+dotted pairs in the Scheme source.  (pregexp is proving
+to be a great test for scm2cl.)
+
+v 1e1
+
+14 Dec 2000
+
+Choose alternate that causes overall match.  As before,
+leftmost alternate will match even if it causes shorter
+match, but an overall match is always preferred over an
+overall nonmatch. 
+
+13 Dec 2000
+
+#\tab not R5RS; replaced by *pregexp-tab-char* = 
+(integer->char 9)
+
+v 1e
+
+9 Dec 2000
+
+(?>...) -- disabling backtracking
+
+matcher should use optarg start
+for beginning-of-string rather than simply 0
+
+. does not match newline
+
+v 1d1
+
+Dec 3, 2000
+
+Added \b and \B -- assertions that a word boundary
+resply exists, doesn't exist.  (\b may give false
+positive inside a lookbehind assertion at the breakoff
+point... very very rare scenario but still...)
+
+v 1d
+
+Dec 3, 2000
+
+Posix character classes added.
+
+v 1c3
+
+Dec 2, 2000
+
+lookahead should be control-delimited too
+(just like lookbehind) -- regardless of
+what I thought at first.  The dotted-quad
+example from Friedl shows this up
+
+v 1c2
+
+Dec 2, 2000
+
+*pregexp-comment-char* (initially should be
+#\; or #\# ?)
+
+Doc cleanup
+
+v 1c1
+
+Dec 2, 2000
+
+Allow comments in space-insensitive clusters.
+
+v 1c
+
+Dec 1, 2000
+
+Lookbehind -- positive (?<=...) and negative (?<!...)
+a la latest Perl
+
+?: can enclose i, -i, x, -x in any sequence.
+
+ i = case-insensitive
+-i = case-sensitive
+ x = space-insensitive
+-x = space-sensitive
+
+By default, regexps are case- and space-sensitive.
+
+Doing length and list-ref separately is less efficient
+in compiled code, Brad Lucier says with stats from
+Gambit.  Combined the two so list is traversed
+only once.
+
+v 1b2
+
+Dec 1, 2000
+
+Included pregexp-test.scm as a test suite.
+(Rather paltry though.)
+
+Check that backref is within bounds in
+regexp-replace-aux -- latent bug pointed out by Brad
+Lucier.  (Out-of-bounds backrefs are empty strings now.
+Should they instead error?) 
+
+v 1b1
+
+Nov 30, 2000
+
+Metaseqs for the chars: \n \r \t
+Metaseqs for std char classes: 
+\d \D \s \S \w \W
+
+typo in var name pointed out
+by Brad Lucier (lucier@math.purdue.com)
+
+v 1b
+
+Nov 30, 2000
+
+Backreferences (\1, ...) can occur in the regexp
+pattern (the same syntax is used to interpolate
+submatches in a replacement string, where \0 [for full
+match] also makes sense)
+
+Fixed nasty (stack-blowing) character-class bug caused
+by index moving past text string end with no
+check.  Example furnished by Glauber Ribeiro
+(theglauber@my-deja.com)
+
+v 1a
+
+Nov 29, 2000
+
+Non-capturing grouping (?:...), lookahead (?=...),
+negative lookahead (?!...) a la Perl. 
+
+Made analogs of all the MzScheme regexp procs except
+regexp? which is useless, viz, pregexp, pregexp-match,
+pregexp-match-positions, pregexp-replace,
+pregexp-replace*.  pregexp procedures have prefix
+'pregexp' where MzScheme has 'regexp'.
+
+v. 0f
+
+Nov 26, 2000
+
+Don't use escape (\) for non-alphabetic
+metacharacters.
+Non-greedy versions of quantifiers.
+Alternation (...|...)
+
+Oct 22, 1999
+
+\{...\} corrected
+\{\} = 0 or more matches
+\{m\} = exactly m matches
+\{m,\} = m or more matches
+\{m,n\} = at least m and at most n matches
+\{,n\} = at most n matches
+
+v. 0e
+
+Oct 9, 1999
+
+Subpattern index pairs are now canonical.  I.e., a
+subpattern within a multiplier only returns the index
+pair within the last matching substring.
+
+v. 0d
+
+Oct 7, 1999
+
+Cleaned up submatch return value somewhat.  Still not
+canonical though.  \(...\) followed by multiplier returns
+an index pair for each of the consecutive substrings it
+matched.  Canonically, it should return the index pair 
+of only the _last_ match.
+
+v. 0c
+
+Oct 5, 1999
+
+Fixed bug wherein multipliers (* + ? \{\}) were too
+greedy.  I.e., (pregexp-match "c.*r" "car") returned #f
+because ".*" swallowed "ar" instead of being satisfied
+with "a".  Bug reported by Lars Thomas Hansen,
+lth@ccs.neu.edu.
+
+v. 0b
+
+Oct 4, 1999
+
+\{m,n\}
+
+v. 0a
+
+Oct 2, 1999

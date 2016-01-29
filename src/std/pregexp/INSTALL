@@ -1,0 +1,81 @@
+INSTALL
+pregexp
+Dorai Sitaram
+last change: 2008-04-12
+
+-
+
+The easiest way to use the pregexp code is to simply
+load the file pregexp.scm into your Scheme.  
+
+If you use Common Lisp, load pregexp.lisp.
+
+Alternatively, if your Scheme dialect is either PLT
+Scheme, Gauche, Guile, or Scsh, you can exploit
+your dialect's module facility.  A module-ized pregexp
+has two advantages: (a) It makes the interface to the
+pregexp code cleaner, as the module hides
+implementation details and avoids polluting the global
+namespace.  (b) Portions of the pregexp code are
+rewritten to take advantage of the dialect's
+extensions.
+
+Use the scmxlate package to
+configure pregexp for these dialects.  scmxlate is
+available from
+http://www.ccs.neu.edu/~dorai/scmxlate/scmxlate.html 
+
+Start Scheme in the pregexp directory, and load the
+file scmxlate/scmxlate.scm , using the correct relative
+or full pathname.  You will be asked your Scheme
+dialect name: answer plt, gauche, guile, or scsh
+as appropriate.
+
+-
+
+SECTION 1.
+
+For PLT, the generated file is pregexp.ss ,
+which can be loaded using the require syntax.  If you
+place pregexp.ss in a standard PLT library location,
+you can load it with
+
+(require (lib "pregexp.ss"))
+
+without worrying about its pathname.
+
+-
+
+SECTION 2.
+
+For Gauche, the generated file is
+gauchelib/pregexp.scm.  If you place it
+in one of the directories in *load-path*, you can
+do
+
+(use pregexp)
+
+without worrying about its pathname.
+
+SECTION 3.
+
+For Guile, the generated file is ice-9/pregexp.scm
+(ie, the file pregexp.scm  in the subdirectory ice-9 ).
+If you place pregexp.scm in an ice-9
+subdirectory in your
+%load-path, you can load it with
+
+(use-modules (ice-9 pregexp))
+
+-
+
+SECTION 4.
+
+For Scsh, the generated file is
+scsh/pregexp.scm .  Move it to an appropriate
+library location.  To load the pregexp module in
+Scsh, you need to do the following (with
+the correct pathname for pregexp.scm).
+
+,config ,load pregexp.scm
+,open pregexp

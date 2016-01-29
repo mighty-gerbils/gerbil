@@ -977,14 +977,14 @@
 
 (define (symbol->keyword sym)
   ((if (uninterned-symbol? sym)
-     ##make-uninterned-keyword
+     string->uninterned-keyword
      string->keyword)
    (symbol->string sym)))
 
 (define (keyword->symbol kw)
   ((if (uninterned-keyword? kw)
-    ##make-uninterned-symbol
-    string->symbol)
+     string->uninterned-symbol
+     string->symbol)
    (keyword->string kw)))
 
 (define (bytes->string bstr)
