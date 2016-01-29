@@ -8,6 +8,7 @@
     `("format"
       "pregexp"
       "sort"
+      (gxc: "event" "-e" "(include \"~~lib/_gambit#.scm\")")
       ;; :std/misc
       "misc/shuffle"
       ;; :std/net
