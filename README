@@ -29,7 +29,7 @@ would read like this:
 
 (C) 2007-2016 Dimitris Vyzovitis <vyzo -at- hackzen.org>
 Gerbil is Free Software, distributed under the GNU LGPLv2.1 or later
-or the Apache 2.0 license.
+and the Apache 2.0 license.
 
 ---------------------------------------------------------------------
 Dependencies: I have tested the bootstrap with Gambit v4.8.4.
