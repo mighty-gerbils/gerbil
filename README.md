@@ -20,8 +20,7 @@ At the prompting of fare and mikael (they know who they are), who
 had seen private versions of Gerbil, I decided to release it in public
 with a clean bootstrap version that bootstraps on gambit with a precompiled
 version of the macro system and a compiler for Gambit.
-That means that the macro system and Gambit compiler is entirely
-self-hosted.
+That means that the system is entirely self-hosted in Gambit.
 
 # License and Copyright
 
@@ -33,9 +32,11 @@ the Net as Dimitris Vyzovitis. The obligatory copyright notice, had I
 bothered polluted everything with more than a (C) vyzo at hackzen.org,
 would read like this:
 
+```
 (C) 2007-2016 Dimitris Vyzovitis <vyzo -at- hackzen.org>
 Gerbil is Free Software, distributed under the GNU LGPLv2.1 or later
 and the Apache 2.0 license.
+```
 
 # Installation
 ## Source Code
@@ -71,7 +72,7 @@ pre-compiled Scheme sources in `$GERBIL_HOME/src/bootstrap`.
 
 # Using Gerbil
 The Gerbil interpreter is `$GERBIL_HOME/bin/gxi`, and the compiler is
-in `$GERBIL_HOME/bin/gxc`.
+`$GERBIL_HOME/bin/gxc`.
 
 If you want an interactive Gerbil shell just execute the interpreter
 directly by running gxi.
