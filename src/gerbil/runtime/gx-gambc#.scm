@@ -2,7 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; Gerbil stage0 -- Gambit-C macros
 (##namespace (""))
-(include "~~/lib/_gambit#.scm")
+(include "~~lib/_gambit#.scm")
 
 (define-macro (when condition . body)
   `(if ,condition (begin ,@body) #!void))
