@@ -1,11 +1,11 @@
 # Gerbil Scheme
 
-Gerbil is a new dialect of scheme, designed around a multiresolution
+Gerbil is a new dialect of Scheme, designed around a multiresolution
 macro-system.
 
 The macro system is based on quote-syntax, and provides full the
 meta-syntactic tower with a native implementation of syntax-case.
-It also provides a full-blown module system, similar to plt scheme's
+It also provides a full-blown module system, similar to PLT Scheme's
 (sorry, racket) modules. The main difference from plt's modules is that
 Gerbil modules are single instantiation, supporting high performance ahead
 of time compilation.
@@ -102,17 +102,23 @@ Hello world! My arguments are (1 2 3)
 
 # Documentation
 
-This README is intended to seasoned scheme hackers anyway, which
+This README is intended to seasoned Scheme hackers anyway, which
 assumes that you can find your way around the source code; the code
 should be self-documenting, except for the really hairy parts.
 
 There is no further documentation at this point, because I haven't
 had the time to prepare some nice and coherent documentation that
-can help scheme neophytes (or people who like neat documentation
-before using a new scheme system; I hope to write some real
+can help Scheme neophytes -- or people who like neat documentation
+before using a new Scheme system. I hope to write some real
 documentation in the not-so-distant future. Check the Github
 repository, as I intend to host documentation directly on Github
 with github-pages.
+
+# Epilogue
+
+Gerbil is under continuous development. The core language has been
+stable for a while, but I am busy porting batteries for the std
+library.
 
 Patches (even for typos in the comments) are always welcome.
 No copyright assignment ever, you keep what you contribute.
