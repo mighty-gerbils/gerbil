@@ -19,13 +19,44 @@ package: std
 ;; ~~lib/_gambit#.scm
 (extern namespace: #f
   macro-thread-end-condvar
-  macro-thread-exception?)
+  macro-thread-exception?
+  macro-mutex-btq-owner
+  macro-closed?
+  macro-u8vector-port?
+  macro-string-port?
+  macro-vector-port?
+  macro-device-port?
+  macro-tcp-server-port?
+  macro-event-queue-port?
+  macro-directory-port?
+  macro-port-mutex
+  macro-port-roptions
+  macro-port-rtimeout
+  macro-device-port-rdevice-condvar
+  macro-u8vector-port-rcondvar
+  macro-string-port-rcondvar
+  macro-vector-port-rcondvar
+  macro-tcp-server-port-rdevice-condvar
+  macro-event-queue-port-rdevice-condvar
+  macro-directory-port-rdevice-condvar
+  macro-byte-port-rlo
+  macro-byte-port-rhi
+  macro-byte-port-rbuf-fill
+  macro-vector-port-rlo
+  macro-vector-port-rhi
+  macro-vector-port-rbuf-fill
+  macro-character-port-rlo
+  macro-character-port-rhi
+  macro-character-port-rbuf-fill
+  )
 
 ;;; select: low level event selection
 ;;  mutex:             becomes ready when the thread successfully acquires
 ;;  io-condvar:        becomes ready when wait-for-io returns
 ;;  [mutex . condvar]: unlocks mutex, becomes ready when condvar signals
 ;;  thread:            becomes ready thread completes
+;;  input-port:        becomes ready when the buffer is filled or the condvar
+;;                      signals (for server sockets)
 ;;  absrel-time:       selectable timeout
 (defstruct selection (e thread mutex condvar)
   id: std/event#selection::t)
@@ -84,6 +115,12 @@ package: std
     (make-thread
      (lambda () (select1 sel selector thread-select-e void))
      'select-thread))
+   ((input-port? selector)
+    (let ((select-e (make-port-selector-wait selector))
+          (abort-e  (make-port-selector-abort selector)))
+      (make-thread
+       (lambda () (select1 sel selector select-e abort-e))
+       'select-input-port)))
    ((or (real? selector) (time? selector))
     (make-thread
      (lambda () (select1 sel selector timeout-select-e void))
@@ -91,8 +128,129 @@ package: std
    (else
     (error "Bad selector" selector))))
 
+;;; the Gambit port hierarchy and means of receiving data:
+;; define-type port
+;;  define-type-of-port character-port
+;;   define-type-of-character-port byte-port
+;;    define-type-of-byte-port device-port
+;;      ##wait-for-io!
+;;    define-type-of-byte-port u8vector-port
+;;      ##mutex-unlock!
+;;   define-type-of-character-port string-port
+;;     ##mutex-unlock!
+;;  define-type-of-port vector-port
+;;    ##mutex-unlock!
+;;  define-type-of-port tcp-server-port
+;;    ##wait-for-io!
+;;  define-type-of-port directory-port
+;;    ##wait-for-io!
+;;  define-type-of-port event-queue-port
+;;    ##wait-for-io!
+;; vector-like ports (u8vector-port, string-port, vector-port) receive
+;;  input with scheme user events
+;; the other type of ports receive input with ##wait-for-io! and may
+;;  return from select before they are ready because of an interrupt.
+(def (make-port-selector-wait port)
+  (def (make-user-port-selector condvar ready? poll)
+    (lambda (sel port)
+      (let (mutex (macro-port-mutex port))
+        (let lp ()
+          (if (input-port-closed? port) #t
+              (begin
+                (mutex-lock! mutex)
+                (if (or (ready? port) (poll port))
+                  (begin (mutex-unlock! mutex) #t)
+                  (begin
+                    (mutex-unlock! mutex condvar)
+                    (lp)))))))))
+
+  (def (make-device-port-selector)
+    ;; XXX assumes that there are no other readers/selectors
+    ;;     besideds multiple readers on a device are racey no matter
+    ;;     what you do
+    (lambda (sel port)
+      (or (input-port-closed? port)
+          (let ((byte-rlo (macro-byte-port-rlo port))
+                (byte-rhi (macro-byte-port-rhi port)))
+            (or (byte-rlo < byte-rhi)
+                (begin
+                  (##wait-for-io! (macro-device-port-rdevice-condvar port)
+                                  (macro-port-rtimeout port))
+                  #t))))))
+
+  (def (make-io-port-selector condvar)
+    (lambda (sel port)
+      (or (input-port-closed? port)
+          (begin
+            (##wait-for-io! condvar (macro-port-rtimeout port))
+            #t))))
+  
+  (def (u8vector-port-ready? port)
+    (fx< (macro-byte-port-rlo port)
+         (macro-byte-port-rhi port)))
+
+  (def (u8vector-port-poll port)
+    (user-port-poll port (macro-byte-port-rbuf-fill port)))
+
+  (def (string-port-ready? port)
+    (fx< (macro-character-port-rlo port) 
+         (macro-character-port-rhi port)))
+
+  (def (string-port-poll port)
+    (user-port-poll port (macro-character-port-rbuf-fill port)))
+  
+  (def (vector-port-ready? port)
+    (fx< (macro-vector-port-rlo port)
+         (macro-vector-port-rhi port)))
+
+  (def (vector-port-poll port)
+    (user-port-poll port (macro-vector-port-rbuf-fill port)))
+
+  (def (user-port-poll port rbuf-fill)
+    (let (r (rbuf-fill port 1 #f))
+      (cond
+       ((eq? r ##err-code-EINTR)        ; interrupted
+        (user-port-poll port rbuf-fill))
+       ((eq? r ##err-code-EAGAIN) #f)   ; would block
+       (else #t))))                     ; read some or EOF
+  
+  (let (mutex (macro-port-mutex port))
+    (cond
+     ((macro-u8vector-port? port)
+      (make-user-port-selector
+       (macro-u8vector-port-rcondvar port)
+       u8vector-port-ready?
+       u8vector-port-poll))
+     ((macro-string-port? port)
+      (make-user-port-selector
+       (macro-string-port-rcondvar port)
+       string-port-ready?
+       string-port-poll))
+     ((macro-vector-port? port)
+      (make-user-port-selector
+       (macro-vector-port-rcondvar port)
+       vector-port-ready?
+       vector-port-poll))
+     ((macro-device-port? port)
+      (make-device-port-selector))
+     ((macro-tcp-server-port? port)
+      (make-io-port-selector (macro-tcp-server-port-rdevice-condvar port)))
+     ((macro-event-queue-port? port)
+      (make-io-port-selector (macro-event-queue-port-rdevice-condvar port)))
+     ((macro-directory-port? port)
+      (make-io-port-selector (macro-directory-port-rdevice-condvar port)))
+     (else
+      (error "Bad selector" port)))))
+
+(def (make-port-selector-abort port)
+  (lambda (sel port)
+    (let ((self (current-thread))
+          (mx   (macro-port-mutex port)))
+      (when (eq? self (macro-mutex-btq-owner mx))
+        (mutex-unlock! mx)))))
+
 (def (select1 sel selector select-e abort-e)
-  (let (threads (thread-receive)) ; receive the set of selector threads
+  (let (threads (thread-receive))       ; receive selector set
     (with-catch
      (lambda (e)
        (abort-e sel selector)
@@ -144,6 +302,9 @@ package: std
 
 (def (thread-dead? thread)
   (not (macro-thread-end-condvar thread)))
+
+(def (input-port-closed? port)
+  (macro-closed? (macro-port-roptions port)))
 
 ;;; sync: high level event programming interface
 ;;  An event object combines a low-level selector with a high level
@@ -301,8 +462,12 @@ package: std
   (thread-dead? (event-sel evt)))
 
 (def (make-input-port-evt port)
-  (error "XXX implement me!!!")
-  )
+  (if (input-port? port)
+    (make-event port port input-port-ready?)
+    (error "Bad selector")))
+
+(def (input-port-ready? evt)
+  (input-port-closed? (event-sel evt)))
 
 (def (make-timeout-evt absrel-time)
   (cond
