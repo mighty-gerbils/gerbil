@@ -1,4 +1,4 @@
-= Gerbil Scheme =
+# Gerbil Scheme
 
 Gerbil is a new dialect of scheme, designed around a multiresolution
 macro-system.
@@ -10,7 +10,7 @@ It also provides a full-blown module system, similar to plt scheme's
 Gerbil modules are single instantiation, supporting high performance ahead
 of time compilation.
 
-== History of Gerbil ==
+## History of Gerbil
 Gerbil has been my private Scheme for many years, evolved out of a set
 of common macros that i used across different implementations. As such
 i have multiple backends that work with the Gerbil macro system, but I
@@ -23,7 +23,7 @@ version of the macro system and a compiler for Gambit.
 That means that the macro system and Gambit compiler is entirely
 self-hosted.
 
-= License and Copyright =
+# License and Copyright
 
 The source code is distributed under the Gambit license; that means
 that Gerbil on Gambit is dual licensed under LGPLv2.1 and Apache 2.0.
@@ -37,14 +37,14 @@ would read like this:
 Gerbil is Free Software, distributed under the GNU LGPLv2.1 or later
 and the Apache 2.0 license.
 
-= Installation =
-== Source Code ==
+# Installation
+## Source Code
 The source code for Gerbil is hosted on [Github](https://github.com/vyzo/gerbil).
 You can obtain the source tree directly in the command line by checking
 out the sources:
 $ git clone https://github.com/vyzo/gerbil.git
 
-== Dependencies ==
+## Dependencies
 I have tested the bootstrap with Gambit v4.8.4, but older versions
 starting with v4.6.0 should works as well.
 
@@ -55,7 +55,7 @@ with the Gambit bootstrap out of the box. I am continuously porting
 more libraries from the various private versions of Gerbils, so you should
 expect more libraries to be continously merged.
 
-== Build Instructions ==
+## Build Instructions
 After checking out the source code from Github, let GERBIL_HOME be the
 top directory of Gerbil.
 Then:
@@ -65,7 +65,7 @@ $ ./build.sh
 this will execute a full bootstrap build in place, starging from the
 pre-compiled Scheme sources in $GERBIL_HOME/src/bootstrap.
 
-= Using Gerbil =
+# Using Gerbil
 The Gerbil interpreter is $GERBIL_HOME/bin/gxi, and the compiler is
 in $GERBIL_HOME/bin/gxc.
 
@@ -75,7 +75,7 @@ directly by running gxi.
 If you want to write a runnable Gerbil script, add $GERBIL_HOME/bin
 to your PATH and use the following for your magic:
 ```
-\#!/usr/bin/env gxi-script
+#!/usr/bin/env gxi-script
 ```
 
 You can define a main procedure in your script that will receive
@@ -83,7 +83,7 @@ the command line arguments.
 
 For an example script, put the following in hello.ss
 ```
-\#!/usr/bin/env gxi-script
+#!/usr/bin/env gxi-script
 
 (def (main . args)
  (displayln "Hello world! My arguments are " args))
@@ -100,7 +100,7 @@ should produce the following output:
 Hello world! My arguments are (1 2 3)
 ```
 
-= Documentation =
+# Documentation
 
 This README is intended to seasoned scheme hackers anyway, which
 assumes that you can find your way around the source code; the code
