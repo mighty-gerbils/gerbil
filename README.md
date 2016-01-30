@@ -42,38 +42,42 @@ and the Apache 2.0 license.
 The source code for Gerbil is hosted on [Github](https://github.com/vyzo/gerbil).
 You can obtain the source tree directly in the command line by checking
 out the sources:
+```
 $ git clone https://github.com/vyzo/gerbil.git
+```
 
 ## Dependencies
 I have tested the bootstrap with Gambit v4.8.4, but older versions
-starting with v4.6.0 should works as well.
+starting with v4.6.0 should work as well.
 
-The :std/xml library in std requires libxml2 to build; comment it out
+The `:std/xml` library in std requires libxml2 to build; comment it out
 xml stuffs in src/std/build.ss if you don't have it.
-The initial std library is an initial packaging of libraries that worked
+The current std library is an initial packaging of libraries that worked
 with the Gambit bootstrap out of the box. I am continuously porting
-more libraries from the various private versions of Gerbils, so you should
+more libraries from the various private versions of Gerbil, so you should
 expect more libraries to be continously merged.
 
 ## Build Instructions
-After checking out the source code from Github, let GERBIL_HOME be the
-top directory of Gerbil.
+After checking out the source code from Github, let `$GERBIL_HOME` be
+the top directory of Gerbil.
 Then:
+```
 $ cd $GERBIL_HOME/src
 $ ./build.sh
+```
 
 this will execute a full bootstrap build in place, starging from the
-pre-compiled Scheme sources in $GERBIL_HOME/src/bootstrap.
+pre-compiled Scheme sources in `$GERBIL_HOME/src/bootstrap`.
 
 # Using Gerbil
-The Gerbil interpreter is $GERBIL_HOME/bin/gxi, and the compiler is
-in $GERBIL_HOME/bin/gxc.
+The Gerbil interpreter is `$GERBIL_HOME/bin/gxi`, and the compiler is
+in `$GERBIL_HOME/bin/gxc`.
 
 If you want an interactive Gerbil shell just execute the interpreter
 directly by running gxi.
 
-If you want to write a runnable Gerbil script, add $GERBIL_HOME/bin
-to your PATH and use the following for your magic:
+If you want to write an executable Gerbil script, add `$GERBIL_HOME/bin`
+to your `PATH` and use the following for your magic:
 ```
 #!/usr/bin/env gxi-script
 ```
@@ -102,10 +106,6 @@ Hello world! My arguments are (1 2 3)
 
 # Documentation
 
-This README is intended to seasoned Scheme hackers anyway, which
-assumes that you can find your way around the source code; the code
-should be self-documenting, except for the really hairy parts.
-
 There is no further documentation at this point, because I haven't
 had the time to prepare some nice and coherent documentation that
 can help Scheme neophytes -- or people who like neat documentation
@@ -116,9 +116,9 @@ with github-pages.
 
 # Epilogue
 
-Gerbil is under continuous development. The core language has been
-stable for a while, but I am busy porting batteries for the std
-library.
+Gerbil is under continuous use and development.
+The core language has been stable for a while, but I am busy porting
+batteries for the std library.
 
 Patches (even for typos in the comments) are always welcome.
 No copyright assignment ever, you keep what you contribute.
