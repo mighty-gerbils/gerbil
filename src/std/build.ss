@@ -34,6 +34,14 @@
       (ssi: "xml/sxml-to-xml")
       "xml/print"
       "xml"
+      ;; :std/crypto
+      (gsc: "crypto/libcrypto"
+            "-ld-options" "-lcrypto"
+            "-e" "(include \"~~lib/_gambit#.scm\")")
+      (ssi: "crypto/libcrypto")
+      (gxc: "crypto/etc"
+            "-e" "(include \"~~lib/_gambit#.scm\")")
+      "crypto/digest"
       ;; SRFI: This is my grandfather's axe; my father replaced the head
       ;;       and i have replaced the handle.
       "srfi/srfi-support"
