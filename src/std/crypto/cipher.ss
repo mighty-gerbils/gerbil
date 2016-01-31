@@ -164,19 +164,19 @@ package: std/crypto
          (buf (make-u8vector (fx+ bufsz (cipher-block-size cipher))))
          (outp (open-output-u8vector)))
 
-    (def (grow-buffer-if-needed olen)
-      (when (fx> olen (u8vector-length buf))
-        (set! buf (make-u8vector olen))))
+    (def (grow-buffer-if-needed ilen)
+      (let (max-olen (fx+ ilen (cipher-block-size cipher)))
+        (when (fx> max-olen (u8vector-length buf))
+          (set! buf (make-u8vector max-olen)))))
     
     (cipher-init! cipher key iv)
     (call-with-binary-input
      (lambda (bytes start end)
+       (grow-buffer-if-needed (- end start))
        (let (olen (cipher-update! cipher buf bytes start end))
-         (grow-buffer-if-needed olen)
          (write-subu8vector buf 0 olen outp)))
      inp)
     (let (olen (cipher-final! cipher buf))
-      (grow-buffer-if-needed olen)
       (write-subu8vector buf 0 olen outp)
       (get-output-u8vector outp))))
 
