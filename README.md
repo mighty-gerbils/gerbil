@@ -16,7 +16,7 @@ of common macros that i used across different implementations. As such
 i have multiple backends that work with the Gerbil macro system, but I
 have elected to base the primary version of Gerbil on Gambit.
 
-At the prompting of fare and mikael (they know who they are), who
+At the prompting of some friends (they know who they are), who
 had seen private versions of Gerbil, I decided to release it in public
 with a clean bootstrap version that bootstraps on gambit with a precompiled
 version of the macro system and a compiler for Gambit.
