@@ -42,6 +42,7 @@
       (gxc: "crypto/etc"
             "-e" "(include \"~~lib/_gambit#.scm\")")
       "crypto/digest"
+      "crypto/cipher"
       ;; SRFI: This is my grandfather's axe; my father replaced the head
       ;;       and i have replaced the handle.
       "srfi/srfi-support"
