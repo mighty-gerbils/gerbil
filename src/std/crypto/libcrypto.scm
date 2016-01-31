@@ -257,7 +257,7 @@ static ___SCMOBJ ffi_release_EVP_CIPHER_CTX (void *ptr)
 static int ffi_EVP_EncryptInit (EVP_CIPHER_CTX *ctx, EVP_CIPHER *type,
                                 ___SCMOBJ key, ___SCMOBJ iv)
 {
-  EVP_EncryptInit_ex (ctx, type, NULL, U8_DATA (key), U8_DATA (iv));      
+  return EVP_EncryptInit_ex (ctx, type, NULL, U8_DATA (key), U8_DATA (iv));      
 }
 
 static int ffi_EVP_EncryptUpdate (EVP_CIPHER_CTX *ctx, ___SCMOBJ out,
@@ -287,7 +287,7 @@ static int ffi_EVP_EncryptFinal (EVP_CIPHER_CTX *ctx, ___SCMOBJ out)
 static int ffi_EVP_DecryptInit (EVP_CIPHER_CTX *ctx, EVP_CIPHER *type,
                                 ___SCMOBJ key, ___SCMOBJ iv)
 {
-  EVP_DecryptInit_ex (ctx, type, NULL, U8_DATA (key), U8_DATA (iv));      
+  return EVP_DecryptInit_ex (ctx, type, NULL, U8_DATA (key), U8_DATA (iv));      
 }
 
 static int ffi_EVP_DecryptUpdate (EVP_CIPHER_CTX *ctx, ___SCMOBJ out,
