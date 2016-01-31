@@ -22,6 +22,7 @@
       "text/hex"
       (gsc: "text/base64")
       (ssi: "text/base64")
+      "text/json"
       ;; :std/xml
       (gsc: "xml/_libxml" 
             "-cc-options" ,(shell-config "xml2-config" "--cflags")
