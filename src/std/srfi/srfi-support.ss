@@ -44,7 +44,7 @@ package: std/srfi
          (error "argument out of domain" var1)))))
   ((_ args (((var ...) proc)) body1 ...)
    (stx-andmap identifier? #'(var ...))
-   (call-with-values (lambda () (apply proc args))
+   (call-with-values (lambda () (proc args))
      (lambda (var ...) body1 ...)))
   ((_ args (rest) body1 ...)
    (identifier? #'rest)

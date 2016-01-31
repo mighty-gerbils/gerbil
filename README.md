@@ -67,7 +67,7 @@ $ cd $GERBIL_HOME/src
 $ ./build.sh
 ```
 
-this will execute a full bootstrap build in place, starging from the
+this will execute a full bootstrap build in place, starting from the
 pre-compiled Scheme sources in `$GERBIL_HOME/src/bootstrap`.
 
 # Using Gerbil
@@ -114,6 +114,13 @@ before using a new Scheme system. I hope to write some real
 documentation in the not-so-distant future. Check the Github
 repository, as I intend to host documentation directly on Github
 with github-pages.
+
+Probably the best way to dive into gerbil is by reading the sources,
+as all the main language features are exercised in one way or another
+within the implementation.
+The core language macros are defined in `src/gerbil/prelude/core.ss`.
+This is the language that you get in the interpreter and what is available
+when writing a new module without explicitly specifying a prelude.
 
 # Epilogue
 
