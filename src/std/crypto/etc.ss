@@ -5,12 +5,11 @@ package: std/crypto
 
 (export libcrypto-error? raise-libcrypto-error with-libcrypto-error
         check-bytes check-bytes-start check-bytes-end check-bytes-range
-        call-with-binary-input)
-(import (only-in :gerbil/gambit/hvectors
-                 u8vector? u8vector-length
-                 string->bytes substring->bytes)
-        (only-in :gerbil/gambit/threads
-                 with-lock)
+        call-with-binary-input
+        random-bytes)
+(import :gerbil/gambit/hvectors
+        :gerbil/gambit/threads
+        :gerbil/gambit/ports
         :std/format
         :std/crypto/libcrypto)
 
@@ -156,3 +155,20 @@ package: std/crypto
           (macro-character-port-rlo-set! port (macro-character-port-rhi port))
           buf)
         #f))))
+
+(def *urandom* (open-input-file "/dev/urandom"))
+
+(def (random-bytes len)
+  (let* ((bytes (make-u8vector len))
+         (count (read-subu8vector bytes 0 len *urandom*)))
+    (if (eq? count len)
+      bytes
+      (error "Could not read enough random bytes" count len))))
+
+(def (random-bytes! bytes (start #f) (end #f))
+  (let* ((start (or start 0))
+         (end   (or end (u8vector-length bytes))) 
+         (count (read-subu8vector bytes start end *urandom*)))
+    (if (eq? count (- end start))
+      bytes
+      (error "Could not read enough random bytes" count start end))))
