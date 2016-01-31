@@ -240,7 +240,9 @@ static int ffi_EVP_DigestFinal (EVP_MD_CTX *ctx, ___SCMOBJ bytes)
 static EVP_CIPHER_CTX *ffi_create_EVP_CIPHER_CTX ()
 {
   EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new ();
-  EVP_CIPHER_CTX_init (ctx);
+  if (ctx) {              
+    EVP_CIPHER_CTX_init (ctx);
+  }                            
   return ctx;
 }
 
