@@ -180,6 +180,7 @@ END-C
 (define-c-lambda/const-pointer EVP_aes_128_ctr () EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_aes_128_ccm () EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_aes_128_gcm () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_aes_128_xts () EVP_CIPHER*)
 
 (define-c-lambda/const-pointer EVP_aes_192_ecb () EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_aes_192_cbc () EVP_CIPHER*)
