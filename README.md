@@ -57,7 +57,7 @@ xml stuffs in `src/std/build.ss` if you don't have it.
 The `:std/crypto` library in std requires libcrypto from openssl; similary
 comment out the crypto stuffs in `build.ss` if you don't have it.
 
-The current std library is an initial packaging of libraries that worked
+Initially, the std library was an initial packaging of libraries that worked
 with the Gambit bootstrap out of the box. I am continuously porting
 more libraries from the various private versions of Gerbil, so you should
 expect more libraries to be continously merged.
