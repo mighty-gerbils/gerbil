@@ -9,7 +9,7 @@ package: std/crypto
         :std/crypto/etc)
 
 (export
-  cipher cipher-type cipher-ctx cipher-context
+  cipher make-cipher cipher? cipher-type cipher-ctx cipher-context
   cipher-name cipher-block-size cipher-key-length cipher-iv-length
   cipher-copy
   encrypt
