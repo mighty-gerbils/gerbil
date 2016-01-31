@@ -52,7 +52,11 @@ I have tested the bootstrap with Gambit v4.8.4, but older versions
 starting with v4.6.0 should work as well.
 
 The `:std/xml` library in std requires libxml2 to build; comment it out
-xml stuffs in src/std/build.ss if you don't have it.
+xml stuffs in `src/std/build.ss` if you don't have it.
+
+The `:std/crypto` library in std requires libcrypto from openssl; similary
+comment out the crypto stuffs in `build.ss` if you don't have it.
+
 The current std library is an initial packaging of libraries that worked
 with the Gambit bootstrap out of the box. I am continuously porting
 more libraries from the various private versions of Gerbil, so you should
