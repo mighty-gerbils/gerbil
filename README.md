@@ -3,12 +3,12 @@
 Gerbil is a new dialect of Scheme, designed around a multiresolution
 macro-system.
 
-The macro system is based on quote-syntax, and provides full the
+The macro system is based on quote-syntax, and provides the full
 meta-syntactic tower with a native implementation of syntax-case.
 It also provides a full-blown module system, similar to PLT Scheme's
 (sorry, racket) modules. The main difference from plt's modules is that
 Gerbil modules are single instantiation, supporting high performance ahead
-of time compilation.
+of time compilation and compiled macros.
 
 ## History of Gerbil
 Gerbil has been my private Scheme for many years, evolved out of a set
@@ -19,12 +19,12 @@ have elected to base the primary version of Gerbil on Gambit.
 At the prompting of some friends (they know who they are), who
 had seen private versions of Gerbil, I decided to release it in public
 with a clean bootstrap version that bootstraps on gambit with a precompiled
-version of the macro system and a compiler for Gambit.
+version of the macro system and compiler.
 That means that the system is entirely self-hosted in Gambit.
 
 # License and Copyright
 
-The source code is distributed under the Gambit license; that means
+The source code is distributed with the Gambit license; that means
 that Gerbil on Gambit is dual licensed under LGPLv2.1 and Apache 2.0.
 
 Gerbil's primary author and maintainer is vyzo-at-hackzen.org, aka in
@@ -41,8 +41,8 @@ and the Apache 2.0 license.
 # Installation
 ## Source Code
 The source code for Gerbil is hosted on [Github](https://github.com/vyzo/gerbil).
-You can obtain the source tree directly in the command line by checking
-out the sources:
+You can obtain the source tree directly in the command line by cloning
+the repository:
 ```
 $ git clone https://github.com/vyzo/gerbil.git
 ```
@@ -57,10 +57,10 @@ xml stuffs in `src/std/build.ss` if you don't have it.
 The `:std/crypto` library in std requires libcrypto from openssl; similary
 comment out the crypto stuffs in `build.ss` if you don't have it.
 
-Initially, the std library was an initial packaging of libraries that worked
+Initially, the std library was a packaging of mature libraries that worked
 with the Gambit bootstrap out of the box. I am continuously porting
 more libraries from the various private versions of Gerbil, so you should
-expect more libraries to be continously merged.
+expect more of them to be continously merged.
 
 ## Build Instructions
 After checking out the source code from Github, let `$GERBIL_HOME` be
