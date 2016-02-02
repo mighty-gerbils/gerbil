@@ -1,7 +1,7 @@
 # Gerbil Scheme
 
 Gerbil is a new dialect of Scheme, designed around a multiresolution
-macro-system.
+macro system.
 
 The macro system is based on quote-syntax, and provides the full
 meta-syntactic tower with a native implementation of syntax-case.
@@ -51,10 +51,10 @@ $ git clone https://github.com/vyzo/gerbil.git
 I have tested the bootstrap with Gambit v4.8.4, but older versions
 starting with v4.6.0 should work as well.
 
-The `:std/xml` library in std requires libxml2 to build; comment it out
+The `:std/xml` library in std requires `libxml2` to build; comment it out
 xml stuffs in `src/std/build.ss` if you don't have it.
 
-The `:std/crypto` library in std requires libcrypto from openssl; similary
+The `:std/crypto` library in std requires `libcrypto` from openssl; similary
 comment out the crypto stuffs in `build.ss` if you don't have it.
 
 Initially, the std library was a packaging of mature libraries that worked
