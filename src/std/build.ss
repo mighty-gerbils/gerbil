@@ -55,6 +55,7 @@
         "srfi/13"
         "srfi/19"
         "srfi/42"
+        "srfi/43"
         "srfi/78"
         "srfi/95"
         ))
