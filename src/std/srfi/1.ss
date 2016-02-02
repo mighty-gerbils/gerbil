@@ -36,4 +36,4 @@ package: std/srfi
   lset-union  lset-intersection  lset-difference  lset-xor  lset-diff+intersection
   lset-union! lset-intersection! lset-difference! lset-xor! lset-diff+intersection!
   )
-(include "srfi-1-reference.scm")
+(include "srfi-1.scm")
