@@ -96,37 +96,40 @@ package: std
              (lp)))))))
 
 (def (make-selector-thread sel selector)
-  (cond
-   ((mutex? selector)
-    (make-thread
-     (lambda () (select1 sel selector mutex-select-e mutex-select-abort-e))
-     'select-mutex))
-   ((condition-variable? selector)
-    (make-thread
-     (lambda () (select1 sel selector io-wait-select-e void))
-     'select-io-wait))
-   ((and (pair? selector)
-         (mutex? (car selector))
-         (condition-variable? (cdr selector)))
-    (make-thread
-     (lambda () (select1 sel selector condvar-select-e void))
-     'select-condvar))
-   ((thread? selector)
-    (make-thread
-     (lambda () (select1 sel selector thread-select-e void))
-     'select-thread))
-   ((input-port? selector)
-    (let ((select-e (make-port-selector-wait selector))
-          (abort-e  (make-port-selector-abort selector)))
-      (make-thread
-       (lambda () (select1 sel selector select-e abort-e))
-       'select-input-port)))
-   ((or (real? selector) (time? selector))
-    (make-thread
-     (lambda () (select1 sel selector timeout-select-e void))
-     'select-timeout))
-   (else
-    (error "Bad selector" selector))))
+  (let (thread
+        (cond
+         ((mutex? selector)
+          (make-thread
+           (lambda () (select1 sel selector mutex-select-e mutex-select-abort-e))
+           'select-mutex))
+         ((condition-variable? selector)
+          (make-thread
+           (lambda () (select1 sel selector io-wait-select-e void))
+           'select-io-wait))
+         ((and (pair? selector)
+               (mutex? (car selector))
+               (condition-variable? (cdr selector)))
+          (make-thread
+           (lambda () (select1 sel selector condvar-select-e void))
+           'select-condvar))
+         ((thread? selector)
+          (make-thread
+           (lambda () (select1 sel selector thread-select-e void))
+           'select-thread))
+         ((input-port? selector)
+          (let ((select-e (make-port-selector-wait selector))
+                (abort-e  (make-port-selector-abort selector)))
+            (make-thread
+             (lambda () (select1 sel selector select-e abort-e))
+             'select-input-port)))
+         ((or (real? selector) (time? selector))
+          (make-thread
+           (lambda () (select1 sel selector timeout-select-e void))
+           'select-timeout))
+         (else
+          (error "Bad selector" selector))))
+    (thread-specific-set! thread sel)
+    thread))
 
 ;;; the Gambit port hierarchy and means of receiving data:
 ;; define-type port
@@ -273,8 +276,17 @@ package: std
     (for-each
       (lambda (thread)
         (unless (or (eq? thread self) (thread-dead? thread))
-          (thread-interrupt! thread (lambda () (raise 'interrupt)))))
+          (thread-interrupt! thread (lambda () (raise 'interrupt))))
+        (alet (sel (thread-specific thread))
+          (thread-specific-set! thread #f)
+          (selector-abort! sel)))
       threads)))
+
+(def (selector-abort! sel)
+  (when (and (pair? sel)
+             (eq? (macro-mutex-btq-owner (car sel))
+                  (current-thread)))
+      (mutex-unlock! (car sel))))
 
 (def (mutex-select-e sel mutex)
   (mutex-lock! mutex #f (selection-thread sel)))
@@ -330,7 +342,10 @@ package: std
          (cond
           ((or (event? evt) (event-handler? evt))
            (if (event-ready? evt)       ; poll
-             (event-select-e evt)
+             (begin
+               (for-each selector-abort! selectors)
+               (for-each event-abort! rest)
+               (event-select-e evt))
              (let (sel (event-selector evt))
                (if (eq? #f sel)         ; never-evt, skip
                  (lp rest selectors timeo)
@@ -411,6 +426,9 @@ package: std
     (event-selector (event-handler-e evt)))
    (else
     (error "Bad event" evt))))
+
+(def (event-abort! evt)
+  (selector-abort! (event-selector evt)))
 
 (def never-evt  (make-event #!void #f false))
 (def always-evt (make-event #!void #t true))
