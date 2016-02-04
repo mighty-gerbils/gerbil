@@ -12,6 +12,8 @@
         "make"
         (gxc: "event" "-e" "(include \"~~lib/_gambit#.scm\")")
         (gxc: "coroutine" "-e" "(include \"~~lib/_gambit#.scm\")")
+        ;; :std/actor
+        (gxc: "actor/message" "-e" "(include \"~~lib/_gambit#.scm\")")
         ;; :std/misc
         "misc/shuffle"
         ;; :std/net
