@@ -22,6 +22,12 @@
         "net/uri"
         ;; "net/requests"
         "net/socks"
+        ;; :std/actor
+        ;; "actor/message"
+        ;; "actor/proto"
+        ;; "actor/xdr"
+        ;; "actor/proto"
+        ;; "actor"
         ;; :std/text
         "text/hex"
         (gsc: "text/base64")
