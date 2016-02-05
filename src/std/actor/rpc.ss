@@ -46,13 +46,12 @@ package: std/actor
 (defproto rpc
   id: std/actor#rpc::proto
   ;; server <-> connection
-  event: (connection-shutdown address)
-  event: (connection-close address)
-  call:  (lookup-proto uuid) => _
+  event: (connection-shutdown)
+  event: (connection-close)
+  call:  (lookup id) => _
   ;; client -> server
   call:  (register id proto) => _
   call:  (unregister id) => _
-  call:  (lookup id) => _
   )
 
 ;;; rpc-server
@@ -66,7 +65,7 @@ package: std/actor
                    (open-tcp-server
                     (inet-address->string
                      (inet-address address)))))
-    (rpc-server-loop (if address never-evt sock)
+    (rpc-server-loop (or sock never-evt)
                      accept-e
                      connect-e)))
 
@@ -92,25 +91,27 @@ package: std/actor
       thr))
   
   (def (handle-protocol-action msg)
-    (with ((message payload src dest opt) msg)
-      (match payload
-        ((rpc.connection-shutdown)
+    (with ((message content src dest opt) msg)
+      (match content
+        ((!rpc.connection-shutdown)
          (cond
           ((hash-get threads src)
            => (lambda (address)
-                (rpc.connection-close src)
+                (!!rpc.connection-close src)
                 (hash-remove! conns address)
                 (hash-remove! theads thr)))
           (else
            (eprintf "Unexpected protocol mesage" msg))))
-        ((rpc.lookup-proto uuid)
-         (cond
-          ((hash-get protos uuid)
-           => (lambda (proto)
-                (!!value src proto k)))
-          (else
-           (!!value src #f k))))
-        ((rpc.register id proto k)
+        ((!rpc.lookup id k)
+         (let (uuid (UUID id))
+           (cond
+            ((hash-get actors uuid)
+             => (lambda (actor)
+                  (let (proto (hash-get protos uuid))
+                    (!!value src (values actor proto) k))))
+            (else
+             (!!value src #f k)))))
+        ((!rpc.register id proto k)
          (let (uuid (UUID id))
            (cond
             ((hash-get actors uuid)
@@ -119,57 +120,50 @@ package: std/actor
            (hash-put! actors uuid src)
            (hash-put! actors uuid proto)
            (!!value src uuid k)))
-        ((rpc.unregister id k)
+        ((!rpc.unregister id k)
          (let (uuid (UUID id))
            (hash-remove! actors uuid)
+           (hash-remove! protos uuid)
            (!!value src #!void k)))
-        ((rpc.lookup id k)
-         (let (uuid (UUID id))
-           (cond
-            ((hash-get actors uuid)
-             => (lambda (actor)
-                  (!!value src actor k)))
-            (else
-             (!!value src #f k)))))
         (else
          (eprintf "Unexpected message" msg)))))
   
   (let lp ()
     (<< ((! sock-evt => accept-conection)
          ((? message? msg)
-          (with ((message value source dest opts) msg)
-           (cond
-            ((eq? (current-thread) dest)
-             (handle-protocol-action msg))
-            ((remote? dest)
-             (let (address (inet-address->string (remote-address dest)))
-               (try
+          (let (dest (message-dest msg))
+            (cond
+             ((eq? (current-thread) dest)
+              (handle-protocol-action msg))
+             ((remote? dest)
+              (let (address (inet-address->string (remote-address dest)))
+                (try
+                 (cond
+                  ((hash-get conns address)
+                   => (lambda (handler)
+                        (thread-send handler msg)))
+                  (else
+                   (let (thr (open-connection address))
+                     (thread-send thr msg))))
+                 (catch (e)
+                   (eprintf "warning: [~a] error connecting client ~a ~a"
+                            (current-thread) address e)
+                   (rpc-send-error-response msg)))))
+             ((handle? dest)
+              (let (uuid (handle-uuid dest))
                 (cond
-                 ((hash-get conns address)
-                  => (lambda (handler)
-                       (thread-send handler msg)))
+                 ((hash-get actors uuid)
+                  => (lambda (actor) (send actor msg)))
                  (else
-                  (let (thr (open-connection address))
-                    (thread-send thr msg)))))))
-                (catch (e)
-                  (eprintf "warning: [~a] error connecting client ~a ~a"
-                           (current-thread) address e)
-                  (rpc-send-error-response msg)))
-            ((handle? dest)
-             (let (uuid (handle-uuid dest))
-               (cond
-                ((hash-get actors uuid)
-                 => (lambda (actor) (send actor msg)))
-                (else
-                 (rpc-send-error-response msg)))))
-            (else
-             (eprintf "warning: [~a] bad destination ~a"
-                      (current-thre) dest)
-             (rpc-send-error-response msg)))))
+                  (rpc-send-error-response msg)))))
+             (else
+              (eprintf "warning: [~a] bad destination ~a"
+                       (current-thre) dest)
+              (rpc-send-error-response msg)))))
         (value
          (eprintf "warning: [~a] unexepected message ~a"
-                  (current-thread) value)))
-    (lp)))
+                  (current-thread) value))))
+    (lp))
 
 (def (rpc-send-error-response msg)
   (when (message? msg)
@@ -220,4 +214,3 @@ package: std/actor
 
 (def (rpc-server-null-proto-connect sock)
   (values sock read-subu8vector write-subu8vector))
-
