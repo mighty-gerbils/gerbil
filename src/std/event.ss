@@ -6,14 +6,17 @@ package: std
 (import :gerbil/gambit/threads
         :gerbil/gambit/os)
 (export
-  select                       ; low level synchronization
-  ! !! sync poll               ; high level synchornization  interface
-  never-evt always-evt         ; bottom events
-  handle-evt                   ; event wrapper 
-  wrap-evt make-event          ; event constructors
-  event? event-handler?        ; event predicates
-  event-ready?                 ; non-blocking sync readiness check
-  event-selector               ; retrieve the selector of an event
+  select                                ; low level synchronization
+  ! !! sync poll                        ; high level synchornization
+  never-evt always-evt                  ; bottom events
+  make-event                            ; event constructors
+  handle-evt                            ;
+  wrap-evt choice-evt 
+  event                                 ; event predicates
+  event-handler?
+  event-set?
+  event-ready?                          ; non-blocking sync check
+  event-selector                        ; retrieve event selector
   )
 
 ;; ~~lib/_gambit#.scm
@@ -332,6 +335,9 @@ package: std
 (defstruct event-handler (e K)
   id: std/event#event-handler::t)
 
+(defstruct event-set (e)
+  id: std/event#event-set::t)
+
 (def (sync . args)
   (def ht (make-hash-table-eq))
   
@@ -340,6 +346,8 @@ package: std
       (match rest
         ([evt . rest]
          (cond
+          ((event-set? evt)
+           (lp (foldr cons rest (event-set-e evt)) selectors timeo))
           ((or (event? evt) (event-handler? evt))
            (if (event-ready? evt)       ; poll
              (begin
@@ -425,7 +433,7 @@ package: std
    ((event-handler? evt)
     (event-selector (event-handler-e evt)))
    (else
-    (error "Bad event" evt))))
+    (error "Bad event; cannot retrieve selector" evt))))
 
 (def (event-abort! evt)
   (selector-abort! (event-selector evt)))
@@ -452,6 +460,9 @@ package: std
       (make-input-port-evt evt))
      (else
       (lp (call-method ':event evt))))))
+
+(def (choice-evt selectors)
+  (make-event-set selectors))
 
 (def (make-mutex-evt mutex)
   (if (mutex? mutex)
