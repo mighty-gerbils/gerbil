@@ -9,7 +9,7 @@ package: std/actor
   message message::t message?
   message-e message-source message-dest message-options
   proxy proxy::t proxy? proxy-handler
-  -> send send-message
+  -> send send-message send-message/timeout
   << <- receive-message
   )
         
@@ -46,6 +46,9 @@ package: std/actor
 
 (def (send-message dest value (options #f))
   (send dest (make-message value (current-thread) dest options)))
+
+(def (send-message/timeout dest value timeo)
+  (send dest (make-message value (current-thread) dest [timeout: timeo])))
 
 (defsyntax (-> stx)
   (syntax-case stx ()
