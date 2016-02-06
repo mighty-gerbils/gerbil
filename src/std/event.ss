@@ -348,6 +348,10 @@ package: std
          (cond
           ((event-set? evt)
            (lp (foldr cons rest (event-set-e evt)) selectors timeo))
+          ((and (event-handler? evt)
+                (event-set? (event-handler-evt evt)))
+           (let (evts (choice-evt-handlers evt))
+             (lp (foldr cons rest evts) selectors timeo)))
           ((or (event? evt) (event-handler? evt))
            (if (event-ready? evt)       ; poll
              (begin
@@ -393,7 +397,7 @@ package: std
 (def (timeout? e)
   (or (real? e) (time? e)))
 
-(def (timeout-expired? timeo now)
+(def (timeout-expired? timeo)
   (and (time? timeo)
        (< (time->seconds timeo) (##current-time-point))))
 
@@ -415,6 +419,11 @@ package: std
    (else
     (error "Bad event" evt))))
 
+(def (event-handler-evt evt)
+  (if (event-handler? evt)
+    (event-handler-evt (event-handler-e evt))
+    evt))
+   
 (def (event-select-e evt)
   (cond
    ((event? evt)
@@ -445,7 +454,8 @@ package: std
 (def (wrap-evt obj)
   (let lp ((evt obj))
     (cond
-     ((or (event? evt) (event-handler? evt)) evt)
+     ((or (event? evt) (event-handler? evt) (event-set? evt))
+      evt)
      ((mutex? evt)
       (make-mutex-evt evt))
      ((condition-variable? evt)
@@ -463,6 +473,25 @@ package: std
 
 (def (choice-evt selectors)
   (make-event-set selectors))
+
+(def (choice-evt-handlers evt)
+  (def (wrap-handlers evt handlers)
+    (match handlers
+      ([K . rest]
+       (wrap-handlers (handle-evt evt K) rest))
+      (else evt)))
+        
+  (let lp ((evt evt) (handlers []))
+    (cond
+     ((event-handler? evt)
+      (lp (event-handler-e evt)
+          (cons (event-handler-K evt) handlers)))
+     ((event-set? evt)
+      (let (evts (event-set-e evt))
+        (map (lambda (evt) (wrap-handlers evt handlers))
+             evts)))
+     (else
+      (error "Bad event set" evt)))))
 
 (def (make-mutex-evt mutex)
   (if (mutex? mutex)
