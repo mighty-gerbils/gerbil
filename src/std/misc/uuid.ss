@@ -7,15 +7,25 @@ package: std/misc
         :std/crypto/digest
         :std/crypto/etc
         )
-(export UUID UUID->u8vector)
+(export UUID uuid->u8vector uuid->symbol)
+
+(defstruct uuid (bytes sym))
 
 (def (UUID obj)
-  (error "XXX Implement me!")
+  XXX
   )
 
-(def (UUID->u8vector uuid-sym)
-  (error "XXX Implement me"
-  )
+(def (uuid->u8vector uuid)
+  (uuid-bytes uuid))
+
+(def (uuid->symbol uuid)
+  (cond
+   ((uuid-sym uuid) => values)
+   (else
+    XXX
+    )))
+
+  
 
 
   

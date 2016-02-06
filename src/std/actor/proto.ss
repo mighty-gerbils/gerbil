@@ -4,6 +4,8 @@
 package: std/actor
 
 (import :std/event
+        :std/actor/message
+        ;; :std/actor/xdr
         )
 (export
   !call make-!call !call? !call-e !call-k
@@ -21,8 +23,21 @@ package: std/actor
 (defstruct !event (e))
 
 (defrules !!call ()
-  ((_ dest e k)
-   (send-message dest (make-!call e k))))
+  ((_ dest e k send-e args ...)
+   (let (token k)
+     (send-e dest (make-!call e token) args ...)
+     (<- ((!values val (eq? token))
+          val)
+         ((!error msg (eq? token))
+          (error (string-append "remote error: " msg))))))
+  ((recur dest e)
+   (recur dest e (gensym 'call) send-message))
+  ((recur dest e timeout: timeo)
+   (recur dest e (gensym 'call) send-message/timeout timeo))
+  ((recur dest e k)
+   (recur dest e k send-message))
+  ((recur dest e k timeout: timeo)
+   (recur dest e k send-message/timeout timeo)))
 
 (defrules !!value ()
   ((_ dest e k)
@@ -36,5 +51,35 @@ package: std/actor
   ((_ dest e)
    (send-message dest (make-!event e))))
 
+;;; protocols
+;; defproto name
+;;   [extend: proto-id]
+;;   [id: proto-id]
+;;   [call: (message . args) => type] ...
+;;   [event: (message . args)] ...
+;;   [struct: (struct . types)] ...
+;;  args:
+;;   _ or id or (id type)
+;;  types:
+;;   _ or xdr-type decl
+;; messages: call: or event:
+;;  creates message struct and !message and !!message macros
+;;  !message wraps a !call or !event around the value
+;;  !!message wraps and sends to dest
+;; 
 (defrules defproto ()
   )
+
+;;; protocol i/o
+(def (rpc-proto-write-message proto msg outp)
+  XXX
+  )
+
+(def (rpc-proto-read-message-envelope inp)
+  XXX
+  )
+
+(def (rpc-proto-read-message-content proto inp)
+  XXX
+  )
+

@@ -26,7 +26,7 @@
         ;; "actor/message"
         ;; "actor/proto"
         ;; "actor/xdr"
-        ;; "actor/proto"
+        ;; "actor/proto/null"
         ;; "actor"
         ;; :std/text
         "text/hex"
