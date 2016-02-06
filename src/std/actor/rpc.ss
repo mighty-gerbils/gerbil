@@ -10,7 +10,7 @@ package: std/actor
         :std/event
         :std/misc/uuid
         :std/actor/message
-        :std/actor/proto
+        :std/actor/proto/message
         :std/actor/proto/null
         )
 (export
@@ -53,6 +53,7 @@ package: std/actor
   ;; client -> server
   call:  (register id proto) => _
   call:  (unregister id) => _
+  call:  (resolve id) => _
   )
 
 ;;; rpc-server
@@ -95,7 +96,7 @@ package: std/actor
   (def conns                            ; address => thread
     (make-hash-table))
   (def threads                          ; threads => address
-    (make-hash-table))
+    (make-hash-table-eq))
   (def monitor
     (spawn rpc-monitor-thread))
 
@@ -158,8 +159,23 @@ package: std/actor
            (hash-put! actor-threads uuids
                       (remove uuids (hash-get actor-threads thread)))
            (!!value src #!void k)))
+        ((!rpc.resolve id k)
+         (let* ((uuid (UUID id))
+                (uuids (uuuid->symbol uuid)))
+           (cond
+            ((hash-get actors uuids)
+             => (lambda (actor) (!!value src actor k)))
+            (else
+             (!!value src #f k)))))
         (else
          (warning "Unexpected message ~a" msg)))))
+
+  (def (actor-thread-e actor)
+    (cond
+     ((thread? actor) actor)
+     ((proxy? actor) (proxy-handler actor))
+     (else
+      (error "Bad actor" actor))))
   
   (def (remove-thread! thread)
     ;; connection threads
@@ -184,7 +200,7 @@ package: std/actor
              ((eq? (current-thread) dest)
               (handle-protocol-action msg))
              ((remote? dest)
-              (let (address (inet-address->string (remote-address dest)))
+              (let (address (remote-address dest))
                 (cond
                  ((hash-get conns address)
                   => (lambda (handler)
@@ -216,7 +232,7 @@ package: std/actor
     (with ((message content src) msg)
       (match content
         ((!call _ k)
-         (!!error src "connection error ~a" k))
+         (!!error (message-source msg) "connection error ~a" k))
         (else #!void)))))
 
 (def (rpc-server-connection rpc-server sock proto-e)
@@ -228,7 +244,7 @@ package: std/actor
 
 (def (rpc-client-connection rpc-server address proto-e)
   (try
-   (let (cli (open-tcp-client address address))
+   (let (cli (open-tcp-client (inet-address->string address) address))
      (rpc-connection-loop rpc-server cli proto-e))
    (catch (e)
      (rpc-connection-cleanup rpc-server e #f))))
@@ -270,8 +286,8 @@ package: std/actor
                    => (lambda (timeo)
                         (hash-remove! continuation-timeouts wire-id)
                         (hash-remove! timeouts timeo)))))))))
-      (hash-keys continuations)
-      (rpc-connection-shutdown rpc-server)))
+      (hash-keys continuations))
+    (rpc-connection-shutdown rpc-server))
   
   (def (read-message)
     (let (data (try (read-e sock) (catch (e) e)))
@@ -296,9 +312,9 @@ package: std/actor
                        (set! (!event-e (message-e msg))
                          val))))
                   ((? !value?)
-                   (dispatch-value msg !value-k !value-k-set! !value-e-set!))
+                   (dispatch-value msg bytes !value-k !value-k-set! !value-e-set!))
                   ((? !error?)
-                   (dispatch-value msg !error-k !error-k-set! !error-e-set!))
+                   (dispatch-value msg bytes !error-k !error-k-set! !error-e-set!))
                   ((? not)
                    (dispatch-call msg message-e-set!)))
                 (begin
@@ -310,26 +326,25 @@ package: std/actor
         (warn "connection error ~a" e)
         (close-connection)))))
   
-  (def (dispatch-call msg message-content-set!)
+  (def (dispatch-call msg bytes message-content-set!)
     (let (uuid (message-dest msg))
       (match (!!rpc.lookup rpc-server uuid)
         ((values actor proto)
-         (message-content-set!
-          msg (rpc-proto-read-message-content proto bytes))
+         (message-content-set! msg
+           (rpc-proto-read-message-content proto bytes))
          (set! (message-dest msg)
            actor)
          (set! (message-src msg)
-           (make-remote (current-thread) uuid sock-address))
+           (make-remote rpc-server uuid sock-address))
          (send actor msg)
          (loop))
         (#f
-         (warning "cannot route call; no actor binding ~a"
-                  dest)
+         (warning "cannot route call; no actor binding ~a" dest)
          (rpc-proto-read-message-content #f bytes)
          (loop)))))
 
     
-  (def (dispatch-value msg value-k value-k-set! value-e-set!)
+  (def (dispatch-value msg bytes value-k value-k-set! value-e-set!)
     (let (cont (hash-get continuations (value-k content)))
       (match cont
         ((values actor k proto)
@@ -337,12 +352,12 @@ package: std/actor
          (value-e-set! content
                        (rpc-proto-read-message-conent proto bytes))
          (set! (message-src msg)
-           (make-remote (current-thread) (message-src msg) sock-address))
+           (make-remote rpc-server (message-src msg) sock-address))
          (send actor msg)
          (loop))
         (#f
          (warning "cannot route value; bogus continuation ~a"
-                  (!value-k content))
+           (value-k content))
          (loop)))))
     
   (def (write-message msg)
@@ -386,19 +401,20 @@ package: std/actor
         (hash-remove! timeouts timeo))))
 
   (def (marshall-and-write proto msg)
-    (let (bytes (open-output-u8vector))
-      (let (e (try (rpc-proto-write-message proto msg bytes) #!void
-                   (catch (e) e)))
-        (if (void? e)
-          (connection-write-and-loop (get-output-u8vector))
-          (let (content (message-e msg))
-            (match content
-              ((!call e wire-id)
-               (dispatch-error wire-id "marshal error")
-               (loop))
-              (else
-               (loop))))))))
-
+    (let (e (try (rpc-proto-marshall-message proto msg)
+                 (catch (e) e)))
+        (if (u8vector? e)
+          (connection-write-and-loop e)
+          (begin
+            (warning "marshall error ~a" e)
+            (let (content (message-e msg))
+              (match content
+                ((!call e wire-id)
+                 (dispatch-error wire-id "marshall error")
+                 (loop))
+                (else
+                 (loop))))))))
+  
   (def (connection-write-and-loop data)
     (let (e (try (write-e data) #!void (catch (e) e)))
       (if (void? e)
@@ -431,10 +447,6 @@ package: std/actor
         (! sock (read-message))
         (! (choice-evt (hash-keys timeouts))
            => dispatch-timeout)
-        (! (choice-evts (hash-keys actor-threads))
-           => remove-thread!)
-        ((? thread? thread)
-         (remove-thread! thread))
         ((? message? msg)
          (write-message msg))
         (bogus
@@ -454,32 +466,10 @@ package: std/actor
              (else
               (rpc-send-error-response msg)
               (lp)))))
-        (value
-         (warning "unexpected message ~a" value)
-         (lp)))))
+        (value (lp))
+        (else #!void))))
 
 (def (rpc-connection-cleanup rpc-server exn sock)
   (warning "connection error ~a" exn)
   (when sock (close-port sock))
   (rpc-connection-shutdown rpc-server))
-
-;;; wire protocol implementation
-;; Handshake:
-;;  client sends hello byte with the protocol byte
-;;  server replies with rpc-proto-connect-accept if it
-;;  supports the requested protocol or rpc-proto-connect-reject
-(def rpc-proto-connect-hello  #x00)
-(def rpc-proto-connect-accept #x01)
-(def rpc-proto-connect-reject #x02)
-;; messages
-(def rpc-proto-message        #x00)
-(def rpc-proto-message-call   #x01)
-(def rpc-proto-message-value  #x02)
-(def rpc-proto-message-error  #x03)
-(def rpc-message-event        #x04)
-;; protocols
-(def rpc-proto-null          #x00)
-(def rpc-proto-cookie        #x01)
-(def rpc-proto-cipher        #x02)
-(def rpc-proto-cipher-cookie #x03)
-

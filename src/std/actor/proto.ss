@@ -5,7 +5,6 @@ package: std/actor
 
 (import :std/event
         :std/actor/message
-        ;; :std/actor/xdr
         )
 (export
   !call make-!call !call? !call-e !call-k
@@ -68,18 +67,5 @@ package: std/actor
 ;;  !!message wraps and sends to dest
 ;; 
 (defrules defproto ()
-  )
-
-;;; protocol i/o
-(def (rpc-proto-write-message proto msg outp)
-  XXX
-  )
-
-(def (rpc-proto-read-message-envelope inp)
-  XXX
-  )
-
-(def (rpc-proto-read-message-content proto inp)
-  XXX
   )
 

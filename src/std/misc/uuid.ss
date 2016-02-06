@@ -7,7 +7,7 @@ package: std/misc
         :std/crypto/digest
         :std/crypto/etc
         )
-(export UUID uuid->u8vector uuid->symbol)
+(export make-uuid UUID uuid->u8vector uuid->symbol)
 
 (defstruct uuid (bytes sym))
 
@@ -24,6 +24,10 @@ package: std/misc
    (else
     XXX
     )))
+
+(def (random-uuid)
+  XXX
+  )
 
   
 

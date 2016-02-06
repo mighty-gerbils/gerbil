@@ -1,10 +1,10 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor rpc null protocol
-package: std/actor/null
+package: std/actor/proto
 
-(import
-  )
+(import :std/actor/proto
+        )
 
 (export
   rpc-server-null-proto-accept
