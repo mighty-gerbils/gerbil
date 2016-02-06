@@ -701,11 +701,13 @@
   (table-ref ht k #f))
 (define (hash-put! ht k v)
   (table-set! ht k v))
-(define (hash-update! ht k v update)
-  (let ((cv (hash-ref ht k _gx#atom)))
-    (if (eq? cv _gx#atom)
-      (hash-put! ht k v)
-      (hash-put! ht k (update v)))))
+(define (hash-update! ht k update #!optional (default #!void))
+  (let* ((cv (hash-ref ht k _gx#atom))
+         (v (if (eq? cv _gx#atom)
+              (update default)
+              (update cv))))
+    (hash-put! ht k v)))
+
 (define (hash-remove! ht k)
   (table-set! ht k))
 
