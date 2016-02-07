@@ -16,10 +16,16 @@ package: std/actor
   )
 
 ;;; rpc messages
-(defstruct !call (e k))
-(defstruct !value (e k))
-(defstruct !error (e k))
-(defstruct !event (e))
+(defstruct !rpc ()
+  id: std/actor#!rpc::t))
+(defstruct (!call !rpc) (e k)
+  id: std/actor#!call::t))
+(defstruct (!value !rpc) (e k)
+  id: std/actor#!value::t)
+(defstruct (!error !rpc) (e k)
+  id: std/actor#!error::t)
+(defstruct (!event !rpc) (e)
+  id: std/actor#!event::t))
 
 (defrules !!call ()
   ((_ dest e k send-e args ...)
@@ -51,6 +57,9 @@ package: std/actor
    (send-message dest (make-!event e))))
 
 ;;; protocols
+(defstruct !protocol (id types)
+  id: std/actor#protocol::t)
+
 ;; defproto name
 ;;   [extend: proto-id]
 ;;   [id: proto-id]
@@ -69,3 +78,5 @@ package: std/actor
 (defrules defproto ()
   )
 
+;; default proto type registry:
+;; remote uuid
