@@ -10,10 +10,6 @@ package: std/actor
         )
 (export #t)
 
-;; _gambit#.scm
-(extern namespace: #f
-  macro-table-test)
-
 (begin-foreign
   (c-declare #<<END-C
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
@@ -87,10 +83,9 @@ END-C
 (def xdr-proto-type-keyword   #x09)
 (def xdr-proto-type-values    #x0a)
 (def xdr-proto-type-vector    #x0b)
-(def xdr-proto-type-u8vector  #x0b)
-(def xdr-proto-type-hash      #x0c)
-(def xdr-proto-type-reserved1 #x0d)
-(def xdr-proto-type-reserved2 #x0e)
+(def xdr-proto-type-u8vector  #x0c)
+(def xdr-proto-type-hash      #x0d)
+(def xdr-proto-type-reserved1 #x0e)
 (def xdr-proto-type-structure #x0f)
 
 (def xdr-proto-type-hash-eq    #x00)
@@ -120,7 +115,6 @@ END-C
 
 (def (xdr-object-type obj)
   (cond
-   ((object? obj)     xdr-proto-type-structure)
    ((void? obj)       xdr-proto-type-void)
    ((not obj)         xdr-proto-type-false)
    ((true? obj)       xdr-proto-type-true)
@@ -135,6 +129,7 @@ END-C
    ((vector? obj)     xdr-proto-type-vector)
    ((u8vector? obj)   xdr-proto-type-u8vector)
    ((hash-table? obj) xdr-proto-type-hash)
+   ((object? obj)     xdr-proto-type-structure)
    (else #f)))
 
 (def (xdr-type-registry-get type-id)
@@ -159,7 +154,8 @@ END-C
 (def xdr-void-read  void)
 (def xdr-false-read false)
 (def xdr-true-read  true)
-(def (xdr-null-read) '())
+(def (xdr-null-read . args)
+  '())
 
 (def (xdr-pair-read port)
   (cons
@@ -168,16 +164,20 @@ END-C
 
 (def (xdr-int-read port)
   (let* ((hd (read-u8 port))
+         (_  (when (eof-object? hd)
+               (error "xdr read error; premature port end")))
          (sign (not (fxzero? (fxand hd #x80))))
          (bytes (fxand hd #x7f))
          (bytes (if (fx< bytes 127)
                   bytes
-                  (xdr-int-read port))))
+                  (xdr-read-object port))))
     (let lp ((k 0) (value 0) (shift 0))
       (cond
        ((fx< k bytes)
         (lp (fx1+ k)
             (let (u8 (read-u8 port))
+              (when (eof-object? u8)
+                (error "xdr read error; premature port end"))
               (bitwise-ior (arithmetic-shift u8 shift)
                            value))
             (fx+ shift 8)))
@@ -192,7 +192,7 @@ END-C
       (error "xdr read error; premature port end" port))))
 
 (def (xdr-binary-read port K)
-  (let* ((len (xdr-int-read port))
+  (let* ((len (xdr-read-object port))
          (buf (make-u8vector len))
          (ilen (read-subu8vector buf 0 len port)))
     (if (fx= len ilen)
@@ -211,12 +211,14 @@ END-C
    port (lambda (bytes) (string->keyword (bytes->string bytes)))))
 
 (def (xdr-vector-like-read makef start port)
-  (let* ((len (xdr-int-read port))
+  (let* ((len (xdr-read-object port))
          (ilen (fx+ start len))
          (obj (makef ilen)))
     (let lp ((k start))
       (if (fx< k ilen)
-        (##vector-set! obj k (xdr-read-object port))
+        (begin
+          (##vector-set! obj k (xdr-read-object port))
+          (lp (fx1+ k)))
         obj))))
 
 (def (xdr-values-read port)
@@ -245,7 +247,7 @@ END-C
                  (else
                   list->hash-table)))
          (pairs (xdr-inline-list-read port)))
-    (list->hash-table pairs)))
+    (makef pairs)))
 
 (def (xdr-structure-read port type)
   (let (type-id (xdr-read-object port))
@@ -269,8 +271,8 @@ END-C
 
 (def (xdr-pair-write obj port)
   (write-u8 xdr-proto-type-pair port)
-  (xdr-write-object port (car obj))
-  (xdr-write-object port (cdr obj)))
+  (xdr-write-object (car obj) port)
+  (xdr-write-object (cdr obj) port))
 
 (def (xdr-int-write obj port)
   (write-u8 xdr-proto-type-int port)
@@ -281,7 +283,7 @@ END-C
          (rem   (fxremainder bits 8))
          (bytes (if (fxzero? rem) bytes (fx1+ bytes)))
          ((values hd len)
-          (if (fx<  bytes 128)
+          (if (fx<  bytes 127)
             (values
               (fxior (fxarithmetic-shift sign 7)
                      bytes)
@@ -293,11 +295,10 @@ END-C
     (write-u8 hd port)
     (when len
       (xdr-int-write bytes port))
-    (let lp ((k 0))
+    (let lp ((k 0) (value obj))
       (when (fx< k bytes)
-        (write-u8 (bitwise-and #xff obj) port)
-        (arithmetic-shift obj -8)
-        (lp (fx1+ k))))))
+        (write-u8 (bitwise-and #xff value) port)
+        (lp (fx1+ k) (arithmetic-shift obj -8))))))
 
 (def (xdr-float-write obj port)
   (write-u8 xdr-proto-type-float port)
@@ -305,29 +306,29 @@ END-C
     (xdr-float->bytes! obj bytes)
     (write-u8vector bytes 0 8 port)))
 
-(def (xdr-binary-write u8v port)
-  (let (len (u8vector-length u8v))
-    (xdr-int-write (u8vector-length bytes) port)
-    (write-subu8vector bytes 0 (u8vector-length bytes) port)))
+(def (xdr-binary-write bytes port)
+  (let (len (u8vector-length bytes))
+    (xdr-int-write len port)
+    (write-subu8vector bytes 0 len port)))
 
 (def (xdr-string-write obj port)
   (write-u8 xdr-proto-type-string port)
-  (xdr-binary-write (string->bytes obj)))
+  (xdr-binary-write (string->bytes obj) port))
 
 (def (xdr-symbol-write obj port)
   (write-u8 xdr-proto-type-symbol port)
-  (xdr-binary-write (string->bytes (symbol->string obj))))
+  (xdr-binary-write (string->bytes (symbol->string obj)) port))
 
 (def (xdr-keyword-write obj port)
   (write-u8 xdr-proto-type-keyword port)
-  (xdr-binary-write (string->bytes (keyword->string obj))))
+  (xdr-binary-write (string->bytes (keyword->string obj)) port))
 
 (def (xdr-vector-like-write obj start port)
   (let* ((len (##vector-length obj))
          (olen (fx- len start)))
     (xdr-int-write olen port)
     (let lp ((k start))
-      (when (k < len)
+      (when (fx< k len)
         (xdr-write-object (##vector-ref obj k) port)
         (lp (fx1+ k))))))
 
@@ -340,7 +341,7 @@ END-C
   (xdr-vector-like-write obj 0 port))
 
 (def (xdr-u8vector-write obj port)
-  (write-u8 xdr-proto-type-u8vector)
+  (write-u8 xdr-proto-type-u8vector port)
   (xdr-binary-write obj port))
 
 (def (xdr-inline-list-write obj port)
@@ -349,18 +350,18 @@ END-C
 
 (def (xdr-hash-write obj port)
   (write-u8 xdr-proto-type-hash port)
-  (let (testf (macro-table-test obj))
+  (let (testf (##vector-ref obj 2))     ; _system#.scm
     (cond
      ((or (not testf)
           (eq? testf eq?)
           (eq? testf ##eq?))
-      (write-u8 xdr-proto-type-hash-eq))
+      (write-u8 xdr-proto-type-hash-eq port))
      ((or (eq? testf eqv?)
           (eq? testf ##eqv?))
-      (write-u8 xdr-proto-type-hash-eqv))
+      (write-u8 xdr-proto-type-hash-eqv port))
      (else
-      (write-u8 xdr-proto-type-hash-equal))))
-  (xdr-inline-list-write (hash->list obj)))
+      (write-u8 xdr-proto-type-hash-equal port))))
+  (xdr-inline-list-write (hash->list obj) port))
 
 (def (xdr-structure-write obj port)
   (cond
@@ -372,6 +373,7 @@ END-C
       (cond
        ((xdr-type-registry-get type-id)
         => (lambda (xdr)
+             (write-u8 xdr-proto-type-structure port)
              (xdr-write-object type-id)
              ((XDR-write xdr) obj port)))
        (else
@@ -394,5 +396,4 @@ END-C
   (xdr-proto-type-u8vector  u8vector-t  u8vector?   xdr-u8vector-read xdr-u8vector-write)
   (xdr-proto-type-hash      hash-t      hash-table? xdr-hash-read     xdr-hash-write)
   (xdr-proto-type-reserved1 reserved1-t void?       xdr-void-read     xdr-void-write)
-  (xdr-proto-type-reserved2 reserved2-t void?       xdr-void-read     xdr-void-write)
   (xdr-proto-type-structure structure-t object?     xdr-structure-read xdr-structure-write))

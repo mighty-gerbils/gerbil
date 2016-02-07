@@ -24,7 +24,7 @@
         "net/socks"
         ;; :std/actor
         "actor/message"
-        (gxc: "actor/xdr" "-e" "(include \"~~lib/_gambit#.scm\")")
+        "actor/xdr"
         ;; "actor/proto"
         ;; "actor/proto/message"
         ;; "actor/proto/null"
