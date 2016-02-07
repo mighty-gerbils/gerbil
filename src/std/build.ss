@@ -23,12 +23,12 @@
         ;; "net/requests"
         "net/socks"
         ;; :std/actor
-        ;; "actor/message"
+        "actor/message"
+        (gxc: "actor/xdr" "-e" "(include \"~~lib/_gambit#.scm\")")
         ;; "actor/proto"
-        ;; "actor/xdr"
-        ;; "actor/rpc"
         ;; "actor/proto/message"
         ;; "actor/proto/null"
+        ;; "actor/rpc"
         ;; "actor"
         ;; :std/text
         "text/hex"

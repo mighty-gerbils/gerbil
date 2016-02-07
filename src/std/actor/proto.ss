@@ -5,6 +5,7 @@ package: std/actor
 
 (import :std/event
         :std/actor/message
+        :std/actor/xdr
         )
 (export
   !call make-!call !call? !call-e !call-k
@@ -80,3 +81,5 @@ package: std/actor
 
 ;; default proto type registry:
 ;; remote uuid
+
+;; standard types
