@@ -8,12 +8,16 @@ package: std/actor
         :std/actor/xdr
         )
 (export
+  !prc !rpc?
   !call make-!call !call? !call-e !call-k
-  !value make-!value !value-e !value-k
-  !error make-!error !error-e !error-k
-  !event make-!event !event-e
+  !value make-!value !value? !value-e !value-k
+  !error make-!error !error? !error-e !error-k
+  !event make-!event !event? !event-e
   !!call !!value !!error !!event
+  !protocol make-!protocol !protocol?
+  !protocol-id !protocol-super !protocol-types
   defproto
+  defproto-default-type
   )
 
 ;;; rpc messages
@@ -58,7 +62,7 @@ package: std/actor
    (send-message dest (make-!event e))))
 
 ;;; protocols
-(defstruct !protocol (id types)
+(defstruct !protocol (id super types)
   id: std/actor#protocol::t)
 
 ;; defproto name
@@ -76,10 +80,29 @@ package: std/actor
 ;;  !message wraps a !call or !event around the value
 ;;  !!message wraps and sends to dest
 ;; 
-(defrules defproto ()
-  )
+(defsyntax (defproto stx)
+  (syntax-case stx ()
+    ((_ clause ...)
+     XXX
+     )))
 
-;; default proto type registry:
-;; remote uuid
+;; default proto type registry
+(def *default-proto-type-registry*
+  (make-hash-table-eq))
 
-;; standard types
+;; default protocol types
+(defrules defproto-default-type ()
+  ((_ rule ...)
+   (begin (defproto-type-decl rule) ...)))
+
+(defrules defproto-default-type-decl ()
+  ((_ (type::t type-t type? xdr-type-read xdr-type-write))
+   (begin
+     (def type-t
+       (make-XDR type? xdr-type-read xdr-type-write))
+     (hash-put! *default-proto-type-registry*
+                (##type-id type::t)
+                type-t))))
+
+
+     

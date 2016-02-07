@@ -10,6 +10,8 @@ package: std/actor
         :std/event
         :std/misc/uuid
         :std/actor/message
+        :std/actor/xdr
+        :std/actor/proto
         :std/actor/proto/message
         :std/actor/proto/null
         )
@@ -47,9 +49,44 @@ package: std/actor
     (set! (remote-handle-proto self)
       proto)))
 
+(def (xdr-uuid-read port)
+  (let (bytes (xdr-binary-read port values))
+    (make-uuid bytes #f)))
+
+(def (xdr-uuid-write obj port)
+  (xdr-binary-write (uuid-bytes obj) port))
+
+(def (xdr-handle-read port)
+  (let (uuid (xdr-read-object por))
+    (make-handle (current-rpc-server) uuid)))
+
+(def (xdr-handle-write obj port)
+  (with ((handle _ uuid) obj)
+    (xdr-write-object uuid port)))
+
+(def (xdr-remote-read port)
+  (let* ((uuid (xdr-read-object port))
+         (address (xdr-read-object port))
+         (proto (xdr-read-object proto)))
+    (make-remote (current-rpc-server)
+                 address uuid
+                 (xdr-type-registry-get proto))))
+
+(def (xdr-remote-write obj port)
+  (with ((remote _ uuid address proto) obj)
+    (xdr-write-object uuid port)
+    (xdr-write-object address port)
+    (xdr-write-object (and proto (!protocol-id proto)) port)))
+
+(defproto-default-type
+  (uuid::t uuid-t uuid? xdr-uuid-read xdr-uuid-write)
+  (handle::t handle-t remote? xdr-handle-read xdr-handle-write)
+  (remote::t remote-t remote? xdr-remote-read xdr-remote-write))
+
+
 ;; rpc server protocol
 (defproto rpc
-  id: std/actor#rpc::proto
+  id: std/actor#rpc
   ;; server <-> connection
   event: (connection-shutdown)
   event: (connection-close)
