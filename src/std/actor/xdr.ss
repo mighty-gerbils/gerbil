@@ -50,9 +50,6 @@ END-C
 (defstruct XDR (pred read write)
   id: std/actor#XDR::t)
 
-(defstruct opaque (data)
-  id: std/actor#opaque::t)
-
 (def (xdr-read port types)
   (parameterize ((current-xdr-type-registry types))
     (xdr-read-object port)))
@@ -69,8 +66,6 @@ END-C
 ;; structure objects must eitherhave an entry in the type registry
 ;;  mapping their type id to an XDR object, or have an :xdr
 ;;  method that produces an XDR encodable object
-;; when decoding, objects that cant be decoded because of
-;;  unknown type, they get decoded to opaque.
 (def xdr-proto-type-void      #x00)
 (def xdr-proto-type-false     #x01)
 (def xdr-proto-type-true      #x02)
@@ -91,7 +86,6 @@ END-C
 (def xdr-proto-type-hash-eq    #x00)
 (def xdr-proto-type-hash-eqv   #x01)
 (def xdr-proto-type-hash-equal #x02)
-
 
 (def *xdr-proto-types*
   (make-vector 16))
