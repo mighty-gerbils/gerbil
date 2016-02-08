@@ -90,11 +90,11 @@ package: std/actor
   ;; server <-> connection
   event: (connection-shutdown)
   event: (connection-close)
-  call:  (lookup id) => _
+  call:  (lookup id)
   ;; client -> server
-  call:  (register id proto) => _
-  call:  (unregister id) => _
-  call:  (resolve id) => _
+  call:  (register id proto)
+  call:  (unregister id)
+  call:  (resolve id)
   )
 
 ;;; rpc-server
