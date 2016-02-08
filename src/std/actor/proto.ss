@@ -19,6 +19,7 @@ package: std/actor
   !protocol-id !protocol-super !protocol-types
   defproto
   defproto-default-type
+  *default-proto-type-registry*
   (phi: +1 make-protocol-info protocol-info?
         protocol-info-runtime-identifier
         protocol-info-id

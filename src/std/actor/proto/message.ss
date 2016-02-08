@@ -4,6 +4,7 @@
 package: std/actor/proto
 
 (import :gerbil/gambit/ports
+        :std/misc/uuid
         :std/actor/message
         :std/actor/proto
         :std/actor/xdr
@@ -36,8 +37,6 @@ package: std/actor/proto
 (def rpc-proto-cipher        #x02)
 (def rpc-proto-cipher-cookie #x03)
 
-
-
 ;;; protocol i/o
 (def (rpc-proto-marshall-message msg proto)
   (let (outp (open-output-u8vector))
@@ -47,7 +46,7 @@ package: std/actor/proto
 ;; wire representation
 ;; rpc-proto-message-type dest content
 (def (rpc-proto-write-message msg proto port)
-  (with ((message content dest) msg)
+  (with ((message content _ dest) msg)
     (cond
      ((!rpc? content)
       (cond
@@ -64,8 +63,10 @@ package: std/actor/proto
       (else
        (write-u8 rpc-proto-message-raw port)))
     (parameterize ((current-xdr-type-registry
-                    (!protocol-types proto)))
-      (xdr-write-object dest port)
+                    (if proto
+                      (!protocol-types proto)
+                      *default-proto-type-registry*)))
+      (xdr-uuid-write dest port)
       (match content
         ((or (!call e k)
              (!value e k)
@@ -85,7 +86,7 @@ package: std/actor/proto
          
 (def (rpc-proto-read-message-envelope port)
   (let* ((type (read-u8 port))
-         (dest (xdr-read-object port)))
+         (dest (xdr-uuid-read port)))
     (make-message
      (cond
       ((eq? type rpc-proto-message-call)
@@ -104,32 +105,36 @@ package: std/actor/proto
 
 ;; return modify msg content in place, return it
 (def (rpc-proto-read-message-content msg proto port)
-  (let (content (message-e msg))
-    (cond
-     ((!rpc? content)
+  (parameterize ((current-xdr-type-registry
+                  (if proto
+                    (!protocol-types proto)
+                    *default-proto-type-registry*)))
+    (let (content (message-e msg))
       (cond
-       ((!call? content)
-        (set! (!call-e content)
-          (xdr-read-object port))
-        (set! (!call-k content)
-          (xdr-read-object port)))
-       ((!value? content)
-        (set! (!value-e content)
-          (xdr-read-object port))
-        (set! (!value-k content)
-          (xdr-read-object port)))
-       ((!error? content)
-        (set! (!error-e content)
-          (xdr-read-object port))
-        (set! (!error-k content)
-          (xdr-read-object port)))
-       ((!event? content)
-        (set! (!event-e content)
-          (xdr-read-object port)))))
-     (else
-      (set! (message-e msg)
-        (xdr-read-object port))))
-    msg))
+       ((!rpc? content)
+        (cond
+         ((!call? content)
+          (set! (!call-e content)
+            (xdr-read-object port))
+          (set! (!call-k content)
+            (xdr-read-object port)))
+         ((!value? content)
+          (set! (!value-e content)
+            (xdr-read-object port))
+          (set! (!value-k content)
+            (xdr-read-object port)))
+         ((!error? content)
+          (set! (!error-e content)
+            (xdr-read-object port))
+          (set! (!error-k content)
+            (xdr-read-object port)))
+         ((!event? content)
+          (set! (!event-e content)
+            (xdr-read-object port)))))
+       (else
+        (set! (message-e msg)
+          (xdr-read-object port))))
+      msg)))
 
 
 (def (read-u32 port)
@@ -152,3 +157,12 @@ package: std/actor/proto
         (write-u8 (fxand value #xff) port)
         (lp (fx1+ k) (fxarithmetic-shift value -8)))
       k)))
+
+;;; default XDR protocol
+(def (xdr-uuid-read port)
+  (let (bytes (xdr-binary-read port values))
+    (make-uuid bytes #f)))
+
+(def (xdr-uuid-write obj port)
+  (xdr-binary-write (uuid->u8vector obj) port))
+

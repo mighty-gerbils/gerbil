@@ -65,13 +65,6 @@ package: std/actor
     (set! (remote-proto self)
       proto)))
 
-(def (xdr-uuid-read port)
-  (let (bytes (xdr-binary-read port values))
-    (make-uuid bytes #f)))
-
-(def (xdr-uuid-write obj port)
-  (xdr-binary-write (uuid->u8vector obj) port))
-
 (def (xdr-handle-read port)
   (let (uuid (xdr-read-object port))
     (make-handle (current-rpc-server) uuid)))
@@ -307,7 +300,7 @@ package: std/actor
 
 (def (rpc-client-connection rpc-server address proto-e)
   (try
-   (let (cli (open-tcp-client (inet-address->string address) address))
+   (let (cli (open-tcp-client (inet-address->string address)))
      (rpc-connection-loop rpc-server cli proto-e))
    (catch (e)
      (rpc-connection-cleanup rpc-server e #f))))
@@ -362,7 +355,7 @@ package: std/actor
           (let (msg (try (rpc-proto-read-message-envelope bytes)
                          (catch (e) e)))
             (if (message? msg)
-              (with ((message content dest) msg)
+              (with ((message content _ dest) msg)
                 (match content
                   ((? (or !call? !event?))
                    (dispatch-call msg bytes))
@@ -391,7 +384,7 @@ package: std/actor
                (set! (message-dest msg)
                  actor)
                (set! (message-source msg)
-                 (make-remote rpc-server uuid peer-address))
+                 (make-remote rpc-server uuid peer-address proto))
                (send actor msg)
                (loop))
              (begin
@@ -412,7 +405,7 @@ package: std/actor
              (begin
                (value-k-set! (message-e msg) k)
                (set! (message-source msg)
-                 (make-remote rpc-server (message-source msg) peer-address))
+                 (make-remote rpc-server (message-source msg) peer-address proto))
                (send actor msg)
                (loop))
              (begin
@@ -430,25 +423,23 @@ package: std/actor
   (def (write-message msg)
     (with ((message content src dest opts) msg)
       (if (remote? dest)
-        (with ((remote _ uuid proto) dest)
+        (with ((remote _ uuid address proto) dest)
           (set! (message-dest msg)
             uuid)
           ;; keep track of continuation and timeout
           (when (!call? content)
             (match content
               ((!call e k)
-               (let (wire-id (next-continuation-id!))
+               (let ((wire-id (next-continuation-id!))
+                     (timeo (or (pgetq timeout: opts) 120)))
                  (hash-put! continuations wire-id (values src k proto))
-                 (cond
-                  ((pgetq timeout: opts)
-                   => (lambda (timeo)
-                        (let (abs-timeo
-                              (if (time? timeo)
-                                timeo
-                                (seconds->time
-                                 (+ (time->seconds (current-time)) timeo))))
-                          (hash-put! timeouts abs-timeo wire-id)
-                          (hash-put! continuation-timeouts wire-id timeo)))))
+                 (let (abs-timeo
+                       (if (time? timeo)
+                         timeo
+                         (seconds->time
+                          (+ (time->seconds (current-time)) timeo))))
+                   (hash-put! timeouts abs-timeo wire-id)
+                   (hash-put! continuation-timeouts wire-id timeo))
                  (set! (!call-k content) wire-id)))))
           ;; marshall, write, loop
           (marshall-and-write proto msg))
@@ -483,11 +474,11 @@ package: std/actor
                  (loop))))))))
   
   (def (connection-write-and-loop data)
-    (let (e (try (write-e data) #!void (catch (e) e)))
+    (let (e (try (write-e data sock) #!void (catch (e) e)))
       (if (void? e)
         (loop)
         (begin
-          (warning "write error" e)
+          (warning "write error ~s" e)
           (close-connection)))))
   
   (def (dispatch-error wire-id what)
@@ -501,11 +492,11 @@ package: std/actor
       => (lambda (wire-id) (dispatch-error wire-id "timeout")))))
 
   (def (keep-alive)
-    (let (e (try (write-e #!void) #!void (catch (e) e)))
+    (let (e (try (write-e #!void sock) #!void (catch (e) e)))
       (if (void? e)
         (loop)
         (begin
-          (warning "write error" e)
+          (warning "write error ~a" e)
           (close-connection)))))
   
   (def (loop)

@@ -27,7 +27,7 @@ package: std/actor/proto
          ((eof-object? e)
           (error connection-closed sock))
          ((eq? e rpc-proto-null)
-          (write-u8 rpc-proto-connect-accept)
+          (write-u8 rpc-proto-connect-accept sock)
           (force-output sock)
           (values rpc-null-proto-read
                   rpc-null-proto-write))
@@ -44,7 +44,7 @@ package: std/actor/proto
     (cond
      ((eof-object? e)
       (error "rpc connect error; connection closed" sock))
-     ((eq? rpc-proto-connect-accept)
+     ((eq? e rpc-proto-connect-accept)
       (values rpc-null-proto-read
               rpc-null-proto-write))
      (else
@@ -69,7 +69,8 @@ package: std/actor/proto
    ((u8vector? obj)
     (write-u8 rpc-proto-message sock)
     (write-u32 (u8vector-length obj) sock)
-    (write-subu8vector obj 0 (u8vector-length obj) sock))
+    (write-subu8vector obj 0 (u8vector-length obj) sock)
+    (force-output sock))
    (else
     (error "rpc write error; unexpected type" obj))))
 
