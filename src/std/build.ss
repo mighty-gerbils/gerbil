@@ -16,7 +16,7 @@
         (gxc: "actor/message" "-e" "(include \"~~lib/_gambit#.scm\")")
         ;; :std/misc
         "misc/shuffle"
-        ;; misc/uuid
+        "misc/uuid"
         ;; :std/net
         "net/address"
         "net/uri"

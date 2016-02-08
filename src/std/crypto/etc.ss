@@ -6,7 +6,7 @@ package: std/crypto
 (export libcrypto-error? raise-libcrypto-error with-libcrypto-error
         check-bytes check-bytes-start check-bytes-end check-bytes-range
         call-with-binary-input
-        random-bytes)
+        random-bytes random-bytes!)
 (import :gerbil/gambit/hvectors
         :gerbil/gambit/threads
         :gerbil/gambit/ports
