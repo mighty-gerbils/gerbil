@@ -28,7 +28,7 @@
         "actor/proto"
         "actor/proto/message"
         "actor/proto/null"
-        ;; "actor/rpc"
+        "actor/rpc"
         ;; "actor"
         ;; :std/text
         "text/hex"

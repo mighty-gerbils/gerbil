@@ -11,7 +11,7 @@ package: std/actor
   message-source message-source-set!
   message-dest message-dest-set!
   message-options message-options-set!
-  proxy proxy::t proxy? proxy-handler
+  proxy proxy::t proxy? proxy-handler proxy-handler-set!
   -> send send-message send-message/timeout
   << <- receive-message
   )
@@ -113,7 +113,7 @@ package: std/actor
     (with-syntax ((((hd . body) ...) clauses))
       #'(lambda (msg)
           (match msg
-            ((or hd ...) #t)
+            (hd #t) ...
             (else #f)))))
 
   (def (generate-receive-raw-recv-e stx clauses)
@@ -133,8 +133,7 @@ package: std/actor
           (match @message
             ((message @value @source @dest @options)
              (match @value
-               ((or hd ...)
-                #t)
+               (hd #t) ...
                (else #f)))
             (else #f)))))
   
