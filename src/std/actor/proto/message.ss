@@ -57,9 +57,9 @@ package: std/actor/proto
        ((!event? content)
         (write-u8 rpc-proto-message-event port))
        (else
-        (error "unknown rpc message" content)))
+        (error "unknown rpc message" content))))
       (else
-       (write-u8 rpc-proto-message-raw port))))
+       (write-u8 rpc-proto-message-raw port)))
     (parameterize ((current-xdr-type-registry
                     (!protocol-types proto)))
       (xdr-write-object dest port)
@@ -77,7 +77,7 @@ package: std/actor/proto
 
 (def (rpc-proto-unmarshall-message proto u8v)
   (let* ((inp (open-input-u8vector u8v))
-         (msg (rpc-proto-read-message-evenelope inp)))
+         (msg (rpc-proto-read-message-envelope inp)))
     (rpc-proto-read-message-content msg proto inp)))
          
 (def (rpc-proto-read-message-envelope port)
@@ -100,7 +100,7 @@ package: std/actor/proto
      dest #!void #f)))
 
 ;; return modify msg content in place, return it
-(def (rpc-proto-read-message-content msg proto inp)
+(def (rpc-proto-read-message-content msg proto port)
   (let (content (message-e msg))
     (cond
      ((!rpc? content)

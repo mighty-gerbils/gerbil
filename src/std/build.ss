@@ -26,7 +26,7 @@
         "actor/message"
         "actor/xdr"
         "actor/proto"
-        ;; "actor/proto/message"
+        "actor/proto/message"
         ;; "actor/proto/null"
         ;; "actor/rpc"
         ;; "actor"

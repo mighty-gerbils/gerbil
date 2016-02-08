@@ -10,10 +10,10 @@ package: std/actor
         )
 (export
   !rpc !rpc?
-  !call make-!call !call? !call-e !call-k
-  !value make-!value !value? !value-e !value-k
-  !error make-!error !error? !error-e !error-k
-  !event make-!event !event? !event-e
+  !call make-!call !call? !call-e !call-e-set! !call-k !call-k-set!
+  !value make-!value !value? !value-e !value-e-set! !value-k !value-k-set!
+  !error make-!error !error? !error-e !error-e-set! !error-k !error-k-set!
+  !event make-!event !event? !event-e !event-e-set!
   !!call !!value !!error !!event
   !protocol make-!protocol !protocol?
   !protocol-id !protocol-super !protocol-types
@@ -104,7 +104,7 @@ package: std/actor
            (raise-syntax-error #f "Bad syntax; duplicate id")))
         ((extend: id .rest)
          (identifier? #'id)
-         (let (proto-info (syntax-local-values #'id))
+         (let (proto-info (syntax-local-value #'id))
            (if (protocol-info? proto-info)
              (lp #'rest #'id
                  (cons #'id extend)
