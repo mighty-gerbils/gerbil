@@ -71,6 +71,6 @@ package: std/actor/proto
     (write-u32 (u8vector-length obj) sock)
     (write-subu8vector obj 0 (u8vector-length obj) sock))
    (else
-    (error "rpc write error; unexpected type"))))
+    (error "rpc write error; unexpected type" obj))))
 
 

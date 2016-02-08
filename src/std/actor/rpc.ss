@@ -24,6 +24,15 @@ package: std/actor
   remote remote::t make-remote remote? remote-address remote-proto
   opaque opaque::t make-opaque opaque? opaque-data
   start-rpc-server!
+  rpc.register rpc.register? make-rpc.register
+  rpc.register-id rpc.register-proto
+  !rpc.register !!rpc.register
+  rpc.unregister rpc.unregister? make-rpc.unregister
+  rpc.unregister-id
+  !rpc.unregister !!rpc.unregister
+  rpc.resolve rpc.resolve? make-rpc.resolve
+  rpc.resolve-id
+  !rpc.resolve !!rpc.resolve
   rpc-null-proto-accept
   rpc-null-proto-connect
   )
@@ -198,12 +207,12 @@ package: std/actor
                 (uuids (uuid->symbol uuid)))
            (if (hash-key? actors uuids)
              (!!error src "duplicate actor" k)
-             ((let (thread (actor-thread-e src))
+             (let (thread (actor-thread-e src))
                 (hash-put! actors uuids src)
                 (hash-put! protos uuids proto)
                 (hash-update! actor-threads thread (cut cons uuids <>) [])
                 (thread-send monitor thread)
-                (!!value src uuid k))))))
+                (!!value src uuid k)))))
         ((!rpc.unregister id k)
          (let* ((uuid (UUID id))
                 (uuids (uuid->symbol))
@@ -223,7 +232,7 @@ package: std/actor
              (!!value src #f k)))))
         (else
          (warning "Unexpected message ~a" msg)))))
-
+  
   (def (actor-thread-e actor)
     (cond
      ((thread? actor) actor)
@@ -251,8 +260,6 @@ package: std/actor
         ((? message? msg)
          (let (dest (message-dest msg))
            (cond
-            ((eq? (current-thread) dest)
-             (handle-protocol-action msg))
             ((remote? dest)
              (let (address (remote-address dest))
                (cond
@@ -270,6 +277,8 @@ package: std/actor
                  => (lambda (actor) (send actor msg)))
                 (else
                  (rpc-send-error-response msg)))))
+            ((eq? (current-thread) dest)
+             (handle-protocol-action msg))
             (else
              (warning "bad destination ~a" dest)
              (rpc-send-error-response msg)))))
