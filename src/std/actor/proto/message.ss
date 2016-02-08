@@ -29,11 +29,14 @@ package: std/actor/proto
 (def rpc-proto-message-value  #x02)
 (def rpc-proto-message-error  #x03)
 (def rpc-proto-message-event  #x04)
+(def rpc-proto-message-max-length 65536)
 ;; protocols
 (def rpc-proto-null          #x00)
 (def rpc-proto-cookie        #x01)
 (def rpc-proto-cipher        #x02)
 (def rpc-proto-cipher-cookie #x03)
+
+
 
 ;;; protocol i/o
 (def (rpc-proto-marshall-message msg proto)
@@ -128,6 +131,24 @@ package: std/actor/proto
         (xdr-read-object port))))
     msg))
 
-    
 
+(def (read-u32 port)
+  (let lp ((k 0) (value 0))
+    (if (fx< k 4)
+      (let (e (read-u8 port))
+        (cond
+         ((eof-object? e)
+          (error "rpc read error; premature port end"))
+         (else
+          (lp (fx1+ k)
+              (fxior (fxarithmetic-shift e (fx* k 8))
+                     value)))))
+      value)))
 
+(def (write-u32 uint port)
+  (let lp ((k 0) (value uint))
+    (if (fx< k 4)
+      (begin
+        (write-u8 (fxand value #xff) port)
+        (lp (fx1+ k) (fxarithmetic-shift value -8)))
+      k)))

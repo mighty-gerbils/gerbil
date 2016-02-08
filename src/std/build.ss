@@ -27,7 +27,7 @@
         "actor/xdr"
         "actor/proto"
         "actor/proto/message"
-        ;; "actor/proto/null"
+        "actor/proto/null"
         ;; "actor/rpc"
         ;; "actor"
         ;; :std/text
