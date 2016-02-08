@@ -101,7 +101,7 @@ package: std/actor/proto
        #f)
       (else
        (error "unmarshall error; unexpected message type" type)))
-     dest #!void #f)))
+     #!void dest #f)))
 
 ;; return modify msg content in place, return it
 (def (rpc-proto-read-message-content msg proto port)

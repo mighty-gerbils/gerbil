@@ -52,14 +52,23 @@ package: std/actor/proto
 
 
 (def (rpc-null-proto-read sock)
-  (let (len (read-u32 sock))
-    (if (fx< len rpc-proto-message-max-length)
-      (let* ((buf (make-u8vector len))
-             (rd  (read-subu8vector buf 0 len sock)))
-        (if (fx= rd len)
-          buf
-          (error "rpc read error; premature port end" sock rd len)))
-      (error "rpc read error; message too long" sock len))))
+  (let (e (read-u8 sock))
+    (cond
+     ((eof-object? e)
+      (error "rpc read error; port closed" sock))
+     ((eq? e rpc-proto-keep-alive)
+      #!void)
+     ((eq? e rpc-proto-message)
+      (let (len (read-u32 sock))
+        (if (fx< len rpc-proto-message-max-length)
+          (let* ((buf (make-u8vector len))
+                 (rd  (read-subu8vector buf 0 len sock)))
+            (if (fx= rd len)
+              buf
+              (error "rpc read error; premature port end" sock rd len)))
+          (error "rpc read error; message too long" sock len))))
+     (else
+      (error "rpc read error; bad message" sock e)))))
 
 (def (rpc-null-proto-write obj sock)
   (cond

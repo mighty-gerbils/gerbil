@@ -158,12 +158,18 @@ package: std/actor
 
   (def (accept-connection sock)
     (let* ((thr (spawn rpc-server-connection (current-thread) sock accept-e))
-           (sinfo (tcp-client-peer-socket-info sock))
-           (address (cons (socket-info-address sinfo)
-                          (socket-info-port-number sinfo))))
-      (hash-put! conns address thr)
-      (hash-put! threads thr address)
-      (thread-send monitor thr)))
+           (sinfo (<< ((? socket-info? sinfo)
+                       sinfo)
+                      (! thr #f)))
+           (address (and sinfo
+                         (cons (socket-info-address sinfo)
+                               (socket-info-port-number sinfo)))))
+      (if address
+        (begin
+          (hash-put! conns address thr)
+          (hash-put! threads thr address)
+          (thread-send monitor thr))
+        (warning "accept error; thread exited ~a ~a" sock thr))))
   
   (def (open-connection address)
     (let (thr (spawn rpc-client-connection
@@ -294,6 +300,7 @@ package: std/actor
 (def (rpc-server-connection rpc-server sock proto-e)
   (try
    (let (client (read sock))
+     (thread-send rpc-server (tcp-client-peer-socket-info client))
      (rpc-connection-loop rpc-server client proto-e))
    (catch (e)
      (rpc-connection-cleanup rpc-server e sock))))
@@ -305,10 +312,10 @@ package: std/actor
    (catch (e)
      (rpc-connection-cleanup rpc-server e #f))))
 
-(def rpc-keep-alive 10) ; keep-alive interval
+(def rpc-keep-alive 30) ; keep-alive interval
 
 (def (set-rpc-keep-alive! dt)
-  (if (and (real? dt) (positive? dt))
+  (if (or (not dt) (and (real? dt) (positive? dt)))
     (set! rpc-keep-alive dt)
     (error "bad keep-alive; expected positive real" dt)))
 
@@ -364,7 +371,7 @@ package: std/actor
                   ((? !error?)
                    (dispatch-value msg bytes !error-k !error-k-set!))
                   ((? not)
-                   (dispatch-call msg message-e-set!)))
+                   (dispatch-call msg bytes)))
                 (begin
                   (warning "read error" msg)
                   (close-connection)))))))
@@ -417,7 +424,7 @@ package: std/actor
          (loop)))))
 
   (def (unmarshall-message-content msg proto bytes)
-    (try (rpc-proto-read-message-content proto bytes)
+    (try (rpc-proto-read-message-content msg proto bytes)
          (catch (e) e)))
     
   (def (write-message msg)
@@ -461,22 +468,22 @@ package: std/actor
   (def (marshall-and-write proto msg)
     (let (e (try (rpc-proto-marshall-message msg proto)
                  (catch (e) e)))
-        (if (u8vector? e)
-          (connection-write-and-loop e)
-          (begin
-            (warning "marshall error ~a" e)
-            (let (content (message-e msg))
-              (match content
-                ((!call e wire-id)
-                 (dispatch-error wire-id "marshall error")
-                 (loop))
-                (else
-                 (loop))))))))
+      (if (u8vector? e)
+        (connection-write-and-loop e)
+        (begin
+          (warning "marshall error ~a" e)
+          (let (content (message-e msg))
+            (match content
+              ((!call e wire-id)
+               (dispatch-error wire-id "marshall error")
+               (loop))
+              (else
+               (loop))))))))
   
   (def (connection-write-and-loop data)
     (let (e (try (write-e data sock) #!void (catch (e) e)))
       (if (void? e)
-        (loop)
+          (loop)
         (begin
           (warning "write error ~s" e)
           (close-connection)))))
@@ -500,7 +507,7 @@ package: std/actor
           (close-connection)))))
   
   (def (loop)
-    (<< (! rpc-keep-alive (keep-alive))
+    (<< (! (or rpc-keep-alive never-evt) (keep-alive))
         (! sock (read-message))
         (! (choice-evt (hash-keys timeouts))
            => dispatch-timeout)

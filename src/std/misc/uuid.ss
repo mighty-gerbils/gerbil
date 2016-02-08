@@ -44,6 +44,7 @@ package: std/misc
 
 (def (UUID obj)
   (cond
+   ((uuid? obj) obj)
    ((symbol? obj)
     (let (str (symbol->string obj))
       (if (pregexp-match uuid-re str)
