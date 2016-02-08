@@ -379,7 +379,7 @@ END-C
        (else
         (error "xdr write error; unknown object type" obj type-id)))))))
 
-;;; XDR type declaration
+;;; XDR type declarations
 (defxdr-proto-types
   (xdr-proto-type-void      void-t      void?       xdr-void-read     xdr-void-write)
   (xdr-proto-type-false     false-t     not         xdr-false-read    xdr-false-write)
@@ -397,3 +397,46 @@ END-C
   (xdr-proto-type-hash      hash-t      hash-table? xdr-hash-read     xdr-hash-write)
   (xdr-proto-type-reserved1 reserved1-t void?       xdr-void-read     xdr-void-write)
   (xdr-proto-type-structure structure-t object?     xdr-structure-read xdr-structure-write))
+
+(def any-t
+  (make-XDR true xdr-read-object xdr-write-object))
+
+(def (U . xdrs)
+  (let* ((preds   (map XDR-pred xdrs))
+         (readers (map XDR-read xdrs))
+         (writers (map XDR-write xdrs))
+         (len     (length preds))
+         (indices (iota len))
+         (reader-vector (make-vector len)))
+
+    (def (read-e port)
+      (let (index (read-u8 port))
+        (when (eof-object? index)
+          (error "xdr read error; premature port end"))
+        (let (xdr-read-e (vector-ref reader-vector index))
+          (xdr-read-e port))))
+
+    (def (write-e obj port)
+      (let lp ((pred-rest preds) (writer-rest writers) (index 0))
+        (match pred-rest
+          ([pred . pred-rest]
+           (match writer-rest
+             ([write-e . writer-rest]
+              (if (pred obj)
+                (begin
+                  (write-u8 index port)
+                  (write-e obj port))
+                (lp pred-rest writer-rest (fx1+ index))))))
+          (else
+           (error "xdr write error; unknown object type" obj)))))
+
+    (def (pred-e obj)
+      (ormap preds obj))
+
+    (when (> len 255)
+      (error "Cannot create discriminated union; too many types"))
+    (for-each (cut vector-set! reader-vector <> <>)
+              indices readers)
+
+    (make-XDR pred-e read-e write-e)))
+
