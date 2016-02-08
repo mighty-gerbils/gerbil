@@ -98,36 +98,56 @@ package: std
              (mutex-unlock! (selection-mutex sel) (selection-condvar sel))
              (lp)))))))
 
+(defrules with-error-display ()
+  ((_ body ...)
+   (with-catch
+    (lambda (e)
+      (unless (eq? e 'interrupt)
+        (displayln "warning: selector [" (current-thread) "] error: " e)))
+    (lambda () body ...))))
+
 (def (make-selector-thread sel selector)
   (let (thread
         (cond
          ((mutex? selector)
           (make-thread
-           (lambda () (select1 sel selector mutex-select-e mutex-select-abort-e))
+           (lambda ()
+             (with-error-display
+              (select1 sel selector mutex-select-e mutex-select-abort-e)))
            'select-mutex))
          ((condition-variable? selector)
           (make-thread
-           (lambda () (select1 sel selector io-wait-select-e void))
+           (lambda ()
+             (with-error-display
+              (select1 sel selector io-wait-select-e void)))
            'select-io-wait))
          ((and (pair? selector)
                (mutex? (car selector))
                (condition-variable? (cdr selector)))
           (make-thread
-           (lambda () (select1 sel selector condvar-select-e void))
+           (lambda ()
+             (with-error-display
+              (select1 sel selector condvar-select-e void)))
            'select-condvar))
          ((thread? selector)
           (make-thread
-           (lambda () (select1 sel selector thread-select-e void))
+           (lambda ()
+             (with-error-display
+              (select1 sel selector thread-select-e void)))
            'select-thread))
          ((input-port? selector)
           (let ((select-e (make-port-selector-wait selector))
                 (abort-e  (make-port-selector-abort selector)))
             (make-thread
-             (lambda () (select1 sel selector select-e abort-e))
+             (lambda ()
+               (with-error-display
+                (select1 sel selector select-e abort-e)))
              'select-input-port)))
          ((or (real? selector) (time? selector))
           (make-thread
-           (lambda () (select1 sel selector timeout-select-e void))
+           (lambda ()
+             (with-error-display
+              (select1 sel selector timeout-select-e void)))
            'select-timeout))
          (else
           (error "Bad selector" selector))))
@@ -178,18 +198,14 @@ package: std
       (or (input-port-closed? port)
           (let ((byte-rlo (macro-byte-port-rlo port))
                 (byte-rhi (macro-byte-port-rhi port)))
-            (or (byte-rlo < byte-rhi)
-                (begin
-                  (##wait-for-io! (macro-device-port-rdevice-condvar port)
-                                  (macro-port-rtimeout port))
-                  #t))))))
+            (or (< byte-rlo byte-rhi)
+                (##wait-for-io! (macro-device-port-rdevice-condvar port)
+                                (macro-port-rtimeout port)))))))
 
   (def (make-io-port-selector condvar)
     (lambda (sel port)
       (or (input-port-closed? port)
-          (begin
-            (##wait-for-io! condvar (macro-port-rtimeout port))
-            #t))))
+          (##wait-for-io! condvar #t))))
   
   (def (u8vector-port-ready? port)
     (fx< (macro-byte-port-rlo port)
@@ -299,7 +315,7 @@ package: std
     (mutex-unlock! mutex)))
 
 (def (io-wait-select-e sel condvar)
-  (##wait-for-io! condvar #f))
+  (##wait-for-io! condvar #t))
 
 (def (condvar-select-e sel selector)
   (with ([mutex . condvar] selector)
