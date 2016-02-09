@@ -404,24 +404,25 @@ package: std/actor
     
   (def (dispatch-value msg bytes value-k value-k-set!)
     (let* ((content (message-e msg))
-           (cont (hash-get continuations (value-k content))))
-      (match cont
-        ((values actor k proto)
-         (let (e (unmarshall-message-content msg proto bytes))
-           (if (message? e)
-             (begin
-               (value-k-set! (message-e msg) k)
-               (set! (message-source msg)
-                 (make-remote rpc-server (message-source msg) peer-address proto))
-               (send actor msg)
-               (loop))
-             (begin
-               (warning "unmarshall error ~a" e)
-               (loop)))))
-        (#f
-         (warning "cannot route value; bogus continuation ~a"
-           (value-k content))
-         (loop)))))
+           (cont    (value-k content)))
+      (cond
+       ((hash-get continuations cont)
+        => (match <>
+             ((values actor k proto)
+              (let (e (unmarshall-message-content msg proto bytes))
+                (if (message? e)
+                  (begin
+                    (value-k-set! (message-e msg) k)
+                    (set! (message-source msg)
+                      (make-remote rpc-server (message-dest msg) peer-address proto))
+                    (send actor msg)
+                    (loop))
+                  (begin
+                    (warning "unmarshall error ~a" e)
+                    (loop)))))))
+       (else
+        (warning "cannot route value; bogus continuation ~a" cont)
+        (loop)))))
 
   (def (unmarshall-message-content msg proto bytes)
     (try (rpc-proto-read-message-content msg proto bytes)
@@ -434,23 +435,23 @@ package: std/actor
           (set! (message-dest msg)
             uuid)
           ;; keep track of continuation and timeout
-          (when (!call? content)
-            (match content
-              ((!call e k)
-               (let ((wire-id (next-continuation-id!))
-                     (timeo (or (and opts (pgetq timeout: opts)) 120)))
-                 (hash-put! continuations wire-id (values src k proto))
-                 (let* ((abs-timeo
-                         (if (time? timeo)
-                           timeo
-                           (seconds->time
-                            (+ (time->seconds (current-time)) timeo))))
-                        (timeo-evt (rec evt (handle-evt abs-timeo (lambda (_) evt)))))
-                   (hash-put! timeouts timeo-evt wire-id)
-                   (hash-put! continuation-timeouts wire-id timeo))
-                 (set! (!call-k content) wire-id)))))
+          (match content
+            ((!call _ k)
+             (let ((wire-id (next-continuation-id!))
+                   (timeo (or (and opts (pgetq timeout: opts)) 120)))
+               (hash-put! continuations wire-id (values src k proto))
+               (let* ((abs-timeo
+                       (if (time? timeo)
+                         timeo
+                         (seconds->time
+                          (+ (time->seconds (current-time)) timeo))))
+                      (timeo-evt (rec evt (handle-evt abs-timeo (lambda (_) evt)))))
+                 (hash-put! timeouts timeo-evt wire-id)
+                 (hash-put! continuation-timeouts wire-id timeo))
+                 (set! (!call-k content) wire-id)))
+            (else (void)))
           ;; marshall, write, loop
-          (marshall-and-write msg proto))
+          (marshall-and-write msg proto #t))
         (begin
           (warning "bad handle; no protocol ~a ~a" dest msg)
           (loop)))))
@@ -467,24 +468,28 @@ package: std/actor
         (hash-remove! continuation-timeouts wire-id)
         (hash-remove! timeouts timeo))))
 
-  (def (marshall-and-write msg proto)
+  (def (marshall-and-write msg proto local-error?)
     (let (e (try (rpc-proto-marshall-message msg proto)
                  (catch (e) e)))
-      (if (u8vector? e)
-        (connection-write-and-loop e)
-        (begin
-          (warning "marshall error ~a" e)
-          (let (content (message-e msg))
-            (match content
-              ((!call e wire-id)
-               (dispatch-error wire-id "marshall error"))
-              (else
-               (loop))))))))
+      (cond
+       ((u8vector? e)
+        (connection-write-and-loop e))
+       (local-error?
+        (warning "marshall error ~a" e)
+        (let (content (message-e msg))
+          (match content
+            ((!call e wire-id)
+             (dispatch-error wire-id "marshall error"))
+            (else
+             (loop)))))
+       (else
+        (warning "marshall error ~a" e)
+        (loop)))))
   
   (def (connection-write-and-loop data)
     (let (e (try (write-e data sock) #!void (catch (e) e)))
       (if (void? e)
-          (loop)
+        (loop)
         (begin
           (warning "write error ~s" e)
           (close-connection)))))
@@ -536,7 +541,7 @@ package: std/actor
               (rpc-send-error-response msg)
               (lp)))))
         (value (lp))
-        (else #!void))))
+        (else (void)))))
 
 (def (rpc-connection-cleanup rpc-server exn sock)
   (warning "connection error ~a" exn)
