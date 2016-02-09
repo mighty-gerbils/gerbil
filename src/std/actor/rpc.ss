@@ -438,25 +438,27 @@ package: std/actor
             (match content
               ((!call e k)
                (let ((wire-id (next-continuation-id!))
-                     (timeo (or (pgetq timeout: opts) 120)))
+                     (timeo (or (and opts (pgetq timeout: opts)) 120)))
                  (hash-put! continuations wire-id (values src k proto))
-                 (let (abs-timeo
-                       (if (time? timeo)
-                         timeo
-                         (seconds->time
-                          (+ (time->seconds (current-time)) timeo))))
-                   (hash-put! timeouts abs-timeo wire-id)
+                 (let* ((abs-timeo
+                         (if (time? timeo)
+                           timeo
+                           (seconds->time
+                            (+ (time->seconds (current-time)) timeo))))
+                        (timeo-evt (rec evt (handle-evt abs-timeo (lambda (_) evt)))))
+                   (hash-put! timeouts timeo-evt wire-id)
                    (hash-put! continuation-timeouts wire-id timeo))
                  (set! (!call-k content) wire-id)))))
           ;; marshall, write, loop
-          (marshall-and-write proto msg))
+          (marshall-and-write msg proto))
         (begin
           (warning "bad handle; no protocol ~a ~a" dest msg)
           (loop)))))
   
   (def (next-continuation-id!)
     (let (next next-continuation-id)
-      (set! next-continuation-id (1+ next))))
+      (set! next-continuation-id (1+ next))
+      next))
   
   (def (remove-continuation! wire-id)
     (hash-remove! continuations wire-id)
@@ -465,7 +467,7 @@ package: std/actor
         (hash-remove! continuation-timeouts wire-id)
         (hash-remove! timeouts timeo))))
 
-  (def (marshall-and-write proto msg)
+  (def (marshall-and-write msg proto)
     (let (e (try (rpc-proto-marshall-message msg proto)
                  (catch (e) e)))
       (if (u8vector? e)
@@ -475,8 +477,7 @@ package: std/actor
           (let (content (message-e msg))
             (match content
               ((!call e wire-id)
-               (dispatch-error wire-id "marshall error")
-               (loop))
+               (dispatch-error wire-id "marshall error"))
               (else
                (loop))))))))
   
@@ -491,12 +492,16 @@ package: std/actor
   (def (dispatch-error wire-id what)
     (with ((values actor k proto) (hash-ref continuations wire-id))
       (!!error actor what k)
-      (remove-continuation! wire-id)))
+      (remove-continuation! wire-id)
+      (loop)))
   
   (def (dispatch-timeout timeo)
     (cond
      ((hash-get timeouts timeo)
-      => (lambda (wire-id) (dispatch-error wire-id "timeout")))))
+      => (lambda (wire-id)
+           (hash-remove! timeouts timeo)
+           (hash-remove! continuation-timeouts wire-id)
+           (dispatch-error wire-id "timeout")))))
 
   (def (keep-alive)
     (let (e (try (write-e #!void sock) #!void (catch (e) e)))

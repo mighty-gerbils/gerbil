@@ -243,7 +243,7 @@ END-C
          (pairs (xdr-inline-list-read port)))
     (makef pairs)))
 
-(def (xdr-structure-read port type)
+(def (xdr-structure-read port)
   (let (type-id (xdr-read-object port))
     (cond
      ((xdr-type-registry-get type-id)
@@ -368,7 +368,7 @@ END-C
        ((xdr-type-registry-get type-id)
         => (lambda (xdr)
              (write-u8 xdr-proto-type-structure port)
-             (xdr-write-object type-id)
+             (xdr-write-object type-id port)
              ((XDR-write xdr) obj port)))
        (else
         (error "xdr write error; unknown object type" obj type-id)))))))

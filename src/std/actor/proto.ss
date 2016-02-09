@@ -41,21 +41,21 @@ package: std/actor
   id: std/actor#!event::t)
 
 (defrules !!call ()
+  ((recur dest e)
+   (recur dest e (gensym 'k) send-message))
+  ((recur dest e timeout: timeo)
+   (recur dest e (gensym 'k) send-message/timeout timeo))
+  ((recur dest e k)
+   (recur dest e k send-message))
+  ((recur dest e k timeout: timeo)
+   (recur dest e k send-message/timeout timeo))
   ((_ dest e k send-e args ...)
    (let (token k)
      (send-e dest (make-!call e token) args ...)
      (<- ((!value val (eq? token))
           val)
          ((!error msg (eq? token))
-          (error (string-append "remote error: " msg))))))
-  ((recur dest e)
-   (recur dest e (gensym 'call) send-message))
-  ((recur dest e timeout: timeo)
-   (recur dest e (gensym 'call) send-message/timeout timeo))
-  ((recur dest e k)
-   (recur dest e k send-message))
-  ((recur dest e k timeout: timeo)
-   (recur dest e k send-message/timeout timeo)))
+          (error (string-append "remote error: " msg)))))))
 
 (defrules !!value ()
   ((_ dest e k)
@@ -229,7 +229,7 @@ package: std/actor
                (def (kall-xdr-write obj port)
                  (xdr-vector-like-write obj 1 port))
                (def kall::xdr
-                 (make-XDR kall? xdr-read xdr-write))
+                 (make-XDR kall? kall-xdr-read kall-xdr-write))
                (hash-put! (!protocol-types proto::proto) 'kall-rt-id kall::xdr))))
       #'(begin defn-kall defn-!kall defn-!!kall defn-xdr)))
 
@@ -273,7 +273,7 @@ package: std/actor
                (def (kall-xdr-write obj port)
                  (xdr-vector-like-write obj 1 port))
                (def kall::xdr
-                 (make-XDR kall? xdr-read xdr-write))
+                 (make-XDR kall? kall-xdr-read kall-xdr-write))
                (hash-put! (!protocol-types proto::proto) 'kall-rt-id kall::xdr))))
       #'(begin defn-kall defn-!kall defn-!!kall defn-xdr)))
   
