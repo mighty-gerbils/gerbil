@@ -3,8 +3,7 @@
 ;;; actor protocols
 package: std/actor
 
-(import :gerbil/gambit/hash ; table-merge! -- this should be in the prelude
-        :std/event
+(import :std/event
         :std/actor/message
         :std/actor/xdr
         )
@@ -179,8 +178,8 @@ package: std/actor
         (syntax-case rest ()
           ((extender . rest)
            (lp #'rest
-               (cons #'(table-merge! (!protocol-types proto::proto)
-                                     (!protocol-types extender))
+               (cons #'(hash-merge! (!protocol-types proto::proto)
+                                    (!protocol-types extender))
                      merges)))
           (_ (with-syntax (((merge-proto! ...) merges))
            #'(begin
