@@ -142,6 +142,7 @@ package: gerbil
     hash-find hash-for-each hash-map hash-fold
     hash-keys hash-values
     hash-copy hash-copy!
+    hash-merge hash-merge!
     uninterned-symbol? interned-symbol? 
     gensym make-symbol make-uninterned-symbol symbol-hash
     keyword? uninterned-keyword? interned-keyword? keyword-hash

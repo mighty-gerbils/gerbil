@@ -702,11 +702,8 @@
 (define (hash-put! ht k v)
   (table-set! ht k v))
 (define (hash-update! ht k update #!optional (default #!void))
-  (let* ((cv (hash-ref ht k _gx#atom))
-         (v (if (eq? cv _gx#atom)
-              (update default)
-              (update cv))))
-    (hash-put! ht k v)))
+  (let ((value (hash-ref ht k default)))
+    (hash-put! ht k (update value))))
 
 (define (hash-remove! ht k)
   (table-set! ht k))
@@ -765,6 +762,14 @@
 (define (hash-copy! hd . rest)
   (for-each (lambda (r) (table-merge! hd r)) rest)
   hd)
+
+(define (hash-merge hd . rest)
+  (foldl (lambda (tab r) (table-merge r tab))
+         hd rest))
+
+(define (hash-merge! hd . rest)
+  (foldl (lambda (tab r) (table-merge! r tab))
+         hd rest))
 
 (define (make-list k #!optional (val #f))
   (let lp ((n 0) (r '()))
