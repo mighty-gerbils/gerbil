@@ -4,7 +4,8 @@
 package: std
 
 (import :gerbil/gambit/threads
-        :gerbil/gambit/os)
+        :gerbil/gambit/os
+        :std/format)
 (export
   select                                ; low level synchronization
   ! !! sync poll                        ; high level synchornization
@@ -103,7 +104,7 @@ package: std
    (with-catch
     (lambda (e)
       (unless (eq? e 'interrupt)
-        (displayln "warning: selector [" (current-thread) "] error: " e)))
+        (eprintf "warning: selector [~a] error: ~a~n" (current-thread) e)))
     (lambda () body ...))))
 
 (def (make-selector-thread sel selector)
