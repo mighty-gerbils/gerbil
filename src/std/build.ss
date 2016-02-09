@@ -12,29 +12,16 @@
         "make"
         (gxc: "event" "-e" "(include \"~~lib/_gambit#.scm\")")
         (gxc: "coroutine" "-e" "(include \"~~lib/_gambit#.scm\")")
-        ;; :std/actor
-        (gxc: "actor/message" "-e" "(include \"~~lib/_gambit#.scm\")")
-        ;; :std/misc
-        "misc/shuffle"
-        "misc/uuid"
-        ;; :std/net
-        "net/address"
-        "net/uri"
-        ;; "net/requests"
-        "net/socks"
-        ;; :std/actor
-        "actor/message"
-        "actor/xdr"
-        "actor/proto"
-        "actor/proto/message"
-        "actor/proto/null"
-        "actor/rpc"
-        "actor"
         ;; :std/text
         "text/hex"
         (gsc: "text/base64")
         (ssi: "text/base64")
         "text/json"
+        ;; :std/net
+        "net/address"
+        "net/uri"
+        ;; "net/requests"
+        "net/socks"
         ;; :std/xml
         (gsc: "xml/_libxml" 
               "-cc-options" ,(shell-config "xml2-config" "--cflags")
@@ -56,6 +43,17 @@
               "-e" "(include \"~~lib/_gambit#.scm\")")
         "crypto/digest"
         "crypto/cipher"
+        ;; :std/misc
+        "misc/shuffle"
+        "misc/uuid"
+        ;; :std/actor
+        (gxc: "actor/message" "-e" "(include \"~~lib/_gambit#.scm\")")
+        "actor/xdr"
+        "actor/proto"
+        "actor/proto/message"
+        "actor/proto/null"
+        "actor/rpc"
+        "actor"
         ;; SRFI: This is my grandfather's axe; my father replaced the head
         ;;       and i have replaced the handle.
         "srfi/srfi-support"
