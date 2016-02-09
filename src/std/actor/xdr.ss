@@ -295,10 +295,13 @@ END-C
         (lp (fx1+ k) (arithmetic-shift obj -8))))))
 
 (def (xdr-float-write obj port)
-  (write-u8 xdr-proto-type-float port)
-  (let (bytes (make-u8vector 8))
-    (xdr-float->bytes! obj bytes)
-    (write-u8vector bytes 0 8 port)))
+  (let (obj (if (exact? obj)
+              (exact->inexact obj)
+              obj))
+    (write-u8 xdr-proto-type-float port)
+    (let (bytes (make-u8vector 8))
+      (xdr-float->bytes! obj bytes)
+      (write-u8vector bytes 0 8 port))))
 
 (def (xdr-binary-write bytes port)
   (let (len (u8vector-length bytes))
