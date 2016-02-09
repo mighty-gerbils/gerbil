@@ -395,6 +395,8 @@ package: gerbil
          (identifier? #'id)
          (define-syntax id
            (syntax-rules kws clauses ...)))))
+
+    (define-alias define-rules defrules)
     
     (defrules defsyntax% ()
       ((_ (id . args) body ...)
@@ -1178,8 +1180,8 @@ package: gerbil
                        def-setf ...)))))))
     
     (defsyntax (defstruct-type stx)
-       (generate-typedef stx #t))
-    
+      (generate-typedef stx #t))
+
     (defsyntax (defclass-type stx)
       (generate-typedef stx #f)))
   
@@ -1456,6 +1458,8 @@ package: gerbil
          (and (identifier-list? #'fields)
               (typedef-body? #'rest))
          (generate #'hd #'fields #'rest))))
+
+    (defalias define-struct defstruct)
     
     (defsyntax (defclass stx)
       (def (generate hd slots body)
@@ -1473,6 +1477,8 @@ package: gerbil
          (and (identifier-list? #'slots)
               (typedef-body? #'rest))
          (generate #'hd #'slots #'rest))))
+
+    (defalias define-class defclass)
     
     (defsyntax (defmethod stx)
       (def (wrap e-stx)
