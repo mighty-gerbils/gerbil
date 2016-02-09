@@ -397,9 +397,15 @@ package: std/actor
              (begin
                (warning "unmarshall error ~a" e)
                (loop)))))
-        (#f
+        (else
          (warning "cannot route call; no actor binding ~a" uuid)
-         (loop)))))
+         (match (message-e msg)
+           ((!call _ k)
+            (marshall-and-write
+             (make-message (make-!error "no binding" k) #!void uuid #f)
+             #f #f))
+           (else
+            (loop)))))))
 
     
   (def (dispatch-value msg bytes value-k value-k-set!)
