@@ -29,7 +29,7 @@
         "actor/proto/message"
         "actor/proto/null"
         "actor/rpc"
-        ;; "actor"
+        "actor"
         ;; :std/text
         "text/hex"
         (gsc: "text/base64")
