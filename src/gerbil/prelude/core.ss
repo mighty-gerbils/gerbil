@@ -956,6 +956,8 @@ package: gerbil
       ((recur (hd . rest) body ...)
        (alet (hd)
          (recur rest body ...))))
+
+    (defalias and-let* alet*)
     
     ;; [] ML-style list constructor
     (defrules @list ()
