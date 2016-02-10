@@ -111,13 +111,12 @@ Hello world! My arguments are (1 2 3)
 
 # Documentation
 
-There is no further documentation at this point, because I haven't
+There little further documentation at this point, because I haven't
 had the time to prepare some nice and coherent documentation that
 can help Scheme neophytes -- or people who like neat documentation
 before using a new Scheme system. I hope to write some real
-documentation in the not-so-distant future. Check the Github
-repository, as I intend to host documentation directly on Github
-with github-pages.
+documentation in the not-so-distant future. Look at `$GERBIL_HOME/doc`
+for what documentation i have collected so far.
 
 Probably the best way to dive into gerbil is by reading the sources,
 as all the main language features are exercised in one way or another
