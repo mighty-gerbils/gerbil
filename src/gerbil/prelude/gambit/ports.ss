@@ -36,6 +36,9 @@ package: gerbil/gambit
   open-tcp-server
   tcp-service-register!
   tcp-service-unregister!
+
+  ;; v4.8+
+  make-tls-context
   
   socket-info?
   socket-info-family
