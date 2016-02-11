@@ -20,6 +20,8 @@
 (c-declare #<<END-C
 #include <openssl/evp.h>
 #include <openssl/err.h>
+#include <openssl/dh.h>
+#include <openssl/bn.h>
 END-C
 )
 
@@ -215,6 +217,26 @@ END-C
 (define-c-lambda/const-pointer EVP_get_cipherbyname (char-string) EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_get_cipherbynid (int) EVP_CIPHER*)
 
+;;; BN
+(c-declare #<<END-C
+static ___SCMOBJ ffi_BN_free (void *bn);
+static BIGNUM *ffi_BN_bin2bn (___SCMOBJ data);
+static int ffi_BN_bn2bin (BIGNUM  *bn, ___SCMOBJ data);
+END-C
+)           
+
+(c-define-type BN "BIGNUM")
+(c-define-type BN* (pointer BN (BN*) "ffi_BN_free"))
+(define-c-type-predicate BN? BN*)
+
+(define-c-lambda BN_num_bytes (BN*) int)
+(define-c-lambda BN_bin2bn (scheme-object) BN*
+  "ffi_BN_bin2bn")
+(define-c-lambda BN_bn2bin (BN* scheme-object) int
+  "ffi_BN_bn2bin")
+
+;;; DH
+
 ;;; ffi helpers
 (c-declare #<<END-C
 static ___SCMOBJ ffi_release_EVP_MD_CTX (void *ptr)
@@ -315,5 +337,20 @@ static int ffi_EVP_DecryptFinal (EVP_CIPHER_CTX *ctx, ___SCMOBJ out)
   } 
 }
 
+static ___SCMOBJ ffi_BN_free (void *bn)
+{
+ BN_free (bn);
+ return ___FIX (___NO_ERR);
+}
+
+static BIGNUM *ffi_BN_bin2bn (___SCMOBJ data)
+{
+  return BN_bin2bn (U8_DATA (data), U8_LEN (data), NULL);
+}
+
+static int ffi_BN_bn2bin (BIGNUM *bn, ___SCMOBJ data)
+{
+ return BN_bn2bin (bn, U8_DATA (data));
+}
 END-C
 )

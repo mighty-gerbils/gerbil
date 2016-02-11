@@ -30,5 +30,6 @@ package: std/crypto
   EVP_CIPHER_CTX_key_length EVP_CIPHER_CTX_iv_length
   EVP_CIPHER_CTX_copy
   EVP_get_cipherbyname EVP_get_cipherbynid
+  BN? BN_num_bytes BN_bin2bn BN_bn2bin
   )
 (load-module "std/crypto/libcrypto")

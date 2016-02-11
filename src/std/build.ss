@@ -59,6 +59,7 @@
                 "-e" "(include \"~~lib/_gambit#.scm\")")
           "crypto/digest"
           "crypto/cipher"
+          "crypto/bn"
           ;; :std/misc
           "misc/shuffle"
           "misc/uuid"
