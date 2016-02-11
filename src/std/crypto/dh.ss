@@ -21,11 +21,11 @@ package: std/crypto
 (def (DH-get-2048-256)
   (with-null-check DH_get_2048_256))
 
-(def (generate-key dh)
+(def (DH-generate-key dh)
   (with-libcrypto-error
    (DH_generate_key dh)))
 
-(def (compute-key dh bn)
+(def (DH-compute-key dh bn)
   (let* ((len (DH_size dh))
          (secret (make-u8vector len))
          (count (DH_compute_key secret bn dh)))
