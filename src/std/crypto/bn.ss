@@ -15,9 +15,10 @@ package: std/crypto
       (u8vector-shrink! bytes count)
       bytes)))
 
-(def (bytes->BN bytes)
+(def (bytes->BN bytes (start 0) (end #f))
   (if (u8vector? bytes)
-    (let (bytes (BN_bin2bn bytes))
-      (or bytes
-          (error "error decoding BN; BN_returned NULL" bytes)))
+    (let (end (or end (u8vector-length bytes)))
+      (or (BN_bin2bn bytes start end)
+          (error "error decoding BN; NULL pointer" bytes)))
     (error "bad argument; expected bytes" bytes)))
+

@@ -220,7 +220,7 @@ END-C
 ;;; BN
 (c-declare #<<END-C
 static ___SCMOBJ ffi_BN_free (void *bn);
-static BIGNUM *ffi_BN_bin2bn (___SCMOBJ data);
+static BIGNUM *ffi_BN_bin2bn (___SCMOBJ data, int, int);
 static int ffi_BN_bn2bin (BIGNUM  *bn, ___SCMOBJ data);
 END-C
 )           
@@ -230,7 +230,7 @@ END-C
 (define-c-type-predicate BN? BN*)
 
 (define-c-lambda BN_num_bytes (BN*) int)
-(define-c-lambda BN_bin2bn (scheme-object) BN*
+(define-c-lambda BN_bin2bn (scheme-object int int) BN*
   "ffi_BN_bin2bn")
 (define-c-lambda BN_bn2bin (BN* scheme-object) int
   "ffi_BN_bn2bin")
@@ -343,9 +343,9 @@ static ___SCMOBJ ffi_BN_free (void *bn)
  return ___FIX (___NO_ERR);
 }
 
-static BIGNUM *ffi_BN_bin2bn (___SCMOBJ data)
+static BIGNUM *ffi_BN_bin2bn (___SCMOBJ data, int start, int end)
 {
-  return BN_bin2bn (U8_DATA (data), U8_LEN (data), NULL);
+  return BN_bin2bn (U8_DATA (data) + start, end -start, NULL);
 }
 
 static int ffi_BN_bn2bin (BIGNUM *bn, ___SCMOBJ data)
