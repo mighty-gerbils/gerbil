@@ -248,6 +248,7 @@ package: std/actor
     (cond
      ((hash-get threads thread)
       => (lambda (address)
+           (rpc-send-connection-error-responses address)
            (hash-remove! conns address)
            (hash-remove! threads thread))))
     ;; actor threads
@@ -298,8 +299,16 @@ package: std/actor
     (with ((message content src) msg)
       (match content
         ((!call _ k)
-         (!!error (message-source msg) "connection error ~a" k))
+         (!!error (message-source msg) "connection error" k))
         (else #!void)))))
+
+(def (rpc-send-connection-error-responses address)
+  (let lp ()
+    (<< ((and (message _ _ (remote _ _ (equal? address)))
+              msg)
+         (rpc-send-error-response msg)
+         (lp))
+        (else #!void))))
 
 (def (rpc-server-connection rpc-server sock proto-e)
   (try
@@ -377,12 +386,12 @@ package: std/actor
                   ((? not)
                    (dispatch-call msg bytes)))
                 (begin
-                  (warning "read error" msg)
+                  (warning "read error ~a" msg)
                   (close-connection)))))))
        ((eof-object? data)
         (close-connection))
        (else
-        (warning "connection eorror ~a" data)
+        (warning "connection error ~a" data)
         (close-connection)))))
   
   (def (dispatch-call msg bytes)

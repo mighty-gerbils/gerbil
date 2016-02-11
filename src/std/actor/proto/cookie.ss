@@ -67,7 +67,7 @@ package: std/actor/proto
         (digest (make-digest challenge-digest)))
     (xdr-binary-write challenge sock)
     (force-output sock)
-    (let* ((response (xdr-binary-read sock))
+    (let* ((response (xdr-binary-read sock values))
            (secret
             (begin
               (digest-update! digest cookie)
@@ -78,7 +78,7 @@ package: std/actor/proto
         (error "rpc accept error; authentication failure" challenge response)))))
 
 (def (rpc-cookie-proto-challenge-respond sock cookie)
-  (let* ((challenge (xdr-binary-read sock))
+  (let* ((challenge (xdr-binary-read sock values))
          (digest (make-digest challenge-digest)))
     (digest-update! digest cookie)
     (digest-update! digest challenge)
