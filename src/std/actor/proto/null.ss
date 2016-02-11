@@ -5,15 +5,20 @@ package: std/actor/proto
 
 (import :gerbil/gambit/ports
         :gerbil/gambit/hvectors
+        :std/net/address
         :std/actor/proto
         :std/actor/proto/message
         )
 
-(export
-  rpc-null-proto-accept
-  rpc-null-proto-connect)
+(export rpc-null-proto)
 
 ;;; NULL proto; unathenticated clear text.
+(def (rpc-null-proto-open-client inaddr)
+  (open-tcp-client (inet-address->string inaddr)))
+
+(def (rpc-null-proto-open-server inaddr)
+  (open-tcp-server (inet-address->string inaddr)))
+
 (def (rpc-null-proto-accept sock)
   (def connection-closed "rpc accept error; connection closed")
   (def bad-hello "rpc accept error; bad hello")
@@ -83,4 +88,9 @@ package: std/actor/proto
    (else
     (error "rpc write error; unexpected type" obj))))
 
-
+(def rpc-null-proto
+  (make-!rpc-protocol
+   rpc-null-proto-open-client
+   rpc-null-proto-open-server
+   rpc-null-proto-connect
+   rpc-null-proto-accept))

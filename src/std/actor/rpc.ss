@@ -33,8 +33,7 @@ package: std/actor
   rpc.resolve rpc.resolve? make-rpc.resolve
   rpc.resolve-id
   !rpc.resolve !!rpc.resolve
-  rpc-null-proto-accept
-  rpc-null-proto-connect
+  rpc-null-proto
   )
 
 (def current-rpc-server
@@ -118,18 +117,14 @@ package: std/actor
   (eprintf "Warning [~a]: ~?" (current-thread) fmt args)
   (newline (current-error-port)))
   
-(def (start-rpc-server! (address #f)
-                        (accept-e rpc-null-proto-accept)
-                        (connect-e rpc-null-proto-connect))
-  (spawn rpc-server address accept-e connect-e))
+(def (start-rpc-server! (address #f) (proto rpc-null-proto))
+  (spawn rpc-server (and address (inet-address address)) proto))
 
-(def (rpc-server address accept-e connect-e)
+(def (rpc-server address proto)
   (let (sock (and address
-                   (open-tcp-server
-                    (inet-address->string
-                     (inet-address address)))))
+                  ((!rpc-protocol-open-server proto) address)))
     (parameterize ((current-rpc-server (current-thread)))
-      (rpc-server-loop (or sock never-evt) accept-e connect-e))))
+      (rpc-server-loop (or sock never-evt) proto))))
 
 (def (rpc-monitor-thread rpc-server)
   (let lp ((threads []))
@@ -142,7 +137,13 @@ package: std/actor
          (warning "unexecpted message ~a" msg)
          (lp)))))
 
-(def (rpc-server-loop sock-evt accept-e connect-e)
+(def (rpc-server-loop sock-evt proto)
+  (def open-client
+    (!rpc-protocol-open-client proto))
+  (def connect-e
+    (!rpc-protocol-connect-e proto))
+  (def accept-e
+    (!rpc-protocol-accept-e proto))
   (def actors                           ; uuid-symbol => src
     (make-hash-table-eq))
   (def protos                           ; uuid-symbol => proto
@@ -173,7 +174,7 @@ package: std/actor
   
   (def (open-connection address)
     (let (thr (spawn rpc-client-connection
-                     (current-thread) address  connect-e))
+                     (current-thread) address open-client connect-e))
       (hash-put! conns address thr)
       (hash-put! threads thr address)
       (thread-send monitor thr)
@@ -305,9 +306,9 @@ package: std/actor
    (catch (e)
      (rpc-connection-cleanup rpc-server e sock))))
 
-(def (rpc-client-connection rpc-server address proto-e)
+(def (rpc-client-connection rpc-server address open-client proto-e)
   (try
-   (let (cli (open-tcp-client (inet-address->string address)))
+   (let (cli (open-client address))
      (rpc-connection-loop rpc-server cli proto-e))
    (catch (e)
      (rpc-connection-cleanup rpc-server e #f))))

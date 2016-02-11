@@ -16,6 +16,9 @@ package: std/actor
   !!call !!value !!error !!event
   !protocol make-!protocol !protocol?
   !protocol-id !protocol-super !protocol-types
+  !rpc-protocol make-!rpc-protocol !rpc-protocol?
+  !rpc-protocol-open-client !rpc-protocol-open-server
+  !rpc-protocol-connect-e !rpc-protocol-accept-e
   defproto
   defproto-default-type
   *default-proto-type-registry*
@@ -68,7 +71,11 @@ package: std/actor
   ((_ dest e)
    (send-message dest (make-!event e))))
 
-;;; protocols
+;;; wire rpc protocols
+(defstruct !rpc-protocol (open-client open-server connect-e accept-e)
+  id: std/actor#rpc-protocol::t)
+
+;;; protocol interface specifications
 (defstruct !protocol (id super types)
   id: std/actor#protocol::t)
 
