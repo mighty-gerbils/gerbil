@@ -321,7 +321,10 @@ package: std/actor
 (def (rpc-client-connection rpc-server address open-client proto-e)
   (try
    (let (cli (open-client address))
-     (rpc-connection-loop rpc-server cli proto-e))
+     (try
+      (rpc-connection-loop rpc-server cli proto-e)
+     (catch (e)
+       (rpc-connection-cleanup rpc-server e cli))))
    (catch (e)
      (rpc-connection-cleanup rpc-server e #f))))
 
