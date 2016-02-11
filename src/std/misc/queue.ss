@@ -1,0 +1,77 @@
+;;; -*- Gerbil -*-
+;;; (C) vyzo at hackzen.org
+;;; imperative queues
+package: std/misc
+
+(export make-queue queue? queue-length
+        queue-empty? non-empty-queue?
+        enqueue! enqueue-front! dequeue!
+        queue->list
+        )
+
+(defstruct queue (front back length)
+  id: std/misc#queue::t
+  constructor: :init!)
+
+(defmethod {:init! queue}
+  (lambda (self)
+    (direct-struct-instance-init! self '() #f 0)))
+
+(def (queue-empty? q)
+  (null? (queue-front q)))
+
+(def (non-empty-queue? q)
+  (pair? (queue-front q)))
+
+(def (enqueue! q v)
+  (with ((queue front back length) q)
+    (if (null? front)
+      (let (front [v])
+        (set! (queue-front q)
+          front)
+        (set! (queue-back q)
+          front)
+        (set! (queue-length)
+          1))
+      (let (new-back [v])
+        (set! (cdr back)
+          new-back)
+        (set! (queue-back q)
+          new-back)
+        (set! (queue-length q)
+          (fx1+ length))))))
+
+(def (enqueue-front! q v)
+  (if (queue-empty? q)
+    (enqueue! q v)
+    (with ((queue front _ length) q)
+      (let (new-front (cons v front))
+        (set! (queue-front q)
+          new-front)
+        (set! (queue-length q)
+          (fx1+ length))))))
+
+(def (dequeue! q)
+  (with ((queue front back length) q)
+    (cond
+     ((eq? front back)
+      (let (v (car front))
+        (set! (queue-front q) '())
+        (set! (queue-back q) #f)
+        (set! (queue-length q) 0)
+        v))
+     ((pair? front)
+      (let ((v (car front))
+            (new-front (cdr front)))
+        (set! (queue-front q)
+          new-front)
+        (set! (queue-length q)
+          (fx1- length))))
+     (else
+      (error "cannot dequeue; empty queue" q)))))
+
+(def (queue->list q)
+  (foldr cons [] (queue-front q)))
+
+
+

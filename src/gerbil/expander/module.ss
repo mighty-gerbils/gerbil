@@ -669,6 +669,17 @@ namespace: gx
           (else
            (raise-syntax-error #f "Reference to unbound identifier" 
                                stx hd id)))))
+      ((rename: id name)
+       (let (phi (current-export-expander-phi))
+         (cond
+          ((core-resolve-identifier id phi)
+           => (lambda (bind)
+                (K rest (cons (make-export bind phi (current-expander-context) 
+                                           name) 
+                              r))))
+          (else
+           (raise-syntax-error #f "Reference to unbound identifier" 
+                               stx hd id)))))
       ((import: . in)
        (stx-list? in)
        (let lp ((in-rest in) (r r))

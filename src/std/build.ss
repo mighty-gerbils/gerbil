@@ -14,6 +14,20 @@
           "make"
           (gxc: "event" "-e" "(include \"~~lib/_gambit#.scm\")")
           (gxc: "coroutine" "-e" "(include \"~~lib/_gambit#.scm\")")
+          ;; SRFI: This is my grandfather's axe; my father replaced the head
+          ;;       and i have replaced the handle.
+          "srfi/srfi-support"
+          "srfi/8"
+          "srfi/9"
+          "srfi/1"
+          "srfi/14"
+          "srfi/13"
+          "srfi/19"
+          "srfi/41"
+          "srfi/42"
+          "srfi/43"
+          "srfi/78"
+          "srfi/95"
           ;; :std/text
           "text/hex"
           (gsc: "text/base64")
@@ -48,6 +62,7 @@
           ;; :std/misc
           "misc/shuffle"
           "misc/uuid"
+          "misc/queue"
           ;; :std/actor
           (gxc: "actor/message" "-e" "(include \"~~lib/_gambit#.scm\")")
           "actor/xdr"
@@ -56,19 +71,5 @@
           "actor/proto/null"
           "actor/rpc"
           "actor"
-          ;; SRFI: This is my grandfather's axe; my father replaced the head
-          ;;       and i have replaced the handle.
-          "srfi/srfi-support"
-          "srfi/8"
-          "srfi/9"
-          "srfi/1"
-          "srfi/14"
-          "srfi/13"
-          "srfi/19"
-          "srfi/41"
-          "srfi/42"
-          "srfi/43"
-          "srfi/78"
-          "srfi/95"
           )))
 
