@@ -17,6 +17,7 @@ package: std/actor
         :std/actor/proto
         :std/actor/proto/message
         :std/actor/proto/null
+        :std/actor/proto/cookie
         )
 (export
   current-rpc-server
@@ -34,6 +35,7 @@ package: std/actor
   rpc.resolve-id
   !rpc.resolve !!rpc.resolve
   rpc-null-proto
+  rpc-cookie-proto
   )
 
 (def current-rpc-server
@@ -117,7 +119,8 @@ package: std/actor
   (eprintf "Warning [~a]: ~?" (current-thread) fmt args)
   (newline (current-error-port)))
   
-(def (start-rpc-server! (address #f) (proto rpc-null-proto))
+(def (start-rpc-server! (address #f)
+                        proto: (proto rpc-null-proto))
   (spawn rpc-server (and address (inet-address address)) proto))
 
 (def (rpc-server address proto)

@@ -10,7 +10,11 @@ package: std/actor/proto
         :std/actor/proto/message
         )
 
-(export rpc-null-proto)
+(export rpc-null-proto
+        rpc-null-proto-open-client
+        rpc-null-proto-open-server
+        rpc-null-proto-read
+        rpc-null-proto-write)
 
 ;;; NULL proto; unathenticated clear text.
 (def (rpc-null-proto-open-client inaddr)
@@ -32,8 +36,7 @@ package: std/actor/proto
          ((eof-object? e)
           (error connection-closed sock))
          ((eq? e rpc-proto-null)
-          (write-u8 rpc-proto-connect-accept sock)
-          (force-output sock)
+          (write-u8/force-output rpc-proto-connect-accept sock)
           (values rpc-null-proto-read
                   rpc-null-proto-write))
          (else
@@ -78,8 +81,7 @@ package: std/actor/proto
 (def (rpc-null-proto-write obj sock)
   (cond
    ((eq? obj #!void)
-    (write-u8 rpc-proto-keep-alive sock)
-    (force-output sock))
+    (write-u8/force-output rpc-proto-keep-alive sock))
    ((u8vector? obj)
     (write-u8 rpc-proto-message sock)
     (write-u32 (u8vector-length obj) sock)

@@ -159,6 +159,10 @@ package: std/actor/proto
         (lp (fx1+ k) (fxarithmetic-shift value -8)))
       k)))
 
+(def (write-u8/force-output u8 port)
+  (write-u8 u8 port)
+  (force-output port))
+
 ;;; default XDR protocol
 (def (xdr-uuid-read port)
   (let (bytes (xdr-binary-read port values))
