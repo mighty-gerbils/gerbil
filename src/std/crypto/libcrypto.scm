@@ -236,6 +236,28 @@ END-C
   "ffi_BN_bn2bin")
 
 ;;; DH
+(c-declare #<<END-C
+static ___SCMOBJ ffi_DH_free (void *dh);
+static BIGNUM *ffi_DH_pub_key (DH *dh);           
+static int ffi_DH_compute_key (___SCMOBJ secret, BIGNUM *pubkey, DH *dh);
+END-C
+)
+
+(c-define-type BN-borrow* (pointer BN (BN*)))
+(c-define-type DH "DH")
+(c-define-type DH* (pointer DH (DH*) "ffi_DH_free"))
+(define-c-type-predicate DH? DH*)
+
+(define-c-lambda DH_pub_key (DH*) BN-borrow*
+  "ffi_DH_pub_key")
+(define-c-lambda DH_new () DH*)
+(define-c-lambda DH_get_1024_160 () DH*)
+(define-c-lambda DH_get_2048_224 () DH*)
+(define-c-lambda DH_get_2048_256 () DH*)
+(define-c-lambda DH_generate_key (DH*) int)
+(define-c-lambda DH_size (DH*) int)
+(define-c-lambda DH_compute_key (scheme-object BN* DH*) int
+  "ffi_DH_compute_key")
 
 ;;; ffi helpers
 (c-declare #<<END-C
@@ -352,5 +374,23 @@ static int ffi_BN_bn2bin (BIGNUM *bn, ___SCMOBJ data)
 {
  return BN_bn2bin (bn, U8_DATA (data));
 }
+
+
+static ___SCMOBJ ffi_DH_free (void *dh)
+{
+ DH_free (dh);
+ return ___FIX (___NO_ERR);
+}
+
+static BIGNUM *ffi_DH_pub_key (DH *dh)
+{
+ return dh->pub_key;
+}
+
+static int ffi_DH_compute_key (___SCMOBJ secret, BIGNUM *pubkey, DH *dh)
+{
+ return DH_compute_key (U8_DATA (secret), pubkey, dh);
+}
+
 END-C
 )

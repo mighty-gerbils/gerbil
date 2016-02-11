@@ -60,6 +60,7 @@
           "crypto/digest"
           "crypto/cipher"
           "crypto/bn"
+          "crypto/dh"
           ;; :std/misc
           "misc/shuffle"
           "misc/uuid"
