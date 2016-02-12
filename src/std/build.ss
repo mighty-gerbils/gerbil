@@ -72,6 +72,7 @@
           "actor/proto/message"
           "actor/proto/null"
           "actor/proto/cookie"
+          "actor/proto/cipher"
           "actor/rpc"
           "actor"
           )))

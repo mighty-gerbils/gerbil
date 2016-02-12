@@ -18,6 +18,7 @@ package: std/actor
         :std/actor/proto/message
         :std/actor/proto/null
         :std/actor/proto/cookie
+        :std/actor/proto/cipher
         )
 (export
   current-rpc-server
@@ -36,6 +37,9 @@ package: std/actor
   !rpc.resolve !!rpc.resolve
   rpc-null-proto
   rpc-cookie-proto
+  rpc-generate-cookie!
+  rpc-cipher-proto
+  rpc-cookie-cipher-proto
   )
 
 (def current-rpc-server
