@@ -56,81 +56,45 @@ package: std/actor/proto
   )
 
 (def (rpc-cipher-proto-accept sock)
-  (def connection-closed "rpc accept error; connection closed")
-  (def bad-hello "rpc accept error; bad hello")
-  (let (e (read-u8 sock))
-    (cond
-     ((eof-object? e)
-      (error connection-closed))
-     ((eq? e rpc-proto-connect-hello)
-      (let (e (read-u8 sock))
-        (cond
-         ((eq? e rpc-proto-cipher)
-          (let (secret (rpc-cipher-proto-key-exchange sock))
+  (rpc-proto-accept-e sock rpc-proto-cipher
+    (lambda (sock)
+      (let (secret (rpc-cipher-proto-key-exchange sock))
             (values
               (cut rpc-cipher-proto-read <> secret)
-              (cut rpc-cipher-proto-write <> secret))))
-         ((eof-object? e)
-          (error connection-closed))
-         (else
-          (error bad-hello e sock)))))
-     (else
-      (write-u8/force-output rpc-proto-connect-reject sock)
-      (error bad-hello e sock)))))
+              (cut rpc-cipher-proto-write <> secret))))))
 
 (def (rpc-cipher-proto-connect sock)
-  (def connection-closed "rpc connect error; connection closed")
-  (def bad-hello "rpc connect error; bad hello")
-  (write-u8 rpc-proto-connect-hello sock)
-  (write-u8 rpc-proto-cipher sock)
-  (force-output sock)
-  (let (secret (rpc-cipher-proto-key-exchange sock))
-    (values
-      (cut rpc-cipher-proto-read <> secret)
-      (cut rpc-cipher-proto-write <> secret))))
-
-(def (rpc-cookie-cipher-proto-accept sock cookie)
-  (def connection-closed "rpc accept error; connection closed")
-  (def bad-hello "rpc accept error; bad hello")
-  (let (e (read-u8 sock))
-    (cond
-     ((eof-object? e)
-      (error connection-closed))
-     ((eq? e rpc-proto-connect-hello)
-      (let (e (read-u8 sock))
-        (cond
-         ((eq? e rpc-proto-cookie-cipher)
-          (rpc-cookie-proto-challenge sock cookie)
-          (let (secret (rpc-cipher-proto-key-exchange sock))
-            (values
-              (cut rpc-cipher-proto-read <> secret)
-              (cut rpc-cipher-proto-write <> secret))))
-         ((eof-object? e)
-          (error connection-closed))
-         (else
-          (error bad-hello e sock)))))
-     (else
-      (write-u8/force-output rpc-proto-connect-reject sock)
-      (error bad-hello e sock)))))
-
-(def (rpc-cookie-cipher-proto-connect sock cookie)
-  (def connection-closed "rpc connect error; connection closed")
-  (def bad-hello "rpc connect error; bad hello")
-  (write-u8 rpc-proto-connect-hello sock)
-  (write-u8 rpc-proto-cookie sock)
-  (force-output sock)
-  (let (e (read-u8 sock))
-    (cond
-     ((eof-object? e)
-      (error connection-closed))
-     ((eq? e rpc-proto-challenge)
-      (rpc-cookie-proto-challenge-respond sock cookie)
+  (rpc-proto-connect-e sock rpc-proto-cipher
+    (lambda (sock)
       (let (secret (rpc-cipher-proto-key-exchange sock))
         (values
           (cut rpc-cipher-proto-read <> secret)
-          (cut rpc-cipher-proto-write <> secret))))
-     (else
-      (error bad-hello e sock)))))
+          (cut rpc-cipher-proto-write <> secret))))))
+
+(def (rpc-cookie-cipher-proto-accept sock cookie)
+  (rpc-proto-accept-e sock rpc-proto-cookie-cipher
+    (lambda (sock)
+      (rpc-cookie-proto-challenge sock cookie)
+      (let (secret (rpc-cipher-proto-key-exchange sock))
+        (values
+          (cut rpc-cipher-proto-read <> secret)
+          (cut rpc-cipher-proto-write <> secret))))))
+
+(def (rpc-cookie-cipher-proto-connect sock cookie)
+  (rpc-proto-connect-e sock rpc-proto-cookie-cipher
+    (lambda (sock)
+      (let (e (read-u8 sock))
+        (cond
+         ((eof-object? e)
+          (error "rpc connect error; connect closed"))
+         ((eq? e rpc-proto-challenge)
+          (rpc-cookie-proto-challenge-respond sock cookie)
+          (let (secret (rpc-cipher-proto-key-exchange sock))
+            (values
+              (cut rpc-cipher-proto-read <> secret)
+              (cut rpc-cipher-proto-write <> secret))))
+         (else
+          (error "rpc connect error; bad hello" e sock)))))))
 
 (def (rpc-cipher-proto)
   (make-!rpc-protocol

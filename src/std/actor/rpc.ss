@@ -327,7 +327,7 @@ package: std/actor
    (let (cli (open-client address))
      (try
       (rpc-connection-loop rpc-server cli proto-e)
-     (catch (e)
+      (catch (e)
        (rpc-connection-cleanup rpc-server e cli))))
    (catch (e)
      (rpc-connection-cleanup rpc-server e #f))))
@@ -571,5 +571,6 @@ package: std/actor
 
 (def (rpc-connection-cleanup rpc-server exn sock)
   (warning "connection error ~a" exn)
+  (##display-exception exn (current-error-port))
   (when sock (close-port sock))
   (rpc-connection-shutdown rpc-server))

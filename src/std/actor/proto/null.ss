@@ -10,20 +10,16 @@ package: std/actor/proto
         :std/actor/proto/message
         )
 
-(export rpc-null-proto
+(export rpc-proto-accept-e
+        rpc-proto-connect-e
+        rpc-null-proto
         rpc-null-proto-open-client
         rpc-null-proto-open-server
         rpc-null-proto-read
         rpc-null-proto-write)
 
-;;; NULL proto; unathenticated clear text.
-(def (rpc-null-proto-open-client inaddr)
-  (open-tcp-client (inet-address->string inaddr)))
-
-(def (rpc-null-proto-open-server inaddr)
-  (open-tcp-server (inet-address->string inaddr)))
-
-(def (rpc-null-proto-accept sock)
+;; generic rpc hello
+(def (rpc-proto-accept-e sock proto-t K)
   (def connection-closed "rpc accept error; connection closed")
   (def bad-hello "rpc accept error; bad hello")
   (let (e (read-u8 sock))
@@ -35,28 +31,46 @@ package: std/actor/proto
         (cond
          ((eof-object? e)
           (error connection-closed sock))
-         ((eq? e rpc-proto-null)
+         ((eq? e proto-t)
           (write-u8/force-output rpc-proto-connect-accept sock)
-          (values rpc-null-proto-read
-                  rpc-null-proto-write))
+          (K sock))
          (else
+          (write-u8/force-output rpc-proto-connect-reject sock)
           (error bad-hello e sock)))))
      (else
       (error bad-hello e sock)))))
 
-(def (rpc-null-proto-connect sock)
+(def (rpc-proto-connect-e sock proto-t K)
   (write-u8 rpc-proto-connect-hello sock)
-  (write-u8 rpc-proto-null sock)
+  (write-u8 proto-t sock)
   (force-output sock)
   (let (e (read-u8 sock))
     (cond
      ((eof-object? e)
       (error "rpc connect error; connection closed" sock))
      ((eq? e rpc-proto-connect-accept)
-      (values rpc-null-proto-read
-              rpc-null-proto-write))
+      (K sock))
      (else
       (error "rpc accept error; bad hello" e sock)))))
+
+;;; NULL proto; unathenticated clear text.
+(def (rpc-null-proto-open-client inaddr)
+  (open-tcp-client (inet-address->string inaddr)))
+
+(def (rpc-null-proto-open-server inaddr)
+  (open-tcp-server (inet-address->string inaddr)))
+
+(def (rpc-null-proto-accept sock)
+  (rpc-proto-accept-e sock rpc-proto-null
+    (lambda (sock)
+      (values rpc-null-proto-read
+              rpc-null-proto-write))))
+
+(def (rpc-null-proto-connect sock)
+  (rpc-proto-connect-e sock rpc-proto-null
+    (lambda (sock)
+      (values rpc-null-proto-read
+              rpc-null-proto-write))))
 
 
 (def (rpc-null-proto-read sock)

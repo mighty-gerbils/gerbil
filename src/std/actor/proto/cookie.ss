@@ -23,46 +23,28 @@ package: std/actor/proto
 (def challenge-length (digest-size challenge-digest))
 
 (def (rpc-cookie-proto-accept sock cookie)
-  (def connection-closed "rpc accept error; connection closed")
-  (def bad-hello "rpc accept error; bad hello")
-  (let (e (read-u8 sock))
-    (cond
-     ((eof-object? e)
-      (error connection-closed))
-     ((eq? e rpc-proto-connect-hello)
+  (rpc-proto-accept-e sock rpc-proto-cookie
+    (lambda (sock)
+      (rpc-cookie-proto-challenge sock cookie)
+      (values rpc-null-proto-read
+              rpc-null-proto-write))))
+
+(def (rpc-cookie-proto-connect sock cookie)
+  (rpc-proto-connect-e sock rpc-proto-cookie
+    (lambda (sock)
       (let (e (read-u8 sock))
         (cond
-         ((eq? e rpc-proto-cookie)
-          (rpc-cookie-proto-challenge sock cookie)
+         ((eq? e rpc-proto-challenge)
+          (rpc-cookie-proto-challenge-respond sock cookie)
           (values rpc-null-proto-read
                   rpc-null-proto-write))
          ((eof-object? e)
-          (error connection-closed))
+          (error "rpc connect error; connection closed"))
          (else
-          (error bad-hello e sock)))))
-     (else
-      (write-u8/force-output rpc-proto-connect-reject sock)
-      (error bad-hello e sock)))))
-
-(def (rpc-cookie-proto-connect sock cookie)
-  (def connection-closed "rpc connect error; connection closed")
-  (def bad-hello "rpc connect error; bad hello")
-  (write-u8 rpc-proto-connect-hello sock)
-  (write-u8 rpc-proto-cookie sock)
-  (force-output sock)
-  (let (e (read-u8 sock))
-    (cond
-     ((eof-object? e)
-      (error connection-closed))
-     ((eq? e rpc-proto-challenge)
-      (rpc-cookie-proto-challenge-respond sock cookie)
-      (values rpc-null-proto-read
-              rpc-null-proto-write))
-     (else
-      (error bad-hello e sock)))))
+          (error "rpc connect error; bad hello" e sock)))))))
 
 (def (rpc-cookie-proto-challenge sock cookie)
-  (write-u8/force-output rpc-proto-challenge sock)
+  (write-u8 rpc-proto-challenge sock)
   (let ((challenge (random-bytes challenge-length))
         (digest (make-digest challenge-digest)))
     (xdr-binary-write challenge sock)
