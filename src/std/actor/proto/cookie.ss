@@ -19,11 +19,11 @@ package: std/actor/proto
         rpc-cookie-proto-challenge
         rpc-cookie-proto-challenge-respond)
 
-(def challenge-length 32)
 (def challenge-digest digest::sha256)
+(def challenge-length (digest-size challenge-digest))
 
 (def (rpc-cookie-proto-accept sock cookie)
-(def connection-closed "rpc accept error; connection closed")
+  (def connection-closed "rpc accept error; connection closed")
   (def bad-hello "rpc accept error; bad hello")
   (let (e (read-u8 sock))
     (cond

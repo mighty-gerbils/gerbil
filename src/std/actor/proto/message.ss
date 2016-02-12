@@ -35,7 +35,7 @@ package: std/actor/proto
 (def rpc-proto-null          #x00)
 (def rpc-proto-cookie        #x01)
 (def rpc-proto-cipher        #x02)
-(def rpc-proto-cipher-cookie #x03)
+(def rpc-proto-cookie-cipher #x03)
 
 ;;; protocol i/o
 (def (rpc-proto-marshall-message msg proto)
