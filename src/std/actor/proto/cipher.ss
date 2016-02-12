@@ -22,12 +22,11 @@ package: std/actor/proto
         rpc-cipher-proto-key-exchange)
 
 ;; aes-128-gcm with sha256 hmac
-(def ::hmac-type          digest::sha256)
-(def ::hmac-length       (digest-size  ::hmac-type))
-(def ::cipher-type        cipher::aes-128-gcm)
+(def ::digest-type        digest::sha256)
+(def ::digest-size       (digest-size  ::digest-type))
+(def ::cipher-type        cipher::aes-128-cbc)
 (def ::cipher-key-length (cipher-key-length ::cipher-type))
 (def ::cipher-iv-length  (cipher-iv-length  ::cipher-type))
-(def ::cipher-block-size (cipher-block-size ::cipher-type))
 (def ::DH::new            DH-get-1024-160)
 
 (def (rpc-cipher-proto-key-exchange sock)
@@ -47,13 +46,65 @@ package: std/actor/proto
        (else
         (error "rpc key exchange; exchange error" e sock))))))
 
-(def (rpc-cipher-proto-write sock secret)
-  (error 'XXX)
-  )
-
 (def (rpc-cipher-proto-read sock secret)
-  (error 'XXX)
-  )
+  (let (e (read-u8 sock))
+    (cond
+     ((eq? e rpc-proto-keep-alive)
+      #!void)
+     ((eq? e rpc-proto-message)
+      (let* ((digest (make-digest ::digest-type))
+             (cipher (make-cipher ::cipher-type))
+             (key    (subu8vector secret 0 ::cipher-key-length))
+             (hmac   (make-u8vector ::digest-size))
+             (rd     (read-subu8vector hmac 0 ::digest-size sock))
+             (_      (when (fx< rd ::digest-size)
+                       (error "rpc read error; premature port end")))
+             (iv     (make-u8vector ::cipher-iv-length))
+             (rd     (read-subu8vector iv 0 ::cipher-iv-length sock))
+             (_      (when (fx< rd ::cipher-iv-length)
+                       (error "rpc read error; premature port end")))
+             (size   (read-u32 sock))
+             (_      (unless (fx< size 65536)
+                       (error "rpc read error; message too large" size)))
+             (ctext  (make-u8vector size))
+             (rd     (read-subu8vector ctext 0 size sock))
+             (_      (when (fx< rd size)
+                       (error "rpc read error; premature port end")))
+             (_      (digest-update! digest secret))
+             (_      (digest-update! digest iv))
+             (_      (digest-update! digest ctext))
+             (hmac*  (digest-final! digest))
+             (_      (unless (equal? hmac hmac*)
+                       (error "rpc read error; HMAC failure" sock))))
+        (decrypt cipher key iv ctext)))
+     ((eof-object? e)
+      (error "rpc read error; port closed" sock))
+     (else
+      (error "rpc read error; bad message" sock e)))))
+
+
+(def (rpc-cipher-proto-write obj sock secret)
+  (cond
+   ((eq? obj #!void)
+    (write-u8/force-output rpc-proto-keep-alive sock))
+   ((u8vector? obj)
+    (write-u8 rpc-proto-message sock)
+    (let* ((digest (make-digest ::digest-type))
+           (cipher (make-cipher ::cipher-type))
+           (key    (subu8vector secret 0 ::cipher-key-length))
+           (iv     (random-bytes ::cipher-iv-length))
+           (ctext  (encrypt cipher key iv obj))
+           (_      (digest-update! digest secret))
+           (_      (digest-update! digest iv))
+           (_      (digest-update! digest ctext))
+           (hmac   (digest-final! digest)))
+      (write-subu8vector hmac 0 ::digest-size sock)
+      (write-subu8vector iv 0 ::cipher-iv-length sock)
+      (write-u32 (u8vector-length ctext) sock)
+      (write-subu8vector ctext 0 (u8vector-length ctext) sock)
+      (force-output sock)))
+   (else
+    (error "rpc write error; unexpected object" obj))))
 
 (def (rpc-cipher-proto-accept sock)
   (rpc-proto-accept-e sock rpc-proto-cipher
@@ -61,7 +112,7 @@ package: std/actor/proto
       (let (secret (rpc-cipher-proto-key-exchange sock))
             (values
               (cut rpc-cipher-proto-read <> secret)
-              (cut rpc-cipher-proto-write <> secret))))))
+              (cut rpc-cipher-proto-write <> <> secret))))))
 
 (def (rpc-cipher-proto-connect sock)
   (rpc-proto-connect-e sock rpc-proto-cipher
@@ -69,7 +120,7 @@ package: std/actor/proto
       (let (secret (rpc-cipher-proto-key-exchange sock))
         (values
           (cut rpc-cipher-proto-read <> secret)
-          (cut rpc-cipher-proto-write <> secret))))))
+          (cut rpc-cipher-proto-write <> <> secret))))))
 
 (def (rpc-cookie-cipher-proto-accept sock cookie)
   (rpc-proto-accept-e sock rpc-proto-cookie-cipher
@@ -78,7 +129,7 @@ package: std/actor/proto
       (let (secret (rpc-cipher-proto-key-exchange sock))
         (values
           (cut rpc-cipher-proto-read <> secret)
-          (cut rpc-cipher-proto-write <> secret))))))
+          (cut rpc-cipher-proto-write <> <> secret))))))
 
 (def (rpc-cookie-cipher-proto-connect sock cookie)
   (rpc-proto-connect-e sock rpc-proto-cookie-cipher
@@ -92,7 +143,7 @@ package: std/actor/proto
           (let (secret (rpc-cipher-proto-key-exchange sock))
             (values
               (cut rpc-cipher-proto-read <> secret)
-              (cut rpc-cipher-proto-write <> secret))))
+              (cut rpc-cipher-proto-write <> <> secret))))
          (else
           (error "rpc connect error; bad hello" e sock)))))))
 

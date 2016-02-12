@@ -76,8 +76,6 @@ package: std/actor/proto
 (def (rpc-null-proto-read sock)
   (let (e (read-u8 sock))
     (cond
-     ((eof-object? e)
-      (error "rpc read error; port closed" sock))
      ((eq? e rpc-proto-keep-alive)
       #!void)
      ((eq? e rpc-proto-message)
@@ -89,6 +87,8 @@ package: std/actor/proto
               buf
               (error "rpc read error; premature port end" sock rd len)))
           (error "rpc read error; message too long" sock len))))
+     ((eof-object? e)
+      (error "rpc read error; port closed" sock))
      (else
       (error "rpc read error; bad message" sock e)))))
 
@@ -102,7 +102,7 @@ package: std/actor/proto
     (write-subu8vector obj 0 (u8vector-length obj) sock)
     (force-output sock))
    (else
-    (error "rpc write error; unexpected type" obj))))
+    (error "rpc write error; unexpected object" obj))))
 
 (def rpc-null-proto
   (make-!rpc-protocol
