@@ -152,7 +152,7 @@ package: std
            'select-timeout))
          (else
           (error "Bad selector" selector))))
-    (thread-specific-set! thread sel)
+    (thread-specific-set! thread selector)
     thread))
 
 ;;; the Gambit port hierarchy and means of receiving data:
@@ -295,11 +295,12 @@ package: std
   (let (self (current-thread))
     (for-each
       (lambda (thread)
-        (unless (or (eq? thread self) (thread-dead? thread))
-          (thread-interrupt! thread (lambda () (raise 'interrupt))))
-        (alet (sel (thread-specific thread))
-          (thread-specific-set! thread #f)
-          (selector-abort! sel main)))
+        (unless (eq? thread self)
+          (unless (thread-dead? thread)
+            (thread-interrupt! thread (lambda () (raise 'interrupt))))
+          (alet (sel (thread-specific thread))
+            (thread-specific-set! thread #f)
+            (selector-abort! sel main))))
       threads)))
 
 (def (selector-abort! sel main)
