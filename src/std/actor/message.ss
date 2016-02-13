@@ -14,6 +14,7 @@ package: std/actor
   proxy proxy::t proxy? proxy-handler proxy-handler-set!
   -> send send-message send-message/timeout
   << <- receive-message
+  !
   )
         
 ;; ~~lib/_gambit#.scm
