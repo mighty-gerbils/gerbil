@@ -104,7 +104,7 @@ package: std/actor/proto
    (else
     (error "rpc write error; unexpected object" obj))))
 
-(def rpc-null-proto
+(def (rpc-null-proto)
   (make-!rpc-protocol
    rpc-null-proto-open-client
    rpc-null-proto-open-server

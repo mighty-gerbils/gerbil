@@ -124,7 +124,7 @@ package: std/actor
   (newline (current-error-port)))
   
 (def (start-rpc-server! (address #f)
-                        proto: (proto rpc-null-proto))
+                        proto: (proto (rpc-null-proto)))
   (spawn rpc-server (and address (inet-address address)) proto))
 
 (def (rpc-server address proto)
