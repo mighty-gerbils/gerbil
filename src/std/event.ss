@@ -83,7 +83,7 @@ package: std
 (def (wait sel threads)
   (with-catch
    (lambda (e)                               ; interrupt
-     (kill-selector-threads! threads)
+     (kill-selector-threads! threads (current-thread))
      (raise e))
    (lambda ()
      (for-each
@@ -287,11 +287,11 @@ package: std
            (abort-e sel selector))
          (begin                         ; race winner
            (set! (selection-e sel) selector)
-           (kill-selector-threads! threads)
+           (kill-selector-threads! threads (selection-thread sel))
            (condition-variable-signal! (selection-condvar sel))
            (mutex-unlock! (selection-mutex sel))))))))
 
-(def (kill-selector-threads! threads)
+(def (kill-selector-threads! threads main)
   (let (self (current-thread))
     (for-each
       (lambda (thread)
@@ -299,20 +299,20 @@ package: std
           (thread-interrupt! thread (lambda () (raise 'interrupt))))
         (alet (sel (thread-specific thread))
           (thread-specific-set! thread #f)
-          (selector-abort! sel)))
+          (selector-abort! sel main)))
       threads)))
 
-(def (selector-abort! sel)
+(def (selector-abort! sel main)
   (when (and (pair? sel)
              (eq? (macro-mutex-btq-owner (car sel))
-                  (current-thread)))
-      (mutex-unlock! (car sel))))
+                  main))
+    (mutex-unlock! (car sel))))
 
 (def (mutex-select-e sel mutex)
   (mutex-lock! mutex #f (selection-thread sel)))
 
 (def (mutex-select-abort-e sel mutex)
-  (when (eq? mutex (selection-e sel))
+  (unless (eq? mutex (selection-e sel))
     (mutex-unlock! mutex)))
 
 (def (io-wait-select-e sel condvar)
@@ -383,8 +383,10 @@ package: std
                    (lp rest (cons sel selectors) timeo))))))
           ((timeout? evt)
            (cond
-            ((and (not (zero? evt))     ; allow poll
+            ((and (not (and (real? evt) (zero? evt))) ; allow poll
                   (timeout-expired? evt))
+             (for-each selector-abort! selectors)
+             (for-each event-abort! rest)
              #f)
             ((or (not timeo) (and timeo (timeout-before? evt timeo)))
              (let (evt (make-timeout-evt evt))
