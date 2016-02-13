@@ -13,4 +13,6 @@
   (set! ##language-specs
     (append ##language-specs
             '(#("gxi" #f #t scm #f) 
-              #("gxi-script" #f #t scm #f)))))
+              #("gxi-script" #f #t scm #f))))
+  
+  (_gx#gxi-init! (command-line)))

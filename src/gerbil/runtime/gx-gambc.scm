@@ -61,6 +61,13 @@
           (macro-character-port-input-readtable-set! port _gx#*readtable*)))
       (list ##stdin-port ##console-port))))
 
+(define (_gx#gxi-init! cmdline)
+  ;; if interactive, and the file exists, load ~/.gerbil/init.ss
+  (if (equal? "-" (last (command-line)))
+    (let ((init-file "~/.gerbil/init.ss"))
+      (if (file-exists? init-file)
+        (gx#eval-syntax `(include ,init-file))))))
+
 ;; hook load to be able to load raw gambit code when the expander is hooked
 (define (load path)
   (parameterize ((_gx#loading-scheme-source path))
