@@ -24,7 +24,7 @@ package: std/actor
   current-rpc-server
   handle handle::t make-handle handle? handle-uuid
   remote remote::t make-remote remote? remote-address remote-proto
-  opaque opaque::t make-opaque opaque? opaque-data
+  opaque opaque::t make-opaque opaque? opaque-type opaque-data
   start-rpc-server!
   rpc.register rpc.register? make-rpc.register
   rpc.register-id rpc.register-proto
@@ -52,7 +52,7 @@ package: std/actor
 (defstruct (remote handle) (address proto)
   id: std/actor#remote-handle::t)
 
-(defstruct opaque (data)
+(defstruct opaque (type data)
   id: std/actor#opaque::t)
 
 (defmethod {:init! handle}
@@ -93,10 +93,12 @@ package: std/actor
     (xdr-write-object (and proto (!protocol-id proto)) port)))
 
 (def (xdr-opaque-read port)
-  (let (bytes (xdr-binary-read port values))
-    (make-opaque bytes)))
+  (let* ((type (xdr-read-object port))
+         (bytes (xdr-binary-read port values)))
+    (make-opaque type bytes)))
 
 (def (xdr-opaque-write obj port)
+  (xdr-write-object (opaque-type obj) port)
   (xdr-binary-write (opaque-data obj) port))
 
 (defproto-default-type
