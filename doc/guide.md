@@ -231,7 +231,7 @@ For example:
 ```
 
 ### Pattern Matching
-#### match
+
 Gerbil uses pattern matching extensively, so a suitable match
 macro is provided by the language. The pattern language is
 similar to plt's match lanuge, with structs destuctured by
