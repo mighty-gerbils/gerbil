@@ -140,7 +140,7 @@ Gerbil-specific libraries.
 Here we provide examples and brief documentation for the more
 interesting of the Gerbil-specific libraries.
 
-### `try/catch/finally` sugar
+### Additional Syntactic Sugar
 
 The `:std/sugar` library provides, among other macros, a `try` syntactic
 form for handling exceptions in imperative style.
@@ -328,7 +328,7 @@ For example, a simple echo actor:
 #<thread #1 primordial> says hello
 > (<- (value value))
 => 'hello
-``
+```
 
 #### Protocols
 
