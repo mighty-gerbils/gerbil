@@ -58,7 +58,10 @@ package: std/actor
   (syntax-case stx ()
     ((macro msg)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send dest msg)))))
+       #'(send-message dest msg)))
+    ((macro msg timeout: timeo)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message/timeout dest msg)))))
 
 ;;; receive primitives
 ;; receive macros
