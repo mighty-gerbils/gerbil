@@ -125,6 +125,113 @@ syntactic forms described later in the guide.
 
 ### Structs and Classes
 
+Gerbil supports Object-oriented programming with structs and
+classes. Structs are index-based types with single inheritance,
+while classes are slot-based types with multiple inheritance.
+
+#### Structs
+
+Structs are defined with `defstruct`:
+```
+(defstruct point (x y))
+(defstruct (point-3d point) (z))
+> (make-point-3d 1 2 3)
+=> #<point-3d> 
+```
+
+For each struct `defstruct` defines a constructor, a type predicate,
+a runtime type descriptor, accessors and mutators, expansion time
+struct info and a match expander.
+
+So:
+```
+> (def my-point (make-point-3d 1 2 3))
+> (point-x my-point)
+=> 1
+> (point-y my-point)
+=> 2
+> (point-3d-z my-point)
+=> 3
+> (set! (point-3d-z my-point) 0)
+> (point-3d-z my-point)
+=> 0
+
+```
+
+#### Classes
+Classes are defined with defclass with slot accessed fields and support multiple
+inheritance.
+For example:
+```
+(defclass A (a))
+(defclass B (b))
+(defclass (C A B) (c))
+...
+> (def my (make-C a: 1 b: 2 c: 3))
+> (A? my)
+=> #t
+> (B? my)
+=> #t
+> (@ my a)
+=> 1
+> (@ my b)
+=> 2
+> (@ my c)
+=> 3
+> (set! (@ my c) 0)
+> (@ my c)
+=> 0
+
+```
+
+#### Methods
+
+Gerbil supports single dispatch for methods associated with a struct and class
+type. Methods are defined with `defmethod` and invoked with curly brace `{}`
+s-expressions.
+
+For instance:
+```
+(import :std/format)
+(defmethod {print point}
+  (lambda (self)
+    (with ((point x y) self)
+      (printf "{point x:~a y:~a}~n" x y))))
+> {print my-point}
+{point x:1 y:2}
+...
+(defmethod {print point-3d}
+  (lambda (self)
+    (with ((point-3d x y z) self)
+      (printf "{point-3d x:~a y:~a z:~a}~n" x y z))))
+> {print my-point}
+{point-3d x:1 y:2 z:0}
+```
+
+#### Constructors
+
+By default, the constructors generated for structs expect all the fields in
+indexed order, while the class constructor expects optional keywords for
+slots in the class.
+A custom constructor can be defined by specifying a costructor property
+designating a method at struct or class definition.
+For example:
+```
+(defstruct (point-3d point) (z)
+  constructor: :init!)
+(defmethod {:init! point-3d}
+  (lambda (self x y (z 0))
+    (set! (point-x self) x)
+    (set! (point-x self) y)
+    (set! (point-y self) z)))
+> (def my-point (make-point-3d 1 2))
+> (point-3d-z my-point)
+=> 0
+
+```
+
+#### Meta Object Protocol
+
 ### Pattern Matching
 
 ### Macros
@@ -198,7 +305,7 @@ For example:
 => #!void ; all 
 ```
 
-### Event programming
+### Event Programming
 
 The `:std/event` library provides procedures and macros for event-driven
 programming in the style of PLT-Scheme. There are two main procedures
@@ -270,7 +377,7 @@ timeout 5
 => 'done
 ```
 
-#### macros
+#### Sync Macros
 
 The library also offers a comple of macros, `!` and `!!` which simplify
 event driven programming. `!` syncs a single event while `!!` syncs
