@@ -322,6 +322,8 @@ hyigenically:
 
 ### Modules and Libraries
 
+TBD.
+
 ## Standard Library
 
 The gerbil standard library is located at `src/std`; it includes
@@ -348,7 +350,7 @@ The general syntax is
 ```
 (try body ....
  [catch-clause] ...
- [finally-clause]
+ [finally-clause])
 
 catch-clause:
  (catch pred => K)
@@ -471,8 +473,8 @@ be rewritten as
 ```
 (let lp ((n 0))
   (!! (1 (displayln "timeout " n) (lp (fx1+ n)))
-      ((thread my-thread)
-       (thread-join! thread))))
+      (my-thread
+       (thread-join! my-thread))))
 ```
 
 The two macros are defined with `defrules` in `src/std/event.ss` with
