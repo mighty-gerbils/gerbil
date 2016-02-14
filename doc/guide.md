@@ -230,11 +230,95 @@ For example:
 
 ```
 
-#### Meta Object Protocol
-
 ### Pattern Matching
+#### match
+Gerbil uses pattern matching extensively, so a suitable match
+macro is provided by the language. The pattern language is
+similar to plt's match lanuge, with structs destuctured by
+the structure name.
+In addition, the square brackets destructure lists symmetrically
+to their construction.
+
+For example:
+```
+(def (my-destructurer obj)
+ (match obj
+   ([a . b]
+    (printf "a pair (~a . ~a)~n" a b)
+    'pair)
+   ((point-3d x y z)
+    (printf "a 3d-point (~a ~a ~a)~n" x y z)
+    'point-3d)
+   ((point x y)
+    (printf "a 2d point (~a ~a)~n" x y)
+    'point-2d)
+   (else 'something-else)))
+> (my-destructurer [1 2 3])
+a pair (1 . (2 3))
+=> 'pair
+> (my-destructurer (make-point 1 2))
+a 2d point (1 2)
+=> 'point-2d
+> (my-destructurer (make-point-3d 1 2))
+a 3d-point (2 0 0)
+=> 'point-3d
+ 
+```
+
+#### Ddestructuring Binds
+Gerbil's `match` provides a shorthand syntax for match lambdas:
+```
+(def car+cdr (match <> ([a . b] (values a b))))
+> (car+cdr [1 2 3])
+=> values 1 '(2 3)
+```
+
+It is also common to destructure-bind an object, thus a common
+destructuring-bind form `with` is provided. The form can
+bind a single object with short-hand notation or multiple
+objects with a let-style head:
+```
+(def (car+cdr obj)
+  (with ([a . b] obj)
+    (values a b)))
+
+(def (car+cdrx2 lsta lstb)
+  (with (([a-car . a-cdr] lsta)
+         ([b-car . b-cdr] lstb))
+     (values a-car a-cdr b-car b-cdr)))
+```
 
 ### Macros
+
+Gerbil has pervasive macro facilities and is a macro-rich language.
+The full meta-syntactic tower is provided, with macro hygiene support
+with `syntax-case` and `quote-syntax`.
+
+#### defrules
+Most macros are simple and medium syntax-rules macros, and thus
+Gerbil provides a short form for definint syntax-rules macros:
+```
+(defrules macro-id (id ...)
+ (head [guard] body) ...)
+; equivalent:
+(defsyntax macro-id
+  (syntax-rules (id ...)
+    (head [guard] body) ...))
+```
+
+#### defsyntax
+More complicated macros are defined `defsyntax` and `syntax-case`
+directly. Here is an example that introduces an identifier
+hyigenically:
+```
+(defsyntax (with-magic stx)
+  (syntax-case stx ()
+   ((macro expr body ...)
+    (with-syntax ((magic-id (datum->syntax #'macro 'magic)))
+      #'(let (magic-id expr) body ...)))))
+> (with-magic 3 (+ magic 1))
+=> 4
+```
 
 ### Modules and Libraries
 
