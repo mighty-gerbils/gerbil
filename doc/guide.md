@@ -456,19 +456,18 @@ $ gxc A.ss
 Library modules are specified with the `:library-module-id` import
 form. For example, the JSON library is `:std/text/json`.
 When there are `/` in the library module path, it indicates
-that it is part of a package. The package of a module
-can be specified with a `package: package-path` at the top
-of the module.
+that it is part of a package. The package can be specified with
+a `package: package-path` declaration at the top of the module.
+The package also affects the namespace of the module.
 
-The package also affects the namespace of the module. For
-instance, the `:std/text/json` library module is part of
-the `std/text` package and resides in file named `json.ss`.
+For example, the `:std/text/json` library module is part of
+the `std/text` package and resides in the file named `json.ss`.
 The namespace prefix for identifiers defined in the file is
 `std/text/json#`.
 
 By default libraries are looked up in the `$GERBIL_HOME/lib`
 directory. You can specify additional directories to be
-searched with the `GERBIL_LOAD_PATH` environment variable.
+searched with the `GERBIL_LOADPATH` environment variable.
 You can also modify the load-path at runtime with `add-load-path`.
 
 When building libraries, you should use an appropriate prefix
