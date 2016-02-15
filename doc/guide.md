@@ -347,7 +347,7 @@ hyigenically:
 => 4
 ```
 
-### Modules and Libraries
+## Modules and Libraries
 
 Modules are self-contained pieces of code. All identifiers
 used in the runtime of the module must be bound. They
@@ -359,7 +359,7 @@ Modules can be declared at the top level with the `module`
 special form, can be defined in a file, or can be part of a library.
 They can also be nested in another module.
 
-#### Top Modules
+### Top Modules
 Here is an example of a simple top module, which provides
 a function that uses`display-exception` from the runtime as extern:
 ```
@@ -375,7 +375,7 @@ it-is-an-error
 => #<error-exception #5>
 ```
 
-#### Imports and Exports
+### Imports and Exports
 
 Identifiers are imported from a module with the `import` special
 form, which must appear at a top contenxt (either top-level
@@ -424,7 +424,7 @@ This form exports all defined symbols, except display-exception.
 It could be used by the example module `A` above to the same
 effect.
 
-#### File Modules
+### File Modules
 
 Modules can be writen directly in files, without a surrounding
 `module` form.
@@ -451,7 +451,7 @@ $ gxc A.ss
 > (import "A")  ; compiled form takes precedence
 ```
 
-#### Library Modules
+### Library Modules
 
 Library modules are specified with the `:library-module-id` import
 form. For example, the JSON library is `:std/text/json`.
