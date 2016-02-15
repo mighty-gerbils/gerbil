@@ -120,6 +120,33 @@ using the ellipsis `...`:
 => (1 2 3 4 5 6)
 ```
 
+Bindings can be mutated with `set!` as usual.
+```
+> (def a #f)
+> (set! a 'a)
+> a
+=> 'a
+```
+
+`set!` also expands with s-expressions as the target
+of mutation.
+When the head of the s-expresion is a setf-macro it
+is invoked to expand the syntax.
+If the head is a plain identifier, as is the case
+in the example below, to expands an `identifier-set!`
+invokation.
+```
+> (def a-pair (cons 'a 'b))
+> (set! (car a-pair) 'c)
+> (car a-pair)
+=> 'c
+```
+
+Finally, macros that mixin the `setq-macro` class,
+like the ones created by `identifier-rules`, can also
+be the target of mutation which leads to an expander
+application.
+
 All the usual Scheme macros are available, with common
 syntactic forms described later in the guide.
 
@@ -322,7 +349,172 @@ hyigenically:
 
 ### Modules and Libraries
 
-TBD.
+Modules are self-contained pieces of code. All identifiers
+used in the runtime of the module must be bound. They
+are either available from the prelude, imported from
+another module, or declared as `extern` to indicate
+runtime-provided identifiers.
+
+Modules can be declared at the top level with the `module`
+special form, can be defined in a file, or can be part of a library.
+They can also be nested in another module.
+
+#### Top Modules
+Here is an example of a simple top module, which provides
+a function that uses`display-exception` from the runtime as extern:
+```
+(module A
+  (export with-display-exception)
+  (extern (display-exception display-exception))
+  (def (with-display-exception thunk)
+    (with-catch (lambda (e) (display-exception e (current-error-port)) e)
+      thunk)))
+> (import A)
+> (with-display-exception (lambda () (error 'it-is-an-error)))
+it-is-an-error
+=> #<error-exception #5>
+```
+
+#### Imports and Exports
+
+Identifiers are imported from a module with the `import` special
+form, which must appear at a top contenxt (either top-level
+or module scope).
+It has the following syntax:
+```
+(import <import-spec> ...)
+import-spec:
+ <module-path>
+ (import-expander <import-spec> expander-args ...)
+module-path:
+ identifier            ; top or module scope module
+ :identifier           ; identifier with ':' prefix, library module
+ "path-to-module-file" ; file module, .ss extension optional
+
+```
+
+As we can see, import allows macros to maninpulate the import set
+of some import source (a module or another expansion).
+They can be defined with `defsyntax-for-import`
+An example macro is `only-in`, provided by the prelude:
+```
+(import (only-in :std/text/json read-json))
+```
+Here we import form `:std/text/json` only the `read-json` procedure.
+
+Modules define the set of exported identifiers with the `export`
+special form, which must appear at module scope.
+It has the following syntax:
+```
+(export <export-sec> ...)
+export-spec:
+ #t                     ; export all defined identifiers
+ identifier             ; export a specific identifiers
+ (rename: id name)      ; export an identifier with a different name
+ (import: <module-path> ; re-export all imports from <module-path>
+ (export-expander <export-spec> args ...) ; export macro
+```
+Similarly to `import`, `export` also supports macros, which can
+be defined with `defsyntax-for-export`.
+An usual export macro is `except-out`, provided by the prelude:
+```
+(export (except-out #t display-exception))
+```
+This form exports all defined symbols, except display-exception.
+It could be used by the example module `A` above to the same
+effect.
+
+#### File Modules
+
+Modules can be writen directly in files, without a surrounding
+`module` form.
+For example, we can place our module `A` into a file A.ss
+```
+$ cat > A.ss <<EOF
+(export with-display-exception)
+(extern (display-exception display-exception))
+(def (with-display-exception thunk)
+  (with-catch (lambda (e) (display-exception e (current-error-port)) e)
+    thunk))
+EOF
+> (import "A")
+```
+
+File modules take their name from the including file, so this
+module is named `A` and uses `A#` as the namespace prefix.
+You can be explicit about the namespace the module uses by
+having a `namesace: id` declaration at the top of the module.
+
+You can compile file modules with `gxc`:
+```
+$ gxc A.ss
+> (import "A")  ; compiled form takes precedence
+```
+
+#### Library Modules
+
+Library modules are specified with the `:library-module-id` import
+form. For example, the JSON library is `:std/text/json`.
+When there are `/` in the library module path, it indicates
+that it is part of a package. The package of a module
+can be specified with a `package: package-path` at the top
+of the module.
+
+The package also affects the namespace of the module. For
+instance, the `:std/text/json` library module is part of
+the `std/text` package and resides in file named `json.ss`.
+The namespace prefix for identifiers defined in the file is
+`std/text/json#`.
+
+By default libraries are looked up in the `$GERBIL_HOME/lib`
+directory. You can specify additional directories to be
+searched with the `GERBIL_LOAD_PATH` environment variable.
+You can also modify the load-path at runtime with `add-load-path`.
+
+When building libraries, you should use an appropriate prefix
+as your package. Then you can use the `:std/make` standard build
+library to compiled directly into `$GERBIL_HOME/lib`.
+For example let's package the `A` module into a library.
+Let's create a package `example` as the top level
+package for your library, and then give an appropriate name
+to your module. Here, let's call it `util` with the expectation
+that the library and module may grow further:
+```
+$ mkdir example
+$ cat > example/util.ss <<EOF
+package: example
+(export with-display-exception)
+(extern (display-exception display-exception))
+(def (with-display-exception thunk)
+  (with-catch (lambda (e) (display-exception e (current-error-port)) e)
+    thunk))
+EOF
+```
+
+You can now create a build script using `:std/make`
+```
+$ cat > build.ss <<EOF
+#!/usr/bin/env gxi-script
+(import :std/make)
+(let (srcdir (path-normalize (path-directory (this-source-file))))
+  (make srcdir: srcdir
+        '("example/util")))
+EOF
+$ chmod +x build.ss
+
+```
+
+You can now build your library with `build.ss` and have it
+installed into `$GERBIL_HOME/lib`.
+```
+$ ./build.ss 
+... compile example/util
+$ gxi
+> (import :example/util)
+> (with-display-exception (lambda () (error "this-is-an-error")))
+this-is-an-error
+=> #<error-exception #4>
+```
 
 ## Standard Library
 
