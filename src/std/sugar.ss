@@ -85,3 +85,33 @@ package: std
        #'(begin
            (defmethod {method type} body ...)
            (bind-method! type::t 'alias method-impl) ...)))))
+
+(defrules assert! ()
+  ((_ expr)
+   (unless expr
+     (error "Assertion error" 'expr)))
+  ((_ expr message)
+   (unless expr
+     (error "Assertion error" message 'expr))))
+
+
+(defrules hash ()
+  ((_ (key val) ...)
+   (~hash-table make-hash-table (key val) ...)))
+
+(defrules hash-eq ()
+  ((_ (key val) ...)
+   (~hash-table make-hash-table-eq (key val) ...)))
+
+(defrules hash-eqv ()
+  ((_ (key val) ...)
+   (~hash-table make-hash-table-eqv (key val) ...)))
+
+(defsyntax (~hash-table stx)
+  (syntax-case stx ()
+    ((_ make-ht clause ...)
+     (with-syntax* ((size (stx-length #'(clause ...)))
+                    (((key val) ...) #'(clause ...)))
+       #'(let (ht (make-ht size: size))
+           (hash-put! ht `key val) ...
+           ht)))))
