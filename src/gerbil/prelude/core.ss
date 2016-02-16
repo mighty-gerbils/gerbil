@@ -282,6 +282,7 @@ package: gerbil
     current-expander-path
     current-expander-phi
     local-context? top-context? module-context? prelude-context?
+    expander-context-id  module-context-ns
     make-local-context
     eval-syntax core-expand core-expand-head core-expand-expression+1
     import-module eval-module
@@ -1106,6 +1107,14 @@ package: gerbil
         
         (def (class-opt? key)
           (memq (stx-e key) '(slots: id: name: plist: constructor:)))
+
+        (def (module-type-id type-t)
+          (cond
+           ((module-context-ns (current-expander-context))
+            => (lambda (ns) (stx-identifier type-t ns "#" type-t)))
+           (else
+            (let (mid (expander-context-id type-t))
+              (stx-identifier type-t mid "#" type-t)))))
         
         (syntax-case stx ()
           ((_ type-t super make instance? . rest)
@@ -1130,7 +1139,9 @@ package: gerbil
                                 make-class-slot-mutator)))
                           (type-id 
                            (or (stx-getq id: #'rest)
-                               (gensym (stx-e #'type-t))))
+                               (if (module-context? (current-expander-context))
+                                 (module-type-id #'type-t)
+                                 (gensym (stx-e #'type-t)))))
                           (type-name 
                            (or (stx-getq name: #'rest)
                                #'type-t))
