@@ -975,7 +975,9 @@
             (cond
              ((string? x) x)
              ((symbol? x) (symbol->string x))
-             (else (error "Not a symbol or string" x))))
+             ((keyword? x) (keyword->string x))
+             ((number? x) (number->string x))
+             (else (error "Cannot convert to symbol" x))))
           args))))
 
 (define (interned-keyword? x)
@@ -1041,15 +1043,37 @@
         (reverse r))))))
 
 (define (string-join strs join)
-  (let ((join (if (char? join)
-                (string join)
-                join)))
-    (let recur ((rest strs))
+  (define (join-length strs jlen)
+    (let lp ((rest strs) (len 0))
       (core-match rest
-        ((hd) hd)
         ((hd . rest)
-         (string-append hd join (recur rest)))
-        (else "")))))
+         (if (pair? rest)
+           (lp rest
+               (fx+ (string-length hd)
+                    jlen len))
+           (fx+ (string-length hd)
+                len)))
+        (else 0))))                     ; empty
+
+  (let* ((join (if (char? join)
+                 (string join)
+                 join))
+         (jlen (string-length join))
+         (olen (join-length strs jlen))
+         (ostr (make-string olen)))
+    (let lp ((rest strs) (k 0))
+      (core-match rest
+        ((hd . rest)
+         (let ((hdlen (string-length hd)))
+           (if (pair? rest)
+             (begin
+               (substring-move! hd 0 hdlen ostr k)
+               (substring-move! join 0 jlen ostr (fx+ k hdlen))
+               (lp rest (fx+ k hdlen jlen)))
+             (begin
+               (substring-move! hd 0 hdlen ostr k)
+               ostr))))
+        (else "")))))                   ; empty
 
 (define (vector-map f vec . rest)
   (define (fold1 vec)
