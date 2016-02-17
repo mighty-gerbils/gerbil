@@ -350,6 +350,8 @@ namespace: gerbil/core
                     (hash-values hash-values)
                     (hash-copy hash-copy)
                     (hash-copy! hash-copy!)
+                    (hash-merge hash-merge)
+                    (hash-merge! hash-merge!)
                     (uninterned-symbol? uninterned-symbol?)
                     (interned-symbol? interned-symbol?)
                     (gensym gensym)
@@ -375,6 +377,7 @@ namespace: gerbil/core
                     (string-split string-split)
                     (string-join string-join)
                     (string-empty? string-empty?)
+                    (type-descriptor? type-descriptor?)
                     (struct-type? struct-type?)
                     (class-type? class-type?)
                     (make-struct-type make-struct-type)
@@ -396,12 +399,7 @@ namespace: gerbil/core
                     (object? object?)
                     (object-type object-type)
                     (struct-instance? struct-instance?)
-                    (struct-subtype? struct-subtype?)
-                    (struct-type-find struct-type-find)
                     (class-instance? class-instance?)
-                    (class-subtype? class-subtype?)
-                    (class-type-find class-type-find)
-                    (class-type-find* class-type-find*)
                     (direct-struct-instance? direct-struct-instance?)
                     (direct-class-instance? direct-class-instance?)
                     (make-object make-object)
@@ -422,12 +420,6 @@ namespace: gerbil/core
                     (direct-method-ref direct-method-ref)
                     (bound-method-ref bound-method-ref)
                     (find-method find-method)
-                    (find-next-method find-next-method)
-                    (struct-find-method struct-find-method)
-                    (struct-find-next-method struct-find-next-method)
-                    (class-find-method class-find-method)
-                    (class-find-next-method class-find-next-method)
-                    (class-find-next-method* class-find-next-method*)
                     (current-error-port current-error-port)
                     (make-promise make-promise)
                     (promise? promise?)
@@ -574,6 +566,8 @@ namespace: gerbil/core
                     (top-context? gx#top-context?)
                     (module-context? gx#module-context?)
                     (prelude-context? gx#prelude-context?)
+                    (expander-context-id gx#expander-context-id)
+                    (module-context-ns gx#module-context-ns)
                     (make-local-context gx#make-local-context)
                     (eval-syntax gx#eval-syntax)
                     (core-expand gx#core-expand)
@@ -706,6 +700,7 @@ namespace: gerbil/core
                                       (%#define-syntax
                                        defrules
                                        |gerbil/core::<sugar>::<sugar:1>[:0:]#defrules|))
+                             (%#define-alias define-rules defrules)
                              (%#define-syntax
                               defsyntax%
                               |gerbil/core::<sugar>::<sugar:1>[:0:]#defsyntax%|)
@@ -797,6 +792,7 @@ namespace: gerbil/core
                              (%#define-syntax
                               alet*
                               |gerbil/core::<sugar>::<sugar:2>[:0:]#alet*|)
+                             (%#define-alias and-let* alet*)
                              (%#define-syntax
                               @list
                               |gerbil/core::<sugar>::<sugar:2>[:0:]#@list|)
@@ -1192,9 +1188,11 @@ namespace: gerbil/core
                              (%#define-syntax
                               defstruct
                               |gerbil/core::<MOP>::<MOP:2>[:0:]#defstruct|)
+                             (%#define-alias define-struct defstruct)
                              (%#define-syntax
                               defclass
                               |gerbil/core::<MOP>::<MOP:2>[:0:]#defclass|)
+                             (%#define-alias define-class defclass)
                              (%#define-syntax
                               defmethod
                               |gerbil/core::<MOP>::<MOP:2>[:0:]#defmethod|)
