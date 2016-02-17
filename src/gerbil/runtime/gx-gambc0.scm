@@ -88,44 +88,33 @@
 ;;  3  ##type-flags
 ;;  4  ##type-super
 ;;  5  ##type-fields
-;;  6                       type-descriptor-super
+;;  6                       type-descriptor-mixin
 ;;  7                       type-descriptor-fields
 ;;  8                       type-descriptor-plist
 ;;  9                       type-descriptor-ctor
 ;; 10                       type-descriptor-slots
 ;; 11                       type-descriptor-methods
 ;;
-;; struct-type
-;;  ##type-super          =>  struct-type/#f
-;;  type-descriptor-super => '##struct-type##
-;; class-type
-;;  ##type-super          => &class-type::t
-;;  type-descriptor-super => [class-type ...]
-
-(define &class-type::t
-  (##structure ##type-type '##class-type## 'class-type 24 #f '#()))
-
 (define (type-descriptor? klass)
   (and (##type? klass)
        (eq? (##vector-length klass) 12)))
 
-(define (struct-type-descriptor? klass)
-  (eq? (type-descriptor-super klass) '##struct-type##))
-
-(define (class-type-descriptor? klass)
-  (let ((super (##type-super klass)))
-    (and super (eq? (##type-id super) '##class-type##))))
-
 (define (struct-type? klass)
   (and (type-descriptor? klass)
-       (struct-type-descriptor? klass)))
+       (not (type-descriptor-mixin klass))))
+
+(define &class-type::t
+  (##structure ##type-type '##class-type## 'class-type 24 #f '#()))
 
 (define (class-type? klass)
   (and (type-descriptor? klass)
-       (class-type-descriptor? klass)))
+       (let ((super (##type-super klass)))
+         (and super
+              (or (eq? &class-type::t super)
+                  (eq? (##type-id super) '##class-type##))))))
 
 (define (make-type-descriptor type-id type-name type-super
-                              rtd-super rtd-fields rtd-plist
+                              rtd-mixin rtd-fields rtd-plist
                               rtd-ctor rtd-slots rtd-methods)
   (let* ((transparent? (assgetq transparent: rtd-plist))
          (field-names
@@ -145,18 +134,16 @@
                  (+ 24 (if transparent? 0 1))
                  type-super
                  (list->vector field-info)
-                 rtd-super rtd-fields rtd-plist rtd-ctor 
+                 rtd-mixin rtd-fields rtd-plist rtd-ctor 
                  rtd-slots rtd-methods)))
 
 (define (make-struct-type-descriptor id name super fields plist ctor)
-  (make-type-descriptor id name super '##struct-type## 
-                        fields plist ctor #f #f))
+  (make-type-descriptor id name super #f fields plist ctor #f #f))
 
-(define (make-class-type-descriptor id name super fields plist ctor slots)
-  (make-type-descriptor id name &class-type::t super 
-                        fields plist ctor slots #f))
+(define (make-class-type-descriptor id name mixin fields plist ctor slots)
+  (make-type-descriptor id name &class-type::t mixin fields plist ctor slots #f))
 
-(define (type-descriptor-super klass)
+(define (type-descriptor-mixin klass)
   (##vector-ref klass 6))
 (define (type-descriptor-fields klass)
   (##vector-ref klass 7))
@@ -269,15 +256,14 @@
          (error "Cannot extend final class" klass))))
   
   (let-values (((std-fields std-slots std-slot-list) (make-slots)))
-    (let ((std-super  (class-linearize-mixins super))
+    (let ((std-mixin  (class-linearize-mixins super))
           (std-plist  (cons (cons slots: std-slot-list) plist))
           (std-ctor   (or ctor (find-super-ctor))))
-      (make-class-type-descriptor id name std-super 
-                                 std-fields std-plist std-ctor std-slots))))
+      (make-class-type-descriptor id name std-mixin std-fields std-plist std-ctor std-slots))))
 
 (define (class-linearize-mixins klass-lst)
   (define (class->list klass)
-    (cons klass (type-descriptor-super klass)))
+    (cons klass (type-descriptor-mixin klass)))
   
   (core-match klass-lst
     (() '())
@@ -343,7 +329,10 @@
     (class-slot-set! klass obj slot val)))
 
 (define (class-slot-offset klass slot)
-  (hash-get (type-descriptor-slots klass) slot))
+  (cond
+   ((type-descriptor-slots klass)
+    => (lambda (slots) (hash-get slots slot)))
+   (else #f)))
 
 (define (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
@@ -372,10 +361,14 @@
   (and (object? obj)
        (let ((klass-id (##type-id klass))
              (type (object-type obj)))
-         (and (class-type? type)
+         (and (type-descriptor? type)
               (or (eq? (##type-id type) klass-id)
-                  (ormap (lambda (type) (eq? (##type-id type) klass-id))
-                         (type-descriptor-super type)))))))
+                  (cond
+                   ((type-descriptor-mixin type)
+                    => (lambda (mixin)
+                         (ormap (lambda (type) (eq? (##type-id type) klass-id))
+                                mixin)))
+                   (else #f)))))))
 
 (define (direct-class-instance? klass obj)
   (##structure-direct-instance-of? obj (##type-id klass)))
@@ -487,7 +480,7 @@
   (if (object? obj)
     (let ((klass (object-type obj)))
       (cond 
-       ((and (class-type? klass) (class-slot-offset klass slot))
+       ((and (type-descriptor? klass) (class-slot-offset klass slot))
         => K)
        (else (E obj slot))))
     (E obj slot)))
@@ -515,81 +508,31 @@
    (else #f)))
 
 (define (find-method klass id)
-  (cond
-   ((struct-type? klass)
-    (struct-find-method klass id))
-   ((class-type? klass)
-    (class-find-method klass id))
-   (else #f)))
-
-(define (find-next-method klass id #!optional (obj #f))
-  (cond
-   ((struct-type? klass)
-    (struct-find-next-method klass id))
-   ((class-type? klass)
-    (if obj
-      (class-find-next-method* klass (object-type obj) id)
-      (class-find-next-method klass id)))
-   (else #f)))
+  (if (class-type? klass)
+    (class-find-method klass id)
+    (struct-find-method klass id)))
 
 (define (struct-find-method klass id)
-  (struct-type-find
-   (lambda (klass)
-     (direct-method-ref klass id))
-   klass))
- 
-(define (struct-find-next-method klass id)
-  (struct-find-method (##type-super klass) id))
+  (and (type-descriptor? klass)
+       (or (direct-method-ref klass id)
+           (struct-find-method (##type-super klass) id))))
 
 (define (class-find-method klass id)
-  (class-type-find
-   (lambda (klass)
-     (direct-method-ref klass id))
-   klass))
-
-(define (class-find-next-method klass id)
-  (class-type-find*
-   (lambda (klass)
-     (direct-method-ref klass id))
-   (type-descriptor-super klass)))
-
-(define (class-find-next-method* klass subklass id)
-  (let ((tid (##type-id klass)))
-    (if (eq? tid (##type-id subklass))
-      (class-find-next-method klass id)
-      (let lp ((rest (type-descriptor-super subklass)))
-        (core-match rest
-          ((hd . rest)
-           (if (eq? tid (##type-id hd))
-             (class-type-find*
-              (lambda (klass)
-                (direct-method-ref klass id))
-              rest)
-             (lp rest)))
-          (else #f))))))
-
-(define (struct-type-find proc klass)
-  (let lp ((klass klass))
-    (and klass
-         (or (proc klass)
-             (lp (##type-super klass))))))
-
-(define (class-type-find proc klass)
-  (or (proc klass)
-      (class-type-find* proc (type-descriptor-super klass))))
-
-(define (class-type-find* proc rest)
-  (let lp ((rest rest))
-    (core-match rest
-      ((hd . rest)
-       (or (proc hd)
-           (lp rest)))
-      (else #f))))
+  (or (direct-method-ref klass id)
+      (mixin-method-ref klass id)))
 
 (define (direct-method-ref klass id)
   (cond
    ((type-descriptor-methods klass)
     => (lambda (ht) (hash-get ht id)))
+   (else #f)))
+
+(define (mixin-method-ref klass id)
+  (cond
+   ((type-descriptor-mixin klass)
+    => (lambda (mixin)
+         (ormap (lambda (rtd) (direct-method-ref rtd id))
+                mixin)))
    (else #f)))
 
 (define (bind-method! klass id proc #!optional (rebind? #t))

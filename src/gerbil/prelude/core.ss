@@ -153,7 +153,9 @@ package: gerbil
     string-map string-index string-rindex 
     string-split string-join string-empty?
     ;; MOP
-    struct-type? class-type? 
+    type-descriptor?
+    struct-type?
+    class-type?
     make-struct-type
     make-struct-predicate
     make-struct-field-accessor
@@ -171,8 +173,7 @@ package: gerbil
     direct-slot-ref
     direct-slot-set!
     object? object-type
-    struct-instance? struct-subtype? struct-type-find
-    class-instance? class-subtype? class-type-find class-type-find*
+    struct-instance? class-instance? 
     direct-struct-instance? direct-class-instance?
     make-object 
     struct->list class->list
@@ -185,9 +186,7 @@ package: gerbil
     call-method
     bind-method!
     method-ref direct-method-ref bound-method-ref 
-    find-method find-next-method
-    struct-find-method struct-find-next-method
-    class-find-method class-find-next-method class-find-next-method*
+    find-method
     ;; control
     current-error-port
     make-promise promise?
@@ -1515,62 +1514,8 @@ package: gerbil
                          (runtime-type-identifier klass))
                         (name 
                          (stx-identifier #'id #'type "::" #'id))
-                        (body
-                         (cond
-                          ((runtime-struct-info? klass)
-                           (with-syntax* 
-                               ((super (datum->syntax #'id '@super))
-                                (find-super
-                                 (wrap
-                                  #'(or (struct-find-next-method type::t 'id)
-                                        (error "Cannot find super method" 
-                                          type::t 'id))))
-                                (call-super
-                                 (wrap
-                                  (if no-cache?
-                                    #'(lambda $args 
-                                        (apply find-super $args))
-                                    #'(let ($super (delay find-super))
-                                        (lambda $args
-                                          (apply (force $super) $args)))))))
-                             (wrap 
-                              #'(let (super call-super)
-                                  impl))))
-                          ((runtime-class-info? klass)
-                           (with-syntax* 
-                               ((super (datum->syntax #'id '@super))
-                                (next (datum->syntax #'id '@next))
-                                (find-super
-                                 (wrap
-                                  #'(or (class-find-next-method type::t 'id)
-                                        (error "Cannot find super method" 
-                                          type::t 'id))))
-                                (call-super
-                                 (wrap
-                                  (if no-cache?
-                                    #'(lambda $args 
-                                        (apply find-super $args))
-                                    #'(let ($super (delay find-super))
-                                        (lambda $args
-                                          (apply (force $super) $args))))))
-                                (find-next
-                                 (wrap
-                                  #'(lambda ($obj)
-                                      (or (class-find-next-method* 
-                                           type::t (object-type $obj) 'id)
-                                          (error "Cannot find next method" 
-                                            type::t $obj 'id)))))
-                                (call-next
-                                 (wrap
-                                  #'(lambda ($obj . $args)
-                                      (apply (find-next $obj) $obj $args)))))
-                             (wrap
-                              #'(let ((super call-super)
-                                      (next  call-next))
-                                  impl))))
-                          (else #'impl)))
                         (defimpl
-                          (wrap #'(def name body)))
+                          (wrap #'(def name impl)))
                         (rebind? rebind?)
                         (bind
                          (wrap #'(bind-method! type::t 'id name rebind?))))

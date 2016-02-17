@@ -426,12 +426,12 @@ namespace: gx
 (defmethod {apply-macro-expander top-special-form}
   (lambda (self stx (top? top-context?))
     (if (top? (current-expander-context))
-      (@super self stx)
+      (core-expander::apply-macro-expander self stx)
       (raise-syntax-error #f "Bad syntax; illegal context" stx))))
 
 (defmethod {apply-macro-expander module-special-form}
   (lambda (self stx)
-    (@super self stx module-context?)))
+    (top-special-form::apply-macro-expander self stx module-context?)))
 
 (defmethod {apply-macro-expander rename-macro-expander}
   (lambda (self stx)
