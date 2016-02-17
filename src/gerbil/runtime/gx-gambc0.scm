@@ -106,12 +106,15 @@
 (define &class-type::t
   (##structure ##type-type '##class-type## 'class-type 24 #f '#()))
 
+(define (class-type-descriptor? klass)
+  (let ((super (##type-super klass)))
+    (and super
+         (or (eq? &class-type::t super)
+             (eq? (##type-id super) '##class-type##)))))
+
 (define (class-type? klass)
   (and (type-descriptor? klass)
-       (let ((super (##type-super klass)))
-         (and super
-              (or (eq? &class-type::t super)
-                  (eq? (##type-id super) '##class-type##))))))
+       (class-type-descriptor? klass)))
 
 (define (make-type-descriptor type-id type-name type-super
                               rtd-mixin rtd-fields rtd-plist
@@ -508,9 +511,12 @@
    (else #f)))
 
 (define (find-method klass id)
-  (if (class-type? klass)
-    (class-find-method klass id)
-    (struct-find-method klass id)))
+  (cond
+   ((type-descriptor? klass)
+    (if (class-type-descriptor? klass)
+      (class-find-method klass id)
+      (struct-find-method klass id)))
+   (else #f)))
 
 (define (struct-find-method klass id)
   (and (type-descriptor? klass)
