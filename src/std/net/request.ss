@@ -9,6 +9,7 @@ package: std/net
         :std/sugar
         :std/format
         :std/pregexp
+        :std/error
         :std/net/uri
         :std/text/json
         :std/srfi/13
@@ -243,9 +244,11 @@ package: std/net
                                 (string-trim-both value))
                           headers)))
                (else
-                (error "http read error; malformed header" port next)))))))
+                (raise-io-error 'http-request-read-response!
+                                "Malformed header" port next)))))))
       (else
-       (error "http read error; malformed sttus line" port status-line)))))
+       (raise-io-error 'http-request-read-response!
+                       "malformed status line" port status-line)))))
 
 (def (http-request-read-body port headers)
   (def (length-e headers)
@@ -314,12 +317,14 @@ package: std/net
     (let (next (read-u8 port))
       (cond
        ((eof-object? next)
-        (error "Incomplete response"))
+        (raise-io-error 'request-read-response-line
+                        "Incomplete response; connection closed" port))
        ((eq? next cr)
         (let (next (read-u8 port))
           (cond
            ((eof-object? next)
-            (error "Incomplete response"))
+            (raise-io-error 'request-read-response-line
+                            "Incomplete response; connection closed" port))
            ((eq? next lf)
             (bytes->string (list->u8vector (reverse r))))
            (else
