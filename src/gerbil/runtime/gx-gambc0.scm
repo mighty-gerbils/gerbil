@@ -1081,39 +1081,41 @@
       K fini)))
 
 ;; gerbil errors
+(define exception-object::t (macro-type-exception))
+(define error-object::t     (macro-type-error-exception))
+
+(define (type-descriptor-super-set! type super)
+  (##vector-set! type 4 super))
+
 (define error::t
   (make-struct-type 'gerbil#error::t #f 3 'error '() #f))
+(type-descriptor-super-set! error::t error-object::t)
+
 (define type-error::t
   (make-struct-type 'gerbil#type-error::t error::t 1 'type-error '() #f))
 
-;; some minimal integration with gambit exceptions
+;; some minimal integration with gambit exception
+(define (exception? obj)
+  (##structure-instance-of? obj (##type-id exception-object::t)))
+
 (define (error? obj)
-  (or (struct-instance? error::t obj)
-      (##structure-instance-of? obj (##type-id (macro-type-exception)))))
+  (##structure-instance-of? obj (##type-id error-object::t)))
 
 (define (type-error? obj)
   (or (struct-instance? type-error::t obj)
       (##structure-instance-of? obj (##type-id (macro-type-type-exception)))))
 
-(define (error-trace obj)
-  (and (struct-instance? error::t obj)
-       (##vector-ref obj 1)))
-
 (define (error-message obj)
-  (cond
-   ((struct-instance? error::t obj)
-    (##vector-ref obj 2))
-   ((error-exception? obj)
-    (error-exception-message obj))
-   (else #f)))
+  (and (error? obj)
+    (##vector-ref obj 1)))
 
 (define (error-irritants obj)
-  (cond
-   ((struct-instance? error::t obj)
-    (##vector-ref obj 3))
-   ((error-exception? obj)
-    (error-exception-parameters obj))
-   (else '())))
+  (and (error? obj)
+       (##vector-ref obj 2)))
+
+(define (error-trace obj)
+  (and (struct-instance? error::t obj)
+       (##vector-ref obj 3)))
 
 ;;; assorted
 (define (create-directory* dir #!optional (perms #o755))

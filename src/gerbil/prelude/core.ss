@@ -198,7 +198,7 @@ package: gerbil
     with-catch 
     error raise raise-type-error
     error::t type-error::t
-    error? type-error? 
+    exception? error? type-error? 
     error-trace error-message error-irritants
     ;; OS
     exit getenv setenv

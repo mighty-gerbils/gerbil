@@ -137,8 +137,7 @@ namespace: gx
 
 (def (raise-syntax-error where message stx . details)
   (raise 
-    (make-syntax-error where message 
-                       (cons stx details)
+    (make-syntax-error message (cons stx details) where 
                        (current-expander-context)
                        (current-expander-marks)
                        (current-expander-phi))))

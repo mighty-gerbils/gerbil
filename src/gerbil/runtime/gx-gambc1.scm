@@ -328,7 +328,7 @@
 
 (define (_gx#raise-syntax-error where what stx . details)
   (raise 
-    (make-syntax-error where what (cons stx details) (&current-context) #f #f)))
+    (make-syntax-error what (cons stx details) where (&current-context) #f #f)))
 
 (define (_gx#resolve-path path #!optional (loc #f))
   (error "XXX"))
