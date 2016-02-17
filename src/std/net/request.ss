@@ -154,7 +154,7 @@ package: std/net
     (http-request 'HEAD url headers #f [] #f)))
 
 (def url-rx
-  (pregexp "(?:(https?)://)?([^/]+)(:[0-9]+)?(/.*)?"))
+  (pregexp "(?:(https?)://)?([^/:]+)(:[0-9]+)?(/.*)?"))
 
 (def (http-request method url headers body history redirect)
   ;; extra headers:
@@ -166,7 +166,9 @@ package: std/net
     (let* ((scheme (or scheme "http"))
             (port
             (cond
-             (port (string->number port))
+             (port
+              (string->number
+               (substring port 1 (string-length port))))
              ((equal? scheme "https")
               443)
              (else 80)))
