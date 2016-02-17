@@ -513,7 +513,7 @@
 (define (find-method klass id)
   (cond
    ((type-descriptor? klass)
-    (if (class-type-descriptor? klass)
+    (if (type-descriptor-mixin klass)
       (class-find-method klass id)
       (struct-find-method klass id)))
    (else #f)))
