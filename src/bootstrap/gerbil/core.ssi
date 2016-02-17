@@ -435,6 +435,7 @@ namespace: gerbil/core
                     (raise-type-error raise-type-error)
                     (error::t error::t)
                     (type-error::t type-error::t)
+                    (exception? exception?)
                     (error? error?)
                     (type-error? type-error?)
                     (error-trace error-trace)

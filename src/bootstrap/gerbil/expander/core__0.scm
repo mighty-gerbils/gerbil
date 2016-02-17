@@ -584,9 +584,9 @@
   (define gx#raise-syntax-error
     (lambda (_where32254_ _message32255_ _stx32256_ . _details32257_)
       (raise (gx#make-syntax-error
-              _where32254_
               _message32255_
               (cons _stx32256_ _details32257_)
+              _where32254_
               (gx#current-expander-context)
               (gx#current-expander-marks)
               (gx#current-expander-phi)))))
