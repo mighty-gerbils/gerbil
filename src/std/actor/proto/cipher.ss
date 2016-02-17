@@ -42,9 +42,9 @@ package: std/actor/proto
         (let (peerk (xdr-binary-read sock values))
           (DH-compute-key dh (bytes->BN peerk))))
        ((eof-object? e)
-        (error "rpc key exchange error; connection closed" sock))
+        (raise-rpc-error 'rpc-proto-key-exchange "connection closed" sock))
        (else
-        (error "rpc key exchange; exchange error" e sock))))))
+        (raise-rpc-error 'rpc-proto-key-exchange "key exchange error" e sock))))))
 
 (def (rpc-cipher-proto-read sock secret)
   (let (e (read-u8 sock))
@@ -58,29 +58,29 @@ package: std/actor/proto
              (hmac   (make-u8vector ::digest-size))
              (rd     (read-subu8vector hmac 0 ::digest-size sock))
              (_      (when (fx< rd ::digest-size)
-                       (error "rpc read error; premature port end")))
+                       (raise-rpc-error 'rpc-proto-read "premature port end")))
              (iv     (make-u8vector ::cipher-iv-length))
              (rd     (read-subu8vector iv 0 ::cipher-iv-length sock))
              (_      (when (fx< rd ::cipher-iv-length)
-                       (error "rpc read error; premature port end")))
+                       (raise-rpc-error 'rpc-proto-read "premature port end")))
              (size   (read-u32 sock))
              (_      (unless (fx< size 65536)
-                       (error "rpc read error; message too large" size)))
+                       (raise-rpc-error 'rpc-proto-read "message too large" size)))
              (ctext  (make-u8vector size))
              (rd     (read-subu8vector ctext 0 size sock))
              (_      (when (fx< rd size)
-                       (error "rpc read error; premature port end")))
+                       (raise-rpc-error 'rpc-proto-read "premature port end")))
              (_      (digest-update! digest secret))
              (_      (digest-update! digest iv))
              (_      (digest-update! digest ctext))
              (hmac*  (digest-final! digest))
              (_      (unless (equal? hmac hmac*)
-                       (error "rpc read error; HMAC failure" sock))))
+                       (raise-rpc-error 'rpc-proto-read "HMAC failure" sock))))
         (decrypt cipher key iv ctext)))
      ((eof-object? e)
-      (error "rpc read error; port closed" sock))
+      (raise-rpc-error 'rpc-proto-read "port closed" sock))
      (else
-      (error "rpc read error; bad message" sock e)))))
+      (raise-rpc-error 'rpc-proto-read "bad message" sock e)))))
 
 
 (def (rpc-cipher-proto-write obj sock secret)
@@ -104,7 +104,7 @@ package: std/actor/proto
       (write-subu8vector ctext 0 (u8vector-length ctext) sock)
       (force-output sock)))
    (else
-    (error "rpc write error; unexpected object" obj))))
+    (raise-rpc-error 'rpc-proto-write "unexpected object" obj))))
 
 (def (rpc-cipher-proto-accept sock)
   (rpc-proto-accept-e sock rpc-proto-cipher
@@ -137,7 +137,7 @@ package: std/actor/proto
       (let (e (read-u8 sock))
         (cond
          ((eof-object? e)
-          (error "rpc connect error; connect closed"))
+          (raise-rpc-error 'rpc-proto-connect "connect closed"))
          ((eq? e rpc-proto-challenge)
           (rpc-cookie-proto-challenge-respond sock cookie)
           (let (secret (rpc-cipher-proto-key-exchange sock))
@@ -145,7 +145,7 @@ package: std/actor/proto
               (cut rpc-cipher-proto-read <> secret)
               (cut rpc-cipher-proto-write <> <> secret))))
          (else
-          (error "rpc connect error; bad hello" e sock)))))))
+          (raise-rpc-error 'rpc-proto-connect "bad hello" e sock)))))))
 
 (def (rpc-cipher-proto)
   (make-!rpc-protocol

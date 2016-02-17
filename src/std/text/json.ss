@@ -17,7 +17,8 @@ package: std/text
 ;;; Note that JSON null is decoded as #!void and JSON lists are decoded as
 ;;;  Scheme lists
 (import :gerbil/gambit/ports
-        :gerbil/gambit/bits)
+        :gerbil/gambit/bits
+        :std/error)
 (export read-json write-json
         string->json-object json-object->string)
 
@@ -38,8 +39,8 @@ package: std/text
 ;;; implementation
 (def (raise-invalid-token port char)
   (if (eof-object? char)
-    (error "Incomplete JSON object; EOF reached" port)
-    (error "Invalid JSON token" port char)))
+    (raise-io-error 'read-json "Incomplete JSON object; EOF reached" port)
+    (raise-io-error 'read-json "Invalid JSON token" port char)))
 
 (def (read-json-object port)
   (skip-whitespace port)

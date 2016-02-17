@@ -39,9 +39,9 @@ package: std/actor/proto
           (values rpc-null-proto-read
                   rpc-null-proto-write))
          ((eof-object? e)
-          (error "rpc connect error; connection closed"))
+          (raise-rpc-error 'rpc-proto-connect "connection closed"))
          (else
-          (error "rpc connect error; bad hello" e sock)))))))
+          (raise-rpc-error 'rpc-proto-connect "bad hello" e sock)))))))
 
 (def (rpc-cookie-proto-challenge sock cookie)
   (write-u8 rpc-proto-challenge sock)
@@ -57,7 +57,7 @@ package: std/actor/proto
               (digest-final! digest))))
       (if (equal? response secret)
         (write-u8/force-output rpc-proto-connect-accept sock)
-        (error "rpc accept error; authentication failure" challenge response)))))
+        (raise-rpc-error 'rpc-proto-authen "authentication failure" challenge response)))))
 
 (def (rpc-cookie-proto-challenge-respond sock cookie)
   (let* ((challenge (xdr-binary-read sock values))
@@ -72,9 +72,9 @@ package: std/actor/proto
        ((eq? e rpc-proto-connect-accept)
         #!void)
        ((eof-object? e)
-        (error "rpc connect error; connection closed"))
+        (raise-rpc-error 'rpc-proto-authen "connection closed"))
        (else
-        (error "rpc connect error; authentication failure" e sock))))))
+        (raise-rpc-error 'rpc-proto-authen "authentication failure" e sock))))))
 
 (def (rpc-cookie-proto (cookie-file "~/.gerbil/cookie"))
   (let (cookie (call-with-input-file cookie-file read))

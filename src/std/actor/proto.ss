@@ -4,10 +4,13 @@
 package: std/actor
 
 (import :std/event
+        :std/error
         :std/actor/message
         :std/actor/xdr
         )
 (export
+  rpc-error? raise-rpc-error
+  remote-error? raise-remote-error
   !rpc !rpc?
   !call make-!call !call? !call-e !call-e-set! !call-k !call-k-set!
   !value make-!value !value? !value-e !value-e-set! !value-k !value-k-set!
@@ -29,6 +32,18 @@ package: std/actor
         protocol-info-calls
         protocol-info-events)
   )
+
+(defstruct (rpc-error io-error) ()
+  id: std/actor#rpc-error::t)
+
+(defstruct (remote-error <error>) ()
+  id: std/actor#remote-error::t)
+
+(def (raise-rpc-error where what . irritants)
+  (raise (make-rpc-error what irritants where)))
+
+(def (raise-remote-error where what . irritants)
+  (raise (make-remote-error what irritants where)))
 
 ;;; rpc messages
 (defstruct !rpc ()
@@ -57,7 +72,7 @@ package: std/actor
      (<- ((!value val (eq? token))
           val)
          ((!error msg (eq? token))
-          (error (string-append "remote error: " msg)))))))
+          (raise-remote-error '!!call (string-append "remote error: " msg)))))))
 
 (defrules !!value ()
   ((_ dest e k)

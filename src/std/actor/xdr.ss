@@ -7,6 +7,7 @@ package: std/actor
         :gerbil/gambit/ports
         :gerbil/gambit/bits
         :gerbil/gambit/fixnum
+        :std/error
         )
 (export #t)
 
@@ -52,6 +53,12 @@ END-C
 
 (defstruct opaque (type data)
   id: std/actor#opaque::t)
+
+(defstruct (xdr-error io-error) ()
+  id: std/actor/xdr-error::t)
+
+(define (raise-xdr-error where what . irritants)
+  (raise (make-xdr-error what irritants where)))
 
 (def (xdr-read port types)
   (parameterize ((current-xdr-type-registry types))
@@ -105,14 +112,14 @@ END-C
       (let (xdr (vector-ref *xdr-proto-types* type))
         ((XDR-read xdr) port)))
      (else
-      (error "xdr read error: unknown object type" type)))))
+      (raise-xdr-error 'xdr-read  "unknown object type" type port)))))
 
 (def (xdr-write-object obj port)
   (let (type (xdr-object-type obj))
     (if type
       (let (xdr (vector-ref *xdr-proto-types* type))
         ((XDR-write xdr) obj port))
-      (error "xdr write error: unknown object type" obj))))
+      (raise-xdr-error 'xdr-write "unknown object type" obj))))
 
 (def (xdr-object-type obj)
   (cond
@@ -167,7 +174,7 @@ END-C
 (def (xdr-int-read port)
   (let* ((hd (read-u8 port))
          (_  (when (eof-object? hd)
-               (error "xdr read error; premature port end")))
+               (raise-xdr-error 'xdr-read "premature port end" port)))
          (sign (not (fxzero? (fxand hd #x80))))
          (bytes (fxand hd #x7f))
          (bytes (if (fx< bytes 127)
@@ -179,7 +186,7 @@ END-C
         (lp (fx1+ k)
             (let (u8 (read-u8 port))
               (when (eof-object? u8)
-                (error "xdr read error; premature port end"))
+                (raise-xdr-error 'xdr-read "premature port end" port))
               (bitwise-ior (arithmetic-shift u8 shift)
                            value))
             (fx+ shift 8)))
@@ -191,7 +198,7 @@ END-C
          (ilen (read-subu8vector bytes 0 8 port)))
     (if (fx= ilen 8)
       (xdr-bytes->float bytes)
-      (error "xdr read error; premature port end" port))))
+      (raise-xdr-error 'xdr-read "premature port end" port))))
 
 (def (xdr-binary-read port K)
   (let* ((len (xdr-read-object port))
@@ -199,7 +206,7 @@ END-C
          (ilen (read-subu8vector buf 0 len port)))
     (if (fx= len ilen)
       (K buf)
-      (error "xdr read error; premature port end" port))))
+      (raise-xdr-error 'xdr-read "premature port end" port))))
      
 (def (xdr-string-read port)
   (xdr-binary-read port bytes->string))
@@ -263,7 +270,7 @@ END-C
       => (lambda (xdr)
            ((XDR-read xdr) port)))
      (else
-      (error "xdr read error; unknown object type" type-id)))))
+      (raise-xdr-error 'xdr-read "unknown structure type" type-id port)))))
 
 ;;; xdr writers
 (defrules defxdr-atom-write ()
@@ -428,7 +435,7 @@ END-C
     (def (read-e port)
       (let (index (read-u8 port))
         (when (eof-object? index)
-          (error "xdr read error; premature port end"))
+          (raise-xdr-error 'xdr-read "premature port end" port))
         (let (xdr-read-e (vector-ref reader-vector index))
           (xdr-read-e port))))
 
@@ -444,7 +451,7 @@ END-C
                   (write-e obj port))
                 (lp pred-rest writer-rest (fx1+ index))))))
           (else
-           (error "xdr write error; unknown object type" obj)))))
+           (raise-xdr-error 'xdr-write "unknown object type" obj)))))
 
     (def (pred-e obj)
       (ormap preds obj))

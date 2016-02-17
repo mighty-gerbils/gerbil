@@ -4,6 +4,7 @@
 package: std/actor/proto
 
 (import :gerbil/gambit/ports
+        :std/error
         :std/misc/uuid
         :std/actor/message
         :std/actor/proto
@@ -66,7 +67,8 @@ package: std/actor/proto
          (write-u8 rpc-proto-message-event port)
          (xdr-uuid-write dest port))
         (else
-         (error "unknown rpc message" content))))
+         (raise-rpc-error 'rpc-proto-write-message
+                          "unknown rpc message type" content))))
      (else
       (write-u8 rpc-proto-message-raw port)))
     (parameterize ((current-xdr-type-registry
@@ -107,7 +109,8 @@ package: std/actor/proto
       ((eq? type rpc-proto-message-raw)
        #f)
       (else
-       (error "unmarshall error; unexpected message type" type)))
+       (raise-rpc-error 'rpc-proto-read-message
+                        "unmarshall error; unexpected message type" type)))
      #!void dest #f)))
 
 ;; return modify msg content in place, return it
@@ -144,7 +147,7 @@ package: std/actor/proto
       (let (e (read-u8 port))
         (cond
          ((eof-object? e)
-          (error "rpc read error; premature port end"))
+          (raise-io-error 'read-u32 "premature port end"))
          (else
           (lp (fx1+ k)
               (fxior (fxarithmetic-shift e (fx* k 8))

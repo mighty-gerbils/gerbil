@@ -20,38 +20,46 @@ package: std/actor/proto
 
 ;; generic rpc hello
 (def (rpc-proto-accept-e sock proto-t K)
-  (def connection-closed "rpc accept error; connection closed")
-  (def bad-hello "rpc accept error; bad hello")
+  (def (connection-closed . args)
+    (apply raise-rpc-error 'rpc-proto-accept "connection closed" args))
+  (def (bad-hello . args)
+    (apply raise-rpc-error 'rpc-proto-accept "bad hello" args))
+  
   (let (e (read-u8 sock))
     (cond
      ((eof-object? e)
-      (error connection-closed sock))
+      (connection-closed sock))
      ((eq? e rpc-proto-connect-hello)
       (let (e (read-u8 sock))
         (cond
          ((eof-object? e)
-          (error connection-closed sock))
+          (connection-closed sock))
          ((eq? e proto-t)
           (write-u8/force-output rpc-proto-connect-accept sock)
           (K sock))
          (else
           (write-u8/force-output rpc-proto-connect-reject sock)
-          (error bad-hello e sock)))))
+          (bad-hello e sock)))))
      (else
-      (error bad-hello e sock)))))
+      (bad-hello e sock)))))
 
 (def (rpc-proto-connect-e sock proto-t K)
+  (def (connection-closed . args)
+    (apply raise-rpc-error 'rpc-proto-connect "connection closed" args))
+  (def (bad-hello . args)
+    (apply raise-rpc-error 'rpc-proto-connect "bad hello" args))
+
   (write-u8 rpc-proto-connect-hello sock)
   (write-u8 proto-t sock)
   (force-output sock)
   (let (e (read-u8 sock))
     (cond
      ((eof-object? e)
-      (error "rpc connect error; connection closed" sock))
+      (connection-closed sock))
      ((eq? e rpc-proto-connect-accept)
       (K sock))
      (else
-      (error "rpc accept error; bad hello" e sock)))))
+      (bad-hello e sock)))))
 
 ;;; NULL proto; unathenticated clear text.
 (def (rpc-null-proto-open-client inaddr)
@@ -85,12 +93,12 @@ package: std/actor/proto
                  (rd  (read-subu8vector buf 0 len sock)))
             (if (fx= rd len)
               buf
-              (error "rpc read error; premature port end" sock rd len)))
-          (error "rpc read error; message too long" sock len))))
+              (raise-rpc-error 'rpc-proto-read "remature port end" sock rd len)))
+          (raise-rpc-error 'rpc-proto-read "message too long" sock len))))
      ((eof-object? e)
-      (error "rpc read error; port closed" sock))
+      (raise-rpc-error 'rpc-proto-read "port closed" sock))
      (else
-      (error "rpc read error; bad message" sock e)))))
+      (raise-rpc-error 'rpc-proto-read "bad message" sock e)))))
 
 (def (rpc-null-proto-write obj sock)
   (cond
@@ -102,7 +110,7 @@ package: std/actor/proto
     (write-subu8vector obj 0 (u8vector-length obj) sock)
     (force-output sock))
    (else
-    (error "rpc write error; unexpected object" obj))))
+    (raise-rpc-error 'rpc-proto-write "unexpected object" obj))))
 
 (def (rpc-null-proto)
   (make-!rpc-protocol
