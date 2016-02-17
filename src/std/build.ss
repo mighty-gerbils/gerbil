@@ -4,7 +4,7 @@
 (import :gerbil/compiler "make")
 
 (let (srcdir (path-normalize (path-directory (this-source-file))))
-  (add-load-path srcdir)
+  (add-load-path (path-normalize (path-expand ".." srcdir)))
   (make srcdir: srcdir
         prefix: "std"
         `("format"
@@ -12,6 +12,7 @@
           "sort"
           "sugar"
           "make"
+          "error"
           (gxc: "event" "-e" "(include \"~~lib/_gambit#.scm\")")
           (gxc: "coroutine" "-e" "(include \"~~lib/_gambit#.scm\")")
           ;; SRFI: This is my grandfather's axe; my father replaced the head
