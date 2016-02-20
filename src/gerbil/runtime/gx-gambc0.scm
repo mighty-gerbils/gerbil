@@ -611,7 +611,8 @@
       (else #f))))
 
 (define (generic-add-method! gen pred proc type)
-  (let* ((table (generic-table gen))
+  (let* ((type  (generic-normalize-method-type type))
+         (table (generic-table gen))
          (arity (length type))
          (table (if (fx< arity (vector-length table))
                   table
@@ -622,6 +623,36 @@
          (dtree  (extend-generic-dispatch-tree dtree
                     (values pred proc type))))
     (vector-set! table arity dtree)))
+
+(define (generic-normalize-method-type type)
+  (map generic-normalize-type type))
+
+(define (generic-normalize-type type)
+  (cond
+   ((list? type) type)
+   ((##type? type)
+    (if (and (type-descriptor? type)
+             (type-descriptor-mixin type))
+      (generic-normalize-class-type type)
+      (generic-normalize-struct-type type)))
+   (else
+    (error "Bad type" type))))
+
+(define (generic-normalize-class-type klass)
+  (let lp ((rest (type-descriptor-mixin klass))
+           (r (list (##type-id klass))))
+    (core-match rest
+      ((klass . rest)
+       (lp rest (cons (##type-id klass) r)))
+      (else
+       (foldl cons '(object) r)))))
+
+(define (generic-normalize-struct-type klass)
+  (let lp ((klass klass) (r '()))
+    (if (##type? klass)
+      (lp (##type-super klass)
+          (cons (##type-id klass) r))
+      (foldl cons '(object) r))))
 
 (define (extend-generic-dispatch-tree dtree method)
   (let recur ((rest dtree))
