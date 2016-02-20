@@ -622,7 +622,8 @@
          (dtree  (vector-ref table arity))
          (dtree  (extend-generic-dispatch-tree dtree
                     (values pred proc type))))
-    (vector-set! table arity dtree)))
+    (vector-set! table arity dtree)
+    #!void))
 
 (define (generic-normalize-method-type type)
   (map generic-normalize-type type))
@@ -645,14 +646,14 @@
       ((klass . rest)
        (lp rest (cons (##type-id klass) r)))
       (else
-       (foldl cons '(object) r)))))
+       (foldl cons '(object t) r)))))
 
 (define (generic-normalize-struct-type klass)
   (let lp ((klass klass) (r '()))
     (if (##type? klass)
       (lp (##type-super klass)
           (cons (##type-id klass) r))
-      (foldl cons '(object) r))))
+      (foldl cons '(object t) r))))
 
 (define (extend-generic-dispatch-tree dtree method)
   (let recur ((rest dtree))

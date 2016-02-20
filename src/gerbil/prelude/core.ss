@@ -1501,7 +1501,7 @@ package: gerbil
         (stx-wrap-source e-stx (stx-source stx)))
       
       (def (method-opt? x)
-        (memq (stx-e x) '(rebind: no-cache:)))
+        (memq (stx-e x) '(rebind:)))
       
       (syntax-case stx (@method)
         ((_ (@method id type) impl . rest)
@@ -1512,8 +1512,6 @@ package: gerbil
                          (syntax-local-value #'type))
                         ((values rebind?)
                          (and (stx-e (stx-getq rebind: #'rest)) #t))
-                        ((values no-cache?)
-                         (and (stx-e (stx-getq no-cache: #'rest)) #t))
                         (type::t 
                          (runtime-type-identifier klass))
                         (name 
