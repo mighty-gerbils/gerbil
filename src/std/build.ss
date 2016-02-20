@@ -13,6 +13,7 @@
           "sugar"
           "make"
           "error"
+          "generic"
           (gxc: "event" "-e" "(include \"~~lib/_gambit#.scm\")")
           (gxc: "coroutine" "-e" "(include \"~~lib/_gambit#.scm\")")
           ;; SRFI: This is my grandfather's axe; my father replaced the head
