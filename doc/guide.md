@@ -552,7 +552,7 @@ finally-clause:
  (finally body ...)
 ```
 
-### Generic Gerbil
+### Generics
 
 Gerbil supports generic multi-method dispatch, with the requisite
 macros provided by `:std/generic`.
@@ -568,7 +568,7 @@ dispatches on numbers and strings:
   (string-append a b))
 ```
 
-The code above defined a generic method with the `defgeneric` macro,
+The code defined a generic method with the `defgeneric` macro,
 providing a default method which is dispatched when there are no
 matching methods. Next, we defined the two methods, operating
 on numbers and strings. We can use the generic method as a procedure:
@@ -586,9 +586,11 @@ Here we define an implementation for instances of a struct `A`:
 ```
 > (my-add (make-A 1) (make-A 2))
 => #f
+
 (defstruct A (x))
 (defmethod (my-add (a A) (b A))
   (make-A (+ (A-x a) (A-x b))))
+
 > (my-add (make-A 1) (make-A 2))
 => #<A a: 3>
 ```
