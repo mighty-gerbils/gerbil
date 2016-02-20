@@ -1,0 +1,7 @@
+2-20-2016: Gerbil-v0.2
+- Unification of object type hierarchy
+- More specific errors from stdlib
+- Generics
+2-15-2016: Gerbil-v0.1
+- first gerbil release tag; core gerbil with batteries and introductory documentation
+
