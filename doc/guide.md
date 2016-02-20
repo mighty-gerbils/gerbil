@@ -552,6 +552,47 @@ finally-clause:
  (finally body ...)
 ```
 
+### Generic Gerbil
+
+Gerbil supports generic multi-method dispatch, with the requisite
+macros provided by `:std/generic`.
+For example, the following defines a generic method `my-add` that
+dispatches on numbers and strings:
+```
+(import :std/generic)
+(defgeneric my-add
+  (lambda args #f))
+(defmethod (my-add (a <number>) (b <number>))
+  (+ a b))
+(defmethod (my-add (a <string>) (b <string>))
+  (string-append a b))
+```
+
+The code above defined a generic method with the `defgeneric` macro,
+providing a default method which is dispatched when there are no
+matching methods. Next, we defined the two methods, operating
+on numbers and strings. We can use the generic method as a procedure:
+
+
+```
+> (my-add 1 2)
+=> 3
+> (my-add "a" "b")
+=> "ab"
+```
+
+We can easily define methods for user-defined types as well.
+Here we define an implementation for instances of a struct `A`:
+```
+> (my-add (make-A 1) (make-A 2))
+=> #f
+(defstruct A (x))
+(defmethod (my-add (a A) (b A))
+  (make-A (+ (A-x a) (A-x b))))
+> (my-add (make-A 1) (make-A 2))
+=> #<A a: 3>
+```
+
 ### Coroutines
 
 The `:std/coroutine` library provides support for coroutines, running
