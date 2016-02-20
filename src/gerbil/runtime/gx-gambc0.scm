@@ -558,6 +558,100 @@
         (type-descriptor-methods-set! klass ht)
         (lp ht)))))
 
+;;; generics
+(define generic::t
+  (make-struct-type 'gerbil#generic::t #f 3 'generic '((final: . #t)) #f))
+(define (make-generic id #!optional (default #f))
+  (make-struct-instance generic::t id (vector) default)) 
+(define generic?
+  (make-struct-predicate generic::t))
+(define generic-id
+  (make-struct-field-accessor generic::t 0))
+(define generic-table
+  (make-struct-field-accessor generic::t 1))
+(define generic-table-set!
+  (make-struct-field-mutator generic::t 1))
+(define generic-default
+  (make-struct-field-accessor generic::t 2))
+
+(define (generic-dispatch gen . args)
+  (let ((table (generic-table gen))
+        (arity (length args)))
+    (cond
+     ((fx< arity (vector-length table))
+      (generic-dispatch-method gen (vector-ref table arity) args #f))
+     ((generic-default gen)
+      => (lambda (default) (apply default args)))
+     (else
+      (error "No clause matching arguments" gen args)))))
+
+(define (generic-dispatch-method gen dtree args E)
+  (cond
+   ((and dtree (generic-dispatch-find-method gen dtree args))
+    => (lambda (proc) (apply proc args)))
+   ((generic-default gen)
+    => (lambda (proc) (apply proc args)))
+   (E (E))
+   (else
+    (error "No clause matching arguments" gen args))))
+
+(define (generic-dispatch-find-method gen dtree args)
+  (let lp ((rest dtree))
+    (core-match rest
+      ((hd . rest)
+       (let ((pred (##vector-ref hd 0))
+             (proc (##vector-ref hd 1)))
+         (if (apply pred args)
+           (let ((next-method
+                  (lambda args
+                    (generic-dispatch-method gen rest args void))))
+             (lambda args
+               (apply proc next-method args)))
+           (lp rest))))
+      (else #f))))
+
+(define (generic-add-method! gen pred proc type)
+  (let* ((table (generic-table gen))
+         (arity (length type))
+         (table (if (fx< arity (vector-length table))
+                  table
+                  (let ((table (make-vector (fx1+ arity) #f)))
+                    (generic-table-set! gen table)
+                    table)))
+         (dtree  (vector-ref table arity))
+         (dtree  (extend-generic-dispatch-tree dtree
+                    (values pred proc type))))
+    (vector-set! table arity dtree)))
+
+(define (extend-generic-dispatch-tree dtree method)
+  (let recur ((rest dtree))
+    (core-match rest
+      ((hd . rest)
+       (if (generic-dispatch-before? method hd)
+         (cons* method hd rest)
+         (cons hd (recur rest))))
+      (else
+       (list method)))))
+
+(define (generic-dispatch-before? method-a method-b)
+  (let ((type-a (##vector-ref method-a 2))
+        (type-b (##vector-ref method-b 2)))
+    (generic-dispatch-type<? type-a type-b)))
+
+(define (generic-dispatch-type<? type-a type-b)
+  (let lp ((rest-a type-a) (rest-b type-b))
+    (core-match rest-a
+      ((arg-type-a . rest-a)
+       (core-match rest-b
+         ((arg-type-b . rest-b)
+          (and (not (generic-type<? arg-type-b arg-type-a))
+               (or (generic-type<? arg-type-a arg-type-b)
+                   (lp rest-a rest-b))))))
+      (else #f))))
+
+(define (generic-type<? type-a type-b)
+  (memq (car type-b) type-a))
+
 ;;; etc
 ;; use gambit type for this
 (define (raise-type-error where type obj)
