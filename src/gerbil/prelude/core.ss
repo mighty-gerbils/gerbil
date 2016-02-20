@@ -187,6 +187,10 @@ package: gerbil
     bind-method!
     method-ref direct-method-ref bound-method-ref 
     find-method
+    ;; generics
+    make-generic generic? generic-id
+    generic-add-method!
+    generic-dispatch
     ;; control
     current-error-port
     make-promise promise?
