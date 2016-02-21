@@ -595,6 +595,24 @@ Here we define an implementation for instances of a struct `A`:
 => #<A a: 3>
 ```
 
+Inside the body of every method implementation, `@next-method` is bound
+to a procedure which dispatches to the next matching method.
+For example:
+```
+(defmethod (my-add (a <fixnum>) (b <fixnum>))
+  (displayln "add fixnums")
+  (@next-method a b))
+```
+Normally in the procedure body we would add with `fx+`, but for
+the shake of the example we display a message and let the generic
+number method to add.
+```
+> (my-add 1 2)
+add fixnums
+=> 3
+
+```
+
 ### Coroutines
 
 The `:std/coroutine` library provides support for coroutines, running
