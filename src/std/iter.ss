@@ -10,17 +10,20 @@ package: std
 (export
   iterator iterator? make-iterator
   iterator-e iterator-e-set!
-  iterator-start iterator-value iterator-next
-  :iter :iter::t :iter::apply
-  iter-end
+  :iter iter-end iter-end?
+  iter-start! iter-value iter-next!
   for for* for/collect for/fold
   in-range in-naturals in-hash-keys in-hash-values
-  in-input-lines
+  in-input-lines in-input-chars in-input-bytes
   )
 
 (defstruct iterator (e start value next))
 
-(def iter-end '#(iter-end))
+(defstruct :iter-end ())
+(def iter-end
+  (make-:iter-end))
+(def (iter-end? obj)
+  (eq? iter-end obj))
 
 (defgeneric :iter
   (lambda (obj) (call-method obj ':iter)))
@@ -105,19 +108,21 @@ package: std
         iter-end)))
   (def (next-e iter)
     (with ((iterator e) iter)
+      (set! (car e)
+        (+ (car e) step))
       (set! (cdr e)
-        (+ (cdr e) step))))
+        (1- (cdr e)))))
   (make-iterator (cons start count) void value-e next-e))
 
 (def* in-range
-  ((count) (iter-in-range count 0 1))
-  ((start count) (iter-in-range count start 1))
-  ((start count step) (iter-in-range count start step)))
+  ((count) (iter-in-range 0 count 1))
+  ((start count) (iter-in-range start count 1))
+  ((start count step) (iter-in-range start count step)))
 
 (def (in-naturals (start 1) (step 1))
   (def (next-e iter)
     (set! (iterator-e iter)
-      (+ (iterator-e iter) start)))
+      (+ (iterator-e iter) step)))
   (make-iterator start void iterator-e next-e))
 
 (def (in-hash-keys ht)
@@ -129,7 +134,67 @@ package: std
 (def (in-input-lines obj)
   (iter-input-port obj read-line))
 
-(defrules for ())
+(def (in-input-chars obj)
+  (iter-input-port obj read-char))
+
+(def (in-input-bytes obj)
+  (iter-input-port obj read-u8))
+
+(def (iter-start! iter)
+  ((iterator-start iter) iter))
+
+(def (iter-value iter)
+  ((iterator-value iter) iter))
+
+(def (iter-next! iter)
+  ((iterator-next iter) iter))
+
+(begin-syntax
+  (def (for-binding? bind)
+    (syntax-case bind (values)
+      (((values id ...) expr)
+       (identifier-list? #'(id ...)))
+      ((id expr)
+       (identifier? #'id))
+      (_ #f)))
+  
+  (def (for-binding-expr binding)
+    (syntax-case binding ()
+      ((bind bind-e) #'bind-e)))
+
+  (def (for-binding-bind binding)
+    (syntax-case binding ()
+      ((bind bind-e) #'bind))))
+
+(defsyntax (for stx)
+  (def (generate-for bindings body)
+    (with-syntax
+        (((iter-id ...)
+          (gentemps bindings))
+         ((iter-e ...)
+          (stx-map for-binding-expr bindings))
+         ((bind-id ...)
+          (gentemps bindings))
+         ((bind-e ...)
+          (stx-map for-binding-bind bindings))
+         ((body ...) body))
+      #'(let ((iter-id (:iter iter-e)) ...)
+          (iter-start! iter-id) ...
+          (let lp ()
+            (let ((bind-id (iter-value iter-id)) ...)
+              (unless (or (eq? iter-end bind-id) ...)
+                (let ((bind-e bind-id) ...)
+                  body ...
+                  (iter-next! iter-id) ...
+                  (lp))))))))
+  
+  (syntax-case stx ()
+    ((_ bind body ...)
+     (for-binding? #'bind)
+     (generate-for [#'bind] #'(body ...)))
+    ((_ (bind ...) body ...)
+     (stx-andmap for-binding? #'(bind ...))
+     (generate-for #'(bind ...) #'(body ...)))))
 
 (defrules for* ()
   ((recur (bind . rest) body ...)
@@ -137,9 +202,81 @@ package: std
   ((_ () body ...)
    (begin body ...)))
 
-(defrules for/collect ())
+(defsyntax (for/collect stx)
+  (def (generate-for bindings body)
+    (with-syntax
+        ((value  (genident 'value))
+         (rvalue (genident 'rvalue))
+         ((iter-id ...)
+          (gentemps bindings))
+         ((iter-e ...)
+          (stx-map for-binding-expr bindings))
+         ((bind-id ...)
+          (gentemps bindings))
+         ((bind-e ...)
+          (stx-map for-binding-bind bindings))
+         ((body ...) body))
+      #'(let ((iter-id (:iter iter-e)) ...)
+          (iter-start! iter-id) ...
+          (let lp ((rvalue []))
+            (let ((bind-id (iter-value iter-id)) ...)
+              (if (or (eq? iter-end bind-id) ...)
+                (reverse rvalue)
+                (let ((bind-e bind-id) ...)
+                  (let (value (let () body ...))
+                    (iter-next! iter-id) ...
+                    (lp (cons value rvalue))))))))))
+  
+  (syntax-case stx ()
+    ((_ bind body ...)
+     (for-binding? #'bind)
+     (generate-for [#'bind] #'(body ...)))
+    ((_ (bind ...) body ...)
+     (stx-andmap for-binding? #'(bind ...))
+     (generate-for #'(bind ...) #'(body ...)))))
 
-(defrules for/fold ())
+(defsyntax (for/fold stx)
+  (def (for/fold-bind? bind)
+    (syntax-case bind ()
+      ((id expr) (identifier? #'id))
+      (else #f)))
+
+  (def (generate-for fold-bind bindings body)
+    (with-syntax
+        ((value  (genident 'value))
+         ((loop-id loop-e)
+          fold-bind)
+         ((iter-id ...)
+          (gentemps bindings))
+         ((iter-e ...)
+          (stx-map for-binding-expr bindings))
+         ((bind-id ...)
+          (gentemps bindings))
+         ((bind-e ...)
+          (stx-map for-binding-bind bindings))
+         ((body ...) body))
+      #'(let ((iter-id (:iter iter-e)) ...)
+          (iter-start! iter-id) ...
+          (let lp ((loop-id loop-e))
+            (let ((bind-id (iter-value iter-id)) ...)
+              (if (or (eq? iter-end bind-id) ...)
+                loop-id
+                (let ((bind-e bind-id) ...)
+                  (let (value (let () body ...))
+                    (iter-next! iter-id) ...
+                    (lp value)))))))))
+  
+  (syntax-case stx ()
+    ((_ fold-bind bind body ...)
+     (and (for/fold-bind? #'fold-bind)
+          (for-binding? #'bind))
+     (generate-for #'fold-bind [#'bind] #'(body ...)))
+    ((_ fold-bind (bind ...) body ...)
+     (and (for/fold-bind? #'fold-bind)
+          (stx-andmap for-binding? #'(bind ...)))
+     (generate-for #'fold-bind #'(bind ...) #'(body ...)))))
+
+    
 
 
 
