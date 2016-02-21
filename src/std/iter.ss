@@ -15,6 +15,7 @@ package: std
   for for* for/collect for/fold
   in-range in-naturals in-hash-keys in-hash-values
   in-input-lines in-input-chars in-input-bytes
+  yield
   )
 
 (defstruct iterator (e start value next))
