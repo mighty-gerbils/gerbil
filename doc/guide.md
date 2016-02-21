@@ -612,6 +612,109 @@ add fixnums
 => 3
 
 ```
+### Iteration
+
+The `:std/iter` library provides support for iteration using
+the iterator protocol. The library also provides macros of
+the `for` family for iterating over sequences or other objects
+that implement the iteration protocol.
+
+#### Iteration Syntax
+
+The basic iteration macro is the imperative `for` comprehension.
+The syntax binds variables to iterators in parallel, and invokes
+the body as long as none of the iterators have signalled end
+of iteration.
+
+For example:
+```
+(import :std/iter)
+
+> (for (x '(1 2 3))
+   (displayln x))
+1
+2
+3
+> (for ((x '(1 2 3))
+        (y '#(a b c d)))
+  (displayln x " " y))
+1 a
+2 b
+3 c
+```
+
+The iteration macro supports the usual suspects for generic
+iteration: lists, vectors, strings, hash-tables, input-ports,
+and ranges.
+
+The variant `for*` performs multi-dimensional iteration, eqiuvalent
+to nested fors:
+```
+> (for* ((x (in-range 2)) (y (in-range 2)))
+   (displayln x y))
+00
+01
+10
+11
+```
+
+
+
+The values of an iteration can be collected in a list with `for/collect`:
+```
+> (for/collect ((x (in-naturals))
+                (y '#(a b c d)))
+    (cons x y))
+=> ((1 . a) (2 . b) (3 . c) (4 . d))
+```
+
+Finally, the values of an iteration can be folded to produce a value;
+in this example we construct a reversed list out of an iterator
+with a folding `cons`:
+```
+> (for/fold (r []) (x (in-range 1 5))
+    (cons x r))
+=> (5 4 3 2 1) 
+```
+
+#### Iteration Protocol
+
+Iteration dispatch applies the generic method `:iter` in order
+to produce an iterator object. The default implementation calls
+the method `:iter` on the object. There are methods for
+iterating lists, hashes, input-ports, ranges etc.
+
+The easiest way to implement an iterator is through a coroutine
+procedure. The procedure is coexecuted with the iteration loop,
+and produces values for the loop with `yield`:
+```
+(def (my-generator n)
+ (lambda ()
+   (let lp ((k 0))
+     (when (< k n)
+       (yield k)
+       (lp (1+ k))))))
+
+> (for (x (my-generator 3))
+    (displayln x))
+0
+1
+2
+```
+
+We can now use this generator to produce an iterator for a user-defined
+struct:
+```
+(defstruct A (x))
+(defmethod {:iter A}
+  (lambda (self)
+    (:iter (my-generator (A-x self)))))
+> (for (x (make-A 3))
+    (displayln x))
+0
+1
+2
+```
 
 ### Coroutines
 
