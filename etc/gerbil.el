@@ -252,6 +252,10 @@ The hook is run after scheme-mode-hook."
      (1 font-lock-keyword-face)
      (2 font-lock-function-name-face)))
   (gerbil-fontlock-add
+   '("(\\(defproto\\)\\s-+\\(\\sw+\\)"
+     (1 font-lock-keyword-face)
+     (2 font-lock-type-face)))
+  (gerbil-fontlock-add
    '("(\\(defregister\\|defvar\\|defconst\\)\\s-+\\(\\sw+\\)"
      (1 font-lock-keyword-face)
      (2 font-lock-variable-name-face)))
