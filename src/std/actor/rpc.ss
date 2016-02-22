@@ -120,7 +120,11 @@ package: std/actor
   (let (sock (and address
                   ((!rpc-protocol-open-server proto) address)))
     (parameterize ((current-rpc-server (current-thread)))
-      (rpc-server-loop (or sock never-evt) proto))))
+      (try
+       (rpc-server-loop (or sock never-evt) proto)
+       (finally
+        (when sock
+          (with-catch void (cut close-port sock))))))))
 
 (def (rpc-monitor-thread rpc-server)
   (let lp ((threads []))
@@ -307,9 +311,12 @@ package: std/actor
   (try
    (let (client (read sock))
      (thread-send rpc-server (tcp-client-peer-socket-info client))
-     (rpc-connection-loop rpc-server client proto-e))
+     (try
+      (rpc-connection-loop rpc-server client proto-e)
+      (catch (e)
+        (rpc-connection-cleanup rpc-server e client))))
    (catch (e)
-     (rpc-connection-cleanup rpc-server e sock))))
+     (rpc-connection-cleanup rpc-server e #f))))
 
 (def (rpc-client-connection rpc-server address open-client proto-e)
   (try
