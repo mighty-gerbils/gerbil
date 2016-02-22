@@ -123,8 +123,7 @@ package: std/actor
       (try
        (rpc-server-loop (or sock never-evt) proto)
        (finally
-        (when sock
-          (with-catch void (cut close-port sock))))))))
+        (rpc-close-port sock))))))
 
 (def (rpc-monitor-thread rpc-server)
   (let lp ((threads []))
@@ -351,7 +350,7 @@ package: std/actor
   (def next-continuation-id 0)
   
   (def (close-connection)
-    (close-port sock)
+    (rpc-close-port sock)
     (for-each
       (lambda (wire-id)
         (cond
@@ -567,5 +566,9 @@ package: std/actor
 
 (def (rpc-connection-cleanup rpc-server exn sock)
   (warning "connection error ~a" exn)
-  (when sock (close-port sock))
+  (rpc-close-port sock)
   (rpc-connection-shutdown rpc-server))
+
+(def (rpc-close-port port)
+  (when port 
+    (with-catch void (cut close-port port))))
