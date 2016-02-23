@@ -22,6 +22,7 @@ package: std
 
 ;; ~~lib/_gambit#.scm
 (extern namespace: #f
+  macro-condvar-name
   macro-thread-end-condvar
   macro-thread-exception?
   macro-mutex-btq-owner
@@ -116,7 +117,7 @@ package: std
              (with-error-display
               (select1 sel selector mutex-select-e mutex-select-abort-e)))
            'select-mutex))
-         ((condition-variable? selector)
+         ((io-condition-variable? selector)
           (make-thread
            (lambda ()
              (with-error-display
@@ -488,7 +489,7 @@ package: std
       evt)
      ((mutex? evt)
       (make-mutex-evt evt))
-     ((condition-variable? evt)
+     ((io-condition-variable? evt)
       (make-io-wait-evt evt))
      ((and (pair? evt) (mutex? (car evt)) (condition-variable? (cdr evt)))
       (make-condvar-evt (car evt) (cdr evt)))
@@ -532,9 +533,13 @@ package: std
   (mutex-lock! (event-sel evt) 0))
 
 (def (make-io-wait-evt condvar)
-  (if (condition-variable? condvar)
+  (if (io-condition-variable? condvar)
     (make-event condvar condvar false)
     (error "Bad selector" condvar)))
+
+(def (io-condition-variable? obj)
+  (and (condition-variable? obj)
+       (##foreign? (macro-condvar-name obj))))
 
 (def (make-condvar-evt mutex condvar)
   (if (and (mutex? mutex) (condition-variable? condvar))
