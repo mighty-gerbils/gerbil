@@ -472,6 +472,8 @@ package: std
     (event-abort! (event-handler-e evt)))
    ((event-set? evt)
     (for-each event-abort! (event-set-e evt)))
+   ((method-ref evt ':event)
+    => (lambda (method) (event-abort! (method evt))))
    (else                                ; raw selector
     (selector-abort! evt))))
 
