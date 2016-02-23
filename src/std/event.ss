@@ -303,7 +303,7 @@ package: std
             (selector-abort! sel main))))
       threads)))
 
-(def (selector-abort! sel main)
+(def (selector-abort! sel (main (current-thread)))
   (when (and (pair? sel)
              (eq? (macro-mutex-btq-owner (car sel))
                   main))
@@ -465,7 +465,15 @@ package: std
     (error "Bad event; cannot retrieve selector" evt))))
 
 (def (event-abort! evt)
-  (selector-abort! (event-selector evt)))
+  (cond
+   ((event? evt)
+    (selector-abort! (event-sel evt)))
+   ((event-handler? evt)
+    (event-abort! (event-handler-e evt)))
+   ((event-set? evt)
+    (for-each event-abort! (event-set-e evt)))
+   (else                                ; raw selector
+    (selector-abort! evt))))
 
 (def never-evt  (make-event #!void #f false))
 (def always-evt (make-event #!void #t true))
