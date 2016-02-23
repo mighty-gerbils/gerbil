@@ -17,6 +17,7 @@
           (gxc: "event" "-e" "(include \"~~lib/_gambit#.scm\")")
           (gxc: "coroutine" "-e" "(include \"~~lib/_gambit#.scm\")")
           "iter"
+          "test"
           ;; SRFI: This is my grandfather's axe; my father replaced the head
           ;;       and i have replaced the handle.
           "srfi/srfi-support"

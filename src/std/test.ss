@@ -13,7 +13,6 @@ package: std
   check-output check-predicate check-exception
   !check-fail? !check-fail-e
   run-tests! test-report-summary!
-  run-tests/report-summary!
   )
 
 (defstruct !check-fail (e value))
@@ -97,13 +96,32 @@ package: std
   (run-test-suite! suite)
   (for-each run-test-suite! more))
 
-(def (run-tests/report-summary! suite . more)
-  (apply run-tests! suite more)
-  (test-report-summary!))
-
 (def (test-report-summary!)
-  (error "XXX; Implement me")
-  )
+  (let (tests (reverse *tests*))
+    (unless (null? tests)
+      (eprintf "--- Test Summary\n")
+      (for-each test-suite-summary! tests))))
+
+(def (test-suite-summary! suite)
+  (def (print-failed tc)
+    (cond
+     ((!test-case-fail tc)
+      => (lambda (fail)
+           (eprintf "~a: Check FAILED ~a~n"
+                    (!test-case-desc tc)
+                    (!check-fail-e fail))))
+     ((!test-case-error tc)
+      => (lambda (exn)
+           (eprintf "~a: ERROR " (!test-case-desc))
+           (display-exception exn (current-error-port))))))
+
+  (let (tests (!test-suite-tests suite)) 
+    (if (ormap (? (or !test-case-fail !test-case-error))
+               tests)
+      (begin
+        (eprintf "~a: FAILED~n" (!test-suite-desc suite))
+        (for-each print-failed tests))
+    (eprintf "~a: OK~n" (!test-suite-desc suite)))))
 
 (def (test-begin!)
   (set! *tests* []))
