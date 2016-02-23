@@ -68,4 +68,3 @@
         (for/fold (r []) ((x '(1 2 3)) (y '#(a b c d)))
           (cons* x y r)))
       (check (test-for/fold) => '(3 c 2 b 1 a)))))
-      
