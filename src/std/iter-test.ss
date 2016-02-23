@@ -14,7 +14,7 @@
         (lp (1+ k))))))
 
 (def iter-test
-  (test-suite "test iteration macros"
+  (test-suite "test :std/iter library"
     (test-case "test imperative for"
       (def (test-for-1)
         (for (x '(1 2 3))
