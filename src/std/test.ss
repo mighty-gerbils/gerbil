@@ -9,7 +9,10 @@ package: std
         :std/format)
 (export
   test-suite test-case
-  check check-eq check-eqv check-equal
+  check checkf
+  check-eq? check-not-eq?
+  check-eqv? check-not-eqv?
+  check-equal? check-not-equal?
   check-output check-predicate check-exception
   !check-fail? !check-fail-e
   run-tests! test-report-summary!
@@ -31,31 +34,65 @@ package: std
 
 (defrules check (=> ?)
   ((_ expr => value)
-   (check-equal expr value))
+   (check-equal? expr value))
   ((_ expr ? pred)
-   (check-predicate expr (? pred))))
+   (check-predicate expr (? pred)))
+  ((eqf expr value)
+   (checkf eqf expr value)))
 
 (defrules print-check-e ()
   ((_ expr eqv value)
    (printf "... check ~a is ~a to ~s~n" 'expr 'eqv value)))
 
-(defrules check-eq ()
-  ((_ expr value)
+(defrules checkf ()
+  ((_ eqf expr value)
    (let (val value)
-     (print-check-e expr eq? val)
-     (test-check-e '(check-eq expr value)  eq? (lambda () expr) val))))
+     (print-check-e expr eqf val)
+     (test-check-e '(check eqf expr value) eqf (lambda () expr) val))))
 
-(defrules check-eqv ()
+(defrules check-eq? ()
   ((_ expr value)
-   (let (val value)
-     (print-check-e expr eq? val)
-     (test-check-e '(check-eqv expr value) eqv? (lambda () expr) val))))
+   (checkf eq? expr value)))
 
-(defrules check-equal ()
+(defrules check-not-eq? ()
+  ((_ expr value)
+   (checkf not-eq? expr value)))
+
+(def (not-eq? x y)
+  (not (eq? x y)))
+
+(defrules check-eqv? ()
+  ((_ expr value)
+   (checkf eqv? expr value)))
+
+(defrules check-not-eqv? ()
+  ((_ expr value)
+   (checkf not-eqv? expr value)))
+
+(def (not-eqv? x y)
+  (not (eqv? x y)))
+
+(defrules check-equal? ()
   ((_ expr value)
    (let (val value)
      (print-check-e expr equal? val)
-     (test-check-e '(check-equal expr value) equal-values? (lambda () expr) val))))
+     (test-check-e '(check equal? expr value) equal-values? (lambda () expr) val))))
+
+(defrules check-not-equal? ()
+  ((_ expr value)
+   (let (val value)
+     (print-check-e expr equal? value)
+     (test-check-e '(check not-equal? expr value) not-equal-values? (lambda () expr) val))))
+
+(def (equal-values? obj-a obj-b)
+  (if (##values? obj-a)
+    (and (##values? obj-b)
+         (equal? (##vector->list obj-a)
+                 (##vector->list obj-b)))
+    (equal? obj-a obj-b)))
+
+(def (not-equal-values? x y)
+  (not (equal-values? x y)))
 
 (defrules check-output ()
   ((_ expr value)
@@ -74,13 +111,6 @@ package: std
    (begin
      (printf "... check ~a raises ~a~n" 'expr 'exn-pred)
      (test-check-exception '(check-exception expr pred) (lambda () expr) exn-pred))))
-
-(def (equal-values? obj-a obj-b)
-  (if (##values? obj-a)
-    (and (##values? obj-b)
-         (equal? (##vector->list obj-a)
-                 (##vector->list obj-b)))
-    (equal? obj-a obj-b)))
 
 (def current-test-case
   (make-parameter #f))
