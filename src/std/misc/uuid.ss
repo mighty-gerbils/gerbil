@@ -9,7 +9,8 @@ package: std/misc
         (only-in :std/crypto/digest md5)
         (only-in :std/crypto/etc random-bytes!))
 
-(export UUID uuid-length uuid::t make-uuid uuid?
+(export UUID uuid-length uuid::t make-uuid
+        uuid? uuid=?
         uuid->u8vector
         uuid->symbol
         random-uuid)
@@ -18,6 +19,9 @@ package: std/misc
 
 (defstruct uuid (bytes symbol)
   id: std/text#uuid::t)
+
+(def (uuid=? a b)
+  (equal? (uuid-bytes a) (uuid-bytes b)))
 
 (def (u8vector->uuid bytes)
   (if (fx= (u8vector-length bytes) uuid-length)
