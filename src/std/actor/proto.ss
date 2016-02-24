@@ -193,9 +193,13 @@ package: std/actor
          ((values extend-infos) (map syntax-local-value extend))
          ((extend::proto ...)   (map protocol-info-runtime-identifier extend-infos))
          (make-proto
-          #'(def proto::proto
-              (make-!protocol 'id [extend::proto ...]
-                              (hash-copy *default-proto-type-registry* )))))
+          #'(begin
+              (def proto::proto
+                (make-!protocol 'id [extend::proto ...]
+                                (hash-copy *default-proto-type-registry* )))
+              (hash-put! (!protocol-types proto::proto)
+                         (!protocol-id proto::proto)
+                         proto::proto))))
       (let lp ((rest #'(extend::proto ...)) (merges []))
         (syntax-case rest ()
           ((extender . rest)
