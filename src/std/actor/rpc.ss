@@ -40,6 +40,8 @@ package: std/actor
   rpc-generate-cookie!
   rpc-cipher-proto
   rpc-cookie-cipher-proto
+  set-rpc-keep-alive-interval!
+  set-rpc-idle-timeout!
   )
 
 (def current-rpc-server
@@ -329,10 +331,17 @@ package: std/actor
 
 (def rpc-keep-alive 30) ; keep-alive interval
 
-(def (set-rpc-keep-alive! dt)
+(def (set-rpc-keep-alive-interval! dt)
   (if (or (not dt) (and (real? dt) (positive? dt)))
     (set! rpc-keep-alive dt)
-    (error "bad keep-alive; expected positive real" dt)))
+    (error "bad keep-alive; expected positive real or #f" dt)))
+
+(def rpc-idle-timeout 300)
+
+(def (set-rpc-idle-timeout! dt)
+  (if (or (not dt) (and (real? dt) (positive? dt)))
+    (set! rpc-idle-timeout dt)
+    (error "bad idle interval; expected positive real or #f" dt)))
 
 (def (rpc-connection-loop rpc-server sock proto-e)
   (defvalues (read-e write-e)
@@ -348,6 +357,16 @@ package: std/actor
   (def continuation-timeouts            ; wire-id => time
     (make-hash-table-eqv))
   (def next-continuation-id 0)
+
+  (def idle-timeout #f)
+  
+  (def (reset-idle-timeout)
+    (set! idle-timeout
+      (if rpc-idle-timeout
+        (seconds->time
+         (+ (time->seconds (current-time))
+            rpc-idle-timeout))
+        never-evt)))
   
   (def (close-connection)
     (rpc-close-port sock)
@@ -539,15 +558,21 @@ package: std/actor
   
   (def (loop)
     (<< (! (or rpc-keep-alive never-evt) (keep-alive))
-        (! sock (read-message))
+        (! sock
+           (read-message)
+           (reset-idle-timeout))
         (! (choice-evt (hash-keys timeouts))
            => dispatch-timeout)
+        (! idle-timeout
+           (close-connection))
         ((? message? msg)
-         (write-message msg))
+         (write-message msg)
+         (reset-idle-timeout))
         (bogus
          (warning "unexpected message ~a" bogus)
          (loop))))
   
+  (reset-idle-timeout)
   (loop))
 
 (def (rpc-connection-shutdown rpc-server)
