@@ -895,7 +895,7 @@ For example, let's define an echo protocol:
   (let lp ()
     (<- ((!echo.hello what k)
           (displayln @source " says " what)
-          (!!value @source what k)
+          (!!value what k)
           (lp)))))
 (def echo (spawn my-echo))
 > (!!echo.hello echo 'hello)
@@ -920,9 +920,18 @@ If it receive a `!value` it returns it, and if it receives an `!error`
 it signals an error.
 
 In the actor, the `(!echo.hello what k)` matches a `!call` with
-the value matching `(echo.hello what)` and the continuation bound
-to `k`. The actor displays its message, and then responds by sending
-a value with the `!!value` macro. An error could be signalled 
+the value matching `(echo.hello what)` and the continuation token
+bound to `k`. The actor displays its message, and then responds by
+sending a value with the `!!value` macro. An error could be signalled
+with the `!!error` macro.
+
+The syntax for `!!value` and `!!error` is similar: the take
+an optional destination (which defaults to `@source`), a value
+or error message and the continuation token:
+```
+(!!value [@source] val token)
+(!!error [@source] msg token)
+```
 
 #### RPC
 
@@ -941,7 +950,7 @@ In one shell:
   (let lp ()
     (<- ((!echo.hello what k)
           (displayln @source " says " what)
-          (!!value @source what k)
+          (!!value what k)
           (lp)))))
 (def remoted (start-rpc-server! "127.0.0.1:9999"))
 (def echod (spawn my-echo remoted))
