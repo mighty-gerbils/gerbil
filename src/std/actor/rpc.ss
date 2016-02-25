@@ -35,6 +35,8 @@ package: std/actor
   rpc.resolve rpc.resolve? make-rpc.resolve
   rpc.resolve-id
   !rpc.resolve !!rpc.resolve
+  rpc.server-address rpc.server-address? make-rpc.server-address
+  !rpc.server-address !!rpc.server-address
   rpc-null-proto
   rpc-cookie-proto
   rpc-generate-cookie!
@@ -107,6 +109,7 @@ package: std/actor
   call:  (register id proto)
   call:  (unregister id)
   call:  (resolve id)
+  call:  (server-address)
   )
 
 ;;; rpc-server
@@ -231,6 +234,13 @@ package: std/actor
              => (lambda (actor) (!!value src actor k)))
             (else
              (!!value src #f k)))))
+        ((!rpc.server-address k)
+         (let* ((sinfo (and (port? sock-evt)
+                            (tcp-server-socket-info sock-evt)))
+                (address (and sinfo
+                              (cons (socket-info-address sinfo)
+                                    (socket-info-port-number sinfo)))))
+           (!!value src address k)))
         (else
          (warning "Unexpected message ~a" msg)))))
   
