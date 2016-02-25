@@ -377,6 +377,16 @@ package: std/actor
   (def (generate-proto-structures proto-id structures)
     (map (cut generate-proto-structure proto-id <>)
          structures))
+
+  (def (generate-proto-id proto-id)
+    (if (module-context? (current-expander-context))
+      (cond
+       ((module-context-ns (current-expander-context))
+        => (lambda (ns) (stx-identifier proto-id ns "#" proto-id "::proto")))
+       (else
+        (let (mid (expander-context-id (current-expander-context)))
+          (stx-identifier proto-id mid "#" proto-id "::proto"))))
+      (genident proto-id)))
   
   (syntax-case stx ()
     ((_ proto-id clause ...)
@@ -384,7 +394,7 @@ package: std/actor
      (with-syntax*
          (((values id extend calls events structures)
            (parse-proto-body #'(clause ...)))
-          (id (or id (gensym)))
+          (id (or id (generate-proto-id #'proto-id)))
           (defn-proto-info
             (generate-make-proto-info #'proto-id #'id extend calls events))
           (defn-proto-registry
