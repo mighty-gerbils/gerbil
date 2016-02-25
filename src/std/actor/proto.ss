@@ -3,14 +3,19 @@
 ;;; actor protocols
 package: std/actor
 
-(import :std/event
+(import :gerbil/gambit/threads
+        :std/event
         :std/error
+        :std/net/address
+        :std/misc/uuid
         :std/actor/message
         :std/actor/xdr
         )
 (export
   rpc-error? raise-rpc-error
   remote-error? raise-remote-error
+  handle handle::t make-handle handle? handle-uuid
+  remote remote::t make-remote remote? remote-address remote-proto
   !rpc !rpc?
   !call make-!call !call? !call-e !call-e-set! !call-k !call-k-set!
   !value make-!value !value? !value-e !value-e-set! !value-k !value-k-set!
@@ -45,6 +50,29 @@ package: std/actor
 (def (raise-remote-error where what . irritants)
   (raise (make-remote-error what irritants where)))
 
+;;; handles
+(defstruct (handle proxy) (uuid)
+  id: std/actor#handle::t
+  constructor: :init!)
+
+(defstruct (remote handle) (address proto)
+  id: std/actor#remote-handle::t)
+
+(defmethod {:init! handle}
+  (lambda (self handler id)
+    (set! (proxy-handler self)
+      handler)
+    (set! (handle-uuid self)
+      (UUID id))))
+
+(defmethod {:init! remote}
+  (lambda (self handler id address proto)
+    (handle:::init! self handler id)
+    (set! (remote-address self)
+      (inet-address address))
+    (set! (remote-proto self)
+      proto)))
+
 ;;; rpc messages
 (defstruct !rpc ()
   id: std/actor#!rpc::t)
@@ -67,12 +95,17 @@ package: std/actor
   ((recur dest e k timeout: timeo)
    (recur dest e k send-message/timeout timeo))
   ((_ dest e k send-e args ...)
-   (let (token k)
+   (let ((token k)
+         (dest dest))
      (send-e dest (make-!call e token) args ...)
      (<- ((!value val (eq? token))
           val)
          ((!error msg (eq? token))
-          (raise-remote-error '!!call (string-append "remote error: " msg)))))))
+          (raise-remote-error '!!call (string-append "remote error: " msg)))
+         (! (if (remote? dest) (proxy-handler dest) never-evt)
+            => (lambda (thread)
+                 (raise-remote-error '!!call "proxy failure"
+                    (with-catch values (cut thread-join! thread)))))))))
 
 (defrules !!value ()
   ((_ dest e k)

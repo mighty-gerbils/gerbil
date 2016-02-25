@@ -22,9 +22,6 @@ package: std/actor
         )
 (export
   current-rpc-server
-  handle handle::t make-handle handle? handle-uuid
-  remote remote::t make-remote remote? remote-address remote-proto
-  opaque opaque::t make-opaque opaque? opaque-type opaque-data
   start-rpc-server!
   rpc.register rpc.register? make-rpc.register
   rpc.register-id rpc.register-proto
@@ -48,28 +45,6 @@ package: std/actor
 
 (def current-rpc-server
   (make-parameter #f))
-
-(defstruct (handle proxy) (uuid)
-  id: std/actor#handle::t
-  constructor: :init!)
-
-(defstruct (remote handle) (address proto)
-  id: std/actor#remote-handle::t)
-
-(defmethod {:init! handle}
-  (lambda (self handler id)
-    (set! (proxy-handler self)
-      handler)
-    (set! (handle-uuid self)
-      (UUID id))))
-
-(defmethod {:init! remote}
-  (lambda (self handler id address proto)
-    (handle:::init! self handler id)
-    (set! (remote-address self)
-      (inet-address address))
-    (set! (remote-proto self)
-      proto)))
 
 (def (xdr-handle-read port)
   (let (uuid (xdr-read-object port))
