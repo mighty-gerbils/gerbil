@@ -1116,7 +1116,7 @@ package: gerbil
            ((module-context-ns (current-expander-context))
             => (lambda (ns) (stx-identifier type-t ns "#" type-t)))
            (else
-            (let (mid (expander-context-id type-t))
+            (let (mid (expander-context-id (current-expander-context)))
               (stx-identifier type-t mid "#" type-t)))))
         
         (syntax-case stx ()
@@ -1144,7 +1144,7 @@ package: gerbil
                            (or (stx-getq id: #'rest)
                                (if (module-context? (current-expander-context))
                                  (module-type-id #'type-t)
-                                 (gensym (stx-e #'type-t)))))
+                                 (genident #'type-t))))
                           (type-name 
                            (or (stx-getq name: #'rest)
                                #'type-t))
