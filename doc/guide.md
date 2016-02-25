@@ -975,7 +975,7 @@ For authentication, you can generate a shared cookie with `rpc-generate-cookie!`
 and start your rpc-server using the `rpc-cookie-proto`:
 ```
 $ mkdir ~/.gerbil
-> (rpc-generate-key!)
+> (rpc-generate-cookie!)
 ; generates a cookie in ~/.gerbil/cookie
 ...
 (def remoted
