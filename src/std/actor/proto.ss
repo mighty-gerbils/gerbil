@@ -107,13 +107,21 @@ package: std/actor
                  (raise-remote-error '!!call "proxy failure"
                     (with-catch values (cut thread-join! thread)))))))))
 
-(defrules !!value ()
-  ((_ dest e k)
-   (send-message dest (make-!value e k))))
+(defsyntax (!!value stx)
+  (syntax-case stx ()
+    ((_ dest e k)
+     #'(send-message dest (make-!value e k)))
+    ((macro e k)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message dest (make-!value e k))))))
 
-(defrules !!error ()
-  ((_ dest e k)
-   (send-message dest (make-!error e k))))
+(defsyntax (!!error stx)
+  (syntax-case stx ()
+    ((_ dest e k)
+     #'(send-message dest (make-!error e k)))
+    ((_ e k)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message dest (make-!error e k))))))
 
 (defrules !!event ()
   ((_ dest e)
