@@ -11,8 +11,9 @@ package: std
   ! !! sync poll                        ; high level synchornization
   never-evt always-evt                  ; bottom events
   make-event                            ; event constructors
+  make-event-set
   handle-evt                            ;
-  wrap-evt choice-evt 
+  wrap-evt choice-evt
   event                                 ; event predicates
   event-handler?
   event-set?
@@ -502,8 +503,22 @@ package: std
      (else
       (lp (call-method ':event evt))))))
 
-(def (choice-evt selectors)
-  (make-event-set selectors))
+(def* choice-evt
+  (() never-evt)
+  ((arg)
+   (if (list? arg)
+     (make-event-set arg)
+     (wrap-evt arg)))
+  (args
+   (let lp ((rest args) (r []))
+     (match rest
+       ([hd . rest]
+        (lp rest
+            (if (list? hd)
+              (foldl cons r hd)
+              (cons hd r))))
+       (else
+        (make-event-set (reverse r)))))))
 
 (def (choice-evt-handlers evt)
   (def (wrap-handlers evt handlers)
