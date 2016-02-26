@@ -119,7 +119,7 @@ package: std/actor
   (syntax-case stx ()
     ((_ dest e k)
      #'(send-message dest (make-!error e k)))
-    ((_ e k)
+    ((macro e k)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
        #'(send-message dest (make-!error e k))))))
 
