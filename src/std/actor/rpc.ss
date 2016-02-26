@@ -41,6 +41,7 @@ package: std/actor
   rpc-cookie-cipher-proto
   set-rpc-keep-alive-interval!
   set-rpc-idle-timeout!
+  set-rpc-call-timeout!
   )
 
 (def current-rpc-server
@@ -328,6 +329,13 @@ package: std/actor
     (set! rpc-idle-timeout dt)
     (error "bad idle interval; expected positive real or #f" dt)))
 
+(def rpc-call-timeout 5)
+
+(def (set-rpc-call-timeout! dt)
+  (if (and (real? dt) (positive? dt))
+    (set! rpc-call-timeout dt)
+    (error "bad timeout; expected positive real " dt)))
+
 (def (rpc-connection-loop rpc-server sock proto-e)
   (defvalues (read-e write-e)
     (proto-e sock))
@@ -362,12 +370,7 @@ package: std/actor
           => (lambda (cont)
                (with ((values actor k proto) cont)
                  (!!error actor "connection closed" k)
-                 (hash-remove! continuations wire-id)
-                 (cond
-                  ((hash-get continuation-timeouts wire-id)
-                   => (lambda (timeo)
-                        (hash-remove! continuation-timeouts wire-id)
-                        (hash-remove! timeouts timeo)))))))))
+                 (remove-continuation! wire-id))))))
       (hash-keys continuations))
     (rpc-connection-shutdown rpc-server))
   
@@ -441,14 +444,16 @@ package: std/actor
                     (set! (message-source msg)
                       (make-remote rpc-server (message-dest msg) peer-address proto))
                     (send actor msg)
+                    (remove-continuation! cont)
                     (loop))
                   (begin
-                    (warning "unmarshall error ~a" e)
+                    (!!error actor "unmarshall error" k)
+                    (remove-continuation! cont)
                     (loop)))))))
        (else
         (warning "cannot route value; bogus continuation ~a" cont)
         (loop)))))
-
+  
   (def (unmarshall-message-content msg proto bytes)
     (try (rpc-proto-read-message-content msg proto bytes)
          (catch (e) e)))
@@ -463,7 +468,8 @@ package: std/actor
           (match content
             ((!call _ k)
              (let ((wire-id (next-continuation-id!))
-                   (timeo (or (and opts (pgetq timeout: opts)) 120)))
+                   (timeo (or (and opts (pgetq timeout: opts))
+                              rpc-call-timeout)))
                (hash-put! continuations wire-id (values src k proto))
                (let* ((abs-timeo
                        (if (time? timeo)
@@ -472,7 +478,7 @@ package: std/actor
                           (+ (time->seconds (current-time)) timeo))))
                       (timeo-evt (rec evt (handle-evt abs-timeo (lambda (_) evt)))))
                  (hash-put! timeouts timeo-evt wire-id)
-                 (hash-put! continuation-timeouts wire-id timeo))
+                 (hash-put! continuation-timeouts wire-id timeo-evt))
                  (set! (!call-k content) wire-id)))
             (else (void)))
           ;; marshall, write, loop
