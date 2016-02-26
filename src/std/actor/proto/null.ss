@@ -95,8 +95,7 @@ package: std/actor/proto
               buf
               (raise-rpc-error 'rpc-proto-read "remature port end" sock rd len)))
           (raise-rpc-error 'rpc-proto-read "message too long" sock len))))
-     ((eof-object? e)
-      (raise-rpc-error 'rpc-proto-read "port closed" sock))
+     ((eof-object? e) e)
      (else
       (raise-rpc-error 'rpc-proto-read "bad message" sock e)))))
 

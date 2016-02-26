@@ -77,8 +77,7 @@ package: std/actor/proto
              (_      (unless (equal? hmac hmac*)
                        (raise-rpc-error 'rpc-proto-read "HMAC failure" sock))))
         (decrypt cipher key iv ctext)))
-     ((eof-object? e)
-      (raise-rpc-error 'rpc-proto-read "port closed" sock))
+     ((eof-object? e) e)
      (else
       (raise-rpc-error 'rpc-proto-read "bad message" sock e)))))
 

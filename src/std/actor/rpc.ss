@@ -310,7 +310,7 @@ package: std/actor
      (try
       (rpc-connection-loop rpc-server cli proto-e)
       (catch (e)
-       (rpc-connection-cleanup rpc-server e cli))))
+        (rpc-connection-cleanup rpc-server e cli))))
    (catch (e)
      (rpc-connection-cleanup rpc-server e #f))))
 
@@ -390,10 +390,10 @@ package: std/actor
                   ((? !error?)
                    (dispatch-value msg bytes !error-k !error-k-set!))
                   ((? not)
-                   (dispatch-call msg bytes)))
+                   (dispatch-call msg bytes))))
                 (begin
                   (warning "read error ~a" msg)
-                  (close-connection)))))))
+                  (close-connection))))))
        ((eof-object? data)
         (close-connection))
        (else
@@ -544,15 +544,15 @@ package: std/actor
   (def (loop)
     (<< (! (or rpc-keep-alive never-evt) (keep-alive))
         (! sock
-           (read-message)
-           (reset-idle-timeout))
+           (reset-idle-timeout)
+           (read-message))
         (! (choice-evt (hash-keys timeouts))
            => dispatch-timeout)
         (! idle-timeout
            (close-connection))
         ((? message? msg)
-         (write-message msg)
-         (reset-idle-timeout))
+         (reset-idle-timeout)
+         (write-message msg))
         (bogus
          (warning "unexpected message ~a" bogus)
          (loop))))
