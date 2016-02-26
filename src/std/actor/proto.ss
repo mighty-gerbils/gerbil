@@ -165,12 +165,12 @@ package: std/actor
            (lp #'rest #'proto-id
                extend calls events structures)
            (raise-syntax-error #f "Bad syntax; duplicate id")))
-        ((extend: id .rest)
-         (identifier? #'id)
-         (let (proto-info (syntax-local-value #'id))
+        ((extend: proto-id . rest)
+         (identifier? #'proto-id)
+         (let (proto-info (syntax-local-value #'proto-id))
            (if (protocol-info? proto-info)
-             (lp #'rest #'id
-                 (cons #'id extend)
+             (lp #'rest id
+                 (cons #'proto-id extend)
                  calls events structures)
              (raise-syntax-error #f "Bad syntax; unknown protocol"
                                  stx #'id))))
@@ -382,10 +382,10 @@ package: std/actor
     (if (module-context? (current-expander-context))
       (cond
        ((module-context-ns (current-expander-context))
-        => (lambda (ns) (stx-identifier proto-id ns "#" proto-id "::proto")))
+        => (lambda (ns) (stx-identifier proto-id ns "#" proto-id)))
        (else
         (let (mid (expander-context-id (current-expander-context)))
-          (stx-identifier proto-id mid "#" proto-id "::proto"))))
+          (stx-identifier proto-id mid "#" proto-id))))
       (genident proto-id)))
   
   (syntax-case stx ()
