@@ -1053,9 +1053,9 @@ to the standard Scheme SXML representation.
 It also provides routines for searching and selecting content
 from SXML trees, as well as XML/HTML output routines.
 
-For example, here is a parse of the bing front page extracting all hyperlinks:
+For example, here is a parse of the bing front page without scripts,
+style, and CDATA:
 ```
-> (import :std/net/request :std/xml)
 > (import :std/net/request :std/xml)
 > (def req (http-get "https://www.bing.com"))
 > (parse-html (request-text req) filter: '("script" "style" "CDATA"))
