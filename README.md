@@ -111,7 +111,7 @@ Hello world! My arguments are (1 2 3)
 
 # Documentation
 
-There little further documentation at this point, because I haven't
+There is little further documentation at this point, because I haven't
 had the time to prepare some nice and coherent documentation that
 can help Scheme neophytes -- or people who like neat documentation
 before using a new Scheme system. I hope to write some real
