@@ -363,7 +363,7 @@ package: std/actor
             (struct::t     (runtime-type-identifier info))
             (proto::proto  (stx-identifier proto-id proto-id "::proto")))
          #'(begin
-             (hash-put! (!protocol-type proto::proto)
+             (hash-put! (!protocol-types proto::proto)
                         (##type-id struct::t)
                         (make-XDR
                          (lambda (obj)
@@ -372,7 +372,7 @@ package: std/actor
                            (xdr-vector-like-read (cut make-object struct::t <>)
                                                  1 port))
                          (lambda (obj port)
-                           (xdr-vector-like-wrte obj 1 port)))))))))
+                           (xdr-vector-like-write obj 1 port)))))))))
   
   (def (generate-proto-structures proto-id structures)
     (map (cut generate-proto-structure proto-id <>)
