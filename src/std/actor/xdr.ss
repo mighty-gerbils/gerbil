@@ -221,8 +221,8 @@ END-C
 
 (def (xdr-vector-like-read makef start port)
   (let* ((len (xdr-read-object port))
-         (ilen (fx+ start len))
-         (obj (makef ilen)))
+         (obj (makef len))
+         (ilen (fx+ start len)))
     (let lp ((k start))
       (if (fx< k ilen)
         (begin
@@ -321,7 +321,7 @@ END-C
     (write-u8 xdr-proto-type-float port)
     (let (bytes (make-u8vector 8))
       (xdr-float->bytes! obj bytes)
-      (write-u8vector bytes 0 8 port))))
+      (write-subu8vector bytes 0 8 port))))
 
 (def (xdr-binary-write bytes port)
   (let (len (u8vector-length bytes))
