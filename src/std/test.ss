@@ -22,6 +22,15 @@ package: std
 (defstruct !test-suite (desc thunk tests))
 (defstruct !test-case (desc checks fail error))
 
+(def *test-verbose* #t)
+
+(def (set-test-verbose! val)
+  (set! *test-verbose* val))
+
+(def (verbose fmt . args)
+  (when *test-verbose*
+    (apply printf fmt args)))
+
 (defrules test-suite ()
   ((_ desc body ...)
    (stx-string? #'desc)
@@ -42,7 +51,7 @@ package: std
 
 (defrules print-check-e ()
   ((_ expr eqv value)
-   (printf "... check ~a is ~a to ~s~n" 'expr 'eqv value)))
+   (verbose "... check ~a is ~a to ~s~n" 'expr 'eqv value)))
 
 (defrules checkf ()
   ((_ eqf expr value)
@@ -97,13 +106,13 @@ package: std
 (defrules check-output ()
   ((_ expr value)
    (let (val value)
-     (printf "... check ~a outputs ~s~n" 'expr val)
+     (verbose "... check ~a outputs ~s~n" 'expr val)
      (test-check-output '(check-output expr value) (lambda () expr) value))))
     
 (defrules check-predicate ()
   ((_ expr pred)
    (begin
-     (printf "... check ~a is ~a~n" 'expr 'pred)
+     (verbose "... check ~a is ~a~n" 'expr 'pred)
      (test-check-predicate '(check-predicate expr pred)  (lambda () expr) pred))))
 
 (defrules check-exception ()
