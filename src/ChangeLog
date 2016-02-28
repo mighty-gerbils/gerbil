@@ -1,3 +1,7 @@
+2-28-2016: Gerbil-v0.3
+- std/test unit testing and basic tests for stdlib
+- std/iter iteration macros (for,for/collect,for/fold)
+- bug fixes and small  improvements
 2-20-2016: Gerbil-v0.2
 - Unification of object type hierarchy
 - More specific errors from stdlib
