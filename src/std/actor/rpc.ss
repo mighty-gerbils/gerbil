@@ -78,14 +78,17 @@ package: std/actor
 (defproto rpc
   id: std/actor#rpc
   ;; server <-> connection
-  event: (connection-shutdown)
-  event: (connection-close)
-  call:  (lookup id)
+  event:
+  (connection-shutdown)
+  (connection-close)
+  call:
+  (lookup id)
   ;; client -> server
-  call:  (register id proto)
-  call:  (unregister id)
-  call:  (resolve id)
-  call:  (server-address)
+  call:
+  (register id proto)
+  (unregister id)
+  (resolve id)
+  (server-address)
   )
 
 ;;; rpc-server

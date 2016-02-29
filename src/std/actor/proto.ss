@@ -157,49 +157,73 @@ package: std/actor
 (defsyntax (defproto stx)
   (def (parse-proto-body clauses)
     (let lp ((rest clauses)
-             (id #f) (extend []) (calls []) (events []) (structures []))
+             (id #f) (extend []) (calls []) (events []) (structures [])
+             (parsing call:))
       (syntax-case rest (=>)
         ((id: proto-id . rest)
          (identifier? #'proto-id)
          (if (not id)
            (lp #'rest #'proto-id
-               extend calls events structures)
+               extend calls events structures
+               parsing)
            (raise-syntax-error #f "Bad syntax; duplicate id")))
-        ((extend: proto-id . rest)
-         (identifier? #'proto-id)
+        ((extend: . rest)
+         (lp #'rest id extend calls events structures
+             extend:))
+        ((proto-id . rest)
+         (and (eq? extend: parsing)
+              (identifier? #'proto-id))
          (let (proto-info (syntax-local-value #'proto-id))
            (if (protocol-info? proto-info)
              (lp #'rest id
                  (cons #'proto-id extend)
-                 calls events structures)
+                 calls events structures
+                 parsing)
              (raise-syntax-error #f "Bad syntax; unknown protocol"
                                  stx #'id))))
-        ((call: (call-id arg ...) . rest)
-         (and (identifier? #'call-id)
+        ((call: . rest)
+         (lp #'rest id extend calls events structures
+             call:))
+        (((call-id arg ...) . rest)
+         (and (eq? call: parsing)
+              (identifier? #'call-id)
               (identifier-list? #'(arg ...)))
          (lp #'rest id extend
              (cons #'(call-id arg ...) calls)
-             events structures))
-        ((event: (event-id arg ...) . rest)
-         (and (identifier? #'event-id)
+             events structures
+             parsing))
+        ((event: . rest)
+         (lp #'rest id extend calls events structures
+             event:))
+        (((event-id arg ...) . rest)
+         (and (eq? event: parsing)
+              (identifier? #'event-id)
               (identifier-list? #'(arg ...)))
          (lp #'rest id extend calls
              (cons #'(event-id arg ...) events)
-             structures))
-        ((struct: struct-id . rest)
-         (identifier? #'struct-id)
+             structures
+             parsing))
+        ((struct: . rest)
+         (lp #'rest id extend calls events structures
+             struct:))
+        ((struct-id . rest)
+         (and (eq? struct: parsing)
+              (identifier? #'struct-id))
          (if (syntax-local-type-info? #'struct-id)
            (lp #'rest id extend calls events
-               (cons #'struct-id structures))
+               (cons #'struct-id structures)
+               parsing)
            (raise-syntax-error #f "Bad syntax; unknown struct type"
                                stx #'struct-id)))
-        ((struct: (struct-id xdr-read-e xdr-write-e) . rest)
-         (and (identifier? #'struct-id)
+        (((struct-id xdr-read-e xdr-write-e) . rest)
+         (and (eq? struct: parsing)
+              (identifier? #'struct-id)
               (identifier? #'xdr-read-e)
               (identifier? #'xdr-write-e))
          (if (syntax-local-type-info? stx)
            (lp #'rest id extend calls events
-               (cons #'(struct-id xdr-read-e xdr-write-e) structures))
+               (cons #'(struct-id xdr-read-e xdr-write-e) structures)
+               parsing)
            (raise-syntax-error #f "Bad syntax; unknown struct type"
                                stx #'struct-id)))
         (()
