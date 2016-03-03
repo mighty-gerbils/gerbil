@@ -42,6 +42,7 @@
           "net/uri"
           "net/socks"
           "net/request"
+          "net/fastcgi"
           ;; :std/xml
           (gsc: "xml/_libxml" 
                 "-cc-options" ,(shell-config "xml2-config" "--cflags")
