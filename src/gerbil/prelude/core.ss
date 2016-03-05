@@ -125,7 +125,7 @@ package: gerbil
     pgetq pgetv pget
     subvector subvector->list subvector-fill!
     vector-map vector-copy vector-append 
-    true true? false void void? identity
+    true true? false void void? eof-object identity
     dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
     ;;bytes? 
     ;;make-bytes bytes-length bytes-ref bytes-set! 

@@ -704,6 +704,9 @@
 (define (void? obj)
   (eq? obj #!void))
 
+(define (eof-object . _)
+  '#!eof)
+
 (define (identity obj)
   obj)
 
