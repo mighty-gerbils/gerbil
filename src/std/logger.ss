@@ -40,6 +40,7 @@ package: std
        (fprintf port "[~a] ~a ~a: ~a~n"
                 level (date->string (current-date) "~4")
                 source message)
+       (force-output port)
        (loop))))
 
   (try (loop)
