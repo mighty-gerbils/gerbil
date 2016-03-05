@@ -17,24 +17,22 @@ package: std/web
 ;;  data is stdin supplied data (u8vector)
 ;;  return values:
 ;;    body is data (string or u8vector) or an iterable that produces
-;;    a stream of data that is sent with chunked content encoding
+;;    a stream of data
 (def (start-rack-fastcgi-server! address handler)
   (start-fastcgi-server! address (cut rack-fastcgi-respond <> handler)))
 
 (def (rack-fastcgi-respond req handler)
-  (def (write-chunked-response req body)
-    (for (next body)
-      (let* ((data
-             (cond
-              ((u8vector? next) next)
-              ((string? next) (string->bytes next))
-              (else
-               (raise-io-error 'rack-fastcgi-respond "bad response chunk" next))))
-             (dlen (u8vector-length data)))
-        (fastcgi-write-stdout req (format "~x\r\n" dlen))
-        (fastcgi-write-stdout req data)
-        (fastcgi-write-stdout req "\r\n")))
-    (fastcgi-write-stdout req "0\r\n\r\n"))
+  (def (collect-data body)
+    (let (out (open-output-u8vector))
+      (for (next body)
+        (cond
+         ((u8vector? next)
+          (write-subu8vector next 0 (u8vector-length next) out))
+         ((string? next)
+          (write-substring next 0 (string-length next) out))
+         (else
+          (raise-io-error 'rack-fastcgi-respond "bad response chunk" next))))
+      (get-output-u8vector out)))
   
   (try
    (let* (((values status headers body)
@@ -44,20 +42,16 @@ package: std/web
           (body-data (cond
                       ((u8vector? body) body)
                       ((string? body) (string->bytes body))
-                      (else #f)))
+                      (else (collect-data body))))
           (hout (open-output-u8vector)))
      (fprintf hout "Status: ~a ~a\r\n" status status-text)
      (for (pair headers)
        (with ([key . value] pair)
          (fprintf hout "~a: ~a\r\n" key value)))
-     (if body-data
-       (fprintf hout "Content-Length: ~a\r\n" (u8vector-length body-data))
-       (fprintf hout "Transfer-Encoding: chunked\r\n"))
+     (fprintf hout "Content-Length: ~a\r\n" (u8vector-length body-data))
      (fprintf hout "\r\n")
      (fastcgi-write-stdout req (get-output-u8vector hout))
-     (if body-data
-       (fastcgi-write-stdout req body-data)
-       (write-chunked-response req body)))
+     (fastcgi-write-stdout req body-data))
    (catch (e)
      (display "rack response error " (current-error-port))
      (display-exception e (current-error-port))

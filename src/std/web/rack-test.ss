@@ -17,7 +17,14 @@
            (display-exception value (current-error-port)))))))
 
 (def (respond env data)
-  (values 200 '((Content . "text/html")) "hello world\n"))
+  (values 200 '((Content . "text/html")) (print-headers env)))
+
+(def (print-headers env)
+  (lambda ()
+    (yield "<pre>\n")
+    (for ((values key val) env)
+      (yield (format "~a: ~a\n" key val)))
+    (yield "</pre>\n")))
 
 (def (main . args)
   (match args
