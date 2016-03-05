@@ -10,6 +10,7 @@ package: std/actor
         :std/sugar
         :std/format
         :std/event
+        :std/logger
         :std/net/address
         :std/misc/uuid
         :std/actor/message
@@ -92,12 +93,9 @@ package: std/actor
   )
 
 ;;; rpc-server
-(def (warning fmt . args)
-  (eprintf "Warning [~a]: ~?" (current-thread) fmt args)
-  (newline (current-error-port)))
-  
 (def (start-rpc-server! (address #f)
                         proto: (proto (rpc-null-proto)))
+  (start-logger!)
   (spawn rpc-server (and address (inet-address address)) proto))
 
 (def (rpc-server address proto)
@@ -400,12 +398,12 @@ package: std/actor
                   ((? not)
                    (dispatch-call msg bytes))))
                 (begin
-                  (warning "read error ~a" msg)
+                  (log-error "read error" msg)
                   (close-connection))))))
        ((eof-object? data)
         (close-connection))
        (else
-        (warning "connection error ~a" data)
+        (log-error "connection error" data)
         (close-connection)))))
   
   (def (dispatch-call msg bytes)
@@ -422,7 +420,7 @@ package: std/actor
                (send actor msg)
                (loop))
              (begin
-               (warning "unmarshall error ~a" e)
+               (log-error "unmarshall error" e)
                (loop)))))
         (else
          (warning "cannot route call; no actor binding ~a" uuid)
@@ -511,7 +509,7 @@ package: std/actor
        ((u8vector? e)
         (connection-write-and-loop e))
        (local-error?
-        (warning "marshall error ~a" e)
+        (log-error "marshall error" e)
         (let (content (message-e msg))
           (match content
             ((!call e wire-id)
@@ -519,7 +517,7 @@ package: std/actor
             (else
              (loop)))))
        (else
-        (warning "marshall error ~a" e)
+        (log-error "marshall error" e)
         (loop)))))
   
   (def (connection-write-and-loop data)
@@ -527,7 +525,7 @@ package: std/actor
       (if (void? e)
         (loop)
         (begin
-          (warning "write error ~s" e)
+          (log-error "write error" e)
           (close-connection)))))
   
   (def (dispatch-error wire-id what)
@@ -549,7 +547,7 @@ package: std/actor
       (if (void? e)
         (loop)
         (begin
-          (warning "write error ~a" e)
+          (log-error "write error" e)
           (close-connection)))))
   
   (def (loop)
@@ -586,7 +584,7 @@ package: std/actor
         (else (void)))))
 
 (def (rpc-connection-cleanup rpc-server exn sock)
-  (warning "connection error ~a" exn)
+  (log-error "connection error" exn)
   (rpc-close-port sock)
   (rpc-connection-shutdown rpc-server))
 

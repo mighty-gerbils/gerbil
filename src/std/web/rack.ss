@@ -9,6 +9,7 @@ package: std/web
         :std/format
         :std/iter
         :std/error
+        :std/logger
         )
 (export start-rack-fastcgi-server!)
 
@@ -53,8 +54,7 @@ package: std/web
      (fastcgi-write-stdout req (get-output-u8vector hout))
      (fastcgi-write-stdout req body-data))
    (catch (e)
-     (display "rack response error " (current-error-port))
-     (display-exception e (current-error-port))
+     (log-error "rack response error " e)
      (let (errstr (call-with-output-string [] (cut display-exception e <>)))
        (fastcgi-write-stderr req errstr)))))
 

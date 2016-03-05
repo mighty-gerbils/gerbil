@@ -8,6 +8,7 @@ package: std/net
         :std/format
         :std/sugar
         :std/iter
+        :std/logger
         :std/net/address
         )
 (export
@@ -25,6 +26,7 @@ package: std/net
 
 ;; multi-threaded server; dispatch requests to respond
 (def (start-fastcgi-server! address respond)
+  (start-logger!)
   (spawn fastcgi-server
          (open-tcp-server (inet-address->string address))
          respond))
@@ -35,8 +37,7 @@ package: std/net
      (let (client (read sock))
        (spawn fastcgi-connection client respond))
      (catch (e)
-       (display "fastcgi-server: error accepting connection: " (current-error-port))
-       (display-exception e (current-error-port))))
+       (log-error "error accepting connection" e)))
     (lp)))
 
 (def (fastcgi-connection port respond)
@@ -56,8 +57,7 @@ package: std/net
   
   (try (loop)
     (catch (e)
-      (display "fastcgi-connection: error responding: " (current-error-port))
-      (display-exception e (current-error-port)))
+      (log-error "error responding" e))
     (finally
      (with-catch void (cut close-port port)))))
 
@@ -88,7 +88,7 @@ package: std/net
                            (fcgi-unknown-type-data type))
         (begin-request port))
        (else
-        (eprintf "Warning: fastcgi-accept: unexpected message type ~a~n" type)
+        (warning "fastcgi-accept: unexpected message type ~a" type)
         (begin-request port))))
       ((? eof-object? eof) eof)))
   
@@ -118,10 +118,10 @@ package: std/net
               ((eq? type FCGI-ABORT-REQUEST)
                (raise-io-error 'fastcgi-accept "Connection aborted"))
               (else
-               (eprintf "Warning: fastcgi-accept: unexpected message type ~a~n" type)
+               (warning "fastcgi-accept: unexpected message type ~a" type)
                (lp end-params end-stdin stdin)))
              (begin
-               (eprintf "Warning: fastcgi-accept: unexpected message request ~a~n" reqid)
+               (warning "fastcgi-accept: unexpected message request ~a" reqid)
                (lp end-params end-stdin stdin))))
           ((? eof-object?)
            (raise-io-error 'fastcgi-accept "Premature port end" port))))))
