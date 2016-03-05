@@ -80,5 +80,6 @@
           "actor/proto/cipher"
           "actor/rpc"
           "actor"
+          "web/rack"
           )))
 
