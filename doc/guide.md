@@ -1076,3 +1076,39 @@ style, and CDATA:
 ; so much for modern html!
 ; everything script, style, and CDATA in the page.
 ```
+### Web Applications
+
+Gerbil supports web applications with fastcgi and a rack-style interface
+for request handling.
+This is the obligatory hello web example:
+```
+(import :std/web/rack)
+(def (respond env data)
+  (values 200 '((Content . "text/html")) "hello world\n"))
+(start-rack-fastcgi-server! "127.0.0.1:9000" respond)
+
+```
+
+The fastcgi web handler is started with `start-rack-fastcgi-server!` from
+the `std/web/rack` library module. The procedure accepts an address where
+it will listen for fastcgi requests and a handler procedure.
+The handler accepts two arguments, a hashtable which contains the `CGI`
+request environment and the data attached to the request as a `u8vector`.
+The handler returns 3 values: the status code for the response, the
+`HTTP` headers as an associative list, and the content which can be a `string`,
+`u8vector` or an iterable yielding a stream of `string` or `u8vector` data.
+
+Here is a more complex example that prints all request variables to
+the response:
+```
+(def (respond env data)
+  (values 200 '((Content . "text/html")) (print-headers env)))
+
+(def (print-headers env)
+  (lambda ()
+    (yield "<pre>\n")
+    (for ((values key val) env)
+      (yield (format "~a: ~a\n" key val)))
+    (yield "</pre>\n")))
+```
+
