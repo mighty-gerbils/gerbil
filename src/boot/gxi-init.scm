@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; Gerbil interactive interpreter init
+;;; Gerbil interpreter init
 
 (let* ((home (getenv "GERBIL_HOME"))
        (libdir (path-expand "lib" home)))
@@ -13,6 +13,4 @@
   (set! ##language-specs
     (append ##language-specs
             '(#("gxi" #f #t scm #f) 
-              #("gxi-script" #f #t scm #f))))
-  
-  (_gx#gxi-init! (command-line)))
+              #("gxi-script" #f #t scm #f)))))
