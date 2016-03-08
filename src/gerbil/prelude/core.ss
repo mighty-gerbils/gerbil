@@ -2450,6 +2450,20 @@ package: gerbil
                    (foldl fold-e r (export-set-exports out)))
                   (else r)))))
          (cons begin: (foldl fold-e [] exports))))))
+
+  (defsyntax-for-export (struct-out stx)
+    (syntax-case stx ()
+      ((_ id ...)
+       (let lp ((rest #'(id ...)) (ids []))
+         (syntax-case rest ()
+           ((id . rest)
+            (let (info (syntax-local-value #'id false))
+              (if (expander-type-info? info)
+                (with ([super type::t make-type type? getf setf]
+                       (@ info expander-identifiers))
+                  (lp #'rest [#'id type::t make-type type? getf ... setf ... ids ...]))
+                (raise-syntax-error #f "Incomplete type info" stx #'id))))
+           (_ (cons 'begin: ids)))))))
   
   ;; ...
   )
