@@ -6,12 +6,7 @@ package: std/actor
 (import :gerbil/gambit/threads
         :std/event)
 (export
-  message message::t make-message message?
-  message-e message-e-set!
-  message-source message-source-set!
-  message-dest message-dest-set!
-  message-options message-options-set!
-  proxy proxy::t proxy? proxy-handler proxy-handler-set!
+  (struct-out message proxy)
   -> send send-message send-message/timeout
   << <- receive-message
   !

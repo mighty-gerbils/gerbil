@@ -14,19 +14,10 @@ package: std/actor
 (export
   rpc-error? raise-rpc-error
   remote-error? raise-remote-error
-  handle handle::t make-handle handle? handle-uuid
-  remote remote::t make-remote remote? remote-address remote-proto
-  !rpc !rpc?
-  !call make-!call !call? !call-e !call-e-set! !call-k !call-k-set!
-  !value make-!value !value? !value-e !value-e-set! !value-k !value-k-set!
-  !error make-!error !error? !error-e !error-e-set! !error-k !error-k-set!
-  !event make-!event !event? !event-e !event-e-set!
+  (struct-out handle remote)
+  (struct-out !rpc !call !value !error !event)
   !!call !!value !!error !!event
-  !protocol make-!protocol !protocol?
-  !protocol-id !protocol-super !protocol-types
-  !rpc-protocol make-!rpc-protocol !rpc-protocol?
-  !rpc-protocol-open-client !rpc-protocol-open-server
-  !rpc-protocol-connect-e !rpc-protocol-accept-e
+  (struct-out !protocol !rpc-protocol)
   defproto
   defproto-default-type
   *default-proto-type-registry*

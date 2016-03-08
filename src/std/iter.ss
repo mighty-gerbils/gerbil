@@ -8,8 +8,7 @@ package: std
         :std/coroutine
         )
 (export
-  iterator iterator? make-iterator
-  iterator-e iterator-e-set!
+  (struct-out iterator)
   :iter iter-end iter-end?
   iter-start! iter-value iter-next!
   for for* for/collect for/fold

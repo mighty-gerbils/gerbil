@@ -24,16 +24,13 @@ package: std/actor
 (export
   current-rpc-server
   start-rpc-server!
-  rpc.register rpc.register? make-rpc.register
-  rpc.register-id rpc.register-proto
+  (struct-out rpc.register)
   !rpc.register !!rpc.register
-  rpc.unregister rpc.unregister? make-rpc.unregister
-  rpc.unregister-id
+  (struct-out rpc.unregister)
   !rpc.unregister !!rpc.unregister
-  rpc.resolve rpc.resolve? make-rpc.resolve
-  rpc.resolve-id
+  (struct-out rpc.resolve)
   !rpc.resolve !!rpc.resolve
-  rpc.server-address rpc.server-address? make-rpc.server-address
+  (struct-out rpc.server-address)
   !rpc.server-address !!rpc.server-address
   rpc-null-proto
   rpc-cookie-proto
