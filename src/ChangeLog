@@ -1,3 +1,10 @@
+3-9-2016: Gerbil-v0.4
+- std/web/rack: web application support with rack-style interface
+- std/net/fastcgi: fastcgi support
+- std/logger: basic logging support
+- std/actor: more casual syntax for defproto
+- prelude: struct-out export expander
+- bug fixes and small improvements
 2-28-2016: Gerbil-v0.3
 - std/test unit testing and basic tests for stdlib
 - std/iter iteration macros (for,for/collect,for/fold)
