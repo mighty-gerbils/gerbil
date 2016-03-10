@@ -1,7 +1,7 @@
 #!/usr/bin/env gxi
 ;; -*- Gerbil -*-
 
-(import :gerbil/compiler "make")
+(import :gerbil/compiler "make" "build-config")
 
 (let (srcdir (path-normalize (path-directory (this-source-file))))
   (add-load-path (path-normalize (path-expand ".." srcdir)))
@@ -45,17 +45,19 @@
           "net/request"
           "net/fastcgi"
           ;; :std/xml
-          (gsc: "xml/_libxml" 
-                "-cc-options" ,(shell-config "xml2-config" "--cflags")
-                "-ld-options" ,(shell-config "xml2-config" "--libs")
-                "-e" "(include \"~~lib/_gambit#.scm\")")
-          (ssi: "xml/_libxml")
-          "xml/libxml"
-          "xml/sxml"
-          (gsc: "xml/sxml-to-xml")
-          (ssi: "xml/sxml-to-xml")
-          "xml/print"
-          "xml"
+          ,@(if config-enable-libxml
+              `((gsc: "xml/_libxml" 
+                      "-cc-options" ,(shell-config "xml2-config" "--cflags")
+                      "-ld-options" ,(shell-config "xml2-config" "--libs")
+                      "-e" "(include \"~~lib/_gambit#.scm\")")
+                (ssi: "xml/_libxml")
+                "xml/libxml"
+                "xml/sxml"
+                (gsc: "xml/sxml-to-xml")
+                (ssi: "xml/sxml-to-xml")
+                "xml/print"
+                "xml")
+              '())
           ;; :std/crypto
           (gsc: "crypto/libcrypto"
                 "-ld-options" "-lcrypto"

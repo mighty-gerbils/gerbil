@@ -51,16 +51,13 @@ $ git clone https://github.com/vyzo/gerbil.git
 I have tested the bootstrap with Gambit v4.8.4, but older versions
 starting with v4.6.0 should work as well.
 
-The `:std/xml` library in std requires `libxml2` to build; comment it out
-xml stuffs in `src/std/build.ss` if you don't have it.
+The only hard dependency is `libcrypto` from OpenSSL; important parts
+of the standard library require it. All the other dependencies can be
+configured at build-time by editing `$GERBIL_HOME/src/std/build-config.ss`.
 
-The `:std/crypto` library in std requires `libcrypto` from openssl; similary
-comment out the crypto stuffs in `build.ss` if you don't have it.
-
-Initially, the std library was a packaging of mature libraries that worked
-with the Gambit bootstrap out of the box. I am continuously porting
-more libraries from the various private versions of Gerbil, so you should
-expect more of them to be continously merged.
+The `:std/xml` library, which is built by default requires `libxml2` to build;
+edit `build-config.ss` and set the option `config-enable-libxml` to `#f` if
+you don't have `libxml2` in your system.
 
 ## Build Instructions
 After checking out the source code from Github, let `$GERBIL_HOME` be
