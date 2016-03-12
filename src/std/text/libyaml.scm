@@ -102,7 +102,7 @@ END-C
   "yaml_emitter_delete")
 (define-c-lambda yaml_emitter_set_output_file (yaml_emitter_t* FILE*) void
   "yaml_emitter_set_output_file")
-(define-c-lambda yaml_emitter_emit (yaml_emitter_t* yaml_event_t*) void
+(define-c-lambda yaml_emitter_emit (yaml_emitter_t* yaml_event_t*) int
   "yaml_emitter_emit")
 (define-c-lambda yaml_emitter_error (yaml_emitter_t*) int
   "___return (___arg1->error);")

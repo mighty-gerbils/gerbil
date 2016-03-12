@@ -6,6 +6,7 @@ package: std/text
 (import :gerbil/gambit/hvectors
         :std/sugar
         :std/error
+        :std/iter
         :std/pregexp
         :std/text/libyaml)
 (export yaml-load yaml-dump)
@@ -180,6 +181,89 @@ package: std/text
    ("!!int"   string->number)
    ("!!float" yaml-string->float)))
  
-(def (yaml-dump obj name)
-  (error "XXX Implement me")
-  )
+(def (yaml-dump fname . args)
+  (cond
+   ((open_yaml_output_file (path-normalize fname))
+    => (lambda (file)
+         (try (yaml-dump-file file args)
+           (finally (close_yaml_file file)))))
+   (else
+    (error "Cannot open yaml input file" fname))))
+
+(def (yaml-dump-file file args)
+  (let* ((emitter (make_yaml_emitter))
+         (_      (yaml_emitter_initialize emitter))
+         (_      (yaml_emitter_set_output_file emitter file))
+         (event  (make_yaml_event)))
+    (try (yaml-emit emitter event args)
+      (finally (yaml_emitter_delete emitter)))))
+
+(def (yaml-emit emitter event args)
+  (def (emit)
+    (let (r (yaml_emitter_emit emitter event))
+      (when (zero? r)
+        (raise-io-error 'yaml-dump "LibYAML emit error" (yaml_emitter_error emitter)))))
+  
+  (def (emit-document obj)
+    (yaml_event_document_start event)
+    (emit)
+    (emit-object obj)
+    (yaml_event_document_end event)
+    (emit))
+
+  (def (emit-object obj)
+    (cond
+     ((string? obj)
+      (yaml_event_scalar event obj)
+      (emit))
+     ((symbol? obj)
+      (let (str (symbol->string obj))
+        (yaml_event_scalar event str)
+        (emit)))
+     ((and (number? obj) (real? obj))
+      (let (str (cond
+                 ((integer? obj)
+                  (number->string obj))
+                 ((finite? obj)
+                  (number->string (exact->inexact obj)))
+                 ((eqv? obj +inf.0) ".inf")
+                 ((eqv? obj -inf.0) "-.inf")
+                 ((eqv? obj +nan.0) ".NaN")
+                 (else
+                  (error "Bad YAML object" obj))))
+        (yaml_event_scalar event str)
+        (emit)))
+     ((list? obj)
+      (yaml_event_sequence_start event)
+      (emit)
+      (for-each emit-object obj)
+      (yaml_event_sequence_end event)
+      (emit))
+     ((vector? obj)
+      (emit-object (vector->list obj)))
+     ((hash-table? obj)
+      (yaml_event_mapping_start event)
+      (emit)
+      (for ((values key val) obj)
+        (emit-object key)
+        (emit-object val))
+      (yaml_event_mapping_end event)
+      (emit))
+     ((boolean? obj)
+      (let (str (if obj "true" "false"))
+        (yaml_event_scalar event str)
+        (emit)))
+     ((void? obj)
+      (yaml_event_scalar event "null")
+      (emit))
+     ((method-ref obj ':yaml)
+      => (lambda (yamlf) (emit-object (yamlf obj))))
+     (else
+      (error "Bad YAML object" obj))))
+  
+  (yaml_event_stream_start event)
+  (emit)
+  (for-each emit-document args)
+  (yaml_event_stream_end event)
+  (emit))
+
