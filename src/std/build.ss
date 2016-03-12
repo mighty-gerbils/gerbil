@@ -40,7 +40,8 @@
           "text/json"
           ,@(if config-enable-libyaml
               '((gsc: "text/libyaml" "-ld-options" "-lyaml")
-                (ssi: "text/libyaml"))
+                (ssi: "text/libyaml")
+                "text/yaml")
               '())
           ;; :std/net
           "net/address"

@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; libcrypto FFI
+;;; libyaml FFI
 package: std/text
 
 (export #t)
@@ -16,13 +16,14 @@ package: std/text
     YAML_SEQUENCE_END_EVENT
     YAML_MAPPING_START_EVENT
     YAML_MAPPING_END_EVENT
-    open_yaml_file
+    open_yaml_input_file
     close_yaml_file
     make_yaml_parser
     yaml_parser_initialize
     yaml_parser_delete
     yaml_parser_set_input_file
     yaml_parser_parse
+    yaml_parser_error
     make_yaml_event
     yaml_event_delete
     yaml_event_type

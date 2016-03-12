@@ -53,7 +53,7 @@ END-C
 static ___SCMOBJ ffi_release_file (void *ptr);
 static ___SCMOBJ ffi_release_event (void *ptr);
 static ___SCMOBJ ffi_release_parser (void *ptr);
-static FILE* ffi_open_file (const char *path);
+static FILE* ffi_open_input_file (const char *path);
 static yaml_parser_t *ffi_make_parser ();
 static yaml_event_t *ffi_make_event ();
 static void ffi_event_scalar_bytes (yaml_event_t *event, ___SCMOBJ bytes);
@@ -69,8 +69,8 @@ END-C
 (c-define-type yaml_parser_t*
   (pointer yaml_parser_t (yaml_parser_t*) "ffi_release_parser"))
 
-(define-c-lambda open_yaml_file (char-string) FILE*
-  "ffi_open_file")
+(define-c-lambda open_yaml_input_file (char-string) FILE*
+  "ffi_open_input_file")
 (define-c-lambda close_yaml_file (FILE*) void
   "fclose")
 (define-c-lambda make_yaml_parser () yaml_parser_t*
@@ -83,6 +83,8 @@ END-C
   "yaml_parser_set_input_file")
 (define-c-lambda yaml_parser_parse (yaml_parser_t* yaml_event_t*) int
   "yaml_parser_parse")
+(define-c-lambda yaml_parser_error (yaml_parser_t*) int
+  "___return (___arg1->error);")
 (define-c-lambda make_yaml_event () yaml_event_t*
   "ffi_make_event")
 (define-c-lambda yaml_event_delete (yaml_event_t*) void
@@ -99,7 +101,7 @@ END-C
   "ffi_event_scalar_bytes")
 
 (c-declare #<<END-C
-static FILE* ffi_open_file (const char *path)
+static FILE* ffi_open_input_file (const char *path)
 {
  return fopen (path, "rb");
 }
