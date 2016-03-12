@@ -50,12 +50,14 @@ END-C
 (define-const YAML_MAPPING_END_EVENT)
 
 (c-declare #<<END-C
-static ___SCMOBJ ffi_release_file (void *ptr);
+static FILE* ffi_open_input_file (const char *path);
+static FILE* ffi_open_output_file (const char *path);
 static ___SCMOBJ ffi_release_event (void *ptr);
 static ___SCMOBJ ffi_release_parser (void *ptr);
-static FILE* ffi_open_input_file (const char *path);
+static ___SCMOBJ ffi_release_emitter (void *ptr);
 static yaml_parser_t *ffi_make_parser ();
 static yaml_event_t *ffi_make_event ();
+static yaml_emitter_t *ffi_make_emitter ();
 static void ffi_event_scalar_bytes (yaml_event_t *event, ___SCMOBJ bytes);
 END-C
 )           
@@ -68,11 +70,17 @@ END-C
 (c-define-type yaml_parser_t "yaml_parser_t")
 (c-define-type yaml_parser_t*
   (pointer yaml_parser_t (yaml_parser_t*) "ffi_release_parser"))
+(c-define-type yaml_emitter_t "yaml_emitter_t")
+(c-define-type yaml_emitter_t*
+  (pointer yaml_emitter_t (yaml_emitter_t*) "ffi_release_emitter"))
 
-(define-c-lambda open_yaml_input_file (char-string) FILE*
+(define-c-lambda open_yaml_input_file (UTF-8-string) FILE*
   "ffi_open_input_file")
+(define-c-lambda open_yaml_output_file (UTF-8-string) FILE*
+  "ffi_open_output_file")
 (define-c-lambda close_yaml_file (FILE*) void
   "fclose")
+
 (define-c-lambda make_yaml_parser () yaml_parser_t*
   "ffi_make_parser")
 (define-c-lambda yaml_parser_initialize (yaml_parser_t*) void
@@ -85,6 +93,20 @@ END-C
   "yaml_parser_parse")
 (define-c-lambda yaml_parser_error (yaml_parser_t*) int
   "___return (___arg1->error);")
+
+(define-c-lambda make_yaml_emitter () yaml_emitter_t*
+  "ffi_make_emitter")
+(define-c-lambda yaml_emitter_initialize (yaml_emitter_t*) void
+  "yaml_emitter_initialize")
+(define-c-lambda yaml_emitter_delete (yaml_emitter_t*) void
+  "yaml_emitter_delete")
+(define-c-lambda yaml_emitter_set_output_file (yaml_emitter_t* FILE*) void
+  "yaml_emitter_set_output_file")
+(define-c-lambda yaml_emitter_emit (yaml_emitter_t* yaml_event_t*) void
+  "yaml_emitter_emit")
+(define-c-lambda yaml_emitter_error (yaml_emitter_t*) int
+  "___return (___arg1->error);")
+
 (define-c-lambda make_yaml_event () yaml_event_t*
   "ffi_make_event")
 (define-c-lambda yaml_event_delete (yaml_event_t*) void
@@ -100,10 +122,34 @@ END-C
 (define-c-lambda yaml_event_scalar_bytes (yaml_event_t* scheme-object) void
   "ffi_event_scalar_bytes")
 
+(define-c-lambda yaml_event_stream_start (yaml_event_t*) int
+  "___return (yaml_stream_start_event_initialize (___arg1, YAML_UTF8_ENCODING));")
+(define-c-lambda yaml_event_stream_end (yaml_event_t*) int
+  "yaml_stream_end_event_initialize")
+(define-c-lambda yaml_event_document_start (yaml_event_t*) int
+  "___return (yaml_document_start_event_initialize (___arg1, NULL, NULL, NULL, 0));")
+(define-c-lambda yaml_event_document_end (yaml_event_t*) int
+  "___return (yaml_document_end_event_initialize (___arg1, 1));")
+(define-c-lambda yaml_event_scalar (yaml_event_t* UTF-8-string) int
+  "___return (yaml_scalar_event_initialize (___arg1, NULL, NULL, ___arg2, strlen (___arg2), 1, 1, 0));")
+(define-c-lambda yaml_event_sequence_start (yaml_event_t*) int
+  "___return (yaml_sequence_start_event_initialize (___arg1, NULL, NULL, 1, 0));")
+(define-c-lambda yaml_event_sequence_end (yaml_event_t*) int
+  "yaml_sequence_end_event_initialize")
+(define-c-lambda yaml_event_mapping_start (yaml_event_t*) int
+  "___return (yaml_mapping_start_event_initialize (___arg1, NULL, NULL, 1, 0));")
+(define-c-lambda yaml_event_mapping_end (yaml_event_t*) int
+  "yaml_mapping_end_event_initialize")
+
 (c-declare #<<END-C
 static FILE* ffi_open_input_file (const char *path)
 {
  return fopen (path, "rb");
+}
+
+static FILE* ffi_open_output_file (const char *path)
+{
+ return fopen (path, "wb");
 }
 
 static yaml_parser_t *ffi_make_parser ()
@@ -112,6 +158,17 @@ static yaml_parser_t *ffi_make_parser ()
 }
 
 static ___SCMOBJ ffi_release_parser (void *ptr)
+{
+ free (ptr);
+ return ___FIX (___NO_ERR);                   
+}
+
+static yaml_emitter_t *ffi_make_emitter ()
+{
+ return malloc (sizeof (yaml_emitter_t));
+}
+
+static ___SCMOBJ ffi_release_emitter (void *ptr)
 {
  free (ptr);
  return ___FIX (___NO_ERR);                   
