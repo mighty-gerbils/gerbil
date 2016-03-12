@@ -38,6 +38,10 @@
           (gsc: "text/base64")
           (ssi: "text/base64")
           "text/json"
+          ,@(if config-enable-libyaml
+              '((gsc: "text/libyaml" "-ld-options" "-lyaml")
+                (ssi: "text/libyaml"))
+              '())
           ;; :std/net
           "net/address"
           "net/uri"

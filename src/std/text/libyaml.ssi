@@ -1,0 +1,34 @@
+;;; -*- Gerbil -*-
+;;; (C) vyzo at hackzen.org
+;;; libcrypto FFI
+package: std/text
+
+(export #t)
+(extern
+    YAML_NO_EVENT
+    YAML_STREAM_START_EVENT
+    YAML_STREAM_END_EVENT
+    YAML_DOCUMENT_START_EVENT
+    YAML_DOCUMENT_END_EVENT
+    YAML_ALIAS_EVENT
+    YAML_SCALAR_EVENT
+    YAML_SEQUENCE_START_EVENT
+    YAML_SEQUENCE_END_EVENT
+    YAML_MAPPING_START_EVENT
+    YAML_MAPPING_END_EVENT
+    open_yaml_file
+    close_yaml_file
+    make_yaml_parser
+    yaml_parser_initialize
+    yaml_parser_delete
+    yaml_parser_set_input_file
+    yaml_parser_parse
+    make_yaml_event
+    yaml_event_delete
+    yaml_event_type
+    yaml_event_anchor
+    yaml_event_tag
+    yaml_event_scalar_length
+    yaml_event_scalar_bytes
+  )
+(load-module "std/text/libyaml")
