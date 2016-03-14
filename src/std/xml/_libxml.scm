@@ -247,7 +247,7 @@ END-C
         int)                            ; optionx
        xmlDocPtr
        #<<END-C
-___result_voidstar = xmlReadMemory (U8_DATA (___arg1) + ___arg2, 
+___result_voidstar = xmlReadMemory ((char*) U8_DATA (___arg1) + ___arg2, 
                                     ___arg3 - ___arg2, 
                                     ___arg4, ___arg5, ___arg6);
 END-C
@@ -262,7 +262,7 @@ END-C
         int)                            ; optionx
        xmlDocPtr
        #<<END-C
-___result_voidstar = htmlReadMemory (U8_DATA (___arg1) + ___arg2,
+___result_voidstar = htmlReadMemory ((char*) U8_DATA (___arg1) + ___arg2,
                                      ___arg3 - ___arg2, 
                                      ___arg4, ___arg5, ___arg6);
 END-C
