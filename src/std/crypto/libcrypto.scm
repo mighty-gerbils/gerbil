@@ -61,7 +61,7 @@ END-C
              c-args))))
     `(define ,id
        (c-lambda ,args ,ret
-         ,(##string-append result " = (void*)"
+         ,(##string-append result " = (char*)"
                            (##symbol->string id) "(" c-args ");")))))
 
 (define-macro (define-c-type-predicate pred tag)
