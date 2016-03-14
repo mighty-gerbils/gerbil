@@ -161,7 +161,7 @@ END-C
 (define xmlNode-content
   (c-lambda (xmlNodePtr)
        UTF-8-string
-       "___result = ((xmlNodePtr)___arg1)->content;"))
+       "___result = (char*) ((xmlNodePtr)___arg1)->content;"))
 
 (define xmlNode-properties
   (c-lambda (xmlNodePtr)
