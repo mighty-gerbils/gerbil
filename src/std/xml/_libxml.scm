@@ -123,10 +123,10 @@ END-C
 (define-const HTML_PARSE_IGNORE_ENC)
 
 ;; concrete node types
-(c-define-type xmlDocPtr  (pointer void xmlDoc))
-(c-define-type xmlNodePtr (pointer void xmlNode))
-(c-define-type xmlAttrPtr (pointer void xmlAttr))
-(c-define-type xmlNsPtr   (pointer void xmlNs))
+(c-define-type xmlDocPtr  (pointer (struct "_xmlDoc"))) ;; void
+(c-define-type xmlNodePtr (pointer (struct "_xmlNode")))
+(c-define-type xmlAttrPtr (pointer (struct "_xmlAttr")))
+(c-define-type xmlNsPtr   (pointer (struct "_xmlNs")))
 
 (define xmlFreeDoc
   (c-lambda (xmlDocPtr)
