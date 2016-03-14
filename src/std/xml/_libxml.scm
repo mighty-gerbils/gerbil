@@ -146,7 +146,7 @@ END-C
 (define xmlNode-name
   (c-lambda (xmlNodePtr)
        char-string
-       "___result = (xmlChar*)((xmlNodePtr)___arg1)->name;"))
+       "___result = (char*)((xmlNodePtr)___arg1)->name;"))
 
 (define xmlNode-children
   (c-lambda (xmlNodePtr)
@@ -176,7 +176,7 @@ END-C
 (define xmlAttr-name
   (c-lambda (xmlAttrPtr)
        char-string
-       "___result = (xmlChar*)((xmlAttrPtr)___arg1)->name;"))
+       "___result = (char*)((xmlAttrPtr)___arg1)->name;"))
 
 (define xmlAttr-children
   (c-lambda (xmlAttrPtr)
@@ -196,12 +196,12 @@ END-C
 (define xmlNs-href
   (c-lambda (xmlNsPtr)
        char-string
-       "___result = (xmlChar*)((xmlNsPtr)___arg1)->href;"))
+       "___result = (char*)((xmlNsPtr)___arg1)->href;"))
 
 (define xmlNs-prefix
   (c-lambda (xmlNsPtr)
        char-string
-       "___result = (xmlChar*)((xmlNsPtr)___arg1)->prefix;"))
+       "___result = (char*)((xmlNsPtr)___arg1)->prefix;"))
 
 ;; html/xml parser interfaces:
 ;;  - parse a string
