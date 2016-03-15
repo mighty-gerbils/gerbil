@@ -61,7 +61,7 @@ END-C
              c-args))))
     `(define ,id
        (c-lambda ,args ,ret
-         ,(##string-append result " = (void*)"
+         ,(##string-append result " = (char*)"
                            (##symbol->string id) "(" c-args ");")))))
 
 (define-macro (define-c-type-predicate pred tag)
@@ -263,7 +263,7 @@ END-C
 (c-declare #<<END-C
 static ___SCMOBJ ffi_release_EVP_MD_CTX (void *ptr)
 {
-  EVP_MD_CTX_destroy (ptr);
+  EVP_MD_CTX_destroy ((EVP_MD_CTX*)ptr);
   return ___FIX (___NO_ERR);
 }
 
@@ -294,8 +294,8 @@ static EVP_CIPHER_CTX *ffi_create_EVP_CIPHER_CTX ()
 /* like EVP_MD_CTX_destroy, no EVP_CIPHER_CTX_destroy available */
 static ___SCMOBJ ffi_release_EVP_CIPHER_CTX (void *ptr)
 {
-  EVP_CIPHER_CTX_cleanup (ptr);
-  EVP_CIPHER_CTX_free (ptr);
+  EVP_CIPHER_CTX_cleanup ((EVP_CIPHER_CTX*) ptr);
+  EVP_CIPHER_CTX_free ((EVP_CIPHER_CTX*)ptr);
   return ___FIX (___NO_ERR);
 }
 
@@ -361,7 +361,7 @@ static int ffi_EVP_DecryptFinal (EVP_CIPHER_CTX *ctx, ___SCMOBJ out)
 
 static ___SCMOBJ ffi_BN_free (void *bn)
 {
- BN_free (bn);
+ BN_free ((BIGNUM *)bn);
  return ___FIX (___NO_ERR);
 }
 
@@ -378,7 +378,7 @@ static int ffi_BN_bn2bin (BIGNUM *bn, ___SCMOBJ data)
 
 static ___SCMOBJ ffi_DH_free (void *dh)
 {
- DH_free (dh);
+ DH_free ((DH *)dh);
  return ___FIX (___NO_ERR);
 }
 
