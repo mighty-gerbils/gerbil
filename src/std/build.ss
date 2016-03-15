@@ -89,5 +89,11 @@
           "actor/rpc"
           "actor"
           "web/rack"
+          "db/dbi"
+          ,@(if config-enable-sqlite
+              '((gsc: "db/_sqlite" "-ld-options" "-lsqlite3")
+                (ssi: "db/_sqlite")
+                )
+              '())
           )))
 

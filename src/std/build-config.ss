@@ -8,3 +8,6 @@
 
 ;; build std/text/yaml library - requires libyaml
 (def config-enable-libyaml #f)
+
+;; build std/dbi/sqlite library -- requires sqlite3
+(def config-enable-sqlite #f)
