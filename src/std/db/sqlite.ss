@@ -44,26 +44,26 @@ package: std/db
       (let* ((params (sqlite3_bind_parameter_count stmt))
              (_ (unless (= params (length args))
                   (error "bind parameters do not match statement count" args params))))
-        (for ((arg args) (col (in-naturals)))
+        (for ((arg args) (param (in-range 1 params)))
           (cond
            ((not arg)
-            (sqlite3_bind_null stmt col))
+            (sqlite3_bind_null stmt param))
            ((number? arg)
             (cond
              ((integer? arg)
               (if (< (abs arg) (expt 2 32))
-                (sqlite3_bind_int stmt col arg)
-                (sqlite3_bind_int64 stmt col arg)))
+                (sqlite3_bind_int stmt param arg)
+                (sqlite3_bind_int64 stmt param arg)))
              ((real? arg)
-              (sqlite3_bind_double stmt col (exact->inexact arg)))
+              (sqlite3_bind_double stmt param (exact->inexact arg)))
              (else
               (error "cannot bind number; not a real" arg))))
            ((string? arg)
-            (sqlite3_bind_text stmt col arg))
+            (sqlite3_bind_text stmt param arg))
            ((symbol? arg)
-            (sqlite3_bind_text stmt col (symbol->string arg)))
+            (sqlite3_bind_text stmt param (symbol->string arg)))
            ((u8vector? arg)
-            (sqlite3_bind_blob stmt col arg))
+            (sqlite3_bind_blob stmt param arg))
            (error "cannot bind object; unknown conversion" arg)))))))
 
 (defmethod {clear sqlite-statement}
@@ -99,7 +99,7 @@ package: std/db
   (lambda (self)
     (with ((statement stmt) self)
       (def (column-e col)
-        (let (t (sqlite3_column_type col))
+        (let (t (sqlite3_column_type stmt col))
           (cond
            ((eq? t SQLITE_INTEGER)
             (sqlite3_column_int64 stmt col))
@@ -120,8 +120,8 @@ package: std/db
       (let (count (sqlite3_column_count stmt))
         (case count
           ((0) #!void)
-          ((1) (column-e 1))
+          ((1) (column-e 0))
           (else
            (list->vector
-            (for/collect (x (in-range 1 count))
+            (for/collect (x (in-range count))
               (column-e x)))))))))

@@ -84,8 +84,8 @@ END-C
 (c-define-type sqlite3_stmt*
   (pointer sqlite3_stmt (sqlite3_stmt*)))
 
-(define-c-lambda sqlite3_errstr (int) char-string
-  "___result = (char*)sqlite3_errstr;")
+(define-c-lambda sqlite3_errstr (int) UTF-8-string
+  "___result = (char*)sqlite3_errstr (___arg1);")
 (define-c-lambda sqlite3_last_error () int
   "___return (ffi_last_error);")
 (define-c-lambda sqlite3_open (char-string int) sqlite3*
