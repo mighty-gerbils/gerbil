@@ -5,16 +5,23 @@ package: std/db
 
 (import (only-in :gerbil/gambit/hash make-will)
         :std/sugar
-        :std/iter)
+        :std/iter
+        :std/error)
 (export
-  (struct-out connection statement)
+  (struct-out connection statement sql-error)
+  raise-sql-error
   sql-connect sql-close sql-prepare
-  sql-bind sql-reset sql-finalize
+  sql-bind sql-clear sql-reset sql-finalize
   sql-exec sql-query in-sql-query
   )
 
 (defstruct connection (e))
 (defstruct statement (e))
+
+(defstruct (sql-error <error>) ())
+
+(def (raise-sql-error where what . irritants)
+  (raise (make-sql-error what irritants where)))
 
 (def (sql-connect connect . args)
   (let (conn (apply connect args))
@@ -43,6 +50,11 @@ package: std/db
 (def (sql-bind stmt . args)
   (if (statement-e stmt)
     (apply call-method stmt 'bind args)
+    (error "Invalid operation; statement finalized" stmt)))
+
+(def (sql-clear stmt)
+  (if (statement-e stmt)
+    {clear stmt}
     (error "Invalid operation; statement finalized" stmt)))
 
 (def (sql-reset stmt)
