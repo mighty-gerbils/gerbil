@@ -49,6 +49,9 @@ END-C
 ;; other times I hate gsc for not having a const qualifier
 (define-macro (define-c-lambda/const-pointer id args ret #!optional (result #f))
   (let ((result (or result "___result_voidstar"))
+        (result-type (if (eq? ret 'char-string)
+                       "char*"
+                       (##symbol->string ret)))
         (c-args
          (let lp ((rest args) (n 1) (c-args ""))
            (if (##pair? rest)
@@ -61,7 +64,7 @@ END-C
              c-args))))
     `(define ,id
        (c-lambda ,args ,ret
-         ,(##string-append result " = (char*)"
+         ,(##string-append result "= (" result-type ")"
                            (##symbol->string id) "(" c-args ");")))))
 
 (define-macro (define-c-type-predicate pred tag)
