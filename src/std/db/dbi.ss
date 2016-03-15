@@ -36,7 +36,7 @@ package: std/db
 
 (def (sql-prepare conn text)
   (if (connection-e conn)
-    (let (stmt {prepare conn})
+    (let (stmt {prepare conn text})
       (make-will stmt sql-finalize)
       stmt)
     (error "Invalid operation; connection closed" conn)))
@@ -81,11 +81,11 @@ package: std/db
 
 (def (sql-query-row iter)
   (with ((iterator stmt) iter)
-    (if (iter-end? stmt) stmt
-        {row stmt})))
+    (if (iter-end? stmt) iter-end
+        {query-row stmt})))
 
 (def (sql-query-fetch iter)
   (with ((iterator stmt) iter)
-    (let (next {fetch stmt})
+    (let (next {query-fetch stmt})
       (when (iter-end? next)
         (set! (iterator-e iter) next)))))
