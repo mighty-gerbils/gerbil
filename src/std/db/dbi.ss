@@ -11,7 +11,8 @@ package: std/db
   (struct-out connection statement sql-error)
   raise-sql-error
   sql-connect sql-close sql-prepare
-  sql-bind sql-clear sql-reset sql-finalize
+  sql-bind sql-clear sql-reset sql-reset/clear sql-finalize
+  sql-eval sql-eval-query
   sql-exec sql-query in-sql-query
   )
 
@@ -61,6 +62,25 @@ package: std/db
   (if (statement-e stmt)
     {reset stmt}
     (error "Invalid operation; statement finalized" stmt)))
+
+(def (sql-reset/clear stmt)
+  (if (statement-e stmt)
+    (begin {reset stmt} {clear stmt})
+    (error "Invalid operation; statement finalized" stmt)))
+
+(def (sql-eval-e eval-e conn sql args)
+  (let (stmt (sql-prepare conn sql))
+    (try
+      (unless (null? args)
+        (apply sql-bind stmt args))
+      (eval-e stmt)
+      (finally (sql-finalize stmt)))))
+
+(def (sql-eval conn sql . args)
+  (sql-eval-e sql-exec conn sql args))
+
+(def (sql-eval-query conn sql . args)
+  (sql-eval-e sql-query conn sql args))
 
 (def (sql-exec stmt)
   (if (statement-e stmt)
