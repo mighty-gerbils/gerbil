@@ -34,11 +34,20 @@ package: std/web
          (else
           (raise-io-error 'rack-fastcgi-respond "bad response chunk" next))))
       (get-output-u8vector out)))
+
+  (def (log-response-error e)
+    (log-error "rack response error" e)
+    (let (errstr (call-with-output-string [] (cut display-exception e <>)))
+      (fastcgi-write-stderr req errstr)))
   
   (try
    (let* (((values status headers body)
-           (handler (fastcgi-request-params req)
-                    (fastcgi-request-stdin req)))
+           (try
+             (handler (fastcgi-request-params req)
+                      (fastcgi-request-stdin req))
+             (catch (e)
+               (log-response-error e)
+               (values 500 [] "OOPS! Something went wrong."))))
           (status-text (hash-ref *http-response-codes* status "(Unknown)"))
           (body-data (cond
                       ((u8vector? body) body)
@@ -54,9 +63,7 @@ package: std/web
      (fastcgi-write-stdout req (get-output-u8vector hout))
      (fastcgi-write-stdout req body-data))
    (catch (e)
-     (log-error "rack response error " e)
-     (let (errstr (call-with-output-string [] (cut display-exception e <>)))
-       (fastcgi-write-stderr req errstr)))))
+     (log-response-error e))))
 
 (def *http-response-codes*
   (hash-eq (100 "Continue")
