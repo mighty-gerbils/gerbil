@@ -3,7 +3,7 @@
 ;;; Generic SQL database interface
 package: std/db
 
-(import (only-in :gerbil/gambit/hash make-will)
+(import (only-in :gerbil/gambit/misc make-will)
         :std/sugar
         :std/iter
         :std/error)

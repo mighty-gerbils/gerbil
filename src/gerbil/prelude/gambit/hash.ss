@@ -12,10 +12,6 @@ package: gerbil/gambit
   eq?-hash
   eqv?-hash
   equal?-hash
-  make-will
-  will?
-  will-testator
-  will-execute!
   make-table
   table?
   table-length

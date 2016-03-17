@@ -5,7 +5,7 @@ package: std
 
 (import :gerbil/gambit/ports
         :gerbil/gambit/threads
-        :gerbil/gambit/continuations
+        :gerbil/gambit/exceptions
         :std/sugar
         :std/format
         :std/srfi/19

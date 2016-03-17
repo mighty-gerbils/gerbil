@@ -5,6 +5,8 @@ package: gerbil/gambit
 
 (export #t)
 (extern namespace: #f
+  display-exception
+  
   primordial-exception-handler
   err-code->string
   
