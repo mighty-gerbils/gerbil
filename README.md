@@ -56,7 +56,7 @@ of the standard library require it. All the other dependencies can be
 configured at build-time by editing `$GERBIL_HOME/src/std/build-config.ss`.
 
 The `:std/xml` library, which is built by default requires `libxml2` to build;
-edit `build-config.ss` and set the option `config-enable-libxml` to `#f` if
+edit `build-config.ss` and set the option `(enabe libxml #f)` if
 you don't have `libxml2` in your system.
 
 ## Build Instructions

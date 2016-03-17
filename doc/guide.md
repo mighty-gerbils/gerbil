@@ -524,6 +524,19 @@ Gerbil-specific libraries.
 Here we provide examples and brief documentation for the more
 interesting of the Gerbil-specific libraries.
 
+### Optional Libraries
+
+Some library modules are not built by default, because they have external
+library dependencies that may not be present in your system.
+The build configuration for the std library is specified in
+`$GERBIL_HOME/src/std/build-config.ss`.
+
+If you have the required libraries (documented in build-config) in your
+system, you can enable building by setting the `(enable feature #f)`
+statement in `build-config.ss` to `#t`. You can then build the optional
+library modules by running `$GERBIL_HOME/src/std/build.ss`
+(or `$GERBIL_HOME/src/build_stdlib.sh`).
+
 ### Additional Syntactic Sugar
 
 The `:std/sugar` library provides, among other macros, a `try` syntactic
