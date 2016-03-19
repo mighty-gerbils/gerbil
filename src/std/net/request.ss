@@ -269,21 +269,18 @@ package: std/net
     (http-request-read-simple-body port (length-e headers)))))
 
 (def (http-request-read-chunked-body port)
-  (let ((out (open-input-bytes))
-        (buf #f))
-  (let lp ()
-    (let (next (string->number (read-response-line port)))
-      (if (fxzero? next)
-        (begin
-          (read-response-line port)     ; end of data
-          (get-output-u8vector out))
-        (begin
-          (when (or (not buf)
-                    (fx> next (u8vector-length buf)))
-            (set! buf (make-u8vector next)))
-          (let (rd (read-subu8vector buf 0 next port))
-            (write-subu8vector buf 0 rd)
-            (lp))))))))
+  (let lp ((chunks []))
+    (let* ((line (read-response-line port))
+           (clen (string->number (car (string-split line #\space)) 16)))
+      (if (fxzero? clen)
+        (append-u8vectors (reverse chunks))
+        (let* ((chunk (make-u8vector clen))
+               (rd    (read-subu8vector chunk 0 clen port)))
+          (when (fx< rd clen)
+            (raise-io-error 'http-request-read-body
+                            "error reading chunk; premature end of port"))
+          (read-response-line port)     ; read chunk trailing CRLF
+          (lp (cons chunk chunks)))))))
 
 (def (http-request-read-simple-body port length)
   (def (read/length port length)
@@ -294,17 +291,17 @@ package: std/net
         data)))
 
   (def (read/end port)
-    (let ((out (open-output-bytes))
-          (buf (make-u8vector 1024)))
-      (let lp ()
-        (let (rd (read-subu8vector buf 0 1024 port))
-          (if (fx< rd 1024)
-            (begin
-              (write-subu8vector buf 0 rd out)
-              (get-output-u8vector out))
-            (begin
-              (write-subu8vector buf 0 rd out)
-              (lp)))))))
+    (let lp ((chunks []))
+      (let* ((buf (make-u8vector 1024))
+             (rd  (read-subu8vector buf 0 1024 port)))
+        (cond
+         ((fxzero? rd)
+          (append-u8vectors (reverse chunks)))
+         ((fx< rd 1024)
+          (u8vector-shrink! buf rd)
+          (append-u8vectors (reverse (cons buf chunks))))
+         (else
+          (lp (cons buf chunks)))))))
 
   (if length
     (read/length port length)
