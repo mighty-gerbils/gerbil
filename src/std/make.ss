@@ -6,8 +6,7 @@ package: std
 (import :gerbil/compiler
         :gerbil/expander
         :gerbil/gambit/misc
-        :gerbil/gambit/ports
-        "sort")
+        :gerbil/gambit/ports)
 (export make make-depgraph shell-config)
 
 ;; buildspec: [<build> ...]
@@ -96,7 +95,9 @@ package: std
       (else #f)))
 
   (def (module-spec-id spec)
-    (hash-get module-ids (module-spec-name spec)))
+    (cond
+     ((module-spec-name spec) => (cut hash-get module-ids <>))
+     (else #f)))
   
   (def (module-spec-id? spec id)
     (eq? (module-spec-id spec) id))
@@ -105,7 +106,7 @@ package: std
     (alet* ((id-a (module-spec-id a))
             (id-b (module-spec-id b)))
       (module-dep<? id-a id-b)))
-
+    
   (def (module-dep<? id-a id-b)
     (cond
      ((hash-get module-deps id-b)
@@ -113,16 +114,32 @@ package: std
            (or (memq id-a deps-b)
                (ormap (cut module-dep<? id-a <>) deps-b))))
      (else #f)))
+
+  (def (sort-spec<? a b seen)
+    (and (not (member a seen))
+         (module-spec<? a b)))
   
   (def (sort-deps bset)
-    (sort bset module-spec<?))
+    (let lp ((rest bset) (r []))
+      (match rest
+        ([hd . rest]
+         (cond
+          ((member hd r)
+           (lp rest r))
+          ((find (cut sort-spec<? <> hd r) rest)
+           => (lambda (dep)
+                (lp (cons* dep hd rest) r)))
+          (else
+           (lp rest (cons hd r)))))
+        (else
+         (reverse r)))))
   
   (for-each add-deps! depgraph)
   (let lp ((bset buildset) (bset-new buildset))
     (let (new (expand-rdeps bset bset-new))
       (if (null? new)
         (sort-deps bset)
-        (lp (foldl cons bset new) new)))))
+        (lp (append bset new) new)))))
 
 (def (make-depgraph files)
   (def (depgraph file)
