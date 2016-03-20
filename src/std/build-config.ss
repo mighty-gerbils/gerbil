@@ -27,7 +27,7 @@ package: std
 (enable libxml #t)
 
 ;; build std/text/yaml library - requires libyaml
-(enable libyaml #t)
+(enable libyaml #f)
 
 ;; build std/dbi/sqlite library -- requires sqlite3
-(enable sqlite #t)
+(enable sqlite #f)
