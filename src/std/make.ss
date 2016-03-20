@@ -4,9 +4,10 @@
 package: std
 
 (import :gerbil/compiler
+        :gerbil/expander
         :gerbil/gambit/misc
         :gerbil/gambit/ports)
-(export make shell-config)
+(export make make-depgraph shell-config)
 
 ;; buildspec: [<build> ...]
 ;;  <build>: 
@@ -28,6 +29,29 @@ package: std
          (libdir (or libdir (path-expand "lib" (getenv "GERBIL_HOME"))))
          (settings [srcdir: srcdir libdir: libdir prefix: prefix force: force?]))
     (for-each (cut build <> settings) buildspec)))
+
+(def (make-depgraph files)
+  (def (depgraph file)
+    (let* ((mod (import-module file))
+           (ht  (make-hash-table-eq)))
+      (let lp ((rest (module-context-import mod)))
+        (match rest
+          ([hd . rest]
+           (cond
+            ((module-context? hd)
+             (hash-put! ht (expander-context-id hd) #t)
+             (lp rest))
+            ((module-import? hd)
+             (lp (cons (module-import-source hd) rest)))
+            ((module-export? hd)
+             (lp (cons (module-export-context hd) rest)))
+            ((import-set? hd)
+             (lp (cons (import-set-source hd) rest)))
+            (else
+             (error "Unexpected module import" hd))))
+          (else
+           [file (expander-context-id mod) (hash-keys ht) ...])))))
+  (map depgraph files))
 
 (def (shell-config cmd . args)
   (let* ((proc (open-input-process [path: cmd arguments: args]))
