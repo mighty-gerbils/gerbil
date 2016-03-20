@@ -7,7 +7,8 @@
   (add-load-path (path-normalize (path-expand ".." srcdir)))
   (make srcdir: srcdir
         prefix: "std"
-        `("format"
+        `("build-config"
+          "format"
           "pregexp"
           "sort"
           "sugar"
@@ -22,9 +23,9 @@
           ;; SRFI: This is my grandfather's axe; my father replaced the head
           ;;       and i have replaced the handle.
           "srfi/srfi-support"
+          "srfi/1"
           "srfi/8"
           "srfi/9"
-          "srfi/1"
           "srfi/14"
           "srfi/13"
           "srfi/19"

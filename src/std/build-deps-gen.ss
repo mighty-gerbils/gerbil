@@ -4,7 +4,8 @@
 (import "make")
 
 (def *modules*
-  '("format"
+  '("build-config"
+    "format"
     "pregexp"
     "sort"
     "sugar"
