@@ -6,7 +6,8 @@ package: std
 (import :gerbil/compiler
         :gerbil/expander
         :gerbil/gambit/misc
-        :gerbil/gambit/ports)
+        :gerbil/gambit/ports
+        "sort")
 (export make make-depgraph shell-config)
 
 ;; buildspec: [<build> ...]
@@ -24,14 +25,104 @@ package: std
        srcdir: (srcdir #f)
        libdir: (libdir #f)
        prefix: (prefix #f)
-       force:  (force? #f))
+       force:  (force? #f)
+       depgraph: (depgraph #f))
   (let* ((srcdir (or srcdir (error "srcdir must be specified")))
          (libdir (or libdir (path-expand "lib" (getenv "GERBIL_HOME"))))
          (settings  [srcdir: srcdir libdir: libdir prefix: prefix force: force?])
-         (buildset (if force?
-                     buildspec
-                     (filter (cut build? <> settings) buildspec))))
+         (buildset (if (not force?)
+                     (filter (cut build? <> settings) buildspec)
+                     buildspec))
+         (buildset (if depgraph
+                     (expand-build-deps buildset buildspec depgraph)
+                     buildset)))
     (for-each (cut build <> settings) buildset)))
+
+(def (expand-build-deps buildset buildspec depgraph)
+  (def module-ids (make-hash-table))
+  (def module-deps (make-hash-table-eq))
+  (def module-rdeps (make-hash-table-eq))
+
+  (def (add-deps! dep)
+    (let* ((name (path-strip-extension (car dep)))
+           (id   (cadr dep))
+           (deps (cddr dep)))
+      (hash-put! module-ids name id)
+      (hash-put! module-deps id deps)
+      (for-each (cut add-rdep! <> id) deps)))
+
+  (def (add-rdep! id rdep)
+      (hash-update! module-rdeps id (cut cons rdep <>) []))
+
+  (def (expand-rdeps bset bset-new)
+    (let (mods (filter-map module-spec-name bset-new))
+      (let lp ((rest mods) (new []))
+        (match rest
+          ([hd . rest]
+           (cond
+            ((hash-get module-ids hd)
+             => (lambda (id)
+                  (cond
+                   ((hash-get module-rdeps id)
+                    => (lambda (rdeps)
+                         (expand-rdeps-e bset rdeps lp rest new)))
+                   (else
+                    (lp rest new)))))
+            (else
+             (lp rest new))))
+          (else new)))))
+
+  (def (expand-rdeps-e bset rdeps K rest-k new)
+    (let lp ((rest rdeps) (new new))
+      (match rest
+        ([hd . rest]
+         (cond
+          ((or (find (cut module-spec-id? <> hd) bset)
+               (find (cut module-spec-id? <> hd) new))
+           (lp rest new))
+          ((find (cut module-spec-id? <> hd) buildspec)
+           => (lambda (spec)
+                (lp rest (cons spec new))))
+          (else
+           (lp rest new))))
+        (else
+         (K rest-k new)))))
+  
+  (def (module-spec-name spec)
+    (match spec
+      ((? string? modf) modf)
+      ([gxc: modf . gsc-opts] modf)
+      ([ssi: modf . deps] modf)
+      (else #f)))
+
+  (def (module-spec-id spec)
+    (hash-get module-ids (module-spec-name spec)))
+  
+  (def (module-spec-id? spec id)
+    (eq? (module-spec-id spec) id))
+
+  (def (module-spec<? a b)
+    (alet* ((id-a (module-spec-id a))
+            (id-b (module-spec-id b)))
+      (module-dep<? id-a id-b)))
+
+  (def (module-dep<? id-a id-b)
+    (cond
+     ((hash-get module-deps id-b)
+      => (lambda (deps-b)
+           (or (memq id-a deps-b)
+               (ormap (cut module-dep<? id-a <>) deps-b))))
+     (else #f)))
+  
+  (def (sort-deps bset)
+    (sort bset module-spec<?))
+  
+  (for-each add-deps! depgraph)
+  (let lp ((bset buildset) (bset-new buildset))
+    (let (new (expand-rdeps bset bset-new))
+      (if (null? new)
+        (sort-deps bset)
+        (lp (foldl cons bset new) new)))))
 
 (def (make-depgraph files)
   (def (depgraph file)

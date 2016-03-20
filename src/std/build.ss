@@ -3,9 +3,11 @@
 
 (import :gerbil/compiler "make" "build-config")
 
-(let (srcdir (path-normalize (path-directory (this-source-file))))
+(let ((depgraph (call-with-input-file "build-deps" read))
+      (srcdir (path-normalize (path-directory (this-source-file)))))
   (add-load-path (path-normalize (path-expand ".." srcdir)))
   (make srcdir: srcdir
+        depgraph: depgraph
         prefix: "std"
         `("build-config"
           "format"
