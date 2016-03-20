@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; Gerbil stdlib build configuration
-
-(export #t)
+package: std
 
 ;; feature macro
 (defsyntax (enable stx)
@@ -12,12 +11,15 @@
                    (config-enable-feature
                     (stx-identifier #'feature "config-enable-" #'feature)))
        #'(begin
+           (export config-have-feature config-enable-feature)
            (provide config-have-feature)
            (def config-enable-feature #t))))
     ((_ feature #f)
      (with-syntax ((config-enable-feature
                     (stx-identifier #'feature "config-enable-" #'feature)))
-       #'(def config-enable-feature #f)))))
+       #'(begin
+           (export config-enable-feature)
+           (def config-enable-feature #f))))))
 
 ;;; Build Configuration
 
@@ -25,7 +27,7 @@
 (enable libxml #t)
 
 ;; build std/text/yaml library - requires libyaml
-(enable libyaml #f)
+(enable libyaml #t)
 
 ;; build std/dbi/sqlite library -- requires sqlite3
-(enable sqlite #f)
+(enable sqlite #t)
