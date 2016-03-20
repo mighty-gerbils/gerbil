@@ -27,8 +27,11 @@ package: std
        force:  (force? #f))
   (let* ((srcdir (or srcdir (error "srcdir must be specified")))
          (libdir (or libdir (path-expand "lib" (getenv "GERBIL_HOME"))))
-         (settings [srcdir: srcdir libdir: libdir prefix: prefix force: force?]))
-    (for-each (cut build <> settings) buildspec)))
+         (settings  [srcdir: srcdir libdir: libdir prefix: prefix force: force?])
+         (buildset (if force?
+                     buildspec
+                     (filter (cut build? <> settings) buildspec))))
+    (for-each (cut build <> settings) buildset)))
 
 (def (make-depgraph files)
   (def (depgraph file)
@@ -60,6 +63,21 @@ package: std
       (error "Error executing config script" cmd args status))
     (read-line proc)))
 
+(def (build? spec settings)
+  (match spec
+    ((? string? modf)
+     (gxc-compile? modf settings))
+    ([gxc: modf . gsc-opts]
+     (gxc-compile? modf settings))
+    ([gsc: modf . gsc-opts]
+     (gsc-compile? modf settings))
+    ([ssi: modf . deps]
+     (compile-ssi? modf settings))
+    ([copy: file]
+     (copy-compiled? file settings))
+    (else
+     (error "Bad buildspec" spec))))
+
 (def (build spec settings)
   (match spec
     ((? string? modf)
@@ -74,25 +92,26 @@ package: std
      (copy-compiled file settings))
     (else
      (error "Bad buildspec" spec))))
-  
+
+(def (gxc-compile? mod settings)
+  (def srcpath (source-path mod ".ss" settings))
+  (def ssipath (library-path mod ".ssi" settings))
+  (or (not (file-exists? ssipath))
+      (file-newer? srcpath ssipath)))
+
 (def (gxc-compile mod gsc-opts settings)
   (def gxc-opts 
     [invoke-gsc: #t output-dir: (pgetq libdir: settings )
                  (if gsc-opts [gsc-options: gsc-opts] []) ...])
   (def srcpath (source-path mod ".ss" settings))
-  (def ssipath (library-path mod ".ssi" settings))
   
-  (when (or (pgetq force: settings)
-            (not (file-exists? ssipath))
-            (file-newer? srcpath ssipath))
-    (displayln "... compile " mod)
-    (compile-file srcpath gxc-opts)))
+  (displayln "... compile " mod)
+  (compile-file srcpath gxc-opts))
 
-(def (gsc-compile mod gsc-opts settings)
+(def (gsc-compile? mod settings)
   (def srcpath (source-path mod ".scm" settings))
   (def libdir (pgetq libdir: settings))
   (def prefix (pgetq prefix: settings))
-  (def force? (pgetq force: settings))
   (defvalues (libpath base)
     (cond
      ((string-rindex mod #\/)
@@ -108,52 +127,72 @@ package: std
         (if (file-exists? next)
           (lp (fx1+ n) next)
           cpath))))
+
+  (or (not cpath) (file-newer? srcpath cpath)))
+
+(def (gsc-compile mod gsc-opts settings)
+  (def srcpath (source-path mod ".scm" settings))
+  (def libdir (pgetq libdir: settings))
+  (def prefix (pgetq prefix: settings))
+  (def libpath
+    (cond
+     ((string-rindex mod #\/)
+      => (lambda (ix) 
+           (path-expand (substring mod 0 ix) 
+                        (if prefix (path-expand prefix libdir) libdir))))
+     (else (path-expand "std" libdir))))
   
-  (when (or force? (not cpath) (file-newer? srcpath cpath))
-    (create-directory* libpath)
-    (displayln "... compile foreign " mod)
-    (let* ((proc (open-process [path: "gsc" 
-                                arguments: ["-o" libpath gsc-opts ... srcpath]
-                                stdout-redirection: #f]))
-           (status (process-status proc)))
-      (unless (zero? status)
-        (error "Compilation error; gsc exited with nonzero status" status)))))
+  (create-directory* libpath)
+  (displayln "... compile foreign " mod)
+  (let* ((proc (open-process [path: "gsc" 
+                              arguments: ["-o" libpath gsc-opts ... srcpath]
+                              stdout-redirection: #f]))
+         (status (process-status proc)))
+    (unless (zero? status)
+      (error "Compilation error; gsc exited with nonzero status" status))))
+
+(def (compile-ssi? mod settings)
+  (def srcpath (source-path mod ".ssi" settings))
+  (def libpath (library-path mod ".ssi" settings))
+  (or (not (file-exists? libpath)) (file-newer? srcpath libpath)))
 
 (def (compile-ssi mod deps settings)
   (def srcpath (source-path mod ".ssi" settings))
   (def libpath (library-path mod ".ssi" settings))
   (def rtpath  (library-path mod "__rt.scm" settings))
   (def prefix  (pgetq prefix: settings))
-  (def force?  (pgetq force: settings))
   
-  (when (or force? (not (file-exists? libpath)) (file-newer? srcpath libpath))
-    (displayln "... copy ssi " mod)
-    (when (file-exists? libpath)
-      (delete-file libpath))
-    (copy-file srcpath libpath)
-    (displayln "... compile loader " mod)
-    (with-output-to-file rtpath
-      (lambda () 
-        (for-each (lambda (dep) (pretty-print `(load-module ,dep)))
-                  deps)
-        (pretty-print `(load-module ,(if prefix (string-append prefix "/" mod) mod)))))
-    (let* ((proc (open-process [path: "gsc" 
-                                arguments: [rtpath]
-                                stdout-redirection: #f]))
-           (status (process-status proc)))
-      (unless (zero? status)
-        (error "Compilation error; gsc exited with nonzero status" status))
-      (delete-file rtpath))))
+  (displayln "... copy ssi " mod)
+  (when (file-exists? libpath)
+    (delete-file libpath))
+  (copy-file srcpath libpath)
+  (displayln "... compile loader " mod)
+  (with-output-to-file rtpath
+    (lambda () 
+      (for-each (lambda (dep) (pretty-print `(load-module ,dep)))
+                deps)
+      (pretty-print `(load-module ,(if prefix (string-append prefix "/" mod) mod)))))
+  (let* ((proc (open-process [path: "gsc" 
+                                    arguments: [rtpath]
+                                    stdout-redirection: #f]))
+         (status (process-status proc)))
+    (unless (zero? status)
+      (error "Compilation error; gsc exited with nonzero status" status))
+    (delete-file rtpath)))
+
+(def (copy-compiled? file settings)
+  (def srcpath (source-path file #f settings))
+  (def libpath (library-path file #f settings))
+  (or (not (file-exists? libpath)) (file-newer? srcpath libpath)))
 
 (def (copy-compiled file settings)
   (def srcpath (source-path file #f settings))
   (def libpath (library-path file #f settings))
-  (def force?  (pgetq force: settings))
-  (when (or force? (not (file-exists? libpath)) (file-newer? srcpath libpath))
-    (displayln "... copy std/" file)
-    (when (file-exists? libpath)
-      (delete-file libpath))
-    (copy-file srcpath libpath)))
+
+  (displayln "... copy std/" file)
+  (when (file-exists? libpath)
+    (delete-file libpath))
+  (copy-file srcpath libpath))
 
 (def (source-path mod ext settings)
   (let ((path (if ext (string-append mod ext) mod))
