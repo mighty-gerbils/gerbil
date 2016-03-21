@@ -49,7 +49,7 @@
           ,@(if config-enable-zlib
               '((gsc: "text/_zlib" "-ld-options" "-lz")
                 (ssi: "text/_zlib")
-                )
+                "text/zlib")
               '())
           ;; :std/net
           "net/address"

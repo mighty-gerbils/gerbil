@@ -9,7 +9,7 @@ package: std/text
   Z_NO_COMPRESSION Z_BEST_SPEED Z_BEST_COMPRESSION Z_DEFAULT_COMPRESSION
   make_z_stream
   z_stream_in z_stream_out
-  compress compressBound
+  compressBound deflate
   inflateInit inflate inflateEnd
   )
 (load-module "std/text/_zlib")

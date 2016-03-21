@@ -60,9 +60,9 @@ END-C
   "___return (___arg1->total_in);")
 (define-c-lambda z_stream_out (z_stream*) unsigned-long
   "___return (___arg1->total_out);")
-(define-c-lambda compress (scheme-object scheme-object int) int
-  "ffi_compress")
 (define-c-lambda compressBound (unsigned-long) unsigned-long)
+(define-c-lambda deflate (scheme-object scheme-object int) int
+  "ffi_compress")
 (define-c-lambda inflateInit (z_stream*) int)
 (define-c-lambda inflate (z_stream* scheme-object int scheme-object int int) int
   "ffi_inflate")
