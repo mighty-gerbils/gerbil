@@ -32,10 +32,9 @@ package: std/text
    (finally (inflateEnd zs))))
 
 (def (uncompress-data zs data)
-  (def len (u8vector-length data))
   (let lp ((start 0) (r []))
     (let* ((buf (make-u8vector 1024))
-           (res (inflate zs buf 0 data start len)))
+           (res (inflate zs buf data start)))
       (cond
        ((eq? res Z_OK)
         (let ((in (z_stream_in zs))

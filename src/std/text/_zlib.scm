@@ -35,9 +35,7 @@ END-C
 static ___SCMOBJ ffi_release_z_stream (void *ptr);
 static z_stream *ffi_make_z_stream ();
 static int ffi_compress (___SCMOBJ dest, ___SCMOBJ src, int level);
-static int ffi_inflate (z_stream *zs,
-                        ___SCMOBJ dest, int dstart,
-                        ___SCMOBJ src,  int sstart, int send);
+static int ffi_inflate (z_stream *zs, ___SCMOBJ dest, ___SCMOBJ src,  int start);
 END-C
 )
 
@@ -64,7 +62,7 @@ END-C
 (define-c-lambda deflate (scheme-object scheme-object int) int
   "ffi_compress")
 (define-c-lambda inflateInit (z_stream*) int)
-(define-c-lambda inflate (z_stream* scheme-object int scheme-object int int) int
+(define-c-lambda inflate (z_stream* scheme-object scheme-object int) int
   "ffi_inflate")
 (define-c-lambda inflateEnd (z_stream*) int)
 
@@ -97,15 +95,13 @@ static int ffi_compress (___SCMOBJ dest, ___SCMOBJ src, int level)
  }
 }
 
-static int ffi_inflate (z_stream *zs,
-                        ___SCMOBJ dest, int dstart,
-                        ___SCMOBJ src,  int sstart, int send)
+static int ffi_inflate (z_stream *zs, ___SCMOBJ dest, ___SCMOBJ src,  int start)
 {
- zs->next_out = U8_DATA (dest) + dstart;
- zs->avail_out = U8_LEN (dest) - dstart;
+ zs->next_out = U8_DATA (dest);
+ zs->avail_out = U8_LEN (dest);
  zs->total_out = 0;            
- zs->next_in = U8_DATA (src) + sstart;
- zs->avail_in = U8_LEN (src) - sstart;
+ zs->next_in = U8_DATA (src) + start;
+ zs->avail_in = U8_LEN (src) - start;
  zs->total_in = 0;
  return inflate (zs, Z_SYNC_FLUSH);
 }
