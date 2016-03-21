@@ -32,6 +32,7 @@
     "text/hex"
     "text/json"
     "text/yaml"
+    "text/zlib"
     "net/address"
     "net/uri"
     "net/socks"
