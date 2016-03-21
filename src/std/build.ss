@@ -46,6 +46,11 @@
                 (ssi: "text/libyaml")
                 "text/yaml")
               '())
+          ,@(if config-enable-zlib
+              '((gsc: "text/_zlib" "-ld-options" "-lz")
+                (ssi: "text/_zlib")
+                )
+              '())
           ;; :std/net
           "net/address"
           "net/uri"

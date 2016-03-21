@@ -23,11 +23,15 @@ package: std
 
 ;;; Build Configuration
 
-;; build xml libraries - requires libxml2
+;; build std/xml libraries - requires libxml2
 (enable libxml #t)
 
 ;; build std/text/yaml library - requires libyaml
 (enable libyaml #f)
 
+;; build std/text/zlib library - requires zlib
+(enable zlib #f)
+
 ;; build std/dbi/sqlite library -- requires sqlite3
 (enable sqlite #f)
+
