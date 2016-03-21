@@ -46,4 +46,4 @@ package: std/text
           (u8vector-shrink! buf out)
           (append-u8vectors (reverse (cons buf r)))))
        (else
-        (raise-io-error 'uncompress "zlib error" res))))))
+        (raise-io-error 'uncompress "zlib error" (z_stream_msg zs) res))))))

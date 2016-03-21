@@ -58,6 +58,8 @@ END-C
   "___return (___arg1->total_in);")
 (define-c-lambda z_stream_out (z_stream*) unsigned-long
   "___return (___arg1->total_out);")
+(define-c-lambda z_stream_msg (z_stream*) char-string
+  "___return (___arg1->msg);")
 (define-c-lambda compressBound (unsigned-long) unsigned-long)
 (define-c-lambda deflate (scheme-object scheme-object int) int
   "ffi_compress")
