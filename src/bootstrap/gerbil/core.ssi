@@ -316,6 +316,7 @@ namespace: gerbil/core
                     (false false)
                     (void void)
                     (void? void?)
+                    (eof-object eof-object)
                     (identity identity)
                     (dssl-object? dssl-object?)
                     (dssl-key-object? dssl-key-object?)
@@ -420,6 +421,11 @@ namespace: gerbil/core
                     (direct-method-ref direct-method-ref)
                     (bound-method-ref bound-method-ref)
                     (find-method find-method)
+                    (make-generic make-generic)
+                    (generic? generic?)
+                    (generic-id generic-id)
+                    (generic-add-method! generic-add-method!)
+                    (generic-dispatch generic-dispatch)
                     (current-error-port current-error-port)
                     (make-promise make-promise)
                     (promise? promise?)
@@ -1440,5 +1446,8 @@ namespace: gerbil/core
                     |gerbil/core::<module-sugar>[:0:]#only-in|)
                    (%#define-syntax
                     except-out
-                    |gerbil/core::<module-sugar>[:0:]#except-out|)))
+                    |gerbil/core::<module-sugar>[:0:]#except-out|)
+                   (%#define-syntax
+                    struct-out
+                    |gerbil/core::<module-sugar>[:0:]#struct-out|)))
          (%#import (in: #f <module-sugar>)))

@@ -64,7 +64,8 @@
                                  _type-t13729_))
                               _$e13732_)
                              (let ((_mid13739_
-                                    (gx#expander-context-id _type-t13729_)))
+                                    (gx#expander-context-id
+                                     (gx#current-expander-context))))
                                (gx#stx-identifier
                                 _type-t13729_
                                 _mid13739_
@@ -276,20 +277,20 @@
                          (lambda (_g1327013299_)
                            (if (gx#stx-pair/null? _g1327013299_)
                                (if (fx>= (gx#stx-length _g1327013299_) '0)
-                                   (let ((_g28079_
+                                   (let ((_g28338_
                                           (gx#syntax-split-splice
                                            _g1327013299_
                                            '0)))
                                      (begin
-                                       (let ((_g28080_
-                                              (values-count _g28079_)))
-                                         (if (not (fx= _g28080_ 2))
+                                       (let ((_g28339_
+                                              (values-count _g28338_)))
+                                         (if (not (fx= _g28339_ 2))
                                              (error "Context expects 2 values"
-                                                    _g28080_)))
+                                                    _g28339_)))
                                        (let ((_target1327313302_
-                                              (values-ref _g28079_ 0))
+                                              (values-ref _g28338_ 0))
                                              (_tl1327513305_
-                                              (values-ref _g28079_ 1)))
+                                              (values-ref _g28338_ 1)))
                                          (if (gx#stx-null? _tl1327513305_)
                                              (letrec ((_loop1327613308_
                                                        (lambda (_hd1327413312_
@@ -540,16 +541,16 @@
                         (_tl1353413575_ (##cdr _e1353213568_)))
                     (if (gx#stx-pair/null? _hd1353313572_)
                         (if (fx>= (gx#stx-length _hd1353313572_) '0)
-                            (let ((_g28081_
+                            (let ((_g28340_
                                    (gx#syntax-split-splice _hd1353313572_ '0)))
                               (begin
-                                (let ((_g28082_ (values-count _g28081_)))
-                                  (if (not (fx= _g28082_ 2))
+                                (let ((_g28341_ (values-count _g28340_)))
+                                  (if (not (fx= _g28341_ 2))
                                       (error "Context expects 2 values"
-                                             _g28082_)))
+                                             _g28341_)))
                                 (let ((_target1353513578_
-                                       (values-ref _g28081_ 0))
-                                      (_tl1353713581_ (values-ref _g28081_ 1)))
+                                       (values-ref _g28340_ 0))
+                                      (_tl1353713581_ (values-ref _g28340_ 1)))
                                   (if (gx#stx-null? _tl1353713581_)
                                       (letrec ((_loop1353813584_
                                                 (lambda (_hd1353613588_
@@ -575,19 +576,19 @@
                             (_tl1354613615_ (##cdr _e1354413608_)))
                         (if (gx#stx-pair/null? _hd1354513612_)
                             (if (fx>= (gx#stx-length _hd1354513612_) '0)
-                                (let ((_g28083_
+                                (let ((_g28342_
                                        (gx#syntax-split-splice
                                         _hd1354513612_
                                         '0)))
                                   (begin
-                                    (let ((_g28084_ (values-count _g28083_)))
-                                      (if (not (fx= _g28084_ 2))
+                                    (let ((_g28343_ (values-count _g28342_)))
+                                      (if (not (fx= _g28343_ 2))
                                           (error "Context expects 2 values"
-                                                 _g28084_)))
+                                                 _g28343_)))
                                     (let ((_target1354713618_
-                                           (values-ref _g28083_ 0))
+                                           (values-ref _g28342_ 0))
                                           (_tl1354913621_
-                                           (values-ref _g28083_ 1)))
+                                           (values-ref _g28342_ 1)))
                                       (if (gx#stx-null? _tl1354913621_)
                                           (letrec ((_loop1355013624_
                                                     (lambda (_hd1354813628_
@@ -700,10 +701,8 @@
                                                                 (gx#current-expander-context))
                                                                (_module-type-id12820_
                                                                 _L12911_)
-                                                               (gensym (gx#stx-e
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                _L12911_))))))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                               (gx#genident
+                                                                _L12911_)))))))))
                                             _hd1296413012_
                                             _hd1296113002_
                                             _hd1295812992_
