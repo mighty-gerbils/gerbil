@@ -24,7 +24,7 @@ package: std
 ;;; Build Configuration
 
 ;; build std/xml libraries - requires libxml2
-(enable libxml #t)
+(enable libxml #f)
 
 ;; build std/text/yaml library - requires libyaml
 (enable libyaml #f)

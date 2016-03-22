@@ -52,12 +52,14 @@ I have tested the bootstrap with Gambit v4.8.4, but older versions
 starting with v4.6.0 should work as well.
 
 The only hard dependency is `libcrypto` from OpenSSL; important parts
-of the standard library require it. All the other dependencies can be
-configured at build-time by editing `$GERBIL_HOME/src/std/build-config.ss`.
+of the standard library require it. You may need to install `openssl-dev`
+in ubuntu and similar systems.
 
-The `:std/xml` library, which is built by default requires `libxml2` to build;
-edit `build-config.ss` and set the option `(enable libxml #f)` if
-you don't have `libxml2` in your system.
+All the other dependencies are soft; library modules with foreign
+dependencies are not built by default. These optional libraries can
+be enabled at any time by editing `$GERBIL_HOME/src/std/build-config.ss`
+and building the necessary parts of the std library with
+`$GERBIL_HOME/src/build_stdlib.sh`
 
 ## Build Instructions
 After checking out the source code from Github, let `$GERBIL_HOME` be

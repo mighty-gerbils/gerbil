@@ -1066,6 +1066,11 @@ to the standard Scheme SXML representation.
 It also provides routines for searching and selecting content
 from SXML trees, as well as XML/HTML output routines.
 
+Because of the `libxml2` foreign dependency, the `:std/xml` library
+is not built by default. You can build it by editing `std/build-config.ss`
+to set `(enable libxml #t)` and rerunning the std library build script as
+described earlier in the guide.
+
 For example, here is a parse of the bing front page without scripts,
 style, and CDATA:
 ```
