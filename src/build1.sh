@@ -8,9 +8,15 @@ die() {
 unset GERBIL_HOME
 export REGERBIL_HOME=$(dirname $(cd ${0%/*} && echo $PWD))
 export GERBIL_HOME=$REGERBIL_HOME/bootstrap/stage0
-export GERBIL_TARGET=$REGERBIL_HOME/bootstrap/stage1
 
-echo "[*] Building gerbil stage1"
+if [[ "xfinal" = "x$1" ]]; then
+    export GERBIL_TARGET=$REGERBIL_HOME
+    final="[final]"
+else
+    export GERBIL_TARGET=$REGERBIL_HOME/bootstrap/stage1
+fi
+
+echo "[*] Building gerbil stage1 $final"
 
 echo ">>> preparing $GERBIL_TARGET"
 rm -rf $GERBIL_TARGET/{bin,lib}

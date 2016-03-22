@@ -57,9 +57,7 @@ in ubuntu and similar systems.
 
 All the other dependencies are soft; library modules with foreign
 dependencies are not built by default. These optional libraries can
-be enabled at any time by editing `$GERBIL_HOME/src/std/build-config.ss`
-and building the necessary parts of the std library with
-`$GERBIL_HOME/src/build_stdlib.sh`
+be enabled at build-time by editing `$GERBIL_HOME/src/std/build-config.ss`.
 
 ## Build Instructions
 After checking out the source code from Github, let `$GERBIL_HOME` be
@@ -69,9 +67,6 @@ Then:
 $ cd $GERBIL_HOME/src
 $ ./build.sh
 ```
-
-this will execute a full bootstrap build in place, starting from the
-pre-compiled Scheme sources in `$GERBIL_HOME/src/bootstrap`.
 
 # Using Gerbil
 The Gerbil interpreter is `$GERBIL_HOME/bin/gxi`, and the compiler is
