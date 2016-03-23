@@ -1,3 +1,16 @@
+3-24-2016: Gerbil-v0.5
+- Revamped build system
+  - by default, build.sh builds a stage1 gerbil for faster build times
+  - std/make now supports dependency graphs
+  - std/build-config for optionally build libraries with foreign dependencies
+  - std/build builds with depgraph and optional libraries
+  - std/xml is now optionally built to avoid hard dependency on libxml2
+- Optionally built libraries with foreign dependencies
+  - std/text/yaml: YAML support with libyaml bindings
+  - std/text/zlib: zlib support for compression/decompression
+  - std/db/sqlite: sqlite3 database interface
+- std/db/dbi: generic database interface
+- bug fixes and small improvements
 3-9-2016: Gerbil-v0.4
 - std/web/rack: web application support with rack-style interface
 - std/net/fastcgi: fastcgi support
