@@ -489,8 +489,19 @@ package: example
     thunk))
 EOF
 ```
+You can compile your library by invoking `gxc` while specifying an output
+directory where the compiler will place the compiled code.
+```
+gxc -d $GERBIL_HOME/lib example/util.ss
+```
+Here we place the compiled code in the gerbil library dir so that we don't
+have to specify an alternative `GERBIL_LOADPATH` to use it.
 
-You can now create a build script using `:std/make`
+Building complex libraries by invoking `gxc` quickly gets tedious.
+Instead you can use the `std/make` library module which provides
+a build tool that handles complex library building.
+For instance, the following script can be used to build the little
+example library:
 ```
 $ cat > build.ss <<EOF
 #!/usr/bin/env gxi-script
@@ -513,6 +524,37 @@ $ gxi
 > (with-display-exception (lambda () (error "this-is-an-error")))
 this-is-an-error
 => #<error-exception #4>
+```
+
+### Executable Modules
+
+The gerbil compiler can also create executable stubs that invoke
+the main function of a dynamically loadable module.
+The generated executables only load runtime dependencies without
+linking and initializing the expander, resulting in significantly
+faster load times compared to wrapper scripts.
+Note that the module must still be compiled as a dynamic module
+and be available in `GERBIL_LOADPATH` or the gerbil library path.
+
+For example, suppose we have a module example/hello that we
+want to compile as an exacutable module:
+```
+package: example
+(export main)
+(def (main . args)
+  (displayln "hello world"))
+```
+The module must define and export a `main` function that gets
+invoked with the command line arguments after loading the gerbil
+runtime and module dependencies.
+
+You can compile it to an executable module with `gxc` with the
+following commands:
+```
+> gxc -d $GERBIL_HOME/lib example/hello.ss
+> gxc -exe -o hello example/hello.ss
+> ./hello
+hello world
 ```
 
 ## Standard Library
