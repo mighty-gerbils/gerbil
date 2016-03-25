@@ -23,12 +23,14 @@ package: std
 (def (make buildspec
        srcdir: (srcdir #f)
        libdir: (libdir #f)
+       bindir: (bindir #f)
        prefix: (prefix #f)
        force:  (force? #f)
        depgraph: (depgraph #f))
   (let* ((srcdir (or srcdir (error "srcdir must be specified")))
          (libdir (or libdir (path-expand "lib" (getenv "GERBIL_HOME"))))
-         (settings  [srcdir: srcdir libdir: libdir prefix: prefix force: force?])
+         (settings  [srcdir: srcdir libdir: libdir bindir: bindir
+                     prefix: prefix force: force?])
          (buildset (if (not force?)
                      (filter (cut build? <> settings) buildspec)
                      buildspec))
@@ -181,6 +183,8 @@ package: std
      (gsc-compile? modf settings))
     ([ssi: modf . deps]
      (compile-ssi? modf settings))
+    ([exe: modf . gsc-opts]
+     (compile-exe? modf settings))
     ([copy: file]
      (copy-compiled? file settings))
     (else
@@ -196,6 +200,8 @@ package: std
      (gsc-compile modf gsc-opts settings))
     ([ssi: modf . deps]
      (compile-ssi modf deps settings))
+    ([exe: modf . gsc-opts]
+     (compile-exe modf gsc-opts settings))
     ([copy: file]
      (copy-compiled file settings))
     (else
@@ -288,6 +294,23 @@ package: std
       (error "Compilation error; gsc exited with nonzero status" status))
     (delete-file rtpath)))
 
+(def (compile-exe? mod settings)
+  (def srcpath (source-path mod ".ss" settings))
+  (def ssipath (library-path mod ".ssi" settings))
+  (def binpath (binary-path mod settings))
+  (or (not (file-exists? ssipath))
+      (file-newer? srcpath ssipath)
+      (not (file-exists? binpath))
+      (file-newer? srcpath binpath)))
+
+(def (compile-exe mod gsc-opts settings)
+  (def srcpath (source-path mod ".ss" settings))
+  (def binpath (binary-path mod settings))
+  (when (gxc-compile? mod settings)
+    (gxc-compile mod gsc-opts settings))
+  (displayln "... compile exe " mod)
+  (compile-exe-stub srcpath [invoke-gsc: #t output-file: binpath]))
+
 (def (copy-compiled? file settings)
   (def srcpath (source-path file #f settings))
   (def libpath (library-path file #f settings))
@@ -317,5 +340,14 @@ package: std
            (else libdir))))
     (path-expand path builddir)))
 
+(def (binary-path mod settings)
+  (let* ((bindir (pgetq bindir: settings))
+         (_ (unless bindir (error "bindir must be specified")))
+         (bin
+          (cond
+           ((string-rindex mod #\/)
+            => (lambda (ix) (substring mod (fx1+ ix) (string-length mod))))
+           (else mod))))
+    (path-expand bin bindir)))
 
 
