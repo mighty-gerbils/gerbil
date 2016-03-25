@@ -14,7 +14,7 @@ namespace: gxc
                  s32vector? u32vector? s64vector? u64vector?
                  f32vector? f64vector?)
         <syntax-case> <syntax-sugar>)
-(export compile-file)
+(export compile-file compile-exe-stub)
 
 (defsyntax (ast-case stx)
   (macro-expand-syntax-case stx 'stx-eq? 'stx-e 'quote))
@@ -67,8 +67,83 @@ namespace: gxc
                    (current-compile-gsc-options gsc-options)
                    (current-compile-keep-scm keep-scm?)
                    (current-compile-verbose verbosity))
-      (verbose "compile " srcpath)
+      (verbose "compile exe " srcpath)
       (compile-top-module (import-module srcpath)))))
+
+(def (compile-exe-stub srcpath (opts []))
+  (unless (string? srcpath)
+    (raise-compile-error "Invalid module source path" srcpath))
+
+  (let ((outdir      (pgetq output-dir: opts))
+        (invoke-gsc? (pgetq invoke-gsc: opts))
+        (gsc-options (pgetq gsc-options: opts))
+        (keep-scm?   (pgetq keep-scm: opts))
+        (verbosity   (pgetq verbose: opts)))
+    (when outdir
+      (create-directory* outdir))
+    (parameterize ((current-compile-output-dir outdir)
+                   (current-compile-invoke-gsc invoke-gsc?)
+                   (current-compile-gsc-options gsc-options)
+                   (current-compile-keep-scm keep-scm?)
+                   (current-compile-verbose verbosity))
+      (verbose "compile " srcpath)
+      (compile-exe-stub-module (import-module srcpath) opts))))
+
+(def (compile-exe-stub-module ctx opts)
+  (def (find-export-binding id exports)
+    (cond
+     ((find (match <>
+              ((module-export _ _ 0 (eq? id)) #t)
+              (else #f))
+            exports)
+      => core-resolve-module-export)
+     (else #f)))
+  
+  (def (generate-stub)
+    (let* ((mod-str (symbol->string (expander-context-id ctx)))
+           (mod-rt  (string-append mod-str "__rt"))
+           (mod-main
+            (cond
+             ((find-export-binding 'main (module-context-export ctx))
+              => (lambda (bind)
+                   (unless (runtime-binding? bind)
+                     (raise-compile-error "main is not a runtime binding"))
+                   (binding-id bind)))
+             (else
+              (raise-compile-error "module does not export main"
+                                   (expander-context-id ctx))))))
+      (write '(##namespace (""))) (newline)
+      (write `(_gx#start! ,mod-rt (quote ,mod-main))) (newline)))
+  
+  (def (compile-stub output-scm output-bin)
+    (let* ((init-stub  (path-expand "lib/gx-init-exe.scm" (getenv "GERBIL_HOME")))
+           (gsc-args ["-exe" "-o" output-bin init-stub output-scm])
+           (proc (open-process [path: "gsc" arguments: gsc-args
+                                      stdout-redirection: #f]))
+           (status (process-status proc)))
+    (unless (zero? status)
+      (raise-compile-error "Compilation error; gsc exit with nonzero status"
+                           output-scm output-bin status))))
+  
+  (let* ((output-bin
+          (cond
+           ((pgetq output-file: opts) => values)
+           (else
+            (let* ((mod-str (symbol->string (expander-context-id ctx)))
+                   (mod-name
+                    (cond
+                     ((string-rindex mod-str #\/)
+                      => (lambda (ix) (substring mod-str (fx1+ ix) (string-length mod-str))))
+                     (else mod-str))))
+              (cond
+               ((current-compile-output-dir) => (cut path-expand mod-name <>))
+               (else mod-name))))))
+         (output-scm (string-append output-bin ".scm")))
+    (with-output-to-file output-scm generate-stub)
+    (when (current-compile-invoke-gsc)
+      (compile-stub output-scm output-bin))
+    (unless (current-compile-keep-scm)
+      (delete-file output-scm))))
 
 (def (compile-top-module ctx)
   (parameterize ((current-expander-context ctx)

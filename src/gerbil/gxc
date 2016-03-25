@@ -9,13 +9,16 @@
   (def keep-scm #f)
   (def verbose #f)
   (def gsc-options #f)
+  (def compile-exe #f)
+  (def outfile #f)
   
   (def (make-opts)
     [invoke-gsc: invoke-gsc 
      keep-scm: keep-scm 
      verbose: verbose 
      gsc-options: gsc-options
-     output-dir: outdir])
+     output-dir: outdir
+     output-file: outfile])
   
   (let lp ((rest args))
     (match rest
@@ -39,15 +42,24 @@
          (("-v")
           (set! verbose #t)
           (lp rest))
+         (("-exe")
+          (set! compile-exe #t)
+          (lp rest))
+         (("-o")
+          (match rest
+            ([file . rest]
+             (set! outfile file)
+             (lp rest))))
          (else
           (if (and (not (string-empty? arg))
                    (eq? (string-ref arg 0) #\-))
             (error "Unexpected option" arg)
-            (values (make-opts) (cons arg rest))))))
+            (values compile-exe (make-opts) (cons arg rest))))))
       (else
        (values (make-opts) args)))))
 
 (def (main . args)
-  (let ((values opts files) (parse-args args))
-    (for-each (cut compile-file <> opts) 
+  (let* (((values compile-exe? opts files) (parse-args args))
+         (compile-e (if compile-exe? compile-exe-stub compile-file)))
+    (for-each (cut compile-e <> opts) 
               (filter (? (not string-empty?)) files))))
