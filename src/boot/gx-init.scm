@@ -53,3 +53,6 @@
   (load-module "gerbil/expander__rt")
   (load (path-expand "gx-gambc" (_gx#gerbil-libdir))))
 
+;; exec module stub compatibility
+(define (_gx#load-expander!)
+  #!void)
