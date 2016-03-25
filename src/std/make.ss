@@ -94,6 +94,7 @@ package: std
       ((? string? modf) modf)
       ([gxc: modf . gsc-opts] modf)
       ([ssi: modf . deps] modf)
+      ([exe: modf . gsc-opts] modf)
       (else #f)))
 
   (def (module-spec-id spec)
