@@ -492,7 +492,7 @@ EOF
 You can compile your library by invoking `gxc` while specifying an output
 directory where the compiler will place the compiled code.
 ```
-gxc -d $GERBIL_HOME/lib example/util.ss
+$ gxc -d $GERBIL_HOME/lib example/util.ss
 ```
 Here we place the compiled code in the gerbil library dir so that we don't
 have to specify an alternative `GERBIL_LOADPATH` to use it.
@@ -536,7 +536,7 @@ faster load times compared to wrapper scripts.
 Note that the module must still be compiled as a dynamic module
 and be available in `GERBIL_LOADPATH` or the gerbil library path.
 
-For example, suppose we have a module example/hello that we
+For example, suppose we have a module example/hello.ss that we
 want to compile as an exacutable module:
 ```
 package: example
@@ -551,9 +551,9 @@ runtime and module dependencies.
 You can compile it to an executable module with `gxc` with the
 following commands:
 ```
-> gxc -d $GERBIL_HOME/lib example/hello.ss
-> gxc -exe -o hello example/hello.ss
-> ./hello
+$ gxc -d $GERBIL_HOME/lib example/hello.ss
+$ gxc -exe -o hello example/hello.ss
+$ ./hello
 hello world
 ```
 
