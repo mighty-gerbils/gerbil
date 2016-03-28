@@ -2,7 +2,7 @@
 ;; -*- Gerbil -*-
 
 (import :gerbil/gambit
-        :std/net/fastcgi
+        :std/web/fastcgi
         :std/format
         :std/event
         :std/iter)

@@ -56,7 +56,6 @@
           "net/uri"
           "net/socks"
           "net/request"
-          "net/fastcgi"
           ;; :std/xml
           ,@(if config-enable-libxml
               `((gsc: "xml/_libxml" 
@@ -96,6 +95,7 @@
           "actor/proto/cipher"
           "actor/rpc"
           "actor"
+          "web/fastcgi"
           "web/rack"
           "db/dbi"
           ,@(if config-enable-sqlite

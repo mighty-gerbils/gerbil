@@ -4,7 +4,7 @@
 package: std/web
 
 (import :gerbil/gambit
-        :std/net/fastcgi
+        :std/web/fastcgi
         :std/sugar
         :std/format
         :std/iter

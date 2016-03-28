@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; fastcgi support
-package: std/net
+package: std/web
 
 (import :gerbil/gambit
         :std/error
