@@ -1,3 +1,5 @@
+4-5-2016: Gerbil-v0.5.1
+- support compilation of executable stubs
 3-24-2016: Gerbil-v0.5
 - Revamped build system
   - by default, build.sh builds a stage1 gerbil for faster build times
