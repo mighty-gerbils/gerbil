@@ -151,11 +151,14 @@ package: std
 
 (begin-syntax
   (def (for-binding? bind)
+    (syntax-case bind ()
+      ((pat expr) #t)
+      (_ #f)))
+
+  (def (for-simple-binding? bind)
     (syntax-case bind (values)
-      (((values id ...) expr)
-       (identifier-list? #'(id ...)))
-      ((id expr)
-       (identifier? #'id))
+      (((values val ...) expr) #t)
+      ((pat expr) (identifier? #'pat))
       (_ #f)))
   
   (def (for-binding-expr binding)
@@ -183,14 +186,14 @@ package: std
           (let lp ()
             (let ((bind-id (iter-value iter-id)) ...)
               (unless (or (eq? iter-end bind-id) ...)
-                (let ((bind-e bind-id) ...)
+                (with ((bind-e bind-id) ...)
                   body ...
                   (iter-next! iter-id) ...
                   (lp))))))))
   
   (syntax-case stx ()
     ((_ bind body ...)
-     (for-binding? #'bind)
+     (for-simple-binding? #'bind)
      (generate-for [#'bind] #'(body ...)))
     ((_ (bind ...) body ...)
      (stx-andmap for-binding? #'(bind ...))
@@ -222,14 +225,14 @@ package: std
             (let ((bind-id (iter-value iter-id)) ...)
               (if (or (eq? iter-end bind-id) ...)
                 (reverse rvalue)
-                (let ((bind-e bind-id) ...)
+                (with ((bind-e bind-id) ...)
                   (let (value (let () body ...))
                     (iter-next! iter-id) ...
                     (lp (cons value rvalue))))))))))
   
   (syntax-case stx ()
     ((_ bind body ...)
-     (for-binding? #'bind)
+     (for-simple-binding? #'bind)
      (generate-for [#'bind] #'(body ...)))
     ((_ (bind ...) body ...)
      (stx-andmap for-binding? #'(bind ...))
@@ -261,7 +264,7 @@ package: std
             (let ((bind-id (iter-value iter-id)) ...)
               (if (or (eq? iter-end bind-id) ...)
                 loop-id
-                (let ((bind-e bind-id) ...)
+                (with ((bind-e bind-id) ...)
                   (let (value (let () body ...))
                     (iter-next! iter-id) ...
                     (lp value)))))))))
@@ -269,7 +272,7 @@ package: std
   (syntax-case stx ()
     ((_ fold-bind bind body ...)
      (and (for/fold-bind? #'fold-bind)
-          (for-binding? #'bind))
+          (for-simple-binding? #'bind))
      (generate-for #'fold-bind [#'bind] #'(body ...)))
     ((_ fold-bind (bind ...) body ...)
      (and (for/fold-bind? #'fold-bind)
