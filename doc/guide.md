@@ -677,7 +677,7 @@ that implement the iteration protocol.
 #### Iteration Syntax
 
 The basic iteration macro is the imperative `for` comprehension.
-The syntax binds variables to iterators in parallel, and invokes
+The syntax matches patterns to iterators in parallel, and invokes
 the body as long as none of the iterators have signalled end
 of iteration.
 
@@ -696,6 +696,17 @@ For example:
 1 a
 2 b
 3 c
+```
+
+All patterns suuported by the `match` macro can be matched in lieu
+of plain variable bindings.
+For instance:
+```
+> (for (([key . val] '((a . 1) (b . 2) (c . 3))))
+    (displayln key " " val))
+a 1
+b 2
+c 3
 ```
 
 The iteration macro supports the usual suspects for generic
