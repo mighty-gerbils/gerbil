@@ -14,6 +14,7 @@ package: std
   for for* for/collect for/fold
   in-range in-naturals in-hash-keys in-hash-values
   in-input-lines in-input-chars in-input-bytes
+  iter-filter iter-map iter-filter-map
   yield
   )
 
@@ -148,6 +149,23 @@ package: std
 
 (def (iter-next! iter)
   ((iterator-next iter) iter))
+
+(def (iter-filter pred iter)
+  (lambda ()
+    (for (x iter)
+      (when (call/values (lambda () x) pred)
+        (yield x)))))
+
+(def (iter-map mapf iter)
+  (lambda ()
+    (for (x iter)
+      (yield (call/values (lambda () x) mapf)))))
+
+(def (iter-filter-map mapf iter)
+  (lambda ()
+    (for (x iter)
+      (alet (y (call/values (lambda () x) mapf))
+        (yield y)))))
 
 (begin-syntax
   (def (for-binding? bind)
