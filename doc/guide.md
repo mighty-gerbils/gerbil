@@ -447,7 +447,8 @@ having a `namesace: id` declaration at the top of the module.
 
 You can compile file modules with `gxc`:
 ```
-$ gxc A.ss
+$ gxc -d . A.ss
+$ gxi
 > (import "A")  ; compiled form takes precedence
 ```
 
@@ -499,11 +500,15 @@ package: example
 EOF
 ```
 
-You can now compile the library module by invoking `gxc`:
+You can now compile the library module by invoking `gxc` and import it as
+`:example/util`:
 
 ```
 $ gxc example/util.ss
+$ gxi
+> (import :example/util)
 ```
+
 By default, the compiler will place compiled modules in `GERBIL_HOME/lib`.
 If you want a separate directory structure for your library, you can
 specify a different directory with the `-d` option:
