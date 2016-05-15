@@ -511,7 +511,7 @@ specify a different directory with the `-d` option:
 $ gxc -d your-library-path example/util.ss
 ```
 
-#### The `:std/make` library build tool
+#### The Standard Library Build Tool
 
 Building complex libraries by invoking `gxc` quickly gets tedious.
 Instead you can use the `std/make` library module which provides
