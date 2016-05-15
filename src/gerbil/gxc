@@ -58,8 +58,12 @@
       (else
        (values (make-opts) args)))))
 
+(def (compile-exe file opts)
+  (compile-file file opts)
+  (compile-exe-stub file opts))
+
 (def (main . args)
   (let* (((values compile-exe? opts files) (parse-args args))
-         (compile-e (if compile-exe? compile-exe-stub compile-file)))
+         (compile-e (if compile-exe? compile-exe compile-file)))
     (for-each (cut compile-e <> opts) 
               (filter (? (not string-empty?)) files))))

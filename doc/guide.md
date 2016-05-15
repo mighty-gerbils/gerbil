@@ -533,8 +533,9 @@ the main function of a dynamically loadable module.
 The generated executables only load runtime dependencies without
 linking and initializing the expander, resulting in significantly
 faster load times compared to wrapper scripts.
-Note that the module must still be compiled as a dynamic module
-and be available in `GERBIL_LOADPATH` or the gerbil library path.
+Note that the module is still compiled as a dynamic loadable module
+and must be available in `GERBIL_LOADPATH` or the gerbil library path
+for the executable to work.
 
 For example, suppose we have a module example/hello.ss that we
 want to compile as an exacutable module:
@@ -548,11 +549,10 @@ The module must define and export a `main` function that gets
 invoked with the command line arguments after loading the gerbil
 runtime and module dependencies.
 
-You can compile it to an executable module with `gxc` with the
-following commands:
+You can compile it to an executable with `gxc` with the
+following command:
 ```
-$ gxc -d $GERBIL_HOME/lib example/hello.ss
-$ gxc -exe -o hello example/hello.ss
+$ gxc -d $GERBIL_HOME/lib -exe -o hello example/hello.ss
 $ ./hello
 hello world
 ```
