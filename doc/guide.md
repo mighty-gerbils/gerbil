@@ -456,12 +456,15 @@ $ gxc A.ss
 Library modules are specified with the `:library-module-id` import
 form. For example, the JSON library is `:std/text/json`.
 When there are `/` in the library module path, it indicates
-that it is part of a package. The package can be specified with
-a `package: package-path` declaration at the top of the module.
-The package also affects the namespace of the module.
+that it is part of a package.
+
+The package can be specified with a `package: package-path` declaration
+at the top of the module. It effects the namespace of the module and
+placement of compiled code.
 
 For example, the `:std/text/json` library module is part of
-the `std/text` package and resides in the file named `json.ss`.
+the `std/text` package and resides in the file named `json.ss`, in
+the directory `$GERBIL_HOME/lib/std/text`.
 The namespace prefix for identifiers defined in the file is
 `std/text/json#`.
 
@@ -471,13 +474,13 @@ searched with the `GERBIL_LOADPATH` environment variable.
 You can also modify the load-path at runtime with `add-load-path`.
 
 When building libraries, you should use an appropriate prefix
-as your package. Then you can use the `:std/make` standard build
-library to compiled directly into `$GERBIL_HOME/lib`.
-For example let's package the `A` module into a library.
-Let's create a package `example` as the top level
-package for your library, and then give an appropriate name
-to your module. Here, let's call it `util` with the expectation
-that the library and module may grow further:
+as your package.
+For example let's package the `A` module above into a library.
+
+For this, we designate `example` as the top level package,
+and then give the module a more appropriate name.
+Here, we call it `util` with the expectation that the library
+and module may grow further:
 ```
 $ mkdir example
 $ cat > example/util.ss <<EOF
@@ -489,13 +492,18 @@ package: example
     thunk))
 EOF
 ```
-You can compile your library by invoking `gxc` while specifying an output
-directory where the compiler will place the compiled code.
+
+You can compile the library module by invoking `gxc`:
+
 ```
-$ gxc -d $GERBIL_HOME/lib example/util.ss
+$ gxc example/util.ss
 ```
-Here we place the compiled code in the gerbil library dir so that we don't
-have to specify an alternative `GERBIL_LOADPATH` to use it.
+By default, the compiler will place compiled modules in `GERBIL_HOME/lib`.
+If you want a separate directory structure for your library, you can
+specify a different directory with the `-d` option:
+```
+$ gxc -d your-library-path example/util.ss
+```
 
 Building complex libraries by invoking `gxc` quickly gets tedious.
 Instead you can use the `std/make` library module which provides
@@ -534,8 +542,8 @@ dependencies without linking and initializing the expander, resulting
 in significantly faster load times compared to wrapper scripts.
 
 Note that the module is still compiled as a dynamic loadable module
-and must be available in `GERBIL_LOADPATH` or the gerbil library path
-for the executable to work.
+and must be available in the gerbil library path for the executable
+to work.
 
 For example, suppose we have a module example/hello.ss that we
 want to compile as an exacutable module:
