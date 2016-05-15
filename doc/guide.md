@@ -528,11 +528,11 @@ this-is-an-error
 
 ### Executable Modules
 
-The gerbil compiler can also create executable stubs that invoke
-the main function of a dynamically loadable module.
-The generated executables only load runtime dependencies without
-linking and initializing the expander, resulting in significantly
-faster load times compared to wrapper scripts.
+The gerbil compiler can also create executables that invoke the main
+function of a module.  The generated executables only load runtime
+dependencies without linking and initializing the expander, resulting
+in significantly faster load times compared to wrapper scripts.
+
 Note that the module is still compiled as a dynamic loadable module
 and must be available in `GERBIL_LOADPATH` or the gerbil library path
 for the executable to work.
