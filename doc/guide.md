@@ -569,7 +569,7 @@ runtime and module dependencies.
 You can compile it to an executable with `gxc` with the
 following command:
 ```
-$ gxc -d $GERBIL_HOME/lib -exe -o hello example/hello.ss
+$ gxc -exe -o hello example/hello.ss
 $ ./hello
 hello world
 ```
