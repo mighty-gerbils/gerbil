@@ -453,34 +453,40 @@ $ gxc A.ss
 
 ### Library Modules
 
-Library modules are specified with the `:library-module-id` import
-form. For example, the JSON library is `:std/text/json`.
-When there are `/` in the library module path, it indicates
-that it is part of a package.
+Library modules are imported with the `:library-module-path` form.
+For example, to use the `json` module from the Gerbil std library
+you need the following import statement:
+```
+(import :std/text/json)
+```
 
-The package can be specified with a `package: package-path` declaration
-at the top of the module. It effects the namespace of the module and
-placement of compiled code.
-
-For example, the `:std/text/json` library module is part of
-the `std/text` package and resides in the file named `json.ss`, and
-compiler artefacts for the module are placed in `$GERBIL_HOME/lib/std/text`.
-The namespace prefix for identifiers defined in the file is
+The library module is defined in a file named `json.ss` in the Gerbil
+std library source tree. The module declares that it is part of the
+`std/text` package, which places compiler artefacts in the
+`$GERBIL_HOME/lib/std/text` directory.
+The namespace prefix for identifiers defined in the module is
 `std/text/json#`.
 
-By default libraries are looked up in the `$GERBIL_HOME/lib`
+When writing a library module, you should choose an appropriate package
+for your code. 
+The package is specified with a `package: package-path` declaration
+at the top of a module. It effects the namespace of the module and
+placement of compiled code.
+
+By default library modules are looked up in the `$GERBIL_HOME/lib`
 directory. You can specify additional directories to be
 searched with the `GERBIL_LOADPATH` environment variable.
 You can also modify the load-path at runtime with `add-load-path`.
 
-When building libraries, you should use an appropriate prefix
-as your package.
+#### Building Libraries
 
-For example let's package the `A` module above into a library.
-For this, we designate `example` as the top level package,
+This is best illustrated with an example, so let's package the `A` module
+above into a library.
+
+For this, we designate `example` as the library package,
 and then give the module a more appropriate name.
 Here, we call it `util` with the expectation that the library
-and module may grow further:
+and module will grow further:
 ```
 $ mkdir example
 $ cat > example/util.ss <<EOF
@@ -493,7 +499,7 @@ package: example
 EOF
 ```
 
-You can compile the library module by invoking `gxc`:
+You can now compile the library module by invoking `gxc`:
 
 ```
 $ gxc example/util.ss
@@ -505,9 +511,12 @@ specify a different directory with the `-d` option:
 $ gxc -d your-library-path example/util.ss
 ```
 
+#### The `:std/make` library build tool
+
 Building complex libraries by invoking `gxc` quickly gets tedious.
 Instead you can use the `std/make` library module which provides
 a build tool that handles complex library building.
+
 For instance, the following script can be used to build the little
 example library:
 ```
@@ -522,7 +531,7 @@ $ chmod +x build.ss
 
 ```
 
-You can now build your library with `build.ss` and have it
+You can now build the library by invoking `build.ss` and have it
 installed into `$GERBIL_HOME/lib`.
 ```
 $ ./build.ss 
@@ -546,7 +555,7 @@ and must be available in the gerbil library path for the executable
 to work.
 
 For example, suppose we have a module example/hello.ss that we
-want to compile as an exacutable module:
+want to compile as an executable module:
 ```
 package: example
 (export main)
