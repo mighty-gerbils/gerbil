@@ -463,8 +463,8 @@ at the top of the module. It effects the namespace of the module and
 placement of compiled code.
 
 For example, the `:std/text/json` library module is part of
-the `std/text` package and resides in the file named `json.ss`, in
-the directory `$GERBIL_HOME/lib/std/text`.
+the `std/text` package and resides in the file named `json.ss`, and
+compiler artefacts for the module are placed in `$GERBIL_HOME/lib/std/text`.
 The namespace prefix for identifiers defined in the file is
 `std/text/json#`.
 
@@ -475,8 +475,8 @@ You can also modify the load-path at runtime with `add-load-path`.
 
 When building libraries, you should use an appropriate prefix
 as your package.
-For example let's package the `A` module above into a library.
 
+For example let's package the `A` module above into a library.
 For this, we designate `example` as the top level package,
 and then give the module a more appropriate name.
 Here, we call it `util` with the expectation that the library
