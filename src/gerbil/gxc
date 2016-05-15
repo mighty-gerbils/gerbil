@@ -4,7 +4,7 @@
 (import :gerbil/compiler)
 
 (def (parse-args args)
-  (def outdir #f)
+  (def outdir (path-expand "lib" (getenv "GERBIL_HOME")))
   (def invoke-gsc #t)
   (def keep-scm #f)
   (def verbose #f)
