@@ -292,7 +292,7 @@ a 3d-point (2 0 0)
  
 ```
 
-#### Ddestructuring Binds
+#### destructuring Binds
 Gerbil's `match` provides a shorthand syntax for match lambdas:
 ```
 (def car+cdr (match <> ([a . b] (values a b))))
