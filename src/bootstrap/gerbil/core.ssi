@@ -1289,7 +1289,8 @@ namespace: gerbil/core
                     (spec:
                      1
                      syntax-local-match-macro?
-                     syntax-local-match-macro?))
+                     syntax-local-match-macro?)
+                    (spec: 1 match-pattern? match-pattern?))
                    (%#begin-syntax
                     (%#call (%#ref _gx#load-module)
                             (%#quote "gerbil/core__10"))
