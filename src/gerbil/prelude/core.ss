@@ -1606,7 +1606,8 @@ package: gerbil
   (export #t 
           (phi: +1 match-macro match-macro::t
                 make-match-macro match-macro?
-                syntax-local-match-macro?))
+                syntax-local-match-macro?
+                match-pattern?))
   
   (begin-syntax
     (defclass (match-macro macro-object) ()
