@@ -107,7 +107,7 @@ package: std/web
                (if (zero? (u8vector-length body))
                  (lp #t end-stdin stdin)
                  (let (alist (fcgi-params-e body))
-                   (for (([key . value] alist))
+                   (for ([key . value] alist)
                      (hash-put! params key value))
                    (lp #f end-stdin stdin))))
               ((eq? type FCGI-STDIN)
@@ -286,7 +286,7 @@ package: std/web
         (write-u8 nb1 port)
         (write-u8 nb0 port))))
   
-  (for (([key . value] alst))
+  (for ([key . value] alst)
     (let* ((kdata (string->bytes
                    (symbol->string
                     key)))

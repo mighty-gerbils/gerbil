@@ -724,7 +724,7 @@ All patterns suuported by the `match` macro can be matched in lieu
 of plain variable bindings.
 For instance:
 ```
-> (for (([key . val] '((a . 1) (b . 2) (c . 3))))
+> (for ([key . val] '((a . 1) (b . 2) (c . 3)))
     (displayln key " " val))
 a 1
 b 2

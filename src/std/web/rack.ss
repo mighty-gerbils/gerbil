@@ -55,7 +55,7 @@ package: std/web
                       (else (collect-data body))))
           (hout (open-output-u8vector)))
      (fprintf hout "Status: ~a ~a\r\n" status status-text)
-     (for (([key . value] headers))
+     (for ([key . value] headers)
        (fprintf hout "~a: ~a\r\n" key value))
      (fprintf hout "Content-Length: ~a\r\n" (u8vector-length body-data))
      (fprintf hout "\r\n")
