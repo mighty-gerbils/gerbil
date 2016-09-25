@@ -6,6 +6,7 @@ different implementations.
 In the following `$` is the shell prompt and `>` the gxi
 interpreter prompt.
 
+## Contents
 <!-- toc -->
 
 - [Hello world](#hello-world)
