@@ -6,6 +6,35 @@ different implementations.
 In the following `$` is the shell prompt and `>` the gxi
 interpreter prompt.
 
+<!-- toc -->
+
+- [Hello world](#hello-world)
+- [Core Gerbil](#core-gerbil)
+  * [Primitive forms](#primitive-forms)
+  * [Structs and Classes](#structs-and-classes)
+  * [Pattern Matching](#pattern-matching)
+  * [Macros](#macros)
+- [Modules and Libraries](#modules-and-libraries)
+  * [Top Modules](#top-modules)
+  * [Imports and Exports](#imports-and-exports)
+  * [File Modules](#file-modules)
+  * [Library Modules](#library-modules)
+  * [Executable Modules](#executable-modules)
+- [Standard Library](#standard-library)
+  * [Optional Libraries](#optional-libraries)
+  * [Additional Syntactic Sugar](#additional-syntactic-sugar)
+  * [Generics](#generics)
+  * [Iteration](#iteration)
+  * [Coroutines](#coroutines)
+  * [Event Programming](#event-programming)
+  * [Actors](#actors)
+  * [HTTP requests](#http-requests)
+  * [JSON](#json)
+  * [XML](#xml)
+  * [Web Applications](#web-applications)
+
+<!-- tocstop -->
+
 ## Hello world
 Add `$GERBIL_HOME/bin` to your path and invoke the interpreter
 for the obligatory "hello world":
