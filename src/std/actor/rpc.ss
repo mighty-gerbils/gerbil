@@ -484,8 +484,18 @@ package: std/actor
                  (hash-put! continuation-timeouts wire-id timeo-evt))
                (set! (!call-k content) wire-id)))
             ((!stream _ k)
-             (let (wire-id (next-continuation-id!))
+             (let ((wire-id (next-continuation-id!))
+                   (timeo (and opts (pgetq timeout: opts))))
                (hash-put! continuations wire-id (values src k proto #t))
+               (when timeo
+                 (let* ((abs-timeo
+                       (if (time? timeo)
+                         timeo
+                         (seconds->time
+                          (+ (time->seconds (current-time)) timeo))))
+                        (timeo-evt (rec evt (handle-evt abs-timeo (lambda (_) evt)))))
+                 (hash-put! timeouts timeo-evt wire-id)
+                 (hash-put! continuation-timeouts wire-id timeo-evt)))
                (set! (!stream-k content) wire-id)))
             (else (void)))
           ;; marshall, write, loop
