@@ -329,7 +329,7 @@ package: std/actor
     (set! rpc-idle-timeout dt)
     (error "bad idle interval; expected positive real or #f" dt)))
 
-(def rpc-call-timeout 5)
+(def rpc-call-timeout 30)
 
 (def (set-rpc-call-timeout! dt)
   (if (and (real? dt) (positive? dt))
