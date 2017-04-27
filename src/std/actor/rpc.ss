@@ -343,7 +343,7 @@ package: std/actor
     (let (sinfo (tcp-client-peer-socket-info sock))
       (cons (socket-info-address sinfo)
             (socket-info-port-number sinfo))))
-  (def continuations               ; wire-id => (values actor k proto)
+  (def continuations               ; wire-id => (values actor k proto stream?)
     (make-hash-table-eqv))
   (def timeouts                         ; time => wire-id
     (make-hash-table-eq))
@@ -368,7 +368,7 @@ package: std/actor
         (cond
          ((hash-get continuations wire-id)
           => (lambda (cont)
-               (with ((values actor k proto) cont)
+               (with ((values actor k proto stream?) cont)
                  (!!error actor "connection closed" k)
                  (remove-continuation! wire-id))))))
       (hash-keys continuations))
@@ -386,12 +386,14 @@ package: std/actor
             (if (message? msg)
               (with ((message content _ dest) msg)
                 (match content
-                  ((? (or !call? !event?))
+                  ((? (or !call? !event? !stream?))
                    (dispatch-call msg bytes))
                   ((? !value?)
                    (dispatch-value msg bytes !value-k !value-k-set!))
                   ((? !error?)
                    (dispatch-value msg bytes !error-k !error-k-set!))
+                  ((? !end?)
+                   (dispatch-value msg bytes !end-k !end-k-set!))
                   ((? not)
                    (dispatch-call msg bytes))))
                 (begin
@@ -436,15 +438,16 @@ package: std/actor
       (cond
        ((hash-get continuations cont)
         => (match <>
-             ((values actor k proto)
+             ((values actor k proto stream?)
               (let (e (unmarshall-message-content msg proto bytes))
                 (if (message? e)
                   (begin
                     (value-k-set! (message-e msg) k)
                     (set! (message-source msg)
                       (make-remote rpc-server (message-dest msg) peer-address proto))
+                    (unless (and stream? (not (!end? content)) (not (!error? content)))
+                      (remove-continuation! cont))
                     (send actor msg)
-                    (remove-continuation! cont)
                     (loop))
                   (begin
                     (!!error actor "unmarshall error" k)
@@ -470,7 +473,7 @@ package: std/actor
              (let ((wire-id (next-continuation-id!))
                    (timeo (or (and opts (pgetq timeout: opts))
                               rpc-call-timeout)))
-               (hash-put! continuations wire-id (values src k proto))
+               (hash-put! continuations wire-id (values src k proto #f))
                (let* ((abs-timeo
                        (if (time? timeo)
                          timeo
@@ -479,7 +482,11 @@ package: std/actor
                       (timeo-evt (rec evt (handle-evt abs-timeo (lambda (_) evt)))))
                  (hash-put! timeouts timeo-evt wire-id)
                  (hash-put! continuation-timeouts wire-id timeo-evt))
-                 (set! (!call-k content) wire-id)))
+               (set! (!call-k content) wire-id)))
+            ((!stream _ k)
+             (let (wire-id (next-continuation-id!))
+               (hash-put! continuations wire-id (values src k proto #t))
+               (set! (!stream-k content) wire-id)))
             (else (void)))
           ;; marshall, write, loop
           (marshall-and-write msg proto #t))
@@ -526,7 +533,7 @@ package: std/actor
           (close-connection)))))
   
   (def (dispatch-error wire-id what)
-    (with ((values actor k proto) (hash-ref continuations wire-id))
+    (with ((values actor k proto stream?) (hash-ref continuations wire-id))
       (!!error actor what k)
       (remove-continuation! wire-id)
       (loop)))
@@ -535,8 +542,6 @@ package: std/actor
     (cond
      ((hash-get timeouts timeo)
       => (lambda (wire-id)
-           (hash-remove! timeouts timeo)
-           (hash-remove! continuation-timeouts wire-id)
            (dispatch-error wire-id "timeout")))))
 
   (def (keep-alive)
