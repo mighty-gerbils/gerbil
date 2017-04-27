@@ -15,7 +15,7 @@ package: std/actor
   rpc-error? raise-rpc-error
   remote-error? raise-remote-error
   (struct-out handle remote)
-  (struct-out !rpc !call !value !error !event)
+  (struct-out !rpc !call !value !error !event !stream !end)
   !!call !!value !!error !!event
   (struct-out !protocol !rpc-protocol)
   defproto
@@ -75,6 +75,10 @@ package: std/actor
   id: std/actor#!error::t)
 (defstruct (!event !rpc) (e)
   id: std/actor#!event::t)
+(defstruct (!stream !rpc) (e k)
+  id: std/actor#!stream::t)
+(defstruct (!end !rpc) (k)
+  id: std/actor#!end::t)
 
 (defrules !!call ()
   ((recur dest e)

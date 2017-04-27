@@ -26,11 +26,13 @@ package: std/actor/proto
 (def rpc-proto-keep-alive     #x06)
 (def rpc-proto-message        #x07)
 ;; messages
-(def rpc-proto-message-raw    #x00)
-(def rpc-proto-message-call   #x01)
-(def rpc-proto-message-value  #x02)
-(def rpc-proto-message-error  #x03)
-(def rpc-proto-message-event  #x04)
+(def rpc-proto-message-raw     #x00)
+(def rpc-proto-message-call    #x01)
+(def rpc-proto-message-value   #x02)
+(def rpc-proto-message-error   #x03)
+(def rpc-proto-message-event   #x04)
+(def rpc-proto-message-stream  #x05)
+(def rpc-proto-message-end     #x06)
 (def rpc-proto-message-max-length 65536)
 ;; protocols
 (def rpc-proto-null          #x00)
@@ -66,6 +68,14 @@ package: std/actor/proto
         ((? !event? content)
          (write-u8 rpc-proto-message-event port)
          (xdr-uuid-write dest port))
+        ((!stream _ k)
+         (write-u8 rpc-proto-message-stream port)
+         (xdr-uuid-write dest port)
+         (xdr-int-write k port))
+        ((!end k)
+         (write-u8 rpc-proto-message-end port)
+         (xdr-uuid-write dest port)
+         (xdr-int-write k port))
         (else
          (raise-rpc-error 'rpc-proto-write-message
                           "unknown rpc message type" content))))
@@ -79,8 +89,10 @@ package: std/actor/proto
         ((or (!call e)
              (!value e)
              (!error e)
-             (!event e))
+             (!event e)
+             (!stream e))
          (xdr-write-object e port))
+        ((!end) (void))
         (else
          (xdr-write-object content port))))
     (force-output port)))
@@ -108,6 +120,12 @@ package: std/actor/proto
        (make-!event #f))
       ((eq? type rpc-proto-message-raw)
        #f)
+      ((eq? type rpc-proto-message-stream)
+       (let (k (xdr-read-object port))
+         (make-!stream #f k)))
+      ((eq? type rpc-proto-message-end)
+       (let (k (xdr-read-object port))
+         (make-!end k)))
       (else
        (raise-rpc-error 'rpc-proto-read-message
                         "unmarshall error; unexpected message type" type)))
@@ -134,7 +152,12 @@ package: std/actor/proto
             (xdr-read-object port)))
          ((!event? content)
           (set! (!event-e content)
-            (xdr-read-object port)))))
+            (xdr-read-object port)))
+         ((!stream? content)
+          (set! (!stream-e content)
+            (xdr-read-object port)))
+         ;; !end is empty
+         ))
        (else
         (set! (message-e msg)
           (xdr-read-object port))))
