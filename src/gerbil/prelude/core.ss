@@ -234,6 +234,8 @@ package: gerbil
     load-module
     ;; keyword argument dispatch
     keyword-dispatch
+    ;; gerbil specifics
+    gerbil-version-string gerbil-system-version-string
     )
   
   (define-alias transcript-on void)

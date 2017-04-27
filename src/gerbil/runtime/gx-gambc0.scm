@@ -15,6 +15,12 @@
 ;;;  Sufficient to bootstrap the compiler
 ;;;
 
+(define (gerbil-version-string)
+  "v0.6-DEV")
+
+(define (gerbil-system-version-string)
+  (string-append "Gerbil " (gerbil-version-string) " on Gambit " (system-version-string)))
+
 (define &current-module-libpath
   (make-parameter #f))
 (define &current-module-registry
