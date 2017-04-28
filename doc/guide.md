@@ -1051,6 +1051,44 @@ or error message and the continuation token:
 (!!error [@source] msg token)
 ```
 
+#### Streams
+
+In addition to calls and events, actors can also open streams.
+A stream is like a call, but it returns multiple values until the stream's
+end or an error occurs.
+
+For example, the following server generates a stream of numbers as
+specified by the argument. Values can be processed directly, or with
+the `!!stream` macro which constructs a vector port and pipes objects
+through it in a background thread:
+```
+(defproto simple-stream
+  stream: (count N))
+
+(def (my-simple-stream)
+  (let lp ()
+    (<- ((!simple-stream.count N k)
+         (let lp2 ((n 0))
+           (if (< n N)
+             (begin
+               (!!value n k)
+               (lp2 (1+ n)))
+             (begin
+               (!!end k)
+               (lp))))))))
+
+
+(def my-stream (spawn my-simple-stream))
+> (let (inp (!!simple-stream.count my-stream 5))
+    (for (x inp)
+      (displayln x)))
+0
+1
+2
+3
+4
+```
+
 #### RPC
 
 The interaction so far has been local. In order to interact with
