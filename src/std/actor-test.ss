@@ -6,7 +6,8 @@
         :std/test
         :std/event
         :std/actor)
-(export actor-rpc-test)
+(export actor-rpc-test
+        actor-rpc-stream-test)
 
 (defproto hello
   call: (hello a))
@@ -29,6 +30,7 @@
 (def rpc-server-address2 "127.0.0.1:9001")
 (def rpc-server-address3 "127.0.0.1:9002")
 (def rpc-server-address4 "127.0.0.1:9003")
+(def rpc-server-address5 "127.0.0.1:9004")
 (def rpc-cookie "/tmp/actor-test-cookie")
 (rpc-generate-cookie! rpc-cookie)
 
@@ -98,3 +100,44 @@
       
       (interrupt-threads! remoted hellod locald)
       (! remoted (void)))))
+
+(def (hello-stream-server remoted N)
+  (!!rpc.register remoted 'foo hello::proto)
+  (let lp ()
+    (<- ((!stream (hello.hello _) k)
+         (let lp2 ((n 0))
+           (if (< n N)
+             (begin
+               (!!value n k)
+               (lp2 (1+ n)))
+             (begin
+               (-> (make-!end k))
+               (lp))))))))
+
+(def actor-rpc-stream-test
+  (test-suite "test :std/actor RPC stream"
+    (test-case "test basic RPC stream"
+      (def N 5)
+      (def remoted (start-rpc-server! rpc-server-address5))
+      (def hellod  (spawn hello-stream-server remoted N))
+      (thread-sleep! 0.1)
+      (check (!!rpc.resolve remoted 'foo) => hellod)
+      (def locald  (start-rpc-server!))
+      (def rfoo
+        (make-remote locald 'foo rpc-server-address5 hello::proto))
+      
+      (let (k (gensym 'stream))
+        (send-message/timeout rfoo (make-!stream (make-hello.hello "stream") k) 1)
+        (let lp ((n 0))
+          (when (< n N)
+            (<- ((!value x (eq? k))
+                 (check x => n)
+                 (lp (1+ n))))))
+        (let (end (thread-receive))
+          (check end ? message?)
+          (check (message-e end) ? !end?)))
+      
+      (interrupt-threads! remoted hellod locald)
+      (! remoted (void)))))
+
+            
