@@ -4,6 +4,7 @@
 package: std/actor
 
 (import :gerbil/gambit/threads
+        :gerbil/gambit/ports
         :std/event
         :std/error
         :std/net/address
@@ -16,7 +17,7 @@ package: std/actor
   remote-error? raise-remote-error
   (struct-out handle remote)
   (struct-out !rpc !call !value !error !event !stream !end)
-  !!call !!value !!error !!event
+  !!call !!call-recv !!value !!error !!event !!stream !!stream-recv
   (struct-out !protocol !rpc-protocol)
   defproto
   defproto-default-type
@@ -93,14 +94,17 @@ package: std/actor
    (let ((token k)
          (dest actor))
      (send-e dest (make-!call e token) args ...)
-     (<- ((!value val (eq? token))
-          val)
-         ((!error msg (eq? token))
-          (raise-remote-error '!!call (string-append "remote error: " msg)))
-         (! (if (remote? dest) (proxy-handler dest) never-evt)
-            => (lambda (thread)
-                 (raise-remote-error '!!call "proxy failure"
-                    (with-catch values (cut thread-join! thread)))))))))
+     (!!call-recv token dest))))
+
+(def (!!call-recv k dest)
+  (<- ((!value val (eq? k))
+       val)
+      ((!error msg (eq? k))
+       (raise-remote-error '!!call (string-append "remote error: " msg)))
+      (! (if (remote? dest) (proxy-handler dest) never-evt)
+         => (lambda (thread)
+              (raise-remote-error '!!call "proxy failure"
+                                  (with-catch values (cut thread-join! thread)))))))
 
 (defsyntax (!!value stx)
   (syntax-case stx ()
@@ -121,6 +125,46 @@ package: std/actor
 (defrules !!event ()
   ((_ dest e)
    (send-message dest (make-!event e))))
+
+(defrules !!stream ()
+  ((recur dest e)
+   (recur dest e (gensym 'k) send-message))
+  ((recur dest e timeout: timeo)
+   (recur dest e (gensym 'k) send-message/timeout timeo))
+  ((recur dest e k)
+   (recur dest e k send-message))
+  ((recur dest e k timeout: timeo)
+   (recur dest e k send-message/timeout timeo))
+  ((_ actor e k send-e args ...)
+   (let ((token k)
+         (dest actor))
+     (!!stream-recv e token dest send-e args ...))))
+
+(def (!!stream-recv e k dest send-e . send-args)
+  (def (stream-handler outp)
+    (apply send-e dest (make-!stream e k) send-args)
+    (let (err-evt (if (remote? dest) (proxy-handler dest) never-evt))
+      (let lp ()
+        (<- ((!value val (eq? k))
+             (write val outp)
+             (lp))
+            ((!end (eq? k))
+             (close-port outp))
+            ((!error msg k)
+             (let (err (make-remote-error '!!call (string-append "remote error: " msg)))
+               (write err outp)
+               (close-port outp)))
+            (! err-evt
+               => (lambda (thread)
+                    (let (err (make-remote-error '!!call "proxy failure"
+                                                 (with-catch values (cut thread-join! thread))))
+                      (write err outp)
+                      (close-port outp))))))))
+  (let ((values inp outp)
+        (open-vector-pipe [permanent-close: #t direction: 'input]
+                          [permanent-close: #t direction: 'output]))
+    (spawn stream-handler outp)
+    inp))
 
 ;;; wire rpc protocols
 (defstruct !rpc-protocol (open-client open-server connect-e accept-e)
