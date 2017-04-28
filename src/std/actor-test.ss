@@ -106,7 +106,7 @@
 (def (hello-stream-server remoted N)
   (!!rpc.register remoted 'foo hello::proto)
   (let lp ()
-    (<- ((!stream (hello.hello-stream _) k)
+    (<- ((!hello.hello-stream _ k)
          (let lp2 ((n 0))
            (if (< n N)
              (begin
