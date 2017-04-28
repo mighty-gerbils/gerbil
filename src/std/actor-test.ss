@@ -113,7 +113,7 @@
                (!!value n k)
                (lp2 (1+ n)))
              (begin
-               (-> (make-!end k))
+               (!!end k)
                (lp))))))))
 
 (def actor-rpc-stream-test
