@@ -1079,6 +1079,7 @@ through it in a background thread:
 
 
 (def my-stream (spawn my-simple-stream))
+
 > (let (inp (!!simple-stream.count my-stream 5))
     (for (x inp)
       (displayln x)))
