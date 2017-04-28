@@ -10,7 +10,8 @@
         actor-rpc-stream-test)
 
 (defproto hello
-  call: (hello a))
+  call: (hello a)
+  stream: (hello-stream a))
 
 (def (hello-server remoted)
   (!!rpc.register remoted 'foo hello::proto)
@@ -105,7 +106,7 @@
 (def (hello-stream-server remoted N)
   (!!rpc.register remoted 'foo hello::proto)
   (let lp ()
-    (<- ((!stream (hello.hello _) k)
+    (<- ((!stream (hello.hello-stream _) k)
          (let lp2 ((n 0))
            (if (< n N)
              (begin
@@ -128,7 +129,7 @@
         (make-remote locald 'foo rpc-server-address5 hello::proto))
       
       (let (k (gensym 'stream))
-        (send-message/timeout rfoo (make-!stream (make-hello.hello "stream") k) 1)
+        (send-message/timeout rfoo (make-!stream (make-hello.hello-stream "stream") k) 1)
         (let lp ((n 0))
           (when (< n N)
             (<- ((!value x (eq? k))
@@ -151,7 +152,7 @@
       (def rfoo
         (make-remote locald 'foo rpc-server-address6 hello::proto))
 
-      (let (inp (!!stream rfoo (make-hello.hello "stream")))
+      (let (inp (!!hello.hello-stream rfoo "stream"))
         (let lp ((n 0))
           (when (< n N)
             (check (read inp) => n)

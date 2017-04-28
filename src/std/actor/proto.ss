@@ -196,18 +196,18 @@ package: std/actor
 (defsyntax (defproto stx)
   (def (parse-proto-body clauses)
     (let lp ((rest clauses)
-             (id #f) (extend []) (calls []) (events []) (structures [])
+             (id #f) (extend []) (calls []) (events []) (streams []) (structures [])
              (parsing call:))
       (syntax-case rest (=>)
         ((id: proto-id . rest)
          (identifier? #'proto-id)
          (if (not id)
            (lp #'rest #'proto-id
-               extend calls events structures
+               extend calls events streams structures
                parsing)
            (raise-syntax-error #f "Bad syntax; duplicate id")))
         ((extend: . rest)
-         (lp #'rest id extend calls events structures
+         (lp #'rest id extend calls events streams structures
              extend:))
         ((proto-id . rest)
          (and (eq? extend: parsing)
@@ -216,12 +216,12 @@ package: std/actor
            (if (protocol-info? proto-info)
              (lp #'rest id
                  (cons #'proto-id extend)
-                 calls events structures
+                 calls events streams structures
                  parsing)
              (raise-syntax-error #f "Bad syntax; unknown protocol"
                                  stx #'id))))
         ((call: . rest)
-         (lp #'rest id extend calls events structures
+         (lp #'rest id extend calls events streams structures
              call:))
         (((call-id arg ...) . rest)
          (and (eq? call: parsing)
@@ -229,10 +229,10 @@ package: std/actor
               (identifier-list? #'(arg ...)))
          (lp #'rest id extend
              (cons #'(call-id arg ...) calls)
-             events structures
+             events streams structures
              parsing))
         ((event: . rest)
-         (lp #'rest id extend calls events structures
+         (lp #'rest id extend calls events streams structures
              event:))
         (((event-id arg ...) . rest)
          (and (eq? event: parsing)
@@ -240,16 +240,28 @@ package: std/actor
               (identifier-list? #'(arg ...)))
          (lp #'rest id extend calls
              (cons #'(event-id arg ...) events)
+             streams structures
+             parsing))
+        ((stream: . rest)
+         (lp #'rest id extend calls events streams structures
+             stream:))
+        (((stream-id arg ...) . rest)
+         (and (eq? stream: parsing)
+              (identifier? #'stream-id)
+              (identifier-list? #'(arg ...)))
+         (lp #'rest id extend
+             calls events
+             (cons #'(stream-id arg ...) streams)
              structures
              parsing))
         ((struct: . rest)
-         (lp #'rest id extend calls events structures
+         (lp #'rest id extend calls events streams structures
              struct:))
         ((struct-id . rest)
          (and (eq? struct: parsing)
               (identifier? #'struct-id))
          (if (syntax-local-type-info? #'struct-id)
-           (lp #'rest id extend calls events
+           (lp #'rest id extend calls events streams
                (cons #'struct-id structures)
                parsing)
            (raise-syntax-error #f "Bad syntax; unknown struct type"
@@ -260,7 +272,7 @@ package: std/actor
               (identifier? #'xdr-read-e)
               (identifier? #'xdr-write-e))
          (if (syntax-local-type-info? stx)
-           (lp #'rest id extend calls events
+           (lp #'rest id extend calls events streams
                (cons #'(struct-id xdr-read-e xdr-write-e) structures)
                parsing)
            (raise-syntax-error #f "Bad syntax; unknown struct type"
@@ -270,6 +282,7 @@ package: std/actor
                  (reverse extend)
                  (reverse calls)
                  (reverse events)
+                 (reverse streams)
                  (reverse structures)))
         (_ (raise-syntax-error #f "Bad syntax; bad clause" stx rest)))))
 
@@ -410,6 +423,56 @@ package: std/actor
     (map (cut generate-proto-event proto-id id <>)
          events))
 
+  (def (generate-proto-stream proto-id id stream-spec)
+    (with-syntax*
+        ((id id)
+         ((call-id arg ...) stream-spec)
+         (kall-id        (stx-identifier #'call-id proto-id "." #'call-id))
+         (kall-rt-id     (stx-identifier #'call-id #'id "." #'call-id "::t"))
+         (make-kall      (stx-identifier #'call-id "make-" #'kall-id))
+         (kall::t        (stx-identifier #'call-id #'kall-id "::t"))
+         (kall?          (stx-identifier #'call-id #'kall-id "?"))
+         (kall::xdr      (stx-identifier #'call-id #'kall-id "::xdr"))
+         (kall-xdr-read  (stx-identifier #'call-id "xdr-" #'kall-id "-read"))
+         (kall-xdr-write (stx-identifier #'call-id "xdr-" #'kall-id "-write"))
+         (!kall          (stx-identifier #'call-id "!" #'kall-id))
+         (!!kall         (stx-identifier #'call-id "!!" #'kall-id))
+         (proto::proto   (stx-identifier proto-id proto-id "::proto"))
+         (defn-kall
+           #'(defstruct kall-id (arg ...) id: kall-rt-id))
+         (defn-!kall
+           #'(defsyntax-for-match !kall
+               (syntax-rules ()
+                 ((_ pat (... ...) k)
+                  (!stream (kall-id pat (... ...)) k)))
+               (syntax-rules ()
+                 ((_ arg ... k)
+                  (make-!stream (make-kall arg ...) k)))))
+         (defn-!!kall
+           #'(defrules !!kall ()
+               ((_ dest arg ...)
+                (!!stream dest (make-kall arg ...) (gensym 'k)))
+               ((_ dest arg ... timeout: timeo)
+                (!!stream dest (make-kall arg ...) (gensym 'k) timeout: timeo))
+               ((_ dest arg ... k)
+                (!!stream dest (make-kall arg ...) k))
+               ((_ dest arg ... k timeout: timeo)
+                (!!stream dest (make-kall arg ...) timeout: timeo))))
+         (defn-xdr
+           #'(begin
+               (def (kall-xdr-read port)
+                 (xdr-vector-like-read (cut make-object kall::t <>) 1 port))
+               (def (kall-xdr-write obj port)
+                 (xdr-vector-like-write obj 1 port))
+               (def kall::xdr
+                 (make-XDR kall? kall-xdr-read kall-xdr-write))
+               (hash-put! (!protocol-types proto::proto) 'kall-rt-id kall::xdr))))
+      #'(begin defn-kall defn-!kall defn-!!kall defn-xdr)))
+
+  (def (generate-proto-streams proto-id id streams)
+    (map (cut generate-proto-stream proto-id id <>)
+         streams))
+
   (def (generate-proto-structure proto-id struct-spec)
     (syntax-case struct-spec ()
       ((struct-id struct-xdr-read structu-xdr-write)
@@ -455,7 +518,7 @@ package: std/actor
     ((_ proto-id clause ...)
      (identifier? #'proto-id)
      (with-syntax*
-         (((values id extend calls events structures)
+         (((values id extend calls events streams structures)
            (parse-proto-body #'(clause ...)))
           (id (or id (generate-proto-id #'proto-id)))
           (defn-proto-info
@@ -466,12 +529,15 @@ package: std/actor
            (generate-proto-calls #'proto-id #'id calls))
           ((defn-event ...)
            (generate-proto-events #'proto-id #'id events))
+          ((defn-stream ...)
+           (generate-proto-streams #'proto-id #'id streams))
           ((defn-struct ...)
            (generate-proto-structures #'proto-id structures)))
        #'(begin defn-proto-info
                 defn-proto-registry
                 (begin defn-call ...)
                 (begin defn-event ...)
+                (begin defn-stream ...)
                 (begin defn-struct ...))))))
 
 ;; default proto type registry
