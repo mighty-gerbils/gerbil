@@ -151,10 +151,11 @@ END-C
   (pointer int (int*) "ffi_free"))
 (c-define-type unsigned-int*
   (pointer unsigned-int (unsigned-int*) "ffi_free"))
-(c-define-type UTF-8-string*
-  (pointer UTF-8-string (UTF-8-string*) "ffi_free"))
 (c-define-type size_t*
   (pointer size_t (size_t*) "ffi_free"))
+(c-define-type UTF-8-string*
+  (pointer UTF-8-string (UTF-8-string*) "ffi_free"))
+
 
 ;;; API
 ;; ffi hekpers
