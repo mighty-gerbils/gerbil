@@ -120,7 +120,7 @@ package: std/db
   ffi_size_t_ptr_value
   ;; LMDB API
   mdb_version
-  mdb_streror
+  mdb_strerror
   mdb_env_create
   mdb_env_open
   mdb_env_copy

@@ -236,7 +236,7 @@ END-C
 ;; LMDB API
 (define-c-lambda mdb_version () UTF-8-string
   "___result = mdb_version (NULL, NULL, NULL);")
-(define-c-lambda mdb_streror (int) UTF-8-string
+(define-c-lambda mdb_strerror (int) UTF-8-string
   "mdb_strerror")
 (define-c-lambda mdb_env_create (MDB_env**) int
   "mdb_env_create")
