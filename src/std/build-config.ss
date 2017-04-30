@@ -32,6 +32,8 @@ package: std
 ;; build std/text/zlib library - requires zlib
 (enable zlib #f)
 
-;; build std/dbi/sqlite library -- requires sqlite3
+;; build std/db/sqlite library -- requires sqlite3
 (enable sqlite #f)
 
+;; build std/db/lmdb library -- requires LMDB
+(enable lmdb #f)

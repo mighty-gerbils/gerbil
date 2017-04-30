@@ -103,5 +103,9 @@
                 (ssi: "db/_sqlite")
                 "db/sqlite")
               '())
+          ,@(if config-enable-lmdb
+              '((gsc: "db/_lmdb" "-ld-options" "-llmdb")
+                )
+              '())
           )))
 
