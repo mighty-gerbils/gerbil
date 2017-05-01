@@ -164,6 +164,7 @@ static int ffi_mdb_get (MDB_txn *txn, MDB_dbi dbi, ___SCMOBJ key, MDB_val *data)
 static int ffi_mdb_put (MDB_txn *txn, MDB_dbi dbi, ___SCMOBJ key, ___SCMOBJ bytes, unsigned int flags);
 static int ffi_mdb_del (MDB_txn *txn, MDB_dbi dbi, ___SCMOBJ key, ___SCMOBJ bytes);
 static int ffi_mdb_cursor_put (MDB_cursor *cursor, ___SCMOBJ key, ___SCMOBJ bytes, unsigned int flags);
+static int ffi_mdb_cursor_get (MDB_cursor *cursor, ___SCMOBJ key, MDB_val *keyval, ___SCMOBJ data, MDB_val *dataval, unsigned int op);
 static int ffi_mdb_cmp (MDB_txn *txn, MDB_dbi dbi, ___SCMOBJ key1, ___SCMOBJ key2);
 static int ffi_mdb_dcmp (MDB_txn *txn, MDB_dbi dbi, ___SCMOBJ data1, ___SCMOBJ data2);
 static void ffi_mdb_val_data (MDB_val* val, ___SCMOBJ bytes);
@@ -319,8 +320,8 @@ END-C
   "mdb_cursor_txn")
 (define-c-lambda mdb_cursor_dbi (MDB_cursor*) MDB_dbi
   "mdb_cursor_dbi")
-(define-c-lambda mdb_cursor_get (MDB_cursor* MDB_val* MDB_val* int) int
-  "mdb_cursor_get")
+(define-c-lambda mdb_cursor_get (MDB_cursor* scheme-object MDB_val* scheme-object MDB_val* int) int
+  "ffi_mdb_cursor_get")
 (define-c-lambda mdb_cursor_put (MDB_cursor* scheme-object scheme-object unsigned-int) int
   "ffi_mdb_cursor_put")
 (define-c-lambda mdb_cursor_del (MDB_cursor* unsigned-int) int
@@ -388,6 +389,23 @@ int ffi_mdb_cursor_put (MDB_cursor *cursor, ___SCMOBJ key, ___SCMOBJ bytes, unsi
  data.mv_data = U8_DATA (bytes);
 
  return mdb_cursor_put (cursor, &keyx, &data, flags);
+}
+
+int ffi_mdb_cursor_get (MDB_cursor *cursor, ___SCMOBJ key, MDB_val *keyval, ___SCMOBJ data, MDB_val *dataval, unsigned int op)
+{
+ if (!___FALSEP (key)) {
+  keyval->mv_size = U8_LEN (key);
+  keyval->mv_data = U8_DATA (key);
+ } else {
+  memset(keyval, 0, sizeof (MDB_val));
+ }
+ if (!___FALSEP (data)) {
+  dataval->mv_size = U8_LEN (data);
+  dataval->mv_data = U8_DATA (data);
+ } else {
+  memset(dataval, 0, sizeof (MDB_val));
+ }
+ return mdb_cursor_get (cursor, keyval, dataval, op);
 }
 
 int ffi_mdb_cmp (MDB_txn *txn, MDB_dbi dbi, ___SCMOBJ key1, ___SCMOBJ key2)
