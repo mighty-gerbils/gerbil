@@ -431,7 +431,7 @@ int ffi_mdb_dcmp (MDB_txn *txn, MDB_dbi dbi, ___SCMOBJ data1, ___SCMOBJ data2)
 
 void ffi_mdb_val_data (MDB_val* val, ___SCMOBJ bytes)
 {
- memcpy (val->mv_data, U8_DATA (bytes), val->mv_size);
+ memcpy (U8_DATA (bytes), val->mv_data, val->mv_size);
 }
 
 END-C
