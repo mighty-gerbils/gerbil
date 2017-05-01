@@ -26,17 +26,16 @@
         (lmdb-txn-commit txn)))
     (test-case "test cursors"
       (let* ((txn (lmdb-txn-begin env))
-             (cursor (lmdb-cursor-open txn db)))
-        (let (entries
+             (cursor (lmdb-cursor-open txn db))
+             (entries
               (let lp ((next (lmdb-cursor-get cursor MDB_FIRST)) (vals []))
                 (match next
                   ((values key val)
                    (lp (lmdb-cursor-get cursor MDB_NEXT) (cons (cons (bytes->string key)
                                                                      (bytes->string val))
                                                                vals)))
-                  (#f (reverse vals)))))
-          (check (length entries) => 2)
-          (check (cdr (assoc "hello" entries)) => "world")
-          (check (cdr (assoc "hello2" entries)) => "world2"))))))
-
-      
+                  (#f (reverse vals))))))
+        (check (length entries) => 2)
+        (check (cdr (assoc "hello" entries)) => "world")
+        (check (cdr (assoc "hello2" entries)) => "world2")
+        (lmdb-txn-commit txn)))))
