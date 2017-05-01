@@ -44,7 +44,7 @@ END-C
 
 (define-macro (define-const symbol)
   (let* ((str (##symbol->string symbol))
-         (ref (##string-append "___result = " str ";")))
+         (ref (##string-append "___return (" str ");")))
     `(define ,symbol
        ((c-lambda () int ,ref)))))
 
@@ -85,7 +85,7 @@ END-C
   (pointer sqlite3_stmt (sqlite3_stmt*)))
 
 (define-c-lambda sqlite3_errstr (int) UTF-8-string
-  "___result = (char*)sqlite3_errstr (___arg1);")
+  "___return ((char*)sqlite3_errstr (___arg1));")
 (define-c-lambda sqlite3_last_error () int
   "___return (ffi_last_error);")
 (define-c-lambda sqlite3_open (char-string int) sqlite3*
@@ -119,9 +119,9 @@ END-C
 (define-c-lambda sqlite3_column_count (sqlite3_stmt*) int
   "sqlite3_column_count")
 (define-c-lambda sqlite3_column_name (sqlite3_stmt* int) UTF-8-string
-  "___result = (char*)sqlite3_column_name (___arg1, ___arg2);")
+  "___return ((char*)sqlite3_column_name (___arg1, ___arg2));")
 (define-c-lambda sqlite3_column_decltype (sqlite3_stmt* int) UTF-8-string
-  "___result = (char*)sqlite3_column_decltype (___arg1, ___arg2);")
+  "___return ((char*)sqlite3_column_decltype (___arg1, ___arg2));")
 (define-c-lambda sqlite3_step (sqlite3_stmt*) int
   "sqlite3_step")
 (define-c-lambda sqlite3_data_count (sqlite3_stmt*) int
@@ -133,7 +133,7 @@ END-C
 (define-c-lambda sqlite3_column_blob (sqlite3_stmt* int scheme-object) void
   "ffi_sqlite3_column_blob")
 (define-c-lambda sqlite3_column_text (sqlite3_stmt* int) UTF-8-string
-  "___result = (char*)sqlite3_column_text (___arg1, ___arg2);")
+  "___return ((char*)sqlite3_column_text (___arg1, ___arg2));")
 (define-c-lambda sqlite3_column_int (sqlite3_stmt* int) int
   "sqlite3_column_int")
 (define-c-lambda sqlite3_column_int64 (sqlite3_stmt* int) int64

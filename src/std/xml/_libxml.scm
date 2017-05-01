@@ -65,7 +65,7 @@ END-C
 ;; constants
 (define-macro (define-const symbol)
   (let* ((str (symbol->string symbol))
-         (ref (string-append "___result = " str ";")))
+         (ref (string-append "___return (" str ");")))
     `(define ,symbol
        ((c-lambda () int ,ref)))))
 
@@ -141,67 +141,67 @@ END-C
 (define xmlNode-type
   (c-lambda (xmlNodePtr)
        int
-       "___result = ((xmlNodePtr)___arg1)->type;"))
+       "___return (((xmlNodePtr)___arg1)->type);"))
 
 (define xmlNode-name
   (c-lambda (xmlNodePtr)
        char-string
-       "___result = (char*)((xmlNodePtr)___arg1)->name;"))
+       "___return ((char*)((xmlNodePtr)___arg1)->name);"))
 
 (define xmlNode-children
   (c-lambda (xmlNodePtr)
        xmlNodePtr
-       "___result_voidstar = ((xmlNodePtr)___arg1)->children;"))
+       "___return (((xmlNodePtr)___arg1)->children);"))
 
 (define xmlNode-next
   (c-lambda (xmlNodePtr)
        xmlNodePtr
-       "___result_voidstar = ((xmlNodePtr)___arg1)->next;"))
+       "___return (((xmlNodePtr)___arg1)->next);"))
 
 (define xmlNode-content
   (c-lambda (xmlNodePtr)
        UTF-8-string
-       "___result = (char*) ((xmlNodePtr)___arg1)->content;"))
+       "___return ((char*) ((xmlNodePtr)___arg1)->content);"))
 
 (define xmlNode-properties
   (c-lambda (xmlNodePtr)
        xmlAttrPtr
-       "___result_voidstar = ((xmlNodePtr)___arg1)->properties;"))
+       "___return (((xmlNodePtr)___arg1)->properties);"))
 
 (define xmlNode-ns
   (c-lambda (xmlNodePtr)
        xmlNsPtr
-       "___result_voidstar = ((xmlNodePtr)___arg1)->ns;"))
+       "___return (((xmlNodePtr)___arg1)->ns);"))
 
 (define xmlAttr-name
   (c-lambda (xmlAttrPtr)
        char-string
-       "___result = (char*)((xmlAttrPtr)___arg1)->name;"))
+       "___return ((char*)((xmlAttrPtr)___arg1)->name);"))
 
 (define xmlAttr-children
   (c-lambda (xmlAttrPtr)
        xmlNodePtr
-       "___result_voidstar = ((xmlAttrPtr)___arg1)->children;"))
+       "___return (((xmlAttrPtr)___arg1)->children);"))
 
 (define xmlAttr-next
   (c-lambda (xmlAttrPtr)
        xmlAttrPtr
-       "___result_voidstar = ((xmlAttrPtr)___arg1)->next;"))
+       "___return (((xmlAttrPtr)___arg1)->next);"))
 
 (define xmlAttr-ns
   (c-lambda (xmlAttrPtr)
        xmlNsPtr
-       "___result_voidstar = ((xmlAttrPtr)___arg1)->ns;"))
+       "___return (((xmlAttrPtr)___arg1)->ns);"))
 
 (define xmlNs-href
   (c-lambda (xmlNsPtr)
        char-string
-       "___result = (char*)((xmlNsPtr)___arg1)->href;"))
+       "___return ((char*)((xmlNsPtr)___arg1)->href);"))
 
 (define xmlNs-prefix
   (c-lambda (xmlNsPtr)
        char-string
-       "___result = (char*)((xmlNsPtr)___arg1)->prefix;"))
+       "___return ((char*)((xmlNsPtr)___arg1)->prefix);"))
 
 ;; html/xml parser interfaces:
 ;;  - parse a string
@@ -221,8 +221,8 @@ END-C
         int)                            ; options
        xmlDocPtr
        #<<END-C
-___result_voidstar = xmlReadMemory (___arg1, strlen (___arg1), 
-                                    ___arg2, ___arg3, ___arg4);
+___return (xmlReadMemory (___arg1, strlen (___arg1), 
+                          ___arg2, ___arg3, ___arg4));
 END-C
 ))
 
@@ -233,8 +233,8 @@ END-C
         int)                            ; options
        xmlDocPtr
        #<<END-C
-___result_voidstar = htmlReadMemory (___arg1, strlen (___arg1), 
-                                     ___arg2, ___arg3, ___arg4);
+___return (htmlReadMemory (___arg1, strlen (___arg1), 
+                           ___arg2, ___arg3, ___arg4));
 END-C
 ))
 
@@ -247,9 +247,9 @@ END-C
         int)                            ; optionx
        xmlDocPtr
        #<<END-C
-___result_voidstar = xmlReadMemory ((char*) U8_DATA (___arg1) + ___arg2, 
-                                    ___arg3 - ___arg2, 
-                                    ___arg4, ___arg5, ___arg6);
+___return (xmlReadMemory ((char*) U8_DATA (___arg1) + ___arg2, 
+                           ___arg3 - ___arg2, 
+                           ___arg4, ___arg5, ___arg6));
 END-C
 ))
 
@@ -262,9 +262,9 @@ END-C
         int)                            ; optionx
        xmlDocPtr
        #<<END-C
-___result_voidstar = htmlReadMemory ((char*) U8_DATA (___arg1) + ___arg2,
-                                     ___arg3 - ___arg2, 
-                                     ___arg4, ___arg5, ___arg6);
+___return (htmlReadMemory ((char*) U8_DATA (___arg1) + ___arg2,
+                            ___arg3 - ___arg2, 
+                            ___arg4, ___arg5, ___arg6));
 END-C
 ))
 
@@ -330,8 +330,8 @@ END-C
        #<<END-C
 struct io_context ioctx;
 ffi_iocontext_init (&ioctx, ___arg1);
-___result_voidstar = xmlReadIO (ffi_iocontext_read, ffi_ioclose, &ioctx, 
-                                ___arg2, ___arg3, ___arg4);
+___return (xmlReadIO (ffi_iocontext_read, ffi_ioclose, &ioctx, 
+                      ___arg2, ___arg3, ___arg4));
 END-C
 ))
 
@@ -344,8 +344,8 @@ END-C
        #<<END-C
 struct io_context ioctx;
 ffi_iocontext_init (&ioctx, ___arg1);
-___result_voidstar = htmlReadIO (ffi_iocontext_read, ffi_ioclose, &ioctx, 
-                                 ___arg2, ___arg3, ___arg4);
+___return (htmlReadIO (ffi_iocontext_read, ffi_ioclose, &ioctx, 
+                       ___arg2, ___arg3, ___arg4));
 END-C
 ))
 

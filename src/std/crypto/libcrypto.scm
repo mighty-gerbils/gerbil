@@ -47,9 +47,8 @@ END-C
 ;; sometimes I really hate gcc (which apparently has no working option to turn
 ;;  that shit off -- -Wno-cast-qual doesn't fucking work, at least with 4.5.x)
 ;; other times I hate gsc for not having a const qualifier
-(define-macro (define-c-lambda/const-pointer id args ret #!optional (result #f))
-  (let ((result (or result "___result_voidstar"))
-        (result-type (if (eq? ret 'char-string)
+(define-macro (define-c-lambda/const-pointer id args ret)
+  (let ((result-type (if (eq? ret 'char-string)
                        "char*"
                        (##symbol->string ret)))
         (c-args
@@ -64,8 +63,8 @@ END-C
              c-args))))
     `(define ,id
        (c-lambda ,args ,ret
-         ,(##string-append result "= (" result-type ")"
-                           (##symbol->string id) "(" c-args ");")))))
+         ,(##string-append "___return ((" result-type ")"
+                           (##symbol->string id) "(" c-args "));")))))
 
 (define-macro (define-c-type-predicate pred tag)
   `(define (,pred x)
@@ -75,12 +74,9 @@ END-C
 ;; error handling
 (define-c-lambda ERR_get_error () unsigned-long)
 (define-c-lambda ERR_peek_last_error () unsigned-long)
-(define-c-lambda/const-pointer ERR_lib_error_string (unsigned-long) char-string
-  "___result")
-(define-c-lambda/const-pointer ERR_func_error_string (unsigned-long) char-string
-  "___result")
-(define-c-lambda/const-pointer ERR_reason_error_string (unsigned-long) char-string
-  "___result")
+(define-c-lambda/const-pointer ERR_lib_error_string (unsigned-long) char-string)
+(define-c-lambda/const-pointer ERR_func_error_string (unsigned-long) char-string)
+(define-c-lambda/const-pointer ERR_reason_error_string (unsigned-long) char-string)
 
 ;; Message Digests
 (c-declare #<<END-C
@@ -123,8 +119,7 @@ END-C
 (define-c-lambda EVP_MD_pkey_type (EVP_MD*) int)
 (define-c-lambda EVP_MD_size (EVP_MD*) int)
 (define-c-lambda EVP_MD_block_size (EVP_MD*) int)
-(define-c-lambda/const-pointer EVP_MD_name (EVP_MD*) char-string
-  "___result")
+(define-c-lambda/const-pointer EVP_MD_name (EVP_MD*) char-string)
 
 (define-c-lambda/const-pointer EVP_MD_CTX_md (EVP_MD_CTX*) EVP_MD*)
 (define-c-lambda EVP_MD_CTX_type (EVP_MD_CTX*) int)
@@ -208,8 +203,7 @@ END-C
 (define-c-lambda EVP_CIPHER_block_size (EVP_CIPHER*) int)
 (define-c-lambda EVP_CIPHER_key_length (EVP_CIPHER*) int)
 (define-c-lambda EVP_CIPHER_iv_length (EVP_CIPHER*) int)
-(define-c-lambda/const-pointer EVP_CIPHER_name (EVP_CIPHER*) char-string
-  "___result")
+(define-c-lambda/const-pointer EVP_CIPHER_name (EVP_CIPHER*) char-string)
 
 (define-c-lambda/const-pointer EVP_CIPHER_CTX_cipher (EVP_CIPHER_CTX*) EVP_CIPHER*)
 (define-c-lambda EVP_CIPHER_CTX_nid (EVP_CIPHER_CTX*) int)

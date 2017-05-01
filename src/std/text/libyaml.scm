@@ -33,7 +33,7 @@ END-C
 
 (define-macro (define-const symbol)
   (let* ((str (##symbol->string symbol))
-         (ref (##string-append "___result = " str ";")))
+         (ref (##string-append "___return (" str ");")))
     `(define ,symbol
        ((c-lambda () int ,ref)))))
 
