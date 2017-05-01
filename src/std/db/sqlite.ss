@@ -13,6 +13,9 @@ package: std/db
 (defstruct (sqlite-connection connection) ())
 (defstruct (sqlite-statement statement) ())
 
+(defmethod {:init! sqlite-connection}
+  connection:::init!)
+
 (def (raise-sqlite-error where err)
   (let (errstr (sqlite3_errstr err))
     (raise-sql-error where (format "SQLite error: ~a" errstr) err)))

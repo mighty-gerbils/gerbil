@@ -9,15 +9,22 @@ package: std/db
         :std/error)
 (export
   (struct-out connection statement sql-error)
+  connection:::init!
   raise-sql-error
   sql-connect sql-close sql-prepare
   sql-bind sql-clear sql-reset sql-reset/clear sql-finalize
   sql-eval sql-eval-query
   sql-exec sql-query in-sql-query
+  sql-txn-begin sql-txn-commit sql-txn-abort
   )
 
-(defstruct connection (e))
+(defstruct connection (e txn-begin txn-commit txn-abort)
+  constructor: :init!)
 (defstruct statement (e))
+
+(defmethod {:init! connection}
+  (lambda (self e)
+    (direct-struct-instance-init! self e #f #f #f)))
 
 (defstruct (sql-error <error>) ())
 
@@ -30,10 +37,41 @@ package: std/db
     conn))
 
 (def (sql-close conn)
-  (when (connection-e conn)
-    (try {close conn}
-      (finally
-       (set! (connection-e conn) #f)))))
+  (with ((connection e txn-begin txn-commit txn-abort) conn)
+    (when e
+      (try
+       (when txn-begin
+         (with-catch void (lambda () {finalize txn-begin})))
+       (when txn-commit
+         (with-catch void (lambda () {finalize txn-commit})))
+       (when txn-abort
+         (with-catch void (lambda () {finalize txn-abort})))
+       {close conn}
+       (finally
+        (set! (connection-e conn) #f)
+        (set! (connection-txn-begin conn) #f)
+        (set! (connection-txn-commit conn) #f)
+        (set! (connection-txn-abort conn) #f))))))
+
+(def (sql-txn-do conn sql getf setf)
+  (with ((connection e) conn)
+    (cond
+     ((not e)
+      (error "Invalid operation; connection closed" conn))
+     ((getf conn) => sql-exec)
+     (else
+      (let (stmt {prepare conn sql})
+        (setf conn stmt)
+        (sql-exec stmt))))))
+
+(def (sql-txn-begin conn)
+  (sql-txn-do conn "BEGIN TRANSACTION" connection-txn-begin connection-txn-begin-set!))
+
+(def (sql-txn-commit conn)
+  (sql-txn-do conn "COMMIT" connection-txn-commit connection-txn-commit-set!))
+
+(def (sql-txn-abort conn)
+  (sql-txn-do conn "ROLLBACK" connection-txn-abort connection-txn-abort-set!))
 
 (def (sql-prepare conn text)
   (if (connection-e conn)
