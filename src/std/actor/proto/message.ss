@@ -33,7 +33,7 @@ package: std/actor/proto
 (def rpc-proto-message-event   #x04)
 (def rpc-proto-message-stream  #x05)
 (def rpc-proto-message-end     #x06)
-(def rpc-proto-message-max-length 65536)
+(def rpc-proto-message-max-length (expt 2 20)) ; 1MB
 ;; protocols
 (def rpc-proto-null          #x00)
 (def rpc-proto-cookie        #x01)

@@ -64,7 +64,7 @@ package: std/actor/proto
              (_      (when (fx< rd ::cipher-iv-length)
                        (raise-rpc-error 'rpc-proto-read "premature port end")))
              (size   (read-u32 sock))
-             (_      (unless (fx< size 65536)
+             (_      (unless (fx< size rpc-proto-message-max-length)
                        (raise-rpc-error 'rpc-proto-read "message too large" size)))
              (ctext  (make-u8vector size))
              (rd     (read-subu8vector ctext 0 size sock))
