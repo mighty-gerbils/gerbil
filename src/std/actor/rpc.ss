@@ -363,6 +363,7 @@ package: std/actor
   
   (def (close-connection)
     (rpc-close-port sock)
+    (thread-interrupt! writer (cut raise 'interrupt))
     (for-each
       (lambda (wire-id)
         (cond
@@ -521,7 +522,8 @@ package: std/actor
                  (catch (e) e)))
       (cond
        ((u8vector? e)
-        (connection-write-and-loop e))
+        (thread-send writer e)
+        (loop))
        (local-error?
         (log-error "marshall error" e)
         (let (content (message-e msg))
@@ -534,14 +536,6 @@ package: std/actor
         (log-error "marshall error" e)
         (loop)))))
   
-  (def (connection-write-and-loop data)
-    (let (e (try (write-e data sock) #!void (catch (e) e)))
-      (if (void? e)
-        (loop)
-        (begin
-          (log-error "write error" e)
-          (close-connection)))))
-  
   (def (dispatch-error wire-id what)
     (with ((values actor k proto stream?) (hash-ref continuations wire-id))
       (!!error actor what k)
@@ -553,23 +547,28 @@ package: std/actor
      ((hash-get timeouts timeo)
       => (lambda (wire-id)
            (dispatch-error wire-id "timeout")))))
-
-  (def (keep-alive)
-    (let (e (try (write-e #!void sock) #!void (catch (e) e)))
-      (if (void? e)
-        (loop)
-        (begin
-          (log-error "write error" e)
-          (close-connection)))))
+  
+  (def (writer-loop)
+    (<< (! (or rpc-keep-alive never-evt)
+           (write-e #!void sock)
+           (writer-loop))
+        ((? u8vector? data)
+         (write-e data sock)
+         (writer-loop))
+        (bogus
+         (warning "unexpected message ~a" bogus)
+         (writer-loop))))
   
   (def (loop)
-    (<< (! (or rpc-keep-alive never-evt) (keep-alive))
-        (! sock
+    (<< (! sock
            (reset-idle-timeout)
            (read-message))
         (! (choice-evt (hash-keys timeouts))
            => dispatch-timeout)
         (! idle-timeout
+           (close-connection))
+        (! writer
+           (log-error "writer error" (with-catch values (cut thread-join! writer)))
            (close-connection))
         ((? message? msg)
          (reset-idle-timeout)
@@ -577,6 +576,8 @@ package: std/actor
         (bogus
          (warning "unexpected message ~a" bogus)
          (loop))))
+
+  (def writer (spawn writer-loop))
   
   (reset-idle-timeout)
   (loop))
