@@ -12,12 +12,17 @@
   (config-have-sqlite
    (import "db/sqlite-test")))
 
+(cond-expand
+  (config-have-lmdb
+   (import "db/lmdb-test")))
+
 (def tests
   [generic-runtime-test generic-macro-test
    iter-test
    event-test
    actor-rpc-test actor-rpc-stream-test
    (if config-enable-sqlite [sqlite-test] []) ...
+   (if config-enable-lmdb [lmdb-test] []) ...
    ])
 
 (apply run-tests! tests)
