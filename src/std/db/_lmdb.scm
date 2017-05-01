@@ -33,7 +33,7 @@ END-C
 
 (define-macro (define-const symbol)
   (let* ((str (##symbol->string symbol))
-         (ref (##string-append "___result = " str ";")))
+         (ref (##string-append "___return (" str ");")))
     `(define ,symbol
        ((c-lambda () int ,ref)))))
 
@@ -171,71 +171,71 @@ END-C
 )
 
 (define-c-lambda ffi_make_mdb_env_ptr_ptr () MDB_env**
-  "___result = (MDB_env**)malloc (sizeof (MDB_env*));")
+  "___return ((MDB_env**)malloc (sizeof (MDB_env*)));")
 (define-c-lambda ffi_mdb_env_ptr (MDB_env**) MDB_env*
-  "___result = *___arg1;")
+  "___return (*___arg1);")
 (define-c-lambda ffi_make_mdb_txn_ptr_ptr () MDB_txn**
-  "___result = (MDB_txn**)malloc (sizeof (MDB_txn*));")
+  "___return ((MDB_txn**)malloc (sizeof (MDB_txn*)));")
 (define-c-lambda ffi_mdb_txn_ptr (MDB_txn**) MDB_txn*
-  "___result = *___arg1;")
+  "___return (*___arg1);")
 (define-c-lambda ffi_make_mdb_dbi_ptr () MDB_dbi*
-  "___result = (MDB_dbi*)malloc (sizeof (MDB_dbi));")
+  "___return ((MDB_dbi*)malloc (sizeof (MDB_dbi)));")
 (define-c-lambda ffi_mdb_dbi_ptr_value (MDB_dbi*) MDB_dbi
-  "___result = *___arg1;")
+  "___return (*___arg1);")
 (define-c-lambda ffi_mdb_dbi_value (MDB_dbi) unsigned-int
-  "___result = ___arg1;")
+  "___return (___arg1);")
 (define-c-lambda ffi_make_mdb_val_ptr () MDB_val*
-  "___result = (MDB_val*)malloc (sizeof (MDB_val));")
+  "___return ((MDB_val*)malloc (sizeof (MDB_val)));")
 (define-c-lambda ffi_mdb_val_size (MDB_val*) size_t
-  "___result = ___arg1->mv_size;")
+  "___return (___arg1->mv_size);")
 (define-c-lambda ffi_mdb_val_data (MDB_val* scheme-object) void
   "ffi_mdb_val_data")
 (define-c-lambda ffi_make_mdb_cursor_ptr_ptr () MDB_cursor**
-  "___result = (MDB_cursor**)malloc (sizeof (MDB_cursor*));")
+  "___return ((MDB_cursor**)malloc (sizeof (MDB_cursor*)));")
 (define-c-lambda ffi_mdb_cursor_ptr (MDB_cursor**) MDB_cursor*
-  "___result = *___arg1;")
+  "___return (*___arg1);")
 (define-c-lambda ffi_make_mdb_stat_ptr () MDB_stat*
-  "___result = (MDB_stat*)malloc (sizeof (MDB_stat));")
+  "___return ((MDB_stat*)malloc (sizeof (MDB_stat)));")
 (define-c-lambda ffi_mdb_stat_psize (MDB_stat*) unsigned-int
-  "___result = ___arg1->ms_psize;")
+  "___return (___arg1->ms_psize);")
 (define-c-lambda ffi_mdb_stat_depth (MDB_stat*) unsigned-int
-  "___result = ___arg1->ms_depth;")
+  "___return (___arg1->ms_depth);")
 (define-c-lambda ffi_mdb_stat_branch_pages (MDB_stat*) size_t
-  "___result = ___arg1->ms_branch_pages;")
+  "___return (___arg1->ms_branch_pages);")
 (define-c-lambda ffi_mdb_stat_leaf_pages (MDB_stat*) size_t
-  "___result = ___arg1->ms_leaf_pages;")
+  "___return (___arg1->ms_leaf_pages);")
 (define-c-lambda ffi_mdb_stat_overflow_pages (MDB_stat*) size_t
-  "___result = ___arg1->ms_overflow_pages;")
+  "___return (___arg1->ms_overflow_pages);")
 (define-c-lambda ffi_mdb_stat_entries (MDB_stat*) size_t
-  "___result = ___arg1->ms_entries;")
+  "___return (___arg1->ms_entries);")
 (define-c-lambda ffi_mdb_envinfo_mapsize (MDB_envinfo*) size_t
-  "___result = ___arg1->me_mapsize;")
+  "___return (___arg1->me_mapsize);")
 (define-c-lambda ffi_mdb_envinfo_last_pgno (MDB_envinfo*) size_t
-  "___result = ___arg1->me_last_pgno;")
+  "___return (___arg1->me_last_pgno);")
 (define-c-lambda ffi_mdb_envinfo_last_txnid (MDB_envinfo*) size_t
-  "___result = ___arg1->me_last_txnid;")
+  "___return (___arg1->me_last_txnid);")
 (define-c-lambda ffi_mdb_envinfo_maxreaders (MDB_envinfo*) unsigned-int
-  "___result = ___arg1->me_maxreaders;")
+  "___return (___arg1->me_maxreaders);")
 (define-c-lambda ffi_mdb_envinfo_numreaders (MDB_envinfo*) unsigned-int
-  "___result = ___arg1->me_numreaders;")
+  "___return (___arg1->me_numreaders);")
 (define-c-lambda ffi_make_mdb_envinfo_ptr () MDB_envinfo*
-  "___result = (MDB_envinfo*)malloc (sizeof (MDB_envinfo));")
+  "___return ((MDB_envinfo*)malloc (sizeof (MDB_envinfo)));")
 (define-c-lambda ffi_make_uint_ptr () unsigned-int*
-  "___result = (unsigned int*)malloc (sizeof (unsigned int));")
+  "___return ((unsigned int*)malloc (sizeof (unsigned int)));")
 (define-c-lambda ffi_uint_ptr_value (unsigned-int*) unsigned-int
-  "___result = *___arg1;")
+  "___return (*___arg1);")
 (define-c-lambda ffi_make_string_ptr () UTF-8-string*
-  "___result = (char**)malloc (sizeof (char*));")
+  "___return ((char**)malloc (sizeof (char*)));")
 (define-c-lambda ffi_string_ptr_value (UTF-8-string*) UTF-8-string
-  "___result = *___arg1;")
+  "___return (*___arg1);")
 (define-c-lambda ffi_make_size_t_ptr () size_t*
-  "___result = (size_t*)malloc (sizeof (size_t));")
+  "___return ((size_t*)malloc (sizeof (size_t)));")
 (define-c-lambda ffi_size_t_ptr_value (size_t*) size_t
-  "___result = *___arg1;")
+  "___return (*___arg1);")
 
 ;; LMDB API
 (define-c-lambda mdb_version () UTF-8-string
-  "___result = mdb_version (NULL, NULL, NULL);")
+  "___return (mdb_version (NULL, NULL, NULL));")
 (define-c-lambda mdb_strerror (int) UTF-8-string
   "mdb_strerror")
 (define-c-lambda mdb_env_create (MDB_env**) int
@@ -260,7 +260,7 @@ END-C
 (define-c-lambda mdb_env_get_flags (MDB_env* unsigned-int*) int
   "mdb_env_get_flags")
 (define-c-lambda mdb_env_get_path (MDB_env* UTF-8-string*) int
-  "___result = mdb_env_get_path (___arg1, (const char**)___arg2);")
+  "___return (mdb_env_get_path (___arg1, (const char**)___arg2));")
 ;; mdb_env_get_fd
 (define-c-lambda mdb_env_set_mapsize (MDB_env* size_t) int
   "mdb_env_set_mapsize")
