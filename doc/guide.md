@@ -287,6 +287,38 @@ For example:
 
 ```
 
+#### Mixing classes and structs
+
+Structs can only extend other structs with single inheritance.
+In contrast, classes can freely mixin structs, as long as the
+mixins contain a compatible base struct. 
+
+For example, the following constructs a diamond hierarchy with a base struct:
+```
+(defstruct A (x))
+(defclass (B A) ())
+(defclass (C A) ())
+(defclass (D B C) () constructor: :init!)
+(defmethod {:init! D}
+  (lambda (self x)
+    (set! (A-x self) x)))
+(def d (make-D 1))
+
+> (A? d)
+=> #t
+> (A-x d)
+=> 1
+> (B? d)
+=> #t
+> (C? d)
+=> #t
+> (D? d)
+=> #t
+> (type-descriptor-mixin D::t)
+=> (#<type #5 B> #<type #6 C> #<type #7 A>)
+
+```
+
 ### Pattern Matching
 
 Gerbil uses pattern matching extensively, so a suitable match
