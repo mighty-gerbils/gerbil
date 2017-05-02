@@ -112,15 +112,10 @@
 (define &class-type::t
   (##structure ##type-type '##class-type## 'class-type 24 #f '#()))
 
-(define (class-type-descriptor? klass)
-  (let ((super (##type-super klass)))
-    (and super
-         (or (eq? &class-type::t super)
-             (eq? (##type-id super) '##class-type##)))))
-
 (define (class-type? klass)
   (and (type-descriptor? klass)
-       (class-type-descriptor? klass)))
+       (type-descriptor-mixin klass)
+       #t))
 
 (define (make-type-descriptor type-id type-name type-super
                               rtd-mixin rtd-fields rtd-plist
@@ -149,8 +144,8 @@
 (define (make-struct-type-descriptor id name super fields plist ctor)
   (make-type-descriptor id name super #f fields plist ctor #f #f))
 
-(define (make-class-type-descriptor id name mixin fields plist ctor slots)
-  (make-type-descriptor id name &class-type::t mixin fields plist ctor slots #f))
+(define (make-class-type-descriptor id name super mixin fields plist ctor slots)
+  (make-type-descriptor id name (or super &class-type::t) mixin fields plist ctor slots #f))
 
 (define (type-descriptor-mixin klass)
   (##vector-ref klass 6))
@@ -268,7 +263,7 @@
     (let ((std-mixin  (class-linearize-mixins super))
           (std-plist  (cons (cons slots: std-slot-list) plist))
           (std-ctor   (or ctor (find-super-ctor))))
-      (make-class-type-descriptor id name std-mixin std-fields std-plist std-ctor std-slots))))
+      (make-class-type-descriptor id name #f std-mixin std-fields std-plist std-ctor std-slots))))
 
 (define (class-linearize-mixins klass-lst)
   (define (class->list klass)
