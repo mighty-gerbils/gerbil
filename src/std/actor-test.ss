@@ -24,7 +24,7 @@
          (lp)))))
 
 (def (interrupt-threads! . threads)
-  (for-each (lambda (thread) (thread-interrupt! thread (cut raise 'interrupt)))
+  (for-each (lambda (thread) (with-catch void (cut thread-interrupt! thread (cut raise 'interrupt))))
             threads))
 
 (def rpc-server-address1 "127.0.0.1:9000")
