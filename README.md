@@ -33,7 +33,7 @@ bothered polluted everything with more than a (C) vyzo at hackzen.org,
 would read like this:
 
 ```
-(C) 2007-2016 Dimitris Vyzovitis <vyzo -at- hackzen.org>
+(C) 2007-2017 Dimitris Vyzovitis <vyzo -at- hackzen.org>
 Gerbil is Free Software, distributed under the GNU LGPLv2.1 or later
 and the Apache 2.0 license.
 ```
