@@ -1,7 +1,7 @@
 # Gerbil Scheme
 
-Gerbil is a new dialect of Scheme, designed around a multiresolution
-macro system.
+Gerbil is an opinionated dialect of Scheme with a state of the
+art macro and module system on the Gambit runtime. 
 
 The macro system is based on quote-syntax, and provides the full
 meta-syntactic tower with a native implementation of syntax-case.
@@ -13,7 +13,7 @@ of time compilation and compiled macros.
 ## History of Gerbil
 Gerbil has been my private Scheme for many years, evolved out of a set
 of common macros that i used across different implementations. As such
-i have multiple backends that work with the Gerbil macro system, but I
+I have had multiple backends that work with the Gerbil macro system, but I
 have elected to base the primary version of Gerbil on Gambit.
 
 At the prompting of some friends (they know who they are), who
