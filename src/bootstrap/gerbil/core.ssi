@@ -482,7 +482,10 @@ namespace: gerbil/core
                     (displayln displayln)
                     (display* display*)
                     (load-module load-module)
-                    (keyword-dispatch keyword-dispatch))
+                    (keyword-dispatch keyword-dispatch)
+                    (gerbil-version-string gerbil-version-string)
+                    (gerbil-system-version-string
+                     gerbil-system-version-string))
                    (%#define-alias transcript-on void)
                    (%#define-alias transcript-off void)
                    (%#define-alias car-set! set-car!)

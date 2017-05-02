@@ -113,7 +113,7 @@
                _$args15051_)))
     (define |gerbil/core::<MOP>::<MOP:2>[1]#extended-class-info::t|
       (make-class-type
-       'gerbil.core#extended-stuct-info::t
+       'gerbil.core#extended-class-info::t
        (cons |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-info::t|
              (cons |gerbil/core::<MOP>::<MOP:2>[1]#extended-runtime-type-info::t|
                    (cons |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info::t|
@@ -1266,7 +1266,7 @@
                                       ((lambda (_L15371_ _L15373_)
                                          (if (if (gx#stx-list? _L15371_)
                                                  (gx#stx-andmap
-                                                  |gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-class-info?|
+                                                  |gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-type-info?|
                                                   _L15371_)
                                                  '#f)
                                              (|gerbil/core::<MOP>::<MOP:2>[1]#generate-typedef|
