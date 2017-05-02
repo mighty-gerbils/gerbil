@@ -206,13 +206,24 @@
 (define (struct-field-set! klass obj off val)
   (##structure-set! obj val (fx1+ off) klass 'struct-field-set!))
 
+(define (struct-subtype? klass xklass)
+  (let ((klass-t (##type-id klass)))
+    (let lp ((next xklass))
+      (cond
+       ((not next)
+        #f)
+       ((eq? klass-t (##type-id next))
+        #t)
+       (else
+        (lp (##type-super next)))))))
+
 (define (make-class-type id super slots name plist ctor)
   (define (class-slots klass)
     (assgetq slots: (type-descriptor-plist klass)))
   
-  (define (make-slots)
+  (define (make-slots off)
     (let ((slot-table (make-hash-table-eq)))
-      (let lp ((rest super) (off 0) (slot-list '()))
+      (let lp ((rest super) (off off) (slot-list '()))
         (core-match rest
           ((hd . rest)
            (merge-slots slot-table (class-slots hd) off slot-list 
@@ -236,7 +247,7 @@
         (else
          (K off r)))))
   
-  (define (find-super-ctor)
+  (define (find-super-ctor super)
     (let lp ((rest super) (ctor #f))
       (core-match rest
         ((hd . rest)
@@ -248,26 +259,76 @@
                   (error "Conflicting implicit constructors" ctor xctor))))
           (else (lp rest ctor))))
         (else ctor))))
+
+  (define (find-super-struct super)
+    (define (base-struct super-struct klass)
+      (cond
+       (super-struct
+        (cond 
+         ((struct-subtype? super-struct klass)
+          klass)
+         ((struct-subtype? klass super-struct)
+          super-struct)
+         (else
+          (error "Bad mixin: incompatible struct bases" klass super-struct))))
+       ((struct-type? klass) klass)
+       ((class-type? klass)
+        (let lp ((next (##type-super klass)))
+          (cond
+           ((not next)
+            #f)
+           ((struct-type? next)
+            next)
+           ((class-type? next)
+            (lp next))
+           (else #f))))
+       (else #f)))
+    
+    (let lp ((rest super) (super-struct #f))
+      (core-match rest
+        ((hd . rest)
+         (lp rest (base-struct super-struct hd)))
+        (else super-struct))))
+
+  (define (expand-struct-mixin super)
+    (let lp ((rest super) (mixin '()))
+      (core-match rest
+        ((hd . rest)
+         (if (struct-type? hd)
+           (let lp2 ((next hd) (mixin mixin))
+             (cond
+              ((not next)
+               (lp rest mixin))
+              ((struct-type? next)
+               (lp2 (##type-super next) (cons next mixin)))
+              (else
+               (lp rest mixin))))
+           (lp rest (cons hd mixin))))
+        (else
+         (reverse mixin)))))
   
   (cond
-   ((find (lambda (klass) (not (class-type? klass))) super)
+   ((find (lambda (klass) (not (type-descriptor? klass))) super)
     => (lambda (klass)
-         (error "Illegal super class; not a class-type" klass)))
+         (error "Illegal super class; not a type descriptor" klass)))
    ((find (lambda (klass) 
              (assgetq final: (type-descriptor-plist klass))) 
            super)
     => (lambda (klass) 
          (error "Cannot extend final class" klass))))
-  
-  (let-values (((std-fields std-slots std-slot-list) (make-slots)))
-    (let ((std-mixin  (class-linearize-mixins super))
-          (std-plist  (cons (cons slots: std-slot-list) plist))
-          (std-ctor   (or ctor (find-super-ctor))))
-      (make-class-type-descriptor id name #f std-mixin std-fields std-plist std-ctor std-slots))))
+
+  (let* ((std-super (find-super-struct super))
+         (mixin (if std-super (expand-struct-mixin super) super)))
+    (let-values (((std-fields std-slots std-slot-list)
+                  (make-slots (if std-super (type-descriptor-fields std-super) 0))))
+      (let ((std-mixin  (class-linearize-mixins mixin))
+            (std-plist  (cons (cons slots: std-slot-list) plist))
+            (std-ctor   (or ctor (find-super-ctor super))))
+        (make-class-type-descriptor id name std-super std-mixin std-fields std-plist std-ctor std-slots)))))
 
 (define (class-linearize-mixins klass-lst)
   (define (class->list klass)
-    (cons klass (type-descriptor-mixin klass)))
+    (cons klass (or (type-descriptor-mixin klass) '())))
   
   (core-match klass-lst
     (() '())
