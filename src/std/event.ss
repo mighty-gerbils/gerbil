@@ -299,7 +299,7 @@ package: std
       (lambda (thread)
         (unless (eq? thread self)
           (unless (thread-dead? thread)
-            (with-catch void (cut thread-interrupt! thread (lambda () (raise 'interrupt)))))
+            (with-catch void (cut thread-interrupt! thread (cut raise 'interrupt))))
           (alet (sel (thread-specific thread))
             (thread-specific-set! thread #f)
             (selector-abort! sel main))))

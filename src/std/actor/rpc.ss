@@ -363,7 +363,7 @@ package: std/actor
   
   (def (close-connection)
     (rpc-close-port sock)
-    (thread-interrupt! writer (cut raise 'interrupt))
+    (with-catch void (cut thread-interrupt! writer (cut raise 'interrupt)))
     (for-each
       (lambda (wire-id)
         (cond

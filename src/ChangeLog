@@ -1,5 +1,22 @@
+5-2-2017: Gerbil-v0.6
+- gerbil/runtime:
+  - MOP allows mixin structs in make-class-type; classes can now mixin structs 
+  - gerbil-version and gerbil-system-version
+- prelude:
+  - defclass allows mixing arbitrary types and defers to runtime for composition
+    validation
+  - fix extend-class-type-info type id
+- stdlib
+  - actor/rpc:
+    - stream support
+    - up [arbitrary] max message size to 1MB
+    - offload message writes from dispatch thread to dedicated writer thread
+  - db/lmdb: LMDB bindings and high level interface
+  - db/dbi: add explicit methods for transactions with cached statements
+  - update ffi code to use ___return instead of ___result[_voidstar]
+  - fix regression with thread-interrupt! raising exceptions in recent gambit
 4-5-2016: Gerbil-v0.5.1
-- support compilation of executable stubs
+- support compilation of dynamically linked executables
 3-24-2016: Gerbil-v0.5
 - Revamped build system
   - by default, build.sh builds a stage1 gerbil for faster build times
