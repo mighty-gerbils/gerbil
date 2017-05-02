@@ -1484,7 +1484,7 @@ package: gerbil
         (syntax-case hd ()
           ((id . super)
            (and (stx-list? #'super)
-                (stx-andmap syntax-local-class-info? #'super))
+                (stx-andmap syntax-local-type-info? #'super))
            (generate-typedef stx #'id (syntax->list #'super) slots body #f))
           (_ (if (identifier? hd)
                (generate-typedef stx hd [] slots body #f)
