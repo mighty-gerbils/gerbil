@@ -15,7 +15,7 @@
 (##namespace ("" define-macro define let let* if or and
               quote quasiquote unquote unquote-splicing
               c-lambda c-define-type c-declare c-initialize 
-              macro-foreign-tags macro-slot))
+              foreign-tags macro-slot))
 
 (c-declare #<<END-C
 #include <openssl/evp.h>
@@ -69,7 +69,7 @@ END-C
 (define-macro (define-c-type-predicate pred tag)
   `(define (,pred x)
      (and (##foreign? x)
-          (##memq ',tag (macro-foreign-tags x)))))
+          (##memq ',tag (foreign-tags x)))))
 
 ;; error handling
 (define-c-lambda ERR_get_error () unsigned-long)
