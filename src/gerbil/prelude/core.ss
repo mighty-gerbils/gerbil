@@ -1282,7 +1282,7 @@ package: gerbil
                                              extended-runtime-type-info::t
                                              expander-type-info::t)
         make-extended-class-info extended-class-info?
-        id:   gerbil.core#extended-stuct-info::t
+        id:   gerbil.core#extended-class-info::t
         name: class-info)
       
       (defstruct-type runtime-rtd-exhibitor::t #f
