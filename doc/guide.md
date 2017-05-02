@@ -323,7 +323,7 @@ For example, the following constructs a diamond hierarchy with a base struct:
 
 Gerbil uses pattern matching extensively, so a suitable match
 macro is provided by the language. The pattern language is
-similar to plt's match lanuge, with structs destuctured by
+similar to plt's match macro, with structs destuctured by
 the structure name.
 In addition, the square brackets destructure lists symmetrically
 to their construction.
@@ -354,7 +354,7 @@ a 3d-point (2 0 0)
  
 ```
 
-#### destructuring Binds
+#### Destructuring Binds
 Gerbil's `match` provides a shorthand syntax for match lambdas:
 ```
 (def car+cdr (match <> ([a . b] (values a b))))
