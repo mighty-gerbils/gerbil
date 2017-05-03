@@ -10,7 +10,7 @@
   (displayln "... compile " modf)
   (let ((proc (open-process 
                (list path: "gsc"
-                     arguments: (list modf)
+                     arguments: (list "-cc-options" "--param max-gcse-memory=300000000" modf)
                      stdout-redirection: #f))))
     (if (not (zero? (process-status proc)))
       (error "Compilation error; gsc exit with nonzero status" modf))))

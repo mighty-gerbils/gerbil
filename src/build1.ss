@@ -38,5 +38,6 @@
 (for-each
   (lambda (modf)
     (displayln "... compile " modf)
-    (compile-file modf [output-dir: gerbil-libdir invoke-gsc: #t]))
+    (compile-file modf [output-dir: gerbil-libdir invoke-gsc: #t
+                        gsc-options: ["-cc-options" "--param max-gcse-memory=300000000"]]))
   gerbil-modules)

@@ -18,6 +18,7 @@
   (let ((proc (open-process 
                (list path: "gsc"
                      arguments: (list "-o" *libdir*
+                                      "-cc-options" "--param max-gcse-memory=300000000"
                                       "-e" "(include \"gx-gambc#.scm\")"
                                       (string-append modf ".scm"))
                      stdout-redirection: #f))))
