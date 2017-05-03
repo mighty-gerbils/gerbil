@@ -12,6 +12,7 @@ package: std/net
         :std/error
         :std/net/uri
         :std/text/json
+        :std/text/zlib
         :std/srfi/13
         )
 
@@ -56,7 +57,8 @@ package: std/net
 (def http/1.1-base-headers
   '(("User-Agent" . "Mozilla/5.0 (compatible; gerbil/1.0)")
     ("Connection" . "close")
-    ("Accept" . "*/*")))
+    ("Accept" . "*/*")
+    ("Accept-Encoding" . "gzip, deflate, identity")))
 
 (def (http-headers-cookies cookies)
   (def (fold-e cookie str)
@@ -338,7 +340,19 @@ package: std/net
     => (lambda (port)
          (let (headers (request-headers req))
            (try
-            (let (body (http-request-read-body port headers))
+            (let* ((body (http-request-read-body port headers))
+                   (body
+                    (cond
+                     ((assoc "Content-Encoding" headers)
+                      => (lambda (enc)
+                           (case (cdr enc)
+                             (("gzip" "deflate")
+                              (uncompress body))
+                             (("identity")
+                              body)
+                             (else
+                              (error "Unsupported content encoding" enc)))))
+                     (else body))))
               (set! (request-body req) body)
               body)
             (finally
