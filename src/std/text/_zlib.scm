@@ -63,7 +63,8 @@ END-C
 (define-c-lambda compressBound (unsigned-long) unsigned-long)
 (define-c-lambda deflate (scheme-object scheme-object int) int
   "ffi_compress")
-(define-c-lambda inflateInit (z_stream*) int)
+(define-c-lambda inflateInit (z_stream*) int
+  "___return (inflateInit2 (___arg1, MAX_WBITS + 32));")
 (define-c-lambda inflate (z_stream* scheme-object scheme-object int) int
   "ffi_inflate")
 (define-c-lambda inflateEnd (z_stream*) int)
