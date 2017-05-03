@@ -62,6 +62,7 @@
     "web/rack"
     "db/dbi"
     "db/sqlite"
+    "db/lmdb"
     ))
 
 (let (srcdir (path-normalize (path-directory (this-source-file))))
