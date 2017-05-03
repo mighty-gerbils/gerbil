@@ -1,3 +1,5 @@
+5-3-2017: Gerbil-v0.6.1
+- fix issues with disabled compiler optimizations from gce memory [gambit#249]
 5-2-2017: Gerbil-v0.6
 - gerbil/runtime:
   - MOP allows mixin structs in make-class-type; classes can now mixin structs 
