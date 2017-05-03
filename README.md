@@ -110,7 +110,7 @@ a introductory guide in markdown for seasoned Schemers.
 You can read it rendered online at Github:
 [guide.md](https://github.com/vyzo/gerbil/blob/master/doc/guide.md).
 
-There is also Gerbil wiki on [github](https://github.com/vyzo/gerbil/wiki),
+There is also Gerbil [wiki](https://github.com/vyzo/gerbil/wiki) at Github, 
 which is still in its infancy.
 
 Beyond that, there is little further documentation at this point,
