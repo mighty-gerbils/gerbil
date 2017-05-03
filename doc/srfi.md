@@ -32,7 +32,7 @@ The following SRFIs are supported by gerbil:
 | SRFI 43 | Vector Library | stdlib | `:std/srfi/43` |
 | SRFI 48 | Intermediate Format Strings | stdlib | `:std/format` |
 | SRFI 60 | Integers as Bits | runtime | `:gerbil/gambit/bits` |
-| SRFI 62 | S-expression comments | gambit reader | `:gerbil/gambit/hvectors` |
+| SRFI 62 | S-expression comments | reader ||
 | SRFI 78 | Lightweight testing | stdlib | `:std/srfi/78` |
 | SRFI 87 | => in case clauses | core prelude ||
 | SRFI 88 | Keyword Objects | runtime ||
