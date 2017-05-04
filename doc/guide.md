@@ -797,6 +797,16 @@ The iteration macro supports the usual suspects for generic
 iteration: lists, vectors, strings, hash-tables, input-ports,
 and ranges.
 
+Siimple filters can be specified with the `when` and `unless` keyword in
+the binding for:
+```
+> (for ([x . y] '((a . 0) (b . 1) (c . 2)) when (> y 0)) (displayln x))
+b
+c
+> (for ([x . y] '((a . 0) (b . 1) (c . 2)) unless (> y 0)) (displayln x))
+a
+```
+
 The variant `for*` performs multi-dimensional iteration, eqiuvalent
 to nested fors:
 ```
@@ -807,8 +817,6 @@ to nested fors:
 10
 11
 ```
-
-
 
 The values of an iteration can be collected in a list with `for/collect`:
 ```

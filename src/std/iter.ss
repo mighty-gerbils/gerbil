@@ -169,17 +169,23 @@ package: std
 
 (begin-syntax
   (def (for-binding? bind)
-    (syntax-case bind ()
+    (syntax-case bind (when unless)
       ((pat expr) (match-pattern? #'pat))
+      ((pat expr when filter-expr) (match-pattern? #'pat))
+      ((pat expr unless filter-expr) (match-pattern? #'pat))
       (_ #f)))
   
   (def (for-binding-expr binding)
-    (syntax-case binding ()
-      ((bind bind-e) #'bind-e)))
+    (syntax-case binding (when unless)
+      ((bind bind-e) #'bind-e)
+      ((bind bind-e when filter-e)
+       #'(iter-filter (match <> (bind filter-e)) bind-e))
+      ((bind bind-e unless filter-e)
+       #'(iter-filter (match <> (bind (not filter-e))) bind-e))))
 
   (def (for-binding-bind binding)
     (syntax-case binding ()
-      ((bind bind-e) #'bind))))
+      ((bind bind-e . _) #'bind))))
 
 (defsyntax (for stx)
   (def (generate-for bindings body)
