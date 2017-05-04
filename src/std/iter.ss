@@ -9,7 +9,7 @@ package: std
         )
 (export
   (struct-out iterator)
-  :iter iter-end iter-end?
+  :iter iter-end iter-end? iter-nil iter-nil?
   iter-start! iter-value iter-next!
   for for* for/collect for/fold
   in-range in-naturals in-hash-keys in-hash-values
@@ -25,6 +25,12 @@ package: std
   (make-:iter-end))
 (def (iter-end? obj)
   (eq? iter-end obj))
+
+(defstruct :iter-nil ())
+(def iter-nil
+  (make-:iter-nil))
+(def (iter-nil? obj)
+  (eq? iter-nil obj))
 
 (defgeneric :iter
   (lambda (obj) (call-method obj ':iter)))
@@ -86,20 +92,35 @@ package: std
     (with ((iterator proc) iter)
       (let (cort (coroutine (lambda () (proc) iter-end)))
         (set! (iterator-e iter)
-          cort))))
+          [cort . iter-nil]))))
   (def (value-e iter)
-    (with ((iterator cort) iter)
-      (continue cort)))
-  (make-iterator proc start-e value-e void))
+    (with ((iterator [cort . val]) iter)
+      (if (iter-nil? val)
+        (let (val (continue cort))
+          (set! (cdr (iterator-e iter)) val)
+          val)
+        val)))
+  (def (next-e iter)
+    (set! (cdr (iterator-e iter))
+      iter-nil))
+  (make-iterator proc start-e value-e next-e))
 
 (def (iter-input-port port (read-e read))
   (def (value-e iter)
-    (with ((iterator port) iter)
-      (let (e (read-e port))
-        (if (eof-object? e)
-          iter-end
-          e))))
-  (make-iterator port void value-e void))
+    (with ((iterator [port . val]) iter)
+      (if (iter-nil? val)
+        (let* ((e (read-e port))
+               (val
+                (if (eof-object? e)
+                  iter-end
+                  e)))
+          (set! (cdr (iterator-e iter)) val)
+          val)
+        val)))
+  (def (next-e iter)
+    (set! (cdr (iterator-e iter))
+      iter-nil))
+  (make-iterator [port . iter-nil] void value-e next-e))
 
 (def (iter-in-range start count step)
   (def (value-e iter)
