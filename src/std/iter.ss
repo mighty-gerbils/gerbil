@@ -153,18 +153,18 @@ package: std
 (def (iter-filter pred iter)
   (lambda ()
     (for (x iter)
-      (when (call/values (lambda () x) pred)
+      (when (pred x)
         (yield x)))))
 
 (def (iter-map mapf iter)
   (lambda ()
     (for (x iter)
-      (yield (call/values (lambda () x) mapf)))))
+      (yield (mapf x)))))
 
 (def (iter-filter-map mapf iter)
   (lambda ()
     (for (x iter)
-      (alet (y (call/values (lambda () x) mapf))
+      (alet (y (mapf x))
         (yield y)))))
 
 (begin-syntax
