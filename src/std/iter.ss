@@ -150,22 +150,47 @@ package: std
 (def (iter-next! iter)
   ((iterator-next iter) iter))
 
+(def (iter-xform iter value-e)
+  (def (start-e iter)
+    (with ((iterator xiter) iter)
+      (iter-start! xiter)))
+  (def (next-e iter)
+    (with ((iterator xiter) iter)
+      (iter-next! xiter)))
+  (make-iterator (:iter iter) start-e value-e next-e))
+
 (def (iter-filter pred iter)
-  (lambda ()
-    (for (x iter)
-      (when (pred x)
-        (yield x)))))
+  (def (value-e iter)
+    (with ((iterator xiter) iter)
+      (let lp ((val (iter-value xiter)))
+        (cond
+         ((iter-end? val) iter-end)
+         ((pred val) val)
+         (else
+          (iter-next! xiter)
+          (lp (iter-value xiter)))))))
+  (iter-xform iter value-e))
 
 (def (iter-map mapf iter)
-  (lambda ()
-    (for (x iter)
-      (yield (mapf x)))))
+  (def (value-e iter)
+    (with ((iterator xiter) iter)
+      (let (val (iter-value xiter))
+        (if (iter-end? val)
+          iter-end
+          (mapf val)))))
+  (iter-xform iter value-e))
 
 (def (iter-filter-map mapf iter)
-  (lambda ()
-    (for (x iter)
-      (alet (y (mapf x))
-        (yield y)))))
+  (def (value-e iter)
+    (with ((iterator xiter) iter)
+      (let lp ((val (iter-value xiter)))
+        (cond
+         ((iter-end? val) iter-end)
+         ((mapf val) => values)
+         (else
+          (iter-next! xiter)
+          (lp (iter-value xiter)))))))
+  (iter-xform iter value-e))
 
 (begin-syntax
   (def (for-binding? bind)

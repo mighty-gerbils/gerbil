@@ -67,4 +67,25 @@
       (def (test-for/fold)
         (for/fold (r []) ((x '(1 2 3)) (y '#(a b c d)))
           (cons* x y r)))
-      (check (test-for/fold) => '(3 c 2 b 1 a)))))
+      (check (test-for/fold) => '(3 c 2 b 1 a)))
+
+    (test-case "test iter xforms"
+      (def (test-xform-when)
+        (for/collect (x (in-range 5) when (odd? x)) x))
+      (check (test-xform-when) => '(1 3))
+
+      (def (test-xform-unless)
+        (for/collect (x (in-range 5) unless (odd? x)) x))
+      (check (test-xform-unless) => '(0 2 4))
+
+      (def (test-xform-filter)
+        (for/collect (x (iter-filter odd? (in-range 5))) x))
+      (check (test-xform-filter) => '(1 3))
+
+      (def (test-xform-map)
+        (for/collect (x (iter-map (cut * <> 2) (in-range 5))) x))
+      (check (test-xform-map) => '(0 2 4 6 8))
+
+      (def (test-xform-filter-map)
+        (for/collect (x (iter-filter-map (lambda (x) (and (odd? x) (* x 2))) (in-range 5))) x))
+      (check (test-xform-filter-map) => '(2 6)))))
