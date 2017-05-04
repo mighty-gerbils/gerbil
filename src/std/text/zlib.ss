@@ -187,7 +187,7 @@ package: std/text
       (let (rd (read-subu8vector ibuf 0 buflen inp))
         (cond
          ((fxzero? rd)
-          (fini (inflate-write #f r)))
+          (fini r))
          ((fx< rd buflen)
           (u8vector-shrink! ibuf rd)
           (fini (inflate-write ibuf r)))
