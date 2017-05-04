@@ -49,7 +49,7 @@ package: std/text
       (finally fini)))))
 
 (def (compress-gz-bytes data level)
-  (with-z-stream compress-gz zs
+  (with-z-stream compress zs
     (deflateInit_gz zs level)
     (compress-gz-data zs data)
     (deflateEnd zs)))
