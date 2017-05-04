@@ -7,9 +7,12 @@ package: std/text
 (extern
   Z_OK Z_STREAM_END Z_NEED_DICT
   Z_NO_COMPRESSION Z_BEST_SPEED Z_BEST_COMPRESSION Z_DEFAULT_COMPRESSION
+  Z_FINISH
   make_z_stream
-  z_stream_in z_stream_out z_stream_msg
-  compressBound deflate
+  z_stream_total_in z_stream_total_out
+  z_stream_msg
+  compressBound compress2
   inflateInit inflate inflateEnd
+  deflateInit deflateInit_gz deflate deflateEnd deflateBound
   )
 (load-module "std/text/_zlib")
