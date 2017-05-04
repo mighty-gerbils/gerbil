@@ -38,14 +38,21 @@ package: std/text
    (else
     (error "Bad input source" data))))
 
+(defrules with-z-stream ()
+  ((_ where zs init body fini)
+   (let* ((zs (make_z_stream))
+          (res init))
+     (unless (eq? res Z_OK)
+       (raise-io-error 'where "zlib stream initialization error" res))
+     (try
+      body
+      (finally fini)))))
+
 (def (compress-gz-bytes data level)
-  (let* ((zs (make_z_stream))
-         (res (deflateInit_gz zs level)))
-    (unless (eq? res Z_OK)
-      (raise-io-error 'compress-gz "deflateInit: zlib error" res))
-    (try
-     (compress-gz-data zs data)
-     (finally (deflateEnd zs)))))
+  (with-z-stream compress-gz zs
+    (deflateInit_gz zs level)
+    (compress-gz-data zs data)
+    (deflateEnd zs)))
 
 (def (compress-gz-data zs data)
   (let* ((buf (make-u8vector (deflateBound zs (u8vector-length data))))
@@ -59,13 +66,10 @@ package: std/text
   (deflate-port inp level deflateInit_gz))
 
 (def (deflate-port inp level init-e)
-  (let* ((zs (make_z_stream))
-         (res (init-e zs level)))
-    (unless (eq? res Z_OK)
-      (raise-io-error 'uncompress "deflateInit: zlib error" res))
-    (try
-     (do-deflate-port zs inp)
-     (finally (deflateEnd zs)))))
+  (with-z-stream compress zs
+    (init-e zs level)
+    (do-deflate-port zs inp)
+    (deflateEnd zs)))
 
 (def (do-deflate-port zs inp)
   (def buflen 1024)
@@ -73,7 +77,7 @@ package: std/text
   (def (fini r)
     (append-u8vectors (reverse r)))
   
-  (def (deflate-write ibuf r flush)
+  (def (deflate-next ibuf r flush)
     (let lp ((obuf (make-u8vector buflen)) (start 0) (r r))
       (let* ((icount (z_stream_total_in zs))
              (ocount (z_stream_total_out zs))
@@ -107,12 +111,12 @@ package: std/text
       (let (rd (read-subu8vector ibuf 0 buflen inp))
         (cond
          ((fxzero? rd)
-          (fini (deflate-write #f r Z_FINISH)))
+          (fini (deflate-next #f r Z_FINISH)))
          ((fx< rd buflen)
           (u8vector-shrink! ibuf rd)
-          (fini (deflate-write ibuf r Z_FINISH)))
+          (fini (deflate-next ibuf r Z_FINISH)))
          (else
-          (let (r (deflate-write ibuf r Z_NO_FLUSH))
+          (let (r (deflate-next ibuf r Z_NO_FLUSH))
             (lp r))))))))
 
 (def (uncompress data)
@@ -126,13 +130,10 @@ package: std/text
   (do-inflate data uncompress-data))
 
 (def (do-inflate data inflate-e)
-  (let* ((zs (make_z_stream))
-         (res (inflateInit zs)))
-    (unless (eq? res Z_OK)
-      (raise-io-error 'uncompress "inflateInit: zlib error" res))
-    (try
-     (inflate-e zs data)
-     (finally (inflateEnd zs)))))
+  (with-z-stream uncompress zs
+    (inflateInit zs)
+    (inflate-e zs data)
+    (inflateEnd zs)))
 
 (def (uncompress-data zs data)
   (def buflen 1024)
@@ -162,7 +163,7 @@ package: std/text
   (def (fini r)
     (append-u8vectors (reverse r)))
 
-  (def (inflate-write ibuf r)
+  (def (inflate-next ibuf r)
     (let lp ((obuf (make-u8vector buflen)) (start 0) (r r))
       (let* ((icount (z_stream_total_in zs))
              (ocount (z_stream_total_out zs))
@@ -190,6 +191,6 @@ package: std/text
           (fini r))
          ((fx< rd buflen)
           (u8vector-shrink! ibuf rd)
-          (fini (inflate-write ibuf r)))
+          (fini (inflate-next ibuf r)))
          (else
-          (lp (inflate-write ibuf r))))))))
+          (lp (inflate-next ibuf r))))))))
