@@ -50,6 +50,7 @@ END-C
 (define-const Z_DEFAULT_COMPRESSION)
 
 (define-const Z_FINISH)
+(define-const Z_NO_FLUSH)
 
 (c-define-type z_stream "z_stream")
 (c-define-type z_stream*
@@ -61,6 +62,10 @@ END-C
   "___return (___arg1->total_in);")
 (define-c-lambda z_stream_total_out (z_stream*) unsigned-long
   "___return (___arg1->total_out);")
+(define-c-lambda z_stream_avail_in (z_stream*) unsigned-long
+  "___return (___arg1->avail_in);")
+(define-c-lambda z_stream_avail_out (z_stream*) unsigned-long
+  "___return (___arg1->avail_out);")
 (define-c-lambda z_stream_msg (z_stream*) char-string
   "___return (___arg1->msg);")
 (define-c-lambda compressBound (unsigned-long) unsigned-long)
@@ -115,10 +120,13 @@ static int ffi_inflate (z_stream *zs, ___SCMOBJ dest, ___SCMOBJ src,  int start)
 {
  zs->next_out = U8_DATA (dest);
  zs->avail_out = U8_LEN (dest);
- zs->total_out = 0;            
- zs->next_in = U8_DATA (src) + start;
- zs->avail_in = U8_LEN (src) - start;
- zs->total_in = 0;
+ if (!___FALSEP(src)) {
+  zs->next_in = U8_DATA (src) + start;
+  zs->avail_in = U8_LEN (src) - start;
+ } else {
+  zs->next_in = NULL;
+  zs->avail_in = 0;
+ }
  return inflate (zs, Z_SYNC_FLUSH);
 }
 
@@ -126,10 +134,13 @@ static int ffi_deflate (z_stream* zs, ___SCMOBJ dest, ___SCMOBJ src, int start, 
 {
  zs->next_out = U8_DATA (dest);
  zs->avail_out = U8_LEN (dest);
- zs->total_out = 0;            
- zs->next_in = U8_DATA (src) + start;
- zs->avail_in = U8_LEN (src) - start;
- zs->total_in = 0;
+ if (!___FALSEP(src)) {
+  zs->next_in = U8_DATA (src) + start;
+  zs->avail_in = U8_LEN (src) - start;
+ } else {
+  zs->next_in = NULL;
+  zs->avail_in = 0;
+ }
  return deflate (zs, flush);
 }
 END-C
