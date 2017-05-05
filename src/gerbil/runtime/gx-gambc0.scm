@@ -411,6 +411,16 @@
       (##vector-set! obj (fx1+ off) val))
     (raise-type-error 'class-slot-set! klass obj)))
 
+(define (class-subtype? klass xklass)
+  (let ((klass-t (##type-id klass)))
+    (cond
+     ((type-descriptor-mixin xklass)
+      => (lambda (mixin)
+           (and (find (lambda (xklass) (eq? klass-t (##type-id xklass)))
+                      mixin)
+                #t)))
+     (else #f))))
+
 (define object? 
   ##structure?)
 (define object-type 
@@ -619,6 +629,41 @@
       (let ((ht (make-hash-table-eq)))
         (type-descriptor-methods-set! klass ht)
         (lp ht)))))
+
+(define (next-method subklass obj id)
+  (let ((klass (object-type obj))
+        (type-id (##type-id subklass)))
+    (and (type-descriptor? klass)
+         (cond
+          ((type-descriptor-mixin klass)
+           => (lambda (mixin)
+                (let lp ((rest (cons klass mixin)))
+                  (core-match rest
+                    ((klass . rest)
+                     (if (eq? type-id (##type-id klass))
+                       (let lp2 ((rest rest))
+                         (core-match rest
+                           ((klass . rest)
+                            (cond
+                             ((direct-method-ref klass id) => values)
+                             (else
+                              (lp2 rest))))
+                           (else #f)))
+                       (lp rest)))
+                    (else #f)))))
+          (else
+           (let lp ((next klass))
+             (and next
+                  (if (eq? type-id (##type-id klass))
+                    (struct-find-method (##type-super klass) id)
+                    (lp (##type-super klass))))))))))
+
+(define (call-next-method subklass obj id . args)
+  (cond
+   ((next-method subklass obj id)
+    => (lambda (methodf) (apply methodf obj args)))
+   (else
+    (error "Cannot find next method" obj id))))
 
 ;;; generics
 (define generic::t
