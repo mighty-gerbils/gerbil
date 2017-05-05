@@ -652,8 +652,8 @@
                        (lp rest)))
                     (else #f)))))
           (else
-           (let lp ((next klass))
-             (and next
+           (let lp ((klass klass))
+             (and klass
                   (if (eq? type-id (##type-id klass))
                     (struct-find-method (##type-super klass) id)
                     (lp (##type-super klass))))))))))
