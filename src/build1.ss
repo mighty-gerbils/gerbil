@@ -28,6 +28,9 @@
     "gerbil/prelude/gambit/readtables.ss"
     "gerbil/prelude/gambit/fixnum.ss"
     "gerbil/prelude/gambit/flonum.ss"
+    "gerbil/compiler/base.ss"
+    "gerbil/compiler/compile.ss"
+    "gerbil/compiler/driver.ss"
     "gerbil/compiler.ss"
     ))
 
