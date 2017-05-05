@@ -1,0 +1,45 @@
+prelude: :gerbil/core
+package: gerbil/compiler
+namespace: gxc
+
+(%#begin (%#import :gerbil/expander)
+         (%#export #t)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref _gx#load-module)
+                           (%#quote "gerbil/compiler/base__1")))
+                  (%#define-syntax ast-case |gxc[:0:]#ast-case|))
+         (%#define-runtime
+          current-compile-symbol-table
+          gxc#current-compile-symbol-table)
+         (%#define-runtime
+          current-compile-runtime-sections
+          gxc#current-compile-runtime-sections)
+         (%#define-runtime
+          current-compile-output-dir
+          gxc#current-compile-output-dir)
+         (%#define-runtime
+          current-compile-invoke-gsc
+          gxc#current-compile-invoke-gsc)
+         (%#define-runtime
+          current-compile-gsc-options
+          gxc#current-compile-gsc-options)
+         (%#define-runtime
+          current-compile-keep-scm
+          gxc#current-compile-keep-scm)
+         (%#define-runtime current-compile-verbose gxc#current-compile-verbose)
+         (%#define-runtime symbol-table::t gxc#symbol-table::t)
+         (%#define-runtime symbol-table? gxc#symbol-table?)
+         (%#define-runtime make-symbol-table gxc#make-symbol-table)
+         (%#define-runtime symbol-table-gensyms gxc#symbol-table-gensyms)
+         (%#define-runtime symbol-table-bindings gxc#symbol-table-bindings)
+         (%#define-runtime
+          symbol-table-gensyms-set!
+          gxc#symbol-table-gensyms-set!)
+         (%#define-runtime
+          symbol-table-bindings-set!
+          gxc#symbol-table-bindings-set!)
+         (%#define-syntax symbol-table |gxc[:0:]#symbol-table|)
+         (%#define-runtime symbol-table:::init! gxc#symbol-table:::init!)
+         (%#define-runtime raise-compile-error gxc#raise-compile-error)
+         (%#define-runtime verbose gxc#verbose))
+(%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/base__0"))

@@ -1,0 +1,30 @@
+prelude: :gerbil/core
+package: gerbil/compiler
+namespace: gxc
+
+(%#begin (%#import
+          :gerbil/expander
+          :gerbil/compiler/base
+          :gerbil/compiler/compile
+          (spec: (:gerbil/gambit/misc) (0 pretty-print 0 pretty-print))
+          (spec:
+           (:gerbil/gambit/ports)
+           (0 open-process 0 open-process)
+           (0 process-status 0 process-status)))
+         (%#export
+          (spec: 0 compile-file compile-file)
+          (spec: 0 compile-exe-stub compile-exe-stub))
+         (%#define-runtime compile-file gxc#compile-file)
+         (%#define-runtime compile-exe-stub gxc#compile-exe-stub)
+         (%#define-runtime compile-exe-stub-module gxc#compile-exe-stub-module)
+         (%#define-runtime compile-top-module gxc#compile-top-module)
+         (%#define-runtime collect-bindings gxc#collect-bindings)
+         (%#define-runtime compile-runtime-code gxc#compile-runtime-code)
+         (%#define-runtime compile-meta-code gxc#compile-meta-code)
+         (%#define-runtime generate-meta-code gxc#generate-meta-code)
+         (%#define-runtime generate-runtime-phi gxc#generate-runtime-phi)
+         (%#define-runtime lift-nested-modules gxc#lift-nested-modules)
+         (%#define-runtime compile-scm-file gxc#compile-scm-file)
+         (%#define-runtime gsc-compile-file gxc#gsc-compile-file)
+         (%#define-runtime compile-output-file gxc#compile-output-file))
+(%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/driver__0"))
