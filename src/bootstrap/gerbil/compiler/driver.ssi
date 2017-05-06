@@ -6,11 +6,12 @@ namespace: gxc
           :gerbil/expander
           :gerbil/compiler/base
           :gerbil/compiler/compile
+          :gerbil/compiler/optimize
           (spec: (:gerbil/gambit/misc) (0 pretty-print 0 pretty-print))
           (spec:
            (:gerbil/gambit/ports)
-           (0 open-process 0 open-process)
-           (0 process-status 0 process-status)))
+           (0 process-status 0 process-status)
+           (0 open-process 0 open-process)))
          (%#export
           (spec: 0 compile-file compile-file)
           (spec: 0 compile-exe-stub compile-exe-stub))
@@ -21,6 +22,7 @@ namespace: gxc
          (%#define-runtime collect-bindings gxc#collect-bindings)
          (%#define-runtime compile-runtime-code gxc#compile-runtime-code)
          (%#define-runtime compile-meta-code gxc#compile-meta-code)
+         (%#define-runtime compile-ssxi-code gxc#compile-ssxi-code)
          (%#define-runtime generate-meta-code gxc#generate-meta-code)
          (%#define-runtime generate-runtime-phi gxc#generate-runtime-phi)
          (%#define-runtime lift-nested-modules gxc#lift-nested-modules)

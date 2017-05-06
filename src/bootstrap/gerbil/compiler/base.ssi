@@ -27,6 +27,9 @@ namespace: gxc
           current-compile-keep-scm
           gxc#current-compile-keep-scm)
          (%#define-runtime current-compile-verbose gxc#current-compile-verbose)
+         (%#define-runtime
+          current-compile-optimize
+          gxc#current-compile-optimize)
          (%#define-runtime symbol-table::t gxc#symbol-table::t)
          (%#define-runtime symbol-table? gxc#symbol-table?)
          (%#define-runtime make-symbol-table gxc#make-symbol-table)

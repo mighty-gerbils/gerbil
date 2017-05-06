@@ -1,0 +1,32 @@
+prelude: :gerbil/core
+package: gerbil/compiler
+namespace: gxc
+
+(%#begin (%#import
+          :gerbil/expander
+          :gerbil/compiler/base
+          :gerbil/compiler/compile)
+         (%#export #t)
+         (%#define-runtime
+          current-compile-optimizer-info
+          gxc#current-compile-optimizer-info)
+         (%#define-runtime optimizer-info::t gxc#optimizer-info::t)
+         (%#define-runtime optimizer-info? gxc#optimizer-info?)
+         (%#define-runtime make-optimizer-info gxc#make-optimizer-info)
+         (%#define-runtime optimizer-info-type gxc#optimizer-info-type)
+         (%#define-runtime optimizer-info-ssxi gxc#optimizer-info-ssxi)
+         (%#define-runtime
+          optimizer-info-type-set!
+          gxc#optimizer-info-type-set!)
+         (%#define-runtime
+          optimizer-info-ssxi-set!
+          gxc#optimizer-info-ssxi-set!)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref _gx#load-module)
+                           (%#quote "gerbil/compiler/optimize__1")))
+                  (%#define-syntax optimizer-info |gxc[:0:]#optimizer-info|))
+         (%#define-runtime optimizer-info:::init! gxc#optimizer-info:::init!)
+         (%#define-runtime optimizer-info-init! gxc#optimizer-info-init!)
+         (%#define-runtime optimize! gxc#optimize!)
+         (%#define-runtime optimize-source gxc#optimize-source))
+(%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize__0"))
