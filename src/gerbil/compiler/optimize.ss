@@ -62,14 +62,16 @@ namespace: gxc
    (else (void))))
 
 (def (optimizer-load-ssxi ctx)
-  (let* ((ht (optimizer-info-ssxi (current-compile-optimizer-info)))
-         (id (expander-context-id ctx))
-         (mod (hash-get ht id)))
-    (or mod
-        (let* ((mod (optimizer-import-ssxi ctx))
-               (val (or mod #!void)))
-          (hash-put! ht id val)
-          val))))
+  (unless (and (module-context? ctx)
+               (list? (module-context-path ctx)))
+    (let* ((ht (optimizer-info-ssxi (current-compile-optimizer-info)))
+           (id (expander-context-id ctx))
+           (mod (hash-get ht id)))
+      (or mod
+          (let* ((mod (optimizer-import-ssxi ctx))
+                 (val (or mod #!void)))
+            (hash-put! ht id val)
+            val)))))
 
 (def (optimizer-import-ssxi ctx)
   ;; check output-dir/id.ssxi.ss for existence; this is a current compilation
