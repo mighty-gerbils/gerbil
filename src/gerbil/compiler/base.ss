@@ -25,6 +25,8 @@ namespace: gxc
   (make-parameter #f))
 (def current-compile-verbose
   (make-parameter #f))
+(def current-compile-optimize
+  (make-parameter #f))
 
 (defstruct symbol-table (gensyms bindings)
   id: gxc#symbol-table::t

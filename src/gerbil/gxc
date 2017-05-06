@@ -8,6 +8,7 @@
   (def invoke-gsc #t)
   (def keep-scm #f)
   (def verbose #f)
+  (def optimize #f)
   (def gsc-options #f)
   (def compile-exe #f)
   (def outfile #f)
@@ -15,7 +16,8 @@
   (def (make-opts)
     [invoke-gsc: invoke-gsc 
      keep-scm: keep-scm 
-     verbose: verbose 
+     verbose: verbose
+     optimize: optimize
      gsc-options: gsc-options
      output-dir: outdir
      output-file: outfile])
@@ -41,6 +43,9 @@
           (lp rest))
          (("-v")
           (set! verbose #t)
+          (lp rest))
+         (("-O")
+          (set! optimize #t)
           (lp rest))
          (("-exe")
           (set! compile-exe #t)

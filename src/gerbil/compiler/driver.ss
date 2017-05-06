@@ -7,6 +7,7 @@ namespace: gxc
 (import :gerbil/expander
         :gerbil/compiler/base
         :gerbil/compiler/compile
+        :gerbil/compiler/optimize
         (only-in :gerbil/gambit/misc
                  pretty-print)
         (only-in :gerbil/gambit/ports
@@ -21,14 +22,18 @@ namespace: gxc
         (invoke-gsc? (pgetq invoke-gsc: opts))
         (gsc-options (pgetq gsc-options: opts))
         (keep-scm?   (pgetq keep-scm: opts))
-        (verbosity   (pgetq verbose: opts)))
+        (verbosity   (pgetq verbose: opts))
+        (optimize    (pgetq optimize: opts)))
     (when outdir
       (create-directory* outdir))
+    (when optimize
+      (optimizer-info-init!))
     (parameterize ((current-compile-output-dir outdir)
                    (current-compile-invoke-gsc invoke-gsc?)
                    (current-compile-gsc-options gsc-options)
                    (current-compile-keep-scm keep-scm?)
-                   (current-compile-verbose verbosity))
+                   (current-compile-verbose verbosity)
+                   (current-compile-optimize optimize))
       (verbose "compile exe " srcpath)
       (compile-top-module (import-module srcpath)))))
 
@@ -116,9 +121,13 @@ namespace: gxc
                  (current-compile-runtime-sections
                   (make-hash-table-eq)))
     (verbose "compile " (expander-context-id ctx))
+    (when (current-compile-optimize)
+      (optimize! ctx))
     (collect-bindings ctx)
     (compile-runtime-code ctx)
-    (compile-meta-code ctx)))
+    (compile-meta-code ctx)
+    (when (current-compile-optimize)
+      (compile-ssxi-code ctx))))
 
 (def (collect-bindings ctx)
   (apply-collect-bindings 
@@ -195,6 +204,11 @@ namespace: gxc
         (generate-meta-code ctx))
     (compile-ssi ssi-code)
     (for-each compile-phi phi-code)))
+
+(def (compile-ssxi-code ctx)
+  ;; TODO Implement me!
+  (void)
+  )
 
 (def (generate-meta-code ctx)
   ;; => ssi-code [[phi-ctx phi n phi-code] ...]
