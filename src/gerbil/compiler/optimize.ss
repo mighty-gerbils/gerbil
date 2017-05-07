@@ -432,12 +432,15 @@ namespace: gxc
     (with ((!struct-pred struct-t) self)
       (let (struct-type (optimizer-resolve-type struct-t))
         (match struct-type
-          ((!struct-type struct-type-id)
+          ((!struct-type struct-type-id _ _ _ _ plist)
            (ast-case args ()
              ((expr)
-              (let (expr (compile-e #'expr))
+              (let ((expr (compile-e #'expr))
+                    (op (if (and plist (assgetq final: plist))
+                          '%#struct-direct-instance?
+                          '%#struct-instance?)))
                 (xform-wrap-source
-                 ['%#struct-instance? ['%#quote struct-type-id] expr]
+                 [op ['%#quote struct-type-id] expr]
                  stx)))
              (_ (raise-compile-error "Illegal struct predicate application" stx))))
          (#f (xform-call% stx))
