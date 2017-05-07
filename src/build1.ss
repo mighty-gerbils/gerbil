@@ -32,6 +32,7 @@
     "gerbil/compiler/compile.ss"
     "gerbil/compiler/optimize.ss"
     "gerbil/compiler/driver.ss"
+    "gerbil/compiler/ssxi.ss"
     "gerbil/compiler.ss"
     ))
 

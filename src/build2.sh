@@ -23,6 +23,10 @@ echo ">>> compiling runtime"
 (cd gerbil/runtime && ./build.scm $GERBIL_TARGET/lib)
 
 ## stage2 build; uses the same build script as stage1
+echo ">>> preparing core build"
+mkdir -p $GERBIL_TARGET/lib/gerbil
+cp -v gerbil/prelude/core.ssxi.ss $GERBIL_TARGET/lib/gerbil
+
 echo ">>> compiling gerbil core"
 $GERBIL_HOME/bin/gxi-script build1.ss || die
 

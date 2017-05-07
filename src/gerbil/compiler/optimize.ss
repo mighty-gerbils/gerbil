@@ -27,7 +27,7 @@ namespace: gxc
     (current-compile-optimizer-info (make-optimizer-info))))
 
 
-;; optimizer entry point
+;;; optimizer entry point
 (def (optimize! ctx)
   (optimizer-load-ssxi-deps ctx)
     ;; mark ssxi presence for batch
@@ -37,6 +37,7 @@ namespace: gxc
   (let (code (optimize-source (module-context-code ctx)))
     (set! (module-context-code ctx) code)))
 
+;;; ssxi loading
 (def (optimizer-load-ssxi-deps ctx)
   (let lp ((rest (module-context-import ctx)))
     (match rest
@@ -102,6 +103,20 @@ namespace: gxc
   
   (with-catch catch-e import-e))
 
+;;; optimizer-info: types
+(defstruct !type (id))
+(defstruct (!struct-type !type) (super fields xfields ctor plist))
+(defstruct (!struct-pred !type) ())
+(defstruct (!struct-cons !type) ())
+(defstruct (!struct-getf !type) (off))
+(defstruct (!struct-setf !type) (off))
+  
+(def (optimizer-declare-type! sym type)
+  (displayln "declare-type! " sym " " type)
+  ;; TODO put typedecs
+  )
+
+;;; source transforms
 (def (optimize-source stx)
   ;; TODO actually optimize
   stx
