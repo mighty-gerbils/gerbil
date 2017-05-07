@@ -112,9 +112,11 @@ namespace: gxc
 (defstruct (!struct-setf !type) (off))
   
 (def (optimizer-declare-type! sym type)
-  (displayln "declare-type! " sym " " type)
-  ;; TODO put typedecs
-  )
+  (unless (!type? type)
+    (error "bad declaration: expected !type" sym type))
+  (verbose "declare-type " sym " " type " " (!type-id type))
+  (hash-put! (optimizer-info-type (current-compile-optimizer-info))
+             sym type))
 
 ;;; source transforms
 (def (optimize-source stx)
