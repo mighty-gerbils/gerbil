@@ -137,35 +137,6 @@ namespace: gxc
     (apply-collect-type-info stx)
     (apply-optimize-call stx)))
 
-(defcompile-method #f &identity-expression
-  (%#lambda              xform-identity)
-  (%#case-lambda         xform-identity)
-  (%#let-values     xform-identity)
-  (%#letrec-values  xform-identity)
-  (%#letrec*-values xform-identity)
-  (%#quote          xform-identity)
-  (%#quote-syntax   xform-identity)
-  (%#call           xform-identity)
-  (%#if             xform-identity)
-  (%#ref            xform-identity)
-  (%#set!           xform-identity))
-
-(defcompile-method #f &identity-special-form
-  (%#begin          xform-identity)
-  (%#begin-syntax   xform-identity)
-  (%#begin-foreign  xform-identity)
-  (%#module         xform-identity)
-  (%#import         xform-identity)
-  (%#export         xform-identity)
-  (%#provide        xform-identity)
-  (%#extern         xform-identity)
-  (%#define-values  xform-identity)
-  (%#define-syntax  xform-identity)
-  (%#define-alias   xform-identity)
-  (%#declare        xform-identity))
-
-(defcompile-method #f (&identity &identity-special-form &identity-expression))
-
 (defcompile-method #f &false-expression
   (%#lambda              false)
   (%#case-lambda         false)
@@ -195,6 +166,47 @@ namespace: gxc
 
 (defcompile-method #f (&false &false-special-form &false-expression))
 
+(defcompile-method #f &identity-expression
+  (%#lambda              xform-identity)
+  (%#case-lambda         xform-identity)
+  (%#let-values     xform-identity)
+  (%#letrec-values  xform-identity)
+  (%#letrec*-values xform-identity)
+  (%#quote          xform-identity)
+  (%#quote-syntax   xform-identity)
+  (%#call           xform-identity)
+  (%#if             xform-identity)
+  (%#ref            xform-identity)
+  (%#set!           xform-identity))
+
+(defcompile-method #f &identity-special-form
+  (%#begin          xform-identity)
+  (%#begin-syntax   xform-identity)
+  (%#begin-foreign  xform-identity)
+  (%#module         xform-identity)
+  (%#import         xform-identity)
+  (%#export         xform-identity)
+  (%#provide        xform-identity)
+  (%#extern         xform-identity)
+  (%#define-values  xform-identity)
+  (%#define-syntax  xform-identity)
+  (%#define-alias   xform-identity)
+  (%#declare        xform-identity))
+
+(defcompile-method #f (&identity &identity-special-form &identity-expression))
+
+(defcompile-method #f (&basic-xform &identity)
+  (%#begin          xform-begin%)
+  (%#define-values  xform-define-values%)
+  (%#lambda              xform-lambda%)
+  (%#case-lambda         xform-case-lambda%)
+  (%#let-values     xform-let-values%)
+  (%#letrec-values  xform-let-values%)
+  (%#letrec*-values xform-let-values%)
+  (%#call           xform-call%)
+  (%#if             xform-if%)
+  (%#set!           xform-setq%))
+
 (defcompile-method apply-lift-top-lambdas (&lift-top-lambdas &identity)
   ;; TODO
   )
@@ -213,13 +225,92 @@ namespace: gxc
   (%#ref    basic-expression-type-ref%)
   (%#begin  basic-expression-type-begin%))
 
-(defcompile-method apply-optimize-call (&optimize-call &identity)
-  ;; TODO
-  )
+(defcompile-method apply-optimize-call (&optimize-call &basic-xform)
+  (%#call optimize-call%))
 
+;;; basic-xform
 (def (xform-identity stx . args)
   stx)
 
+(def (xform-wrap-source stx src-stx)
+  (stx-wrap-source stx (stx-source src-stx)))
+
+(def (xform-apply-compile-e args)
+  (cut apply compile-e <> args))
+
+(def (xform-begin% stx . args)
+  (ast-case stx ()
+    ((_ . forms)
+     (let (forms (stx-map (xform-apply-compile-e args) #'forms))
+       (xform-wrap-source
+        ['%#begin forms ...]
+        stx)))))
+
+(def (xform-define-values% stx . args)
+  (ast-case stx ()
+    ((_ hd expr)
+     (let (expr (apply compile-e #'expr args))
+       (xform-wrap-source
+        ['%#define-values #'hd expr]
+        stx)))))
+
+(def (xform-lambda% stx . args)
+  (ast-case stx ()
+    ((_ hd . body)
+     (let (body (stx-map (xform-apply-compile-e args) #'body))
+       (xform-wrap-source
+        ['%#lambda #'hd body ...]
+        stx)))))
+
+(def (xform-case-lambda% stx . args)
+  (def (clause-e clause)
+    (ast-case clause ()
+      ((hd . body)
+       (let (body (stx-map (xform-apply-compile-e args) #'body))
+         [#'hd body ...]))))
+  
+  (ast-case stx ()
+    ((_ . clauses)
+     (let (clauses (stx-map clause-e #'clauses))
+       (xform-wrap-source
+        ['%#case-lambda clauses ...]
+        stx)))))
+
+(def (xform-let-values% stx . args)
+  (ast-case stx ()
+    ((form ((hd expr) ...) . body)
+     (with-syntax (((expr ...) (stx-map (xform-apply-compile-e args) #'(expr ...))))
+       (let (body (stx-map (xform-apply-compile-e args) #'body))
+         (xform-wrap-source
+          [#'form #'((hd expr) ...) body ...]
+          stx))))))
+
+(def (xform-call% stx . args)
+  (ast-case stx ()
+    ((_ rator . rands)
+     (let ((rator (apply compile-e #'rator args))
+           (rands (stx-map (xform-apply-compile-e args) #'rands)))
+       (xform-wrap-source
+        ['%#call rator rands ...]
+        stx)))))
+
+(def (xform-if% stx . args)
+  (ast-case stx ()
+    ((_ . forms)
+     (let (forms (stx-map (xform-apply-compile-e args) #'forms))
+       (xform-wrap-source
+        ['%#if forms ...]
+        stx)))))
+
+(def (xform-setq% stx . args)
+  (ast-case stx ()
+    ((_ id expr)
+     (let (expr (apply compile-e #'expr args))
+       (xform-wrap-source
+        ['%#set! #'id expr]
+        stx)))))
+
+;;; apply-collect-type-info
 (def (collect-type-define-values% stx)
   (ast-case stx ()
     ((_ (id) expr)
@@ -227,11 +318,14 @@ namespace: gxc
        (optimizer-declare-type! (identifier-symbol #'id) type)))
     (_ (void))))
 
+;;; apply-basic-expression-type
 (def (basic-expression-type-lambda% stx)
+  ;; TODO
   #f
   )
 
 (def (basic-expression-type-case-lambda% stx)
+  ;; TODO
   #f
   )
 
@@ -301,12 +395,105 @@ namespace: gxc
      (optimizer-lookup-type (identifier-symbol #'id)))))
 
 (def (basic-expression-type-begin% stx)
+  ;; TODO
   #f
   )
 
+;;; apply-optimize-call
+(def (optimize-call% stx)
+  (ast-case stx (%#ref)
+    ((_ (%#ref rator) . rands)
+     (let* ((rator-id (identifier-symbol #'rator))
+            (rator-type (optimizer-lookup-type rator-id)))
+       (if rator-type
+         {optimize-call rator-type stx #'rands}
+         (let (rands (stx-map compile-e #'rands))
+           (xform-wrap-source
+            ['%#call #'(%#ref rator) rands ...]
+            stx)))))
+    (_ (xform-call% stx))))
+
+(defmethod {optimize-call !alias}
+  (lambda (self stx args)
+    (with ((!alias alias-id) self)
+      (let (alias-type (optimizer-lookup-type alias-id))
+        (if (!type? alias-type)
+          {optimize-call alias-type stx args}
+          (let (args (stx-map compile-e args))
+            (xform-wrap-source
+             ['%#call ['%#ref alias-id] args ...]
+             stx)))))))
+
+(defmethod {optimize-call !struct-pred}
+  (lambda (self stx args)
+    (with ((!struct-pred struct-t) self)
+      (let (struct-type (optimizer-resolve-type struct-t))
+        (match struct-type
+          ((!struct-type struct-type-id)
+           (ast-case args ()
+             ((expr)
+              (let (expr (compile-e #'expr))
+                (xform-wrap-source
+                 ['%#struct-instance? ['%#quote struct-type-id] expr]
+                 stx)))
+             (_ (raise-compile-error "Illegal struct predicate application" stx))))
+         (#f (xform-call% stx))
+         (else
+          (raise-compile-error "Illegal struct predicate application; not a struct type"
+                               stx struct-t struct-type)))))))
+
+(defmethod {optimize-call !struct-cons}
+  (lambda (self stx args)
+    ;; TODO
+    stx
+    ))
+
+(defmethod {optimize-call !struct-getf}
+  (lambda (self stx args)
+    (with ((!struct-getf struct-t off) self)
+      (let (struct-type (optimizer-resolve-type struct-t))
+        (match struct-type
+          ((!struct-type struct-type-id _ fields xfields)
+           (if xfields
+             (ast-case stx ()
+               ((expr)
+                (let ((expr (compile-e #'expr))
+                      (off (fx+ off xfields)))
+                  (xform-wrap-source
+                   ['%#struct-ref ['%#quote struct-type-id] ['%#quote off] expr]
+                   stx)))
+               (_ (raise-compile-error "Illegal struct accessor application" stx)))
+             (xform-call% stx))) ; incomplete struct info; can't inline
+          (#f (xform-call% stx))
+          (else
+           (raise-compile-error "Illegal struct predicate application; not a struct type"
+                                stx struct-t struct-type)))))))
+
+(defmethod {optimize-call !struct-setf}
+  (lambda (self stx args)
+    (with ((!struct-setf struct-t off) self)
+      (let (struct-type (optimizer-resolve-type struct-t))
+        (match struct-type
+          ((!struct-type struct-type-id _ fields xfields)
+           (if xfields
+             (ast-case stx ()
+               ((expr val)
+                (let ((expr (compile-e #'expr))
+                      (val (compile-e #'val))
+                      (off (fx+ off xfields)))
+                  (xform-wrap-source
+                   ['%#struct-set! ['%#quote struct-type-id] ['%#quote off] expr val]
+                   stx)))
+               (_ (raise-compile-error "Illegal struct mutator application" stx)))
+             (xform-call% stx))) ; incomplete struct info; can't inline
+          (#f (xform-call% stx))
+          (else
+           (raise-compile-error "Illegal struct predicate application; not a struct type"
+                                stx struct-t struct-type)))))))
+
+;;; utilities
 (def (identifier-symbol stx)
   (cond
    ((resolve-identifier stx) => binding-id)
    (else
     (stx-e stx))))
-
