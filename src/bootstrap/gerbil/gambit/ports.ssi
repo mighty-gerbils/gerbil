@@ -37,6 +37,7 @@ namespace: gerbil/gambit/ports
           (open-tcp-server open-tcp-server)
           (tcp-service-register! tcp-service-register!)
           (tcp-service-unregister! tcp-service-unregister!)
+          (make-tls-context make-tls-context)
           (socket-info? socket-info?)
           (socket-info-family socket-info-family)
           (socket-info-port-number socket-info-port-number)

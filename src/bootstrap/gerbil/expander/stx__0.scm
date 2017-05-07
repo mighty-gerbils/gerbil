@@ -12,8 +12,8 @@
      '#f))
   (define gx#identifier-wrap? (make-struct-predicate gx#identifier-wrap::t))
   (define gx#make-identifier-wrap
-    (lambda _$args30600_
-      (apply make-struct-instance gx#identifier-wrap::t _$args30600_)))
+    (lambda _$args2544_
+      (apply make-struct-instance gx#identifier-wrap::t _$args2544_)))
   (define gx#identifier-wrap-marks
     (make-struct-field-accessor gx#identifier-wrap::t '0))
   (define gx#identifier-wrap-marks-set!
@@ -29,8 +29,8 @@
      '#f))
   (define gx#syntax-wrap? (make-struct-predicate gx#syntax-wrap::t))
   (define gx#make-syntax-wrap
-    (lambda _$args30597_
-      (apply make-struct-instance gx#syntax-wrap::t _$args30597_)))
+    (lambda _$args2541_
+      (apply make-struct-instance gx#syntax-wrap::t _$args2541_)))
   (define gx#syntax-wrap-mark
     (make-struct-field-accessor gx#syntax-wrap::t '0))
   (define gx#syntax-wrap-mark-set!
@@ -46,8 +46,8 @@
      '#f))
   (define gx#syntax-quote? (make-struct-predicate gx#syntax-quote::t))
   (define gx#make-syntax-quote
-    (lambda _$args30594_
-      (apply make-struct-instance gx#syntax-quote::t _$args30594_)))
+    (lambda _$args2538_
+      (apply make-struct-instance gx#syntax-quote::t _$args2538_)))
   (define gx#syntax-quote-context
     (make-struct-field-accessor gx#syntax-quote::t '0))
   (define gx#syntax-quote-marks
@@ -57,948 +57,923 @@
   (define gx#syntax-quote-marks-set!
     (make-struct-field-mutator gx#syntax-quote::t '1))
   (begin)
-  (define gx#identifier? (lambda (_stx30592_) (symbol? (gx#stx-e _stx30592_))))
+  (define gx#identifier? (lambda (_stx2536_) (symbol? (gx#stx-e _stx2536_))))
   (define gx#identifier-quote?
-    (lambda (_stx30590_)
-      (if (gx#syntax-quote? _stx30590_) (symbol? (AST-e _stx30590_)) '#f)))
+    (lambda (_stx2534_)
+      (if (gx#syntax-quote? _stx2534_) (symbol? (AST-e _stx2534_)) '#f)))
   (define gx#sealed-syntax?
-    (lambda (_stx30585_)
-      (let ((_$e30587_ (gx#syntax-quote? _stx30585_)))
-        (if _$e30587_
-            _$e30587_
-            (if (AST? _stx30585_)
-                (gx#sealed-syntax? (AST-e _stx30585_))
-                '#f)))))
+    (lambda (_stx2529_)
+      (let ((_$e2531_ (gx#syntax-quote? _stx2529_)))
+        (if _$e2531_
+            _$e2531_
+            (if (AST? _stx2529_) (gx#sealed-syntax? (AST-e _stx2529_)) '#f)))))
   (define gx#syntax-e
-    (lambda (_stx30581_)
-      (let ((_stx30583_ (gx#stx-unwrap _stx30581_)))
-        (if (AST? _stx30583_) (AST-e _stx30583_) _stx30583_))))
+    (lambda (_stx2525_)
+      (let ((_stx2527_ (gx#stx-unwrap _stx2525_)))
+        (if (AST? _stx2527_) (AST-e _stx2527_) _stx2527_))))
   (define gx#syntax->datum
-    (lambda (_stx30579_)
-      (if (AST? _stx30579_)
-          (gx#syntax->datum (AST-e _stx30579_))
-          (if (pair? _stx30579_)
-              (cons (gx#syntax->datum (car _stx30579_))
-                    (gx#syntax->datum (cdr _stx30579_)))
-              (if (vector? _stx30579_)
-                  (vector-map gx#syntax->datum _stx30579_)
-                  (if (box? _stx30579_)
-                      (box (gx#syntax->datum (unbox _stx30579_)))
-                      _stx30579_))))))
+    (lambda (_stx2523_)
+      (if (AST? _stx2523_)
+          (gx#syntax->datum (AST-e _stx2523_))
+          (if (pair? _stx2523_)
+              (cons (gx#syntax->datum (car _stx2523_))
+                    (gx#syntax->datum (cdr _stx2523_)))
+              (if (vector? _stx2523_)
+                  (vector-map gx#syntax->datum _stx2523_)
+                  (if (box? _stx2523_)
+                      (box (gx#syntax->datum (unbox _stx2523_)))
+                      _stx2523_))))))
   (define gx#datum->syntax
-    (let ((_opt-lambda3054730567_
-           (lambda (_stx30549_ _datum30550_ _src30551_)
-             (let ((_wrap-datum30553_
-                    (lambda (_e30560_ _marks30561_)
-                      ((letrec ((_recur30563_
-                                 (lambda (_e30565_)
-                                   (if (symbol? _e30565_)
+    (let ((_opt-lambda24912511_
+           (lambda (_stx2493_ _datum2494_ _src2495_)
+             (let ((_wrap-datum2497_
+                    (lambda (_e2504_ _marks2505_)
+                      ((letrec ((_recur2507_
+                                 (lambda (_e2509_)
+                                   (if (symbol? _e2509_)
                                        (gx#make-identifier-wrap
-                                        _e30565_
-                                        _src30551_
-                                        _marks30561_)
-                                       (if (pair? _e30565_)
-                                           (cons (_recur30563_ (car _e30565_))
-                                                 (_recur30563_ (cdr _e30565_)))
-                                           (if (vector? _e30565_)
-                                               (vector-map
-                                                _recur30563_
-                                                _e30565_)
-                                               (if (box? _e30565_)
-                                                   (box (_recur30563_
-                                                         (unbox _e30565_)))
-                                                   _e30565_)))))))
-                         _recur30563_)
-                       _e30560_))))
-               (let ((_wrap-outer30554_
-                      (lambda (_e30558_)
-                        (if (AST? _e30558_)
-                            _e30558_
-                            (make-AST _e30558_ _src30551_)))))
-                 (if (AST? _datum30550_)
-                     _datum30550_
-                     (if (not _stx30549_)
-                         (make-AST _datum30550_ _src30551_)
-                         (if (gx#identifier? _stx30549_)
-                             (let ((_stx30556_ (gx#stx-unwrap _stx30549_)))
-                               (if (gx#identifier-quote? _stx30556_)
+                                        _e2509_
+                                        _src2495_
+                                        _marks2505_)
+                                       (if (pair? _e2509_)
+                                           (cons (_recur2507_ (car _e2509_))
+                                                 (_recur2507_ (cdr _e2509_)))
+                                           (if (vector? _e2509_)
+                                               (vector-map _recur2507_ _e2509_)
+                                               (if (box? _e2509_)
+                                                   (box (_recur2507_
+                                                         (unbox _e2509_)))
+                                                   _e2509_)))))))
+                         _recur2507_)
+                       _e2504_))))
+               (let ((_wrap-outer2498_
+                      (lambda (_e2502_)
+                        (if (AST? _e2502_)
+                            _e2502_
+                            (make-AST _e2502_ _src2495_)))))
+                 (if (AST? _datum2494_)
+                     _datum2494_
+                     (if (not _stx2493_)
+                         (make-AST _datum2494_ _src2495_)
+                         (if (gx#identifier? _stx2493_)
+                             (let ((_stx2500_ (gx#stx-unwrap _stx2493_)))
+                               (if (gx#identifier-quote? _stx2500_)
                                    (gx#make-syntax-quote
-                                    _datum30550_
-                                    _src30551_
-                                    (gx#syntax-quote-context _stx30556_)
-                                    (gx#syntax-quote-marks _stx30556_))
-                                   (_wrap-outer30554_
-                                    (_wrap-datum30553_
-                                     _datum30550_
-                                     (gx#identifier-wrap-marks _stx30556_)))))
+                                    _datum2494_
+                                    _src2495_
+                                    (gx#syntax-quote-context _stx2500_)
+                                    (gx#syntax-quote-marks _stx2500_))
+                                   (_wrap-outer2498_
+                                    (_wrap-datum2497_
+                                     _datum2494_
+                                     (gx#identifier-wrap-marks _stx2500_)))))
                              (error '"Bad template syntax; expected identifier"
-                                    _stx30549_)))))))))
-      (lambda _g40546_
-        (let ((_g40545_ (length _g40546_)))
-          (cond ((fx= _g40545_ 2)
-                 (apply (lambda (_stx30570_ _datum30571_)
-                          (let ((_src30573_ '#f))
-                            (_opt-lambda3054730567_
-                             _stx30570_
-                             _datum30571_
-                             _src30573_)))
-                        _g40546_))
-                ((fx= _g40545_ 3)
-                 (apply (lambda (_stx30575_ _datum30576_ _src30577_)
-                          (_opt-lambda3054730567_
-                           _stx30575_
-                           _datum30576_
-                           _src30577_))
-                        _g40546_))
-                (else (error "No clause matching arguments" _g40546_)))))))
+                                    _stx2493_)))))))))
+      (lambda _g12490_
+        (let ((_g12489_ (length _g12490_)))
+          (cond ((fx= _g12489_ 2)
+                 (apply (lambda (_stx2514_ _datum2515_)
+                          (let ((_src2517_ '#f))
+                            (_opt-lambda24912511_
+                             _stx2514_
+                             _datum2515_
+                             _src2517_)))
+                        _g12490_))
+                ((fx= _g12489_ 3)
+                 (apply (lambda (_stx2519_ _datum2520_ _src2521_)
+                          (_opt-lambda24912511_
+                           _stx2519_
+                           _datum2520_
+                           _src2521_))
+                        _g12490_))
+                (else (error "No clause matching arguments" _g12490_)))))))
   (define gx#stx-unwrap
-    (let ((_opt-lambda3052330538_
-           (lambda (_stx30525_ _marks30526_)
-             ((letrec ((_lp30528_
-                        (lambda (_e30530_ _marks30531_ _src30532_)
-                          (if (gx#syntax-wrap? _e30530_)
-                              (_lp30528_
-                               (AST-e _e30530_)
+    (let ((_opt-lambda24672482_
+           (lambda (_stx2469_ _marks2470_)
+             ((letrec ((_lp2472_
+                        (lambda (_e2474_ _marks2475_ _src2476_)
+                          (if (gx#syntax-wrap? _e2474_)
+                              (_lp2472_
+                               (AST-e _e2474_)
                                (gx#apply-mark
-                                (gx#syntax-wrap-mark _e30530_)
-                                _marks30531_)
-                               (AST-source _e30530_))
-                              (if (gx#identifier-wrap? _e30530_)
-                                  (if (null? _marks30531_)
-                                      _e30530_
+                                (gx#syntax-wrap-mark _e2474_)
+                                _marks2475_)
+                               (AST-source _e2474_))
+                              (if (gx#identifier-wrap? _e2474_)
+                                  (if (null? _marks2475_)
+                                      _e2474_
                                       (gx#make-identifier-wrap
-                                       (AST-e _e30530_)
-                                       (AST-source _e30530_)
+                                       (AST-e _e2474_)
+                                       (AST-source _e2474_)
                                        (foldl gx#apply-mark
                                               (gx#identifier-wrap-marks
-                                               _e30530_)
-                                              _marks30531_)))
-                                  (if (gx#syntax-quote? _e30530_)
-                                      _e30530_
-                                      (if (AST? _e30530_)
-                                          (_lp30528_
-                                           (AST-e _e30530_)
-                                           _marks30531_
-                                           (AST-source _e30530_))
-                                          (if (symbol? _e30530_)
+                                               _e2474_)
+                                              _marks2475_)))
+                                  (if (gx#syntax-quote? _e2474_)
+                                      _e2474_
+                                      (if (AST? _e2474_)
+                                          (_lp2472_
+                                           (AST-e _e2474_)
+                                           _marks2475_
+                                           (AST-source _e2474_))
+                                          (if (symbol? _e2474_)
                                               (gx#make-identifier-wrap
-                                               _e30530_
-                                               _src30532_
-                                               (reverse _marks30531_))
-                                              (if (null? _marks30531_)
-                                                  _e30530_
-                                                  (if (pair? _e30530_)
+                                               _e2474_
+                                               _src2476_
+                                               (reverse _marks2475_))
+                                              (if (null? _marks2475_)
+                                                  _e2474_
+                                                  (if (pair? _e2474_)
                                                       (cons (gx#stx-wrap
-                                                             (car _e30530_)
-                                                             _marks30531_)
+                                                             (car _e2474_)
+                                                             _marks2475_)
                                                             (gx#stx-wrap
-                                                             (cdr _e30530_)
-                                                             _marks30531_))
-                                                      (if (vector? _e30530_)
+                                                             (cdr _e2474_)
+                                                             _marks2475_))
+                                                      (if (vector? _e2474_)
                                                           (vector-map
-                                                           (lambda (_g3053330535_)
+                                                           (lambda (_g24772479_)
                                                              (gx#stx-wrap
-                                                              _g3053330535_
-                                                              _marks30531_))
-                                                           _e30530_)
-                                                          (if (box? _e30530_)
+                                                              _g24772479_
+                                                              _marks2475_))
+                                                           _e2474_)
+                                                          (if (box? _e2474_)
                                                               (box (gx#stx-wrap
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (unbox _e30530_)
-                            _marks30531_))
-                      _e30530_))))))))))))
+                            (unbox _e2474_)
+                            _marks2475_))
+                      _e2474_))))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                _lp30528_)
-              _stx30525_
-              _marks30526_
-              (gx#stx-source _stx30525_)))))
-      (lambda _g40548_
-        (let ((_g40547_ (length _g40548_)))
-          (cond ((fx= _g40547_ 1)
-                 (apply (lambda (_stx30541_)
-                          (let ((_marks30543_ '()))
-                            (_opt-lambda3052330538_ _stx30541_ _marks30543_)))
-                        _g40548_))
-                ((fx= _g40547_ 2)
-                 (apply (lambda (_stx30545_ _marks30546_)
-                          (_opt-lambda3052330538_ _stx30545_ _marks30546_))
-                        _g40548_))
-                (else (error "No clause matching arguments" _g40548_)))))))
+                _lp2472_)
+              _stx2469_
+              _marks2470_
+              (gx#stx-source _stx2469_)))))
+      (lambda _g12492_
+        (let ((_g12491_ (length _g12492_)))
+          (cond ((fx= _g12491_ 1)
+                 (apply (lambda (_stx2485_)
+                          (let ((_marks2487_ '()))
+                            (_opt-lambda24672482_ _stx2485_ _marks2487_)))
+                        _g12492_))
+                ((fx= _g12491_ 2)
+                 (apply (lambda (_stx2489_ _marks2490_)
+                          (_opt-lambda24672482_ _stx2489_ _marks2490_))
+                        _g12492_))
+                (else (error "No clause matching arguments" _g12492_)))))))
   (define gx#stx-wrap
-    (lambda (_stx30518_ _marks30519_)
-      (foldl (lambda (_mark30521_ _stx30522_)
-               (gx#stx-apply-mark _stx30522_ _mark30521_))
-             _stx30518_
-             _marks30519_)))
+    (lambda (_stx2462_ _marks2463_)
+      (foldl (lambda (_mark2465_ _stx2466_)
+               (gx#stx-apply-mark _stx2466_ _mark2465_))
+             _stx2462_
+             _marks2463_)))
   (define gx#stx-rewrap
-    (lambda (_stx30512_ _marks30513_)
-      (foldr (lambda (_mark30515_ _stx30516_)
-               (gx#stx-apply-mark _stx30516_ _mark30515_))
-             _stx30512_
-             _marks30513_)))
+    (lambda (_stx2456_ _marks2457_)
+      (foldr (lambda (_mark2459_ _stx2460_)
+               (gx#stx-apply-mark _stx2460_ _mark2459_))
+             _stx2456_
+             _marks2457_)))
   (define gx#stx-apply-mark
-    (lambda (_stx30509_ _mark30510_)
-      (if (gx#syntax-quote? _stx30509_)
-          _stx30509_
-          (if (if (gx#syntax-wrap? _stx30509_)
-                  (eq? _mark30510_ (gx#syntax-wrap-mark _stx30509_))
+    (lambda (_stx2453_ _mark2454_)
+      (if (gx#syntax-quote? _stx2453_)
+          _stx2453_
+          (if (if (gx#syntax-wrap? _stx2453_)
+                  (eq? _mark2454_ (gx#syntax-wrap-mark _stx2453_))
                   '#f)
-              (AST-e _stx30509_)
+              (AST-e _stx2453_)
               (gx#make-syntax-wrap
-               _stx30509_
-               (gx#stx-source _stx30509_)
-               _mark30510_)))))
+               _stx2453_
+               (gx#stx-source _stx2453_)
+               _mark2454_)))))
   (define gx#apply-mark
-    (lambda (_mark30473_ _marks30474_)
-      (let ((_marks3047530483_ _marks30474_))
-        (let ((_E3047830487_
-               (lambda () (error '"No clause matching" _marks3047530483_))))
-          (let ((_else3047730491_ (lambda () (cons _mark30473_ _marks30474_))))
-            (let ((_K3047930497_
-                   (lambda (_rest30494_ _hd30495_)
-                     (if (eq? _mark30473_ _hd30495_)
-                         _rest30494_
-                         (cons _mark30473_ _marks30474_)))))
-              (if (##pair? _marks3047530483_)
-                  (let ((_hd3048030500_ (##car _marks3047530483_))
-                        (_tl3048130502_ (##cdr _marks3047530483_)))
-                    (let ((_hd30505_ _hd3048030500_))
-                      (let ((_rest30507_ _tl3048130502_))
-                        (_K3047930497_ _rest30507_ _hd30505_))))
-                  (_else3047730491_))))))))
+    (lambda (_mark2417_ _marks2418_)
+      (let ((_marks24192427_ _marks2418_))
+        (let ((_E24222431_
+               (lambda () (error '"No clause matching" _marks24192427_))))
+          (let ((_else24212435_ (lambda () (cons _mark2417_ _marks2418_))))
+            (let ((_K24232441_
+                   (lambda (_rest2438_ _hd2439_)
+                     (if (eq? _mark2417_ _hd2439_)
+                         _rest2438_
+                         (cons _mark2417_ _marks2418_)))))
+              (if (##pair? _marks24192427_)
+                  (let ((_hd24242444_ (##car _marks24192427_))
+                        (_tl24252446_ (##cdr _marks24192427_)))
+                    (let ((_hd2449_ _hd24242444_))
+                      (let ((_rest2451_ _tl24252446_))
+                        (_K24232441_ _rest2451_ _hd2449_))))
+                  (_else24212435_))))))))
   (define gx#stx-e
-    (lambda (_stx30471_)
-      (if (AST? _stx30471_) (gx#stx-e (AST-e _stx30471_)) _stx30471_)))
+    (lambda (_stx2415_)
+      (if (AST? _stx2415_) (gx#stx-e (AST-e _stx2415_)) _stx2415_)))
   (define gx#stx-source
-    (lambda (_stx30469_) (if (AST? _stx30469_) (AST-source _stx30469_) '#f)))
+    (lambda (_stx2413_) (if (AST? _stx2413_) (AST-source _stx2413_) '#f)))
   (define gx#stx-wrap-source
-    (lambda (_stx30463_ _src30464_)
-      (if (let ((_$e30466_ (AST? _stx30463_)))
-            (if _$e30466_ _$e30466_ (not _src30464_)))
-          _stx30463_
-          (make-AST _stx30463_ _src30464_))))
+    (lambda (_stx2407_ _src2408_)
+      (if (let ((_$e2410_ (AST? _stx2407_)))
+            (if _$e2410_ _$e2410_ (not _src2408_)))
+          _stx2407_
+          (make-AST _stx2407_ _src2408_))))
   (define gx#stx-datum?
-    (lambda (_stx30461_) (gx#self-quoting? (gx#stx-e _stx30461_))))
+    (lambda (_stx2405_) (gx#self-quoting? (gx#stx-e _stx2405_))))
   (define gx#self-quoting?
-    (lambda (_x30441_)
-      (let ((_$e30443_ (boolean? _x30441_)))
-        (if _$e30443_
-            _$e30443_
-            (let ((_$e30446_ (char? _x30441_)))
-              (if _$e30446_
-                  _$e30446_
-                  (let ((_$e30449_ (number? _x30441_)))
-                    (if _$e30449_
-                        _$e30449_
-                        (let ((_$e30452_ (keyword? _x30441_)))
-                          (if _$e30452_
-                              _$e30452_
-                              (let ((_$e30455_ (string? _x30441_)))
-                                (if _$e30455_
-                                    _$e30455_
-                                    (let ((_$e30458_ (void? _x30441_)))
-                                      (if _$e30458_
-                                          _$e30458_
-                                          (dssl-object? _x30441_)))))))))))))))
-  (define gx#stx-boolean? (lambda (_e30439_) (boolean? (gx#stx-e _e30439_))))
-  (define gx#stx-keyword? (lambda (_e30437_) (keyword? (gx#stx-e _e30437_))))
-  (define gx#stx-char? (lambda (_e30435_) (char? (gx#stx-e _e30435_))))
-  (define gx#stx-number? (lambda (_e30433_) (number? (gx#stx-e _e30433_))))
-  (define gx#stx-fixnum? (lambda (_e30431_) (fixnum? (gx#stx-e _e30431_))))
-  (define gx#stx-string? (lambda (_e30429_) (string? (gx#stx-e _e30429_))))
-  (define gx#stx-null? (lambda (_e30427_) (null? (gx#stx-e _e30427_))))
-  (define gx#stx-pair? (lambda (_e30425_) (pair? (gx#stx-e _e30425_))))
+    (lambda (_x2385_)
+      (let ((_$e2387_ (boolean? _x2385_)))
+        (if _$e2387_
+            _$e2387_
+            (let ((_$e2390_ (char? _x2385_)))
+              (if _$e2390_
+                  _$e2390_
+                  (let ((_$e2393_ (number? _x2385_)))
+                    (if _$e2393_
+                        _$e2393_
+                        (let ((_$e2396_ (keyword? _x2385_)))
+                          (if _$e2396_
+                              _$e2396_
+                              (let ((_$e2399_ (string? _x2385_)))
+                                (if _$e2399_
+                                    _$e2399_
+                                    (let ((_$e2402_ (void? _x2385_)))
+                                      (if _$e2402_
+                                          _$e2402_
+                                          (dssl-object? _x2385_)))))))))))))))
+  (define gx#stx-boolean? (lambda (_e2383_) (boolean? (gx#stx-e _e2383_))))
+  (define gx#stx-keyword? (lambda (_e2381_) (keyword? (gx#stx-e _e2381_))))
+  (define gx#stx-char? (lambda (_e2379_) (char? (gx#stx-e _e2379_))))
+  (define gx#stx-number? (lambda (_e2377_) (number? (gx#stx-e _e2377_))))
+  (define gx#stx-fixnum? (lambda (_e2375_) (fixnum? (gx#stx-e _e2375_))))
+  (define gx#stx-string? (lambda (_e2373_) (string? (gx#stx-e _e2373_))))
+  (define gx#stx-null? (lambda (_e2371_) (null? (gx#stx-e _e2371_))))
+  (define gx#stx-pair? (lambda (_e2369_) (pair? (gx#stx-e _e2369_))))
   (define gx#stx-list?
-    (lambda (_e30385_)
-      (let ((_g3038630395_ (gx#stx-e _e30385_)))
-        (let ((_E3038930399_
-               (lambda () (error '"No clause matching" _g3038630395_))))
-          (let ((_try-match3038830410_
+    (lambda (_e2329_)
+      (let ((_g23302339_ (gx#stx-e _e2329_)))
+        (let ((_E23332343_
+               (lambda () (error '"No clause matching" _g23302339_))))
+          (let ((_try-match23322354_
                  (lambda ()
-                   (let ((_K3039030405_
-                          (lambda (_tail30403_) (null? _tail30403_))))
-                     (let ((_tail30408_ _g3038630395_))
-                       (_K3039030405_ _tail30408_))))))
-            (let ((_K3039130415_
-                   (lambda (_rest30413_) (gx#stx-list? _rest30413_))))
-              (if (##pair? _g3038630395_)
-                  (let ((_hd3039230418_ (##car _g3038630395_))
-                        (_tl3039330420_ (##cdr _g3038630395_)))
-                    (let ((_rest30423_ _tl3039330420_))
-                      (_K3039130415_ _rest30423_)))
-                  (_try-match3038830410_))))))))
+                   (let ((_K23342349_
+                          (lambda (_tail2347_) (null? _tail2347_))))
+                     (let ((_tail2352_ _g23302339_))
+                       (_K23342349_ _tail2352_))))))
+            (let ((_K23352359_
+                   (lambda (_rest2357_) (gx#stx-list? _rest2357_))))
+              (if (##pair? _g23302339_)
+                  (let ((_hd23362362_ (##car _g23302339_))
+                        (_tl23372364_ (##cdr _g23302339_)))
+                    (let ((_rest2367_ _tl23372364_)) (_K23352359_ _rest2367_)))
+                  (_try-match23322354_))))))))
   (define gx#stx-pair/null?
-    (lambda (_e30378_)
-      (let ((_e30380_ (gx#stx-e _e30378_)))
-        (let ((_$e30382_ (pair? _e30380_)))
-          (if _$e30382_ _$e30382_ (null? _e30380_))))))
-  (define gx#stx-vector? (lambda (_e30376_) (vector? (gx#stx-e _e30376_))))
-  (define gx#stx-box? (lambda (_e30374_) (box? (gx#stx-e _e30374_))))
+    (lambda (_e2322_)
+      (let ((_e2324_ (gx#stx-e _e2322_)))
+        (let ((_$e2326_ (pair? _e2324_)))
+          (if _$e2326_ _$e2326_ (null? _e2324_))))))
+  (define gx#stx-vector? (lambda (_e2320_) (vector? (gx#stx-e _e2320_))))
+  (define gx#stx-box? (lambda (_e2318_) (box? (gx#stx-e _e2318_))))
   (define gx#stx-eq?
-    (lambda (_x30371_ _y30372_) (eq? (gx#stx-e _x30371_) (gx#stx-e _y30372_))))
+    (lambda (_x2315_ _y2316_) (eq? (gx#stx-e _x2315_) (gx#stx-e _y2316_))))
   (define gx#stx-eqv?
-    (lambda (_x30368_ _y30369_)
-      (eqv? (gx#stx-e _x30368_) (gx#stx-e _y30369_))))
+    (lambda (_x2312_ _y2313_) (eqv? (gx#stx-e _x2312_) (gx#stx-e _y2313_))))
   (define gx#stx-equal?
-    (lambda (_x30365_ _y30366_)
-      (equal? (gx#stx-e _x30365_) (gx#stx-e _y30366_))))
-  (define gx#stx-false? (lambda (_x30363_) (not (gx#stx-e _x30363_))))
+    (lambda (_x2309_ _y2310_) (equal? (gx#stx-e _x2309_) (gx#stx-e _y2310_))))
+  (define gx#stx-false? (lambda (_x2307_) (not (gx#stx-e _x2307_))))
   (define gx#stx-identifier
-    (lambda (_template30360_ . _args30361_)
+    (lambda (_template2304_ . _args2305_)
       (gx#datum->syntax
-       _template30360_
-       (apply make-symbol (map gx#stx-e _args30361_))
-       (gx#stx-source _template30360_))))
+       _template2304_
+       (apply make-symbol (map gx#stx-e _args2305_))
+       (gx#stx-source _template2304_))))
   (define gx#stx-identifier-marks
-    (lambda (_stx30356_)
-      (let ((_stx30358_ (gx#stx-unwrap _stx30356_)))
-        (if (gx#identifier-wrap? _stx30358_)
-            (gx#identifier-wrap-marks _stx30358_)
-            (gx#syntax-quote-marks _stx30358_)))))
+    (lambda (_stx2300_)
+      (let ((_stx2302_ (gx#stx-unwrap _stx2300_)))
+        (if (gx#identifier-wrap? _stx2302_)
+            (gx#identifier-wrap-marks _stx2302_)
+            (gx#syntax-quote-marks _stx2302_)))))
   (define gx#stx-identifier-context
-    (lambda (_stx30352_)
-      (let ((_stx30354_ (gx#stx-unwrap _stx30352_)))
-        (if (gx#identifier-quote? _stx30354_)
-            (gx#syntax-quote-context _stx30354_)
+    (lambda (_stx2296_)
+      (let ((_stx2298_ (gx#stx-unwrap _stx2296_)))
+        (if (gx#identifier-quote? _stx2298_)
+            (gx#syntax-quote-context _stx2298_)
             '#f))))
   (define gx#identifier-list?
-    (lambda (_stx30307_)
-      (let ((_g3030830318_ (gx#stx-e _stx30307_)))
-        (let ((_E3031230322_
-               (lambda () (error '"No clause matching" _g3030830318_))))
-          (let ((_else3031130326_ (lambda () '#f)))
-            (let ((_try-match3031030334_
+    (lambda (_stx2251_)
+      (let ((_g22522262_ (gx#stx-e _stx2251_)))
+        (let ((_E22562266_
+               (lambda () (error '"No clause matching" _g22522262_))))
+          (let ((_else22552270_ (lambda () '#f)))
+            (let ((_try-match22542278_
                    (lambda ()
-                     (let ((_K3031330331_ (lambda () '#t)))
-                       (if (##null? _g3030830318_)
-                           (_K3031330331_)
-                           (_else3031130326_))))))
-              (let ((_K3031430340_
-                     (lambda (_rest30337_ _hd30338_)
-                       (if (gx#identifier? _hd30338_)
-                           (gx#identifier-list? _rest30337_)
+                     (let ((_K22572275_ (lambda () '#t)))
+                       (if (##null? _g22522262_)
+                           (_K22572275_)
+                           (_else22552270_))))))
+              (let ((_K22582284_
+                     (lambda (_rest2281_ _hd2282_)
+                       (if (gx#identifier? _hd2282_)
+                           (gx#identifier-list? _rest2281_)
                            '#f))))
-                (if (##pair? _g3030830318_)
-                    (let ((_hd3031530343_ (##car _g3030830318_))
-                          (_tl3031630345_ (##cdr _g3030830318_)))
-                      (let ((_hd30348_ _hd3031530343_))
-                        (let ((_rest30350_ _tl3031630345_))
-                          (_K3031430340_ _rest30350_ _hd30348_))))
-                    (_try-match3031030334_)))))))))
+                (if (##pair? _g22522262_)
+                    (let ((_hd22592287_ (##car _g22522262_))
+                          (_tl22602289_ (##cdr _g22522262_)))
+                      (let ((_hd2292_ _hd22592287_))
+                        (let ((_rest2294_ _tl22602289_))
+                          (_K22582284_ _rest2294_ _hd2292_))))
+                    (_try-match22542278_)))))))))
   (define gx#genident
-    (let ((_opt-lambda3028230292_
-           (lambda (_e30284_ _src30285_)
+    (let ((_opt-lambda22262236_
+           (lambda (_e2228_ _src2229_)
              (gx#stx-wrap-source
-              (gensym (let ((_e30287_ (gx#stx-e _e30284_)))
-                        (if (interned-symbol? _e30287_) _e30287_ 'g)))
-              (let ((_$e30289_ (gx#stx-source _e30284_)))
-                (if _$e30289_ _$e30289_ _src30285_))))))
-      (lambda _g40550_
-        (let ((_g40549_ (length _g40550_)))
-          (cond ((fx= _g40549_ 0)
+              (gensym (let ((_e2231_ (gx#stx-e _e2228_)))
+                        (if (interned-symbol? _e2231_) _e2231_ 'g)))
+              (let ((_$e2233_ (gx#stx-source _e2228_)))
+                (if _$e2233_ _$e2233_ _src2229_))))))
+      (lambda _g12494_
+        (let ((_g12493_ (length _g12494_)))
+          (cond ((fx= _g12493_ 0)
                  (apply (lambda ()
-                          (let ((_e30296_ 'g))
-                            (let ((_src30298_ '#f))
-                              (_opt-lambda3028230292_ _e30296_ _src30298_))))
-                        _g40550_))
-                ((fx= _g40549_ 1)
-                 (apply (lambda (_e30300_)
-                          (let ((_src30302_ '#f))
-                            (_opt-lambda3028230292_ _e30300_ _src30302_)))
-                        _g40550_))
-                ((fx= _g40549_ 2)
-                 (apply (lambda (_e30304_ _src30305_)
-                          (_opt-lambda3028230292_ _e30304_ _src30305_))
-                        _g40550_))
-                (else (error "No clause matching arguments" _g40550_)))))))
+                          (let ((_e2240_ 'g))
+                            (let ((_src2242_ '#f))
+                              (_opt-lambda22262236_ _e2240_ _src2242_))))
+                        _g12494_))
+                ((fx= _g12493_ 1)
+                 (apply (lambda (_e2244_)
+                          (let ((_src2246_ '#f))
+                            (_opt-lambda22262236_ _e2244_ _src2246_)))
+                        _g12494_))
+                ((fx= _g12493_ 2)
+                 (apply (lambda (_e2248_ _src2249_)
+                          (_opt-lambda22262236_ _e2248_ _src2249_))
+                        _g12494_))
+                (else (error "No clause matching arguments" _g12494_)))))))
   (define gx#gentemps
-    (lambda (_stx-lst30281_) (gx#stx-map gx#genident _stx-lst30281_)))
-  (define gx#syntax->list (lambda (_stx30279_) (gx#stx-map values _stx30279_)))
-  (define gx#stx-car (lambda (_stx30277_) (car (gx#syntax-e _stx30277_))))
-  (define gx#stx-cdr (lambda (_stx30275_) (cdr (gx#syntax-e _stx30275_))))
+    (lambda (_stx-lst2225_) (gx#stx-map gx#genident _stx-lst2225_)))
+  (define gx#syntax->list (lambda (_stx2223_) (gx#stx-map values _stx2223_)))
+  (define gx#stx-car (lambda (_stx2221_) (car (gx#syntax-e _stx2221_))))
+  (define gx#stx-cdr (lambda (_stx2219_) (cdr (gx#syntax-e _stx2219_))))
   (define gx#stx-length
-    (lambda (_stx30238_)
-      ((letrec ((_lp30240_
-                 (lambda (_rest30242_ _n30243_)
-                   (let ((_g3024430252_ (gx#stx-e _rest30242_)))
-                     (let ((_E3024730256_
+    (lambda (_stx2182_)
+      ((letrec ((_lp2184_
+                 (lambda (_rest2186_ _n2187_)
+                   (let ((_g21882196_ (gx#stx-e _rest2186_)))
+                     (let ((_E21912200_
                             (lambda ()
-                              (error '"No clause matching" _g3024430252_))))
-                       (let ((_else3024630260_ (lambda () _n30243_)))
-                         (let ((_K3024830265_
-                                (lambda (_rest30263_)
-                                  (_lp30240_ _rest30263_ (fx1+ _n30243_)))))
-                           (if (##pair? _g3024430252_)
-                               (let ((_hd3024930268_ (##car _g3024430252_))
-                                     (_tl3025030270_ (##cdr _g3024430252_)))
-                                 (let ((_rest30273_ _tl3025030270_))
-                                   (_K3024830265_ _rest30273_)))
-                               (_else3024630260_)))))))))
-         _lp30240_)
-       _stx30238_
+                              (error '"No clause matching" _g21882196_))))
+                       (let ((_else21902204_ (lambda () _n2187_)))
+                         (let ((_K21922209_
+                                (lambda (_rest2207_)
+                                  (_lp2184_ _rest2207_ (fx1+ _n2187_)))))
+                           (if (##pair? _g21882196_)
+                               (let ((_hd21932212_ (##car _g21882196_))
+                                     (_tl21942214_ (##cdr _g21882196_)))
+                                 (let ((_rest2217_ _tl21942214_))
+                                   (_K21922209_ _rest2217_)))
+                               (_else21902204_)))))))))
+         _lp2184_)
+       _stx2182_
        '0)))
   (define gx#stx-for-each
-    (lambda _g40552_
-      (let ((_g40551_ (length _g40552_)))
-        (cond ((fx= _g40551_ 2)
-               (apply (lambda (_f30231_ _stx30232_)
-                        (gx#stx-for-each1 _f30231_ _stx30232_))
-                      _g40552_))
-              ((fx= _g40551_ 3)
-               (apply (lambda (_f30234_ _xstx30235_ _ystx30236_)
-                        (gx#stx-for-each2 _f30234_ _xstx30235_ _ystx30236_))
-                      _g40552_))
-              (else (error "No clause matching arguments" _g40552_))))))
+    (lambda _g12496_
+      (let ((_g12495_ (length _g12496_)))
+        (cond ((fx= _g12495_ 2)
+               (apply (lambda (_f2175_ _stx2176_)
+                        (gx#stx-for-each1 _f2175_ _stx2176_))
+                      _g12496_))
+              ((fx= _g12495_ 3)
+               (apply (lambda (_f2178_ _xstx2179_ _ystx2180_)
+                        (gx#stx-for-each2 _f2178_ _xstx2179_ _ystx2180_))
+                      _g12496_))
+              (else (error "No clause matching arguments" _g12496_))))))
   (define gx#stx-for-each1
-    (lambda (_f30181_ _stx30182_)
-      ((letrec ((_lp30184_
-                 (lambda (_rest30186_)
-                   (let ((_g3018730197_ (gx#syntax-e _rest30186_)))
-                     (let ((_E3019130201_
+    (lambda (_f2125_ _stx2126_)
+      ((letrec ((_lp2128_
+                 (lambda (_rest2130_)
+                   (let ((_g21312141_ (gx#syntax-e _rest2130_)))
+                     (let ((_E21352145_
                             (lambda ()
-                              (error '"No clause matching" _g3018730197_))))
-                       (let ((_else3019030205_
-                              (lambda () (_f30181_ _rest30186_))))
-                         (let ((_try-match3018930213_
+                              (error '"No clause matching" _g21312141_))))
+                       (let ((_else21342149_ (lambda () (_f2125_ _rest2130_))))
+                         (let ((_try-match21332157_
                                 (lambda ()
-                                  (let ((_K3019230210_ (lambda () '#!void)))
-                                    (if (##null? _g3018730197_)
-                                        (_K3019230210_)
-                                        (_else3019030205_))))))
-                           (let ((_K3019330219_
-                                  (lambda (_rest30216_ _hd30217_)
+                                  (let ((_K21362154_ (lambda () '#!void)))
+                                    (if (##null? _g21312141_)
+                                        (_K21362154_)
+                                        (_else21342149_))))))
+                           (let ((_K21372163_
+                                  (lambda (_rest2160_ _hd2161_)
                                     (begin
-                                      (_f30181_ _hd30217_)
-                                      (_lp30184_ _rest30216_)))))
-                             (if (##pair? _g3018730197_)
-                                 (let ((_hd3019430222_ (##car _g3018730197_))
-                                       (_tl3019530224_ (##cdr _g3018730197_)))
-                                   (let ((_hd30227_ _hd3019430222_))
-                                     (let ((_rest30229_ _tl3019530224_))
-                                       (_K3019330219_ _rest30229_ _hd30227_))))
-                                 (_try-match3018930213_))))))))))
-         _lp30184_)
-       _stx30182_)))
+                                      (_f2125_ _hd2161_)
+                                      (_lp2128_ _rest2160_)))))
+                             (if (##pair? _g21312141_)
+                                 (let ((_hd21382166_ (##car _g21312141_))
+                                       (_tl21392168_ (##cdr _g21312141_)))
+                                   (let ((_hd2171_ _hd21382166_))
+                                     (let ((_rest2173_ _tl21392168_))
+                                       (_K21372163_ _rest2173_ _hd2171_))))
+                                 (_try-match21332157_))))))))))
+         _lp2128_)
+       _stx2126_)))
   (define gx#stx-for-each2
-    (lambda (_f30086_ _xstx30087_ _ystx30088_)
-      ((letrec ((_lp30090_
-                 (lambda (_xrest30092_ _yrest30093_)
-                   (let ((_g3009430104_ (gx#syntax-e _xrest30092_)))
-                     (let ((_E3009830108_
+    (lambda (_f2030_ _xstx2031_ _ystx2032_)
+      ((letrec ((_lp2034_
+                 (lambda (_xrest2036_ _yrest2037_)
+                   (let ((_g20382048_ (gx#syntax-e _xrest2036_)))
+                     (let ((_E20422052_
                             (lambda ()
-                              (error '"No clause matching" _g3009430104_))))
-                       (let ((_else3009730112_ (lambda () '#!void)))
-                         (let ((_try-match3009630135_
+                              (error '"No clause matching" _g20382048_))))
+                       (let ((_else20412056_ (lambda () '#!void)))
+                         (let ((_try-match20402079_
                                 (lambda ()
-                                  (let ((_K3009930132_
+                                  (let ((_K20432076_
                                          (lambda ()
-                                           (let ((_yrest3011630121_
-                                                  _yrest30093_))
-                                             (let ((_E3011830125_
+                                           (let ((_yrest20602065_ _yrest2037_))
+                                             (let ((_E20622069_
                                                     (lambda ()
                                                       (error '"No clause matching"
-                                                             _yrest3011630121_))))
-                                               (let ((_K3011930129_
+                                                             _yrest20602065_))))
+                                               (let ((_K20632073_
                                                       (lambda ()
-                                                        (_f30086_
-                                                         _xrest30092_
-                                                         _yrest30093_))))
+                                                        (_f2030_ _xrest2036_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         _yrest2037_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (if (not (gx#stx-null?
-                                                           _yrest3011630121_))
-                                                     (_K3011930129_)
-                                                     (_E3011830125_))))))))
-                                    (if (not (null? _g3009430104_))
-                                        (_K3009930132_)
-                                        (_else3009730112_))))))
-                           (let ((_K3010030169_
-                                  (lambda (_xrest30138_ _xhd30139_)
-                                    (let ((_g3014030147_
-                                           (gx#syntax-e _yrest30093_)))
-                                      (let ((_E3014230151_
+                                                           _yrest20602065_))
+                                                     (_K20632073_)
+                                                     (_E20622069_))))))))
+                                    (if (not (null? _g20382048_))
+                                        (_K20432076_)
+                                        (_else20412056_))))))
+                           (let ((_K20442113_
+                                  (lambda (_xrest2082_ _xhd2083_)
+                                    (let ((_g20842091_
+                                           (gx#syntax-e _yrest2037_)))
+                                      (let ((_E20862095_
                                              (lambda ()
                                                (error '"No clause matching"
-                                                      _g3014030147_))))
-                                        (let ((_K3014330157_
-                                               (lambda (_yrest30154_
-                                                        _yhd30155_)
+                                                      _g20842091_))))
+                                        (let ((_K20872101_
+                                               (lambda (_yrest2098_ _yhd2099_)
                                                  (begin
-                                                   (_f30086_
-                                                    _xhd30139_
-                                                    _yhd30155_)
-                                                   (_lp30090_
-                                                    _xrest30138_
-                                                    _yrest30154_)))))
-                                          (if (##pair? _g3014030147_)
-                                              (let ((_hd3014430160_
-                                                     (##car _g3014030147_))
-                                                    (_tl3014530162_
-                                                     (##cdr _g3014030147_)))
-                                                (let ((_yhd30165_
-                                                       _hd3014430160_))
-                                                  (let ((_yrest30167_
-                                                         _tl3014530162_))
-                                                    (_K3014330157_
-                                                     _yrest30167_
-                                                     _yhd30165_))))
-                                              (_E3014230151_))))))))
-                             (if (##pair? _g3009430104_)
-                                 (let ((_hd3010130172_ (##car _g3009430104_))
-                                       (_tl3010230174_ (##cdr _g3009430104_)))
-                                   (let ((_xhd30177_ _hd3010130172_))
-                                     (let ((_xrest30179_ _tl3010230174_))
-                                       (_K3010030169_
-                                        _xrest30179_
-                                        _xhd30177_))))
-                                 (_try-match3009630135_))))))))))
-         _lp30090_)
-       _xstx30087_
-       _ystx30088_)))
+                                                   (_f2030_ _xhd2083_
+                                                            _yhd2099_)
+                                                   (_lp2034_
+                                                    _xrest2082_
+                                                    _yrest2098_)))))
+                                          (if (##pair? _g20842091_)
+                                              (let ((_hd20882104_
+                                                     (##car _g20842091_))
+                                                    (_tl20892106_
+                                                     (##cdr _g20842091_)))
+                                                (let ((_yhd2109_ _hd20882104_))
+                                                  (let ((_yrest2111_
+                                                         _tl20892106_))
+                                                    (_K20872101_
+                                                     _yrest2111_
+                                                     _yhd2109_))))
+                                              (_E20862095_))))))))
+                             (if (##pair? _g20382048_)
+                                 (let ((_hd20452116_ (##car _g20382048_))
+                                       (_tl20462118_ (##cdr _g20382048_)))
+                                   (let ((_xhd2121_ _hd20452116_))
+                                     (let ((_xrest2123_ _tl20462118_))
+                                       (_K20442113_ _xrest2123_ _xhd2121_))))
+                                 (_try-match20402079_))))))))))
+         _lp2034_)
+       _xstx2031_
+       _ystx2032_)))
   (define gx#stx-map
-    (lambda _g40554_
-      (let ((_g40553_ (length _g40554_)))
-        (cond ((fx= _g40553_ 2)
-               (apply (lambda (_f30079_ _stx30080_)
-                        (gx#stx-map1 _f30079_ _stx30080_))
-                      _g40554_))
-              ((fx= _g40553_ 3)
-               (apply (lambda (_f30082_ _xstx30083_ _ystx30084_)
-                        (gx#stx-map2 _f30082_ _xstx30083_ _ystx30084_))
-                      _g40554_))
-              (else (error "No clause matching arguments" _g40554_))))))
+    (lambda _g12498_
+      (let ((_g12497_ (length _g12498_)))
+        (cond ((fx= _g12497_ 2)
+               (apply (lambda (_f2023_ _stx2024_)
+                        (gx#stx-map1 _f2023_ _stx2024_))
+                      _g12498_))
+              ((fx= _g12497_ 3)
+               (apply (lambda (_f2026_ _xstx2027_ _ystx2028_)
+                        (gx#stx-map2 _f2026_ _xstx2027_ _ystx2028_))
+                      _g12498_))
+              (else (error "No clause matching arguments" _g12498_))))))
   (define gx#stx-map1
-    (lambda (_f30029_ _stx30030_)
-      ((letrec ((_recur30032_
-                 (lambda (_rest30034_)
-                   (let ((_g3003530045_ (gx#syntax-e _rest30034_)))
-                     (let ((_E3003930049_
+    (lambda (_f1973_ _stx1974_)
+      ((letrec ((_recur1976_
+                 (lambda (_rest1978_)
+                   (let ((_g19791989_ (gx#syntax-e _rest1978_)))
+                     (let ((_E19831993_
                             (lambda ()
-                              (error '"No clause matching" _g3003530045_))))
-                       (let ((_else3003830053_
-                              (lambda () (_f30029_ _rest30034_))))
-                         (let ((_try-match3003730061_
+                              (error '"No clause matching" _g19791989_))))
+                       (let ((_else19821997_ (lambda () (_f1973_ _rest1978_))))
+                         (let ((_try-match19812005_
                                 (lambda ()
-                                  (let ((_K3004030058_ (lambda () '())))
-                                    (if (##null? _g3003530045_)
-                                        (_K3004030058_)
-                                        (_else3003830053_))))))
-                           (let ((_K3004130067_
-                                  (lambda (_rest30064_ _hd30065_)
-                                    (cons (_f30029_ _hd30065_)
-                                          (_recur30032_ _rest30064_)))))
-                             (if (##pair? _g3003530045_)
-                                 (let ((_hd3004230070_ (##car _g3003530045_))
-                                       (_tl3004330072_ (##cdr _g3003530045_)))
-                                   (let ((_hd30075_ _hd3004230070_))
-                                     (let ((_rest30077_ _tl3004330072_))
-                                       (_K3004130067_ _rest30077_ _hd30075_))))
-                                 (_try-match3003730061_))))))))))
-         _recur30032_)
-       _stx30030_)))
+                                  (let ((_K19842002_ (lambda () '())))
+                                    (if (##null? _g19791989_)
+                                        (_K19842002_)
+                                        (_else19821997_))))))
+                           (let ((_K19852011_
+                                  (lambda (_rest2008_ _hd2009_)
+                                    (cons (_f1973_ _hd2009_)
+                                          (_recur1976_ _rest2008_)))))
+                             (if (##pair? _g19791989_)
+                                 (let ((_hd19862014_ (##car _g19791989_))
+                                       (_tl19872016_ (##cdr _g19791989_)))
+                                   (let ((_hd2019_ _hd19862014_))
+                                     (let ((_rest2021_ _tl19872016_))
+                                       (_K19852011_ _rest2021_ _hd2019_))))
+                                 (_try-match19812005_))))))))))
+         _recur1976_)
+       _stx1974_)))
   (define gx#stx-map2
-    (lambda (_f29934_ _xstx29935_ _ystx29936_)
-      ((letrec ((_recur29938_
-                 (lambda (_xrest29940_ _yrest29941_)
-                   (let ((_g2994229952_ (gx#syntax-e _xrest29940_)))
-                     (let ((_E2994629956_
+    (lambda (_f1878_ _xstx1879_ _ystx1880_)
+      ((letrec ((_recur1882_
+                 (lambda (_xrest1884_ _yrest1885_)
+                   (let ((_g18861896_ (gx#syntax-e _xrest1884_)))
+                     (let ((_E18901900_
                             (lambda ()
-                              (error '"No clause matching" _g2994229952_))))
-                       (let ((_else2994529960_ (lambda () '())))
-                         (let ((_try-match2994429983_
+                              (error '"No clause matching" _g18861896_))))
+                       (let ((_else18891904_ (lambda () '())))
+                         (let ((_try-match18881927_
                                 (lambda ()
-                                  (let ((_K2994729980_
+                                  (let ((_K18911924_
                                          (lambda ()
-                                           (let ((_yrest2996429969_
-                                                  _yrest29941_))
-                                             (let ((_E2996629973_
+                                           (let ((_yrest19081913_ _yrest1885_))
+                                             (let ((_E19101917_
                                                     (lambda ()
                                                       (error '"No clause matching"
-                                                             _yrest2996429969_))))
-                                               (let ((_K2996729977_
+                                                             _yrest19081913_))))
+                                               (let ((_K19111921_
                                                       (lambda ()
-                                                        (_f29934_
-                                                         _xrest29940_
-                                                         _yrest29941_))))
+                                                        (_f1878_ _xrest1884_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         _yrest1885_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (if (not (gx#stx-null?
-                                                           _yrest2996429969_))
-                                                     (_K2996729977_)
-                                                     (_E2996629973_))))))))
-                                    (if (not (null? _g2994229952_))
-                                        (_K2994729980_)
-                                        (_else2994529960_))))))
-                           (let ((_K2994830017_
-                                  (lambda (_xrest29986_ _xhd29987_)
-                                    (let ((_g2998829995_
-                                           (gx#syntax-e _yrest29941_)))
-                                      (let ((_E2999029999_
+                                                           _yrest19081913_))
+                                                     (_K19111921_)
+                                                     (_E19101917_))))))))
+                                    (if (not (null? _g18861896_))
+                                        (_K18911924_)
+                                        (_else18891904_))))))
+                           (let ((_K18921961_
+                                  (lambda (_xrest1930_ _xhd1931_)
+                                    (let ((_g19321939_
+                                           (gx#syntax-e _yrest1885_)))
+                                      (let ((_E19341943_
                                              (lambda ()
                                                (error '"No clause matching"
-                                                      _g2998829995_))))
-                                        (let ((_K2999130005_
-                                               (lambda (_yrest30002_
-                                                        _yhd30003_)
-                                                 (cons (_f29934_
-                                                        _xhd29987_
-                                                        _yhd30003_)
-                                                       (_recur29938_
-                                                        _xrest29986_
-                                                        _yrest30002_)))))
-                                          (if (##pair? _g2998829995_)
-                                              (let ((_hd2999230008_
-                                                     (##car _g2998829995_))
-                                                    (_tl2999330010_
-                                                     (##cdr _g2998829995_)))
-                                                (let ((_yhd30013_
-                                                       _hd2999230008_))
-                                                  (let ((_yrest30015_
-                                                         _tl2999330010_))
-                                                    (_K2999130005_
-                                                     _yrest30015_
-                                                     _yhd30013_))))
-                                              (_E2999029999_))))))))
-                             (if (##pair? _g2994229952_)
-                                 (let ((_hd2994930020_ (##car _g2994229952_))
-                                       (_tl2995030022_ (##cdr _g2994229952_)))
-                                   (let ((_xhd30025_ _hd2994930020_))
-                                     (let ((_xrest30027_ _tl2995030022_))
-                                       (_K2994830017_
-                                        _xrest30027_
-                                        _xhd30025_))))
-                                 (_try-match2994429983_))))))))))
-         _recur29938_)
-       _xstx29935_
-       _ystx29936_)))
+                                                      _g19321939_))))
+                                        (let ((_K19351949_
+                                               (lambda (_yrest1946_ _yhd1947_)
+                                                 (cons (_f1878_ _xhd1931_
+                                                                _yhd1947_)
+                                                       (_recur1882_
+                                                        _xrest1930_
+                                                        _yrest1946_)))))
+                                          (if (##pair? _g19321939_)
+                                              (let ((_hd19361952_
+                                                     (##car _g19321939_))
+                                                    (_tl19371954_
+                                                     (##cdr _g19321939_)))
+                                                (let ((_yhd1957_ _hd19361952_))
+                                                  (let ((_yrest1959_
+                                                         _tl19371954_))
+                                                    (_K19351949_
+                                                     _yrest1959_
+                                                     _yhd1957_))))
+                                              (_E19341943_))))))))
+                             (if (##pair? _g18861896_)
+                                 (let ((_hd18931964_ (##car _g18861896_))
+                                       (_tl18941966_ (##cdr _g18861896_)))
+                                   (let ((_xhd1969_ _hd18931964_))
+                                     (let ((_xrest1971_ _tl18941966_))
+                                       (_K18921961_ _xrest1971_ _xhd1969_))))
+                                 (_try-match18881927_))))))))))
+         _recur1882_)
+       _xstx1879_
+       _ystx1880_)))
   (define gx#stx-andmap
-    (lambda (_f29884_ _stx29885_)
-      ((letrec ((_lp29887_
-                 (lambda (_rest29889_)
-                   (let ((_g2989029900_ (gx#syntax-e _rest29889_)))
-                     (let ((_E2989429904_
+    (lambda (_f1828_ _stx1829_)
+      ((letrec ((_lp1831_
+                 (lambda (_rest1833_)
+                   (let ((_g18341844_ (gx#syntax-e _rest1833_)))
+                     (let ((_E18381848_
                             (lambda ()
-                              (error '"No clause matching" _g2989029900_))))
-                       (let ((_else2989329908_
-                              (lambda () (_f29884_ _rest29889_))))
-                         (let ((_try-match2989229916_
+                              (error '"No clause matching" _g18341844_))))
+                       (let ((_else18371852_ (lambda () (_f1828_ _rest1833_))))
+                         (let ((_try-match18361860_
                                 (lambda ()
-                                  (let ((_K2989529913_ (lambda () '#t)))
-                                    (if (##null? _g2989029900_)
-                                        (_K2989529913_)
-                                        (_else2989329908_))))))
-                           (let ((_K2989629922_
-                                  (lambda (_rest29919_ _hd29920_)
-                                    (if (_f29884_ _hd29920_)
-                                        (_lp29887_ _rest29919_)
+                                  (let ((_K18391857_ (lambda () '#t)))
+                                    (if (##null? _g18341844_)
+                                        (_K18391857_)
+                                        (_else18371852_))))))
+                           (let ((_K18401866_
+                                  (lambda (_rest1863_ _hd1864_)
+                                    (if (_f1828_ _hd1864_)
+                                        (_lp1831_ _rest1863_)
                                         '#f))))
-                             (if (##pair? _g2989029900_)
-                                 (let ((_hd2989729925_ (##car _g2989029900_))
-                                       (_tl2989829927_ (##cdr _g2989029900_)))
-                                   (let ((_hd29930_ _hd2989729925_))
-                                     (let ((_rest29932_ _tl2989829927_))
-                                       (_K2989629922_ _rest29932_ _hd29930_))))
-                                 (_try-match2989229916_))))))))))
-         _lp29887_)
-       _stx29885_)))
+                             (if (##pair? _g18341844_)
+                                 (let ((_hd18411869_ (##car _g18341844_))
+                                       (_tl18421871_ (##cdr _g18341844_)))
+                                   (let ((_hd1874_ _hd18411869_))
+                                     (let ((_rest1876_ _tl18421871_))
+                                       (_K18401866_ _rest1876_ _hd1874_))))
+                                 (_try-match18361860_))))))))))
+         _lp1831_)
+       _stx1829_)))
   (define gx#stx-ormap
-    (lambda (_f29831_ _stx29832_)
-      ((letrec ((_lp29834_
-                 (lambda (_rest29836_)
-                   (let ((_g2983729847_ (gx#syntax-e _rest29836_)))
-                     (let ((_E2984129851_
+    (lambda (_f1775_ _stx1776_)
+      ((letrec ((_lp1778_
+                 (lambda (_rest1780_)
+                   (let ((_g17811791_ (gx#syntax-e _rest1780_)))
+                     (let ((_E17851795_
                             (lambda ()
-                              (error '"No clause matching" _g2983729847_))))
-                       (let ((_else2984029855_
-                              (lambda () (_f29831_ _rest29836_))))
-                         (let ((_try-match2983929863_
+                              (error '"No clause matching" _g17811791_))))
+                       (let ((_else17841799_ (lambda () (_f1775_ _rest1780_))))
+                         (let ((_try-match17831807_
                                 (lambda ()
-                                  (let ((_K2984229860_ (lambda () '#f)))
-                                    (if (##null? _g2983729847_)
-                                        (_K2984229860_)
-                                        (_else2984029855_))))))
-                           (let ((_K2984329872_
-                                  (lambda (_rest29866_ _hd29867_)
-                                    (let ((_$e29869_ (_f29831_ _hd29867_)))
-                                      (if _$e29869_
-                                          _$e29869_
-                                          (_lp29834_ _rest29866_))))))
-                             (if (##pair? _g2983729847_)
-                                 (let ((_hd2984429875_ (##car _g2983729847_))
-                                       (_tl2984529877_ (##cdr _g2983729847_)))
-                                   (let ((_hd29880_ _hd2984429875_))
-                                     (let ((_rest29882_ _tl2984529877_))
-                                       (_K2984329872_ _rest29882_ _hd29880_))))
-                                 (_try-match2983929863_))))))))))
-         _lp29834_)
-       _stx29832_)))
+                                  (let ((_K17861804_ (lambda () '#f)))
+                                    (if (##null? _g17811791_)
+                                        (_K17861804_)
+                                        (_else17841799_))))))
+                           (let ((_K17871816_
+                                  (lambda (_rest1810_ _hd1811_)
+                                    (let ((_$e1813_ (_f1775_ _hd1811_)))
+                                      (if _$e1813_
+                                          _$e1813_
+                                          (_lp1778_ _rest1810_))))))
+                             (if (##pair? _g17811791_)
+                                 (let ((_hd17881819_ (##car _g17811791_))
+                                       (_tl17891821_ (##cdr _g17811791_)))
+                                   (let ((_hd1824_ _hd17881819_))
+                                     (let ((_rest1826_ _tl17891821_))
+                                       (_K17871816_ _rest1826_ _hd1824_))))
+                                 (_try-match17831807_))))))))))
+         _lp1778_)
+       _stx1776_)))
   (define gx#stx-foldl
-    (lambda (_f29779_ _iv29780_ _stx29781_)
-      ((letrec ((_lp29783_
-                 (lambda (_r29785_ _rest29786_)
-                   (let ((_g2978729797_ (gx#syntax-e _rest29786_)))
-                     (let ((_E2979129801_
+    (lambda (_f1723_ _iv1724_ _stx1725_)
+      ((letrec ((_lp1727_
+                 (lambda (_r1729_ _rest1730_)
+                   (let ((_g17311741_ (gx#syntax-e _rest1730_)))
+                     (let ((_E17351745_
                             (lambda ()
-                              (error '"No clause matching" _g2978729797_))))
-                       (let ((_else2979029805_
-                              (lambda () (_f29779_ _rest29786_ _r29785_))))
-                         (let ((_try-match2978929813_
+                              (error '"No clause matching" _g17311741_))))
+                       (let ((_else17341749_
+                              (lambda () (_f1723_ _rest1730_ _r1729_))))
+                         (let ((_try-match17331757_
                                 (lambda ()
-                                  (let ((_K2979229810_ (lambda () _r29785_)))
-                                    (if (##null? _g2978729797_)
-                                        (_K2979229810_)
-                                        (_else2979029805_))))))
-                           (let ((_K2979329819_
-                                  (lambda (_rest29816_ _hd29817_)
-                                    (_lp29783_
-                                     (_f29779_ _hd29817_ _r29785_)
-                                     _rest29816_))))
-                             (if (##pair? _g2978729797_)
-                                 (let ((_hd2979429822_ (##car _g2978729797_))
-                                       (_tl2979529824_ (##cdr _g2978729797_)))
-                                   (let ((_hd29827_ _hd2979429822_))
-                                     (let ((_rest29829_ _tl2979529824_))
-                                       (_K2979329819_ _rest29829_ _hd29827_))))
-                                 (_try-match2978929813_))))))))))
-         _lp29783_)
-       _iv29780_
-       _stx29781_)))
+                                  (let ((_K17361754_ (lambda () _r1729_)))
+                                    (if (##null? _g17311741_)
+                                        (_K17361754_)
+                                        (_else17341749_))))))
+                           (let ((_K17371763_
+                                  (lambda (_rest1760_ _hd1761_)
+                                    (_lp1727_
+                                     (_f1723_ _hd1761_ _r1729_)
+                                     _rest1760_))))
+                             (if (##pair? _g17311741_)
+                                 (let ((_hd17381766_ (##car _g17311741_))
+                                       (_tl17391768_ (##cdr _g17311741_)))
+                                   (let ((_hd1771_ _hd17381766_))
+                                     (let ((_rest1773_ _tl17391768_))
+                                       (_K17371763_ _rest1773_ _hd1771_))))
+                                 (_try-match17331757_))))))))))
+         _lp1727_)
+       _iv1724_
+       _stx1725_)))
   (define gx#stx-foldr
-    (lambda (_f29728_ _iv29729_ _stx29730_)
-      ((letrec ((_recur29732_
-                 (lambda (_rest29734_)
-                   (let ((_g2973529745_ (gx#syntax-e _rest29734_)))
-                     (let ((_E2973929749_
+    (lambda (_f1672_ _iv1673_ _stx1674_)
+      ((letrec ((_recur1676_
+                 (lambda (_rest1678_)
+                   (let ((_g16791689_ (gx#syntax-e _rest1678_)))
+                     (let ((_E16831693_
                             (lambda ()
-                              (error '"No clause matching" _g2973529745_))))
-                       (let ((_else2973829753_
-                              (lambda () (_f29728_ _rest29734_ _iv29729_))))
-                         (let ((_try-match2973729761_
+                              (error '"No clause matching" _g16791689_))))
+                       (let ((_else16821697_
+                              (lambda () (_f1672_ _rest1678_ _iv1673_))))
+                         (let ((_try-match16811705_
                                 (lambda ()
-                                  (let ((_K2974029758_ (lambda () _iv29729_)))
-                                    (if (##null? _g2973529745_)
-                                        (_K2974029758_)
-                                        (_else2973829753_))))))
-                           (let ((_K2974129767_
-                                  (lambda (_rest29764_ _hd29765_)
-                                    (_f29728_
-                                     _hd29765_
-                                     (_recur29732_ _rest29764_)))))
-                             (if (##pair? _g2973529745_)
-                                 (let ((_hd2974229770_ (##car _g2973529745_))
-                                       (_tl2974329772_ (##cdr _g2973529745_)))
-                                   (let ((_hd29775_ _hd2974229770_))
-                                     (let ((_rest29777_ _tl2974329772_))
-                                       (_K2974129767_ _rest29777_ _hd29775_))))
-                                 (_try-match2973729761_))))))))))
-         _recur29732_)
-       _stx29730_)))
+                                  (let ((_K16841702_ (lambda () _iv1673_)))
+                                    (if (##null? _g16791689_)
+                                        (_K16841702_)
+                                        (_else16821697_))))))
+                           (let ((_K16851711_
+                                  (lambda (_rest1708_ _hd1709_)
+                                    (_f1672_ _hd1709_
+                                             (_recur1676_ _rest1708_)))))
+                             (if (##pair? _g16791689_)
+                                 (let ((_hd16861714_ (##car _g16791689_))
+                                       (_tl16871716_ (##cdr _g16791689_)))
+                                   (let ((_hd1719_ _hd16861714_))
+                                     (let ((_rest1721_ _tl16871716_))
+                                       (_K16851711_ _rest1721_ _hd1719_))))
+                                 (_try-match16811705_))))))))))
+         _recur1676_)
+       _stx1674_)))
   (define gx#stx-reverse
-    (lambda (_stx29726_) (gx#stx-foldl cons '() _stx29726_)))
+    (lambda (_stx1670_) (gx#stx-foldl cons '() _stx1670_)))
   (define gx#stx-last
-    (lambda (_stx29687_)
-      ((letrec ((_lp29689_
-                 (lambda (_rest29691_)
-                   (let ((_g2969229700_ (gx#syntax-e _rest29691_)))
-                     (let ((_E2969529704_
+    (lambda (_stx1631_)
+      ((letrec ((_lp1633_
+                 (lambda (_rest1635_)
+                   (let ((_g16361644_ (gx#syntax-e _rest1635_)))
+                     (let ((_E16391648_
                             (lambda ()
-                              (error '"No clause matching" _g2969229700_))))
-                       (let ((_else2969429708_ (lambda () _rest29691_)))
-                         (let ((_K2969629714_
-                                (lambda (_rest29711_ _hd29712_)
-                                  (if (gx#stx-null? _rest29711_)
-                                      _hd29712_
-                                      (_lp29689_ _rest29711_)))))
-                           (if (##pair? _g2969229700_)
-                               (let ((_hd2969729717_ (##car _g2969229700_))
-                                     (_tl2969829719_ (##cdr _g2969229700_)))
-                                 (let ((_hd29722_ _hd2969729717_))
-                                   (let ((_rest29724_ _tl2969829719_))
-                                     (_K2969629714_ _rest29724_ _hd29722_))))
-                               (_else2969429708_)))))))))
-         _lp29689_)
-       _stx29687_)))
+                              (error '"No clause matching" _g16361644_))))
+                       (let ((_else16381652_ (lambda () _rest1635_)))
+                         (let ((_K16401658_
+                                (lambda (_rest1655_ _hd1656_)
+                                  (if (gx#stx-null? _rest1655_)
+                                      _hd1656_
+                                      (_lp1633_ _rest1655_)))))
+                           (if (##pair? _g16361644_)
+                               (let ((_hd16411661_ (##car _g16361644_))
+                                     (_tl16421663_ (##cdr _g16361644_)))
+                                 (let ((_hd1666_ _hd16411661_))
+                                   (let ((_rest1668_ _tl16421663_))
+                                     (_K16401658_ _rest1668_ _hd1666_))))
+                               (_else16381652_)))))))))
+         _lp1633_)
+       _stx1631_)))
   (define gx#stx-last-pair
-    (lambda (_stx29656_)
-      ((letrec ((_lp29658_
-                 (lambda (_hd29660_)
-                   (let ((_g2966129668_ (gx#syntax-e _hd29660_)))
-                     (let ((_E2966329672_
+    (lambda (_stx1600_)
+      ((letrec ((_lp1602_
+                 (lambda (_hd1604_)
+                   (let ((_g16051612_ (gx#syntax-e _hd1604_)))
+                     (let ((_E16071616_
                             (lambda ()
-                              (error '"No clause matching" _g2966129668_))))
-                       (let ((_K2966429677_
-                              (lambda (_rest29675_)
-                                (if (gx#stx-pair? _rest29675_)
-                                    (_lp29658_ _rest29675_)
-                                    _hd29660_))))
-                         (if (##pair? _g2966129668_)
-                             (let ((_hd2966529680_ (##car _g2966129668_))
-                                   (_tl2966629682_ (##cdr _g2966129668_)))
-                               (let ((_rest29685_ _tl2966629682_))
-                                 (_K2966429677_ _rest29685_)))
-                             (_E2966329672_))))))))
-         _lp29658_)
-       _stx29656_)))
+                              (error '"No clause matching" _g16051612_))))
+                       (let ((_K16081621_
+                              (lambda (_rest1619_)
+                                (if (gx#stx-pair? _rest1619_)
+                                    (_lp1602_ _rest1619_)
+                                    _hd1604_))))
+                         (if (##pair? _g16051612_)
+                             (let ((_hd16091624_ (##car _g16051612_))
+                                   (_tl16101626_ (##cdr _g16051612_)))
+                               (let ((_rest1629_ _tl16101626_))
+                                 (_K16081621_ _rest1629_)))
+                             (_E16071616_))))))))
+         _lp1602_)
+       _stx1600_)))
   (define gx#stx-list-tail
-    (lambda (_stx29623_ _k29624_)
-      ((letrec ((_lp29626_
-                 (lambda (_rest29628_ _k29629_)
-                   (if (fxpositive? _k29629_)
-                       (let ((_g2963029637_ (gx#syntax-e _rest29628_)))
-                         (let ((_E2963229641_
+    (lambda (_stx1567_ _k1568_)
+      ((letrec ((_lp1570_
+                 (lambda (_rest1572_ _k1573_)
+                   (if (fxpositive? _k1573_)
+                       (let ((_g15741581_ (gx#syntax-e _rest1572_)))
+                         (let ((_E15761585_
                                 (lambda ()
-                                  (error '"No clause matching"
-                                         _g2963029637_))))
-                           (let ((_K2963329646_
-                                  (lambda (_rest29644_)
-                                    (_lp29626_ _rest29644_ (fx1- _k29629_)))))
-                             (if (##pair? _g2963029637_)
-                                 (let ((_hd2963429649_ (##car _g2963029637_))
-                                       (_tl2963529651_ (##cdr _g2963029637_)))
-                                   (let ((_rest29654_ _tl2963529651_))
-                                     (_K2963329646_ _rest29654_)))
-                                 (_E2963229641_)))))
-                       _rest29628_))))
-         _lp29626_)
-       _stx29623_
-       _k29624_)))
+                                  (error '"No clause matching" _g15741581_))))
+                           (let ((_K15771590_
+                                  (lambda (_rest1588_)
+                                    (_lp1570_ _rest1588_ (fx1- _k1573_)))))
+                             (if (##pair? _g15741581_)
+                                 (let ((_hd15781593_ (##car _g15741581_))
+                                       (_tl15791595_ (##cdr _g15741581_)))
+                                   (let ((_rest1598_ _tl15791595_))
+                                     (_K15771590_ _rest1598_)))
+                                 (_E15761585_)))))
+                       _rest1572_))))
+         _lp1570_)
+       _stx1567_
+       _k1568_)))
   (define gx#stx-list-ref
-    (lambda (_stx29620_ _k29621_)
-      (gx#stx-car (gx#stx-list-tail _stx29620_ _k29621_))))
+    (lambda (_stx1564_ _k1565_)
+      (gx#stx-car (gx#stx-list-tail _stx1564_ _k1565_))))
   (define gx#stx-plist?
-    (let ((_opt-lambda2952829610_
-           (lambda (_stx29530_ _key?29531_)
-             ((letrec ((_lp29533_
-                        (lambda (_rest29535_)
-                          (let ((_g2953629546_ (gx#stx-e _rest29535_)))
-                            (let ((_E2954029550_
+    (let ((_opt-lambda14721554_
+           (lambda (_stx1474_ _key?1475_)
+             ((letrec ((_lp1477_
+                        (lambda (_rest1479_)
+                          (let ((_g14801490_ (gx#stx-e _rest1479_)))
+                            (let ((_E14841494_
                                    (lambda ()
                                      (error '"No clause matching"
-                                            _g2953629546_))))
-                              (let ((_else2953929554_ (lambda () '#f)))
-                                (let ((_try-match2953829562_
+                                            _g14801490_))))
+                              (let ((_else14831498_ (lambda () '#f)))
+                                (let ((_try-match14821506_
                                        (lambda ()
-                                         (let ((_K2954129559_ (lambda () '#t)))
-                                           (if (##null? _g2953629546_)
-                                               (_K2954129559_)
-                                               (_else2953929554_))))))
-                                  (let ((_K2954229598_
-                                         (lambda (_rest29565_ _hd29566_)
-                                           (if (_key?29531_ _hd29566_)
-                                               (let ((_g2956729575_
-                                                      (gx#stx-e _rest29565_)))
-                                                 (let ((_E2957029579_
+                                         (let ((_K14851503_ (lambda () '#t)))
+                                           (if (##null? _g14801490_)
+                                               (_K14851503_)
+                                               (_else14831498_))))))
+                                  (let ((_K14861542_
+                                         (lambda (_rest1509_ _hd1510_)
+                                           (if (_key?1475_ _hd1510_)
+                                               (let ((_g15111519_
+                                                      (gx#stx-e _rest1509_)))
+                                                 (let ((_E15141523_
                                                         (lambda ()
                                                           (error '"No clause matching"
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _g2956729575_))))
+                         _g15111519_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   (let ((_else2956929583_
+                                                   (let ((_else15131527_
                                                           (lambda () '#f)))
-                                                     (let ((_K2957129588_
-                                                            (lambda (_rest29586_)
-                                                              (_lp29533_
-                                                               _rest29586_))))
-                                                       (if (##pair? _g2956729575_)
-                                                           (let ((_hd2957229591_
+                                                     (let ((_K15151532_
+                                                            (lambda (_rest1530_)
+                                                              (_lp1477_
+                                                               _rest1530_))))
+                                                       (if (##pair? _g15111519_)
+                                                           (let ((_hd15161535_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (##car _g2956729575_))
-                         (_tl2957329593_ (##cdr _g2956729575_)))
-                     (let ((_rest29596_ _tl2957329593_))
-                       (_K2957129588_ _rest29596_)))
-                   (_else2956929583_))))))
+                          (##car _g15111519_))
+                         (_tl15171537_ (##cdr _g15111519_)))
+                     (let ((_rest1540_ _tl15171537_))
+                       (_K15151532_ _rest1540_)))
+                   (_else15131527_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                '#f))))
-                                    (if (##pair? _g2953629546_)
-                                        (let ((_hd2954329601_
-                                               (##car _g2953629546_))
-                                              (_tl2954429603_
-                                               (##cdr _g2953629546_)))
-                                          (let ((_hd29606_ _hd2954329601_))
-                                            (let ((_rest29608_ _tl2954429603_))
-                                              (_K2954229598_
-                                               _rest29608_
-                                               _hd29606_))))
-                                        (_try-match2953829562_))))))))))
-                _lp29533_)
-              _stx29530_))))
-      (lambda _g40556_
-        (let ((_g40555_ (length _g40556_)))
-          (cond ((fx= _g40555_ 1)
-                 (apply (lambda (_stx29613_)
-                          (let ((_key?29615_ gx#stx-keyword?))
-                            (_opt-lambda2952829610_ _stx29613_ _key?29615_)))
-                        _g40556_))
-                ((fx= _g40555_ 2)
-                 (apply (lambda (_stx29617_ _key?29618_)
-                          (_opt-lambda2952829610_ _stx29617_ _key?29618_))
-                        _g40556_))
-                (else (error "No clause matching arguments" _g40556_)))))))
+                                    (if (##pair? _g14801490_)
+                                        (let ((_hd14871545_
+                                               (##car _g14801490_))
+                                              (_tl14881547_
+                                               (##cdr _g14801490_)))
+                                          (let ((_hd1550_ _hd14871545_))
+                                            (let ((_rest1552_ _tl14881547_))
+                                              (_K14861542_
+                                               _rest1552_
+                                               _hd1550_))))
+                                        (_try-match14821506_))))))))))
+                _lp1477_)
+              _stx1474_))))
+      (lambda _g12500_
+        (let ((_g12499_ (length _g12500_)))
+          (cond ((fx= _g12499_ 1)
+                 (apply (lambda (_stx1557_)
+                          (let ((_key?1559_ gx#stx-keyword?))
+                            (_opt-lambda14721554_ _stx1557_ _key?1559_)))
+                        _g12500_))
+                ((fx= _g12499_ 2)
+                 (apply (lambda (_stx1561_ _key?1562_)
+                          (_opt-lambda14721554_ _stx1561_ _key?1562_))
+                        _g12500_))
+                (else (error "No clause matching arguments" _g12500_)))))))
   (define gx#stx-getq
-    (let ((_opt-lambda2944629517_
-           (lambda (_key29448_ _stx29449_ _key=?29450_)
-             ((letrec ((_lp29452_
-                        (lambda (_rest29454_)
-                          (let ((_g2945529463_ (gx#syntax-e _rest29454_)))
-                            (let ((_E2945829467_
+    (let ((_opt-lambda13901461_
+           (lambda (_key1392_ _stx1393_ _key=?1394_)
+             ((letrec ((_lp1396_
+                        (lambda (_rest1398_)
+                          (let ((_g13991407_ (gx#syntax-e _rest1398_)))
+                            (let ((_E14021411_
                                    (lambda ()
                                      (error '"No clause matching"
-                                            _g2945529463_))))
-                              (let ((_else2945729471_ (lambda () '#f)))
-                                (let ((_K2945929505_
-                                       (lambda (_rest29474_ _hd29475_)
-                                         (let ((_g2947629483_
-                                                (gx#syntax-e _rest29474_)))
-                                           (let ((_E2947829487_
+                                            _g13991407_))))
+                              (let ((_else14011415_ (lambda () '#f)))
+                                (let ((_K14031449_
+                                       (lambda (_rest1418_ _hd1419_)
+                                         (let ((_g14201427_
+                                                (gx#syntax-e _rest1418_)))
+                                           (let ((_E14221431_
                                                   (lambda ()
                                                     (error '"No clause matching"
-                                                           _g2947629483_))))
-                                             (let ((_K2947929493_
-                                                    (lambda (_rest29490_
-                                                             _val29491_)
-                                                      (if (_key=?29450_
-                                                           _hd29475_
-                                                           _key29448_)
-                                                          _val29491_
-                                                          (_lp29452_
-                                                           _rest29490_)))))
-                                               (if (##pair? _g2947629483_)
-                                                   (let ((_hd2948029496_
-                                                          (##car _g2947629483_))
-                                                         (_tl2948129498_
-                                                          (##cdr _g2947629483_)))
-                                                     (let ((_val29501_
-                                                            _hd2948029496_))
-                                                       (let ((_rest29503_
-                                                              _tl2948129498_))
-                                                         (_K2947929493_
-                                                          _rest29503_
-                                                          _val29501_))))
-                                                   (_E2947829487_))))))))
-                                  (if (##pair? _g2945529463_)
-                                      (let ((_hd2946029508_
-                                             (##car _g2945529463_))
-                                            (_tl2946129510_
-                                             (##cdr _g2945529463_)))
-                                        (let ((_hd29513_ _hd2946029508_))
-                                          (let ((_rest29515_ _tl2946129510_))
-                                            (_K2945929505_
-                                             _rest29515_
-                                             _hd29513_))))
-                                      (_else2945729471_)))))))))
-                _lp29452_)
-              _stx29449_))))
-      (lambda _g40558_
-        (let ((_g40557_ (length _g40558_)))
-          (cond ((fx= _g40557_ 2)
-                 (apply (lambda (_key29520_ _stx29521_)
-                          (let ((_key=?29523_ gx#stx-eq?))
-                            (_opt-lambda2944629517_
-                             _key29520_
-                             _stx29521_
-                             _key=?29523_)))
-                        _g40558_))
-                ((fx= _g40557_ 3)
-                 (apply (lambda (_key29525_ _stx29526_ _key=?29527_)
-                          (_opt-lambda2944629517_
-                           _key29525_
-                           _stx29526_
-                           _key=?29527_))
-                        _g40558_))
-                (else (error "No clause matching arguments" _g40558_))))))))
+                                                           _g14201427_))))
+                                             (let ((_K14231437_
+                                                    (lambda (_rest1434_
+                                                             _val1435_)
+                                                      (if (_key=?1394_
+                                                           _hd1419_
+                                                           _key1392_)
+                                                          _val1435_
+                                                          (_lp1396_
+                                                           _rest1434_)))))
+                                               (if (##pair? _g14201427_)
+                                                   (let ((_hd14241440_
+                                                          (##car _g14201427_))
+                                                         (_tl14251442_
+                                                          (##cdr _g14201427_)))
+                                                     (let ((_val1445_
+                                                            _hd14241440_))
+                                                       (let ((_rest1447_
+                                                              _tl14251442_))
+                                                         (_K14231437_
+                                                          _rest1447_
+                                                          _val1445_))))
+                                                   (_E14221431_))))))))
+                                  (if (##pair? _g13991407_)
+                                      (let ((_hd14041452_ (##car _g13991407_))
+                                            (_tl14051454_ (##cdr _g13991407_)))
+                                        (let ((_hd1457_ _hd14041452_))
+                                          (let ((_rest1459_ _tl14051454_))
+                                            (_K14031449_
+                                             _rest1459_
+                                             _hd1457_))))
+                                      (_else14011415_)))))))))
+                _lp1396_)
+              _stx1393_))))
+      (lambda _g12502_
+        (let ((_g12501_ (length _g12502_)))
+          (cond ((fx= _g12501_ 2)
+                 (apply (lambda (_key1464_ _stx1465_)
+                          (let ((_key=?1467_ gx#stx-eq?))
+                            (_opt-lambda13901461_
+                             _key1464_
+                             _stx1465_
+                             _key=?1467_)))
+                        _g12502_))
+                ((fx= _g12501_ 3)
+                 (apply (lambda (_key1469_ _stx1470_ _key=?1471_)
+                          (_opt-lambda13901461_
+                           _key1469_
+                           _stx1470_
+                           _key=?1471_))
+                        _g12502_))
+                (else (error "No clause matching arguments" _g12502_))))))))

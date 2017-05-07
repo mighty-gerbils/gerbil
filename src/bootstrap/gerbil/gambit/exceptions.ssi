@@ -4,6 +4,7 @@ namespace: gerbil/gambit/exceptions
 
 (%#begin (%#export #t)
          (%#extern
+          (display-exception display-exception)
           (primordial-exception-handler primordial-exception-handler)
           (err-code->string err-code->string)
           (fixnum-overflow-exception? fixnum-overflow-exception?)

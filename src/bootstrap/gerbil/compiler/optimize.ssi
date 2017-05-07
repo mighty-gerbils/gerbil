@@ -5,7 +5,10 @@ namespace: gxc
 (%#begin (%#import
           :gerbil/expander
           :gerbil/compiler/base
-          :gerbil/compiler/compile)
+          :gerbil/compiler/compile
+          (spec:
+           (:gerbil/gambit/exceptions)
+           (0 display-exception 0 display-exception)))
          (%#export #t)
          (%#define-runtime
           current-compile-optimizer-info
@@ -28,5 +31,58 @@ namespace: gxc
          (%#define-runtime optimizer-info:::init! gxc#optimizer-info:::init!)
          (%#define-runtime optimizer-info-init! gxc#optimizer-info-init!)
          (%#define-runtime optimize! gxc#optimize!)
+         (%#define-runtime
+          optimizer-load-ssxi-deps
+          gxc#optimizer-load-ssxi-deps)
+         (%#define-runtime
+          optimizer-load-prelude-ssxi
+          gxc#optimizer-load-prelude-ssxi)
+         (%#define-runtime optimizer-load-ssxi gxc#optimizer-load-ssxi)
+         (%#define-runtime optimizer-import-ssxi gxc#optimizer-import-ssxi)
+         (%#define-runtime !type::t gxc#!type::t)
+         (%#define-runtime !type? gxc#!type?)
+         (%#define-runtime make-!type gxc#make-!type)
+         (%#define-runtime !type-id gxc#!type-id)
+         (%#define-runtime !type-id-set! gxc#!type-id-set!)
+         (%#define-syntax !type |gxc[:0:]#!type|)
+         (%#define-runtime !struct-type::t gxc#!struct-type::t)
+         (%#define-runtime !struct-type? gxc#!struct-type?)
+         (%#define-runtime make-!struct-type gxc#make-!struct-type)
+         (%#define-runtime !struct-type-super gxc#!struct-type-super)
+         (%#define-runtime !struct-type-fields gxc#!struct-type-fields)
+         (%#define-runtime !struct-type-xfields gxc#!struct-type-xfields)
+         (%#define-runtime !struct-type-ctor gxc#!struct-type-ctor)
+         (%#define-runtime !struct-type-plist gxc#!struct-type-plist)
+         (%#define-runtime !struct-type-super-set! gxc#!struct-type-super-set!)
+         (%#define-runtime
+          !struct-type-fields-set!
+          gxc#!struct-type-fields-set!)
+         (%#define-runtime
+          !struct-type-xfields-set!
+          gxc#!struct-type-xfields-set!)
+         (%#define-runtime !struct-type-ctor-set! gxc#!struct-type-ctor-set!)
+         (%#define-runtime !struct-type-plist-set! gxc#!struct-type-plist-set!)
+         (%#define-syntax !struct-type |gxc[:0:]#!struct-type|)
+         (%#define-runtime !struct-pred::t gxc#!struct-pred::t)
+         (%#define-runtime !struct-pred? gxc#!struct-pred?)
+         (%#define-runtime make-!struct-pred gxc#make-!struct-pred)
+         (%#define-syntax !struct-pred |gxc[:0:]#!struct-pred|)
+         (%#define-runtime !struct-cons::t gxc#!struct-cons::t)
+         (%#define-runtime !struct-cons? gxc#!struct-cons?)
+         (%#define-runtime make-!struct-cons gxc#make-!struct-cons)
+         (%#define-syntax !struct-cons |gxc[:0:]#!struct-cons|)
+         (%#define-runtime !struct-getf::t gxc#!struct-getf::t)
+         (%#define-runtime !struct-getf? gxc#!struct-getf?)
+         (%#define-runtime make-!struct-getf gxc#make-!struct-getf)
+         (%#define-runtime !struct-getf-off gxc#!struct-getf-off)
+         (%#define-runtime !struct-getf-off-set! gxc#!struct-getf-off-set!)
+         (%#define-syntax !struct-getf |gxc[:0:]#!struct-getf|)
+         (%#define-runtime !struct-setf::t gxc#!struct-setf::t)
+         (%#define-runtime !struct-setf? gxc#!struct-setf?)
+         (%#define-runtime make-!struct-setf gxc#make-!struct-setf)
+         (%#define-runtime !struct-setf-off gxc#!struct-setf-off)
+         (%#define-runtime !struct-setf-off-set! gxc#!struct-setf-off-set!)
+         (%#define-syntax !struct-setf |gxc[:0:]#!struct-setf|)
+         (%#define-runtime optimizer-declare-type! gxc#optimizer-declare-type!)
          (%#define-runtime optimize-source gxc#optimize-source))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize__0"))

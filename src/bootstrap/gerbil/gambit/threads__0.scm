@@ -3,27 +3,27 @@
   (begin)
   (begin)
   (define gerbil/gambit/threads#spawn
-    (lambda (_f47154_ . _args47155_)
+    (lambda (_f28537_ . _args28538_)
       (apply gerbil/gambit/threads#spawn/name
-             (let ((_$e47157_ (##procedure-name _f47154_)))
-               (if _$e47157_ _$e47157_ '#!void))
-             _f47154_
-             _args47155_)))
+             (let ((_$e28540_ (##procedure-name _f28537_)))
+               (if _$e28540_ _$e28540_ '#!void))
+             _f28537_
+             _args28538_)))
   (define gerbil/gambit/threads#spawn/name
-    (lambda (_name47149_ _f47150_ . _args47151_)
+    (lambda (_name28532_ _f28533_ . _args28534_)
       (begin
-        (if (procedure? _f47150_)
+        (if (procedure? _f28533_)
             '#!void
-            (error '"Expected procedure" _f47150_))
+            (error '"Expected procedure" _f28533_))
         (thread-start!
          (make-thread
-          (if (null? _args47151_)
-              _f47150_
-              (lambda () (apply _f47150_ _args47151_)))
-          _name47149_)))))
+          (if (null? _args28534_)
+              _f28533_
+              (lambda () (apply _f28533_ _args28534_)))
+          _name28532_)))))
   (define gerbil/gambit/threads#with-lock
-    (lambda (_mutex47144_ _proc47145_)
+    (lambda (_mutex28527_ _proc28528_)
       (dynamic-wind
-       (lambda () (mutex-lock! _mutex47144_))
-       _proc47145_
-       (lambda () (mutex-unlock! _mutex47144_))))))
+       (lambda () (mutex-lock! _mutex28527_))
+       _proc28528_
+       (lambda () (mutex-unlock! _mutex28527_))))))

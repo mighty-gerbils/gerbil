@@ -1,0 +1,16 @@
+prelude: :gerbil/core
+package: gerbil/compiler
+namespace: gxc
+
+(%#begin (%#import :gerbil/compiler/optimize)
+         (%#export #t)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref _gx#load-module)
+                           (%#quote "gerbil/compiler/ssxi__1")))
+                  (%#define-syntax declare-type |gxc[:0:]#declare-type|))
+         (%#define-syntax declare-type* |gxc[:0:]#declare-type*|)
+         (%#define-syntax @struct-type |gxc[:0:]#@struct-type|)
+         (%#define-syntax @struct-pred |gxc[:0:]#@struct-pred|)
+         (%#define-syntax @struct-cons |gxc[:0:]#@struct-cons|)
+         (%#define-syntax @struct-getf |gxc[:0:]#@struct-getf|)
+         (%#define-syntax @struct-setf |gxc[:0:]#@struct-setf|))

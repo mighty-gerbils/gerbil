@@ -8,7 +8,6 @@ namespace: gerbil/gambit/continuations
           (continuation-capture continuation-capture)
           (continuation-graft continuation-graft)
           (continuation-return continuation-return)
-          (display-exception display-exception)
           (display-exception-in-context display-exception-in-context)
           (display-procedure-environment display-procedure-environment)
           (display-continuation-environment display-continuation-environment)
