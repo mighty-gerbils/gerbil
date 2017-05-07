@@ -2,17 +2,25 @@
 (import :gerbil/compiler)
 
 (def gerbil-modules
-  '("gerbil/expander.ss"
-    "gerbil/expander/stxcase.ss"
-    "gerbil/expander/module.ss"
-    "gerbil/expander/common.ss"
-    "gerbil/expander/top.ss"
+  '("gerbil/expander/common.ss"
     "gerbil/expander/stx.ss"
     "gerbil/expander/core.ss"
+    "gerbil/expander/top.ss"
+    "gerbil/expander/module.ss"
     "gerbil/expander/compile.ss"
     "gerbil/expander/root.ss"
-    "gerbil/prelude/core.ss"
-    "gerbil/prelude/gambit.ss"
+    "gerbil/expander/stxcase.ss"
+    "gerbil/expander.ss"
+    "gerbil/compiler/base.ss"
+    "gerbil/compiler/compile.ss"
+    "gerbil/compiler/optimize.ss"
+    "gerbil/compiler/driver.ss"
+    "gerbil/compiler/ssxi.ss"
+    "gerbil/compiler.ss"
+    ))
+
+(def gerbil-prelude
+  '("gerbil/prelude/core.ss"
     "gerbil/prelude/gambit/ports.ss"
     "gerbil/prelude/gambit/misc.ss"
     "gerbil/prelude/gambit/random.ss"
@@ -28,21 +36,22 @@
     "gerbil/prelude/gambit/readtables.ss"
     "gerbil/prelude/gambit/fixnum.ss"
     "gerbil/prelude/gambit/flonum.ss"
-    "gerbil/compiler/base.ss"
-    "gerbil/compiler/compile.ss"
-    "gerbil/compiler/optimize.ss"
-    "gerbil/compiler/driver.ss"
-    "gerbil/compiler/ssxi.ss"
-    "gerbil/compiler.ss"
-    ))
+    "gerbil/prelude/gambit.ss"))
 
 (def gerbil-libdir
   (path-expand "lib" (getenv "GERBIL_TARGET")))
 
+(def (compile1 modf optimize? gen-ssxi?)
+  (displayln "... compile " modf)
+  (compile-file modf [output-dir: gerbil-libdir invoke-gsc: #t
+                      optimize: optimize? generate-ssxi: gen-ssxi?
+                      gsc-options: ["-cc-options" "--param max-gcse-memory=300000000"]]))
+
+(def optimize-prelude #f) ; meaningless before macros are also optimized
+(def optimize-modules #f) ; not yet
+
 (displayln "building gerbil in " gerbil-libdir)
-(for-each
-  (lambda (modf)
-    (displayln "... compile " modf)
-    (compile-file modf [output-dir: gerbil-libdir invoke-gsc: #t
-                        gsc-options: ["-cc-options" "--param max-gcse-memory=300000000"]]))
-  gerbil-modules)
+(for-each (cut compile1 <> optimize-prelude #f) ; don't clobber core.ssxi, that's hand crafted
+          gerbil-prelude)
+(for-each (cut compile1 <> optimize-modules #t) ; we want ssxis for that
+          gerbil-modules)

@@ -23,7 +23,8 @@ namespace: gxc
         (gsc-options (pgetq gsc-options: opts))
         (keep-scm?   (pgetq keep-scm: opts))
         (verbosity   (pgetq verbose: opts))
-        (optimize    (pgetq optimize: opts)))
+        (optimize    (pgetq optimize: opts))
+        (gen-ssxi    (pgetq generate-ssxi: opts)))
     (when outdir
       (create-directory* outdir))
     (when optimize
@@ -33,7 +34,8 @@ namespace: gxc
                    (current-compile-gsc-options gsc-options)
                    (current-compile-keep-scm keep-scm?)
                    (current-compile-verbose verbosity)
-                   (current-compile-optimize optimize))
+                   (current-compile-optimize optimize)
+                   (current-compile-generate-ssxi gen-ssxi))
       (verbose "compile exe " srcpath)
       (compile-top-module (import-module srcpath)))))
 
@@ -126,7 +128,8 @@ namespace: gxc
     (collect-bindings ctx)
     (compile-runtime-code ctx)
     (compile-meta-code ctx)
-    (when (current-compile-optimize)
+    (when (and (current-compile-optimize)
+               (current-compile-generate-ssxi))
       (compile-ssxi-code ctx))))
 
 (def (collect-bindings ctx)

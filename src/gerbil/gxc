@@ -9,6 +9,7 @@
   (def keep-scm #f)
   (def verbose #f)
   (def optimize #f)
+  (def generate-ssxi #t) ; enable by default (only when optimizing)
   (def gsc-options #f)
   (def compile-exe #f)
   (def outfile #f)
@@ -18,6 +19,7 @@
      keep-scm: keep-scm 
      verbose: verbose
      optimize: optimize
+     generate-ssxi: generate-ssxi
      gsc-options: gsc-options
      output-dir: outdir
      output-file: outfile])
@@ -46,6 +48,9 @@
           (lp rest))
          (("-O")
           (set! optimize #t)
+          (lp rest))
+         (("-no-ssxi")
+          (set! generate-ssxi #f)
           (lp rest))
          (("-exe")
           (set! compile-exe #t)
