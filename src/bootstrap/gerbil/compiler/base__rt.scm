@@ -23,5 +23,6 @@
     (begin)
     (begin)
     (begin)
+    (begin)
     (begin))
   (load-module "gerbil/compiler/base__0"))

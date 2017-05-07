@@ -10,8 +10,8 @@ namespace: gxc
           (spec: (:gerbil/gambit/misc) (0 pretty-print 0 pretty-print))
           (spec:
            (:gerbil/gambit/ports)
-           (0 open-process 0 open-process)
-           (0 process-status 0 process-status)))
+           (0 process-status 0 process-status)
+           (0 open-process 0 open-process)))
          (%#export
           (spec: 0 compile-file compile-file)
           (spec: 0 compile-exe-stub compile-exe-stub))

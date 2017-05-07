@@ -30,6 +30,9 @@ namespace: gxc
          (%#define-runtime
           current-compile-optimize
           gxc#current-compile-optimize)
+         (%#define-runtime
+          current-compile-generate-ssxi
+          gxc#current-compile-generate-ssxi)
          (%#define-runtime symbol-table::t gxc#symbol-table::t)
          (%#define-runtime symbol-table? gxc#symbol-table?)
          (%#define-runtime make-symbol-table gxc#make-symbol-table)
