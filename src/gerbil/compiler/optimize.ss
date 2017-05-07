@@ -406,7 +406,10 @@ namespace: gxc
      (let* ((rator-id (identifier-symbol #'rator))
             (rator-type (optimizer-lookup-type rator-id)))
        (if rator-type
-         {optimize-call rator-type stx #'rands}
+         (begin
+           (verbose "optimize-call => " rator-type " " (!type-id rator-type))
+           {optimize-call rator-type stx #'rands}
+           )
          (let (rands (stx-map compile-e #'rands))
            (xform-wrap-source
             ['%#call #'(%#ref rator) rands ...]
@@ -455,15 +458,19 @@ namespace: gxc
         (match struct-type
           ((!struct-type struct-type-id _ fields xfields)
            (if xfields
-             (ast-case stx ()
+             (ast-case args ()
                ((expr)
                 (let ((expr (compile-e #'expr))
-                      (off (fx+ off xfields)))
+                      (off (fx+ off xfields 1)))
                   (xform-wrap-source
-                   ['%#struct-ref ['%#quote struct-type-id] ['%#quote off] expr]
+                   ['%#struct-ref ['%#ref struct-t] ['%#quote off] expr]
                    stx)))
                (_ (raise-compile-error "Illegal struct accessor application" stx)))
-             (xform-call% stx))) ; incomplete struct info; can't inline
+             (begin
+               (verbose "struct-getf: incomplete struct " struct-type-id)
+               (xform-call% stx)
+               )
+             ))                 ; incomplete struct info; can't inline
           (#f (xform-call% stx))
           (else
            (raise-compile-error "Illegal struct predicate application; not a struct type"
@@ -476,16 +483,20 @@ namespace: gxc
         (match struct-type
           ((!struct-type struct-type-id _ fields xfields)
            (if xfields
-             (ast-case stx ()
+             (ast-case args ()
                ((expr val)
                 (let ((expr (compile-e #'expr))
                       (val (compile-e #'val))
-                      (off (fx+ off xfields)))
+                      (off (fx+ off xfields 1)))
                   (xform-wrap-source
                    ['%#struct-set! ['%#quote struct-type-id] ['%#quote off] expr val]
                    stx)))
                (_ (raise-compile-error "Illegal struct mutator application" stx)))
-             (xform-call% stx))) ; incomplete struct info; can't inline
+             (begin
+               (verbose "struct-setf: incomplete struct " struct-type-id)
+               (xform-call% stx)
+               )
+             ))                 ; incomplete struct info; can't inline
           (#f (xform-call% stx))
           (else
            (raise-compile-error "Illegal struct predicate application; not a struct type"
