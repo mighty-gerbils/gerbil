@@ -534,7 +534,7 @@ namespace: gxc
                       (val (compile-e #'val))
                       (off (fx+ off xfields 1)))
                   (xform-wrap-source
-                   ['%#struct-set! ['%#quote struct-type-id] ['%#quote off] expr val]
+                   ['%#struct-set! ['%#ref struct-t] ['%#quote off] expr val]
                    stx)))
                (_ (raise-compile-error "Illegal struct mutator application" stx)))
              (begin
