@@ -335,12 +335,23 @@ namespace: gxc
 (def (basic-expression-type-lambda% stx)
   (ast-case stx (%#call %#ref)
     ((_ args (%#call (%#ref -apply) (%#ref -make-instance) (%#ref type-t) (%#ref xargs)))
-     ;; struct constructor
+     ;; defstruct constructor
      (and (identifier? #'args)
-          (identifier? #'xargs)
           (eq? (identifier-symbol #'-apply) 'apply)
           (eq? (identifier-symbol #'-make-instance) 'make-struct-instance)
           (free-identifier=? #'args #'xargs))
+     (let* ((type-t (identifier-symbol #'type-t))
+            (type (optimizer-resolve-type type-t)))
+       (and (!struct-type? type)
+            (make-!struct-cons type-t))))
+    ((_ (arg ...) (%#call (%#ref -make-struct-instance) (%#ref type-t) (%#ref xarg) ...))
+     ;; srfi/9 defrecord constructor
+     (and (identifier-list? #'(arg ...))
+          (eq? (identifier-symbol #'-make-struct-instance) 'make-struct-instance)
+          (fx= (length #'(arg ...)) (length #'(xarg ...)))
+          (andmap free-identifier=?
+                  #'(arg ...)
+                  #'(xarg ...)))
      (let* ((type-t (identifier-symbol #'type-t))
             (type (optimizer-resolve-type type-t)))
        (and (!struct-type? type)
