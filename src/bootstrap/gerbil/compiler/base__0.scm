@@ -1,8 +1,5 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (begin)
-  (begin)
-  (begin)
   (define gxc#current-compile-symbol-table (make-parameter '#f))
   (define gxc#current-compile-runtime-sections (make-parameter '#f))
   (define gxc#current-compile-output-dir (make-parameter '#f))
@@ -26,7 +23,6 @@
     (make-struct-field-mutator gxc#symbol-table::t '0))
   (define gxc#symbol-table-bindings-set!
     (make-struct-field-mutator gxc#symbol-table::t '1))
-  (begin)
   (define gxc#symbol-table:::init!
     (lambda (_self181_)
       (direct-struct-instance-init!

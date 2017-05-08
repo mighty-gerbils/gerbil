@@ -1,11 +1,2 @@
 (declare (block) (standard-bindings) (extended-bindings))
-(begin
-  (begin (load-module "gerbil/compiler/optimize__rt"))
-  (begin)
-  (begin)
-  (begin)
-  (begin)
-  (begin)
-  (begin)
-  (begin)
-  (begin))
+(begin (begin (load-module "gerbil/compiler/optimize__rt")))

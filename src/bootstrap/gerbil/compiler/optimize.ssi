@@ -6,6 +6,8 @@ namespace: gxc
           :gerbil/expander
           :gerbil/compiler/base
           :gerbil/compiler/compile
+          (in: :gerbil/core <syntax-case>)
+          (in: :gerbil/core <syntax-sugar>)
           (spec:
            (:gerbil/gambit/exceptions)
            (0 display-exception 0 display-exception)))
@@ -45,6 +47,10 @@ namespace: gxc
          (%#define-runtime !type-id gxc#!type-id)
          (%#define-runtime !type-id-set! gxc#!type-id-set!)
          (%#define-syntax !type |gxc[:0:]#!type|)
+         (%#define-runtime !alias::t gxc#!alias::t)
+         (%#define-runtime !alias? gxc#!alias?)
+         (%#define-runtime make-!alias gxc#make-!alias)
+         (%#define-syntax !alias |gxc[:0:]#!alias|)
          (%#define-runtime !struct-type::t gxc#!struct-type::t)
          (%#define-runtime !struct-type? gxc#!struct-type?)
          (%#define-runtime make-!struct-type gxc#make-!struct-type)
@@ -63,6 +69,10 @@ namespace: gxc
          (%#define-runtime !struct-type-ctor-set! gxc#!struct-type-ctor-set!)
          (%#define-runtime !struct-type-plist-set! gxc#!struct-type-plist-set!)
          (%#define-syntax !struct-type |gxc[:0:]#!struct-type|)
+         (%#define-runtime !procedure::t gxc#!procedure::t)
+         (%#define-runtime !procedure? gxc#!procedure?)
+         (%#define-runtime make-!procedure gxc#make-!procedure)
+         (%#define-syntax !procedure |gxc[:0:]#!procedure|)
          (%#define-runtime !struct-pred::t gxc#!struct-pred::t)
          (%#define-runtime !struct-pred? gxc#!struct-pred?)
          (%#define-runtime make-!struct-pred gxc#make-!struct-pred)
@@ -84,5 +94,97 @@ namespace: gxc
          (%#define-runtime !struct-setf-off-set! gxc#!struct-setf-off-set!)
          (%#define-syntax !struct-setf |gxc[:0:]#!struct-setf|)
          (%#define-runtime optimizer-declare-type! gxc#optimizer-declare-type!)
-         (%#define-runtime optimize-source gxc#optimize-source))
+         (%#define-runtime optimizer-lookup-type gxc#optimizer-lookup-type)
+         (%#define-runtime optimizer-resolve-type gxc#optimizer-resolve-type)
+         (%#define-runtime optimize-source gxc#optimize-source)
+         (%#define-runtime &false-expression gxc#&false-expression)
+         (%#define-runtime &false-special-form gxc#&false-special-form)
+         (%#define-runtime &false gxc#&false)
+         (%#define-runtime &identity-expression gxc#&identity-expression)
+         (%#define-runtime &identity-special-form gxc#&identity-special-form)
+         (%#define-runtime &identity gxc#&identity)
+         (%#define-runtime &basic-xform gxc#&basic-xform)
+         (%#define-runtime &lift-top-lambdas gxc#&lift-top-lambdas)
+         (%#define-runtime apply-lift-top-lambdas gxc#apply-lift-top-lambdas)
+         (%#define-runtime &collect-type-info gxc#&collect-type-info)
+         (%#define-runtime apply-collect-type-info gxc#apply-collect-type-info)
+         (%#define-runtime &basic-expression-type gxc#&basic-expression-type)
+         (%#define-runtime
+          apply-basic-expression-type
+          gxc#apply-basic-expression-type)
+         (%#define-runtime &optimize-call gxc#&optimize-call)
+         (%#define-runtime apply-optimize-call gxc#apply-optimize-call)
+         (%#define-runtime &generate-ssxi gxc#&generate-ssxi)
+         (%#define-runtime apply-generate-ssxi gxc#apply-generate-ssxi)
+         (%#define-runtime xform-identity gxc#xform-identity)
+         (%#define-runtime xform-wrap-source gxc#xform-wrap-source)
+         (%#define-runtime xform-apply-compile-e gxc#xform-apply-compile-e)
+         (%#define-runtime xform-begin% gxc#xform-begin%)
+         (%#define-runtime xform-define-values% gxc#xform-define-values%)
+         (%#define-runtime xform-lambda% gxc#xform-lambda%)
+         (%#define-runtime xform-case-lambda% gxc#xform-case-lambda%)
+         (%#define-runtime xform-let-values% gxc#xform-let-values%)
+         (%#define-runtime xform-call% gxc#xform-call%)
+         (%#define-runtime xform-if% gxc#xform-if%)
+         (%#define-runtime xform-setq% gxc#xform-setq%)
+         (%#define-runtime
+          collect-type-define-values%
+          gxc#collect-type-define-values%)
+         (%#define-runtime
+          basic-expression-type-begin%
+          gxc#basic-expression-type-begin%)
+         (%#define-runtime
+          basic-expression-type-lambda%
+          gxc#basic-expression-type-lambda%)
+         (%#define-runtime
+          basic-expression-type-case-lambda%
+          gxc#basic-expression-type-case-lambda%)
+         (%#define-runtime
+          basic-expression-type-builtin
+          gxc#basic-expression-type-builtin)
+         (%#define-syntax
+          defbasic-expression-type-builtin
+          |gxc[:0:]#defbasic-expression-type-builtin|)
+         (%#define-runtime
+          basic-expression-type-call%
+          gxc#basic-expression-type-call%)
+         (%#define-runtime
+          basic-expression-type-make-struct-type
+          gxc#basic-expression-type-make-struct-type)
+         (%#define-runtime
+          basic-expression-type-make-struct-predicate
+          gxc#basic-expression-type-make-struct-predicate)
+         (%#define-runtime
+          basic-expression-type-make-struct-field-accessor
+          gxc#basic-expression-type-make-struct-field-accessor)
+         (%#define-runtime
+          basic-expression-type-make-struct-field-mutator
+          gxc#basic-expression-type-make-struct-field-mutator)
+         (%#define-runtime
+          basic-expression-type-ref%
+          gxc#basic-expression-type-ref%)
+         (%#define-runtime optimize-call% gxc#optimize-call%)
+         (%#define-runtime !alias::optimize-call gxc#!alias::optimize-call)
+         (%#define-runtime
+          !struct-pred::optimize-call
+          gxc#!struct-pred::optimize-call)
+         (%#define-runtime
+          !struct-cons::optimize-call
+          gxc#!struct-cons::optimize-call)
+         (%#define-runtime
+          !struct-getf::optimize-call
+          gxc#!struct-getf::optimize-call)
+         (%#define-runtime
+          !struct-setf::optimize-call
+          gxc#!struct-setf::optimize-call)
+         (%#define-runtime
+          generate-ssxi-define-values%
+          gxc#generate-ssxi-define-values%)
+         (%#define-runtime !alias::typedecl gxc#!alias::typedecl)
+         (%#define-runtime !struct-type::typedecl gxc#!struct-type::typedecl)
+         (%#define-runtime !struct-pred::typedecl gxc#!struct-pred::typedecl)
+         (%#define-runtime !struct-cons::typedecl gxc#!struct-cons::typedecl)
+         (%#define-runtime !struct-getf::typedecl gxc#!struct-getf::typedecl)
+         (%#define-runtime !struct-setf::typedecl gxc#!struct-setf::typedecl)
+         (%#define-runtime identifier-symbol gxc#identifier-symbol))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize__0"))
