@@ -31,7 +31,7 @@ package: std/misc
           front)
         (set! (queue-back q)
           front)
-        (set! (queue-length)
+        (set! (queue-length q)
           1))
       (let (new-back [v])
         (set! (cdr back)

@@ -151,7 +151,7 @@ package: std
                     (!check-fail-e fail))))
      ((!test-case-error tc)
       => (lambda (exn)
-           (eprintf "~a: ERROR " (!test-case-desc))
+           (eprintf "~a: ERROR " (!test-case-desc tc))
            (display-exception exn (current-error-port))))))
 
   (let (tests (!test-suite-tests suite)) 
