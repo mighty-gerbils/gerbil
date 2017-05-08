@@ -46,8 +46,9 @@ namespace: gxc
        (cond
         ((module-context? hd)
          (optimizer-load-prelude-ssxi ctx)
+         (lp (module-context-import hd))
          (optimizer-load-ssxi hd)
-         (lp (append (module-context-import hd) rest)))
+         (lp rest))
         ((module-import? hd)
          (lp (cons (module-import-source hd) rest)))
         ((module-export? hd)
