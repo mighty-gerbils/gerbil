@@ -38,8 +38,13 @@ namespace: gxc
           (xfields
            (and super-type
                 (alet (xfields (!struct-type-xfields super-type))
-                  (fx+ xfields (!struct-type-fields super-type))))))
-     (make-!struct-type 'type-id 'super fields xfields 'ctor 'plist))))
+                  (fx+ xfields (!struct-type-fields super-type)))))
+          (xtor
+           (or 'ctor
+               (if super-type
+                 (!struct-type-ctor super-type)
+                 #!void))))
+     (make-!struct-type 'type-id 'super fields xfields xtor 'plist))))
 
 (defrules @struct-pred ()
   ((_ type)

@@ -117,7 +117,7 @@ namespace: gxc
 (def (optimizer-declare-type! sym type)
   (unless (!type? type)
     (error "bad declaration: expected !type" sym type))
-  (verbose "declare-type " sym " " type " " (!type-id type))
+  (verbose "declare-type " sym " " (##vector->list type))
   (hash-put! (optimizer-info-type (current-compile-optimizer-info))
              sym type))
 
@@ -348,6 +348,8 @@ namespace: gxc
 
 (def (basic-expression-type-make-struct-type stx args)
   (ast-case args (%#quote %#ref)
+    (((%#quote type-id) (%#quote #f) (%#quote fields) name (%#quote plist) (%#quote ctor))
+     (make-!struct-type (stx-e #'type-id) #f (stx-e #'fields) 0 (stx-e #'ctor) (stx-e #'plist)))
     (((%#quote type-id) (%#ref super) (%#quote fields) name (%#quote plist) (%#quote ctor))
      (let* ((super-t (and (stx-e #'super) (identifier-symbol #'super)))
             (super-type (and super-t (optimizer-resolve-type super-t))))
@@ -367,7 +369,10 @@ namespace: gxc
               (super-t #!void)          ; unknown, be conservative
               (else #f))))              ; no constructor method
          (make-!struct-type (stx-e #'type-id) super-t fields xfields ctor plist))))
-    (_ #f)))
+    (_
+     (begin
+       (verbose "make-struct-type: can't infer type " (syntax->datum stx))
+       #f))))
 
 (def (basic-expression-type-make-struct-predicate stx args)
   (ast-case args (%#ref)
