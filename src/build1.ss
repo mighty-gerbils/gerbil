@@ -48,7 +48,7 @@
                       gsc-options: ["-cc-options" "--param max-gcse-memory=300000000"]]))
 
 (def optimize-prelude #f) ; meaningless before macros are also optimized
-(def optimize-modules #f) ; not yet
+(def optimize-modules #t)
 
 (displayln "building gerbil in " gerbil-libdir)
 (for-each (cut compile1 <> optimize-prelude #f) ; don't clobber core.ssxi, that's hand crafted
