@@ -853,11 +853,11 @@ namespace: gxc
 (def (generate-runtime-struct-setq% stx)
   (ast-case stx ()
     ((_ type off obj val)
-     ['##structure-ref (compile-e #'obj)  ; obj
-                       (compile-e #'val)  ; val
-                       (compile-e #'off)  ; off (incl type)
-                       (compile-e #'type) ; type
-                       '(quote #f)])))    ; where
+     ['##structure-set! (compile-e #'obj)  ; obj
+                        (compile-e #'val)  ; val
+                        (compile-e #'off)  ; off (incl type)
+                        (compile-e #'type) ; type
+                        '(quote #f)])))    ; where
 
 ;;; loader
 (def (generate-runtime-loader-import% stx)
