@@ -123,12 +123,12 @@ namespace: gxc
   (%#struct-ref              true)
   (%#struct-set!             true))
 
-(defcompile-method apply-generate-loader &generate-loader
-  (%#begin                   generate-runtime-begin%)
+(defcompile-method #f &generate-runtime-empty
+  (%#begin                   generate-runtime-empty)
   (%#begin-syntax            generate-runtime-empty)
   (%#begin-foreign           generate-runtime-empty)
   (%#module                  generate-runtime-empty)
-  (%#import                  generate-runtime-loader-import%)
+  (%#import                  generate-runtime-empty)
   (%#export                  generate-runtime-empty)
   (%#provide                 generate-runtime-empty)
   (%#extern                  generate-runtime-empty)
@@ -151,18 +151,14 @@ namespace: gxc
   (%#struct-ref              generate-runtime-empty)
   (%#struct-set!             generate-runtime-empty))
 
-(defcompile-method apply-generate-runtime &generate-runtime
+(defcompile-method apply-generate-loader (&generate-loader &generate-runtime-empty)
   (%#begin                   generate-runtime-begin%)
-  (%#begin-syntax            generate-runtime-empty)
+  (%#import                  generate-runtime-loader-import%))
+
+(defcompile-method apply-generate-runtime (&generate-runtime &generate-runtime-empty)
+  (%#begin                   generate-runtime-begin%)
   (%#begin-foreign           generate-runtime-begin-foreign%)
-  (%#module                  generate-runtime-empty)
-  (%#import                  generate-runtime-empty)
-  (%#export                  generate-runtime-empty)
-  (%#provide                 generate-runtime-empty)
-  (%#extern                  generate-runtime-empty)
   (%#define-values           generate-runtime-define-values%)
-  (%#define-syntax           generate-runtime-empty)
-  (%#define-alias            generate-runtime-empty)
   (%#declare                 generate-runtime-declare%)
   (%#lambda                       generate-runtime-lambda%)
   (%#case-lambda                  generate-runtime-case-lambda%)
@@ -367,7 +363,13 @@ namespace: gxc
 (def (generate-runtime-begin% stx)
   (ast-case stx ()
     ((_ . body)
-     ['begin (map compile-e (stx-e #'body)) ...])))
+     (let* ((body (stx-map compile-e #'body))
+            (body (filter (lambda (stx)
+                            (ast-case stx (begin)
+                              ((begin) #f) ; filter empty begins
+                              (_ #t)))
+                          body)))
+       ['begin body ...]))))
 
 (def (generate-runtime-begin-foreign% stx)
   (ast-case stx ()

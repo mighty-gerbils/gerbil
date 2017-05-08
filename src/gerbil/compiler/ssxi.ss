@@ -16,6 +16,11 @@ namespace: gxc
   ((_ (symbol type) ...)
    (begin (declare-type symbol type) ...)))
 
+;; aliases
+(defrules @alias ()
+  ((_ alias-id)
+   (make-!alias 'alias-id)))
+
 ;; struct types
 (defrules @struct-type ()
   ((_ type-id super fields ctor plist)

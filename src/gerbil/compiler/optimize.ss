@@ -228,6 +228,10 @@ namespace: gxc
 (defcompile-method apply-optimize-call (&optimize-call &basic-xform)
   (%#call optimize-call%))
 
+(defcompile-method apply-generate-ssxi (&generate-ssxi &generate-runtime-empty)
+  (%#begin         generate-runtime-begin%)
+  (%#define-values generate-ssxi-define-values%))
+
 ;;; basic-xform
 (def (xform-identity stx . args)
   stx)
@@ -451,7 +455,7 @@ namespace: gxc
 (defmethod {optimize-call !struct-cons}
   (lambda (self stx args)
     ;; TODO
-    stx
+    (xform-call% stx)
     ))
 
 (defmethod {optimize-call !struct-getf}
@@ -504,6 +508,55 @@ namespace: gxc
           (else
            (raise-compile-error "Illegal struct predicate application; not a struct type"
                                 stx struct-t struct-type)))))))
+
+;;; apply-generate-ssxi
+(def (generate-ssxi-define-values% stx)
+  (def (generate-e id)
+    (let (sym (identifier-symbol id))
+      (cond
+       ((optimizer-lookup-type sym)
+        => (lambda (type)
+             (let (typedecl {typedecl type})
+               ['declare-type sym typedecl])))
+       (else '(begin)))))
+  
+  (ast-case stx ()
+    ((_ (id) _)
+     (generate-e #'id))
+    ((_ (id ...) _)
+     (let* ((ids (filter stx-e #'(id ...)))
+            (types (map generate-e ids)))
+       ['begin types ...]))))
+
+(defmethod {typedecl !alias}
+  (lambda (self)
+    (with ((!alias alias-id) self)
+      ['@alias alias-id])))
+
+(defmethod {typedecl !struct-type}
+  (lambda (self)
+    (with ((!struct-type type-id super fields _ ctor plist) self)
+      ['@struct-type type-id super fields ctor plist])))
+
+(defmethod {typedecl !struct-pred}
+  (lambda (self)
+    (with ((!struct-pred struct-t) self)
+      ['@struct-pred struct-t])))
+
+(defmethod {typedecl !struct-cons}
+  (lambda (self)
+    (with ((!struct-cons struct-t) self)
+      ['@struct-cons struct-t])))
+
+(defmethod {typedecl !struct-getf}
+  (lambda (self)
+    (with ((!struct-getf struct-t off) self)
+      ['@struct-getf struct-t off])))
+
+(defmethod {typedecl !struct-setf}
+  (lambda (self)
+    (with ((!struct-setf struct-t off) self)
+      ['@struct-setf struct-t off])))
 
 ;;; utilities
 (def (identifier-symbol stx)

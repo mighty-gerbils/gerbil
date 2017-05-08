@@ -209,9 +209,22 @@ namespace: gxc
     (for-each compile-phi phi-code)))
 
 (def (compile-ssxi-code ctx)
-  ;; TODO Implement me!
-  (void)
-  )
+  (let* ((path (compile-output-file ctx #f ".ssxi.ss"))
+         (code (apply-generate-ssxi (module-context-code ctx)))
+         (idstr (symbol->string (expander-context-id ctx)))
+         (pkg 
+          (cond
+           ((string-rindex idstr #\/)
+            => (lambda (x) (string->symbol (substring idstr 0 x))))
+           (else #f))))
+    
+    (verbose "compile " path)
+    (with-output-to-file [path: path permissions: #o644]
+      (lambda ()
+        (displayln "prelude: :gerbil/compiler/ssxi")
+        (when pkg (displayln "package: " pkg))
+        (newline)
+        (pretty-print code)))))
 
 (def (generate-meta-code ctx)
   ;; => ssi-code [[phi-ctx phi n phi-code] ...]
