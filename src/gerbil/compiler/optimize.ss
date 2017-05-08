@@ -45,9 +45,11 @@ namespace: gxc
       ([hd . rest]
        (cond
         ((module-context? hd)
-         (optimizer-load-prelude-ssxi ctx)
-         (lp (module-context-import hd))
-         (optimizer-load-ssxi hd)
+         (unless (hash-get (optimizer-info-ssxi (current-compile-optimizer-info))
+                           (expander-context-id hd))
+           (optimizer-load-prelude-ssxi ctx)
+           (lp (module-context-import hd))
+           (optimizer-load-ssxi hd))
          (lp rest))
         ((module-import? hd)
          (lp (cons (module-import-source hd) rest)))
