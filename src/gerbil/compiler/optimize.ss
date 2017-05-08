@@ -219,11 +219,11 @@ namespace: gxc
   (%#define-values collect-type-define-values%))
 
 (defcompile-method apply-basic-expression-type (&basic-expression-type &false)
+  (%#begin  basic-expression-type-begin%)
   (%#lambda      basic-expression-type-lambda%)
   (%#case-lambda basic-expression-type-case-lambda%)
   (%#call   basic-expression-type-call%)
-  (%#ref    basic-expression-type-ref%)
-  (%#begin  basic-expression-type-begin%))
+  (%#ref    basic-expression-type-ref%))
 
 (defcompile-method apply-optimize-call (&optimize-call &basic-xform)
   (%#call optimize-call%))
@@ -323,10 +323,27 @@ namespace: gxc
     (_ (void))))
 
 ;;; apply-basic-expression-type
+(def (basic-expression-type-begin% stx)
+  (ast-case stx ()
+    ((_ expr)
+     (compile-e #'expr))
+    (_ #f)))
+
 (def (basic-expression-type-lambda% stx)
-  ;; TODO
-  #f
-  )
+  (ast-case stx (%#call %#ref)
+    ((_ args (%#call (%#ref -apply) (%#ref -make-instance) (%#ref type-t) (%#ref xargs)))
+     ;; struct constructor
+     (and (identifier? #'args)
+          (identifier? #'xargs)
+          (eq? (identifier-symbol #'-apply) 'apply)
+          (eq? (identifier-symbol #'-make-instance) 'make-struct-instance)
+          (free-identifier=? #'args #'xargs))
+     (let* ((type-t (identifier-symbol #'type-t))
+            (type (optimizer-resolve-type type-t)))
+       (and (!struct-type? type)
+            (make-!struct-cons type-t))))
+    ;; TODO generic lambda type for call arity checking
+    (_ #f)))
 
 (def (basic-expression-type-case-lambda% stx)
   ;; TODO
@@ -403,11 +420,6 @@ namespace: gxc
     ((_ id)
      (optimizer-lookup-type (identifier-symbol #'id)))))
 
-(def (basic-expression-type-begin% stx)
-  ;; TODO
-  #f
-  )
-
 ;;; apply-optimize-call
 (def (optimize-call% stx)
   (ast-case stx (%#ref)
@@ -416,13 +428,10 @@ namespace: gxc
             (rator-type (optimizer-lookup-type rator-id)))
        (if rator-type
          (begin
-           (verbose "optimize-call => " rator-type " " (!type-id rator-type))
+           (verbose "optimize-call " rator-id  " => " rator-type " " (!type-id rator-type))
            {optimize-call rator-type stx #'rands}
            )
-         (let (rands (stx-map compile-e #'rands))
-           (xform-wrap-source
-            ['%#call #'(%#ref rator) rands ...]
-            stx)))))
+         (xform-call% stx))))
     (_ (xform-call% stx))))
 
 (defmethod {optimize-call !alias}
@@ -459,9 +468,30 @@ namespace: gxc
 
 (defmethod {optimize-call !struct-cons}
   (lambda (self stx args)
-    ;; TODO
-    (xform-call% stx)
-    ))
+    (with ((!struct-cons struct-t) self)
+      (let (struct-type (optimizer-resolve-type struct-t))
+        (match struct-type
+          ((!struct-type type-id _ fields xfields ctor)
+           (let (args (stx-map compile-e args))
+             (cond
+              ((or ctor (not xfields)) ; inline to make-struct-instance
+               (xform-wrap-source
+                ['%#call ['%#ref 'make-struct-instance] ['%#ref struct-t] args ...]
+                stx))
+            (else
+             (let (arity (fx+ fields xfields))
+               (if (fx= arity (length args))
+                 (xform-wrap-source
+                  ['%#call ['%#ref '##structure] ['%#ref struct-t] args ...]
+                  stx)
+                 (raise-compile-error "Illegal struct constructor application; arity mismatch"
+                                      stx struct-t arity)))))))
+          (#f
+           (verbose "cannot inline struct constructor; unknown struct type " struct-t)
+           (xform-call% stx))
+          (else
+           (raise-compile-error "Illegal struct constructor application; not a struct type"
+                                stx struct-t struct-type)))))))
 
 (defmethod {optimize-call !struct-getf}
   (lambda (self stx args)
