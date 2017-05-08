@@ -26,11 +26,14 @@ package: std
        bindir: (bindir #f)
        prefix: (prefix #f)
        force:  (force? #f)
+       optimize: (optimize #f)
+       verbose: (verbose #f)
        depgraph: (depgraph #f))
   (let* ((srcdir (or srcdir (error "srcdir must be specified")))
          (libdir (or libdir (path-expand "lib" (getenv "GERBIL_HOME"))))
          (settings  [srcdir: srcdir libdir: libdir bindir: bindir
-                     prefix: prefix force: force?])
+                     prefix: prefix force: force? optimize: optimize
+                     verbose: verbose])
          (buildset (if (not force?)
                      (filter (cut build? <> settings) buildspec)
                      buildspec))
@@ -216,8 +219,11 @@ package: std
 
 (def (gxc-compile mod gsc-opts settings)
   (def gxc-opts 
-    [invoke-gsc: #t output-dir: (pgetq libdir: settings )
-                 (if gsc-opts [gsc-options: gsc-opts] []) ...])
+    [invoke-gsc: #t
+     output-dir: (pgetq libdir: settings )
+     optimize: (pgetq optimize: settings)
+     verbose: (pgetq verbose: settings)
+     (if gsc-opts [gsc-options: gsc-opts] []) ...])
   (def srcpath (source-path mod ".ss" settings))
   
   (displayln "... compile " mod)

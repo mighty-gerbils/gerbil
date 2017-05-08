@@ -7,6 +7,7 @@
       (srcdir (path-normalize (path-directory (this-source-file)))))
   (add-load-path (path-normalize (path-expand ".." srcdir)))
   (make srcdir: srcdir
+        optimize: #t
         depgraph: depgraph
         prefix: "std"
         `("build-config"
