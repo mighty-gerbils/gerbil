@@ -222,6 +222,7 @@ package: std
     [invoke-gsc: #t
      output-dir: (pgetq libdir: settings )
      optimize: (pgetq optimize: settings)
+     generate-ssxi: #t
      verbose: (pgetq verbose: settings)
      (if gsc-opts [gsc-options: gsc-opts] []) ...])
   (def srcpath (source-path mod ".ss" settings))
