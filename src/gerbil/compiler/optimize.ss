@@ -116,6 +116,8 @@ namespace: gxc
 (defstruct (!struct-cons !procedure) ())
 (defstruct (!struct-getf !procedure) (off))
 (defstruct (!struct-setf !procedure) (off))
+(defstruct (!lambda !procedure) (arity dispatch))
+(defstruct (!case-lambda !procedure) (clauses))
   
 (def (optimizer-declare-type! sym type)
   (unless (!type? type)
@@ -198,21 +200,30 @@ namespace: gxc
 
 (defcompile-method #f (&identity &identity-special-form &identity-expression))
 
-(defcompile-method #f (&basic-xform &identity)
-  (%#begin          xform-begin%)
-  (%#define-values  xform-define-values%)
+(defcompile-method #f &basic-xform-expression
   (%#lambda              xform-lambda%)
   (%#case-lambda         xform-case-lambda%)
   (%#let-values     xform-let-values%)
   (%#letrec-values  xform-let-values%)
   (%#letrec*-values xform-let-values%)
+  (%#quote          xform-identity)
+  (%#quote-syntax   xform-identity)
   (%#call           xform-call%)
   (%#if             xform-if%)
+  (%#ref            xform-identity)
   (%#set!           xform-setq%))
 
+(defcompile-method #f (&basic-xform &basic-xform-expression &identity)
+  (%#begin          xform-begin%)
+  (%#define-values  xform-define-values%))
+
 (defcompile-method apply-lift-top-lambdas (&lift-top-lambdas &identity)
-  ;; TODO
-  )
+  (%#begin          xform-begin%)
+  (%#define-values  lift-top-lambda-define-values%))
+
+(defcompile-method apply-expression-subst (&expression-subst &basic-xform-expression)
+  (%#begin xform-begin%)
+  (%#ref   expression-subst-ref%))
 
 (defcompile-method apply-collect-type-info (&collect-type-info
                                             &void-expression
@@ -317,6 +328,147 @@ namespace: gxc
         ['%#set! #'id expr]
         stx)))))
 
+;;; apply-lift-top-lambdas
+(def (dispatch-lambda-form? form)
+  (ast-case form (%#call %#ref)
+    (((arg ...) (%#call (%#ref rator) (%#ref xarg) ...))
+     (and (identifier-list? #'(arg ...))
+          (fx= (stx-length #'(arg ...)) (stx-length #'(xarg ...)))
+          (andmap free-identifier=? #'(arg ...) #'(xarg ...))
+          (not (find (cut free-identifier=? <> #'rator) #'(arg ...)))))
+    (((arg ... . rest) (%#call (%#ref -apply) (%#ref rator) (%#ref xarg) ... (%#ref xrest)))
+     (and (identifier-list? #'(arg ...))
+          (identifier? #'rest)
+          (eq? (identifier-symbol #'-apply) 'apply)
+          (fx= (stx-length #'(arg ...)) (stx-length  #'(xarg ...)))
+          (andmap free-identifier=? #'(arg ...) #'(xarg ...))
+          (free-identifier=? #'rest #'xrest)
+          (not (find (cut free-identifier=? <> #'rator) #'(arg ... rest)))))
+    (_ #f)))
+
+(def (dispatch-lambda-form-delegate form)
+  (ast-case form (%#call %#ref)
+    (((arg ...) (%#call (%#ref rator) . _))
+     (identifier-symbol #'rator))
+    (((arg ... . rest) (%#call (%#ref -apply) (%#ref rator) . _))
+     (identifier-symbol #'rator))))
+
+(def (lambda-form-arity form)
+  (ast-case form ()
+    (((arg ...) . _)
+     (stx-length #'(arg ...)))
+    ((arg ... . rest)
+     [(stx-length #'(arg ...))])))
+
+
+(def (lift-top-lambda-define-values% stx)
+  (def (lambda-expr? expr)
+    (ast-case expr (%#lambda)
+      ((%#lambda . form) #t)
+      (_ #f)))
+
+  (def (case-lambda-expr? expr)
+    (ast-case expr (%#case-lambda)
+      ((%#case-lambda . clauses) #t)
+      (_ #f)))
+
+  (def (lift-case-lambda-clauses id clauses)
+    (let lp ((rest clauses) (ids []) (impls []) (clauses []))
+      (match rest
+        ([clause . rest]
+         (if (dispatch-lambda-form? clause)
+           (lp rest ids impls (cons clause clauses))
+           (ast-case clause ()
+             ((hd . body)
+              (let* ((id (make-symbol (stx-e id) "__" (length clauses)))
+                     (impl
+                      (xform-wrap-source
+                       #'(%#lambda hd . body)
+                       stx))
+                     (clause
+                      (ast-case #'hd ()
+                        ((arg ...)
+                         [#'hd 
+                          (xform-wrap-source
+                            ['%#call ['%#ref id] #'((%#ref arg) ...) ...]
+                            stx)])
+                        ((arg ... . rest)
+                         [#'hd
+                          (xform-wrap-source
+                           ['%#call ['%#ref 'apply] ['%#ref id]
+                                    #'((%#ref arg) ...) ... #'(%#ref rest)]
+                           stx)]))))
+                (lp rest
+                    (cons id ids)
+                    (cons impl impls)
+                    (cons clause clauses)))))))
+        (else
+         (values (reverse ids) (reverse impls) (reverse clauses))))))
+
+  (def (case-lambda-clause-def id impl)
+    (xform-wrap-source
+     ['%#define-values [id] impl]
+     stx))
+  
+  (ast-case stx (%#lambda %#case-lambda %#let-values)
+    ((_ (id) (%#case-lambda . clauses))
+     ;; dispatch clauses -- no need to lift
+     (and (identifier? #'id)
+          (andmap dispatch-lambda-form? #'clauses))
+     stx
+     )
+    ((_ (id) case-lambda-expr)
+     ;; generic case-lambda, lift non dispatch clauses
+     (and (identifier? #'id)
+          (case-lambda-expr? #'case-lambda-expr))
+     (ast-case #'case-lambda-expr ()
+       ((_ . clauses)
+        (let* (((values ids impls clauses)
+                (lift-case-lambda-clauses #'id #'clauses))
+               (defs (map case-lambda-clause-def ids impls)))
+          (verbose "lift case-lambda clauses " (identifier-symbol #'id) " => " ids)
+          (for-each core-bind-runtime! ids)
+          (xform-wrap-source
+           ['%#begin defs ...
+                     (xform-wrap-source
+                      ['%#define-values [#'id]
+                                        (xform-wrap-source
+                                         ['%#case-lambda clauses ...]
+                                         #'case-lambda-expr)]
+                      stx)]
+           stx)))))
+    ((_ (id) (%#let-values (((xid) lambda-expr)) case-lambda-expr))
+     ;; opt-lambda expansion
+     (and (identifier? #'id)
+          (identifier? #'xid)
+          (lambda-expr? #'lambda-expr)
+          (case-lambda-expr? #'case-lambda-expr))
+     (let* ((lambda-id (make-symbol (stx-e #'id) "__" (stx-e #'xid)))
+            (new-case-lambda-expr
+             (apply-expression-subst #'case-lambda-expr #'xid lambda-id)))
+       (verbose "lift opt-lambda dispatch "(identifier-symbol #'id) " => " lambda-id)
+       (core-bind-runtime! lambda-id)
+       (xform-wrap-source
+        ['%#begin (xform-wrap-source
+                   ['%#define-values [lambda-id] #'lambda-expr]
+                   stx)
+                  (lift-top-lambda-define-values%
+                   (xform-wrap-source
+                    ['%#define-values [#'id] new-case-lambda-expr]
+                    stx))]
+        stx)))
+    (_ stx)))
+
+;;; apply-subst-refs
+(def (expression-subst-ref% stx id new-id)
+  (ast-case stx ()
+    ((_ xid)
+     (free-identifier=? #'xid id)
+     (xform-wrap-source
+      ['%#ref new-id]
+      stx))
+    (_ stx)))
+
 ;;; apply-collect-type-info
 (def (collect-type-define-values% stx)
   (ast-case stx ()
@@ -356,13 +508,22 @@ namespace: gxc
             (type (optimizer-resolve-type type-t)))
        (and (!struct-type? type)
             (make-!struct-cons type-t))))
+    ((_ . form)
+     ;; delegate dispatch
+     (dispatch-lambda-form? #'form)
+     (make-!lambda 'lambda (lambda-form-arity #'form) (dispatch-lambda-form-delegate #'form)))
     ;; TODO generic lambda type for call arity checking
     (_ #f)))
 
 (def (basic-expression-type-case-lambda% stx)
-  ;; TODO
-  #f
-  )
+  (def (clause-e form)
+    (make-!lambda 'case-lambda-clause (lambda-form-arity form) (dispatch-lambda-form-delegate form)))
+  (ast-case stx ()
+    ((_ . clauses)
+     (andmap dispatch-lambda-form? #'clauses)
+     (let (clauses (map clause-e #'clauses))
+       (make-!case-lambda 'case-lambda clauses)))
+    (_ #f)))
 
 (def basic-expression-type-builtin (make-hash-table-eq))
 (defrules defbasic-expression-type-builtin ()
@@ -558,6 +719,16 @@ namespace: gxc
            (raise-compile-error "Illegal struct predicate application; not a struct type"
                                 stx struct-t struct-type)))))))
 
+(defmethod {optimize-call !lambda}
+  (lambda (self stx args)
+    (verbose "XXX IMPLEMENT ME: !lambda::optimize-call")
+    (xform-call% stx)))
+
+(defmethod {optimize-call !case-lambda}
+  (lambda (self stx args)
+    (verbose "XXX IMPLEMENT ME: !lambda::optimize-call")
+    (xform-call% stx)))
+
 ;;; apply-generate-ssxi
 (def (generate-ssxi-define-values% stx)
   (def (generate-e id)
@@ -606,6 +777,16 @@ namespace: gxc
   (lambda (self)
     (with ((!struct-setf struct-t off) self)
       ['@struct-setf struct-t off])))
+
+(defmethod {typedecl !lambda}
+  (lambda (self)
+    (verbose "XXX IMPLEMENT ME: !lambda::typedecl")
+    #f))
+
+(defmethod {typedecl !case-lambda}
+  (lambda (self)
+    (verbose "XXX IMPLEMENT ME: !lambda::typedecl")
+    #f))
 
 ;;; utilities
 (def (identifier-symbol stx)
