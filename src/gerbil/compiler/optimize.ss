@@ -344,6 +344,11 @@ namespace: gxc
           (andmap free-identifier=? #'(arg ...) #'(xarg ...))
           (free-identifier=? #'rest #'xrest)
           (not (find (cut free-identifier=? <> #'rator) #'(arg ... rest)))))
+    ((args (%#call (%#ref -apply) (%#ref rator) (%#ref xargs)))
+     (and (identifier? #'args)
+          (eq? (identifier-symbol #'-apply) 'apply)
+          (free-identifier=? #'args #'xargs)
+          (not (free-identifier=? #'rator #'args))))
     (_ #f)))
 
 (def (dispatch-lambda-form-delegate form)
@@ -351,6 +356,8 @@ namespace: gxc
     (((arg ...) (%#call (%#ref rator) . _))
      (identifier-symbol #'rator))
     (((arg ... . rest) (%#call (%#ref -apply) (%#ref rator) . _))
+     (identifier-symbol #'rator))
+    ((args (%#call (%#ref -apply) (%#ref rator) _))
      (identifier-symbol #'rator))))
 
 (def (lambda-form-arity form)
@@ -358,8 +365,8 @@ namespace: gxc
     (((arg ...) . _)
      (stx-length #'(arg ...)))
     ((arg ... . rest)
-     [(stx-length #'(arg ...))])))
-
+     [(stx-length #'(arg ...))])
+    (args [0])))
 
 (def (lift-top-lambda-define-values% stx)
   (def (lambda-expr? expr)
@@ -397,6 +404,11 @@ namespace: gxc
                           (xform-wrap-source
                            ['%#call ['%#ref 'apply] ['%#ref id]
                                     #'((%#ref arg) ...) ... #'(%#ref rest)]
+                           stx)])
+                        (args
+                         [#'hd
+                          (xform-wrap-source
+                           ['%#call ['%#ref 'apply] ['%#ref id] #'(%#ref args)]
                            stx)]))))
                 (lp rest
                     (cons id ids)
