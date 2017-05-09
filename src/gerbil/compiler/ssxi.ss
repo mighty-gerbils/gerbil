@@ -62,4 +62,15 @@ namespace: gxc
   ((_ type off)
    (make-!struct-setf 'type off)))
 
+(defrules @lambda ()
+  ((_ arity dispatch)
+   (make-!lambda 'lambda 'arity 'dispatch))
+  ((recur arity)
+   (recur arity #f)))
 
+(defrules @case-lambda ()
+  ((_ (arity dispatch) ...)
+   (make-!case-lambda 'case-lambda (@lambda arity dispatch) ...)))
+
+                 
+    

@@ -802,13 +802,17 @@ namespace: gxc
 
 (defmethod {typedecl !lambda}
   (lambda (self)
-    (verbose "XXX IMPLEMENT ME: !lambda::typedecl")
-    #f))
+    (with ((!lambda _ arity dispatch) self)
+      ['@lambda arity dispatch])))
 
 (defmethod {typedecl !case-lambda}
   (lambda (self)
-    (verbose "XXX IMPLEMENT ME: !lambda::typedecl")
-    #f))
+    (def (clause-e clause)
+      (with ((!lambda _ arity dispatch) clause)
+        [arity dispatch]))
+    (with ((!case-lambda _ clauses) self)
+      (let (clauses (map clause-e clauses))
+        ['@case-lambda clauses ...]))))
 
 ;;; utilities
 (def (identifier-symbol stx)
