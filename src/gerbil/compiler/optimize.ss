@@ -721,13 +721,35 @@ namespace: gxc
 
 (defmethod {optimize-call !lambda}
   (lambda (self stx args)
-    (verbose "XXX IMPLEMENT ME: !lambda::optimize-call")
-    (xform-call% stx)))
+    (with ((!lambda _ arity dispatch) self)
+      (unless (!lambda-arity-match? self args)
+        (raise-compile-error "Illegal lambda application; arity mismatch"
+                             stx arity))
+      (if dispatch
+        (let (args (stx-map compile-e args))
+          (verbose "dispatch lambda => " dispatch)
+          (xform-wrap-source
+           ['%#call ['%#ref dispatch] args ...]
+           stx))
+        (xform-call% stx)))))
 
 (defmethod {optimize-call !case-lambda}
   (lambda (self stx args)
-    (verbose "XXX IMPLEMENT ME: !lambda::optimize-call")
-    (xform-call% stx)))
+    (with ((!case-lambda _ clauses) self)
+      (cond
+       ((find (cut !lambda-arity-match? <> args) clauses)
+        => (lambda (clause) {optimize-call clause stx args}))
+       (else
+        (raise-compile-error "Illegal case-lambda application; arity mismatch"
+                             stx (map (cut !lambda-arity clauses) clauses)))))))
+
+(def (!lambda-arity-match? self args)
+  (with ((!lambda _ arity) self)
+    (match arity
+      ((? fixnum?)
+       (fx= (stx-length args) arity))
+      ([arity]
+       (fx>= (stx-length args) arity)))))
 
 ;;; apply-generate-ssxi
 (def (generate-ssxi-define-values% stx)
