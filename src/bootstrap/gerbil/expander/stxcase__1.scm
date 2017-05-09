@@ -10,26 +10,25 @@
   (define |gx[1]#_g12560_| (gx#core-quote-syntax 'syntax-pattern-id-set!))
   (define |gx[1]#_g12561_| (gx#core-quote-syntax 'syntax-pattern-depth-set!))
   (define |gx[1]#_g12562_| (gx#core-quote-syntax 'expander))
-  (begin
-    (define |gx[:0:]#syntax-pattern|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
-       'runtime-identifier:
-       |gx[1]#_g12553_|
-       'expander-identifiers:
-       (cons |gx[1]#_g12554_|
-             (cons |gx[1]#_g12555_|
-                   (cons |gx[1]#_g12556_|
-                         (cons |gx[1]#_g12557_|
-                               (cons (cons |gx[1]#_g12558_|
-                                           (cons |gx[1]#_g12559_| '()))
-                                     (cons (cons |gx[1]#_g12560_|
-                                                 (cons |gx[1]#_g12561_| '()))
-                                           '()))))))
-       'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
-        'gx#syntax-pattern::t
-        |gx[1]#_g12562_|
-        'syntax-pattern
-        '#f
-        '()
-        '(id depth))))))
+  (define |gx[:0:]#syntax-pattern|
+    (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+     'runtime-identifier:
+     |gx[1]#_g12553_|
+     'expander-identifiers:
+     (cons |gx[1]#_g12554_|
+           (cons |gx[1]#_g12555_|
+                 (cons |gx[1]#_g12556_|
+                       (cons |gx[1]#_g12557_|
+                             (cons (cons |gx[1]#_g12558_|
+                                         (cons |gx[1]#_g12559_| '()))
+                                   (cons (cons |gx[1]#_g12560_|
+                                               (cons |gx[1]#_g12561_| '()))
+                                         '()))))))
+     'type-exhibitor:
+     (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+      'gx#syntax-pattern::t
+      |gx[1]#_g12562_|
+      'syntax-pattern
+      '#f
+      '()
+      '(id depth)))))

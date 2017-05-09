@@ -25,9 +25,21 @@ namespace: gx
           syntax-pattern::apply-macro-expander
           gx#syntax-pattern::apply-macro-expander)
          (%#define-runtime macro-expand-syntax gx#macro-expand-syntax)
-         (%#define-runtime
-          macro-expand-syntax-case
-          gx#macro-expand-syntax-case)
+         (%#begin (%#define-runtime
+                   macro-expand-syntax-case__opt-lambda11401
+                   gx#macro-expand-syntax-case__opt-lambda11401)
+                  (%#begin (%#define-runtime
+                            macro-expand-syntax-case__0
+                            gx#macro-expand-syntax-case__0)
+                           (%#define-runtime
+                            macro-expand-syntax-case__1
+                            gx#macro-expand-syntax-case__1)
+                           (%#define-runtime
+                            macro-expand-syntax-case__2
+                            gx#macro-expand-syntax-case__2)
+                           (%#define-runtime
+                            macro-expand-syntax-case
+                            gx#macro-expand-syntax-case)))
          (%#define-runtime syntax-local-pattern? gx#syntax-local-pattern?)
          (%#define-runtime
           syntax-check-splice-targets

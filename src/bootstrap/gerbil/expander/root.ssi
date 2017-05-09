@@ -11,12 +11,40 @@ namespace: gx
           :gerbil/expander/compile)
          (%#define-runtime *core-syntax-expanders* gx#*core-syntax-expanders*)
          (%#define-runtime *core-macro-expanders* gx#*core-macro-expanders*)
-         (%#define-runtime root-context:::init! gx#root-context:::init!)
-         (%#define-runtime top-context:::init! gx#top-context:::init!)
-         (%#define-runtime
-          expander-context::bind-core-syntax-expanders!
-          gx#expander-context::bind-core-syntax-expanders!)
-         (%#define-runtime
-          expander-context::bind-core-macro-expanders!
-          gx#expander-context::bind-core-macro-expanders!))
+         (%#begin (%#define-runtime
+                   root-context:::init!__opt-lambda11292
+                   gx#root-context:::init!__opt-lambda11292)
+                  (%#begin (%#define-runtime
+                            root-context:::init!__0
+                            gx#root-context:::init!__0)
+                           (%#define-runtime
+                            root-context:::init!
+                            gx#root-context:::init!)))
+         (%#begin (%#define-runtime
+                   top-context:::init!__opt-lambda11270
+                   gx#top-context:::init!__opt-lambda11270)
+                  (%#begin (%#define-runtime
+                            top-context:::init!__0
+                            gx#top-context:::init!__0)
+                           (%#define-runtime
+                            top-context:::init!
+                            gx#top-context:::init!)))
+         (%#begin (%#define-runtime
+                   expander-context::bind-core-syntax-expanders!__opt-lambda11123
+                   gx#expander-context::bind-core-syntax-expanders!__opt-lambda11123)
+                  (%#begin (%#define-runtime
+                            expander-context::bind-core-syntax-expanders!__0
+                            gx#expander-context::bind-core-syntax-expanders!__0)
+                           (%#define-runtime
+                            expander-context::bind-core-syntax-expanders!
+                            gx#expander-context::bind-core-syntax-expanders!)))
+         (%#begin (%#define-runtime
+                   expander-context::bind-core-macro-expanders!__opt-lambda11017
+                   gx#expander-context::bind-core-macro-expanders!__opt-lambda11017)
+                  (%#begin (%#define-runtime
+                            expander-context::bind-core-macro-expanders!__0
+                            gx#expander-context::bind-core-macro-expanders!__0)
+                           (%#define-runtime
+                            expander-context::bind-core-macro-expanders!
+                            gx#expander-context::bind-core-macro-expanders!))))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/root__0"))

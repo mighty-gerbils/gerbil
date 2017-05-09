@@ -1,2 +1,2 @@
 (declare (block) (standard-bindings) (extended-bindings))
-(begin (begin (load-module "gerbil/core::<expander-runtime>__rt")))
+(begin (load-module "gerbil/core::<expander-runtime>__rt"))

@@ -78,6 +78,22 @@ package: gerbil/compiler
   (declare-type gxc#!struct-setf? (@struct-pred gxc#!struct-setf::t))
   (declare-type gxc#make-!struct-setf (@struct-cons gxc#!struct-setf::t))
   (declare-type gxc#!struct-setf-off (@struct-getf gxc#!struct-setf::t 0))
+  (declare-type gxc#!struct-setf-off-set! (@struct-setf gxc#!struct-setf::t 0))
   (declare-type
-   gxc#!struct-setf-off-set!
-   (@struct-setf gxc#!struct-setf::t 0)))
+   gxc#!lambda::t
+   (@struct-type gxc#!lambda::t gxc#!procedure::t 2 #f ()))
+  (declare-type gxc#!lambda? (@struct-pred gxc#!lambda::t))
+  (declare-type gxc#make-!lambda (@struct-cons gxc#!lambda::t))
+  (declare-type gxc#!lambda-arity (@struct-getf gxc#!lambda::t 0))
+  (declare-type gxc#!lambda-dispatch (@struct-getf gxc#!lambda::t 1))
+  (declare-type gxc#!lambda-arity-set! (@struct-setf gxc#!lambda::t 0))
+  (declare-type gxc#!lambda-dispatch-set! (@struct-setf gxc#!lambda::t 1))
+  (declare-type
+   gxc#!case-lambda::t
+   (@struct-type gxc#!case-lambda::t gxc#!procedure::t 1 #f ()))
+  (declare-type gxc#!case-lambda? (@struct-pred gxc#!case-lambda::t))
+  (declare-type gxc#make-!case-lambda (@struct-cons gxc#!case-lambda::t))
+  (declare-type gxc#!case-lambda-clauses (@struct-getf gxc#!case-lambda::t 0))
+  (declare-type
+   gxc#!case-lambda-clauses-set!
+   (@struct-setf gxc#!case-lambda::t 0)))

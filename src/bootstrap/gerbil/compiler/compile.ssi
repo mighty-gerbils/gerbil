@@ -9,16 +9,16 @@ namespace: gxc
           (in: :gerbil/core <syntax-sugar>)
           (spec:
            (:gerbil/gambit/hvectors)
-           (0 u16vector? 0 u16vector?)
-           (0 f32vector? 0 f32vector?)
-           (0 s16vector? 0 s16vector?)
-           (0 u8vector? 0 u8vector?)
-           (0 u64vector? 0 u64vector?)
-           (0 u32vector? 0 u32vector?)
            (0 s32vector? 0 s32vector?)
+           (0 f32vector? 0 f32vector?)
+           (0 u16vector? 0 u16vector?)
+           (0 u8vector? 0 u8vector?)
+           (0 s16vector? 0 s16vector?)
+           (0 u32vector? 0 u32vector?)
+           (0 f64vector? 0 f64vector?)
            (0 s64vector? 0 s64vector?)
-           (0 s8vector? 0 s8vector?)
-           (0 f64vector? 0 f64vector?)))
+           (0 u64vector? 0 u64vector?)
+           (0 s8vector? 0 s8vector?)))
          (%#export #t)
          (%#define-runtime current-compile-methods gxc#current-compile-methods)
          (%#define-runtime current-compile-lift gxc#current-compile-lift)
@@ -83,9 +83,15 @@ namespace: gxc
          (%#define-runtime
           generate-runtime-identifier-key
           gxc#generate-runtime-identifier-key)
-         (%#define-runtime
-          generate-runtime-temporary
-          gxc#generate-runtime-temporary)
+         (%#begin (%#define-runtime
+                   generate-runtime-temporary__opt-lambda6529
+                   gxc#generate-runtime-temporary__opt-lambda6529)
+                  (%#begin (%#define-runtime
+                            generate-runtime-temporary__0
+                            gxc#generate-runtime-temporary__0)
+                           (%#define-runtime
+                            generate-runtime-temporary
+                            gxc#generate-runtime-temporary)))
          (%#define-runtime generate-runtime-empty gxc#generate-runtime-empty)
          (%#define-runtime generate-runtime-begin% gxc#generate-runtime-begin%)
          (%#define-runtime
@@ -109,15 +115,27 @@ namespace: gxc
          (%#define-runtime
           generate-runtime-case-lambda%
           gxc#generate-runtime-case-lambda%)
-         (%#define-runtime
-          generate-runtime-let-values%
-          gxc#generate-runtime-let-values%)
+         (%#begin (%#define-runtime
+                   generate-runtime-let-values%__opt-lambda5592
+                   gxc#generate-runtime-let-values%__opt-lambda5592)
+                  (%#begin (%#define-runtime
+                            generate-runtime-let-values%__0
+                            gxc#generate-runtime-let-values%__0)
+                           (%#define-runtime
+                            generate-runtime-let-values%
+                            gxc#generate-runtime-let-values%)))
          (%#define-runtime
           generate-runtime-let-values-bind
           gxc#generate-runtime-let-values-bind)
-         (%#define-runtime
-          generate-runtime-letrec-values%
-          gxc#generate-runtime-letrec-values%)
+         (%#begin (%#define-runtime
+                   generate-runtime-letrec-values%__opt-lambda5171
+                   gxc#generate-runtime-letrec-values%__opt-lambda5171)
+                  (%#begin (%#define-runtime
+                            generate-runtime-letrec-values%__0
+                            gxc#generate-runtime-letrec-values%__0)
+                           (%#define-runtime
+                            generate-runtime-letrec-values%
+                            gxc#generate-runtime-letrec-values%)))
          (%#define-runtime
           generate-runtime-letrec*-values%
           gxc#generate-runtime-letrec*-values%)

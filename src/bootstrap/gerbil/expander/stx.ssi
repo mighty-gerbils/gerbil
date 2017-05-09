@@ -36,8 +36,18 @@ namespace: gx
          (%#define-runtime sealed-syntax? gx#sealed-syntax?)
          (%#define-runtime syntax-e gx#syntax-e)
          (%#define-runtime syntax->datum gx#syntax->datum)
-         (%#define-runtime datum->syntax gx#datum->syntax)
-         (%#define-runtime stx-unwrap gx#stx-unwrap)
+         (%#begin (%#define-runtime
+                   datum->syntax__opt-lambda2498
+                   gx#datum->syntax__opt-lambda2498)
+                  (%#begin (%#define-runtime
+                            datum->syntax__0
+                            gx#datum->syntax__0)
+                           (%#define-runtime datum->syntax gx#datum->syntax)))
+         (%#begin (%#define-runtime
+                   stx-unwrap__opt-lambda2474
+                   gx#stx-unwrap__opt-lambda2474)
+                  (%#begin (%#define-runtime stx-unwrap__0 gx#stx-unwrap__0)
+                           (%#define-runtime stx-unwrap gx#stx-unwrap)))
          (%#define-runtime stx-wrap gx#stx-wrap)
          (%#define-runtime stx-rewrap gx#stx-rewrap)
          (%#define-runtime stx-apply-mark gx#stx-apply-mark)
@@ -67,7 +77,12 @@ namespace: gx
          (%#define-runtime stx-identifier-marks gx#stx-identifier-marks)
          (%#define-runtime stx-identifier-context gx#stx-identifier-context)
          (%#define-runtime identifier-list? gx#identifier-list?)
-         (%#define-runtime genident gx#genident)
+         (%#begin (%#define-runtime
+                   genident__opt-lambda2233
+                   gx#genident__opt-lambda2233)
+                  (%#begin (%#define-runtime genident__0 gx#genident__0)
+                           (%#define-runtime genident__1 gx#genident__1)
+                           (%#define-runtime genident gx#genident)))
          (%#define-runtime gentemps gx#gentemps)
          (%#define-runtime syntax->list gx#syntax->list)
          (%#define-runtime stx-car gx#stx-car)
@@ -88,6 +103,14 @@ namespace: gx
          (%#define-runtime stx-last-pair gx#stx-last-pair)
          (%#define-runtime stx-list-tail gx#stx-list-tail)
          (%#define-runtime stx-list-ref gx#stx-list-ref)
-         (%#define-runtime stx-plist? gx#stx-plist?)
-         (%#define-runtime stx-getq gx#stx-getq))
+         (%#begin (%#define-runtime
+                   stx-plist?__opt-lambda1479
+                   gx#stx-plist?__opt-lambda1479)
+                  (%#begin (%#define-runtime stx-plist?__0 gx#stx-plist?__0)
+                           (%#define-runtime stx-plist? gx#stx-plist?)))
+         (%#begin (%#define-runtime
+                   stx-getq__opt-lambda1397
+                   gx#stx-getq__opt-lambda1397)
+                  (%#begin (%#define-runtime stx-getq__0 gx#stx-getq__0)
+                           (%#define-runtime stx-getq gx#stx-getq))))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/stx__0"))

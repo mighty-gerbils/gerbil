@@ -80,7 +80,15 @@ namespace: gx
           current-export-expander-phi
           gx#current-export-expander-phi)
          (%#define-runtime module-context:::init! gx#module-context:::init!)
-         (%#define-runtime prelude-context:::init! gx#prelude-context:::init!)
+         (%#begin (%#define-runtime
+                   prelude-context:::init!__opt-lambda9786
+                   gx#prelude-context:::init!__opt-lambda9786)
+                  (%#begin (%#define-runtime
+                            prelude-context:::init!__0
+                            gx#prelude-context:::init!__0)
+                           (%#define-runtime
+                            prelude-context:::init!
+                            gx#prelude-context:::init!)))
          (%#define-runtime import-expander:::init! gx#import-expander:::init!)
          (%#define-runtime export-expander:::init! gx#export-expander:::init!)
          (%#define-runtime
@@ -90,22 +98,53 @@ namespace: gx
           export-expander::apply-export-expander
           gx#export-expander::apply-export-expander)
          (%#define-runtime module-source-path gx#module-source-path)
-         (%#define-runtime import-module gx#import-module)
+         (%#begin (%#define-runtime
+                   import-module__opt-lambda9734
+                   gx#import-module__opt-lambda9734)
+                  (%#begin (%#define-runtime
+                            import-module__0
+                            gx#import-module__0)
+                           (%#define-runtime
+                            import-module__1
+                            gx#import-module__1)
+                           (%#define-runtime import-module gx#import-module)))
          (%#define-runtime eval-module gx#eval-module)
          (%#define-runtime core-eval-module gx#core-eval-module)
-         (%#define-runtime core-context-prelude gx#core-context-prelude)
+         (%#begin (%#define-runtime
+                   core-context-prelude__opt-lambda9699
+                   gx#core-context-prelude__opt-lambda9699)
+                  (%#begin (%#define-runtime
+                            core-context-prelude__0
+                            gx#core-context-prelude__0)
+                           (%#define-runtime
+                            core-context-prelude
+                            gx#core-context-prelude)))
          (%#define-runtime
           core-module->prelude-context
           gx#core-module->prelude-context)
-         (%#define-runtime core-import-module gx#core-import-module)
+         (%#begin (%#define-runtime
+                   core-import-module__opt-lambda9643
+                   gx#core-import-module__opt-lambda9643)
+                  (%#begin (%#define-runtime
+                            core-import-module__0
+                            gx#core-import-module__0)
+                           (%#define-runtime
+                            core-import-module
+                            gx#core-import-module)))
          (%#define-runtime core-read-module gx#core-read-module)
          (%#define-runtime
           core-module-path->namespace
           gx#core-module-path->namespace)
          (%#define-runtime core-module-path->id gx#core-module-path->id)
-         (%#define-runtime
-          core-resolve-module-path
-          gx#core-resolve-module-path)
+         (%#begin (%#define-runtime
+                   core-resolve-module-path__opt-lambda9481
+                   gx#core-resolve-module-path__opt-lambda9481)
+                  (%#begin (%#define-runtime
+                            core-resolve-module-path__0
+                            gx#core-resolve-module-path__0)
+                           (%#define-runtime
+                            core-resolve-module-path
+                            gx#core-resolve-module-path)))
          (%#define-runtime
           core-resolve-library-module-path
           gx#core-resolve-library-module-path)
@@ -120,14 +159,42 @@ namespace: gx
          (%#define-runtime
           core-bound-module-prelude?
           gx#core-bound-module-prelude?)
-         (%#define-runtime core-bind-import! gx#core-bind-import!)
-         (%#define-runtime core-bind-weak-import! gx#core-bind-weak-import!)
+         (%#begin (%#define-runtime
+                   core-bind-import!__opt-lambda9325
+                   gx#core-bind-import!__opt-lambda9325)
+                  (%#begin (%#define-runtime
+                            core-bind-import!__0
+                            gx#core-bind-import!__0)
+                           (%#define-runtime
+                            core-bind-import!__1
+                            gx#core-bind-import!__1)
+                           (%#define-runtime
+                            core-bind-import!
+                            gx#core-bind-import!)))
+         (%#begin (%#define-runtime
+                   core-bind-weak-import!__opt-lambda9311
+                   gx#core-bind-weak-import!__opt-lambda9311)
+                  (%#begin (%#define-runtime
+                            core-bind-weak-import!__0
+                            gx#core-bind-weak-import!__0)
+                           (%#define-runtime
+                            core-bind-weak-import!
+                            gx#core-bind-weak-import!)))
          (%#define-runtime
           core-resolve-module-export
           gx#core-resolve-module-export)
-         (%#define-runtime
-          core-module-export->import
-          gx#core-module-export->import)
+         (%#begin (%#define-runtime
+                   core-module-export->import__opt-lambda9127
+                   gx#core-module-export->import__opt-lambda9127)
+                  (%#begin (%#define-runtime
+                            core-module-export->import__0
+                            gx#core-module-export->import__0)
+                           (%#define-runtime
+                            core-module-export->import__1
+                            gx#core-module-export->import__1)
+                           (%#define-runtime
+                            core-module-export->import
+                            gx#core-module-export->import)))
          (%#define-runtime core-expand-module% gx#core-expand-module%)
          (%#define-runtime
           core-expand-module-begin
@@ -136,17 +203,47 @@ namespace: gx
          (%#define-runtime
           core-expand-import/export
           gx#core-expand-import/export)
-         (%#define-runtime core-expand-import% gx#core-expand-import%)
+         (%#begin (%#define-runtime
+                   core-expand-import%__opt-lambda8229
+                   gx#core-expand-import%__opt-lambda8229)
+                  (%#begin (%#define-runtime
+                            core-expand-import%__0
+                            gx#core-expand-import%__0)
+                           (%#define-runtime
+                            core-expand-import%
+                            gx#core-expand-import%)))
          (%#define-runtime
           core-import-nested-module
           gx#core-import-nested-module)
          (%#define-runtime
           core-expand-import-source
           gx#core-expand-import-source)
-         (%#define-runtime core-expand-export% gx#core-expand-export%)
+         (%#begin (%#define-runtime
+                   core-expand-export%__opt-lambda7738
+                   gx#core-expand-export%__opt-lambda7738)
+                  (%#begin (%#define-runtime
+                            core-expand-export%__0
+                            gx#core-expand-export%__0)
+                           (%#define-runtime
+                            core-expand-export%
+                            gx#core-expand-export%)))
          (%#define-runtime
           core-expand-export-source
           gx#core-expand-export-source)
          (%#define-runtime core-expand-provide% gx#core-expand-provide%)
-         (%#define-runtime core-bind-feature! gx#core-bind-feature!))
+         (%#begin (%#define-runtime
+                   core-bind-feature!__opt-lambda7671
+                   gx#core-bind-feature!__opt-lambda7671)
+                  (%#begin (%#define-runtime
+                            core-bind-feature!__0
+                            gx#core-bind-feature!__0)
+                           (%#define-runtime
+                            core-bind-feature!__1
+                            gx#core-bind-feature!__1)
+                           (%#define-runtime
+                            core-bind-feature!__2
+                            gx#core-bind-feature!__2)
+                           (%#define-runtime
+                            core-bind-feature!
+                            gx#core-bind-feature!))))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/expander/module__0"))

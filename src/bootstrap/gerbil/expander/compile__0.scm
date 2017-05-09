@@ -15,7 +15,7 @@
                            (let ((_form11010_ _hd1099111005_))
                              (if '#t
                                  (call-method
-                                  (gx#syntax-local-e _form11010_)
+                                  (gx#syntax-local-e__0 _form11010_)
                                   'compile-top-syntax
                                   _stx10986_)
                                  (_E1098910998_)))))
@@ -66,7 +66,7 @@
                            (let ((_body10938_ _tl1092010935_))
                              (if '#t
                                  (cons '%#begin
-                                       (gx#stx-map
+                                       (gx#stx-map1
                                         gx#core-compile-top-syntax
                                         _body10938_))
                                  (_E1091710926_)))))
@@ -89,7 +89,7 @@
                                  (cons '%#begin-syntax
                                        (call-with-parameters
                                         (lambda ()
-                                          (gx#stx-map
+                                          (gx#stx-map1
                                            gx#core-compile-top-syntax
                                            _body10907_))
                                         gx#current-expander-phi
@@ -155,12 +155,12 @@
                                        (if '#t
                                            (cons* '%#module
                                                   (##structure-ref
-                                                   (gx#syntax-local-e
+                                                   (gx#syntax-local-e__0
                                                     _hd10815_)
                                                    '1
                                                    gx#expander-context::t
                                                    '#f)
-                                                  (gx#stx-map
+                                                  (gx#stx-map1
                                                    gx#core-compile-top-syntax
                                                    _body10817_))
                                            (_E1078310795_))))))
@@ -200,7 +200,7 @@
                            (let ((_body10744_ _tl1072610741_))
                              (if '#t
                                  (cons '%#provide
-                                       (gx#stx-map
+                                       (gx#stx-map1
                                         gx#core-quote-syntax
                                         _body10744_))
                                  (_E1072310732_)))))
@@ -237,7 +237,7 @@
                                                 (if (gx#stx-null?
                                                      _tl1068610711_)
                                                     (if '#t
-                                                        (cons (gx#core-quote-syntax
+                                                        (cons (gx#core-quote-syntax__0
                                                                _id10704_)
                                                               (cons (gx#stx-e
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -262,7 +262,7 @@
                              (let ((_body10671_ _tl1065310668_))
                                (if '#t
                                    (cons '%#extern
-                                         (gx#stx-map
+                                         (gx#stx-map1
                                           _generate10647_
                                           _body10671_))
                                    (_E1065010659_)))))
@@ -299,7 +299,7 @@
                                                     _tl1060310636_)
                                                    (if '#t
                                                        (cons '%#define-values
-                                                             (cons (gx#stx-map
+                                                             (cons (gx#stx-map1
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             gx#core-compile-top-runtime-bind
                             _hd10629_)
@@ -343,7 +343,7 @@
                                                     _tl1054810581_)
                                                    (if '#t
                                                        (cons '%#define-syntax
-                                                             (cons (gx#core-quote-syntax
+                                                             (cons (gx#core-quote-syntax__0
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             _hd10574_)
                            (cons (call-with-parameters
@@ -390,10 +390,11 @@
                                                     _tl1049410527_)
                                                    (if '#t
                                                        (cons '%#define-alias
-                                                             (cons (gx#core-quote-syntax
+                                                             (cons (gx#core-quote-syntax__0
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             _hd10520_)
-                           (cons (gx#core-quote-syntax _alias-id10530_) '())))
+                           (cons (gx#core-quote-syntax__0 _alias-id10530_)
+                                 '())))
                (_E1048510500_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (_E1048510500_)))))
@@ -432,10 +433,10 @@
                                                     _tl1044010473_)
                                                    (if '#t
                                                        (cons '%#define-runtime
-                                                             (cons (gx#core-quote-syntax
+                                                             (cons (gx#core-quote-syntax__0
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             _id10466_)
-                           (cons (gx#core-quote-syntax _binding-id10476_)
+                           (cons (gx#core-quote-syntax__0 _binding-id10476_)
                                  '())))
                (_E1043110446_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -504,7 +505,7 @@
                                      (let ((_body10362_ _hd1033310357_))
                                        (if (gx#stx-null? _tl1033410359_)
                                            (if '#t
-                                               (cons (gx#stx-map
+                                               (cons (gx#stx-map1
                                                       gx#core-compile-top-runtime-bind
                                                       _hd10352_)
                                                      (cons (gx#core-compile-top-syntax
@@ -530,83 +531,90 @@
                            (let ((_clauses10319_ _tl1030110316_))
                              (if '#t
                                  (cons '%#case-lambda
-                                       (gx#stx-map
+                                       (gx#stx-map1
                                         gx#core-compile-top-lambda-clause
                                         _clauses10319_))
                                  (_E1029810307_)))))
                        (_E1029810307_)))))
             (let () (_E1029710321_)))))))
-  (define gx#core-compile-top-let-values%
-    (let ((_opt-lambda1022810285_
-           (lambda (_stx10230_ _form10231_)
-             (let ((_e1023210245_ _stx10230_))
-               (let ((_E1023410249_
-                      (lambda ()
-                        (gx#raise-syntax-error
-                         '#f
-                         '"Bad syntax"
-                         _e1023210245_))))
-                 (let ((_E1023310281_
-                        (lambda ()
-                          (if (gx#stx-pair? _e1023210245_)
-                              (let ((_e1023510253_
-                                     (gx#syntax-e _e1023210245_)))
-                                (let ((_hd1023610256_ (##car _e1023510253_))
-                                      (_tl1023710258_ (##cdr _e1023510253_)))
-                                  (if (gx#stx-pair? _tl1023710258_)
-                                      (let ((_e1023810261_
-                                             (gx#syntax-e _tl1023710258_)))
-                                        (let ((_hd1023910264_
-                                               (##car _e1023810261_))
-                                              (_tl1024010266_
-                                               (##cdr _e1023810261_)))
-                                          (let ((_hd10269_ _hd1023910264_))
-                                            (if (gx#stx-pair? _tl1024010266_)
-                                                (let ((_e1024110271_
-                                                       (gx#syntax-e
-                                                        _tl1024010266_)))
-                                                  (let ((_hd1024210274_
-                                                         (##car _e1024110271_))
-                                                        (_tl1024310276_
-                                                         (##cdr _e1024110271_)))
-                                                    (let ((_body10279_
-                                                           _hd1024210274_))
-                                                      (if (gx#stx-null?
-                                                           _tl1024310276_)
-                                                          (if '#t
-                                                              (cons _form10231_
+  (begin
+    (define gx#core-compile-top-let-values%__opt-lambda10228
+      (lambda (_stx10230_ _form10231_)
+        (let ((_e1023210245_ _stx10230_))
+          (let ((_E1023410249_
+                 (lambda ()
+                   (gx#raise-syntax-error '#f '"Bad syntax" _e1023210245_))))
+            (let ((_E1023310281_
+                   (lambda ()
+                     (if (gx#stx-pair? _e1023210245_)
+                         (let ((_e1023510253_ (gx#syntax-e _e1023210245_)))
+                           (let ((_hd1023610256_ (##car _e1023510253_))
+                                 (_tl1023710258_ (##cdr _e1023510253_)))
+                             (if (gx#stx-pair? _tl1023710258_)
+                                 (let ((_e1023810261_
+                                        (gx#syntax-e _tl1023710258_)))
+                                   (let ((_hd1023910264_ (##car _e1023810261_))
+                                         (_tl1024010266_
+                                          (##cdr _e1023810261_)))
+                                     (let ((_hd10269_ _hd1023910264_))
+                                       (if (gx#stx-pair? _tl1024010266_)
+                                           (let ((_e1024110271_
+                                                  (gx#syntax-e
+                                                   _tl1024010266_)))
+                                             (let ((_hd1024210274_
+                                                    (##car _e1024110271_))
+                                                   (_tl1024310276_
+                                                    (##cdr _e1024110271_)))
+                                               (let ((_body10279_
+                                                      _hd1024210274_))
+                                                 (if (gx#stx-null?
+                                                      _tl1024310276_)
+                                                     (if '#t
+                                                         (cons _form10231_
+                                                               (cons (gx#stx-map1
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (cons (gx#stx-map
-                                   gx#core-compile-top-lambda-clause
-                                   _hd10269_)
-                                  (cons (gx#core-compile-top-syntax
-                                         _body10279_)
-                                        '())))
-                      (_E1023410249_))
-                  (_E1023410249_)))))
+                              gx#core-compile-top-lambda-clause
+                              _hd10269_)
+                             (cons (gx#core-compile-top-syntax _body10279_)
+                                   '())))
+                 (_E1023410249_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (_E1023410249_)))))
-                                      (_E1023410249_))))
-                              (_E1023410249_)))))
-                   (let () (_E1023310281_))))))))
-      (lambda _g11016_
-        (let ((_g11015_ (length _g11016_)))
-          (cond ((fx= _g11015_ 1)
-                 (apply (lambda (_stx10288_)
-                          (let ((_form10290_ '%#let-values))
-                            (_opt-lambda1022810285_ _stx10288_ _form10290_)))
-                        _g11016_))
-                ((fx= _g11015_ 2)
-                 (apply (lambda (_stx10292_ _form10293_)
-                          (_opt-lambda1022810285_ _stx10292_ _form10293_))
-                        _g11016_))
-                (else (error "No clause matching arguments" _g11016_)))))))
+                                                     (_E1023410249_)))))
+                                           (_E1023410249_)))))
+                                 (_E1023410249_))))
+                         (_E1023410249_)))))
+              (let () (_E1023310281_)))))))
+    (begin
+      (define gx#core-compile-top-let-values%__0
+        (lambda (_stx10288_)
+          (let ((_form10290_ '%#let-values))
+            (gx#core-compile-top-let-values%__opt-lambda10228
+             _stx10288_
+             _form10290_))))
+      (define gx#core-compile-top-let-values%
+        (lambda _g11016_
+          (let ((_g11015_ (length _g11016_)))
+            (cond ((fx= _g11015_ 1)
+                   (apply (lambda (_stx10288_)
+                            (gx#core-compile-top-let-values%__0 _stx10288_))
+                          _g11016_))
+                  ((fx= _g11015_ 2)
+                   (apply (lambda (_stx10292_ _form10293_)
+                            (gx#core-compile-top-let-values%__opt-lambda10228
+                             _stx10292_
+                             _form10293_))
+                          _g11016_))
+                  (else (error "No clause matching arguments" _g11016_))))))))
   (define gx#core-compile-top-letrec-values%
     (lambda (_stx10227_)
-      (gx#core-compile-top-let-values% _stx10227_ '%#letrec-values)))
+      (gx#core-compile-top-let-values%__opt-lambda10228
+       _stx10227_
+       '%#letrec-values)))
   (define gx#core-compile-top-letrec*-values%
     (lambda (_stx10225_)
-      (gx#core-compile-top-let-values% _stx10225_ '%#letrec*-values)))
+      (gx#core-compile-top-let-values%__opt-lambda10228
+       _stx10225_
+       '%#letrec*-values)))
   (define gx#core-compile-top-quote%
     (lambda (_stx10184_)
       (let ((_e1018510195_ _stx10184_))
@@ -657,7 +665,7 @@
                                      (if (gx#stx-null? _tl1015210175_)
                                          (if '#t
                                              (cons '%#quote-syntax
-                                                   (cons (gx#core-quote-syntax
+                                                   (cons (gx#core-quote-syntax__0
                                                           _e10178_)
                                                          '()))
                                              (_E1014610158_))
@@ -688,7 +696,7 @@
                                            (cons* '%#call
                                                   (gx#core-compile-top-syntax
                                                    _rator10135_)
-                                                  (gx#stx-map
+                                                  (gx#stx-map1
                                                    gx#core-compile-top-syntax
                                                    _args10137_))
                                            (_E1010310115_))))))
@@ -822,7 +830,7 @@
             (let () (_E99409988_)))))))
   (define gx#core-compile-top-runtime-ref
     (lambda (_id9933_)
-      (let ((_$e9935_ (gx#resolve-identifier _id9933_)))
+      (let ((_$e9935_ (gx#resolve-identifier__0 _id9933_)))
         (if _$e9935_
             (##structure-ref _$e9935_ '1 gx#binding::t '#f)
             _id9933_))))

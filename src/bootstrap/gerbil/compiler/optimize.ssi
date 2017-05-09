@@ -93,6 +93,22 @@ namespace: gxc
          (%#define-runtime !struct-setf-off gxc#!struct-setf-off)
          (%#define-runtime !struct-setf-off-set! gxc#!struct-setf-off-set!)
          (%#define-syntax !struct-setf |gxc[:0:]#!struct-setf|)
+         (%#define-runtime !lambda::t gxc#!lambda::t)
+         (%#define-runtime !lambda? gxc#!lambda?)
+         (%#define-runtime make-!lambda gxc#make-!lambda)
+         (%#define-runtime !lambda-arity gxc#!lambda-arity)
+         (%#define-runtime !lambda-dispatch gxc#!lambda-dispatch)
+         (%#define-runtime !lambda-arity-set! gxc#!lambda-arity-set!)
+         (%#define-runtime !lambda-dispatch-set! gxc#!lambda-dispatch-set!)
+         (%#define-syntax !lambda |gxc[:0:]#!lambda|)
+         (%#define-runtime !case-lambda::t gxc#!case-lambda::t)
+         (%#define-runtime !case-lambda? gxc#!case-lambda?)
+         (%#define-runtime make-!case-lambda gxc#make-!case-lambda)
+         (%#define-runtime !case-lambda-clauses gxc#!case-lambda-clauses)
+         (%#define-runtime
+          !case-lambda-clauses-set!
+          gxc#!case-lambda-clauses-set!)
+         (%#define-syntax !case-lambda |gxc[:0:]#!case-lambda|)
          (%#define-runtime optimizer-declare-type! gxc#optimizer-declare-type!)
          (%#define-runtime optimizer-lookup-type gxc#optimizer-lookup-type)
          (%#define-runtime optimizer-resolve-type gxc#optimizer-resolve-type)
@@ -103,9 +119,12 @@ namespace: gxc
          (%#define-runtime &identity-expression gxc#&identity-expression)
          (%#define-runtime &identity-special-form gxc#&identity-special-form)
          (%#define-runtime &identity gxc#&identity)
+         (%#define-runtime &basic-xform-expression gxc#&basic-xform-expression)
          (%#define-runtime &basic-xform gxc#&basic-xform)
          (%#define-runtime &lift-top-lambdas gxc#&lift-top-lambdas)
          (%#define-runtime apply-lift-top-lambdas gxc#apply-lift-top-lambdas)
+         (%#define-runtime &expression-subst gxc#&expression-subst)
+         (%#define-runtime apply-expression-subst gxc#apply-expression-subst)
          (%#define-runtime &collect-type-info gxc#&collect-type-info)
          (%#define-runtime apply-collect-type-info gxc#apply-collect-type-info)
          (%#define-runtime &basic-expression-type gxc#&basic-expression-type)
@@ -127,6 +146,15 @@ namespace: gxc
          (%#define-runtime xform-call% gxc#xform-call%)
          (%#define-runtime xform-if% gxc#xform-if%)
          (%#define-runtime xform-setq% gxc#xform-setq%)
+         (%#define-runtime dispatch-lambda-form? gxc#dispatch-lambda-form?)
+         (%#define-runtime
+          dispatch-lambda-form-delegate
+          gxc#dispatch-lambda-form-delegate)
+         (%#define-runtime lambda-form-arity gxc#lambda-form-arity)
+         (%#define-runtime
+          lift-top-lambda-define-values%
+          gxc#lift-top-lambda-define-values%)
+         (%#define-runtime expression-subst-ref% gxc#expression-subst-ref%)
          (%#define-runtime
           collect-type-define-values%
           gxc#collect-type-define-values%)
@@ -177,6 +205,11 @@ namespace: gxc
          (%#define-runtime
           !struct-setf::optimize-call
           gxc#!struct-setf::optimize-call)
+         (%#define-runtime !lambda::optimize-call gxc#!lambda::optimize-call)
+         (%#define-runtime
+          !case-lambda::optimize-call
+          gxc#!case-lambda::optimize-call)
+         (%#define-runtime !lambda-arity-match? gxc#!lambda-arity-match?)
          (%#define-runtime
           generate-ssxi-define-values%
           gxc#generate-ssxi-define-values%)
@@ -186,5 +219,7 @@ namespace: gxc
          (%#define-runtime !struct-cons::typedecl gxc#!struct-cons::typedecl)
          (%#define-runtime !struct-getf::typedecl gxc#!struct-getf::typedecl)
          (%#define-runtime !struct-setf::typedecl gxc#!struct-setf::typedecl)
+         (%#define-runtime !lambda::typedecl gxc#!lambda::typedecl)
+         (%#define-runtime !case-lambda::typedecl gxc#!case-lambda::typedecl)
          (%#define-runtime identifier-symbol gxc#identifier-symbol))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize__0"))
