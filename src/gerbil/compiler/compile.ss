@@ -369,7 +369,9 @@ namespace: gxc
                               ((begin) #f) ; filter empty begins
                               (_ #t)))
                           body)))
-       ['begin body ...]))))
+       (if (fx= (length body) 1)
+         (car body)
+         ['begin body ...])))))
 
 (def (generate-runtime-begin-foreign% stx)
   (ast-case stx ()
