@@ -70,7 +70,7 @@ namespace: gxc
 
 (defrules @case-lambda ()
   ((_ (arity dispatch) ...)
-   (make-!case-lambda 'case-lambda (@lambda arity dispatch) ...)))
+   (make-!case-lambda 'case-lambda [(@lambda arity dispatch) ...])))
 
                  
     
