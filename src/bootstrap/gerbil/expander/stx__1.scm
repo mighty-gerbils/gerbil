@@ -1,47 +1,47 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gx[1]#_g2567_| (gx#core-quote-syntax 'identifier-wrap::t))
-  (define |gx[1]#_g2568_| (gx#core-quote-syntax 'AST::t))
-  (define |gx[1]#_g2569_| (gx#core-quote-syntax 'identifier-wrap::t))
-  (define |gx[1]#_g2570_| (gx#core-quote-syntax 'make-identifier-wrap))
-  (define |gx[1]#_g2571_| (gx#core-quote-syntax 'identifier-wrap?))
-  (define |gx[1]#_g2572_| (gx#core-quote-syntax 'identifier-wrap-marks))
-  (define |gx[1]#_g2573_| (gx#core-quote-syntax 'identifier-wrap-marks-set!))
-  (define |gx[1]#_g2574_| (gx#core-quote-syntax 'AST))
-  (define |gx[1]#_g2575_| (gx#core-quote-syntax 'syntax-wrap::t))
-  (define |gx[1]#_g2576_| (gx#core-quote-syntax 'AST::t))
-  (define |gx[1]#_g2577_| (gx#core-quote-syntax 'syntax-wrap::t))
-  (define |gx[1]#_g2578_| (gx#core-quote-syntax 'make-syntax-wrap))
-  (define |gx[1]#_g2579_| (gx#core-quote-syntax 'syntax-wrap?))
-  (define |gx[1]#_g2580_| (gx#core-quote-syntax 'syntax-wrap-mark))
-  (define |gx[1]#_g2581_| (gx#core-quote-syntax 'syntax-wrap-mark-set!))
-  (define |gx[1]#_g2582_| (gx#core-quote-syntax 'AST))
-  (define |gx[1]#_g2583_| (gx#core-quote-syntax 'syntax-quote::t))
-  (define |gx[1]#_g2584_| (gx#core-quote-syntax 'AST::t))
-  (define |gx[1]#_g2585_| (gx#core-quote-syntax 'syntax-quote::t))
-  (define |gx[1]#_g2586_| (gx#core-quote-syntax 'make-syntax-quote))
-  (define |gx[1]#_g2587_| (gx#core-quote-syntax 'syntax-quote?))
-  (define |gx[1]#_g2588_| (gx#core-quote-syntax 'syntax-quote-context))
-  (define |gx[1]#_g2589_| (gx#core-quote-syntax 'syntax-quote-marks))
-  (define |gx[1]#_g2590_| (gx#core-quote-syntax 'syntax-quote-context-set!))
-  (define |gx[1]#_g2591_| (gx#core-quote-syntax 'syntax-quote-marks-set!))
-  (define |gx[1]#_g2592_| (gx#core-quote-syntax 'AST))
+  (define |gx[1]#_g2626_| (gx#core-quote-syntax 'identifier-wrap::t))
+  (define |gx[1]#_g2627_| (gx#core-quote-syntax 'AST::t))
+  (define |gx[1]#_g2628_| (gx#core-quote-syntax 'identifier-wrap::t))
+  (define |gx[1]#_g2629_| (gx#core-quote-syntax 'make-identifier-wrap))
+  (define |gx[1]#_g2630_| (gx#core-quote-syntax 'identifier-wrap?))
+  (define |gx[1]#_g2631_| (gx#core-quote-syntax 'identifier-wrap-marks))
+  (define |gx[1]#_g2632_| (gx#core-quote-syntax 'identifier-wrap-marks-set!))
+  (define |gx[1]#_g2633_| (gx#core-quote-syntax 'AST))
+  (define |gx[1]#_g2634_| (gx#core-quote-syntax 'syntax-wrap::t))
+  (define |gx[1]#_g2635_| (gx#core-quote-syntax 'AST::t))
+  (define |gx[1]#_g2636_| (gx#core-quote-syntax 'syntax-wrap::t))
+  (define |gx[1]#_g2637_| (gx#core-quote-syntax 'make-syntax-wrap))
+  (define |gx[1]#_g2638_| (gx#core-quote-syntax 'syntax-wrap?))
+  (define |gx[1]#_g2639_| (gx#core-quote-syntax 'syntax-wrap-mark))
+  (define |gx[1]#_g2640_| (gx#core-quote-syntax 'syntax-wrap-mark-set!))
+  (define |gx[1]#_g2641_| (gx#core-quote-syntax 'AST))
+  (define |gx[1]#_g2642_| (gx#core-quote-syntax 'syntax-quote::t))
+  (define |gx[1]#_g2643_| (gx#core-quote-syntax 'AST::t))
+  (define |gx[1]#_g2644_| (gx#core-quote-syntax 'syntax-quote::t))
+  (define |gx[1]#_g2645_| (gx#core-quote-syntax 'make-syntax-quote))
+  (define |gx[1]#_g2646_| (gx#core-quote-syntax 'syntax-quote?))
+  (define |gx[1]#_g2647_| (gx#core-quote-syntax 'syntax-quote-context))
+  (define |gx[1]#_g2648_| (gx#core-quote-syntax 'syntax-quote-marks))
+  (define |gx[1]#_g2649_| (gx#core-quote-syntax 'syntax-quote-context-set!))
+  (define |gx[1]#_g2650_| (gx#core-quote-syntax 'syntax-quote-marks-set!))
+  (define |gx[1]#_g2651_| (gx#core-quote-syntax 'AST))
   (begin
     (define |gx[:0:]#identifier-wrap|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gx[1]#_g2567_|
+       |gx[1]#_g2626_|
        'expander-identifiers:
-       (cons |gx[1]#_g2568_|
-             (cons |gx[1]#_g2569_|
-                   (cons |gx[1]#_g2570_|
-                         (cons |gx[1]#_g2571_|
-                               (cons (cons |gx[1]#_g2572_| '())
-                                     (cons (cons |gx[1]#_g2573_| '()) '()))))))
+       (cons |gx[1]#_g2627_|
+             (cons |gx[1]#_g2628_|
+                   (cons |gx[1]#_g2629_|
+                         (cons |gx[1]#_g2630_|
+                               (cons (cons |gx[1]#_g2631_| '())
+                                     (cons (cons |gx[1]#_g2632_| '()) '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#identifier-wrap::t
-        |gx[1]#_g2574_|
+        |gx[1]#_g2633_|
         'syntax
         '#f
         '((final: . #t))
@@ -49,18 +49,18 @@
     (define |gx[:0:]#syntax-wrap|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gx[1]#_g2575_|
+       |gx[1]#_g2634_|
        'expander-identifiers:
-       (cons |gx[1]#_g2576_|
-             (cons |gx[1]#_g2577_|
-                   (cons |gx[1]#_g2578_|
-                         (cons |gx[1]#_g2579_|
-                               (cons (cons |gx[1]#_g2580_| '())
-                                     (cons (cons |gx[1]#_g2581_| '()) '()))))))
+       (cons |gx[1]#_g2635_|
+             (cons |gx[1]#_g2636_|
+                   (cons |gx[1]#_g2637_|
+                         (cons |gx[1]#_g2638_|
+                               (cons (cons |gx[1]#_g2639_| '())
+                                     (cons (cons |gx[1]#_g2640_| '()) '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#syntax-wrap::t
-        |gx[1]#_g2582_|
+        |gx[1]#_g2641_|
         'syntax
         '#f
         '((final: . #t))
@@ -68,21 +68,21 @@
     (define |gx[:0:]#syntax-quote|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gx[1]#_g2583_|
+       |gx[1]#_g2642_|
        'expander-identifiers:
-       (cons |gx[1]#_g2584_|
-             (cons |gx[1]#_g2585_|
-                   (cons |gx[1]#_g2586_|
-                         (cons |gx[1]#_g2587_|
-                               (cons (cons |gx[1]#_g2588_|
-                                           (cons |gx[1]#_g2589_| '()))
-                                     (cons (cons |gx[1]#_g2590_|
-                                                 (cons |gx[1]#_g2591_| '()))
+       (cons |gx[1]#_g2643_|
+             (cons |gx[1]#_g2644_|
+                   (cons |gx[1]#_g2645_|
+                         (cons |gx[1]#_g2646_|
+                               (cons (cons |gx[1]#_g2647_|
+                                           (cons |gx[1]#_g2648_| '()))
+                                     (cons (cons |gx[1]#_g2649_|
+                                                 (cons |gx[1]#_g2650_| '()))
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#syntax-quote::t
-        |gx[1]#_g2592_|
+        |gx[1]#_g2651_|
         'syntax
         '#f
         '((final: . #t))

@@ -14,4 +14,5 @@ package: gerbil/compiler
    (@struct-setf gxc#symbol-table::t 0))
   (declare-type
    gxc#symbol-table-bindings-set!
-   (@struct-setf gxc#symbol-table::t 1)))
+   (@struct-setf gxc#symbol-table::t 1))
+  (declare-method gxc#symbol-table::t :init! gxc#symbol-table:::init! #f))

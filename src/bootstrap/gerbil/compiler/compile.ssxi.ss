@@ -6,17 +6,17 @@ package: gerbil/compiler
    gxc#generate-runtime-temporary
    (@case-lambda
     (0 gxc#generate-runtime-temporary__0)
-    (1 gxc#generate-runtime-temporary__opt-lambda6529)))
+    (1 gxc#generate-runtime-temporary__opt-lambda6588)))
   (declare-type
    gxc#generate-runtime-let-values%
    (@case-lambda
     (1 gxc#generate-runtime-let-values%__0)
-    (2 gxc#generate-runtime-let-values%__opt-lambda5592)))
+    (2 gxc#generate-runtime-let-values%__opt-lambda5651)))
   (declare-type
    gxc#generate-runtime-letrec-values%
    (@case-lambda
     (1 gxc#generate-runtime-letrec-values%__0)
-    (2 gxc#generate-runtime-letrec-values%__opt-lambda5171)))
+    (2 gxc#generate-runtime-letrec-values%__opt-lambda5230)))
   (declare-type
    gxc#meta-state::t
    (@struct-type gxc#meta-state::t #f 4 :init! ()))
@@ -30,6 +30,7 @@ package: gerbil/compiler
   (declare-type gxc#meta-state-n-set! (@struct-setf gxc#meta-state::t 1))
   (declare-type gxc#meta-state-open-set! (@struct-setf gxc#meta-state::t 2))
   (declare-type gxc#meta-state-blocks-set! (@struct-setf gxc#meta-state::t 3))
+  (declare-method gxc#meta-state::t :init! gxc#meta-state:::init! #f)
   (declare-type
    gxc#meta-state-block::t
    (@struct-type gxc#meta-state-block::t #f 4 #f ()))

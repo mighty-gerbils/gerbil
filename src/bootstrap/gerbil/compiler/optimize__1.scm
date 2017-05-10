@@ -1,107 +1,109 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gxc[1]#_g13445_| (gx#core-quote-syntax 'optimizer-info::t))
-  (define |gxc[1]#_g13446_| (gx#core-quote-syntax 'optimizer-info::t))
-  (define |gxc[1]#_g13447_| (gx#core-quote-syntax 'make-optimizer-info))
-  (define |gxc[1]#_g13448_| (gx#core-quote-syntax 'optimizer-info?))
-  (define |gxc[1]#_g13449_| (gx#core-quote-syntax 'optimizer-info-type))
-  (define |gxc[1]#_g13450_| (gx#core-quote-syntax 'optimizer-info-ssxi))
-  (define |gxc[1]#_g13451_| (gx#core-quote-syntax 'optimizer-info-type-set!))
-  (define |gxc[1]#_g13452_| (gx#core-quote-syntax 'optimizer-info-ssxi-set!))
-  (define |gxc[1]#_g13453_| (gx#core-quote-syntax '!type::t))
-  (define |gxc[1]#_g13454_| (gx#core-quote-syntax '!type::t))
-  (define |gxc[1]#_g13455_| (gx#core-quote-syntax 'make-!type))
-  (define |gxc[1]#_g13456_| (gx#core-quote-syntax '!type?))
-  (define |gxc[1]#_g13457_| (gx#core-quote-syntax '!type-id))
-  (define |gxc[1]#_g13458_| (gx#core-quote-syntax '!type-id-set!))
-  (define |gxc[1]#_g13459_| (gx#core-quote-syntax '!alias::t))
-  (define |gxc[1]#_g13460_| (gx#core-quote-syntax '!type::t))
-  (define |gxc[1]#_g13461_| (gx#core-quote-syntax '!alias::t))
-  (define |gxc[1]#_g13462_| (gx#core-quote-syntax 'make-!alias))
-  (define |gxc[1]#_g13463_| (gx#core-quote-syntax '!alias?))
-  (define |gxc[1]#_g13464_| (gx#core-quote-syntax '!type))
-  (define |gxc[1]#_g13465_| (gx#core-quote-syntax '!struct-type::t))
-  (define |gxc[1]#_g13466_| (gx#core-quote-syntax '!type::t))
-  (define |gxc[1]#_g13467_| (gx#core-quote-syntax '!struct-type::t))
-  (define |gxc[1]#_g13468_| (gx#core-quote-syntax 'make-!struct-type))
-  (define |gxc[1]#_g13469_| (gx#core-quote-syntax '!struct-type?))
-  (define |gxc[1]#_g13470_| (gx#core-quote-syntax '!struct-type-super))
-  (define |gxc[1]#_g13471_| (gx#core-quote-syntax '!struct-type-fields))
-  (define |gxc[1]#_g13472_| (gx#core-quote-syntax '!struct-type-xfields))
-  (define |gxc[1]#_g13473_| (gx#core-quote-syntax '!struct-type-ctor))
-  (define |gxc[1]#_g13474_| (gx#core-quote-syntax '!struct-type-plist))
-  (define |gxc[1]#_g13475_| (gx#core-quote-syntax '!struct-type-super-set!))
-  (define |gxc[1]#_g13476_| (gx#core-quote-syntax '!struct-type-fields-set!))
-  (define |gxc[1]#_g13477_| (gx#core-quote-syntax '!struct-type-xfields-set!))
-  (define |gxc[1]#_g13478_| (gx#core-quote-syntax '!struct-type-ctor-set!))
-  (define |gxc[1]#_g13479_| (gx#core-quote-syntax '!struct-type-plist-set!))
-  (define |gxc[1]#_g13480_| (gx#core-quote-syntax '!type))
-  (define |gxc[1]#_g13481_| (gx#core-quote-syntax '!procedure::t))
-  (define |gxc[1]#_g13482_| (gx#core-quote-syntax '!type::t))
-  (define |gxc[1]#_g13483_| (gx#core-quote-syntax '!procedure::t))
-  (define |gxc[1]#_g13484_| (gx#core-quote-syntax 'make-!procedure))
-  (define |gxc[1]#_g13485_| (gx#core-quote-syntax '!procedure?))
-  (define |gxc[1]#_g13486_| (gx#core-quote-syntax '!type))
-  (define |gxc[1]#_g13487_| (gx#core-quote-syntax '!struct-pred::t))
-  (define |gxc[1]#_g13488_| (gx#core-quote-syntax '!procedure::t))
-  (define |gxc[1]#_g13489_| (gx#core-quote-syntax '!struct-pred::t))
-  (define |gxc[1]#_g13490_| (gx#core-quote-syntax 'make-!struct-pred))
-  (define |gxc[1]#_g13491_| (gx#core-quote-syntax '!struct-pred?))
-  (define |gxc[1]#_g13492_| (gx#core-quote-syntax '!procedure))
-  (define |gxc[1]#_g13493_| (gx#core-quote-syntax '!struct-cons::t))
-  (define |gxc[1]#_g13494_| (gx#core-quote-syntax '!procedure::t))
-  (define |gxc[1]#_g13495_| (gx#core-quote-syntax '!struct-cons::t))
-  (define |gxc[1]#_g13496_| (gx#core-quote-syntax 'make-!struct-cons))
-  (define |gxc[1]#_g13497_| (gx#core-quote-syntax '!struct-cons?))
-  (define |gxc[1]#_g13498_| (gx#core-quote-syntax '!procedure))
-  (define |gxc[1]#_g13499_| (gx#core-quote-syntax '!struct-getf::t))
-  (define |gxc[1]#_g13500_| (gx#core-quote-syntax '!procedure::t))
-  (define |gxc[1]#_g13501_| (gx#core-quote-syntax '!struct-getf::t))
-  (define |gxc[1]#_g13502_| (gx#core-quote-syntax 'make-!struct-getf))
-  (define |gxc[1]#_g13503_| (gx#core-quote-syntax '!struct-getf?))
-  (define |gxc[1]#_g13504_| (gx#core-quote-syntax '!struct-getf-off))
-  (define |gxc[1]#_g13505_| (gx#core-quote-syntax '!struct-getf-off-set!))
-  (define |gxc[1]#_g13506_| (gx#core-quote-syntax '!procedure))
-  (define |gxc[1]#_g13507_| (gx#core-quote-syntax '!struct-setf::t))
-  (define |gxc[1]#_g13508_| (gx#core-quote-syntax '!procedure::t))
-  (define |gxc[1]#_g13509_| (gx#core-quote-syntax '!struct-setf::t))
-  (define |gxc[1]#_g13510_| (gx#core-quote-syntax 'make-!struct-setf))
-  (define |gxc[1]#_g13511_| (gx#core-quote-syntax '!struct-setf?))
-  (define |gxc[1]#_g13512_| (gx#core-quote-syntax '!struct-setf-off))
-  (define |gxc[1]#_g13513_| (gx#core-quote-syntax '!struct-setf-off-set!))
-  (define |gxc[1]#_g13514_| (gx#core-quote-syntax '!procedure))
-  (define |gxc[1]#_g13515_| (gx#core-quote-syntax '!lambda::t))
-  (define |gxc[1]#_g13516_| (gx#core-quote-syntax '!procedure::t))
-  (define |gxc[1]#_g13517_| (gx#core-quote-syntax '!lambda::t))
-  (define |gxc[1]#_g13518_| (gx#core-quote-syntax 'make-!lambda))
-  (define |gxc[1]#_g13519_| (gx#core-quote-syntax '!lambda?))
-  (define |gxc[1]#_g13520_| (gx#core-quote-syntax '!lambda-arity))
-  (define |gxc[1]#_g13521_| (gx#core-quote-syntax '!lambda-dispatch))
-  (define |gxc[1]#_g13522_| (gx#core-quote-syntax '!lambda-arity-set!))
-  (define |gxc[1]#_g13523_| (gx#core-quote-syntax '!lambda-dispatch-set!))
-  (define |gxc[1]#_g13524_| (gx#core-quote-syntax '!procedure))
-  (define |gxc[1]#_g13525_| (gx#core-quote-syntax '!case-lambda::t))
-  (define |gxc[1]#_g13526_| (gx#core-quote-syntax '!procedure::t))
-  (define |gxc[1]#_g13527_| (gx#core-quote-syntax '!case-lambda::t))
-  (define |gxc[1]#_g13528_| (gx#core-quote-syntax 'make-!case-lambda))
-  (define |gxc[1]#_g13529_| (gx#core-quote-syntax '!case-lambda?))
-  (define |gxc[1]#_g13530_| (gx#core-quote-syntax '!case-lambda-clauses))
-  (define |gxc[1]#_g13531_| (gx#core-quote-syntax '!case-lambda-clauses-set!))
-  (define |gxc[1]#_g13532_| (gx#core-quote-syntax '!procedure))
+  (define |gxc[1]#_g14505_| (gx#core-quote-syntax 'optimizer-info::t))
+  (define |gxc[1]#_g14506_| (gx#core-quote-syntax 'optimizer-info::t))
+  (define |gxc[1]#_g14507_| (gx#core-quote-syntax 'make-optimizer-info))
+  (define |gxc[1]#_g14508_| (gx#core-quote-syntax 'optimizer-info?))
+  (define |gxc[1]#_g14509_| (gx#core-quote-syntax 'optimizer-info-type))
+  (define |gxc[1]#_g14510_| (gx#core-quote-syntax 'optimizer-info-ssxi))
+  (define |gxc[1]#_g14511_| (gx#core-quote-syntax 'optimizer-info-type-set!))
+  (define |gxc[1]#_g14512_| (gx#core-quote-syntax 'optimizer-info-ssxi-set!))
+  (define |gxc[1]#_g14513_| (gx#core-quote-syntax '!type::t))
+  (define |gxc[1]#_g14514_| (gx#core-quote-syntax '!type::t))
+  (define |gxc[1]#_g14515_| (gx#core-quote-syntax 'make-!type))
+  (define |gxc[1]#_g14516_| (gx#core-quote-syntax '!type?))
+  (define |gxc[1]#_g14517_| (gx#core-quote-syntax '!type-id))
+  (define |gxc[1]#_g14518_| (gx#core-quote-syntax '!type-id-set!))
+  (define |gxc[1]#_g14519_| (gx#core-quote-syntax '!alias::t))
+  (define |gxc[1]#_g14520_| (gx#core-quote-syntax '!type::t))
+  (define |gxc[1]#_g14521_| (gx#core-quote-syntax '!alias::t))
+  (define |gxc[1]#_g14522_| (gx#core-quote-syntax 'make-!alias))
+  (define |gxc[1]#_g14523_| (gx#core-quote-syntax '!alias?))
+  (define |gxc[1]#_g14524_| (gx#core-quote-syntax '!type))
+  (define |gxc[1]#_g14525_| (gx#core-quote-syntax '!struct-type::t))
+  (define |gxc[1]#_g14526_| (gx#core-quote-syntax '!type::t))
+  (define |gxc[1]#_g14527_| (gx#core-quote-syntax '!struct-type::t))
+  (define |gxc[1]#_g14528_| (gx#core-quote-syntax 'make-!struct-type))
+  (define |gxc[1]#_g14529_| (gx#core-quote-syntax '!struct-type?))
+  (define |gxc[1]#_g14530_| (gx#core-quote-syntax '!struct-type-super))
+  (define |gxc[1]#_g14531_| (gx#core-quote-syntax '!struct-type-fields))
+  (define |gxc[1]#_g14532_| (gx#core-quote-syntax '!struct-type-xfields))
+  (define |gxc[1]#_g14533_| (gx#core-quote-syntax '!struct-type-ctor))
+  (define |gxc[1]#_g14534_| (gx#core-quote-syntax '!struct-type-plist))
+  (define |gxc[1]#_g14535_| (gx#core-quote-syntax '!struct-type-methods))
+  (define |gxc[1]#_g14536_| (gx#core-quote-syntax '!struct-type-super-set!))
+  (define |gxc[1]#_g14537_| (gx#core-quote-syntax '!struct-type-fields-set!))
+  (define |gxc[1]#_g14538_| (gx#core-quote-syntax '!struct-type-xfields-set!))
+  (define |gxc[1]#_g14539_| (gx#core-quote-syntax '!struct-type-ctor-set!))
+  (define |gxc[1]#_g14540_| (gx#core-quote-syntax '!struct-type-plist-set!))
+  (define |gxc[1]#_g14541_| (gx#core-quote-syntax '!struct-type-methods-set!))
+  (define |gxc[1]#_g14542_| (gx#core-quote-syntax '!type))
+  (define |gxc[1]#_g14543_| (gx#core-quote-syntax '!procedure::t))
+  (define |gxc[1]#_g14544_| (gx#core-quote-syntax '!type::t))
+  (define |gxc[1]#_g14545_| (gx#core-quote-syntax '!procedure::t))
+  (define |gxc[1]#_g14546_| (gx#core-quote-syntax 'make-!procedure))
+  (define |gxc[1]#_g14547_| (gx#core-quote-syntax '!procedure?))
+  (define |gxc[1]#_g14548_| (gx#core-quote-syntax '!type))
+  (define |gxc[1]#_g14549_| (gx#core-quote-syntax '!struct-pred::t))
+  (define |gxc[1]#_g14550_| (gx#core-quote-syntax '!procedure::t))
+  (define |gxc[1]#_g14551_| (gx#core-quote-syntax '!struct-pred::t))
+  (define |gxc[1]#_g14552_| (gx#core-quote-syntax 'make-!struct-pred))
+  (define |gxc[1]#_g14553_| (gx#core-quote-syntax '!struct-pred?))
+  (define |gxc[1]#_g14554_| (gx#core-quote-syntax '!procedure))
+  (define |gxc[1]#_g14555_| (gx#core-quote-syntax '!struct-cons::t))
+  (define |gxc[1]#_g14556_| (gx#core-quote-syntax '!procedure::t))
+  (define |gxc[1]#_g14557_| (gx#core-quote-syntax '!struct-cons::t))
+  (define |gxc[1]#_g14558_| (gx#core-quote-syntax 'make-!struct-cons))
+  (define |gxc[1]#_g14559_| (gx#core-quote-syntax '!struct-cons?))
+  (define |gxc[1]#_g14560_| (gx#core-quote-syntax '!procedure))
+  (define |gxc[1]#_g14561_| (gx#core-quote-syntax '!struct-getf::t))
+  (define |gxc[1]#_g14562_| (gx#core-quote-syntax '!procedure::t))
+  (define |gxc[1]#_g14563_| (gx#core-quote-syntax '!struct-getf::t))
+  (define |gxc[1]#_g14564_| (gx#core-quote-syntax 'make-!struct-getf))
+  (define |gxc[1]#_g14565_| (gx#core-quote-syntax '!struct-getf?))
+  (define |gxc[1]#_g14566_| (gx#core-quote-syntax '!struct-getf-off))
+  (define |gxc[1]#_g14567_| (gx#core-quote-syntax '!struct-getf-off-set!))
+  (define |gxc[1]#_g14568_| (gx#core-quote-syntax '!procedure))
+  (define |gxc[1]#_g14569_| (gx#core-quote-syntax '!struct-setf::t))
+  (define |gxc[1]#_g14570_| (gx#core-quote-syntax '!procedure::t))
+  (define |gxc[1]#_g14571_| (gx#core-quote-syntax '!struct-setf::t))
+  (define |gxc[1]#_g14572_| (gx#core-quote-syntax 'make-!struct-setf))
+  (define |gxc[1]#_g14573_| (gx#core-quote-syntax '!struct-setf?))
+  (define |gxc[1]#_g14574_| (gx#core-quote-syntax '!struct-setf-off))
+  (define |gxc[1]#_g14575_| (gx#core-quote-syntax '!struct-setf-off-set!))
+  (define |gxc[1]#_g14576_| (gx#core-quote-syntax '!procedure))
+  (define |gxc[1]#_g14577_| (gx#core-quote-syntax '!lambda::t))
+  (define |gxc[1]#_g14578_| (gx#core-quote-syntax '!procedure::t))
+  (define |gxc[1]#_g14579_| (gx#core-quote-syntax '!lambda::t))
+  (define |gxc[1]#_g14580_| (gx#core-quote-syntax 'make-!lambda))
+  (define |gxc[1]#_g14581_| (gx#core-quote-syntax '!lambda?))
+  (define |gxc[1]#_g14582_| (gx#core-quote-syntax '!lambda-arity))
+  (define |gxc[1]#_g14583_| (gx#core-quote-syntax '!lambda-dispatch))
+  (define |gxc[1]#_g14584_| (gx#core-quote-syntax '!lambda-arity-set!))
+  (define |gxc[1]#_g14585_| (gx#core-quote-syntax '!lambda-dispatch-set!))
+  (define |gxc[1]#_g14586_| (gx#core-quote-syntax '!procedure))
+  (define |gxc[1]#_g14587_| (gx#core-quote-syntax '!case-lambda::t))
+  (define |gxc[1]#_g14588_| (gx#core-quote-syntax '!procedure::t))
+  (define |gxc[1]#_g14589_| (gx#core-quote-syntax '!case-lambda::t))
+  (define |gxc[1]#_g14590_| (gx#core-quote-syntax 'make-!case-lambda))
+  (define |gxc[1]#_g14591_| (gx#core-quote-syntax '!case-lambda?))
+  (define |gxc[1]#_g14592_| (gx#core-quote-syntax '!case-lambda-clauses))
+  (define |gxc[1]#_g14593_| (gx#core-quote-syntax '!case-lambda-clauses-set!))
+  (define |gxc[1]#_g14594_| (gx#core-quote-syntax '!procedure))
   (begin
     (define |gxc[:0:]#optimizer-info|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g13445_|
+       |gxc[1]#_g14505_|
        'expander-identifiers:
        (cons '#f
-             (cons |gxc[1]#_g13446_|
-                   (cons |gxc[1]#_g13447_|
-                         (cons |gxc[1]#_g13448_|
-                               (cons (cons |gxc[1]#_g13449_|
-                                           (cons |gxc[1]#_g13450_| '()))
-                                     (cons (cons |gxc[1]#_g13451_|
-                                                 (cons |gxc[1]#_g13452_| '()))
+             (cons |gxc[1]#_g14506_|
+                   (cons |gxc[1]#_g14507_|
+                         (cons |gxc[1]#_g14508_|
+                               (cons (cons |gxc[1]#_g14509_|
+                                           (cons |gxc[1]#_g14510_| '()))
+                                     (cons (cons |gxc[1]#_g14511_|
+                                                 (cons |gxc[1]#_g14512_| '()))
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
@@ -114,14 +116,14 @@
     (define |gxc[:0:]#!type|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g13453_|
+       |gxc[1]#_g14513_|
        'expander-identifiers:
        (cons '#f
-             (cons |gxc[1]#_g13454_|
-                   (cons |gxc[1]#_g13455_|
-                         (cons |gxc[1]#_g13456_|
-                               (cons (cons |gxc[1]#_g13457_| '())
-                                     (cons (cons |gxc[1]#_g13458_| '())
+             (cons |gxc[1]#_g14514_|
+                   (cons |gxc[1]#_g14515_|
+                         (cons |gxc[1]#_g14516_|
+                               (cons (cons |gxc[1]#_g14517_| '())
+                                     (cons (cons |gxc[1]#_g14518_| '())
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
@@ -134,16 +136,16 @@
     (define |gxc[:0:]#!alias|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g13459_|
+       |gxc[1]#_g14519_|
        'expander-identifiers:
-       (cons |gxc[1]#_g13460_|
-             (cons |gxc[1]#_g13461_|
-                   (cons |gxc[1]#_g13462_|
-                         (cons |gxc[1]#_g13463_| (cons '() (cons '() '()))))))
+       (cons |gxc[1]#_g14520_|
+             (cons |gxc[1]#_g14521_|
+                   (cons |gxc[1]#_g14522_|
+                         (cons |gxc[1]#_g14523_| (cons '() (cons '() '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g13464_|
+        |gxc[1]#_g14524_|
         '!alias
         '#f
         '()
@@ -151,49 +153,50 @@
     (define |gxc[:0:]#!struct-type|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g13465_|
+       |gxc[1]#_g14525_|
        'expander-identifiers:
-       (cons |gxc[1]#_g13466_|
-             (cons |gxc[1]#_g13467_|
-                   (cons |gxc[1]#_g13468_|
-                         (cons |gxc[1]#_g13469_|
-                               (cons (cons |gxc[1]#_g13470_|
-                                           (cons |gxc[1]#_g13471_|
-                                                 (cons |gxc[1]#_g13472_|
-                                                       (cons |gxc[1]#_g13473_|
-                                                             (cons |gxc[1]#_g13474_|
+       (cons |gxc[1]#_g14526_|
+             (cons |gxc[1]#_g14527_|
+                   (cons |gxc[1]#_g14528_|
+                         (cons |gxc[1]#_g14529_|
+                               (cons (cons |gxc[1]#_g14530_|
+                                           (cons |gxc[1]#_g14531_|
+                                                 (cons |gxc[1]#_g14532_|
+                                                       (cons |gxc[1]#_g14533_|
+                                                             (cons |gxc[1]#_g14534_|
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           '())))))
+                           (cons |gxc[1]#_g14535_| '()))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                     (cons (cons |gxc[1]#_g13475_|
-                                                 (cons |gxc[1]#_g13476_|
-                                                       (cons |gxc[1]#_g13477_|
-                                                             (cons |gxc[1]#_g13478_|
+                                     (cons (cons |gxc[1]#_g14536_|
+                                                 (cons |gxc[1]#_g14537_|
+                                                       (cons |gxc[1]#_g14538_|
+                                                             (cons |gxc[1]#_g14539_|
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (cons |gxc[1]#_g13479_| '())))))
+                           (cons |gxc[1]#_g14540_|
+                                 (cons |gxc[1]#_g14541_| '()))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g13480_|
+        |gxc[1]#_g14542_|
         '!struct-type
-        '#f
+        ':init!
         '()
-        '(super fields xfields ctor plist))))
+        '(super fields xfields ctor plist methods))))
     (define |gxc[:0:]#!procedure|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g13481_|
+       |gxc[1]#_g14543_|
        'expander-identifiers:
-       (cons |gxc[1]#_g13482_|
-             (cons |gxc[1]#_g13483_|
-                   (cons |gxc[1]#_g13484_|
-                         (cons |gxc[1]#_g13485_| (cons '() (cons '() '()))))))
+       (cons |gxc[1]#_g14544_|
+             (cons |gxc[1]#_g14545_|
+                   (cons |gxc[1]#_g14546_|
+                         (cons |gxc[1]#_g14547_| (cons '() (cons '() '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g13486_|
+        |gxc[1]#_g14548_|
         '!procedure
         '#f
         '()
@@ -201,16 +204,16 @@
     (define |gxc[:0:]#!struct-pred|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g13487_|
+       |gxc[1]#_g14549_|
        'expander-identifiers:
-       (cons |gxc[1]#_g13488_|
-             (cons |gxc[1]#_g13489_|
-                   (cons |gxc[1]#_g13490_|
-                         (cons |gxc[1]#_g13491_| (cons '() (cons '() '()))))))
+       (cons |gxc[1]#_g14550_|
+             (cons |gxc[1]#_g14551_|
+                   (cons |gxc[1]#_g14552_|
+                         (cons |gxc[1]#_g14553_| (cons '() (cons '() '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g13492_|
+        |gxc[1]#_g14554_|
         '!struct-pred
         '#f
         '()
@@ -218,16 +221,16 @@
     (define |gxc[:0:]#!struct-cons|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g13493_|
+       |gxc[1]#_g14555_|
        'expander-identifiers:
-       (cons |gxc[1]#_g13494_|
-             (cons |gxc[1]#_g13495_|
-                   (cons |gxc[1]#_g13496_|
-                         (cons |gxc[1]#_g13497_| (cons '() (cons '() '()))))))
+       (cons |gxc[1]#_g14556_|
+             (cons |gxc[1]#_g14557_|
+                   (cons |gxc[1]#_g14558_|
+                         (cons |gxc[1]#_g14559_| (cons '() (cons '() '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g13498_|
+        |gxc[1]#_g14560_|
         '!struct-cons
         '#f
         '()
@@ -235,19 +238,19 @@
     (define |gxc[:0:]#!struct-getf|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g13499_|
+       |gxc[1]#_g14561_|
        'expander-identifiers:
-       (cons |gxc[1]#_g13500_|
-             (cons |gxc[1]#_g13501_|
-                   (cons |gxc[1]#_g13502_|
-                         (cons |gxc[1]#_g13503_|
-                               (cons (cons |gxc[1]#_g13504_| '())
-                                     (cons (cons |gxc[1]#_g13505_| '())
+       (cons |gxc[1]#_g14562_|
+             (cons |gxc[1]#_g14563_|
+                   (cons |gxc[1]#_g14564_|
+                         (cons |gxc[1]#_g14565_|
+                               (cons (cons |gxc[1]#_g14566_| '())
+                                     (cons (cons |gxc[1]#_g14567_| '())
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g13506_|
+        |gxc[1]#_g14568_|
         '!struct-getf
         '#f
         '()
@@ -255,19 +258,19 @@
     (define |gxc[:0:]#!struct-setf|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g13507_|
+       |gxc[1]#_g14569_|
        'expander-identifiers:
-       (cons |gxc[1]#_g13508_|
-             (cons |gxc[1]#_g13509_|
-                   (cons |gxc[1]#_g13510_|
-                         (cons |gxc[1]#_g13511_|
-                               (cons (cons |gxc[1]#_g13512_| '())
-                                     (cons (cons |gxc[1]#_g13513_| '())
+       (cons |gxc[1]#_g14570_|
+             (cons |gxc[1]#_g14571_|
+                   (cons |gxc[1]#_g14572_|
+                         (cons |gxc[1]#_g14573_|
+                               (cons (cons |gxc[1]#_g14574_| '())
+                                     (cons (cons |gxc[1]#_g14575_| '())
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g13514_|
+        |gxc[1]#_g14576_|
         '!struct-setf
         '#f
         '()
@@ -275,21 +278,21 @@
     (define |gxc[:0:]#!lambda|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g13515_|
+       |gxc[1]#_g14577_|
        'expander-identifiers:
-       (cons |gxc[1]#_g13516_|
-             (cons |gxc[1]#_g13517_|
-                   (cons |gxc[1]#_g13518_|
-                         (cons |gxc[1]#_g13519_|
-                               (cons (cons |gxc[1]#_g13520_|
-                                           (cons |gxc[1]#_g13521_| '()))
-                                     (cons (cons |gxc[1]#_g13522_|
-                                                 (cons |gxc[1]#_g13523_| '()))
+       (cons |gxc[1]#_g14578_|
+             (cons |gxc[1]#_g14579_|
+                   (cons |gxc[1]#_g14580_|
+                         (cons |gxc[1]#_g14581_|
+                               (cons (cons |gxc[1]#_g14582_|
+                                           (cons |gxc[1]#_g14583_| '()))
+                                     (cons (cons |gxc[1]#_g14584_|
+                                                 (cons |gxc[1]#_g14585_| '()))
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g13524_|
+        |gxc[1]#_g14586_|
         '!lambda
         '#f
         '()
@@ -297,92 +300,92 @@
     (define |gxc[:0:]#!case-lambda|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g13525_|
+       |gxc[1]#_g14587_|
        'expander-identifiers:
-       (cons |gxc[1]#_g13526_|
-             (cons |gxc[1]#_g13527_|
-                   (cons |gxc[1]#_g13528_|
-                         (cons |gxc[1]#_g13529_|
-                               (cons (cons |gxc[1]#_g13530_| '())
-                                     (cons (cons |gxc[1]#_g13531_| '())
+       (cons |gxc[1]#_g14588_|
+             (cons |gxc[1]#_g14589_|
+                   (cons |gxc[1]#_g14590_|
+                         (cons |gxc[1]#_g14591_|
+                               (cons (cons |gxc[1]#_g14592_| '())
+                                     (cons (cons |gxc[1]#_g14593_| '())
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g13532_|
+        |gxc[1]#_g14594_|
         '!case-lambda
         '#f
         '()
         '(clauses))))
     (define |gxc[:0:]#defbasic-expression-type-builtin|
-      (lambda (_$stx7154_)
-        (let ((_g71587187_
-               (lambda (_g71597183_)
-                 (gx#raise-syntax-error '#f '"Bad syntax" _g71597183_))))
-          (let ((_g71577288_
-                 (lambda (_g71597191_)
-                   (if (gx#stx-pair? _g71597191_)
-                       (let ((_e71627194_ (gx#syntax-e _g71597191_)))
-                         (let ((_hd71637198_ (##car _e71627194_))
-                               (_tl71647201_ (##cdr _e71627194_)))
-                           (if (gx#stx-pair/null? _tl71647201_)
-                               (if (fx>= (gx#stx-length _tl71647201_) '0)
-                                   (let ((_g13533_
+      (lambda (_$stx7213_)
+        (let ((_g72177246_
+               (lambda (_g72187242_)
+                 (gx#raise-syntax-error '#f '"Bad syntax" _g72187242_))))
+          (let ((_g72167347_
+                 (lambda (_g72187250_)
+                   (if (gx#stx-pair? _g72187250_)
+                       (let ((_e72217253_ (gx#syntax-e _g72187250_)))
+                         (let ((_hd72227257_ (##car _e72217253_))
+                               (_tl72237260_ (##cdr _e72217253_)))
+                           (if (gx#stx-pair/null? _tl72237260_)
+                               (if (fx>= (gx#stx-length _tl72237260_) '0)
+                                   (let ((_g14595_
                                           (gx#syntax-split-splice
-                                           _tl71647201_
+                                           _tl72237260_
                                            '0)))
                                      (begin
-                                       (let ((_g13534_
-                                              (values-count _g13533_)))
-                                         (if (not (fx= _g13534_ 2))
+                                       (let ((_g14596_
+                                              (values-count _g14595_)))
+                                         (if (not (fx= _g14596_ 2))
                                              (error "Context expects 2 values"
-                                                    _g13534_)))
-                                       (let ((_target71657204_
-                                              (values-ref _g13533_ 0))
-                                             (_tl71677207_
-                                              (values-ref _g13533_ 1)))
-                                         (if (gx#stx-null? _tl71677207_)
-                                             (letrec ((_loop71687210_
-                                                       (lambda (_hd71667214_
-                                                                _type-e71727217_
-                                                                _id71737219_)
+                                                    _g14596_)))
+                                       (let ((_target72247263_
+                                              (values-ref _g14595_ 0))
+                                             (_tl72267266_
+                                              (values-ref _g14595_ 1)))
+                                         (if (gx#stx-null? _tl72267266_)
+                                             (letrec ((_loop72277269_
+                                                       (lambda (_hd72257273_
+                                                                _type-e72317276_
+                                                                _id72327278_)
                                                          (if (gx#stx-pair?
-                                                              _hd71667214_)
-                                                             (let ((_e71697222_
+                                                              _hd72257273_)
+                                                             (let ((_e72287281_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (gx#syntax-e _hd71667214_)))
-                       (let ((_lp-hd71707226_ (##car _e71697222_))
-                             (_lp-tl71717229_ (##cdr _e71697222_)))
-                         (if (gx#stx-pair? _lp-hd71707226_)
-                             (let ((_e71767232_ (gx#syntax-e _lp-hd71707226_)))
-                               (let ((_hd71777236_ (##car _e71767232_))
-                                     (_tl71787239_ (##cdr _e71767232_)))
-                                 (if (gx#stx-pair? _tl71787239_)
-                                     (let ((_e71797242_
-                                            (gx#syntax-e _tl71787239_)))
-                                       (let ((_hd71807246_ (##car _e71797242_))
-                                             (_tl71817249_
-                                              (##cdr _e71797242_)))
-                                         (if (gx#stx-null? _tl71817249_)
-                                             (_loop71687210_
-                                              _lp-tl71717229_
-                                              (cons _hd71807246_
-                                                    _type-e71727217_)
-                                              (cons _hd71777236_ _id71737219_))
-                                             (_g71587187_ _g71597191_))))
-                                     (_g71587187_ _g71597191_))))
-                             (_g71587187_ _g71597191_))))
-                     (let ((_type-e71747252_ (reverse _type-e71727217_))
-                           (_id71757255_ (reverse _id71737219_)))
-                       ((lambda (_L7258_ _L7260_)
+                            (gx#syntax-e _hd72257273_)))
+                       (let ((_lp-hd72297285_ (##car _e72287281_))
+                             (_lp-tl72307288_ (##cdr _e72287281_)))
+                         (if (gx#stx-pair? _lp-hd72297285_)
+                             (let ((_e72357291_ (gx#syntax-e _lp-hd72297285_)))
+                               (let ((_hd72367295_ (##car _e72357291_))
+                                     (_tl72377298_ (##cdr _e72357291_)))
+                                 (if (gx#stx-pair? _tl72377298_)
+                                     (let ((_e72387301_
+                                            (gx#syntax-e _tl72377298_)))
+                                       (let ((_hd72397305_ (##car _e72387301_))
+                                             (_tl72407308_
+                                              (##cdr _e72387301_)))
+                                         (if (gx#stx-null? _tl72407308_)
+                                             (_loop72277269_
+                                              _lp-tl72307288_
+                                              (cons _hd72397305_
+                                                    _type-e72317276_)
+                                              (cons _hd72367295_ _id72327278_))
+                                             (_g72177246_ _g72187250_))))
+                                     (_g72177246_ _g72187250_))))
+                             (_g72177246_ _g72187250_))))
+                     (let ((_type-e72337311_ (reverse _type-e72317276_))
+                           (_id72347314_ (reverse _id72327278_)))
+                       ((lambda (_L7317_ _L7319_)
                           (cons (gx#datum->syntax '#f 'begin)
                                 (begin
                                   (gx#syntax-check-splice-targets
-                                   _L7258_
-                                   _L7260_)
-                                  (foldr (lambda (_g72767280_
-                                                  _g72777283_
-                                                  _g72787285_)
+                                   _L7317_
+                                   _L7319_)
+                                  (foldr (lambda (_g73357339_
+                                                  _g73367342_
+                                                  _g73377344_)
                                            (cons (cons (gx#datum->syntax
                                                         '#f
                                                         'hash-put!)
@@ -393,22 +396,22 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                   '#f
                                   'quote)
-                                 (cons _g72777283_ '()))
-                           (cons _g72767280_ '()))))
+                                 (cons _g73367342_ '()))
+                           (cons _g73357339_ '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 _g72787285_))
+                                                 _g73377344_))
                                          '()
-                                         _L7258_
-                                         _L7260_))))
-                        _type-e71747252_
-                        _id71757255_))))))
+                                         _L7317_
+                                         _L7319_))))
+                        _type-e72337311_
+                        _id72347314_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                               (_loop71687210_
-                                                _target71657204_
+                                               (_loop72277269_
+                                                _target72247263_
                                                 '()
                                                 '()))
-                                             (_g71587187_ _g71597191_)))))
-                                   (_g71587187_ _g71597191_))
-                               (_g71587187_ _g71597191_))))
-                       (_g71587187_ _g71597191_)))))
-            (_g71577288_ _$stx7154_)))))))
+                                             (_g72177246_ _g72187250_)))))
+                                   (_g72177246_ _g72187250_))
+                               (_g72177246_ _g72187250_))))
+                       (_g72177246_ _g72187250_)))))
+            (_g72167347_ _$stx7213_)))))))

@@ -1,33 +1,33 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gx[1]#_g12553_| (gx#core-quote-syntax 'syntax-pattern::t))
-  (define |gx[1]#_g12554_| (gx#core-quote-syntax 'expander::t))
-  (define |gx[1]#_g12555_| (gx#core-quote-syntax 'syntax-pattern::t))
-  (define |gx[1]#_g12556_| (gx#core-quote-syntax 'make-syntax-pattern))
-  (define |gx[1]#_g12557_| (gx#core-quote-syntax 'syntax-pattern?))
-  (define |gx[1]#_g12558_| (gx#core-quote-syntax 'syntax-pattern-id))
-  (define |gx[1]#_g12559_| (gx#core-quote-syntax 'syntax-pattern-depth))
-  (define |gx[1]#_g12560_| (gx#core-quote-syntax 'syntax-pattern-id-set!))
-  (define |gx[1]#_g12561_| (gx#core-quote-syntax 'syntax-pattern-depth-set!))
-  (define |gx[1]#_g12562_| (gx#core-quote-syntax 'expander))
+  (define |gx[1]#_g12624_| (gx#core-quote-syntax 'syntax-pattern::t))
+  (define |gx[1]#_g12625_| (gx#core-quote-syntax 'expander::t))
+  (define |gx[1]#_g12626_| (gx#core-quote-syntax 'syntax-pattern::t))
+  (define |gx[1]#_g12627_| (gx#core-quote-syntax 'make-syntax-pattern))
+  (define |gx[1]#_g12628_| (gx#core-quote-syntax 'syntax-pattern?))
+  (define |gx[1]#_g12629_| (gx#core-quote-syntax 'syntax-pattern-id))
+  (define |gx[1]#_g12630_| (gx#core-quote-syntax 'syntax-pattern-depth))
+  (define |gx[1]#_g12631_| (gx#core-quote-syntax 'syntax-pattern-id-set!))
+  (define |gx[1]#_g12632_| (gx#core-quote-syntax 'syntax-pattern-depth-set!))
+  (define |gx[1]#_g12633_| (gx#core-quote-syntax 'expander))
   (define |gx[:0:]#syntax-pattern|
     (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
      'runtime-identifier:
-     |gx[1]#_g12553_|
+     |gx[1]#_g12624_|
      'expander-identifiers:
-     (cons |gx[1]#_g12554_|
-           (cons |gx[1]#_g12555_|
-                 (cons |gx[1]#_g12556_|
-                       (cons |gx[1]#_g12557_|
-                             (cons (cons |gx[1]#_g12558_|
-                                         (cons |gx[1]#_g12559_| '()))
-                                   (cons (cons |gx[1]#_g12560_|
-                                               (cons |gx[1]#_g12561_| '()))
+     (cons |gx[1]#_g12625_|
+           (cons |gx[1]#_g12626_|
+                 (cons |gx[1]#_g12627_|
+                       (cons |gx[1]#_g12628_|
+                             (cons (cons |gx[1]#_g12629_|
+                                         (cons |gx[1]#_g12630_| '()))
+                                   (cons (cons |gx[1]#_g12631_|
+                                               (cons |gx[1]#_g12632_| '()))
                                          '()))))))
      'type-exhibitor:
      (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
       'gx#syntax-pattern::t
-      |gx[1]#_g12562_|
+      |gx[1]#_g12633_|
       'syntax-pattern
       '#f
       '()

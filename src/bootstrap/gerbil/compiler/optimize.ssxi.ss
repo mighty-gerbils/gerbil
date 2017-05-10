@@ -15,6 +15,7 @@ package: gerbil/compiler
   (declare-type
    gxc#optimizer-info-ssxi-set!
    (@struct-setf gxc#optimizer-info::t 1))
+  (declare-method gxc#optimizer-info::t :init! gxc#optimizer-info:::init! #f)
   (declare-type gxc#!type::t (@struct-type gxc#!type::t #f 1 #f ()))
   (declare-type gxc#!type? (@struct-pred gxc#!type::t))
   (declare-type gxc#make-!type (@struct-cons gxc#!type::t))
@@ -27,7 +28,7 @@ package: gerbil/compiler
   (declare-type gxc#make-!alias (@struct-cons gxc#!alias::t))
   (declare-type
    gxc#!struct-type::t
-   (@struct-type gxc#!struct-type::t gxc#!type::t 5 #f ()))
+   (@struct-type gxc#!struct-type::t gxc#!type::t 6 :init! ()))
   (declare-type gxc#!struct-type? (@struct-pred gxc#!struct-type::t))
   (declare-type gxc#make-!struct-type (@struct-cons gxc#!struct-type::t))
   (declare-type gxc#!struct-type-super (@struct-getf gxc#!struct-type::t 0))
@@ -35,6 +36,7 @@ package: gerbil/compiler
   (declare-type gxc#!struct-type-xfields (@struct-getf gxc#!struct-type::t 2))
   (declare-type gxc#!struct-type-ctor (@struct-getf gxc#!struct-type::t 3))
   (declare-type gxc#!struct-type-plist (@struct-getf gxc#!struct-type::t 4))
+  (declare-type gxc#!struct-type-methods (@struct-getf gxc#!struct-type::t 5))
   (declare-type
    gxc#!struct-type-super-set!
    (@struct-setf gxc#!struct-type::t 0))
@@ -50,6 +52,9 @@ package: gerbil/compiler
   (declare-type
    gxc#!struct-type-plist-set!
    (@struct-setf gxc#!struct-type::t 4))
+  (declare-type
+   gxc#!struct-type-methods-set!
+   (@struct-setf gxc#!struct-type::t 5))
   (declare-type
    gxc#!procedure::t
    (@struct-type gxc#!procedure::t gxc#!type::t 0 #f ()))
@@ -96,4 +101,45 @@ package: gerbil/compiler
   (declare-type gxc#!case-lambda-clauses (@struct-getf gxc#!case-lambda::t 0))
   (declare-type
    gxc#!case-lambda-clauses-set!
-   (@struct-setf gxc#!case-lambda::t 0)))
+   (@struct-setf gxc#!case-lambda::t 0))
+  (declare-method gxc#!struct-type::t :init! gxc#!struct-type:::init! #f)
+  (declare-type
+   gxc#optimizer-declare-method!
+   (@case-lambda
+    (3 gxc#optimizer-declare-method!__0)
+    (4 gxc#optimizer-declare-method!__opt-lambda14290)))
+  (declare-method gxc#!alias::t optimize-call gxc#!alias::optimize-call #f)
+  (declare-method
+   gxc#!struct-pred::t
+   optimize-call
+   gxc#!struct-pred::optimize-call
+   #f)
+  (declare-method
+   gxc#!struct-cons::t
+   optimize-call
+   gxc#!struct-cons::optimize-call
+   #f)
+  (declare-method
+   gxc#!struct-getf::t
+   optimize-call
+   gxc#!struct-getf::optimize-call
+   #f)
+  (declare-method
+   gxc#!struct-setf::t
+   optimize-call
+   gxc#!struct-setf::optimize-call
+   #f)
+  (declare-method gxc#!lambda::t optimize-call gxc#!lambda::optimize-call #f)
+  (declare-method
+   gxc#!case-lambda::t
+   optimize-call
+   gxc#!case-lambda::optimize-call
+   #f)
+  (declare-method gxc#!alias::t typedecl gxc#!alias::typedecl #f)
+  (declare-method gxc#!struct-type::t typedecl gxc#!struct-type::typedecl #f)
+  (declare-method gxc#!struct-pred::t typedecl gxc#!struct-pred::typedecl #f)
+  (declare-method gxc#!struct-cons::t typedecl gxc#!struct-cons::typedecl #f)
+  (declare-method gxc#!struct-getf::t typedecl gxc#!struct-getf::typedecl #f)
+  (declare-method gxc#!struct-setf::t typedecl gxc#!struct-setf::typedecl #f)
+  (declare-method gxc#!lambda::t typedecl gxc#!lambda::typedecl #f)
+  (declare-method gxc#!case-lambda::t typedecl gxc#!case-lambda::typedecl #f))

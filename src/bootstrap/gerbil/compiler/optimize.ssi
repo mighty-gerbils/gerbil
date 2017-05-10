@@ -59,6 +59,7 @@ namespace: gxc
          (%#define-runtime !struct-type-xfields gxc#!struct-type-xfields)
          (%#define-runtime !struct-type-ctor gxc#!struct-type-ctor)
          (%#define-runtime !struct-type-plist gxc#!struct-type-plist)
+         (%#define-runtime !struct-type-methods gxc#!struct-type-methods)
          (%#define-runtime !struct-type-super-set! gxc#!struct-type-super-set!)
          (%#define-runtime
           !struct-type-fields-set!
@@ -68,6 +69,9 @@ namespace: gxc
           gxc#!struct-type-xfields-set!)
          (%#define-runtime !struct-type-ctor-set! gxc#!struct-type-ctor-set!)
          (%#define-runtime !struct-type-plist-set! gxc#!struct-type-plist-set!)
+         (%#define-runtime
+          !struct-type-methods-set!
+          gxc#!struct-type-methods-set!)
          (%#define-syntax !struct-type |gxc[:0:]#!struct-type|)
          (%#define-runtime !procedure::t gxc#!procedure::t)
          (%#define-runtime !procedure? gxc#!procedure?)
@@ -109,9 +113,24 @@ namespace: gxc
           !case-lambda-clauses-set!
           gxc#!case-lambda-clauses-set!)
          (%#define-syntax !case-lambda |gxc[:0:]#!case-lambda|)
+         (%#define-runtime !struct-type:::init! gxc#!struct-type:::init!)
+         (%#define-runtime !struct-type-vtab gxc#!struct-type-vtab)
+         (%#define-runtime
+          !struct-type-lookup-method
+          gxc#!struct-type-lookup-method)
          (%#define-runtime optimizer-declare-type! gxc#optimizer-declare-type!)
+         (%#begin (%#define-runtime
+                   optimizer-declare-method!__opt-lambda14290
+                   gxc#optimizer-declare-method!__opt-lambda14290)
+                  (%#begin (%#define-runtime
+                            optimizer-declare-method!__0
+                            gxc#optimizer-declare-method!__0)
+                           (%#define-runtime
+                            optimizer-declare-method!
+                            gxc#optimizer-declare-method!)))
          (%#define-runtime optimizer-lookup-type gxc#optimizer-lookup-type)
          (%#define-runtime optimizer-resolve-type gxc#optimizer-resolve-type)
+         (%#define-runtime optimizer-lookup-method gxc#optimizer-lookup-method)
          (%#define-runtime optimize-source gxc#optimize-source)
          (%#define-runtime &false-expression gxc#&false-expression)
          (%#define-runtime &false-special-form gxc#&false-special-form)
@@ -146,6 +165,7 @@ namespace: gxc
          (%#define-runtime xform-call% gxc#xform-call%)
          (%#define-runtime xform-if% gxc#xform-if%)
          (%#define-runtime xform-setq% gxc#xform-setq%)
+         (%#define-runtime xform-struct-op% gxc#xform-struct-op%)
          (%#define-runtime dispatch-lambda-form? gxc#dispatch-lambda-form?)
          (%#define-runtime
           dispatch-lambda-form-delegate
@@ -158,6 +178,7 @@ namespace: gxc
          (%#define-runtime
           collect-type-define-values%
           gxc#collect-type-define-values%)
+         (%#define-runtime collect-type-call% gxc#collect-type-call%)
          (%#define-runtime
           basic-expression-type-begin%
           gxc#basic-expression-type-begin%)
@@ -213,6 +234,7 @@ namespace: gxc
          (%#define-runtime
           generate-ssxi-define-values%
           gxc#generate-ssxi-define-values%)
+         (%#define-runtime generate-ssxi-call% gxc#generate-ssxi-call%)
          (%#define-runtime !alias::typedecl gxc#!alias::typedecl)
          (%#define-runtime !struct-type::typedecl gxc#!struct-type::typedecl)
          (%#define-runtime !struct-pred::typedecl gxc#!struct-pred::typedecl)
