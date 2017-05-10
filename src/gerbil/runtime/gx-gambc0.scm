@@ -187,12 +187,12 @@
 (define (make-struct-field-accessor klass field)
   (let ((off (fx1+ (struct-field-offset klass field))))
     (lambda (obj)
-      (##structure-ref obj off klass 'struct-field-ref))))
+      (##structure-ref obj off klass #f))))
 
 (define (make-struct-field-mutator klass field)
   (let ((off (fx1+ (struct-field-offset klass field))))
     (lambda (obj val)
-      (##structure-set! obj val off klass 'struct-field-set!))))
+      (##structure-set! obj val off klass #f))))
 
 (define (struct-field-offset klass field)
   (fx+ field 
@@ -201,10 +201,10 @@
         (else 0))))
 
 (define (struct-field-ref klass obj off)
-  (##structure-ref obj (fx1+ off) klass 'struct-field-ref))
+  (##structure-ref obj (fx1+ off) klass #f))
 
 (define (struct-field-set! klass obj off val)
-  (##structure-set! obj val (fx1+ off) klass 'struct-field-set!))
+  (##structure-set! obj val (fx1+ off) klass #f))
 
 (define (struct-subtype? klass xklass)
   (let ((klass-t (##type-id klass)))
@@ -449,7 +449,7 @@
   (##structure-direct-instance-of? obj (##type-id klass)))
 
 (define (make-object klass k)
-  (let ((obj (##make-vector (fx1+ k))))
+  (let ((obj (##make-vector (fx1+ k) #f)))
     (##vector-set! obj 0 klass)
     (##subtype-set! obj (macro-subtype-structure))
     obj))
