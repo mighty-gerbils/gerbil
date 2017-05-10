@@ -107,7 +107,7 @@ package: gerbil/compiler
    gxc#optimizer-declare-method!
    (@case-lambda
     (3 gxc#optimizer-declare-method!__0)
-    (4 gxc#optimizer-declare-method!__opt-lambda14290)))
+    (4 gxc#optimizer-declare-method!__opt-lambda14413)))
   (declare-method gxc#!alias::t optimize-call gxc#!alias::optimize-call #f)
   (declare-method
    gxc#!struct-pred::t
