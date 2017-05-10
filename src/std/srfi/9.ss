@@ -31,10 +31,21 @@ package: std/srfi
         (match rest
           ([(eq? field) . _] off)
           ([_ . rest] (lp rest (fx1+ off)))))))
+
+  (def (module-type-id type-t)
+    (cond
+     ((module-context-ns (current-expander-context))
+      => (lambda (ns) (stx-identifier type-t ns "#" type-t)))
+     (else
+      (let (mid (expander-context-id (current-expander-context)))
+        (stx-identifier type-t mid "#" type-t)))))
   
   (def (generate-type type-id fields)
     (with-syntax ((klass type-id)
-                  (id (gensym (stx-e type-id)))
+                  (id
+                   (if (module-context? (current-expander-context))
+                     (module-type-id type-id)
+                     (gensym (stx-e type-id))))
                   (field-count (length fields))
                   (plist [[fields: fields ...]]))
       #'(define klass (make-struct-type 'id #f field-count 'klass 'plist #f))))
