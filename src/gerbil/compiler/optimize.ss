@@ -181,17 +181,21 @@ namespace: gxc
     (apply-optimize-call stx)))
 
 (defcompile-method #f &false-expression
-  (%#lambda              false)
-  (%#case-lambda         false)
-  (%#let-values     false)
-  (%#letrec-values  false)
-  (%#letrec*-values false)
-  (%#quote          false)
-  (%#quote-syntax   false)
-  (%#call           false)
-  (%#if             false)
-  (%#ref            false)
-  (%#set!           false))
+  (%#lambda                       false)
+  (%#case-lambda                  false)
+  (%#let-values              false)
+  (%#letrec-values           false)
+  (%#letrec*-values          false)
+  (%#quote                   false)
+  (%#quote-syntax            false)
+  (%#call                    false)
+  (%#if                      false)
+  (%#ref                     false)
+  (%#set!                    false)
+  (%#struct-instance?        false)
+  (%#struct-direct-instance? false)
+  (%#struct-ref              false)
+  (%#struct-set!             false))
 
 (defcompile-method #f &false-special-form
   (%#begin          false)
@@ -210,17 +214,21 @@ namespace: gxc
 (defcompile-method #f (&false &false-special-form &false-expression))
 
 (defcompile-method #f &identity-expression
-  (%#lambda              xform-identity)
-  (%#case-lambda         xform-identity)
-  (%#let-values     xform-identity)
-  (%#letrec-values  xform-identity)
-  (%#letrec*-values xform-identity)
-  (%#quote          xform-identity)
-  (%#quote-syntax   xform-identity)
-  (%#call           xform-identity)
-  (%#if             xform-identity)
-  (%#ref            xform-identity)
-  (%#set!           xform-identity))
+  (%#lambda                       xform-identity)
+  (%#case-lambda                  xform-identity)
+  (%#let-values              xform-identity)
+  (%#letrec-values           xform-identity)
+  (%#letrec*-values          xform-identity)
+  (%#quote                   xform-identity)
+  (%#quote-syntax            xform-identity)
+  (%#call                    xform-identity)
+  (%#if                      xform-identity)
+  (%#ref                     xform-identity)
+  (%#set!                    xform-identity)
+  (%#struct-instance?        xform-identity)
+  (%#struct-direct-instance? xform-identity)
+  (%#struct-ref              xform-identity)
+  (%#struct-set!             xform-identity))
 
 (defcompile-method #f &identity-special-form
   (%#begin          xform-identity)
@@ -239,17 +247,21 @@ namespace: gxc
 (defcompile-method #f (&identity &identity-special-form &identity-expression))
 
 (defcompile-method #f &basic-xform-expression
-  (%#lambda              xform-lambda%)
-  (%#case-lambda         xform-case-lambda%)
-  (%#let-values     xform-let-values%)
-  (%#letrec-values  xform-let-values%)
-  (%#letrec*-values xform-let-values%)
-  (%#quote          xform-identity)
-  (%#quote-syntax   xform-identity)
-  (%#call           xform-call%)
-  (%#if             xform-if%)
-  (%#ref            xform-identity)
-  (%#set!           xform-setq%))
+  (%#lambda                       xform-lambda%)
+  (%#case-lambda                  xform-case-lambda%)
+  (%#let-values              xform-let-values%)
+  (%#letrec-values           xform-let-values%)
+  (%#letrec*-values          xform-let-values%)
+  (%#quote                   xform-identity)
+  (%#quote-syntax            xform-identity)
+  (%#call                    xform-call%)
+  (%#if                      xform-if%)
+  (%#ref                     xform-identity)
+  (%#set!                    xform-setq%)
+  (%#struct-instance?        xform-struct-op%)
+  (%#struct-direct-instance? xform-struct-op%)
+  (%#struct-ref              xform-struct-op%)
+  (%#struct-set!             xform-struct-op%))
 
 (defcompile-method #f (&basic-xform &basic-xform-expression &identity)
   (%#begin          xform-begin%)
@@ -366,6 +378,14 @@ namespace: gxc
      (let (expr (apply compile-e #'expr args))
        (xform-wrap-source
         ['%#set! #'id expr]
+        stx)))))
+
+(def (xform-struct-op% stx . args)
+  (ast-case stx ()
+    ((form . op-args)
+     (let (op-args (stx-map (xform-apply-compile-e args) #'op-args))
+       (xform-wrap-source
+        [#'form op-args ...]
         stx)))))
 
 ;;; apply-lift-top-lambdas
