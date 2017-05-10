@@ -17,11 +17,13 @@ namespace: gxc
    (begin (declare-type symbol type) ...)))
 
 (defrules declare-method ()
-  ((_ type-t method symbol)
+  ((_ type-t method symbol rebind?)
    (and (identifier? #'type-t)
         (identifier? #'method)
         (identifier? #'symbol))
-   (optimizer-declare-method! 'type-t 'method 'symbol)))
+   (optimizer-declare-method! 'type-t 'method 'symbol rebind?))
+  ((recur type-t method symbol)
+   (recur type-t method symbol rebind?)))
 
 (defrules declare-method* ()
   ((_ (type-t method symbol) ...)
@@ -86,6 +88,3 @@ namespace: gxc
 (defrules @case-lambda ()
   ((_ (arity dispatch) ...)
    (make-!case-lambda 'case-lambda [(@lambda arity dispatch) ...])))
-
-                 
-    

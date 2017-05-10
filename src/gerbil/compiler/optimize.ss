@@ -283,7 +283,8 @@ namespace: gxc
 
 (defcompile-method apply-generate-ssxi (&generate-ssxi &generate-runtime-empty)
   (%#begin         generate-runtime-begin%)
-  (%#define-values generate-ssxi-define-values%))
+  (%#define-values generate-ssxi-define-values%)
+  (%#call          generate-ssxi-call%))
 
 ;;; basic-xform
 (def (xform-identity stx . args)
@@ -849,6 +850,21 @@ namespace: gxc
      (let* ((ids (filter stx-e #'(id ...)))
             (types (map generate-e ids)))
        ['begin types ...]))))
+
+(def (generate-ssxi-call% stx)
+  (ast-case stx (%#ref %#quote)
+    ((_ (%#ref -bind-method) (%#ref type-t) (%#quote method) (%#ref impl) (%#quote rebind?))
+     (eq? (identifier-symbol #'-bind-method) 'bind-method!)
+     ['declare-method (identifier-symbol #'type-t)
+                      (stx-e #'method) (identifier-symbol #'impl)
+                      (stx-e #'rebind?)])
+    ((_ (%#ref -bind-method!) (%#ref type-t) (%#quote method) (%#ref impl))
+     (eq? (identifier-symbol #'-bind-method) 'bind-method!)
+     ['declare-method (identifier-symbol #'type-t)
+                      (stx-e #'method) (identifier-symbol #'impl)
+                      #f])
+    (_ '(begin))))
+
 
 (defmethod {typedecl !alias}
   (lambda (self)
