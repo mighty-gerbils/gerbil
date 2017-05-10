@@ -104,8 +104,9 @@ namespace: gxc
               library-path)))
       (verbose "Loading ssxi module " ssxi-path)
       (import-module ssxi-path #t #t)))
-  
-  (with-catch catch-e import-e))
+
+  (and (expander-context-id ctx)
+       (with-catch catch-e import-e)))
 
 ;;; optimizer-info: types
 (defstruct !type (id))
@@ -271,10 +272,12 @@ namespace: gxc
 
 (defcompile-method #f (&basic-xform &basic-xform-expression &identity)
   (%#begin          xform-begin%)
+  (%#module         xform-module%)
   (%#define-values  xform-define-values%))
 
 (defcompile-method apply-lift-top-lambdas (&lift-top-lambdas &identity)
   (%#begin          xform-begin%)
+  (%#module         xform-module%)
   (%#define-values  lift-top-lambda-define-values%))
 
 (defcompile-method apply-expression-subst (&expression-subst &basic-xform-expression)
@@ -301,6 +304,7 @@ namespace: gxc
 
 (defcompile-method apply-generate-ssxi (&generate-ssxi &generate-runtime-empty)
   (%#begin         generate-runtime-begin%)
+  (%#module        generate-ssxi-module%)
   (%#define-values generate-ssxi-define-values%)
   (%#call          generate-ssxi-call%))
 
@@ -320,6 +324,20 @@ namespace: gxc
      (let (forms (stx-map (xform-apply-compile-e args) #'forms))
        (xform-wrap-source
         ['%#begin forms ...]
+        stx)))))
+
+(def (xform-module% stx . args)
+  (ast-case stx ()
+    ((_ id . body)
+     (let* ((ctx (syntax-local-e #'id))
+            (code (module-context-code ctx))
+            (code
+             (parameterize ((current-expander-context ctx))
+               (apply compile-e code args))))
+       (set! (module-context-code ctx)
+         code)
+       (xform-wrap-source
+        ['%#module #'id code]
         stx)))))
 
 (def (xform-define-values% stx . args)
@@ -859,6 +877,14 @@ namespace: gxc
        (fx>= (stx-length args) arity)))))
 
 ;;; apply-generate-ssxi
+(def (generate-ssxi-module% stx)
+  (ast-case stx ()
+    ((_ id . body)
+     (let* ((ctx (syntax-local-e #'id))
+            (code (module-context-code ctx)))
+       (parameterize ((current-expander-context ctx))
+         (compile-e code))))))
+
 (def (generate-ssxi-define-values% stx)
   (def (generate-e id)
     (let (sym (identifier-symbol id))
