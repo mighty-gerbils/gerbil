@@ -13,6 +13,12 @@
   (def gsc-options #f)
   (def compile-exe #f)
   (def outfile #f)
+
+  (def (add-gsc-option! opt)
+    (set! gsc-options
+      (if gsc-options
+        (append gsc-options opt)
+        opt)))
   
   (def (make-opts)
     [invoke-gsc: invoke-gsc 
@@ -41,7 +47,7 @@
           (lp rest))
          (("-g")
           (set! keep-scm #t)
-          (set! gsc-options ["-debug"])
+          (add-gsc-option! ["-debug"])
           (lp rest))
          (("-v")
           (set! verbose #t)
@@ -59,6 +65,16 @@
           (match rest
             ([file . rest]
              (set! outfile file)
+             (lp rest))))
+         (("-cc-options")
+          (match rest
+            ([opt . rest]
+             (add-gsc-option! ["-cc-options" opt])
+             (lp rest))))
+         (("-ld-options")
+          (match rest
+            ([opt . rest]
+             (add-gsc-option! ["-ld-options" opt])
              (lp rest))))
          (else
           (if (and (not (string-empty? arg))
