@@ -110,7 +110,8 @@ namespace: gxc
 ;;; optimizer-info: types
 (defstruct !type (id))
 (defstruct (!alias !type) ())
-(defstruct (!struct-type !type) (super fields xfields ctor plist))
+(defstruct (!struct-type !type) (super fields xfields ctor plist methods)
+  constructor: :init!)
 (defstruct (!procedure !type) ())
 (defstruct (!struct-pred !procedure) ())
 (defstruct (!struct-cons !procedure) ())
@@ -118,13 +119,40 @@ namespace: gxc
 (defstruct (!struct-setf !procedure) (off))
 (defstruct (!lambda !procedure) (arity dispatch))
 (defstruct (!case-lambda !procedure) (clauses))
-  
+
+(defmethod {:init! !struct-type}
+  (lambda (self id super fields xfields ctor plist)
+    (direct-struct-instance-init! self id super fields xfields ctor plist #f)))
+
+(def (!struct-type-vtab type)
+  (cond
+   ((!struct-type-methods type) => values)
+   (else
+    (let (vtab (make-hash-table-eq))
+      (set! (!struct-type-methods type) vtab)
+      vtab))))
+
+(def (!struct-type-lookup-method type method)
+  (alet (vtab (!struct-type-methods type))
+    (hash-get vtab method)))
+
 (def (optimizer-declare-type! sym type)
   (unless (!type? type)
     (error "bad declaration: expected !type" sym type))
   (verbose "declare-type " sym " " (##vector->list type))
   (hash-put! (optimizer-info-type (current-compile-optimizer-info))
              sym type))
+
+(def (optimizer-declare-method! type-t method sym)
+  (let (type (optimizer-resolve-type type-t))
+    (cond
+     ((!struct-type? type)
+      (verbose "declare-method " type-t " " method " => " sym)
+      (hash-put! (!struct-type-vtab type) method sym))
+     ((not type)
+      (verbose "declare-method: unknown type "  type-t))
+     (else
+      (error "declare-method: bad method declaration; no method table" type-t type)))))
 
 (def (optimizer-lookup-type sym)
   (hash-get (optimizer-info-type (current-compile-optimizer-info))
@@ -135,6 +163,13 @@ namespace: gxc
     (if (!alias? type)
       (optimizer-resolve-type (!type-id type))
       type)))
+
+(def (optimizer-lookup-method type-t method)
+  (let (type (optimizer-resolve-type type-t))
+    (cond
+     ((!struct-type? type)
+      (!struct-type-lookup-method type method))
+     (else #f))))
 
 ;;; source transforms
 (def (optimize-source stx)

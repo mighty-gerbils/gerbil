@@ -16,6 +16,21 @@ namespace: gxc
   ((_ (symbol type) ...)
    (begin (declare-type symbol type) ...)))
 
+(defrules declare-method ()
+  ((_ type-t method symbol)
+   (and (identifier? #'type-t)
+        (identifier? #'method)
+        (identifier? #'symbol))
+   (optimizer-declare-method! 'type-t 'method 'symbol)))
+
+(defrules declare-method* ()
+  ((_ (type-t method symbol) ...)
+   (begin (declare-method type-t method symbol) ...)))
+
+(defrules declare-methods ()
+  ((_ type-t (method symbol) ...)
+   (begin (declare-method type-t method symbol) ...)))
+
 ;; aliases
 (defrules @alias ()
   ((_ alias-id)
