@@ -148,10 +148,16 @@ namespace: gxc
     (cond
      ((!struct-type? type)
       (let (vtab (!struct-type-vtab type))
-        (verbose "declare-method " type-t " " method " => " sym)
-        (if (and (not rebind?) (hash-key? vtab method))
-          (verbose "declare-method: cannot rebind method " type-t " " method)
-          (hash-put! vtab method sym))))
+        (cond
+        (rebind? ; we don't track rebindable methods, so it shouldn't be there
+         (if (hash-key? vtab method)
+           (verbose "declare-method: [warning] skip rebind on existing method" type-t " " method)
+           (verbose "declare-method: skip rebind method " type-t " " method)))
+        ((hash-key? vtab method)
+         (error "declare-method: duplicate method declaration"))
+        (else
+         (verbose "declare-method " type-t " " method " => " sym)
+         (hash-put! vtab method sym)))))
      ((not type)
       (verbose "declare-method: unknown type "  type-t))
      (else
