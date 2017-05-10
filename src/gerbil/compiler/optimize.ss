@@ -143,12 +143,15 @@ namespace: gxc
   (hash-put! (optimizer-info-type (current-compile-optimizer-info))
              sym type))
 
-(def (optimizer-declare-method! type-t method sym)
+(def (optimizer-declare-method! type-t method sym (rebind? #f))
   (let (type (optimizer-resolve-type type-t))
     (cond
      ((!struct-type? type)
-      (verbose "declare-method " type-t " " method " => " sym)
-      (hash-put! (!struct-type-vtab type) method sym))
+      (let (vtab (!struct-type-vtab type))
+        (verbose "declare-method " type-t " " method " => " sym)
+        (if (and (not rebind?) (hash-key? vtab method))
+          (verbose "declare-method: cannot rebind method " type-t " " method)
+          (hash-put! vtab method sym))))
      ((not type)
       (verbose "declare-method: unknown type "  type-t))
      (else
@@ -265,7 +268,8 @@ namespace: gxc
                                             &void-special-form)
   (%#begin         collect-begin%)
   (%#module        collect-module%)
-  (%#define-values collect-type-define-values%))
+  (%#define-values collect-type-define-values%)
+  (%#call          collect-type-call%))
 
 (defcompile-method apply-basic-expression-type (&basic-expression-type &false)
   (%#begin  basic-expression-type-begin%)
@@ -522,6 +526,20 @@ namespace: gxc
     ((_ (id) expr)
      (alet (type (apply-basic-expression-type #'expr))
        (optimizer-declare-type! (identifier-symbol #'id) type)))
+    (_ (void))))
+
+(def (collect-type-call% stx)
+  (ast-case stx (%#ref %#quote)
+    ((_ (%#ref -bind-method) (%#ref type-t) (%#quote method) (%#ref impl) (%#quote rebind?))
+     (eq? (identifier-symbol #'-bind-method) 'bind-method!)
+     (optimizer-declare-method! (identifier-symbol #'type-t)
+                                (stx-e #'method) (identifier-symbol #'impl)
+                                (stx-e #'rebind?)))
+    ((_ (%#ref -bind-method!) (%#ref type-t) (%#quote method) (%#ref impl))
+     (eq? (identifier-symbol #'-bind-method) 'bind-method!)
+     (optimizer-declare-method! (identifier-symbol #'type-t)
+                                (stx-e #'method) (identifier-symbol #'impl)
+                                #f))
     (_ (void))))
 
 ;;; apply-basic-expression-type
