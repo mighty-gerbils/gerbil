@@ -714,18 +714,33 @@ namespace: gxc
           ((!struct-type type-id _ fields xfields ctor)
            (let (args (stx-map compile-e args))
              (cond
-              ((or ctor (not xfields)) ; inline to make-struct-instance
+              ((and ctor xfields (!struct-type-lookup-method struct-type ctor))
+               => (lambda (kons) ; known constructor, inline make-object and dispatch
+                    (let ($obj (make-symbol (gensym '__obj)))
+                      (xform-wrap-source
+                       ['%#let-values [[[$obj]
+                                        ['%#call ['%#ref 'make-object]
+                                                 ['%#ref struct-t]
+                                                 ['%#quote (fx+ fields xfields)]]]]
+                                      ['%#begin
+                                       (compile-e
+                                        (xform-wrap-source
+                                         ['%#call ['%#ref kons] ['%#ref $obj] args ...]
+                                         stx))
+                                       ['%#ref $obj]]]
+                       stx))))
+              ((or ctor (not xfields)) ; inline call to make-struct-instance
                (xform-wrap-source
                 ['%#call ['%#ref 'make-struct-instance] ['%#ref struct-t] args ...]
                 stx))
-            (else
-             (let (arity (fx+ fields xfields))
-               (if (fx= arity (length args))
-                 (xform-wrap-source
-                  ['%#call ['%#ref '##structure] ['%#ref struct-t] args ...]
-                  stx)
-                 (raise-compile-error "Illegal struct constructor application; arity mismatch"
-                                      stx struct-t arity)))))))
+              (else ; plain old struct, inline ##structure application
+               (let (arity (fx+ fields xfields))
+                 (if (fx= arity (length args))
+                   (xform-wrap-source
+                    ['%#call ['%#ref '##structure] ['%#ref struct-t] args ...]
+                    stx)
+                   (raise-compile-error "Illegal struct constructor application; arity mismatch"
+                                        stx struct-t arity)))))))
           (#f
            (verbose "cannot inline struct constructor; unknown struct type " struct-t)
            (xform-call% stx))
