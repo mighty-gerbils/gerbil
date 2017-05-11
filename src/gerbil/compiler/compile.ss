@@ -477,7 +477,6 @@ namespace: gxc
     (let (form [hd body])
       (ast-case form (%#call %#ref)
         (((arg ...) (%#call (%#ref rator) (%#ref xarg) ...))
-         (fx= (stx-length #'(arg ...)) (stx-length #'(xarg ...)))
          (compile-e #'(%#ref rator)))
         (((arg ... . rest) (%#call (%#ref -apply) (%#ref rator) . _))
          (compile-e #'(%#ref rator)))

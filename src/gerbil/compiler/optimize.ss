@@ -441,7 +441,6 @@ namespace: gxc
 (def (dispatch-lambda-form-delegate form)
   (ast-case form (%#call %#ref)
     (((arg ...) (%#call (%#ref rator) (%#ref xarg) ...))
-     (fx= (stx-length #'(arg ...)) (stx-length #'(xarg ...)))
      (identifier-symbol #'rator))
     (((arg ... . rest) (%#call (%#ref -apply) (%#ref rator) . _))
      (identifier-symbol #'rator))
