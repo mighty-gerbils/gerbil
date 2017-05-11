@@ -19,6 +19,22 @@
       (if gsc-options
         (append gsc-options opt)
         opt)))
+
+  (def (print-usage!)
+    (displayln "gxc [options...] <file> ...")
+    (displayln "Options: ")
+    (displayln " -h,-help     display this usage summary and exit")
+    (displayln " -d <dir>     set compiler output directory; defaults to $GERBIL_HOME/lib")
+    (displayln " -exe         compile an executable")
+    (displayln " -o <file>    set output file")
+    (displayln " -O           optimize gerbil source")
+    (displayln " -s           keep intermediate .scm files")
+    (displayln " -S           don't invoke gsc")
+    (displayln " -v           be verbose during compilation")
+    (displayln " -g           add -debug to gsc options; enables -s")
+    (displayln " -no-ssxi     don't generate .ssxi modules for cross-module optimization")
+    (displayln " -cc-options <string>   add -cc-options to gsc options")
+    (displayln " -ld-options <string>   add -ld-options to gsc options"))
   
   (def (make-opts)
     [invoke-gsc: invoke-gsc 
@@ -34,6 +50,9 @@
     (match rest
       ([arg . rest]
        (case arg
+         (("-h" "-help")
+          (print-usage!)
+          (exit 0))
          (("-d")
           (match rest
             ([dir . rest]
