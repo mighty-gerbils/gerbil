@@ -122,7 +122,7 @@ neat documentation before using a new Scheme system.
 Probably the best way to dive into gerbil is by reading the sources,
 as all the main language features are exercised in one way or another
 within the implementation.
-The core language macros are defined in `src/gerbil/prelude/core.ss`.
+The core language macros are defined in the [core prelude](src/gerbil/prelude/core.ss).
 This is the language that you get in the interpreter and what is available
 when writing a new module without explicitly specifying a prelude.
 
