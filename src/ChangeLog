@@ -1,5 +1,36 @@
+5-11-2017: Gerbil-v0.7
+- compiler: modularize and implement optimizer pass
+  - optimizations:
+    - lift opt lambdas and case-lambdas and optimize direct call dispatch
+    - recognize struct MOP definitions and inline direct struct operations
+    - cross module optimization with concurrent compilation and ssxi module generation
+    - ssxi prelude for writing type declarations for the optimizer
+  - gxc:
+    - add -O and -no-ssxi options for optimization
+    - add -cc-options and -ld-options for gsc compilation flags
+    - add -h option for printing usage
+- runtime:
+  - new MOP functions: class-subtype? next-method call-next-method
+- stdlib
+  - std/text/zlib
+    - support transparent gzip/deflate decompression
+    - support gz compression
+    - support compression and decompression of input ports
+  - std/net/request
+    - accept gzip/deflate encoding with transparent content decompression
+  - std/iter
+    - accept when and unless filters in for and it's variants
+    - optimize iter transforms to use a direct iterator instead of a coroutine
+    - make coroutine and input-port iter-value idempotent between iter-next calls
+  - std/srfi/9
+    - generate record constructor that is recognized by the optimizer
+    - use interned symbols for module scoped records, as in defstruct
+  - std/misc/queue and std/test
+    - fix accessor bugs caught by the optimizer
+    
 5-3-2017: Gerbil-v0.6.1
 - fix issues with disabled compiler optimizations from gce memory [gambit#249]
+
 5-2-2017: Gerbil-v0.6
 - gerbil/runtime:
   - MOP allows mixin structs in make-class-type; classes can now mixin structs 
@@ -17,8 +48,10 @@
   - db/dbi: add explicit methods for transactions with cached statements
   - update ffi code to use ___return instead of ___result[_voidstar]
   - fix regression with thread-interrupt! raising exceptions in recent gambit
+
 4-5-2016: Gerbil-v0.5.1
 - support compilation of dynamically linked executables
+
 3-24-2016: Gerbil-v0.5
 - Revamped build system
   - by default, build.sh builds a stage1 gerbil for faster build times
@@ -32,6 +65,7 @@
   - std/db/sqlite: sqlite3 database interface
 - std/db/dbi: generic database interface
 - bug fixes and small improvements
+
 3-9-2016: Gerbil-v0.4
 - std/web/rack: web application support with rack-style interface
 - std/net/fastcgi: fastcgi support
@@ -39,14 +73,17 @@
 - std/actor: more casual syntax for defproto
 - prelude: struct-out export expander
 - bug fixes and small improvements
+
 2-28-2016: Gerbil-v0.3
 - std/test unit testing and basic tests for stdlib
 - std/iter iteration macros (for,for/collect,for/fold)
 - bug fixes and small  improvements
+
 2-20-2016: Gerbil-v0.2
 - Unification of object type hierarchy
 - More specific errors from stdlib
 - Generics
+
 2-15-2016: Gerbil-v0.1
 - first gerbil release tag; core gerbil with batteries and introductory documentation
 
