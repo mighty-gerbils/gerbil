@@ -6,17 +6,17 @@ package: gerbil/compiler
    gxc#generate-runtime-temporary
    (@case-lambda
     (0 gxc#generate-runtime-temporary__0)
-    (1 gxc#generate-runtime-temporary__opt-lambda6588)))
+    (1 gxc#generate-runtime-temporary__opt-lambda7924)))
   (declare-type
    gxc#generate-runtime-let-values%
    (@case-lambda
     (1 gxc#generate-runtime-let-values%__0)
-    (2 gxc#generate-runtime-let-values%__opt-lambda5651)))
+    (2 gxc#generate-runtime-let-values%__opt-lambda5653)))
   (declare-type
    gxc#generate-runtime-letrec-values%
    (@case-lambda
     (1 gxc#generate-runtime-letrec-values%__0)
-    (2 gxc#generate-runtime-letrec-values%__opt-lambda5230)))
+    (2 gxc#generate-runtime-letrec-values%__opt-lambda5232)))
   (declare-type
    gxc#meta-state::t
    (@struct-type gxc#meta-state::t #f 4 :init! ()))

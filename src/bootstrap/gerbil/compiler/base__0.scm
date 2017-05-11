@@ -13,8 +13,8 @@
     (make-struct-type 'gxc#symbol-table::t '#f '2 'symbol-table '() ':init!))
   (define gxc#symbol-table? (make-struct-predicate gxc#symbol-table::t))
   (define gxc#make-symbol-table
-    (lambda _$args242_
-      (apply make-struct-instance gxc#symbol-table::t _$args242_)))
+    (lambda _$args244_
+      (apply make-struct-instance gxc#symbol-table::t _$args244_)))
   (define gxc#symbol-table-gensyms
     (make-struct-field-accessor gxc#symbol-table::t '0))
   (define gxc#symbol-table-bindings
@@ -24,19 +24,19 @@
   (define gxc#symbol-table-bindings-set!
     (make-struct-field-mutator gxc#symbol-table::t '1))
   (define gxc#symbol-table:::init!
-    (lambda (_self240_)
+    (lambda (_self242_)
       (direct-struct-instance-init!
-       _self240_
+       _self242_
        (make-hash-table-eq)
        (make-hash-table-eq))))
   (bind-method! gxc#symbol-table::t ':init! gxc#symbol-table:::init! '#f)
   (define gxc#raise-compile-error
-    (lambda (_message236_ _stx237_ . _details238_)
+    (lambda (_message238_ _stx239_ . _details240_)
       (apply gx#raise-syntax-error
              'compile
-             _message236_
-             _stx237_
-             _details238_)))
+             _message238_
+             _stx239_
+             _details240_)))
   (define gxc#verbose
-    (lambda _args234_
-      (if (gxc#current-compile-verbose) (apply displayln _args234_) '#!void))))
+    (lambda _args236_
+      (if (gxc#current-compile-verbose) (apply displayln _args236_) '#!void))))

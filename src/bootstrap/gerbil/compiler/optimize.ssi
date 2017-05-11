@@ -120,8 +120,8 @@ namespace: gxc
           gxc#!struct-type-lookup-method)
          (%#define-runtime optimizer-declare-type! gxc#optimizer-declare-type!)
          (%#begin (%#define-runtime
-                   optimizer-declare-method!__opt-lambda14413
-                   gxc#optimizer-declare-method!__opt-lambda14413)
+                   optimizer-declare-method!__opt-lambda15839
+                   gxc#optimizer-declare-method!__opt-lambda15839)
                   (%#begin (%#define-runtime
                             optimizer-declare-method!__0
                             gxc#optimizer-declare-method!__0)
