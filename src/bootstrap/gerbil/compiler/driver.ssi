@@ -16,15 +16,15 @@ namespace: gxc
           (spec: 0 compile-file compile-file)
           (spec: 0 compile-exe-stub compile-exe-stub))
          (%#begin (%#define-runtime
-                   compile-file__opt-lambda16493
-                   gxc#compile-file__opt-lambda16493)
+                   compile-file__opt-lambda16465
+                   gxc#compile-file__opt-lambda16465)
                   (%#begin (%#define-runtime
                             compile-file__0
                             gxc#compile-file__0)
                            (%#define-runtime compile-file gxc#compile-file)))
          (%#begin (%#define-runtime
-                   compile-exe-stub__opt-lambda16472
-                   gxc#compile-exe-stub__opt-lambda16472)
+                   compile-exe-stub__opt-lambda16444
+                   gxc#compile-exe-stub__opt-lambda16444)
                   (%#begin (%#define-runtime
                             compile-exe-stub__0
                             gxc#compile-exe-stub__0)

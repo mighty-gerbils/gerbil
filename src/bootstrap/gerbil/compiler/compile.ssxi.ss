@@ -6,7 +6,7 @@ package: gerbil/compiler
    gxc#generate-runtime-temporary
    (@case-lambda
     (0 gxc#generate-runtime-temporary__0)
-    (1 gxc#generate-runtime-temporary__opt-lambda7924)))
+    (1 gxc#generate-runtime-temporary__opt-lambda7910)))
   (declare-type
    gxc#generate-runtime-let-values%
    (@case-lambda
