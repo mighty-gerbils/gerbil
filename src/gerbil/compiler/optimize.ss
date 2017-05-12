@@ -13,6 +13,8 @@ namespace: gxc
 
 (def current-compile-optimizer-info
   (make-parameter #f))
+(def current-compile-mutators
+  (make-parameter #f))
 
 (defstruct optimizer-info (type ssxi)
   constructor: :init!)
@@ -35,8 +37,9 @@ namespace: gxc
   (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
              (expander-context-id ctx)
              #t)
-  (let (code (optimize-source (module-context-code ctx)))
-    (set! (module-context-code ctx) code)))
+  (parameterize ((current-compile-mutators (make-hash-table-eq)))
+    (let (code (optimize-source (module-context-code ctx)))
+      (set! (module-context-code ctx) code))))
 
 ;;; ssxi loading
 (def (optimizer-load-ssxi-deps ctx)
@@ -188,6 +191,7 @@ namespace: gxc
 
 ;;; source transforms
 (def (optimize-source stx)
+  (apply-collect-mutators stx)
   (let (stx (apply-lift-top-lambdas stx))
     (apply-collect-type-info stx)
     (apply-optimize-call stx)))
@@ -280,6 +284,22 @@ namespace: gxc
   (%#module         xform-module%)
   (%#define-values  xform-define-values%))
 
+(defcompile-method apply-collect-mutators (&collect-mutators &void)
+  (%#begin                   collect-begin%)
+  (%#module                  collect-module%)
+  (%#lambda                       collect-body-lambda%)
+  (%#case-lambda                  collect-body-case-lambda%)
+  (%#let-values              collect-body-let-values%)
+  (%#letrec-values           collect-body-let-values%)
+  (%#letrec*-values          collect-body-let-values%)
+  (%#call                    collect-operands)
+  (%#if                      collect-operands)
+  (%#set!                    collect-mutators-setq%)
+  (%#struct-instance?        collect-operands)
+  (%#struct-direct-instance? collect-operands)
+  (%#struct-ref              collect-operands)
+  (%#struct-set!             collect-operands))
+
 (defcompile-method apply-lift-top-lambdas (&lift-top-lambdas &identity)
   (%#begin          xform-begin%)
   (%#module         xform-module%)
@@ -289,9 +309,7 @@ namespace: gxc
   (%#begin xform-begin%)
   (%#ref   expression-subst-ref%))
 
-(defcompile-method apply-collect-type-info (&collect-type-info
-                                            &void-expression
-                                            &void-special-form)
+(defcompile-method apply-collect-type-info (&collect-type-info &void)
   (%#begin         collect-begin%)
   (%#module        collect-module%)
   (%#define-values collect-type-define-values%)
@@ -416,6 +434,15 @@ namespace: gxc
        (xform-wrap-source
         [#'form op-args ...]
         stx)))))
+
+;;; apply-collect-mutators
+(def (collect-mutators-setq% stx)
+  (ast-case stx ()
+    ((_ id expr)
+     (let (sym (identifier-symbol #'id))
+       (verbose "collect mutator " sym)
+       (hash-put! (current-compile-mutators) sym #t) ; just set for now
+       (compile-e #'expr)))))
 
 ;;; apply-lift-top-lambdas
 (def (dispatch-lambda-form? form)
@@ -577,8 +604,11 @@ namespace: gxc
 (def (collect-type-define-values% stx)
   (ast-case stx ()
     ((_ (id) expr)
-     (alet (type (apply-basic-expression-type #'expr))
-       (optimizer-declare-type! (identifier-symbol #'id) type)))
+     (let (sym (identifier-symbol #'id))
+       (if (hash-get (current-compile-mutators) sym)
+           (verbose "skipping type declaration for mutable binding " sym)
+           (alet (type (apply-basic-expression-type #'expr))
+             (optimizer-declare-type! sym type)))))
     (_ (void))))
 
 (def (collect-type-call% stx)

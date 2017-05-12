@@ -182,21 +182,21 @@ namespace: gxc
 
 (defcompile-method apply-collect-expression-refs &collect-expression-refs
   (%#begin                   collect-begin%)
-  (%#lambda                       collect-refs-lambda%)
-  (%#case-lambda                  collect-refs-case-lambda%)
-  (%#let-values              collect-refs-let-values%)
-  (%#letrec-values           collect-refs-let-values%)
-  (%#letrec*-values          collect-refs-let-values%)
+  (%#lambda                       collect-body-lambda%)
+  (%#case-lambda                  collect-body-case-lambda%)
+  (%#let-values              collect-body-let-values%)
+  (%#letrec-values           collect-body-let-values%)
+  (%#letrec*-values          collect-body-let-values%)
   (%#quote                   void)
   (%#quote-syntax            void)
   (%#call                    collect-begin%)
   (%#if                      collect-begin%)
   (%#ref                     collect-refs-ref%)
   (%#set!                    collect-refs-setq%)
-  (%#struct-instance?        collect-refs-struct-instancep%)
-  (%#struct-direct-instance? collect-refs-struct-instancep%)
-  (%#struct-ref              collect-refs-struct-ref%)
-  (%#struct-set!             collect-refs-struct-setq%))
+  (%#struct-instance?        collect-operands)
+  (%#struct-direct-instance? collect-operands)
+  (%#struct-ref              collect-operands)
+  (%#struct-set!             collect-operands))
 
 (defcompile-method apply-generate-meta (&generate-meta &void-expression)
   (%#begin          generate-meta-begin%)
@@ -253,6 +253,27 @@ namespace: gxc
      (let (ctx (syntax-local-e #'id))
        (parameterize ((current-expander-context ctx))
          (apply compile-e (module-context-code ctx) args))))))
+
+(def (collect-body-lambda% stx . args)
+  (ast-case stx ()
+    ((_ hd body)
+     (apply compile-e #'body args))))
+
+(def (collect-body-case-lambda% stx . args)
+  (ast-case stx ()
+    ((_ (hd body) ...)
+     (for-each (cut apply compile-e <> args) #'(body ...)))))
+
+(def (collect-body-let-values% stx . args)
+  (ast-case stx ()
+    ((_ ((hd expr) ...) body)
+     (for-each (cut apply compile-e <> args) #'(expr ... body)))))
+       
+
+(def (collect-operands stx . args)
+  (ast-case stx ()
+    ((_ rands ...)
+     (for-each (cut apply compile-e <> args) #'(rands ...)))))
 
 ;;; collect-bindings
 (def (collect-bindings-define-values% stx)
@@ -1256,22 +1277,6 @@ namespace: gxc
     (apply-collect-expression-refs stx ht)
     ht))
 
-(def (collect-refs-lambda% stx ht)
-  (ast-case stx ()
-    ((_ hd body)
-     (compile-e #'body ht))))
-
-(def (collect-refs-case-lambda% stx ht)
-  (ast-case stx ()
-    ((_ (hd body) ...)
-     (for-each (cut compile-e <> ht) #'(body ...)))))
-
-(def (collect-refs-let-values% stx ht)
-  (ast-case stx ()
-    ((_ ((hd expr) ...) body)
-     (for-each (cut compile-e <> ht) #'(expr ...))
-     (compile-e #'body ht))))
-
 (def (collect-refs-ref% stx ht)
   (ast-case stx ()
     ((_ id)
@@ -1286,28 +1291,6 @@ namespace: gxc
             (eid (if bind (binding-id bind) (stx-e #'id))))
        (hash-put! ht eid eid)
        (compile-e #'expr ht)))))
-
-(def (collect-refs-struct-instancep% stx ht)
-  (ast-case stx ()
-    ((_ type-id expr)
-     (compile-e #'expr ht))))
-
-(def (collect-refs-struct-ref% stx ht)
-  (ast-case stx ()
-    ((_ type off expr)
-     (begin
-       (compile-e #'type ht)
-       (compile-e #'off ht)
-       (compile-e #'expr ht)))))
-
-(def (collect-refs-struct-setq% stx ht)
-  (ast-case stx ()
-    ((_ type off expr val)
-     (begin
-       (compile-e #'type ht)
-       (compile-e #'off ht)
-       (compile-e #'expr ht)
-       (compile-e #'val ht)))))
 
 ;;; find runtime
 (def (find-runtime-begin% stx)
