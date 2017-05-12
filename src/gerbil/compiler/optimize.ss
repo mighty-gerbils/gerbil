@@ -118,7 +118,7 @@ namespace: gxc
 (defstruct (!struct-cons !procedure) ())
 (defstruct (!struct-getf !procedure) (off))
 (defstruct (!struct-setf !procedure) (off))
-(defstruct (!lambda !procedure) (arity dispatch inline)
+(defstruct (!lambda !procedure) (arity dispatch inline inline-typedecl)
   constructor: :init!)
 (defstruct (!case-lambda !procedure) (clauses))
 
@@ -127,8 +127,8 @@ namespace: gxc
     (direct-struct-instance-init! self id super fields xfields ctor plist #f)))
 
 (defmethod {:init! !lambda}
-  (lambda (self id arity dispatch (inline #f))
-    (direct-struct-instance-init! self id arity dispatch inline)))
+  (lambda (self id arity dispatch (inline #f) (typedecl #f))
+    (direct-struct-instance-init! self id arity dispatch inline typedecl)))
 
 (def (!struct-type-vtab type)
   (cond
@@ -908,6 +908,7 @@ namespace: gxc
       (cond
        ((optimizer-lookup-type sym)
         => (lambda (type)
+             (verbose "generate typedecl " sym)
              (let (typedecl {typedecl type})
                ['declare-type sym typedecl])))
        (else '(begin)))))
@@ -967,9 +968,10 @@ namespace: gxc
 
 (defmethod {typedecl !lambda}
   (lambda (self)
-    (with ((!lambda _ arity dispatch inline) self)
+    (with ((!lambda _ arity dispatch inline typedecl) self)
       (if inline
-        (error "Cannot generate typedecl for inline rules")
+        (or typedecl
+            (error "Cannot generate typedecl for inline rules"))
         ['@lambda arity dispatch]))))
 
 (defmethod {typedecl !case-lambda}

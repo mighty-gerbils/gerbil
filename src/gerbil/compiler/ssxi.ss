@@ -82,7 +82,7 @@ namespace: gxc
 
 (defrules @lambda ()
   ((_ arity inline: inline-rules)
-   (make-!lambda 'lambda 'arity #f inline-rules))
+   (make-!lambda 'lambda 'arity #f inline-rules 'inline-rules))
   ((_ arity dispatch)
    (make-!lambda 'lambda 'arity 'dispatch))
   ((recur arity)
