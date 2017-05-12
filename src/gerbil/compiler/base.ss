@@ -4,7 +4,8 @@
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/expander)
+(import :gerbil/expander
+        <syntax-case>)
 
 (export #t)
 
@@ -12,22 +13,19 @@ namespace: gxc
   (macro-expand-syntax-case stx 'stx-eq? 'stx-e 'quote))
 
 (defsyntax (ast-rules stx)
-  (lambda (stx)
-    (syntax-case stx ()
-      ((_ ids clause ...)
-       (identifier-list? #'ids)
-       (with-syntax (((clause ...)
-                      (stx-map (lambda (clause)
-                                 (syntax-case clause ()
-                                   ((hd body)
-                                    #'(hd (syntax body)))
-                                   ((hd fender body)
-                                    #'(hd fender (syntax body)))))
-                               #'(clause ...))))
-         #'(lambda ($stx)
-             (ast-case $stx ids clause ...)))))))
-                     
-         
+  (syntax-case stx ()
+    ((_ ids clause ...)
+     (identifier-list? #'ids)
+     (with-syntax (((clause ...)
+                    (stx-map (lambda (clause)
+                               (syntax-case clause ()
+                                 ((hd body)
+                                  #'(hd (syntax body)))
+                                 ((hd fender body)
+                                  #'(hd fender (syntax body)))))
+                             #'(clause ...))))
+       #'(lambda ($stx)
+           (ast-case $stx ids clause ...))))))
 
 (def current-compile-symbol-table
   (make-parameter #f))
