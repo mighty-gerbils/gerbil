@@ -4,8 +4,9 @@
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/compiler/optimize)
-(export #t)
+(import :gerbil/compiler/base
+        :gerbil/compiler/optimize)
+(export #t ast-rules)
 
 (defrules declare-type ()
   ((_ symbol type-expr)
@@ -80,6 +81,8 @@ namespace: gxc
    (make-!struct-setf 'type off)))
 
 (defrules @lambda ()
+  ((_ arity inline: inline-rules)
+   (make-!lambda 'lambda 'arity #f inline-rules))
   ((_ arity dispatch)
    (make-!lambda 'lambda 'arity 'dispatch))
   ((recur arity)
