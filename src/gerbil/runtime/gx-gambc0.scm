@@ -16,7 +16,7 @@
 ;;;
 
 (define (gerbil-version-string)
-  "v0.7")
+  "v0.8-DEV")
 
 (define (gerbil-system-version-string)
   (string-append "Gerbil " (gerbil-version-string) " on Gambit " (system-version-string)))
