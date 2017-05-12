@@ -2,8 +2,8 @@ prelude: :gerbil/core
 package: gerbil/compiler
 namespace: gxc
 
-(%#begin (%#import :gerbil/compiler/optimize)
-         (%#export #t)
+(%#begin (%#import :gerbil/compiler/base :gerbil/compiler/optimize)
+         (%#export #t (spec: 0 ast-rules ast-rules))
          (%#begin (%#begin-syntax
                    (%#call (%#ref _gx#load-module)
                            (%#quote "gerbil/compiler/ssxi__1")))

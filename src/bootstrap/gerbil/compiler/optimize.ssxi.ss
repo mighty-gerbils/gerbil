@@ -86,13 +86,19 @@ package: gerbil/compiler
   (declare-type gxc#!struct-setf-off-set! (@struct-setf gxc#!struct-setf::t 0))
   (declare-type
    gxc#!lambda::t
-   (@struct-type gxc#!lambda::t gxc#!procedure::t 2 #f ()))
+   (@struct-type gxc#!lambda::t gxc#!procedure::t 4 :init! ()))
   (declare-type gxc#!lambda? (@struct-pred gxc#!lambda::t))
   (declare-type gxc#make-!lambda (@struct-cons gxc#!lambda::t))
   (declare-type gxc#!lambda-arity (@struct-getf gxc#!lambda::t 0))
   (declare-type gxc#!lambda-dispatch (@struct-getf gxc#!lambda::t 1))
+  (declare-type gxc#!lambda-inline (@struct-getf gxc#!lambda::t 2))
+  (declare-type gxc#!lambda-inline-typedecl (@struct-getf gxc#!lambda::t 3))
   (declare-type gxc#!lambda-arity-set! (@struct-setf gxc#!lambda::t 0))
   (declare-type gxc#!lambda-dispatch-set! (@struct-setf gxc#!lambda::t 1))
+  (declare-type gxc#!lambda-inline-set! (@struct-setf gxc#!lambda::t 2))
+  (declare-type
+   gxc#!lambda-inline-typedecl-set!
+   (@struct-setf gxc#!lambda::t 3))
   (declare-type
    gxc#!case-lambda::t
    (@struct-type gxc#!case-lambda::t gxc#!procedure::t 1 #f ()))
@@ -103,11 +109,22 @@ package: gerbil/compiler
    gxc#!case-lambda-clauses-set!
    (@struct-setf gxc#!case-lambda::t 0))
   (declare-method gxc#!struct-type::t :init! gxc#!struct-type:::init! #f)
+  (begin
+    (declare-type
+     gxc#!lambda:::init!__opt-lambda17026
+     (@lambda 6 direct-struct-instance-init!))
+    (declare-type
+     gxc#!lambda:::init!
+     (@case-lambda
+      (4 gxc#!lambda:::init!__0)
+      (5 gxc#!lambda:::init!__1)
+      (6 gxc#!lambda:::init!__opt-lambda17026))))
+  (declare-method gxc#!lambda::t :init! gxc#!lambda:::init! #f)
   (declare-type
    gxc#optimizer-declare-method!
    (@case-lambda
     (3 gxc#optimizer-declare-method!__0)
-    (4 gxc#optimizer-declare-method!__opt-lambda15811)))
+    (4 gxc#optimizer-declare-method!__opt-lambda16983)))
   (declare-method gxc#!alias::t optimize-call gxc#!alias::optimize-call #f)
   (declare-method
    gxc#!struct-pred::t

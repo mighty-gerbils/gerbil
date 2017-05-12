@@ -1,189 +1,189 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (begin
-    (define gxc#compile-file__opt-lambda16465
-      (lambda (_srcpath16467_ _opts16468_)
+    (define gxc#compile-file__opt-lambda17680
+      (lambda (_srcpath17682_ _opts17683_)
         (begin
-          (if (string? _srcpath16467_)
+          (if (string? _srcpath17682_)
               '#!void
               (gxc#raise-compile-error
                '"Invalid module source path"
-               _srcpath16467_))
-          (let ((_outdir16470_ (pgetq 'output-dir: _opts16468_))
-                (_invoke-gsc?16471_ (pgetq 'invoke-gsc: _opts16468_))
-                (_gsc-options16472_ (pgetq 'gsc-options: _opts16468_))
-                (_keep-scm?16473_ (pgetq 'keep-scm: _opts16468_))
-                (_verbosity16474_ (pgetq 'verbose: _opts16468_))
-                (_optimize16475_ (pgetq 'optimize: _opts16468_))
-                (_gen-ssxi16476_ (pgetq 'generate-ssxi: _opts16468_)))
+               _srcpath17682_))
+          (let ((_outdir17685_ (pgetq 'output-dir: _opts17683_))
+                (_invoke-gsc?17686_ (pgetq 'invoke-gsc: _opts17683_))
+                (_gsc-options17687_ (pgetq 'gsc-options: _opts17683_))
+                (_keep-scm?17688_ (pgetq 'keep-scm: _opts17683_))
+                (_verbosity17689_ (pgetq 'verbose: _opts17683_))
+                (_optimize17690_ (pgetq 'optimize: _opts17683_))
+                (_gen-ssxi17691_ (pgetq 'generate-ssxi: _opts17683_)))
             (begin
-              (if _outdir16470_ (create-directory* _outdir16470_) '#!void)
-              (if _optimize16475_ (gxc#optimizer-info-init!) '#!void)
+              (if _outdir17685_ (create-directory* _outdir17685_) '#!void)
+              (if _optimize17690_ (gxc#optimizer-info-init!) '#!void)
               (call-with-parameters
                (lambda ()
                  (begin
-                   (gxc#verbose '"compile exe " _srcpath16467_)
+                   (gxc#verbose '"compile exe " _srcpath17682_)
                    (gxc#compile-top-module
-                    (gx#import-module__0 _srcpath16467_))))
+                    (gx#import-module__0 _srcpath17682_))))
                gxc#current-compile-output-dir
-               _outdir16470_
+               _outdir17685_
                gxc#current-compile-invoke-gsc
-               _invoke-gsc?16471_
+               _invoke-gsc?17686_
                gxc#current-compile-gsc-options
-               _gsc-options16472_
+               _gsc-options17687_
                gxc#current-compile-keep-scm
-               _keep-scm?16473_
+               _keep-scm?17688_
                gxc#current-compile-verbose
-               _verbosity16474_
+               _verbosity17689_
                gxc#current-compile-optimize
-               _optimize16475_
+               _optimize17690_
                gxc#current-compile-generate-ssxi
-               _gen-ssxi16476_))))))
+               _gen-ssxi17691_))))))
     (begin
       (define gxc#compile-file__0
-        (lambda (_srcpath16482_)
-          (let ((_opts16484_ '()))
-            (gxc#compile-file__opt-lambda16465 _srcpath16482_ _opts16484_))))
+        (lambda (_srcpath17697_)
+          (let ((_opts17699_ '()))
+            (gxc#compile-file__opt-lambda17680 _srcpath17697_ _opts17699_))))
       (define gxc#compile-file
-        (lambda _g16491_
-          (let ((_g16490_ (length _g16491_)))
-            (cond ((fx= _g16490_ 1) (apply gxc#compile-file__0 _g16491_))
-                  ((fx= _g16490_ 2)
-                   (apply gxc#compile-file__opt-lambda16465 _g16491_))
-                  (else (error "No clause matching arguments" _g16491_))))))))
+        (lambda _g17706_
+          (let ((_g17705_ (length _g17706_)))
+            (cond ((fx= _g17705_ 1) (apply gxc#compile-file__0 _g17706_))
+                  ((fx= _g17705_ 2)
+                   (apply gxc#compile-file__opt-lambda17680 _g17706_))
+                  (else (error "No clause matching arguments" _g17706_))))))))
   (begin
-    (define gxc#compile-exe-stub__opt-lambda16444
-      (lambda (_srcpath16446_ _opts16447_)
+    (define gxc#compile-exe-stub__opt-lambda17659
+      (lambda (_srcpath17661_ _opts17662_)
         (begin
-          (if (string? _srcpath16446_)
+          (if (string? _srcpath17661_)
               '#!void
               (gxc#raise-compile-error
                '"Invalid module source path"
-               _srcpath16446_))
-          (let ((_outdir16449_ (pgetq 'output-dir: _opts16447_))
-                (_invoke-gsc?16450_ (pgetq 'invoke-gsc: _opts16447_))
-                (_gsc-options16451_ (pgetq 'gsc-options: _opts16447_))
-                (_keep-scm?16452_ (pgetq 'keep-scm: _opts16447_))
-                (_verbosity16453_ (pgetq 'verbose: _opts16447_)))
+               _srcpath17661_))
+          (let ((_outdir17664_ (pgetq 'output-dir: _opts17662_))
+                (_invoke-gsc?17665_ (pgetq 'invoke-gsc: _opts17662_))
+                (_gsc-options17666_ (pgetq 'gsc-options: _opts17662_))
+                (_keep-scm?17667_ (pgetq 'keep-scm: _opts17662_))
+                (_verbosity17668_ (pgetq 'verbose: _opts17662_)))
             (begin
-              (if _outdir16449_ (create-directory* _outdir16449_) '#!void)
+              (if _outdir17664_ (create-directory* _outdir17664_) '#!void)
               (call-with-parameters
                (lambda ()
                  (begin
-                   (gxc#verbose '"compile " _srcpath16446_)
+                   (gxc#verbose '"compile " _srcpath17661_)
                    (gxc#compile-exe-stub-module
-                    (gx#import-module__0 _srcpath16446_)
-                    _opts16447_)))
+                    (gx#import-module__0 _srcpath17661_)
+                    _opts17662_)))
                gxc#current-compile-output-dir
-               _outdir16449_
+               _outdir17664_
                gxc#current-compile-invoke-gsc
-               _invoke-gsc?16450_
+               _invoke-gsc?17665_
                gxc#current-compile-gsc-options
-               _gsc-options16451_
+               _gsc-options17666_
                gxc#current-compile-keep-scm
-               _keep-scm?16452_
+               _keep-scm?17667_
                gxc#current-compile-verbose
-               _verbosity16453_))))))
+               _verbosity17668_))))))
     (begin
       (define gxc#compile-exe-stub__0
-        (lambda (_srcpath16459_)
-          (let ((_opts16461_ '()))
-            (gxc#compile-exe-stub__opt-lambda16444
-             _srcpath16459_
-             _opts16461_))))
+        (lambda (_srcpath17674_)
+          (let ((_opts17676_ '()))
+            (gxc#compile-exe-stub__opt-lambda17659
+             _srcpath17674_
+             _opts17676_))))
       (define gxc#compile-exe-stub
-        (lambda _g16493_
-          (let ((_g16492_ (length _g16493_)))
-            (cond ((fx= _g16492_ 1) (apply gxc#compile-exe-stub__0 _g16493_))
-                  ((fx= _g16492_ 2)
-                   (apply gxc#compile-exe-stub__opt-lambda16444 _g16493_))
-                  (else (error "No clause matching arguments" _g16493_))))))))
+        (lambda _g17708_
+          (let ((_g17707_ (length _g17708_)))
+            (cond ((fx= _g17707_ 1) (apply gxc#compile-exe-stub__0 _g17708_))
+                  ((fx= _g17707_ 2)
+                   (apply gxc#compile-exe-stub__opt-lambda17659 _g17708_))
+                  (else (error "No clause matching arguments" _g17708_))))))))
   (define gxc#compile-exe-stub-module
-    (lambda (_ctx16338_ _opts16339_)
-      (let ((_find-export-binding16341_
-             (lambda (_id16395_ _exports16396_)
-               (let ((_$e16442_
-                      (find (lambda (_e1639716399_)
-                              (let ((_g1640116411_ _e1639716399_))
-                                (let ((_E1640416415_
+    (lambda (_ctx17553_ _opts17554_)
+      (let ((_find-export-binding17556_
+             (lambda (_id17610_ _exports17611_)
+               (let ((_$e17657_
+                      (find (lambda (_e1761217614_)
+                              (let ((_g1761617626_ _e1761217614_))
+                                (let ((_E1761917630_
                                        (lambda ()
                                          (error '"No clause matching"
-                                                _g1640116411_))))
-                                  (let ((_else1640316419_ (lambda () '#f)))
-                                    (let ((_K1640516423_ (lambda () '#t)))
+                                                _g1761617626_))))
+                                  (let ((_else1761817634_ (lambda () '#f)))
+                                    (let ((_K1762017638_ (lambda () '#t)))
                                       (if (direct-struct-instance?
                                            gx#module-export::t
-                                           _g1640116411_)
-                                          (let ((_e1640616426_
+                                           _g1761617626_)
+                                          (let ((_e1762117641_
                                                  (##vector-ref
-                                                  _g1640116411_
+                                                  _g1761617626_
                                                   '1)))
-                                            (let ((_e1640716429_
+                                            (let ((_e1762217644_
                                                    (##vector-ref
-                                                    _g1640116411_
+                                                    _g1761617626_
                                                     '2)))
-                                              (let ((_e1640816432_
+                                              (let ((_e1762317647_
                                                      (##vector-ref
-                                                      _g1640116411_
+                                                      _g1761617626_
                                                       '3)))
-                                                (if (##eq? _e1640816432_ '0)
-                                                    (let ((_e1640916435_
+                                                (if (##eq? _e1762317647_ '0)
+                                                    (let ((_e1762417650_
                                                            (##vector-ref
-                                                            _g1640116411_
+                                                            _g1761617626_
                                                             '4)))
-                                                      (if ((lambda (_g1643716439_)
-                                                             (eq? _g1643716439_
+                                                      (if ((lambda (_g1765217654_)
+                                                             (eq? _g1765217654_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _id16395_))
-                   _e1640916435_)
-                  (_K1640516423_)
-                  (_else1640316419_)))
+                          _id17610_))
+                   _e1762417650_)
+                  (_K1762017638_)
+                  (_else1761817634_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_else1640316419_)))))
-                                          (_else1640316419_)))))))
-                            _exports16396_)))
-                 (if _$e16442_
-                     (gx#core-resolve-module-export _$e16442_)
+                                                    (_else1761817634_)))))
+                                          (_else1761817634_)))))))
+                            _exports17611_)))
+                 (if _$e17657_
+                     (gx#core-resolve-module-export _$e17657_)
                      '#f)))))
-        (let ((_generate-stub16342_
+        (let ((_generate-stub17557_
                (lambda ()
-                 (let ((_mod-str16383_
+                 (let ((_mod-str17598_
                         (symbol->string
                          (##structure-ref
-                          _ctx16338_
+                          _ctx17553_
                           '1
                           gx#expander-context::t
                           '#f))))
-                   (let ((_mod-rt16385_
-                          (string-append _mod-str16383_ '"__rt")))
-                     (let ((_mod-main16392_
-                            (let ((_$e16387_
-                                   (_find-export-binding16341_
+                   (let ((_mod-rt17600_
+                          (string-append _mod-str17598_ '"__rt")))
+                     (let ((_mod-main17607_
+                            (let ((_$e17602_
+                                   (_find-export-binding17556_
                                     'main
                                     (##structure-ref
-                                     _ctx16338_
+                                     _ctx17553_
                                      '9
                                      gx#module-context::t
                                      '#f))))
-                              (if _$e16387_
-                                  ((lambda (_bind16390_)
+                              (if _$e17602_
+                                  ((lambda (_bind17605_)
                                      (begin
                                        (if (##structure-instance-of?
-                                            _bind16390_
+                                            _bind17605_
                                             'gx#runtime-binding::t)
                                            '#!void
                                            (gxc#raise-compile-error
                                             '"main is not a runtime binding"))
                                        (##structure-ref
-                                        _bind16390_
+                                        _bind17605_
                                         '1
                                         gx#binding::t
                                         '#f)))
-                                   _$e16387_)
+                                   _$e17602_)
                                   (gxc#raise-compile-error
                                    '"module does not export main"
                                    (##structure-ref
-                                    _ctx16338_
+                                    _ctx17553_
                                     '1
                                     gx#expander-context::t
                                     '#f))))))
@@ -192,263 +192,264 @@
                            (write '(##namespace ("")))
                            (newline)
                            (write (cons '_gx#start!
-                                        (cons _mod-rt16385_
+                                        (cons _mod-rt17600_
                                               (cons (cons 'quote
-                                                          (cons _mod-main16392_
+                                                          (cons _mod-main17607_
                                                                 '()))
                                                     '()))))
                            (newline)))))))))
-          (let ((_compile-stub16343_
-                 (lambda (_output-scm16370_ _output-bin16371_)
-                   (let ((_init-stub16373_
+          (let ((_compile-stub17558_
+                 (lambda (_output-scm17585_ _output-bin17586_)
+                   (let ((_init-stub17588_
                           (path-expand
                            '"lib/gx-init-exe.scm"
                            (getenv '"GERBIL_HOME"))))
-                     (let ((_gsc-args16375_
+                     (let ((_gsc-args17590_
                             (cons '"-exe"
                                   (cons '"-o"
-                                        (cons _output-bin16371_
-                                              (cons _init-stub16373_
-                                                    (cons _output-scm16370_
+                                        (cons _output-bin17586_
+                                              (cons _init-stub17588_
+                                                    (cons _output-scm17585_
                                                           '())))))))
-                       (let ((_proc16377_
+                       (let ((_proc17592_
                               (open-process
                                (cons 'path:
                                      (cons '"gsc"
                                            (cons 'arguments:
-                                                 (cons _gsc-args16375_
+                                                 (cons _gsc-args17590_
                                                        (cons 'stdout-redirection:
                                                              (cons '#f
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '())))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                         (let ((_status16379_ (process-status _proc16377_)))
+                         (let ((_status17594_ (process-status _proc17592_)))
                            (let ()
-                             (if (zero? _status16379_)
+                             (if (zero? _status17594_)
                                  '#!void
                                  (gxc#raise-compile-error
                                   '"Compilation error; gsc exit with nonzero status"
-                                  _output-scm16370_
-                                  _output-bin16371_
-                                  _status16379_))))))))))
-            (let ((_output-bin16365_
-                   (let ((_$e16345_ (pgetq 'output-file: _opts16339_)))
-                     (if _$e16345_
-                         (values _$e16345_)
-                         (let ((_mod-str16348_
+                                  _output-scm17585_
+                                  _output-bin17586_
+                                  _status17594_))))))))))
+            (let ((_output-bin17580_
+                   (let ((_$e17560_ (pgetq 'output-file: _opts17554_)))
+                     (if _$e17560_
+                         (values _$e17560_)
+                         (let ((_mod-str17563_
                                 (symbol->string
                                  (##structure-ref
-                                  _ctx16338_
+                                  _ctx17553_
                                   '1
                                   gx#expander-context::t
                                   '#f))))
-                           (let ((_mod-name16355_
-                                  (let ((_$e16350_
-                                         (string-rindex _mod-str16348_ '#\/)))
-                                    (if _$e16350_
-                                        ((lambda (_ix16353_)
+                           (let ((_mod-name17570_
+                                  (let ((_$e17565_
+                                         (string-rindex _mod-str17563_ '#\/)))
+                                    (if _$e17565_
+                                        ((lambda (_ix17568_)
                                            (substring
-                                            _mod-str16348_
-                                            (fx1+ _ix16353_)
-                                            (string-length _mod-str16348_)))
-                                         _$e16350_)
-                                        _mod-str16348_))))
+                                            _mod-str17563_
+                                            (fx+ _ix17568_ '1)
+                                            (string-length _mod-str17563_)))
+                                         _$e17565_)
+                                        _mod-str17563_))))
                              (let ()
-                               (let ((_$e16358_
+                               (let ((_$e17573_
                                       (gxc#current-compile-output-dir)))
-                                 (if _$e16358_
-                                     ((lambda (_g1636016362_)
+                                 (if _$e17573_
+                                     ((lambda (_g1757517577_)
                                         (path-expand
-                                         _mod-name16355_
-                                         _g1636016362_))
-                                      _$e16358_)
-                                     _mod-name16355_)))))))))
-              (let ((_output-scm16367_
-                     (string-append _output-bin16365_ '".scm")))
+                                         _mod-name17570_
+                                         _g1757517577_))
+                                      _$e17573_)
+                                     _mod-name17570_)))))))))
+              (let ((_output-scm17582_
+                     (string-append _output-bin17580_ '".scm")))
                 (let ()
                   (begin
                     (with-output-to-file
-                     _output-scm16367_
-                     _generate-stub16342_)
+                     _output-scm17582_
+                     _generate-stub17557_)
                     (if (gxc#current-compile-invoke-gsc)
-                        (_compile-stub16343_
-                         _output-scm16367_
-                         _output-bin16365_)
+                        (_compile-stub17558_
+                         _output-scm17582_
+                         _output-bin17580_)
                         '#!void)
                     (if (gxc#current-compile-keep-scm)
                         '#!void
-                        (delete-file _output-scm16367_)))))))))))
+                        (delete-file _output-scm17582_)))))))))))
   (define gxc#compile-top-module
-    (lambda (_ctx16335_)
+    (lambda (_ctx17550_)
       (call-with-parameters
        (lambda ()
          (begin
            (gxc#verbose
             '"compile "
-            (##structure-ref _ctx16335_ '1 gx#expander-context::t '#f))
+            (##structure-ref _ctx17550_ '1 gx#expander-context::t '#f))
            (if (gxc#current-compile-optimize)
-               (gxc#optimize! _ctx16335_)
+               (gxc#optimize! _ctx17550_)
                '#!void)
-           (gxc#collect-bindings _ctx16335_)
-           (gxc#compile-runtime-code _ctx16335_)
-           (gxc#compile-meta-code _ctx16335_)
+           (gxc#collect-bindings _ctx17550_)
+           (gxc#compile-runtime-code _ctx17550_)
+           (gxc#compile-meta-code _ctx17550_)
            (if (if (gxc#current-compile-optimize)
                    (gxc#current-compile-generate-ssxi)
                    '#f)
-               (gxc#compile-ssxi-code _ctx16335_)
+               (gxc#compile-ssxi-code _ctx17550_)
                '#!void)))
        gx#current-expander-context
-       _ctx16335_
+       _ctx17550_
        gx#current-expander-phi
        '0
        gx#current-expander-marks
        '()
        gxc#current-compile-symbol-table
-       (let ((__obj16488 (make-object gxc#symbol-table::t '2)))
-         (begin (gxc#symbol-table:::init! __obj16488) __obj16488))
+       (let ((__obj17703 (make-object gxc#symbol-table::t '2)))
+         (begin (gxc#symbol-table:::init! __obj17703) __obj17703))
        gxc#current-compile-runtime-sections
        (make-hash-table-eq))))
   (define gxc#collect-bindings
-    (lambda (_ctx16333_)
+    (lambda (_ctx17548_)
       (gxc#apply-collect-bindings
-       (##structure-ref _ctx16333_ '11 gx#module-context::t '#f))))
+       (##structure-ref _ctx17548_ '11 gx#module-context::t '#f))))
   (define gxc#compile-runtime-code
-    (lambda (_ctx16300_)
-      (let ((_generate-runtime-code16303_
-             (lambda (_ctx16318_ _code16319_)
-               (let ((_runtime-code16322_
+    (lambda (_ctx17515_)
+      (let ((_generate-runtime-code17518_
+             (lambda (_ctx17533_ _code17534_)
+               (let ((_runtime-code17537_
                       (call-with-parameters
-                       (lambda () (gxc#apply-generate-runtime _code16319_))
+                       (lambda () (gxc#apply-generate-runtime _code17534_))
                        gx#current-expander-context
-                       _ctx16318_)))
+                       _ctx17533_)))
                  (gxc#compile-scm-file
-                  (gxc#compile-output-file _ctx16318_ '0 '".scm")
-                  _runtime-code16322_)))))
-        (let ((_generate-loader-code16304_
-               (lambda (_ctx16308_ _code16309_ _rt16310_)
-                 (let ((_loader-code16313_
+                  (gxc#compile-output-file _ctx17533_ '0 '".scm")
+                  _runtime-code17537_)))))
+        (let ((_generate-loader-code17519_
+               (lambda (_ctx17523_ _code17524_ _rt17525_)
+                 (let ((_loader-code17528_
                         (call-with-parameters
-                         (lambda () (gxc#apply-generate-loader _code16309_))
+                         (lambda () (gxc#apply-generate-loader _code17524_))
                          gx#current-expander-context
-                         _ctx16308_)))
-                   (let ((_loader-code16315_
-                          (if _rt16310_
+                         _ctx17523_)))
+                   (let ((_loader-code17530_
+                          (if _rt17525_
                               (cons 'begin
-                                    (cons _loader-code16313_
+                                    (cons _loader-code17528_
                                           (cons (cons 'load-module
-                                                      (cons _rt16310_ '()))
+                                                      (cons _rt17525_ '()))
                                                 '())))
-                              _loader-code16313_)))
+                              _loader-code17528_)))
                      (let ()
                        (gxc#compile-scm-file
-                        (gxc#compile-output-file _ctx16308_ 'rt '".scm")
-                        _loader-code16315_)))))))
-          (let ((_compile116302_
-                 (lambda (_ctx16324_)
-                   (let ((_code16326_
+                        (gxc#compile-output-file _ctx17523_ 'rt '".scm")
+                        _loader-code17530_)))))))
+          (let ((_compile117517_
+                 (lambda (_ctx17539_)
+                   (let ((_code17541_
                           (##structure-ref
-                           _ctx16324_
+                           _ctx17539_
                            '11
                            gx#module-context::t
                            '#f)))
-                     (let ((_rt16330_
-                            (if (gxc#apply-find-runtime-code _code16326_)
-                                (let ((_idstr16328_
+                     (let ((_rt17545_
+                            (if (gxc#apply-find-runtime-code _code17541_)
+                                (let ((_idstr17543_
                                        (symbol->string
                                         (##structure-ref
-                                         _ctx16324_
+                                         _ctx17539_
                                          '1
                                          gx#expander-context::t
                                          '#f))))
-                                  (string-append _idstr16328_ '"__0"))
+                                  (string-append _idstr17543_ '"__0"))
                                 '#f)))
                        (let ()
                          (begin
-                           (if _rt16330_
+                           (if _rt17545_
                                (begin
                                  (hash-put!
                                   (gxc#current-compile-runtime-sections)
-                                  _ctx16324_
-                                  _rt16330_)
-                                 (_generate-runtime-code16303_
-                                  _ctx16324_
-                                  _code16326_))
+                                  _ctx17539_
+                                  _rt17545_)
+                                 (_generate-runtime-code17518_
+                                  _ctx17539_
+                                  _code17541_))
                                '#!void)
-                           (_generate-loader-code16304_
-                            _ctx16324_
-                            _code16326_
-                            _rt16330_))))))))
-            (let ((_all-modules16306_
-                   (cons _ctx16300_ (gxc#lift-nested-modules _ctx16300_))))
-              (for-each _compile116302_ _all-modules16306_)))))))
+                           (_generate-loader-code17519_
+                            _ctx17539_
+                            _code17541_
+                            _rt17545_))))))))
+            (let ((_all-modules17521_
+                   (cons _ctx17515_ (gxc#lift-nested-modules _ctx17515_))))
+              (for-each _compile117517_ _all-modules17521_)))))))
   (define gxc#compile-meta-code
-    (lambda (_ctx16202_)
-      (let ((_compile-ssi16204_
-             (lambda (_code16270_)
-               (let ((_path16272_
-                      (gxc#compile-output-file _ctx16202_ '#f '".ssi")))
-                 (let ((_prelude16283_
-                        (let ((_super16274_
+    (lambda (_ctx17417_)
+      (let ((_compile-ssi17419_
+             (lambda (_code17485_)
+               (let ((_path17487_
+                      (gxc#compile-output-file _ctx17417_ '#f '".ssi")))
+                 (let ((_prelude17498_
+                        (let ((_super17489_
                                (##structure-ref
-                                _ctx16202_
+                                _ctx17417_
                                 '3
                                 gx#phi-context::t
                                 '#f)))
-                          (let ((_$e16276_
+                          (let ((_$e17491_
                                  (##structure-ref
-                                  _super16274_
+                                  _super17489_
                                   '1
                                   gx#expander-context::t
                                   '#f)))
-                            (if _$e16276_
-                                ((lambda (_g1627816280_)
-                                   (make-symbol '":" _g1627816280_))
-                                 _$e16276_)
+                            (if _$e17491_
+                                ((lambda (_g1749317495_)
+                                   (make-symbol '":" _g1749317495_))
+                                 _$e17491_)
                                 ':<root>)))))
-                   (let ((_ns16285_
+                   (let ((_ns17500_
                           (##structure-ref
-                           _ctx16202_
+                           _ctx17417_
                            '6
                            gx#module-context::t
                            '#f)))
-                     (let ((_idstr16287_
+                     (let ((_idstr17502_
                             (symbol->string
                              (##structure-ref
-                              _ctx16202_
+                              _ctx17417_
                               '1
                               gx#expander-context::t
                               '#f))))
-                       (let ((_pkg16294_
-                              (let ((_$e16289_
-                                     (string-rindex _idstr16287_ '#\/)))
-                                (if _$e16289_
-                                    ((lambda (_x16292_)
+                       (let ((_pkg17509_
+                              (let ((_$e17504_
+                                     (string-rindex _idstr17502_ '#\/)))
+                                (if _$e17504_
+                                    ((lambda (_x17507_)
                                        (string->symbol
-                                        (substring _idstr16287_ '0 _x16292_)))
-                                     _$e16289_)
+                                        (substring _idstr17502_ '0 _x17507_)))
+                                     _$e17504_)
                                     '#f))))
-                         (let ((_rt16296_
-                                (hash-get
+                         (let ((_rt17511_
+                                (table-ref
                                  (gxc#current-compile-runtime-sections)
-                                 _ctx16202_)))
+                                 _ctx17417_
+                                 '#f)))
                            (let ()
                              (begin
-                               (gxc#verbose '"compile " _path16272_)
+                               (gxc#verbose '"compile " _path17487_)
                                (with-output-to-file
                                 (cons 'path:
-                                      (cons _path16272_
+                                      (cons _path17487_
                                             (cons 'permissions:
                                                   (cons '420 '()))))
                                 (lambda ()
                                   (begin
-                                    (displayln '"prelude:" '" " _prelude16283_)
-                                    (if _pkg16294_
-                                        (displayln '"package:" '" " _pkg16294_)
+                                    (displayln '"prelude:" '" " _prelude17498_)
+                                    (if _pkg17509_
+                                        (displayln '"package:" '" " _pkg17509_)
                                         '#!void)
-                                    (displayln '"namespace:" '" " _ns16285_)
+                                    (displayln '"namespace:" '" " _ns17500_)
                                     (newline)
-                                    (pretty-print _code16270_)
-                                    (if _rt16296_
+                                    (pretty-print _code17485_)
+                                    (if _rt17511_
                                         (pretty-print
                                          (cons '%#call
                                                (cons (cons '%#ref
@@ -458,252 +459,252 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (cons (cons '%#quote
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (cons _rt16296_ '()))
+                         (cons _rt17511_ '()))
                    '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                         '#!void)))))))))))))))
-        (let ((_compile-phi16205_
-               (lambda (_part16210_)
-                 (let ((_part1621116224_ _part16210_))
-                   (let ((_E1621316228_
+        (let ((_compile-phi17420_
+               (lambda (_part17425_)
+                 (let ((_part1742617439_ _part17425_))
+                   (let ((_E1742817443_
                           (lambda ()
-                            (error '"No clause matching" _part1621116224_))))
-                     (let ((_K1621416239_
-                            (lambda (_code16231_
-                                     _n16232_
-                                     _phi16233_
-                                     _phi-ctx16234_)
-                              (let ((_code16237_
+                            (error '"No clause matching" _part1742617439_))))
+                     (let ((_K1742917454_
+                            (lambda (_code17446_
+                                     _n17447_
+                                     _phi17448_
+                                     _phi-ctx17449_)
+                              (let ((_code17452_
                                      (call-with-parameters
                                       (lambda ()
-                                        (gxc#generate-runtime-phi _code16231_))
+                                        (gxc#generate-runtime-phi _code17446_))
                                       gx#current-expander-context
-                                      _phi-ctx16234_
+                                      _phi-ctx17449_
                                       gx#current-expander-phi
-                                      _phi16233_)))
+                                      _phi17448_)))
                                 (gxc#compile-scm-file
                                  (gxc#compile-output-file
-                                  _ctx16202_
-                                  _n16232_
+                                  _ctx17417_
+                                  _n17447_
                                   '".scm")
-                                 _code16237_)))))
-                       (if (##pair? _part1621116224_)
-                           (let ((_hd1621516242_ (##car _part1621116224_))
-                                 (_tl1621616244_ (##cdr _part1621116224_)))
-                             (let ((_phi-ctx16247_ _hd1621516242_))
-                               (if (##pair? _tl1621616244_)
-                                   (let ((_hd1621716249_
-                                          (##car _tl1621616244_))
-                                         (_tl1621816251_
-                                          (##cdr _tl1621616244_)))
-                                     (let ((_phi16254_ _hd1621716249_))
-                                       (if (##pair? _tl1621816251_)
-                                           (let ((_hd1621916256_
-                                                  (##car _tl1621816251_))
-                                                 (_tl1622016258_
-                                                  (##cdr _tl1621816251_)))
-                                             (let ((_n16261_ _hd1621916256_))
-                                               (if (##pair? _tl1622016258_)
-                                                   (let ((_hd1622116263_
-                                                          (##car _tl1622016258_))
-                                                         (_tl1622216265_
-                                                          (##cdr _tl1622016258_)))
-                                                     (let ((_code16268_
-                                                            _hd1622116263_))
-                                                       (if (##null? _tl1622216265_)
-                                                           (_K1621416239_
-                                                            _code16268_
-                                                            _n16261_
-                                                            _phi16254_
-                                                            _phi-ctx16247_)
-                                                           (_E1621316228_))))
-                                                   (_E1621316228_))))
-                                           (_E1621316228_))))
-                                   (_E1621316228_))))
-                           (_E1621316228_))))))))
-          (let ((_g16494_ (gxc#generate-meta-code _ctx16202_)))
+                                 _code17452_)))))
+                       (if (##pair? _part1742617439_)
+                           (let ((_hd1743017457_ (##car _part1742617439_))
+                                 (_tl1743117459_ (##cdr _part1742617439_)))
+                             (let ((_phi-ctx17462_ _hd1743017457_))
+                               (if (##pair? _tl1743117459_)
+                                   (let ((_hd1743217464_
+                                          (##car _tl1743117459_))
+                                         (_tl1743317466_
+                                          (##cdr _tl1743117459_)))
+                                     (let ((_phi17469_ _hd1743217464_))
+                                       (if (##pair? _tl1743317466_)
+                                           (let ((_hd1743417471_
+                                                  (##car _tl1743317466_))
+                                                 (_tl1743517473_
+                                                  (##cdr _tl1743317466_)))
+                                             (let ((_n17476_ _hd1743417471_))
+                                               (if (##pair? _tl1743517473_)
+                                                   (let ((_hd1743617478_
+                                                          (##car _tl1743517473_))
+                                                         (_tl1743717480_
+                                                          (##cdr _tl1743517473_)))
+                                                     (let ((_code17483_
+                                                            _hd1743617478_))
+                                                       (if (##null? _tl1743717480_)
+                                                           (_K1742917454_
+                                                            _code17483_
+                                                            _n17476_
+                                                            _phi17469_
+                                                            _phi-ctx17462_)
+                                                           (_E1742817443_))))
+                                                   (_E1742817443_))))
+                                           (_E1742817443_))))
+                                   (_E1742817443_))))
+                           (_E1742817443_))))))))
+          (let ((_g17709_ (gxc#generate-meta-code _ctx17417_)))
             (begin
-              (let ((_g16495_ (values-count _g16494_)))
-                (if (not (fx= _g16495_ 2))
-                    (error "Context expects 2 values" _g16495_)))
-              (let ((_ssi-code16207_ (values-ref _g16494_ 0))
-                    (_phi-code16208_ (values-ref _g16494_ 1)))
+              (let ((_g17710_ (values-count _g17709_)))
+                (if (not (fx= _g17710_ 2))
+                    (error "Context expects 2 values" _g17710_)))
+              (let ((_ssi-code17422_ (values-ref _g17709_ 0))
+                    (_phi-code17423_ (values-ref _g17709_ 1)))
                 (begin
-                  (_compile-ssi16204_ _ssi-code16207_)
-                  (for-each _compile-phi16205_ _phi-code16208_)))))))))
+                  (_compile-ssi17419_ _ssi-code17422_)
+                  (for-each _compile-phi17420_ _phi-code17423_)))))))))
   (define gxc#compile-ssxi-code
-    (lambda (_ctx16185_)
-      (let ((_path16187_ (gxc#compile-output-file _ctx16185_ '#f '".ssxi.ss")))
-        (let ((_code16189_
+    (lambda (_ctx17400_)
+      (let ((_path17402_ (gxc#compile-output-file _ctx17400_ '#f '".ssxi.ss")))
+        (let ((_code17404_
                (gxc#apply-generate-ssxi
-                (##structure-ref _ctx16185_ '11 gx#module-context::t '#f))))
-          (let ((_idstr16191_
+                (##structure-ref _ctx17400_ '11 gx#module-context::t '#f))))
+          (let ((_idstr17406_
                  (symbol->string
-                  (##structure-ref _ctx16185_ '1 gx#expander-context::t '#f))))
-            (let ((_pkg16198_
-                   (let ((_$e16193_ (string-rindex _idstr16191_ '#\/)))
-                     (if _$e16193_
-                         ((lambda (_x16196_)
+                  (##structure-ref _ctx17400_ '1 gx#expander-context::t '#f))))
+            (let ((_pkg17413_
+                   (let ((_$e17408_ (string-rindex _idstr17406_ '#\/)))
+                     (if _$e17408_
+                         ((lambda (_x17411_)
                             (string->symbol
-                             (substring _idstr16191_ '0 _x16196_)))
-                          _$e16193_)
+                             (substring _idstr17406_ '0 _x17411_)))
+                          _$e17408_)
                          '#f))))
               (let ()
                 (begin
-                  (gxc#verbose '"compile " _path16187_)
+                  (gxc#verbose '"compile " _path17402_)
                   (with-output-to-file
                    (cons 'path:
-                         (cons _path16187_
+                         (cons _path17402_
                                (cons 'permissions: (cons '420 '()))))
                    (lambda ()
                      (begin
                        (displayln '"prelude: :gerbil/compiler/ssxi")
-                       (if _pkg16198_
-                           (displayln '"package: " _pkg16198_)
+                       (if _pkg17413_
+                           (displayln '"package: " _pkg17413_)
                            '#!void)
                        (newline)
-                       (pretty-print _code16189_))))))))))))
+                       (pretty-print _code17404_))))))))))))
   (define gxc#generate-meta-code
-    (lambda (_ctx16178_)
-      (let ((_state16180_
-             (let ((__obj16489 (make-object gxc#meta-state::t '4)))
+    (lambda (_ctx17393_)
+      (let ((_state17395_
+             (let ((__obj17704 (make-object gxc#meta-state::t '4)))
                (begin
-                 (gxc#meta-state:::init! __obj16489 _ctx16178_)
-                 __obj16489))))
-        (let ((_ssi-code16182_
+                 (gxc#meta-state:::init! __obj17704 _ctx17393_)
+                 __obj17704))))
+        (let ((_ssi-code17397_
                (gxc#apply-generate-meta
-                (##structure-ref _ctx16178_ '11 gx#module-context::t '#f)
-                _state16180_)))
+                (##structure-ref _ctx17393_ '11 gx#module-context::t '#f)
+                _state17395_)))
           (let ()
-            (values _ssi-code16182_ (gxc#meta-state-end! _state16180_)))))))
+            (values _ssi-code17397_ (gxc#meta-state-end! _state17395_)))))))
   (define gxc#generate-runtime-phi
-    (lambda (_stx16171_)
-      (let ((_lifts16173_ (box '())))
+    (lambda (_stx17386_)
+      (let ((_lifts17388_ (box '())))
         (call-with-parameters
          (lambda ()
-           (let ((_code16176_ (gxc#apply-generate-runtime-phi _stx16171_)))
-             (if (null? (unbox _lifts16173_))
-                 _code16176_
+           (let ((_code17391_ (gxc#apply-generate-runtime-phi _stx17386_)))
+             (if (null? (unbox _lifts17388_))
+                 _code17391_
                  (cons 'begin
                        (foldr cons
-                              (cons _code16176_ '())
-                              (reverse (unbox _lifts16173_)))))))
+                              (cons _code17391_ '())
+                              (reverse (unbox _lifts17388_)))))))
          gxc#current-compile-lift
-         _lifts16173_))))
+         _lifts17388_))))
   (define gxc#lift-nested-modules
-    (lambda (_ctx16167_)
-      (let ((_modules16169_ (box '())))
+    (lambda (_ctx17382_)
+      (let ((_modules17384_ (box '())))
         (begin
           (gxc#apply-lift-modules
-           (##structure-ref _ctx16167_ '11 gx#module-context::t '#f)
-           _modules16169_)
-          (reverse (unbox _modules16169_))))))
+           (##structure-ref _ctx17382_ '11 gx#module-context::t '#f)
+           _modules17384_)
+          (reverse (unbox _modules17384_))))))
   (define gxc#compile-scm-file
-    (lambda (_path16163_ _code16164_)
+    (lambda (_path17378_ _code17379_)
       (begin
-        (gxc#verbose '"compile " _path16163_)
+        (gxc#verbose '"compile " _path17378_)
         (with-output-to-file
-         (cons 'path: (cons _path16163_ (cons 'permissions: (cons '420 '()))))
+         (cons 'path: (cons _path17378_ (cons 'permissions: (cons '420 '()))))
          (lambda ()
            (begin
              (pretty-print
               '(declare (block) (standard-bindings) (extended-bindings)))
-             (pretty-print _code16164_))))
+             (pretty-print _code17379_))))
         (if (gxc#current-compile-invoke-gsc)
             (begin
-              (gxc#gsc-compile-file _path16163_)
+              (gxc#gsc-compile-file _path17378_)
               (if (gxc#current-compile-keep-scm)
                   '#!void
-                  (delete-file _path16163_)))
+                  (delete-file _path17378_)))
             '#!void))))
   (define gxc#gsc-compile-file
-    (lambda (_path16149_)
-      (let ((_gsc-args16156_
-             (let ((_$e16151_ (gxc#current-compile-gsc-options)))
-               (if _$e16151_
-                   ((lambda (_opts16154_)
-                      (foldr cons (cons _path16149_ '()) _opts16154_))
-                    _$e16151_)
-                   (cons _path16149_ '())))))
-        (let ((_proc16158_
+    (lambda (_path17364_)
+      (let ((_gsc-args17371_
+             (let ((_$e17366_ (gxc#current-compile-gsc-options)))
+               (if _$e17366_
+                   ((lambda (_opts17369_)
+                      (foldr cons (cons _path17364_ '()) _opts17369_))
+                    _$e17366_)
+                   (cons _path17364_ '())))))
+        (let ((_proc17373_
                (open-process
                 (cons 'path:
                       (cons '"gsc"
                             (cons 'arguments:
-                                  (cons _gsc-args16156_
+                                  (cons _gsc-args17371_
                                         (cons 'stdout-redirection:
                                               (cons '#f '())))))))))
-          (let ((_status16160_ (process-status _proc16158_)))
+          (let ((_status17375_ (process-status _proc17373_)))
             (let ()
-              (if (zero? _status16160_)
+              (if (zero? _status17375_)
                   '#!void
                   (gxc#raise-compile-error
                    '"Compilation error; gsc exit with nonzero status"
-                   _path16149_
-                   _status16160_))))))))
+                   _path17364_
+                   _status17375_))))))))
   (define gxc#compile-output-file
-    (lambda (_ctx16121_ _n16122_ _ext16123_)
-      (let ((_module-relative-path16125_
-             (lambda (_ctx16147_)
+    (lambda (_ctx17336_ _n17337_ _ext17338_)
+      (let ((_module-relative-path17340_
+             (lambda (_ctx17362_)
                (path-strip-directory
                 (symbol->string
                  (##structure-ref
-                  _ctx16147_
+                  _ctx17362_
                   '1
                   gx#expander-context::t
                   '#f))))))
-        (let ((_module-source-directory16126_
-               (lambda (_ctx16143_)
+        (let ((_module-source-directory17341_
+               (lambda (_ctx17358_)
                  (path-directory
-                  (let ((_mpath16145_
+                  (let ((_mpath17360_
                          (##structure-ref
-                          _ctx16143_
+                          _ctx17358_
                           '7
                           gx#module-context::t
                           '#f)))
-                    (if (string? _mpath16145_)
-                        _mpath16145_
-                        (last _mpath16145_)))))))
-          (let ((_section-string16127_
-                 (lambda (_n16141_)
-                   (if (number? _n16141_)
-                       (number->string _n16141_)
-                       (if (symbol? _n16141_)
-                           (symbol->string _n16141_)
-                           (if (string? _n16141_)
-                               _n16141_
+                    (if (string? _mpath17360_)
+                        _mpath17360_
+                        (last _mpath17360_)))))))
+          (let ((_section-string17342_
+                 (lambda (_n17356_)
+                   (if (number? _n17356_)
+                       (number->string _n17356_)
+                       (if (symbol? _n17356_)
+                           (symbol->string _n17356_)
+                           (if (string? _n17356_)
+                               _n17356_
                                (gxc#raise-compile-error
                                 '"Unexpected section"
-                                _n16141_)))))))
-            (let ((_file-name16128_
-                   (lambda (_path16139_)
-                     (if _n16122_
+                                _n17356_)))))))
+            (let ((_file-name17343_
+                   (lambda (_path17354_)
+                     (if _n17337_
                          (string-append
-                          _path16139_
+                          _path17354_
                           '"__"
-                          (_section-string16127_ _n16122_)
-                          _ext16123_)
-                         (string-append _path16139_ _ext16123_)))))
-              (let ((_file-path16129_
+                          (_section-string17342_ _n17337_)
+                          _ext17338_)
+                         (string-append _path17354_ _ext17338_)))))
+              (let ((_file-path17344_
                      (lambda ()
-                       (let ((_$e16134_ (gxc#current-compile-output-dir)))
-                         (if _$e16134_
-                             ((lambda (_outdir16137_)
+                       (let ((_$e17349_ (gxc#current-compile-output-dir)))
+                         (if _$e17349_
+                             ((lambda (_outdir17352_)
                                 (path-expand
-                                 (_file-name16128_
+                                 (_file-name17343_
                                   (symbol->string
                                    (##structure-ref
-                                    _ctx16121_
+                                    _ctx17336_
                                     '1
                                     gx#expander-context::t
                                     '#f)))
-                                 _outdir16137_))
-                              _$e16134_)
+                                 _outdir17352_))
+                              _$e17349_)
                              (path-expand
-                              (_file-name16128_
-                               (_module-relative-path16125_ _ctx16121_))
-                              (_module-source-directory16126_ _ctx16121_)))))))
-                (let ((_path16131_ (_file-path16129_)))
+                              (_file-name17343_
+                               (_module-relative-path17340_ _ctx17336_))
+                              (_module-source-directory17341_ _ctx17336_)))))))
+                (let ((_path17346_ (_file-path17344_)))
                   (begin
-                    (create-directory* (path-directory _path16131_))
-                    _path16131_))))))))))
+                    (create-directory* (path-directory _path17346_))
+                    _path17346_))))))))))

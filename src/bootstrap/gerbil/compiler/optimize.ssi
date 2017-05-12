@@ -102,8 +102,14 @@ namespace: gxc
          (%#define-runtime make-!lambda gxc#make-!lambda)
          (%#define-runtime !lambda-arity gxc#!lambda-arity)
          (%#define-runtime !lambda-dispatch gxc#!lambda-dispatch)
+         (%#define-runtime !lambda-inline gxc#!lambda-inline)
+         (%#define-runtime !lambda-inline-typedecl gxc#!lambda-inline-typedecl)
          (%#define-runtime !lambda-arity-set! gxc#!lambda-arity-set!)
          (%#define-runtime !lambda-dispatch-set! gxc#!lambda-dispatch-set!)
+         (%#define-runtime !lambda-inline-set! gxc#!lambda-inline-set!)
+         (%#define-runtime
+          !lambda-inline-typedecl-set!
+          gxc#!lambda-inline-typedecl-set!)
          (%#define-syntax !lambda |gxc[:0:]#!lambda|)
          (%#define-runtime !case-lambda::t gxc#!case-lambda::t)
          (%#define-runtime !case-lambda? gxc#!case-lambda?)
@@ -114,14 +120,26 @@ namespace: gxc
           gxc#!case-lambda-clauses-set!)
          (%#define-syntax !case-lambda |gxc[:0:]#!case-lambda|)
          (%#define-runtime !struct-type:::init! gxc#!struct-type:::init!)
+         (%#begin (%#define-runtime
+                   !lambda:::init!__opt-lambda17026
+                   gxc#!lambda:::init!__opt-lambda17026)
+                  (%#begin (%#define-runtime
+                            !lambda:::init!__0
+                            gxc#!lambda:::init!__0)
+                           (%#define-runtime
+                            !lambda:::init!__1
+                            gxc#!lambda:::init!__1)
+                           (%#define-runtime
+                            !lambda:::init!
+                            gxc#!lambda:::init!)))
          (%#define-runtime !struct-type-vtab gxc#!struct-type-vtab)
          (%#define-runtime
           !struct-type-lookup-method
           gxc#!struct-type-lookup-method)
          (%#define-runtime optimizer-declare-type! gxc#optimizer-declare-type!)
          (%#begin (%#define-runtime
-                   optimizer-declare-method!__opt-lambda15811
-                   gxc#optimizer-declare-method!__opt-lambda15811)
+                   optimizer-declare-method!__opt-lambda16983
+                   gxc#optimizer-declare-method!__opt-lambda16983)
                   (%#begin (%#define-runtime
                             optimizer-declare-method!__0
                             gxc#optimizer-declare-method!__0)
