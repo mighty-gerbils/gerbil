@@ -9,16 +9,16 @@ namespace: gxc
           (in: :gerbil/core <syntax-sugar>)
           (spec:
            (:gerbil/gambit/hvectors)
-           (0 s16vector? 0 s16vector?)
            (0 u64vector? 0 u64vector?)
            (0 s32vector? 0 s32vector?)
            (0 s8vector? 0 s8vector?)
-           (0 u32vector? 0 u32vector?)
-           (0 f64vector? 0 f64vector?)
-           (0 f32vector? 0 f32vector?)
-           (0 u16vector? 0 u16vector?)
            (0 s64vector? 0 s64vector?)
-           (0 u8vector? 0 u8vector?)))
+           (0 f32vector? 0 f32vector?)
+           (0 s16vector? 0 s16vector?)
+           (0 u16vector? 0 u16vector?)
+           (0 u8vector? 0 u8vector?)
+           (0 u32vector? 0 u32vector?)
+           (0 f64vector? 0 f64vector?)))
          (%#export #t)
          (%#define-runtime current-compile-methods gxc#current-compile-methods)
          (%#define-runtime current-compile-lift gxc#current-compile-lift)
@@ -60,6 +60,14 @@ namespace: gxc
          (%#define-runtime collect-begin% gxc#collect-begin%)
          (%#define-runtime collect-begin-syntax% gxc#collect-begin-syntax%)
          (%#define-runtime collect-module% gxc#collect-module%)
+         (%#define-runtime collect-body-lambda% gxc#collect-body-lambda%)
+         (%#define-runtime
+          collect-body-case-lambda%
+          gxc#collect-body-case-lambda%)
+         (%#define-runtime
+          collect-body-let-values%
+          gxc#collect-body-let-values%)
+         (%#define-runtime collect-operands gxc#collect-operands)
          (%#define-runtime
           collect-bindings-define-values%
           gxc#collect-bindings-define-values%)
@@ -84,8 +92,8 @@ namespace: gxc
           generate-runtime-identifier-key
           gxc#generate-runtime-identifier-key)
          (%#begin (%#define-runtime
-                   generate-runtime-temporary__opt-lambda9058
-                   gxc#generate-runtime-temporary__opt-lambda9058)
+                   generate-runtime-temporary__opt-lambda8473
+                   gxc#generate-runtime-temporary__opt-lambda8473)
                   (%#begin (%#define-runtime
                             generate-runtime-temporary__0
                             gxc#generate-runtime-temporary__0)
@@ -116,8 +124,8 @@ namespace: gxc
           generate-runtime-case-lambda%
           gxc#generate-runtime-case-lambda%)
          (%#begin (%#define-runtime
-                   generate-runtime-let-values%__opt-lambda6801
-                   gxc#generate-runtime-let-values%__opt-lambda6801)
+                   generate-runtime-let-values%__opt-lambda6216
+                   gxc#generate-runtime-let-values%__opt-lambda6216)
                   (%#begin (%#define-runtime
                             generate-runtime-let-values%__0
                             gxc#generate-runtime-let-values%__0)
@@ -128,8 +136,8 @@ namespace: gxc
           generate-runtime-let-values-bind
           gxc#generate-runtime-let-values-bind)
          (%#begin (%#define-runtime
-                   generate-runtime-letrec-values%__opt-lambda6380
-                   gxc#generate-runtime-letrec-values%__opt-lambda6380)
+                   generate-runtime-letrec-values%__opt-lambda5795
+                   gxc#generate-runtime-letrec-values%__opt-lambda5795)
                   (%#begin (%#define-runtime
                             generate-runtime-letrec-values%__0
                             gxc#generate-runtime-letrec-values%__0)
@@ -233,23 +241,7 @@ namespace: gxc
          (%#define-runtime meta-state-end-phi! gxc#meta-state-end-phi!)
          (%#define-runtime meta-state-end! gxc#meta-state-end!)
          (%#define-runtime collect-expression-refs gxc#collect-expression-refs)
-         (%#define-runtime collect-refs-lambda% gxc#collect-refs-lambda%)
-         (%#define-runtime
-          collect-refs-case-lambda%
-          gxc#collect-refs-case-lambda%)
-         (%#define-runtime
-          collect-refs-let-values%
-          gxc#collect-refs-let-values%)
          (%#define-runtime collect-refs-ref% gxc#collect-refs-ref%)
          (%#define-runtime collect-refs-setq% gxc#collect-refs-setq%)
-         (%#define-runtime
-          collect-refs-struct-instancep%
-          gxc#collect-refs-struct-instancep%)
-         (%#define-runtime
-          collect-refs-struct-ref%
-          gxc#collect-refs-struct-ref%)
-         (%#define-runtime
-          collect-refs-struct-setq%
-          gxc#collect-refs-struct-setq%)
          (%#define-runtime find-runtime-begin% gxc#find-runtime-begin%))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/compile__0"))

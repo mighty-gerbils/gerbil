@@ -15,6 +15,9 @@ namespace: gxc
          (%#define-runtime
           current-compile-optimizer-info
           gxc#current-compile-optimizer-info)
+         (%#define-runtime
+          current-compile-mutators
+          gxc#current-compile-mutators)
          (%#define-runtime optimizer-info::t gxc#optimizer-info::t)
          (%#define-runtime optimizer-info? gxc#optimizer-info?)
          (%#define-runtime make-optimizer-info gxc#make-optimizer-info)
@@ -121,8 +124,8 @@ namespace: gxc
          (%#define-syntax !case-lambda |gxc[:0:]#!case-lambda|)
          (%#define-runtime !struct-type:::init! gxc#!struct-type:::init!)
          (%#begin (%#define-runtime
-                   !lambda:::init!__opt-lambda17026
-                   gxc#!lambda:::init!__opt-lambda17026)
+                   !lambda:::init!__opt-lambda16944
+                   gxc#!lambda:::init!__opt-lambda16944)
                   (%#begin (%#define-runtime
                             !lambda:::init!__0
                             gxc#!lambda:::init!__0)
@@ -138,8 +141,8 @@ namespace: gxc
           gxc#!struct-type-lookup-method)
          (%#define-runtime optimizer-declare-type! gxc#optimizer-declare-type!)
          (%#begin (%#define-runtime
-                   optimizer-declare-method!__opt-lambda16983
-                   gxc#optimizer-declare-method!__opt-lambda16983)
+                   optimizer-declare-method!__opt-lambda16901
+                   gxc#optimizer-declare-method!__opt-lambda16901)
                   (%#begin (%#define-runtime
                             optimizer-declare-method!__0
                             gxc#optimizer-declare-method!__0)
@@ -158,6 +161,8 @@ namespace: gxc
          (%#define-runtime &identity gxc#&identity)
          (%#define-runtime &basic-xform-expression gxc#&basic-xform-expression)
          (%#define-runtime &basic-xform gxc#&basic-xform)
+         (%#define-runtime &collect-mutators gxc#&collect-mutators)
+         (%#define-runtime apply-collect-mutators gxc#apply-collect-mutators)
          (%#define-runtime &lift-top-lambdas gxc#&lift-top-lambdas)
          (%#define-runtime apply-lift-top-lambdas gxc#apply-lift-top-lambdas)
          (%#define-runtime &expression-subst gxc#&expression-subst)
@@ -185,6 +190,7 @@ namespace: gxc
          (%#define-runtime xform-if% gxc#xform-if%)
          (%#define-runtime xform-setq% gxc#xform-setq%)
          (%#define-runtime xform-struct-op% gxc#xform-struct-op%)
+         (%#define-runtime collect-mutators-setq% gxc#collect-mutators-setq%)
          (%#define-runtime dispatch-lambda-form? gxc#dispatch-lambda-form?)
          (%#define-runtime
           dispatch-lambda-form-delegate

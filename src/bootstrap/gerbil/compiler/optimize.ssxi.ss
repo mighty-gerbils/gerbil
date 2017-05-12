@@ -111,20 +111,20 @@ package: gerbil/compiler
   (declare-method gxc#!struct-type::t :init! gxc#!struct-type:::init! #f)
   (begin
     (declare-type
-     gxc#!lambda:::init!__opt-lambda17026
+     gxc#!lambda:::init!__opt-lambda16944
      (@lambda 6 direct-struct-instance-init!))
     (declare-type
      gxc#!lambda:::init!
      (@case-lambda
       (4 gxc#!lambda:::init!__0)
       (5 gxc#!lambda:::init!__1)
-      (6 gxc#!lambda:::init!__opt-lambda17026))))
+      (6 gxc#!lambda:::init!__opt-lambda16944))))
   (declare-method gxc#!lambda::t :init! gxc#!lambda:::init! #f)
   (declare-type
    gxc#optimizer-declare-method!
    (@case-lambda
     (3 gxc#optimizer-declare-method!__0)
-    (4 gxc#optimizer-declare-method!__opt-lambda16983)))
+    (4 gxc#optimizer-declare-method!__opt-lambda16901)))
   (declare-method gxc#!alias::t optimize-call gxc#!alias::optimize-call #f)
   (declare-method
    gxc#!struct-pred::t
