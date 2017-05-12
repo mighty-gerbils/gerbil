@@ -30,7 +30,7 @@ package: std
 (enable libyaml #f)
 
 ;; build std/text/zlib library - requires zlib
-(enable zlib #f)
+(enable zlib #t)
 
 ;; build std/db/sqlite library -- requires sqlite3
 (enable sqlite #f)
