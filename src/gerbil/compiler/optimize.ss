@@ -118,12 +118,17 @@ namespace: gxc
 (defstruct (!struct-cons !procedure) ())
 (defstruct (!struct-getf !procedure) (off))
 (defstruct (!struct-setf !procedure) (off))
-(defstruct (!lambda !procedure) (arity dispatch))
+(defstruct (!lambda !procedure) (arity dispatch inline)
+  constructor: :init!)
 (defstruct (!case-lambda !procedure) (clauses))
 
 (defmethod {:init! !struct-type}
   (lambda (self id super fields xfields ctor plist)
     (direct-struct-instance-init! self id super fields xfields ctor plist #f)))
+
+(defmethod {:init! !lambda}
+  (lambda (self id arity dispatch (inline #f))
+    (direct-struct-instance-init! self id arity dispatch inline)))
 
 (def (!struct-type-vtab type)
   (cond
@@ -717,8 +722,7 @@ namespace: gxc
        (if rator-type
          (begin
            (verbose "optimize-call " rator-id  " => " rator-type " " (!type-id rator-type))
-           {optimize-call rator-type stx #'rands}
-           )
+           {optimize-call rator-type stx #'rands})
          (xform-call% stx))))
     (_ (xform-call% stx))))
 
@@ -729,9 +733,10 @@ namespace: gxc
         (if (!type? alias-type)
           {optimize-call alias-type stx args}
           (let (args (stx-map compile-e args))
-            (xform-wrap-source
-             ['%#call ['%#ref alias-id] args ...]
-             stx)))))))
+            (compile-e 
+             (xform-wrap-source
+              ['%#call ['%#ref alias-id] args ...]
+              stx))))))))
 
 (defmethod {optimize-call !struct-pred}
   (lambda (self stx args)
@@ -849,17 +854,26 @@ namespace: gxc
 
 (defmethod {optimize-call !lambda}
   (lambda (self stx args)
-    (with ((!lambda _ arity dispatch) self)
+    (with ((!lambda _ arity dispatch inline) self)
       (unless (!lambda-arity-match? self args)
         (raise-compile-error "Illegal lambda application; arity mismatch"
                              stx arity))
-      (if dispatch
+      (cond
+       (inline
+        (verbose "inline lambda")
+        (compile-e
+         (xform-wrap-source
+          (inline stx)
+          stx)))
+       (dispatch
         (let (args (stx-map compile-e args))
           (verbose "dispatch lambda => " dispatch)
-          (xform-wrap-source
-           ['%#call ['%#ref dispatch] args ...]
-           stx))
-        (xform-call% stx)))))
+          (compile-e 
+           (xform-wrap-source
+            ['%#call ['%#ref dispatch] args ...]
+            stx))))
+       (else
+        (xform-call% stx))))))
 
 (defmethod {optimize-call !case-lambda}
   (lambda (self stx args)
@@ -953,8 +967,10 @@ namespace: gxc
 
 (defmethod {typedecl !lambda}
   (lambda (self)
-    (with ((!lambda _ arity dispatch) self)
-      ['@lambda arity dispatch])))
+    (with ((!lambda _ arity dispatch inline) self)
+      (if inline
+        (error "Cannot generate typedecl for inline rules")
+        ['@lambda arity dispatch]))))
 
 (defmethod {typedecl !case-lambda}
   (lambda (self)
