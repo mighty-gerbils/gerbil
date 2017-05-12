@@ -26,10 +26,6 @@ package: gerbil
             (ast-rules (%#call)
               ((%#call _ arg)
                (%#call (%#ref eq?) arg (%#quote #!void))))))
- (eof-object (@lambda (0) inline:
-                 (ast-rules (%#call)
-                   ((%#call _ arg ...)
-                    (%#quote #!eof)))))
  (identity (@lambda 1 inline:
                (ast-rules (%#call)
                  ((%#call _ arg)
