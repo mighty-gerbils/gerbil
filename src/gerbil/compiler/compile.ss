@@ -327,6 +327,14 @@ namespace: gxc
           (let (gid (generate-runtime-gensym-reference eid))
             (hash-put! ht eid gid)
             gid))
+         ((module-binding? bind)
+          (let (gid
+                (cond
+                 ((module-context-ns (module-binding-context bind))
+                  => (lambda (ns) (make-symbol ns "#" eid)))
+                 (else (generate-runtime-gensym-reference eid))))
+            (hash-put! ht eid gid)
+            gid))
          (else
           ;; module bindings have been mapped in collect-bindings.
           (raise-compile-error "Cannot compile reference to uninterned binding"
