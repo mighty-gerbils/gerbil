@@ -189,8 +189,8 @@ namespace: gxc
   (%#letrec*-values          collect-body-let-values%)
   (%#quote                   void)
   (%#quote-syntax            void)
-  (%#call                    collect-begin%)
-  (%#if                      collect-begin%)
+  (%#call                    collect-operands)
+  (%#if                      collect-operands)
   (%#ref                     collect-refs-ref%)
   (%#set!                    collect-refs-setq%)
   (%#struct-instance?        collect-operands)
@@ -270,6 +270,11 @@ namespace: gxc
      (for-each (cut apply compile-e <> args) #'(expr ... body)))))
        
 
+(def (collect-body-setq% stx . args)
+  (ast-case stx ()
+    ((_ id expr)
+     (apply compile-e #'expr args))))
+
 (def (collect-operands stx . args)
   (ast-case stx ()
     ((_ rands ...)
@@ -327,10 +332,10 @@ namespace: gxc
           (raise-compile-error "Cannot compile reference to uninterned binding"
                                id eid bind)))))
      ((interned-symbol? (stx-e id))
-      ;; implicit extern
+      ;; implicit extern or optimizer introduced symbol
       (stx-e id))
      (else
-      ;; gensymed global, where did you get this one?
+      ;; gensymed reference, where did you get this one?
       (raise-compile-error "Cannot compile reference to uninterned identifier" 
                            id)))))
 
@@ -852,7 +857,7 @@ namespace: gxc
 (def (generate-runtime-quote% stx)
   (def (generate1 datum)
     (cond
-     ((or (null? datum) (symbol? datum) (self-quoting? datum))
+     ((or (null? datum) (interned-symbol? datum) (self-quoting? datum))
       datum)
      ((uninterned-symbol? datum)
       (generate-runtime-gensym-reference datum))

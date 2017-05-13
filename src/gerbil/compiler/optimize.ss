@@ -318,10 +318,17 @@ namespace: gxc
   (%#ref   expression-subst-ref%))
 
 (defcompile-method apply-collect-type-info (&collect-type-info &void)
-  (%#begin         collect-begin%)
-  (%#module        collect-module%)
-  (%#define-values collect-type-define-values%)
-  (%#call          collect-type-call%))
+  (%#begin          collect-begin%)
+  (%#module         collect-module%)
+  (%#define-values  collect-type-define-values%)
+  (%#lambda              collect-body-lambda%)
+  (%#case-lambda         collect-body-case-lambda%)
+  (%#let-values     collect-type-let-values%)
+  (%#letrec-values  collect-type-let-values%)
+  (%#letrec*-values collect-type-let-values%)
+  (%#call           collect-type-call%)
+  (%#if             collect-operands)
+  (%#set!           collect-body-setq%))
 
 (defcompile-method apply-basic-expression-type (&basic-expression-type &false)
   (%#begin  basic-expression-type-begin%)
@@ -616,8 +623,27 @@ namespace: gxc
        (if (hash-get (current-compile-mutators) sym)
            (verbose "skipping type declaration for mutable binding " sym)
            (alet (type (apply-basic-expression-type #'expr))
-             (optimizer-declare-type! sym type)))))
+             (optimizer-declare-type! sym type)))
+       (compile-e #'expr)))
     (_ (void))))
+
+(def (collect-type-let-values% stx)
+  (def (collect-e hd expr)
+    (ast-case hd ()
+      ((id)
+       (let (sym (identifier-symbol #'id))
+         (if (hash-get (current-compile-mutators) sym)
+           (verbose "skipping type declaration for mutable binding " sym)
+           (alet (type (apply-basic-expression-type expr))
+             (optimizer-declare-type! sym type #t)))))
+      (_ (void))))
+  
+  (ast-case stx ()
+    ((_ ((hd expr) ...) body)
+     (begin
+       (for-each collect-e #'(hd ...) #'(expr ...))
+       (for-each compile-e #'(expr ...))
+       (compile-e #'body)))))
 
 (def (collect-type-call% stx)
   (ast-case stx (%#ref %#quote)
@@ -1023,7 +1049,4 @@ namespace: gxc
 
 ;;; utilities
 (def (identifier-symbol stx)
-  (cond
-   ((resolve-identifier stx) => binding-id)
-   (else
-    (stx-e stx))))
+  (generate-runtime-binding-id stx))
