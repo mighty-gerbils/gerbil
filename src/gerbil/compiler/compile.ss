@@ -344,12 +344,14 @@ namespace: gxc
     (generate-runtime-binding-id id)
     (generate-runtime-temporary)))
 
-(def (generate-runtime-gensym-reference sym)
+(def (generate-runtime-gensym-reference sym (quote? #f))
   (let (ht (symbol-table-gensyms (current-compile-symbol-table)))
     (cond
      ((hash-get ht sym) => values)
      (else
-      (let (g (make-symbol "_" sym "_"))
+      (let (g (if quote?
+                (make-symbol "__" sym "__" (current-compile-timestamp))
+                (make-symbol "_" sym "_")))
         (hash-put! ht sym g)
         g)))))
 
@@ -860,7 +862,7 @@ namespace: gxc
      ((or (null? datum) (interned-symbol? datum) (self-quoting? datum))
       datum)
      ((uninterned-symbol? datum)
-      (generate-runtime-gensym-reference datum))
+      (generate-runtime-gensym-reference datum #t))
      ((pair? datum)
       (cons (generate1 (car datum))
             (generate1 (cdr datum))))

@@ -11,8 +11,13 @@ namespace: gxc
         (only-in :gerbil/gambit/misc
                  pretty-print)
         (only-in :gerbil/gambit/ports
-                 open-process process-status))
+                 open-process process-status)
+        (only-in :gerbil/gambit/os
+                 current-time time->seconds))
 (export compile-file compile-exe-stub)
+
+(def (compile-timestamp)
+  (inexact->exact (floor (time->seconds (current-time)))))
 
 (def (compile-file srcpath (opts []))
   (unless (string? srcpath)
@@ -35,7 +40,8 @@ namespace: gxc
                    (current-compile-keep-scm keep-scm?)
                    (current-compile-verbose verbosity)
                    (current-compile-optimize optimize)
-                   (current-compile-generate-ssxi gen-ssxi))
+                   (current-compile-generate-ssxi gen-ssxi)
+                   (current-compile-timestamp (compile-timestamp)))
       (verbose "compile exe " srcpath)
       (compile-top-module (import-module srcpath)))))
 
@@ -54,7 +60,8 @@ namespace: gxc
                    (current-compile-invoke-gsc invoke-gsc?)
                    (current-compile-gsc-options gsc-options)
                    (current-compile-keep-scm keep-scm?)
-                   (current-compile-verbose verbosity))
+                   (current-compile-verbose verbosity)
+                   (current-compile-timestamp (compile-timestamp)))
       (verbose "compile " srcpath)
       (compile-exe-stub-module (import-module srcpath) opts))))
 
