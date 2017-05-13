@@ -15,6 +15,8 @@ namespace: gxc
   (make-parameter #f))
 (def current-compile-mutators
   (make-parameter #f))
+(def current-compile-local-type
+  (make-parameter #f))
 
 (defstruct optimizer-info (type ssxi)
   constructor: :init!)
@@ -32,13 +34,14 @@ namespace: gxc
 
 ;;; optimizer entry point
 (def (optimize! ctx)
-  (optimizer-load-prelude-ssxi ctx)
-  (optimizer-load-ssxi-deps ctx)
+  (parameterize ((current-compile-mutators (make-hash-table-eq))
+                 (current-compile-local-type (make-hash-table-eq)))
+    (optimizer-load-prelude-ssxi ctx)
+    (optimizer-load-ssxi-deps ctx)
     ;; mark ssxi presence for batch
-  (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
-             (expander-context-id ctx)
-             #t)
-  (parameterize ((current-compile-mutators (make-hash-table-eq)))
+    (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
+               (expander-context-id ctx)
+               #t)
     (let (code (optimize-source (module-context-code ctx)))
       (set! (module-context-code ctx) code))))
 
@@ -146,11 +149,13 @@ namespace: gxc
   (alet (vtab (!struct-type-methods type))
     (hash-get vtab method)))
 
-(def (optimizer-declare-type! sym type)
+(def (optimizer-declare-type! sym type (local? #f))
   (unless (!type? type)
     (error "bad declaration: expected !type" sym type))
   (verbose "declare-type " sym " " (##vector->list type))
-  (hash-put! (optimizer-info-type (current-compile-optimizer-info))
+  (hash-put! (if local?
+               (current-compile-local-type)
+               (optimizer-info-type (current-compile-optimizer-info)))
              sym type))
 
 (def (optimizer-declare-method! type-t method sym (rebind? #f))
@@ -174,8 +179,10 @@ namespace: gxc
       (error "declare-method: bad method declaration; no method table" type-t type)))))
 
 (def (optimizer-lookup-type sym)
-  (hash-get (optimizer-info-type (current-compile-optimizer-info))
-            sym))
+  (or (alet (ht (current-compile-local-type))
+        (hash-get ht sym))
+      (hash-get (optimizer-info-type (current-compile-optimizer-info))
+                sym)))
 
 (def (optimizer-resolve-type sym)
   (alet (type (optimizer-lookup-type sym))
