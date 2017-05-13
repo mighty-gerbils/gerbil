@@ -346,14 +346,14 @@
                  (lambda ()
                    (let ((_K35313546_
                           (lambda (_tail3544_) (null? _tail3544_))))
-                     (let ((_tail3549_ _g35273536_))
-                       (_K35313546_ _tail3549_))))))
+                     (let ((_tail3549_ _g35273536_)) (null? _tail3549_))))))
             (let ((_K35323556_
                    (lambda (_rest3554_) (gx#stx-list? _rest3554_))))
               (if (##pair? _g35273536_)
                   (let ((_hd35333559_ (##car _g35273536_))
                         (_tl35343561_ (##cdr _g35273536_)))
-                    (let ((_rest3564_ _tl35343561_)) (_K35323556_ _rest3564_)))
+                    (let ((_rest3564_ _tl35343561_))
+                      (gx#stx-list? _rest3564_)))
                   (_try-match35293551_))))))))
   (define gx#stx-pair/null?
     (lambda (_e3519_)

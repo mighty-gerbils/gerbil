@@ -18,6 +18,9 @@ namespace: gxc
          (%#define-runtime
           current-compile-mutators
           gxc#current-compile-mutators)
+         (%#define-runtime
+          current-compile-local-type
+          gxc#current-compile-local-type)
          (%#define-runtime optimizer-info::t gxc#optimizer-info::t)
          (%#define-runtime optimizer-info? gxc#optimizer-info?)
          (%#define-runtime make-optimizer-info gxc#make-optimizer-info)
@@ -124,8 +127,8 @@ namespace: gxc
          (%#define-syntax !case-lambda |gxc[:0:]#!case-lambda|)
          (%#define-runtime !struct-type:::init! gxc#!struct-type:::init!)
          (%#begin (%#define-runtime
-                   !lambda:::init!__opt-lambda17265
-                   gxc#!lambda:::init!__opt-lambda17265)
+                   !lambda:::init!__opt-lambda17633
+                   gxc#!lambda:::init!__opt-lambda17633)
                   (%#begin (%#define-runtime
                             !lambda:::init!__0
                             gxc#!lambda:::init!__0)
@@ -139,10 +142,18 @@ namespace: gxc
          (%#define-runtime
           !struct-type-lookup-method
           gxc#!struct-type-lookup-method)
-         (%#define-runtime optimizer-declare-type! gxc#optimizer-declare-type!)
          (%#begin (%#define-runtime
-                   optimizer-declare-method!__opt-lambda17222
-                   gxc#optimizer-declare-method!__opt-lambda17222)
+                   optimizer-declare-type!__opt-lambda17600
+                   gxc#optimizer-declare-type!__opt-lambda17600)
+                  (%#begin (%#define-runtime
+                            optimizer-declare-type!__0
+                            gxc#optimizer-declare-type!__0)
+                           (%#define-runtime
+                            optimizer-declare-type!
+                            gxc#optimizer-declare-type!)))
+         (%#begin (%#define-runtime
+                   optimizer-declare-method!__opt-lambda17576
+                   gxc#optimizer-declare-method!__opt-lambda17576)
                   (%#begin (%#define-runtime
                             optimizer-declare-method!__0
                             gxc#optimizer-declare-method!__0)
@@ -203,6 +214,9 @@ namespace: gxc
          (%#define-runtime
           collect-type-define-values%
           gxc#collect-type-define-values%)
+         (%#define-runtime
+          collect-type-let-values%
+          gxc#collect-type-let-values%)
          (%#define-runtime collect-type-call% gxc#collect-type-call%)
          (%#define-runtime
           basic-expression-type-begin%

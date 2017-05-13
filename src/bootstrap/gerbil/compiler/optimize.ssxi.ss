@@ -111,20 +111,25 @@ package: gerbil/compiler
   (declare-method gxc#!struct-type::t :init! gxc#!struct-type:::init! #f)
   (begin
     (declare-type
-     gxc#!lambda:::init!__opt-lambda17265
+     gxc#!lambda:::init!__opt-lambda17633
      (@lambda 6 direct-struct-instance-init!))
     (declare-type
      gxc#!lambda:::init!
      (@case-lambda
       (4 gxc#!lambda:::init!__0)
       (5 gxc#!lambda:::init!__1)
-      (6 gxc#!lambda:::init!__opt-lambda17265))))
+      (6 gxc#!lambda:::init!__opt-lambda17633))))
   (declare-method gxc#!lambda::t :init! gxc#!lambda:::init! #f)
+  (declare-type
+   gxc#optimizer-declare-type!
+   (@case-lambda
+    (2 gxc#optimizer-declare-type!__0)
+    (3 gxc#optimizer-declare-type!__opt-lambda17600)))
   (declare-type
    gxc#optimizer-declare-method!
    (@case-lambda
     (3 gxc#optimizer-declare-method!__0)
-    (4 gxc#optimizer-declare-method!__opt-lambda17222)))
+    (4 gxc#optimizer-declare-method!__opt-lambda17576)))
   (declare-method gxc#!alias::t optimize-call gxc#!alias::optimize-call #f)
   (declare-method
    gxc#!struct-pred::t
@@ -159,4 +164,7 @@ package: gerbil/compiler
   (declare-method gxc#!struct-getf::t typedecl gxc#!struct-getf::typedecl #f)
   (declare-method gxc#!struct-setf::t typedecl gxc#!struct-setf::typedecl #f)
   (declare-method gxc#!lambda::t typedecl gxc#!lambda::typedecl #f)
-  (declare-method gxc#!case-lambda::t typedecl gxc#!case-lambda::typedecl #f))
+  (declare-method gxc#!case-lambda::t typedecl gxc#!case-lambda::typedecl #f)
+  (declare-type
+   gxc#identifier-symbol
+   (@lambda 1 gxc#generate-runtime-binding-id)))

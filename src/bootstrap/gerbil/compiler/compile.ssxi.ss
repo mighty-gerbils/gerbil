@@ -3,6 +3,11 @@ package: gerbil/compiler
 
 (begin
   (declare-type
+   gxc#generate-runtime-gensym-reference
+   (@case-lambda
+    (1 gxc#generate-runtime-gensym-reference__0)
+    (2 gxc#generate-runtime-gensym-reference__opt-lambda8848)))
+  (declare-type
    gxc#generate-runtime-temporary
    (@case-lambda
     (0 gxc#generate-runtime-temporary__0)

@@ -9,6 +9,7 @@
   (define gxc#current-compile-verbose (make-parameter '#f))
   (define gxc#current-compile-optimize (make-parameter '#f))
   (define gxc#current-compile-generate-ssxi (make-parameter '#f))
+  (define gxc#current-compile-timestamp (make-parameter '#f))
   (define gxc#symbol-table::t
     (make-struct-type 'gxc#symbol-table::t '#f '2 'symbol-table '() ':init!))
   (define gxc#symbol-table? (make-struct-predicate gxc#symbol-table::t))
