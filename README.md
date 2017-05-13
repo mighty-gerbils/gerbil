@@ -105,7 +105,7 @@ Hello world! My arguments are (1 2 3)
 
 # Documentation
 
-There is some documentation at `$GERBIL_HOME/doc`, most notably
+There is some documentation at [$GERBIL_HOME/doc](doc/), most notably
 a introductory guide in markdown for seasoned Schemers.
 You can read it rendered online at Github:
 [guide.md](https://github.com/vyzo/gerbil/blob/master/doc/guide.md).
