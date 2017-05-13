@@ -32,6 +32,7 @@ namespace: gxc
 
 ;;; optimizer entry point
 (def (optimize! ctx)
+  (optimizer-load-prelude-ssxi ctx)
   (optimizer-load-ssxi-deps ctx)
     ;; mark ssxi presence for batch
   (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
