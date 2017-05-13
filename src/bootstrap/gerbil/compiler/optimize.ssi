@@ -124,8 +124,8 @@ namespace: gxc
          (%#define-syntax !case-lambda |gxc[:0:]#!case-lambda|)
          (%#define-runtime !struct-type:::init! gxc#!struct-type:::init!)
          (%#begin (%#define-runtime
-                   !lambda:::init!__opt-lambda16944
-                   gxc#!lambda:::init!__opt-lambda16944)
+                   !lambda:::init!__opt-lambda17265
+                   gxc#!lambda:::init!__opt-lambda17265)
                   (%#begin (%#define-runtime
                             !lambda:::init!__0
                             gxc#!lambda:::init!__0)
@@ -141,8 +141,8 @@ namespace: gxc
           gxc#!struct-type-lookup-method)
          (%#define-runtime optimizer-declare-type! gxc#optimizer-declare-type!)
          (%#begin (%#define-runtime
-                   optimizer-declare-method!__opt-lambda16901
-                   gxc#optimizer-declare-method!__opt-lambda16901)
+                   optimizer-declare-method!__opt-lambda17222
+                   gxc#optimizer-declare-method!__opt-lambda17222)
                   (%#begin (%#define-runtime
                             optimizer-declare-method!__0
                             gxc#optimizer-declare-method!__0)

@@ -1,17 +1,17 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gx[1]#_g2260_| (gx#core-quote-syntax 'error::t))
-  (define |gx[1]#_g2261_| (gx#core-quote-syntax 'AST::t))
-  (define |gx[1]#_g2264_| (gx#core-quote-syntax 'else))
+  (define |gx[1]#_g2581_| (gx#core-quote-syntax 'error::t))
+  (define |gx[1]#_g2582_| (gx#core-quote-syntax 'AST::t))
+  (define |gx[1]#_g2585_| (gx#core-quote-syntax 'else))
   (begin
     (define |gx[:0:]#<error>|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-info|
        'runtime-identifier:
-       |gx[1]#_g2260_|))
+       |gx[1]#_g2581_|))
     (define |gx[:0:]#AST|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-info|
        'runtime-identifier:
-       |gx[1]#_g2261_|))
+       |gx[1]#_g2582_|))
     (define |gx[:0:]#core-syntax-case|
       (lambda (_stx233_)
         (let ((_generate236_
@@ -605,7 +605,7 @@
                                                              _hd626756_)
                                                             (if (gx#free-identifier=?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         |gx[1]#_g2264_|
+                         |gx[1]#_g2585_|
                          _hd626756_)
                         ((lambda (_L762_)
                            (if (gx#stx-null? _L608_)
@@ -661,19 +661,19 @@
                                   (lambda (_g402422_)
                                     (if (gx#stx-pair/null? _g402422_)
                                         (if (fx>= (gx#stx-length _g402422_) '0)
-                                            (let ((_g2262_ (gx#syntax-split-splice
+                                            (let ((_g2583_ (gx#syntax-split-splice
                                                             _g402422_
                                                             '0)))
                                               (begin
-                                                (let ((_g2263_ (values-count
-                                                                _g2262_)))
-                                                  (if (not (fx= _g2263_ 2))
+                                                (let ((_g2584_ (values-count
+                                                                _g2583_)))
+                                                  (if (not (fx= _g2584_ 2))
                                                       (error "Context expects 2 values"
-                                                             _g2263_)))
+                                                             _g2584_)))
                                                 (let ((_target404425_
-                                                       (values-ref _g2262_ 0))
+                                                       (values-ref _g2583_ 0))
                                                       (_tl406428_
-                                                       (values-ref _g2262_ 1)))
+                                                       (values-ref _g2583_ 1)))
                                                   (if (gx#stx-null? _tl406428_)
                                                       (letrec ((_loop407431_
                                                                 (lambda (_hd405435_

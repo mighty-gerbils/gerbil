@@ -7,21 +7,27 @@ package: gerbil
 ;; gx-gambc0: simple runtime functions that should be inlined
 (declare-type*
  (true (@lambda (0) inline:
-           (ast-rules (%#call)
+           (ast-rules (%#call %#ref)
+             ((%#call _ (%#ref arg) ...)
+              (%#quote #t))
              ((%#call _ arg ...)
-              (%#quote #t)))))
+              (%#begin arg ... (%#quote #t))))))
  (true? (@lambda 1 inline:
             (ast-rules (%#call)
               ((%#call _ arg)
                (%#call (%#ref eq?) arg (%#quote #t))))))
  (false (@lambda (0) inline:
-            (ast-rules (%#call)
+            (ast-rules (%#call %#ref)
+              ((%#call _ (%#ref arg) ...)
+               (%#quote #f))
               ((%#call _ arg ...)
-               (%#quote #f)))))
+               (%#begin arg ... (%#quote #f))))))
  (void (@lambda (0) inline:
-           (ast-rules (%#call)
-              ((%#call _ arg ...)
-               (%#quote #!void)))))
+           (ast-rules (%#call %#ref)
+             ((%#call _ (%#ref arg) ...)
+              (%#quote #!void))
+             ((%#call _ arg ...)
+              (%#begin arg ... (%#quote #!void))))))
  (void? (@lambda 1 inline:
             (ast-rules (%#call)
               ((%#call _ arg)
