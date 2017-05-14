@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh -eu
 
 die() {
     "*** Build failed"
