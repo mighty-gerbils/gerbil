@@ -975,109 +975,109 @@
     (cons x y)
     (cons x (apply cons* y rest))))
 
+(define (foldl1 f iv rest)
+  (core-match rest
+    ((hd . rest)
+     (foldl1 f (f hd iv) rest))
+    (else iv)))
+
 (define (foldl f iv lst . rest)
-  (define (fold1 iv rest)
-    (core-match rest
-      ((hd . rest)
-       (fold1 (f hd iv) rest))
-      (else iv)))
-  
-  (define (fold* iv rest)
-    (if (andmap pair? rest)
-      (fold* (apply f (foldr (lambda (xs r) (cons (car xs) r))
-                             (list iv) rest))
+  (define (fold* f iv rest)
+    (if (andmap1 pair? rest)
+      (fold* f
+             (apply f (foldr1 (lambda (xs r) (cons (car xs) r))
+                              (list iv) rest))
              (map cdr rest))
       iv))
   
   (if (null? rest)
-    (fold1 iv lst)
-    (fold* iv (cons lst rest))))
+    (foldl1 f iv lst)
+    (fold* f iv (cons lst rest))))
+
+(define (foldr1 f iv rest)
+  (core-match rest
+    ((hd . rest)
+     (f hd (foldr1 f iv rest)))
+    (else iv)))
 
 (define (foldr f iv lst . rest)
-  (define (fold1 iv rest)
-    (core-match rest
-      ((hd . rest)
-       (f hd (fold1 iv rest)))
-      (else iv)))
-  
-  (define (fold* iv rest)
-    (if (andmap pair? rest)
+  (define (fold* f iv rest)
+    (if (andmap1 pair? rest)
       (apply f 
-        (foldr (lambda (xs r) (cons (car xs) r))
-               (list (fold* iv (map cdr rest)))
-               rest))
+        (foldr1 (lambda (xs r) (cons (car xs) r))
+                (list (fold* f iv (map cdr rest)))
+                rest))
       iv))
   
   (if (null? rest)
-    (fold1 iv lst)
-    (fold* iv (cons lst rest))))
+    (foldr1 f iv lst)
+    (fold* f iv (cons lst rest))))
+
+(define (andmap1 f rest)
+  (core-match rest
+    ((hd . rest)
+     (and (f hd) 
+          (andmap1 f rest)))
+    (else #t)))
 
 (define (andmap f lst . rest)
-  (define (fold1 rest)
-    (core-match rest
-      ((hd . rest)
-       (and (f hd) 
-            (fold1 rest)))
-      (else #t)))
-
-  (define (fold* rest)
-    (if (andmap pair? rest)
+  (define (fold* f rest)
+    (if (andmap1 pair? rest)
       (and (apply f (map car rest))
-           (fold* (map cdr rest)))
+           (fold* f (map cdr rest)))
       #t))
   
   (if (null? rest)
-    (fold1 lst)
-    (fold* (cons lst rest))))
+    (andmap1 f lst)
+    (fold* f (cons lst rest))))
+
+(define (ormap1 f rest)
+  (core-match rest
+    ((hd . rest)
+     (or (f hd) 
+         (ormap1 f rest)))
+    (else #f)))
 
 (define (ormap f lst . rest)
-  (define (fold1 rest)
-    (core-match rest
-      ((hd . rest)
-       (or (f hd) 
-           (fold1 rest)))
-      (else #f)))
-  
-  (define (fold* rest)
-    (if (andmap pair? rest)
+  (define (fold* f rest)
+    (if (andmap1 pair? rest)
       (or (apply f (map car rest))
-           (fold* (map cdr rest)))
+          (fold* f (map cdr rest)))
       #f))
   
   (if (null? rest)
-    (fold1 lst)
-    (fold* (cons lst rest))))
+    (ormap1 f lst)
+    (fold* f (cons lst rest))))
 
 (define (filter f lst)
-  (let recur ((rest lst))
-    (core-match rest
-      ((hd . rest)
-       (if (f hd)
-         (cons hd (recur rest))
-         (recur rest)))
-      (else '()))))
+  (core-match lst
+    ((hd . rest)
+     (if (f hd)
+       (cons hd (filter f rest))
+       (filter f rest)))
+    (else '())))
+
+(define (filter-map1 f rest)
+  (core-match rest
+    ((hd . rest)
+     (cond
+      ((f hd) => (lambda (r) (cons r (filter-map1 f rest))))
+      (else (filter-map1 f rest))))
+    (else '())))
 
 (define (filter-map f lst . rest)
-  (define (fold1 rest)
-    (core-match rest
-      ((hd . rest)
-       (cond
-        ((f hd) => (lambda (r) (cons r (fold1 rest))))
-        (else (fold1 rest))))
-      (else '())))
-  
-  (define (fold* rest)
-    (if (andmap pair? rest)
+  (define (fold* f rest)
+    (if (andmap1 pair? rest)
       (cond
        ((apply f (map car rest))
-        => (lambda (r) (cons r (fold* (map cdr rest)))))
+        => (lambda (r) (cons r (fold* f (map cdr rest)))))
        (else
-        (fold* (map cdr rest))))
+        (fold* f (map cdr rest))))
       '()))
   
   (if (null? rest)
-    (fold1 lst)
-    (fold* (cons lst rest))))
+    (filter-map1 f lst)
+    (fold* f (cons lst rest))))
 
 (define (iota count #!optional (start 0) (step 1))
   (let lp ((k 0) (x start) (r '()))
