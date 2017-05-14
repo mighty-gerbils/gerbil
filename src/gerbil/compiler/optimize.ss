@@ -425,8 +425,7 @@ namespace: gxc
         [#'form rands ...]
         stx)))))
 
-(def (xform-call% stx . args)
-  (apply xform-operands stx args))
+(def xform-call% xform-operands)
 
 (def (xform-setq% stx . args)
   (ast-case stx ()
@@ -773,7 +772,7 @@ namespace: gxc
   (ast-case stx (%#ref)
     ((_ (%#ref rator) . rands)
      (let* ((rator-id (identifier-symbol #'rator))
-            (rator-type (optimizer-lookup-type rator-id)))
+            (rator-type (optimizer-resolve-type rator-id)))
        (cond
         ((!procedure? rator-type)
          (verbose "optimize-call " rator-id  " => " rator-type " " (!type-id rator-type))
@@ -783,18 +782,6 @@ namespace: gxc
         (else
          (raise-compile-error "Illegal application; not a procedure" stx rator-type)))))
     (_ (xform-call% stx))))
-
-(defmethod {optimize-call !alias}
-  (lambda (self stx args)
-    (with ((!alias alias-id) self)
-      (let (alias-type (optimizer-lookup-type alias-id))
-        (if (!type? alias-type)
-          {optimize-call alias-type stx args}
-          (let (args (map compile-e args))
-            (compile-e 
-             (xform-wrap-source
-              ['%#call ['%#ref alias-id] args ...]
-              stx))))))))
 
 (defmethod {optimize-call !struct-pred}
   (lambda (self stx args)
