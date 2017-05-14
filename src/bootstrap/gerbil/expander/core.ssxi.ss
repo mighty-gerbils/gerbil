@@ -419,7 +419,7 @@ package: gerbil/expander
    (@case-lambda
     (0 gx#core-context-rebind?__0)
     (1 gx#core-context-rebind?__opt-lambda4006)
-    ((2) gx#core-context-rebind?__opt-lambda4006)))
+    ((1) gx#core-context-rebind?__opt-lambda4006)))
   (declare-type
    gx#core-context-namespace
    (@case-lambda
