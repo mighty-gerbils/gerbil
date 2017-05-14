@@ -125,7 +125,7 @@ Note that the `_` identifier is reserved for bindings to
 mean the null binding; that is the expression value
 is ignored and no lexical binding is generated:
 ```
-(def (a-function x . _) ; accepts 1 or more ignored args 
+(def (a-function x . _) ; accepts 1 or more ignored args
  (+ x 1))
 > (a-function 1 2)
 => 2
@@ -142,7 +142,7 @@ constructed with short-hand syntax using square brackets:
 => (1 2 3)
 ```
 
-The short-hand syntax also supoorts list splicing using
+The short-hand syntax also supports list splicing using
 using the ellipsis `...`:
 ```
 ; splice nested list
@@ -193,7 +193,7 @@ Structs are defined with `defstruct`:
 (defstruct point (x y))
 (defstruct (point-3d point) (z))
 > (make-point-3d 1 2 3)
-=> #<point-3d> 
+=> #<point-3d>
 ```
 
 For each struct `defstruct` defines a constructor, a type predicate,
@@ -270,7 +270,7 @@ For instance:
 By default, the constructors generated for structs expect all the fields in
 indexed order, while the class constructor expects optional keywords for
 slots in the class.
-A custom constructor can be defined by specifying a costructor property
+A custom constructor can be defined by specifying a constructor property
 designating a method at struct or class definition.
 For example:
 ```
@@ -291,7 +291,7 @@ For example:
 
 Structs can only extend other structs with single inheritance.
 In contrast, classes can freely mixin structs, as long as the
-mixins contain a compatible base struct. 
+mixins contain a compatible base struct.
 
 For example, the following constructs a diamond hierarchy with a base struct:
 ```
@@ -351,7 +351,7 @@ a 2d point (1 2)
 > (my-destructurer (make-point-3d 1 2))
 a 3d-point (2 0 0)
 => 'point-3d
- 
+
 ```
 
 #### Destructuring Binds
@@ -398,7 +398,7 @@ Gerbil provides a short form for definint syntax-rules macros:
 #### defsyntax
 More complicated macros are defined `defsyntax` and `syntax-case`
 directly. Here is an example that introduces an identifier
-hyigenically:
+hygienically:
 ```
 (defsyntax (with-magic stx)
   (syntax-case stx ()
@@ -455,7 +455,7 @@ module-path:
 
 ```
 
-As we can see, import allows macros to maninpulate the import set
+As we can see, import allows macros to manipulate the import set
 of some import source (a module or another expansion).
 They can be defined with `defsyntax-for-import`
 An example macro is `only-in`, provided by the prelude:
@@ -505,7 +505,7 @@ EOF
 File modules take their name from the including file, so this
 module is named `A` and uses `A#` as the namespace prefix.
 You can be explicit about the namespace the module uses by
-having a `namesace: id` declaration at the top of the module.
+having a `namespace: id` declaration at the top of the module.
 
 You can compile file modules with `gxc`:
 ```
@@ -531,7 +531,7 @@ The namespace prefix for identifiers defined in the module is
 `std/text/json#`.
 
 When writing a library module, you should choose an appropriate package
-for your code. 
+for your code.
 The package is specified with a `package: package-path` declaration
 at the top of a module. It effects the namespace of the module and
 placement of compiled code.
@@ -601,7 +601,7 @@ $ chmod +x build.ss
 You can now build the library by invoking `build.ss` and have it
 installed into `$GERBIL_HOME/lib`.
 ```
-$ ./build.ss 
+$ ./build.ss
 ... compile example/util
 $ gxi
 > (import :example/util)
@@ -678,7 +678,7 @@ finally!
 
 The general syntax is
 ```
-(try body ....
+(try body ...
  [catch-clause] ...
  [finally-clause])
 
@@ -749,8 +749,8 @@ number method to add.
 > (my-add 1 2)
 add fixnums
 => 3
-
 ```
+
 ### Iteration
 
 The `:std/iter` library provides support for iteration using
@@ -782,7 +782,7 @@ For example:
 3 c
 ```
 
-All patterns suuported by the `match` macro can be matched in lieu
+All patterns supported by the `match` macro can be matched in lieu
 of plain variable bindings.
 For instance:
 ```
@@ -797,7 +797,7 @@ The iteration macro supports the usual suspects for generic
 iteration: lists, vectors, strings, hash-tables, input-ports,
 and ranges.
 
-Siimple filters can be specified with the `when` and `unless` keyword in
+Simple filters can be specified with the `when` and `unless` keyword in
 the binding for:
 ```
 > (for ([x . y] '((a . 0) (b . 1) (c . 2)) when (> y 0)) (displayln x))
@@ -807,7 +807,7 @@ c
 a
 ```
 
-The variant `for*` performs multi-dimensional iteration, eqiuvalent
+The variant `for*` performs multi-dimensional iteration, equivalent
 to nested fors:
 ```
 > (for* ((x (in-range 2)) (y (in-range 2)))
@@ -832,7 +832,7 @@ with a folding `cons`:
 ```
 > (for/fold (r []) (x (in-range 1 5))
     (cons x r))
-=> (5 4 3 2 1) 
+=> (5 4 3 2 1)
 ```
 
 #### Iteration Protocol
@@ -898,10 +898,10 @@ For example:
 => 2
 > (continue cort)
 => 3
-> (contiune cort)
+> (continue cort)
 => #!void ; coroutine ended
 > (continue cort)
-=> #!void ; all 
+=> #!void ; all
 ```
 
 ### Event Programming
@@ -918,7 +918,7 @@ level `sync`.
 - A naked i/o condvar which is waited for i/o becomes ready when the runtime signals that it.
 - A thread which becomes ready when the thread completes.
 - An input port, which signals when a single read operation at the level of the port will not block; it becomes ready either when the buffer fills or when the port i/o condition is signalled.
-- A timeout, which is a real for a relative timeoute or a time object for an absolute timeout.
+- A timeout, which is a real for a relative timeout or a time object for an absolute timeout.
 
 The signature of select is
 ```
@@ -996,7 +996,7 @@ easy to follow definitions.
 ### Actors
 
 At the low-level Gerbil builds on Gambit's thread mailboxes, and blends
-them with events to provide actor-oriented programming capabilits and
+them with events to provide actor-oriented programming capabilities and
 remote inter-actor communication.
 
 #### Messages
@@ -1008,7 +1008,7 @@ but usually actors communicate with structured messages:
 (defstruct message (e source dest options))
 (def (send dest value) ...)                       ; send raw message
 (def (send-message dest value (options #f)) ...)  ; send structured message
-(def (send-message/timeout dest value timeo) ...) 
+(def (send-message/timeout dest value timeo) ...)
 
 ```
 Actors process messages and events with two main macros, `<<` and `<-`.
@@ -1186,7 +1186,7 @@ $ mkdir ~/.gerbil
 ```
 
 If you also want to encrypt your communications, then use
-the `rpc-cookie-cipher-proto` as `proto:` aregument for your rpc
+the `rpc-cookie-cipher-proto` as `proto:` argument for your rpc
 servers. On top of cookie authentication, this protocol performs
 a Diffie-Hellman key exchange and then encrypts all messages with
 AES/HMAC (it encrypts and then MACs).
@@ -1229,9 +1229,8 @@ The library provides the following procedures:
 ```
 
 The mapping of Scheme Objects to JSON objects is similar to other Scheme JSON libraries.
-The `read-json` procedure constructs primitive objects (strings, numbers, lists,
- symbol hashes).
-The `write-json` writes JSON objects with the JSON external data reprsentation.
+The `read-json` procedure constructs primitive objects (strings, numbers, lists, symbol hashes).
+The `write-json` writes JSON objects with the JSON external data representation.
 The following is a convertible JSON object:
 - booleans, corresponding to `true` and `false`
 - `#!void`, corresponding to `null`
