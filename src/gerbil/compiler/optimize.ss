@@ -786,11 +786,14 @@ namespace: gxc
     ((_ (%#ref rator) . rands)
      (let* ((rator-id (identifier-symbol #'rator))
             (rator-type (optimizer-lookup-type rator-id)))
-       (if rator-type
-         (begin
-           (verbose "optimize-call " rator-id  " => " rator-type " " (!type-id rator-type))
-           {optimize-call rator-type stx #'rands})
-         (xform-call% stx))))
+       (cond
+        ((!procedure? rator-type)
+         (verbose "optimize-call " rator-id  " => " rator-type " " (!type-id rator-type))
+         {optimize-call rator-type stx #'rands})
+        ((not rator-type)
+         (xform-call% stx))
+        (else
+         (raise-compile-error "Illegal application; not a procedure" stx rator-type)))))
     (_ (xform-call% stx))))
 
 (defmethod {optimize-call !alias}
