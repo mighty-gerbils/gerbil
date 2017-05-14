@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh -eu
 
 die() {
     "*** Build failed"
@@ -35,4 +35,3 @@ echo ">>> finalizing build"
 cp -v boot/*.scm $GERBIL_TARGET/lib
 cp -v gerbil/gxi gerbil/gxc $GERBIL_TARGET/bin
 (cd $GERBIL_TARGET/bin && ln -s gxi gxi-script)
-

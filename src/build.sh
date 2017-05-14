@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh -eu
 
 die() {
     echo "*** ERROR; build failed"
@@ -20,7 +20,7 @@ build_stage2() {
     ./build_stdlib.sh || die
 }
 
-if [[ "xstage2" = "x$1" ]]; then
+if [[ "xstage2" = "x${1:-}" ]]; then
     echo "Building stage2 Gerbil"
     build_stage2
 else
