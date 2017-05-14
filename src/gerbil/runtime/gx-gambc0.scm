@@ -592,14 +592,10 @@
    ((type-descriptor? klass)
     (cond
      ((direct-method-ref klass id) => values)
-     (cache?
-      (cond
-       ((type-descriptor-mixin klass)
-        (cache-method! klass id (mixin-method-ref klass id)))
-       (else
-        (cache-method! klass id (struct-find-method (##type-super klass) id)))))
-     ((type-descriptor-mixin klass)
+     ((type-descriptor-mixin klass)     ; we can't cache for classes
       (mixin-method-ref klass id))
+     (cache?
+      (cache-method! klass id (struct-find-method (##type-super klass) id)))
      (else
       (struct-find-method (##type-super klass) id))))
    (else #f)))
