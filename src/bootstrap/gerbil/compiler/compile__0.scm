@@ -35,39 +35,39 @@
      (lambda ()
        (let ((_tbl9827_ (make-hash-table-eq)))
          (begin
-           (hash-put! _tbl9827_ '%#lambda void)
-           (hash-put! _tbl9827_ '%#case-lambda void)
-           (hash-put! _tbl9827_ '%#let-values void)
-           (hash-put! _tbl9827_ '%#letrec-values void)
-           (hash-put! _tbl9827_ '%#letrec*-values void)
-           (hash-put! _tbl9827_ '%#quote void)
-           (hash-put! _tbl9827_ '%#quote-syntax void)
-           (hash-put! _tbl9827_ '%#call void)
-           (hash-put! _tbl9827_ '%#if void)
-           (hash-put! _tbl9827_ '%#ref void)
-           (hash-put! _tbl9827_ '%#set! void)
-           (hash-put! _tbl9827_ '%#struct-instance? void)
-           (hash-put! _tbl9827_ '%#struct-direct-instance? void)
-           (hash-put! _tbl9827_ '%#struct-ref void)
-           (hash-put! _tbl9827_ '%#struct-set! void)
+           (table-set! _tbl9827_ '%#lambda void)
+           (table-set! _tbl9827_ '%#case-lambda void)
+           (table-set! _tbl9827_ '%#let-values void)
+           (table-set! _tbl9827_ '%#letrec-values void)
+           (table-set! _tbl9827_ '%#letrec*-values void)
+           (table-set! _tbl9827_ '%#quote void)
+           (table-set! _tbl9827_ '%#quote-syntax void)
+           (table-set! _tbl9827_ '%#call void)
+           (table-set! _tbl9827_ '%#if void)
+           (table-set! _tbl9827_ '%#ref void)
+           (table-set! _tbl9827_ '%#set! void)
+           (table-set! _tbl9827_ '%#struct-instance? void)
+           (table-set! _tbl9827_ '%#struct-direct-instance? void)
+           (table-set! _tbl9827_ '%#struct-ref void)
+           (table-set! _tbl9827_ '%#struct-set! void)
            _tbl9827_)))))
   (define gxc#&void-special-form
     (make-promise
      (lambda ()
        (let ((_tbl9823_ (make-hash-table-eq)))
          (begin
-           (hash-put! _tbl9823_ '%#begin void)
-           (hash-put! _tbl9823_ '%#begin-syntax void)
-           (hash-put! _tbl9823_ '%#begin-foreign void)
-           (hash-put! _tbl9823_ '%#module void)
-           (hash-put! _tbl9823_ '%#import void)
-           (hash-put! _tbl9823_ '%#export void)
-           (hash-put! _tbl9823_ '%#provide void)
-           (hash-put! _tbl9823_ '%#extern void)
-           (hash-put! _tbl9823_ '%#define-values void)
-           (hash-put! _tbl9823_ '%#define-syntax void)
-           (hash-put! _tbl9823_ '%#define-alias void)
-           (hash-put! _tbl9823_ '%#declare void)
+           (table-set! _tbl9823_ '%#begin void)
+           (table-set! _tbl9823_ '%#begin-syntax void)
+           (table-set! _tbl9823_ '%#begin-foreign void)
+           (table-set! _tbl9823_ '%#module void)
+           (table-set! _tbl9823_ '%#import void)
+           (table-set! _tbl9823_ '%#export void)
+           (table-set! _tbl9823_ '%#provide void)
+           (table-set! _tbl9823_ '%#extern void)
+           (table-set! _tbl9823_ '%#define-values void)
+           (table-set! _tbl9823_ '%#define-syntax void)
+           (table-set! _tbl9823_ '%#define-alias void)
+           (table-set! _tbl9823_ '%#declare void)
            _tbl9823_)))))
   (define gxc#&void
     (make-promise
@@ -84,14 +84,14 @@
          (begin
            (hash-copy! _tbl9815_ (force gxc#&void-expression))
            (hash-copy! _tbl9815_ (force gxc#&void-special-form))
-           (hash-put! _tbl9815_ '%#begin gxc#collect-begin%)
-           (hash-put! _tbl9815_ '%#begin-syntax gxc#collect-begin-syntax%)
-           (hash-put! _tbl9815_ '%#module gxc#collect-module%)
-           (hash-put!
+           (table-set! _tbl9815_ '%#begin gxc#collect-begin%)
+           (table-set! _tbl9815_ '%#begin-syntax gxc#collect-begin-syntax%)
+           (table-set! _tbl9815_ '%#module gxc#collect-module%)
+           (table-set!
             _tbl9815_
             '%#define-values
             gxc#collect-bindings-define-values%)
-           (hash-put!
+           (table-set!
             _tbl9815_
             '%#define-syntax
             gxc#collect-bindings-define-syntax%)
@@ -108,8 +108,8 @@
        (let ((_tbl9805_ (make-hash-table-eq)))
          (begin
            (hash-copy! _tbl9805_ (force gxc#&void))
-           (hash-put! _tbl9805_ '%#begin gxc#collect-begin%)
-           (hash-put! _tbl9805_ '%#module gxc#lift-modules-module%)
+           (table-set! _tbl9805_ '%#begin gxc#collect-begin%)
+           (table-set! _tbl9805_ '%#module gxc#lift-modules-module%)
            _tbl9805_)))))
   (define gxc#apply-lift-modules
     (lambda (_stx9798_ . _args9800_)
@@ -122,32 +122,32 @@
      (lambda ()
        (let ((_tbl9795_ (make-hash-table-eq)))
          (begin
-           (hash-put! _tbl9795_ '%#begin gxc#find-runtime-begin%)
-           (hash-put! _tbl9795_ '%#begin-syntax false)
-           (hash-put! _tbl9795_ '%#begin-foreign true)
-           (hash-put! _tbl9795_ '%#module false)
-           (hash-put! _tbl9795_ '%#import false)
-           (hash-put! _tbl9795_ '%#export false)
-           (hash-put! _tbl9795_ '%#provide false)
-           (hash-put! _tbl9795_ '%#extern false)
-           (hash-put! _tbl9795_ '%#define-values true)
-           (hash-put! _tbl9795_ '%#define-syntax false)
-           (hash-put! _tbl9795_ '%#define-alias false)
-           (hash-put! _tbl9795_ '%#declare false)
-           (hash-put! _tbl9795_ '%#lambda true)
-           (hash-put! _tbl9795_ '%#case-lambda true)
-           (hash-put! _tbl9795_ '%#let-values true)
-           (hash-put! _tbl9795_ '%#letrec-values true)
-           (hash-put! _tbl9795_ '%#letrec*-values true)
-           (hash-put! _tbl9795_ '%#quote true)
-           (hash-put! _tbl9795_ '%#call true)
-           (hash-put! _tbl9795_ '%#if true)
-           (hash-put! _tbl9795_ '%#ref true)
-           (hash-put! _tbl9795_ '%#set! true)
-           (hash-put! _tbl9795_ '%#struct-instance? true)
-           (hash-put! _tbl9795_ '%#struct-direct-instance? true)
-           (hash-put! _tbl9795_ '%#struct-ref true)
-           (hash-put! _tbl9795_ '%#struct-set! true)
+           (table-set! _tbl9795_ '%#begin gxc#find-runtime-begin%)
+           (table-set! _tbl9795_ '%#begin-syntax false)
+           (table-set! _tbl9795_ '%#begin-foreign true)
+           (table-set! _tbl9795_ '%#module false)
+           (table-set! _tbl9795_ '%#import false)
+           (table-set! _tbl9795_ '%#export false)
+           (table-set! _tbl9795_ '%#provide false)
+           (table-set! _tbl9795_ '%#extern false)
+           (table-set! _tbl9795_ '%#define-values true)
+           (table-set! _tbl9795_ '%#define-syntax false)
+           (table-set! _tbl9795_ '%#define-alias false)
+           (table-set! _tbl9795_ '%#declare false)
+           (table-set! _tbl9795_ '%#lambda true)
+           (table-set! _tbl9795_ '%#case-lambda true)
+           (table-set! _tbl9795_ '%#let-values true)
+           (table-set! _tbl9795_ '%#letrec-values true)
+           (table-set! _tbl9795_ '%#letrec*-values true)
+           (table-set! _tbl9795_ '%#quote true)
+           (table-set! _tbl9795_ '%#call true)
+           (table-set! _tbl9795_ '%#if true)
+           (table-set! _tbl9795_ '%#ref true)
+           (table-set! _tbl9795_ '%#set! true)
+           (table-set! _tbl9795_ '%#struct-instance? true)
+           (table-set! _tbl9795_ '%#struct-direct-instance? true)
+           (table-set! _tbl9795_ '%#struct-ref true)
+           (table-set! _tbl9795_ '%#struct-set! true)
            _tbl9795_)))))
   (define gxc#apply-find-runtime-code
     (lambda (_stx9788_ . _args9790_)
@@ -160,35 +160,38 @@
      (lambda ()
        (let ((_tbl9785_ (make-hash-table-eq)))
          (begin
-           (hash-put! _tbl9785_ '%#begin gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#begin-syntax gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#begin-foreign gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#module gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#import gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#export gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#provide gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#extern gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#define-values gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#define-syntax gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#define-alias gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#declare gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#lambda gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#case-lambda gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#let-values gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#letrec-values gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#letrec*-values gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#quote gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#call gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#if gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#ref gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#set! gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#struct-instance? gxc#generate-runtime-empty)
-           (hash-put!
+           (table-set! _tbl9785_ '%#begin gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#begin-syntax gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#begin-foreign gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#module gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#import gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#export gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#provide gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#extern gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#define-values gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#define-syntax gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#define-alias gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#declare gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#lambda gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#case-lambda gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#let-values gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#letrec-values gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#letrec*-values gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#quote gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#call gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#if gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#ref gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#set! gxc#generate-runtime-empty)
+           (table-set!
+            _tbl9785_
+            '%#struct-instance?
+            gxc#generate-runtime-empty)
+           (table-set!
             _tbl9785_
             '%#struct-direct-instance?
             gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#struct-ref gxc#generate-runtime-empty)
-           (hash-put! _tbl9785_ '%#struct-set! gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#struct-ref gxc#generate-runtime-empty)
+           (table-set! _tbl9785_ '%#struct-set! gxc#generate-runtime-empty)
            _tbl9785_)))))
   (define gxc#&generate-loader
     (make-promise
@@ -196,8 +199,8 @@
        (let ((_tbl9781_ (make-hash-table-eq)))
          (begin
            (hash-copy! _tbl9781_ (force gxc#&generate-runtime-empty))
-           (hash-put! _tbl9781_ '%#begin gxc#generate-runtime-begin%)
-           (hash-put! _tbl9781_ '%#import gxc#generate-runtime-loader-import%)
+           (table-set! _tbl9781_ '%#begin gxc#generate-runtime-begin%)
+           (table-set! _tbl9781_ '%#import gxc#generate-runtime-loader-import%)
            _tbl9781_)))))
   (define gxc#apply-generate-loader
     (lambda (_stx9774_ . _args9776_)
@@ -211,45 +214,51 @@
        (let ((_tbl9771_ (make-hash-table-eq)))
          (begin
            (hash-copy! _tbl9771_ (force gxc#&generate-runtime-empty))
-           (hash-put! _tbl9771_ '%#begin gxc#generate-runtime-begin%)
-           (hash-put!
+           (table-set! _tbl9771_ '%#begin gxc#generate-runtime-begin%)
+           (table-set!
             _tbl9771_
             '%#begin-foreign
             gxc#generate-runtime-begin-foreign%)
-           (hash-put!
+           (table-set!
             _tbl9771_
             '%#define-values
             gxc#generate-runtime-define-values%)
-           (hash-put! _tbl9771_ '%#declare gxc#generate-runtime-declare%)
-           (hash-put! _tbl9771_ '%#lambda gxc#generate-runtime-lambda%)
-           (hash-put!
+           (table-set! _tbl9771_ '%#declare gxc#generate-runtime-declare%)
+           (table-set! _tbl9771_ '%#lambda gxc#generate-runtime-lambda%)
+           (table-set!
             _tbl9771_
             '%#case-lambda
             gxc#generate-runtime-case-lambda%)
-           (hash-put! _tbl9771_ '%#let-values gxc#generate-runtime-let-values%)
-           (hash-put!
+           (table-set!
+            _tbl9771_
+            '%#let-values
+            gxc#generate-runtime-let-values%)
+           (table-set!
             _tbl9771_
             '%#letrec-values
             gxc#generate-runtime-letrec-values%)
-           (hash-put!
+           (table-set!
             _tbl9771_
             '%#letrec*-values
             gxc#generate-runtime-letrec*-values%)
-           (hash-put! _tbl9771_ '%#quote gxc#generate-runtime-quote%)
-           (hash-put! _tbl9771_ '%#call gxc#generate-runtime-call%)
-           (hash-put! _tbl9771_ '%#if gxc#generate-runtime-if%)
-           (hash-put! _tbl9771_ '%#ref gxc#generate-runtime-ref%)
-           (hash-put! _tbl9771_ '%#set! gxc#generate-runtime-setq%)
-           (hash-put!
+           (table-set! _tbl9771_ '%#quote gxc#generate-runtime-quote%)
+           (table-set! _tbl9771_ '%#call gxc#generate-runtime-call%)
+           (table-set! _tbl9771_ '%#if gxc#generate-runtime-if%)
+           (table-set! _tbl9771_ '%#ref gxc#generate-runtime-ref%)
+           (table-set! _tbl9771_ '%#set! gxc#generate-runtime-setq%)
+           (table-set!
             _tbl9771_
             '%#struct-instance?
             gxc#generate-runtime-struct-instancep%)
-           (hash-put!
+           (table-set!
             _tbl9771_
             '%#struct-direct-instance?
             gxc#generate-runtime-struct-direct-instancep%)
-           (hash-put! _tbl9771_ '%#struct-ref gxc#generate-runtime-struct-ref%)
-           (hash-put!
+           (table-set!
+            _tbl9771_
+            '%#struct-ref
+            gxc#generate-runtime-struct-ref%)
+           (table-set!
             _tbl9771_
             '%#struct-set!
             gxc#generate-runtime-struct-setq%)
@@ -266,11 +275,11 @@
        (let ((_tbl9761_ (make-hash-table-eq)))
          (begin
            (hash-copy! _tbl9761_ (force gxc#&generate-runtime))
-           (hash-put!
+           (table-set!
             _tbl9761_
             '%#quote-syntax
             gxc#generate-runtime-phi-quote-syntax%)
-           (hash-put!
+           (table-set!
             _tbl9761_
             '%#define-runtime
             gxc#generate-runtime-phi-define-runtime%)
@@ -286,25 +295,28 @@
      (lambda ()
        (let ((_tbl9751_ (make-hash-table-eq)))
          (begin
-           (hash-put! _tbl9751_ '%#begin gxc#collect-begin%)
-           (hash-put! _tbl9751_ '%#lambda gxc#collect-body-lambda%)
-           (hash-put! _tbl9751_ '%#case-lambda gxc#collect-body-case-lambda%)
-           (hash-put! _tbl9751_ '%#let-values gxc#collect-body-let-values%)
-           (hash-put! _tbl9751_ '%#letrec-values gxc#collect-body-let-values%)
-           (hash-put! _tbl9751_ '%#letrec*-values gxc#collect-body-let-values%)
-           (hash-put! _tbl9751_ '%#quote void)
-           (hash-put! _tbl9751_ '%#quote-syntax void)
-           (hash-put! _tbl9751_ '%#call gxc#collect-operands)
-           (hash-put! _tbl9751_ '%#if gxc#collect-operands)
-           (hash-put! _tbl9751_ '%#ref gxc#collect-refs-ref%)
-           (hash-put! _tbl9751_ '%#set! gxc#collect-refs-setq%)
-           (hash-put! _tbl9751_ '%#struct-instance? gxc#collect-operands)
-           (hash-put!
+           (table-set! _tbl9751_ '%#begin gxc#collect-begin%)
+           (table-set! _tbl9751_ '%#lambda gxc#collect-body-lambda%)
+           (table-set! _tbl9751_ '%#case-lambda gxc#collect-body-case-lambda%)
+           (table-set! _tbl9751_ '%#let-values gxc#collect-body-let-values%)
+           (table-set! _tbl9751_ '%#letrec-values gxc#collect-body-let-values%)
+           (table-set!
+            _tbl9751_
+            '%#letrec*-values
+            gxc#collect-body-let-values%)
+           (table-set! _tbl9751_ '%#quote void)
+           (table-set! _tbl9751_ '%#quote-syntax void)
+           (table-set! _tbl9751_ '%#call gxc#collect-operands)
+           (table-set! _tbl9751_ '%#if gxc#collect-operands)
+           (table-set! _tbl9751_ '%#ref gxc#collect-refs-ref%)
+           (table-set! _tbl9751_ '%#set! gxc#collect-refs-setq%)
+           (table-set! _tbl9751_ '%#struct-instance? gxc#collect-operands)
+           (table-set!
             _tbl9751_
             '%#struct-direct-instance?
             gxc#collect-operands)
-           (hash-put! _tbl9751_ '%#struct-ref gxc#collect-operands)
-           (hash-put! _tbl9751_ '%#struct-set! gxc#collect-operands)
+           (table-set! _tbl9751_ '%#struct-ref gxc#collect-operands)
+           (table-set! _tbl9751_ '%#struct-set! gxc#collect-operands)
            _tbl9751_)))))
   (define gxc#apply-collect-expression-refs
     (lambda (_stx9744_ . _args9746_)
@@ -318,30 +330,30 @@
        (let ((_tbl9741_ (make-hash-table-eq)))
          (begin
            (hash-copy! _tbl9741_ (force gxc#&void-expression))
-           (hash-put! _tbl9741_ '%#begin gxc#generate-meta-begin%)
-           (hash-put!
+           (table-set! _tbl9741_ '%#begin gxc#generate-meta-begin%)
+           (table-set!
             _tbl9741_
             '%#begin-syntax
             gxc#generate-meta-begin-syntax%)
-           (hash-put! _tbl9741_ '%#module gxc#generate-meta-module%)
-           (hash-put! _tbl9741_ '%#import gxc#generate-meta-import%)
-           (hash-put! _tbl9741_ '%#export gxc#generate-meta-export%)
-           (hash-put! _tbl9741_ '%#provide gxc#generate-meta-provide%)
-           (hash-put! _tbl9741_ '%#extern gxc#generate-meta-extern%)
-           (hash-put!
+           (table-set! _tbl9741_ '%#module gxc#generate-meta-module%)
+           (table-set! _tbl9741_ '%#import gxc#generate-meta-import%)
+           (table-set! _tbl9741_ '%#export gxc#generate-meta-export%)
+           (table-set! _tbl9741_ '%#provide gxc#generate-meta-provide%)
+           (table-set! _tbl9741_ '%#extern gxc#generate-meta-extern%)
+           (table-set!
             _tbl9741_
             '%#define-values
             gxc#generate-meta-define-values%)
-           (hash-put!
+           (table-set!
             _tbl9741_
             '%#define-syntax
             gxc#generate-meta-define-syntax%)
-           (hash-put!
+           (table-set!
             _tbl9741_
             '%#define-alias
             gxc#generate-meta-define-alias%)
-           (hash-put! _tbl9741_ '%#begin-foreign void)
-           (hash-put! _tbl9741_ '%#declare void)
+           (table-set! _tbl9741_ '%#begin-foreign void)
+           (table-set! _tbl9741_ '%#declare void)
            _tbl9741_)))))
   (define gxc#apply-generate-meta
     (lambda (_stx9734_ . _args9736_)
@@ -354,42 +366,45 @@
      (lambda ()
        (let ((_tbl9731_ (make-hash-table-eq)))
          (begin
-           (hash-put! _tbl9731_ '%#begin gxc#generate-meta-begin%)
-           (hash-put!
+           (table-set! _tbl9731_ '%#begin gxc#generate-meta-begin%)
+           (table-set!
             _tbl9731_
             '%#begin-syntax
             gxc#generate-meta-begin-syntax%)
-           (hash-put!
+           (table-set!
             _tbl9731_
             '%#define-syntax
             gxc#generate-meta-define-syntax%)
-           (hash-put!
+           (table-set!
             _tbl9731_
             '%#define-alias
             gxc#generate-meta-define-alias%)
-           (hash-put!
+           (table-set!
             _tbl9731_
             '%#define-values
             gxc#generate-meta-phi-define-values%)
-           (hash-put! _tbl9731_ '%#lambda gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#case-lambda gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#let-values gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#letrec-values gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#letrec*-values gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#quote gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#quote-syntax gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#call gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#if gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#ref gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#set! gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#struct-instance? gxc#generate-meta-phi-expr)
-           (hash-put!
+           (table-set! _tbl9731_ '%#lambda gxc#generate-meta-phi-expr)
+           (table-set! _tbl9731_ '%#case-lambda gxc#generate-meta-phi-expr)
+           (table-set! _tbl9731_ '%#let-values gxc#generate-meta-phi-expr)
+           (table-set! _tbl9731_ '%#letrec-values gxc#generate-meta-phi-expr)
+           (table-set! _tbl9731_ '%#letrec*-values gxc#generate-meta-phi-expr)
+           (table-set! _tbl9731_ '%#quote gxc#generate-meta-phi-expr)
+           (table-set! _tbl9731_ '%#quote-syntax gxc#generate-meta-phi-expr)
+           (table-set! _tbl9731_ '%#call gxc#generate-meta-phi-expr)
+           (table-set! _tbl9731_ '%#if gxc#generate-meta-phi-expr)
+           (table-set! _tbl9731_ '%#ref gxc#generate-meta-phi-expr)
+           (table-set! _tbl9731_ '%#set! gxc#generate-meta-phi-expr)
+           (table-set!
+            _tbl9731_
+            '%#struct-instance?
+            gxc#generate-meta-phi-expr)
+           (table-set!
             _tbl9731_
             '%#struct-direct-instance?
             gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#struct-ref gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#struct-set! gxc#generate-meta-phi-expr)
-           (hash-put! _tbl9731_ '%#declare void)
+           (table-set! _tbl9731_ '%#struct-ref gxc#generate-meta-phi-expr)
+           (table-set! _tbl9731_ '%#struct-set! gxc#generate-meta-phi-expr)
+           (table-set! _tbl9731_ '%#declare void)
            _tbl9731_)))))
   (define gxc#apply-generate-meta-phi
     (lambda (_stx9724_ . _args9726_)
@@ -903,7 +918,7 @@
               '#f)))
         (if (interned-symbol? _eid8894_)
             '#!void
-            (hash-put!
+            (table-set!
              _ht8895_
              _eid8894_
              (gx#make-binding-id__1
@@ -932,7 +947,7 @@
                                    (gxc#generate-runtime-gensym-reference__0
                                     _eid8876_)))
                               (begin
-                                (hash-put! _ht8877_ _eid8876_ _gid8882_)
+                                (table-set! _ht8877_ _eid8876_ _gid8882_)
                                 _gid8882_))
                             (if (##structure-instance-of?
                                  _bind8874_
@@ -958,7 +973,7 @@
                                              (gxc#generate-runtime-gensym-reference__0
                                               _eid8876_)))))
                                   (begin
-                                    (hash-put! _ht8877_ _eid8876_ _gid8889_)
+                                    (table-set! _ht8877_ _eid8876_ _gid8889_)
                                     _gid8889_))
                                 (gxc#raise-compile-error
                                  '"Cannot compile reference to uninterned binding"
@@ -994,7 +1009,7 @@
                                     '"__"
                                     (gxc#current-compile-timestamp))
                                    (make-symbol '"_" _sym8850_ '"_"))))
-                  (begin (hash-put! _ht8853_ _sym8850_ _g8858_) _g8858_)))))))
+                  (begin (table-set! _ht8853_ _sym8850_ _g8858_) _g8858_)))))))
     (begin
       (define gxc#generate-runtime-gensym-reference__0
         (lambda (_sym8863_)
@@ -4715,7 +4730,7 @@
                                   (symbol->string _id4448_)
                                   '"__rt")))
                             (begin
-                              (hash-put! _ht4399_ _id4448_ _rt4450_)
+                              (table-set! _ht4399_ _id4448_ _rt4450_)
                               (_lp4401_
                                _rest4446_
                                (cons _rt4450_ _loads4404_)))))))))
@@ -5999,7 +6014,7 @@
                             '2
                             gxc#meta-state::t
                             '#f)
-                           (hash-put!
+                           (table-set!
                             _open3007_
                             _phi2991_
                             (##structure
@@ -6132,7 +6147,7 @@
                                                       '#f)
                                                      (gx#stx-e _L2907_))))
                                             (let ()
-                                              (hash-put!
+                                              (table-set!
                                                _ht2871_
                                                _eid2921_
                                                _eid2921_)))))
@@ -6178,7 +6193,7 @@
                                                               _L2847_))))
                                                     (let ()
                                                       (begin
-                                                        (hash-put!
+                                                        (table-set!
                                                          _ht2798_
                                                          _eid2864_
                                                          _eid2864_)

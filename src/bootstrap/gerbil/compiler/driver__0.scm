@@ -372,7 +372,7 @@
                          (begin
                            (if _rt18157_
                                (begin
-                                 (hash-put!
+                                 (table-set!
                                   (gxc#current-compile-runtime-sections)
                                   _ctx18151_
                                   _rt18157_)

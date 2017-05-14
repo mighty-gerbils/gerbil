@@ -1910,7 +1910,7 @@
                                       '%
                                       _id4289_))))
                      (begin
-                       (hash-put! _subst4288_ _id4289_ _eid4291_)
+                       (table-set! _subst4288_ _id4289_ _eid4291_)
                        _eid4291_)))))
             (let ((_subst!4224_
                    (lambda (_key4226_)
@@ -2176,7 +2176,7 @@
        '#f)))
   (define gx#core-context-put!
     (lambda (_ctx4084_ _key4085_ _val4086_)
-      (hash-put!
+      (table-set!
        (##structure-ref _ctx4084_ '2 gx#expander-context::t '#f)
        _key4085_
        _val4086_)))

@@ -391,7 +391,7 @@
                          (gx#prelude-context:::init!__0 __obj11042 _ctx10888_)
                          __obj11042))))
                 (begin
-                  (hash-put! _ht10890_ _ctx10888_ _pre10895_)
+                  (table-set! _ht10890_ _ctx10888_ _pre10895_)
                   _pre10895_)))))))
   (begin
     (define gx#core-import-module__opt-lambda10840
@@ -483,11 +483,11 @@
                                          '11
                                          gx#module-context::t
                                          '#f)
-                                        (hash-put!
+                                        (table-set!
                                          (gx#current-expander-module-registry)
                                          _path10857_
                                          _ctx10870_)
-                                        (hash-put!
+                                        (table-set!
                                          (gx#current-expander-module-registry)
                                          _id10861_
                                          _ctx10870_)
@@ -519,7 +519,7 @@
                             (gx#core-resolve-library-module-path _rpath10842_)
                             _reload?10843_)))
                       (begin
-                        (hash-put!
+                        (table-set!
                          (gx#current-expander-module-registry)
                          _rpath10842_
                          _ctx10850_)
@@ -1742,7 +1742,7 @@
                                                             gx#module-export::t
                                                             '#f))
                                                   '#f)
-                                              (hash-put!
+                                              (table-set!
                                                _deps9456_
                                                (##structure-ref
                                                 (##structure-ref
@@ -1960,7 +1960,7 @@
                                   (begin
                                     (for-each
                                      (lambda (_out9560_)
-                                       (hash-put!
+                                       (table-set!
                                         _exports9557_
                                         (cons (##structure-ref
                                                _out9560_

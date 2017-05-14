@@ -44,7 +44,7 @@
          (begin
            (gxc#optimizer-load-prelude-ssxi _ctx17794_)
            (gxc#optimizer-load-ssxi-deps _ctx17794_)
-           (hash-put!
+           (table-set!
             (##structure-ref
              (gxc#current-compile-optimizer-info)
              '2
@@ -176,7 +176,7 @@
                                    (if _$e17744_ _$e17744_ '#!void))))
                             (let ()
                               (begin
-                                (hash-put! _ht17732_ _id17734_ _val17747_)
+                                (table-set! _ht17732_ _id17734_ _val17747_)
                                 _val17747_)))))))))))))
   (define gxc#optimizer-import-ssxi
     (lambda (_ctx17707_)
@@ -492,7 +492,7 @@
            _sym17602_
            '" "
            (##vector->list _type17603_))
-          (hash-put!
+          (table-set!
            (if _local?17604_
                (gxc#current-compile-local-type)
                (##structure-ref
@@ -547,7 +547,7 @@
                            _method17579_
                            '" => "
                            _sym17580_)
-                          (hash-put! _vtab17585_ _method17579_ _sym17580_)))))
+                          (table-set! _vtab17585_ _method17579_ _sym17580_)))))
               (if (not _type17583_)
                   (gxc#verbose '"declare-method: unknown type " _type-t17578_)
                   (error '"declare-method: bad method declaration; no method table"
@@ -618,39 +618,39 @@
      (lambda ()
        (let ((_tbl17546_ (make-hash-table-eq)))
          (begin
-           (hash-put! _tbl17546_ '%#lambda false)
-           (hash-put! _tbl17546_ '%#case-lambda false)
-           (hash-put! _tbl17546_ '%#let-values false)
-           (hash-put! _tbl17546_ '%#letrec-values false)
-           (hash-put! _tbl17546_ '%#letrec*-values false)
-           (hash-put! _tbl17546_ '%#quote false)
-           (hash-put! _tbl17546_ '%#quote-syntax false)
-           (hash-put! _tbl17546_ '%#call false)
-           (hash-put! _tbl17546_ '%#if false)
-           (hash-put! _tbl17546_ '%#ref false)
-           (hash-put! _tbl17546_ '%#set! false)
-           (hash-put! _tbl17546_ '%#struct-instance? false)
-           (hash-put! _tbl17546_ '%#struct-direct-instance? false)
-           (hash-put! _tbl17546_ '%#struct-ref false)
-           (hash-put! _tbl17546_ '%#struct-set! false)
+           (table-set! _tbl17546_ '%#lambda false)
+           (table-set! _tbl17546_ '%#case-lambda false)
+           (table-set! _tbl17546_ '%#let-values false)
+           (table-set! _tbl17546_ '%#letrec-values false)
+           (table-set! _tbl17546_ '%#letrec*-values false)
+           (table-set! _tbl17546_ '%#quote false)
+           (table-set! _tbl17546_ '%#quote-syntax false)
+           (table-set! _tbl17546_ '%#call false)
+           (table-set! _tbl17546_ '%#if false)
+           (table-set! _tbl17546_ '%#ref false)
+           (table-set! _tbl17546_ '%#set! false)
+           (table-set! _tbl17546_ '%#struct-instance? false)
+           (table-set! _tbl17546_ '%#struct-direct-instance? false)
+           (table-set! _tbl17546_ '%#struct-ref false)
+           (table-set! _tbl17546_ '%#struct-set! false)
            _tbl17546_)))))
   (define gxc#&false-special-form
     (make-promise
      (lambda ()
        (let ((_tbl17542_ (make-hash-table-eq)))
          (begin
-           (hash-put! _tbl17542_ '%#begin false)
-           (hash-put! _tbl17542_ '%#begin-syntax false)
-           (hash-put! _tbl17542_ '%#begin-foreign false)
-           (hash-put! _tbl17542_ '%#module false)
-           (hash-put! _tbl17542_ '%#import false)
-           (hash-put! _tbl17542_ '%#export false)
-           (hash-put! _tbl17542_ '%#provide false)
-           (hash-put! _tbl17542_ '%#extern false)
-           (hash-put! _tbl17542_ '%#define-values false)
-           (hash-put! _tbl17542_ '%#define-syntax false)
-           (hash-put! _tbl17542_ '%#define-alias false)
-           (hash-put! _tbl17542_ '%#declare false)
+           (table-set! _tbl17542_ '%#begin false)
+           (table-set! _tbl17542_ '%#begin-syntax false)
+           (table-set! _tbl17542_ '%#begin-foreign false)
+           (table-set! _tbl17542_ '%#module false)
+           (table-set! _tbl17542_ '%#import false)
+           (table-set! _tbl17542_ '%#export false)
+           (table-set! _tbl17542_ '%#provide false)
+           (table-set! _tbl17542_ '%#extern false)
+           (table-set! _tbl17542_ '%#define-values false)
+           (table-set! _tbl17542_ '%#define-syntax false)
+           (table-set! _tbl17542_ '%#define-alias false)
+           (table-set! _tbl17542_ '%#declare false)
            _tbl17542_)))))
   (define gxc#&false
     (make-promise
@@ -665,39 +665,42 @@
      (lambda ()
        (let ((_tbl17534_ (make-hash-table-eq)))
          (begin
-           (hash-put! _tbl17534_ '%#lambda gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#case-lambda gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#let-values gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#letrec-values gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#letrec*-values gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#quote gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#quote-syntax gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#call gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#if gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#ref gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#set! gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#struct-instance? gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#struct-direct-instance? gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#struct-ref gxc#xform-identity)
-           (hash-put! _tbl17534_ '%#struct-set! gxc#xform-identity)
+           (table-set! _tbl17534_ '%#lambda gxc#xform-identity)
+           (table-set! _tbl17534_ '%#case-lambda gxc#xform-identity)
+           (table-set! _tbl17534_ '%#let-values gxc#xform-identity)
+           (table-set! _tbl17534_ '%#letrec-values gxc#xform-identity)
+           (table-set! _tbl17534_ '%#letrec*-values gxc#xform-identity)
+           (table-set! _tbl17534_ '%#quote gxc#xform-identity)
+           (table-set! _tbl17534_ '%#quote-syntax gxc#xform-identity)
+           (table-set! _tbl17534_ '%#call gxc#xform-identity)
+           (table-set! _tbl17534_ '%#if gxc#xform-identity)
+           (table-set! _tbl17534_ '%#ref gxc#xform-identity)
+           (table-set! _tbl17534_ '%#set! gxc#xform-identity)
+           (table-set! _tbl17534_ '%#struct-instance? gxc#xform-identity)
+           (table-set!
+            _tbl17534_
+            '%#struct-direct-instance?
+            gxc#xform-identity)
+           (table-set! _tbl17534_ '%#struct-ref gxc#xform-identity)
+           (table-set! _tbl17534_ '%#struct-set! gxc#xform-identity)
            _tbl17534_)))))
   (define gxc#&identity-special-form
     (make-promise
      (lambda ()
        (let ((_tbl17530_ (make-hash-table-eq)))
          (begin
-           (hash-put! _tbl17530_ '%#begin gxc#xform-identity)
-           (hash-put! _tbl17530_ '%#begin-syntax gxc#xform-identity)
-           (hash-put! _tbl17530_ '%#begin-foreign gxc#xform-identity)
-           (hash-put! _tbl17530_ '%#module gxc#xform-identity)
-           (hash-put! _tbl17530_ '%#import gxc#xform-identity)
-           (hash-put! _tbl17530_ '%#export gxc#xform-identity)
-           (hash-put! _tbl17530_ '%#provide gxc#xform-identity)
-           (hash-put! _tbl17530_ '%#extern gxc#xform-identity)
-           (hash-put! _tbl17530_ '%#define-values gxc#xform-identity)
-           (hash-put! _tbl17530_ '%#define-syntax gxc#xform-identity)
-           (hash-put! _tbl17530_ '%#define-alias gxc#xform-identity)
-           (hash-put! _tbl17530_ '%#declare gxc#xform-identity)
+           (table-set! _tbl17530_ '%#begin gxc#xform-identity)
+           (table-set! _tbl17530_ '%#begin-syntax gxc#xform-identity)
+           (table-set! _tbl17530_ '%#begin-foreign gxc#xform-identity)
+           (table-set! _tbl17530_ '%#module gxc#xform-identity)
+           (table-set! _tbl17530_ '%#import gxc#xform-identity)
+           (table-set! _tbl17530_ '%#export gxc#xform-identity)
+           (table-set! _tbl17530_ '%#provide gxc#xform-identity)
+           (table-set! _tbl17530_ '%#extern gxc#xform-identity)
+           (table-set! _tbl17530_ '%#define-values gxc#xform-identity)
+           (table-set! _tbl17530_ '%#define-syntax gxc#xform-identity)
+           (table-set! _tbl17530_ '%#define-alias gxc#xform-identity)
+           (table-set! _tbl17530_ '%#declare gxc#xform-identity)
            _tbl17530_)))))
   (define gxc#&identity
     (make-promise
@@ -712,24 +715,24 @@
      (lambda ()
        (let ((_tbl17522_ (make-hash-table-eq)))
          (begin
-           (hash-put! _tbl17522_ '%#lambda gxc#xform-lambda%)
-           (hash-put! _tbl17522_ '%#case-lambda gxc#xform-case-lambda%)
-           (hash-put! _tbl17522_ '%#let-values gxc#xform-let-values%)
-           (hash-put! _tbl17522_ '%#letrec-values gxc#xform-let-values%)
-           (hash-put! _tbl17522_ '%#letrec*-values gxc#xform-let-values%)
-           (hash-put! _tbl17522_ '%#quote gxc#xform-identity)
-           (hash-put! _tbl17522_ '%#quote-syntax gxc#xform-identity)
-           (hash-put! _tbl17522_ '%#call gxc#xform-call%)
-           (hash-put! _tbl17522_ '%#if gxc#xform-if%)
-           (hash-put! _tbl17522_ '%#ref gxc#xform-identity)
-           (hash-put! _tbl17522_ '%#set! gxc#xform-setq%)
-           (hash-put! _tbl17522_ '%#struct-instance? gxc#xform-struct-op%)
-           (hash-put!
+           (table-set! _tbl17522_ '%#lambda gxc#xform-lambda%)
+           (table-set! _tbl17522_ '%#case-lambda gxc#xform-case-lambda%)
+           (table-set! _tbl17522_ '%#let-values gxc#xform-let-values%)
+           (table-set! _tbl17522_ '%#letrec-values gxc#xform-let-values%)
+           (table-set! _tbl17522_ '%#letrec*-values gxc#xform-let-values%)
+           (table-set! _tbl17522_ '%#quote gxc#xform-identity)
+           (table-set! _tbl17522_ '%#quote-syntax gxc#xform-identity)
+           (table-set! _tbl17522_ '%#call gxc#xform-call%)
+           (table-set! _tbl17522_ '%#if gxc#xform-if%)
+           (table-set! _tbl17522_ '%#ref gxc#xform-identity)
+           (table-set! _tbl17522_ '%#set! gxc#xform-setq%)
+           (table-set! _tbl17522_ '%#struct-instance? gxc#xform-struct-op%)
+           (table-set!
             _tbl17522_
             '%#struct-direct-instance?
             gxc#xform-struct-op%)
-           (hash-put! _tbl17522_ '%#struct-ref gxc#xform-struct-op%)
-           (hash-put! _tbl17522_ '%#struct-set! gxc#xform-struct-op%)
+           (table-set! _tbl17522_ '%#struct-ref gxc#xform-struct-op%)
+           (table-set! _tbl17522_ '%#struct-set! gxc#xform-struct-op%)
            _tbl17522_)))))
   (define gxc#&basic-xform
     (make-promise
@@ -738,9 +741,9 @@
          (begin
            (hash-copy! _tbl17518_ (force gxc#&basic-xform-expression))
            (hash-copy! _tbl17518_ (force gxc#&identity))
-           (hash-put! _tbl17518_ '%#begin gxc#xform-begin%)
-           (hash-put! _tbl17518_ '%#module gxc#xform-module%)
-           (hash-put! _tbl17518_ '%#define-values gxc#xform-define-values%)
+           (table-set! _tbl17518_ '%#begin gxc#xform-begin%)
+           (table-set! _tbl17518_ '%#module gxc#xform-module%)
+           (table-set! _tbl17518_ '%#define-values gxc#xform-define-values%)
            _tbl17518_)))))
   (define gxc#&collect-mutators
     (make-promise
@@ -748,26 +751,29 @@
        (let ((_tbl17514_ (make-hash-table-eq)))
          (begin
            (hash-copy! _tbl17514_ (force gxc#&void))
-           (hash-put! _tbl17514_ '%#begin gxc#collect-begin%)
-           (hash-put! _tbl17514_ '%#module gxc#collect-module%)
-           (hash-put! _tbl17514_ '%#lambda gxc#collect-body-lambda%)
-           (hash-put! _tbl17514_ '%#case-lambda gxc#collect-body-case-lambda%)
-           (hash-put! _tbl17514_ '%#let-values gxc#collect-body-let-values%)
-           (hash-put! _tbl17514_ '%#letrec-values gxc#collect-body-let-values%)
-           (hash-put!
+           (table-set! _tbl17514_ '%#begin gxc#collect-begin%)
+           (table-set! _tbl17514_ '%#module gxc#collect-module%)
+           (table-set! _tbl17514_ '%#lambda gxc#collect-body-lambda%)
+           (table-set! _tbl17514_ '%#case-lambda gxc#collect-body-case-lambda%)
+           (table-set! _tbl17514_ '%#let-values gxc#collect-body-let-values%)
+           (table-set!
+            _tbl17514_
+            '%#letrec-values
+            gxc#collect-body-let-values%)
+           (table-set!
             _tbl17514_
             '%#letrec*-values
             gxc#collect-body-let-values%)
-           (hash-put! _tbl17514_ '%#call gxc#collect-operands)
-           (hash-put! _tbl17514_ '%#if gxc#collect-operands)
-           (hash-put! _tbl17514_ '%#set! gxc#collect-mutators-setq%)
-           (hash-put! _tbl17514_ '%#struct-instance? gxc#collect-operands)
-           (hash-put!
+           (table-set! _tbl17514_ '%#call gxc#collect-operands)
+           (table-set! _tbl17514_ '%#if gxc#collect-operands)
+           (table-set! _tbl17514_ '%#set! gxc#collect-mutators-setq%)
+           (table-set! _tbl17514_ '%#struct-instance? gxc#collect-operands)
+           (table-set!
             _tbl17514_
             '%#struct-direct-instance?
             gxc#collect-operands)
-           (hash-put! _tbl17514_ '%#struct-ref gxc#collect-operands)
-           (hash-put! _tbl17514_ '%#struct-set! gxc#collect-operands)
+           (table-set! _tbl17514_ '%#struct-ref gxc#collect-operands)
+           (table-set! _tbl17514_ '%#struct-set! gxc#collect-operands)
            _tbl17514_)))))
   (define gxc#apply-collect-mutators
     (lambda (_stx17507_ . _args17509_)
@@ -781,9 +787,9 @@
        (let ((_tbl17504_ (make-hash-table-eq)))
          (begin
            (hash-copy! _tbl17504_ (force gxc#&identity))
-           (hash-put! _tbl17504_ '%#begin gxc#xform-begin%)
-           (hash-put! _tbl17504_ '%#module gxc#xform-module%)
-           (hash-put!
+           (table-set! _tbl17504_ '%#begin gxc#xform-begin%)
+           (table-set! _tbl17504_ '%#module gxc#xform-module%)
+           (table-set!
             _tbl17504_
             '%#define-values
             gxc#lift-top-lambda-define-values%)
@@ -800,8 +806,8 @@
        (let ((_tbl17494_ (make-hash-table-eq)))
          (begin
            (hash-copy! _tbl17494_ (force gxc#&basic-xform-expression))
-           (hash-put! _tbl17494_ '%#begin gxc#xform-begin%)
-           (hash-put! _tbl17494_ '%#ref gxc#expression-subst-ref%)
+           (table-set! _tbl17494_ '%#begin gxc#xform-begin%)
+           (table-set! _tbl17494_ '%#ref gxc#expression-subst-ref%)
            _tbl17494_)))))
   (define gxc#apply-expression-subst
     (lambda (_stx17487_ . _args17489_)
@@ -815,23 +821,26 @@
        (let ((_tbl17484_ (make-hash-table-eq)))
          (begin
            (hash-copy! _tbl17484_ (force gxc#&void))
-           (hash-put! _tbl17484_ '%#begin gxc#collect-begin%)
-           (hash-put! _tbl17484_ '%#module gxc#collect-module%)
-           (hash-put!
+           (table-set! _tbl17484_ '%#begin gxc#collect-begin%)
+           (table-set! _tbl17484_ '%#module gxc#collect-module%)
+           (table-set!
             _tbl17484_
             '%#define-values
             gxc#collect-type-define-values%)
-           (hash-put! _tbl17484_ '%#lambda gxc#collect-body-lambda%)
-           (hash-put! _tbl17484_ '%#case-lambda gxc#collect-body-case-lambda%)
-           (hash-put! _tbl17484_ '%#let-values gxc#collect-type-let-values%)
-           (hash-put! _tbl17484_ '%#letrec-values gxc#collect-type-let-values%)
-           (hash-put!
+           (table-set! _tbl17484_ '%#lambda gxc#collect-body-lambda%)
+           (table-set! _tbl17484_ '%#case-lambda gxc#collect-body-case-lambda%)
+           (table-set! _tbl17484_ '%#let-values gxc#collect-type-let-values%)
+           (table-set!
+            _tbl17484_
+            '%#letrec-values
+            gxc#collect-type-let-values%)
+           (table-set!
             _tbl17484_
             '%#letrec*-values
             gxc#collect-type-let-values%)
-           (hash-put! _tbl17484_ '%#call gxc#collect-type-call%)
-           (hash-put! _tbl17484_ '%#if gxc#collect-operands)
-           (hash-put! _tbl17484_ '%#set! gxc#collect-body-setq%)
+           (table-set! _tbl17484_ '%#call gxc#collect-type-call%)
+           (table-set! _tbl17484_ '%#if gxc#collect-operands)
+           (table-set! _tbl17484_ '%#set! gxc#collect-body-setq%)
            _tbl17484_)))))
   (define gxc#apply-collect-type-info
     (lambda (_stx17477_ . _args17479_)
@@ -845,14 +854,14 @@
        (let ((_tbl17474_ (make-hash-table-eq)))
          (begin
            (hash-copy! _tbl17474_ (force gxc#&false))
-           (hash-put! _tbl17474_ '%#begin gxc#basic-expression-type-begin%)
-           (hash-put! _tbl17474_ '%#lambda gxc#basic-expression-type-lambda%)
-           (hash-put!
+           (table-set! _tbl17474_ '%#begin gxc#basic-expression-type-begin%)
+           (table-set! _tbl17474_ '%#lambda gxc#basic-expression-type-lambda%)
+           (table-set!
             _tbl17474_
             '%#case-lambda
             gxc#basic-expression-type-case-lambda%)
-           (hash-put! _tbl17474_ '%#call gxc#basic-expression-type-call%)
-           (hash-put! _tbl17474_ '%#ref gxc#basic-expression-type-ref%)
+           (table-set! _tbl17474_ '%#call gxc#basic-expression-type-call%)
+           (table-set! _tbl17474_ '%#ref gxc#basic-expression-type-ref%)
            _tbl17474_)))))
   (define gxc#apply-basic-expression-type
     (lambda (_stx17467_ . _args17469_)
@@ -866,7 +875,7 @@
        (let ((_tbl17464_ (make-hash-table-eq)))
          (begin
            (hash-copy! _tbl17464_ (force gxc#&basic-xform))
-           (hash-put! _tbl17464_ '%#call gxc#optimize-call%)
+           (table-set! _tbl17464_ '%#call gxc#optimize-call%)
            _tbl17464_)))))
   (define gxc#apply-optimize-call
     (lambda (_stx17457_ . _args17459_)
@@ -880,13 +889,13 @@
        (let ((_tbl17454_ (make-hash-table-eq)))
          (begin
            (hash-copy! _tbl17454_ (force gxc#&generate-runtime-empty))
-           (hash-put! _tbl17454_ '%#begin gxc#generate-runtime-begin%)
-           (hash-put! _tbl17454_ '%#module gxc#generate-ssxi-module%)
-           (hash-put!
+           (table-set! _tbl17454_ '%#begin gxc#generate-runtime-begin%)
+           (table-set! _tbl17454_ '%#module gxc#generate-ssxi-module%)
+           (table-set!
             _tbl17454_
             '%#define-values
             gxc#generate-ssxi-define-values%)
-           (hash-put! _tbl17454_ '%#call gxc#generate-ssxi-call%)
+           (table-set! _tbl17454_ '%#call gxc#generate-ssxi-call%)
            _tbl17454_)))))
   (define gxc#apply-generate-ssxi
     (lambda (_stx17447_ . _args17449_)
@@ -1424,7 +1433,7 @@
                                                     (gxc#verbose
                                                      '"collect mutator "
                                                      _sym16693_)
-                                                    (hash-put!
+                                                    (table-set!
                                                      (gxc#current-compile-mutators)
                                                      _sym16693_
                                                      '#t)
@@ -5330,19 +5339,19 @@
                                (_g1197812012_ _g1198012015_))))
                        (_g1197812012_ _g1198012015_)))))
             (_g1197712088_ _args11976_))))))
-  (hash-put!
+  (table-set!
    gxc#basic-expression-type-builtin
    'make-struct-type
    gxc#basic-expression-type-make-struct-type)
-  (hash-put!
+  (table-set!
    gxc#basic-expression-type-builtin
    'make-struct-predicate
    gxc#basic-expression-type-make-struct-predicate)
-  (hash-put!
+  (table-set!
    gxc#basic-expression-type-builtin
    'make-struct-field-accessor
    gxc#basic-expression-type-make-struct-field-accessor)
-  (hash-put!
+  (table-set!
    gxc#basic-expression-type-builtin
    'make-struct-field-mutator
    gxc#basic-expression-type-make-struct-field-mutator)

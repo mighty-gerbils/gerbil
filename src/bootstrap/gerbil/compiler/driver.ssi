@@ -14,8 +14,8 @@ namespace: gxc
            (0 open-process 0 open-process))
           (spec:
            (:gerbil/gambit/os)
-           (0 time->seconds 0 time->seconds)
-           (0 current-time 0 current-time)))
+           (0 current-time 0 current-time)
+           (0 time->seconds 0 time->seconds)))
          (%#export
           (spec: 0 compile-file compile-file)
           (spec: 0 compile-exe-stub compile-exe-stub))
