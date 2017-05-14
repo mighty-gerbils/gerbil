@@ -572,7 +572,7 @@
 
 (define (method-ref obj id)
   (and (object? obj)
-       (find-method (object-type obj) id #t)))
+       (find-method (object-type obj) id)))
 
 (define (bound-method-ref obj id)
   (cond
@@ -582,7 +582,7 @@
            (apply method obj args))))
    (else #f)))
 
-(define (find-method klass id #!optional (cache? #f))
+(define (find-method klass id)
   (define (cache-method! klass id method)
     (when method
       (bind-method! klass id method #t)) ; rebind, it's ok to race
@@ -594,10 +594,8 @@
      ((direct-method-ref klass id) => values)
      ((type-descriptor-mixin klass)     ; we can't cache for classes
       (mixin-method-ref klass id))
-     (cache?
-      (cache-method! klass id (struct-find-method (##type-super klass) id)))
      (else
-      (struct-find-method (##type-super klass) id))))
+      (cache-method! klass id (struct-find-method (##type-super klass) id)))))
    (else #f)))
 
 (define (struct-find-method klass id)
