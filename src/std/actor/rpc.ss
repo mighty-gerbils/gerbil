@@ -200,7 +200,7 @@ package: std/actor
            (let (actor-rest (remove uuids (hash-ref actor-threads thread [])))
              (if (null? actor-rest)
                (hash-remove! actor-threads thread)
-               (hash-put! actor-threads actor-rest)))
+               (hash-put! actor-threads thread actor-rest)))
            (!!value src #!void k)))
         ((!rpc.resolve id k)
          (let* ((uuid (UUID id))
