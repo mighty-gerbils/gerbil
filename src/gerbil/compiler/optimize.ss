@@ -278,14 +278,14 @@ namespace: gxc
   (%#letrec*-values          xform-let-values%)
   (%#quote                   xform-identity)
   (%#quote-syntax            xform-identity)
-  (%#call                    xform-call%)
-  (%#if                      xform-if%)
+  (%#call                    xform-operands)
+  (%#if                      xform-operands)
   (%#ref                     xform-identity)
   (%#set!                    xform-setq%)
-  (%#struct-instance?        xform-struct-op%)
-  (%#struct-direct-instance? xform-struct-op%)
-  (%#struct-ref              xform-struct-op%)
-  (%#struct-set!             xform-struct-op%))
+  (%#struct-instance?        xform-operands)
+  (%#struct-direct-instance? xform-operands)
+  (%#struct-ref              xform-operands)
+  (%#struct-set!             xform-operands))
 
 (defcompile-method #f (&basic-xform &basic-xform-expression &identity)
   (%#begin          xform-begin%)
@@ -417,22 +417,16 @@ namespace: gxc
           [#'form #'((hd expr) ...) body ...]
           stx))))))
 
-(def (xform-call% stx . args)
+(def (xform-operands stx . args)
   (ast-case stx ()
-    ((_ rator . rands)
-     (let ((rator (apply compile-e #'rator args))
-           (rands (map (xform-apply-compile-e args) #'rands)))
+    ((form . rands)
+     (let (rands (map (xform-apply-compile-e args) #'rands))
        (xform-wrap-source
-        ['%#call rator rands ...]
+        [#'form rands ...]
         stx)))))
 
-(def (xform-if% stx . args)
-  (ast-case stx ()
-    ((_ . forms)
-     (let (forms (map (xform-apply-compile-e args) #'forms))
-       (xform-wrap-source
-        ['%#if forms ...]
-        stx)))))
+(def (xform-call% stx . args)
+  (apply xform-operands stx args))
 
 (def (xform-setq% stx . args)
   (ast-case stx ()
@@ -440,14 +434,6 @@ namespace: gxc
      (let (expr (apply compile-e #'expr args))
        (xform-wrap-source
         ['%#set! #'id expr]
-        stx)))))
-
-(def (xform-struct-op% stx . args)
-  (ast-case stx ()
-    ((form . op-args)
-     (let (op-args (map (xform-apply-compile-e args) #'op-args))
-       (xform-wrap-source
-        [#'form op-args ...]
         stx)))))
 
 ;;; apply-collect-mutators
@@ -496,11 +482,13 @@ namespace: gxc
 
 (def (lambda-form-arity form)
   (ast-case form ()
-    (((arg ...) . _)
-     (length #'(arg ...)))
-    ((arg ... . rest)
-     [(length #'(arg ...))])
-    (args [0])))
+    ((hd body)
+     (ast-case #'hd ()
+       ((arg ...)
+        (length #'(arg ...)))
+       ((arg ... . rest)
+        [(length #'(arg ...))])
+       (rest [0])))))
 
 (def (lift-top-lambda-define-values% stx)
   (def (lambda-expr? expr)
