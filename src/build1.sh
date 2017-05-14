@@ -14,6 +14,7 @@ if [[ "xfinal" = "x${1:-}" ]]; then
     final="[final]"
 else
     export GERBIL_TARGET=$REGERBIL_HOME/bootstrap/stage1
+    final=""
 fi
 
 echo "[*] Building gerbil stage1 $final"
