@@ -1801,20 +1801,22 @@
                            _L8024_)))
                  (if (gx#identifier? _L8023_)
                      (if (_runtime-identifier=?6859_ _L8022_ 'apply)
-                         (if (fx= (gx#stx-length
-                                   (begin
-                                     '#!void
-                                     (foldr (lambda (_g80748077_ _g80758079_)
-                                              (cons _g80748077_ _g80758079_))
-                                            '()
-                                            _L8024_)))
-                                  (gx#stx-length
-                                   (begin
-                                     '#!void
-                                     (foldr (lambda (_g80818084_ _g80828086_)
-                                              (cons _g80818084_ _g80828086_))
-                                            '()
-                                            _L8020_))))
+                         (if (fx= (length (begin
+                                            '#!void
+                                            (foldr (lambda (_g80748077_
+                                                            _g80758079_)
+                                                     (cons _g80748077_
+                                                           _g80758079_))
+                                                   '()
+                                                   _L8024_)))
+                                  (length (begin
+                                            '#!void
+                                            (foldr (lambda (_g80818084_
+                                                            _g80828086_)
+                                                     (cons _g80818084_
+                                                           _g80828086_))
+                                                   '()
+                                                   _L8020_))))
                              (if (andmap gx#free-identifier=?
                                          (begin
                                            '#!void
@@ -2045,24 +2047,24 @@
                                            (cons _g82618264_ _g82628266_))
                                          '()
                                          _L8233_)))
-                               (if (fx= (gx#stx-length
-                                         (begin
-                                           '#!void
-                                           (foldr (lambda (_g82688271_
-                                                           _g82698273_)
-                                                    (cons _g82688271_
-                                                          _g82698273_))
-                                                  '()
-                                                  _L8233_)))
-                                        (gx#stx-length
-                                         (begin
-                                           '#!void
-                                           (foldr (lambda (_g82758278_
-                                                           _g82768280_)
-                                                    (cons _g82758278_
-                                                          _g82768280_))
-                                                  '()
-                                                  _L8231_))))
+                               (if (fx= (length (begin
+                                                  '#!void
+                                                  (foldr (lambda (_g82688271_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          _g82698273_)
+                   (cons _g82688271_ _g82698273_))
+                 '()
+                 _L8233_)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                        (length (begin
+                                                  '#!void
+                                                  (foldr (lambda (_g82758278_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          _g82768280_)
+                   (cons _g82758278_ _g82768280_))
+                 '()
+                 _L8231_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                    (if (andmap gx#free-identifier=?
                                                (begin
                                                  '#!void
