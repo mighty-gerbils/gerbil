@@ -359,7 +359,7 @@ namespace: gxc
 (def (xform-begin% stx . args)
   (ast-case stx ()
     ((_ . forms)
-     (let (forms (stx-map (xform-apply-compile-e args) #'forms))
+     (let (forms (map (xform-apply-compile-e args) #'forms))
        (xform-wrap-source
         ['%#begin forms ...]
         stx)))))
@@ -389,7 +389,7 @@ namespace: gxc
 (def (xform-lambda% stx . args)
   (ast-case stx ()
     ((_ hd . body)
-     (let (body (stx-map (xform-apply-compile-e args) #'body))
+     (let (body (map (xform-apply-compile-e args) #'body))
        (xform-wrap-source
         ['%#lambda #'hd body ...]
         stx)))))
@@ -398,12 +398,12 @@ namespace: gxc
   (def (clause-e clause)
     (ast-case clause ()
       ((hd . body)
-       (let (body (stx-map (xform-apply-compile-e args) #'body))
+       (let (body (map (xform-apply-compile-e args) #'body))
          [#'hd body ...]))))
   
   (ast-case stx ()
     ((_ . clauses)
-     (let (clauses (stx-map clause-e #'clauses))
+     (let (clauses (map clause-e #'clauses))
        (xform-wrap-source
         ['%#case-lambda clauses ...]
         stx)))))
@@ -411,8 +411,8 @@ namespace: gxc
 (def (xform-let-values% stx . args)
   (ast-case stx ()
     ((form ((hd expr) ...) . body)
-     (with-syntax (((expr ...) (stx-map (xform-apply-compile-e args) #'(expr ...))))
-       (let (body (stx-map (xform-apply-compile-e args) #'body))
+     (with-syntax (((expr ...) (map (xform-apply-compile-e args) #'(expr ...))))
+       (let (body (map (xform-apply-compile-e args) #'body))
          (xform-wrap-source
           [#'form #'((hd expr) ...) body ...]
           stx))))))
@@ -421,7 +421,7 @@ namespace: gxc
   (ast-case stx ()
     ((_ rator . rands)
      (let ((rator (apply compile-e #'rator args))
-           (rands (stx-map (xform-apply-compile-e args) #'rands)))
+           (rands (map (xform-apply-compile-e args) #'rands)))
        (xform-wrap-source
         ['%#call rator rands ...]
         stx)))))
@@ -429,7 +429,7 @@ namespace: gxc
 (def (xform-if% stx . args)
   (ast-case stx ()
     ((_ . forms)
-     (let (forms (stx-map (xform-apply-compile-e args) #'forms))
+     (let (forms (map (xform-apply-compile-e args) #'forms))
        (xform-wrap-source
         ['%#if forms ...]
         stx)))))
@@ -445,7 +445,7 @@ namespace: gxc
 (def (xform-struct-op% stx . args)
   (ast-case stx ()
     ((form . op-args)
-     (let (op-args (stx-map (xform-apply-compile-e args) #'op-args))
+     (let (op-args (map (xform-apply-compile-e args) #'op-args))
        (xform-wrap-source
         [#'form op-args ...]
         stx)))))
@@ -464,7 +464,7 @@ namespace: gxc
   (ast-case form (%#call %#ref)
     (((arg ...) (%#call (%#ref rator) (%#ref xarg) ...))
      (and (identifier-list? #'(arg ...))
-          (fx= (stx-length #'(arg ...)) (stx-length #'(xarg ...)))
+          (fx= (length #'(arg ...)) (length #'(xarg ...)))
           (andmap free-identifier=? #'(arg ...) #'(xarg ...))
           (not (find (cut free-identifier=? <> #'rator) #'(arg ...))))
      #t)
@@ -472,7 +472,7 @@ namespace: gxc
      (and (identifier-list? #'(arg ...))
           (identifier? #'rest)
           (eq? (identifier-symbol #'-apply) 'apply)
-          (fx= (stx-length #'(arg ...)) (stx-length  #'(xarg ...)))
+          (fx= (length #'(arg ...)) (length  #'(xarg ...)))
           (andmap free-identifier=? #'(arg ...) #'(xarg ...))
           (free-identifier=? #'rest #'xrest)
           (not (find (cut free-identifier=? <> #'rator) #'(arg ... rest))))
@@ -497,9 +497,9 @@ namespace: gxc
 (def (lambda-form-arity form)
   (ast-case form ()
     (((arg ...) . _)
-     (stx-length #'(arg ...)))
+     (length #'(arg ...)))
     ((arg ... . rest)
-     [(stx-length #'(arg ...))])
+     [(length #'(arg ...))])
     (args [0])))
 
 (def (lift-top-lambda-define-values% stx)
@@ -799,7 +799,7 @@ namespace: gxc
       (let (alias-type (optimizer-lookup-type alias-id))
         (if (!type? alias-type)
           {optimize-call alias-type stx args}
-          (let (args (stx-map compile-e args))
+          (let (args (map compile-e args))
             (compile-e 
              (xform-wrap-source
               ['%#call ['%#ref alias-id] args ...]
@@ -832,7 +832,7 @@ namespace: gxc
       (let (struct-type (optimizer-resolve-type struct-t))
         (match struct-type
           ((!struct-type type-id _ fields xfields ctor)
-           (let (args (stx-map compile-e args))
+           (let (args (map compile-e args))
              (cond
               ((and ctor xfields (!struct-type-lookup-method struct-type ctor))
                => (lambda (kons) ; known constructor, inline make-object and dispatch
@@ -955,9 +955,9 @@ namespace: gxc
   (with ((!lambda _ arity) self)
     (match arity
       ((? fixnum?)
-       (fx= (stx-length args) arity))
+       (fx= (length args) arity))
       ([arity]
-       (fx>= (stx-length args) arity)))))
+       (fx>= (length args) arity)))))
 
 ;;; apply-generate-ssxi
 (def (generate-ssxi-module% stx)
