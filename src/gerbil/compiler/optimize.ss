@@ -933,12 +933,11 @@ namespace: gxc
           (inline stx)
           stx)))
        (dispatch
-        (let (args (stx-map compile-e args))
-          (verbose "dispatch lambda => " dispatch)
-          (compile-e 
-           (xform-wrap-source
-            ['%#call ['%#ref dispatch] args ...]
-            stx))))
+        (verbose "dispatch lambda => " dispatch)
+        (compile-e 
+         (xform-wrap-source
+          ['%#call ['%#ref dispatch] args ...]
+          stx)))
        (else
         (xform-call% stx))))))
 
