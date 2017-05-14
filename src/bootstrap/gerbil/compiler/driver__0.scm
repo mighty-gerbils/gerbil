@@ -592,9 +592,9 @@
              (if (null? (unbox _lifts17998_))
                  _code18001_
                  (cons 'begin
-                       (foldr cons
-                              (cons _code18001_ '())
-                              (reverse (unbox _lifts17998_)))))))
+                       (foldr1 cons
+                               (cons _code18001_ '())
+                               (reverse (unbox _lifts17998_)))))))
          gxc#current-compile-lift
          _lifts17998_))))
   (define gxc#lift-nested-modules
@@ -629,7 +629,7 @@
              (let ((_$e17976_ (gxc#current-compile-gsc-options)))
                (if _$e17976_
                    ((lambda (_opts17979_)
-                      (foldr cons (cons _path17974_ '()) _opts17979_))
+                      (foldr1 cons (cons _path17974_ '()) _opts17979_))
                     _$e17976_)
                    (cons _path17974_ '())))))
         (let ((_proc17983_

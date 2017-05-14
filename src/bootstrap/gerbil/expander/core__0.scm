@@ -922,7 +922,7 @@
                                (cons _rpath5145_ (gx#current-expander-path)))))
                          (let ()
                            (_K5002_ _rest5107_
-                                    (foldr cons _r5108_ _rbody5150_))))))
+                                    (foldr1 cons _r5108_ _rbody5150_))))))
                    (_E51115123_))
                (_E51115123_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1661,13 +1661,13 @@
                                   (##structure-ref _e4432_ '1 AST::t '#f)
                                   _phi4427_
                                   _ctx4428_
-                                  (foldl gx#apply-mark
-                                         (##structure-ref
-                                          _e4432_
-                                          '3
-                                          gx#identifier-wrap::t
-                                          '#f)
-                                         _marks4433_))
+                                  (foldl1 gx#apply-mark
+                                          (##structure-ref
+                                           _e4432_
+                                           '3
+                                           gx#identifier-wrap::t
+                                           '#f)
+                                          _marks4433_))
                                  (if (##structure-direct-instance-of?
                                       _e4432_
                                       'gx#syntax-wrap::t)

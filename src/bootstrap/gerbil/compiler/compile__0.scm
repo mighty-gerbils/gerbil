@@ -582,10 +582,10 @@
                            (apply gxc#compile-e _g94969498_ _args9394_))
                          (begin
                            '#!void
-                           (foldr (lambda (_g95009503_ _g95019505_)
-                                    (cons _g95009503_ _g95019505_))
-                                  '()
-                                  _L9481_))))
+                           (foldr1 (lambda (_g95009503_ _g95019505_)
+                                     (cons _g95009503_ _g95019505_))
+                                   '()
+                                   _L9481_))))
                       _body94129476_
                       _hd94139478_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -675,12 +675,12 @@
                                                       _args9247_))
                                              (begin
                                                '#!void
-                                               (foldr (lambda (_g93829385_
-                                                               _g93839387_)
-                                                        (cons _g93829385_
-                                                              _g93839387_))
-                                                      (cons _L9357_ '())
-                                                      _L9358_))))
+                                               (foldr1 (lambda (_g93829385_
+                                                                _g93839387_)
+                                                         (cons _g93829385_
+                                                               _g93839387_))
+                                                       (cons _L9357_ '())
+                                                       _L9358_))))
                                           _hd92789352_
                                           _expr92699344_
                                           _hd92709346_)
@@ -777,10 +777,10 @@
                            (apply gxc#compile-e _g91639165_ _args9092_))
                          (begin
                            '#!void
-                           (foldr (lambda (_g91679170_ _g91689172_)
-                                    (cons _g91679170_ _g91689172_))
-                                  '()
-                                  _L9150_))))
+                           (foldr1 (lambda (_g91679170_ _g91689172_)
+                                     (cons _g91679170_ _g91689172_))
+                                   '()
+                                   _L9150_))))
                       _rands91089147_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                              (_loop91039131_
@@ -1240,18 +1240,18 @@
                                                             (if (gx#identifier?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          _L8526_)
-                        (foldl cons
-                               (cons (cons 'define
-                                           (cons (gxc#generate-runtime-binding-id
-                                                  _L8526_)
-                                                 (cons (cons 'values->list
-                                                             (cons _tmp8487_
+                        (foldl1 cons
+                                (cons (cons 'define
+                                            (cons (gxc#generate-runtime-binding-id
+                                                   _L8526_)
+                                                  (cons (cons 'values->list
+                                                              (cons _tmp8487_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (cons _k8492_ '())))
-               '())))
+                            (cons _k8492_ '())))
+                '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                     '())
-                               _r8493_)
+                                      '())
+                                _r8493_)
                         (_g84978521_ _g84998524_)))
                   _g84998524_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1793,47 +1793,47 @@
                                                  (if (if (gx#identifier-list?
                                                           (begin
                                                             '#!void
-                                                            (foldr (lambda (_g80678070_
+                                                            (foldr1 (lambda (_g80678070_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                    _g80688072_)
-                             (cons _g80678070_ _g80688072_))
-                           '()
-                           _L8024_)))
+                                     _g80688072_)
+                              (cons _g80678070_ _g80688072_))
+                            '()
+                            _L8024_)))
                  (if (gx#identifier? _L8023_)
                      (if (_runtime-identifier=?6859_ _L8022_ 'apply)
                          (if (fx= (length (begin
                                             '#!void
-                                            (foldr (lambda (_g80748077_
-                                                            _g80758079_)
-                                                     (cons _g80748077_
-                                                           _g80758079_))
-                                                   '()
-                                                   _L8024_)))
+                                            (foldr1 (lambda (_g80748077_
+                                                             _g80758079_)
+                                                      (cons _g80748077_
+                                                            _g80758079_))
+                                                    '()
+                                                    _L8024_)))
                                   (length (begin
                                             '#!void
-                                            (foldr (lambda (_g80818084_
-                                                            _g80828086_)
-                                                     (cons _g80818084_
-                                                           _g80828086_))
-                                                   '()
-                                                   _L8020_))))
+                                            (foldr1 (lambda (_g80818084_
+                                                             _g80828086_)
+                                                      (cons _g80818084_
+                                                            _g80828086_))
+                                                    '()
+                                                    _L8020_))))
                              (if (andmap gx#free-identifier=?
                                          (begin
                                            '#!void
-                                           (foldr (lambda (_g80888091_
-                                                           _g80898093_)
-                                                    (cons _g80888091_
-                                                          _g80898093_))
-                                                  '()
-                                                  _L8024_))
+                                           (foldr1 (lambda (_g80888091_
+                                                            _g80898093_)
+                                                     (cons _g80888091_
+                                                           _g80898093_))
+                                                   '()
+                                                   _L8024_))
                                          (begin
                                            '#!void
-                                           (foldr (lambda (_g80958098_
-                                                           _g80968100_)
-                                                    (cons _g80958098_
-                                                          _g80968100_))
-                                                  '()
-                                                  _L8020_)))
+                                           (foldr1 (lambda (_g80958098_
+                                                            _g80968100_)
+                                                     (cons _g80958098_
+                                                           _g80968100_))
+                                                   '()
+                                                   _L8020_)))
                                  (if (gx#free-identifier=? _L8023_ _L8019_)
                                      (not (find (lambda (_g81028104_)
                                                   (gx#free-identifier=?
@@ -1841,12 +1841,12 @@
                                                    _L8021_))
                                                 (begin
                                                   '#!void
-                                                  (foldr (lambda (_g81068109_
+                                                  (foldr1 (lambda (_g81068109_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _g81078111_)
-                   (cons _g81068109_ _g81078111_))
-                 (cons _L8023_ '())
-                 _L8024_))))
+                           _g81078111_)
+                    (cons _g81068109_ _g81078111_))
+                  (cons _L8023_ '())
+                  _L8024_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                      '#f)
                                  '#f)
@@ -2043,46 +2043,46 @@
                        (if (if (gx#identifier-list?
                                 (begin
                                   '#!void
-                                  (foldr (lambda (_g82618264_ _g82628266_)
-                                           (cons _g82618264_ _g82628266_))
-                                         '()
-                                         _L8233_)))
+                                  (foldr1 (lambda (_g82618264_ _g82628266_)
+                                            (cons _g82618264_ _g82628266_))
+                                          '()
+                                          _L8233_)))
                                (if (fx= (length (begin
                                                   '#!void
-                                                  (foldr (lambda (_g82688271_
+                                                  (foldr1 (lambda (_g82688271_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _g82698273_)
-                   (cons _g82688271_ _g82698273_))
-                 '()
-                 _L8233_)))
+                           _g82698273_)
+                    (cons _g82688271_ _g82698273_))
+                  '()
+                  _L8233_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                         (length (begin
                                                   '#!void
-                                                  (foldr (lambda (_g82758278_
+                                                  (foldr1 (lambda (_g82758278_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _g82768280_)
-                   (cons _g82758278_ _g82768280_))
-                 '()
-                 _L8231_))))
+                           _g82768280_)
+                    (cons _g82758278_ _g82768280_))
+                  '()
+                  _L8231_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                    (if (andmap gx#free-identifier=?
                                                (begin
                                                  '#!void
-                                                 (foldr (lambda (_g82828285_
+                                                 (foldr1 (lambda (_g82828285_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _g82838287_)
-                  (cons _g82828285_ _g82838287_))
-                '()
-                _L8233_))
+                          _g82838287_)
+                   (cons _g82828285_ _g82838287_))
+                 '()
+                 _L8233_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                (begin
                                                  '#!void
-                                                 (foldr (lambda (_g82898292_
+                                                 (foldr1 (lambda (_g82898292_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _g82908294_)
-                  (cons _g82898292_ _g82908294_))
-                '()
-                _L8231_)))
+                          _g82908294_)
+                   (cons _g82898292_ _g82908294_))
+                 '()
+                 _L8231_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                        (not (find (lambda (_g82968298_)
                                                     (gx#free-identifier=?
@@ -2090,12 +2090,12 @@
                                                      _L8232_))
                                                   (begin
                                                     '#!void
-                                                    (foldr (lambda (_g83008303_
+                                                    (foldr1 (lambda (_g83008303_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            _g83018305_)
-                     (cons _g83008303_ _g83018305_))
-                   '()
-                   _L8233_))))
+                             _g83018305_)
+                      (cons _g83008303_ _g83018305_))
+                    '()
+                    _L8233_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                        '#f)
                                    '#f)
@@ -2663,39 +2663,39 @@
                                           '()))
                               '())
                         (cons (cons 'cond
-                                    (foldr cons
-                                           (cons (cons 'else
-                                                       (cons (cons 'error
+                                    (foldr1 cons
+                                            (cons (cons 'else
+                                                        (cons (cons 'error
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (cons '"No clause matching arguments"
-                                 (cons _args6966_ '())))
-                     '()))
+                            (cons '"No clause matching arguments"
+                                  (cons _args6966_ '())))
+                      '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 '())
-                                           (map (lambda (_g69686971_
-                                                         _g69696973_)
-                                                  (_generate16862_
-                                                   _args6966_
-                                                   _arglen6967_
-                                                   _g69686971_
-                                                   _g69696973_))
-                                                (begin
-                                                  '#!void
-                                                  (foldr (lambda (_g69756978_
+                                                  '())
+                                            (map (lambda (_g69686971_
+                                                          _g69696973_)
+                                                   (_generate16862_
+                                                    _args6966_
+                                                    _arglen6967_
+                                                    _g69686971_
+                                                    _g69696973_))
+                                                 (begin
+                                                   '#!void
+                                                   (foldr1 (lambda (_g69756978_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _g69766980_)
-                   (cons _g69756978_ _g69766980_))
-                 '()
-                 _L6950_))
+                            _g69766980_)
+                     (cons _g69756978_ _g69766980_))
+                   '()
+                   _L6950_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                (begin
-                                                  '#!void
-                                                  (foldr (lambda (_g69826985_
+                                                 (begin
+                                                   '#!void
+                                                   (foldr1 (lambda (_g69826985_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _g69836987_)
-                   (cons _g69826985_ _g69836987_))
-                 '()
-                 _L6949_)))))
+                            _g69836987_)
+                     (cons _g69826985_ _g69836987_))
+                   '()
+                   _L6949_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                               '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -2762,9 +2762,9 @@
             (let ((_generate-values-check6545_
                    (lambda (_check6613_ _body6614_)
                      (cons 'begin
-                           (foldr cons
-                                  (cons _body6614_ '())
-                                  (reverse _check6613_))))))
+                           (foldr1 cons
+                                   (cons _body6614_ '())
+                                   (reverse _check6613_))))))
               (let ((_generate-values6543_
                      (lambda (_hd6657_ _body6658_)
                        ((letrec ((_lp6660_
@@ -2993,16 +2993,16 @@
                               (lambda (_g64516476_)
                                 ((lambda (_L6478_)
                                    (if (gx#identifier? _L6478_)
-                                       (foldl cons
-                                              (cons (cons (gxc#generate-runtime-binding-id
-                                                           _L6478_)
-                                                          (cons (cons 'values->list
+                                       (foldl1 cons
+                                               (cons (cons (gxc#generate-runtime-binding-id
+                                                            _L6478_)
+                                                           (cons (cons 'values->list
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (cons _vals6438_ (cons _k6444_ '())))
-                        '()))
+                               (cons _vals6438_ (cons _k6444_ '())))
+                         '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    '())
-                                              _r6445_)
+                                                     '())
+                                               _r6445_)
                                        (_g64496473_ _g64516476_)))
                                  _g64516476_))))
                          (let ((_g64476513_
@@ -3069,17 +3069,17 @@
           (let ((_generate-values-check6123_
                  (lambda (_check6199_ _body6200_)
                    (cons 'begin
-                         (foldr cons
-                                (cons _body6200_ '())
-                                (reverse _check6199_))))))
+                         (foldr1 cons
+                                 (cons _body6200_ '())
+                                 (reverse _check6199_))))))
             (let ((_generate-values-post6124_
                    (lambda (_post6192_ _body6193_)
                      (cons 'begin
-                           (foldr cons
-                                  (cons _body6193_ '())
-                                  (map (lambda (_g61946196_)
-                                         (cons 'set! _g61946196_))
-                                       (reverse _post6192_)))))))
+                           (foldr1 cons
+                                   (cons _body6193_ '())
+                                   (map (lambda (_g61946196_)
+                                          (cons 'set! _g61946196_))
+                                        (reverse _post6192_)))))))
               (let ((_generate-values6122_
                      (lambda (_hd6202_ _body6203_)
                        ((letrec ((_lp6205_
@@ -3166,41 +3166,43 @@
                       (let ()
                         (_lp6205_
                          _L6251_
-                         (foldl cons
-                                (cons (cons _vals6327_ (cons _expr6329_ '()))
-                                      _bind6208_)
-                                (map (lambda (_e63356337_)
-                                       (let ((_g63396348_ _e63356337_))
-                                         (let ((_E63416352_
-                                                (lambda ()
-                                                  (error '"No clause matching"
-                                                         _g63396348_))))
-                                           (let ((_K63426357_
-                                                  (lambda (_eid6355_)
-                                                    (cons _eid6355_
-                                                          (cons '#!void
-                                                                '())))))
-                                             (if (##pair? _g63396348_)
-                                                 (let ((_hd63436360_
-                                                        (##car _g63396348_))
-                                                       (_tl63446362_
-                                                        (##cdr _g63396348_)))
-                                                   (let ((_eid6365_
-                                                          _hd63436360_))
-                                                     (if (##pair? _tl63446362_)
-                                                         (let ((_hd63456367_
-                                                                (##car _tl63446362_))
-                                                               (_tl63466369_
-                                                                (##cdr _tl63446362_)))
-                                                           (if (##null? _tl63466369_)
-                                                               (_K63426357_
-                                                                _eid6365_)
-                                                               (_E63416352_)))
-                                                         (_E63416352_))))
-                                                 (_E63416352_))))))
-                                     _refs6333_))
+                         (foldl1 cons
+                                 (cons (cons _vals6327_ (cons _expr6329_ '()))
+                                       _bind6208_)
+                                 (map (lambda (_e63356337_)
+                                        (let ((_g63396348_ _e63356337_))
+                                          (let ((_E63416352_
+                                                 (lambda ()
+                                                   (error '"No clause matching"
+                                                          _g63396348_))))
+                                            (let ((_K63426357_
+                                                   (lambda (_eid6355_)
+                                                     (cons _eid6355_
+                                                           (cons '#!void
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         '())))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                              (if (##pair? _g63396348_)
+                                                  (let ((_hd63436360_
+                                                         (##car _g63396348_))
+                                                        (_tl63446362_
+                                                         (##cdr _g63396348_)))
+                                                    (let ((_eid6365_
+                                                           _hd63436360_))
+                                                      (if (##pair? _tl63446362_)
+                                                          (let ((_hd63456367_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (##car _tl63446362_))
+                        (_tl63466369_ (##cdr _tl63446362_)))
+                    (if (##null? _tl63466369_)
+                        (_K63426357_ _eid6365_)
+                        (_E63416352_)))
+                  (_E63416352_))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                  (_E63416352_))))))
+                                      _refs6333_))
                          (cons _check-values6331_ _check6209_)
-                         (foldl cons _refs6333_ _post6210_))))))))
+                         (foldl1 cons _refs6333_ _post6210_))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     _hd62866308_
                                                     _hd62836300_)
@@ -3411,9 +3413,9 @@
                       _forms5982_))))
           (let ((_closure-reference?5245_
                  (lambda (_closure5534_ _bindings5535_)
-                   (ormap (lambda (_g55365538_)
-                            (table-ref _closure5534_ _g55365538_ '#f))
-                          _bindings5535_))))
+                   (ormap1 (lambda (_g55365538_)
+                             (table-ref _closure5534_ _g55365538_ '#f))
+                           _bindings5535_))))
             (let ((_is-effect-expr?5247_
                    (lambda (_expr5445_)
                      (let ((_g54475457_
@@ -3518,13 +3520,13 @@
                                                        (let ()
                                                          (_lp5543_
                                                           _rest5568_
-                                                          (foldl (lambda (_ref5658_
+                                                          (foldl1 (lambda (_ref5658_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                  _r5659_)
-                           (cons (cons (car _ref5658_) (cons '#!void '()))
-                                 _r5659_))
-                         _pre5546_
-                         _refs5655_)
+                                   _r5659_)
+                            (cons (cons (car _ref5658_) (cons '#!void '()))
+                                  _r5659_))
+                          _pre5546_
+                          _refs5655_)
                   _bind5547_
                   (cons (cons 'let
                               (cons (cons (cons _vals5649_
@@ -3753,20 +3755,20 @@
                                          (if _$e5929_
                                              _$e5929_
                                              (let ((_$e5936_
-                                                    (ormap (lambda (_g59315933_)
-                                                             (_closure-reference?5245_
-                                                              _closure5927_
-                                                              _g59315933_))
-                                                           _rest-bindings5923_)))
+                                                    (ormap1 (lambda (_g59315933_)
+                                                              (_closure-reference?5245_
+                                                               _closure5927_
+                                                               _g59315933_))
+                                                            _rest-bindings5923_)))
                                                (if _$e5936_
                                                    _$e5936_
                                                    (let ((_$e5943_
-                                                          (ormap (lambda (_g59385940_)
+                                                          (ormap1 (lambda (_g59385940_)
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (_closure-reference?5245_
-                            _closure5927_
-                            _g59385940_))
-                         _post-bindings5885_)))
+                            (_closure-reference?5245_
+                             _closure5927_
+                             _g59385940_))
+                          _post-bindings5885_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (if _$e5943_
                                                          _$e5943_
@@ -3896,20 +3898,22 @@
                                            (if _$e5822_
                                                _$e5822_
                                                (let ((_$e5829_
-                                                      (ormap (lambda (_g58245826_)
-                                                               (_closure-reference?5245_
-                                                                _g58245826_
-                                                                _bindings5817_))
-                                                             _rest-closures5819_)))
+                                                      (ormap1 (lambda (_g58245826_)
+                                                                (_closure-reference?5245_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         _g58245826_
+                         _bindings5817_))
+                      _rest-closures5819_)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (if _$e5829_
                                                      _$e5829_
                                                      (let ((_$e5836_
-                                                            (ormap (lambda (_g58315833_)
+                                                            (ormap1 (lambda (_g58315833_)
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (_closure-reference?5245_
-                              _g58315833_
-                              _bindings5817_))
-                           _pre-closures5779_)))
+                              (_closure-reference?5245_
+                               _g58315833_
+                               _bindings5817_))
+                            _pre-closures5779_)))
                (if _$e5836_
                    _$e5836_
                    (if (_is-effect-bind?5246_ _form5814_)
@@ -4169,11 +4173,10 @@
                                                (if (null? _rec-init5317_)
                                                    _body5322_
                                                    (cons 'begin
-                                                         (foldr cons
-                                                                (cons _body5322_
+                                                         (foldr1 cons
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              '())
-                        _rec-init5317_)))))
+                         (cons _body5322_ '())
+                         _rec-init5317_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                           (let ((_body5326_
                                                  (if (null? _rec-bind5316_)
@@ -5655,16 +5658,20 @@
                                 (map _generate13425_
                                      (begin
                                        '#!void
-                                       (foldr (lambda (_g35283531_ _g35293533_)
-                                                (cons _g35283531_ _g35293533_))
-                                              '()
-                                              _L3513_))
+                                       (foldr1 (lambda (_g35283531_
+                                                        _g35293533_)
+                                                 (cons _g35283531_
+                                                       _g35293533_))
+                                               '()
+                                               _L3513_))
                                      (begin
                                        '#!void
-                                       (foldr (lambda (_g35353538_ _g35363540_)
-                                                (cons _g35353538_ _g35363540_))
-                                              '()
-                                              _L3512_)))))
+                                       (foldr1 (lambda (_g35353538_
+                                                        _g35363540_)
+                                                 (cons _g35353538_
+                                                       _g35363540_))
+                                               '()
+                                               _L3512_)))))
                         _eid34433507_
                         _id34443509_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -5743,11 +5750,11 @@
                                       ((lambda (_L3322_)
                                          (if (gx#identifier? _L3322_)
                                              (_generate*3221_
-                                              (foldl cons
-                                                     (cons (_generate13220_
-                                                            _L3322_)
-                                                           '())
-                                                     _r3289_))
+                                              (foldl1 cons
+                                                      (cons (_generate13220_
+                                                             _L3322_)
+                                                            '())
+                                                      _r3289_))
                                              (_g32933317_ _g32953320_)))
                                        _g32953320_))))
                                (let ((_g32913357_
@@ -6071,49 +6078,49 @@
     (lambda (_state2931_)
       (begin
         (gxc#meta-state-end-phi! _state2931_)
-        (foldl (lambda (_block2933_ _r2934_)
-                 (let ((_block29352944_ _block2933_))
-                   (let ((_E29372948_
-                          (lambda ()
-                            (error '"No clause matching" _block29352944_))))
-                     (let ((_K29382956_
-                            (lambda (_code2951_ _n2952_ _phi2953_ _ctx2954_)
-                              (if (null? _code2951_)
-                                  _r2934_
-                                  (cons (cons _ctx2954_
-                                              (cons _phi2953_
-                                                    (cons _n2952_
-                                                          (cons (cons '%#begin
+        (foldl1 (lambda (_block2933_ _r2934_)
+                  (let ((_block29352944_ _block2933_))
+                    (let ((_E29372948_
+                           (lambda ()
+                             (error '"No clause matching" _block29352944_))))
+                      (let ((_K29382956_
+                             (lambda (_code2951_ _n2952_ _phi2953_ _ctx2954_)
+                               (if (null? _code2951_)
+                                   _r2934_
+                                   (cons (cons _ctx2954_
+                                               (cons _phi2953_
+                                                     (cons _n2952_
+                                                           (cons (cons '%#begin
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              (reverse _code2951_))
-                        '()))))
+                               (reverse _code2951_))
+                         '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                        _r2934_)))))
-                       (if (struct-instance?
-                            gxc#meta-state-block::t
-                            _block29352944_)
-                           (let ((_e29392959_
-                                  (##vector-ref _block29352944_ '1)))
-                             (let ((_ctx2962_ _e29392959_))
-                               (let ((_e29402964_
-                                      (##vector-ref _block29352944_ '2)))
-                                 (let ((_phi2967_ _e29402964_))
-                                   (let ((_e29412969_
-                                          (##vector-ref _block29352944_ '3)))
-                                     (let ((_n2972_ _e29412969_))
-                                       (let ((_e29422974_
-                                              (##vector-ref
-                                               _block29352944_
-                                               '4)))
-                                         (let ((_code2977_ _e29422974_))
-                                           (_K29382956_
-                                            _code2977_
-                                            _n2972_
-                                            _phi2967_
-                                            _ctx2962_)))))))))
-                           (_E29372948_))))))
-               '()
-               (##structure-ref _state2931_ '4 gxc#meta-state::t '#f)))))
+                                         _r2934_)))))
+                        (if (struct-instance?
+                             gxc#meta-state-block::t
+                             _block29352944_)
+                            (let ((_e29392959_
+                                   (##vector-ref _block29352944_ '1)))
+                              (let ((_ctx2962_ _e29392959_))
+                                (let ((_e29402964_
+                                       (##vector-ref _block29352944_ '2)))
+                                  (let ((_phi2967_ _e29402964_))
+                                    (let ((_e29412969_
+                                           (##vector-ref _block29352944_ '3)))
+                                      (let ((_n2972_ _e29412969_))
+                                        (let ((_e29422974_
+                                               (##vector-ref
+                                                _block29352944_
+                                                '4)))
+                                          (let ((_code2977_ _e29422974_))
+                                            (_K29382956_
+                                             _code2977_
+                                             _n2972_
+                                             _phi2967_
+                                             _ctx2962_)))))))))
+                            (_E29372948_))))))
+                '()
+                (##structure-ref _state2931_ '4 gxc#meta-state::t '#f)))))
   (define gxc#collect-expression-refs
     (lambda (_stx2927_)
       (let ((_ht2929_ (make-hash-table-eq)))
@@ -6220,7 +6227,7 @@
                      (let ((_e27642776_ (gx#stx-e _g27622774_)))
                        (let ((_hd27652779_ (##car _e27642776_))
                              (_tl27662781_ (##cdr _e27642776_)))
-                         ((lambda (_L2784_) (ormap gxc#compile-e _L2784_))
+                         ((lambda (_L2784_) (ormap1 gxc#compile-e _L2784_))
                           _tl27662781_)))
                      (_g27612771_ _g27622774_)))))
           (_g27602794_ _stx2759_))))))

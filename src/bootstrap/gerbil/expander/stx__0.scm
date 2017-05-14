@@ -183,13 +183,13 @@
                                   gx#identifier-wrap::t
                                   (##structure-ref _e3671_ '1 AST::t '#f)
                                   (##structure-ref _e3671_ '2 AST::t '#f)
-                                  (foldl gx#apply-mark
-                                         (##structure-ref
-                                          _e3671_
-                                          '3
-                                          gx#identifier-wrap::t
-                                          '#f)
-                                         _marks3672_)))
+                                  (foldl1 gx#apply-mark
+                                          (##structure-ref
+                                           _e3671_
+                                           '3
+                                           gx#identifier-wrap::t
+                                           '#f)
+                                          _marks3672_)))
                              (if (##structure-direct-instance-of?
                                   _e3671_
                                   'gx#syntax-quote::t)
@@ -246,16 +246,16 @@
                   (else (error "No clause matching arguments" _g3746_))))))))
   (define gx#stx-wrap
     (lambda (_stx3659_ _marks3660_)
-      (foldl (lambda (_mark3662_ _stx3663_)
-               (gx#stx-apply-mark _stx3663_ _mark3662_))
-             _stx3659_
-             _marks3660_)))
+      (foldl1 (lambda (_mark3662_ _stx3663_)
+                (gx#stx-apply-mark _stx3663_ _mark3662_))
+              _stx3659_
+              _marks3660_)))
   (define gx#stx-rewrap
     (lambda (_stx3653_ _marks3654_)
-      (foldr (lambda (_mark3656_ _stx3657_)
-               (gx#stx-apply-mark _stx3657_ _mark3656_))
-             _stx3653_
-             _marks3654_)))
+      (foldr1 (lambda (_mark3656_ _stx3657_)
+                (gx#stx-apply-mark _stx3657_ _mark3656_))
+              _stx3653_
+              _marks3654_)))
   (define gx#stx-apply-mark
     (lambda (_stx3650_ _mark3651_)
       (if (##structure-direct-instance-of? _stx3650_ 'gx#syntax-quote::t)

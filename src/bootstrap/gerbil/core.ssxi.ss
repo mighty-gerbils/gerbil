@@ -75,6 +75,14 @@ package: gerbil
               (%#call (%#ref fx-) arg (%#quote 1))))))
  (fxshift (@lambda 2 fxarithmetic-shift)))
 
+;; gx-gambc0: foldings
+(declare-type*
+ (foldl (@case-lambda (3 foldl1) ((4) #f)))
+ (foldr (@case-lambda (3 foldr1) ((4) #f)))
+ (andmap (@case-lambda (2 andmap1) ((3) #f)))
+ (ormap (@case-lambda (2 ormap1) ((3) #f)))
+ (filter-map (@case-lambda (2 filter-map1) ((3) #f))))
+
 ;; gx-gambc1: AST type for optimizing the expander
 (declare-type*
  (AST::t (@struct-type gerbil#AST::t #f 2))

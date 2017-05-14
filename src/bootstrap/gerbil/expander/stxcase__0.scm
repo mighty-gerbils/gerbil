@@ -143,9 +143,9 @@
                   (let ((_fold-in13621_ (gx#gentemps _args13610_)))
                     (let ((_fold-out13623_ (gx#genident__0)))
                       (let ((_lambda-args13625_
-                             (foldr cons
-                                    (cons _fold-out13623_ '())
-                                    _fold-in13621_)))
+                             (foldr1 cons
+                                     (cons _fold-out13623_ '())
+                                     _fold-in13621_)))
                         (let ((_lambda-body13642_
                                (if (fx> _depth13613_ '1)
                                    (let ((_r-args13633_
