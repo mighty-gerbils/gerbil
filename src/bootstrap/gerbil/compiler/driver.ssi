@@ -10,8 +10,8 @@ namespace: gxc
           (spec: (:gerbil/gambit/misc) (0 pretty-print 0 pretty-print))
           (spec:
            (:gerbil/gambit/ports)
-           (0 open-process 0 open-process)
-           (0 process-status 0 process-status))
+           (0 process-status 0 process-status)
+           (0 open-process 0 open-process))
           (spec:
            (:gerbil/gambit/os)
            (0 current-time 0 current-time)
@@ -21,15 +21,15 @@ namespace: gxc
           (spec: 0 compile-exe-stub compile-exe-stub))
          (%#define-runtime compile-timestamp gxc#compile-timestamp)
          (%#begin (%#define-runtime
-                   compile-file__opt-lambda19583
-                   gxc#compile-file__opt-lambda19583)
+                   compile-file__opt-lambda19625
+                   gxc#compile-file__opt-lambda19625)
                   (%#begin (%#define-runtime
                             compile-file__0
                             gxc#compile-file__0)
                            (%#define-runtime compile-file gxc#compile-file)))
          (%#begin (%#define-runtime
-                   compile-exe-stub__opt-lambda19562
-                   gxc#compile-exe-stub__opt-lambda19562)
+                   compile-exe-stub__opt-lambda19604
+                   gxc#compile-exe-stub__opt-lambda19604)
                   (%#begin (%#define-runtime
                             compile-exe-stub__0
                             gxc#compile-exe-stub__0)
