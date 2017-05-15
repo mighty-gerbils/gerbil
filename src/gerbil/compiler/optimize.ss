@@ -510,7 +510,7 @@ namespace: gxc
           (case-lambda-expr? #'case-lambda-expr)))
     (_ #f)))
 
-(def (lift-case-lambda-clauses stx id clauses)
+(def (lift-case-lambda-clauses stx id clauses (gensym? #f))
   (let lp ((rest clauses) (ids []) (impls []) (clauses []))
     (match rest
       ([clause . rest]
@@ -518,7 +518,8 @@ namespace: gxc
          (lp rest ids impls (cons clause clauses))
          (ast-case clause ()
            ((hd . body)
-            (let* ((id (make-symbol (stx-e id) "__" (length clauses)))
+            (let* ((id (make-symbol (stx-e id) "__" (length clauses)
+                                    (if gensym? (gensym '__) "")))
                    (id (core-quote-syntax id (stx-source stx)))
                    (impl
                     (xform-wrap-source
@@ -625,7 +626,7 @@ namespace: gxc
                (lp rest (cons [[#'id] #'expr] bind)))
               ((_ . clauses)
                (let* (((values ids impls clauses)
-                       (lift-case-lambda-clauses stx #'id #'clauses))
+                       (lift-case-lambda-clauses stx #'id #'clauses #t))
                       (_ (for-each core-bind-runtime! ids))
                       (xbind (map bind-e ids impls))
                       (expr* (xform-wrap-source
@@ -639,7 +640,7 @@ namespace: gxc
                  (opt-lambda-expr? #'expr))
             (ast-case #'expr ()
               ((_ (((xid) lambda-expr)) case-lambda-expr)
-               (let* ((lambda-id (make-symbol (stx-e #'id) "__" (stx-e #'xid)))
+               (let* ((lambda-id (make-symbol (stx-e #'id) "__" (stx-e #'xid) (gensym '__)))
                       (lambda-id (core-quote-syntax lambda-id (stx-source stx)))
                       (_ (core-bind-runtime! lambda-id))
                       (new-case-lambda-expr
