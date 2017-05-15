@@ -605,8 +605,78 @@ namespace: gxc
       stx))))
 
 (def (lift-top-lambda-let-values% stx)
-  ;; XXX Implement me
-  (xform-let-values% stx))
+  (def (bind-e id expr)
+    [[id] (compile-e expr)])
+  
+  (def (compile-bindings rest)
+    (let lp ((rest rest) (lift1 []) (lift2 []) (bind []))
+      (match rest
+        ([hd . rest]
+         (ast-case hd ()
+           (((id) expr)
+            (and (identifier? #'id)
+                 (case-lambda-expr? #'expr))
+            (ast-case #'expr ()
+              ((_ . clauses)
+               (andmap dispatch-lambda-form? #'clauses)
+               (lp rest lift1 lift2 (cons [[#'id] #'expr] bind)))
+              ((_ . clauses)
+               (let* (((values ids impls clauses)
+                       (lift-case-lambda-clauses stx #'id #'clauses #t))
+                      (_ (for-each core-bind-runtime! ids))
+                      (xbind (map bind-e ids impls))
+                      (expr* (xform-wrap-source
+                              ['%#case-lambda clauses ...]
+                              #'case-lambda-expr))
+                      (bind* (bind-e #'id expr*)))
+                 (verbose "lift case-lambda clauses " (identifier-symbol #'id) " => " (map identifier-symbol ids))
+                 (lp rest lift1 (foldl cons lift2 xbind) (cons bind* bind))))))
+           (((id) expr)
+            (and (identifier? #'id)
+                 (opt-lambda-expr? #'expr))
+            (ast-case #'expr ()
+              ((_ (((xid) lambda-expr)) case-lambda-expr)
+               (let* ((lambda-id (make-symbol (stx-e #'id) "__" (stx-e #'xid) (gensym '__)))
+                      (lambda-id (core-quote-syntax lambda-id (stx-source stx)))
+                      (_ (core-bind-runtime! lambda-id))
+                      (new-case-lambda-expr
+                       (apply-expression-subst #'case-lambda-expr #'xid lambda-id)))
+                 (verbose "lift opt-lambda dispatch "(identifier-symbol #'id) " => " (identifier-symbol lambda-id))
+                 (lp (cons (bind-e #'id new-case-lambda-expr) rest)
+                     (cons (bind-e lambda-id (compile-e #'lambda-expr)) lift1)
+                     lift2 bind)))))
+           ((hd expr)
+            (lp rest lift1 lift2 (cons [#'hd (compile-e #'expr)] bind)))))
+        (else
+         (values (reverse lift1)
+                 (reverse lift2)
+                 (reverse bind))))))
+    
+  (ast-case stx ()
+    ((_ (bind ...) body)
+     (ormap lift-top-lambda-binding? #'(bind ...))
+     (parameterize ((current-expander-context (make-local-context)))
+       (let* (((values lift1 lift2 hd)
+               (compile-bindings #'(bind ...)))
+              (body (compile-e #'body))
+              (expr
+               (xform-wrap-source
+                ['%#let-values hd body]
+                stx))
+              (expr
+               (if (null? lift2)
+                 expr
+                 (xform-wrap-source
+                  ['%#let-values lift2 expr]
+                  stx)))
+              (expr
+               (if (null? lift1)
+                 expr
+                 (xform-wrap-source
+                  ['%#let-values lift1 expr]
+                  stx))))
+         expr)))
+    (_ (xform-let-values% stx))))
 
 (def (lift-top-lambda-letrec-values% stx)
   (def (bind-e id expr)
@@ -655,12 +725,22 @@ namespace: gxc
   
   (ast-case stx ()
     ((form (bind ...) body)
+     (ormap lift-top-lambda-binding? #'(bind ...))
      (parameterize ((current-expander-context (make-local-context)))
        (let ((hd (compile-bindings #'(bind ...)))
              (body (compile-e #'body)))
          (xform-wrap-source
           [#'form hd body]
-          stx))))))
+          stx))))
+    (_ (xform-let-values% stx))))
+
+(def (lift-top-lambda-binding? bind)
+  (ast-case bind ()
+    (((id) expr)
+     (and (identifier? #'id)
+          (or (case-lambda-expr? #'expr)
+              (opt-lambda-expr? #'expr))))
+    (_ #f)))
 
 ;;; apply-subst-refs
 (def (expression-subst-ref% stx id new-id)
