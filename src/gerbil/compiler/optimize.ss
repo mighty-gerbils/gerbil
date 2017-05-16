@@ -36,7 +36,6 @@ namespace: gxc
 (def (optimize! ctx)
   (parameterize ((current-compile-mutators (make-hash-table-eq))
                  (current-compile-local-type (make-hash-table-eq)))
-    (optimizer-load-prelude-ssxi ctx)
     (optimizer-load-ssxi-deps ctx)
     ;; mark ssxi presence for batch
     (hash-put! (optimizer-info-ssxi (current-compile-optimizer-info))
@@ -47,17 +46,32 @@ namespace: gxc
 
 ;;; ssxi loading
 (def (optimizer-load-ssxi-deps ctx)
-  (let lp ((rest (module-context-import ctx)))
+  (def deps
+    (let (imports (module-context-import ctx))
+      (cond
+       ((core-context-prelude ctx) => (cut cons <> imports))
+       (else imports))))
+
+  (let lp ((rest deps))
     (match rest
       ([hd . rest]
        (cond
         ((module-context? hd)
          (unless (hash-get (optimizer-info-ssxi (current-compile-optimizer-info))
                            (expander-context-id hd))
-           (optimizer-load-prelude-ssxi ctx)
-           (lp (module-context-import hd))
+           (cond
+            ((core-context-prelude hd)
+             => (lambda (pre)
+                  (lp (cons pre (module-context-import hd)))))
+            (else
+             (lp (module-context-import hd))))
            (optimizer-load-ssxi hd))
          (lp rest))
+        ((prelude-context? hd)
+         (unless (hash-get (optimizer-info-ssxi (current-compile-optimizer-info))
+                           (expander-context-id hd))
+           (lp (prelude-context-import hd))
+           (optimizer-load-ssxi hd)))
         ((module-import? hd)
          (lp (cons (module-import-source hd) rest)))
         ((module-export? hd)
@@ -67,11 +81,6 @@ namespace: gxc
         (else
          (error "Unexpected module import" hd))))
       (else (void)))))
-
-(def (optimizer-load-prelude-ssxi ctx)
-  (cond
-   ((core-context-prelude ctx) => optimizer-load-ssxi)
-   (else (void))))
 
 (def (optimizer-load-ssxi ctx)
   (unless (and (module-context? ctx)
