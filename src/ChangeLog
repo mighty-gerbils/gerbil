@@ -1,3 +1,30 @@
+5-16-2017: Gerbil-v0.8
+- compiler: optimizer improvements and static executables
+  - optimizer:
+    - track types for local bindings
+    - lift locally defined opt/case-lambdas
+    - attach inline rules to !lambdas for more complex call optimization transforms
+    - track prelude imports to optimize custom preludes deeply
+  - driver:
+    - support static compilation
+      - static: option for compiling library modules for static linkage
+      - compile-static-exe for statically linked executables
+    - default output directory for executables to current dir
+  - gxc:
+    - -static option for static compilation
+    - -gsc-option and -gsc-option2 for adding arbitrary compilation options for gsc
+    - print usage when invoked with no files and fix error when invoked with only options
+- runtime:
+  - find-method now caches struct method resolutions to the rtd vtab
+- prelude:
+  - extend core.ssxi to include more of the runtime and inline all simple procedures
+- stdlib:
+  - build static linkage modules for all stdlib
+  - std/make supports static library compilation and executables
+  - actor/rpc fix latent arity bug caught by the optimizer
+- build:
+  - [fare] use /bin/sh -eu for build scripts
+
 5-11-2017: Gerbil-v0.7
 - compiler: modularize and implement optimizer pass
   - optimizations:
