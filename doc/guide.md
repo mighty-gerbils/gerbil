@@ -656,9 +656,9 @@ and can only use the baseline parts of the gerbil runtime (gx-gambc0).
 That means that static executables can't use the expander or the compiler,
 as the meta levels of the gerbil runtime are not linked and initialized.
 
-The advantage is that it can work without a local Gerbil installation, which
-makes it suitable for binary distribution. It also loads faster, as it doesn't
-have to do any dynamic module loading.
+The advantage is that static executables don't require a local Gerbil
+installation to work, which makes them suitable for binary distribution.
+They also load faster, as they don't have to do any dynamic module loading.
 
 ## Standard Library
 
