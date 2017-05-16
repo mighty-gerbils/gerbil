@@ -1,7 +1,7 @@
 #!/usr/bin/env gxi
 ;; -*- Gerbil -*-
 
-(import :gerbil/compiler "make" "build-config")
+(import "make" "build-config")
 
 (let ((depgraph (call-with-input-file "build-deps" read))
       (srcdir (path-normalize (path-directory (this-source-file)))))
