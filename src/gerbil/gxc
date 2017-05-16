@@ -119,8 +119,13 @@
        (values compile-exe (make-opts) rest)))))
 
 (def (compile-exe file opts)
-  (compile-file file opts)
-  (compile-exe-stub file opts))
+  (if (pgetq static: opts)
+    (begin
+      (compile-file file [invoke-gsc: #f opts ...])
+      (compile-static-exe file opts))
+    (begin
+      (compile-file file opts)
+      (compile-exe-stub file opts))))
 
 (def (main . args)
   (let* (((values compile-exe? opts files) (parse-args args))
