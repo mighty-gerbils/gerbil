@@ -13,7 +13,7 @@ namespace: gxc
         (only-in :gerbil/gambit/ports
                  open-process process-status)
         (only-in :gerbil/gambit/os
-                 current-time time->seconds))
+                 current-time time->seconds file-info file-info-size))
 (export compile-file compile-exe-stub compile-static-exe)
 
 (def (compile-timestamp)
@@ -44,10 +44,16 @@ namespace: gxc
                    (current-compile-generate-ssxi gen-ssxi)
                    (current-compile-static static)
                    (current-compile-timestamp (compile-timestamp)))
-      (verbose "compile exe " srcpath)
+      (verbose "compile " srcpath)
       (compile-top-module (import-module srcpath)))))
 
 (def (compile-exe-stub srcpath (opts []))
+  (do-compile-exe srcpath opts compile-exe-stub-module))
+
+(def (compile-static-exe srcpath (opts []))
+  (do-compile-exe srcpath opts compile-exe-static-module))
+
+(def (do-compile-exe srcpath opts compile-e)
   (unless (string? srcpath)
     (raise-compile-error "Invalid module source path" srcpath))
 
@@ -64,64 +70,163 @@ namespace: gxc
                    (current-compile-keep-scm keep-scm?)
                    (current-compile-verbose verbosity)
                    (current-compile-timestamp (compile-timestamp)))
-      (verbose "compile " srcpath)
-      (compile-exe-stub-module (import-module srcpath) opts))))
-
-(def (compile-static-exe srcpath (opts []))
-  (error "XXX Implement me!")
-  )
+      (verbose "compile exe " srcpath)
+      (compile-e (import-module srcpath) opts))))
 
 (def (compile-exe-stub-module ctx opts)
-  (def (find-export-binding id exports)
-    (cond
-     ((find (match <>
-              ((module-export _ _ 0 (eq? id)) #t)
-              (else #f))
-            exports)
-      => core-resolve-module-export)
-     (else #f)))
-  
   (def (generate-stub)
     (let* ((mod-str (symbol->string (expander-context-id ctx)))
            (mod-rt  (string-append mod-str "__rt"))
-           (mod-main
-            (cond
-             ((find-export-binding 'main (module-context-export ctx))
-              => (lambda (bind)
-                   (unless (runtime-binding? bind)
-                     (raise-compile-error "main is not a runtime binding"))
-                   (binding-id bind)))
-             (else
-              (raise-compile-error "module does not export main"
-                                   (expander-context-id ctx))))))
+           (mod-main (find-runtime-symbol ctx 'main)))
       (write '(##namespace (""))) (newline)
       (write `(_gx#start! ,mod-rt (quote ,mod-main))) (newline)))
   
   (def (compile-stub output-scm output-bin)
     (let* ((init-stub  (path-expand "lib/gx-init-exe.scm" (getenv "GERBIL_HOME")))
            (gsc-args ["-exe" "-o" output-bin init-stub output-scm])
+           (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
            (proc (open-process [path: "gsc" arguments: gsc-args
                                       stdout-redirection: #f]))
            (status (process-status proc)))
-    (unless (zero? status)
-      (raise-compile-error "Compilation error; gsc exit with nonzero status"
-                           output-scm output-bin status))))
+      (unless (zero? status)
+        (raise-compile-error "Compilation error; gsc exit with nonzero status"
+                             output-scm output-bin status))))
   
-  (let* ((output-bin
-          (cond
-           ((pgetq output-file: opts) => values)
-           (else
-            (let (mod-str (symbol->string (expander-context-id ctx)))
-              (cond
-               ((string-rindex mod-str #\/)
-                => (lambda (ix) (substring mod-str (fx1+ ix) (string-length mod-str))))
-               (else mod-str))))))
+  (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin ".scm")))
     (with-output-to-file output-scm generate-stub)
     (when (current-compile-invoke-gsc)
       (compile-stub output-scm output-bin))
     (unless (current-compile-keep-scm)
       (delete-file output-scm))))
+
+(def (compile-exe-static-module ctx opts)
+  (def (generate-stub)
+    (let (mod-main (find-runtime-symbol ctx 'main))
+      (write '(##namespace (""))) (newline)
+      (write `(apply ,mod-main (cdr (command-line)))) (newline)))
+
+  (def (compile-stub output-scm output-bin)
+    (let* ((gx-gambc0 (path-expand "lib/static/gx-gambc0.scm" (getenv "GERBIL_HOME")))
+           (gx-gambc-macros (path-expand "lib/static/gx-gambc#.scm" (getenv "GERBIL_HOME")))
+           (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
+           (bin-scm (find-static-module-file ctx))
+           (deps (find-runtime-module-deps ctx))
+           (deps (map find-static-module-file deps))
+           (deps (filter (? (not file-empty?)) deps))
+           (gsc-args ["-exe" "-o" output-bin
+                      "-e" include-gx-gambc-macros
+                      gx-gambc0 deps ... bin-scm output-scm])
+           (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
+           (proc (open-process [path: "gsc" arguments: gsc-args
+                                      stdout-redirection: #f]))
+           (status (process-status proc)))
+      (unless (zero? status)
+        (raise-compile-error "Compilation error; gsc exit with nonzero status"
+                             output-scm output-bin status))))
+  
+  (let* ((output-bin (compile-exe-output-file ctx opts))
+         (output-scm (string-append output-bin ".scm")))
+    (with-output-to-file output-scm generate-stub)
+    (when (current-compile-invoke-gsc)
+      (compile-stub output-scm output-bin))
+    (unless (current-compile-keep-scm)
+      (delete-file output-scm))))
+
+(def (find-export-binding ctx id)
+  (cond
+   ((find (match <>
+            ((module-export _ _ 0 (eq? id)) #t)
+            (else #f))
+          (module-context-export ctx))
+    => core-resolve-module-export)
+   (else #f)))
+
+(def (find-runtime-symbol ctx id)
+  (cond
+   ((find-export-binding ctx id)
+    => (lambda (bind)
+         (unless (runtime-binding? bind)
+           (raise-compile-error "export is not a runtime binding" id))
+         (binding-id bind)))
+   (else
+    (raise-compile-error "module does not export symbol"
+                         (expander-context-id ctx) id))))
+
+(def (find-runtime-module-deps ctx)
+  (def ht (make-hash-table-eq))
+  
+  (def (find-deps rest deps)
+    (match rest
+      ([hd . rest]
+       (cond
+        ((module-context? hd)
+         (let ((id (expander-context-id hd))
+               (imports (module-context-import hd)))
+           (cond
+            ((hash-get ht id)
+             (find-deps rest deps))
+            ((core-context-prelude hd)
+             => (lambda (pre)
+                  (hash-put! ht id hd)
+                  (let (xdeps (find-deps (cons pre imports) deps))
+                    (find-deps rest (cons hd xdeps)))))
+            (else
+             (hash-put! ht id hd)
+             (let (xdeps (find-deps imports deps))
+               (find-deps rest (cons hd xdeps)))))))
+        ((prelude-context? hd)
+         (let (id (expander-context-id hd))
+           (cond
+            ((hash-get ht id)
+             (find-deps rest deps))
+            (else
+             (hash-put! ht id hd)
+             (let (xdeps (find-deps (prelude-context-import hd) deps))
+               (find-deps rest (cons hd xdeps)))))))
+        ((module-import? hd)
+         (if (fxzero? (module-import-phi hd))
+           (find-deps (cons (module-import-source hd) rest) deps)
+           (find-deps rest deps)))
+        ((module-export? hd)
+         (find-deps (cons (module-export-context hd) rest) deps))
+        ((import-set? hd)
+         (if (fxzero? (module-import-phi hd))
+           (find-deps (cons (import-set-source hd) rest) deps)
+           (find-deps rest deps)))
+        (else
+         (error "Unexpected module import" hd))))
+      (else deps)))
+
+  (reverse
+   (find-deps
+    (cond
+     ((core-context-prelude ctx)
+      => (lambda (pre) (cons pre (module-context-import ctx))))
+     (else (module-context-import ctx)))
+    [])))
+  
+(def (find-static-module-file ctx)
+  (let* ((scm (string-append (static-module-name (expander-context-id ctx)) ".scm"))
+         (dirs (current-expander-module-library-path))
+         (dirs
+          (cond
+           ((current-compile-output-dir)
+            => (cut cons <> dirs))
+           (else dirs)))
+         (dirs (map (cut path-expand "static" <>) dirs)))
+    (let lp ((rest dirs))
+      (match rest
+        ([dir . rest]
+         (let (path (path-expand scm dir))
+           (if (file-exists? path)
+             path
+             (lp rest))))
+        (else
+         (raise-compile-error "cannot find static module" (expander-context-id ctx) scm))))))
+
+(def (file-empty? path)
+  (zero? (file-info-size (file-info path #t))))
 
 (def (compile-top-module ctx)
   (parameterize ((current-expander-context ctx)
@@ -173,6 +278,8 @@ namespace: gxc
           ;; copy compiled scm0 to static and delete when not keep-scm          
           (parameterize ((current-compile-keep-scm #t))
             (compile-scm-file scm0 runtime-code))
+          (when (file-exists? scms)
+            (delete-file scms))
           (copy-file scm0 scms)
           (unless (current-compile-keep-scm)
             (delete-file scm0)))
@@ -337,12 +444,8 @@ namespace: gxc
     path))
 
 (def (compile-static-output-file ctx)
-  (def (mangle idstr)
-    (let (strs (string-split idstr #\/))
-      (string-join strs "__")))
-  
   (def (file-name idstr)
-    (string-append (mangle idstr) ".scm"))
+    (string-append (static-module-name idstr) ".scm"))
   
   (def (file-path)
     (let (file (file-name (symbol->string (expander-context-id ctx))))
@@ -356,3 +459,23 @@ namespace: gxc
   (let (path (file-path))
     (create-directory* (path-directory path))
     path))
+
+(def (compile-exe-output-file ctx opts)
+  (cond
+   ((pgetq output-file: opts) => values)
+   (else
+    (let (mod-str (symbol->string (expander-context-id ctx)))
+      (cond
+       ((string-rindex mod-str #\/)
+        => (lambda (ix) (substring mod-str (fx1+ ix) (string-length mod-str))))
+       (else mod-str))))))
+
+(def (static-module-name idstr)
+  (cond
+   ((string? idstr)
+    (let (strs (string-split idstr #\/))
+      (string-join strs "__")))
+   ((symbol? idstr)
+    (static-module-name (symbol->string idstr)))
+   (else
+    (error "Bad module id" idstr))))
