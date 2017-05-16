@@ -9,7 +9,7 @@
     (displayln " -h,-help     display this usage summary and exit")
     (displayln " -d <dir>     set compiler output directory; defaults to $GERBIL_HOME/lib")
     (displayln " -exe         compile an executable")
-    (displayln " -o <file>    set output file")
+    (displayln " -o <file>    set executable output file")
     (displayln " -O           optimize gerbil source")
     (displayln " -s           keep intermediate .scm files")
     (displayln " -S           don't invoke gsc")
