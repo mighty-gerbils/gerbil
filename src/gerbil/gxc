@@ -6,19 +6,21 @@
   (def (print-usage!)
     (displayln "gxc [options...] <file> ...")
     (displayln "Options: ")
-    (displayln " -h,-help     display this usage summary and exit")
-    (displayln " -d <dir>     set compiler output directory; defaults to $GERBIL_HOME/lib")
-    (displayln " -exe         compile an executable")
-    (displayln " -o <file>    set executable output file")
-    (displayln " -O           optimize gerbil source")
-    (displayln " -s           keep intermediate .scm files")
-    (displayln " -S           don't invoke gsc")
-    (displayln " -static      compile modules for static linking; with -exe, compile a statically linked executable")
-    (displayln " -v           be verbose during compilation")
-    (displayln " -g           add -debug to gsc options; enables -s")
-    (displayln " -no-ssxi     don't generate .ssxi modules for cross-module optimization")
-    (displayln " -cc-options <string>   add -cc-options to gsc options")
-    (displayln " -ld-options <string>   add -ld-options to gsc options"))
+    (displayln " -h,-help      display this usage summary and exit")
+    (displayln " -d <dir>      set compiler output directory; defaults to $GERBIL_HOME/lib")
+    (displayln " -exe          compile an executable")
+    (displayln " -o <file>     set executable output file")
+    (displayln " -O            optimize gerbil source")
+    (displayln " -s            keep intermediate .scm files")
+    (displayln " -S            don't invoke gsc")
+    (displayln " -static       compile modules for static linking; with -exe, compile a statically linked executable")
+    (displayln " -v            be verbose during compilation")
+    (displayln " -g            add -debug to gsc options; enables -s")
+    (displayln " -no-ssxi      don't generate .ssxi modules for cross-module optimization")
+    (displayln " -cc-options <string>        add [-cc-options <string>] to gsc options")
+    (displayln " -ld-options <string>        add [-ld-options <string>] to gsc options")
+    (displayln " -gsc-option <opt>           add [<opt>] to gsc options")
+    (displayln " -gsc-option2 <opt> <string> add [<opt> <string>] to gsc options"))
 
 (def (parse-args args)
   (def outdir (path-expand "lib" (getenv "GERBIL_HOME")))
@@ -106,6 +108,22 @@
           (match rest
             ([opt . rest]
              (add-gsc-option! ["-ld-options" opt])
+             (lp rest))
+            (else
+             (print-usage!)
+             (exit 1))))
+         (("-gsc-option")
+          (match rest
+            ([opt . rest]
+             (add-gsc-option! [opt])
+             (lp rest))
+            (else
+             (print-usage!)
+             (exit 1))))
+         (("-gsc-option2")
+          (match rest
+            ([opt arg . rest]
+             (add-gsc-option! [opt arg])
              (lp rest))
             (else
              (print-usage!)
