@@ -617,7 +617,8 @@ function of a module.  The generated executables only load runtime
 dependencies without linking and initializing the expander, resulting
 in significantly faster load times compared to wrapper scripts.
 
-Note that the module is still compiled as a dynamic loadable module
+Note that by default, the executable is linked dynamically:
+the module is still compiled as a dynamic loadable module
 and must be available in the gerbil library path for the executable
 to work.
 
@@ -640,6 +641,20 @@ $ gxc -exe -o hello example/hello.ss
 $ ./hello
 hello world
 ```
+
+You can also compile the executable with static linkage, which links
+parts of the gerbil runtime and all dependent modules statically and
+allows the executable to work without a local gerbil environment:
+```
+$ gxc -static -exe -o hello example/hello.ss
+$ ./hello
+hello world
+```
+
+The disadvantage of static linkage is that the executables are bigger
+and can only use the baseline parts of the gerbil runtime (gx-gambc0).
+That means that static executables can't use the expander or the compiler,
+as the meta levels of the gerbil runtime are not linked and initialized.
 
 ## Standard Library
 
