@@ -277,7 +277,13 @@ package: std
                               stdout-redirection: #f]))
          (status (process-status proc)))
     (unless (zero? status)
-      (error "Compilation error; gsc exited with nonzero status" status))))
+      (error "Compilation error; gsc exited with nonzero status" status)))
+  (when (pgetq static: settings)
+    ;; just copy to libdir/static/ with properly mangled module name
+    (let (static-path (static-path mod settings))
+      (when (file-exists? static-path)
+        (delete-file static-path))
+      (copy-file srcpath static-path))))
 
 (def (compile-ssi? mod settings)
   (def srcpath (source-path mod ".ssi" settings))
@@ -337,7 +343,7 @@ package: std
   (when (gxc-compile? mod settings)
     (gxc-compile mod [invoke-gsc: #f gsc-opts ...] [static: #t settings ...]))
   (displayln "... compile static exe " mod)
-  (gxc#compile-static-exe srcpath [invoke-gsc: #t output-file: binpath]))
+  (gxc#compile-static-exe srcpath [invoke-gsc: #t output-file: binpath gsc-options: gsc-opts]))
 
 (def (copy-compiled? file settings)
   (def srcpath (source-path file #f settings))
@@ -378,4 +384,14 @@ package: std
            (else mod))))
     (path-expand bin bindir)))
 
-
+(def (static-path mod settings)
+  (let* ((libdir (pgetq libdir: settings))
+         (staticdir (path-expand "static" libdir))
+         (mod
+          (cond
+           ((pgetq prefix: settings) => (cut string-append <> "/" mod))
+           (else mod)))
+         (scm (string-append
+               (string-join (string-split mod #\/) "__")
+               ".scm")))
+    (path-expand scm staticdir)))
