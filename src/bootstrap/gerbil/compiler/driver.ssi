@@ -10,33 +10,56 @@ namespace: gxc
           (spec: (:gerbil/gambit/misc) (0 pretty-print 0 pretty-print))
           (spec:
            (:gerbil/gambit/ports)
-           (0 process-status 0 process-status)
-           (0 open-process 0 open-process))
+           (0 open-process 0 open-process)
+           (0 process-status 0 process-status))
           (spec:
            (:gerbil/gambit/os)
            (0 current-time 0 current-time)
-           (0 time->seconds 0 time->seconds)))
+           (0 time->seconds 0 time->seconds)
+           (0 file-info 0 file-info)
+           (0 file-info-size 0 file-info-size)))
          (%#export
           (spec: 0 compile-file compile-file)
-          (spec: 0 compile-exe-stub compile-exe-stub))
+          (spec: 0 compile-exe-stub compile-exe-stub)
+          (spec: 0 compile-static-exe compile-static-exe))
          (%#define-runtime compile-timestamp gxc#compile-timestamp)
          (%#begin (%#define-runtime
-                   compile-file__opt-lambda19625
-                   gxc#compile-file__opt-lambda19625)
+                   compile-file__opt-lambda19234
+                   gxc#compile-file__opt-lambda19234)
                   (%#begin (%#define-runtime
                             compile-file__0
                             gxc#compile-file__0)
                            (%#define-runtime compile-file gxc#compile-file)))
          (%#begin (%#define-runtime
-                   compile-exe-stub__opt-lambda19604
-                   gxc#compile-exe-stub__opt-lambda19604)
+                   compile-exe-stub__opt-lambda19220
+                   gxc#compile-exe-stub__opt-lambda19220)
                   (%#begin (%#define-runtime
                             compile-exe-stub__0
                             gxc#compile-exe-stub__0)
                            (%#define-runtime
                             compile-exe-stub
                             gxc#compile-exe-stub)))
+         (%#begin (%#define-runtime
+                   compile-static-exe__opt-lambda19206
+                   gxc#compile-static-exe__opt-lambda19206)
+                  (%#begin (%#define-runtime
+                            compile-static-exe__0
+                            gxc#compile-static-exe__0)
+                           (%#define-runtime
+                            compile-static-exe
+                            gxc#compile-static-exe)))
+         (%#define-runtime do-compile-exe gxc#do-compile-exe)
          (%#define-runtime compile-exe-stub-module gxc#compile-exe-stub-module)
+         (%#define-runtime
+          compile-exe-static-module
+          gxc#compile-exe-static-module)
+         (%#define-runtime find-export-binding gxc#find-export-binding)
+         (%#define-runtime find-runtime-symbol gxc#find-runtime-symbol)
+         (%#define-runtime
+          find-runtime-module-deps
+          gxc#find-runtime-module-deps)
+         (%#define-runtime find-static-module-file gxc#find-static-module-file)
+         (%#define-runtime file-empty? gxc#file-empty?)
          (%#define-runtime compile-top-module gxc#compile-top-module)
          (%#define-runtime collect-bindings gxc#collect-bindings)
          (%#define-runtime compile-runtime-code gxc#compile-runtime-code)
@@ -47,5 +70,10 @@ namespace: gxc
          (%#define-runtime lift-nested-modules gxc#lift-nested-modules)
          (%#define-runtime compile-scm-file gxc#compile-scm-file)
          (%#define-runtime gsc-compile-file gxc#gsc-compile-file)
-         (%#define-runtime compile-output-file gxc#compile-output-file))
+         (%#define-runtime compile-output-file gxc#compile-output-file)
+         (%#define-runtime
+          compile-static-output-file
+          gxc#compile-static-output-file)
+         (%#define-runtime compile-exe-output-file gxc#compile-exe-output-file)
+         (%#define-runtime static-module-name gxc#static-module-name))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/driver__0"))

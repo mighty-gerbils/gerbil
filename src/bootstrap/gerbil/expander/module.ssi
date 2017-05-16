@@ -81,8 +81,8 @@ namespace: gx
           gx#current-export-expander-phi)
          (%#define-runtime module-context:::init! gx#module-context:::init!)
          (%#begin (%#define-runtime
-                   prelude-context:::init!__opt-lambda10983
-                   gx#prelude-context:::init!__opt-lambda10983)
+                   prelude-context:::init!__opt-lambda11000
+                   gx#prelude-context:::init!__opt-lambda11000)
                   (%#begin (%#define-runtime
                             prelude-context:::init!__0
                             gx#prelude-context:::init!__0)
@@ -99,8 +99,8 @@ namespace: gx
           gx#export-expander::apply-export-expander)
          (%#define-runtime module-source-path gx#module-source-path)
          (%#begin (%#define-runtime
-                   import-module__opt-lambda10931
-                   gx#import-module__opt-lambda10931)
+                   import-module__opt-lambda10948
+                   gx#import-module__opt-lambda10948)
                   (%#begin (%#define-runtime
                             import-module__0
                             gx#import-module__0)
@@ -111,8 +111,8 @@ namespace: gx
          (%#define-runtime eval-module gx#eval-module)
          (%#define-runtime core-eval-module gx#core-eval-module)
          (%#begin (%#define-runtime
-                   core-context-prelude__opt-lambda10896
-                   gx#core-context-prelude__opt-lambda10896)
+                   core-context-prelude__opt-lambda10913
+                   gx#core-context-prelude__opt-lambda10913)
                   (%#begin (%#define-runtime
                             core-context-prelude__0
                             gx#core-context-prelude__0)
@@ -123,8 +123,8 @@ namespace: gx
           core-module->prelude-context
           gx#core-module->prelude-context)
          (%#begin (%#define-runtime
-                   core-import-module__opt-lambda10840
-                   gx#core-import-module__opt-lambda10840)
+                   core-import-module__opt-lambda10857
+                   gx#core-import-module__opt-lambda10857)
                   (%#begin (%#define-runtime
                             core-import-module__0
                             gx#core-import-module__0)
@@ -137,8 +137,8 @@ namespace: gx
           gx#core-module-path->namespace)
          (%#define-runtime core-module-path->id gx#core-module-path->id)
          (%#begin (%#define-runtime
-                   core-resolve-module-path__opt-lambda10678
-                   gx#core-resolve-module-path__opt-lambda10678)
+                   core-resolve-module-path__opt-lambda10695
+                   gx#core-resolve-module-path__opt-lambda10695)
                   (%#begin (%#define-runtime
                             core-resolve-module-path__0
                             gx#core-resolve-module-path__0)
@@ -160,8 +160,8 @@ namespace: gx
           core-bound-module-prelude?
           gx#core-bound-module-prelude?)
          (%#begin (%#define-runtime
-                   core-bind-import!__opt-lambda10522
-                   gx#core-bind-import!__opt-lambda10522)
+                   core-bind-import!__opt-lambda10539
+                   gx#core-bind-import!__opt-lambda10539)
                   (%#begin (%#define-runtime
                             core-bind-import!__0
                             gx#core-bind-import!__0)
@@ -172,8 +172,8 @@ namespace: gx
                             core-bind-import!
                             gx#core-bind-import!)))
          (%#begin (%#define-runtime
-                   core-bind-weak-import!__opt-lambda10508
-                   gx#core-bind-weak-import!__opt-lambda10508)
+                   core-bind-weak-import!__opt-lambda10525
+                   gx#core-bind-weak-import!__opt-lambda10525)
                   (%#begin (%#define-runtime
                             core-bind-weak-import!__0
                             gx#core-bind-weak-import!__0)
@@ -184,8 +184,8 @@ namespace: gx
           core-resolve-module-export
           gx#core-resolve-module-export)
          (%#begin (%#define-runtime
-                   core-module-export->import__opt-lambda10324
-                   gx#core-module-export->import__opt-lambda10324)
+                   core-module-export->import__opt-lambda10341
+                   gx#core-module-export->import__opt-lambda10341)
                   (%#begin (%#define-runtime
                             core-module-export->import__0
                             gx#core-module-export->import__0)
@@ -204,8 +204,8 @@ namespace: gx
           core-expand-import/export
           gx#core-expand-import/export)
          (%#begin (%#define-runtime
-                   core-expand-import%__opt-lambda9426
-                   gx#core-expand-import%__opt-lambda9426)
+                   core-expand-import%__opt-lambda9443
+                   gx#core-expand-import%__opt-lambda9443)
                   (%#begin (%#define-runtime
                             core-expand-import%__0
                             gx#core-expand-import%__0)
@@ -219,8 +219,8 @@ namespace: gx
           core-expand-import-source
           gx#core-expand-import-source)
          (%#begin (%#define-runtime
-                   core-expand-export%__opt-lambda8935
-                   gx#core-expand-export%__opt-lambda8935)
+                   core-expand-export%__opt-lambda8952
+                   gx#core-expand-export%__opt-lambda8952)
                   (%#begin (%#define-runtime
                             core-expand-export%__0
                             gx#core-expand-export%__0)
@@ -232,8 +232,8 @@ namespace: gx
           gx#core-expand-export-source)
          (%#define-runtime core-expand-provide% gx#core-expand-provide%)
          (%#begin (%#define-runtime
-                   core-bind-feature!__opt-lambda8868
-                   gx#core-bind-feature!__opt-lambda8868)
+                   core-bind-feature!__opt-lambda8885
+                   gx#core-bind-feature!__opt-lambda8885)
                   (%#begin (%#define-runtime
                             core-bind-feature!__0
                             gx#core-bind-feature!__0)

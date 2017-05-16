@@ -34,6 +34,7 @@ namespace: gxc
          (%#define-runtime
           current-compile-generate-ssxi
           gxc#current-compile-generate-ssxi)
+         (%#define-runtime current-compile-static gxc#current-compile-static)
          (%#define-runtime
           current-compile-timestamp
           gxc#current-compile-timestamp)
