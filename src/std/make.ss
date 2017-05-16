@@ -222,9 +222,9 @@ package: std
   (or (not (file-exists? ssipath))
       (file-newer? srcpath ssipath)))
 
-(def (gxc-compile mod gsc-opts settings)
+(def (gxc-compile mod gsc-opts settings (invoke-gsc? #t))
   (def gxc-opts 
-    [invoke-gsc: #t
+    [invoke-gsc: invoke-gsc?
      output-dir: (pgetq libdir: settings )
      optimize: (pgetq optimize: settings)
      generate-ssxi: #t
@@ -341,7 +341,7 @@ package: std
   (def srcpath (source-path mod ".ss" settings))
   (def binpath (binary-path mod settings))
   (when (gxc-compile? mod settings)
-    (gxc-compile mod [invoke-gsc: #f gsc-opts ...] [static: #t settings ...]))
+    (gxc-compile mod gsc-opts [static: #t settings ...] #f))
   (displayln "... compile static exe " mod)
   (gxc#compile-static-exe srcpath [invoke-gsc: #t output-file: binpath gsc-options: gsc-opts]))
 
