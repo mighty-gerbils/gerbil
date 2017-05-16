@@ -45,6 +45,8 @@ namespace: gxc
   (make-parameter #f))
 (def current-compile-generate-ssxi
   (make-parameter #f))
+(def current-compile-static
+  (make-parameter #f))
 (def current-compile-timestamp
   (make-parameter #f))
 

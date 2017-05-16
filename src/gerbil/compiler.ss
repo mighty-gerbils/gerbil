@@ -5,9 +5,7 @@ package: gerbil
 namespace: gxc
 
 (import :gerbil/compiler/driver)
-(export compile-file compile-exe-stub)
-
-
+(export (import: :gerbil/compiler/driver))
 
 
 

@@ -13,6 +13,7 @@
     (displayln " -O           optimize gerbil source")
     (displayln " -s           keep intermediate .scm files")
     (displayln " -S           don't invoke gsc")
+    (displayln " -static      compile modules for static linking; with -exe, compile a statically linked executable")
     (displayln " -v           be verbose during compilation")
     (displayln " -g           add -debug to gsc options; enables -s")
     (displayln " -no-ssxi     don't generate .ssxi modules for cross-module optimization")
@@ -26,6 +27,7 @@
   (def verbose #f)
   (def optimize #f)
   (def generate-ssxi #t) ; enable by default (only when optimizing)
+  (def static #f)
   (def gsc-options #f)
   (def compile-exe #f)
   (def outfile #f)
@@ -41,6 +43,7 @@
      keep-scm: keep-scm 
      verbose: verbose
      optimize: optimize
+     static: static
      generate-ssxi: generate-ssxi
      gsc-options: gsc-options
      output-dir: outdir
@@ -66,6 +69,9 @@
           (lp rest))
          (("-s")
           (set! keep-scm #t)
+          (lp rest))
+         (("-static")
+          (set! static #t)
           (lp rest))
          (("-g")
           (set! keep-scm #t)

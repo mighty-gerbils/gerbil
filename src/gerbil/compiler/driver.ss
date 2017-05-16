@@ -14,7 +14,7 @@ namespace: gxc
                  open-process process-status)
         (only-in :gerbil/gambit/os
                  current-time time->seconds))
-(export compile-file compile-exe-stub)
+(export compile-file compile-exe-stub compile-static-exe)
 
 (def (compile-timestamp)
   (inexact->exact (floor (time->seconds (current-time)))))
@@ -29,7 +29,8 @@ namespace: gxc
         (keep-scm?   (pgetq keep-scm: opts))
         (verbosity   (pgetq verbose: opts))
         (optimize    (pgetq optimize: opts))
-        (gen-ssxi    (pgetq generate-ssxi: opts)))
+        (gen-ssxi    (pgetq generate-ssxi: opts))
+        (static      (pgetq static: opts)))
     (when outdir
       (create-directory* outdir))
     (when optimize
@@ -41,6 +42,7 @@ namespace: gxc
                    (current-compile-verbose verbosity)
                    (current-compile-optimize optimize)
                    (current-compile-generate-ssxi gen-ssxi)
+                   (current-compile-static static)
                    (current-compile-timestamp (compile-timestamp)))
       (verbose "compile exe " srcpath)
       (compile-top-module (import-module srcpath)))))
@@ -64,6 +66,10 @@ namespace: gxc
                    (current-compile-timestamp (compile-timestamp)))
       (verbose "compile " srcpath)
       (compile-exe-stub-module (import-module srcpath) opts))))
+
+(def (compile-static-exe srcpath (opts []))
+  (error "XXX Implement me!")
+  )
 
 (def (compile-exe-stub-module ctx opts)
   (def (find-export-binding id exports)
@@ -105,15 +111,11 @@ namespace: gxc
           (cond
            ((pgetq output-file: opts) => values)
            (else
-            (let* ((mod-str (symbol->string (expander-context-id ctx)))
-                   (mod-name
-                    (cond
-                     ((string-rindex mod-str #\/)
-                      => (lambda (ix) (substring mod-str (fx1+ ix) (string-length mod-str))))
-                     (else mod-str))))
+            (let (mod-str (symbol->string (expander-context-id ctx)))
               (cond
-               ((current-compile-output-dir) => (cut path-expand mod-name <>))
-               (else mod-name))))))
+               ((string-rindex mod-str #\/)
+                => (lambda (ix) (substring mod-str (fx1+ ix) (string-length mod-str))))
+               (else mod-str))))))
          (output-scm (string-append output-bin ".scm")))
     (with-output-to-file output-scm generate-stub)
     (when (current-compile-invoke-gsc)
@@ -149,16 +151,32 @@ namespace: gxc
            (rt (and (apply-find-runtime-code code)
                     (let (idstr (symbol->string (expander-context-id ctx)))
                       (string-append idstr "__0")))))
-      (when rt
+      (cond
+       (rt
         (hash-put! (current-compile-runtime-sections) ctx rt)
         (generate-runtime-code ctx code))
+       ((current-compile-static)
+        ;; just touch empty runtime code file in static
+        (let (path (compile-static-output-file ctx))
+          (with-output-to-file [path: path permissions: #o644]
+            void))))
+      
       (generate-loader-code ctx code rt)))
   
   (def (generate-runtime-code ctx code)
-    (let (runtime-code 
-          (parameterize ((current-expander-context ctx))
-            (apply-generate-runtime code)))
-      (compile-scm-file (compile-output-file ctx 0 ".scm") runtime-code)))
+    (let* ((runtime-code 
+            (parameterize ((current-expander-context ctx))
+              (apply-generate-runtime code)))
+           (scm0 (compile-output-file ctx 0 ".scm")))
+      (if (current-compile-static)
+        (let (scms (compile-static-output-file ctx))
+          ;; copy compiled scm0 to static and delete when not keep-scm          
+          (parameterize ((current-compile-keep-scm #t))
+            (compile-scm-file scm0 runtime-code))
+          (copy-file scm0 scms)
+          (unless (current-compile-keep-scm)
+            (delete-file scm0)))
+        (compile-scm-file scm0 runtime-code))))
 
   (def (generate-loader-code ctx code rt)
     (let* ((loader-code 
@@ -263,9 +281,9 @@ namespace: gxc
           (extended-bindings)))
       (pretty-print code)))
   (when (current-compile-invoke-gsc)
-    (gsc-compile-file path)
-    (unless (current-compile-keep-scm)
-      (delete-file path))))
+    (gsc-compile-file path))
+  (unless (current-compile-keep-scm)
+    (delete-file path)))
 
 (def (gsc-compile-file path)
   (let* ((gsc-args
@@ -318,3 +336,23 @@ namespace: gxc
     (create-directory* (path-directory path))
     path))
 
+(def (compile-static-output-file ctx)
+  (def (mangle idstr)
+    (let (strs (string-split idstr #\/))
+      (string-join strs "__")))
+  
+  (def (file-name idstr)
+    (string-append (mangle idstr) ".scm"))
+  
+  (def (file-path)
+    (let (file (file-name (symbol->string (expander-context-id ctx))))
+      (cond
+       ((current-compile-output-dir)
+        => (lambda (outdir)
+             (path-expand file (path-expand "static" outdir))))
+       (else
+        (path-expand file "static")))))
+  
+  (let (path (file-path))
+    (create-directory* (path-directory path))
+    path))
