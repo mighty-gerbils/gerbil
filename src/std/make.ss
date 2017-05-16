@@ -27,13 +27,14 @@ package: std
        prefix: (prefix #f)
        force:  (force? #f)
        optimize: (optimize #f)
+       static: (static #f)
        verbose: (verbose #f)
        depgraph: (depgraph #f))
   (let* ((srcdir (or srcdir (error "srcdir must be specified")))
          (libdir (or libdir (path-expand "lib" (getenv "GERBIL_HOME"))))
          (settings  [srcdir: srcdir libdir: libdir bindir: bindir
                      prefix: prefix force: force? optimize: optimize
-                     verbose: verbose])
+                     static: static verbose: verbose])
          (buildset (if (not force?)
                      (filter (cut build? <> settings) buildspec)
                      buildspec))
@@ -189,6 +190,8 @@ package: std
      (compile-ssi? modf settings))
     ([exe: modf . gsc-opts]
      (compile-exe? modf settings))
+    ([static-exe: modf . gsc-opts]
+     (compile-static-exe? modf settings))
     ([copy: file]
      (copy-compiled? file settings))
     (else
@@ -206,6 +209,8 @@ package: std
      (compile-ssi modf deps settings))
     ([exe: modf . gsc-opts]
      (compile-exe modf gsc-opts settings))
+    ([static-exe: modf . gsc-opts]
+     (compile-static-exe modf gsc-opts settings))
     ([copy: file]
      (copy-compiled file settings))
     (else
@@ -223,6 +228,7 @@ package: std
      output-dir: (pgetq libdir: settings )
      optimize: (pgetq optimize: settings)
      generate-ssxi: #t
+     static: (pgetq static: settings)
      verbose: (pgetq verbose: settings)
      (if gsc-opts [gsc-options: gsc-opts] []) ...])
   (def srcpath (source-path mod ".ss" settings))
@@ -318,6 +324,20 @@ package: std
     (gxc-compile mod gsc-opts settings))
   (displayln "... compile exe " mod)
   (compile-exe-stub srcpath [invoke-gsc: #t output-file: binpath]))
+
+(def (compile-static-exe? mod settings)
+  (def srcpath (source-path mod ".ss" settings))
+  (def binpath (binary-path mod settings))
+  (or (not (file-exists? binpath))
+      (file-newer? srcpath binpath)))
+
+(def (compile-static-exe mod gsc-opts settings)
+  (def srcpath (source-path mod ".ss" settings))
+  (def binpath (binary-path mod settings))
+  (when (gxc-compile? mod settings)
+    (gxc-compile mod [invoke-gsc: #f gsc-opts ...] [static: #t settings ...]))
+  (displayln "... compile static exe " mod)
+  (gxc#compile-static-exe srcpath [invoke-gsc: #t output-file: binpath]))
 
 (def (copy-compiled? file settings)
   (def srcpath (source-path file #f settings))
