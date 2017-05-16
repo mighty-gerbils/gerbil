@@ -41,17 +41,17 @@
 (def gerbil-libdir
   (path-expand "lib" (getenv "GERBIL_TARGET")))
 
-(def (compile1 modf optimize? gen-ssxi?)
+(def (compile1 modf optimize? gen-ssxi? static?)
   (displayln "... compile " modf)
   (compile-file modf [output-dir: gerbil-libdir invoke-gsc: #t
-                      optimize: optimize? generate-ssxi: gen-ssxi?
+                      optimize: optimize? generate-ssxi: gen-ssxi? static: static?
                       gsc-options: ["-cc-options" "--param max-gcse-memory=300000000"]]))
 
 (def optimize-prelude #f) ; meaningless before macros are also optimized
 (def optimize-modules #t)
 
 (displayln "building gerbil in " gerbil-libdir)
-(for-each (cut compile1 <> optimize-prelude #f) ; don't clobber core.ssxi, that's hand crafted
+(for-each (cut compile1 <> optimize-prelude #f #t) ; don't clobber core.ssxi, static stubs
           gerbil-prelude)
-(for-each (cut compile1 <> optimize-modules #t) ; we want ssxis for that
+(for-each (cut compile1 <> optimize-modules #t #f) ; we want ssxis for that, but no static yet
           gerbil-modules)
