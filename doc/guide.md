@@ -60,6 +60,27 @@ $./hello.ss
 hello world
 ```
 
+The "hello world" executable:
+```
+$ cat > hello.ss <<EOF
+package: example
+
+(export main)
+(def (main . args)
+  (displayln "hello world"))
+EOF
+$ gxc -exe -o hello hello.ss
+$ ./hello
+hello world
+```
+
+And if you want a statically linked hello with no runtime dependencies to the Gerbil environment:
+```
+$ gxc -static -exe -o hello hello.ss
+$ ./hello 
+hello world
+```
+
 ## Core Gerbil
 ### Primitive forms
 The standard Scheme primitive forms and macros are all supported.
