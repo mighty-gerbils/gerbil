@@ -1,4 +1,4 @@
-#!/bin/sh -eu
+#!/usr/bin/env bash
 
 unset GERBIL_HOME
 export GERBIL_HOME=$(dirname $(cd ${0%/*} && echo $PWD))
