@@ -7,6 +7,7 @@ In the following `$` is the shell prompt and `>` the gxi
 interpreter prompt.
 
 ## Contents
+
 <!-- toc -->
 
 - [Hello world](#hello-world)
@@ -21,6 +22,7 @@ interpreter prompt.
   * [File Modules](#file-modules)
   * [Library Modules](#library-modules)
   * [Executable Modules](#executable-modules)
+  * [The Standard Library Build Tool](#the-standard-library-build-tool)
 - [Standard Library](#standard-library)
   * [Optional Libraries](#optional-libraries)
   * [Additional Syntactic Sugar](#additional-syntactic-sugar)
