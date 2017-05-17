@@ -1,4 +1,5 @@
-#!/bin/sh -eu
+#!/usr/bin/env bash
+set -eu
 
 die() {
     "*** Build failed"

@@ -1,3 +1,6 @@
+5-17-2017: Gerbil-v0.8.2
+- fix shell script shebangs to work on ubuntu with bash + set -eu
+
 5-17-2017: Gerbil-v0.8.1
 - compiler/optimize: fix bug where prelude ssxi loading short-circuited further deps
 - compiler/driver: fix bug in static exe dependency collection where the prelude module deps where short-circuited

@@ -24,16 +24,16 @@ package: std
 ;;; Build Configuration
 
 ;; build std/xml libraries - requires libxml2
-(enable libxml #f)
+(enable libxml #t)
 
 ;; build std/text/yaml library - requires libyaml
-(enable libyaml #f)
+(enable libyaml #t)
 
 ;; build std/text/zlib library - requires zlib
 (enable zlib #t)
 
 ;; build std/db/sqlite library -- requires sqlite3
-(enable sqlite #f)
+(enable sqlite #t)
 
 ;; build std/db/lmdb library -- requires LMDB
-(enable lmdb #f)
+(enable lmdb #t)
