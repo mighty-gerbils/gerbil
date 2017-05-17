@@ -168,12 +168,12 @@ namespace: gxc
              (find-deps rest deps))
             ((core-context-prelude hd)
              => (lambda (pre)
-                  (hash-put! ht id hd)
                   (let (xdeps (find-deps (cons pre imports) deps))
+                    (hash-put! ht id hd)
                     (find-deps rest (cons hd xdeps)))))
             (else
-             (hash-put! ht id hd)
              (let (xdeps (find-deps imports deps))
+               (hash-put! ht id hd)
                (find-deps rest (cons hd xdeps)))))))
         ((prelude-context? hd)
          (let (id (expander-context-id hd))
@@ -181,9 +181,12 @@ namespace: gxc
             ((hash-get ht id)
              (find-deps rest deps))
             (else
-             (hash-put! ht id hd)
              (let (xdeps (find-deps (prelude-context-import hd) deps))
-               (find-deps rest (cons hd xdeps)))))))
+               (if (hash-get ht id)     ; imports picked up the module
+                 (find-deps rest xdeps)
+                 (begin
+                   (hash-put! ht id hd)
+                   (find-deps rest (cons hd xdeps)))))))))
         ((module-import? hd)
          (if (fxzero? (module-import-phi hd))
            (find-deps (cons (module-import-source hd) rest) deps)
@@ -199,12 +202,14 @@ namespace: gxc
       (else deps)))
 
   (reverse
-   (find-deps
-    (cond
-     ((core-context-prelude ctx)
-      => (lambda (pre) (cons pre (module-context-import ctx))))
-     (else (module-context-import ctx)))
-    [])))
+   (filter
+    expander-context-id
+    (find-deps
+     (cond
+      ((core-context-prelude ctx)
+       => (lambda (pre) (cons pre (module-context-import ctx))))
+      (else (module-context-import ctx)))
+     []))))
   
 (def (find-static-module-file ctx)
   (let* ((scm (string-append (static-module-name (expander-context-id ctx)) ".scm"))
