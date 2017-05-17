@@ -26,8 +26,8 @@ namespace: gx
           gx#syntax-pattern::apply-macro-expander)
          (%#define-runtime macro-expand-syntax gx#macro-expand-syntax)
          (%#begin (%#define-runtime
-                   macro-expand-syntax-case__opt-lambda12629
-                   gx#macro-expand-syntax-case__opt-lambda12629)
+                   macro-expand-syntax-case__opt-lambda12705
+                   gx#macro-expand-syntax-case__opt-lambda12705)
                   (%#begin (%#define-runtime
                             macro-expand-syntax-case__0
                             gx#macro-expand-syntax-case__0)

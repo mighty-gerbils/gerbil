@@ -12,8 +12,8 @@ namespace: gx
          (%#define-runtime *core-syntax-expanders* gx#*core-syntax-expanders*)
          (%#define-runtime *core-macro-expanders* gx#*core-macro-expanders*)
          (%#begin (%#define-runtime
-                   root-context:::init!__opt-lambda12519
-                   gx#root-context:::init!__opt-lambda12519)
+                   root-context:::init!__opt-lambda12595
+                   gx#root-context:::init!__opt-lambda12595)
                   (%#begin (%#define-runtime
                             root-context:::init!__0
                             gx#root-context:::init!__0)
@@ -21,8 +21,8 @@ namespace: gx
                             root-context:::init!
                             gx#root-context:::init!)))
          (%#begin (%#define-runtime
-                   top-context:::init!__opt-lambda12497
-                   gx#top-context:::init!__opt-lambda12497)
+                   top-context:::init!__opt-lambda12573
+                   gx#top-context:::init!__opt-lambda12573)
                   (%#begin (%#define-runtime
                             top-context:::init!__0
                             gx#top-context:::init!__0)
@@ -30,8 +30,8 @@ namespace: gx
                             top-context:::init!
                             gx#top-context:::init!)))
          (%#begin (%#define-runtime
-                   expander-context::bind-core-syntax-expanders!__opt-lambda12350
-                   gx#expander-context::bind-core-syntax-expanders!__opt-lambda12350)
+                   expander-context::bind-core-syntax-expanders!__opt-lambda12426
+                   gx#expander-context::bind-core-syntax-expanders!__opt-lambda12426)
                   (%#begin (%#define-runtime
                             expander-context::bind-core-syntax-expanders!__0
                             gx#expander-context::bind-core-syntax-expanders!__0)
@@ -39,8 +39,8 @@ namespace: gx
                             expander-context::bind-core-syntax-expanders!
                             gx#expander-context::bind-core-syntax-expanders!)))
          (%#begin (%#define-runtime
-                   expander-context::bind-core-macro-expanders!__opt-lambda12244
-                   gx#expander-context::bind-core-macro-expanders!__opt-lambda12244)
+                   expander-context::bind-core-macro-expanders!__opt-lambda12320
+                   gx#expander-context::bind-core-macro-expanders!__opt-lambda12320)
                   (%#begin (%#define-runtime
                             expander-context::bind-core-macro-expanders!__0
                             gx#expander-context::bind-core-macro-expanders!__0)

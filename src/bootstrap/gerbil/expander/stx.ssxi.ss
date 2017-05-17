@@ -33,23 +33,23 @@ package: gerbil/expander
   (declare-type gx#syntax-quote-marks-set! (@struct-setf gx#syntax-quote::t 1))
   (declare-type
    gx#datum->syntax
-   (@case-lambda (2 gx#datum->syntax__0) (3 gx#datum->syntax__opt-lambda3705)))
+   (@case-lambda (2 gx#datum->syntax__0) (3 gx#datum->syntax__opt-lambda3781)))
   (declare-type
    gx#stx-unwrap
-   (@case-lambda (1 gx#stx-unwrap__0) (2 gx#stx-unwrap__opt-lambda3681)))
+   (@case-lambda (1 gx#stx-unwrap__0) (2 gx#stx-unwrap__opt-lambda3757)))
   (declare-type
    gx#genident
    (@case-lambda
     (0 gx#genident__0)
     (1 gx#genident__1)
-    (2 gx#genident__opt-lambda3440)))
+    (2 gx#genident__opt-lambda3516)))
   (declare-type
    gx#stx-for-each
    (@case-lambda (2 gx#stx-for-each1) (3 gx#stx-for-each2)))
   (declare-type gx#stx-map (@case-lambda (2 gx#stx-map1) (3 gx#stx-map2)))
   (declare-type
    gx#stx-plist?
-   (@case-lambda (1 gx#stx-plist?__0) (2 gx#stx-plist?__opt-lambda2686)))
+   (@case-lambda (1 gx#stx-plist?__0) (2 gx#stx-plist?__opt-lambda2762)))
   (declare-type
    gx#stx-getq
-   (@case-lambda (2 gx#stx-getq__0) (3 gx#stx-getq__opt-lambda2604))))
+   (@case-lambda (2 gx#stx-getq__0) (3 gx#stx-getq__opt-lambda2680))))
