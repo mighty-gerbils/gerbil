@@ -326,10 +326,14 @@ package: std
 (def (compile-exe mod gsc-opts settings)
   (def srcpath (source-path mod ".ss" settings))
   (def binpath (binary-path mod settings))
+  (def gxc-opts 
+    [invoke-gsc: #t
+     output-file: binpath
+     verbose: (pgetq verbose: settings)])
   (when (gxc-compile? mod settings)
     (gxc-compile mod gsc-opts settings))
   (displayln "... compile exe " mod)
-  (compile-exe-stub srcpath [invoke-gsc: #t output-file: binpath]))
+  (compile-exe-stub srcpath gxc-opts))
 
 (def (compile-static-exe? mod settings)
   (def srcpath (source-path mod ".ss" settings))
@@ -340,10 +344,15 @@ package: std
 (def (compile-static-exe mod gsc-opts settings)
   (def srcpath (source-path mod ".ss" settings))
   (def binpath (binary-path mod settings))
+  (def gxc-opts 
+    [invoke-gsc: #t
+     output-file: binpath
+     verbose: (pgetq verbose: settings)
+     (if gsc-opts [gsc-options: gsc-opts] []) ...])
   (when (gxc-compile? mod settings)
     (gxc-compile mod gsc-opts [static: #t settings ...] #f))
   (displayln "... compile static exe " mod)
-  (gxc#compile-static-exe srcpath [invoke-gsc: #t output-file: binpath gsc-options: gsc-opts]))
+  (gxc#compile-static-exe srcpath gxc-opts))
 
 (def (copy-compiled? file settings)
   (def srcpath (source-path file #f settings))
