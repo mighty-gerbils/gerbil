@@ -608,38 +608,6 @@ specify a different directory with the `-d` option:
 $ gxc -d your-library-path example/util.ss
 ```
 
-#### The Standard Library Build Tool
-
-Building complex libraries by invoking `gxc` quickly gets tedious.
-Instead you can use the `std/make` library module which provides
-a build tool that handles complex library building.
-
-For instance, the following script can be used to build the little
-example library:
-```
-$ cat > build.ss <<EOF
-#!/usr/bin/env gxi-script
-(import :std/make)
-(let (srcdir (path-normalize (path-directory (this-source-file))))
-  (make srcdir: srcdir
-        '("example/util")))
-EOF
-$ chmod +x build.ss
-
-```
-
-You can now build the library by invoking `build.ss` and have it
-installed into `$GERBIL_HOME/lib`.
-```
-$ ./build.ss
-... compile example/util
-$ gxi
-> (import :example/util)
-> (with-display-exception (lambda () (error "this-is-an-error")))
-this-is-an-error
-=> #<error-exception #4>
-```
-
 ### Executable Modules
 
 The gerbil compiler can also create executables that invoke the main
@@ -655,10 +623,12 @@ to work.
 For example, suppose we have a module example/hello.ss that we
 want to compile as an executable module:
 ```
+$ cat > example/hello.ss <<EOF
 package: example
 (export main)
 (def (main . args)
   (displayln "hello world"))
+EOF
 ```
 The module must define and export a `main` function that gets
 invoked with the command line arguments after loading the gerbil
@@ -689,6 +659,93 @@ as the meta levels of the gerbil runtime are not linked and initialized.
 The advantage is that static executables don't require a local Gerbil
 installation to work, which makes them suitable for binary distribution.
 They also load faster, as they don't have to do any dynamic module loading.
+
+### The Standard Library Build Tool
+
+Building complex libraries and executables by invoking `gxc` quickly gets
+tedious. When you reach that point of complexity when you need a build tool,
+you can use the `std/make` library module which provides a modest build tool
+that can handle reasonably complex project building.
+
+For instance, the following script can be used to build the little
+example library:
+```
+$ cat > build.ss <<EOF
+#!/usr/bin/env gxi-script
+(import :std/make)
+(let (srcdir (path-directory (this-source-file)))
+  (make srcdir: srcdir
+        '("example/util")))
+EOF
+$ chmod +x build.ss
+
+```
+
+You can now build the library by invoking `build.ss` and have it
+installed by default into `$GERBIL_HOME/lib` -- the location can
+vary by specifying a `libdir:` option to `make`.
+```
+$ ./build.ss
+... compile example/util
+$ gxi
+> (import :example/util)
+> (with-display-exception (lambda () (error "this-is-an-error")))
+this-is-an-error
+=> #<error-exception #4>
+```
+
+Executables can also be built -- the following extends the buildspec
+for building an executable for our `hello` program:
+```
+$ mkdir bin # to place our executables
+$ cat > build.ss <<EOF
+#!/usr/bin/env gxi-script
+(import :std/make)
+(let (srcdir (path-directory (this-source-file)))
+  (make srcdir: srcdir
+        bindir: (path-expand "bin" srcdir) 
+        '("example/util"
+          (exe: "example/hello"))))
+EOF
+$ chmod +x build.ss
+$ ./build.ss
+... compile example/hello
+... compile exe example/hello
+$ ./bin/hello 
+hello world
+```
+
+Static executables are also supported with the `static-exe:` buildspec.
+Note that if you have any dependencies in your project you should also
+specify the `static:` parameter to `make` so that your library modules
+are also compiled for static linkage.
+The following `build.ss` can be used to build hello statically:
+```
+$ cat > build.ss <<EOF
+#!/usr/bin/env gxi-script
+(import :std/make)
+(let (srcdir (path-directory (this-source-file)))
+  (make srcdir: srcdir
+        bindir: (path-expand "bin" srcdir)
+        static: #t
+        '("example/util"
+          (static-exe: "example/hello"))))
+EOF
+$ chmod +x build.ss
+$ ./build.ss
+... compile example/util
+... compile example/hello
+... compile static exe example/hello
+$ ./bin/hello 
+hello world
+
+```
+
+The build tool can handle quite a few different buildspecs and generate/use
+dependency graphs, while by default it only builds if the source is
+newer than the artefacts (or any of the latter doesn't exist).
+The canonical example for its usage is the stdlib [build.ss](https://github.com/vyzo/gerbil/blob/master/src/std/build.ss)
+script, as the `std/make` library evolved out of that script.
 
 ## Standard Library
 
