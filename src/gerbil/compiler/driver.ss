@@ -285,6 +285,7 @@ namespace: gxc
             (compile-scm-file scm0 runtime-code))
           (when (file-exists? scms)
             (delete-file scms))
+          (verbose "copy static module " scm0 " => " scms)
           (copy-file scm0 scms)
           (unless (current-compile-keep-scm)
             (delete-file scm0)))
