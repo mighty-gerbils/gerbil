@@ -219,8 +219,13 @@ package: std
 (def (gxc-compile? mod settings)
   (def srcpath (source-path mod ".ss" settings))
   (def ssipath (library-path mod ".ssi" settings))
+  (def statpath (and (pgetq static: settings)
+                     (static-path mod settings)))
   (or (not (file-exists? ssipath))
-      (file-newer? srcpath ssipath)))
+      (file-newer? srcpath ssipath)
+      (and statpath
+           (or (not (file-exists? statpath))
+               (file-newer? srcpath statpath)))))
 
 (def (gxc-compile mod gsc-opts settings (invoke-gsc? #t))
   (def gxc-opts 
@@ -280,10 +285,10 @@ package: std
       (error "Compilation error; gsc exited with nonzero status" status)))
   (when (pgetq static: settings)
     ;; just copy to libdir/static/ with properly mangled module name
-    (let (static-path (static-path mod settings))
-      (when (file-exists? static-path)
-        (delete-file static-path))
-      (copy-file srcpath static-path))))
+    (let (statpath (static-path mod settings))
+      (when (file-exists? statpath)
+        (delete-file statpath))
+      (copy-file srcpath statpath))))
 
 (def (compile-ssi? mod settings)
   (def srcpath (source-path mod ".ssi" settings))
@@ -338,7 +343,10 @@ package: std
 (def (compile-static-exe? mod settings)
   (def srcpath (source-path mod ".ss" settings))
   (def binpath (binary-path mod settings))
-  (or (not (file-exists? binpath))
+  (def statpath (static-path mod settings))
+  (or (not (file-exists? statpath))
+      (file-newer? srcpath statpath)
+      (not (file-exists? binpath))
       (file-newer? srcpath binpath)))
 
 (def (compile-static-exe mod gsc-opts settings)
