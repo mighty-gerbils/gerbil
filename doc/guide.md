@@ -409,6 +409,36 @@ hygienically:
 => 4
 ```
 
+#### defsyntax-for-match
+The match expanper is also macro capable; you can define a match
+macro with `defsyntax-for-match`, which has the following form:
+```
+(defsyntax-for-match id match-macro [macro])
+```
+Both macros are procedures at phi+1, with the `match-macro` invoked when
+expanding a match pattern and the optional normal `macro` invoked at normal
+procedure application.
+
+For example, the following defines a match macro for constructing and
+destructuring  pairs tagged with `'foo`:
+```
+(defsyntax-for-match foo
+  (syntax-rules ()
+    ((_ pat) (cons 'foo pat)))
+  (syntax-rules ()
+    ((_ val) (cons 'foo val))))
+
+> (def my-foo (foo 1))
+> my-foo
+=> (foo . 1)
+> (match my-foo ((foo x) x))
+=> 1
+> (def my-bar (cons 'bar 2))
+> (match my-bar ((foo x) x) (else 'not-a-foo))
+=> not-a-foo
+
+```
+
 ## Modules and Libraries
 
 Modules are self-contained pieces of code. All identifiers
