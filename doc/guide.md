@@ -41,7 +41,7 @@ interpreter prompt.
 Add `$GERBIL_HOME/bin` to your path and invoke the interpreter
 for the obligatory "hello world":
 ```
-export PATH=$PATH:$GERBIL_HOME/bin
+$ export PATH=$PATH:$GERBIL_HOME/bin
 $ gxi
 > (displayln "hello world")
 hello world
