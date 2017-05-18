@@ -233,12 +233,7 @@ namespace: gx
        ((runtime-binding? bind) stx)
        ((syntax-binding? bind)
         (core-apply-expander (syntax-binding-e bind) stx))
-       ((not bind)
-        (unless (or (fxpositive? (current-expander-phi))
-                    (core-context-rebind? (core-context-top))
-                    (core-extern-symbol? (stx-e hd)))
-          (raise-syntax-error #f "Reference to unbound identifier" stx hd))
-        stx)
+       ((not bind) stx)
        (else
         (raise-syntax-error #f "Bad syntax" stx)))))
   
