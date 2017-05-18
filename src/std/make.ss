@@ -377,12 +377,20 @@ package: std
   (copy-file srcpath libpath))
 
 (def (source-path mod ext settings)
-  (let ((path (if ext (string-append mod ext) mod))
+  (let ((path
+         (if (and ext (string-empty? (path-extension mod)))
+           (string-append mod ext)
+           mod))
         (srcdir (pgetq srcdir: settings)))
     (path-expand path srcdir)))
 
 (def (library-path mod ext settings)
-  (let* ((path (if ext (string-append mod ext) mod))
+  (let* ((path
+          (if ext
+            (if (string-empty? (path-extension mod))
+              (string-append mod ext)
+              (string-append (path-strip-extension mod) ext))
+            mod))
          (libdir (pgetq libdir: settings))
          (builddir
           (cond
@@ -398,7 +406,11 @@ package: std
           (cond
            ((string-rindex mod #\/)
             => (lambda (ix) (substring mod (fx1+ ix) (string-length mod))))
-           (else mod))))
+           (else mod)))
+         (bin
+          (if (string-empty? (path-extension bin))
+            bin
+            (path-strip-extension bin))))
     (path-expand bin bindir)))
 
 (def (static-path mod settings)
@@ -408,7 +420,11 @@ package: std
           (cond
            ((pgetq prefix: settings) => (cut string-append <> "/" mod))
            (else mod)))
-         (scm (string-append
-               (string-join (string-split mod #\/) "__")
-               ".scm")))
+         (base (string-join (string-split mod #\/) "__"))
+         (base
+          (if (string-empty? (path-extension base))
+            base
+            (path-strip-extension base)))
+         (scm (string-append base ".scm")))
     (path-expand scm staticdir)))
+
