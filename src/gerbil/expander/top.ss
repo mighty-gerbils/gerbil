@@ -87,6 +87,11 @@ namespace: gx
       (core-cons '%#begin-foreign body)
       (stx-source stx)))))
 
+;; (%#begin-module body ...)
+;; transient form for module expansion; cannot appear in the wild
+(def (core-expand-begin-module% stx)
+  (raise-syntax-error #f "Illegal expansion" stx))
+
 ;; (%#begin-annotation annotation expr ...)
 (def (core-expand-begin-annotation% stx)
   (core-syntax-case stx ()

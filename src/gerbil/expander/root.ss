@@ -67,6 +67,8 @@ namespace: gx
                         ,core-compile-top-begin-syntax%)
     (%#begin-foreign    top:     ,core-expand-begin-foreign%
                         ,core-compile-top-begin-foreign%)
+    (%#begin-module     top:     ,core-expand-begin-module%
+                        #f)
     (%#extern           top:     ,core-expand-extern%
                         ,core-compile-top-extern%)
     (%#import           top:     ,core-expand-import%
@@ -151,7 +153,7 @@ namespace: gx
     ;; custom module expansion
     (%%app            => %#call)
     (%%ref            => %#ref)
-    (%%begin-module   => %#begin)
+    (%%begin-module   => %#begin-module)
     ;; sugar reserved
     (_) (...) (else) (=>)
     (unquote) (unquote-splicing)

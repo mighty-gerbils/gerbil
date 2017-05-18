@@ -360,7 +360,12 @@ namespace: gx
   (parameterize ((current-expander-context ctx)
                  (current-expander-phi 0))
     (core-bind-feature! 'gerbil-module #t)
-    (core-expand-module-body body)))
+    (let (body (core-expand-head (cons '%%begin-module body)))
+      (core-syntax-case body (%#begin-module)
+        ((%#begin-module . body)
+         (core-expand-module-body body))
+        (else
+         (raise-syntax-error #f "Illegal module body expansion" body))))))
 
 (def (core-expand-module-body body)
   (def (expand-special hd K rest r)
