@@ -150,6 +150,7 @@ namespace: gx
     (if              ,macro-expand-if)
     ;; custom module expansion
     (%%app            => %#call)
+    (%%ref            => %#ref)
     (%%begin-module   => %#begin)
     ;; sugar reserved
     (_) (...) (else) (=>)

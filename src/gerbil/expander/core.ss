@@ -208,7 +208,7 @@ namespace: gx
      ((core-bound-identifier? hd)
       (illegal-expression hd))
      ((identifier? hd)
-      (expand-e '%#ref ['%#ref hd]))
+      (expand-e '%%ref ['%%ref hd]))
      ((stx-datum? hd)
       (expand-e '%#quote ['%#quote hd]))
      (else
