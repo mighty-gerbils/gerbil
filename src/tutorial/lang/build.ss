@@ -6,5 +6,7 @@
   (make srcdir: srcdir
         prefix: "tutorial/lang"
         '("dot-app"
-          "example/my-app")))
+          "example/my-app"
+          "auto-export"
+          "example/my-auto-export")))
 

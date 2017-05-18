@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; Custom prelude that rebinds%%app
+;;; Custom prelude that rebinds %%app and %%ref
 package: tutorial/lang
 
 (import :gerbil/core) ;; so that we can re-export
