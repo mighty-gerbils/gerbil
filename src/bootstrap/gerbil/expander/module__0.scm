@@ -1220,15 +1220,15 @@
        (lambda ()
          (begin
            (gx#core-bind-feature!__1 'gerbil-module '#t)
-           (let ((_body10343_
+           (let ((_stx10343_
                   (gx#core-expand-head (cons '%%begin-module _body10339_))))
-             (let ((_e1034410351_ _body10343_))
+             (let ((_e1034410351_ _stx10343_))
                (let ((_E1034610355_
                       (lambda ()
                         (gx#raise-syntax-error
                          '#f
                          '"Illegal module body expansion"
-                         _body10343_))))
+                         _stx10343_))))
                  (let ((_E1034510369_
                         (lambda ()
                           (if (gx#stx-pair? _e1034410351_)
@@ -1243,8 +1243,10 @@
                                           '#f)
                                       (let ((_body10367_ _tl1034910364_))
                                         (if '#t
-                                            (gx#core-expand-module-body
-                                             _body10367_)
+                                            (if (gx#sealed-syntax? _stx10343_)
+                                                _body10367_
+                                                (gx#core-expand-module-body
+                                                 _body10367_))
                                             (_E1034610355_)))
                                       (_E1034610355_))))
                               (_E1034610355_)))))
