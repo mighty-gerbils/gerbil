@@ -27,6 +27,8 @@ echo ">>> compiling runtime"
 echo ">>> preparing core build"
 mkdir -p $GERBIL_TARGET/lib/gerbil
 cp -v gerbil/prelude/core.ssxi.ss $GERBIL_TARGET/lib/gerbil
+mkdir -p $GERBIL_TARGET/lib/static
+cp -v gerbil/runtime/gx-gambc*.scm $GERBIL_TARGET/lib/static
 
 echo ">>> compiling gerbil core"
 $GERBIL_HOME/bin/gxi-script build1.ss || die
