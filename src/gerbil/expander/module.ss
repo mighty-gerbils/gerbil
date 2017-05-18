@@ -231,28 +231,33 @@ namespace: gx
 ;; rel: source-location/path
 (def (core-resolve-module-path stx-path (rel #f))
   (let* ((path (stx-e stx-path))
-         (path 
-          (if (equal? (path-extension path) ".ss") path
-              (string-append path ".ss"))))
+         (path (if (string-empty? (path-extension path))
+                 (string-append path ".ss")
+                 path)))
     (core-resolve-path path (or (stx-source stx-path) rel))))
 
 ;; for each path in current-expander-module-library-path look for 
 ;;  subpath with .ssi (compiled module interface) or .ss
 (def (core-resolve-library-module-path libpath)
   (let* ((spath (symbol->string (stx-e libpath)))
-         (spath (substring spath 1 (string-length spath))))
+         (spath (substring spath 1 (string-length spath)))
+         (ext (path-extension spath))
+         (ssi (if (string-empty? ext)
+                (string-append spath ".ssi")
+                (string-append (path-strip-extension spath) ".ssi")))
+         (src (if (string-empty? ext)
+                (string-append spath ".ss")
+                spath)))
     (let lp ((rest (current-expander-module-library-path)))
       (match rest
         ([dir . rest]
-         (let (compiled-path 
-               (path-expand (string-append spath ".ssi") dir))
+         (let (compiled-path (path-expand ssi dir))
            (if (file-exists? compiled-path)
              (path-normalize compiled-path)
-               (let (src-path
-                     (path-expand (string-append spath ".ss") dir))
-                 (if (file-exists? src-path)
-                   (path-normalize src-path)
-                   (lp rest))))))
+             (let (src-path (path-expand src dir))
+               (if (file-exists? src-path)
+                 (path-normalize src-path)
+                 (lp rest))))))
         ([] (raise-syntax-error #f "Cannot find library module" libpath))))))
 
 
