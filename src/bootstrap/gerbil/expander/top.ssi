@@ -15,6 +15,9 @@ namespace: gx
           core-expand-begin-foreign%
           gx#core-expand-begin-foreign%)
          (%#define-runtime
+          core-expand-begin-module%
+          gx#core-expand-begin-module%)
+         (%#define-runtime
           core-expand-begin-annotation%
           gx#core-expand-begin-annotation%)
          (%#define-runtime core-expand-local-block gx#core-expand-local-block)

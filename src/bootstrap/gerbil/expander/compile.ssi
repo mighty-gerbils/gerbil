@@ -59,8 +59,8 @@ namespace: gx
           core-compile-top-case-lambda%
           gx#core-compile-top-case-lambda%)
          (%#begin (%#define-runtime
-                   core-compile-top-let-values%__opt-lambda11525
-                   gx#core-compile-top-let-values%__opt-lambda11525)
+                   core-compile-top-let-values%__opt-lambda11557
+                   gx#core-compile-top-let-values%__opt-lambda11557)
                   (%#begin (%#define-runtime
                             core-compile-top-let-values%__0
                             gx#core-compile-top-let-values%__0)
