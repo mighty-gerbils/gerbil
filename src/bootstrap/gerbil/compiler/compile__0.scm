@@ -534,18 +534,18 @@
                              (_tl94959527_ (##cdr _e94939522_)))
                          (if (gx#stx-pair/null? _tl94959527_)
                              (if (fx>= (gx#stx-length _tl94959527_) '0)
-                                 (let ((_g9966_ (gx#syntax-split-splice
+                                 (let ((_g9967_ (gx#syntax-split-splice
                                                  _tl94959527_
                                                  '0)))
                                    (begin
-                                     (let ((_g9967_ (values-count _g9966_)))
-                                       (if (not (fx= _g9967_ 2))
+                                     (let ((_g9968_ (values-count _g9967_)))
+                                       (if (not (fx= _g9968_ 2))
                                            (error "Context expects 2 values"
-                                                  _g9967_)))
+                                                  _g9968_)))
                                      (let ((_target94969530_
-                                            (values-ref _g9966_ 0))
+                                            (values-ref _g9967_ 0))
                                            (_tl94989532_
-                                            (values-ref _g9966_ 1)))
+                                            (values-ref _g9967_ 1)))
                                        (if (gx#stx-null? _tl94989532_)
                                            (letrec ((_loop94999535_
                                                      (lambda (_hd94979538_
@@ -615,19 +615,19 @@
                                      (_tl93529395_ (##cdr _e93509390_)))
                                  (if (gx#stx-pair/null? _hd93519393_)
                                      (if (fx>= (gx#stx-length _hd93519393_) '0)
-                                         (let ((_g9968_ (gx#syntax-split-splice
+                                         (let ((_g9969_ (gx#syntax-split-splice
                                                          _hd93519393_
                                                          '0)))
                                            (begin
-                                             (let ((_g9969_ (values-count
-                                                             _g9968_)))
-                                               (if (not (fx= _g9969_ 2))
+                                             (let ((_g9970_ (values-count
+                                                             _g9969_)))
+                                               (if (not (fx= _g9970_ 2))
                                                    (error "Context expects 2 values"
-                                                          _g9969_)))
+                                                          _g9970_)))
                                              (let ((_target93539398_
-                                                    (values-ref _g9968_ 0))
+                                                    (values-ref _g9969_ 0))
                                                    (_tl93559400_
-                                                    (values-ref _g9968_ 1)))
+                                                    (values-ref _g9969_ 1)))
                                                (if (gx#stx-null? _tl93559400_)
                                                    (letrec ((_loop93569403_
                                                              (lambda (_hd93549406_
@@ -744,18 +744,18 @@
                              (_tl91929216_ (##cdr _e91909211_)))
                          (if (gx#stx-pair/null? _tl91929216_)
                              (if (fx>= (gx#stx-length _tl91929216_) '0)
-                                 (let ((_g9970_ (gx#syntax-split-splice
+                                 (let ((_g9971_ (gx#syntax-split-splice
                                                  _tl91929216_
                                                  '0)))
                                    (begin
-                                     (let ((_g9971_ (values-count _g9970_)))
-                                       (if (not (fx= _g9971_ 2))
+                                     (let ((_g9972_ (values-count _g9971_)))
+                                       (if (not (fx= _g9972_ 2))
                                            (error "Context expects 2 values"
-                                                  _g9971_)))
+                                                  _g9972_)))
                                      (let ((_target91939219_
-                                            (values-ref _g9970_ 0))
+                                            (values-ref _g9971_ 0))
                                            (_tl91959221_
-                                            (values-ref _g9970_ 1)))
+                                            (values-ref _g9971_ 1)))
                                        (if (gx#stx-null? _tl91959221_)
                                            (letrec ((_loop91969224_
                                                      (lambda (_hd91949227_
@@ -1018,14 +1018,14 @@
              _sym8956_
              _quote?8958_))))
       (define gxc#generate-runtime-gensym-reference
-        (lambda _g9973_
-          (let ((_g9972_ (length _g9973_)))
-            (cond ((fx= _g9972_ 1)
-                   (apply gxc#generate-runtime-gensym-reference__0 _g9973_))
-                  ((fx= _g9972_ 2)
+        (lambda _g9974_
+          (let ((_g9973_ (length _g9974_)))
+            (cond ((fx= _g9973_ 1)
+                   (apply gxc#generate-runtime-gensym-reference__0 _g9974_))
+                  ((fx= _g9973_ 2)
                    (apply gxc#generate-runtime-gensym-reference__opt-lambda8941
-                          _g9973_))
-                  (else (error "No clause matching arguments" _g9973_))))))))
+                          _g9974_))
+                  (else (error "No clause matching arguments" _g9974_))))))))
   (define gxc#generate-runtime-identifier
     (lambda (_id8940_)
       (gxc#generate-runtime-identifier-key (gx#core-identifier-key _id8940_))))
@@ -1092,14 +1092,14 @@
           (let ((_top8898_ '#f))
             (gxc#generate-runtime-temporary__opt-lambda8887 _top8898_))))
       (define gxc#generate-runtime-temporary
-        (lambda _g9975_
-          (let ((_g9974_ (length _g9975_)))
-            (cond ((fx= _g9974_ 0)
-                   (apply gxc#generate-runtime-temporary__0 _g9975_))
-                  ((fx= _g9974_ 1)
+        (lambda _g9976_
+          (let ((_g9975_ (length _g9976_)))
+            (cond ((fx= _g9975_ 0)
+                   (apply gxc#generate-runtime-temporary__0 _g9976_))
+                  ((fx= _g9975_ 1)
                    (apply gxc#generate-runtime-temporary__opt-lambda8887
-                          _g9975_))
-                  (else (error "No clause matching arguments" _g9975_))))))))
+                          _g9976_))
+                  (else (error "No clause matching arguments" _g9976_))))))))
   (define gxc#generate-runtime-empty (lambda (_stx8886_) '(begin)))
   (define gxc#generate-runtime-begin%
     (lambda (_stx8806_)
@@ -1619,19 +1619,19 @@
                                               (if (fx>= (gx#stx-length
                                                          _hd76967955_)
                                                         '0)
-                                                  (let ((_g9984_ (gx#syntax-split-splice
+                                                  (let ((_g9985_ (gx#syntax-split-splice
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           _hd76967955_
                           '0)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (begin
-                                                      (let ((_g9985_ (values-count
+                                                      (let ((_g9986_ (values-count
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              _g9984_)))
-                (if (not (fx= _g9985_ 2))
-                    (error "Context expects 2 values" _g9985_)))
-              (let ((_target76987960_ (values-ref _g9984_ 0))
-                    (_tl77007962_ (values-ref _g9984_ 1)))
+                              _g9985_)))
+                (if (not (fx= _g9986_ 2))
+                    (error "Context expects 2 values" _g9986_)))
+              (let ((_target76987960_ (values-ref _g9985_ 0))
+                    (_tl77007962_ (values-ref _g9985_ 1)))
                 (letrec ((_loop77017965_
                           (lambda (_hd76997968_ _arg77057970_)
                             (if (gx#stx-pair? _hd76997968_)
@@ -1710,13 +1710,13 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          _tl77248029_)
                         '1)
-                  (let ((_g9986_ (gx#syntax-split-splice _tl77248029_ '1)))
+                  (let ((_g9987_ (gx#syntax-split-splice _tl77248029_ '1)))
                     (begin
-                      (let ((_g9987_ (values-count _g9986_)))
-                        (if (not (fx= _g9987_ 2))
-                            (error "Context expects 2 values" _g9987_)))
-                      (let ((_target77318048_ (values-ref _g9986_ 0))
-                            (_tl77338050_ (values-ref _g9986_ 1)))
+                      (let ((_g9988_ (values-count _g9987_)))
+                        (if (not (fx= _g9988_ 2))
+                            (error "Context expects 2 values" _g9988_)))
+                      (let ((_target77318048_ (values-ref _g9987_ 0))
+                            (_tl77338050_ (values-ref _g9987_ 1)))
                         (if (gx#stx-pair? _tl77338050_)
                             (let ((_e77408053_ (gx#stx-e _tl77338050_)))
                               (let ((_hd77418056_ (##car _e77408053_))
@@ -1914,16 +1914,16 @@
                                                 (if (fx>= (gx#stx-length
                                                            _hd76488215_)
                                                           '0)
-                                                    (let ((_g9988_ (gx#syntax-split-splice
+                                                    (let ((_g9989_ (gx#syntax-split-splice
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             _hd76488215_
                             '0)))
               (begin
-                (let ((_g9989_ (values-count _g9988_)))
-                  (if (not (fx= _g9989_ 2))
-                      (error "Context expects 2 values" _g9989_)))
-                (let ((_target76508220_ (values-ref _g9988_ 0))
-                      (_tl76528222_ (values-ref _g9988_ 1)))
+                (let ((_g9990_ (values-count _g9989_)))
+                  (if (not (fx= _g9990_ 2))
+                      (error "Context expects 2 values" _g9990_)))
+                (let ((_target76508220_ (values-ref _g9989_ 0))
+                      (_tl76528222_ (values-ref _g9989_ 1)))
                   (if (gx#stx-null? _tl76528222_)
                       (letrec ((_loop76538225_
                                 (lambda (_hd76518228_ _arg76578230_)
@@ -1988,16 +1988,16 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          _tl76678265_)
                         (if (fx>= (gx#stx-length _tl76678265_) '0)
-                            (let ((_g9990_ (gx#syntax-split-splice
+                            (let ((_g9991_ (gx#syntax-split-splice
                                             _tl76678265_
                                             '0)))
                               (begin
-                                (let ((_g9991_ (values-count _g9990_)))
-                                  (if (not (fx= _g9991_ 2))
+                                (let ((_g9992_ (values-count _g9991_)))
+                                  (if (not (fx= _g9992_ 2))
                                       (error "Context expects 2 values"
-                                             _g9991_)))
-                                (let ((_target76748284_ (values-ref _g9990_ 0))
-                                      (_tl76768286_ (values-ref _g9990_ 1)))
+                                             _g9992_)))
+                                (let ((_target76748284_ (values-ref _g9991_ 0))
+                                      (_tl76768286_ (values-ref _g9991_ 1)))
                                   (if (gx#stx-null? _tl76768286_)
                                       (letrec ((_loop76778289_
                                                 (lambda (_hd76758292_
@@ -2265,19 +2265,19 @@
                                               (if (fx>= (gx#stx-length
                                                          _hd71577355_)
                                                         '0)
-                                                  (let ((_g9978_ (gx#syntax-split-splice
+                                                  (let ((_g9979_ (gx#syntax-split-splice
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           _hd71577355_
                           '0)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (begin
-                                                      (let ((_g9979_ (values-count
+                                                      (let ((_g9980_ (values-count
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              _g9978_)))
-                (if (not (fx= _g9979_ 2))
-                    (error "Context expects 2 values" _g9979_)))
-              (let ((_target71597360_ (values-ref _g9978_ 0))
-                    (_tl71617362_ (values-ref _g9978_ 1)))
+                              _g9979_)))
+                (if (not (fx= _g9980_ 2))
+                    (error "Context expects 2 values" _g9980_)))
+              (let ((_target71597360_ (values-ref _g9979_ 0))
+                    (_tl71617362_ (values-ref _g9979_ 1)))
                 (letrec ((_loop71627365_
                           (lambda (_hd71607368_ _arg71667370_)
                             (if (gx#stx-pair? _hd71607368_)
@@ -2405,16 +2405,16 @@
                                                 (if (fx>= (gx#stx-length
                                                            _hd71117491_)
                                                           '0)
-                                                    (let ((_g9980_ (gx#syntax-split-splice
+                                                    (let ((_g9981_ (gx#syntax-split-splice
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             _hd71117491_
                             '0)))
               (begin
-                (let ((_g9981_ (values-count _g9980_)))
-                  (if (not (fx= _g9981_ 2))
-                      (error "Context expects 2 values" _g9981_)))
-                (let ((_target71137496_ (values-ref _g9980_ 0))
-                      (_tl71157498_ (values-ref _g9980_ 1)))
+                (let ((_g9982_ (values-count _g9981_)))
+                  (if (not (fx= _g9982_ 2))
+                      (error "Context expects 2 values" _g9982_)))
+                (let ((_target71137496_ (values-ref _g9981_ 0))
+                      (_tl71157498_ (values-ref _g9981_ 1)))
                   (if (gx#stx-null? _tl71157498_)
                       (letrec ((_loop71167501_
                                 (lambda (_hd71147504_ _arg71207506_)
@@ -2479,16 +2479,16 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          _tl71307541_)
                         (if (fx>= (gx#stx-length _tl71307541_) '0)
-                            (let ((_g9982_ (gx#syntax-split-splice
+                            (let ((_g9983_ (gx#syntax-split-splice
                                             _tl71307541_
                                             '0)))
                               (begin
-                                (let ((_g9983_ (values-count _g9982_)))
-                                  (if (not (fx= _g9983_ 2))
+                                (let ((_g9984_ (values-count _g9983_)))
+                                  (if (not (fx= _g9984_ 2))
                                       (error "Context expects 2 values"
-                                             _g9983_)))
-                                (let ((_target71377560_ (values-ref _g9982_ 0))
-                                      (_tl71397562_ (values-ref _g9982_ 1)))
+                                             _g9984_)))
+                                (let ((_target71377560_ (values-ref _g9983_ 0))
+                                      (_tl71397562_ (values-ref _g9983_ 1)))
                                   (if (gx#stx-null? _tl71397562_)
                                       (letrec ((_loop71407565_
                                                 (lambda (_hd71387568_
@@ -2602,19 +2602,19 @@
                                      (_tl69636995_ (##cdr _e69616990_)))
                                  (if (gx#stx-pair/null? _tl69636995_)
                                      (if (fx>= (gx#stx-length _tl69636995_) '0)
-                                         (let ((_g9976_ (gx#syntax-split-splice
+                                         (let ((_g9977_ (gx#syntax-split-splice
                                                          _tl69636995_
                                                          '0)))
                                            (begin
-                                             (let ((_g9977_ (values-count
-                                                             _g9976_)))
-                                               (if (not (fx= _g9977_ 2))
+                                             (let ((_g9978_ (values-count
+                                                             _g9977_)))
+                                               (if (not (fx= _g9978_ 2))
                                                    (error "Context expects 2 values"
-                                                          _g9977_)))
+                                                          _g9978_)))
                                              (let ((_target69646998_
-                                                    (values-ref _g9976_ 0))
+                                                    (values-ref _g9977_ 0))
                                                    (_tl69667000_
-                                                    (values-ref _g9976_ 1)))
+                                                    (values-ref _g9977_ 1)))
                                                (if (gx#stx-null? _tl69667000_)
                                                    (letrec ((_loop69677003_
                                                              (lambda (_hd69657006_
@@ -2968,14 +2968,14 @@
              _stx6943_
              _compiled-body?6945_))))
       (define gxc#generate-runtime-let-values%
-        (lambda _g9993_
-          (let ((_g9992_ (length _g9993_)))
-            (cond ((fx= _g9992_ 1)
-                   (apply gxc#generate-runtime-let-values%__0 _g9993_))
-                  ((fx= _g9992_ 2)
+        (lambda _g9994_
+          (let ((_g9993_ (length _g9994_)))
+            (cond ((fx= _g9993_ 1)
+                   (apply gxc#generate-runtime-let-values%__0 _g9994_))
+                  ((fx= _g9993_ 2)
                    (apply gxc#generate-runtime-let-values%__opt-lambda6630
-                          _g9993_))
-                  (else (error "No clause matching arguments" _g9993_))))))))
+                          _g9994_))
+                  (else (error "No clause matching arguments" _g9994_))))))))
   (define gxc#generate-runtime-let-values-bind
     (lambda (_vals6531_ _hd6532_)
       ((letrec ((_lp6534_
@@ -3316,14 +3316,14 @@
              _stx6524_
              _compiled-body?6526_))))
       (define gxc#generate-runtime-letrec-values%
-        (lambda _g9995_
-          (let ((_g9994_ (length _g9995_)))
-            (cond ((fx= _g9994_ 1)
-                   (apply gxc#generate-runtime-letrec-values%__0 _g9995_))
-                  ((fx= _g9994_ 2)
+        (lambda _g9996_
+          (let ((_g9995_ (length _g9996_)))
+            (cond ((fx= _g9995_ 1)
+                   (apply gxc#generate-runtime-letrec-values%__0 _g9996_))
+                  ((fx= _g9995_ 2)
                    (apply gxc#generate-runtime-letrec-values%__opt-lambda6209
-                          _g9995_))
-                  (else (error "No clause matching arguments" _g9995_))))))))
+                          _g9996_))
+                  (else (error "No clause matching arguments" _g9996_))))))))
   (define gxc#generate-runtime-letrec*-values%
     (lambda (_stx5330_)
       (let ((_collect-closures5333_
@@ -3989,66 +3989,66 @@
                                    (let ((_bindings6193_
                                           (_collect-bindings5334_
                                            _forms6189_)))
-                                     (let ((_g9998_ (_lift-pre5335_
+                                     (let ((_g9999_ (_lift-pre5335_
                                                      _forms6189_
                                                      _bindings6193_
                                                      _closures6191_)))
                                        (begin
-                                         (let ((_g9999_ (values-count
-                                                         _g9998_)))
-                                           (if (not (fx= _g9999_ 4))
+                                         (let ((_g10000_
+                                                (values-count _g9999_)))
+                                           (if (not (fx= _g10000_ 4))
                                                (error "Context expects 4 values"
-                                                      _g9999_)))
+                                                      _g10000_)))
                                          (let ((_pre-bind6195_
-                                                (values-ref _g9998_ 0))
+                                                (values-ref _g9999_ 0))
                                                (_forms6196_
-                                                (values-ref _g9998_ 1))
+                                                (values-ref _g9999_ 1))
                                                (_bindings6197_
-                                                (values-ref _g9998_ 2))
+                                                (values-ref _g9999_ 2))
                                                (_closures6198_
-                                                (values-ref _g9998_ 3)))
-                                           (let ((_g10000_
+                                                (values-ref _g9999_ 3)))
+                                           (let ((_g10001_
                                                   (_lift-post5336_
                                                    _forms6196_
                                                    _bindings6197_
                                                    _closures6198_)))
                                              (begin
-                                               (let ((_g10001_
-                                                      (values-count _g10000_)))
-                                                 (if (not (fx= _g10001_ 4))
+                                               (let ((_g10002_
+                                                      (values-count _g10001_)))
+                                                 (if (not (fx= _g10002_ 4))
                                                      (error "Context expects 4 values"
-                                                            _g10001_)))
+                                                            _g10002_)))
                                                (let ((_post-bind6200_
-                                                      (values-ref _g10000_ 0))
+                                                      (values-ref _g10001_ 0))
                                                      (_forms6201_
-                                                      (values-ref _g10000_ 1))
+                                                      (values-ref _g10001_ 1))
                                                      (_bindings6202_
-                                                      (values-ref _g10000_ 2))
+                                                      (values-ref _g10001_ 2))
                                                      (_closures6203_
-                                                      (values-ref _g10000_ 3)))
-                                                 (let ((_g10002_
+                                                      (values-ref _g10001_ 3)))
+                                                 (let ((_g10003_
                                                         (_lift-rec5337_
                                                          _forms6201_)))
                                                    (begin
-                                                     (let ((_g10003_
+                                                     (let ((_g10004_
                                                             (values-count
-                                                             _g10002_)))
-                                                       (if (not (fx= _g10003_
+                                                             _g10003_)))
+                                                       (if (not (fx= _g10004_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              3))
-                   (error "Context expects 3 values" _g10003_)))
+                   (error "Context expects 3 values" _g10004_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (let ((_rec-pre6205_
                                                             (values-ref
-                                                             _g10002_
+                                                             _g10003_
                                                              0))
                                                            (_rec-bind6206_
                                                             (values-ref
-                                                             _g10002_
+                                                             _g10003_
                                                              1))
                                                            (_rec-init6207_
                                                             (values-ref
-                                                             _g10002_
+                                                             _g10003_
                                                              2)))
                                                        (let ()
                                                          (values _pre-bind6195_
@@ -4153,17 +4153,17 @@
                            (_tl53565387_ (##cdr _e53545382_)))
                        (if (gx#stx-null? _tl53565387_)
                            ((lambda (_L5390_ _L5391_)
-                              (let ((_g9996_ (_linearize5332_ _L5391_)))
+                              (let ((_g9997_ (_linearize5332_ _L5391_)))
                                 (begin
-                                  (let ((_g9997_ (values-count _g9996_)))
-                                    (if (not (fx= _g9997_ 5))
+                                  (let ((_g9998_ (values-count _g9997_)))
+                                    (if (not (fx= _g9998_ 5))
                                         (error "Context expects 5 values"
-                                               _g9997_)))
-                                  (let ((_pre5407_ (values-ref _g9996_ 0))
-                                        (_rec-pre5408_ (values-ref _g9996_ 1))
-                                        (_rec-bind5409_ (values-ref _g9996_ 2))
-                                        (_rec-init5410_ (values-ref _g9996_ 3))
-                                        (_post5411_ (values-ref _g9996_ 4)))
+                                               _g9998_)))
+                                  (let ((_pre5407_ (values-ref _g9997_ 0))
+                                        (_rec-pre5408_ (values-ref _g9997_ 1))
+                                        (_rec-bind5409_ (values-ref _g9997_ 2))
+                                        (_rec-init5410_ (values-ref _g9997_ 3))
+                                        (_post5411_ (values-ref _g9997_ 4)))
                                     (let ((_body5413_ (gxc#compile-e _L5390_)))
                                       (let ((_body5415_
                                              (if (null? _post5411_)
@@ -5611,20 +5611,20 @@
                                (_tl35263558_ (##cdr _e35243553_)))
                            (if (gx#stx-pair/null? _tl35263558_)
                                (if (fx>= (gx#stx-length _tl35263558_) '0)
-                                   (let ((_g10004_
+                                   (let ((_g10005_
                                           (gx#syntax-split-splice
                                            _tl35263558_
                                            '0)))
                                      (begin
-                                       (let ((_g10005_
-                                              (values-count _g10004_)))
-                                         (if (not (fx= _g10005_ 2))
+                                       (let ((_g10006_
+                                              (values-count _g10005_)))
+                                         (if (not (fx= _g10006_ 2))
                                              (error "Context expects 2 values"
-                                                    _g10005_)))
+                                                    _g10006_)))
                                        (let ((_target35273561_
-                                              (values-ref _g10004_ 0))
+                                              (values-ref _g10005_ 0))
                                              (_tl35293563_
-                                              (values-ref _g10004_ 1)))
+                                              (values-ref _g10005_ 1)))
                                          (if (gx#stx-null? _tl35293563_)
                                              (letrec ((_loop35303566_
                                                        (lambda (_hd35283569_
@@ -6066,7 +6066,7 @@
         (##structure-set!
          _state3072_
          (hash-fold
-          (lambda (_g10006_ _block3074_ _r3075_) (cons _block3074_ _r3075_))
+          (lambda (_g10007_ _block3074_ _r3075_) (cons _block3074_ _r3075_))
           (##structure-ref _state3072_ '4 gxc#meta-state::t '#f)
           (##structure-ref _state3072_ '3 gxc#meta-state::t '#f))
          '4
