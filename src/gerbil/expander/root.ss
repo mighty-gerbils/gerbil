@@ -148,6 +148,9 @@ namespace: gx
     (letrec-values   ,macro-expand-letrec-values)
     (letrec*-values  ,macro-expand-letrec*-values)
     (if              ,macro-expand-if)
+    ;; custom module expansion
+    (%%app            => %#call)
+    (%%begin-module   => %#begin)
     ;; sugar reserved
     (_) (...) (else) (=>)
     (unquote) (unquote-splicing)

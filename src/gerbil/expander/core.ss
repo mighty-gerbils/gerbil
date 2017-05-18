@@ -198,7 +198,7 @@ namespace: gx
            (cond
             ((or (not bind)
                  (not (core-expander-binding? bind)))
-             (expand-e '%#call ['%#call . hd]))
+             (expand-e '%%app ['%%app . hd]))
             ((eq? (binding-id bind) '%#begin)
              (core-expand-block* hd illegal-expression))
             ((expression-form-binding? bind)
