@@ -15,8 +15,8 @@ namespace: gxc
           (spec:
            (:gerbil/gambit/os)
            (0 current-time 0 current-time)
-           (0 file-info 0 file-info)
            (0 time->seconds 0 time->seconds)
+           (0 file-info 0 file-info)
            (0 file-info-size 0 file-info-size)))
          (%#export
           (spec: 0 compile-file compile-file)

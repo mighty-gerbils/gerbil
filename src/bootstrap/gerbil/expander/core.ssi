@@ -107,8 +107,8 @@ namespace: gx
          (%#define-runtime make-local-context gx#make-local-context)
          (%#define-syntax local-context |gx[:0:]#local-context|)
          (%#begin (%#define-runtime
-                   phi-context:::init!__opt-lambda5618
-                   gx#phi-context:::init!__opt-lambda5618)
+                   phi-context:::init!__opt-lambda5612
+                   gx#phi-context:::init!__opt-lambda5612)
                   (%#begin (%#define-runtime
                             phi-context:::init!__0
                             gx#phi-context:::init!__0)
@@ -116,8 +116,8 @@ namespace: gx
                             phi-context:::init!
                             gx#phi-context:::init!)))
          (%#begin (%#define-runtime
-                   local-context:::init!__opt-lambda5604
-                   gx#local-context:::init!__opt-lambda5604)
+                   local-context:::init!__opt-lambda5598
+                   gx#local-context:::init!__opt-lambda5598)
                   (%#begin (%#define-runtime
                             local-context:::init!__0
                             gx#local-context:::init!__0)
@@ -300,14 +300,14 @@ namespace: gx
          (%#define-syntax syntax-error |gx[:0:]#syntax-error|)
          (%#define-runtime raise-syntax-error gx#raise-syntax-error)
          (%#begin (%#define-runtime
-                   eval-syntax__opt-lambda5513
-                   gx#eval-syntax__opt-lambda5513)
+                   eval-syntax__opt-lambda5507
+                   gx#eval-syntax__opt-lambda5507)
                   (%#begin (%#define-runtime eval-syntax__0 gx#eval-syntax__0)
                            (%#define-runtime eval-syntax gx#eval-syntax)))
          (%#define-runtime eval-syntax* gx#eval-syntax*)
          (%#begin (%#define-runtime
-                   core-expand__opt-lambda5497
-                   gx#core-expand__opt-lambda5497)
+                   core-expand__opt-lambda5491
+                   gx#core-expand__opt-lambda5491)
                   (%#begin (%#define-runtime core-expand__0 gx#core-expand__0)
                            (%#define-runtime core-expand gx#core-expand)))
          (%#define-runtime core-expand-top gx#core-expand-top)
@@ -316,8 +316,8 @@ namespace: gx
           core-expand-expression+1
           gx#core-expand-expression+1)
          (%#begin (%#define-runtime
-                   core-expand*__opt-lambda5362
-                   gx#core-expand*__opt-lambda5362)
+                   core-expand*__opt-lambda5356
+                   gx#core-expand*__opt-lambda5356)
                   (%#begin (%#define-runtime
                             core-expand*__0
                             gx#core-expand*__0)

@@ -21,8 +21,8 @@
      ':init!))
   (define gx#expander-context? (make-struct-predicate gx#expander-context::t))
   (define gx#make-expander-context
-    (lambda _$args5654_
-      (apply make-struct-instance gx#expander-context::t _$args5654_)))
+    (lambda _$args5648_
+      (apply make-struct-instance gx#expander-context::t _$args5648_)))
   (define gx#expander-context-id
     (make-struct-field-accessor gx#expander-context::t '0))
   (define gx#expander-context-table
@@ -41,8 +41,8 @@
      '#f))
   (define gx#root-context? (make-struct-predicate gx#root-context::t))
   (define gx#make-root-context
-    (lambda _$args5651_
-      (apply make-struct-instance gx#root-context::t _$args5651_)))
+    (lambda _$args5645_
+      (apply make-struct-instance gx#root-context::t _$args5645_)))
   (define gx#phi-context::t
     (make-struct-type
      'gx#context-phi::t
@@ -53,8 +53,8 @@
      '#f))
   (define gx#phi-context? (make-struct-predicate gx#phi-context::t))
   (define gx#make-phi-context
-    (lambda _$args5648_
-      (apply make-struct-instance gx#phi-context::t _$args5648_)))
+    (lambda _$args5642_
+      (apply make-struct-instance gx#phi-context::t _$args5642_)))
   (define gx#phi-context-super
     (make-struct-field-accessor gx#phi-context::t '0))
   (define gx#phi-context-up (make-struct-field-accessor gx#phi-context::t '1))
@@ -76,8 +76,8 @@
      '#f))
   (define gx#top-context? (make-struct-predicate gx#top-context::t))
   (define gx#make-top-context
-    (lambda _$args5645_
-      (apply make-struct-instance gx#top-context::t _$args5645_)))
+    (lambda _$args5639_
+      (apply make-struct-instance gx#top-context::t _$args5639_)))
   (define gx#module-context::t
     (make-struct-type
      'gx#module-context::t
@@ -88,8 +88,8 @@
      '#f))
   (define gx#module-context? (make-struct-predicate gx#module-context::t))
   (define gx#make-module-context
-    (lambda _$args5642_
-      (apply make-struct-instance gx#module-context::t _$args5642_)))
+    (lambda _$args5636_
+      (apply make-struct-instance gx#module-context::t _$args5636_)))
   (define gx#module-context-ns
     (make-struct-field-accessor gx#module-context::t '0))
   (define gx#module-context-path
@@ -124,8 +124,8 @@
      '#f))
   (define gx#prelude-context? (make-struct-predicate gx#prelude-context::t))
   (define gx#make-prelude-context
-    (lambda _$args5639_
-      (apply make-struct-instance gx#prelude-context::t _$args5639_)))
+    (lambda _$args5633_
+      (apply make-struct-instance gx#prelude-context::t _$args5633_)))
   (define gx#prelude-context-path
     (make-struct-field-accessor gx#prelude-context::t '0))
   (define gx#prelude-context-import
@@ -148,65 +148,65 @@
      '#f))
   (define gx#local-context? (make-struct-predicate gx#local-context::t))
   (define gx#make-local-context
-    (lambda _$args5636_
-      (apply make-struct-instance gx#local-context::t _$args5636_)))
+    (lambda _$args5630_
+      (apply make-struct-instance gx#local-context::t _$args5630_)))
   (begin
-    (define gx#phi-context:::init!__opt-lambda5618
-      (lambda (_self5620_ _id5621_ _super5622_)
+    (define gx#phi-context:::init!__opt-lambda5612
+      (lambda (_self5614_ _id5615_ _super5616_)
         (direct-struct-instance-init!
-         _self5620_
-         _id5621_
+         _self5614_
+         _id5615_
          (make-hash-table-eq)
-         _super5622_
+         _super5616_
          '#f
          '#f)))
     (begin
       (define gx#phi-context:::init!__0
-        (lambda (_self5627_ _id5628_)
-          (let ((_super5630_ (gx#current-expander-context)))
-            (gx#phi-context:::init!__opt-lambda5618
-             _self5627_
-             _id5628_
-             _super5630_))))
+        (lambda (_self5621_ _id5622_)
+          (let ((_super5624_ (gx#current-expander-context)))
+            (gx#phi-context:::init!__opt-lambda5612
+             _self5621_
+             _id5622_
+             _super5624_))))
       (define gx#phi-context:::init!
-        (lambda _g5658_
-          (let ((_g5657_ (length _g5658_)))
-            (cond ((fx= _g5657_ 2) (apply gx#phi-context:::init!__0 _g5658_))
-                  ((fx= _g5657_ 3)
-                   (apply gx#phi-context:::init!__opt-lambda5618 _g5658_))
-                  (else (error "No clause matching arguments" _g5658_))))))))
+        (lambda _g5652_
+          (let ((_g5651_ (length _g5652_)))
+            (cond ((fx= _g5651_ 2) (apply gx#phi-context:::init!__0 _g5652_))
+                  ((fx= _g5651_ 3)
+                   (apply gx#phi-context:::init!__opt-lambda5612 _g5652_))
+                  (else (error "No clause matching arguments" _g5652_))))))))
   (bind-method! gx#phi-context::t ':init! gx#phi-context:::init! '#f)
   (begin
-    (define gx#local-context:::init!__opt-lambda5604
-      (lambda (_self5606_ _super5607_)
+    (define gx#local-context:::init!__opt-lambda5598
+      (lambda (_self5600_ _super5601_)
         (direct-struct-instance-init!
-         _self5606_
+         _self5600_
          (gensym 'L)
          (make-hash-table-eq)
-         _super5607_
+         _super5601_
          '#f
          '#f)))
     (begin
       (define gx#local-context:::init!__0
-        (lambda (_self5612_)
-          (let ((_super5614_ (gx#current-expander-context)))
-            (gx#local-context:::init!__opt-lambda5604
-             _self5612_
-             _super5614_))))
+        (lambda (_self5606_)
+          (let ((_super5608_ (gx#current-expander-context)))
+            (gx#local-context:::init!__opt-lambda5598
+             _self5606_
+             _super5608_))))
       (define gx#local-context:::init!
-        (lambda _g5660_
-          (let ((_g5659_ (length _g5660_)))
-            (cond ((fx= _g5659_ 1) (apply gx#local-context:::init!__0 _g5660_))
-                  ((fx= _g5659_ 2)
-                   (apply gx#local-context:::init!__opt-lambda5604 _g5660_))
-                  (else (error "No clause matching arguments" _g5660_))))))))
+        (lambda _g5654_
+          (let ((_g5653_ (length _g5654_)))
+            (cond ((fx= _g5653_ 1) (apply gx#local-context:::init!__0 _g5654_))
+                  ((fx= _g5653_ 2)
+                   (apply gx#local-context:::init!__opt-lambda5598 _g5654_))
+                  (else (error "No clause matching arguments" _g5654_))))))))
   (bind-method! gx#local-context::t ':init! gx#local-context:::init! '#f)
   (define gx#binding::t
     (make-struct-type 'gx#binding::t '#f '3 'binding '() '#f))
   (define gx#binding? (make-struct-predicate gx#binding::t))
   (define gx#make-binding
-    (lambda _$args5602_
-      (apply make-struct-instance gx#binding::t _$args5602_)))
+    (lambda _$args5596_
+      (apply make-struct-instance gx#binding::t _$args5596_)))
   (define gx#binding-id (make-struct-field-accessor gx#binding::t '0))
   (define gx#binding-key (make-struct-field-accessor gx#binding::t '1))
   (define gx#binding-phi (make-struct-field-accessor gx#binding::t '2))
@@ -223,8 +223,8 @@
      '#f))
   (define gx#runtime-binding? (make-struct-predicate gx#runtime-binding::t))
   (define gx#make-runtime-binding
-    (lambda _$args5599_
-      (apply make-struct-instance gx#runtime-binding::t _$args5599_)))
+    (lambda _$args5593_
+      (apply make-struct-instance gx#runtime-binding::t _$args5593_)))
   (define gx#local-binding::t
     (make-struct-type
      'gx#local-binding::t
@@ -235,8 +235,8 @@
      '#f))
   (define gx#local-binding? (make-struct-predicate gx#local-binding::t))
   (define gx#make-local-binding
-    (lambda _$args5596_
-      (apply make-struct-instance gx#local-binding::t _$args5596_)))
+    (lambda _$args5590_
+      (apply make-struct-instance gx#local-binding::t _$args5590_)))
   (define gx#top-binding::t
     (make-struct-type
      'gx#top-binding::t
@@ -247,8 +247,8 @@
      '#f))
   (define gx#top-binding? (make-struct-predicate gx#top-binding::t))
   (define gx#make-top-binding
-    (lambda _$args5593_
-      (apply make-struct-instance gx#top-binding::t _$args5593_)))
+    (lambda _$args5587_
+      (apply make-struct-instance gx#top-binding::t _$args5587_)))
   (define gx#module-binding::t
     (make-struct-type
      'gx#module-binding::t
@@ -259,8 +259,8 @@
      '#f))
   (define gx#module-binding? (make-struct-predicate gx#module-binding::t))
   (define gx#make-module-binding
-    (lambda _$args5590_
-      (apply make-struct-instance gx#module-binding::t _$args5590_)))
+    (lambda _$args5584_
+      (apply make-struct-instance gx#module-binding::t _$args5584_)))
   (define gx#module-binding-context
     (make-struct-field-accessor gx#module-binding::t '0))
   (define gx#module-binding-context-set!
@@ -275,8 +275,8 @@
      '#f))
   (define gx#extern-binding? (make-struct-predicate gx#extern-binding::t))
   (define gx#make-extern-binding
-    (lambda _$args5587_
-      (apply make-struct-instance gx#extern-binding::t _$args5587_)))
+    (lambda _$args5581_
+      (apply make-struct-instance gx#extern-binding::t _$args5581_)))
   (define gx#syntax-binding::t
     (make-struct-type
      'gx#syntax-binding::t
@@ -287,8 +287,8 @@
      '#f))
   (define gx#syntax-binding? (make-struct-predicate gx#syntax-binding::t))
   (define gx#make-syntax-binding
-    (lambda _$args5584_
-      (apply make-struct-instance gx#syntax-binding::t _$args5584_)))
+    (lambda _$args5578_
+      (apply make-struct-instance gx#syntax-binding::t _$args5578_)))
   (define gx#syntax-binding-e
     (make-struct-field-accessor gx#syntax-binding::t '0))
   (define gx#syntax-binding-e-set!
@@ -303,8 +303,8 @@
      '#f))
   (define gx#import-binding? (make-struct-predicate gx#import-binding::t))
   (define gx#make-import-binding
-    (lambda _$args5581_
-      (apply make-struct-instance gx#import-binding::t _$args5581_)))
+    (lambda _$args5575_
+      (apply make-struct-instance gx#import-binding::t _$args5575_)))
   (define gx#import-binding-e
     (make-struct-field-accessor gx#import-binding::t '0))
   (define gx#import-binding-context
@@ -327,8 +327,8 @@
      '#f))
   (define gx#alias-binding? (make-struct-predicate gx#alias-binding::t))
   (define gx#make-alias-binding
-    (lambda _$args5578_
-      (apply make-struct-instance gx#alias-binding::t _$args5578_)))
+    (lambda _$args5572_
+      (apply make-struct-instance gx#alias-binding::t _$args5572_)))
   (define gx#alias-binding-e
     (make-struct-field-accessor gx#alias-binding::t '0))
   (define gx#alias-binding-e-set!
@@ -337,8 +337,8 @@
     (make-struct-type 'gx#expander::t '#f '1 'expander '() '#f))
   (define gx#expander? (make-struct-predicate gx#expander::t))
   (define gx#make-expander
-    (lambda _$args5575_
-      (apply make-struct-instance gx#expander::t _$args5575_)))
+    (lambda _$args5569_
+      (apply make-struct-instance gx#expander::t _$args5569_)))
   (define gx#expander-e (make-struct-field-accessor gx#expander::t '0))
   (define gx#expander-e-set! (make-struct-field-mutator gx#expander::t '0))
   (define gx#core-expander::t
@@ -351,8 +351,8 @@
      '#f))
   (define gx#core-expander? (make-struct-predicate gx#core-expander::t))
   (define gx#make-core-expander
-    (lambda _$args5572_
-      (apply make-struct-instance gx#core-expander::t _$args5572_)))
+    (lambda _$args5566_
+      (apply make-struct-instance gx#core-expander::t _$args5566_)))
   (define gx#core-expander-id
     (make-struct-field-accessor gx#core-expander::t '0))
   (define gx#core-expander-compile-top
@@ -371,8 +371,8 @@
      '#f))
   (define gx#expression-form? (make-struct-predicate gx#expression-form::t))
   (define gx#make-expression-form
-    (lambda _$args5569_
-      (apply make-struct-instance gx#expression-form::t _$args5569_)))
+    (lambda _$args5563_
+      (apply make-struct-instance gx#expression-form::t _$args5563_)))
   (define gx#special-form::t
     (make-struct-type
      'gx#special-form::t
@@ -383,8 +383,8 @@
      '#f))
   (define gx#special-form? (make-struct-predicate gx#special-form::t))
   (define gx#make-special-form
-    (lambda _$args5566_
-      (apply make-struct-instance gx#special-form::t _$args5566_)))
+    (lambda _$args5560_
+      (apply make-struct-instance gx#special-form::t _$args5560_)))
   (define gx#definition-form::t
     (make-struct-type
      'gx#definition-form::t
@@ -395,8 +395,8 @@
      '#f))
   (define gx#definition-form? (make-struct-predicate gx#definition-form::t))
   (define gx#make-definition-form
-    (lambda _$args5563_
-      (apply make-struct-instance gx#definition-form::t _$args5563_)))
+    (lambda _$args5557_
+      (apply make-struct-instance gx#definition-form::t _$args5557_)))
   (define gx#top-special-form::t
     (make-struct-type
      'gx#top-special-form::t
@@ -407,8 +407,8 @@
      '#f))
   (define gx#top-special-form? (make-struct-predicate gx#top-special-form::t))
   (define gx#make-top-special-form
-    (lambda _$args5560_
-      (apply make-struct-instance gx#top-special-form::t _$args5560_)))
+    (lambda _$args5554_
+      (apply make-struct-instance gx#top-special-form::t _$args5554_)))
   (define gx#module-special-form::t
     (make-struct-type
      'gx#module-special-form::t
@@ -420,8 +420,8 @@
   (define gx#module-special-form?
     (make-struct-predicate gx#module-special-form::t))
   (define gx#make-module-special-form
-    (lambda _$args5557_
-      (apply make-struct-instance gx#module-special-form::t _$args5557_)))
+    (lambda _$args5551_
+      (apply make-struct-instance gx#module-special-form::t _$args5551_)))
   (define gx#feature-expander::t
     (make-struct-type
      'gx#feature-expander::t
@@ -432,8 +432,8 @@
      '#f))
   (define gx#feature-expander? (make-struct-predicate gx#feature-expander::t))
   (define gx#make-feature-expander
-    (lambda _$args5554_
-      (apply make-struct-instance gx#feature-expander::t _$args5554_)))
+    (lambda _$args5548_
+      (apply make-struct-instance gx#feature-expander::t _$args5548_)))
   (define gx#private-feature-expander::t
     (make-struct-type
      'gx#private-feature-expander::t
@@ -445,8 +445,8 @@
   (define gx#private-feature-expander?
     (make-struct-predicate gx#private-feature-expander::t))
   (define gx#make-private-feature-expander
-    (lambda _$args5551_
-      (apply make-struct-instance gx#private-feature-expander::t _$args5551_)))
+    (lambda _$args5545_
+      (apply make-struct-instance gx#private-feature-expander::t _$args5545_)))
   (define gx#reserved-expander::t
     (make-struct-type
      'gx#reserved-expander::t
@@ -458,8 +458,8 @@
   (define gx#reserved-expander?
     (make-struct-predicate gx#reserved-expander::t))
   (define gx#make-reserved-expander
-    (lambda _$args5548_
-      (apply make-struct-instance gx#reserved-expander::t _$args5548_)))
+    (lambda _$args5542_
+      (apply make-struct-instance gx#reserved-expander::t _$args5542_)))
   (define gx#macro-expander::t
     (make-struct-type
      'gx#core-macro::t
@@ -470,8 +470,8 @@
      '#f))
   (define gx#macro-expander? (make-struct-predicate gx#macro-expander::t))
   (define gx#make-macro-expander
-    (lambda _$args5545_
-      (apply make-struct-instance gx#macro-expander::t _$args5545_)))
+    (lambda _$args5539_
+      (apply make-struct-instance gx#macro-expander::t _$args5539_)))
   (define gx#rename-macro-expander::t
     (make-struct-type
      'gx#rename-macro-expander::t
@@ -483,8 +483,8 @@
   (define gx#rename-macro-expander?
     (make-struct-predicate gx#rename-macro-expander::t))
   (define gx#make-rename-macro-expander
-    (lambda _$args5542_
-      (apply make-struct-instance gx#rename-macro-expander::t _$args5542_)))
+    (lambda _$args5536_
+      (apply make-struct-instance gx#rename-macro-expander::t _$args5536_)))
   (define gx#user-expander::t
     (make-struct-type
      'gx#macro-expander::t
@@ -495,8 +495,8 @@
      '#f))
   (define gx#user-expander? (make-struct-predicate gx#user-expander::t))
   (define gx#make-user-expander
-    (lambda _$args5539_
-      (apply make-struct-instance gx#user-expander::t _$args5539_)))
+    (lambda _$args5533_
+      (apply make-struct-instance gx#user-expander::t _$args5533_)))
   (define gx#user-expander-context
     (make-struct-field-accessor gx#user-expander::t '0))
   (define gx#user-expander-phi
@@ -509,8 +509,8 @@
     (make-struct-type 'gx#expander-mark::t '#f '4 'expander-mark '() '#f))
   (define gx#expander-mark? (make-struct-predicate gx#expander-mark::t))
   (define gx#make-expander-mark
-    (lambda _$args5536_
-      (apply make-struct-instance gx#expander-mark::t _$args5536_)))
+    (lambda _$args5530_
+      (apply make-struct-instance gx#expander-mark::t _$args5530_)))
   (define gx#expander-mark-subst
     (make-struct-field-accessor gx#expander-mark::t '0))
   (define gx#expander-mark-context
@@ -531,8 +531,8 @@
     (make-struct-type 'gx#syntax-error::t error::t '3 'syntax-error '() '#f))
   (define gx#syntax-error? (make-struct-predicate gx#syntax-error::t))
   (define gx#make-syntax-error
-    (lambda _$args5533_
-      (apply make-struct-instance gx#syntax-error::t _$args5533_)))
+    (lambda _$args5527_
+      (apply make-struct-instance gx#syntax-error::t _$args5527_)))
   (define gx#syntax-error-context
     (make-struct-field-accessor gx#syntax-error::t '0))
   (define gx#syntax-error-marks
@@ -546,228 +546,228 @@
   (define gx#syntax-error-phi-set!
     (make-struct-field-mutator gx#syntax-error::t '2))
   (define gx#raise-syntax-error
-    (lambda (_where5528_ _message5529_ _stx5530_ . _details5531_)
+    (lambda (_where5522_ _message5523_ _stx5524_ . _details5525_)
       (raise (make-struct-instance
               gx#syntax-error::t
-              _message5529_
-              (cons _stx5530_ _details5531_)
-              _where5528_
+              _message5523_
+              (cons _stx5524_ _details5525_)
+              _where5522_
               (gx#current-expander-context)
               (gx#current-expander-marks)
               (gx#current-expander-phi)))))
   (begin
-    (define gx#eval-syntax__opt-lambda5513
-      (lambda (_stx5515_ _expression?5516_)
+    (define gx#eval-syntax__opt-lambda5507
+      (lambda (_stx5509_ _expression?5510_)
         (gx#eval-syntax*
-         (gx#core-expand__opt-lambda5497 _stx5515_ _expression?5516_))))
+         (gx#core-expand__opt-lambda5491 _stx5509_ _expression?5510_))))
     (begin
       (define gx#eval-syntax__0
-        (lambda (_stx5521_)
-          (let ((_expression?5523_ '#f))
-            (gx#eval-syntax__opt-lambda5513 _stx5521_ _expression?5523_))))
+        (lambda (_stx5515_)
+          (let ((_expression?5517_ '#f))
+            (gx#eval-syntax__opt-lambda5507 _stx5515_ _expression?5517_))))
       (define gx#eval-syntax
-        (lambda _g5662_
-          (let ((_g5661_ (length _g5662_)))
-            (cond ((fx= _g5661_ 1) (apply gx#eval-syntax__0 _g5662_))
-                  ((fx= _g5661_ 2)
-                   (apply gx#eval-syntax__opt-lambda5513 _g5662_))
-                  (else (error "No clause matching arguments" _g5662_))))))))
+        (lambda _g5656_
+          (let ((_g5655_ (length _g5656_)))
+            (cond ((fx= _g5655_ 1) (apply gx#eval-syntax__0 _g5656_))
+                  ((fx= _g5655_ 2)
+                   (apply gx#eval-syntax__opt-lambda5507 _g5656_))
+                  (else (error "No clause matching arguments" _g5656_))))))))
   (define gx#eval-syntax*
-    (lambda (_stx5512_)
-      ((gx#current-expander-eval) ((gx#current-expander-compile) _stx5512_))))
+    (lambda (_stx5506_)
+      ((gx#current-expander-eval) ((gx#current-expander-compile) _stx5506_))))
   (begin
-    (define gx#core-expand__opt-lambda5497
-      (lambda (_stx5499_ _expression?5500_)
-        (if _expression?5500_
-            (gx#core-expand-expression _stx5499_)
-            (gx#core-expand-top _stx5499_))))
+    (define gx#core-expand__opt-lambda5491
+      (lambda (_stx5493_ _expression?5494_)
+        (if _expression?5494_
+            (gx#core-expand-expression _stx5493_)
+            (gx#core-expand-top _stx5493_))))
     (begin
       (define gx#core-expand__0
-        (lambda (_stx5505_)
-          (let ((_expression?5507_ '#f))
-            (gx#core-expand__opt-lambda5497 _stx5505_ _expression?5507_))))
+        (lambda (_stx5499_)
+          (let ((_expression?5501_ '#f))
+            (gx#core-expand__opt-lambda5491 _stx5499_ _expression?5501_))))
       (define gx#core-expand
-        (lambda _g5664_
-          (let ((_g5663_ (length _g5664_)))
-            (cond ((fx= _g5663_ 1) (apply gx#core-expand__0 _g5664_))
-                  ((fx= _g5663_ 2)
-                   (apply gx#core-expand__opt-lambda5497 _g5664_))
-                  (else (error "No clause matching arguments" _g5664_))))))))
+        (lambda _g5658_
+          (let ((_g5657_ (length _g5658_)))
+            (cond ((fx= _g5657_ 1) (apply gx#core-expand__0 _g5658_))
+                  ((fx= _g5657_ 2)
+                   (apply gx#core-expand__opt-lambda5491 _g5658_))
+                  (else (error "No clause matching arguments" _g5658_))))))))
   (define gx#core-expand-top
-    (lambda (_stx5466_)
-      (let ((_stx5468_ (gx#core-expand*__0 _stx5466_)))
-        (let ((_e54695476_ _stx5468_))
-          (let ((_E54715480_
-                 (lambda () (gx#core-expand-expression _stx5468_))))
-            (let ((_E54705494_
+    (lambda (_stx5460_)
+      (let ((_stx5462_ (gx#core-expand*__0 _stx5460_)))
+        (let ((_e54635470_ _stx5462_))
+          (let ((_E54655474_
+                 (lambda () (gx#core-expand-expression _stx5462_))))
+            (let ((_E54645488_
                    (lambda ()
-                     (if (gx#stx-pair? _e54695476_)
-                         (let ((_e54725484_ (gx#syntax-e _e54695476_)))
-                           (let ((_hd54735487_ (##car _e54725484_))
-                                 (_tl54745489_ (##cdr _e54725484_)))
-                             (let ((_form5492_ _hd54735487_))
-                               (if (gx#core-bound-identifier?__0 _form5492_)
-                                   _stx5468_
-                                   (_E54715480_)))))
-                         (_E54715480_)))))
-              (let () (_E54705494_))))))))
+                     (if (gx#stx-pair? _e54635470_)
+                         (let ((_e54665478_ (gx#syntax-e _e54635470_)))
+                           (let ((_hd54675481_ (##car _e54665478_))
+                                 (_tl54685483_ (##cdr _e54665478_)))
+                             (let ((_form5486_ _hd54675481_))
+                               (if (gx#core-bound-identifier?__0 _form5486_)
+                                   _stx5462_
+                                   (_E54655474_)))))
+                         (_E54655474_)))))
+              (let () (_E54645488_))))))))
   (define gx#core-expand-expression
-    (lambda (_stx5388_)
-      (let ((_sealed-expression?5390_
-             (lambda (_hd5436_)
-               (if (gx#sealed-syntax? _hd5436_)
-                   (let ((_e54375444_ _hd5436_))
-                     (let ((_E54395448_ (lambda () '#f)))
-                       (let ((_E54385462_
+    (lambda (_stx5382_)
+      (let ((_sealed-expression?5384_
+             (lambda (_hd5430_)
+               (if (gx#sealed-syntax? _hd5430_)
+                   (let ((_e54315438_ _hd5430_))
+                     (let ((_E54335442_ (lambda () '#f)))
+                       (let ((_E54325456_
                               (lambda ()
-                                (if (gx#stx-pair? _e54375444_)
-                                    (let ((_e54405452_
-                                           (gx#syntax-e _e54375444_)))
-                                      (let ((_hd54415455_ (##car _e54405452_))
-                                            (_tl54425457_ (##cdr _e54405452_)))
-                                        (let ((_form5460_ _hd54415455_))
+                                (if (gx#stx-pair? _e54315438_)
+                                    (let ((_e54345446_
+                                           (gx#syntax-e _e54315438_)))
+                                      (let ((_hd54355449_ (##car _e54345446_))
+                                            (_tl54365451_ (##cdr _e54345446_)))
+                                        (let ((_form5454_ _hd54355449_))
                                           (if '#t
                                               (gx#core-bound-identifier?__opt-lambda4037
-                                               _form5460_
+                                               _form5454_
                                                gx#expression-form-binding?)
-                                              (_E54395448_)))))
-                                    (_E54395448_)))))
-                         (let () (_E54385462_)))))
+                                              (_E54335442_)))))
+                                    (_E54335442_)))))
+                         (let () (_E54325456_)))))
                    '#f))))
-        (let ((_illegal-expression5391_
-               (lambda (_hd5434_ . _g5665_)
+        (let ((_illegal-expression5385_
+               (lambda (_hd5428_ . _g5659_)
                  (gx#raise-syntax-error
                   '#f
                   '"Bad syntax; illegal expression"
-                  _stx5388_
-                  _hd5434_))))
-          (let ((_expand-e5392_
-                 (lambda (_form5429_ _hd5430_)
-                   (let ((_bind5432_
+                  _stx5382_
+                  _hd5428_))))
+          (let ((_expand-e5386_
+                 (lambda (_form5423_ _hd5424_)
+                   (let ((_bind5426_
                           (if (##structure-instance-of?
-                               _form5429_
+                               _form5423_
                                'gx#binding::t)
-                              _form5429_
-                              (gx#resolve-identifier__0 _form5429_))))
-                     (if (gx#core-expander-binding? _bind5432_)
+                              _form5423_
+                              (gx#resolve-identifier__0 _form5423_))))
+                     (if (gx#core-expander-binding? _bind5426_)
                          (gx#core-apply-expander__0
                           (##structure-ref
-                           _bind5432_
+                           _bind5426_
                            '4
                            gx#syntax-binding::t
                            '#f)
                           (gx#stx-wrap-source
-                           _hd5430_
-                           (gx#stx-source _stx5388_)))
+                           _hd5424_
+                           (gx#stx-source _stx5382_)))
                          (if (##structure-direct-instance-of?
-                              _bind5432_
+                              _bind5426_
                               'gx#syntax-binding::t)
                              (gx#core-expand-expression
                               (gx#core-apply-expander__0
                                (##structure-ref
-                                _bind5432_
+                                _bind5426_
                                 '4
                                 gx#syntax-binding::t
                                 '#f)
                                (gx#stx-wrap-source
-                                _hd5430_
-                                (gx#stx-source _stx5388_))))
+                                _hd5424_
+                                (gx#stx-source _stx5382_))))
                              (gx#raise-syntax-error
                               '#f
                               '"Bad syntax; missing expander"
-                              _stx5388_
-                              _form5429_)))))))
-            (let ((_hd5394_ (gx#core-expand-head _stx5388_)))
-              (if (_sealed-expression?5390_ _hd5394_)
-                  _hd5394_
-                  (if (gx#stx-pair? _hd5394_)
-                      (let ((_e53955402_ _hd5394_))
-                        (let ((_E53975406_
+                              _stx5382_
+                              _form5423_)))))))
+            (let ((_hd5388_ (gx#core-expand-head _stx5382_)))
+              (if (_sealed-expression?5384_ _hd5388_)
+                  _hd5388_
+                  (if (gx#stx-pair? _hd5388_)
+                      (let ((_e53895396_ _hd5388_))
+                        (let ((_E53915400_
                                (lambda ()
                                  (gx#raise-syntax-error
                                   '#f
                                   '"Bad syntax"
-                                  _e53955402_))))
-                          (let ((_E53965425_
+                                  _e53895396_))))
+                          (let ((_E53905419_
                                  (lambda ()
-                                   (if (gx#stx-pair? _e53955402_)
-                                       (let ((_e53985410_
-                                              (gx#syntax-e _e53955402_)))
-                                         (let ((_hd53995413_
-                                                (##car _e53985410_))
-                                               (_tl54005415_
-                                                (##cdr _e53985410_)))
-                                           (let ((_form5418_ _hd53995413_))
+                                   (if (gx#stx-pair? _e53895396_)
+                                       (let ((_e53925404_
+                                              (gx#syntax-e _e53895396_)))
+                                         (let ((_hd53935407_
+                                                (##car _e53925404_))
+                                               (_tl53945409_
+                                                (##cdr _e53925404_)))
+                                           (let ((_form5412_ _hd53935407_))
                                              (if '#t
-                                                 (let ((_bind5420_
+                                                 (let ((_bind5414_
                                                         (if (gx#identifier?
-                                                             _form5418_)
+                                                             _form5412_)
                                                             (gx#resolve-identifier__0
-                                                             _form5418_)
+                                                             _form5412_)
                                                             '#f)))
-                                                   (if (let ((_$e5422_
-                                                              (not _bind5420_)))
-                                                         (if _$e5422_
-                                                             _$e5422_
+                                                   (if (let ((_$e5416_
+                                                              (not _bind5414_)))
+                                                         (if _$e5416_
+                                                             _$e5416_
                                                              (not (gx#core-expander-binding?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _bind5420_))))
-               (_expand-e5392_ '%#call (cons '%#call _hd5394_))
-               (if (eq? (##structure-ref _bind5420_ '1 gx#binding::t '#f)
+                           _bind5414_))))
+               (_expand-e5386_ '%%app (cons '%%app _hd5388_))
+               (if (eq? (##structure-ref _bind5414_ '1 gx#binding::t '#f)
                         '%#begin)
-                   (gx#core-expand-block* _hd5394_ _illegal-expression5391_)
-                   (if (gx#expression-form-binding? _bind5420_)
-                       (_expand-e5392_ _bind5420_ _hd5394_)
-                       (_illegal-expression5391_ _hd5394_)))))
+                   (gx#core-expand-block* _hd5388_ _illegal-expression5385_)
+                   (if (gx#expression-form-binding? _bind5414_)
+                       (_expand-e5386_ _bind5414_ _hd5388_)
+                       (_illegal-expression5385_ _hd5388_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (_E53975406_)))))
-                                       (_E53975406_)))))
-                            (let () (_E53965425_)))))
-                      (if (gx#core-bound-identifier?__0 _hd5394_)
-                          (_illegal-expression5391_ _hd5394_)
-                          (if (gx#identifier? _hd5394_)
-                              (_expand-e5392_
-                               '%#ref
-                               (cons '%#ref (cons _hd5394_ '())))
-                              (if (gx#stx-datum? _hd5394_)
-                                  (_expand-e5392_
+                                                 (_E53915400_)))))
+                                       (_E53915400_)))))
+                            (let () (_E53905419_)))))
+                      (if (gx#core-bound-identifier?__0 _hd5388_)
+                          (_illegal-expression5385_ _hd5388_)
+                          (if (gx#identifier? _hd5388_)
+                              (_expand-e5386_
+                               '%%ref
+                               (cons '%%ref (cons _hd5388_ '())))
+                              (if (gx#stx-datum? _hd5388_)
+                                  (_expand-e5386_
                                    '%#quote
-                                   (cons '%#quote (cons _hd5394_ '())))
-                                  (_illegal-expression5391_
-                                   _hd5394_))))))))))))
+                                   (cons '%#quote (cons _hd5388_ '())))
+                                  (_illegal-expression5385_
+                                   _hd5388_))))))))))))
   (define gx#core-expand-expression+1
-    (lambda (_stx5383_)
+    (lambda (_stx5377_)
       (call-with-parameters
        (lambda ()
-         (let ((_stx5386_ (gx#core-expand-expression _stx5383_)))
-           (values _stx5386_ (gx#eval-syntax* _stx5386_))))
+         (let ((_stx5380_ (gx#core-expand-expression _stx5377_)))
+           (values _stx5380_ (gx#eval-syntax* _stx5380_))))
        gx#current-expander-phi
        (fx+ (gx#current-expander-phi) '1))))
   (begin
-    (define gx#core-expand*__opt-lambda5362
-      (lambda (_stx5364_ _stop?5365_)
-        ((letrec ((_lp5367_
-                   (lambda (_stx5369_)
-                     (if (_stop?5365_ _stx5369_)
-                         _stx5369_
-                         (let ((_rstx5371_ (gx#core-expand1 _stx5369_)))
-                           (if (eq? _stx5369_ _rstx5371_)
-                               _stx5369_
-                               (_lp5367_ _rstx5371_)))))))
-           _lp5367_)
-         _stx5364_)))
+    (define gx#core-expand*__opt-lambda5356
+      (lambda (_stx5358_ _stop?5359_)
+        ((letrec ((_lp5361_
+                   (lambda (_stx5363_)
+                     (if (_stop?5359_ _stx5363_)
+                         _stx5363_
+                         (let ((_rstx5365_ (gx#core-expand1 _stx5363_)))
+                           (if (eq? _stx5363_ _rstx5365_)
+                               _stx5363_
+                               (_lp5361_ _rstx5365_)))))))
+           _lp5361_)
+         _stx5358_)))
     (begin
       (define gx#core-expand*__0
-        (lambda (_stx5376_)
-          (let ((_stop?5378_ false))
-            (gx#core-expand*__opt-lambda5362 _stx5376_ _stop?5378_))))
+        (lambda (_stx5370_)
+          (let ((_stop?5372_ false))
+            (gx#core-expand*__opt-lambda5356 _stx5370_ _stop?5372_))))
       (define gx#core-expand*
-        (lambda _g5667_
-          (let ((_g5666_ (length _g5667_)))
-            (cond ((fx= _g5666_ 1) (apply gx#core-expand*__0 _g5667_))
-                  ((fx= _g5666_ 2)
-                   (apply gx#core-expand*__opt-lambda5362 _g5667_))
-                  (else (error "No clause matching arguments" _g5667_))))))))
+        (lambda _g5661_
+          (let ((_g5660_ (length _g5661_)))
+            (cond ((fx= _g5660_ 1) (apply gx#core-expand*__0 _g5661_))
+                  ((fx= _g5660_ 2)
+                   (apply gx#core-expand*__opt-lambda5356 _g5661_))
+                  (else (error "No clause matching arguments" _g5661_))))))))
   (define gx#core-expand1
     (lambda (_stx5314_)
       (let ((_step5316_
@@ -788,26 +788,7 @@
                            '#f)
                           _stx5314_)
                          (if (not _bind5355_)
-                             (begin
-                               (if (let ((_$e5357_
-                                          (fxpositive?
-                                           (gx#current-expander-phi))))
-                                     (if _$e5357_
-                                         _$e5357_
-                                         (let ((_$e5360_
-                                                (gx#core-context-rebind?__opt-lambda4099
-                                                 (gx#core-context-top__0))))
-                                           (if _$e5360_
-                                               _$e5360_
-                                               (gx#core-extern-symbol?
-                                                (gx#stx-e _hd5353_))))))
-                                   '#!void
-                                   (gx#raise-syntax-error
-                                    '#f
-                                    '"Reference to unbound identifier"
-                                    _stx5314_
-                                    _hd5353_))
-                               _stx5314_)
+                             _stx5314_
                              (gx#raise-syntax-error
                               '#f
                               '"Bad syntax"
@@ -851,7 +832,7 @@
                                           (_E52875296_)))))
                                 (_E52875296_)))))
                      (let () (_E52865310_))))))))
-        (gx#core-expand*__opt-lambda5362 _stx5280_ _stop?5282_))))
+        (gx#core-expand*__opt-lambda5356 _stx5280_ _stop?5282_))))
   (begin
     (define gx#core-expand-block__opt-lambda5084
       (lambda (_stx5086_ _expand-special5087_ _begin-form5088_ _expand-e5089_)
@@ -1053,13 +1034,13 @@
              _begin-form5271_
              _expand-e5273_))))
       (define gx#core-expand-block
-        (lambda _g5669_
-          (let ((_g5668_ (length _g5669_)))
-            (cond ((fx= _g5668_ 2) (apply gx#core-expand-block__0 _g5669_))
-                  ((fx= _g5668_ 3) (apply gx#core-expand-block__1 _g5669_))
-                  ((fx= _g5668_ 4)
-                   (apply gx#core-expand-block__opt-lambda5084 _g5669_))
-                  (else (error "No clause matching arguments" _g5669_))))))))
+        (lambda _g5663_
+          (let ((_g5662_ (length _g5663_)))
+            (cond ((fx= _g5662_ 2) (apply gx#core-expand-block__0 _g5663_))
+                  ((fx= _g5662_ 3) (apply gx#core-expand-block__1 _g5663_))
+                  ((fx= _g5662_ 4)
+                   (apply gx#core-expand-block__opt-lambda5084 _g5663_))
+                  (else (error "No clause matching arguments" _g5663_))))))))
   (define gx#core-expand-block*
     (lambda (_stx5034_ _expand-special5035_)
       (let ((_g50365047_
@@ -1287,12 +1268,12 @@
           (let ((_rpath4887_ '#f))
             (gx#core-expand-include%__opt-lambda4833 _stx4885_ _rpath4887_))))
       (define gx#core-expand-include%
-        (lambda _g5671_
-          (let ((_g5670_ (length _g5671_)))
-            (cond ((fx= _g5670_ 1) (apply gx#core-expand-include%__0 _g5671_))
-                  ((fx= _g5670_ 2)
-                   (apply gx#core-expand-include%__opt-lambda4833 _g5671_))
-                  (else (error "No clause matching arguments" _g5671_))))))))
+        (lambda _g5665_
+          (let ((_g5664_ (length _g5665_)))
+            (cond ((fx= _g5664_ 1) (apply gx#core-expand-include%__0 _g5665_))
+                  ((fx= _g5664_ 2)
+                   (apply gx#core-expand-include%__opt-lambda4833 _g5665_))
+                  (else (error "No clause matching arguments" _g5665_))))))))
   (begin
     (define gx#core-apply-expander__opt-lambda4802
       (lambda (_K4804_ _stx4805_ _method4806_)
@@ -1325,12 +1306,12 @@
              _stx4826_
              _method4828_))))
       (define gx#core-apply-expander
-        (lambda _g5673_
-          (let ((_g5672_ (length _g5673_)))
-            (cond ((fx= _g5672_ 2) (apply gx#core-apply-expander__0 _g5673_))
-                  ((fx= _g5672_ 3)
-                   (apply gx#core-apply-expander__opt-lambda4802 _g5673_))
-                  (else (error "No clause matching arguments" _g5673_))))))))
+        (lambda _g5667_
+          (let ((_g5666_ (length _g5667_)))
+            (cond ((fx= _g5666_ 2) (apply gx#core-apply-expander__0 _g5667_))
+                  ((fx= _g5666_ 3)
+                   (apply gx#core-apply-expander__opt-lambda4802 _g5667_))
+                  (else (error "No clause matching arguments" _g5667_))))))))
   (define gx#expander::apply-macro-expander
     (lambda (_self4800_ _stx4801_)
       (gx#raise-syntax-error '#f '"Bad syntax" _stx4801_)))
@@ -1393,15 +1374,15 @@
              _stx4742_
              _top?4744_))))
       (define gx#top-special-form::apply-macro-expander
-        (lambda _g5675_
-          (let ((_g5674_ (length _g5675_)))
-            (cond ((fx= _g5674_ 2)
+        (lambda _g5669_
+          (let ((_g5668_ (length _g5669_)))
+            (cond ((fx= _g5668_ 2)
                    (apply gx#top-special-form::apply-macro-expander__0
-                          _g5675_))
-                  ((fx= _g5674_ 3)
+                          _g5669_))
+                  ((fx= _g5668_ 3)
                    (apply gx#top-special-form::apply-macro-expander__opt-lambda4732
-                          _g5675_))
-                  (else (error "No clause matching arguments" _g5675_))))))))
+                          _g5669_))
+                  (else (error "No clause matching arguments" _g5669_))))))))
   (bind-method!
    gx#top-special-form::t
    'apply-macro-expander
@@ -1488,13 +1469,13 @@
              _stx4669_
              _method4671_))))
       (define gx#core-apply-user-expander
-        (lambda _g5677_
-          (let ((_g5676_ (length _g5677_)))
-            (cond ((fx= _g5676_ 2)
-                   (apply gx#core-apply-user-expander__0 _g5677_))
-                  ((fx= _g5676_ 3)
-                   (apply gx#core-apply-user-expander__opt-lambda4623 _g5677_))
-                  (else (error "No clause matching arguments" _g5677_))))))))
+        (lambda _g5671_
+          (let ((_g5670_ (length _g5671_)))
+            (cond ((fx= _g5670_ 2)
+                   (apply gx#core-apply-user-expander__0 _g5671_))
+                  ((fx= _g5670_ 3)
+                   (apply gx#core-apply-user-expander__opt-lambda4623 _g5671_))
+                  (else (error "No clause matching arguments" _g5671_))))))))
   (define gx#core-apply-user-macro
     (lambda (_K4615_ _stx4616_ _ctx4617_ _phi4618_ _method4619_)
       (let ((_mark4621_
@@ -1569,13 +1550,13 @@
              _phi4607_
              _ctx4609_))))
       (define gx#resolve-identifier
-        (lambda _g5679_
-          (let ((_g5678_ (length _g5679_)))
-            (cond ((fx= _g5678_ 1) (apply gx#resolve-identifier__0 _g5679_))
-                  ((fx= _g5678_ 2) (apply gx#resolve-identifier__1 _g5679_))
-                  ((fx= _g5678_ 3)
-                   (apply gx#resolve-identifier__opt-lambda4587 _g5679_))
-                  (else (error "No clause matching arguments" _g5679_))))))))
+        (lambda _g5673_
+          (let ((_g5672_ (length _g5673_)))
+            (cond ((fx= _g5672_ 1) (apply gx#resolve-identifier__0 _g5673_))
+                  ((fx= _g5672_ 2) (apply gx#resolve-identifier__1 _g5673_))
+                  ((fx= _g5672_ 3)
+                   (apply gx#resolve-identifier__opt-lambda4587 _g5673_))
+                  (else (error "No clause matching arguments" _g5673_))))))))
   (begin
     (define gx#bind-identifier!__opt-lambda4545
       (lambda (_stx4547_ _val4548_ _rebind?4549_ _phi4550_ _ctx4551_)
@@ -1621,14 +1602,14 @@
              _phi4578_
              _ctx4580_))))
       (define gx#bind-identifier!
-        (lambda _g5681_
-          (let ((_g5680_ (length _g5681_)))
-            (cond ((fx= _g5680_ 2) (apply gx#bind-identifier!__0 _g5681_))
-                  ((fx= _g5680_ 3) (apply gx#bind-identifier!__1 _g5681_))
-                  ((fx= _g5680_ 4) (apply gx#bind-identifier!__2 _g5681_))
-                  ((fx= _g5680_ 5)
-                   (apply gx#bind-identifier!__opt-lambda4545 _g5681_))
-                  (else (error "No clause matching arguments" _g5681_))))))))
+        (lambda _g5675_
+          (let ((_g5674_ (length _g5675_)))
+            (cond ((fx= _g5674_ 2) (apply gx#bind-identifier!__0 _g5675_))
+                  ((fx= _g5674_ 3) (apply gx#bind-identifier!__1 _g5675_))
+                  ((fx= _g5674_ 4) (apply gx#bind-identifier!__2 _g5675_))
+                  ((fx= _g5674_ 5)
+                   (apply gx#bind-identifier!__opt-lambda4545 _g5675_))
+                  (else (error "No clause matching arguments" _g5675_))))))))
   (begin
     (define gx#core-resolve-identifier__opt-lambda4517
       (lambda (_stx4519_ _phi4520_ _ctx4521_)
@@ -1714,15 +1695,15 @@
              _phi4538_
              _ctx4540_))))
       (define gx#core-resolve-identifier
-        (lambda _g5683_
-          (let ((_g5682_ (length _g5683_)))
-            (cond ((fx= _g5682_ 1)
-                   (apply gx#core-resolve-identifier__0 _g5683_))
-                  ((fx= _g5682_ 2)
-                   (apply gx#core-resolve-identifier__1 _g5683_))
-                  ((fx= _g5682_ 3)
-                   (apply gx#core-resolve-identifier__opt-lambda4517 _g5683_))
-                  (else (error "No clause matching arguments" _g5683_))))))))
+        (lambda _g5677_
+          (let ((_g5676_ (length _g5677_)))
+            (cond ((fx= _g5676_ 1)
+                   (apply gx#core-resolve-identifier__0 _g5677_))
+                  ((fx= _g5676_ 2)
+                   (apply gx#core-resolve-identifier__1 _g5677_))
+                  ((fx= _g5676_ 3)
+                   (apply gx#core-resolve-identifier__opt-lambda4517 _g5677_))
+                  (else (error "No clause matching arguments" _g5677_))))))))
   (define gx#core-resolve-binding
     (lambda (_id4433_ _phi4434_ _ctx4435_ _marks4436_)
       (let ((_resolve4438_
@@ -2006,14 +1987,14 @@
              _phi4423_
              _ctx4425_))))
       (define gx#core-bind!
-        (lambda _g5685_
-          (let ((_g5684_ (length _g5685_)))
-            (cond ((fx= _g5684_ 2) (apply gx#core-bind!__0 _g5685_))
-                  ((fx= _g5684_ 3) (apply gx#core-bind!__1 _g5685_))
-                  ((fx= _g5684_ 4) (apply gx#core-bind!__2 _g5685_))
-                  ((fx= _g5684_ 5)
-                   (apply gx#core-bind!__opt-lambda4307 _g5685_))
-                  (else (error "No clause matching arguments" _g5685_))))))))
+        (lambda _g5679_
+          (let ((_g5678_ (length _g5679_)))
+            (cond ((fx= _g5678_ 2) (apply gx#core-bind!__0 _g5679_))
+                  ((fx= _g5678_ 3) (apply gx#core-bind!__1 _g5679_))
+                  ((fx= _g5678_ 4) (apply gx#core-bind!__2 _g5679_))
+                  ((fx= _g5678_ 5)
+                   (apply gx#core-bind!__opt-lambda4307 _g5679_))
+                  (else (error "No clause matching arguments" _g5679_))))))))
   (define gx#core-identifier-key
     (lambda (_stx4239_)
       (if (symbol? _stx4239_)
@@ -2053,13 +2034,13 @@
     (lambda (_ctx4184_ _phi4185_)
       (let ((_make-phi4187_
              (lambda (_super4237_)
-               (let ((__obj5656 (make-object gx#phi-context::t '5)))
+               (let ((__obj5650 (make-object gx#phi-context::t '5)))
                  (begin
-                   (gx#phi-context:::init!__opt-lambda5618
-                    __obj5656
+                   (gx#phi-context:::init!__opt-lambda5612
+                    __obj5650
                     (gensym 'phi)
                     _super4237_)
-                   __obj5656)))))
+                   __obj5650)))))
         (let ((_make-phi/up4188_
                (lambda (_ctx4232_ _super4233_)
                  (let ((_ctx+14235_ (_make-phi4187_ _super4233_)))
@@ -2241,13 +2222,13 @@
           (let ((_stop?4149_ gx#top-context?))
             (gx#core-context-top__opt-lambda4130 _ctx4147_ _stop?4149_))))
       (define gx#core-context-top
-        (lambda _g5687_
-          (let ((_g5686_ (length _g5687_)))
-            (cond ((fx= _g5686_ 0) (apply gx#core-context-top__0 _g5687_))
-                  ((fx= _g5686_ 1) (apply gx#core-context-top__1 _g5687_))
-                  ((fx= _g5686_ 2)
-                   (apply gx#core-context-top__opt-lambda4130 _g5687_))
-                  (else (error "No clause matching arguments" _g5687_))))))))
+        (lambda _g5681_
+          (let ((_g5680_ (length _g5681_)))
+            (cond ((fx= _g5680_ 0) (apply gx#core-context-top__0 _g5681_))
+                  ((fx= _g5680_ 1) (apply gx#core-context-top__1 _g5681_))
+                  ((fx= _g5680_ 2)
+                   (apply gx#core-context-top__opt-lambda4130 _g5681_))
+                  (else (error "No clause matching arguments" _g5681_))))))))
   (begin
     (define gx#core-context-root__opt-lambda4115
       (lambda (_ctx4117_)
@@ -2267,12 +2248,12 @@
           (let ((_ctx4127_ (gx#current-expander-context)))
             (gx#core-context-root__opt-lambda4115 _ctx4127_))))
       (define gx#core-context-root
-        (lambda _g5689_
-          (let ((_g5688_ (length _g5689_)))
-            (cond ((fx= _g5688_ 0) (apply gx#core-context-root__0 _g5689_))
-                  ((fx= _g5688_ 1)
-                   (apply gx#core-context-root__opt-lambda4115 _g5689_))
-                  (else (error "No clause matching arguments" _g5689_))))))))
+        (lambda _g5683_
+          (let ((_g5682_ (length _g5683_)))
+            (cond ((fx= _g5682_ 0) (apply gx#core-context-root__0 _g5683_))
+                  ((fx= _g5682_ 1)
+                   (apply gx#core-context-root__opt-lambda4115 _g5683_))
+                  (else (error "No clause matching arguments" _g5683_))))))))
   (begin
     (define gx#core-context-rebind?__opt-lambda4099
       (lambda (_ctx4101_ . __40984102_)
@@ -2291,14 +2272,14 @@
           (let ((_ctx4109_ (gx#current-expander-context)))
             (gx#core-context-rebind?__opt-lambda4099 _ctx4109_))))
       (define gx#core-context-rebind?
-        (lambda _g5691_
-          (let ((_g5690_ (length _g5691_)))
-            (cond ((fx= _g5690_ 0) (apply gx#core-context-rebind?__0 _g5691_))
-                  ((fx= _g5690_ 1)
-                   (apply gx#core-context-rebind?__opt-lambda4099 _g5691_))
-                  ((fx>= _g5690_ 1)
-                   (apply gx#core-context-rebind?__opt-lambda4099 _g5691_))
-                  (else (error "No clause matching arguments" _g5691_))))))))
+        (lambda _g5685_
+          (let ((_g5684_ (length _g5685_)))
+            (cond ((fx= _g5684_ 0) (apply gx#core-context-rebind?__0 _g5685_))
+                  ((fx= _g5684_ 1)
+                   (apply gx#core-context-rebind?__opt-lambda4099 _g5685_))
+                  ((fx>= _g5684_ 1)
+                   (apply gx#core-context-rebind?__opt-lambda4099 _g5685_))
+                  (else (error "No clause matching arguments" _g5685_))))))))
   (begin
     (define gx#core-context-namespace__opt-lambda4082
       (lambda (_ctx4084_)
@@ -2316,13 +2297,13 @@
           (let ((_ctx4095_ (gx#current-expander-context)))
             (gx#core-context-namespace__opt-lambda4082 _ctx4095_))))
       (define gx#core-context-namespace
-        (lambda _g5693_
-          (let ((_g5692_ (length _g5693_)))
-            (cond ((fx= _g5692_ 0)
-                   (apply gx#core-context-namespace__0 _g5693_))
-                  ((fx= _g5692_ 1)
-                   (apply gx#core-context-namespace__opt-lambda4082 _g5693_))
-                  (else (error "No clause matching arguments" _g5693_))))))))
+        (lambda _g5687_
+          (let ((_g5686_ (length _g5687_)))
+            (cond ((fx= _g5686_ 0)
+                   (apply gx#core-context-namespace__0 _g5687_))
+                  ((fx= _g5686_ 1)
+                   (apply gx#core-context-namespace__opt-lambda4082 _g5687_))
+                  (else (error "No clause matching arguments" _g5687_))))))))
   (begin
     (define gx#expander-binding?__opt-lambda4068
       (lambda (_bind4070_ _is?4071_)
@@ -2336,12 +2317,12 @@
           (let ((_is?4078_ gx#expander?))
             (gx#expander-binding?__opt-lambda4068 _bind4076_ _is?4078_))))
       (define gx#expander-binding?
-        (lambda _g5695_
-          (let ((_g5694_ (length _g5695_)))
-            (cond ((fx= _g5694_ 1) (apply gx#expander-binding?__0 _g5695_))
-                  ((fx= _g5694_ 2)
-                   (apply gx#expander-binding?__opt-lambda4068 _g5695_))
-                  (else (error "No clause matching arguments" _g5695_))))))))
+        (lambda _g5689_
+          (let ((_g5688_ (length _g5689_)))
+            (cond ((fx= _g5688_ 1) (apply gx#expander-binding?__0 _g5689_))
+                  ((fx= _g5688_ 2)
+                   (apply gx#expander-binding?__opt-lambda4068 _g5689_))
+                  (else (error "No clause matching arguments" _g5689_))))))))
   (define gx#core-expander-binding?
     (lambda (_bind4067_)
       (gx#expander-binding?__opt-lambda4068 _bind4067_ gx#core-expander?)))
@@ -2384,13 +2365,13 @@
              _id4045_
              _bound?4047_))))
       (define gx#core-bound-identifier?
-        (lambda _g5697_
-          (let ((_g5696_ (length _g5697_)))
-            (cond ((fx= _g5696_ 1)
-                   (apply gx#core-bound-identifier?__0 _g5697_))
-                  ((fx= _g5696_ 2)
-                   (apply gx#core-bound-identifier?__opt-lambda4037 _g5697_))
-                  (else (error "No clause matching arguments" _g5697_))))))))
+        (lambda _g5691_
+          (let ((_g5690_ (length _g5691_)))
+            (cond ((fx= _g5690_ 1)
+                   (apply gx#core-bound-identifier?__0 _g5691_))
+                  ((fx= _g5690_ 2)
+                   (apply gx#core-bound-identifier?__opt-lambda4037 _g5691_))
+                  (else (error "No clause matching arguments" _g5691_))))))))
   (define gx#core-identifier=?
     (lambda (_x4029_ _y4030_)
       (let ((_y=?4032_
@@ -2457,14 +2438,14 @@
              _ctx4018_
              _marks4020_))))
       (define gx#core-quote-syntax
-        (lambda _g5699_
-          (let ((_g5698_ (length _g5699_)))
-            (cond ((fx= _g5698_ 1) (apply gx#core-quote-syntax__0 _g5699_))
-                  ((fx= _g5698_ 2) (apply gx#core-quote-syntax__1 _g5699_))
-                  ((fx= _g5698_ 3) (apply gx#core-quote-syntax__2 _g5699_))
-                  ((fx= _g5698_ 4)
-                   (apply gx#core-quote-syntax__opt-lambda3983 _g5699_))
-                  (else (error "No clause matching arguments" _g5699_))))))))
+        (lambda _g5693_
+          (let ((_g5692_ (length _g5693_)))
+            (cond ((fx= _g5692_ 1) (apply gx#core-quote-syntax__0 _g5693_))
+                  ((fx= _g5692_ 2) (apply gx#core-quote-syntax__1 _g5693_))
+                  ((fx= _g5692_ 3) (apply gx#core-quote-syntax__2 _g5693_))
+                  ((fx= _g5692_ 4)
+                   (apply gx#core-quote-syntax__opt-lambda3983 _g5693_))
+                  (else (error "No clause matching arguments" _g5693_))))))))
   (define gx#core-cons
     (lambda (_hd3981_ _tl3982_)
       (cons (gx#core-quote-syntax__0 _hd3981_) _tl3982_)))
@@ -2508,12 +2489,12 @@
           (let ((_rel3970_ '#f))
             (gx#core-resolve-path__opt-lambda3947 _stx-path3968_ _rel3970_))))
       (define gx#core-resolve-path
-        (lambda _g5701_
-          (let ((_g5700_ (length _g5701_)))
-            (cond ((fx= _g5700_ 1) (apply gx#core-resolve-path__0 _g5701_))
-                  ((fx= _g5700_ 2)
-                   (apply gx#core-resolve-path__opt-lambda3947 _g5701_))
-                  (else (error "No clause matching arguments" _g5701_))))))))
+        (lambda _g5695_
+          (let ((_g5694_ (length _g5695_)))
+            (cond ((fx= _g5694_ 1) (apply gx#core-resolve-path__0 _g5695_))
+                  ((fx= _g5694_ 2)
+                   (apply gx#core-resolve-path__opt-lambda3947 _g5695_))
+                  (else (error "No clause matching arguments" _g5695_))))))))
   (define gx#syntax-local-rewrap
     (lambda (_stx3946_) (gx#stx-rewrap _stx3946_ (gx#current-expander-marks))))
   (define gx#syntax-local-unwrap
@@ -2547,12 +2528,12 @@
           (let ((_E3907_ gx#raise-syntax-ref-error))
             (gx#syntax-local-e__opt-lambda3895 _stx3905_ _E3907_))))
       (define gx#syntax-local-e
-        (lambda _g5703_
-          (let ((_g5702_ (length _g5703_)))
-            (cond ((fx= _g5702_ 1) (apply gx#syntax-local-e__0 _g5703_))
-                  ((fx= _g5702_ 2)
-                   (apply gx#syntax-local-e__opt-lambda3895 _g5703_))
-                  (else (error "No clause matching arguments" _g5703_))))))))
+        (lambda _g5697_
+          (let ((_g5696_ (length _g5697_)))
+            (cond ((fx= _g5696_ 1) (apply gx#syntax-local-e__0 _g5697_))
+                  ((fx= _g5696_ 2)
+                   (apply gx#syntax-local-e__opt-lambda3895 _g5697_))
+                  (else (error "No clause matching arguments" _g5697_))))))))
   (begin
     (define gx#syntax-local-value__opt-lambda3879
       (lambda (_stx3881_ _E3882_)
@@ -2566,12 +2547,12 @@
           (let ((_E3891_ gx#raise-syntax-ref-error))
             (gx#syntax-local-value__opt-lambda3879 _stx3889_ _E3891_))))
       (define gx#syntax-local-value
-        (lambda _g5705_
-          (let ((_g5704_ (length _g5705_)))
-            (cond ((fx= _g5704_ 1) (apply gx#syntax-local-value__0 _g5705_))
-                  ((fx= _g5704_ 2)
-                   (apply gx#syntax-local-value__opt-lambda3879 _g5705_))
-                  (else (error "No clause matching arguments" _g5705_))))))))
+        (lambda _g5699_
+          (let ((_g5698_ (length _g5699_)))
+            (cond ((fx= _g5698_ 1) (apply gx#syntax-local-value__0 _g5699_))
+                  ((fx= _g5698_ 2)
+                   (apply gx#syntax-local-value__opt-lambda3879 _g5699_))
+                  (else (error "No clause matching arguments" _g5699_))))))))
   (define gx#raise-syntax-ref-error
     (lambda (_stx3878_)
       (gx#raise-syntax-error

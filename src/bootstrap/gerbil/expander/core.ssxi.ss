@@ -93,13 +93,13 @@ package: gerbil/expander
    gx#phi-context:::init!
    (@case-lambda
     (2 gx#phi-context:::init!__0)
-    (3 gx#phi-context:::init!__opt-lambda5618)))
+    (3 gx#phi-context:::init!__opt-lambda5612)))
   (declare-method gx#phi-context::t :init! gx#phi-context:::init! #f)
   (declare-type
    gx#local-context:::init!
    (@case-lambda
     (1 gx#local-context:::init!__0)
-    (2 gx#local-context:::init!__opt-lambda5604)))
+    (2 gx#local-context:::init!__opt-lambda5598)))
   (declare-method gx#local-context::t :init! gx#local-context:::init! #f)
   (declare-type gx#binding::t (@struct-type gx#binding::t #f 3 #f ()))
   (declare-type gx#binding? (@struct-pred gx#binding::t))
@@ -304,13 +304,13 @@ package: gerbil/expander
   (declare-type gx#syntax-error-phi-set! (@struct-setf gx#syntax-error::t 2))
   (declare-type
    gx#eval-syntax
-   (@case-lambda (1 gx#eval-syntax__0) (2 gx#eval-syntax__opt-lambda5513)))
+   (@case-lambda (1 gx#eval-syntax__0) (2 gx#eval-syntax__opt-lambda5507)))
   (declare-type
    gx#core-expand
-   (@case-lambda (1 gx#core-expand__0) (2 gx#core-expand__opt-lambda5497)))
+   (@case-lambda (1 gx#core-expand__0) (2 gx#core-expand__opt-lambda5491)))
   (declare-type
    gx#core-expand*
-   (@case-lambda (1 gx#core-expand*__0) (2 gx#core-expand*__opt-lambda5362)))
+   (@case-lambda (1 gx#core-expand*__0) (2 gx#core-expand*__opt-lambda5356)))
   (declare-type
    gx#core-expand-block
    (@case-lambda
