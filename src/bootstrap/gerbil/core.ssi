@@ -483,6 +483,9 @@ namespace: gerbil/core
                     (source-location? source-location?)
                     (source-location-path? source-location-path?)
                     (source-location-path source-location-path)
+                    (datum-parsing-exception? datum-parsing-exception?)
+                    (datum-parsing-exception-filepos
+                     datum-parsing-exception-filepos)
                     (displayln displayln)
                     (display* display*)
                     (load-module load-module)
