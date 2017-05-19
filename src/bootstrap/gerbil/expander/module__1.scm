@@ -1,82 +1,82 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gx[1]#_g11207_| (gx#core-quote-syntax 'module-import::t))
-  (define |gx[1]#_g11208_| (gx#core-quote-syntax 'module-import::t))
-  (define |gx[1]#_g11209_| (gx#core-quote-syntax 'make-module-import))
-  (define |gx[1]#_g11210_| (gx#core-quote-syntax 'module-import?))
-  (define |gx[1]#_g11211_| (gx#core-quote-syntax 'module-import-source))
-  (define |gx[1]#_g11212_| (gx#core-quote-syntax 'module-import-name))
-  (define |gx[1]#_g11213_| (gx#core-quote-syntax 'module-import-phi))
-  (define |gx[1]#_g11214_| (gx#core-quote-syntax 'module-import-weak?))
-  (define |gx[1]#_g11215_| (gx#core-quote-syntax 'module-import-source-set!))
-  (define |gx[1]#_g11216_| (gx#core-quote-syntax 'module-import-name-set!))
-  (define |gx[1]#_g11217_| (gx#core-quote-syntax 'module-import-phi-set!))
-  (define |gx[1]#_g11218_| (gx#core-quote-syntax 'module-import-weak?-set!))
-  (define |gx[1]#_g11219_| (gx#core-quote-syntax 'module-export::t))
-  (define |gx[1]#_g11220_| (gx#core-quote-syntax 'module-export::t))
-  (define |gx[1]#_g11221_| (gx#core-quote-syntax 'make-module-export))
-  (define |gx[1]#_g11222_| (gx#core-quote-syntax 'module-export?))
-  (define |gx[1]#_g11223_| (gx#core-quote-syntax 'module-export-context))
-  (define |gx[1]#_g11224_| (gx#core-quote-syntax 'module-export-key))
-  (define |gx[1]#_g11225_| (gx#core-quote-syntax 'module-export-phi))
-  (define |gx[1]#_g11226_| (gx#core-quote-syntax 'module-export-name))
-  (define |gx[1]#_g11227_| (gx#core-quote-syntax 'module-export-weak?))
-  (define |gx[1]#_g11228_| (gx#core-quote-syntax 'module-export-context-set!))
-  (define |gx[1]#_g11229_| (gx#core-quote-syntax 'module-export-key-set!))
-  (define |gx[1]#_g11230_| (gx#core-quote-syntax 'module-export-phi-set!))
-  (define |gx[1]#_g11231_| (gx#core-quote-syntax 'module-export-name-set!))
-  (define |gx[1]#_g11232_| (gx#core-quote-syntax 'module-export-weak?-set!))
-  (define |gx[1]#_g11233_| (gx#core-quote-syntax 'import-set::t))
-  (define |gx[1]#_g11234_| (gx#core-quote-syntax 'import-set::t))
-  (define |gx[1]#_g11235_| (gx#core-quote-syntax 'make-import-set))
-  (define |gx[1]#_g11236_| (gx#core-quote-syntax 'import-set?))
-  (define |gx[1]#_g11237_| (gx#core-quote-syntax 'import-set-source))
-  (define |gx[1]#_g11238_| (gx#core-quote-syntax 'import-set-phi))
-  (define |gx[1]#_g11239_| (gx#core-quote-syntax 'import-set-imports))
-  (define |gx[1]#_g11240_| (gx#core-quote-syntax 'import-set-source-set!))
-  (define |gx[1]#_g11241_| (gx#core-quote-syntax 'import-set-phi-set!))
-  (define |gx[1]#_g11242_| (gx#core-quote-syntax 'import-set-imports-set!))
-  (define |gx[1]#_g11243_| (gx#core-quote-syntax 'export-set::t))
-  (define |gx[1]#_g11244_| (gx#core-quote-syntax 'export-set::t))
-  (define |gx[1]#_g11245_| (gx#core-quote-syntax 'make-export-set))
-  (define |gx[1]#_g11246_| (gx#core-quote-syntax 'export-set?))
-  (define |gx[1]#_g11247_| (gx#core-quote-syntax 'export-set-source))
-  (define |gx[1]#_g11248_| (gx#core-quote-syntax 'export-set-phi))
-  (define |gx[1]#_g11249_| (gx#core-quote-syntax 'export-set-exports))
-  (define |gx[1]#_g11250_| (gx#core-quote-syntax 'export-set-source-set!))
-  (define |gx[1]#_g11251_| (gx#core-quote-syntax 'export-set-phi-set!))
-  (define |gx[1]#_g11252_| (gx#core-quote-syntax 'export-set-exports-set!))
-  (define |gx[1]#_g11253_| (gx#core-quote-syntax 'import-expander::t))
-  (define |gx[1]#_g11254_| (gx#core-quote-syntax 'user-expander::t))
-  (define |gx[1]#_g11255_| (gx#core-quote-syntax 'import-expander::t))
-  (define |gx[1]#_g11256_| (gx#core-quote-syntax 'make-import-expander))
-  (define |gx[1]#_g11257_| (gx#core-quote-syntax 'import-expander?))
-  (define |gx[1]#_g11258_| (gx#core-quote-syntax 'user-expander))
-  (define |gx[1]#_g11259_| (gx#core-quote-syntax 'export-expander::t))
-  (define |gx[1]#_g11260_| (gx#core-quote-syntax 'user-expander::t))
-  (define |gx[1]#_g11261_| (gx#core-quote-syntax 'export-expander::t))
-  (define |gx[1]#_g11262_| (gx#core-quote-syntax 'make-export-expander))
-  (define |gx[1]#_g11263_| (gx#core-quote-syntax 'export-expander?))
-  (define |gx[1]#_g11264_| (gx#core-quote-syntax 'user-expander))
+  (define |gx[1]#_g11435_| (gx#core-quote-syntax 'module-import::t))
+  (define |gx[1]#_g11436_| (gx#core-quote-syntax 'module-import::t))
+  (define |gx[1]#_g11437_| (gx#core-quote-syntax 'make-module-import))
+  (define |gx[1]#_g11438_| (gx#core-quote-syntax 'module-import?))
+  (define |gx[1]#_g11439_| (gx#core-quote-syntax 'module-import-source))
+  (define |gx[1]#_g11440_| (gx#core-quote-syntax 'module-import-name))
+  (define |gx[1]#_g11441_| (gx#core-quote-syntax 'module-import-phi))
+  (define |gx[1]#_g11442_| (gx#core-quote-syntax 'module-import-weak?))
+  (define |gx[1]#_g11443_| (gx#core-quote-syntax 'module-import-source-set!))
+  (define |gx[1]#_g11444_| (gx#core-quote-syntax 'module-import-name-set!))
+  (define |gx[1]#_g11445_| (gx#core-quote-syntax 'module-import-phi-set!))
+  (define |gx[1]#_g11446_| (gx#core-quote-syntax 'module-import-weak?-set!))
+  (define |gx[1]#_g11447_| (gx#core-quote-syntax 'module-export::t))
+  (define |gx[1]#_g11448_| (gx#core-quote-syntax 'module-export::t))
+  (define |gx[1]#_g11449_| (gx#core-quote-syntax 'make-module-export))
+  (define |gx[1]#_g11450_| (gx#core-quote-syntax 'module-export?))
+  (define |gx[1]#_g11451_| (gx#core-quote-syntax 'module-export-context))
+  (define |gx[1]#_g11452_| (gx#core-quote-syntax 'module-export-key))
+  (define |gx[1]#_g11453_| (gx#core-quote-syntax 'module-export-phi))
+  (define |gx[1]#_g11454_| (gx#core-quote-syntax 'module-export-name))
+  (define |gx[1]#_g11455_| (gx#core-quote-syntax 'module-export-weak?))
+  (define |gx[1]#_g11456_| (gx#core-quote-syntax 'module-export-context-set!))
+  (define |gx[1]#_g11457_| (gx#core-quote-syntax 'module-export-key-set!))
+  (define |gx[1]#_g11458_| (gx#core-quote-syntax 'module-export-phi-set!))
+  (define |gx[1]#_g11459_| (gx#core-quote-syntax 'module-export-name-set!))
+  (define |gx[1]#_g11460_| (gx#core-quote-syntax 'module-export-weak?-set!))
+  (define |gx[1]#_g11461_| (gx#core-quote-syntax 'import-set::t))
+  (define |gx[1]#_g11462_| (gx#core-quote-syntax 'import-set::t))
+  (define |gx[1]#_g11463_| (gx#core-quote-syntax 'make-import-set))
+  (define |gx[1]#_g11464_| (gx#core-quote-syntax 'import-set?))
+  (define |gx[1]#_g11465_| (gx#core-quote-syntax 'import-set-source))
+  (define |gx[1]#_g11466_| (gx#core-quote-syntax 'import-set-phi))
+  (define |gx[1]#_g11467_| (gx#core-quote-syntax 'import-set-imports))
+  (define |gx[1]#_g11468_| (gx#core-quote-syntax 'import-set-source-set!))
+  (define |gx[1]#_g11469_| (gx#core-quote-syntax 'import-set-phi-set!))
+  (define |gx[1]#_g11470_| (gx#core-quote-syntax 'import-set-imports-set!))
+  (define |gx[1]#_g11471_| (gx#core-quote-syntax 'export-set::t))
+  (define |gx[1]#_g11472_| (gx#core-quote-syntax 'export-set::t))
+  (define |gx[1]#_g11473_| (gx#core-quote-syntax 'make-export-set))
+  (define |gx[1]#_g11474_| (gx#core-quote-syntax 'export-set?))
+  (define |gx[1]#_g11475_| (gx#core-quote-syntax 'export-set-source))
+  (define |gx[1]#_g11476_| (gx#core-quote-syntax 'export-set-phi))
+  (define |gx[1]#_g11477_| (gx#core-quote-syntax 'export-set-exports))
+  (define |gx[1]#_g11478_| (gx#core-quote-syntax 'export-set-source-set!))
+  (define |gx[1]#_g11479_| (gx#core-quote-syntax 'export-set-phi-set!))
+  (define |gx[1]#_g11480_| (gx#core-quote-syntax 'export-set-exports-set!))
+  (define |gx[1]#_g11481_| (gx#core-quote-syntax 'import-expander::t))
+  (define |gx[1]#_g11482_| (gx#core-quote-syntax 'user-expander::t))
+  (define |gx[1]#_g11483_| (gx#core-quote-syntax 'import-expander::t))
+  (define |gx[1]#_g11484_| (gx#core-quote-syntax 'make-import-expander))
+  (define |gx[1]#_g11485_| (gx#core-quote-syntax 'import-expander?))
+  (define |gx[1]#_g11486_| (gx#core-quote-syntax 'user-expander))
+  (define |gx[1]#_g11487_| (gx#core-quote-syntax 'export-expander::t))
+  (define |gx[1]#_g11488_| (gx#core-quote-syntax 'user-expander::t))
+  (define |gx[1]#_g11489_| (gx#core-quote-syntax 'export-expander::t))
+  (define |gx[1]#_g11490_| (gx#core-quote-syntax 'make-export-expander))
+  (define |gx[1]#_g11491_| (gx#core-quote-syntax 'export-expander?))
+  (define |gx[1]#_g11492_| (gx#core-quote-syntax 'user-expander))
   (begin
     (define |gx[:0:]#module-import|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gx[1]#_g11207_|
+       |gx[1]#_g11435_|
        'expander-identifiers:
        (cons '#f
-             (cons |gx[1]#_g11208_|
-                   (cons |gx[1]#_g11209_|
-                         (cons |gx[1]#_g11210_|
-                               (cons (cons |gx[1]#_g11211_|
-                                           (cons |gx[1]#_g11212_|
-                                                 (cons |gx[1]#_g11213_|
-                                                       (cons |gx[1]#_g11214_|
+             (cons |gx[1]#_g11436_|
+                   (cons |gx[1]#_g11437_|
+                         (cons |gx[1]#_g11438_|
+                               (cons (cons |gx[1]#_g11439_|
+                                           (cons |gx[1]#_g11440_|
+                                                 (cons |gx[1]#_g11441_|
+                                                       (cons |gx[1]#_g11442_|
                                                              '()))))
-                                     (cons (cons |gx[1]#_g11215_|
-                                                 (cons |gx[1]#_g11216_|
-                                                       (cons |gx[1]#_g11217_|
-                                                             (cons |gx[1]#_g11218_|
+                                     (cons (cons |gx[1]#_g11443_|
+                                                 (cons |gx[1]#_g11444_|
+                                                       (cons |gx[1]#_g11445_|
+                                                             (cons |gx[1]#_g11446_|
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -92,26 +92,26 @@
     (define |gx[:0:]#module-export|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gx[1]#_g11219_|
+       |gx[1]#_g11447_|
        'expander-identifiers:
        (cons '#f
-             (cons |gx[1]#_g11220_|
-                   (cons |gx[1]#_g11221_|
-                         (cons |gx[1]#_g11222_|
-                               (cons (cons |gx[1]#_g11223_|
-                                           (cons |gx[1]#_g11224_|
-                                                 (cons |gx[1]#_g11225_|
-                                                       (cons |gx[1]#_g11226_|
-                                                             (cons |gx[1]#_g11227_|
+             (cons |gx[1]#_g11448_|
+                   (cons |gx[1]#_g11449_|
+                         (cons |gx[1]#_g11450_|
+                               (cons (cons |gx[1]#_g11451_|
+                                           (cons |gx[1]#_g11452_|
+                                                 (cons |gx[1]#_g11453_|
+                                                       (cons |gx[1]#_g11454_|
+                                                             (cons |gx[1]#_g11455_|
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '())))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                     (cons (cons |gx[1]#_g11228_|
-                                                 (cons |gx[1]#_g11229_|
-                                                       (cons |gx[1]#_g11230_|
-                                                             (cons |gx[1]#_g11231_|
+                                     (cons (cons |gx[1]#_g11456_|
+                                                 (cons |gx[1]#_g11457_|
+                                                       (cons |gx[1]#_g11458_|
+                                                             (cons |gx[1]#_g11459_|
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (cons |gx[1]#_g11232_| '())))))
+                           (cons |gx[1]#_g11460_| '())))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            '()))))))
        'type-exhibitor:
@@ -125,18 +125,18 @@
     (define |gx[:0:]#import-set|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gx[1]#_g11233_|
+       |gx[1]#_g11461_|
        'expander-identifiers:
        (cons '#f
-             (cons |gx[1]#_g11234_|
-                   (cons |gx[1]#_g11235_|
-                         (cons |gx[1]#_g11236_|
-                               (cons (cons |gx[1]#_g11237_|
-                                           (cons |gx[1]#_g11238_|
-                                                 (cons |gx[1]#_g11239_| '())))
-                                     (cons (cons |gx[1]#_g11240_|
-                                                 (cons |gx[1]#_g11241_|
-                                                       (cons |gx[1]#_g11242_|
+             (cons |gx[1]#_g11462_|
+                   (cons |gx[1]#_g11463_|
+                         (cons |gx[1]#_g11464_|
+                               (cons (cons |gx[1]#_g11465_|
+                                           (cons |gx[1]#_g11466_|
+                                                 (cons |gx[1]#_g11467_| '())))
+                                     (cons (cons |gx[1]#_g11468_|
+                                                 (cons |gx[1]#_g11469_|
+                                                       (cons |gx[1]#_g11470_|
                                                              '())))
                                            '()))))))
        'type-exhibitor:
@@ -150,18 +150,18 @@
     (define |gx[:0:]#export-set|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gx[1]#_g11243_|
+       |gx[1]#_g11471_|
        'expander-identifiers:
        (cons '#f
-             (cons |gx[1]#_g11244_|
-                   (cons |gx[1]#_g11245_|
-                         (cons |gx[1]#_g11246_|
-                               (cons (cons |gx[1]#_g11247_|
-                                           (cons |gx[1]#_g11248_|
-                                                 (cons |gx[1]#_g11249_| '())))
-                                     (cons (cons |gx[1]#_g11250_|
-                                                 (cons |gx[1]#_g11251_|
-                                                       (cons |gx[1]#_g11252_|
+             (cons |gx[1]#_g11472_|
+                   (cons |gx[1]#_g11473_|
+                         (cons |gx[1]#_g11474_|
+                               (cons (cons |gx[1]#_g11475_|
+                                           (cons |gx[1]#_g11476_|
+                                                 (cons |gx[1]#_g11477_| '())))
+                                     (cons (cons |gx[1]#_g11478_|
+                                                 (cons |gx[1]#_g11479_|
+                                                       (cons |gx[1]#_g11480_|
                                                              '())))
                                            '()))))))
        'type-exhibitor:
@@ -175,16 +175,16 @@
     (define |gx[:0:]#import-expander|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gx[1]#_g11253_|
+       |gx[1]#_g11481_|
        'expander-identifiers:
-       (cons |gx[1]#_g11254_|
-             (cons |gx[1]#_g11255_|
-                   (cons |gx[1]#_g11256_|
-                         (cons |gx[1]#_g11257_| (cons '() (cons '() '()))))))
+       (cons |gx[1]#_g11482_|
+             (cons |gx[1]#_g11483_|
+                   (cons |gx[1]#_g11484_|
+                         (cons |gx[1]#_g11485_| (cons '() (cons '() '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#import-expander::t
-        |gx[1]#_g11258_|
+        |gx[1]#_g11486_|
         'import-expander
         ':init!
         '()
@@ -192,16 +192,16 @@
     (define |gx[:0:]#export-expander|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gx[1]#_g11259_|
+       |gx[1]#_g11487_|
        'expander-identifiers:
-       (cons |gx[1]#_g11260_|
-             (cons |gx[1]#_g11261_|
-                   (cons |gx[1]#_g11262_|
-                         (cons |gx[1]#_g11263_| (cons '() (cons '() '()))))))
+       (cons |gx[1]#_g11488_|
+             (cons |gx[1]#_g11489_|
+                   (cons |gx[1]#_g11490_|
+                         (cons |gx[1]#_g11491_| (cons '() (cons '() '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#export-expander::t
-        |gx[1]#_g11264_|
+        |gx[1]#_g11492_|
         'export-expander
         ':init!
         '()
