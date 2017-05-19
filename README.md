@@ -49,16 +49,20 @@ $ git clone https://github.com/vyzo/gerbil.git
 ```
 
 ## Dependencies
-I have tested the bootstrap with Gambit v4.8.4, but older versions
-starting with v4.6.0 should work as well.
+I have tested the bootstrap with Gambit v4.8.x, but older versions
+starting with v4.6.0 used to work as well.
 
-The only hard dependency is `libcrypto` from OpenSSL; important parts
-of the standard library require it. You may need to install `openssl-dev`
-in ubuntu and similar systems.
+The core system has no dependencies outside Gambit, but the standard
+library has several mostly optional dependencies. The only hard dependency
+is `libcrypto` from OpenSSL; important parts of the standard library
+require it. You may need to install `openssl-dev` in ubuntu and similar
+systems.
 
 All the other dependencies are soft; library modules with foreign
-dependencies are not built by default. These optional libraries can
-be enabled at build-time by editing `$GERBIL_HOME/src/std/build-config.ss`.
+dependencies are not built by default, with the exception of `zlib`.
+The optional libraries can be enabled at build-time by editing
+`$GERBIL_HOME/src/std/build-config.ss`. You can also enable features later,
+by editing `build-config.ss` and running `build.ss` in `$GERBIL_HOME/src/std`
 
 ## Build Instructions
 After checking out the source code from Github, let `$GERBIL_HOME` be
