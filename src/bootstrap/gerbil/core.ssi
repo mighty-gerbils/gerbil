@@ -486,6 +486,7 @@ namespace: gerbil/core
                     (datum-parsing-exception? datum-parsing-exception?)
                     (datum-parsing-exception-filepos
                      datum-parsing-exception-filepos)
+                    (read-line read-line)
                     (displayln displayln)
                     (display* display*)
                     (load-module load-module)
