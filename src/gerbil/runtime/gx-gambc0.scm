@@ -1367,6 +1367,9 @@
   (and (struct-instance? error::t obj)
        (##vector-ref obj 3)))
 
+(define (datum-parsing-exception-filepos e)
+  (macro-readenv-filepos (datum-parsing-exception-readenv e)))
+
 ;;; assorted
 (define (create-directory* dir #!optional (perms #o755))
   (define (create1 path)

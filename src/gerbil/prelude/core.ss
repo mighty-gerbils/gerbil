@@ -220,6 +220,8 @@ package: gerbil
     AST::t AST? AST-e AST-source make-AST
     read-syntax read-syntax-from-file
     source-location? source-location-path? source-location-path
+    ;; required by the module reader to support #lang
+    datum-parsing-exception? datum-parsing-exception-filepos
     ;; string I/O
     ;;open-input-string open-output-string get-output-string
     ;;call-with-input-string with-input-from-string
