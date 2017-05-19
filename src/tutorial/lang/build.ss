@@ -8,5 +8,8 @@
         '("dot-app"
           "example/my-app"
           "auto-export"
-          "example/my-auto-export")))
+          "example/my-auto-export"
+          "sexp"
+          "example/my-sexp")))
+
 
