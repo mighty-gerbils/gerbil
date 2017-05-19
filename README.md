@@ -6,15 +6,16 @@ art macro and module system on the Gambit runtime.
 The macro system is based on quote-syntax, and provides the full
 meta-syntactic tower with a native implementation of syntax-case.
 It also provides a full-blown module system, similar to PLT Scheme's
-(sorry, racket) modules. The main difference from plt's modules is that
-Gerbil modules are single instantiation, supporting high performance ahead
-of time compilation and compiled macros.
+(sorry, Racket) modules. The main difference from Racket is that
+Gerbil modules are single instantiation, supporting high performance
+ahead of time compilation and compiled macros.
 
 ## History of Gerbil
 Gerbil has been my private Scheme for many years, evolved out of a set
-of common macros that i used across different implementations. As such
-I have had multiple backends that work with the Gerbil macro system, but I
-have elected to base the primary version of Gerbil on Gambit.
+of common macros that i used across different implementations and
+eventually a full-blown PLT macro language. As such I have had
+multiple backends that work with the Gerbil macro system, but I have
+elected to base the canonical version of Gerbil on Gambit.
 
 At the prompting of some friends (they know who they are), who
 had seen private versions of Gerbil, I decided to release it in public
