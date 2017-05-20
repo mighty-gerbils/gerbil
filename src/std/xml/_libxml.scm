@@ -43,9 +43,11 @@
               macro-btq-deq-prev
               macro-btq-deq-prev-set!
               macro-btq-owner-set!
+              macro-btq-deq-insert-at-tail!
               macro-slot
               macro-byte-kind macro-character-kind 
               macro-port? macro-port-rkind macro-port-of-rkind?
+              macro-struct-slot
               ))
 
 (c-declare #<<END-C
