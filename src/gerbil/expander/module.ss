@@ -235,14 +235,7 @@ namespace: gx
 
 (def (core-read-module/lang path)
   (def (read-body inp pre pkg ns)
-    (let* ((pre
-            (let (len (string-length pre))
-              (if (and (fx> len 1)
-                       (eq? (string-ref pre 0) #\")
-                       (eq? (string-ref pre (fx1- len)) #\"))
-                (substring pre 1 (fx1- len)) ; looks like a string path; good luck with spaces
-                (string->symbol pre))))
-           (prelude
+    (let* ((prelude
             (import-module pre))
            (read-module-body
             (cond
@@ -256,11 +249,12 @@ namespace: gx
                            (cut eval-syntax (binding-id (core-resolve-module-export xport)))))
                      (if (procedure? proc) proc
                          (raise-syntax-error #f
-                           "Illegal lang prelude; read-module-body is not a procedure" path proc)))))
+                           "Illegal #lang prelude; read-module-body is not a procedure"
+                           path pre proc)))))
              (else
               (raise-syntax-error #f
-                "Illegal lang prelude; does not export read-module-body for syntax" path))))
-           (path-id   (core-module-path->namespace path))
+                "Illegal #lang prelude; does not export read-module-body for syntax" path pre))))
+           (path-id (core-module-path->namespace path))
            (pkg-id (if pkg (string-append pkg "/" path-id) path-id))
            (module-id (string->symbol pkg-id))
            (module-ns (or ns pkg-id))
@@ -268,27 +262,47 @@ namespace: gx
             (parameterize ((current-module-reader-path path))
               (read-module-body inp))))
       (values prelude module-id module-ns body)))
+
+  (def (string-e obj what)
+    (cond
+     ((string? obj) obj)
+     ((symbol? obj)
+      (symbol->string obj))
+     (else
+      (raise-syntax-error #f (string-append "Illegal module " what) path obj))))
+  
+  (def (read-lang-args inp args)
+    (match args
+      ([prelude . rest]
+       (let lp ((rest rest) (pkg #f) (ns #f))
+         (match rest
+           ([package: pkg . rest]
+            (lp rest (string-e pkg "package") ns))
+           ([namespace: ns . rest]
+            (lp rest pkg (string-e ns "namespace")))
+           ([]
+            (read-body inp prelude pkg ns))
+           (else
+            (raise-syntax-error #f "Illegal #lang arguments" path rest)))))
+      (else
+       (raise-syntax-error #f "Illegal #lang arguments; missing prelude" path))))
   
   (def (read-lang inp)
-    ;; this head parsing approach breaks module paths with spaces
-    ;; but it's simple, so i can live with it until someone complains
-    (let* ((head (read-line inp))
-           (tokens (filter (lambda (str) (not (string-empty? str)))
-                           (string-split head #\space))))
-      (match tokens
-        (["#lang" prelude . args]
-         (let lp ((rest args) (pkg #f) (ns #f))
-           (match rest
-             (["package:" pkg . rest]
-              (lp rest pkg ns))
-             (["namespace:" ns . rest]
-              (lp rest pkg ns))
-             ([]
-              (read-body inp prelude pkg ns))
-             (else
-              (raise-syntax-error #f "Illegal #lang arguments" path rest)))))
-        (else
-         (raise-syntax-error #f "Illegal module syntax" path)))))
+    (let (head (read-line inp))
+      (cond
+       ((string-index head #\space)
+        => (lambda (ix)
+             (let (lang (substring head 0 ix))
+               (if (equal? lang "#lang")
+                 (let* ((rest (substring head (fx1+ ix) (string-length head)))
+                        (args
+                         (with-catch
+                          (cut raise-syntax-error #f "Illegal #lang arguments" path <>)
+                          (cut call-with-input-string rest (cut read-all <> read)))))
+                   (read-lang-args inp args))
+                 (raise-syntax-error #f "Illegal module syntax" path)))))
+       (else
+        (raise-syntax-error #f "Illegal module syntax" path)))))
   
   (def (read-e inp)
     (if (eq? (peek-char inp) #\#)

@@ -222,11 +222,11 @@ package: gerbil
     source-location? source-location-path? source-location-path
     ;; required by the module reader to support #lang
     datum-parsing-exception? datum-parsing-exception-filepos
-    read-line
+    read-line read-all
     ;; string I/O
-    ;;open-input-string open-output-string get-output-string
-    ;;call-with-input-string with-input-from-string
-    ;;call-with-output-string with-output-to-string
+    open-input-string open-output-string get-output-string
+    call-with-input-string with-input-from-string
+    call-with-output-string with-output-to-string
     ;; bytes I/O
     ;;open-input-bytes open-output-bytes get-output-bytes
     ;;call-with-input-bytes with-input-from-bytes
