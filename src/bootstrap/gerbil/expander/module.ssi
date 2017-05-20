@@ -82,10 +82,13 @@ namespace: gx
          (%#define-runtime
           current-module-reader-path
           gx#current-module-reader-path)
+         (%#define-runtime
+          current-module-reader-args
+          gx#current-module-reader-args)
          (%#define-runtime module-context:::init! gx#module-context:::init!)
          (%#begin (%#define-runtime
-                   prelude-context:::init!__opt-lambda11349
-                   gx#prelude-context:::init!__opt-lambda11349)
+                   prelude-context:::init!__opt-lambda11273
+                   gx#prelude-context:::init!__opt-lambda11273)
                   (%#begin (%#define-runtime
                             prelude-context:::init!__0
                             gx#prelude-context:::init!__0)
@@ -102,8 +105,8 @@ namespace: gx
           gx#export-expander::apply-export-expander)
          (%#define-runtime module-source-path gx#module-source-path)
          (%#begin (%#define-runtime
-                   import-module__opt-lambda11297
-                   gx#import-module__opt-lambda11297)
+                   import-module__opt-lambda11221
+                   gx#import-module__opt-lambda11221)
                   (%#begin (%#define-runtime
                             import-module__0
                             gx#import-module__0)
@@ -114,8 +117,8 @@ namespace: gx
          (%#define-runtime eval-module gx#eval-module)
          (%#define-runtime core-eval-module gx#core-eval-module)
          (%#begin (%#define-runtime
-                   core-context-prelude__opt-lambda11262
-                   gx#core-context-prelude__opt-lambda11262)
+                   core-context-prelude__opt-lambda11186
+                   gx#core-context-prelude__opt-lambda11186)
                   (%#begin (%#define-runtime
                             core-context-prelude__0
                             gx#core-context-prelude__0)
@@ -126,8 +129,8 @@ namespace: gx
           core-module->prelude-context
           gx#core-module->prelude-context)
          (%#begin (%#define-runtime
-                   core-import-module__opt-lambda11206
-                   gx#core-import-module__opt-lambda11206)
+                   core-import-module__opt-lambda11130
+                   gx#core-import-module__opt-lambda11130)
                   (%#begin (%#define-runtime
                             core-import-module__0
                             gx#core-import-module__0)
