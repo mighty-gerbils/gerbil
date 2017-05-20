@@ -292,6 +292,7 @@ package: gerbil
     current-expander-path
     current-expander-phi
     current-module-reader-path
+    current-module-reader-args
     local-context? top-context? module-context? prelude-context?
     expander-context-id  module-context-ns
     make-local-context

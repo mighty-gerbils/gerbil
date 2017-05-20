@@ -35,6 +35,8 @@ namespace: gx
   (make-parameter #f))
 (def current-module-reader-path
   (make-parameter #f))
+(def current-module-reader-args
+  (make-parameter #f))
 
 (defmethod {:init! module-context}
   (lambda (self id super ns path)
@@ -234,7 +236,7 @@ namespace: gx
          (values prelude module-id module-ns body))))))
 
 (def (core-read-module/lang path)
-  (def (read-body inp pre pkg ns)
+  (def (read-body inp pre pkg ns args)
     (let* ((prelude
             (import-module pre))
            (read-module-body
@@ -259,7 +261,8 @@ namespace: gx
            (module-id (string->symbol pkg-id))
            (module-ns (or ns pkg-id))
            (body
-            (parameterize ((current-module-reader-path path))
+            (parameterize ((current-module-reader-path path)
+                           (current-module-reader-args args))
               (read-module-body inp))))
       (values prelude module-id module-ns body)))
 
@@ -273,17 +276,12 @@ namespace: gx
   
   (def (read-lang-args inp args)
     (match args
-      ([prelude . rest]
-       (let lp ((rest rest) (pkg #f) (ns #f))
-         (match rest
-           ([package: pkg . rest]
-            (lp rest (string-e pkg "package") ns))
-           ([namespace: ns . rest]
-            (lp rest pkg (string-e ns "namespace")))
-           ([]
-            (read-body inp prelude pkg ns))
-           (else
-            (raise-syntax-error #f "Illegal #lang arguments" path rest)))))
+      ([prelude . args]
+       (let* ((pkg (pgetq package: args))
+              (pkg (and pkg (string-e pkg "package")))
+              (ns (pgetq namespace: args))
+              (ns (and ns (string-e ns "namespace"))))
+         (read-body inp prelude pkg ns args)))
       (else
        (raise-syntax-error #f "Illegal #lang arguments; missing prelude" path))))
   
