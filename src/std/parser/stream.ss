@@ -24,59 +24,59 @@ package: std/parser
       (error "Bad input source; not a character-input-port" port))
     (direct-struct-instance-init! self port [] (make-location port 0 0 0 0) [])))
 
-(def (char-stream-close ts)
-  (close-input-port (char-stream-port ts)))
+(def (char-stream-close cs)
+  (close-input-port (char-stream-port cs)))
 
-(def (char-stream-getc ts)
-  (with ((char-stream port buf loc lines) ts)
+(def (char-stream-getc cs)
+  (with ((char-stream port buf loc lines) cs)
     (match buf
       ([char . rest]
-       (set! (char-stream-buf ts)
+       (set! (char-stream-buf cs)
          rest)
-       (set! (char-stream-loc ts)
+       (set! (char-stream-loc cs)
          (location-getc loc char lines))
        char)
       (else
        (let* ((loc (port-location port))
               (char (read-char port)))
          (unless (eof-object? char)
-           (set! (char-stream-loc ts) loc)
+           (set! (char-stream-loc cs) loc)
            (when (eq? #\newline char)
-             (set! (char-stream-lines ts)
+             (set! (char-stream-lines cs)
                (cons (location-xoff loc) lines))))
          char)))))
 
-(def (char-stream-ungetc ts char)
-  (with ((char-stream port buf loc lines) ts)
-    (set! (char-stream-buf ts)
+(def (char-stream-ungetc cs char)
+  (with ((char-stream port buf loc lines) cs)
+    (set! (char-stream-buf cs)
       (cons char buf))
-    (set! (char-stream-loc ts)
+    (set! (char-stream-loc cs)
       (location-ungetc loc char lines))))
 
-(def (char-stream-peek ts)
-  (with ((char-stream port buf) ts)
+(def (char-stream-peek cs)
+  (with ((char-stream port buf) cs)
     (match buf
       ([char . rest] char)
       (else
        (peek-char port)))))
 
 (def (location-getc loc char lines)
-  (with ((location port line col off xoff) loc)
+  (with ((location port line col _ xoff) loc)
     (cond
      ((fx< xoff 0)
-      (make-location port 0 0 0 0))
+      (make-location port 0 0 1 0))
      ((memq xoff lines)
-      (make-location port (fx1+ line) 0 off (fx1+ xoff)))
+      (make-location port (fx1+ line) 0 1 (fx1+ xoff)))
      (else
-      (make-location port line (fx1+ col) off (fx1+ xoff))))))
+      (make-location port line (fx1+ col) 1 (fx1+ xoff))))))
 
 (def (location-ungetc loc char lines)
   (with ((location port line col _ xoff) loc)
     (if (fx> col 0)
-      (make-location port line (fx1- col) 0 (fx1- xoff))
+      (make-location port line (fx1- col) 1 (fx1- xoff))
       (let* ((xoff (fx1- xoff))
              (base (or (find (cut < <> xoff) lines) -1))
              (col (fx- xoff base 1)))
-        (make-location port (fx1- line) col 0 xoff)))))
+        (make-location port (fx1- line) col 1 xoff)))))
 
 

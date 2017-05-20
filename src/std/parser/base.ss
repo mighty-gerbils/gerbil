@@ -78,5 +78,5 @@ package: std/parser
          (xoff (fx+ (macro-character-port-rchars port)
                     (macro-character-port-rlo port)))
          (col (fx- xoff (macro-character-port-rcurline port))))
-    (make-location port line col 0 xoff)))
+    (make-location port line col 1 xoff)))
 
