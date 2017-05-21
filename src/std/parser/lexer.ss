@@ -32,18 +32,22 @@ package: std/parser
   (def (loop Ls chars start E)
     (let (next (char-stream-getc cs))
       (if (eof-object? next)
-        ;; if any L is nullable, then it matches the lexeme
-        (let lp ((rest-Ls Ls) (rest-Rs Rs))
-          (match rest-Ls
-            ([L . rest-Ls]
-             (match rest-Rs
-               ([R . rest-Rs]
-                (if (delta L)
-                  (let (end (char-stream-loc cs))
-                    (R (chars->string chars) (token-loc start end)))
-                  (lp rest-Ls rest-Rs)))))
-            (else
-             (E chars))))
+        (if (null? chars)
+          ;; we are not parsing any lexeme, this plain old eof
+          (eof-object)
+          ;; check if any L is nullable, then it matches the lexeme
+          (let lp ((rest-Ls Ls) (rest-Rs Rs))
+            (match rest-Ls
+              ([L . rest-Ls]
+               (match rest-Rs
+                 ([R . rest-Rs]
+                  (if (delta L)
+                    (let (end (char-stream-loc cs))
+                      (R (chars->string chars) (token-loc start end)))
+                    (lp rest-Ls rest-Rs)))))
+              (else
+               ;; no match, fail with incomplete parse
+               (E chars)))))
         (let* ((chars (cons next chars))
                (Ls* (map (cut deriv <> next) Ls))
                (deltas (map delta Ls*)))
@@ -80,8 +84,6 @@ package: std/parser
   
   (let* ((start (char-stream-loc cs))
          (E (lambda (chars)
-              (if (null? chars)
-                (eof-object)
-                (let (end (char-stream-loc cs))
-                  (raise-e chars start end))))))
+              (let (end (char-stream-loc cs))
+                (raise-e chars start end)))))
     (loop Ls [] start E)))
