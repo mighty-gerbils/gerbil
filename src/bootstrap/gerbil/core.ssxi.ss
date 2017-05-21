@@ -4,6 +4,23 @@
 prelude: :gerbil/compiler/ssxi
 package: gerbil
 
+;; gx-gambc0: struct-instance? and direct-struct-instance? [pattern matcher]
+(declare-type*
+ (struct-instance?
+  (@lambda 2 inline:
+      (ast-rules (%#call)
+        ((%#call _ klass obj)
+         (%#call (%#ref ##structure-instance-of?)
+                 obj
+                 (%#call (%#ref ##type-id) klass))))))
+ (direct-struct-instance?
+  (@lambda 2 inline:
+      (ast-rules (%#call)
+        ((%#call _ klass obj)
+         (%#call (%#ref ##structure-direct-instance-of?)
+                 obj
+                 (%#call (%#ref ##type-id) klass)))))))
+
 ;; gx-gambc0: simple runtime functions that should be inlined
 (declare-type*
  (true (@lambda (0) inline:

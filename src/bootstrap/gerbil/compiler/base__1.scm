@@ -1,13 +1,13 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gxc[1]#_g2438_| (gx#core-quote-syntax 'symbol-table::t))
-  (define |gxc[1]#_g2439_| (gx#core-quote-syntax 'symbol-table::t))
-  (define |gxc[1]#_g2440_| (gx#core-quote-syntax 'make-symbol-table))
-  (define |gxc[1]#_g2441_| (gx#core-quote-syntax 'symbol-table?))
-  (define |gxc[1]#_g2442_| (gx#core-quote-syntax 'symbol-table-gensyms))
-  (define |gxc[1]#_g2443_| (gx#core-quote-syntax 'symbol-table-bindings))
-  (define |gxc[1]#_g2444_| (gx#core-quote-syntax 'symbol-table-gensyms-set!))
-  (define |gxc[1]#_g2445_| (gx#core-quote-syntax 'symbol-table-bindings-set!))
+  (define |gxc[1]#_g2600_| (gx#core-quote-syntax 'symbol-table::t))
+  (define |gxc[1]#_g2601_| (gx#core-quote-syntax 'symbol-table::t))
+  (define |gxc[1]#_g2602_| (gx#core-quote-syntax 'make-symbol-table))
+  (define |gxc[1]#_g2603_| (gx#core-quote-syntax 'symbol-table?))
+  (define |gxc[1]#_g2604_| (gx#core-quote-syntax 'symbol-table-gensyms))
+  (define |gxc[1]#_g2605_| (gx#core-quote-syntax 'symbol-table-bindings))
+  (define |gxc[1]#_g2606_| (gx#core-quote-syntax 'symbol-table-gensyms-set!))
+  (define |gxc[1]#_g2607_| (gx#core-quote-syntax 'symbol-table-bindings-set!))
   (begin
     (define |gxc[:0:]#ast-case|
       (lambda (_stx326_)
@@ -29,19 +29,19 @@
                                        (_tl341380_ (##cdr _e339373_)))
                                    (if (gx#stx-pair/null? _tl341380_)
                                        (if (fx>= (gx#stx-length _tl341380_) '0)
-                                           (let ((_g2434_ (gx#syntax-split-splice
+                                           (let ((_g2596_ (gx#syntax-split-splice
                                                            _tl341380_
                                                            '0)))
                                              (begin
-                                               (let ((_g2435_ (values-count
-                                                               _g2434_)))
-                                                 (if (not (fx= _g2435_ 2))
+                                               (let ((_g2597_ (values-count
+                                                               _g2596_)))
+                                                 (if (not (fx= _g2597_ 2))
                                                      (error "Context expects 2 values"
-                                                            _g2435_)))
+                                                            _g2597_)))
                                                (let ((_target342383_
-                                                      (values-ref _g2434_ 0))
+                                                      (values-ref _g2596_ 0))
                                                      (_tl344386_
-                                                      (values-ref _g2434_ 1)))
+                                                      (values-ref _g2596_ 1)))
                                                  (if (gx#stx-null? _tl344386_)
                                                      (letrec ((_loop345389_
                                                                (lambda (_hd343393_
@@ -70,16 +70,16 @@
                                                      (if (fx>= (gx#stx-length
                                                                 _g437457_)
                                                                '0)
-                                                         (let ((_g2436_ (gx#syntax-split-splice
+                                                         (let ((_g2598_ (gx#syntax-split-splice
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                  _g437457_
                                  '0)))
                    (begin
-                     (let ((_g2437_ (values-count _g2436_)))
-                       (if (not (fx= _g2437_ 2))
-                           (error "Context expects 2 values" _g2437_)))
-                     (let ((_target439460_ (values-ref _g2436_ 0))
-                           (_tl441463_ (values-ref _g2436_ 1)))
+                     (let ((_g2599_ (values-count _g2598_)))
+                       (if (not (fx= _g2599_ 2))
+                           (error "Context expects 2 values" _g2599_)))
+                     (let ((_target439460_ (values-ref _g2598_ 0))
+                           (_tl441463_ (values-ref _g2598_ 1)))
                        (if (gx#stx-null? _tl441463_)
                            (letrec ((_loop442466_
                                      (lambda (_hd440470_ _clause446473_)
@@ -221,16 +221,16 @@
     (define |gxc[:0:]#symbol-table|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g2438_|
+       |gxc[1]#_g2600_|
        'expander-identifiers:
        (cons '#f
-             (cons |gxc[1]#_g2439_|
-                   (cons |gxc[1]#_g2440_|
-                         (cons |gxc[1]#_g2441_|
-                               (cons (cons |gxc[1]#_g2442_|
-                                           (cons |gxc[1]#_g2443_| '()))
-                                     (cons (cons |gxc[1]#_g2444_|
-                                                 (cons |gxc[1]#_g2445_| '()))
+             (cons |gxc[1]#_g2601_|
+                   (cons |gxc[1]#_g2602_|
+                         (cons |gxc[1]#_g2603_|
+                               (cons (cons |gxc[1]#_g2604_|
+                                           (cons |gxc[1]#_g2605_| '()))
+                                     (cons (cons |gxc[1]#_g2606_|
+                                                 (cons |gxc[1]#_g2607_| '()))
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
