@@ -10,14 +10,16 @@ package: std/parser
         char-stream-close
         char-stream-peek
         char-stream-getc
-        char-stream-ungetc)
+        char-stream-ungetc
+        port-location)
 
 ;; port: character-input-port we are parsing
 ;; buf:  lookahead buffer (returned with ungetc)
 ;; loc:  location of last character read with getc
 ;; lines: offsets of lines encountered in the stream
 (defstruct char-stream (port buf loc lines)
-  constructor: :init!)
+  constructor: :init!
+  final: #t)
 
 ;; _gambit#.scm
 (extern namespace: #f

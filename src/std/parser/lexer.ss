@@ -7,7 +7,73 @@ package: std/parser
         :std/parser/stream
         :std/parser/rlang)
 
-(export #t) ;; XXX
+(export lex
+        token-stream?
+        token-stream-close
+        token-stream-peek
+        token-stream-get
+        token-stream-unget)
+
+(defstruct token-stream (cs buf Ls Rs)
+  final: #t)
+
+;; ignored token [eg whitespace, comments]
+(def $ (make-token '$ #!void #f))
+(def ($? obj)
+  (eq? $ obj))
+
+;; input: string, character-input-port, or char-stream
+;; Ls: list of rlangs for each lexeme [see lex1]
+;; Rs: list of reductions for each lexeme [see lex1]
+;; => token-stream
+(def (lex input Ls Rs)
+  (let (cs (input-stream-e input))
+    (make-token-stream cs [] Ls Rs)))
+
+(def (token-stream-close ts)
+  (char-stream-close
+   (token-stream-cs ts)))
+
+(def (token-stream-get ts)
+  (with ((token-stream cs buf Ls Rs) ts)
+    (match buf
+      ([tok . rest]
+       (set! (token-stream-buf ts)
+         rest)
+       tok)
+      (else
+       (let lp ()
+         (let (next (lex1 cs Ls Rs))
+           (if ($? next)
+             (lp)
+             next)))))))
+
+(def (token-stream-unget ts tok)
+  (with ((token-stream _ buf) ts)
+    (set! (token-stream-buf ts)
+      (cons tok buf))))
+
+(def (token-stream-peek ts)
+  (with ((token-stream _ buf) ts)
+    (match buf
+      ([tok . rest]
+       tok)
+      (else
+       (let (next (token-stream-get ts))
+         (unless (eof-object? next)
+           (set! (token-stream-buf ts)
+             [next]))
+         next)))))
+
+(def (input-stream-e inp)
+  (cond
+   ((input-port? inp)
+    (make-char-stream inp))
+   ((string? inp)
+    (make-char-stream (open-input-string inp)))
+   ((char-stream? inp) inp)
+   (else
+    (error "Bad input source; expected input-port, string or char-stream" inp))))
 
 ;; cs: char-stream 
 ;; Ls: list of rlangs for each lexeme; matches longest, with ties resolved in order
@@ -16,13 +82,8 @@ package: std/parser
   (def (chars->string chars)
     (list->string (reverse chars)))
   
-  (def (token-loc start end)
-    (with (((location port line col _ xoff) start)
-           ((location _ _ _ eoff exoff) end))
-      (make-location port line col (fx+ (fx- exoff xoff) eoff) xoff)))
-
   (def (token-e t e start end)
-    (let (loc (token-loc start end))
+    (let (loc (location-delta start end))
       (make-token t e loc)))
 
   (def (raise-e chars start end)
@@ -43,7 +104,7 @@ package: std/parser
                  ([R . rest-Rs]
                   (if (delta L)
                     (let (end (char-stream-loc cs))
-                      (R (chars->string chars) (token-loc start end)))
+                      (R (chars->string chars) (location-delta start end)))
                     (lp rest-Ls rest-Rs)))))
               (else
                ;; no match, fail with incomplete parse
@@ -72,7 +133,7 @@ package: std/parser
                              (match rest-Rs
                                ([R . rest-Rs]
                                 (if hd
-                                  (R (chars->string chars) (token-loc start end))
+                                  (R (chars->string chars) (location-delta start end))
                                   (lp rest-deltas rest-Rs))))))))))
               (loop Ls* chars start E)))
            ((ormap (? (not @nul?)) Ls*)
