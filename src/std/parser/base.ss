@@ -8,8 +8,8 @@ package: std/parser
 
 (defstruct (parse-error <error>) ())
 
-(defstruct token (t e loc))
-(defstruct location (port line col off xoff))
+(defstruct token (t e loc) final: #t)
+(defstruct location (port line col off xoff) final: #t)
 
 (def (wrap-syntax e loc)
   (make-AST e (location->source-location loc)))
@@ -65,18 +65,3 @@ package: std/parser
 
 (def (display-location loc (port (current-output-port)))
   (##display-locat (location->source-location loc)  #t port))
-
-;; _gambit#.scm
-(extern namespace: #f
-  macro-character-port-rlines
-  macro-character-port-rchars
-  macro-character-port-rcurline
-  macro-character-port-rlo)
-  
-(def (port-location port)
-  (let* ((line (macro-character-port-rlines port))
-         (xoff (fx+ (macro-character-port-rchars port)
-                    (macro-character-port-rlo port)))
-         (col (fx- xoff (macro-character-port-rcurline port))))
-    (make-location port line col 1 xoff)))
-

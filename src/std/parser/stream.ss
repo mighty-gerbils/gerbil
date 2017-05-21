@@ -16,7 +16,11 @@ package: std/parser
 
 ;; _gambit#.scm
 (extern namespace: #f
-  macro-character-input-port?)
+  macro-character-input-port?
+  macro-character-port-rlines
+  macro-character-port-rchars
+  macro-character-port-rcurline
+  macro-character-port-rlo)
 
 (defmethod {:init! char-stream}
   (lambda (self port)
@@ -79,4 +83,9 @@ package: std/parser
              (col (fx- xoff base 1)))
         (make-location port (fx1- line) col 1 xoff)))))
 
-
+(def (port-location port)
+  (let* ((line (macro-character-port-rlines port))
+         (xoff (fx+ (macro-character-port-rchars port)
+                    (macro-character-port-rlo port)))
+         (col (fx- xoff (macro-character-port-rcurline port))))
+    (make-location port line col 1 xoff)))
