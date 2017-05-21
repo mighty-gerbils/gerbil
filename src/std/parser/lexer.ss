@@ -12,7 +12,8 @@ package: std/parser
         token-stream-close
         token-stream-peek
         token-stream-get
-        token-stream-unget)
+        token-stream-unget
+        $ $? $$ $$?)
 
 (defstruct token-stream (cs buf Ls Rs)
   final: #t)
@@ -21,6 +22,12 @@ package: std/parser
 (def $ (make-token '$ #!void #f))
 (def ($? obj)
   (eq? $ obj))
+
+;; end of input -- to signal the parser to stop
+(def $$ (make-token '$$ #!void #f))
+(def ($$? obj)
+  (or (eq? $$ obj)
+      (eof-object? obj)))
 
 ;; input: string, character-input-port, or char-stream
 ;; Ls: list of rlangs for each lexeme [see lex1]
