@@ -4,7 +4,7 @@
 package: std/parser
 
 (export
-  @nul @eps @char @charset @negset
+  @nul @nul? @eps @eps? @char @charset @negset
   @alt @cat @rep* @rep+ @maybe
   deriv delta recognizes?
   )
@@ -33,7 +33,9 @@ package: std/parser
   (make-char c))
 
 (def (@charset . chars)
-  (make-charset (list->hash-table-eq (map (cut cons <> #t) chars))))
+  (if (null? chars)
+    @nul
+    (make-charset (list->hash-table-eq (map (cut cons <> #t) chars)))))
 
 (def (@negset . chars)
   (make-negset (list->hash-table-eq (map (cut cons <> #t) chars))))
@@ -57,7 +59,9 @@ package: std/parser
    (@cat L1 (apply @cat L2 rest))))
 
 (def (@rep* L)
-  (make-rep L))
+  (if (@nul? L)
+    @eps
+    (make-rep L)))
 
 (def (@rep+ L)
   (@cat L (@rep* L)))
