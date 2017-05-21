@@ -5,7 +5,12 @@ package: std/parser
 
 (import :std/parser/base
         :gerbil/gambit/ports)
-(export #t)
+(export make-char-stream char-stream?
+        char-stream-loc
+        char-stream-close
+        char-stream-peek
+        char-stream-getc
+        char-stream-ungetc)
 
 ;; port: character-input-port we are parsing
 ;; buf:  lookahead buffer (returned with ungetc)
