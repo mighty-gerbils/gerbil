@@ -80,8 +80,8 @@ package: std/parser
   
   (let* ((start (char-stream-loc cs))
          (E (lambda (chars)
-              (let (end (char-stream-loc cs))
-                (raise-e chars start end)))))
+              (if (null? chars)
+                (eof-object)
+                (let (end (char-stream-loc cs))
+                  (raise-e chars start end))))))
     (loop Ls [] start E)))
-                    
-                     
