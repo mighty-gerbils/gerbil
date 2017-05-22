@@ -58,11 +58,12 @@ package: std/parser
          char)))))
 
 (def (char-stream-ungetc cs char)
-  (with ((char-stream port buf loc lines) cs)
-    (set! (char-stream-buf cs)
-      (cons char buf))
-    (set! (char-stream-loc cs)
-      (location-ungetc loc char lines))))
+  (unless (eof-object? char)
+    (with ((char-stream port buf loc lines) cs)
+      (set! (char-stream-buf cs)
+        (cons char buf))
+      (set! (char-stream-loc cs)
+        (location-ungetc loc char lines)))))
 
 (def (char-stream-peek cs)
   (with ((char-stream port buf) cs)
