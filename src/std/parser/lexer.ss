@@ -164,7 +164,9 @@ package: std/parser
             ;; no lexeme matches, continue with E
             (E chars)))))))
   
-  (let* ((start (char-stream-loc cs))
+  (let* ((first (char-stream-getc cs)) ; get the right starting location!
+         (start (char-stream-loc cs))
+         (_ (char-stream-ungetc cs first))
          (E (lambda (chars)
               (let (end (char-stream-loc cs))
                 (raise-e chars start end)))))
