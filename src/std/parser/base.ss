@@ -41,8 +41,12 @@ package: std/parser
            (unless (null? rest)
              (display "... detail: ")
              (for-each (match <>
-                         ((token t e _)
-                          (displayln "(" t " " e ")"))
+                         ((token t e loc)
+                          (display "(") (display t) (display " ") (display e) (display ")")
+                          (when loc
+                            (display " at ")
+                            (display-location loc))
+                          (newline))
                          (obj (write obj) (newline)))
                        rest))))
         (else
