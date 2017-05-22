@@ -381,7 +381,13 @@ static ___SCMOBJ ffi_DH_free (void *dh)
 
 static BIGNUM *ffi_DH_pub_key (DH *dh)
 {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
  return dh->pub_key;
+#else
+ BIGNUM const *pub;
+ DH_get0_key (dh, &pub, NULL);
+ return pub;
+#endif
 }
 
 static int ffi_DH_compute_key (___SCMOBJ secret, BIGNUM *pubkey, DH *dh)
