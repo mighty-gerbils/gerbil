@@ -13,6 +13,7 @@ package: std/parser
         token-stream-peek
         token-stream-get
         token-stream-unget
+        token-stream-loc
         $ $? $$ $$?)
 
 (defstruct token-stream (cs buf Ls Rs)
@@ -24,7 +25,7 @@ package: std/parser
   (eq? $ obj))
 
 ;; end of input -- to signal the parser to stop
-(def $$ (make-token '$$ #!void #f))
+(def $$ (make-token '$$ (eof-object) #f))
 (def ($$? obj)
   (or (eq? $$ obj)
       (eof-object? obj)))
@@ -56,9 +57,10 @@ package: std/parser
              next)))))))
 
 (def (token-stream-unget ts tok)
-  (with ((token-stream _ buf) ts)
-    (set! (token-stream-buf ts)
-      (cons tok buf))))
+  (unless (eof-object? tok)
+    (with ((token-stream _ buf) ts)
+      (set! (token-stream-buf ts)
+        (cons tok buf)))))
 
 (def (token-stream-peek ts)
   (with ((token-stream _ buf) ts)
@@ -71,6 +73,14 @@ package: std/parser
            (set! (token-stream-buf ts)
              [next]))
          next)))))
+
+(def (token-stream-loc ts)
+  (with ((token-stream cs buf) ts)
+    (match buf
+      ([tok . rest]
+       (token-loc tok))
+      (else
+       (char-stream-loc cs)))))
 
 (def (input-stream-e inp)
   (cond
