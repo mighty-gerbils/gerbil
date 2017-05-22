@@ -7,7 +7,7 @@ package: std/parser
         :std/parser/stream
         :std/parser/rlang)
 
-(export lex
+(export lex lex-chars
         token-stream?
         token-stream-close
         token-stream-peek
@@ -37,6 +37,10 @@ package: std/parser
 (def (lex input Ls Rs)
   (let (cs (input-stream-e input))
     (make-token-stream cs [] Ls Rs)))
+
+;; simples possible lexer: produces character tokens for every char in the stream
+(def (lex-chars input)
+  (lex input [@dot] [(cut make-token 'Char <> <>)]))
 
 (def (token-stream-close ts)
   (char-stream-close

@@ -7,7 +7,7 @@ package: std/parser
         :std/parser/rlang
         :std/parser/lexer
         :std/parser/defparser)
-(export parse-rx lex-chars)
+(export parse-rx)
 
 (defparser parse-rx
   lexer: lex-chars
@@ -93,6 +93,4 @@ package: std/parser
       (raise-parse-error 'parse-rx "Illegal character range"
                          (make-token 'CharRange [char-start char-end] loc)))))
 
-(def (lex-chars input)
-  (lex input [@dot] [(cut make-token 'Char <> <>)]))
 
