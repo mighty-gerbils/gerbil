@@ -32,12 +32,12 @@ package: std/parser
 (def (@char c)
   (make-char c))
 
-(def (@charset . chars)
+(def (@charset chars)
   (if (null? chars)
     @nul
     (make-charset (list->hash-table-eq (map (cut cons <> #t) chars)))))
 
-(def (@negset . chars)
+(def (@negset chars)
   (make-negset (list->hash-table-eq (map (cut cons <> #t) chars))))
 
 (def* @alt
