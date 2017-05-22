@@ -45,6 +45,7 @@ package: std/parser
   (@negset []))
 
 (def* @alt
+  ((L) L)
   ((L1 L2)
    (cond
     ((@nul? L1) L2)
@@ -55,6 +56,7 @@ package: std/parser
    (@alt L1 (apply @alt L2 rest))))
 
 (def* @cat
+  ((L) L)
   ((L1 L2)
    (if (or (@nul? L1) (@nul? L2))
      @nul
