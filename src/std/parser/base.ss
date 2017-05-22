@@ -12,7 +12,8 @@ package: std/parser
 (defstruct location (port line col off xoff) final: #t)
 
 (def (wrap-syntax e loc)
-  (make-AST e (location->source-location loc)))
+  (if (or (AST? e) (not loc)) e
+      (make-AST e (location->source-location loc))))
 
 (def (wrap-identity e loc)
   e)
