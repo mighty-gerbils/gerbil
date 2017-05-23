@@ -75,7 +75,14 @@ package: std/parser
 (def (display-location loc (port (current-output-port)))
   (##display-locat (location->source-location loc)  #t port))
 
+;; location [start end]
 (def (location-delta start end)
   (with (((location port line col _ xoff) start)
          ((location _ _ _ eoff exoff) end))
     (make-location port line col (fx+ (fx- exoff xoff) eoff) xoff)))
+
+;; location [start end)
+(def (location-delta* start end)
+  (with (((location port line col _ xoff) start)
+         ((location _ _ _ _ exoff) end))
+    (make-location port line col (fx- exoff xoff) xoff)))
