@@ -17,7 +17,7 @@ package: std/parser
         token-stream-loc
         $ $? $$ $$?)
 
-(defstruct token-stream (cs buf Ls Rs)
+(defstruct token-stream (cs buf Ls Rs $$)
   final: #t)
 
 ;; ignored token [eg whitespace, comments]
@@ -26,18 +26,22 @@ package: std/parser
   (eq? $ obj))
 
 ;; end of input -- to signal the parser to stop
-(def $$ (make-token '$$ (eof-object) #f))
+(def ($$ loc)
+  (make-token '$$ (eof-object) loc))
+
 (def ($$? obj)
-  (or (eq? $$ obj)
-      (eof-object? obj)))
+  (match obj
+    ((token '$$) #t)
+    ((? eof-object?) #t)
+    (else #f)))
 
 ;; input: string, character-input-port, or char-stream
 ;; Ls: list of rlangs for each lexeme [see lex1]
 ;; Rs: list of reductions for each lexeme [see lex1]
 ;; => token-stream
 (def (lex input Ls Rs)
-  (let (cs (input-stream-e input))
-    (make-token-stream cs [] Ls Rs)))
+  (let (cs (lexer-input-stream input))
+    (make-token-stream cs [] Ls Rs #f)))
 
 ;; simples possible lexer: produces character tokens for every char in the stream
 (def (lex-chars input)
@@ -65,7 +69,13 @@ package: std/parser
 (def (token-stream-next ts)
   (let (next (token-stream-get ts))
     (if (eof-object? next)
-      $$
+      (cond
+       ((token-stream-$$ ts) => values)
+       (else
+        (let (eof ($$ (char-stream-loc (token-stream-cs ts))))
+          (set! (token-stream-$$ ts)
+            eof)
+          eof)))
       next)))
 
 (def (token-stream-unget ts tok)
@@ -94,7 +104,7 @@ package: std/parser
       (else
        (char-stream-loc cs)))))
 
-(def (input-stream-e inp)
+(def (lexer-input-stream inp)
   (cond
    ((input-port? inp)
     (make-char-stream inp))
