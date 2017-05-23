@@ -7,8 +7,7 @@ package: std/parser
         :std/parser/lexer)
 (export defparser @eq)
 
-(defrules @eq ())  ; token-e eq?
-(defrules @eqv ()) ; token-e eqv?
+(defrules @eq ())  ; token-e equality
 (defrules % ())    ; lexeme token
 (defrules ! ())    ; cut that the descent (invokes the E continuation)
 
