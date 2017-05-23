@@ -44,9 +44,9 @@ package: std/parser
            (displayln ": " msg)
            (displayln "... token: (" t " " e ")")
            (unless (null? rest)
-             (display "... detail: ")
              (for-each (match <>
                          ((token t e loc)
+                          (display "... detail: ")
                           (display "(") (display t) (display " ") (display e) (display ")")
                           (when loc
                             (display " at ")
