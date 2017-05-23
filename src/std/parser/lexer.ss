@@ -10,9 +10,10 @@ package: std/parser
 (export lex lex-chars
         token-stream?
         token-stream-close
-        token-stream-peek
         token-stream-get
+        token-stream-next
         token-stream-unget
+        token-stream-peek
         token-stream-loc
         $ $? $$ $$?)
 
@@ -59,6 +60,13 @@ package: std/parser
            (if ($? next)
              (lp)
              next)))))))
+
+;; get the next token, mapping eof to $$
+(def (token-stream-next ts)
+  (let (next (token-stream-get ts))
+    (if (eof-object? next)
+      $$
+      next)))
 
 (def (token-stream-unget ts tok)
   (unless (eof-object? tok)
