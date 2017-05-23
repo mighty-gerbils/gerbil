@@ -26,7 +26,7 @@ package: std/parser
       => (string->symbol (list->string $1))
       L2)
   (L2 (EscapedChar $1)
-      => ['@char (escape-char $1)]
+      => ['@char $1]
       (NegSet $1)
       => ['@negset $1]
       (CharSet $1)
@@ -38,7 +38,7 @@ package: std/parser
       Char)
   (EscapedChar
    (@cat (@eq #\\) (Char $1))
-   => $1)
+   => (escape-char $1))
   (CharSet
    (@cat (@eq #\[) (@eq #\-) (rep* (CharRange $1)) (@eq #\]))
    => ['@charset (apply append [#\-] $1)]
