@@ -54,9 +54,9 @@ package: std/parser
    => (make-char-range $1 $2 @loc)
    CharRangeChar)
   (CharRangeChar
+   (@eq #\]) !                      ; cut, we hit the end of the range
    (@eq #\-)
    => (raise-parse-error 'parse-rx "Illegal character range" @@)
-   (@eq #\]) !                      ; cut, we hit the end of the range
    EscapedChar
    Char)
   (IdentifierChar
