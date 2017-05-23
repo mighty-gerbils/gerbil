@@ -36,8 +36,9 @@ package: std/parser
       SpecialChar
       => (raise-parse-error 'parse-rx "Illegal use of special character" @@)
       Char)
-  (EscapedChar (@cat (@eq #\\) (Char $1))
-               => $1)
+  (EscapedChar
+   (@cat (@eq #\\) (Char $1))
+   => $1)
   (CharSet
    (@cat (@eq #\[) (@eq #\-) (rep* (CharRange $1)) (@eq #\]))
    => ['@charset (apply append [#\-] $1)]
@@ -56,8 +57,10 @@ package: std/parser
    (@eq #\-)
    => (raise-parse-error 'parse-rx "Illegal character range" @@)
    (@eq #\]) !                      ; cut, we hit the end of the range
+   EscapedChar
    Char)
   (IdentifierChar
+   (eq #\}) !                       ; cut, we hit the end of macro name
    SeparatorChar
    => (raise-parse-error 'parse-rx "Illegal identifier character" @@)
    Char)
