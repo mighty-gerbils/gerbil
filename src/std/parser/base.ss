@@ -11,12 +11,16 @@ package: std/parser
 (defstruct token (t e loc) final: #t)
 (defstruct location (port line col off xoff) final: #t)
 
+(def (wrap-identity e loc)
+  e)
+
 (def (wrap-syntax e loc)
   (if (or (AST? e) (not loc)) e
       (make-AST e (location->source-location loc))))
 
-(def (wrap-identity e loc)
-  e)
+(def (token->syntax tok)
+  (with ((token t e loc) tok)
+    (wrap-syntax [t e] loc)))
 
 (def (raise-parse-error where msg tok . rest)
   (raise (make-parse-error msg (cons tok rest) where)))
