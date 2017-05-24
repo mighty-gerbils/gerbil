@@ -354,11 +354,12 @@ package: std/parser
                               (body
                                #'(let* ((end (token-stream-loc ts))
                                         (@loc (location-delta* start end)))
-                                   (make-token 'rule-id
-                                               (wrap-e
-                                                (recv xvar ...)
-                                                @loc)
-                                               @loc))))
+                                   (K toks
+                                      (make-token 'rule-id
+                                                  (wrap-e
+                                                   (recv xvar ...)
+                                                   @loc)
+                                                  @loc)))))
                  (let (defn (wrap-source
                              #'(def (prod-id ts toks wrap-e K E)
                                  (let (start (token-stream-loc ts))
