@@ -25,11 +25,13 @@ package: std/parser
          (lp rest))))))
 
 (def (parser-fail where ts toks)
-  (for-each (cut token-stream-unget ts <>) toks)
-  (let (next (token-stream-peek ts))
-    (if ($$? next)
-      (raise-parse-error where "Premature end of input" next)
-      (raise-parse-error where "Failed to parse input" next))))
+  (let (last (car toks))
+    (for-each (cut token-stream-unget ts <>) toks)
+    (let (next (token-stream-peek ts))
+      (if ($$? next)
+        (raise-parse-error where "Premature end of input" next)
+        (apply raise-parse-error where "Failed to parse input" next
+               (if (eq? last next) [] [last]))))))
 
 (def (parser-input-stream input lexer)
   (if (token-stream? input)
