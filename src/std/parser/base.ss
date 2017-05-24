@@ -14,18 +14,18 @@ package: std/parser
 (def (wrap-identity e loc)
   e)
 
-(def (wrap-syntax e loc)
+(def (wrap-ast e loc)
   (if (or (AST? e) (not loc)) e
       (make-AST e (location->source-location loc))))
 
-(def (unwrap-syntax e)
+(def (unwrap-ast e)
   (if (AST? e)
     (AST-e e)
     e))
 
 (def (token->syntax tok)
   (with ((token t e loc) tok)
-    (wrap-syntax [t e] loc)))
+    (wrap-ast [t e] loc)))
 
 (def (raise-parse-error where msg tok . rest)
   (raise (make-parse-error msg (cons tok rest) where)))

@@ -19,7 +19,8 @@ package: std/parser
       => ['@rep+ $1]
       (@cat (L1 $1) (@eq #\?))
       => ['@maybe $1]
-      L1)
+      (@rep+ (L1 $1))
+      => ['@cat $1 ...])
   (L1 (@cat (@eq #\() (L $1) (@rep* (@cat (@eq #\|) (L $2))) (@eq #\)))
       => ['@alt $1 $2 ...]
       (@cat (@eq #\{) (@rep+ (IdentifierChar $1)) (@eq #\}))
@@ -41,14 +42,14 @@ package: std/parser
    => (escape-char $1))
   (CharSet
    (@cat (@eq #\[) (@eq #\-) (@rep* (CharRange $1)) (@eq #\]))
-   => ['@charset (apply append [#\-] (map unwrap-syntax $1))]
+   => ['@charset (apply append [#\-] (map unwrap-ast $1))]
    (@cat (@eq #\[) (@rep+ (CharRange $1)) (@eq #\]))
-   => ['@charset (apply append (map unwrap-syntax $1))])
+   => ['@charset (apply append (map unwrap-ast $1))])
   (NegSet
    (@cat (@eq #\[) (@eq #\^) (@eq #\-) (@rep* (CharRange $1)) (@eq #\]))
-   => ['@negset (apply append [#\-] (map unwrap-syntax $1))]
+   => ['@negset (apply append [#\-] (map unwrap-ast $1))]
    (@cat (@eq #\[) (@eq #\^) (@rep+ (CharRange $1)) (@eq #\]))
-   => ['@negset (apply append (map unwrap-syntax $1))])
+   => ['@negset (apply append (map unwrap-ast $1))])
   (CharRange
    (@cat (CharRangeChar $1) (@eq #\-) (CharRangeChar $2))
    => (make-char-range $1 $2 @loc)

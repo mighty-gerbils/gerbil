@@ -516,7 +516,7 @@ package: std/parser
                       (lexer-arg (if lexer ['$lexer lexer] '$lexer))
                       (parsedef
                        (stx-wrap-source
-                        #'(def (id input lexer-arg (wrap-e wrap-syntax))
+                        #'(def (id input lexer-arg (wrap-e wrap-ast))
                             (parser-parse 'id (parser-input-stream input $lexer) start-e wrap-e))
                         (stx-source stx))))
          #'(begin parsedef defn ...))))))
