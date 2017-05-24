@@ -221,7 +221,13 @@
      (for-each
        (lambda (detail)
          (display "... detail: ")
-         (_gx#pp-syntax detail))
+         (write (&AST->datum detail))
+         (cond
+          ((&AST-source detail)
+           => (lambda (loc)
+                (display " at ")
+                (##display-locat loc #t (current-output-port)))))
+         (newline))
        rest))
     (else (void)))
   (cond
