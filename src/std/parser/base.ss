@@ -42,12 +42,12 @@ package: std/parser
              (display " at ")
              (display where))
            (displayln ": " msg)
-           (displayln "... token: (" t " " e ")")
+           (display "... token: (") (display t) (display " ") (write e) (displayln ")")
            (unless (null? rest)
              (for-each (match <>
                          ((token t e loc)
                           (display "... detail: ")
-                          (display "(") (display t) (display " ") (display e) (display ")")
+                          (display "(") (display t) (display " ") (write e) (display ")")
                           (when loc
                             (display " at ")
                             (display-location loc))
