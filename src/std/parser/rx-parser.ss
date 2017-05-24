@@ -12,6 +12,7 @@ package: std/parser
 (def (simplify e)
   (match e
     (['@cat e] e)
+    (['@alt e] e)
     (else e)))
 
 (defparser parse-rx
@@ -27,7 +28,7 @@ package: std/parser
       (@rep+ (L1 $1))
       => (simplify ['@cat $1 ...]))
   (L1 (@cat (@eq #\() (L $1) (@rep* (@cat (@eq #\|) (L $2))) (@eq #\)))
-      => ['@alt $1 $2 ...]
+      => (simplify ['@alt $1 $2 ...])
       (@cat (@eq #\{) (@rep+ (IdentifierChar $1)) (@eq #\}))
       => (string->symbol (list->string $1))
       (@rep+ (L2 $1))
