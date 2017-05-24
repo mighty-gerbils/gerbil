@@ -9,10 +9,15 @@ package: std/parser
         :std/parser/defparser)
 (export parse-rx)
 
+(def (simplify e)
+  (match e
+    (['@cat e] e)
+    (else e)))
+
 (defparser parse-rx
   lexer: lex-chars
   (RX (@cat (@rep* (L $1)) $$)
-      => ['@cat $1 ...])
+      => (simplify ['@cat $1 ...]))
   (L  (@cat (L1 $1) (@eq #\*))
       => ['@rep* $1]
       (@cat (L1 $1) (@eq #\+))
@@ -20,13 +25,13 @@ package: std/parser
       (@cat (L1 $1) (@eq #\?))
       => ['@maybe $1]
       (@rep+ (L1 $1))
-      => ['@cat $1 ...])
+      => (simplify ['@cat $1 ...]))
   (L1 (@cat (@eq #\() (L $1) (@rep* (@cat (@eq #\|) (L $2))) (@eq #\)))
       => ['@alt $1 $2 ...]
       (@cat (@eq #\{) (@rep+ (IdentifierChar $1)) (@eq #\}))
       => (string->symbol (list->string $1))
       (@rep+ (L2 $1))
-      => ['@cat $1 ...])
+      => (simplify ['@cat $1 ...]))
   (L2 (EscapedChar $1)
       => ['@char $1]
       NegSet
