@@ -109,7 +109,6 @@ END-C
 
 (define-c-lambda/const-pointer EVP_md5 () EVP_MD*)
 (define-c-lambda/const-pointer EVP_sha1 () EVP_MD*)
-(define-c-lambda/const-pointer EVP_dss1 () EVP_MD*)
 (define-c-lambda/const-pointer EVP_sha224 () EVP_MD*)
 (define-c-lambda/const-pointer EVP_sha256 () EVP_MD*)
 (define-c-lambda/const-pointer EVP_sha384 () EVP_MD*)
@@ -386,7 +385,7 @@ static BIGNUM *ffi_DH_pub_key (DH *dh)
 #else
  BIGNUM const *pub;
  DH_get0_key (dh, &pub, NULL);
- return pub;
+ return (BIGNUM*) pub;
 #endif
 }
 
