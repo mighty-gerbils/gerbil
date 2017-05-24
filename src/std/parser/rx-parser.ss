@@ -34,8 +34,9 @@ package: std/parser
       (@eq #\.)
       => '@dot
       SpecialChar
-      => (raise-parse-error 'parse-rx "Illegal use of special character" @@)
-      Char)
+      !
+      (Char $1)
+      => ['@char $1])
   (EscapedChar
    (@cat (@eq #\\) (Char $1))
    => (escape-char $1))
@@ -95,5 +96,3 @@ package: std/parser
           (reverse chars)))
       (raise-parse-error 'parse-rx "Illegal character range"
                          (make-token 'CharRange [char-start char-end] loc)))))
-
-
