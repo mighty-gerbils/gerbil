@@ -355,7 +355,9 @@ package: std/parser
                                #'(let* ((end (token-stream-loc ts))
                                         (@loc (location-delta* start end)))
                                    (make-token 'rule-id
-                                               (recv xvar ...)
+                                               (wrap-e
+                                                (recv xvar ...)
+                                                @loc)
                                                @loc))))
                  (let (defn (wrap-source
                              #'(def (prod-id ts toks wrap-e K E)
@@ -375,7 +377,7 @@ package: std/parser
                (let (defn (wrap-source
                            #'(def (prod-id ts toks wrap-e K E)
                                (prod-e ts toks wrap-e
-                                       (lambda (toks . _) (E toks))
+                                       (lambda (toks . _) (K toks))
                                        E))
                            #'prod-id))
                  (K (cons defn defs))))))))
@@ -439,22 +441,33 @@ package: std/parser
                            #'prod-id))
                  (K (cons defn defs))))))))))
 
-  (def (generate-rule-def rule-id prod-ids defs K)
-    (def (generate1 prod-ids)
+  (def (generate-rule-def rule-id prod-ids prods defs K)
+    (def (prod-cut? prod)
+      (syntax-case prod (!)
+        ((prod !) #t)
+        (else #f)))
+    
+    (def (generate1 prod-ids prods)
       (match prod-ids
         ([prod-id]
-         (with-syntax ((prod-id prod-id))
-           #'(prod-id ts toks wrap-e K E)))
+         (match prods
+           ([prod]
+            (with-syntax ((prod-id prod-id)
+                          (K* (if (prod-cut? prod) 'E 'K)))
+              #'(prod-id ts toks wrap-e K* E)))))
         ([prod-id . rest]
-         (with-syntax ((prod-id prod-id)
-                       (next (generate1 rest)))
-           #'(prod-id ts toks wrap-e K
-                      (lambda (xtoks)
-                        (parser-rewind ts xtoks toks)
-                        next))))))
+         (match prods
+           ([prod . rest-prods]
+            (with-syntax ((prod-id prod-id)
+                          (next (generate1 rest rest-prods))
+                          (K* (if (prod-cut? prod) 'E 'K)))
+              #'(prod-id ts toks wrap-e K*
+                         (lambda (xtoks)
+                           (parser-rewind ts xtoks toks)
+                           next))))))))
     
     (with-syntax ((rule-id rule-id)
-                  (next (generate1 prod-ids)))
+                  (next (generate1 prod-ids prods)))
       (let (defn (wrap-source
                   #'(def (rule-id ts toks wrap-e K E)
                       next)
@@ -476,7 +489,7 @@ package: std/parser
                     (generate-prod prod prod-id #'rule-id defs
                                    (cut lp rest (fx1+ k) (cons prod-id prod-ids) <>))))
                  (else
-                  (generate-rule-def #'rule-id (reverse prod-ids) defs K))))))))))
+                  (generate-rule-def #'rule-id (reverse prod-ids) prods defs K))))))))))
   
   (def (generate-rules rules rule-ids)
     (let lp ((rest rules) (defs []))
