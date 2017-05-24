@@ -45,7 +45,7 @@ package: std/parser
 
 ;; simples possible lexer: produces character tokens for every char in the stream
 (def (lex-chars input)
-  (lex input [@dot] [(cut make-token 'Char <> <>)]))
+  (lex input [@dot] [(lambda (str loc) (make-token 'Char (string-ref str 0) loc))]))
 
 (def (token-stream-close ts)
   (char-stream-close
