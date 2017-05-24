@@ -40,14 +40,14 @@ package: std/parser
    (@cat (@eq #\\) (Char $1))
    => (escape-char $1))
   (CharSet
-   (@cat (@eq #\[) (@eq #\-) (rep* (CharRange $1)) (@eq #\]))
+   (@cat (@eq #\[) (@eq #\-) (@rep* (CharRange $1)) (@eq #\]))
    => ['@charset (apply append [#\-] $1)]
-   (@cat (@eq #\[) (rep+ (CharRange $1)) (@eq #\]))
+   (@cat (@eq #\[) (@rep+ (CharRange $1)) (@eq #\]))
    => ['@charset (apply append $1)])
   (NegSet
-   (@cat (@eq #\[) (@eq #\^) (@eq #\-) (rep* (CharRange $1)) (@eq #\]))
+   (@cat (@eq #\[) (@eq #\^) (@eq #\-) (@rep* (CharRange $1)) (@eq #\]))
    => ['@negset (apply append [#\-] $1)]
-   (@cat (@eq #\[) (@eq #\^) (rep+ (CharRange $1)) (@eq #\]))
+   (@cat (@eq #\[) (@eq #\^) (@rep+ (CharRange $1)) (@eq #\]))
    => ['@negset (apply append $1)])
   (CharRange
    (@cat (CharRangeChar $1) (@eq #\-) (CharRangeChar $2))
@@ -60,7 +60,7 @@ package: std/parser
    EscapedChar
    Char)
   (IdentifierChar
-   (eq #\}) !                       ; cut, we hit the end of macro name
+   (@eq #\}) !                      ; cut, we hit the end of macro name
    SeparatorChar
    => (raise-parse-error 'parse-rx "Illegal identifier character" @@)
    Char)
