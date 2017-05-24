@@ -227,7 +227,7 @@ package: std/parser
                                              (lp toks (cons xarg var) ...))
                                            (lambda (xtoks)
                                              (parser-rewind ts xtoks toks)
-                                             (K toks karg ...)))))
+                                             (K toks (reverse karg) ...)))))
                              #'prod-id))
                    (K (cons defn defs)))))))))
       ((@rep+ prod)
@@ -255,7 +255,7 @@ package: std/parser
                                                           (lp toks (cons xarg var) ...))
                                                         (lambda (xtoks)
                                                           (parser-rewind ts xtoks toks)
-                                                          (K toks karg ...)))))
+                                                          (K toks (reverse karg) ...)))))
                                             E))
                              #'prod-id))
                    (K (cons defn defs)))))))))
@@ -361,7 +361,7 @@ package: std/parser
                              #'(def (prod-id ts toks wrap-e K E)
                                  (let (start (token-stream-loc ts))
                                    (prod-e ts toks wrap-e
-                                           (lambda (K toks rarg ...)
+                                           (lambda (toks rarg ...)
                                              body)
                                            E)))
                                  #'prod-id))
@@ -434,7 +434,8 @@ package: std/parser
                                (prod-e ts toks wrap-e
                                        (lambda (toks rtok)
                                          (K toks
-                                            (make-token 'rule-id (token-e rtok) (token-loc rtok))))))
+                                            (make-token 'rule-id (token-e rtok) (token-loc rtok))))
+                                       E))
                            #'prod-id))
                  (K (cons defn defs))))))))))
 
