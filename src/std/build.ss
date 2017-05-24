@@ -38,6 +38,15 @@
           "srfi/43"
           "srfi/78"
           "srfi/95"
+          ;; :std/parser
+          "parser/rlang"
+          "parser/base"
+          (gxc: "parser/stream" "-e" "(include \"~~lib/_gambit#.scm\")")
+          "parser/lexer"
+          (gxc: "parser/defparser" "-cc-options" "--param max-gcse-memory=300000000")
+          "parser/rx-parser"
+          "parser/deflexer"
+          "parser"
           ;; :std/text
           "text/hex"
           (gsc: "text/base64")
