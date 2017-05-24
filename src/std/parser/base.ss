@@ -18,6 +18,11 @@ package: std/parser
   (if (or (AST? e) (not loc)) e
       (make-AST e (location->source-location loc))))
 
+(def (unwrap-syntax e)
+  (if (AST? e)
+    (AST-e e)
+    e))
+
 (def (token->syntax tok)
   (with ((token t e loc) tok)
     (wrap-syntax [t e] loc)))

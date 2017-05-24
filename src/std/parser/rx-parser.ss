@@ -24,13 +24,12 @@ package: std/parser
       => ['@alt $1 $2 ...]
       (@cat (@eq #\{) (@rep+ (IdentifierChar $1)) (@eq #\}))
       => (string->symbol (list->string $1))
-      L2)
+      (@rep+ (L2 $1))
+      => ['@cat $1 ...])
   (L2 (EscapedChar $1)
       => ['@char $1]
-      (NegSet $1)
-      => ['@negset $1]
-      (CharSet $1)
-      => ['@charset $1]
+      NegSet
+      CharSet
       (@eq #\.)
       => '@dot
       SpecialChar
@@ -42,18 +41,19 @@ package: std/parser
    => (escape-char $1))
   (CharSet
    (@cat (@eq #\[) (@eq #\-) (@rep* (CharRange $1)) (@eq #\]))
-   => ['@charset (apply append [#\-] $1)]
+   => ['@charset (apply append [#\-] (map unwrap-syntax $1))]
    (@cat (@eq #\[) (@rep+ (CharRange $1)) (@eq #\]))
-   => ['@charset (apply append $1)])
+   => ['@charset (apply append (map unwrap-syntax $1))])
   (NegSet
    (@cat (@eq #\[) (@eq #\^) (@eq #\-) (@rep* (CharRange $1)) (@eq #\]))
-   => ['@negset (apply append [#\-] $1)]
+   => ['@negset (apply append [#\-] (map unwrap-syntax $1))]
    (@cat (@eq #\[) (@eq #\^) (@rep+ (CharRange $1)) (@eq #\]))
-   => ['@negset (apply append $1)])
+   => ['@negset (apply append (map unwrap-syntax $1))])
   (CharRange
    (@cat (CharRangeChar $1) (@eq #\-) (CharRangeChar $2))
    => (make-char-range $1 $2 @loc)
-   CharRangeChar)
+   (CharRangeChar $1)
+   => [$1])
   (CharRangeChar
    (@eq #\]) !                      ; cut, we hit the end of the range
    (@eq #\-)
