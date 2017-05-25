@@ -106,6 +106,8 @@ package: std/parser
          (if (and (null? prods) (stx-null? #'rest))
            [#'!]
            (raise-syntax-error #f "Bad syntax; misplaced cut" stx rule #'!)))
+        ((prod => ! . rest)
+         (lp #'(prod ! . rest) prods))
         ((prod => expr . rest)
          (begin
            (check-prod-e #'prod rule rule-ids)
