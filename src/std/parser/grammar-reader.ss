@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; std parser grammar reader
-package: :std/parser
+package: std/parser
 
 (import <expander-runtime>
         <syntax-case>
@@ -109,7 +109,8 @@ package: :std/parser
     (let (next (peek-char port))
       (cond
        ((eof-object? next)
-        (values id (reverse opts)))
+        (raise-syntax-error #f "Bad syntax; premature end of input"
+                            (read-error-token port)))
        ((eq? #\newline next)
         (read-char port)
         (values id (reverse opts)))
@@ -120,6 +121,7 @@ package: :std/parser
         (raise-syntax-error #f "Bad syntax; unexpected character"
                             (read-error-token port) next))
        ((char-whitespace? next)
+        (read-char port)
         (read-opts id opts))
        (else
         (let (opt (read-syntax port))
