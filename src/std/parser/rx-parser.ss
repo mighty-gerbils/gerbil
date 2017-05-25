@@ -120,7 +120,7 @@ package: std/parser
         (end (char->integer char-end)))
     (if (fx<= start end)
       (let lp ((k start) (chars []))
-        (if (fx< k end)
+        (if (fx<= k end)
           (lp (fx1+ k) (cons (integer->char k) chars))
           (reverse chars)))
       (raise-parse-error 'parse-rx "Illegal character range"
