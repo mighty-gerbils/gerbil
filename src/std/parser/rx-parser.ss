@@ -37,8 +37,8 @@ package: std/parser
       => ['@rep+ $1]
       (@cat (L1 $1) (@eq #\?))
       => ['@maybe $1]
-      (@rep+ (L1+ $1))
-      => (simplify ['@cat $1 ...]))
+      (@cat (L1 $1) (@rep* (L1+ $2)))
+      => (simplify ['@cat $1 $2 ...]))
   (L1+ (@cat L1 SuffixOpChar)
        !
        L1)
@@ -46,8 +46,11 @@ package: std/parser
       => (simplify ['@alt $1 $2 ...])
       (@cat (@eq #\{) (@rep+ (IdentifierChar $1)) (@eq #\}))
       => (wrap-identifier-e $1 @loc)
-      (@rep+ (L2 $1))
-      => (simplify ['@cat $1 ...]))
+      (@cat (L2 $1) (@rep* (L2+ $2)))
+      => (simplify ['@cat $1 $2 ...]))
+  (L2+ (@cat L2 SuffixOpChar)
+       !
+       L2)
   (L2 (EscapedChar $1)
       => ['@char $1]
       NegSet
