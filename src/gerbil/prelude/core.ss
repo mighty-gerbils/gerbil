@@ -2360,9 +2360,7 @@ package: gerbil
     ((_ id body ...)
      (identifier? #'id)
      (call/esc (lambda (id) body ...))))
-  
-  (defrules catch ())
-  
+    
   (defrules unwind-protect ()
     ((_ body postlude)
      (with-unwind-protect (lambda () body) (lambda () postlude))))
