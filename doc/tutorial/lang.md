@@ -261,7 +261,7 @@ blocks using `end` tokens. The language itself is a toy, but it's complex enough
 to benefit from a proper parser and a lexer.
 
 Gerbil provides extensive facilities for parsing and lexing in the standard
-library, as part of the [:std/parser](../../src/std/parser.ss) package.
+library, as part of the [:std/parser](../../src/std/parser) package.
 The package provides facilities for lexing and parsing while accurately tracking source
 location, macros for parser and lexer generation, and a custom language prelude for
 writing language grammars in declarative fashion (i was quite fond of silex and lalr).
