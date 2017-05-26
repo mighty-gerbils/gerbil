@@ -10,6 +10,10 @@
           "auto-export"
           "example/my-auto-export"
           "sexp"
-          "example/my-sexp")))
+          "example/my-sexp"
+          "scuby-grammar"
+          "scuby"
+          "example/my-scuby"
+          )))
 
 
