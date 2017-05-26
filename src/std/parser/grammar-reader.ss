@@ -50,7 +50,7 @@ package: std/parser
      ((eq? e '%%parser)
       (read-parser-section port body))
      ((eq? e '%%lexer)
-      (read-parser-section port body))
+      (read-lexer-section port body))
      (else
       (raise-syntax-error #f "Bad syntax; unexpected token" (token->syntax tok))))))
 
@@ -129,10 +129,10 @@ package: std/parser
   
   (read-id))
 
-(def (read-parser-body port)
-  (def (raise-unexpected-token tok)
-    (raise-syntax-error #f "Bad syntax; unexpected token" (token->syntax tok)))
+(def (raise-unexpected-token tok)
+  (raise-syntax-error #f "Bad syntax; unexpected token" (token->syntax tok)))
 
+(def (read-parser-body port)
   (def (locat-delta* start end)
     (location->source-location
      (location-delta* (token-loc start) (token-loc end))))
@@ -220,9 +220,50 @@ package: std/parser
            (values (reverse rules) tok)))))))
 
 (def (read-lexer-body port)
-  (error "XXX Implement me!")
-  )
+  (def (make-rule rx action end)
+    (make-AST [(token-e rx) action]
+              (location->source-location
+               (location-delta (token-loc rx) end))))
+  
+  (def (parse-rule ts K E)
+    (let (next (token-stream-next ts))
+      (case (token-t next)
+        ((RX)
+         (parse-rule-k ts next K E))
+        (else
+         (E ts next)))))
 
+  (def (parse-rule-k ts rx K E)
+    (let (next (token-stream-next ts))
+      (case (token-t next)
+        (($$)
+         (case (token-e next)
+           ((ACTION)
+            (let (action (read-syntax port))
+              (if (eof-object? action)
+                (raise-syntax-error #f "Bad syntax; unexpected end of input"
+                                    (token->syntax next))
+                (let* ((ts (lex-lexer port))
+                       (end (token-stream-loc ts))
+                       (rule (make-rule rx action end)))
+                  (K ts rule)))))
+           (else
+            (raise-unexpected-token next))))
+        (else
+         (raise-unexpected-token next)))))
+                  
+  
+  (let lp ((ts (lex-lexer port)) (rules []))
+    (parse-rule
+     ts
+     (lambda (ts rule)
+       (lp ts (cons rule rules)))
+     (lambda (ts tok)
+       (if (eq? (token-e tok) 'ENDRULE)
+         (lp ts rules)
+         (values (reverse rules) tok))))))
+
+;;; lexers and parsers
 (deflexer lex-parser
   ;; macros
   ("[ \\t]"   {WS})
@@ -236,14 +277,14 @@ package: std/parser
   ("{WS}+"     $)                       ; whitespace
   (";[^\\n]+"  $)                       ; comment
   ;; lexemes
-  ("<-"         (PROD '<-))
-  ("\\("        (LPAREN '|(|))
-  ("\\)"        (RPAREN '|)|))
-  ("'[^']*'"    (EQ (string->token-symbol @@)))
-  ("\"[^\"]*\"" (EQUAL (string->token-string @@)))
-  ("\\*"        (STAR '*))
-  ("\\+"        (PLUS '+))
-  ("\\?"        (MAYBE '?))
+  ("<-"                            (PROD '<-))
+  ("\\("                           (LPAREN '|(|))
+  ("\\)"                           (RPAREN '|)|))
+  ("'[^']*'"                       (EQ (string->token-symbol @@)))
+  ("\"(\\\"|[^\"])*\""             (EQUAL (string->token-string @@)))
+  ("\\*"                           (STAR '*))
+  ("\\+"                           (PLUS '+))
+  ("\\?"                           (MAYBE '?))
   ("[-+*/=?<>~!@$%^&:_a-zA-Z0-9]+" (Ident (string->symbol @@))))
 
 (defparser parse-rule-head
@@ -278,6 +319,16 @@ package: std/parser
   (EQ %)
   (EQUAL %))
 
+(deflexer lex-lexer
+  ("%%parser" ($$ '%%parser))           ; new parser section
+  ("%%lexer"  ($$ '%%lexer))            ; new lexer section
+  ("{WS}+->"  ($$ 'ACTION))
+  ("\\n+"     ($$ 'ENDRULE))
+  ("{WS}+"     $)                       ; whitespace
+  (";[^\\n]+"  $)                       ; comment
+  ;; regexp
+  ("(\\\\;|\\\\ |[^ \n\t;])+" (RX (escape-chars @@))))
+
 (def (simplify cat)
   (match cat
     (['@cat e] e)
@@ -288,4 +339,20 @@ package: std/parser
    (string->token-string str)))
 
 (def (string->token-string str)
-  (substring str 1 (fx1- (string-length str))))
+  (escape-chars
+   (substring str 1 (fx1- (string-length str)))))
+
+(def (escape-chars str)
+  (let lp ((rest (string->list str)) (chars []))
+    (match rest
+      ([char . rest]
+       (if (eq? char #\\)
+         (case char
+           ((#\n) (lp rest (cons #\newline chars)))
+           ((#\r) (lp rest (cons #\return chars)))
+           ((#\t) (lp rest (cons #\tab chars)))
+           (else
+            (lp rest (cons char chars))))
+         (lp rest (cons char chars))))
+      (else
+       (list->string (reverse chars))))))
