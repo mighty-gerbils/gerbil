@@ -36,8 +36,8 @@ namespace: gx
           core-expand-define-alias%
           gx#core-expand-define-alias%)
          (%#begin (%#define-runtime
-                   core-expand-lambda%__opt-lambda8047
-                   gx#core-expand-lambda%__opt-lambda8047)
+                   core-expand-lambda%__opt-lambda8048
+                   gx#core-expand-lambda%__opt-lambda8048)
                   (%#begin (%#define-runtime
                             core-expand-lambda%__0
                             gx#core-expand-lambda%__0)
@@ -49,8 +49,8 @@ namespace: gx
           gx#core-expand-case-lambda%)
          (%#define-runtime core-expand-let-values% gx#core-expand-let-values%)
          (%#begin (%#define-runtime
-                   core-expand-letrec-values%__opt-lambda7910
-                   gx#core-expand-letrec-values%__opt-lambda7910)
+                   core-expand-letrec-values%__opt-lambda7911
+                   gx#core-expand-letrec-values%__opt-lambda7911)
                   (%#begin (%#define-runtime
                             core-expand-letrec-values%__0
                             gx#core-expand-letrec-values%__0)
@@ -81,8 +81,8 @@ namespace: gx
           core-expand-let-bind-syntax-expression
           gx#core-expand-let-bind-syntax-expression)
          (%#begin (%#define-runtime
-                   core-expand-let-bind-syntax!__opt-lambda7502
-                   gx#core-expand-let-bind-syntax!__opt-lambda7502)
+                   core-expand-let-bind-syntax!__opt-lambda7503
+                   gx#core-expand-let-bind-syntax!__opt-lambda7503)
                   (%#begin (%#define-runtime
                             core-expand-let-bind-syntax!__0
                             gx#core-expand-let-bind-syntax!__0)
@@ -113,8 +113,8 @@ namespace: gx
           macro-expand-case-lambda
           gx#macro-expand-case-lambda)
          (%#begin (%#define-runtime
-                   macro-expand-let-values__opt-lambda6653
-                   gx#macro-expand-let-values__opt-lambda6653)
+                   macro-expand-let-values__opt-lambda6654
+                   gx#macro-expand-let-values__opt-lambda6654)
                   (%#begin (%#define-runtime
                             macro-expand-let-values__0
                             gx#macro-expand-let-values__0)
@@ -134,8 +134,8 @@ namespace: gx
          (%#define-runtime ellipsis? gx#ellipsis?)
          (%#define-runtime user-binding-identifier gx#user-binding-identifier)
          (%#begin (%#define-runtime
-                   check-duplicate-identifiers__opt-lambda6451
-                   gx#check-duplicate-identifiers__opt-lambda6451)
+                   check-duplicate-identifiers__opt-lambda6452
+                   gx#check-duplicate-identifiers__opt-lambda6452)
                   (%#begin (%#define-runtime
                             check-duplicate-identifiers__0
                             gx#check-duplicate-identifiers__0)
@@ -144,8 +144,8 @@ namespace: gx
                             gx#check-duplicate-identifiers)))
          (%#define-runtime core-bind-values? gx#core-bind-values?)
          (%#begin (%#define-runtime
-                   core-bind-values!__opt-lambda6407
-                   gx#core-bind-values!__opt-lambda6407)
+                   core-bind-values!__opt-lambda6408
+                   gx#core-bind-values!__opt-lambda6408)
                   (%#begin (%#define-runtime
                             core-bind-values!__0
                             gx#core-bind-values!__0)
@@ -162,8 +162,8 @@ namespace: gx
          (%#define-runtime core-runtime-ref? gx#core-runtime-ref?)
          (%#define-runtime core-quote-runtime-ref gx#core-quote-runtime-ref)
          (%#begin (%#define-runtime
-                   core-bind-runtime!__opt-lambda6343
-                   gx#core-bind-runtime!__opt-lambda6343)
+                   core-bind-runtime!__opt-lambda6344
+                   gx#core-bind-runtime!__opt-lambda6344)
                   (%#begin (%#define-runtime
                             core-bind-runtime!__0
                             gx#core-bind-runtime!__0)
@@ -177,8 +177,8 @@ namespace: gx
                             core-bind-runtime!
                             gx#core-bind-runtime!)))
          (%#begin (%#define-runtime
-                   core-bind-runtime-reference!__opt-lambda6298
-                   gx#core-bind-runtime-reference!__opt-lambda6298)
+                   core-bind-runtime-reference!__opt-lambda6299
+                   gx#core-bind-runtime-reference!__opt-lambda6299)
                   (%#begin (%#define-runtime
                             core-bind-runtime-reference!__0
                             gx#core-bind-runtime-reference!__0)
@@ -192,8 +192,8 @@ namespace: gx
                             core-bind-runtime-reference!
                             gx#core-bind-runtime-reference!)))
          (%#begin (%#define-runtime
-                   core-bind-extern!__opt-lambda6258
-                   gx#core-bind-extern!__opt-lambda6258)
+                   core-bind-extern!__opt-lambda6259
+                   gx#core-bind-extern!__opt-lambda6259)
                   (%#begin (%#define-runtime
                             core-bind-extern!__0
                             gx#core-bind-extern!__0)
@@ -207,8 +207,8 @@ namespace: gx
                             core-bind-extern!
                             gx#core-bind-extern!)))
          (%#begin (%#define-runtime
-                   core-bind-syntax!__opt-lambda6212
-                   gx#core-bind-syntax!__opt-lambda6212)
+                   core-bind-syntax!__opt-lambda6213
+                   gx#core-bind-syntax!__opt-lambda6213)
                   (%#begin (%#define-runtime
                             core-bind-syntax!__0
                             gx#core-bind-syntax!__0)
@@ -222,8 +222,8 @@ namespace: gx
                             core-bind-syntax!
                             gx#core-bind-syntax!)))
          (%#begin (%#define-runtime
-                   core-bind-root-syntax!__opt-lambda6195
-                   gx#core-bind-root-syntax!__opt-lambda6195)
+                   core-bind-root-syntax!__opt-lambda6196
+                   gx#core-bind-root-syntax!__opt-lambda6196)
                   (%#begin (%#define-runtime
                             core-bind-root-syntax!__0
                             gx#core-bind-root-syntax!__0)
@@ -231,8 +231,8 @@ namespace: gx
                             core-bind-root-syntax!
                             gx#core-bind-root-syntax!)))
          (%#begin (%#define-runtime
-                   core-bind-alias!__opt-lambda6153
-                   gx#core-bind-alias!__opt-lambda6153)
+                   core-bind-alias!__opt-lambda6154
+                   gx#core-bind-alias!__opt-lambda6154)
                   (%#begin (%#define-runtime
                             core-bind-alias!__0
                             gx#core-bind-alias!__0)
@@ -246,8 +246,8 @@ namespace: gx
                             core-bind-alias!
                             gx#core-bind-alias!)))
          (%#begin (%#define-runtime
-                   make-binding-id__opt-lambda6110
-                   gx#make-binding-id__opt-lambda6110)
+                   make-binding-id__opt-lambda6111
+                   gx#make-binding-id__opt-lambda6111)
                   (%#begin (%#define-runtime
                             make-binding-id__0
                             gx#make-binding-id__0)

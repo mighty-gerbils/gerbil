@@ -70,7 +70,7 @@
              (let ((_imports19351_
                     (##structure-ref _ctx19305_ '8 gx#module-context::t '#f)))
                (let ((_$e19353_
-                      (gx#core-context-prelude__opt-lambda11348 _ctx19305_)))
+                      (gx#core-context-prelude__opt-lambda11349 _ctx19305_)))
                  (if _$e19353_
                      ((lambda (_g1935519357_)
                         (cons _g1935519357_ _imports19351_))
@@ -105,7 +105,7 @@
                                               '#!void
                                               (begin
                                                 (let ((_$e19334_
-                                                       (gx#core-context-prelude__opt-lambda11348
+                                                       (gx#core-context-prelude__opt-lambda11349
                                                         _hd19332_)))
                                                   (if _$e19334_
                                                       ((lambda (_pre19337_)
@@ -273,7 +273,7 @@
                              (gxc#verbose
                               '"Loading ssxi module "
                               _ssxi-path19280_)
-                             (gx#import-module__opt-lambda11383
+                             (gx#import-module__opt-lambda11384
                               _ssxi-path19280_
                               '#t
                               '#t))))))))))
