@@ -10,6 +10,11 @@ Here we explore language extensibility in Gerbil by definition of custom prelude
   * [Custom Body Expansion](#custom-body-expansion)
   * [Custom Readers](#custom-readers)
 - [Arbitrary Surface Syntax](#arbitrary-surface-syntax)
+  * [Some Scuby Code](#some-scuby-code)
+  * [The Grammar](#the-grammar)
+    + [The Parser Specification Grammar](#the-parser-specification-grammar)
+    + [The Scuby Parser](#the-scuby-parser)
+    + [The Scuby Lexer](#the-scuby-lexer)
 
 <!-- tocstop -->
 
@@ -181,7 +186,6 @@ redefining the `%%begin-module` expander:
 
 The macro is actually trivial and doesn't do any processing of the body; all it
 does is plaster an `(export #t)` and expand up the chain through the root `%%begin-module`.
-We will see a more refined `%%begin-module` expansion in the `scuby` language later on.
 
 #### Example
 
@@ -246,3 +250,167 @@ hello world
 ```
 
 ## Arbitrary Surface Syntax
+
+We have so far illustrated the basics of custom module expansion and have built up
+our machinery up to the `#lang` form for custom language preludes.
+Here, we put this machinery to use with a language that has an adhoc surface syntax.
+
+Let's call our language `scuby`, because it takes the ruby approach in delinating basic
+blocks using `end` tokens. The language itself is a toy, but it's complex enough
+to benefit from a proper parser and a lexer.
+
+Gerbil provides extensive facilities for parsing and lexing in the standard
+library, as part of the [:std/parser](../../src/std/parser.ss) package.
+The package provides facilities for lexing and parsing while accurately tracking source
+location, macros for parser and lexer generation, and a custom language prelude for
+writing language grammars in declarative fashion (i was quite fond of silex and lalr).
+
+### Some Scuby Code
+
+So let's look at our yet-to-be designed language, and write some code in it.
+We want to keep things simple and minimal, so we have one `def` form for
+function definitions and variables, while we have exactly one special form
+with `if`. Our datums can be booleans, null, integers, and strings.
+
+There is some scuby code in the [example module](../../src/tutorial/lang/example/my-scuby.ss).
+
+For instance, here is a function that computes the nth fibonacci number:
+```
+def (fibo n)
+  def (fibo-r x y k)
+    if (< k n)
+      (fibo-r (+ x y) x (1+ k))
+    else x
+    end
+  end
+  (fibo-r 1 0 1)
+end
+```
+
+And here are closures with the classic stateful counter:
+```
+def (make-counter x)
+  def (counter)
+    def next = x
+    (set! x (1+ x))
+    next
+  end
+  counter
+end
+```
+
+### The Grammar
+
+So let's take a look at the [grammar](../../src/tutorial/grammar/scuby-grammar.ss).
+
+First, let's take a look at the parser specification. The syntax is declarative,
+with mutually recursive rules and productions.
+Each rule can have multiple productions,
+which take the form of a pattern and an optional action.
+
+#### The Parser Specification Grammar
+So the general form of a parser specification can be given in a form ofEBNF:
+```
+ParserSpec    <- Rule*
+Rule          <- Production AltProduction*
+Production    <- Pattern Action
+              |  Pattern
+AltProduction <- '|' Production
+
+Action     <- '=>' ActionExpr
+ActionExpr <- '!'                     ; cut (rule scoped)
+
+Pattern <- SimplePattern '+'          ; one or more
+        |  SimplePattern '*'          ; zero or more
+        |  SimplePattern '?'          ; zero or one
+        |  SimplePattern
+SimplePattern <- '(' Ident Ident ')'  ; variable binding
+              |  EOF
+              |  Ident
+              |  Quote
+              |  String
+
+EOF    <- '$$'                        ; the end of input token
+Ident  <- %                           ; identifier (lexer token)
+Quote  <- %                           ; symbolic equality (token)
+String <- %                           ; string equality (token)
+```
+Incidentally, this is a valid but incomplete (it is has a reference to SExpression)
+parser specification for the parser specification language.
+This parser would recognize the language but doesn't produce an AST.
+
+The lexer specification is almost identical to silex, which should be obvious by
+example.
+
+#### The Scuby Parser
+Here is the high level logic for our scuby parser:
+```
+Program <- (Form $1)* EOF
+           => ['begin $1 ...]
+
+Form <- Defn
+     |  Expr
+     
+Defn <- DEF (VarIdent $1) '=' (Expr $2)
+        => ['def $1 $2]
+     |  DEF '(' (VarIdent $1) (VarIdent $2)* ')' (Defn $3)* (Expr $4)+ END
+        => ['def [$1 $2 ...] $3 ... $4 ...]
+     |  DEF
+        ;; hard cut to provide better error locality
+        => (raise-parse-error 'parse-scuby "malformed definition" @@)
+
+VarIdent <- Reserved
+            => (raise-parse-error 'parse-scuby "illegal variable identifier: reserved keyword" @@)
+         |  (Ident $1)
+            => $1  ; wrap identifier to track source location
+
+Expr <- BeginExpr
+     |  IfExpr
+     |  AppExpr
+     |  RefExpr
+     |  DatumExpr
+     
+BeginExpr <- BEGIN (Expr $1)+ END
+             => ['begin $1 ...]
+
+IfExpr <- IF (Expr $1) (Expr $2) ELSE (Expr $3) END
+          => ['if $1 $2 $3]
+       |  IF (Expr $1) (Expr $2) END
+          => ['if $1 $2]
+
+AppExpr <- '(' (Expr $1) (Expr $2)* ')'
+           => [$1 $2 ...]
+
+RefExpr <- Reserved
+           => !
+        |  (Ident $1)
+           => $1  ; wrap identifier to track source location
+
+Reserved <- DEF
+         |  BEGIN
+         |  IF
+         |  ELSE
+         |  END
+
+DatumExpr <- Int
+          |  String
+          |  TRUE
+          |  FALSE
+          |  NULL
+```
+
+#### The Scuby Lexer
+And here is our lexer specification:
+```
+[\ \t\n]+                       -> $                             ; whitespace
+\;[^\n]*\n                      -> $                             ; comments
+true                            -> (TRUE #t)                     ; #t
+false                           -> (FALSE #f)                    ; #f
+null                            -> (NULL '())                    ; '()
+[(]                             -> (LPAREN '|(|)                 ; LPAREN token
+[)]                             -> (RPAREN '|)|)                 ; RPAREN token
+[-]?[0-9]+                      -> (Int (string->number @@))     ; integers
+[-+*/=?<>~!@$%^&:_a-zA-Z0-9]+   -> (Ident (string->symbol @@))   ; identifiers
+"([^"]|\\")*"                   -> (String (string-e @@ @loc))   ; strings
+
+```
