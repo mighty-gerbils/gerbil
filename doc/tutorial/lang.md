@@ -7,6 +7,7 @@ Here we explore language extensibility in Gerbil by definition of custom prelude
 - [Preliminaries](#preliminaries)
 - [Custom References and Procedure Application](#custom-references-and-procedure-application)
 - [Custom Module Expansion](#custom-module-expansion)
+- [Custom Module Readers](#custom-module-readers)
 
 <!-- tocstop -->
 
@@ -116,7 +117,7 @@ The macros also need a couple of helper functions, defined for syntax:
     (map string->symbol (string-split (symbol->string (stx-e stx)) #\.))))
 ```
 
-### Example
+#### Example
 
 For a contrived example, consider the code in [example/my-app.ss](../../src/tutorial/lang/example/my-app.ss):
 
@@ -179,7 +180,7 @@ The macro is actually trivial and doesn't do any processing of the body; all it
 does is plaster an `(export #t)` and expand up the chain through the root `%%begin-module`.
 We will see a more refined `%%begin-module` expansion in the `scuby` language later on.
 
-### Example
+#### Example
 
 The [example](../../src/tutorial/lang/example/my-auto-export.ss) is a module
 with a single definition `greet` and no export directive in sight:
@@ -198,6 +199,45 @@ We can verify that `greet` is indeed exported in the interpreter:
 ```
 $ gxi
 > (import "example/my-auto-export")
+> (greet "world")
+hello world
+```
+
+## Custom Module Readers
+
+The next example is the `sexp` language, which illustrates the mechanics of custom module
+readers and `#lang` preludes.
+
+The [sexp](../../src/tutorial/lang/sexp.ss) prelude is a minimal module with a custom
+reader:
+```
+(import :gerbil/core) ;; so that we can re-export
+(export (import: :gerbil/core)
+        (phi: +1 read-module-body))
+
+(begin-syntax
+  (def (read-module-body port)
+    (let lp ((body []))
+      (let (next (read-syntax port))
+        (if (eof-object? next)
+          (reverse body)
+          (lp (cons next body)))))))
+```
+The reader itself is quite uninteresting: it uses the builtin `read-syntax` primitive
+to read s-expressions, so this language is identical to Gerbil core. However, it can be
+used as a `#lang` prelude, in contrast to the gerbil core prelude.
+
+The [example](../../src/tutorial/lang/example/my-sexp.ss) demonstrates just that:
+```
+$ cat example/my-sexp.ss
+#lang :tutorial/lang/sexp package: tutorial/lang/example
+(export #t)
+
+(def (greet x)
+  (displayln "hello " x))
+
+$ gxi
+> (import "example/my-sexp")
 > (greet "world")
 hello world
 ```
