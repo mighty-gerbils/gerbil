@@ -27,11 +27,9 @@ package: std/parser
 (def (parser-fail where ts toks)
   (let (last (car toks))
     (for-each (cut token-stream-unget ts <>) toks)
-    (let (next (token-stream-peek ts))
-      (if ($$? next)
-        (raise-parse-error where "Premature end of input" next)
-        (apply raise-parse-error where "Failed to parse input" next
-               (if (eq? last next) [] [last]))))))
+    (if ($$? last)
+      (raise-parse-error where "Premature end of input" last)
+      (raise-parse-error where "Failed to parse input" last))))
 
 (def (parser-input-stream input lexer)
   (if (token-stream? input)
@@ -108,6 +106,8 @@ package: std/parser
          (if (and (null? prods) (stx-null? #'rest))
            [#'!]
            (raise-syntax-error #f "Bad syntax; misplaced cut" stx rule #'!)))
+        ((prod => ! . rest)
+         (lp #'(prod ! . rest) prods))
         ((prod => expr . rest)
          (begin
            (check-prod-e #'prod rule rule-ids)

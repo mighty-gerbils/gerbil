@@ -68,21 +68,22 @@ package: std/parser
   (syntax-case stx ()
     ((_ id rule ...)
      (identifier? #'id)
-     (let ((values defs langs actions)
-           (parse-rules #'id #'(rule ...)))
-       (with-syntax* (((defn ...) defs)
-                      ((lang ...) langs)
-                      ((action ...) actions)
-                      (lexer::L (stx-identifier #'id #'id "::L" ))
-                      (lexer::R (stx-identifier #'id #'id "::R"))
-                      (def::L (stx-wrap-source
-                               #'(def lexer::L [lang ...])
-                               (stx-source stx)))
-                      (def::R (stx-wrap-source
-                               #'(def lexer::R [action ...])
-                               (stx-source stx))))
-         #'(begin
-             defn ...
-             def::L def::R
-             (def (id input)
-               (lex input lexer::L lexer::R))))))))
+     (parameterize ((current-rx-syntax-context #'id))
+       (let ((values defs langs actions)
+             (parse-rules #'id #'(rule ...)))
+         (with-syntax* (((defn ...) defs)
+                        ((lang ...) langs)
+                        ((action ...) actions)
+                        (lexer::L (stx-identifier #'id #'id "::L" ))
+                        (lexer::R (stx-identifier #'id #'id "::R"))
+                        (def::L (stx-wrap-source
+                                 #'(def lexer::L [lang ...])
+                                 (stx-source stx)))
+                        (def::R (stx-wrap-source
+                                 #'(def lexer::R [action ...])
+                                 (stx-source stx))))
+           #'(begin
+               defn ...
+               def::L def::R
+               (def (id input)
+                 (lex input lexer::L lexer::R)))))))))

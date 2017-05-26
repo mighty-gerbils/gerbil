@@ -99,8 +99,8 @@ package: std/parser
        (@alt (deriv L2 c)
              (@cat (deriv L1 c) L2))
        (@cat (deriv L1 c) L2)))
-    ((rep L)
-     (@cat (deriv L c) L))))
+    ((rep Lc)
+     (@cat (deriv Lc c) L))))
 
 (def (delta L)
   (match L

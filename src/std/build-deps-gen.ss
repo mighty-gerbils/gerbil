@@ -36,6 +36,8 @@
     "parser/defparser"
     "parser/rx-parser"
     "parser/deflexer"
+    "parser/grammar-reader"
+    "parser/grammar"
     "parser"
     "text/hex"
     "text/json"

@@ -24,8 +24,10 @@ package: std/parser
     e))
 
 (def (token->syntax tok)
-  (with ((token t e loc) tok)
-    (wrap-ast [t e] loc)))
+  (match tok
+    ((token t e loc)
+     (wrap-ast [t e] loc))
+    (else tok)))
 
 (def (raise-parse-error where msg tok . rest)
   (raise (make-parse-error msg (cons tok rest) where)))
