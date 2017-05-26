@@ -1,4 +1,4 @@
-# Custom Languags in Gerbil
+# Custom Languages in Gerbil
 
 Here we explore language extensibility in Gerbil by definition of custom preludes.
 
@@ -50,9 +50,9 @@ the procedure `a.some-method`.
 For chained dotted references we want to invoke the dotted parts as methods:
 ```
 (a.b.c arg ...) => {{b a} c arg ...}
-``
+```
 
-The (dot-app)[../../src/tutorial/lang/dot-app.ss] prelude accomplishes this by redefining
+The [dot-app](../../src/tutorial/lang/dot-app.ss) prelude accomplishes this by redefining
 pthe `%%app` and `%%ref` expander hooks:
 ```
 (defsyntax (my-%%app stx)
