@@ -301,7 +301,7 @@ end
 
 ### The Grammar
 
-So let's take a look at the [grammar](../../src/tutorial/grammar/scuby-grammar.ss).
+So let's take a look at the [grammar](../../src/std/parser/grammar/scuby-grammar.ss).
 
 First, let's take a look at the parser specification. The syntax is declarative,
 with mutually recursive rules and productions.
@@ -309,9 +309,10 @@ Each rule can have multiple productions,
 which take the form of a pattern and an optional action.
 
 #### The Parser Specification Grammar
-So the general form of a parser specification can be given in a form ofEBNF:
+So the general form of a parser specification can be given in a declarative
+form of EBNF notation:
 ```
-ParserSpec    <- Rule*
+Parser        <- Rule*
 Rule          <- Production AltProduction*
 Production    <- Pattern Action
               |  Pattern
@@ -338,9 +339,6 @@ String <- %                           ; string equality (token)
 Incidentally, this is a valid but incomplete (it is has a reference to SExpression)
 parser specification for the parser specification language.
 This parser would recognize the language but doesn't produce an AST.
-
-The lexer specification is almost identical to silex, which should be obvious by
-example.
 
 #### The Scuby Parser
 Here is the high level logic for our scuby parser:
@@ -400,6 +398,19 @@ DatumExpr <- Int
 ```
 
 #### The Scuby Lexer
+The lexer specification language is almost identical to silex, which should be obvious by
+example.
+The basic form is
+```
+Lexer <- Rule*
+Rule <- Regex '->' Production
+Production <- '$'                 ; ignored token
+           |  '$$'                ; eof token
+           |  '{' Identifier '}'  ; macro definition
+           |  (Ident Sexpression) ; token production
+```
+
+
 And here is our lexer specification:
 ```
 [\ \t\n]+                       -> $                             ; whitespace
