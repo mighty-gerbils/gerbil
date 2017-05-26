@@ -6,15 +6,11 @@
   (make srcdir: srcdir
         prefix: "tutorial/lang"
         '("dot-app"
-          "example/my-app"
           "auto-export"
-          "example/my-auto-export"
           "sexp"
-          "example/my-sexp"
           "scuby-etc"
           "scuby-grammar"
           "scuby"
-          "example/my-scuby"
           )))
 
 
