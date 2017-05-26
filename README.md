@@ -110,19 +110,14 @@ Hello world! My arguments are (1 2 3)
 
 # Documentation
 
-There is some documentation at [$GERBIL_HOME/doc](doc/), most notably
-a introductory guide in markdown for seasoned Schemers.
-You can read it rendered online at Github:
-[guide.md](https://github.com/vyzo/gerbil/blob/master/doc/guide.md).
-
-There is also the [Gerbil wiki](https://github.com/vyzo/gerbil/wiki) at Github, 
-which contains a small but growing collection of pages that can help you
-get started with Gerbil.
-
-Beyond that, there is little further documentation at this point,
-because I haven't had the time to prepare some nice and coherent
-documentation that can help Scheme neophytes -- or people who like
-neat documentation before using a new Scheme system.
+The documentation is a work in progress, but there are some resources
+that should get you started:
+- The [Introduction to Gerbil](doc/guide.md), which is an introductory
+  guide for seasoned Schemers.
+- The [Gerbil wiki](https://github.com/vyzo/gerbil/wiki) at Github, 
+  which contains a small but growing collection of pages that can help you
+  get started with Gerbil.
+- The [Gerbil Tutorial](doc/tutorial.md), which is still in its infancy.
 
 Probably the best way to dive into gerbil is by reading the sources,
 as all the main language features are exercised in one way or another
