@@ -22,6 +22,7 @@ interpreter prompt.
   * [File Modules](#file-modules)
   * [Library Modules](#library-modules)
   * [Executable Modules](#executable-modules)
+  * [Prelude Modules and Custom Languages](#prelude-modules-and-custom-languages)
 - [Standard Library](#standard-library)
   * [Optional Libraries](#optional-libraries)
   * [Additional Syntactic Sugar](#additional-syntactic-sugar)
@@ -522,10 +523,10 @@ It has the following syntax:
 ```
 (export <export-sec> ...)
 export-spec:
- #t                     ; export all defined identifiers
- identifier             ; export a specific identifiers
- (rename: id name)      ; export an identifier with a different name
- (import: <module-path> ; re-export all imports from <module-path>
+ #t                                       ; export all defined identifiers
+ identifier                               ; export a specific identifiers
+ (rename: id name)                        ; export an identifier with a different name
+ (import: <module-path>)                  ; re-export all imports from <module-path>
  (export-expander <export-spec> args ...) ; export macro
 ```
 Similarly to `import`, `export` also supports macros, which can
@@ -681,6 +682,50 @@ as the meta levels of the gerbil runtime are not linked and initialized.
 The advantage is that static executables don't require a local Gerbil
 installation to work, which makes them suitable for binary distribution.
 They also load faster, as they don't have to do any dynamic module loading.
+
+### Prelude Modules and Custom Languages
+
+Every identifier accessible to a Gerbil module has to be defined somewhere,
+either as a concrete definition or an extern reference.
+The initial bindings in a module come from the prelude and the root context
+which is the parent context of every module.
+
+The root context is a special context that contains the core macro expanders 
+for provide the core language.
+The prelude context on the other hand, is an ordinary module that
+exports any number of bindings that form the language of the module.
+
+When a prelude is not specified, the default prelude is the Gerbil
+[core prelude](../src/gerbil/prelude/core.ss).
+Any module however can designate a different prelude with the `prelude:`
+module directive, which allows us to design custom languages.
+
+Apart from standard bindings, custom preludes can also override some
+special expander indirection hooks by exporting macros with these names:
+- `%%ref` can intercept and redefine ordinary identifier references.
+- `%%app` can intercept and redefine ordinary procedure application.
+- `%%begin-module` can intercept the expansion of a module body and provide
+  custom full or partial expansion.
+
+Language extensibility does not stop there however: prelude modules can
+also specify a custom surface syntax, by providing a module reader.
+The custom reader is invoked by using a `#lang` declaration at the begining
+of the module file:
+```
+#lang prelude [package: pkg-id] [namespace: namespace-id]
+```
+
+When the expander sources a module that begins with a `#lang` declaration
+it imports the prelude and looks for a `read-module-body` export.
+The function, which must be defined for syntax, takes as input a the port
+containing the module body and returns a list of syntax objects which then
+become the body of the module. The module is then expanded with the usual
+expansion mechanism, including custom module body expansion as defined
+by the prelude.
+
+Custom languages are a big topic and this only touches the surface;
+they  are further explored in the
+[Custom Language tutorial](tutorial/lang.md).
 
 ## Standard Library
 
