@@ -1,3 +1,20 @@
+5-26-2017: Gerbil-v0.9
+- expander:
+  - %%ref, %%app, and %%begin-module indirections for custom expansion
+  - #lang reader support for custom language preludes
+  - allow arbitrary extensions for modules (not just .ss)
+  - fix resolution of displaced syntax-quotes
+- std/parser:
+  - parsing and lexing package in stdlib
+  - std/parser/grammar prelude for declarative parser specification
+- core prelude:
+  - inline struct-instance? and direct-struct-instance?
+  - remove catch, add read-line
+- stdlib
+  - std/make: recompile static exes when the static module is stale
+  - [targit] std/crypto/libcrypto: fix compatibility issues with openssl-1.1.x
+- tutorial: Custom Languages tutorial
+
 5-17-2017: Gerbil-v0.8.2
 - fix shell script shebangs to work on ubuntu with bash + set -eu
 
