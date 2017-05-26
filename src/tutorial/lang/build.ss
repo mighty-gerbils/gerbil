@@ -11,6 +11,7 @@
           "example/my-auto-export"
           "sexp"
           "example/my-sexp"
+          "scuby-etc"
           "scuby-grammar"
           "scuby"
           "example/my-scuby"
