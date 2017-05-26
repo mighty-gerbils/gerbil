@@ -6,6 +6,7 @@ Here we explore language extensibility in Gerbil by definition of custom prelude
 
 - [Preliminaries](#preliminaries)
 - [Custom References and Procedure Application](#custom-references-and-procedure-application)
+- [Custom Module Expansion](#custom-module-expansion)
 
 <!-- tocstop -->
 
@@ -53,7 +54,7 @@ For chained dotted references we want to invoke the dotted parts as methods:
 ```
 
 The [dot-app](../../src/tutorial/lang/dot-app.ss) prelude accomplishes this by redefining
-pthe `%%app` and `%%ref` expander hooks:
+the `%%app` and `%%ref` expander hooks:
 ```
 (defsyntax (my-%%app stx)
   (syntax-case stx ()
@@ -155,3 +156,48 @@ $ gxi
 2
 ```
 
+## Custom Module Expansion
+
+The second example is the `auto-export` language, which illustrates the very basics
+of custom module body expansion.
+
+The premise is very simple: we want a language that automatically exports all bindings,
+similar to how Schemes without modules work.
+The [auto-export](../../src/tutorial/lang/auto-export.ss) prelude accomplishes this by
+redefining the `%%begin-module` expander:
+```
+(import :gerbil/core) ;; so that we can re-export
+(export (import: :gerbil/core)
+        (rename: my-%%begin-module %%begin-module))
+
+(defrules my-%%begin-module ()
+  ((_ . body)
+   (%%begin-module (export #t) . body)))
+```
+
+The macro is actually trivial and doesn't do any processing of the body; all it
+does is plaster an `(export #t)` and expand up the chain through the root `%%begin-module`.
+We will see a more refined `%%begin-module` expansion in the `scuby` language later on.
+
+### Example
+
+The [example](../../src/tutorial/lang/example/my-auto-export.ss) is a module
+with a single definition `greet` and no export directive in sight:
+```
+$ cat example/my-auto-export.ss 
+prelude: :tutorial/lang/auto-export
+package: tutorial/lang/example
+
+;; everything is automagically exported, so no export directive needed
+(def (greet x)
+  (displayln "hello " x))
+
+```
+
+We can verify that `greet` is indeed exported in the interpreter:
+```
+$ gxi
+> (import "example/my-auto-export")
+> (greet "world")
+hello world
+```
