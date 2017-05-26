@@ -478,13 +478,13 @@ namespace: gx
   (let lp ((e stx) (marks (current-expander-marks)))
     (cond
      ((symbol? e)
-      (core-resolve-binding e phi ctx (reverse marks)))
+      (core-resolve-binding e phi phi ctx (reverse marks)))
      ((identifier-quote? e)
-      (core-resolve-binding (AST-e e) phi 
+      (core-resolve-binding (AST-e e) phi 0
                             (syntax-quote-context e) 
                             (syntax-quote-marks e)))
      ((identifier-wrap? e)
-      (core-resolve-binding (AST-e e) phi ctx 
+      (core-resolve-binding (AST-e e) phi phi ctx 
                             (foldl apply-mark (identifier-wrap-marks e) 
                                    marks)))
      ((syntax-wrap? e)
@@ -497,7 +497,7 @@ namespace: gx
 ;; identifier key:
 ;;  original source: id
 ;;  macro introduced: [id . top-mark] => subst => eid
-(def (core-resolve-binding id phi ctx marks)
+(def (core-resolve-binding id phi src-phi ctx marks)
   (def (resolve ctx src-phi key)
     (let lp ((ctx (core-context-shift ctx phi)) (dphi (fx- phi src-phi)))
       (cond
@@ -509,7 +509,7 @@ namespace: gx
        ((fxnegative? dphi)
         (lp (core-context-shift ctx +1) (fx1+ dphi))))))
   
-  (let lp ((ctx ctx) (src-phi phi) (rest marks))
+  (let lp ((ctx ctx) (src-phi src-phi) (rest marks))
     (match rest
       ([hd . rest]
        (with ((expander-mark subst) hd)
