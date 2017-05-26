@@ -46,6 +46,8 @@
           (gxc: "parser/defparser" "-cc-options" "--param max-gcse-memory=300000000")
           "parser/rx-parser"
           "parser/deflexer"
+          "parser/grammar-reader"
+          "parser/grammar"
           "parser"
           ;; :std/text
           "text/hex"
