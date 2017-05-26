@@ -15,6 +15,7 @@ Here we explore language extensibility in Gerbil by definition of custom prelude
     + [The Parser Specification Grammar](#the-parser-specification-grammar)
     + [The Scuby Parser](#the-scuby-parser)
     + [The Scuby Lexer](#the-scuby-lexer)
+  * [The Scuby Prelude](#the-scuby-prelude)
 
 <!-- tocstop -->
 
@@ -325,11 +326,11 @@ Pattern <- SimplePattern '+'          ; one or more
         |  SimplePattern '*'          ; zero or more
         |  SimplePattern '?'          ; zero or one
         |  SimplePattern
-SimplePattern <- '(' Ident Ident ')'  ; variable binding
+SimplePattern <- '(' Ident Ident ')'  ; rule match with variable binding
+              |  Ident                ; rule match
+              |  Quote                ; token value eq? 'symbolic-value'
+              |  String               ; token value equal? "string-value"
               |  EOF
-              |  Ident
-              |  Quote
-              |  String
 
 EOF    <- '$$'                        ; the end of input token
 Ident  <- %                           ; identifier (lexer token)
@@ -424,4 +425,66 @@ null                            -> (NULL '())                    ; '()
 [-+*/=?<>~!@$%^&:_a-zA-Z0-9]+   -> (Ident (string->symbol @@))   ; identifiers
 "([^"]|\\")*"                   -> (String (string-e @@ @loc))   ; strings
 
+```
+
+### The Scuby Prelude
+
+The [scuby](../../src/tutorial/lang/scuby.ss) prelude defines a custom module reader
+which parses scuby syntax and
+produces an AST. The reader is straightforward:
+```
+(import :gerbil/core
+        (phi: +1
+              :std/sugar
+              :std/parser/base
+              :tutorial/lang/scuby-grammar))
+
+(begin-syntax
+  ;; the module reader: uses the parser defined in scuby-grammar to parse the module
+  (def (read-module-body port)
+    (try
+     (let (progn (parse-scuby port))
+       (case (token-t progn)
+         ((Program)                     ; we parsed a program
+          [(token-e progn)])
+         (($$)                          ; the empty program
+          [])
+         (else                          ; that really shouldn't happen with our grammar
+          (raise-syntax-error #f "Bad syntax; unexpected token" (token->syntax progn)))))
+     (catch (parse-error? exn)
+       (apply raise-syntax-error #f
+              (string-append "Bad syntax; " (error-message exn))
+              (map token->syntax (error-irritants exn)))))))
+```
+
+#### Example
+
+And putting altogether, we can import our small corpus of [scuby code](../../src/tutorial/lang/example/my-scuby.ss):
+```
+$ gxi
+> (import "example/my-scuby")
+> (import :std/iter)
+> (for (x (in-range 1 10)) (displayln (fibo x)))
+1
+1
+2
+3
+5
+8
+13
+21
+34
+55
+> (def my-counter (make-counter 1))
+> (for (x (in-range 10)) (displayln (my-counter)))
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
 ```
