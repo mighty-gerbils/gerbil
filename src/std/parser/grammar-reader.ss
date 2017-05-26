@@ -13,8 +13,7 @@ package: std/parser
         :std/parser/defparser
         :std/parser/deflexer)
 
-;;(export read-module-body)
-(export #t) ;; XXX 
+(export read-module-body)
 
 ;; The module body starts with a body section followed by one or more
 ;; parser and lexer definition section.
