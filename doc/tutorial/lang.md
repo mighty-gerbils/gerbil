@@ -120,6 +120,8 @@ The macros also need a couple of helper functions, defined for syntax:
 For a contrived example, consider the code in [example/my-app.ss](../../src/tutorial/lang/example/my-app.ss):
 
 ```
+$ cat example/my-app.ss
+package: tutorial/lang/example
 prelude: :tutorial/lang/dot-app
 
 (export #t)
@@ -146,8 +148,10 @@ $ gxi
 > (def a (make-A 1))
 > (add-x a 1)
 2
-> (a-add-x a)
-#<procedure #5>
-> (#5 1)
+> (def a.add-x (a-add-x a)) ; here the dot is a normal identifier
+> a.add-x
+#<procedure #5 a.add-x>
+> (a.add-x 1)
 2
 ```
+
