@@ -5,9 +5,11 @@ Here we explore language extensibility in Gerbil by definition of custom prelude
 <!-- toc -->
 
 - [Preliminaries](#preliminaries)
-- [Custom References and Procedure Application](#custom-references-and-procedure-application)
 - [Custom Module Expansion](#custom-module-expansion)
-- [Custom Module Readers](#custom-module-readers)
+  * [Custom References and Procedure Application](#custom-references-and-procedure-application)
+  * [Custom Body Expansion](#custom-body-expansion)
+  * [Custom Readers](#custom-readers)
+- [Arbitrary Surface Syntax](#arbitrary-surface-syntax)
 
 <!-- tocstop -->
 
@@ -27,7 +29,8 @@ $ ./build.ss
 ... compile scuby
 ```
 
-## Custom References and Procedure Application
+## Custom Module Expansion
+### Custom References and Procedure Application
 
 The first example is the `dot-app` language, which illustrates reference and application
 indirection through custom expanders.
@@ -157,7 +160,7 @@ $ gxi
 2
 ```
 
-## Custom Module Expansion
+### Custom Body Expansion
 
 The second example is the `auto-export` language, which illustrates the very basics
 of custom module body expansion.
@@ -203,7 +206,7 @@ $ gxi
 hello world
 ```
 
-## Custom Module Readers
+### Custom Readers
 
 The next example is the `sexp` language, which illustrates the mechanics of custom module
 readers and `#lang` preludes.
@@ -241,3 +244,5 @@ $ gxi
 > (greet "world")
 hello world
 ```
+
+## Arbitrary Surface Syntax
