@@ -1419,9 +1419,6 @@ namespace: gerbil/core
                     let/esc
                     |gerbil/core::<more-sugar>[:0:]#let/esc|)
                    (%#define-syntax
-                    catch
-                    |gerbil/core::<more-sugar>[:0:]#catch|)
-                   (%#define-syntax
                     unwind-protect
                     |gerbil/core::<more-sugar>[:0:]#unwind-protect|)))
          (%#import
