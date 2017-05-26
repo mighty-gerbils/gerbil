@@ -103,7 +103,7 @@ the `%%app` and `%%ref` expander hooks:
 
 The two macros are defined with different names in local scope, to avoid shadowing
 the root `%%app` and `%%ref` and causing an expansion loop.
-The module exports them renamed, together with all the exports of the prelude core
+The module exports them renamed, together with all the exports of the core prelude
 to define a language that is just like core Gerbil but with special semantics for
 the dot in identifiers:
 ```
@@ -302,7 +302,7 @@ end
 
 ### The Grammar
 
-So let's take a look at the [grammar](../../src/std/parser/grammar/scuby-grammar.ss).
+So let's take a look at the [grammar](../../src/tutorial/lang/scuby-grammar.ss).
 
 First, let's take a look at the parser specification. The syntax is declarative,
 with mutually recursive rules and productions.
