@@ -22,6 +22,7 @@ interpreter prompt.
   * [File Modules](#file-modules)
   * [Library Modules](#library-modules)
   * [Executable Modules](#executable-modules)
+  * [Prelude Modules and Custom Languages](#prelude-modules-and-custom-languages)
 - [Standard Library](#standard-library)
   * [Optional Libraries](#optional-libraries)
   * [Additional Syntactic Sugar](#additional-syntactic-sugar)
@@ -695,14 +696,14 @@ The prelude context on the other hand, is an ordinary module that
 exports any number of bindings that form the language of the module.
 
 When a prelude is not specified, the default prelude is the Gerbil
-[core prelude](../../src/gerbil/prelude/core.ss).
+[core prelude](../src/gerbil/prelude/core.ss).
 Any module however can designate a different prelude with the `prelude:`
 module directive, which allows us to design custom languages.
 
 Apart from standard bindings, custom preludes can also override some
 special expander indirection hooks by exporting macros with these names:
-- `%%ref` can intercept and redefine ordinary identifier references
-- `%%app` can intercept and redefine ordinary procedure application
+- `%%ref` can intercept and redefine ordinary identifier references.
+- `%%app` can intercept and redefine ordinary procedure application.
 - `%%begin-module` can intercept the expansion of a module body and provide
   custom full or partial expansion.
 
