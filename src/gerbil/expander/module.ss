@@ -845,7 +845,7 @@ namespace: gx
     (or (module-export? e)
         (export-set? e)))
 
-  (let (rbody (core-expand-import/export stx module-export?
+  (let (rbody (core-expand-import/export stx expanded-export?
                                          'apply-export-expander
                                          current-export-expander-phi
                                          expand1))
