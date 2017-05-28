@@ -7,4 +7,5 @@ package: gerbil/gambit
 (extern namespace: #f
   system-version system-version-string system-type system-type-string
   configure-command-string system-stamp
+  gc-report-set!
   )

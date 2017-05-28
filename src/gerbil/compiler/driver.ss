@@ -114,7 +114,8 @@ namespace: gxc
            (deps (find-runtime-module-deps ctx))
            (deps (map find-static-module-file deps))
            (deps (filter (? (not file-empty?)) deps))
-           (gsc-args ["-exe" "-o" output-bin
+           (gsc-opts (or (pgetq gsc-options: opts) []))
+           (gsc-args ["-exe" "-o" output-bin gsc-opts ...
                       "-e" include-gx-gambc-macros
                       gx-gambc0 deps ... bin-scm output-scm])
            (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
