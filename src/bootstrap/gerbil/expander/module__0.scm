@@ -3113,7 +3113,7 @@
                           (let ((_rbody9198_
                                  (gx#core-expand-import/export
                                   _stx9189_
-                                  gx#module-export?
+                                  _expanded-export?9196_
                                   'apply-export-expander
                                   gx#current-export-expander-phi
                                   _expand19193_)))
