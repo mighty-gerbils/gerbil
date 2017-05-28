@@ -2437,6 +2437,77 @@ package: gerbil
                    (foldl fold-e r (import-set-imports in)))
                   (else r)))))
          (cons begin: (foldl fold-e [] imports))))))
+
+  (begin-syntax
+    (def (module-import-rename in rename)
+      (make-module-import (module-import-source in)
+                          rename
+                          (module-import-phi in)
+                          (module-import-weak? in))))
+    
+  (defsyntax-for-import (rename-in stx)
+    (syntax-case stx ()
+      ((_ hd (id new-id) ...)
+       (and (identifier-list? #'(id ...))
+            (identifier-list? #'(new-id ...)))
+       (let* ((keytab (make-hash-table))
+              (found (make-hash-table))
+              (_
+               (for-each
+                 (lambda (id new-id)
+                   (hash-put! keytab (core-identifier-key id) (core-identifier-key new-id)))
+                 #'(id ...)
+                 #'(new-id ...)))
+              (imports (core-expand-import-source #'hd))
+              (fold-e
+               (rec (fold-e in r)
+                 (cond
+                  ((module-import? in)
+                   (let (name (module-import-name in))
+                     (cond
+                      ((hash-get keytab name)
+                       => (lambda (rename)
+                            (hash-put! found name #t)
+                            (cons (module-import-rename in rename) r)))
+                      (else
+                       (cons in r)))))
+                  ((import-set? in)
+                   (foldl fold-e r (import-set-imports in)))
+                  (else
+                   (cons in r)))))
+              (new-imports (foldl fold-e [] imports)))
+         ;; check to see if we found all identifiers in the rename set
+         (for-each
+           (lambda (id)
+             (unless (hash-get found (core-identifier-key id))
+               (raise-syntax-error #f "Bad syntax; identifier is not in the import set" stx id)))
+           #'(id ...))
+         (cons begin: new-imports)))))
+
+  (defsyntax-for-import (prefix-in stx)
+    (syntax-case stx ()
+      ((_ hd pre)
+       (identifier? #'pre)
+       (let* ((pre (stx-e #'pre))
+              (imports (core-expand-import-source #'hd))
+              (rename-e
+               (lambda (name)
+                 (match name
+                   ([id . mark]
+                    (cons (make-symbol pre id) mark))
+                   (else
+                    (make-symbol pre name )))))
+              (fold-e
+               (rec (fold-e in r)
+                 (cond
+                  ((module-import? in)
+                   (cons (module-import-rename in (rename-e (module-import-name in)))
+                         r))
+                  ((import-set? in)
+                   (foldl fold-e r (import-set-imports in)))
+                  (else
+                   (cons in r))))))
+         (cons begin: (foldl fold-e [] imports))))))
   
   (defsyntax-for-export (except-out stx)
     (syntax-case stx ()
@@ -2472,8 +2543,7 @@ package: gerbil
                   (lp #'rest [#'id type::t make-type type? getf ... setf ... ids ...]))
                 (raise-syntax-error #f "Incomplete type info" stx #'id))))
            (_ (cons 'begin: ids)))))))
-  
-  ;; ...
+
   )
 
 (import <module-sugar>)
