@@ -2443,7 +2443,14 @@ package: gerbil
       (make-module-import (module-import-source in)
                           rename
                           (module-import-phi in)
-                          (module-import-weak? in))))
+                          (module-import-weak? in)))
+
+    (def (prefix-identifier-key name pre)
+      (match name
+        ([id . mark]
+         (cons (make-symbol pre id) mark))
+        (else
+         (make-symbol pre name )))))
     
   (defsyntax-for-import (rename-in stx)
     (syntax-case stx ()
@@ -2492,11 +2499,7 @@ package: gerbil
               (imports (core-expand-import-source #'hd))
               (rename-e
                (lambda (name)
-                 (match name
-                   ([id . mark]
-                    (cons (make-symbol pre id) mark))
-                   (else
-                    (make-symbol pre name )))))
+                 (prefix-identifier-key name pre)))
               (fold-e
                (rec (fold-e in r)
                  (cond
@@ -2530,6 +2533,74 @@ package: gerbil
                   (else r)))))
          (cons begin: (foldl fold-e [] exports))))))
 
+  (begin-syntax
+    (def (module-export-rename out rename)
+      (make-module-export (module-export-context out)
+                          (module-export-key out)
+                          (module-export-phi out)
+                          rename
+                          (module-export-weak? out))))
+  
+  (defsyntax-for-export (rename-out stx)
+    (syntax-case stx ()
+      ((_ hd (id new-id) ...)
+       (and (identifier-list? #'(id ...))
+            (identifier-list? #'(new-id ...)))
+       (let* ((keytab (make-hash-table))
+              (found (make-hash-table))
+              (_ (for-each
+                   (lambda (id new-id)
+                     (hash-put! keytab (core-identifier-key id) (core-identifier-key new-id)))
+                   #'(id ...)
+                   #'(new-id ...)))
+              (exports (core-expand-export-source #'hd))
+              (fold-e
+               (rec (fold-e out r)
+                 (cond
+                  ((module-export? out)
+                   (let (name (module-export-name out))
+                     (cond
+                      ((hash-get keytab name)
+                       => (lambda (rename)
+                            (hash-put! found name #t)
+                            (cons (module-export-rename out rename)
+                                  r)))
+                      (else
+                       (cons out r)))))
+                  ((export-set? out)
+                   (foldl fold-e r (export-set-exports out)))
+                  (else
+                   (cons out r)))))
+              (new-exports
+               (foldl fold-e [] exports)))
+         ;; check to see if we found all identifiers in the rename set
+         (for-each
+           (lambda (id)
+             (unless (hash-get found (core-identifier-key id))
+               (raise-syntax-error #f "Bad syntax; identifier is not in the export set" stx id)))
+           #'(id ...))
+         (cons begin: new-exports)))))
+
+  (defsyntax-for-export (prefix-out stx)
+    (syntax-case stx ()
+      ((_ hd pre)
+       (identifier? #'pre)
+       (let* ((pre (stx-e #'pre))
+              (exports (core-expand-export-source #'hd))
+              (rename-e
+               (lambda (name)
+                 (prefix-identifier-key name pre)))
+              (fold-e
+               (rec (fold-e out r)
+                 (cond
+                  ((module-export? out)
+                   (cons (module-export-rename out (rename-e (module-export-name out)))
+                         r))
+                  ((export-set? out)
+                   (foldl fold-e r (export-set-exports out)))
+                  (else (cons out r))))))
+         (cons begin: (foldl fold-e [] exports))))))
+  
   (defsyntax-for-export (struct-out stx)
     (syntax-case stx ()
       ((_ id ...)
