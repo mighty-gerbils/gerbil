@@ -164,6 +164,31 @@ package: scheme
 (defvector-copy! bytevector-copy! subu8vector-move! u8vector-length)
 
 ;; i/o
+(def (read-bytevector k (port (current-input-port)))
+  (unless (and (fixnum? k) (fx> k 0))
+    (error "Illegal argument; expected positive fixnum" k))
+  (let* ((bytes (make-u8vector k))
+         (rd (read-subu8vector bytes 0 k port)))
+    (cond
+     ((fxzero? rd)
+      (eof-object))
+     ((fx< rd k)
+      (u8vector-shrink! bytes rd)
+      bytes)
+     (else
+      bytes))))
+
+(def (read-bytevector! bytes (port (current-input-port)) (start 0) (end (u8vector-length bytes)))
+  (unless (and (fixnum? start) (fixnum? end) (fx< start end))
+    (error "Illegal bytevector range; need at least one char" start end))
+  (let (rd (read-subu8vector bytes start end port))
+    (if (fxzero? rd)
+      (eof-object)
+      rd)))
+
+(def (write-bytevector bytes (port (current-output-port)) (start 0) (end (u8vector-length bytes)))
+  (write-subu8vector bytes start end port))
+
 (defstub read-error?)
 (defstub file-error?)
 
@@ -177,6 +202,3 @@ package: scheme
 
 (defstub u8-ready?)
 (defstub peek-u8)
-(defstub read-bytevector)
-(defstub read-bytevector!)
-(defstub write-bytevector)
