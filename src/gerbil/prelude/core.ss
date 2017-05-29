@@ -30,7 +30,7 @@ package: gerbil
     + * - /
     abs quotient remainder modulo gcd lcm 
     floor ceiling truncate round
-    numerator denumenator rationalize
+    numerator denominator rationalize
     exp log sin cos tan asin acos atan
     sqrt expt
     make-rectangular make-polar real-part imag-part magnitude angle
