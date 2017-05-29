@@ -6,6 +6,15 @@ package: scheme
 (import :scheme/stubs)
 (export #t)
 
-(defstub emergency-exit)
-(defstub get-environment-variable)
+(def (get-environment-variable var)
+  (getenv var #f))
+
+;; not supported by Gambit
 (defstub get-environment-variables)
+
+(def (r7rs-exit (normally? #t))
+  (exit (if normally? 0 1)))
+
+;; not supported by Gambit
+(defstub emergency-exit)
+

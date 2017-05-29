@@ -9,7 +9,7 @@ package: scheme
 (export
   command-line
   emergency-exit
-  exit
+  (rename: r7rs-exit exit)
   get-environment-variable
   get-environment-variables
   )
