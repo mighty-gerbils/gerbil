@@ -8,8 +8,8 @@ package: scheme
 (defrules defstub ()
   ((_ id)
    (identifier? #'id)
-   (def (id . args)
-     (error "R7RS procedure NOT IMPLEMENTED" 'id))))
+   (defsyntax (id stx)
+     (raise-syntax-error #f "R7RS procedure NOT IMPLEMENTED" stx #'id))))
 
 (defrules defsyntax-stub ()
   ((_ id)
