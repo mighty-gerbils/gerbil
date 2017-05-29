@@ -287,8 +287,13 @@ package: scheme
 (def (write-bytevector bytes (port (current-output-port)) (start 0) (end (u8vector-length bytes)))
   (write-subu8vector bytes start end port))
 
-(defstub read-error?)
-(defstub file-error?)
+(def (read-error? obj)
+  (or (datum-parsing-exception? obj)
+      (expression-parsing-exception? obj)))
+
+(def (file-error? obj)
+  (or (no-such-file-or-directory-exception? obj)
+      (os-exception? obj)))
 
 ;; _gambit#.scm
 (extern namespace: #f
