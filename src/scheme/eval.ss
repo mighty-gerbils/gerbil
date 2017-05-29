@@ -3,7 +3,7 @@
 ;;; R7RS (scheme eval) library
 package: scheme
 
-(import :scheme/eval-impl.ss)
+(import :scheme/eval-impl)
 
 (export
   eval

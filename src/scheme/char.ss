@@ -3,8 +3,7 @@
 ;;; R7RS (scheme char) library
 package: scheme
 
-(import :gerbil/gambit
-        :scheme/char-impl.ss)
+(import :scheme/char-impl)
 
 (export
   char-alphabetic?
