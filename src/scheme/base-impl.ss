@@ -29,6 +29,23 @@ package: scheme
 (defeqv boolean=? boolean? eq?)
 (defeqv symbol=? symbol? eq?)
 
+;; R7RS spec:
+;; "Raises an exception by invoking the current exception han-
+;;  dler on obj . The handler is called with the same dynamic
+;;  environment as the call to raise-continuable, except
+;;  that: (1) the current exception handler is the one that was
+;;  in place when the handler being called was installed, and
+;;  (2) if the handler being called returns, then it will again
+;;  become the current exception handler."
+;;
+;; This CANNOT be implemented without kernel changes in Gambit
+;; as the previous exception handler is not accessible anywhere
+;; but hidden on the local stack frame at the time of installation.
+;; On the same time, all Gambit exceptions are continuable in the
+;; sense that the exception handler can return, it just happens
+;; that the current exception handler is itself during its invocation
+;; So it will remain a stub; seek professional help if you need this in
+;; a library module.
 (defstub raise-continuable)
 
 ;; numerics
@@ -36,7 +53,7 @@ package: scheme
   (and (exact? obj)
        (integer? obj)))
 
-(defstub denominator)
+;; number theoretic functions are not my forte, so I am passing on these for now
 (defstub exact-integer-sqrt)
 (defstub floor/)
 (defstub floor-quotient)
@@ -192,13 +209,107 @@ package: scheme
 (defstub read-error?)
 (defstub file-error?)
 
-(defstub binary-port?)
-(defstub textual-port?)
+;; _gambit#.scm
+(extern namespace: #f
+  macro-byte-port?
+  macro-character-port?)
 
-(defstub call-with-port)
+(def (binary-port? obj)
+  (macro-byte-port? obj))
 
+(def (textual-port? obj)
+  (macro-character-port? obj))
+
+
+;; R7RS spec:
+;; "The call-with-port procedure calls proc with port as an
+;;  argument. If proc returns, then the port is closed auto-
+;;  matically and the values yielded by the proc are returned.
+;;  If proc does not return, then the port must not be closed
+;;  automatically unless it is possible to prove that the port
+;;  will never again be used for a read or write operation."
+;;
+;; We can't prove anything about the behaviour of the exception
+;; handler, so we can't close a port in an exceptoin catcher.
+;; The only sensible thing to do is to close it on a normal
+;; return and will a close by the finalizer otherwise.
+(def (call-with-port port proc)
+  (let* ((will (make-will port close-port))
+         (res (proc port)))
+    (will-execute! will)
+    res))
+
+
+;; R7RS spec:
+;; "Returns #t if port is still open and capable of performing
+;;  input or output, respectively, and #f otherwise."
+;;
+;; Not possible to implement without kernel support from Gambit
 (defstub input-port-open?)
 (defstub output-port-open?)
 
-(defstub u8-ready?)
-(defstub peek-u8)
+;; _gambit#.scm
+(extern namespace: #f
+  macro-port-mutex-lock!
+  macro-port-mutex-unlock!
+  macro-character-port-rlo
+  macro-character-port-rhi
+  macro-character-port-peek-eof?
+  macro-byte-port-rlo
+  macro-byte-port-rhi
+  macro-byte-port-rbuf
+  macro-byte-port-rbuf-fill
+  )
+
+(def (port-buffered-chars? port)
+  (or (fx< (macro-character-port-rlo port)
+           (macro-character-port-rhi port))
+      (macro-character-port-peek-eof? port)))
+
+(def (check-byte-port/lock! port proc)
+  (unless (macro-byte-port? port)
+    (error "Illegal argument; expected byte-port" port))
+  (macro-port-mutex-lock! port)
+  (when (port-buffered-chars? port)
+    (macro-port-mutex-unlock! port)
+    (##raise-nonempty-input-port-character-buffer-exception port proc port)))
+
+(def (u8-ready? port)
+  (check-byte-port/lock! port u8-ready?)
+  (let ((byte-rlo (macro-byte-port-rlo port))
+        (byte-rhi (macro-byte-port-rhi port)))
+    (if (fx< byte-rlo byte-rhi)
+      (begin
+        (macro-port-mutex-unlock! port)
+        #t)
+      (let (res ((macro-byte-port-rbuf-fill port) port 1 #f))
+        (macro-port-mutex-unlock! port)
+        (cond
+         ((eq? res ##err-code-EAGAIN)   ; read-u8 would block
+          #f)
+         ((fixnum? res)
+          (##raise-os-io-exception port #f res peek-u8 port))
+         (else #t))))))
+
+(def (peek-u8 port)
+  (check-byte-port/lock! port peek-u8)
+  (let lp ()
+    (let ((byte-rlo (macro-byte-port-rlo port))
+          (byte-rhi (macro-byte-port-rhi port)))
+      (if (fx< byte-rlo byte-rhi)
+        (let (byte (u8vector-ref (macro-byte-port-rbuf port) byte-rlo))
+          (macro-port-mutex-unlock! port)
+          byte)
+        (let (res ((macro-byte-port-rbuf-fill port) port 1 #t))
+          (cond
+           ((eq? res ##err-code-EAGAIN) ; timeout thunk => #f => eof
+            (macro-port-mutex-unlock! port)
+            (eof-object))
+           ((fixnum? res)
+            (macro-port-mutex-unlock! port)
+            (##raise-os-io-exception port #f res peek-u8 port))
+           (res                    ; some bytes were added to the buffer
+            (lp))
+           (else                   ; no bytes were added - eof reached
+            (macro-port-mutex-unlock! port)
+            (eof-object))))))))
