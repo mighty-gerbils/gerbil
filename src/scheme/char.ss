@@ -3,7 +3,8 @@
 ;;; R7RS (scheme char) library
 package: scheme
 
-(import :scheme/char-impl)
+(import :scheme/char-impl
+        (only-in :std/srfi/13 string-downcase string-upcase))
 
 (export
   char-alphabetic?
