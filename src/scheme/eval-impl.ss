@@ -6,6 +6,6 @@ package: scheme
 (import :scheme/stubs)
 (export #t)
 
-(defstub eval)
-(defstub environment)
+(defstub r7rs-eval)
+(defstub r7rs-environment)
 

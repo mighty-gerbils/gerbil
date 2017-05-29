@@ -7,3 +7,5 @@ package: scheme
 (export #t)
 
 (defstub r7rs-interaction-environment)
+(defstub r7rs-null-environment)
+(defstub r7rs-scheme-report-environment)

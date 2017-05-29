@@ -6,6 +6,6 @@ package: scheme
 (import :scheme/eval-impl)
 
 (export
-  eval
-  environment)
+  (rename: r7rs-eval eval)
+  (rename: r7rs-environment environment))
 
