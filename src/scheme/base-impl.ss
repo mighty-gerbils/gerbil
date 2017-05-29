@@ -88,7 +88,7 @@ package: scheme
                               (current-readtable)
                               't)))
                (read-syntax-from-file rpath))))
-       (syntax-local-rewrap
+       (syntax-local-introduce
         (stx-wrap-source
          (cons 'begin body)
          (stx-source stx)))))))
