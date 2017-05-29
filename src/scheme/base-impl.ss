@@ -4,13 +4,94 @@
 package: scheme
 
 (import :gerbil/gambit
-        :scheme/stubs)
+        :scheme/stubs
+        (phi: +1 :gerbil/expander))
 (export #t)
 
 ;; macros
-(defsyntax-stub features)
-(defsyntax-stub guard)
-(defsyntax-stub include-ci)
+;; R7RS spec:
+(defsyntax (features stx)
+  (syntax-case stx ()
+    ((_)
+     (let* ((feats (make-hash-table-eq))
+            (add-feature!
+             (rec (add bind)
+               (cond
+                ((import-binding? bind)
+                 (add (import-binding-e bind)))
+                ((alias-binding? bind)
+                 (add (resolve-identifier (alias-binding-e bind))))
+                ((syntax-binding? bind)
+                 (let (expander (syntax-binding-e bind))
+                   (when (feature-expander? expander)
+                     (hash-put! feats (expander-e expander) #t))))))))
+       (let lp ((ctx (core-context-shift (core-context-top) (current-expander-phi))))
+         (when ctx
+           (hash-for-each
+            (lambda (_ bind)
+              (add-feature! bind))
+            (expander-context-table ctx))
+           (when (phi-context? ctx)
+             (lp (phi-context-super ctx)))))
+       (with-syntax (((feat ...) (hash-keys feats)))
+         #'(quote (feat ...)))))))
+
+;; R7RS spec:
+;; (guard (variable cond-clause ...) body ...)
+;; "Semantics: The body is evaluated with an exception han-
+;;  dler that binds the raised object (see raise in section 6.11)
+;;  to variable and, within the scope of that binding, evalu-
+;;  ates the clauses as if they were the clauses of a cond ex-
+;;  pression. That implicit cond expression is evaluated with
+;;  the continuation and dynamic environment of the guard
+;;  expression. If every cond clause’s test evaluates to #f
+;;  and there is no else clause, then raise-continuable is
+;;  invoked on the raised object within the dynamic environ-
+;;  ment of the original call to raise or raise-continuable,
+;;  except that the current exception handler is that of the
+;;  guard expression."
+;;
+;; There is no raise-continiuable per se in Gerbil on Gambit
+;; [see comments on raise-continuable stub] but this macro
+;; is still usable by implementing in the following manner
+(defrules guard (else)
+  ((_ (var clause ... (else else-body ...)) body ...)
+   (identifier? #'var)
+   (with-exception-handler
+    (let (handler (current-exception-handler))
+      (lambda (var)
+        (with-exception-handler
+         handler
+         (lambda () (cond clause ... (else else-body ...))))))
+    (lambda () body ...)))
+  ((_ (var clause ...) body ...)
+   (identifier? #'var)
+   (with-exception-handler
+    (let (handler (current-exception-handler))
+      (lambda (var)
+        (with-exception-handler
+         handler
+         (lambda () (cond clause ... (else (raise var)))))))
+    (lambda () body ...))))
+
+;; Gerbil on Gambit is fundamentally case sensitivie, so there
+;; is no concept of of case-insensitive symbols
+;; the best we can do is include with downcase conversion.
+(defsyntax (include-ci stx)
+  (syntax-case stx()
+    ((_ path)
+     (stx-string? #'path)
+     (let* ((rpath (core-resolve-path #'path (stx-source stx)))
+            (body
+             (parameterize ((current-readtable
+                             (readtable-case-conversion?-set
+                              (current-readtable)
+                              't)))
+               (read-syntax-from-file rpath))))
+       (syntax-local-rewrap
+        (stx-wrap-source
+         (cons 'begin body)
+         (stx-source stx)))))))
 
 ;; misc
 (defrules defeqv ()
