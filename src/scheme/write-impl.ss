@@ -3,9 +3,17 @@
 ;;; R7RS (scheme write) library -- implementation details
 package: scheme
 
-(import :scheme/stubs)
+(import :scheme/stubs
+        :gerbil/gambit
+        :std/sugar)
 (export #t)
 
-(defstub write-shared)
-(defstub write-simple)
+(def (write-shared obj (port (current-output-port)))
+  (let (rt (output-port-readtable port))
+    (try
+     (set! (output-port-readtable port)
+       (readtable-sharing-allowed?-set rt #t))
+     (write obj port)
+     (finally
+      (set! (output-port-readtable port) rt)))))
 
