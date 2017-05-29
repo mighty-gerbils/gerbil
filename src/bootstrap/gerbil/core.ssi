@@ -61,7 +61,7 @@ namespace: gerbil/core
                     (truncate truncate)
                     (round round)
                     (numerator numerator)
-                    (denumenator denumenator)
+                    (denominator denominator)
                     (rationalize rationalize)
                     (exp exp)
                     (log log)
