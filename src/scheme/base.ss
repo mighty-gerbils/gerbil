@@ -225,7 +225,7 @@ package: scheme
   vector-for-each
   vector-length
   vector->list
-  vector-map
+  (rename: r7rs-vector-map vector-map)
   vector-ref
   vector-set!
   vector->string
