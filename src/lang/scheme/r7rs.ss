@@ -51,7 +51,9 @@ package: scheme
                     (map import-spec-e #'(import-set ...))))
        #'(import import-spec ...)))))
 
-(defrules include-library-declarations ())
+(defrules include-library-declarations ()
+  ((_ path ...)
+   (begin (include path) ...)))
 
 (defsyntax (define-library stx)
   (def (library-module-id ids )
@@ -76,9 +78,6 @@ package: scheme
 
   (def (expand-cond decl in rest body K)
     (expand-wrap 'cond-expand decl in rest body K))
-
-  (def (expand-include decl in rest body K)
-    (expand-wrap 'include decl in rest body K))
   
   (def (expand-decls decls)
     (let lp ((rest decls) (body []))
@@ -91,13 +90,13 @@ package: scheme
             (expand-export decl #'(export-set ...) rest body lp))
            ((cond-expand clause ...)
             (expand-cond decl #'(clause ...) rest body lp))
-           ((include-library-declarations path ...)
-            (expand-include decl #'(path ...) rest body lp))
            ((begin library-body ...)
             (lp rest (cons decl body)))
            ((include path ...)
             (lp rest (cons decl body)))
            ((include-ci path ...)
+            (lp rest (cons decl body)))
+           ((include-library-declarations path ...)
             (lp rest (cons decl body)))))
         (else
          (reverse body)))))
