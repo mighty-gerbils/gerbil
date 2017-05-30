@@ -21,7 +21,7 @@ Writing (or porting) an R7RS module is simple: you just specify
 necessities to support library definitions: `define-library` and the
 associated symbols for library declarations.
 
-There can be only a single library defined within a module, and it's
+There can be only a single library defined within a module, and its
 name must match the module id constructed by the package and name of
 the file. This implementation restriction has to do with library
 module resolution: Gerbil supports only a single top module per
