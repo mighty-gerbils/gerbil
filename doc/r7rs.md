@@ -71,7 +71,7 @@ package: example
           (proc j k (ref grid j k)))))))
 ```
 
-And then we define the `(example life` library:
+And then we define the `(example life)` library:
 ```
 $ cat > example/life.ss
 prelude: :scheme/r7rs
