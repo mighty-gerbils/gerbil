@@ -2438,6 +2438,28 @@ package: gerbil
                   (else r)))))
          (cons begin: (foldl fold-e [] imports))))))
 
+  (defsyntax-for-import (except-in stx)
+    (syntax-case stx ()
+      ((_ hd id ...)
+       (identifier-list? #'(id ...))
+       (let* ((keys (stx-map core-identifier-key #'(id ...)))
+              (keytab 
+               (let (ht (make-hash-table))
+                 (for-each (cut hash-put! ht <> #t) keys)
+                 ht))
+              (imports (core-expand-import-source #'hd))
+              (fold-e
+               (rec (fold-e in r)
+                 (cond
+                  ((module-import? in)
+                   (if (hash-get keytab (module-import-name in))
+                     r
+                     (cons in r)))
+                  ((import-set? in)
+                   (foldl fold-e r (import-set-imports in)))
+                  (else (cons in r))))))
+         (cons begin: (foldl fold-e [] imports))))))
+
   (begin-syntax
     (def (module-import-rename in rename)
       (make-module-import (module-import-source in)
