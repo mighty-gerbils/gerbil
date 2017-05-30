@@ -1,44 +1,44 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core::<more-sugar>[2]#_g29364_|
+  (define |gerbil/core::<more-sugar>[2]#_g29518_|
     (gx#core-quote-syntax 'setq-macro::t))
-  (define |gerbil/core::<more-sugar>[2]#_g29365_|
+  (define |gerbil/core::<more-sugar>[2]#_g29519_|
     (gx#core-quote-syntax 'macro-object::t))
-  (define |gerbil/core::<more-sugar>[2]#_g29366_|
+  (define |gerbil/core::<more-sugar>[2]#_g29520_|
     (gx#core-quote-syntax 'setq-macro::t))
-  (define |gerbil/core::<more-sugar>[2]#_g29367_|
+  (define |gerbil/core::<more-sugar>[2]#_g29521_|
     (gx#core-quote-syntax 'make-setq-macro))
-  (define |gerbil/core::<more-sugar>[2]#_g29368_|
+  (define |gerbil/core::<more-sugar>[2]#_g29522_|
     (gx#core-quote-syntax 'setq-macro?))
-  (define |gerbil/core::<more-sugar>[2]#_g29369_|
+  (define |gerbil/core::<more-sugar>[2]#_g29523_|
     (gx#core-quote-syntax 'macro-object))
-  (define |gerbil/core::<more-sugar>[2]#_g29370_|
+  (define |gerbil/core::<more-sugar>[2]#_g29524_|
     (gx#core-quote-syntax 'setf-macro::t))
-  (define |gerbil/core::<more-sugar>[2]#_g29371_|
+  (define |gerbil/core::<more-sugar>[2]#_g29525_|
     (gx#core-quote-syntax 'macro-object::t))
-  (define |gerbil/core::<more-sugar>[2]#_g29372_|
+  (define |gerbil/core::<more-sugar>[2]#_g29526_|
     (gx#core-quote-syntax 'setf-macro::t))
-  (define |gerbil/core::<more-sugar>[2]#_g29373_|
+  (define |gerbil/core::<more-sugar>[2]#_g29527_|
     (gx#core-quote-syntax 'make-setf-macro))
-  (define |gerbil/core::<more-sugar>[2]#_g29374_|
+  (define |gerbil/core::<more-sugar>[2]#_g29528_|
     (gx#core-quote-syntax 'setf-macro?))
-  (define |gerbil/core::<more-sugar>[2]#_g29375_|
+  (define |gerbil/core::<more-sugar>[2]#_g29529_|
     (gx#core-quote-syntax 'macro-object))
   (begin
     (define |gerbil/core::<more-sugar>[:1:]#setq-macro|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-class-info|
        'runtime-identifier:
-       |gerbil/core::<more-sugar>[2]#_g29364_|
+       |gerbil/core::<more-sugar>[2]#_g29518_|
        'expander-identifiers:
-       (cons (cons |gerbil/core::<more-sugar>[2]#_g29365_| '())
-             (cons |gerbil/core::<more-sugar>[2]#_g29366_|
-                   (cons |gerbil/core::<more-sugar>[2]#_g29367_|
-                         (cons |gerbil/core::<more-sugar>[2]#_g29368_|
+       (cons (cons |gerbil/core::<more-sugar>[2]#_g29519_| '())
+             (cons |gerbil/core::<more-sugar>[2]#_g29520_|
+                   (cons |gerbil/core::<more-sugar>[2]#_g29521_|
+                         (cons |gerbil/core::<more-sugar>[2]#_g29522_|
                                (cons '() (cons '() '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-exhibitor|
         'gerbil.core#setq-macro::t
-        (list |gerbil/core::<more-sugar>[2]#_g29369_|)
+        (list |gerbil/core::<more-sugar>[2]#_g29523_|)
         'setq-macro
         '#f
         '()
@@ -46,17 +46,17 @@
     (define |gerbil/core::<more-sugar>[:1:]#setf-macro|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-class-info|
        'runtime-identifier:
-       |gerbil/core::<more-sugar>[2]#_g29370_|
+       |gerbil/core::<more-sugar>[2]#_g29524_|
        'expander-identifiers:
-       (cons (cons |gerbil/core::<more-sugar>[2]#_g29371_| '())
-             (cons |gerbil/core::<more-sugar>[2]#_g29372_|
-                   (cons |gerbil/core::<more-sugar>[2]#_g29373_|
-                         (cons |gerbil/core::<more-sugar>[2]#_g29374_|
+       (cons (cons |gerbil/core::<more-sugar>[2]#_g29525_| '())
+             (cons |gerbil/core::<more-sugar>[2]#_g29526_|
+                   (cons |gerbil/core::<more-sugar>[2]#_g29527_|
+                         (cons |gerbil/core::<more-sugar>[2]#_g29528_|
                                (cons '() (cons '() '()))))))
        'type-exhibitor:
        (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-exhibitor|
         'gerbil.core#setf-macro::t
-        (list |gerbil/core::<more-sugar>[2]#_g29375_|)
+        (list |gerbil/core::<more-sugar>[2]#_g29529_|)
         'setf-macro
         '#f
         '()

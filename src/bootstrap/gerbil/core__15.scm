@@ -80,26 +80,26 @@
                                              (if (fx>= (gx#stx-length
                                                         _tl2742427466_)
                                                        '0)
-                                                 (let ((_g29376_
+                                                 (let ((_g29530_
                                                         (gx#syntax-split-splice
                                                          _tl2742427466_
                                                          '0)))
                                                    (begin
-                                                     (let ((_g29377_
+                                                     (let ((_g29531_
                                                             (values-count
-                                                             _g29376_)))
-                                                       (if (not (fx= _g29377_
+                                                             _g29530_)))
+                                                       (if (not (fx= _g29531_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              2))
-                   (error "Context expects 2 values" _g29377_)))
+                   (error "Context expects 2 values" _g29531_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (let ((_target2742827479_
                                                             (values-ref
-                                                             _g29376_
+                                                             _g29530_
                                                              0))
                                                            (_tl2743027482_
                                                             (values-ref
-                                                             _g29376_
+                                                             _g29530_
                                                              1)))
                                                        (if (gx#stx-null?
                                                             _tl2743027482_)
@@ -221,26 +221,26 @@
                                              (if (fx>= (gx#stx-length
                                                         _tl2762927671_)
                                                        '0)
-                                                 (let ((_g29378_
+                                                 (let ((_g29532_
                                                         (gx#syntax-split-splice
                                                          _tl2762927671_
                                                          '0)))
                                                    (begin
-                                                     (let ((_g29379_
+                                                     (let ((_g29533_
                                                             (values-count
-                                                             _g29378_)))
-                                                       (if (not (fx= _g29379_
+                                                             _g29532_)))
+                                                       (if (not (fx= _g29533_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              2))
-                   (error "Context expects 2 values" _g29379_)))
+                   (error "Context expects 2 values" _g29533_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (let ((_target2763327684_
                                                             (values-ref
-                                                             _g29378_
+                                                             _g29532_
                                                              0))
                                                            (_tl2763527687_
                                                             (values-ref
-                                                             _g29378_
+                                                             _g29532_
                                                              1)))
                                                        (if (gx#stx-null?
                                                             _tl2763527687_)
@@ -355,20 +355,20 @@
                                   (if (gx#stx-pair/null? _tl2781927858_)
                                       (if (fx>= (gx#stx-length _tl2781927858_)
                                                 '0)
-                                          (let ((_g29380_
+                                          (let ((_g29534_
                                                  (gx#syntax-split-splice
                                                   _tl2781927858_
                                                   '0)))
                                             (begin
-                                              (let ((_g29381_
-                                                     (values-count _g29380_)))
-                                                (if (not (fx= _g29381_ 2))
+                                              (let ((_g29535_
+                                                     (values-count _g29534_)))
+                                                (if (not (fx= _g29535_ 2))
                                                     (error "Context expects 2 values"
-                                                           _g29381_)))
+                                                           _g29535_)))
                                               (let ((_target2782027861_
-                                                     (values-ref _g29380_ 0))
+                                                     (values-ref _g29534_ 0))
                                                     (_tl2782227864_
-                                                     (values-ref _g29380_ 1)))
+                                                     (values-ref _g29534_ 1)))
                                                 (if (gx#stx-null?
                                                      _tl2782227864_)
                                                     (letrec ((_loop2782327867_
@@ -454,872 +454,991 @@
                               (_g2781027834_ _g2781127838_))))
                       (_g2781027834_ _g2781127838_)))))
            (_g2780927956_ _stx27807_))))))
-  (define |gerbil/core::<module-sugar>[1]#module-import-rename|
-    (lambda (_in28008_ _rename28010_)
-      (gx#make-module-import
-       (gx#module-import-source _in28008_)
-       _rename28010_
-       (gx#module-import-phi _in28008_)
-       (gx#module-import-weak? _in28008_))))
-  (define |gerbil/core::<module-sugar>[1]#prefix-identifier-key|
-    (lambda (_name27961_ _pre27963_)
-      (let ((_name2796427972_ _name27961_))
-        (let ((_E2796727978_
-               (lambda () (error '"No clause matching" _name2796427972_))))
-          (let ((_else2796627984_
-                 (lambda () (make-symbol _pre27963_ _name27961_))))
-            (let ((_K2796827992_
-                   (lambda (_mark27988_ _id27990_)
-                     (cons (make-symbol _pre27963_ _id27990_) _mark27988_))))
-              (if (##pair? _name2796427972_)
-                  (let ((_hd2796927996_ (##car _name2796427972_))
-                        (_tl2797027999_ (##cdr _name2796427972_)))
-                    (let ((_id28002_ _hd2796927996_))
-                      (let ((_mark28005_ _tl2797027999_))
-                        (_K2796827992_ _mark28005_ _id28002_))))
-                  (_else2796627984_))))))))
-  (define |gerbil/core::<module-sugar>[:0:]#rename-in|
+  (define |gerbil/core::<module-sugar>[:0:]#except-in|
     (gx#make-import-expander
-     (lambda (_stx28012_)
-       (let ((_g2801528048_
-              (lambda (_g2801628044_)
-                (gx#raise-syntax-error '#f '"Bad syntax" _g2801628044_))))
-         (let ((_g2801428234_
-                (lambda (_g2801628052_)
-                  (if (gx#stx-pair? _g2801628052_)
-                      (let ((_e2802028055_ (gx#syntax-e _g2801628052_)))
-                        (let ((_hd2802128059_ (##car _e2802028055_))
-                              (_tl2802228062_ (##cdr _e2802028055_)))
-                          (if (gx#stx-pair? _tl2802228062_)
-                              (let ((_e2802328065_
-                                     (gx#syntax-e _tl2802228062_)))
-                                (let ((_hd2802428069_ (##car _e2802328065_))
-                                      (_tl2802528072_ (##cdr _e2802328065_)))
-                                  (if (gx#stx-pair/null? _tl2802528072_)
-                                      (if (fx>= (gx#stx-length _tl2802528072_)
+     (lambda (_stx27961_)
+       (let ((_g2796427988_
+              (lambda (_g2796527984_)
+                (gx#raise-syntax-error '#f '"Bad syntax" _g2796527984_))))
+         (let ((_g2796328110_
+                (lambda (_g2796527992_)
+                  (if (gx#stx-pair? _g2796527992_)
+                      (let ((_e2796827995_ (gx#syntax-e _g2796527992_)))
+                        (let ((_hd2796927999_ (##car _e2796827995_))
+                              (_tl2797028002_ (##cdr _e2796827995_)))
+                          (if (gx#stx-pair? _tl2797028002_)
+                              (let ((_e2797128005_
+                                     (gx#syntax-e _tl2797028002_)))
+                                (let ((_hd2797228009_ (##car _e2797128005_))
+                                      (_tl2797328012_ (##cdr _e2797128005_)))
+                                  (if (gx#stx-pair/null? _tl2797328012_)
+                                      (if (fx>= (gx#stx-length _tl2797328012_)
                                                 '0)
-                                          (let ((_g29382_
+                                          (let ((_g29536_
                                                  (gx#syntax-split-splice
-                                                  _tl2802528072_
+                                                  _tl2797328012_
                                                   '0)))
                                             (begin
-                                              (let ((_g29383_
-                                                     (values-count _g29382_)))
-                                                (if (not (fx= _g29383_ 2))
+                                              (let ((_g29537_
+                                                     (values-count _g29536_)))
+                                                (if (not (fx= _g29537_ 2))
                                                     (error "Context expects 2 values"
-                                                           _g29383_)))
-                                              (let ((_target2802628075_
-                                                     (values-ref _g29382_ 0))
-                                                    (_tl2802828078_
-                                                     (values-ref _g29382_ 1)))
+                                                           _g29537_)))
+                                              (let ((_target2797428015_
+                                                     (values-ref _g29536_ 0))
+                                                    (_tl2797628018_
+                                                     (values-ref _g29536_ 1)))
                                                 (if (gx#stx-null?
-                                                     _tl2802828078_)
-                                                    (letrec ((_loop2802928081_
-                                                              (lambda (_hd2802728085_
+                                                     _tl2797628018_)
+                                                    (letrec ((_loop2797728021_
+                                                              (lambda (_hd2797528025_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               _new-id2803328088_
-                               _id2803428090_)
-                        (if (gx#stx-pair? _hd2802728085_)
-                            (let ((_e2803028093_ (gx#syntax-e _hd2802728085_)))
-                              (let ((_lp-hd2803128097_ (##car _e2803028093_))
-                                    (_lp-tl2803228100_ (##cdr _e2803028093_)))
-                                (if (gx#stx-pair? _lp-hd2803128097_)
-                                    (let ((_e2803728103_
-                                           (gx#syntax-e _lp-hd2803128097_)))
-                                      (let ((_hd2803828107_
-                                             (##car _e2803728103_))
-                                            (_tl2803928110_
-                                             (##cdr _e2803728103_)))
-                                        (if (gx#stx-pair? _tl2803928110_)
-                                            (let ((_e2804028113_
-                                                   (gx#syntax-e
-                                                    _tl2803928110_)))
-                                              (let ((_hd2804128117_
-                                                     (##car _e2804028113_))
-                                                    (_tl2804228120_
-                                                     (##cdr _e2804028113_)))
-                                                (if (gx#stx-null?
-                                                     _tl2804228120_)
-                                                    (_loop2802928081_
-                                                     _lp-tl2803228100_
-                                                     (cons _hd2804128117_
-                                                           _new-id2803328088_)
-                                                     (cons _hd2803828107_
-                                                           _id2803428090_))
-                                                    (_g2801528048_
-                                                     _g2801628052_))))
-                                            (_g2801528048_ _g2801628052_))))
-                                    (_g2801528048_ _g2801628052_))))
-                            (let ((_new-id2803528123_
-                                   (reverse _new-id2803328088_))
-                                  (_id2803628126_ (reverse _id2803428090_)))
-                              ((lambda (_L28129_ _L28131_ _L28132_)
-                                 (if (if (gx#identifier-list?
-                                          (begin
-                                            '#!void
-                                            (foldr (lambda (_g2815028153_
-                                                            _g2815128156_)
-                                                     (cons _g2815028153_
-                                                           _g2815128156_))
-                                                   '()
-                                                   _L28131_)))
-                                         (gx#identifier-list?
-                                          (begin
-                                            '#!void
-                                            (foldr (lambda (_g2815828161_
-                                                            _g2815928164_)
-                                                     (cons _g2815828161_
-                                                           _g2815928164_))
-                                                   '()
-                                                   _L28129_)))
-                                         '#f)
-                                     (let ((_keytab28167_ (make-hash-table)))
-                                       (let ((_found28170_ (make-hash-table)))
-                                         (let ((_g29384_
-                                                (for-each
-                                                 (lambda (_id28173_
-                                                          _new-id28175_)
-                                                   (hash-put!
-                                                    _keytab28167_
-                                                    (gx#core-identifier-key
-                                                     _id28173_)
-                                                    (gx#core-identifier-key
-                                                     _new-id28175_)))
-                                                 (begin
-                                                   '#!void
-                                                   (foldr (lambda (_g2817628179_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _g2817728182_)
-                    (cons _g2817628179_ _g2817728182_))
-                  '()
-                  _L28131_))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 (begin
-                                                   '#!void
-                                                   (foldr (lambda (_g2818428187_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _g2818528190_)
-                    (cons _g2818428187_ _g2818528190_))
-                  '()
-                  _L28129_)))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                           (let ((_imports28195_
-                                                  (gx#core-expand-import-source
-                                                   _L28132_)))
-                                             (let ((_fold-e28215_
-                                                    (letrec ((_fold-e28198_
-                                                              (lambda (_in28201_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               _r28203_)
-                        (if (gx#module-import? _in28201_)
-                            (let ((_name28205_
-                                   (gx#module-import-name _in28201_)))
-                              (let ((_$e28208_
-                                     (hash-get _keytab28167_ _name28205_)))
-                                (if _$e28208_
-                                    ((lambda (_rename28212_)
-                                       (begin
-                                         (hash-put!
-                                          _found28170_
-                                          _name28205_
-                                          '#t)
-                                         (cons (|gerbil/core::<module-sugar>[1]#module-import-rename|
-                                                _in28201_
-                                                _rename28212_)
-                                               _r28203_)))
-                                     _$e28208_)
-                                    (cons _in28201_ _r28203_))))
-                            (if (gx#import-set? _in28201_)
-                                (foldl _fold-e28198_
-                                       _r28203_
-                                       (gx#import-set-imports _in28201_))
-                                (cons _in28201_ _r28203_))))))
-              _fold-e28198_)))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                               (let ((_new-imports28218_
-                                                      (foldl _fold-e28215_
-                                                             '()
-                                                             _imports28195_)))
-                                                 (let ()
-                                                   (begin
-                                                     (for-each
-                                                      (lambda (_id28223_)
-                                                        (if (hash-get
-                                                             _found28170_
-                                                             (gx#core-identifier-key
-                                                              _id28223_))
-                                                            '#!void
-                                                            (gx#raise-syntax-error
-                                                             '#f
-                                                             '"Bad syntax; identifier is not in the import set"
-                                                             _stx28012_
-                                                             _id28223_)))
-                                                      (begin
-                                                        '#!void
-                                                        (foldr (lambda (_g2822528228_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                _g2822628231_)
-                         (cons _g2822528228_ _g2822628231_))
-                       '()
-                       _L28131_)))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (cons 'begin:
-                                                           _new-imports28218_)))))))))
-                                     (_g2801528048_ _g2801628052_)))
-                               _new-id2803528123_
-                               _id2803628126_
-                               _hd2802428069_))))))
-              (_loop2802928081_ _target2802628075_ '() '()))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_g2801528048_
-                                                     _g2801628052_)))))
-                                          (_g2801528048_ _g2801628052_))
-                                      (_g2801528048_ _g2801628052_))))
-                              (_g2801528048_ _g2801628052_))))
-                      (_g2801528048_ _g2801628052_)))))
-           (_g2801428234_ _stx28012_))))))
-  (define |gerbil/core::<module-sugar>[:0:]#prefix-in|
-    (gx#make-import-expander
-     (lambda (_stx28240_)
-       (let ((_g2824328261_
-              (lambda (_g2824428257_)
-                (gx#raise-syntax-error '#f '"Bad syntax" _g2824428257_))))
-         (let ((_g2824228340_
-                (lambda (_g2824428265_)
-                  (if (gx#stx-pair? _g2824428265_)
-                      (let ((_e2824728268_ (gx#syntax-e _g2824428265_)))
-                        (let ((_hd2824828272_ (##car _e2824728268_))
-                              (_tl2824928275_ (##cdr _e2824728268_)))
-                          (if (gx#stx-pair? _tl2824928275_)
-                              (let ((_e2825028278_
-                                     (gx#syntax-e _tl2824928275_)))
-                                (let ((_hd2825128282_ (##car _e2825028278_))
-                                      (_tl2825228285_ (##cdr _e2825028278_)))
-                                  (if (gx#stx-pair? _tl2825228285_)
-                                      (let ((_e2825328288_
-                                             (gx#syntax-e _tl2825228285_)))
-                                        (let ((_hd2825428292_
-                                               (##car _e2825328288_))
-                                              (_tl2825528295_
-                                               (##cdr _e2825328288_)))
-                                          (if (gx#stx-null? _tl2825528295_)
-                                              ((lambda (_L28298_ _L28300_)
-                                                 (if (gx#identifier? _L28298_)
-                                                     (let ((_pre28316_
-                                                            (gx#stx-e
-                                                             _L28298_)))
-                                                       (let ((_imports28319_
-                                                              (gx#core-expand-import-source
-                                                               _L28300_)))
-                                                         (let ((_rename-e28325_
-                                                                (lambda (_name28322_)
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (|gerbil/core::<module-sugar>[1]#prefix-identifier-key|
-                           _name28322_
-                           _pre28316_))))
-                   (let ((_fold-e28335_
-                          (letrec ((_fold-e28328_
-                                    (lambda (_in28331_ _r28333_)
-                                      (if (gx#module-import? _in28331_)
-                                          (cons (|gerbil/core::<module-sugar>[1]#module-import-rename|
-                                                 _in28331_
-                                                 (_rename-e28325_
-                                                  (gx#module-import-name
-                                                   _in28331_)))
-                                                _r28333_)
-                                          (if (gx#import-set? _in28331_)
-                                              (foldl _fold-e28328_
-                                                     _r28333_
-                                                     (gx#import-set-imports
-                                                      _in28331_))
-                                              (cons _in28331_ _r28333_))))))
-                            _fold-e28328_)))
-                     (let ()
-                       (cons 'begin:
-                             (foldl _fold-e28335_ '() _imports28319_)))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (_g2824328261_
-                                                      _g2824428265_)))
-                                               _hd2825428292_
-                                               _hd2825128282_)
-                                              (_g2824328261_ _g2824428265_))))
-                                      (_g2824328261_ _g2824428265_))))
-                              (_g2824328261_ _g2824428265_))))
-                      (_g2824328261_ _g2824428265_)))))
-           (_g2824228340_ _stx28240_))))))
-  (define |gerbil/core::<module-sugar>[:0:]#except-out|
-    (gx#make-export-expander
-     (lambda (_stx28344_)
-       (let ((_g2834728371_
-              (lambda (_g2834828367_)
-                (gx#raise-syntax-error '#f '"Bad syntax" _g2834828367_))))
-         (let ((_g2834628493_
-                (lambda (_g2834828375_)
-                  (if (gx#stx-pair? _g2834828375_)
-                      (let ((_e2835128378_ (gx#syntax-e _g2834828375_)))
-                        (let ((_hd2835228382_ (##car _e2835128378_))
-                              (_tl2835328385_ (##cdr _e2835128378_)))
-                          (if (gx#stx-pair? _tl2835328385_)
-                              (let ((_e2835428388_
-                                     (gx#syntax-e _tl2835328385_)))
-                                (let ((_hd2835528392_ (##car _e2835428388_))
-                                      (_tl2835628395_ (##cdr _e2835428388_)))
-                                  (if (gx#stx-pair/null? _tl2835628395_)
-                                      (if (fx>= (gx#stx-length _tl2835628395_)
-                                                '0)
-                                          (let ((_g29385_
-                                                 (gx#syntax-split-splice
-                                                  _tl2835628395_
-                                                  '0)))
-                                            (begin
-                                              (let ((_g29386_
-                                                     (values-count _g29385_)))
-                                                (if (not (fx= _g29386_ 2))
-                                                    (error "Context expects 2 values"
-                                                           _g29386_)))
-                                              (let ((_target2835728398_
-                                                     (values-ref _g29385_ 0))
-                                                    (_tl2835928401_
-                                                     (values-ref _g29385_ 1)))
-                                                (if (gx#stx-null?
-                                                     _tl2835928401_)
-                                                    (letrec ((_loop2836028404_
-                                                              (lambda (_hd2835828408_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               _id2836428411_)
-                        (if (gx#stx-pair? _hd2835828408_)
-                            (let ((_e2836128414_ (gx#syntax-e _hd2835828408_)))
-                              (let ((_lp-hd2836228418_ (##car _e2836128414_))
-                                    (_lp-tl2836328421_ (##cdr _e2836128414_)))
-                                (_loop2836028404_
-                                 _lp-tl2836328421_
-                                 (cons _lp-hd2836228418_ _id2836428411_))))
-                            (let ((_id2836528424_ (reverse _id2836428411_)))
-                              ((lambda (_L28428_ _L28430_)
+                               _id2798128028_)
+                        (if (gx#stx-pair? _hd2797528025_)
+                            (let ((_e2797828031_ (gx#syntax-e _hd2797528025_)))
+                              (let ((_lp-hd2797928035_ (##car _e2797828031_))
+                                    (_lp-tl2798028038_ (##cdr _e2797828031_)))
+                                (_loop2797728021_
+                                 _lp-tl2798028038_
+                                 (cons _lp-hd2797928035_ _id2798128028_))))
+                            (let ((_id2798228041_ (reverse _id2798128028_)))
+                              ((lambda (_L28045_ _L28047_)
                                  (if (gx#identifier-list?
                                       (begin
                                         '#!void
-                                        (foldr (lambda (_g2844728450_
-                                                        _g2844828453_)
-                                                 (cons _g2844728450_
-                                                       _g2844828453_))
+                                        (foldr (lambda (_g2806428067_
+                                                        _g2806528070_)
+                                                 (cons _g2806428067_
+                                                       _g2806528070_))
                                                '()
-                                               _L28428_)))
-                                     (let ((_keys28464_
+                                               _L28045_)))
+                                     (let ((_keys28081_
                                             (gx#stx-map
                                              gx#core-identifier-key
                                              (begin
                                                '#!void
-                                               (foldr (lambda (_g2845528458_
-                                                               _g2845628461_)
-                                                        (cons _g2845528458_
-                                                              _g2845628461_))
+                                               (foldr (lambda (_g2807228075_
+                                                               _g2807328078_)
+                                                        (cons _g2807228075_
+                                                              _g2807328078_))
                                                       '()
-                                                      _L28428_)))))
-                                       (let ((_keytab28475_
-                                              (let ((_ht28467_
+                                                      _L28045_)))))
+                                       (let ((_keytab28092_
+                                              (let ((_ht28084_
                                                      (make-hash-table)))
                                                 (begin
                                                   (for-each
-                                                   (lambda (_g2846928471_)
+                                                   (lambda (_g2808628088_)
                                                      (hash-put!
-                                                      _ht28467_
-                                                      _g2846928471_
+                                                      _ht28084_
+                                                      _g2808628088_
                                                       '#t))
-                                                   _keys28464_)
-                                                  _ht28467_))))
-                                         (let ((_exports28478_
-                                                (gx#core-expand-export-source
-                                                 _L28430_)))
-                                           (let ((_fold-e28488_
-                                                  (letrec ((_fold-e28481_
-                                                            (lambda (_out28484_
+                                                   _keys28081_)
+                                                  _ht28084_))))
+                                         (let ((_imports28095_
+                                                (gx#core-expand-import-source
+                                                 _L28047_)))
+                                           (let ((_fold-e28105_
+                                                  (letrec ((_fold-e28098_
+                                                            (lambda (_in28101_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             _r28486_)
-                      (if (gx#module-export? _out28484_)
+                             _r28103_)
+                      (if (gx#module-import? _in28101_)
                           (if (hash-get
-                               _keytab28475_
-                               (gx#module-export-name _out28484_))
-                              _r28486_
-                              (cons _out28484_ _r28486_))
-                          (if (gx#export-set? _out28484_)
-                              (foldl _fold-e28481_
-                                     _r28486_
-                                     (gx#export-set-exports _out28484_))
-                              _r28486_)))))
+                               _keytab28092_
+                               (gx#module-import-name _in28101_))
+                              _r28103_
+                              (cons _in28101_ _r28103_))
+                          (if (gx#import-set? _in28101_)
+                              (foldl _fold-e28098_
+                                     _r28103_
+                                     (gx#import-set-imports _in28101_))
+                              (cons _in28101_ _r28103_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    _fold-e28481_)))
+                                                    _fold-e28098_)))
                                              (let ()
                                                (cons 'begin:
-                                                     (foldl _fold-e28488_
+                                                     (foldl _fold-e28105_
                                                             '()
-                                                            _exports28478_)))))))
-                                     (_g2834728371_ _g2834828375_)))
-                               _id2836528424_
-                               _hd2835528392_))))))
-              (_loop2836028404_ _target2835728398_ '()))
+                                                            _imports28095_)))))))
+                                     (_g2796427988_ _g2796527992_)))
+                               _id2798228041_
+                               _hd2797228009_))))))
+              (_loop2797728021_ _target2797428015_ '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_g2834728371_
-                                                     _g2834828375_)))))
-                                          (_g2834728371_ _g2834828375_))
-                                      (_g2834728371_ _g2834828375_))))
-                              (_g2834728371_ _g2834828375_))))
-                      (_g2834728371_ _g2834828375_)))))
-           (_g2834628493_ _stx28344_))))))
-  (define |gerbil/core::<module-sugar>[1]#module-export-rename|
-    (lambda (_out28498_ _rename28500_)
-      (gx#make-module-export
-       (gx#module-export-context _out28498_)
-       (gx#module-export-key _out28498_)
-       (gx#module-export-phi _out28498_)
-       _rename28500_
-       (gx#module-export-weak? _out28498_))))
-  (define |gerbil/core::<module-sugar>[:0:]#rename-out|
-    (gx#make-export-expander
-     (lambda (_stx28502_)
-       (let ((_g2850528538_
-              (lambda (_g2850628534_)
-                (gx#raise-syntax-error '#f '"Bad syntax" _g2850628534_))))
-         (let ((_g2850428724_
-                (lambda (_g2850628542_)
-                  (if (gx#stx-pair? _g2850628542_)
-                      (let ((_e2851028545_ (gx#syntax-e _g2850628542_)))
-                        (let ((_hd2851128549_ (##car _e2851028545_))
-                              (_tl2851228552_ (##cdr _e2851028545_)))
-                          (if (gx#stx-pair? _tl2851228552_)
-                              (let ((_e2851328555_
-                                     (gx#syntax-e _tl2851228552_)))
-                                (let ((_hd2851428559_ (##car _e2851328555_))
-                                      (_tl2851528562_ (##cdr _e2851328555_)))
-                                  (if (gx#stx-pair/null? _tl2851528562_)
-                                      (if (fx>= (gx#stx-length _tl2851528562_)
+                                                    (_g2796427988_
+                                                     _g2796527992_)))))
+                                          (_g2796427988_ _g2796527992_))
+                                      (_g2796427988_ _g2796527992_))))
+                              (_g2796427988_ _g2796527992_))))
+                      (_g2796427988_ _g2796527992_)))))
+           (_g2796328110_ _stx27961_))))))
+  (define |gerbil/core::<module-sugar>[1]#module-import-rename|
+    (lambda (_in28162_ _rename28164_)
+      (gx#make-module-import
+       (gx#module-import-source _in28162_)
+       _rename28164_
+       (gx#module-import-phi _in28162_)
+       (gx#module-import-weak? _in28162_))))
+  (define |gerbil/core::<module-sugar>[1]#prefix-identifier-key|
+    (lambda (_name28115_ _pre28117_)
+      (let ((_name2811828126_ _name28115_))
+        (let ((_E2812128132_
+               (lambda () (error '"No clause matching" _name2811828126_))))
+          (let ((_else2812028138_
+                 (lambda () (make-symbol _pre28117_ _name28115_))))
+            (let ((_K2812228146_
+                   (lambda (_mark28142_ _id28144_)
+                     (cons (make-symbol _pre28117_ _id28144_) _mark28142_))))
+              (if (##pair? _name2811828126_)
+                  (let ((_hd2812328150_ (##car _name2811828126_))
+                        (_tl2812428153_ (##cdr _name2811828126_)))
+                    (let ((_id28156_ _hd2812328150_))
+                      (let ((_mark28159_ _tl2812428153_))
+                        (_K2812228146_ _mark28159_ _id28156_))))
+                  (_else2812028138_))))))))
+  (define |gerbil/core::<module-sugar>[:0:]#rename-in|
+    (gx#make-import-expander
+     (lambda (_stx28166_)
+       (let ((_g2816928202_
+              (lambda (_g2817028198_)
+                (gx#raise-syntax-error '#f '"Bad syntax" _g2817028198_))))
+         (let ((_g2816828388_
+                (lambda (_g2817028206_)
+                  (if (gx#stx-pair? _g2817028206_)
+                      (let ((_e2817428209_ (gx#syntax-e _g2817028206_)))
+                        (let ((_hd2817528213_ (##car _e2817428209_))
+                              (_tl2817628216_ (##cdr _e2817428209_)))
+                          (if (gx#stx-pair? _tl2817628216_)
+                              (let ((_e2817728219_
+                                     (gx#syntax-e _tl2817628216_)))
+                                (let ((_hd2817828223_ (##car _e2817728219_))
+                                      (_tl2817928226_ (##cdr _e2817728219_)))
+                                  (if (gx#stx-pair/null? _tl2817928226_)
+                                      (if (fx>= (gx#stx-length _tl2817928226_)
                                                 '0)
-                                          (let ((_g29387_
+                                          (let ((_g29538_
                                                  (gx#syntax-split-splice
-                                                  _tl2851528562_
+                                                  _tl2817928226_
                                                   '0)))
                                             (begin
-                                              (let ((_g29388_
-                                                     (values-count _g29387_)))
-                                                (if (not (fx= _g29388_ 2))
+                                              (let ((_g29539_
+                                                     (values-count _g29538_)))
+                                                (if (not (fx= _g29539_ 2))
                                                     (error "Context expects 2 values"
-                                                           _g29388_)))
-                                              (let ((_target2851628565_
-                                                     (values-ref _g29387_ 0))
-                                                    (_tl2851828568_
-                                                     (values-ref _g29387_ 1)))
+                                                           _g29539_)))
+                                              (let ((_target2818028229_
+                                                     (values-ref _g29538_ 0))
+                                                    (_tl2818228232_
+                                                     (values-ref _g29538_ 1)))
                                                 (if (gx#stx-null?
-                                                     _tl2851828568_)
-                                                    (letrec ((_loop2851928571_
-                                                              (lambda (_hd2851728575_
+                                                     _tl2818228232_)
+                                                    (letrec ((_loop2818328235_
+                                                              (lambda (_hd2818128239_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               _new-id2852328578_
-                               _id2852428580_)
-                        (if (gx#stx-pair? _hd2851728575_)
-                            (let ((_e2852028583_ (gx#syntax-e _hd2851728575_)))
-                              (let ((_lp-hd2852128587_ (##car _e2852028583_))
-                                    (_lp-tl2852228590_ (##cdr _e2852028583_)))
-                                (if (gx#stx-pair? _lp-hd2852128587_)
-                                    (let ((_e2852728593_
-                                           (gx#syntax-e _lp-hd2852128587_)))
-                                      (let ((_hd2852828597_
-                                             (##car _e2852728593_))
-                                            (_tl2852928600_
-                                             (##cdr _e2852728593_)))
-                                        (if (gx#stx-pair? _tl2852928600_)
-                                            (let ((_e2853028603_
+                               _new-id2818728242_
+                               _id2818828244_)
+                        (if (gx#stx-pair? _hd2818128239_)
+                            (let ((_e2818428247_ (gx#syntax-e _hd2818128239_)))
+                              (let ((_lp-hd2818528251_ (##car _e2818428247_))
+                                    (_lp-tl2818628254_ (##cdr _e2818428247_)))
+                                (if (gx#stx-pair? _lp-hd2818528251_)
+                                    (let ((_e2819128257_
+                                           (gx#syntax-e _lp-hd2818528251_)))
+                                      (let ((_hd2819228261_
+                                             (##car _e2819128257_))
+                                            (_tl2819328264_
+                                             (##cdr _e2819128257_)))
+                                        (if (gx#stx-pair? _tl2819328264_)
+                                            (let ((_e2819428267_
                                                    (gx#syntax-e
-                                                    _tl2852928600_)))
-                                              (let ((_hd2853128607_
-                                                     (##car _e2853028603_))
-                                                    (_tl2853228610_
-                                                     (##cdr _e2853028603_)))
+                                                    _tl2819328264_)))
+                                              (let ((_hd2819528271_
+                                                     (##car _e2819428267_))
+                                                    (_tl2819628274_
+                                                     (##cdr _e2819428267_)))
                                                 (if (gx#stx-null?
-                                                     _tl2853228610_)
-                                                    (_loop2851928571_
-                                                     _lp-tl2852228590_
-                                                     (cons _hd2853128607_
-                                                           _new-id2852328578_)
-                                                     (cons _hd2852828597_
-                                                           _id2852428580_))
-                                                    (_g2850528538_
-                                                     _g2850628542_))))
-                                            (_g2850528538_ _g2850628542_))))
-                                    (_g2850528538_ _g2850628542_))))
-                            (let ((_new-id2852528613_
-                                   (reverse _new-id2852328578_))
-                                  (_id2852628616_ (reverse _id2852428580_)))
-                              ((lambda (_L28619_ _L28621_ _L28622_)
+                                                     _tl2819628274_)
+                                                    (_loop2818328235_
+                                                     _lp-tl2818628254_
+                                                     (cons _hd2819528271_
+                                                           _new-id2818728242_)
+                                                     (cons _hd2819228261_
+                                                           _id2818828244_))
+                                                    (_g2816928202_
+                                                     _g2817028206_))))
+                                            (_g2816928202_ _g2817028206_))))
+                                    (_g2816928202_ _g2817028206_))))
+                            (let ((_new-id2818928277_
+                                   (reverse _new-id2818728242_))
+                                  (_id2819028280_ (reverse _id2818828244_)))
+                              ((lambda (_L28283_ _L28285_ _L28286_)
                                  (if (if (gx#identifier-list?
                                           (begin
                                             '#!void
-                                            (foldr (lambda (_g2864028643_
-                                                            _g2864128646_)
-                                                     (cons _g2864028643_
-                                                           _g2864128646_))
+                                            (foldr (lambda (_g2830428307_
+                                                            _g2830528310_)
+                                                     (cons _g2830428307_
+                                                           _g2830528310_))
                                                    '()
-                                                   _L28621_)))
+                                                   _L28285_)))
                                          (gx#identifier-list?
                                           (begin
                                             '#!void
-                                            (foldr (lambda (_g2864828651_
-                                                            _g2864928654_)
-                                                     (cons _g2864828651_
-                                                           _g2864928654_))
+                                            (foldr (lambda (_g2831228315_
+                                                            _g2831328318_)
+                                                     (cons _g2831228315_
+                                                           _g2831328318_))
                                                    '()
-                                                   _L28619_)))
+                                                   _L28283_)))
                                          '#f)
-                                     (let ((_keytab28657_ (make-hash-table)))
-                                       (let ((_found28660_ (make-hash-table)))
-                                         (let ((_g29389_
+                                     (let ((_keytab28321_ (make-hash-table)))
+                                       (let ((_found28324_ (make-hash-table)))
+                                         (let ((_g29540_
                                                 (for-each
-                                                 (lambda (_id28663_
-                                                          _new-id28665_)
+                                                 (lambda (_id28327_
+                                                          _new-id28329_)
                                                    (hash-put!
-                                                    _keytab28657_
+                                                    _keytab28321_
                                                     (gx#core-identifier-key
-                                                     _id28663_)
+                                                     _id28327_)
                                                     (gx#core-identifier-key
-                                                     _new-id28665_)))
+                                                     _new-id28329_)))
                                                  (begin
                                                    '#!void
-                                                   (foldr (lambda (_g2866628669_
+                                                   (foldr (lambda (_g2833028333_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _g2866728672_)
-                    (cons _g2866628669_ _g2866728672_))
+                           _g2833128336_)
+                    (cons _g2833028333_ _g2833128336_))
                   '()
-                  _L28621_))
+                  _L28285_))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (begin
                                                    '#!void
-                                                   (foldr (lambda (_g2867428677_
+                                                   (foldr (lambda (_g2833828341_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _g2867528680_)
-                    (cons _g2867428677_ _g2867528680_))
+                           _g2833928344_)
+                    (cons _g2833828341_ _g2833928344_))
                   '()
-                  _L28619_)))))
+                  _L28283_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                           (let ((_exports28685_
-                                                  (gx#core-expand-export-source
-                                                   _L28622_)))
-                                             (let ((_fold-e28705_
-                                                    (letrec ((_fold-e28688_
-                                                              (lambda (_out28691_
+                                           (let ((_imports28349_
+                                                  (gx#core-expand-import-source
+                                                   _L28286_)))
+                                             (let ((_fold-e28369_
+                                                    (letrec ((_fold-e28352_
+                                                              (lambda (_in28355_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               _r28693_)
-                        (if (gx#module-export? _out28691_)
-                            (let ((_name28695_
-                                   (gx#module-export-name _out28691_)))
-                              (let ((_$e28698_
-                                     (hash-get _keytab28657_ _name28695_)))
-                                (if _$e28698_
-                                    ((lambda (_rename28702_)
+                               _r28357_)
+                        (if (gx#module-import? _in28355_)
+                            (let ((_name28359_
+                                   (gx#module-import-name _in28355_)))
+                              (let ((_$e28362_
+                                     (hash-get _keytab28321_ _name28359_)))
+                                (if _$e28362_
+                                    ((lambda (_rename28366_)
                                        (begin
                                          (hash-put!
-                                          _found28660_
-                                          _name28695_
+                                          _found28324_
+                                          _name28359_
                                           '#t)
-                                         (cons (|gerbil/core::<module-sugar>[1]#module-export-rename|
-                                                _out28691_
-                                                _rename28702_)
-                                               _r28693_)))
-                                     _$e28698_)
-                                    (cons _out28691_ _r28693_))))
-                            (if (gx#export-set? _out28691_)
-                                (foldl _fold-e28688_
-                                       _r28693_
-                                       (gx#export-set-exports _out28691_))
-                                (cons _out28691_ _r28693_))))))
-              _fold-e28688_)))
+                                         (cons (|gerbil/core::<module-sugar>[1]#module-import-rename|
+                                                _in28355_
+                                                _rename28366_)
+                                               _r28357_)))
+                                     _$e28362_)
+                                    (cons _in28355_ _r28357_))))
+                            (if (gx#import-set? _in28355_)
+                                (foldl _fold-e28352_
+                                       _r28357_
+                                       (gx#import-set-imports _in28355_))
+                                (cons _in28355_ _r28357_))))))
+              _fold-e28352_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                               (let ((_new-exports28708_
-                                                      (foldl _fold-e28705_
+                                               (let ((_new-imports28372_
+                                                      (foldl _fold-e28369_
                                                              '()
-                                                             _exports28685_)))
+                                                             _imports28349_)))
                                                  (let ()
                                                    (begin
                                                      (for-each
-                                                      (lambda (_id28713_)
+                                                      (lambda (_id28377_)
                                                         (if (hash-get
-                                                             _found28660_
+                                                             _found28324_
                                                              (gx#core-identifier-key
-                                                              _id28713_))
+                                                              _id28377_))
+                                                            '#!void
+                                                            (gx#raise-syntax-error
+                                                             '#f
+                                                             '"Bad syntax; identifier is not in the import set"
+                                                             _stx28166_
+                                                             _id28377_)))
+                                                      (begin
+                                                        '#!void
+                                                        (foldr (lambda (_g2837928382_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                _g2838028385_)
+                         (cons _g2837928382_ _g2838028385_))
+                       '()
+                       _L28285_)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (cons 'begin:
+                                                           _new-imports28372_)))))))))
+                                     (_g2816928202_ _g2817028206_)))
+                               _new-id2818928277_
+                               _id2819028280_
+                               _hd2817828223_))))))
+              (_loop2818328235_ _target2818028229_ '() '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    (_g2816928202_
+                                                     _g2817028206_)))))
+                                          (_g2816928202_ _g2817028206_))
+                                      (_g2816928202_ _g2817028206_))))
+                              (_g2816928202_ _g2817028206_))))
+                      (_g2816928202_ _g2817028206_)))))
+           (_g2816828388_ _stx28166_))))))
+  (define |gerbil/core::<module-sugar>[:0:]#prefix-in|
+    (gx#make-import-expander
+     (lambda (_stx28394_)
+       (let ((_g2839728415_
+              (lambda (_g2839828411_)
+                (gx#raise-syntax-error '#f '"Bad syntax" _g2839828411_))))
+         (let ((_g2839628494_
+                (lambda (_g2839828419_)
+                  (if (gx#stx-pair? _g2839828419_)
+                      (let ((_e2840128422_ (gx#syntax-e _g2839828419_)))
+                        (let ((_hd2840228426_ (##car _e2840128422_))
+                              (_tl2840328429_ (##cdr _e2840128422_)))
+                          (if (gx#stx-pair? _tl2840328429_)
+                              (let ((_e2840428432_
+                                     (gx#syntax-e _tl2840328429_)))
+                                (let ((_hd2840528436_ (##car _e2840428432_))
+                                      (_tl2840628439_ (##cdr _e2840428432_)))
+                                  (if (gx#stx-pair? _tl2840628439_)
+                                      (let ((_e2840728442_
+                                             (gx#syntax-e _tl2840628439_)))
+                                        (let ((_hd2840828446_
+                                               (##car _e2840728442_))
+                                              (_tl2840928449_
+                                               (##cdr _e2840728442_)))
+                                          (if (gx#stx-null? _tl2840928449_)
+                                              ((lambda (_L28452_ _L28454_)
+                                                 (if (gx#identifier? _L28452_)
+                                                     (let ((_pre28470_
+                                                            (gx#stx-e
+                                                             _L28452_)))
+                                                       (let ((_imports28473_
+                                                              (gx#core-expand-import-source
+                                                               _L28454_)))
+                                                         (let ((_rename-e28479_
+                                                                (lambda (_name28476_)
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (|gerbil/core::<module-sugar>[1]#prefix-identifier-key|
+                           _name28476_
+                           _pre28470_))))
+                   (let ((_fold-e28489_
+                          (letrec ((_fold-e28482_
+                                    (lambda (_in28485_ _r28487_)
+                                      (if (gx#module-import? _in28485_)
+                                          (cons (|gerbil/core::<module-sugar>[1]#module-import-rename|
+                                                 _in28485_
+                                                 (_rename-e28479_
+                                                  (gx#module-import-name
+                                                   _in28485_)))
+                                                _r28487_)
+                                          (if (gx#import-set? _in28485_)
+                                              (foldl _fold-e28482_
+                                                     _r28487_
+                                                     (gx#import-set-imports
+                                                      _in28485_))
+                                              (cons _in28485_ _r28487_))))))
+                            _fold-e28482_)))
+                     (let ()
+                       (cons 'begin:
+                             (foldl _fold-e28489_ '() _imports28473_)))))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (_g2839728415_
+                                                      _g2839828419_)))
+                                               _hd2840828446_
+                                               _hd2840528436_)
+                                              (_g2839728415_ _g2839828419_))))
+                                      (_g2839728415_ _g2839828419_))))
+                              (_g2839728415_ _g2839828419_))))
+                      (_g2839728415_ _g2839828419_)))))
+           (_g2839628494_ _stx28394_))))))
+  (define |gerbil/core::<module-sugar>[:0:]#except-out|
+    (gx#make-export-expander
+     (lambda (_stx28498_)
+       (let ((_g2850128525_
+              (lambda (_g2850228521_)
+                (gx#raise-syntax-error '#f '"Bad syntax" _g2850228521_))))
+         (let ((_g2850028647_
+                (lambda (_g2850228529_)
+                  (if (gx#stx-pair? _g2850228529_)
+                      (let ((_e2850528532_ (gx#syntax-e _g2850228529_)))
+                        (let ((_hd2850628536_ (##car _e2850528532_))
+                              (_tl2850728539_ (##cdr _e2850528532_)))
+                          (if (gx#stx-pair? _tl2850728539_)
+                              (let ((_e2850828542_
+                                     (gx#syntax-e _tl2850728539_)))
+                                (let ((_hd2850928546_ (##car _e2850828542_))
+                                      (_tl2851028549_ (##cdr _e2850828542_)))
+                                  (if (gx#stx-pair/null? _tl2851028549_)
+                                      (if (fx>= (gx#stx-length _tl2851028549_)
+                                                '0)
+                                          (let ((_g29541_
+                                                 (gx#syntax-split-splice
+                                                  _tl2851028549_
+                                                  '0)))
+                                            (begin
+                                              (let ((_g29542_
+                                                     (values-count _g29541_)))
+                                                (if (not (fx= _g29542_ 2))
+                                                    (error "Context expects 2 values"
+                                                           _g29542_)))
+                                              (let ((_target2851128552_
+                                                     (values-ref _g29541_ 0))
+                                                    (_tl2851328555_
+                                                     (values-ref _g29541_ 1)))
+                                                (if (gx#stx-null?
+                                                     _tl2851328555_)
+                                                    (letrec ((_loop2851428558_
+                                                              (lambda (_hd2851228562_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                               _id2851828565_)
+                        (if (gx#stx-pair? _hd2851228562_)
+                            (let ((_e2851528568_ (gx#syntax-e _hd2851228562_)))
+                              (let ((_lp-hd2851628572_ (##car _e2851528568_))
+                                    (_lp-tl2851728575_ (##cdr _e2851528568_)))
+                                (_loop2851428558_
+                                 _lp-tl2851728575_
+                                 (cons _lp-hd2851628572_ _id2851828565_))))
+                            (let ((_id2851928578_ (reverse _id2851828565_)))
+                              ((lambda (_L28582_ _L28584_)
+                                 (if (gx#identifier-list?
+                                      (begin
+                                        '#!void
+                                        (foldr (lambda (_g2860128604_
+                                                        _g2860228607_)
+                                                 (cons _g2860128604_
+                                                       _g2860228607_))
+                                               '()
+                                               _L28582_)))
+                                     (let ((_keys28618_
+                                            (gx#stx-map
+                                             gx#core-identifier-key
+                                             (begin
+                                               '#!void
+                                               (foldr (lambda (_g2860928612_
+                                                               _g2861028615_)
+                                                        (cons _g2860928612_
+                                                              _g2861028615_))
+                                                      '()
+                                                      _L28582_)))))
+                                       (let ((_keytab28629_
+                                              (let ((_ht28621_
+                                                     (make-hash-table)))
+                                                (begin
+                                                  (for-each
+                                                   (lambda (_g2862328625_)
+                                                     (hash-put!
+                                                      _ht28621_
+                                                      _g2862328625_
+                                                      '#t))
+                                                   _keys28618_)
+                                                  _ht28621_))))
+                                         (let ((_exports28632_
+                                                (gx#core-expand-export-source
+                                                 _L28584_)))
+                                           (let ((_fold-e28642_
+                                                  (letrec ((_fold-e28635_
+                                                            (lambda (_out28638_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                             _r28640_)
+                      (if (gx#module-export? _out28638_)
+                          (if (hash-get
+                               _keytab28629_
+                               (gx#module-export-name _out28638_))
+                              _r28640_
+                              (cons _out28638_ _r28640_))
+                          (if (gx#export-set? _out28638_)
+                              (foldl _fold-e28635_
+                                     _r28640_
+                                     (gx#export-set-exports _out28638_))
+                              _r28640_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    _fold-e28635_)))
+                                             (let ()
+                                               (cons 'begin:
+                                                     (foldl _fold-e28642_
+                                                            '()
+                                                            _exports28632_)))))))
+                                     (_g2850128525_ _g2850228529_)))
+                               _id2851928578_
+                               _hd2850928546_))))))
+              (_loop2851428558_ _target2851128552_ '()))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    (_g2850128525_
+                                                     _g2850228529_)))))
+                                          (_g2850128525_ _g2850228529_))
+                                      (_g2850128525_ _g2850228529_))))
+                              (_g2850128525_ _g2850228529_))))
+                      (_g2850128525_ _g2850228529_)))))
+           (_g2850028647_ _stx28498_))))))
+  (define |gerbil/core::<module-sugar>[1]#module-export-rename|
+    (lambda (_out28652_ _rename28654_)
+      (gx#make-module-export
+       (gx#module-export-context _out28652_)
+       (gx#module-export-key _out28652_)
+       (gx#module-export-phi _out28652_)
+       _rename28654_
+       (gx#module-export-weak? _out28652_))))
+  (define |gerbil/core::<module-sugar>[:0:]#rename-out|
+    (gx#make-export-expander
+     (lambda (_stx28656_)
+       (let ((_g2865928692_
+              (lambda (_g2866028688_)
+                (gx#raise-syntax-error '#f '"Bad syntax" _g2866028688_))))
+         (let ((_g2865828878_
+                (lambda (_g2866028696_)
+                  (if (gx#stx-pair? _g2866028696_)
+                      (let ((_e2866428699_ (gx#syntax-e _g2866028696_)))
+                        (let ((_hd2866528703_ (##car _e2866428699_))
+                              (_tl2866628706_ (##cdr _e2866428699_)))
+                          (if (gx#stx-pair? _tl2866628706_)
+                              (let ((_e2866728709_
+                                     (gx#syntax-e _tl2866628706_)))
+                                (let ((_hd2866828713_ (##car _e2866728709_))
+                                      (_tl2866928716_ (##cdr _e2866728709_)))
+                                  (if (gx#stx-pair/null? _tl2866928716_)
+                                      (if (fx>= (gx#stx-length _tl2866928716_)
+                                                '0)
+                                          (let ((_g29543_
+                                                 (gx#syntax-split-splice
+                                                  _tl2866928716_
+                                                  '0)))
+                                            (begin
+                                              (let ((_g29544_
+                                                     (values-count _g29543_)))
+                                                (if (not (fx= _g29544_ 2))
+                                                    (error "Context expects 2 values"
+                                                           _g29544_)))
+                                              (let ((_target2867028719_
+                                                     (values-ref _g29543_ 0))
+                                                    (_tl2867228722_
+                                                     (values-ref _g29543_ 1)))
+                                                (if (gx#stx-null?
+                                                     _tl2867228722_)
+                                                    (letrec ((_loop2867328725_
+                                                              (lambda (_hd2867128729_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                               _new-id2867728732_
+                               _id2867828734_)
+                        (if (gx#stx-pair? _hd2867128729_)
+                            (let ((_e2867428737_ (gx#syntax-e _hd2867128729_)))
+                              (let ((_lp-hd2867528741_ (##car _e2867428737_))
+                                    (_lp-tl2867628744_ (##cdr _e2867428737_)))
+                                (if (gx#stx-pair? _lp-hd2867528741_)
+                                    (let ((_e2868128747_
+                                           (gx#syntax-e _lp-hd2867528741_)))
+                                      (let ((_hd2868228751_
+                                             (##car _e2868128747_))
+                                            (_tl2868328754_
+                                             (##cdr _e2868128747_)))
+                                        (if (gx#stx-pair? _tl2868328754_)
+                                            (let ((_e2868428757_
+                                                   (gx#syntax-e
+                                                    _tl2868328754_)))
+                                              (let ((_hd2868528761_
+                                                     (##car _e2868428757_))
+                                                    (_tl2868628764_
+                                                     (##cdr _e2868428757_)))
+                                                (if (gx#stx-null?
+                                                     _tl2868628764_)
+                                                    (_loop2867328725_
+                                                     _lp-tl2867628744_
+                                                     (cons _hd2868528761_
+                                                           _new-id2867728732_)
+                                                     (cons _hd2868228751_
+                                                           _id2867828734_))
+                                                    (_g2865928692_
+                                                     _g2866028696_))))
+                                            (_g2865928692_ _g2866028696_))))
+                                    (_g2865928692_ _g2866028696_))))
+                            (let ((_new-id2867928767_
+                                   (reverse _new-id2867728732_))
+                                  (_id2868028770_ (reverse _id2867828734_)))
+                              ((lambda (_L28773_ _L28775_ _L28776_)
+                                 (if (if (gx#identifier-list?
+                                          (begin
+                                            '#!void
+                                            (foldr (lambda (_g2879428797_
+                                                            _g2879528800_)
+                                                     (cons _g2879428797_
+                                                           _g2879528800_))
+                                                   '()
+                                                   _L28775_)))
+                                         (gx#identifier-list?
+                                          (begin
+                                            '#!void
+                                            (foldr (lambda (_g2880228805_
+                                                            _g2880328808_)
+                                                     (cons _g2880228805_
+                                                           _g2880328808_))
+                                                   '()
+                                                   _L28773_)))
+                                         '#f)
+                                     (let ((_keytab28811_ (make-hash-table)))
+                                       (let ((_found28814_ (make-hash-table)))
+                                         (let ((_g29545_
+                                                (for-each
+                                                 (lambda (_id28817_
+                                                          _new-id28819_)
+                                                   (hash-put!
+                                                    _keytab28811_
+                                                    (gx#core-identifier-key
+                                                     _id28817_)
+                                                    (gx#core-identifier-key
+                                                     _new-id28819_)))
+                                                 (begin
+                                                   '#!void
+                                                   (foldr (lambda (_g2882028823_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           _g2882128826_)
+                    (cons _g2882028823_ _g2882128826_))
+                  '()
+                  _L28775_))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                 (begin
+                                                   '#!void
+                                                   (foldr (lambda (_g2882828831_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           _g2882928834_)
+                    (cons _g2882828831_ _g2882928834_))
+                  '()
+                  _L28773_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                           (let ((_exports28839_
+                                                  (gx#core-expand-export-source
+                                                   _L28776_)))
+                                             (let ((_fold-e28859_
+                                                    (letrec ((_fold-e28842_
+                                                              (lambda (_out28845_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                               _r28847_)
+                        (if (gx#module-export? _out28845_)
+                            (let ((_name28849_
+                                   (gx#module-export-name _out28845_)))
+                              (let ((_$e28852_
+                                     (hash-get _keytab28811_ _name28849_)))
+                                (if _$e28852_
+                                    ((lambda (_rename28856_)
+                                       (begin
+                                         (hash-put!
+                                          _found28814_
+                                          _name28849_
+                                          '#t)
+                                         (cons (|gerbil/core::<module-sugar>[1]#module-export-rename|
+                                                _out28845_
+                                                _rename28856_)
+                                               _r28847_)))
+                                     _$e28852_)
+                                    (cons _out28845_ _r28847_))))
+                            (if (gx#export-set? _out28845_)
+                                (foldl _fold-e28842_
+                                       _r28847_
+                                       (gx#export-set-exports _out28845_))
+                                (cons _out28845_ _r28847_))))))
+              _fold-e28842_)))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                               (let ((_new-exports28862_
+                                                      (foldl _fold-e28859_
+                                                             '()
+                                                             _exports28839_)))
+                                                 (let ()
+                                                   (begin
+                                                     (for-each
+                                                      (lambda (_id28867_)
+                                                        (if (hash-get
+                                                             _found28814_
+                                                             (gx#core-identifier-key
+                                                              _id28867_))
                                                             '#!void
                                                             (gx#raise-syntax-error
                                                              '#f
                                                              '"Bad syntax; identifier is not in the export set"
-                                                             _stx28502_
-                                                             _id28713_)))
+                                                             _stx28656_
+                                                             _id28867_)))
                                                       (begin
                                                         '#!void
-                                                        (foldr (lambda (_g2871528718_
+                                                        (foldr (lambda (_g2886928872_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                _g2871628721_)
-                         (cons _g2871528718_ _g2871628721_))
+                                _g2887028875_)
+                         (cons _g2886928872_ _g2887028875_))
                        '()
-                       _L28621_)))
+                       _L28775_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (cons 'begin:
-                                                           _new-exports28708_)))))))))
-                                     (_g2850528538_ _g2850628542_)))
-                               _new-id2852528613_
-                               _id2852628616_
-                               _hd2851428559_))))))
-              (_loop2851928571_ _target2851628565_ '() '()))
+                                                           _new-exports28862_)))))))))
+                                     (_g2865928692_ _g2866028696_)))
+                               _new-id2867928767_
+                               _id2868028770_
+                               _hd2866828713_))))))
+              (_loop2867328725_ _target2867028719_ '() '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (_g2850528538_
-                                                     _g2850628542_)))))
-                                          (_g2850528538_ _g2850628542_))
-                                      (_g2850528538_ _g2850628542_))))
-                              (_g2850528538_ _g2850628542_))))
-                      (_g2850528538_ _g2850628542_)))))
-           (_g2850428724_ _stx28502_))))))
+                                                    (_g2865928692_
+                                                     _g2866028696_)))))
+                                          (_g2865928692_ _g2866028696_))
+                                      (_g2865928692_ _g2866028696_))))
+                              (_g2865928692_ _g2866028696_))))
+                      (_g2865928692_ _g2866028696_)))))
+           (_g2865828878_ _stx28656_))))))
   (define |gerbil/core::<module-sugar>[:0:]#prefix-out|
     (gx#make-export-expander
-     (lambda (_stx28730_)
-       (let ((_g2873328751_
-              (lambda (_g2873428747_)
-                (gx#raise-syntax-error '#f '"Bad syntax" _g2873428747_))))
-         (let ((_g2873228830_
-                (lambda (_g2873428755_)
-                  (if (gx#stx-pair? _g2873428755_)
-                      (let ((_e2873728758_ (gx#syntax-e _g2873428755_)))
-                        (let ((_hd2873828762_ (##car _e2873728758_))
-                              (_tl2873928765_ (##cdr _e2873728758_)))
-                          (if (gx#stx-pair? _tl2873928765_)
-                              (let ((_e2874028768_
-                                     (gx#syntax-e _tl2873928765_)))
-                                (let ((_hd2874128772_ (##car _e2874028768_))
-                                      (_tl2874228775_ (##cdr _e2874028768_)))
-                                  (if (gx#stx-pair? _tl2874228775_)
-                                      (let ((_e2874328778_
-                                             (gx#syntax-e _tl2874228775_)))
-                                        (let ((_hd2874428782_
-                                               (##car _e2874328778_))
-                                              (_tl2874528785_
-                                               (##cdr _e2874328778_)))
-                                          (if (gx#stx-null? _tl2874528785_)
-                                              ((lambda (_L28788_ _L28790_)
-                                                 (if (gx#identifier? _L28788_)
-                                                     (let ((_pre28806_
+     (lambda (_stx28884_)
+       (let ((_g2888728905_
+              (lambda (_g2888828901_)
+                (gx#raise-syntax-error '#f '"Bad syntax" _g2888828901_))))
+         (let ((_g2888628984_
+                (lambda (_g2888828909_)
+                  (if (gx#stx-pair? _g2888828909_)
+                      (let ((_e2889128912_ (gx#syntax-e _g2888828909_)))
+                        (let ((_hd2889228916_ (##car _e2889128912_))
+                              (_tl2889328919_ (##cdr _e2889128912_)))
+                          (if (gx#stx-pair? _tl2889328919_)
+                              (let ((_e2889428922_
+                                     (gx#syntax-e _tl2889328919_)))
+                                (let ((_hd2889528926_ (##car _e2889428922_))
+                                      (_tl2889628929_ (##cdr _e2889428922_)))
+                                  (if (gx#stx-pair? _tl2889628929_)
+                                      (let ((_e2889728932_
+                                             (gx#syntax-e _tl2889628929_)))
+                                        (let ((_hd2889828936_
+                                               (##car _e2889728932_))
+                                              (_tl2889928939_
+                                               (##cdr _e2889728932_)))
+                                          (if (gx#stx-null? _tl2889928939_)
+                                              ((lambda (_L28942_ _L28944_)
+                                                 (if (gx#identifier? _L28942_)
+                                                     (let ((_pre28960_
                                                             (gx#stx-e
-                                                             _L28788_)))
-                                                       (let ((_exports28809_
+                                                             _L28942_)))
+                                                       (let ((_exports28963_
                                                               (gx#core-expand-export-source
-                                                               _L28790_)))
-                                                         (let ((_rename-e28815_
-                                                                (lambda (_name28812_)
+                                                               _L28944_)))
+                                                         (let ((_rename-e28969_
+                                                                (lambda (_name28966_)
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (|gerbil/core::<module-sugar>[1]#prefix-identifier-key|
-                           _name28812_
-                           _pre28806_))))
-                   (let ((_fold-e28825_
-                          (letrec ((_fold-e28818_
-                                    (lambda (_out28821_ _r28823_)
-                                      (if (gx#module-export? _out28821_)
+                           _name28966_
+                           _pre28960_))))
+                   (let ((_fold-e28979_
+                          (letrec ((_fold-e28972_
+                                    (lambda (_out28975_ _r28977_)
+                                      (if (gx#module-export? _out28975_)
                                           (cons (|gerbil/core::<module-sugar>[1]#module-export-rename|
-                                                 _out28821_
-                                                 (_rename-e28815_
+                                                 _out28975_
+                                                 (_rename-e28969_
                                                   (gx#module-export-name
-                                                   _out28821_)))
-                                                _r28823_)
-                                          (if (gx#export-set? _out28821_)
-                                              (foldl _fold-e28818_
-                                                     _r28823_
+                                                   _out28975_)))
+                                                _r28977_)
+                                          (if (gx#export-set? _out28975_)
+                                              (foldl _fold-e28972_
+                                                     _r28977_
                                                      (gx#export-set-exports
-                                                      _out28821_))
-                                              (cons _out28821_ _r28823_))))))
-                            _fold-e28818_)))
+                                                      _out28975_))
+                                              (cons _out28975_ _r28977_))))))
+                            _fold-e28972_)))
                      (let ()
                        (cons 'begin:
-                             (foldl _fold-e28825_ '() _exports28809_)))))))
+                             (foldl _fold-e28979_ '() _exports28963_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (_g2873328751_
-                                                      _g2873428755_)))
-                                               _hd2874428782_
-                                               _hd2874128772_)
-                                              (_g2873328751_ _g2873428755_))))
-                                      (_g2873328751_ _g2873428755_))))
-                              (_g2873328751_ _g2873428755_))))
-                      (_g2873328751_ _g2873428755_)))))
-           (_g2873228830_ _stx28730_))))))
+                                                     (_g2888728905_
+                                                      _g2888828909_)))
+                                               _hd2889828936_
+                                               _hd2889528926_)
+                                              (_g2888728905_ _g2888828909_))))
+                                      (_g2888728905_ _g2888828909_))))
+                              (_g2888728905_ _g2888828909_))))
+                      (_g2888728905_ _g2888828909_)))))
+           (_g2888628984_ _stx28884_))))))
   (define |gerbil/core::<module-sugar>[:0:]#struct-out|
     (gx#make-export-expander
-     (lambda (_stx28834_)
-       (let ((_g2883728857_
-              (lambda (_g2883828853_)
-                (gx#raise-syntax-error '#f '"Bad syntax" _g2883828853_))))
-         (let ((_g2883629092_
-                (lambda (_g2883828861_)
-                  (if (gx#stx-pair? _g2883828861_)
-                      (let ((_e2884028864_ (gx#syntax-e _g2883828861_)))
-                        (let ((_hd2884128868_ (##car _e2884028864_))
-                              (_tl2884228871_ (##cdr _e2884028864_)))
-                          (if (gx#stx-pair/null? _tl2884228871_)
-                              (if (fx>= (gx#stx-length _tl2884228871_) '0)
-                                  (let ((_g29390_
+     (lambda (_stx28988_)
+       (let ((_g2899129011_
+              (lambda (_g2899229007_)
+                (gx#raise-syntax-error '#f '"Bad syntax" _g2899229007_))))
+         (let ((_g2899029246_
+                (lambda (_g2899229015_)
+                  (if (gx#stx-pair? _g2899229015_)
+                      (let ((_e2899429018_ (gx#syntax-e _g2899229015_)))
+                        (let ((_hd2899529022_ (##car _e2899429018_))
+                              (_tl2899629025_ (##cdr _e2899429018_)))
+                          (if (gx#stx-pair/null? _tl2899629025_)
+                              (if (fx>= (gx#stx-length _tl2899629025_) '0)
+                                  (let ((_g29546_
                                          (gx#syntax-split-splice
-                                          _tl2884228871_
+                                          _tl2899629025_
                                           '0)))
                                     (begin
-                                      (let ((_g29391_ (values-count _g29390_)))
-                                        (if (not (fx= _g29391_ 2))
+                                      (let ((_g29547_ (values-count _g29546_)))
+                                        (if (not (fx= _g29547_ 2))
                                             (error "Context expects 2 values"
-                                                   _g29391_)))
-                                      (let ((_target2884328874_
-                                             (values-ref _g29390_ 0))
-                                            (_tl2884528877_
-                                             (values-ref _g29390_ 1)))
-                                        (if (gx#stx-null? _tl2884528877_)
-                                            (letrec ((_loop2884628880_
-                                                      (lambda (_hd2884428884_
-                                                               _id2885028887_)
+                                                   _g29547_)))
+                                      (let ((_target2899729028_
+                                             (values-ref _g29546_ 0))
+                                            (_tl2899929031_
+                                             (values-ref _g29546_ 1)))
+                                        (if (gx#stx-null? _tl2899929031_)
+                                            (letrec ((_loop2900029034_
+                                                      (lambda (_hd2899829038_
+                                                               _id2900429041_)
                                                         (if (gx#stx-pair?
-                                                             _hd2884428884_)
-                                                            (let ((_e2884728890_
+                                                             _hd2899829038_)
+                                                            (let ((_e2900129044_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (gx#syntax-e _hd2884428884_)))
-                      (let ((_lp-hd2884828894_ (##car _e2884728890_))
-                            (_lp-tl2884928897_ (##cdr _e2884728890_)))
-                        (_loop2884628880_
-                         _lp-tl2884928897_
-                         (cons _lp-hd2884828894_ _id2885028887_))))
-                    (let ((_id2885128900_ (reverse _id2885028887_)))
-                      ((lambda (_L28904_)
-                         ((letrec ((_lp28920_
-                                    (lambda (_rest28923_ _ids28925_)
-                                      (let ((_g2892828940_
-                                             (lambda (_g2892928936_)
+                           (gx#syntax-e _hd2899829038_)))
+                      (let ((_lp-hd2900229048_ (##car _e2900129044_))
+                            (_lp-tl2900329051_ (##cdr _e2900129044_)))
+                        (_loop2900029034_
+                         _lp-tl2900329051_
+                         (cons _lp-hd2900229048_ _id2900429041_))))
+                    (let ((_id2900529054_ (reverse _id2900429041_)))
+                      ((lambda (_L29058_)
+                         ((letrec ((_lp29074_
+                                    (lambda (_rest29077_ _ids29079_)
+                                      (let ((_g2908229094_
+                                             (lambda (_g2908329090_)
                                                (gx#raise-syntax-error
                                                 '#f
                                                 '"Bad syntax"
-                                                _g2892928936_))))
-                                        (let ((_g2892728951_
-                                               (lambda (_g2892928944_)
+                                                _g2908329090_))))
+                                        (let ((_g2908129105_
+                                               (lambda (_g2908329098_)
                                                  ((lambda ()
                                                     (cons 'begin:
-                                                          _ids28925_))))))
-                                          (let ((_g2892629080_
-                                                 (lambda (_g2892928955_)
+                                                          _ids29079_))))))
+                                          (let ((_g2908029234_
+                                                 (lambda (_g2908329109_)
                                                    (if (gx#stx-pair?
-                                                        _g2892928955_)
-                                                       (let ((_e2893228958_
+                                                        _g2908329109_)
+                                                       (let ((_e2908629112_
                                                               (gx#syntax-e
-                                                               _g2892928955_)))
-                                                         (let ((_hd2893328962_
-                                                                (##car _e2893228958_))
-                                                               (_tl2893428965_
-                                                                (##cdr _e2893228958_)))
-                                                           ((lambda (_L28968_
+                                                               _g2908329109_)))
+                                                         (let ((_hd2908729116_
+                                                                (##car _e2908629112_))
+                                                               (_tl2908829119_
+                                                                (##cdr _e2908629112_)))
+                                                           ((lambda (_L29122_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             _L28970_)
-                      (let ((_info28985_
-                             (gx#syntax-local-value _L28970_ false)))
+                             _L29124_)
+                      (let ((_info29139_
+                             (gx#syntax-local-value _L29124_ false)))
                         (if (|gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info?|
-                             _info28985_)
-                            (let ((_g2898729004_
+                             _info29139_)
+                            (let ((_g2914129158_
                                    (slot-ref
-                                    _info28985_
+                                    _info29139_
                                     'expander-identifiers)))
-                              (let ((_E2898929010_
+                              (let ((_E2914329164_
                                      (lambda ()
                                        (error '"No clause matching"
-                                              _g2898729004_))))
-                                (let ((_K2899029022_
-                                       (lambda (_setf29014_
-                                                _getf29016_
-                                                _type?29017_
-                                                _make-type29018_
-                                                _type::t29019_
-                                                _super29020_)
-                                         (_lp28920_
-                                          _L28968_
-                                          (cons _L28970_
-                                                (cons _type::t29019_
-                                                      (cons _make-type29018_
-                                                            (cons _type?29017_
+                                              _g2914129158_))))
+                                (let ((_K2914429176_
+                                       (lambda (_setf29168_
+                                                _getf29170_
+                                                _type?29171_
+                                                _make-type29172_
+                                                _type::t29173_
+                                                _super29174_)
+                                         (_lp29074_
+                                          _L29122_
+                                          (cons _L29124_
+                                                (cons _type::t29173_
+                                                      (cons _make-type29172_
+                                                            (cons _type?29171_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           (foldr cons
-                                 (foldr cons _ids28925_ _setf29014_)
-                                 _getf29016_)))))))))
+                                 (foldr cons _ids29079_ _setf29168_)
+                                 _getf29170_)))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                  (if (##pair? _g2898729004_)
-                                      (let ((_hd2899129026_
-                                             (##car _g2898729004_))
-                                            (_tl2899229029_
-                                             (##cdr _g2898729004_)))
-                                        (let ((_super29032_ _hd2899129026_))
-                                          (if (##pair? _tl2899229029_)
-                                              (let ((_hd2899329035_
-                                                     (##car _tl2899229029_))
-                                                    (_tl2899429038_
-                                                     (##cdr _tl2899229029_)))
-                                                (let ((_type::t29041_
-                                                       _hd2899329035_))
-                                                  (if (##pair? _tl2899429038_)
-                                                      (let ((_hd2899529044_
-                                                             (##car _tl2899429038_))
-                                                            (_tl2899629047_
-                                                             (##cdr _tl2899429038_)))
-                                                        (let ((_make-type29050_
-                                                               _hd2899529044_))
-                                                          (if (##pair? _tl2899629047_)
-                                                              (let ((_hd2899729053_
+                                  (if (##pair? _g2914129158_)
+                                      (let ((_hd2914529180_
+                                             (##car _g2914129158_))
+                                            (_tl2914629183_
+                                             (##cdr _g2914129158_)))
+                                        (let ((_super29186_ _hd2914529180_))
+                                          (if (##pair? _tl2914629183_)
+                                              (let ((_hd2914729189_
+                                                     (##car _tl2914629183_))
+                                                    (_tl2914829192_
+                                                     (##cdr _tl2914629183_)))
+                                                (let ((_type::t29195_
+                                                       _hd2914729189_))
+                                                  (if (##pair? _tl2914829192_)
+                                                      (let ((_hd2914929198_
+                                                             (##car _tl2914829192_))
+                                                            (_tl2915029201_
+                                                             (##cdr _tl2914829192_)))
+                                                        (let ((_make-type29204_
+                                                               _hd2914929198_))
+                                                          (if (##pair? _tl2915029201_)
+                                                              (let ((_hd2915129207_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             (##car _tl2899629047_))
-                            (_tl2899829056_ (##cdr _tl2899629047_)))
-                        (let ((_type?29059_ _hd2899729053_))
-                          (if (##pair? _tl2899829056_)
-                              (let ((_hd2899929062_ (##car _tl2899829056_))
-                                    (_tl2900029065_ (##cdr _tl2899829056_)))
-                                (let ((_getf29068_ _hd2899929062_))
-                                  (if (##pair? _tl2900029065_)
-                                      (let ((_hd2900129071_
-                                             (##car _tl2900029065_))
-                                            (_tl2900229074_
-                                             (##cdr _tl2900029065_)))
-                                        (let ((_setf29077_ _hd2900129071_))
-                                          (if (##null? _tl2900229074_)
-                                              (_K2899029022_
-                                               _setf29077_
-                                               _getf29068_
-                                               _type?29059_
-                                               _make-type29050_
-                                               _type::t29041_
-                                               _super29032_)
-                                              (_E2898929010_))))
-                                      (_E2898929010_))))
-                              (_E2898929010_))))
-                      (_E2898929010_))))
-              (_E2898929010_))))
+                             (##car _tl2915029201_))
+                            (_tl2915229210_ (##cdr _tl2915029201_)))
+                        (let ((_type?29213_ _hd2915129207_))
+                          (if (##pair? _tl2915229210_)
+                              (let ((_hd2915329216_ (##car _tl2915229210_))
+                                    (_tl2915429219_ (##cdr _tl2915229210_)))
+                                (let ((_getf29222_ _hd2915329216_))
+                                  (if (##pair? _tl2915429219_)
+                                      (let ((_hd2915529225_
+                                             (##car _tl2915429219_))
+                                            (_tl2915629228_
+                                             (##cdr _tl2915429219_)))
+                                        (let ((_setf29231_ _hd2915529225_))
+                                          (if (##null? _tl2915629228_)
+                                              (_K2914429176_
+                                               _setf29231_
+                                               _getf29222_
+                                               _type?29213_
+                                               _make-type29204_
+                                               _type::t29195_
+                                               _super29186_)
+                                              (_E2914329164_))))
+                                      (_E2914329164_))))
+                              (_E2914329164_))))
+                      (_E2914329164_))))
+              (_E2914329164_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (_E2898929010_))))
-                                      (_E2898929010_)))))
+                                              (_E2914329164_))))
+                                      (_E2914329164_)))))
                             (gx#raise-syntax-error
                              '#f
                              '"Incomplete type info"
-                             _stx28834_
-                             _L28970_))))
-                    _tl2893428965_
-                    _hd2893328962_)))
-               (_g2892728951_ _g2892928955_)))))
+                             _stx28988_
+                             _L29124_))))
+                    _tl2908829119_
+                    _hd2908729116_)))
+               (_g2908129105_ _g2908329109_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            (_g2892629080_ _rest28923_)))))))
-                            _lp28920_)
+                                            (_g2908029234_ _rest29077_)))))))
+                            _lp29074_)
                           (begin
                             '#!void
-                            (foldr (lambda (_g2908329086_ _g2908429089_)
-                                     (cons _g2908329086_ _g2908429089_))
+                            (foldr (lambda (_g2923729240_ _g2923829243_)
+                                     (cons _g2923729240_ _g2923829243_))
                                    '()
-                                   _L28904_))
+                                   _L29058_))
                           '()))
-                       _id2885128900_))))))
+                       _id2900529054_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (_loop2884628880_
-                                               _target2884328874_
+                                              (_loop2900029034_
+                                               _target2899729028_
                                                '()))
-                                            (_g2883728857_ _g2883828861_)))))
-                                  (_g2883728857_ _g2883828861_))
-                              (_g2883728857_ _g2883828861_))))
-                      (_g2883728857_ _g2883828861_)))))
-           (_g2883629092_ _stx28834_)))))))
+                                            (_g2899129011_ _g2899229015_)))))
+                                  (_g2899129011_ _g2899229015_))
+                              (_g2899129011_ _g2899229015_))))
+                      (_g2899129011_ _g2899229015_)))))
+           (_g2899029246_ _stx28988_)))))))

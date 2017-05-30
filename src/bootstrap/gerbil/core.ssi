@@ -1463,6 +1463,9 @@ namespace: gerbil/core
                    (%#define-syntax
                     only-in
                     |gerbil/core::<module-sugar>[:0:]#only-in|)
+                   (%#define-syntax
+                    except-in
+                    |gerbil/core::<module-sugar>[:0:]#except-in|)
                    (%#begin-syntax
                     (%#define-runtime
                      module-import-rename
