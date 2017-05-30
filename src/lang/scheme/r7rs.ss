@@ -7,7 +7,8 @@ package: scheme
 (export
   (rename: r7rs-import import)
   (rename: r7rs-export export)
-  define-library)
+  define-library
+  begin cond-expand include include-ci include-library-declarations and or not)
 
 (defsyntax (r7rs-import stx)
   (def (import-spec-e set)
