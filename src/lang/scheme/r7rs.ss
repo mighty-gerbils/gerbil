@@ -61,23 +61,6 @@ package: scheme
            (spath (map symbol->string spath))
            (spath (string-join spath #\/)))
       (string->symbol spath)))
-
-  (def (expand-wrap form decl in rest body K)
-    (K rest
-       (cons (stx-wrap-source
-              (cons form in)
-              (or (stx-source decl)
-                  (stx-source stx)))
-             body)))
-  
-  (def (expand-import decl in rest body K)
-    (expand-wrap 'r7rs-import decl in rest body K))
-
-  (def (expand-export decl in rest body K)
-    (expand-wrap 'r7rs-export decl in rest body K))
-
-  (def (expand-cond decl in rest body K)
-    (expand-wrap 'cond-expand decl in rest body K))
   
   (def (expand-decls decls)
     (let lp ((rest decls) (body []))
@@ -85,11 +68,11 @@ package: scheme
         ([decl . rest]
          (syntax-case decl (r7rs-import r7rs-export cond-expand begin include include-ci include-library-declarations)
            ((r7rs-import import-set ...)
-            (expand-import decl #'(import-set ...) rest body lp))
+            (lp rest (cons decl body)))
            ((r7rs-export export-set ...)
-            (expand-export decl #'(export-set ...) rest body lp))
+            (lp rest (cons decl body)))
            ((cond-expand clause ...)
-            (expand-cond decl #'(clause ...) rest body lp))
+            (lp rest (cons decl body)))
            ((begin library-body ...)
             (lp rest (cons decl body)))
            ((include path ...)
