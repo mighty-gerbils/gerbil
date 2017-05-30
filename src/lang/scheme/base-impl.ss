@@ -93,6 +93,11 @@ package: scheme
          (cons 'begin body)
          (stx-source stx)))))))
 
+;; this differs from Gerbil include in that it admits multiple paths
+(defrules r7rs-include ()
+  ((_ path ...)
+   (begin (include path) ...)))
+
 ;; misc
 (defrules defeqv ()
   ((_ id is? =?)

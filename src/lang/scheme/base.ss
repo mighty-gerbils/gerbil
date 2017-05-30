@@ -95,7 +95,7 @@ package: scheme
   get-output-string
   guard
   if
-  include
+  (rename: r7rs-include include)
   include-ci
   (rename: exact->inexact inexact)
   inexact?
