@@ -30,6 +30,7 @@
     "scheme/write-impl"
     "scheme/write"
     "scheme/r5rs"
+    "scheme/r5rs-null"
     ))
 
 (let (srcdir (path-normalize (path-directory (this-source-file))))
