@@ -134,12 +134,14 @@ package: scheme
   (and (exact? obj)
        (integer? obj)))
 
+(def (square x)
+  (expt x 2))
+
 ;; number theoretic functions are not my forte, so I am passing on these for now
 (defstub exact-integer-sqrt)
 (defstub floor/)
 (defstub floor-quotient)
 (defstub floor-remainder)
-(defstub square)
 (defstub truncate/)
 (defstub truncate-quotient)
 (defstub truncate-remainder)
