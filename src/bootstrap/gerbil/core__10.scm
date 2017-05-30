@@ -1,30 +1,30 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core::<match>[1]#_g29282_|
+  (define |gerbil/core::<match>[1]#_g29436_|
     (gx#core-quote-syntax 'quasiquote))
-  (define |gerbil/core::<match>[1]#_g29283_| (gx#core-quote-syntax 'quote))
-  (define |gerbil/core::<match>[1]#_g29286_| (gx#core-quote-syntax 'vector))
-  (define |gerbil/core::<match>[1]#_g29287_| (gx#core-quote-syntax 'values))
-  (define |gerbil/core::<match>[1]#_g29288_| (gx#core-quote-syntax 'values))
-  (define |gerbil/core::<match>[1]#_g29289_| (gx#core-quote-syntax 'box))
-  (define |gerbil/core::<match>[1]#_g29290_| (gx#core-quote-syntax '@list))
-  (define |gerbil/core::<match>[1]#_g29291_| (gx#core-quote-syntax 'cons*))
-  (define |gerbil/core::<match>[1]#_g29292_| (gx#core-quote-syntax 'cons))
-  (define |gerbil/core::<match>[1]#_g29293_| (gx#core-quote-syntax 'not))
-  (define |gerbil/core::<match>[1]#_g29294_| (gx#core-quote-syntax 'or))
-  (define |gerbil/core::<match>[1]#_g29295_| (gx#core-quote-syntax 'and))
-  (define |gerbil/core::<match>[1]#_g29296_| (gx#core-quote-syntax '?))
-  (define |gerbil/core::<match>[1]#_g29297_| (gx#core-quote-syntax '=>))
-  (define |gerbil/core::<match>[1]#_g29298_| (gx#core-quote-syntax '=>))
-  (define |gerbil/core::<match>[1]#_g29311_| (gx#core-quote-syntax 'else))
-  (define |gerbil/core::<match>[1]#_g29312_| (gx#core-quote-syntax 'else))
-  (define |gerbil/core::<match>[1]#_g29313_| (gx#core-quote-syntax '<...>))
-  (define |gerbil/core::<match>[1]#_g29314_| (gx#core-quote-syntax '<>))
-  (define |gerbil/core::<match>[1]#_g29331_| (gx#core-quote-syntax '=>))
-  (define |gerbil/core::<match>[1]#_g29332_| (gx#core-quote-syntax '=>))
-  (define |gerbil/core::<match>[1]#_g29333_| (gx#core-quote-syntax 'not))
-  (define |gerbil/core::<match>[1]#_g29334_| (gx#core-quote-syntax 'or))
-  (define |gerbil/core::<match>[1]#_g29337_| (gx#core-quote-syntax 'and))
+  (define |gerbil/core::<match>[1]#_g29437_| (gx#core-quote-syntax 'quote))
+  (define |gerbil/core::<match>[1]#_g29440_| (gx#core-quote-syntax 'vector))
+  (define |gerbil/core::<match>[1]#_g29441_| (gx#core-quote-syntax 'values))
+  (define |gerbil/core::<match>[1]#_g29442_| (gx#core-quote-syntax 'values))
+  (define |gerbil/core::<match>[1]#_g29443_| (gx#core-quote-syntax 'box))
+  (define |gerbil/core::<match>[1]#_g29444_| (gx#core-quote-syntax '@list))
+  (define |gerbil/core::<match>[1]#_g29445_| (gx#core-quote-syntax 'cons*))
+  (define |gerbil/core::<match>[1]#_g29446_| (gx#core-quote-syntax 'cons))
+  (define |gerbil/core::<match>[1]#_g29447_| (gx#core-quote-syntax 'not))
+  (define |gerbil/core::<match>[1]#_g29448_| (gx#core-quote-syntax 'or))
+  (define |gerbil/core::<match>[1]#_g29449_| (gx#core-quote-syntax 'and))
+  (define |gerbil/core::<match>[1]#_g29450_| (gx#core-quote-syntax '?))
+  (define |gerbil/core::<match>[1]#_g29451_| (gx#core-quote-syntax '=>))
+  (define |gerbil/core::<match>[1]#_g29452_| (gx#core-quote-syntax '=>))
+  (define |gerbil/core::<match>[1]#_g29465_| (gx#core-quote-syntax 'else))
+  (define |gerbil/core::<match>[1]#_g29466_| (gx#core-quote-syntax 'else))
+  (define |gerbil/core::<match>[1]#_g29467_| (gx#core-quote-syntax '<...>))
+  (define |gerbil/core::<match>[1]#_g29468_| (gx#core-quote-syntax '<>))
+  (define |gerbil/core::<match>[1]#_g29485_| (gx#core-quote-syntax '=>))
+  (define |gerbil/core::<match>[1]#_g29486_| (gx#core-quote-syntax '=>))
+  (define |gerbil/core::<match>[1]#_g29487_| (gx#core-quote-syntax 'not))
+  (define |gerbil/core::<match>[1]#_g29488_| (gx#core-quote-syntax 'or))
+  (define |gerbil/core::<match>[1]#_g29491_| (gx#core-quote-syntax 'and))
   (begin
     (define |gerbil/core::<match>[1]#match-macro::t|
       (make-class-type
@@ -157,7 +157,7 @@
                         (_tl2241722540_ (##cdr _e2241522533_)))
                     (if (gx#identifier? _hd2241622537_)
                         (if (gx#free-identifier=?
-                             |gerbil/core::<match>[1]#_g29282_|
+                             |gerbil/core::<match>[1]#_g29436_|
                              _hd2241622537_)
                             (if (gx#stx-pair? _tl2241722540_)
                                 (let ((_e2241822543_
@@ -185,7 +185,7 @@
                           (_tl2241022580_ (##cdr _e2240822573_)))
                       (if (gx#identifier? _hd2240922577_)
                           (if (gx#free-identifier=?
-                               |gerbil/core::<match>[1]#_g29283_|
+                               |gerbil/core::<match>[1]#_g29437_|
                                _hd2240922577_)
                               (if (gx#stx-pair? _tl2241022580_)
                                   (let ((_e2241122583_
@@ -313,20 +313,20 @@
                                  (vector->list (gx#syntax-e _g2230322720_))))
                             (if (gx#stx-pair/null? _e2237922723_)
                                 (if (fx>= (gx#stx-length _e2237922723_) '0)
-                                    (let ((_g29284_
+                                    (let ((_g29438_
                                            (gx#syntax-split-splice
                                             _e2237922723_
                                             '0)))
                                       (begin
-                                        (let ((_g29285_
-                                               (values-count _g29284_)))
-                                          (if (not (fx= _g29285_ 2))
+                                        (let ((_g29439_
+                                               (values-count _g29438_)))
+                                          (if (not (fx= _g29439_ 2))
                                               (error "Context expects 2 values"
-                                                     _g29285_)))
+                                                     _g29439_)))
                                         (let ((_target2238022727_
-                                               (values-ref _g29284_ 0))
+                                               (values-ref _g29438_ 0))
                                               (_tl2238222730_
-                                               (values-ref _g29284_ 1)))
+                                               (values-ref _g29438_ 1)))
                                           (if (gx#stx-null? _tl2238222730_)
                                               (letrec ((_loop2238322733_
                                                         (lambda (_hd2238122737_
@@ -369,7 +369,7 @@
                                     (_tl2237722793_ (##cdr _e2237522786_)))
                                 (if (gx#identifier? _hd2237622790_)
                                     (if (gx#free-identifier=?
-                                         |gerbil/core::<match>[1]#_g29286_|
+                                         |gerbil/core::<match>[1]#_g29440_|
                                          _hd2237622790_)
                                         ((lambda (_L22796_)
                                            (cons 'vector:
@@ -389,7 +389,7 @@
                                       (_tl2237322821_ (##cdr _e2237122814_)))
                                   (if (gx#identifier? _hd2237222818_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core::<match>[1]#_g29287_|
+                                           |gerbil/core::<match>[1]#_g29441_|
                                            _hd2237222818_)
                                           ((lambda (_L22824_)
                                              (cons 'values:
@@ -409,7 +409,7 @@
                                         (_tl2236622849_ (##cdr _e2236422842_)))
                                     (if (gx#identifier? _hd2236522846_)
                                         (if (gx#free-identifier=?
-                                             |gerbil/core::<match>[1]#_g29288_|
+                                             |gerbil/core::<match>[1]#_g29442_|
                                              _hd2236522846_)
                                             (if (gx#stx-pair? _tl2236622849_)
                                                 (let ((_e2236722852_
@@ -453,7 +453,7 @@
                                              (##cdr _e2235522903_)))
                                         (if (gx#identifier? _hd2235622907_)
                                             (if (gx#free-identifier=?
-                                                 |gerbil/core::<match>[1]#_g29289_|
+                                                 |gerbil/core::<match>[1]#_g29443_|
                                                  _hd2235622907_)
                                                 (if (gx#stx-pair?
                                                      _tl2235722910_)
@@ -489,7 +489,7 @@
                                                (##cdr _e2235122943_)))
                                           (if (gx#identifier? _hd2235222947_)
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core::<match>[1]#_g29290_|
+                                                   |gerbil/core::<match>[1]#_g29444_|
                                                    _hd2235222947_)
                                                   ((lambda (_L22953_)
                                                      (_parse-list21932_
@@ -510,7 +510,7 @@
                                                  (##cdr _e2234122971_)))
                                             (if (gx#identifier? _hd2234222975_)
                                                 (if (gx#free-identifier=?
-                                                     |gerbil/core::<match>[1]#_g29291_|
+                                                     |gerbil/core::<match>[1]#_g29445_|
                                                      _hd2234222975_)
                                                     (if (gx#stx-pair?
                                                          _tl2234322978_)
@@ -565,7 +565,7 @@
                                               (if (gx#identifier?
                                                    _hd2233023031_)
                                                   (if (gx#free-identifier=?
-                                                       |gerbil/core::<match>[1]#_g29292_|
+                                                       |gerbil/core::<match>[1]#_g29446_|
                                                        _hd2233023031_)
                                                       (if (gx#stx-pair?
                                                            _tl2233123034_)
@@ -607,7 +607,7 @@
                                                 (if (gx#identifier?
                                                      _hd2232223085_)
                                                     (if (gx#free-identifier=?
-                                                         |gerbil/core::<match>[1]#_g29293_|
+                                                         |gerbil/core::<match>[1]#_g29447_|
                                                          _hd2232223085_)
                                                         (if (gx#stx-pair?
                                                              _tl2232323088_)
@@ -641,7 +641,7 @@
                                                   (if (gx#identifier?
                                                        _hd2231823125_)
                                                       (if (gx#free-identifier=?
-                                                           |gerbil/core::<match>[1]#_g29294_|
+                                                           |gerbil/core::<match>[1]#_g29448_|
                                                            _hd2231823125_)
                                                           ((lambda (_L23131_)
                                                              (if (gx#stx-list?
@@ -696,7 +696,7 @@
                                                     (if (gx#identifier?
                                                          _hd2231423210_)
                                                         (if (gx#free-identifier=?
-                                                             |gerbil/core::<match>[1]#_g29295_|
+                                                             |gerbil/core::<match>[1]#_g29449_|
                                                              _hd2231423210_)
                                                             ((lambda (_L23216_)
                                                                (if (gx#stx-list?
@@ -755,7 +755,7 @@
                                                       (if (gx#identifier?
                                                            _hd2230723295_)
                                                           (if (gx#free-identifier=?
-                                                               |gerbil/core::<match>[1]#_g29296_|
+                                                               |gerbil/core::<match>[1]#_g29450_|
                                                                _hd2230723295_)
                                                               (if (gx#stx-pair?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -804,7 +804,7 @@
                                            (##cdr _e2335123400_)))
                                       (if (gx#identifier? _hd2335223404_)
                                           (if (gx#free-identifier=?
-                                               |gerbil/core::<match>[1]#_g29297_|
+                                               |gerbil/core::<match>[1]#_g29451_|
                                                _hd2335223404_)
                                               (if (gx#stx-pair? _tl2335323407_)
                                                   (let ((_e2335423410_
@@ -857,7 +857,7 @@
                                                              _hd2333823452_)
                                                             (if (gx#free-identifier=?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         |gerbil/core::<match>[1]#_g29298_|
+                         |gerbil/core::<match>[1]#_g29452_|
                          _hd2333823452_)
                         (if (gx#stx-pair? _tl2333923455_)
                             (let ((_e2334023458_ (gx#syntax-e _tl2333923455_)))
@@ -1125,17 +1125,17 @@
                                   _recur21958_)
                                 _body21955_))))
                      (_parse121930_ _stx21926_)))))))
-        (lambda _g29300_
-          (let ((_g29299_ (length _g29300_)))
-            (cond ((fx= _g29299_ 1)
+        (lambda _g29454_
+          (let ((_g29453_ (length _g29454_)))
+            (cond ((fx= _g29453_ 1)
                    (apply (lambda (_stx23532_)
                             (let ((_match-stx23535_ '#f))
                               (_opt-lambda2192423528_
                                _stx23532_
                                _match-stx23535_)))
-                          _g29300_))
-                  ((fx= _g29299_ 2) (apply _opt-lambda2192423528_ _g29300_))
-                  (else (error "No clause matching arguments" _g29300_)))))))
+                          _g29454_))
+                  ((fx= _g29453_ 2) (apply _opt-lambda2192423528_ _g29454_))
+                  (else (error "No clause matching arguments" _g29454_)))))))
     (define |gerbil/core::<match>[1]#match-pattern?|
       (lambda (_stx21910_)
         (call-with-escape
@@ -2980,20 +2980,20 @@
                              (lambda (_g1859518615_)
                                (if (gx#stx-pair/null? _g1859518615_)
                                    (if (fx>= (gx#stx-length _g1859518615_) '0)
-                                       (let ((_g29301_
+                                       (let ((_g29455_
                                               (gx#syntax-split-splice
                                                _g1859518615_
                                                '0)))
                                          (begin
-                                           (let ((_g29302_
-                                                  (values-count _g29301_)))
-                                             (if (not (fx= _g29302_ 2))
+                                           (let ((_g29456_
+                                                  (values-count _g29455_)))
+                                             (if (not (fx= _g29456_ 2))
                                                  (error "Context expects 2 values"
-                                                        _g29302_)))
+                                                        _g29456_)))
                                            (let ((_target1859718618_
-                                                  (values-ref _g29301_ 0))
+                                                  (values-ref _g29455_ 0))
                                                  (_tl1859918621_
-                                                  (values-ref _g29301_ 1)))
+                                                  (values-ref _g29455_ 1)))
                                              (if (gx#stx-null? _tl1859918621_)
                                                  (letrec ((_loop1860018624_
                                                            (lambda (_hd1859818628_
@@ -3022,20 +3022,20 @@
                                                (if (fx>= (gx#stx-length
                                                           _g1866518685_)
                                                          '0)
-                                                   (let ((_g29303_
+                                                   (let ((_g29457_
                                                           (gx#syntax-split-splice
                                                            _g1866518685_
                                                            '0)))
                                                      (begin
-                                                       (let ((_g29304_
+                                                       (let ((_g29458_
                                                               (values-count
-                                                               _g29303_)))
-                                                         (if (not (fx= _g29304_
+                                                               _g29457_)))
+                                                         (if (not (fx= _g29458_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                2))
-                     (error "Context expects 2 values" _g29304_)))
-               (let ((_target1866718688_ (values-ref _g29303_ 0))
-                     (_tl1866918691_ (values-ref _g29303_ 1)))
+                     (error "Context expects 2 values" _g29458_)))
+               (let ((_target1866718688_ (values-ref _g29457_ 0))
+                     (_tl1866918691_ (values-ref _g29457_ 1)))
                  (if (gx#stx-null? _tl1866918691_)
                      (letrec ((_loop1867018694_
                                (lambda (_hd1866818698_ _var-r1867418701_)
@@ -3068,14 +3068,14 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                               _g1873618756_)
                              '0)
-                       (let ((_g29305_
+                       (let ((_g29459_
                               (gx#syntax-split-splice _g1873618756_ '0)))
                          (begin
-                           (let ((_g29306_ (values-count _g29305_)))
-                             (if (not (fx= _g29306_ 2))
-                                 (error "Context expects 2 values" _g29306_)))
-                           (let ((_target1873818759_ (values-ref _g29305_ 0))
-                                 (_tl1874018762_ (values-ref _g29305_ 1)))
+                           (let ((_g29460_ (values-count _g29459_)))
+                             (if (not (fx= _g29460_ 2))
+                                 (error "Context expects 2 values" _g29460_)))
+                           (let ((_target1873818759_ (values-ref _g29459_ 0))
+                                 (_tl1874018762_ (values-ref _g29459_ 1)))
                              (if (gx#stx-null? _tl1874018762_)
                                  (letrec ((_loop1874118765_
                                            (lambda (_hd1873918769_
@@ -4183,7 +4183,7 @@
                                           (##cdr _e1757317645_)))
                                      (if (gx#identifier? _hd1757417649_)
                                          (if (gx#free-identifier=?
-                                              |gerbil/core::<match>[1]#_g29311_|
+                                              |gerbil/core::<match>[1]#_g29465_|
                                               _hd1757417649_)
                                              ((lambda (_L17655_)
                                                 (if (if (gx#stx-list? _L17655_)
@@ -4288,19 +4288,19 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          (if (gx#stx-pair/null? _g1683116851_)
                              (if (fx>= (gx#stx-length _g1683116851_) '0)
-                                 (let ((_g29309_
+                                 (let ((_g29463_
                                         (gx#syntax-split-splice
                                          _g1683116851_
                                          '0)))
                                    (begin
-                                     (let ((_g29310_ (values-count _g29309_)))
-                                       (if (not (fx= _g29310_ 2))
+                                     (let ((_g29464_ (values-count _g29463_)))
+                                       (if (not (fx= _g29464_ 2))
                                            (error "Context expects 2 values"
-                                                  _g29310_)))
+                                                  _g29464_)))
                                      (let ((_target1683316854_
-                                            (values-ref _g29309_ 0))
+                                            (values-ref _g29463_ 0))
                                            (_tl1683516857_
-                                            (values-ref _g29309_ 1)))
+                                            (values-ref _g29463_ 1)))
                                        (if (gx#stx-null? _tl1683516857_)
                                            (letrec ((_loop1683616860_
                                                      (lambda (_hd1683416864_
@@ -4606,13 +4606,13 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          _g1734817368_)
                         '0)
-                  (let ((_g29307_ (gx#syntax-split-splice _g1734817368_ '0)))
+                  (let ((_g29461_ (gx#syntax-split-splice _g1734817368_ '0)))
                     (begin
-                      (let ((_g29308_ (values-count _g29307_)))
-                        (if (not (fx= _g29308_ 2))
-                            (error "Context expects 2 values" _g29308_)))
-                      (let ((_target1735017371_ (values-ref _g29307_ 0))
-                            (_tl1735217374_ (values-ref _g29307_ 1)))
+                      (let ((_g29462_ (values-count _g29461_)))
+                        (if (not (fx= _g29462_ 2))
+                            (error "Context expects 2 values" _g29462_)))
+                      (let ((_target1735017371_ (values-ref _g29461_ 0))
+                            (_tl1735217374_ (values-ref _g29461_ 1)))
                         (if (gx#stx-null? _tl1735217374_)
                             (letrec ((_loop1735317377_
                                       (lambda (_hd1735117381_
@@ -4743,7 +4743,7 @@
                                              (##cdr _e1659416659_)))
                                         (if (gx#identifier? _hd1659516663_)
                                             (if (gx#free-identifier=?
-                                                 |gerbil/core::<match>[1]#_g29312_|
+                                                 |gerbil/core::<match>[1]#_g29466_|
                                                  _hd1659516663_)
                                                 ((lambda () _clause16587_))
                                                 (_g1659016652_ _g1659316656_))
@@ -4831,7 +4831,7 @@
                                           (##cdr _e2357523716_)))
                                      (if (gx#identifier? _hd2357623720_)
                                          (if (gx#free-identifier=?
-                                              |gerbil/core::<match>[1]#_g29313_|
+                                              |gerbil/core::<match>[1]#_g29467_|
                                               _hd2357623720_)
                                              ((lambda (_L23726_)
                                                 (if (gx#stx-list? _L23726_)
@@ -4894,7 +4894,7 @@
                                             (##cdr _e2356823821_)))
                                        (if (gx#identifier? _hd2356923825_)
                                            (if (gx#free-identifier=?
-                                                |gerbil/core::<match>[1]#_g29314_|
+                                                |gerbil/core::<match>[1]#_g29468_|
                                                 _hd2356923825_)
                                                ((lambda (_L23831_)
                                                   (if (gx#stx-list? _L23831_)
@@ -4963,20 +4963,20 @@
                                    (if (gx#stx-pair/null? _hd2392423961_)
                                        (if (fx>= (gx#stx-length _hd2392423961_)
                                                  '0)
-                                           (let ((_g29315_
+                                           (let ((_g29469_
                                                   (gx#syntax-split-splice
                                                    _hd2392423961_
                                                    '0)))
                                              (begin
-                                               (let ((_g29316_
-                                                      (values-count _g29315_)))
-                                                 (if (not (fx= _g29316_ 2))
+                                               (let ((_g29470_
+                                                      (values-count _g29469_)))
+                                                 (if (not (fx= _g29470_ 2))
                                                      (error "Context expects 2 values"
-                                                            _g29316_)))
+                                                            _g29470_)))
                                                (let ((_target2392623967_
-                                                      (values-ref _g29315_ 0))
+                                                      (values-ref _g29469_ 0))
                                                      (_tl2392823970_
-                                                      (values-ref _g29315_ 1)))
+                                                      (values-ref _g29469_ 1)))
                                                  (if (gx#stx-null?
                                                       _tl2392823970_)
                                                      (letrec ((_loop2392923973_
@@ -5007,17 +5007,17 @@
                                                      (if (fx>= (gx#stx-length
                                                                 _g2401824038_)
                                                                '0)
-                                                         (let ((_g29317_
+                                                         (let ((_g29471_
                                                                 (gx#syntax-split-splice
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          _g2401824038_
                          '0)))
                    (begin
-                     (let ((_g29318_ (values-count _g29317_)))
-                       (if (not (fx= _g29318_ 2))
-                           (error "Context expects 2 values" _g29318_)))
-                     (let ((_target2402024041_ (values-ref _g29317_ 0))
-                           (_tl2402224044_ (values-ref _g29317_ 1)))
+                     (let ((_g29472_ (values-count _g29471_)))
+                       (if (not (fx= _g29472_ 2))
+                           (error "Context expects 2 values" _g29472_)))
+                     (let ((_target2402024041_ (values-ref _g29471_ 0))
+                           (_tl2402224044_ (values-ref _g29471_ 1)))
                        (if (gx#stx-null? _tl2402224044_)
                            (letrec ((_loop2402324047_
                                      (lambda (_hd2402124051_ _$e2402724054_)
@@ -5127,20 +5127,20 @@
                                    (if (gx#stx-pair/null? _hd2421424268_)
                                        (if (fx>= (gx#stx-length _hd2421424268_)
                                                  '0)
-                                           (let ((_g29319_
+                                           (let ((_g29473_
                                                   (gx#syntax-split-splice
                                                    _hd2421424268_
                                                    '0)))
                                              (begin
-                                               (let ((_g29320_
-                                                      (values-count _g29319_)))
-                                                 (if (not (fx= _g29320_ 2))
+                                               (let ((_g29474_
+                                                      (values-count _g29473_)))
+                                                 (if (not (fx= _g29474_ 2))
                                                      (error "Context expects 2 values"
-                                                            _g29320_)))
+                                                            _g29474_)))
                                                (let ((_target2421624274_
-                                                      (values-ref _g29319_ 0))
+                                                      (values-ref _g29473_ 0))
                                                      (_tl2421824277_
-                                                      (values-ref _g29319_ 1)))
+                                                      (values-ref _g29473_ 1)))
                                                  (if (gx#stx-null?
                                                       _tl2421824277_)
                                                      (letrec ((_loop2421924280_
@@ -5185,20 +5185,20 @@
                                    (_hd2422624325_ (reverse _hd2422424289_)))
                                (if (gx#stx-pair/null? _tl2421524271_)
                                    (if (fx>= (gx#stx-length _tl2421524271_) '0)
-                                       (let ((_g29321_
+                                       (let ((_g29475_
                                               (gx#syntax-split-splice
                                                _tl2421524271_
                                                '0)))
                                          (begin
-                                           (let ((_g29322_
-                                                  (values-count _g29321_)))
-                                             (if (not (fx= _g29322_ 2))
+                                           (let ((_g29476_
+                                                  (values-count _g29475_)))
+                                             (if (not (fx= _g29476_ 2))
                                                  (error "Context expects 2 values"
-                                                        _g29322_)))
+                                                        _g29476_)))
                                            (let ((_target2423324328_
-                                                  (values-ref _g29321_ 0))
+                                                  (values-ref _g29475_ 0))
                                                  (_tl2423524331_
-                                                  (values-ref _g29321_ 1)))
+                                                  (values-ref _g29475_ 1)))
                                              (if (gx#stx-null? _tl2423524331_)
                                                  (letrec ((_loop2423624334_
                                                            (lambda (_hd2423424338_
@@ -5292,15 +5292,15 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                 _tl2419124432_)
                                '0)
-                         (let ((_g29323_
+                         (let ((_g29477_
                                 (gx#syntax-split-splice _tl2419124432_ '0)))
                            (begin
-                             (let ((_g29324_ (values-count _g29323_)))
-                               (if (not (fx= _g29324_ 2))
+                             (let ((_g29478_ (values-count _g29477_)))
+                               (if (not (fx= _g29478_ 2))
                                    (error "Context expects 2 values"
-                                          _g29324_)))
-                             (let ((_target2419824455_ (values-ref _g29323_ 0))
-                                   (_tl2420024458_ (values-ref _g29323_ 1)))
+                                          _g29478_)))
+                             (let ((_target2419824455_ (values-ref _g29477_ 0))
+                                   (_tl2420024458_ (values-ref _g29477_ 1)))
                                (if (gx#stx-null? _tl2420024458_)
                                    (letrec ((_loop2420124461_
                                              (lambda (_hd2419924465_
@@ -5371,20 +5371,20 @@
                                                (if (fx>= (gx#stx-length
                                                           _tl2417224544_)
                                                          '0)
-                                                   (let ((_g29325_
+                                                   (let ((_g29479_
                                                           (gx#syntax-split-splice
                                                            _tl2417224544_
                                                            '0)))
                                                      (begin
-                                                       (let ((_g29326_
+                                                       (let ((_g29480_
                                                               (values-count
-                                                               _g29325_)))
-                                                         (if (not (fx= _g29326_
+                                                               _g29479_)))
+                                                         (if (not (fx= _g29480_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                2))
-                     (error "Context expects 2 values" _g29326_)))
-               (let ((_target2417324547_ (values-ref _g29325_ 0))
-                     (_tl2417524550_ (values-ref _g29325_ 1)))
+                     (error "Context expects 2 values" _g29480_)))
+               (let ((_target2417324547_ (values-ref _g29479_ 0))
+                     (_tl2417524550_ (values-ref _g29479_ 1)))
                  (if (gx#stx-null? _tl2417524550_)
                      (letrec ((_loop2417624553_
                                (lambda (_hd2417424557_ _body2418024560_)
@@ -5445,24 +5445,24 @@
                                            (if (fx>= (gx#stx-length
                                                       _tl2465224691_)
                                                      '0)
-                                               (let ((_g29327_
+                                               (let ((_g29481_
                                                       (gx#syntax-split-splice
                                                        _tl2465224691_
                                                        '0)))
                                                  (begin
-                                                   (let ((_g29328_
+                                                   (let ((_g29482_
                                                           (values-count
-                                                           _g29327_)))
-                                                     (if (not (fx= _g29328_ 2))
+                                                           _g29481_)))
+                                                     (if (not (fx= _g29482_ 2))
                                                          (error "Context expects 2 values"
-                                                                _g29328_)))
+                                                                _g29482_)))
                                                    (let ((_target2465324694_
                                                           (values-ref
-                                                           _g29327_
+                                                           _g29481_
                                                            0))
                                                          (_tl2465524697_
                                                           (values-ref
-                                                           _g29327_
+                                                           _g29481_
                                                            1)))
                                                      (if (gx#stx-null?
                                                           _tl2465524697_)
@@ -5541,19 +5541,19 @@
                      (if (gx#stx-null? _tl2463624804_)
                          (if (gx#stx-pair/null? _tl2462724774_)
                              (if (fx>= (gx#stx-length _tl2462724774_) '0)
-                                 (let ((_g29329_
+                                 (let ((_g29483_
                                         (gx#syntax-split-splice
                                          _tl2462724774_
                                          '0)))
                                    (begin
-                                     (let ((_g29330_ (values-count _g29329_)))
-                                       (if (not (fx= _g29330_ 2))
+                                     (let ((_g29484_ (values-count _g29483_)))
+                                       (if (not (fx= _g29484_ 2))
                                            (error "Context expects 2 values"
-                                                  _g29330_)))
+                                                  _g29484_)))
                                      (let ((_target2463724807_
-                                            (values-ref _g29329_ 0))
+                                            (values-ref _g29483_ 0))
                                            (_tl2463924810_
-                                            (values-ref _g29329_ 1)))
+                                            (values-ref _g29483_ 1)))
                                        (if (gx#stx-null? _tl2463924810_)
                                            (letrec ((_loop2464024813_
                                                      (lambda (_hd2463824817_
@@ -5651,7 +5651,7 @@
                                (_tl2502825091_ (##cdr _e2502625084_)))
                            (if (gx#identifier? _hd2502725088_)
                                (if (gx#free-identifier=?
-                                    |gerbil/core::<match>[1]#_g29331_|
+                                    |gerbil/core::<match>[1]#_g29485_|
                                     _hd2502725088_)
                                    (if (gx#stx-pair? _tl2502825091_)
                                        (let ((_e2502925094_
@@ -5797,7 +5797,7 @@
                                                (if (gx#identifier?
                                                     _hd2499025231_)
                                                    (if (gx#free-identifier=?
-                                                        |gerbil/core::<match>[1]#_g29332_|
+                                                        |gerbil/core::<match>[1]#_g29486_|
                                                         _hd2499025231_)
                                                        (if (gx#stx-pair?
                                                             _tl2499125234_)
@@ -5929,7 +5929,7 @@
                                                      (if (gx#identifier?
                                                           _hd2495325395_)
                                                          (if (gx#free-identifier=?
-                                                              |gerbil/core::<match>[1]#_g29333_|
+                                                              |gerbil/core::<match>[1]#_g29487_|
                                                               _hd2495325395_)
                                                              (if (gx#stx-pair?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6000,25 +6000,25 @@
                                                        (if (gx#identifier?
                                                             _hd2492925475_)
                                                            (if (gx#free-identifier=?
-                                                                |gerbil/core::<match>[1]#_g29334_|
+                                                                |gerbil/core::<match>[1]#_g29488_|
                                                                 _hd2492925475_)
                                                                (if (gx#stx-pair/null?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             _tl2493025478_)
                            (if (fx>= (gx#stx-length _tl2493025478_) '0)
-                               (let ((_g29335_
+                               (let ((_g29489_
                                       (gx#syntax-split-splice
                                        _tl2493025478_
                                        '0)))
                                  (begin
-                                   (let ((_g29336_ (values-count _g29335_)))
-                                     (if (not (fx= _g29336_ 2))
+                                   (let ((_g29490_ (values-count _g29489_)))
+                                     (if (not (fx= _g29490_ 2))
                                          (error "Context expects 2 values"
-                                                _g29336_)))
+                                                _g29490_)))
                                    (let ((_target2493125481_
-                                          (values-ref _g29335_ 0))
+                                          (values-ref _g29489_ 0))
                                          (_tl2493325484_
-                                          (values-ref _g29335_ 1)))
+                                          (values-ref _g29489_ 1)))
                                      (if (gx#stx-null? _tl2493325484_)
                                          (letrec ((_loop2493425487_
                                                    (lambda (_hd2493225491_
@@ -6103,23 +6103,23 @@
                                                               _hd2490525585_)
                                                              (if (gx#free-identifier=?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          |gerbil/core::<match>[1]#_g29337_|
+                          |gerbil/core::<match>[1]#_g29491_|
                           _hd2490525585_)
                          (if (gx#stx-pair/null? _tl2490625588_)
                              (if (fx>= (gx#stx-length _tl2490625588_) '0)
-                                 (let ((_g29338_
+                                 (let ((_g29492_
                                         (gx#syntax-split-splice
                                          _tl2490625588_
                                          '0)))
                                    (begin
-                                     (let ((_g29339_ (values-count _g29338_)))
-                                       (if (not (fx= _g29339_ 2))
+                                     (let ((_g29493_ (values-count _g29492_)))
+                                       (if (not (fx= _g29493_ 2))
                                            (error "Context expects 2 values"
-                                                  _g29339_)))
+                                                  _g29493_)))
                                      (let ((_target2490725591_
-                                            (values-ref _g29338_ 0))
+                                            (values-ref _g29492_ 0))
                                            (_tl2490925594_
-                                            (values-ref _g29338_ 1)))
+                                            (values-ref _g29492_ 1)))
                                        (if (gx#stx-null? _tl2490925594_)
                                            (letrec ((_loop2491025597_
                                                      (lambda (_hd2490825601_

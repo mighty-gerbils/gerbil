@@ -97,13 +97,13 @@
   
   (define (no-expand src)
     (cond
-     ((_gx#loading-scheme-source)
-      src)
      ((##source? src)
       (let ((code (##source-code src)))
         (and (pair? code)
              (eq? __noexpand: (##car code))
              (##cdr code))))
+     ((_gx#loading-scheme-source)
+      src)
      (else #f)))
   
   ;;(displayln "expand-source " src)
