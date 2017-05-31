@@ -122,7 +122,7 @@ as all the main language features are exercised in one way or another
 within the implementation.
 
 Depending on your inclinations, there are several starting points:
-- If you are interested in Gerbil macrology, then the place to start is [gerbil/prelude/core.ss](src/gerbil/prelude/core.ss).
+- If you are interested in Gerbil macrology, then the place to start is the [core prelude](src/gerbil/prelude/core.ss).
   This is the language that you get in the interpreter and what is available
   when writing a new module without explicitly specifying a prelude.
 - If you are interested in the Gerbil expander internals, then you should look at
