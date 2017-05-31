@@ -10,6 +10,16 @@ It also provides a full-blown module system, similar to PLT Scheme's
 Gerbil modules are single instantiation, supporting high performance
 ahead of time compilation and compiled macros.
 
+<!-- toc -->
+
+- [License and Copyright](#license-and-copyright)
+- [Installation](#installation)
+- [Using Gerbil](#using-gerbil)
+- [Documentation](#documentation)
+- [Epilogue](#epilogue)
+
+<!-- tocstop -->
+
 # License and Copyright
 
 The source code is distributed with the Gambit license; that means
