@@ -717,7 +717,7 @@ Short-form destructuring bind macros.
 => (or (? pred obj) ...)
 
 (? (not pred) obj)
-=> (not (recur pred obj))
+=> (not (? pred obj))
 
 (? pred obj)
 => (pred obj)
@@ -732,12 +732,12 @@ Short-form destructuring bind macros.
 
 (? pred :: K)
 => (lambda (obj)
-     (alet (val (recur pred obj))
+     (alet (val (? pred obj))
        (K val)))
 
 (? pred :: proc => K)
 => (lambda (obj)
-     (and (recur pred obj)
+     (and (? pred obj)
           (K (proc obj))))
 ```
 
@@ -760,7 +760,7 @@ The following macros are only available for syntax (phi = 1).
 (syntax expr)
 
 (syntax-case stx (keyword-id ...)
-  (pat [test] body) ...)
+  (pat [fender] body) ...)
 
 ```
 
@@ -770,7 +770,7 @@ of Syntactic Abstraction" by Waddell and Dybvig and popularized by Racket.
 #### syntax-rules
 ```
 (syntax-rules (keyword-id ...)
- (pat [test] expr) ...)
+ (pat [fender] expr) ...)
 ```
 
 The familiar `syntax-rules` macro from R5RS, extended with pattern fenders like `syntax-case`
@@ -793,7 +793,7 @@ allowance for value bindings with `let*` semantics.
 #### identifier-rules
 ```
 (identifier-rules (keyword-id)
- (pat [test] expr) ...)
+ (pat [fender] expr) ...)
 ```
 
 Variant of `syntax-rules` that constructs a setq macro and not a plain macro expander.
