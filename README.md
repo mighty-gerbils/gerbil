@@ -113,6 +113,8 @@ that should get you started:
 - The [Gerbil wiki](https://github.com/vyzo/gerbil/wiki/Gerbil-Scheme) at Github
   contains a small but growing collection of pages that can help you
   get started with Gerbil.
+- The [Gerbil Core Prelude](doc/core-prelude.md) documents the core
+  language prelude.
 - The [Gerbil Tutorial](doc/tutorial.md), which is still in its infancy.
 
 Probably the best way to dive into gerbil is by reading the sources,
