@@ -12,12 +12,14 @@ file modules, unless you specify an alternate prelude with the `prelude:` direct
   * [Expander Hooks](#expander-hooks)
   * [Reserved Syntactic Tokens](#reserved-syntactic-tokens)
 - [Prelude Macros](#prelude-macros)
-  * [Syntactic Sugar](#syntactic-sugar)
+  * [Definition Forms](#definition-forms)
+  * [Binding Forms](#binding-forms)
+  * [Common Syntactic Sugar](#common-syntactic-sugar)
   * [MOP Macros](#mop-macros)
   * [Pattern Matching](#pattern-matching)
   * [Macros for Syntax](#macros-for-syntax)
   * [Module Sugar](#module-sugar)
-- [Runtime Bindings](#runtime-bindings)
+- [runtime Bindings](#runtime-bindings)
 - [Index of Macros](#index-of-macros)
 
 <!-- tocstop -->
@@ -142,6 +144,13 @@ Binds `id ...` as features provided by a module.
 (define-syntax id expr)
 ```
 
+#### define-alias
+```
+(define-alias id alias-id)
+```
+
+Defines a syntactic alias for `id` to be the same as `alias-id`
+
 #### extern
 ```
 (extern id ...)
@@ -215,9 +224,294 @@ _ ... else => unqute unquote-splicing unsyntax unsyntax-splicing
 These are the main macros defined by the prelude; we ignore ancillary macros used
 to facilitate expansion.
 
-### Syntactic Sugar
+### Definition Forms
 
-TBD
+#### define
+```
+(define (id . args) body ...)
+=> (define-values (id)
+     (lambda% args body ...))
+
+(define id expr)
+=> (define-values (id) expr)
+```
+
+#### def
+```
+(def (id . args) body ...)
+=> (define-values (id)
+     (lambda args body ...))
+
+(def id expr)
+=> (define-values (id) expr)
+```
+
+Subtle difference with `define`: the former defines lambdas with the core Scheme
+`lambda%` form, while `def` uses the extended `lambda` form.
+
+#### def*
+```
+(def* id
+  (args body ....) ...)
+=>
+(def id
+  (case-lambda (args body ...) ...))
+```
+
+#### defvalues
+```
+(defvalues (id ...) expr)
+=> (define-values (id ...) expr)
+```
+
+#### defsyntax
+```
+(defsyntax (id . args) body ...)
+=> (define-syntax id (lambda args body ...))
+
+(defsyntax id expr)
+=> (define-syntax id expr)
+```
+
+#### defrules
+```
+(defrules id (keyword-id ...)
+  (pat [fender] body) ...)
+=> (defsyntax id
+     (syntax-rules (keyword-id ...)
+        (pat [fender] body) ...))
+```
+
+#### defalias
+```
+(defalias id alias-id)
+=> (define-alias id alias-id)
+```
+
+### Binding Forms
+
+#### let*-values
+```
+(let*-values (((id ...) expr) rest ...) body ...)
+=> (let-values (((id) expr))
+     (let*-values rest body ...))
+
+(let*-values () body ...)
+=> (let-values () body ...)
+```
+
+#### let
+
+```
+(let id ((var expr) ...) body ...)
+=> ((letrec (id (lambda% (var ...) body ...))) expr ...)
+
+(let bind body ...)
+=> (let-values (bind-values) body ...)
+
+(let (bind ...) body ...)
+=> (let-values (bind-values ...) body ...)
+
+<bind>:
+ ((values id ...) expr)
+ (id expr)
+
+<bind-values>:
+(((id ...) expr))
+```
+
+#### let*
+```
+(let* (bind rest ...) body ...)
+=> (let bind (let* (rest ...) body ...))
+
+(let* () body ...)
+=> (let () body ...)
+
+```
+
+#### letrec letrec*
+
+```
+(letrec[*] bind body ...)
+=> (letrec[*]-values (bind-values) body ...)
+
+(letrec[*] (bind ...) body ...)
+=> (letrec[*]-values (bind-values ...) body ...)
+```
+
+#### lambda
+```
+(lambda (arg ...) body ...)
+(lambda (arg ... . id) body)
+
+<arg>:
+ id                ; required argument
+ (id default)      ; optional argument
+ key: (id default) ; keyword argument
+```
+
+The extended lambda form that supports optional and keyword arguments.
+
+#### set!
+```
+(set! id expr)
+
+(set! setq-macro-id expr)
+=> apply setq-macro expander
+
+(set! (setf-macro . args) . rest)
+=> apply setf-macro expander
+
+(set! (getf-id arg ...) expr)
+=> (getf-id-set! arg ... expr)
+
+```
+
+And when you got bindings, you want your mutator too.
+As they say, _mostly functional_.
+
+### Common Syntactic Sugar
+
+#### and or
+```
+(and expr ...)
+(or expr ...)
+```
+
+#### case cond
+```
+(cond cond-clause ...)
+(case case-clause ...)
+```
+
+The well known conditional macros; `case` has its extended form supporting `=>`
+dispatch.
+
+
+#### when unless
+```
+(when test expr ...)
+=> (if test (begin expr ...) #!void)
+
+(unless test expr ...)
+=> (if test #!void (begin expr ...))
+```
+
+#### do do-while
+```
+(do ((var init step ...) ...)
+    (test fini ...)
+  body ...)
+
+(do-while hd (test fini ...) body ...)
+=> (do hd ((not test) fini ...) body ...)
+```
+
+The common iteration macro and its inverted form.
+
+#### begin0
+```
+(begin0 expr rest ...)
+=> (let (val expr) rest ... val)
+```
+
+#### rec
+```
+(rec id expr)
+=> (letrec ((id expr)) id)
+
+(rec (values id ...) expr)
+=> (leterc ((values id ...) expr) (values id ...))
+
+(rec (id . args) body ...)
+=> (letrec (id (lambda args body ...)) id)
+```
+
+Short recursive definition form.
+
+#### alet alet*
+```
+(alet bind body ...)
+(alet (bind ...) body ...)
+(alet* bind body ...)
+(alet* (bind ...) body ...)
+
+(and-let* hd body ...)
+=> (alet* hd body ...)
+```
+Anaphoric lets which short circuit to `#f` if any of the bindings is `#f`.
+
+#### @list
+```
+(@list)
+=> '()
+
+(@list :: tl)
+=> tl
+
+(@list xs ellipsis)
+=> xs
+
+(@list xs ellipsis . rest) 
+=> (foldr cons (@list . rest) xs)
+
+(@list x . xs)
+=> (cons x (@list . xs)))
+
+(@list . tl)
+=> tl
+```
+
+This is the reader macro for `[...]`.
+
+#### quasiquote
+```
+(quasiquote expr)
+```
+
+#### delay
+```
+(delay expr)
+```
+
+The promise to eval `expr`.
+
+#### cut
+```
+(cut arg ...)
+```
+
+if you don't know how this works, stop and read the [SRFI](https://srfi.schemers.org/srfi-26/srfi-26.html).
+Most useful little macro ever.
+
+#### parameterize
+```
+(parameterize ((paremter-id expr) ...) body ...)
+```
+
+#### let/cc let/esc
+```
+(let/cc id body ...)
+=> (call/cc (lambda (id) body ...))
+
+(let/esc id body ...)
+=> (call/esc (lambda (id) body ...)
+```
+
+`call/esc` is really the same thing as `call/cc` in Gerbil on Gambit.
+
+#### unwind-protect
+```
+(unwind-protect body postlude)
+```
+
+#### syntax-error
+```
+(syntax-error message detail ...)
+```
+
+Raises a syntax error; used for meaningful error in syntax-rules macros.
 
 ### MOP Macros
 
@@ -244,8 +538,6 @@ The following macros are only available for syntax (phi = 1).
 The well-known `syntax` and `syntax-case` macros, first defined in "Extending the Scope
 of Syntactic Abstraction" by Waddell and Dybvig and popularized by Racket.
 
-Defined in the `<syntax-case>` prelude module.
-
 #### syntax-rules
 ```
 (syntax-rules (keyword-id ...)
@@ -254,8 +546,6 @@ Defined in the `<syntax-case>` prelude module.
 
 The familiar `syntax-rules` macro from R5RS, extended with pattern fenders like `syntax-case`
 and meaningful underscores.
-
-Defined in the `<syntax-sugar>` prelude module.
 
 #### with-syntax with-syntax*
 ```
@@ -271,8 +561,6 @@ The common `with-syntax` macro is widely used in Racket.
 Its sequence form `with-syntax*` is like a sequence of `with-syntax`, with the Gerbilic
 allowance for value bindings with `let*` semantics.
 
-Defined in the `<syntax-sugar>` prelude module.
-
 #### identifier-rules
 ```
 (identifier-rules (keyword-id)
@@ -280,8 +568,6 @@ Defined in the `<syntax-sugar>` prelude module.
 ```
 
 Variant of `syntax-rules` that constructs a setq macro and not a plain macro expander.
-
-Defined in the `<more-syntax-sugar>` prelude module.
 
 ### Module Sugar
 
@@ -310,6 +596,7 @@ TBD
     + [provide](#provide)
     + [define-values](#define-values)
     + [define-syntax](#define-syntax)
+    + [define-alias](#define-alias)
     + [extern](#extern)
   * [Expressions](#expressions)
     + [lambda%](#lambda%)
@@ -322,7 +609,37 @@ TBD
   * [Expander Hooks](#expander-hooks)
   * [Reserved Syntactic Tokens](#reserved-syntactic-tokens)
 - [Prelude Macros](#prelude-macros)
-  * [Syntactic Sugar](#syntactic-sugar)
+  * [Definition Forms](#definition-forms)
+    + [define](#define)
+    + [def](#def)
+    + [def*](#def)
+    + [defvalues](#defvalues)
+    + [defsyntax](#defsyntax)
+    + [defrules](#defrules)
+    + [defalias](#defalias)
+  * [Binding Forms](#binding-forms)
+    + [let*-values](#let-values)
+    + [let](#let)
+    + [let*](#let)
+    + [letrec letrec*](#letrec-letrec)
+    + [lambda](#lambda)
+    + [set!](#set)
+  * [Common Syntactic Sugar](#common-syntactic-sugar)
+    + [and or](#and-or)
+    + [case cond](#case-cond)
+    + [when unless](#when-unless)
+    + [do do-while](#do-do-while)
+    + [begin0](#begin0)
+    + [rec](#rec)
+    + [alet alet*](#alet-alet)
+    + [@list](#list)
+    + [quasiquote](#quasiquote)
+    + [delay](#delay)
+    + [cut](#cut)
+    + [parameterize](#parameterize)
+    + [let/cc let/esc](#letcc-letesc)
+    + [unwind-protect](#unwind-protect)
+    + [syntax-error](#syntax-error)
   * [MOP Macros](#mop-macros)
   * [Pattern Matching](#pattern-matching)
   * [Macros for Syntax](#macros-for-syntax)
