@@ -244,7 +244,7 @@ The following macros are only available for syntax (phi = 1).
 The well-known `syntax` and `syntax-case` macros, first defined in "Extending the Scope
 of Syntactic Abstraction" by Waddell and Dybvig and popularized by Racket.
 
-Defined in the <syntax-case> prelude module.
+Defined in the `<syntax-case>` prelude module.
 
 #### syntax-rules
 ```
@@ -255,7 +255,7 @@ Defined in the <syntax-case> prelude module.
 The familiar `syntax-rules` macro from R5RS, extended with pattern fenders like `syntax-case`
 and meaningful underscores.
 
-Defined in the <syntax-sugar> prelude module.
+Defined in the `<syntax-sugar>` prelude module.
 
 #### with-syntax with-syntax*
 ```
@@ -271,7 +271,7 @@ The common `with-syntax` macro is widely used in Racket.
 Its sequence form `with-syntax*` is like a sequence of `with-syntax`, with the Gerbilic
 allowance for value bindings with `let*` semantics.
 
-Defined in the <syntax-sugar> prelude module.
+Defined in the `<syntax-sugar>` prelude module.
 
 #### identifier-rules
 ```
@@ -281,7 +281,7 @@ Defined in the <syntax-sugar> prelude module.
 
 Variant of `syntax-rules` that constructs a setq macro and not a plain macro expander.
 
-Defined in the <more-syntax-sugar> prelude module.
+Defined in the `<more-syntax-sugar>` prelude module.
 
 ### Module Sugar
 
