@@ -19,7 +19,7 @@ file modules, unless you specify an alternate prelude with the `prelude:` direct
   * [Pattern Matching](#pattern-matching)
   * [Macros for Syntax](#macros-for-syntax)
   * [Module Sugar](#module-sugar)
-- [runtime Bindings](#runtime-bindings)
+- [Runtime Bindings](#runtime-bindings)
 - [Index of Macros](#index-of-macros)
 
 <!-- tocstop -->
@@ -27,8 +27,8 @@ file modules, unless you specify an alternate prelude with the `prelude:` direct
 ## Core Expander Syntax
 
 These syntactic forms come from the root context, which is the parent context
-of all syntactic contexts in Gerbil. They are not per se a part of the core
-prelude, but they are documented here for completeness.
+of all syntactic contexts in Gerbil. They are not a part of the core prelude
+per se, but they are documented here for completeness.
 
 ### Top Forms
 #### begin
@@ -515,7 +515,114 @@ Raises a syntax error; used for meaningful error reporting in syntax-rules macro
 
 ### MOP Macros
 
-TBD
+#### defstruct-type defclass-tye
+```
+(defstruct-type id super make instance? type-body ...)
+
+(defclass-type id super make instance? type-body ...)
+
+<type-body>:
+ name: id                    ; type name
+ id: id                      ; type id
+ constructor: method-id      ; constructor method id
+ plist: expr                 ; type plist
+ fields: ((getf setf) ...)   ; struct type fields
+ slots: ((id getf set) ...)  ; class type slots
+```
+
+Low level struct and class type definition facilities.
+
+#### defstruct define-struct
+```
+(defstruct id (field ...) typedef-option ...)
+(defstruct (id super) (field ...) typedef-option ...)
+
+(defalias define-struct defstruct)
+
+<typedef-option>:
+ name: id                    ; type name
+ id: id                      ; type id
+ constructor: id             ; constructor method id
+ final: bool                 ; #t for final types
+
+(defstruct id (field) ...)
+=> (begin
+     (defstruct-type id::t #f make-id id?
+       fields: ((field field-set!) ...)
+       type-body ...)
+     (defsyntax id ...)
+
+(defstruct (id super) (field) ...)
+=> (begin
+     (defstruct-type id::t super::t make-id id?
+      fields: ...
+      type-body ...)
+     (defsyntax id ...))
+```
+
+Canonical struct type definition macro.
+
+#### defclass define-class
+```
+(defclass id (slot ...) typedef-option ...)
+(defclass (id super ...) (slot ...) typedef-option ...)
+
+(defalias define-class defclass)
+
+(defclass id (slot ...) typedef-option ...)
+=> (begin
+     (defclass-type id::t [] make-id id?
+       slots: ((slot slot slot-set!) ...)
+       type-body ...)
+     (defsyntax id ...)
+
+(defclass (id super ...) (slot ...) typedef-option ...)
+=> (begin
+     (defclass-type id::t [super::t ...] make-id id?
+       slots: ((slot slot slot-set!) ...)
+       type-body ...)
+     (defsyntax id ...)
+```
+
+Canonical class type definition macro.
+
+#### defmethod
+```
+(defmethod {method-id type}
+  expr
+  [rebind: bool])
+=> (begin
+    (def type::method-id expr)
+    (bind-method type::t 'method-id type::method-id rebind?))
+```
+
+Defines a method `method-id` for type `type`, which must be
+a class or struct type.
+The `:std/generic` library extends the form for generic metho
+
+#### @method
+```
+(@method id obj arg ...)
+=> (call-method obj 'id arg ...)
+```
+This is the reader macro for `{...}`, the method invocation operator.
+
+#### @ @-set!
+```
+(@ obj id)
+=> (slot-ref obj 'id)
+
+(@ obj id rest ...)
+=> (@ (@ obj id) rest ...)
+
+(@-set! obj id val)
+=> (slot-set! obj 'id val)
+
+(@-set! obj id rest ... last val)
+=> (@-set! (@ obj id rest ...) last val)
+```
+
+Slot reference and mutation macros.
 
 ### Pattern Matching
 
@@ -641,6 +748,12 @@ TBD
     + [unwind-protect](#unwind-protect)
     + [syntax-error](#syntax-error)
   * [MOP Macros](#mop-macros)
+    + [defstruct-type defclass-tye](#defstruct-type-defclass-tye)
+    + [defstruct define-struct](#defstruct-define-struct)
+    + [defclass define-class](#defclass-define-class)
+    + [defmethod](#defmethod)
+    + [@method](#method)
+    + [@ @-set!](#--set)
   * [Pattern Matching](#pattern-matching)
   * [Macros for Syntax](#macros-for-syntax)
     + [syntax syntax-case](#syntax-syntax-case)
