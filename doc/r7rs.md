@@ -10,7 +10,7 @@ procedure provided by `:scheme/eval`.
 
 - [R7RS Library Modules](#r7rs-library-modules)
 - [Evaluating R7RS Expressions](#evaluating-r7rs-expressions)
-- [Implementation Notes](#implementation-notes)
+- [Implementation Restrictions](#implementation-restrictions)
 
 <!-- tocstop -->
 
@@ -21,7 +21,7 @@ Writing (or porting) an R7RS module is simple: you just specify
 necessities to support library definitions: `define-library` and the
 associated symbols for library declarations.
 
-There can be only a single library defined within a module, and it's
+There can be only a single library defined within a module, and its
 name must match the module id constructed by the package and name of
 the file. This implementation restriction has to do with library
 module resolution: Gerbil supports only a single top module per
@@ -169,7 +169,11 @@ $ gxi
 ...
 ```
 
-## Implementation Notes
+## Implementation Restrictions
+
+- The `define-library` can appear at most once per file module;
+  it is also not supported in top scope, as it does not make
+  sense with Gerbil module semantics.
 
 - The following procedures from `(scheme base)` are not implemented:
 ```

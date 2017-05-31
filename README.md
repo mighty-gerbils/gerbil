@@ -10,18 +10,15 @@ It also provides a full-blown module system, similar to PLT Scheme's
 Gerbil modules are single instantiation, supporting high performance
 ahead of time compilation and compiled macros.
 
-## History of Gerbil
-Gerbil has been my private Scheme for many years, evolved out of a set
-of common macros that i used across different implementations and
-eventually a full-blown PLT macro language. As such I have had
-multiple backends that work with the Gerbil macro system, but I have
-elected to base the canonical version of Gerbil on Gambit.
+<!-- toc -->
 
-At the prompting of some friends (they know who they are), who
-had seen private versions of Gerbil, I decided to release it in public
-with a clean bootstrap version that bootstraps on gambit with a precompiled
-version of the macro system and compiler.
-That means that the system is entirely self-hosted in Gambit.
+- [License and Copyright](#license-and-copyright)
+- [Installation](#installation)
+- [Using Gerbil](#using-gerbil)
+- [Documentation](#documentation)
+- [Epilogue](#epilogue)
+
+<!-- tocstop -->
 
 # License and Copyright
 
@@ -112,25 +109,49 @@ Hello world! My arguments are (1 2 3)
 
 The documentation is a work in progress, but there are some resources
 that should get you started:
-- The [Introduction to Gerbil](doc/guide.md), which is an introductory
-  guide for seasoned Schemers.
-- The [Gerbil wiki](https://github.com/vyzo/gerbil/wiki/Gerbil-Scheme) at Github, 
-  which contains a small but growing collection of pages that can help you
+- The [Introduction to Gerbil](doc/guide.md), an introductory guide for seasoned Schemers.
+- The [Gerbil wiki](https://github.com/vyzo/gerbil/wiki/Gerbil-Scheme) at Github
+  contains a small but growing collection of pages that can help you
   get started with Gerbil.
+- The [Gerbil Core Prelude](doc/core-prelude.md) documents the core
+  language prelude.
 - The [Gerbil Tutorial](doc/tutorial.md), which is still in its infancy.
 
 Probably the best way to dive into gerbil is by reading the sources,
 as all the main language features are exercised in one way or another
 within the implementation.
-The core language macros are defined in the [core prelude](src/gerbil/prelude/core.ss).
-This is the language that you get in the interpreter and what is available
-when writing a new module without explicitly specifying a prelude.
+
+Depending on your inclinations, there are several starting points:
+- If you are interested in Gerbil macrology, then the place to start is the [core prelude](src/gerbil/prelude/core.ss).
+  This is the language that you get in the interpreter and what is available
+  when writing a new module without explicitly specifying a prelude.
+- If you are interested in the Gerbil expander internals, then you should look at
+  the [expander sources](src/gerbil/expander).
+- If you are interested in the Gerbil compiler internals, then you should look at
+  the [compiler sources](src/gerbil/compiler).
+- If you are interested in general purpose programming, then you should look at
+  the [stdlib sources](src/std).
+
+For questions and support, you can come say hi in `#gerbil-scheme` on irc at freenode.net.
 
 # Epilogue
 
+Gerbil has been my private Scheme for many years, evolved out of a set
+of common macros that i used across different implementations and
+eventually a full-blown PLT macro language. As such I have had
+multiple backends that work with the Gerbil macro system, but I have
+elected to base the canonical version of Gerbil on Gambit.
+
+At the prompting of some friends (they know who they are), who
+had seen private versions of Gerbil, I decided to release it in public
+with a clean bootstrap version that bootstraps on gambit with a precompiled
+version of the macro system and compiler.
+That means that the system is entirely self-hosted in Gambit.
+
 Gerbil is under continuous use and development.
 The core language has been stable for a while, but I am busy porting
-batteries for the std library.
+batteries, adding features, fixing bugs, and expanding the scope of
+syntactic abstraction.
 
 Patches (even for typos in the comments) are always welcome.
 No copyright assignment ever, you keep what you contribute.
