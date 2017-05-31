@@ -496,7 +496,7 @@ Most useful little macro ever.
 => (call/cc (lambda (id) body ...))
 
 (let/esc id body ...)
-=> (call/esc (lambda (id) body ...)
+=> (call/esc (lambda (id) body ...))
 ```
 
 `call/esc` is really the same thing as `call/cc` in Gerbil on Gambit.
@@ -550,7 +550,7 @@ Low level struct and class type definition facilities.
      (defstruct-type id::t #f make-id id?
        fields: ((field field-set!) ...)
        type-body ...)
-     (defsyntax id ...)
+     (defsyntax id ...))
 
 (defstruct (id super) (field) ...)
 => (begin
@@ -574,14 +574,14 @@ Canonical struct type definition macro.
      (defclass-type id::t [] make-id id?
        slots: ((slot slot slot-set!) ...)
        type-body ...)
-     (defsyntax id ...)
+     (defsyntax id ...))
 
 (defclass (id super ...) (slot ...) typedef-option ...)
 => (begin
      (defclass-type id::t [super::t ...] make-id id?
        slots: ((slot slot slot-set!) ...)
        type-body ...)
-     (defsyntax id ...)
+     (defsyntax id ...))
 ```
 
 Canonical class type definition macro.
@@ -614,6 +614,14 @@ This is the reader macro for `{...}`, the method invocation operator.
 
 (@ obj id rest ...)
 => (@ (@ obj id) rest ...)
+```
+
+Slot reference macro.
+
+#### @-set!
+```
+(set! (@ obj id ...) val)
+=> (@-set! obj id ... val)
 
 (@-set! obj id val)
 => (slot-set! obj 'id val)
@@ -622,11 +630,122 @@ This is the reader macro for `{...}`, the method invocation operator.
 => (@-set! (@ obj id rest ...) last val)
 ```
 
-Slot reference and mutation macros.
+Slot mutation macro.
 
 ### Pattern Matching
+#### match
+```
+(match expr
+  (pattern body ...) ...
+  [(else body ...)])
 
-TBD
+<pattern>:
+ (? test)                          ; predicate test with the `?` predicate constructor
+ (? test pattern)                  ; test and match a pattern
+ (? test => pattern)               ; test and match a pattern on the value of the test
+ (? test :: proc => pattern)       ; test and match with a filter
+ (and pattern ...)                 ; match all patterns
+ (or pattern ...)                  ; match any pattern
+ (not pattern)                     ; negated match
+ (cons pattern1 pattern2)          ; destructure a pair like cons
+ (cons* pattern ... pattern-tail)  ; destructure a list like cons*
+ (@list pattern ...)               ; destructure a list like @list
+ (box pattern)                     ; 
+ #&pattern                         ; destructure a box
+ (values pattern ...)              ; destructure a values tuple
+ (vector pattern ...)              ; 
+ #(pattern ...)                    ; destructure a vector
+ (struct-id pattern ...)           ; destructure a struct
+ (class-id (slot pattern) ...)     ; destructure a class
+ (eq? val)                         ; match eq? to val
+ (eqv? val)                        ; match eqv? to val
+ (equal? val)                      ; match equal? to val
+ (quote expr)                      ; match eq?/eqv?/equal? to a quoted value
+ (quasiquote datum)                ; destructure with quasiquote
+ (match-macro arg ...)             ; apply match macro expander
+ _                                 ; match any and ignore
+ id                                ; match any and bind to id
+ datum                             ; match eq?/eqv?/equal? to a datum
+
+(match <> (match-pattern body ...) ...)
+=> (lambda (obj) (match obj (match-pattern body ...) ...))
+
+(match <...> (match-pattern body ...) ...)
+=> (lambda args (match args (match-pattern body ...) ...))
+```
+
+The fundamental destructuring pattern match macro; you've seen many and this one is
+very much like them.
+
+#### match*
+```
+(match* (expr ...)
+ ((pattern ...) body) ...)
+```
+
+Matches multiple objects in sequence.
+
+#### with with*
+```
+(with (pattern expr) body ...)
+=> (match expr (pattern body ...))
+
+(with ((pattern expr) ...) body ...)
+=> (match* (expr ...) ((pattern ...) body ...))
+
+(with () body ...)
+=> (let () body ...)
+
+(with* (hd rest ...) body ...)
+=> (with hd (with* (rest ...) body ...))
+
+(with* () body ...)
+=> (let () body ...)
+```
+
+Short-form destructuring bind macros.
+
+#### ?
+```
+(? (and pred ...) obj)
+=> (and (? pred obj) ...)
+
+(? (or pred ...) obj)
+=> (or (? pred obj) ...)
+
+(? (not pred) obj)
+=> (not (recur pred obj))
+
+(? pred obj)
+=> (pred obj)
+
+(? pred)
+=> (lambda (obj) (? pred obj))
+
+(? pred => K)
+=> (lambda (obj)
+     (and (? pred obj)
+          (K obj)))
+
+(? pred :: K)
+=> (lambda (obj)
+     (alet (val (recur pred obj))
+       (K val)))
+
+(? pred :: proc => K)
+=> (lambda (obj)
+     (and (recur pred obj)
+          (K (proc obj))))
+```
+
+The predicate constructor macro.
+
+#### defsyntax-for-match
+```
+(defsyntax-for-match id match-macro-expr [macro-expr]
+```
+Defines a match macro expander with name `id`, with optionally a regular expander for the
+same identifier.
 
 ### Macros for Syntax
 
@@ -754,7 +873,13 @@ TBD
     + [defmethod](#defmethod)
     + [@method](#method)
     + [@ @-set!](#--set)
+    + [@-set!](#-set)
   * [Pattern Matching](#pattern-matching)
+    + [match](#match)
+    + [match*](#match)
+    + [with with*](#with-with)
+    + [?](#)
+    + [defsyntax-for-match](#defsyntax-for-match)
   * [Macros for Syntax](#macros-for-syntax)
     + [syntax syntax-case](#syntax-syntax-case)
     + [syntax-rules](#syntax-rules)
