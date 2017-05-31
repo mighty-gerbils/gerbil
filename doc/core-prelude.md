@@ -360,7 +360,7 @@ The extended lambda form that supports optional and keyword arguments.
 (set! setq-macro-id expr)
 => apply setq-macro expander
 
-(set! (setf-macro . args) . rest)
+(set! (setf-macro-id . args) . rest)
 => apply setf-macro expander
 
 (set! (getf-id arg ...) expr)
@@ -511,7 +511,7 @@ Most useful little macro ever.
 (syntax-error message detail ...)
 ```
 
-Raises a syntax error; used for meaningful error in syntax-rules macros.
+Raises a syntax error; used for meaningful error reporting in syntax-rules macros.
 
 ### MOP Macros
 
