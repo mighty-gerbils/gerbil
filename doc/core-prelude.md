@@ -6,8 +6,7 @@ file modules, unless you specify an alternate prelude with the `prelude:` direct
 
 <!-- toc -->
 
-- [Core Syntax](#core-syntax)
-  * [Core Expander Syntax](#core-expander-syntax)
+- [Core Expander Syntax](#core-expander-syntax)
     + [begin](#begin)
     + [begin-syntax](#begin-syntax)
     + [begin-annotation](#begin-annotation)
@@ -28,15 +27,23 @@ file modules, unless you specify an alternate prelude with the `prelude:` direct
     + [if](#if)
     + [quote](#quote)
     + [quote-syntax](#quote-syntax)
-    + [%%app %%ref %%begin-module](#%%app-%%ref-%%begin-module)
+    + [Expander Hooks](#expander-hooks)
+    + [Reserved Syntactic Tokens](#reserved-syntactic-tokens)
+- [Prelude Macros](#prelude-macros)
+  * [Syntactic Sugar](#syntactic-sugar)
+  * [MOP Macros](#mop-macros)
+  * [Pattern Matching](#pattern-matching)
+  * [Macros for Syntax](#macros-for-syntax)
+    + [syntax syntax-case](#syntax-syntax-case)
+    + [syntax-rules](#syntax-rules)
+    + [with-syntax with-syntax*](#with-syntax-with-syntax)
+    + [identifier-rules](#identifier-rules)
+  * [Module Sugar](#module-sugar)
+- [Runtime Bindings](#runtime-bindings)
 
 <!-- tocstop -->
 
-## Core Syntax
-
-This section defines all the syntactic forms (macros) in `:gerbil/core`
-
-### Core Expander Syntax
+## Core Expander Syntax
 
 These syntactic forms come from the root context, which is the parent context
 of all syntactic contexts in Gerbil. They are not per se a part of the core
@@ -207,8 +214,101 @@ Plain old Scheme `lambda`, without optional and keyword argument support
 
 Quote an identifier `id`, capturing its syntactic context.
 
-#### %%app %%ref %%begin-module
-
+#### Expander Hooks
+```
+(%%app rator rand ...)
+(%%ref id)
+(%%begin-module body ...)
+```
 Special expander indirection hooks; explained elsewhere in the documentation.
 
+#### Reserved Syntactic Tokens
+The following widely used syntactic tokens are defined as reserved expanders:
+```
+_ ... else => unqute unquote-splicing unsyntax unsyntax-splicing
+```
 
+
+## Prelude Macros
+
+These are the main macros defined by the prelude; we ignore ancillary macros used
+to facilitate expansion.
+
+### Syntactic Sugar
+
+TBD
+
+### MOP Macros
+
+TBD
+
+### Pattern Matching
+
+TBD
+
+### Macros for Syntax
+
+The following macros are only available for syntax (phi = 1).
+
+#### syntax syntax-case
+
+```
+(syntax expr)
+
+(syntax-case stx (keyword-id ...)
+  (pat [test] body) ...)
+
+```
+
+The well-known `syntax` and `syntax-case` macros, first defined in "Extending the Scope
+of Syntactic Abstraction" by Waddell and Dybvig and popularized by Racket.
+
+Defined in the <syntax-case> prelude module.
+
+#### syntax-rules
+```
+(syntax-rules (keyword-id ...)
+ (pat [test] expr) ...)
+```
+
+The familiar `syntax-rules` macro from R5RS, extended with pattern fenders like `syntax-case`
+and meaningful underscores.
+
+Defined in the <syntax-sugar> prelude module.
+
+#### with-syntax with-syntax*
+```
+(with-syntax ((pat expr) ...) body)
+(with-syntax* ((bind expr) ...) body)
+
+<bind>:
+ (values id ...)             ; value binding
+ pat                         ; syntax binding
+```
+
+The common `with-syntax` macro is widely used in Racket.
+Its sequence form `with-syntax*` is like a sequence of `with-syntax`, with the Gerbilic
+allowance for value bindings with `let*` semantics.
+
+Defined in the <syntax-sugar> prelude module.
+
+#### identifier-rules
+```
+(identifier-rules (keyword-id)
+ (pat [test] expr) ...)
+```
+
+Variant of `syntax-rules` that constructs a setq macro and not a plain macro expander.
+
+Defined in the <more-syntax-sugar> prelude module.
+
+### Module Sugar
+
+TBD
+
+## Runtime Bindings
+
+The runtime bindings exported by the prelude are all externs collected in nested modules,
+which allows for easy reuse in custom languages.
+
+TBD
