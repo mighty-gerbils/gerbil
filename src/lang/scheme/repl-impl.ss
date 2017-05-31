@@ -26,6 +26,7 @@ package: scheme
   (import! r5rs-top ':scheme/r5rs)
   (import! r5rs-null ':scheme/r5rs-null)
   (import! interaction ':scheme/r7rs)
+  (import! interaction '(scheme base))
   )
 
 ;; this needs to be delayed because it calls eval/import from within a module loader

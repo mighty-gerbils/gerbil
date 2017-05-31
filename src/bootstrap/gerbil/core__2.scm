@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core::<syntax-sugar>[1]#_g29264_|
+  (define |gerbil/core::<syntax-sugar>[1]#_g29285_|
     (gx#core-quote-syntax 'values))
   (begin
     (define |gerbil/core::<syntax-sugar>[:0:]#syntax-rules|
@@ -20,20 +20,20 @@
                                        (_tl342381_ (##cdr _e340374_)))
                                    (if (gx#stx-pair/null? _tl342381_)
                                        (if (fx>= (gx#stx-length _tl342381_) '0)
-                                           (let ((_g29250_
+                                           (let ((_g29271_
                                                   (gx#syntax-split-splice
                                                    _tl342381_
                                                    '0)))
                                              (begin
-                                               (let ((_g29251_
-                                                      (values-count _g29250_)))
-                                                 (if (not (fx= _g29251_ 2))
+                                               (let ((_g29272_
+                                                      (values-count _g29271_)))
+                                                 (if (not (fx= _g29272_ 2))
                                                      (error "Context expects 2 values"
-                                                            _g29251_)))
+                                                            _g29272_)))
                                                (let ((_target343384_
-                                                      (values-ref _g29250_ 0))
+                                                      (values-ref _g29271_ 0))
                                                      (_tl345387_
-                                                      (values-ref _g29250_ 1)))
+                                                      (values-ref _g29271_ 1)))
                                                  (if (gx#stx-null? _tl345387_)
                                                      (letrec ((_loop346390_
                                                                (lambda (_hd344394_
@@ -147,13 +147,13 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                           _g583603_)
                          '0)
-                   (let ((_g29252_ (gx#syntax-split-splice _g583603_ '0)))
+                   (let ((_g29273_ (gx#syntax-split-splice _g583603_ '0)))
                      (begin
-                       (let ((_g29253_ (values-count _g29252_)))
-                         (if (not (fx= _g29253_ 2))
-                             (error "Context expects 2 values" _g29253_)))
-                       (let ((_target585606_ (values-ref _g29252_ 0))
-                             (_tl587609_ (values-ref _g29252_ 1)))
+                       (let ((_g29274_ (values-count _g29273_)))
+                         (if (not (fx= _g29274_ 2))
+                             (error "Context expects 2 values" _g29274_)))
+                       (let ((_target585606_ (values-ref _g29273_ 0))
+                             (_tl587609_ (values-ref _g29273_ 1)))
                          (if (gx#stx-null? _tl587609_)
                              (letrec ((_loop588612_
                                        (lambda (_hd586616_ _clause592619_)
@@ -227,20 +227,20 @@
                                        (_tl726782_ (##cdr _e724775_)))
                                    (if (gx#stx-pair/null? _hd725779_)
                                        (if (fx>= (gx#stx-length _hd725779_) '0)
-                                           (let ((_g29254_
+                                           (let ((_g29275_
                                                   (gx#syntax-split-splice
                                                    _hd725779_
                                                    '0)))
                                              (begin
-                                               (let ((_g29255_
-                                                      (values-count _g29254_)))
-                                                 (if (not (fx= _g29255_ 2))
+                                               (let ((_g29276_
+                                                      (values-count _g29275_)))
+                                                 (if (not (fx= _g29276_ 2))
                                                      (error "Context expects 2 values"
-                                                            _g29255_)))
+                                                            _g29276_)))
                                                (let ((_target727785_
-                                                      (values-ref _g29254_ 0))
+                                                      (values-ref _g29275_ 0))
                                                      (_tl729788_
-                                                      (values-ref _g29254_ 1)))
+                                                      (values-ref _g29275_ 1)))
                                                  (if (gx#stx-null? _tl729788_)
                                                      (letrec ((_loop730791_
                                                                (lambda (_hd728795_
@@ -277,20 +277,20 @@
                                    (_pat737836_ (reverse _pat735800_)))
                                (if (gx#stx-pair/null? _tl726782_)
                                    (if (fx>= (gx#stx-length _tl726782_) '0)
-                                       (let ((_g29256_
+                                       (let ((_g29277_
                                               (gx#syntax-split-splice
                                                _tl726782_
                                                '0)))
                                          (begin
-                                           (let ((_g29257_
-                                                  (values-count _g29256_)))
-                                             (if (not (fx= _g29257_ 2))
+                                           (let ((_g29278_
+                                                  (values-count _g29277_)))
+                                             (if (not (fx= _g29278_ 2))
                                                  (error "Context expects 2 values"
-                                                        _g29257_)))
+                                                        _g29278_)))
                                            (let ((_target744839_
-                                                  (values-ref _g29256_ 0))
+                                                  (values-ref _g29277_ 0))
                                                  (_tl746842_
-                                                  (values-ref _g29256_ 1)))
+                                                  (values-ref _g29277_ 1)))
                                              (if (gx#stx-null? _tl746842_)
                                                  (letrec ((_loop747845_
                                                            (lambda (_hd745849_
@@ -389,20 +389,20 @@
                          (if (gx#stx-null? _tl702953_)
                              (if (gx#stx-pair/null? _tl699943_)
                                  (if (fx>= (gx#stx-length _tl699943_) '0)
-                                     (let ((_g29258_
+                                     (let ((_g29279_
                                             (gx#syntax-split-splice
                                              _tl699943_
                                              '0)))
                                        (begin
-                                         (let ((_g29259_
-                                                (values-count _g29258_)))
-                                           (if (not (fx= _g29259_ 2))
+                                         (let ((_g29280_
+                                                (values-count _g29279_)))
+                                           (if (not (fx= _g29280_ 2))
                                                (error "Context expects 2 values"
-                                                      _g29259_)))
+                                                      _g29280_)))
                                          (let ((_target709976_
-                                                (values-ref _g29258_ 0))
+                                                (values-ref _g29279_ 0))
                                                (_tl711979_
-                                                (values-ref _g29258_ 1)))
+                                                (values-ref _g29279_ 1)))
                                            (if (gx#stx-null? _tl711979_)
                                                (letrec ((_loop712982_
                                                          (lambda (_hd710986_
@@ -469,20 +469,20 @@
                                                (if (fx>= (gx#stx-length
                                                           _tl6811065_)
                                                          '0)
-                                                   (let ((_g29260_
+                                                   (let ((_g29281_
                                                           (gx#syntax-split-splice
                                                            _tl6811065_
                                                            '0)))
                                                      (begin
-                                                       (let ((_g29261_
+                                                       (let ((_g29282_
                                                               (values-count
-                                                               _g29260_)))
-                                                         (if (not (fx= _g29261_
+                                                               _g29281_)))
+                                                         (if (not (fx= _g29282_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                2))
-                     (error "Context expects 2 values" _g29261_)))
-               (let ((_target6821068_ (values-ref _g29260_ 0))
-                     (_tl6841071_ (values-ref _g29260_ 1)))
+                     (error "Context expects 2 values" _g29282_)))
+               (let ((_target6821068_ (values-ref _g29281_ 0))
+                     (_tl6841071_ (values-ref _g29281_ 1)))
                  (if (gx#stx-null? _tl6841071_)
                      (letrec ((_loop6851074_
                                (lambda (_hd6831078_ _body6891081_)
@@ -549,20 +549,20 @@
                                                (if (fx>= (gx#stx-length
                                                           _tl11951237_)
                                                          '0)
-                                                   (let ((_g29262_
+                                                   (let ((_g29283_
                                                           (gx#syntax-split-splice
                                                            _tl11951237_
                                                            '0)))
                                                      (begin
-                                                       (let ((_g29263_
+                                                       (let ((_g29284_
                                                               (values-count
-                                                               _g29262_)))
-                                                         (if (not (fx= _g29263_
+                                                               _g29283_)))
+                                                         (if (not (fx= _g29284_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                2))
-                     (error "Context expects 2 values" _g29263_)))
-               (let ((_target11991250_ (values-ref _g29262_ 0))
-                     (_tl12011253_ (values-ref _g29262_ 1)))
+                     (error "Context expects 2 values" _g29284_)))
+               (let ((_target11991250_ (values-ref _g29283_ 0))
+                     (_tl12011253_ (values-ref _g29283_ 1)))
                  (if (gx#stx-null? _tl12011253_)
                      (letrec ((_loop12021256_
                                (lambda (_hd12001260_ _body12061263_)
@@ -646,7 +646,7 @@
                          (_tl11731368_ (##cdr _e11711361_)))
                      (if (gx#identifier? _hd11721365_)
                          (if (gx#free-identifier=?
-                              |gerbil/core::<syntax-sugar>[1]#_g29264_|
+                              |gerbil/core::<syntax-sugar>[1]#_g29285_|
                               _hd11721365_)
                              (if (gx#stx-pair? _tl11701358_)
                                  (let ((_e11741371_
@@ -658,26 +658,26 @@
                                              (if (fx>= (gx#stx-length
                                                         _tl11641338_)
                                                        '0)
-                                                 (let ((_g29265_
+                                                 (let ((_g29286_
                                                         (gx#syntax-split-splice
                                                          _tl11641338_
                                                          '0)))
                                                    (begin
-                                                     (let ((_g29266_
+                                                     (let ((_g29287_
                                                             (values-count
-                                                             _g29265_)))
-                                                       (if (not (fx= _g29266_
+                                                             _g29286_)))
+                                                       (if (not (fx= _g29287_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              2))
-                   (error "Context expects 2 values" _g29266_)))
+                   (error "Context expects 2 values" _g29287_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      (let ((_target11771381_
                                                             (values-ref
-                                                             _g29265_
+                                                             _g29286_
                                                              0))
                                                            (_tl11791384_
                                                             (values-ref
-                                                             _g29265_
+                                                             _g29286_
                                                              1)))
                                                        (if (gx#stx-null?
                                                             _tl11791384_)
@@ -758,20 +758,20 @@
                                                (if (fx>= (gx#stx-length
                                                           _tl11441476_)
                                                          '0)
-                                                   (let ((_g29267_
+                                                   (let ((_g29288_
                                                           (gx#syntax-split-splice
                                                            _tl11441476_
                                                            '0)))
                                                      (begin
-                                                       (let ((_g29268_
+                                                       (let ((_g29289_
                                                               (values-count
-                                                               _g29267_)))
-                                                         (if (not (fx= _g29268_
+                                                               _g29288_)))
+                                                         (if (not (fx= _g29289_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                2))
-                     (error "Context expects 2 values" _g29268_)))
-               (let ((_target11451479_ (values-ref _g29267_ 0))
-                     (_tl11471482_ (values-ref _g29267_ 1)))
+                     (error "Context expects 2 values" _g29289_)))
+               (let ((_target11451479_ (values-ref _g29288_ 0))
+                     (_tl11471482_ (values-ref _g29288_ 1)))
                  (if (gx#stx-null? _tl11471482_)
                      (letrec ((_loop11481485_
                                (lambda (_hd11461489_ _body11521492_)
