@@ -22,6 +22,7 @@ file modules, unless you specify an alternate prelude with the `prelude:` direct
 - [Runtime Symbol Bindings](#runtime-symbol-bindings)
   * [Runtime [phi=0] Bindings](#runtime-phi0-bindings)
   * [Syntax [phi=1] Bindings](#syntax-phi1-bindings)
+  * [More Gambit Symbols](#more-gambit-symbols)
 - [Index of Macros](#index-of-macros)
 
 <!-- tocstop -->
@@ -1180,6 +1181,19 @@ Defines the following symbols as extern:
     core-expand-import-source
     core-expand-export-source
 
+```
+
+### More Gambit Symbols
+
+There are more symbols provided by the Gambit runtime, which you may find useful
+in systems programming. These are not defined in the core prelude by default to
+avoid bloat. Instead, they are defined in the `:gerbil/gambit` module and
+its submodules in the `gerbil/gambit` package.
+
+So in order to have the full Gerbil on Gambit symbols available, in addition to
+the core prelude, you need to import the extended symbols with
+```
+(import :gerbil/gambit)
 ```
 
 ## Index of Macros
