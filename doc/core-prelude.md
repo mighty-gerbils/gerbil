@@ -7,39 +7,18 @@ file modules, unless you specify an alternate prelude with the `prelude:` direct
 <!-- toc -->
 
 - [Core Expander Syntax](#core-expander-syntax)
-    + [begin](#begin)
-    + [begin-syntax](#begin-syntax)
-    + [begin-annotation](#begin-annotation)
-    + [import](#import)
-    + [module](#module)
-    + [export](#export)
-    + [declare](#declare)
-    + [include](#include)
-    + [cond-expand](#cond-expand)
-    + [provide](#provide)
-    + [define-values](#define-values)
-    + [define-syntax](#define-syntax)
-    + [extern](#extern)
-    + [lambda%](#lambda%)
-    + [case-lambda](#case-lambda)
-    + [let-values letrec-values letrec*-values](#let-values-letrec-values-letrec-values)
-    + [let-syntax letrec-syntax](#let-syntax-letrec-syntax)
-    + [if](#if)
-    + [quote](#quote)
-    + [quote-syntax](#quote-syntax)
-    + [Expander Hooks](#expander-hooks)
-    + [Reserved Syntactic Tokens](#reserved-syntactic-tokens)
+  * [Top Forms](#top-forms)
+  * [Expressions](#expressions)
+  * [Expander Hooks](#expander-hooks)
+  * [Reserved Syntactic Tokens](#reserved-syntactic-tokens)
 - [Prelude Macros](#prelude-macros)
   * [Syntactic Sugar](#syntactic-sugar)
   * [MOP Macros](#mop-macros)
   * [Pattern Matching](#pattern-matching)
   * [Macros for Syntax](#macros-for-syntax)
-    + [syntax syntax-case](#syntax-syntax-case)
-    + [syntax-rules](#syntax-rules)
-    + [with-syntax with-syntax*](#with-syntax-with-syntax)
-    + [identifier-rules](#identifier-rules)
   * [Module Sugar](#module-sugar)
 - [Runtime Bindings](#runtime-bindings)
+- [Index of Macros](#index-of-macros)
 
 <!-- tocstop -->
 
@@ -49,6 +28,7 @@ These syntactic forms come from the root context, which is the parent context
 of all syntactic contexts in Gerbil. They are not per se a part of the core
 prelude, but they are documented here for completeness.
 
+### Top Forms
 #### begin
 ```
 (begin form ....)
@@ -171,6 +151,7 @@ Binds `id ...` as features provided by a module.
 Create runtime bindings for `id`, with the symbols bound at runtime through an
 external mechanism (eg builtin or defined at a foreign library).
 
+### Expressions
 #### lambda%
 ```
 (lambda% lambda-formals body ...)
@@ -214,7 +195,7 @@ Plain old Scheme `lambda`, without optional and keyword argument support
 
 Quote an identifier `id`, capturing its syntactic context.
 
-#### Expander Hooks
+### Expander Hooks
 ```
 (%%app rator rand ...)
 (%%ref id)
@@ -222,7 +203,7 @@ Quote an identifier `id`, capturing its syntactic context.
 ```
 Special expander indirection hooks; explained elsewhere in the documentation.
 
-#### Reserved Syntactic Tokens
+### Reserved Syntactic Tokens
 The following widely used syntactic tokens are defined as reserved expanders:
 ```
 _ ... else => unqute unquote-splicing unsyntax unsyntax-splicing
@@ -312,3 +293,41 @@ The runtime bindings exported by the prelude are all externs collected in nested
 which allows for easy reuse in custom languages.
 
 TBD
+
+## Index of Macros
+
+- [Core Expander Syntax](#core-expander-syntax)
+  * [Top Forms](#top-forms)
+    + [begin](#begin)
+    + [begin-syntax](#begin-syntax)
+    + [begin-annotation](#begin-annotation)
+    + [import](#import)
+    + [module](#module)
+    + [export](#export)
+    + [declare](#declare)
+    + [include](#include)
+    + [cond-expand](#cond-expand)
+    + [provide](#provide)
+    + [define-values](#define-values)
+    + [define-syntax](#define-syntax)
+    + [extern](#extern)
+  * [Expressions](#expressions)
+    + [lambda%](#lambda%)
+    + [case-lambda](#case-lambda)
+    + [let-values letrec-values letrec*-values](#let-values-letrec-values-letrec-values)
+    + [let-syntax letrec-syntax](#let-syntax-letrec-syntax)
+    + [if](#if)
+    + [quote](#quote)
+    + [quote-syntax](#quote-syntax)
+  * [Expander Hooks](#expander-hooks)
+  * [Reserved Syntactic Tokens](#reserved-syntactic-tokens)
+- [Prelude Macros](#prelude-macros)
+  * [Syntactic Sugar](#syntactic-sugar)
+  * [MOP Macros](#mop-macros)
+  * [Pattern Matching](#pattern-matching)
+  * [Macros for Syntax](#macros-for-syntax)
+    + [syntax syntax-case](#syntax-syntax-case)
+    + [syntax-rules](#syntax-rules)
+    + [with-syntax with-syntax*](#with-syntax-with-syntax)
+    + [identifier-rules](#identifier-rules)
+  * [Module Sugar](#module-sugar)
