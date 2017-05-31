@@ -8,6 +8,27 @@ file modules, unless you specify an alternate prelude with the `prelude:` direct
 
 - [Core Syntax](#core-syntax)
   * [Core Expander Syntax](#core-expander-syntax)
+    + [begin](#begin)
+    + [begin-syntax](#begin-syntax)
+    + [begin-annotation](#begin-annotation)
+    + [import](#import)
+    + [module](#module)
+    + [export](#export)
+    + [declare](#declare)
+    + [include](#include)
+    + [cond-expand](#cond-expand)
+    + [provide](#provide)
+    + [define-values](#define-values)
+    + [define-syntax](#define-syntax)
+    + [extern](#extern)
+    + [lambda%](#lambda%)
+    + [case-lambda](#case-lambda)
+    + [let-values letrec-values letrec*-values](#let-values-letrec-values-letrec-values)
+    + [let-syntax letrec-syntax](#let-syntax-letrec-syntax)
+    + [if](#if)
+    + [quote](#quote)
+    + [quote-syntax](#quote-syntax)
+    + [%%app %%ref %%begin-module](#%%app-%%ref-%%begin-module)
 
 <!-- tocstop -->
 
@@ -112,8 +133,7 @@ Include the contents of path, wrapped with a `begin`.
  (and feaure ...)             ; boolean and of `feature ...`
  (or feature ...)             ; boolean or of `feature ...`
  (not feature)                ; negation of feature
- id                           ; true if `id` is defined as an identifier
- 
+ id                           ; satisfied if `id` is bound as an identifier
 ```
 
 Conditionally expands the body for the first satisfied feature. Must appear at top scope.
