@@ -110,8 +110,8 @@ Hello world! My arguments are (1 2 3)
 The documentation is a work in progress, but there are some resources
 that should get you started:
 - The [Introduction to Gerbil](doc/guide.md), an introductory guide for seasoned Schemers.
-- The [Gerbil wiki](https://github.com/vyzo/gerbil/wiki/Gerbil-Scheme) at Github, 
-  which contains a small but growing collection of pages that can help you
+- The [Gerbil wiki](https://github.com/vyzo/gerbil/wiki/Gerbil-Scheme) at Github
+  contains a small but growing collection of pages that can help you
   get started with Gerbil.
 - The [Gerbil Tutorial](doc/tutorial.md), which is still in its infancy.
 
@@ -121,6 +121,8 @@ within the implementation.
 The core language macros are defined in the [core prelude](src/gerbil/prelude/core.ss).
 This is the language that you get in the interpreter and what is available
 when writing a new module without explicitly specifying a prelude.
+
+For questions and support, you can come say hi in `#gerbil-scheme` at freenode irc!
 
 # Epilogue
 
