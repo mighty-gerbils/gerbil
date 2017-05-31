@@ -1,3 +1,14 @@
+5-31-2017: Gerbil-v0.10
+- lang/scheme: R7RS implementation
+- doc/core-prelude: core prelude documentation
+- prelude:
+  - core:
+    - more import and export expanders
+    - fix @-set! expansion for multislot
+  - gambit: add gc-report-set!
+- compiler: fix compile-static-exe to honor gsc-options
+- expander: fix core-expand-exports for nested expansions
+
 5-26-2017: Gerbil-v0.9
 - expander:
   - %%ref, %%app, and %%begin-module indirections for custom expansion
