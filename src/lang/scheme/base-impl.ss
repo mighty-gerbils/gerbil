@@ -136,14 +136,22 @@ package: scheme
 
 ;; numerics
 (def (exact-integer? obj)
-  (and (exact? obj)
+  (and (number? obj)
+       (exact? obj)
        (integer? obj)))
 
 (def (square x)
   (expt x 2))
 
+;; original author: brad [gambiteer]
+(def (exact-integer-sqrt y)
+  (if (and (exact-integer? y)
+           (not (negative? y)))
+    (let (s-r (##exact-int.sqrt y))
+      (values (car s-r) (cdr s-r)))
+    (error "exact-integer-sqrt: Argument is not a nonnegative exact integer: " y)))
+
 ;; number theoretic functions are not my forte, so I am passing on these for now
-(defstub exact-integer-sqrt)
 (defstub floor/)
 (defstub floor-quotient)
 (defstub floor-remainder)

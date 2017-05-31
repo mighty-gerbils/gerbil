@@ -178,7 +178,7 @@ $ gxi
 - The following procedures from `(scheme base)` are not implemented:
 ```
 raise-continuable input-port-open? output-port-open?
-exact-integer-sqrt floor/ floor-quotient floor-remainder
+floor/ floor-quotient floor-remainder
 truncate/ truncate-quotient truncate-remainder
 ```
 
