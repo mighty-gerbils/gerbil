@@ -10,7 +10,7 @@ procedure provided by `:scheme/eval`.
 
 - [R7RS Library Modules](#r7rs-library-modules)
 - [Evaluating R7RS Expressions](#evaluating-r7rs-expressions)
-- [Implementation Notes](#implementation-notes)
+- [Implementation Restrictions](#implementation-restrictions)
 
 <!-- tocstop -->
 
@@ -169,7 +169,11 @@ $ gxi
 ...
 ```
 
-## Implementation Notes
+## Implementation Restrictions
+
+- The `define-library` can appear at most once per file module;
+  it is also not supported in top scope, as it does not make
+  sense with Gerbil module semantics.
 
 - The following procedures from `(scheme base)` are not implemented:
 ```
