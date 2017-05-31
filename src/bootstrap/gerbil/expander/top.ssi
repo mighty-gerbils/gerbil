@@ -36,8 +36,8 @@ namespace: gx
           core-expand-define-alias%
           gx#core-expand-define-alias%)
          (%#begin (%#define-runtime
-                   core-expand-lambda%__opt-lambda8048
-                   gx#core-expand-lambda%__opt-lambda8048)
+                   core-expand-lambda%__opt-lambda8045
+                   gx#core-expand-lambda%__opt-lambda8045)
                   (%#begin (%#define-runtime
                             core-expand-lambda%__0
                             gx#core-expand-lambda%__0)
@@ -49,8 +49,8 @@ namespace: gx
           gx#core-expand-case-lambda%)
          (%#define-runtime core-expand-let-values% gx#core-expand-let-values%)
          (%#begin (%#define-runtime
-                   core-expand-letrec-values%__opt-lambda7911
-                   gx#core-expand-letrec-values%__opt-lambda7911)
+                   core-expand-letrec-values%__opt-lambda7908
+                   gx#core-expand-letrec-values%__opt-lambda7908)
                   (%#begin (%#define-runtime
                             core-expand-letrec-values%__0
                             gx#core-expand-letrec-values%__0)
@@ -81,8 +81,8 @@ namespace: gx
           core-expand-let-bind-syntax-expression
           gx#core-expand-let-bind-syntax-expression)
          (%#begin (%#define-runtime
-                   core-expand-let-bind-syntax!__opt-lambda7503
-                   gx#core-expand-let-bind-syntax!__opt-lambda7503)
+                   core-expand-let-bind-syntax!__opt-lambda7500
+                   gx#core-expand-let-bind-syntax!__opt-lambda7500)
                   (%#begin (%#define-runtime
                             core-expand-let-bind-syntax!__0
                             gx#core-expand-let-bind-syntax!__0)
@@ -113,8 +113,8 @@ namespace: gx
           macro-expand-case-lambda
           gx#macro-expand-case-lambda)
          (%#begin (%#define-runtime
-                   macro-expand-let-values__opt-lambda6654
-                   gx#macro-expand-let-values__opt-lambda6654)
+                   macro-expand-let-values__opt-lambda6651
+                   gx#macro-expand-let-values__opt-lambda6651)
                   (%#begin (%#define-runtime
                             macro-expand-let-values__0
                             gx#macro-expand-let-values__0)
@@ -134,8 +134,8 @@ namespace: gx
          (%#define-runtime ellipsis? gx#ellipsis?)
          (%#define-runtime user-binding-identifier gx#user-binding-identifier)
          (%#begin (%#define-runtime
-                   check-duplicate-identifiers__opt-lambda6452
-                   gx#check-duplicate-identifiers__opt-lambda6452)
+                   check-duplicate-identifiers__opt-lambda6449
+                   gx#check-duplicate-identifiers__opt-lambda6449)
                   (%#begin (%#define-runtime
                             check-duplicate-identifiers__0
                             gx#check-duplicate-identifiers__0)
@@ -144,8 +144,8 @@ namespace: gx
                             gx#check-duplicate-identifiers)))
          (%#define-runtime core-bind-values? gx#core-bind-values?)
          (%#begin (%#define-runtime
-                   core-bind-values!__opt-lambda6408
-                   gx#core-bind-values!__opt-lambda6408)
+                   core-bind-values!__opt-lambda6405
+                   gx#core-bind-values!__opt-lambda6405)
                   (%#begin (%#define-runtime
                             core-bind-values!__0
                             gx#core-bind-values!__0)

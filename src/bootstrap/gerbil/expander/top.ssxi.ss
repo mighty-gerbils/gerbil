@@ -6,34 +6,34 @@ package: gerbil/expander
    gx#core-expand-lambda%
    (@case-lambda
     (1 gx#core-expand-lambda%__0)
-    (2 gx#core-expand-lambda%__opt-lambda8048)))
+    (2 gx#core-expand-lambda%__opt-lambda8045)))
   (declare-type
    gx#core-expand-letrec-values%
    (@case-lambda
     (1 gx#core-expand-letrec-values%__0)
-    (2 gx#core-expand-letrec-values%__opt-lambda7911)))
+    (2 gx#core-expand-letrec-values%__opt-lambda7908)))
   (declare-type
    gx#core-expand-let-bind-syntax!
    (@case-lambda
     (2 gx#core-expand-let-bind-syntax!__0)
-    (3 gx#core-expand-let-bind-syntax!__opt-lambda7503)))
+    (3 gx#core-expand-let-bind-syntax!__opt-lambda7500)))
   (declare-type
    gx#macro-expand-let-values
    (@case-lambda
     (1 gx#macro-expand-let-values__0)
-    (2 gx#macro-expand-let-values__opt-lambda6654)))
+    (2 gx#macro-expand-let-values__opt-lambda6651)))
   (declare-type
    gx#check-duplicate-identifiers
    (@case-lambda
     (1 gx#check-duplicate-identifiers__0)
-    (2 gx#check-duplicate-identifiers__opt-lambda6452)))
+    (2 gx#check-duplicate-identifiers__opt-lambda6449)))
   (declare-type
    gx#core-bind-values!
    (@case-lambda
     (1 gx#core-bind-values!__0)
     (2 gx#core-bind-values!__1)
     (3 gx#core-bind-values!__2)
-    (4 gx#core-bind-values!__opt-lambda6408)))
+    (4 gx#core-bind-values!__opt-lambda6405)))
   (declare-type
    gx#core-bind-runtime!
    (@case-lambda
