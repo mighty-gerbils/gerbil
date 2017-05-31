@@ -5,7 +5,7 @@ package: scheme
 
 (import :gerbil/gambit
         :scheme/stubs
-        (phi: +1 :gerbil/expander))
+        (phi: +1 :gerbil/expander :gerbil/gambit))
 (export #t)
 
 ;; macros
