@@ -1552,8 +1552,8 @@ package: gerbil
       ((_ obj id val)
        (identifier? #'id)
        (slot-set! obj 'id val))
-      ((_ obj id path ... val)
-       (slot-set! (@ obj path ...) 'id val))))
+      ((recur obj id path ... last val)
+       (recur (@ obj id path ...) last val))))
   
   (import <MOP:2> (phi: +1 <MOP:2>))
   
