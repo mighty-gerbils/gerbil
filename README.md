@@ -10,19 +10,6 @@ It also provides a full-blown module system, similar to PLT Scheme's
 Gerbil modules are single instantiation, supporting high performance
 ahead of time compilation and compiled macros.
 
-## History of Gerbil
-Gerbil has been my private Scheme for many years, evolved out of a set
-of common macros that i used across different implementations and
-eventually a full-blown PLT macro language. As such I have had
-multiple backends that work with the Gerbil macro system, but I have
-elected to base the canonical version of Gerbil on Gambit.
-
-At the prompting of some friends (they know who they are), who
-had seen private versions of Gerbil, I decided to release it in public
-with a clean bootstrap version that bootstraps on gambit with a precompiled
-version of the macro system and compiler.
-That means that the system is entirely self-hosted in Gambit.
-
 # License and Copyright
 
 The source code is distributed with the Gambit license; that means
@@ -127,9 +114,22 @@ when writing a new module without explicitly specifying a prelude.
 
 # Epilogue
 
+Gerbil has been my private Scheme for many years, evolved out of a set
+of common macros that i used across different implementations and
+eventually a full-blown PLT macro language. As such I have had
+multiple backends that work with the Gerbil macro system, but I have
+elected to base the canonical version of Gerbil on Gambit.
+
+At the prompting of some friends (they know who they are), who
+had seen private versions of Gerbil, I decided to release it in public
+with a clean bootstrap version that bootstraps on gambit with a precompiled
+version of the macro system and compiler.
+That means that the system is entirely self-hosted in Gambit.
+
 Gerbil is under continuous use and development.
 The core language has been stable for a while, but I am busy porting
-batteries for the std library.
+batteries, adding features, fixing bugs, and expanding the scope of
+syntactic abstraction.
 
 Patches (even for typos in the comments) are always welcome.
 No copyright assignment ever, you keep what you contribute.
