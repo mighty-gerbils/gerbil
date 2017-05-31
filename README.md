@@ -112,8 +112,7 @@ Hello world! My arguments are (1 2 3)
 
 The documentation is a work in progress, but there are some resources
 that should get you started:
-- The [Introduction to Gerbil](doc/guide.md), which is an introductory
-  guide for seasoned Schemers.
+- The [Introduction to Gerbil](doc/guide.md), an introductory guide for seasoned Schemers.
 - The [Gerbil wiki](https://github.com/vyzo/gerbil/wiki/Gerbil-Scheme) at Github, 
   which contains a small but growing collection of pages that can help you
   get started with Gerbil.
