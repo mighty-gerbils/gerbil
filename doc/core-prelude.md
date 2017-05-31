@@ -855,7 +855,7 @@ Import and export expander; rename specific identifiers in a set.
 (export (prefix-out export-spec prefix-id))
 ```
 
-Import and Export expander; rename a set by applying a prefix.
+Import and export expander; rename a set by applying a prefix.
 
 #### struct-out
 ```
@@ -874,7 +874,7 @@ which allows for easy reuse in custom languages.
 This includes the `<runtime>` prelude module, which is composed by the `<r5rs-runtime>` and
 `<host-runtime>` modules.
 
-#### <r5rs-runtime>
+#### `<r5rs-runtime>`
 
 Defines the following symbols as externs:
 ```
@@ -954,7 +954,7 @@ Defines the following symbols as externs:
     load
 ```
 
-#### <host-runtime>
+#### `<host-runtime>`
 
 Defines the following symbols as externs:
 ```
