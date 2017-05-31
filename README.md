@@ -122,7 +122,7 @@ The core language macros are defined in the [core prelude](src/gerbil/prelude/co
 This is the language that you get in the interpreter and what is available
 when writing a new module without explicitly specifying a prelude.
 
-For questions and support, you can come say hi in `#gerbil-scheme` at freenode irc!
+For questions and support, you can come say hi in `#gerbil-scheme` on irc at freenode.net.
 
 # Epilogue
 
