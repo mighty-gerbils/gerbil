@@ -11,6 +11,7 @@
     "sugar"
     "make"
     "error"
+    "getopt"
     "logger"
     "generic"
     "event"
