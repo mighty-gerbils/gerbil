@@ -34,7 +34,7 @@ package: std/crypto
 
 (defmethod {:init! libcrypto-error}
   (lambda (self errno irritants)
-    (direct-struct-instance-init!
+    (struct-instance-init!
      self
      (string-append
       (or (ERR_lib_error_string errno) "?") ":"
