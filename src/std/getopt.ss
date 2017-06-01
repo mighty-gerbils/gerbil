@@ -187,7 +187,7 @@ package: std
              (hash-put! ht key (value-e val))
              (lp args rest))
             (else
-             (raise-getopt-error "Missing argument" key))))
+             (hash-put! ht key default))))
          ((!rest key _ value-e)
           (hash-put! ht key (map value-e rest)))))
       (else
