@@ -291,10 +291,10 @@ package: std
 (def (display-option-help opts port)
   (for-each (match <>
               ((!option _ help short long _ default)
-               (fprintf port " ~a ~a:\t ~a~n"
+               (fprintf port " ~a ~a:\t ~a [default: ~a]~n"
                         (or short "")
                         (or long "")
-                        help))
+                        help default))
               ((!flag _ help short long)
                (fprintf port " ~a ~a:\t ~a~n"
                         (or short "")
