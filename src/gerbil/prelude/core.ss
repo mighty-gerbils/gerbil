@@ -349,7 +349,7 @@ package: gerbil
 (module <syntax-sugar>
   (export #t)
   (import <expander-runtime> <syntax-case>)
-  
+
   (define-syntax syntax-rules
     (lambda% (stx)
       (syntax-case stx ()
@@ -392,7 +392,15 @@ package: gerbil
              (recur rest body ...)))
         ((recur (hd . rest) body ...)
          #'(with-syntax (hd) 
-             (recur rest body ...)))))))
+             (recur rest body ...))))))
+
+  (define-syntax syntax/loc
+    (lambda% (stx)
+      (syntax-case stx ()
+        ((_ src-stx form)
+         #'(stx-wrap-source
+            (syntax form)
+            (stx-source src-stx)))))))
 
 (import (phi: +1 <syntax-sugar>)
         (phi: +2 <syntax-sugar>))
