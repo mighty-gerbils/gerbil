@@ -94,6 +94,19 @@ package: std
    (unless expr
      (error "Assertion error" message 'expr))))
 
+(defrules while ()
+  ((_ test body ...)
+   (let lp ()
+     (when test
+       body ...
+       (lp)))))
+
+(defrules until ()
+  ((_ test body ...)
+   (let lp ()
+     (unless test
+       body ...
+       (lp)))))
 
 (defrules hash ()
   ((_ (key val) ...)
