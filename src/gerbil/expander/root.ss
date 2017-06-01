@@ -161,7 +161,7 @@ namespace: gx
 
 (defmethod {:init! root-context}
   (lambda (self (bind? #t))
-    (direct-struct-instance-init! self 'root (make-hash-table-eq))
+    (struct-instance-init! self 'root (make-hash-table-eq))
     (when bind?
       {bind-core-syntax-expanders! self}
       {bind-core-macro-expanders!  self})))
@@ -169,7 +169,7 @@ namespace: gx
 (defmethod {:init! top-context}
   (lambda (self (super #f))
     (let (super (or super (core-context-root) (make-root-context)))
-      (direct-struct-instance-init! self 'top (make-hash-table-eq) 
+      (struct-instance-init! self 'top (make-hash-table-eq) 
                                     super #f #f))))
 
 (defmethod {bind-core-syntax-expanders! expander-context}
