@@ -61,7 +61,8 @@ package: tutorial/kvstore
             getcmd
             refcmd
             putcmd
-            delcmd))
+            delcmd
+            helpcmd))
 
   (try
    (let ((values cmd opt) (getopt-parse gopt args))
