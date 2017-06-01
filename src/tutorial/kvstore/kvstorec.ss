@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; kvstore daemon
+;;; kvstore command line client
 package: tutorial/kvstore
 
 (import :gerbil/gambit

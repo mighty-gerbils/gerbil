@@ -40,7 +40,7 @@ $ if [ ! -e $HOME/.gerbil/cookie ]; then
 fi
 ```
 
-The source code for the tutorial is avilable at [$GERBIL_HOME/src/tutorial/kvstore](../../src/tutorial/kvstore).
+The source code for the tutorial is available at [$GERBIL_HOME/src/tutorial/kvstore](../../src/tutorial/kvstore).
 You can now build the kvstore tutorial so that you can use the programs:
 ```
 $ cd $GERBIL_HOME/src/tutorial/kvstore
@@ -277,7 +277,7 @@ with the key-value store:
 
 ## A Command-Line Client
 
-There is a command-line client for our deamon, defined in [kvstorec.ss](../../src/tutorial/kvstore/kvstorec.ss).
+There is a command-line client for our daemon, defined in [kvstorec.ss](../../src/tutorial/kvstore/kvstorec.ss).
 
 ### The main function
 
