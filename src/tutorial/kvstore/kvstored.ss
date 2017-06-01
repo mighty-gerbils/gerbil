@@ -5,8 +5,9 @@ package: tutorial/kvstore
 
 (import :gerbil/gambit
         :std/sugar
-        :std/actor
+        :std/getopt
         :std/logger
+        :std/actor
         :std/text/json
         :std/text/zlib
         :std/db/lmdb
@@ -93,8 +94,22 @@ package: tutorial/kvstore
         (what
          (warning "Unexpected message: ~a " what)))))
 
-(def (main rpcd-address lmdb-path)
-  (start-logger!)
-  (let* ((rpcd (start-rpc-server! rpcd-address proto: (rpc-cookie-proto)))
-         (env (lmdb-open lmdb-path)))
-    (run rpcd env)))
+(def (main . args)
+  (def gopt
+    (getopt (option 'listen "-l" "--listen"
+                    default: "127.0.0.1:9999"
+                    help: "rpcd listen address")
+            (argument 'path help: "lmdb path")))
+  (try
+   (let (opt (getopt-parse gopt args))
+     (start-logger!)
+     (let* ((rpcd (start-rpc-server! (hash-get opt 'listen)
+                                     proto: (rpc-cookie-proto)))
+            (env (lmdb-open (hash-get opt 'path))))
+       (spawn run rpcd env)
+       (thread-join! rpcd)))
+   (catch (getopt-error? exn)
+     (getopt-display-help exn "kvstored" (current-error-port))
+     (exit 1))
+   (catch (uncaught-exception? exn)
+     (display-exception (uncaught-exception-reason exn) (current-error-port)))))
