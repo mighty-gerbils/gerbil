@@ -25,7 +25,7 @@
     (make-struct-field-mutator gxc#optimizer-info::t '1))
   (define gxc#optimizer-info:::init!
     (lambda (_self19366_)
-      (direct-struct-instance-init!
+      (struct-instance-init!
        _self19366_
        (make-hash-table-eq)
        (make-hash-table-eq))))
@@ -439,7 +439,7 @@
              _xfields19228_
              _ctor19229_
              _plist19230_)
-      (direct-struct-instance-init!
+      (struct-instance-init!
        _self19224_
        _id19225_
        _super19226_
@@ -457,7 +457,7 @@
                _dispatch19193_
                _inline19194_
                _typedecl19195_)
-        (direct-struct-instance-init!
+        (struct-instance-init!
          _self19190_
          _id19191_
          _arity19192_
@@ -469,7 +469,7 @@
         (lambda (_self19200_ _id19201_ _arity19202_ _dispatch19203_)
           (let ((_inline19205_ '#f))
             (let ((_typedecl19207_ '#f))
-              (direct-struct-instance-init!
+              (struct-instance-init!
                _self19200_
                _id19201_
                _arity19202_
@@ -483,7 +483,7 @@
                  _dispatch19212_
                  _inline19213_)
           (let ((_typedecl19215_ '#f))
-            (direct-struct-instance-init!
+            (struct-instance-init!
              _self19209_
              _id19210_
              _arity19211_
@@ -495,8 +495,7 @@
           (let ((_g19387_ (length _g19388_)))
             (cond ((fx= _g19387_ 4) (apply gxc#!lambda:::init!__0 _g19388_))
                   ((fx= _g19387_ 5) (apply gxc#!lambda:::init!__1 _g19388_))
-                  ((fx= _g19387_ 6)
-                   (apply direct-struct-instance-init! _g19388_))
+                  ((fx= _g19387_ 6) (apply struct-instance-init! _g19388_))
                   (else (error "No clause matching arguments" _g19388_))))))))
   (bind-method! gxc#!lambda::t ':init! gxc#!lambda:::init! '#f)
   (define gxc#!struct-type-vtab
