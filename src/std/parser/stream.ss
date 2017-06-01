@@ -33,7 +33,7 @@ package: std/parser
   (lambda (self port)
     (unless (macro-character-input-port? port)
       (error "Bad input source; not a character-input-port" port))
-    (direct-struct-instance-init! self port [] (make-location port 0 0 0 0) [])))
+    (struct-instance-init! self port [] (make-location port 0 0 0 0) [])))
 
 (def (char-stream-close cs)
   (close-input-port (char-stream-port cs)))

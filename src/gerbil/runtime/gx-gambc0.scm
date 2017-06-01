@@ -16,7 +16,7 @@
 ;;;
 
 (define (gerbil-version-string)
-  "v0.10")
+  "v0.11-DEV")
 
 (define (gerbil-system-version-string)
   (string-append "Gerbil " (gerbil-version-string) " on Gambit " (system-version-string)))
@@ -466,12 +466,6 @@
       (error "Arguments don't match object size" 
         klass fields args)))))
 
-(define (make-direct-struct-instance klass . args)
-  (let ((fields (type-descriptor-fields klass)))
-    (if (fx<= (length args) fields)
-      (&struct-instance-init! (make-object klass fields) args)
-      (error "Too many arguments for struct" klass args))))
-
 (define (make-class-instance klass . args)
   (let ((obj (make-object klass (type-descriptor-fields klass))))
     (cond
@@ -481,12 +475,7 @@
      (else 
       (&class-instance-init! klass obj args)))))
 
-(define (make-direct-class-instance klass . args)
-  (&class-instance-init! klass 
-                         (make-object klass (type-descriptor-fields klass)) 
-                         args))
-
-(define (direct-struct-instance-init! obj . args)
+(define (struct-instance-init! obj . args)
   (if (fx< (length args) (##vector-length obj))
     (&struct-instance-init! obj args)
     (error "Too many arguments for struct" obj args)))
@@ -499,7 +488,7 @@
        (lp (fx1+ k) rest))
       (else obj))))
 
-(define (direct-class-instance-init! obj . args)
+(define (class-instance-init! obj . args)
   (&class-instance-init! (object-type obj) obj args))
 
 (define (&class-instance-init! klass obj args)
@@ -517,7 +506,7 @@
        (if (null? rest) obj
            (error "Unexpected class initializer arguments" rest))))))
 
-(define (direct-constructor-init! klass kons-id obj . args)
+(define (constructor-init! klass kons-id obj . args)
   (&constructor-init! klass kons-id obj args))
 
 (define (&constructor-init! klass kons-id obj args)
@@ -536,14 +525,14 @@
   (error "XXX")
   )
 
-(define (direct-field-ref obj off)
+(define (unchecked-field-ref obj off)
   (##vector-ref obj (fx1+ off)))
-(define (direct-field-set! obj off val)
+(define (unchecked-field-set! obj off val)
   (##vector-set! obj (fx1+ off) val))
-(define (direct-slot-ref obj slot)
-  (direct-field-ref obj (class-slot-offset (object-type obj))))
-(define (direct-slot-set! obj slot val)
-  (direct-field-set! obj (class-slot-offset (object-type obj)) val)) 
+(define (unchecked-slot-ref obj slot)
+  (unchecked-field-ref obj (class-slot-offset (object-type obj))))
+(define (unchecked-slot-set! obj slot val)
+  (unchecked-field-set! obj (class-slot-offset (object-type obj)) val)) 
 
 (define (slot-ref obj slot #!optional (E &slot-error))
   (&slot-e obj slot (lambda (off) (##vector-ref obj (fx1+ off))) E))

@@ -112,7 +112,7 @@ package: gerbil/compiler
   (begin
     (declare-type
      gxc#!lambda:::init!__opt-lambda19188
-     (@lambda 6 direct-struct-instance-init!))
+     (@lambda 6 struct-instance-init!))
     (declare-type
      gxc#!lambda:::init!
      (@case-lambda

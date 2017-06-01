@@ -33,7 +33,7 @@ package: std/crypto
     (let (ctx (EVP_CIPHER_CTX_create))
       (unless ctx
         (error "Failed to allocate cipher context"))
-      (direct-struct-instance-init! self type ctx))))
+      (struct-instance-init! self type ctx))))
 
 (def (cipher-name cipher)
   (if (EVP_CIPHER? cipher)

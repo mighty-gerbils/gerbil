@@ -33,8 +33,8 @@ package: std/net
 
 (defmethod {:init! request}
   (lambda (self port url history)
-    (direct-struct-instance-init! self port url history
-                                  #f #f #f #f #f)))
+    (struct-instance-init! self port url history
+      #f #f #f #f #f)))
 
 (def (url-target-e url params)
   (if params

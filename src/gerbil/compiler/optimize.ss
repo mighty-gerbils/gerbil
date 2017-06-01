@@ -23,8 +23,7 @@ namespace: gxc
 
 (defmethod {:init! optimizer-info}
   (lambda (self)
-    (direct-struct-instance-init!
-     self (make-hash-table-eq) (make-hash-table-eq))))
+    (struct-instance-init! self (make-hash-table-eq) (make-hash-table-eq))))
 
 ;; sticky to persist across batch compilation and avoid reloading ssxi modules
 (def (optimizer-info-init!)
@@ -141,11 +140,11 @@ namespace: gxc
 
 (defmethod {:init! !struct-type}
   (lambda (self id super fields xfields ctor plist)
-    (direct-struct-instance-init! self id super fields xfields ctor plist #f)))
+    (struct-instance-init! self id super fields xfields ctor plist #f)))
 
 (defmethod {:init! !lambda}
   (lambda (self id arity dispatch (inline #f) (typedecl #f))
-    (direct-struct-instance-init! self id arity dispatch inline typedecl)))
+    (struct-instance-init! self id arity dispatch inline typedecl)))
 
 (def (!struct-type-vtab type)
   (cond

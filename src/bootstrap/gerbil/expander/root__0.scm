@@ -266,7 +266,7 @@
     (define gx#root-context:::init!__opt-lambda12952
       (lambda (_self12954_ _bind?12955_)
         (begin
-          (direct-struct-instance-init! _self12954_ 'root (make-hash-table-eq))
+          (struct-instance-init! _self12954_ 'root (make-hash-table-eq))
           (if _bind?12955_
               (begin
                 (call-method _self12954_ 'bind-core-syntax-expanders!)
@@ -303,7 +303,7 @@
                              (begin
                                (gx#root-context:::init!__0 __obj12966)
                                __obj12966))))))))
-          (direct-struct-instance-init!
+          (struct-instance-init!
            _self12932_
            'top
            (make-hash-table-eq)

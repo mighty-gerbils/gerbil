@@ -1244,9 +1244,9 @@ namespace: gxc
 
 (defmethod {:init! meta-state}
   (lambda (self ctx)
-    (direct-struct-instance-init! self 
-                                  (symbol->string (expander-context-id ctx))
-                                  1 (make-hash-table-eq) [])))
+    (struct-instance-init! self 
+      (symbol->string (expander-context-id ctx))
+      1 (make-hash-table-eq) [])))
 
 (defstruct meta-state-block (ctx phi n code)
   id: gxc#meta-state-block::t)

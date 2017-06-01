@@ -23,7 +23,7 @@ package: std/crypto
       (unless ctx
         (error "Failed to allocate digest context"))
       (with-libcrypto-error (EVP_DigestInit ctx type))
-      (direct-struct-instance-init! self type ctx))))
+      (struct-instance-init! self type ctx))))
 
 (def (digest-size digest)
   (if (EVP_MD? digest)

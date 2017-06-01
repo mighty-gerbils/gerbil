@@ -136,7 +136,7 @@
   (define gx#current-module-reader-args (make-parameter '#f))
   (define gx#module-context:::init!
     (lambda (_self11469_ _id11470_ _super11471_ _ns11472_ _path11473_)
-      (direct-struct-instance-init!
+      (struct-instance-init!
        _self11469_
        _id11470_
        (make-hash-table-eq)
@@ -180,7 +180,7 @@
                     (_e11451_
                      (make-promise (lambda () (gx#eval-module _ctx11436_)))))
                 (begin
-                  (direct-struct-instance-init!
+                  (struct-instance-init!
                    _self11435_
                    _id11448_
                    (make-hash-table-eq)
@@ -196,7 +196,7 @@
                       _g1145211454_
                       _self11435_))
                    _in11450_)))
-              (direct-struct-instance-init!
+              (struct-instance-init!
                _self11435_
                '#f
                (make-hash-table-eq)
@@ -226,7 +226,7 @@
   (bind-method! gx#prelude-context::t ':init! gx#prelude-context:::init! '#f)
   (define gx#import-expander:::init!
     (lambda (_self11431_ _e11432_)
-      (direct-struct-instance-init!
+      (struct-instance-init!
        _self11431_
        _e11432_
        (gx#current-expander-context)
@@ -234,7 +234,7 @@
   (bind-method! gx#import-expander::t ':init! gx#import-expander:::init! '#f)
   (define gx#export-expander:::init!
     (lambda (_self11428_ _e11429_)
-      (direct-struct-instance-init!
+      (struct-instance-init!
        _self11428_
        _e11429_
        (gx#current-expander-context)

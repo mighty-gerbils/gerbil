@@ -27,7 +27,7 @@
     (make-struct-field-mutator gxc#symbol-table::t '1))
   (define gxc#symbol-table:::init!
     (lambda (_self673_)
-      (direct-struct-instance-init!
+      (struct-instance-init!
        _self673_
        (make-hash-table-eq)
        (make-hash-table-eq))))

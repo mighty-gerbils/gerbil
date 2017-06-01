@@ -40,8 +40,8 @@ namespace: gx
 
 (defmethod {:init! module-context}
   (lambda (self id super ns path)
-    (direct-struct-instance-init! self id (make-hash-table-eq) super #f #f
-                                  ns path [] [] #f #f)))
+    (struct-instance-init! self id (make-hash-table-eq) super #f #f
+                           ns path [] [] #f #f)))
 
 (defmethod {:init! prelude-context}
   (lambda (self ctx (root #f))
@@ -52,20 +52,20 @@ namespace: gx
               (in   (map core-module-export->import 
                          (module-context-export ctx)))
               (e    (delay (eval-module ctx))))
-          (direct-struct-instance-init! self id (make-hash-table-eq) super #f #f
-                                        path in e)
+          (struct-instance-init! self id (make-hash-table-eq) super #f #f
+                                 path in e)
           (for-each (cut core-bind-weak-import! <> self) in))
-        (direct-struct-instance-init! self #f (make-hash-table-eq) super #f #f
-                                      #f [] #f)))))
+        (struct-instance-init! self #f (make-hash-table-eq) super #f #f
+                               #f [] #f)))))
 
 (defmethod {:init! import-expander}
   (lambda (self e)
-    (direct-struct-instance-init! self 
+    (struct-instance-init! self 
       e (current-expander-context) (fx1- (current-expander-phi)))))
 
 (defmethod {:init! export-expander}
   (lambda (self e)
-    (direct-struct-instance-init! self 
+    (struct-instance-init! self 
       e (current-expander-context) (fx1- (current-expander-phi)))))
 
 (defmethod {apply-import-expander import-expander}

@@ -5994,7 +5994,7 @@
     (make-struct-field-mutator gxc#meta-state::t '3))
   (define gxc#meta-state:::init!
     (lambda (_self3289_ _ctx3290_)
-      (direct-struct-instance-init!
+      (struct-instance-init!
        _self3289_
        (symbol->string
         (##structure-ref _ctx3290_ '1 gx#expander-context::t '#f))

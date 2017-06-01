@@ -54,13 +54,11 @@ namespace: gx
 
 (defmethod {:init! phi-context}
   (lambda (self id (super (current-expander-context)))
-    (direct-struct-instance-init! self id (make-hash-table-eq) 
-                                  super #f #f)))
+    (struct-instance-init! self id (make-hash-table-eq) super #f #f)))
 
 (defmethod {:init! local-context}
   (lambda (self (super (current-expander-context)))
-    (direct-struct-instance-init! self (gensym 'L) (make-hash-table-eq)
-                                  super #f #f)))
+    (struct-instance-init! self (gensym 'L) (make-hash-table-eq) super #f #f)))
 
 ;; bindings
 (defstruct binding (id key phi)

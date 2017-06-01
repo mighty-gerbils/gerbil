@@ -15,7 +15,7 @@ package: std/misc
 
 (defmethod {:init! queue}
   (lambda (self)
-    (direct-struct-instance-init! self '() #f 0)))
+    (struct-instance-init! self '() #f 0)))
 
 (def (queue-empty? q)
   (null? (queue-front q)))

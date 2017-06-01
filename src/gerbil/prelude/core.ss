@@ -162,26 +162,26 @@ package: gerbil
     make-struct-field-mutator
     struct-field-ref
     struct-field-set!
-    direct-field-ref
-    direct-field-set!
+    unchecked-field-ref
+    unchecked-field-set!
     make-class-type
     make-class-predicate
     make-class-slot-accessor
     make-class-slot-mutator
     class-slot-ref
     class-slot-set!
-    direct-slot-ref
-    direct-slot-set!
+    unchecked-slot-ref
+    unchecked-slot-set!
     object? object-type
     struct-instance? class-instance? 
     direct-struct-instance? direct-class-instance?
     make-object 
     struct->list class->list
-    make-struct-instance make-direct-struct-instance
-    make-class-instance make-direct-class-instance
-    direct-struct-instance-init!
-    direct-class-instance-init!
-    direct-constructor-init!
+    make-struct-instance 
+    make-class-instance 
+    struct-instance-init!
+    class-instance-init!
+    constructor-init!
     slot-ref slot-set!
     call-method
     bind-method!

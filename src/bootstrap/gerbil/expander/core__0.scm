@@ -153,7 +153,7 @@
   (begin
     (define gx#phi-context:::init!__opt-lambda5775
       (lambda (_self5777_ _id5778_ _super5779_)
-        (direct-struct-instance-init!
+        (struct-instance-init!
          _self5777_
          _id5778_
          (make-hash-table-eq)
@@ -179,7 +179,7 @@
   (begin
     (define gx#local-context:::init!__opt-lambda5761
       (lambda (_self5763_ _super5764_)
-        (direct-struct-instance-init!
+        (struct-instance-init!
          _self5763_
          (gensym 'L)
          (make-hash-table-eq)

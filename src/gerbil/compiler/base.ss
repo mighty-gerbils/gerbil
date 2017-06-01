@@ -56,8 +56,7 @@ namespace: gxc
 
 (defmethod {:init! symbol-table}
   (lambda (self)
-    (direct-struct-instance-init! 
-     self (make-hash-table-eq) (make-hash-table-eq))))
+    (struct-instance-init! self (make-hash-table-eq) (make-hash-table-eq))))
 
 (def (raise-compile-error message stx . details)
   (apply raise-syntax-error 'compile message stx details))
