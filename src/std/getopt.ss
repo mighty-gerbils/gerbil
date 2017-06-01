@@ -187,7 +187,8 @@ package: std
              (hash-put! ht key (value-e val))
              (lp args rest))
             (else
-             (hash-put! ht key default))))
+             (hash-put! ht key default)
+             (lp args rest))))
          ((!rest key _ value-e)
           (hash-put! ht key (map value-e rest)))))
       (else
