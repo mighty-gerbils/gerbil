@@ -109,13 +109,14 @@ Hello world! My arguments are (1 2 3)
 
 The [documentation](doc) is a work in progress, but there are some resources
 that should get you started:
-- The [Introduction to Gerbil](doc/guide.md), an introductory guide for seasoned Schemers.
 - The [Gerbil wiki](https://github.com/vyzo/gerbil/wiki/Gerbil-Scheme) at Github
   contains a small but growing collection of pages that can help you
   get started with Gerbil.
+- The [Introduction to Gerbil](doc/guide.md) is an introductory guide for seasoned Schemers.
 - The [Gerbil Core Prelude](doc/core-prelude.md) documents the core
   language prelude.
-- The [Gerbil Tutorial](doc/tutorial.md), which is still in its infancy.
+- The [Gerbil Tutorial](doc/tutorial.md), while still in its infancy, provides a few
+  hands-on guides on Gerbil programming.
 
 Probably the best way to dive into gerbil is by reading the sources,
 as all the main language features are exercised in one way or another
