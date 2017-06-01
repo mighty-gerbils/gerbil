@@ -107,8 +107,10 @@ namespace: gxc
       (write `(apply ,mod-main (cdr (command-line)))) (newline)))
 
   (def (compile-stub output-scm output-bin)
-    (let* ((gx-gambc0 (path-expand "lib/static/gx-gambc0.scm" (getenv "GERBIL_HOME")))
-           (gx-gambc-macros (path-expand "lib/static/gx-gambc#.scm" (getenv "GERBIL_HOME")))
+    (let* ((gerbil-home (getenv "GERBIL_HOME"))
+           (gx-gambc0 (path-expand "lib/static/gx-gambc0.scm" gerbil-home))
+           (gx-gambc-init (path-expand "lib/gx-init-static-exe.scm" gerbil-home))
+           (gx-gambc-macros (path-expand "lib/static/gx-gambc#.scm" gerbil-home))
            (include-gx-gambc-macros (string-append "(include \"" gx-gambc-macros "\")"))
            (bin-scm (find-static-module-file ctx))
            (deps (find-runtime-module-deps ctx))
@@ -117,7 +119,7 @@ namespace: gxc
            (gsc-opts (or (pgetq gsc-options: opts) []))
            (gsc-args ["-exe" "-o" output-bin gsc-opts ...
                       "-e" include-gx-gambc-macros
-                      gx-gambc0 deps ... bin-scm output-scm])
+                      gx-gambc0 gx-gambc-init deps ... bin-scm output-scm])
            (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
            (proc (open-process [path: "gsc" arguments: gsc-args
                                       stdout-redirection: #f]))

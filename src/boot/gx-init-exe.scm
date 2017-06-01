@@ -14,6 +14,7 @@
   '("gx-gambc0"
     "gx-gambc1"
     "gx-gambc2"))
+(define __gx#method-ref #f)
 
 (define (_gx#load-runtime!)
   (let* ((home
@@ -29,7 +30,8 @@
     (for-each (lambda (mod) (load (path-expand mod libdir)))
               __gx#rtlibs)
     (set! __gx#libdir libdir)
-    (set! __gx#load-module (eval 'load-module))))
+    (set! __gx#load-module (eval 'load-module))
+    (set! __gx#method-ref (eval 'method-ref))))
 
 (define (_gx#load-expander-runtime!)
   (__gx#load-module "gerbil/expander__rt")
@@ -56,7 +58,15 @@
            (else '()))))
     ((eval '&current-module-libpath) (cons __gx#libdir loadpath))
     ((eval '&current-module-registry) (make-hash-table))
-    (current-readtable (eval '_gx#*readtable*))))
+    (current-readtable (eval '_gx#*readtable*))
+    (set! ##display-exception-hook __gx#display-exception)))
+
+(define (__gx#display-exception e port)
+  (cond
+   ((__gx#method-ref e 'display-exception)
+    => (lambda (f) (f e port)))
+   (else
+    (##default-display-exception e port))))
 
 (define (_gx#start! module-rt main-id)
   (_gx#init!)

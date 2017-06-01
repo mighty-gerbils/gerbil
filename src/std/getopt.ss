@@ -187,7 +187,7 @@ package: std
              (hash-put! ht key (value-e val))
              (lp args rest))
             (else
-             (raise-getopt-error "Missing argument" key))))
+             (hash-put! ht key default))))
          ((!rest key _ value-e)
           (hash-put! ht key (map value-e rest)))))
       (else
@@ -260,7 +260,7 @@ package: std
         (fprintf port "~nCommands:~n")
         (for-each (match <>
                     ((!command key help)
-                     (fprintf port " ~a:\t ~a~n" key help)))
+                     (fprintf port " ~a:\t ~a~n" key (or help "?"))))
                   cmds)))))
 
 (def (display-help-command obj program port)
@@ -291,23 +291,23 @@ package: std
 (def (display-option-help opts port)
   (for-each (match <>
               ((!option _ help short long _ default)
-               (fprintf port " ~a ~a:\t ~a~n"
+               (fprintf port " ~a ~a:\t ~a [default: ~a]~n"
                         (or short "")
                         (or long "")
-                        help))
+                        (or help "?") default))
               ((!flag _ help short long)
                (fprintf port " ~a ~a:\t ~a~n"
                         (or short "")
                         (or long "")
-                        help)))
+                        (or help "?"))))
             opts))
 
 (def (display-arg-help args port)
   (for-each (match <>
               ((!reqarg key help)
-               (fprintf port " ~a:\t ~a~n" key help))
+               (fprintf port " ~a:\t ~a~n" key (or help "?")))
               ((!optarg key help _ default)
-               (fprintf port " ~a:\t ~a [default: ~a]~n" key help default))
+               (fprintf port " ~a:\t ~a [default: ~a]~n" key (or help "?") default))
               ((!rest key help)
-               (fprintf port " ~a:\t ~a~n" key help)))
+               (fprintf port " ~a:\t ~a~n" key (or help "?"))))
             args))
