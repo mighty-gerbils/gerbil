@@ -18,6 +18,7 @@
           "sugar"
           "make"
           "error"
+          "getopt"
           "logger"
           "generic"
           (gxc: "event" "-e" "(include \"~~lib/_gambit#.scm\")")
