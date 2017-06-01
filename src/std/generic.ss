@@ -24,10 +24,9 @@ package: std
                         (make-generic 'id default)))
                    (procedure-id (stx-identifier #'id #'id "::apply"))
                    (procedure
-                    (stx-wrap-source
-                     #'(def (procedure-id . args)
-                         (apply generic-dispatch dispatch-table-id args))
-                     (stx-source stx)))
+                    (syntax/loc stx
+                      (def (procedure-id . args)
+                        (apply generic-dispatch dispatch-table-id args))))
                    (meta
                     #'(defsyntax id
                         (make-generic-info
