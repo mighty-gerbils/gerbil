@@ -55,7 +55,7 @@ The hook is run after scheme-mode-hook."
   (gerbil-put '(if when unless 
                 set!
                 begin-annotation begin0
-                datum->syntax
+                datum->syntax syntax/loc
                 core-match core-wrap
                 with-syntax with-syntax*
                 ast-rules
@@ -120,6 +120,7 @@ The hook is run after scheme-mode-hook."
                        "parameterize" "parameterize*"
                        "quote-syntax"
                        "syntax" "quasisyntax" "unsyntax" "unsyntax-splicing"
+                       "syntax/loc"
                        "define-values" "define-alias"
                        "syntax-parameterize"
                        "alet" "alet*"

@@ -349,7 +349,7 @@ package: gerbil
 (module <syntax-sugar>
   (export #t)
   (import <expander-runtime> <syntax-case>)
-  
+
   (define-syntax syntax-rules
     (lambda% (stx)
       (syntax-case stx ()
@@ -392,7 +392,15 @@ package: gerbil
              (recur rest body ...)))
         ((recur (hd . rest) body ...)
          #'(with-syntax (hd) 
-             (recur rest body ...)))))))
+             (recur rest body ...))))))
+
+  (define-syntax syntax/loc
+    (lambda% (stx)
+      (syntax-case stx ()
+        ((_ src-stx form)
+         #'(stx-wrap-source
+            (syntax form)
+            (stx-source src-stx)))))))
 
 (import (phi: +1 <syntax-sugar>)
         (phi: +2 <syntax-sugar>))
@@ -708,9 +716,8 @@ package: gerbil
                           (primary primary))
               (list
                (list #'(pre ... opt ... . tail)
-                     (stx-wrap-source 
-                      #'(apply primary pre ... opt ... tail)
-                      (stx-source stx)))))))))
+                     (syntax/loc stx
+                       (apply primary pre ... opt ... tail)))))))))
       
       (define (generate-opt-clause primary pre opt)
         (let recur ((opt-rest opt) (right '()))
@@ -729,9 +736,8 @@ package: gerbil
                           ((opt ...)
                            (reverse right))
                           (primary primary))
-              (stx-wrap-source
-               #'(primary pre ... opt ...)
-               (stx-source stx))))))
+              (syntax/loc stx
+                (primary pre ... opt ...))))))
 
       (define (generate-kw-primary kwvar kwargs args body)
         (define absent (genident 'absent))
@@ -758,9 +764,8 @@ package: gerbil
         (with-syntax* ((kwvar kwvar)
                        (args args)
                        (body (make-body kwargs body))
-                       (impl (stx-wrap-source
-                              #'(lambda (kwvar . args) body)
-                              (stx-source stx)))
+                       (impl (syntax/loc stx
+                               (lambda (kwvar . args) body)))
                        (absent absent))
           #'(let-values (((absent) (make-vector 0)))
               impl)))
@@ -808,9 +813,8 @@ package: gerbil
                         ((clause ...)
                          (generate-opt-dispatch #'$primary pre opt tail))
                         (dispatch 
-                         (stx-wrap-source
-                          #'(case-lambda clause ...)
-                          (stx-source stx))))
+                         (syntax/loc stx
+                           (case-lambda clause ...))))
            #'(let-values ((($primary) primary)) 
                dispatch)))
         ((_ hd . body)
@@ -2131,9 +2135,8 @@ package: gerbil
                        ((target ...)
                         tgt-lst)
                        (fail 
-                        (stx-wrap-source
-                         #'(lambda () (error "No clause matching" target ...))
-                         (stx-source stx)))
+                        (syntax/loc stx
+                          (lambda () (error "No clause matching" target ...))))
                        (body
                         (generate-clauses body #'($E))))
           #'(let (($E fail))
@@ -2186,9 +2189,8 @@ package: gerbil
         (syntax-case clause (else)
           ((else . _) clause)
           ((hd . body) 
-           (stx-wrap-source 
-            #'((hd) . body)
-            (stx-source #'clause)))
+           (syntax/loc #'clause
+             ((hd) . body)))
           (_ (raise-syntax-error #f 
                "Bad syntax; illegal match clause" stx clause))))
       
@@ -2200,17 +2202,15 @@ package: gerbil
        (stx-list? #'clauses)
        (with-syntax* (($e (genident 'e))
                       (body 
-                       (stx-wrap-source 
-                        #'(match $e . clauses)
-                        (stx-source stx))))
+                       (syntax/loc stx
+                         (match $e . clauses))))
          #'(lambda ($e) body)))
       ((_ <...> . clauses)
        (stx-list? #'clauses)
        (with-syntax* (($args (genident 'args))
                       (body
-                       (stx-wrap-source
-                        #'(match $args . clauses)
-                        (stx-source stx))))
+                       (syntax/loc stx
+                         (match $args . clauses))))
          #'(lambda $args body)))
       ((_ e . clauses)
        (stx-list? #'clauses)
@@ -2342,9 +2342,8 @@ package: gerbil
        #'(let () body ...))
       ((_ ((param expr) ...) body ...)
        (with-syntax* ((thunk 
-                       (stx-wrap-source
-                        #'(lambda () body ...)
-                        (stx-source stx)))
+                       (syntax/loc stx
+                         (lambda () body ...)))
                       ((arg ...)
                        (foldr cons* [] 
                               (syntax->list #'(param ...)) 
