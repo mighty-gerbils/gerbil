@@ -25,7 +25,7 @@ This tutorial requires [LMDB](https://en.wikipedia.org/wiki/Lightning_Memory-Map
 You need to first install it, and then build the LMDB bindings in stdlib, as they are
 not built by default.
 
-So, after installing LMDB, to build the LMDB bindings:
+So, after installing LMDB, build the LMDB bindings:
 ```
 $ cd $GERBIL_HOME/src/std
 $ sed -i 's/lmdb #f/lmdb #t/' build-config.ss
@@ -54,7 +54,7 @@ $ ./build.ss
 ```
 
 This builds two programs in the tutorial directory: `kvstored`, which is the daemon
-daemon and `kvstorec`, which is a simple client to perform basic operations with the daemon.
+and `kvstorec`, which is a simple client to perform basic operations with the daemon.
 
 ## The RPC Protocol
 
