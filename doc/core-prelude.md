@@ -755,18 +755,21 @@ same identifier.
 
 The following macros are only available for syntax (phi = 1).
 
-#### syntax syntax-case
+#### syntax-case syntax syntax/loc
 
 ```
-(syntax expr)
-
 (syntax-case stx (keyword-id ...)
   (pat [fender] body) ...)
+
+(syntax expr)
+
+(syntax/loc src-stx expr)
 
 ```
 
 The well-known `syntax` and `syntax-case` macros, first defined in "Extending the Scope
 of Syntactic Abstraction" by Waddell and Dybvig and popularized by Racket.
+`syntax/loc` is like syntax, only it assigns the source location to that of `src-stx`
 
 #### syntax-rules
 ```
@@ -1271,7 +1274,7 @@ the core prelude, you need to import the extended symbols with
     + [?](#)
     + [defsyntax-for-match](#defsyntax-for-match)
   * [Macros for Syntax](#macros-for-syntax)
-    + [syntax syntax-case](#syntax-syntax-case)
+    + [syntax-case syntax syntax/loc](#syntax-case-syntax-syntaxloc)
     + [syntax-rules](#syntax-rules)
     + [with-syntax with-syntax*](#with-syntax-with-syntax)
     + [identifier-rules](#identifier-rules)
@@ -1283,4 +1286,3 @@ the core prelude, you need to import the extended symbols with
     + [rename-in rename-out](#rename-in-rename-out)
     + [prefix-in prefix-out](#prefix-in-prefix-out)
     + [struct-out](#struct-out)
-
