@@ -662,15 +662,6 @@
    (else
     (error "Cannot find next method" obj id))))
 
-;;; XXX temporary aliases
-(define direct-struct-instance-init! struct-instance-init!)
-(define direct-class-instance-init! class-instance-init!)
-(define direct-constructor-init! constructor-init!)
-(define direct-field-ref unchecked-field-ref)
-(define direct-field-set! unchecked-field-set!)
-(define direct-slot-ref unchecked-slot-ref)
-(define direct-slot-set! unchecked-slot-set!)
-
 ;;; generics
 (define generic::t
   (make-struct-type 'gerbil#generic::t #f 3 'generic '((final: . #t)) #f))
