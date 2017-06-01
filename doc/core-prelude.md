@@ -433,15 +433,14 @@ The common iteration macro and its inverted form.
 
 Short recursive definition form.
 
-#### alet alet*
+#### alet alet* and-let*
 ```
 (alet bind body ...)
 (alet (bind ...) body ...)
 (alet* bind body ...)
 (alet* (bind ...) body ...)
 
-(and-let* hd body ...)
-=> (alet* hd body ...)
+(defalias and-let* alet*)
 ```
 Anaphoric lets which short circuit to `#f` if any of the bindings is `#f`.
 
@@ -1250,7 +1249,7 @@ the core prelude, you need to import the extended symbols with
     + [do do-while](#do-do-while)
     + [begin0](#begin0)
     + [rec](#rec)
-    + [alet alet*](#alet-alet)
+    + [alet alet* and-let*](#alet-alet-and-let)
     + [@list](#list)
     + [quasiquote](#quasiquote)
     + [delay](#delay)
