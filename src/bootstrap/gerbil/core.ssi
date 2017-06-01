@@ -709,7 +709,10 @@ namespace: gerbil/core
                     |gerbil/core::<syntax-sugar>[:0:]#with-syntax|)
                    (%#define-syntax
                     with-syntax*
-                    |gerbil/core::<syntax-sugar>[:0:]#with-syntax*|)))
+                    |gerbil/core::<syntax-sugar>[:0:]#with-syntax*|)
+                   (%#define-syntax
+                    syntax/loc
+                    |gerbil/core::<syntax-sugar>[:0:]#syntax/loc|)))
          (%#import
           (phi: 1 (in: #f <syntax-sugar>))
           (phi: 2 (in: #f <syntax-sugar>)))
