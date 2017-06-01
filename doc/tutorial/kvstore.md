@@ -12,7 +12,7 @@ actor RPC to communicate with its clients.
   * [The main function](#the-main-function)
   * [The server main loop](#the-server-main-loop)
   * [Auxiliary Functions](#auxiliary-functions)
-- [The Client](#the-client)
+- [A Command-Line Client](#a-command-line-client)
   * [The main function](#the-main-function-1)
   * [Command Implementation](#command-implementation)
 - [Example Interaction](#example-interaction)
@@ -275,9 +275,9 @@ with the key-value store:
   ...)
 ```
 
-## The Client
+## A Command-Line Client
 
-The client is defined in [kvstorec.ss](../../src/tutorial/kvstore/kvstorec.ss).
+There is a command-line client for our deamon, defined in [kvstorec.ss](../../src/tutorial/kvstore/kvstorec.ss).
 
 ### The main function
 
