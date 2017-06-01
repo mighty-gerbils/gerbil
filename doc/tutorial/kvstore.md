@@ -277,7 +277,7 @@ with the key-value store:
 
 ## The Client
 
-The server is defined in [kvstorec.ss](../../src/tutorial/kvstore/kvstorec.ss).
+The client is defined in [kvstorec.ss](../../src/tutorial/kvstore/kvstorec.ss).
 
 ### The main function
 
