@@ -260,7 +260,7 @@ package: std
         (fprintf port "~nCommands:~n")
         (for-each (match <>
                     ((!command key help)
-                     (fprintf port " ~a:\t ~a~n" key help)))
+                     (fprintf port " ~a:\t ~a~n" key (or help "?"))))
                   cmds)))))
 
 (def (display-help-command obj program port)
@@ -294,20 +294,20 @@ package: std
                (fprintf port " ~a ~a:\t ~a [default: ~a]~n"
                         (or short "")
                         (or long "")
-                        help default))
+                        (or help "?") default))
               ((!flag _ help short long)
                (fprintf port " ~a ~a:\t ~a~n"
                         (or short "")
                         (or long "")
-                        help)))
+                        (or help "?"))))
             opts))
 
 (def (display-arg-help args port)
   (for-each (match <>
               ((!reqarg key help)
-               (fprintf port " ~a:\t ~a~n" key help))
+               (fprintf port " ~a:\t ~a~n" key (or help "?")))
               ((!optarg key help _ default)
-               (fprintf port " ~a:\t ~a [default: ~a]~n" key help default))
+               (fprintf port " ~a:\t ~a [default: ~a]~n" key (or help "?") default))
               ((!rest key help)
-               (fprintf port " ~a:\t ~a~n" key help)))
+               (fprintf port " ~a:\t ~a~n" key (or help "?"))))
             args))
