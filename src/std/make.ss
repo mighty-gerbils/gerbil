@@ -151,13 +151,18 @@ package: std
 (def (make-depgraph files)
   (def (depgraph file)
     (let* ((mod (import-module file))
-           (ht  (make-hash-table-eq)))
-      (let lp ((rest (module-context-import mod)))
+           (ht  (make-hash-table-eq))
+           (pre (core-context-prelude mod)))
+      (let lp ((rest (cons pre (module-context-import mod))))
         (match rest
           ([hd . rest]
            (cond
             ((module-context? hd)
              (hash-put! ht (expander-context-id hd) #t)
+             (lp rest))
+            ((prelude-context? hd)
+             (alet (id (expander-context-id hd)) ; maybe it's root!
+               (hash-put! ht id #t))
              (lp rest))
             ((module-import? hd)
              (lp (cons (module-import-source hd) rest)))
