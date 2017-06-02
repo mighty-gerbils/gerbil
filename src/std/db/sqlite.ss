@@ -21,10 +21,11 @@ package: std/db
     (raise-sql-error where (format "SQLite error: ~a" errstr) err)))
 
 (def (sqlite-open file (flags (fxior SQLITE_OPEN_READWRITE SQLITE_OPEN_CREATE)))
-  (let (e (sqlite3_open file flags))
-    (if e
-      (make-sqlite-connection e)
-      (raise-sqlite-error 'sqlite-open (sqlite3_last_error)))))
+  (let* ((ptr (make_sqlite3_ptr_ptr))
+         (r (sqlite3_open ptr file flags)))
+    (if (fx= r SQLITE_OK)
+      (make-sqlite-connection (sqlite3_ptr ptr))
+      (raise-sqlite-error 'sqlite-open r))))
 
 (defmethod {close sqlite-connection}
   (lambda (self)
@@ -32,10 +33,11 @@ package: std/db
 
 (defmethod {prepare sqlite-connection}
   (lambda (self sql)
-    (let (e (sqlite3_prepare (connection-e self) sql))
-      (if e
-        (make-sqlite-statement e)
-        (raise-sqlite-error 'sqlite-prepare (sqlite3_last_error))))))
+    (let* ((ptr (make_sqlite3_stmt_ptr_ptr))
+           (r (sqlite3_prepare ptr (connection-e self) sql)))
+      (if (fx= r SQLITE_OK)
+        (make-sqlite-statement (sqlite3_stmt_ptr ptr))
+        (raise-sqlite-error 'sqlite-prepare r)))))
 
 (defmethod {finalize sqlite-statement}
   (lambda (self)
