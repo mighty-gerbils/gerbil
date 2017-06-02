@@ -97,7 +97,7 @@ package: std/net
        (pregexp-match inet-host-name-rx obj)))
 
 (def inet-host-name-rx
-  (pregexp "^[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\\.[a-zA-Z](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*$"))
+  (pregexp "^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*$"))
 
 (def inet-address-rx 
   (pregexp "^([^:]+):(\\d+)$"))
