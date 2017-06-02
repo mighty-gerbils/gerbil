@@ -24,7 +24,7 @@ package: std/db
 
 (defmethod {:init! connection}
   (lambda (self e)
-    (struct-instance-init! self e #f #f #f)))
+    (struct-instance-init! self e)))
 
 (defstruct (sql-error <error>) ())
 
