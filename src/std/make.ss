@@ -7,7 +7,7 @@ package: std
         :gerbil/expander
         :gerbil/gambit/misc
         :gerbil/gambit/ports)
-(export make make-depgraph shell-config)
+(export make make-depgraph make-depgraph/spec shell-config)
 
 ;; buildspec: [<build> ...]
 ;;  <build>: 
@@ -175,6 +175,29 @@ package: std
           (else
            [file (expander-context-id mod) (hash-keys ht) ...])))))
   (map depgraph files))
+
+(def (make-depgraph/spec spec)
+  (def (file-e mod)
+    (if (string-empty? (path-extension mod))
+      (string-append mod ".ss")
+      mod))
+  
+  (let lp ((rest spec) (files []))
+    (match rest
+      ([hd . rest]
+       (match hd
+         ((? string?)
+          (lp rest (cons (file-e hd) files)))
+         ([gxc: mod . opts]
+          (lp rest (cons (file-e mod) files)))
+         ([exe: mod . opts]
+          (lp rest (cons (file-e mod) files)))
+         ([static-exe: mod . opts]
+          (lp rest (cons (file-e mod) files)))
+         (else
+          (lp rest files))))
+      (else
+       (make-depgraph (reverse files))))))
 
 (def (shell-config cmd . args)
   (let* ((proc (open-input-process [path: cmd arguments: args]))
