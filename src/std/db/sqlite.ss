@@ -10,8 +10,10 @@ package: std/db
         :std/iter)
 (export sqlite-open)
 
-(defstruct (sqlite-connection connection) ())
-(defstruct (sqlite-statement statement) ())
+(defstruct (sqlite-connection connection) ()
+  final: #t)
+(defstruct (sqlite-statement statement) ()
+  final: #t)
 
 (defmethod {:init! sqlite-connection}
   connection:::init!)
@@ -87,7 +89,7 @@ package: std/db
                     (eq? r SQLITE_ROW))
           (raise-sqlite-error 'sqlite-exec r))))))
 
-(defmethod {query sqlite-statement}
+(defmethod {query-start sqlite-statement}
   void)
 
 (defmethod {query-fetch sqlite-statement}
@@ -130,3 +132,7 @@ package: std/db
            (list->vector
             (for/collect (x (in-range count))
               (column-e x)))))))))
+
+(defmethod {query-fini sqlite-statement}
+  (lambda (self)
+    (sqlite-statement::reset self)))

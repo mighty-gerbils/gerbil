@@ -130,11 +130,11 @@ package: std/db
 
 (def (in-sql-query stmt)
   (if (statement-e stmt)
-    (make-iterator stmt sql-query-start sql-query-row sql-query-fetch)
+    (make-iterator stmt sql-query-start sql-query-row sql-query-fetch sql-query-fini)
     (error "Invalid operation; statement finalized" stmt)))
 
 (def (sql-query-start iter)
-  {query (iterator-e iter)}
+  {query-start (iterator-e iter)}
   (sql-query-fetch iter))
 
 (def (sql-query-row iter)
@@ -146,4 +146,10 @@ package: std/db
   (with ((iterator stmt) iter)
     (let (next {query-fetch stmt})
       (when (iter-end? next)
+        {query-fini stmt}
         (set! (iterator-e iter) next)))))
+
+(def (sql-query-fini iter)
+  (with ((iterator stmt) iter)
+    (unless (iter-end? stmt)
+      {query-fini stmt})))
