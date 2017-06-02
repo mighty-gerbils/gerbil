@@ -7,7 +7,7 @@ package: std
         :gerbil/expander
         :gerbil/gambit/misc
         :gerbil/gambit/ports)
-(export make make-depgraph shell-config)
+(export make make-depgraph make-depgraph/spec shell-config)
 
 ;; buildspec: [<build> ...]
 ;;  <build>: 
@@ -36,7 +36,7 @@ package: std
                      prefix: prefix force: force? optimize: optimize
                      static: static verbose: verbose])
          (buildset (if (not force?)
-                     (filter (cut build? <> settings) buildspec)
+                     (filter (cut build? <> settings depgraph) buildspec)
                      buildspec))
          (buildset (if depgraph
                      (expand-build-deps buildset buildspec depgraph)
@@ -151,13 +151,18 @@ package: std
 (def (make-depgraph files)
   (def (depgraph file)
     (let* ((mod (import-module file))
-           (ht  (make-hash-table-eq)))
-      (let lp ((rest (module-context-import mod)))
+           (ht  (make-hash-table-eq))
+           (pre (core-context-prelude mod)))
+      (let lp ((rest (cons pre (module-context-import mod))))
         (match rest
           ([hd . rest]
            (cond
             ((module-context? hd)
              (hash-put! ht (expander-context-id hd) #t)
+             (lp rest))
+            ((prelude-context? hd)
+             (alet (id (expander-context-id hd)) ; maybe it's root!
+               (hash-put! ht id #t))
              (lp rest))
             ((module-import? hd)
              (lp (cons (module-import-source hd) rest)))
@@ -171,6 +176,29 @@ package: std
            [file (expander-context-id mod) (hash-keys ht) ...])))))
   (map depgraph files))
 
+(def (make-depgraph/spec spec)
+  (def (file-e mod)
+    (if (string-empty? (path-extension mod))
+      (string-append mod ".ss")
+      mod))
+  
+  (let lp ((rest spec) (files []))
+    (match rest
+      ([hd . rest]
+       (match hd
+         ((? string?)
+          (lp rest (cons (file-e hd) files)))
+         ([gxc: mod . opts]
+          (lp rest (cons (file-e mod) files)))
+         ([exe: mod . opts]
+          (lp rest (cons (file-e mod) files)))
+         ([static-exe: mod . opts]
+          (lp rest (cons (file-e mod) files)))
+         (else
+          (lp rest files))))
+      (else
+       (make-depgraph (reverse files))))))
+
 (def (shell-config cmd . args)
   (let* ((proc (open-input-process [path: cmd arguments: args]))
          (status (process-status proc)))
@@ -178,24 +206,53 @@ package: std
       (error "Error executing config script" cmd args status))
     (read-line proc)))
 
-(def (build? spec settings)
+(def (build? spec settings depgraph)
   (match spec
     ((? string? modf)
-     (gxc-compile? modf settings))
+     (or (gxc-compile? modf settings)
+         (library-deps-newer? modf settings depgraph #f)))
     ([gxc: modf . gsc-opts]
-     (gxc-compile? modf settings))
+     (or (gxc-compile? modf settings)
+         (library-deps-newer? modf settings depgraph #f)))
     ([gsc: modf . gsc-opts]
      (gsc-compile? modf settings))
     ([ssi: modf . deps]
      (compile-ssi? modf settings))
     ([exe: modf . gsc-opts]
-     (compile-exe? modf settings))
+     (or (compile-exe? modf settings)
+         (library-deps-newer? modf settings depgraph #t)))
     ([static-exe: modf . gsc-opts]
-     (compile-static-exe? modf settings))
+     (or (compile-static-exe? modf settings)
+         (library-deps-newer? modf settings depgraph #t)))
     ([copy: file]
      (copy-compiled? file settings))
     (else
      (error "Bad buildspec" spec))))
+
+(def (library-deps-newer? mod settings depgraph bin?)
+  (and depgraph
+       (let* ((target (if bin?
+                        (binary-path mod settings)
+                        (library-path mod ".ssi" settings)))
+              (file (if (string-empty? (path-extension mod))
+                      (string-append mod ".ss")
+                      mod))
+              (deps (assoc file depgraph)))
+         (and deps
+              (let lp ((rest (cddr deps)))
+                (match rest
+                  ([dep . rest]
+                   (with-catch
+                    (lambda (exn) 
+                      (if (syntax-error? exn)
+                        (lp rest) ; it's ok if it can't be found, it might be in the tree
+                        (raise exn)))
+                    (lambda ()
+                      (let* ((libdep (make-symbol ":" dep))
+                             (libpath (core-resolve-library-module-path libdep)))
+                        (or (file-newer? libpath target)
+                            (lp rest))))))
+                  (else #f)))))))
 
 (def (build spec settings)
   (match spec
@@ -427,4 +484,3 @@ package: std
             (path-strip-extension base)))
          (scm (string-append base ".scm")))
     (path-expand scm staticdir)))
-

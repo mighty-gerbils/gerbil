@@ -2,15 +2,15 @@
 ;; -*- Gerbil -*-
 
 (import :std/make)
-(let (srcdir (path-directory (this-source-file)))
+
+(include "build-spec.ss")
+
+(let ((srcdir (path-directory (this-source-file)))
+      (depgraph (call-with-input-file "build-deps" read)))
   (make srcdir: srcdir
         prefix: "tutorial/lang"
-        '("dot-app"
-          "auto-export"
-          "sexp"
-          "scuby-etc"
-          "scuby-grammar"
-          "scuby"
-          )))
+        optimize: #t
+        depgraph: depgraph
+        build-spec))
 
 

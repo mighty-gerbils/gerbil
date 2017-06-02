@@ -1,43 +1,67 @@
-(("scheme/stubs.ss" scheme/stubs)
+(("scheme/stubs.ss" scheme/stubs gerbil/core)
  ("scheme/base-impl.ss"
   scheme/base-impl
+  gerbil/core
   scheme/stubs
-  gerbil/gambit
+  gerbil/expander
+  gerbil/gambit)
+ ("scheme/base.ss"
+  scheme/base
+  gerbil/core
+  std/srfi/9
+  scheme/base-impl
+  gerbil/gambit)
+ ("scheme/case-lambda.ss" scheme/case-lambda gerbil/core)
+ ("scheme/char-impl.ss" scheme/char-impl gerbil/core scheme/stubs)
+ ("scheme/char.ss" scheme/char gerbil/core scheme/char-impl std/srfi/13)
+ ("scheme/complex.ss" scheme/complex gerbil/core)
+ ("scheme/cxr.ss" scheme/cxr gerbil/core)
+ ("scheme/eval-impl.ss"
+  scheme/eval-impl
+  gerbil/core
+  scheme/stubs
   gerbil/expander)
- ("scheme/base.ss" scheme/base std/srfi/9 scheme/base-impl gerbil/gambit)
- ("scheme/case-lambda.ss" scheme/case-lambda)
- ("scheme/char-impl.ss" scheme/char-impl scheme/stubs)
- ("scheme/char.ss" scheme/char std/srfi/13 scheme/char-impl)
- ("scheme/complex.ss" scheme/complex)
- ("scheme/cxr.ss" scheme/cxr)
- ("scheme/eval-impl.ss" scheme/eval-impl scheme/stubs gerbil/expander)
- ("scheme/eval.ss" scheme/eval scheme/eval-impl)
- ("scheme/file.ss" scheme/file)
- ("scheme/inexact.ss" scheme/inexact)
- ("scheme/lazy-impl.ss" scheme/lazy-impl scheme/stubs)
- ("scheme/lazy.ss" scheme/lazy scheme/lazy-impl)
+ ("scheme/eval.ss" scheme/eval gerbil/core scheme/eval-impl)
+ ("scheme/file.ss" scheme/file gerbil/core)
+ ("scheme/inexact.ss" scheme/inexact gerbil/core)
+ ("scheme/lazy-impl.ss" scheme/lazy-impl gerbil/core scheme/stubs)
+ ("scheme/lazy.ss" scheme/lazy gerbil/core scheme/lazy-impl)
  ("scheme/load-impl.ss"
   scheme/load-impl
+  gerbil/core
   scheme/stubs
-  scheme/repl-impl
-  gerbil/expander)
- ("scheme/load.ss" scheme/load scheme/load-impl)
- ("scheme/process-context-impl.ss" scheme/process-context-impl scheme/stubs)
+  gerbil/expander
+  scheme/repl-impl)
+ ("scheme/load.ss" scheme/load gerbil/core scheme/load-impl)
+ ("scheme/process-context-impl.ss"
+  scheme/process-context-impl
+  gerbil/core
+  scheme/stubs)
  ("scheme/process-context.ss"
   scheme/process-context
+  gerbil/core
   scheme/process-context-impl
   gerbil/gambit)
- ("scheme/read.ss" scheme/read)
- ("scheme/repl-impl.ss" scheme/repl-impl scheme/stubs gerbil/expander)
- ("scheme/repl.ss" scheme/repl scheme/repl-impl)
- ("scheme/time-impl.ss" scheme/time-impl scheme/stubs gerbil/gambit)
- ("scheme/time.ss" scheme/time scheme/time-impl)
+ ("scheme/read.ss" scheme/read gerbil/core)
+ ("scheme/repl-impl.ss"
+  scheme/repl-impl
+  gerbil/core
+  scheme/stubs
+  gerbil/expander)
+ ("scheme/repl.ss" scheme/repl gerbil/core scheme/repl-impl)
+ ("scheme/time-impl.ss"
+  scheme/time-impl
+  gerbil/core
+  scheme/stubs
+  gerbil/gambit)
+ ("scheme/time.ss" scheme/time gerbil/core scheme/time-impl)
  ("scheme/write-impl.ss"
   scheme/write-impl
-  scheme/stubs
+  gerbil/core
   gerbil/gambit
+  scheme/stubs
   std/sugar)
- ("scheme/write.ss" scheme/write scheme/write-impl)
- ("scheme/r5rs.ss" scheme/r5rs scheme/base scheme/eval scheme/repl)
- ("scheme/r5rs-null.ss" scheme/r5rs-null scheme/r5rs)
- ("scheme/r7rs.ss" scheme/r7rs scheme/base))
+ ("scheme/write.ss" scheme/write gerbil/core scheme/write-impl)
+ ("scheme/r5rs.ss" scheme/r5rs gerbil/core scheme/repl scheme/eval scheme/base)
+ ("scheme/r5rs-null.ss" scheme/r5rs-null gerbil/core scheme/r5rs)
+ ("scheme/r7rs.ss" scheme/r7rs gerbil/core scheme/base))
