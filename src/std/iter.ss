@@ -18,7 +18,13 @@ package: std
   yield
   )
 
-(defstruct iterator (e start value next))
+(defstruct iterator (e start value next fini)
+  constructor: :init!
+  final: #t)
+
+(defmethod {:init! iterator}
+  (lambda (self e start value next (fini void))
+    (struct-instance-init! self e start value next fini)))
 
 (defstruct :iter-end ())
 (def iter-end
@@ -171,6 +177,9 @@ package: std
 (def (iter-next! iter)
   ((iterator-next iter) iter))
 
+(def (iter-fini! iter)
+  ((iterator-fini iter) iter))
+
 (def (iter-xform iter value-e)
   (def (start-e iter)
     (with ((iterator xiter) iter)
@@ -178,7 +187,10 @@ package: std
   (def (next-e iter)
     (with ((iterator xiter) iter)
       (iter-next! xiter)))
-  (make-iterator (:iter iter) start-e value-e next-e))
+  (def (fini-e iter)
+    (with ((iterator xiter) iter)
+      (iter-fini! xiter)))
+  (make-iterator (:iter iter) start-e value-e next-e fini-e))
 
 (def (iter-filter pred iter)
   (def (value-e iter)
@@ -253,7 +265,9 @@ package: std
                 (with ((bind-e bind-id) ...)
                   body ...
                   (iter-next! iter-id) ...
-                  (lp))))))))
+                  (lp)))))
+          (iter-fini! iter-id) ...
+          (void))))
   
   (syntax-case stx ()
     ((_ bind body ...)
@@ -288,7 +302,8 @@ package: std
           (let lp ((rvalue []))
             (let ((bind-id (iter-value iter-id)) ...)
               (if (or (eq? iter-end bind-id) ...)
-                (reverse rvalue)
+                (begin (iter-fini! iter-id) ...
+                       (reverse rvalue))
                 (with ((bind-e bind-id) ...)
                   (let (value (let () body ...))
                     (iter-next! iter-id) ...
@@ -327,7 +342,8 @@ package: std
           (let lp ((loop-id loop-e))
             (let ((bind-id (iter-value iter-id)) ...)
               (if (or (eq? iter-end bind-id) ...)
-                loop-id
+                (begin (iter-fini! iter-id) ...
+                       loop-id)
                 (with ((bind-e bind-id) ...)
                   (let (value (let () body ...))
                     (iter-next! iter-id) ...
