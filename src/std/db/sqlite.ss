@@ -47,7 +47,7 @@ package: std/db
 
 (defmethod {bind sqlite-statement}
   (lambda (self . args)
-    (with ((statement stmt) self)
+    (with ((sqlite-statement stmt) self)
       (let* ((params (sqlite3_bind_parameter_count stmt))
              (_ (unless (= params (length args))
                   (error "bind parameters do not match statement count" args params))))
@@ -83,7 +83,7 @@ package: std/db
 
 (defmethod {exec sqlite-statement}
   (lambda (self)
-    (with ((statement stmt) self)
+    (with ((sqlite-statement stmt) self)
       (let (r (sqlite3_step stmt))
         (unless (or (eq? r SQLITE_DONE)
                     (eq? r SQLITE_ROW))
@@ -94,7 +94,7 @@ package: std/db
 
 (defmethod {query-fetch sqlite-statement}
   (lambda (self)
-    (with ((statement stmt) self)
+    (with ((sqlite-statement stmt) self)
       (let (r (sqlite3_step stmt))
         (cond
          ((eq? r SQLITE_ROW) #!void)
@@ -104,7 +104,7 @@ package: std/db
 
 (defmethod {query-row sqlite-statement}
   (lambda (self)
-    (with ((statement stmt) self)
+    (with ((sqlite-statement stmt) self)
       (def (column-e col)
         (let (t (sqlite3_column_type stmt col))
           (cond
