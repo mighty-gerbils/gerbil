@@ -83,4 +83,7 @@ package: tutorial/kvstore
           (getopt-display-help (or topic gopt) "kvstorec")))))
    (catch (getopt-error? exn)
      (getopt-display-help exn "kvstorec" (current-error-port))
+     (exit 1))
+   (catch (remote-error? exn)
+     (displayln (error-message exn))
      (exit 1))))

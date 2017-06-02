@@ -330,6 +330,9 @@ The `main` function is the entry of the program:
           (getopt-display-help (or topic gopt) "kvstorec")))))
    (catch (getopt-error? exn)
      (getopt-display-help exn "kvstorec" (current-error-port))
+     (exit 1))
+   (catch (remote-error? exn)
+     (displayln (error-message exn))
      (exit 1))))
 ```
 
@@ -410,5 +413,7 @@ If we want an error if the object does not exist instead of a default `false`
 response, we can use the `ref` command:
 ```
 $ ./kvstorec ref foo
-*** ERROR -- !!call: [remote-error] remote error: No object associated with key
+remote error: No object associated with key
+$ echo $?
+1
 ```
