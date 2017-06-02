@@ -67,8 +67,6 @@ package: std/db
               (error "cannot bind number; not a real" arg))))
            ((string? arg)
             (sqlite3_bind_text stmt param arg))
-           ((symbol? arg)
-            (sqlite3_bind_text stmt param (symbol->string arg)))
            ((u8vector? arg)
             (sqlite3_bind_blob stmt param arg))
            (error "cannot bind object; unknown conversion" arg)))))))
@@ -134,5 +132,4 @@ package: std/db
               (column-e x)))))))))
 
 (defmethod {query-fini sqlite-statement}
-  (lambda (self)
-    (sqlite-statement::reset self)))
+  sqlite-statement::reset)
