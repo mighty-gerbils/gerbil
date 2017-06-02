@@ -2,12 +2,14 @@
 ;; -*- Gerbil -*-
 
 (import :std/make)
-(let (srcdir (path-directory (this-source-file)))
+
+(include "build-spec.ss")
+
+(let ((srcdir (path-directory (this-source-file)))
+      (depgraph (call-with-input-file "build-deps" read)))
   (make srcdir: srcdir
         bindir: srcdir
         prefix: "tutorial/kvstore"
         optimize: #t
-        '("proto"
-          (exe: "kvstored")
-          (exe: "kvstorec"))))
-
+        depgraph: depgraph
+        build-spec))

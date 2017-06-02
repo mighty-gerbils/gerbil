@@ -1,0 +1,22 @@
+(("proto.ss" tutorial/kvstore/proto std/actor gerbil/core)
+ ("kvstored.ss"
+  tutorial/kvstore/kvstored
+  std/text/json
+  std/getopt
+  std/text/zlib
+  gerbil/gambit
+  std/db/lmdb
+  std/sugar
+  std/actor
+  std/logger
+  gerbil/core
+  tutorial/kvstore/proto)
+ ("kvstorec.ss"
+  tutorial/kvstore/kvstorec
+  std/text/json
+  tutorial/kvstore/proto
+  gerbil/gambit
+  std/getopt
+  std/sugar
+  gerbil/core
+  std/actor))

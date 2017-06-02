@@ -1,0 +1,14 @@
+(("dot-app.ss" tutorial/lang/dot-app gerbil/core)
+ ("auto-export.ss" tutorial/lang/auto-export gerbil/core)
+ ("sexp.ss" tutorial/lang/sexp gerbil/core)
+ ("scuby-etc.ss" tutorial/lang/scuby-etc std/parser/base gerbil/core)
+ ("scuby-grammar.ss"
+  tutorial/lang/scuby-grammar
+  tutorial/lang/scuby-etc
+  std/parser/grammar)
+ ("scuby.ss"
+  tutorial/lang/scuby
+  std/parser/base
+  std/sugar
+  gerbil/core
+  tutorial/lang/scuby-grammar))
