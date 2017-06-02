@@ -17,6 +17,7 @@
               ))
 
 (c-declare #<<END-C
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>           
 #include <sqlite3.h>
@@ -69,30 +70,41 @@ END-C
 (define-const SQLITE_TEXT)
 
 (c-declare #<<END-C
-static sqlite3* ffi_sqlite3_open (const char *path, int flags);
-static sqlite3_stmt* ffi_sqlite3_prepare (sqlite3* db, const char *sql);
+static int ffi_sqlite3_open (sqlite3**, const char *path, int flags);
+static int ffi_sqlite3_prepare (sqlite3_stmt**, sqlite3* db, const char *sql);
 static int ffi_sqlite3_bind_blob (sqlite3_stmt* stmt, int col, ___SCMOBJ data);
 static int ffi_sqlite3_bind_text (sqlite3_stmt* stmt, int col, const char *str);
 static void ffi_sqlite3_column_blob (sqlite3_stmt* stmt, int col, ___SCMOBJ bytes);
+static ___SCMOBJ ffi_free (void *ptr);
 END-C
 )
 
 (c-define-type sqlite3 "sqlite3")
 (c-define-type sqlite3*
   (pointer sqlite3 (sqlite3*)))
+(c-define-type sqlite3**
+  (pointer sqlite3* (sqlite3**) "ffi_free"))
 (c-define-type sqlite3_stmt "sqlite3_stmt")
 (c-define-type sqlite3_stmt*
   (pointer sqlite3_stmt (sqlite3_stmt*)))
+(c-define-type sqlite3_stmt**
+  (pointer sqlite3_stmt* (sqlite3_stmt**) "ffi_free"))
 
+(define-c-lambda make_sqlite3_ptr_ptr () sqlite3**
+  "___return ((sqlite3**)malloc (sizeof (sqlite3*)));")
+(define-c-lambda sqlite3_ptr (sqlite3**) sqlite3*
+  "___return (*___arg1);")
+(define-c-lambda make_sqlite3_stmt_ptr_ptr () sqlite3_stmt**
+  "___return ((sqlite3_stmt**)malloc (sizeof (sqlite3_stmt*)));")
+(define-c-lambda sqlite3_stmt_ptr (sqlite3_stmt**) sqlite3_stmt*
+  "___return (*___arg1);")
 (define-c-lambda sqlite3_errstr (int) UTF-8-string
   "___return ((char*)sqlite3_errstr (___arg1));")
-(define-c-lambda sqlite3_last_error () int
-  "___return (ffi_last_error);")
-(define-c-lambda sqlite3_open (char-string int) sqlite3*
+(define-c-lambda sqlite3_open (sqlite3** char-string int) int
   "ffi_sqlite3_open")
 (define-c-lambda sqlite3_close (sqlite3*) int
   "sqlite3_close_v2")
-(define-c-lambda sqlite3_prepare (sqlite3* UTF-8-string) sqlite3_stmt*
+(define-c-lambda sqlite3_prepare (sqlite3_stmt** sqlite3* UTF-8-string) int
   "ffi_sqlite3_prepare")
 (define-c-lambda sqlite3_stmt_readonly (sqlite3_stmt*) bool
   "sqlite3_stmt_readonly")
@@ -146,30 +158,22 @@ END-C
   "sqlite3_reset")
 
 (c-declare #<<END-C
-static sqlite3* ffi_sqlite3_open (const char *path, int flags)
+static int ffi_sqlite3_open (sqlite3** db, const char *path, int flags)
 {
- sqlite3 *db;
- int r = sqlite3_open_v2 (path, &db, flags, NULL);
- if (r == SQLITE_OK) {
-  return db;
- } else {
-  ffi_last_error = r;               
-  sqlite3_close_v2 (db);
-  return NULL;                        
+ int r = sqlite3_open_v2 (path, db, flags, NULL);
+ if (r != SQLITE_OK) {
+  sqlite3_close_v2 (*db);
  }
+ return r;
 }
 
-static sqlite3_stmt* ffi_sqlite3_prepare (sqlite3* db, const char *sql)
+static int ffi_sqlite3_prepare (sqlite3_stmt** stmt, sqlite3* db, const char *sql)
 {
- sqlite3_stmt* stmt;
- int r = sqlite3_prepare_v2 (db, sql, strlen (sql), &stmt, NULL);
- if (r == SQLITE_OK) {
-  return stmt;
- } else {
-  ffi_last_error = r;               
-  sqlite3_finalize (stmt);
-  return NULL;
+ int r = sqlite3_prepare_v2 (db, sql, strlen (sql), stmt, NULL);
+ if (r != SQLITE_OK) {
+  sqlite3_finalize (*stmt);
  }                
+ return r;
 }
 
 static int ffi_sqlite3_bind_blob (sqlite3_stmt* stmt, int col, ___SCMOBJ data)
@@ -186,6 +190,12 @@ static void ffi_sqlite3_column_blob (sqlite3_stmt* stmt, int col, ___SCMOBJ byte
 {
  const void *blob = sqlite3_column_blob (stmt, col);
  memcpy (U8_DATA (bytes), blob, U8_LEN (bytes));
+}
+
+___SCMOBJ ffi_free (void *ptr)
+{
+ free (ptr);
+ return ___FIX (___NO_ERR);
 }
 
 END-C
