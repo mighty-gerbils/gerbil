@@ -117,14 +117,14 @@ package: std/misc
            (res ((macro-character-port-rbuf-fill in) in
                  (##string-length rbuf) #t)))
       (cond
-       ((eq? res ##err-code-EAGAIN) ; timeout -> eof
+       ((eq? res ##err-code-EAGAIN)     ; timeout -> eof
         (macro-port-mutex-unlock! in))
        ((fixnum? res)
         (macro-port-mutex-unlock! in)
         (##raise-os-io-exception in #f res copy-port in out))
-       (res ; some characters were added
+       (res                             ; some chars were added
         (loop))
-       (else ; no characters were added, eof
+       (else                            ; no chars were added, eof
         (macro-port-mutex-unlock! in)))))
   
   (loop))
