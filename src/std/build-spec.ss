@@ -106,6 +106,11 @@
           (ssi: "db/_sqlite")
           "db/sqlite")
         '())
+    ,@(if config-enable-mysql
+        '((gsc: "db/_mysql" "-ld-options" "-lmysqlclient")
+          (ssi: "db/_mysql")
+          "db/mysql")
+        '())
     ,@(if config-enable-lmdb
         '((gsc: "db/_lmdb" "-ld-options" "-llmdb")
           (ssi: "db/_lmdb")
