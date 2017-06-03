@@ -88,6 +88,7 @@
     "misc/shuffle"
     "misc/uuid"
     "misc/queue"
+    (gxc:  "misc/ports" "-e" "(include \"~~lib/_gambit#.scm\")")
     ;; :std/actor
     (gxc: "actor/message" "-e" "(include \"~~lib/_gambit#.scm\")")
     "actor/xdr"
