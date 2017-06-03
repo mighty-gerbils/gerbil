@@ -23,19 +23,19 @@ package: std/db
   mysql_stmt_fetch
   mysql_stmt_fetch_column
   mysql_stmt_result_metadata
-  
+
+  mysql_free_result
   mysql_num_fields
   mysql_fetch_field
   mysql_field_name
   mysql_field_type
-  mysql_free_result
-  
+    
   make_mysql_bind
   mysql_bind_null
   mysql_bind_set_null
   mysql_bind_get_null
-  mysql_bind_set_int
-  mysql_bind_get_int
+  mysql_bind_set_long
+  mysql_bind_get_long
   mysql_bind_set_bigint
   mysql_bind_get_bigint
   mysql_bind_set_float
@@ -52,8 +52,8 @@ package: std/db
   mysql_bind_get_len
 
   make_bool_ptr
-  make_int_ptr
-  int_ptr_set
+  make_long_ptr
+  long_ptr_set
   make_bigint_ptr
   bigint_ptr_set
   make_ulong_ptr

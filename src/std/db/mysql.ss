@@ -103,9 +103,9 @@ package: std/db
                (loop))
               ((integer? arg)
                (if (< (abs arg) (expt 2 32))
-                 (let (ptr (check-ptr (make_int_ptr)))
-                   (int_ptr_set ptr arg)
-                   (mysql_bind_set_int bind k ptr)
+                 (let (ptr (check-ptr (make_long_ptr)))
+                   (long_ptr_set ptr arg)
+                   (mysql_bind_set_long bind k ptr)
                    (loop ptr))
                  (let (ptr (check-ptr (make_bigint_ptr)))
                    (bigint_ptr_set ptr arg)
@@ -216,9 +216,9 @@ package: std/db
                           (cons* ptr ... ptrs))))
                    (case type
                      ((int)
-                      (let ((ptr (check-ptr (make_int_ptr)))
+                      (let ((ptr (check-ptr (make_long_ptr)))
                             (nullp (check-ptr (make_bool_ptr))))
-                        (mysql_bind_set_int res k ptr)
+                        (mysql_bind_set_long res k ptr)
                         (mysql_bind_set_null res k nullp)
                         (loop ptr nullp)))
                      ((bigint)
@@ -293,7 +293,7 @@ package: std/db
            
            (case type
              ((int)
-              (let (val (maybe-null (mysql_bind_get_int res k)))
+              (let (val (maybe-null (mysql_bind_get_long res k)))
                 (loop val)))
              ((bigint)
               (let (val (maybe-null (mysql_bind_get_bigint res k)))
