@@ -35,6 +35,7 @@ interpreter prompt.
   * [JSON](#json)
   * [XML](#xml)
   * [Web Applications](#web-applications)
+  * [Databases](#databases)
 
 <!-- tocstop -->
 
@@ -1399,3 +1400,58 @@ the response:
     (yield "</pre>\n")))
 ```
 
+### Databases
+
+Gerbil provides a unified SQL database interface with bindings for
+SQLite and MySQL in the `:std/db` package. The `:std/db/dbi` library
+provides a the implementation of the database interface, while
+individual modules provide the drivers for particular databases. Note
+that none of the drivers are built by default, as they are FFI
+drivers, so you will need to enable them for your installation in
+`$GERBIL_HOME/src/std/build-config.ss`.
+
+Here is an example of using the dbi interface with SQLite.
+First, the necessary imports and a connection to an in-memory database:
+```
+> (import :std/db/dbi :std/db/sqlite)
+> (def db (sql-connect sqlite-open ":memory:"))
+```
+
+Then we create a simple table with `sql-eval`, which evaluates an SQL statement:
+```
+> (sql-eval db "CREATE TABLE Users (FirstName VARCHAR, LastName VARCHAR, Secret VARCHAR)")
+```
+
+Let's insert some data in our table, using a prepared statements:
+```
+> (def insert (sql-prepare db "INSERT INTO Users (FirstName, LastName, Secret) VALUES (?, ?, ?)"))
+> (sql-txn-begin db)
+> (sql-bind insert "John" "Smith" "very secret")
+> (sql-exec insert)
+> (sql-reset insert)
+> (sql-bind insert "Marc" "Thompson" "oh so secret")
+> (sql-exec insert)
+> (sql-txn-commit db)
+
+```
+
+And finally a query:
+```
+> (def users (sql-prepare db "SELECT FirstName, LastName FROM Users"))
+> (sql-query users)
+=> (#("John" "Smith") #("Marc" "Thompson"))
+```
+
+We can also iterate on the results of a query:
+```
+> (import :std/iter)
+> (for (#(FirstName LastName) (in-sql-query users))
+    (displayln "First name: " FirstName " Last name: " LastName))
+First name: John Last name: Smith
+First name: Marc Last name: Thompson
+```
+
+And we are done, we can close our database connection:
+```
+> (sql-close db)
+```
