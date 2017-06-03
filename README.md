@@ -12,29 +12,13 @@ ahead of time compilation and compiled macros.
 
 <!-- toc -->
 
-- [License and Copyright](#license-and-copyright)
 - [Installation](#installation)
 - [Using Gerbil](#using-gerbil)
 - [Documentation](#documentation)
+- [License and Copyright](#license-and-copyright)
 - [Epilogue](#epilogue)
 
 <!-- tocstop -->
-
-# License and Copyright
-
-The source code is distributed with the Gambit license; that means
-that Gerbil on Gambit is dual licensed under LGPLv2.1 and Apache 2.0.
-
-Gerbil's primary author and maintainer is vyzo-at-hackzen.org, aka in
-the Net as Dimitris Vyzovitis. The obligatory copyright notice, had I
-bothered polluted everything with more than a (C) vyzo at hackzen.org,
-would read like this:
-
-```
-(C) 2007-2017 Dimitris Vyzovitis <vyzo -at- hackzen.org>
-Gerbil is Free Software, distributed under the GNU LGPLv2.1 or later
-and the Apache 2.0 license.
-```
 
 # Installation
 ## Source Code
@@ -113,10 +97,10 @@ that should get you started:
   contains a small but growing collection of pages that can help you
   get started with Gerbil.
 - The [Introduction to Gerbil](doc/guide.md) is an introductory guide for seasoned Schemers.
-- The [Gerbil Core Prelude](doc/core-prelude.md) documents the core
-  language prelude.
 - The [Gerbil Tutorial](doc/tutorial.md), while still in its infancy, provides a few
   hands-on guides on Gerbil programming.
+- The [Gerbil Core Prelude](doc/core-prelude.md) documents the core
+  language prelude.
 
 Probably the best way to dive into gerbil is by reading the sources,
 as all the main language features are exercised in one way or another
@@ -134,6 +118,22 @@ Depending on your inclinations, there are several starting points:
   the [stdlib sources](src/std).
 
 For questions and support, you can come say hi in `#gerbil-scheme` on irc at freenode.net.
+
+# License and Copyright
+
+The source code is distributed with the Gambit license; that means
+that Gerbil on Gambit is dual licensed under LGPLv2.1 and Apache 2.0.
+
+Gerbil's primary author and maintainer is vyzo-at-hackzen.org, aka in
+the Net as Dimitris Vyzovitis. The obligatory copyright notice, had I
+bothered polluted everything with more than a (C) vyzo at hackzen.org,
+would read like this:
+
+```
+(C) 2007-2017 Dimitris Vyzovitis <vyzo -at- hackzen.org>
+Gerbil is Free Software, distributed under the GNU LGPLv2.1 or later
+and the Apache 2.0 license.
+```
 
 # Epilogue
 
