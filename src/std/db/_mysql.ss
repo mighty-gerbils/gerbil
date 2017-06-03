@@ -7,6 +7,7 @@ package: std/db
 (extern
   mysql_error mysql_errno
   mysql_stmt_error mysql_stmt_errno
+  
   mysql_init
   mysql_connect
   mysql_close
@@ -21,8 +22,8 @@ package: std/db
   mysql_stmt_execute
   mysql_stmt_fetch
   mysql_stmt_fetch_column
-  
   mysql_stmt_result_metadata
+  
   mysql_num_fields
   mysql_fetch_field
   mysql_field_name
@@ -81,6 +82,9 @@ package: std/db
   mysql_time_year
   mysql_time_set_year
 
+  MYSQL_NO_DATA
+  MYSQL_DATA_TRUNCATED
+  
   MYSQL_TYPE_BIT
   MYSQL_TYPE_TINY
   MYSQL_TYPE_SHORT

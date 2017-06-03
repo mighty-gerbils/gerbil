@@ -267,8 +267,13 @@ package: std/db
   (lambda (self)
     (with ((mysql-statement mystmt) self)
       (let (r (mysql_stmt_fetch mystmt))
-        (unless (fxzero? r)
-          (raise-mysql-stmt-error 'mysql-query-fetch mystmt))))))
+        (cond
+         ((fxzero? r) #!void)
+         ((eq? r MYSQ_NO_DATA) iter-end)
+         ((eq? r MYSQL_DATA_TRUNCATED)
+          (error "Error fetching data; data was truncated!"))
+         (else
+          (raise-mysql-stmt-error 'mysql-query-fetch mystmt)))))))
 
 (defmethod {query-row mysql-statement}
   (lambda (self)
