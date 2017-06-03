@@ -1,9 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
-;;; SQLite dbi interface
+;;; MySQL dbi interface
 package: std/db
 
-(import (only-in :gerbil/gambit/hvectors make-u8vector u8vector-length)
+(import (only-in :gerbil/gambit
+                 make-u8vector u8vector? u8vector-length
+                 fxquotient)
         :std/db/dbi
         :std/db/_mysql
         :std/error
@@ -30,7 +32,8 @@ package: std/db
   connection:::init!)
 
 (defmethod {:init! mysql-statement}
-  statement:::init!)
+  (lambda (self mystmt)
+    (struct-instance-init! self mystmt)))
 
 (def (raise-mysql-error where mysql)
   (let ((errmsg (mysql_error mysql))
@@ -200,7 +203,7 @@ package: std/db
                         (type (hash-get column-types mytype)))
                    (unless type
                      (raise-sql-error 'mysql-query-start "Unknown field type"
-                                      (mysql_field_type myfield) mytype))
+                                      (mysql_field_name myfield) mytype))
                    (defrules loop ()
                      ((_ ptr ...)
                       (lp (fx1+ k)
@@ -297,7 +300,7 @@ package: std/db
                   (let* ((bind (make_mysql_bind 1))
                          (ptr (make_string_ptr len))
                          (_ (mysql_bind_set_string bind 0 ptr len))
-                         (r (mysql_fetch_column mystmt bind k 0)))
+                         (r (mysql_stmt_fetch_column mystmt bind k 0)))
                     (if (fxzero? r)
                       (let (val (mysql_bind_get_string bind 0))
                         (loop val))
@@ -309,7 +312,7 @@ package: std/db
                   (let* ((bind (make_mysql_bind 1))
                          (ptr (make_blob_ptr))
                          (_ (mysql_bind_set_blob bind 0 ptr len))
-                         (r (mysql_fetch_column mystmt bind k 0)))
+                         (r (mysql_stmt_fetch_column mystmt bind k 0)))
                     (if (fxzero? r)
                       (let* ((bytes (make-u8vector len))
                              (_ (mysql_bind_get_blob bind 0 bytes)))
