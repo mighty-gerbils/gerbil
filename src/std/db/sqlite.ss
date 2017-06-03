@@ -133,3 +133,15 @@ package: std/db
 
 (defmethod {query-fini sqlite-statement}
   sqlite-statement::reset)
+
+(defmethod {columns sqlite-statement}
+  (lambda (self)
+    (with ((sqlite-statement stmt) self)
+      (let (count (sqlite3_column_count stmt))
+        (let lp ((k 0) (cols []))
+          (if (fx< k count)
+            (let (name (sqlite3_column_name stmt k))
+              (lp (fx1+ k) (cons name cols)))
+            (reverse cols)))))))
+
+        
