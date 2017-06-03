@@ -25,12 +25,10 @@
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
 #define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
 
-static int ffi_last_error;
 END-C
 )
 
 (c-initialize #<<END-C
-ffi_last_error = 0;
 if (sqlite3_initialize () != SQLITE_OK) {
   fprintf (stderr, "Warning: error initializing sqlite3 library\n");
 }
