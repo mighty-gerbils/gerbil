@@ -1428,7 +1428,6 @@ Let's insert some data in our table, using a prepared statements:
 > (sql-txn-begin db)
 > (sql-bind insert "John" "Smith" "very secret")
 > (sql-exec insert)
-> (sql-reset insert)
 > (sql-bind insert "Marc" "Thompson" "oh so secret")
 > (sql-exec insert)
 > (sql-txn-commit db)
