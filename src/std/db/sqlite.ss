@@ -47,7 +47,7 @@ package: std/db
 
 (defmethod {bind sqlite-statement}
   (lambda (self . args)
-    (with ((statement stmt) self)
+    (with ((sqlite-statement stmt) self)
       (let* ((params (sqlite3_bind_parameter_count stmt))
              (_ (unless (= params (length args))
                   (error "bind parameters do not match statement count" args params))))
@@ -67,8 +67,6 @@ package: std/db
               (error "cannot bind number; not a real" arg))))
            ((string? arg)
             (sqlite3_bind_text stmt param arg))
-           ((symbol? arg)
-            (sqlite3_bind_text stmt param (symbol->string arg)))
            ((u8vector? arg)
             (sqlite3_bind_blob stmt param arg))
            (error "cannot bind object; unknown conversion" arg)))))))
@@ -83,7 +81,7 @@ package: std/db
 
 (defmethod {exec sqlite-statement}
   (lambda (self)
-    (with ((statement stmt) self)
+    (with ((sqlite-statement stmt) self)
       (let (r (sqlite3_step stmt))
         (unless (or (eq? r SQLITE_DONE)
                     (eq? r SQLITE_ROW))
@@ -94,7 +92,7 @@ package: std/db
 
 (defmethod {query-fetch sqlite-statement}
   (lambda (self)
-    (with ((statement stmt) self)
+    (with ((sqlite-statement stmt) self)
       (let (r (sqlite3_step stmt))
         (cond
          ((eq? r SQLITE_ROW) #!void)
@@ -104,7 +102,7 @@ package: std/db
 
 (defmethod {query-row sqlite-statement}
   (lambda (self)
-    (with ((statement stmt) self)
+    (with ((sqlite-statement stmt) self)
       (def (column-e col)
         (let (t (sqlite3_column_type stmt col))
           (cond
@@ -134,5 +132,16 @@ package: std/db
               (column-e x)))))))))
 
 (defmethod {query-fini sqlite-statement}
+  sqlite-statement::reset)
+
+(defmethod {columns sqlite-statement}
   (lambda (self)
-    (sqlite-statement::reset self)))
+    (with ((sqlite-statement stmt) self)
+      (let (count (sqlite3_column_count stmt))
+        (let lp ((k 0) (cols []))
+          (if (fx< k count)
+            (let (name (sqlite3_column_name stmt k))
+              (lp (fx1+ k) (cons name cols)))
+            (reverse cols)))))))
+
+        

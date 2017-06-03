@@ -14,7 +14,7 @@ package: std/db
   sql-connect sql-close sql-prepare
   sql-bind sql-clear sql-reset sql-reset/clear sql-finalize
   sql-eval sql-eval-query
-  sql-exec sql-query in-sql-query
+  sql-exec sql-query in-sql-query sql-columns
   sql-txn-begin sql-txn-commit sql-txn-abort
   )
 
@@ -24,7 +24,7 @@ package: std/db
 
 (defmethod {:init! connection}
   (lambda (self e)
-    (struct-instance-init! self e #f #f #f)))
+    (struct-instance-init! self e)))
 
 (defstruct (sql-error <error>) ())
 
@@ -153,3 +153,9 @@ package: std/db
   (with ((iterator stmt) iter)
     (unless (iter-end? stmt)
       {query-fini stmt})))
+
+(def (sql-columns stmt)
+  (if (statement-e stmt)
+    {columns stmt}
+    (error "Invalid operation; statement finalized" stmt)))
+

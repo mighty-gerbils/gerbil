@@ -1,7 +1,7 @@
 #!/usr/bin/env gxi-script
 ;; -*- Gerbil -*-
 ;; build-deps depgraph generator
-(import "make")
+(import :std/make "build-config")
 
 (include "build-spec.ss")
 
