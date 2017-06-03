@@ -354,3 +354,19 @@ package: std/db
 (defmethod {query-fini mysql-statement}
   mysql-statement::reset)
 
+(defmethod {columns mysql-statement}
+  (lambda (self)
+    (with ((mysql-statement mystmt) self)
+      (let (myres (mysql_stmt_result_metadata mystmt))
+        (unless myres
+          (raise-mysql-stmt-error 'mysql-query-start mystmt "No result set metadata"))
+        (try
+         (let (count (mysql_num_fields myres))
+           (let lp ((k 0) (cols []))
+             (if (fx< k count)
+               (let* ((myfield (mysql_fetch_field myres))
+                      (name (mysql_field_name myfield)))
+                 (lp (fx1+ k) (cons name cols)))
+               (reverse cols))))
+         (finally
+          (mysql_free_result myres)))))))
