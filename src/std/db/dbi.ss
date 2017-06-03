@@ -122,7 +122,9 @@ package: std/db
 
 (def (sql-exec stmt)
   (if (statement-e stmt)
-    {exec stmt}
+    (begin
+      {exec stmt}
+      {reset stmt})
     (error "Invalid operation; statement finalized" stmt)))
 
 (def (sql-query stmt)

@@ -1403,10 +1403,12 @@ the response:
 ### Databases
 
 Gerbil provides a unified SQL database interface with bindings for
-SQLite and MySQL in the `:std/db` package. The `:std/db/dbi` library
-provides a the implementation of the database interface, while
-individual modules provide the drivers for particular databases. Note
-that none of the drivers are built by default, as they are FFI
+SQLite and MySQL in the `:std/db` package.
+
+The `:std/db/dbi` library provides a the implementation of the
+database interface, while individual modules (`:std/db/sqlite` and
+`:std/db/mysql`) provide the drivers for particular databases.
+Note that none of the drivers are built by default, as they are FFI
 drivers, so you will need to enable them for your installation in
 `$GERBIL_HOME/src/std/build-config.ss`.
 
@@ -1428,7 +1430,6 @@ Let's insert some data in our table, using a prepared statements:
 > (sql-txn-begin db)
 > (sql-bind insert "John" "Smith" "very secret")
 > (sql-exec insert)
-> (sql-reset insert)
 > (sql-bind insert "Marc" "Thompson" "oh so secret")
 > (sql-exec insert)
 > (sql-txn-commit db)
