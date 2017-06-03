@@ -46,10 +46,17 @@ package: std/db
   mysql_bind_get_string
   mysql_bind_set_blob
   mysql_bind_get_blob
-  mysql_bind_set_time
-  mysql_bind_get_time
   mysql_bind_set_len
   mysql_bind_get_len
+
+  mysql_bind_set_time
+  mysql_bind_get_time_second_part
+  mysql_bind_get_time_second
+  mysql_bind_get_time_minute
+  mysql_bind_get_time_hour
+  mysql_bind_get_time_day
+  mysql_bind_get_time_month
+  mysql_bind_get_time_year
 
   make_bool_ptr
   make_long_ptr
@@ -61,25 +68,17 @@ package: std/db
   float_ptr_set
   make_double_ptr
   double_ptr_set
-  make_string_ptr
-  string_ptr_set
   make_blob_ptr
+  string_ptr_set
   blob_ptr_set
+  
   make_time_ptr
-
-  mysql_time_second_part
   mysql_time_set_second_part
-  mysql_time_second
   mysql_time_set_second
-  mysql_time_minute
   mysql_time_set_minute
-  mysql_time_hour
   mysql_time_set_hour
-  mysql_time_day
   mysql_time_set_day
-  mysql_time_month
   mysql_time_set_month
-  mysql_time_year
   mysql_time_set_year
 
   MYSQL_NO_DATA
@@ -103,3 +102,5 @@ package: std/db
   MYSQL_TYPE_MEDIUM_BLOB
   MYSQL_TYPE_LONG_BLOB
   )
+
+(load-module "std/db/_mysql")
