@@ -100,10 +100,15 @@ static unsigned ffi_mysql_bind_get_time_day (MYSQL_BIND* mybind, int k);
 static unsigned ffi_mysql_bind_get_time_month (MYSQL_BIND* mybind, int k);
 static unsigned ffi_mysql_bind_get_time_year (MYSQL_BIND* mybind, int k);
 
+static unsigned long* ffi_make_ulong_ptr ();
 static void ffi_long_ptr_set (long* ptr, long val);
+static long long* ffi_make_bigint_ptr ();
 static void ffi_bigint_ptr_set (long long* ptr, long val);
+static float* ffi_make_float_ptr ();
 static void ffi_float_ptr_set (float* ptr, float val);
+static double* ffi_make_double_ptr ();
 static void ffi_double_ptr_set (double* ptr, double val);
+static void* ffi_make_blob_ptr (unsigned len);
 static void ffi_string_ptr_set (void* ptr, char* str);
 static void ffi_blob_ptr_set (void* ptr, ___SCMOBJ bytes);
 
@@ -240,27 +245,27 @@ END-C
   "ffi_mysql_bind_get_time_year")
 
 (define-c-lambda make_bool_ptr () my_bool*
-  "___return ((my_bool*)malloc (sizeof (my_bool)));")
+  "ffi_make_bool_ptr")
 (define-c-lambda make_long_ptr () long*
-  "___return ((long*)malloc (sizeof (long)));")
+  "ffi_make_long_ptr")so
 (define-c-lambda long_ptr_set (long* long) void
   "ffi_long_ptr_set")
+(define-c-lambda make_ulong_ptr () ulong*
+  "ffi_make_ulong_ptr")
 (define-c-lambda make_bigint_ptr () long-long*
-  "___return ((long long*)malloc (sizeof (long long)));")
+  "ffi_make_bigint_ptr")
 (define-c-lambda bigint_ptr_set (long-long* long-long) void
   "ffi_bigint_ptr_set")
-(define-c-lambda make_ulong_ptr () long*
-  "___return ((unsigned long*)malloc (sizeof (unsigned long)));")
 (define-c-lambda make_float_ptr () float*
   "___return ((float*)malloc (sizeof (float)));")
 (define-c-lambda float_ptr_set (float* float) void
   "ffi_float_ptr_set")
 (define-c-lambda make_double_ptr () double*
-  "___return ((double*)malloc (sizeof (double)));")
+  "ffi_make_double_ptr")
 (define-c-lambda double_ptr_set (double* double) void
   "ffi_double_ptr_set")
 (define-c-lambda make_blob_ptr (unsigned-int) void*
-  "___return (malloc (___arg1));")
+  "ffi_make_blob_ptr")
 (define-c-lambda string_ptr_set (void* UTF-8-string) void
   "ffi_string_ptr_set")
 (define-c-lambda blob_ptr_set (void* scheme-object) void
@@ -467,9 +472,49 @@ unsigned ffi_mysql_bind_get_time_year (MYSQL_BIND* mybind, int k)
  return ((MYSQL_TIME*)(mybind[k].buffer))->year;
 }
 
+my_bool* ffi_make_bool_ptr ()
+{
+ my_bool* res = malloc (sizeof (my_bool));
+ if (res)
+ {
+  *res = 0;
+ }
+ return res;
+}
+
+long* ffi_make_long_ptr ()
+{
+ long* res = malloc (sizeof (long));
+ if (res)
+ {
+  *res = 0;
+ }
+ return res;
+}
+
 void ffi_long_ptr_set (long* ptr, long val)
 {
  *ptr = val;
+}
+
+unsigned long* ffi_make_ulong_ptr ()
+{
+ unsigned long* res = malloc (sizeof (long));
+ if (res)
+ {
+  *res = 0;
+ }
+ return res;
+}
+
+long long* ffi_make_bigint_ptr ()
+{
+ long long* res = malloc (sizeof (long long));
+ if (res)
+ {
+  *res = 0;
+ }
+ return res;
 }
 
 void ffi_bigint_ptr_set (long long* ptr, long val)
@@ -477,14 +522,44 @@ void ffi_bigint_ptr_set (long long* ptr, long val)
  *ptr = val;
 }
 
+float* ffi_make_float_ptr ()
+{
+ float* res = malloc (sizeof (float));
+ if (res)
+ {
+  *res = 0;
+ }
+ return res;
+}
+
 void ffi_float_ptr_set (float* ptr, float val)
 {
  *ptr = val;
 }
 
+double* ffi_make_double_ptr ()
+{
+ double* res = malloc (sizeof (double));
+ if (res)
+ {
+  *res = 0;
+ }
+ return res;
+}
+
 void ffi_double_ptr_set (double* ptr, double val)
 {
  *ptr = val;
+}
+
+void* ffi_make_blob_ptr (unsigned len)
+{
+ void* res = malloc (len);
+ if (res)
+ {      
+  memset (res, 0, len);
+ }
+ return res;      
 }
 
 void ffi_string_ptr_set (void* ptr, char* str)

@@ -35,14 +35,18 @@ package: std/db
   (lambda (self mystmt)
     (struct-instance-init! self mystmt)))
 
-(def (raise-mysql-error where mysql)
-  (let ((errmsg (mysql_error mysql))
-        (errno (mysql_errno mysql)))
+(def (raise-mysql-error where mysql (unknown-error "Unknown Error"))
+  (let* ((errno (mysql_errno mysql))
+         (errmsg (if (fxzero? errno)
+                   unknown-error
+                   (mysql_error mysql))))
     (raise-sql-error where (format "MySQL error: ~a" errmsg) errno)))
 
-(def (raise-mysql-stmt-error where mystmt)
-  (let ((errmsg (mysql_stmt_error mystmt))
-        (errno (mysql_stmt_errno mystmt)))
+(def (raise-mysql-stmt-error where mystmt (unknown-error "Unknown Error"))
+  (let* ((errno (mysql_stmt_errno mystmt))
+         (errmsg (if (fxzero? errno)
+                   unknown-error
+                   (mysql_stmt_error mystmt))))
     (raise-sql-error where (format "MySQL statement error: ~a" errmsg) errno)))
 
 (def (mysql-connect host: (host #f)
@@ -52,7 +56,7 @@ package: std/db
                     db: (db #f))
   (let* (mysql (mysql_init))
     (unless mysql
-      (raise-sql-error 'mysql-connect "Error allocating MYSQL structure"))
+      (error "Error allocating and initializing MYSQL structure"))
     (let (r (mysql_connect mysql host port user passwd db))
       (if (fxzero? r)
         (make-mysql-connection mysql)
@@ -195,7 +199,7 @@ package: std/db
     (with ((mysql-statement mystmt) self)
       (let (myres (mysql_stmt_result_metadata mystmt))
         (unless myres
-          (raise-mysql-stmt-error 'mysql-query-start mystmt))
+          (raise-mysql-stmt-error 'mysql-query-start mystmt "No result set metadata"))
         (try
          (let (count (mysql_num_fields myres))
            (when (fxzero? count)
@@ -269,9 +273,9 @@ package: std/db
       (let (r (mysql_stmt_fetch mystmt))
         (cond
          ((fxzero? r) #!void)
-         ((eq? r MYSQL_NO_DATA) iter-end)
-         ((eq? r MYSQL_DATA_TRUNCATED)
-          (error "Error fetching data; data was truncated!"))
+         ((eq? r MYSQL_DATA_TRUNCATED) ; that's ok, blobs and strings
+          #!void)
+         ((eq? r MYSQL_NO_DATA) iter-end) 
          (else
           (raise-mysql-stmt-error 'mysql-query-fetch mystmt)))))))
 
