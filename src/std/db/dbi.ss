@@ -155,4 +155,7 @@ package: std/db
       {query-fini stmt})))
 
 (def (sql-columns stmt)
-  {columns stmt})
+  (if (statement-e stmt)
+    {columns stmt}
+    (error "Invalid operation; statement finalized" stmt)))
+
