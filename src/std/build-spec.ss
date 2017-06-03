@@ -101,6 +101,7 @@
     "web/fastcgi"
     "web/rack"
     "db/dbi"
+    "db/conpool"
     ,@(if config-enable-sqlite
         '((gsc: "db/_sqlite" "-ld-options" "-lsqlite3")
           (ssi: "db/_sqlite")
