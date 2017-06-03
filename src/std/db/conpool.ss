@@ -3,8 +3,7 @@
 ;;; Generic SQL database connection pool
 package: std/db
 
-(import :gerbil/gambit/threads
-        :std/sugar)
+(import :gerbil/gambit/threads)
 (export make-connection-pool connection-pool?
         connection-pool-get connection-pool-put)
 
