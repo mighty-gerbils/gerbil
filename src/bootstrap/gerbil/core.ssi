@@ -367,6 +367,7 @@ namespace: gerbil/core
                     (interned-keyword? interned-keyword?)
                     (keyword-hash keyword-hash)
                     (string->bytes string->bytes)
+                    (substring->bytes substring->bytes)
                     (bytes->string bytes->string)
                     (string->keyword string->keyword)
                     (keyword->string keyword->string)

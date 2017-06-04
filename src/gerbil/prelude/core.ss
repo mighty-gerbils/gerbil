@@ -142,7 +142,7 @@ package: gerbil
     uninterned-symbol? interned-symbol? 
     gensym make-symbol make-uninterned-symbol symbol-hash
     keyword? uninterned-keyword? interned-keyword? keyword-hash
-    string->bytes bytes->string
+    string->bytes substring->bytes bytes->string
     string->keyword keyword->string make-uninterned-keyword
     symbol->keyword keyword->symbol
     substring-fill! substring-move! string-shrink!
