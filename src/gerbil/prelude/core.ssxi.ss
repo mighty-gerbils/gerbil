@@ -90,6 +90,7 @@ package: gerbil
            (ast-rules (%#call)
              ((%#call _ arg)
               (%#call (%#ref fx-) arg (%#quote 1))))))
+ (fx/ (@lambda 2 fxquotient))
  (fxshift (@lambda 2 fxarithmetic-shift)))
 
 ;; gx-gambc0: foldings
@@ -99,6 +100,11 @@ package: gerbil
  (andmap (@case-lambda (2 andmap1) ((3) #f)))
  (ormap (@case-lambda (2 ormap1) ((3) #f)))
  (filter-map (@case-lambda (2 filter-map1) ((3) #f))))
+
+;; gx-gambc0: call/cc and friends
+(declare-type*
+ (call-with-escape (@lambda 1 call-with-current-continuation))
+ (with-catch (@lambda 2 with-exception-catcher)))
 
 ;; gx-gambc1: AST type for optimizing the expander
 (declare-type*
