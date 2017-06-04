@@ -38,14 +38,16 @@ package: std/db
     (error "Bad argument: expected u8vector or string" key))))
 
 ;;; Implementation
-(defstruct leveldb (db)
+(defstruct leveldb (db opt)
+  final: #t)
+(defstruct leveldb-opts (e cache filter)
   final: #t)
 
 (def (leveldb-open name (opts (leveldb-default-options)))
   (let* ((errptr (get-errptr))
-         (ptr (leveldb_open opts name errptr)))
+         (ptr (leveldb_open (leveldb-opts-e opts) name errptr)))
     (if ptr
-      (let (db (make-leveldb ptr (make-hash-table-eq weak-keys: #t)))
+      (let (db (make-leveldb ptr opts))
         (make-will db leveldb-close)
         db)
       (raise-leveldb-error/errptr 'leveldb-open errptr))))
@@ -197,14 +199,14 @@ package: std/db
 
 (def (leveldb-destroy-db name (opts (leveldb-default-options)))
   (let (errptr (get-errptr))
-    (leveldb_destroy_db opts name errptr)
+    (leveldb_destroy_db (leveldb-opts-e opts) name errptr)
     (cond
      ((errptr_str errptr)
       => (cut raise-leveldb-error 'leveldb-destroy-db <>)))))
 
 (def (leveldb-repair-db name (opts (leveldb-default-options)))
   (let (errptr (get-errptr))
-    (leveldb_repair_db opts name errptr)
+    (leveldb_repair_db (leveldb-opts-e opts) name errptr)
     (cond
      ((errptr_str errptr)
       => (cut raise-leveldb-error 'leveldb-repair-db <>)))))
@@ -246,20 +248,21 @@ package: std/db
       (if (fixnum? block-restart-interval)
         (leveldb_options_set_block_restart_interval opts block-restart-interval)
         (error "Bad block restart interval; expected fixnum")))
-    (when lru-cache-capacity
-      (if (fixnum-positive? lru-cache-capacity)
-        (leveldb_options_set_cache
-         opts
-         (check-ptr leveldb_cache_create_lru (leveldb_cache_create_lru lru-cache-capacity)))
-        (error "Bad lru cache size; expected positive fixnum")))
-    (when bloom-filter-bits
-      (if (fixnum-positive? bloom-filter-bits)
-        (leveldb_options_set_filter_policy
-         opts
-         (check-ptr leveldb_filterpolicy_create_bloom
-                    (leveldb_filterpolicy_create_bloom bloom-filter-bits)))
-        (error "Bad bloom filter bits; expected positive fixnum")))
-    opts))
+    (def cache
+      (when lru-cache-capacity
+        (if (fixnum-positive? lru-cache-capacity)
+          (let (ptr (check-ptr leveldb_cache_create_lru (leveldb_cache_create_lru lru-cache-capacity)))
+            (leveldb_options_set_cache opts ptr)
+            ptr)
+          (error "Bad lru cache size; expected positive fixnum"))))
+    (def bloom-filter
+      (when bloom-filter-bits
+        (if (fixnum-positive? bloom-filter-bits)
+          (let (ptr (check-ptr leveldb_filterpolicy_create_bloom (leveldb_filterpolicy_create_bloom bloom-filter-bits)))
+            (leveldb_options_set_filter_policy opts ptr)
+            ptr)
+          (error "Bad bloom filter bits; expected positive fixnum"))))
+    (make-leveldb-opts opts cache bloom-filter)))
 
 (def (leveldb-default-options)
   (force default-options))
