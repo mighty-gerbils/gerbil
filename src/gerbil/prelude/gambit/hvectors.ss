@@ -165,6 +165,4 @@ package: gerbil/gambit
   subf64vector
   subf64vector-move!
   f64vector-shrink!
-  object->u8vector
-  u8vector->object
   )
