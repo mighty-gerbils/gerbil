@@ -3,10 +3,7 @@
 ;;; MySQL dbi interface
 package: std/db
 
-(import (only-in :gerbil/gambit
-                 make-u8vector u8vector? u8vector-length
-                 fxquotient)
-        :std/db/dbi
+(import :std/db/dbi
         :std/db/_mysql
         :std/error
         :std/format
@@ -137,7 +134,7 @@ package: std/db
                               arg
                               (time-utc->date (date->time-utc arg))))
                       (ptr (check-ptr (make_time_ptr))))
-                 (mysql_time_set_second_part ptr (fxquotient (date-nanosecond date) 1000))
+                 (mysql_time_set_second_part ptr (fx/ (date-nanosecond date) 1000))
                  (mysql_time_set_second ptr (date-second date))
                  (mysql_time_set_minute ptr (date-minute date))
                  (mysql_time_set_hour ptr (date-hour date))

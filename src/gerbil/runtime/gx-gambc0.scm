@@ -1145,6 +1145,8 @@
   (fx- x 1))
 (define fxshift
   fxarithmetic-shift)
+(define fx/
+  fxquotient)
 
 (define (interned-symbol? x)
   (and (symbol? x)

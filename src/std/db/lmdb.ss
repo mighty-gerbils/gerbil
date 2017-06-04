@@ -4,7 +4,6 @@
 package: std/db
 
 (import :gerbil/gambit/threads
-        :gerbil/gambit/hvectors
         :std/error
         :std/format
         :std/db/_lmdb)

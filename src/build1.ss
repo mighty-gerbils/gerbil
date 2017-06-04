@@ -22,6 +22,7 @@
 (def gerbil-prelude
   '("gerbil/prelude/core.ss"
     "gerbil/prelude/gambit/ports.ss"
+    "gerbil/prelude/gambit/bytes.ss"
     "gerbil/prelude/gambit/misc.ss"
     "gerbil/prelude/gambit/random.ss"
     "gerbil/prelude/gambit/continuations.ss"

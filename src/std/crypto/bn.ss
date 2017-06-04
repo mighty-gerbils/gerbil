@@ -3,8 +3,7 @@
 ;;; libcrypto bignum utils
 package: std/crypto
 
-(import :gerbil/gambit/hvectors
-        :std/crypto/libcrypto
+(import :std/crypto/libcrypto
         :std/crypto/etc)
 (export #t)
 

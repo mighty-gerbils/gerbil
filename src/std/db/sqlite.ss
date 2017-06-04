@@ -3,8 +3,7 @@
 ;;; SQLite dbi interface
 package: std/db
 
-(import (only-in :gerbil/gambit/hvectors make-u8vector u8vector?)
-        :std/db/dbi
+(import :std/db/dbi
         :std/db/_sqlite
         :std/format
         :std/iter)

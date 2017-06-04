@@ -6,8 +6,6 @@ package: std/net
 (import (only-in :gerbil/gambit/ports
                  open-tcp-client read-u8vector write-u8vector
                  force-output close-port)
-        (only-in :gerbil/gambit/hvectors
-                 string->bytes bytes->string)
         :std/pregexp
         :std/error
         :std/net/address)

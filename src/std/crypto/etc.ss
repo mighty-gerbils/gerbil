@@ -7,8 +7,7 @@ package: std/crypto
         check-bytes check-bytes-start check-bytes-end check-bytes-range
         call-with-binary-input
         random-bytes random-bytes!)
-(import :gerbil/gambit/hvectors
-        :gerbil/gambit/threads
+(import :gerbil/gambit/threads
         :gerbil/gambit/ports
         :std/format
         :std/crypto/libcrypto)

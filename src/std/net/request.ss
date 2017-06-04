@@ -4,7 +4,6 @@
 package: std/net
 
 (import :gerbil/gambit/ports
-        :gerbil/gambit/hvectors
         :gerbil/gambit/misc
         :std/sugar
         :std/format

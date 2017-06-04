@@ -165,37 +165,4 @@ package: gerbil/gambit
   subf64vector
   subf64vector-move!
   f64vector-shrink!
-  object->u8vector
-  u8vector->object
   )
-
-;; bytes
-(define-alias bytes? u8vector?)
-(define-alias make-bytes make-u8vector)
-(define-alias bytes u8vector)
-(define-alias bytes-length u8vector-length)
-(define-alias bytes-ref u8vector-ref)
-(define-alias bytes-set! u8vector-set!)
-(define-alias bytes->list u8vector->list)
-(define-alias list->bytes list->u8vector)
-(define-alias bytes-fill! u8vector-fill!)
-(define-alias subbytes-fill! subu8vector-fill!)
-(define-alias append-bytes append-u8vectors)
-(define-alias bytes-copy u8vector-copy)
-(define-alias bytes-append u8vector-append)
-(define-alias subbytes subu8vector)
-(define-alias bytes-move! subu8vector-move!)
-(define-alias bytes-shrink! u8vector-shrink!)
-(define-alias object->bytes object->u8vector)
-(define-alias bytes->object u8vector->object)
-
-;; gxrt
-(extern namespace: #f
-  string->bytes substring->bytes bytes->string)
-
-(defsyntax (@bytes stx)
-  (syntax-case stx ()
-    ((_ str) 
-     (stx-string? #'str)
-     (with-syntax ((e (string->bytes (stx-e #'str))))
-       #'(quote e)))))

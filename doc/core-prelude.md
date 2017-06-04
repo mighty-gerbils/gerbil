@@ -943,7 +943,8 @@ Defines the following symbols as externs:
     call-with-current-continuation
     call-with-values values
     dynamic-wind
-    ;; 6.5 eval ; userland
+    ;; 6.5 eval
+    eval interaction-environment scheme-report-environment
     ;; 6.6 i/o
     call-with-input-file call-with-output-file
     input-port? output-port?
@@ -1002,7 +1003,8 @@ Defines the following symbols as externs:
     string->bytes bytes->string
     string->keyword keyword->string make-uninterned-keyword
     symbol->keyword keyword->symbol
-    substring->list substring-fill!
+    substring-fill! substring-move! string-shrink!
+    append-strings
     string-map string-index string-rindex 
     string-split string-join string-empty?
     ;; MOP
@@ -1076,9 +1078,24 @@ Defines the following symbols as externs:
     datum-parsing-exception? datum-parsing-exception-filepos
     read-line read-all
     ;; string I/O
+    write-substring
     open-input-string open-output-string get-output-string
     call-with-input-string with-input-from-string
     call-with-output-string with-output-to-string
+    ;; bytes
+    u8vector? u8vector
+    make-u8vector u8vector-length u8vector-ref u8vector-set!
+    u8vector->list list->u8vector
+    u8vector-fill! u8vector-shrink!
+    u8vector-copy u8vector-append
+    subu8vector subu8vector-fill! subu8vector-move! 
+    append-u8vectors
+    object->u8vector u8vector->object
+    ;; bytes I/O
+    write-subu8vector
+    open-input-u8vector open-output-u8vector get-output-u8vector
+    call-with-input-u8vector with-input-from-u8vector
+    call-with-output-u8vector with-output-to-u8vector
     ;; generic I/O
     displayln display*
     ;;flush-output-port

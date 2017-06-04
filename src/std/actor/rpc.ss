@@ -3,8 +3,7 @@
 ;;; actor rpc
 package: std/actor
 
-(import :gerbil/gambit/hvectors
-        :gerbil/gambit/threads
+(import :gerbil/gambit/threads
         :gerbil/gambit/ports
         :gerbil/gambit/os
         :std/sugar
@@ -381,7 +380,7 @@ package: std/actor
        ((void? data)                    ; keep-alive
         (loop))
        ((u8vector? data)                ; incoming message
-        (let (bytes (open-input-bytes data))
+        (let (bytes (open-input-u8vector data))
           (let (msg (try (rpc-proto-read-message-envelope bytes)
                          (catch (e) e)))
             (if (message? msg)

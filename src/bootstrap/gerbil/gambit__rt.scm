@@ -8,6 +8,7 @@
   (load-module "gerbil/gambit/random__rt")
   (load-module "gerbil/gambit/hvectors__rt")
   (load-module "gerbil/gambit/ports__rt")
+  (load-module "gerbil/gambit/bytes__rt")
   (load-module "gerbil/gambit/readtables__rt")
   (load-module "gerbil/gambit/hash__rt")
   (load-module "gerbil/gambit/exceptions__rt")
