@@ -33,10 +33,14 @@ package: std/db
        cleanup ...
        (raise-lmdb-error 'lmdb-e res)))))
 
-(defstruct lmdb-env (ptr dbs mx))
-(defstruct lmdb-db (env dbi name))
-(defstruct lmdb-txn (env ptr val))
-(defstruct lmdb-cursor (txn db ptr val1 val2))
+(defstruct lmdb-env (ptr dbs mx)
+  final: #t)
+(defstruct lmdb-db (env dbi name)
+  final: #t)
+(defstruct lmdb-txn (env ptr val)
+  final: #t)
+(defstruct lmdb-cursor (txn db ptr val1 val2)
+  final: #t)
 
 (def (lmdb-open path
                 max-dbs: (maxdbs 1)
