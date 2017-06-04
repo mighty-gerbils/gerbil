@@ -226,7 +226,7 @@ package: std/db
     (leveldb_options_set_compression opts (if compression 1 0))
     (when write-buffer-size
       (if (fixnum-positive? write-buffer-size)
-        (leveldb_optoins_set_write_buffer_size opts write-buffer-size)
+        (leveldb_options_set_write_buffer_size opts write-buffer-size)
         (error "Bad write buffer size; expected positive fixnum" write-buffer-size)))
     (when max-open-files
       (if (fixnum? max-open-files)

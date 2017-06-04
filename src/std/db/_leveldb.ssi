@@ -37,8 +37,7 @@ package: std/db
   leveldb_options_set_error_if_exists
   leveldb_options_set_paranoid_checks
   leveldb_options_set_compression
-  leveldb_optoins_set_write_buffer_size
-  leveldb_optoins_set_write_buffer_size
+  leveldb_options_set_write_buffer_size
   leveldb_options_set_max_open_files
   leveldb_options_set_block_size
   leveldb_options_set_block_restart_interval
@@ -61,4 +60,4 @@ package: std/db
   slice_bytes
   )
 
-;; (load-module "std/db/_leveldb")
+(load-module "std/db/_leveldb")
