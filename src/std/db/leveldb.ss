@@ -14,7 +14,7 @@ package: std/db
         leveldb-put leveldb-get leveldb-delete leveldb-write
         leveldb-writebatch leveldb-writebatch-clear
         leveldb-writebatch-put leveldb-writebatch-delete
-        leveldb-iterator leveldb-iterator-valid?
+        leveldb-iterator leveldb-iterator-close leveldb-iterator-valid?
         leveldb-iterator-seek-first leveldb-iterator-seek-last
         leveldb-iterator-seek
         leveldb-iterator-next leveldb-iterator-prev
@@ -57,14 +57,14 @@ package: std/db
   final: #t)
 (defstruct leveldb-opts (e cache filter)
   final: #t)
+(defstruct leveldb-itor (e)
+  final: #t)
 
 (def (leveldb-open name (opts (leveldb-default-options)))
   (let* ((errptr (get-errptr))
          (ptr (leveldb_open (leveldb-opts-e opts) name errptr)))
     (if ptr
-      (let (db (make-leveldb ptr opts))
-        (make-will db leveldb-close)
-        db)
+      (make-leveldb ptr opts)
       (raise-leveldb-error/errptr 'leveldb-open errptr))))
 
 (def (leveldb-close ldb)
@@ -161,45 +161,80 @@ package: std/db
 (def (leveldb-iterator ldb (opts (leveldb-default-read-options)))
   (with ((leveldb db) ldb)
     (if db
-      (check-ptr leveldb_create_iterator (leveldb_create_iterator db opts))
+      (let (lit (make-leveldb-itor (check-ptr leveldb_create_iterator (leveldb_create_iterator db opts))))
+        (make-will lit leveldb-iterator-close)
+        lit)
       (error "LevelDB database has been closed"))))
 
-(def (leveldb-iterator-valid? itor)
-  (eq? (leveldb_iter_valid itor) 1))
+(def (leveldb-iterator-close lit)
+  (with ((leveldb-itor itor) lit)
+    (when itor
+      (leveldb_iter_destroy itor)
+      (set! (leveldb-itor-e lit) #f))))
 
-(def (leveldb-iterator-seek-first itor)
-  (leveldb_iter_seek_to_first itor))
+(def (leveldb-iterator-valid? lit)
+  (with ((leveldb-itor itor) lit)
+    (if itor
+      (eq? (leveldb_iter_valid itor) 1)
+      (error "Iterator has been finalized"))))
 
-(def (leveldb-iterator-seek-last itor)
-  (leveldb_iter_seek_to_last itor))
+(def (leveldb-iterator-seek-first lit)
+  (with ((leveldb-itor itor) lit)
+    (if itor
+      (leveldb_iter_seek_to_first itor)
+      (error "Iterator has been finalized"))))
 
-(def (leveldb-iterator-seek itor key)
-  (let (keyx (value-bytes key))
-    (leveldb_iter_seek itor keyx)))
+(def (leveldb-iterator-seek-last lit)
+  (with ((leveldb-itor itor) lit)
+    (if itor
+      (leveldb_iter_seek_to_last itor)
+      (error "Iterator has been finalized"))))
 
-(def (leveldb-iterator-next itor)
-  (leveldb_iter_next itor))
+(def (leveldb-iterator-seek lit key)
+  (with ((leveldb-itor itor) lit)
+    (if itor
+      (let (keyx (value-bytes key))
+        (leveldb_iter_seek itor keyx))
+      (error "Iterator has been finalized"))))
 
-(def (leveldb-iterator-prev itor)
-  (leveldb_iter_prev itor))
+(def (leveldb-iterator-next lit)
+  (with ((leveldb-itor itor) lit)
+    (if itor
+      (leveldb_iter_next itor)
+      (error "Iterator has been finalized"))))                   
 
-(def (leveldb-iterator-key itor)
-  (alet (slice (leveldb_iter_key itor))
-    (slice->bytes slice)))
+(def (leveldb-iterator-prev lit)
+  (with ((leveldb-itor itor) lit)
+    (if itor
+      (leveldb_iter_prev itor)
+      (error "Iterator has been finalized"))))
 
-(def (leveldb-iterator-value itor)
-  (alet (slice (leveldb_iter_value itor))
-    (slice->bytes slice)))
+(def (leveldb-iterator-key lit)
+  (with ((leveldb-itor itor) lit)
+    (if itor
+      (alet (slice (leveldb_iter_key itor))
+        (slice->bytes slice))
+      (error "Iterator has been finalized"))))
 
-(def (leveldb-iterator-error itor (raise? #t))
-  (let (errptr (get-errptr))
-    (leveldb_iter_get_error itor errptr)
-    (cond
-     ((not raise?)
-      (errptr_str errptr))
-     ((errptr_str errptr)
-      => (cut raise-leveldb-error 'leveldb-iterator-error <>))
-     (else #f))))
+(def (leveldb-iterator-value lit)
+  (with ((leveldb-itor itor) lit)
+    (if itor
+      (alet (slice (leveldb_iter_value itor))
+        (slice->bytes slice))
+      (error "Iterator has been finalized"))))
+
+(def (leveldb-iterator-error lit (raise? #t))
+  (with ((leveldb-itor itor) lit)
+    (if itor
+      (let (errptr (get-errptr))
+        (leveldb_iter_get_error itor errptr)
+        (cond
+         ((not raise?)
+          (errptr_str errptr))
+         ((errptr_str errptr)
+          => (cut raise-leveldb-error 'leveldb-iterator-error <>))
+         (else #f)))
+      (error "Iterator has been finalized"))))
 
 ;; Misc Operations
 (def (leveldb-compact-range ldb start-key end-key)

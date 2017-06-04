@@ -71,14 +71,14 @@ END-C
 
 (c-define-type leveldb_t "leveldb_t")
 (c-define-type leveldb_t*
-  (pointer leveldb_t (leveldb_t*) "ffi_free"))
+  (pointer leveldb_t (leveldb_t*)))
 
 (c-define-type leveldb_writebatch_t "leveldb_writebatch_t")
 (c-define-type leveldb_writebatch_t*
   (pointer leveldb_writebatch_t (leveldb_writebatch_t*) "ffi_free_writebatch"))
 (c-define-type leveldb_iterator_t "leveldb_iterator_t")
 (c-define-type leveldb_iterator_t*
-  (pointer leveldb_iterator_t (leveldb_iterator_t*) "ffi_free_iter"))
+  (pointer leveldb_iterator_t (leveldb_iterator_t*))) ; free with leveldb_iter_destroy
 
 (c-define-type leveldb_options_t "leveldb_options_t")
 (c-define-type leveldb_options_t*
@@ -116,6 +116,7 @@ END-C
   "ffi_leveldb_writebatch_delete")
 
 (define-c-lambda leveldb_create_iterator (leveldb_t* leveldb_readoptions_t*) leveldb_iterator_t*)
+(define-c-lambda leveldb_iter_destroy (leveldb_iterator_t*) void)
 (define-c-lambda leveldb_iter_valid (leveldb_iterator_t*) int)
 (define-c-lambda leveldb_iter_seek_to_first (leveldb_iterator_t*) void)
 (define-c-lambda leveldb_iter_seek_to_last (leveldb_iterator_t*) void)

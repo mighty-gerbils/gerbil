@@ -40,6 +40,7 @@
       (check (bytes->string (leveldb-iterator-key itor)) => "def")
       (check (bytes->string (leveldb-iterator-value itor)) => "this-is-def")
       (leveldb-iterator-next itor)
-      (check (leveldb-iterator-valid? itor) => #f))
+      (check (leveldb-iterator-valid? itor) => #f)
+      (leveldb-iterator-close itor))
     
     (leveldb-close db)))
