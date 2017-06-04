@@ -59,35 +59,9 @@ The Gerbil interpreter is `$GERBIL_HOME/bin/gxi`, and the compiler is
 `$GERBIL_HOME/bin/gxc`.
 
 If you want an interactive Gerbil shell just execute the interpreter
-directly by running gxi.
+directly by running `gxi`.
 
-If you want to write an executable Gerbil script, add `$GERBIL_HOME/bin`
-to your `PATH` and use the following for your magic:
-```
-#!/usr/bin/env gxi-script
-```
-
-You can define a main procedure in your script that will receive
-the command line arguments.
-
-For an example script, put the following in hello.ss
-```
-#!/usr/bin/env gxi-script
-
-(def (main . args)
- (displayln "Hello world! My arguments are " args))
-```
-
-Running the script with
-```
-chmod +x hello.ss
-./hello.ss 1 2 3
-```
-
-should produce the following output:
-```
-Hello world! My arguments are (1 2 3)
-```
+For "hello, world" see the [Guide](doc/guide.md#hello-world).
 
 # Documentation
 
@@ -107,6 +81,8 @@ as all the main language features are exercised in one way or another
 within the implementation.
 
 Depending on your inclinations, there are several starting points:
+- If you are interested in general purpose programming, then you should look at
+  the [stdlib sources](src/std).
 - If you are interested in Gerbil macrology, then the place to start is the [core prelude](src/gerbil/prelude/core.ss).
   This is the language that you get in the interpreter and what is available
   when writing a new module without explicitly specifying a prelude.
@@ -114,8 +90,6 @@ Depending on your inclinations, there are several starting points:
   the [expander sources](src/gerbil/expander).
 - If you are interested in the Gerbil compiler internals, then you should look at
   the [compiler sources](src/gerbil/compiler).
-- If you are interested in general purpose programming, then you should look at
-  the [stdlib sources](src/std).
 
 For questions and support, you can come say hi in `#gerbil-scheme` on irc at freenode.net.
 
