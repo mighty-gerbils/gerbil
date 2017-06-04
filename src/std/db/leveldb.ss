@@ -14,11 +14,11 @@ package: std/db
         leveldb-put leveldb-get leveldb-delete leveldb-write
         leveldb-writebatch leveldb-writebatch-clear
         leveldb-writebatch-put leveldb-writebatch-delete
-        leveldb-iterator
+        leveldb-iterator leveldb-iterator-valid?
         leveldb-iterator-seek-first leveldb-iterator-seek-last
         leveldb-iterator-seek
         leveldb-iterator-next leveldb-iterator-prev
-        leveld-iterator-key leveldb-iterator-value
+        leveldb-iterator-key leveldb-iterator-value
         leveldb-iterator-error
         leveldb-compact-range
         leveldb-destroy-db
@@ -92,9 +92,12 @@ package: std/db
       (let* ((keyx (value-bytes key))
              (errptr (get-errptr))
              (slice (leveldb_get db opts keyx errptr)))
-        (if slice
-          (slice->bytes slice)
-          (raise-leveldb-error/errptr 'leveldb-get errptr)))
+        (cond
+         (slice
+          (slice->bytes slice))
+         ((errptr_str errptr)
+          => (cut raise-leveldb-error 'leveldb-get <>))
+         (else #f)))
       (error "LevelDB database has been closed"))))
 
 (def (leveldb-delete ldb key (opts (leveldb-default-write-options)))
@@ -161,6 +164,9 @@ package: std/db
       (check-ptr leveldb_create_iterator (leveldb_create_iterator db opts))
       (error "LevelDB database has been closed"))))
 
+(def (leveldb-iterator-valid? itor)
+  (eq? (leveldb_iter_valid itor) 1))
+
 (def (leveldb-iterator-seek-first itor)
   (leveldb_iter_seek_to_first itor))
 
@@ -177,7 +183,7 @@ package: std/db
 (def (leveldb-iterator-prev itor)
   (leveldb_iter_prev itor))
 
-(def (leveld-iterator-key itor)
+(def (leveldb-iterator-key itor)
   (alet (slice (leveldb_iter_key itor))
     (slice->bytes slice)))
 

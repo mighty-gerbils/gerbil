@@ -116,6 +116,7 @@ END-C
   "ffi_leveldb_writebatch_delete")
 
 (define-c-lambda leveldb_create_iterator (leveldb_t* leveldb_readoptions_t*) leveldb_iterator_t*)
+(define-c-lambda leveldb_iter_valid (leveldb_iterator_t*) int)
 (define-c-lambda leveldb_iter_seek_to_first (leveldb_iterator_t*) void)
 (define-c-lambda leveldb_iter_seek_to_last (leveldb_iterator_t*) void)
 (define-c-lambda leveldb_iter_seek (leveldb_iterator_t* scheme-object) void

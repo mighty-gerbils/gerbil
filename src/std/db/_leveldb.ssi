@@ -19,6 +19,7 @@ package: std/db
   leveldb_writebatch_delete
 
   leveldb_create_iterator
+  leveldb_iter_valid
   leveldb_iter_seek_to_first
   leveldb_iter_seek_to_last
   leveldb_iter_seek
