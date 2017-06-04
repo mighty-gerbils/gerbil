@@ -675,7 +675,7 @@ $ ./hello
 hello world
 ```
 
-The disadvantage of static linkage is that the executables are bigger
+The disadvantage of static linkage is that the executables are bigger,
 and can only use the baseline parts of the gerbil runtime (gx-gambc0).
 That means that static executables can't use the expander or the compiler,
 as the meta levels of the gerbil runtime are not linked and initialized.
@@ -683,6 +683,9 @@ as the meta levels of the gerbil runtime are not linked and initialized.
 The advantage is that static executables don't require a local Gerbil
 installation to work, which makes them suitable for binary distribution.
 They also load faster, as they don't have to do any dynamic module loading.
+And finally, because dependencies are compiled in together, you can apply
+declarations like `(not safe)` to the whole program, resulting in potentially
+significant performance gains. 
 
 ### Prelude Modules and Custom Languages
 
