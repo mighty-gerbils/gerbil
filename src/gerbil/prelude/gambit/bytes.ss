@@ -3,6 +3,7 @@
 ;;; u8vectors -- bytes alises et al
 package: gerbil/gambit
 
+(import :gerbil/gambit/ports)
 (export #t)
 
 ;; bytes
@@ -36,6 +37,8 @@ package: gerbil/gambit
 (define-alias write-byte write-u8)
 (define-alias read-subbytes read-subu8vector)
 (define-alias write-subbytes write-subu8vector)
+(define-alias write-bytes write-u8vector)
+(define-alias read-bytes read-u8vector)
 
 (defsyntax (@bytes stx)
   (syntax-case stx ()

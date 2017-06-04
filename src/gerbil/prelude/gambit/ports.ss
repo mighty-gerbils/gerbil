@@ -107,6 +107,3 @@ package: gerbil/gambit
 
 (def (read-u8vector bytes (port (current-input-port)))
   (read-subu8vector bytes 0 (u8vector-length bytes) port))
-
-(define-alias write-bytes write-u8vector)
-(define-alias read-bytes read-u8vector)
