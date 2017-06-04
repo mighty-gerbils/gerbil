@@ -219,6 +219,11 @@ package: gerbil
     ;; required by the module reader to support #lang
     datum-parsing-exception? datum-parsing-exception-filepos
     read-line read-all
+    ;; string I/O
+    write-substring
+    open-input-string open-output-string get-output-string
+    call-with-input-string with-input-from-string
+    call-with-output-string with-output-to-string
     ;; bytes
     u8vector? u8vector
     make-u8vector u8vector-length u8vector-ref u8vector-set!
@@ -227,11 +232,7 @@ package: gerbil
     u8vector-copy u8vector-append
     subu8vector subu8vector-fill! subu8vector-move! 
     append-u8vectors
-    ;; string I/O
-    write-substring
-    open-input-string open-output-string get-output-string
-    call-with-input-string with-input-from-string
-    call-with-output-string with-output-to-string
+    object->u8vector u8vector->object
     ;; bytes I/O
     write-subu8vector
     open-input-u8vector open-output-u8vector get-output-u8vector
