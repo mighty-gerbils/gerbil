@@ -3,7 +3,8 @@
 ;;; LevelDB wrapper interface
 package: std/db
 
-(import :gerbil/gambit/misc
+(import :gerbil/gambit/threads
+        :gerbil/gambit/misc
         :std/db/_leveldb
         :std/error
         :std/format)
@@ -37,14 +38,14 @@ package: std/db
     (error "Bad argument: expected u8vector or string" key))))
 
 ;;; Implementation
-(defstruct leveldb (db errptr)
+(defstruct leveldb (db ptab)
   final: #t)
 
 (def (leveldb-open name (opts (leveldb-default-options)))
   (let* ((errptr (check-ptr make_errptr (make_errptr)))
          (ptr (leveldb_open opts name errptr)))
     (if ptr
-      (let (db (make-leveldb ptr errptr))
+      (let (db (make-leveldb ptr (make-hash-table-eq weak-keys: #t)))
         (make-will db leveldb-close)
         db)
       (raise-leveldb-error/errptr 'leveldb-open errptr))))
@@ -54,14 +55,15 @@ package: std/db
     (when db
       (leveldb_close db)
       (set! (leveldb-db ldb) #f)
-      (set! (leveldb-errptr ldb) #f))))
+      (set! (leveldb-ptab ldb) #f))))
 
 ;;; Basic Operations
 (def (leveldb-put ldb key val (opts (leveldb-default-write-options)))
-  (with ((leveldb db errptr) ldb)
+  (with ((leveldb db ptab) ldb)
     (if db
       (let ((keyx (value-bytes key))
-            (valx (value-bytes val)))
+            (valx (value-bytes val))
+            (errptr (get-errptr ptab)))
         (leveldb_put db opts keyx valx errptr)
         (cond
          ((errptr_str errptr)
@@ -69,9 +71,10 @@ package: std/db
       (error "LevelDB database has been closed"))))
 
 (def (leveldb-get ldb key (opts (leveldb-default-read-options)))
-  (with ((leveldb db errptr) ldb)
+  (with ((leveldb db ptab) ldb)
     (if db
       (let* ((keyx (value-bytes key))
+             (errptr (get-errptr ptab))
              (slice (leveldb_get db opts keyx errptr)))
         (if slice
           (slice->bytes slice)
@@ -79,9 +82,10 @@ package: std/db
       (error "LevelDB database has been closed"))))
 
 (def (leveldb-delete ldb key (opts (leveldb-default-write-options)))
-  (with ((leveldb db errptr) ldb)
+  (with ((leveldb db ptab) ldb)
     (if db
-      (let (keyx (value-bytes key))
+      (let ((keyx (value-bytes key))
+            (errptr (get-errptr ptab)))
         (leveldb_delete db opts keyx errptr)
         (cond
          ((errptr_str errptr)
@@ -89,9 +93,9 @@ package: std/db
       (error "LevelDB database has been closed"))))
 
 (def (leveldb-write ldb batch (opts (leveldb-default-write-options)))
-  (with ((leveldb db errptr) ldb)
+  (with ((leveldb db ptab) ldb)
     (if db
-      (begin
+      (let (errptr (get-errptr ptab))
         (leveldb_write db opts batch errptr)
         (cond
          ((errptr_str errptr)
@@ -103,6 +107,14 @@ package: std/db
          (bytes (make-u8vector len)))
     (slice_bytes slice bytes)
     bytes))
+
+(def (get-errptr ptab)
+  (cond
+   ((hash-get ptab (current-thread)) => values)
+   (else
+    (let (errptr (check-ptr make_errptr (make_errptr)))
+      (hash-put! ptab (current-thread) errptr)
+      errptr))))
 
 ;; Write batches
 (def (leveldb-writebatch)
