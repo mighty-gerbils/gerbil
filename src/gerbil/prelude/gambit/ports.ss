@@ -4,7 +4,6 @@
 package: gerbil/gambit
 
 (export #t)
-(import (only-in :gerbil/gambit/hvectors u8vector-length))
 (extern namespace: #f
   port? close-port force-output
   
