@@ -16,6 +16,10 @@
   (config-have-lmdb
    (import "db/lmdb-test")))
 
+(cond-expand
+  (config-have-leveldb
+   (import "db/leveldb-test")))
+
 (def tests
   [generic-runtime-test generic-macro-test
    iter-test
@@ -23,6 +27,7 @@
    actor-rpc-test actor-rpc-stream-test
    (if config-enable-sqlite [sqlite-test] []) ...
    (if config-enable-lmdb [lmdb-test] []) ...
+   (if config-enable-leveldb [leveldb-test] []) ...
    ])
 
 (apply run-tests! tests)
