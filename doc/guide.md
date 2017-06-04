@@ -1405,8 +1405,10 @@ the response:
 
 ### Databases
 
-Gerbil provides a unified SQL database interface with bindings for
-SQLite and MySQL in the `:std/db` package.
+Gerbil include support for SQL databases (MySQL, SQLite) and key-value
+stores (LevelDB, LMDB) in the `:std/db` package. 
+
+#### SQL Databases
 
 The `:std/db/dbi` library provides a the implementation of the
 database interface, while individual modules (`:std/db/sqlite` and
@@ -1459,3 +1461,15 @@ And we are done, we can close our database connection:
 ```
 > (sql-close db)
 ```
+
+#### Key-Value Stores
+
+The `:std/db/leveldb` library provides support for [LevelDB](https://en.wikipedia.org/wiki/LevelDB),
+while the `:std/db/lmdb` library provides support for [LMDB](https://en.wikipedia.org/wiki/LMDB).
+The libraries are not built by default, as they have foreign dependencies, so you need to
+enable them for your installation in `$GERBIL_HOME/src/std/build-config.ss`.
+
+The interfaces of these libraries generally follow the C API for these systems, so they are
+beyond the scope of this guide. The LMDB library is covered in more detail in the
+[Key Value Store tutorial](tutorial/kvstore.md).
+
