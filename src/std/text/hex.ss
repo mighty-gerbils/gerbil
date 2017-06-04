@@ -4,8 +4,7 @@
 package: std/text
 
 (export hex-encode hexlify hex-decode unhexlify)
-(import :gerbil/gambit/hvectors
-        :gerbil/gambit/fixnum)
+(import :gerbil/gambit/fixnum)
 
 (def hexes "0123456789abcdef")
 (def (hex-encode bytes (start 0) (end #f))

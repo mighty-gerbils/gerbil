@@ -3,8 +3,7 @@
 ;;; yaml support
 package: std/text
 
-(import :gerbil/gambit/hvectors
-        :std/sugar
+(import :std/sugar
         :std/error
         :std/iter
         :std/pregexp

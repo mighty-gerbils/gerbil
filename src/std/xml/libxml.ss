@@ -34,9 +34,7 @@ package: std/xml
         HTML_PARSE_COMPACT
         HTML_PARSE_IGNORE_ENC)
 
-(import (only-in :gerbil/gambit/hvectors u8vector? u8vector-length)
-        (only-in :gerbil/gambit/ports read-line)
-        :std/xml/_libxml)
+(import :std/xml/_libxml)
 
 (def (parser-e source parse-string parse-u8vector parse-port)
   (cond

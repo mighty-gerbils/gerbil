@@ -3,8 +3,7 @@
 ;;; libcrypto ciphers
 package: std/crypto
 
-(import :gerbil/gambit/hvectors
-        :gerbil/gambit/ports
+(import :gerbil/gambit/ports
         :std/crypto/libcrypto
         :std/crypto/etc)
 

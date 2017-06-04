@@ -3,8 +3,7 @@
 ;;; zlib interface
 package: std/text
 
-(import :gerbil/gambit/hvectors
-        :gerbil/gambit/ports
+(import :gerbil/gambit/ports
         :std/sugar
         :std/error
         :std/text/_zlib)

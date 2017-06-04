@@ -3,8 +3,7 @@
 ;;; UUID utilities
 package: std/misc
 
-(import :gerbil/gambit/hvectors
-        :std/pregexp
+(import :std/pregexp
         :std/text/hex
         (only-in :std/crypto/digest md5)
         (only-in :std/crypto/etc random-bytes!))

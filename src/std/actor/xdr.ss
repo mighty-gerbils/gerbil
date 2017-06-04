@@ -3,8 +3,7 @@
 ;;; actor rpc wire data representation
 package: std/actor
 
-(import :gerbil/gambit/hvectors
-        :gerbil/gambit/ports
+(import :gerbil/gambit/ports
         :gerbil/gambit/bits
         :gerbil/gambit/fixnum
         :std/error

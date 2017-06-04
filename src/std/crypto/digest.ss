@@ -3,9 +3,7 @@
 ;;; libcrypto digests
 package: std/crypto
 
-(import (only-in :gerbil/gambit/hvectors
-                 make-u8vector)
-        :std/crypto/libcrypto
+(import :std/crypto/libcrypto
         :std/crypto/etc)
 
 (export make-digest digest? digest-update! digest-update* digest-final!

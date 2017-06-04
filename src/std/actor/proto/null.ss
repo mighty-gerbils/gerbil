@@ -4,7 +4,6 @@
 package: std/actor/proto
 
 (import :gerbil/gambit/ports
-        :gerbil/gambit/hvectors
         :std/net/address
         :std/actor/proto
         :std/actor/proto/message
