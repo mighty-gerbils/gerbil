@@ -17,8 +17,6 @@
       (let (stmt (sql-prepare db "INSERT INTO Users (FirstName, LastName, Secret) VALUES (?, ?, ?)"))
         (sql-bind stmt "John" "Smith" "very secret")
         (check (sql-exec stmt) => #!void)
-        (sql-reset stmt)
-        (sql-clear stmt)
         (sql-bind stmt "Marc" "Smith" "oh so secret")
         (check (sql-exec stmt) => #!void)
         (sql-finalize stmt)))

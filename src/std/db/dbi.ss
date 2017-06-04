@@ -124,7 +124,8 @@ package: std/db
   (if (statement-e stmt)
     (begin
       {exec stmt}
-      {reset stmt})
+      {reset stmt}
+      #!void)
     (error "Invalid operation; statement finalized" stmt)))
 
 (def (sql-query stmt)
