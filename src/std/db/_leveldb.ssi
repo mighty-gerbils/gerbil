@@ -5,6 +5,33 @@ package: std/db
 
 (export #t)
 (extern
+  leveldb_open
+  leveldb_close
+
+  leveldb_put
+  leveldb_get
+  leveldb_delete
+  leveldb_write
+
+  leveldb_writebatch_create
+  leveldb_writebatch_clear
+  leveldb_writebatch_put
+  leveldb_writebatch_delete
+
+  leveldb_create_iterator
+  leveldb_iter_seek_to_first
+  leveldb_iter_seek_to_last
+  leveldb_iter_seek
+  leveldb_iter_next
+  leveldb_iter_prev
+  leveldb_iter_key
+  leveldb_iter_value
+  leveldb_iter_get_error
+  
+  leveldb_approximate_sizes
+  leveldb_compact_range
+  leveldb_destroy_db
+  leveldb_repair_db
   
   leveldb_options_create
   leveldb_options_set_create_if_missing
@@ -27,6 +54,11 @@ package: std/db
   
   leveldb_writeoptions_create
   leveldb_writeoptions_set_sync
+
+  make_errptr
+  errptr_str
+  slice_len
+  slice_bytes
   )
 
 ;; (load-module "std/db/_leveldb")

@@ -3,16 +3,21 @@
 ;;; LevelDB wrapper interface
 package: std/db
 
-(import :std/db/_leveldb
+(import :gerbil/gambit/misc
+        :std/db/_leveldb
         :std/error
         :std/format)
 (export leveldb-error?
+        
         )
 
 (defstruct (leveldb-error <error>) ())
 
 (def (raise-leveldb-error where what)
   (raise (make-leveldb-error what [] where)))
+
+(def (raise-leveldb-error/errptr where errptr)
+  (raise (make-leveldb-error (errptr_str errptr) [] where)))
 
 (defrules check-ptr ()
   ((_ where expr)
@@ -23,6 +28,169 @@ package: std/db
 (def (fixnum-positive? obj)
   (and (fixnum? obj)
        (fxpositive? obj)))
+
+(def (value-bytes key)
+  (cond
+   ((u8vector? key) key)
+   ((string? key) (string->bytes key))
+   (else
+    (error "Bad argument: expected u8vector or string" key))))
+
+;;; Implementation
+(defstruct leveldb (db errptr)
+  final: #t)
+
+(def (leveldb-open name (opts (leveldb-default-options)))
+  (let* ((errptr (check-ptr make_errptr (make_errptr)))
+         (ptr (leveldb_open opts name errptr)))
+    (if ptr
+      (let (db (make-leveldb ptr errptr))
+        (make-will db leveldb-close)
+        db)
+      (raise-leveldb-error/errptr 'leveldb-open errptr))))
+
+(def (leveldb-close ldb)
+  (with ((leveldb db) ldb)
+    (when db
+      (leveldb_close db)
+      (set! (leveldb-db ldb) #f)
+      (set! (leveldb-errptr ldb) #f))))
+
+;;; Basic Operations
+(def (leveldb-put ldb key val (opts (leveldb-default-write-options)))
+  (with ((leveldb db errptr) ldb)
+    (if db
+      (let ((keyx (value-bytes key))
+            (valx (value-bytes val)))
+        (leveldb_put db opts keyx valx errptr)
+        (cond
+         ((errptr_str errptr)
+          => (cut raise-leveldb-error 'leveldb-put <>))))
+      (error "LevelDB database has been closed"))))
+
+(def (leveldb-get ldb key (opts (leveldb-default-read-options)))
+  (with ((leveldb db errptr) ldb)
+    (if db
+      (let* ((keyx (value-bytes key))
+             (slice (leveldb_get db opts keyx errptr)))
+        (if slice
+          (slice->bytes slice)
+          (raise-leveldb-error/errptr 'leveldb-get errptr)))
+      (error "LevelDB database has been closed"))))
+
+(def (leveldb-delete ldb key (opts (leveldb-default-write-options)))
+  (with ((leveldb db errptr) ldb)
+    (if db
+      (let (keyx (value-bytes key))
+        (leveldb_delete db opts keyx errptr)
+        (cond
+         ((errptr_str errptr)
+          => (cut raise-leveldb-error 'leveldb-delete <>))))
+      (error "LevelDB database has been closed"))))
+
+(def (leveldb-write ldb batch (opts (leveldb-default-write-options)))
+  (with ((leveldb db errptr) ldb)
+    (if db
+      (begin
+        (leveldb_write db opts batch errptr)
+        (cond
+         ((errptr_str errptr)
+          => (cut raise-leveldb-error 'leveldb-write <>))))
+      (error "LevelDB database has been closed"))))
+
+(def (slice->bytes slice)
+  (let* ((len (slice_len slice))
+         (bytes (make-u8vector len)))
+    (slice_bytes slice bytes)
+    bytes))
+
+;; Write batches
+(def (leveldb-writebatch)
+  (check-ptr leveldb_writebatch_create (leveldb_writebatch_create)))
+
+(def (leveldb-writebatch-clear batch)
+  (leveldb_writebatch_clear batch))
+
+(def (leveldb-writebatch-put batch key val)
+  (let ((keyx (value-bytes key))
+        (valx (value-bytes val)))
+    (leveldb_writebatch_put batch keyx valx)))
+
+(def (leveldb-writebatch-delete batch key)
+  (let (keyx (value-bytes key))
+    (leveldb_writebatch_delete batch keyx)))
+
+;; Iterators
+(def (leveldb-iterator ldb (opts (leveldb-default-read-options)))
+  (with ((leveldb db) ldb)
+    (if db
+      (check-ptr leveldb_create_iterator (leveldb_create_iterator db opts))
+      (error "LevelDB database has been closed"))))
+
+(def (leveldb-iterator-seek-first itor)
+  (leveldb_iter_seek_to_first itor))
+
+(def (leveldb-iterator-seek-last itor)
+  (leveldb_iter_seek_to_last itor))
+
+(def (leveldb-iterator-seek itor key)
+  (let (keyx (value-bytes key))
+    (leveldb_iter_seek itor keyx)))
+
+(def (leveldb-iterator-next itor)
+  (leveldb_iter_next itor))
+
+(def (leveldb-iterator-prev itor)
+  (leveldb_iter_prev itor))
+
+(def (leveld-iterator-key itor)
+  (alet (slice (leveldb_iter_key itor))
+    (slice->bytes slice)))
+
+(def (leveldb-iterator-value itor)
+  (alet (slice (leveldb_iter_value itor))
+    (slice->bytes slice)))
+
+(def (leveldb-iterator-error itor (raise? #t))
+  (let (errptr (check-ptr make_errptr make_errptr))
+    (leveldb_iter_get_error itor errptr)
+    (cond
+     ((not raise?)
+      (errptr_str errptr))
+     ((errptr_str errptr)
+      => (cut raise-leveldb-error 'leveldb-iterator-error <>))
+     (else #f))))
+
+;; Misc Operations
+(def (leveldb-approximate-sizes ldb num-ranges start-key end-key)
+  (with ((leveldb db) ldb)
+    (if db
+      (let ((startx (value-bytes start-key))
+            (endx (value-bytes end-key)))
+        (leveldb_approximate_sizes db num-ranges startx endx))
+      (error "LevelDB database has been closed"))))
+
+(def (leveldb-compact-range ldb start-key end-key)
+  (with ((leveldb db) ldb)
+    (if db
+      (let ((startx (value-bytes start-key))
+            (endx (value-bytes end-key)))
+        (leveldb_compact_range db startx endx))
+      (error "LevelDB database has been closed"))))
+
+(def (leveldb-destroy-db name (opts (leveldb-default-options)))
+  (let (errptr (check-ptr make_errptr (make_errptr)))
+    (leveldb_destroy_db opts name errptr)
+    (cond
+     ((errptr_str errptr)
+      => (cut raise-leveldb-error 'leveldb-destroy-db <>)))))
+
+(def (leveldb-repair-db name (opts (leveldb-default-options)))
+  (let (errptr (check-ptr make_errptr (make_errptr)))
+    (leveldb_repair_db opts name errptr)
+    (cond
+     ((errptr_str errptr)
+      => (cut raise-leveldb-error 'leveldb-repair-db <>)))))
 
 ;; options objects
 (def (leveldb-options create-if-missing:      (create-if-missing #t)      ; boolean
