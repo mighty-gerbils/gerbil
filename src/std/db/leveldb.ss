@@ -9,8 +9,23 @@ package: std/db
         :std/error
         :std/format)
 (export leveldb-error?
-        
-        )
+        leveldb?
+        leveldb-open leveldb-close
+        leveldb-put leveldb-get leveldb-delete leveldb-write
+        leveldb-writebatch leveldb-writebatch-clear
+        leveldb-writebatch-put leveldb-writebatch-delete
+        leveldb-iterator
+        leveldb-iterator-seek-first leveldb-iterator-seek-last
+        leveldb-iterator-seek
+        leveldb-iterator-next leveldb-iterator-prev
+        leveld-iterator-key leveldb-iterator-value
+        leveldb-iterator-error
+        leveldb-compact-range
+        leveldb-destroy-db
+        leveldb-repair-db
+        leveldb-options leveldb-default-options
+        leveldb-read-options leveldb-default-read-options
+        leveldb-write-options leveldb-default-write-options)
 
 (defstruct (leveldb-error <error>) ())
 
