@@ -1,0 +1,32 @@
+;;; -*- Gerbil -*-
+;;; (C) vyzo at hackzen.org
+;;; LevelDB FFI interface
+package: std/db
+
+(export #t)
+(extern
+  
+  leveldb_options_create
+  leveldb_options_set_create_if_missing
+  leveldb_options_set_error_if_exists
+  leveldb_options_set_paranoid_checks
+  leveldb_options_set_compression
+  leveldb_optoins_set_write_buffer_size
+  leveldb_optoins_set_write_buffer_size
+  leveldb_options_set_max_open_files
+  leveldb_options_set_block_size
+  leveldb_options_set_block_restart_interval
+  leveldb_options_set_cache
+  leveldb_options_set_filter_policy
+  leveldb_cache_create_lru
+  leveldb_filterpolicy_create_bloom
+  
+  leveldb_readoptions_create
+  leveldb_readoptions_set_verify_checksums
+  leveldb_readoptions_set_fill_cache
+  
+  leveldb_writeoptions_create
+  leveldb_writeoptions_set_sync
+  )
+
+;; (load-module "std/db/_leveldb")
