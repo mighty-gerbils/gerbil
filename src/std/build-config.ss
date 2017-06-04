@@ -40,3 +40,6 @@ package: std
 
 ;; build std/db/lmdb library -- requires LMDB
 (enable lmdb #f)
+
+;; build std/db/leveldb library -- requires LevelDB
+(enable leveldb #f)

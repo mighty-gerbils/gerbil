@@ -118,4 +118,9 @@
           (ssi: "db/_lmdb")
           "db/lmdb")
         '())
+    ,@(if config-enable-leveldb
+        '((gsc: "db/_leveldb" "-ld-options" "-lleveldb")
+          (ssi: "db/_leveldb")
+          "db/leveldb")
+        '())
     ))
