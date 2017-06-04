@@ -5,7 +5,6 @@ package: std/db
 
 (import :gerbil/gambit/threads
         :std/error
-        :std/format
         :std/db/_lmdb)
 (export lmdb-error?
         lmdb-env?

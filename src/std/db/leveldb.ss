@@ -6,8 +6,7 @@ package: std/db
 (import :gerbil/gambit/threads
         :gerbil/gambit/misc
         :std/db/_leveldb
-        :std/error
-        :std/format)
+        :std/error)
 (export leveldb-error?
         leveldb?
         leveldb-open leveldb-close
