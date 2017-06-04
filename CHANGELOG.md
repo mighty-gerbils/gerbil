@@ -1,4 +1,4 @@
-5-31-2017: Gerbil-v0.10
+### 5-31-2017: Gerbil-v0.10
 - lang/scheme: R7RS implementation
 - doc/core-prelude: core prelude documentation
 - prelude:
@@ -9,7 +9,7 @@
 - compiler: fix compile-static-exe to honor gsc-options
 - expander: fix core-expand-exports for nested expansions
 
-5-26-2017: Gerbil-v0.9
+### 5-26-2017: Gerbil-v0.9
 - expander:
   - %%ref, %%app, and %%begin-module indirections for custom expansion
   - #lang reader support for custom language preludes
@@ -26,15 +26,17 @@
   - [targit] std/crypto/libcrypto: fix compatibility issues with openssl-1.1.x
 - tutorial: Custom Languages tutorial
 
-5-17-2017: Gerbil-v0.8.2
+### 5-17-2017: Gerbil-v0.8.2
+Bug fix release:
 - fix shell script shebangs to work on ubuntu with bash + set -eu
 
-5-17-2017: Gerbil-v0.8.1
+### 5-17-2017: Gerbil-v0.8.1
+Bug fix release:
 - compiler/optimize: fix bug where prelude ssxi loading short-circuited further deps
 - compiler/driver: fix bug in static exe dependency collection where the prelude module deps where short-circuited
 - std/make: honour verbosity in exe compilation
 
-5-16-2017: Gerbil-v0.8
+### 5-16-2017: Gerbil-v0.8
 - compiler: optimizer improvements and static executables
   - optimizer:
     - track types for local bindings
@@ -61,7 +63,7 @@
 - build:
   - [fare] use /bin/sh -eu for build scripts
 
-5-11-2017: Gerbil-v0.7
+### 5-11-2017: Gerbil-v0.7
 - compiler: modularize and implement optimizer pass
   - optimizations:
     - lift opt lambdas and case-lambdas and optimize direct call dispatch
@@ -91,10 +93,11 @@
   - std/misc/queue and std/test
     - fix accessor bugs caught by the optimizer
     
-5-3-2017: Gerbil-v0.6.1
+### 5-3-2017: Gerbil-v0.6.1
+Bug fix release:
 - fix issues with disabled compiler optimizations from gce memory [gambit#249]
 
-5-2-2017: Gerbil-v0.6
+### 5-2-2017: Gerbil-v0.6
 - gerbil/runtime:
   - MOP allows mixin structs in make-class-type; classes can now mixin structs 
   - gerbil-version and gerbil-system-version
@@ -112,10 +115,10 @@
   - update ffi code to use ___return instead of ___result[_voidstar]
   - fix regression with thread-interrupt! raising exceptions in recent gambit
 
-4-5-2016: Gerbil-v0.5.1
+### 4-5-2016: Gerbil-v0.5.1
 - support compilation of dynamically linked executables
 
-3-24-2016: Gerbil-v0.5
+### 3-24-2016: Gerbil-v0.5
 - Revamped build system
   - by default, build.sh builds a stage1 gerbil for faster build times
   - std/make now supports dependency graphs
@@ -129,7 +132,7 @@
 - std/db/dbi: generic database interface
 - bug fixes and small improvements
 
-3-9-2016: Gerbil-v0.4
+### 3-9-2016: Gerbil-v0.4
 - std/web/rack: web application support with rack-style interface
 - std/net/fastcgi: fastcgi support
 - std/logger: basic logging support
@@ -137,16 +140,16 @@
 - prelude: struct-out export expander
 - bug fixes and small improvements
 
-2-28-2016: Gerbil-v0.3
+### 2-28-2016: Gerbil-v0.3
 - std/test unit testing and basic tests for stdlib
 - std/iter iteration macros (for,for/collect,for/fold)
 - bug fixes and small  improvements
 
-2-20-2016: Gerbil-v0.2
+### 2-20-2016: Gerbil-v0.2
 - Unification of object type hierarchy
 - More specific errors from stdlib
 - Generics
 
-2-15-2016: Gerbil-v0.1
+### 2-15-2016: Gerbil-v0.1
 - first gerbil release tag; core gerbil with batteries and introductory documentation
 
