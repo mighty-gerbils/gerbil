@@ -129,17 +129,21 @@ package: std/db
 
 (def errptr-cache
   (make-hash-table-eq weak-keys: #t))
+(def errptr-cache-mutex
+  (make-mutex))
 
 (def (get-errptr)
-  (cond
-   ((hash-get errptr-cache (current-thread))
-    => (lambda (errptr)
-         (errptr_clear errptr)
-         errptr))
-   (else
-    (let (errptr (check-ptr get-errptr (make_errptr)))
-      (hash-put! errptr-cache (current-thread) errptr)
-      errptr))))
+  (with-lock errptr-cache-mutex
+    (lambda ()
+      (cond
+       ((hash-get errptr-cache (current-thread))
+        => (lambda (errptr)
+             (errptr_clear errptr)
+             errptr))
+       (else
+        (let (errptr (check-ptr get-errptr (make_errptr)))
+          (hash-put! errptr-cache (current-thread) errptr)
+          errptr))))))
 
 ;; Write batches
 (def (leveldb-writebatch)
