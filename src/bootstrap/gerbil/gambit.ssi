@@ -11,6 +11,7 @@ namespace: gerbil/gambit
           :gerbil/gambit/random
           :gerbil/gambit/hvectors
           :gerbil/gambit/ports
+          :gerbil/gambit/bytes
           :gerbil/gambit/readtables
           :gerbil/gambit/hash
           :gerbil/gambit/exceptions
@@ -27,6 +28,7 @@ namespace: gerbil/gambit
           (import: :gerbil/gambit/random)
           (import: :gerbil/gambit/hvectors)
           (import: :gerbil/gambit/ports)
+          (import: :gerbil/gambit/bytes)
           (import: :gerbil/gambit/readtables)
           (import: :gerbil/gambit/hash)
           (import: :gerbil/gambit/exceptions)
