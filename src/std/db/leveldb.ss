@@ -181,14 +181,6 @@ package: std/db
      (else #f))))
 
 ;; Misc Operations
-(def (leveldb-approximate-sizes ldb num-ranges start-key end-key)
-  (with ((leveldb db) ldb)
-    (if db
-      (let ((startx (value-bytes start-key))
-            (endx (value-bytes end-key)))
-        (leveldb_approximate_sizes db num-ranges startx endx))
-      (error "LevelDB database has been closed"))))
-
 (def (leveldb-compact-range ldb start-key end-key)
   (with ((leveldb db) ldb)
     (if db

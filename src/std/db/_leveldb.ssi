@@ -28,7 +28,6 @@ package: std/db
   leveldb_iter_value
   leveldb_iter_get_error
   
-  leveldb_approximate_sizes
   leveldb_compact_range
   leveldb_destroy_db
   leveldb_repair_db
