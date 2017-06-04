@@ -69,17 +69,23 @@ package: std/actor
 (defstruct !rpc ()
   id: std/actor#!rpc::t)
 (defstruct (!call !rpc) (e k)
-  id: std/actor#!call::t)
+  id: std/actor#!call::t
+  final: #t)
 (defstruct (!value !rpc) (e k)
-  id: std/actor#!value::t)
+  id: std/actor#!value::t
+  final: #t)
 (defstruct (!error !rpc) (e k)
-  id: std/actor#!error::t)
+  id: std/actor#!error::t
+  final: #t)
 (defstruct (!event !rpc) (e)
-  id: std/actor#!event::t)
+  id: std/actor#!event::t
+  final: #t)
 (defstruct (!stream !rpc) (e k)
-  id: std/actor#!stream::t)
+  id: std/actor#!stream::t
+  final: #t)
 (defstruct (!end !rpc) (k)
-  id: std/actor#!end::t)
+  id: std/actor#!end::t
+  final: #t)
 
 (defrules !!call ()
   ((recur dest e)
@@ -181,7 +187,8 @@ package: std/actor
 
 ;;; protocol interface specifications
 (defstruct !protocol (id super types)
-  id: std/actor#protocol::t)
+  id: std/actor#protocol::t
+  final: #t)
 
 ;; defproto name
 ;;   [extend: proto-id]
@@ -354,7 +361,7 @@ package: std/actor
          (!!kall         (stx-identifier #'call-id "!!" #'kall-id))
          (proto::proto   (stx-identifier proto-id proto-id "::proto"))
          (defn-kall
-           #'(defstruct kall-id (arg ...) id: kall-rt-id))
+           #'(defstruct kall-id (arg ...) id: kall-rt-id final: #t))
          (defn-!kall
            #'(defsyntax-for-match !kall
                (syntax-rules ()
@@ -404,7 +411,7 @@ package: std/actor
          (!!kall         (stx-identifier #'event-id "!!" #'kall-id))
          (proto::proto   (stx-identifier proto-id proto-id "::proto"))
          (defn-kall
-           #'(defstruct kall-id (arg ...) id: kall-rt-id))
+           #'(defstruct kall-id (arg ...) id: kall-rt-id final: #t))
          (defn-!kall
            #'(defsyntax-for-match !kall
                (syntax-rules ()
@@ -448,7 +455,7 @@ package: std/actor
          (!!kall         (stx-identifier #'call-id "!!" #'kall-id))
          (proto::proto   (stx-identifier proto-id proto-id "::proto"))
          (defn-kall
-           #'(defstruct kall-id (arg ...) id: kall-rt-id))
+           #'(defstruct kall-id (arg ...) id: kall-rt-id final: #t))
          (defn-!kall
            #'(defsyntax-for-match !kall
                (syntax-rules ()
