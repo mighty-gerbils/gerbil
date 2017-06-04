@@ -81,7 +81,8 @@ package: gerbil
     call-with-current-continuation
     call-with-values values
     dynamic-wind
-    ;; 6.5 eval ; userland
+    ;; 6.5 eval
+    eval interaction-environment scheme-report-environment
     ;; 6.6 i/o
     call-with-input-file call-with-output-file
     input-port? output-port?
