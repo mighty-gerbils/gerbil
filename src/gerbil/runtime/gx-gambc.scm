@@ -16,10 +16,7 @@
   ;; setup expander
   (gx#current-expander-marks  '())
   (gx#current-expander-phi     0)
-  (let ((top (gx#make-top-context)))
-    (gx#core-bind-feature! 'gerbil #f 0 top)
-    (gx#core-bind-feature! 'gerbil-gambit #f 0 top)
-    (gx#current-expander-context top))
+  (gx#current-expander-context (gx#make-top-context))
   (gx#current-expander-module-library-path (&current-module-libpath))
   (gx#current-expander-module-registry (make-hash-table))
   (gx#current-expander-module-import gx#core-import-module)
@@ -40,9 +37,6 @@
          (pre  (gx#make-prelude-context core)))
     (gx#current-expander-module-prelude pre)
     (gx#core-bind-root-syntax! ':<core> pre #t)
-    (gx#core-bind-feature! 'gerbil #f 0 pre)
-    (gx#core-bind-feature! 'gerbil-gambit #f 0 pre)
-    (hash-put! (gx#current-expander-module-registry) core pre)
     (gx#eval-syntax '(import :gerbil/core)))
   (when hook-expander?
     ;; avoid loops from phi evals
