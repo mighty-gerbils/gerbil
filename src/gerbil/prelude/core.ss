@@ -249,6 +249,8 @@ package: gerbil
     keyword-dispatch
     ;; gerbil specifics
     gerbil-version-string gerbil-system-version-string
+    ;; system type information
+    gerbil-system system-type
     )
   
   (define-alias transcript-on void)

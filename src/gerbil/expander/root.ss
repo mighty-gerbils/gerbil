@@ -164,7 +164,8 @@ namespace: gx
     (struct-instance-init! self 'root (make-hash-table-eq))
     (when bind?
       {bind-core-syntax-expanders! self}
-      {bind-core-macro-expanders!  self})))
+      {bind-core-macro-expanders!  self}
+      {bind-core-features! self})))
 
 (defmethod {:init! top-context}
   (lambda (self (super #f))
@@ -206,3 +207,12 @@ namespace: gx
                  (make-reserved-expander id)))))))
       bindings)))
 
+(defmethod {bind-core-features! expander-context}
+  (lambda (self)
+    (core-bind-feature! 'gerbil #f 0 self)
+    (core-bind-feature! (gerbil-system) #f 0 self)
+    (match (system-type)
+      ([sys-cpu sys-vendor sys-type]
+       (core-bind-feature! sys-cpu #f 0 self)
+       (core-bind-feature! sys-type #f 0 self))
+      (else (void)))))
