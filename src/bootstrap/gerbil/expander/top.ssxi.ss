@@ -6,78 +6,78 @@ package: gerbil/expander
    gx#core-expand-lambda%
    (@case-lambda
     (1 gx#core-expand-lambda%__0)
-    (2 gx#core-expand-lambda%__opt-lambda8045)))
+    (2 gx#core-expand-lambda%__opt-lambda8049)))
   (declare-type
    gx#core-expand-letrec-values%
    (@case-lambda
     (1 gx#core-expand-letrec-values%__0)
-    (2 gx#core-expand-letrec-values%__opt-lambda7908)))
+    (2 gx#core-expand-letrec-values%__opt-lambda7912)))
   (declare-type
    gx#core-expand-let-bind-syntax!
    (@case-lambda
     (2 gx#core-expand-let-bind-syntax!__0)
-    (3 gx#core-expand-let-bind-syntax!__opt-lambda7500)))
+    (3 gx#core-expand-let-bind-syntax!__opt-lambda7504)))
   (declare-type
    gx#macro-expand-let-values
    (@case-lambda
     (1 gx#macro-expand-let-values__0)
-    (2 gx#macro-expand-let-values__opt-lambda6651)))
+    (2 gx#macro-expand-let-values__opt-lambda6655)))
   (declare-type
    gx#check-duplicate-identifiers
    (@case-lambda
     (1 gx#check-duplicate-identifiers__0)
-    (2 gx#check-duplicate-identifiers__opt-lambda6449)))
+    (2 gx#check-duplicate-identifiers__opt-lambda6453)))
   (declare-type
    gx#core-bind-values!
    (@case-lambda
     (1 gx#core-bind-values!__0)
     (2 gx#core-bind-values!__1)
     (3 gx#core-bind-values!__2)
-    (4 gx#core-bind-values!__opt-lambda6405)))
+    (4 gx#core-bind-values!__opt-lambda6409)))
   (declare-type
    gx#core-bind-runtime!
    (@case-lambda
     (1 gx#core-bind-runtime!__0)
     (2 gx#core-bind-runtime!__1)
     (3 gx#core-bind-runtime!__2)
-    (4 gx#core-bind-runtime!__opt-lambda6344)))
+    (4 gx#core-bind-runtime!__opt-lambda6348)))
   (declare-type
    gx#core-bind-runtime-reference!
    (@case-lambda
     (2 gx#core-bind-runtime-reference!__0)
     (3 gx#core-bind-runtime-reference!__1)
     (4 gx#core-bind-runtime-reference!__2)
-    (5 gx#core-bind-runtime-reference!__opt-lambda6299)))
+    (5 gx#core-bind-runtime-reference!__opt-lambda6303)))
   (declare-type
    gx#core-bind-extern!
    (@case-lambda
     (2 gx#core-bind-extern!__0)
     (3 gx#core-bind-extern!__1)
     (4 gx#core-bind-extern!__2)
-    (5 gx#core-bind-extern!__opt-lambda6259)))
+    (5 gx#core-bind-extern!__opt-lambda6263)))
   (declare-type
    gx#core-bind-syntax!
    (@case-lambda
     (2 gx#core-bind-syntax!__0)
     (3 gx#core-bind-syntax!__1)
     (4 gx#core-bind-syntax!__2)
-    (5 gx#core-bind-syntax!__opt-lambda6213)))
+    (5 gx#core-bind-syntax!__opt-lambda6217)))
   (declare-type
    gx#core-bind-root-syntax!
    (@case-lambda
     (2 gx#core-bind-root-syntax!__0)
-    (3 gx#core-bind-root-syntax!__opt-lambda6196)))
+    (3 gx#core-bind-root-syntax!__opt-lambda6200)))
   (declare-type
    gx#core-bind-alias!
    (@case-lambda
     (2 gx#core-bind-alias!__0)
     (3 gx#core-bind-alias!__1)
     (4 gx#core-bind-alias!__2)
-    (5 gx#core-bind-alias!__opt-lambda6154)))
+    (5 gx#core-bind-alias!__opt-lambda6158)))
   (declare-type
    gx#make-binding-id
    (@case-lambda
     (1 gx#make-binding-id__0)
     (2 gx#make-binding-id__1)
     (3 gx#make-binding-id__2)
-    (4 gx#make-binding-id__opt-lambda6111))))
+    (4 gx#make-binding-id__opt-lambda6115))))

@@ -14,25 +14,25 @@ namespace: gxc
            (0 process-status 0 process-status))
           (spec:
            (:gerbil/gambit/os)
-           (0 file-info-size 0 file-info-size)
+           (0 time->seconds 0 time->seconds)
            (0 current-time 0 current-time)
            (0 file-info 0 file-info)
-           (0 time->seconds 0 time->seconds)))
+           (0 file-info-size 0 file-info-size)))
          (%#export
           (spec: 0 compile-file compile-file)
           (spec: 0 compile-exe-stub compile-exe-stub)
           (spec: 0 compile-static-exe compile-static-exe))
          (%#define-runtime compile-timestamp gxc#compile-timestamp)
          (%#begin (%#define-runtime
-                   compile-file__opt-lambda20111
-                   gxc#compile-file__opt-lambda20111)
+                   compile-file__opt-lambda20114
+                   gxc#compile-file__opt-lambda20114)
                   (%#begin (%#define-runtime
                             compile-file__0
                             gxc#compile-file__0)
                            (%#define-runtime compile-file gxc#compile-file)))
          (%#begin (%#define-runtime
-                   compile-exe-stub__opt-lambda20097
-                   gxc#compile-exe-stub__opt-lambda20097)
+                   compile-exe-stub__opt-lambda20100
+                   gxc#compile-exe-stub__opt-lambda20100)
                   (%#begin (%#define-runtime
                             compile-exe-stub__0
                             gxc#compile-exe-stub__0)
@@ -40,8 +40,8 @@ namespace: gxc
                             compile-exe-stub
                             gxc#compile-exe-stub)))
          (%#begin (%#define-runtime
-                   compile-static-exe__opt-lambda20083
-                   gxc#compile-static-exe__opt-lambda20083)
+                   compile-static-exe__opt-lambda20086
+                   gxc#compile-static-exe__opt-lambda20086)
                   (%#begin (%#define-runtime
                             compile-static-exe__0
                             gxc#compile-static-exe__0)
