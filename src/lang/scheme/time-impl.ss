@@ -10,6 +10,7 @@ package: scheme
 (begin-foreign
   (c-declare #<<END-C
 #include <time.h>
+#include <stdio.h>             
 static long ffi_jiffie_res;
 static struct timespec ffi_jiffie_start;
 static long ffi_get_jiffies ()
