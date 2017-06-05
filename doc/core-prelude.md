@@ -1106,7 +1106,8 @@ Defines the following symbols as externs:
     keyword-dispatch
     ;; gerbil specifics
     gerbil-version-string gerbil-system-version-string
-
+    ;; system type information
+    gerbil-system system-type
 ```
 
 Also defines the following aliases:
