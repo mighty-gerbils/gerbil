@@ -1495,6 +1495,14 @@ this is the value of abc
 abc => this is the value of abc
 def => this is the value of def
 
+;; we can do the same with a for loop
+(for ((values key val) (in-leveldb db))
+  (displayln (bytes->string key)
+             " => "
+             (bytes->string val)))
+abc => this is the value of abc
+def => this is the value of def
+
 ;; Let's delete a value
 > (leveldb-delete db "abc")
 > (leveldb-get db "abc")

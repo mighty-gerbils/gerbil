@@ -1,12 +1,12 @@
 (("build-config.ss" std/build-config gerbil/core)
- ("format.ss" std/format gerbil/core gerbil/gambit/misc gerbil/gambit/ports)
+ ("format.ss" std/format gerbil/core gerbil/gambit/ports gerbil/gambit/misc)
  ("pregexp.ss" std/pregexp gerbil/core)
  ("sort.ss" std/sort gerbil/core gerbil/gambit/misc)
  ("sugar.ss" std/sugar gerbil/core)
  ("make.ss"
   std/make
-  gerbil/gambit/ports
   gerbil/core
+  gerbil/gambit/ports
   gerbil/gambit/misc
   gerbil/compiler
   gerbil/expander)
@@ -14,30 +14,30 @@
  ("getopt.ss" std/getopt gerbil/core std/format std/error)
  ("logger.ss"
   std/logger
-  gerbil/gambit/ports
-  gerbil/core
-  gerbil/gambit/threads
   std/srfi/19
+  gerbil/core
+  std/format
+  gerbil/gambit/ports
   std/sugar
   gerbil/gambit/exceptions
-  std/format)
+  gerbil/gambit/threads)
  ("generic.ss" std/generic gerbil/core gerbil/gambit)
  ("event.ss"
   std/event
-  gerbil/gambit/threads
   gerbil/core
-  gerbil/gambit/os
-  std/format)
+  std/format
+  gerbil/gambit/threads
+  gerbil/gambit/os)
  ("coroutine.ss"
   std/coroutine
-  std/sugar
   gerbil/core
+  gerbil/gambit/threads
   std/event
-  gerbil/gambit/threads)
- ("iter.ss" std/iter gerbil/gambit/ports gerbil/core std/generic std/coroutine)
- ("test.ss" std/test gerbil/core gerbil/gambit std/sugar std/error std/format)
+  std/sugar)
+ ("iter.ss" std/iter gerbil/core std/coroutine std/generic gerbil/gambit/ports)
+ ("test.ss" std/test gerbil/core std/format std/error gerbil/gambit std/sugar)
  ("srfi/srfi-support.ss" std/srfi/srfi-support gerbil/core)
- ("srfi/1.ss" std/srfi/1 std/srfi/srfi-support gerbil/core std/srfi/8)
+ ("srfi/1.ss" std/srfi/1 gerbil/core std/srfi/srfi-support std/srfi/8)
  ("srfi/8.ss" std/srfi/8 gerbil/core)
  ("srfi/9.ss" std/srfi/9 gerbil/core)
  ("srfi/14.ss"
@@ -51,17 +51,17 @@
   std/srfi/13
   gerbil/core
   std/srfi/8
-  std/srfi/14
+  std/srfi/srfi-support
   gerbil/gambit/bits
-  std/srfi/srfi-support)
+  std/srfi/14)
  ("srfi/19.ss"
   std/srfi/19
-  gerbil/gambit/ports
   gerbil/core
+  gerbil/gambit/ports
   std/srfi/8
-  gerbil/gambit/os
-  std/srfi/srfi-support)
- ("srfi/41.ss" std/srfi/41 std/srfi/9 gerbil/core)
+  std/srfi/srfi-support
+  gerbil/gambit/os)
+ ("srfi/41.ss" std/srfi/41 gerbil/core std/srfi/9)
  ("srfi/42.ss" std/srfi/42 gerbil/core)
  ("srfi/43.ss" std/srfi/43 gerbil/core)
  ("srfi/78.ss" std/srfi/78 gerbil/core std/srfi/42)
@@ -71,120 +71,120 @@
  ("parser/stream.ss"
   std/parser/stream
   gerbil/core
-  std/parser/base
-  gerbil/gambit/ports)
+  gerbil/gambit/ports
+  std/parser/base)
  ("parser/lexer.ss"
   std/parser/lexer
   gerbil/core
   std/parser/base
-  std/parser/stream
-  std/parser/rlang)
+  std/parser/rlang
+  std/parser/stream)
  ("parser/defparser.ss"
   std/parser/defparser
-  std/parser/lexer
   gerbil/core
+  std/parser/rlang
   std/parser/base
-  std/parser/rlang)
+  std/parser/lexer)
  ("parser/rx-parser.ss"
   std/parser/rx-parser
-  std/parser/base
+  std/parser/lexer
+  gerbil/core
+  gerbil/core::<expander-runtime>
   std/parser/rlang
   std/parser/defparser
-  gerbil/core::<expander-runtime>
-  std/parser/lexer
-  gerbil/core)
+  std/parser/base)
  ("parser/deflexer.ss"
   std/parser/deflexer
-  std/parser/base
-  std/parser/rlang
   std/parser/lexer
+  gerbil/core
   std/parser/rx-parser
-  gerbil/core)
+  std/parser/rlang
+  std/parser/base)
  ("parser/grammar-reader.ss"
   std/parser/grammar-reader
-  std/parser/base
-  gerbil/core
-  std/parser/defparser
-  std/parser/rlang
-  std/parser/lexer
-  std/parser/stream
   std/parser/deflexer
-  gerbil/core::<syntax-case>
+  gerbil/core
   gerbil/core::<syntax-sugar>
-  gerbil/core::<expander-runtime>)
+  std/parser/stream
+  std/parser/rlang
+  gerbil/core::<syntax-case>
+  std/parser/lexer
+  std/parser/defparser
+  gerbil/core::<expander-runtime>
+  std/parser/base)
  ("parser/grammar.ss"
   std/parser/grammar
-  std/parser/grammar-reader
-  gerbil/core
-  std/parser/defparser
-  std/parser/rlang
-  std/parser/lexer
   std/parser/deflexer
+  gerbil/core
+  std/parser/rlang
+  std/parser/grammar-reader
+  std/parser/lexer
+  std/parser/defparser
   std/parser/base)
  ("parser.ss"
   std/parser
-  std/parser/base
+  std/parser/deflexer
   gerbil/core
-  std/parser/defparser
+  std/parser/stream
   std/parser/rlang
   std/parser/lexer
-  std/parser/stream
-  std/parser/deflexer)
+  std/parser/defparser
+  std/parser/base)
  ("text/hex.ss" std/text/hex gerbil/core gerbil/gambit/fixnum)
  ("text/json.ss"
   std/text/json
   gerbil/core
   gerbil/gambit/ports
-  gerbil/gambit/bits
-  std/error)
+  std/error
+  gerbil/gambit/bits)
  ("text/yaml.ss"
   std/text/yaml
-  std/pregexp
-  gerbil/core
-  std/text/libyaml
-  std/iter
   std/error
-  std/sugar)
+  gerbil/core
+  std/pregexp
+  std/sugar
+  std/iter
+  std/text/libyaml)
  ("text/zlib.ss"
   std/text/zlib
   gerbil/gambit/ports
+  std/error
   gerbil/core
   std/sugar
-  std/error
   std/text/_zlib)
- ("net/address.ss" std/net/address gerbil/core std/pregexp std/format)
+ ("net/address.ss" std/net/address gerbil/core std/format std/pregexp)
  ("net/uri.ss" std/net/uri gerbil/core gerbil/gambit/ports)
  ("net/socks.ss"
   std/net/socks
+  std/error
   gerbil/gambit/ports
-  gerbil/core
   std/pregexp
-  std/net/address
-  std/error)
+  gerbil/core
+  std/net/address)
  ("net/request.ss"
   std/net/request
   std/format
-  std/sugar
-  std/text/json
-  std/pregexp
   gerbil/core
-  std/srfi/13
   gerbil/gambit/ports
-  std/net/uri
   std/error
+  gerbil/gambit/misc
   std/text/zlib
-  gerbil/gambit/misc)
- ("xml/libxml.ss" std/xml/libxml std/xml/_libxml gerbil/core)
+  std/srfi/13
+  std/sugar
+  std/net/uri
+  std/text/json
+  std/pregexp)
+ ("xml/libxml.ss" std/xml/libxml gerbil/core std/xml/_libxml)
  ("xml/sxml.ss" std/xml/sxml gerbil/core)
  ("xml/print.ss" std/xml/print gerbil/core std/xml/sxml-to-xml)
- ("xml.ss" std/xml std/xml/libxml gerbil/core std/xml/print std/xml/sxml)
+ ("xml.ss" std/xml gerbil/core std/xml/print std/xml/sxml std/xml/libxml)
  ("crypto/etc.ss"
   std/crypto/etc
-  gerbil/gambit/ports
-  gerbil/core
-  gerbil/gambit/threads
   std/crypto/libcrypto
-  std/format)
+  gerbil/gambit/ports
+  std/format
+  gerbil/core
+  gerbil/gambit/threads)
  ("crypto/digest.ss"
   std/crypto/digest
   gerbil/core
@@ -192,168 +192,169 @@
   std/crypto/etc)
  ("crypto/cipher.ss"
   std/crypto/cipher
-  gerbil/gambit/ports
   gerbil/core
   std/crypto/libcrypto
+  gerbil/gambit/ports
   std/crypto/etc)
  ("crypto/bn.ss" std/crypto/bn gerbil/core std/crypto/libcrypto std/crypto/etc)
  ("crypto/dh.ss" std/crypto/dh gerbil/core std/crypto/libcrypto std/crypto/etc)
  ("misc/shuffle.ss" std/misc/shuffle gerbil/core gerbil/gambit/random)
  ("misc/uuid.ss"
   std/misc/uuid
-  std/pregexp
-  gerbil/core
+  std/crypto/etc
   std/text/hex
   std/crypto/digest
-  std/crypto/etc)
+  std/pregexp
+  gerbil/core)
  ("misc/queue.ss" std/misc/queue gerbil/core)
- ("misc/ports.ss" std/misc/ports std/sugar gerbil/core gerbil/gambit/ports)
+ ("misc/ports.ss" std/misc/ports gerbil/core gerbil/gambit/ports std/sugar)
  ("actor/message.ss"
   std/actor/message
-  gerbil/gambit/threads
   gerbil/core
+  gerbil/gambit/threads
   std/event)
  ("actor/xdr.ss"
   std/actor/xdr
-  gerbil/gambit/ports
+  gerbil/core
   gerbil/gambit/fixnum
-  gerbil/gambit/bits
   std/error
-  gerbil/core)
+  gerbil/gambit/bits
+  gerbil/gambit/ports)
  ("actor/proto.ss"
   std/actor/proto
-  std/net/address
-  std/actor/xdr
-  gerbil/gambit/ports
-  std/actor/message
-  gerbil/gambit/threads
+  gerbil/core
   std/misc/uuid
   std/event
   std/error
-  gerbil/core)
+  gerbil/gambit/threads
+  std/net/address
+  gerbil/gambit/ports
+  std/actor/xdr
+  std/actor/message)
  ("actor/proto/message.ss"
   std/actor/proto/message
+  std/error
+  std/misc/uuid
   std/actor/proto
   gerbil/core
   gerbil/gambit/ports
   std/actor/xdr
-  std/actor/message
-  std/misc/uuid
-  std/error)
+  std/actor/message)
  ("actor/proto/null.ss"
   std/actor/proto/null
-  std/actor/proto
   gerbil/gambit/ports
   std/actor/proto/message
-  std/net/address
-  gerbil/core)
- ("actor/proto/cookie.ss"
-  std/actor/proto/cookie
   std/actor/proto
   gerbil/core
-  std/actor/proto/null
-  std/actor/xdr
-  gerbil/gambit/ports
+  std/net/address)
+ ("actor/proto/cookie.ss"
+  std/actor/proto/cookie
   std/crypto/etc
+  std/actor/proto/null
   std/actor/proto/message
   std/crypto/digest
+  std/actor/proto
+  gerbil/core
+  gerbil/gambit/ports
+  std/actor/xdr
   std/net/address)
  ("actor/proto/cipher.ss"
   std/actor/proto/cipher
+  std/actor/proto/cookie
+  std/actor/proto/message
   std/actor/proto/null
   std/crypto/dh
-  std/actor/proto/cookie
-  std/crypto/bn
-  std/actor/proto/message
-  std/actor/xdr
-  gerbil/gambit/ports
-  gerbil/core
-  std/crypto/cipher
-  std/crypto/etc
   std/net/address
   std/crypto/digest
-  std/actor/proto)
+  std/crypto/etc
+  gerbil/gambit/ports
+  gerbil/core
+  std/actor/xdr
+  std/actor/proto
+  std/crypto/bn
+  std/crypto/cipher)
  ("actor/rpc.ss"
   std/actor/rpc
-  std/format
-  gerbil/gambit/threads
-  gerbil/core
-  std/sugar
-  std/actor/proto/cookie
+  std/net/address
+  std/actor/proto/message
+  std/misc/uuid
+  std/actor/proto/cipher
+  std/actor/proto/null
+  std/event
   gerbil/gambit/ports
   std/logger
-  std/actor/proto/null
-  std/actor/xdr
-  std/actor/proto/cipher
-  std/actor/message
-  std/actor/proto/message
+  std/format
   gerbil/gambit/os
-  std/misc/uuid
-  std/event
-  std/net/address
-  std/actor/proto)
+  gerbil/core
+  std/actor/xdr
+  std/actor/proto
+  std/actor/message
+  std/sugar
+  gerbil/gambit/threads
+  std/actor/proto/cookie)
  ("actor.ss"
   std/actor
-  std/actor/message
   gerbil/core
-  std/actor/rpc
-  std/actor/proto)
+  std/actor/proto
+  std/actor/message
+  std/actor/rpc)
  ("web/fastcgi.ss"
   std/web/fastcgi
+  gerbil/core
+  std/format
+  std/error
+  gerbil/gambit
   std/net/address
   std/sugar
-  std/logger
-  std/error
-  gerbil/gambit
   std/iter
-  std/format
-  gerbil/core)
+  std/logger)
  ("web/rack.ss"
   std/web/rack
-  std/sugar
   gerbil/core
-  std/logger
-  std/web/fastcgi
-  gerbil/gambit
-  std/iter
+  std/format
   std/error
-  std/format)
+  gerbil/gambit
+  std/sugar
+  std/iter
+  std/logger
+  std/web/fastcgi)
  ("db/dbi.ss"
   std/db/dbi
-  std/sugar
   gerbil/core
+  std/error
   gerbil/gambit/misc
-  std/iter
-  std/error)
+  std/sugar
+  std/iter)
  ("db/conpool.ss" std/db/conpool gerbil/core gerbil/gambit/threads)
  ("db/sqlite.ss"
   std/db/sqlite
-  std/db/dbi
   gerbil/core
   std/format
   std/iter
-  std/db/_sqlite)
+  std/db/_sqlite
+  std/db/dbi)
  ("db/mysql.ss"
   std/db/mysql
+  std/srfi/19
+  gerbil/core
+  std/format
+  std/error
+  std/db/_mysql
   std/net/address
   std/sugar
-  std/format
-  std/db/dbi
-  std/srfi/19
   std/iter
-  std/db/_mysql
-  std/error
-  gerbil/core)
+  std/db/dbi)
  ("db/lmdb.ss"
   std/db/lmdb
-  gerbil/gambit/threads
   gerbil/core
   std/db/_lmdb
-  std/error)
+  std/error
+  gerbil/gambit/threads)
  ("db/leveldb.ss"
   std/db/leveldb
   gerbil/core
-  gerbil/gambit/threads
-  gerbil/gambit/misc
+  std/db/_leveldb
   std/error
-  std/db/_leveldb))
+  gerbil/gambit/misc
+  std/iter
+  gerbil/gambit/threads))
