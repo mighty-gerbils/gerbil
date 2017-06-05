@@ -6,7 +6,8 @@ package: std/db
 (import :gerbil/gambit/threads
         :gerbil/gambit/misc
         :std/db/_leveldb
-        :std/error)
+        :std/error
+        :std/iter)
 (export leveldb-error?
         leveldb?
         leveldb-open leveldb-close
@@ -19,6 +20,7 @@ package: std/db
         leveldb-iterator-next leveldb-iterator-prev
         leveldb-iterator-key leveldb-iterator-value
         leveldb-iterator-error
+        in-leveldb in-leveldb-keys
         leveldb-compact-range
         leveldb-destroy-db
         leveldb-repair-db
@@ -238,6 +240,90 @@ package: std/db
           => (cut raise-leveldb-error 'leveldb-iterator-error <>))
          (else #f)))
       (error "Iterator has been finalized"))))
+
+;; iterator protocol
+(defstruct leveldb-iter-state (itor value start limit)
+  final: #t)
+
+(def* in-leveldb
+  ((db)
+   (make-iterator (make-leveldb-iter-state (leveldb-iterator db) iter-nil #f #f)
+                  leveldb-iter-start
+                  leveldb-iter-key-value
+                  leveldb-iter-next
+                  leveldb-iter-fini))
+  ((db start limit)
+   (make-iterator (make-leveldb-iter-state (leveldb-iterator db) iter-nil
+                                           (value-bytes start)
+                                           (value-bytes limit))
+                  leveldb-iter-start
+                  leveldb-iter-key-value
+                  leveldb-iter-next
+                  leveldb-iter-fini)))
+
+(def* in-leveldb-keys
+  ((db)
+   (make-iterator (make-leveldb-iter-state (leveldb-iterator db) iter-nil #f #f)
+                  leveldb-iter-start
+                  leveldb-iter-key
+                  leveldb-iter-next
+                  leveldb-iter-fini))
+  ((db start limit)
+   (make-iterator (make-leveldb-iter-state (leveldb-iterator db) iter-nil
+                                           (value-bytes start)
+                                           (value-bytes limit))
+                  leveldb-iter-start
+                  leveldb-iter-key
+                  leveldb-iter-next
+                  leveldb-iter-fini)))
+
+(def (leveldb-iter-start iter)
+  (with ((iterator state) iter)
+    (with ((leveldb-iter-state itor nil start limit) state)
+      (if start
+        (leveldb-iterator-seek itor start)
+        (leveldb-iterator-seek-first itor))
+      (set! (leveldb-iter-state-value state)
+        (if (leveldb-iterator-valid? itor)
+          (if (and start (equal? start limit))
+            iter-end
+            iter-nil)
+          iter-end)))))
+
+(def (leveldb-iter-key-value iter)
+  (with ((iterator state) iter)
+    (with ((leveldb-iter-state itor value) state)
+      (if (iter-nil? value)
+        (let* ((key (leveldb-iterator-key itor))
+               (val (leveldb-iterator-value itor))
+               (value (values key val)))
+          (set! (leveldb-iter-state-value state) value)
+          value)
+        value))))
+
+(def (leveldb-iter-key iter)
+  (with ((iterator state) iter)
+    (with ((leveldb-iter-state itor value) state)
+      (if (iter-nil? value)
+        (let (value (leveldb-iterator-key itor))
+          (set! (leveldb-iter-state-value state) value)
+          value)
+        value))))
+
+(def (leveldb-iter-next iter)
+  (with ((iterator state) iter)
+    (with ((leveldb-iter-state itor _ start limit) state)
+      (leveldb-iterator-next itor)
+      (set! (leveldb-iter-state-value state)
+        (if (leveldb-iterator-valid? itor)
+          (if (and limit (equal? (leveldb-iterator-key itor) limit))
+            iter-end
+            iter-nil)
+          iter-end)))))
+
+(def (leveldb-iter-fini iter)
+  (with ((iterator (leveldb-iter-state itor)) iter)
+    (leveldb-iterator-close itor)))
 
 ;; Misc Operations
 (def (leveldb-compact-range ldb start-key end-key)
