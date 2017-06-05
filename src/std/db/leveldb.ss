@@ -245,37 +245,23 @@ package: std/db
 (defstruct leveldb-iter-state (itor value start limit)
   final: #t)
 
-(def* in-leveldb
-  ((db)
-   (make-iterator (make-leveldb-iter-state (leveldb-iterator db) iter-nil #f #f)
+(def (in-leveldb db (start #f) (limit #f))
+   (make-iterator (make-leveldb-iter-state (leveldb-iterator db) iter-nil
+                                           (and start (value-bytes start))
+                                           (and limit (value-bytes limit)))
                   leveldb-iter-start
                   leveldb-iter-key-value
                   leveldb-iter-next
                   leveldb-iter-fini))
-  ((db start limit)
-   (make-iterator (make-leveldb-iter-state (leveldb-iterator db) iter-nil
-                                           (value-bytes start)
-                                           (value-bytes limit))
-                  leveldb-iter-start
-                  leveldb-iter-key-value
-                  leveldb-iter-next
-                  leveldb-iter-fini)))
 
-(def* in-leveldb-keys
-  ((db)
-   (make-iterator (make-leveldb-iter-state (leveldb-iterator db) iter-nil #f #f)
+(def (in-leveldb-keys db (start #f) (limit #f))
+   (make-iterator (make-leveldb-iter-state (leveldb-iterator db) iter-nil
+                                           (and start (value-bytes start))
+                                           (and limit (value-bytes limit)))
                   leveldb-iter-start
                   leveldb-iter-key
                   leveldb-iter-next
                   leveldb-iter-fini))
-  ((db start limit)
-   (make-iterator (make-leveldb-iter-state (leveldb-iterator db) iter-nil
-                                           (value-bytes start)
-                                           (value-bytes limit))
-                  leveldb-iter-start
-                  leveldb-iter-key
-                  leveldb-iter-next
-                  leveldb-iter-fini)))
 
 (def (leveldb-iter-start iter)
   (with ((iterator state) iter)
