@@ -24,6 +24,7 @@ package: std/net
   request-text
   request-json
   request-cookies
+  request-close
   )
 
 (defstruct request (port url history status status-text headers body encoding)
@@ -32,8 +33,7 @@ package: std/net
 
 (defmethod {:init! request}
   (lambda (self port url history)
-    (struct-instance-init! self port url history
-      #f #f #f #f #f)))
+    (struct-instance-init! self port url history)))
 
 (def (url-target-e url params)
   (if params
@@ -195,6 +195,7 @@ package: std/net
               tcp-client-options))
            (sock (open-tcp-client tcp-client-options))
            (req (make-request sock url history)))
+      (make-will req request-close)
       (http-request-write sock method target headers body)
       (http-request-read-response! req)
       (cond
@@ -207,7 +208,7 @@ package: std/net
               (if (member new-url history)
                 (error "URL redirection loop" url)
                 (begin
-                  (close-port sock)
+                  (request-close req)
                   (http-request method new-url headers body (cons url history) #t))))))
        (else req)))))
 
@@ -331,6 +332,11 @@ package: std/net
             (lp (cons* next cr r))))))
         (else
          (lp (cons next r)))))))
+
+(def (request-close req)
+  (alet (port (request-port req))
+    (with-catch void (cut close-port port))
+    (set! (request-port req) #f)))
 
 (def (request-content req)
   (cond
