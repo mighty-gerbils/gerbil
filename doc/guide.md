@@ -1469,7 +1469,40 @@ while the `:std/db/lmdb` library provides support for [LMDB](https://en.wikipedi
 The libraries are not built by default, as they have foreign dependencies, so you need to
 enable them for your installation in `$GERBIL_HOME/src/std/build-config.ss`.
 
-The interfaces of these libraries generally follow the C API for these systems, so they are
-beyond the scope of this guide. The LMDB library is covered in more detail in the
-[Key Value Store tutorial](tutorial/kvstore.md).
+For example, here we use the LevelDB library for some simple operations:
+```
+> (import :std/db/leveldb
+          :std/sugar)
+> (def db (leveldb-open "/tmp/leveldb-test.db"))
+
+;; let's put some values
+> (leveldb-put db "abc" "this is the value of abc")
+> (leveldb-put db "def" "this is the value of def")
+
+;; we can retrieve them -- objects are always stored as u8vectors
+> (displayln (bytes->string (leveldb-get db "abc")))
+this is the value of abc
+
+;; let's iterate and print the contents of the store
+> (let (itor (leveldb-iterator db))
+    (leveldb-iterator-seek-first itor)
+    (while (leveldb-iterator-valid? itor)
+      (displayln (bytes->string (leveldb-iterator-key itor))
+                 " => "
+                 (bytes->string (leveldb-iterator-value itor)))
+      (leveldb-iterator-next itor))
+    (leveldb-iterator-close itor))
+abc => this is the value of abc
+def => this is the value of def
+
+;; Let's delete a value
+> (leveldb-delete db "abc")
+> (leveldb-get db "abc")
+=> #f
+
+;; we are done, let's close the db
+(leveldb-close db)
+```
+
+The LMDB library is covered in in the [Key-Value Store Server tutorial](tutorial/kvstore.md).
 
