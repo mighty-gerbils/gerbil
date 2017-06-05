@@ -21,6 +21,9 @@
 (define (gerbil-system-version-string)
   (string-append "Gerbil " (gerbil-version-string) " on Gambit " (system-version-string)))
 
+(define (gerbil-system)
+  'gerbil-gambit)
+
 (define &current-module-libpath
   (make-parameter #f))
 (define &current-module-registry
