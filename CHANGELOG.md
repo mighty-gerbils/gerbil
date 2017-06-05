@@ -1,3 +1,40 @@
+### 6-5-2017: Gerbil-v0.11
+- stdlib:
+  - std/db
+    - std/db/mysql: MySQL dbi interface with FFI driver [new]
+    - std/db/leveldb: LevelDB interface with FFI driver [new]
+    - std/db/conpool: connection pools for SQL databases [new]
+    - std/db/dbi: reset statements after exec and query evaluation
+    - std/db/sqlite: Fix SMP-safety on FFI (removes ffi_last_error)
+  - std/getopt: command line argument parsing library [new]
+  - std/misc/ports: port utilites (copy-port) [new]
+  - std/sugar: while and until macros
+  - std/iter: add iter-fini! to iteration protocol for stateful iterator cleanup
+  - std/make:
+    - track preludes in make-depgraph
+    - use build-specs for depgraph generation with make-depgraph/spec
+    - check library dependencies on build decisions
+  - std/actor: final structs for messages
+- r7rs:
+  - scheme/base: [gambiteer] implement exact-integer-sqrt
+- prelude:
+  - gerbil/core
+    - add u8vector primitives to <host-runtime>
+    - eval is there
+    - syntax/loc macro from Racket
+  - gerbil/gambit:
+    - gerbil/gambit/bytes: refactored synonyms for u8vector ops [new]
+- expander:
+  - bind core features at root context, including system-type features
+  - strict refernces for positive phis
+- compiler:
+  - update exe stubs to hook display-exception
+- runtime:
+  - clean up confusing direct-* MOP functions
+- doc:
+  - guide.md#databases: document the :std/db package [new]
+  - tutorial/kvstore.md: a key-value store server tutorial [new]
+
 ### 5-31-2017: Gerbil-v0.10
 - lang/scheme: R7RS implementation
 - doc/core-prelude: core prelude documentation
