@@ -181,6 +181,7 @@
     ((ec-simplify expression)
      expression )))
 
+(module __a (void))  ; break phi section
 
 ; ==========================================================================
 ; The special generators :do, :let, :parallel, :while, and :until
@@ -253,6 +254,8 @@
     ; no more gens -> continue with cc, reentry at (*)
     ((:parallel-1 (cc ...) () result)
      (cc ... result) )))
+
+(module __b (void))
 
 (define-syntax :while
   (syntax-rules ()
@@ -373,6 +376,7 @@
     ((:until-1 cc test (:do olet lbs ne1? ilet ne2? lss))
      (:do cc olet lbs ne1? ilet (and ne2? (not test)) lss) )))
 
+(module __c (void))
 
 ; ==========================================================================
 ; The typed generators :list :string :vector etc.
@@ -461,6 +465,8 @@
 ;   append and :list in the multi-argument case. Please refer to the
 ;   'design.scm' for more details.
 
+
+(module __d (void))
 
 (define-syntax :integers
   (syntax-rules (index)
@@ -630,6 +636,8 @@
           #t
           ((read-proc port)) ))))
 
+
+(module __e (void))
 
 ; ==========================================================================
 ; The typed generator :dispatched and utilities for constructing dispatchers
@@ -812,6 +820,8 @@
      (:dispatched cc var :-dispatch arg1 arg ...) )))
 
 
+(module __f (void))
+
 ; ==========================================================================
 ; The utility comprehensions fold-ec, fold3-ec
 ; ==========================================================================
@@ -851,6 +861,7 @@
        result ))))
 
 
+(module __g (void))
 ; ==========================================================================
 ; The comprehensions list-ec string-ec vector-ec etc.
 ; ==========================================================================
@@ -921,6 +932,7 @@
              vec
              (error "vector is too long for the comprehension") ))))))
 
+(module __h (void))
 
 (define-syntax sum-ec
   (syntax-rules ()
@@ -978,6 +990,8 @@
          (begin (set! result expression)
                 (set! stop #t) ))
        result ))))
+
+(module __i (void))
 
 ; (ec-guarded-do-ec stop (nested q ...) cmd)
 ;   constructs (do-ec q ... cmd) where the generators gen in q ... are
