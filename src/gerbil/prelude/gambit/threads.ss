@@ -62,9 +62,12 @@ package: gerbil/gambit
   )
 
 (def (spawn f . args)
-  (apply spawn/name (or (##procedure-name f) #!void) f args))
+  (spawn/name/args (or (##procedure-name f) #!void) f args))
 
 (def (spawn/name name f . args)
+  (spawn/name/args name f args))
+
+(def (spawn/name/args name f args)
   (unless (procedure? f)
     (error "Expected procedure" f))
   (thread-start! 
