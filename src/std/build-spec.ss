@@ -54,6 +54,8 @@
           (ssi: "text/_zlib")
           "text/zlib")
         '())
+    ;; std/os
+    (gxc: "os/fd" "-e" "(include \"~~lib/_gambit#.scm\")")
     ;; :std/net
     "net/address"
     "net/uri"
