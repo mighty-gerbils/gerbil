@@ -25,9 +25,11 @@ package: std
           irritants)
         (newline port)))))
 
-(defstruct (io-error <error>) ()
-  id: :std/io-error::t)
+(defstruct (io-error <error>) ())
+(defstruct (timeout-error <error>) ())
 
 (def (raise-io-error where what . irritants)
   (raise (make-io-error what irritants where)))
 
+(def (raise-timeout where what . irritants)
+  (raise (make-timeout-error what irritants where)))

@@ -102,7 +102,7 @@
     "web/fastcgi"
     "web/rack"
     "db/dbi"
-    "db/conpool"
+    (gxc: "db/conpool" "-e" "(include \"~~lib/_gambit#.scm\")")
     ,@(if config-enable-sqlite
         '((gsc: "db/_sqlite" "-ld-options" "-lsqlite3")
           (ssi: "db/_sqlite")
