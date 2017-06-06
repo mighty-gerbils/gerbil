@@ -1,66 +1,66 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gerbil/gambit/ports#write-string
-    (let ((_opt-lambda381386_
-           (lambda (_str383_ _port384_)
+    (let ((_opt-lambda390395_
+           (lambda (_str392_ _port393_)
              (write-substring
-              _str383_
+              _str392_
               '0
-              (string-length _str383_)
-              _port384_))))
-      (lambda _g493_
-        (let ((_g492_ (length _g493_)))
-          (cond ((fx= _g492_ 1)
-                 (apply (lambda (_str389_)
-                          (let ((_port391_ (current-output-port)))
-                            (_opt-lambda381386_ _str389_ _port391_)))
-                        _g493_))
-                ((fx= _g492_ 2) (apply _opt-lambda381386_ _g493_))
-                (else (error "No clause matching arguments" _g493_)))))))
+              (string-length _str392_)
+              _port393_))))
+      (lambda _g502_
+        (let ((_g501_ (length _g502_)))
+          (cond ((fx= _g501_ 1)
+                 (apply (lambda (_str398_)
+                          (let ((_port400_ (current-output-port)))
+                            (_opt-lambda390395_ _str398_ _port400_)))
+                        _g502_))
+                ((fx= _g501_ 2) (apply _opt-lambda390395_ _g502_))
+                (else (error "No clause matching arguments" _g502_)))))))
   (define gerbil/gambit/ports#read-string
-    (let ((_opt-lambda367372_
-           (lambda (_str369_ _port370_)
-             (read-substring _str369_ '0 (string-length _str369_) _port370_))))
-      (lambda _g495_
-        (let ((_g494_ (length _g495_)))
-          (cond ((fx= _g494_ 1)
-                 (apply (lambda (_str375_)
-                          (let ((_port377_ (current-input-port)))
-                            (_opt-lambda367372_ _str375_ _port377_)))
-                        _g495_))
-                ((fx= _g494_ 2) (apply _opt-lambda367372_ _g495_))
-                (else (error "No clause matching arguments" _g495_)))))))
+    (let ((_opt-lambda376381_
+           (lambda (_str378_ _port379_)
+             (read-substring _str378_ '0 (string-length _str378_) _port379_))))
+      (lambda _g504_
+        (let ((_g503_ (length _g504_)))
+          (cond ((fx= _g503_ 1)
+                 (apply (lambda (_str384_)
+                          (let ((_port386_ (current-input-port)))
+                            (_opt-lambda376381_ _str384_ _port386_)))
+                        _g504_))
+                ((fx= _g503_ 2) (apply _opt-lambda376381_ _g504_))
+                (else (error "No clause matching arguments" _g504_)))))))
   (define gerbil/gambit/ports#write-u8vector
-    (let ((_opt-lambda353358_
-           (lambda (_bytes355_ _port356_)
+    (let ((_opt-lambda362367_
+           (lambda (_bytes364_ _port365_)
              (write-subu8vector
-              _bytes355_
+              _bytes364_
               '0
-              (u8vector-length _bytes355_)
-              _port356_))))
-      (lambda _g497_
-        (let ((_g496_ (length _g497_)))
-          (cond ((fx= _g496_ 1)
-                 (apply (lambda (_bytes361_)
-                          (let ((_port363_ (current-output-port)))
-                            (_opt-lambda353358_ _bytes361_ _port363_)))
-                        _g497_))
-                ((fx= _g496_ 2) (apply _opt-lambda353358_ _g497_))
-                (else (error "No clause matching arguments" _g497_)))))))
+              (u8vector-length _bytes364_)
+              _port365_))))
+      (lambda _g506_
+        (let ((_g505_ (length _g506_)))
+          (cond ((fx= _g505_ 1)
+                 (apply (lambda (_bytes370_)
+                          (let ((_port372_ (current-output-port)))
+                            (_opt-lambda362367_ _bytes370_ _port372_)))
+                        _g506_))
+                ((fx= _g505_ 2) (apply _opt-lambda362367_ _g506_))
+                (else (error "No clause matching arguments" _g506_)))))))
   (define gerbil/gambit/ports#read-u8vector
-    (let ((_opt-lambda339344_
-           (lambda (_bytes341_ _port342_)
+    (let ((_opt-lambda348353_
+           (lambda (_bytes350_ _port351_)
              (read-subu8vector
-              _bytes341_
+              _bytes350_
               '0
-              (u8vector-length _bytes341_)
-              _port342_))))
-      (lambda _g499_
-        (let ((_g498_ (length _g499_)))
-          (cond ((fx= _g498_ 1)
-                 (apply (lambda (_bytes347_)
-                          (let ((_port349_ (current-input-port)))
-                            (_opt-lambda339344_ _bytes347_ _port349_)))
-                        _g499_))
-                ((fx= _g498_ 2) (apply _opt-lambda339344_ _g499_))
-                (else (error "No clause matching arguments" _g499_))))))))
+              (u8vector-length _bytes350_)
+              _port351_))))
+      (lambda _g508_
+        (let ((_g507_ (length _g508_)))
+          (cond ((fx= _g507_ 1)
+                 (apply (lambda (_bytes356_)
+                          (let ((_port358_ (current-input-port)))
+                            (_opt-lambda348353_ _bytes356_ _port358_)))
+                        _g508_))
+                ((fx= _g507_ 2) (apply _opt-lambda348353_ _g508_))
+                (else (error "No clause matching arguments" _g508_))))))))
