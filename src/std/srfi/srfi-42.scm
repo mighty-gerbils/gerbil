@@ -181,7 +181,7 @@
     ((ec-simplify expression)
      expression )))
 
-(module __a (void))  ; break phi section
+(module __a)  ; break phi section
 
 ; ==========================================================================
 ; The special generators :do, :let, :parallel, :while, and :until
@@ -255,7 +255,7 @@
     ((:parallel-1 (cc ...) () result)
      (cc ... result) )))
 
-(module __b (void))
+(module __b)
 
 (define-syntax :while
   (syntax-rules ()
@@ -376,7 +376,7 @@
     ((:until-1 cc test (:do olet lbs ne1? ilet ne2? lss))
      (:do cc olet lbs ne1? ilet (and ne2? (not test)) lss) )))
 
-(module __c (void))
+(module __c)
 
 ; ==========================================================================
 ; The typed generators :list :string :vector etc.
@@ -466,7 +466,7 @@
 ;   'design.scm' for more details.
 
 
-(module __d (void))
+(module __d)
 
 (define-syntax :integers
   (syntax-rules (index)
@@ -637,7 +637,7 @@
           ((read-proc port)) ))))
 
 
-(module __e (void))
+(module __e)
 
 ; ==========================================================================
 ; The typed generator :dispatched and utilities for constructing dispatchers
@@ -820,7 +820,7 @@
      (:dispatched cc var :-dispatch arg1 arg ...) )))
 
 
-(module __f (void))
+(module __f)
 
 ; ==========================================================================
 ; The utility comprehensions fold-ec, fold3-ec
@@ -861,7 +861,7 @@
        result ))))
 
 
-(module __g (void))
+(module __g)
 ; ==========================================================================
 ; The comprehensions list-ec string-ec vector-ec etc.
 ; ==========================================================================
@@ -932,7 +932,7 @@
              vec
              (error "vector is too long for the comprehension") ))))))
 
-(module __h (void))
+(module __h)
 
 (define-syntax sum-ec
   (syntax-rules ()
@@ -991,7 +991,7 @@
                 (set! stop #t) ))
        result ))))
 
-(module __i (void))
+(module __i)
 
 ; (ec-guarded-do-ec stop (nested q ...) cmd)
 ;   constructs (do-ec q ... cmd) where the generators gen in q ... are
