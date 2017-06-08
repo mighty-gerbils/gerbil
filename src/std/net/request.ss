@@ -195,7 +195,6 @@ package: std/net
               tcp-client-options))
            (sock (open-tcp-client tcp-client-options))
            (req (make-request sock url history)))
-      (make-will req request-close)
       (http-request-write sock method target headers body)
       (http-request-read-response! req)
       (cond
