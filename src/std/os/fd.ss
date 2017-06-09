@@ -4,12 +4,15 @@
 package: std/os
 
 (import :gerbil/gambit/ports)
-(export #t)
+(export fdopen
+        fd-e fd-io-in fd-io-out
+        fd? fd-type? fd-type)
 
 ;; _gambit#.scm
 (extern namespace: #f
   macro-direction-in macro-direction-out macro-direction-inout
   macro-port-name
+  macro-raw-device-port?
   macro-raw-device-port-rdevice-condvar
   macro-raw-device-port-wdevice-condvar
   macro-raw-device-port-fd)
@@ -38,5 +41,9 @@ package: std/os
     ([t _] t)
     (else #f)))
 
-(def (fd-type? raw t)
-  (eq? (fd-type raw) t))
+(def (fd? obj)
+  (macro-raw-device-port? obj))
+
+(def (fd-type? obj t)
+  (and (fd? obj)
+       (eq? (fd-type obj) t)))
