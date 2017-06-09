@@ -42,17 +42,26 @@ package: std/os
   _setsockopt_int
   _getsockopt_tv
   _setsockopt_tv
-  _getsockopt_in
-  _setsockopt_in
-  _getsockopt_in6
-  _setsockopt_in6
-  _getsockopt_mreq
+  _getsockopt_sa
+  _setsockopt_sa
   _setsockopt_mreq
-  _getsockopt_mreq6
+  _setsockopt_mreq_src
   _setsockopt_mreq6
+  _setsockopt_mreq6_src
   _getsockopt_bytes
   _setsockopt_bytes
+  _getsockopt_linger
+  _setsockopt_linger
 
+  ;; sockopt helpers
+  _make_tv
+  _tv_sec _tv_sec_set
+  _tv_usec _tv_usec_set
+
+  _make_linger
+  _linger_onoff _linger_onoff_set
+  _linger_linger _linger_linger_set
+  
   ;; constants
   AF_UNSPEC
   AF_INET
@@ -72,8 +81,6 @@ package: std/os
   UNIX_MAX_PATH
   
   ;; sockopts
-  ;; this list is invariably incomplete, new ones get added all the time
-  ;; add to it (and _socket.scm) if you are missing something!
   SOL_SOCKET
   SO_ACCEPTCONN
   SO_BINDTODEVICE
@@ -87,6 +94,7 @@ package: std/os
   SO_OOBLINE
   SO_PASSCRED
   SO_PEERCRED
+  SO_PEEK_OFF
   SO_PROTOCOL
   SO_RCVBUF
   SO_SNDBUF
@@ -103,45 +111,58 @@ package: std/os
   IPPROTO_IP
   IP_ADD_MEMBERSHIP
   IP_DROP_MEMBERSHIP
+  IP_ADD_SOURCE_MEMBERSHIP
+  IP_DROP_SOURCE_MEMBERSHIP
+  IP_BLOCK_SOURCE
+  IP_UNBLOCK_SOURCE
+  IP_FREEBIND
   IP_HDRINCL
   IP_MTU
   IP_MTU_DISCOVER
+  IP_MULTICAST_ALL
   IP_MULTICAST_IF
   IP_MULTICAST_LOOP
   IP_MULTICAST_TTL
+  IP_NODEFRAG
   IP_OPTIONS
   IP_PKTINFO
-  IP_RECVDSTADDR
-  IP_RECVIF
+  IP_RECVERR
+  IP_RECVORIGDSTADDR
+  IP_RECVOPTS
   IP_RECVTOS
   IP_RECVTTL
+  IP_RETOPTS
+  IP_ROUTER_ALERT
   IP_TOS
   IP_TTL
 
   IPPROTO_IPV6
+  IPV6_ADDRFORM
   IPV6_ADD_MEMBERSHIP
   IPV6_DROP_MEMBERSHIP
+  IPV6_MTU
+  IPV6_MTU_DISCOVER
   IPV6_MULTICAST_HOPS
   IPV6_MULTICAST_IF
   IPV6_MULTICAST_LOOP
-  IPV6_MTU
-  IPV6_MTU_DISCOVER
-  IPV6_CHECKSUM
-  IPV6_PKTINFO
-  IPV6_RECVERR
-  IPV6_UNICAST_HOPS
+  IPV6_RECVPKTINFO
   IPV6_RTHDR
   IPV6_AUTHHDR
   IPV6_DSTOPTS
   IPV6_HOPOPTS
   IPV6_FLOWINFO
   IPV6_HOPLIMIT
+  IPV6_ROUTER_ALERT
+  IPV6_UNICAST_HOPS
+  IPV6_V6ONLY
 
   IPPROTO_TCP
-  TCP_KEEPALIVE
+  TCP_CONGESTION
+  TCP_CORK
+  TCP_DEFER_ACCEPT
+  TCP_KEEPCNT
   TCP_KEEPIDLE
   TCP_KEEPINTVL
-  TCP_MAXRT
   TCP_MAXSEG
   TCP_NODELAY
   TCP_SYNCNT
