@@ -3,7 +3,7 @@
 ;;; hex encoding
 package: std/text
 
-(export hex-encode hexlify hex-decode unhexlify)
+(export hex-encode hexlify hex-decode unhexlify hex unhex unhex*)
 (import :gerbil/gambit/fixnum)
 
 (def hexes "0123456789abcdef")
@@ -21,6 +21,9 @@ package: std/text
           (lp (fx1+ n)))
         str))))
 
+(def (hex u4)
+  (string-ref hexes u4))
+
 (def unhexes
   (let (ht (make-hash-table-eq))
     (for-each (cut hash-put! ht <> <>)
@@ -36,6 +39,10 @@ package: std/text
 
 (def (unhex char)
   (hash-ref unhexes char))
+
+(def (unhex* char)
+  (hash-get unhexes char))
+
 (def (hex-decode str)
   (let (len (string-length str))
     (unless (fxeven? len)
