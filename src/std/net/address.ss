@@ -5,13 +5,15 @@ package: std/net
 
 (export ip4-address? ip4-address 
         ip4-address-string? ip4-address->string string->ip4-address
-        ip6-address?
+        ip6-address? ip6-address
+        ip6-address-string? ip6-address->string string->ip6-address
         inet-address? inet-address
         inet-address-string? inet-address->string string->inet-address
         inet-host-name?
         ip4-address-rx inet-host-name-rx)
 (import :std/pregexp
-        :std/format)
+        :std/format
+        :std/text/hex)
 
 ;; ipv4 address; 4-octet u8vector
 (def (ip4-address obj)
@@ -24,11 +26,12 @@ package: std/net
 
 (def (ip4-address? obj)
   (and (##u8vector? obj)
-       (fx= (##u8vector-length obj) 4)))
+       (##fx= (##u8vector-length obj) 4)))
 
 (def (ip4-address-string? obj)
   (and (string? obj)
-       (pregexp-match ip4-address-rx obj)))
+       (pregexp-match ip4-address-rx obj)
+       #t))
 
 (def ip4-address-rx
   (pregexp "^(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})$"))
@@ -46,9 +49,143 @@ package: std/net
     (error "Malformed ip4 address" ip4))))
 
 ;; ipv6 compat
+(def (ip6-address obj)
+  (cond
+   ((ip6-address? obj) obj)
+   ((ip6-address-string? obj)
+    (string->ip6-address obj))
+   (else
+    (error "Malformed ip6 address" obj))))
+  
 (def (ip6-address? obj)
   (and (##u8vector? obj)
-       (fx= (##u8vector-length obj) 16)))
+       (##fx= (##u8vector-length obj) 16)))
+
+(def ip6-address-rx
+  (pregexp "^[0-9a-fA-F:]+$"))
+
+(def (ip6-address-string? obj)
+  (and (string? obj)
+       (pregexp-match ip6-address-rx obj)
+       #t))
+
+;; rfc4291-compliant ipv6 address strings
+(extern (fxshift fxarithmetic-shift)) ; TODO prelude!
+
+(def (string->ip6-address str)
+  (def (hex-e str k)
+    (let (char (string-ref str k))
+      (cond
+       ((unhex* char) => values)
+       (else
+        (error "Malformed address; not a hex digit" str char)))))
+  
+  (def (loop rest bytes have-zeros)
+    (match rest
+      ([hex . rest]
+       (case (string-length hex)
+         ((0)
+          (if have-zeros
+            (error "Malformed address" str)
+            (let* ((count (length rest))
+                   (count (fx* (fx- 8 count) 2))
+                   (count (fx- count (length bytes)))
+                   (_ (when (fxnegative? count)
+                        (error "Malformed address; too manu bits" str)))
+                   (block (make-list count 0)))
+              (loop rest
+                    (foldl cons bytes block)
+                    #t))))
+         ((1)
+          (loop rest
+                (cons* (hex-e hex 0)
+                       0 bytes)
+                have-zeros))
+         ((2)
+          (loop rest
+                (cons* (fxior (fxshift (hex-e hex 0) 4) (hex-e hex 1))
+                       0 bytes)
+                have-zeros))
+         ((3)
+          (loop rest
+                (cons* (fxior (fxshift (hex-e hex 1) 4) (hex-e hex 2))
+                       (hex-e hex 0)
+                       bytes)
+                have-zeros))
+         ((4)
+          (loop rest
+                (cons* (fxior (fxshift (hex-e hex 2) 4) (hex-e hex 3))
+                       (fxior (fxshift (hex-e hex 0) 4) (hex-e hex 1))
+                       bytes)
+                have-zeros))
+         (else "Malformed address; block is too big" str hex)))
+      (else
+       (check (list->u8vector (reverse bytes))))))
+
+  (def (check bytes)
+    (cond
+     ((fx= (u8vector-length bytes) 16) bytes)
+     ((fx< (u8vector-length bytes) 16)
+      (error "Malformed address; not enough bits" str bytes))
+     (else
+      (error "malformed address; too many bits" str bytes))))
+  
+  (let (hexes (string-split str #\:))
+    (match hexes
+      (["" "" . rest]
+       (let* ((count (length rest))
+              (count (fx* (fx- 8 count) 2))
+              (_ (when (fxnegative? count)
+                   (error "Malformed address; too many bits" str)))
+              (bytes (make-list count 0)))
+           (loop rest bytes #t)))
+      (else
+       (loop hexes [] #f)))))
+
+(def (ip6-address->string ip6)
+  (def (compress-zeros hexes)
+    (match hexes
+      (["0" . rest]
+       (if (find (lambda (hex) (not (equal? hex "0"))) rest)
+         (compress hexes)
+         ["" "" ""]))
+      (else
+       (compress hexes))))
+
+  (def (compress hexes)
+    (match hexes
+      (["0" "0" . rest]
+       (cons "" (compress* rest)))
+      ([hd . rest]
+       (cons hd (compress rest)))
+      (else [])))
+
+  (def (compress* hexes)
+    (match hexes
+      (["0" . rest]
+       (compress* rest))
+      (else hexes)))
+  
+  (let lp ((rest (u8vector->list ip6)) (hexes []))
+    (match rest
+      ([b0 b1 . rest]
+       (let ((b0h (fxand (fxshift b0 -4) #xf))
+             (b0l (fxand b0 #xf))
+             (b1h (fxand (fxshift b1 -4) #xf))
+             (b1l (fxand b1 #xf)))
+         (match* (b0h b0l b1h b1l)
+           ((0 0 0 0)
+            (lp rest (cons "0" hexes)))
+           ((0 0 0 b1l)
+            (lp rest (cons (string (hex b1l)) hexes)))
+           ((0 0 b1h b1l)
+            (lp rest (cons (string (hex b1h) (hex b1l)) hexes)))
+           ((0 b0l b1h b1l)
+            (lp rest (cons (string (hex b0l) (hex b1h) (hex b1l)) hexes)))
+           (else
+            (lp rest (cons (string (hex b0h) (hex b0l) (hex b1h) (hex b1l)) hexes))))))
+      (else
+       (string-join (compress-zeros (reverse hexes)) #\:)))))
 
 ;; inet address: endpoint [host . port]
 (def (inet-address obj)
@@ -65,6 +202,8 @@ package: std/net
     (cond
      ((ip4-address-string? host)
       (cons (string->ip4-address host) port))
+     ((ip6-address-string? host)
+      (cons (string->ip6-address host) port))
      (else inaddr))))
 
 (def (inet-address? obj)
@@ -77,11 +216,20 @@ package: std/net
 
 (def (inet-address-string? obj)
   (cond
-   ((and (string? obj) (pregexp-match inet-address-rx obj))
+   ((and (string? obj) (inet-address-split obj false))
     => (match <>
-         ([_ host port] (inet-host-address-string? host))
+         ((values host port) (inet-host-address-string? host))
          (else #f)))
    (else #f)))
+
+(def (inet-address-split str (E error))
+  (cond
+   ((string-rindex str #\:)
+    => (lambda (ix)
+         (values (substring str 0 ix)
+                 (substring str (fx1+ ix) (string-length str)))))
+   (else
+    (E "Malformed address; no port separator" str))))
 
 (def (inet-host-address? obj)
   (or (ip4-address? obj)
@@ -90,6 +238,7 @@ package: std/net
 
 (def (inet-host-address-string? obj)
   (or (ip4-address-string? obj)
+      (ip6-address-string? obj)
       (inet-host-name? obj)))
 
 (def (inet-host-name? obj)
@@ -99,24 +248,25 @@ package: std/net
 (def inet-host-name-rx
   (pregexp "^[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*$"))
 
-(def inet-address-rx 
-  (pregexp "^([^:]+):(\\d+)$"))
-
-(def (string->inet-address obj)
+(def (string->inet-address str)
   (def (string->host host)
     (cond
      ((ip4-address-string? host)
       (string->ip4-address host))
+     ((ip6-address-string? host)
+      (string->ip6-address host))
      ((inet-host-name? host) host)
+     ((string-empty? host)
+      '#u8(0 0 0 0))
      (else
-      (error "Malformed address: bad host" obj host))))
+      (error "Malformed address; bad host" str host))))
   
   (def (string->port port)
     (let (port (string->number port))
       (if (and (fixnum? port) (fx<= 0 port 65535)) port
-          (error "Malformed address: bad port" obj port))))
+          (error "Malformed address; bad port" str port))))
   
-  (with ([_ host port] (pregexp-match inet-address-rx obj))
+  (with ((values host port) (inet-address-split str))
     (cons
      (string->host host)
      (string->port port))))
@@ -135,5 +285,7 @@ package: std/net
    ((string? host) host)
    ((ip4-address? host)
     (ip4-address->string host))
+   ((ip6-address? host)
+    (ip6-address->string host))
    (else
     (error "Malformed inet host address" host))))
