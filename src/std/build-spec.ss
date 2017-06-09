@@ -55,7 +55,9 @@
           "text/zlib")
         '())
     ;; std/os
+    (gxc: "os/error" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc: "os/fd" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (gxc: "os/fcntl" "-e" "(include \"~~lib/_gambit#.scm\")")
     ;; :std/net
     "net/address"
     "net/uri"
