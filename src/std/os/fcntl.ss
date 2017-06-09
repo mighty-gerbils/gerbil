@@ -22,13 +22,11 @@ package: std/os
 
 (def* fcntl
   ((raw cmd)
-   (let (r (fcntl0 (fd-e raw) cmd))
-     (if (not (fxnegative? r)) r
-         (raise-os-error (fx- r) fcntl raw cmd))))
+   (check-os-error (fcntl0 (fd-e raw) cmd)
+     (fcntl raw cmd)))
   ((raw cmd arg)
-   (let (r (fcntl1 (fd-e raw) cmd arg))
-     (if (not (fxnegative? r)) r
-         (raise-os-error (fx- r) fcntl raw cmd arg)))))
+   (check-os-error (fcntl1 (fd-e raw) cmd arg)
+     (fcntl raw cmd arg))))
 
 (def (fd-getfl raw)
   (fcntl raw F_GETFL))
