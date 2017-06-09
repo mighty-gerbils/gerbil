@@ -1,0 +1,148 @@
+;;; -*- Gerbil -*-
+;;; (C) vyzo at hackzen.org
+;;; OS socket FFI interface
+package: std/os
+
+(export #t)
+(extern
+  _socket
+  _bind
+  _listen
+  _accept
+  _connect
+  _shutdown
+  _close
+  
+  _send
+  _sendto
+  _sendmsg
+  _recv
+  _recvfrom
+  _recvmsg
+
+  _getpeername
+  _getsockname
+
+  ;; sockopts
+  _getsockopt_int
+  _setsockopt_int
+  _getsockopt_tv
+  _setsockopt_tv
+  _getsockopt_addr
+  _setsockopt_addr
+  _getsockopt_addr6
+  _setsockopt_addr6
+  _getsockopt_mreq
+  _setsockopt_mreq
+  _getsockopt_mreq6
+  _setsockopt_mreq6
+  _getsockopt_bytes
+  _setsockopt_bytes
+
+  ;; constants
+  AF_UNSPEC
+  AF_INET
+  AF_INET6
+  AF_UNIX AF_LOCAL
+  AF_NETLINK AF_PACKET AF_ALG           ; linux
+
+  SOCK_STREAM
+  SOCK_DGRAM
+  SOCK_RAW
+  SOCK_SEQPACKET SOCK_RDM               ; linux
+  
+  SHUT_RD
+  SHUT_WR
+  SHUT_RDWR
+
+  ;; sockopts
+  ;; this list is invariably incomplete, new ones get added all the time
+  ;; add to it (and _socket.scm) if you are missing something!
+  SOL_SOCKET
+  SO_ACCEPTCONN
+  SO_BINDTODEVICE
+  SO_BROADCAST
+  SO_DEBUG
+  SO_DOMAIN
+  SO_DONTROUTE
+  SO_ERROR
+  SO_KEEPALIVE
+  SO_LINGER
+  SO_OOBLINE
+  SO_PASSCRED
+  SO_PEERCRED
+  SO_PROTOCOL
+  SO_RCVBUF
+  SO_SNDBUF
+  SO_RCVLOWAT
+  SO_SNDLOWAT
+  SO_RCVTIMEO
+  SO_SNDTIMEO
+  SO_REUSEADDR
+  SO_REUSEPORT
+  SO_TYPE
+  SO_TIMESTAMP
+  SO_USELOOPBACK
+
+  IPPROTO_IP
+  IP_ADD_MEMBERSHIP
+  IP_DROP_MEMBERSHIP
+  IP_HDRINCL
+  IP_MTU
+  IP_MTU_DISCOVER
+  IP_MULTICAST_IF
+  IP_MULTICAST_LOOP
+  IP_MULTICAST_TTL
+  IP_OPTIONS
+  IP_PKTINFO
+  IP_RECVDSTADDR
+  IP_RECVIF
+  IP_RECVTOS
+  IP_RECVTTL
+  IP_TOS
+  IP_TTL
+
+  IPPROTO_IPV6
+  IPV6_ADD_MEMBERSHIP
+  IPV6_DROP_MEMBERSHIP
+  IPV6_MULTICAST_HOPS
+  IPV6_MULTICAST_IF
+  IPV6_MULTICAST_LOOP
+  IPV6_MTU
+  IPV6_MTU_DISCOVER
+  IPV6_CHECKSUM
+  IPV6_PKTINFO
+  IPV6_RECVERR
+  IPV6_UNICAST_HOPS
+  IPV6_RTHDR
+  IPV6_AUTHHDR
+  IPV6_DSTOPTS
+  IPV6_HOPOPTS
+  IPV6_FLOWINFO
+  IPV6_HOPLIMIT
+
+  IPPROTO_TCP
+  TCP_KEEPALIVE
+  TCP_KEEPIDLE
+  TCP_KEEPINTVL
+  TCP_MAXRT
+  TCP_MAXSEG
+  TCP_NODELAY
+  TCP_SYNCNT
+
+  IP_PMTUDISC_WANT
+  IP_PMTUDISC_DONT
+  IP_PMTUDISC_DO
+  IP_PMTUDISC_PROBE
+  IPV6_PKTOPTIONS
+  IPTOS_LOWDELAY
+  IPTOS_THROUGHPUT
+  IPTOS_RELIABILITY
+  IPTOS_MINCOST
+  MSG_DONTROUTE
+  MSG_DONTWAIT
+  MSG_MORE
+  MSG_OOB
+  )
+
+;; (load-module "std/os/_socket")
