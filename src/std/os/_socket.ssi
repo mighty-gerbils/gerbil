@@ -11,7 +11,6 @@ package: std/os
   _accept
   _connect
   _shutdown
-  _close
   
   _send
   _sendto
@@ -23,15 +22,30 @@ package: std/os
   _getpeername
   _getsockname
 
+  ;; sockaddress
+  _make_sockaddr_in
+  _make_sockaddr_in6
+  _make_sockaddr_un
+  _sockaddr_in
+  _sockaddr_in6
+  _sockaddr_un
+  _sockaddr?
+  _sockaddr_fam
+  _sockaddr_in_addr
+  _sockaddr_in_port
+  _sockaddr_in6_addr
+  _sockaddr_in6_port
+  _sockaddr_un_path
+  
   ;; sockopts
   _getsockopt_int
   _setsockopt_int
   _getsockopt_tv
   _setsockopt_tv
-  _getsockopt_addr
-  _setsockopt_addr
-  _getsockopt_addr6
-  _setsockopt_addr6
+  _getsockopt_in
+  _setsockopt_in
+  _getsockopt_in6
+  _setsockopt_in6
   _getsockopt_mreq
   _setsockopt_mreq
   _getsockopt_mreq6
@@ -55,6 +69,8 @@ package: std/os
   SHUT_WR
   SHUT_RDWR
 
+  UNIX_MAX_PATH
+  
   ;; sockopts
   ;; this list is invariably incomplete, new ones get added all the time
   ;; add to it (and _socket.scm) if you are missing something!
