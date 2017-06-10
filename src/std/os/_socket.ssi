@@ -54,7 +54,10 @@ package: std/os
   _getsockopt_linger
   _setsockopt_linger
 
-  ;; sockopt helpers
+  ;; helpers
+  make_int_ptr
+  int_ptr_value
+  
   make_tv
   tv_sec tv_sec_set
   tv_usec tv_usec_set
@@ -169,18 +172,29 @@ package: std/os
   TCP_NODELAY
   TCP_SYNCNT
 
+  ;; flags
   IP_PMTUDISC_WANT
   IP_PMTUDISC_DONT
   IP_PMTUDISC_DO
   IP_PMTUDISC_PROBE
+  
   IPTOS_LOWDELAY
   IPTOS_THROUGHPUT
   IPTOS_RELIABILITY
   IPTOS_MINCOST
+  
+  MSG_CONFIRM
+  MSG_CTRUNC
   MSG_DONTROUTE
   MSG_DONTWAIT
+  MSG_EOR
+  MSG_ERRQUEUE
   MSG_MORE
+  MSG_NOSIGNAL
   MSG_OOB
+  MSG_PEEK
+  MSG_TRUNC
+  MSG_WAITALL
   )
 
 (load-module "std/os/_socket")

@@ -252,6 +252,7 @@ END-C
 (define-const  IP_PMTUDISC_DO)
 (define-compat IP_PMTUDISC_PROBE)
 (define-const  IP_PMTUDISC_PROBE)
+
 (define-compat IPTOS_LOWDELAY)
 (define-const  IPTOS_LOWDELAY)
 (define-compat IPTOS_THROUGHPUT)
@@ -260,13 +261,31 @@ END-C
 (define-const  IPTOS_RELIABILITY)
 (define-compat IPTOS_MINCOST)
 (define-const  IPTOS_MINCOST)
+
+(define-compat MSG_CONFIRM)
+(define-const  MSG_CONFIRM)
+(define-compat MSG_CTRUNC)
+(define-const  MSG_CTRUNC)
 (define-compat MSG_DONTROUTE)
 (define-const  MSG_DONTROUTE)
 (define-compat MSG_DONTWAIT)
 (define-const  MSG_DONTWAIT)
+(define-compat MSG_EOR)
+(define-const  MSG_EOR)
+(define-compat MSG_ERRQUEUE)
+(define-const  MSG_ERRQUEUE)
 (define-compat MSG_MORE)
 (define-const  MSG_MORE)
+(define-compat MSG_NOSIGNAL)
+(define-const  MSG_NOSIGNAL)
 (define-compat MSG_OOB)
+(define-const  MSG_OOB)
+(define-compat MSG_PEEK)
+(define-const  MSG_PEEK)
+(define-compat MSG_TRUNC)
+(define-const  MSG_TRUNC)
+(define-compat MSG_WAITALL)
+(define-const  MSG_WAITALL)
 
 (c-declare #<<END-C
 static ___SCMOBJ ffi_free (void *ptr);
@@ -275,8 +294,10 @@ static int ffi_accept (int fd, struct sockaddr *sa);
 static int ffi_connect (int fd, struct sockaddr *sa);
 static int ffi_send (int fd, ___SCMOBJ bytes, int start, int end, int flags);
 static int ffi_sendto (int fd, ___SCMOBJ bytes, int start, int end, int flags, struct sockaddr *sa);
+static int ffi_sendmsg (int fd, ___SCMOBJ name, ___SCMOBJ io, ___SCMOBJ ctl, int flags);
 static int ffi_recv (int fd, ___SCMOBJ bytes, int start, int end, int flags);
 static int ffi_recvfrom (int fd, ___SCMOBJ bytes, int start, int end, int flags, struct sockaddr *sa);
+static int ffi_recvmsg (int fd, ___SCMOBJ name, int *rname, ___SCMOBJ io, ___SCMOBJ ctl, int *rctl, int flags, int *rflags);
 static int ffi_getpeername (int fd, struct sockaddr *sa);
 static int ffi_getsockname (int fd, struct sockaddr *sa);
 static struct sockaddr *ffi_make_sockaddr_in ();
@@ -305,6 +326,7 @@ static int ffi_getsockopt_bytes (int fd, int level, int opt, ___SCMOBJ bytes);
 static int ffi_setsockopt_bytes (int fd, int level, int opt, ___SCMOBJ bytes);
 static int ffi_getsockopt_linger (int fd, int level, int opt, struct linger *linger);
 static int ffi_setsockopt_linger (int fd, int level, int opt, struct linger *linger);
+static int *ffi_make_int_ptr ();
 static struct timeval *ffi_make_tv ();
 static struct linger *ffi_make_linger ();
 END-C
@@ -313,6 +335,9 @@ END-C
 (c-define-type sockaddr (struct "sockaddr"))
 (c-define-type sockaddr*
   (pointer sockaddr (sockaddr*) "ffi_free"))
+
+(c-define-type int*
+  (pointer int (int*) "ffi_free"))
 
 (c-define-type timeval (struct "timeval"))
 (c-define-type timeval*
@@ -350,12 +375,15 @@ END-C
   "ffi_send")
 (define-c-lambda __sendto (int scheme-object int int int sockaddr*) int
   "ffi_sendto")
-;; __sendmsg
+(define-c-lambda __sendmsg (int scheme-object scheme-object scheme-object int) int
+  "ffi_sendmsg")
+ 
 (define-c-lambda __recv (int scheme-object int int int) int
   "ffi_recv")
 (define-c-lambda __recvfrom (int scheme-object int int int sockaddr*) int
   "ffi_recvfrom")
-;; __recvmsg
+(define-c-lambda __recvmsg (int scheme-object int* scheme-object scheme-object int* int int*) int
+  "ffi_recvmsg")
 
 (define-c-lambda __getpeername (int sockaddr*) int
   "ffi_getpeername")
@@ -371,10 +399,10 @@ END-C
   
 (define-with-errno _send __send (fd bytes start end flags))
 (define-with-errno _sendto __sendto (fd bytes start end flags sa))
-;; _sendmsg
+(define-with-errno _sendmsg __sendmsg (fd name-bytes io-bytes ctl-bytes flags))
 (define-with-errno _recv __recv (fd bytes start end flags))
 (define-with-errno _recvfrom __recvfrom (fd bytes start end flags sa))
-;; _recvmsg
+(define-with-errno _recvmsg __recvmsg (fd name-bytes rname io-bytes ctl-bytes rctl flags rflags))
 
 (define-with-errno _getpeername __getpeername (fd sa))
 (define-with-errno _getsockname __getsockname (fd sa))
@@ -454,6 +482,11 @@ END-C
 (define-with-errno _getsockopt_linger __getsockopt_linger (fd level opt linger))
 (define-with-errno _setsockopt_linger __setsockopt_linger (fd level opt linger))
 
+(define-c-lambda make_int_ptr () int*
+  "ffi_make_int_ptr")
+(define-c-lambda int_ptr_value (int*) int
+  "___return (*___arg1);")
+
 (define-c-lambda make_tv () timeval*
   "ffi_make_tv")
 (define-c-lambda tv_sec (timeval*) int
@@ -532,6 +565,44 @@ int ffi_sendto (int fd, ___SCMOBJ bytes, int start, int end, int flags, struct s
  return sendto (fd, U8_DATA (bytes) + start, end - start, flags, sa, salen);
 }
 
+int ffi_sendmsg (int fd, ___SCMOBJ name, ___SCMOBJ io, ___SCMOBJ ctl, int flags)
+{
+ void *msg_name = NULL;
+ socklen_t msg_namelen = 0;
+ struct iovec msg_iov = {NULL, 0};
+ void *msg_control = NULL;
+ size_t msg_controllen = 0;
+
+ if (!___FALSEP (name))
+ {
+  msg_name = U8_DATA (name);
+  msg_namelen = U8_LEN (name);
+ }
+
+ if (!___FALSEP (io))
+ {
+  msg_iov.iov_base = U8_DATA (io);
+  msg_iov.iov_len = U8_LEN (io);
+ }
+
+ if (!___FALSEP (ctl))
+ {
+  msg_control = U8_DATA (ctl);
+  msg_controllen = U8_LEN (ctl);
+ }
+ 
+ struct msghdr msg;
+ msg.msg_name = msg_name;
+ msg.msg_namelen = msg_namelen;
+ msg.msg_iov = &msg_iov;
+ msg.msg_iovlen = 1;
+ msg.msg_control = msg_control;
+ msg.msg_controllen = msg_controllen;
+ msg.msg_flags = 0;
+
+ return sendmsg (fd, &msg, flags);
+}
+
 int ffi_recv (int fd, ___SCMOBJ bytes, int start, int end, int flags)
 {
  return recv (fd, U8_DATA (bytes) + start, end - start, flags);
@@ -542,6 +613,54 @@ int ffi_recvfrom (int fd, ___SCMOBJ bytes, int start, int end, int flags, struct
  GETSALEN (sa, salen);
  return recvfrom (fd, U8_DATA (bytes) + start, end - start, flags, sa, &salen);
  }
+
+int ffi_recvmsg (int fd, ___SCMOBJ name, int *rname, ___SCMOBJ io, ___SCMOBJ ctl, int *rctl, int flags, int *rflags)
+{
+ void *msg_name = NULL;
+ socklen_t msg_namelen = 0;
+ struct iovec msg_iov = {NULL, 0};
+ void *msg_control = NULL;
+ size_t msg_controllen = 0;
+
+ if (!___FALSEP (name))
+ {
+  msg_name = U8_DATA (name);
+  msg_namelen = U8_LEN (name);
+ }
+
+ if (!___FALSEP (io))
+ {
+  msg_iov.iov_base = U8_DATA (io);
+  msg_iov.iov_len = U8_LEN (io);
+ }
+
+ if (!___FALSEP (ctl))
+ {
+  msg_control = U8_DATA (ctl);
+  msg_controllen = U8_LEN (ctl);
+ }
+ 
+ struct msghdr msg;
+ msg.msg_name = msg_name;
+ msg.msg_namelen = msg_namelen;
+ msg.msg_iov = &msg_iov;
+ msg.msg_iovlen = 1;
+ msg.msg_control = msg_control;
+ msg.msg_controllen = msg_controllen;
+ msg.msg_flags = 0;
+
+ int r = recvmsg (fd, &msg, flags);
+ if (r < 0)
+  return r;
+ if (rname)
+  *rname = msg.msg_namelen;
+ if (rctl)
+  *rctl = msg.msg_controllen;
+ if (rflags)
+  *rflags = msg.msg_flags;
+
+ return r;
+}
 
 int ffi_getpeername (int fd, struct sockaddr *sa)
 {
@@ -740,6 +859,11 @@ int ffi_setsockopt_linger (int fd, int level, int opt, struct linger *linger)
 {
  socklen_t olen = sizeof (struct linger);
  return setsockopt (fd, level, opt, linger, olen);
+}
+
+static int *ffi_make_int_ptr ()
+{
+ return (int*)malloc (sizeof (int));
 }
 
 struct timeval *ffi_make_tv ()

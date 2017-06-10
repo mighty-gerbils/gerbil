@@ -22,8 +22,11 @@ package: std/os
         socket-close
         socket-send
         socket-sendto
+        socket-sendmsg
         socket-recv
         socket-recvfrom
+        socket-recvmsg
+        socket-recvmsg*
         socket-getpeername
         socket-getsockname
         socket-getsockopt
@@ -121,14 +124,24 @@ package: std/os
         IP_PMTUDISC_DONT
         IP_PMTUDISC_DO
         IP_PMTUDISC_PROBE
+        
         IPTOS_LOWDELAY
         IPTOS_THROUGHPUT
         IPTOS_RELIABILITY
         IPTOS_MINCOST
+        
+        MSG_CONFIRM
+        MSG_CTRUNC
         MSG_DONTROUTE
         MSG_DONTWAIT
+        MSG_EOR
+        MSG_ERRQUEUE
         MSG_MORE
+        MSG_NOSIGNAL
         MSG_OOB
+        MSG_PEEK
+        MSG_TRUNC
+        MSG_WAITALL
         )
 
 (def (open-socket domain type proto dir)
@@ -192,7 +205,9 @@ package: std/os
     (do-retry-nonblock (_sendto (fd-e sock) bytes start end flags sa)
       (socket-sendto sock bytes sa start end flags))))
 
-;; TODO socket-sendmsg
+(def (socket-sendmsg sock name-bytes io-bytes ctl-bytes flags)
+  (do-retry-nonblock (_sendmsg (fd-e sock) name-bytes io-bytes ctl-bytes flags)
+    (socket-sendmsg sock name-bytes io-bytes ctl-bytes flags)))
 
 (def (socket-recv sock bytes (start 0) (end (u8vector-length bytes)) (flags 0))
   (do-retry-nonblock (_recv (fd-e sock) bytes start end flags)
@@ -202,7 +217,24 @@ package: std/os
   (do-retry-nonblock (_recvfrom (fd-e sock) bytes start end flags sa)
     (socket-recvfrom sock bytes sa start end flags)))
 
-;; TODO socket-recvmsg
+(def (socket-recvmsg* sock name-bytes rname io-bytes ctl-bytes rctl flags rflags)
+  (do-retry-nonblock (_recvmsg (fd-e sock)
+                               name-bytes rname
+                               io-bytes
+                               ctl-bytes rctl
+                               flags
+                               rflags)
+    (socket-recvmsg sock name-bytes io-bytes ctl-bytes flags)))
+
+(def (socket-recvmsg sock name io ctl flags)
+  (let* ((rname (and name (check-ptr (make_int_ptr))))
+         (rctl (and ctl (check-ptr (make_int_ptr))))
+         (rflags (make_int_ptr))
+         (r (socket-recvmsg* sock name rname ctl rctl flags rflags)))
+    (and r (values r
+                   (and rname (int_ptr_value rname))
+                   (and rctl (int_ptr_value rctl))
+                   (int_ptr_value rflags)))))
 
 (def (socket-getpeername sock)
   (let* ((af (socket-getsockopt sock SOL_SOCKET SO_DOMAIN))
