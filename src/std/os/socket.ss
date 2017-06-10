@@ -12,6 +12,7 @@ package: std/os
         (only-in :gerbil/gambit/ports close-port))
 
 (export socket
+        server-socket
         socket?
         socket-bind
         socket-listen
@@ -130,16 +131,19 @@ package: std/os
         MSG_OOB
         )
 
-(def (open-socket domain type proto)
-  (let (fd (check-os-error (_socket domain type proto)
-             (socket domain type proto)))
-    (fdopen fd 'inout 'socket)))
-
-(def (socket domain type (proto 0))
-  (let (raw (open-socket domain type proto))
+(def (open-socket domain type proto dir)
+  (let* ((fd (check-os-error (_socket domain type proto)
+               (socket domain type proto)))
+         (raw (fdopen fd dir 'socket)))
     (fd-set-nonblock raw)
     (fd-set-closeonexec raw)
     raw))
+
+(def (socket domain type (proto 0))
+  (open-socket domain type proto 'inout))
+
+(def (server-socket domain type (proto 0))
+  (open-socket domain type proto 'in))
 
 (def (socket? obj)
   (fd-type? obj 'socket))
