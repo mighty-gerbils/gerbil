@@ -29,8 +29,7 @@ package: std/os
        (if (not (fxnegative? r)) r
            (let (errno (fx- r))
              (cond
-              ((or (eq? errno EWOULDBLOCK)
-                   (eq? errno ERRNO) ...)
+              ((or (eq? errno ERRNO) ...)
                #f)
               ((eq? errno EINTR)
                (lp))
