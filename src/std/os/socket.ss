@@ -298,15 +298,14 @@ package: std/os
     (socket-address-un addr))))
 
 (def (inet-address->socket-address addr)
-  (let lp ((addr (inet-address addr)))
-    (with ([ip . port] addr)
-      (cond
-       ((ip4-address? ip)
-        (socket-address-in ip port))
-       ((ip6-address? ip)
-        (socket-address-in6 ip port))
-       (else
-        (error "Bad address; expected resolved inet-address" addr))))))
+  (with ([ip . port] (resolve-address addr))
+    (cond
+     ((ip4-address? ip)
+      (socket-address-in ip port))
+     ((ip6-address? ip)
+      (socket-address-in6 ip port))
+     (else
+      (error "Bad address; expected ip4 or ip6 inet-address" addr)))))
 
 (def (socket-address->address sa)
   (let (saf (sockaddr_family sa))

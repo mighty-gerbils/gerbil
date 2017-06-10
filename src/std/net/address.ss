@@ -9,9 +9,9 @@ package: std/net
         ip6-address-string? ip6-address->string string->ip6-address
         inet-address? inet-address
         inet-address-string? inet-address->string string->inet-address
-        inet-host-name?
-        ip4-address-rx inet-host-name-rx)
-(import :std/pregexp
+        resolve-address)
+(import :gerbil/gambit/os
+        :std/pregexp
         :std/format
         :std/text/hex)
 
@@ -201,14 +201,16 @@ package: std/net
    (else
     (error "Malformed inet address" obj))))
 
-(def (inet-address-normalize inaddr)
-  (with ([host . port] inaddr)
+(def (inet-address-normalize addr)
+  (with ([host . port] addr)
     (cond
+     ((or (ip4-address? host) (ip6-address? host))
+      addr)
      ((ip4-address-string? host)
       (cons (string->ip4-address host) port))
      ((ip6-address-string? host)
       (cons (string->ip6-address host) port))
-     (else inaddr))))
+     (else addr))))
 
 (def (inet-address? obj)
   (match obj
@@ -293,3 +295,16 @@ package: std/net
     (ip6-address->string host))
    (else
     (error "Malformed inet host address" host))))
+
+(def (resolve-address addr)
+  (let (addr (inet-address addr))
+    (with ([host . port] addr)
+      (if (or (ip4-address? host)
+              (ip6-address? host))
+        addr
+        (let (info (host-info host))
+          (match (host-info-addresses info)
+            ([ip . rest]
+             (cons ip port))
+            (else
+             (error "Failed to resolve address" addr))))))))
