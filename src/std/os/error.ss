@@ -6,7 +6,12 @@ package: std/os
 (export raise-os-error
         check-os-error
         do-retry-nonblock
-        check-ptr)
+        check-ptr
+        strerror
+        EAGAIN
+        EINTR
+        EINPROGRESS
+        EWOULDBLOCK)
 
 (def (raise-os-error errno prim . args)
   (apply ##raise-os-exception (strerror errno) errno prim args))
@@ -18,14 +23,17 @@ package: std/os
          (raise-os-error (fx- r) prim arg ...)))))
 
 (defrules do-retry-nonblock ()
-  ((_ expr (prim arg ...))
+  ((_ expr (prim arg ...) ERRNO ...)
    (let lp ()
      (let (r expr)
        (if (not (fxnegative? r)) r
            (let (errno (fx- r))
              (cond
-              ((eq? errno EAGAIN) #f)
-              ((eq? errno EINTR) (lp))
+              ((or (eq? errno EWOULDBLOCK)
+                   (eq? errno ERRNO) ...)
+               #f)
+              ((eq? errno EINTR)
+               (lp))
               (else
                (raise-os-error errno prim arg ...)))))))))
 
@@ -35,7 +43,7 @@ package: std/os
      (if r r
          (error "Error allocating memory" 'make)))))
 
-(extern strerror EAGAIN EINTR)
+(extern strerror EAGAIN EINTR EINPROGRESS EWOULDBLOCK)
 (begin-foreign
   (c-declare "#include <errno.h>")
   (c-declare "#include <string.h>")
@@ -51,10 +59,14 @@ package: std/os
       `(define ,symbol
          ((c-lambda () int ,ref)))))
 
-  (namespace ("std/os/error#" strerror EAGAIN EINTR))
+  (namespace ("std/os/error#"
+              strerror
+              EAGAIN EINTR EWOULDBLOCK EINPROGRESS))
 
   (define-const EAGAIN)
   (define-const EINTR)
+  (define-const EINPROGRESS)
+  (define-const EWOULDBLOCK)
   (define-c-lambda strerror (int) char-string))
 
 

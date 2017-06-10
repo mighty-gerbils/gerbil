@@ -171,7 +171,8 @@ package: std/os
 
 (def (socket-accept sock (sa #f))
   (alet (fd (do-retry-nonblock (_accept (fd-e sock) sa)
-             (_accept sock sa)))
+              (_accept sock sa)
+              EAGAIN))
     (let (raw (fdopen fd 'inout 'socket))
       (fd-set-nonblock raw)
       (fd-set-closeonexec raw)
@@ -180,7 +181,8 @@ package: std/os
 (def (socket-connect sock sa)
   (let (sa (socket-address sa))
     (do-retry-nonblock (_connect (fd-e sock) sa)
-      (socket-connect sock sa))))
+      (socket-connect sock sa)
+      EINPROGRESS)))
 
 (def (socket-shutdown sock how)
   (check-os-error (_shutdown (fd-e sock) how)
@@ -198,24 +200,29 @@ package: std/os
 
 (def (socket-send sock bytes (start 0) (end (u8vector-length bytes)) (flags 0))
   (do-retry-nonblock (_send (fd-e sock) bytes start end flags)
-    (socket-send sock bytes start end flags)))
+    (socket-send sock bytes start end flags)
+    EAGAIN))
 
 (def (socket-sendto sock bytes sa (start 0) (end (u8vector-length bytes)) (flags 0))
   (let (sa (socket-address sa))
     (do-retry-nonblock (_sendto (fd-e sock) bytes start end flags sa)
-      (socket-sendto sock bytes sa start end flags))))
+      (socket-sendto sock bytes sa start end flags)
+      EAGAIN)))
 
 (def (socket-sendmsg sock name-bytes io-bytes ctl-bytes flags)
   (do-retry-nonblock (_sendmsg (fd-e sock) name-bytes io-bytes ctl-bytes flags)
-    (socket-sendmsg sock name-bytes io-bytes ctl-bytes flags)))
+    (socket-sendmsg sock name-bytes io-bytes ctl-bytes flags)
+    EAGAIN))
 
 (def (socket-recv sock bytes (start 0) (end (u8vector-length bytes)) (flags 0))
   (do-retry-nonblock (_recv (fd-e sock) bytes start end flags)
-    (socket-recv sock bytes start end flags)))
+    (socket-recv sock bytes start end flags)
+    EAGAIN))
 
 (def (socket-recvfrom sock bytes sa (start 0) (end (u8vector-length bytes)) (flags 0))
   (do-retry-nonblock (_recvfrom (fd-e sock) bytes start end flags sa)
-    (socket-recvfrom sock bytes sa start end flags)))
+    (socket-recvfrom sock bytes sa start end flags)
+    EAGAIN))
 
 (def (socket-recvmsg* sock name-bytes rname io-bytes ctl-bytes rctl flags rflags)
   (do-retry-nonblock (_recvmsg (fd-e sock)
@@ -224,7 +231,8 @@ package: std/os
                                ctl-bytes rctl
                                flags
                                rflags)
-    (socket-recvmsg sock name-bytes io-bytes ctl-bytes flags)))
+    (socket-recvmsg sock name-bytes io-bytes ctl-bytes flags)
+    EAGAIN))
 
 (def (socket-recvmsg sock name io ctl flags)
   (let* ((rname (and name (check-ptr (make_int_ptr))))
