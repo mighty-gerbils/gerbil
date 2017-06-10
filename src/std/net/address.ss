@@ -144,14 +144,18 @@ package: std/net
 
 (def (ip6-address->string ip6)
   (def (compress-zeros hexes)
-    (match hexes
-      (["0" . rest]
-       (if (find (lambda (hex) (not (equal? hex "0"))) rest)
-         (compress hexes)
-         ["" "" ""]))
-      (else
-       (compress hexes))))
-
+    (compress-leading-trailing
+     (compress hexes)))
+  
+  (def (compress-leading-trailing hexes)
+    (cond
+     ((equal? (car hexes) "")
+      (cons "" hexes))
+     ((equal? (last hexes) "")
+      (set! (cdr (last-pair hexes)) '(""))
+      hexes)
+     (else hexes)))
+  
   (def (compress hexes)
     (match hexes
       (["0" "0" . rest]
@@ -159,7 +163,7 @@ package: std/net
       ([hd . rest]
        (cons hd (compress rest)))
       (else [])))
-
+  
   (def (compress* hexes)
     (match hexes
       (["0" . rest]
