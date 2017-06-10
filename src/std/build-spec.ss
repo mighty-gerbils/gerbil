@@ -58,6 +58,9 @@
     (gxc: "os/error" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc: "os/fd" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc: "os/fcntl" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (gsc: "os/_socket" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (ssi: "os/_socket")
+    (gxc: "os/socket" "-e" "(include \"~~lib/_gambit#.scm\")")
     ;; :std/net
     "net/address"
     "net/uri"

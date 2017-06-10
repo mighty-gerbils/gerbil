@@ -11,7 +11,124 @@ package: std/os
         :std/sugar
         (only-in :gerbil/gambit/ports close-port))
 
-(export #t)
+(export socket
+        socket?
+        socket-bind
+        socket-listen
+        socket-accept
+        socket-connect
+        socket-shutdown
+        socket-close
+        socket-send
+        socket-sendto
+        socket-recv
+        socket-recvfrom
+        socket-getpeername
+        socket-getsockname
+        socket-getsockopt
+        socket-setsockopt
+        socket-address?
+        make-socket-address
+        make-socket-address-in
+        make-socket-address-in6
+        make-socket-address-un
+        socket-address
+        socket-address-in
+        socket-address-in6
+        socket-address-un
+        socket-address->address
+        socket-address->string
+
+        ;; constants from _socket
+        AF_UNSPEC
+        AF_INET
+        AF_INET6
+        AF_UNIX AF_LOCAL
+        AF_NETLINK AF_PACKET AF_ALG
+
+        SOCK_STREAM
+        SOCK_DGRAM
+        SOCK_RAW
+        SOCK_SEQPACKET SOCK_RDM
+  
+        SHUT_RD
+        SHUT_WR
+        SHUT_RDWR
+
+        UNIX_MAX_PATH
+
+        ;; sockopt constants
+        SOL_SOCKET
+        SO_ACCEPTCONN
+        SO_BINDTODEVICE
+        SO_BROADCAST
+        SO_DEBUG
+        SO_DOMAIN
+        SO_DONTROUTE
+        SO_ERROR
+        SO_KEEPALIVE
+        SO_LINGER
+        SO_OOBLINE
+        SO_PASSCRED
+        SO_PEERCRED
+        SO_PEEK_OFF
+        SO_PROTOCOL
+        SO_RCVBUF
+        SO_SNDBUF
+        SO_RCVLOWAT
+        SO_SNDLOWAT
+        SO_RCVTIMEO
+        SO_SNDTIMEO
+        SO_REUSEADDR
+        SO_REUSEPORT
+        SO_TYPE
+        SO_TIMESTAMP
+        SO_USELOOPBACK
+
+        IPPROTO_IPV6
+        IPV6_ADDRFORM
+        IPV6_ADD_MEMBERSHIP
+        IPV6_DROP_MEMBERSHIP
+        IPV6_MTU
+        IPV6_MTU_DISCOVER
+        IPV6_MULTICAST_HOPS
+        IPV6_MULTICAST_IF
+        IPV6_MULTICAST_LOOP
+        IPV6_RECVPKTINFO
+        IPV6_RTHDR
+        IPV6_AUTHHDR
+        IPV6_DSTOPTS
+        IPV6_HOPOPTS
+        IPV6_FLOWINFO
+        IPV6_HOPLIMIT
+        IPV6_ROUTER_ALERT
+        IPV6_UNICAST_HOPS
+        IPV6_V6ONLY
+
+        IPPROTO_TCP
+        TCP_CONGESTION
+        TCP_CORK
+        TCP_DEFER_ACCEPT
+        TCP_KEEPCNT
+        TCP_KEEPIDLE
+        TCP_KEEPINTVL
+        TCP_MAXSEG
+        TCP_NODELAY
+        TCP_SYNCNT
+
+        IP_PMTUDISC_WANT
+        IP_PMTUDISC_DONT
+        IP_PMTUDISC_DO
+        IP_PMTUDISC_PROBE
+        IPTOS_LOWDELAY
+        IPTOS_THROUGHPUT
+        IPTOS_RELIABILITY
+        IPTOS_MINCOST
+        MSG_DONTROUTE
+        MSG_DONTWAIT
+        MSG_MORE
+        MSG_OOB
+        )
 
 (def (open-socket domain type proto)
   (let (fd (check-os-error (_socket domain type proto)
@@ -67,7 +184,7 @@ package: std/os
     (socket-send sock bytes start end flags)))
 
 (def (socket-sendto sock bytes sa (start 0) (end (u8vector-length bytes)) (flags 0))
-  (let (sa (and sa (socket-address sa)))
+  (let (sa (socket-address sa))
     (do-retry-nonblock (_sendto (fd-e sock) bytes start end flags sa)
       (socket-sendto sock bytes sa start end flags))))
 
@@ -99,7 +216,7 @@ package: std/os
 
 ;;; Socket addresses
 (def (socket-address? obj)
-  (_sockaddr? obj))
+  (sockaddr? obj))
 
 (def (make-socket-address af)
   (cond
@@ -113,24 +230,35 @@ package: std/os
     (error "Unknown address family" af))))
 
 (def (make-socket-address-in)
-  (_make_sockaddr_in))
+  (check-ptr (make_sockaddr_in)))
 
 (def (make-socket-address-in6)
-  (_make_sockaddr_in6))
+  (check-ptr (make_sockaddr_in6)))
 
 (def (make-socket-address-un)
-  (_make_sockaddr_un))
+  (check-ptr (make_sockaddr_un)))
 
 (def (socket-address-in host port)
-  (let (ip4 (ip4-address host))
-    (_sockaddr_in ip4 port)))
+  (let* ((ip4 (ip4-address host))
+         (sa (check-ptr (make_sockaddr_in))))
+    (sockaddr_in_addr_set sa ip4)
+    (sockaddr_in_port_set sa port)
+    sa))
 
 (def (socket-address-in6 host port)
-  (let (ip6 (ip6-address host))
-    (_sockaddr_in6 ip6 port)))
+  (let* ((ip6 (ip6-address host))
+         (sa (check-ptr (make_sockaddr_in6))))
+    (sockaddr_in6_addr_set sa ip6)
+    (sockaddr_in6_port_set sa port)
+    sa))
 
 (def (socket-address-un path)
-  (path->socket-address path))
+  (let (pathlen (u8vector-length (string->bytes path)))
+    (if (fx< pathlen UNIX_MAX_PATH)
+      (let (sa (check-ptr (make_sockaddr_un)))
+        (sockaddr_un_path_set sa path)
+        sa)
+      (error "Malformed address; path is too long"))))
 
 (def (socket-address addr)
   (cond
@@ -139,58 +267,52 @@ package: std/os
         (inet-address-string? addr))
     (inet-address->socket-address addr))
    (else
-    (path->socket-address addr))))
+    (socket-address-un addr))))
 
 (def (inet-address->socket-address addr)
   (let lp ((addr (inet-address addr)))
     (with ([ip . port] addr)
       (cond
        ((ip4-address? ip)
-        (_sockaddr_in ip port))
+        (socket-address-in ip port))
        ((ip6-address? ip)
-        (_sockaddr_in6 ip port))
+        (socket-address-in6 ip port))
        (else
         (error "Bad address; expected resolved inet-address" addr))))))
 
-(def (path->socket-address path)
-  (let (pathlen (u8vector-length (string->bytes path)))
-    (if (fx< pathlen UNIX_MAX_PATH)
-      (_sockaddr_un path)
-      (error "Malformed address; path is too long"))))
-
 (def (socket-address->address sa)
-  (let (saf (_sockaddr_fam sa))
+  (let (saf (sockaddr_family sa))
     (cond
      ((eq? saf AF_INET)
       (let* ((ip4 (make-u8vector 4))
-             (_ (_sockaddr_in_addr sa ip4))
-             (port (_sockaddr_in_port sa)))
+             (_ (sockaddr_in_addr sa ip4))
+             (port (sockaddr_in_port sa)))
         (cons ip4 port)))
      ((eq? saf AF_INET6)
       (let* ((ip6 (make-u8vector 16))
-             (_ (_sockaddr_in6_addr sa ip6))
-             (port (_sockaddr_in6_port sa)))
+             (_ (sockaddr_in6_addr sa ip6))
+             (port (sockaddr_in6_port sa)))
         (cons ip6 port)))
      ((eq? saf AF_UNIX)
-      (_sockaddr_un_path sa))
+      (sockaddr_un_path sa))
      (else
       (error "Unknown address family" sa saf)))))
 
 (def (socket-address->string sa)
-  (let (saf (_sockaddr_fam sa))
+  (let (saf (sockaddr_family sa))
     (cond
      ((eq? saf AF_INET)
       (let* ((ip4 (make-u8vector 4))
-             (_ (_sockaddr_in_addr sa ip4))
-             (port (_sockaddr_in_port sa)))
+             (_ (sockaddr_in_addr sa ip4))
+             (port (sockaddr_in_port sa)))
         (string-append (ip4-address->string ip4) ":" (number->string port))))
      ((eq? saf AF_INET6)
       (let* ((ip6 (make-u8vector 16))
-             (_ (_sockaddr_in6_addr sa ip6))
-             (port (_sockaddr_in6_port sa)))
+             (_ (sockaddr_in6_addr sa ip6))
+             (port (sockaddr_in6_port sa)))
         (string-append (ip6-address->string ip6) ":" (number->string port))))
      ((eq? saf AF_UNIX)
-      (_sockaddr_un_path sa))
+      (sockaddr_un_path sa))
      (else
       (error "Unknown address family" sa saf)))))
 
@@ -238,19 +360,19 @@ package: std/os
     (error "Bad argument; expected fixnum" val)))
 
 (def (socket-getsockopt-tv sock level opt)
-  (let (tv (_make_tv))
+  (let (tv (check-ptr (make_tv)))
     (check-os-error (_getsockopt_tv (fd-e sock) level opt tv)
       (socket-getsockopt sock level opt))
-    (+ (_tv_sec tv) (/ (_tv_usec tv) 1e6))))
+    (+ (tv_sec tv) (/ (tv_usec tv) 1e6))))
 
 (def (socket-setsockopt-tv sock level opt tm)
   (if (real? tm)
     (let* ((tm-sec (floor tm))
            (tm-frac (- tm tm-sec))
            (tm-usec (floor (* tm-frac 1e6)))
-           (tv (_make_tv)))
-      (_tv_sec_set tv (inexact->exact tm-sec))
-      (_tv_usec_set tv (inexact->exact tm-usec))
+           (tv (check-ptr (make_tv))))
+      (tv_sec_set tv (inexact->exact tm-sec))
+      (tv_usec_set tv (inexact->exact tm-usec))
       (check-os-error (_setsockopt_tv (fd-e sock) level opt tv)
         (socket-setsockopt sock level opt tm)))
     (error "Bad argument; expected real" tm)))
@@ -307,40 +429,30 @@ package: std/os
 
 (def (socket-setsockopt-mreq6 sock level opt ips)
   (match ips
-    ((cons maddr laddr)
-     (let ((maddr (ip6-address maddr))
-           (laddr (ip6-address laddr)))
-     (check-os-error (_setsockopt_mreq6 (fd-e sock) level opt maddr laddr)
+    ((cons maddr ifindex)
+     (let (maddr (ip6-address maddr))
+     (check-os-error (_setsockopt_mreq6 (fd-e sock) level opt maddr ifindex)
        (socket-setsockopt sock level opt ips))))
     (else
      (error "Bad argument; expected pair of ip6 addresses" ips))))
 
-(def (socket-setsockopt-mreq6-src sock level opt ips)
-  (match ips
-    ([maddr iaddr saddr]
-     (let ((maddr (ip6-address maddr))
-           (iaddr (ip6-address iaddr))
-           (saddr (ip6-address saddr)))
-     (check-os-error (_setsockopt_mreq6_src (fd-e sock) level opt maddr iaddr saddr)
-       (socket-setsockopt sock level opt ips))))
-    (else
-     (error "Bad argument; list with 3 ip6 addresses" ips))))
-
 (def (socket-getsockopt-linger sock level opt)
-  (let (linger (_make_linger))
+  (let (linger (check-ptr (make_linger)))
     (check-os-error (_getsockopt_linger sock level opt linger)
       (socket-getsockopt sock level opt))
-    (if (fxzero? (_linger_onoff linger))
+    (if (fxzero? (linger_onoff linger))
       #f
-      (_linger_linger linger))))
+      (linger_linger linger))))
 
 (def (socket-setsockopt-linger sock level opt val)
-  (let (linger (_make_linger))
+  (let (linger (check-ptr (make_linger)))
     (cond
      ((fixnum? val)
-      (_linger_onoff_set linger 1)
-      (_linger_linger_set val))
-     ((not val))
+      (linger_onoff_set linger 1)
+      (linger_linger_set linger val))
+     ((not val)
+      (linger_onoff_set linger 0)
+      (linger_linger_set linger 0))
      (else
       (error "Bad argument; expected fixnum or #f" val)))
     (check-os-error (_setsockopt_linger sock level opt linger)
