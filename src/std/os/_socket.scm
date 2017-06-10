@@ -27,6 +27,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef __linux__
+#include <linux/netlink.h>
+#endif
+
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
 #define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
 END-C
@@ -52,7 +56,6 @@ END-C
     `(c-declare ,ifdef)))
 
 ;;; Constants
-(define-const  AF_UNSPEC)
 (define-const  AF_UNSPEC)
 (define-const  AF_INET)
 (define-const  AF_INET6)
@@ -300,9 +303,7 @@ static int ffi_recvfrom (int fd, ___SCMOBJ bytes, int start, int end, int flags,
 static int ffi_recvmsg (int fd, ___SCMOBJ name, int *rname, ___SCMOBJ io, ___SCMOBJ ctl, int *rctl, int flags, int *rflags);
 static int ffi_getpeername (int fd, struct sockaddr *sa);
 static int ffi_getsockname (int fd, struct sockaddr *sa);
-static struct sockaddr *ffi_make_sockaddr_in ();
-static struct sockaddr *ffi_make_sockaddr_in6 ();
-static struct sockaddr *ffi_make_sockaddr_un ();
+static struct sockaddr *ffi_make_sockaddr (int family);
 static void ffi_sockaddr_in_addr (struct sockaddr *sa, ___SCMOBJ bytes);
 static void ffi_sockaddr_in_addr_set (struct sockaddr *sa, ___SCMOBJ bytes);
 static int ffi_sockaddr_in_port (struct sockaddr *sa);
@@ -313,6 +314,9 @@ static int ffi_sockaddr_in6_port (struct sockaddr *sa);
 static void ffi_sockaddr_in6_port_set (struct sockaddr *sa, int port);
 static char *ffi_sockaddr_un_path (struct sockaddr *sa);
 static void ffi_sockaddr_un_path_set (struct sockaddr *sa, char *path);
+static int ffi_sockaddr_len (struct sockaddr *sa);
+static int ffi_sockaddr_bytes (struct sockaddr *sa, ___SCMOBJ bytes);
+static int ffi_sockaddr_bytes_set (struct sockaddr *sa, ___SCMOBJ bytes);
 static int ffi_getsockopt_int (int fd, int level, int opt);
 static int ffi_setsockopt_int (int fd, int level, int opt, int val);
 static int ffi_getsockopt_tv (int fd, int level, int opt, struct timeval *tv);
@@ -407,12 +411,8 @@ END-C
 (define-with-errno _getpeername __getpeername (fd sa))
 (define-with-errno _getsockname __getsockname (fd sa))
 
-(define-c-lambda make_sockaddr_in () sockaddr*
-  "ffi_make_sockaddr_in")
-(define-c-lambda make_sockaddr_in6 () sockaddr*
-  "ffi_make_sockaddr_in6")
-(define-c-lambda make_sockaddr_un () sockaddr*
-  "ffi_make_sockaddr_un")
+(define-c-lambda make_sockaddr (int) sockaddr*
+  "ffi_make_sockaddr")
 
 (define (sockaddr? obj)
   (and (foreign? obj)
@@ -440,6 +440,12 @@ END-C
   "ffi_sockaddr_un_path")
 (define-c-lambda sockaddr_un_path_set (sockaddr* UTF-8-string) void
   "ffi_sockaddr_un_path_set")
+(define-c-lambda sockaddr_len (sockaddr*) int
+  "ffi_sockaddr_len")
+(define-c-lambda sockaddr_bytes (sockaddr* scheme-object) int
+  "ffi_sockaddr_bytes")
+(define-c-lambda sockaddr_bytes_set (sockaddr* scheme-object) int
+  "ffi_sockaddr_bytes_set")
 
 (define-c-lambda __getsockopt_int (int int int) int
   "ffi_getsockopt_int")
@@ -516,9 +522,9 @@ ___SCMOBJ ffi_free (void *ptr)
  return ___FIX (___NO_ERR);
 }
 
-static socklen_t sockaddr_len (struct sockaddr *sa)
+static socklen_t sockaddr_family_len (int family)
 {
- switch (sa->sa_family)
+ switch (family)
  {
   case AF_INET:
    return sizeof (struct sockaddr_in);
@@ -526,10 +532,21 @@ static socklen_t sockaddr_len (struct sockaddr *sa)
    return sizeof (struct sockaddr_in6);
   case AF_UNIX:
    return sizeof (struct sockaddr_un);
+#ifdef __linux__
+  case AF_NETLINK:
+   return sizeof (struct sockaddr_nl);
+#endif
   default:
-   errno = EINVAL;
    return -1;
  }
+}
+
+static socklen_t sockaddr_len (struct sockaddr *sa)
+{
+ int r = sockaddr_family_len (sa->sa_family);
+ if (r < 0)
+  errno = EINVAL;
+ return r;
 }
 
 #define GETSALEN(sa, salen) \
@@ -674,37 +691,19 @@ int ffi_getsockname (int fd, struct sockaddr *sa)
  return getsockname (fd, sa, &salen);
 }
 
-struct sockaddr *ffi_make_sockaddr_in ()
+struct sockaddr *ffi_make_sockaddr (int family)
 {
- struct sockaddr *sa = (struct sockaddr*)malloc (sizeof (struct sockaddr_in));
- if (sa)
- {     
-  memset (sa, 0, sizeof (struct sockaddr_in));
-  sa->sa_family = AF_INET;
- }
- return sa;
-}
+ socklen_t salen = sockaddr_family_len (family);
+ if (salen < 0)
+  return NULL;
 
-struct sockaddr *ffi_make_sockaddr_in6 ()
-{
- struct sockaddr *sa = (struct sockaddr*)malloc (sizeof (struct sockaddr_in6));
- if (sa)
- {       
-  memset (sa, 0, sizeof (struct sockaddr_in6));
-  sa->sa_family = AF_INET6;
- }
- return sa;
-}
-
-struct sockaddr *ffi_make_sockaddr_un ()
-{
- struct sockaddr *sa = (struct sockaddr*)malloc (sizeof (struct sockaddr_un));
- if (sa)
- {       
-  memset (sa, 0, sizeof (struct sockaddr_un));
-  sa->sa_family = AF_UNIX;
- }
- return sa;
+ struct sockaddr *sa = (struct sockaddr*)malloc (salen);
+ if (sa) 
+ {
+  memset (sa, 0, salen);
+  sa->sa_family = family;
+ }       
+ return sa;;
 }
 
 void ffi_sockaddr_in_addr (struct sockaddr *sa, ___SCMOBJ bytes)
@@ -765,6 +764,26 @@ void ffi_sockaddr_un_path_set (struct sockaddr *sa, char *path)
 {
  struct sockaddr_un *sa_un = (struct sockaddr_un*)sa;
  strncpy (sa_un->sun_path, path, sizeof (sa_un->sun_path));      
+}
+
+int ffi_sockaddr_len (struct sockaddr *sa)
+{
+ GETSALEN (sa, salen);
+ return salen;
+}
+
+int ffi_sockaddr_bytes (struct sockaddr *sa, ___SCMOBJ bytes)
+{
+ GETSALEN (sa, salen);
+ memcpy (U8_DATA (bytes), sa, salen);
+ return 0;       
+}
+
+int ffi_sockaddr_bytes_set (struct sockaddr *sa, ___SCMOBJ bytes)
+{
+ GETSALEN (sa, salen);
+ memcpy (sa, U8_DATA (bytes), salen);
+ return 0;
 }
 
 int ffi_getsockopt_int (int fd, int level, int opt)

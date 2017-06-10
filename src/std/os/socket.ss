@@ -255,35 +255,27 @@ package: std/os
   (sockaddr? obj))
 
 (def (make-socket-address af)
-  (cond
-   ((eq? af AF_INET)
-    (make-socket-address-in))
-   ((eq? af AF_INET6)
-    (make-socket-address-in6))
-   ((eq? af AF_UNIX)
-    (make-socket-address-un))
-   (else
-    (error "Unknown address family" af))))
+  (check-ptr (make_sockaddr af)))
 
 (def (make-socket-address-in)
-  (check-ptr (make_sockaddr_in)))
+  (make-socket-address AF_INET))
 
 (def (make-socket-address-in6)
-  (check-ptr (make_sockaddr_in6)))
+  (make-socket-address AF_INET6))
 
 (def (make-socket-address-un)
-  (check-ptr (make_sockaddr_un)))
+  (make-socket-address AF_UNIX))
 
 (def (socket-address-in host port)
   (let* ((ip4 (ip4-address host))
-         (sa (check-ptr (make_sockaddr_in))))
+         (sa (make-socket-address-in)))
     (sockaddr_in_addr_set sa ip4)
     (sockaddr_in_port_set sa port)
     sa))
 
 (def (socket-address-in6 host port)
   (let* ((ip6 (ip6-address host))
-         (sa (check-ptr (make_sockaddr_in6))))
+         (sa (make-socket-address-in6)))
     (sockaddr_in6_addr_set sa ip6)
     (sockaddr_in6_port_set sa port)
     sa))
@@ -291,7 +283,7 @@ package: std/os
 (def (socket-address-un path)
   (let (pathlen (u8vector-length (string->bytes path)))
     (if (fx< pathlen UNIX_MAX_PATH)
-      (let (sa (check-ptr (make_sockaddr_un)))
+      (let (sa (make-socket-address-un))
         (sockaddr_un_path_set sa path)
         sa)
       (error "Malformed address; path is too long"))))

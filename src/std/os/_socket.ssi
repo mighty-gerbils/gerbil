@@ -23,9 +23,7 @@ package: std/os
   _getsockname
 
   ;; sockaddress
-  make_sockaddr_in
-  make_sockaddr_in6
-  make_sockaddr_un
+  make_sockaddr
   sockaddr?
   sockaddr_family
   sockaddr_in_addr
@@ -38,6 +36,9 @@ package: std/os
   sockaddr_in6_port_set
   sockaddr_un_path
   sockaddr_un_path_set
+  sockaddr_len
+  sockaddr_bytes
+  sockaddr_bytes_set
   
   ;; sockopts
   _getsockopt_int
