@@ -196,7 +196,7 @@ package: std/os
     (close-port sock))))
 
 (def (socket-close sock)
-  (with-catch void (cut close-port sock)))
+  (close-port sock))
 
 (def (socket-send sock bytes (start 0) (end (u8vector-length bytes)) (flags 0))
   (do-retry-nonblock (_send (fd-e sock) bytes start end flags)
