@@ -17,15 +17,15 @@ package: std/os
   O_RDONLY O_RDWR O_WRONLY
   ;; F_SETLK F_SETLK F_SETLKW
   ;; F_RDLCK F_UNLCK F_WRLCK
-  fcntl0 fcntl1
+  _fcntl0 _fcntl1
   )
 
 (def* fcntl
   ((raw cmd)
-   (check-os-error (fcntl0 (fd-e raw) cmd)
+   (check-os-error (_fcntl0 (fd-e raw) cmd)
      (fcntl raw cmd)))
   ((raw cmd arg)
-   (check-os-error (fcntl1 (fd-e raw) cmd arg)
+   (check-os-error (_fcntl1 (fd-e raw) cmd arg)
      (fcntl raw cmd arg))))
 
 (def (fd-getfl raw)
@@ -83,8 +83,8 @@ package: std/os
               O_APPEND O_DSYNC O_NONBLOCK O_RSYNC O_SYNC
               O_ACCMODE
               O_RDONLY O_RDWR O_WRONLY
-              _fcntl0 _fcntl1 _errno
-              fcntl0 fcntl1
+              __fcntl0 __fcntl1 __errno
+              _fcntl0 _fcntl1
               ))
   
   ;; POSIX commands
@@ -121,21 +121,21 @@ package: std/os
   (define-const O_RDWR)
   (define-const O_WRONLY)
   
-  (define-c-lambda _fcntl0 (int int) int "fcntl")
-  (define-c-lambda _fcntl1 (int int int) int "fcntl")
-  (define-c-lambda _errno () int
+  (define-c-lambda __fcntl0 (int int) int "fcntl")
+  (define-c-lambda __fcntl1 (int int int) int "fcntl")
+  (define-c-lambda __errno () int
     "___return (errno);")
 
-  (define (fcntl0 fd cmd)
+  (define (_fcntl0 fd cmd)
     (declare (not interrupts-enabled))
-    (let ((r (_fcntl0 fd cmd)))
+    (let ((r (__fcntl0 fd cmd)))
       (if (##eq? r -1)
-        (##fx- (_errno))
+        (##fx- (__errno))
         r)))
 
-  (define (fcntl1 fd cmd arg)
+  (define (_fcntl1 fd cmd arg)
     (declare (not interrupts-enabled))
-    (let ((r (_fcntl1 fd cmd arg)))
+    (let ((r (__fcntl1 fd cmd arg)))
       (if (##eq? r -1)
-        (##fx- (_errno))
+        (##fx- (__errno))
         r))))
