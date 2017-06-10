@@ -5,7 +5,8 @@ package: std/os
 
 (export raise-os-error
         check-os-error
-        do-retry-nonblock)
+        do-retry-nonblock
+        check-ptr)
 
 (def (raise-os-error errno prim . args)
   (apply ##raise-os-exception (strerror errno) errno prim args))
@@ -27,6 +28,12 @@ package: std/os
               ((eq? errno EINTR) (lp))
               (else
                (raise-os-error errno prim arg ...)))))))))
+
+(defrules check-ptr ()
+  ((_ (make arg ...))
+   (let (r (make arg ...))
+     (if r r
+         (error "Error allocating memory" 'make)))))
 
 (extern strerror EAGAIN EINTR)
 (begin-foreign
