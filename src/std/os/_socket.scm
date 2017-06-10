@@ -22,6 +22,7 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
+#include <arpa/inet.h>
 #include <sys/un.h>
 #include <sys/time.h>
 #include <stdlib.h>
@@ -561,8 +562,13 @@ static int ffi_bind (int fd, struct sockaddr *sa)
 
 int ffi_accept (int fd, struct sockaddr *sa)
 {
- GETSALEN (sa, salen);
- return accept (fd, sa, &salen);
+ if (sa)
+ {
+  GETSALEN (sa, salen);
+  return accept (fd, sa, &salen);
+ } else {
+  return accept (fd, NULL, 0); 
+ }
 }
 
 int ffi_connect (int fd, struct sockaddr *sa)
@@ -721,13 +727,13 @@ void ffi_sockaddr_in_addr_set (struct sockaddr *sa, ___SCMOBJ bytes)
 int ffi_sockaddr_in_port (struct sockaddr *sa)
 {
  struct sockaddr_in *sa_in = (struct sockaddr_in*)sa;
- return sa_in->sin_port;
+ return ntohs (sa_in->sin_port);
 }
 
 void ffi_sockaddr_in_port_set (struct sockaddr *sa, int port)
 {
  struct sockaddr_in *sa_in = (struct sockaddr_in*)sa;
- sa_in->sin_port = port;
+ sa_in->sin_port = htons (port);
 }
 
 void ffi_sockaddr_in6_addr (struct sockaddr *sa, ___SCMOBJ bytes)
@@ -745,13 +751,13 @@ void ffi_sockaddr_in6_addr_set (struct sockaddr *sa, ___SCMOBJ bytes)
 int ffi_sockaddr_in6_port (struct sockaddr *sa)
 {
  struct sockaddr_in6 *sa_in6 = (struct sockaddr_in6*)sa;
- return sa_in6->sin6_port;
+ return ntohs (sa_in6->sin6_port);
 }
 
 void ffi_sockaddr_in6_port_set (struct sockaddr *sa, int port)
 {
  struct sockaddr_in6 *sa_in6 = (struct sockaddr_in6*)sa;
- sa_in6->sin6_port = port;
+ sa_in6->sin6_port = htons (port);
 }
 
 char *ffi_sockaddr_un_path (struct sockaddr *sa)
