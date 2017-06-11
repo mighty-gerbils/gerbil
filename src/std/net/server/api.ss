@@ -10,7 +10,7 @@ package: std/net/server
         :std/os/error
         :std/net/address
         :std/net/server/base
-        :std/net/server/sync
+        :std/net/server/sync-server
         :std/sugar
         :std/error
         )
@@ -25,7 +25,7 @@ package: std/net/server
 
 (cond-expand
   (linux-gnu
-   (import :std/net/server/epoll)))
+   (import :std/net/server/epoll-server)))
 
 (def (default-server-impl)
   (cond-expand
