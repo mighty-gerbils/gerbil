@@ -29,5 +29,5 @@ package: std/net/server
 ;; socket-server protocol 
 (defproto socket-server
   (add sock)
-  (close ssock dir)
+  (close ssock dir shutdown)
   (shutdown!))

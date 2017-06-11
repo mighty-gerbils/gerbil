@@ -163,15 +163,15 @@ package: std/net/server
 
 ;; close an ssock
 (def (server-close ssock)
-  ((!socket-close ssock) ssock 'inout))
+  ((!socket-close ssock) ssock 'inout #f))
 
 ;; close input side of an ssock
-(def (server-close-input ssock)
-  ((!socket-close ssock) ssock 'in))
+(def (server-close-input ssock (shutdown #f))
+  ((!socket-close ssock) ssock 'in (and shutdown SHUT_RD)))
 
 ;; close output side of an ssock
-(def (server-close-output ssock)
-  ((!socket-close ssock) ssock 'out))
+(def (server-close-output ssock (shutdown #f))
+  ((!socket-close ssock) ssock 'out (and shutdown SHUT_WR)))
 
 ;; utils
 (def (abs-timeout timeo)
