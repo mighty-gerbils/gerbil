@@ -79,7 +79,7 @@ namespace: gx
                         ,core-compile-top-export%)
     (%#provide          module:  ,core-expand-provide%
                         ,core-compile-top-provide%)
-    (%#declare          special: ,core-expand-declare%
+    (%#declare          module:   ,core-expand-declare%
                         ,core-compile-top-declare%)
     (%#cond-expand      special: ,core-expand-cond-expand% 
                         #f)

@@ -201,6 +201,9 @@ namespace: gx
              (core-expand-block* hd illegal-expression))
             ((expression-form-binding? bind)
              (expand-e bind hd))
+            ((direct-special-form-binding? bind)
+             (core-expand-expression
+              (expand-e bind hd)))
             (else
              (illegal-expression hd)))))))
      ((core-bound-identifier? hd)
@@ -369,7 +372,7 @@ namespace: gx
   (core-syntax-case stx ()
     ((_ . clauses)
      (stx-list? clauses)
-      (core-cons '%#begin
+      (core-cons 'begin
         (loop clauses)))))
 
 ;; (%#include path)
@@ -384,7 +387,7 @@ namespace: gx
          (raise-syntax-error #f "Bad syntax; cyclic expansion" stx)
          (syntax-local-rewrap
           (stx-wrap-source
-           (core-cons '%#begin
+           (core-cons 'begin
              (read-syntax-from-file rpath))
            (stx-source stx))))))))
 
@@ -680,8 +683,14 @@ namespace: gx
   (expander-binding? bind core-expander?))
 (def (expression-form-binding? bind)
   (expander-binding? bind expression-form?))
+(def (direct-special-form-binding? bind)
+  (def (direct-special-form? obj)
+    (direct-struct-instance? special-form::t obj))
+  (expander-binding? bind direct-special-form?))
+
 (def (special-form-binding? bind)
   (expander-binding? bind special-form?))
+
 
 (def (feature-binding? bind)
   (def (feature? e)
