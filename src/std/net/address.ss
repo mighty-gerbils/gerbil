@@ -224,7 +224,9 @@ package: std/net
   (cond
    ((and (string? obj) (inet-address-split obj false))
     => (match <>
-         ((values host port) (inet-host-address-string? host))
+         ((values host port)
+          (or (string-empty? host)
+              (inet-host-address-string? host)))
          (else #f)))
    (else #f)))
 
