@@ -32,5 +32,5 @@ rm -f .build.stage0
 ## finalize build
 echo ">>> finalizing build"
 cp -v boot/*.scm $GERBIL_TARGET/lib
-cp -v gerbil/gxi gerbil/gxc $GERBIL_TARGET/bin
+cp -v gerbil/gxi gerbil/gxc gerbil/gxi-build-script $GERBIL_TARGET/bin
 (cd $GERBIL_TARGET/bin && ln -s gxi gxi-script)
