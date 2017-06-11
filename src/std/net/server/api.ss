@@ -179,8 +179,6 @@ package: std/net/server
    ((or (not timeo) (time? timeo))
     timeo)
    ((real? timeo)
-    (if (finite? timeo)
-      (seconds->time (+ (##current-time-point) timeo))
-      timeo))
+    (seconds->time (+ (##current-time-point) timeo)))
    (else
-    (error "Bad timeout; expected real or #f" timeo))))
+    (error "Bad timeout; expected real, time or #f" timeo))))
