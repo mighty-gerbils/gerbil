@@ -54,6 +54,11 @@
           (ssi: "text/_zlib")
           "text/zlib")
         '())
+    ;; :std/net
+    "net/address"
+    "net/uri"
+    "net/socks"
+    "net/request"
     ;; std/os
     (gxc: "os/error" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc: "os/fd" "-e" "(include \"~~lib/_gambit#.scm\")")
@@ -65,11 +70,6 @@
         (linux-gnu
          '((gxc: "os/epoll" "-e" "(include \"~~lib/_gambit#.scm\")")))
         (else '()))
-    ;; :std/net
-    "net/address"
-    "net/uri"
-    "net/socks"
-    "net/request"
     ;; :std/net/server
     "net/server/base"
     "net/server/sync-server"
