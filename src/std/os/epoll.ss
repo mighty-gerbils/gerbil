@@ -41,7 +41,7 @@ package: std/os
   (close-port epoll))
 
 (def (make-epoll-events size)
-  (make_epoll_evt size))
+  (check-ptr (make_epoll_evt size)))
 
 (def (epoll-event-fd evts k)
   (epoll_evt_fd evts k))
