@@ -5,14 +5,15 @@ package: std/net/server
 
 (import (only-in :gerbil/gambit/threads spawn)
         (only-in :gerbil/gambit/os time? seconds->time)
+        :std/net/server/base
+        :std/net/server/sync-server
         :std/os/socket
         :std/os/fd
         :std/os/error
         :std/net/address
-        :std/net/server/base
-        :std/net/server/sync-server
         :std/sugar
         :std/error
+        :std/logger
         )
 (export start-socket-server! server-shutdown!
         server-connect
@@ -39,6 +40,7 @@ package: std/net/server
 
 ;; start a server
 (def (start-socket-server! (impl (default-server-impl)))
+  (start-logger!)
   (spawn impl))
 
 (def (server-shutdown! srv)
