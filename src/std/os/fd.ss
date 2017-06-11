@@ -15,7 +15,19 @@ package: std/os
   macro-raw-device-port?
   macro-raw-device-port-rdevice-condvar
   macro-raw-device-port-wdevice-condvar
-  macro-raw-device-port-fd)
+  macro-raw-device-port-device)
+
+(def (open-raw-device direction name fd)
+  (def (fail)
+    (##fail-check-settings 1 open-raw-device direction name fd))
+  (##make-psettings
+   direction '() '() fail
+   (lambda (psettings)
+     (let (device
+            (##os-device-open-raw fd (##psettings->device-flags psettings)))
+       (if (##fixnum? device)
+         (##raise-os-exception #f device open-raw-device direction name fd)
+         (##make-raw-device-port device fd name direction))))))
 
 (def (fdopen fd dir t)
   (let (dirx
@@ -25,10 +37,10 @@ package: std/os
           ((inout) (macro-direction-inout))
           (else
            (error "Bad direction; must be in, out, or inout" dir))))
-    (##open-raw-device dirx t fd)))
+    (open-raw-device dirx t fd)))
 
 (def (fd-e raw)
-  (macro-raw-device-port-fd raw))
+  (macro-raw-device-port-device raw))
 
 (def (fd-io-in raw)
   (macro-raw-device-port-rdevice-condvar raw))
