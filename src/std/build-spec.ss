@@ -61,6 +61,11 @@
     (gsc: "os/_socket" "-e" "(include \"~~lib/_gambit#.scm\")")
     (ssi: "os/_socket")
     (gxc: "os/socket" "-e" "(include \"~~lib/_gambit#.scm\")")
+    ,@(begin
+        (cond-expand
+          (linux-gnu
+           '((gxc: "os/epoll" "-e" "(include \"~~lib/_gambit#.scm\")")))
+          (else '())))
     ;; :std/net
     "net/address"
     "net/uri"
