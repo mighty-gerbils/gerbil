@@ -42,6 +42,7 @@ package: std/os
         socket-address-un
         socket-address->address
         socket-address->string
+        socket-address-family
 
         ;; constants from _socket
         AF_UNSPEC
@@ -295,6 +296,9 @@ package: std/os
         (sockaddr_un_path_set sa path)
         sa)
       (error "Malformed address; path is too long"))))
+
+(def (socket-address-family sa)
+  (sockaddr_family sa))
 
 (def (socket-address addr)
   (cond
