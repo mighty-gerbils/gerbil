@@ -88,11 +88,12 @@ package: std/net/server
   (with ((!socket sock srv wait-in) ssock)
     (if wait-in
       (let lp ()
-        (wait-in ssock #f)
         (let (cli (socket-accept sock sa))
           (if cli
             (!!socket-server.add srv cli)
-            (lp))))
+            (begin
+              (wait-in ssock #f)
+              (lp)))))
       (error "Socket is not open for input" ssock))))
 
 ;; => count | #f if timeout
@@ -101,9 +102,10 @@ package: std/net/server
     (if wait-out
       (let (timeo (abs-timeout timeo))
         (let lp ()
-          (and (wait-out ssock timeo)
-            (let (r (socket-send sock buf start end))
-              (or r (lp))))))
+          (let (r (socket-send sock buf start end))
+            (or r
+                (and (wait-out ssock timeo)
+                     (lp))))))
       (error "Socket is not open for output" ssock))))
 
 ;; => count | #f
@@ -114,17 +116,16 @@ package: std/net/server
     (if wait-out
       (let (timeo (abs-timeout timeo))
         (let lp ((count 0) (start start))
-          (cond
-           ((fx>= start end)
-            count)
-           ((wait-out ssock timeo)
+          (if (fx>= start end)
+            count
             (let (r (socket-send sock buf start end))
-              (if r
-                (lp (fx+ count r) (fx+ start r))
-                (lp count start))))
-           ((fxpositive? count)
-            count)
-           (else #f))))
+              (cond
+               (r (lp (fx+ count r) (fx+ start r)))
+               ((wait-out ssock timeo)
+                (lp count start))
+               ((fxpositive? count)
+                count)
+               (else #f))))))
       (error "Socket is not open for output" ssock))))
 
 ;; => count | #f if timeout
@@ -133,9 +134,10 @@ package: std/net/server
     (if wait-in
       (let (timeo (abs-timeout timeo))
         (let lp ()
-          (and (wait-in ssock timeo)
-               (let (r (socket-recv sock buf start end))
-                 (or r (lp))))))
+          (let (r (socket-recv sock buf start end))
+            (or r
+                (and (wait-in ssock timeo)
+                     (lp))))))
       (error "Socket is not open for input" ssock))))
 
 ;; => count | #f
@@ -146,21 +148,21 @@ package: std/net/server
     (if wait-in
       (let (timeo (abs-timeout timeo))
         (let lp ((count 0) (start start))
-          (cond
-           ((fx>= start end)
-            count)
-           ((wait-in ssock timeo)
+          (if (fx>= start end)
+            count
             (let (r (socket-recv sock buf start end))
               (cond
                ((not r)
-                (lp count start))
+                (cond
+                 ((wait-in ssock timeo)
+                  (lp count start))
+                 ((fxpositive? count)
+                  count)
+                 (else #f)))
                ((fxzero? r)
                 count)
                (else
-                (lp (fx+ count r) (fx+ start r))))))
-           ((fxpositive? count)
-            count)
-           (else #f))))
+                (lp (fx+ count r) (fx+ start r))))))))
       (error "Socket is not open for input"))))
 
 ;; close an ssock
