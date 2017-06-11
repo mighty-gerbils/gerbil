@@ -71,6 +71,15 @@
     "net/uri"
     "net/socks"
     "net/request"
+    ;; :std/net/server
+    "net/server/base"
+    "net/server/sync-server"
+    ,@(begin
+        (cond-expand
+          (linux-gnu
+           '((gxc: "net/server/epoll-server" "-e" "(include \"~~lib/_gambit#.scm\")")))
+          (else '())))
+    "net/server/api"
     ;; :std/xml
     ,@(if config-enable-libxml
         `((gsc: "xml/_libxml" 
