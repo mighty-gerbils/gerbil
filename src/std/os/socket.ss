@@ -31,6 +31,7 @@ package: std/os
         socket-getsockname
         socket-getsockopt
         socket-setsockopt
+        socket-domain
         socket-address?
         make-socket-address
         make-socket-address-in
@@ -245,19 +246,20 @@ package: std/os
                    (and rctl (int_ptr_value rctl))
                    (int_ptr_value rflags)))))
 
-(def (socket-getpeername sock)
-  (let* ((af (socket-getsockopt sock SOL_SOCKET SO_DOMAIN))
-         (sa (make-socket-address af)))
+(def (socket-getpeername sock (sa #f))
+  (let (sa (or sa (make-socket-address (socket-domain sock))))
     (check-os-error (_getpeername (fd-e sock) sa)
       (socket-getpeername sock))
     sa))
 
-(def (socket-getsockname sock)
-  (let* ((af (socket-getsockopt sock SOL_SOCKET SO_DOMAIN))
-         (sa (make-socket-address af)))
+(def (socket-getsockname sock (sa #f))
+  (let (sa (or sa (make-socket-address (socket-domain sock))))
     (check-os-error (_getsockname (fd-e sock) sa)
       (socket-getsockname sock))
     sa))
+
+(def (socket-domain sock)
+  (socket-getsockopt sock SOL_SOCKET SO_DOMAIN))
 
 ;;; Socket addresses
 (def (socket-address? obj)
