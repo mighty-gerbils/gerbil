@@ -6,19 +6,19 @@ package: gerbil/expander
    gx#root-context:::init!
    (@case-lambda
     (1 gx#root-context:::init!__0)
-    (2 gx#root-context:::init!__opt-lambda13008)))
+    (2 gx#root-context:::init!__opt-lambda13014)))
   (declare-method gx#root-context::t :init! gx#root-context:::init! #f)
   (declare-type
    gx#top-context:::init!
    (@case-lambda
     (1 gx#top-context:::init!__0)
-    (2 gx#top-context:::init!__opt-lambda12986)))
+    (2 gx#top-context:::init!__opt-lambda12992)))
   (declare-method gx#top-context::t :init! gx#top-context:::init! #f)
   (declare-type
    gx#expander-context::bind-core-syntax-expanders!
    (@case-lambda
     (1 gx#expander-context::bind-core-syntax-expanders!__0)
-    (2 gx#expander-context::bind-core-syntax-expanders!__opt-lambda12839)))
+    (2 gx#expander-context::bind-core-syntax-expanders!__opt-lambda12845)))
   (declare-method
    gx#expander-context::t
    bind-core-syntax-expanders!
@@ -28,7 +28,7 @@ package: gerbil/expander
    gx#expander-context::bind-core-macro-expanders!
    (@case-lambda
     (1 gx#expander-context::bind-core-macro-expanders!__0)
-    (2 gx#expander-context::bind-core-macro-expanders!__opt-lambda12733)))
+    (2 gx#expander-context::bind-core-macro-expanders!__opt-lambda12739)))
   (declare-method
    gx#expander-context::t
    bind-core-macro-expanders!
