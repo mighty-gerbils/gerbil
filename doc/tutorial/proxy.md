@@ -8,7 +8,7 @@ with the `:std/os/socket` package. This packages utilizes raw devices and opens 
 through FFI, thus providing access to the full POSIX socket programming API with a
 nonblocking interface.
 
-The second one is a full-blown SOCKS4 proxy, written using the `:std/net/server` package.
+The second one is an anonymous SOCKS4 proxy, written using the `:std/net/server` package.
 This package provides high level network programming facilities using multiplexed
 i/o optimized for the operating system of the host. On linux this utilizes `epoll`
 and soon `kqueue` on BSD/MacOS, with a fallback implementation of polling using
