@@ -8,7 +8,7 @@ with the `:std/os/socket` package. This packages utilizes raw devices and opens 
 through FFI, thus providing access to the full POSIX socket programming API with a
 nonblocking interface.
 
-The second one is a full-blown SOCKS4a proxy, written using the `:std/net/server` package.
+The second one is a full-blown SOCKS4 proxy, written using the `:std/net/server` package.
 This package provides high level network programming facilities using multiplexed
 i/o optimized for the operating system of the host. On linux this utilizes `epoll`
 and soon `kqueue` on BSD/MacOS, with a fallback implementation of polling using
@@ -95,7 +95,7 @@ For each connection, it logs it and spawns a thread to proxy it:
 
 ### Connection proxying
 
-The funciton `proxy` takes a client socket and proxies it to the remote address.
+The procedure `proxy` takes a client socket and proxies it to the remote address.
 First it opens and connects a socket to the remote server, and then spanws two
 threads piping data between the two ends. The programming should look familiar to
 anyone with experience with network programming with the socket API in nonblocking
@@ -183,6 +183,191 @@ Connection closed by foreign host.
 
 ```
 
-
-
 ## A SOCKS4a Proxy
+
+The [socks proxy](../../src/tutorial/proxy/socks-proxy.ss) listens to a local port and
+proxies connections using the SOCKS4 protocol. The implementation uses multiplexed I/O
+with the `:std/net/server` package, which hides the nonblocking nature of the `:std/os/socket`
+interface and utilizes high performance polling with low level host primitives like epoll.
+
+### The main function
+
+The function is very similar to the one in tcp-proxy, with the difference that it accepts
+a single argument -- the local address to bind:
+
+```
+(def (main . args)
+  (def gopt
+    (getopt (argument 'address help: "local address to bind")))
+  (try
+   (let (opt (getopt-parse gopt args))
+     (start-logger!)
+     (run (hash-get opt 'address)))
+   (catch (getopt-error? exn)
+     (getopt-display-help exn "tcp-proxy" (current-error-port))
+     (exit 1))))
+```
+
+### The server main loop
+
+The server main loop starts a `server-socket` to use for multiplexing I/O, and creates
+a listening socket to the specified address. It then loops accepting connections to proxy:
+```
+(def (run address)
+  (def srv (start-socket-server!))
+
+  (let* ((sa (socket-address address))
+         (ssock (server-listen srv sa)))
+    (while #t
+      (try
+       (let (cli (server-accept ssock sa))
+         (debug "Accepted connection from ~a" (socket-address->string sa))
+         (spawn proxy srv cli))
+       (catch (e)
+         (log-error "Error accepting connection" e))))))
+```
+
+### The proxy function
+
+This procedure performs a handshake, establishes proxying according to the request:
+```
+(def (proxy srv clisock)
+  (try
+   (let (srvsock (proxy-handshake srv clisock))
+     (spawn proxy-io clisock srvsock)
+     (spawn proxy-io srvsock clisock))
+   (catch (e)
+     (log-error "Error creating proxy" e))))
+```
+
+The `proxy-handshake` function contains the details of the protocol implementation:
+```
+(def (proxy-handshake srv clisock)
+  (try
+   (let* ((hdr (make-u8vector 8))
+          (rd (server-recv-all clisock hdr)))
+     (if (fx< rd 8)
+       (error "Incomplete request" hdr)
+       (let* ((vn (u8vector-ref hdr 0))
+              (cd (u8vector-ref hdr 1))
+              (dstport (fxior (fxshift (u8vector-ref hdr 2) 8)
+                              (u8vector-ref hdr 3)))
+              (dstip (subu8vector hdr 4 8))
+              (nulbuf (make-u8vector 1024))
+              (rd (server-recv clisock nulbuf)) ; read userid, ignored
+              (_ (unless (fx< rd 1024)
+                   (error "Request buffer overflow"))))
+         (if (fx= vn 4)
+           (case cd
+             ((1)                       ; CONNECT
+              (proxy-connect srv clisock (cons dstip dstport)))
+             ((2)                       ; BIND
+              (proxy-bind srv clisock))
+             (else
+              (proxy-handshake-reject clisock (cons dstip dstport))
+              (error "Uknown command" cd)))
+           (begin
+             (proxy-handshake-reject clisock (cons dstip dstport))
+             (error "Uknown protocol version" vn))))))
+   (catch (e)
+     (server-close clisock)
+     (raise e))))
+```
+
+### Connection establishment and binding
+
+New connections are established with `proxy-connect`, while socket binding
+is preformed with `proxy-bind`:
+```
+(def (proxy-connect srv clisock addr)
+  (let (srvsock (server-connect srv addr))
+    (try
+     (proxy-handshake-accept clisock addr)
+     srvsock
+     (catch (e)
+       (server-close srvsock)
+       (raise e)))))
+
+(def (proxy-bind srv clisock)
+  (let* ((srvsock (server-listen srv ":0"))
+         (srvaddr (socket-address->address
+                   (socket-getsockname
+                    (server-socket-e srvsock)))))
+    (try
+     (proxy-handshake-accept clisock srvaddr)
+     (let* ((newcli
+             (try
+              (server-accept srvsock)
+              (catch (e)
+                (proxy-handshake-reject clisock srvaddr)
+                (raise e))))
+            (newcliaddr
+             (socket-address->address
+              (socket-getpeername
+               (server-socket-e newcli)))))
+       (proxy-handshake-accept clisock newcliaddr)
+       newcli)
+     (finally
+      (server-close srvsock)))))
+
+(def (proxy-handshake-accept clisock addr)
+  (proxy-handshake-reply 90 clisock addr))
+
+(def (proxy-handshake-reject clisock addr)
+  (proxy-handshake-reply 91 clisock addr))
+
+(def (proxy-handshake-reply code clisock addr)
+  (let (resp (make-u8vector 8))
+    (u8vector-set! resp 0 0)
+    (u8vector-set! resp 1 code)
+    (with ([ip . port] addr)
+      (u8vector-set! resp 2 (fxand (fxshift port -8) #xff))
+      (u8vector-set! resp 3 (fxand port #xff))
+      (subu8vector-move! ip 0 4 resp 4))
+    (server-send-all clisock resp)))
+
+```
+
+### Proxy I/O
+
+The actual function of the proxy is perfomed with the `proxy-io` procedure, very similar
+to how the equinamed procedure in tcp-proxy. The difference is that it uses multiplexed I/O
+through the socket server:
+```
+(def (proxy-io isock osock)
+  (def buf (make-u8vector 4096))
+  (try
+   (let lp ()
+     (let (rd (server-recv isock buf))
+       (cond
+        ((fxzero? rd)
+         (server-close-input isock)
+         (server-close-output osock))
+        (else
+         (server-send-all osock buf 0 rd)
+         (lp)))))
+   (catch (e)
+     (log-error "Error proxying connection" e)
+     (server-close-input isock)
+     (server-close-output osock))))
+```
+
+### Using the proxy
+
+Here we'll run the proxy locally bound at port 1080, acting as a standard proxy.
+
+So we can run our proxy like this:
+```
+$ ./socks-proxy :1080
+```
+
+And in another shell we can proxy a using curl:
+```
+$ curl --socks4 127.0.0.1 http://www.google.com
+<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
+<TITLE>302 Moved</TITLE></HEAD><BODY>
+<H1>302 Moved</H1>
+The document has moved
+<A HREF="http://www.google.gr/?gfe_rd=cr&amp;ei=lcg-WbSbDqrd8Af5rJuQBA">here</A>.
+</BODY></HTML>
+```
