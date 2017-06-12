@@ -5,6 +5,7 @@ package: std/net/server
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
+        :gerbil/gambit/misc
         :std/net/server/base
         :std/net/server/server
         :std/os/fd
@@ -39,8 +40,9 @@ package: std/net/server
            (ssock
             (make-!socket sock (current-thread) wait-in wait-out close))
            (state
-            (make-!socket-state ssock io-in io-out)))
-      (hash-put! socks ssock state)
+            (make-!socket-state sock io-in io-out)))
+      (hash-put! socks sock state)
+      (make-will ssock (cut close <> 'inout #f))
       ssock))
 
   (def (close-socket ssock dir shutdown)
@@ -55,24 +57,24 @@ package: std/net/server
         (close-output-port sock)))
     
     (with ((!socket sock) ssock)
-      (let (state (hash-get socks ssock))
+      (let (state (hash-get socks sock))
         (match state 
           ((!socket-state _ io-in io-out)
            (case dir
              ((in)
               (when io-in
                 (unless io-out
-                  (hash-remove! socks ssock))
+                  (hash-remove! socks sock))
                 (set! (!socket-state-io-in state) #f)
                 (close-io-in! sock)))
              ((out)
               (when io-out
                 (unless io-in
-                  (hash-remove! socks ssock)))
+                  (hash-remove! socks sock)))
                 (set! (!socket-state-io-out state) #f)
                 (close-io-out! sock io-out))
              ((inout)
-              (hash-remove! socks ssock)
+              (hash-remove! socks sock)
               (when io-in
                 (close-io-in! sock))
               (when io-out
@@ -84,8 +86,8 @@ package: std/net/server
 
   (def (shutdown!)
     (debug "shutting down socket server")
-    (for (ssock (in-hash-keys socks))
-      (close-port (!socket-e ssock)))
+    (for (sock (in-hash-keys socks))
+      (close-port sock))
     ;; release refs to raw devices
     (set! socks #f))
   
