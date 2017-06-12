@@ -15,19 +15,20 @@ package: std/os
   macro-raw-device-port?
   macro-raw-device-port-rdevice-condvar
   macro-raw-device-port-wdevice-condvar
-  macro-raw-device-port-device)
+  macro-raw-device-port-device
+  macro-raw-device-port-id)
 
-(def (open-raw-device direction name fd)
+(def (open-raw-device direction id fd)
   (def (fail)
-    (##fail-check-settings 1 open-raw-device direction name fd))
+    (##fail-check-settings 1 open-raw-device direction id fd))
   (##make-psettings
    direction '() '() fail
    (lambda (psettings)
      (let (device
             (##os-device-open-raw fd (##psettings->device-flags psettings)))
        (if (##fixnum? device)
-         (##raise-os-exception #f device open-raw-device direction name fd)
-         (##make-raw-device-port device fd name direction))))))
+         (##raise-os-exception #f device open-raw-device direction id fd)
+         (##make-raw-device-port device fd id direction))))))
 
 (def (fdopen fd dir t)
   (let (dirx
@@ -49,13 +50,11 @@ package: std/os
   (values (macro-raw-device-port-wdevice-condvar raw)))
 
 (def (fd-type raw)
-  (match ((macro-port-name raw) raw)
-    ([t _] t)
-    (else #f)))
+  (values (macro-raw-device-port-id raw)))
 
 (def (fd? obj)
   (values (macro-raw-device-port? obj)))
 
 (def (fd-type? obj t)
-  (and (fd? obj)
-       (eq? (fd-type obj) t)))
+  (and (macro-raw-device-port? obj)
+       (eq? (macro-raw-device-port-id obj) t)))
