@@ -969,7 +969,7 @@ Defines the following symbols as externs:
     fxzero? fxpositive? fxnegative? fxodd? fxeven?
     fixnum->char char->fixnum fixnum->flonum
     fxmax fxmin fxabs fxnot fxand fxior fxxor fxand fxmodulo
-    fxbit-set? fxarithmetic-shift
+    fxbit-set? fxarithmetic-shift fxshift
     fx< fx<= fx= fx>= fx>
     flonum?
     fl+ fl- fl* fl/ fl< fl<= fl= fl>= fl>
