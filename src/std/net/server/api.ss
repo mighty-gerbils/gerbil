@@ -20,6 +20,7 @@ package: std/net/server
         server-listen server-accept
         server-send server-send-all
         server-recv server-recv-all
+        server-socket-e
         server-close server-close-input server-close-output
         )
 
@@ -163,6 +164,10 @@ package: std/net/server
                (else
                 (lp (fx+ count r) (fx+ start r))))))))
       (error "Socket is not open for input"))))
+
+;; retrieve the socket in a server socket
+(def (server-socket-e ssock)
+  (!socket-e ssock))
 
 ;; close an ssock
 (def (server-close ssock)
