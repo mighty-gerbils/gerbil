@@ -77,7 +77,8 @@ package: tutorial/proxy
   (let* ((srvsock (server-listen srv ":0"))
          (srvaddr (socket-address->address
                    (socket-getsockname
-                    (server-socket-e srvsock)))))
+                    (server-socket-e srvsock)
+                    (make-socket-address-in)))))
     (try
      (proxy-handshake-accept clisock srvaddr)
      (let* ((newcli
@@ -89,9 +90,14 @@ package: tutorial/proxy
             (newcliaddr
              (socket-address->address
               (socket-getpeername
-               (server-socket-e newcli)))))
-       (proxy-handshake-accept clisock newcliaddr)
-       newcli)
+               (server-socket-e newcli)
+               (make-socket-address-in)))))
+       (try
+        (proxy-handshake-accept clisock newcliaddr)
+        newcli
+        (catch (e)
+          (server-close newcli)
+          (raise e))))
      (finally
       (server-close srvsock)))))
 

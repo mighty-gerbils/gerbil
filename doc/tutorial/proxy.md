@@ -34,7 +34,7 @@ Gambit's `##wait-for-io!`.
 
 ## Preliminaries
 
-This tutorial requires a very recent version of Gambit that supports raw devices ([gambit#272](https://github.com/gambit/gambit/pull/272) [gambit#273](https://github.com/gambit/gambit/pull/273)).
+This tutorial requires a very recent version of Gambit that supports raw devices ([gambit#272](https://github.com/gambit/gambit/pull/272)).
 
 The source code for the tutorial  is available at [$GERBIL_HOME/src/tutorial/proxy](../../src/tutorial/proxy).
 There are two build scripts, `build.ss` for building dynamic executables for local use and `build-static.ss`for building static executables you can deploy on servers.
@@ -298,7 +298,8 @@ is preformed with `proxy-bind`:
   (let* ((srvsock (server-listen srv ":0"))
          (srvaddr (socket-address->address
                    (socket-getsockname
-                    (server-socket-e srvsock)))))
+                    (server-socket-e srvsock)
+                    (make-socket-address-in)))))
     (try
      (proxy-handshake-accept clisock srvaddr)
      (let* ((newcli
@@ -310,9 +311,14 @@ is preformed with `proxy-bind`:
             (newcliaddr
              (socket-address->address
               (socket-getpeername
-               (server-socket-e newcli)))))
-       (proxy-handshake-accept clisock newcliaddr)
-       newcli)
+               (server-socket-e newcli)
+               (make-socket-address-in)))))
+       (try
+        (proxy-handshake-accept clisock newcliaddr)
+        newcli
+        (catch (e)
+          (server-close newcli)
+          (raise e))))
      (finally
       (server-close srvsock)))))
 
