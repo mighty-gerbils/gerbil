@@ -348,14 +348,14 @@ through the socket server:
        (cond
         ((fxzero? rd)
          (server-close-input isock)
-         (server-close-output osock))
+         (server-close-output osock #t))
         (else
          (server-send-all osock buf 0 rd)
          (lp)))))
    (catch (e)
      (log-error "Error proxying connection" e)
      (server-close-input isock)
-     (server-close-output osock))))
+     (server-close-output osock #t))))
 ```
 
 ### Using the proxy

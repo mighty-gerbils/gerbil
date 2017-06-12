@@ -119,14 +119,14 @@ package: tutorial/proxy
        (cond
         ((fxzero? rd)
          (server-close-input isock)
-         (server-close-output osock))
+         (server-close-output osock #t))
         (else
          (server-send-all osock buf 0 rd)
          (lp)))))
    (catch (e)
      (log-error "Error proxying connection" e)
      (server-close-input isock)
-     (server-close-output osock))))
+     (server-close-output osock #t))))
 
 (def (main . args)
   (def gopt
