@@ -25,7 +25,7 @@ package: std/os
    direction '() '() fail
    (lambda (psettings)
      (let (device
-            (##os-device-open-raw fd (##psettings->device-flags psettings)))
+            (##os-device-open-raw-from-fd fd (##psettings->device-flags psettings)))
        (if (##fixnum? device)
          (##raise-os-exception #f device open-raw-device direction id fd)
          (##make-raw-device-port device fd id direction))))))
