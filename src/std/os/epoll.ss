@@ -35,7 +35,7 @@ package: std/os
 
 (def (epoll-wait epoll evts maxevts)
   (do-retry-nonblock (_epoll_wait (fd-e epoll) evts maxevts 0)
-    (epoll-wait epoll evts maxevts 0)))
+    (epoll-wait epoll evts maxevts)))
 
 (def (epoll-close epoll)
   (close-port epoll))
