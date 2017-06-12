@@ -79,6 +79,7 @@
          '("net/server/epoll-server"))
         (else '()))
     "net/server/api"
+    "net/server"
     ;; :std/xml
     ,@(if config-enable-libxml
         `((gsc: "xml/_libxml" 
