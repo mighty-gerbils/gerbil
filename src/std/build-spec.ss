@@ -72,7 +72,7 @@
         (else '()))
     ;; :std/net/server
     "net/server/base"
-    (gxc: "net/server/basic-server" "-e" "(include \"~~lib/_gambit#.scm\")")
+    "net/server/basic-server"
     ,@(cond-expand
         (linux-gnu
          '((gxc: "net/server/epoll-server" "-e" "(include \"~~lib/_gambit#.scm\")")))

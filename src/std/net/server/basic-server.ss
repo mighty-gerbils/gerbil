@@ -16,7 +16,6 @@ package: std/net/server
         )
 
 (export basic-socket-server)
-(extern namespace: #f macro-absent-obj)
 
 (def (basic-socket-server)
   (def socks (make-hash-table-eq))
@@ -50,7 +49,7 @@ package: std/net/server
          (loop))))
 
   (def (wait-io! io timeo)
-    (##wait-for-io! io (or timeo (macro-absent-obj))))
+    (##wait-for-io! io (or timeo #t)))
   
   (def (add-socket sock)
     (let* ((io-in (fd-io-in sock))
