@@ -6,7 +6,7 @@ package: std/net/server
 (import (only-in :gerbil/gambit/threads spawn)
         (only-in :gerbil/gambit/os time? seconds->time)
         :std/net/server/base
-        :std/net/server/sync-server
+        :std/net/server/basic-server
         :std/os/socket
         :std/os/fd
         :std/os/error
@@ -21,7 +21,6 @@ package: std/net/server
         server-send server-send-all
         server-recv server-recv-all
         server-close server-close-input server-close-output
-        sync-socket-server
         )
 
 (cond-expand
@@ -31,7 +30,7 @@ package: std/net/server
 (def (default-server-impl)
   (cond-expand
     (linux-gnu epoll-socket-server)
-    (else sync-socket-server)))
+    (else basic-socket-server)))
 
 (def default-listen-sockopts
   (if (not (fxnegative? SO_REUSEADDR))

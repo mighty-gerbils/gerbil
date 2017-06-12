@@ -65,14 +65,14 @@
     (gxc: "os/fcntl" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gsc: "os/_socket" "-e" "(include \"~~lib/_gambit#.scm\")")
     (ssi: "os/_socket")
-    (gxc: "os/socket" "-e" "(include \"~~lib/_gambit#.scm\")")
+    "os/socket"
     ,@(cond-expand
         (linux-gnu
          '((gxc: "os/epoll" "-e" "(include \"~~lib/_gambit#.scm\")")))
         (else '()))
     ;; :std/net/server
     "net/server/base"
-    "net/server/sync-server"
+    (gxc: "net/server/basic-server" "-e" "(include \"~~lib/_gambit#.scm\")")
     ,@(cond-expand
         (linux-gnu
          '((gxc: "net/server/epoll-server" "-e" "(include \"~~lib/_gambit#.scm\")")))

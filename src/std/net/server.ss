@@ -4,10 +4,10 @@
 package: std/net
 
 (import :std/net/server/api
-        :std/net/server/sync-server)
+        :std/net/server/basic-server)
 
 (export (import: :std/net/server/api)
-        sync-socket-server)
+        basic-socket-server)
 
 (cond-expand
   (linux-gnu

@@ -15,10 +15,10 @@ package: std/net/server
         :std/sugar
         )
 
-(export sync-socket-server)
+(export basic-socket-server)
 (extern namespace: #f macro-absent-obj)
 
-(def (sync-socket-server)
+(def (basic-socket-server)
   (def socks (make-hash-table-eq))
   
   (def (loop)
