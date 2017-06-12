@@ -35,13 +35,11 @@ package: std/net/server
             (log-error "socket-server.add" e)
             (!!error (error-message e) k)))
          (loop))
-        ((!socket-server.close ssock dir shutdown k)
+        ((!socket-server.close ssock dir shutdown)
          (try
           (close-socket ssock dir shutdown)
-          (!!value (void) k)
           (catch (e)
-            (log-error "socket-server.close" e)
-            (!!error (error-message e) k)))
+            (log-error "socket-server.close" e)))
          (loop))
         ((!socket-server.shutdown! k)
          (try

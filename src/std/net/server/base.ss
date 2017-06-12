@@ -22,13 +22,14 @@ package: std/net/server
   constructor: :init!)
 
 ;; socket blocking state
-;; e: !socket
+;; e: socket device
 ;; io-in, io-out: !io-state
 (defstruct !socket-state (e io-in io-out)
   final: #t)
 
 ;; socket-server protocol 
 (defproto socket-server
+  (shutdown!)
   (add sock)
-  (close ssock dir shutdown)
-  (shutdown!))
+  event:
+  (close ssock dir shutdown))
