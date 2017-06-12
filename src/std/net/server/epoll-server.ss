@@ -8,11 +8,10 @@ package: std/net/server
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
         :std/net/server/base
+        :std/net/server/server
         :std/os/fd
         :std/os/socket
         :std/os/epoll
-        :std/actor/message
-        :std/actor/proto
         :std/sugar
         :std/logger
         :std/iter
@@ -26,43 +25,7 @@ package: std/net/server
   (def epoll (epoll-create))
   (def maxevts 1024)
   (def evts (make-epoll-events maxevts))
-
-  (def (loop)
-    (<- (! (_ (fd-io-in epoll))
-           (try
-            (do-epoll)
-            (loop)
-            (catch (e)
-              ;; log it and die -- that's not good.
-              (log-error "socket-server.do-epoll" e)
-              (shutdown!))))
-        ((!socket-server.add sock k)
-         (try
-          (let (ssock (add-socket sock))
-            (!!value ssock k))
-          (catch (e)
-            (log-error "socket-server.add" e)
-            (!!error (error-message e) k)))
-         (loop))
-        ((!socket-server.close ssock dir shutdown k)
-         (try
-          (close-socket ssock dir shutdown)
-          (!!value (void) k)
-          (catch (e)
-            (log-error "socket-server.close" e)
-            (!!error (error-message e) k)))
-         (loop))
-        ((!socket-server.shutdown! k)
-         (try
-          (shutdown!)
-          (!!value (void) k)
-          (catch (e)
-            (log-error "socket-server.shutdown!" e)
-            (!!error (error-message e) k))))
-        (msg
-         (warning "Unexpected message: ~a" msg)
-         (loop))))
-
+  
   (def (do-epoll)
     (let (count (epoll-wait epoll evts maxevts))
       (when (fxpositive? count)
@@ -203,4 +166,4 @@ package: std/net/server
     (set! fdtab #f)
     (set! epoll #f))
   
-  (loop))
+  (server-loop (fd-io-in epoll) do-epoll add-socket close-socket shutdown!))

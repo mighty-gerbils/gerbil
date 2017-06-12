@@ -72,6 +72,7 @@
         (else '()))
     ;; :std/net/server
     "net/server/base"
+    "net/server/server"
     "net/server/basic-server"
     ,@(cond-expand
         (linux-gnu

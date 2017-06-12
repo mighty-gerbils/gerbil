@@ -1,15 +1,15 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; socket server -- sync server implementation
+;;; socket server -- basic server implementation
 package: std/net/server
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
         :std/net/server/base
+        :std/net/server/server
         :std/os/fd
         :std/os/socket
-        :std/actor/message
-        :std/actor/proto
+        :std/event
         :std/logger
         :std/iter
         :std/sugar
@@ -20,34 +20,6 @@ package: std/net/server
 (def (basic-socket-server)
   (def socks (make-hash-table-eq))
   
-  (def (loop)
-    (<- ((!socket-server.add sock k)
-         (try
-          (let (ssock (add-socket sock))
-            (!!value ssock k))
-          (catch (e)
-            (log-error "socket-server.add" e)
-            (!!error (error-message e) k)))
-         (loop))
-        ((!socket-server.close ssock dir shutdown k)
-         (try
-          (close-socket ssock dir shutdown)
-          (!!value (void) k)
-          (catch (e)
-            (log-error "socket-server.close" e)
-            (!!error (error-message e) k)))
-         (loop))
-        ((!socket-server.shutdown! k)
-         (try
-          (shutdown!)
-          (!!value (void) k)
-          (catch (e)
-            (log-error "socket-server.shutdown!" e)
-            (!!error (error-message e) k))))
-        (msg
-         (warning "Unexpected message: ~a" msg)
-         (loop))))
-
   (def (wait-io! io timeo)
     (##wait-for-io! io (or timeo #t)))
   
@@ -124,4 +96,4 @@ package: std/net/server
     ;; release refs to raw devices
     (set! socks #f))
   
-  (loop))
+  (server-loop never-evt void add-socket close-socket shutdown!))
