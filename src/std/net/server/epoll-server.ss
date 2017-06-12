@@ -7,6 +7,7 @@ package: std/net/server
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
+        :gerbil/gambit/misc
         :std/net/server/base
         :std/net/server/server
         :std/os/fd
@@ -29,7 +30,7 @@ package: std/net/server
         (for (k (in-range count))
           (let ((fd (epoll-event-fd evts k))
                 (ready (epoll-event-events evts k)))
-            (with ((!socket-state ssock io-in io-out)
+            (with ((!socket-state _ io-in io-out)
                    (hash-ref fdtab fd))
               (unless (fxzero? (fxand ready (fxior EPOLLIN EPOLLHUP EPOLLERR)))
                 (when io-in
@@ -60,7 +61,7 @@ package: std/net/server
            (ssock
             (make-!socket sock (current-thread) wait-in wait-out close))
            (state
-            (make-!socket-state ssock io-in io-out))
+            (make-!socket-state sock io-in io-out))
            (events EPOLLET)
            (events
             (if io-in
@@ -70,6 +71,7 @@ package: std/net/server
             (if io-out
               (fxior EPOLLOUT events)
               events)))
+      (make-will ssock (cut close <> 'inout #f))
       (epoll-ctl-add epoll sock events)
       (hash-put! fdtab fd state)
       ssock))
@@ -83,7 +85,7 @@ package: std/net/server
     (with ((!socket sock) ssock)
       (let (state (hash-get fdtab (fd-e sock)))
         (match state 
-          ((!socket-state ssock io-in io-out)
+          ((!socket-state _ io-in io-out)
            (case dir
              ((in)
               (when io-in
@@ -119,7 +121,7 @@ package: std/net/server
     (debug "shutting down socket server")
     (close-port epoll)
     (for (state (in-hash-values fdtab))
-      (close-port (!socket-e (!socket-state-e state))))
+      (close-port (!socket-state-e state)))
     ;; release refs to raw devices
     (set! fdtab #f)
     (set! epoll #f))
