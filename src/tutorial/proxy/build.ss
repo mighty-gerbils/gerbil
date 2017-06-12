@@ -4,7 +4,8 @@
 (import :std/make)
 
 (def build-spec
-  '((exe: "tcp-proxy")))
+  '((exe: "tcp-proxy")
+    (exe: "socks-proxy")))
 
 (let (srcdir (path-directory (this-source-file)))
   (make srcdir: srcdir
