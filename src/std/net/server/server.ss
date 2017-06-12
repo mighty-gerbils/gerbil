@@ -3,13 +3,19 @@
 ;;; socket server -- server building blocks
 package: std/net/server
 
-(import :std/net/server/base
+(import :gerbil/gambit/threads
+        :std/net/server/base
+        :std/os/socket
         :std/actor/message
         :std/actor/proto
         :std/logger
         :std/sugar
         )
 (export #t)
+
+(defmethod {:init! !io-state}
+  (lambda (self)
+    (struct-instance-init! self 'blocked (make-mutex) (make-condition-variable))))
 
 (def (server-loop poll-evt do-poll add-socket close-socket shutdown!)
   (let loop ()
@@ -47,3 +53,49 @@ package: std/net/server
         (msg
          (warning "Unexpected message: ~a" msg)
          (loop)))))
+
+(def (io-state-signal-ready! iostate how)
+  (with ((!io-state _ mx cv) iostate)
+    (mutex-lock! mx)
+    (set! (!io-state-e iostate)
+      how)
+    (condition-variable-broadcast! cv)
+    (mutex-unlock! mx)))
+
+(extern namespace: #f macro-absent-obj)
+
+(def (io-state-wait-io! iostate timeo how)
+  (with ((!io-state _ mx cv) iostate)
+    (let lp ()
+      (mutex-lock! mx)
+      (case (!io-state-e iostate)
+        ((closed)
+         (mutex-unlock! mx)
+         (error "Socket direction has been closed" how))
+        ((ready)
+         (set! (!io-state-e iostate) how)
+         (mutex-unlock! mx)
+         (void))
+        (else
+         (set! (!io-state-e iostate)
+           'blocked)
+         (and (mutex-unlock! mx cv (or timeo (macro-absent-obj)))
+              (lp)))))))
+
+(def (io-state-close-in! iostate sock shutdown)
+  (if shutdown
+    (shutdown-socket! sock shutdown)
+    (close-input-port sock))
+  (io-state-signal-ready! iostate 'closed))
+
+(def (io-state-close-out! iostate sock shutdown)
+  (if shutdown
+    (shutdown-socket! sock shutdown)
+    (close-output-port sock))
+  (io-state-signal-ready! iostate 'closed))
+
+(def (shutdown-socket! sock how)
+  (try
+   (socket-shutdown sock how)
+   (catch (e)
+     (log-error "socket-server.shutdown-socket!" e))))

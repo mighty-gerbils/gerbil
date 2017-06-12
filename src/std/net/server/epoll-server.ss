@@ -18,8 +18,6 @@ package: std/net/server
         )
 (export epoll-socket-server)
 
-(extern namespace: #f macro-absent-obj)
-
 (def (epoll-socket-server)
   (def fdtab (make-hash-table-eq))
   (def epoll (epoll-create))
@@ -36,53 +34,27 @@ package: std/net/server
                    (hash-ref fdtab fd))
               (unless (fxzero? (fxand ready (fxior EPOLLIN EPOLLHUP EPOLLERR)))
                 (when io-in
-                  (signal-ready! io-in 'ready)))
+                  (io-state-signal-ready! io-in 'ready)))
               (unless (fxzero? (fxand ready (fxior EPOLLOUT EPOLLHUP EPOLLERR)))
                 (when io-out
-                  (signal-ready! io-out 'ready)))))))))
-
-  (def (signal-ready! iostate how)
-    (with ((!io-state _ mx cv) iostate)
-      (mutex-lock! mx)
-      (set! (!io-state-e iostate)
-        how)
-      (condition-variable-broadcast! cv)
-      (mutex-unlock! mx)))
-
-  (def (wait-io! iostate timeo how)
-    (with ((!io-state _ mx cv) iostate)
-      (let lp ()
-        (mutex-lock! mx)
-        (case (!io-state-e iostate)
-          ((closed)
-           (mutex-unlock! mx)
-           (error "Socket direction has been closed" how))
-          ((ready)
-           (set! (!io-state-e iostate) how)
-           (mutex-unlock! mx)
-           (void))
-          (else
-           (set! (!io-state-e iostate)
-             'blocked)
-           (and (mutex-unlock! mx cv (or timeo (macro-absent-obj)))
-                (lp)))))))
+                  (io-state-signal-ready! io-out 'ready)))))))))
   
   (def (add-socket sock)
     (let* ((fd (fd-e sock))
            (io-in
             (and (fd-io-in sock)
-                 (make-!io-state 'blocked (make-mutex) (make-condition-variable))))
+                 (make-!io-state)))
            (wait-in
             (and io-in
                  (lambda (ssock timeo)
-                   (wait-io! io-in timeo 'input))))
+                   (io-state-wait-io! io-in timeo 'input))))
            (io-out
             (and (fd-io-out sock)
-                 (make-!io-state 'blocked (make-mutex) (make-condition-variable))))
+                 (make-!io-state)))
            (wait-out
             (and io-out
                  (lambda (ssock timeo)
-                   (wait-io! io-out timeo 'output))))
+                   (io-state-wait-io! io-out timeo 'output))))
            (close
             (lambda (ssock dir shutdown)
               (!!socket-server.close (!socket-srv ssock) ssock dir shutdown)))
@@ -104,23 +76,10 @@ package: std/net/server
       ssock))
   
   (def (close-socket ssock dir shutdown)
-    (def (shutdown! sock)
-      (try
-       (socket-shutdown sock shutdown)
-       (catch (e)
-         (log-error "socket-server.close" e))))
-    
-    (def (close-io-in! sock io-in)
-      (if shutdown
-        (shutdown! sock)
-        (close-input-port sock))
-      (signal-ready! io-in 'closed))
-
-    (def (close-io-out! sock io-out)
-      (if shutdown
-        (shutdown! sock)
-        (close-output-port sock))
-      (signal-ready! io-out 'closed))
+    (def (close-io-in! io-in sock)
+      (io-state-close-in! io-in sock shutdown))
+    (def (close-io-out! io-out sock)
+      (io-state-close-out! io-out sock shutdown))
     
     (with ((!socket sock) ssock)
       (let (state (hash-get fdtab (fd-e sock)))
@@ -135,7 +94,7 @@ package: std/net/server
                     (epoll-ctl-del epoll sock)
                     (hash-remove! fdtab (fd-e sock))))
                 (set! (!socket-state-io-in state) #f)
-                (close-io-in! sock io-in)))
+                (close-io-in! io-in sock)))
              ((out)
               (when io-out
                 (if io-in
@@ -144,14 +103,14 @@ package: std/net/server
                     (epoll-ctl-del epoll sock)
                     (hash-remove! fdtab (fd-e sock))))
                 (set! (!socket-state-io-out state) #f)
-                (close-io-out! sock io-out)))
+                (close-io-out! io-out sock)))
              ((inout)
               (epoll-ctl-del epoll sock)
               (hash-remove! fdtab (fd-e sock))
               (when io-in
-                (close-io-in! sock io-in))
+                (close-io-in! io-in sock))
               (when io-out
-                (close-io-out! sock io-out))
+                (close-io-out! io-out sock))
               (close-port sock))
              (else
               (error "Bad direction" dir))))

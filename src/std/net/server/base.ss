@@ -18,7 +18,8 @@ package: std/net/server
 ;; e: blocked, ready, input or output, closed
 ;; mx, cv: mutex and condvar
 (defstruct !io-state (e mx cv)
-  final: #t)
+  final: #t
+  constructor: :init!)
 
 ;; socket blocking state
 ;; e: !socket
