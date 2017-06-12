@@ -23,6 +23,12 @@ Gambit's `##wait-for-io!`.
   * [Connection proxying](#connection-proxying)
   * [Using the proxy](#using-the-proxy)
 - [A SOCKS4a Proxy](#a-socks4a-proxy)
+  * [The main function](#the-main-function-1)
+  * [The server main loop](#the-server-main-loop-1)
+  * [The proxy function](#the-proxy-function)
+  * [Connection establishment and binding](#connection-establishment-and-binding)
+  * [Proxy I/O](#proxy-io)
+  * [Using the proxy](#using-the-proxy-1)
 
 <!-- tocstop -->
 
