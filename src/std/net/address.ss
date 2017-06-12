@@ -70,8 +70,6 @@ package: std/net
        #t))
 
 ;; rfc4291-compliant ipv6 address strings
-(extern (fxshift fxarithmetic-shift)) ; TODO prelude!
-
 (def (string->ip6-address str)
   (def (hex-e str k)
     (let (char (string-ref str k))
