@@ -10,7 +10,6 @@ package: std/net/server
         :std/net/server/base
         :std/net/server/server
         :std/os/fd
-        :std/os/socket
         :std/os/epoll
         :std/sugar
         :std/logger
