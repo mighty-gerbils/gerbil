@@ -28,7 +28,7 @@ package: std/net/server
   (def evts (make-epoll-events maxevts))
 
   (def (loop)
-    (<- (! (fd-io-in epoll)
+    (<- (! (_ (fd-io-in epoll))
            (try
             (do-epoll)
             (loop)
@@ -84,7 +84,7 @@ package: std/net/server
       (set! (!io-state-e iostate)
         how)
       (condition-variable-broadcast! cv)
-      (mutex-lock! mx)))
+      (mutex-unlock! mx)))
 
   (def (wait-io! iostate timeo how)
     (with ((!io-state _ mx cv) iostate)
@@ -169,7 +169,7 @@ package: std/net/server
                 (if io-out
                   (epoll-ctl-mod epoll sock (fxior EPOLLET EPOLLOUT))
                   (begin
-                    (epoll-ctl-del epoll sock 0)
+                    (epoll-ctl-del epoll sock)
                     (hash-remove! fdtab (fd-e sock))))
                 (set! (!socket-state-io-in state) #f)
                 (close-io-in! sock io-in)))
@@ -178,12 +178,12 @@ package: std/net/server
                 (if io-in
                   (epoll-ctl-mod epoll sock (fxior EPOLLET EPOLLIN))
                   (begin
-                    (epoll-ctl-del epoll sock 0)
+                    (epoll-ctl-del epoll sock)
                     (hash-remove! fdtab (fd-e sock))))
                 (set! (!socket-state-io-out state) #f)
                 (close-io-out! sock io-out)))
              ((inout)
-              (epoll-ctl-del epoll sock 0)
+              (epoll-ctl-del epoll sock)
               (hash-remove! fdtab (fd-e sock))
               (when io-in
                 (close-io-in! sock io-in))
