@@ -84,16 +84,16 @@ package: std/net/server
       (!!socket-server.add srv sock))))
 
 ;; => !socket | #f if tiemout
-(def (server-accept ssock (sa #f))
+(def (server-accept ssock (sa #f) (timeo #f))
   (with ((!socket sock srv wait-in) ssock)
     (if wait-in
-      (let lp ()
-        (let (cli (socket-accept sock sa))
-          (if cli
-            (!!socket-server.add srv cli)
-            (begin
-              (wait-in ssock #f)
-              (lp)))))
+      (let (timeo (abs-timeout timeo))
+        (let lp ()
+          (let (cli (socket-accept sock sa))
+            (if cli
+              (!!socket-server.add srv cli)
+              (and (wait-in ssock timeo)
+                   (lp))))))
       (error "Socket is not open for input" ssock))))
 
 ;; => count | #f if timeout
