@@ -750,8 +750,7 @@ The build configuration for the std library is specified in
 If you have the required libraries (documented in build-config) in your
 system, you can enable building by setting the `(enable feature #f)`
 statement in `build-config.ss` to `#t`. You can then build the optional
-library modules by running `$GERBIL_HOME/src/std/build.ss`
-(or `$GERBIL_HOME/src/build_stdlib.sh`).
+library modules by running `$GERBIL_HOME/src/build_stdlib.sh`.
 
 ### Additional Syntactic Sugar
 

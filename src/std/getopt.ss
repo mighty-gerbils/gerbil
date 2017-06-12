@@ -268,7 +268,7 @@ package: std
   (with ((!command key help opts args) obj)
     (fprintf port "Usage: ~a [option ...] ~a~a"
              program key
-             (if (null? opts) "" "[command-option ...] "))
+             (if (null? opts) "" " [command-option ...]"))
     (display-args args port)
     (fprintf port "       ~a~n" help)
     (unless (null? opts)
@@ -281,11 +281,11 @@ package: std
 (def (display-args args port)
   (for-each (match <>
               ((!reqarg key)
-               (fprintf port " ~a" key))
+               (fprintf port " <~a>" key))
               ((!optarg key)
-               (fprintf port " [~a]" key))
+               (fprintf port " [<~a>]" key))
               ((!rest key)
-               (fprintf port " ~a ..." key)))
+               (fprintf port " <~a> ..." key)))
             args)
   (newline port))
 

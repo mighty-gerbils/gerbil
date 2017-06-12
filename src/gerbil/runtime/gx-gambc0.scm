@@ -1350,8 +1350,9 @@
       (##structure-instance-of? obj (##type-id (macro-type-type-exception)))))
 
 (define (error-message obj)
-  (and (error? obj)
-    (##vector-ref obj 1)))
+  (if (error? obj)
+    (##vector-ref obj 1)
+    (with-output-to-string '() (lambda () (display-exception obj)))))
 
 (define (error-irritants obj)
   (and (error? obj)

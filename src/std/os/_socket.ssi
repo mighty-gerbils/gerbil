@@ -1,0 +1,201 @@
+;;; -*- Gerbil -*-
+;;; (C) vyzo at hackzen.org
+;;; OS socket FFI interface
+package: std/os
+
+(export #t)
+(extern
+  _socket
+  _bind
+  _listen
+  _accept
+  _connect
+  _shutdown
+  
+  _send
+  _sendto
+  _sendmsg
+  _recv
+  _recvfrom
+  _recvmsg
+
+  _getpeername
+  _getsockname
+
+  ;; sockaddress
+  make_sockaddr
+  sockaddr?
+  sockaddr_family
+  sockaddr_in_addr
+  sockaddr_in_addr_set
+  sockaddr_in_port
+  sockaddr_in_port_set
+  sockaddr_in6_addr
+  sockaddr_in6_addr_set
+  sockaddr_in6_port
+  sockaddr_in6_port_set
+  sockaddr_un_path
+  sockaddr_un_path_set
+  sockaddr_len
+  sockaddr_bytes
+  sockaddr_bytes_set
+  
+  ;; sockopts
+  _getsockopt_int
+  _setsockopt_int
+  _getsockopt_tv
+  _setsockopt_tv
+  _getsockopt_sa
+  _setsockopt_sa
+  _setsockopt_mreq
+  _setsockopt_mreq_src
+  _setsockopt_mreq6
+  _getsockopt_bytes
+  _setsockopt_bytes
+  _getsockopt_linger
+  _setsockopt_linger
+
+  ;; helpers
+  make_int_ptr
+  int_ptr_value
+  
+  make_tv
+  tv_sec tv_sec_set
+  tv_usec tv_usec_set
+
+  make_linger
+  linger_onoff linger_onoff_set
+  linger_linger linger_linger_set
+  
+  ;; constants
+  ;; these are defined to -1 if undefined for the OS
+  AF_UNSPEC
+  AF_INET
+  AF_INET6
+  AF_UNIX AF_LOCAL
+  AF_NETLINK AF_PACKET AF_ALG
+
+  SOCK_STREAM
+  SOCK_DGRAM
+  SOCK_RAW
+  SOCK_SEQPACKET SOCK_RDM
+  
+  SHUT_RD
+  SHUT_WR
+  SHUT_RDWR
+
+  UNIX_MAX_PATH
+  
+  ;; sockopts
+  SOL_SOCKET
+  SO_ACCEPTCONN
+  SO_BINDTODEVICE
+  SO_BROADCAST
+  SO_DEBUG
+  SO_DOMAIN
+  SO_DONTROUTE
+  SO_ERROR
+  SO_KEEPALIVE
+  SO_LINGER
+  SO_OOBLINE
+  SO_PASSCRED
+  SO_PEERCRED
+  SO_PEEK_OFF
+  SO_PROTOCOL
+  SO_RCVBUF
+  SO_SNDBUF
+  SO_RCVLOWAT
+  SO_SNDLOWAT
+  SO_RCVTIMEO
+  SO_SNDTIMEO
+  SO_REUSEADDR
+  SO_REUSEPORT
+  SO_TYPE
+  SO_TIMESTAMP
+  SO_USELOOPBACK
+
+  IPPROTO_IP
+  IP_ADD_MEMBERSHIP
+  IP_DROP_MEMBERSHIP
+  IP_ADD_SOURCE_MEMBERSHIP
+  IP_DROP_SOURCE_MEMBERSHIP
+  IP_BLOCK_SOURCE
+  IP_UNBLOCK_SOURCE
+  IP_FREEBIND
+  IP_HDRINCL
+  IP_MTU
+  IP_MTU_DISCOVER
+  IP_MULTICAST_ALL
+  IP_MULTICAST_IF
+  IP_MULTICAST_LOOP
+  IP_MULTICAST_TTL
+  IP_NODEFRAG
+  IP_OPTIONS
+  IP_PKTINFO
+  IP_RECVERR
+  IP_RECVORIGDSTADDR
+  IP_RECVOPTS
+  IP_RECVTOS
+  IP_RECVTTL
+  IP_RETOPTS
+  IP_ROUTER_ALERT
+  IP_TOS
+  IP_TTL
+
+  IPPROTO_IPV6
+  IPV6_ADDRFORM
+  IPV6_ADD_MEMBERSHIP
+  IPV6_DROP_MEMBERSHIP
+  IPV6_MTU
+  IPV6_MTU_DISCOVER
+  IPV6_MULTICAST_HOPS
+  IPV6_MULTICAST_IF
+  IPV6_MULTICAST_LOOP
+  IPV6_RECVPKTINFO
+  IPV6_RTHDR
+  IPV6_AUTHHDR
+  IPV6_DSTOPTS
+  IPV6_HOPOPTS
+  IPV6_FLOWINFO
+  IPV6_HOPLIMIT
+  IPV6_ROUTER_ALERT
+  IPV6_UNICAST_HOPS
+  IPV6_V6ONLY
+
+  IPPROTO_TCP
+  TCP_CONGESTION
+  TCP_CORK
+  TCP_DEFER_ACCEPT
+  TCP_KEEPCNT
+  TCP_KEEPIDLE
+  TCP_KEEPINTVL
+  TCP_MAXSEG
+  TCP_NODELAY
+  TCP_SYNCNT
+
+  ;; flags
+  IP_PMTUDISC_WANT
+  IP_PMTUDISC_DONT
+  IP_PMTUDISC_DO
+  IP_PMTUDISC_PROBE
+  
+  IPTOS_LOWDELAY
+  IPTOS_THROUGHPUT
+  IPTOS_RELIABILITY
+  IPTOS_MINCOST
+  
+  MSG_CONFIRM
+  MSG_CTRUNC
+  MSG_DONTROUTE
+  MSG_DONTWAIT
+  MSG_EOR
+  MSG_ERRQUEUE
+  MSG_MORE
+  MSG_NOSIGNAL
+  MSG_OOB
+  MSG_PEEK
+  MSG_TRUNC
+  MSG_WAITALL
+  )
+
+(load-module "std/os/_socket")

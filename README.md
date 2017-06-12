@@ -43,7 +43,7 @@ All the other dependencies are soft; library modules with foreign
 dependencies are not built by default, with the exception of `zlib`.
 The optional libraries can be enabled at build-time by editing
 `$GERBIL_HOME/src/std/build-config.ss`. You can also enable features later,
-by editing `build-config.ss` and running `build.ss` in `$GERBIL_HOME/src/std`
+by editing `build-config.ss` and running `build_stdlib.sh` in `$GERBIL_HOME/src/`
 
 ## Build Instructions
 After checking out the source code from Github, let `$GERBIL_HOME` be

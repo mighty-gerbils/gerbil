@@ -59,6 +59,27 @@
     "net/uri"
     "net/socks"
     "net/request"
+    ;; std/os
+    (gxc: "os/error" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (gxc: "os/fd" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (gxc: "os/fcntl" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (gsc: "os/_socket" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (ssi: "os/_socket")
+    "os/socket"
+    ,@(cond-expand
+        (linux-gnu
+         '((gxc: "os/epoll" "-e" "(include \"~~lib/_gambit#.scm\")")))
+        (else '()))
+    ;; :std/net/server
+    "net/server/base"
+    (gxc: "net/server/server"  "-e" "(include \"~~lib/_gambit#.scm\")")
+    "net/server/basic-server"
+    ,@(cond-expand
+        (linux-gnu
+         '("net/server/epoll-server"))
+        (else '()))
+    "net/server/api"
+    "net/server"
     ;; :std/xml
     ,@(if config-enable-libxml
         `((gsc: "xml/_libxml" 

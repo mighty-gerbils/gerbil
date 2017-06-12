@@ -5,4 +5,4 @@ export PATH="$GERBIL_HOME/bin:$PATH"
 
 echo "[*] Building gerbil stdlib"
 
-cd std && ./build.ss
+cd std && ./build-deps-gen.ss  && ./build.ss
