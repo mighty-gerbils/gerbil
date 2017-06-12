@@ -58,7 +58,7 @@ The main function of the proxy simply parses the arguments to the program using 
 ```
 (def (main . args)
   (def gopt
-    (getopt (argument 'local help: "local addres to bind")
+    (getopt (argument 'local help: "local address to bind")
             (argument 'remote help: "remote address to proxy to")))
   (try
    (let (opt (getopt-parse gopt args))
@@ -118,7 +118,6 @@ mode.
 
 (def (proxy-io isock osock)
   (def buf (make-u8vector 4096))
-
   (try
    (let lp ()
      (let (rd (socket-recv isock buf))
