@@ -198,6 +198,9 @@ package: std/net/server
     (debug "shutting down socket server")
     (close-port epoll)
     (for (state (in-hash-values fdtab))
-      (close-port (!socket-e (!socket-state-e state)))))
+      (close-port (!socket-e (!socket-state-e state))))
+    ;; release refs to raw devices
+    (set! fdtab #f)
+    (set! epoll #f))
   
   (loop))
