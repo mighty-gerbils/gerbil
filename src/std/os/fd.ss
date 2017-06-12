@@ -40,13 +40,13 @@ package: std/os
     (open-raw-device dirx t fd)))
 
 (def (fd-e raw)
-  (macro-raw-device-port-device raw))
+  (values (macro-raw-device-port-device raw)))
 
 (def (fd-io-in raw)
-  (macro-raw-device-port-rdevice-condvar raw))
+  (values (macro-raw-device-port-rdevice-condvar raw)))
 
 (def (fd-io-out raw)
-  (macro-raw-device-port-wdevice-condvar raw))
+  (values (macro-raw-device-port-wdevice-condvar raw)))
 
 (def (fd-type raw)
   (match ((macro-port-name raw) raw)
@@ -54,7 +54,7 @@ package: std/os
     (else #f)))
 
 (def (fd? obj)
-  (macro-raw-device-port? obj))
+  (values (macro-raw-device-port? obj)))
 
 (def (fd-type? obj t)
   (and (fd? obj)
