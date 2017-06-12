@@ -8,7 +8,6 @@ package: std/net/server
         :std/net/server/base
         :std/net/server/server
         :std/os/fd
-        :std/os/socket
         :std/event
         :std/logger
         :std/iter
@@ -45,20 +44,14 @@ package: std/net/server
       ssock))
 
   (def (close-socket ssock dir shutdown)
-    (def (shutdown! sock)
-      (try
-       (socket-shutdown sock shutdown)
-       (catch (e)
-         (log-error "socket-server.close" e))))
-    
     (def (close-io-in! sock)
       (if shutdown
-        (shutdown! sock)
+        (shutdown-socket! sock shutdown)
         (close-input-port sock)))
 
     (def (close-io-out! sock)
       (if shutdown
-        (shutdown! sock)
+        (shutdown-socket! sock shutdown)
         (close-output-port sock)))
     
     (with ((!socket sock) ssock)
