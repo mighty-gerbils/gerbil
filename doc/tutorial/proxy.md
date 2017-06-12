@@ -22,7 +22,7 @@ Gambit's `##wait-for-io!`.
   * [The server main loop](#the-server-main-loop)
   * [Connection proxying](#connection-proxying)
   * [Using the proxy](#using-the-proxy)
-- [A SOCKS4a Proxy](#a-socks4a-proxy)
+- [A SOCKS4 Proxy](#a-socks4-proxy)
   * [The main function](#the-main-function-1)
   * [The server main loop](#the-server-main-loop-1)
   * [The proxy function](#the-proxy-function)
@@ -189,7 +189,7 @@ Connection closed by foreign host.
 
 ```
 
-## A SOCKS4a Proxy
+## A SOCKS4 Proxy
 
 The [socks proxy](../../src/tutorial/proxy/socks-proxy.ss) listens to a local port and
 proxies connections using the SOCKS4 protocol. The implementation uses multiplexed I/O
