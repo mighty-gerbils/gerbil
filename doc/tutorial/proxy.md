@@ -373,7 +373,7 @@ So we can run our proxy like this:
 $ ./socks-proxy :1080
 ```
 
-And in another shell we can proxy a using curl:
+And in another shell we can proxy an HTTP request using curl:
 ```
 $ curl --socks4 127.0.0.1 http://www.google.com
 <HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
