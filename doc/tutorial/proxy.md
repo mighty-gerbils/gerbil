@@ -5,7 +5,8 @@ a couple of network proxies.
 
 The first one is a transparent TCP proxy, written using low level socket programming
 with the `:std/os/socket` package. This packages utilizes raw devices and opens sockets
-through FFI, thus providing access to the full POSIX socket programming API.
+through FFI, thus providing access to the full POSIX socket programming API with a
+nonblocking interface.
 
 The second one is a full-blown SOCKS4a proxy, written using the `:std/net/server` package.
 This package provides high level network programming facilities using multiplexed
@@ -97,7 +98,8 @@ For each connection, it logs it and spawns a thread to proxy it:
 The funciton `proxy` takes a client socket and proxies it to the remote address.
 First it opens and connects a socket to the remote server, and then spanws two
 threads piping data between the two ends. The programming should look familiar to
-anyone with experience with network programming with the socket API.
+anyone with experience with network programming with the socket API in nonblocking
+mode.
 
 ```
 (def (proxy clisock raddr)
