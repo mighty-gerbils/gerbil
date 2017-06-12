@@ -64,7 +64,7 @@ package: std/net/server
         (unless (wait-out ssock (abs-timeout timeo))
           (close ssock 'inout)
           (raise-timeout 'server-connect "Operation timeout exceeded" addr)))
-      (let (errno (socket-getsockopt sock SOL_SOCKET SO_ERROR))
+      (let (errno (or rcon (socket-getsockopt sock SOL_SOCKET SO_ERROR)))
         (if (fxzero? errno)
           ssock
           (begin
