@@ -24,6 +24,7 @@ package: tutorial/proxy
     (socket-bind sock laddr)
     (socket-listen sock 10)
     (while #t
+      (sync (fd-io-in sock))
       (try
        (let (cli (socket-accept sock caddr))
          (when cli
