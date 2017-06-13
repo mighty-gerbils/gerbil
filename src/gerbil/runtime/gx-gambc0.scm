@@ -562,6 +562,10 @@
    (else
     (error "Cannot find method" obj id))))
 
+;; Methods
+(define builtin-type-methods
+  (make-table test: eq?))
+
 (define (method-ref obj id)
   (and (object? obj)
        (find-method (object-type obj) id)))
@@ -588,6 +592,12 @@
       (mixin-method-ref klass id))
      (else
       (cache-method! klass id (struct-find-method (##type-super klass) id)))))
+   ((##type? klass)
+    (cond
+     ((hash-get builtin-type-methods (##type-id klass))
+      => (lambda (mtab)
+           (hash-get mtab id)))
+     (else #f)))
    (else #f)))
 
 (define (struct-find-method klass id)
@@ -614,21 +624,30 @@
    (else #f)))
 
 (define (bind-method! klass id proc #!optional (rebind? #t))
-  (let lp ((ht (type-descriptor-methods klass)))
-    (if ht
-      (cond
-       ((hash-get ht id)
-        => (lambda (prev)
-             (unless rebind?
-               (error "Method already bound" klass id))
-             (hash-put! ht id proc)
-             prev))
-       (else
-        (hash-put! ht id proc)
-        #f))
-      (let ((ht (make-hash-table-eq)))
-        (type-descriptor-methods-set! klass ht)
-        (lp ht)))))
+  (define (bind! ht)
+    (if (and (not rebind?) (hash-get ht id))
+      (error "Method already bound" klass id)
+      (hash-put! ht id proc)))
+  
+  (cond
+   ((type-descriptor? klass)
+    (let ((ht (type-descriptor-methods klass)))
+      (if ht
+        (bind! ht)
+        (let ((ht (make-hash-table-eq)))
+          (type-descriptor-methods-set! klass ht)
+          (bind! ht)))))
+   ((##type? klass)
+    (let ((ht
+           (cond
+            ((hash-get builtin-type-methods (##type-id klass)) => values)
+            (else
+             (let ((ht (make-hash-table-eq)))
+               (hash-put! builtin-type-methods (##type-id klass) ht)
+               ht)))))
+      (bind! ht)))
+   (else
+    (error "Expected type-descriptor" klass))))
 
 (define (next-method subklass obj id)
   (let ((klass (object-type obj))

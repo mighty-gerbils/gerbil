@@ -74,6 +74,9 @@ package: std/db
       (leveldb_close db)
       (set! (leveldb-db ldb) #f))))
 
+(defmethod {destroy leveldb}
+  leveldb-close)
+
 ;;; Basic Operations
 (def (leveldb-put ldb key val (opts (leveldb-default-write-options)))
   (with ((leveldb db) ldb)
@@ -121,6 +124,7 @@ package: std/db
          ((errptr_str errptr)
           => (cut raise-leveldb-error 'leveldb-write <>))))
       (error "LevelDB database has been closed"))))
+
 
 (def (slice->bytes slice)
   (let* ((len (slice_len slice))
@@ -176,6 +180,9 @@ package: std/db
     (when itor
       (leveldb_iter_destroy itor)
       (set! (leveldb-itor-e lit) #f))))
+
+(defmethod {destroy leveldb-itor}
+  leveldb-iterator-close)
 
 (def (leveldb-iterator-valid? lit)
   (with ((leveldb-itor itor) lit)
@@ -240,6 +247,7 @@ package: std/db
           => (cut raise-leveldb-error 'leveldb-iterator-error <>))
          (else #f)))
       (error "Iterator has been finalized"))))
+
 
 ;; iterator protocol
 (defstruct leveldb-iter-state (itor value start limit)

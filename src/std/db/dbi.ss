@@ -53,6 +53,9 @@ package: std/db
         (set! (connection-txn-commit conn) #f)
         (set! (connection-txn-abort conn) #f))))))
 
+(defmethod {destroy connection}
+  sql-close)
+
 (def (sql-txn-do conn sql getf setf)
   (with ((connection e) conn)
     (cond
@@ -85,6 +88,9 @@ package: std/db
     (try {finalize stmt}
       (finally
        (set! (statement-e stmt) #f)))))
+
+(defmethod {destroy statement}
+  sql-finalize)
 
 (def (sql-bind stmt . args)
   (if (statement-e stmt)

@@ -72,6 +72,10 @@ package: std
          (() ; no clauses, just a begin
           (cons 'begin (reverse body))))))))
 
+(defrules with-destroy ()
+  ((_ obj body ...)
+   (let ($obj obj)
+     (try body ... (finally {destroy $obj})))))
 
 (defsyntax (defmethod/alias stx)
   (syntax-case stx (@method)
