@@ -18,8 +18,9 @@
           (if (null? _args336_) _f335_ (lambda () (apply _f335_ _args336_)))
           _name334_)))))
   (define gerbil/gambit/threads#with-lock
-    (lambda (_mutex329_ _proc330_)
-      (dynamic-wind
-       (lambda () (mutex-lock! _mutex329_))
-       _proc330_
-       (lambda () (mutex-unlock! _mutex329_))))))
+    (lambda (_mx329_ _proc330_)
+      (begin
+        (mutex-lock! _mx329_)
+        (with-unwind-protect
+         (lambda () (_proc330_))
+         (lambda () (mutex-unlock! _mx329_)))))))
