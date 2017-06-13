@@ -76,8 +76,8 @@ package: gerbil/gambit
         (lambda () (apply f args)))
     name)))
 
-(def (with-lock mutex proc)
-  (dynamic-wind
-    (lambda () (mutex-lock! mutex))
-    proc
-    (lambda () (mutex-unlock! mutex))))
+(def (with-lock mx proc)
+  (mutex-lock! mx)
+  (unwind-protect
+    (proc)
+    (mutex-unlock! mx)))
