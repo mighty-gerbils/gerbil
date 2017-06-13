@@ -19,6 +19,8 @@ package: std
   event-set?
   event-ready?                          ; non-blocking sync check
   event-selector                        ; retrieve event selector
+  ;; useful stuff
+  thread-dead?
   )
 
 ;; ~~lib/_gambit#.scm
