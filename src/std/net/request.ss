@@ -337,6 +337,9 @@ package: std/net
     (with-catch void (cut close-port port))
     (set! (request-port req) #f)))
 
+(defmethod {destroy request}
+  request-close)
+
 (def (request-content req)
   (cond
    ((request-body req) => values)
