@@ -80,6 +80,9 @@ package: std/db
       (mdb_env_close env*)
       (set! (lmdb-env-ptr env) #f))))
 
+(defmethod {destroy lmdb-env}
+  lmdb-close)
+
 (defrules do-lmdb-stat ()
   ((_ env* stat-e stat-args ...)
    (let (stat* (ffi_make_mdb_stat_ptr))
@@ -131,6 +134,9 @@ package: std/db
             (mdb_dbi_close env* dbi)
             (set! (lmdb-db-dbi db) #f)
             (hash-remove! dbs name)))))))
+
+(defmethod {destroy lmdb-db}
+  lmdb-close-db)
 
 (def (lmdb-txn-begin env (parent #f) (flags 0))
   (with ((lmdb-env env*) env)

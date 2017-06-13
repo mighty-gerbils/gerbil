@@ -181,6 +181,11 @@ package: std/net/server
 (def (server-close-output ssock (shutdown #f))
   ((!socket-close ssock) ssock 'out (and shutdown SHUT_WR)))
 
+;; with-destroy
+(defmethod {destroy !socket}
+  (lambda (self)
+    ((!socket-close self) self 'inout #f)))
+
 ;; utils
 (def (abs-timeout timeo)
   (cond
