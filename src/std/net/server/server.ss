@@ -33,7 +33,7 @@ package: std/net/server
             (!!value ssock k))
           (catch (e)
             (log-error "socket-server.add" e)
-            (!!error (error-message e) k)))
+            (!!error e k)))
          (loop))
         ((!socket-server.close ssock dir shutdown)
          (try
@@ -47,7 +47,7 @@ package: std/net/server
           (!!value (void) k)
           (catch (e)
             (log-error "socket-server.shutdown!" e)
-            (!!error (error-message e) k))))
+            (!!error e k))))
         (msg
          (warning "Unexpected message: ~a" msg)
          (loop)))))
