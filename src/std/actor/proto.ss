@@ -158,8 +158,11 @@ package: std/actor
              (lp))
             ((!end (eq? k))
              (close-port outp))
-            ((!error msg k)
-             (let (err (make-remote-error '!!call (string-append "remote error: " msg)))
+            ((!error obj k)
+             (let (err
+                   (if (string? obj)
+                     (make-remote-error '!!call (string-append "remote error: " obj))
+                     obj))
                (write err outp)
                (close-port outp)))
             (! err-evt
