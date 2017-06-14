@@ -295,7 +295,8 @@ package: std
                (fprintf port " ~a ~a:\t\t ~a [default: ~a]~n"
                         (or short "")
                         (or long "")
-                        (or help "?") default))
+                        (or help "?")
+                        default))
               ((!flag _ help short long)
                (fprintf port " ~a ~a:\t\t ~a~n"
                         (or short "")
