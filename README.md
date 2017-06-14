@@ -22,18 +22,20 @@ ahead of time compilation and compiled macros.
 
 # Installation
 ## Source Code
-The source code for Gerbil is hosted on [Github](https://github.com/vyzo/gerbil).
-You can obtain the source tree directly in the command line by cloning
-the repository:
+The source code for Gerbil is hosted on [Github](https://github.com/vyzo/gerbil),
+with the latest release available in [releases](https://github.com/vyzo/gerbil/releases).
+
+For cutting-edge Gerbil, you can clone the repository:
 ```
 $ git clone https://github.com/vyzo/gerbil.git
 ```
 
 ## Dependencies
 I have tested the bootstrap with Gambit v4.8.x, but older versions
-starting with v4.6.0 used to work as well. Nonetheless, the latest
-version of Gambit from master is recommended, as important pieces of
-the standard library require raw device support
+starting with v4.6.0 used to work as well. Nonetheless, if you want to
+use the latest Gerbil from master after v0.12, then the latest version of
+Gambit from master is also recommended, as important pieces of the standard
+library require raw device support
 ([gambit#272](https://github.com/gambit/gambit/pull/272)).
 
 The core system has no dependencies outside Gambit, but the standard
@@ -49,8 +51,8 @@ The optional libraries can be enabled at build-time by editing
 by editing `build-config.ss` and running `build_stdlib.sh` in `$GERBIL_HOME/src/`
 
 ## Build Instructions
-After checking out the source code from Github, let `$GERBIL_HOME` be
-the top directory of Gerbil.
+After unpacking a release or checking out the source code from Github, let
+`$GERBIL_HOME` be the top directory of Gerbil.
 Then:
 ```
 $ cd $GERBIL_HOME/src
