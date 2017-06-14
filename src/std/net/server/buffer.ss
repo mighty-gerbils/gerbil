@@ -59,44 +59,29 @@ package: std/net/server
             (fx+ start 4))
           (u32 buf start))))))
 
-(def (server-input-fill! ibuf need)
-  (with ((!buffer sock buf start end) ibuf)
-    (if (fx> start 0)
-      (if (fx< start end)
-        (begin
-          (##subu8vector-move! buf start end buf 0)
-          (set! (!buffer-start ibuf) 0)
-          (set! (!buffer-end ibuf) (fx- end start))
-          (server-input-fill! ibuf need))
-        (begin
-          (set! (!buffer-start ibuf) 0)
-          (set! (!buffer-end ibuf) 0)
-          (server-input-fill! ibuf need)))
-      (let* ((need (fx- need end))
-             (rd (server-recv sock buf end)))
-        (set! (!buffer-end ibuf)
-          (fx+ end rd))
-        (when (fx< need rd)
-          (raise-io-error 'server-input-fill! "premature end of input"))))))
-
 (def (server-input-read-u8vector ibuf u8v)
   (with ((!buffer sock buf start end) ibuf)
     (let* ((u8vl (u8vector-length u8v))
            (start+u8vl (fx+ start u8vl)))
-    (if (fx<= start+u8vl end)
-      (begin
+      (cond
+       ((fx<= start+u8vl end)           ; already buffered
         (##subu8vector-move! buf start start+u8vl u8v 0)
         (set! (!buffer-start ibuf)
-          start+u8vl))
-      (let (have (fx- end start))
-        (unless (fxzero? have)
-          (##subu8vector-move! buf start end u8v 0))
-        (set! (!buffer-start ibuf) 0)
-        (set! (!buffer-end ibuf) 0)
-        (let (rd (server-recv-all sock u8v have))
-          (if (fx< (fx+ have rd) u8vl)
-            (raise-io-error 'server-input-read-u8vector "premature end of input")
-            u8vl)))))))
+          start+u8vl)
+        u8vl)
+       ((fx< u8vl (##u8vector-length buf)) ; fits in buffer
+        (server-input-fill! ibuf u8vl)
+        (server-input-read-u8vector ibuf u8v))
+       (else                            ; doesn't fit in buffer
+        (let (have (fx- end start))
+          (unless (fxzero? have)
+            (##subu8vector-move! buf start end u8v 0))
+          (set! (!buffer-start ibuf) 0)
+          (set! (!buffer-end ibuf) 0)
+          (let (rd (server-recv-all sock u8v have))
+            (if (fx< (fx+ have rd) u8vl)
+              (raise-io-error 'server-input-read-u8vector "premature end of input")
+              u8vl))))))))
 
 (def (server-input-read-u8vector* ibuf u8v)
   (with ((!buffer sock buf start end) ibuf)
@@ -107,7 +92,34 @@ package: std/net/server
         (set! (!buffer-start ibuf)
           start+count)
         count)
-      (server-recv sock u8v))))
+      (begin
+        (server-input-fill! ibuf 1)
+        (server-input-read-u8vector* ibuf u8v)))))
+
+(def (server-input-fill! ibuf need)
+  (with ((!buffer sock buf start end) ibuf)
+    (cond
+     ((fx<= (fx+ start need) (##u8vector-length buf)) ; fits in buffer as is
+      (let* ((have (fx- end start))
+             (need (fx- need have))
+             (rd (server-recv sock buf end)))
+        (set! (!buffer-end ibuf)
+           (fx+ end rd))
+         (when (fx< need rd)
+           (raise-io-error 'server-input-fill! "premature end of input"))))
+     ((fx> start 0)                    ; need to memmove buffered data
+      (if (fx< start end)
+        (begin
+          (##subu8vector-move! buf start end buf 0)
+          (set! (!buffer-start ibuf) 0)
+          (set! (!buffer-end ibuf) (fx- end start))
+          (server-input-fill! ibuf need))
+        (begin
+          (set! (!buffer-start ibuf) 0)
+          (set! (!buffer-end ibuf) 0)
+          (server-input-fill! ibuf need))))
+      (else
+       (error "Bad fill; buffer too small" ibuf need)))))
 
 (def (server-output-write-u8 obuf u8)
   (with ((!buffer _ buf start end) obuf)
