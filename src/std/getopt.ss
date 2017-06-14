@@ -5,17 +5,19 @@ package: std
 
 (import :std/error
         :std/format)
-(export getopt (rename: !getopt? getopt?)
+(export getopt
+        (rename: !getopt? getopt?)
+        (rename: !top? getopt-object?)
+        getopt-error?
         getopt-parse
         getopt-display-help
-        option (rename: !option? option?)
-        flag (rename: !flag? flag?)
-        command (rename: !command? command?)
-        argument (rename: !reqarg? argument?)
-        optional-argument (rename: !optarg? optional-argument?)
-        rest-arguments (rename: !rest? rest-arguments?)
-        (rename: !top? getopt-object?)
-        getopt-error?)
+        option
+        flag
+        command
+        argument
+        optional-argument
+        rest-arguments
+        )
 
 (defstruct (getopt-error <error>) (e))
 
@@ -252,7 +254,7 @@ package: std
           (fprintf port "~nArguments:~n")
           (display-arg-help args port)))
       (begin
-        (fprintf port "Usage: ~a ~a [command] command-arg ...~n"
+        (fprintf port "Usage: ~a ~a <command> command-arg ...~n"
                  program
                  (if (null? opts) "" "[option ...]"))
         (unless (null? opts)
@@ -261,7 +263,10 @@ package: std
         (fprintf port "~nCommands:~n")
         (for-each (match <>
                     ((!command key help)
-                     (fprintf port " ~a:\t ~a~n" key (or help "?"))))
+                     (fprintf port " ~a:~a ~a~n"
+                              key
+                              (tabs key)
+                              (or help "?"))))
                   cmds)))))
 
 (def (display-help-command obj program port)
@@ -292,12 +297,14 @@ package: std
 (def (display-option-help opts port)
   (for-each (match <>
               ((!option _ help short long _ default)
-               (fprintf port " ~a ~a:\t ~a [default: ~a]~n"
+               (fprintf port " ~a ~a:~a ~a [default: ~a]~n"
                         (or short "")
                         (or long "")
-                        (or help "?") default))
+                        (tabs (or short "") " " (or long ""))
+                        (or help "?")
+                        default))
               ((!flag _ help short long)
-               (fprintf port " ~a ~a:\t ~a~n"
+               (fprintf port " ~a ~a:\t\t ~a~n"
                         (or short "")
                         (or long "")
                         (or help "?"))))
@@ -306,9 +313,25 @@ package: std
 (def (display-arg-help args port)
   (for-each (match <>
               ((!reqarg key help)
-               (fprintf port " ~a:\t ~a~n" key (or help "?")))
+               (fprintf port " ~a:~a ~a~n"
+                        key (tabs key) (or help "?")))
               ((!optarg key help _ default)
-               (fprintf port " ~a:\t ~a [default: ~a]~n" key (or help "?") default))
+               (fprintf port " ~a:~a ~a [default: ~a]~n"
+                        key (tabs key) (or help "?")
+                        default))
               ((!rest key help)
-               (fprintf port " ~a:\t ~a~n" key (or help "?"))))
+               (fprintf port " ~a:~a ~a~n"
+                        key (tabs key) (or help "?"))))
             args))
+
+(def (tabs . strs)
+  (def tablen 31) ; take : into account
+  (def (string-e str)
+    (if (symbol? str)
+      (symbol->string str)
+      str))
+  
+  (let* (len (foldl + 0 (map string-length (map string-e strs))))
+    (if (fx< len tablen)
+      (make-string (fx- tablen len) #\space)
+      "")))
