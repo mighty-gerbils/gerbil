@@ -216,7 +216,7 @@ a single argument -- the local address to bind:
 
 ### The server main loop
 
-The server main loop starts a `server-socket` to use for multiplexing I/O, and creates
+The server main loop starts a `socket-server` to use for multiplexing I/O, and creates
 a listening socket to the specified address. It then loops accepting connections to proxy:
 ```
 (def (run address)
