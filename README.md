@@ -75,7 +75,7 @@ that should get you started:
 - The [Gerbil Core Prelude](doc/core-prelude.md) documents the core
   language prelude.
 
-Probably the best way to dive into gerbil is by reading the sources,
+Probably the best way to dive into Gerbil is by reading the sources,
 as all the main language features are exercised in one way or another
 within the implementation.
 
