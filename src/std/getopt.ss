@@ -5,17 +5,19 @@ package: std
 
 (import :std/error
         :std/format)
-(export getopt (rename: !getopt? getopt?)
+(export getopt
+        (rename: !getopt? getopt?)
+        (rename: !top? getopt-object?)
+        getopt-error?
         getopt-parse
         getopt-display-help
-        option (rename: !option? option?)
-        flag (rename: !flag? flag?)
-        command (rename: !command? command?)
-        argument (rename: !reqarg? argument?)
-        optional-argument (rename: !optarg? optional-argument?)
-        rest-arguments (rename: !rest? rest-arguments?)
-        (rename: !top? getopt-object?)
-        getopt-error?)
+        option
+        flag
+        command
+        argument
+        optional-argument
+        rest-arguments
+        )
 
 (defstruct (getopt-error <error>) (e))
 
