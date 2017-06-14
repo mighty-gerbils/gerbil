@@ -3,8 +3,7 @@
 ;;; actor rpc cookie authen protocol
 package: std/actor/proto
 
-(import :gerbil/gambit/ports
-        :std/net/address
+(import :std/net/server
         :std/crypto/etc
         :std/crypto/digest
         :std/crypto/cipher
@@ -28,25 +27,30 @@ package: std/actor/proto
 (def ::cipher-iv-length  (cipher-iv-length  ::cipher-type))
 (def ::DH::new            DH-get-1024-160)
 
-(def (rpc-cipher-proto-key-exchange sock)
-  (write-u8 rpc-proto-key-exchange sock)
+(def (rpc-cipher-proto-key-exchange ibuf obuf)
+  (server-output-write-u8 obuf rpc-proto-key-exchange)
   (let* ((dh   (::DH::new))
          (_    (DH-generate-key dh))
-         (pubk (DH-pub-key dh)))
-    (xdr-binary-write (BN->bytes pubk) sock)
-    (force-output sock)
-    (let (e (read-u8 sock))
+         (pubk (DH-pub-key dh))
+         (u8port (open-output-u8vector)))
+    (xdr-binary-write (BN->bytes pubk) u8port)
+    (server-output-write obuf (get-output-u8vector u8port))
+    (server-output-force obuf)
+    (let (e (server-input-read-u8 ibuf))
       (cond
        ((eq? e rpc-proto-key-exchange)
-        (let (peerk (xdr-binary-read sock values))
+        (let* ((buf (make-u8vector 1024))
+               (rd (server-input-read* ibuf buf))
+               (u8port (open-input-u8vector (subu8vector buf 0 rd)))
+               (peerk (xdr-binary-read u8port values)))
           (DH-compute-key dh (bytes->BN peerk))))
        ((eof-object? e)
-        (raise-rpc-error 'rpc-proto-key-exchange "connection closed" sock))
+        (raise-rpc-error 'rpc-proto-key-exchange "connection closed"))
        (else
-        (raise-rpc-error 'rpc-proto-key-exchange "key exchange error" e sock))))))
+        (raise-rpc-error 'rpc-proto-key-exchange "key exchange error" e))))))
 
-(def (rpc-cipher-proto-read sock secret)
-  (let (e (read-u8 sock))
+(def (rpc-cipher-proto-read ibuf obuf secret)
+  (let (e (server-input-read-u8 ibuf))
     (cond
      ((eq? e rpc-proto-keep-alive)
       #!void)
@@ -55,38 +59,32 @@ package: std/actor/proto
              (cipher (make-cipher ::cipher-type))
              (key    (subu8vector secret 0 ::cipher-key-length))
              (hmac   (make-u8vector ::digest-size))
-             (rd     (read-subu8vector hmac 0 ::digest-size sock))
-             (_      (when (fx< rd ::digest-size)
-                       (raise-rpc-error 'rpc-proto-read "premature port end")))
+             (_      (server-input-read ibuf hmac))
              (iv     (make-u8vector ::cipher-iv-length))
-             (rd     (read-subu8vector iv 0 ::cipher-iv-length sock))
-             (_      (when (fx< rd ::cipher-iv-length)
-                       (raise-rpc-error 'rpc-proto-read "premature port end")))
-             (size   (read-u32 sock))
+             (_      (server-input-read ibuf iv))
+             (size   (server-input-read-u32 ibuf))
              (_      (unless (fx< size rpc-proto-message-max-length)
                        (raise-rpc-error 'rpc-proto-read "message too large" size)))
              (ctext  (make-u8vector size))
-             (rd     (read-subu8vector ctext 0 size sock))
-             (_      (when (fx< rd size)
-                       (raise-rpc-error 'rpc-proto-read "premature port end")))
+             (_      (server-input-read ibuf ctext))
              (_      (digest-update! digest secret))
              (_      (digest-update! digest iv))
              (_      (digest-update! digest ctext))
              (hmac*  (digest-final! digest))
              (_      (unless (equal? hmac hmac*)
-                       (raise-rpc-error 'rpc-proto-read "HMAC failure" sock))))
+                       (raise-rpc-error 'rpc-proto-read "HMAC failure"))))
         (decrypt cipher key iv ctext)))
      ((eof-object? e) e)
      (else
-      (raise-rpc-error 'rpc-proto-read "bad message" sock e)))))
+      (raise-rpc-error 'rpc-proto-read "bad message" e)))))
 
-
-(def (rpc-cipher-proto-write obj sock secret)
+(def (rpc-cipher-proto-write obuf obj secret)
   (cond
    ((eq? obj #!void)
-    (write-u8/force-output rpc-proto-keep-alive sock))
+    (server-output-write-u8 obuf rpc-proto-keep-alive)
+    (server-output-force obuf))
    ((u8vector? obj)
-    (write-u8 rpc-proto-message sock)
+    (server-output-write-u8 obuf rpc-proto-message)
     (let* ((digest (make-digest ::digest-type))
            (cipher (make-cipher ::cipher-type))
            (key    (subu8vector secret 0 ::cipher-key-length))
@@ -96,59 +94,57 @@ package: std/actor/proto
            (_      (digest-update! digest iv))
            (_      (digest-update! digest ctext))
            (hmac   (digest-final! digest)))
-      (write-subu8vector hmac 0 ::digest-size sock)
-      (write-subu8vector iv 0 ::cipher-iv-length sock)
-      (write-u32 (u8vector-length ctext) sock)
-      (write-subu8vector ctext 0 (u8vector-length ctext) sock)
-      (force-output sock)))
+      (server-output-write obuf hmac)
+      (server-output-write obuf iv)
+      (server-output-write-u32 obuf (u8vector-length ctext))
+      (server-output-write obuf ctext)
+      (server-output-force obuf)))
    (else
     (raise-rpc-error 'rpc-proto-write "unexpected object" obj))))
 
-(def (rpc-cipher-proto-accept sock)
-  (rpc-proto-accept-e sock rpc-proto-cipher
-    (lambda (sock)
-      (let (secret (rpc-cipher-proto-key-exchange sock))
+(def (rpc-cipher-proto-accept ibuf obuf)
+  (rpc-proto-accept-e ibuf obuf rpc-proto-cipher
+    (lambda (ibuf obuf)
+      (let (secret (rpc-cipher-proto-key-exchange ibuf obuf))
             (values
               (cut rpc-cipher-proto-read <> secret)
               (cut rpc-cipher-proto-write <> <> secret))))))
 
-(def (rpc-cipher-proto-connect sock)
-  (rpc-proto-connect-e sock rpc-proto-cipher
-    (lambda (sock)
-      (let (secret (rpc-cipher-proto-key-exchange sock))
+(def (rpc-cipher-proto-connect ibuf obuf)
+  (rpc-proto-connect-e ibuf obuf rpc-proto-cipher
+    (lambda (ibuf obuf)
+      (let (secret (rpc-cipher-proto-key-exchange ibuf obuf))
         (values
           (cut rpc-cipher-proto-read <> secret)
           (cut rpc-cipher-proto-write <> <> secret))))))
 
-(def (rpc-cookie-cipher-proto-accept sock cookie)
-  (rpc-proto-accept-e sock rpc-proto-cookie-cipher
-    (lambda (sock)
-      (rpc-cookie-proto-challenge sock cookie)
-      (let (secret (rpc-cipher-proto-key-exchange sock))
+(def (rpc-cookie-cipher-proto-accept ibuf obuf cookie)
+  (rpc-proto-accept-e ibuf obuf rpc-proto-cookie-cipher
+    (lambda (ibuf obuf)
+      (rpc-cookie-proto-challenge ibuf obuf cookie)
+      (let (secret (rpc-cipher-proto-key-exchange ibuf obuf))
         (values
           (cut rpc-cipher-proto-read <> secret)
           (cut rpc-cipher-proto-write <> <> secret))))))
 
-(def (rpc-cookie-cipher-proto-connect sock cookie)
-  (rpc-proto-connect-e sock rpc-proto-cookie-cipher
-    (lambda (sock)
-      (let (e (read-u8 sock))
+(def (rpc-cookie-cipher-proto-connect ibuf obuf cookie)
+  (rpc-proto-connect-e ibuf obuf rpc-proto-cookie-cipher
+    (lambda (ibuf obuf)
+      (let (e (server-input-read-u8 ibuf))
         (cond
          ((eof-object? e)
           (raise-rpc-error 'rpc-proto-connect "connect closed"))
          ((eq? e rpc-proto-challenge)
-          (rpc-cookie-proto-challenge-respond sock cookie)
-          (let (secret (rpc-cipher-proto-key-exchange sock))
+          (rpc-cookie-proto-challenge-respond ibuf obuf cookie)
+          (let (secret (rpc-cipher-proto-key-exchange ibuf obuf))
             (values
               (cut rpc-cipher-proto-read <> secret)
               (cut rpc-cipher-proto-write <> <> secret))))
          (else
-          (raise-rpc-error 'rpc-proto-connect "bad hello" e sock)))))))
+          (raise-rpc-error 'rpc-proto-connect "bad hello" e)))))))
 
 (def (rpc-cipher-proto)
   (make-!rpc-protocol
-   rpc-null-proto-open-client
-   rpc-null-proto-open-server
    rpc-cipher-proto-accept
    rpc-cipher-proto-connect))
 
@@ -156,9 +152,7 @@ package: std/actor/proto
   (let (cookie (call-with-input-file cookie-file read))
     (if (u8vector? cookie)
       (make-!rpc-protocol
-       rpc-null-proto-open-client
-       rpc-null-proto-open-server
-       (cut rpc-cookie-cipher-proto-connect <> cookie)
-       (cut rpc-cookie-cipher-proto-accept <> cookie))
+       (cut rpc-cookie-cipher-proto-connect <> <> cookie)
+       (cut rpc-cookie-cipher-proto-accept <> <> cookie))
       (error "Invalid cookie; expected u8vector"
         cookie-file cookie))))
