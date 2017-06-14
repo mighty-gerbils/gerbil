@@ -26,7 +26,7 @@ package: std/actor/proto
      ((eof-object? e)
       (connection-closed))
      ((eq? e rpc-proto-connect-hello)
-      (let (e (server-input-read-u8 ibuf))
+      (let (e (server-input-read-u8 ibuf #f))
         (cond
          ((eof-object? e)
           (connection-closed))
@@ -52,7 +52,7 @@ package: std/actor/proto
   (server-output-write-u8 obuf rpc-proto-connect-hello)
   (server-output-write-u8 obuf proto-t)
   (server-output-force obuf)
-  (let (e (server-input-read-u8 ibuf))
+  (let (e (server-input-read-u8 ibuf #f))
     (cond
      ((eof-object? e)
       (connection-closed))
@@ -77,7 +77,7 @@ package: std/actor/proto
               rpc-null-proto-write))))
 
 (def (rpc-null-proto-read ibuf)
-  (let (e (server-input-read-u8 ibuf))
+  (let (e (server-input-read-u8 ibuf #f))
     (cond
      ((eq? e rpc-proto-keep-alive)
       #!void)
@@ -88,7 +88,7 @@ package: std/actor/proto
                  (rd  (server-input-read ibuf buf)))
             (if (fx= rd len)
               buf
-              (raise-rpc-error 'rpc-proto-read "remature port end" rd len)))
+              (raise-rpc-error 'rpc-proto-read "premature end of input" rd len)))
           (raise-rpc-error 'rpc-proto-read "message too long" len))))
      ((eof-object? e) e)
      (else

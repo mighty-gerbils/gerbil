@@ -77,7 +77,7 @@ package: std/actor
   id: std/actor#rpc
   ;; server <-> connection
   event:
-  (connection-accept sock)
+  (connection-accept sock sa)
   (connection-shutdown)
   (connection-close)
   call:
@@ -135,22 +135,17 @@ package: std/actor
   (def monitor
     (spawn rpc-monitor-thread))
   (def acceptor
-    (and sock (spawn rpc-server-accept (current-thread) sock)))
+    (and sock
+         (spawn rpc-server-accept (current-thread) sock (socket-address-family sa))))
   (def acceptor-evt
     (or acceptor never-evt))
   
-  (def (accept-connection sock)
-    (let* ((thr (spawn rpc-server-connection
-                       (current-thread) sock (socket-address-family sa) accept-e))
-           (sa (<< ((? socket-address? sa) sa)
-                   (! thr #f)))
-           (address (and sa (socket-address->address sa))))
-      (if address
-        (begin
-          (hash-put! conns address thr)
-          (hash-put! threads thr address)
-          (thread-send monitor thr))
-        (warning "accept error; thread exited ~a ~a" sock thr))))
+  (def (accept-connection sock cliaddr)
+    (let* ((thr (spawn rpc-server-connection (current-thread) sock cliaddr accept-e))
+           (address (socket-address->address cliaddr)))
+      (hash-put! conns address thr)
+      (hash-put! threads thr address)
+      (thread-send monitor thr)))
   
   (def (open-connection address)
     (let (thr (spawn rpc-client-connection
@@ -163,8 +158,8 @@ package: std/actor
   (def (handle-protocol-action msg)
     (with ((message content src dest opt) msg)
       (match content
-        ((!rpc.connection-accept sock)
-         (accept-connection sock))
+        ((!rpc.connection-accept sock cliaddr)
+         (accept-connection sock cliaddr))
         ((!rpc.connection-shutdown)
          (cond
           ((hash-get threads src)
@@ -280,7 +275,8 @@ package: std/actor
   (try
    (loop)
    (catch (e)
-     (log-error "rpc server error" e)
+     (unless (eq? e 'interrupt)
+       (log-error "rpc server error" e))
      (raise e))
    (finally
      (thread-kill! monitor)
@@ -288,11 +284,12 @@ package: std/actor
        (thread-kill! acceptor))
      (for-each thread-kill! (hash-keys threads)))))
 
-(def (rpc-server-accept rpc-server sock)
+(def (rpc-server-accept rpc-server sock safamily)
   (while #t
     (try
-     (let (clisock (server-accept sock))
-       (!!rpc.connection-accept rpc-server clisock))
+     (let* ((cliaddr (make-socket-address safamily))
+            (clisock (server-accept sock cliaddr)))
+       (!!rpc.connection-accept rpc-server clisock cliaddr))
      (catch (e)
        (if (eq? e 'interrupt)
          (raise e)
@@ -314,16 +311,12 @@ package: std/actor
          (lp))
         (else #!void))))
 
-(def (rpc-server-connection rpc-server sock safamily proto-e)
+(def (rpc-server-connection rpc-server sock sa proto-e)
   (try
-   (let* ((sa (make-socket-address safamily))
-          (cli (server-accept sock sa)))
-     (thread-send rpc-server cli)
-     (rpc-set-nodelay! cli safamily)
-     (rpc-connection-loop rpc-server cli sa proto-e))
+   (rpc-set-nodelay! sock (socket-address-family sa))
+   (rpc-connection-loop rpc-server sock sa proto-e)
    (catch (e)
-     (log-error "rpc connection error" e)
-     (rpc-connection-cleanup rpc-server e #f))))
+     (rpc-connection-cleanup rpc-server e sock))))
 
 (def (rpc-client-connection rpc-server socksrv address proto-e)
   (try
@@ -332,13 +325,12 @@ package: std/actor
      (rpc-set-nodelay! cli (socket-address-family sa))
      (rpc-connection-loop rpc-server cli sa proto-e))
    (catch (e)
-     (log-error "rpc connection error" e)
      (rpc-connection-cleanup rpc-server e #f))))
 
 (def (rpc-set-nodelay! sock safamily)
   (when (or (eq? safamily AF_INET)
             (eq? safamily AF_INET6))
-    (socket-setsockopt (server-socket-e sock) IPPROTO_TCP TCP_NODELAY)))
+    (socket-setsockopt (server-socket-e sock) IPPROTO_TCP TCP_NODELAY 1)))
 
 (def rpc-keep-alive 30) ; keep-alive interval
 
@@ -586,7 +578,7 @@ package: std/actor
   (def (writer-loop)
     (let (output (server-output-buffer sock))
       (<< (! (or rpc-keep-alive never-evt)
-             (write-e #!void output)
+             (write-e output #!void)
              (writer-loop))
           ((? u8vector? data)
            (write-e output data)
@@ -625,7 +617,6 @@ package: std/actor
   (try
    (loop)
    (catch (e)
-     (log-error "rpc connection error" e)
      (close-connection)
      (raise e))))
 
@@ -644,7 +635,8 @@ package: std/actor
         (else (void)))))
 
 (def (rpc-connection-cleanup rpc-server exn sock)
-  (log-error "connection error" exn)
+  (unless (eq? exn 'interrupt)
+    (log-error "connection error" exn))
   (rpc-close-sock sock)
   (rpc-connection-shutdown rpc-server))
 
