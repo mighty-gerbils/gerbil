@@ -10,7 +10,7 @@ package: std/net
         basic-socket-server)
 
 (cond-expand
-  (linux-gnu
+  (linux
    (import :std/net/server/epoll-server)
    (export epoll-socket-server )))
 

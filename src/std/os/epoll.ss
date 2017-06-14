@@ -3,7 +3,7 @@
 ;;; OS epoll interface [linux]
 package: std/os
 
-(require linux-gnu)
+(require linux)
 (import :gerbil/gambit/threads
         (only-in :gerbil/gambit/ports close-port)
         :std/os/error

@@ -3,7 +3,7 @@
 ;;; socket server -- epoll server implementation
 package: std/net/server
 
-(require linux-gnu)
+(require linux)
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
