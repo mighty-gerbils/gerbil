@@ -187,7 +187,7 @@ package: std/actor
 
 
 ;;; wire rpc protocols
-(defstruct !rpc-protocol (open-client open-server connect-e accept-e)
+(defstruct !rpc-protocol (connect accept)
   id: std/actor#rpc-protocol::t)
 
 ;;; protocol interface specifications
