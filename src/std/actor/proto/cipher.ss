@@ -63,7 +63,7 @@ package: std/actor/proto
              (iv     (make-u8vector ::cipher-iv-length))
              (_      (server-input-read ibuf iv))
              (size   (server-input-read-u32 ibuf))
-             (_      (unless (fx< size rpc-proto-message-max-length)
+             (_      (unless (fx<= size rpc-proto-message-max-length)
                        (raise-rpc-error 'rpc-proto-read "message too large" size)))
              (ctext  (make-u8vector size))
              (_      (server-input-read ibuf ctext))

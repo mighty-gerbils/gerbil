@@ -549,13 +549,22 @@ package: std/actor
                  (catch (e) e)))
       (cond
        ((u8vector? e)
-        (thread-send writer e)
-        (loop))
+        (if (fx<= (u8vector-length e) rpc-proto-message-max-length)
+          (begin
+            (thread-send writer e)
+            (loop))
+          (let (content (message-e msg))
+            (match content
+              ((or (!call e wire-id) (!stream e wire-id))
+               (dispatch-error wire-id "message too large"))
+              (else
+               (warning "message too large; not sending %d bytes" (u8vector-length e))
+               (loop))))))
        (local-error?
         (log-error "marshall error" e)
         (let (content (message-e msg))
           (match content
-            ((!call e wire-id)
+            ((or (!call e wire-id) (!stream e wire-id))
              (dispatch-error wire-id "marshall error"))
             (else
              (loop)))))

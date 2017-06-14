@@ -83,7 +83,7 @@ package: std/actor/proto
       #!void)
      ((eq? e rpc-proto-message)
       (let (len (server-input-read-u32 ibuf))
-        (if (fx< len rpc-proto-message-max-length)
+        (if (fx<= len rpc-proto-message-max-length)
           (let* ((buf (make-u8vector len))
                  (rd  (server-input-read ibuf buf)))
             (if (fx= rd len)
