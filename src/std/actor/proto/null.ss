@@ -43,6 +43,8 @@ package: std/actor/proto
       (bad-hello e sock)))))
 
 (def (rpc-proto-connect-e sock proto-t K)
+  (def (connection-rejected sock)
+    (raise-rpc-error 'rpc-proto-connect "Connection hello rejected by peer" sock))
   (def (connection-closed . args)
     (apply raise-rpc-error 'rpc-proto-connect "connection closed" args))
   (def (bad-hello . args)
@@ -57,6 +59,8 @@ package: std/actor/proto
       (connection-closed sock))
      ((eq? e rpc-proto-connect-accept)
       (K sock))
+     ((eq? e rpc-proto-connect-reject)
+      (connection-rejected sock))
      (else
       (bad-hello e sock)))))
 
