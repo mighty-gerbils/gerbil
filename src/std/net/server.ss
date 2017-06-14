@@ -4,9 +4,11 @@
 package: std/net
 
 (import :std/net/server/api
+        :std/net/server/buffer
         :std/net/server/basic-server)
 
 (export (import: :std/net/server/api)
+        (import: :std/net/server/buffer)
         basic-socket-server)
 
 (cond-expand
