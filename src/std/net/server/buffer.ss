@@ -8,12 +8,12 @@ package: std/net/server
 (export server-input-buffer
         server-input-read-u8
         server-input-read-u32
-        server-input-read-u8vector
-        server-input-read-u8vector*
+        server-input-read
+        server-input-read*
         server-output-buffer
         server-output-write-u8
         server-output-write-u32
-        server-output-write-u8vector
+        server-output-write
         server-output-force)
 
 (defstruct !buffer (sock buf start end)
@@ -59,7 +59,7 @@ package: std/net/server
             (fx+ start 4))
           (u32 buf start))))))
 
-(def (server-input-read-u8vector ibuf u8v)
+(def (server-input-read ibuf u8v)
   (with ((!buffer sock buf start end) ibuf)
     (let* ((u8vl (u8vector-length u8v))
            (start+u8vl (fx+ start u8vl)))
@@ -71,7 +71,7 @@ package: std/net/server
         u8vl)
        ((fx< u8vl (##u8vector-length buf)) ; fits in buffer
         (server-input-fill! ibuf u8vl)
-        (server-input-read-u8vector ibuf u8v))
+        (server-input-read ibuf u8v))
        (else                            ; doesn't fit in buffer
         (let (have (fx- end start))
           (unless (fxzero? have)
@@ -80,10 +80,10 @@ package: std/net/server
           (set! (!buffer-end ibuf) 0)
           (let (rd (server-recv-all sock u8v have))
             (if (fx< (fx+ have rd) u8vl)
-              (raise-io-error 'server-input-read-u8vector "premature end of input")
+              (raise-io-error 'server-input-read "premature end of input")
               u8vl))))))))
 
-(def (server-input-read-u8vector* ibuf u8v)
+(def (server-input-read* ibuf u8v)
   (with ((!buffer sock buf start end) ibuf)
     (if (fx< start end)
       (let* ((count (min (u8vector-length u8v) (fx- end start)))
@@ -94,7 +94,7 @@ package: std/net/server
         count)
       (begin
         (server-input-fill! ibuf 1)
-        (server-input-read-u8vector* ibuf u8v)))))
+        (server-input-read* ibuf u8v)))))
 
 (def (server-input-fill! ibuf need)
   (with ((!buffer sock buf start end) ibuf)
@@ -146,7 +146,7 @@ package: std/net/server
         (server-output-force obuf)
         (server-output-write-u32 obuf u32)))))
 
-(def (server-output-write-u8vector obuf u8v)
+(def (server-output-write obuf u8v)
   (with ((!buffer sock buf start end) obuf)
     (let* ((u8vl (u8vector-length u8v))
            (start+u8vl (fx+ start u8vl)))
