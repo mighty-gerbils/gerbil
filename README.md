@@ -31,7 +31,10 @@ $ git clone https://github.com/vyzo/gerbil.git
 
 ## Dependencies
 I have tested the bootstrap with Gambit v4.8.x, but older versions
-starting with v4.6.0 used to work as well.
+starting with v4.6.0 used to work as well. Nonetheless, the latest
+version of Gambit is recommended, as important pieces of the standard
+library require raw device support
+([gambit#272](https://github.com/gambit/gambit/pull/272)).
 
 The core system has no dependencies outside Gambit, but the standard
 library has several mostly optional dependencies. The only hard dependency
