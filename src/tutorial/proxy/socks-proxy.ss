@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; SOCKS4a proxy
+;;; SOCKS4 proxy
 package: tutorial/proxy
 
 (import :gerbil/gambit/threads
