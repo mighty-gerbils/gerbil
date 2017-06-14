@@ -25,12 +25,12 @@ package: std/net/server
         )
 
 (cond-expand
-  (linux-gnu
+  (linux
    (import :std/net/server/epoll-server)))
 
 (def (default-server-impl)
   (cond-expand
-    (linux-gnu epoll-socket-server)
+    (linux epoll-socket-server)
     (else basic-socket-server)))
 
 (def default-listen-sockopts

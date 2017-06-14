@@ -209,10 +209,16 @@ namespace: gx
 
 (defmethod {bind-core-features! expander-context}
   (lambda (self)
+    (def (linux-variant? sys-type)
+      (match (string-split (symbol->string sys-type) #\-)
+        (["linux" . rest] (not (null? rest)))
+        (else #f)))
     (core-bind-feature! 'gerbil #f 0 self)
     (core-bind-feature! (gerbil-system) #f 0 self)
     (match (system-type)
       ([sys-cpu sys-vendor sys-type]
        (core-bind-feature! sys-cpu #f 0 self)
-       (core-bind-feature! sys-type #f 0 self))
+       (core-bind-feature! sys-type #f 0 self)
+       (when (linux-variant? sys-type)
+         (core-bind-feature! 'linux #f 0 self)))
       (else (void)))))
