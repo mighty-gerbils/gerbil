@@ -21,7 +21,7 @@ package: std/actor/proto
   (def (bad-hello e)
     (raise-rpc-error 'rpc-proto-accept "bad hello" e))
   
-  (let (e (server-input-read-u8 ibuf))
+  (let (e (server-input-read-u8 ibuf #f))
     (cond
      ((eof-object? e)
       (connection-closed))
