@@ -71,12 +71,13 @@ package: std/net/server
         (set! (!buffer-start ibuf)
           start+u8vl)
         u8vl)
-       ((fx< u8vl (##u8vector-length buf)) ; fits in buffer
+       ((fx<= u8vl (##u8vector-length buf)) ; fits in buffer
         (let (rd (server-input-fill! ibuf u8vl raise-eof?))
           (if (fx< rd (fx- u8vl (fx- end start)))
-            (let* ((end+rd (fx+ end rd))
-                   (count (fx- end+rd start)))
-              (##subu8vector-move! buf start end+rd u8v 0)
+            (let* ((start (!buffer-start ibuf))
+                   (end (!buffer-end ibuf))
+                   (count (fx- end start)))
+              (##subu8vector-move! buf start end u8v 0)
               (set! (!buffer-start ibuf) 0)
               (set! (!buffer-end ibuf) 0)
               count)
@@ -118,9 +119,9 @@ package: std/net/server
         (set! (!buffer-end ibuf)
            (fx+ end rd))
         (if (and (fx< rd need) raise-eof?)
-          (raise-io-error 'server-input-fill! "premature end of input")
+          (raise-io-error 'server-input-read "premature end of input")
           rd)))
-     ((fx> start 0)                    ; need to memmove buffered data
+     ((fx> start 0)                     ; need to move buffered data
       (if (fx< start end)
         (begin
           (##subu8vector-move! buf start end buf 0)
@@ -163,14 +164,16 @@ package: std/net/server
   (with ((!buffer sock buf start end) obuf)
     (let* ((u8vl (u8vector-length u8v))
            (start+u8vl (fx+ start u8vl)))
-      (if (fx<= start+u8vl end)
+      (if (fx<= start+u8vl end)         ; fits as is
         (begin
           (##subu8vector-move! u8v 0 u8vl buf start)
           (set! (!buffer-start obuf)
             start+u8vl))
         (begin
-          (server-output-force obuf)
-          (server-send-all sock u8v))))))
+          (server-output-force obuf)    ; flush buffer
+          (if (fx< u8vl end)            ; fits in buffer, but send if it's exact fit
+            (server-output-write obuf u8v)
+            (server-send-all sock u8v)))))))
 
 (def (server-output-force obuf)
   (with ((!buffer sock buf start) obuf)
