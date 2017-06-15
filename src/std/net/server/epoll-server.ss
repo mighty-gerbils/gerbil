@@ -119,8 +119,12 @@ package: std/net/server
 
   (def (shutdown!)
     (close-port epoll)
-    (for (state (in-hash-values fdtab))
-      (close-port (!socket-state-e state)))
+    (for (((!socket-state sock io-in io-out) (in-hash-values fdtab)))
+      (when io-in
+        (io-state-close-in! io-in sock #f))
+      (when io-out
+        (io-state-close-out! io-out sock #f))
+      (close-port sock))
     ;; release refs to raw devices
     (set! fdtab #f)
     (set! epoll #f))
