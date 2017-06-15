@@ -24,6 +24,7 @@ package: std/actor
 (export
   current-rpc-server
   start-rpc-server!
+  stop-rpc-server!
   (struct-out rpc.register)
   !rpc.register !!rpc.register
   (struct-out rpc.unregister)
@@ -96,6 +97,9 @@ package: std/actor
   (start-logger!)
   (spawn rpc-server address proto))
 
+(def (stop-rpc-server! rpcd)
+  (thread-kill! rpcd))
+
 (def (rpc-server address proto)
   (let* ((socksrv (start-socket-server!))
          (sa (and address (socket-address address)))
@@ -103,6 +107,9 @@ package: std/actor
     (parameterize ((current-rpc-server (current-thread)))
       (try
        (rpc-server-loop socksrv sock sa proto)
+       (catch (e)
+         (unless (eq? e 'interrupt)
+           (log-error "rpc server error" e)))
        (finally
         (server-shutdown! socksrv))))))
 
@@ -272,14 +279,11 @@ package: std/actor
         (value
          (warning "unexepected message ~a"  value)))
     (loop))
+  
   (try
    (loop)
-   (catch (e)
-     (unless (eq? e 'interrupt)
-       (log-error "rpc server error" e))
-     (raise e))
    (finally
-     (thread-kill! monitor)
+    (thread-kill! monitor)
      (when acceptor
        (thread-kill! acceptor))
      (for-each thread-kill! (hash-keys threads)))))
@@ -290,10 +294,8 @@ package: std/actor
      (let* ((cliaddr (make-socket-address safamily))
             (clisock (server-accept sock cliaddr)))
        (!!rpc.connection-accept rpc-server clisock cliaddr))
-     (catch (e)
-       (if (eq? e 'interrupt)
-         (raise e)
-         (log-error "error accepting connection" e))))))
+     (catch (exception? e)
+       (log-error "error accepting connection" e)))))
 
 (def (rpc-send-error-response msg)
   (when (message? msg)
@@ -403,7 +405,7 @@ package: std/actor
        ((u8vector? data)                ; incoming message
         (let (bytes (open-input-u8vector data))
           (let (msg (try (rpc-proto-read-message-envelope bytes)
-                         (catch (e) e)))
+                         (catch (exception? e) e)))
             (if (message? msg)
               (with ((message content _ dest) msg)
                 (match content
@@ -487,7 +489,7 @@ package: std/actor
   
   (def (unmarshall-message-content msg proto bytes)
     (try (rpc-proto-read-message-content msg proto bytes)
-         (catch (e) e)))
+         (catch (exception? e) e)))
     
   (def (write-message msg)
     (with ((message content src dest opts) msg)
@@ -546,7 +548,7 @@ package: std/actor
 
   (def (marshall-and-write msg proto local-error?)
     (let (e (try (rpc-proto-marshall-message msg proto)
-                 (catch (e) e)))
+                 (catch (exception? e) e)))
       (cond
        ((u8vector? e)
         (if (fx<= (u8vector-length e) rpc-proto-message-max-length)
