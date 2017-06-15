@@ -56,30 +56,39 @@ package: std/net/server
         (shutdown-socket! sock shutdown)
         (close-output-port sock)))
     
-    (with ((!socket sock) ssock)
+    (with ((!socket sock _ wait-in wait-out) ssock)
       (let (state (hash-get socks sock))
         (match state 
           ((!socket-state _ io-in io-out)
            (case dir
              ((in)
-              (when io-in
-                (unless io-out
-                  (hash-remove! socks sock))
+              (when wait-in
+                (set! (!socket-wait-in ssock) #f)
                 (set! (!socket-state-io-in state) #f)
-                (close-io-in! sock)))
+                (close-io-in! sock)
+                (unless io-out
+                  (hash-remove! socks sock)
+                  (close-port sock))))
              ((out)
-              (when io-out
-                (unless io-in
-                  (hash-remove! socks sock)))
+              (when wait-out
+                (set! (!socket-wait-out ssock) #f)
                 (set! (!socket-state-io-out state) #f)
-                (close-io-out! sock io-out))
+                (close-io-out! sock io-out)
+                (unless io-in
+                  (hash-remove! socks sock)
+                  (close-port sock))))
              ((inout)
-              (hash-remove! socks sock)
-              (when io-in
-                (close-io-in! sock))
-              (when io-out
-                (close-io-out! sock))
-              (close-port sock))
+              (when (or wait-in wait-out)
+                (hash-remove! socks sock)
+                (when io-in
+                  (set! (!socket-wait-in ssock) #f)
+                  (set! (!socket-state-io-in state) #f)
+                  (close-io-in! sock))
+                (when io-out
+                  (set! (!socket-wait-out ssock) #f)
+                  (set! (!socket-state-io-out state) #f)
+                  (close-io-out! sock))
+                (close-port sock)))
              (else
               (error "Bad direction" dir))))
           (else (void))))))
