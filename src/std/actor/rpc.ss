@@ -5,6 +5,7 @@ package: std/actor
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/os
+        :gerbil/gambit/exceptions
         :std/sugar
         :std/format
         :std/event
@@ -108,8 +109,12 @@ package: std/actor
       (try
        (rpc-server-loop socksrv sock sa proto)
        (catch (e)
-         (unless (eq? e 'interrupt)
-           (log-error "rpc server error" e)))
+         (cond
+          ((eq? e 'interrupt))
+          ((uncaught-exception? e)
+           (log-error "rpc server error" (uncaught-exception-reason e)))
+          (else
+           (log-error "rpc server error" e))))
        (finally
         (server-shutdown! socksrv))))))
 
@@ -147,8 +152,8 @@ package: std/actor
   (def acceptor-evt
     (or acceptor never-evt))
   
-  (def (accept-connection sock cliaddr)
-    (let* ((thr (spawn rpc-server-connection (current-thread) sock cliaddr accept-e))
+  (def (accept-connection cli cliaddr)
+    (let* ((thr (spawn rpc-server-connection (current-thread) cli cliaddr accept-e))
            (address (socket-address->address cliaddr)))
       (hash-put! conns address thr)
       (hash-put! threads thr address)
@@ -165,8 +170,8 @@ package: std/actor
   (def (handle-protocol-action msg)
     (with ((message content src dest opt) msg)
       (match content
-        ((!rpc.connection-accept sock cliaddr)
-         (accept-connection sock cliaddr))
+        ((!rpc.connection-accept cli cliaddr)
+         (accept-connection cli cliaddr))
         ((!rpc.connection-shutdown)
          (cond
           ((hash-get threads src)
@@ -249,6 +254,9 @@ package: std/actor
     (<< (! acceptor-evt
            (warning "server acceptor thread has exited abnormally")
            (thread-join! acceptor))
+        (! socksrv
+           (warning "socket server thread has exited abonrmally")
+           (thread-join! socksrv))
         ((? message? msg)
          (let (dest (message-dest msg))
            (cond
@@ -293,6 +301,7 @@ package: std/actor
     (try
      (let* ((cliaddr (make-socket-address safamily))
             (clisock (server-accept sock cliaddr)))
+       (debug "accepted connection from ~a" (socket-address->string cliaddr))
        (!!rpc.connection-accept rpc-server clisock cliaddr))
      (catch (exception? e)
        (log-error "error accepting connection" e)))))
@@ -603,11 +612,9 @@ package: std/actor
            => dispatch-timeout)
         (! idle-timeout
            (close-connection))
-        (! reader
-           (log-error "reader error" (with-catch values (cut thread-join! reader)))
+        (! reader           
            (close-connection))
         (! writer
-           (log-error "writer error" (with-catch values (cut thread-join! writer)))
            (close-connection))
         ((? message? msg)
          (reset-idle-timeout)
@@ -628,8 +635,8 @@ package: std/actor
   (try
    (loop)
    (catch (e)
-     (close-connection)
-     (raise e))))
+     (log-error "connection error" e)
+     (close-connection))))
 
 (def (rpc-connection-shutdown rpc-server)
   (!!rpc.connection-shutdown rpc-server)
