@@ -85,7 +85,6 @@ package: std/net/server
           (else (void))))))
 
   (def (shutdown!)
-    (debug "shutting down socket server")
     (for (sock (in-hash-keys socks))
       (close-port sock))
     ;; release refs to raw devices

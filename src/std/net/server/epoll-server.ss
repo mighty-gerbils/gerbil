@@ -118,7 +118,6 @@ package: std/net/server
           (else (void))))))
 
   (def (shutdown!)
-    (debug "shutting down socket server")
     (close-port epoll)
     (for (state (in-hash-values fdtab))
       (close-port (!socket-state-e state)))
