@@ -8,7 +8,8 @@ package: std
   (only-in :gerbil/gambit/ports
            open-output-string
            get-output-string
-           with-output-to-string)
+           with-output-to-string
+           force-output)
   (only-in :gerbil/gambit/misc
            pretty-print))
 
@@ -30,7 +31,8 @@ package: std
   (dofmt port fmt args))
 
 (def (eprintf fmt . args)
-  (apply fprintf (current-error-port) fmt args))
+  (apply fprintf (current-error-port) fmt args)
+  (force-output (current-error-port)))
 
 ;;; implementation
 ;; mostly srfi-48-style format strings, except the brain damage.
