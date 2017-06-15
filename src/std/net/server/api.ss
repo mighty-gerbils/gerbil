@@ -63,13 +63,13 @@ package: std/net/server
     (with ((!socket _ _ _ wait-out close) ssock)
       (unless rcon
         (unless (wait-out ssock (abs-timeout timeo))
-          (close ssock 'inout)
+          (close ssock 'inout #f)
           (raise-timeout 'server-connect "Operation timeout exceeded" addr)))
       (let (errno (or rcon (socket-getsockopt sock SOL_SOCKET SO_ERROR)))
         (if (fxzero? errno)
           ssock
           (begin
-            (close ssock 'inout)
+            (close ssock 'inout #f)
             (raise-os-error errno server-connect srv addr timeo)))))))
 
 ;; => !socket that is bound and listening
@@ -188,8 +188,7 @@ package: std/net/server
 
 ;; with-destroy
 (defmethod {destroy !socket}
-  (lambda (self)
-    ((!socket-close self) self 'inout #f)))
+  server-close)
 
 ;; utils
 (def (abs-timeout timeo)
