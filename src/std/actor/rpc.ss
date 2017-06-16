@@ -119,15 +119,19 @@ package: std/actor
         (server-shutdown! socksrv))))))
 
 (def (rpc-monitor-thread rpc-server)
-  (let lp ((threads []))
-    (<< (! (dead (choice-evt threads))
-           (thread-send rpc-server dead)
-           (lp (remove dead threads)))
-        ((? thread? thread)
-         (lp (cons thread threads)))
+  (def (thread-monitor rpc-server thread)
+    (with-catch values (cut thread-join! thread))
+    (thread-send rpc-server thread))
+  
+  (let lp ((mons []))
+    (<< ((? thread? thread)
+         (let (mon (spawn thread-monitor rpc-server thread))
+           (lp (cons mon mons))))
+        ('exit
+         (for-each thread-kill! mons))
         (msg
-         (warning "unexecpted message ~a" msg)
-         (lp)))))
+         (warning "Unexpected message ~a" msg)
+         (lp mons)))))
 
 (def (rpc-server-loop socksrv sock sa proto)
   (def connect-e
@@ -149,8 +153,6 @@ package: std/actor
   (def acceptor
     (and sock
          (spawn rpc-server-accept (current-thread) sock (socket-address-family sa))))
-  (def acceptor-evt
-    (or acceptor never-evt))
   
   (def (accept-connection cli clisa)
     (let* ((thr (spawn rpc-server-connection (current-thread) cli clisa accept-e))
@@ -259,13 +261,7 @@ package: std/actor
            (hash-remove! actor-threads thread)))))
   
   (def (loop)
-    (<< (! acceptor-evt
-           (warning "server acceptor thread has exited abnormally")
-           (thread-join! acceptor))
-        (! socksrv
-           (warning "socket server thread has exited abonrmally")
-           (thread-join! socksrv))
-        ((? message? msg)
+    (<< ((? message? msg)
          (let (dest (message-dest msg))
            (cond
             ((remote? dest)
@@ -291,18 +287,27 @@ package: std/actor
              (warning "bad destination ~a" dest)
              (rpc-send-error-response msg)))))
         ((? thread? thread)
-         (remove-thread! thread))
+         (cond
+          ((eq? thread socksrv)
+           (error "socket server has exited unexpectedly"))
+          ((eq? thread acceptor)
+           (error "acceptor thread has exited unexpectedly"))
+          (else
+           (remove-thread! thread))))
         (value
          (warning "unexepected message ~a"  value)))
     (loop))
-  
+
+  (thread-send monitor socksrv)
+  (when acceptor
+    (thread-send monitor acceptor))
   (try
    (loop)
    (finally
-    (thread-kill! monitor)
-     (when acceptor
-       (thread-kill! acceptor))
-     (for-each thread-kill! (hash-keys threads)))))
+    (thread-send monitor 'exit)
+    (when acceptor
+      (thread-kill! acceptor))
+    (for-each thread-kill! (hash-keys threads)))))
 
 (def (rpc-server-accept rpc-server sock safamily)
   (while #t
