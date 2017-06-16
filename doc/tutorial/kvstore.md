@@ -55,6 +55,8 @@ $ ./build.ss
 
 This builds two programs in the tutorial directory: `kvstored`, which is the daemon
 and `kvstorec`, which is a simple client to perform basic operations with the daemon.
+There is also a build script for static executables, `build-static.ss`, but we used here
+dynamic executables as they are much faster to compile.
 
 ## The RPC Protocol
 
