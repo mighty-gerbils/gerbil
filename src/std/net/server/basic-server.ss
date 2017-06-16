@@ -52,28 +52,26 @@ package: std/net/server
         (close-output-port sock)))
     
     (with ((!socket sock _ wait-in wait-out) ssock)
-      (let (state (hash-get socks sock))
-        (match state 
-          ((!socket-state _ io-in io-out)
-           (case dir
-             ((in)
-              (when wait-in
+      (when (or wait-in wait-out)
+        (let (state (hash-get socks sock))
+          (match state 
+            ((!socket-state _ io-in io-out)
+             (case dir
+               ((in)
                 (set! (!socket-wait-in ssock) #f)
                 (set! (!socket-state-io-in state) #f)
                 (close-io-in! sock)
                 (unless io-out
                   (hash-remove! socks sock)
-                  (close-port sock))))
-             ((out)
-              (when wait-out
+                  (close-port sock)))
+               ((out)
                 (set! (!socket-wait-out ssock) #f)
                 (set! (!socket-state-io-out state) #f)
                 (close-io-out! sock io-out)
                 (unless io-in
                   (hash-remove! socks sock)
-                  (close-port sock))))
-             ((inout)
-              (when (or wait-in wait-out)
+                  (close-port sock)))
+               ((inout)
                 (hash-remove! socks sock)
                 (when io-in
                   (set! (!socket-wait-in ssock) #f)
@@ -83,10 +81,10 @@ package: std/net/server
                   (set! (!socket-wait-out ssock) #f)
                   (set! (!socket-state-io-out state) #f)
                   (close-io-out! sock))
-                (close-port sock)))
-             (else
-              (error "Bad direction" dir))))
-          (else (void))))))
+                (close-port sock))
+               (else
+                (error "Bad direction" dir))))
+            (else (void)))))))
 
   (def (shutdown!)
     (for-each close-port (hash-keys socks))
