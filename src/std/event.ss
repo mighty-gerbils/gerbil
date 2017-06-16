@@ -14,11 +14,12 @@ package: std
   make-event-set
   handle-evt                            ;
   wrap-evt choice-evt
-  event                                 ; event predicates
+  event?                                ; event predicates
   event-handler?
   event-set?
   event-ready?                          ; non-blocking sync check
   event-selector                        ; retrieve event selector
+  (rename: event-select-e event-value)  ; dispatch an event
   ;; useful stuff
   thread-dead?
   )
@@ -66,13 +67,14 @@ package: std
 ;;  input-port:        becomes ready when the buffer is filled or the condvar
 ;;                      signals (for server sockets)
 ;;  absrel-time:       selectable timeout
-(defstruct selection (e thread mutex condvar)
-  id: std/event#selection::t)
+(defstruct selection (e thread mutex condvar count)
+  final: #t)
 
 (def (select timeout selectors)
   (let (sel (make-selection #f (current-thread)
               (make-mutex 'select)
-              (make-condition-variable 'select)))
+              (make-condition-variable 'select)
+              0))
     (let lp ((rest selectors) (threads []))
       (match rest
         ([selector . rest]
@@ -90,15 +92,15 @@ package: std
      (kill-selector-threads! threads (current-thread))
      (raise e))
    (lambda ()
-     (for-each
-       (lambda (thread)
-         (thread-start! thread)
-         (thread-send thread threads))
-       threads)
-
+     (set! (selection-count sel) (length threads))
+     (for-each thread-start! threads)
+     (selection-count-wait! sel)
+     (for-each (cut thread-send <> threads) threads)
      (let lp ()
        (mutex-lock! (selection-mutex sel))
-       (or (selection-e sel)
+       (or (alet (e (selection-e sel))
+             (mutex-unlock! (selection-mutex sel))
+             e)
            (begin
              (mutex-unlock! (selection-mutex sel) (selection-condvar sel))
              (lp)))))))
@@ -277,23 +279,52 @@ package: std
         (mutex-unlock! mx)))))
 
 (def (select1 sel selector select-e abort-e)
-  (let (threads (thread-receive))       ; receive selector set
-    (with-catch
-     (lambda (e)
-       (abort-e sel selector)
-       (raise e))
-     (lambda ()
+  (with-catch
+   (lambda (e)
+     (abort-e sel selector)
+     (raise e))
+   (lambda ()
+     (selection-count-dec! sel)
+     (let (threads (thread-receive))    ; receive selector set
        (select-e sel selector)
-       (mutex-lock! (selection-mutex sel))
-       (if (selection-e sel)
-         (begin                         ; race lost
-           (mutex-unlock! (selection-mutex sel))
-           (abort-e sel selector))
-         (begin                         ; race winner
-           (set! (selection-e sel) selector)
-           (kill-selector-threads! threads (selection-thread sel))
-           (condition-variable-signal! (selection-condvar sel))
-           (mutex-unlock! (selection-mutex sel))))))))
+       (let (mutex (selection-mutex sel))
+         (unwind-protect
+           (begin
+             (mutex-lock! mutex)
+             (if (selection-e sel)
+               (begin                   ; race lost [dead!?]
+                 (abort-e sel selector))
+               (begin                   ; race winner
+                 (set! (selection-e sel) selector)
+                 (kill-selector-threads! threads (selection-thread sel))
+                 (condition-variable-signal! (selection-condvar sel)))))
+           ;; this is necessary because in the case of a race we could be
+           ;; blocked in mutex-lock! when interrupted. But mutex-unlock!
+           ;; transfers ownership, so when the interrupt is executed
+           ;; we could end up *owning* the lock
+           (when (eq? (macro-mutex-btq-owner mutex)
+                      (current-thread))
+             (mutex-unlock! mutex))))))))
+
+(def (selection-count-wait! sel)
+  (with ((selection _ _ mutex condvar) sel)
+    (let lp ()
+      (mutex-lock! mutex)
+      (if (fxzero? (selection-count sel))
+        (begin
+          (mutex-unlock! mutex condvar)
+          (lp))
+        (mutex-unlock! mutex)))))
+
+(def (selection-count-dec! sel)
+  (with ((selection _ _ mutex condvar count) sel)
+    (mutex-lock! mutex)
+    (let (newcount (fx1- count))
+      (set! (selection-count sel)
+        newcount)
+      (when (fxzero? newcount)
+        (condition-variable-signal! condvar)))
+    (mutex-unlock! mutex)))
 
 (def (kill-selector-threads! threads main)
   (let (self (current-thread))
@@ -352,13 +383,13 @@ package: std
 ;;  sync accepts events, event-handlers, timeouts, and generalized selectors
 ;;   which are automatically wrapped in an event with wrap-evt.
 (defstruct event (e sel try)
-  id: std/event#event::t)
+  final: #t)
 
 (defstruct event-handler (e K)
-  id: std/event#event-handler::t)
+  final: #t)
 
 (defstruct event-set (e)
-  id: std/event#event-set::t)
+  final: #t)
 
 (def (sync . args)
   (def ht (make-hash-table-eq))
