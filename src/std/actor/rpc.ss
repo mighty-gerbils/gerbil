@@ -118,20 +118,20 @@ package: std/actor
        (finally
         (server-shutdown! socksrv))))))
 
-(def (rpc-monitor-thread rpc-server)
-  (def (thread-monitor rpc-server thread)
+(def (rpc-monitor server)
+  (def (thread-monitor server thread)
     (with-catch values (cut thread-join! thread))
-    (thread-send rpc-server thread))
+    (thread-send server thread))
   
-  (let lp ((mons []))
+  (let lp ()
     (<< ((? thread? thread)
-         (let (mon (spawn thread-monitor rpc-server thread))
-           (lp (cons mon mons))))
+         (spawn thread-monitor server thread)
+         (lp))
         ('exit
-         (for-each thread-kill! mons))
+         (void))
         (msg
          (warning "Unexpected message ~a" msg)
-         (lp mons)))))
+         (lp)))))
 
 (def (rpc-server-loop socksrv sock sa proto)
   (def connect-e
@@ -149,7 +149,7 @@ package: std/actor
   (def threads                          ; threads => address
     (make-hash-table-eq))
   (def monitor
-    (spawn rpc-monitor-thread))
+    (spawn rpc-monitor (current-thread)))
   (def acceptor
     (and sock
          (spawn rpc-server-accept (current-thread) sock (socket-address-family sa))))
@@ -394,6 +394,8 @@ package: std/actor
   (def idle-timeout #f)
   (def reader #f)
   (def writer #f)
+  (def monitor
+    (spawn rpc-monitor (current-thread)))
   
   (def (reset-idle-timeout)
     (set! idle-timeout
@@ -407,6 +409,7 @@ package: std/actor
     (rpc-close-sock sock)
     (thread-kill! writer)
     (thread-kill! reader)
+    (thread-send monitor 'exit)
     (for-each
       (lambda (wire-id)
         (cond
@@ -636,24 +639,25 @@ package: std/actor
            => dispatch-timeout)
         (! idle-timeout
            (close-connection))
-        (! reader
-           (close-connection))
-        (! writer
-           (close-connection))
         ((? message? msg)
          (reset-idle-timeout)
          (write-message msg))
         (['read . data]
          (reset-idle-timeout)
          (read-message data))
+        ((? thread?)
+         (close-connection))
         (bogus
          (warning "unexpected message ~a" bogus)
          (loop))))
 
-  (set! reader
-    (spawn/name 'rpc-connection-reader reader-loop (current-thread)))
-  (set! writer
-    (spawn/name 'rpc-connection-writer writer-loop))
+  (let (thread (spawn/name 'rpc-connection-reader reader-loop (current-thread)))
+    (set! reader thread)
+    (thread-send monitor thread))
+  
+  (let (thread (spawn/name 'rpc-connection-writer writer-loop))
+    (set! writer thread)
+    (thread-send monitor thread))
   
   (reset-idle-timeout)
   (try
