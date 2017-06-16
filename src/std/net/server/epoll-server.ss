@@ -14,8 +14,7 @@ package: std/net/server
         :std/os/epoll
         :std/sugar
         :std/logger
-        :std/iter
-        )
+        :std/iter)
 (export epoll-socket-server)
 
 (def (epoll-socket-server)
@@ -83,12 +82,12 @@ package: std/net/server
       (io-state-close-out! io-out sock shutdown))
 
     (with ((!socket sock _ wait-in wait-out) ssock)
-      (let (state (hash-get fdtab (fd-e sock)))
-        (match state 
-          ((!socket-state _ io-in io-out)
-           (case dir
-             ((in)
-              (when wait-in
+      (when (or wait-in wait-out)
+        (let (state (hash-get fdtab (fd-e sock)))
+          (match state 
+            ((!socket-state _ io-in io-out)
+             (case dir
+               ((in)
                 (if io-out
                   (epoll-ctl-mod epoll sock (fxior EPOLLET EPOLLOUT))
                   (begin
@@ -98,9 +97,8 @@ package: std/net/server
                 (set! (!socket-state-io-in state) #f)
                 (close-io-in! io-in sock)
                 (unless io-out
-                  (close-port sock))))
-             ((out)
-              (when wait-out
+                  (close-port sock)))
+               ((out)
                 (if io-in
                   (epoll-ctl-mod epoll sock (fxior EPOLLET EPOLLIN))
                   (begin
@@ -110,9 +108,8 @@ package: std/net/server
                 (set! (!socket-state-io-out state) #f)
                 (close-io-out! io-out sock)
                 (unless io-in
-                  (close-port sock))))
-             ((inout)
-              (when (or wait-in wait-out)
+                  (close-port sock)))
+               ((inout)
                 (epoll-ctl-del epoll sock)
                 (hash-remove! fdtab (fd-e sock))
                 (when io-in
@@ -123,10 +120,10 @@ package: std/net/server
                   (set! (!socket-wait-out ssock) #f)
                   (set! (!socket-state-io-out state) #f)  
                   (close-io-out! io-out sock))
-                (close-port sock)))
-             (else
-              (error "Bad direction" dir))))
-          (else (void))))))
+                (close-port sock))
+               (else
+                (error "Bad direction" dir))))
+            (else (void)))))))
 
   (def (shutdown!)
     (close-port epoll)
