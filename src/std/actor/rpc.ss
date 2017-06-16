@@ -646,9 +646,9 @@ package: std/actor
          (loop))))
 
   (set! reader
-    (spawn reader-loop (current-thread)))
+    (spawn/name 'rpc-connection-reader reader-loop (current-thread)))
   (set! writer
-    (spawn writer-loop))
+    (spawn/name 'rpc-connection-writer writer-loop))
   
   (reset-idle-timeout)
   (try
