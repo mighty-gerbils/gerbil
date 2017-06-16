@@ -3,6 +3,10 @@
 ;;; network addresses
 package: std/net
 
+(import :gerbil/gambit/os
+        :std/pregexp
+        :std/format
+        :std/text/hex)
 (export ip4-address? ip4-address 
         ip4-address-string? ip4-address->string string->ip4-address
         ip6-address? ip6-address
@@ -10,10 +14,6 @@ package: std/net
         inet-address? inet-address
         inet-address-string? inet-address->string string->inet-address
         resolve-address)
-(import :gerbil/gambit/os
-        :std/pregexp
-        :std/format
-        :std/text/hex)
 
 ;; ipv4 address; 4-octet u8vector
 (def (ip4-address obj)
