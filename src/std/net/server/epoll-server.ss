@@ -12,8 +12,6 @@ package: std/net/server
         :std/net/server/server
         :std/os/fd
         :std/os/epoll
-        :std/sugar
-        :std/logger
         :std/iter)
 (export epoll-socket-server)
 

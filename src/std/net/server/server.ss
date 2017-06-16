@@ -16,12 +16,24 @@ package: std/net/server
   (lambda (self)
     (struct-instance-init! self 'blocked (make-mutex) (make-condition-variable))))
 
-(def (server-loop poll-evt do-poll add-socket close-socket shutdown!)
+(def (server-poll server io)
+  (let lp ()
+    (##wait-for-io! io #t)
+    (!!socket-server.poll server)
+    (lp)))
+
+(def (server-loop poll-io do-poll add-socket close-socket shutdown!)
+  (def poll-thread
+    (and poll-io
+         (spawn server-poll (current-thread) poll-io)))
+    
   (try
    (let loop ()
-     (<- (! poll-evt
-            (do-poll)
-            (loop))
+     (<- ((!socket-server.poll k)
+          (do-poll)
+          (!!value (void) k)
+          (loop))
+         
          ((!socket-server.add sock k)
           (try
            (let (ssock (add-socket sock))
@@ -50,7 +62,10 @@ package: std/net/server
      ;; log it and die -- that's not good.
      (log-error "socket-server error" e)
      (shutdown!)
-     (raise e))))
+     (raise e))
+   (finally
+    (when poll-thread
+      (with-catch void (cut thread-interrupt! poll-thread (cut raise 'interrupt)))))))
 
 (def (io-state-signal-ready! iostate how)
   (with ((!io-state _ mx cv) iostate)

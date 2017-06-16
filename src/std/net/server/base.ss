@@ -31,5 +31,6 @@ package: std/net/server
 (defproto socket-server
   (shutdown!)
   (add sock)
+  (poll)
   event:
   (close ssock dir shutdown))

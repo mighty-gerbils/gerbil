@@ -8,12 +8,7 @@ package: std/net/server
         :gerbil/gambit/misc
         :std/net/server/base
         :std/net/server/server
-        :std/os/fd
-        :std/event
-        :std/logger
-        :std/iter
-        :std/sugar
-        )
+        :std/os/fd)
 
 (export basic-socket-server)
 
@@ -94,9 +89,8 @@ package: std/net/server
           (else (void))))))
 
   (def (shutdown!)
-    (for (sock (in-hash-keys socks))
-      (close-port sock))
+    (for-each close-port (hash-keys socks))
     ;; release refs to raw devices
     (set! socks #f))
   
-  (server-loop never-evt void add-socket close-socket shutdown!))
+  (server-loop #f void add-socket close-socket shutdown!))
