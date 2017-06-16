@@ -246,23 +246,20 @@ This procedure performs a handshake, establishes proxying according to the reque
      (log-error "Error creating proxy" e))))
 ```
 
-The `proxy-handshake` function contains the details of the protocol implementation:
+The `proxy-handshake` function contains the details of the protocol implementation,
+ignoring supplied userids (it's anonymous proxy):
 ```
 (def (proxy-handshake srv clisock)
   (try
-   (let* ((hdr (make-u8vector 8))
-          (rd (server-recv-all clisock hdr)))
-     (if (fx< rd 8)
+   (let* ((hdr (make-u8vector 1024))
+          (rd (server-recv clisock hdr)))
+     (if (fx< rd 9)                  ; header + NUL userid terminator
        (error "Incomplete request" hdr)
        (let* ((vn (u8vector-ref hdr 0))
               (cd (u8vector-ref hdr 1))
               (dstport (fxior (fxshift (u8vector-ref hdr 2) 8)
                               (u8vector-ref hdr 3)))
-              (dstip (subu8vector hdr 4 8))
-              (nulbuf (make-u8vector 1024))
-              (rd (server-recv clisock nulbuf)) ; read userid, ignored
-              (_ (unless (fx< rd 1024)
-                   (error "Request buffer overflow"))))
+              (dstip (subu8vector hdr 4 8)))
          (if (fx= vn 4)
            (case cd
              ((1)                       ; CONNECT
