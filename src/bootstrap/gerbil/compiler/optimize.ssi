@@ -124,8 +124,8 @@ namespace: gxc
          (%#define-syntax !case-lambda |gxc[:0:]#!case-lambda|)
          (%#define-runtime !struct-type:::init! gxc#!struct-type:::init!)
          (%#begin (%#define-runtime
-                   !lambda:::init!__opt-lambda19192
-                   gxc#!lambda:::init!__opt-lambda19192)
+                   !lambda:::init!__opt-lambda19191
+                   gxc#!lambda:::init!__opt-lambda19191)
                   (%#begin (%#define-runtime
                             !lambda:::init!__0
                             gxc#!lambda:::init!__0)
@@ -140,8 +140,8 @@ namespace: gxc
           !struct-type-lookup-method
           gxc#!struct-type-lookup-method)
          (%#begin (%#define-runtime
-                   optimizer-declare-type!__opt-lambda19159
-                   gxc#optimizer-declare-type!__opt-lambda19159)
+                   optimizer-declare-type!__opt-lambda19158
+                   gxc#optimizer-declare-type!__opt-lambda19158)
                   (%#begin (%#define-runtime
                             optimizer-declare-type!__0
                             gxc#optimizer-declare-type!__0)
@@ -149,8 +149,8 @@ namespace: gxc
                             optimizer-declare-type!
                             gxc#optimizer-declare-type!)))
          (%#begin (%#define-runtime
-                   optimizer-declare-method!__opt-lambda19135
-                   gxc#optimizer-declare-method!__opt-lambda19135)
+                   optimizer-declare-method!__opt-lambda19134
+                   gxc#optimizer-declare-method!__opt-lambda19134)
                   (%#begin (%#define-runtime
                             optimizer-declare-method!__0
                             gxc#optimizer-declare-method!__0)
@@ -207,8 +207,8 @@ namespace: gxc
          (%#define-runtime case-lambda-expr? gxc#case-lambda-expr?)
          (%#define-runtime opt-lambda-expr? gxc#opt-lambda-expr?)
          (%#begin (%#define-runtime
-                   lift-case-lambda-clauses__opt-lambda16308
-                   gxc#lift-case-lambda-clauses__opt-lambda16308)
+                   lift-case-lambda-clauses__opt-lambda16307
+                   gxc#lift-case-lambda-clauses__opt-lambda16307)
                   (%#begin (%#define-runtime
                             lift-case-lambda-clauses__0
                             gxc#lift-case-lambda-clauses__0)

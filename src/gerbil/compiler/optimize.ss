@@ -1086,7 +1086,7 @@ namespace: gxc
         => (lambda (clause) {optimize-call clause stx args}))
        (else
         (raise-compile-error "Illegal case-lambda application; arity mismatch"
-                             stx (map (cut !lambda-arity clauses) clauses)))))))
+                             stx (map !lambda-arity clauses)))))))
 
 (def (!lambda-arity-match? self args)
   (with ((!lambda _ arity) self)

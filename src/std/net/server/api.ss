@@ -63,13 +63,13 @@ package: std/net/server
     (with ((!socket _ _ _ wait-out close) ssock)
       (unless rcon
         (unless (wait-out ssock (abs-timeout timeo))
-          (close ssock 'inout)
+          (close ssock 'inout #f)
           (raise-timeout 'server-connect "Operation timeout exceeded" addr)))
       (let (errno (or rcon (socket-getsockopt sock SOL_SOCKET SO_ERROR)))
         (if (fxzero? errno)
           ssock
           (begin
-            (close ssock 'inout)
+            (close ssock 'inout #f)
             (raise-os-error errno server-connect srv addr timeo)))))))
 
 ;; => !socket that is bound and listening
@@ -85,85 +85,90 @@ package: std/net/server
 
 ;; => !socket | #f if tiemout
 (def (server-accept ssock (sa #f) (timeo #f))
-  (with ((!socket sock srv wait-in) ssock)
-    (if wait-in
-      (let (timeo (abs-timeout timeo))
-        (let lp ()
-          (let (cli (socket-accept sock sa))
-            (if cli
-              (!!socket-server.add srv cli)
-              (and (wait-in ssock timeo)
-                   (lp))))))
-      (error "Socket is not open for input" ssock))))
+  (with ((!socket sock srv) ssock)
+    (let (timeo (abs-timeout timeo))
+      (let lp ()
+        (let (wait-in (!socket-wait-in ssock))
+          (if wait-in
+            (let (cli (socket-accept sock sa))
+              (if cli
+                (!!socket-server.add srv cli)
+                (and (wait-in ssock timeo)
+                     (lp))))
+            (raise-io-error 'server-accept "Socket is not open for input" ssock)))))))
 
 ;; => count | #f if timeout
 (def (server-send ssock buf (start 0) (end (u8vector-length buf)) (timeo #f))
-  (with ((!socket sock _ _ wait-out) ssock)
-    (if wait-out
-      (let (timeo (abs-timeout timeo))
-        (let lp ()
-          (let (r (socket-send sock buf start end))
-            (or r
-                (and (wait-out ssock timeo)
-                     (lp))))))
-      (error "Socket is not open for output" ssock))))
+  (with ((!socket sock) ssock)
+    (let (timeo (abs-timeout timeo))
+      (let lp ()
+        (let (wait-out (!socket-wait-out ssock))
+          (if wait-out
+            (let (r (socket-send sock buf start end))
+              (or r
+                  (and (wait-out ssock timeo)
+                       (lp))))
+            (raise-io-error 'server-send "Socket is not open for output" ssock)))))))
 
 ;; => count | #f
 ;; try to fill the buffer with recvs, may return fewer bytes or #f
 ;; if timeout is reached
 (def (server-send-all ssock buf (start 0) (end (u8vector-length buf)) (timeo #f))
-  (with ((!socket sock _ _ wait-out) ssock)
-    (if wait-out
-      (let (timeo (abs-timeout timeo))
-        (let lp ((count 0) (start start))
-          (if (fx>= start end)
-            count
-            (let (r (socket-send sock buf start end))
-              (cond
-               (r (lp (fx+ count r) (fx+ start r)))
-               ((wait-out ssock timeo)
-                (lp count start))
-               ((fxpositive? count)
-                count)
-               (else #f))))))
-      (error "Socket is not open for output" ssock))))
+  (with ((!socket sock) ssock)
+    (let (timeo (abs-timeout timeo))
+      (let lp ((count 0) (start start))
+        (let (wait-out (!socket-wait-out ssock))
+          (if wait-out
+            (if (fx< start end)
+              (let (r (socket-send sock buf start end))
+                (cond
+                 (r (lp (fx+ count r) (fx+ start r)))
+                 ((wait-out ssock timeo)
+                  (lp count start))
+                 ((fxpositive? count)
+                  count)
+                 (else #f)))
+              count)
+            (raise-io-error 'server-send-all "Socket is not open for output" ssock)))))))
 
 ;; => count | #f if timeout
 (def (server-recv ssock buf (start 0) (end (u8vector-length buf)) (timeo #f))
-  (with ((!socket sock _ wait-in) ssock)
-    (if wait-in
-      (let (timeo (abs-timeout timeo))
-        (let lp ()
-          (let (r (socket-recv sock buf start end))
-            (or r
-                (and (wait-in ssock timeo)
-                     (lp))))))
-      (error "Socket is not open for input" ssock))))
+  (with ((!socket sock) ssock)
+    (let (timeo (abs-timeout timeo))
+      (let lp ()
+        (let (wait-in (!socket-wait-in ssock))
+          (if wait-in
+            (let (r (socket-recv sock buf start end))
+              (or r
+                  (and (wait-in ssock timeo)
+                       (lp))))
+            (raise-io-error 'server-recv "Socket is not open for input" ssock)))))))
 
 ;; => count | #f
 ;; try to fill the buffer with recvs, may return fewer bytes or #f
 ;; if timeout is reached or end of input is reached
 (def (server-recv-all ssock buf (start 0) (end (u8vector-length buf)) (timeo #f))
-  (with ((!socket sock _ wait-in) ssock)
-    (if wait-in
-      (let (timeo (abs-timeout timeo))
-        (let lp ((count 0) (start start))
-          (if (fx>= start end)
-            count
-            (let (r (socket-recv sock buf start end))
-              (cond
-               ((not r)
+  (with ((!socket sock) ssock)
+    (let (timeo (abs-timeout timeo))
+      (let lp ((count 0) (start start))
+        (let (wait-in (!socket-wait-in ssock))
+          (if wait-in
+            (if (fx>= start end)
+              count
+              (let (r (socket-recv sock buf start end))
                 (cond
-                 ((wait-in ssock timeo)
-                  (lp count start))
-                 ((fxpositive? count)
+                 ((not r)
+                  (cond
+                   ((wait-in ssock timeo)
+                    (lp count start))
+                   ((fxpositive? count)
+                    count)
+                   (else #f)))
+                 ((fxzero? r)
                   count)
-                 (else #f)))
-               ((fxzero? r)
-                count)
-               (else
-                (lp (fx+ count r) (fx+ start r))))))))
-      (error "Socket is not open for input"))))
+                 (else
+                  (lp (fx+ count r) (fx+ start r))))))
+            (raise-io-error 'server-recv-all "Socket is not open for input" ssock)))))))
 
 ;; retrieve the socket in a server socket
 (def (server-socket-e ssock)
@@ -183,8 +188,7 @@ package: std/net/server
 
 ;; with-destroy
 (defmethod {destroy !socket}
-  (lambda (self)
-    ((!socket-close self) self 'inout #f)))
+  server-close)
 
 ;; utils
 (def (abs-timeout timeo)

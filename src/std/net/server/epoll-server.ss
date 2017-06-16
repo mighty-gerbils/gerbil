@@ -12,10 +12,7 @@ package: std/net/server
         :std/net/server/server
         :std/os/fd
         :std/os/epoll
-        :std/sugar
-        :std/logger
-        :std/iter
-        )
+        :std/iter)
 (export epoll-socket-server)
 
 (def (epoll-socket-server)
@@ -81,47 +78,60 @@ package: std/net/server
       (io-state-close-in! io-in sock shutdown))
     (def (close-io-out! io-out sock)
       (io-state-close-out! io-out sock shutdown))
-    
-    (with ((!socket sock) ssock)
-      (let (state (hash-get fdtab (fd-e sock)))
-        (match state 
-          ((!socket-state _ io-in io-out)
-           (case dir
-             ((in)
-              (when io-in
+
+    (with ((!socket sock _ wait-in wait-out) ssock)
+      (when (or wait-in wait-out)
+        (let (state (hash-get fdtab (fd-e sock)))
+          (match state 
+            ((!socket-state _ io-in io-out)
+             (case dir
+               ((in)
                 (if io-out
                   (epoll-ctl-mod epoll sock (fxior EPOLLET EPOLLOUT))
                   (begin
                     (epoll-ctl-del epoll sock)
                     (hash-remove! fdtab (fd-e sock))))
+                (set! (!socket-wait-in ssock) #f)
                 (set! (!socket-state-io-in state) #f)
-                (close-io-in! io-in sock)))
-             ((out)
-              (when io-out
+                (close-io-in! io-in sock)
+                (unless io-out
+                  (close-port sock)))
+               ((out)
                 (if io-in
                   (epoll-ctl-mod epoll sock (fxior EPOLLET EPOLLIN))
                   (begin
                     (epoll-ctl-del epoll sock)
                     (hash-remove! fdtab (fd-e sock))))
+                (set! (!socket-wait-out ssock) #f)
                 (set! (!socket-state-io-out state) #f)
-                (close-io-out! io-out sock)))
-             ((inout)
-              (epoll-ctl-del epoll sock)
-              (hash-remove! fdtab (fd-e sock))
-              (when io-in
-                (close-io-in! io-in sock))
-              (when io-out
-                (close-io-out! io-out sock))
-              (close-port sock))
-             (else
-              (error "Bad direction" dir))))
-          (else (void))))))
+                (close-io-out! io-out sock)
+                (unless io-in
+                  (close-port sock)))
+               ((inout)
+                (epoll-ctl-del epoll sock)
+                (hash-remove! fdtab (fd-e sock))
+                (when io-in
+                  (set! (!socket-wait-in ssock) #f)  
+                  (set! (!socket-state-io-in state) #f)
+                  (close-io-in! io-in sock))
+                (when io-out
+                  (set! (!socket-wait-out ssock) #f)
+                  (set! (!socket-state-io-out state) #f)  
+                  (close-io-out! io-out sock))
+                (close-port sock))
+               (else
+                (error "Bad direction" dir))))
+            (else (void)))))))
 
   (def (shutdown!)
-    (debug "shutting down socket server")
     (close-port epoll)
     (for (state (in-hash-values fdtab))
-      (close-port (!socket-state-e state)))
+      (with ((!socket-state sock io-in io-out) state)
+        (when io-in
+          (io-state-close-in! io-in sock #f))
+        (when io-out
+          (io-state-close-out! io-out sock #f))
+        (close-port sock)))
     ;; release refs to raw devices
     (set! fdtab #f)
     (set! epoll #f))

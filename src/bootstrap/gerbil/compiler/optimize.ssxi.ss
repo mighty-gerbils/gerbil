@@ -111,30 +111,30 @@ package: gerbil/compiler
   (declare-method gxc#!struct-type::t :init! gxc#!struct-type:::init! #f)
   (begin
     (declare-type
-     gxc#!lambda:::init!__opt-lambda19192
+     gxc#!lambda:::init!__opt-lambda19191
      (@lambda 6 struct-instance-init!))
     (declare-type
      gxc#!lambda:::init!
      (@case-lambda
       (4 gxc#!lambda:::init!__0)
       (5 gxc#!lambda:::init!__1)
-      (6 gxc#!lambda:::init!__opt-lambda19192))))
+      (6 gxc#!lambda:::init!__opt-lambda19191))))
   (declare-method gxc#!lambda::t :init! gxc#!lambda:::init! #f)
   (declare-type
    gxc#optimizer-declare-type!
    (@case-lambda
     (2 gxc#optimizer-declare-type!__0)
-    (3 gxc#optimizer-declare-type!__opt-lambda19159)))
+    (3 gxc#optimizer-declare-type!__opt-lambda19158)))
   (declare-type
    gxc#optimizer-declare-method!
    (@case-lambda
     (3 gxc#optimizer-declare-method!__0)
-    (4 gxc#optimizer-declare-method!__opt-lambda19135)))
+    (4 gxc#optimizer-declare-method!__opt-lambda19134)))
   (declare-type
    gxc#lift-case-lambda-clauses
    (@case-lambda
     (3 gxc#lift-case-lambda-clauses__0)
-    (4 gxc#lift-case-lambda-clauses__opt-lambda16308)))
+    (4 gxc#lift-case-lambda-clauses__opt-lambda16307)))
   (declare-method
    gxc#!struct-pred::t
    optimize-call

@@ -8,12 +8,7 @@ package: std/net/server
         :gerbil/gambit/misc
         :std/net/server/base
         :std/net/server/server
-        :std/os/fd
-        :std/event
-        :std/logger
-        :std/iter
-        :std/sugar
-        )
+        :std/os/fd)
 
 (export basic-socket-server)
 
@@ -56,39 +51,44 @@ package: std/net/server
         (shutdown-socket! sock shutdown)
         (close-output-port sock)))
     
-    (with ((!socket sock) ssock)
-      (let (state (hash-get socks sock))
-        (match state 
-          ((!socket-state _ io-in io-out)
-           (case dir
-             ((in)
-              (when io-in
-                (unless io-out
-                  (hash-remove! socks sock))
+    (with ((!socket sock _ wait-in wait-out) ssock)
+      (when (or wait-in wait-out)
+        (let (state (hash-get socks sock))
+          (match state 
+            ((!socket-state _ io-in io-out)
+             (case dir
+               ((in)
+                (set! (!socket-wait-in ssock) #f)
                 (set! (!socket-state-io-in state) #f)
-                (close-io-in! sock)))
-             ((out)
-              (when io-out
-                (unless io-in
-                  (hash-remove! socks sock)))
+                (close-io-in! sock)
+                (unless io-out
+                  (hash-remove! socks sock)
+                  (close-port sock)))
+               ((out)
+                (set! (!socket-wait-out ssock) #f)
                 (set! (!socket-state-io-out state) #f)
-                (close-io-out! sock io-out))
-             ((inout)
-              (hash-remove! socks sock)
-              (when io-in
-                (close-io-in! sock))
-              (when io-out
-                (close-io-out! sock))
-              (close-port sock))
-             (else
-              (error "Bad direction" dir))))
-          (else (void))))))
+                (close-io-out! sock io-out)
+                (unless io-in
+                  (hash-remove! socks sock)
+                  (close-port sock)))
+               ((inout)
+                (hash-remove! socks sock)
+                (when io-in
+                  (set! (!socket-wait-in ssock) #f)
+                  (set! (!socket-state-io-in state) #f)
+                  (close-io-in! sock))
+                (when io-out
+                  (set! (!socket-wait-out ssock) #f)
+                  (set! (!socket-state-io-out state) #f)
+                  (close-io-out! sock))
+                (close-port sock))
+               (else
+                (error "Bad direction" dir))))
+            (else (void)))))))
 
   (def (shutdown!)
-    (debug "shutting down socket server")
-    (for (sock (in-hash-keys socks))
-      (close-port sock))
+    (for-each close-port (hash-keys socks))
     ;; release refs to raw devices
     (set! socks #f))
   
-  (server-loop never-evt void add-socket close-socket shutdown!))
+  (server-loop #f void add-socket close-socket shutdown!))

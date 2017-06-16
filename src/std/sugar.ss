@@ -93,10 +93,10 @@ package: std
 (defrules assert! ()
   ((_ expr)
    (unless expr
-     (error "Assertion error" 'expr)))
+     (error "Assertion failed" 'expr)))
   ((_ expr message)
    (unless expr
-     (error "Assertion error" message 'expr))))
+     (error "Assertion failed" message 'expr))))
 
 (defrules while ()
   ((_ test body ...)
