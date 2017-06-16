@@ -5,7 +5,8 @@ package: std
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/os
-        :std/format)
+        :gerbil/gambit/exceptions
+        :std/sugar)
 (export
   select                                ; low level synchronization
   ! !! sync poll                        ; high level synchornization
@@ -105,13 +106,15 @@ package: std
              (mutex-unlock! (selection-mutex sel) (selection-condvar sel))
              (lp)))))))
 
-(defrules with-error-display ()
+(defrules with-interrupt-handler ()
   ((_ body ...)
-   (with-catch
-    (lambda (e)
-      (unless (eq? e 'interrupt)
-        (eprintf "warning: selector [~a] error: ~a~n" (current-thread) e)))
-    (lambda () body ...))))
+   (try
+    body ...
+    (catch (e)
+      (when (eq? e 'interrupt)
+        (thread-terminate! (current-thread)))
+      (display "selector error: " (current-error-port))
+      (display-exception e (current-error-port))))))
 
 (def (make-selector-thread sel selector)
   (let (thread
@@ -119,13 +122,13 @@ package: std
          ((mutex? selector)
           (make-thread
            (lambda ()
-             (with-error-display
+             (with-interrupt-handler
               (select1 sel selector mutex-select-e mutex-select-abort-e)))
            'select-mutex))
          ((io-condition-variable? selector)
           (make-thread
            (lambda ()
-             (with-error-display
+             (with-interrupt-handler
               (select1 sel selector io-wait-select-e void)))
            'select-io-wait))
          ((and (pair? selector)
@@ -133,13 +136,13 @@ package: std
                (condition-variable? (cdr selector)))
           (make-thread
            (lambda ()
-             (with-error-display
+             (with-interrupt-handler
               (select1 sel selector condvar-select-e void)))
            'select-condvar))
          ((thread? selector)
           (make-thread
            (lambda ()
-             (with-error-display
+             (with-interrupt-handler
               (select1 sel selector thread-select-e void)))
            'select-thread))
          ((input-port? selector)
@@ -147,13 +150,13 @@ package: std
                 (abort-e  (make-port-selector-abort selector)))
             (make-thread
              (lambda ()
-               (with-error-display
+               (with-interrupt-handler
                 (select1 sel selector select-e abort-e)))
              'select-input-port)))
          ((or (real? selector) (time? selector))
           (make-thread
            (lambda ()
-             (with-error-display
+             (with-interrupt-handler
               (select1 sel selector timeout-select-e void)))
            'select-timeout))
          (else
@@ -279,32 +282,21 @@ package: std
         (mutex-unlock! mx)))))
 
 (def (select1 sel selector select-e abort-e)
-  (with-catch
-   (lambda (e)
+  (try
+   (selection-count-dec! sel)
+   (let (threads (thread-receive))      ; receive selector set
+     (select-e sel selector)
+     (let (mutex (selection-mutex sel))
+       (mutex-lock! mutex)
+       ;; there is no race because contenders are interrupted in mutex-lock!
+       ;; by the winner
+       (set! (selection-e sel) selector)
+       (kill-selector-threads! threads (selection-thread sel))
+       (condition-variable-signal! (selection-condvar sel))
+       (mutex-unlock! mutex)))
+   (catch (e)
      (abort-e sel selector)
-     (raise e))
-   (lambda ()
-     (selection-count-dec! sel)
-     (let (threads (thread-receive))    ; receive selector set
-       (select-e sel selector)
-       (let (mutex (selection-mutex sel))
-         (unwind-protect
-           (begin
-             (mutex-lock! mutex)
-             (if (selection-e sel)
-               (begin                   ; race lost [dead!?]
-                 (abort-e sel selector))
-               (begin                   ; race winner
-                 (set! (selection-e sel) selector)
-                 (kill-selector-threads! threads (selection-thread sel))
-                 (condition-variable-signal! (selection-condvar sel)))))
-           ;; this is necessary because in the case of a race we could be
-           ;; blocked in mutex-lock! when interrupted. But mutex-unlock!
-           ;; transfers ownership, so when the interrupt is executed
-           ;; we could end up *owning* the lock
-           (when (eq? (macro-mutex-btq-owner mutex)
-                      (current-thread))
-             (mutex-unlock! mutex))))))))
+     (raise e))))
 
 (def (selection-count-wait! sel)
   (with ((selection _ _ mutex condvar) sel)
