@@ -152,20 +152,28 @@ package: std/actor
   (def acceptor-evt
     (or acceptor never-evt))
   
-  (def (accept-connection cli cliaddr)
-    (let* ((thr (spawn rpc-server-connection (current-thread) cli cliaddr accept-e))
-           (address (socket-address->address cliaddr)))
+  (def (accept-connection cli clisa)
+    (let* ((thr (spawn rpc-server-connection (current-thread) cli clisa accept-e))
+           (address (socket-address->address clisa)))
       (hash-put! conns address thr)
       (hash-put! threads thr address)
       (thread-send monitor thr)))
   
   (def (open-connection address)
-    (let (thr (spawn rpc-client-connection
-                     (current-thread) socksrv address connect-e))
+    (let (thr (spawn rpc-client-connection (current-thread) socksrv address connect-e))
       (hash-put! conns address thr)
       (hash-put! threads thr address)
       (thread-send monitor thr)
       thr))
+
+  (def (canonical-address address)
+    (cond
+     ((or (inet-address? address)
+          (inet-address-string? address))
+      (resolve-address address))
+     ((string? address)                 ; unix domain
+      address)
+     (else #f)))
   
   (def (handle-protocol-action msg)
     (with ((message content src dest opt) msg)
@@ -261,7 +269,7 @@ package: std/actor
          (let (dest (message-dest msg))
            (cond
             ((remote? dest)
-             (let (address (remote-address dest))
+             (let (address (canonical-address (remote-address dest)))
                (cond
                 ((hash-get conns address)
                  => (lambda (handler)
@@ -325,7 +333,7 @@ package: std/actor
 (def (rpc-server-connection rpc-server sock sa proto-e)
   (try
    (rpc-set-nodelay! sock (socket-address-family sa))
-   (rpc-connection-loop rpc-server sock sa proto-e)
+   (rpc-connection-loop rpc-server sock (socket-address->address sa) proto-e)
    (catch (e)
      (rpc-connection-cleanup rpc-server e sock))))
 
@@ -334,7 +342,7 @@ package: std/actor
    (let* ((sa (socket-address address))
           (cli (server-connect socksrv sa)))
      (rpc-set-nodelay! cli (socket-address-family sa))
-     (rpc-connection-loop rpc-server cli sa proto-e))
+     (rpc-connection-loop rpc-server cli address proto-e))
    (catch (e)
      (rpc-connection-cleanup rpc-server e #f))))
 
@@ -343,7 +351,7 @@ package: std/actor
             (eq? safamily AF_INET6))
     (socket-setsockopt (server-socket-e sock) IPPROTO_TCP TCP_NODELAY 1)))
 
-(def rpc-keep-alive 30) ; keep-alive interval
+(def rpc-keep-alive 60) ; keep-alive interval
 
 (def (set-rpc-keep-alive-interval! dt)
   (if (or (not dt) (and (real? dt) (positive? dt)))
@@ -364,15 +372,13 @@ package: std/actor
     (set! rpc-call-timeout dt)
     (error "bad timeout; expected positive real " dt)))
 
-(def (rpc-connection-loop rpc-server sock sa proto-e)
+(def (rpc-connection-loop rpc-server sock peer-address proto-e)
   (def input
     (server-input-buffer sock))
   (def output
     (server-output-buffer sock))
   (defvalues (read-e write-e)
     (proto-e input output))
-  (def peer-address
-    (socket-address->address sa))
   (def continuations               ; wire-id => (values actor k proto stream?)
     (make-hash-table-eqv))
   (def timeouts                         ; time => wire-id
@@ -606,13 +612,26 @@ package: std/actor
           (bogus
            (warning "unexpected message ~a" bogus)
            (writer-loop)))))
-  
+
+  (def (timeout-event)
+    (let lp ((rest (hash-keys timeouts)) (timeo #f) (time #f))
+      (match rest
+        ([evt . rest]
+         (if timeo
+           (let (xtime (time->seconds (event-selector evt)))
+             (if (< xtime time)
+               (lp rest evt xtime)
+               (lp rest timeo time)))
+           (lp rest evt (time->seconds (event-selector evt)))))
+        (else
+         (or timeo never-evt)))))
+                    
   (def (loop)
-    (<< (! (choice-evt (hash-keys timeouts))
+    (<< (! (timeout-event)
            => dispatch-timeout)
         (! idle-timeout
            (close-connection))
-        (! reader           
+        (! reader
            (close-connection))
         (! writer
            (close-connection))
