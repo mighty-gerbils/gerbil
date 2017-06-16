@@ -65,7 +65,7 @@ package: std/net/server
      (raise e))
    (finally
     (when poll-thread
-      (with-catch void (cut thread-interrupt! poll-thread (cut raise 'interrupt)))))))
+      (thread-terminate! poll-thread)))))
 
 (def (io-state-signal-ready! iostate how)
   (with ((!io-state _ mx cv) iostate)
