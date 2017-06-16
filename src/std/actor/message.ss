@@ -4,16 +4,17 @@
 package: std/actor
 
 (import :gerbil/gambit/threads
+        :gerbil/gambit/os
         :std/event)
 (export
   (struct-out message proxy)
   -> send send-message send-message/timeout
   << <- receive-message
-  !
-  )
+  !)
         
 ;; ~~lib/_gambit#.scm
 (extern namespace: #f
+  macro-absent-obj
   macro-mailbox-mutex
   macro-mailbox-condvar
   macro-mailbox-cursor
@@ -22,8 +23,7 @@ package: std/actor
   macro-fifo-next
   macro-fifo-next-set!
   macro-fifo-elem
-  macro-fifo-tail-set!
-  )
+  macro-fifo-tail-set!)
 
 ;;; structured messages
 (defstruct message (e source dest options)
@@ -218,16 +218,59 @@ package: std/actor
       empty-mailbox)))
 
 (def (mailbox-wait! mb events loop)
+  (def (simple-events? events)
+    (match events
+      ([evt . rest]
+       (and (or (time? (event-selector evt))
+                (not (event-selector evt)))
+            (simple-events? rest)))
+      (else #t)))
+
+  (def (timeout-e events)
+    (def now (##current-time-point))
+    (let lp ((rest events) (timeo (macro-absent-obj)) (deadline #f))
+      (match rest
+        ([evt . rest]
+         (if (time? (event-selector evt))
+           (let* ((evt-time (event-selector evt))
+                  (evt-deadline (time->seconds evt-time)))
+             (if (or (not deadline) (< evt-deadline deadline))
+               (lp rest evt-time evt-deadline)
+               (lp rest timeo deadline)))
+           (lp rest timeo deadline)))
+        (else timeo))))
+
+  (def (dispatch-e events timeo)
+    (match events
+      ([evt . rest]
+       (if (eq? timeo (event-selector evt))
+         (event-value evt)
+         (dispatch-e rest timeo)))))
+  
   ;; sync the condvar with events
   ;; mutex is locked
-  (apply sync
-    (handle-evt
-     (cons (macro-mailbox-mutex mb)
-           (macro-mailbox-condvar mb))
-     (lambda (mx condvar)
-       (mutex-lock! mx)
-       (loop mb)))
-    events))
+  (let ((mutex (macro-mailbox-mutex mb))
+        (condvar (macro-mailbox-condvar mb)))
+    (cond
+     ((null? events)
+      (mutex-unlock! mutex condvar)
+      (mutex-lock! mutex)
+      (loop mb))
+     ((simple-events? events)
+      (let (timeo (timeout-e events))
+        (if (mutex-unlock! mutex condvar timeo)
+          (begin
+            (mutex-lock! mutex)
+            (loop mb))
+          (dispatch-e events timeo))))
+     (else
+      (apply sync
+        (handle-evt
+         (cons mutex condvar)
+         (lambda (mutex condvar)
+           (mutex-lock! mutex)
+           (loop mb)))
+        events)))))
 
 (def (mailbox-extract-rewind! mb)
   ;; extract object, reset cursor and mulock mutex
