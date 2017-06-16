@@ -99,7 +99,7 @@ package: std/actor
   (spawn rpc-server address proto))
 
 (def (stop-rpc-server! rpcd)
-  (thread-kill! rpcd))
+  (kill-thread! rpcd))
 
 (def (rpc-server address proto)
   (let* ((socksrv (start-socket-server!))
@@ -110,11 +110,11 @@ package: std/actor
        (rpc-server-loop socksrv sock sa proto)
        (catch (e)
          (cond
-          ((eq? e 'interrupt))
-          ((uncaught-exception? e)
-           (log-error "rpc server error" (uncaught-exception-reason e)))
+          ((eq? e 'interrupt)
+           (server-shutdown! socksrv)
+           (thread-terminate! (current-thread)))
           (else
-           (log-error "rpc server error" e))))
+           (log-error "unhandled exception" e))))
        (finally
         (server-shutdown! socksrv))))))
 
@@ -303,11 +303,12 @@ package: std/actor
     (thread-send monitor acceptor))
   (try
    (loop)
-   (finally
-    (thread-send monitor 'exit)
-    (when acceptor
-      (thread-kill! acceptor))
-    (for-each thread-kill! (hash-keys threads)))))
+   (catch (e)
+     (thread-send monitor 'exit)
+     (when acceptor
+       (thread-terminate! acceptor))
+     (for-each kill-thread! (hash-keys threads))
+     (raise e))))
 
 (def (rpc-server-accept rpc-server sock safamily)
   (while #t
@@ -340,6 +341,7 @@ package: std/actor
    (rpc-set-nodelay! sock (socket-address-family sa))
    (rpc-connection-loop rpc-server sock (socket-address->address sa) proto-e)
    (catch (e)
+     (log-error "connection error" e)
      (rpc-connection-cleanup rpc-server e sock))))
 
 (def (rpc-client-connection rpc-server socksrv address proto-e)
@@ -349,6 +351,7 @@ package: std/actor
      (rpc-set-nodelay! cli (socket-address-family sa))
      (rpc-connection-loop rpc-server cli address proto-e))
    (catch (e)
+     (log-error "connection error" e)
      (rpc-connection-cleanup rpc-server e #f))))
 
 (def (rpc-set-nodelay! sock safamily)
@@ -407,8 +410,8 @@ package: std/actor
   
   (def (close-connection)
     (rpc-close-sock sock)
-    (thread-kill! writer)
-    (thread-kill! reader)
+    (thread-terminate! writer)
+    (thread-terminate! reader)
     (thread-send monitor 'exit)
     (for-each
       (lambda (wire-id)
@@ -610,16 +613,17 @@ package: std/actor
            (dispatch-error wire-id "timeout")))))
   
   (def (writer-loop)
-    (let (output (server-output-buffer sock))
-      (<< (! (or rpc-keep-alive never-evt)
-             (write-e output #!void)
-             (writer-loop))
-          ((? u8vector? data)
-           (write-e output data)
-           (writer-loop))
-          (bogus
-           (warning "unexpected message ~a" bogus)
-           (writer-loop)))))
+    (let lp ()
+      (let (output (server-output-buffer sock))
+        (<< (! (or rpc-keep-alive never-evt)
+               (write-e output #!void)
+               (lp))
+            ((? u8vector? data)
+             (write-e output data)
+             (lp))
+            (bogus
+             (warning "unexpected message ~a" bogus)
+             (lp))))))
 
   (def (timeout-event)
     ;; TODO use a heap, this is inefficient for large number of outstanding
@@ -664,8 +668,11 @@ package: std/actor
   (try
    (loop)
    (catch (e)
-     (log-error "connection error" e)
-     (close-connection))))
+     (unless (eq? e 'interrupt)
+       (log-error "unhandled exception"))
+     (close-connection)
+     (when (eq? e 'interrupt)
+       (thread-terminate! (current-thread))))))
 
 (def (rpc-connection-shutdown rpc-server)
   (!!rpc.connection-shutdown rpc-server)
@@ -691,5 +698,5 @@ package: std/actor
   (when sock
     (server-close sock)))
 
-(def (thread-kill! thread)
+(def (kill-thread! thread)
   (with-catch void (cut thread-interrupt! thread (cut raise 'interrupt))))
