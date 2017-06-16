@@ -423,33 +423,33 @@ package: std/actor
   
   (def (read-message data)
     (cond
-       ((void? data)                    ; keep-alive
-        (loop))
-       ((u8vector? data)                ; incoming message
-        (let (bytes (open-input-u8vector data))
-          (let (msg (try (rpc-proto-read-message-envelope bytes)
-                         (catch (exception? e) e)))
-            (if (message? msg)
-              (with ((message content _ dest) msg)
-                (match content
-                  ((? (or !call? !event? !stream?))
-                   (dispatch-call msg bytes))
-                  ((? !value?)
-                   (dispatch-value msg bytes !value-k !value-k-set!))
-                  ((? !error?)
-                   (dispatch-value msg bytes !error-k !error-k-set!))
-                  ((? !end?)
-                   (dispatch-value msg bytes !end-k !end-k-set!))
-                  ((? not)
-                   (dispatch-call msg bytes))))
-                (begin
-                  (log-error "read error" msg)
-                  (close-connection))))))
-       ((eof-object? data)
-        (close-connection))
-       (else
-        (log-error "connection error" data)
-        (close-connection))))
+     ((void? data)                      ; keep-alive
+      (loop))
+     ((u8vector? data)                  ; incoming message
+      (let (bytes (open-input-u8vector data))
+        (let (msg (try (rpc-proto-read-message-envelope bytes)
+                       (catch (exception? e) e)))
+          (if (message? msg)
+            (with ((message content _ dest) msg)
+              (match content
+                ((? (or !call? !event? !stream?))
+                 (dispatch-call msg bytes))
+                ((? !value?)
+                 (dispatch-value msg bytes !value-k !value-k-set!))
+                ((? !error?)
+                 (dispatch-value msg bytes !error-k !error-k-set!))
+                ((? !end?)
+                 (dispatch-value msg bytes !end-k !end-k-set!))
+                ((? not)
+                 (dispatch-call msg bytes))))
+            (begin
+              (log-error "read error" msg)
+              (close-connection))))))
+     ((eof-object? data)
+      (close-connection))
+     (else
+      (log-error "connection error" data)
+      (close-connection))))
 
   (def (reader-loop connection-thread)
     (let lp ()
@@ -622,17 +622,18 @@ package: std/actor
            (writer-loop)))))
 
   (def (timeout-event)
-    (let lp ((rest (hash-keys timeouts)) (timeo #f) (time #f))
+    ;; TODO use a heap, this is inefficient for large number of outstanding
+    ;;      calls per connection
+    (let lp ((rest (hash-keys timeouts)) (timeo never-evt) (time #f))
       (match rest
         ([evt . rest]
-         (if timeo
+         (if time
            (let (xtime (time->seconds (event-selector evt)))
              (if (< xtime time)
                (lp rest evt xtime)
                (lp rest timeo time)))
            (lp rest evt (time->seconds (event-selector evt)))))
-        (else
-         (or timeo never-evt)))))
+        (else timeo))))
                     
   (def (loop)
     (<< (! (timeout-event)
