@@ -93,21 +93,20 @@ package: std/actor
   )
 
 ;;; rpc-server
-(def (start-rpc-server! (address #f)
-                        proto: (proto (rpc-null-proto)))
+(def (start-rpc-server! proto: (proto (rpc-null-proto)) . addresses)
   (start-logger!)
-  (spawn rpc-server address proto))
+  (spawn rpc-server proto addresses))
 
 (def (stop-rpc-server! rpcd)
   (kill-thread! rpcd))
 
-(def (rpc-server address proto)
+(def (rpc-server proto addresses)
   (let* ((socksrv (start-socket-server!))
-         (sa (and address (socket-address address)))
-         (sock (and sa (server-listen socksrv sa))))
+         (sas   (map socket-address addresses))
+         (socks (map (cut server-listen socksrv <>) sas)))
     (parameterize ((current-rpc-server (current-thread)))
       (try
-       (rpc-server-loop socksrv sock sa proto)
+       (rpc-server-loop socksrv socks sas proto)
        (catch (e)
          (cond
           ((eq? e 'interrupt)
@@ -133,7 +132,7 @@ package: std/actor
          (warning "Unexpected message ~a" msg)
          (lp)))))
 
-(def (rpc-server-loop socksrv sock sa proto)
+(def (rpc-server-loop socksrv socks sas proto)
   (def connect-e
     (!rpc-protocol-connect proto))
   (def accept-e
@@ -150,9 +149,10 @@ package: std/actor
     (make-hash-table-eq))
   (def monitor
     (spawn rpc-monitor (current-thread)))
-  (def acceptor
-    (and sock
-         (spawn rpc-server-accept (current-thread) sock (socket-address-family sa))))
+  (def acceptors
+    (map (lambda (sock sa)
+           (spawn rpc-server-accept (current-thread) sock (socket-address-family sa)))
+         socks sas))
   
   (def (accept-connection cli clisa)
     (let* ((thr (spawn rpc-server-connection (current-thread) cli clisa accept-e))
@@ -232,8 +232,8 @@ package: std/actor
             (else
              (!!value src #f k)))))
         ((!rpc.server-address k)
-         (let (address (and sa (socket-address->address sa)))
-           (!!value src address k)))
+         (let (addresses (map socket-address->address sas))
+           (!!value src addresses k)))
         (else
          (warning "Unexpected message ~a" msg)))))
   
@@ -290,8 +290,8 @@ package: std/actor
          (cond
           ((eq? thread socksrv)
            (error "socket server has exited unexpectedly"))
-          ((eq? thread acceptor)
-           (error "acceptor thread has exited unexpectedly"))
+          ((memq thread acceptors)
+           (warning "acceptor thread has exited abnormally ~a" thread))
           (else
            (remove-thread! thread))))
         (value
@@ -299,14 +299,12 @@ package: std/actor
     (loop))
 
   (thread-send monitor socksrv)
-  (when acceptor
-    (thread-send monitor acceptor))
+  (for-each (cut thread-send monitor <>)  acceptors)
   (try
    (loop)
    (catch (e)
      (thread-send monitor 'exit)
-     (when acceptor
-       (thread-terminate! acceptor))
+     (for-each thread-terminate! acceptors)
      (for-each kill-thread! (hash-keys threads))
      (raise e))))
 
