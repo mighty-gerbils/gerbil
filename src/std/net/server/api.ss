@@ -119,8 +119,7 @@ package: std/net/server
       (let lp ((count 0) (start start))
         (let (wait-out (!socket-wait-out ssock))
           (if wait-out
-            (if (fx>= start end)
-              count
+            (if (fx< start end)
               (let (r (socket-send sock buf start end))
                 (cond
                  (r (lp (fx+ count r) (fx+ start r)))
@@ -128,7 +127,8 @@ package: std/net/server
                   (lp count start))
                  ((fxpositive? count)
                   count)
-                 (else #f))))
+                 (else #f)))
+              count)
             (raise-io-error 'server-send-all "Socket is not open for output" ssock)))))))
 
 ;; => count | #f if timeout
