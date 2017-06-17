@@ -48,7 +48,7 @@ package: std/net
 (def (make-http/1.1-headers headers cookies)
   (http-headers-cons! headers
     (http-headers-cons http/1.1-base-headers
-      (http-headers-cookies cookies))))
+      (http-headers-cookies (or cookies [])))))
 
 (def http/1.1-base-headers
   '(("User-Agent" . "Mozilla/5.0 (compatible; gerbil/1.0)")
@@ -162,7 +162,7 @@ package: std/net
   (with ([_ scheme host port target]
          (pregexp-match url-rx url))
     (let* ((scheme (or scheme "http"))
-            (port
+           (port
             (cond
              (port
               (string->number
@@ -171,7 +171,12 @@ package: std/net
               443)
              (else 80)))
            (target (or target "/"))
-           (headers (http-headers-cons [["Host" . host]] headers))
+           (host-header
+            (case port
+              ((80 443) host)
+              (else                     ; non-standard port
+               (format "~a:~a" host port))))
+           (headers (http-headers-cons [["Host" . host-header]] headers))
            (body
             (cond
              ((not body) #f)
