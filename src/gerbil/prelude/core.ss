@@ -220,6 +220,9 @@ package: gerbil
     ;; required by the module reader to support #lang
     datum-parsing-exception? datum-parsing-exception-filepos
     read-line read-all
+    ;; string and vector moves
+    append-vectors subvector-move! vector-shrink!
+    append-strings substring-move! string-shrink!
     ;; string I/O
     write-substring
     open-input-string open-output-string get-output-string
