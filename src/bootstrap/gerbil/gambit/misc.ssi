@@ -6,12 +6,6 @@ namespace: gerbil/gambit/misc
          (%#extern
           (pretty-print pretty-print)
           (pp pp)
-          (append-vectors append-vectors)
-          (subvector-move! subvector-move!)
-          (vector-shrink! vector-shrink!)
-          (append-strings append-strings)
-          (substring-move! substring-move!)
-          (string-shrink! string-shrink!)
           (integer-sqrt integer-sqrt)
           (integer-nth-root integer-nth-root)
           (touch touch)

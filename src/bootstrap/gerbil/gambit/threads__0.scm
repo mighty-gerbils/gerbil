@@ -1,26 +1,26 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gerbil/gambit/threads#spawn
-    (lambda (_f343_ . _args344_)
+    (lambda (_f344_ . _args345_)
       (gerbil/gambit/threads#spawn/name/args
-       (let ((_$e346_ (##procedure-name _f343_))) (if _$e346_ _$e346_ '#!void))
-       _f343_
-       _args344_)))
+       (let ((_$e347_ (##procedure-name _f344_))) (if _$e347_ _$e347_ '#!void))
+       _f344_
+       _args345_)))
   (define gerbil/gambit/threads#spawn/name
-    (lambda (_name339_ _f340_ . _args341_)
-      (gerbil/gambit/threads#spawn/name/args _name339_ _f340_ _args341_)))
+    (lambda (_name340_ _f341_ . _args342_)
+      (gerbil/gambit/threads#spawn/name/args _name340_ _f341_ _args342_)))
   (define gerbil/gambit/threads#spawn/name/args
-    (lambda (_name334_ _f335_ _args336_)
+    (lambda (_name335_ _f336_ _args337_)
       (begin
-        (if (procedure? _f335_) '#!void (error '"Expected procedure" _f335_))
+        (if (procedure? _f336_) '#!void (error '"Expected procedure" _f336_))
         (thread-start!
          (make-thread
-          (if (null? _args336_) _f335_ (lambda () (apply _f335_ _args336_)))
-          _name334_)))))
+          (if (null? _args337_) _f336_ (lambda () (apply _f336_ _args337_)))
+          _name335_)))))
   (define gerbil/gambit/threads#with-lock
-    (lambda (_mx329_ _proc330_)
+    (lambda (_mx330_ _proc331_)
       (begin
-        (mutex-lock! _mx329_)
+        (mutex-lock! _mx330_)
         (with-unwind-protect
-         (lambda () (_proc330_))
-         (lambda () (mutex-unlock! _mx329_)))))))
+         (lambda () (_proc331_))
+         (lambda () (mutex-unlock! _mx330_)))))))
