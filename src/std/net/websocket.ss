@@ -7,6 +7,7 @@ package: std/net
         :gerbil/gambit/ports
         :gerbil/gambit/os
         :gerbil/gambit/bits
+        :std/srfi/13
         :std/error
         :std/sugar
         :std/logger
@@ -32,8 +33,8 @@ package: std/net
   (let* ((url (url->request-url url))
          (nonce (random-bytes 16))
          (nonce64 (base64-encode nonce))
-         (headers (cons* ["Connection" . "Upgrade"]
-                         ["Upgrade" . "websocket"]
+         (headers (cons* ["Upgrade" . "websocket"]
+                         ["Connection" . "Upgrade"]
                          ["Sec-WebSocket-Key" . nonce64]
                          ["Sec-WebSocket-Version" . 13]
                          (or headers [])))
@@ -51,24 +52,24 @@ package: std/net
      (let* ((rheaders (request-headers req))
             (Connection (assoc "Connection" rheaders))
             (Upgrade (assoc "Upgrade" rheaders))
-            (Sec-WebSocket-Accept (assoc "Sec-WebSocket-Accept" rheaders))
-            (Sec-WebSocket-Extensions (assoc "Sec-WebSocket-Extensions" rheaders))
-            (Sec-WebSocket-Protocol (assoc "Sec-WebSocket-Protocol" rheaders)))
+            (Sec-WebSocket-Accept (assoc "Sec-Websocket-Accept" rheaders))
+            (Sec-WebSocket-Extensions (assoc "Sec-Websocket-Extensions" rheaders))
+            (Sec-WebSocket-Protocol (assoc "Sec-Websocket-Protocol" rheaders)))
 
        (unless (and Connection (equal? (cdr Connection) "Upgrade"))
          (raise-io-error 'open-websocket-client
                          "Bad server response; no connection upgrade"
                          url Connection))
 
-       (unless (and Upgrade (equal? (cdr Upgrade) "websocket"))
+       (unless (and Upgrade (equal? (string-downcase (cdr Upgrade)) "websocket"))
          (raise-io-error 'open-websocket-client
                          "Bad server response; no websocket upgrade"
                          url Upgrade))
 
        (let* ((accept64 (and Sec-WebSocket-Accept (cdr Sec-WebSocket-Accept)))
               (digest (make-digest digest::sha1))
-              (_ (digest-update! digest nonce64))
-              (_ (digest-update! digest wsmagic))
+              (_ (digest-update! digest (string->bytes nonce64)))
+              (_ (digest-update! digest (string->bytes wsmagic)))
               (verify (digest-final! digest))
               (verify64 (base64-encode verify)))
          (unless (equal? accept64 verify64)
@@ -162,7 +163,7 @@ package: std/net
          ((not timeo)
           (macro-absent-obj))
          ((real? timeo)
-          (time->seconds (+ (##current-time-point) timeo)))
+          (seconds->time (+ (##current-time-point) timeo)))
          ((time? timeo)
           timeo)
          (else
@@ -411,7 +412,8 @@ package: std/net
       (unless (fx< plen 126)
         (write-u16 plen port))
       (write-subu8vector mask-bytes 0 4 port)
-      (write-payload mask-bytes data port)))
+      (write-payload mask-bytes data port)
+      (force-output port)))
 
   (def (send port opcode data)
     (let (end (u8vector-length data))
