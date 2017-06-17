@@ -25,6 +25,7 @@ package: std/net
   request-json
   request-cookies
   request-close
+  request-port
   )
 
 (defstruct request (port url history status status-text headers body encoding)
