@@ -32,7 +32,6 @@ package: std/actor/proto
           (connection-closed))
          ((eq? e proto-t)
           (server-output-write-u8 obuf rpc-proto-connect-accept)
-          (server-output-force obuf)
           (K ibuf obuf))
          (else
           (server-output-write-u8 obuf rpc-proto-connect-reject)
@@ -67,6 +66,7 @@ package: std/actor/proto
 (def (rpc-null-proto-accept ibuf obuf)
   (rpc-proto-accept-e ibuf obuf rpc-proto-null
     (lambda (ibuf obuf)
+      (server-output-force obuf)
       (values rpc-null-proto-read
               rpc-null-proto-write))))
 
