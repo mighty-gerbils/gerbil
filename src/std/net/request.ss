@@ -289,17 +289,20 @@ package: std/net
     (let* ((data (make-u8vector length))
            (rd (read-subu8vector data 0 length port)))
       (if (fx< rd length)
-        (u8vector-shrink! data rd)
+        (begin
+          (u8vector-shrink! data rd)
+          data)
         data)))
 
   (def (read/end port)
     (let lp ((chunks []))
-      (let* ((buf (make-u8vector 1024))
-             (rd  (read-subu8vector buf 0 1024 port)))
+      (let* ((buflen 4096)
+             (buf (make-u8vector buflen))
+             (rd  (read-subu8vector buf 0 buflen port)))
         (cond
          ((fxzero? rd)
           (append-u8vectors (reverse chunks)))
-         ((fx< rd 1024)
+         ((fx< rd buflen)
           (u8vector-shrink! buf rd)
           (append-u8vectors (reverse (cons buf chunks))))
          (else
