@@ -4,7 +4,6 @@
 package: std/net
 
 (import :gerbil/gambit/ports
-        :gerbil/gambit/misc
         :std/sugar
         :std/format
         :std/pregexp
@@ -12,9 +11,7 @@ package: std/net
         :std/net/uri
         :std/text/json
         :std/text/zlib
-        :std/srfi/13
-        )
-
+        :std/srfi/13)
 (export
   http-get http-head http-post http-put http-delete http-options
   request? request-url request-status request-status-text
@@ -25,8 +22,7 @@ package: std/net
   request-json
   request-cookies
   request-close
-  request-port
-  )
+  request-port)
 
 (defstruct request (port url history status status-text headers body encoding)
   id: std/net#request::t
