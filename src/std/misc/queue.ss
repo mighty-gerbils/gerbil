@@ -10,8 +10,8 @@ package: std/misc
         )
 
 (defstruct queue (front back length)
-  id: std/misc#queue::t
-  constructor: :init!)
+  constructor: :init!
+  final: #t)
 
 (defmethod {:init! queue}
   (lambda (self)

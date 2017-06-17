@@ -10,6 +10,7 @@ package: std/actor
         :std/format
         :std/event
         :std/logger
+        :std/misc/pqueue
         :std/net/address
         :std/net/server
         :std/os/socket
@@ -385,12 +386,14 @@ package: std/actor
     (server-output-buffer sock))
   (defvalues (read-e write-e)
     (proto-e input output))
-  (def continuations               ; wire-id => (values actor k proto stream?)
+  (def continuations                    ; wire-id => (values actor k proto stream?)
     (make-hash-table-eqv))
   (def timeouts                         ; time => wire-id
     (make-hash-table-eq))
   (def continuation-timeouts            ; wire-id => time
     (make-hash-table-eqv))
+  (def timeouts-pqueue 
+    (make-pqueue (lambda (evt) (time->seconds (event-selector evt)))))
   (def next-continuation-id 0)
   (def idle-timeout #f)
   (def reader #f)
@@ -535,7 +538,8 @@ package: std/actor
                           (+ (time->seconds (current-time)) timeo))))
                       (timeo-evt (rec evt (handle-evt abs-timeo (lambda (_) evt)))))
                  (hash-put! timeouts timeo-evt wire-id)
-                 (hash-put! continuation-timeouts wire-id timeo-evt))
+                 (hash-put! continuation-timeouts wire-id timeo-evt)
+                 (pqueue-push! timeouts-pqueue timeo-evt))
                (set! (!call-k content) wire-id)))
             ((!stream _ k)
              (let ((wire-id (next-continuation-id!))
@@ -543,13 +547,14 @@ package: std/actor
                (hash-put! continuations wire-id (values src k proto #t))
                (when timeo
                  (let* ((abs-timeo
-                       (if (time? timeo)
-                         timeo
-                         (seconds->time
-                          (+ (time->seconds (current-time)) timeo))))
+                         (if (time? timeo)
+                           timeo
+                           (seconds->time
+                            (+ (time->seconds (current-time)) timeo))))
                         (timeo-evt (rec evt (handle-evt abs-timeo (lambda (_) evt)))))
-                 (hash-put! timeouts timeo-evt wire-id)
-                 (hash-put! continuation-timeouts wire-id timeo-evt)))
+                   (hash-put! timeouts timeo-evt wire-id)
+                   (hash-put! continuation-timeouts wire-id timeo-evt)
+                   (pqueue-push! timeouts-pqueue timeo-evt)))
                (set! (!stream-k content) wire-id)))
             (else (void)))
           ;; marshall, write, loop
@@ -624,18 +629,15 @@ package: std/actor
              (lp))))))
 
   (def (timeout-event)
-    ;; TODO use a heap, this is inefficient for large number of outstanding
-    ;;      calls per connection
-    (let lp ((rest (hash-keys timeouts)) (timeo never-evt) (time #f))
-      (match rest
-        ([evt . rest]
-         (if time
-           (let (xtime (time->seconds (event-selector evt)))
-             (if (< xtime time)
-               (lp rest evt xtime)
-               (lp rest timeo time)))
-           (lp rest evt (time->seconds (event-selector evt)))))
-        (else timeo))))
+    (let lp ()
+      (if (pqueue-empty? timeouts-pqueue)
+        never-evt
+        (let (timeo (pqueue-peek timeouts-pqueue))
+          (if (hash-get timeouts timeo)
+            timeo
+            (begin
+              (pqueue-pop! timeouts-pqueue)
+              (lp)))))))
                     
   (def (loop)
     (<< (! (timeout-event)
