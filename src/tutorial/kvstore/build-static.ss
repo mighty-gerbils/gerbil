@@ -15,9 +15,10 @@
         depgraph: depgraph
         '("proto"
           (static-exe: "kvstored"
-                       "-ld-options" "-lz -llmdb"
+                       "-ld-options" "-lz -llmdb -lcrypto"
                        "-prelude" "(declare (not safe))"
                        "-e" "(include \"~~lib/_gambit#.scm\")")
           (static-exe: "kvstorec"
+                       "-ld-options" "-lcrypto"
                        "-prelude" "(declare (not safe))"
                        "-e" "(include \"~~lib/_gambit#.scm\")"))))
