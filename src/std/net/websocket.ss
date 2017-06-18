@@ -29,7 +29,8 @@ package: std/net
 (def (open-websocket-client url
                             redirect: (redirect #t)
                             headers:  (headers #f)
-                            cookies:  (cookies #f))
+                            cookies:  (cookies #f)
+                            params:   (params #f))
   (let* ((url (url->request-url url))
          (nonce (random-bytes 16))
          (nonce64 (base64-encode nonce))
@@ -41,7 +42,8 @@ package: std/net
          (req (http-get url
                         redirect: redirect
                         headers: headers
-                        cookies: cookies)))
+                        cookies: cookies
+                        params: params)))
     (try
      (let (status (request-status req))
        (unless (fx= status 101)
@@ -228,8 +230,8 @@ package: std/net
 ;; +---------------------------------------------------------------+
 ;;
 
-(def max-frame-size (expt 2 18))
-(def max-message-size (expt 2 20))
+(def max-frame-size (expt 2 20))        ; 1MB
+(def max-message-size (expt 2 20))      ; 1MB
 
 (def (set-websocket-max-frame-size! sz)
   (set! max-frame-size sz))
@@ -267,7 +269,11 @@ package: std/net
   ;; => (values fin opcode mask plen)
   (def (read-header port)
     (let* ((b0 (read-u8 port))
-           (b1 (read-u8 port)))
+           (_ (when (eof-object? b0)
+                (read-eof)))
+           (b1 (read-u8 port))
+           (_ (when (eof-object? b1)
+                (read-eof))))
       (values (fxand b0 #x80)
               (fxand b0 #x0f)
               (fxand b1 #x80)
@@ -363,7 +369,8 @@ package: std/net
                    (lp xtype [data])))
                 (else                   ; unfragmented msg
                  (let (data (read-payload port plen))
-                   (receive xtype data))))))
+                   (receive xtype data)
+                   (lp #f []))))))
             ((#x8)                      ; connection close
              (let (how (read-u16 port))
                (websocket-close ws how)
