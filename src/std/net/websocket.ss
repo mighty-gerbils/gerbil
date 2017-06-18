@@ -348,6 +348,8 @@ package: std/net
                           dlen)
                  (websocket-close ws 1009)
                  (skip-to-eof port))
+                ((fxzero? plen)         ; empty frame, skip
+                 (lp type frags))
                 ((fxzero? fin)
                  (let (data (read-payload port plen))
                    (lp type (cons data frags))))
