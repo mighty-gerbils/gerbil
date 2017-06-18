@@ -4,7 +4,6 @@
 package: std/net
 
 (import :gerbil/gambit/ports
-        :gerbil/gambit/misc
         :std/sugar
         :std/format
         :std/pregexp
@@ -12,9 +11,7 @@ package: std/net
         :std/net/uri
         :std/text/json
         :std/text/zlib
-        :std/srfi/13
-        )
-
+        :std/srfi/13)
 (export
   http-get http-head http-post http-put http-delete http-options
   request? request-url request-status request-status-text
@@ -25,7 +22,7 @@ package: std/net
   request-json
   request-cookies
   request-close
-  )
+  request-port)
 
 (defstruct request (port url history status status-text headers body encoding)
   id: std/net#request::t
@@ -51,7 +48,7 @@ package: std/net
 (def (make-http/1.1-headers headers cookies)
   (http-headers-cons! headers
     (http-headers-cons http/1.1-base-headers
-      (http-headers-cookies cookies))))
+      (http-headers-cookies (or cookies [])))))
 
 (def http/1.1-base-headers
   '(("User-Agent" . "Mozilla/5.0 (compatible; gerbil/1.0)")
@@ -165,7 +162,7 @@ package: std/net
   (with ([_ scheme host port target]
          (pregexp-match url-rx url))
     (let* ((scheme (or scheme "http"))
-            (port
+           (port
             (cond
              (port
               (string->number
@@ -174,7 +171,12 @@ package: std/net
               443)
              (else 80)))
            (target (or target "/"))
-           (headers (http-headers-cons [["Host" . host]] headers))
+           (host-header
+            (case port
+              ((80 443) host)
+              (else                     ; non-standard port
+               (format "~a:~a" host port))))
+           (headers (http-headers-cons [["Host" . host-header]] headers))
            (body
             (cond
              ((not body) #f)
@@ -288,17 +290,20 @@ package: std/net
     (let* ((data (make-u8vector length))
            (rd (read-subu8vector data 0 length port)))
       (if (fx< rd length)
-        (u8vector-shrink! data rd)
+        (begin
+          (u8vector-shrink! data rd)
+          data)
         data)))
 
   (def (read/end port)
     (let lp ((chunks []))
-      (let* ((buf (make-u8vector 1024))
-             (rd  (read-subu8vector buf 0 1024 port)))
+      (let* ((buflen 4096)
+             (buf (make-u8vector buflen))
+             (rd  (read-subu8vector buf 0 buflen port)))
         (cond
          ((fxzero? rd)
           (append-u8vectors (reverse chunks)))
-         ((fx< rd 1024)
+         ((fx< rd buflen)
           (u8vector-shrink! buf rd)
           (append-u8vectors (reverse (cons buf chunks))))
          (else
