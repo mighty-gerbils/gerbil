@@ -17,6 +17,7 @@ package: std/actor
   remote-error? raise-remote-error
   (struct-out handle remote)
   (struct-out !rpc !call !value !error !event !stream !end)
+  (struct-out !control !continue !abort)
   !!call !!call-recv !!value !!error !!event !!stream !!stream-recv !!end
   (struct-out !protocol !rpc-protocol)
   defproto
@@ -66,25 +67,25 @@ package: std/actor
       proto)))
 
 ;;; rpc messages
-(defstruct !rpc ()
-  id: std/actor#!rpc::t)
+(defstruct !rpc ())
 (defstruct (!call !rpc) (e k)
-  id: std/actor#!call::t
   final: #t)
 (defstruct (!value !rpc) (e k)
-  id: std/actor#!value::t
   final: #t)
 (defstruct (!error !rpc) (e k)
-  id: std/actor#!error::t
   final: #t)
 (defstruct (!event !rpc) (e)
-  id: std/actor#!event::t
   final: #t)
 (defstruct (!stream !rpc) (e k)
-  id: std/actor#!stream::t
   final: #t)
 (defstruct (!end !rpc) (k)
-  id: std/actor#!end::t
+  final: #t)
+
+;;; flow control messages [rpc server]
+(defstruct !control ())
+(defstruct (!continue !control) (k)
+  final: #t)
+(defstruct (!abort !control) (k)
   final: #t)
 
 (defrules !!call ()
@@ -108,19 +109,20 @@ package: std/actor
       ((!error obj (eq? k))
        (if (string? obj)
          (raise-remote-error '!!call (string-append "remote error: " obj))
-         (raise obj)))
-      (! (if (remote? dest) (proxy-handler dest) never-evt)
-         => (lambda (thread)
-              (raise-remote-error '!!call "proxy failure"
-                                  (with-catch values (cut thread-join! thread)))))))
+         (raise obj)))))
 
 (defsyntax (!!value stx)
   (syntax-case stx ()
     ((_ dest e k)
      #'(send-message dest (make-!value e k)))
+    ((_ dest e k continue: g)
+     #'(send-message dest (make-!value e k) [continue: g] #t))
     ((macro e k)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message dest (make-!value e k))))))
+       #'(send-message dest (make-!value e k))))
+    ((macro e k continue: g)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message dest (make-!value e k) [continue: g] #t)))))
 
 (defsyntax (!!error stx)
   (syntax-case stx ()
@@ -151,26 +153,19 @@ package: std/actor
 (def (!!stream-recv e k dest send-e . send-args)
   (def (stream-handler outp)
     (apply send-e dest (make-!stream e k) send-args)
-    (let (err-evt (if (remote? dest) (proxy-handler dest) never-evt))
-      (let lp ()
-        (<- ((!value val (eq? k))
-             (write val outp)
-             (lp))
-            ((!end (eq? k))
-             (close-port outp))
-            ((!error obj k)
-             (let (err
-                   (if (string? obj)
-                     (make-remote-error '!!call (string-append "remote error: " obj))
-                     obj))
-               (write err outp)
-               (close-port outp)))
-            (! err-evt
-               => (lambda (thread)
-                    (let (err (make-remote-error '!!call "proxy failure"
-                                                 (with-catch values (cut thread-join! thread))))
-                      (write err outp)
-                      (close-port outp))))))))
+    (let lp ()
+      (<- ((!value val (eq? k))
+           (write val outp)
+           (lp))
+          ((!end (eq? k))
+           (close-port outp))
+          ((!error obj k)
+           (let (err
+                 (if (string? obj)
+                   (make-remote-error '!!call (string-append "remote error: " obj))
+                   obj))
+             (write err outp)
+             (close-port outp))))))
   (let ((values inp outp)
         (open-vector-pipe [permanent-close: #t direction: 'input]
                           [permanent-close: #t direction: 'output]))
