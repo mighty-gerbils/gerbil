@@ -333,6 +333,10 @@ package: std/net
             ((#x0)                      ; continuation frame
              (let (dlen (foldl fx+ plen (map u8vector-length frags)))
                (cond
+                ((not type)
+                 (warning "unexpected continuation frame from server; closing websocket connection")
+                 (websocket-close ws 1002)
+                 (skip-to-eof port))
                 ((fx> dlen max-message-size)
                  (warning "message length ~a exceeds max message size; closing websocket connection"
                           dlen)
@@ -347,26 +351,26 @@ package: std/net
                    (receive type message)
                    (lp #f []))))))
             ((#x1 #x2)                  ; text or binary frame
-             (cond
-              (type                     ; receiving cont frames
-               (warning "unexpected frame ~x from server; closing websocket connection"
-                        opcode)
-               (websocket-close ws 1002)
-               (skip-to-eof port))
-              ((fxzero? fin)            ; first fragment
-               (let (data (read-payload port plen))
-                 (lp (if (fx= opcode #x1) 'text 'binary) [data])))
-              (else                     ; unfragmented msg
-               (let (data (read-payload port plen))
-                 (receive (if (fx= opcode #x1) 'text 'binary)
-                          data)))))
+             (let (xtype (if (fx= opcode #x1) 'text 'binary))
+               (cond
+                (type                   ; receiving cont frames
+                 (warning "unexpected frame ~x from server; closing websocket connection"
+                          opcode)
+                 (websocket-close ws 1002)
+                 (skip-to-eof port))
+                ((fxzero? fin)          ; first fragment
+                 (let (data (read-payload port plen))
+                   (lp xtype [data])))
+                (else                   ; unfragmented msg
+                 (let (data (read-payload port plen))
+                   (receive xtype data))))))
             ((#x8)                      ; connection close
              (let (how (read-u16 port))
                (websocket-close ws how)
                (skip-to-eof port)))
             ((#x9)                      ; ping
              (let (data (read-payload port plen))
-               (thread-send writer (cons 'ping data))
+               (thread-send writer (cons 'pong data))
                (lp type frags)))
             ((#xA)                      ; pong
              (skip-payload port plen)
@@ -436,7 +440,7 @@ package: std/net
          (['binary . data]
           (send port #x2 data)
           (lp))
-         (['ping . data]
+         (['pong . data]
           (send port #xA data)
           (lp))
          (['close . how]
