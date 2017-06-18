@@ -323,7 +323,7 @@ package: std/actor
   (when (message? msg)
     (with ((message content src) msg)
       (match content
-        ((!call _ k)
+        ((or (!call _ k) (!stream _ k))
          (!!error (message-source msg) "connection error" k))
         (else #!void)))))
 
