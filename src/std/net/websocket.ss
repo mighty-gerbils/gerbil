@@ -228,7 +228,7 @@ package: std/net
 ;; +---------------------------------------------------------------+
 ;;
 
-(def max-frame-size (expt 2 16))
+(def max-frame-size (expt 2 18))
 (def max-message-size (expt 2 20))
 
 (def (set-websocket-max-frame-size! sz)
@@ -385,22 +385,23 @@ package: std/net
       (with-catch void (cut close-input-port port))))))
 
 (def (websocket-writer ws)
+  (def buf (make-u8vector 65535))
+  
   (def (write-u16 plen port)
     (write-u8 (fxand (fxshift plen -8) #xff) port)
     (write-u8 (fxand plen #xff) port))
 
-  (def (write-payload mask data port)
-    (let (len (u8vector-length data))
-      (let lp ((k 0))
-        (if (fx< k len)
-          (begin
-            (##u8vector-set! data k
-                             (fxxor (##u8vector-ref data k)
-                                    (##u8vector-ref mask (fxmodulo k 4))))
-            (lp (fx1+ k)))
-          (write-subu8vector data 0 len port)))))
+  (def (write-payload mask data start end port)
+    (let lp ((k start) (x 0))
+      (if (fx< k end)
+        (begin
+          (##u8vector-set! buf x
+                           (fxxor (##u8vector-ref data k)
+                                  (##u8vector-ref mask (fxmodulo x 4))))
+          (lp (fx1+ k) (fx1+ x)))
+        (write-subu8vector buf 0 x port))))
   
-  (def (send-frame port fin opcode data (start 0) (end (u8vector-length data)))
+  (def (send-frame port fin opcode data start end)
     (let* ((plen (fx- end start))
            (fin (fxshift fin 7))
            (b0 (fxior fin opcode))
@@ -412,7 +413,7 @@ package: std/net
       (unless (fx< plen 126)
         (write-u16 plen port))
       (write-subu8vector mask-bytes 0 4 port)
-      (write-payload mask-bytes data port)
+      (write-payload mask-bytes data start end port)
       (force-output port)))
 
   (def (send port opcode data)
@@ -421,7 +422,7 @@ package: std/net
         (let (have (fx- end start))
           (if (fx< have 65536)
             (send-frame port 1 opcode data start end)
-            (let (xend (fx+ start 65536))
+            (let (xend (fx+ start 65535))
               (send-frame port 0 opcode data start xend)
               (lp xend #x0)))))))
   
