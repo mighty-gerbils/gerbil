@@ -91,7 +91,8 @@ package: std/actor
   (unregister id)
   (resolve id)
   (server-address)
-  )
+  event:
+  (shutdown))
 
 ;;; rpc-server
 (def (start-rpc-server! proto: (proto (rpc-null-proto)) . addresses)
@@ -99,7 +100,8 @@ package: std/actor
   (spawn rpc-server proto addresses))
 
 (def (stop-rpc-server! rpcd)
-  (kill-thread! rpcd))
+  (!!rpc.shutdown rpcd)
+  (thread-join! rpcd))
 
 (def (rpc-server proto addresses)
   (let* ((socksrv (start-socket-server!))
@@ -109,12 +111,9 @@ package: std/actor
       (try
        (rpc-server-loop socksrv socks sas proto)
        (catch (e)
-         (cond
-          ((eq? e 'interrupt)
-           (server-shutdown! socksrv)
-           (thread-terminate! (current-thread)))
-          (else
-           (log-error "unhandled exception" e))))
+         (unless (eq? e 'shutdown)
+           (log-error "unhandled exception" e)
+           (raise e)))
        (finally
         (server-shutdown! socksrv))))))
 
@@ -235,6 +234,8 @@ package: std/actor
         ((!rpc.server-address k)
          (let (addresses (map socket-address->address sas))
            (!!value src addresses k)))
+        ((!rpc.shutdown)
+         (raise 'shutdown))
         (else
          (warning "Unexpected message ~a" msg)))))
   
@@ -305,8 +306,8 @@ package: std/actor
    (loop)
    (catch (e)
      (thread-send monitor 'exit)
-     (for-each thread-terminate! acceptors)
-     (for-each kill-thread! (hash-keys threads))
+     (for-each server-close socks)
+     (for-each (cut thread-send <> 'shutdown) (hash-keys threads))
      (raise e))))
 
 (def (rpc-server-accept rpc-server sock safamily)
@@ -316,7 +317,7 @@ package: std/actor
             (clisock (server-accept sock cliaddr)))
        (debug "accepted connection from ~a" (socket-address->string cliaddr))
        (!!rpc.connection-accept rpc-server clisock cliaddr))
-     (catch (exception? e)
+     (catch (os-exception? e)
        (log-error "error accepting connection" e)))))
 
 (def (rpc-send-error-response msg)
@@ -340,7 +341,6 @@ package: std/actor
    (rpc-set-nodelay! sock (socket-address-family sa))
    (rpc-connection-loop rpc-server sock (socket-address->address sa) proto-e)
    (catch (e)
-     (log-error "connection error" e)
      (rpc-connection-cleanup rpc-server e sock))))
 
 (def (rpc-client-connection rpc-server socksrv address proto-e)
@@ -350,7 +350,6 @@ package: std/actor
      (rpc-set-nodelay! cli (socket-address-family sa))
      (rpc-connection-loop rpc-server cli address proto-e))
    (catch (e)
-     (log-error "connection error" e)
      (rpc-connection-cleanup rpc-server e #f))))
 
 (def (rpc-set-nodelay! sock safamily)
@@ -410,9 +409,8 @@ package: std/actor
         never-evt)))
   
   (def (close-connection)
-    (rpc-close-sock sock)
-    (thread-terminate! writer)
-    (thread-terminate! reader)
+    (server-close sock)
+    (thread-send writer 'exit)
     (thread-send monitor 'exit)
     (for-each
       (lambda (wire-id)
@@ -420,8 +418,7 @@ package: std/actor
          ((hash-get continuations wire-id)
           => (lambda (cont)
                (with ((values actor k proto stream?) cont)
-                 (!!error actor "connection closed" k)
-                 (remove-continuation! wire-id))))))
+                 (!!error actor "connection closed" k))))))
       (hash-keys continuations))
     (rpc-connection-shutdown rpc-server))
   
@@ -624,6 +621,7 @@ package: std/actor
             ((? u8vector? data)
              (write-e output data)
              (lp))
+            ('exit (void))
             (bogus
              (warning "unexpected message ~a" bogus)
              (lp))))))
@@ -650,6 +648,8 @@ package: std/actor
         (['read . data]
          (reset-idle-timeout)
          (read-message data))
+        ('shutdown
+         (close-connection))
         ((? thread?)
          (close-connection))
         (bogus
@@ -668,11 +668,8 @@ package: std/actor
   (try
    (loop)
    (catch (e)
-     (unless (eq? e 'interrupt)
-       (log-error "unhandled exception"))
-     (close-connection)
-     (when (eq? e 'interrupt)
-       (thread-terminate! (current-thread))))))
+     (log-error "unhandled exception" e)
+     (close-connection))))
 
 (def (rpc-connection-shutdown rpc-server)
   (!!rpc.connection-shutdown rpc-server)
@@ -689,14 +686,7 @@ package: std/actor
         (else (void)))))
 
 (def (rpc-connection-cleanup rpc-server exn sock)
-  (unless (eq? exn 'interrupt)
-    (log-error "connection error" exn))
-  (rpc-close-sock sock)
-  (rpc-connection-shutdown rpc-server))
-
-(def (rpc-close-sock sock)
+  (log-error "connection error" exn)
   (when sock
-    (server-close sock)))
-
-(def (kill-thread! thread)
-  (with-catch void (cut thread-interrupt! thread (cut raise 'interrupt))))
+    (server-close sock))
+  (rpc-connection-shutdown rpc-server))

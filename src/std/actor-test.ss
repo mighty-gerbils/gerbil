@@ -48,9 +48,10 @@
       (def rfoo
         (make-remote locald 'foo rpc-server-address1 hello::proto))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
-      
-      (interrupt-threads! remoted hellod locald)
-      (! remoted (void)))
+
+      (stop-rpc-server! remoted)
+      (stop-rpc-server! locald)
+      (interrupt-threads! hellod))
     
     (test-case "test RPC COOKIE proto"
       (def remoted
@@ -65,9 +66,10 @@
       (def rfoo
         (make-remote locald 'foo rpc-server-address2 hello::proto))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
-      
-      (interrupt-threads! remoted hellod locald)
-      (! remoted (void)))
+
+      (stop-rpc-server! remoted)
+      (stop-rpc-server! locald)
+      (interrupt-threads! hellod))
     
     (test-case "test RPC CIPHER proto"
       (def remoted
@@ -82,9 +84,10 @@
       (def rfoo
         (make-remote locald 'foo rpc-server-address3 hello::proto))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
-      
-      (interrupt-threads! remoted hellod locald)
-      (! remoted (void)))
+
+      (stop-rpc-server! remoted)
+      (stop-rpc-server! locald)
+      (interrupt-threads! hellod))
     
     (test-case "test RPC COOKIE-CIPHER proto"
       (def remoted
@@ -99,9 +102,10 @@
       (def rfoo
         (make-remote locald 'foo rpc-server-address4 hello::proto))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
-      
-      (interrupt-threads! remoted hellod locald)
-      (! remoted (void)))))
+
+      (stop-rpc-server! remoted)
+      (stop-rpc-server! locald)
+      (interrupt-threads! hellod))))
 
 (def (hello-stream-server remoted N)
   (!!rpc.register remoted 'foo hello::proto)
@@ -138,9 +142,10 @@
         (let (end (thread-receive))
           (check end ? message?)
           (check (message-e end) ? !end?)))
-      
-      (interrupt-threads! remoted hellod locald)
-      (! remoted (void)))
+
+      (stop-rpc-server! remoted)
+      (stop-rpc-server! locald)
+      (interrupt-threads! hellod))
 
     (test-case "test RPC stream ports"
              (def N 5)
@@ -158,7 +163,7 @@
             (check (read inp) => n)
             (lp (1+ n))))
         (check (read inp) ? eof-object?))
-      
-      (interrupt-threads! remoted hellod locald)
-      (! remoted (void)))
-    ))
+
+      (stop-rpc-server! remoted)
+      (stop-rpc-server! locald)
+      (interrupt-threads! hellod))))
