@@ -326,6 +326,8 @@ package: std/actor
       (match content
         ((or (!call _ k) (!stream _ k))
          (!!error (message-source msg) "connection error" k))
+        ((? !value?)
+         (rpc-send-control-abort msg))
         (else #!void)))))
 
 (def (rpc-send-connection-error-responses address)
@@ -335,6 +337,18 @@ package: std/actor
          (rpc-send-error-response msg)
          (lp))
         (else #!void))))
+
+(defrules rpc-send-control ()
+  ((_ msg make)
+  (alet* ((opts (message-options msg))
+          (g (pgetq continue: opts)))
+    (send (message-source msg) (make g)))))
+
+(def (rpc-send-control-abort msg)
+  (rpc-send-control msg make-!abort))
+
+(def (rpc-send-control-continue msg)
+  (rpc-send-control msg make-!continue))
 
 (def (rpc-server-connection rpc-server sock sa proto-e)
   (try
@@ -578,15 +592,24 @@ package: std/actor
       (cond
        ((u8vector? e)
         (if (fx<= (u8vector-length e) rpc-proto-message-max-length)
-          (begin
-            (thread-send writer e)
-            (loop))
+          (let* ((opts (message-options msg))
+                 (g (and opts (pgetq continue: opts))))
+            (if (and g (!value? (message-e msg)))
+              (begin
+                (thread-send writer ['continue e msg])
+                (loop))
+              (begin
+                (thread-send writer e)
+                (loop))))
           (let (content (message-e msg))
+            (warning "message too large; not sending %d bytes" (u8vector-length e))
             (match content
               ((or (!call e wire-id) (!stream e wire-id))
                (dispatch-error wire-id "message too large"))
+              ((? !value?)
+               (rpc-send-control-abort msg)
+               (loop))
               (else
-               (warning "message too large; not sending %d bytes" (u8vector-length e))
                (loop))))))
        (local-error?
         (log-error "marshall error" e)
@@ -594,6 +617,9 @@ package: std/actor
           (match content
             ((or (!call e wire-id) (!stream e wire-id))
              (dispatch-error wire-id "marshall error"))
+            ((? !value?)
+             (rpc-send-control-abort msg)
+             (loop))
             (else
              (loop)))))
        (else
@@ -613,18 +639,29 @@ package: std/actor
            (dispatch-error wire-id "timeout")))))
   
   (def (writer-loop)
-    (let lp ()
-      (let (output (server-output-buffer sock))
-        (<< (! (or rpc-keep-alive never-evt)
-               (write-e output #!void)
-               (lp))
-            ((? u8vector? data)
-             (write-e output data)
+    (try
+     (let lp ()
+       (<< (! (or rpc-keep-alive never-evt)
+              (write-e output #!void)
+              (lp))
+           ((? u8vector? data)
+            (write-e output data)
+            (lp))
+           (['continue data msg]
+            (rpc-send-control-continue msg)
+            (write-e output data)
+            (lp))
+           ('exit (void))
+           (bogus
+            (warning "unexpected message ~a" bogus)
+            (lp))))
+     (finally
+      (let lp ()
+        (<< (['continue _ msg]
+             (rpc-send-control-abort msg)
              (lp))
-            ('exit (void))
-            (bogus
-             (warning "unexpected message ~a" bogus)
-             (lp))))))
+            (data (lp))
+            (else (void)))))))
 
   (def (timeout-event)
     (let lp ()

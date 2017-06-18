@@ -33,6 +33,7 @@
 (def rpc-server-address4 "127.0.0.1:9003")
 (def rpc-server-address5 "127.0.0.1:9004")
 (def rpc-server-address6 "127.0.0.1:9005")
+(def rpc-server-address7 "127.0.0.1:9006")
 (def rpc-cookie "/tmp/actor-test-cookie")
 (rpc-generate-cookie! rpc-cookie)
 
@@ -120,6 +121,20 @@
                (!!end k)
                (lp))))))))
 
+(def (hello-stream-control-server remoted N)
+  (!!rpc.register remoted 'foo hello::proto)
+  (let lp ()
+    (<- ((!hello.hello-stream _ k)
+         (let lp2 ((n 0))
+           (if (< n N)
+             (begin
+               (!!value n k continue: k)
+               (<< ((!continue (eq? k))
+                    (lp2 (1+ n)))))
+             (begin
+               (!!end k)
+               (lp))))))))
+
 (def actor-rpc-stream-test
   (test-suite "test :std/actor RPC stream"
     (test-case "test basic RPC stream"
@@ -156,6 +171,27 @@
       (def locald  (start-rpc-server!))
       (def rfoo
         (make-remote locald 'foo rpc-server-address6 hello::proto))
+
+      (let (inp (!!hello.hello-stream rfoo "stream"))
+        (let lp ((n 0))
+          (when (< n N)
+            (check (read inp) => n)
+            (lp (1+ n))))
+        (check (read inp) ? eof-object?))
+
+      (stop-rpc-server! remoted)
+      (stop-rpc-server! locald)
+      (interrupt-threads! hellod))
+
+    (test-case "test RPC stream control"
+             (def N 5)
+      (def remoted (start-rpc-server! rpc-server-address7))
+      (def hellod  (spawn hello-stream-control-server remoted N))
+      (thread-sleep! 0.1)
+      (check (!!rpc.resolve remoted 'foo) => hellod)
+      (def locald  (start-rpc-server!))
+      (def rfoo
+        (make-remote locald 'foo rpc-server-address7 hello::proto))
 
       (let (inp (!!hello.hello-stream rfoo "stream"))
         (let lp ((n 0))

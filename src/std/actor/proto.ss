@@ -17,6 +17,7 @@ package: std/actor
   remote-error? raise-remote-error
   (struct-out handle remote)
   (struct-out !rpc !call !value !error !event !stream !end)
+  (struct-out !control !continue !abort)
   !!call !!call-recv !!value !!error !!event !!stream !!stream-recv !!end
   (struct-out !protocol !rpc-protocol)
   defproto
@@ -66,25 +67,25 @@ package: std/actor
       proto)))
 
 ;;; rpc messages
-(defstruct !rpc ()
-  id: std/actor#!rpc::t)
+(defstruct !rpc ())
 (defstruct (!call !rpc) (e k)
-  id: std/actor#!call::t
   final: #t)
 (defstruct (!value !rpc) (e k)
-  id: std/actor#!value::t
   final: #t)
 (defstruct (!error !rpc) (e k)
-  id: std/actor#!error::t
   final: #t)
 (defstruct (!event !rpc) (e)
-  id: std/actor#!event::t
   final: #t)
 (defstruct (!stream !rpc) (e k)
-  id: std/actor#!stream::t
   final: #t)
 (defstruct (!end !rpc) (k)
-  id: std/actor#!end::t
+  final: #t)
+
+;;; flow control messages [rpc server]
+(defstruct !control ())
+(defstruct (!continue !control) (k)
+  final: #t)
+(defstruct (!abort !control) (k)
   final: #t)
 
 (defrules !!call ()
@@ -114,9 +115,14 @@ package: std/actor
   (syntax-case stx ()
     ((_ dest e k)
      #'(send-message dest (make-!value e k)))
+    ((_ dest e k continue: g)
+     #'(send-message dest (make-!value e k) [continue: g] #t))
     ((macro e k)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message dest (make-!value e k))))))
+       #'(send-message dest (make-!value e k))))
+    ((macro e k continue: g)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message dest (make-!value e k) [continue: g] #t)))))
 
 (defsyntax (!!error stx)
   (syntax-case stx ()
