@@ -35,6 +35,8 @@ package: std/actor
   !rpc.resolve !!rpc.resolve
   (struct-out rpc.server-address)
   !rpc.server-address !!rpc.server-address
+  (struct-out rpc.shutdown)
+  !rpc.shutdown !!rpc.shutdown
   rpc-null-proto
   rpc-cookie-proto
   rpc-generate-cookie!
@@ -305,6 +307,7 @@ package: std/actor
   (try
    (loop)
    (catch (e)
+     (for-each (cut !!rpc.shutdown <>) (hash-keys actor-threads))
      (thread-send monitor 'exit)
      (for-each server-close socks)
      (for-each (cut thread-send <> 'shutdown) (hash-keys threads))

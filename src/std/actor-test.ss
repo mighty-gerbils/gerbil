@@ -19,13 +19,11 @@
     (<- ((!hello.hello val k)
          (!!value @source val k)
          (lp))
+        ((!rpc.shutdown)
+         (void))
         (content
          (displayln "unexpected message " @message " " content)
          (lp)))))
-
-(def (interrupt-threads! . threads)
-  (for-each (lambda (thread) (with-catch void (cut thread-interrupt! thread (cut raise 'interrupt))))
-            threads))
 
 (def rpc-server-address1 "127.0.0.1:9000")
 (def rpc-server-address2 "127.0.0.1:9001")
@@ -51,8 +49,7 @@
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (stop-rpc-server! remoted)
-      (stop-rpc-server! locald)
-      (interrupt-threads! hellod))
+      (stop-rpc-server! locald))
     
     (test-case "test RPC COOKIE proto"
       (def remoted
@@ -69,8 +66,7 @@
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (stop-rpc-server! remoted)
-      (stop-rpc-server! locald)
-      (interrupt-threads! hellod))
+      (stop-rpc-server! locald))
     
     (test-case "test RPC CIPHER proto"
       (def remoted
@@ -87,8 +83,7 @@
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (stop-rpc-server! remoted)
-      (stop-rpc-server! locald)
-      (interrupt-threads! hellod))
+      (stop-rpc-server! locald))
     
     (test-case "test RPC COOKIE-CIPHER proto"
       (def remoted
@@ -105,8 +100,7 @@
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (stop-rpc-server! remoted)
-      (stop-rpc-server! locald)
-      (interrupt-threads! hellod))))
+      (stop-rpc-server! locald))))
 
 (def (hello-stream-server remoted N)
   (!!rpc.register remoted 'foo hello::proto)
@@ -119,7 +113,9 @@
                (lp2 (1+ n)))
              (begin
                (!!end k)
-               (lp))))))))
+               (lp)))))
+        ((!rpc.shutdown)
+         (void)))))
 
 (def (hello-stream-control-server remoted N)
   (!!rpc.register remoted 'foo hello::proto)
@@ -133,7 +129,9 @@
                     (lp2 (1+ n)))))
              (begin
                (!!end k)
-               (lp))))))))
+               (lp)))))
+        ((!rpc.shutdown)
+         (void)))))
 
 (def actor-rpc-stream-test
   (test-suite "test :std/actor RPC stream"
@@ -159,8 +157,7 @@
           (check (message-e end) ? !end?)))
 
       (stop-rpc-server! remoted)
-      (stop-rpc-server! locald)
-      (interrupt-threads! hellod))
+      (stop-rpc-server! locald))
 
     (test-case "test RPC stream ports"
              (def N 5)
@@ -180,8 +177,7 @@
         (check (read inp) ? eof-object?))
 
       (stop-rpc-server! remoted)
-      (stop-rpc-server! locald)
-      (interrupt-threads! hellod))
+      (stop-rpc-server! locald))
 
     (test-case "test RPC stream control"
              (def N 5)
@@ -201,5 +197,4 @@
         (check (read inp) ? eof-object?))
 
       (stop-rpc-server! remoted)
-      (stop-rpc-server! locald)
-      (interrupt-threads! hellod))))
+      (stop-rpc-server! locald))))
