@@ -182,6 +182,16 @@ package: std/actor
   (def (handle-protocol-action msg)
     (with ((message content src dest opt) msg)
       (match content
+        ((!rpc.lookup id k)
+         (let* ((uuid (UUID id))
+                (uuids (uuid->symbol uuid)))
+           (cond
+            ((hash-get actors uuids)
+             => (lambda (actor)
+                  (let (proto (hash-get protos uuids))
+                    (!!value src (values actor proto) k))))
+            (else
+             (!!value src #f k)))))
         ((!rpc.connection-accept cli cliaddr)
          (accept-connection cli cliaddr))
         ((!rpc.connection-shutdown)
@@ -193,16 +203,6 @@ package: std/actor
                 (hash-remove! threads src)))
           (else
            (warning "Unexpected protocol mesage ~a" msg))))
-        ((!rpc.lookup id k)
-         (let* ((uuid (UUID id))
-                (uuids (uuid->symbol uuid)))
-           (cond
-            ((hash-get actors uuids)
-             => (lambda (actor)
-                  (let (proto (hash-get protos uuids))
-                    (!!value src (values actor proto) k))))
-            (else
-             (!!value src #f k)))))
         ((!rpc.register id proto k)
          (let* ((uuid (UUID id))
                 (uuids (uuid->symbol uuid)))
