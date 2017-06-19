@@ -37,6 +37,7 @@ package: std/actor
   !rpc.server-address !!rpc.server-address
   (struct-out rpc.shutdown)
   !rpc.shutdown !!rpc.shutdown
+  rpc-address
   rpc-null-proto
   rpc-cookie-proto
   rpc-generate-cookie!
@@ -72,10 +73,28 @@ package: std/actor
     (xdr-write-object address port)
     (xdr-write-object (and proto (!protocol-id proto)) port)))
 
+(def (xdr-error-read error-t port)
+  (xdr-vector-like-read (cut make-object error-t <>) 1 port))
+
+(def (xdr-error-write obj port)
+  (xdr-vector-like-write obj 1 port))
+
+(def (xdr-actor-error-read port)
+  (xdr-error-read actor-error::t port))
+
+(def (xdr-remote-error-read port)
+  (xdr-error-read remote-error::t port))
+
+(def (xdr-rpc-error-read port)
+  (xdr-error-read rpc-error::t port))
+
 (defproto-default-type
   (uuid::t uuid-t uuid? xdr-uuid-read xdr-uuid-write)
-  (handle::t handle-t remote? xdr-handle-read xdr-handle-write)
-  (remote::t remote-t remote? xdr-remote-read xdr-remote-write))
+  (handle::t handle-t handle? xdr-handle-read xdr-handle-write)
+  (remote::t remote-t remote? xdr-remote-read xdr-remote-write)
+  (actor-error::t actor-error-t actor-error? xdr-actor-error-read xdr-error-write)
+  (remote-error::t remote-error-t remote-error? xdr-remote-error-read xdr-error-write)
+  (rpc-error::t rpc-error-t rpc-error? xdr-rpc-error-read xdr-error-write))
 
 ;; rpc server protocol
 (defproto rpc
@@ -134,6 +153,19 @@ package: std/actor
          (warning "Unexpected message ~a" msg)
          (lp)))))
 
+(def (canonical-address address)
+  (cond
+   ((or (inet-address? address)
+        (inet-address-string? address))
+    (resolve-address address))
+   ((string? address)                   ; unix domain
+    address)
+   (else #f)))
+
+(def (rpc-address address)
+  (or (canonical-address address)
+      (error "Bad rpc address" address)))
+
 (def (rpc-server-loop socksrv socks sas proto)
   (def connect-e
     (!rpc-protocol-connect proto))
@@ -147,7 +179,7 @@ package: std/actor
     (make-hash-table-eq))
   (def conns                            ; address => thread
     (make-hash-table))
-  (def threads                          ; threads => address
+  (def threads                          ; thread => address
     (make-hash-table-eq))
   (def monitor
     (spawn rpc-monitor (current-thread)))
@@ -169,19 +201,20 @@ package: std/actor
       (hash-put! threads thr address)
       (thread-send monitor thr)
       thr))
-
-  (def (canonical-address address)
-    (cond
-     ((or (inet-address? address)
-          (inet-address-string? address))
-      (resolve-address address))
-     ((string? address)                 ; unix domain
-      address)
-     (else #f)))
   
   (def (handle-protocol-action msg)
     (with ((message content src dest opt) msg)
       (match content
+        ((!rpc.lookup id k)
+         (let* ((uuid (UUID id))
+                (uuids (uuid->symbol uuid)))
+           (cond
+            ((hash-get actors uuids)
+             => (lambda (actor)
+                  (let (proto (hash-get protos uuids))
+                    (!!value src (values actor proto) k))))
+            (else
+             (!!value src #f k)))))
         ((!rpc.connection-accept cli cliaddr)
          (accept-connection cli cliaddr))
         ((!rpc.connection-shutdown)
@@ -193,16 +226,6 @@ package: std/actor
                 (hash-remove! threads src)))
           (else
            (warning "Unexpected protocol mesage ~a" msg))))
-        ((!rpc.lookup id k)
-         (let* ((uuid (UUID id))
-                (uuids (uuid->symbol uuid)))
-           (cond
-            ((hash-get actors uuids)
-             => (lambda (actor)
-                  (let (proto (hash-get protos uuids))
-                    (!!value src (values actor proto) k))))
-            (else
-             (!!value src #f k)))))
         ((!rpc.register id proto k)
          (let* ((uuid (UUID id))
                 (uuids (uuid->symbol uuid)))
@@ -224,7 +247,7 @@ package: std/actor
              (if (null? actor-rest)
                (hash-remove! actor-threads thread)
                (hash-put! actor-threads thread actor-rest)))
-           (!!value src #!void k)))
+           (!!value src (void) k)))
         ((!rpc.resolve id k)
          (let* ((uuid (UUID id))
                 (uuids (uuid->symbol uuid)))
@@ -271,6 +294,8 @@ package: std/actor
             ((remote? dest)
              (let (address (canonical-address (remote-address dest)))
                (cond
+                ((not address)
+                 (rpc-send-error-response msg "bad address"))
                 ((hash-get conns address)
                  => (lambda (handler)
                       (thread-send handler msg)))
@@ -284,12 +309,12 @@ package: std/actor
                 ((hash-get actors uuids)
                  => (lambda (actor) (send actor msg)))
                 (else
-                 (rpc-send-error-response msg)))))
+                 (rpc-send-error-response msg "unknown actor")))))
             ((eq? (current-thread) dest)
              (handle-protocol-action msg))
             (else
              (warning "bad destination ~a" dest)
-             (rpc-send-error-response msg)))))
+             (rpc-send-error-response msg "bad destination")))))
         ((? thread? thread)
          (cond
           ((eq? thread socksrv)
@@ -310,7 +335,12 @@ package: std/actor
      (for-each (cut !!rpc.shutdown <>) (hash-keys actor-threads))
      (thread-send monitor 'exit)
      (for-each server-close socks)
-     (for-each (cut thread-send <> 'shutdown) (hash-keys threads))
+     (for-each (lambda (thread)
+                 (thread-send thread 'shutdown)
+                 (!!rpc.connection-close thread))
+               (hash-keys threads))
+     (for-each thread-join! (hash-keys threads))
+     (rpc-send-error-responses "server shutdown")
      (raise e))))
 
 (def (rpc-server-accept rpc-server sock safamily)
@@ -323,23 +353,32 @@ package: std/actor
      (catch (os-exception? e)
        (log-error "error accepting connection" e)))))
 
-(def (rpc-send-error-response msg)
+(def (rpc-send-error-response msg what)
   (when (message? msg)
     (with ((message content src) msg)
       (match content
         ((or (!call _ k) (!stream _ k))
-         (!!error (message-source msg) "connection error" k))
+         (!!error (message-source msg) (make-rpc-error 'rpc-server what) k))
         ((? !value?)
          (rpc-send-control-abort msg))
-        (else #!void)))))
+        (else (void))))))
+
+(def (rpc-send-error-responses what)
+  (let lp ()
+    (<< ((? message? msg)
+         (rpc-send-error-response msg what)
+         (lp))
+        (ignore (lp))
+        (else (void)))))
 
 (def (rpc-send-connection-error-responses address)
   (let lp ()
     (<< ((and (message _ _ (remote _ _ (equal? address)))
               msg)
-         (rpc-send-error-response msg)
+         (rpc-send-error-response msg "connection error")
          (lp))
-        (else #!void))))
+        (ignore (lp))
+        (else (void)))))
 
 (defrules rpc-send-control ()
   ((_ msg make)
@@ -435,7 +474,7 @@ package: std/actor
          ((hash-get continuations wire-id)
           => (lambda (cont)
                (with ((values actor k proto stream?) cont)
-                 (!!error actor "connection closed" k))))))
+                 (!!error actor (make-rpc-error 'rpc-connection "connection closed") k))))))
       (hash-keys continuations))
     (rpc-connection-shutdown rpc-server))
   
@@ -493,16 +532,15 @@ package: std/actor
                (log-error "unmarshall error" e)
                (loop)))))
         (else
-         (warning "cannot route call; no actor binding ~a" uuid)
+         (warning "cannot route call; no actor binding ~a" (uuid->symbol uuid))
          (match (message-e msg)
-           ((!call _ k)
+           ((or (!call _ k) (!stream _ k))
             (marshall-and-write
-             (make-message (make-!error "no binding" k) #!void uuid #f)
+             (make-message (make-!error "no binding" k) (void) uuid #f)
              #f #f))
            (else
             (loop)))))))
-
-    
+  
   (def (dispatch-value msg bytes value-k value-k-set!)
     (let* ((content (message-e msg))
            (cont    (value-k content)))
@@ -521,7 +559,7 @@ package: std/actor
                     (send actor msg)
                     (loop))
                   (begin
-                    (!!error actor "unmarshall error" k)
+                    (!!error actor (make-rpc-error 'rpc-connection "unmarshall error") k)
                     (remove-continuation! cont)
                     (loop)))))))
        (else
@@ -631,7 +669,7 @@ package: std/actor
   
   (def (dispatch-error wire-id what)
     (with ((values actor k proto stream?) (hash-ref continuations wire-id))
-      (!!error actor what k)
+      (!!error actor (make-rpc-error 'rpc-connection what) k)
       (remove-continuation! wire-id)
       (loop)))
   
@@ -645,7 +683,7 @@ package: std/actor
     (try
      (let lp ()
        (<< (! (or rpc-keep-alive never-evt)
-              (write-e output #!void)
+              (write-e output (void))
               (lp))
            ((? u8vector? data)
             (write-e output data)
@@ -720,10 +758,9 @@ package: std/actor
              ((!rpc.connection-close)
               (void))
              (else
-              (rpc-send-error-response msg)
+              (rpc-send-error-response msg "connection closed")
               (lp)))))
-        (value (lp))
-        (else (void)))))
+        (ignore (lp)))))
 
 (def (rpc-connection-cleanup rpc-server exn sock)
   (log-error "connection error" exn)

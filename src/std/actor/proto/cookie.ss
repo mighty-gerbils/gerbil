@@ -37,9 +37,9 @@ package: std/actor/proto
           (values rpc-null-proto-read
                   rpc-null-proto-write))
          ((eof-object? e)
-          (raise-rpc-error 'rpc-proto-connect "connection closed"))
+          (raise-rpc-io-error 'rpc-proto-connect "connection closed"))
          (else
-          (raise-rpc-error 'rpc-proto-connect "bad hello" e)))))))
+          (raise-rpc-io-error 'rpc-proto-connect "bad hello" e)))))))
 
 (def (rpc-cookie-proto-challenge ibuf obuf cookie)
   (server-output-write-u8 obuf rpc-proto-challenge)
@@ -49,7 +49,7 @@ package: std/actor/proto
     (server-output-force obuf)
     (let* ((sz (server-input-read-u32 ibuf))
            (_ (unless (fx= sz challenge-length)
-                (raise-rpc-error 'rpc-proto-authen "challenge response size mismatch" sz)))
+                (raise-rpc-io-error 'rpc-proto-authen "challenge response size mismatch" sz)))
            (response (make-u8vector sz))
            (_ (server-input-read ibuf response))
            (secret
@@ -64,12 +64,12 @@ package: std/actor/proto
         (begin
           (server-output-write-u8 obuf rpc-proto-connect-reject)
           (server-output-force obuf)
-          (raise-rpc-error 'rpc-proto-authen "authentication failure" challenge response))))))
+          (raise-rpc-io-error 'rpc-proto-authen "authentication failure" challenge response))))))
 
 (def (rpc-cookie-proto-challenge-respond ibuf obuf cookie)
   (let* ((sz (server-input-read-u32 ibuf))
          (_ (when (fx> sz 1024)
-              (raise-rpc-error 'rpc-proto-authen "inordinately sized challenge" sz)))
+              (raise-rpc-io-error 'rpc-proto-authen "inordinately sized challenge" sz)))
          (challenge (make-u8vector sz))
          (_ (server-input-read ibuf challenge))
          (digest (make-digest challenge-digest)))
@@ -84,9 +84,9 @@ package: std/actor/proto
        ((eq? e rpc-proto-connect-accept)
         #!void)
        ((eof-object? e)
-        (raise-rpc-error 'rpc-proto-authen "connection closed"))
+        (raise-rpc-io-error 'rpc-proto-authen "connection closed"))
        (else
-        (raise-rpc-error 'rpc-proto-authen "authentication failure" e))))))
+        (raise-rpc-io-error 'rpc-proto-authen "authentication failure" e))))))
 
 (def (rpc-cookie-proto (cookie-file "~/.gerbil/cookie"))
   (let (cookie (call-with-input-file cookie-file read))

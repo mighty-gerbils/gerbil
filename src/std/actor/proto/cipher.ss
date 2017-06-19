@@ -41,15 +41,15 @@ package: std/actor/proto
        ((eq? e rpc-proto-key-exchange)
         (let* ((sz (server-input-read-u32 ibuf))
                (_ (when (fx> sz 1024)
-                    (raise-rpc-error 'rpc-proto-key-exchange "inordinately sized key" sz)))
+                    (raise-rpc-io-error 'rpc-proto-key-exchange "inordinately sized key" sz)))
                (bytes (make-u8vector sz))
                (_ (server-input-read ibuf bytes))
                (peerk (bytes->BN bytes)))
           (DH-compute-key dh peerk)))
        ((eof-object? e)
-        (raise-rpc-error 'rpc-proto-key-exchange "connection closed"))
+        (raise-rpc-io-error 'rpc-proto-key-exchange "connection closed"))
        (else
-        (raise-rpc-error 'rpc-proto-key-exchange "key exchange error" e))))))
+        (raise-rpc-io-error 'rpc-proto-key-exchange "key exchange error" e))))))
 
 (def (rpc-cipher-proto-read ibuf secret)
   (let (e (server-input-read-u8 ibuf #f))
@@ -64,7 +64,7 @@ package: std/actor/proto
              (_      (server-input-read ibuf iv))
              (size   (server-input-read-u32 ibuf))
              (_      (unless (fx<= size rpc-proto-message-max-length)
-                       (raise-rpc-error 'rpc-proto-read "message too large" size)))
+                       (raise-rpc-io-error 'rpc-proto-read "message too large" size)))
              (ctext  (make-u8vector size))
              (_      (server-input-read ibuf ctext))
              (_      (digest-update! digest secret))
@@ -72,13 +72,13 @@ package: std/actor/proto
              (_      (digest-update! digest ctext))
              (hmac*  (digest-final! digest))
              (_      (unless (equal? hmac hmac*)
-                       (raise-rpc-error 'rpc-proto-read "HMAC failure"))))
+                       (raise-rpc-io-error 'rpc-proto-read "HMAC failure"))))
         (decrypt cipher key iv ctext)))
      ((eq? e rpc-proto-keep-alive)
       #!void)
      ((eof-object? e) e)
      (else
-      (raise-rpc-error 'rpc-proto-read "bad message" e)))))
+      (raise-rpc-io-error 'rpc-proto-read "bad message" e)))))
 
 (def (rpc-cipher-proto-write obuf obj secret)
   (cond
@@ -102,7 +102,7 @@ package: std/actor/proto
       (server-output-write obuf ctext)
       (server-output-force obuf)))
    (else
-    (raise-rpc-error 'rpc-proto-write "unexpected object" obj))))
+    (raise-rpc-io-error 'rpc-proto-write "unexpected object" obj))))
 
 (def (rpc-cipher-proto-accept ibuf obuf)
   (rpc-proto-accept-e ibuf obuf rpc-proto-cipher
@@ -141,9 +141,9 @@ package: std/actor/proto
               (cut rpc-cipher-proto-read <> secret)
               (cut rpc-cipher-proto-write <> <> secret))))
          ((eof-object? e)
-          (raise-rpc-error 'rpc-proto-connect "connect closed"))
+          (raise-rpc-io-error 'rpc-proto-connect "connect closed"))
          (else
-          (raise-rpc-error 'rpc-proto-connect "bad hello" e)))))))
+          (raise-rpc-io-error 'rpc-proto-connect "bad hello" e)))))))
 
 (def (rpc-cipher-proto)
   (make-!rpc-protocol

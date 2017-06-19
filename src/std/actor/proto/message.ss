@@ -77,8 +77,8 @@ package: std/actor/proto
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         (else
-         (raise-rpc-error 'rpc-proto-write-message
-                          "unknown rpc message type" content))))
+         (raise-rpc-io-error 'rpc-proto-write-message
+                             "unknown rpc message type" content))))
      (else
       (write-u8 rpc-proto-message-raw port)))
     (parameterize ((current-xdr-type-registry
@@ -127,8 +127,8 @@ package: std/actor/proto
        (let (k (xdr-read-object port))
          (make-!end k)))
       (else
-       (raise-rpc-error 'rpc-proto-read-message
-                        "unmarshall error; unexpected message type" type)))
+       (raise-rpc-io-error 'rpc-proto-read-message
+                           "unmarshall error; unexpected message type" type)))
      #!void dest #f)))
 
 ;; return modify msg content in place, return it
@@ -148,8 +148,12 @@ package: std/actor/proto
           (set! (!value-e content)
             (xdr-read-object port)))
          ((!error? content)
-          (set! (!error-e content)
-            (xdr-read-object port)))
+          (let* ((e (xdr-read-object port))
+                 (e (if (string? e)
+                      (make-remote-error 'rpc e)
+                      e)))
+            (set! (!error-e content)
+              e)))
          ((!event? content)
           (set! (!event-e content)
             (xdr-read-object port)))
