@@ -13,7 +13,7 @@ package: std/actor
         :std/actor/xdr
         )
 (export
-  rpc-error? raise-rpc-error
+  rpc-io-error? raise-rpc-io-error
   remote-error? raise-remote-error
   (struct-out handle remote)
   (struct-out !rpc !call !value !error !event !stream !end)
@@ -31,14 +31,12 @@ package: std/actor
         protocol-info-events)
   )
 
-(defstruct (rpc-error io-error) ()
-  id: std/actor#rpc-error::t)
+(defstruct (rpc-io-error io-error) ())
 
-(defstruct (remote-error <error>) ()
-  id: std/actor#remote-error::t)
+(defstruct (remote-error <error>) ())
 
-(def (raise-rpc-error where what . irritants)
-  (raise (make-rpc-error what irritants where)))
+(def (raise-rpc-io-error where what . irritants)
+  (raise (make-rpc-io-error what irritants where)))
 
 (def (raise-remote-error where what . irritants)
   (raise (make-remote-error what irritants where)))

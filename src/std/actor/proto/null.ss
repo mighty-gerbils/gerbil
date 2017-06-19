@@ -17,9 +17,9 @@ package: std/actor/proto
 ;; generic rpc hello
 (def (rpc-proto-accept-e ibuf obuf proto-t K)
   (def (connection-closed)
-    (raise-rpc-error 'rpc-proto-accept "connection closed"))
+    (raise-rpc-io-error 'rpc-proto-accept "connection closed"))
   (def (bad-hello e)
-    (raise-rpc-error 'rpc-proto-accept "bad hello" e))
+    (raise-rpc-io-error 'rpc-proto-accept "bad hello" e))
   
   (let (e (server-input-read-u8 ibuf #f))
     (cond
@@ -42,11 +42,11 @@ package: std/actor/proto
 
 (def (rpc-proto-connect-e ibuf obuf proto-t K)
   (def (connection-rejected)
-    (raise-rpc-error 'rpc-proto-connect "Connection hello rejected by peer"))
+    (raise-rpc-io-error 'rpc-proto-connect "Connection hello rejected by peer"))
   (def (connection-closed)
-    (raise-rpc-error 'rpc-proto-connect "connection closed"))
+    (raise-rpc-io-error 'rpc-proto-connect "connection closed"))
   (def (bad-hello)
-    (raise-rpc-error 'rpc-proto-connect "bad hello"))
+    (raise-rpc-io-error 'rpc-proto-connect "bad hello"))
 
   (server-output-write-u8 obuf rpc-proto-connect-hello)
   (server-output-write-u8 obuf proto-t)
@@ -88,11 +88,11 @@ package: std/actor/proto
                  (rd  (server-input-read ibuf buf)))
             (if (fx= rd len)
               buf
-              (raise-rpc-error 'rpc-proto-read "premature end of input" rd len)))
-          (raise-rpc-error 'rpc-proto-read "message too long" len))))
+              (raise-rpc-io-error 'rpc-proto-read "premature end of input" rd len)))
+          (raise-rpc-io-error 'rpc-proto-read "message too long" len))))
      ((eof-object? e) e)
      (else
-      (raise-rpc-error 'rpc-proto-read "bad message" e)))))
+      (raise-rpc-io-error 'rpc-proto-read "bad message" e)))))
 
 (def (rpc-null-proto-write obuf obj)
   (cond
@@ -105,7 +105,7 @@ package: std/actor/proto
     (server-output-write obuf obj)
     (server-output-force obuf))
    (else
-    (raise-rpc-error 'rpc-proto-write "unexpected object" obj))))
+    (raise-rpc-io-error 'rpc-proto-write "unexpected object" obj))))
 
 (def (rpc-null-proto)
   (make-!rpc-protocol
