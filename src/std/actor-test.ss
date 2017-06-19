@@ -32,6 +32,7 @@
 (def rpc-server-address5 "127.0.0.1:9004")
 (def rpc-server-address6 "127.0.0.1:9005")
 (def rpc-server-address7 "127.0.0.1:9006")
+(def rpc-server-address8 "127.0.0.1:9007")
 (def rpc-cookie "/tmp/actor-test-cookie")
 (rpc-generate-cookie! rpc-cookie)
 
@@ -98,6 +99,20 @@
       (def rfoo
         (make-remote locald 'foo rpc-server-address4 hello::proto))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
+
+      (stop-rpc-server! remoted)
+      (stop-rpc-server! locald))
+
+    (test-case "test RPC errors"
+      (def locald (start-rpc-server!))
+      (def rfoo
+        (make-remote locald 'foo rpc-server-address8 hello::proto))
+
+      (check (with-catch values (cut !!hello.hello rfoo 'a)) ? rpc-error?)
+
+      (def remoted (start-rpc-server! rpc-server-address8))
+      (thread-sleep! 0.1)
+      (check (with-catch values (cut !!hello.hello rfoo 'a)) ? remote-error?)
 
       (stop-rpc-server! remoted)
       (stop-rpc-server! locald))))
@@ -180,7 +195,7 @@
       (stop-rpc-server! locald))
 
     (test-case "test RPC stream control"
-             (def N 5)
+      (def N 5)
       (def remoted (start-rpc-server! rpc-server-address7))
       (def hellod  (spawn hello-stream-control-server remoted N))
       (thread-sleep! 0.1)

@@ -358,7 +358,7 @@ package: std/actor
     (with ((message content src) msg)
       (match content
         ((or (!call _ k) (!stream _ k))
-         (!!error (message-source msg) what k))
+         (!!error (message-source msg) (make-rpc-error 'rpc-server what) k))
         ((? !value?)
          (rpc-send-control-abort msg))
         (else (void))))))
@@ -474,7 +474,7 @@ package: std/actor
          ((hash-get continuations wire-id)
           => (lambda (cont)
                (with ((values actor k proto stream?) cont)
-                 (!!error actor "connection closed" k))))))
+                 (!!error actor (make-rpc-error 'rpc-connection "connection closed") k))))))
       (hash-keys continuations))
     (rpc-connection-shutdown rpc-server))
   
@@ -532,7 +532,7 @@ package: std/actor
                (log-error "unmarshall error" e)
                (loop)))))
         (else
-         (warning "cannot route call; no actor binding ~a" uuid)
+         (warning "cannot route call; no actor binding ~a" (uuid->symbol uuid))
          (match (message-e msg)
            ((or (!call _ k) (!stream _ k))
             (marshall-and-write
@@ -559,7 +559,7 @@ package: std/actor
                     (send actor msg)
                     (loop))
                   (begin
-                    (!!error actor "unmarshall error" k)
+                    (!!error actor (make-rpc-error 'rpc-connection "unmarshall error") k)
                     (remove-continuation! cont)
                     (loop)))))))
        (else
@@ -669,7 +669,7 @@ package: std/actor
   
   (def (dispatch-error wire-id what)
     (with ((values actor k proto stream?) (hash-ref continuations wire-id))
-      (!!error actor what k)
+      (!!error actor (make-rpc-error 'rpc-connection what) k)
       (remove-continuation! wire-id)
       (loop)))
   

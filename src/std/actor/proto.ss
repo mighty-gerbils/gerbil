@@ -168,7 +168,7 @@ package: std/actor
           ((!error obj k)
            (let (err
                  (if (string? obj)
-                   (make-remote-error '!!call (string-append "remote error: " obj))
+                   (make-actor-error '!!stream obj)
                    obj))
              (write err outp)
              (close-port outp))))))
