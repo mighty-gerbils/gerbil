@@ -509,14 +509,13 @@ package: std/actor
         (else
          (warning "cannot route call; no actor binding ~a" uuid)
          (match (message-e msg)
-           ((!call _ k)
+           ((or (!call _ k) (!stream _ k))
             (marshall-and-write
              (make-message (make-!error "no binding" k) (void) uuid #f)
              #f #f))
            (else
             (loop)))))))
-
-    
+  
   (def (dispatch-value msg bytes value-k value-k-set!)
     (let* ((content (message-e msg))
            (cont    (value-k content)))
