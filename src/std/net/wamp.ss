@@ -127,14 +127,6 @@ package: std/net
                 topics)
       (hash-remove! actor-subscriptions thread)))
 
-  (def (remove-actor-subscription! topic thread)
-    (alet (topics (hash-get actor-subscriptions thread))
-      (let (topics (remove topic topics))
-        (if (null? topics)
-          (hash-remove! actor-subscriptions thread)
-          (hash-put! actor-subscriptions thread topics)))
-      (remove-subscription! topic thread)))
-  
   (def (remove-subscription! topic thread)
     (let* ((subs (hash-ref topic-subscriptions topic))
            (subs (remq thread subs)))
@@ -146,6 +138,14 @@ package: std/net
           (let (reqid (request-id))
             (wamp-send [UNSUBSCRIBE reqid subid])))
         (hash-put! topic-subscriptions topic subs))))
+  
+  (def (remove-actor-subscription! topic thread)
+    (alet (topics (hash-get actor-subscriptions thread))
+      (let (topics (remove topic topics))
+        (if (null? topics)
+          (hash-remove! actor-subscriptions thread)
+          (hash-put! actor-subscriptions thread topics)))
+      (remove-subscription! topic thread)))
 
   (def (add-actor-subscription! topic thread)
     (cond
@@ -192,6 +192,9 @@ package: std/net
                       (add-actor-subscription! topic src)
                       (!!value src (void) k)))
                    pend)))
+
+      ([(eq? UNSUBSCRIBED) reqid subid]
+       (void))
       
       ([(eq? ERROR) what reqid details err . rest]
        (cond
@@ -205,18 +208,21 @@ package: std/net
                 (pend (hash-get pend-topic-subscriptions topic)))
            (hash-remove! pend-subscriptions reqid)
            (hash-remove! pend-topic-subscriptions topic)
-           (for-each (match <>
-                       ([src . k]
-                        (!!error src (apply make-wamp-error 'SUBSCRIBE err details rest) k)))
-                     pend)))))
+           (let (err (apply make-wamp-error 'SUBSCRIBE err details rest))
+             (for-each (cut send-pend-error <> err) pend))))
+
+        (else
+         (warning "unexpected ERROR: ~a ~a" what err))))
 
       ([(eq? GOODBYE) details reason]
-       (wamp-send ['GOODBYE empty-hash "wamp.error.goodbye_and_out"])
+       (wamp-send [GOODBYE empty-hash "wamp.error.goodbye_and_out"])
        (raise 'shutdown))
       
-      (else (void))))
-
+      (else
+       (warning "unexpected message: ~a" msg))))
+  
   (def rbytes (make-u8vector 7))
+  (def rmax (expt 2 53))
   
   (def (request-id)
     (random-bytes! rbytes)
@@ -224,7 +230,7 @@ package: std/net
       (if (fx< k 7)
         (lp (fx1+ k)
             (bitwise-ior (arithmetic-shift r 8) (##u8vector-ref rbytes k)))
-        (modulo r (expt 2 53)))))
+        (modulo r rmax))))
   
   (def (message-tail args kws)
     (if (null? args)
@@ -271,7 +277,7 @@ package: std/net
            (wamp-send ws [PUBLISH reqid (or opts empty-hash) topic (message-tail args kws) ...])))
         ;; control
         ((!wamp.shutdown)
-         (wamp-send ['GOODBYE empty-hash "wamp.error.close_realm"])
+         (wamp-send [GOODBYE empty-hash "wamp.error.close_realm"])
          (raise 'shutdown))
         ((!wamp.close-connection e)
          (raise e))
@@ -281,12 +287,22 @@ package: std/net
          (warning "unexpected message: ~a" bogus)))
     (loop))
 
+  (def (send-shutdown-errors pend)
+    (let (err (make-wamp-error 'wamp-client "client shutdown"))
+      (for-each (cut send-pend-error <> err) pend)))
+                     
+  (def (send-pend-error pend err)
+    (with ([src . k] pend)
+      (!!error src err k)))
+
   (try
    (loop)
    (catch (e)
      (unless (eq? 'shutdown error)
        (log-error "wamp client error" e))
      (websocket-close ws)
+     (send-shutdown-errors (hash-values pend-calls))
+     (for-each send-shutdown-errors (hash-values pend-subscriptions))
      (for-each (cut !!wamp.shutdown <>) (hash-keys actor-subscriptions))
      (unless (eq? 'shutdown error)
        (raise e)))))
