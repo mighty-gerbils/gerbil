@@ -37,6 +37,7 @@ package: std/actor
   !rpc.server-address !!rpc.server-address
   (struct-out rpc.shutdown)
   !rpc.shutdown !!rpc.shutdown
+  rpc-address
   rpc-null-proto
   rpc-cookie-proto
   rpc-generate-cookie!
@@ -134,6 +135,19 @@ package: std/actor
          (warning "Unexpected message ~a" msg)
          (lp)))))
 
+(def (canonical-address address)
+  (cond
+   ((or (inet-address? address)
+        (inet-address-string? address))
+    (resolve-address address))
+   ((string? address)                   ; unix domain
+    address)
+   (else #f)))
+
+(def (rpc-address address)
+  (or (canonical-address address)
+      (error "Bad rpc address" address)))
+
 (def (rpc-server-loop socksrv socks sas proto)
   (def connect-e
     (!rpc-protocol-connect proto))
@@ -169,15 +183,6 @@ package: std/actor
       (hash-put! threads thr address)
       (thread-send monitor thr)
       thr))
-
-  (def (canonical-address address)
-    (cond
-     ((or (inet-address? address)
-          (inet-address-string? address))
-      (resolve-address address))
-     ((string? address)                 ; unix domain
-      address)
-     (else #f)))
   
   (def (handle-protocol-action msg)
     (with ((message content src dest opt) msg)
@@ -271,6 +276,8 @@ package: std/actor
             ((remote? dest)
              (let (address (canonical-address (remote-address dest)))
                (cond
+                ((not address)
+                 (rpc-send-error-response msg "bad address"))
                 ((hash-get conns address)
                  => (lambda (handler)
                       (thread-send handler msg)))
