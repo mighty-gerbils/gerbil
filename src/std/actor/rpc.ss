@@ -147,7 +147,7 @@ package: std/actor
     (make-hash-table-eq))
   (def conns                            ; address => thread
     (make-hash-table))
-  (def threads                          ; threads => address
+  (def threads                          ; thread => address
     (make-hash-table-eq))
   (def monitor
     (spawn rpc-monitor (current-thread)))
@@ -284,12 +284,12 @@ package: std/actor
                 ((hash-get actors uuids)
                  => (lambda (actor) (send actor msg)))
                 (else
-                 (rpc-send-error-response msg)))))
+                 (rpc-send-error-response msg "unknown actor")))))
             ((eq? (current-thread) dest)
              (handle-protocol-action msg))
             (else
              (warning "bad destination ~a" dest)
-             (rpc-send-error-response msg)))))
+             (rpc-send-error-response msg "bad destination")))))
         ((? thread? thread)
          (cond
           ((eq? thread socksrv)
@@ -310,7 +310,12 @@ package: std/actor
      (for-each (cut !!rpc.shutdown <>) (hash-keys actor-threads))
      (thread-send monitor 'exit)
      (for-each server-close socks)
-     (for-each (cut thread-send <> 'shutdown) (hash-keys threads))
+     (for-each (lambda (thread)
+                 (thread-send thread 'shutdown)
+                 (!!rpc.connection-close thread))
+               (hash-keys threads))
+     (for-each thread-join! (hash-keys threads))
+     (rpc-send-error-responses "server shutdown")
      (raise e))))
 
 (def (rpc-server-accept rpc-server sock safamily)
@@ -323,22 +328,31 @@ package: std/actor
      (catch (os-exception? e)
        (log-error "error accepting connection" e)))))
 
-(def (rpc-send-error-response msg)
+(def (rpc-send-error-response msg what)
   (when (message? msg)
     (with ((message content src) msg)
       (match content
         ((or (!call _ k) (!stream _ k))
-         (!!error (message-source msg) "connection error" k))
+         (!!error (message-source msg) what k))
         ((? !value?)
          (rpc-send-control-abort msg))
         (else #!void)))))
+
+(def (rpc-send-error-responses what)
+  (let lp ()
+    (<< ((? message? msg)
+         (rpc-send-error-response msg what)
+         (lp))
+        (ignore (lp))
+        (else #!void))))
 
 (def (rpc-send-connection-error-responses address)
   (let lp ()
     (<< ((and (message _ _ (remote _ _ (equal? address)))
               msg)
-         (rpc-send-error-response msg)
+         (rpc-send-error-response msg "connection error")
          (lp))
+        (ignore (lp))
         (else #!void))))
 
 (defrules rpc-send-control ()
@@ -720,10 +734,9 @@ package: std/actor
              ((!rpc.connection-close)
               (void))
              (else
-              (rpc-send-error-response msg)
+              (rpc-send-error-response msg "connection closed")
               (lp)))))
-        (value (lp))
-        (else (void)))))
+        (ignore (lp)))))
 
 (def (rpc-connection-cleanup rpc-server exn sock)
   (log-error "connection error" exn)
