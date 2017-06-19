@@ -14,9 +14,21 @@ package: std/net
         :std/actor/proto
         :std/crypto/etc
         :std/text/json)
-(export start-wamp-client!
-        wamp-call wamp-subscribe wamp-close
-        )
+(export
+  (except-out #t wamp-client wamp-reader
+              session-details
+              wamp-open-session
+              wamp-send
+              wamp-recv
+              HELLO WELCOME ABORT GOODBYE
+              ERROR
+              PUBLISH PUBLISHED
+              SUBSCRIBE SUBSCRIBED
+              UNSUBSCRIBE UNSUBSCRIBED
+              EVENT
+              CALL RESULT
+              REGISTER REGISTERED UNREGISTER UNREGISTERED
+              INVOCATION YIELD))
 
 (defstruct (wamp-error <error>) ())
 
@@ -30,7 +42,7 @@ package: std/net
                          params: (params #f))
   (start-logger!)
   (let* ((headers
-          (cons '(("Sec-WebSocket-Protocol" . "wamp.2.json"))
+          (cons '("Sec-WebSocket-Protocol" . "wamp.2.json")
                 (or headers [])))
          (ws (open-websocket-client url
                                     redirect: redirect
@@ -58,17 +70,22 @@ package: std/net
        (<- ((!wamp.event _ details args kws)
             (write (values details args kws) outp)
             (lp))
+           ((!wamp.close-stream)
+            (!!wamp.unsubscribe cli topic)
+            (close-port outp))
            ((!wamp.shutdown)
             (close-port outp))))
      (catch (e)
+       (!!wamp.unsubscribe cli topic)
        (write e outp)
        (close-port outp))))
   
-  (let ((values inp outp)
-        (open-vector-pipe [permanent-close: #t direction: 'input]
-                          [permanent-close: #t direction: 'output]))
-    (spawn event-handler outp)
-    inp))
+  (let* (((values inp outp)
+          (open-vector-pipe [permanent-close: #t direction: 'input]
+                            [permanent-close: #t direction: 'output]))
+         (handler (spawn event-handler outp))
+         (close (lambda () (!!wamp.close-stream handler))))
+    (values inp close)))
 
 ;; close a wamp client
 (def (wamp-close cli)
@@ -85,8 +102,8 @@ package: std/net
   (invoke proc details args kws)        ; => (values opts args kws) 
   ;; pubsub
   (subscribe topic opts)
-  (unsubscribe topic)
   event:
+  (unsubscribe topic)
   (publish topic opts args kws)
   (event topic details args kws)
   ;; notifications
@@ -94,7 +111,8 @@ package: std/net
   ;; internal
   (receive msg)
   (close-connection e)
-  (remove-thread e))
+  (remove-thread e)
+  (close-stream))
 
 (def (wamp-client ws realm sid)
   (def pend-calls                       ; request-id -> [thread . k]
@@ -136,7 +154,7 @@ package: std/net
           (hash-remove! topic-subscriptions topic)
           (hash-remove! topic-subscription-ids topic)
           (let (reqid (request-id))
-            (wamp-send [UNSUBSCRIBE reqid subid])))
+            (wamp-send ws [UNSUBSCRIBE reqid subid])))
         (hash-put! topic-subscriptions topic subs))))
   
   (def (remove-actor-subscription! topic thread)
@@ -193,7 +211,7 @@ package: std/net
                       (!!value src (void) k)))
                    pend)))
 
-      ([(eq? UNSUBSCRIBED) reqid subid]
+      ([(eq? UNSUBSCRIBED) . _]
        (void))
       
       ([(eq? ERROR) what reqid details err . rest]
@@ -215,7 +233,7 @@ package: std/net
          (warning "unexpected ERROR: ~a ~a" what err))))
 
       ([(eq? GOODBYE) details reason]
-       (wamp-send [GOODBYE empty-hash "wamp.error.goodbye_and_out"])
+       (wamp-send ws [GOODBYE empty-hash "wamp.error.goodbye_and_out"])
        (raise 'shutdown))
       
       (else
@@ -277,7 +295,7 @@ package: std/net
            (wamp-send ws [PUBLISH reqid (or opts empty-hash) topic (message-tail args kws) ...])))
         ;; control
         ((!wamp.shutdown)
-         (wamp-send [GOODBYE empty-hash "wamp.error.close_realm"])
+         (wamp-send ws [GOODBYE empty-hash "wamp.error.close_realm"])
          (raise 'shutdown))
         ((!wamp.close-connection e)
          (raise e))
@@ -319,43 +337,35 @@ package: std/net
 ;;; Protocol Details
 (def empty-hash (make-hash-table))
 
-(def message-names (make-hash-table-eqv))
-
-(defrules defmessage ()
-  ((_ id code)
-   (begin
-     (def id code)
-     (hash-put! message-names id 'id))))
-
-(defmessage HELLO         1)
-(defmessage WELCOME       2)
-(defmessage ABORT         3)
-(defmessage GOODBYE       6)
-(defmessage ERROR         8)
-(defmessage PUBLISH      16)
-(defmessage PUBLISHED    17)
-(defmessage SUBSCRIBE    32)
-(defmessage SUBSCRIBED   33)
-(defmessage UNSUBSCRIBE  34)
-(defmessage UNSUBSCRIBED 35)
-(defmessage EVENT        36)
-(defmessage CALL         48)
-(defmessage RESULT       50)
-(defmessage REGISTER     64)
-(defmessage REGISTERED   65)
-(defmessage UNREGISTER   66)
-(defmessage UNREGISTERED 67)
-(defmessage INVOCATION   68)
-(defmessage YIELD        70)
+(def HELLO         1)
+(def WELCOME       2)
+(def ABORT         3)
+(def GOODBYE       6)
+(def ERROR         8)
+(def PUBLISH      16)
+(def PUBLISHED    17)
+(def SUBSCRIBE    32)
+(def SUBSCRIBED   33)
+(def UNSUBSCRIBE  34)
+(def UNSUBSCRIBED 35)
+(def EVENT        36)
+(def CALL         48)
+(def RESULT       50)
+(def REGISTER     64)
+(def REGISTERED   65)
+(def UNREGISTER   66)
+(def UNREGISTERED 67)
+(def INVOCATION   68)
+(def YIELD        70)
 
 (def session-details
   (hash
-   ("agent" (string-append "Gerbil-" (gerbil-version-string)))
-   ("roles" (hash
-             ("publisher" empty-hash)
-             ("subscriber" empty-hash)
-             ("caller" empty-hash)
-             ;;("callee" empty-hash)
+   (agent (string-append "Gerbil-" (gerbil-version-string)))
+   (roles (hash
+             (publisher empty-hash)
+             (subscriber empty-hash)
+             (caller empty-hash)
+             ;;(callee empty-hash)
              ))))
 
 (def (wamp-open-session ws realm)
