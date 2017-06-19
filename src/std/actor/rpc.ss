@@ -474,7 +474,7 @@ package: std/actor
          ((hash-get continuations wire-id)
           => (lambda (cont)
                (with ((values actor k proto stream?) cont)
-                 (!!error actor (make-rpc-error 'rpc-connection "connection closed") k))))))
+                 (!!error actor (make-rpc-error 'rpc-connection "connection error") k))))))
       (hash-keys continuations))
     (rpc-connection-shutdown rpc-server))
   
@@ -758,7 +758,7 @@ package: std/actor
              ((!rpc.connection-close)
               (void))
              (else
-              (rpc-send-error-response msg "connection closed")
+              (rpc-send-error-response msg "connection error")
               (lp)))))
         (ignore (lp)))))
 

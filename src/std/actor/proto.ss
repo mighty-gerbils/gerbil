@@ -579,6 +579,3 @@ package: std/actor
      (hash-put! *default-proto-type-registry*
                 (##type-id type::t)
                 type-t))))
-
-
-     
