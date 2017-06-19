@@ -73,10 +73,28 @@ package: std/actor
     (xdr-write-object address port)
     (xdr-write-object (and proto (!protocol-id proto)) port)))
 
+(def (xdr-error-read error-t port)
+  (xdr-vector-like-read (cut make-object error-t <>) 1 port))
+
+(def (xdr-error-write obj port)
+  (xdr-vector-like-write obj 1 port))
+
+(def (xdr-actor-error-read port)
+  (xdr-error-read actor-error::t port))
+
+(def (xdr-remote-error-read port)
+  (xdr-error-read remote-error::t port))
+
+(def (xdr-rpc-error-read port)
+  (xdr-error-read rpc-error::t port))
+
 (defproto-default-type
   (uuid::t uuid-t uuid? xdr-uuid-read xdr-uuid-write)
-  (handle::t handle-t remote? xdr-handle-read xdr-handle-write)
-  (remote::t remote-t remote? xdr-remote-read xdr-remote-write))
+  (handle::t handle-t handle? xdr-handle-read xdr-handle-write)
+  (remote::t remote-t remote? xdr-remote-read xdr-remote-write)
+  (actor-error::t actor-error-t actor-error? xdr-actor-error-read xdr-error-write)
+  (remote-error::t remote-error-t remote-error? xdr-remote-error-read xdr-error-write)
+  (rpc-error::t rpc-error-t rpc-error? xdr-rpc-error-read xdr-error-write))
 
 ;; rpc server protocol
 (defproto rpc
