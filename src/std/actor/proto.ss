@@ -14,7 +14,7 @@ package: std/actor
         )
 (export
   rpc-io-error? raise-rpc-io-error
-  remote-error? raise-remote-error
+  (struct-out actor-error remote-error rpc-error)
   (struct-out handle remote)
   (struct-out !rpc !call !value !error !event !stream !end)
   (struct-out !control !continue !abort)
@@ -28,18 +28,26 @@ package: std/actor
         protocol-info-id
         protocol-info-extend
         protocol-info-calls
-        protocol-info-events)
-  )
+        protocol-info-events))
 
 (defstruct (rpc-io-error io-error) ())
 
-(defstruct (remote-error <error>) ())
+(defstruct (actor-error <error>) ()
+  constructor: :init!)
+(defstruct (remote-error actor-error) ())
+(defstruct (rpc-error actor-error) ())
+
+(defmethod {:init! actor-error}
+  (lambda (self where what . irritants)
+    (struct-instance-init! self what irritants where)))
+
+(defmethod {:init! remote-error}
+  actor-error:::init!)
+(defmethod {:init! rpc-error}
+  actor-error:::init!)
 
 (def (raise-rpc-io-error where what . irritants)
   (raise (make-rpc-io-error what irritants where)))
-
-(def (raise-remote-error where what . irritants)
-  (raise (make-remote-error what irritants where)))
 
 ;;; handles
 (defstruct (handle proxy) (uuid)
@@ -106,7 +114,7 @@ package: std/actor
        val)
       ((!error obj (eq? k))
        (if (string? obj)
-         (raise-remote-error '!!call (string-append "remote error: " obj))
+         (raise (make-actor-error '!!call obj))
          (raise obj)))))
 
 (defsyntax (!!value stx)
