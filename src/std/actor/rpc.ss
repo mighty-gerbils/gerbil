@@ -224,7 +224,7 @@ package: std/actor
              (if (null? actor-rest)
                (hash-remove! actor-threads thread)
                (hash-put! actor-threads thread actor-rest)))
-           (!!value src #!void k)))
+           (!!value src (void) k)))
         ((!rpc.resolve id k)
          (let* ((uuid (UUID id))
                 (uuids (uuid->symbol uuid)))
@@ -336,7 +336,7 @@ package: std/actor
          (!!error (message-source msg) what k))
         ((? !value?)
          (rpc-send-control-abort msg))
-        (else #!void)))))
+        (else (void))))))
 
 (def (rpc-send-error-responses what)
   (let lp ()
@@ -344,7 +344,7 @@ package: std/actor
          (rpc-send-error-response msg what)
          (lp))
         (ignore (lp))
-        (else #!void))))
+        (else (void)))))
 
 (def (rpc-send-connection-error-responses address)
   (let lp ()
@@ -353,7 +353,7 @@ package: std/actor
          (rpc-send-error-response msg "connection error")
          (lp))
         (ignore (lp))
-        (else #!void))))
+        (else (void)))))
 
 (defrules rpc-send-control ()
   ((_ msg make)
@@ -511,7 +511,7 @@ package: std/actor
          (match (message-e msg)
            ((!call _ k)
             (marshall-and-write
-             (make-message (make-!error "no binding" k) #!void uuid #f)
+             (make-message (make-!error "no binding" k) (void) uuid #f)
              #f #f))
            (else
             (loop)))))))
@@ -659,7 +659,7 @@ package: std/actor
     (try
      (let lp ()
        (<< (! (or rpc-keep-alive never-evt)
-              (write-e output #!void)
+              (write-e output (void))
               (lp))
            ((? u8vector? data)
             (write-e output data)
