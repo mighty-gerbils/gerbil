@@ -10,27 +10,42 @@ package: std/db
         :std/sugar
         :std/iter
         :std/net/address
+        :std/os/error
+        :std/os/fd
+        :std/os/fcntl
+        :std/os/pipe
         (only-in :std/srfi/19
                  make-date date?
                  date-nanosecond date-second
                  date-minute date-hour
                  date-day date-month date-year
                  date-zone-offset
-                 date->time-utc time-utc->date))
+                 date->time-utc time-utc->date)
+        (only-in :gerbil/gambit/ports close-port)
+        :gerbil/gambit/threads)
 (export mysql-connect)
 
-(defstruct (mysql-connection connection) ()
+(defstruct (mysql-connection connection) (in out)
   final: #t)
-(defstruct (mysql-statement statement) (res cols ptrs)
+(defstruct (mysql-statement statement) (res cols ptrs in out)
   constructor: :init!
   final: #t)
 
 (defmethod {:init! mysql-connection}
-  connection:::init!)
+  (lambda (self myconn in out)
+    (connection:::init! self myconn)
+    (set! (mysql-connection-in self)
+      in)
+    (set! (mysql-connection-out self)
+      out)))
 
 (defmethod {:init! mysql-statement}
-  (lambda (self mystmt)
-    (struct-instance-init! self mystmt)))
+  (lambda (self mystmt in out)
+    (struct-instance-init! self mystmt)
+    (set! (mysql-statement-in self)
+      in)
+    (set! (mysql-statement-out self)
+      out)))
 
 (def (raise-mysql-error where mysql (unknown-error "Unknown Error"))
   (let* ((errno (mysql_errno mysql))
@@ -54,13 +69,74 @@ package: std/db
   (let* (mysql (mysql_init))
     (unless mysql
       (error "Error allocating and initializing MYSQL structure"))
-    (let (r (mysql_connect mysql host port user passwd db))
+    (let* (((values in out) (mysql-start-connection-thread!))
+           (r (mysql-wait-result in (mysql_connect_begin out mysql host port user passwd db))))
       (if (fxzero? r)
-        (make-mysql-connection mysql)
-        (raise-mysql-error 'mysql-connect mysql))))) ; mysql ptr is gced
+        (make-mysql-connection mysql in out)
+        (begin
+          (close-port in)
+          (close-port out)
+          (raise-mysql-error 'mysql-connect mysql)))))) ; mysql ptr is gced
+
+(def (mysql-start-connection-thread!)
+  (let* ((pipe-ptr (check-ptr (make_pipe_ptr)))
+         (_ (check-os-error (_pipe pipe-ptr)
+              (mysql-start-connection-thread!)))
+         (cin (pipe_ptr_ref pipe-ptr 0))
+         (sout (pipe_ptr_ref pipe-ptr 1))
+         (_ (try (check-os-error (_pipe pipe-ptr)
+                   (mysql-start-connection-thread!))
+                 (catch (e)
+                   (__close cin)
+                   (__close sout)
+                   (raise e))))
+         (sin (pipe_ptr_ref pipe-ptr 0))
+         (cout (pipe_ptr_ref pipe-ptr 1))
+         (in (fdopen cin 'in 'pipe))
+         (out (fdopen cout 'out 'pipe)))
+    (fd-set-nonblock in)
+    (check-os-error (__start_mysql_connection_thread sin sout)
+      (mysql-start-connection-thread!))
+    (values in out)))
+
+(defrules mysql-wait-result ()
+  ((_ in (proc out arg ...))
+   (begin
+     (check-os-error (proc (fd-e out) arg ...)
+       (proc out arg ...))
+     (mysql-wait-result! in))))
+
+(def (mysql-wait-result! in)
+  (let (ptr (get-intptr))
+    (let lp ()
+      (##wait-for-io! (fd-io-in in) #t)
+      (or (alet (r (do-retry-nonblock (__read_int (fd-e in) ptr)
+                     (mysql-wait-result! in)
+                     EAGAIN EWOULDBLOCK))
+            (if (fx< r sizeof_int)
+              (error "incomplete read" in)
+              (int_ptr_ref ptr)))
+          (lp)))))
+
+(def intptr-cache
+  (make-hash-table-eq weak-keys: #t))
+(def intptr-cache-mutex
+  (make-mutex))
+
+(def (get-intptr)
+  (with-lock intptr-cache-mutex
+    (lambda ()
+      (cond
+       ((hash-get intptr-cache (current-thread)) => values)
+       (else
+        (let (intptr (check-ptr (make_int_ptr)))
+          (hash-put! intptr-cache (current-thread) intptr)
+          intptr))))))
 
 (defmethod {close mysql-connection}
   (lambda (self)
+    (close-port (mysql-connection-in self))
+    (close-port (mysql-connection-out self))
     (mysql_close (connection-e self))))
 
 (defmethod {prepare mysql-connection}
@@ -69,9 +145,11 @@ package: std/db
       (let (mystmt (mysql_stmt_init mysql))
         (unless mystmt
           (raise-mysql-error 'mysql-prepare mysql))
-        (let (r (mysql_stmt_prepare mystmt sql))
+        (let* ((in (mysql-connection-in self))
+               (out (mysql-connection-out self))
+               (r (mysql-wait-result in (mysql_stmt_prepare_begin out mystmt sql))))
           (if (fxzero? r)
-            (make-mysql-statement mystmt)
+            (make-mysql-statement mystmt in out)
             (begin
               (mysql_stmt_close mystmt)
               (raise-mysql-stmt-error 'mysql-prepare mystmt))))))))
@@ -79,10 +157,6 @@ package: std/db
 (defmethod {finalize mysql-statement}
   (lambda (self)
     (mysql_stmt_close (statement-e self))))
-
-(defrules check-ptr ()
-  ((_ ptr)
-   (or ptr (error "Error allocating memory" 'ptr))))
 
 (defmethod {bind mysql-statement}
   (lambda (self . args)
@@ -157,7 +231,9 @@ package: std/db
 (defmethod {reset mysql-statement}
   (lambda (self)
     (with ((mysql-statement mystmt) self)
-      (let (r (mysql_stmt_reset mystmt))
+      (let* ((in (mysql-statement-in self))
+             (out (mysql-statement-out self))
+             (r (mysql-wait-result in (mysql_stmt_reset_begin out mystmt))))
         (unless (fxzero? r)
           (raise-mysql-stmt-error 'mysql-reset mystmt))))
     (set! (mysql-statement-res self) #f)
@@ -167,7 +243,9 @@ package: std/db
 (defmethod {exec mysql-statement}
   (lambda (self)
     (with ((mysql-statement mystmt) self)
-      (let (r (mysql_stmt_execute mystmt))
+      (let* ((in (mysql-statement-in self))
+             (out (mysql-statement-out self))
+             (r (mysql-wait-result in (mysql_stmt_execute_begin out mystmt))))
         (unless (fxzero? r)
           (raise-mysql-stmt-error 'mysql-execute mystmt))))))
 
@@ -267,7 +345,9 @@ package: std/db
 (defmethod {query-fetch mysql-statement}
   (lambda (self)
     (with ((mysql-statement mystmt) self)
-      (let (r (mysql_stmt_fetch mystmt))
+      (let* ((in (mysql-statement-in self))
+             (out (mysql-statement-out self))
+             (r (mysql-wait-result in (mysql_stmt_fetch_begin out mystmt))))
         (cond
          ((fxzero? r) #!void)
          ((eq? r MYSQL_DATA_TRUNCATED) ; that's ok, blobs and strings
