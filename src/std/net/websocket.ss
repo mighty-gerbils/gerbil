@@ -58,7 +58,7 @@ package: std/net
             (Sec-WebSocket-Extensions (assoc "Sec-Websocket-Extensions" rheaders))
             (Sec-WebSocket-Protocol (assoc "Sec-Websocket-Protocol" rheaders)))
 
-       (unless (and Connection (equal? (cdr Connection) "Upgrade"))
+       (unless (and Connection (equal? (string-downcase (cdr Connection)) "upgrade"))
          (raise-io-error 'open-websocket-client
                          "Bad server response; no connection upgrade"
                          url Connection))
@@ -87,7 +87,7 @@ package: std/net
        (when Sec-WebSocket-Protocol
          (let* ((proto (cdr Sec-WebSocket-Protocol))
                 (uproto (assoc "Sec-WebSocket-Protocol" headers))
-                (uproto (and uproto (cdr uproto))))
+                (uproto (string-split (and uproto (cdr uproto)) #\,)))
            (unless (member proto uproto)
              (raise-io-error 'open-websocket-client
                              "Bad server response; unexpected protocol"
@@ -399,6 +399,7 @@ package: std/net
 
 (def (websocket-writer ws)
   (def buf (make-u8vector 65535))
+  (def mask-bytes (make-u8vector 4))
   
   (def (write-u16 plen port)
     (write-u8 (fxand (fxshift plen -8) #xff) port)
@@ -419,8 +420,8 @@ package: std/net
            (fin (fxshift fin 7))
            (b0 (fxior fin opcode))
            (mask (fxshift 1 7))
-           (b1 (fxior mask (if (fx< plen 126) plen 126)))
-           (mask-bytes (random-bytes 4)))
+           (b1 (fxior mask (if (fx< plen 126) plen 126))))
+      (random-bytes! mask-bytes)
       (write-u8 b0 port)
       (write-u8 b1 port)
       (unless (fx< plen 126)

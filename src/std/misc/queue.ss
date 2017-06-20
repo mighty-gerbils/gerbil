@@ -66,7 +66,8 @@ package: std/misc
         (set! (queue-front q)
           new-front)
         (set! (queue-length q)
-          (fx1- length))))
+          (fx1- length))
+        v))
      (else
       (error "cannot dequeue; empty queue" q)))))
 
