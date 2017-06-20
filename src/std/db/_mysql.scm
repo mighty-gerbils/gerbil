@@ -18,6 +18,9 @@
               ))
 
 (c-declare #<<END-C
+#include <pthread.h>
+#include <errno.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>           
@@ -73,6 +76,11 @@ END-C
 static ___SCMOBJ ffi_free (void *ptr);
 static MYSQL* ffi_mysql_init ();
 static int ffi_mysql_connect (MYSQL* mysql, char *host, int port, char *user, char *passwd, char *db);
+static int ffi_mysql_connect_begin (int ofd, MYSQL* mysql, char *host, int port, char *user, char *passwd, char *db);
+static int ffi_mysql_stmt_prepare_begin (int ofd, MYSQL_STMT* mystmt, char *sql);
+static int ffi_mysql_stmt_reset_begin (int ofd, MYSQL_STMT* mystmt);
+static int ffi_mysql_stmt_execute_begin (int ofd, MYSQL_STMT* mystmt);
+static int ffi_mysql_stmt_fetch_begin (int ofd, MYSQL_STMT* mystmt);
 static MYSQL_BIND* ffi_make_mysql_bind (unsigned count);
 static void ffi_mysql_bind_null (MYSQL_BIND* mybind, int k);
 static void ffi_mysql_bind_set_null (MYSQL_BIND* mybind, int k, my_bool* is_null);
@@ -99,6 +107,10 @@ static unsigned ffi_mysql_bind_get_time_hour (MYSQL_BIND* mybind, int k);
 static unsigned ffi_mysql_bind_get_time_day (MYSQL_BIND* mybind, int k);
 static unsigned ffi_mysql_bind_get_time_month (MYSQL_BIND* mybind, int k);
 static unsigned ffi_mysql_bind_get_time_year (MYSQL_BIND* mybind, int k);
+
+static int ffi_start_mysql_connection_thread (int ifd, int ofd);
+static int ffi_read_int (int ifd, int *ptr);
+static void ffi_close (int fd);
 
 static unsigned long* ffi_make_ulong_ptr ();
 static void ffi_long_ptr_set (long* ptr, long val);
@@ -152,18 +164,28 @@ END-C
   "ffi_mysql_init")
 (define-c-lambda mysql_connect (MYSQL* char-string int char-string char-string char-string) int
   "ffi_mysql_connect")
+(define-c-lambda mysql_connect_begin (int MYSQL* char-string int char-string char-string char-string) int
+  "ffi_mysql_connect_begin")
 (define-c-lambda mysql_close (MYSQL*) void)
 
 (define-c-lambda mysql_stmt_init (MYSQL*) MYSQL_STMT*)
 (define-c-lambda mysql_stmt_prepare (MYSQL_STMT* char-string) int
   "___return (mysql_stmt_prepare (___arg1, ___arg2, strlen (___arg2)));")
+(define-c-lambda mysql_stmt_prepare_begin (int MYSQL_STMT* char-string) int
+  "ffi_mysql_stmt_prepare_begin")
 (define-c-lambda mysql_stmt_close (MYSQL_STMT*) void)
 (define-c-lambda mysql_stmt_param_count (MYSQL_STMT*) int)
 (define-c-lambda mysql_stmt_bind_param (MYSQL_STMT* MYSQL_BIND*) int)
 (define-c-lambda mysql_stmt_bind_result (MYSQL_STMT* MYSQL_BIND*) int)
 (define-c-lambda mysql_stmt_reset (MYSQL_STMT*) int)
+(define-c-lambda mysql_stmt_reset_begin (int MYSQL_STMT*) int
+  "ffi_mysql_stmt_reset_begin")
 (define-c-lambda mysql_stmt_execute (MYSQL_STMT*) int)
+(define-c-lambda mysql_stmt_execute_begin (int MYSQL_STMT*) int
+  "ffi_mysql_stmt_execute_begin")
 (define-c-lambda mysql_stmt_fetch (MYSQL_STMT*) int)
+(define-c-lambda mysql_stmt_fetch_begin (int MYSQL_STMT*) int
+  "ffi_mysql_stmt_fetch_begin")
 (define-c-lambda mysql_stmt_fetch_column (MYSQL_STMT* MYSQL_BIND* int int) int)
 (define-c-lambda mysql_stmt_result_metadata (MYSQL_STMT*) MYSQL_RES*)
 
@@ -178,6 +200,8 @@ END-C
 (c-define-type my_bool "my_bool")
 (c-define-type my_bool*
   (pointer my_bool (my_bool*) "ffi_free"))
+(c-define-type int*
+  (pointer int (int*) "ffi_free"))
 (c-define-type long*
   (pointer long (long*) "ffi_free"))
 (c-define-type long-long*
@@ -244,10 +268,21 @@ END-C
 (define-c-lambda mysql_bind_get_time_year (MYSQL_BIND* int) unsigned-int
   "ffi_mysql_bind_get_time_year")
 
+(define-c-lambda __start_mysql_connection_thread (int int) int
+  "ffi_start_mysql_connection_thread")
+(define-c-lambda __read_int (int int*) int
+  "ffi_read_int")
+(define-c-lambda __close (int) void
+  "ffi_close")
+
 (define-c-lambda make_bool_ptr () my_bool*
   "ffi_make_bool_ptr")
+(define-c-lambda make_int_ptr () int*
+  "ffi_make_int_ptr")
+(define-c-lambda int_ptr_ref (int*) int
+  "___return (*___arg1);")
 (define-c-lambda make_long_ptr () long*
-  "ffi_make_long_ptr")so
+  "ffi_make_long_ptr")
 (define-c-lambda long_ptr_set (long* long) void
   "ffi_long_ptr_set")
 (define-c-lambda make_ulong_ptr () ulong*
@@ -288,6 +323,9 @@ END-C
 (define-c-lambda mysql_time_set_year (MYSQL_TIME* unsigned-int) void
   "ffi_mysql_time_set_year")
 
+(define sizeof_int
+  ((c-lambda () int "___return (sizeof (int));")))
+
 (c-declare #<<END-C
 ___SCMOBJ ffi_free (void *ptr)
 {
@@ -324,6 +362,282 @@ int ffi_mysql_connect (MYSQL* mysql, char *host, int port, char *user, char *pas
   return 1;
  }
 }
+
+#define OP_CONNECT 0
+#define OP_PREPARE 1
+#define OP_EXEC    2
+#define OP_FETCH   3
+#define OP_RESET   4
+
+struct op_connect
+{
+ MYSQL *mysql;
+ char  *host;
+ int    port;
+ char  *user;
+ char  *passwd;
+ char  *db;
+};
+
+struct op_prepare
+{
+ MYSQL_STMT *mystmt;
+ char       *sql;
+};
+
+struct op_stmt
+{
+ MYSQL_STMT *mystmt;
+};
+
+typedef struct async_op
+{
+ int type;
+ union {
+  struct op_connect connect;
+  struct op_prepare prepare;
+  struct op_stmt stmt;
+ } body;
+} async_op;
+
+int ffi_mysql_connect_begin (int ofd, MYSQL* mysql, char *host, int port, char *user, char *passwd, char *db)
+{
+ int r;
+ async_op op;
+ op.type = OP_CONNECT;
+ op.body.connect.mysql = mysql;
+ if (host)
+  op.body.connect.host = strdup (host);
+ else
+  op.body.connect.host = NULL;
+ op.body.connect.port = port;
+ if (user)
+  op.body.connect.user = strdup (user);
+ else
+  op.body.connect.user = NULL;
+ if (passwd)
+  op.body.connect.passwd = strdup (passwd);
+ else
+  op.body.connect.passwd = NULL;
+ if (db)
+  op.body.connect.db = strdup (db);
+ else
+  op.body.connect.db = NULL;
+
+again:
+ r =  write (ofd, &op, sizeof (async_op));
+ if (r == EINTR)
+  goto again;
+ if (r < 0)
+  return -errno;
+ return r;
+}
+
+int ffi_mysql_stmt_prepare_begin (int ofd, MYSQL_STMT* mystmt, char *sql)
+{
+ int r;
+ async_op op;
+ op.type = OP_PREPARE;
+ op.body.prepare.mystmt = mystmt;
+ op.body.prepare.sql = strdup (sql);
+
+again:
+ r =  write (ofd, &op, sizeof (async_op));
+ if (r == EINTR)
+  goto again;
+ if (r < 0)
+  return -errno;
+ return r;
+}
+ 
+int ffi_mysql_stmt_reset_begin (int ofd, MYSQL_STMT* mystmt)
+{
+ int r;
+ async_op op;
+ op.type = OP_RESET;
+ op.body.stmt.mystmt = mystmt;
+
+again:
+ r =  write (ofd, &op, sizeof (async_op));
+ if (r == EINTR)
+  goto again;
+ if (r < 0)
+  return -errno;
+ return r;
+}
+
+int ffi_mysql_stmt_execute_begin (int ofd, MYSQL_STMT* mystmt)
+{
+ int r;
+ async_op op;
+ op.type = OP_EXEC;
+ op.body.stmt.mystmt = mystmt;
+
+again:
+ r =  write (ofd, &op, sizeof (async_op));
+ if (r == EINTR)
+  goto again;
+ if (r < 0)
+  return -errno;
+ return r;
+}
+
+int ffi_mysql_stmt_fetch_begin (int ofd, MYSQL_STMT* mystmt)
+{
+ int r;
+ async_op op;
+ op.type = OP_FETCH;
+ op.body.stmt.mystmt = mystmt;
+
+again:
+ r =  write (ofd, &op, sizeof (async_op));
+ if (r == EINTR)
+  goto again;
+ if (r < 0)
+  return -errno;
+ return r;
+}
+
+typedef struct worker_data
+{
+ int ifd;
+ int ofd;
+} worker_data;
+
+static void *ffi_mysql_connection_worker (void *arg)
+{
+ worker_data *data = (worker_data*)arg;
+ async_op op;
+ int r, res;
+ 
+again:
+ r = read (data->ifd, &op, sizeof (async_op));
+ if (!r)
+  goto out;
+ 
+ if (r < 0)
+  switch (errno)
+  {
+   case EINTR:
+    goto again;
+   default:
+    perror ("ffi_mysql_connection_worker");
+    goto out;
+  }
+
+ switch (op.type)
+ {
+  case OP_CONNECT:
+   res = ffi_mysql_connect (op.body.connect.mysql,
+                            op.body.connect.host,
+                            op.body.connect.port,
+                            op.body.connect.user,
+                            op.body.connect.passwd,
+                            op.body.connect.db);
+   free (op.body.connect.host);
+   free (op.body.connect.user);
+   free (op.body.connect.passwd);
+   free (op.body.connect.db);
+   break;
+   
+  case OP_PREPARE:
+   res = mysql_stmt_prepare (op.body.prepare.mystmt,
+                             op.body.prepare.sql,
+                             strlen (op.body.prepare.sql));
+   free (op.body.prepare.sql);
+   break;
+   
+  case OP_EXEC:
+   res = mysql_stmt_execute (op.body.stmt.mystmt);
+   break;
+  
+  case OP_FETCH:
+   res = mysql_stmt_fetch (op.body.stmt.mystmt);
+   break;
+   
+  case OP_RESET:
+   res = mysql_stmt_reset (op.body.stmt.mystmt);
+   break;
+ 
+ }
+
+write_again:
+ r = write (data->ofd, &res, sizeof (res));
+ if (r < 0)
+ switch (errno)
+ {
+  case EINTR:
+   goto write_again;
+  default:
+   perror ("ffi_mysql_connection_worker");
+   goto out;
+ }
+ 
+ goto again;
+
+out:
+ ffi_close (data->ifd);
+ ffi_close (data->ofd);
+ free (data);
+ return NULL;
+}
+
+int ffi_start_mysql_connection_thread (int ifd, int ofd)
+{
+ int r;
+ pthread_t thread;
+ worker_data *arg;
+ 
+ arg = (worker_data*)malloc (sizeof (worker_data));
+ if (!arg)
+ {
+  ffi_close (ifd);
+  ffi_close (ofd);
+  return -ENOMEM;
+ }
+ arg->ifd = ifd;
+ arg->ofd = ofd;
+
+ r = pthread_create (&thread, NULL, ffi_mysql_connection_worker, arg);
+ if (r)
+ {
+  ffi_close (ifd);
+  ffi_close (ofd);
+  free (arg);
+  return -r;
+ }
+ 
+ return 0;
+}
+
+int ffi_read_int (int ifd, int *ptr)
+{
+ int r;
+
+again:
+ r = read (ifd, ptr, sizeof (int));
+ if (r < 0)
+  switch (errno)
+  {
+   case EINTR:
+    goto again;
+   default:
+    return -errno;
+  }
+
+ return r;
+}
+
+void ffi_close (int fd)
+{
+ int r;
+
+again:
+ r = close (fd);
+ if (r< 0 && errno == EINTR)
+  goto again;
+}
+
 
 MYSQL_BIND* ffi_make_mysql_bind (unsigned count)
 {
@@ -475,6 +789,16 @@ unsigned ffi_mysql_bind_get_time_year (MYSQL_BIND* mybind, int k)
 my_bool* ffi_make_bool_ptr ()
 {
  my_bool* res = malloc (sizeof (my_bool));
+ if (res)
+ {
+  *res = 0;
+ }
+ return res;
+}
+
+int* ffi_make_int_ptr ()
+{
+ int* res = malloc (sizeof (int));
  if (res)
  {
   *res = 0;
