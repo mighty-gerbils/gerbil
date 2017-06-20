@@ -65,6 +65,7 @@
     (gxc: "os/error" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc: "os/fd" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc: "os/fcntl" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (gxc: "os/pipe" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gsc: "os/_socket" "-e" "(include \"~~lib/_gambit#.scm\")")
     (ssi: "os/_socket")
     "os/socket"
@@ -134,7 +135,7 @@
           "db/sqlite")
         '())
     ,@(if config-enable-mysql
-        '((gsc: "db/_mysql" "-ld-options" "-lmysqlclient")
+        '((gsc: "db/_mysql" "-ld-options" "-lpthread -lmysqlclient")
           (ssi: "db/_mysql")
           "db/mysql")
         '())
