@@ -73,6 +73,10 @@ package: std/net
       (values (spawn wamp-client ws realm sid)
               details))))
 
+(def (stop-wamp-client! cli)
+  (!!wamp.shutdown cli)
+  (thread-join! cli))
+
 ;; synchronous client interface
 ;; => (values details args kws)
 (def (wamp-call cli name opts args kws)
@@ -428,7 +432,7 @@ package: std/net
   (try
    (loop)
    (catch (e)
-     (unless (eq? 'shutdown error)
+     (unless (eq? e 'shutdown)
        (log-error "wamp client error" e))
      (websocket-close ws)
      (send-shutdown-errors (hash-values pend-calls))
@@ -436,7 +440,7 @@ package: std/net
      (send-shutdown-errors (map car (hash-values pend-registrations)))
      (send-shutdown-errors (map car (hash-values pend-unregistrations)))
      (for-each (cut !!wamp.shutdown <>) (hash-keys actor-subscriptions))
-     (unless (eq? 'shutdown error)
+     (unless (eq? e 'shutdown)
        (raise e)))))
 
 (def (wamp-reader cli ws)
