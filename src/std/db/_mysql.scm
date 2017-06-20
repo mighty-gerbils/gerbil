@@ -426,10 +426,13 @@ int ffi_mysql_connect_begin (int ofd, MYSQL* mysql, char *host, int port, char *
 
 again:
  r =  write (ofd, &op, sizeof (async_op));
- if (r == EINTR)
-  goto again;
  if (r < 0)
+ {
+  if (errno == EINTR)
+   goto again;
+
   return -errno;
+ } 
  return r;
 }
 
@@ -443,10 +446,13 @@ int ffi_mysql_stmt_prepare_begin (int ofd, MYSQL_STMT* mystmt, char *sql)
 
 again:
  r =  write (ofd, &op, sizeof (async_op));
- if (r == EINTR)
-  goto again;
  if (r < 0)
+ {
+  if (errno == EINTR)
+   goto again;
+
   return -errno;
+ } 
  return r;
 }
  
@@ -459,10 +465,13 @@ int ffi_mysql_stmt_reset_begin (int ofd, MYSQL_STMT* mystmt)
 
 again:
  r =  write (ofd, &op, sizeof (async_op));
- if (r == EINTR)
-  goto again;
  if (r < 0)
+ {
+  if (errno == EINTR)
+   goto again;
+
   return -errno;
+ } 
  return r;
 }
 
@@ -475,10 +484,13 @@ int ffi_mysql_stmt_execute_begin (int ofd, MYSQL_STMT* mystmt)
 
 again:
  r =  write (ofd, &op, sizeof (async_op));
- if (r == EINTR)
-  goto again;
  if (r < 0)
+ {
+  if (errno == EINTR)
+   goto again;
+
   return -errno;
+ } 
  return r;
 }
 
@@ -491,10 +503,13 @@ int ffi_mysql_stmt_fetch_begin (int ofd, MYSQL_STMT* mystmt)
 
 again:
  r =  write (ofd, &op, sizeof (async_op));
- if (r == EINTR)
-  goto again;
  if (r < 0)
+ {
+  if (errno == EINTR)
+   goto again;
+
   return -errno;
+ } 
  return r;
 }
 
