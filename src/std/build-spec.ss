@@ -60,6 +60,7 @@
     "net/socks"
     "net/request"
     (gxc: "net/websocket" "-e" "(include \"~~lib/_gambit#.scm\")")
+    "net/wamp"
     ;; std/os
     (gxc: "os/error" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc: "os/fd" "-e" "(include \"~~lib/_gambit#.scm\")")
