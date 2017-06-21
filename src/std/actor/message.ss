@@ -27,10 +27,9 @@ package: std/actor
 
 ;;; structured messages
 (defstruct message (e source dest options)
-  id: std/actor#message::t)
+  final: #t)
 
-(defstruct proxy (handler)
-  id: std/actor#proxy::t)
+(defstruct proxy (handler))
 
 ;;; send primitives
 (def (send dest msg (check-dead? #f))

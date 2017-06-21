@@ -51,11 +51,10 @@ package: std/actor
 
 ;;; handles
 (defstruct (handle proxy) (uuid)
-  id: std/actor#handle::t
   constructor: :init!)
 
 (defstruct (remote handle) (address proto)
-  id: std/actor#remote-handle::t)
+  final: #t)
 
 (defmethod {:init! handle}
   (lambda (self handler id)
@@ -68,9 +67,19 @@ package: std/actor
   (lambda (self handler id address proto)
     (handle:::init! self handler id)
     (set! (remote-address self)
-      (inet-address address))
+      (canonical-address address))
     (set! (remote-proto self)
       proto)))
+
+(def (canonical-address address)
+  (cond
+   ((or (inet-address? address)
+        (inet-address-string? address))
+    (resolve-address address))
+   ((string? address)                   ; unix domain
+    address)
+   (else
+    (error "Bad actor address" address))))
 
 ;;; rpc messages
 (defstruct !rpc ())
@@ -162,6 +171,8 @@ package: std/actor
     (let lp ()
       (<- ((!value val (eq? k))
            (write val outp)
+           (alet (g (and @options (pgetq continue: @options)))
+             (send @source (make-!continue g)))
            (lp))
           ((!end (eq? k))
            (close-port outp))
