@@ -2414,7 +2414,7 @@
                (if (##structure-direct-instance-of?
                     _e6536_
                     'gx#syntax-quote::t)
-                   (##structure-ref _e6536_ '3 gx#syntax-quote::t '#f)
+                   (##direct-structure-ref _e6536_ '3 gx#syntax-quote::t '#f)
                    (gx#current-expander-context)))))
         (let ((_marks6526_
                (lambda (_e6534_)
@@ -2423,8 +2423,12 @@
                      (if (##structure-direct-instance-of?
                           _e6534_
                           'gx#identifier-wrap::t)
-                         (##structure-ref _e6534_ '3 gx#identifier-wrap::t '#f)
-                         (##structure-ref
+                         (##direct-structure-ref
+                          _e6534_
+                          '3
+                          gx#identifier-wrap::t
+                          '#f)
+                         (##direct-structure-ref
                           _e6534_
                           '4
                           gx#syntax-quote::t
