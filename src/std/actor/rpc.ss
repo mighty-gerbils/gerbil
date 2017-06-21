@@ -138,20 +138,11 @@ package: std/actor
        (finally
         (server-shutdown! socksrv))))))
 
-(def (rpc-monitor server)
+(def (rpc-monitor thread)
   (def (thread-monitor server thread)
     (with-catch values (cut thread-join! thread))
     (thread-send server thread))
-  
-  (let lp ()
-    (<< ((? thread? thread)
-         (spawn thread-monitor server thread)
-         (lp))
-        ('exit
-         (void))
-        (msg
-         (warning "Unexpected message ~a" msg)
-         (lp)))))
+  (spawn thread-monitor (current-thread) thread))
 
 (def (canonical-address address)
   (cond
@@ -181,8 +172,6 @@ package: std/actor
     (make-hash-table))
   (def threads                          ; thread => address
     (make-hash-table-eq))
-  (def monitor
-    (spawn rpc-monitor (current-thread)))
   (def acceptors
     (map (lambda (sock sa)
            (spawn rpc-server-accept (current-thread) sock (socket-address-family sa)))
@@ -193,13 +182,13 @@ package: std/actor
            (address (socket-address->address clisa)))
       (hash-put! conns address thr)
       (hash-put! threads thr address)
-      (thread-send monitor thr)))
+      (rpc-monitor thr)))
   
   (def (open-connection address)
     (let (thr (spawn rpc-client-connection (current-thread) socksrv address connect-e))
       (hash-put! conns address thr)
       (hash-put! threads thr address)
-      (thread-send monitor thr)
+      (rpc-monitor thr)
       thr))
   
   (def (handle-protocol-action msg)
@@ -235,7 +224,7 @@ package: std/actor
                 (hash-put! actors uuids src)
                 (hash-put! protos uuids proto)
                 (hash-update! actor-threads thread (cut cons uuids <>) [])
-                (thread-send monitor thread)
+                (rpc-monitor thread)
                 (!!value src uuid k)))))
         ((!rpc.unregister id k)
          (let* ((uuid (UUID id))
@@ -327,13 +316,12 @@ package: std/actor
          (warning "unexepected message ~a"  value)))
     (loop))
 
-  (thread-send monitor socksrv)
-  (for-each (cut thread-send monitor <>)  acceptors)
+  (rpc-monitor socksrv)
+  (for-each rpc-monitor acceptors)
   (try
    (loop)
    (catch (e)
      (for-each (cut !!rpc.shutdown <>) (hash-keys actor-threads))
-     (thread-send monitor 'exit)
      (for-each server-close socks)
      (for-each (lambda (thread)
                  (thread-send thread 'shutdown)
@@ -453,8 +441,6 @@ package: std/actor
   (def idle-timeout #f)
   (def reader #f)
   (def writer #f)
-  (def monitor
-    (spawn rpc-monitor (current-thread)))
   
   (def (reset-idle-timeout)
     (set! idle-timeout
@@ -467,7 +453,6 @@ package: std/actor
   (def (close-connection)
     (server-close sock)
     (thread-send writer 'exit)
-    (thread-send monitor 'exit)
     (for-each
       (lambda (wire-id)
         (cond
@@ -736,11 +721,11 @@ package: std/actor
 
   (let (thread (spawn/name 'rpc-connection-reader reader-loop (current-thread)))
     (set! reader thread)
-    (thread-send monitor thread))
+    (rpc-monitor thread))
   
   (let (thread (spawn/name 'rpc-connection-writer writer-loop))
     (set! writer thread)
-    (thread-send monitor thread))
+    (rpc-monitor thread))
   
   (reset-idle-timeout)
   (try
