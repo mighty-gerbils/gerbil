@@ -34,7 +34,7 @@
     (gxc: "parser/stream" "-e" "(include \"~~lib/_gambit#.scm\")")
     "parser/lexer"
     (gxc: "parser/defparser" "-cc-options" "--param max-gcse-memory=300000000")
-    "parser/rx-parser"
+    (gxc: "parser/rx-parser" "-cc-options" "--param max-gcse-memory=300000000")
     "parser/deflexer"
     "parser/grammar-reader"
     "parser/grammar"
