@@ -33,6 +33,7 @@
 (def rpc-server-address6 "127.0.0.1:9005")
 (def rpc-server-address7 "127.0.0.1:9006")
 (def rpc-server-address8 "127.0.0.1:9007")
+(def rpc-server-address9 "127.0.0.1:9008")
 (def rpc-cookie "/tmp/actor-test-cookie")
 (rpc-generate-cookie! rpc-cookie)
 
@@ -124,7 +125,7 @@
          (let lp2 ((n 0))
            (if (< n N)
              (begin
-               (!!value n k)
+               (!!yield n k)
                (lp2 (1+ n)))
              (begin
                (!!end k)
@@ -139,12 +140,27 @@
          (let lp2 ((n 0))
            (if (< n N)
              (begin
-               (!!value n k continue: k)
-               (<< ((!continue (eq? k))
+               (!!yield n k continue: k)
+               (<- ((!continue (eq? k))
                     (lp2 (1+ n)))))
              (begin
                (!!end k)
                (lp)))))
+        ((!rpc.shutdown)
+         (void)))))
+
+(def (hello-stream-close-server remoted)
+  (!!rpc.register remoted 'foo hello::proto)
+  (let lp ()
+    (<- ((!hello.hello-stream _ k)
+         (let (source @source)
+           (let lp2 ((n 0))
+             (!!yield n k continue: k)
+             (<- ((!continue k)
+                  (lp2 (1+ n)))
+                 ((!close k)
+                  (!!end source k)
+                  (lp))))))
         ((!rpc.shutdown)
          (void)))))
 
@@ -164,7 +180,7 @@
         (send-message/timeout rfoo (make-!stream (make-hello.hello-stream "stream") k) 1)
         (let lp ((n 0))
           (when (< n N)
-            (<- ((!value x (eq? k))
+            (<- ((!yield x (eq? k))
                  (check x => n)
                  (lp (1+ n))))))
         (let (end (thread-receive))
@@ -184,7 +200,7 @@
       (def rfoo
         (make-remote locald 'foo rpc-server-address6 hello::proto))
 
-      (let (inp (!!hello.hello-stream rfoo "stream"))
+      (let ((values inp close) (!!hello.hello-stream rfoo "stream"))
         (let lp ((n 0))
           (when (< n N)
             (check (read inp) => n)
@@ -204,11 +220,31 @@
       (def rfoo
         (make-remote locald 'foo rpc-server-address7 hello::proto))
 
-      (let (inp (!!hello.hello-stream rfoo "stream"))
+      (let ((values inp close) (!!hello.hello-stream rfoo "stream"))
         (let lp ((n 0))
           (when (< n N)
             (check (read inp) => n)
             (lp (1+ n))))
+        (check (read inp) ? eof-object?))
+
+      (stop-rpc-server! remoted)
+      (stop-rpc-server! locald))
+
+    (test-case "test RPC stream close"
+      (def remoted (start-rpc-server! rpc-server-address9))
+      (def hellod  (spawn hello-stream-close-server remoted))
+      (thread-sleep! 0.1)
+      (check (!!rpc.resolve remoted 'foo) => hellod)
+      (def locald  (start-rpc-server!))
+      (def rfoo
+        (make-remote locald 'foo rpc-server-address9 hello::proto))
+
+      (let ((values inp close) (!!hello.hello-stream rfoo "stream"))
+        (close)
+        (let lp ((n 0))
+          (let (next (read inp))
+            (unless (eof-object? next)
+              (lp (1+ n)))))
         (check (read inp) ? eof-object?))
 
       (stop-rpc-server! remoted)

@@ -331,7 +331,7 @@ package: std/actor
       (match content
         ((or (!call _ k) (!stream _ k))
          (!!error (message-source msg) (make-rpc-error 'rpc-server what) k))
-        ((? !value?)
+        ((? !yield?)
          (rpc-send-control-abort msg))
         (else (void))))))
 
@@ -356,7 +356,7 @@ package: std/actor
   ((_ msg make)
   (alet* ((opts (message-options msg))
           (g (pgetq continue: opts)))
-    (send (message-source msg) (make g)))))
+    (send-message (message-source msg) (make g)))))
 
 (def (rpc-send-control-abort msg)
   (rpc-send-control msg make-!abort))
@@ -415,6 +415,10 @@ package: std/actor
     (proto-e input output))
   (def continuations                    ; wire-id => (values actor k proto stream?)
     (make-hash-table-eqv))
+  (def stream-continuations             ; k => wire-id
+    (make-hash-table-eq))
+  (def stream-actors                    ; wire-id => actor
+    (make-hash-table-eqv))
   (def timeouts                         ; time => wire-id
     (make-hash-table-eq))
   (def continuation-timeouts            ; wire-id => time
@@ -445,6 +449,10 @@ package: std/actor
                (with ((values actor k proto stream?) cont)
                  (!!error actor (make-rpc-error 'rpc-connection "connection error") k))))))
       (hash-keys continuations))
+    (hash-for-each
+      (lambda (wire-id actor)
+        (!!close actor wire-id))
+      stream-actors)
     (rpc-connection-shutdown rpc-server))
   
   (def (read-message data)
@@ -464,8 +472,12 @@ package: std/actor
                  (dispatch-value msg bytes !value-k !value-k-set!))
                 ((? !error?)
                  (dispatch-value msg bytes !error-k !error-k-set!))
+                ((? !yield?)
+                 (dispatch-value msg bytes !yield-k !yield-k-set!))
                 ((? !end?)
                  (dispatch-value msg bytes !end-k !end-k-set!))
+                ((? !close?)
+                 (dispatch-close msg bytes))
                 ((? not)
                  (dispatch-call msg bytes))))
             (begin
@@ -534,6 +546,18 @@ package: std/actor
        (else
         (warning "cannot route value; bogus continuation ~a" cont)
         (loop)))))
+
+  (def (dispatch-close msg bytes)
+    (let* ((content (message-e msg))
+           (wire-id (!close-k content))
+           (actor (hash-get stream-actors wire-id)))
+      (if actor
+        (begin
+          (send actor msg)
+          (loop))
+        (begin
+          (warning "cannot close unknown stream ~a" wire-id)
+          (loop)))))
   
   (def (unmarshall-message-content msg proto bytes)
     (try (rpc-proto-read-message-content msg proto bytes)
@@ -561,11 +585,13 @@ package: std/actor
                  (hash-put! timeouts timeo-evt wire-id)
                  (hash-put! continuation-timeouts wire-id timeo-evt)
                  (pqueue-push! timeouts-pqueue timeo-evt))
-               (set! (!call-k content) wire-id)))
+               (set! (!call-k content) wire-id)
+               (marshall-and-write msg proto #t)))
             ((!stream _ k)
              (let ((wire-id (next-continuation-id!))
                    (timeo (and opts (pgetq timeout: opts))))
                (hash-put! continuations wire-id (values src k proto #t))
+               (hash-put! stream-continuations k wire-id)
                (when timeo
                  (let* ((abs-timeo
                          (if (time? timeo)
@@ -576,10 +602,26 @@ package: std/actor
                    (hash-put! timeouts timeo-evt wire-id)
                    (hash-put! continuation-timeouts wire-id timeo-evt)
                    (pqueue-push! timeouts-pqueue timeo-evt)))
-               (set! (!stream-k content) wire-id)))
-            (else (void)))
-          ;; marshall, write, loop
-          (marshall-and-write msg proto #t))
+               (set! (!stream-k content) wire-id)
+               (marshall-and-write msg proto #t)))
+            ((!yield _ wire-id)
+             (hash-put! stream-actors wire-id src)
+             (marshall-and-write msg proto #t))
+            ((or (!error _ wire-id)
+                 (!end wire-id))
+             (hash-remove! stream-actors wire-id)
+             (marshall-and-write msg proto #t))
+            ((!close k)
+             (let (wire-id (hash-get stream-continuations k))
+               (if wire-id
+                 (begin
+                   (set! (!close-k content) wire-id)
+                   (marshall-and-write msg proto #t))
+                 (begin
+                   (warning "bad close; unknown stream continuation ~a" k)
+                   (loop)))))
+            (else
+             (marshall-and-write msg proto #t))))
         (begin
           (warning "bad handle; no protocol ~a ~a" dest msg)
           (loop)))))
@@ -590,11 +632,15 @@ package: std/actor
       next))
   
   (def (remove-continuation! wire-id)
-    (hash-remove! continuations wire-id)
-    (let (timeo (hash-get continuation-timeouts wire-id))
-      (when timeo
-        (hash-remove! continuation-timeouts wire-id)
-        (hash-remove! timeouts timeo))))
+    (alet (cont (hash-get continuations wire-id))
+      (hash-remove! continuations wire-id)
+      (with ((values _ k _ stream?) cont)
+        (when stream?
+          (hash-remove! stream-continuations k)))
+      (let (timeo (hash-get continuation-timeouts wire-id))
+        (when timeo
+          (hash-remove! continuation-timeouts wire-id)
+          (hash-remove! timeouts timeo)))))
 
   (def (marshall-and-write msg proto local-error?)
     (let (e (try (rpc-proto-marshall-message msg proto)
@@ -604,7 +650,7 @@ package: std/actor
         (if (fx<= (u8vector-length e) rpc-proto-message-max-length)
           (let* ((opts (message-options msg))
                  (g (and opts (pgetq continue: opts))))
-            (if (and g (!value? (message-e msg)))
+            (if (and g (!yield? (message-e msg)))
               (begin
                 (thread-send writer ['continue e msg])
                 (loop))
@@ -616,7 +662,7 @@ package: std/actor
             (match content
               ((or (!call e wire-id) (!stream e wire-id))
                (dispatch-error wire-id "message too large"))
-              ((? !value?)
+              ((? !yield?)
                (rpc-send-control-abort msg)
                (loop))
               (else
@@ -627,8 +673,8 @@ package: std/actor
           (match content
             ((or (!call e wire-id) (!stream e wire-id))
              (dispatch-error wire-id "marshall error"))
-            ((? !value?)
-             (rpc-send-control-abort msg)
+            ((!yield _ wire-id)
+             (!!close (message-source msg)  wire-id)
              (loop))
             (else
              (loop)))))

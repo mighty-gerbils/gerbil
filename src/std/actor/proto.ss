@@ -16,9 +16,10 @@ package: std/actor
   rpc-io-error? raise-rpc-io-error
   (struct-out actor-error remote-error rpc-error)
   (struct-out handle remote)
-  (struct-out !rpc !call !value !error !event !stream !end)
+  (struct-out !rpc !call !value !error !event !stream !yield !end !close)
   (struct-out !control !continue !abort)
-  !!call !!call-recv !!value !!error !!event !!stream !!stream-recv !!end
+  !!call !!call-recv !!value !!error !!event
+  !!stream !!stream-recv !!yield !!end !!close
   (struct-out !protocol !rpc-protocol)
   defproto
   defproto-default-type
@@ -93,11 +94,15 @@ package: std/actor
   final: #t)
 (defstruct (!stream !rpc) (e k)
   final: #t)
+(defstruct (!yield !rpc) (e k)
+  final: #t)
 (defstruct (!end !rpc) (k)
   final: #t)
+(defstruct (!close !rpc) (k)
+  final: #t)
 
-;;; flow control messages [rpc server]
-(defstruct !control ())
+;;; flow control messages 
+(defstruct (!control !rpc) ())
 (defstruct (!continue !control) (k)
   final: #t)
 (defstruct (!abort !control) (k)
@@ -130,14 +135,9 @@ package: std/actor
   (syntax-case stx ()
     ((_ dest e k)
      #'(send-message dest (make-!value e k)))
-    ((_ dest e k continue: g)
-     #'(send-message dest (make-!value e k) [continue: g] #t))
     ((macro e k)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message dest (make-!value e k))))
-    ((macro e k continue: g)
-     (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message dest (make-!value e k) [continue: g] #t)))))
+       #'(send-message dest (make-!value e k))))))
 
 (defsyntax (!!error stx)
   (syntax-case stx ()
@@ -168,12 +168,14 @@ package: std/actor
 (def (!!stream-recv e k dest send-e . send-args)
   (def (stream-handler outp)
     (apply send-e dest (make-!stream e k) send-args)
-    (let lp ()
-      (<- ((!value val (eq? k))
+    (let lp ((source #f) (close? #f))
+      (<- ((!yield val (eq? k))
            (write val outp)
-           (alet (g (and @options (pgetq continue: @options)))
-             (send @source (make-!continue g)))
-           (lp))
+           (if close?
+             (!!close @source k)
+             (alet (g (and @options (pgetq continue: @options)))
+               (send-message @source (make-!continue g))))
+           (lp @source #f))
           ((!end (eq? k))
            (close-port outp))
           ((!error obj k)
@@ -182,12 +184,33 @@ package: std/actor
                    (make-actor-error '!!stream obj)
                    obj))
              (write err outp)
-             (close-port outp))))))
-  (let ((values inp outp)
-        (open-vector-pipe [permanent-close: #t direction: 'input]
-                          [permanent-close: #t direction: 'output]))
-    (spawn stream-handler outp)
-    inp))
+             (close-port outp)))
+          ((!close k)
+           (if source
+             (begin
+               (!!close source k)
+               (lp source #f))
+             (lp source #t))))))
+  
+  (let* (((values inp outp)
+          (open-vector-pipe [permanent-close: #t direction: 'input]
+                            [permanent-close: #t direction: 'output]))
+         (handler (spawn stream-handler outp))
+         (close (lambda () (!!close handler k))))
+    (values inp close)))
+
+(defsyntax (!!yield stx)
+  (syntax-case stx ()
+    ((_ dest e k)
+     #'(send-message dest (make-!yield e k)))
+    ((_ dest e k continue: g)
+     #'(send-message dest (make-!yield e k) [continue: g] #t))
+    ((macro e k)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message dest (make-!yield e k))))
+    ((macro e k continue: g)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message dest (make-!yield e k) [continue: g] #t)))))
 
 (defsyntax (!!end stx)
   (syntax-case stx ()
@@ -197,6 +220,13 @@ package: std/actor
      (with-syntax ((dest (stx-identifier #'macro '@source)))
        #'(send-message dest (make-!end k))))))
 
+(defsyntax (!!close stx)
+  (syntax-case stx ()
+    ((_ dest k)
+     #'(send-message dest (make-!close k)))
+    ((macro k)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message dest (make-!close k))))))
 
 ;;; wire rpc protocols
 (defstruct !rpc-protocol (connect accept)

@@ -1183,8 +1183,8 @@ or error message and the continuation token:
 #### Streams
 
 In addition to calls and events, actors can also open streams.
-A stream is like a call, but it returns multiple values until the stream's
-end or an error occurs.
+A stream is like a call, but it returns multiple values using `!!yield`
+until the stream's end or an error occurs.
 
 For example, the following server generates a stream of numbers as
 specified by the argument. Values can be processed directly, or with
@@ -1200,7 +1200,7 @@ through it in a background thread:
          (let lp2 ((n 0))
            (if (< n N)
              (begin
-               (!!value n k)
+               (!!yield n k)
                (lp2 (1+ n)))
              (begin
                (!!end k)
@@ -1209,7 +1209,7 @@ through it in a background thread:
 
 (def my-stream (spawn my-simple-stream))
 
-> (let (inp (!!simple-stream.count my-stream 5))
+> (let ((values inp close) (!!simple-stream.count my-stream 5))
     (for (x inp)
       (displayln x)))
 0
