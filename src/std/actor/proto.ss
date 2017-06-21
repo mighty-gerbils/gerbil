@@ -51,11 +51,10 @@ package: std/actor
 
 ;;; handles
 (defstruct (handle proxy) (uuid)
-  id: std/actor#handle::t
   constructor: :init!)
 
 (defstruct (remote handle) (address proto)
-  id: std/actor#remote-handle::t)
+  final: #t)
 
 (defmethod {:init! handle}
   (lambda (self handler id)
