@@ -11,7 +11,7 @@ package: std/text
 ;;;  - strings
 ;;;  - proper lists
 ;;;  - vectors (encoded as lists)
-;;;  - hashes with symbolic keys mapping to json encodable objects
+;;;  - hashes with symbolic or string keys mapping to json encodable objects
 ;;;  - any object that defines a :json method producing a json encodable objects
 ;;; JSON decoding produces JSON-encodable objects with the following.
 ;;; Note that JSON null is decoded as #!void and JSON lists are decoded as
@@ -20,7 +20,8 @@ package: std/text
         :gerbil/gambit/bits
         :std/error)
 (export read-json write-json
-        string->json-object json-object->string)
+        string->json-object json-object->string
+        json-symbolic-keys)
 
 (def (read-json (port (current-input-port)))
   (read-json-object port))
@@ -35,6 +36,10 @@ package: std/text
   (let (port (open-output-string))
     (write-json-object obj port)
     (get-output-string port)))
+
+;; should decoded hashes have symbols as keys?
+(def json-symbolic-keys
+  (make-parameter #t))
 
 ;;; implementation
 (def (raise-invalid-token port char)
@@ -76,7 +81,9 @@ package: std/text
 
 (def (read-json-hash port)
   (read-char port)
-  (let (obj (make-hash-table-eq))
+  (let (obj (if (json-symbolic-keys)
+              (make-hash-table-eq)
+              (make-hash-table)))
     (let lp ()
       (let (key (read-json-hash-key port))
         (if key
@@ -106,7 +113,9 @@ package: std/text
            (case char
              ((#\:)
               (read-char port)
-              (string->symbol key))
+              (if (json-symbolic-keys)
+                (string->symbol key)
+                key))
              (else
               (raise-invalid-token port char))))))
       ((#\})
@@ -284,17 +293,25 @@ package: std/text
       (display "[]" port))))
 
 (def (write-json-hash obj port)
+  (def (string-e key)
+    (cond
+     ((symbol? key)
+      (symbol->string key))
+     ((string? key) key)
+     (else
+      (error "Illegal hash key; must be symbol or string" obj key))))
+  
   (display #\{ port)
   (let (lst (hash->list obj))
     (let lp ((rest lst))
       (match rest
         ([[key . val]]                  ; last one
-         (write (symbol->string key) port)
+         (write (string-e key) port)
          (display ": " port)
          (write-json-object val port)
          (display #\} port))
         ([[key . val] . rest]
-         (write (symbol->string key) port)
+         (write (string-e key) port)
          (display ": " port)
          (write-json-object val port)
          (display ", " port)
