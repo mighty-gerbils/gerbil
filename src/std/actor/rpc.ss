@@ -713,7 +713,14 @@ package: std/actor
          (read-message data))
         ('shutdown
          (close-connection))
-        ((? thread?)
+        ((? thread? thread)
+         (try
+          (thread-join! thread)
+          (warning "connection error: i/o thread ~a exited unexpectedly" (thread-name thread))
+          (catch (uncaught-exception? e)
+            (log-error "connection error" (uncaught-exception-reason e)))
+          (catch (e)
+            (log-error "connection error" e)))
          (close-connection))
         (bogus
          (warning "unexpected message ~a" bogus)
