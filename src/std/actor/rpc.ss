@@ -331,7 +331,7 @@ package: std/actor
       (match content
         ((or (!call _ k) (!stream _ k))
          (!!error (message-source msg) (make-rpc-error 'rpc-server what) k))
-        ((? !value?)
+        ((? !yield?)
          (rpc-send-control-abort msg))
         (else (void))))))
 
@@ -464,6 +464,8 @@ package: std/actor
                  (dispatch-value msg bytes !value-k !value-k-set!))
                 ((? !error?)
                  (dispatch-value msg bytes !error-k !error-k-set!))
+                ((? !yield?)
+                 (dispatch-value msg bytes !yield-k !yield-k-set!))
                 ((? !end?)
                  (dispatch-value msg bytes !end-k !end-k-set!))
                 ((? not)
@@ -604,7 +606,7 @@ package: std/actor
         (if (fx<= (u8vector-length e) rpc-proto-message-max-length)
           (let* ((opts (message-options msg))
                  (g (and opts (pgetq continue: opts))))
-            (if (and g (!value? (message-e msg)))
+            (if (and g (!yield? (message-e msg)))
               (begin
                 (thread-send writer ['continue e msg])
                 (loop))
@@ -616,7 +618,7 @@ package: std/actor
             (match content
               ((or (!call e wire-id) (!stream e wire-id))
                (dispatch-error wire-id "message too large"))
-              ((? !value?)
+              ((? !yield?)
                (rpc-send-control-abort msg)
                (loop))
               (else
@@ -627,7 +629,7 @@ package: std/actor
           (match content
             ((or (!call e wire-id) (!stream e wire-id))
              (dispatch-error wire-id "marshall error"))
-            ((? !value?)
+            ((? !yield?)
              (rpc-send-control-abort msg)
              (loop))
             (else

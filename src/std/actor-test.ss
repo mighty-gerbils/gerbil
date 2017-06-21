@@ -124,7 +124,7 @@
          (let lp2 ((n 0))
            (if (< n N)
              (begin
-               (!!value n k)
+               (!!yield n k)
                (lp2 (1+ n)))
              (begin
                (!!end k)
@@ -139,7 +139,7 @@
          (let lp2 ((n 0))
            (if (< n N)
              (begin
-               (!!value n k continue: k)
+               (!!yield n k continue: k)
                (<< ((!continue (eq? k))
                     (lp2 (1+ n)))))
              (begin
@@ -164,7 +164,7 @@
         (send-message/timeout rfoo (make-!stream (make-hello.hello-stream "stream") k) 1)
         (let lp ((n 0))
           (when (< n N)
-            (<- ((!value x (eq? k))
+            (<- ((!yield x (eq? k))
                  (check x => n)
                  (lp (1+ n))))))
         (let (end (thread-receive))

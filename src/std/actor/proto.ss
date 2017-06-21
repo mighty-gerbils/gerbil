@@ -16,9 +16,9 @@ package: std/actor
   rpc-io-error? raise-rpc-io-error
   (struct-out actor-error remote-error rpc-error)
   (struct-out handle remote)
-  (struct-out !rpc !call !value !error !event !stream !end)
+  (struct-out !rpc !call !value !error !event !stream !yield !end)
   (struct-out !control !continue !abort)
-  !!call !!call-recv !!value !!error !!event !!stream !!stream-recv !!end
+  !!call !!call-recv !!value !!error !!event !!stream !!stream-recv !!yield !!end
   (struct-out !protocol !rpc-protocol)
   defproto
   defproto-default-type
@@ -93,6 +93,8 @@ package: std/actor
   final: #t)
 (defstruct (!stream !rpc) (e k)
   final: #t)
+(defstruct (!yield !rpc) (e k)
+  final: #t)
 (defstruct (!end !rpc) (k)
   final: #t)
 
@@ -130,14 +132,9 @@ package: std/actor
   (syntax-case stx ()
     ((_ dest e k)
      #'(send-message dest (make-!value e k)))
-    ((_ dest e k continue: g)
-     #'(send-message dest (make-!value e k) [continue: g] #t))
     ((macro e k)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message dest (make-!value e k))))
-    ((macro e k continue: g)
-     (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message dest (make-!value e k) [continue: g] #t)))))
+       #'(send-message dest (make-!value e k))))))
 
 (defsyntax (!!error stx)
   (syntax-case stx ()
@@ -169,7 +166,7 @@ package: std/actor
   (def (stream-handler outp)
     (apply send-e dest (make-!stream e k) send-args)
     (let lp ()
-      (<- ((!value val (eq? k))
+      (<- ((!yield val (eq? k))
            (write val outp)
            (alet (g (and @options (pgetq continue: @options)))
              (send @source (make-!continue g)))
@@ -189,6 +186,19 @@ package: std/actor
     (spawn stream-handler outp)
     inp))
 
+(defsyntax (!!yield stx)
+  (syntax-case stx ()
+    ((_ dest e k)
+     #'(send-message dest (make-!yield e k)))
+    ((_ dest e k continue: g)
+     #'(send-message dest (make-!yield e k) [continue: g] #t))
+    ((macro e k)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message dest (make-!yield e k))))
+    ((macro e k continue: g)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message dest (make-!yield e k) [continue: g] #t)))))
+
 (defsyntax (!!end stx)
   (syntax-case stx ()
     ((_ dest k)
@@ -196,7 +206,6 @@ package: std/actor
     ((macro k)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
        #'(send-message dest (make-!end k))))))
-
 
 ;;; wire rpc protocols
 (defstruct !rpc-protocol (connect accept)
