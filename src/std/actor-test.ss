@@ -140,7 +140,7 @@
            (if (< n N)
              (begin
                (!!yield n k continue: k)
-               (<< ((!continue (eq? k))
+               (<- ((!continue (eq? k))
                     (lp2 (1+ n)))))
              (begin
                (!!end k)

@@ -356,7 +356,7 @@ package: std/actor
   ((_ msg make)
   (alet* ((opts (message-options msg))
           (g (pgetq continue: opts)))
-    (send (message-source msg) (make g)))))
+    (send-message (message-source msg) (make g)))))
 
 (def (rpc-send-control-abort msg)
   (rpc-send-control msg make-!abort))

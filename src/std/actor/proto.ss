@@ -98,8 +98,8 @@ package: std/actor
 (defstruct (!end !rpc) (k)
   final: #t)
 
-;;; flow control messages [rpc server]
-(defstruct !control ())
+;;; flow control messages 
+(defstruct (!control !rpc) ())
 (defstruct (!continue !control) (k)
   final: #t)
 (defstruct (!abort !control) (k)
@@ -169,7 +169,7 @@ package: std/actor
       (<- ((!yield val (eq? k))
            (write val outp)
            (alet (g (and @options (pgetq continue: @options)))
-             (send @source (make-!continue g)))
+             (send-message @source (make-!continue g)))
            (lp))
           ((!end (eq? k))
            (close-port outp))
