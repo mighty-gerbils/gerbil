@@ -228,7 +228,9 @@ namespace: gxc
   (%#struct-instance?        false)
   (%#struct-direct-instance? false)
   (%#struct-ref              false)
-  (%#struct-set!             false))
+  (%#struct-set!             false)
+  (%#struct-direct-ref       false)
+  (%#struct-direct-set!      false))
 
 (defcompile-method #f &false-special-form
   (%#begin          false)
@@ -261,7 +263,9 @@ namespace: gxc
   (%#struct-instance?        xform-identity)
   (%#struct-direct-instance? xform-identity)
   (%#struct-ref              xform-identity)
-  (%#struct-set!             xform-identity))
+  (%#struct-set!             xform-identity)
+  (%#struct-direct-ref       xform-identity)
+  (%#struct-direct-set!      xform-identity))
 
 (defcompile-method #f &identity-special-form
   (%#begin          xform-identity)
@@ -294,7 +298,9 @@ namespace: gxc
   (%#struct-instance?        xform-operands)
   (%#struct-direct-instance? xform-operands)
   (%#struct-ref              xform-operands)
-  (%#struct-set!             xform-operands))
+  (%#struct-set!             xform-operands)
+  (%#struct-direct-ref       xform-operands)
+  (%#struct-direct-set!      xform-operands))
 
 (defcompile-method #f (&basic-xform &basic-xform-expression &identity)
   (%#begin          xform-begin%)
@@ -315,14 +321,15 @@ namespace: gxc
   (%#struct-instance?        collect-operands)
   (%#struct-direct-instance? collect-operands)
   (%#struct-ref              collect-operands)
-  (%#struct-set!             collect-operands))
+  (%#struct-set!             collect-operands)
+  (%#struct-direct-ref       collect-operands)
+  (%#struct-direct-set!      collect-operands))
 
 (defcompile-method apply-lift-top-lambdas (&lift-top-lambdas &basic-xform)
   (%#define-values  lift-top-lambda-define-values%)
   (%#let-values     lift-top-lambda-let-values%)
   (%#letrec-values  lift-top-lambda-letrec-values%)
-  (%#letrec*-values lift-top-lambda-letrec-values%)
-  )
+  (%#letrec*-values lift-top-lambda-letrec-values%))
 
 (defcompile-method apply-expression-subst (&expression-subst &basic-xform-expression)
   (%#begin xform-begin%)
@@ -1010,20 +1017,22 @@ namespace: gxc
     (with ((!struct-getf struct-t off) self)
       (let (struct-type (optimizer-resolve-type struct-t))
         (match struct-type
-          ((!struct-type struct-type-id _ fields xfields)
+          ((!struct-type struct-type-id _ fields xfields _ plist)
            (if xfields
              (ast-case args ()
                ((expr)
                 (let ((expr (compile-e #'expr))
-                      (off (fx+ off xfields 1)))
+                      (off (fx+ off xfields 1))
+                      (op (if (and plist (assgetq final: plist))
+                          '%#struct-direct-ref
+                          '%#struct-ref)))
                   (xform-wrap-source
-                   ['%#struct-ref ['%#ref struct-t] ['%#quote off] expr]
+                   [op ['%#ref struct-t] ['%#quote off] expr]
                    stx)))
                (_ (raise-compile-error "Illegal struct accessor application" stx)))
              (begin
                (verbose "struct-getf: incomplete struct " struct-type-id)
-               (xform-call% stx)
-               )
+               (xform-call% stx))
              ))                 ; incomplete struct info; can't inline
           (#f (xform-call% stx))
           (else
@@ -1035,21 +1044,23 @@ namespace: gxc
     (with ((!struct-setf struct-t off) self)
       (let (struct-type (optimizer-resolve-type struct-t))
         (match struct-type
-          ((!struct-type struct-type-id _ fields xfields)
+          ((!struct-type struct-type-id _ fields xfields _ plist)
            (if xfields
              (ast-case args ()
                ((expr val)
                 (let ((expr (compile-e #'expr))
                       (val (compile-e #'val))
-                      (off (fx+ off xfields 1)))
+                      (off (fx+ off xfields 1))
+                      (op (if (and plist (assgetq final: plist))
+                          '%#struct-direct-set!
+                          '%#struct-set!)))
                   (xform-wrap-source
-                   ['%#struct-set! ['%#ref struct-t] ['%#quote off] expr val]
+                   [op ['%#ref struct-t] ['%#quote off] expr val]
                    stx)))
                (_ (raise-compile-error "Illegal struct mutator application" stx)))
              (begin
                (verbose "struct-setf: incomplete struct " struct-type-id)
-               (xform-call% stx)
-               )
+               (xform-call% stx))
              ))                 ; incomplete struct info; can't inline
           (#f (xform-call% stx))
           (else

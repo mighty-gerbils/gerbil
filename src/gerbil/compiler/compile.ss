@@ -64,7 +64,9 @@ namespace: gxc
   (%#struct-instance?        void)
   (%#struct-direct-instance? void)
   (%#struct-ref              void)
-  (%#struct-set!             void))
+  (%#struct-set!             void)
+  (%#struct-direct-ref       void)
+  (%#struct-direct-set!      void))
 
 (defcompile-method #f &void-special-form
   (%#begin          void)
@@ -121,7 +123,9 @@ namespace: gxc
   (%#struct-instance?        true)
   (%#struct-direct-instance? true)
   (%#struct-ref              true)
-  (%#struct-set!             true))
+  (%#struct-set!             true)
+  (%#struct-direct-ref       true)
+  (%#struct-direct-set!      true))
 
 (defcompile-method #f &generate-runtime-empty
   (%#begin                   generate-runtime-empty)
@@ -149,7 +153,9 @@ namespace: gxc
   (%#struct-instance?        generate-runtime-empty)
   (%#struct-direct-instance? generate-runtime-empty)
   (%#struct-ref              generate-runtime-empty)
-  (%#struct-set!             generate-runtime-empty))
+  (%#struct-set!             generate-runtime-empty)
+  (%#struct-direct-ref       generate-runtime-empty)
+  (%#struct-direct-set!      generate-runtime-empty))
 
 (defcompile-method apply-generate-loader (&generate-loader &generate-runtime-empty)
   (%#begin                   generate-runtime-begin%)
@@ -173,7 +179,9 @@ namespace: gxc
   (%#struct-instance?        generate-runtime-struct-instancep%)
   (%#struct-direct-instance? generate-runtime-struct-direct-instancep%)
   (%#struct-ref              generate-runtime-struct-ref%)
-  (%#struct-set!             generate-runtime-struct-setq%))
+  (%#struct-set!             generate-runtime-struct-setq%)
+  (%#struct-direct-ref       generate-runtime-struct-direct-ref%)
+  (%#struct-direct-set!      generate-runtime-struct-direct-setq%))
 
 (defcompile-method apply-generate-runtime-phi (&generate-runtime-phi
                                                &generate-runtime)
@@ -196,7 +204,9 @@ namespace: gxc
   (%#struct-instance?        collect-operands)
   (%#struct-direct-instance? collect-operands)
   (%#struct-ref              collect-operands)
-  (%#struct-set!             collect-operands))
+  (%#struct-set!             collect-operands)
+  (%#struct-direct-ref       collect-operands)
+  (%#struct-direct-set!      collect-operands))
 
 (defcompile-method apply-generate-meta (&generate-meta &void-expression)
   (%#begin          generate-meta-begin%)
@@ -233,6 +243,8 @@ namespace: gxc
   (%#struct-direct-instance? generate-meta-phi-expr)
   (%#struct-ref              generate-meta-phi-expr)
   (%#struct-set!             generate-meta-phi-expr)
+  (%#struct-direct-ref       generate-meta-phi-expr)
+  (%#struct-direct-set!      generate-meta-phi-expr)
   (%#declare                 void))
 
 ;;; generic collectors
@@ -938,6 +950,23 @@ namespace: gxc
                         (compile-e #'off)  ; off (incl type)
                         (compile-e #'type) ; type
                         '(quote #f)])))    ; where
+
+(def (generate-runtime-struct-direct-ref% stx)
+  (ast-case stx ()
+    ((_ type off obj)
+     ['##direct-structure-ref (compile-e #'obj)  ; obj
+                              (compile-e #'off)  ; off (incl type)
+                              (compile-e #'type) ; type
+                              '(quote #f)])))    ; where
+
+(def (generate-runtime-struct-direct-setq% stx)
+  (ast-case stx ()
+    ((_ type off obj val)
+     ['##direct-structure-set! (compile-e #'obj)  ; obj
+                               (compile-e #'val)  ; val
+                               (compile-e #'off)  ; off (incl type)
+                               (compile-e #'type) ; type
+                               '(quote #f)])))    ; where
 
 ;;; loader
 (def (generate-runtime-loader-import% stx)
