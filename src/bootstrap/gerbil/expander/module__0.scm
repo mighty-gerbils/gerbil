@@ -1114,7 +1114,7 @@
                          _key10835_
                          _phi10834_
                          _e10838_
-                         (##structure-ref
+                         (##direct-structure-ref
                           _source10836_
                           '1
                           gx#module-export::t
@@ -2003,13 +2003,13 @@
                                            _hd9763_
                                            _current-ctx9715_)
                                           (if (if (fxpositive?
-                                                   (##structure-ref
+                                                   (##direct-structure-ref
                                                     _hd9763_
                                                     '3
                                                     gx#module-import::t
                                                     '#f))
-                                                  (fxzero? (##structure-ref
-                                                            (##structure-ref
+                                                  (fxzero? (##direct-structure-ref
+                                                            (##direct-structure-ref
                                                              _hd9763_
                                                              '1
                                                              gx#module-import::t
@@ -2020,8 +2020,8 @@
                                                   '#f)
                                               (table-set!
                                                _deps9716_
-                                               (##structure-ref
-                                                (##structure-ref
+                                               (##direct-structure-ref
+                                                (##direct-structure-ref
                                                  _hd9763_
                                                  '1
                                                  gx#module-import::t
@@ -2042,7 +2042,7 @@
                                                    'gx#import-set::t)
                                                   (foldl1 cons
                                                           _r9761_
-                                                          (##structure-ref
+                                                          (##direct-structure-ref
                                                            _in9760_
                                                            '3
                                                            gx#import-set::t
@@ -2095,7 +2095,7 @@
                                   'gx#import-set::t)
                                  (for-each
                                   _bind!9717_
-                                  (##structure-ref
+                                  (##direct-structure-ref
                                    _hd9746_
                                    '3
                                    gx#import-set::t
@@ -2238,12 +2238,12 @@
                                      (lambda (_out9820_)
                                        (table-set!
                                         _exports9817_
-                                        (cons (##structure-ref
+                                        (cons (##direct-structure-ref
                                                _out9820_
                                                '3
                                                gx#module-export::t
                                                '#f)
-                                              (##structure-ref
+                                              (##direct-structure-ref
                                                _out9820_
                                                '4
                                                gx#module-export::t
@@ -2523,7 +2523,7 @@
                                                     _bind9677_
                                                     'gx#syntax-binding::t)
                                                    (##structure-instance-of?
-                                                    (##structure-ref
+                                                    (##direct-structure-ref
                                                      _bind9677_
                                                      '4
                                                      gx#syntax-binding::t
@@ -2539,7 +2539,7 @@
                                                 _id9673_))
                                            (_lp9646_
                                             _rest9675_
-                                            (##structure-ref
+                                            (##direct-structure-ref
                                              _bind9677_
                                              '4
                                              gx#syntax-binding::t
@@ -2652,7 +2652,7 @@
                                                               _current-phi9227_)
                                                          (if (eq? _src9223_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (##structure-ref
+                          (##direct-structure-ref
                            _out9254_
                            '1
                            gx#module-export::t
@@ -2725,7 +2725,7 @@
                                                  'gx#export-set::t)
                                                 (foldl1 cons
                                                         _r9221_
-                                                        (##structure-ref
+                                                        (##direct-structure-ref
                                                          _out9220_
                                                          '3
                                                          gx#export-set::t

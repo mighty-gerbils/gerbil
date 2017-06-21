@@ -651,7 +651,7 @@
                               (gx#resolve-identifier__0 _form5597_))))
                      (if (gx#core-expander-binding? _bind5600_)
                          (gx#core-apply-expander__0
-                          (##structure-ref
+                          (##direct-structure-ref
                            _bind5600_
                            '4
                            gx#syntax-binding::t
@@ -664,7 +664,7 @@
                               'gx#syntax-binding::t)
                              (gx#core-expand-expression
                               (gx#core-apply-expander__0
-                               (##structure-ref
+                               (##direct-structure-ref
                                 _bind5600_
                                 '4
                                 gx#syntax-binding::t
@@ -784,7 +784,7 @@
                           _bind5529_
                           'gx#syntax-binding::t)
                          (gx#core-apply-expander__0
-                          (##structure-ref
+                          (##direct-structure-ref
                            _bind5529_
                            '4
                            gx#syntax-binding::t
@@ -1521,7 +1521,7 @@
                           _bind4769_
                           'gx#import-binding::t)
                          (_lp4767_
-                          (##structure-ref
+                          (##direct-structure-ref
                            _bind4769_
                            '4
                            gx#import-binding::t
@@ -1531,7 +1531,7 @@
                               'gx#alias-binding::t)
                              (_lp4767_
                               (gx#core-resolve-identifier__opt-lambda4691
-                               (##structure-ref
+                               (##direct-structure-ref
                                 _bind4769_
                                 '4
                                 gx#alias-binding::t
@@ -1638,12 +1638,12 @@
                               (##structure-ref _e4699_ '1 AST::t '#f)
                               _phi4694_
                               '0
-                              (##structure-ref
+                              (##direct-structure-ref
                                _e4699_
                                '3
                                gx#syntax-quote::t
                                '#f)
-                              (##structure-ref
+                              (##direct-structure-ref
                                _e4699_
                                '4
                                gx#syntax-quote::t
@@ -1657,7 +1657,7 @@
                                   _phi4694_
                                   _ctx4695_
                                   (foldl1 gx#apply-mark
-                                          (##structure-ref
+                                          (##direct-structure-ref
                                            _e4699_
                                            '3
                                            gx#identifier-wrap::t
@@ -1669,7 +1669,7 @@
                                      (_lp4697_
                                       (##structure-ref _e4699_ '1 AST::t '#f)
                                       (gx#apply-mark
-                                       (##structure-ref
+                                       (##direct-structure-ref
                                         _e4699_
                                         '3
                                         gx#syntax-wrap::t
@@ -1829,7 +1829,7 @@
                                        _xval4559_
                                        'gx#import-binding::t)
                                       (let ((_$e4564_
-                                             (##structure-ref
+                                             (##direct-structure-ref
                                               _xval4559_
                                               '6
                                               gx#import-binding::t
@@ -1869,7 +1869,7 @@
                               _val4483_
                               'gx#import-binding::t)
                              (let ((_$e4570_
-                                    (##structure-ref
+                                    (##direct-structure-ref
                                      _val4483_
                                      '6
                                      gx#import-binding::t
@@ -2323,7 +2323,7 @@
       (lambda (_bind4243_ _is?4244_)
         (if (##structure-direct-instance-of? _bind4243_ 'gx#syntax-binding::t)
             (_is?4244_
-             (##structure-ref _bind4243_ '4 gx#syntax-binding::t '#f))
+             (##direct-structure-ref _bind4243_ '4 gx#syntax-binding::t '#f))
             '#f)))
     (begin
       (define gx#expander-binding?__0
@@ -2423,7 +2423,11 @@
                    (let ((_$e4159_ (gx#stx-source _id4157_)))
                      (if _$e4159_ _$e4159_ _src4153_))
                    _ctx4154_
-                   (##structure-ref _id4157_ '3 gx#identifier-wrap::t '#f)))
+                   (##direct-structure-ref
+                    _id4157_
+                    '3
+                    gx#identifier-wrap::t
+                    '#f)))
                 (if (gx#stx-datum? _stx4152_)
                     (gx#stx-e _stx4152_)
                     (##structure
@@ -2544,7 +2548,7 @@
           (if (##structure-direct-instance-of?
                _bind4067_
                'gx#syntax-binding::t)
-              (##structure-ref _bind4067_ '4 gx#syntax-binding::t '#f)
+              (##direct-structure-ref _bind4067_ '4 gx#syntax-binding::t '#f)
               (_E4065_ _stx4064_)))))
     (begin
       (define gx#syntax-local-e__0

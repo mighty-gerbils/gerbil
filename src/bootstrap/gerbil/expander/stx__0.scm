@@ -125,12 +125,12 @@
                                gx#syntax-quote::t
                                _datum3951_
                                _src3952_
-                               (##structure-ref
+                               (##direct-structure-ref
                                 _stx3957_
                                 '3
                                 gx#syntax-quote::t
                                 '#f)
-                               (##structure-ref
+                               (##direct-structure-ref
                                 _stx3957_
                                 '4
                                 gx#syntax-quote::t
@@ -138,7 +138,7 @@
                               (_wrap-outer3955_
                                (_wrap-datum3954_
                                 _datum3951_
-                                (##structure-ref
+                                (##direct-structure-ref
                                  _stx3957_
                                  '3
                                  gx#identifier-wrap::t
@@ -171,7 +171,11 @@
                          (_lp3929_
                           (##structure-ref _e3931_ '1 AST::t '#f)
                           (gx#apply-mark
-                           (##structure-ref _e3931_ '3 gx#syntax-wrap::t '#f)
+                           (##direct-structure-ref
+                            _e3931_
+                            '3
+                            gx#syntax-wrap::t
+                            '#f)
                            _marks3932_)
                           (##structure-ref _e3931_ '2 AST::t '#f))
                          (if (##structure-direct-instance-of?
@@ -184,7 +188,7 @@
                                   (##structure-ref _e3931_ '1 AST::t '#f)
                                   (##structure-ref _e3931_ '2 AST::t '#f)
                                   (foldl1 gx#apply-mark
-                                          (##structure-ref
+                                          (##direct-structure-ref
                                            _e3931_
                                            '3
                                            gx#identifier-wrap::t
@@ -264,7 +268,11 @@
                    _stx3910_
                    'gx#syntax-wrap::t)
                   (eq? _mark3911_
-                       (##structure-ref _stx3910_ '3 gx#syntax-wrap::t '#f))
+                       (##direct-structure-ref
+                        _stx3910_
+                        '3
+                        gx#syntax-wrap::t
+                        '#f))
                   '#f)
               (##structure-ref _stx3910_ '1 AST::t '#f)
               (##structure
@@ -379,13 +387,13 @@
     (lambda (_stx3757_)
       (let ((_stx3759_ (gx#stx-unwrap__0 _stx3757_)))
         (if (##structure-direct-instance-of? _stx3759_ 'gx#identifier-wrap::t)
-            (##structure-ref _stx3759_ '3 gx#identifier-wrap::t '#f)
-            (##structure-ref _stx3759_ '4 gx#syntax-quote::t '#f)))))
+            (##direct-structure-ref _stx3759_ '3 gx#identifier-wrap::t '#f)
+            (##direct-structure-ref _stx3759_ '4 gx#syntax-quote::t '#f)))))
   (define gx#stx-identifier-context
     (lambda (_stx3753_)
       (let ((_stx3755_ (gx#stx-unwrap__0 _stx3753_)))
         (if (gx#identifier-quote? _stx3755_)
-            (##structure-ref _stx3755_ '3 gx#syntax-quote::t '#f)
+            (##direct-structure-ref _stx3755_ '3 gx#syntax-quote::t '#f)
             '#f))))
   (define gx#identifier-list?
     (lambda (_stx3708_)
