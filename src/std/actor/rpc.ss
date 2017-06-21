@@ -37,7 +37,6 @@ package: std/actor
   !rpc.server-address !!rpc.server-address
   (struct-out rpc.shutdown)
   !rpc.shutdown !!rpc.shutdown
-  rpc-address
   rpc-null-proto
   rpc-cookie-proto
   rpc-generate-cookie!
@@ -143,19 +142,6 @@ package: std/actor
     (with-catch values (cut thread-join! thread))
     (thread-send server thread))
   (spawn thread-monitor (current-thread) thread))
-
-(def (canonical-address address)
-  (cond
-   ((or (inet-address? address)
-        (inet-address-string? address))
-    (resolve-address address))
-   ((string? address)                   ; unix domain
-    address)
-   (else #f)))
-
-(def (rpc-address address)
-  (or (canonical-address address)
-      (error "Bad rpc address" address)))
 
 (def (rpc-server-loop socksrv socks sas proto)
   (def connect-e
@@ -281,10 +267,8 @@ package: std/actor
          (let (dest (message-dest msg))
            (cond
             ((remote? dest)
-             (let (address (canonical-address (remote-address dest)))
+             (let (address (remote-address dest))
                (cond
-                ((not address)
-                 (rpc-send-error-response msg "bad address"))
                 ((hash-get conns address)
                  => (lambda (handler)
                       (thread-send handler msg)))

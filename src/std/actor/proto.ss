@@ -68,9 +68,19 @@ package: std/actor
   (lambda (self handler id address proto)
     (handle:::init! self handler id)
     (set! (remote-address self)
-      (inet-address address))
+      (canonical-address address))
     (set! (remote-proto self)
       proto)))
+
+(def (canonical-address address)
+  (cond
+   ((or (inet-address? address)
+        (inet-address-string? address))
+    (resolve-address address))
+   ((string? address)                   ; unix domain
+    address)
+   (else
+    (error "Bad actor address" address))))
 
 ;;; rpc messages
 (defstruct !rpc ())
