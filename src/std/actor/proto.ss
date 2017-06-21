@@ -162,6 +162,8 @@ package: std/actor
     (let lp ()
       (<- ((!value val (eq? k))
            (write val outp)
+           (alet (g (and @options (pgetq continue: @options)))
+             (send @source (make-!continue g)))
            (lp))
           ((!end (eq? k))
            (close-port outp))
