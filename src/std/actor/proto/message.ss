@@ -44,7 +44,7 @@ package: std/actor/proto
 (def rpc-proto-cookie-cipher #x03)
 
 ;;; protocol i/o
-(def (rpc-proto-marshall-message msg proto)
+(def (rpc-proto-marshal-message msg proto)
   (let (outp (open-output-u8vector))
     (rpc-proto-write-message msg proto outp)
     (get-output-u8vector outp)))
@@ -114,7 +114,7 @@ package: std/actor/proto
          (xdr-write-object content port))))
     (force-output port)))
 
-(def (rpc-proto-unmarshall-message proto u8v)
+(def (rpc-proto-unmarshal-message proto u8v)
   (let* ((inp (open-input-u8vector u8v))
          (msg (rpc-proto-read-message-envelope inp)))
     (rpc-proto-read-message-content msg proto inp)))
@@ -154,7 +154,7 @@ package: std/actor/proto
          (make-!close k)))
       (else
        (raise-rpc-io-error 'rpc-proto-read-message
-                           "unmarshall error; unexpected message type" type)))
+                           "unmarshal error; unexpected message type" type)))
      #!void dest #f)))
 
 ;; return modify msg content in place, return it
