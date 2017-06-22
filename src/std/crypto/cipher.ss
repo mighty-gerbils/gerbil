@@ -173,6 +173,21 @@ package: std/crypto
       (write-subu8vector buf 0 olen outp)
       (get-output-u8vector outp))))
 
+(def (cipher-u8vector-encrypt/decrypt cipher key iv bytes
+                                      cipher-init!
+                                      cipher-update!
+                                      cipher-final!)
+  (let* ((len (u8vector-length bytes))
+         (buflen (fx+ len (fx* 2 (cipher-block-size cipher))))
+         (buf (make-u8vector buflen)))
+    (cipher-init! cipher key iv)
+    (let* ((ulen (cipher-update! cipher buf bytes 0 len))
+           (flen (cipher-final! cipher buf ulen))
+           (olen (fx+ ulen flen)))
+      (when (fx< olen buflen)
+        (u8vector-shrink! buf olen))
+      buf)))
+
 (def (encrypt cipher key iv in)
   (cond
    ((string? in)
@@ -185,7 +200,10 @@ package: std/crypto
     (error "Bad input source" in))))
 
 (def (encrypt-u8vector cipher key iv in)
-  (encrypt-port cipher key iv (open-input-u8vector in)))
+  (cipher-u8vector-encrypt/decrypt cipher key iv in
+                                   encrypt-init!
+                                   encrypt-update/nocheck!
+                                   encrypt-final/nocheck!))
 
 (def (encrypt-port cipher key iv inp)
   (cipher-port-encrypt/decrypt cipher key iv inp
@@ -203,7 +221,10 @@ package: std/crypto
     (error "Bad input source" in))))
 
 (def (decrypt-u8vector cipher key iv in)
-  (decrypt-port cipher key iv (open-input-u8vector in)))
+  (cipher-u8vector-encrypt/decrypt cipher key iv in
+                                   decrypt-init!
+                                   decrypt-update/nocheck!
+                                   decrypt-final/nocheck!))
 
 (def (decrypt-port cipher key iv inp)
   (cipher-port-encrypt/decrypt cipher key iv inp
