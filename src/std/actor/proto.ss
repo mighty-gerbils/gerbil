@@ -5,6 +5,7 @@ package: std/actor
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
+        :gerbil/gambit/misc
         :std/event
         :std/error
         :std/net/address
@@ -197,6 +198,7 @@ package: std/actor
                             [permanent-close: #t direction: 'output]))
          (handler (spawn stream-handler outp))
          (close (lambda () (!!close handler k))))
+    (make-will inp (lambda (_) (close)))
     (values inp close)))
 
 (defsyntax (!!yield stx)
