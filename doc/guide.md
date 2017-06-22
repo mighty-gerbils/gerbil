@@ -1187,7 +1187,7 @@ A stream is like a call, but it returns multiple values using `!!yield`
 until the stream's end or an error occurs.
 
 For example, the following server generates a stream of numbers as
-specified by the argument. Values can be processed directly, or with
+specified by the argument. Yielded values can be processed directly, or with
 the `!!stream` macro which constructs a vector port and pipes objects
 through it in a background thread:
 ```
@@ -1195,17 +1195,23 @@ through it in a background thread:
   stream: (count N))
 
 (def (my-simple-stream)
+  (def (stream dest N k)
+    (let lp ((n 0))
+      (if (< n N)
+        (begin
+          (!!yield dest n k)
+          (<- ((!continue k)            ; flow control
+               (lp (1+ n)))
+              ((!close k)               ; stream closed
+               (!!end dest k))
+              ((!abort k)               ; stream aborted 
+               (void))))
+        (!!end dest k))))
+  
   (let lp ()
     (<- ((!simple-stream.count N k)
-         (let lp2 ((n 0))
-           (if (< n N)
-             (begin
-               (!!yield n k)
-               (lp2 (1+ n)))
-             (begin
-               (!!end k)
-               (lp))))))))
-
+         (spawn stream @source N k)
+         (lp)))))
 
 (def my-stream (spawn my-simple-stream))
 

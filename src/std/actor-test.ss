@@ -140,7 +140,7 @@
          (let lp2 ((n 0))
            (if (< n N)
              (begin
-               (!!yield n k continue: k)
+               (!!yield n k)
                (<- ((!continue (eq? k))
                     (lp2 (1+ n)))))
              (begin
@@ -155,7 +155,7 @@
     (<- ((!hello.hello-stream _ k)
          (let (source @source)
            (let lp2 ((n 0))
-             (!!yield n k continue: k)
+             (!!yield n k)
              (<- ((!continue k)
                   (lp2 (1+ n)))
                  ((!close k)

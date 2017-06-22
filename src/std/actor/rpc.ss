@@ -331,8 +331,10 @@ package: std/actor
       (match content
         ((or (!call _ k) (!stream _ k))
          (!!error (message-source msg) (make-rpc-error 'rpc-server what) k))
-        ((? !yield?)
-         (rpc-send-control-abort msg))
+        ((!yield k)
+         (let* ((opts (message-options msg))
+                (g (or (and opts (pgetq continue: opts)) k)))
+           (send-message (message-source msg) (make-!abort g))))
         (else (void))))))
 
 (def (rpc-send-error-responses what)
@@ -351,18 +353,6 @@ package: std/actor
          (lp))
         (ignore (lp))
         (else (void)))))
-
-(defrules rpc-send-control ()
-  ((_ msg make)
-  (alet* ((opts (message-options msg))
-          (g (pgetq continue: opts)))
-    (send-message (message-source msg) (make g)))))
-
-(def (rpc-send-control-abort msg)
-  (rpc-send-control msg make-!abort))
-
-(def (rpc-send-control-continue msg)
-  (rpc-send-control msg make-!continue))
 
 (def (rpc-server-connection rpc-server sock sa proto-e)
   (try
@@ -477,8 +467,10 @@ package: std/actor
                  (dispatch-value msg bytes !yield-k !yield-k-set!))
                 ((? !end?)
                  (dispatch-value msg bytes !end-k !end-k-set!))
+                ((? !continue?)
+                 (dispatch-control msg bytes !continue-k !continue-k-set!))
                 ((? !close?)
-                 (dispatch-close msg bytes))
+                 (dispatch-control msg bytes !close-k !close-k-set!))
                 ((? not)
                  (dispatch-call msg bytes))))
             (begin
@@ -548,13 +540,13 @@ package: std/actor
         (warning "cannot route value; bogus continuation ~a" cont)
         (loop)))))
 
-  (def (dispatch-close msg bytes)
+  (def (dispatch-control msg bytes value-k value-k-set!)
     (let* ((content (message-e msg))
-           (wire-id (!close-k content))
+           (wire-id (value-k content))
            (stream (hash-get stream-actors wire-id)))
       (if stream
         (with ([actor . g] stream)
-          (set! (!close-k content) g)
+          (value-k-set! content g)
           (send actor msg)
           (loop))
         (begin
@@ -614,6 +606,15 @@ package: std/actor
                  (!end wire-id))
              (hash-remove! stream-actors wire-id)
              (marshall-and-write msg proto #t))
+            ((!continue k)
+             (let (wire-id (hash-get stream-continuations k))
+               (if wire-id
+                 (begin
+                   (set! (!continue-k content) wire-id)
+                   (marshall-and-write msg proto #t))
+                 (begin
+                   (warning "bad continue; unknown stream ~a" k)
+                   (loop)))))
             ((!close k)
              (let (wire-id (hash-get stream-continuations k))
                (if wire-id
@@ -621,7 +622,7 @@ package: std/actor
                    (set! (!close-k content) wire-id)
                    (marshall-and-write msg proto #t))
                  (begin
-                   (warning "bad close; unknown stream continuation ~a" k)
+                   (warning "bad close; unknown stream ~a" k)
                    (loop)))))
             (else
              (marshall-and-write msg proto #t))))
@@ -651,16 +652,9 @@ package: std/actor
       (cond
        ((u8vector? e)
         (if (fx<= (u8vector-length e) rpc-proto-message-max-length)
-          (let (g (and (!yield? (message-e msg))
-                       (alet (opts (message-options msg))
-                         (pgetq continue: opts))))
-            (if g
-              (begin
-                (thread-send writer ['continue e msg])
-                (loop))
-              (begin
-                (thread-send writer e)
-                (loop))))
+          (begin
+            (thread-send writer e)
+            (loop))
           (let (content (message-e msg))
             (warning "message too large; not sending %d bytes" (u8vector-length e))
             (match content
@@ -704,29 +698,17 @@ package: std/actor
            (dispatch-error wire-id "timeout")))))
   
   (def (writer-loop)
-    (try
-     (let lp ()
-       (<< (! (or rpc-keep-alive never-evt)
-              (write-e output (void))
-              (lp))
-           ((? u8vector? data)
-            (write-e output data)
-            (lp))
-           (['continue data msg]
-            (rpc-send-control-continue msg)
-            (write-e output data)
-            (lp))
-           ('exit (void))
-           (bogus
-            (warning "unexpected message ~a" bogus)
-            (lp))))
-     (finally
-      (let lp ()
-        (<< (['continue _ msg]
-             (rpc-send-control-abort msg)
+    (let lp ()
+      (<< (! (or rpc-keep-alive never-evt)
+             (write-e output (void))
              (lp))
-            (data (lp))
-            (else (void)))))))
+          ((? u8vector? data)
+           (write-e output data)
+           (lp))
+          ('exit (void))
+          (bogus
+           (warning "unexpected message ~a" bogus)
+           (lp)))))
 
   (def (timeout-event)
     (let lp ()

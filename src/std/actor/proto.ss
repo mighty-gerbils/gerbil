@@ -17,10 +17,9 @@ package: std/actor
   rpc-io-error? raise-rpc-io-error
   (struct-out actor-error remote-error rpc-error)
   (struct-out handle remote)
-  (struct-out !rpc !call !value !error !event !stream !yield !end !close)
-  (struct-out !control !continue !abort)
+  (struct-out !rpc !call !value !error !event !stream !yield !end !continue !close !abort)
   !!call !!call-recv !!value !!error !!event
-  !!stream !!stream-recv !!yield !!end !!close
+  !!stream !!stream-recv !!yield !!end !!continue !!close
   (struct-out !protocol !rpc-protocol)
   defproto
   defproto-default-type
@@ -99,14 +98,11 @@ package: std/actor
   final: #t)
 (defstruct (!end !rpc) (k)
   final: #t)
+(defstruct (!continue !rpc) (k)
+  final: #t)
 (defstruct (!close !rpc) (k)
   final: #t)
-
-;;; flow control messages 
-(defstruct (!control !rpc) ())
-(defstruct (!continue !control) (k)
-  final: #t)
-(defstruct (!abort !control) (k)
+(defstruct (!abort !rpc) (k)
   final: #t)
 
 (defrules !!call ()
@@ -174,8 +170,8 @@ package: std/actor
            (write val outp)
            (if close?
              (!!close @source k)
-             (alet (g (and @options (pgetq continue: @options)))
-               (send-message @source (make-!continue g))))
+             (let (g (or (and @options (pgetq continue: @options)) k))
+               (!!continue @source g)))
            (lp @source #f))
           ((!end (eq? k))
            (close-port outp))
@@ -213,6 +209,14 @@ package: std/actor
     ((macro e k continue: g)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
        #'(send-message dest (make-!yield e k) [continue: g] #t)))))
+
+(defsyntax (!!continue stx)
+  (syntax-case stx ()
+    ((_ dest k)
+     #'(send-message dest (make-!continue k)))
+    ((macro k)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message dest (make-!continue k))))))
 
 (defsyntax (!!end stx)
   (syntax-case stx ()
