@@ -493,7 +493,7 @@ package: std/actor
     (let (uuid (message-dest msg))
       (match (!!rpc.lookup rpc-server uuid)
         ((values actor proto)
-         (let (e (unmarshall-message-content msg proto bytes))
+         (let (e (unmarshal-message-content msg proto bytes))
            (if (message? e)
              (begin
                (set! (message-dest msg)
@@ -503,15 +503,17 @@ package: std/actor
                (send actor msg)
                (loop))
              (begin
-               (log-error "unmarshall error" e)
-               (loop)))))
+               (log-error "unmarshal error" e)
+               (match (message-e msg)
+                 ((or (!call _ k) (!stream _ k))
+                  (dispatch-remote-error (make-!error "unmarshal error" k) uuid))
+                 (else
+                  (loop)))))))
         (else
          (warning "cannot route call; no actor binding ~a" (uuid->symbol uuid))
          (match (message-e msg)
            ((or (!call _ k) (!stream _ k))
-            (marshall-and-write
-             (make-message (make-!error "no binding" k) (void) uuid #f)
-             #f #f))
+            (dispatch-remote-error (make-!error "no binding" k) uuid))
            (else
             (loop)))))))
   
@@ -522,7 +524,7 @@ package: std/actor
        ((hash-get continuations cont)
         => (match <>
              ((values actor k proto stream?)
-              (let (e (unmarshall-message-content msg proto bytes))
+              (let (e (unmarshal-message-content msg proto bytes))
                 (if (message? e)
                   (begin
                     (value-k-set! (message-e msg) k)
@@ -533,9 +535,12 @@ package: std/actor
                     (send actor msg)
                     (loop))
                   (begin
-                    (!!error actor (make-rpc-error 'rpc-connection "unmarshall error") k)
+                    (log-error "unmarshal error" e)
+                    (!!error actor (make-rpc-error 'rpc-connection "unmarshal error") k)
                     (remove-continuation! cont)
-                    (loop)))))))
+                    (if (!yield? content)
+                      (dispatch-remote-error (make-!close cont) (message-dest msg))
+                      (loop))))))))
        (else
         (warning "cannot route value; bogus continuation ~a" cont)
         (loop)))))
@@ -550,10 +555,13 @@ package: std/actor
           (send actor msg)
           (loop))
         (begin
-          (warning "cannot close unknown stream ~a" wire-id)
-          (loop)))))
+          (warning "bad control message; unknown stream ~a" wire-id)
+          (dispatch-remote-error (make-!error "uknown stream" wire-id) (message-dest msg))))))
+
+  (def (dispatch-remote-error what dest)
+    (marshal-and-write (make-message what (void) dest #f) #f #f))
   
-  (def (unmarshall-message-content msg proto bytes)
+  (def (unmarshal-message-content msg proto bytes)
     (try (rpc-proto-read-message-content msg proto bytes)
          (catch (exception? e) e)))
     
@@ -580,7 +588,7 @@ package: std/actor
                  (hash-put! continuation-timeouts wire-id timeo-evt)
                  (pqueue-push! timeouts-pqueue timeo-evt))
                (set! (!call-k content) wire-id)
-               (marshall-and-write msg proto #t)))
+               (marshal-and-write msg proto #t)))
             ((!stream _ k)
              (let ((wire-id (next-continuation-id!))
                    (timeo (and opts (pgetq timeout: opts))))
@@ -597,21 +605,21 @@ package: std/actor
                    (hash-put! continuation-timeouts wire-id timeo-evt)
                    (pqueue-push! timeouts-pqueue timeo-evt)))
                (set! (!stream-k content) wire-id)
-               (marshall-and-write msg proto #t)))
+               (marshal-and-write msg proto #t)))
             ((!yield _ wire-id)
              (let (g (or (and opts (pgetq continue: opts)) wire-id))
                (hash-put! stream-actors wire-id (cons src g))
-               (marshall-and-write msg proto #t)))
+               (marshal-and-write msg proto #t)))
             ((or (!error _ wire-id)
                  (!end wire-id))
              (hash-remove! stream-actors wire-id)
-             (marshall-and-write msg proto #t))
+             (marshal-and-write msg proto #t))
             ((!continue k)
              (let (wire-id (hash-get stream-continuations k))
                (if wire-id
                  (begin
                    (set! (!continue-k content) wire-id)
-                   (marshall-and-write msg proto #t))
+                   (marshal-and-write msg proto #t))
                  (begin
                    (warning "bad continue; unknown stream ~a" k)
                    (loop)))))
@@ -620,12 +628,12 @@ package: std/actor
                (if wire-id
                  (begin
                    (set! (!close-k content) wire-id)
-                   (marshall-and-write msg proto #t))
+                   (marshal-and-write msg proto #t))
                  (begin
                    (warning "bad close; unknown stream ~a" k)
                    (loop)))))
             (else
-             (marshall-and-write msg proto #t))))
+             (marshal-and-write msg proto #t))))
         (begin
           (warning "bad handle; no protocol ~a ~a" dest msg)
           (loop)))))
@@ -646,8 +654,8 @@ package: std/actor
           (hash-remove! continuation-timeouts wire-id)
           (hash-remove! timeouts timeo)))))
 
-  (def (marshall-and-write msg proto local-error?)
-    (let (e (try (rpc-proto-marshall-message msg proto)
+  (def (marshal-and-write msg proto local-error?)
+    (let (e (try (rpc-proto-marshal-message msg proto)
                  (catch (exception? e) e)))
       (cond
        ((u8vector? e)
@@ -665,17 +673,17 @@ package: std/actor
               (else
                (loop))))))
        (local-error?
-        (log-error "marshall error" e)
+        (log-error "marshal error" e)
         (let (content (message-e msg))
           (match content
             ((or (!call e wire-id) (!stream e wire-id))
-             (dispatch-error wire-id "marshall error"))
+             (dispatch-error wire-id "marshal error"))
             ((!yield wire-id)
              (dispatch-close/abort msg wire-id "marshal error"))
             (else
              (loop)))))
        (else
-        (log-error "marshall error" e)
+        (log-error "marshal error" e)
         (loop)))))
   
   (def (dispatch-error wire-id what)
