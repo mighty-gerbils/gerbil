@@ -55,8 +55,8 @@ package: std/actor/proto
   (let ((key   (subu8vector secret 0 ::cipher-key-length))
         (hmac  (make-u8vector ::digest-size))
         (iv    (make-u8vector ::cipher-iv-length))
-        (ctext (make-u8vector 4096)))
-    (cut rpc-cipher-proto-read <> secret key hmac iv (box ctext))))
+        (ctext (box (make-u8vector 4096))))
+    (cut rpc-cipher-proto-read <> secret key hmac iv ctext)))
 
 (def (rpc-cipher-proto-read ibuf secret key hmac iv ctext)
   (let (e (server-input-read-u8 ibuf #f))
