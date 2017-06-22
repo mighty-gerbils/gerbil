@@ -504,7 +504,13 @@ package: std/actor
                (loop))
              (begin
                (log-error "unmarshall error" e)
-               (loop)))))
+               (match (message-e msg)
+                 ((or (!call _ k) (!stream _ k))
+                  (marshall-and-write
+                   (make-message (make-!error "unmarshall error" k) (void) uuid #f)
+                   #f #f))
+                 (else
+                  (loop)))))))
         (else
          (warning "cannot route call; no actor binding ~a" (uuid->symbol uuid))
          (match (message-e msg)
@@ -533,9 +539,14 @@ package: std/actor
                     (send actor msg)
                     (loop))
                   (begin
+                    (log-error "unmarshall error" e)
                     (!!error actor (make-rpc-error 'rpc-connection "unmarshall error") k)
                     (remove-continuation! cont)
-                    (loop)))))))
+                    (if (!yield? content)
+                      (marshall-and-write
+                       (make-message (make-!close cont) (void) (message-dest msg) #f)
+                       #f #f)
+                      (loop))))))))
        (else
         (warning "cannot route value; bogus continuation ~a" cont)
         (loop)))))
