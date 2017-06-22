@@ -56,9 +56,9 @@ package: std/actor/proto
         (hmac  (make-u8vector ::digest-size))
         (iv    (make-u8vector ::cipher-iv-length))
         (ctext (make-u8vector 4096)))
-    (cut rpc-cipher-proto-read <> key hmac iv (box ctext))))
+    (cut rpc-cipher-proto-read <> secret key hmac iv (box ctext))))
 
-(def (rpc-cipher-proto-read ibuf key hmac iv ctext)
+(def (rpc-cipher-proto-read ibuf secret key hmac iv ctext)
   (let (e (server-input-read-u8 ibuf #f))
     (cond
      ((eq? e rpc-proto-message)
@@ -75,7 +75,7 @@ package: std/actor/proto
                              (set! (box ctext) buf)
                              buf))))
              (_      (server-input-read ibuf ctext 0 size))
-             (_      (digest-update! digest key))
+             (_      (digest-update! digest secret))
              (_      (digest-update! digest iv))
              (_      (digest-update! digest ctext 0 size))
              (hmac*  (digest-final! digest))
@@ -91,9 +91,9 @@ package: std/actor/proto
 (def (rpc-cipher-proto-write-e secret)
   (let ((key (subu8vector secret 0 ::cipher-key-length))
         (iv  (make-u8vector ::cipher-iv-length)))
-    (cut rpc-cipher-proto-write <> <> key iv)))
+    (cut rpc-cipher-proto-write <> <> secret key iv)))
 
-(def (rpc-cipher-proto-write obuf obj key iv)
+(def (rpc-cipher-proto-write obuf obj secret key iv)
   (cond
    ((eq? obj #!void)
     (server-output-write-u8 obuf rpc-proto-keep-alive)
@@ -104,7 +104,7 @@ package: std/actor/proto
            (cipher (make-cipher ::cipher-type))
            (_      (random-bytes! iv))
            (ctext  (encrypt-u8vector cipher key iv obj))
-           (_      (digest-update! digest key))
+           (_      (digest-update! digest secret))
            (_      (digest-update! digest iv))
            (_      (digest-update! digest ctext))
            (hmac   (digest-final! digest)))
