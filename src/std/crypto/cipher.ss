@@ -149,44 +149,46 @@ package: std/crypto
     olen))
 
 ;; high level API: encrypt/decrypt bytes or input-port
-(def (cipher-port-encrypt/decrypt cipher key iv inp
-                                  cipher-init!
-                                  cipher-update!
-                                  cipher-final!)
-  (let* ((bufsz 1024)
-         (buf (make-u8vector (fx+ bufsz (cipher-block-size cipher))))
-         (outp (open-output-u8vector)))
+(defrules cipher-port-encrypt/decrypt ()
+  ((_ cipher key iv inp
+      cipher-init!
+      cipher-update!
+      cipher-final!)
+   (let* ((bufsz 1024)
+          (buf (make-u8vector (fx+ bufsz (cipher-block-size cipher))))
+          (outp (open-output-u8vector)))
 
-    (def (grow-buffer-if-needed ilen)
-      (let (max-olen (fx+ ilen (cipher-block-size cipher)))
-        (when (fx> max-olen (u8vector-length buf))
-          (set! buf (make-u8vector max-olen)))))
+     (def (grow-buffer-if-needed ilen)
+       (let (max-olen (fx+ ilen (cipher-block-size cipher)))
+         (when (fx> max-olen (u8vector-length buf))
+           (set! buf (make-u8vector max-olen)))))
     
-    (cipher-init! cipher key iv)
-    (call-with-binary-input
-     (lambda (bytes start end)
-       (grow-buffer-if-needed (- end start))
-       (let (olen (cipher-update! cipher buf bytes start end))
-         (write-subu8vector buf 0 olen outp)))
-     inp)
-    (let (olen (cipher-final! cipher buf))
-      (write-subu8vector buf 0 olen outp)
-      (get-output-u8vector outp))))
+     (cipher-init! cipher key iv)
+     (call-with-binary-input
+      (lambda (bytes start end)
+        (grow-buffer-if-needed (- end start))
+        (let (olen (cipher-update! cipher buf bytes start end))
+          (write-subu8vector buf 0 olen outp)))
+      inp)
+     (let (olen (cipher-final! cipher buf))
+       (write-subu8vector buf 0 olen outp)
+       (get-output-u8vector outp)))))
 
-(def (cipher-u8vector-encrypt/decrypt cipher key iv bytes
-                                      cipher-init!
-                                      cipher-update!
-                                      cipher-final!)
-  (let* ((len (u8vector-length bytes))
-         (buflen (fx+ len (fx* 2 (cipher-block-size cipher))))
-         (buf (make-u8vector buflen)))
-    (cipher-init! cipher key iv)
-    (let* ((ulen (cipher-update! cipher buf bytes 0 len))
-           (flen (cipher-final! cipher buf ulen))
-           (olen (fx+ ulen flen)))
-      (when (fx< olen buflen)
-        (u8vector-shrink! buf olen))
-      buf)))
+(defrules cipher-u8vector-encrypt/decrypt ()
+  ((_ cipher key iv bytes
+      cipher-init!
+      cipher-update!
+      cipher-final!)
+   (let* ((len (u8vector-length bytes))
+          (buflen (fx+ len (fx* 2 (cipher-block-size cipher))))
+          (buf (make-u8vector buflen)))
+     (cipher-init! cipher key iv)
+     (let* ((ulen (cipher-update! cipher buf bytes 0 len))
+            (flen (cipher-final! cipher buf ulen))
+            (olen (fx+ ulen flen)))
+       (when (fx< olen buflen)
+         (u8vector-shrink! buf olen))
+       buf))))
 
 (def (encrypt cipher key iv in)
   (cond
