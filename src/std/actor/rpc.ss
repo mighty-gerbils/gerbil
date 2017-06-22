@@ -506,18 +506,14 @@ package: std/actor
                (log-error "unmarshal error" e)
                (match (message-e msg)
                  ((or (!call _ k) (!stream _ k))
-                  (marshal-and-write
-                   (make-message (make-!error "unmarshal error" k) (void) uuid #f)
-                   #f #f))
+                  (dispatch-remote-error (make-!error "unmarshal error" k) uuid))
                  (else
                   (loop)))))))
         (else
          (warning "cannot route call; no actor binding ~a" (uuid->symbol uuid))
          (match (message-e msg)
            ((or (!call _ k) (!stream _ k))
-            (marshal-and-write
-             (make-message (make-!error "no binding" k) (void) uuid #f)
-             #f #f))
+            (dispatch-remote-error (make-!error "no binding" k) uuid))
            (else
             (loop)))))))
   
@@ -543,9 +539,7 @@ package: std/actor
                     (!!error actor (make-rpc-error 'rpc-connection "unmarshal error") k)
                     (remove-continuation! cont)
                     (if (!yield? content)
-                      (marshal-and-write
-                       (make-message (make-!close cont) (void) (message-dest msg) #f)
-                       #f #f)
+                      (dispatch-remote-error (make-!close cont) (message-dest msg))
                       (loop))))))))
        (else
         (warning "cannot route value; bogus continuation ~a" cont)
@@ -561,8 +555,11 @@ package: std/actor
           (send actor msg)
           (loop))
         (begin
-          (warning "cannot close unknown stream ~a" wire-id)
-          (loop)))))
+          (warning "bad control message; unknown stream ~a" wire-id)
+          (dispatch-remote-error (make-!error "uknown stream" wire-id) (message-dest msg))))))
+
+  (def (dispatch-remote-error what dest)
+    (marshal-and-write (make-message what (void) dest #f) #f #f))
   
   (def (unmarshal-message-content msg proto bytes)
     (try (rpc-proto-read-message-content msg proto bytes)
