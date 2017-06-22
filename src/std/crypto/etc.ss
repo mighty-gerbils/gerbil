@@ -158,16 +158,11 @@ package: std/crypto
 (def *urandom* (open-input-file "/dev/urandom"))
 
 (def (random-bytes len)
-  (let* ((bytes (make-u8vector len))
-         (count (read-subu8vector bytes 0 len *urandom*)))
-    (if (eq? count len)
-      bytes
-      (error "Could not read enough random bytes" count len))))
+  (let (bytes (make-u8vector len))
+    (random-bytes! bytes 0 len)
+    bytes))
 
-(def (random-bytes! bytes (start #f) (end #f))
-  (let* ((start (or start 0))
-         (end   (or end (u8vector-length bytes))) 
-         (count (read-subu8vector bytes start end *urandom*)))
-    (if (eq? count (- end start))
-      bytes
+(def (random-bytes! bytes (start 0) (end (u8vector-length bytes)))
+  (let (count (read-subu8vector bytes start end *urandom*))
+    (unless (eq? count (fx- end start))
       (error "Could not read enough random bytes" count start end))))
