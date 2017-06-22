@@ -417,7 +417,7 @@ package: std/actor
     (make-hash-table-eqv))
   (def stream-continuations             ; k => wire-id
     (make-hash-table-eq))
-  (def stream-actors                    ; wire-id => actor
+  (def stream-actors                    ; wire-id => [actor . g]
     (make-hash-table-eqv))
   (def timeouts                         ; time => wire-id
     (make-hash-table-eq))
@@ -450,8 +450,9 @@ package: std/actor
                  (!!error actor (make-rpc-error 'rpc-connection "connection error") k))))))
       (hash-keys continuations))
     (hash-for-each
-      (lambda (wire-id actor)
-        (!!close actor wire-id))
+      (lambda (wire-id stream)
+        (with ([actor . g] stream)
+          (send-message actor (make-!abort g))))
       stream-actors)
     (rpc-connection-shutdown rpc-server))
   
@@ -550,9 +551,10 @@ package: std/actor
   (def (dispatch-close msg bytes)
     (let* ((content (message-e msg))
            (wire-id (!close-k content))
-           (actor (hash-get stream-actors wire-id)))
-      (if actor
-        (begin
+           (stream (hash-get stream-actors wire-id)))
+      (if stream
+        (with ([actor . g] stream)
+          (set! (!close-k content) g)
           (send actor msg)
           (loop))
         (begin
@@ -605,8 +607,9 @@ package: std/actor
                (set! (!stream-k content) wire-id)
                (marshall-and-write msg proto #t)))
             ((!yield _ wire-id)
-             (hash-put! stream-actors wire-id src)
-             (marshall-and-write msg proto #t))
+             (let (g (or (and opts (pgetq continue: opts)) wire-id))
+               (hash-put! stream-actors wire-id (cons src g))
+               (marshall-and-write msg proto #t)))
             ((or (!error _ wire-id)
                  (!end wire-id))
              (hash-remove! stream-actors wire-id)
@@ -673,8 +676,8 @@ package: std/actor
           (match content
             ((or (!call e wire-id) (!stream e wire-id))
              (dispatch-error wire-id "marshall error"))
-            ((!yield _ wire-id)
-             (!!close (message-source msg)  wire-id)
+            ((? !yield?)
+             (rpc-send-control-abort msg)
              (loop))
             (else
              (loop)))))
