@@ -6,6 +6,7 @@ package: std/net
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
         :gerbil/gambit/bits
+        :gerbil/gambit/misc
         :std/error
         :std/sugar
         :std/logger
@@ -116,6 +117,7 @@ package: std/net
                             [permanent-close: #t direction: 'output]))
          (handler (spawn event-handler outp))
          (close (lambda () (!!wamp.close-stream handler))))
+    (make-will inp (lambda (_) (close)))
     (values inp close)))
 
 (def (wamp-register cli proc name opts)

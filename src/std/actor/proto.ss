@@ -5,6 +5,7 @@ package: std/actor
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
+        :gerbil/gambit/misc
         :std/event
         :std/error
         :std/net/address
@@ -197,6 +198,7 @@ package: std/actor
                             [permanent-close: #t direction: 'output]))
          (handler (spawn stream-handler outp))
          (close (lambda () (!!close handler k))))
+    (make-will inp (lambda (_) (close)))
     (values inp close)))
 
 (defsyntax (!!yield stx)
@@ -224,9 +226,14 @@ package: std/actor
   (syntax-case stx ()
     ((_ dest k)
      #'(send-message dest (make-!close k)))
+    ((_ dest k abort: err)
+     #'(send-message dest (make-!close k) [abort: err]))
     ((macro k)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message dest (make-!close k))))))
+       #'(send-message dest (make-!close k))))
+    ((macro k abort: err)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message dest (make-!close k) [abort: err])))))
 
 ;;; wire rpc protocols
 (defstruct !rpc-protocol (connect accept)
