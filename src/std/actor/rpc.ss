@@ -528,7 +528,7 @@ package: std/actor
                     (value-k-set! (message-e msg) k)
                     (set! (message-source msg)
                       (make-remote rpc-server (message-dest msg) peer-address proto))
-                    (unless (and stream? (not (!end? content)) (not (!error? content)))
+                    (unless (!yield? content)
                       (remove-continuation! cont))
                     (send actor msg)
                     (loop))
