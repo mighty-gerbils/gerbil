@@ -224,9 +224,14 @@ package: std/actor
   (syntax-case stx ()
     ((_ dest k)
      #'(send-message dest (make-!close k)))
+    ((_ dest k abort: err)
+     #'(send-message dest (make-!close k) [abort: err]))
     ((macro k)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message dest (make-!close k))))))
+       #'(send-message dest (make-!close k))))
+    ((macro k abort: err)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message dest (make-!close k) [abort: err])))))
 
 ;;; wire rpc protocols
 (defstruct !rpc-protocol (connect accept)

@@ -651,9 +651,10 @@ package: std/actor
       (cond
        ((u8vector? e)
         (if (fx<= (u8vector-length e) rpc-proto-message-max-length)
-          (let* ((opts (message-options msg))
-                 (g (and opts (pgetq continue: opts))))
-            (if (and g (!yield? (message-e msg)))
+          (let (g (and (!yield? (message-e msg))
+                       (alet (opts (message-options msg))
+                         (pgetq continue: opts))))
+            (if g
               (begin
                 (thread-send writer ['continue e msg])
                 (loop))
@@ -665,9 +666,8 @@ package: std/actor
             (match content
               ((or (!call e wire-id) (!stream e wire-id))
                (dispatch-error wire-id "message too large"))
-              ((? !yield?)
-               (rpc-send-control-abort msg)
-               (loop))
+              ((!yield wire-id)
+               (dispatch-close/abort msg wire-id "message too large"))
               (else
                (loop))))))
        (local-error?
@@ -676,9 +676,8 @@ package: std/actor
           (match content
             ((or (!call e wire-id) (!stream e wire-id))
              (dispatch-error wire-id "marshall error"))
-            ((? !yield?)
-             (rpc-send-control-abort msg)
-             (loop))
+            ((!yield wire-id)
+             (dispatch-close/abort msg wire-id "marshal error"))
             (else
              (loop)))))
        (else
@@ -689,6 +688,13 @@ package: std/actor
     (with ((values actor k proto stream?) (hash-ref continuations wire-id))
       (!!error actor (make-rpc-error 'rpc-connection what) k)
       (remove-continuation! wire-id)
+      (loop)))
+
+  (def (dispatch-close/abort msg wire-id what)
+    (let (g (or (alet (opts (message-options msg))
+                           (pgetq continue: opts))
+                         wire-id))
+      (!!close (message-source msg) g abort: what)
       (loop)))
   
   (def (dispatch-timeout timeo)
