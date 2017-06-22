@@ -11,11 +11,11 @@ package: std/crypto
   cipher make-cipher cipher? cipher-type cipher-ctx cipher-context
   cipher-name cipher-block-size cipher-key-length cipher-iv-length
   cipher-copy
-  encrypt
+  encrypt encrypt-u8vector
   encrypt-init!
   encrypt-update! encrypt-update/nocheck!
   encrypt-final! encrypt-final/nocheck!
-  decrypt
+  decrypt decrypt-u8vector
   decrypt-init!
   decrypt-update! decrypt-update/nocheck!
   decrypt-final! decrypt-final/nocheck!
@@ -175,15 +175,15 @@ package: std/crypto
        (get-output-u8vector outp)))))
 
 (defrules cipher-u8vector-encrypt/decrypt ()
-  ((_ cipher key iv bytes
+  ((_ cipher key iv bytes start end
       cipher-init!
       cipher-update!
       cipher-final!)
-   (let* ((len (u8vector-length bytes))
+   (let* ((len (fx- end start))
           (buflen (fx+ len (fx* 2 (cipher-block-size cipher))))
           (buf (make-u8vector buflen)))
      (cipher-init! cipher key iv)
-     (let* ((ulen (cipher-update! cipher buf bytes 0 len))
+     (let* ((ulen (cipher-update! cipher buf bytes start end))
             (flen (cipher-final! cipher buf ulen))
             (olen (fx+ ulen flen)))
        (when (fx< olen buflen)
@@ -201,8 +201,8 @@ package: std/crypto
    (else
     (error "Bad input source" in))))
 
-(def (encrypt-u8vector cipher key iv in)
-  (cipher-u8vector-encrypt/decrypt cipher key iv in
+(def (encrypt-u8vector cipher key iv in (start 0) (end (u8vector-length in)))
+  (cipher-u8vector-encrypt/decrypt cipher key iv in start end
                                    encrypt-init!
                                    encrypt-update/nocheck!
                                    encrypt-final/nocheck!))
@@ -222,8 +222,8 @@ package: std/crypto
    (else
     (error "Bad input source" in))))
 
-(def (decrypt-u8vector cipher key iv in)
-  (cipher-u8vector-encrypt/decrypt cipher key iv in
+(def (decrypt-u8vector cipher key iv in (start 0) (end (u8vector-length in)))
+  (cipher-u8vector-encrypt/decrypt cipher key iv in start end
                                    decrypt-init!
                                    decrypt-update/nocheck!
                                    decrypt-final/nocheck!))

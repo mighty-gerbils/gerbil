@@ -61,16 +61,16 @@ package: std/net/server
               (fx+ start 4))
             (u32 buf start)))))))
 
-(def (server-input-read ibuf u8v (raise-eof? #t))
+(def (server-input-read ibuf u8v (u8v-start 0) (u8v-end (u8vector-length u8v)) (raise-eof? #t))
   (with ((!buffer sock buf) ibuf)
-    (let (u8vl (u8vector-length u8v))
+    (let (u8vl (fx- u8v-end u8v-start))
       (let lp ()
         (let* ((start (!buffer-start ibuf))
                (end (!buffer-end ibuf))
                (start+u8vl (fx+ start u8vl)))
           (cond
            ((fx<= start+u8vl end)       ; already buffered
-            (##subu8vector-move! buf start start+u8vl u8v 0)
+            (##subu8vector-move! buf start start+u8vl u8v u8v-start)
             (set! (!buffer-start ibuf)
               start+u8vl)
             u8vl)
@@ -80,7 +80,7 @@ package: std/net/server
                 (let* ((start (!buffer-start ibuf))
                        (end (!buffer-end ibuf))
                        (count (fx- end start)))
-                  (##subu8vector-move! buf start end u8v 0)
+                  (##subu8vector-move! buf start end u8v u8v-start)
                   (set! (!buffer-start ibuf) 0)
                   (set! (!buffer-end ibuf) 0)
                   count)
@@ -88,10 +88,10 @@ package: std/net/server
            (else                        ; doesn't fit in buffer
             (let (have (fx- end start))
               (unless (fxzero? have)
-                (##subu8vector-move! buf start end u8v 0)
+                (##subu8vector-move! buf start end u8v u8v-start)
                 (set! (!buffer-start ibuf) 0)
                 (set! (!buffer-end ibuf) 0))
-              (let* ((rd (server-recv-all sock u8v have))
+              (let* ((rd (server-recv-all sock u8v (fx+ u8v-start have) u8v-end))
                      (got (fx+ have rd)))
                 (if (fx< got u8vl)
                   (if raise-eof?
@@ -99,18 +99,19 @@ package: std/net/server
                     got)
                   u8vl))))))))))
 
-(def (server-input-read* ibuf u8v)
+(def (server-input-read* ibuf u8v (u8v-start 0) (u8v-end (u8vector-length u8v)))
   (with ((!buffer sock buf start end) ibuf)
     (if (fx< start end)
-      (let* ((count (min (u8vector-length u8v) (fx- end start)))
+      (let* ((u8vl (fx- u8v-end u8v-start))
+             (count (min u8vl (fx- end start)))
              (start+count (fx+ start count)))
-        (##subu8vector-move! buf start start+count u8v 0)
+        (##subu8vector-move! buf start start+count u8v u8v-start)
         (set! (!buffer-start ibuf)
           start+count)
         count)
       (let (rd (server-input-fill! ibuf 1 #f))
         (if (fxzero? rd) 0
-            (server-input-read* ibuf u8v))))))
+            (server-input-read* ibuf u8v u8v-start u8v-end))))))
 
 (def (server-input-fill! ibuf need raise-eof?)
   (with ((!buffer sock buf) ibuf)
@@ -174,20 +175,20 @@ package: std/net/server
         (server-output-force obuf)
         (server-output-write-u32 obuf u32)))))
 
-(def (server-output-write obuf u8v)
+(def (server-output-write obuf u8v (u8v-start 0) (u8v-end (u8vector-length u8v)))
   (with ((!buffer sock buf start end) obuf)
-    (let* ((u8vl (u8vector-length u8v))
+    (let* ((u8vl (fx- u8v-end u8v-start))
            (start+u8vl (fx+ start u8vl)))
       (if (fx<= start+u8vl end)         ; fits as is
         (begin
-          (##subu8vector-move! u8v 0 u8vl buf start)
+          (##subu8vector-move! u8v u8v-start u8v-end buf start)
           (set! (!buffer-start obuf)
             start+u8vl))
         (begin
           (server-output-force obuf)    ; flush buffer
           (if (fx< u8vl end)            ; fits in buffer, but send if it's exact fit
-            (server-output-write obuf u8v)
-            (server-send-all sock u8v)))))))
+            (server-output-write obuf u8v u8v-start u8v-end)
+            (server-send-all sock u8v u8v-start u8v-end)))))))
 
 (def (server-output-force obuf)
   (with ((!buffer sock buf start) obuf)
