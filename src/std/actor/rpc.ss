@@ -35,6 +35,10 @@ package: std/actor
   !rpc.resolve !!rpc.resolve
   (struct-out rpc.server-address)
   !rpc.server-address !!rpc.server-address
+  (struct-out rpc.monitor)
+  !rpc.monitor !!rpc.monitor
+  (struct-out rpc.disconnect)
+  !rpc.disconnect !!rpc.disconnect
   (struct-out rpc.shutdown)
   !rpc.shutdown !!rpc.shutdown
   rpc-null-proto
@@ -112,6 +116,8 @@ package: std/actor
   (resolve id)
   (server-address)
   event:
+  (monitor remote)
+  (disconnect remote)
   (shutdown))
 
 ;;; rpc-server
@@ -158,6 +164,8 @@ package: std/actor
     (make-hash-table))
   (def threads                          ; thread => address
     (make-hash-table-eq))
+  (def monitors                         ; thread => [[actor . remote] ...]
+    (make-hash-table-eq))
   (def acceptors
     (map (lambda (sock sa)
            (spawn rpc-server-accept (current-thread) sock (socket-address-family sa)))
@@ -197,8 +205,7 @@ package: std/actor
           ((hash-get threads src)
            => (lambda (address)
                 (!!rpc.connection-close src)
-                (hash-remove! conns address)
-                (hash-remove! threads src)))
+                (remove-thread! src)))
           (else
            (warning "Unexpected protocol mesage ~a" msg))))
         ((!rpc.register id proto k)
@@ -234,6 +241,14 @@ package: std/actor
         ((!rpc.server-address k)
          (let (addresses (map socket-address->address sas))
            (!!value src addresses k)))
+        ((!rpc.monitor remote)
+         (let (address (remote-address remote))
+           (cond
+            ((hash-get conns address)
+             => (lambda (thread)
+                  (hash-update! monitors  thread (cut cons [src . remote] <>) [])))
+            (else
+             (!!rpc.disconnect src remote)))))
         ((!rpc.shutdown)
          (raise 'shutdown))
         (else
@@ -252,8 +267,14 @@ package: std/actor
      ((hash-get threads thread)
       => (lambda (address)
            (rpc-send-connection-error-responses address)
+           (for-each
+             (match <>
+               ([actor . remote]
+                (!!rpc.disconnect actor remote)))
+             (hash-ref monitors thread []))
            (hash-remove! conns address)
-           (hash-remove! threads thread))))
+           (hash-remove! threads thread)
+           (hash-remove! monitors thread))))
     ;; actor threads
     (cond
      ((hash-get actor-threads thread)
