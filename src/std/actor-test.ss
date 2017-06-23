@@ -25,6 +25,14 @@
          (displayln "unexpected message " @message " " content)
          (lp)))))
 
+(def (hello-void-server remoted)
+  (!!rpc.register remoted 'foo hello::proto)
+  (let lp ()
+    (<- ((!rpc.shutdown)
+         (void))
+        (ignore
+         (lp)))))
+
 (def rpc-server-address1 "127.0.0.1:9000")
 (def rpc-server-address2 "127.0.0.1:9001")
 (def rpc-server-address3 "127.0.0.1:9002")
@@ -34,6 +42,7 @@
 (def rpc-server-address7 "127.0.0.1:9006")
 (def rpc-server-address8 "127.0.0.1:9007")
 (def rpc-server-address9 "127.0.0.1:9008")
+(def rpc-server-address10 "127.0.0.1:9009")
 (def rpc-cookie "/tmp/actor-test-cookie")
 (rpc-generate-cookie! rpc-cookie)
 
@@ -115,7 +124,32 @@
       (thread-sleep! 0.1)
       (check (with-catch values (cut !!hello.hello rfoo 'a)) ? remote-error?)
 
+      (def hellod
+        (spawn hello-void-server remoted))
+      (thread-sleep! 0.1)
+      (check (!!rpc.resolve remoted 'foo) => hellod)
+      (check (with-catch values (cut !!hello.hello rfoo 'a timeout: 1)) ? rpc-error?)
+
       (stop-rpc-server! remoted)
+      (stop-rpc-server! locald))
+
+    (test-case "test RPC monitors"
+      (def remoted (start-rpc-server! rpc-server-address10))
+      (def hellod  (spawn hello-server remoted))
+      (thread-sleep! 0.1)
+      (check (!!rpc.resolve remoted 'foo) => hellod)
+      
+      (def locald  (start-rpc-server!))
+      (def rfoo
+        (make-remote locald 'foo rpc-server-address10 hello::proto))
+      (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
+
+      (!!rpc.monitor locald rfoo)
+      (thread-sleep! 1.0)
+      
+      (stop-rpc-server! remoted)
+      (check (<- ((!rpc.disconnect r) r)) => rfoo)
+      
       (stop-rpc-server! locald))))
 
 (def (hello-stream-server remoted N)
