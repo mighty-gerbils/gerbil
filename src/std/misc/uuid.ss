@@ -6,10 +6,12 @@ package: std/misc
 (import :std/pregexp
         :std/text/hex
         (only-in :std/crypto/digest md5)
-        (only-in :std/crypto/etc random-bytes!))
+        (only-in :std/crypto/etc random-bytes!)
+        (only-in :gerbil/gambit/hash equal?-hash))
 
 (export UUID uuid-length uuid::t make-uuid
         uuid? uuid=?
+        uuid-hash
         uuid->u8vector
         uuid->symbol
         random-uuid)
@@ -61,6 +63,9 @@ package: std/misc
     (u8vector->uuid obj))
    (else
     (error "bad uuid identifier" obj))))
+
+(def (uuid-hash uuid)
+  (equal?-hash (uuid-bytes uuid)))
 
 (def (uuid->u8vector uuid)
   (uuid-bytes uuid))

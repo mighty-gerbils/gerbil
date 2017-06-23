@@ -13,7 +13,7 @@ package: std/net
         ip6-address-string? ip6-address->string string->ip6-address
         inet-address? inet-address
         inet-address-string? inet-address->string string->inet-address
-        resolve-address)
+        resolve-address resolved-address?)
 
 ;; ipv4 address; 4-octet u8vector
 (def (ip4-address obj)
@@ -214,8 +214,7 @@ package: std/net
   (match obj
     ([host . port]
      (and (inet-host-address? host)
-          (fixnum? port)
-          (fx<= 0 port 65535)))
+          (fixnum? port)))
     (else #f)))
 
 (def (inet-address-string? obj)
@@ -308,3 +307,11 @@ package: std/net
              (cons ip port))
             (else
              (error "Failed to resolve address" addr))))))))
+
+(def (resolved-address? obj)
+  (match obj
+    ([host . port]
+     (and (or (ip4-address? host)
+              (ip6-address? host))
+          (fixnum? port)))
+    (else #f)))

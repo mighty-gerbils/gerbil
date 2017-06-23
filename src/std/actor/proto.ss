@@ -6,6 +6,7 @@ package: std/actor
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
         :gerbil/gambit/misc
+        :gerbil/gambit/hash
         :std/event
         :std/error
         :std/net/address
@@ -17,6 +18,7 @@ package: std/actor
   rpc-io-error? raise-rpc-io-error
   (struct-out actor-error remote-error rpc-error)
   (struct-out handle remote)
+  remote=? remote-hash
   (struct-out !rpc !call !value !error !event !stream !yield !end !continue !close !abort)
   !!call !!call-recv !!value !!error !!event
   !!stream !!stream-recv !!yield !!end !!continue !!close
@@ -74,13 +76,29 @@ package: std/actor
 
 (def (canonical-address address)
   (cond
-   ((or (inet-address? address)
+   ((list? address)                     ; passive address
+    address)
+   ((resolved-address? address)         ; resolved inet address
+    address)
+   ((or (inet-address? address)         ; unresolved inet address
         (inet-address-string? address))
     (resolve-address address))
    ((string? address)                   ; unix domain
     address)
    (else
     (error "Bad actor address" address))))
+
+(def (remote=? a b)
+  (with (((remote proxy-a uuid-a address-a) a)
+         ((remote proxy-b uuid-b address-b) b))
+    (and (eq? proxy-a proxy-b)
+         (uuid=? uuid-a uuid-b)
+         (equal? address-a address-b))))
+
+(def (remote-hash r)
+  (with ((remote _ uuid address) r)
+    (fxxor (uuid-hash uuid)
+           (equal?-hash address))))
 
 ;;; rpc messages
 (defstruct !rpc ())
