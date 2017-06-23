@@ -471,6 +471,8 @@ package: std/actor
                  (dispatch-control msg bytes !continue-k !continue-k-set!))
                 ((? !close?)
                  (dispatch-control msg bytes !close-k !close-k-set!))
+                ((? !abort?)
+                 (dispatch-control msg bytes !abort-k !abort-k-set!))
                 ((? not)
                  (dispatch-call msg bytes))))
             (begin
@@ -539,11 +541,13 @@ package: std/actor
                     (!!error actor (make-rpc-error 'rpc-connection "unmarshal error") k)
                     (remove-continuation! cont)
                     (if (!yield? content)
-                      (dispatch-remote-error (make-!close cont) (message-dest msg))
+                      (dispatch-remote-error (make-!abort cont) (message-dest msg))
                       (loop))))))))
        (else
         (warning "cannot route value; bogus continuation ~a" cont)
-        (loop)))))
+        (if (!yield? content)
+          (dispatch-remote-error (make-!abort cont) (message-dest msg))
+          (loop))))))
 
   (def (dispatch-control msg bytes value-k value-k-set!)
     (let* ((content (message-e msg))
@@ -553,6 +557,8 @@ package: std/actor
         (with ([actor . g] stream)
           (value-k-set! content g)
           (send actor msg)
+          (when (!abort? content)
+            (hash-remove! stream-actors wire-id))
           (loop))
         (begin
           (warning "bad control message; unknown stream ~a" wire-id)
