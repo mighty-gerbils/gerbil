@@ -332,9 +332,7 @@ package: std/actor
         ((or (!call _ k) (!stream _ k))
          (!!error (message-source msg) (make-rpc-error 'rpc-server what) k))
         ((!yield k)
-         (let* ((opts (message-options msg))
-                (g (or (and opts (pgetq continue: opts)) k)))
-           (send-message (message-source msg) (make-!abort g))))
+         (send-message (message-source msg) (make-!abort k)))
         (else (void))))))
 
 (def (rpc-send-error-responses what)
@@ -407,7 +405,7 @@ package: std/actor
     (make-hash-table-eqv))
   (def stream-continuations             ; k => wire-id
     (make-hash-table-eq))
-  (def stream-actors                    ; wire-id => [actor . g]
+  (def stream-actors                    ; wire-id => actor
     (make-hash-table-eqv))
   (def timeouts                         ; timeout => wire-id
     (make-hash-table-eq))
@@ -440,9 +438,8 @@ package: std/actor
                  (!!error actor (make-rpc-error 'rpc-connection "connection error") k))))))
       (hash-keys continuations))
     (hash-for-each
-      (lambda (wire-id stream)
-        (with ([actor . g] stream)
-          (send-message actor (make-!abort g))))
+      (lambda (wire-id actor)
+        (send-message actor (make-!abort wire-id)))
       stream-actors)
     (rpc-connection-shutdown rpc-server))
   
@@ -552,10 +549,9 @@ package: std/actor
   (def (dispatch-control msg bytes value-k value-k-set!)
     (let* ((content (message-e msg))
            (wire-id (value-k content))
-           (stream (hash-get stream-actors wire-id)))
-      (if stream
-        (with ([actor . g] stream)
-          (value-k-set! content g)
+           (actor (hash-get stream-actors wire-id)))
+      (if actor
+        (begin
           (send actor msg)
           (when (!abort? content)
             (hash-remove! stream-actors wire-id))
@@ -613,9 +609,8 @@ package: std/actor
                (set! (!stream-k content) wire-id)
                (marshal-and-write msg proto #t)))
             ((!yield _ wire-id)
-             (let (g (or (and opts (pgetq continue: opts)) wire-id))
-               (hash-put! stream-actors wire-id (cons src g))
-               (marshal-and-write msg proto #t)))
+             (hash-put! stream-actors wire-id src)
+             (marshal-and-write msg proto #t))
             ((or (!error _ wire-id)
                  (!end wire-id))
              (hash-remove! stream-actors wire-id)
@@ -699,12 +694,9 @@ package: std/actor
       (loop)))
 
   (def (dispatch-stream-error msg wire-id what)
-    (let (g (or (alet (opts (message-options msg))
-                           (pgetq continue: opts))
-                wire-id))
-      (send-message (make-!abort g) (message-source msg))
-      (hash-remove! stream-actors wire-id)
-      (dispatch-remote-error (make-!error what wire-id) (message-dest msg))))
+    (send-message (make-!abort wire-id) (message-source msg))
+    (hash-remove! stream-actors wire-id)
+    (dispatch-remote-error (make-!error what wire-id) (message-dest msg)))
   
   (def (dispatch-timeout timeo)
     (cond
