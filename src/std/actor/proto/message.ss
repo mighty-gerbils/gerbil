@@ -36,6 +36,7 @@ package: std/actor/proto
 (def rpc-proto-message-end      #x07)
 (def rpc-proto-message-continue #x08)
 (def rpc-proto-message-close    #x09)
+(def rpc-proto-message-abort    #x0A)
 (def rpc-proto-message-max-length (expt 2 20)) ; 1MB
 ;; protocols
 (def rpc-proto-null          #x00)
@@ -91,6 +92,10 @@ package: std/actor/proto
          (write-u8 rpc-proto-message-close port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
+        ((!abort k)
+         (write-u8 rpc-proto-message-abort port)
+         (xdr-uuid-write dest port)
+         (xdr-int-write k port))
         (else
          (raise-rpc-io-error 'rpc-proto-write-message
                              "unknown rpc message type" content))))
@@ -108,7 +113,7 @@ package: std/actor/proto
              (!stream e)
              (!yield e))
          (xdr-write-object e port))
-        ((? (or !end? !continue? !close?))
+        ((? (or !end? !continue? !close? !abort?))
          (void))
         (else
          (xdr-write-object content port))))
@@ -152,6 +157,9 @@ package: std/actor/proto
       ((eq? type rpc-proto-message-close)
        (let (k (xdr-read-object port))
          (make-!close k)))
+      ((eq? type rpc-proto-message-abort)
+       (let (k (xdr-read-object port))
+         (make-!abort k)))
       (else
        (raise-rpc-io-error 'rpc-proto-read-message
                            "unmarshal error; unexpected message type" type)))
@@ -189,7 +197,7 @@ package: std/actor/proto
          ((!yield? content)
           (set! (!yield-e content)
             (xdr-read-object port)))
-         ;; !end/!continue/!close are empty
+         ;; !end/!continue/!close/!abort are empty
          ))
        (else
         (set! (message-e msg)
