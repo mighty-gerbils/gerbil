@@ -165,7 +165,7 @@ package: std/actor
   
   (def (accept-connection cli clisa)
     (let* ((thr (spawn rpc-server-connection (current-thread) cli clisa accept-e))
-           (address (socket-address->address clisa)))
+           (address (list (socket-address->address clisa))))
       (hash-put! conns address thr)
       (hash-put! threads thr address)
       (rpc-monitor thr)))
@@ -356,7 +356,7 @@ package: std/actor
 (def (rpc-server-connection rpc-server sock sa proto-e)
   (try
    (rpc-set-nodelay! sock (socket-address-family sa))
-   (rpc-connection-loop rpc-server sock (socket-address->address sa) proto-e)
+   (rpc-connection-loop rpc-server sock (list (socket-address->address sa)) proto-e)
    (catch (e)
      (rpc-connection-cleanup rpc-server e sock))))
 
