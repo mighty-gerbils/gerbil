@@ -21,7 +21,7 @@ package: std/actor
   remote=? remote-hash
   (struct-out !rpc !call !value !error !event !stream !yield !end !continue !close !abort)
   !!call !!call-recv !!value !!error !!event
-  !!stream !!stream-recv !!yield !!end !!continue !!close
+  !!stream !!stream-recv !!yield !!end !!continue !!close !!abort
   (struct-out !protocol !rpc-protocol)
   defproto
   defproto-default-type
@@ -242,14 +242,17 @@ package: std/actor
   (syntax-case stx ()
     ((_ dest k)
      #'(send-message dest (make-!close k)))
-    ((_ dest k abort: err)
-     #'(send-message dest (make-!close k) [abort: err]))
     ((macro k)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message dest (make-!close k))))
-    ((macro k abort: err)
+       #'(send-message dest (make-!close k))))))
+
+(defsyntax (!!abort stx)
+  (syntax-case stx ()
+    ((_ dest k)
+     #'(send-message dest (make-!abort k)))
+    ((macro k)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message dest (make-!close k) [abort: err])))))
+       #'(send-message dest (make-!abort k))))))
 
 ;;; wire rpc protocols
 (defstruct !rpc-protocol (connect accept)
