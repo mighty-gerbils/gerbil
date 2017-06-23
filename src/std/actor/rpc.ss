@@ -409,9 +409,9 @@ package: std/actor
     (make-hash-table-eq))
   (def stream-actors                    ; wire-id => [actor . g]
     (make-hash-table-eqv))
-  (def timeouts                         ; time => wire-id
+  (def timeouts                         ; timeout => wire-id
     (make-hash-table-eq))
-  (def continuation-timeouts            ; wire-id => time
+  (def continuation-timeouts            ; wire-id => timeout
     (make-hash-table-eqv))
   (def timeouts-pqueue 
     (make-pqueue (lambda (evt) (time->seconds (event-selector evt)))))
