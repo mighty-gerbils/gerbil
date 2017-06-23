@@ -126,21 +126,6 @@
            (if (< n N)
              (begin
                (!!yield n k)
-               (lp2 (1+ n)))
-             (begin
-               (!!end k)
-               (lp)))))
-        ((!rpc.shutdown)
-         (void)))))
-
-(def (hello-stream-control-server remoted N)
-  (!!rpc.register remoted 'foo hello::proto)
-  (let lp ()
-    (<- ((!hello.hello-stream _ k)
-         (let lp2 ((n 0))
-           (if (< n N)
-             (begin
-               (!!yield n k)
                (<- ((!continue (eq? k))
                     (lp2 (1+ n)))))
              (begin
@@ -182,6 +167,7 @@
           (when (< n N)
             (<- ((!yield x (eq? k))
                  (check x => n)
+                 (!!continue k)
                  (lp (1+ n))))))
         (let (end (thread-receive))
           (check end ? message?)
@@ -209,27 +195,7 @@
 
       (stop-rpc-server! remoted)
       (stop-rpc-server! locald))
-
-    (test-case "test RPC stream control"
-      (def N 5)
-      (def remoted (start-rpc-server! rpc-server-address7))
-      (def hellod  (spawn hello-stream-control-server remoted N))
-      (thread-sleep! 0.1)
-      (check (!!rpc.resolve remoted 'foo) => hellod)
-      (def locald  (start-rpc-server!))
-      (def rfoo
-        (make-remote locald 'foo rpc-server-address7 hello::proto))
-
-      (let ((values inp close) (!!hello.hello-stream rfoo "stream"))
-        (let lp ((n 0))
-          (when (< n N)
-            (check (read inp) => n)
-            (lp (1+ n))))
-        (check (read inp) ? eof-object?))
-
-      (stop-rpc-server! remoted)
-      (stop-rpc-server! locald))
-
+    
     (test-case "test RPC stream close"
       (def remoted (start-rpc-server! rpc-server-address9))
       (def hellod  (spawn hello-stream-close-server remoted))
