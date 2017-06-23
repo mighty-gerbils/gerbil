@@ -37,6 +37,8 @@ package: std/actor
   !rpc.server-address !!rpc.server-address
   (struct-out rpc.monitor)
   !rpc.monitor !!rpc.monitor
+  (struct-out rpc.unmonitor)
+  !rpc.unmonitor !!rpc.unmonitor
   (struct-out rpc.disconnect)
   !rpc.disconnect !!rpc.disconnect
   (struct-out rpc.shutdown)
@@ -117,6 +119,7 @@ package: std/actor
   (server-address)
   event:
   (monitor remote)
+  (unmonitor remote)
   (disconnect remote)
   (shutdown))
 
@@ -249,6 +252,10 @@ package: std/actor
                   (hash-update! monitors  thread (cut cons [src . remote] <>) [])))
             (else
              (!!rpc.disconnect src remote)))))
+        ((!rpc.unmonitor remote)
+         (let (address (remote-address remote))
+           (alet (thread (hash-get conns address))
+             (hash-update! monitors thread (cut remove [src . remote] <>) []))))
         ((!rpc.shutdown)
          (raise 'shutdown))
         (else
