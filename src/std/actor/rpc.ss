@@ -645,6 +645,8 @@ package: std/actor
                    (hash-put! continuation-timeouts wire-id timeo-evt)
                    (pqueue-push! timeouts-pqueue timeo-evt)))
                (marshal-and-write msg proto #t)))
+            ((? !value?)
+             (marshal-and-write msg proto #t))
             ((!yield _ wire-id)
              (hash-put! stream-actors wire-id (cons src dest))
              (marshal-and-write msg proto #t))
@@ -669,6 +671,16 @@ package: std/actor
                    (marshal-and-write msg proto #t))
                  (begin
                    (warning "bad close; unknown stream ~a" k)
+                   (loop)))))
+            ((!abort k)
+             (let (wire-id (hash-get stream-continuations k))
+               (if wire-id
+                 (begin
+                   (set! (!abort-k content) wire-id)
+                   (remove-continuation! wire-id)
+                   (marshal-and-write msg proto #t))
+                 (begin
+                   (warning "bad abort; unknown stream ~a" k)
                    (loop)))))
             (else
              (marshal-and-write msg proto #t))))
