@@ -25,6 +25,14 @@
          (displayln "unexpected message " @message " " content)
          (lp)))))
 
+(def (hello-void-server remoted)
+  (!!rpc.register remoted 'foo hello::proto)
+  (let lp ()
+    (<- ((!rpc.shutdown)
+         (void))
+        (ignore
+         (lp)))))
+
 (def rpc-server-address1 "127.0.0.1:9000")
 (def rpc-server-address2 "127.0.0.1:9001")
 (def rpc-server-address3 "127.0.0.1:9002")
@@ -114,6 +122,12 @@
       (def remoted (start-rpc-server! rpc-server-address8))
       (thread-sleep! 0.1)
       (check (with-catch values (cut !!hello.hello rfoo 'a)) ? remote-error?)
+
+      (def hellod
+        (spawn hello-void-server remoted))
+      (thread-sleep! 0.1)
+      (check (!!rpc.resolve remoted 'foo) => hellod)
+      (check (with-catch values (cut !!hello.hello rfoo 'a timeout: 1)) ? rpc-error?)
 
       (stop-rpc-server! remoted)
       (stop-rpc-server! locald))))
