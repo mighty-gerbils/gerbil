@@ -137,11 +137,11 @@ package: std/actor
        (finally
         (server-shutdown! socksrv))))))
 
-(def (rpc-monitor thread)
-  (def (thread-monitor server thread)
+(def (rpc-monitor thread (msg thread))
+  (def (thread-monitor server thread msg)
     (with-catch values (cut thread-join! thread))
-    (thread-send server thread))
-  (spawn thread-monitor (current-thread) thread))
+    (thread-send server msg))
+  (spawn thread-monitor (current-thread) thread msg))
 
 (def (rpc-server-loop socksrv socks sas proto)
   (def connect-e
@@ -675,7 +675,7 @@ package: std/actor
               ((or (!call e wire-id) (!stream e wire-id))
                (dispatch-error wire-id "message too large"))
               ((!yield wire-id)
-               (dispatch-close/abort msg wire-id "message too large"))
+               (dispatch-stream-error msg wire-id "message too large"))
               (else
                (loop))))))
        (local-error?
@@ -685,7 +685,7 @@ package: std/actor
             ((or (!call e wire-id) (!stream e wire-id))
              (dispatch-error wire-id "marshal error"))
             ((!yield wire-id)
-             (dispatch-close/abort msg wire-id "marshal error"))
+             (dispatch-stream-error msg wire-id "marshal error"))
             (else
              (loop)))))
        (else
@@ -698,12 +698,13 @@ package: std/actor
       (remove-continuation! wire-id)
       (loop)))
 
-  (def (dispatch-close/abort msg wire-id what)
+  (def (dispatch-stream-error msg wire-id what)
     (let (g (or (alet (opts (message-options msg))
                            (pgetq continue: opts))
-                         wire-id))
-      (!!close (message-source msg) g abort: what)
-      (loop)))
+                wire-id))
+      (send-message (make-!abort g) (message-source msg))
+      (hash-remove! stream-actors wire-id)
+      (dispatch-remote-error (make-!error what wire-id) (message-dest msg))))
   
   (def (dispatch-timeout timeo)
     (cond
