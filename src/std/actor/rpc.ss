@@ -272,6 +272,8 @@ package: std/actor
                 ((hash-get conns address)
                  => (lambda (handler)
                       (thread-send handler msg)))
+                ((list? address)      ; it's a passive address; can't connect
+                 (rpc-send-error-response msg "ivalid address"))
                 (else
                  (let (thr (open-connection address))
                    (thread-send thr msg))))))

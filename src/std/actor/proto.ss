@@ -74,11 +74,11 @@ package: std/actor
 
 (def (canonical-address address)
   (cond
-   ((list? address)                     ; server accept address
+   ((list? address)                     ; passive address
     address)
    ((resolved-address? address)         ; resolved inet address
     address)
-   ((or (inet-address? address)         ; inet address
+   ((or (inet-address? address)         ; unresolved inet address
         (inet-address-string? address))
     (resolve-address address))
    ((string? address)                   ; unix domain
