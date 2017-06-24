@@ -236,17 +236,41 @@ package: std/crypto
 
 ;;; Library defined Ciphers
 (defsyntax (define-cipher stx)
-  (def (generate-defn name length mode)
-    (let (length (number->string (stx-e length)))
+  (def (generate-defn name len mode)
+    (let (len (and len (number->string (stx-e len))))
       (with-syntax
-          ((evp-cipher (stx-identifier name
-                         "EVP_" name "_" length "_" mode))
-           (cipher-t (stx-identifier name
-                       "cipher::" name "-" length "-" mode))
-           (make-cipher-t (stx-identifier name
-                            "make-" name "-" length "-" mode "-cipher"))
-           (cipher-t? (stx-identifier name
-                        name "-" length "-" mode "-cipher?")))
+          ((evp-cipher
+            (cond
+             (len
+              (stx-identifier name "EVP_" name "_" len "_" mode))
+             (mode
+              (stx-identifier name "EVP_" name "_" mode))
+             (else
+              (stx-identifier name "EVP_" name))))
+           (cipher-t
+            (cond
+             (len
+              (stx-identifier name "cipher::" name "-" len "-" mode))
+             (mode
+              (stx-identifier name "cipher::" name "-" mode))
+             (else
+              (stx-identifier name "cipher::" name))))
+           (make-cipher-t
+            (cond
+             (len
+              (stx-identifier name "make-" name "-" len "-" mode "-cipher"))
+             (mode
+              (stx-identifier name "make-" name "-" mode "-cipher"))
+             (else
+              (stx-identifier name "make-" name "-cipher"))))
+           (cipher-t?
+            (cond
+             (len
+              (stx-identifier name name "-" len "-" mode "-cipher?"))
+             (mode
+              (stx-identifier name name "-" mode "-cipher?"))
+             (else
+              (stx-identifier name name "-cipher?")))))
         #'(begin
             (def cipher-t (evp-cipher))
             (def (make-cipher-t)
@@ -257,12 +281,26 @@ package: std/crypto
                         (EVP_CIPHER_nid cipher-t))))
             (export cipher-t make-cipher-t cipher-t?)))))
   (syntax-case stx ()
-    ((_ name length (mode ...))
+    ((_ name len (mode ...))
      (with-syntax (((defn ...)
-                    (stx-map (cut generate-defn #'name #'length <>)
+                    (stx-map (cut generate-defn #'name #'len <>)
                              #'(mode ...))))
-       #'(begin defn ...)))))
+       #'(begin defn ...)))
+    ((_ name (mode ...))
+     (with-syntax (((defn ...)
+                    (stx-map (cut generate-defn #'name #f <>)
+                             #'(mode ...))))
+       #'(begin defn ...)))
+    ((_ name)
+     (generate-defn #'name #f #f))))
 
 (define-cipher aes 128 (ecb cbc cfb ofb ctr ccm gcm xts))
 (define-cipher aes 192 (ecb cbc cfb ofb ctr ccm gcm))
 (define-cipher aes 256 (ecb cbc cfb ofb ctr ccm gcm xts))
+(define-cipher camellia 128 (ecb cbc cfb ofb))
+(define-cipher camellia 192 (ecb cbc cfb ofb))
+(define-cipher camellia 256 (ecb cbc cfb ofb))
+(define-cipher idea (ecb cbc cfb ofb))
+(define-cipher cast5 (ecb cbc cfb ofb))
+(define-cipher bf (ecb cbc cfb ofb))
+(define-cipher rc4)

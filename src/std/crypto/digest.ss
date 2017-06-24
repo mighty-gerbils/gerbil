@@ -108,3 +108,5 @@ package: std/crypto
 (define-digest sha256)
 (define-digest sha384)
 (define-digest sha512)
+(define-digest ripemd160)
+(define-digest whirlpool)

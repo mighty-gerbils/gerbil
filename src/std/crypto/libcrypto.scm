@@ -113,6 +113,8 @@ END-C
 (define-c-lambda/const-pointer EVP_sha256 () EVP_MD*)
 (define-c-lambda/const-pointer EVP_sha384 () EVP_MD*)
 (define-c-lambda/const-pointer EVP_sha512 () EVP_MD*)
+(define-c-lambda/const-pointer EVP_ripemd160 () EVP_MD*)
+(define-c-lambda/const-pointer EVP_whirlpool () EVP_MD*)
 
 (define-c-lambda EVP_MD_type (EVP_MD*) int)
 (define-c-lambda EVP_MD_pkey_type (EVP_MD*) int)
@@ -172,6 +174,8 @@ END-C
 (define-c-lambda EVP_CIPHER_CTX_copy (EVP_CIPHER_CTX* EVP_CIPHER_CTX*) int
   "EVP_CIPHER_CTX_copy")
 
+(define-c-lambda/const-pointer EVP_rc4 () EVP_CIPHER*)
+
 (define-c-lambda/const-pointer EVP_aes_128_ecb () EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_aes_128_cbc () EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_aes_128_cfb () EVP_CIPHER*)
@@ -197,6 +201,36 @@ END-C
 (define-c-lambda/const-pointer EVP_aes_256_ccm () EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_aes_256_gcm () EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_aes_256_xts () EVP_CIPHER*)
+
+(define-c-lambda/const-pointer EVP_camellia_128_ecb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_128_cbc () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_128_cfb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_128_ofb () EVP_CIPHER*)
+
+(define-c-lambda/const-pointer EVP_camellia_192_ecb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_192_cbc () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_192_cfb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_192_ofb () EVP_CIPHER*)
+
+(define-c-lambda/const-pointer EVP_camellia_256_ecb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_256_cbc () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_256_cfb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_256_ofb () EVP_CIPHER*)
+
+(define-c-lambda/const-pointer EVP_idea_ecb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_idea_cbc () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_idea_cfb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_idea_ofb () EVP_CIPHER*)
+
+(define-c-lambda/const-pointer EVP_cast5_ecb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_cast5_cbc () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_cast5_cfb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_cast5_ofb () EVP_CIPHER*)
+
+(define-c-lambda/const-pointer EVP_bf_ecb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_bf_cbc () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_bf_cfb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_bf_ofb () EVP_CIPHER*)
 
 (define-c-lambda EVP_CIPHER_nid (EVP_CIPHER*) int)
 (define-c-lambda EVP_CIPHER_block_size (EVP_CIPHER*) int)

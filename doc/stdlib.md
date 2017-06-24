@@ -159,6 +159,8 @@ Exports:
   sha256 digest::sha256 make-sha256-digest sha256-digest?
   sha384 digest::sha384 make-sha384-digest sha384-digest?
   sha512 digest::sha512 make-sha512-digest sha512-digest?
+  ripemd160 digest::ripemd160 make-ripemd160-digest ripemd160-digest?
+  whirlpool digest::whirlpool make-whirlpool-digest whirlpool-digest?
   
 ;; :std/crypto/cipher
   cipher make-cipher cipher? cipher-type cipher-ctx cipher-context
@@ -172,10 +174,22 @@ Exports:
   decrypt-init!
   decrypt-update! decrypt-update/nocheck!
   decrypt-final! decrypt-final/nocheck!
-  cipher::aes128 make-aes128-cipher aes128-cipher?
-  cipher::aes192 make-aes192-cipher aes192-cipher?
-  cipher::aes256 make-aes256-cipher aes256-cipher?
 
+  cipher::rc4 make-rc4-cipher rc4-cipher?
+  
+  ;; MODE = ecb cbc cfb ofb
+  cipher::idea-{MODE} make-idea-{MODE}-cipher idea-{MODE}-cipher?
+  cipher::cast5-{MODE} make-cast5-{MODE}-cipher cast5-{MODE}-cipher?
+  cipher::bf-{MODE} make-bf-{MODE}-cipher bf-{MODE}-cipher?
+
+  ;; LEN = 128 192 256
+  ;; MODE = ecb cbc cfb ofb ctr ccm gcm xts
+  cipher::aes-{LEN}-{MODE} make-aes-{LEN}-{MODE}-cipher aes-{LEN}-{MODE}-cipher?
+  
+  ;; LEN = 128 192 256
+  ;; MODE = ecb cbc cfb ofb
+  cipher::camellia-{LEN}-{MODE} make-camellia-{LEN}-{MODE}-cipher camellia-{LEN}-{MODE}-cipher?
+  
 ;; :std/crypto/dh
   DH-generate-key DH-compute-key DH-pub-key
   DH-get-1024-160 DH-get-2048-224 DH-get-2048-256
