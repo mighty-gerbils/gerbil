@@ -199,6 +199,21 @@ END-C
 (define-c-lambda/const-pointer EVP_aes_256_gcm () EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_aes_256_xts () EVP_CIPHER*)
 
+(define-c-lambda/const-pointer EVP_camellia_128_ecb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_128_cbc () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_128_cfb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_128_ofb () EVP_CIPHER*)
+
+(define-c-lambda/const-pointer EVP_camellia_192_ecb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_192_cbc () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_192_cfb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_192_ofb () EVP_CIPHER*)
+
+(define-c-lambda/const-pointer EVP_camellia_256_ecb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_256_cbc () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_256_cfb () EVP_CIPHER*)
+(define-c-lambda/const-pointer EVP_camellia_256_ofb () EVP_CIPHER*)
+
 (define-c-lambda EVP_CIPHER_nid (EVP_CIPHER*) int)
 (define-c-lambda EVP_CIPHER_block_size (EVP_CIPHER*) int)
 (define-c-lambda EVP_CIPHER_key_length (EVP_CIPHER*) int)

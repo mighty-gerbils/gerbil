@@ -173,9 +173,12 @@ Exports:
   decrypt-init!
   decrypt-update! decrypt-update/nocheck!
   decrypt-final! decrypt-final/nocheck!
-  cipher::aes128 make-aes128-cipher aes128-cipher?
-  cipher::aes192 make-aes192-cipher aes192-cipher?
-  cipher::aes256 make-aes256-cipher aes256-cipher?
+
+  ;; LEN = 128 192 256
+  ;; MODE = ecb cbc cfb ofb ctr ccm gcm xts
+  cipher::aes-{LEN}-{MODE} make-aes-{LEN}-{MODE}-cipher aes-{LEN}-{MODE}-cipher?
+  ;; MODE = ecb cbc cfb ofb
+  cipher::camellia-{LEN}-{MODE} make-camellia-{LEN}-{MODE}-cipher camellia-{LEN}-{MODE}-cipher?
 
 ;; :std/crypto/dh
   DH-generate-key DH-compute-key DH-pub-key

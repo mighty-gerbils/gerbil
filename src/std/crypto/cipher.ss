@@ -266,3 +266,6 @@ package: std/crypto
 (define-cipher aes 128 (ecb cbc cfb ofb ctr ccm gcm xts))
 (define-cipher aes 192 (ecb cbc cfb ofb ctr ccm gcm))
 (define-cipher aes 256 (ecb cbc cfb ofb ctr ccm gcm xts))
+(define-cipher camellia 128 (ecb cbc cfb ofb))
+(define-cipher camellia 192 (ecb cbc cfb ofb))
+(define-cipher camellia 256 (ecb cbc cfb ofb))
