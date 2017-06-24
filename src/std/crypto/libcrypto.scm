@@ -114,6 +114,7 @@ END-C
 (define-c-lambda/const-pointer EVP_sha384 () EVP_MD*)
 (define-c-lambda/const-pointer EVP_sha512 () EVP_MD*)
 (define-c-lambda/const-pointer EVP_ripemd160 () EVP_MD*)
+(define-c-lambda/const-pointer EVP_whirlpool () EVP_MD*)
 
 (define-c-lambda EVP_MD_type (EVP_MD*) int)
 (define-c-lambda EVP_MD_pkey_type (EVP_MD*) int)
