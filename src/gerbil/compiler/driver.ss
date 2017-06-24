@@ -243,7 +243,9 @@ namespace: gxc
                  (current-compile-symbol-table
                   (make-symbol-table))
                  (current-compile-runtime-sections
-                  (make-hash-table-eq)))
+                  (make-hash-table-eq))
+                 (current-compile-runtime-names
+                  (make-hash-table)))
     (verbose "compile " (expander-context-id ctx))
     (when (current-compile-optimize)
       (optimize! ctx))
