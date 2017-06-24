@@ -212,7 +212,7 @@ Database connection pool.
 ;; exports:
 
   make-conpool conpool?
-  conpool-get conpool-put
+  conpool-get conpool-put conpool-close
 ```
 
 
