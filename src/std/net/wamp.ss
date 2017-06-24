@@ -74,10 +74,6 @@ package: std/net
       (values (spawn wamp-client ws realm sid)
               details))))
 
-(def (stop-wamp-client! cli)
-  (!!wamp.shutdown cli)
-  (thread-join! cli))
-
 ;; synchronous client interface
 ;; => (values details args kws)
 (def (wamp-call cli name opts args kws)
