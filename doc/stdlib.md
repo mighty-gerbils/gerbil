@@ -159,6 +159,7 @@ Exports:
   sha256 digest::sha256 make-sha256-digest sha256-digest?
   sha384 digest::sha384 make-sha384-digest sha384-digest?
   sha512 digest::sha512 make-sha512-digest sha512-digest?
+  ripemd160 digest::ripemd160 make-ripemd160-digest ripemd160-digest?
   
 ;; :std/crypto/cipher
   cipher make-cipher cipher? cipher-type cipher-ctx cipher-context
