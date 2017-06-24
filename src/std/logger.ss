@@ -37,10 +37,14 @@ package: std
   (def (loop)
     (match (thread-receive)
       ((!log-message source level message)
-       (fprintf port "[~a] ~a ~a: ~a~n"
-                level (date->string (current-date) "~4")
-                source message)
+       (fprintf port "~a [~a] ~a: ~a~n"
+                (date->string (current-date) "~4")
+                level source message)
        (force-output port)
+       (loop))
+      ('shutdown
+       (void))
+      (else
        (loop))))
 
   (try (loop)
@@ -59,4 +63,5 @@ package: std
     (log-message 'error (get-output-string outp))))
 
 (def (log-message level msg)
-  (thread-send (current-logger) (make-!log-message (current-thread) level msg)))
+  (alet (logger (current-logger))
+    (thread-send logger (make-!log-message (current-thread) level msg))))

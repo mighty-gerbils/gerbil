@@ -4,10 +4,12 @@
 package: std/db
 
 (import :gerbil/gambit/threads
+        :std/db/dbi
         :std/sugar
-        :std/error)
+        :std/error
+        :std/logger)
 (export make-conpool conpool?
-        conpool-get conpool-put)
+        conpool-get conpool-put conpool-close)
 
 (defstruct conpool (e mx cv conns out max)
   constructor: :init!
@@ -17,7 +19,7 @@ package: std/db
   (lambda (self connect (max #f))
     (struct-instance-init! self connect
       (make-mutex) (make-condition-variable)
-      [] 0 max)))
+      [] [] max)))
 
 ;; _gambit#.scm
 (extern namespace: #f
@@ -32,19 +34,19 @@ package: std/db
          (set! (conpool-conns cp)
            rest)
          (set! (conpool-out cp)
-           (fx1+ out))
+           (cons conn out))
          (mutex-unlock! mx)
          conn)
         (else
-         (if (or (not max) (fx< out max))
+         (if (or (not max) (fx< (length out) max))
            (let (conn
                  (try
-                  (connect)
+                  (sql-connect connect)
                   (catch (e)
                     (mutex-unlock! mx)
                     (raise e))))
              (set! (conpool-out cp)
-               (fx1+ out))
+               (cons conn out))
              (mutex-unlock! mx)
              conn)
            (let (res (mutex-unlock! mx cv timeo))
@@ -58,6 +60,23 @@ package: std/db
     (set! (conpool-conns cp)
       (cons conn conns))
     (set! (conpool-out cp)
-      (fx1- out))
+      (remq conn out))
     (condition-variable-signal! cv)
+    (mutex-unlock! mx)))
+
+(def (conpool-close cp)
+  (def (close conn)
+    (try
+     (sql-close conn)
+     (catch (e)
+       (log-error "error closing connection" e))))
+  
+  (with ((conpool _ mx cv conns out) cp)
+    (mutex-lock! mx)
+    (for-each close conns)
+    (for-each close out)
+    (set! (conpool-e cp)
+      (cut error "Connection pool is closed"))
+    (set! (conpool-conns cp) [])
+    (set! (conpool-out cp) [])
     (mutex-unlock! mx)))
