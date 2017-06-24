@@ -2,37 +2,38 @@
 
 <!-- toc -->
 
-- [std/format](#stdformat)
-- [std/pregexp](#stdpregexp)
-- [std/sort](#stdsort)
-- [std/sugar](#stdsugar)
-- [std/make](#stdmake)
-- [std/error](#stderror)
-- [std/getopt](#stdgetopt)
-- [std/logger](#stdlogger)
-- [std/generic](#stdgeneric)
-- [std/event](#stdevent)
-- [std/coroutine](#stdcoroutine)
-- [std/iter](#stditer)
-- [std/test](#stdtest)
-- [std/srfi](#stdsrfi)
 - [std/actor](#stdactor)
-- [std/parser](#stdparser)
+- [std/coroutine](#stdcoroutine)
 - [std/crypto](#stdcrypto)
-- [std/text](#stdtext)
-  * [std/text/hex](#stdtexthex)
-  * [std/text/base64](#stdtextbase64)
-  * [std/text/json](#stdtextjson)
-  * [std/text/yaml](#stdtextyaml)
-  * [std/text/zlib](#stdtextzlib)
+- [std/db](#stddb)
+  * [std/db/conpool](#stddbconpool)
+  * [std/db/dbi](#stddbdbi)
+  * [std/db/leveldb](#stddbleveldb)
+  * [std/db/lmdb](#stddblmdb)
+  * [std/db/mysql](#stddbmysql)
+  * [std/db/sqlite](#stddbsqlite)
+- [std/error](#stderror)
+- [std/event](#stdevent)
+- [std/format](#stdformat)
+- [std/generic](#stdgeneric)
+- [std/getopt](#stdgetopt)
+- [std/iter](#stditer)
+- [std/logger](#stdlogger)
+- [std/make](#stdmake)
+- [std/misc](#stdmisc)
+  * [std/misc/ports](#stdmiscports)
+  * [std/misc/pqueue](#stdmiscpqueue)
+  * [std/misc/queue](#stdmiscqueue)
+  * [std/misc/shuffle](#stdmiscshuffle)
+  * [std/misc/uuid](#stdmiscuuid)
 - [std/net](#stdnet)
   * [std/net/address](#stdnetaddress)
-  * [std/net/uri](#stdneturi)
-  * [std/net/socks](#stdnetsocks)
   * [std/net/request](#stdnetrequest)
-  * [std/net/websocket](#stdnetwebsocket)
-  * [std/net/wamp](#stdnetwamp)
   * [std/net/server](#stdnetserver)
+  * [std/net/socks](#stdnetsocks)
+  * [std/net/uri](#stdneturi)
+  * [std/net/wamp](#stdnetwamp)
+  * [std/net/websocket](#stdnetwebsocket)
 - [std/os](#stdos)
   * [std/os/error](#stdoserror)
   * [std/os/fd](#stdosfd)
@@ -40,245 +41,24 @@
   * [std/os/pipe](#stdospipe)
   * [std/os/socket](#stdossocket)
   * [std/os/epoll](#stdosepoll)
-- [std/misc](#stdmisc)
-  * [std/misc/shuffle](#stdmiscshuffle)
-  * [std/misc/uuid](#stdmiscuuid)
-  * [std/misc/queue](#stdmiscqueue)
-  * [std/misc/pqueue](#stdmiscpqueue)
-  * [std/misc/ports](#stdmiscports)
+- [std/parser](#stdparser)
+- [std/pregexp](#stdpregexp)
+- [std/sort](#stdsort)
+- [std/srfi](#stdsrfi)
+- [std/sugar](#stdsugar)
+- [std/test](#stdtest)
+- [std/text](#stdtext)
+  * [std/text/base64](#stdtextbase64)
+  * [std/text/hex](#stdtexthex)
+  * [std/text/json](#stdtextjson)
+  * [std/text/yaml](#stdtextyaml)
+  * [std/text/zlib](#stdtextzlib)
 - [std/web](#stdweb)
   * [std/web/fastcgi](#stdwebfastcgi)
   * [std/web/rack](#stdwebrack)
-- [std/db](#stddb)
-  * [std/db/dbi](#stddbdbi)
-  * [std/db/sqlite](#stddbsqlite)
-  * [std/db/mysql](#stddbmysql)
-  * [std/db/conpool](#stddbconpool)
-  * [std/db/lmdb](#stddblmdb)
-  * [std/db/leveldb](#stddbleveldb)
 - [std/xml](#stdxml)
 
 <!-- tocstop -->
-
-## std/format
-```
-(import :std/format)
-```
-
-Intermediate format strings.
-
-Exports:
-```
-  format printf fprintf eprintf
-```
-
-## std/pregexp
-```
-(import :std/pregexp)
-```
-
-The well-known portable Scheme regular expressions library.
-
-Exports:
-```
-  pregexp
-  pregexp-match-positions
-  pregexp-match
-  pregexp-split
-  pregexp-replace
-  pregexp-replace*
-  pregexp-quote
-```
-
-## std/sort
-```
-(import :std/sort)
-```
-
-Sorting using Olin Shivers' withdrawn SRFI-32 implementation.
-
-Exports:
-```
-  sort sort! stable-sort stable-sort!
-```
-
-## std/sugar
-```
-(import :std/sugar)
-```
-
-Commonly used macros.
-
-Exports:
-```
-  try catch finally
-  with-destroy
-  assert!
-  while until
-  hash hash-eq hash-eqv
-  defmethod/alias
-```
-
-## std/make
-```
-(import :std/make)
-```
-
-Standard library build tool.
-
-Exports:
-```
-  make make-depgraph make-depgraph/spec shell-config
-```
-
-## std/error
-```
-(import :std/error)
-```
-
-Common error base classes.
-
-Exports:
-```
-  <error>
-  (struct-out io-error timeout-error)
-  raise-io-error
-  raise-timeout
-```
-
-## std/getopt
-```
-(import :std/getopt)
-```
-
-Command-line argument parsing.
-
-Exports:
-```
-  getopt
-  getopt? getopt-object?
-  getopt-error?
-  getopt-parse
-  getopt-display-help
-  option
-  flag
-  command
-  argument
-  optional-argument
-  rest-arguments
-```
-
-## std/logger
-```
-(import :std/logger)
-```
-
-Logging facilities.
-
-Exports:
-```
-  start-logger!
-  debug warning
-  log-error log-message
-```
-
-## std/generic
-```
-(import :std/generic)
-```
-
-Generic methods.
-
-Exports:
-```
-  defgeneric defgeneric-type defmethod
-  <t>  <void>  <null>  <boolean>
-  <number>  <real>  <integer>  <fixnum>  <flonum>  <rational>  <complex>
-  <string>  <symbol>  <keyword>
-  <u8vector>  <vector>  <values>
-  <pair>  <list>
-  <procedure>
-  <object>
-  <hash-table>
-  <thread>  <mutex>  <condvar>
-  <port>  <input-port>  <output-port>
-  <exception>
-```
-
-## std/event
-```
-(import :std/event)
-```
-
-Event-driven programming facilities.
-
-Exports:
-```
-  select
-  ! !! sync poll
-  never-evt always-evt
-  make-event
-  make-event-set
-  handle-evt
-  wrap-evt choice-evt
-  event? event-handler? event-set?  event-ready?
-  event-selector event-value
-  thread-dead?
-```
-
-## std/coroutine
-```
-(import :std/coroutine)
-```
-
-Library for thread-based coroutines.
-
-Exports:
-```
-  coroutine coroutine? continue yield
-```
-
-## std/iter
-```
-(import :std/iter)
-```
-
-Iterators.
-
-Exports:
-```
-  (struct-out iterator)
-  :iter iter-end iter-end? iter-nil iter-nil?
-  iter-start! iter-value iter-next!
-  for for* for/collect for/fold
-  in-range in-naturals in-hash-keys in-hash-values
-  in-input-lines in-input-chars in-input-bytes
-  iter-filter iter-map iter-filter-map
-  yield
-```
-
-## std/test
-```
-(import :std/test)
-```
-
-Testing facilities.
-
-Exports:
-```
-  test-suite test-case
-  check checkf
-  check-eq? check-not-eq?
-  check-eqv? check-not-eqv?
-  check-equal? check-not-equal?
-  check-output check-predicate check-exception
-  !check-fail? !check-fail-e
-  run-tests! test-report-summary!
-```
-
-## std/srfi
-
-See [SRFI Support](srfi.md)
 
 ## std/actor
 ```
@@ -344,59 +124,16 @@ Exports:
   set-rpc-call-timeout!
 ```
 
-## std/parser
+## std/coroutine
 ```
-(import :std/parser)
-#lang :std/parser/grammar
+(import :std/coroutine)
 ```
 
-Parsing facilities and grammar definition prelude.
+Library for thread-based coroutines.
 
 Exports:
 ```
-;; :std/parser/rlang
-  @nul @nul? @eps @eps?
-  @char @charset @negset @dot
-  @alt @cat @rep* @rep+ @maybe
-  deriv delta recognizes?
-
-;; :std/parser/base
-  (struct-out parse-error token location)
-  raise-parse-error
-  wrap-identity wrap-ast unwrap-ast
-  token->syntax
-  location->source-location
-  display-location
-  location-delta location-delta*
-  
-;; :std/parser/stream
-  make-char-stream char-stream?
-  char-stream-loc
-  char-stream-close
-  char-stream-peek
-  char-stream-getc
-  char-stream-ungetc
-  port-location
-        
-;; :std/parser/lexer
-  lex lex-chars
-  token-stream?
-  token-stream-close
-  token-stream-get
-  token-stream-next
-  token-stream-unget
-  token-stream-peek
-  token-stream-loc
-  $ $? $$ $$?
-
-;; :std/parser/defparser
-  defparser
-  @eq % ! $-
-  parser-parse parser-rewind parser-fail
-  parser-input-stream
-  
-;; :std/parser/deflexer
-  deflexer
+  coroutine coroutine? continue yield
 ```
 
 ## std/crypto
@@ -448,77 +185,332 @@ Exports:
 
 ```
 
-## std/text
+## std/db
 
-Text encoding and decoding libraries.
+Database interfaces.
 
-### std/text/hex
+### std/db/conpool
 ```
-(import :std/text/hex)
-```
-
-Hex encoding and decoding.
-
-Exports:
-```
-  hex-encode hexlify
-  hex-decode unhexlify
-  hex unhex unhex*
+(import :std/db/conpool)
 ```
 
-### std/text/base64
-```
-(import :std/text/base64)
-```
-
-Base64 encoding and decoding.
+Database connection pool.
 
 Exports:
 ```
-  base64-string->u8vector
-  base64-substring->u8vector
-  u8vector->base64-string
-  subu8vector->base64-string)
-  base64-decode base64-decode-substring
-  base64-encode base64-encode-subu8vector
+  make-conpool conpool?
+  conpool-get conpool-put
 ```
 
-### std/text/json
+
+### std/db/dbi
 ```
-(import :std/text/json)
+(import :std/db/dbi)
 ```
 
-JSON encoding and decoding.
+Generic SQL database interface.
 
 Exports:
 ```
-  read-json write-json
-  string->json-object json-object->string
-  json-symbolic-keys
+  sql-connect sql-close sql-prepare
+  sql-bind sql-clear sql-reset sql-reset/clear sql-finalize
+  sql-eval sql-eval-query
+  sql-exec sql-query in-sql-query sql-columns
+  sql-txn-begin sql-txn-commit sql-txn-abort
+
 ```
 
-### std/text/yaml
+
+### std/db/leveldb
 ```
-(import :std/text/yaml)
+(import :std/db/leveldb)
 ```
 
-YAML parsing and dumping; requires libyaml.
-
-Exports:
-```
-  yaml-load yaml-dump
-```
-
-### std/text/zlib
-```
-(import :std/text/zlib)
-```
-
-Compression and decompression with zlib.
+LevelDB interface.
 
 Exports:
 ```
-  compress compress-gz uncompress
+  leveldb-error?
+  leveldb?
+  leveldb-open leveldb-close
+  leveldb-put leveldb-get leveldb-delete leveldb-write
+  leveldb-writebatch leveldb-writebatch-clear
+  leveldb-writebatch-put leveldb-writebatch-delete
+  leveldb-iterator leveldb-iterator-close leveldb-iterator-valid?
+  leveldb-iterator-seek-first leveldb-iterator-seek-last
+  leveldb-iterator-seek
+  leveldb-iterator-next leveldb-iterator-prev
+  leveldb-iterator-key leveldb-iterator-value
+  leveldb-iterator-error
+  in-leveldb in-leveldb-keys
+  leveldb-compact-range
+  leveldb-destroy-db
+  leveldb-repair-db
+  leveldb-options leveldb-default-options
+  leveldb-read-options leveldb-default-read-options
+  leveldb-write-options leveldb-default-write-options
+```
+
+### std/db/lmdb
+```
+(import :std/db/lmdb)
+```
+
+LMDB interface.
+
+Exports:
+```
+  lmdb-error?
+  lmdb-env?
+  lmdb-db? lmdb-db-env lmdb-db-name
+  lmdb-txn? lmdb-txn-env
+  lmdb-cursor? lmdb-cursor-txn lmdb-cursor-db
+  lmdb-open lmdb-sync lmdb-close lmdb-stat
+  lmdb-open-db lmdb-close-db lmdb-db-stat lmdb-db-drop
+  lmdb-txn-begin lmdb-txn-id
+  lmdb-txn-commit lmdb-txn-abort
+  lmdb-txn-reset lmdb-txn-renew
+  lmdb-get lmdb-put lmdb-del
+  lmdb-cursor-open lmdb-cursor-close lmdb-cursor-renew
+  lmdb-cursor-get lmdb-cursor-put lmdb-cursor-del lmdb-cursor-count
+```
+
+### std/db/mysql
+```
+(import :std/db/mysql)
+```
+
+MySQL dbi driver.
+
+Exports:
+```
+  mysql-connect
+```
+
+
+### std/db/sqlite
+```
+(import :std/db/sqlite)
+```
+
+SQLite dbi driver.
+
+Exports:
+```
+  sqlite-open
+```
+
+## std/error
+```
+(import :std/error)
+```
+
+Common error base classes.
+
+Exports:
+```
+  <error>
+  (struct-out io-error timeout-error)
+  raise-io-error
+  raise-timeout
+```
+
+## std/event
+```
+(import :std/event)
+```
+
+Event-driven programming facilities.
+
+Exports:
+```
+  select
+  ! !! sync poll
+  never-evt always-evt
+  make-event
+  make-event-set
+  handle-evt
+  wrap-evt choice-evt
+  event? event-handler? event-set?  event-ready?
+  event-selector event-value
+  thread-dead?
+```
+
+## std/format
+```
+(import :std/format)
+```
+
+Intermediate format strings.
+
+Exports:
+```
+  format printf fprintf eprintf
+```
+
+## std/generic
+```
+(import :std/generic)
+```
+
+Generic methods.
+
+Exports:
+```
+  defgeneric defgeneric-type defmethod
+  <t>  <void>  <null>  <boolean>
+  <number>  <real>  <integer>  <fixnum>  <flonum>  <rational>  <complex>
+  <string>  <symbol>  <keyword>
+  <u8vector>  <vector>  <values>
+  <pair>  <list>
+  <procedure>
+  <object>
+  <hash-table>
+  <thread>  <mutex>  <condvar>
+  <port>  <input-port>  <output-port>
+  <exception>
+```
+
+## std/getopt
+```
+(import :std/getopt)
+```
+
+Command-line argument parsing.
+
+Exports:
+```
+  getopt
+  getopt? getopt-object?
+  getopt-error?
+  getopt-parse
+  getopt-display-help
+  option
+  flag
+  command
+  argument
+  optional-argument
+  rest-arguments
+```
+
+## std/iter
+```
+(import :std/iter)
+```
+
+Iterators.
+
+Exports:
+```
+  (struct-out iterator)
+  :iter iter-end iter-end? iter-nil iter-nil?
+  iter-start! iter-value iter-next!
+  for for* for/collect for/fold
+  in-range in-naturals in-hash-keys in-hash-values
+  in-input-lines in-input-chars in-input-bytes
+  iter-filter iter-map iter-filter-map
+  yield
+```
+
+## std/logger
+```
+(import :std/logger)
+```
+
+Logging facilities.
+
+Exports:
+```
+  start-logger!
+  debug warning
+  log-error log-message
+```
+
+## std/make
+```
+(import :std/make)
+```
+
+Standard library build tool.
+
+Exports:
+```
+  make make-depgraph make-depgraph/spec shell-config
+```
+
+## std/misc
+
+Miscellaneous libraries.
+
+### std/misc/ports
+```
+(import :std/misc/ports)
+```
+
+Port utilites.
+
+Exports:
+```
+  copy-port
+```
+
+
+### std/misc/pqueue
+```
+(import :std/misc/pqueue)
+```
+
+Heap-based priority queues.
+
+Exports:
+```
+  make-pqueue pqueue? pqueue-empty? pqueue-size
+  pqueue-peek pqueue-pop! pqueue-push!
+```
+
+### std/misc/queue
+```
+(import :std/misc/queue)
+```
+
+Double-edged queues.
+
+Exports:
+```
+  make-queue queue? queue-length
+  queue-empty? non-empty-queue?
+  enqueue! enqueue-front! dequeue!
+  queue->list
+```
+
+
+### std/misc/shuffle
+```
+(import :std/misc/shuffle)
+```
+
+Shuffling.
+
+Exports:
+```
+  shuffle vector-shuffle vector-shuffle!
+```
+
+### std/misc/uuid
+```
+(import :std/misc/uuid)
+```
+
+UUIDs.
+
+Export:
+```
+  UUID uuid-length uuid::t make-uuid
+  uuid? uuid=?
+  uuid-hash
+  uuid->u8vector
+  uuid->symbol
+  random-uuid
 ```
 
 ## std/net
@@ -543,34 +535,6 @@ Exports:
   resolve-address resolved-address?
 ```
 
-### std/net/uri
-```
-(import :std/net/uri)
-```
-
-URI support [RFC3986]
-
-Exports:
-```
-  uri-encode uri-decode form-url-encode form-url-decode
-```
-
-### std/net/socks
-```
-(import :std/net/socks)
-```
-
-SOCKS proxy client.
-
-Exports:
-```
-  open-socks5-client open-socks4-client
-  socks5-open socks5-connect socks5-bind socks5-accept
-  socks4-connect socks4-bind socks4-accept
-  socks5-send-request socks5-recv-reply
-  socks4-send-request socks4-recv-reply
-```
-
 ### std/net/request
 ```
 (import :std/net/request)
@@ -592,41 +556,6 @@ Exports:
   request-port
 ```
 
-### std/net/websocket
-```
-(import :std/net/websocket)
-```
-
-Websocket client.
-
-Exports:
-```
-  open-websocket-client
-  websocket?
-  websocket-recv websocket-read
-  websocket-send websocket-write
-  websocket-close
-  set-websocket-max-frame-size!
-  set-websocket-max-message-size!
-```
-
-### std/net/wamp
-```
-(import :std/net/wamp)
-```
-
-Web Application Message Protocol client.
-
-Exports:
-```
-  start-wamp-client! 
-  wamp-call wamp-publish wamp-subscribe
-  wamp-register wamp-unregister
-  wamp-close
-  (struct-out wamp-error invocation-error)
-  raise-invocation-error
-  
-```
 
 ### std/net/server
 ```
@@ -664,6 +593,71 @@ Exports:
 ;; :std/net/server/epoll-server (linux)
   epoll-socket-server
 
+```
+
+### std/net/socks
+```
+(import :std/net/socks)
+```
+
+SOCKS proxy client.
+
+Exports:
+```
+  open-socks5-client open-socks4-client
+  socks5-open socks5-connect socks5-bind socks5-accept
+  socks4-connect socks4-bind socks4-accept
+  socks5-send-request socks5-recv-reply
+  socks4-send-request socks4-recv-reply
+```
+
+### std/net/uri
+```
+(import :std/net/uri)
+```
+
+URI support [RFC3986]
+
+Exports:
+```
+  uri-encode uri-decode form-url-encode form-url-decode
+```
+
+
+### std/net/wamp
+```
+(import :std/net/wamp)
+```
+
+Web Application Message Protocol client.
+
+Exports:
+```
+  start-wamp-client! 
+  wamp-call wamp-publish wamp-subscribe
+  wamp-register wamp-unregister
+  wamp-close
+  (struct-out wamp-error invocation-error)
+  raise-invocation-error
+  
+```
+
+### std/net/websocket
+```
+(import :std/net/websocket)
+```
+
+Websocket client.
+
+Exports:
+```
+  open-websocket-client
+  websocket?
+  websocket-recv websocket-read
+  websocket-send websocket-write
+  websocket-close
+  set-websocket-max-frame-size!
+  set-websocket-max-message-size!
 ```
 
 ## std/os
@@ -893,78 +887,206 @@ Exports:
   EPOLLIN EPOLLOUT EPOLLERR EPOLLHUP EPOLLET EPOLLONESHOT
 ```
 
-## std/misc
-
-Miscellaneous libraries.
-
-### std/misc/shuffle
+## std/parser
 ```
-(import :std/misc/shuffle)
+(import :std/parser)
+#lang :std/parser/grammar
 ```
 
-Shuffling.
+Parsing facilities and grammar definition prelude.
 
 Exports:
 ```
-  shuffle vector-shuffle vector-shuffle!
+;; :std/parser/rlang
+  @nul @nul? @eps @eps?
+  @char @charset @negset @dot
+  @alt @cat @rep* @rep+ @maybe
+  deriv delta recognizes?
+
+;; :std/parser/base
+  (struct-out parse-error token location)
+  raise-parse-error
+  wrap-identity wrap-ast unwrap-ast
+  token->syntax
+  location->source-location
+  display-location
+  location-delta location-delta*
+  
+;; :std/parser/stream
+  make-char-stream char-stream?
+  char-stream-loc
+  char-stream-close
+  char-stream-peek
+  char-stream-getc
+  char-stream-ungetc
+  port-location
+        
+;; :std/parser/lexer
+  lex lex-chars
+  token-stream?
+  token-stream-close
+  token-stream-get
+  token-stream-next
+  token-stream-unget
+  token-stream-peek
+  token-stream-loc
+  $ $? $$ $$?
+
+;; :std/parser/defparser
+  defparser
+  @eq % ! $-
+  parser-parse parser-rewind parser-fail
+  parser-input-stream
+  
+;; :std/parser/deflexer
+  deflexer
 ```
 
-### std/misc/uuid
+## std/pregexp
 ```
-(import :std/misc/uuid)
-```
-
-UUIDs.
-
-Export:
-```
-  UUID uuid-length uuid::t make-uuid
-  uuid? uuid=?
-  uuid-hash
-  uuid->u8vector
-  uuid->symbol
-  random-uuid
+(import :std/pregexp)
 ```
 
-### std/misc/queue
-```
-(import :std/misc/queue)
-```
-
-Double-edged queues.
-
-Exports:
-```
-  make-queue queue? queue-length
-  queue-empty? non-empty-queue?
-  enqueue! enqueue-front! dequeue!
-  queue->list
-```
-
-### std/misc/pqueue
-```
-(import :std/misc/pqueue)
-```
-
-Heap-based priority queues.
-
-Exports:
-```
-  make-pqueue pqueue? pqueue-empty? pqueue-size
-  pqueue-peek pqueue-pop! pqueue-push!
-```
-
-### std/misc/ports
-```
-(import :std/misc/ports)
-```
-
-Port utilites.
+The well-known portable Scheme regular expressions library.
 
 Exports:
 ```
-  copy-port
+  pregexp
+  pregexp-match-positions
+  pregexp-match
+  pregexp-split
+  pregexp-replace
+  pregexp-replace*
+  pregexp-quote
 ```
+
+## std/sort
+```
+(import :std/sort)
+```
+
+Sorting using Olin Shivers' withdrawn SRFI-32 implementation.
+
+Exports:
+```
+  sort sort! stable-sort stable-sort!
+```
+
+## std/srfi
+
+See [SRFI Support](srfi.md)
+
+
+
+## std/sugar
+```
+(import :std/sugar)
+```
+
+Commonly used macros.
+
+Exports:
+```
+  try catch finally
+  with-destroy
+  assert!
+  while until
+  hash hash-eq hash-eqv
+  defmethod/alias
+```
+
+## std/test
+```
+(import :std/test)
+```
+
+Testing facilities.
+
+Exports:
+```
+  test-suite test-case
+  check checkf
+  check-eq? check-not-eq?
+  check-eqv? check-not-eqv?
+  check-equal? check-not-equal?
+  check-output check-predicate check-exception
+  !check-fail? !check-fail-e
+  run-tests! test-report-summary!
+```
+
+## std/text
+
+Text encoding and decoding libraries.
+
+### std/text/base64
+```
+(import :std/text/base64)
+```
+
+Base64 encoding and decoding.
+
+Exports:
+```
+  base64-string->u8vector
+  base64-substring->u8vector
+  u8vector->base64-string
+  subu8vector->base64-string)
+  base64-decode base64-decode-substring
+  base64-encode base64-encode-subu8vector
+```
+
+### std/text/hex
+```
+(import :std/text/hex)
+```
+
+Hex encoding and decoding.
+
+Exports:
+```
+  hex-encode hexlify
+  hex-decode unhexlify
+  hex unhex unhex*
+```
+
+### std/text/json
+```
+(import :std/text/json)
+```
+
+JSON encoding and decoding.
+
+Exports:
+```
+  read-json write-json
+  string->json-object json-object->string
+  json-symbolic-keys
+```
+
+### std/text/yaml
+```
+(import :std/text/yaml)
+```
+
+YAML parsing and dumping; requires libyaml.
+
+Exports:
+```
+  yaml-load yaml-dump
+```
+
+### std/text/zlib
+```
+(import :std/text/zlib)
+```
+
+Compression and decompression with zlib.
+
+Exports:
+```
+  compress compress-gz uncompress
+```
+
 
 ## std/web
 
@@ -1001,117 +1123,6 @@ Exports:
   start-rack-fastcgi-server!
 ```
 
-## std/db
-
-Database interfaces.
-
-### std/db/dbi
-```
-(import :std/db/dbi)
-```
-
-Generic SQL database interface.
-
-Exports:
-```
-  sql-connect sql-close sql-prepare
-  sql-bind sql-clear sql-reset sql-reset/clear sql-finalize
-  sql-eval sql-eval-query
-  sql-exec sql-query in-sql-query sql-columns
-  sql-txn-begin sql-txn-commit sql-txn-abort
-
-```
-
-### std/db/sqlite
-```
-(import :std/db/sqlite)
-```
-
-SQLite dbi driver.
-
-Exports:
-```
-  sqlite-open
-```
-
-### std/db/mysql
-```
-(import :std/db/mysql)
-```
-
-MySQL dbi driver.
-
-Exports:
-```
-  mysql-connect
-```
-
-### std/db/conpool
-```
-(import :std/db/conpool)
-```
-
-Database connection pool.
-
-Exports:
-```
-  make-conpool conpool?
-  conpool-get conpool-put
-```
-
-### std/db/lmdb
-```
-(import :std/db/lmdb)
-```
-
-LMDB interface.
-
-Exports:
-```
-  lmdb-error?
-  lmdb-env?
-  lmdb-db? lmdb-db-env lmdb-db-name
-  lmdb-txn? lmdb-txn-env
-  lmdb-cursor? lmdb-cursor-txn lmdb-cursor-db
-  lmdb-open lmdb-sync lmdb-close lmdb-stat
-  lmdb-open-db lmdb-close-db lmdb-db-stat lmdb-db-drop
-  lmdb-txn-begin lmdb-txn-id
-  lmdb-txn-commit lmdb-txn-abort
-  lmdb-txn-reset lmdb-txn-renew
-  lmdb-get lmdb-put lmdb-del
-  lmdb-cursor-open lmdb-cursor-close lmdb-cursor-renew
-  lmdb-cursor-get lmdb-cursor-put lmdb-cursor-del lmdb-cursor-count
-```
-
-### std/db/leveldb
-```
-(import :std/db/leveldb)
-```
-
-LevelDB interface.
-
-Exports:
-```
-  leveldb-error?
-  leveldb?
-  leveldb-open leveldb-close
-  leveldb-put leveldb-get leveldb-delete leveldb-write
-  leveldb-writebatch leveldb-writebatch-clear
-  leveldb-writebatch-put leveldb-writebatch-delete
-  leveldb-iterator leveldb-iterator-close leveldb-iterator-valid?
-  leveldb-iterator-seek-first leveldb-iterator-seek-last
-  leveldb-iterator-seek
-  leveldb-iterator-next leveldb-iterator-prev
-  leveldb-iterator-key leveldb-iterator-value
-  leveldb-iterator-error
-  in-leveldb in-leveldb-keys
-  leveldb-compact-range
-  leveldb-destroy-db
-  leveldb-repair-db
-  leveldb-options leveldb-default-options
-  leveldb-read-options leveldb-default-read-options
-  leveldb-write-options leveldb-default-write-options
-```
 
 ## std/xml
 ```
