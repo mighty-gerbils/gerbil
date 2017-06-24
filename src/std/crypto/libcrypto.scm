@@ -174,6 +174,8 @@ END-C
 (define-c-lambda EVP_CIPHER_CTX_copy (EVP_CIPHER_CTX* EVP_CIPHER_CTX*) int
   "EVP_CIPHER_CTX_copy")
 
+(define-c-lambda/const-pointer EVP_rc4 () EVP_CIPHER*)
+
 (define-c-lambda/const-pointer EVP_aes_128_ecb () EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_aes_128_cbc () EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_aes_128_cfb () EVP_CIPHER*)

@@ -19,6 +19,7 @@ package: std/crypto
   EVP_CIPHER_CTX_create
   EVP_EncryptInit EVP_EncryptUpdate EVP_EncryptFinal
   EVP_DecryptInit EVP_DecryptUpdate EVP_DecryptFinal
+  EVP_rc4
   EVP_aes_128_ecb EVP_aes_128_cbc EVP_aes_128_cfb EVP_aes_128_ofb
   EVP_aes_128_ctr EVP_aes_128_ccm EVP_aes_128_gcm EVP_aes_128_xts
   EVP_aes_192_ecb EVP_aes_192_cbc EVP_aes_192_cfb EVP_aes_192_ofb
