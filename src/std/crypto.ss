@@ -3,7 +3,7 @@
 ;;; std libcrypto interface
 package: std
 
-(import :std/crypto/etc
+(import (only-in :std/crypto/etc random-bytes random-bytes! libcrypto-error?)
         :std/crypto/digest
         :std/crypto/cipher
         :std/crypto/dh
