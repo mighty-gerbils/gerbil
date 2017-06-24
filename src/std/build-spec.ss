@@ -109,6 +109,7 @@
     "crypto/cipher"
     "crypto/bn"
     "crypto/dh"
+    "crypto"
     ;; :std/misc
     "misc/shuffle"
     "misc/uuid"
