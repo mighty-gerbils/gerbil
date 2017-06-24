@@ -61,14 +61,14 @@
 <!-- tocstop -->
 
 ## std/actor
-```
-(import :std/actor)
-```
 
 Package for actor-oriented concurrent and distributed programming.
 
-Exports:
 ```
+(import :std/actor)
+
+;; exports:
+
 ;; :std/actor/message
   (struct-out message proxy)
   -> send send-message send-message/timeout
@@ -125,26 +125,25 @@ Exports:
 ```
 
 ## std/coroutine
-```
-(import :std/coroutine)
-```
 
 Library for thread-based coroutines.
 
-Exports:
 ```
+(import :std/coroutine)
+
+;; exports:
   coroutine coroutine? continue yield
 ```
 
 ## std/crypto
-```
-(import :std/crypto)
-```
 
 Cryptography based on libcrypto.
 
-Exports:
 ```
+(import :std/crypto)
+
+;; exports:
+
 ;; :std/crypto/etc
   random-bytes random-bytes!
   libcrypto-error?
@@ -204,28 +203,28 @@ Exports:
 Database interfaces.
 
 ### std/db/conpool
-```
-(import :std/db/conpool)
-```
 
 Database connection pool.
 
-Exports:
 ```
+(import :std/db/conpool)
+
+;; exports:
+
   make-conpool conpool?
   conpool-get conpool-put
 ```
 
 
 ### std/db/dbi
-```
-(import :std/db/dbi)
-```
 
 Generic SQL database interface.
 
-Exports:
 ```
+(import :std/db/dbi)
+
+;; exports:
+
   sql-connect sql-close sql-prepare
   sql-bind sql-clear sql-reset sql-reset/clear sql-finalize
   sql-eval sql-eval-query
@@ -236,14 +235,13 @@ Exports:
 
 
 ### std/db/leveldb
-```
-(import :std/db/leveldb)
-```
-
 LevelDB interface.
 
-Exports:
 ```
+(import :std/db/leveldb)
+
+;; exports:
+
   leveldb-error?
   leveldb?
   leveldb-open leveldb-close
@@ -266,14 +264,13 @@ Exports:
 ```
 
 ### std/db/lmdb
-```
-(import :std/db/lmdb)
-```
-
 LMDB interface.
 
-Exports:
 ```
+(import :std/db/lmdb)
+
+;; exports:
+
   lmdb-error?
   lmdb-env?
   lmdb-db? lmdb-db-env lmdb-db-name
@@ -290,39 +287,36 @@ Exports:
 ```
 
 ### std/db/mysql
-```
-(import :std/db/mysql)
-```
-
 MySQL dbi driver.
 
-Exports:
 ```
+(import :std/db/mysql)
+
+;; exports:
+
   mysql-connect
 ```
 
 
 ### std/db/sqlite
-```
-(import :std/db/sqlite)
-```
-
 SQLite dbi driver.
 
-Exports:
 ```
+(import :std/db/sqlite)
+
+;; exports:
+
   sqlite-open
 ```
 
 ## std/error
-```
-(import :std/error)
-```
-
 Common error base classes.
 
-Exports:
 ```
+(import :std/error)
+
+;; exports:
+
   <error>
   (struct-out io-error timeout-error)
   raise-io-error
@@ -330,14 +324,13 @@ Exports:
 ```
 
 ## std/event
-```
-(import :std/event)
-```
-
 Event-driven programming facilities.
 
-Exports:
 ```
+(import :std/event)
+
+;; exports:
+
   select
   ! !! sync poll
   never-evt always-evt
@@ -351,26 +344,24 @@ Exports:
 ```
 
 ## std/format
-```
-(import :std/format)
-```
-
 Intermediate format strings.
 
-Exports:
 ```
+(import :std/format)
+
+;; exports:
+
   format printf fprintf eprintf
 ```
 
 ## std/generic
-```
-(import :std/generic)
-```
-
 Generic methods.
 
-Exports:
 ```
+(import :std/generic)
+
+;; exports:
+
   defgeneric defgeneric-type defmethod
   <t>  <void>  <null>  <boolean>
   <number>  <real>  <integer>  <fixnum>  <flonum>  <rational>  <complex>
@@ -386,14 +377,13 @@ Exports:
 ```
 
 ## std/getopt
-```
-(import :std/getopt)
-```
-
 Command-line argument parsing.
 
-Exports:
 ```
+(import :std/getopt)
+
+;; exports:
+
   getopt
   getopt? getopt-object?
   getopt-error?
@@ -408,14 +398,13 @@ Exports:
 ```
 
 ## std/iter
-```
-(import :std/iter)
-```
-
 Iterators.
 
-Exports:
 ```
+(import :std/iter)
+
+;; exports:
+
   (struct-out iterator)
   :iter iter-end iter-end? iter-nil iter-nil?
   iter-start! iter-value iter-next!
@@ -427,28 +416,26 @@ Exports:
 ```
 
 ## std/logger
-```
-(import :std/logger)
-```
-
 Logging facilities.
 
-Exports:
 ```
+(import :std/logger)
+
+;; exports:
+
   start-logger!
   debug warning
   log-error log-message
 ```
 
 ## std/make
-```
-(import :std/make)
-```
-
 Standard library build tool.
 
-Exports:
 ```
+(import :std/make)
+
+;; exports:
+
   make make-depgraph make-depgraph/spec shell-config
 ```
 
@@ -457,40 +444,37 @@ Exports:
 Miscellaneous libraries.
 
 ### std/misc/ports
-```
-(import :std/misc/ports)
-```
-
 Port utilites.
 
-Exports:
 ```
+(import :std/misc/ports)
+
+;; exports:
+
   copy-port
 ```
 
 
 ### std/misc/pqueue
-```
-(import :std/misc/pqueue)
-```
-
 Heap-based priority queues.
 
-Exports:
 ```
+(import :std/misc/pqueue)
+
+;; exports:
+
   make-pqueue pqueue? pqueue-empty? pqueue-size
   pqueue-peek pqueue-pop! pqueue-push!
 ```
 
 ### std/misc/queue
-```
-(import :std/misc/queue)
-```
-
 Double-edged queues.
 
-Exports:
 ```
+(import :std/misc/queue)
+
+;; exports:
+
   make-queue queue? queue-length
   queue-empty? non-empty-queue?
   enqueue! enqueue-front! dequeue!
@@ -499,26 +483,24 @@ Exports:
 
 
 ### std/misc/shuffle
-```
-(import :std/misc/shuffle)
-```
-
 Shuffling.
 
-Exports:
 ```
+(import :std/misc/shuffle)
+
+;; exports:
+
   shuffle vector-shuffle vector-shuffle!
 ```
 
 ### std/misc/uuid
-```
-(import :std/misc/uuid)
-```
-
 UUIDs.
 
-Export:
 ```
+(import :std/misc/uuid)
+
+;; export:
+
   UUID uuid-length uuid::t make-uuid
   uuid? uuid=?
   uuid-hash
@@ -532,14 +514,13 @@ Export:
 Networking-related libraries.
 
 ### std/net/address
-```
-(import :std/net/address)
-```
-
 Internet addresses as host-port pairs.
 
-Exports:
 ```
+(import :std/net/address)
+
+;; exports:
+
   ip4-address? ip4-address 
   ip4-address-string? ip4-address->string string->ip4-address
   ip6-address? ip6-address
@@ -550,14 +531,13 @@ Exports:
 ```
 
 ### std/net/request
-```
-(import :std/net/request)
-```
-
 HTTP requests library.
 
-Exports:
 ```
+(import :std/net/request)
+
+;; exports:
+
   http-get http-head http-post http-put http-delete http-options
   request? request-url request-status request-status-text
   request-headers
@@ -572,14 +552,13 @@ Exports:
 
 
 ### std/net/server
-```
-(import :std/net/server)
-```
-
 Package for programming with sockets and platform-optimized i/o multiplexing.
 
-Exports:
 ```
+(import :std/net/server)
+
+;; exports:
+
 ;; :std/net/server/api
   start-socket-server! server-shutdown!
   server-connect
@@ -610,14 +589,13 @@ Exports:
 ```
 
 ### std/net/socks
-```
-(import :std/net/socks)
-```
-
 SOCKS proxy client.
 
-Exports:
 ```
+(import :std/net/socks)
+
+;; exports:
+
   open-socks5-client open-socks4-client
   socks5-open socks5-connect socks5-bind socks5-accept
   socks4-connect socks4-bind socks4-accept
@@ -626,27 +604,25 @@ Exports:
 ```
 
 ### std/net/uri
-```
-(import :std/net/uri)
-```
-
 URI support [RFC3986]
 
-Exports:
 ```
+(import :std/net/uri)
+
+;; exports:
+
   uri-encode uri-decode form-url-encode form-url-decode
 ```
 
 
 ### std/net/wamp
-```
-(import :std/net/wamp)
-```
-
 Web Application Message Protocol client.
 
-Exports:
 ```
+(import :std/net/wamp)
+
+;; exports:
+
   start-wamp-client! 
   wamp-call wamp-publish wamp-subscribe
   wamp-register wamp-unregister
@@ -657,14 +633,13 @@ Exports:
 ```
 
 ### std/net/websocket
-```
-(import :std/net/websocket)
-```
-
 Websocket client.
 
-Exports:
 ```
+(import :std/net/websocket)
+
+;; exports:
+
   open-websocket-client
   websocket?
   websocket-recv websocket-read
@@ -679,14 +654,13 @@ Exports:
 Libraries for programming with raw OS devices.
 
 ### std/os/error
-```
-(import :std/os/error)
-```
-
 OS error handling facilities.
 
-Exports:
 ```
+(import :std/os/error)
+
+;; exports:
+
   raise-os-error check-os-error
   do-retry-nonblock
   check-ptr
@@ -695,28 +669,26 @@ Exports:
 ```
 
 ### std/os/fd
-```
-(import :std/os/fd)
-```
-
 Raw devices from file decriptors.
 
-Exports:
 ```
+(import :std/os/fd)
+
+;; exports:
+
   fdopen
   fd-e fd-io-in fd-io-out
   fd? fd-type? fd-type
 ```
 
 ### std/os/fcntl
-```
-(import :std/os/fcntl)
-```
-
 File descriptor control.
 
-Exports:
 ```
+(import :std/os/fcntl)
+
+;; exports:
+
   fcntl _fcntl0 _fcntl1
   fd-getfl fd-setfl fd-setfl!
   fd-getfd fd-setfd fd-setfd!
@@ -731,28 +703,26 @@ Exports:
 ```
 
 ### std/os/pipe
-```
-(import :std/os/pipe)
-```
-
 Pipes.
 
-Exports:
 ```
+(import :std/os/pipe)
+
+;; exports:
+
   pipe
   _pipe make_pipe_ptr pipe_ptr_ref
   
 ```
 
 ### std/os/socket
-```
-(import :std/os/socket)
-```
-
 Sockets.
 
-Exports:
 ```
+(import :std/os/socket)
+
+;; exports:
+
   socket
   server-socket
   socket?
@@ -887,30 +857,29 @@ Exports:
 ```
 
 ### std/os/epoll
-```
-(require linux)
-(import :std/os/epoll)
-```
 
 epoll for linux.
 
-Exports:
 ```
+(require linux)
+(import :std/os/epoll)
+
+;; exports:
+
   epoll-create epoll-ctl-add epoll-ctl-mod epoll-ctl-del epoll-wait
   make-epoll-events epoll-event-fd epoll-event-events
   EPOLLIN EPOLLOUT EPOLLERR EPOLLHUP EPOLLET EPOLLONESHOT
 ```
 
 ## std/parser
-```
-(import :std/parser)
-#lang :std/parser/grammar
-```
-
 Parsing facilities and grammar definition prelude.
 
-Exports:
 ```
+#lang :std/parser/grammar
+(import :std/parser)
+
+;; exports:
+
 ;; :std/parser/rlang
   @nul @nul? @eps @eps?
   @char @charset @negset @dot
@@ -957,14 +926,13 @@ Exports:
 ```
 
 ## std/pregexp
-```
-(import :std/pregexp)
-```
-
 The well-known portable Scheme regular expressions library.
 
-Exports:
 ```
+(import :std/pregexp)
+
+;; exports:
+
   pregexp
   pregexp-match-positions
   pregexp-match
@@ -975,14 +943,13 @@ Exports:
 ```
 
 ## std/sort
-```
-(import :std/sort)
-```
-
 Sorting using Olin Shivers' withdrawn SRFI-32 implementation.
 
-Exports:
 ```
+(import :std/sort)
+
+;; exports:
+
   sort sort! stable-sort stable-sort!
 ```
 
@@ -993,14 +960,13 @@ See [SRFI Support](srfi.md)
 
 
 ## std/sugar
-```
-(import :std/sugar)
-```
-
 Commonly used macros.
 
-Exports:
 ```
+(import :std/sugar)
+
+;; exports:
+
   try catch finally
   with-destroy
   assert!
@@ -1010,14 +976,13 @@ Exports:
 ```
 
 ## std/test
-```
-(import :std/test)
-```
-
 Testing facilities.
 
-Exports:
 ```
+(import :std/test)
+
+;; exports:
+
   test-suite test-case
   check checkf
   check-eq? check-not-eq?
@@ -1033,14 +998,13 @@ Exports:
 Text encoding and decoding libraries.
 
 ### std/text/base64
-```
-(import :std/text/base64)
-```
-
 Base64 encoding and decoding.
 
-Exports:
 ```
+(import :std/text/base64)
+
+;; exports:
+
   base64-string->u8vector
   base64-substring->u8vector
   u8vector->base64-string
@@ -1050,54 +1014,50 @@ Exports:
 ```
 
 ### std/text/hex
-```
-(import :std/text/hex)
-```
-
 Hex encoding and decoding.
 
-Exports:
 ```
+(import :std/text/hex)
+
+;; exports:
+
   hex-encode hexlify
   hex-decode unhexlify
   hex unhex unhex*
 ```
 
 ### std/text/json
-```
-(import :std/text/json)
-```
-
 JSON encoding and decoding.
 
-Exports:
 ```
+(import :std/text/json)
+
+;; exports:
+
   read-json write-json
   string->json-object json-object->string
   json-symbolic-keys
 ```
 
 ### std/text/yaml
-```
-(import :std/text/yaml)
-```
-
 YAML parsing and dumping; requires libyaml.
 
-Exports:
 ```
+(import :std/text/yaml)
+
+;; exports:
+
   yaml-load yaml-dump
 ```
 
 ### std/text/zlib
-```
-(import :std/text/zlib)
-```
-
 Compression and decompression with zlib.
 
-Exports:
 ```
+(import :std/text/zlib)
+
+;; exports:
+
   compress compress-gz uncompress
 ```
 
@@ -1107,14 +1067,13 @@ Exports:
 Web programming.
 
 ### std/web/fastcgi
-```
-(import :std/web/fastcgi)
-```
-
 Fastcgi interface.
 
-Exports:
 ```
+(import :std/web/fastcgi)
+
+;; exports:
+
   start-fastcgi-server!
   fastcgi-request?
   fastcgi-request-role
@@ -1126,27 +1085,25 @@ Exports:
 ```
 
 ### std/web/rack
-```
-(import :std/web/rack)
-```
-
 Rack-style web servers with fastcgi connections.
 
-Exports:
 ```
+(import :std/web/rack)
+
+;; exports:
+
   start-rack-fastcgi-server!
 ```
 
 
 ## std/xml
-```
-(import :std/xml)
-```
-
 XML processing package; requires libxml2.
 
-Exports:
 ```
+(import :std/xml)
+
+;; exports:
+
 ;; :std/xml/libxml
   parse-xml parse-html
   parse-xml-default-options parse-html-default-options
