@@ -1633,7 +1633,10 @@
                   ((fx= _g14309_ 4)
                    (apply gx#macro-expand-syntax-case__opt-lambda13159
                           _g14310_))
-                  (else (error "No clause matching arguments" _g14310_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#macro-expand-syntax-case
+                    _g14310_))))))))
   (define gx#syntax-local-pattern?
     (lambda (_stx13158_)
       (if (gx#identifier? _stx13158_)

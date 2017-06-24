@@ -601,7 +601,10 @@
                   ((fx= _g12686_ 2)
                    (apply gx#core-compile-top-let-values%__opt-lambda11899
                           _g12687_))
-                  (else (error "No clause matching arguments" _g12687_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-compile-top-let-values%
+                    _g12687_))))))))
   (define gx#core-compile-top-letrec-values%
     (lambda (_stx11898_)
       (gx#core-compile-top-let-values%__opt-lambda11899

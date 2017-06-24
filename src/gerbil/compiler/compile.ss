@@ -437,9 +437,10 @@ namespace: gxc
      (ast-case #'hd ()
        ((#f) 
         (compile-e #'expr))
-       ((id) 
-        ['define (generate-runtime-binding-id #'id)
-          (compile-e #'expr)])
+       ((id)
+        (let (eid (generate-runtime-binding-id #'id))
+          (hash-put! (current-compile-runtime-names) #'expr eid)
+          ['define eid (compile-e #'expr)]))
        (_
         (let* ((tmp (generate-runtime-temporary #t))
                (body
@@ -549,12 +550,15 @@ namespace: gxc
   (ast-case stx ()
     ((_ (hd body) ...)
      (let ((args (generate-runtime-temporary))
-           (arglen (generate-runtime-temporary)))
+           (arglen (generate-runtime-temporary))
+           (name (or (hash-get (current-compile-runtime-names) stx)
+                     '(quote case-lambda-dispatch))))
        ['lambda args
          ['let [[arglen ['length args]]]
            ['cond
             (map (cut generate1 args arglen <> <>) #'(hd ...) #'(body ...)) ...
-            ['else ['error "No clause matching arguments" args]]]]]))))
+            ['else
+             ['##raise-wrong-number-of-arguments-exception name args]]]]]))))
 
 (def (generate-runtime-let-values% stx (compiled-body? #f))
   (def (generate-simple hd body)

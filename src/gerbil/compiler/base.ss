@@ -31,6 +31,8 @@ namespace: gxc
   (make-parameter #f))
 (def current-compile-runtime-sections
   (make-parameter #f))
+(def current-compile-runtime-names
+  (make-parameter #f))
 (def current-compile-output-dir
   (make-parameter #f))
 (def current-compile-invoke-gsc

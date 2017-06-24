@@ -287,7 +287,10 @@
                    (apply gx#root-context:::init!__0 _g13065_))
                   ((fx= _g13064_ 2)
                    (apply gx#root-context:::init!__opt-lambda13049 _g13065_))
-                  (else (error "No clause matching arguments" _g13065_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#root-context:::init!
+                    _g13065_))))))))
   (bind-method! gx#root-context::t ':init! gx#root-context:::init! '#f)
   (begin
     (define gx#top-context:::init!__opt-lambda13027
@@ -324,7 +327,10 @@
             (cond ((fx= _g13066_ 1) (apply gx#top-context:::init!__0 _g13067_))
                   ((fx= _g13066_ 2)
                    (apply gx#top-context:::init!__opt-lambda13027 _g13067_))
-                  (else (error "No clause matching arguments" _g13067_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#top-context:::init!
+                    _g13067_))))))))
   (bind-method! gx#top-context::t ':init! gx#top-context:::init! '#f)
   (begin
     (define gx#expander-context::bind-core-syntax-expanders!__opt-lambda12880
@@ -468,7 +474,10 @@
                   ((fx= _g13068_ 2)
                    (apply gx#expander-context::bind-core-syntax-expanders!__opt-lambda12880
                           _g13069_))
-                  (else (error "No clause matching arguments" _g13069_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#expander-context::bind-core-syntax-expanders!
+                    _g13069_))))))))
   (bind-method!
    gx#expander-context::t
    'bind-core-syntax-expanders!
@@ -576,7 +585,10 @@
                   ((fx= _g13070_ 2)
                    (apply gx#expander-context::bind-core-macro-expanders!__opt-lambda12774
                           _g13071_))
-                  (else (error "No clause matching arguments" _g13071_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#expander-context::bind-core-macro-expanders!
+                    _g13071_))))))))
   (bind-method!
    gx#expander-context::t
    'bind-core-macro-expanders!

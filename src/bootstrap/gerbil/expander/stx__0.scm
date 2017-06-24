@@ -159,7 +159,10 @@
             (cond ((fx= _g4003_ 2) (apply gx#datum->syntax__0 _g4004_))
                   ((fx= _g4003_ 3)
                    (apply gx#datum->syntax__opt-lambda3948 _g4004_))
-                  (else (error "No clause matching arguments" _g4004_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#datum->syntax
+                    _g4004_))))))))
   (begin
     (define gx#stx-unwrap__opt-lambda3924
       (lambda (_stx3926_ _marks3927_)
@@ -247,7 +250,10 @@
             (cond ((fx= _g4005_ 1) (apply gx#stx-unwrap__0 _g4006_))
                   ((fx= _g4005_ 2)
                    (apply gx#stx-unwrap__opt-lambda3924 _g4006_))
-                  (else (error "No clause matching arguments" _g4006_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#stx-unwrap
+                    _g4006_))))))))
   (define gx#stx-wrap
     (lambda (_stx3919_ _marks3920_)
       (foldl1 (lambda (_mark3922_ _stx3923_)
@@ -443,7 +449,10 @@
             (cond ((fx= _g4007_ 0) (apply gx#genident__0 _g4008_))
                   ((fx= _g4007_ 1) (apply gx#genident__1 _g4008_))
                   ((fx= _g4007_ 2) (apply gx#genident__opt-lambda3683 _g4008_))
-                  (else (error "No clause matching arguments" _g4008_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#genident
+                    _g4008_))))))))
   (define gx#gentemps
     (lambda (_stx-lst3682_) (gx#stx-map1 gx#genident _stx-lst3682_)))
   (define gx#syntax->list (lambda (_stx3680_) (gx#stx-map1 values _stx3680_)))
@@ -475,7 +484,10 @@
       (let ((_g4009_ (length _g4010_)))
         (cond ((fx= _g4009_ 2) (apply gx#stx-for-each1 _g4010_))
               ((fx= _g4009_ 3) (apply gx#stx-for-each2 _g4010_))
-              (else (error "No clause matching arguments" _g4010_))))))
+              (else
+               (##raise-wrong-number-of-arguments-exception
+                gx#stx-for-each
+                _g4010_))))))
   (define gx#stx-for-each1
     (lambda (_f3582_ _stx3583_)
       ((letrec ((_lp3585_
@@ -579,7 +591,10 @@
       (let ((_g4011_ (length _g4012_)))
         (cond ((fx= _g4011_ 2) (apply gx#stx-map1 _g4012_))
               ((fx= _g4011_ 3) (apply gx#stx-map2 _g4012_))
-              (else (error "No clause matching arguments" _g4012_))))))
+              (else
+               (##raise-wrong-number-of-arguments-exception
+                gx#stx-map
+                _g4012_))))))
   (define gx#stx-map1
     (lambda (_f3430_ _stx3431_)
       ((letrec ((_recur3433_
@@ -928,7 +943,10 @@
             (cond ((fx= _g4013_ 1) (apply gx#stx-plist?__0 _g4014_))
                   ((fx= _g4013_ 2)
                    (apply gx#stx-plist?__opt-lambda2929 _g4014_))
-                  (else (error "No clause matching arguments" _g4014_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#stx-plist?
+                    _g4014_))))))))
   (begin
     (define gx#stx-getq__opt-lambda2847
       (lambda (_key2849_ _stx2850_ _key=?2851_)
@@ -985,4 +1003,7 @@
           (let ((_g4015_ (length _g4016_)))
             (cond ((fx= _g4015_ 2) (apply gx#stx-getq__0 _g4016_))
                   ((fx= _g4015_ 3) (apply gx#stx-getq__opt-lambda2847 _g4016_))
-                  (else (error "No clause matching arguments" _g4016_)))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#stx-getq
+                    _g4016_)))))))))

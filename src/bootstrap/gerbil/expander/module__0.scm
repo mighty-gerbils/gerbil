@@ -222,7 +222,10 @@
                   ((fx= _g11516_ 3)
                    (apply gx#prelude-context:::init!__opt-lambda11444
                           _g11517_))
-                  (else (error "No clause matching arguments" _g11517_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#prelude-context:::init!
+                    _g11517_))))))))
   (bind-method! gx#prelude-context::t ':init! gx#prelude-context:::init! '#f)
   (define gx#import-expander:::init!
     (lambda (_self11442_ _e11443_)
@@ -304,7 +307,10 @@
                   ((fx= _g11518_ 2) (apply gx#import-module__1 _g11519_))
                   ((fx= _g11518_ 3)
                    (apply gx#import-module__opt-lambda11392 _g11519_))
-                  (else (error "No clause matching arguments" _g11519_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#import-module
+                    _g11519_))))))))
   (define gx#eval-module
     (lambda (_mod11391_) ((gx#current-expander-module-eval) _mod11391_)))
   (define gx#core-eval-module
@@ -380,7 +386,10 @@
                    (apply gx#core-context-prelude__0 _g11521_))
                   ((fx= _g11520_ 1)
                    (apply gx#core-context-prelude__opt-lambda11357 _g11521_))
-                  (else (error "No clause matching arguments" _g11521_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-context-prelude
+                    _g11521_))))))))
   (define gx#core-module->prelude-context
     (lambda (_ctx11349_)
       (let ((_ht11351_ (gx#current-expander-module-registry)))
@@ -550,7 +559,10 @@
             (cond ((fx= _g11524_ 1) (apply gx#core-import-module__0 _g11525_))
                   ((fx= _g11524_ 2)
                    (apply gx#core-import-module__opt-lambda11301 _g11525_))
-                  (else (error "No clause matching arguments" _g11525_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-import-module
+                    _g11525_))))))))
   (define gx#core-read-module
     (lambda (_path11297_)
       (with-exception-catcher
@@ -979,7 +991,10 @@
                   ((fx= _g11526_ 2)
                    (apply gx#core-resolve-module-path__opt-lambda10974
                           _g11527_))
-                  (else (error "No clause matching arguments" _g11527_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-resolve-module-path
+                    _g11527_))))))))
   (define gx#core-resolve-library-module-path
     (lambda (_libpath10916_)
       (let ((_spath10918_ (symbol->string (gx#stx-e _libpath10916_))))
@@ -1166,7 +1181,10 @@
                   ((fx= _g11528_ 2) (apply gx#core-bind-import!__1 _g11529_))
                   ((fx= _g11528_ 3)
                    (apply gx#core-bind-import!__opt-lambda10812 _g11529_))
-                  (else (error "No clause matching arguments" _g11529_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-bind-import!
+                    _g11529_))))))))
   (begin
     (define gx#core-bind-weak-import!__opt-lambda10798
       (lambda (_in10800_ _ctx10801_)
@@ -1185,7 +1203,10 @@
                    (apply gx#core-bind-weak-import!__0 _g11531_))
                   ((fx= _g11530_ 2)
                    (apply gx#core-bind-weak-import!__opt-lambda10798 _g11531_))
-                  (else (error "No clause matching arguments" _g11531_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-bind-weak-import!
+                    _g11531_))))))))
   (define gx#core-resolve-module-export
     (lambda (_out10691_)
       (let ((_subst10693_
@@ -1329,7 +1350,10 @@
                   ((fx= _g11532_ 3)
                    (apply gx#core-module-export->import__opt-lambda10614
                           _g11533_))
-                  (else (error "No clause matching arguments" _g11533_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-module-export->import
+                    _g11533_))))))))
   (define gx#core-expand-module%
     (lambda (_stx10544_)
       (let ((_make-context10546_
@@ -2474,7 +2498,10 @@
             (cond ((fx= _g11535_ 1) (apply gx#core-expand-import%__0 _g11536_))
                   ((fx= _g11535_ 2)
                    (apply gx#core-expand-import%__opt-lambda9686 _g11536_))
-                  (else (error "No clause matching arguments" _g11536_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-expand-import%
+                    _g11536_))))))))
   (define gx#core-import-nested-module
     (lambda (_spath9615_ _where9616_)
       (let ((_e96179624_ _spath9615_))
@@ -2629,8 +2656,9 @@
                                   (apply _make-export__opt-lambda9559__1150411505_
                                          _g11538_))
                                  (else
-                                  (error "No clause matching arguments"
-                                         _g11538_)))))))
+                                  (##raise-wrong-number-of-arguments-exception
+                                   'case-lambda-dispatch
+                                   _g11538_)))))))
                   (let ((_export-imports9202_
                          (lambda (_src9223_ _r9224_)
                            (let ((_current-ctx9226_
@@ -3137,7 +3165,10 @@
             (cond ((fx= _g11539_ 1) (apply gx#core-expand-export%__0 _g11540_))
                   ((fx= _g11539_ 2)
                    (apply gx#core-expand-export%__opt-lambda9195 _g11540_))
-                  (else (error "No clause matching arguments" _g11540_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-expand-export%
+                    _g11540_))))))))
   (define gx#core-expand-export-source
     (lambda (_hd9194_)
       (gx#core-expand-export%__opt-lambda9195
@@ -3219,4 +3250,7 @@
                   ((fx= _g11541_ 3) (apply gx#core-bind-feature!__2 _g11542_))
                   ((fx= _g11541_ 4)
                    (apply gx#core-bind-feature!__opt-lambda9128 _g11542_))
-                  (else (error "No clause matching arguments" _g11542_)))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-bind-feature!
+                    _g11542_)))))))))
