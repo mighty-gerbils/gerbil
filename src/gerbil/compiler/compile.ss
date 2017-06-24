@@ -551,15 +551,14 @@ namespace: gxc
     ((_ (hd body) ...)
      (let ((args (generate-runtime-temporary))
            (arglen (generate-runtime-temporary))
-           (name (hash-get (current-compile-runtime-names) stx)))
+           (name (or (hash-get (current-compile-runtime-names) stx)
+                     '(quote case-lambda-dispatch))))
        ['lambda args
          ['let [[arglen ['length args]]]
            ['cond
             (map (cut generate1 args arglen <> <>) #'(hd ...) #'(body ...)) ...
             ['else
-             (if name
-               ['##raise-wrong-number-of-arguments-exception name args]
-               ['error "No clause matching arguments" args])]]]]))))
+             ['##raise-wrong-number-of-arguments-exception name args]]]]]))))
 
 (def (generate-runtime-let-values% stx (compiled-body? #f))
   (def (generate-simple hd body)
