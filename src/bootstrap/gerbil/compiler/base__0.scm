@@ -2,6 +2,7 @@
 (begin
   (define gxc#current-compile-symbol-table (make-parameter '#f))
   (define gxc#current-compile-runtime-sections (make-parameter '#f))
+  (define gxc#current-compile-runtime-names (make-parameter '#f))
   (define gxc#current-compile-output-dir (make-parameter '#f))
   (define gxc#current-compile-invoke-gsc (make-parameter '#f))
   (define gxc#current-compile-gsc-options (make-parameter '#f))

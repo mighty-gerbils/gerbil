@@ -6,12 +6,12 @@ package: gerbil/compiler
    gxc#generate-runtime-gensym-reference
    (@case-lambda
     (1 gxc#generate-runtime-gensym-reference__0)
-    (2 gxc#generate-runtime-gensym-reference__opt-lambda9290)))
+    (2 gxc#generate-runtime-gensym-reference__opt-lambda9296)))
   (declare-type
    gxc#generate-runtime-temporary
    (@case-lambda
     (0 gxc#generate-runtime-temporary__0)
-    (1 gxc#generate-runtime-temporary__opt-lambda9236)))
+    (1 gxc#generate-runtime-temporary__opt-lambda9242)))
   (declare-type
    gxc#generate-runtime-let-values%
    (@case-lambda

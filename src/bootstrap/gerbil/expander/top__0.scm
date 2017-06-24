@@ -1072,7 +1072,10 @@
             (cond ((fx= _g9099_ 1) (apply gx#core-expand-lambda%__0 _g9100_))
                   ((fx= _g9099_ 2)
                    (apply gx#core-expand-lambda%__opt-lambda8056 _g9100_))
-                  (else (error "No clause matching arguments" _g9100_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-expand-lambda%
+                    _g9100_))))))))
   (define gx#core-expand-case-lambda%
     (lambda (_stx8022_)
       (let ((_e80238030_ _stx8022_))
@@ -1233,7 +1236,10 @@
                   ((fx= _g9101_ 2)
                    (apply gx#core-expand-letrec-values%__opt-lambda7919
                           _g9102_))
-                  (else (error "No clause matching arguments" _g9102_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-expand-letrec-values%
+                    _g9102_))))))))
   (define gx#core-expand-letrec*-values%
     (lambda (_stx7918_)
       (gx#core-expand-letrec-values%__opt-lambda7919
@@ -1571,7 +1577,10 @@
                   ((fx= _g9105_ 3)
                    (apply gx#core-expand-let-bind-syntax!__opt-lambda7511
                           _g9106_))
-                  (else (error "No clause matching arguments" _g9106_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-expand-let-bind-syntax!
+                    _g9106_))))))))
   (define gx#core-expand-expression%
     (lambda (_stx7471_)
       (let ((_e74727482_ _stx7471_))
@@ -2301,7 +2310,10 @@
                    (apply gx#macro-expand-let-values__0 _g9108_))
                   ((fx= _g9107_ 2)
                    (apply gx#macro-expand-let-values__opt-lambda6662 _g9108_))
-                  (else (error "No clause matching arguments" _g9108_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#macro-expand-let-values
+                    _g9108_))))))))
   (define gx#macro-expand-letrec-values
     (lambda (_stx6661_)
       (gx#macro-expand-let-values__opt-lambda6662 _stx6661_ '%#letrec-values)))
@@ -2511,7 +2523,10 @@
                   ((fx= _g9109_ 2)
                    (apply gx#check-duplicate-identifiers__opt-lambda6460
                           _g9110_))
-                  (else (error "No clause matching arguments" _g9110_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#check-duplicate-identifiers
+                    _g9110_))))))))
   (define gx#core-bind-values?
     (lambda (_stx6454_)
       (gx#stx-andmap
@@ -2568,7 +2583,10 @@
                   ((fx= _g9111_ 3) (apply gx#core-bind-values!__2 _g9112_))
                   ((fx= _g9111_ 4)
                    (apply gx#core-bind-values!__opt-lambda6416 _g9112_))
-                  (else (error "No clause matching arguments" _g9112_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-bind-values!
+                    _g9112_))))))))
   (define gx#core-quote-bind-values
     (lambda (_stx6413_)
       (gx#stx-map1
@@ -2693,7 +2711,10 @@
                   ((fx= _g9113_ 3) (apply gx#core-bind-runtime!__2 _g9114_))
                   ((fx= _g9113_ 4)
                    (apply gx#core-bind-runtime!__opt-lambda6355 _g9114_))
-                  (else (error "No clause matching arguments" _g9114_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-bind-runtime!
+                    _g9114_))))))))
   (begin
     (define gx#core-bind-runtime-reference!__opt-lambda6310
       (lambda (_id6312_ _eid6313_ _rebind?6314_ _phi6315_ _ctx6316_)
@@ -2769,7 +2790,10 @@
                   ((fx= _g9115_ 5)
                    (apply gx#core-bind-runtime-reference!__opt-lambda6310
                           _g9116_))
-                  (else (error "No clause matching arguments" _g9116_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-bind-runtime-reference!
+                    _g9116_))))))))
   (begin
     (define gx#core-bind-extern!__opt-lambda6270
       (lambda (_id6272_ _eid6273_ _rebind?6274_ _phi6275_ _ctx6276_)
@@ -2822,7 +2846,10 @@
                   ((fx= _g9117_ 4) (apply gx#core-bind-extern!__2 _g9118_))
                   ((fx= _g9117_ 5)
                    (apply gx#core-bind-extern!__opt-lambda6270 _g9118_))
-                  (else (error "No clause matching arguments" _g9118_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-bind-extern!
+                    _g9118_))))))))
   (begin
     (define gx#core-bind-syntax!__opt-lambda6224
       (lambda (_id6226_ _e6227_ _rebind?6228_ _phi6229_ _ctx6230_)
@@ -2896,7 +2923,10 @@
                   ((fx= _g9119_ 4) (apply gx#core-bind-syntax!__2 _g9120_))
                   ((fx= _g9119_ 5)
                    (apply gx#core-bind-syntax!__opt-lambda6224 _g9120_))
-                  (else (error "No clause matching arguments" _g9120_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-bind-syntax!
+                    _g9120_))))))))
   (begin
     (define gx#core-bind-root-syntax!__opt-lambda6207
       (lambda (_id6209_ _e6210_ _rebind?6211_)
@@ -2921,7 +2951,10 @@
                    (apply gx#core-bind-root-syntax!__0 _g9122_))
                   ((fx= _g9121_ 3)
                    (apply gx#core-bind-root-syntax!__opt-lambda6207 _g9122_))
-                  (else (error "No clause matching arguments" _g9122_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-bind-root-syntax!
+                    _g9122_))))))))
   (begin
     (define gx#core-bind-alias!__opt-lambda6165
       (lambda (_id6167_ _alias-id6168_ _rebind?6169_ _phi6170_ _ctx6171_)
@@ -2980,7 +3013,10 @@
                   ((fx= _g9123_ 4) (apply gx#core-bind-alias!__2 _g9124_))
                   ((fx= _g9123_ 5)
                    (apply gx#core-bind-alias!__opt-lambda6165 _g9124_))
-                  (else (error "No clause matching arguments" _g9124_))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#core-bind-alias!
+                    _g9124_))))))))
   (begin
     (define gx#make-binding-id__opt-lambda6122
       (lambda (_key6124_ _syntax?6125_ _phi6126_ _ctx6127_)
@@ -3048,4 +3084,7 @@
                   ((fx= _g9125_ 3) (apply gx#make-binding-id__2 _g9126_))
                   ((fx= _g9125_ 4)
                    (apply gx#make-binding-id__opt-lambda6122 _g9126_))
-                  (else (error "No clause matching arguments" _g9126_)))))))))
+                  (else
+                   (##raise-wrong-number-of-arguments-exception
+                    gx#make-binding-id
+                    _g9126_)))))))))

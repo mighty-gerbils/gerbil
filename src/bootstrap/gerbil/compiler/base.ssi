@@ -16,6 +16,9 @@ namespace: gxc
           current-compile-runtime-sections
           gxc#current-compile-runtime-sections)
          (%#define-runtime
+          current-compile-runtime-names
+          gxc#current-compile-runtime-names)
+         (%#define-runtime
           current-compile-output-dir
           gxc#current-compile-output-dir)
          (%#define-runtime
