@@ -179,7 +179,10 @@ Exports:
   cipher::aes-{LEN}-{MODE} make-aes-{LEN}-{MODE}-cipher aes-{LEN}-{MODE}-cipher?
   ;; MODE = ecb cbc cfb ofb
   cipher::camellia-{LEN}-{MODE} make-camellia-{LEN}-{MODE}-cipher camellia-{LEN}-{MODE}-cipher?
-
+  cipher::idea-{MODE} make-idea-{MODE}-cipher idea-{MODE}-cipher?
+  cipher::cast5-{MODE} make-cast5-{MODE}-cipher cast5-{MODE}-cipher?
+  cipher::bf-{MODE} make-bf-{MODE}-cipher bf-{MODE}-cipher?
+  
 ;; :std/crypto/dh
   DH-generate-key DH-compute-key DH-pub-key
   DH-get-1024-160 DH-get-2048-224 DH-get-2048-256
