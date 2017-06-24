@@ -79,6 +79,8 @@ that should get you started:
 - The [Gerbil Tutorial](doc/tutorial.md) provides a few hands-on guides on Gerbil programming.
 - The [Gerbil Core Prelude](doc/core-prelude.md) documents the core
   language prelude.
+- The [Gerbil Standard Library Overview](doc/stdlib.md) provides an overview of the Gerbil
+  stdlib.
 
 Probably the best way to dive into Gerbil is by reading the sources,
 as all the main language features are exercised in one way or another
