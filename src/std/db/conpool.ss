@@ -1,10 +1,9 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
-;;; Generic SQL database connection pool
+;;; Generic database connection pool
 package: std/db
 
 (import :gerbil/gambit/threads
-        :std/db/dbi
         :std/sugar
         :std/error
         :std/logger)
@@ -41,7 +40,7 @@ package: std/db
          (if (or (not max) (fx< (length out) max))
            (let (conn
                  (try
-                  (sql-connect connect)
+                  (connect)
                   (catch (e)
                     (mutex-unlock! mx)
                     (raise e))))
@@ -67,7 +66,7 @@ package: std/db
 (def (conpool-close cp)
   (def (close conn)
     (try
-     (sql-close conn)
+     {destroy conn}
      (catch (e)
        (log-error "error closing connection" e))))
   
