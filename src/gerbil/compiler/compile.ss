@@ -84,6 +84,41 @@ namespace: gxc
 
 (defcompile-method #f (&void &void-special-form &void-expression))
 
+(defcompile-method #f &false-expression
+  (%#lambda                       false)
+  (%#case-lambda                  false)
+  (%#let-values              false)
+  (%#letrec-values           false)
+  (%#letrec*-values          false)
+  (%#quote                   false)
+  (%#quote-syntax            false)
+  (%#call                    false)
+  (%#if                      false)
+  (%#ref                     false)
+  (%#set!                    false)
+  (%#struct-instance?        false)
+  (%#struct-direct-instance? false)
+  (%#struct-ref              false)
+  (%#struct-set!             false)
+  (%#struct-direct-ref       false)
+  (%#struct-direct-set!      false))
+
+(defcompile-method #f &false-special-form
+  (%#begin          false)
+  (%#begin-syntax   false)
+  (%#begin-foreign  false)
+  (%#module         false)
+  (%#import         false)
+  (%#export         false)
+  (%#provide        false)
+  (%#extern         false)
+  (%#define-values  false)
+  (%#define-syntax  false)
+  (%#define-alias   false)
+  (%#declare        false))
+
+(defcompile-method #f (&false &false-special-form &false-expression))
+
 (defcompile-method apply-collect-bindings (&collect-bindings 
                                            &void-expression
                                            &void-special-form)
@@ -126,6 +161,14 @@ namespace: gxc
   (%#struct-set!             true)
   (%#struct-direct-ref       true)
   (%#struct-direct-set!      true))
+
+(defcompile-method apply-find-lambda-expression (&find-lambda-expression &false)
+  (%#begin                   find-lambda-expression-begin%)
+  (%#lambda                       values)
+  (%#case-lambda                  values)
+  (%#let-values              find-lambda-expression-let-values%)
+  (%#letrec-values           find-lambda-expression-let-values%)
+  (%#letrec*-values          find-lambda-expression-let-values%))
 
 (defcompile-method #f &generate-runtime-empty
   (%#begin                   generate-runtime-empty)
@@ -439,7 +482,8 @@ namespace: gxc
         (compile-e #'expr))
        ((id)
         (let (eid (generate-runtime-binding-id #'id))
-          (hash-put! (current-compile-runtime-names) #'expr eid)
+          (alet (lambda-expr (apply-find-lambda-expression #'expr))
+            (hash-put! (current-compile-runtime-names) lambda-expr eid))
           ['define eid (compile-e #'expr)]))
        (_
         (let* ((tmp (generate-runtime-temporary #t))
@@ -1346,3 +1390,14 @@ namespace: gxc
     ((_ . body)
      (ormap compile-e #'body))))
 
+
+;; find-lambda-expression
+(def (find-lambda-expression-begin% stx)
+  (ast-case stx ()
+    ((_ . body)
+     (compile-e (last #'body)))))
+
+(def (find-lambda-expression-let-values% stx)
+  (ast-case stx ()
+    ((_ bind body)
+     (compile-e #'body))))

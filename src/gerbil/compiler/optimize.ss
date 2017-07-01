@@ -213,41 +213,6 @@ namespace: gxc
     (apply-collect-type-info stx)
     (apply-optimize-call stx)))
 
-(defcompile-method #f &false-expression
-  (%#lambda                       false)
-  (%#case-lambda                  false)
-  (%#let-values              false)
-  (%#letrec-values           false)
-  (%#letrec*-values          false)
-  (%#quote                   false)
-  (%#quote-syntax            false)
-  (%#call                    false)
-  (%#if                      false)
-  (%#ref                     false)
-  (%#set!                    false)
-  (%#struct-instance?        false)
-  (%#struct-direct-instance? false)
-  (%#struct-ref              false)
-  (%#struct-set!             false)
-  (%#struct-direct-ref       false)
-  (%#struct-direct-set!      false))
-
-(defcompile-method #f &false-special-form
-  (%#begin          false)
-  (%#begin-syntax   false)
-  (%#begin-foreign  false)
-  (%#module         false)
-  (%#import         false)
-  (%#export         false)
-  (%#provide        false)
-  (%#extern         false)
-  (%#define-values  false)
-  (%#define-syntax  false)
-  (%#define-alias   false)
-  (%#declare        false))
-
-(defcompile-method #f (&false &false-special-form &false-expression))
-
 (defcompile-method #f &identity-expression
   (%#lambda                       xform-identity)
   (%#case-lambda                  xform-identity)
