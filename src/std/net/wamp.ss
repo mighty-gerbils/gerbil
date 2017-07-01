@@ -162,7 +162,7 @@ package: std/net
   (def subscriptions                    ; subscription-id -> topic
     (make-hash-table-eqv))
   (def topic-subscription-ids           ; topic -> subscription-id
-    (make-hash-table-eqv))
+    (make-hash-table))
   (def topic-subscriptions              ; topic -> [thread ...]
     (make-hash-table))
   (def actor-subscriptions              ; thread -> [topic ...]
