@@ -79,7 +79,7 @@ hello world
 And if you want a statically linked hello with no runtime dependencies to the Gerbil environment:
 ```
 $ gxc -static -exe -o hello hello.ss
-$ ./hello 
+$ ./hello
 hello world
 ```
 
@@ -685,7 +685,7 @@ installation to work, which makes them suitable for binary distribution.
 They also load faster, as they don't have to do any dynamic module loading.
 And finally, because dependencies are compiled in together, you can apply
 declarations like `(not safe)` to the whole program, resulting in potentially
-significant performance gains. 
+significant performance gains.
 
 ### Prelude Modules and Custom Languages
 
@@ -694,7 +694,7 @@ either as a concrete definition or an extern reference.
 The initial bindings in a module come from the prelude and the root context
 which is the parent context of every module.
 
-The root context is a special context that contains the core macro expanders 
+The root context is a special context that contains the core macro expanders
 for provide the core language.
 The prelude context on the other hand, is an ordinary module that
 exports any number of bindings that form the language of the module.
@@ -745,11 +745,11 @@ interesting of the Gerbil-specific libraries.
 Some library modules are not built by default, because they have external
 library dependencies that may not be present in your system.
 The build configuration for the std library is specified in
-`$GERBIL_HOME/src/std/build-config.ss`.
+`$GERBIL_HOME/src/std/build-features.ss`.
 
-If you have the required libraries (documented in build-config) in your
+If you have the required libraries (documented in build-features) in your
 system, you can enable building by setting the `(enable feature #f)`
-statement in `build-config.ss` to `#t`. You can then build the optional
+statement in `build-features.ss` to `#t`. You can then build the optional
 library modules by running `$GERBIL_HOME/src/build_stdlib.sh`.
 
 ### Additional Syntactic Sugar
@@ -1204,10 +1204,10 @@ through it in a background thread:
                (lp (1+ n)))
               ((!close k)               ; stream closed
                (!!end dest k))
-              ((!abort k)               ; stream aborted 
+              ((!abort k)               ; stream aborted
                (void))))
         (!!end dest k))))
-  
+
   (let lp ()
     (<- ((!simple-stream.count N k)
          (spawn stream @source N k)
@@ -1345,7 +1345,7 @@ It also provides routines for searching and selecting content
 from SXML trees, as well as XML/HTML output routines.
 
 Because of the `libxml2` foreign dependency, the `:std/xml` library
-is not built by default. You can build it by editing `std/build-config.ss`
+is not built by default. You can build it by editing `std/build-features.ss`
 to set `(enable libxml #t)` and rerunning the std library build script as
 described earlier in the guide.
 
@@ -1411,7 +1411,7 @@ the response:
 ### Databases
 
 Gerbil include support for SQL databases (MySQL, SQLite) and key-value
-stores (LevelDB, LMDB) in the `:std/db` package. 
+stores (LevelDB, LMDB) in the `:std/db` package.
 
 #### SQL Databases
 
@@ -1420,7 +1420,7 @@ database interface, while individual modules (`:std/db/sqlite` and
 `:std/db/mysql`) provide the drivers for particular databases.
 Note that none of the drivers are built by default, as they are FFI
 drivers, so you will need to enable them for your installation in
-`$GERBIL_HOME/src/std/build-config.ss`.
+`$GERBIL_HOME/src/std/build-features.ss`.
 
 Here is an example of using the dbi interface with SQLite.
 First, the necessary imports and a connection to an in-memory database:
@@ -1472,7 +1472,7 @@ And we are done, we can close our database connection:
 The `:std/db/leveldb` library provides support for [LevelDB](https://en.wikipedia.org/wiki/LevelDB),
 while the `:std/db/lmdb` library provides support for [LMDB](https://en.wikipedia.org/wiki/LMDB).
 The libraries are not built by default, as they have foreign dependencies, so you need to
-enable them for your installation in `$GERBIL_HOME/src/std/build-config.ss`.
+enable them for your installation in `$GERBIL_HOME/src/std/build-features.ss`.
 
 For example, here we use the LevelDB library for some simple operations:
 ```
