@@ -80,7 +80,7 @@ END-C
 (define-const MDB_LAST_DUP)
 (define-const MDB_NEXT)
 (define-const MDB_NEXT_DUP)
-(define-const MDB_NEXT_MULTIPLE)
+;; (define-const MDB_NEXT_MULTIPLE)
 (define-const MDB_NEXT_NODUP)
 (define-const MDB_PREV)
 (define-const MDB_PREV_DUP)
@@ -88,7 +88,7 @@ END-C
 (define-const MDB_SET)
 (define-const MDB_SET_KEY)
 (define-const MDB_SET_RANGE)
-(define-const MDB_PREV_MULTIPLE)
+;; (define-const MDB_PREV_MULTIPLE)
 ;; errors	Return Codes
 (define-const MDB_SUCCESS)
 (define-const MDB_KEYEXIST)

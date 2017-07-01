@@ -217,11 +217,6 @@ END-C
 (define-c-lambda/const-pointer EVP_camellia_256_cfb () EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_camellia_256_ofb () EVP_CIPHER*)
 
-(define-c-lambda/const-pointer EVP_idea_ecb () EVP_CIPHER*)
-(define-c-lambda/const-pointer EVP_idea_cbc () EVP_CIPHER*)
-(define-c-lambda/const-pointer EVP_idea_cfb () EVP_CIPHER*)
-(define-c-lambda/const-pointer EVP_idea_ofb () EVP_CIPHER*)
-
 (define-c-lambda/const-pointer EVP_cast5_ecb () EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_cast5_cbc () EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_cast5_cfb () EVP_CIPHER*)
