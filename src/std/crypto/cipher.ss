@@ -300,7 +300,6 @@ package: std/crypto
 (define-cipher camellia 128 (ecb cbc cfb ofb))
 (define-cipher camellia 192 (ecb cbc cfb ofb))
 (define-cipher camellia 256 (ecb cbc cfb ofb))
-(define-cipher idea (ecb cbc cfb ofb))
 (define-cipher cast5 (ecb cbc cfb ofb))
 (define-cipher bf (ecb cbc cfb ofb))
 (define-cipher rc4)

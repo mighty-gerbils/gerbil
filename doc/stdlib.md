@@ -177,7 +177,6 @@ Cryptography based on libcrypto.
   cipher::rc4 make-rc4-cipher rc4-cipher?
   
   ;; MODE = ecb cbc cfb ofb
-  cipher::idea-{MODE} make-idea-{MODE}-cipher idea-{MODE}-cipher?
   cipher::cast5-{MODE} make-cast5-{MODE}-cipher cast5-{MODE}-cipher?
   cipher::bf-{MODE} make-bf-{MODE}-cipher bf-{MODE}-cipher?
 
