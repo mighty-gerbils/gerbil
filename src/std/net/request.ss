@@ -263,7 +263,7 @@ package: std/net
      (else #f)))
   
   (cond
-   ((assoc "Transfer-encoding" headers)
+   ((assoc "Transfer-Encoding" headers)
     => (lambda (tenc)
          (if (not (equal? "identity" tenc))
            (http-request-read-chunked-body port)
