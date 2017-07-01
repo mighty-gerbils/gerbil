@@ -28,7 +28,7 @@ not built by default.
 So, after installing LMDB, build the LMDB bindings:
 ```
 $ cd $GERBIL_HOME/src
-$ sed -i 's/lmdb #f/lmdb #t/' std/build-config.ss
+$ sed -i 's/lmdb #f/lmdb #t/' std/build-features.ss
 $ ./build_stdlib.sh
 ...
 ```

@@ -1,7 +1,7 @@
 # Gerbil Scheme
 
 Gerbil is an opinionated dialect of Scheme designed for Systems Programming,
-with a state of the art macro and module system on top of the Gambit runtime. 
+with a state of the art macro and module system on top of the Gambit runtime.
 
 The macro system is based on quote-syntax, and provides the full
 meta-syntactic tower with a native implementation of syntax-case.
@@ -44,11 +44,15 @@ is `libcrypto` from OpenSSL; important parts of the standard library
 require it. You may need to install `openssl-dev` in ubuntu and similar
 systems.
 
-All the other dependencies are soft; library modules with foreign
-dependencies are not built by default, with the exception of `zlib`.
-The optional libraries can be enabled at build-time by editing
-`$GERBIL_HOME/src/std/build-config.ss`. You can also enable features later,
-by editing `build-config.ss` and running `build_stdlib.sh` in `$GERBIL_HOME/src/`
+All the other dependencies are soft.
+Most library modules with foreign dependencies are not built by default,
+with the exception of `zlib` and `sqlite`, that are ubiquitous, stable
+and generally useful enough to warrant being present by default
+(you can still disable them if you want for a minimal installation).
+The optional libraries can be enabled or disabled at build-time
+by editing `$GERBIL_HOME/src/std/build-features.ss`.
+You can also enable features later, by editing `build-features.ss` and
+running `build_stdlib.sh` in `$GERBIL_HOME/src/`
 
 ## Build Instructions
 After unpacking a release or checking out the source code from Github, let

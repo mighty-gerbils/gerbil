@@ -8,3 +8,4 @@ lib
 *.o?
 *.so
 
+src/std/build-deps
