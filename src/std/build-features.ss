@@ -10,7 +10,7 @@
 (enable zlib #t)
 
 ;; build std/db/sqlite library -- requires sqlite3
-(enable sqlite #f)
+(enable sqlite #t)
 
 ;; build std/db/mysql library -- requires mysql (libmysqlclient)
 (enable mysql #f)
