@@ -9,16 +9,16 @@ namespace: gxc
           (in: :gerbil/core <syntax-sugar>)
           (spec:
            (:gerbil/gambit/hvectors)
-           (0 s16vector? 0 s16vector?)
            (0 s8vector? 0 s8vector?)
+           (0 s16vector? 0 s16vector?)
            (0 u16vector? 0 u16vector?)
            (0 u8vector? 0 u8vector?)
-           (0 s32vector? 0 s32vector?)
-           (0 s64vector? 0 s64vector?)
-           (0 u32vector? 0 u32vector?)
+           (0 f64vector? 0 f64vector?)
            (0 f32vector? 0 f32vector?)
+           (0 u32vector? 0 u32vector?)
+           (0 s64vector? 0 s64vector?)
            (0 u64vector? 0 u64vector?)
-           (0 f64vector? 0 f64vector?)))
+           (0 s32vector? 0 s32vector?)))
          (%#export #t)
          (%#define-runtime current-compile-methods gxc#current-compile-methods)
          (%#define-runtime current-compile-lift gxc#current-compile-lift)
@@ -32,12 +32,19 @@ namespace: gxc
          (%#define-runtime &void-expression gxc#&void-expression)
          (%#define-runtime &void-special-form gxc#&void-special-form)
          (%#define-runtime &void gxc#&void)
+         (%#define-runtime &false-expression gxc#&false-expression)
+         (%#define-runtime &false-special-form gxc#&false-special-form)
+         (%#define-runtime &false gxc#&false)
          (%#define-runtime &collect-bindings gxc#&collect-bindings)
          (%#define-runtime apply-collect-bindings gxc#apply-collect-bindings)
          (%#define-runtime &lift-modules gxc#&lift-modules)
          (%#define-runtime apply-lift-modules gxc#apply-lift-modules)
          (%#define-runtime &find-runtime-code gxc#&find-runtime-code)
          (%#define-runtime apply-find-runtime-code gxc#apply-find-runtime-code)
+         (%#define-runtime &find-lambda-expression gxc#&find-lambda-expression)
+         (%#define-runtime
+          apply-find-lambda-expression
+          gxc#apply-find-lambda-expression)
          (%#define-runtime &generate-runtime-empty gxc#&generate-runtime-empty)
          (%#define-runtime &generate-loader gxc#&generate-loader)
          (%#define-runtime apply-generate-loader gxc#apply-generate-loader)
@@ -84,8 +91,8 @@ namespace: gxc
           generate-runtime-binding-id*
           gxc#generate-runtime-binding-id*)
          (%#begin (%#define-runtime
-                   generate-runtime-gensym-reference__opt-lambda9296
-                   gxc#generate-runtime-gensym-reference__opt-lambda9296)
+                   generate-runtime-gensym-reference__opt-lambda9407
+                   gxc#generate-runtime-gensym-reference__opt-lambda9407)
                   (%#begin (%#define-runtime
                             generate-runtime-gensym-reference__0
                             gxc#generate-runtime-gensym-reference__0)
@@ -99,8 +106,8 @@ namespace: gxc
           generate-runtime-identifier-key
           gxc#generate-runtime-identifier-key)
          (%#begin (%#define-runtime
-                   generate-runtime-temporary__opt-lambda9242
-                   gxc#generate-runtime-temporary__opt-lambda9242)
+                   generate-runtime-temporary__opt-lambda9353
+                   gxc#generate-runtime-temporary__opt-lambda9353)
                   (%#begin (%#define-runtime
                             generate-runtime-temporary__0
                             gxc#generate-runtime-temporary__0)
@@ -131,8 +138,8 @@ namespace: gxc
           generate-runtime-case-lambda%
           gxc#generate-runtime-case-lambda%)
          (%#begin (%#define-runtime
-                   generate-runtime-let-values%__opt-lambda6979
-                   gxc#generate-runtime-let-values%__opt-lambda6979)
+                   generate-runtime-let-values%__opt-lambda7084
+                   gxc#generate-runtime-let-values%__opt-lambda7084)
                   (%#begin (%#define-runtime
                             generate-runtime-let-values%__0
                             gxc#generate-runtime-let-values%__0)
@@ -143,8 +150,8 @@ namespace: gxc
           generate-runtime-let-values-bind
           gxc#generate-runtime-let-values-bind)
          (%#begin (%#define-runtime
-                   generate-runtime-letrec-values%__opt-lambda6558
-                   gxc#generate-runtime-letrec-values%__opt-lambda6558)
+                   generate-runtime-letrec-values%__opt-lambda6663
+                   gxc#generate-runtime-letrec-values%__opt-lambda6663)
                   (%#begin (%#define-runtime
                             generate-runtime-letrec-values%__0
                             gxc#generate-runtime-letrec-values%__0)
@@ -256,5 +263,11 @@ namespace: gxc
          (%#define-runtime collect-expression-refs gxc#collect-expression-refs)
          (%#define-runtime collect-refs-ref% gxc#collect-refs-ref%)
          (%#define-runtime collect-refs-setq% gxc#collect-refs-setq%)
-         (%#define-runtime find-runtime-begin% gxc#find-runtime-begin%))
+         (%#define-runtime find-runtime-begin% gxc#find-runtime-begin%)
+         (%#define-runtime
+          find-lambda-expression-begin%
+          gxc#find-lambda-expression-begin%)
+         (%#define-runtime
+          find-lambda-expression-let-values%
+          gxc#find-lambda-expression-let-values%))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/compile__0"))
