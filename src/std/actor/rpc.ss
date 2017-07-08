@@ -227,6 +227,8 @@ package: std/actor
           ((hash-get conns address)
            => (lambda (handler)
                 (!!value src (make-remote handler id address proto) k)))
+          ((list? address)
+           (!!error src (make-rpc-error 'rpc-server "invalid address") k))
           (else
            (let (handler (open-connection address))
              (!!value src (make-remote handler id address proto) k)))))
