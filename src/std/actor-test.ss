@@ -56,7 +56,7 @@
       
       (def locald  (start-rpc-server!))
       (def rfoo
-        (make-remote locald 'foo rpc-server-address1 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address1 hello::proto))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (stop-rpc-server! remoted)
@@ -73,7 +73,7 @@
       (def locald
         (start-rpc-server! proto: (rpc-cookie-proto rpc-cookie)))
       (def rfoo
-        (make-remote locald 'foo rpc-server-address2 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address2 hello::proto))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (stop-rpc-server! remoted)
@@ -90,7 +90,7 @@
       (def locald
         (start-rpc-server! proto: (rpc-cipher-proto)))
       (def rfoo
-        (make-remote locald 'foo rpc-server-address3 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address3 hello::proto))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (stop-rpc-server! remoted)
@@ -107,7 +107,7 @@
       (def locald
         (start-rpc-server! proto: (rpc-cookie-cipher-proto rpc-cookie)))
       (def rfoo
-        (make-remote locald 'foo rpc-server-address4 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address4 hello::proto))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (stop-rpc-server! remoted)
@@ -141,7 +141,7 @@
       
       (def locald  (start-rpc-server!))
       (def rfoo
-        (make-remote locald 'foo rpc-server-address10 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address10 hello::proto))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (!!rpc.monitor locald rfoo)
@@ -193,7 +193,7 @@
       (check (!!rpc.resolve remoted 'foo) => hellod)
       (def locald  (start-rpc-server!))
       (def rfoo
-        (make-remote locald 'foo rpc-server-address5 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address5 hello::proto))
       
       (let (k (gensym 'stream))
         (send-message/timeout rfoo (make-!stream (make-hello.hello-stream "stream") k) 1)
@@ -218,7 +218,7 @@
       (check (!!rpc.resolve remoted 'foo) => hellod)
       (def locald  (start-rpc-server!))
       (def rfoo
-        (make-remote locald 'foo rpc-server-address6 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address6 hello::proto))
 
       (let ((values inp close) (!!hello.hello-stream rfoo "stream"))
         (let lp ((n 0))
@@ -237,7 +237,7 @@
       (check (!!rpc.resolve remoted 'foo) => hellod)
       (def locald  (start-rpc-server!))
       (def rfoo
-        (make-remote locald 'foo rpc-server-address9 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address9 hello::proto))
 
       (let ((values inp close) (!!hello.hello-stream rfoo "stream"))
         (close)
