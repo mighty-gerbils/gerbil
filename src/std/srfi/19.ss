@@ -3,18 +3,13 @@
 ;;; SRFI-19: time data types and procedures
 package: std/srfi
 
-(import :gerbil/gambit/ports
-        :gerbil/gambit/os
-        "srfi-support" "8")
+(import "srfi-support" "8")
 (export
   time-duration time-monotonic time-process time-tai time-thread time-utc
   current-date current-julian-day current-modified-julian-day
-  current-time-tc
+  current-time
   time-resolution
-  make-time time?
-  time-type time-type-set! set-time-type!
-  time-second time-second-set! set-time-second!
-  time-nanosecond time-nanosecond-set! set-time-nanosecond!
+  (struct-out time)
   time<=? time<? time=? time>=? time>?
   time-difference time-difference!
   add-duration add-duration!

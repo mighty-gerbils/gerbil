@@ -15,7 +15,8 @@
 ;;             Implemented (:optional), needed for a lot of procedures to work.
 ;; 2012-11-03: Improved code formatting a little bit, replaced use of tabs with use of spaces.
 ;; 2013-08-19: Some code formatting improvements
-;; 2016-01-28: [vyzo] imported to gerbil, dropped bh specifics and some comment cosmetics
+;; 2016-01-28: [vyzo] imported to Gerbil, dropped bh specifics and some comment cosmetics
+;; 2017-07-08: [vyzo] use ##current-time-point with ns accuracy for get-time-of-day
 ;;
 ;; ## TODO
 ;;  * The exception handling presumes user code to be written in a very specific style using exception
@@ -252,8 +253,7 @@
 ;;; the time structure; creates the accessors, too.
 ;;; wf: changed to match srfi documentation. uses mzscheme structures & inspectors
 ;;; vyzo: change to use gerbil defstruct
-(defstruct time (type nanosecond second)
-  id: std/srfi/95#time::t)
+(defstruct time (type nanosecond second))
 
 ;; thanks, Martin Gasbichler ...
 
@@ -274,36 +274,31 @@
 ;;    this is supposed to return utc.
 ;;
 
-
+;; vyzo: use current-time-point, ns resolution
 (define (current-seconds)
-  (inexact->exact (floor (time->seconds (current-time)))))
+  (inexact->exact (floor (##current-time-point))))
 
 (define (current-milliseconds)
-  (inexact->exact (floor (* 1000 (time->seconds (current-time))))))
+  (inexact->exact (floor (fl* 1e3 (##current-time-point)))))
 
-(define (tm:get-time-of-day)
+#;(define (tm:get-time-of-day)
   (values (current-seconds)
           (abs (remainder (current-milliseconds) 1000))))
 
+(define (tm:get-time-of-day)
+  (let* ((now (##current-time-point))
+         (sec (floor now)))
+    (values (inexact->exact sec)
+            (inexact->exact
+             (floor (fl* (fl- now sec) 1e9))))))
+
 (define (tm:current-time-utc)
-  (receive (seconds ms) (tm:get-time-of-day)
-	   (make-time  time-utc (* ms 10000) seconds )))
+  (receive (seconds ns) (tm:get-time-of-day)
+	   (make-time time-utc ns seconds )))
 
 (define (tm:current-time-tai)
-  (receive (seconds ms) (tm:get-time-of-day)
-	   (make-time time-tai
-                  (* ms 10000)
-                  (+ seconds (tm:leap-second-delta seconds))
-                  )))
-
-
-
-(define (tm:current-time-ms-time time-type proc)
-  (let ((current-ms (proc)))
-    (make-time time-type
-               (* (remainder current-ms 1000) 10000)
-               (quotient current-ms 10000)
-               )))
+  (receive (seconds ns) (tm:get-time-of-day)
+	   (make-time time-tai ns (+ seconds (tm:leap-second-delta seconds)))))
 
 ;; -- we define it to be the same as tai.
 ;;    a different implemation of current-time-montonic
@@ -311,22 +306,17 @@
 ;;    of course.
 
 (define (tm:current-time-monotonic)
-  (receive (seconds ms) (tm:get-time-of-day)
-	   (make-time time-monotonic
-                  (* ms 10000)
-                  (+ seconds (tm:leap-second-delta seconds))
-                  )))
+  (receive (seconds ns) (tm:get-time-of-day)
+       (make-time time-monotonic ns (+ seconds (tm:leap-second-delta seconds)))))
 
 
 (define (tm:current-time-thread)
-  ;;(tm:current-time-ms-time time-process current-process-milliseconds))
   (error "Unimplemented"))
 
 (define (tm:current-time-process)
-  ;;(tm:current-time-ms-time time-process current-process-milliseconds))
   (error "Unimplemented"))
 
-(define (current-time-tc . clock-type)
+(define (current-time . clock-type)
   (let ((clock-type (:optional clock-type time-utc)))
     (cond
      ((eq? clock-type time-tai) (tm:current-time-tai))
@@ -345,11 +335,11 @@
 (define (time-resolution . clock-type)
   (let ((clock-type (:optional clock-type time-utc)))
     (cond
-     ((eq? clock-type time-tai) 10000)
-     ((eq? clock-type time-utc) 10000)
-     ((eq? clock-type time-monotonic) 10000)
-     ((eq? clock-type time-thread) 10000)
-     ((eq? clock-type time-process) 10000)
+     ((eq? clock-type time-tai) 1)
+     ((eq? clock-type time-utc) 1)
+     ((eq? clock-type time-monotonic) 1)
+     ((eq? clock-type time-thread) 1000)
+     ((eq? clock-type time-process) 1000)
      (else (tm:time-error 'time-resolution 'invalid-clock-type clock-type)))))
 
 ;; -- time comparisons
@@ -578,8 +568,7 @@
 ;; -- date structures
 
 ;; vyzo: defstruct for gerbil
-(defstruct date (nanosecond second minute hour day month year zone-offset)
-  id: std/srfi/19#date::t)
+(defstruct date (nanosecond second minute hour day month year zone-offset))
 
 ;; redefine setters
 
@@ -805,7 +794,7 @@
             7))
 
 (define (current-date . tz-offset)
-  (time-utc->date (current-time-tc time-utc)
+  (time-utc->date (current-time time-utc)
                   (:optional tz-offset (tm:local-tz-offset))))
 
 ;; given a 'two digit' number, find the year within 50 years +/-
@@ -910,10 +899,10 @@
   (julian-day->time-monotonic (+ jdn 4800001/2)))
 
 (define (current-julian-day)
-  (time-utc->julian-day (current-time-tc time-utc)))
+  (time-utc->julian-day (current-time time-utc)))
 
 (define (current-modified-julian-day)
-  (time-utc->modified-julian-day (current-time-tc time-utc)))
+  (time-utc->modified-julian-day (current-time time-utc)))
 
 ;; returns a string rep. of number N, of minimum LENGTH,
 ;; padded with character PAD-WITH. If PAD-WITH if #f, 
