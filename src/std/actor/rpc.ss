@@ -27,6 +27,7 @@ package: std/actor
   current-rpc-server
   start-rpc-server!
   stop-rpc-server!
+  rpc-connect rpc-register rpc-unregister
   (struct-out rpc.register)
   !rpc.register !!rpc.register
   (struct-out rpc.unregister)
@@ -113,6 +114,7 @@ package: std/actor
   (lookup id)
   ;; client -> server
   call:
+  (connect id address proto)
   (register id proto)
   (unregister id)
   (resolve id)
@@ -132,6 +134,15 @@ package: std/actor
   (!!rpc.shutdown rpcd)
   (thread-join! rpcd))
 
+(def (rpc-connect rpcd id address proto)
+  (!!rpc.connect rpcd id (canonical-address address) proto))
+
+(def (rpc-register rpcd id proto)
+  (!!rpc.register rpcd id proto))
+
+(def (rpc-unregister rpcd id)
+  (!!rpc.unregister rpcd id))
+
 (def (rpc-server proto addresses)
   (let* ((socksrv (start-socket-server!))
          (sas   (map socket-address addresses))
@@ -150,7 +161,7 @@ package: std/actor
   (def (thread-monitor server thread msg)
     (with-catch values (cut thread-join! thread))
     (thread-send server msg))
-  (spawn thread-monitor (current-thread) thread msg))
+  (spawn/name 'rpc-monitor thread-monitor (current-thread) thread msg))
 
 (def (rpc-server-loop socksrv socks sas proto)
   (def connect-e
@@ -211,6 +222,14 @@ package: std/actor
                 (remove-thread! src)))
           (else
            (warning "Unexpected protocol mesage ~a" msg))))
+        ((!rpc.connect id address proto k)
+         (cond
+          ((hash-get conns address)
+           => (lambda (handler)
+                (!!value src (make-remote handler id address proto) k)))
+          (else
+           (let (handler (open-connection address))
+             (!!value src (make-remote handler id address proto) k)))))
         ((!rpc.register id proto k)
          (let* ((uuid (UUID id))
                 (uuids (uuid->symbol uuid)))
@@ -273,7 +292,6 @@ package: std/actor
     (cond
      ((hash-get threads thread)
       => (lambda (address)
-           (rpc-send-connection-error-responses address)
            (for-each
              (match <>
                ([actor . remote]
@@ -370,15 +388,6 @@ package: std/actor
   (let lp ()
     (<< ((? message? msg)
          (rpc-send-error-response msg what)
-         (lp))
-        (ignore (lp))
-        (else (void)))))
-
-(def (rpc-send-connection-error-responses address)
-  (let lp ()
-    (<< ((and (message _ _ (remote _ _ (equal? address)))
-              msg)
-         (rpc-send-error-response msg "connection error")
          (lp))
         (ignore (lp))
         (else (void)))))
@@ -535,7 +544,7 @@ package: std/actor
                (set! (message-dest msg)
                  actor)
                (set! (message-source msg)
-                 (make-remote rpc-server uuid peer-address proto))
+                 (make-remote (current-thread) uuid peer-address proto))
                (send actor msg)
                (loop))
              (begin
@@ -565,7 +574,7 @@ package: std/actor
                   (begin
                     (value-k-set! (message-e msg) k)
                     (set! (message-source msg)
-                      (make-remote rpc-server (message-dest msg) peer-address proto))
+                      (make-remote (current-thread) (message-dest msg) peer-address proto))
                     (unless (!yield? content)
                       (remove-continuation! cont))
                     (send actor msg)
@@ -777,7 +786,7 @@ package: std/actor
             (begin
               (pqueue-pop! timeouts-pqueue)
               (lp)))))))
-                    
+  
   (def (loop)
     (<< (! (timeout-event)
            => dispatch-timeout)
@@ -847,7 +856,7 @@ package: std/actor
          (with ((message content) msg)
            (match content
              ((!rpc.connection-close)
-              (void))
+              (rpc-send-error-responses "connection error"))
              (else
               (rpc-send-error-response msg "connection error")
               (lp)))))

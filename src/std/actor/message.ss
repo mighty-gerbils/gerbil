@@ -163,60 +163,23 @@ package: std/actor
 
 ;; receive-message
 (def (receive-message test-e receive-e else-e events)
-  (def (loop mb)                        ; mutex is locked
-    (let (next (mailbox-next! mb))
-      (if (eq? next empty-mailbox)
-        (if else-e
-          (begin
-            (mailbox-unlock! mb)
-            (else-e))
-          (mailbox-wait! mb events loop))
-        (if (test-e next)
-          (begin
-            (mailbox-extract-rewind! mb)
-            (receive-e next))
-          (loop mb)))))
-  
-  (let (mb (##thread-mailbox-get! (current-thread)))
-    (mailbox-rewind! mb)
-    (loop mb)))
+  (def (loop next)
+    (cond
+     ((eq? next mailbox-empty)
+      (if else-e
+        (begin
+          (thread-mailbox-rewind)
+          (else-e))
+        (mailbox-wait! events loop)))
+     ((test-e next)
+      (thread-mailbox-extract-and-rewind)
+      (receive-e next))
+     (else
+      (loop (mailbox-next)))))
+  (thread-mailbox-rewind)
+  (loop (mailbox-next)))
 
-(def empty-mailbox '#(empty))
-
-(def (mailbox-lock! mb)
-  (mutex-lock! (macro-mailbox-mutex mb)))
-
-(def (mailbox-unlock! mb)
-  (mutex-unlock! (macro-mailbox-mutex mb)))
-  
-(def (mailbox-rewind! mb)
-  ;; locks mutex and resets the cursor
-  (mailbox-lock! mb)
-  (mailbox-reset! mb))
-  
-(def (mailbox-reset! mb)
-  ;; reset the mailbox cursor for iteration
-  ;; mutex is locked
-  (macro-mailbox-cursor-set! mb #f))
-  
-(def (mailbox-next! mb)
-  ;; advances the cursor and returns the next object
-  ;; returns empty-mailbox if cursor is at the end
-  ;; mutex is locked
-  (let* ((cursor (macro-mailbox-cursor mb))
-         (next
-          (if cursor
-            (macro-fifo-next cursor)
-            (macro-mailbox-fifo mb)))
-          (next2
-           (macro-fifo-next next)))
-    (if (##pair? next2)
-      (let ((result (macro-fifo-elem next2)))
-        (macro-mailbox-cursor-set! mb next)
-        result)
-      empty-mailbox)))
-
-(def (mailbox-wait! mb events loop)
+(def (mailbox-wait! events loop)
   (def (simple-events? events)
     (match events
       ([evt . rest]
@@ -226,17 +189,16 @@ package: std/actor
       (else #t)))
 
   (def (timeout-e events)
-    (def now (##current-time-point))
     (let lp ((rest events) (timeo (macro-absent-obj)) (deadline #f))
       (match rest
         ([evt . rest]
-         (if (time? (event-selector evt))
-           (let* ((evt-time (event-selector evt))
-                  (evt-deadline (time->seconds evt-time)))
-             (if (or (not deadline) (< evt-deadline deadline))
-               (lp rest evt-time evt-deadline)
-               (lp rest timeo deadline)))
-           (lp rest timeo deadline)))
+         (let (sel (event-selector evt))
+           (if (time? sel)
+             (let (evt-deadline (time->seconds sel))
+               (if (or (not deadline) (< evt-deadline deadline))
+                 (lp rest sel evt-deadline)
+                 (lp rest timeo deadline)))
+             (lp rest timeo deadline))))
         (else timeo))))
 
   (def (dispatch-e events timeo)
@@ -245,40 +207,56 @@ package: std/actor
        (if (eq? timeo (event-selector evt))
          (event-value evt)
          (dispatch-e rest timeo)))))
-  
-  ;; sync the condvar with events
-  ;; mutex is locked
-  (let ((mutex (macro-mailbox-mutex mb))
-        (condvar (macro-mailbox-condvar mb)))
-    (cond
-     ((null? events)
-      (mutex-unlock! mutex condvar)
-      (mutex-lock! mutex)
-      (loop mb))
-     ((simple-events? events)
-      (let (timeo (timeout-e events))
-        (if (mutex-unlock! mutex condvar timeo)
-          (begin
-            (mutex-lock! mutex)
-            (loop mb))
-          (dispatch-e events timeo))))
-     (else
-      (apply sync
-        (handle-evt
-         (cons mutex condvar)
-         (lambda (mutex condvar)
-           (mutex-lock! mutex)
-           (loop mb)))
-        events)))))
 
-(def (mailbox-extract-rewind! mb)
-  ;; extract object, reset cursor and mulock mutex
-  (let (cursor (macro-mailbox-cursor mb))
-    (when cursor
-      (let* ((next (macro-fifo-next cursor))
-             (next2 (macro-fifo-next next)))
-        (macro-fifo-next-set! cursor next2)
-        (when (##not (##pair? next2))
-          (macro-fifo-tail-set! (macro-mailbox-fifo mb) cursor))
-        (macro-mailbox-cursor-set! mb #f)))
-    (mailbox-unlock! mb)))
+  (cond
+   ((null? events)
+    (loop (thread-mailbox-next)))
+   ((simple-events? events)
+    (let* ((timeo (timeout-e events))
+           (next (thread-mailbox-next timeo mailbox-timeout)))
+      (if (eq? next mailbox-timeout)
+        (dispatch-e events timeo)
+        (loop next))))
+   (else
+    (let* ((mb (##thread-mailbox-get! (current-thread)))
+           (mutex (macro-mailbox-mutex mb))
+           (condvar (macro-mailbox-condvar mb)))
+      (mutex-lock! mutex)
+      (let (next (mailbox-next))
+        (if (eq? next mailbox-empty)
+          (apply sync
+            (handle-evt
+             (cons mutex condvar)
+             (lambda (mutex condvar)
+               (loop (mailbox-next))))
+            events)
+          (begin
+            (mutex-unlock! mutex)
+            (loop next))))))))
+
+(def mailbox-timeout '#(timeout))
+
+(extern mailbox-empty mailbox-next)
+
+(begin-foreign
+  (namespace ("std/actor/message#" mailbox-empty mailbox-next))
+  
+  (define mailbox-empty '#(empty))
+  
+  (define (mailbox-next)
+    (declare (not interrupts-enabled))
+    (let* ((mb
+            (##thread-mailbox-get! (macro-current-thread)))
+           (cursor
+            (macro-mailbox-cursor mb))
+           (next
+            (if cursor
+              (macro-fifo-next cursor)
+              (macro-mailbox-fifo mb)))
+           (next2
+            (macro-fifo-next next)))
+      (if (##pair? next2)
+        (let ((result (macro-fifo-elem next2)))
+          (macro-mailbox-cursor-set! mb next)
+          result)
+        mailbox-empty))))

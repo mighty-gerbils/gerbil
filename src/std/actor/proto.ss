@@ -18,7 +18,7 @@ package: std/actor
   rpc-io-error? raise-rpc-io-error
   (struct-out actor-error remote-error rpc-error)
   (struct-out handle remote)
-  remote=? remote-hash
+  remote=? remote-hash canonical-address
   (struct-out !rpc !call !value !error !event !stream !yield !end !continue !close !abort)
   !!call !!call-recv !!value !!error !!event
   !!stream !!stream-recv !!yield !!end !!continue !!close !!abort

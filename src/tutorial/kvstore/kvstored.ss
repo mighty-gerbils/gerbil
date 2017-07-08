@@ -51,7 +51,7 @@ package: tutorial/kvstore
          (lmdb-txn-abort txn)
          (raise e)))))
   
-  (!!rpc.register rpcd 'kvstore kvstore::proto)
+  (rpc-register rpcd 'kvstore kvstore::proto)
   (while #t
     (<- ((!kvstore.get key k)
          (try 

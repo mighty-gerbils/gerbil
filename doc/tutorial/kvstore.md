@@ -189,7 +189,7 @@ responding to messages using the `<-` reaction macro:
   (def (remove! key)
     ...)
   
-  (!!rpc.register rpcd 'kvstore kvstore::proto)
+  (rpc-register rpcd 'kvstore kvstore::proto)
   (while #t
     (<- ((!kvstore.get key k)
          (try 
@@ -350,7 +350,7 @@ proceeds to call the server with RPC:
 ```
 (def (kvstore-connect opt)
   (let (rpcd (start-rpc-server! proto: (rpc-cookie-proto)))
-    (make-remote rpcd 'kvstore (hash-get opt 'server) kvstore::proto)))
+    (rpc-connect rpcd 'kvstore (hash-get opt 'server) kvstore::proto)))
 
 (def (kvstore-get opt)
   (let* ((remote (kvstore-connect opt))

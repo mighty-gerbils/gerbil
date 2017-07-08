@@ -79,7 +79,7 @@ Package for actor-oriented concurrent and distributed programming.
   rpc-io-error? raise-rpc-io-error
   (struct-out actor-error remote-error rpc-error)
   (struct-out handle remote)
-  remote=? remote-hash
+  remote=? remote-hash canonical-address
   (struct-out !rpc !call !value !error !event !stream !yield !end !continue !close !abort)
   !!call !!call-recv !!value !!error !!event
   !!stream !!stream-recv !!yield !!end !!continue !!close !!abort
@@ -98,6 +98,7 @@ Package for actor-oriented concurrent and distributed programming.
   current-rpc-server
   start-rpc-server!
   stop-rpc-server!
+  rpc-connect rpc-register rpc-unregister
   (struct-out rpc.register)
   !rpc.register !!rpc.register
   (struct-out rpc.unregister)
