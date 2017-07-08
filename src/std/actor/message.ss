@@ -5,9 +5,12 @@ package: std/actor
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/os
-        :std/event)
+        :std/event
+        :std/error)
 (export
   (struct-out message proxy)
+  (struct-out actor-error)
+  actor-error:::init!
   -> send send-message send-message/timeout
   << <- receive-message
   !)
@@ -25,6 +28,13 @@ package: std/actor
   macro-fifo-elem
   macro-fifo-tail-set!)
 
+(defstruct (actor-error <error>) ()
+  constructor: :init!)
+
+(defmethod {:init! actor-error}
+  (lambda (self where what . irritants)
+    (struct-instance-init! self what irritants where)))
+
 ;;; structured messages
 (defstruct message (e source dest options)
   final: #t)
@@ -32,13 +42,13 @@ package: std/actor
 (defstruct proxy (handler))
 
 ;;; send primitives
-(def (send dest msg (check-dead? #f))
+(def (send dest msg (check-dead? (proxy? dest)))
   (let lp ((dest dest))
     (cond
      ((thread? dest)
       (if (or (not check-dead?) (not (thread-dead? dest)))
         (thread-send dest msg)
-        (error "Cannot send message; dead thread" dest msg)))
+        (raise (make-actor-error 'send "Cannot send message; dead thread" dest msg))))
      ((proxy? dest)
       (lp (proxy-handler dest)))
      (else

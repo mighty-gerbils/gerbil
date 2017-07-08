@@ -35,14 +35,8 @@ package: std/actor
 
 (defstruct (rpc-io-error io-error) ())
 
-(defstruct (actor-error <error>) ()
-  constructor: :init!)
 (defstruct (remote-error actor-error) ())
 (defstruct (rpc-error actor-error) ())
-
-(defmethod {:init! actor-error}
-  (lambda (self where what . irritants)
-    (struct-instance-init! self what irritants where)))
 
 (defmethod {:init! remote-error}
   actor-error:::init!)
