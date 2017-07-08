@@ -56,7 +56,10 @@
       (list ##stdin-port ##console-port))))
 
 (define (_gx#gxi-init-interactive! cmdline)
-  ;; if interactive, and the file exists, load ~/.gerbil/init.ss
+  ;; load gerbil interactive init
+  (let ((init-file (path-expand "lib/init.ss" (getenv "GERBIL_HOME"))))
+    (gx#eval-syntax `(include ,init-file)))
+  ;; if it exists, load user's ~/.gerbil/init.ss
   (let ((init-file "~/.gerbil/init.ss"))
     (if (file-exists? init-file)
       (gx#eval-syntax `(include ,init-file)))))
