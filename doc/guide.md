@@ -1238,7 +1238,7 @@ to bind and a wire protocol implementation with a keyword.
 In one shell:
 ```
 (def (my-echo rpcd)
-  (!!rpc.register rpcd 'echo echo::proto)
+  (rpc-register rpcd 'echo echo::proto)
   (let lp ()
     (<- ((!echo.hello what k)
           (displayln @source " says " what)
@@ -1254,7 +1254,7 @@ echo protocol `echo::proto` for marshalling and unmarshalling.
 In a different shell, we can connect to our echo with a `remote` handle:
 ```
 (def locald (start-rpc-server!))
-(def echod (make-remote locald 'echo "127.0.0.1:9999" echo::proto))
+(def echod (rpc-connect locald 'echo "127.0.0.1:9999" echo::proto))
 > (!!echo.hello echod 'hello)
 => 'hello
 ```
@@ -1275,8 +1275,7 @@ $ mkdir ~/.gerbil
     proto: (rpc-cookie-proto)))
 ...
 (def locald
-  (start-rpc-server! "127.0.0.1:999"
-    proto: (rpc-cookie-proto)))
+  (start-rpc-server! proto: (rpc-cookie-proto)))
 ...
 ```
 
