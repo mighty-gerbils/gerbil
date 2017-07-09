@@ -40,7 +40,7 @@
            (loadpath
             (if (file-exists? "~/.gerbil/lib")
               (cons (path-normalize "~/.gerbil/lib") loadpath)
-              loadpath)))
+              (cons "~/.gerbil/lib" loadpath)))) ; maybe later (interactive gxi)
       (&current-module-libpath (cons libdir loadpath))
       (_gx#gerbil-loadpath loadpath))
     (&current-module-registry (make-hash-table))
