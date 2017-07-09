@@ -1650,7 +1650,8 @@ package: gerbil
                            cons cons* @list
                            values vector box
                            quote quasiquote 
-                           eq? eqv? equal?)
+                           eq? eqv? equal?
+                           apply)
           ;; gated match
           ((? test . body)
            (syntax-case #'body (=>)
@@ -1721,6 +1722,9 @@ package: gerbil
            [datum: (stx-e #'datum)])
           ((quasiquote qp)
            (parse-qq #'qp))
+          ;; applicative destructuring
+          ((apply getf pat)
+           [apply: #'getf (parse1 #'pat)])
           ;; user expansion
           ((match-id . _)
            (syntax-local-match-macro? #'match-id)
@@ -1840,6 +1844,8 @@ package: gerbil
            (loop-vector #'body vars K))
           ((class: _ body)
            (loop-class-list #'body vars K))
+          ((apply: getf pat)
+           (loop #'pat vars K))
           ((var: id)
            (if (find (cut bound-identifier=? <> #'id) vars)
              (K vars)
@@ -1961,6 +1967,10 @@ package: gerbil
                                    ((number? e) #'eqv?)
                                    (else #'equal?)))))
                [#'if #'(eql target (quote datum)) K E]))
+            ((apply: getf pat)
+             (with-syntax (($tgt (genident 'e)))
+               [#'let #'(($tgt (getf target)))
+                      (generate1 #'$tgt #'pat K E)]))
             ((var: id)
              [#'let #'((id target)) K])
             ((any:) K))))
