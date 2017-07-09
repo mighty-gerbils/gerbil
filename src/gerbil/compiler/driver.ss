@@ -151,8 +151,10 @@ namespace: gxc
 
 (def (compile-cache file gxc-cache)
   (let (cachefile (path-expand (path-strip-directory file) gxc-cache))
-    (when (or (not (file-exists? cachefile))
-              (file-newer? file cachefile))
+    (if (file-exists? cachefile)
+      (when (file-newer? file cachefile)
+        (delete-file cachefile)
+        (copy-file file cachefile))
       (copy-file file cachefile))
     cachefile))
 
