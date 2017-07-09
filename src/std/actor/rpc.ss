@@ -145,8 +145,9 @@ package: std/actor
 
 (def (rpc-server proto addresses)
   (let* ((socksrv (start-socket-server!))
-         (sas   (map socket-address addresses))
-         (socks (map (cut server-listen socksrv <>) sas)))
+         (sas     (map socket-address addresses))
+         (_       (for-each rpc-unlink-unix-socket sas))
+         (socks   (map (cut server-listen socksrv <>) sas)))
     (parameterize ((current-rpc-server (current-thread)))
       (try
        (rpc-server-loop socksrv socks sas proto)
@@ -156,6 +157,10 @@ package: std/actor
            (raise e)))
        (finally
         (server-shutdown! socksrv))))))
+
+(def (rpc-unlink-unix-socket sa)
+  (when (eq? (socket-address-family sa) AF_UNIX)
+    (with-catch void (cut delete-file (socket-address->string sa)))))
 
 (def (rpc-monitor thread (msg thread))
   (def (thread-monitor server thread msg)
@@ -184,10 +189,13 @@ package: std/actor
     (map (lambda (sock sa)
            (spawn rpc-server-accept (current-thread) sock (socket-address-family sa)))
          socks sas))
+  (def server-connection 0)
   
   (def (accept-connection cli clisa)
-    (let* ((thr (spawn rpc-server-connection (current-thread) cli clisa accept-e))
-           (address (list (socket-address->address clisa))))
+    (let* ((cliaddr (socket-address->address clisa))
+           (address (list cliaddr server-connection))
+           (thr (spawn rpc-server-connection (current-thread) cli clisa address accept-e)))
+      (set! server-connection (fx1+ server-connection))
       (hash-put! conns address thr)
       (hash-put! threads thr address)
       (rpc-monitor thr)))
@@ -370,7 +378,10 @@ package: std/actor
     (try
      (let* ((cliaddr (make-socket-address safamily))
             (clisock (server-accept sock cliaddr)))
-       (debug "accepted connection from ~a" (socket-address->string cliaddr))
+       (debug "accepted connection from ~a"
+              (let (clistr (socket-address->string cliaddr))
+                (if (string-empty? clistr) ; UNIX client
+                  "?" clistr)))
        (!!rpc.connection-accept rpc-server clisock cliaddr))
      (catch (os-exception? e)
        (log-error "error accepting connection" e)))))
@@ -394,10 +405,10 @@ package: std/actor
         (ignore (lp))
         (else (void)))))
 
-(def (rpc-server-connection rpc-server sock sa proto-e)
+(def (rpc-server-connection rpc-server sock sa cliaddr proto-e)
   (try
    (rpc-set-nodelay! sock (socket-address-family sa))
-   (rpc-connection-loop rpc-server sock (list (socket-address->address sa)) proto-e)
+   (rpc-connection-loop rpc-server sock cliaddr proto-e)
    (catch (e)
      (rpc-connection-cleanup rpc-server e sock))))
 
