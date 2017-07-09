@@ -30,13 +30,17 @@
     (_gx#gerbil-libdir libdir)
     (if load-rt
       (_gx#load-rt))
-    (let ((loadpath 
-           (cond
-            ((getenv "GERBIL_LOADPATH" #f) 
-             => (lambda (ev) 
-                  (filter (lambda (path) (not (string-empty? path)))
-                          (string-split ev #\:))))
-            (else '()))))
+    (let* ((loadpath 
+            (cond
+             ((getenv "GERBIL_LOADPATH" #f) 
+              => (lambda (ev) 
+                   (filter (lambda (path) (not (string-empty? path)))
+                           (string-split ev #\:))))
+             (else '())))
+           (loadpath
+            (if (file-exists? "~/.gerbil/lib")
+              (cons (path-normalize "~/.gerbil/lib") loadpath)
+              (cons "~/.gerbil/lib" loadpath)))) ; maybe later (interactive gxi)
       (&current-module-libpath (cons libdir loadpath))
       (_gx#gerbil-loadpath loadpath))
     (&current-module-registry (make-hash-table))

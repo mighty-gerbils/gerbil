@@ -23,7 +23,7 @@
     (displayln " -gsc-option <opt> <string>  add [<opt> <string>] to gsc options"))
 
 (def (parse-args args)
-  (def outdir (path-expand "lib" (getenv "GERBIL_HOME")))
+  (def outdir "~/.gerbil/lib")
   (def invoke-gsc #t)
   (def keep-scm #f)
   (def verbose #f)
