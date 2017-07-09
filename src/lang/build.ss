@@ -6,10 +6,11 @@
 (include "build-spec.ss")
 
 (let ((depgraph (call-with-input-file "build-deps" read))
-      (srcdir (path-normalize (path-directory (this-source-file)))))
+      (srcdir (path-normalize (path-directory (this-source-file))))
+      (libdir (path-expand "lib" (getenv "GERBIL_HOME"))))
   (make srcdir: srcdir
+        libdir: libdir
         optimize: #t
         static: #t
         depgraph: depgraph
-        build-spec
-        ))
+        build-spec))
