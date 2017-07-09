@@ -145,8 +145,9 @@ package: std/actor
 
 (def (rpc-server proto addresses)
   (let* ((socksrv (start-socket-server!))
-         (sas   (map socket-address addresses))
-         (socks (map (cut server-listen socksrv <>) sas)))
+         (sas     (map socket-address addresses))
+         (_       (for-each rpc-unlink-unix-socket sas))
+         (socks   (map (cut server-listen socksrv <>) sas)))
     (parameterize ((current-rpc-server (current-thread)))
       (try
        (rpc-server-loop socksrv socks sas proto)
@@ -156,6 +157,10 @@ package: std/actor
            (raise e)))
        (finally
         (server-shutdown! socksrv))))))
+
+(def (rpc-unlink-unix-socket sa)
+  (when (eq? (socket-address-family sa) AF_UNIX)
+    (with-catch void (cut delete-file (socket-address->string sa)))))
 
 (def (rpc-monitor thread (msg thread))
   (def (thread-monitor server thread msg)
@@ -370,7 +375,10 @@ package: std/actor
     (try
      (let* ((cliaddr (make-socket-address safamily))
             (clisock (server-accept sock cliaddr)))
-       (debug "accepted connection from ~a" (socket-address->string cliaddr))
+       (debug "accepted connection from ~a"
+              (let (clistr (socket-address->string cliaddr))
+                (if (string-empty? clistr) ; UNIX client
+                  "?" clistr)))
        (!!rpc.connection-accept rpc-server clisock cliaddr))
      (catch (os-exception? e)
        (log-error "error accepting connection" e)))))
