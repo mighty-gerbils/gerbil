@@ -38,5 +38,3 @@ The following SRFIs are supported by gerbil:
 | SRFI 88 | Keyword Objects | runtime ||
 | SRFI 95 | Sorting and Merging | stdlib | `:std/srfi/95` |
 | SRFI 111 | Boxes | runtime ||
-
-

@@ -1517,4 +1517,3 @@ def => this is the value of def
 ```
 
 The LMDB library is covered in in the [Key-Value Store Server tutorial](tutorial/kvstore.md).
-

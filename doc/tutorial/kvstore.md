@@ -93,7 +93,7 @@ The expansion of the protocol definition looks like this:
    (!protocol-types kvstore::proto)
    (!protocol-id kvstore::proto)
    kvstore::proto)
-      
+
   (defstruct kvstore.get (key) id: tutorial/kvstore/proto#kvstore.get::t)
   (defsyntax-for-match
     !kvstore.get
@@ -182,17 +182,17 @@ responding to messages using the `<-` reaction macro:
 
   (def (get key)
     ...)
-  
+
   (def (put! key val)
     ...)
 
   (def (remove! key)
     ...)
-  
+
   (rpc-register rpcd 'kvstore kvstore::proto)
   (while #t
     (<- ((!kvstore.get key k)
-         (try 
+         (try
           (let* ((val (get key))
                  (val
                   (if (eq? val nil)
@@ -202,7 +202,7 @@ responding to messages using the `<-` reaction macro:
           (catch (e)
             (log-error "kvstore.get" e)
             (!!error (error-message e) k))))
-        
+
         ((!kvstore.ref key k)
          (try
           (let (val (get key))
@@ -212,7 +212,7 @@ responding to messages using the `<-` reaction macro:
           (catch (e)
             (log-error "kvstore.ref" e)
             (!!error (error-message e) k))))
-        
+
         ((!kvstore.put! key val k)
          (try
           (put! key val)
@@ -220,7 +220,7 @@ responding to messages using the `<-` reaction macro:
           (catch (e)
             (log-error "kvstore.put!" e)
             (!!error (error-message e) k))))
-        
+
         ((!kvstore.remove! key k)
          (try
           (remove! key)
@@ -228,7 +228,7 @@ responding to messages using the `<-` reaction macro:
           (catch (e)
             (log-error "kvstore.remove!" e)
             (!!error (error-message e) k))))
-        
+
         (what
          (warning "Unexpected message: ~a " what)))))
 ```
@@ -253,7 +253,7 @@ with the key-value store:
        (catch (e)
          (lmdb-txn-abort txn)
          (raise e)))))
-  
+
   (def (put! key val)
     (let* ((bytes (call-with-output-u8vector [] (cut write-json val <>)))
            (bytes (compress bytes))
@@ -273,7 +273,7 @@ with the key-value store:
        (catch (e)
          (lmdb-txn-abort txn)
          (raise e)))))
-  
+
   ...)
 ```
 
@@ -302,7 +302,7 @@ The `main` function is the entry of the program:
   (def helpcmd
     (command 'help help: "display usage help"
              (optional-argument 'command value: string->symbol)))
-  
+
   (def gopt
     (getopt (option 'server "-s" "--server"
                     default: "127.0.0.1:9999"

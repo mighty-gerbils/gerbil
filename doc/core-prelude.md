@@ -455,7 +455,7 @@ Anaphoric lets which short circuit to `#f` if any of the bindings is `#f`.
 (@list xs ellipsis)
 => xs
 
-(@list xs ellipsis . rest) 
+(@list xs ellipsis . rest)
 => (foldr cons (@list . rest) xs)
 
 (@list x . xs)
@@ -653,10 +653,10 @@ Slot mutation macro.
  (cons* pattern ... pattern-tail)  ; destructure a list like cons*
  [pattern ...]                     ;
  (@list pattern ...)               ; destructure a list like @list
- (box pattern)                     ; 
+ (box pattern)                     ;
  #&pattern                         ; destructure a box
  (values pattern ...)              ; destructure a values tuple
- (vector pattern ...)              ; 
+ (vector pattern ...)              ;
  #(pattern ...)                    ; destructure a vector
  (struct-id pattern ...)           ; destructure a struct
  (class-id (slot pattern) ...)     ; destructure a class
@@ -891,7 +891,7 @@ Defines the following symbols as externs:
     zero? positive? negative? odd? even?
     max min
     + * - /
-    abs quotient remainder modulo gcd lcm 
+    abs quotient remainder modulo gcd lcm
     floor ceiling truncate round
     numerator denominator rationalize
     exp log sin cos tan asin acos atan
@@ -919,7 +919,7 @@ Defines the following symbols as externs:
     ;;  6.3.4 characters
     char? char=? char<? char>? char<=? char>=?
     char-ci=? char-ci<? char-ci>? char-ci<=? char-ci>=?
-    char-alphabetic? char-numeric? char-whitespace? 
+    char-alphabetic? char-numeric? char-whitespace?
     char-upper-case? char-lower-case?
     char->integer integer->char
     char-upcase char-downcase
@@ -939,7 +939,7 @@ Defines the following symbols as externs:
     vector-fill!
     ;; 6.4 control
     procedure? apply
-    map for-each 
+    map for-each
     force
     call-with-current-continuation
     call-with-values values
@@ -954,7 +954,7 @@ Defines the following symbols as externs:
     open-input-file open-output-file
     close-input-port close-output-port
     read read-char peek-char
-    eof-object? char-ready? 
+    eof-object? char-ready?
     write display newline write-char
     load
 ```
@@ -966,7 +966,7 @@ Defines the following symbols as externs:
     immediate?
     finite? infinite? nan?
     1+ 1- fx+ fx1+ fx- fx1- fx* fx/
-    fixnum? nonnegative-fixnum? 
+    fixnum? nonnegative-fixnum?
     fxzero? fxpositive? fxnegative? fxodd? fxeven?
     fixnum->char char->fixnum fixnum->flonum
     fxmax fxmin fxabs fxnot fxand fxior fxxor fxand fxmodulo
@@ -974,7 +974,7 @@ Defines the following symbols as externs:
     fx< fx<= fx= fx>= fx>
     flonum?
     fl+ fl- fl* fl/ fl< fl<= fl= fl>= fl>
-    flzero? flpositive? flnegative? 
+    flzero? flpositive? flnegative?
     flnan? flinfinite? flfinite? flinteger?
     flmax flmin
     box? box unbox set-box!
@@ -984,7 +984,7 @@ Defines the following symbols as externs:
     remove remq remv remf
     pgetq pgetv pget
     subvector subvector->list subvector-fill!
-    vector-map vector-copy vector-append 
+    vector-map vector-copy vector-append
     true true? false void void? eof-object identity
     dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
     values-count values->list
@@ -998,7 +998,7 @@ Defines the following symbols as externs:
     hash-keys hash-values
     hash-copy hash-copy!
     hash-merge hash-merge!
-    uninterned-symbol? interned-symbol? 
+    uninterned-symbol? interned-symbol?
     gensym make-symbol make-uninterned-symbol symbol-hash
     keyword? uninterned-keyword? interned-keyword? keyword-hash
     string->bytes bytes->string
@@ -1006,7 +1006,7 @@ Defines the following symbols as externs:
     symbol->keyword keyword->symbol
     substring-fill! substring-move! string-shrink!
     append-strings
-    string-map string-index string-rindex 
+    string-map string-index string-rindex
     string-split string-join string-empty?
     ;; MOP
     type-descriptor?
@@ -1029,9 +1029,9 @@ Defines the following symbols as externs:
     direct-slot-ref
     direct-slot-set!
     object? object-type
-    struct-instance? class-instance? 
+    struct-instance? class-instance?
     direct-struct-instance? direct-class-instance?
-    make-object 
+    make-object
     struct->list class->list
     make-struct-instance make-direct-struct-instance
     make-class-instance make-direct-class-instance
@@ -1041,7 +1041,7 @@ Defines the following symbols as externs:
     slot-ref slot-set!
     call-method
     bind-method!
-    method-ref direct-method-ref bound-method-ref 
+    method-ref direct-method-ref bound-method-ref
     find-method
     next-method call-next-method
     struct-subtype? class-subtype?
@@ -1056,18 +1056,18 @@ Defines the following symbols as externs:
     call-with-escape
     with-unwind-protect
     current-exception-handler with-exception-handler
-    with-catch 
+    with-catch
     error raise raise-type-error
     error::t type-error::t
-    exception? error? type-error? 
+    exception? error? type-error?
     error-trace error-message error-irritants
     ;; OS
     exit getenv setenv
     current-directory create-directory create-directory*
-    delete-file copy-file rename-file 
+    delete-file copy-file rename-file
     delete-directory directory-files
     file-exists? file-newer? file-type
-    path-expand path-normalize 
+    path-expand path-normalize
     path-extension path-strip-extension
     path-directory path-strip-directory
     path-strip-trailing-directory-separator
@@ -1092,7 +1092,7 @@ Defines the following symbols as externs:
     u8vector->list list->u8vector
     u8vector-fill! u8vector-shrink!
     u8vector-copy u8vector-append
-    subu8vector subu8vector-fill! subu8vector-move! 
+    subu8vector subu8vector-fill! subu8vector-move!
     append-u8vectors
     object->u8vector u8vector->object
     ;; bytes I/O
@@ -1143,19 +1143,19 @@ Defines the following symbols as extern:
     datum->syntax syntax->datum syntax-e syntax->list
     genident gentemps
     stx-identifier
-    stx-boolean? stx-keyword? stx-char? stx-number? stx-fixnum? stx-string? 
+    stx-boolean? stx-keyword? stx-char? stx-number? stx-fixnum? stx-string?
     stx-null? stx-pair? stx-pair/null? stx-list?
     stx-box? stx-vector? stx-datum?
     stx-eq? stx-eqv? stx-equal? stx-false?
     stx-e stx-source stx-wrap-source
-    stx-car stx-cdr stx-length 
-    stx-for-each stx-map stx-foldl stx-foldr stx-reverse 
+    stx-car stx-cdr stx-length
+    stx-for-each stx-map stx-foldl stx-foldr stx-reverse
     stx-last stx-last-pair stx-list-tail stx-list-ref
     stx-andmap stx-ormap
     stx-plist? stx-getq
     macro-expand-syntax
     macro-expand-syntax-case
-    syntax-pattern? syntax-local-pattern? 
+    syntax-pattern? syntax-local-pattern?
     make-syntax-pattern syntax-pattern-id syntax-pattern-depth
     syntax-check-splice-targets
     syntax-split-splice
@@ -1181,14 +1181,14 @@ Defines the following symbols as extern:
     syntax-local-introduce syntax-local-rewrap syntax-local-unwrap
     syntax-local-e syntax-local-value
     resolve-identifier core-resolve-identifier
-    binding? binding-id 
+    binding? binding-id
     runtime-binding? top-binding? module-binding? extern-binding?
     syntax-binding? syntax-binding-e
     alias-binding? alias-binding-e
     import-binding? import-binding-e
     expander? expander-binding? expander-e expander-binding-e
-    feature-expander? 
-    user-expander? make-user-expander 
+    feature-expander?
+    user-expander? make-user-expander
     user-expander-context user-expander-phi
     import-expander? make-import-expander
     export-expander? make-export-expander

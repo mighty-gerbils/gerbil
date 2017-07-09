@@ -129,14 +129,14 @@ Bug fix release:
     - use interned symbols for module scoped records, as in defstruct
   - std/misc/queue and std/test
     - fix accessor bugs caught by the optimizer
-    
+
 ### 5-3-2017: Gerbil-v0.6.1
 Bug fix release:
 - fix issues with disabled compiler optimizations from gce memory [gambit#249]
 
 ### 5-2-2017: Gerbil-v0.6
 - gerbil/runtime:
-  - MOP allows mixin structs in make-class-type; classes can now mixin structs 
+  - MOP allows mixin structs in make-class-type; classes can now mixin structs
   - gerbil-version and gerbil-system-version
 - prelude:
   - defclass allows mixing arbitrary types and defers to runtime for composition
@@ -189,4 +189,3 @@ Bug fix release:
 
 ### 2-15-2016: Gerbil-v0.1
 - first gerbil release tag; core gerbil with batteries and introductory documentation
-
