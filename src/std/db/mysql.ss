@@ -352,7 +352,7 @@ package: std/db
          ((fxzero? r) #!void)
          ((eq? r MYSQL_DATA_TRUNCATED) ; that's ok, blobs and strings
           #!void)
-         ((eq? r MYSQL_NO_DATA) iter-end) 
+         ((eq? r MYSQL_NO_DATA) iter-end)
          (else
           (raise-mysql-stmt-error 'mysql-query-fetch mystmt)))))))
 
@@ -365,13 +365,13 @@ package: std/db
            (defrules loop ()
              ((_ val)
               (lp rest (fx1+ k) (cons val vals))))
-           
+
            (defrules maybe-null ()
              ((_ expr)
               (let (nullp (mysql_bind_get_null res k))
                 (and (fxzero? nullp)
                      expr))))
-           
+
            (case type
              ((int)
               (let (val (maybe-null (mysql_bind_get_long res k)))

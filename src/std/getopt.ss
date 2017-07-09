@@ -141,7 +141,7 @@ package: std
                 (when long
                   (hash-put! optht long opt))))
             opts)
-    
+
   (let lp ((rest rest))
     (match rest
       ([hd . rest*]
@@ -330,7 +330,7 @@ package: std
     (if (symbol? str)
       (symbol->string str)
       str))
-  
+
   (let* (len (foldl + 0 (map string-length (map string-e strs))))
     (if (fx< len tablen)
       (make-string (fx- tablen len) #\space)

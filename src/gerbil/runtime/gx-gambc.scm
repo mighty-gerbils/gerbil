@@ -49,7 +49,7 @@
     (set! ##macro-descr _gx#macro-descr)
     ;; hook the readtables
     (set! ##main-readtable _gx#*readtable*)
-    (for-each 
+    (for-each
       (lambda (port)
         (when (macro-character-input-port? port)
           (macro-character-port-input-readtable-set! port _gx#*readtable*)))
@@ -89,9 +89,9 @@
 ;; stuffs
 (define (_gx#expand-source src)
   (define (expand src)
-    (_gx#compile-top 
+    (_gx#compile-top
      (gx#core-expand (_gx#source->syntax src))))
-  
+
   (define (no-expand src)
     (cond
      ((##source? src)
@@ -102,7 +102,7 @@
      ((_gx#loading-scheme-source)
       src)
      (else #f)))
-  
+
   ;;(displayln "expand-source " src)
 
   (cond
@@ -110,7 +110,7 @@
    (else (expand src))))
 
 ;; hook to make gambit macro expansion work with a hooked expander
-;; ##macro-descr recurses into the expander through ##eval-top, 
+;; ##macro-descr recurses into the expander through ##eval-top,
 ;; which breaks begin-foreign
 (define _gx#real-macro-descr #f)
 
@@ -140,19 +140,19 @@
 
 (define (_gx#eval-import in)
   (define (import-context in)
-    (cond 
+    (cond
      ((gx#module-import? in)
-      (gx#module-export-context 
+      (gx#module-export-context
          (gx#module-import-source in)))
      ((gx#import-set? in)
       (gx#import-set-source in))
      ((gx#module-context? in) in)
      (else
       (error "Unexpected import" in))))
-  
+
   (define (import1 in)
     (_gx#eval-module (import-context in)))
-  
+
   (define (import* lst)
     (let ((tab (make-hash-table-eq)))
       (let lp ((rest lst) (mods '()))
@@ -166,7 +166,7 @@
                  (lp rest (cons ctx mods))))))
           (else
            (for-each _gx#eval-module (reverse mods)))))))
-  
+
   ((if (pair? in) import* import1) in))
 
 ;; bootstrap module eval - init-gx! sets to gx#core-eval-module
@@ -198,7 +198,7 @@
          (or (&AST-source hd)
              (lp rest)))
         (else #f))))
-  
+
   (display        "*** ERROR IN ")
   (cond
    ((location)
@@ -229,5 +229,3 @@
     (else (void)))
   (cond
    ((method-ref e 'display-error-trace) => (lambda (displayf) (displayf e)))))
-
-

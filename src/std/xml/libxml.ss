@@ -39,15 +39,15 @@ package: std/xml
 (def (parser-e source parse-string parse-u8vector parse-port)
   (cond
    ((string? source) parse-string)
-   ((u8vector? source) 
+   ((u8vector? source)
     (lambda (src url enc opt)
       (parse-u8vector src 0 (u8vector-length src) enc opt)))
    ((input-port? source) parse-port)
    (else
-    (error "Illegal source; Expected string, u8vector, or input-port" 
+    (error "Illegal source; Expected string, u8vector, or input-port"
       source))))
 
-;; xml parser interface: parses to SXML + *CDATA* unless collapsed with 
+;; xml parser interface: parses to SXML + *CDATA* unless collapsed with
 ;;  XML_PARSE_NOCDATA
 ;; Arguments:
 ;;  source: parse source; a string, u8vector, or input port
@@ -57,18 +57,18 @@ package: std/xml
 ;;  namespaces: alist or hash-table mapping urls to namespace prefixes
 ;;              (string -> string)
 ;;              document defined prefixes are ignored; the url is used
-;;              as the canonical prefix if it is not in the namespaces 
+;;              as the canonical prefix if it is not in the namespaces
 ;;              mapping.
 (def (parse-xml source
                 url: (url "none.xml")
                 encoding: (encoding "UTF-8")
                 options: (options parse-xml-default-options)
                 namespaces: (ns []))
-  (let* ((parse (parser-e source xmlRead-string xmlRead-u8vector 
+  (let* ((parse (parser-e source xmlRead-string xmlRead-u8vector
                           xmlRead-port))
          (xtree (parse source url encoding options)))
     (if xtree
-      (unwind-protect 
+      (unwind-protect
         (xml-doc->sxml xtree ns)
         (xmlFreeDoc xtree))
       (error "Error parsing xml; no parse tree" source))))
@@ -81,7 +81,7 @@ package: std/xml
                  encoding: (encoding "UTF-8")
                  options: (options parse-html-default-options)
                  filter: (filter-els []))
-  (let* ((parse (parser-e source htmlRead-string htmlRead-u8vector 
+  (let* ((parse (parser-e source htmlRead-string htmlRead-u8vector
                           htmlRead-port))
          (xtree (parse source url encoding options)))
     (if xtree
@@ -97,7 +97,7 @@ package: std/xml
      ((pair? ns)
       (list->hash-table ns))
      (else #f)))
-  
+
   (def (ns-name-e node node-name node-ns)
     (let ((name (node-name node))
           (ns (node-ns node)))
@@ -113,7 +113,7 @@ package: std/xml
 
   (def (attribute-e node)
     (ns-name-e node xmlAttr-name xmlAttr-ns))
-  
+
   (let ((body (xmlNode->sxml (xmlDocGetRootElement xtree)
                              false element-e attribute-e))
         (nsassoc (and nsmap (hash-map (lambda (href pre) [(string->symbol pre) href])
@@ -124,8 +124,8 @@ package: std/xml
       ['*TOP* body ...])))
 
 (def (html-doc->sxml xtree filter-e)
-  (cons '*TOP* 
-        (xmlNode->sxml (xmlDocGetRootElement xtree) 
+  (cons '*TOP*
+        (xmlNode->sxml (xmlDocGetRootElement xtree)
                        filter-e xmlNode-name-e xmlAttr-name-e)))
 
 (def (xmlNode->sxml node filter-e element-e attribute-e)
@@ -177,7 +177,7 @@ package: std/xml
          XML_PARSE_NOBLANKS))
 (def parse-html-default-options
   (fxior HTML_PARSE_RECOVER
-         HTML_PARSE_NOERROR 
+         HTML_PARSE_NOERROR
          HTML_PARSE_NOWARNING
          HTML_PARSE_NONET
          HTML_PARSE_NOBLANKS))

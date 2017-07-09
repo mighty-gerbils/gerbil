@@ -9,7 +9,7 @@ Program <- (Form $1)* EOF
 
 Form <- Defn
      |  Expr
-     
+
 Defn <- DEF (VarIdent $1) '=' (Expr $2)
         => ['def $1 $2]
      |  DEF '(' (VarIdent $1) (VarIdent $2)* ')' (Defn $3)* (Expr $4)+ END
@@ -28,7 +28,7 @@ Expr <- BeginExpr
      |  AppExpr
      |  RefExpr
      |  DatumExpr
-     
+
 BeginExpr <- BEGIN (Expr $1)+ END
              => ['begin $1 ...]
 
@@ -86,4 +86,3 @@ null                            -> (NULL '())                    ; '()
 [-]?[0-9]+                      -> (Int (string->number @@))     ; integers
 [-+*/=?<>~!@$%^&:_a-zA-Z0-9]+   -> (Ident (string->symbol @@))   ; identifiers
 "([^"]|\\")*"                   -> (String (string-e @@ @loc))   ; strings
-

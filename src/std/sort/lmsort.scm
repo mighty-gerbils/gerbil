@@ -13,7 +13,7 @@
      (let ((var exp)) (mlet (rest ...) body ...)))
 
     ((mlet ((vars exp) rest ...) body ...)
-     (call-with-values (lambda () exp) 
+     (call-with-values (lambda () exp)
        (lambda vars (mlet (rest ...) body ...))))
 
     ((mlet () body ...) (begin body ...))))
@@ -25,7 +25,7 @@
     (let lp ((xs (cdr lis)) (prev (car lis)) (i 1))
       (if (pair? xs)
 	  (let ((x (car xs)))
-	    (if (elt< x prev) 
+	    (if (elt< x prev)
 		(values i xs)
 		(lp (cdr xs) x (+ i 1))))
 	  (values i xs))))
@@ -37,7 +37,7 @@
 	  (cons y (let ((lb (- lb 1)))
 		    (if (= lb 0) a
 			(let ((b (cdr b)))
-			  (recur x       a la 
+			  (recur x       a la
 				 (car b) b lb)))))
 	  (cons x (let ((la (- la 1)))
 		    (if (= la 0) b
@@ -61,7 +61,7 @@
     (if (= 0 i) '()
 	(cons (car lis) (first (cdr lis) (- i 1)))))
 
-  (if (not (pair? lis)) '()		; Note: (LENGTH LIS) or any constant 
+  (if (not (pair? lis)) '()		; Note: (LENGTH LIS) or any constant
       (mlet (((lr tail)  (getrun lis))	; guaranteed to be greater can be used
 	     ((infinity) #o100000000)	; in place of INFINITY.
 	     ((a la v)   (grow lis lr 1 tail infinity)))
@@ -70,23 +70,23 @@
 
 ;;; (list-merge-sort! lis <)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; A natural, stable, destructive, in-place merge sort. 
+;;; A natural, stable, destructive, in-place merge sort.
 ;;; - natural: picks off maximal contiguous runs of pre-ordered data.
 ;;; - stable: won't invert the order of equal elements in the input list.
-;;; - destructive, in-place: this routine allocates no extra working memory; 
+;;; - destructive, in-place: this routine allocates no extra working memory;
 ;;;   it simply rearranges the list with SET-CDR! operations.
 
 (define (list-merge-sort! lis elt<)
   ;; (getrun lis) -> runlen last rest
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;; Pick a run of non-decreasing data off of non-empty list LIS. 
+  ;; Pick a run of non-decreasing data off of non-empty list LIS.
   ;; Return the length of this run, the last cons cell of the run,
   ;; and the following list.
   (define (getrun lis)
     (let lp ((lis lis) (x (car lis)) (i 1) (next (cdr lis)))
       (if (pair? next)
 	  (let ((y (car next)))
-	    (if (elt< y x) 
+	    (if (elt< y x)
 		(values i lis next)
 		(lp next y (+ i 1) (cdr next))))
 	  (values i lis next))))
@@ -119,20 +119,20 @@
 
 	     (scan-b (lambda (prev  x a  y b)     ; Zip down B while its
 		       (cond ((elt< y x)          ; elts are < (CAR A).
-			      (if (eq? b endb) 
+			      (if (eq? b endb)
 				  (begin (set-cdr! b a) enda)      ; Done.
 				  (let ((next-b (cdr b))) ; Continue scan.
 				    (scan-b b x a (car next-b) next-b))))
 
 			     (else (set-cdr! prev a)
-				   (if (eq? a enda) 
+				   (if (eq? a enda)
 				       (begin (maybe-set-cdr! a b) endb) ; Done.
 				       (let ((next-a (cdr a)))
 					 (scan-a a (car next-a) next-a y b)))))))
 
 	     ;; This guy only writes if he has to. Called at most once.
 	     ;; Pointer equality rules.
-	     (maybe-set-cdr! (lambda (pair val) (if (not (eq? (cdr pair) val)) 
+	     (maybe-set-cdr! (lambda (pair val) (if (not (eq? (cdr pair) val))
 						    (set-cdr! pair val)))))
 
       (let ((x (car a))  (y (car b)))
@@ -145,7 +145,7 @@
 			    (scan-b b x a (car next-b) next-b))))
 
 	    ;; A starts the answer list.
-	    (values a (if (eq? a enda) 
+	    (values a (if (eq? a enda)
 			  (begin (maybe-set-cdr! a b) endb)
 			  (let ((next-a (cdr a)))
 			    (scan-a a (car next-a) next-a y b))))))))
@@ -153,10 +153,10 @@
   ;; (grow s ends ls ls2 u lw) -> [a enda la v]
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
   ;; The core routine.
-  ;; - S is a sorted list of length LS > 1, with final cons cell ENDS, 
+  ;; - S is a sorted list of length LS > 1, with final cons cell ENDS,
   ;;   not properly terminated.
   ;; - LS2 is some power of two <= LS.
-  ;; - U is an unsorted list. 
+  ;; - U is an unsorted list.
   ;; - LW is a positive integer.
   ;; Starting with S, and taking data from U as needed, produce
   ;; a sorted list of *at least* length LW, if there's enough data

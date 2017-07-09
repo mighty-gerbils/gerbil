@@ -10,7 +10,7 @@ package: std/os
         :std/os/fd)
 (export epoll-create epoll-ctl-add epoll-ctl-mod epoll-ctl-del epoll-wait
         make-epoll-events epoll-event-fd epoll-event-events
-        EPOLLIN EPOLLOUT EPOLLERR EPOLLHUP EPOLLET EPOLLONESHOT) 
+        EPOLLIN EPOLLOUT EPOLLERR EPOLLHUP EPOLLET EPOLLONESHOT)
 
 (def (epoll-create)
   (let (fd (check-os-error (_epoll_create 1024)
@@ -95,7 +95,7 @@ package: std/os
          (if (##fx< r 0)
            (##fx- (__errno))
            r))))
-  
+
   (namespace ("std/os/epoll#"
               EPOLL_CTL_ADD EPOLL_CTL_MOD EPOLL_CTL_DEL
               EPOLLIN EPOLLOUT EPOLLERR EPOLLHUP EPOLLET EPOLLONESHOT
@@ -118,11 +118,11 @@ package: std/os
   (define-const EPOLLONESHOT)
 
   (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
-  
+
   (c-define-type epoll_event (struct "epoll_event"))
   (c-define-type epoll_event*
     (pointer epoll_event (epoll_event*) "ffi_free"))
-  
+
   (define-c-lambda __errno () int
     "___return (errno);")
 
@@ -139,12 +139,12 @@ package: std/os
 
   (define-c-lambda make_epoll_evt (int) epoll_event*
     "___return ((struct epoll_event*)malloc (___arg1 * sizeof (struct epoll_event)));")
-  
+
   (define-c-lambda epoll_evt_fd (epoll_event* int) int
     "___return (___arg1[___arg2].data.fd);")
   (define-c-lambda epoll_evt_fd_set (epoll_event* int int) void
     "___arg1[___arg2].data.fd = ___arg3; ___return;")
-  
+
   (define-c-lambda epoll_evt_events (epoll_event* int) int
     "___return (___arg1[___arg2].events);")
   (define-c-lambda epoll_evt_events_set (epoll_event* int int) void

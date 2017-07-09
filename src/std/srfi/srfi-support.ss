@@ -29,7 +29,7 @@ package: std/srfi
          (if (check-proc val) val
              (error "argument out of domain" val))))
       (else (error "too many optional arguments" maybe-arg))))))
-  
+
 (defrules really-let-optionals* ()
   ((recur args ((var1 default1 typecheck ...) etc ...)
           body1 ...)
@@ -57,4 +57,3 @@ package: std/srfi
   ((_ args vars&defaults body1 ...)
    (let ((rest args))
      (really-let-optionals* rest vars&defaults body1 ...))))
-

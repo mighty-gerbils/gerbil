@@ -207,7 +207,7 @@ END-C
     (if (fx= len ilen)
       (K buf)
       (raise-xdr-error 'xdr-read "premature port end" port))))
-     
+
 (def (xdr-string-read port)
   (xdr-binary-read port bytes->string))
 
@@ -462,4 +462,3 @@ END-C
               indices readers)
 
     (make-XDR pred-e read-e write-e)))
-

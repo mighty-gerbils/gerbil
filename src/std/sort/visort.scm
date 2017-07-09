@@ -50,7 +50,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; This code is completely R5RS except for the LET-VECTOR-START+END
 ;;; macro used to handle defaulting & checking the optional START/END
-;;; subvector args. There's an R5RS definition of this macro in 
+;;; subvector args. There's an R5RS definition of this macro in
 ;;; sort-support-macs.scm, which comes with this SRFI reference implementation.
 ;;;
 ;;; This code is tightly bummed as far as I can go in portable Scheme.

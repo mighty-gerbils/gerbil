@@ -6,10 +6,10 @@ package: gerbil/gambit
 (export #t)
 (extern namespace: #f
   display-exception
-  
+
   primordial-exception-handler
   err-code->string
-  
+
   fixnum-overflow-exception?
   fixnum-overflow-exception-procedure
   fixnum-overflow-exception-arguments
@@ -25,9 +25,9 @@ package: gerbil/gambit
   inactive-thread-exception-arguments
 
   unterminated-process-exception?
-  unterminated-process-exception-procedure 
+  unterminated-process-exception-procedure
   unterminated-process-exception-arguments
-  
+
   nonempty-input-port-character-buffer-exception?
   nonempty-input-port-character-buffer-exception-arguments
   nonempty-input-port-character-buffer-exception-procedure
@@ -38,7 +38,7 @@ package: gerbil/gambit
   unbound-table-key-exception?
   unbound-table-key-exception-procedure
   unbound-table-key-exception-arguments
-  
+
   mailbox-receive-timeout-exception?
   mailbox-receive-timeout-exception-procedure
   mailbox-receive-timeout-exception-arguments
@@ -131,7 +131,7 @@ package: gerbil/gambit
   error-exception?
   error-exception-message
   error-exception-parameters
-  
+
   invalid-hash-number-exception?
   invalid-hash-number-exception-procedure
   invalid-hash-number-exception-arguments

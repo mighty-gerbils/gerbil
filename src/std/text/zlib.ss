@@ -75,7 +75,7 @@ package: std/text
 
   (def (fini r)
     (append-u8vectors (reverse r)))
-  
+
   (def (deflate-next ibuf r flush)
     (let lp ((obuf (make-u8vector buflen)) (start 0) (r r))
       (let* ((icount (z_stream_total_in zs))
@@ -104,7 +104,7 @@ package: std/text
             r))
          (else
           (raise-io-error 'deflate-port "deflate: zlib error" (z_stream_msg zs) res))))))
-  
+
   (let (ibuf (make-u8vector buflen))
     (let lp ((r []))
       (let (rd (read-subu8vector ibuf 0 buflen inp))
@@ -181,7 +181,7 @@ package: std/text
           (cons obuf r))
          (else
           (raise-io-error 'inflate-port "zlib error" (z_stream_msg zs) res))))))
-          
+
   (let (ibuf (make-u8vector buflen))
     (let lp ((r []))
       (let (rd (read-subu8vector ibuf 0 buflen inp))

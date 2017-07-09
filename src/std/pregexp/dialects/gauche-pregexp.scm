@@ -10,7 +10,7 @@
 
 (define-module pregexp
   (export *pregexp-comment-char*
-          pregexp  
+          pregexp
           pregexp-match
           pregexp-match-positions
           pregexp-quote
@@ -52,6 +52,3 @@
   (display "Resulting file is gauchelib/pregexp.scm")
   (newline)
   )
-
-
-

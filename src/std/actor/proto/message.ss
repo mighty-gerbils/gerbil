@@ -123,7 +123,7 @@ package: std/actor/proto
   (let* ((inp (open-input-u8vector u8v))
          (msg (rpc-proto-read-message-envelope inp)))
     (rpc-proto-read-message-content msg proto inp)))
-         
+
 (def (rpc-proto-read-message-envelope port)
   (let* ((type (read-u8 port))
          (dest (xdr-uuid-read port)))
@@ -237,4 +237,3 @@ package: std/actor/proto
 
 (def (xdr-uuid-write obj port)
   (xdr-binary-write (uuid->u8vector obj) port))
-

@@ -19,7 +19,7 @@ package: std/xml
         sxml->xhtml-string
         )
 
-(defrules defproc ()                    ; see through *TOP* 
+(defrules defproc ()                    ; see through *TOP*
   ((_ proc sxml-to-xml-proc)
    (def (proc tree)
      (sxml-to-xml-proc (cadr tree)))))

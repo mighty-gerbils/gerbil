@@ -216,7 +216,7 @@ package: std
     (lambda (sel port)
       (or (input-port-closed? port)
           (##wait-for-io! condvar #t))))
-  
+
   (def (u8vector-port-ready? port)
     (fx< (macro-byte-port-rlo port)
          (macro-byte-port-rhi port)))
@@ -225,12 +225,12 @@ package: std
     (user-port-poll port (macro-byte-port-rbuf-fill port)))
 
   (def (string-port-ready? port)
-    (fx< (macro-character-port-rlo port) 
+    (fx< (macro-character-port-rlo port)
          (macro-character-port-rhi port)))
 
   (def (string-port-poll port)
     (user-port-poll port (macro-character-port-rbuf-fill port)))
-  
+
   (def (vector-port-ready? port)
     (fx< (macro-vector-port-rlo port)
          (macro-vector-port-rhi port)))
@@ -245,7 +245,7 @@ package: std
         (user-port-poll port rbuf-fill))
        ((eq? r ##err-code-EAGAIN) #f)   ; would block
        (else #t))))                     ; read some or EOF
-  
+
   (let (mutex (macro-port-mutex port))
     (cond
      ((macro-u8vector-port? port)
@@ -385,7 +385,7 @@ package: std
 
 (def (sync . args)
   (def ht (make-hash-table-eq))
-  
+
   (def (loop evts)
     (let lp ((rest evts) (selectors []) (timeo #f))
       (match rest
@@ -430,12 +430,12 @@ package: std
              (wait timeo [])
              (thread-sleep! +inf.0))    ; sleep and wait for interrupt
            (wait timeo selectors))))))
-  
+
   (def (wait timeo selectors)
     (let* ((sel (select timeo selectors))
            (evt (hash-ref ht sel)))
       (event-select-e evt)))
-  
+
   (loop args))
 
 (def (poll . evts)
@@ -470,7 +470,7 @@ package: std
   (if (event-handler? evt)
     (event-handler-evt (event-handler-e evt))
     evt))
-   
+
 (def (event-select-e evt)
   (cond
    ((event? evt)
@@ -551,7 +551,7 @@ package: std
       ([K . rest]
        (wrap-handlers (handle-evt evt K) rest))
       (else evt)))
-        
+
   (let lp ((evt evt) (handlers []))
     (cond
      ((event-handler? evt)

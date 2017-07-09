@@ -73,6 +73,3 @@ package: std/misc
 
 (def (queue->list q)
   (foldr cons [] (queue-front q)))
-
-
-

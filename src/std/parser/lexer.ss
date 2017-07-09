@@ -114,13 +114,13 @@ package: std/parser
    (else
     (error "Bad input source; expected input-port, string or char-stream" inp))))
 
-;; cs: char-stream 
+;; cs: char-stream
 ;; Ls: list of rlangs for each lexeme; matches longest, with ties resolved in order
 ;; Rs: list of reductions receiving lexeme text and location to construct a token
 (def (lex1 cs Ls Rs)
   (def (chars->string chars)
     (list->string (reverse chars)))
-  
+
   (def (token-e t e start end)
     (let (loc (location-delta start end))
       (make-token t e loc)))
@@ -128,7 +128,7 @@ package: std/parser
   (def (raise-e chars start end)
     (let (tok (token-e 'ERROR (chars->string chars) start end))
       (raise-parse-error 'lex "No lexeme matching input" tok)))
-  
+
   (def (loop Ls chars start E)
     (let (next (char-stream-getc cs))
       (if (eof-object? next)
@@ -181,7 +181,7 @@ package: std/parser
            (else
             ;; no lexeme matches, continue with E
             (E chars)))))))
-  
+
   (let* ((first (char-stream-getc cs)) ; get the right starting location!
          (start (char-stream-loc cs))
          (_ (char-stream-ungetc cs first))

@@ -106,7 +106,7 @@ package: std/misc
                    (heap-prio e parent))
             (begin
               (heap-swap! e parent i)
-              (lp parent))            
+              (lp parent))
             e))
         e))))
 

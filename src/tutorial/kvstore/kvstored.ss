@@ -30,7 +30,7 @@ package: tutorial/kvstore
        (catch (e)
          (lmdb-txn-abort txn)
          (raise e)))))
-  
+
   (def (put! key val)
     (let* ((bytes (call-with-output-u8vector [] (cut write-json val <>)))
            (bytes (compress bytes))
@@ -50,11 +50,11 @@ package: tutorial/kvstore
        (catch (e)
          (lmdb-txn-abort txn)
          (raise e)))))
-  
+
   (rpc-register rpcd 'kvstore kvstore::proto)
   (while #t
     (<- ((!kvstore.get key k)
-         (try 
+         (try
           (let* ((val (get key))
                  (val
                   (if (eq? val nil)
@@ -64,7 +64,7 @@ package: tutorial/kvstore
           (catch (e)
             (log-error "kvstore.get" e)
             (!!error (error-message e) k))))
-        
+
         ((!kvstore.ref key k)
          (try
           (let (val (get key))
@@ -74,7 +74,7 @@ package: tutorial/kvstore
           (catch (e)
             (log-error "kvstore.ref" e)
             (!!error (error-message e) k))))
-        
+
         ((!kvstore.put! key val k)
          (try
           (put! key val)
@@ -82,7 +82,7 @@ package: tutorial/kvstore
           (catch (e)
             (log-error "kvstore.put!" e)
             (!!error (error-message e) k))))
-        
+
         ((!kvstore.remove! key k)
          (try
           (remove! key)
@@ -90,7 +90,7 @@ package: tutorial/kvstore
           (catch (e)
             (log-error "kvstore.remove!" e)
             (!!error (error-message e) k))))
-        
+
         (what
          (warning "Unexpected message: ~a " what)))))
 

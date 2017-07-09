@@ -14,7 +14,7 @@ package: std/actor
   -> send send-message send-message/timeout
   << <- receive-message
   !)
-        
+
 ;; ~~lib/_gambit#.scm
 (extern namespace: #f
   macro-absent-obj
@@ -120,7 +120,7 @@ package: std/actor
         (()
          (values (reverse clauses) (reverse events) else-e))
         (_ (raise-syntax-error #f "Bad sytnax; bad clause" stx rest)))))
-  
+
   (def (generate-receive-raw-test-e stx clauses)
     (with-syntax ((((hd . body) ...) clauses))
       #'(lambda (msg)
@@ -132,7 +132,7 @@ package: std/actor
     (with-syntax (((clause ...) clauses))
       #'(lambda (msg)
           (match msg clause ...))))
-  
+
   (def (generate-receive-msg-test-e stx clauses)
     (with-syntax* ((((hd . body) ...) clauses)
                    ((macro . body) stx)
@@ -148,7 +148,7 @@ package: std/actor
                (hd #t) ...
                (else #f)))
             (else #f)))))
-  
+
   (def (generate-receive-msg-recv-e stx clauses)
     (with-syntax* (((clause ...) clauses)
                    ((macro . body) stx)
@@ -250,9 +250,9 @@ package: std/actor
 
 (begin-foreign
   (namespace ("std/actor/message#" mailbox-empty mailbox-next))
-  
+
   (define mailbox-empty '#(empty))
-  
+
   (define (mailbox-next)
     (declare (not interrupts-enabled))
     (let* ((mb

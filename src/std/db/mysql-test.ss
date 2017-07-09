@@ -12,7 +12,7 @@
     (test-case "prepare tables"
       (with-catch void (cut sql-eval db "DROP TABLE Users"))
       (with-catch void (cut sql-eval db "DROP TABLE HitCount"))
-      
+
       (let (stmt (sql-prepare db "CREATE TABLE Users (FirstName VARCHAR(20), LastName VARCHAR(20), Secret VARCHAR(20))"))
         (check (sql-exec stmt) => #!void)
         (sql-finalize stmt))
@@ -43,7 +43,7 @@
         (check (sql-query stmt) => '(#("John" "Smith" "very secret")
                                       #("Marc" "Smith" "oh so secret")
                                       #("Minnie" "Smith" #f))))
-    
+
       (let (stmt (sql-prepare db "SELECT * FROM Users WHERE FirstName = ?"))
         (sql-bind stmt "John")
         (check (sql-query stmt) => '(#("John" "Smith" "very secret")))
@@ -65,5 +65,5 @@
 
     (with-catch void (cut sql-eval db "DROP TABLE Users"))
     (with-catch void (cut sql-eval db "DROP TABLE HitCount"))
-    
+
     (sql-close db)))

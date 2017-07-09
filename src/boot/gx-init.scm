@@ -22,7 +22,7 @@
             (cond
              (in-place "../..")
              ((getenv "GERBIL_HOME" #f) => values)
-             (else 
+             (else
               (error "Cannot determine GERBIL_HOME"))))))
          (libdir
           (path-expand "lib" home)))
@@ -30,10 +30,10 @@
     (_gx#gerbil-libdir libdir)
     (if load-rt
       (_gx#load-rt))
-    (let* ((loadpath 
+    (let* ((loadpath
             (cond
-             ((getenv "GERBIL_LOADPATH" #f) 
-              => (lambda (ev) 
+             ((getenv "GERBIL_LOADPATH" #f)
+              => (lambda (ev)
                    (filter (lambda (path) (not (string-empty? path)))
                            (string-split ev #\:))))
              (else '())))
@@ -49,7 +49,7 @@
       (_gx#load-gx))))
 
 (define (_gx#load-rt)
-  (for-each 
+  (for-each
     (lambda (rt) (load (path-expand rt (_gx#gerbil-libdir))))
     _gx#*rtlibs*))
 

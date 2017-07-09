@@ -10,5 +10,3 @@ package: std
 (export (import: :std/actor/message
                  :std/actor/proto
                  :std/actor/rpc))
-
-   

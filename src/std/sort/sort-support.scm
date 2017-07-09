@@ -1,6 +1,6 @@
 ;;; The SRFI-?? sort package -- R5RS support			-*- Scheme -*-
 ;;; Copyright (c) 1998 by Olin Shivers.
-;;; This code is open-source; see the end of the file for 
+;;; This code is open-source; see the end of the file for
 ;;; more copyright information.
 ;;; Olin Shivers 10/98.
 
@@ -12,7 +12,7 @@
 ;;; - (let-vector-start+end (start end) proc vector arg-list
 ;;;     body ...)
 ;;;
-;;; - (let-vector-start+end2 (start1 end1 start2 end2) 
+;;; - (let-vector-start+end2 (start1 end1 start2 end2)
 ;;;                          proc vector1 vector2 arg-list
 ;;;     body ...)
 ;;;
@@ -35,8 +35,8 @@
 ;;; correctness.
 ;;;
 ;;; - START and END are two variables that get bound in the scope of the body.
-;;; 
-;;; - PROC is the procedure whose args we are parsing -- it's used in error 
+;;;
+;;; - PROC is the procedure whose args we are parsing -- it's used in error
 ;;;   reports.
 ;;;
 ;;; - VECTOR is the corresponding vector. We use its length as END's default.
@@ -50,7 +50,7 @@
      (receive (start end) (parse-vector-final-start+end proc v-exp args-exp)
        body ...))))
 
-;;; (let-vector-start+end2 (start1 end1 start2 end2) 
+;;; (let-vector-start+end2 (start1 end1 start2 end2)
 ;;;                        proc vector1 vector2 arg-list
 ;;;   body ...)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -58,8 +58,8 @@
 ;;; a pair of START/END pairs.
 (define-syntax let-vector-start+end2
   (syntax-rules ()
-    ((let-vector-start+end2 (start1 end1 start2 end2) 
-                            proc v1-exp v2-exp args-exp 
+    ((let-vector-start+end2 (start1 end1 start2 end2)
+                            proc v1-exp v2-exp args-exp
        body ...)
      (receive (start1 end1 rest) (parse-vector-start+end proc v-exp1 args-exp)
        (receive (start2 end2) (parse-vector-start+end proc v-exp2 rest)

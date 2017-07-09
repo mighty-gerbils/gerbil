@@ -51,7 +51,7 @@ package: std/db
   (let (env** (ffi_make_mdb_env_ptr_ptr))
     (unless env**
       (error "lmdb-open: memory allocation failure"))
-    
+
     (with-lmdb-error (mdb_env_create env**))
     (let (env* (ffi_mdb_env_ptr env**))
       (when maxdbs
@@ -63,7 +63,7 @@ package: std/db
       (when maxreaders
         (with-lmdb-error (mdb_env_set_maxreaders env* maxreaders)
           (mdb_env_close env*)))
-      
+
       (with-lmdb-error (mdb_env_open env* path flags mode)
         (mdb_env_close env*))
       (make-lmdb-env env* (make-hash-table) (make-mutex)))))
@@ -259,7 +259,7 @@ package: std/db
       (error "lmdb-cursor-renew: invalid cursor"))
     (with-lmdb-error (mdb_cursor_renew txn* cursor*))
     (set! (lmdb-cursor-txn cursor) txn)))
-  
+
 (def (lmdb-cursor-get cursor op (key #f) (val #f))
   (let ((keyx (and key (value-bytes key)))
         (valx (and val (value-bytes val))))

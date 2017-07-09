@@ -40,7 +40,7 @@
 
 ;;; This routine is not exported. The code is tightly bummed.
 ;;;
-;;; If these preconditions hold, the routine can be bummed to run with 
+;;; If these preconditions hold, the routine can be bummed to run with
 ;;; unsafe vector-indexing and fixnum arithmetic ops:
 ;;;   - V V1 V2 are vectors.
 ;;;   - START0 START1 END1 START2 END2 are fixnums.
@@ -225,8 +225,8 @@
 ;;; just set things up for you to exploit.
 ;;;
 ;;; The optional-arg parsing, defaulting, and error checking is done with a
-;;; portable R4RS macro. But if your Scheme has a faster mechanism (e.g., 
+;;; portable R4RS macro. But if your Scheme has a faster mechanism (e.g.,
 ;;; Chez), you should definitely port over to it. Note that argument defaulting
-;;; and error-checking are interleaved -- you don't have to error-check 
+;;; and error-checking are interleaved -- you don't have to error-check
 ;;; defaulted START/END args to see if they are fixnums that are legal vector
 ;;; indices for the corresponding vector, etc.

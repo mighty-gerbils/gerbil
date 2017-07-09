@@ -189,7 +189,7 @@ package: std/text
           n
           (lp (fx1+ n)))
         (raise-invalid-token port char))))
-  
+
   (read-char port)
   (let lp ((chars []))
     (let (char (read-char port))
@@ -209,7 +209,7 @@ package: std/text
   ;; parse it liberally
   (def (parse chars)
     (string->number (list->string (reverse chars))))
-  
+
   (let lp ((chars [(read-char port)]))
     (let (char (peek-char port))
       (if (or (memq char '(#\] #\} #\,))
@@ -300,7 +300,7 @@ package: std/text
      ((string? key) key)
      (else
       (error "Illegal hash key; must be symbol or string" obj key))))
-  
+
   (display #\{ port)
   (let (lst (hash->list obj))
     (let lp ((rest lst))
@@ -333,7 +333,7 @@ package: std/text
   (def (safe-char? char)
     (let (n (char->integer char))
       (and (fx>= n 32) (fx< n 127))))
-  
+
   (def (write-uchar char port)
     (let (int (char->integer char))
       (display "\\u" port)
@@ -358,7 +358,7 @@ package: std/text
              (else
               (write-uchar char port)))
             (lp (fx1+ n)))))))
-  
+
   (display #\" port)
   (write-str obj port)
   (display #\" port))

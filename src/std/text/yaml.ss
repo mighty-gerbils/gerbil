@@ -66,7 +66,7 @@ package: std/text
           (raise-io-error 'yaml-load "read-stream: unexpected event" t))))))
 
   (def end-token '#(end))
-  
+
   (def (read-node (end-event-t #f))
     (let* ((_ (parse))
            (t (yaml_event_type event)))
@@ -77,7 +77,7 @@ package: std/text
           (if (hash-key? anchors anchor)
             (hash-ref anchors anchor)
             (raise-io-error 'yaml-load "read-node: undefined alias" anchor))))
-       
+
        ((eq? t YAML_SCALAR_EVENT)
         (let* ((anchor (yaml_event_anchor event))
                (tag    (yaml_event_tag event))
@@ -89,7 +89,7 @@ package: std/text
           (when anchor
             (hash-put! anchors anchor value))
           value))
-       
+
        ((eq? t YAML_SEQUENCE_START_EVENT)
         (let* ((anchor (yaml_event_anchor event))
                (tag    (yaml_event_tag event))
@@ -98,7 +98,7 @@ package: std/text
           (when anchor
             (hash-put! anchors anchor value))
           value))
-       
+
        ((eq? t YAML_MAPPING_START_EVENT)
         (let* ((anchor (yaml_event_anchor event))
                (tag    (yaml_event_tag event))
@@ -110,10 +110,10 @@ package: std/text
 
        ((eq? t end-event-t)
         end-token)
-       
+
        ((eq? t YAML_NO_EVENT)
         (read-node))
-       
+
        (else
         (raise-io-error 'yaml-load "read-object: unexpected event" t)))))
 
@@ -153,7 +153,7 @@ package: std/text
        ((equal? "false" str) #f)
        ((equal? "null" str) #!void)
        (else str))))
-  
+
   (stream-start))
 
 (def rx-scalar-decimal
@@ -179,7 +179,7 @@ package: std/text
    ("!!bool"  (cut equal? <> "true"))
    ("!!int"   string->number)
    ("!!float" yaml-string->float)))
- 
+
 (def (yaml-dump fname . args)
   (cond
    ((open_yaml_output_file (path-normalize fname))
@@ -202,7 +202,7 @@ package: std/text
     (let (r (yaml_emitter_emit emitter event))
       (when (zero? r)
         (raise-io-error 'yaml-dump "LibYAML emit error" (yaml_emitter_error emitter)))))
-  
+
   (def (emit-document obj)
     (yaml_event_document_start event)
     (emit)
@@ -259,10 +259,9 @@ package: std/text
       => (lambda (yamlf) (emit-object (yamlf obj))))
      (else
       (error "Bad YAML object" obj))))
-  
+
   (yaml_event_stream_start event)
   (emit)
   (for-each emit-document args)
   (yaml_event_stream_end event)
   (emit))
-

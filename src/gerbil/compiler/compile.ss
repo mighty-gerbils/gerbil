@@ -8,7 +8,7 @@ namespace: gxc
         :gerbil/expander
         <syntax-case> <syntax-sugar>
         (only-in :gerbil/gambit/hvectors
-                 s8vector? u8vector? s16vector? u16vector? 
+                 s8vector? u8vector? s16vector? u16vector?
                  s32vector? u32vector? s64vector? u64vector?
                  f32vector? f64vector?))
 (export #t)
@@ -119,7 +119,7 @@ namespace: gxc
 
 (defcompile-method #f (&false &false-special-form &false-expression))
 
-(defcompile-method apply-collect-bindings (&collect-bindings 
+(defcompile-method apply-collect-bindings (&collect-bindings
                                            &void-expression
                                            &void-special-form)
   (%#begin         collect-begin%)
@@ -323,7 +323,7 @@ namespace: gxc
   (ast-case stx ()
     ((_ ((hd expr) ...) body)
      (for-each (cut apply compile-e <> args) #'(expr ... body)))))
-       
+
 
 (def (collect-body-setq% stx . args)
   (ast-case stx ()
@@ -339,9 +339,9 @@ namespace: gxc
 (def (collect-bindings-define-values% stx)
   (ast-case stx ()
     ((_ hd expr)
-     (stx-for-each 
-      (lambda (bind) 
-        (when (identifier? bind) 
+     (stx-for-each
+      (lambda (bind)
+        (when (identifier? bind)
           (add-module-binding! bind #f)))
       #'hd))))
 
@@ -365,13 +365,13 @@ namespace: gxc
   (let ((eid (binding-id (resolve-identifier id)))
         (ht (symbol-table-bindings (current-compile-symbol-table))))
     (unless (interned-symbol? eid)
-      (hash-put! ht eid 
-                 (make-binding-id (generate-runtime-gensym-reference eid) 
+      (hash-put! ht eid
+                 (make-binding-id (generate-runtime-gensym-reference eid)
                                   syntax?)))))
 
 (def (generate-runtime-binding-id id)
   (let (bind (resolve-identifier id))
-    (cond 
+    (cond
      (bind
       (let ((eid (binding-id bind))
             (ht (symbol-table-bindings (current-compile-symbol-table))))
@@ -399,7 +399,7 @@ namespace: gxc
       (stx-e id))
      (else
       ;; gensymed reference, where did you get this one?
-      (raise-compile-error "Cannot compile reference to uninterned identifier" 
+      (raise-compile-error "Cannot compile reference to uninterned identifier"
                            id)))))
 
 (def (generate-runtime-binding-id* id)
@@ -434,9 +434,9 @@ namespace: gxc
          => (lambda (ht)
               (cond
                ((hash-get ht eid) => values)
-               (else 
+               (else
                 (generate-runtime-identifier-key eid)))))
-        (else 
+        (else
          (generate-runtime-identifier-key eid))))))))
 
 (def (generate-runtime-temporary (top #f))
@@ -478,7 +478,7 @@ namespace: gxc
   (ast-case stx ()
     ((_ hd expr)
      (ast-case #'hd ()
-       ((#f) 
+       ((#f)
         (compile-e #'expr))
        ((id)
         (let (eid (generate-runtime-binding-id #'id))
@@ -490,14 +490,14 @@ namespace: gxc
                (body
                 (let lp ((rest #'hd) (k 0) (r []))
                   (ast-case rest ()
-                    ((#f . rest) 
+                    ((#f . rest)
                      (lp #'rest (fx1+ k) r))
                     ((id . rest)
                      (lp #'rest (fx1+ k)
                          (cons ['define (generate-runtime-binding-id #'id)
                                  ['values-ref tmp k]]
                                r)))
-                    (id 
+                    (id
                      (identifier? #'id)
                      (foldl cons
                             [['define (generate-runtime-binding-id #'id)
@@ -539,7 +539,7 @@ namespace: gxc
   (def (runtime-identifier=? id-stx sym)
     (alet (bind (resolve-identifier id-stx))
       (eq? (binding-id bind) sym)))
-  
+
   (def (dispatch-case? hd body)
     (let (form [hd body])
       (ast-case form (%#call %#ref)
@@ -575,11 +575,11 @@ namespace: gxc
          (compile-e #'(%#ref rator)))
         ((args (%#call (%#ref -apply) (%#ref rator) _))
          (compile-e #'(%#ref rator))))))
-  
+
   (def (generate1 args arglen hd body)
     (let* ((len (stx-length hd))
            (condition
-            (cond 
+            (cond
              ((stx-list? hd)
               ['fx= arglen len])
              ((> len 0)
@@ -590,7 +590,7 @@ namespace: gxc
               (dispatch-case-e hd body)
               ['lambda (generate-runtime-lambda-head hd) (compile-e body)])))
       [condition ['apply dispatch args]]))
-  
+
   (ast-case stx ()
     ((_ (hd body) ...)
      (let ((args (generate-runtime-temporary))
@@ -607,7 +607,7 @@ namespace: gxc
 (def (generate-runtime-let-values% stx (compiled-body? #f))
   (def (generate-simple hd body)
     (generate-runtime-simple-let 'let hd body compiled-body?))
-  
+
   (def (generate-values hd body)
     (let lp ((rest hd) (bind []) (check []) (post []))
       (ast-case rest ()
@@ -630,17 +630,17 @@ namespace: gxc
                   (body (generate-values-post post body))
                   (body (generate-values-check check body)))
              ['let (reverse bind) body])))))
-  
+
   (def (generate-values-post post body)
     (let lp ((rest post) (body body))
       (match rest
         ([bind . rest]
          (lp rest ['let bind body]))
         (else body))))
-  
+
   (def (generate-values-check check body)
     ['begin (reverse check) ... body])
-  
+
   (ast-case stx ()
     ((_ hd body)
      (if (generate-runtime-simple-let? #'hd)
@@ -657,7 +657,7 @@ namespace: gxc
            (fx1+ k)
            (cons [(generate-runtime-binding-id #'id) ['values-ref vals k]]
                  r)))
-      (tail 
+      (tail
        (identifier? #'tail)
        (foldl cons
               [[(generate-runtime-binding-id #'tail) ['values->list vals k]]]
@@ -667,7 +667,7 @@ namespace: gxc
 (def (generate-runtime-letrec-values% stx (compiled-body? #f))
   (def (generate-simple hd body)
     (generate-runtime-simple-let 'letrec hd body compiled-body?))
-  
+
   (def (generate-values hd body)
     (let lp ((rest hd) (bind []) (check []) (post []))
       (ast-case rest ()
@@ -692,13 +692,13 @@ namespace: gxc
                   (body (generate-values-post post body))
                   (body (generate-values-check check body)))
              ['letrec (reverse bind) body])))))
-  
+
   (def (generate-values-check check body)
     ['begin (reverse check) ... body])
-  
+
   (def (generate-values-post post body)
     ['begin (map (cut cons 'set! <>) (reverse post)) ... body])
-  
+
   (ast-case stx ()
     ((_ hd body)
      (if (generate-runtime-simple-let? #'hd)
@@ -718,10 +718,10 @@ namespace: gxc
            ((values rec-pre rec-bind rec-init)
             (lift-rec forms)))
       (values pre-bind rec-pre rec-bind rec-init post-bind)))
-  
+
   (def (collect-closures forms)
     (map (match <> ([_ expr] (collect-expression-refs expr))) forms))
-  
+
   (def (collect-bindings forms)
     (map (match <>
            ([bind _]
@@ -731,12 +731,12 @@ namespace: gxc
                  (if (identifier? id)
                    (lp rest (cons (binding-id (resolve-identifier id)) r))
                    (lp rest r)))
-                (else 
+                (else
                  (if (identifier? rest)
                    (cons rest r)
                    r))))))
          forms))
-  
+
   (def (lift-pre hd bindings closures)
     ;; lift bindings into a preceding let*
     ;; A binding can be lifted if the expression:
@@ -745,12 +745,12 @@ namespace: gxc
     ;;  3. no effect reordering will occur from the lift (very conservative)
     ;; If any binding is lifted in a pass, then loop again so that lambdas can be
     ;;  bubbled up (so that's quadratic at worst case)
-    (let lp ((rest-forms hd) (rest-bindings bindings) (rest-closures closures) 
+    (let lp ((rest-forms hd) (rest-bindings bindings) (rest-closures closures)
              (post-forms []) (post-bindings []) (post-closures [])
              (pre-forms []) (lifted? #f))
       (match* (rest-forms rest-bindings rest-closures)
-        (([form . rest-forms] 
-          [bindings . rest-bindings] 
+        (([form . rest-forms]
+          [bindings . rest-bindings]
           [closure . rest-closures])
          (if (or (closure-reference? closure bindings)
                  (ormap (cut closure-reference? closure <>) rest-bindings)
@@ -768,10 +768,10 @@ namespace: gxc
                post-forms post-bindings post-closures
                (cons form pre-forms) #t)))
         (else
-         (if lifted? 
+         (if lifted?
            ;; reloop if any has been lifted
-           (lp (reverse post-forms) 
-               (reverse post-bindings) 
+           (lp (reverse post-forms)
+               (reverse post-bindings)
                (reverse post-closures)
                [] [] []
                pre-forms #f)
@@ -779,12 +779,12 @@ namespace: gxc
                    (reverse post-forms)
                    (reverse post-bindings)
                    (reverse post-closures)))))))
-  
+
   (def (lift-post hd bindings closures)
     ;; similar to lift-pre, but push down to a trailing let*
     ;; a binding can be lifted (pushed) if
     ;;  1. is not recursive
-    ;;  2. there no backwards references to it 
+    ;;  2. there no backwards references to it
     ;;  3. no effect re-ordering will occur
     (let lp ((rest-forms (reverse hd))
              (rest-bindings (reverse bindings))
@@ -821,14 +821,14 @@ namespace: gxc
                    pre-forms
                    pre-bindings
                    pre-closures))))))
-  
+
   (def (lift-rec forms)
     (let lp ((rest forms) (pre []) (bind []) (init []))
       (match rest
         ([bind-hd . rest]
          (ast-case bind-hd ()
            (((#f) expr)
-            (lp rest pre bind 
+            (lp rest pre bind
                 (cons (compile-e #'expr) init)))
            (((id) expr)
             (let (eid (generate-runtime-binding-id #'id))
@@ -836,7 +836,7 @@ namespace: gxc
                 (lp rest pre
                     (cons [eid (compile-e #'expr)] bind)
                     init)
-                (lp rest 
+                (lp rest
                   (cons [eid #!void] pre)
                   bind
                   (cons ['set! eid (compile-e #'expr)] init)))))
@@ -845,7 +845,7 @@ namespace: gxc
                    (expr (compile-e #'expr))
                    (check-values (generate-runtime-check-values vals #'hd))
                    (refs (generate-runtime-let-values-bind vals #'hd)))
-              (lp rest 
+              (lp rest
                   (foldl (lambda (ref r) (cons [(car ref) #!void] r))
                          pre refs)
                   bind
@@ -854,30 +854,30 @@ namespace: gxc
                      check-values
                      (map (cut cons 'set! <>) refs)]
                    init))))))
-        (else 
-         (values (reverse pre) 
-                 (reverse bind) 
+        (else
+         (values (reverse pre)
+                 (reverse bind)
                  (reverse init))))))
-  
+
   (def (closure-reference? closure bindings)
     (ormap (cut hash-get closure <>) bindings))
-  
+
   (def (is-effect-bind? hd-bind)
     (ast-case hd-bind ()
       ((_ expr) (is-effect-expr? #'expr))))
-  
+
   ;; very very simple and conservative
   (def (is-effect-expr? expr)
     (ast-case expr ()
       ((hd . _)
-       (not (memq (stx-e #'hd) 
+       (not (memq (stx-e #'hd)
                   '(%#lambda %#case-lambda %#quote %#quote-syntax %#ref))))))
-  
+
   (def (is-lambda-expr? expr)
     (ast-case expr ()
       ((hd . _)
        (memq (stx-e #'hd) '(%#lambda %#case-lambda)))))
-  
+
   (def (generate-let* hd body)
     (match hd
       ([bind . rest]
@@ -889,7 +889,7 @@ namespace: gxc
              #t)
             ['begin (compile-e expr) (generate-let* rest body)]))))
       (else body)))
-  
+
   (ast-case stx ()
     ((_ hd body)
      (let ((values pre rec-pre rec-bind rec-init post)
@@ -920,7 +920,7 @@ namespace: gxc
     (ast-case bind ()
       (((id) expr)
        [(generate-runtime-binding-id* #'id) (compile-e #'expr)])))
-  [form (map generate1 hd) 
+  [form (map generate1 hd)
         (if compiled-body? body
             (compile-e body))])
 
@@ -939,14 +939,14 @@ namespace: gxc
      ((vector? datum)
       (vector-map generate1 datum))
      ((or (s8vector? datum) (u8vector? datum)
-          (s16vector? datum) (u16vector? datum) 
+          (s16vector? datum) (u16vector? datum)
           (s32vector? datum) (u32vector? datum)
           (s64vector? datum) (u64vector? datum)
           (f32vector? datum) (f64vector? datum))
       datum)
      (else
       (raise-compile-error "Cannot compile non-primitive quote" stx))))
-  
+
   (ast-case stx ()
     ((_ datum)
      ['quote (generate1 (stx-e #'datum))])))
@@ -1029,7 +1029,7 @@ namespace: gxc
                (let (rt (string-append (symbol->string id) "__rt"))
                  (hash-put! ht id rt)
                  (lp rest (cons rt loads))))))
-         
+
          (match rest
            ([in . rest]
             (cond
@@ -1057,7 +1057,7 @@ namespace: gxc
       (generate-runtime-identifier q)
       ;; and this is even more complicated, don't bother...
       (raise-compile-error "Cannot quote non-identifier syntax" stx q)))
-  
+
   (ast-case stx ()
     ((_ stxq)
      (let ((gid (generate-runtime-temporary #t))
@@ -1072,7 +1072,7 @@ namespace: gxc
     ((_ eid expr)
      ['define (stx-e #'eid) (compile-e #'expr)])))
 
-;;; meta 
+;;; meta
 (def (generate-meta-begin% stx state)
   (ast-case stx ()
     ((_ . body)
@@ -1091,13 +1091,13 @@ namespace: gxc
        (ast-case compiled (%#begin)
          ((%#begin . body)
           (let (c-body (filter (? (not void?)) #'body))
-            (cond 
-             (block 
+            (cond
+             (block
               ['%#begin-syntax
                ['%#call ['%#ref '_gx#load-module] ['%#quote block]]
                c-body ...])
              ((null? c-body) #!void)
-             (else 
+             (else
               ['%#begin-syntax c-body ...])))))))))
 
 (def (generate-meta-module% stx state)
@@ -1113,8 +1113,8 @@ namespace: gxc
                (parameterize ((current-expander-context ctx))
                  (compile-e (module-context-code ctx) state)))
               (rt (hash-get (current-compile-runtime-sections) ctx))
-              (loader 
-               (if rt 
+              (loader
+               (if rt
                  [['%#call ['%#ref '_gx#load-module] ['%#quote rt]]]
                  []))
               (modid (stx-e #'id)))
@@ -1125,7 +1125,7 @@ namespace: gxc
 (def (generate-meta-import-path ctx context-chain)
   (let lp ((ctx ctx) (path []))
     (let (super (phi-context-super ctx))
-      (cond 
+      (cond
        ((memq super context-chain)
         (cons* #f (car (module-context-path ctx)) path))
        ((module-context? super)
@@ -1136,7 +1136,7 @@ namespace: gxc
 (def (current-context-chain)
   (let lp ((ctx (current-expander-context)) (r []))
     (cond
-     ((module-context? ctx) 
+     ((module-context? ctx)
       (lp (phi-context-super ctx) (cons ctx r)))
      (else r))))
 
@@ -1146,20 +1146,20 @@ namespace: gxc
   ;; this also covers submodule references
   (def context-chain
     (current-context-chain))
-  
+
   (def (make-import-spec in)
     (with ((module-import (module-export src-ctx src-key src-phi src-name)
                           name phi)
            in)
       [phi (generate-runtime-identifier-key name)
        src-phi (generate-runtime-identifier-key src-name)]))
-  
+
   (def (make-import-path ctx)
     (generate-meta-import-path ctx context-chain))
-  
+
   (def (make-import-spec-in ctx in)
     [spec: (make-import-path ctx) (reverse in) ...])
-  
+
   (meta-state-end-phi! state)
   (ast-case stx ()
     ((_ . body)
@@ -1169,7 +1169,7 @@ namespace: gxc
           (cond
            ((module-import? in)
             (with ((module-import (module-export src-ctx)) in)
-              (cond 
+              (cond
                ((eq? current-src src-ctx)
                 (lp rest current-src
                     (cons (make-import-spec in) current-in)
@@ -1177,7 +1177,7 @@ namespace: gxc
                (current-src
                 (lp rest src-ctx
                     [(make-import-spec in)]
-                    (cons (make-import-spec-in current-src current-in) 
+                    (cons (make-import-spec-in current-src current-in)
                           r)))
                (else
                 (lp rest src-ctx [(make-import-spec in)] r)))))
@@ -1189,25 +1189,25 @@ namespace: gxc
                       ([path] path)
                       (path (cons in: path))))
                    (r (if current-src
-                        (cons (make-import-spec-in current-src current-in) 
+                        (cons (make-import-spec-in current-src current-in)
                               r)
                         r)))
-              (lp rest #f [] 
+              (lp rest #f []
                   (cons (if (fxzero? phi) src-in [phi: phi src-in])
                         r))))
            ((module-context? in)
             ;; don't mix with the current-src accumulation since this
-            ;; is a forced runtime reference 
+            ;; is a forced runtime reference
             (let (r (if current-src
-                      (cons (make-import-spec-in current-src current-in) 
+                      (cons (make-import-spec-in current-src current-in)
                             r)
                       r))
-              (lp rest #f [] 
+              (lp rest #f []
                   (cons (cons runtime: (make-import-path in))
                         r))))))
          (else
-          (let (r (if current-src 
-                    (cons (make-import-spec-in current-src current-in) 
+          (let (r (if current-src
+                    (cons (make-import-spec-in current-src current-in)
                           r)
                     r))
             ['%#import (reverse r) ...])))))))
@@ -1215,10 +1215,10 @@ namespace: gxc
 (def (generate-meta-export% stx state)
   (def context-chain
     (current-context-chain))
-  
+
   (def (make-import-path ctx)
     (generate-meta-import-path ctx context-chain))
-  
+
   (ast-case stx ()
     ((_ . body)
      (let lp ((rest #'body) (r []))
@@ -1226,15 +1226,15 @@ namespace: gxc
          ([out . rest]
           (match out
             ((module-export _ key phi name)
-             (lp rest 
-                 (cons [spec: phi 
+             (lp rest
+                 (cons [spec: phi
                               (generate-runtime-identifier-key key)
                               (generate-runtime-identifier-key name)]
                        r)))
             ((export-set src phi)
-             (let* ((out 
+             (let* ((out
                      (if src
-                       [import: 
+                       [import:
                         (match (make-import-path src)
                           ([path] path)
                           (path (cons in: path)))]
@@ -1255,7 +1255,7 @@ namespace: gxc
       (unless (interned-symbol? eid)
         (raise-compile-error "Cannot compile extern reference" stx eid))
     [(generate-runtime-identifier id) eid]))
-  
+
   (ast-case stx ()
     ((_ (id eid) ...)
      ['%#extern (map generate1 #'(id ...) #'(eid ...)) ...])))
@@ -1265,17 +1265,17 @@ namespace: gxc
     (let ((eid (generate-runtime-binding-id id))
           (ident (generate-runtime-identifier id)))
       ['%#define-runtime ident eid]))
-  
+
   (def (generate* all)
     (match all
       ([one] one)
       (else ['%#begin all ...])))
-  
+
   (ast-case stx ()
     ((_ hd expr)
      (let lp ((rest #'hd) (r []))
        (ast-case rest ()
-         ((#f . rest) 
+         ((#f . rest)
           (lp #'rest r))
          ((id . rest)
           (lp #'rest (cons (generate1 #'id) r)))
@@ -1294,8 +1294,8 @@ namespace: gxc
        (with-syntax ((rtid eid))
          (meta-state-add-phi! state phi #'(%#define-runtime rtid expr)))
        (if block
-         ['%#begin 
-          ['%#begin-syntax 
+         ['%#begin
+          ['%#begin-syntax
            ['%#call ['%#ref '_gx#load-module] ['%#quote block]]]
           ['%#define-syntax (generate-runtime-identifier #'id) eid]]
          ['%#define-syntax (generate-runtime-identifier #'id) eid])))))
@@ -1321,7 +1321,7 @@ namespace: gxc
 
 (defmethod {:init! meta-state}
   (lambda (self ctx)
-    (struct-instance-init! self 
+    (struct-instance-init! self
       (symbol->string (expander-context-id ctx))
       1 (make-hash-table-eq) [])))
 

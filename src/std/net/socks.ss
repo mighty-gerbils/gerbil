@@ -113,7 +113,7 @@ package: std/net
 ;;   report different user-ids.
 ;;
 ;; SOCKS4a
-;;  DSTIP = 0.0.0.x 
+;;  DSTIP = 0.0.0.x
 ;;  Following the NULL byte of user id, domain name (NULL-terminated)
 ;;
 
@@ -227,7 +227,7 @@ package: std/net
     (let* ((porthi (##read-u8 sock))
            (portlo (##read-u8 sock)))
       (fxior (fxarithmetic-shift porthi 8) portlo)))
-  
+
   (def (recv-address atype rep)
     (case atype
       ((#x01)
@@ -245,7 +245,7 @@ package: std/net
       (else
        (raise-io-error 'socks5-recv-reply
                        "Unexpected SOCKS5 address type" atype rep))))
-  
+
   (let (hdr (##make-u8vector 4 0))
     (recv-msg sock hdr)
     (let ((proto (##u8vector-ref hdr 0))

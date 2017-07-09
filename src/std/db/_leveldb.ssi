@@ -29,11 +29,11 @@ package: std/db
   leveldb_iter_key
   leveldb_iter_value
   leveldb_iter_get_error
-  
+
   leveldb_compact_range
   leveldb_destroy_db
   leveldb_repair_db
-  
+
   leveldb_options_create
   leveldb_options_set_create_if_missing
   leveldb_options_set_error_if_exists
@@ -47,11 +47,11 @@ package: std/db
   leveldb_options_set_filter_policy
   leveldb_cache_create_lru
   leveldb_filterpolicy_create_bloom
-  
+
   leveldb_readoptions_create
   leveldb_readoptions_set_verify_checksums
   leveldb_readoptions_set_fill_cache
-  
+
   leveldb_writeoptions_create
   leveldb_writeoptions_set_sync
 

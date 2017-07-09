@@ -53,7 +53,7 @@
       (def hellod  (spawn hello-server remoted))
       (thread-sleep! 0.1)
       (check (!!rpc.resolve remoted 'foo) => hellod)
-      
+
       (def locald  (start-rpc-server!))
       (def rfoo
         (rpc-connect locald 'foo rpc-server-address1 hello::proto))
@@ -61,7 +61,7 @@
 
       (stop-rpc-server! remoted)
       (stop-rpc-server! locald))
-    
+
     (test-case "test RPC COOKIE proto"
       (def remoted
         (start-rpc-server! rpc-server-address2 proto: (rpc-cookie-proto rpc-cookie)))
@@ -69,7 +69,7 @@
         (spawn hello-server remoted))
       (thread-sleep! 0.1)
       (check (!!rpc.resolve remoted 'foo) => hellod)
-      
+
       (def locald
         (start-rpc-server! proto: (rpc-cookie-proto rpc-cookie)))
       (def rfoo
@@ -78,7 +78,7 @@
 
       (stop-rpc-server! remoted)
       (stop-rpc-server! locald))
-    
+
     (test-case "test RPC CIPHER proto"
       (def remoted
         (start-rpc-server! rpc-server-address3 proto: (rpc-cipher-proto)))
@@ -95,7 +95,7 @@
 
       (stop-rpc-server! remoted)
       (stop-rpc-server! locald))
-    
+
     (test-case "test RPC COOKIE-CIPHER proto"
       (def remoted
         (start-rpc-server! rpc-server-address4 proto: (rpc-cookie-cipher-proto rpc-cookie)))
@@ -138,7 +138,7 @@
       (def hellod  (spawn hello-server remoted))
       (thread-sleep! 0.1)
       (check (!!rpc.resolve remoted 'foo) => hellod)
-      
+
       (def locald  (start-rpc-server!))
       (def rfoo
         (rpc-connect locald 'foo rpc-server-address10 hello::proto))
@@ -146,10 +146,10 @@
 
       (!!rpc.monitor locald rfoo)
       (thread-sleep! 1.0)
-      
+
       (stop-rpc-server! remoted)
       (check (<- ((!rpc.disconnect r) r)) => rfoo)
-      
+
       (stop-rpc-server! locald))))
 
 (def (hello-stream-server remoted N)
@@ -194,7 +194,7 @@
       (def locald  (start-rpc-server!))
       (def rfoo
         (rpc-connect locald 'foo rpc-server-address5 hello::proto))
-      
+
       (let (k (gensym 'stream))
         (send-message/timeout rfoo (make-!stream (make-hello.hello-stream "stream") k) 1)
         (let lp ((n 0))
@@ -229,7 +229,7 @@
 
       (stop-rpc-server! remoted)
       (stop-rpc-server! locald))
-    
+
     (test-case "test RPC stream close"
       (def remoted (start-rpc-server! rpc-server-address9))
       (def hellod  (spawn hello-stream-close-server remoted))

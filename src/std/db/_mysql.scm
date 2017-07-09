@@ -14,7 +14,7 @@
 (namespace ("std/db/_mysql#"))
 (##namespace ("" define-macro define let let* if or and
               quote quasiquote unquote unquote-splicing
-              c-lambda c-define-type c-declare c-initialize 
+              c-lambda c-define-type c-declare c-initialize
               ))
 
 (c-declare #<<END-C
@@ -23,7 +23,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>           
+#include <string.h>
 #include <mysql/mysql.h>
 
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
@@ -333,21 +333,21 @@ ___SCMOBJ ffi_free (void *ptr)
  return ___FIX (___NO_ERR);
 }
 
-MYSQL* ffi_mysql_init () 
+MYSQL* ffi_mysql_init ()
 {
  MYSQL* mysql = malloc (sizeof (MYSQL));
  if (!mysql)
  {
   return NULL;
  }
- 
+
  MYSQL* res = mysql_init (mysql);
  if (res)
  {
   return res;
  } else {
   free (mysql);
-  return NULL;            
+  return NULL;
  }
 }
 
@@ -432,7 +432,7 @@ again:
    goto again;
 
   return -errno;
- } 
+ }
  return r;
 }
 
@@ -452,10 +452,10 @@ again:
    goto again;
 
   return -errno;
- } 
+ }
  return r;
 }
- 
+
 int ffi_mysql_stmt_reset_begin (int ofd, MYSQL_STMT* mystmt)
 {
  int r;
@@ -471,7 +471,7 @@ again:
    goto again;
 
   return -errno;
- } 
+ }
  return r;
 }
 
@@ -490,7 +490,7 @@ again:
    goto again;
 
   return -errno;
- } 
+ }
  return r;
 }
 
@@ -509,7 +509,7 @@ again:
    goto again;
 
   return -errno;
- } 
+ }
  return r;
 }
 
@@ -524,12 +524,12 @@ static void *ffi_mysql_connection_worker (void *arg)
  worker_data *data = (worker_data*)arg;
  async_op op;
  int r, res;
- 
+
 again:
  r = read (data->ifd, &op, sizeof (async_op));
  if (!r)
   goto out;
- 
+
  if (r < 0)
   switch (errno)
   {
@@ -554,26 +554,26 @@ again:
    free (op.body.connect.passwd);
    free (op.body.connect.db);
    break;
-   
+
   case OP_PREPARE:
    res = mysql_stmt_prepare (op.body.prepare.mystmt,
                              op.body.prepare.sql,
                              strlen (op.body.prepare.sql));
    free (op.body.prepare.sql);
    break;
-   
+
   case OP_EXEC:
    res = mysql_stmt_execute (op.body.stmt.mystmt);
    break;
-  
+
   case OP_FETCH:
    res = mysql_stmt_fetch (op.body.stmt.mystmt);
    break;
-   
+
   case OP_RESET:
    res = mysql_stmt_reset (op.body.stmt.mystmt);
    break;
- 
+
  }
 
 write_again:
@@ -587,7 +587,7 @@ write_again:
    perror ("ffi_mysql_connection_worker");
    goto out;
  }
- 
+
  goto again;
 
 out:
@@ -602,7 +602,7 @@ int ffi_start_mysql_connection_thread (int ifd, int ofd)
  int r;
  pthread_t thread;
  worker_data *arg;
- 
+
  arg = (worker_data*)malloc (sizeof (worker_data));
  if (!arg)
  {
@@ -621,7 +621,7 @@ int ffi_start_mysql_connection_thread (int ifd, int ofd)
   free (arg);
   return -r;
  }
- 
+
  return 0;
 }
 
@@ -681,7 +681,7 @@ void ffi_mysql_bind_set_long (MYSQL_BIND* mybind, int k, long* ptr)
 {
  mybind[k].buffer_type = MYSQL_TYPE_LONG;
  mybind[k].buffer = ptr;
- mybind[k].buffer_length = sizeof (long);      
+ mybind[k].buffer_length = sizeof (long);
 }
 
 long ffi_mysql_bind_get_long (MYSQL_BIND* mybind, int k)
@@ -705,7 +705,7 @@ void ffi_mysql_bind_set_float (MYSQL_BIND* mybind, int k, float* ptr)
 {
  mybind[k].buffer_type = MYSQL_TYPE_FLOAT;
  mybind[k].buffer = ptr;
- mybind[k].buffer_length = sizeof (float);      
+ mybind[k].buffer_length = sizeof (float);
 }
 
 float ffi_mysql_bind_get_float (MYSQL_BIND* mybind, int k)
@@ -717,7 +717,7 @@ void ffi_mysql_bind_set_double (MYSQL_BIND* mybind, int k, double* ptr)
 {
  mybind[k].buffer_type = MYSQL_TYPE_DOUBLE;
  mybind[k].buffer = ptr;
- mybind[k].buffer_length = sizeof (double);      
+ mybind[k].buffer_length = sizeof (double);
 }
 
 double ffi_mysql_bind_get_double (MYSQL_BIND* mybind, int k)
@@ -895,10 +895,10 @@ void* ffi_make_blob_ptr (unsigned len)
 {
  void* res = malloc (len);
  if (res)
- {      
+ {
   memset (res, 0, len);
  }
- return res;      
+ return res;
 }
 
 void ffi_string_ptr_set (void* ptr, char* str)

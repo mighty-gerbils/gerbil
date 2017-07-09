@@ -199,7 +199,7 @@ package: std/actor
                (!!close source k)
                (lp source #f))
              (lp source #t))))))
-  
+
   (let* (((values inp outp)
           (open-vector-pipe [permanent-close: #t direction: 'input]
                             [permanent-close: #t direction: 'output]))
@@ -372,7 +372,7 @@ package: std/actor
   (def (generate-make-proto-info proto-id id extend calls events)
     (def (type-id id)
       (stx-identifier proto-id proto-id "." id))
-    
+
     (with-syntax* ((proto-id proto-id)
                    (id id)
                    (proto::proto (stx-identifier #'proto-id #'proto-id "::proto"))
@@ -501,7 +501,7 @@ package: std/actor
                  (make-XDR kall? kall-xdr-read kall-xdr-write))
                (hash-put! (!protocol-types proto::proto) 'kall-rt-id kall::xdr))))
       #'(begin defn-kall defn-!kall defn-!!kall defn-xdr)))
-  
+
   (def (generate-proto-events proto-id id events)
     (map (cut generate-proto-event proto-id id <>)
          events))
@@ -582,7 +582,7 @@ package: std/actor
                                                  1 port))
                          (lambda (obj port)
                            (xdr-vector-like-write obj 1 port)))))))))
-  
+
   (def (generate-proto-structures proto-id structures)
     (map (cut generate-proto-structure proto-id <>)
          structures))
@@ -596,7 +596,7 @@ package: std/actor
         (let (mid (expander-context-id (current-expander-context)))
           (stx-identifier proto-id mid "#" proto-id))))
       (genident proto-id)))
-  
+
   (syntax-case stx ()
     ((_ proto-id clause ...)
      (identifier? #'proto-id)

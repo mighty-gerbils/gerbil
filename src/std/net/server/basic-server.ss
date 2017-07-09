@@ -14,10 +14,10 @@ package: std/net/server
 
 (def (basic-socket-server)
   (def socks (make-hash-table-eq))
-  
+
   (def (wait-io! io timeo)
     (##wait-for-io! io (or timeo #t)))
-  
+
   (def (add-socket sock)
     (let* ((io-in (fd-io-in sock))
            (wait-in
@@ -50,11 +50,11 @@ package: std/net/server
       (if shutdown
         (shutdown-socket! sock shutdown)
         (close-output-port sock)))
-    
+
     (with ((!socket sock _ wait-in wait-out) ssock)
       (when (or wait-in wait-out)
         (let (state (hash-get socks sock))
-          (match state 
+          (match state
             ((!socket-state _ io-in io-out)
              (case dir
                ((in)
@@ -90,5 +90,5 @@ package: std/net/server
     (for-each close-port (hash-keys socks))
     ;; release refs to raw devices
     (set! socks #f))
-  
+
   (server-loop #f void add-socket close-socket shutdown!))

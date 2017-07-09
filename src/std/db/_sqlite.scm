@@ -13,13 +13,13 @@
 (namespace ("std/db/_sqlite#"))
 (##namespace ("" define-macro define let let* if or and
               quote quasiquote unquote unquote-splicing
-              c-lambda c-define-type c-declare c-initialize 
+              c-lambda c-define-type c-declare c-initialize
               ))
 
 (c-declare #<<END-C
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>           
+#include <string.h>
 #include <sqlite3.h>
 
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
@@ -170,7 +170,7 @@ static int ffi_sqlite3_prepare (sqlite3_stmt** stmt, sqlite3* db, const char *sq
  int r = sqlite3_prepare_v2 (db, sql, strlen (sql), stmt, NULL);
  if (r != SQLITE_OK) {
   sqlite3_finalize (*stmt);
- }                
+ }
  return r;
 }
 

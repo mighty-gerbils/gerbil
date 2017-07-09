@@ -38,7 +38,7 @@ package: std
                             (procedure-id arg (... ...)))
                            (id (identifier? #'id) procedure-id))))))
       #'(begin dispatch-table procedure meta)))
-      
+
   (syntax-case stx ()
     ((_ id)
      (identifier? #'id)
@@ -59,7 +59,7 @@ package: std
 (defsyntax (defmethod stx)
   (def (wrap e-stx)
     (stx-wrap-source e-stx (stx-source stx)))
-  
+
   (def (class-method-option? x)
     (memq (stx-e x) '(rebind:)))
 
@@ -84,7 +84,7 @@ package: std
           #'((class-instace? class::t arg-id) class::t)))
        (else
         (raise-syntax-error #f "Bad syntax; unknown argument type" stx)))))
-  
+
   (syntax-case stx (@method)
     ((_ (@method id type) impl . opts)
      (and (identifier? #'id)
@@ -92,9 +92,9 @@ package: std
           (stx-plist? #'opts class-method-option?))
      (with-syntax* (((values klass)
                      (syntax-local-value #'type))
-                    (type::t 
+                    (type::t
                      (runtime-type-identifier klass))
-                    (name 
+                    (name
                      (stx-identifier #'id #'type "::" #'id))
                     (defimpl
                       (wrap #'(def name impl)))
@@ -103,7 +103,7 @@ package: std
                     (bind
                      (wrap #'(bind-method! type::t 'id name rebind?))))
        (wrap #'(begin defimpl bind))))
-    
+
     ((_ (generic-id (arg-id type-id) ...) body ...)
      (and (identifier? #'generic-id)
           (generic-info? (syntax-local-value #'generic-id false))

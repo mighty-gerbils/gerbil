@@ -6,7 +6,3 @@ namespace: gxc
 
 (import :gerbil/compiler/driver)
 (export (import: :gerbil/compiler/driver))
-
-
-
-

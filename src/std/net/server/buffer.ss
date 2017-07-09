@@ -46,7 +46,7 @@ package: std/net/server
            (fxshift (##u8vector-ref buf (fx+ start 1)) 16)
            (fxshift (##u8vector-ref buf (fx+ start 2)) 8)
            (##u8vector-ref buf (fx+ start 3))))
-  
+
   (with ((!buffer _ buf start end) ibuf)
     (if (fx<= (fx+ start 4) end)
       (begin
@@ -160,7 +160,7 @@ package: std/net/server
       (begin
         (server-output-force obuf)
         (server-output-write-u8 obuf u8)))))
-  
+
 (def (server-output-write-u32 obuf u32)
   (with ((!buffer _ buf start end) obuf)
     (if (fx<= (fx+ start 4) end)

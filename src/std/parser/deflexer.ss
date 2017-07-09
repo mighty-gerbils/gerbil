@@ -22,7 +22,7 @@ package: std/parser
          (raise exn)))
      (lambda ()
        (token-e (parse-rx (stx-e rx))))))
-  
+
   (def (parse-rules id rules)
     (let lp ((rest rules) (defs []) (langs []) (actions []))
       (match rest
@@ -64,7 +64,7 @@ package: std/parser
            (_ (raise-syntax-error #f "Bad syntax; illegal rule" stx rule))))
         (else
          (values (reverse defs) (reverse langs) (reverse actions))))))
-  
+
   (syntax-case stx ()
     ((_ id rule ...)
      (identifier? #'id)

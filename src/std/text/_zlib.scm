@@ -7,7 +7,7 @@
 (namespace ("std/text/_zlib#"))
 (##namespace ("" define-macro define let let* if or and
               quote quasiquote unquote unquote-splicing
-              c-lambda c-define-type c-declare c-initialize 
+              c-lambda c-define-type c-declare c-initialize
               ))
 
 (c-declare #<<END-C
@@ -111,7 +111,7 @@ static int ffi_compress (___SCMOBJ dest, ___SCMOBJ src, int level)
                     level);
  if (r == Z_OK) {
   return destlen;
- } else {                       
+ } else {
   return r;
  }
 }

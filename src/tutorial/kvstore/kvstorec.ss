@@ -53,7 +53,7 @@ package: tutorial/kvstore
   (def helpcmd
     (command 'help help: "display usage help"
              (optional-argument 'command value: string->symbol)))
-  
+
   (def gopt
     (getopt (option 'server "-s" "--server"
                     default: "127.0.0.1:9999"

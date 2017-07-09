@@ -167,4 +167,3 @@ package: std/db
   (if (statement-e stmt)
     {columns stmt}
     (error "Invalid operation; statement finalized" stmt)))
-

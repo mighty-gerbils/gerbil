@@ -8,7 +8,7 @@
 
 (define (compile modf)
   (displayln "... compile " modf)
-  (let ((proc (open-process 
+  (let ((proc (open-process
                (list path: "gsc"
                      arguments: (list "-cc-options" "--param max-gcse-memory=300000000" modf)
                      stdout-redirection: #f))))

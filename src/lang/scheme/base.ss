@@ -237,4 +237,3 @@ package: scheme
   write-u8
   zero?
   )
-

@@ -9,7 +9,7 @@ package: std
 (export coroutine coroutine? continue yield)
 
 ;; _gambit#.scm
-(extern namespace: #f 
+(extern namespace: #f
   macro-thread-end-condvar)
 
 (defstruct cort (mutex put get e op k)
@@ -20,7 +20,7 @@ package: std
                           (make-condition-variable 'coroutine-put)
                           (make-condition-variable 'coroutine-put)
                           #f #f #f))
-         (thread (make-thread 
+         (thread (make-thread
                   (cut coroutine-start! cort proc args)
                   (or (##procedure-name proc) 'coroutine))))
     (set! (thread-specific thread) cort)
@@ -34,12 +34,12 @@ package: std
         (mutex-unlock! (cort-mutex cort) (cort-put cort))
         (mutex-lock! (cort-mutex cort))
         (get))))
-  
+
   (let (xargs (with-lock (cort-mutex cort) get))
     (apply proc (append args (values->list xargs)))))
 
 (def (coroutine? thread)
-  (and (thread? thread) 
+  (and (thread? thread)
        (cort? (thread-specific thread))))
 
 (def (continue thread . args)
@@ -61,9 +61,9 @@ package: std
         (thread-join! thread))
        ((eq? (cort-op cort) 'get)
         (cort-e cort))
-       (else 
+       (else
         (wait cort)))))
-  
+
   (def (put cort)
     (when (cort-k cort)
       (error "Producer conflict" thread (cort-k cort)))
@@ -74,7 +74,7 @@ package: std
      (condition-variable-signal! (cort-put cort))
      (wait cort)
      (finally (set! (cort-k cort) #f))))
-  
+
   (let (cort (thread-specific thread))
     (with-lock (cort-mutex cort) (cut put cort))))
 
@@ -85,7 +85,7 @@ package: std
     (if (eq? (cort-op cort) 'put)
       (cort-e cort)
       (wait cort)))
-  
+
   (def (get cort)
     (unless (cort-k cort)
       (error "No consumer"))

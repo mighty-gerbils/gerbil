@@ -9,18 +9,18 @@
 ;;; the MIT Scheme copyright:
 ;;;     Copyright (c) 1988-1995 Massachusetts Institute of Technology
 ;;; The MIT Scheme license is a "free software" license. See the end of
-;;; this file for the tedious details. 
+;;; this file for the tedious details.
 
 ;;; Exports:
 ;;; char-set? char-set= char-set<=
-;;; char-set-hash 
+;;; char-set-hash
 ;;; char-set-cursor char-set-ref char-set-cursor-next end-of-char-set?
 ;;; char-set-fold char-set-unfold char-set-unfold!
 ;;; char-set-for-each char-set-map
 ;;; char-set-copy char-set
 ;;;
-;;; list->char-set  string->char-set 
-;;; list->char-set! string->char-set! 
+;;; list->char-set  string->char-set
+;;; list->char-set! string->char-set!
 ;;;
 ;;; filterchar-set  ucs-range->char-set  ->char-set
 ;;; filterchar-set! ucs-range->char-set!
@@ -30,12 +30,12 @@
 ;;; char-set-size char-set-count char-set-contains?
 ;;; char-set-every char-set-any
 ;;;
-;;; char-set-adjoin  char-set-delete 
+;;; char-set-adjoin  char-set-delete
 ;;; char-set-adjoin! char-set-delete!
-;;; 
+;;;
 
-;;; char-set-complement  char-set-union  char-set-intersection  
-;;; char-set-complement! char-set-union! char-set-intersection! 
+;;; char-set-complement  char-set-union  char-set-intersection
+;;; char-set-complement! char-set-union! char-set-intersection!
 ;;;
 ;;; char-set-difference  char-set-xor  char-set-diff+intersection
 ;;; char-set-difference! char-set-xor! char-set-diff+intersection!
@@ -55,7 +55,7 @@
 ;;;   optional arguments from rest lists.
 ;;; - BITWISE-AND for CHAR-SET-HASH
 ;;; - The SRFI-19 DEFINE-RECORD-TYPE record macro
-;;; - A simple CHECK-ARG procedure: 
+;;; - A simple CHECK-ARG procedure:
 ;;;   (lambda (pred val caller) (if (not (pred val)) (error val caller)))
 
 ;;; This is simple code, not great code. Char sets are represented as 256-char
@@ -114,7 +114,7 @@
 (define (%set0! s i) (string-set! s i c0))
 (define (%set1! s i) (string-set! s i c1))
 
-;;; These do various "s[i] := s[i] op val" operations -- see 
+;;; These do various "s[i] := s[i] op val" operations -- see
 ;;; %CHAR-SET-ALGEBRA. They are used to implement the various
 ;;; set-algebra procedures.
 (define (setv!   s i v) (string-set! s i (%latin1->char v))) ; SET to a Value.
@@ -160,14 +160,14 @@
 ;;; calculation. If this screws up any important properties of the hash
 ;;; function I'd like to hear about it. -Olin)
 ;;;
-;;; If you keep BOUND small enough, the intermediate calculations will 
-;;; always be fixnums. How small is dependent on the underlying Scheme system; 
+;;; If you keep BOUND small enough, the intermediate calculations will
+;;; always be fixnums. How small is dependent on the underlying Scheme system;
 ;;; we use a default BOUND of 2^22 = 4194304, which should hack it in
-;;; Schemes that give you at least 29 signed bits for fixnums. The core 
+;;; Schemes that give you at least 29 signed bits for fixnums. The core
 ;;; calculation that you don't want to overflow is, worst case,
 ;;;     (+ 65535 (* 37 (- bound 1)))
 ;;; where 65535 is the max character code. Choose the default BOUND to be the
-;;; biggest power of two that won't cause this expression to fixnum overflow, 
+;;; biggest power of two that won't cause this expression to fixnum overflow,
 ;;; and everything will be copacetic.
 
 (define (char-set-hash cs . maybe-bound)
@@ -238,13 +238,13 @@
 ;;; mark vector, and -1 for the end-of-char-set cursor.
 ;;;
 ;;; If we represented char sets as a bit set, we could do the following
-;;; trick to pick the lowest bit out of the set: 
+;;; trick to pick the lowest bit out of the set:
 ;;;   (count-bits (xor (- cset 1) cset))
 ;;; (But first mask out the bits already scanned by the cursor first.)
 
 (define (char-set-cursor cset)
   (%char-set-cursor-next cset 256 char-set-cursor))
-  
+
 (define (end-of-char-set? cursor) (< cursor 0))
 
 (define (char-set-ref cset cursor) (%latin1->char cursor))
@@ -660,14 +660,14 @@
 					    #x00D7 ; MULTIPLICATION SIGN
 					    #x00F7)))) ; DIVISION SIGN
     (list->char-set! latin-1-chars ascii)))
-  
+
 
 (define char-set:graphic
   (char-set-union char-set:letter+digit char-set:punctuation char-set:symbol))
 
 (define char-set:whitespace
   (list->char-set (map %latin1->char '(#x09 ; HORIZONTAL TABULATION
-				       #x0A ; LINE FEED		
+				       #x0A ; LINE FEED
 				       #x0B ; VERTICAL TABULATION
 				       #x0C ; FORM FEED
 				       #x0D ; CARRIAGE RETURN
@@ -717,7 +717,7 @@
 ;;; early, so that the actual body of the procedures can assume proper values.
 ;;; This isn't likely; this kind of compiler technology isn't common any
 ;;; longer.
-;;; 
+;;;
 ;;; The overhead of optional-argument parsing is irritating. The optional
 ;;; arguments must be consed into a rest list on entry, and then parsed out.
 ;;; Function call should be a matter of a few register moves and a jump; it
@@ -729,7 +729,7 @@
 ;;; Note that optional arguments are also a barrier to procedure integration.
 ;;; If your Scheme system permits you to specify alternate entry points
 ;;; for a call when the number of optional arguments is known in a manner
-;;; that enables inlining/integration, this can provide performance 
+;;; that enables inlining/integration, this can provide performance
 ;;; improvements.
 ;;;
 ;;; There is enough *explicit* error checking that *all* internal operations
@@ -747,7 +747,7 @@
 ;;; arguments. But all other types to all other procedures are fully
 ;;; checked.
 ;;;
-;;; This does open up the alternate possibility of simply *removing* these 
+;;; This does open up the alternate possibility of simply *removing* these
 ;;; checks, and letting the safe primitives raise the errors. On a dumb
 ;;; Scheme system, this would provide speed (by eliminating the redundant
 ;;; error checks) at the cost of error-message clarity.
@@ -758,7 +758,7 @@
 ;;;
 ;;; It would also be nice to have the ability to mark some of these
 ;;; routines as candidates for inlining/integration.
-;;; 
+;;;
 ;;; See the comments preceding the hash function code for notes on tuning
 ;;; the default bound so that the code never overflows your implementation's
 ;;; fixnum size into bignum calculation.
@@ -773,30 +773,30 @@
 ;;; Copyright notice
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Copyright (c) 1988-1995 Massachusetts Institute of Technology
-;;; 
+;;;
 ;;; This material was developed by the Scheme project at the Massachusetts
 ;;; Institute of Technology, Department of Electrical Engineering and
 ;;; Computer Science.  Permission to copy and modify this software, to
 ;;; redistribute either the original software or a modified version, and
 ;;; to use this software for any purpose is granted, subject to the
 ;;; following restrictions and understandings.
-;;; 
+;;;
 ;;; 1. Any copy made of this software must include this copyright notice
 ;;; in full.
-;;; 
+;;;
 ;;; 2. Users of this software agree to make their best efforts (a) to
 ;;; return to the MIT Scheme project any improvements or extensions that
 ;;; they make, so that these may be included in future releases; and (b)
 ;;; to inform MIT of noteworthy uses of this software.
-;;; 
+;;;
 ;;; 3. All materials developed as a consequence of the use of this
 ;;; software shall duly acknowledge such use, in accordance with the usual
 ;;; standards of acknowledging credit in academic research.
-;;; 
+;;;
 ;;; 4. MIT has made no warrantee or representation that the operation of
 ;;; this software will be error-free, and MIT is under no obligation to
 ;;; provide any services, by way of maintenance, update, or otherwise.
-;;; 
+;;;
 ;;; 5. In conjunction with products arising from the use of this material,
 ;;; there shall be no use of the name of the Massachusetts Institute of
 ;;; Technology nor of any adaptation thereof in any advertising,

@@ -42,7 +42,7 @@ namespace: gx
 ;;  (%#quote-syntax <form>)
 ;;  (%#lambda <lambda-head> <expr>)
 ;;  (%#case-lambda (<lambda-head> <expr) ...)
-;;  (%#let-values (<let-binding> ...) <expr>) 
+;;  (%#let-values (<let-binding> ...) <expr>)
 ;;  (%#letrec-values (<let-binding> ...) <expr>)
 ;;  (%#letrec*-values (<let-binding> ...) <expr>)
 ;;  (%#ref <identifier>)
@@ -61,7 +61,7 @@ namespace: gx
 ;;
 
 (def *core-syntax-expanders*
-  `((%#begin            top:     ,core-expand-begin% 
+  `((%#begin            top:     ,core-expand-begin%
                         ,core-compile-top-begin%)
     (%#begin-syntax     top:     ,core-expand-begin-syntax%
                         ,core-compile-top-begin-syntax%)
@@ -81,7 +81,7 @@ namespace: gx
                         ,core-compile-top-provide%)
     (%#declare          module:   ,core-expand-declare%
                         ,core-compile-top-declare%)
-    (%#cond-expand      special: ,core-expand-cond-expand% 
+    (%#cond-expand      special: ,core-expand-cond-expand%
                         #f)
     (%#include          special: ,core-expand-include%
                         #f)
@@ -170,7 +170,7 @@ namespace: gx
 (defmethod {:init! top-context}
   (lambda (self (super #f))
     (let (super (or super (core-context-root) (make-root-context)))
-      (struct-instance-init! self 'top (make-hash-table-eq) 
+      (struct-instance-init! self 'top (make-hash-table-eq)
                                     super #f #f))))
 
 (defmethod {bind-core-syntax-expanders! expander-context}
@@ -191,7 +191,7 @@ namespace: gx
                   expander id (or compiler core-compile-top-error))))))))
       bindings)))
 
-(defmethod {bind-core-macro-expanders! expander-context} 
+(defmethod {bind-core-macro-expanders! expander-context}
   (lambda (self (bindings *core-macro-expanders*))
     (for-each
       (lambda (bind)

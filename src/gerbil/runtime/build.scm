@@ -15,7 +15,7 @@
 
 (define (compile modf)
   (displayln "... compile " modf)
-  (let ((proc (open-process 
+  (let ((proc (open-process
                (list path: "gsc"
                      arguments: (list "-o" *libdir*
                                       "-cc-options" "--param max-gcse-memory=300000000"

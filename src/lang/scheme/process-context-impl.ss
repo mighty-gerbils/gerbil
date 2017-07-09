@@ -51,7 +51,7 @@ END-C
     (let (ix (string-index str #\=))
       (cons (substring str 0 ix)
             (substring str (fx1+ ix) (string-length str)))))
-  
+
   (let (count (count-envvars))
     (let lp ((x 0) (vars []))
       (if (fx< x count)
@@ -63,5 +63,3 @@ END-C
 
 (def (emergency-exit (normally? #t))
   (_exit (if normally? 0 1)))
-
-

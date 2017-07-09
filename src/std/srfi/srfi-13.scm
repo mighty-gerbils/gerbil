@@ -9,21 +9,21 @@
 ;;; Exports:
 ;;; string-map string-map!
 ;;; string-fold       string-unfold
-;;; string-fold-right string-unfold-right 
+;;; string-fold-right string-unfold-right
 ;;; string-tabulate string-for-each string-for-each-index
 ;;; string-every string-any
 ;;; string-hash string-hash-ci
 ;;; string-compare string-compare-ci
 ;;; string=    string<    string>    string<=    string>=    string<>
-;;; string-ci= string-ci< string-ci> string-ci<= string-ci>= string-ci<> 
-;;; string-downcase  string-upcase  string-titlecase  
-;;; string-downcase! string-upcase! string-titlecase! 
+;;; string-ci= string-ci< string-ci> string-ci<= string-ci>= string-ci<>
+;;; string-downcase  string-upcase  string-titlecase
+;;; string-downcase! string-upcase! string-titlecase!
 ;;; string-take string-take-right
 ;;; string-drop string-drop-right
 ;;; string-pad string-pad-right
 ;;; string-trim string-trim-right string-trim-both
 ;;; string-filter string-delete
-;;; string-index string-index-right 
+;;; string-index string-index-right
 ;;; string-skip  string-skip-right
 ;;; string-count
 ;;; string-prefix-length string-prefix-length-ci
@@ -40,12 +40,12 @@
 ;;; string-join
 ;;; string-tokenize
 ;;; string-replace
-;;; 
+;;;
 ;;; R5RS extended:
-;;; string->list string-copy string-fill! 
+;;; string->list string-copy string-fill!
 ;;;
 ;;; R5RS re-exports:
-;;; string? make-string string-length string-ref string-set! 
+;;; string? make-string string-length string-ref string-set!
 ;;;
 ;;; R5RS re-exports (also defined here but commented-out):
 ;;; string string-append list->string
@@ -69,27 +69,27 @@
 ;;;
 ;;; - Various imports from the char-set library for the routines that can
 ;;;   take char-set arguments;
-;;;   
+;;;
 ;;; - An n-ary ERROR procedure;
-;;;   
+;;;
 ;;; - BITWISE-AND for the hash functions;
-;;;   
-;;; - A simple CHECK-ARG procedure for checking parameter values; it is 
-;;;   (lambda (pred val proc) 
+;;;
+;;; - A simple CHECK-ARG procedure for checking parameter values; it is
+;;;   (lambda (pred val proc)
 ;;;     (if (pred val) val (error "Bad arg" val pred proc)))
-;;;   
-;;; - :OPTIONAL and LET-OPTIONALS* macros for parsing, defaulting & 
+;;;
+;;; - :OPTIONAL and LET-OPTIONALS* macros for parsing, defaulting &
 ;;;   type-checking optional parameters from a rest argument;
-;;;   
-;;; - CHAR-CASED? and CHAR-TITLECASE for the STRING-TITLECASE & 
+;;;
+;;; - CHAR-CASED? and CHAR-TITLECASE for the STRING-TITLECASE &
 ;;;   STRING-TITLECASE! procedures. The former returns true iff a character is
 ;;;   one that has case distinctions; in ASCII it returns true on a-z and A-Z.
 ;;;   CHAR-TITLECASE is analagous to CHAR-UPCASE and CHAR-DOWNCASE. In ASCII &
 ;;;   Latin-1, it is the same as CHAR-UPCASE.
 ;;;
 ;;; The code depends upon a small set of core string primitives from R5RS:
-;;;     MAKE-STRING STRING-REF STRING-SET! STRING? STRING-LENGTH SUBSTRING 
-;;; (Actually, SUBSTRING is not a primitive, but we assume that an 
+;;;     MAKE-STRING STRING-REF STRING-SET! STRING? STRING-LENGTH SUBSTRING
+;;; (Actually, SUBSTRING is not a primitive, but we assume that an
 ;;; implementation's native version is probably faster than one we could
 ;;; define, so we import it from R5RS.)
 ;;;
@@ -97,7 +97,7 @@
 ;;;   char? char=? char-ci=? char<? char-ci<?
 ;;;   char-upcase char-downcase
 ;;;   char->integer (for the hash functions)
-;;;   
+;;;
 ;;; We assume the following:
 ;;; - CHAR-DOWNCASE o CHAR-UPCASE = CHAR-DOWNCASE
 ;;; - CHAR-CI=? is equivalent to
@@ -126,7 +126,7 @@
      (receive (rest start end) (string-parse-start+end proc s-exp args-exp)
        body ...))))
 
-;;; This one parses out a *pair* of final start/end indices. 
+;;; This one parses out a *pair* of final start/end indices.
 ;;; Not exported; for internal use.
 (define-syntax let-string-start+end2
   (syntax-rules ()
@@ -196,7 +196,7 @@
 
 
 
-;;; substring/shared S START [END] 
+;;; substring/shared S START [END]
 ;;; string-copy      S [START END]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -292,12 +292,12 @@
 	  v))))
 
 ;;; (string-unfold p f g seed [base make-final])
-;;; This is the fundamental constructor for strings. 
+;;; This is the fundamental constructor for strings.
 ;;; - G is used to generate a series of "seed" values from the initial seed:
 ;;;     SEED, (G SEED), (G^2 SEED), (G^3 SEED), ...
-;;; - P tells us when to stop -- when it returns true when applied to one 
+;;; - P tells us when to stop -- when it returns true when applied to one
 ;;;   of these seed values.
-;;; - F maps each seed value to the corresponding character 
+;;; - F maps each seed value to the corresponding character
 ;;;   in the result string. These chars are assembled into the
 ;;;   string in a left-to-right order.
 ;;; - BASE is the optional initial/leftmost portion of the constructed string;
@@ -313,7 +313,7 @@
 ;;;                    (if (p seed) (make-final seed)
 ;;;                        (string-append (string (f seed))
 ;;;                                       (recur (g seed)))))))
-;;; 
+;;;
 ;;; STRING-UNFOLD is a fairly powerful constructor -- you can use it to
 ;;; reverse a string, copy a string, convert a list to a string, read
 ;;; a port into a string, and so forth. Examples:
@@ -322,7 +322,7 @@
 ;;;                  read-char values port)
 ;;;
 ;;; (list->string lis) = (string-unfold null? car cdr lis)
-;;; 
+;;;
 ;;; (tabulate-string f size) = (string-unfold (lambda (i) (= i size)) f add1 0)
 
 ;;; A problem with the following simple formulation is that it pushes one
@@ -439,7 +439,7 @@
 	      (%string-copy! ans 0 final 0 flen)	; Install FINAL.
 	      (%string-copy! ans flen chunk i chunk-len); Install CHUNK[I,).
 	      (let lp ((j (+ flen chunk-used))		; Install CHUNKS.
-		       (chunks chunks))		
+		       (chunks chunks))
 		  (if (pair? chunks)
 		      (let* ((chunk  (car chunks))
 			     (chunks (cdr chunks))
@@ -455,7 +455,7 @@
   (let-string-start+end (start end) string-for-each s maybe-start+end
     (let lp ((i start))
       (if (< i end)
-	  (begin (proc (string-ref s i)) 
+	  (begin (proc (string-ref s i))
 		 (lp (+ i 1)))))))
 
 (define (string-for-each-index proc s . maybe-start+end)
@@ -595,22 +595,22 @@
 
 
 (define (string-prefix-length s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-prefix-length s1 s2 maybe-starts+ends
     (%string-prefix-length s1 start1 end1 s2 start2 end2)))
 
 (define (string-suffix-length s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-suffix-length s1 s2 maybe-starts+ends
     (%string-suffix-length s1 start1 end1 s2 start2 end2)))
 
 (define (string-prefix-length-ci s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-prefix-length-ci s1 s2 maybe-starts+ends
     (%string-prefix-length-ci s1 start1 end1 s2 start2 end2)))
 
 (define (string-suffix-length-ci s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-suffix-length-ci s1 s2 maybe-starts+ends
     (%string-suffix-length-ci s1 start1 end1 s2 start2 end2)))
 
@@ -623,22 +623,22 @@
 ;;; These are all simple derivatives of the previous counting funs.
 
 (define (string-prefix? s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-prefix? s1 s2 maybe-starts+ends
     (%string-prefix? s1 start1 end1 s2 start2 end2)))
 
 (define (string-suffix? s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-suffix? s1 s2 maybe-starts+ends
     (%string-suffix? s1 start1 end1 s2 start2 end2)))
 
 (define (string-prefix-ci? s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-prefix-ci? s1 s2 maybe-starts+ends
     (%string-prefix-ci? s1 start1 end1 s2 start2 end2)))
 
 (define (string-suffix-ci? s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-suffix-ci? s1 s2 maybe-starts+ends
     (%string-suffix-ci? s1 start1 end1 s2 start2 end2)))
 
@@ -710,7 +710,7 @@
   (check-arg procedure? proc< string-compare)
   (check-arg procedure? proc= string-compare)
   (check-arg procedure? proc> string-compare)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-compare s1 s2 maybe-starts+ends
     (%string-compare s1 start1 end1 s2 start2 end2 proc< proc= proc>)))
 
@@ -718,7 +718,7 @@
   (check-arg procedure? proc< string-compare-ci)
   (check-arg procedure? proc= string-compare-ci)
   (check-arg procedure? proc> string-compare-ci)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-compare-ci s1 s2 maybe-starts+ends
     (%string-compare-ci s1 start1 end1 s2 start2 end2 proc< proc= proc>)))
 
@@ -732,7 +732,7 @@
 ;;; I sure hope the %STRING-COMPARE calls get integrated.
 
 (define (string= s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string= s1 s2 maybe-starts+ends
     (and (= (- end1 start1) (- end2 start2))			; Quick filter
 	 (or (and (eq? s1 s2) (= start1 start2))		; Fast path
@@ -742,7 +742,7 @@
 			      (lambda (i) #f))))))
 
 (define (string<> s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string<> s1 s2 maybe-starts+ends
     (or (not (= (- end1 start1) (- end2 start2)))		; Fast path
 	(and (not (and (eq? s1 s2) (= start1 start2)))		; Quick filter
@@ -752,7 +752,7 @@
 			      values)))))
 
 (define (string< s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string< s1 s2 maybe-starts+ends
     (if (and (eq? s1 s2) (= start1 start2))			; Fast path
 	(< end1 end2)
@@ -763,7 +763,7 @@
 			 (lambda (i) #f)))))
 
 (define (string> s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string> s1 s2 maybe-starts+ends
     (if (and (eq? s1 s2) (= start1 start2))			; Fast path
 	(> end1 end2)
@@ -774,7 +774,7 @@
 			 values))))
 
 (define (string<= s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string<= s1 s2 maybe-starts+ends
     (if (and (eq? s1 s2) (= start1 start2))			; Fast path
 	(<= end1 end2)
@@ -785,7 +785,7 @@
 			 (lambda (i) #f)))))
 
 (define (string>= s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string>= s1 s2 maybe-starts+ends
     (if (and (eq? s1 s2) (= start1 start2))			; Fast path
 	(>= end1 end2)
@@ -796,7 +796,7 @@
 			 values))))
 
 (define (string-ci= s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-ci= s1 s2 maybe-starts+ends
     (and (= (- end1 start1) (- end2 start2))			; Quick filter
 	 (or (and (eq? s1 s2) (= start1 start2))		; Fast path
@@ -806,7 +806,7 @@
 				 (lambda (i) #f))))))
 
 (define (string-ci<> s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-ci<> s1 s2 maybe-starts+ends
     (or (not (= (- end1 start1) (- end2 start2)))		; Fast path
 	(and (not (and (eq? s1 s2) (= start1 start2)))		; Quick filter
@@ -816,7 +816,7 @@
 				 values)))))
 
 (define (string-ci< s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-ci< s1 s2 maybe-starts+ends
     (if (and (eq? s1 s2) (= start1 start2))			; Fast path
 	(< end1 end2)
@@ -827,7 +827,7 @@
 			    (lambda (i) #f)))))
 
 (define (string-ci> s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-ci> s1 s2 maybe-starts+ends
     (if (and (eq? s1 s2) (= start1 start2))			; Fast path
 	(> end1 end2)
@@ -838,7 +838,7 @@
 			    values))))
 
 (define (string-ci<= s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-ci<= s1 s2 maybe-starts+ends
     (if (and (eq? s1 s2) (= start1 start2))			; Fast path
 	(<= end1 end2)
@@ -849,7 +849,7 @@
 			    (lambda (i) #f)))))
 
 (define (string-ci>= s1 s2 . maybe-starts+ends)
-  (let-string-start+end2 (start1 end1 start2 end2) 
+  (let-string-start+end2 (start1 end1 start2 end2)
 			 string-ci>= s1 s2 maybe-starts+ends
     (if (and (eq? s1 s2) (= start1 start2))			; Fast path
 	(>= end1 end2)
@@ -868,14 +868,14 @@
 ;;; calculation. If this screws up any important properties of the hash
 ;;; function I'd like to hear about it. -Olin)
 ;;;
-;;; If you keep BOUND small enough, the intermediate calculations will 
-;;; always be fixnums. How small is dependent on the underlying Scheme system; 
+;;; If you keep BOUND small enough, the intermediate calculations will
+;;; always be fixnums. How small is dependent on the underlying Scheme system;
 ;;; we use a default BOUND of 2^22 = 4194304, which should hack it in
-;;; Schemes that give you at least 29 signed bits for fixnums. The core 
+;;; Schemes that give you at least 29 signed bits for fixnums. The core
 ;;; calculation that you don't want to overflow is, worst case,
 ;;;     (+ 65535 (* 37 (- bound 1)))
 ;;; where 65535 is the max character code. Choose the default BOUND to be the
-;;; biggest power of two that won't cause this expression to fixnum overflow, 
+;;; biggest power of two that won't cause this expression to fixnum overflow,
 ;;; and everything will be copacetic.
 
 (define (%string-hash s char->int bound start end)
@@ -965,12 +965,12 @@
 ;;; string-take-right string nchars
 ;;; string-drop-right string nchars
 ;;;
-;;; string-pad string k [char start end] 
-;;; string-pad-right string k [char start end] 
-;;; 
-;;; string-trim       string [char/char-set/pred start end] 
-;;; string-trim-right string [char/char-set/pred start end] 
-;;; string-trim-both  string [char/char-set/pred start end] 
+;;; string-pad string k [char start end]
+;;; string-pad-right string k [char start end]
+;;;
+;;; string-trim       string [char/char-set/pred start end]
+;;; string-trim-right string [char/char-set/pred start end]
+;;; string-trim-both  string [char/char-set/pred start end]
 ;;;
 ;;; These trimmers invert the char-set meaning from MIT Scheme -- you
 ;;; say what you want to trim.
@@ -1059,9 +1059,9 @@
 ;;; string-filter char/char-set/pred string [start end]
 ;;;
 ;;; If the criterion is a char or char-set, we scan the string twice with
-;;;   string-fold -- once to determine the length of the result string, 
+;;;   string-fold -- once to determine the length of the result string,
 ;;;   and once to do the filtered copy.
-;;; If the criterion is a predicate, we don't do this double-scan strategy, 
+;;; If the criterion is a predicate, we don't do this double-scan strategy,
 ;;;   because the predicate might have side-effects or be very expensive to
 ;;;   compute. So we preallocate a temp buffer pessimistically, and only do
 ;;;   one scan over S. This is likely to be faster and more space-efficient
@@ -1248,7 +1248,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; string-fill! string char [start end]
-;;; 
+;;;
 ;;; string-copy! to tstart from [fstart fend]
 ;;; 	Guaranteed to work, even if s1 eq s2.
 
@@ -1286,7 +1286,7 @@
 ;;; See below for fast KMP version.
 
 ;(define (string-contains string substring . maybe-starts+ends)
-;  (let-string-start+end2 (start1 end1 start2 end2) 
+;  (let-string-start+end2 (start1 end1 start2 end2)
 ;                         string-contains string substring maybe-starts+ends
 ;    (let* ((len (- end2 start2))
 ;	   (i-bound (- end1 len)))
@@ -1322,7 +1322,7 @@
 ;;;     Alfred V. Aho
 ;;;     Formal Language Theory - Perspectives and Open Problems
 ;;;     Ronald V. Brook (editor)
-;;; This algorithm is O(m + n) where m and n are the 
+;;; This algorithm is O(m + n) where m and n are the
 ;;; lengths of the pattern and string respectively
 
 ;;; KMP search source[start,end) for PATTERN. Return starting index of
@@ -1343,7 +1343,7 @@
 	       (if (c= (string-ref text ti) ; Search.
 		       (string-ref pattern (+ p-start pi)))
 		   (lp (+ 1 ti) (+ 1 pi) (- tj 1) (- pj 1)) ; Advance.
-		   
+
 		   (let ((pi (vector-ref rv pi))) ; Retreat.
 		     (if (= pi -1)
 			 (lp (+ ti 1) 0  (- tj 1) plen) ; Punt.
@@ -1391,7 +1391,7 @@
 
 	    ;; Here's the main loop. We have set rv[0] ... rv[i].
 	    ;; K = I + START -- it is the corresponding index into PATTERN.
-	    (let lp1 ((i 0) (j -1) (k start))	
+	    (let lp1 ((i 0) (j -1) (k start))
 	      (if (< i rvlen-1)
 		  ;; lp2 invariant:
 		  ;;   pat[(k-j) .. k-1] matches pat[start .. start+j-1]
@@ -1414,11 +1414,11 @@
 
 
 ;;; We've matched I chars from PAT. C is the next char from the search string.
-;;; Return the new I after handling C. 
+;;; Return the new I after handling C.
 ;;;
 ;;; The pattern is (VECTOR-LENGTH RV) chars long, beginning at index PAT-START
 ;;; in PAT (PAT-START is usually 0). The I chars of the pattern we've matched
-;;; are 
+;;; are
 ;;;     PAT[PAT-START .. PAT-START + I].
 ;;;
 ;;; It's *not* an oversight that there is no friendly error checking or
@@ -1463,7 +1463,7 @@
 	      ((= si s-end) vi)		; Ran off the end.
 	      (else			; Match s[si] & loop.
 	       (let ((c (string-ref s si)))
-		 (lp (+ si 1)	
+		 (lp (+ si 1)
 		     (let lp2 ((vi vi))	; This is just KMP-STEP.
 		       (if (c= c (string-ref pat (+ vi p-start)))
 			   (+ vi 1)
@@ -1545,7 +1545,7 @@
 (define (string-concatenate/shared strings)
   (let lp ((strings strings) (nchars 0) (first #f))
     (cond ((pair? strings)			; Scan the args, add up total
-	   (let* ((string  (car strings))	; length, remember 1st 
+	   (let* ((string  (car strings))	; length, remember 1st
 		  (tail (cdr strings))		; non-empty string.
 		  (slen (string-length string)))
 	     (if (zero? slen)
@@ -1565,7 +1565,7 @@
 			  (%string-copy! ans i s 0 slen)
 			  (lp (cdr strings) (+ i slen)))))
 		  ans)))))
-			
+
 
 ; Alas, Scheme 48's APPLY blows up if you have many, many arguments.
 ;(define (string-concatenate strings) (apply string-append strings))
@@ -1584,7 +1584,7 @@
 	    (%string-copy! ans i s 0 slen)
 	    (lp (+ i slen) (cdr strings)))))
     ans))
-	  
+
 
 ;;; Defined by R5RS, so commented out here.
 ;(define (string-append . strings) (string-concatenate strings))
@@ -1593,7 +1593,7 @@
 ;;; string-concatenate-reverse/shared string-list [final-string end] -> string
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Return
-;;;   (string-concatenate 
+;;;   (string-concatenate
 ;;;     (reverse
 ;;;       (cons (substring final-string 0 end) string-list)))
 
@@ -1696,19 +1696,19 @@
 ;;; S is a string; START and END are optional arguments that demarcate
 ;;; a substring of S, defaulting to 0 and the length of S (e.g., the whole
 ;;; string). Replicate this substring up and down index space, in both the
-;;  positive and negative directions. For example, if S = "abcdefg", START=3, 
+;;  positive and negative directions. For example, if S = "abcdefg", START=3,
 ;;; and END=6, then we have the conceptual bidirectionally-infinite string
 ;;;     ...  d  e  f  d  e  f  d  e  f  d  e  f  d  e  f  d  e  f  d  e  f ...
 ;;;     ... -9 -8 -7 -6 -5 -4 -3 -2 -1  0  1  2  3  4  5  6  7  8  9 ...
 ;;; XSUBSTRING returns the substring of this string beginning at index FROM,
 ;;; and ending at TO (which defaults to FROM+(END-START)).
-;;; 
+;;;
 ;;; You can use XSUBSTRING in many ways:
 ;;; - To rotate a string left:  (xsubstring "abcdef" 2)  => "cdefab"
 ;;; - To rotate a string right: (xsubstring "abcdef" -2) => "efabcd"
 ;;; - To replicate a string:    (xsubstring "abc" 0 7) => "abcabca"
 ;;;
-;;; Note that 
+;;; Note that
 ;;;   - The FROM/TO indices give a half-open range -- the characters from
 ;;;     index FROM up to, but not including index TO.
 ;;;   - The FROM/TO indices are not in terms of the index space for string S.
@@ -1786,7 +1786,7 @@
 
 	    ;; Selected text falls entirely within one span.
 	    ((= (floor (/ sfrom slen)) (floor (/ sto slen)))
-	     (%string-copy! target tstart s 
+	     (%string-copy! target tstart s
 			    (+ start (modulo sfrom slen))
 			    (+ start (modulo sto   slen))))
 
@@ -1802,11 +1802,11 @@
 
     ;; Copy the partial span @ the beginning
     (%string-copy! target tstart s i0 end)
-		    
+
     (let* ((ncopied (- end i0))			; We've copied this many.
 	   (nleft (- total-chars ncopied))	; # chars left to copy.
 	   (nspans (quotient nleft slen)))	; # whole spans to copy
-			   
+
       ;; Copy the whole spans in the middle.
       (do ((i (+ tstart ncopied) (+ i slen))	; Current target index.
 	   (nspans nspans (- nspans 1)))	; # spans to copy
@@ -1825,11 +1825,11 @@
 ;;; (join-strings '("foo" "bar" "baz") ":") => "foo:bar:baz"
 ;;;
 ;;; DELIMITER defaults to a single space " "
-;;; GRAMMAR is one of the symbols {prefix, infix, strict-infix, suffix} 
+;;; GRAMMAR is one of the symbols {prefix, infix, strict-infix, suffix}
 ;;; and defaults to 'infix.
 ;;;
 ;;; I could rewrite this more efficiently -- precompute the length of the
-;;; answer string, then allocate & fill it in iteratively. Using 
+;;; answer string, then allocate & fill it in iteratively. Using
 ;;; STRING-CONCATENATE is less efficient.
 
 (define (string-join strings . delim+grammar)
@@ -1886,9 +1886,9 @@
 ;;; good as if the error were caught at the "higher level." Also, a very, very
 ;;; smart Scheme compiler may be able to exploit having the type checks done
 ;;; early, so that the actual body of the procedures can assume proper values.
-;;; This isn't likely; this kind of compiler technology isn't common any 
+;;; This isn't likely; this kind of compiler technology isn't common any
 ;;; longer.
-;;; 
+;;;
 ;;; The overhead of optional-argument parsing is irritating. The optional
 ;;; arguments must be consed into a rest list on entry, and then parsed out.
 ;;; Function call should be a matter of a few register moves and a jump; it
@@ -1900,14 +1900,14 @@
 ;;; Note that optional arguments are also a barrier to procedure integration.
 ;;; If your Scheme system permits you to specify alternate entry points
 ;;; for a call when the number of optional arguments is known in a manner
-;;; that enables inlining/integration, this can provide performance 
+;;; that enables inlining/integration, this can provide performance
 ;;; improvements.
 ;;;
 ;;; There is enough *explicit* error checking that *all* string-index
 ;;; operations should *never* produce a bounds error. Period. Feel like
 ;;; living dangerously? *Big* performance win to be had by replacing
-;;; STRING-REF's and STRING-SET!'s with unsafe equivalents in the loops. 
-;;; Similarly, fixnum-specific operators can speed up the arithmetic done on 
+;;; STRING-REF's and STRING-SET!'s with unsafe equivalents in the loops.
+;;; Similarly, fixnum-specific operators can speed up the arithmetic done on
 ;;; the index values in the inner loops. The only arguments that are not
 ;;; completely error checked are
 ;;;   - string lists (complete checking requires time proportional to the
@@ -1918,7 +1918,7 @@
 ;;; arguments. But all other types to all other procedures are fully
 ;;; checked.
 ;;;
-;;; This does open up the alternate possibility of simply *removing* these 
+;;; This does open up the alternate possibility of simply *removing* these
 ;;; checks, and letting the safe primitives raise the errors. On a dumb
 ;;; Scheme system, this would provide speed (by eliminating the redundant
 ;;; error checks) at the cost of error-message clarity.
@@ -1929,14 +1929,14 @@
 ;;;
 ;;; In an interpreted Scheme, some of these procedures, or the internal
 ;;; routines with % prefixes, are excellent candidates for being rewritten
-;;; in C. Consider STRING-HASH, %STRING-COMPARE, the 
+;;; in C. Consider STRING-HASH, %STRING-COMPARE, the
 ;;; %STRING-{SUF,PRE}FIX-LENGTH routines, STRING-COPY!, STRING-INDEX &
 ;;; STRING-SKIP (char-set & char cases), SUBSTRING and SUBSTRING/SHARED,
 ;;; %KMP-SEARCH, and %MULTISPAN-REPCOPY!.
 ;;;
 ;;; It would also be nice to have the ability to mark some of these
 ;;; routines as candidates for inlining/integration.
-;;; 
+;;;
 ;;; All the %-prefixed routines in this source code are written
 ;;; to be called internally to this library. They do *not* perform
 ;;; friendly error checks on the inputs; they assume everything is
@@ -1951,7 +1951,7 @@
 ;;; distant) origins in MIT Scheme's string lib, and was substantially
 ;;; reworked by Olin Shivers (shivers@ai.mit.edu) 9/98. As such, it is
 ;;; covered by MIT Scheme's open source copyright. See below for details.
-;;; 
+;;;
 ;;; The KMP string-search code was influenced by implementations written
 ;;; by Stephen Bevan, Brian Dehneyer and Will Fitzgerald. However, this
 ;;; version was written from scratch by myself.
@@ -1969,23 +1969,23 @@
 ;;; redistribute either the original software or a modified version, and
 ;;; to use this software for any purpose is granted, subject to the
 ;;; following restrictions and understandings.
-;;; 
+;;;
 ;;; 1. Any copy made of this software must include this copyright notice
 ;;; in full.
-;;; 
+;;;
 ;;; 2. Users of this software agree to make their best efforts (a) to
 ;;; return to the MIT Scheme project any improvements or extensions that
 ;;; they make, so that these may be included in future releases; and (b)
 ;;; to inform MIT of noteworthy uses of this software.
-;;; 
+;;;
 ;;; 3. All materials developed as a consequence of the use of this
 ;;; software shall duly acknowledge such use, in accordance with the usual
 ;;; standards of acknowledging credit in academic research.
-;;; 
+;;;
 ;;; 4. MIT has made no warrantee or representation that the operation of
 ;;; this software will be error-free, and MIT is under no obligation to
 ;;; provide any services, by way of maintenance, update, or otherwise.
-;;; 
+;;;
 ;;; 5. In conjunction with products arising from the use of this material,
 ;;; there shall be no use of the name of the Massachusetts Institute of
 ;;; Technology nor of any adaptation thereof in any advertising,
@@ -1995,7 +1995,7 @@
 ;;; Scsh copyright terms
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; All rights reserved.
-;;; 
+;;;
 ;;; Redistribution and use in source and binary forms, with or without
 ;;; modification, are permitted provided that the following conditions
 ;;; are met:
@@ -2006,7 +2006,7 @@
 ;;;    documentation and/or other materials provided with the distribution.
 ;;; 3. The name of the authors may not be used to endorse or promote products
 ;;;    derived from this software without specific prior written permission.
-;;; 
+;;;
 ;;; THIS SOFTWARE IS PROVIDED BY THE AUTHORS ``AS IS'' AND ANY EXPRESS OR
 ;;; IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
 ;;; OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.

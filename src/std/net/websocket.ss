@@ -50,7 +50,7 @@ package: std/net
          (raise-io-error 'open-websocket-client
                          "Unexpected server response"
                          url status)))
-     
+
      (let* ((rheaders (request-headers req))
             (Connection (assoc "Connection" rheaders))
             (Upgrade (assoc "Upgrade" rheaders))
@@ -78,12 +78,12 @@ package: std/net
            (raise-io-error 'open-websocket-client
                            "Bad server response; nonce verification failure"
                            url nonce64 accept64 verify64)))
-       
+
        (when Sec-WebSocket-Extensions
          (raise-io-error 'open-websocket-client
                          "Bad server response; includes unsupported exensions"
                          url Sec-WebSocket-Extensions))
-       
+
        (when Sec-WebSocket-Protocol
          (let* ((proto (cdr Sec-WebSocket-Protocol))
                 (uproto (assoc "Sec-WebSocket-Protocol" headers))
@@ -92,9 +92,9 @@ package: std/net
              (raise-io-error 'open-websocket-client
                              "Bad server response; unexpected protocol"
                              url Sec-WebSocket-Protocol)))))
-     
+
      (make-websocket-client (request-port req))
-     
+
      (catch (e)
        (request-close req)
        (raise e)))))
@@ -299,7 +299,7 @@ package: std/net
     (let (rd (read-subu8vector buf 0 8 port))
       (let lp ((k 0) (r 0))
         (if (fx< k 8)
-          (lp (fx1+ k) 
+          (lp (fx1+ k)
               (bitwise-ior (arithmetic-shift r 8)
                            (##u8vector-ref buf k)))
           r))))
@@ -307,14 +307,14 @@ package: std/net
   (def (read-eof)
     (websocket-close ws 1002)
     (raise 'eof))
-  
+
   (with ((websocket port _ writer _ q mx cv) ws)
     (def (receive type data)
       (mutex-lock! mx)
       (enqueue! q (cons type data))
       (condition-variable-broadcast! cv)
       (mutex-unlock! mx))
-    
+
     (try
      (let lp ((type #f) (frags []))
       (let* (((values fin opcode mask plen)
@@ -400,7 +400,7 @@ package: std/net
 (def (websocket-writer ws)
   (def buf (make-u8vector 65535))
   (def mask-bytes (make-u8vector 4))
-  
+
   (def (write-u16 plen port)
     (write-u8 (fxand (fxshift plen -8) #xff) port)
     (write-u8 (fxand plen #xff) port))
@@ -414,7 +414,7 @@ package: std/net
                                   (##u8vector-ref mask (fxmodulo x 4))))
           (lp (fx1+ k) (fx1+ x)))
         (write-subu8vector buf 0 x port))))
-  
+
   (def (send-frame port fin opcode data start end)
     (let* ((plen (fx- end start))
            (fin (fxshift fin 7))
@@ -439,7 +439,7 @@ package: std/net
             (let (xend (fx+ start 65535))
               (send-frame port 0 opcode data start xend)
               (lp xend #x0)))))))
-  
+
   (with ((websocket port) ws)
     (try
      (let lp ()

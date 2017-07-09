@@ -120,7 +120,7 @@ package: std/db
               bytes))
            (else
             (error "Unexpected column type" t)))))
-      
+
       (let (count (sqlite3_column_count stmt))
         (case count
           ((0) #!void)
@@ -142,5 +142,3 @@ package: std/db
             (let (name (sqlite3_column_name stmt k))
               (lp (fx1+ k) (cons name cols)))
             (reverse cols)))))))
-
-        

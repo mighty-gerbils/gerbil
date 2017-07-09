@@ -44,7 +44,7 @@ package: scheme
               (spath (string-append ":" spath))
               (mpath (string->symbol spath)))
          (stx-wrap-source mpath (stx-source set))))))
-  
+
   (syntax-case stx ()
     ((_ import-set ...)
      (with-syntax (((import-spec ...)
@@ -61,7 +61,7 @@ package: scheme
            (spath (map symbol->string spath))
            (spath (string-join spath #\/)))
       (string->symbol spath)))
-  
+
   (def (expand-decls decls)
     (let lp ((rest decls) (body []))
       (match rest
@@ -83,7 +83,7 @@ package: scheme
             (lp rest (cons decl body)))))
         (else
          (reverse body)))))
-  
+
   (syntax-case stx ()
     ((_ (id ids ...) decl ...)
      (identifier-list? #'(id ids ...))
@@ -108,7 +108,7 @@ package: scheme
       (id
        (identifier? #'id)
        #'id)))
-  
+
   (syntax-case stx ()
     ((_ exports ...)
      (with-syntax (((export-spec ...) (map export-spec-e #'(exports ...))))

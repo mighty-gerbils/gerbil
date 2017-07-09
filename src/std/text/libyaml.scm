@@ -13,7 +13,7 @@
 (namespace ("std/text/libyaml#"))
 (##namespace ("" define-macro define let let* if or and
               quote quasiquote unquote unquote-splicing
-              c-lambda c-define-type c-declare c-initialize 
+              c-lambda c-define-type c-declare c-initialize
               ))
 
 (c-declare #<<END-C
@@ -60,7 +60,7 @@ static yaml_event_t *ffi_make_event ();
 static yaml_emitter_t *ffi_make_emitter ();
 static void ffi_event_scalar_bytes (yaml_event_t *event, ___SCMOBJ bytes);
 END-C
-)           
+)
 
 (c-define-type FILE "FILE")
 (c-define-type FILE* (pointer FILE (FILE*)))
@@ -160,7 +160,7 @@ static yaml_parser_t *ffi_make_parser ()
 static ___SCMOBJ ffi_release_parser (void *ptr)
 {
  free (ptr);
- return ___FIX (___NO_ERR);                   
+ return ___FIX (___NO_ERR);
 }
 
 static yaml_emitter_t *ffi_make_emitter ()
@@ -171,7 +171,7 @@ static yaml_emitter_t *ffi_make_emitter ()
 static ___SCMOBJ ffi_release_emitter (void *ptr)
 {
  free (ptr);
- return ___FIX (___NO_ERR);                   
+ return ___FIX (___NO_ERR);
 }
 
 static yaml_event_t *ffi_make_event ()
@@ -190,4 +190,4 @@ static void ffi_event_scalar_bytes (yaml_event_t *event, ___SCMOBJ bytes)
  memcpy (U8_DATA (bytes), event->data.scalar.value, event->data.scalar.length);
 }
 END-C
-)           
+)

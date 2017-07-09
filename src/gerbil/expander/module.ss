@@ -49,7 +49,7 @@ namespace: gx
       (if ctx
         (let ((id   (expander-context-id ctx))
               (path (module-context-path ctx))
-              (in   (map core-module-export->import 
+              (in   (map core-module-export->import
                          (module-context-export ctx)))
               (e    (delay (eval-module ctx))))
           (struct-instance-init! self id (make-hash-table-eq) super #f #f
@@ -60,12 +60,12 @@ namespace: gx
 
 (defmethod {:init! import-expander}
   (lambda (self e)
-    (struct-instance-init! self 
+    (struct-instance-init! self
       e (current-expander-context) (fx1- (current-expander-phi)))))
 
 (defmethod {:init! export-expander}
   (lambda (self e)
-    (struct-instance-init! self 
+    (struct-instance-init! self
       e (current-expander-context) (fx1- (current-expander-phi)))))
 
 (defmethod {apply-import-expander import-expander}
@@ -94,9 +94,9 @@ namespace: gx
     (parameterize ((current-expander-context e)
                    (current-expander-phi 0))
       (force (getf e))))
-  
+
   (let recur ((e obj))
-    (cond 
+    (cond
      ((module-context? e)
       (cond ((core-context-prelude e) => recur))
       (force-e module-context-e e))
@@ -134,7 +134,7 @@ namespace: gx
     (parameterize ((current-expander-context (core-context-root))
                    (current-expander-marks [])
                    (current-expander-phi 0)
-                   (current-expander-path 
+                   (current-expander-path
                     (cons path (current-expander-path)))
                    (current-import-expander-phi #f)
                    (current-export-expander-phi #f))
@@ -142,9 +142,9 @@ namespace: gx
         (let* ((prelude
                 (cond
                  ((prelude-context? pre) pre)
-                 ((module-context? pre) 
+                 ((module-context? pre)
                   (core-module->prelude-context pre))
-                 ((string? pre) 
+                 ((string? pre)
                   (core-module->prelude-context
                    (core-import-module pre)))
                  ((not pre)
@@ -152,12 +152,12 @@ namespace: gx
                       (make-prelude-context #f)))
                  (else
                   (error "Cannot import module; unknown prelude" rpath pre))))
-               (ctx 
+               (ctx
                 (make-module-context id prelude ns path))
                (body
                 (core-expand-module-begin body ctx))
                (body
-                (core-quote-syntax 
+                (core-quote-syntax
                  (core-cons '%#begin body)
                  path ctx [])))
           (set! (module-context-e ctx)
@@ -167,19 +167,19 @@ namespace: gx
           (hash-put! (current-expander-module-registry) path ctx)
           (hash-put! (current-expander-module-registry) id ctx)
           ctx))))
-  
+
   (cond
    ((and (not reload?) (hash-get (current-expander-module-registry) rpath))
     => values)
    ((core-library-module-path? rpath)
-    (let (ctx (core-import-module (core-resolve-library-module-path rpath) 
+    (let (ctx (core-import-module (core-resolve-library-module-path rpath)
                                   reload?))
       (hash-put! (current-expander-module-registry) rpath ctx)
       ctx))
    (else
     (let (npath (path-normalize rpath))
       (cond
-       ((and (not reload?) 
+       ((and (not reload?)
              (hash-get (current-expander-module-registry) npath))
         => values)
        (else (import-source npath)))))))
@@ -205,7 +205,7 @@ namespace: gx
                  ((or (stx-string? ns) (stx-false? ns))
                   (stx-e ns))
                  (else
-                  (raise-syntax-error 'import 
+                  (raise-syntax-error 'import
                     "Bad syntax; illegal namespace" ns))))
          (lp rest pre ns pkg)))
       ((package: pkg . rest)
@@ -273,7 +273,7 @@ namespace: gx
       (symbol->string obj))
      (else
       (raise-syntax-error #f (string-append "Illegal module " what) path obj))))
-  
+
   (def (read-lang-args inp args)
     (match args
       ([prelude . args]
@@ -284,7 +284,7 @@ namespace: gx
          (read-body inp prelude pkg ns args)))
       (else
        (raise-syntax-error #f "Illegal #lang arguments; missing prelude" path))))
-  
+
   (def (read-lang inp)
     (let (head (read-line inp))
       (cond
@@ -301,12 +301,12 @@ namespace: gx
                  (raise-syntax-error #f "Illegal module syntax" path)))))
        (else
         (raise-syntax-error #f "Illegal module syntax" path)))))
-  
+
   (def (read-e inp)
     (if (eq? (peek-char inp) #\#)
       (read-lang inp)
       (raise-syntax-error #f "Illegal module syntax" path)))
-  
+
   (call-with-input-file path read-e))
 
 (def (core-module-path->namespace path)
@@ -323,7 +323,7 @@ namespace: gx
                  path)))
     (core-resolve-path path (or (stx-source stx-path) rel))))
 
-;; for each path in current-expander-module-library-path look for 
+;; for each path in current-expander-module-library-path look for
 ;;  subpath with .ssi (compiled module interface) or .ss
 (def (core-resolve-library-module-path libpath)
   (let* ((spath (symbol->string (stx-e libpath)))
@@ -363,25 +363,25 @@ namespace: gx
     (cut expander-binding? <> prelude-context?)))
 
 (def (core-bound-module? stx)
-  (core-bound-identifier? stx 
+  (core-bound-identifier? stx
     (cut expander-binding? <> module-context?)))
 
 (def (core-bound-module-prelude? stx)
   (def (module-prelude? e)
     (or (module-context? e)
         (prelude-context? e)))
-  
+
   (core-bound-identifier? stx
     (cut expander-binding? <> module-prelude?)))
 
-(def (core-bind-import! in 
-                        (ctx (current-expander-context)) 
+(def (core-bind-import! in
+                        (ctx (current-expander-context))
                         (force-weak? #f))
   (with ((module-import source key phi weak?) in)
-    (core-bind! key 
+    (core-bind! key
       (let (e (core-resolve-module-export source))
         (make-import-binding (binding-id e) key phi
-                             e (module-export-context source) 
+                             e (module-export-context source)
                              (or force-weak? weak?)))
       core-context-rebind? phi ctx)))
 
@@ -396,7 +396,7 @@ namespace: gx
          (or (and subst (hash-get subst id))
              (raise-syntax-error #f "Illegal key; missing substitution" key))))
       (else key)))
-  
+
   (with ((module-export ctx key phi _ _) out)
     (core-context-resolve (core-context-shift ctx phi) (subst key))))
 
@@ -425,7 +425,7 @@ namespace: gx
                  (else [bind-id path])))
               bind-id)))
       (make-module-context mod-id super ns path)))
-  
+
   (core-syntax-case stx ()
     ((_ id . body)
      (and (identifier? id)
@@ -443,7 +443,7 @@ namespace: gx
          body)
        (core-bind-syntax! id ctx)
        (core-quote-syntax
-        (core-list '%#module 
+        (core-list '%#module
           (core-quote-syntax id)
           body)
         (stx-source stx))))))
@@ -473,16 +473,16 @@ namespace: gx
        (K rest (cons hd r)))
       (else
        (K rest (cons (core-expand-top hd) r)))))
-  
+
   (def (expand-body rbody)
     (let lp ((rest rbody) (body []))
       (match rest
         ([hd . rest]
          (core-syntax-case hd (%#define-values %#export)
            ((%#define-values hd-bind expr)
-            (lp rest 
-                (cons 
-                 (core-quote-syntax 
+            (lp rest
+                (cons
+                 (core-quote-syntax
                   (core-list '%#define-values
                     (core-quote-bind-values hd-bind)
                     (core-expand-expression expr))
@@ -497,7 +497,7 @@ namespace: gx
            (else
             (lp rest (cons (core-expand-expression hd) body)))))
         (else body))))
-  
+
   (expand-body
    (core-expand-block
     (cons '%#begin-module body)
@@ -509,12 +509,12 @@ namespace: gx
       ((hd . rest)
        (step hd rest r))
       (else r)))
-  
+
   (def (step hd rest r)
     (core-syntax-case hd ()
       ((phi: dphi . body)
        (stx-fixnum? dphi)
-       (let (rbody 
+       (let (rbody
              (parameterize ((current-phi (fx+ (stx-e dphi) (current-phi))))
                (K body [])))
          (K rest (foldr cons r rbody))))
@@ -529,7 +529,7 @@ namespace: gx
        (if (expanded? (stx-e hd))
          (K rest (cons (stx-e hd) r))
          (expand1 hd K rest r)))))
-  
+
   (core-syntax-case stx ()
     ((_ . body)
      (cond
@@ -543,14 +543,14 @@ namespace: gx
   (def (expand1 hd K rest r)
     (cond
      ((core-bound-module? hd)
-      (import1 (syntax-local-e hd) 
+      (import1 (syntax-local-e hd)
                K rest r))
      ((core-library-module-path? hd)
-      (import1 (import-module 
+      (import1 (import-module
                 (core-resolve-library-module-path hd))
                K rest r))
      ((stx-string? hd)
-      (import1 (import-module 
+      (import1 (import-module
                 (core-resolve-module-path hd (stx-source stx)))
                K rest r))
      ((module-context? (stx-e hd))
@@ -563,41 +563,41 @@ namespace: gx
       (import-runtime hd K rest r))
      (else
       (raise-syntax-error #f "Bad syntax; illegal import" stx hd))))
-  
+
   (def (import1 ctx K rest r)
     (let (dphi (fx- (current-import-expander-phi)
                     (current-expander-phi)))
       (K rest
-         (cons (make-import-set ctx dphi 
-                 (map (cut core-module-export->import <> #f dphi) 
+         (cons (make-import-set ctx dphi
+                 (map (cut core-module-export->import <> #f dphi)
                       (module-context-export ctx)))
                r))))
-  
+
   (def (import-spec? hd)
     (core-syntax-case hd ()
       ((spec: spath . specs) #t)
       (else #f)))
-  
+
   (def (import-submodule? hd)
     (core-syntax-case hd ()
       ((in: top . sub) #t)
       (else #f)))
-  
+
   (def (import-runtime? hd)
     (core-syntax-case hd ()
       ((runtime: top . spath) #t)
       (else #f)))
-  
+
   (def (import-submodule hd K rest r)
     (core-syntax-case hd ()
       ((_ . spath)
        (import1 (import-spec-source spath) K rest r))))
-  
+
   (def (import-runtime hd K rest r)
     (core-syntax-case hd ()
       ((_ . spath)
        (K rest (cons (import-spec-source spath) r)))))
-  
+
   (def (import-spec hd K rest r)
     (core-syntax-case hd ()
       ((_ path)
@@ -606,15 +606,15 @@ namespace: gx
        (let ((src-ctx (import-spec-source path))
              (exports (make-hash-table))
              (specs (syntax->list specs)))
-         (for-each 
+         (for-each
            (lambda (out)
-             (hash-put! exports 
+             (hash-put! exports
                         (cons (module-export-phi out)
                               (module-export-name out))
                         out))
            (module-context-export src-ctx))
          (K rest
-            (foldl 
+            (foldl
               (lambda (spec r)
                 (core-syntax-case spec ()
                   ((phi name src-phi src-name)
@@ -629,21 +629,21 @@ namespace: gx
                      (cond
                       ((hash-get exports (cons src-phi src-name))
                      => (lambda (out)
-                          (cons (core-module-export->import 
+                          (cons (core-module-export->import
                                  out name (fx- phi src-phi))
                                 r)))
                     (else
-                     (raise-syntax-error #f "Bad syntax; no matching export" 
+                     (raise-syntax-error #f "Bad syntax; no matching export"
                                          stx hd)))))))
               r specs))))))
-  
+
   (def (import-spec-source spath)
     (core-import-nested-module spath stx))
-  
+
   (def (import! rbody)
     (def current-ctx (current-expander-context))
     (def deps (make-hash-table-eq))
-    
+
     (def (bind! hd)
       (core-bind-import! hd current-ctx)
       ;; track expansion-time eval deps
@@ -654,7 +654,7 @@ namespace: gx
                    (module-export-context
                     (module-import-source hd))
                    #t)))
-  
+
     (def (fold-e in r)
       (cond
        ((module-import? in)
@@ -662,7 +662,7 @@ namespace: gx
        ((import-set? in)
         (foldl cons r (import-set-imports in)))
        (else r)))
-    
+
     (let lp ((rest rbody) (body []))
       (match rest
         ([hd . rest]
@@ -682,12 +682,12 @@ namespace: gx
          ;; eval expander deps
          (hash-for-each (lambda (ctx _) (eval-module ctx)) deps)
          body))))
-  
+
   (def (expanded-import? e)
     (or (import-set? e)
         (module-import? e)
         (module-context? e)))
-  
+
   (let (rbody (core-expand-import/export stx expanded-import?
                                          'apply-import-expander
                                          current-import-expander-phi
@@ -701,8 +701,8 @@ namespace: gx
 (def (core-import-nested-module spath where)
   (core-syntax-case spath ()
     ((origin . sub)
-     (let (origin-ctx 
-           (if (stx-false? origin) 
+     (let (origin-ctx
+           (if (stx-false? origin)
              (current-expander-context)
              (import-module origin)))
        (let lp ((rest sub) (ctx origin-ctx))
@@ -720,16 +720,16 @@ namespace: gx
   (core-expand-import% ['import-internal% hd] #t))
 
 (def (core-expand-export% stx (internal-expand? #f))
-  (def (make-export bind 
+  (def (make-export bind
                     (phi (current-export-expander-phi))
                     (ctx (current-expander-context))
                     (name #f))
     (let* ((key (binding-key bind))
            (export-key (if name (core-identifier-key name) key)))
-      (make-module-export ctx key phi export-key 
+      (make-module-export ctx key phi export-key
                           (or (extern-binding? bind)
                               (import-binding? bind)))))
-  
+
   (def (expand1 hd K rest r)
     (core-syntax-case hd ()
       (#t
@@ -746,7 +746,7 @@ namespace: gx
                 (lp bind-rest
                     (cons (make-export bind current-phi current-ctx)
                           set))))
-             (else 
+             (else
               (K rest (cons (make-export-set #f current-phi set) r)))))))
       (id
        (identifier? id)
@@ -762,31 +762,31 @@ namespace: gx
          (cond
           ((core-resolve-identifier id phi)
            => (lambda (bind)
-                (K rest (cons (make-export bind phi (current-expander-context) 
-                                           name) 
+                (K rest (cons (make-export bind phi (current-expander-context)
+                                           name)
                               r))))
           (else
-           (raise-syntax-error #f "Reference to unbound identifier" 
+           (raise-syntax-error #f "Reference to unbound identifier"
                                stx hd id)))))
       ((rename: id name)
        (let (phi (current-export-expander-phi))
          (cond
           ((core-resolve-identifier id phi)
            => (lambda (bind)
-                (K rest (cons (make-export bind phi (current-expander-context) 
-                                           name) 
+                (K rest (cons (make-export bind phi (current-expander-context)
+                                           name)
                               r))))
           (else
-           (raise-syntax-error #f "Reference to unbound identifier" 
+           (raise-syntax-error #f "Reference to unbound identifier"
                                stx hd id)))))
       ((import: . in)
        (stx-list? in)
        (let lp ((in-rest in) (r r))
          (core-syntax-case in-rest ()
            ((hd . in-rest)
-            (let (src 
+            (let (src
                   (cond
-                   ((core-bound-module? hd) 
+                   ((core-bound-module? hd)
                     (syntax-local-e hd))
                    ((core-library-module-path? hd)
                     (import-module
@@ -799,35 +799,35 @@ namespace: gx
                       ((in: . spath)
                        (core-import-nested-module spath stx))
                       (else
-                       (raise-syntax-error #f 
+                       (raise-syntax-error #f
                          "Bad syntax; illegal re-export" stx hd))))))
               (lp in-rest (export-imports src r))))
            (else
             (K rest r)))))
       (else
        (raise-syntax-error #f "Bad syntax; illegal export" stx hd))))
-  
+
   (def (export-imports src r)
     (def current-ctx (current-expander-context))
     (def current-phi (current-export-expander-phi))
-    
+
     (def (import->export in)
       (with ((module-import out key phi) in)
         (and (fx= phi current-phi)
              (eq? src (module-export-context out))
              (make-module-export current-ctx key phi key #t))))
-    
+
     (def (fold-e in r)
       (let (out (import->export in))
         (if out (cons out r) r)))
-    
+
     (cons (make-export-set src current-phi
             (foldl fold-e [] (module-context-import current-ctx)))
           r))
-  
+
   (def (export! rbody)
     (def current-ctx (current-expander-context))
-    
+
     (def (fold-e out r)
       (cond
        ((module-export? out)
@@ -835,12 +835,12 @@ namespace: gx
        ((export-set? out)
         (foldl cons r (export-set-exports out)))
        (else r)))
-    
+
     (let (body (reverse rbody))
       (set! (module-context-export current-ctx)
         (foldl fold-e (module-context-export current-ctx) body))
       body))
-  
+
   (def (expanded-export? e)
     (or (module-export? e)
         (export-set? e)))
@@ -868,7 +868,7 @@ namespace: gx
         (core-cons '%#provide (stx-map core-quote-syntax body))
         (stx-source stx))))))
 
-(def (core-bind-feature! id 
+(def (core-bind-feature! id
                          (private? #f)
                          (phi (current-expander-phi))
                          (ctx (current-expander-context)))
@@ -876,4 +876,3 @@ namespace: gx
     ((if private? make-private-feature-expander make-feature-expander)
      (stx-e id))
     private? phi ctx))
-

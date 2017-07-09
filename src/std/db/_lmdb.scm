@@ -13,7 +13,7 @@
 (namespace ("std/db/_lmdb#"))
 (##namespace ("" define-macro define let let* if or and
               quote quasiquote unquote unquote-splicing
-              c-lambda c-define-type c-declare c-initialize 
+              c-lambda c-define-type c-declare c-initialize
               ))
 
 (c-declare #<<END-C
@@ -374,7 +374,7 @@ int ffi_mdb_del (MDB_txn *txn, MDB_dbi dbi, ___SCMOBJ key, ___SCMOBJ bytes)
   data.mv_data = U8_DATA (bytes);
  } else {
   data.mv_size = 0;
-  data.mv_data = NULL;                     
+  data.mv_data = NULL;
  }
 
  return mdb_del (txn, dbi, &keyx, &data);
@@ -425,7 +425,7 @@ int ffi_mdb_dcmp (MDB_txn *txn, MDB_dbi dbi, ___SCMOBJ data1, ___SCMOBJ data2)
  data1x.mv_data = U8_DATA (data1);
  data2x.mv_size = U8_LEN (data2);
  data2x.mv_data = U8_DATA (data2);
- 
+
  return mdb_cmp (txn, dbi, &data1x, &data2x);
 }
 

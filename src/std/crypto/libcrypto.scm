@@ -14,7 +14,7 @@
 (namespace ("std/crypto/libcrypto#"))
 (##namespace ("" define-macro define let let* if or and
               quote quasiquote unquote unquote-splicing
-              c-lambda c-define-type c-declare c-initialize 
+              c-lambda c-define-type c-declare c-initialize
               foreign-tags macro-slot))
 
 (c-declare #<<END-C
@@ -133,7 +133,7 @@ END-C
 ;;; Ciphers
 (c-declare #<<END-C
 static ___SCMOBJ ffi_release_EVP_CIPHER_CTX (void *ptr);
-static EVP_CIPHER_CTX *ffi_create_EVP_CIPHER_CTX ();           
+static EVP_CIPHER_CTX *ffi_create_EVP_CIPHER_CTX ();
 static int ffi_EVP_EncryptInit (EVP_CIPHER_CTX *ctx, EVP_CIPHER *type,
                                 ___SCMOBJ key, ___SCMOBJ iv);
 static int ffi_EVP_EncryptUpdate (EVP_CIPHER_CTX *ctx, ___SCMOBJ out,
@@ -248,7 +248,7 @@ static ___SCMOBJ ffi_BN_free (void *bn);
 static BIGNUM *ffi_BN_bin2bn (___SCMOBJ data, int, int);
 static int ffi_BN_bn2bin (BIGNUM  *bn, ___SCMOBJ data);
 END-C
-)           
+)
 
 (c-define-type BN "BIGNUM")
 (c-define-type BN* (pointer BN (BN*) "ffi_BN_free"))
@@ -263,7 +263,7 @@ END-C
 ;;; DH
 (c-declare #<<END-C
 static ___SCMOBJ ffi_DH_free (void *dh);
-static BIGNUM *ffi_DH_pub_key (DH *dh);           
+static BIGNUM *ffi_DH_pub_key (DH *dh);
 static int ffi_DH_compute_key (___SCMOBJ secret, BIGNUM *pubkey, DH *dh);
 END-C
 )
@@ -310,9 +310,9 @@ static int ffi_EVP_DigestFinal (EVP_MD_CTX *ctx, ___SCMOBJ bytes)
 static EVP_CIPHER_CTX *ffi_create_EVP_CIPHER_CTX ()
 {
   EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new ();
-  if (ctx) {              
+  if (ctx) {
     EVP_CIPHER_CTX_init (ctx);
-  }                            
+  }
   return ctx;
 }
 
@@ -327,7 +327,7 @@ static ___SCMOBJ ffi_release_EVP_CIPHER_CTX (void *ptr)
 static int ffi_EVP_EncryptInit (EVP_CIPHER_CTX *ctx, EVP_CIPHER *type,
                                 ___SCMOBJ key, ___SCMOBJ iv)
 {
-  return EVP_EncryptInit_ex (ctx, type, NULL, U8_DATA (key), U8_DATA (iv));      
+  return EVP_EncryptInit_ex (ctx, type, NULL, U8_DATA (key), U8_DATA (iv));
 }
 
 static int ffi_EVP_EncryptUpdate (EVP_CIPHER_CTX *ctx, ___SCMOBJ out,
@@ -340,7 +340,7 @@ static int ffi_EVP_EncryptUpdate (EVP_CIPHER_CTX *ctx, ___SCMOBJ out,
     return olen;
   } else {
     return -1;
-  } 
+  }
 }
 
 static int ffi_EVP_EncryptFinal (EVP_CIPHER_CTX *ctx, ___SCMOBJ out, int start)
@@ -351,13 +351,13 @@ static int ffi_EVP_EncryptFinal (EVP_CIPHER_CTX *ctx, ___SCMOBJ out, int start)
     return olen;
   } else {
     return -1;
-  } 
+  }
 }
 
 static int ffi_EVP_DecryptInit (EVP_CIPHER_CTX *ctx, EVP_CIPHER *type,
                                 ___SCMOBJ key, ___SCMOBJ iv)
 {
-  return EVP_DecryptInit_ex (ctx, type, NULL, U8_DATA (key), U8_DATA (iv));      
+  return EVP_DecryptInit_ex (ctx, type, NULL, U8_DATA (key), U8_DATA (iv));
 }
 
 static int ffi_EVP_DecryptUpdate (EVP_CIPHER_CTX *ctx, ___SCMOBJ out,
@@ -365,12 +365,12 @@ static int ffi_EVP_DecryptUpdate (EVP_CIPHER_CTX *ctx, ___SCMOBJ out,
 {
   int r, olen;
   r = EVP_DecryptUpdate (ctx, U8_DATA (out), &olen,
-                         U8_DATA (in) + start, end - start);    
+                         U8_DATA (in) + start, end - start);
   if (r) {
     return olen;
   } else {
     return -1;
-  } 
+  }
 }
 
 static int ffi_EVP_DecryptFinal (EVP_CIPHER_CTX *ctx, ___SCMOBJ out, int start)
@@ -381,7 +381,7 @@ static int ffi_EVP_DecryptFinal (EVP_CIPHER_CTX *ctx, ___SCMOBJ out, int start)
     return olen;
   } else {
     return -1;
-  } 
+  }
 }
 
 static ___SCMOBJ ffi_BN_free (void *bn)

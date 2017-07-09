@@ -14,12 +14,12 @@ package: std
       (raise-syntax-error #f "Bad syntax; missing body" stx)
       (with-syntax (((e ...) (reverse body)))
         #'(lambda () e ...))))
-  
+
   (def (generate-fini thunk fini)
     (with-syntax ((thunk thunk)
                   ((e ...) fini))
       #'(with-unwind-protect thunk (lambda () e ...))))
-  
+
   (def (generate-catch handlers thunk)
     (with-syntax (($e (genident)))
       (let lp ((rest handlers) (clauses []))
@@ -27,7 +27,7 @@ package: std
           ([hd . rest]
            (syntax-case hd (=>)
              ((pred => K)
-              (lp rest (cons #'(((? pred) $e) => K) 
+              (lp rest (cons #'(((? pred) $e) => K)
                              clauses)))
              (((pred var) body ...)
               (identifier? #'var)
@@ -35,9 +35,9 @@ package: std
                              clauses)))
              (((var) body ...)
               (identifier? #'var)
-              (lp rest (cons #'(#t (let ((var $e)) body ...)) 
+              (lp rest (cons #'(#t (let ((var $e)) body ...))
                              clauses)))
-             ((us body ...) 
+             ((us body ...)
               (underscore? #'us)
               (lp rest (cons #'(#t (begin body ...))
                              clauses)))))
@@ -47,7 +47,7 @@ package: std
              #'(with-catch
                 (lambda ($e) (cond clause ... (else (raise $e))))
                 thunk)))))))
-  
+
   (syntax-case stx ()
     ((_ e ...)
      (let lp ((rest #'(e ...)) (body []))
@@ -66,7 +66,7 @@ package: std
                  (((finally fini ...))
                   (with-syntax ((body (generate-catch handlers (generate-thunk body))))
                     (generate-fini #'(lambda () body) #'(fini ...))))
-                 (() 
+                 (()
                   (generate-catch handlers (generate-thunk body))))))
             (_ (lp #'rest (cons #'hd body)))))
          (() ; no clauses, just a begin

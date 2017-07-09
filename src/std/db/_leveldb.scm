@@ -13,7 +13,7 @@
 (namespace ("std/db/_leveldb#"))
 (##namespace ("" define-macro define let let* if or and
               quote quasiquote unquote unquote-splicing
-              c-lambda c-define-type c-declare c-initialize 
+              c-lambda c-define-type c-declare c-initialize
               ))
 
 (c-declare #<<END-C
@@ -27,7 +27,7 @@
 typedef struct slice {
  char* data;
  size_t len;
- int own;      
+ int own;
 } slice_t;
 
 static ___SCMOBJ ffi_free (void *ptr);
@@ -129,12 +129,12 @@ END-C
 (define-c-lambda leveldb_iter_value (leveldb_iterator_t*) slice_t*
   "ffi_leveldb_iter_value")
 (define-c-lambda leveldb_iter_get_error (leveldb_iterator_t* errptr) void)
-  
+
 (define-c-lambda leveldb_compact_range (leveldb_t* scheme-object scheme-object) void
   "ffi_leveldb_compact_range")
 (define-c-lambda leveldb_destroy_db (leveldb_options_t* char-string errptr) void)
 (define-c-lambda leveldb_repair_db (leveldb_options_t* char-string errptr) void)
-  
+
 (define-c-lambda leveldb_options_create () leveldb_options_t*)
 (define-c-lambda leveldb_options_set_create_if_missing (leveldb_options_t* int) void)
 (define-c-lambda leveldb_options_set_error_if_exists (leveldb_options_t* int) void)
@@ -150,11 +150,11 @@ END-C
 
 (define-c-lambda leveldb_options_set_filter_policy (leveldb_options_t* leveldb_filterpolicy_t*) void)
 (define-c-lambda leveldb_filterpolicy_create_bloom (int) leveldb_filterpolicy_t*)
-  
+
 (define-c-lambda leveldb_readoptions_create () leveldb_readoptions_t*)
 (define-c-lambda leveldb_readoptions_set_verify_checksums (leveldb_readoptions_t* int) void)
 (define-c-lambda leveldb_readoptions_set_fill_cache (leveldb_readoptions_t* int) void)
-  
+
 (define-c-lambda leveldb_writeoptions_create () leveldb_writeoptions_t*)
 (define-c-lambda leveldb_writeoptions_set_sync (leveldb_writeoptions_t* int) void)
 
@@ -187,7 +187,7 @@ static ___SCMOBJ ffi_free_slice (void *ptr)
 {
  slice_t* slice = (slice_t*)ptr;
  if (slice->own)
- {         
+ {
   free (slice->data);
  }
  free (ptr);
@@ -318,7 +318,7 @@ char** ffi_make_errptr()
 {
  char** res = malloc (sizeof (char*));
  *res = 0;
- return res;       
+ return res;
 }
 
 void ffi_errptr_clear (char** errptr)

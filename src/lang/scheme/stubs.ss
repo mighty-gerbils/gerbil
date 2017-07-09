@@ -15,6 +15,3 @@ package: scheme
   ((_ id)
    (defsyntax (id stx)
      (raise-syntax-error #f "R7RS macro NOT IMPLEMENTED" stx 'id))))
-
-   
-     

@@ -176,7 +176,7 @@ package: std/actor
   (def actors                           ; uuid-symbol => src
     (make-hash-table-eq))
   (def protos                           ; uuid-symbol => proto
-    (make-hash-table-eq))   
+    (make-hash-table-eq))
   (def actor-threads                    ; thread => [uuid-symbol ...]
     (make-hash-table-eq))
   (def conns                            ; address => thread
@@ -190,7 +190,7 @@ package: std/actor
            (spawn rpc-server-accept (current-thread) sock (socket-address-family sa)))
          socks sas))
   (def server-connection 0)
-  
+
   (def (accept-connection cli clisa)
     (let* ((cliaddr (socket-address->address clisa))
            (address (list cliaddr server-connection))
@@ -199,14 +199,14 @@ package: std/actor
       (hash-put! conns address thr)
       (hash-put! threads thr address)
       (rpc-monitor thr)))
-  
+
   (def (open-connection address)
     (let (thr (spawn rpc-client-connection (current-thread) socksrv address connect-e))
       (hash-put! conns address thr)
       (hash-put! threads thr address)
       (rpc-monitor thr)
       thr))
-  
+
   (def (handle-protocol-action msg)
     (with ((message content src dest opt) msg)
       (match content
@@ -289,14 +289,14 @@ package: std/actor
          (raise 'shutdown))
         (else
          (warning "Unexpected message ~a" msg)))))
-  
+
   (def (actor-thread-e actor)
     (cond
      ((thread? actor) actor)
      ((proxy? actor) (proxy-handler actor))
      (else
       (error "Bad actor" actor))))
-  
+
   (def (remove-thread! thread)
     ;; connection threads
     (cond
@@ -317,7 +317,7 @@ package: std/actor
            (for-each (cut hash-remove! actors <>) uuids)
            (for-each (cut hash-remove! protos <>) uuids)
            (hash-remove! actor-threads thread)))))
-  
+
   (def (loop)
     (<< ((? message? msg)
          (let (dest (message-dest msg))
@@ -468,13 +468,13 @@ package: std/actor
     (make-hash-table-eq))
   (def continuation-timeouts            ; wire-id => timeout
     (make-hash-table-eqv))
-  (def timeouts-pqueue 
+  (def timeouts-pqueue
     (make-pqueue (lambda (evt) (time->seconds (event-selector evt)))))
   (def next-continuation-id 0)
   (def idle-timeout #f)
   (def reader #f)
   (def writer #f)
-  
+
   (def (reset-idle-timeout)
     (set! idle-timeout
       (if rpc-idle-timeout
@@ -482,7 +482,7 @@ package: std/actor
          (+ (time->seconds (current-time))
             rpc-idle-timeout))
         never-evt)))
-  
+
   (def (close-connection)
     (server-close sock)
     (thread-send writer 'exit)
@@ -501,7 +501,7 @@ package: std/actor
             (send actor abort))))
       stream-actors)
     (rpc-connection-shutdown rpc-server))
-  
+
   (def (read-message data)
     (cond
      ((void? data)                      ; keep-alive
@@ -546,7 +546,7 @@ package: std/actor
         (thread-send connection-thread (cons 'read next))
         (unless (eof-object? next)
           (lp)))))
-  
+
   (def (dispatch-call msg bytes)
     (let (uuid (message-dest msg))
       (match (!!rpc.lookup rpc-server uuid)
@@ -574,7 +574,7 @@ package: std/actor
             (dispatch-remote-error (make-!error "no binding" k) uuid))
            (else
             (loop)))))))
-  
+
   (def (dispatch-value msg bytes value-k value-k-set!)
     (let* ((content (message-e msg))
            (cont    (value-k content)))
@@ -622,11 +622,11 @@ package: std/actor
 
   (def (dispatch-remote-error what dest)
     (marshal-and-write (make-message what (void) dest #f) #f #f))
-  
+
   (def (unmarshal-message-content msg proto bytes)
     (try (rpc-proto-read-message-content msg proto bytes)
          (catch (exception? e) e)))
-  
+
   (def (write-message msg)
     (with ((message content src dest opts) msg)
       (if (remote? dest)
@@ -709,12 +709,12 @@ package: std/actor
         (begin
           (warning "bad handle; no protocol ~a ~a" dest msg)
           (loop)))))
-  
+
   (def (next-continuation-id!)
     (let (next next-continuation-id)
       (set! next-continuation-id (1+ next))
       next))
-  
+
   (def (remove-continuation! wire-id)
     (alet (cont (hash-get continuations wire-id))
       (hash-remove! continuations wire-id)
@@ -756,7 +756,7 @@ package: std/actor
        (else
         (log-error "marshal error" e)
         (loop)))))
-  
+
   (def (dispatch-error wire-id what)
     (with ((values actor k proto stream?) (hash-ref continuations wire-id))
       (!!error actor (make-rpc-error 'rpc-connection what) k)
@@ -769,13 +769,13 @@ package: std/actor
         (send src abort))
       (hash-remove! stream-actors wire-id)
       (dispatch-remote-error (make-!error what wire-id) dest)))
-  
+
   (def (dispatch-timeout timeo)
     (cond
      ((hash-get timeouts timeo)
       => (lambda (wire-id)
            (dispatch-error wire-id "timeout")))))
-  
+
   (def (writer-loop)
     (let lp ()
       (<< (! (or rpc-keep-alive never-evt)
@@ -799,7 +799,7 @@ package: std/actor
             (begin
               (pqueue-pop! timeouts-pqueue)
               (lp)))))))
-  
+
   (def (loop)
     (<< (! (timeout-event)
            => dispatch-timeout)
@@ -829,11 +829,11 @@ package: std/actor
   (let (thread (spawn/name 'rpc-connection-reader reader-loop (current-thread)))
     (set! reader thread)
     (rpc-monitor thread))
-  
+
   (let (thread (spawn/name 'rpc-connection-writer writer-loop))
     (set! writer thread)
     (rpc-monitor thread))
-  
+
   (reset-idle-timeout)
   (try
    (loop)
@@ -849,7 +849,7 @@ package: std/actor
        ((eq? timeo 'nil)                ; not specified
         default)
        ((not timeo)                     ; no timeout
-        #f)  
+        #f)
        ((real? timeo)                   ; relative timeout
         (if (positive? timeo)
           (if (finite? timeo)
@@ -861,7 +861,7 @@ package: std/actor
        (else                            ; not quite a timeout, we'll do default
         default)))
     default))
-  
+
 (def (rpc-connection-shutdown rpc-server)
   (!!rpc.connection-shutdown rpc-server)
   (let lp ()

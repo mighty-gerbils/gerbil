@@ -11,4 +11,3 @@ package: tutorial/lang
 (defrules my-%%begin-module ()
   ((_ . body)
    (%%begin-module (export #t) . body)))
-

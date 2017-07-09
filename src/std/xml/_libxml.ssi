@@ -68,8 +68,8 @@ namespace: std/xml/libxml
   xmlAttr-ns
   xmlNs-href
   xmlNs-prefix
-  xmlRead-string 
-  htmlRead-string 
+  xmlRead-string
+  htmlRead-string
   xmlRead-u8vector
   htmlRead-u8vector
   xmlRead-u8vector*

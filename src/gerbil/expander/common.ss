@@ -9,17 +9,17 @@ namespace: gx
   (gerbil-core
    (export #t)
    (import <expander-runtime>)
-   
+
    (cond-expand
     ((not gerbil-runtime)
      (defsyntax <error>
        (make-runtime-struct-info
         runtime-identifier: (quote-syntax error::t)))
-     
+
      (defsyntax AST
-       (make-runtime-struct-info 
+       (make-runtime-struct-info
         runtime-identifier: (quote-syntax AST::t)))))
-   
+
    (defsyntax (core-syntax-case stx)
      (def (generate tgt kws clauses)
        (def (generate-clause hd E)
@@ -29,7 +29,7 @@ namespace: gx
            ((pat fender body)
             (generate1 hd #'pat #'fender #'body E))
            (_ (raise-syntax-error #f "Bad syntax" stx hd))))
-     
+
        (def (generate1 where hd fender body E)
          (def (recur hd tgt K)
            (syntax-case hd ()
@@ -58,33 +58,33 @@ namespace: gx
                                    (core-identifier=? target 'id))
                             K E]))
                    (else
-                    (with-syntax ((target tgt) 
+                    (with-syntax ((target tgt)
                                   (id hd))
-                      [#'let #'((id target)) 
+                      [#'let #'((id target))
                              K]))))
                  ((stx-null? hd)
                   (with-syntax ((target tgt))
-                    [#'if #'(stx-null? target) 
+                    [#'if #'(stx-null? target)
                           K E]))
                  ((stx-datum? hd)
                   (with-syntax ((target tgt)
                                 (datum hd)
                                 (eql
                                  (let (e (stx-e hd))
-                                   (cond 
+                                   (cond
                                     ((or (keyword? e) (immediate? e))
                                      #'eq?)
                                     ((number? e)
                                      #'eqv?)
                                     (else
                                      #'equal?)))))
-                    [#'if #'(eql (stx-e target) 'datum) 
+                    [#'if #'(eql (stx-e target) 'datum)
                           K E]))
                  (else
                   (raise-syntax-error #f "Bad syntax" stx where hd))))))
-       
+
          (recur hd tgt [#'if fender body E]))
-       
+
        (def (generate-clauses clauses)
          (let lp ((rest clauses) (E (genident 'E)) (r []))
            (syntax-case rest ()
@@ -98,10 +98,10 @@ namespace: gx
                                (stx-source #'hd))]
                            r)
                      (raise-syntax-error #f "Bad syntax" stx #'hd))
-                   (raise-syntax-error #f "Bad syntax; misplaced else" 
+                   (raise-syntax-error #f "Bad syntax; misplaced else"
                                        stx #'hd)))
                 (_ (with-syntax* (($E (genident 'E))
-                                  (body 
+                                  (body
                                    (generate-clause #'hd #'($E)))
                                   (try
                                    (stx-wrap-source
@@ -113,14 +113,14 @@ namespace: gx
                             #'(lambda () (raise-syntax-error #f "Bad syntax" target))
                             (stx-source stx))]
                         r))))))
-       
-       (with-syntax* (((values bind) 
+
+       (with-syntax* (((values bind)
                        (generate-clauses clauses))
-                      ((bind-try ...) 
+                      ((bind-try ...)
                        bind)
                       (K (car (last bind))))
          #'(let* (bind-try ...) (K))))
-     
+
      (syntax-case stx ()
        ((_ expr kws . clauses)
         (and (identifier-list? #'kws)

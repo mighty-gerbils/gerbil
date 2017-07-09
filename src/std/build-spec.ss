@@ -86,7 +86,7 @@
     "net/server"
     ;; :std/xml
     ,@(if config-enable-libxml
-        `((gsc: "xml/_libxml" 
+        `((gsc: "xml/_libxml"
                 "-cc-options" ,(shell-config "xml2-config" "--cflags")
                 "-ld-options" ,(shell-config "xml2-config" "--libs")
                 "-e" "(include \"~~lib/_gambit#.scm\")")

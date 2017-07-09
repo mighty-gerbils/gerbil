@@ -43,4 +43,3 @@
           (if (> *failed* 1) (display "s"))
           (display " failed! :-( :-( :-(")))
     (newline)))
-

@@ -375,14 +375,14 @@ END-C
   "ffi_connect")
 (define-c-lambda __shutdown (int int) int
   "shutdown")
-  
+
 (define-c-lambda __send (int scheme-object int int int) int
   "ffi_send")
 (define-c-lambda __sendto (int scheme-object int int int sockaddr*) int
   "ffi_sendto")
 (define-c-lambda __sendmsg (int scheme-object scheme-object scheme-object int) int
   "ffi_sendmsg")
- 
+
 (define-c-lambda __recv (int scheme-object int int int) int
   "ffi_recv")
 (define-c-lambda __recvfrom (int scheme-object int int int sockaddr*) int
@@ -401,7 +401,7 @@ END-C
 (define-with-errno _accept __accept (fd sa))
 (define-with-errno _connect __connect (fd sa))
 (define-with-errno _shutdown __shutdown (fd how))
-  
+
 (define-with-errno _send __send (fd bytes start end flags))
 (define-with-errno _sendto __sendto (fd bytes start end flags sa))
 (define-with-errno _sendmsg __sendmsg (fd name-bytes io-bytes ctl-bytes flags))
@@ -567,7 +567,7 @@ int ffi_accept (int fd, struct sockaddr *sa)
   GETSALEN (sa, salen);
   return accept (fd, sa, &salen);
  } else {
-  return accept (fd, NULL, 0); 
+  return accept (fd, NULL, 0);
  }
 }
 
@@ -613,7 +613,7 @@ int ffi_sendmsg (int fd, ___SCMOBJ name, ___SCMOBJ io, ___SCMOBJ ctl, int flags)
   msg_control = U8_DATA (ctl);
   msg_controllen = U8_LEN (ctl);
  }
- 
+
  struct msghdr msg;
  msg.msg_name = msg_name;
  msg.msg_namelen = msg_namelen;
@@ -662,7 +662,7 @@ int ffi_recvmsg (int fd, ___SCMOBJ name, int *rname, ___SCMOBJ io, ___SCMOBJ ctl
   msg_control = U8_DATA (ctl);
   msg_controllen = U8_LEN (ctl);
  }
- 
+
  struct msghdr msg;
  msg.msg_name = msg_name;
  msg.msg_namelen = msg_namelen;
@@ -704,11 +704,11 @@ struct sockaddr *ffi_make_sockaddr (int family)
   return NULL;
 
  struct sockaddr *sa = (struct sockaddr*)malloc (salen);
- if (sa) 
+ if (sa)
  {
   memset (sa, 0, salen);
   sa->sa_family = family;
- }       
+ }
  return sa;;
 }
 
@@ -769,7 +769,7 @@ char *ffi_sockaddr_un_path (struct sockaddr *sa)
 void ffi_sockaddr_un_path_set (struct sockaddr *sa, char *path)
 {
  struct sockaddr_un *sa_un = (struct sockaddr_un*)sa;
- strncpy (sa_un->sun_path, path, sizeof (sa_un->sun_path));      
+ strncpy (sa_un->sun_path, path, sizeof (sa_un->sun_path));
 }
 
 int ffi_sockaddr_len (struct sockaddr *sa)
@@ -782,7 +782,7 @@ int ffi_sockaddr_bytes (struct sockaddr *sa, ___SCMOBJ bytes)
 {
  GETSALEN (sa, salen);
  memcpy (U8_DATA (bytes), sa, salen);
- return 0;       
+ return 0;
 }
 
 int ffi_sockaddr_bytes_set (struct sockaddr *sa, ___SCMOBJ bytes)

@@ -66,4 +66,3 @@ namespace: gxc
 (def (verbose . args)
   (when (current-compile-verbose)
     (apply displayln args)))
-
