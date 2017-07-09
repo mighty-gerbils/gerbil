@@ -195,7 +195,7 @@ package: std/actor
     (let* ((cliaddr (socket-address->address clisa))
            (address (list cliaddr server-connection))
            (thr (spawn rpc-server-connection (current-thread) cli clisa address accept-e)))
-      (set! server-connection (fx1+ server-connection))
+      (set! server-connection (1+ server-connection))
       (hash-put! conns address thr)
       (hash-put! threads thr address)
       (rpc-monitor thr)))
