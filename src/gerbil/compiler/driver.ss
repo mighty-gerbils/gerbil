@@ -83,6 +83,8 @@ namespace: gxc
   
   (def (compile-stub output-scm output-bin)
     (let* ((init-stub  (path-expand "lib/gx-init-exe.scm" (getenv "GERBIL_HOME")))
+           (gxc-cache (compile-cache-directory))
+           (init-stub (compile-cache init-stub gxc-cache))
            (gsc-args ["-exe" "-o" output-bin init-stub output-scm])
            (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
            (proc (open-process [path: "gsc" arguments: gsc-args
@@ -116,6 +118,11 @@ namespace: gxc
            (deps (find-runtime-module-deps ctx))
            (deps (map find-static-module-file deps))
            (deps (filter (? (not file-empty?)) deps))
+           (gxc-cache (compile-cache-directory))
+           (gx-gambc0 (compile-cache gx-gambc0 gxc-cache))
+           (gx-gambc-init (compile-cache gx-gambc-init gxc-cache))
+           (deps (map (cut compile-cache <> gxc-cache) deps))
+           (bin-scm (compile-cache bin-scm gxc-cache))
            (gsc-opts (or (pgetq gsc-options: opts) []))
            (gsc-args ["-exe" "-o" output-bin gsc-opts ...
                       "-e" include-gx-gambc-macros
@@ -135,6 +142,19 @@ namespace: gxc
       (compile-stub output-scm output-bin))
     (unless (current-compile-keep-scm)
       (delete-file output-scm))))
+
+(def (compile-cache-directory)
+  (let* ((cachedir (getenv "GERBIL_CACHE" "~/.cache/gerbil"))
+         (gxc-cache (path-expand "gxc" cachedir)))
+    (create-directory* gxc-cache)
+    (path-normalize gxc-cache)))
+
+(def (compile-cache file gxc-cache)
+  (let (cachefile (path-expand (path-strip-directory file) gxc-cache))
+    (when (or (not (file-exists? cachefile))
+              (file-newer? file cachefile))
+      (copy-file file cachefile))
+    cachefile))
 
 (def (find-export-binding ctx id)
   (cond
