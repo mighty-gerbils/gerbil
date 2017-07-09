@@ -665,6 +665,7 @@ Slot mutation macro.
  (equal? val)                      ; match equal? to val
  (quote expr)                      ; match eq?/eqv?/equal? to a quoted value
  (quasiquote datum)                ; destructure with quasiquote
+ (apply getf pattern)              ; applicative destructuring
  (match-macro arg ...)             ; apply match macro expander
  _                                 ; match any and ignore
  id                                ; match any and bind to id
