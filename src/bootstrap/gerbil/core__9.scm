@@ -1,90 +1,90 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29755_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29993_|
     (gx#core-quote-syntax 'runtime-type-info::t))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29756_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29994_|
     (gx#core-quote-syntax 'runtime-struct-info::t))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29757_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29995_|
     (gx#core-quote-syntax 'runtime-class-info::t))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29758_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29996_|
     (gx#core-quote-syntax 'expander-type-info::t))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29759_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29997_|
     (gx#core-quote-syntax 'extended-runtime-type-info::t))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29760_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29998_|
     (gx#core-quote-syntax 'extended-struct-info::t))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29761_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29999_|
     (gx#core-quote-syntax 'extended-class-info::t))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29762_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g30000_|
     (gx#core-quote-syntax 'runtime-rtd-exhibitor::t))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29763_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g30001_|
     (gx#core-quote-syntax 'runtime-struct-exhibitor::t))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29764_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g30002_|
     (gx#core-quote-syntax 'runtime-class-exhibitor::t))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29765_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g30003_|
     (gx#core-quote-syntax 'macro-object::t))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29766_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g30004_|
     (gx#core-quote-syntax 'macro-object::t))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29767_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g30005_|
     (gx#core-quote-syntax 'make-macro-object))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29768_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g30006_|
     (gx#core-quote-syntax 'macro-object?))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29769_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g30007_|
     (gx#core-quote-syntax 'macro-object-macro))
-  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g29770_|
+  (define |gerbil/core::<MOP>::<MOP:3>[2]#_g30008_|
     (gx#core-quote-syntax 'macro-object-macro-set!))
   (begin
     (define |gerbil/core::<MOP>::<MOP:3>[:1:]#runtime-type-info|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-info|
        'runtime-identifier:
-       |gerbil/core::<MOP>::<MOP:3>[2]#_g29755_|))
+       |gerbil/core::<MOP>::<MOP:3>[2]#_g29993_|))
     (define |gerbil/core::<MOP>::<MOP:3>[:1:]#runtime-struct-info|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-info|
        'runtime-identifier:
-       |gerbil/core::<MOP>::<MOP:3>[2]#_g29756_|))
+       |gerbil/core::<MOP>::<MOP:3>[2]#_g29994_|))
     (define |gerbil/core::<MOP>::<MOP:3>[:1:]#runtime-class-info|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-info|
        'runtime-identifier:
-       |gerbil/core::<MOP>::<MOP:3>[2]#_g29757_|))
+       |gerbil/core::<MOP>::<MOP:3>[2]#_g29995_|))
     (define |gerbil/core::<MOP>::<MOP:3>[:1:]#expander-type-info|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-info|
        'runtime-identifier:
-       |gerbil/core::<MOP>::<MOP:3>[2]#_g29758_|))
+       |gerbil/core::<MOP>::<MOP:3>[2]#_g29996_|))
     (define |gerbil/core::<MOP>::<MOP:3>[:1:]#extended-runtime-type-info|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-info|
        'runtime-identifier:
-       |gerbil/core::<MOP>::<MOP:3>[2]#_g29759_|))
+       |gerbil/core::<MOP>::<MOP:3>[2]#_g29997_|))
     (define |gerbil/core::<MOP>::<MOP:3>[:1:]#extended-struct-info|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-info|
        'runtime-identifier:
-       |gerbil/core::<MOP>::<MOP:3>[2]#_g29760_|))
+       |gerbil/core::<MOP>::<MOP:3>[2]#_g29998_|))
     (define |gerbil/core::<MOP>::<MOP:3>[:1:]#extended-class-info|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-info|
        'runtime-identifier:
-       |gerbil/core::<MOP>::<MOP:3>[2]#_g29761_|))
+       |gerbil/core::<MOP>::<MOP:3>[2]#_g29999_|))
     (define |gerbil/core::<MOP>::<MOP:3>[:1:]#runtime-rtd-exhibitor|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-info|
        'runtime-identifier:
-       |gerbil/core::<MOP>::<MOP:3>[2]#_g29762_|))
+       |gerbil/core::<MOP>::<MOP:3>[2]#_g30000_|))
     (define |gerbil/core::<MOP>::<MOP:3>[:1:]#runtime-struct-exhibitor|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-info|
        'runtime-identifier:
-       |gerbil/core::<MOP>::<MOP:3>[2]#_g29763_|))
+       |gerbil/core::<MOP>::<MOP:3>[2]#_g30001_|))
     (define |gerbil/core::<MOP>::<MOP:3>[:1:]#runtime-class-exhibitor|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-info|
        'runtime-identifier:
-       |gerbil/core::<MOP>::<MOP:3>[2]#_g29764_|))
+       |gerbil/core::<MOP>::<MOP:3>[2]#_g30002_|))
     (define |gerbil/core::<MOP>::<MOP:3>[:1:]#macro-object|
       (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-class-info|
        'runtime-identifier:
-       |gerbil/core::<MOP>::<MOP:3>[2]#_g29765_|
+       |gerbil/core::<MOP>::<MOP:3>[2]#_g30003_|
        'expander-identifiers:
        (cons '()
-             (cons |gerbil/core::<MOP>::<MOP:3>[2]#_g29766_|
-                   (cons |gerbil/core::<MOP>::<MOP:3>[2]#_g29767_|
-                         (cons |gerbil/core::<MOP>::<MOP:3>[2]#_g29768_|
-                               (cons (cons |gerbil/core::<MOP>::<MOP:3>[2]#_g29769_|
+             (cons |gerbil/core::<MOP>::<MOP:3>[2]#_g30004_|
+                   (cons |gerbil/core::<MOP>::<MOP:3>[2]#_g30005_|
+                         (cons |gerbil/core::<MOP>::<MOP:3>[2]#_g30006_|
+                               (cons (cons |gerbil/core::<MOP>::<MOP:3>[2]#_g30007_|
                                            '())
-                                     (cons (cons |gerbil/core::<MOP>::<MOP:3>[2]#_g29770_|
+                                     (cons (cons |gerbil/core::<MOP>::<MOP:3>[2]#_g30008_|
                                                  '())
                                            '()))))))
        'type-exhibitor:

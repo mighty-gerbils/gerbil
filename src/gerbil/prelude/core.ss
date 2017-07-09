@@ -1349,6 +1349,16 @@ package: gerbil
                        (runtime-type-exhibitor info)))))
       
       ;; private
+      (def (expander-type-info::apply-macro-expander self stx)
+        (syntax-case stx ()
+          ((_ arg ...)
+           (with-syntax (((super type::t make type? getf setf)
+                          (expander-type-identifiers self)))
+             #'(make arg ...)))))
+
+      (bind-method! expander-type-info::t 'apply-macro-expander
+                    expander-type-info::apply-macro-expander)
+      
       (def (typedef-body? stx)
         (def (body-opt? key)
           (memq (stx-e key)
