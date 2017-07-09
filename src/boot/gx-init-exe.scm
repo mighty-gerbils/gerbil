@@ -55,7 +55,11 @@
             => (lambda (ev) 
                  (filter (lambda (path) (not (string-empty? path)))
                          (string-split ev #\:))))
-           (else '()))))
+           (else '())))
+         (loadpath
+            (if (file-exists? "~/.gerbil/lib")
+              (cons (path-normalize "~/.gerbil/lib") loadpath)
+              loadpath)))
     ((eval '&current-module-libpath) (cons __gx#libdir loadpath))
     ((eval '&current-module-registry) (make-hash-table))
     (current-readtable (eval '_gx#*readtable*))
