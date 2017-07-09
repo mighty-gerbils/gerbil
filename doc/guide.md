@@ -590,10 +590,10 @@ The package is specified with a `package: package-path` declaration
 at the top of a module. It effects the namespace of the module and
 placement of compiled code.
 
-By default library modules are looked up in the `$GERBIL_HOME/lib`
-directory. You can specify additional directories to be
-searched with the `GERBIL_LOADPATH` environment variable.
-You can also modify the load-path at runtime with `add-load-path`.
+By default library modules are looked up in the `$GERBIL_HOME/lib` and
+`~/.gerbil/lib` directories. You can specify additional directories to
+be searched with the `GERBIL_LOADPATH` environment variable.  You can
+also modify the load-path at runtime with `add-load-path`.
 
 #### Building Libraries
 
@@ -625,7 +625,7 @@ $ gxi
 > (import :example/util)
 ```
 
-By default, the compiler will place compiled modules in `GERBIL_HOME/lib`.
+By default, the compiler will place compiled modules in `~/.gerbil/lib`.
 If you want a separate directory structure for your library, you can
 specify a different directory with the `-d` option:
 ```
