@@ -8,10 +8,10 @@
 ;; compile: -cc-options "$(xml2-config --cflags)"
 ;;          -ld-options "$(xml2-config --libs)"
 ;;          -e "(include \"~~lib/_gambit#.scm\")"
-(declare 
-  (block) 
-  (standard-bindings) 
-  (extended-bindings) 
+(declare
+  (block)
+  (standard-bindings)
+  (extended-bindings)
   (not safe))
 
 (namespace ("std/xml/libxml#"))
@@ -45,7 +45,7 @@
               macro-btq-owner-set!
               macro-btq-deq-insert-at-tail!
               macro-slot
-              macro-byte-kind macro-character-kind 
+              macro-byte-kind macro-character-kind
               macro-port? macro-port-rkind macro-port-of-rkind?
               macro-struct-slot
               ))
@@ -93,7 +93,7 @@ END-C
 (define-const XML_XINCLUDE_START)
 (define-const XML_XINCLUDE_END)
 
-;; parser options 
+;; parser options
 (define-const XML_PARSE_RECOVER)
 (define-const XML_PARSE_NOENT)
 (define-const XML_PARSE_DTDLOAD)
@@ -216,26 +216,26 @@ END-C
 END-C
 )
 
-(define xmlRead-string 
-  (c-lambda (UTF-8-string 
+(define xmlRead-string
+  (c-lambda (UTF-8-string
         char-string                     ; url
         char-string                     ; encoding
         int)                            ; options
        xmlDocPtr
        #<<END-C
-___return (xmlReadMemory (___arg1, strlen (___arg1), 
+___return (xmlReadMemory (___arg1, strlen (___arg1),
                           ___arg2, ___arg3, ___arg4));
 END-C
 ))
 
-(define htmlRead-string 
-  (c-lambda (UTF-8-string 
+(define htmlRead-string
+  (c-lambda (UTF-8-string
         char-string                     ; url
         char-string                     ; encoding
         int)                            ; options
        xmlDocPtr
        #<<END-C
-___return (htmlReadMemory (___arg1, strlen (___arg1), 
+___return (htmlReadMemory (___arg1, strlen (___arg1),
                            ___arg2, ___arg3, ___arg4));
 END-C
 ))
@@ -249,8 +249,8 @@ END-C
         int)                            ; optionx
        xmlDocPtr
        #<<END-C
-___return (xmlReadMemory ((char*) U8_DATA (___arg1) + ___arg2, 
-                           ___arg3 - ___arg2, 
+___return (xmlReadMemory ((char*) U8_DATA (___arg1) + ___arg2,
+                           ___arg3 - ___arg2,
                            ___arg4, ___arg5, ___arg6));
 END-C
 ))
@@ -265,7 +265,7 @@ END-C
        xmlDocPtr
        #<<END-C
 ___return (htmlReadMemory ((char*) U8_DATA (___arg1) + ___arg2,
-                            ___arg3 - ___arg2, 
+                            ___arg3 - ___arg2,
                             ___arg4, ___arg5, ___arg6));
 END-C
 ))
@@ -332,7 +332,7 @@ END-C
        #<<END-C
 struct io_context ioctx;
 ffi_iocontext_init (&ioctx, ___arg1);
-___return (xmlReadIO (ffi_iocontext_read, ffi_ioclose, &ioctx, 
+___return (xmlReadIO (ffi_iocontext_read, ffi_ioclose, &ioctx,
                       ___arg2, ___arg3, ___arg4));
 END-C
 ))
@@ -346,7 +346,7 @@ END-C
        #<<END-C
 struct io_context ioctx;
 ffi_iocontext_init (&ioctx, ___arg1);
-___return (htmlReadIO (ffi_iocontext_read, ffi_ioclose, &ioctx, 
+___return (htmlReadIO (ffi_iocontext_read, ffi_ioclose, &ioctx,
                        ___arg2, ___arg3, ___arg4));
 END-C
 ))
@@ -365,13 +365,13 @@ END-C
       (begin
         (macro-port-mutex-unlock! port)
          #f)))
-  
+
   (define (read-byte-port port)
     (let ((ret (macro-make-fifo)))
       (let ((cb (drain-char-buffer! port)))
         (if cb
           (macro-fifo-insert-at-tail! ret cb)))
-      
+
       (let lp ()
         (let* ((blen 4096)
                (buf (##make-u8vector blen))
@@ -385,16 +385,16 @@ END-C
            (else
             (macro-fifo-insert-at-tail! ret buf)
             (lp)))))))
-  
+
   (define (read-char-port port)
-    (##read-all port 
+    (##read-all port
       (lambda (port)
         (let* ((blen 2048)
                (buf (##make-string blen))
                (rlen (##read-substring buf 0 blen port)))
           (if (##fxzero? rlen) '#!eof
               (substring->bytes buf 0 rlen))))))
-  
+
   (cond
    ((macro-byte-input-port? port)
     (parse (read-byte-port port) url encoding options))

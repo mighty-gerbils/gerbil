@@ -7,4 +7,3 @@ package: tutorial/lang/example
 ;; everything is automagically exported, so no export directive needed
 (def (greet x)
   (displayln "hello " x))
-

@@ -16,4 +16,3 @@
 	     (cond ((key< key elt-key) (lp left m))
 		   ((key< elt-key key) (lp (+ m 1) right))
 		   (else m)))))))
-

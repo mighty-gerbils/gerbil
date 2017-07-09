@@ -26,7 +26,7 @@
       (let (stmt (sql-prepare db "SELECT * FROM Users"))
         (check (sql-query stmt) => '(#("John" "Smith" "very secret")
                                       #("Marc" "Smith" "oh so secret"))))
-    
+
       (let (stmt (sql-prepare db "SELECT * FROM Users WHERE FirstName = ?"))
         (sql-bind stmt "John")
         (check (sql-query stmt) => '(#("John" "Smith" "very secret")))
@@ -42,5 +42,3 @@
         (sql-finalize stmt)))
 
     (sql-close db)))
-    
-

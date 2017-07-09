@@ -162,7 +162,7 @@ Cryptography based on libcrypto.
   sha512 digest::sha512 make-sha512-digest sha512-digest?
   ripemd160 digest::ripemd160 make-ripemd160-digest ripemd160-digest?
   whirlpool digest::whirlpool make-whirlpool-digest whirlpool-digest?
-  
+
 ;; :std/crypto/cipher
   cipher make-cipher cipher? cipher-type cipher-ctx cipher-context
   cipher-name cipher-block-size cipher-key-length cipher-iv-length
@@ -177,7 +177,7 @@ Cryptography based on libcrypto.
   decrypt-final! decrypt-final/nocheck!
 
   cipher::rc4 make-rc4-cipher rc4-cipher?
-  
+
   ;; MODE = ecb cbc cfb ofb
   cipher::cast5-{MODE} make-cast5-{MODE}-cipher cast5-{MODE}-cipher?
   cipher::bf-{MODE} make-bf-{MODE}-cipher bf-{MODE}-cipher?
@@ -185,15 +185,15 @@ Cryptography based on libcrypto.
   ;; LEN = 128 192 256
   ;; MODE = ecb cbc cfb ofb ctr ccm gcm xts
   cipher::aes-{LEN}-{MODE} make-aes-{LEN}-{MODE}-cipher aes-{LEN}-{MODE}-cipher?
-  
+
   ;; LEN = 128 192 256
   ;; MODE = ecb cbc cfb ofb
   cipher::camellia-{LEN}-{MODE} make-camellia-{LEN}-{MODE}-cipher camellia-{LEN}-{MODE}-cipher?
-  
+
 ;; :std/crypto/dh
   DH-generate-key DH-compute-key DH-pub-key
   DH-get-1024-160 DH-get-2048-224 DH-get-2048-256
-  
+
 ;; :std/crypto/bn
   BN->bytes bytes->BN
 
@@ -522,7 +522,7 @@ Internet addresses as host-port pairs.
 
 ;; exports:
 
-  ip4-address? ip4-address 
+  ip4-address? ip4-address
   ip4-address-string? ip4-address->string string->ip4-address
   ip6-address? ip6-address
   ip6-address-string? ip6-address->string string->ip6-address
@@ -568,7 +568,7 @@ Package for programming with sockets and platform-optimized i/o multiplexing.
   server-recv server-recv-all
   server-socket-e
   server-close server-close-input server-close-output
-        
+
 ;; :std/net/server/buffer
   server-input-buffer
   server-input-read-u8
@@ -580,7 +580,7 @@ Package for programming with sockets and platform-optimized i/o multiplexing.
   server-output-write-u32
   server-output-write
   server-output-force
-        
+
 ;; :std/net/server/basic-server
   basic-socket-server
 
@@ -624,13 +624,13 @@ Web Application Message Protocol client.
 
 ;; exports:
 
-  start-wamp-client! 
+  start-wamp-client!
   wamp-call wamp-publish wamp-subscribe
   wamp-register wamp-unregister
   wamp-close
   (struct-out wamp-error invocation-error)
   raise-invocation-error
-  
+
 ```
 
 ### std/net/websocket
@@ -700,7 +700,7 @@ File descriptor control.
   O_APPEND O_DSYNC O_NONBLOCK O_RSYNC O_SYNC
   O_ACCMODE
   O_RDONLY O_RDWR O_WRONLY
-  
+
 ```
 
 ### std/os/pipe
@@ -713,7 +713,7 @@ Pipes.
 
   pipe
   _pipe make_pipe_ptr pipe_ptr_ref
-  
+
 ```
 
 ### std/os/socket
@@ -757,24 +757,24 @@ Sockets.
   socket-address->address
   socket-address->string
   socket-address-family
-  
+
   AF_UNSPEC
   AF_INET
   AF_INET6
   AF_UNIX AF_LOCAL
   AF_NETLINK AF_PACKET AF_ALG
-  
+
   SOCK_STREAM
   SOCK_DGRAM
   SOCK_RAW
   SOCK_SEQPACKET SOCK_RDM
-  
+
   SHUT_RD
   SHUT_WR
   SHUT_RDWR
-  
+
   UNIX_MAX_PATH
-  
+
   SOL_SOCKET
   SO_ACCEPTCONN
   SO_BINDTODEVICE
@@ -801,7 +801,7 @@ Sockets.
   SO_TYPE
   SO_TIMESTAMP
   SO_USELOOPBACK
-  
+
   IPPROTO_IPV6
   IPV6_ADDRFORM
   IPV6_ADD_MEMBERSHIP
@@ -821,7 +821,7 @@ Sockets.
   IPV6_ROUTER_ALERT
   IPV6_UNICAST_HOPS
   IPV6_V6ONLY
-  
+
   IPPROTO_TCP
   TCP_CONGESTION
   TCP_CORK
@@ -832,17 +832,17 @@ Sockets.
   TCP_MAXSEG
   TCP_NODELAY
   TCP_SYNCNT
-  
+
   IP_PMTUDISC_WANT
   IP_PMTUDISC_DONT
   IP_PMTUDISC_DO
   IP_PMTUDISC_PROBE
-  
+
   IPTOS_LOWDELAY
   IPTOS_THROUGHPUT
   IPTOS_RELIABILITY
   IPTOS_MINCOST
-  
+
   MSG_CONFIRM
   MSG_CTRUNC
   MSG_DONTROUTE
@@ -895,7 +895,7 @@ Parsing facilities and grammar definition prelude.
   location->source-location
   display-location
   location-delta location-delta*
-  
+
 ;; :std/parser/stream
   make-char-stream char-stream?
   char-stream-loc
@@ -904,7 +904,7 @@ Parsing facilities and grammar definition prelude.
   char-stream-getc
   char-stream-ungetc
   port-location
-        
+
 ;; :std/parser/lexer
   lex lex-chars
   token-stream?
@@ -921,7 +921,7 @@ Parsing facilities and grammar definition prelude.
   @eq % ! $-
   parser-parse parser-rewind parser-fail
   parser-input-stream
-  
+
 ;; :std/parser/deflexer
   deflexer
 ```
@@ -1143,7 +1143,7 @@ XML processing package; requires libxml2.
   sxml-select sxml-select/context sxml-select*
   sxml-find sxml-find/context sxml-find*
   sxml-e? sxml-id? sxml-class?
-  
+
 ;; :std/xml/print
   print-sxml->html
   print-sxml->html*

@@ -2,7 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; Gerbil executable module stub
 (##namespace (""))
-(declare 
+(declare
   (block)
   (standard-bindings)
   (extended-bindings))
@@ -22,7 +22,7 @@
            (path-normalize
             (cond
              ((getenv "GERBIL_HOME" #f) => values)
-             (else 
+             (else
               (error "Cannot determine GERBIL_HOME"))))))
          (libdir
           (path-expand "lib" home)))
@@ -51,8 +51,8 @@
          (filter        (eval 'filter))
          (loadpath
           (cond
-           ((getenv "GERBIL_LOADPATH" #f) 
-            => (lambda (ev) 
+           ((getenv "GERBIL_LOADPATH" #f)
+            => (lambda (ev)
                  (filter (lambda (path) (not (string-empty? path)))
                          (string-split ev #\:))))
            (else '())))

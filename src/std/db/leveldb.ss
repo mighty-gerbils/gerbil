@@ -213,7 +213,7 @@ package: std/db
   (with ((leveldb-itor itor) lit)
     (if itor
       (leveldb_iter_next itor)
-      (error "Iterator has been finalized"))))                   
+      (error "Iterator has been finalized"))))
 
 (def (leveldb-iterator-prev lit)
   (with ((leveldb-itor itor) lit)

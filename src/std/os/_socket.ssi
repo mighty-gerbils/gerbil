@@ -11,7 +11,7 @@ package: std/os
   _accept
   _connect
   _shutdown
-  
+
   _send
   _sendto
   _sendmsg
@@ -39,7 +39,7 @@ package: std/os
   sockaddr_len
   sockaddr_bytes
   sockaddr_bytes_set
-  
+
   ;; sockopts
   _getsockopt_int
   _setsockopt_int
@@ -58,7 +58,7 @@ package: std/os
   ;; helpers
   make_int_ptr
   int_ptr_value
-  
+
   make_tv
   tv_sec tv_sec_set
   tv_usec tv_usec_set
@@ -66,7 +66,7 @@ package: std/os
   make_linger
   linger_onoff linger_onoff_set
   linger_linger linger_linger_set
-  
+
   ;; constants
   ;; these are defined to -1 if undefined for the OS
   AF_UNSPEC
@@ -79,13 +79,13 @@ package: std/os
   SOCK_DGRAM
   SOCK_RAW
   SOCK_SEQPACKET SOCK_RDM
-  
+
   SHUT_RD
   SHUT_WR
   SHUT_RDWR
 
   UNIX_MAX_PATH
-  
+
   ;; sockopts
   SOL_SOCKET
   SO_ACCEPTCONN
@@ -178,12 +178,12 @@ package: std/os
   IP_PMTUDISC_DONT
   IP_PMTUDISC_DO
   IP_PMTUDISC_PROBE
-  
+
   IPTOS_LOWDELAY
   IPTOS_THROUGHPUT
   IPTOS_RELIABILITY
   IPTOS_MINCOST
-  
+
   MSG_CONFIRM
   MSG_CTRUNC
   MSG_DONTROUTE

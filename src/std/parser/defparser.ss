@@ -40,7 +40,7 @@ package: std/parser
   (parse-e ts [] wrap-e
            (lambda (_ tok) tok)
            (lambda (toks) (parser-fail where ts toks))))
-                   
+
 (defsyntax (defparser stx)
   (def (rule-id? id rule-ids)
     (find (cut bound-identifier=? id <>) rule-ids))
@@ -51,7 +51,7 @@ package: std/parser
        (and (identifier? #'id)
             (not (underscore? #'id))))
       (_ #f)))
-  
+
   (def (parse-body body)
     (let lp ((rest body) (rules []) (xrules []) (lexer #f))
       (syntax-case rest ()
@@ -94,7 +94,7 @@ package: std/parser
        (unless (rule-id? #'xrule rule-ids)
          (raise-syntax-error #f "Bad syntax; reference to unknwon rule" stx rule #'xrule)))
       (_ (raise-syntax-error #f "Bad syntax; illegal production" stx rule prod))))
-  
+
   (def (parse-rule-body body rule rule-ids)
     (let lp ((rest body) (prods []))
       (syntax-case rest (=> ! %)
@@ -193,7 +193,7 @@ package: std/parser
                       body)
                   #'prod-id))
         (K (cons defn defs)))))
-  
+
   (def (generate-prod-e prod prod-id defs K)
     (syntax-case prod (@cat @rep* @rep+ @maybe @eq $$)
       ((@cat prod ...)
@@ -317,7 +317,7 @@ package: std/parser
            (K (cons defn defs)))))
       (rule
        (generate-prod-e #'(rule _) prod-id defs K))))
-  
+
   (def (generate-prod prod prod-id rule-id defs K)
     (syntax-case prod (=> ! % $$ @eq @eqv @equal)
       ((prod => expr)
@@ -449,7 +449,7 @@ package: std/parser
       (syntax-case prod (!)
         ((prod !) #t)
         (else #f)))
-    
+
     (def (generate1 prod-ids prods)
       (match prod-ids
         ([prod-id]
@@ -468,7 +468,7 @@ package: std/parser
                          (lambda (xtoks)
                            (parser-rewind ts xtoks toks)
                            next))))))))
-    
+
     (with-syntax ((rule-id rule-id)
                   (next (generate1 prod-ids prods)))
       (let (defn (wrap-source
@@ -476,7 +476,7 @@ package: std/parser
                       next)
                   #'rule-id))
         (K (cons defn defs)))))
-  
+
   (def (generate-rule rule rule-ids defs K)
     (syntax-case rule ()
       ((rule-id . body)
@@ -493,7 +493,7 @@ package: std/parser
                                    (cut lp rest (fx1+ k) (cons prod-id prod-ids) <>))))
                  (else
                   (generate-rule-def #'rule-id (reverse prod-ids) prods defs K))))))))))
-  
+
   (def (generate-rules rules rule-ids)
     (let lp ((rest rules) (defs []))
       (match rest
@@ -501,7 +501,7 @@ package: std/parser
          (generate-rule rule rule-ids defs (cut lp rest <>)))
         (else
          (reverse defs)))))
-  
+
   (syntax-case stx ()
     ((_ id body ...)
      (identifier? #'id)

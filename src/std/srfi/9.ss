@@ -39,7 +39,7 @@ package: std/srfi
      (else
       (let (mid (expander-context-id (current-expander-context)))
         (stx-identifier type-t mid "#" type-t)))))
-  
+
   (def (generate-type type-id fields)
     (with-syntax ((klass type-id)
                   (id
@@ -84,7 +84,7 @@ package: std/srfi
                   ((ctor-name field ...) ctor-spec))
       #'(define (ctor-name field ...)
           (make-struct-instance klass field ...))))
-  
+
   (syntax-case stx ()
     ((_ type (constructor field ...) predicate field-spec ...)
      (and (identifier? #'type)

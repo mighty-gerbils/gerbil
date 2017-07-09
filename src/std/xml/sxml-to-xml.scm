@@ -19,7 +19,7 @@
 ;; 2013-03-11: Made *UNENCODED* take several arguments, this makes good sense.
 ;; 2016-01-29: namespaced for gerbil, some v4.8 change porting
 
-(declare 
+(declare
   (fixnum)
   (block)
   (standard-bindings)

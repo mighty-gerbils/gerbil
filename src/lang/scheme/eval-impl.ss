@@ -32,5 +32,3 @@ package: scheme
             ctx))))
     ;; wrap a context to make it effectively immutable
     (make-top-context ctx)))
-
-

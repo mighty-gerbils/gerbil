@@ -1,6 +1,6 @@
 ; <PLAINTEXT>
 ; Copyright (c) 2005-2006 Sebastian Egner.
-; 
+;
 ; Permission is hereby granted, free of charge, to any person obtaining
 ; a copy of this software and associated documentation files (the
 ; ``Software''), to deal in the Software without restriction, including
@@ -8,10 +8,10 @@
 ; distribute, sublicense, and/or sell copies of the Software, and to
 ; permit persons to whom the Software is furnished to do so, subject to
 ; the following conditions:
-; 
+;
 ; The above copyright notice and this permission notice shall be
 ; included in all copies or substantial portions of the Software.
-; 
+;
 ; THE SOFTWARE IS PROVIDED ``AS IS'', WITHOUT WARRANTY OF ANY KIND,
 ; EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 ; MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -19,9 +19,9 @@
 ; LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 ; OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 ; WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-; 
+;
 ; -----------------------------------------------------------------------
-; 
+;
 ; Lightweight testing (reference implementation)
 ; ==============================================
 ;
@@ -37,7 +37,7 @@
 ; -- portability --
 
 ; PLT:      (require (lib "23.ss" "srfi") (lib "42.ss" "srfi"))
-; Scheme48: ,open srfi-23 srfi-42 
+; Scheme48: ,open srfi-23 srfi-42
 
 ; -- utilities --
 
@@ -125,7 +125,7 @@
             (let* ((w (car (reverse check:failed)))
                    (expression (car w))
                    (actual-result (cadr w))
-                   (expected-result (caddr w)))                  
+                   (expected-result (caddr w)))
               (display " First failed example:")
               (newline)
               (check:report-expression expression)
@@ -135,7 +135,7 @@
 (define (check-passed? expected-total-count)
   (and (= (length check:failed) 0)
        (= check:correct expected-total-count)))
-       
+
 ; -- simple checks --
 
 (define (check:proc expression thunk equal expected-result)
@@ -163,8 +163,8 @@
            (begin (check:report-correct 1)
                   (check:add-correct!))
            (begin (check:report-failed expected-result)
-                  (check:add-failed! expression 
-				     actual-result 
+                  (check:add-failed! expression
+				     actual-result
 				     expected-result)))))
     (else (error "unrecognized check:mode" check:mode)))
   (if #f #f))
@@ -195,8 +195,8 @@
                    (begin (check:report-expression expression)
                           (check:report-actual-result actual-result)
                           (check:report-failed expected-result)))
-               (check:add-failed! expression 
-				  actual-result 
+               (check:add-failed! expression
+				  actual-result
 				  expected-result)))))
 
 (define-syntax check-ec:make
@@ -205,7 +205,7 @@
      (if (>= check:mode 1)
          (check:proc-ec
 	  (let ((cases 0))
-	    (let ((w (first-ec 
+	    (let ((w (first-ec
 		      #f
 		      qualifiers
 		      (:let equal-pred equal)
@@ -221,9 +221,9 @@
 			    cases))))
 	      (if w
 		  (cons #f w)
-		  (list #t 
-			'(check-ec qualifiers 
-				   expr (=> equal) 
+		  (list #t
+			'(check-ec qualifiers
+				   expr (=> equal)
 				   expected (arg ...))
 			(if #f #f)
 		        (if #f #f)

@@ -8,7 +8,7 @@ package: scheme
         :scheme/repl
         :scheme/eval
         )
-(export 
+(export
   *
   +
   -

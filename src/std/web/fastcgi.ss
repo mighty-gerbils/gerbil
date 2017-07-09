@@ -54,7 +54,7 @@ package: std/web
         (fastcgi-request-end req 1 FCGI-UNKNOWN-ROLE)
         (when (fastcgi-request-keepalive req)
           (loop))))))
-  
+
   (try (loop)
     (catch (e)
       (log-error "error responding" e))
@@ -91,10 +91,10 @@ package: std/web
         (warning "fastcgi-accept: unexpected message type ~a" type)
         (begin-request port))))
       ((? eof-object? eof) eof)))
-  
+
   (def (receive-request-data port id keepalive role)
     (def params (make-hash-table-eq))
-    
+
     (let lp ((end-params #f) (end-stdin #f) (stdin []))
       (if (and end-params end-stdin)
         (make-fastcgi-request port id keepalive
@@ -124,7 +124,7 @@ package: std/web
                (lp end-params end-stdin stdin))))
           ((? eof-object?)
            (raise-io-error 'fastcgi-accept "Premature port end" port))))))
-          
+
   (begin-request port))
 
 ;; send output data
@@ -225,7 +225,7 @@ package: std/web
                  (fxarithmetic-shift nb2 16)
                  (fxarithmetic-shift nb1 8)
                  nb0))))))
-  
+
   (let lp ((klen (read-length port)) (r []))
     (if (eof-object? klen)
       (reverse r)
@@ -285,7 +285,7 @@ package: std/web
         (write-u8 nb2 port)
         (write-u8 nb1 port)
         (write-u8 nb0 port))))
-  
+
   (for ([key . value] alst)
     (let* ((kdata (string->bytes
                    (symbol->string

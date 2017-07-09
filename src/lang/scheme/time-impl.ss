@@ -10,7 +10,7 @@ package: scheme
 (begin-foreign
   (c-declare #<<END-C
 #include <time.h>
-#include <stdio.h>             
+#include <stdio.h>
 static long ffi_jiffie_res;
 static struct timespec ffi_jiffie_start;
 static long ffi_get_jiffies ()
@@ -21,7 +21,7 @@ static long ffi_get_jiffies ()
  {
   goto err;
  }
-        
+
  int r = clock_gettime (CLOCK_MONOTONIC, &ts);
  if (r)
  {
@@ -31,7 +31,7 @@ static long ffi_get_jiffies ()
 
  return (ts.tv_sec - ffi_jiffie_start.tv_sec) * 1000000000 / ffi_jiffie_res
       + (ts.tv_nsec - ffi_jiffie_start.tv_nsec) / ffi_jiffie_res;
- 
+
  err:
  return -1;
 }
@@ -87,4 +87,3 @@ END-C
     (if (fxpositive? res)
       (/ 1000000000 res)
       (error "Error determining jiffy resolution; something went wrong..."))))
-

@@ -55,7 +55,7 @@ package: std/xml
          (select (sxml-children n) r
                  (cut select rest <> K))))
       (else (K r))))
-  
+
   (select (sxml-children n) [] reverse))
 
 ;; select with context; predicate is binary fun (node [node ...]) => boolean
@@ -68,7 +68,7 @@ package: std/xml
          (select (sxml-children n) (cons n ctx) r
                  (cut select rest ctx <> K))))
       (else (K r))))
-  
+
   (select (sxml-children n) [n] [] reverse))
 
 ;; select from immediate children
@@ -87,12 +87,12 @@ package: std/xml
   (def (find nodes E)
     (match nodes
       ([n . rest]
-       (if (predf n) 
+       (if (predf n)
          (mapf n)
          (find (sxml-children n)
                (lambda () (find rest E)))))
       (else (E))))
-  
+
   (find (sxml-children n) false))
 
 ;; find with context
@@ -105,7 +105,7 @@ package: std/xml
          (find (sxml-children n) (cons n ctx)
                (lambda () (find rest ctx E)))))
       (else (E))))
-  
+
   (find (sxml-children n) [n] false))
 
 ;; find in immediate children
@@ -131,5 +131,5 @@ package: std/xml
     (alet (classes (sxml-attribute-e n 'class))
       (and (string? classes)
            (or (string=? classes klass)
-               (find (cut string=? klass <>) 
+               (find (cut string=? klass <>)
                      (string-split classes #\space)))))))

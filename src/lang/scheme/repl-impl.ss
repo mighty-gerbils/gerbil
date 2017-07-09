@@ -51,5 +51,3 @@ package: scheme
     ((5) (with-id! (make-top-context r5rs-top) 'r5rs-report))
     (else
      (error "Unrecognized Scheme Report version" version))))
-
-

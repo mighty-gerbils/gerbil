@@ -6,7 +6,7 @@ package: gerbil/gambit
 (export #t)
 (extern namespace: #f
   port? close-port force-output
-  
+
   input-port-timeout-set!
   output-port-timeout-set!
   input-port-line
@@ -38,7 +38,7 @@ package: gerbil/gambit
 
   ;; v4.8+
   make-tls-context
-  
+
   socket-info?
   socket-info-family
   socket-info-port-number
@@ -46,7 +46,7 @@ package: gerbil/gambit
   tcp-client-peer-socket-info
   tcp-client-self-socket-info
   tcp-server-socket-info
-  
+
   open-directory
 
   open-vector
@@ -73,16 +73,16 @@ package: gerbil/gambit
   print
   println
 
-  open-u8vector open-input-u8vector open-output-u8vector 
+  open-u8vector open-input-u8vector open-output-u8vector
   call-with-input-u8vector with-input-from-u8vector
   call-with-output-u8vector with-output-to-u8vector
   open-u8vector-pipe
   get-output-u8vector
   object->u8vector
-  
+
   open-process open-input-process open-output-process
   call-with-input-process call-with-output-process
-  with-input-from-process with-output-to-process 
+  with-input-from-process with-output-to-process
   process-pid process-status
 
   with-input-from-port with-output-to-port

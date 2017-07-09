@@ -149,7 +149,7 @@
 ;; (define (error reason . args)
 ;;   (display "Error: ")
 ;;   (display (symbol->string reason))
-;;   (for-each (lambda (arg) 
+;;   (for-each (lambda (arg)
 ;;             (display " ")
 ;;             (write arg))
 ;;             args)
@@ -287,7 +287,7 @@
           ((exists (lambda (x) (not (stream? x))) strms)
             (error 'stream-append "non-stream argument"))
           (else (stream-append strms))))
-  
+
   (define (stream-concat strms)
     (define stream-concat
       (stream-lambda (strms)
@@ -404,7 +404,7 @@
           ((exists (lambda (x) (not (stream? x))) strms)
             (error 'stream-map "non-stream argument"))
           (else (stream-map strms))))
-  
+
   (define-syntax stream-match
     (syntax-rules ()
       ((stream-match strm-expr clause ...)
@@ -413,7 +413,7 @@
             ((not (stream? strm)) (error 'stream-match "non-stream argument"))
             ((stream-match-test strm clause) => car) ...
             (else (error 'stream-match "pattern failure")))))))
- 
+
   (define-syntax stream-match-test
     (syntax-rules ()
       ((stream-match-test strm (pattern fender expr))
@@ -426,24 +426,24 @@
       (define (wildcard? x)
         (and (identifier? x)
              (free-identifier=? x (syntax _))))
-      (syntax-case x () 
+      (syntax-case x ()
         ((stream-match-pattern strm () (binding ...) body)
           (syntax (and (stream-null? strm) (let (binding ...) body))))
         ((stream-match-pattern strm (w? . rest) (binding ...) body)
-          (wildcard? #'w?) 
+          (wildcard? #'w?)
           (syntax (and (stream-pair? strm)
                        (let ((strm (stream-cdr strm)))
                          (stream-match-pattern strm rest (binding ...) body)))))
         ((stream-match-pattern strm (var . rest) (binding ...) body)
           (syntax (and (stream-pair? strm)
-                       (let ((temp (stream-car strm)) (strm (stream-cdr strm))) 
+                       (let ((temp (stream-car strm)) (strm (stream-cdr strm)))
                          (stream-match-pattern strm rest ((var temp) binding ...) body)))))
         ((stream-match-pattern strm w? (binding ...) body)
           (wildcard? #'w?)
           (syntax (let (binding ...) body)))
-        ((stream-match-pattern strm var (binding ...) body) 
+        ((stream-match-pattern strm var (binding ...) body)
           (syntax (let ((var strm) binding ...) body))))))
-  
+
   (define-syntax stream-of
     (syntax-rules ()
       ((stream-of expr rest ...)

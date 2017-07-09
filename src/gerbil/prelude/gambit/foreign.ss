@@ -5,5 +5,5 @@ package: gerbil/gambit
 
 (export #t)
 (extern namespace: #f
-  foreign? foreign-tags foreign-address 
+  foreign? foreign-tags foreign-address
   foreign-release! foreign-released?)

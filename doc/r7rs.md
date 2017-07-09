@@ -190,4 +190,3 @@ char-foldcase string-foldcase
 - The `delay-force` special from `(scheme base)` is not implemented.
 - The `cond-expand` special form does not understand `library` features.
 - The `#true` and `#false` datums are not recognized by the reader.
-

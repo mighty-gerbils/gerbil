@@ -3,7 +3,7 @@
 ;;; URI support; rfc3986
 package: std/net
 
-(import (only-in :gerbil/gambit/ports 
+(import (only-in :gerbil/gambit/ports
                  with-output-to-string
                  with-output-to-u8vector write-u8))
 
@@ -27,7 +27,7 @@ package: std/net
         (let (char (##string-ref self-chars n))
           (vector-set! vt (char->integer char) char)
           (lp (fx1+ n)))))
-    (for-each (match <> 
+    (for-each (match <>
                 ([char . sub] (vector-set! vt (char->integer char) sub)))
               sub-chars)
     vt))
@@ -50,9 +50,9 @@ package: std/net
 ;; form-url-encode: [[string . string/#f] ...] => string
 ;; if +space is t, #\space is encoded as #\+ (otherwise %20)
 (def (form-url-encode fields (+space? #t))
-  (def encoding 
+  (def encoding
     (if +space? uri-space-encoding uri-encoding))
-  
+
   (def (encode-field field)
     (match field
       ([key . val]
@@ -60,7 +60,7 @@ package: std/net
        (when val
          (write-char #\=)
          (write-uri-encoded val encoding)))))
-  
+
   (match fields
     ([first . rest]
      (with-output-to-string []
@@ -73,7 +73,7 @@ package: std/net
 (def (write-uri-encoded str encoding)
   (def (write-hex n)
     (write-char (##string-ref "0123456789ABCDEF" n)))
-  
+
   (let* ((utf8 (string->bytes str))
          (len  (u8vector-length utf8)))
     (let lp ((n 0))
@@ -90,7 +90,7 @@ package: std/net
 ;; uri-decode: string => string
 (def hex-bytes
   (let (ht (make-hash-table-eq))
-    (for-each 
+    (for-each
       (lambda (n)
         (let (char (##string-ref "0123456789ABCDEF" n))
           (hash-put! ht char n)
@@ -105,11 +105,11 @@ package: std/net
        ((hash-get hex-bytes char) => values)
        (else
         (error "Malformed uri encoding" char)))))
-  
+
   (when encoding
     (unless (and (vector? encoding) (fx= (vector-length encoding) 256))
       (error "Bad encoding table" encoding)))
-  
+
   (let* ((utf8 (string->bytes str))
          (len  (u8vector-length utf8))
          (pct  (char->integer #\%)))
@@ -133,7 +133,7 @@ package: std/net
                                         (hex-byte lo)))
                        (lp (fx+ n 2)))
                      (error "Malformed uri component"))))
-                (else 
+                (else
                  (write-u8 next)
                  (lp (fx1+ n))))))))))))
 

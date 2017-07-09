@@ -9,16 +9,16 @@ package: std/srfi
   vector-unfold                   vector-unfold-right
   vector-copy                     vector-reverse-copy
   vector-append                   vector-concatenate
-  
+
   ;; * Predicates
   vector?
   vector-empty?
   vector=
-  
+
   ;; * Selectors
   vector-ref
   vector-length
-  
+
   ;; * Iteration
   vector-fold                     vector-fold-right
   vector-map                      vector-map!
@@ -38,7 +38,7 @@ package: std/srfi
   vector-reverse!
   vector-copy!                    vector-reverse-copy!
   vector-reverse!
-  
+
   ;; * Conversion
   vector->list                    reverse-vector->list
   list->vector                    reverse-list->vector

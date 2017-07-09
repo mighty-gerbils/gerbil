@@ -25,7 +25,7 @@
  )
 
 
-;(scmxlate-ignore 
+;(scmxlate-ignore
 ; *pregexp-return-char*
 ; *pregexp-tab-char*
 ; pregexp-reverse!
@@ -43,7 +43,7 @@
 
 (scmxlate-postamble)
 
-(scmxlate-insert 
+(scmxlate-insert
  ")
 ")
 

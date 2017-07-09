@@ -7,12 +7,12 @@ package: std/db
 (extern
   mysql_error mysql_errno
   mysql_stmt_error mysql_stmt_errno
-  
+
   mysql_init
   mysql_connect
   mysql_connect_begin
   mysql_close
-  
+
   mysql_stmt_init
   mysql_stmt_prepare
   mysql_stmt_prepare_begin
@@ -34,7 +34,7 @@ package: std/db
   mysql_fetch_field
   mysql_field_name
   mysql_field_type
-    
+
   make_mysql_bind
   mysql_bind_null
   mysql_bind_set_null
@@ -66,7 +66,7 @@ package: std/db
   __start_mysql_connection_thread
   __read_int
   __close
-  
+
   make_bool_ptr
   make_int_ptr
   int_ptr_ref
@@ -82,7 +82,7 @@ package: std/db
   make_blob_ptr
   string_ptr_set
   blob_ptr_set
-  
+
   make_time_ptr
   mysql_time_set_second_part
   mysql_time_set_second
@@ -91,12 +91,12 @@ package: std/db
   mysql_time_set_day
   mysql_time_set_month
   mysql_time_set_year
-  
+
   sizeof_int
-  
+
   MYSQL_NO_DATA
   MYSQL_DATA_TRUNCATED
-  
+
   MYSQL_TYPE_BIT
   MYSQL_TYPE_TINY
   MYSQL_TYPE_SHORT

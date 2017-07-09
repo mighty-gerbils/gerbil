@@ -232,7 +232,7 @@ package: std
       ((pat expr when filter-expr) (match-pattern? #'pat))
       ((pat expr unless filter-expr) (match-pattern? #'pat))
       (_ #f)))
-  
+
   (def (for-binding-expr binding)
     (syntax-case binding (when unless)
       ((bind bind-e) #'bind-e)
@@ -268,7 +268,7 @@ package: std
                   (lp)))))
           (iter-fini! iter-id) ...
           (void))))
-  
+
   (syntax-case stx ()
     ((_ bind body ...)
      (for-binding? #'bind)
@@ -308,7 +308,7 @@ package: std
                   (let (value (let () body ...))
                     (iter-next! iter-id) ...
                     (lp (cons value rvalue))))))))))
-  
+
   (syntax-case stx ()
     ((_ bind body ...)
      (for-binding? #'bind)
@@ -348,7 +348,7 @@ package: std
                   (let (value (let () body ...))
                     (iter-next! iter-id) ...
                     (lp value)))))))))
-  
+
   (syntax-case stx ()
     ((_ fold-bind bind body ...)
      (and (for/fold-bind? #'fold-bind)
@@ -358,8 +358,3 @@ package: std
      (and (for/fold-bind? #'fold-bind)
           (stx-andmap for-binding? #'(bind ...)))
      (generate-for #'fold-bind #'(bind ...) #'(body ...)))))
-
-    
-
-
-

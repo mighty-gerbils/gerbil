@@ -12,4 +12,3 @@ package: scheme
   ;; bypass the load hook (used for loading raw Gambit source)
   (parameterize ((current-expander-context env))
     (##load path (lambda args #f) #t #t #f)))
-

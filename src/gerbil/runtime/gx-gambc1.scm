@@ -4,7 +4,7 @@
 (##namespace (""))
 ;; (include "gx-gambc#.scm")
 
-(declare 
+(declare
   (block)
   (standard-bindings)
   (extended-bindings))
@@ -20,8 +20,8 @@
         (make-AST e src))))
 
 (define (&AST-e stx)
-  (if (AST? stx) 
-    (AST-e stx) 
+  (if (AST? stx)
+    (AST-e stx)
     stx))
 
 (define (&AST-source stx)
@@ -102,7 +102,7 @@
       e)))
 
 (define (read-syntax-from-file path)
-  (let ((r (##read-all-as-a-begin-expr-from-path 
+  (let ((r (##read-all-as-a-begin-expr-from-path
             (path-normalize path)
             (current-readtable)
             _gx#wrap-syntax
@@ -162,7 +162,7 @@
    (make-hash-table-eq)))
 
 (define _gx#*readtable*
-  (let ((rt (readtable-write-extended-read-macros?-set 
+  (let ((rt (readtable-write-extended-read-macros?-set
              (##make-standard-readtable) #t)))
     (macro-readtable-bracket-keyword-set! rt '@list)
     (macro-readtable-brace-keyword-set! rt '@method)
@@ -213,9 +213,9 @@
       (gensym id))
      ((symbol? id)
       (case (&context-t ctx)
-        ((local) 
+        ((local)
          (gensym id))
-        ((module) 
+        ((module)
          (make-symbol (&context-ns ctx) "#" id))
         (else id)))
      (else
@@ -224,8 +224,8 @@
 (define (make-&context-local #!optional (super (&current-context)))
   (make-&context 'local #f super (make-hash-table-eq)))
 
-(define (make-&context-module id ns path 
-                              #!optional 
+(define (make-&context-module id ns path
+                              #!optional
                               (super (&current-context)))
   (make-&module 'module ns super (make-hash-table-eq) id path #f #f))
 
@@ -248,16 +248,16 @@
 (define (_gx#expand-top stx)
   (let ((stx (_gx#expand* stx)))
     (core-ast-case stx ()
-      ((form . _) 
+      ((form . _)
        (&core-bound-id? form &core-form?)
        stx)
-      (else 
+      (else
        (_gx#expand-expression stx)))))
 
 (define (_gx#expand-expression stx)
   (define (illegal-expression hd . ignore)
     (_gx#raise-syntax-error #f "Bad syntax; illegal expression" stx hd))
-  
+
   (let ((stx (_gx#expand-head stx)))
     (core-ast-case stx (begin)
       ((begin . body)
@@ -273,7 +273,7 @@
        (cons* '%#call
               (_gx#expand-expression rator)
               (map _gx#expand-expression (&AST->list rands))))
-      (id 
+      (id
        (&core-bound-id? id &runtime?)
        `(%#ref ,(&AST (&runtime-id (&core-resolve id)) id)))
       (id
@@ -288,12 +288,12 @@
     (core-ast-case stx ()
       ((form . _)
        (&AST-id? form)
-       (&core-bound-id? form (lambda (bind) 
+       (&core-bound-id? form (lambda (bind)
                                (or (&runtime? bind)
                                    (&special-form? bind)
                                    (&core-form? bind)))))
       (else #f)))
-  
+
   (_gx#expand* stx stop?))
 
 (define (_gx#expand* stx #!optional (stop? false))
@@ -312,9 +312,9 @@
              ((&syntax-e bind) stx)
              stx)))
      (else stx)))
-  
+
   (core-ast-case stx ()
-    ((id . _) 
+    ((id . _)
      (&AST-id? id)
      (expand1 id))
     (id
@@ -327,17 +327,17 @@
   id: gx#syntax-error::t)
 
 (define (_gx#raise-syntax-error where what stx . details)
-  (raise 
+  (raise
     (make-syntax-error what (cons stx details) where (&current-context) #f #f)))
 
 (define (_gx#resolve-path path #!optional (loc #f))
   (error "XXX"))
 
 (define (_gx#resolve-module-path path #!optional (loc #f))
-  (let* ((rel (cond 
-               (loc 
+  (let* ((rel (cond
+               (loc
                 (let ((src (##locat-container loc)))
-                  (if (string? src) 
+                  (if (string? src)
                     (path-directory src)
                     (macro-absent-obj))))
                ((not (null? (&current-path)))
@@ -359,7 +359,7 @@
       (let-values (((id ns body) (_gx#read-module path)))
         (let ((ctx (make-&context-module id ns path)))
           (parameterize ((&current-path (cons path (&current-path))))
-            (_gx#eval (make-AST (cons 'begin-module% body) 
+            (_gx#eval (make-AST (cons 'begin-module% body)
                                 (##make-locat path 0))
                       ctx #f)
             (hash-put! _gx#*modules* path ctx)
@@ -384,15 +384,15 @@
 (define (_gx#expand-block stx expand-special #!optional (begin-form '%#begin))
   (define (expand-special/splice? form)
     (memq (&AST-e form) '(include cond-expand)))
-  
+
   (define (expand-special? form)
     (&core-bound-id? form &special-form?))
-  
+
   (define (expand-splice hd body rest r)
     (if (&AST-list? body)
       (K (foldr cons rest (&AST->list body)) r)
       (_gx#raise-syntax-error #f "Bad syntax" stx hd)))
-  
+
   (define (expand-special/splice hd rest r)
     (core-ast-case hd (cond-expand include)
       ((cond-expand . _)
@@ -403,13 +403,13 @@
                (_gx#resolve-path (&AST-e path)
                                  (or (&AST-source path)
                                      (&AST-source hd))))
-              (block 
+              (block
                (_gx#include hd rpath))
               (rbody
                (parameterize ((&current-path (cons rpath (&current-path))))
                  (_gx#expand-block block expand-special #f))))
          (K rest (foldr cons r rbody))))))
-  
+
   (define (K rest r)
     (core-ast-case rest ()
       ((hd . rest)
@@ -417,11 +417,11 @@
          (core-ast-case hd (begin)
            ((begin . body)
             (expand-splice hd body rest r))
-           ((form . _) 
+           ((form . _)
             (expand-special/splice? form)
             (expand-special/splice hd rest r))
-           ((form . _) 
-            (expand-special? form)            
+           ((form . _)
+            (expand-special? form)
             (expand-special hd K rest r))
            (else
             (K rest (cons (_gx#expand-expression hd) r))))))
@@ -429,7 +429,7 @@
        (if begin-form
          (cons begin-form (reverse r))
          r))))
-  
+
   (core-ast-case stx ()
     ((_ . body)
      (&AST-list? body)
@@ -445,20 +445,20 @@
 (define-core-special-form (begin stx)
   (define (expand-special hd K rest r)
     (K rest (cons (_gx#expand* hd) r)))
-  
+
   (_gx#expand-block stx expand-special))
 
 (define-core-macro (begin-local% stx)
   (define (expand-special hd K rest r)
     (K '() (cons (expand-internal hd rest) r)))
-  
+
   (define (expand-internal hd rest)
     (parameterize ((&current-context (make-&context-local)))
       (wrap-internal
        (_gx#expand-block
         (&AST (cons* 'begin hd rest) stx)
         expand-internal-special #f))))
-  
+
   (define (expand-internal-special hd K rest r)
     (core-ast-case hd (define-values define-syntax)
       ((define-values ids _)
@@ -472,15 +472,15 @@
        (begin
          (&core-bind-user-syntax! id (_gx#eval-syntax expr))
          (K rest r)))))
-  
+
   (define (wrap-internal rbody)
     (let lp ((rest rbody) (bind '()) (body '()))
       (core-ast-case rest ()
         ((hd . rest)
          (core-ast-case hd (define-values)
-           ((define-values ids expr) 
+           ((define-values ids expr)
             (lp rest
-                (cons (list (map (lambda (id) 
+                (cons (list (map (lambda (id)
                                    (&AST (cond
                                           ((&core-resolve id) => &runtime-id)
                                           (else #f))
@@ -498,11 +498,11 @@
                 (core-match body
                   (() (_gx#raise-syntax-error #f "Bad syntax" stx))
                   ((expr) expr)
-                  (else 
+                  (else
                    (&AST (cons '%#begin body) stx)))))
            (if (null? bind) body
                (&AST (list '%#letrec*-values bind body) stx)))))))
-  
+
   (_gx#expand-block* stx expand-special))
 
 (define-core-special-form (begin-module% stx)
@@ -527,14 +527,14 @@
        (begin
          (_gx#export hd)
          (K rest r)))))
-  
+
   (define (wrap-module rbody)
     (let lp ((rest rbody) (body '()))
       (core-match rest
         ((hd . rest)
          (core-ast-case hd (define-values)
            ((define-values ids expr)
-            (let ((eids (map (lambda (id) 
+            (let ((eids (map (lambda (id)
                                (&AST (cond
                                       ((&core-resolve id) => &runtime-id)
                                       (else #f))
@@ -549,7 +549,7 @@
             (lp rest (cons hd body)))))
         (else
          (cons '%#begin body)))))
-  
+
   (wrap-module
    (_gx#expand-block stx expand-special #f)))
 
@@ -571,7 +571,7 @@
            ((or)  (ormap satisfied? body))
            (else
             (_gx#raise-syntax-error #f "Bad syntax" stx combinator)))))))
-  
+
   (define (loop rest)
     (core-ast-case rest ()
       ((hd . rest)
@@ -581,12 +581,12 @@
            ((&AST-eq? condition 'else)
             (if (&AST-null? rest) body
                 (_gx#raise-syntax-error #f "Bad syntax" stx hd)))
-           ((satisfied? condition) 
+           ((satisfied? condition)
             body)
-           (else 
+           (else
             (loop rest))))))
       (() '())))
-  
+
   (core-ast-case stx ()
     ((_ . clauses)
      (&AST-list? clauses)
@@ -647,7 +647,7 @@
         (() opt?)
         (tail
          (and (&AST-id? tail) opt?)))))
-  
+
   (define (opt-lambda-split hd)
     (let lp ((rest hd) (pre '()) (opt '()))
       (core-ast-case rest ()
@@ -657,48 +657,48 @@
             (&AST-id? id)
             (lp rest (cons (generate-id id) pre) opt))
            ((id expr)
-            (lp rest pre 
+            (lp rest pre
                 (cons (cons (generate-id id) expr)
                       opt)))))
         (tail
-         (values (reverse pre) (reverse opt) 
+         (values (reverse pre) (reverse opt)
                  (if (&AST-id? tail)
                    (generate-id tail)
                    tail))))))
-  
+
   (define (generate-id id)
     (if (&AST-eq? id '_)
       (gensym)
       id))
-  
+
   (define (generate impl pre opt tail)
     (cons
      (&AST `(,pre ,(generate1 impl pre opt))
            stx)
      (generate* impl pre opt tail)))
-  
+
   (define (generate* impl pre opt tail)
     (let recur ((opt opt) (right '()))
       (core-match opt
         (((eid . expr) . rest)
          (let* ((right* (cons eid right))
                 (right (reverse right)))
-           (cons 
+           (cons
             (&AST `((,@pre ,@right ,eid)
                     ,(generate1 impl (foldr cons (reverse right*) pre) rest))
                   stx)
             (recur rest right*))))
         (else
          (if (&AST-null? tail) '()
-             (list 
-              (&AST 
+             (list
+              (&AST
                (let* ((right (reverse right))
                       (args (foldr cons tail `(,@pre ,@right))))
                  `(,args
                    ,(&AST `(apply ,impl ,@pre ,@right ,tail)
                           stx)))
                stx)))))))
-  
+
   (define (generate1 impl pre opt)
     (let recur ((opt opt) (right '()))
       (core-match opt
@@ -710,7 +710,7 @@
         (else
          (&AST `(,impl ,@pre ,@(reverse right))
                stx)))))
-  
+
   (core-ast-case stx ()
     ((_ hd . body)
      (&AST-bind-list? hd)
@@ -729,7 +729,7 @@
 (define-core-macro (case-lambda stx)
   (core-ast-case stx ()
     ((_ . clauses)
-     `(%#case-lambda 
+     `(%#case-lambda
        ,@(map (lambda (clause)
                 (cdr (_gx#lambda% (&AST (cons 'case-lambda-clause clause) clause))))
               clauses)))))
@@ -737,7 +737,7 @@
 (define-core-macro (lambda% stx)
   (define (wrap-lambda hd body)
     `(%#lambda ,hd ,(_gx#begin-local% (&AST (cons 'begin-lambda-body body) stx))))
-  
+
   (core-ast-case stx ()
     ((_ hd . body)
      (&AST-bind-list? hd)
@@ -748,7 +748,7 @@
             (let ((eid (make-&runtime-id hd)))
               (&core-bind-runtime! hd eid)
               (lp rest (cons (&AST eid hd) args))))
-           (() 
+           (()
             (wrap-lambda (reverse args) body))
            (tail
             (let ((eid (make-&runtime-id tail)))
@@ -770,7 +770,7 @@
                           (core-ast-case bind ()
                             ((_ expr) expr)))
                        hd)))
-       `((letrec-values (((,id) ,(&AST `(lambda% ,hd-ids ,@body) stx))) ,id) 
+       `((letrec-values (((,id) ,(&AST `(lambda% ,hd-ids ,@body) stx))) ,id)
          ,@args)))
     ((_ (id expr) . body)
      (&AST-id? id)
@@ -824,12 +824,12 @@
        (parameterize ((&current-context (make-&context-local)))
          (let* ((eids* (map (lambda (ids) (map make-&runtime-id ids)) ids*))
                 (eids** (map (lambda (ids eids) (map &AST eids ids)) ids* eids*)))
-           (for-each 
+           (for-each
              (lambda (ids eids)
                (for-each &core-bind-runtime! ids eids))
              ids* eids*)
            `(%#let-values ,(map list eids** exprs)
-                          ,(_gx#begin-local% 
+                          ,(_gx#begin-local%
                             (&AST (cons 'begin-let-body body) stx)))))))))
 
 (define-core-macro (let*-values stx)
@@ -839,7 +839,7 @@
         ,(&AST `(let*-values ,rest ,@body) stx)))
     ((_ () . body)
      `(let-values () ,@body))))
-                     
+
 
 (define-core-macro (letrec-values stx)
   (core-ast-case stx ()
@@ -859,13 +859,13 @@
        (parameterize ((&current-context (make-&context-local)))
          (let* ((eids* (map (lambda (ids) (map make-&runtime-id ids)) ids*))
                 (eids** (map (lambda (ids eids) (map &AST eids ids)) ids* eids*)))
-           (for-each 
+           (for-each
              (lambda (ids eids)
                (for-each &core-bind-runtime! ids eids))
              ids* eids*)
-           `(%#letrec-values ,(map list eids** 
+           `(%#letrec-values ,(map list eids**
                                    (map _gx#expand-expression exprs))
-                             ,(_gx#begin-local% 
+                             ,(_gx#begin-local%
                                (&AST (cons 'begin-let-body body) stx)))))))))
 
 (define-core-macro (quote stx)
@@ -888,13 +888,13 @@
         ((box? (&AST-e e))
          (simple-quote? (unbox (&AST-e e))))
         (else #t)))))
-  
+
   (define (generate e d)
     (core-ast-case e (quasiquote unquote unquote-splicing)
       ((quasiquote e)
        `(list ,(generate e (fx1+ d))))
-      ((unquote e) 
-       (fxzero? d) 
+      ((unquote e)
+       (fxzero? d)
        e)
       ((unquote e)
        `(list (quote unquote) ,(generate e (fx1- d))))
@@ -918,7 +918,7 @@
          `(quote ,e))))))
 
   (core-ast-case stx ()
-    ((_ e) 
+    ((_ e)
      (simple-quote? e)
      `(%#quote ,e))
     ((_ e)
@@ -932,7 +932,7 @@
        `(,setf ,@args ,expr)))
     ((_ id expr)
      (&core-bound-id? id &runtime?)
-     `(%#set! ,(&AST (&runtime-id (&core-resolve id)) id) 
+     `(%#set! ,(&AST (&runtime-id (&core-resolve id)) id)
               ,(_gx#expand-expression expr)))
     ((_ id expr)
      (&AST-id? id)
@@ -1004,12 +1004,12 @@
                (begin ,@body)
                ,(recur rest)))))
         (else #!void))))
-  
+
   (define (generate1 hd tgt)
     (core-ast-case hd ()
       ((datum)
-       (let ((cmp 
-              (cond 
+       (let ((cmp
+              (cond
                ((eq-datum? datum) 'eq?)
                ((eqv-datum? datum) 'eqv?)
                (else 'equal?))))
@@ -1017,13 +1017,13 @@
       (datums
        (&AST-list? datums)
        (let* ((datums (&AST->list datums))
-              (cmp 
-               (cond 
+              (cmp
+               (cond
                 ((andmap eq-datum? datums) 'memq)
                 ((andmap eqv-datum? datums) 'memv)
                 (else 'member))))
          `(,cmp ,tgt (quote ,datums))))))
-  
+
   (define (eq-datum? x)
     (let ((e (&AST-e x)))
       (or (symbol? x)
@@ -1032,11 +1032,11 @@
           (char? x)
           (void? x)
           (dssl-object? x))))
-  
+
   (define (eqv-datum? x)
     (or (eq-datum? x)
         (number? (&AST-e x))))
-  
+
   (core-ast-case stx ()
     ((_ expr . clauses)
      (&AST-list? clauses)
@@ -1051,13 +1051,13 @@
            (type (&AST (make-symbol pre "::t") stx))
            (is?  (&AST (make-symbol pre "?") stx))
            (make (&AST (make-symbol "make-" pre) stx))
-           (pref (map (lambda (field) 
+           (pref (map (lambda (field)
                         (string-append pre "-" (symbol->string (&AST-e field))))
                       fields))
            (getf (map (lambda (pref)
                         (&AST (string->symbol pref) stx))
                       pref))
-           (setf (map (lambda (pref) 
+           (setf (map (lambda (pref)
                         (&AST (make-symbol pref "-set!") stx))
                       pref))
            (off  (let lp ((rest fields) (n 0) (r '()))
@@ -1079,13 +1079,13 @@
               '(quote ())))
            (type-super
             (and super (&syntax-e super)))
-           (type-len  
+           (type-len
             (length fields)))
       `(begin
-         (define-syntax ,id 
+         (define-syntax ,id
            (make-&struct-info (quote ,type) (quote ,id)))
          (define-values (,type)
-           (make-struct-type ,type-id ,type-super ,type-len 
+           (make-struct-type ,type-id ,type-super ,type-len
                              ,type-name ,type-plist ,type-ctor))
          (define-values (,is?)
            (make-struct-predicate ,type))
@@ -1100,7 +1100,7 @@
                   `(define-values (,setf)
                      (make-struct-field-mutator ,type ,off)))
                 setf off))))
-  
+
   (define (getopt key opts)
     (let lp ((rest opts))
       (core-ast-case rest ()
@@ -1108,7 +1108,7 @@
          (if (&AST-eq? k key) v
              (lp rest)))
         (else #f))))
-  
+
   (core-ast-case stx ()
     ((_ hd fields . opts)
      (and (&AST-id-list? fields)
@@ -1119,7 +1119,7 @@
           (and (&AST-id? id)
                (&core-bound-id? super &struct-info?))
           (generate (&AST-e id) (&core-resolve super) fields opts))
-         (id 
+         (id
           (&AST-id? id)
           (generate (&AST-e id) #f fields opts)))))))
 
@@ -1133,7 +1133,7 @@
            (super (gensym))
            (next  (gensym))
            (args  (gensym))
-           (type::method 
+           (type::method
             (&AST (make-symbol (&AST-e type) "::" (&AST-e id))
                   id)))
        `(begin
@@ -1191,9 +1191,9 @@
                            ,(&AST `(lambda% () ,(generate tgt rest))
                                   stx)))
                ,(generate1 hd tgt (&AST `(begin ,@body) stx) `(,$E)))))))
-      (else 
+      (else
        (&AST `(error "No clause matching" ,tgt) stx))))
-  
+
   (define (generate1 hd tgt K E)
     (core-ast-case hd (@list ? quote)
       ((? pred)
@@ -1206,7 +1206,7 @@
        (generate-list body tgt K E))
       ((struct-id . body)
        (&core-bound-id? struct-id &struct-info?)
-       (generate-struct (&syntax-e (&core-resolve struct-id)) body 
+       (generate-struct (&syntax-e (&core-resolve struct-id)) body
                         tgt K E))
       (id
        (&AST-id? id)
@@ -1215,7 +1215,7 @@
       (datum
        (&AST-datum? datum)
        (generate-quote datum tgt K E))))
-  
+
   (define (generate-pred pred tgt K E)
     (define (recur pred)
       (core-ast-case pred (and or not)
@@ -1227,28 +1227,28 @@
          `(not ,(recur pred)))
         (else
          `(,pred ,tgt))))
-    
+
     (&AST `(if ,(recur pred) ,K ,E) stx))
-  
+
   (define (generate-quote obj tgt K E)
     (let ((is? (cond
-                ((or (symbol? obj) 
+                ((or (symbol? obj)
                      (keyword? obj)
                      (boolean? obj)
                      (fixnum? obj))
                  'eq?)
                 ((number? obj)
                  'eqv?)
-                (else 
+                (else
                  'equal?))))
       (&AST
        `(if (,is? (quote ,obj) ,tgt) ,K ,E)
        stx)))
-  
+
   ;; no splice matching
   (define (generate-list rest tgt K E)
     (core-ast-case rest ()
-      (() 
+      (()
        (&AST `(if (null? ,tgt) ,K ,E) stx))
       ((:: tail)
        (generate1 tail tgt K E))
@@ -1264,7 +1264,7 @@
           stx)))
       (tail
        (generate1 tail tgt K E))))
-  
+
   (define (generate-struct type-id body tgt K E)
     (define (recur rest n)
       (core-match rest
@@ -1277,7 +1277,7 @@
                  ,(generate1 hd $tgt (recur rest (fx1+ n)) E))
               stx))))
         (else K)))
-    
+
     (let* ((body (&AST->list body))
            (len (length body)))
       (&AST
@@ -1306,7 +1306,7 @@
       (id (&AST-id? id) #t)
       (datum (&AST-datum? datum) #t)
       (else #f)))
-  
+
   (core-ast-case stx ()
     ((_ hd . body)
      (and (&AST-list? body)
@@ -1330,7 +1330,7 @@
       (core-ast-case rest ()
         ((e . rest)
          (core-ast-case e (<> <...>)
-           (<> 
+           (<>
             (let ((arg (gensym)))
               (lp rest (cons arg hd) (cons arg body))))
            (<...>
@@ -1343,10 +1343,10 @@
            (else
             (lp rest hd (cons e body)))))
         (else
-         (values (reverse hd) 
-                 (reverse body) 
+         (values (reverse hd)
+                 (reverse body)
                  #f)))))
-  
+
   (core-ast-case stx ()
     ((_  . body)
      (and (&AST-list? body)
@@ -1379,7 +1379,7 @@
                  ,(generate1 pat tgt kws `(if ,fender ,body ,E) E))))))
         (else
          (&AST `(raise-syntax-error #f "Bad syntax" ,tgt) stx)))))
-  
+
   (define (generate1 pat tgt kws K E)
     (let recur ((pat pat) (tgt tgt) (K K))
       (core-ast-case pat ()
@@ -1393,7 +1393,7 @@
                              ((,$tl) (##cdr ,$e)))
                   ,(recur hd $hd (recur rest $tl K))))
               ,E)))
-        (id 
+        (id
          (&AST-id? id)
          (cond
           ((&AST-eq? id '_) K)
@@ -1420,7 +1420,7 @@
                       (else
                        (_gx#raise-syntax-error #f "Bad syntax" stx pat)))))
            `(if (,is? ,tgt (quote ,hd)) ,K ,E))))))
-  
+
   (core-ast-case stx ()
     ((_ expr kws . clauses)
      (and (&AST-id-list? kws)
@@ -1450,19 +1450,19 @@
              (lp rest (cons id in)))
             (else
              (when (&module? ctx)
-               (&module-import-set! 
+               (&module-import-set!
                 ctx (cons (cons mod in)
                           (or (&module-import ctx) '()))))))))))
   (core-ast-case stx ()
     ((_ . body)
      (&AST-list? body)
      (let ((body (&AST->list body)))
-       (for-each 
+       (for-each
          (lambda (path-stx)
            (let ((path (&AST-e path-stx)))
              (cond
               ((string? path)
-               (let ((rpath 
+               (let ((rpath
                       (_gx#resolve-module-path path (or (&AST-source path-stx)
                                                         (&AST-source stx)))))
                  (import! (_gx#import-module rpath))))

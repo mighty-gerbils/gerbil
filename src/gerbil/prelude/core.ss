@@ -5,7 +5,7 @@ prelude: :<root>
 package: gerbil
 
 (export #t
-        (import: <runtime> <sugar> <MOP> <match> <more-sugar> 
+        (import: <runtime> <sugar> <MOP> <match> <more-sugar>
                  <module-sugar>)
         (phi: +1 (import: <runtime> <sugar> <MOP> <match> <more-sugar>
                           <expander-runtime> <syntax-case> <syntax-sugar>
@@ -28,7 +28,7 @@ package: gerbil
     zero? positive? negative? odd? even?
     max min
     + * - /
-    abs quotient remainder modulo gcd lcm 
+    abs quotient remainder modulo gcd lcm
     floor ceiling truncate round
     numerator denominator rationalize
     exp log sin cos tan asin acos atan
@@ -56,7 +56,7 @@ package: gerbil
     ;;  6.3.4 characters
     char? char=? char<? char>? char<=? char>=?
     char-ci=? char-ci<? char-ci>? char-ci<=? char-ci>=?
-    char-alphabetic? char-numeric? char-whitespace? 
+    char-alphabetic? char-numeric? char-whitespace?
     char-upper-case? char-lower-case?
     char->integer integer->char
     char-upcase char-downcase
@@ -76,7 +76,7 @@ package: gerbil
     vector-fill!
     ;; 6.4 control
     procedure? apply
-    map for-each 
+    map for-each
     force
     call-with-current-continuation
     call-with-values values
@@ -91,12 +91,12 @@ package: gerbil
     open-input-file open-output-file
     close-input-port close-output-port
     read read-char peek-char
-    eof-object? char-ready? 
+    eof-object? char-ready?
     write display newline write-char
     load
     ;; transcript-on transcript-off ; void
     ))
-    
+
 
 ;;;
 ;;; Common Runtime
@@ -107,7 +107,7 @@ package: gerbil
     immediate?
     finite? infinite? nan?
     1+ 1- fx+ fx1+ fx- fx1- fx* fx/
-    fixnum? nonnegative-fixnum? 
+    fixnum? nonnegative-fixnum?
     fxzero? fxpositive? fxnegative? fxodd? fxeven?
     fixnum->char char->fixnum fixnum->flonum
     fxmax fxmin fxabs fxnot fxand fxior fxxor fxand fxmodulo
@@ -115,7 +115,7 @@ package: gerbil
     fx< fx<= fx= fx>= fx>
     flonum?
     fl+ fl- fl* fl/ fl< fl<= fl= fl>= fl>
-    flzero? flpositive? flnegative? 
+    flzero? flpositive? flnegative?
     flnan? flinfinite? flfinite? flinteger?
     flmax flmin
     box? box unbox set-box!
@@ -125,9 +125,9 @@ package: gerbil
     remove remq remv remf
     pgetq pgetv pget
     subvector subvector->list subvector-fill!
-    vector-map vector-copy vector-append 
+    vector-map vector-copy vector-append
     true true? false void void? eof-object identity
-    dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?    
+    dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
     values-count values->list
     make-hash-table make-hash-table-eq make-hash-table-eqv
     hash-table?
@@ -139,7 +139,7 @@ package: gerbil
     hash-keys hash-values
     hash-copy hash-copy!
     hash-merge hash-merge!
-    uninterned-symbol? interned-symbol? 
+    uninterned-symbol? interned-symbol?
     gensym make-symbol make-uninterned-symbol symbol-hash
     keyword? uninterned-keyword? interned-keyword? keyword-hash
     string->bytes substring->bytes bytes->string
@@ -147,7 +147,7 @@ package: gerbil
     symbol->keyword keyword->symbol
     substring-fill! substring-move! string-shrink!
     append-strings
-    string-map string-index string-rindex 
+    string-map string-index string-rindex
     string-split string-join string-empty?
     ;; MOP
     type-descriptor?
@@ -170,19 +170,19 @@ package: gerbil
     unchecked-slot-ref
     unchecked-slot-set!
     object? object-type
-    struct-instance? class-instance? 
+    struct-instance? class-instance?
     direct-struct-instance? direct-class-instance?
-    make-object 
+    make-object
     struct->list class->list
-    make-struct-instance 
-    make-class-instance 
+    make-struct-instance
+    make-class-instance
     struct-instance-init!
     class-instance-init!
     constructor-init!
     slot-ref slot-set!
     call-method
     bind-method!
-    method-ref direct-method-ref bound-method-ref 
+    method-ref direct-method-ref bound-method-ref
     find-method
     next-method call-next-method
     struct-subtype? class-subtype?
@@ -198,18 +198,18 @@ package: gerbil
     ;;call-with-prompt abort!
     with-unwind-protect
     current-exception-handler with-exception-handler
-    with-catch 
+    with-catch
     error raise raise-type-error
     error::t type-error::t
-    exception? error? type-error? 
+    exception? error? type-error?
     error-trace error-message error-irritants
     ;; OS
     exit getenv setenv
     current-directory create-directory create-directory*
-    delete-file copy-file rename-file 
+    delete-file copy-file rename-file
     delete-directory directory-files
     file-exists? file-newer? file-type
-    path-expand path-normalize 
+    path-expand path-normalize
     path-extension path-strip-extension
     path-directory path-strip-directory
     path-strip-trailing-directory-separator
@@ -234,7 +234,7 @@ package: gerbil
     u8vector->list list->u8vector
     u8vector-fill! u8vector-shrink!
     u8vector-copy u8vector-append
-    subu8vector subu8vector-fill! subu8vector-move! 
+    subu8vector subu8vector-fill! subu8vector-move!
     append-u8vectors
     object->u8vector u8vector->object
     ;; bytes I/O
@@ -255,7 +255,7 @@ package: gerbil
     ;; system type information
     gerbil-system system-type
     )
-  
+
   (define-alias transcript-on void)
   (define-alias transcript-off void)
   (define-alias car-set! set-car!)
@@ -281,19 +281,19 @@ package: gerbil
     datum->syntax syntax->datum syntax-e syntax->list
     genident gentemps
     stx-identifier
-    stx-boolean? stx-keyword? stx-char? stx-number? stx-fixnum? stx-string? 
+    stx-boolean? stx-keyword? stx-char? stx-number? stx-fixnum? stx-string?
     stx-null? stx-pair? stx-pair/null? stx-list?
     stx-box? stx-vector? stx-datum?
     stx-eq? stx-eqv? stx-equal? stx-false?
     stx-e stx-source stx-wrap-source
-    stx-car stx-cdr stx-length 
-    stx-for-each stx-map stx-foldl stx-foldr stx-reverse 
+    stx-car stx-cdr stx-length
+    stx-for-each stx-map stx-foldl stx-foldr stx-reverse
     stx-last stx-last-pair stx-list-tail stx-list-ref
     stx-andmap stx-ormap
     stx-plist? stx-getq
     macro-expand-syntax
     macro-expand-syntax-case
-    syntax-pattern? syntax-local-pattern? 
+    syntax-pattern? syntax-local-pattern?
     make-syntax-pattern syntax-pattern-id syntax-pattern-depth
     syntax-check-splice-targets
     syntax-split-splice
@@ -319,14 +319,14 @@ package: gerbil
     syntax-local-introduce syntax-local-rewrap syntax-local-unwrap
     syntax-local-e syntax-local-value
     resolve-identifier core-resolve-identifier
-    binding? binding-id 
+    binding? binding-id
     runtime-binding? top-binding? module-binding? extern-binding?
     syntax-binding? syntax-binding-e
     alias-binding? alias-binding-e
     import-binding? import-binding-e
     expander? expander-binding? expander-e expander-binding-e
-    feature-expander? 
-    user-expander? make-user-expander 
+    feature-expander?
+    user-expander? make-user-expander
     user-expander-context user-expander-phi
     import-expander? make-import-expander
     export-expander? make-export-expander
@@ -343,7 +343,7 @@ package: gerbil
     core-expand-import-source
     core-expand-export-source))
 
-(import <runtime> 
+(import <runtime>
         (phi: +1 <runtime> <expander-runtime>)
         (phi: +2 <runtime> <expander-runtime>)
         (phi: +3 <runtime> <expander-runtime>))
@@ -366,7 +366,7 @@ package: gerbil
   (define-syntax syntax-rules
     (lambda% (stx)
       (syntax-case stx ()
-        ((_ ids clauses ...) 
+        ((_ ids clauses ...)
          (identifier-list? #'ids)
          (let-values (((body)
                        (stx-map
@@ -379,10 +379,10 @@ package: gerbil
                         #'(clauses ...))))
            (syntax-case body ()
              ((clause ...)
-              #'(lambda% ($stx) 
-                  (syntax-case $stx ids 
+              #'(lambda% ($stx)
+                  (syntax-case $stx ids
                     clause ...)))))))))
-  
+
   (define-syntax with-syntax
     (lambda% (stx)
       (syntax-case stx ()
@@ -394,17 +394,17 @@ package: gerbil
         ((_ ((pat e) ...) body ...)
          #'(syntax-case (list e ...) ()
              ((pat ...) (let-values () body ...)))))))
-  
+
   (define-syntax with-syntax*
     (lambda% (stx)
       (syntax-case stx (values)
         ((_ () body ...)
          #'(let-values () body ...))
         ((recur (((values . hd) e) . rest) body ...)
-         #'(let-values ((hd e)) 
+         #'(let-values ((hd e))
              (recur rest body ...)))
         ((recur (hd . rest) body ...)
-         #'(with-syntax (hd) 
+         #'(with-syntax (hd)
              (recur rest body ...))))))
 
   (define-syntax syntax/loc
@@ -420,7 +420,7 @@ package: gerbil
 
 (module <sugar>
   (export (import: <sugar:1> <sugar:2> <sugar:3>))
-  
+
   (module <sugar:1>
     (export #t)
     (define-syntax defrules
@@ -431,7 +431,7 @@ package: gerbil
            (syntax-rules kws clauses ...)))))
 
     (define-alias define-rules defrules)
-    
+
     (defrules defsyntax% ()
       ((_ (id . args) body ...)
        (identifier? #'id)
@@ -440,11 +440,11 @@ package: gerbil
       ((_ id expr)
        (identifier? #'id)
        (define-syntax id expr)))
-    
+
     (defrules defalias ()
       ((_ id alias-id)
        (define-alias id alias-id)))
-    
+
     (defrules define ()
       ((_ (id . args) body ...)
        (identifier? #'id)
@@ -454,35 +454,35 @@ package: gerbil
        (identifier? #'id)
        (define-values (id)
          expr)))
-    
+
     (defrules let*-values ()
-      ((_ () body ...) 
+      ((_ () body ...)
        (let-values () body ...))
       ((recur (hd . rest) body ...)
        (let-values (hd)
          (recur rest body ...))))
-    
+
     (defrules let ()
       ((_ id ((var arg) ... . rest) body ...)
        (identifier? #'id)
-       ((letrec-values (((id) (lambda% (var ... . rest) body ...))) 
+       ((letrec-values (((id) (lambda% (var ... . rest) body ...)))
           id)
         arg ...))
       ((_ hd body ...)
        (~let let-values hd body ...)))
-    
+
     (defrules let* ()
       ((_ hd body ...)
        (~let let*-values hd body ...)))
-    
+
     (defrules letrec ()
       ((_ hd body ...)
        (~let letrec-values hd body ...)))
-    
+
     (defrules letrec* ()
       ((_ hd body ...)
        (~let letrec*-values hd body ...)))
-    
+
     (defsyntax% (~let stx)
       (define-values (let-head?)
         (lambda% (x)
@@ -490,36 +490,36 @@ package: gerbil
             ((values . ids)
              (stx-andmap identifier? #'ids))
             (_ (identifier? x)))))
-      
+
       (define-values (let-head)
         (lambda% (x)
           (syntax-case x (values)
             ((values . ids) #'ids)
             (_ (list x)))))
-      
+
       (syntax-case stx ()
         ((recur form (hd e) . body)
          (let-head? #'hd)
          #'(recur form ((hd e)) . body))
         ((_ form ((hd e) ...) body ...)
          (stx-andmap let-head? #'(hd ...))
-         (with-syntax (((hd-bind ...) 
+         (with-syntax (((hd-bind ...)
                         (stx-map let-head #'(hd ...))))
            #'(form ((hd-bind e) ...) body ...)))))
-    
+
     (defrules and ()
       ((_) #t)
       ((_ x) x)
       ((recur x . rest)
        (if x (recur . rest) #f)))
-    
+
     (defrules or ()
       ((_) #f)
       ((_ x) x)
       ((recur x . rest)
        (let ($e x)
          (if $e $e (recur . rest)))))
-    
+
     (defrules cond (else =>)
       ((_) #!void)
       ((_ (else body ...))
@@ -533,64 +533,64 @@ package: gerbil
        (recur (test => values) . rest))
       ((recur (test body ...) . rest)
        (if test (begin body ...) (recur . rest))))
-    
+
     (defrules when ()
       ((_ test expr ...)
        (if test (begin expr ...) #!void)))
-    
+
     (defrules unless ()
       ((_ test expr ...)
        (if test #!void (begin expr ...))))
-    
+
     (defsyntax% (syntax-error stx)
       (syntax-case stx ()
         ((_ message detail ...)
          (stx-string? #'message)
-         (apply raise-syntax-error #f (stx-e #'message) stx 
+         (apply raise-syntax-error #f (stx-e #'message) stx
                 (syntax->list #'(detail ...)))))))
-  
+
   (import <sugar:1>
           (phi: +1 <sugar:1>))
-  
+
   (module <sugar:2>
     (export #t)
     ;; begin with lambda
     (defsyntax% (lambda stx)
       (define (simple-lambda? hd)
         (stx-andmap identifier? hd))
-      
+
       (define (opt-lambda? hd)
         (let lp ((rest hd) (opt? #f))
           (syntax-case rest ()
             ((hd . hd-rest)
              (syntax-case #'hd ()
-               ((id _) 
+               ((id _)
                 (identifier? #'id)
                 (lp #'hd-rest #t))
                (_ (and (identifier? #'hd) (not opt?)
                        (lp #'hd-rest #f)))))
-            (_ (and opt? (or (stx-null? rest) 
+            (_ (and opt? (or (stx-null? rest)
                              (identifier? rest)))))))
-      
+
       (define (opt-lambda-split hd)
         (let lp ((rest hd) (pre '()) (opt '()))
           (syntax-case rest ()
             ((hd . hd-rest)
              (syntax-case #'hd ()
                ((id e)
-                (lp #'hd-rest pre 
+                (lp #'hd-rest pre
                     (cons (cons (generate-bind #'id) #'e)
                           opt)))
-               (_ (lp #'hd-rest 
-                      (cons (generate-bind #'hd) 
-                            pre) 
+               (_ (lp #'hd-rest
+                      (cons (generate-bind #'hd)
+                            pre)
                       opt))))
-            (_ (values (reverse pre) 
-                       (reverse opt) 
+            (_ (values (reverse pre)
+                       (reverse opt)
                        (if (identifier? rest)
                          (generate-bind rest)
                          rest))))))
-      
+
       (define (kw-lambda? hd)
         (let lp ((rest hd) (opt? #f) (key? #f))
           (syntax-case rest ()
@@ -612,9 +612,9 @@ package: gerbil
                      (lp #'hd-rest #t key?)))
                (_ (and (identifier? #'hd) (not opt?)
                        (lp #'hd-rest #f key?)))))
-            (_ (and key? (or (stx-null? rest) 
+            (_ (and key? (or (stx-null? rest)
                              (identifier? rest)))))))
-      
+
       (define (kw-lambda-split hd)
         (let lp ((rest hd) (kwvar #f) (kwargs '()) (args '()))
           (syntax-case rest ()
@@ -630,7 +630,7 @@ package: gerbil
                         (cons (list key (generate-bind #'id) #'default)
                               kwargs)
                         args))
-                   (_ 
+                   (_
                     (lp #'hd-rest kwvar
                         (cons (list key (generate-bind #'bind)
                                     #'(error "Missing required keyword argument"
@@ -647,16 +647,16 @@ package: gerbil
             ((hd . hd-rest)
              (lp #'hd-rest kwvar kwargs (cons #'hd args)))
             (_ (values kwvar (reverse kwargs) (foldl cons rest args))))))
-      
+
       (define (generate-bind e)
-        (if (underscore? e) 
-          (genident e) 
+        (if (underscore? e)
+          (genident e)
           e))
-      
+
       (define (check-duplicate-bindings hd)
         (define (cons-id id ids)
           (if (underscore? id) ids (cons id ids)))
-        
+
         (let lp ((rest hd) (ids '()))
           (syntax-case rest ()
             ((hd . hd-rest)
@@ -678,26 +678,26 @@ package: gerbil
                (syntax-case #'hd-rest ()
                  ((id . hd-rest)
                   (lp #'hd-rest (cons-id #'id ids)))))
-              (else 
+              (else
                (error "BUG: check-duplicate-bindings" stx rest))))
             (_
              (check-duplicate-identifiers
               (if (stx-null? rest) ids (cons-id rest ids))
               stx)))))
-      
+
       (define (generate-opt-primary pre opt tail body)
-        (with-syntax (((pre ...) 
+        (with-syntax (((pre ...)
                        pre)
-                      ((opt ...) 
+                      ((opt ...)
                        (map car opt))
                       (tail tail)
                       (body body))
           #'(lambda% (pre ... opt ... . tail) . body)))
-      
+
       (define (generate-opt-dispatch primary pre opt tail)
         (cons (list pre (generate-opt-clause primary pre opt))
               (generate-opt-dispatch* primary pre opt tail)))
-      
+
       (define (generate-opt-dispatch* primary pre opt tail)
         (let recur ((opt-rest opt) (right '()))
           (cond
@@ -708,12 +708,12 @@ package: gerbil
                             (cdr opt-rest))
                            ((values right*)
                             (cons hd right))
-                           ((pre-bind ...)    
+                           ((pre-bind ...)
                             pre)
-                           ((opt-bind ...) 
+                           ((opt-bind ...)
                             (reverse right))
                            (bind hd))
-              (cons 
+              (cons
                (list #'(pre-bind ... opt-bind ... bind)
                      (generate-opt-clause primary
                        (foldr cons (reverse right*) pre)
@@ -723,7 +723,7 @@ package: gerbil
            (else
             (with-syntax (((pre ...)
                            pre)
-                          ((opt ...) 
+                          ((opt ...)
                            (reverse right))
                           (tail tail)
                           (primary primary))
@@ -731,13 +731,13 @@ package: gerbil
                (list #'(pre ... opt ... . tail)
                      (syntax/loc stx
                        (apply primary pre ... opt ... tail)))))))))
-      
+
       (define (generate-opt-clause primary pre opt)
         (let recur ((opt-rest opt) (right '()))
           (if (pair? opt-rest)
             (with-syntax* (((values hd)
                             (car opt-rest))
-                           ((values rest) 
+                           ((values rest)
                             (cdr opt-rest))
                            (bind (car hd))
                            (expr (cdr hd))
@@ -754,7 +754,7 @@ package: gerbil
 
       (define (generate-kw-primary kwvar kwargs args body)
         (define absent (genident 'absent))
-        
+
         (define (make-body kwargs body)
           (if (pair? kwargs)
             (let* ((next (car kwargs))
@@ -773,7 +773,7 @@ package: gerbil
                     (let-values (((var) (if (eq? tmp absent) default tmp)))
                       body))))
             (cons 'begin body)))
-        
+
         (with-syntax* ((kwvar kwvar)
                        (args args)
                        (body (make-body kwargs body))
@@ -782,7 +782,7 @@ package: gerbil
                        (absent absent))
           #'(let-values (((absent) (make-vector 0)))
               impl)))
-      
+
       (define (generate-kw-dispatch primary kwargs strict?)
         ;; when the procedure doesn't accept arbitrary keywords (strict? = #t)
         ;; generate a "perfect hash table" as a vector for the keywords
@@ -793,7 +793,7 @@ package: gerbil
                       (K primary)
                       ($args (genident 'args)))
           #'(lambda% $args (apply keyword-dispatch 'pht K $args))))
-      
+
       (define (generate-kw-table kws)
         (let rehash ((pht (make-vector (length kws) #f)))
           (let lp ((rest kws))
@@ -809,14 +809,14 @@ package: gerbil
                     (vector-set! pht pos key)
                     (lp rest))))
               pht))))
-      
+
       (syntax-case stx ()
         ((_ hd . body)
          (simple-lambda? #'hd)
          #'(lambda% hd . body))
         ((_ hd . body)
          (opt-lambda? #'hd)
-         (with-syntax* (((values pre opt tail) 
+         (with-syntax* (((values pre opt tail)
                          (opt-lambda-split #'hd))
                         ($primary (genident 'opt-lambda))
                         (primary
@@ -825,10 +825,10 @@ package: gerbil
                           (stx-source stx)))
                         ((clause ...)
                          (generate-opt-dispatch #'$primary pre opt tail))
-                        (dispatch 
+                        (dispatch
                          (syntax/loc stx
                            (case-lambda clause ...))))
-           #'(let-values ((($primary) primary)) 
+           #'(let-values ((($primary) primary))
                dispatch)))
         ((_ hd . body)
          (kw-lambda? #'hd)
@@ -847,7 +847,7 @@ package: gerbil
                           (stx-source stx))))
            #'(let-values ((($primary) primary))
                dispatch)))))
-    
+
     (defrules def ()
       ((_ (id . args) body ...)
        (identifier? #'id)
@@ -856,24 +856,24 @@ package: gerbil
       ((_ id expr)
        (identifier? #'id)
        (define-values (id) expr)))
-    
+
     ;; XXX curried case-lambda
     (defrules def* ()
       ((_ id clauses ...)
        (identifier? #'id)
        (define-values (id)
          (case-lambda clauses ...))))
-    
+
     (defrules defvalues ()
       ((_ hd expr)
        (identifier-list? #'hd)
        (define-values hd expr)))
-    
+
     (defrules case ()
       ((_ expr clause ...)
        (let ($e expr)
          (~case $e clause ...))))
-    
+
     (defrules ~case (else =>)
       ((_ _) #!void)
       ((_ e (else body ...))
@@ -890,18 +890,18 @@ package: gerbil
        (if (~case-test e hd)
          (begin body ...)
          (recur e . rest))))
-    
+
     (defsyntax% (~case-test stx)
       (define (memq-datum? x)
         (let (e (stx-e x))
           (or (symbol? e)
               (keyword? e)
               (immediate? e))))
-      
+
       (define (memv-datum? x)
         (or (memq-datum? x)
             (stx-number? x)))
-      
+
       (syntax-case stx ()
         ((_ e ()) #f)
         ((_ e (datum))
@@ -918,7 +918,7 @@ package: gerbil
                          ((stx-andmap memv-datum? #'(datum ...)) #'memv)
                          (else #'member))))
            #'(testf e '(datum ...))))))
-    
+
     (defrules do ()
       ((_ ((var init step ...) ...)
           (test fini ...)
@@ -928,58 +928,58 @@ package: gerbil
          (if (not test)
            (begin body ... ($loop (begin var step ...) ...))
            (begin #!void fini ...)))))
-    
+
     (defrules do-while ()
       ((_ hd (test . fini) . body)
        (do hd ((not test) . fini) . body)))
-    
+
     (defrules begin0 ()
       ((_ expr) expr)
       ((_ expr rest ...)
        (let ($r expr)
          (%#expression (begin rest ...))
          $r)))
-    
+
     (defrules rec (values)
-      ((_ id expr) 
+      ((_ id expr)
        (identifier? #'id)
        (letrec ((id expr)) id))
       ((_ (values . ids) expr)
        (identifier-list? #'ids)
        (letrec-values ((ids expr))
          (values . ids)))
-      ((_ (id . hd) body ...) 
+      ((_ (id . hd) body ...)
        (identifier? #'id)
        (letrec ((id (lambda hd body ...)))
          id)))
-    
+
     (defsyntax% (alet stx)
       (define (let-head? x)
         (syntax-case x (values)
-          ((values . ids) 
+          ((values . ids)
            (stx-andmap identifier? #'ids))
           (_ (identifier? x))))
-      
+
       (define (let-head x)
         (syntax-case x (values)
           ((values . ids) #'ids)
           (_ (list x))))
-      
+
       (syntax-case stx ()
         ((recur (hd e) . body)
          (let-head? #'hd)
          #'(recur ((hd e)) . body))
         ((_ ((hd e) ...) body ...)
          (stx-andmap let-head? #'(hd ...))
-         (with-syntax ((($e ...) 
+         (with-syntax ((($e ...)
                         (gentemps #'(hd ...)))
-                       ((hd-bind ...) 
+                       ((hd-bind ...)
                         (stx-map let-head #'(hd ...))))
            #'(let-values ((($e) e) ...)
                (and $e ...
                     (let-values ((hd-bind $e) ...)
                       body ...)))))))
-    
+
     (defrules alet* ()
       ((_ () body ...)
        (let () body ...))
@@ -988,7 +988,7 @@ package: gerbil
          (recur rest body ...))))
 
     (defalias and-let* alet*)
-    
+
     ;; [] ML-style list constructor
     (defrules @list ()
       ((_) '())
@@ -996,13 +996,13 @@ package: gerbil
       ((_ xs dots)
        (ellipsis? #'dots)
        xs)
-      ((recur xs dots . rest) 
+      ((recur xs dots . rest)
        (ellipsis? #'dots)
        (foldr cons (recur . rest) xs))
       ((recur x . xs)
        (cons x (recur . xs)))
       ((_ . tl) tl))
-    
+
     ;; and its cousin, the quasiquote
     (defsyntax% (quasiquote stx)
       (define (simple-quote? e)
@@ -1012,18 +1012,18 @@ package: gerbil
           ((hd . tl)
            (and (simple-quote? #'hd)
                 (simple-quote? #'tl)))
-          (#(e ...) 
+          (#(e ...)
             (simple-quote? #'(e ...)))
-          (#&e 
+          (#&e
            (simple-quote? #'e))
           (_ #t)))
-      
+
       (define (generate e d)
         (syntax-case e (quasiquote unquote unquote-splicing)
           ((quasiquote e)
            (with-syntax ((e (generate #'e (fx1+ d))))
              #'(list 'quasiquote e)))
-          ((unquote e) 
+          ((unquote e)
            (if (fxzero? d) #'e
                (with-syntax ((e (generate #'e (fx1- d))))
                  #'(list 'unquote e))))
@@ -1047,20 +1047,20 @@ package: gerbil
            (with-syntax ((e (generate #'e d)))
              #'(box e)))
           (e #'(quote e))))
-      
+
       (syntax-case stx ()
-        ((_ e) 
+        ((_ e)
          (if (simple-quote? #'e)
            #'(quote e)
            (generate #'e 0)))))
-    
+
     (defrules delay ()
       ((_ datum)
        (stx-datum? #'datum)
        (quote datum))
       ((_ expr)
        (make-promise (lambda% () expr))))
-    
+
     ;; and end with partial lambda
     (defsyntax% (cut stx)
       (define (generate rest)
@@ -1068,7 +1068,7 @@ package: gerbil
           (syntax-case rest ()
             ((e . rest)
              (syntax-case #'e (<> <...>)
-               (<> 
+               (<>
                 (let (arg (genident))
                   (lp #'rest (cons arg hd) (cons arg body))))
                (<...>
@@ -1080,27 +1080,27 @@ package: gerbil
                   (raise-syntax-error #f "Bad syntax" stx #'e)))
                (_ (lp #'rest hd (cons #'e body)))))
             (_ (values (reverse hd) (reverse body) #f)))))
-      
+
       (syntax-case stx ()
         ((_ . body)
          (and (stx-list? #'body)
               (not (stx-null? #'body)))
-         (with-syntax* (((values hd body tail?) 
+         (with-syntax* (((values hd body tail?)
                          (generate #'body))
                         (hd hd)
                         (body body))
            (if tail?
              #'(lambda% hd (apply . body))
              #'(lambda% hd body))))))
-    
+
     (defrules <> ())
     (defrules <...> ()))
-  
+
   (import <sugar:2> (phi: +1 <sugar:2>))
-  
+
   (module <sugar:3>
     (export #t)
-    
+
     (defrules defsyntax ()
       ((_ (id . args) body ...)
        (identifier? #'id)
@@ -1109,7 +1109,7 @@ package: gerbil
       ((_ id expr)
        (identifier? #'id)
        (define-syntax id expr))))
-  
+
   (import <sugar:3>))
 
 (import <sugar> (phi: +1 <sugar>) (phi: +2 <sugar>))
@@ -1117,23 +1117,23 @@ package: gerbil
 (module <MOP>
   (export (import: <MOP:1> <MOP:2>)
           (phi: +1 (import: <MOP:2> <MOP:3>)))
-  
+
   (module <MOP:1>
     (export #t)
-    
+
     (begin-syntax
       (def (generate-typedef stx struct?)
         (def (wrap e-stx)
           (stx-wrap-source e-stx (stx-source stx)))
-        
+
         (def (slotify field off)
           (syntax-case field ()
             ((getf setf)
              [off #'getf #'setf])))
-        
+
         (def (struct-opt? key)
           (memq (stx-e key) '(fields: id: name: plist: constructor:)))
-        
+
         (def (class-opt? key)
           (memq (stx-e key) '(slots: id: name: plist: constructor:)))
 
@@ -1144,7 +1144,7 @@ package: gerbil
            (else
             (let (mid (expander-context-id (current-expander-context)))
               (stx-identifier type-t mid "#" type-t)))))
-        
+
         (syntax-case stx ()
           ((_ type-t super make instance? . rest)
            (and (identifier? #'type-t)
@@ -1152,7 +1152,7 @@ package: gerbil
                     (stx-false? #'make))
                 (identifier? #'instance?)
                 (stx-plist? #'rest (if struct? struct-opt? class-opt?)))
-           
+
            (with-syntax* (((values els)
                            (or (stx-getq (if struct? fields: slots:) #'rest)
                                []))
@@ -1166,26 +1166,26 @@ package: gerbil
                                 make-class-predicate
                                 make-class-slot-accessor
                                 make-class-slot-mutator)))
-                          (type-id 
+                          (type-id
                            (or (stx-getq id: #'rest)
                                (if (module-context? (current-expander-context))
                                  (module-type-id #'type-t)
                                  (genident #'type-t))))
-                          (type-name 
+                          (type-name
                            (or (stx-getq name: #'rest)
                                #'type-t))
-                          (type-plist 
+                          (type-plist
                            (or (stx-getq plist: #'rest)
                                #'[]))
-                          (type-ctor 
+                          (type-ctor
                            (stx-getq constructor: #'rest))
                           (type-rtd
                            (if struct?
                              (with-syntax ((fields (stx-length els)))
-                               #'(make-struct-type 'type-id 
+                               #'(make-struct-type 'type-id
                                    super fields
                                    'type-name type-plist 'type-ctor))
-                             (with-syntax (((super ...) 
+                             (with-syntax (((super ...)
                                             #'super)
                                            ((slot ...)
                                             (stx-map stx-car els)))
@@ -1197,19 +1197,19 @@ package: gerbil
                           (def-make
                             (if (stx-false? #'make)
                               #'(begin)
-                              (wrap 
+                              (wrap
                                #'(def (make . $args)
                                    (apply make-instance type-t $args)))))
                           (def-predicate
                             (wrap #'(def instance? (make-predicate type-t))))
                           (((def-getf def-setf) ...)
-                           (stx-map 
+                           (stx-map
                             (lambda (ref)
                               (syntax-case ref ()
                                 ((key getf setf)
-                                 [(wrap 
+                                 [(wrap
                                    #'(def getf (make-getf type-t 'key)))
-                                  (wrap 
+                                  (wrap
                                    #'(def setf (make-setf type-t 'key)))])))
                             (if struct?
                               (stx-map slotify els (iota (stx-length els)))
@@ -1220,18 +1220,18 @@ package: gerbil
                        def-make
                        def-getf ...
                        def-setf ...)))))))
-    
+
     (defsyntax (defstruct-type stx)
       (generate-typedef stx #t))
 
     (defsyntax (defclass-type stx)
       (generate-typedef stx #f)))
-  
+
   (import <MOP:1> (phi: +1 <MOP:1>))
-  
+
   (module <MOP:2>
-    (export #t 
-            (phi: +1 
+    (export #t
+            (phi: +1
                   runtime-type-info::t runtime-type-info?
                   runtime-struct-info::t runtime-struct-info?
                   runtime-class-info::t  runtime-class-info?
@@ -1252,63 +1252,63 @@ package: gerbil
                   runtime-struct-fields runtime-struct-fields-set!
                   runtime-class-slots runtime-class-slots-set!
                   expander-type-identifiers expander-type-identifiers-set!
-                  make-runtime-struct-info 
+                  make-runtime-struct-info
                   make-runtime-class-info
                   make-extended-struct-info
                   make-extended-class-info
-                  make-runtime-struct-exhibitor 
-                  make-runtime-class-exhibitor 
+                  make-runtime-struct-exhibitor
+                  make-runtime-class-exhibitor
                   syntax-local-type-info?
                   syntax-local-struct-info?
                   syntax-local-class-info?
                   runtime-type-exhibitor-e))
-    
+
     (begin-syntax
       (defclass-type runtime-type-info::t ()
         #f runtime-type-info?
-        slots: 
-        ((runtime-identifier 
+        slots:
+        ((runtime-identifier
           runtime-type-identifier runtime-type-identifier-set!))
         id:   gerbil.core#runtime-type-info::t)
-      
+
       (defclass-type runtime-struct-info::t (runtime-type-info::t)
         make-runtime-struct-info runtime-struct-info?
         id:   gerbil.core#runtime-struct-info::t
         name: struct-info)
-      
+
       (defclass-type runtime-class-info::t (runtime-type-info::t)
         make-runtime-class-info runtime-class-info?
         id:   gerbil.core#runtime-class-info::t
         name: class-info)
-      
+
       (defclass-type expander-type-info::t ()
         #f expander-type-info?
         slots:
-        ((expander-identifiers 
+        ((expander-identifiers
           expander-type-identifiers expander-type-identifiers-set!))
         id:   gerbil.core#expander-type-info::t)
-      
+
       (defclass-type extended-runtime-type-info::t (runtime-type-info::t)
         #f extended-runtime-type-info?
         slots:
-        ((type-exhibitor 
+        ((type-exhibitor
           runtime-type-exhibitor runtime-type-exhibitor-set!))
         id:   gerbil.core#extended-runtime-type-info)
-      
-      (defclass-type extended-struct-info::t (runtime-struct-info::t 
+
+      (defclass-type extended-struct-info::t (runtime-struct-info::t
                                               extended-runtime-type-info::t
                                               expander-type-info::t)
         make-extended-struct-info extended-struct-info?
         id:   gerbil.core#extended-stuct-info::t
         name: struct-info)
-      
-      (defclass-type extended-class-info::t (runtime-class-info::t 
+
+      (defclass-type extended-class-info::t (runtime-class-info::t
                                              extended-runtime-type-info::t
                                              expander-type-info::t)
         make-extended-class-info extended-class-info?
         id:   gerbil.core#extended-class-info::t
         name: class-info)
-      
+
       (defstruct-type runtime-rtd-exhibitor::t #f
         #f runtime-type-exhibitor?
         fields:
@@ -1318,21 +1318,21 @@ package: gerbil
          (runtime-type-ctor  runtime-type-ctor-set!)
          (runtime-type-plist runtime-type-plist-set!))
         id:   gerbil.core#runtime-rtd-exhibitor::t)
-      
+
       (defstruct-type runtime-struct-exhibitor::t runtime-rtd-exhibitor::t
         make-runtime-struct-exhibitor runtime-struct-exhibitor?
         fields:
         ((runtime-struct-fields runtime-struct-fields-set!))
         id:   gerbil.core#runtime-struct-exhibitor::t
         name: struct-exhibitor)
-      
+
       (defstruct-type runtime-class-exhibitor::t runtime-rtd-exhibitor::t
         make-runtime-class-exhibitor runtime-class-exhibitor?
         fields:
         ((runtime-class-slots runtime-class-slots-set!))
         id:   gerbil.core#runtime-class-exhibitor::t
         name: class-exhibitor)
-      
+
       (def (syntax-local-type-info? stx (is? true))
         (and (identifier? stx)
              (alet (e (syntax-local-value stx false))
@@ -1342,12 +1342,12 @@ package: gerbil
         (syntax-local-type-info? stx runtime-struct-info?))
       (def (syntax-local-class-info? stx)
         (syntax-local-type-info? stx runtime-class-info?))
-      
+
       (def (runtime-type-exhibitor-e id)
         (and id (let ((info (syntax-local-value id)))
                   (and (extended-runtime-type-info? info)
                        (runtime-type-exhibitor info)))))
-      
+
       ;; private
       (def (expander-type-info::apply-macro-expander self stx)
         (syntax-case stx ()
@@ -1358,25 +1358,25 @@ package: gerbil
 
       (bind-method! expander-type-info::t 'apply-macro-expander
                     expander-type-info::apply-macro-expander)
-      
+
       (def (typedef-body? stx)
         (def (body-opt? key)
           (memq (stx-e key)
                 '(id: name: constructor: transparent: final: plist:)))
         (stx-plist? stx body-opt?))
-      
+
       (def (generate-typedef stx id super-ref els body struct?)
         (def (wrap e-stx)
           (stx-wrap-source e-stx (stx-source stx)))
-        
+
         (def make-id
           (if (uninterned-symbol? (stx-e id))
             (lambda _ (genident id))
             (lambda args
               (apply stx-identifier id args))))
-        
+
         (check-duplicate-identifiers els stx)
-        
+
         (with-syntax* (((values name)
                         (symbol->string (stx-e id)))
                        ((values super)
@@ -1384,14 +1384,14 @@ package: gerbil
                           (and super-ref (syntax-local-value super-ref))
                           (map syntax-local-value super-ref)))
                        (deftype-type
-                         (if struct? 
+                         (if struct?
                            #'defstruct-type
                            #'defclass-type))
                        (type id)
                        (type::t   (make-id name "::t"))
                        (make-type (make-id "make-" name))
                        (type?     (make-id name "?"))
-                       (type-super 
+                       (type-super
                         (if struct?
                           (and super (runtime-type-identifier super))
                           (map runtime-type-identifier super)))
@@ -1417,7 +1417,7 @@ package: gerbil
                               [constructor: e])
                             []))
                        ((values plist)
-                        (let* ((plist (or (stx-getq plist: body) 
+                        (let* ((plist (or (stx-getq plist: body)
                                           []))
                                (plist (if (stx-e (stx-getq transparent: body))
                                         (cons [transparent: . #t] plist)
@@ -1431,9 +1431,9 @@ package: gerbil
                             (with-syntax ((plist plist))
                               [plist: #'(quote plist)])))
                        ((type-body ...)
-                        [type-attr ... 
-                         type-id ... 
-                         type-name ... 
+                        [type-attr ...
+                         type-id ...
+                         type-name ...
                          type-ctor ...
                          type-plist ...])
                        (typedef
@@ -1455,7 +1455,7 @@ package: gerbil
                           #'make-runtime-struct-exhibitor
                           #'make-runtime-class-exhibitor))
                        (meta-rtd-id
-                        (and (not (null? type-id)) 
+                        (and (not (null? type-id))
                              (cadr type-id)))
                        (meta-rtd-super
                         (let (quote-e
@@ -1475,7 +1475,7 @@ package: gerbil
                        (metadef
                         (wrap
                          #'(defsyntax type
-                             (make-type-info 
+                             (make-type-info
                               runtime-identifier: (quote-syntax type::t)
                               expander-identifiers:
                               [meta-type-super
@@ -1491,9 +1491,9 @@ package: gerbil
                                               (quote meta-rtd-ctor)
                                               (quote meta-rtd-plist)
                                               (quote (attr ...))))))))
-          (wrap 
+          (wrap
            #'(begin typedef metadef)))))
-    
+
     (defsyntax (defstruct stx)
       (def (generate hd fields body)
         (syntax-case hd ()
@@ -1504,7 +1504,7 @@ package: gerbil
           (_ (if (identifier? hd)
                (generate-typedef stx hd #f fields body #t)
                (raise-syntax-error #f "Bad syntax" stx hd)))))
-      
+
       (syntax-case stx ()
         ((_ hd fields . rest)
          (and (identifier-list? #'fields)
@@ -1512,7 +1512,7 @@ package: gerbil
          (generate #'hd #'fields #'rest))))
 
     (defalias define-struct defstruct)
-    
+
     (defsyntax (defclass stx)
       (def (generate hd slots body)
         (syntax-case hd ()
@@ -1523,7 +1523,7 @@ package: gerbil
           (_ (if (identifier? hd)
                (generate-typedef stx hd [] slots body #f)
                (raise-syntax-error #f "Bad syntax" stx hd)))))
-      
+
       (syntax-case stx ()
         ((_ hd slots . rest)
          (and (identifier-list? #'slots)
@@ -1531,14 +1531,14 @@ package: gerbil
          (generate #'hd #'slots #'rest))))
 
     (defalias define-class defclass)
-    
+
     (defsyntax (defmethod stx)
       (def (wrap e-stx)
         (stx-wrap-source e-stx (stx-source stx)))
-      
+
       (def (method-opt? x)
         (memq (stx-e x) '(rebind:)))
-      
+
       (syntax-case stx (@method)
         ((_ (@method id type) impl . rest)
          (and (identifier? #'id)
@@ -1548,9 +1548,9 @@ package: gerbil
                          (syntax-local-value #'type))
                         ((values rebind?)
                          (and (stx-e (stx-getq rebind: #'rest)) #t))
-                        (type::t 
+                        (type::t
                          (runtime-type-identifier klass))
-                        (name 
+                        (name
                          (stx-identifier #'id #'type "::" #'id))
                         (defimpl
                           (wrap #'(def name impl)))
@@ -1558,7 +1558,7 @@ package: gerbil
                         (bind
                          (wrap #'(bind-method! type::t 'id name rebind?))))
            (wrap #'(begin defimpl bind))))))
-    
+
     (defrules @method ()
       ((_ id obj arg ...)
        (and (identifier? #'id)
@@ -1567,109 +1567,109 @@ package: gerbil
       ((_ id obj arg ...)
        (identifier? #'id)
        (call-method obj 'id arg ...)))
-    
+
     (defrules @ ()
       ((_ obj id)
        (identifier? #'id)
        (slot-ref obj 'id))
       ((recur obj id rest ...)
        (recur (recur obj id) rest ...)))
-    
+
     (defrules @-set! ()
       ((_ obj id val)
        (identifier? #'id)
        (slot-set! obj 'id val))
       ((recur obj id path ... last val)
        (recur (@ obj id path ...) last val))))
-  
+
   (import <MOP:2> (phi: +1 <MOP:2>))
-  
+
   (module <MOP:3>
     (export (phi: +1 #t))
     (begin-syntax
       (defsyntax runtime-type-info
-        (make-runtime-class-info 
+        (make-runtime-class-info
          runtime-identifier: (quote-syntax runtime-type-info::t)))
-      
+
       (defsyntax runtime-struct-info
-        (make-runtime-class-info 
+        (make-runtime-class-info
          runtime-identifier: (quote-syntax runtime-struct-info::t)))
-      
+
       (defsyntax runtime-class-info
         (make-runtime-class-info
          runtime-identifier: (quote-syntax runtime-class-info::t)))
-      
+
       (defsyntax expander-type-info
         (make-runtime-class-info
          runtime-identifier: (quote-syntax expander-type-info::t)))
-      
+
       (defsyntax extended-runtime-type-info
-        (make-runtime-class-info 
+        (make-runtime-class-info
          runtime-identifier: (quote-syntax extended-runtime-type-info::t)))
-      
+
       (defsyntax extended-struct-info
-        (make-runtime-class-info 
+        (make-runtime-class-info
          runtime-identifier: (quote-syntax extended-struct-info::t)))
-      
+
       (defsyntax extended-class-info
         (make-runtime-class-info
          runtime-identifier: (quote-syntax extended-class-info::t)))
-      
+
       (defsyntax runtime-rtd-exhibitor
-        (make-runtime-class-info 
+        (make-runtime-class-info
          runtime-identifier: (quote-syntax runtime-rtd-exhibitor::t)))
-      
+
       (defsyntax runtime-struct-exhibitor
-        (make-runtime-class-info 
+        (make-runtime-class-info
          runtime-identifier: (quote-syntax runtime-struct-exhibitor::t)))
-      
+
       (defsyntax runtime-class-exhibitor
-        (make-runtime-class-info 
+        (make-runtime-class-info
          runtime-identifier: (quote-syntax runtime-class-exhibitor::t)))
-      
+
       (defclass macro-object (macro)
         id: gerbil.core#macro-object::t)
-      
+
       (defmethod {apply-macro-expander macro-object}
         (lambda (self stx)
           (core-apply-expander (macro-object-macro self) stx)))))
-  
+
   (import <MOP:3>))
 
 (import <MOP> (phi: +1 <MOP>) (phi: +2 <MOP>))
 
 (module <match>
-  (export #t 
+  (export #t
           (phi: +1 match-macro match-macro::t
                 make-match-macro match-macro?
                 syntax-local-match-macro?
                 match-pattern?))
-  
+
   (begin-syntax
     (defclass (match-macro macro-object) ()
       id: gerbil.core#match-macro::t)
-    
+
     (def (syntax-local-match-macro? stx)
       (and (identifier? stx)
            (match-macro? (syntax-local-value stx false))))
-    
+
     ;; private
     (def (parse-match-pattern stx (match-stx #f))
       (def (parse1 hd)
         (syntax-case hd (? and or not
                            cons cons* @list
                            values vector box
-                           quote quasiquote 
+                           quote quasiquote
                            eq? eqv? equal?
                            apply)
           ;; gated match
           ((? test . body)
            (syntax-case #'body (=>)
-             (() 
+             (()
               [?: #'test])
-             ((pat) 
+             ((pat)
               [?: #'test (parse1 #'pat)])
-             ((=> pat) 
+             ((=> pat)
               [?: #'test =>: (parse1 #'pat)])
              ((:: proc => pat)
               [?: #'test :: #'proc =>: (parse1 #'pat)])
@@ -1714,11 +1714,11 @@ package: gerbil
             [vector: (parse-vector #'(body ...))])
           ((struct-id . body)
            (syntax-local-struct-info? #'struct-id)
-           [struct: (syntax-local-value #'struct-id) 
+           [struct: (syntax-local-value #'struct-id)
                     (parse-vector #'body)])
           ((class-id . body)
            (syntax-local-class-info? #'class-id)
-           [class: (syntax-local-value #'class-id) 
+           [class: (syntax-local-value #'class-id)
                    (parse-class-body #'body)])
           ;; equality
           ((eql e)
@@ -1745,7 +1745,7 @@ package: gerbil
                (or (stx-source hd)
                    (stx-source stx))))))
           ;; terminals
-          (us (underscore? #'us) 
+          (us (underscore? #'us)
               [any:])
           (id (and (identifier? #'id)
                    (not (ellipsis? #'id)))
@@ -1753,38 +1753,38 @@ package: gerbil
           (datum (stx-datum? #'datum)
                  [datum: (stx-e #'datum)])
           (_ (parse-error hd))))
-      
+
       (def (parse-list body)
         (syntax-case body ()
           ((:: tl)
            (parse1 #'tl))
-          ((hd dots . rest) 
+          ((hd dots . rest)
            (ellipsis? #'dots)
            [splice: (parse1 #'hd) (parse-list #'rest)])
           ((hd . rest)
            (not (ellipsis? #'hd))
            [cons: (parse1 #'hd) (parse-list #'rest)])
-          (_ 
+          (_
            (cond
-            ((stx-null? body) 
+            ((stx-null? body)
              [null:])
             ((not (stx-pair? body))
              (parse1 body))
-            (else 
+            (else
              (parse-error body))))))
-      
+
       (def (parse-vector body)
         (if (simple-vector? body)
           [simple: (stx-map parse1 body)]
           [list: (parse-list body)]))
-      
+
       (def (simple-vector? body)
         (syntax-case body ()
           ((hd . rest)
            (and (not (ellipsis? #'hd))
                 (simple-vector? #'rest)))
           (_ (stx-null? body))))
-      
+
       (def (parse-class-body body)
         (let recur ((rest body))
           (syntax-case rest ()
@@ -1793,24 +1793,24 @@ package: gerbil
              (cons* #'key (parse1 #'pat) (recur #'rest)))
             (_ (if (stx-null? rest) []
                    (parse-error rest))))))
-      
+
       (def (parse-qq hd)
         (syntax-case hd ()
           ;; XXX
           ))
-      
+
       (def (parse-error hd)
         (apply raise-syntax-error
-          #f "Bad syntax; illegal pattern" 
+          #f "Bad syntax; illegal pattern"
           (if match-stx
             [match-stx stx hd]
             [stx hd])))
-      
+
       (parse1 stx))
-    
+
     (def (match-pattern? stx)
       (call/esc
-       (lambda (E) 
+       (lambda (E)
          (with-exception-handler
           (let (E! (current-exception-handler))
             (lambda (e)
@@ -1818,13 +1818,13 @@ package: gerbil
                 (E #f)
                 (E! e))))
           (lambda () (parse-match-pattern stx) #t)))))
-    
+
     (def (match-pattern-vars ptree)
       (def (loop ptree vars K)
         (syntax-case ptree ()
           ((?: _ . body)
            (syntax-case #'body ()
-             ((pat) 
+             ((pat)
               (loop #'pat vars K))
              ((_ =>: pat)
               (loop #'pat vars K))
@@ -1861,45 +1861,45 @@ package: gerbil
              (K vars)
              (K (cons #'id vars))))
           (_ (K vars))))
-      
+
       (def (loop-vector body vars K)
         (syntax-case body ()
           ((simple: body)
            (loop-list #'body vars K))
           ((list: body)
            (loop #'body vars K))))
-      
+
       (def (loop-list rest vars K)
         (syntax-case rest ()
           ((hd . rest)
            (loop #'hd vars (cut loop-list #'rest <> K)))
           (_ (K vars))))
-      
+
       (def (loop-class-list rest vars K)
         (syntax-case rest ()
           ((_ pat . rest)
            (loop #'pat vars (cut loop-class-list #'rest <> K)))
           (_ (K vars))))
-      
+
       (loop ptree [] values))
-    
+
     (def (generate-match1 stx tgt ptree K E)
       (def (generate1 tgt ptree K E)
         (with-syntax ((target tgt))
           (syntax-case ptree ()
             ((?: hd . rest)
              (syntax-case #'rest ()
-               (() 
+               (()
                 [#'if #'(? hd target) K E])
                ((pat)
-                [#'if #'(? hd target) 
-                      (generate1 tgt #'pat K E) 
+                [#'if #'(? hd target)
+                      (generate1 tgt #'pat K E)
                       E])
                ((=>: pat)
                 (with-syntax (($tgt (genident 'e)))
                   [#'let #'(($tgt (hd target)))
-                         [#'if #'$tgt 
-                               (generate1 #'$tgt #'pat K E) 
+                         [#'if #'$tgt
+                               (generate1 #'$tgt #'pat K E)
                                E]]))
                ((:: proc =>: pat)
                 (with-syntax (($tgt (genident 'e)))
@@ -1910,8 +1910,8 @@ package: gerbil
             ((and: . rest)
              (syntax-case #'rest ()
                ((hd . rest)
-                (generate1 tgt #'hd 
-                           (generate1 tgt #'(and: . rest) K E) 
+                (generate1 tgt #'hd
+                           (generate1 tgt #'(and: . rest) K E)
                            E))
                (_ K)))
             ((or: . rest)
@@ -1970,7 +1970,7 @@ package: gerbil
             ((datum: datum)
              (with-syntax ((eql (let (e (stx-e #'datum))
                                   (cond
-                                   ((or (symbol? e) 
+                                   ((or (symbol? e)
                                         (keyword? e)
                                         (immediate? e))
                                     #'##eq?)
@@ -1984,13 +1984,13 @@ package: gerbil
             ((var: id)
              [#'let #'((id target)) K])
             ((any:) K))))
-      
+
       (def (generate-splice tgt hd rest K E)
-        (with-syntax* (((var ...) 
+        (with-syntax* (((var ...)
                         (match-pattern-vars hd))
-                       ((var-r ...) 
+                       ((var-r ...)
                         (gentemps #'(var ...)))
-                       ((init ...) 
+                       ((init ...)
                         (make-list (stx-length #'(var ...)) #'[]))
                        (target tgt)
                        ($splice-rest (genident 'splice-rest))
@@ -2006,9 +2006,9 @@ package: gerbil
                         #'($splice-rest $rest (reverse var-r) ...))
                        (loop-try-body
                         (generate1 #'$hd hd #'loop-K #'loop-E)))
-          #'(letrec (($splice-rest 
+          #'(letrec (($splice-rest
                       (lambda ($rest var ...) splice-rest-body))
-                     ($loop-try 
+                     ($loop-try
                       (lambda ($hd $rest var-r ...) loop-try-body))
                      ($loop
                       (lambda ($rest var-r ...)
@@ -2016,7 +2016,7 @@ package: gerbil
                           ($loop-try (##car $rest) $rest var-r ...)
                           loop-E))))
               ($loop target init ...))))
-      
+
       (def (generate-simple-vector tgt body start K E)
         (let recur ((rest body) (off start))
           (syntax-case rest ()
@@ -2025,18 +2025,18 @@ package: gerbil
                            (target tgt)
                            (k off))
                [#'let #'(($tgt (##vector-ref target k)))
-                      (generate1 #'$tgt #'hd 
+                      (generate1 #'$tgt #'hd
                                  (recur #'rest (fx1+ off))
                                  E)]))
             (_ K))))
-      
+
       (def (generate-list-vector tgt body tgt->list start K E)
         (with-syntax (($tgt (genident 'e))
                       (target tgt)
                       (target->list tgt->list))
           [#'let #'(($tgt (target->list target)))
                  (generate1 #'$tgt body K E)]))
-      
+
       (def (generate-struct info tgt body K E)
         (with-syntax* (((values rtd)
                         (and (extended-struct-info? info)
@@ -2044,14 +2044,14 @@ package: gerbil
                        ((values fields)
                         (let lp ((rtd rtd) (k 0))
                           (if rtd
-                            (lp (runtime-type-exhibitor-e 
+                            (lp (runtime-type-exhibitor-e
                                  (runtime-type-super rtd))
                                 (fx+ (length (runtime-struct-fields rtd)) k))
                             k)))
                        ((values final?)
                         (and rtd (assgetq final: (runtime-type-plist rtd))))
                        (target tgt)
-                       (type::t 
+                       (type::t
                         (runtime-type-identifier info))
                        (type-instance?
                         (if final?
@@ -2071,29 +2071,29 @@ package: gerbil
              [#'if #'(type-instance? type::t target)
                    (generate-list-vector tgt #'body #'struct->list 1 K E)
                    E]))))
-      
+
       (def (generate-class info tgt body K E)
-        (def rtd 
-          (and (extended-class-info? info) 
+        (def rtd
+          (and (extended-class-info? info)
                (runtime-type-exhibitor info)))
-        
+
         (def known-slot?
           (if rtd
             (lambda (key)
               (let (slot (keyword->symbol (stx-e key)))
                 (rtd-known-slot? rtd slot)))
             false))
-        
+
         (def final?
           (and rtd (assgetq final: (runtime-type-plist rtd))))
-        
+
         (def (rtd-known-slot? rtd slot)
           (and rtd
                (or (memq slot (runtime-class-slots rtd))
                    (ormap (cut rtd-known-slot? <> slot)
-                          (map runtime-type-exhibitor-e 
+                          (map runtime-type-exhibitor-e
                                (runtime-type-super rtd))))))
-        
+
         (def (recur klass rest)
           (syntax-case rest ()
             ((key pat . rest)
@@ -2112,10 +2112,10 @@ package: gerbil
                  [#'let #'(($off (class-slot-offset $klass key)))
                         [#'if #'$off K E]])))
             (_ K)))
-        
+
         (with-syntax* (($klass (genident 'class))
                        (target tgt)
-                       (type::t 
+                       (type::t
                         (runtime-type-identifier info))
                        (type-instance?
                         (if final?
@@ -2125,9 +2125,9 @@ package: gerbil
                 [#'let #'(($klass (object-type target)))
                        (recur #'$klass body)]
                 E]))
-      
+
       (generate1 tgt ptree K E))
-    
+
     (def (generate-match* stx tgt-lst clauses)
       (def (parse-body hd-len)
         (let lp ((rest clauses) (r []))
@@ -2144,7 +2144,7 @@ package: gerbil
                           (or (stx-source #'hd)
                               (stx-source stx)))]
                         r)
-                  (raise-syntax-error #f 
+                  (raise-syntax-error #f
                     "Bad syntax; misplaced else" stx #'hd)))
                ((hd-pat . body)
                 (and (stx-list? #'hd-pat)
@@ -2162,19 +2162,19 @@ package: gerbil
                (_ (raise-syntax-error #f "Bad syntax; illegal match clause"
                                       stx #'hd))))
             (_ r))))
-      
+
       (def (generate-body body)
         (with-syntax* (($E (genident 'E))
                        ((target ...)
                         tgt-lst)
-                       (fail 
+                       (fail
                         (syntax/loc stx
                           (lambda () (error "No clause matching" target ...))))
                        (body
                         (generate-clauses body #'($E))))
           #'(let (($E fail))
               body)))
-      
+
       (def (generate-clauses rest E)
         (syntax-case rest ()
           ((hd)
@@ -2186,16 +2186,16 @@ package: gerbil
           ((hd . rest)
            (syntax-case #'hd ()
              ((try clause body)
-              (with-syntax ((body 
+              (with-syntax ((body
                              (if (stx-e #'clause)
                                (generate1 #'clause #'body E)
                                #'body))
-                            (rest-body 
+                            (rest-body
                              (generate-clauses #'rest #'(try))))
                 #'(let ((try (lambda () body)))
                     rest-body)))))
           (_ E)))
-      
+
       (def (generate1 clause body E)
         (let recur ((rest clause) (rest-targets tgt-lst))
           (syntax-case rest ()
@@ -2205,7 +2205,7 @@ package: gerbil
                 (with-syntax* (($K (genident 'K))
                                ((var ...)
                                 (match-pattern-vars #'ptree))
-                               (body 
+                               (body
                                 (recur #'rest #'rest-targets))
                                (dispatch
                                 (generate-match1 stx #'target #'ptree
@@ -2214,27 +2214,27 @@ package: gerbil
                   #'(let (($K (lambda (var ...) body)))
                       dispatch)))))
             (_ body))))
-      
+
       (generate-body (parse-body (stx-length tgt-lst))))
-    
+
     (def (generate-match stx tgt clauses)
       (def (reclause clause)
         (syntax-case clause (else)
           ((else . _) clause)
-          ((hd . body) 
+          ((hd . body)
            (syntax/loc #'clause
              ((hd) . body)))
-          (_ (raise-syntax-error #f 
+          (_ (raise-syntax-error #f
                "Bad syntax; illegal match clause" stx clause))))
-      
+
       (generate-match* stx [tgt] (stx-map reclause clauses))))
-  
+
   (defsyntax (match stx)
     (syntax-case stx (<> <...>)
       ((_ <> . clauses)
        (stx-list? #'clauses)
        (with-syntax* (($e (genident 'e))
-                      (body 
+                      (body
                        (syntax/loc stx
                          (match $e . clauses))))
          #'(lambda ($e) body)))
@@ -2251,18 +2251,18 @@ package: gerbil
                       (body (generate-match stx #'$e #'clauses)))
          #'(let (($e e))
              body)))))
-  
+
   (defsyntax (match* stx)
     (syntax-case stx ()
       ((_ (e ...) . clauses)
        (stx-list? #'clauses)
-       (with-syntax* ((($e ...) 
+       (with-syntax* ((($e ...)
                        (gentemps #'(e ...)))
-                      (body 
+                      (body
                        (generate-match* stx #'($e ...) #'clauses)))
          #'(let (($e e) ...)
              body)))))
-  
+
   (defrules with ()
     ((_ () body ...)
      (let () body ...))
@@ -2271,14 +2271,14 @@ package: gerbil
      (recur ((hd expr)) body ...))
     ((_ ((hd expr) ...) body ...)
      (match* (expr ...) ((hd ...) body ...))))
-  
+
   (defrules with* ()
     ((recur ((hd e) . rest) body ...)
      (with ((hd e))
        (recur rest body ...)))
     ((_ () body ...)
      (let () body ...)))
-  
+
   (defrules ? (and or not =>)
     ((recur (and pred ...) obj)
      (and (recur pred obj) ...))
@@ -2302,7 +2302,7 @@ package: gerbil
      (lambda ($obj)
        (and (recur pred $obj)
             (K (proc $obj))))))
-  
+
   (defrules defsyntax-for-match ()
     ((_ id match-e macro-e)
      (identifier? #'id)
@@ -2314,14 +2314,14 @@ package: gerbil
           (lambda ($stx)
             (syntax-case $stx ()
               ((match: . body)
-               (core-apply-expander $match-e 
+               (core-apply-expander $match-e
                  (stx-wrap-source #'body (stx-source $stx))))
               (_ (core-apply-expander $macro-e $stx))))))))
     ((recur id match-e)
      (recur id match-e
             (lambda ($stx)
               (raise-syntax-error #f "Bad syntax" $stx)))))
-  
+
   (defrules defrules-for-match ()
     ((_ id . body)
      (defsyntax-for-match id
@@ -2331,21 +2331,21 @@ package: gerbil
 
 (module <more-sugar>
   (export #t (phi: +1 #t))
-  
+
   (begin-syntax
     (defclass (setq-macro macro-object) ()
       id: gerbil.core#setq-macro::t)
     (defclass (setf-macro macro-object) ()
       id: gerbil.core#setf-macro::t)
-    
+
     (def (syntax-local-setf-macro? stx)
-      (and (identifier? stx) 
+      (and (identifier? stx)
            (setf-macro? (syntax-local-value stx false))))
-    
+
     (def (syntax-local-setq-macro? stx)
-      (and (identifier? stx) 
+      (and (identifier? stx)
            (setq-macro? (syntax-local-value stx false)))))
-  
+
   (defsyntax (set! stx)
     (syntax-case stx ()
       ((_ (setf-id . _) . _)
@@ -2361,38 +2361,38 @@ package: gerbil
       ((_ id expr)
        (identifier? #'id)
        #'(%#set! id expr))))
-  
+
   (defsyntax (values-set! stx)
     (syntax-case stx ()
       ((_ tgt ... expr)
        (with-syntax ((($e ...) (gentemps #'(tgt ...))))
          #'(let-values ((($e ...) expr))
              (set! tgt $e) ...)))))
-  
+
   (defsyntax (parameterize stx)
     (syntax-case stx ()
       ((_ () body ...)
        #'(let () body ...))
       ((_ ((param expr) ...) body ...)
-       (with-syntax* ((thunk 
+       (with-syntax* ((thunk
                        (syntax/loc stx
                          (lambda () body ...)))
                       ((arg ...)
-                       (foldr cons* [] 
-                              (syntax->list #'(param ...)) 
+                       (foldr cons* []
+                              (syntax->list #'(param ...))
                               (syntax->list #'(expr ...)))))
          #'(call-with-parameters thunk arg ...)))))
-  
+
   (defrules let/cc ()
     ((_ id body ...)
      (identifier? #'id)
      (call/cc (lambda (id) body ...))))
-  
+
   (defrules let/esc ()
     ((_ id body ...)
      (identifier? #'id)
      (call/esc (lambda (id) body ...))))
-    
+
   (defrules unwind-protect ()
     ((_ body postlude)
      (with-unwind-protect (lambda () body) (lambda () postlude))))
@@ -2403,14 +2403,14 @@ package: gerbil
 
 (module <more-syntax-sugar>
   (export #t)
-  (import <expander-runtime> <syntax-case> <syntax-sugar> 
+  (import <expander-runtime> <syntax-case> <syntax-sugar>
           (phi: -1 <more-sugar>))       ; make-setq-macro
-  
+
   (defrules identifier-rules ()
     ((_ . body)
      (make-setq-macro
       macro: (syntax-rules . body))))
-  
+
   (defrules quasisyntax ())
   ;; ...
   )
@@ -2420,16 +2420,16 @@ package: gerbil
 
 (module <module-sugar>
   (export #t)
-  
+
   (defrules require ()
     ((_) (begin))
     ((recur feature . rest)
      (cond-expand
        (feature
         (recur . rest))
-       (else 
+       (else
         (syntax-error "Missing required feature" feature)))))
-  
+
   (defrules defsyntax-for-import ()
     ((_ id expr)
      (identifier? #'id)
@@ -2438,7 +2438,7 @@ package: gerbil
     ((recur (id . args) body ...)
      (identifier? #'id)
      (recur id (lambda args body ...))))
-  
+
   (defrules defsyntax-for-export ()
     ((_ id expr)
      (identifier? #'id)
@@ -2453,7 +2453,7 @@ package: gerbil
       ((_ hd id ...)
        (identifier-list? #'(id ...))
        (let* ((keys (stx-map core-identifier-key #'(id ...)))
-              (keytab 
+              (keytab
                (let (ht (make-hash-table))
                  (for-each (cut hash-put! ht <> #t) keys)
                  ht))
@@ -2475,7 +2475,7 @@ package: gerbil
       ((_ hd id ...)
        (identifier-list? #'(id ...))
        (let* ((keys (stx-map core-identifier-key #'(id ...)))
-              (keytab 
+              (keytab
                (let (ht (make-hash-table))
                  (for-each (cut hash-put! ht <> #t) keys)
                  ht))
@@ -2505,7 +2505,7 @@ package: gerbil
          (cons (make-symbol pre id) mark))
         (else
          (make-symbol pre name )))))
-    
+
   (defsyntax-for-import (rename-in stx)
     (syntax-case stx ()
       ((_ hd (id new-id) ...)
@@ -2565,7 +2565,7 @@ package: gerbil
                   (else
                    (cons in r))))))
          (cons begin: (foldl fold-e [] imports))))))
-  
+
   (defsyntax-for-export (except-out stx)
     (syntax-case stx ()
       ((_ hd id ...)
@@ -2594,7 +2594,7 @@ package: gerbil
                           (module-export-phi out)
                           rename
                           (module-export-weak? out))))
-  
+
   (defsyntax-for-export (rename-out stx)
     (syntax-case stx ()
       ((_ hd (id new-id) ...)
@@ -2654,7 +2654,7 @@ package: gerbil
                    (foldl fold-e r (export-set-exports out)))
                   (else (cons out r))))))
          (cons begin: (foldl fold-e [] exports))))))
-  
+
   (defsyntax-for-export (struct-out stx)
     (syntax-case stx ()
       ((_ id ...)

@@ -11,7 +11,7 @@
     (def my-generic (make-generic 'my-generic (lambda args #f)))
     (test-case "test default dispatch"
       (check (generic-dispatch my-generic 1 2) => #f))
-    
+
     (generic-add-method! my-generic
                      (lambda (a b) (and (number? a) (number? b)))
                      (lambda (next-method a b) ['number+ a b])

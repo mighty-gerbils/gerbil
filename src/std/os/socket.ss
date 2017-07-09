@@ -56,7 +56,7 @@ package: std/os
         SOCK_DGRAM
         SOCK_RAW
         SOCK_SEQPACKET SOCK_RDM
-  
+
         SHUT_RD
         SHUT_WR
         SHUT_RDWR
@@ -126,12 +126,12 @@ package: std/os
         IP_PMTUDISC_DONT
         IP_PMTUDISC_DO
         IP_PMTUDISC_PROBE
-        
+
         IPTOS_LOWDELAY
         IPTOS_THROUGHPUT
         IPTOS_RELIABILITY
         IPTOS_MINCOST
-        
+
         MSG_CONFIRM
         MSG_CTRUNC
         MSG_DONTROUTE
@@ -526,7 +526,7 @@ package: std/os
 ;; add to it and _socket.{ssi,scm} if you are missing something!
 (defsockopt SOL_SOCKET SO_ACCEPTCONN            int    #f)
 (defsockopt SOL_SOCKET SO_BINDTODEVICE          bytes  bytes)
-(defsockopt SOL_SOCKET SO_BROADCAST             int    int)     
+(defsockopt SOL_SOCKET SO_BROADCAST             int    int)
 (defsockopt SOL_SOCKET SO_DEBUG                 int    int)
 (defsockopt SOL_SOCKET SO_DOMAIN                int    #f)
 (defsockopt SOL_SOCKET SO_DONTROUTE             int    int)

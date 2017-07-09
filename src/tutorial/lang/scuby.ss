@@ -8,7 +8,7 @@ package: tutorial/lang
               :std/sugar
               :std/parser/base
               :tutorial/lang/scuby-grammar))
-              
+
 (export (import: :gerbil/core)
         (rename: begin-module%% %%begin-module)
         (phi: +1 read-module-body))

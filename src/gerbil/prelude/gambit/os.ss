@@ -87,13 +87,13 @@ package: gerbil/gambit
   network-info-name
   network-info-aliases
   network-info-number
-  
+
   tcp-client-peer-socket-info
   tcp-client-self-socket-info
   tcp-server-socket-info
-  socket-info? 
+  socket-info?
   socket-info-address socket-info-family socket-info-port-number
-  
+
   ;; tty stuff
   tty?
   tty-history tty-history-set! tty-history-max-length-set!

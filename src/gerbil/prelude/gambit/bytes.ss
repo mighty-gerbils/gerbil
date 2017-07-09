@@ -42,8 +42,7 @@ package: gerbil/gambit
 
 (defsyntax (@bytes stx)
   (syntax-case stx ()
-    ((_ str) 
+    ((_ str)
      (stx-string? #'str)
      (with-syntax ((e (string->bytes (stx-e #'str))))
        #'(quote e)))))
-

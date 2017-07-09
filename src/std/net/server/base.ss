@@ -27,7 +27,7 @@ package: std/net/server
 (defstruct !socket-state (e io-in io-out)
   final: #t)
 
-;; socket-server protocol 
+;; socket-server protocol
 (defproto socket-server
   (shutdown!)
   (add sock)

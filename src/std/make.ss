@@ -10,7 +10,7 @@ package: std
 (export make make-depgraph make-depgraph/spec shell-config)
 
 ;; buildspec: [<build> ...]
-;;  <build>: 
+;;  <build>:
 ;;    <module> ; module path string without extension
 ;;   (gxc: <module> gsc-opt ...)
 ;;   (gsc: <module> gsc-opt ...)
@@ -92,7 +92,7 @@ package: std
            (lp rest new))))
         (else
          (K rest-k new)))))
-  
+
   (def (module-spec-name spec)
     (match spec
       ((? string? modf) modf)
@@ -105,7 +105,7 @@ package: std
     (cond
      ((module-spec-name spec) => (cut hash-get module-ids <>))
      (else #f)))
-  
+
   (def (module-spec-id? spec id)
     (eq? (module-spec-id spec) id))
 
@@ -113,7 +113,7 @@ package: std
     (alet* ((id-a (module-spec-id a))
             (id-b (module-spec-id b)))
       (module-dep<? id-a id-b)))
-    
+
   (def (module-dep<? id-a id-b)
     (cond
      ((hash-get module-deps id-b)
@@ -125,7 +125,7 @@ package: std
   (def (sort-spec<? a b seen)
     (and (not (member a seen))
          (module-spec<? a b)))
-  
+
   (def (sort-deps bset)
     (let lp ((rest bset) (r []))
       (match rest
@@ -140,7 +140,7 @@ package: std
            (lp rest (cons hd r)))))
         (else
          (reverse r)))))
-  
+
   (for-each add-deps! depgraph)
   (let lp ((bset buildset) (bset-new buildset))
     (let (new (expand-rdeps bset bset-new))
@@ -181,7 +181,7 @@ package: std
     (if (string-empty? (path-extension mod))
       (string-append mod ".ss")
       mod))
-  
+
   (let lp ((rest spec) (files []))
     (match rest
       ([hd . rest]
@@ -243,7 +243,7 @@ package: std
                 (match rest
                   ([dep . rest]
                    (with-catch
-                    (lambda (exn) 
+                    (lambda (exn)
                       (if (syntax-error? exn)
                         (lp rest) ; it's ok if it can't be found, it might be in the tree
                         (raise exn)))
@@ -285,7 +285,7 @@ package: std
                (file-newer? srcpath statpath)))))
 
 (def (gxc-compile mod gsc-opts settings (invoke-gsc? #t))
-  (def gxc-opts 
+  (def gxc-opts
     [invoke-gsc: invoke-gsc?
      output-dir: (pgetq libdir: settings )
      optimize: (pgetq optimize: settings)
@@ -294,7 +294,7 @@ package: std
      verbose: (pgetq verbose: settings)
      (if gsc-opts [gsc-options: gsc-opts] []) ...])
   (def srcpath (source-path mod ".ss" settings))
-  
+
   (displayln "... compile " mod)
   (compile-file srcpath gxc-opts))
 
@@ -305,8 +305,8 @@ package: std
   (defvalues (libpath base)
     (cond
      ((string-rindex mod #\/)
-      => (lambda (ix) 
-           (values (path-expand (substring mod 0 ix) 
+      => (lambda (ix)
+           (values (path-expand (substring mod 0 ix)
                                 (if prefix (path-expand prefix libdir) libdir))
                    (substring mod (fx1+ ix) (string-length mod)))))
      (else (values (path-expand "std" libdir) mod))))
@@ -327,14 +327,14 @@ package: std
   (def libpath
     (cond
      ((string-rindex mod #\/)
-      => (lambda (ix) 
-           (path-expand (substring mod 0 ix) 
+      => (lambda (ix)
+           (path-expand (substring mod 0 ix)
                         (if prefix (path-expand prefix libdir) libdir))))
      (else (path-expand "std" libdir))))
-  
+
   (create-directory* libpath)
   (displayln "... compile foreign " mod)
-  (let* ((proc (open-process [path: "gsc" 
+  (let* ((proc (open-process [path: "gsc"
                               arguments: ["-o" libpath gsc-opts ... srcpath]
                               stdout-redirection: #f]))
          (status (process-status proc)))
@@ -357,18 +357,18 @@ package: std
   (def libpath (library-path mod ".ssi" settings))
   (def rtpath  (library-path mod "__rt.scm" settings))
   (def prefix  (pgetq prefix: settings))
-  
+
   (displayln "... copy ssi " mod)
   (when (file-exists? libpath)
     (delete-file libpath))
   (copy-file srcpath libpath)
   (displayln "... compile loader " mod)
   (with-output-to-file rtpath
-    (lambda () 
+    (lambda ()
       (for-each (lambda (dep) (pretty-print `(load-module ,dep)))
                 deps)
       (pretty-print `(load-module ,(if prefix (string-append prefix "/" mod) mod)))))
-  (let* ((proc (open-process [path: "gsc" 
+  (let* ((proc (open-process [path: "gsc"
                                     arguments: [rtpath]
                                     stdout-redirection: #f]))
          (status (process-status proc)))
@@ -388,7 +388,7 @@ package: std
 (def (compile-exe mod gsc-opts settings)
   (def srcpath (source-path mod ".ss" settings))
   (def binpath (binary-path mod settings))
-  (def gxc-opts 
+  (def gxc-opts
     [invoke-gsc: #t
      output-file: binpath
      verbose: (pgetq verbose: settings)])
@@ -409,7 +409,7 @@ package: std
 (def (compile-static-exe mod gsc-opts settings)
   (def srcpath (source-path mod ".ss" settings))
   (def binpath (binary-path mod settings))
-  (def gxc-opts 
+  (def gxc-opts
     [invoke-gsc: #t
      output-file: binpath
      verbose: (pgetq verbose: settings)

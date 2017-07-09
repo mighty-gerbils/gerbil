@@ -69,7 +69,7 @@ package: std/db
      {destroy conn}
      (catch (e)
        (log-error "error closing connection" e))))
-  
+
   (with ((conpool _ mx cv conns out) cp)
     (mutex-lock! mx)
     (for-each close conns)

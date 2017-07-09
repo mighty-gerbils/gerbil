@@ -31,7 +31,7 @@
 ;;;
 ;;; This code is completely R5RS except for the LET-VECTOR-START+END
 ;;; macro used to handle defaulting & checking the optional START/END args
-;;; passed to VECTOR-SORTED?. There's an R5RS definition of this macro in 
+;;; passed to VECTOR-SORTED?. There's an R5RS definition of this macro in
 ;;; sort-support-macs.scm, which comes with this SRFI reference implementation.
 ;;;
 ;;; If your Scheme has a faster mechanism for handling optional arguments

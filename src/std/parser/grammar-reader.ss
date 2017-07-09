@@ -72,7 +72,7 @@ package: std/parser
                             (error-message exn))
              (map token->syntax (error-irritants exn)))
       (raise exn)))
-  
+
   (with-syntax* (((values macro-id opts)
                   (read-section-head port))
                  ((values rules end)
@@ -103,7 +103,7 @@ package: std/parser
           (unless (identifier? id)
             (raise-syntax-error #f "Bad syntax; expected identifier" id))
           (read-opts id []))))))
-  
+
   (def (read-opts id opts)
     (let (next (peek-char port))
       (cond
@@ -125,7 +125,7 @@ package: std/parser
        (else
         (let (opt (read-syntax port))
           (read-opts id (cons opt opts)))))))
-  
+
   (read-id))
 
 (def (raise-unexpected-token tok)
@@ -135,11 +135,11 @@ package: std/parser
   (def (locat-delta* start end)
     (location->source-location
      (location-delta* (token-loc start) (token-loc end))))
-  
+
   (def (make-rule rule-id prods start end)
     (make-AST (cons rule-id (reverse prods))
               (locat-delta* start end)))
-  
+
   (def (parse-rule ts K E)
     (let (rule (parse-rule-head ts))
       (case (token-t rule)
@@ -223,7 +223,7 @@ package: std/parser
     (make-AST [(token-e rx) action]
               (location->source-location
                (location-delta (token-loc rx) end))))
-  
+
   (def (parse-rule ts K E)
     (let (next (token-stream-next ts))
       (case (token-t next)
@@ -250,8 +250,8 @@ package: std/parser
             (raise-unexpected-token next))))
         (else
          (raise-unexpected-token next)))))
-                  
-  
+
+
   (let lp ((ts (lex-lexer port)) (rules []))
     (parse-rule
      ts

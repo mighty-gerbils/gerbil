@@ -7,7 +7,7 @@ package: std/net
         :std/pregexp
         :std/format
         :std/text/hex)
-(export ip4-address? ip4-address 
+(export ip4-address? ip4-address
         ip4-address-string? ip4-address->string string->ip4-address
         ip6-address? ip6-address
         ip6-address-string? ip6-address->string string->ip6-address
@@ -56,7 +56,7 @@ package: std/net
     (string->ip6-address obj))
    (else
     (error "Malformed ip6 address" obj))))
-  
+
 (def (ip6-address? obj)
   (and (##u8vector? obj)
        (##fx= (##u8vector-length obj) 16)))
@@ -77,7 +77,7 @@ package: std/net
        ((unhex* char) => values)
        (else
         (error "Malformed address; not a hex digit" str char)))))
-  
+
   (def (loop rest bytes have-zeros)
     (match rest
       ([hex . rest]
@@ -127,7 +127,7 @@ package: std/net
       (error "Malformed address; not enough bits" str bytes))
      (else
       (error "malformed address; too many bits" str bytes))))
-  
+
   (let (hexes (string-split str #\:))
     (match hexes
       (["" "" . rest]
@@ -144,7 +144,7 @@ package: std/net
   (def (compress-zeros hexes)
     (compress-leading-trailing
      (compress hexes)))
-  
+
   (def (compress-leading-trailing hexes)
     (cond
      ((equal? (car hexes) "")
@@ -153,7 +153,7 @@ package: std/net
       (set! (cdr (last-pair hexes)) '(""))
       hexes)
      (else hexes)))
-  
+
   (def (compress hexes)
     (match hexes
       (["0" "0" . rest]
@@ -161,13 +161,13 @@ package: std/net
       ([hd . rest]
        (cons hd (compress rest)))
       (else [])))
-  
+
   (def (compress* hexes)
     (match hexes
       (["0" . rest]
        (compress* rest))
       (else hexes)))
-  
+
   (let lp ((rest (u8vector->list ip6)) (hexes []))
     (match rest
       ([b0 b1 . rest]
@@ -192,7 +192,7 @@ package: std/net
 ;; inet address: endpoint [host . port]
 (def (inet-address obj)
   (cond
-   ((inet-address? obj) 
+   ((inet-address? obj)
     (inet-address-normalize obj))
    ((inet-address-string? obj)
     (string->inet-address obj))
@@ -265,12 +265,12 @@ package: std/net
       '#u8(0 0 0 0))
      (else
       (error "Malformed address; bad host" str host))))
-  
+
   (def (string->port port)
     (let (port (string->number port))
       (if (and (fixnum? port) (fx<= 0 port 65535)) port
           (error "Malformed address; bad port" str port))))
-  
+
   (with ((values host port) (inet-address-split str))
     (cons
      (string->host host)

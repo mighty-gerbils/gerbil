@@ -7,7 +7,7 @@ package: gerbil/gambit
 (extern namespace: #f
   default-random-source
   random-integer random-real random-u8vector random-f64vector
-  make-random-source random-source? 
+  make-random-source random-source?
   random-source-state-ref random-source-state-set!
   random-source-randomize! random-source-pseudo-randomize!
   random-source-make-integers random-source-make-reals

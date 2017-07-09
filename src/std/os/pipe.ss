@@ -30,7 +30,7 @@ package: std/os
   (c-declare "#include <errno.h>")
   (c-declare "#include <unistd.h>")
   (c-declare "#include <stdlib.h>")
-  
+
   (define-macro (define-c-lambda id args ret #!optional (name #f))
     (let ((name (or name (##symbol->string id))))
       `(define ,id
@@ -49,17 +49,17 @@ package: std/os
               pipe* make_pipe_ptr pipe_ptr_ref))
 
   (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
-  
+
   (c-define-type pipe*
     (pointer int (pipe*) "ffi_free"))
 
   (define-c-lambda __errno () int
     "___return (errno);")
-  
+
   (define-c-lambda __pipe (pipe*) int
     "pipe")
   (define-with-errno _pipe __pipe (pipe-ptr))
-  
+
   (define-c-lambda make_pipe_ptr () pipe*
     "___return ((int*)malloc (2 * sizeof (int)));")
   (define-c-lambda pipe_ptr_ref (pipe* int) int

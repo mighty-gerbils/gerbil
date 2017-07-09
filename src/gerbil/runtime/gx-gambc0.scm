@@ -4,7 +4,7 @@
 (##namespace (""))
 ;;(include "gx-gambc#.scm")
 
-(declare 
+(declare
   (block)
   (standard-bindings)
   (extended-bindings))
@@ -49,11 +49,11 @@
           (if (file-exists? next)
             (lp next (fx1+ n))
             current)))))
-  
+
   (define (find-source-file npath)
     (let ((spath (string-append npath ".scm")))
       (and (file-exists? spath) spath)))
-          
+
   (let lp ((rest (&current-module-libpath)))
     (core-match rest
       ((dir . rest)
@@ -75,7 +75,7 @@
 ;; explicit namespace reference for loading compiled modules
 (define (_gx#load-module modpath)
   (load-module modpath #f))
-  
+
 ;;; MOP
 ;;
 ;; Gerbil rtd:
@@ -136,12 +136,12 @@
               ((id . rest)
                (cons* id (if transparent? 0 1) #f (recur rest)))
               (else '())))))
-    (##structure ##type-type 
-                 type-id type-name 
+    (##structure ##type-type
+                 type-id type-name
                  (+ 24 (if transparent? 0 1))
                  type-super
                  (list->vector field-info)
-                 rtd-mixin rtd-fields rtd-plist rtd-ctor 
+                 rtd-mixin rtd-fields rtd-plist rtd-ctor
                  rtd-slots rtd-methods)))
 
 (define (make-struct-type-descriptor id name super fields plist ctor)
@@ -171,11 +171,11 @@
   (when (and super (assgetq final: (type-descriptor-plist super)))
     (error "Cannot extend final struct" super))
 
-  (let* ((super-fields 
+  (let* ((super-fields
           (if super (type-descriptor-fields super) 0))
-         (std-fields 
+         (std-fields
           (fx+ fields super-fields))
-         (ctor 
+         (ctor
           (or ctor (and super (type-descriptor-ctor super)))))
     (make-struct-type-descriptor id name super std-fields plist ctor)))
 
@@ -198,7 +198,7 @@
       (##structure-set! obj val off klass #f))))
 
 (define (struct-field-offset klass field)
-  (fx+ field 
+  (fx+ field
        (cond
         ((##type-super klass) => type-descriptor-fields)
         (else 0))))
@@ -223,20 +223,20 @@
 (define (make-class-type id super slots name plist ctor)
   (define (class-slots klass)
     (assgetq slots: (type-descriptor-plist klass)))
-  
+
   (define (make-slots off)
     (let ((slot-table (make-hash-table-eq)))
       (let lp ((rest super) (off off) (slot-list '()))
         (core-match rest
           ((hd . rest)
-           (merge-slots slot-table (class-slots hd) off slot-list 
+           (merge-slots slot-table (class-slots hd) off slot-list
                         (lambda (off slot-list)
                           (lp rest off slot-list))))
           (else
-           (merge-slots slot-table slots off slot-list 
+           (merge-slots slot-table slots off slot-list
                         (lambda (off slot-list)
                           (values off slot-table (reverse slot-list)))))))))
-  
+
   (define (merge-slots ht lst off r K)
     (let lp ((rest lst) (off off) (r r))
       (core-match rest
@@ -249,7 +249,7 @@
              (lp rest (fx1+ off) (cons slot r)))))
         (else
          (K off r)))))
-  
+
   (define (find-super-ctor super)
     (let lp ((rest super) (ctor #f))
       (core-match rest
@@ -267,7 +267,7 @@
     (define (base-struct super-struct klass)
       (cond
        (super-struct
-        (cond 
+        (cond
          ((struct-subtype? super-struct klass)
           klass)
          ((struct-subtype? klass super-struct)
@@ -286,7 +286,7 @@
             (lp next))
            (else #f))))
        (else #f)))
-    
+
     (let lp ((rest super) (super-struct #f))
       (core-match rest
         ((hd . rest)
@@ -309,15 +309,15 @@
            (lp rest (cons hd mixin))))
         (else
          (reverse mixin)))))
-  
+
   (cond
    ((find (lambda (klass) (not (type-descriptor? klass))) super)
     => (lambda (klass)
          (error "Illegal super class; not a type descriptor" klass)))
-   ((find (lambda (klass) 
-             (assgetq final: (type-descriptor-plist klass))) 
+   ((find (lambda (klass)
+             (assgetq final: (type-descriptor-plist klass)))
            super)
-    => (lambda (klass) 
+    => (lambda (klass)
          (error "Cannot extend final class" klass))))
 
   (let* ((std-super (find-super-struct super))
@@ -332,13 +332,13 @@
 (define (class-linearize-mixins klass-lst)
   (define (class->list klass)
     (cons klass (or (type-descriptor-mixin klass) '())))
-  
+
   (core-match klass-lst
     (() '())
     ((klass)
      (class->list klass))
     (else
-     (&linearize-mixins 
+     (&linearize-mixins
       (map class->list klass-lst)))))
 
 (define (&linearize-mixins lst)
@@ -346,9 +346,9 @@
     (core-match rest
       ((hd . rest)
        (linearize1 hd rest r))
-      (else 
+      (else
        (reverse r))))
-  
+
   (define (linearize1 hd rest r)
     (core-match hd
       ((hd-first . hd-rest)
@@ -356,9 +356,9 @@
          (linearize2 rest (list hd) r)
          (K (cons hd-rest rest)
             (putq hd-first r))))
-      (else 
+      (else
        (K rest r))))
-  
+
   (define (linearize2 rest pre r)
     (let lp ((rest rest) (pre pre))
       (core-match rest
@@ -371,14 +371,14 @@
                  (putq hd-first r))))
            (else
             (lp rest pre)))))))
-  
+
   (define (putq hd lst)
     (if (memq hd lst) lst
         (cons hd lst)))
-  
+
   (define (findq hd rest)
     (find (lambda (lst) (memq hd lst)) rest))
-  
+
   (K lst '()))
 
 (define (make-class-predicate klass)
@@ -424,9 +424,9 @@
                 #t)))
      (else #f))))
 
-(define object? 
+(define object?
   ##structure?)
-(define object-type 
+(define object-type
   ##structure-type)
 
 (define (struct-instance? klass obj)
@@ -461,21 +461,21 @@
   (let ((fields (type-descriptor-fields klass)))
     (cond
      ((type-descriptor-ctor klass)
-      => (lambda (kons-id) 
+      => (lambda (kons-id)
            (&constructor-init! klass kons-id (make-object klass fields) args)))
      ((fx= fields (length args))
       (apply ##structure klass args))
      (else
-      (error "Arguments don't match object size" 
+      (error "Arguments don't match object size"
         klass fields args)))))
 
 (define (make-class-instance klass . args)
   (let ((obj (make-object klass (type-descriptor-fields klass))))
     (cond
      ((type-descriptor-ctor klass)
-      => (lambda (kons-id) 
+      => (lambda (kons-id)
            (&constructor-init! klass kons-id obj args)))
-     (else 
+     (else
       (&class-instance-init! klass obj args)))))
 
 (define (struct-instance-init! obj . args)
@@ -498,9 +498,9 @@
   (let lp ((rest args))
     (core-match rest
       ((key val . rest)
-       (cond 
+       (cond
         ((class-slot-offset klass key)
-         => (lambda (off) 
+         => (lambda (off)
               (##vector-set! obj (fx1+ off) val)
               (lp rest)))
         (else
@@ -515,8 +515,8 @@
 (define (&constructor-init! klass kons-id obj args)
   (cond
    ((direct-method-ref klass kons-id)
-    => (lambda (kons) 
-         (apply kons obj args) 
+    => (lambda (kons)
+         (apply kons obj args)
          obj))
    (else
     (error "Missing constructor" klass kons-id))))
@@ -535,7 +535,7 @@
 (define (unchecked-slot-ref obj slot)
   (unchecked-field-ref obj (class-slot-offset (object-type obj))))
 (define (unchecked-slot-set! obj slot val)
-  (unchecked-field-set! obj (class-slot-offset (object-type obj)) val)) 
+  (unchecked-field-set! obj (class-slot-offset (object-type obj)) val))
 
 (define (slot-ref obj slot #!optional (E &slot-error))
   (&slot-e obj slot (lambda (off) (##vector-ref obj (fx1+ off))) E))
@@ -546,7 +546,7 @@
 (define (&slot-e obj slot K E)
   (if (object? obj)
     (let ((klass (object-type obj)))
-      (cond 
+      (cond
        ((and (type-descriptor? klass) (class-slot-offset klass slot))
         => K)
        (else (E obj slot))))
@@ -574,7 +574,7 @@
   (cond
    ((method-ref obj id)
     => (lambda (method)
-         (lambda args 
+         (lambda args
            (apply method obj args))))
    (else #f)))
 
@@ -583,7 +583,7 @@
     (when method
       (bind-method! klass id method #t)) ; rebind, it's ok to race
     method)
-  
+
   (cond
    ((type-descriptor? klass)
     (cond
@@ -628,7 +628,7 @@
     (if (and (not rebind?) (hash-get ht id))
       (error "Method already bound" klass id)
       (hash-put! ht id proc)))
-  
+
   (cond
    ((type-descriptor? klass)
     (let ((ht (type-descriptor-methods klass)))
@@ -688,7 +688,7 @@
 (define generic::t
   (make-struct-type 'gerbil#generic::t #f 3 'generic '((final: . #t)) #f))
 (define (make-generic id #!optional (default #f))
-  (make-struct-instance generic::t id (vector) default)) 
+  (make-struct-instance generic::t id (vector) default))
 (define generic?
   (make-struct-predicate generic::t))
 (define generic-id
@@ -817,15 +817,15 @@
 
 (define _gx#atom (make-vector 0))
 
-(define (true . _) 
+(define (true . _)
   #t)
 (define (true? obj)
   (eq? obj #t))
 
-(define (false . _) 
+(define (false . _)
   #f)
 
-(define (void . _) 
+(define (void . _)
   #!void)
 (define (void? obj)
   (eq? obj #!void))
@@ -938,7 +938,7 @@
   table-for-each)
 
 (define (hash-map fun ht)
-  (hash-fold 
+  (hash-fold
    (lambda (k v r) (cons (fun k v) r))
    '() ht))
 
@@ -1000,7 +1000,7 @@
                               (list iv) rest))
              (map cdr rest))
       iv))
-  
+
   (if (null? rest)
     (foldl1 f iv lst)
     (fold* f iv (cons lst rest))))
@@ -1014,12 +1014,12 @@
 (define (foldr f iv lst . rest)
   (define (fold* f iv rest)
     (if (andmap1 pair? rest)
-      (apply f 
+      (apply f
         (foldr1 (lambda (xs r) (cons (car xs) r))
                 (list (fold* f iv (map cdr rest)))
                 rest))
       iv))
-  
+
   (if (null? rest)
     (foldr1 f iv lst)
     (fold* f iv (cons lst rest))))
@@ -1027,7 +1027,7 @@
 (define (andmap1 f rest)
   (core-match rest
     ((hd . rest)
-     (and (f hd) 
+     (and (f hd)
           (andmap1 f rest)))
     (else #t)))
 
@@ -1037,7 +1037,7 @@
       (and (apply f (map car rest))
            (fold* f (map cdr rest)))
       #t))
-  
+
   (if (null? rest)
     (andmap1 f lst)
     (fold* f (cons lst rest))))
@@ -1045,7 +1045,7 @@
 (define (ormap1 f rest)
   (core-match rest
     ((hd . rest)
-     (or (f hd) 
+     (or (f hd)
          (ormap1 f rest)))
     (else #f)))
 
@@ -1055,7 +1055,7 @@
       (or (apply f (map car rest))
           (fold* f (map cdr rest)))
       #f))
-  
+
   (if (null? rest)
     (ormap1 f lst)
     (fold* f (cons lst rest))))
@@ -1085,7 +1085,7 @@
        (else
         (fold* f (map cdr rest))))
       '()))
-  
+
   (if (null? rest)
     (filter-map1 f lst)
     (fold* f (cons lst rest))))
@@ -1288,17 +1288,17 @@
       (do ((k 0 (fx1+ k)))
           ((fx= k len) r)
         (##vector-set! r k (f (##vector-ref vec k))))))
-  
+
   (define (fold* vecs)
     (let* ((len (apply min (map vector-length vecs)))
            (r (make-vector len)))
       (do ((k 0 (fx1+ k)))
           ((fx= k len) r)
-        (##vector-set! r k 
-                       (apply f 
-                         (map (lambda (vec) (##vector-ref vec k)) 
+        (##vector-set! r k
+                       (apply f
+                         (map (lambda (vec) (##vector-ref vec k))
                               vecs))))))
-  
+
   (if (null? rest)
     (fold1 vec)
     (fold* (cons vec rest))))
@@ -1387,7 +1387,7 @@
 ;;; assorted
 (define (create-directory* dir #!optional (perms #o755))
   (define (create1 path)
-    (cond 
+    (cond
      ((file-exists? path)
       (unless (eq? (file-type path) 'directory)
         (error "Path component is not a directory" path)))
@@ -1395,10 +1395,10 @@
       (create-directory (list path: path permissions: perms)))
      (else
       (create-directory path))))
-  
+
   (let lp ((start 0))
     (cond
-     ((string-index dir #\/ start) 
+     ((string-index dir #\/ start)
       => (lambda (x)
            (when (fx> x 0)
              (create1 (substring dir 0 x)))
@@ -1414,9 +1414,9 @@
       (##raise-type-exception 1 'vector 'keyword-dispatch
                               (cons* kwt K all-args))))
   (unless (procedure? K)
-    (##raise-type-exception 2 'procedure 'keyword-dispatch 
+    (##raise-type-exception 2 'procedure 'keyword-dispatch
                             (cons* kwt K all-args)))
-  (let ((keys 
+  (let ((keys
          (if kwt
            (make-hash-table-eq hash: keyword-hash size: (##vector-length kwt))
            (make-hash-table-eq hash: keyword-hash))))

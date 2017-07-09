@@ -12,4 +12,3 @@ package: std/srfi
         )
 
 (include "srfi-78.scm")
-

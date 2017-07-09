@@ -19,7 +19,7 @@ namespace: gx
 ;; top-syntax-form:
 ;;  definition
 ;;  expression
-;;  (%#begin-syntax top-syntax-form ...) 
+;;  (%#begin-syntax top-syntax-form ...)
 ;;
 ;; phi+1 expansion and evaluation
 ;;  if in module core-top-context
@@ -28,15 +28,15 @@ namespace: gx
 (def (core-expand-begin-syntax% stx)
   (def (expand-special hd K rest r)
     (let (K (lambda (e) (K rest (cons e r))))
-      (core-syntax-case hd (%#begin-syntax 
+      (core-syntax-case hd (%#begin-syntax
                             %#define-values %#define-syntax %#define-alias
                             %#define-runtime)
         ((%#begin-syntax . _)
          (K (core-expand-begin-syntax% hd)))
         ((%#define-values hd-bind expr)
          (core-bind-values? hd-bind)
-         (begin 
-           (core-bind-values! hd-bind) 
+         (begin
+           (core-bind-values! hd-bind)
            (K hd)))
         ((%#define-syntax . _)
          (K (core-expand-define-syntax% hd)))
@@ -44,14 +44,14 @@ namespace: gx
          (K (core-expand-define-alias% hd)))
         ((%#define-runtime . _)
          (K (core-expand-define-runtime% hd))))))
-  
+
   (def (eval-body rbody)
     (let lp ((rest rbody) (body '()) (ebody '()))
       (match rest
         ([hd . rest]
          (core-syntax-case hd (%#define-values %#begin-syntax)
            ((%#define-values hd-bind expr)
-            (let (ehd 
+            (let (ehd
                   (core-quote-syntax
                    [(core-quote-syntax '%#define-values)
                     (core-quote-bind-values hd-bind)
@@ -63,16 +63,16 @@ namespace: gx
            (else
             (lp rest (cons hd body) (cons hd ebody)))))
         (else
-         (values body 
-                 (eval-syntax* 
+         (values body
+                 (eval-syntax*
                   (core-quote-syntax
                    (core-cons '%#begin ebody)
                    (stx-source stx))))))))
-  
+
   (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
     (let (rbody (core-expand-block stx expand-special #f))
       (let-values (((expanded-body value) (eval-body rbody)))
-        (core-quote-syntax 
+        (core-quote-syntax
          (if (module-context? (current-expander-context))
            (core-cons '%#begin-syntax expanded-body)
            [(core-quote-syntax '%#quote) value])
@@ -102,17 +102,17 @@ namespace: gx
 (def (core-expand-local-block stx body)
   (def (expand-special hd K rest r)
     (K [] (cons (expand-internal hd rest) r)))
-  
+
   (def (expand-internal hd rest)
     (parameterize ((current-expander-context (make-local-context)))
       (wrap-internal
-       (core-expand-block 
+       (core-expand-block
         (stx-wrap-source (cons* '%#begin hd rest)
                          (stx-source stx))
         expand-internal-special #f))))
-  
+
   (def (expand-internal-special hd K rest r)
-    (core-syntax-case hd (%#define-values 
+    (core-syntax-case hd (%#define-values
                           %#define-syntax %#define-alias
                           %#declare)
       ((%#define-values hd-bind expr)
@@ -130,7 +130,7 @@ namespace: gx
          (K rest r)))
       ((%#declare . _)
        (K rest (cons (core-expand-declare% hd) r)))))
-  
+
   (def (wrap-internal rbody)
     (let lp ((rest rbody) (decls []) (bind []) (body []))
       (core-syntax-case rest ()
@@ -153,7 +153,7 @@ namespace: gx
                  (match body
                    ([] (raise-syntax-error #f "Bad syntax" stx))
                    ([expr] expr)
-                   (else 
+                   (else
                     (core-quote-syntax
                      (core-cons '%#begin body)
                      (stx-source stx)))))
@@ -166,9 +166,9 @@ namespace: gx
                (core-quote-syntax
                 [(core-quote-syntax '%#begin-annotation) decls body]
                 (stx-source stx))))))))
-  
+
   (core-expand-block*
-   (stx-wrap-source (cons '%#begin body) 
+   (stx-wrap-source (cons '%#begin body)
                     (stx-source stx))
    expand-special))
 
@@ -195,7 +195,7 @@ namespace: gx
     ((_ . body)
      (stx-list? body)
      (begin
-       (stx-for-each 
+       (stx-for-each
         (lambda (bind)
           (core-syntax-case bind ()
             ((id eid)
@@ -220,8 +220,8 @@ namespace: gx
      (begin
        (core-bind-values! hd)
        (core-quote-syntax
-        [(core-quote-syntax '%#define-values) 
-         (core-quote-bind-values hd) 
+        [(core-quote-syntax '%#define-values)
+         (core-quote-bind-values hd)
          (core-expand-expression expr)]
         (stx-source stx))))))
 
@@ -270,7 +270,7 @@ namespace: gx
      (core-bind-values? hd)
      (parameterize ((current-expander-context (make-local-context)))
        (core-bind-values! hd)
-       (let (body [(core-quote-bind-values hd) 
+       (let (body [(core-quote-bind-values hd)
                    (core-expand-local-block stx body)])
          (if wrap?
            (core-quote-syntax
@@ -284,10 +284,10 @@ namespace: gx
      (stx-list? clauses)
      (core-quote-syntax
       (core-cons  '%#case-lambda
-        (stx-map 
+        (stx-map
          (lambda (clause)
            (core-expand-lambda%
-            (stx-wrap-source 
+            (stx-wrap-source
              (cons '%#case-lambda-clause clause)
              (or (stx-source clause)
                  (stx-source stx)))
@@ -359,7 +359,7 @@ namespace: gx
     ((_ hd . body)
      (core-expand-let-bind-syntax? hd)
      (parameterize ((current-expander-context (make-local-context)))
-       (stx-for-each core-expand-let-bind-syntax! 
+       (stx-for-each core-expand-let-bind-syntax!
                      hd (make-list (stx-length hd) #!void))
        (stx-for-each (cut core-expand-let-bind-syntax! <> <> #t)
                      hd (stx-map core-expand-let-bind-syntax-expression hd))
@@ -376,7 +376,7 @@ namespace: gx
 (def (core-expand-let-bind-syntax-expression bind)
   (core-syntax-case bind ()
     ((_ expr)
-     (let-values (((_ e) (core-expand-expression+1 expr))) 
+     (let-values (((_ e) (core-expand-expression+1 expr)))
        e))))
 
 (def (core-expand-let-bind-syntax! bind e (rebind? #f))
@@ -392,7 +392,7 @@ namespace: gx
 (def (core-expand-quote% stx)
   (core-syntax-case stx ()
     ((_ e)
-     (core-quote-syntax 
+     (core-quote-syntax
       [(core-quote-syntax '%#quote) (syntax->datum e)]
       (stx-source stx)))))
 
@@ -435,7 +435,7 @@ namespace: gx
   (core-syntax-case stx ()
     ((_ id expr)
      (core-runtime-ref? id)
-     (core-quote-syntax 
+     (core-quote-syntax
       [(core-quote-syntax '%#set!)
        (core-quote-runtime-ref id stx)
        (core-expand-expression expr)]
@@ -457,14 +457,14 @@ namespace: gx
            (lp rest ns r)))
         ((hd . rest)
          (if (identifier? hd)
-           (lp rest ns 
+           (lp rest ns
                (cons [hd (if ns (stx-identifier hd ns "#" hd) hd)] r))
            (core-syntax-case hd ()
              ((id eid)
               (and (identifier? id) (identifier? eid))
               (lp rest ns (cons [id eid] r))))))
         (() (reverse r)))))
-  
+
   (core-syntax-case stx ()
     ((_ . body)
      (stx-list? body)
@@ -509,13 +509,13 @@ namespace: gx
        (and (stx-andmap identifier? hd)
             (stx-list? body)
             (not (stx-null? body)))
-       (stx-wrap-source 
+       (stx-wrap-source
         (cons (stx-map user-binding-identifier hd)
               body)
         (stx-source clause)))
       (else
        (raise-syntax-error #f "Bad syntax; malformed clause" stx clause))))
-  
+
   (core-syntax-case stx ()
     ((_ . clauses)
      (stx-list? clauses)
@@ -530,7 +530,7 @@ namespace: gx
        [(stx-map user-binding-identifier ids) expr])
       (else
        (raise-syntax-error #f "Bad syntax; malformed binding" stx bind))))
-  
+
   (core-syntax-case stx ()
     ((_ hd . body)
      (and (stx-list? hd)
@@ -571,7 +571,7 @@ namespace: gx
     (if (syntax-quote? e)
       (syntax-quote-context e)
       (current-expander-context)))
-  
+
   (def (marks e)
     (cond
      ((symbol? e) [])
@@ -579,11 +579,11 @@ namespace: gx
       (identifier-wrap-marks e))
      (else
       (syntax-quote-marks e))))
-  
+
   (def (unwrap e)
     (if (symbol? e) e
         (syntax-local-unwrap e)))
-  
+
   (let ((x (unwrap xid))
         (y (unwrap yid)))
     (and (stx-eq? x y)
@@ -599,7 +599,7 @@ namespace: gx
        (core-identifier=? stx '...)))
 
 (def (user-binding-identifier x)
-  (and (identifier? x) (not (underscore? x)) 
+  (and (identifier? x) (not (underscore? x))
        x))
 
 (def (check-duplicate-identifiers stx (where stx))
@@ -631,7 +631,7 @@ namespace: gx
    stx))
 
 (def (core-quote-bind-values stx)
-  (stx-map (lambda (x) 
+  (stx-map (lambda (x)
              (and (identifier? x)
                   (core-quote-syntax x)))
            stx))
@@ -644,7 +644,7 @@ namespace: gx
 
 (def (core-quote-runtime-ref id form)
   (let (bind (resolve-identifier id))
-    (cond 
+    (cond
      ((runtime-binding? bind)
       (core-quote-syntax id))
      ((not bind)
@@ -696,7 +696,7 @@ namespace: gx
     (make-extern-binding eid (core-identifier-key id) phi)
     rebind? phi ctx))
 
-(def (core-bind-syntax! id e 
+(def (core-bind-syntax! id e
                         (rebind? #f)
                         (phi (current-expander-phi))
                         (ctx (current-expander-context)))
@@ -720,7 +720,7 @@ namespace: gx
                           alias-id))
     rebind? phi ctx))
 
-(def (make-binding-id key 
+(def (make-binding-id key
                       (syntax? #f)
                       (phi (current-expander-phi))
                       (ctx (current-expander-context)))
@@ -731,7 +731,7 @@ namespace: gx
     (gensym (car key)))
    ((top-context? ctx)
     (let (ns (core-context-namespace ctx))
-      (cond 
+      (cond
        ((and (fxzero? phi) (not syntax?))
         (if ns
           (make-symbol ns "#" key)
@@ -740,5 +740,5 @@ namespace: gx
         (make-symbol (or ns "") "[:" (number->string phi) ":]#" key))
        (else
         (make-symbol (or ns "") "[" (number->string phi) "]#" key)))))
-   (else 
+   (else
     (gensym key))))

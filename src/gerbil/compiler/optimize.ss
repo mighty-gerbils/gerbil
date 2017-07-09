@@ -383,7 +383,7 @@ namespace: gxc
       ((hd . body)
        (let (body (map (xform-apply-compile-e args) #'body))
          [#'hd body ...]))))
-  
+
   (ast-case stx ()
     ((_ . clauses)
      (let (clauses (map clause-e #'clauses))
@@ -509,7 +509,7 @@ namespace: gxc
                    (clause
                     (ast-case #'hd ()
                       ((arg ...)
-                       [#'hd 
+                       [#'hd
                         (xform-wrap-source
                          ['%#call ['%#ref id] #'((%#ref arg) ...) ...]
                          stx)])
@@ -536,7 +536,7 @@ namespace: gxc
     (xform-wrap-source
      ['%#define-values [id] (compile-e impl)]
      stx))
-  
+
   (ast-case stx ()
     ((_ (id) expr)
      (and (identifier? #'id)
@@ -588,7 +588,7 @@ namespace: gxc
 (def (lift-top-lambda-let-values% stx)
   (def (bind-e id expr (compile? #t))
     [[id] (if compile? (compile-e expr) expr)])
-  
+
   (def (compile-bindings rest)
     (let lp ((rest rest) (lift1 []) (lift2 []) (bind []))
       (match rest
@@ -632,7 +632,7 @@ namespace: gxc
          (values (reverse lift1)
                  (reverse lift2)
                  (reverse bind))))))
-    
+
   (ast-case stx ()
     ((_ (bind ...) body)
      (ormap lift-top-lambda-binding? #'(bind ...))
@@ -662,7 +662,7 @@ namespace: gxc
 (def (lift-top-lambda-letrec-values% stx)
   (def (bind-e id expr (compile? #t))
     [[id] (if compile? (compile-e expr) expr)])
-  
+
   (def (compile-bindings rest)
     (let lp ((rest rest) (bind []))
       (match rest
@@ -703,7 +703,7 @@ namespace: gxc
             (lp rest (cons [#'hd (compile-e #'expr)] bind)))))
         (else
          (reverse bind)))))
-  
+
   (ast-case stx ()
     ((form (bind ...) body)
      (ormap lift-top-lambda-binding? #'(bind ...))
@@ -758,7 +758,7 @@ namespace: gxc
            (alet (type (apply-basic-expression-type expr))
              (optimizer-declare-type! sym type #t)))))
       (_ (void))))
-  
+
   (ast-case stx ()
     ((_ ((hd expr) ...) body)
      (begin
@@ -1047,7 +1047,7 @@ namespace: gxc
           stx)))
        (dispatch
         (verbose "dispatch lambda => " dispatch)
-        (compile-e 
+        (compile-e
          (xform-wrap-source
           ['%#call ['%#ref dispatch] args ...]
           stx)))
@@ -1091,7 +1091,7 @@ namespace: gxc
              (let (typedecl {typedecl type})
                ['declare-type sym typedecl])))
        (else '(begin)))))
-  
+
   (ast-case stx ()
     ((_ (id) _)
      (generate-e #'id))

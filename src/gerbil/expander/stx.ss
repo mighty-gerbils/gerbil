@@ -38,7 +38,7 @@ namespace: gx
 (def (syntax-e stx)
   (let (stx (stx-unwrap stx))
     (if (AST? stx)
-      (AST-e stx) 
+      (AST-e stx)
       stx)))
 
 (def (syntax->datum stx)
@@ -69,11 +69,11 @@ namespace: gx
        ((box? e)
         (box (recur (unbox e))))
        (else e))))
-  
+
   (def (wrap-outer e)
     (if (AST? e) e
         (make-AST e src)))
-  
+
   (cond
    ((AST? datum) datum)
    ((not stx)
@@ -81,7 +81,7 @@ namespace: gx
    ((identifier? stx)
     (let (stx (stx-unwrap stx))
       (if (identifier-quote? stx)
-        (make-syntax-quote datum src 
+        (make-syntax-quote datum src
                            (syntax-quote-context stx)
                            (syntax-quote-marks stx))
         (wrap-outer
@@ -99,12 +99,12 @@ namespace: gx
           (AST-source e)))
      ((identifier-wrap? e)
       (if (null? marks) e
-          (make-identifier-wrap 
+          (make-identifier-wrap
            (AST-e e)
            (AST-source e)
            (foldl apply-mark (identifier-wrap-marks e) marks))))
      ((syntax-quote? e) e)
-     ((AST? e) 
+     ((AST? e)
       (lp (AST-e e) marks (AST-source e)))
      ((symbol? e)
       (make-identifier-wrap e src (reverse marks)))
@@ -140,12 +140,12 @@ namespace: gx
     ([hd . rest]
      (if (eq? mark hd) rest
          (cons mark marks)))
-    (else 
+    (else
      (cons mark marks))))
 
 ;; utilities
 (def (stx-e stx)
-  (if (AST? stx) 
+  (if (AST? stx)
     (stx-e (AST-e stx))
     stx))
 
@@ -240,7 +240,7 @@ namespace: gx
 (def (identifier-list? stx)
   (match (stx-e stx)
     ([hd . rest]
-     (and (identifier? hd) 
+     (and (identifier? hd)
           (identifier-list? rest)))
     ([] #t)
     (else #f)))
@@ -309,7 +309,7 @@ namespace: gx
   (let recur ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
-       (cons (f hd) 
+       (cons (f hd)
              (recur rest)))
       ([] [])
       (else (f rest)))))
@@ -320,7 +320,7 @@ namespace: gx
       ([xhd . xrest]
        (match (syntax-e yrest)
          ([yhd . yrest]
-          (cons (f xhd yhd) 
+          (cons (f xhd yhd)
                 (recur xrest yrest)))))
       ((? (not null?))
        (match yrest
@@ -332,7 +332,7 @@ namespace: gx
   (let lp ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
-       (and (f hd) 
+       (and (f hd)
             (lp rest)))
       ([] #t)
       (else (f rest)))))
@@ -341,7 +341,7 @@ namespace: gx
   (let lp ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
-       (or (f hd) 
+       (or (f hd)
            (lp rest)))
       ([] #f)
       (else (f rest)))))
@@ -377,8 +377,8 @@ namespace: gx
   (let lp ((hd stx))
     (match (syntax-e hd)
       ([_ . rest]
-       (if (stx-pair? rest) 
-         (lp rest) 
+       (if (stx-pair? rest)
+         (lp rest)
          hd)))))
 
 (def (stx-list-tail stx k)

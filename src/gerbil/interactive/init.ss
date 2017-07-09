@@ -31,7 +31,7 @@
   (def (reload-compiled-module modpath)
     (def (reload modpath)
       (with-catch display-exception (cut load-module modpath #t)))
-    
+
     (let ((registry (&current-module-registry))
           (modrt (string-append modpath "__rt")))
       (if (hash-get registry modpath)

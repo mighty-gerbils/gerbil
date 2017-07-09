@@ -20,4 +20,3 @@ package: scheme
 ;; this simply cannot be implemented without Gambit kernel support
 ;; as we need a promise-force construct to force tail recursively
 (defsyntax-stub delay-force)
-

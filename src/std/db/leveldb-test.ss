@@ -42,5 +42,5 @@
       (leveldb-iterator-next itor)
       (check (leveldb-iterator-valid? itor) => #f)
       (leveldb-iterator-close itor))
-    
+
     (leveldb-close db)))

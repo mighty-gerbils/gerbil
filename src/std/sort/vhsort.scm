@@ -16,7 +16,7 @@
 ;;;
 ;;;   2. The first index of a leaf node in the range [start,end) is
 ;;;          first-leaf = floor[(start+end)/2]
-;;;      (You can deduce this from fact #1 above.) 
+;;;      (You can deduce this from fact #1 above.)
 ;;;      Any index before FIRST-LEAF is an internal node.
 
 (define (really-heap-sort! v elt< start end)
@@ -77,14 +77,14 @@
 ;;; + (RECEIVE (var ...) mv-exp body ...)
 ;;;   This is the SRFI-?? multiple-value form that expands into
 ;;;   (call-with-values (lambda () mv-exp) (lambda (var ...) body ...))
-;;; 
+;;;
 ;;; + (LET-VECTOR-START+END (start end) client-proc v maybe-start+end body ...)
 ;;;   This macro defaults & checks the optional START/END subvector arguments
 ;;;   passed to HEAP-SORT and HEAP-SORT!.
-;;; 
+;;;
 ;;; Both of these macros are defined in a separate file sort-support-macs.scm
 ;;; that comes with the SRFI-?? reference implementation.
-;;; 
+;;;
 ;;; Bumming the code for speed
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; If you can use a module system to lock up the internal function
@@ -96,7 +96,7 @@
 ;;; FIRST-LEAF, all arithmetic will be fixnum arithmetic that never overflows
 ;;; into bignums, assuming your Scheme provides that you can't allocate an
 ;;; array so large you might need a bignum to index an element, which is
-;;; definitely the case for every implementation with which I am familiar. 
+;;; definitely the case for every implementation with which I am familiar.
 ;;;
 ;;; If you want to code up the first-leaf = (quotient (+ s e) 2) computation
 ;;; so that it will never fixnum overflow when S & E are fixnums, you can do
@@ -110,7 +110,7 @@
 ;;;      (quotient (+ s (modulo e 2)) 2))
 ;;; If we know that e & s are fixnums, and that 0 <= s <= e, then this
 ;;; can only fixnum-overflow when s = e = max-fixnum. Note that the
-;;; two divides and one modulo op can be done very quickly with two 
+;;; two divides and one modulo op can be done very quickly with two
 ;;; right-shifts and a bitwise and.
 ;;;
 ;;; I suspect there has never been a heapsort written in the history of

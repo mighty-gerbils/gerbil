@@ -4,7 +4,7 @@
 ;
 ; sebastian.egner@philips.com, Eindhoven, The Netherlands, 26-Dec-2007
 ; Scheme R5RS (incl. macros), SRFI-23 (error).
-; 
+;
 ; Loading the implementation into Scheme48 0.57:
 ;   ,open srfi-23
 ;   ,load ec.scm
@@ -13,15 +13,15 @@
 ;   ; File > Open ... "ec.scm", click Execute
 ;
 ; Loading the implementation into SCM 5d7:
-;   (require 'macro) (require 'record) 
+;   (require 'macro) (require 'record)
 ;   (load "ec.scm")
 ;
 ; Implementation comments:
 ;   * All local (not exported) identifiers are named ec-<something>.
-;   * This implementation focuses on portability, performance, 
+;   * This implementation focuses on portability, performance,
 ;     readability, and simplicity roughly in this order. Design
 ;     decisions related to performance are taken for Scheme48.
-;   * Alternative implementations, Comments and Warnings are 
+;   * Alternative implementations, Comments and Warnings are
 ;     mentioned after the definition with a heading.
 
 
@@ -30,7 +30,7 @@
 ; ==========================================================================
 ;
 ; All eager comprehensions are reduced into do-ec and
-; all generators are reduced to :do. 
+; all generators are reduced to :do.
 ;
 ; We use the following short names for syntactic variables
 ;   q    - qualifier
@@ -51,7 +51,7 @@
 
 
 ; (do-ec q ... cmd)
-;   handles nested, if/not/and/or, begin, :let, and calls generator 
+;   handles nested, if/not/and/or, begin, :let, and calls generator
 ;   macros in CPS to transform them into fully decorated :do.
 ;   The code generation for a :do is delegated to do-ec:do.
 
@@ -104,12 +104,12 @@
   (syntax-rules (:do let)
 
     ; reentry point (*) -> generate code
-    ((do-ec:do cmd 
-               (:do (let obs oc ...) 
-                    lbs 
-                    ne1? 
-                    (let ibs ic ...) 
-                    ne2? 
+    ((do-ec:do cmd
+               (:do (let obs oc ...)
+                    lbs
+                    ne1?
+                    (let ibs ic ...)
+                    ne2?
                     (ls ...) ))
      (ec-simplify
        (let obs
@@ -125,7 +125,7 @@
                         (if ne2?
                             (loop ls ...) )))))))))) ))
 
-    
+
 ; (ec-simplify <expression>)
 ;   generates potentially more efficient code for <expression>.
 ;   The macro handles if, (begin <command>*), and (let () <command>*)
@@ -152,13 +152,13 @@
     ((ec-simplify (if (not (not test)) consequent alternate))
      (ec-simplify (if test consequent alternate)) )
 
-; (let () <command>*) 
+; (let () <command>*)
 
     ; empty <binding spec>*
     ((ec-simplify (let () command ...))
      (ec-simplify (begin command ...)) )
 
-; begin 
+; begin
 
     ; flatten use helper (ec-simplify 1 done to-do)
     ((ec-simplify (begin command ...))
@@ -197,7 +197,7 @@
     ; short form -> fill in default values
     ((:do cc lbs ne1? lss)
      (:do cc (let ()) lbs ne1? (let ()) #t lss) )))
-    
+
 
 (define-syntax :let
   (syntax-rules (index)
@@ -215,10 +215,10 @@
      (g (:parallel-1 cc (gen ...)) arg1 arg ...) )))
 
 ; (:parallel-1 cc (to-do ...) result [ next ] )
-;    iterates over to-do by converting the first generator into 
+;    iterates over to-do by converting the first generator into
 ;    the :do-generator next and merging next into result.
 
-(define-syntax :parallel-1  ; used as 
+(define-syntax :parallel-1  ; used as
   (syntax-rules (:do let)
 
     ; process next element of to-do, reentry at (**)
@@ -226,29 +226,29 @@
      (g (:parallel-1 cc (gen ...) result) arg1 arg ...) )
 
     ; reentry point (**) -> merge next into result
-    ((:parallel-1 
-       cc 
-       gens 
-       (:do (let (ob1 ...) oc1 ...) 
-            (lb1 ...) 
-            ne1?1 
-            (let (ib1 ...) ic1 ...) 
-            ne2?1 
+    ((:parallel-1
+       cc
+       gens
+       (:do (let (ob1 ...) oc1 ...)
+            (lb1 ...)
+            ne1?1
+            (let (ib1 ...) ic1 ...)
+            ne2?1
             (ls1 ...) )
-       (:do (let (ob2 ...) oc2 ...) 
-            (lb2 ...) 
-            ne1?2 
-            (let (ib2 ...) ic2 ...) 
-            ne2?2 
+       (:do (let (ob2 ...) oc2 ...)
+            (lb2 ...)
+            ne1?2
+            (let (ib2 ...) ic2 ...)
+            ne2?2
             (ls2 ...) ))
-     (:parallel-1 
-       cc 
-       gens 
-       (:do (let (ob1 ... ob2 ...) oc1 ... oc2 ...) 
-            (lb1 ... lb2 ...) 
-            (and ne1?1 ne1?2) 
-            (let (ib1 ... ib2 ...) ic1 ... ic2 ...) 
-            (and ne2?1 ne2?2) 
+     (:parallel-1
+       cc
+       gens
+       (:do (let (ob1 ... ob2 ...) oc1 ... oc2 ...)
+            (lb1 ... lb2 ...)
+            (and ne1?1 ne1?2)
+            (let (ib1 ... ib2 ...) ic1 ... ic2 ...)
+            (and ne2?1 ne2?2)
             (ls1 ... ls2 ...) )))
 
     ; no more gens -> continue with cc, reentry at (*)
@@ -264,7 +264,7 @@
 
 ; (:while-1 cc test (:do ...))
 ;    modifies the fully decorated :do-generator such that it
-;    runs while test is a true value. 
+;    runs while test is a true value.
 ;       The original implementation just replaced ne1? by
 ;    (and ne1? test) as follows:
 ;
@@ -277,10 +277,10 @@
 ;    Unfortunately, this code is wrong because ne1? may depend
 ;    in the inner bindings introduced in ilet, but ne1? is evaluated
 ;    outside of the inner bindings. (Refer to the specification of
-;    :do to see the structure.) 
-;       The problem manifests itself (as sunnan@handgranat.org 
+;    :do to see the structure.)
+;       The problem manifests itself (as sunnan@handgranat.org
 ;    observed, 25-Apr-2005) when the :list-generator is modified:
-; 
+;
 ;      (do-ec (:while (:list x '(1 2)) (= x 1)) (display x)).
 ;
 ;    In order to generate proper code, we introduce temporary
@@ -304,9 +304,9 @@
 ;               /payload/
 ;               (if ne2?
 ;                   (loop ls ...) )))))
-; 
+;
 ; Bug #2:
-;    Unfortunately, the above expansion is still incorrect (as Jens-Axel 
+;    Unfortunately, the above expansion is still incorrect (as Jens-Axel
 ;    Soegaard pointed out, 4-Jun-2007) because ib-rhs are evaluated even
 ;    if ne1?-value is #f, indicating that the loop has ended.
 ;       The problem manifests itself in the following example:
@@ -325,27 +325,27 @@
 
 (define-syntax :while-2
   (syntax-rules (:do let)
-    ((:while-2 cc 
-               test 
+    ((:while-2 cc
+               test
                (ib-let     ...)
                (ib-save    ...)
                (ib-restore ...)
-               (:do olet 
-                    lbs 
-                    ne1? 
+               (:do olet
+                    lbs
+                    ne1?
                     (let ((ib-var ib-rhs) ib ...) ic ...)
-                    ne2? 
+                    ne2?
                     lss))
-     (:while-2 cc 
-               test 
+     (:while-2 cc
+               test
                (ib-let     ... (ib-tmp #f))
                (ib-save    ... (ib-var ib-rhs))
                (ib-restore ... (ib-var ib-tmp))
-               (:do olet 
-                    lbs 
-                    ne1? 
-                    (let (ib ...) ic ... (set! ib-tmp ib-var)) 
-                    ne2? 
+               (:do olet
+                    lbs
+                    ne1?
+                    (let (ib ...) ic ... (set! ib-tmp ib-var))
+                    ne2?
                     lss)))
     ((:while-2 cc
                test
@@ -402,7 +402,7 @@
   (syntax-rules (index)
     ((:string cc var (index i) arg)
      (:do cc
-          (let ((str arg) (len 0)) 
+          (let ((str arg) (len 0))
             (set! len (string-length str)))
           ((i 0))
           (< i len)
@@ -425,7 +425,7 @@
      (:vector cc var (index i) arg) )
     ((:vector cc var (index i) arg)
      (:do cc
-          (let ((vec arg) (len 0)) 
+          (let ((vec arg) (len 0))
             (set! len (vector-length vec)))
           ((i 0))
           (< i len)
@@ -493,7 +493,7 @@
      (:do cc
           (let ((b arg2))
             (if (not (and (integer? b) (exact? b)))
-                (error 
+                (error
                    "arguments of :range are not exact integer "
                    "(use :real-range?)" 0 b 1 )))
           ((var 0))
@@ -506,7 +506,7 @@
      (:do cc
           (let ((b arg2))
             (if (not (and (integer? b) (exact? b)))
-                (error 
+                (error
                    "arguments of :range are not exact integer "
                    "(use :real-range?)" 0 b 1 )))
           ((var 0))
@@ -520,7 +520,7 @@
           (let ((a arg1) (b arg2))
             (if (not (and (integer? a) (exact? a)
                           (integer? b) (exact? b) ))
-                (error 
+                (error
                    "arguments of :range are not exact integer "
                    "(use :real-range?)" a b 1 )) )
           ((var a))
@@ -534,7 +534,7 @@
           (let ((a arg1) (b arg2) (s -1) (stop 0))
             (if (not (and (integer? a) (exact? a)
                           (integer? b) (exact? b) ))
-                (error 
+                (error
                    "arguments of :range are not exact integer "
                    "(use :real-range?)" a b -1 )) )
           ((var a))
@@ -551,7 +551,7 @@
             (if (not (and (integer? a) (exact? a)
                           (integer? b) (exact? b)
                           (integer? s) (exact? s) ))
-                (error 
+                (error
                    "arguments of :range are not exact integer "
                    "(use :real-range?)" a b s ))
             (if (zero? s)
@@ -564,7 +564,7 @@
           ((+ var s)) ))))
 
 ; Comment: The macro :range inserts some code to make sure the values
-;   are exact integers. This overhead has proven very helpful for 
+;   are exact integers. This overhead has proven very helpful for
 ;   saving users from themselves.
 
 
@@ -602,7 +602,7 @@
 ;   value in case any of the other values is inexact. This is a
 ;   precaution to avoid (list-ec (: x 0 3.0) x) => '(0 1.0 2.0).
 
-    
+
 (define-syntax :char-range
   (syntax-rules (index)
     ((:char-range cc var (index i) arg1 arg2)
@@ -616,8 +616,8 @@
           #t
           ((+ i 1)) ))))
 
-; Warning: There is no R5RS-way to implement the :char-range generator 
-;   because the integers obtained by char->integer are not necessarily 
+; Warning: There is no R5RS-way to implement the :char-range generator
+;   because the integers obtained by char->integer are not necessarily
 ;   consecutive. We simply assume this anyhow for illustration.
 
 
@@ -646,19 +646,19 @@
 (define-syntax :dispatched
   (syntax-rules (index)
     ((:dispatched cc var (index i) dispatch arg1 arg ...)
-     (:parallel cc 
+     (:parallel cc
                 (:integers i)
                 (:dispatched var dispatch arg1 arg ...) ))
     ((:dispatched cc var dispatch arg1 arg ...)
      (:do cc
-          (let ((d dispatch) 
-                (args (list arg1 arg ...)) 
-                (g #f) 
+          (let ((d dispatch)
+                (args (list arg1 arg ...))
+                (g #f)
                 (empty (list #f)) )
             (set! g (d args))
             (if (not (procedure? g))
-                (error "unrecognized arguments in dispatching" 
-                       args 
+                (error "unrecognized arguments in dispatching"
+                       args
                        (d '()) )))
           ((var (g empty)))
           (not (eq? var empty))
@@ -680,14 +680,14 @@
 
     ; reentry point (**) -> make the code from a single :do
     ((:generator-proc
-       var 
-       (:do (let obs oc ...) 
-            ((lv li) ...) 
-            ne1? 
-            (let ((i v) ...) ic ...) 
-            ne2? 
+       var
+       (:do (let obs oc ...)
+            ((lv li) ...)
+            ne1?
+            (let ((i v) ...) ic ...)
+            ne2?
             (ls ...)) )
-     (ec-simplify 
+     (ec-simplify
       (let obs
           oc ...
           (let ((lv li) ... (ne2 #t))
@@ -696,13 +696,13 @@
                (lambda (empty)
                  (if (and ne1? ne2)
                      (ec-simplify
-                      (begin 
+                      (begin
                         (set! i v) ...
                         ic ...
                         (let ((value var))
                           (ec-simplify
                            (if ne2?
-                               (ec-simplify 
+                               (ec-simplify
                                 (begin (set! lv ls) ...) )
                                (set! ne2 #f) ))
                           value )))
@@ -717,9 +717,9 @@
   (lambda (args)
     (let ((g1 (d1 args)) (g2 (d2 args)))
       (if g1
-          (if g2 
+          (if g2
               (if (null? args)
-                  (append (if (list? g1) g1 (list g1)) 
+                  (append (if (list? g1) g1 (list g1))
                           (if (list? g2) g2 (list g2)) )
                   (error "dispatching conflict" args (d1 '()) (d2 '())) )
               g1 )
@@ -776,7 +776,7 @@
                (:generator-proc (:string a1 a2 a3)) )
               ((and (vector? a1) (vector? a2) (vector? a3))
                (:generator-proc (:vector a1 a2 a3)) )
-              ((and (integer? a1) (exact? a1) 
+              ((and (integer? a1) (exact? a1)
                     (integer? a2) (exact? a2)
                     (integer? a3) (exact? a3))
                (:generator-proc (:range a1 a2 a3)) )
@@ -785,7 +785,7 @@
               (else
                #f ))))
       (else
-       (letrec ((every? 
+       (letrec ((every?
                  (lambda (pred args)
                    (if (null? args)
                        #t
@@ -889,7 +889,7 @@
      (list->string (list-ec etc1 etc ...)) )))
 
 ; Alternative: For very long strings, the intermediate list may be a
-;   problem. A more space-aware implementation collect the characters 
+;   problem. A more space-aware implementation collect the characters
 ;   in an intermediate list and when this list becomes too large it is
 ;   converted into an intermediate string. At the end, the intermediate
 ;   strings are concatenated with string-append.
@@ -984,8 +984,8 @@
 
     ((first-ec default qualifier expression)
      (let ((result default) (stop #f))
-       (ec-guarded-do-ec 
-         stop 
+       (ec-guarded-do-ec
+         stop
          (nested qualifier)
          (begin (set! result expression)
                 (set! stop #t) ))
@@ -1016,8 +1016,8 @@
      (begin etc ... (ec-guarded-do-ec stop (nested q ...) cmd)) )
 
     ((ec-guarded-do-ec stop (nested gen q ...) cmd)
-     (do-ec 
-       (:until gen stop) 
+     (do-ec
+       (:until gen stop)
        (ec-guarded-do-ec stop (nested q ...) cmd) ))
 
     ((ec-guarded-do-ec stop (nested) cmd)
@@ -1026,10 +1026,10 @@
 ; Alternative: Instead of modifying the generator with :until, it is
 ;   possible to use call-with-current-continuation:
 ;
-;   (define-synatx first-ec 
+;   (define-synatx first-ec
 ;     ...same as above...
 ;     ((first-ec default qualifier expression)
-;      (call-with-current-continuation 
+;      (call-with-current-continuation
 ;       (lambda (cc)
 ;        (do-ec qualifier (cc expression))
 ;        default ))) ))
@@ -1064,4 +1064,3 @@
 
     ((every?-ec qualifier expression)
      (first-ec #t qualifier (if (not expression)) #f) )))
-

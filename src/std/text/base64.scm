@@ -8,7 +8,7 @@
 ;; ## Base64 coding support notes
 ;; * Support for urlsafe coding
 ;;   In this mode, #\- instead of #\+ and #\_ is used instead of #\/. For this coding to work,
-;;   the padding should be turned off during encoding (so there's no #\=:s in the output). 
+;;   the padding should be turned off during encoding (so there's no #\=:s in the output).
 ;;   Also known as the "Base64 with URL and Filename Safe Alphabet" aka base64url of RFC 4648.
 ;;
 ;; * Support for presence and absence of end padding

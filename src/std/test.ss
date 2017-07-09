@@ -108,7 +108,7 @@ package: std
    (let (val value)
      (verbose "... check ~a outputs ~s~n" 'expr val)
      (test-check-output '(check-output expr value) (lambda () expr) value))))
-    
+
 (defrules check-predicate ()
   ((_ expr pred)
    (begin
@@ -154,7 +154,7 @@ package: std
            (eprintf "~a: ERROR " (!test-case-desc tc))
            (display-exception exn (current-error-port))))))
 
-  (let (tests (!test-suite-tests suite)) 
+  (let (tests (!test-suite-tests suite))
     (if (ormap (? (or !test-case-fail !test-case-error))
                tests)
       (begin

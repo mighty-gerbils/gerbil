@@ -67,7 +67,3 @@ package: std/os
   (define-const EINPROGRESS)
   (define-const EWOULDBLOCK)
   (define-c-lambda strerror (int) char-string))
-
-
-
-

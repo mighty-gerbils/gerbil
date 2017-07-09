@@ -6,7 +6,7 @@ package: gerbil
 
 (provide gerbil-expander)
 
-(import 
+(import
   "expander/common"
   "expander/stx"
   "expander/core"

@@ -9,4 +9,3 @@ package: std/srfi
   ((_ formals expression body ...)
    (call-with-values (lambda () expression)
      (lambda formals body ...))))
-

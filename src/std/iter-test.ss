@@ -59,7 +59,7 @@
                       (y '#(a b c d)))
           (cons x y)))
       (check (test-for/collect-2) => '((1 . a) (2 . b) (3 . c) (4 . d)))
-      
+
       (def (test-for/collect-3)
         (for/collect (x (my-generator 3)) x))
       (check (test-for/collect-3) => '(0 1 2))

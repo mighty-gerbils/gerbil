@@ -20,7 +20,7 @@ package: std/net/server
   (def epoll (epoll-create))
   (def maxevts 1024)
   (def evts (make-epoll-events maxevts))
-  
+
   (def (do-epoll)
     (let (count (epoll-wait epoll evts maxevts))
       (when (fxpositive? count)
@@ -35,7 +35,7 @@ package: std/net/server
               (unless (fxzero? (fxand ready (fxior EPOLLOUT EPOLLHUP EPOLLERR)))
                 (when io-out
                   (io-state-signal-ready! io-out 'ready)))))))))
-  
+
   (def (add-socket sock)
     (let* ((fd (fd-e sock))
            (io-in
@@ -72,7 +72,7 @@ package: std/net/server
       (epoll-ctl-add epoll sock events)
       (hash-put! fdtab fd state)
       ssock))
-  
+
   (def (close-socket ssock dir shutdown)
     (def (close-io-in! io-in sock)
       (io-state-close-in! io-in sock shutdown))
@@ -82,7 +82,7 @@ package: std/net/server
     (with ((!socket sock _ wait-in wait-out) ssock)
       (when (or wait-in wait-out)
         (let (state (hash-get fdtab (fd-e sock)))
-          (match state 
+          (match state
             ((!socket-state _ io-in io-out)
              (case dir
                ((in)
@@ -111,12 +111,12 @@ package: std/net/server
                 (epoll-ctl-del epoll sock)
                 (hash-remove! fdtab (fd-e sock))
                 (when io-in
-                  (set! (!socket-wait-in ssock) #f)  
+                  (set! (!socket-wait-in ssock) #f)
                   (set! (!socket-state-io-in state) #f)
                   (close-io-in! io-in sock))
                 (when io-out
                   (set! (!socket-wait-out ssock) #f)
-                  (set! (!socket-state-io-out state) #f)  
+                  (set! (!socket-state-io-out state) #f)
                   (close-io-out! io-out sock))
                 (close-port sock))
                (else
@@ -135,5 +135,5 @@ package: std/net/server
     ;; release refs to raw devices
     (set! fdtab #f)
     (set! epoll #f))
-  
+
   (server-loop (fd-io-in epoll) do-epoll add-socket close-socket shutdown!))

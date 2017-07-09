@@ -2,7 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; Gerbil static executable module stub
 (##namespace (""))
-(declare 
+(declare
   (block)
   (standard-bindings)
   (extended-bindings))

@@ -22,7 +22,7 @@ namespace: gxc
 (def (compile-file srcpath (opts []))
   (unless (string? srcpath)
     (raise-compile-error "Invalid module source path" srcpath))
-  
+
   (let ((outdir      (pgetq output-dir: opts))
         (invoke-gsc? (pgetq invoke-gsc: opts))
         (gsc-options (pgetq gsc-options: opts))
@@ -80,7 +80,7 @@ namespace: gxc
            (mod-main (find-runtime-symbol ctx 'main)))
       (write '(##namespace (""))) (newline)
       (write `(_gx#start! ,mod-rt (quote ,mod-main))) (newline)))
-  
+
   (def (compile-stub output-scm output-bin)
     (let* ((init-stub  (path-expand "lib/gx-init-exe.scm" (getenv "GERBIL_HOME")))
            (gxc-cache (compile-cache-directory))
@@ -93,7 +93,7 @@ namespace: gxc
       (unless (zero? status)
         (raise-compile-error "Compilation error; gsc exit with nonzero status"
                              output-scm output-bin status))))
-  
+
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin ".scm")))
     (with-output-to-file output-scm generate-stub)
@@ -134,7 +134,7 @@ namespace: gxc
       (unless (zero? status)
         (raise-compile-error "Compilation error; gsc exit with nonzero status"
                              output-scm output-bin status))))
-  
+
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin ".scm")))
     (with-output-to-file output-scm generate-stub)
@@ -180,7 +180,7 @@ namespace: gxc
 
 (def (find-runtime-module-deps ctx)
   (def ht (make-hash-table-eq))
-  
+
   (def (find-deps rest deps)
     (match rest
       ([hd . rest]
@@ -235,7 +235,7 @@ namespace: gxc
        => (lambda (pre) (cons pre (module-context-import ctx))))
       (else (module-context-import ctx)))
      []))))
-  
+
 (def (find-static-module-file ctx)
   (let* ((scm (string-append (static-module-name (expander-context-id ctx)) ".scm"))
          (dirs (current-expander-module-library-path))
@@ -279,7 +279,7 @@ namespace: gxc
       (compile-ssxi-code ctx))))
 
 (def (collect-bindings ctx)
-  (apply-collect-bindings 
+  (apply-collect-bindings
    (module-context-code ctx)))
 
 (def (compile-runtime-code ctx)
@@ -297,17 +297,17 @@ namespace: gxc
         (let (path (compile-static-output-file ctx))
           (with-output-to-file [path: path permissions: #o644]
             void))))
-      
+
       (generate-loader-code ctx code rt)))
-  
+
   (def (generate-runtime-code ctx code)
-    (let* ((runtime-code 
+    (let* ((runtime-code
             (parameterize ((current-expander-context ctx))
               (apply-generate-runtime code)))
            (scm0 (compile-output-file ctx 0 ".scm")))
       (if (current-compile-static)
         (let (scms (compile-static-output-file ctx))
-          ;; copy compiled scm0 to static and delete when not keep-scm          
+          ;; copy compiled scm0 to static and delete when not keep-scm
           (parameterize ((current-compile-keep-scm #t))
             (compile-scm-file scm0 runtime-code))
           (when (file-exists? scms)
@@ -319,29 +319,29 @@ namespace: gxc
         (compile-scm-file scm0 runtime-code))))
 
   (def (generate-loader-code ctx code rt)
-    (let* ((loader-code 
+    (let* ((loader-code
             (parameterize ((current-expander-context ctx))
               (apply-generate-loader code)))
-           (loader-code 
-            (if rt 
-              ['begin loader-code ['load-module rt]] 
+           (loader-code
+            (if rt
+              ['begin loader-code ['load-module rt]]
               loader-code)))
       (compile-scm-file (compile-output-file ctx 'rt ".scm") loader-code)))
-  
+
   (let (all-modules (cons ctx (lift-nested-modules ctx)))
     (for-each compile1 all-modules)))
 
 (def (compile-meta-code ctx)
   (def (compile-ssi code)
     (let* ((path (compile-output-file ctx #f ".ssi"))
-           (prelude 
+           (prelude
             (let (super (phi-context-super ctx))
               (cond
                ((expander-context-id super) => (cut make-symbol ":" <>))
                (else ':<root>))))
            (ns (module-context-ns ctx))
            (idstr (symbol->string (expander-context-id ctx)))
-           (pkg 
+           (pkg
             (cond
              ((string-rindex idstr #\/)
               => (lambda (x) (string->symbol (substring idstr 0 x))))
@@ -356,9 +356,9 @@ namespace: gxc
           (newline)
           (pretty-print code)
           (when rt
-            (pretty-print 
+            (pretty-print
              ['%#call ['%#ref '_gx#load-module] ['%#quote rt]]))))))
-  
+
   (def (compile-phi part)
     (match part
       ([phi-ctx phi n code]
@@ -367,8 +367,8 @@ namespace: gxc
                             (current-expander-phi phi))
                (generate-runtime-phi code)))
          (compile-scm-file (compile-output-file ctx n ".scm") code)))))
-  
-  (let ((values ssi-code phi-code) 
+
+  (let ((values ssi-code phi-code)
         (generate-meta-code ctx))
     (compile-ssi ssi-code)
     (for-each compile-phi phi-code)))
@@ -377,12 +377,12 @@ namespace: gxc
   (let* ((path (compile-output-file ctx #f ".ssxi.ss"))
          (code (apply-generate-ssxi (module-context-code ctx)))
          (idstr (symbol->string (expander-context-id ctx)))
-         (pkg 
+         (pkg
           (cond
            ((string-rindex idstr #\/)
             => (lambda (x) (string->symbol (substring idstr 0 x))))
            (else #f))))
-    
+
     (verbose "compile " path)
     (with-output-to-file [path: path permissions: #o644]
       (lambda ()
@@ -413,9 +413,9 @@ namespace: gxc
 (def (compile-scm-file path code)
   (verbose "compile " path)
   (with-output-to-file [path: path permissions: #o644]
-    (lambda () 
+    (lambda ()
       (pretty-print
-       '(declare 
+       '(declare
           (block)
           (standard-bindings)
           (extended-bindings)))
@@ -441,25 +441,25 @@ namespace: gxc
 (def (compile-output-file ctx n ext)
   (def (module-relative-path ctx)
     (path-strip-directory (symbol->string (expander-context-id ctx))))
-  
+
   (def (module-source-directory ctx)
     (path-directory
      (let (mpath (module-context-path ctx))
        (if (string? mpath) mpath (last mpath)))))
-  
+
   (def (section-string n)
-    (cond 
+    (cond
      ((number? n) (number->string n))
      ((symbol? n) (symbol->string n))
      ((string? n) n)
-     (else 
+     (else
       (raise-compile-error "Unexpected section" n))))
-  
+
   (def (file-name path)
-    (if n 
+    (if n
       (string-append path "__" (section-string n) ext)
       (string-append path ext)))
-  
+
   (def (file-path)
     (cond
      ((current-compile-output-dir)
@@ -479,7 +479,7 @@ namespace: gxc
 (def (compile-static-output-file ctx)
   (def (file-name idstr)
     (string-append (static-module-name idstr) ".scm"))
-  
+
   (def (file-path)
     (let (file (file-name (symbol->string (expander-context-id ctx))))
       (cond
@@ -488,7 +488,7 @@ namespace: gxc
              (path-expand file (path-expand "static" outdir))))
        (else
         (path-expand file "static")))))
-  
+
   (let (path (file-path))
     (create-directory* (path-directory path))
     path))

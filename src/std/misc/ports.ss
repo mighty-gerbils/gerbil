@@ -89,7 +89,7 @@ package: std/misc
         (loop))
        (else                            ; no bytes were added, eof
         (macro-port-mutex-unlock! in)))))
-  
+
   (loop))
 
 (def (copy-character-port/lock in out)
@@ -126,7 +126,7 @@ package: std/misc
         (loop))
        (else                            ; no chars were added, eof
         (macro-port-mutex-unlock! in)))))
-  
+
   (loop))
 
 (def (copy-object-port in out)

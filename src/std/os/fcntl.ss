@@ -86,7 +86,7 @@ package: std/os
               __fcntl0 __fcntl1 __errno
               _fcntl0 _fcntl1
               ))
-  
+
   ;; POSIX commands
   (define-const F_DUPFD)
   (define-const F_GETFD)
@@ -96,7 +96,7 @@ package: std/os
   ;; (define-const F_GETLK)
   ;; (define-const F_SETLK)
   ;; (define-const F_SETLKW)
-  
+
   ;; POSIX flags
   (define-const FD_CLOEXEC)
 
@@ -116,11 +116,11 @@ package: std/os
   (define-const O_SYNC)
 
   (define-const O_ACCMODE)
-  
+
   (define-const O_RDONLY)
   (define-const O_RDWR)
   (define-const O_WRONLY)
-  
+
   (define-c-lambda __fcntl0 (int int) int "fcntl")
   (define-c-lambda __fcntl1 (int int int) int "fcntl")
   (define-c-lambda __errno () int

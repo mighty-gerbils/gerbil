@@ -4,7 +4,7 @@
 (##namespace (""))
 ;; (include "gx-gambc#.scm")
 
-(declare 
+(declare
   (block)
   (standard-bindings)
   (extended-bindings))
@@ -64,19 +64,19 @@
        ((#f)
         (_gx#compile expr))
        ((id)
-        (&SRC 
-         `(##define ,(&SRC id) 
+        (&SRC
+         `(##define ,(&SRC id)
                     ,(_gx#compile expr))
          stx))
        (else
         (let* ((ids (&AST->list hd))
                (len (length ids))
                (tmp (&SRC (gensym))))
-          (&SRC 
-           `(##begin 
+          (&SRC
+           `(##begin
              ,(&SRC `(##define ,tmp ,(_gx#compile expr)) stx)
              ,(&SRC `(_gx#check-values ,tmp ,len) stx)
-             ,@(filter-map 
+             ,@(filter-map
                 (lambda (id k)
                   (and (&AST-e id)
                        (&SRC
@@ -114,14 +114,14 @@
        (variadic? rest))
       (() #f)
       (else #t)))
-  
+
   (define (arity hd)
     (let lp ((rest hd) (k 0))
       (core-ast-case rest ()
         ((_ . rest)
          (lp rest (fx1+ k)))
         (else k))))
-  
+
   (define (generate rest args len)
     (core-ast-case rest ()
       ((clause . rest)
@@ -139,7 +139,7 @@
              stx)))))
       (else
        (&SRC `(error "No clause matching arguments" ,args) stx))))
-  
+
   (core-ast-case stx ()
     ((_ clause)
      (_gx#compile-lambda% (cons '%#lambda clause)))
@@ -160,10 +160,10 @@
       ((id) #t)
       (#f #t)
       (else #f)))
-  
+
   (define (car-e hd)
     (if (pair? hd) (car hd) hd))
-  
+
   (core-ast-case stx ()
      ((_ () body)
       (_gx#compile body))
@@ -189,7 +189,7 @@
      `(##let ,(map list (map _gx#compile-head-id hd-ids) exprs)
              ,body)
      stx))
-  
+
   (define (compile-values hd-ids exprs body)
     (let lp ((rest hd-ids) (exprs exprs) (bind '()) (post '()))
       (core-match rest
@@ -204,8 +204,8 @@
                 (tmp (&SRC (gensym))))
            (lp rest (cdr exprs)
                (cons `(,tmp ,(car exprs)) bind)
-               (cons (cons* tmp len 
-                            (filter-map (lambda (id k) 
+               (cons (cons* tmp len
+                            (filter-map (lambda (id k)
                                           (and (&AST-e id) (cons (&SRC id) k)))
                                         hd (iota len)))
                      post))))
@@ -214,7 +214,7 @@
           `(##let ,(reverse bind)
                   ,(compile-post post body))
           stx)))))
-  
+
   (define (compile-post post body)
     (let lp ((rest post) (check '()) (bind '()))
       (core-match rest
@@ -231,7 +231,7 @@
           `(##begin ,@check
                     ,(&SRC `(##let ,bind ,body) stx))
           stx)))))
-  
+
   (_gx#compile-let-form stx compile-simple compile-values))
 
 (define (_gx#compile-letrec-values% stx)
@@ -240,12 +240,12 @@
      `(##letrec ,(map list (map _gx#compile-head-id hd-ids) exprs)
                 ,body)
      stx))
-  
+
   (define (compile-values hd-ids exprs body)
     (let lp ((rest hd-ids) (exprs exprs) (pre '()) (bind '()) (post '()))
       (core-match rest
         (((id) . rest)
-         (lp rest (cdr exprs) 
+         (lp rest (cdr exprs)
              pre
              (cons `(,(_gx#compile-head-id id) ,(car exprs)) bind)
              post))
@@ -254,32 +254,32 @@
                 (len (length hd))
                 (tmp (&SRC (gensym))))
            (lp rest (cdr exprs)
-               (foldl (lambda (id r) 
+               (foldl (lambda (id r)
                         (if (&AST-e id) (cons `(,(&SRC id) #!void) r) r))
                       pre hd)
                (cons `(,tmp ,(car exprs)) bind)
-               (cons (cons* tmp len 
-                            (filter-map (lambda (id k) 
+               (cons (cons* tmp len
+                            (filter-map (lambda (id k)
                                           (and (&AST-e id) (cons (&SRC id) k)))
                                         hd (iota len)))
                      post))))
         (else
          (compile-inner pre bind post body)))))
-  
+
   (define (compile-inner pre bind post body)
     (if (null? pre)
       (compile-bind bind post body)
-      (&SRC 
+      (&SRC
        `(##let ,(reverse pre)
                ,(compile-bind bind post body))
        stx)))
-  
+
   (define (compile-bind bind post body)
     (&SRC
      `(##letrec ,(reverse bind)
                 ,(compile-post post body))
      stx))
-  
+
   (define (compile-post post body)
     (let lp ((rest post) (check '()) (bind '()))
       (core-match rest
@@ -295,7 +295,7 @@
          (&SRC
           `(##begin ,@check ,@bind ,body)
           stx)))))
-  
+
   (_gx#compile-let-form stx compile-simple compile-values))
 
 (define (_gx#compile-letrec*-values% stx)
@@ -308,11 +308,11 @@
                (cons `(,id #!void) bind)
                (cons `(,id ,(car exprs)) post))))
         ((_ . rest)
-         (lp rest (cdr exprs) bind 
+         (lp rest (cdr exprs) bind
              (cons `(#f ,(car exprs)) post)))
         (else
          (compile-bind bind post body)))))
-  
+
   (define (compile-values hd-ids exprs body)
     (let lp ((rest hd-ids) (exprs exprs) (bind '()) (post '()))
       (core-match rest
@@ -332,24 +332,24 @@
                (foldl (lambda (id r)
                         (if (&AST-e id) (cons `(,(&SRC id) #!void) r) r))
                       bind hd)
-               (cons (cons* tmp (car exprs) len 
-                            (filter-map (lambda (id k) 
+               (cons (cons* tmp (car exprs) len
+                            (filter-map (lambda (id k)
                                           (and (&AST-e id) (cons (&SRC id) k)))
                                         hd (iota len)))
                      post))))
         (else
          (compile-bind bind post body)))))
-  
+
   (define (compile-bind bind post body)
     (&SRC
      `(##let ,(reverse bind)
              ,(compile-post post body))
      stx))
-  
+
   (define (compile-post post body)
     (&SRC
      `(##begin
-       ,@(foldl 
+       ,@(foldl
            (lambda (hd r)
              (core-match hd
                ((#f expr)
@@ -362,7 +362,7 @@
                   `(##let ((,tmp ,expr))
                           ,(&SRC `(_gx#check-values ,tmp ,len) stx)
                           ,@(map (lambda (hd)
-                                   (core-match hd 
+                                   (core-match hd
                                      ((id . k)
                                       (&SRC
                                        `(##set! ,id (##vector-ref ,tmp ,k))
@@ -372,7 +372,7 @@
                  r))))
            (list body) post))
      stx))
-  
+
   (_gx#compile-let-form stx compile-simple compile-values))
 
 (define (_gx#compile-call% stx)
@@ -408,7 +408,7 @@
   (core-ast-case stx ()
     ((_ e) (&SRC `(##quote ,e) stx))))
 
-(define-core-forms 
+(define-core-forms
   (%#begin            special: compile-begin%)
   (%#begin-syntax     special: compile-ignore%)
   (%#begin-foreign    special: compile-begin-foreign%)

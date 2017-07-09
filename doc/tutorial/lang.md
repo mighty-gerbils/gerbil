@@ -193,7 +193,7 @@ does is plaster an `(export #t)` and expand up the chain through the root `%%beg
 The [example](../../src/tutorial/lang/example/my-auto-export.ss) is a module
 with a single definition `greet` and no export directive in sight:
 ```
-$ cat example/my-auto-export.ss 
+$ cat example/my-auto-export.ss
 prelude: :tutorial/lang/auto-export
 package: tutorial/lang/example
 
@@ -349,7 +349,7 @@ Program <- (Form $1)* EOF
 
 Form <- Defn
      |  Expr
-     
+
 Defn <- DEF (VarIdent $1) '=' (Expr $2)
         => ['def $1 $2]
      |  DEF '(' (VarIdent $1) (VarIdent $2)* ')' (Defn $3)* (Expr $4)+ END
@@ -368,7 +368,7 @@ Expr <- BeginExpr
      |  AppExpr
      |  RefExpr
      |  DatumExpr
-     
+
 BeginExpr <- BEGIN (Expr $1)+ END
              => ['begin $1 ...]
 

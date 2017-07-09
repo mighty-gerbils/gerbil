@@ -22,7 +22,7 @@
        ((null? hd)
         `(if (null? ,tgt) ,K ,E))
        ((symbol? hd)
-        (if (or (eq? hd '_) 
+        (if (or (eq? hd '_)
                 (eq? hd 'else))
           K
           `(let ((,hd ,tgt)) ,K)))
@@ -53,13 +53,13 @@
              ,E)))
        (else
         (error "core-match: bad pattern" hd)))))
-  
+
   (define quote?
-    (lambda (hd) 
+    (lambda (hd)
       (and (pair? hd)
            (eq? (car hd) 'quote)
            (pair? (cdr hd)))))
-  
+
   (define predicate?
     (lambda (hd)
       (and (list? hd)
@@ -68,13 +68,13 @@
                (and (= (length hd) 3)
                     (eq? (car hd) '?)
                     (eq? (caddr hd) '_))))))
-  
+
   (define predicate-rec?
     (lambda (hd)
       (and (list? hd)
            (= (length hd) 3)
            (eq? (car hd) '?))))
-  
+
   (if (null? cases)
     `(error "core-match: no clause matching" ,tgt)
     (let* ((e    (car cases))
@@ -93,7 +93,7 @@
            (type (string->symbol (string-append pre "::t")))
            (is?  (string->symbol (string-append pre "?")))
            (make (string->symbol (string-append "make-" pre)))
-           (pref (map (lambda (field) 
+           (pref (map (lambda (field)
                         (string-append pre "-" (symbol->string field)))
                       fields))
            (getf (map string->symbol pref))
@@ -113,11 +113,11 @@
             `(quote ,(or (getopt name:) id)))
            (type-ctor
             `(quote ,(or (getopt constructor:) #f)))
-           (type-len  
+           (type-len
             (length fields)))
       `(begin
-         (define ,type 
-           (make-struct-type ,type-id ,super ,type-len 
+         (define ,type
+           (make-struct-type ,type-id ,super ,type-len
                              ,type-name '() ,type-ctor))
          (define ,is?
            (make-struct-predicate ,type))
@@ -132,7 +132,7 @@
                   `(define ,setf
                      (make-struct-field-mutator ,type ,off)))
                 setf off))))
-  
+
   (define (getopt key)
     (let lp ((rest opts))
       (core-match rest
@@ -140,7 +140,7 @@
          (if (eq? key hd) val
              (lp rest)))
         (else #f))))
-  
+
   (core-match hd
     (((? symbol? id) super)
      (generate id super))
@@ -165,12 +165,12 @@
 
 (define-macro (define-core-macro hd . body)
   (define (generate id args body bind!)
-    (let ((impl (gensym)) 
+    (let ((impl (gensym))
           (stx (gensym)))
        `(define-core ,id
           (lambda ,args ,@body)
           (lambda (,impl)
-            (,bind! (quote ,id) 
+            (,bind! (quote ,id)
                     (lambda (,stx) (&AST (,impl ,stx) ,stx)))))))
   (core-match hd
     (special:
@@ -188,10 +188,10 @@
 
 (define-macro (define-core-forms . body)
   (define (generate id compile make)
-    (let ((eid (string->symbol 
+    (let ((eid (string->symbol
                 (string-append "_gx#" (symbol->string compile)))))
       `(&core-bind-syntax! (quote ,id) ,eid ,make)))
-  
+
   (let lp ((rest body) (rbody '()))
     (core-match rest
       (((id expr: compile) . rest)
@@ -229,8 +229,8 @@
             ,K ,E))
         (else
          `(let ((,id ,tgt)) ,K))))
-      (else 
-       (let ((is? (cond 
+      (else
+       (let ((is? (cond
                    ((atom? hd)   'eq?)
                    ((number? hd) 'eqv?)
                    (else         'equal?))))
@@ -243,9 +243,9 @@
         (boolean? e)
         (keyword? e)
         (eq? e #!void)))
-  
+
   (let recur ((rest cases))
-    (core-match rest      
+    (core-match rest
       ((hd . rest)
        (let* (($E (gensym '$E))
               (E `(,$E)))

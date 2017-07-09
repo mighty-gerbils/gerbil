@@ -36,5 +36,3 @@ package: gerbil
                  "gambit/system"
                  "gambit/foreign"
                  "gambit/misc"))
-
-

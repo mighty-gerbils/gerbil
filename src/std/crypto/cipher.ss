@@ -162,7 +162,7 @@ package: std/crypto
        (let (max-olen (fx+ ilen (cipher-block-size cipher)))
          (when (fx> max-olen (u8vector-length buf))
            (set! buf (make-u8vector max-olen)))))
-    
+
      (cipher-init! cipher key iv)
      (call-with-binary-input
       (lambda (bytes start end)

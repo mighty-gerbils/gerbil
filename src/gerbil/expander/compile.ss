@@ -49,7 +49,7 @@ namespace: gx
 (def (core-compile-top-module% stx)
   (core-syntax-case stx ()
     ((_ hd . body)
-     (cons* '%#module 
+     (cons* '%#module
             (expander-context-id (syntax-local-e hd))
             (stx-map core-compile-top-syntax body)))))
 
@@ -68,7 +68,7 @@ namespace: gx
     (core-syntax-case hd ()
       ((id eid)
        [(core-quote-syntax id) (stx-e eid)])))
-  
+
   (core-syntax-case stx ()
     ((_ . body)
      (cons '%#extern (stx-map generate body)))))
@@ -83,7 +83,7 @@ namespace: gx
   (core-syntax-case stx ()
     ((_ hd expr)
      ['%#define-syntax (core-quote-syntax hd)
-                       (parameterize ((current-expander-phi 
+                       (parameterize ((current-expander-phi
                                        (fx1+ (current-expander-phi))))
                          (core-compile-top-syntax expr))])))
 

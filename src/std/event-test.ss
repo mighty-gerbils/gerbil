@@ -11,7 +11,7 @@
   (test-suite "test :std/event library"
     (test-case "test select"
       (check (select 1 []) => 1)
-      
+
       (def thr1 (spawn void))
       (check (select 1 [thr1]) => thr1)
 
@@ -33,7 +33,7 @@
       (def /dev/null (open-input-file "/dev/null"))
       (check (select #f [/dev/null]) => /dev/null)
       (close-port /dev/null))
-    
+
     (test-case "test sync selectors"
       (check (sync 1) => #f)
 
@@ -48,7 +48,7 @@
       (def thr3 (spawn (lambda () (thread-sleep! 1) (mutex-unlock! lock3))))
       (mutex-lock! lock3 #f thr3)
       (check (sync lock3) => lock3)
-      
+
       (def lock4 (make-mutex))
       (def cv4 (make-condition-variable))
       (mutex-lock! lock4)
@@ -58,7 +58,7 @@
       (def /dev/null (open-input-file "/dev/null"))
       (check (sync /dev/null) => /dev/null)
       (close-port /dev/null))
-    
+
     (test-case "test sync events"
       (check (sync never-evt 0) => #f)
       (check (sync always-evt 0) => always-evt)

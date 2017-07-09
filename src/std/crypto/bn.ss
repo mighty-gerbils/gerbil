@@ -20,4 +20,3 @@ package: std/crypto
       (or (BN_bin2bn bytes start end)
           (error "error decoding BN; NULL pointer" bytes)))
     (error "bad argument; expected bytes" bytes)))
-

@@ -31,5 +31,3 @@ package: std/crypto
     (when (fx< count len)
       (u8vector-shrink! secret count))
     secret))
-
-

@@ -26,14 +26,14 @@ package: std/net/server
   (def poll-thread
     (and poll-io
          (spawn server-poll (current-thread) poll-io)))
-    
+
   (try
    (let loop ()
      (<- ((!socket-server.poll k)
           (do-poll)
           (!!value (void) k)
           (loop))
-         
+
          ((!socket-server.add sock k)
           (try
            (let (ssock (add-socket sock))

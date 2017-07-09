@@ -83,7 +83,7 @@ package: std/db
   MDB_dbi MDB_dbi*
   MDB_cursor MDB_cursor* MDB_cursor**
   MDB_val MDB_val*
-  MDB_stat MDB_stat* 
+  MDB_stat MDB_stat*
   MDB_envinfo MDB_envinfo*
   int* unsigned-int* size_t* UTF-8-string*
   ;; ffi helpers

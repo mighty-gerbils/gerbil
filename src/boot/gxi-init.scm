@@ -12,5 +12,5 @@
   ;; hook gxi-script line to run as script
   (set! ##language-specs
     (append ##language-specs
-            '(#("gxi" #f #t scm #f) 
+            '(#("gxi" #f #t scm #f)
               #("gxi-script" #f #t scm #f)))))

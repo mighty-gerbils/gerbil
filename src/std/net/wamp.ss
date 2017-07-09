@@ -107,7 +107,7 @@ package: std/net
 
   (unless (string? topic)
     (error "Bad argument; expected string" topic))
-  
+
   (let* (((values inp outp)
           (open-vector-pipe [permanent-close: #t direction: 'input]
                             [permanent-close: #t direction: 'output]))
@@ -175,7 +175,7 @@ package: std/net
     (make-hash-table))
   (def pend-unregistrations             ; request-id -> [[thread . k] registration-id]
     (make-hash-table-eqv))
-  
+
   (def reader
     (spawn wamp-reader (current-thread) ws))
 
@@ -202,7 +202,7 @@ package: std/net
           (let (reqid (request-id))
             (wamp-send ws [UNSUBSCRIBE reqid subid])))
         (hash-put! topic-subscriptions topic subs))))
-  
+
   (def (remove-actor-subscription! topic thread)
     (alet (topics (hash-get actor-subscriptions thread))
       (let (topics (remove topic topics))
@@ -221,7 +221,7 @@ package: std/net
       (hash-put! actor-subscriptions thread [topic]))))
 
   (def (invoke proc reqid details rest)
-    (let (vals 
+    (let (vals
           (match rest
                  ([] (values details [] #f))
                  ([args] (values details args #f))
@@ -239,7 +239,7 @@ package: std/net
          (wamp-send ws [ERROR INVOCATION reqid
                               (hash (message "Internal Server Error"))
                               "internal_server_error"])))))
-         
+
   (def (receive msg)
     (match msg
       ([(eq? EVENT) subid pubid details . rest]
@@ -268,7 +268,7 @@ package: std/net
       ([(eq? INVOCATION) reqid regid details . rest]
        (with ([name . proc] (hash-ref registrations regid))
          (spawn/name 'wamp-invocation invoke proc reqid details rest)))
-      
+
       ([(eq? SUBSCRIBED) reqid subid]
        (let* ((topic (hash-ref pend-subscriptions reqid))
               (pend  (hash-ref pend-topic-subscriptions topic)))
@@ -301,7 +301,7 @@ package: std/net
          (hash-remove! registrations regid)
          (hash-remove! procedure-registrations name)
          (!!value src (void) k)))
-      
+
       ([(eq? ERROR) what reqid details err . rest]
        (cond
         ((eq? what CALL)
@@ -309,7 +309,7 @@ package: std/net
            (hash-remove! pend-calls reqid)
            (let (err (apply make-wamp-error 'CALL err details rest))
              (send-pend-error pend err))))
-        
+
         ((eq? what SUBSCRIBE)
          (let* ((topic (hash-ref pend-subscriptions reqid))
                 (pend (hash-ref pend-topic-subscriptions topic)))
@@ -329,20 +329,20 @@ package: std/net
            (hash-remove! pend-unregistrations reqid)
            (let (err (apply make-wamp-error 'UNREGISTER err details rest))
              (send-pend-error pend err))))
-        
+
         (else
          (warning "unexpected ERROR: ~a ~a" what err))))
 
       ([(eq? GOODBYE) details reason]
        (wamp-send ws [GOODBYE empty-hash "wamp.error.goodbye_and_out"])
        (raise 'shutdown))
-      
+
       (else
        (warning "unexpected message: ~a" msg))))
-  
+
   (def rbytes (make-u8vector 7))
   (def rmax (expt 2 53))
-  
+
   (def (request-id)
     (random-bytes! rbytes)
     (let lp ((k 0) (r 0))
@@ -350,7 +350,7 @@ package: std/net
         (lp (fx1+ k)
             (bitwise-ior (arithmetic-shift r 8) (##u8vector-ref rbytes k)))
         (modulo r rmax))))
-  
+
   (def (message-tail args kws)
     (if (null? args)
       (if (and kws (not (fxzero? (hash-length kws))))
@@ -359,7 +359,7 @@ package: std/net
       (if (and kws (not (fxzero? (hash-length kws))))
         [args kws]
         [args])))
-  
+
   (def (loop)
     (<- ((!wamp.receive msg)
          (receive msg))
@@ -422,7 +422,7 @@ package: std/net
   (def (send-shutdown-errors pend)
     (let (err (make-wamp-error 'wamp-client "client shutdown"))
       (for-each (cut send-pend-error <> err) pend)))
-                     
+
   (def (send-pend-error pend err)
     (with ([src . k] pend)
       (!!error src err k)))

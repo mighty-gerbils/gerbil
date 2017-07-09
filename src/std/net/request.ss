@@ -64,7 +64,7 @@ package: std/net
         (format "~a; ~a=~a" str key value))))
   (if (null? cookies) []
       [(cons "Cookie" (foldr fold-e cookies ""))]))
-  
+
 (def (http-headers-cons new-headers headers)
   (def (fold-e header headers)
     (with ([key . value] header)
@@ -112,7 +112,7 @@ package: std/net
                 cookies:  (cookies #f)
                 params:   (params #f)
                 data:     (data #f))
-                
+
   (let ((values headers data)
         (if params
           (let (form-data (form-url-encode params #t))
@@ -261,7 +261,7 @@ package: std/net
      ((assoc "Content-Length" headers)
       => (match <> ([_ . len] (string->number len))))
      (else #f)))
-  
+
   (cond
    ((assoc "Transfer-Encoding" headers)
     => (lambda (tenc)
@@ -381,7 +381,7 @@ package: std/net
            (len  (read-substring out 0 len in)))
       (string-shrink! out len)
       out))
-  
+
   (cond
    ((request-encoding req) => get-text)
    (else
@@ -402,4 +402,3 @@ package: std/net
           (lp rest cookies))))
       (else
        (reverse cookies)))))
-

@@ -39,7 +39,7 @@ package: std/web
     (log-error "rack response error" e)
     (let (errstr (call-with-output-string [] (cut display-exception e <>)))
       (fastcgi-write-stderr req errstr)))
-  
+
   (try
    (let* (((values status headers body)
            (try

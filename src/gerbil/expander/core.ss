@@ -134,8 +134,8 @@ namespace: gx
   id: gx#syntax-error::t)
 
 (def (raise-syntax-error where message stx . details)
-  (raise 
-    (make-syntax-error message (cons stx details) where 
+  (raise
+    (make-syntax-error message (cons stx details) where
                        (current-expander-context)
                        (current-expander-marks)
                        (current-expander-phi))))
@@ -156,7 +156,7 @@ namespace: gx
 (def (core-expand-top stx)
   (let (stx (core-expand* stx))
     (core-syntax-case stx ()
-      ((form . _) 
+      ((form . _)
        (core-bound-identifier? form)
        stx)
       (else
@@ -169,23 +169,23 @@ namespace: gx
            ((form . _)
             (core-bound-identifier? form expression-form-binding?))
            (else #f))))
-  
+
   (def (illegal-expression hd . _)
     (raise-syntax-error #f "Bad syntax; illegal expression" stx hd))
-  
+
   (def (expand-e form hd)
     (let (bind (if (binding? form) form (resolve-identifier form)))
       (cond
        ((core-expander-binding? bind)
-        (core-apply-expander (syntax-binding-e bind) 
+        (core-apply-expander (syntax-binding-e bind)
           (stx-wrap-source hd (stx-source stx))))
        ((syntax-binding? bind)
         (core-expand-expression
-         (core-apply-expander (syntax-binding-e bind) 
+         (core-apply-expander (syntax-binding-e bind)
            (stx-wrap-source hd (stx-source stx)))))
        (else
         (raise-syntax-error #f "Bad syntax; missing expander" stx form)))))
-  
+
   (let (hd (core-expand-head stx))
     (cond
      ((sealed-expression? hd) hd)
@@ -237,7 +237,7 @@ namespace: gx
        ((not bind) stx)
        (else
         (raise-syntax-error #f "Bad syntax" stx)))))
-  
+
   (core-syntax-case stx ()
     ((hd . _)
      (identifier? hd)
@@ -262,34 +262,34 @@ namespace: gx
 ;;   if symbol?
 ;;      => syntax-quote; wrap begin-form
 ;;      => left-folded expanded body
-(def (core-expand-block stx expand-special 
-                        (begin-form '%#begin) 
+(def (core-expand-block stx expand-special
+                        (begin-form '%#begin)
                         (expand-e core-expand-expression))
   (def (expand-splice hd body rest r)
     (if (stx-list? body)
       (K (stx-foldr cons rest body) r)
       (raise-syntax-error #f "Bad syntax" stx hd)))
-  
+
   (def (expand-cond-expand hd rest r)
     (K (cons (core-expand-cond-expand% hd) rest) r))
-  
+
   (def (expand-include hd rest r)
     (core-syntax-case hd ()
       ((_ path)
        (stx-string? path)
        (let* ((rpath
                (core-resolve-path path (stx-source hd)))
-              (block 
+              (block
                (core-expand-include% hd rpath))
               (rbody
                (parameterize ((current-expander-path
                                (cons rpath (current-expander-path))))
                  (core-expand-block block expand-special #f expand-e))))
          (K rest (foldr cons r rbody))))))
-  
+
   (def (expand-expression hd rest r)
     (K rest (cons (expand-e hd) r)))
-  
+
   (def (K rest r)
     (core-syntax-case rest ()
       ((hd . rest)
@@ -305,10 +305,10 @@ namespace: gx
                    (expand-cond-expand hd rest r))
                   ((%#include)
                    (expand-include hd rest r))
-                  (else 
+                  (else
                    (expand-special hd K rest r)))
                 (expand-expression hd rest r))))
-           (else 
+           (else
             (expand-expression hd rest r)))))
       (else
        (if begin-form
@@ -317,7 +317,7 @@ namespace: gx
             (reverse r))
           (stx-source stx))
          r))))
-  
+
   (core-syntax-case stx ()
     ((_ . body)
      (stx-list? body)
@@ -341,7 +341,7 @@ namespace: gx
 (def (core-expand-cond-expand% stx)
   (def (satisfied? condition)
     (core-syntax-case condition ()
-      (id 
+      (id
        (identifier? id)
        (core-bound-identifier? id feature-binding?))
       ((combinator . body)
@@ -353,7 +353,7 @@ namespace: gx
          ((defined) (stx-andmap core-resolve-identifier body))
          (else
           (raise-syntax-error #f "Bad syntax" stx combinator))))))
-  
+
   (def (loop rest)
     (core-syntax-case rest ()
       ((hd . rest)
@@ -363,12 +363,12 @@ namespace: gx
            ((stx-eq? condition 'else)
             (if (stx-null? rest) body
                 (raise-syntax-error #f "Bad syntax" stx hd)))
-           ((satisfied? condition) 
+           ((satisfied? condition)
             body)
-           (else 
+           (else
             (loop rest))))))
       (() [])))
-  
+
   (core-syntax-case stx ()
     ((_ . clauses)
      (stx-list? clauses)
@@ -380,7 +380,7 @@ namespace: gx
   (core-syntax-case stx ()
     ((_ path)
      (stx-string? path)
-     (let (rpath 
+     (let (rpath
            (or rpath
                (core-resolve-path path (stx-source stx))))
        (if (member rpath (current-expander-path))
@@ -395,7 +395,7 @@ namespace: gx
 ;;; expander application
 (def (core-apply-expander K stx (method 'apply-macro-expander))
   (cond
-   ((procedure? K) 
+   ((procedure? K)
     (cond
      ((stx-source stx) => (cut stx-wrap-source (K stx) <>))
      (else (K stx))))
@@ -441,9 +441,9 @@ namespace: gx
 
 (def (core-apply-user-macro K stx ctx phi method)
   (let (mark (make-expander-mark #f ctx phi stx))
-    (parameterize ((current-expander-marks 
+    (parameterize ((current-expander-marks
                     (cons mark (current-expander-marks))))
-      (stx-apply-mark 
+      (stx-apply-mark
        (core-apply-expander K (stx-apply-mark stx mark) method)
        mark))))
 
@@ -451,7 +451,7 @@ namespace: gx
   core-apply-user-expander)
 
 ;;; identifier bindings
-(def (resolve-identifier stx 
+(def (resolve-identifier stx
                          (phi (current-expander-phi))
                          (ctx (current-expander-context)))
   (let lp ((bind (core-resolve-identifier stx phi ctx)))
@@ -473,7 +473,7 @@ namespace: gx
          (else true)))
     (core-bind! (core-identifier-key stx) val rebind? phi ctx)))
 
-(def (core-resolve-identifier stx 
+(def (core-resolve-identifier stx
                               (phi (current-expander-phi))
                               (ctx (current-expander-context)))
   (let lp ((e stx) (marks (current-expander-marks)))
@@ -482,11 +482,11 @@ namespace: gx
       (core-resolve-binding e phi phi ctx (reverse marks)))
      ((identifier-quote? e)
       (core-resolve-binding (AST-e e) phi 0
-                            (syntax-quote-context e) 
+                            (syntax-quote-context e)
                             (syntax-quote-marks e)))
      ((identifier-wrap? e)
-      (core-resolve-binding (AST-e e) phi phi ctx 
-                            (foldl apply-mark (identifier-wrap-marks e) 
+      (core-resolve-binding (AST-e e) phi phi ctx
+                            (foldl apply-mark (identifier-wrap-marks e)
                                    marks)))
      ((syntax-wrap? e)
       (lp (AST-e e) (apply-mark (syntax-wrap-mark e) marks)))
@@ -509,21 +509,21 @@ namespace: gx
         (lp (core-context-shift ctx -1) (fx1- dphi)))
        ((fxnegative? dphi)
         (lp (core-context-shift ctx +1) (fx1+ dphi))))))
-  
+
   (let lp ((ctx ctx) (src-phi src-phi) (rest marks))
     (match rest
       ([hd . rest]
        (with ((expander-mark subst) hd)
          (or (let (key (and subst (hash-get subst id)))
                (and key (resolve ctx src-phi key)))
-             (lp (expander-mark-context hd) 
+             (lp (expander-mark-context hd)
                  (expander-mark-phi hd)
                  rest))))
       (else
        (resolve ctx src-phi id)))))
 
-(def (core-bind! key val 
-                 (rebind? false) 
+(def (core-bind! key val
+                 (rebind? false)
                  (phi (current-expander-phi))
                  (ctx (current-expander-context)))
   (def (update-binding xval)
@@ -544,12 +544,12 @@ namespace: gx
       xval)
      (else
       (raise-syntax-error #f "Bad binding; rebind conflict" key xval val))))
-  
+
   (def (gensubst subst id)
     (let (eid (gensym (if (uninterned-symbol? id) '% id)))
       (hash-put! subst id eid)
       eid))
-  
+
   (def (subst! key)
     (match key
       ([id . mark]
@@ -563,14 +563,14 @@ namespace: gx
           (else
            (gensubst subst id)))))
       (else key)))
-  
-  (core-context-bind! (core-context-shift ctx phi) 
-                      (subst! key) val 
+
+  (core-context-bind! (core-context-shift ctx phi)
+                      (subst! key) val
                       update-binding))
 
 (def (core-identifier-key stx)
   (cond
-   ((symbol? stx) 
+   ((symbol? stx)
     (match (current-expander-marks)
       ([hd . _] (cons stx hd))
       (else stx)))
@@ -579,7 +579,7 @@ namespace: gx
            (eid (stx-e id))
            (marks (stx-identifier-marks id)))
       (match marks
-        ([hd . _] 
+        ([hd . _]
          (cons eid hd))
         (else eid))))
    (else
@@ -589,19 +589,19 @@ namespace: gx
 (def (core-context-shift ctx phi)
   (def (make-phi super)
     (make-phi-context (gensym 'phi) super))
-  
+
   (def (make-phi/up ctx super)
     (let (ctx+1 (make-phi super))
       (set! (phi-context-up ctx) ctx+1)
       (set! (phi-context-down ctx+1) ctx)
       ctx+1))
-  
+
   (def (make-phi/down ctx super)
     (let (ctx-1 (make-phi super))
       (set! (phi-context-up ctx-1) ctx)
       (set! (phi-context-down ctx) ctx-1)
       ctx-1))
-  
+
   (def (shift ctx delta make-delta-context phi K)
     (cond
      ((phi-context-super ctx)
@@ -611,7 +611,7 @@ namespace: gx
              (K ctx+d (fx- phi delta)))))
      (else
       (error "Bad context" ctx))))
-  
+
   (let K ((ctx ctx) (phi phi))
     (cond
      ((fxzero? phi) ctx)
@@ -646,12 +646,12 @@ namespace: gx
    (else
     (core-context-put! ctx key val))))
 
-(def (core-context-top (ctx (current-expander-context)) 
+(def (core-context-top (ctx (current-expander-context))
                        (stop? top-context?))
   (let lp ((ctx ctx))
     (cond
      ((stop? ctx) ctx)
-     ((phi-context? ctx) 
+     ((phi-context? ctx)
       (lp (phi-context-super ctx)))
      (else #f))))
 
@@ -662,13 +662,13 @@ namespace: gx
       ctx)))
 
 (def (core-context-rebind? (ctx (current-expander-context)) . _)
-  (and (top-context? ctx) 
+  (and (top-context? ctx)
        (not (module-context? ctx))
        (not (prelude-context? ctx))))
 
 (def (core-context-namespace (ctx (current-expander-context)))
   (cond
-   ((core-context-top ctx) 
+   ((core-context-top ctx)
     => (lambda (ctx)
          (and (module-context? ctx)
               (module-context-ns ctx))))
@@ -708,7 +708,7 @@ namespace: gx
 (def (core-identifier=? x y)
   (def (y=? xid)
     ((if (list? y) memq eq?) xid y))
-  
+
   (let (bind (resolve-identifier x))
     (if (binding? bind)
       (y=? (binding-id bind))
@@ -718,7 +718,7 @@ namespace: gx
   (and (interned-symbol? e)
        (string-index (symbol->string e) #\#)))
 
-(def (core-quote-syntax stx 
+(def (core-quote-syntax stx
                         (src #f)
                         (ctx (current-expander-context))
                         (marks (current-expander-marks)))
@@ -732,7 +732,7 @@ namespace: gx
    ((stx-datum? stx)
     (stx-e stx))
    (else
-    (make-syntax-quote stx (or (stx-source stx) src) 
+    (make-syntax-quote stx (or (stx-source stx) src)
                        ctx (reverse marks)))))
 
 (def (core-cons hd tl)
@@ -746,19 +746,19 @@ namespace: gx
 
 (def (core-resolve-path stx-path (rel #f))
   (let ((path (stx-e stx-path))
-        (reldir 
+        (reldir
          (let lp ((relsrc (or (stx-source stx-path) rel)))
-            (cond 
+            (cond
              ((AST? relsrc)
-              (lp (or (stx-source relsrc) 
+              (lp (or (stx-source relsrc)
                       (stx-e relsrc))))
              ((source-location-path? relsrc)
               (path-directory (source-location-path relsrc)))
-             ((string? relsrc) 
+             ((string? relsrc)
               (path-directory relsrc))
              ((not (null? (current-expander-path)))
               (path-directory (car (current-expander-path))))
-             (else 
+             (else
               (current-directory))))))
     (path-expand path (path-normalize reldir))))
 
@@ -781,7 +781,7 @@ namespace: gx
 (def (syntax-local-value stx (E raise-syntax-ref-error))
   (let (e (syntax-local-e stx E))
     (if (expander? e)
-      (expander-e e) 
+      (expander-e e)
       e)))
 
 (def (raise-syntax-ref-error stx)

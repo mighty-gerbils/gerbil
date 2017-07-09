@@ -6,4 +6,3 @@ package: scheme
 (import :scheme/load-impl)
 (export
   (rename: r7rs-load load))
-

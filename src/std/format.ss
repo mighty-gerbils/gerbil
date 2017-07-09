@@ -36,7 +36,7 @@ package: std
 
 ;;; implementation
 ;; mostly srfi-48-style format strings, except the brain damage.
-;; departures: 
+;; departures:
 ;;   lower-case synonyms for all format specifiers
 ;;   ~u/~U for unicode hex char print (for #\uXXXX)
 ;;   ~f/~F means "float" and does non-exp fp (C-style %f more or less)
@@ -60,7 +60,7 @@ package: std
               (let ((next (##string-ref fmt xi))
                     (xi (fx1+ xi)))
                 (cond
-                 ((hash-get dispatch-table next) 
+                 ((hash-get dispatch-table next)
                   => (cut <> next K xi rest))
                  (else
                   (error "Unknown format specifier" fmt next))))
@@ -114,10 +114,10 @@ package: std
 
 (defdispatch-e (#\s #\S)
   write)
-  
+
 (defdispatch-e (#\c #\C)
   write-char)
-  
+
 (defdispatch-e (#\u #\U)
   (lambda (arg)
     (let (i (char->integer arg))
@@ -130,19 +130,19 @@ package: std
 (defdispatch-e (#\b #\B)
   (lambda (arg)
     (display (number->string arg 2))))
-  
+
 (defdispatch-e (#\o #\O)
   (lambda (arg)
     (display (number->string arg 8))))
-  
+
 (defdispatch-e (#\d #\D)
   (lambda (arg)
     (display (number->string arg 10))))
-  
+
 (defdispatch-e (#\x #\X)
   (lambda (arg)
     (display (number->string arg 16))))
-  
+
 (defdispatch-e (#\y #\Y)
   pretty-print)
 
@@ -151,13 +151,13 @@ package: std
 
 (defdispatch-q (#\~)
   (write-char #\~))
-  
+
 (defdispatch-q (#\t #\T)
   (write-char #\tab))
-  
+
 (defdispatch-q (#\_)
   (write-char #\space))
-  
+
 ;; recursive format
 (defdispatch (#\? #\k #\K)
   (lambda (_ K xi rest)
@@ -176,17 +176,17 @@ package: std
            (len (##string-length str)))
 
       (defrules bad-format-string ()
-        ((_) 
-         (error "Bad format string; malformed fixed width specifier" 
+        ((_)
+         (error "Bad format string; malformed fixed width specifier"
            str (current-format-args))))
-      
+
       (let lp ((xi xi) (width [char]))
         (if (fx< xi len)
           (let ((next (##string-ref str xi))
                 (xi (fx1+ xi)))
             (case next
               ((#\f #\F)
-               (format-fixed-float (chars->number (reverse width)) 
+               (format-fixed-float (chars->number (reverse width))
                                    #f K xi rest))
               ((#\,)
                (let lp2 ((xi xi) (digits []))
@@ -198,7 +198,7 @@ package: std
                        (lp2 xi (cons next digits)))
                       ((and (memq next '(#\f #\F))
                             (not (null? digits)))
-                       (format-fixed-float (chars->number (reverse width)) 
+                       (format-fixed-float (chars->number (reverse width))
                                            (chars->number (reverse digits))
                                            K xi rest))
                       (else
@@ -208,7 +208,7 @@ package: std
                (cond
                 ((char-numeric? next)
                  (lp xi (cons next width)))
-                ((hash-get dispatch-table next) 
+                ((hash-get dispatch-table next)
                  => (lambda (f)
                       (format-fixed-generic (chars->number (reverse width))
                                             f next xi rest K)))
@@ -237,7 +237,7 @@ package: std
             (imag (imag-part arg)))
         (cond
          ((not (zero? imag))
-          (string-append 
+          (string-append
            (format-fixed real digits)
            (if (and (finite? imag) (positive? imag)) "+" "")
            (format-fixed imag digits)
@@ -260,12 +260,12 @@ package: std
      (else
       (error "Bad argument for float format; expected number"
         (current-format-string) (current-format-args) arg))))
-  
+
   (def (compose-float digits pre-str frac-str)
     (let (frac-len (string-length frac-str))
       (cond
        ((fx< frac-len digits)
-        (string-append pre-str "." (make-string (fx- digits frac-len) #\0) 
+        (string-append pre-str "." (make-string (fx- digits frac-len) #\0)
                        frac-str))
        ((fx= frac-len digits)
         (string-append pre-str "." frac-str))
@@ -273,7 +273,7 @@ package: std
         (if (equal? pre-str "-0") "0" pre-str))
        (else
         (error "BUG: compose-float" digits pre-str frac-str)))))
-  
+
   ;; ensure there is a leading zero for sub-1 magnitude floats
   ;; ensure there is a fractional part
   (def (pad-zeros str)
@@ -288,7 +288,7 @@ package: std
        ((fx= (fx1+ dot) len)
         (string-append str "0"))
        (else str))))
-  
+
   (let (width (or width 0))
     (with-args rest (arg . rest)
       (display (pad-string (format-fixed arg digits) width))
