@@ -1250,6 +1250,9 @@ namespace: gerbil/core
                                runtime-type-exhibitor-e
                                |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor-e|)
                               (%#define-runtime
+                               expander-type-info::apply-macro-expander
+                               |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info::apply-macro-expander|)
+                              (%#define-runtime
                                typedef-body?
                                |gerbil/core::<MOP>::<MOP:2>[1]#typedef-body?|)
                               (%#define-runtime
