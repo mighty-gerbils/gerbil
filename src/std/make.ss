@@ -31,7 +31,7 @@ package: std
        verbose: (verbose #f)
        depgraph: (depgraph #f))
   (let* ((srcdir (or srcdir (error "srcdir must be specified")))
-         (libdir (or libdir (path-expand "lib" (getenv "GERBIL_HOME"))))
+         (libdir (or libdir "~/.gerbil/lib"))
          (settings  [srcdir: srcdir libdir: libdir bindir: bindir
                      prefix: prefix force: force? optimize: optimize
                      static: static verbose: verbose])
