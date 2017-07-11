@@ -270,7 +270,7 @@ package: std/text
        (display #\] port))
       ([val . rest]
        (write-json-object val port)
-       (display ", " port)
+       (display "," port)
        (lp rest))
       ([]                               ; empty
        (display #\] port)))))
@@ -288,7 +288,7 @@ package: std/text
                 (display #\] port))
               (begin
                 (write-json-object (##vector-ref obj n) port)
-                (display ", " port)
+                (display "," port)
                 (lp (fx1+ n)))))))
       (display "[]" port))))
 
@@ -307,14 +307,14 @@ package: std/text
       (match rest
         ([[key . val]]                  ; last one
          (write (string-e key) port)
-         (display ": " port)
+         (display ":" port)
          (write-json-object val port)
          (display #\} port))
         ([[key . val] . rest]
          (write (string-e key) port)
-         (display ": " port)
+         (display ":" port)
          (write-json-object val port)
-         (display ", " port)
+         (display "," port)
          (lp rest))
         ([]                             ; empty
          (display #\} port))))))
