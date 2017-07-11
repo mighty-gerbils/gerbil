@@ -246,7 +246,7 @@ LevelDB interface.
   leveldb-error?
   leveldb?
   leveldb-open leveldb-close
-  leveldb-put leveldb-get leveldb-delete leveldb-write
+  leveldb-put leveldb-get leveldb-delete leveldb-write leveldb-key?
   leveldb-writebatch leveldb-writebatch-clear
   leveldb-writebatch-put leveldb-writebatch-delete
   leveldb-iterator leveldb-iterator-close leveldb-iterator-valid?

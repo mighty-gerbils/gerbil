@@ -11,7 +11,7 @@ package: std/db
 (export leveldb-error?
         leveldb?
         leveldb-open leveldb-close
-        leveldb-put leveldb-get leveldb-delete leveldb-write
+        leveldb-put leveldb-get leveldb-delete leveldb-write leveldb-key?
         leveldb-writebatch leveldb-writebatch-clear
         leveldb-writebatch-put leveldb-writebatch-delete
         leveldb-iterator leveldb-iterator-close leveldb-iterator-valid?
@@ -125,6 +125,18 @@ package: std/db
           => (cut raise-leveldb-error 'leveldb-write <>))))
       (error "LevelDB database has been closed"))))
 
+(def (leveldb-key? ldb key (opts (leveldb-default-read-options)))
+  (with ((leveldb db) ldb)
+    (if db
+      (let* ((keyx (value-bytes key))
+             (errptr (get-errptr))
+             (slice (leveldb_get db opts keyx errptr)))
+        (cond
+         (slice #t)
+         ((errptr_str errptr)
+          => (cut raise-leveldb-error 'leveldb-key? <>))
+         (else #f)))
+      (error "LevelDB database has been closed"))))
 
 (def (slice->bytes slice)
   (let* ((len (slice_len slice))
