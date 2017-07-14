@@ -297,15 +297,16 @@ package: std/net
 
   (def (read-u64 port)
     (let (rd (read-subu8vector buf 0 8 port))
-      (let lp ((k 0) (r 0))
-        (if (fx< k 8)
-          (lp (fx1+ k)
-              (bitwise-ior (arithmetic-shift r 8)
-                           (##u8vector-ref buf k)))
-          r))))
+      (if (fx= rd 8)
+        (let lp ((k 0) (r 0))
+          (if (fx< k 8)
+            (lp (fx1+ k)
+                (bitwise-ior (arithmetic-shift r 8)
+                             (##u8vector-ref buf k)))
+            r))
+        (read-eof))))
 
   (def (read-eof)
-    (websocket-close ws 1002)
     (raise 'eof))
 
   (with ((websocket port _ writer _ q mx cv) ws)
@@ -390,9 +391,11 @@ package: std/net
              (websocket-close ws 1002)
              (skip-to-eof port)))))))
      (catch (e)
-       (unless (eq? e 'eof)
-         (log-error "unhandled exception" e))
-       (websocket-close ws 1008)
+       (if (eq? e 'eof)
+         (websocket-close ws 1002)
+         (begin
+           (log-error "unhandled exception" e)
+           (websocket-close ws 1008)))
        (raise e))
      (finally
       (with-catch void (cut close-input-port port))))))
