@@ -500,4 +500,6 @@ package: std/net
   (let ((values bytes type) (websocket-recv ws))
     (if (eq? type 'text)
       (read-json (open-input-u8vector [char-encoding: 'UTF-8 init: bytes]))
-      (warning "wamp-recv: server sent binary data"))))
+      (begin
+        (warning "wamp-recv: server sent binary data (~s)" (u8vector-length bytes))
+        (raise-io-error 'wamp-recv "server sent binary data" bytes)))))
