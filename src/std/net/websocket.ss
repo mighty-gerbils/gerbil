@@ -392,7 +392,7 @@ package: std/net
              (skip-to-eof port)))))))
      (catch (e)
        (if (eq? e 'eof)
-         (websocket-close ws 1002)
+         (websocket-close ws 'eof)
          (begin
            (log-error "unhandled exception" e)
            (websocket-close ws 'abort)))
@@ -457,7 +457,7 @@ package: std/net
           (send port #xA data)
           (lp))
          (['close . how]
-          (unless (eq? how 'abort)
+          (when (fixnum? how)
             (let (bytes (make-u8vector 2))
               (##u8vector-set! bytes 0 (fxand (fxshift how -8) #xff))
               (##u8vector-set! bytes 1 (fxand how #xff))
