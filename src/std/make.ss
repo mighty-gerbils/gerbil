@@ -98,8 +98,8 @@ package: std
       ((? string? modf) modf)
       ([gxc: modf . gsc-opts] modf)
       ([ssi: modf . deps] modf)
-      ([exe: modf . gsc-opts] modf)
-      ([static-exe: modf . gsc-opts] modf)
+      ([exe: modf . opts] modf)
+      ([static-exe: modf . opts] modf)
       (else #f)))
 
   (def (module-spec-id spec)
@@ -219,21 +219,21 @@ package: std
      (gsc-compile? modf settings))
     ([ssi: modf . deps]
      (compile-ssi? modf settings))
-    ([exe: modf . gsc-opts]
-     (or (compile-exe? modf settings)
-         (library-deps-newer? modf settings depgraph #t)))
-    ([static-exe: modf . gsc-opts]
-     (or (compile-static-exe? modf settings)
-         (library-deps-newer? modf settings depgraph #t)))
+    ([exe: modf . opts]
+     (or (compile-exe? modf opts settings)
+         (library-deps-newer? modf settings depgraph opts)))
+    ([static-exe: modf . opts]
+     (or (compile-static-exe? modf opts settings)
+         (library-deps-newer? modf settings depgraph opts)))
     ([copy: file]
      (copy-compiled? file settings))
     (else
      (error "Bad buildspec" spec))))
 
-(def (library-deps-newer? mod settings depgraph bin?)
+(def (library-deps-newer? mod settings depgraph binopts)
   (and depgraph
-       (let* ((target (if bin?
-                        (binary-path mod settings)
+       (let* ((target (if binopts
+                        (binary-path mod binopts settings)
                         (library-path mod ".ssi" settings)))
               (file (if (string-empty? (path-extension mod))
                       (string-append mod ".ss")
@@ -265,10 +265,10 @@ package: std
      (gsc-compile modf gsc-opts settings))
     ([ssi: modf . deps]
      (compile-ssi modf deps settings))
-    ([exe: modf . gsc-opts]
-     (compile-exe modf gsc-opts settings))
-    ([static-exe: modf . gsc-opts]
-     (compile-static-exe modf gsc-opts settings))
+    ([exe: modf . opts]
+     (compile-exe modf opts settings))
+    ([static-exe: modf . opts]
+     (compile-static-exe modf opts settings))
     ([copy: file]
      (copy-compiled file settings))
     (else
@@ -377,39 +377,47 @@ package: std
       (error "Compilation error; gsc exited with nonzero status" status))
     (delete-file rtpath)))
 
-(def (compile-exe? mod settings)
+(def (compile-exe? mod opts settings)
   (def srcpath (source-path mod ".ss" settings))
   (def ssipath (library-path mod ".ssi" settings))
-  (def binpath (binary-path mod settings))
+  (def binpath (binary-path mod opts settings))
   (or (not (file-exists? ssipath))
       (file-newer? srcpath ssipath)
       (not (file-exists? binpath))
       (file-newer? srcpath binpath)))
 
-(def (compile-exe mod gsc-opts settings)
+(def (compile-exe mod opts settings)
   (def srcpath (source-path mod ".ss" settings))
-  (def binpath (binary-path mod settings))
+  (def binpath (binary-path mod opts settings))
+  (def gsc-opts (compile-exe-gsc-opts opts))
   (def gxc-opts
     [invoke-gsc: #t
      output-file: binpath
      verbose: (pgetq verbose: settings)])
   (when (gxc-compile? mod settings)
     (gxc-compile mod gsc-opts settings))
-  (displayln "... compile exe " mod)
+  (displayln "... compile exe " mod " -> " (path-strip-directory binpath))
   (compile-exe-stub srcpath gxc-opts))
 
-(def (compile-static-exe? mod settings)
+(def (compile-exe-gsc-opts opts)
+  (match opts
+    ([(? keyword?) opt . rest]
+     (compile-exe-gsc-opts rest))
+    (else opts)))
+
+(def (compile-static-exe? mod opts settings)
   (def srcpath (source-path mod ".ss" settings))
-  (def binpath (binary-path mod settings))
+  (def binpath (binary-path mod opts settings))
   (def statpath (static-path mod settings))
   (or (not (file-exists? statpath))
       (file-newer? srcpath statpath)
       (not (file-exists? binpath))
       (file-newer? srcpath binpath)))
 
-(def (compile-static-exe mod gsc-opts settings)
+(def (compile-static-exe mod opts settings)
   (def srcpath (source-path mod ".ss" settings))
-  (def binpath (binary-path mod settings))
+  (def binpath (binary-path mod opts settings))
+  (def gsc-opts (compile-exe-gsc-opts opts))
   (def gxc-opts
     [invoke-gsc: #t
      output-file: binpath
@@ -417,7 +425,7 @@ package: std
      (if gsc-opts [gsc-options: gsc-opts] []) ...])
   (when (gxc-compile? mod settings)
     (gxc-compile mod gsc-opts [static: #t settings ...] #f))
-  (displayln "... compile static exe " mod)
+  (displayln "... compile static exe " mod " -> " (path-strip-directory binpath))
   (gxc#compile-static-exe srcpath gxc-opts))
 
 (def (copy-compiled? file settings)
@@ -457,11 +465,12 @@ package: std
            (else libdir))))
     (path-expand path builddir)))
 
-(def (binary-path mod settings)
+(def (binary-path mod opts settings)
   (let* ((bindir (pgetq bindir: settings))
          (_ (unless bindir (error "bindir must be specified")))
          (bin
           (cond
+           ((pgetq bin: opts) => values)
            ((string-rindex mod #\/)
             => (lambda (ix) (substring mod (fx1+ ix) (string-length mod))))
            (else mod)))
