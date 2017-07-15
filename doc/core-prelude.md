@@ -1222,7 +1222,7 @@ the core prelude, you need to import the extended symbols with
 
 The package module aggregates and re-exports the following modules.
 
-#### `:gerbil/gambit/bits
+#### `:gerbil/gambit/bits`
 Symbols related to bit manipulation.
 
 ```
