@@ -51,14 +51,17 @@ package: gerbil/gambit
   thread-group->thread-group-vector thread-group->thread-list
   thread-group->thread-vector
   thread-state thread-state-uninitialized? thread-state-initialized?
-  thread-state-active?
-  thread-state-active-waiting-for thread-state-active-timeout
+  thread-state-running? thread-state-running-processor
+  thread-state-waiting? thread-state-waiting-for thread-state-waiting-timeout
   thread-state-normally-terminated?
   thread-state-normally-terminated-result
   thread-state-abnormally-terminated?
   thread-state-abnormally-terminated-reason
   top thread-interrupt! thread-suspend! thread-resume!
   thread-thread-group thread-init!
+
+  ;; system processors
+  processor? current-processor processor-id
   )
 
 (def (spawn f . args)
