@@ -185,7 +185,7 @@ package: std/net
          ((mutex-unlock! mx cv timeo)
           (lp))
          (raise-timeo?
-          (raise-timeout 'websocket-recv "websocket-recv: timeout" ws))
+          (raise-timeout 'websocket-recv "timeout" ws))
          (else
           #f))))))
 
@@ -395,7 +395,7 @@ package: std/net
          (websocket-close ws 1002)
          (begin
            (log-error "unhandled exception" e)
-           (websocket-close ws 1008)))
+           (websocket-close ws 'abort)))
        (raise e))
      (finally
       (with-catch void (cut close-input-port port))))))
@@ -457,16 +457,17 @@ package: std/net
           (send port #xA data)
           (lp))
          (['close . how]
-          (let (bytes (make-u8vector 2))
-            (##u8vector-set! bytes 0 (fxand (fxshift how -8) #xff))
-            (##u8vector-set! bytes 1 (fxand how #xff))
-            (send port #x8 bytes)))
+          (unless (eq? how 'abort)
+            (let (bytes (make-u8vector 2))
+              (##u8vector-set! bytes 0 (fxand (fxshift how -8) #xff))
+              (##u8vector-set! bytes 1 (fxand how #xff))
+              (send port #x8 bytes))))
          (bogus
           (warning "unexpected message ~a" bogus)
           (lp))))
      (catch (e)
        (log-error "unhandled exception" e)
-       (websocket-close ws 1008)                ; notify receivers
+       (websocket-close ws 'abort)              ; notify receivers
        (with-catch void (cut close-port port))) ; unblock reader
      (finally
       (with-catch void (cut close-output-port port))))))
