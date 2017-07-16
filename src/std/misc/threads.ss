@@ -26,12 +26,12 @@ package: std/misc
 
 (def (thread-abort! thread)
   (cond
+   ((not (thread? thread))
+    (error "Expected thread" thread))
    ((eq? thread (current-thread))
     (raise +thread-abort+))
-   ((thread-not-running? thread))
    (else
-    (##thread-int! thread (cut raise +thread-abort+))
-    (void))))
+    (thread-raise! thread +thread-abort+))))
 
 (def (spawn/abort f . args)
   (spawn/name (or (##procedure-name f) (void)) with-abort-handler f args))
@@ -39,16 +39,20 @@ package: std/misc
 (def (spawn/name/abort name f . args)
   (spawn/name name with-abort-handler f args))
 
-(extern thread-release-locks! thread-not-running?)
+(extern thread-raise! thread-release-locks!)
 
 (begin-foreign
-  (namespace ("std/misc/threads#" thread-not-running? thread-release-locks! btq-release!))
+  (namespace ("std/misc/threads#" thread-raise! thread-release-locks! btq-release!))
 
-  (define (thread-not-running? thread)
+  (define (thread-raise! thread obj)
     (declare (not interrupts-enabled))
-    (or (##not (macro-initialized-thread? thread))
-        (macro-terminated-thread-given-initialized? thread)
-        (##not (macro-started-thread-given-initialized? thread))))
+    (if (and (macro-initialized-thread? thread)
+             (##not (macro-terminated-thread-given-initialized? thread))
+             (macro-started-thread-given-initialized? thread))
+      (begin
+        (##thread-int! thread (lambda () (raise obj)))
+        (##void))
+      #f))
 
   (define (thread-release-locks! thread)
     (declare (not interrupts-enabled))
