@@ -37,10 +37,12 @@
 - [std/os](#stdos)
   * [std/os/error](#stdoserror)
   * [std/os/fd](#stdosfd)
+  * [std/os/fdio](#stdosfdio)
   * [std/os/fcntl](#stdosfcntl)
   * [std/os/pipe](#stdospipe)
   * [std/os/socket](#stdossocket)
   * [std/os/epoll](#stdosepoll)
+  * [std/os/inotify](#stdosinotify)
 - [std/parser](#stdparser)
 - [std/pregexp](#stdpregexp)
 - [std/sort](#stdsort)
@@ -682,6 +684,18 @@ Raw devices from file decriptors.
   fd? fd-type? fd-type
 ```
 
+### std/os/fdio
+
+Reading and writing from raw devices.
+
+```
+(import :std/os/fdio)
+
+;; exports:
+
+  fdread fdwrite _read _write
+```
+
 ### std/os/fcntl
 File descriptor control.
 
@@ -870,6 +884,45 @@ epoll for linux.
   epoll-create epoll-ctl-add epoll-ctl-mod epoll-ctl-del epoll-wait
   make-epoll-events epoll-event-fd epoll-event-events
   EPOLLIN EPOLLOUT EPOLLERR EPOLLHUP EPOLLET EPOLLONESHOT
+```
+
+### std/os/inotify
+
+inotify for linux.
+
+```
+(require linux)
+(import :std/os/inotify)
+
+;; exports:
+  inotify-init inotify? inotify-close
+  inotify-add-watch inotify-rm-watch
+  inotify
+  (struct-out inotify-event)
+  IN_ACCESS
+  IN_ATTRIB
+  IN_CLOSE_WRITE
+  IN_CLOSE_NOWRITE
+  IN_CREATE
+  IN_DELETE
+  IN_DELETE_SELF
+  IN_MODIFY
+  IN_MOVE_SELF
+  IN_MOVED_FROM
+  IN_MOVED_TO
+  IN_OPEN
+  IN_ALL_EVENTS
+  IN_MOVE
+  IN_CLOSE
+  IN_DONT_FOLLOW
+  IN_EXCL_UNLINK
+  IN_MASK_ADD
+  IN_ONESHOT
+  IN_ONLYDIR
+  IN_IGNORED
+  IN_ISDIR
+  IN_Q_OVERFLOW
+  IN_UNMOUNT
 ```
 
 ## std/parser
