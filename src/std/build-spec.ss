@@ -64,6 +64,7 @@
     ;; std/os
     (gxc: "os/error" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc: "os/fd" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (gxc: "os/fdio" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc: "os/fcntl" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc: "os/pipe" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gsc: "os/_socket" "-e" "(include \"~~lib/_gambit#.scm\")")
@@ -71,7 +72,8 @@
     "os/socket"
     ,@(cond-expand
         (linux
-         '((gxc: "os/epoll" "-e" "(include \"~~lib/_gambit#.scm\")")))
+         '((gxc: "os/epoll" "-e" "(include \"~~lib/_gambit#.scm\")")
+           (gxc: "os/inotify" "-e" "(include \"~~lib/_gambit#.scm\")")))
         (else '()))
     ;; :std/net/server
     "net/server/base"
