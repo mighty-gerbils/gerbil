@@ -72,7 +72,8 @@
     "os/socket"
     ,@(cond-expand
         (linux
-         '((gxc: "os/epoll" "-e" "(include \"~~lib/_gambit#.scm\")")))
+         '((gxc: "os/epoll" "-e" "(include \"~~lib/_gambit#.scm\")")
+           (gxc: "os/inotify" "-e" "(include \"~~lib/_gambit#.scm\")")))
         (else '()))
     ;; :std/net/server
     "net/server/base"
