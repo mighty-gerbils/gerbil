@@ -496,6 +496,17 @@ Shuffling.
   shuffle vector-shuffle vector-shuffle!
 ```
 
+### std/misc/threads
+Thread utilities.
+
+```
+(import :std/misc/threads)
+
+;; exports:
+
+  spawn/abort spawn/name/abort thread-abort! thread-abort?
+```
+
 ### std/misc/uuid
 UUIDs.
 
