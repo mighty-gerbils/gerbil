@@ -811,7 +811,7 @@ Variant of `syntax-rules` that constructs a setq macro and not a plain macro exp
 
 Fails with a syntax error if the `cond-expand` features `feature ...` are not satisfied.
 
-#### defsyntax-for-import defsytnax-for-export
+#### defsyntax-for-import defsyntax-for-export
 ```
 (defsyntax-for-import id expr)
 
@@ -2051,7 +2051,7 @@ Symbols related to thread programming; spawn and with-lock primitives.
     + [identifier-rules](#identifier-rules)
   * [Module Sugar](#module-sugar)
     + [require](#require)
-    + [defsyntax-for-import defsytnax-for-export](#defsyntax-for-import-defsytnax-for-export)
+    + [defsyntax-for-import defsyntax-for-export](#defsyntax-for-import-defsyntax-for-export)
     + [only-in](#only-in)
     + [except-in except-out](#except-in-except-out)
     + [rename-in rename-out](#rename-in-rename-out)

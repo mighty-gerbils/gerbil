@@ -119,7 +119,7 @@ package: std/actor
              events else-e))
         (()
          (values (reverse clauses) (reverse events) else-e))
-        (_ (raise-syntax-error #f "Bad sytnax; bad clause" stx rest)))))
+        (_ (raise-syntax-error #f "Bad syntax; bad clause" stx rest)))))
 
   (def (generate-receive-raw-test-e stx clauses)
     (with-syntax ((((hd . body) ...) clauses))
