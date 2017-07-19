@@ -572,14 +572,14 @@
 
 ;; redefine setters
 
-(define tm:set-date-nanosecond! date-nanosecond-set!)
-(define tm:set-date-second! date-second-set!)
-(define tm:set-date-minute! date-minute-set!)
-(define tm:set-date-hour! date-hour-set!)
-(define tm:set-date-day! date-day-set!)
-(define tm:set-date-month! date-month-set!)
-(define tm:set-date-year! date-year-set!)
-(define tm:set-date-zone-offset! date-zone-offset-set!)
+(define tm:set-date-nanosecond! (values date-nanosecond-set!))
+(define tm:set-date-second! (values date-second-set!))
+(define tm:set-date-minute! (values date-minute-set!))
+(define tm:set-date-hour! (values date-hour-set!))
+(define tm:set-date-day! (values date-day-set!))
+(define tm:set-date-month! (values date-month-set!))
+(define tm:set-date-year! (values date-year-set!))
+(define tm:set-date-zone-offset! (values date-zone-offset-set!))
 
 (set! date-second-set! (lambda (date val)
                          (tm:time-error 'date-second-set! 'dates-are-immutable date)))
