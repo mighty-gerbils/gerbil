@@ -75,7 +75,6 @@ package: std
               (lp))
              ((yield)
               (set! (cort-state co) 'run)
-              (condition-variable-signal! cv)
               (mutex-unlock! mx)
               kont)
              ((end)
@@ -105,15 +104,6 @@ package: std
        (set! (cort-state co) 'yield)
        (condition-variable-signal! cv)
        (mutex-unlock! mx)
-       (let lp ()
-         (mutex-lock! mx)
-         (let (state (cort-state co))
-           (case state
-             ((yield)
-              (mutex-unlock! mx cv)
-              (lp))
-             (else
-              (mutex-unlock! mx)))))
        kont)
       (else
        (mutex-unlock! mx)
@@ -134,7 +124,7 @@ package: std
       (mutex-lock! mx)
       (let (state (cort-state co))
         (case state
-          ((run)
+          ((run yield)
            (mutex-unlock! mx cv)
            (lp))
           ((continue)
