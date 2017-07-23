@@ -136,7 +136,7 @@ Library for thread-based coroutines.
 (import :std/coroutine)
 
 ;; exports:
-  coroutine coroutine? continue yield
+  coroutine coroutine? continue yield coroutine-stop!
 ```
 
 ## std/crypto

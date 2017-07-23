@@ -970,8 +970,8 @@ in a separate thread and yielding results with `yield`. The user creates
 the coroutine with `coroutine`, and receives results with `continue` which
 blocks the current thread and passes control to the coroutine until
 it yields a value or exits. After the coroutine procedure finishes,
-all further calls to `continue` will return the final result (or
-deliver an exception) with `thread-join!`.
+all further calls to `continue` will return the final result or
+deliver an exception.
 
 For example:
 ```

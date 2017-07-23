@@ -109,7 +109,9 @@ package: std
   (def (next-e iter)
     (set! (cdr (iterator-e iter))
       iter-nil))
-  (make-iterator proc start-e value-e next-e))
+  (def (fini-e iter)
+    (coroutine-stop! (car (iterator-e iter)) iter-end))
+  (make-iterator proc start-e value-e next-e fini-e))
 
 (def (iter-input-port port (read-e read))
   (def (value-e iter)
