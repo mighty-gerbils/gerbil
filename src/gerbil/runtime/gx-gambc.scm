@@ -70,6 +70,17 @@
     (##load path (lambda args #f) #t #t #f)))
 
 ;; load path utils
+(define (load-path)
+  (values
+    (library-load-path)
+    (expander-load-path)))
+
+(define (library-load-path)
+  (&current-module-libpath))
+
+(define (expander-load-path)
+  (gx#current-expander-module-library-path))
+
 (define (add-load-path . paths)
   (apply add-library-load-path paths)
   (apply add-expander-load-path paths))
@@ -85,6 +96,20 @@
          (paths (map path-normalize paths))
          (paths (filter (lambda (x) (not (member x current))) paths)))
     (gx#current-expander-module-library-path (append current paths))))
+
+(define (cons-load-path . paths)
+  (apply cons-library-load-path paths)
+  (apply cons-expander-load-path paths))
+
+(define (cons-library-load-path . paths)
+  (let* ((current (&current-module-libpath))
+         (paths (map path-normalize paths)))
+    (&current-module-libpath (append paths current))))
+
+(define (cons-expander-load-path . paths)
+  (let* ((current (gx#current-expander-module-library-path))
+         (paths (map path-normalize paths)))
+    (gx#current-expander-module-library-path (append paths current))))
 
 ;; stuffs
 (define (_gx#expand-source src)
