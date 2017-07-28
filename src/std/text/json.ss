@@ -208,8 +208,9 @@ package: std/text
   ;; read until a terminal is encountered and let string->number
   ;; parse it liberally
   (def (parse chars)
-    (or (string->number (list->string (reverse chars)))
-        (raise-invalid-token port (reverse chars))))
+    (let (str (list->string (reverse chars)))
+      (or (string->number str)
+          (raise-invalid-token port str))))
 
   (let lp ((chars [(read-char port)]))
     (let (char (peek-char port))
