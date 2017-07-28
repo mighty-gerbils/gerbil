@@ -23,7 +23,7 @@
   :group 'scheme)
 
 (defcustom gerbil-mode-hook nil
-  "hook run when entering `gerbil-mode'. 
+  "hook run when entering `gerbil-mode'.
 The hook is run after scheme-mode-hook."
   :type 'hook
   :group 'gerbil)
@@ -36,7 +36,7 @@ The hook is run after scheme-mode-hook."
   (gerbil-put syms 'scheme-indent-function v))
 
 (defun gerbil-fontlock-add (x)
-  (font-lock-add-keywords nil (list x)))
+  (font-lock-add-keywords nil (list x) t))
 
 (defun gerbil-init-keywords ()
   (interactive)
@@ -52,7 +52,7 @@ The hook is run after scheme-mode-hook."
                 )
               'scheme-indent-function 0)
 
-  (gerbil-put '(if when unless 
+  (gerbil-put '(if when unless
                 set!
                 begin-annotation begin0
                 datum->syntax syntax/loc
@@ -82,9 +82,9 @@ The hook is run after scheme-mode-hook."
                  do-while
                  )
               'scheme-indent-function 2)
-  (gerbil-put '(def defvalues extern 
+  (gerbil-put '(def defvalues extern
                  defalias defsyntax defrule defrules defrules*
-                  defstruct defclass defmethod 
+                  defstruct defclass defmethod
                   definline definline*
                   define-values define-syntaxes
                   defsyntax/parameter
@@ -178,7 +178,7 @@ The hook is run after scheme-mode-hook."
   (gerbil-fontlock-add
    '("\\(#?,@\\)"
      (1 font-lock-keyword-face)))
-  
+
   (gerbil-fontlock-add
    '("\\(%#\\w+\\)"
      (1 font-lock-builtin-face)))
@@ -272,7 +272,7 @@ The hook is run after scheme-mode-hook."
   (interactive)
   (gerbil-fontlock-add
    `("\\(lambda\\)"
-     (0 (progn 
+     (0 (progn
           (compose-region (match-beginning 1) (match-end 1)
                           ,(make-char 'greek-iso8859-7 107))
           nil)))))
@@ -285,4 +285,3 @@ The hook is run after scheme-mode-hook."
     (gerbil-pretty-lambdas)))
 
 (provide 'gerbil)
-
