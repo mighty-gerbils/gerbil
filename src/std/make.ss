@@ -422,8 +422,7 @@ package: std
      output-file: binpath
      verbose: (pgetq verbose: settings)
      (if gsc-opts [gsc-options: gsc-opts] []) ...])
-  (when (gxc-compile? mod settings)
-    (gxc-compile mod gsc-opts [static: #t settings ...] #f))
+  (gxc-compile mod gsc-opts [static: #t settings ...] #f)
   (displayln "... compile static exe " mod " -> " (path-strip-directory binpath))
   (gxc#compile-static-exe srcpath gxc-opts))
 
