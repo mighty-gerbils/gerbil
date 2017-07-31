@@ -402,6 +402,10 @@ END-C
         (xdr-write-object (make-opaque type-id (object->u8vector obj))
                           port)))))))
 
+(def (int? obj)
+  (and (integer? obj)
+       (exact? obj)))
+
 ;;; XDR type declarations
 (defxdr-proto-types
   (xdr-proto-type-void      void-t      void?       xdr-void-read     xdr-void-write)
@@ -409,7 +413,7 @@ END-C
   (xdr-proto-type-true      true-t      true?       xdr-true-read     xdr-true-write)
   (xdr-proto-type-null      null-t      null?       xdr-null-read     xdr-null-write)
   (xdr-proto-type-pair      pair-t      pair?       xdr-pair-read     xdr-pair-write)
-  (xdr-proto-type-int       int-t       integer?    xdr-int-read      xdr-int-write)
+  (xdr-proto-type-int       int-t       int?        xdr-int-read      xdr-int-write)
   (xdr-proto-type-float     float-t     real?       xdr-float-read    xdr-float-write)
   (xdr-proto-type-string    string-t    string?     xdr-string-read   xdr-string-write)
   (xdr-proto-type-symbol    symbol-t    symbol?     xdr-symbol-read   xdr-symbol-write)
