@@ -7,7 +7,7 @@ package: std/actor
         :gerbil/gambit/bits
         :gerbil/gambit/fixnum
         :std/error
-        )
+        (only-in :std/srfi/1 reverse!))
 (export #t)
 
 (begin-foreign
@@ -244,7 +244,7 @@ END-C
   (let lp ((lst []))
     (let (next (xdr-read-object port))
       (if (null? next)
-        (reverse lst)
+        (reverse! lst)
         (lp (cons next lst))))))
 
 (def (xdr-hash-read port)
