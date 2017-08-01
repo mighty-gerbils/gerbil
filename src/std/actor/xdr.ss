@@ -129,7 +129,7 @@ END-C
    ((true? obj)       xdr-proto-type-true)
    ((null? obj)       xdr-proto-type-null)
    ((pair? obj)       xdr-proto-type-pair)
-   ((integer? obj)    xdr-proto-type-int)
+   ((int? obj)        xdr-proto-type-int)
    ((real? obj)       xdr-proto-type-float)
    ((string? obj)     xdr-proto-type-string)
    ((symbol? obj)     xdr-proto-type-symbol)
@@ -310,10 +310,10 @@ END-C
     (write-u8 hd port)
     (when len
       (xdr-int-write bytes port))
-    (let lp ((k 0) (value obj))
+    (let lp ((k 0) (value value))
       (when (fx< k bytes)
-        (write-u8 (bitwise-and #xff value) port)
-        (lp (fx1+ k) (arithmetic-shift obj -8))))))
+        (write-u8 (bitwise-and value #xff) port)
+        (lp (fx1+ k) (arithmetic-shift value -8))))))
 
 (def (xdr-float-write obj port)
   (let (obj (if (exact? obj)
