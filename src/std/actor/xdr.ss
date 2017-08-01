@@ -119,7 +119,8 @@ END-C
     (if type
       (let (xdr (vector-ref *xdr-proto-types* type))
         ((XDR-write xdr) obj port))
-      (raise-xdr-error 'xdr-write "unknown object type" obj))))
+      (let (xdr (vector-ref *xdr-proto-types* xdr-proto-type-opaque))
+        ((XDR-write xdr) (make-opaque #f (object->u8vector obj)) port)))))
 
 (def (xdr-object-type obj)
   (cond
