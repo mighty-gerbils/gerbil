@@ -7,7 +7,7 @@ package: std/actor
         :gerbil/gambit/bits
         :gerbil/gambit/fixnum
         :std/error
-        )
+        (only-in :std/srfi/1 reverse!))
 (export #t)
 
 (begin-foreign
@@ -119,7 +119,8 @@ END-C
     (if type
       (let (xdr (vector-ref *xdr-proto-types* type))
         ((XDR-write xdr) obj port))
-      (raise-xdr-error 'xdr-write "unknown object type" obj))))
+      (let (xdr (vector-ref *xdr-proto-types* xdr-proto-type-opaque))
+        ((XDR-write xdr) (make-opaque #f (object->u8vector obj)) port)))))
 
 (def (xdr-object-type obj)
   (cond
@@ -128,7 +129,7 @@ END-C
    ((true? obj)       xdr-proto-type-true)
    ((null? obj)       xdr-proto-type-null)
    ((pair? obj)       xdr-proto-type-pair)
-   ((integer? obj)    xdr-proto-type-int)
+   ((int? obj)        xdr-proto-type-int)
    ((real? obj)       xdr-proto-type-float)
    ((string? obj)     xdr-proto-type-string)
    ((symbol? obj)     xdr-proto-type-symbol)
@@ -243,7 +244,7 @@ END-C
   (let lp ((lst []))
     (let (next (xdr-read-object port))
       (if (null? next)
-        (reverse lst)
+        (reverse! lst)
         (lp (cons next lst))))))
 
 (def (xdr-hash-read port)
@@ -309,10 +310,10 @@ END-C
     (write-u8 hd port)
     (when len
       (xdr-int-write bytes port))
-    (let lp ((k 0) (value obj))
+    (let lp ((k 0) (value value))
       (when (fx< k bytes)
-        (write-u8 (bitwise-and #xff value) port)
-        (lp (fx1+ k) (arithmetic-shift obj -8))))))
+        (write-u8 (bitwise-and value #xff) port)
+        (lp (fx1+ k) (arithmetic-shift value -8))))))
 
 (def (xdr-float-write obj port)
   (let (obj (if (exact? obj)
