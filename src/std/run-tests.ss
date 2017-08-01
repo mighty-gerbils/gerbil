@@ -6,6 +6,7 @@
         "generic-test"
         "iter-test"
         "event-test"
+        "actor/xdr-test"
         "actor-test")
 
 (cond-expand
@@ -24,6 +25,7 @@
   [generic-runtime-test generic-macro-test
    iter-test
    event-test
+   actor-xdr-test
    actor-rpc-test actor-rpc-stream-test
    (if config-enable-sqlite [sqlite-test] []) ...
    (if config-enable-lmdb [lmdb-test] []) ...
