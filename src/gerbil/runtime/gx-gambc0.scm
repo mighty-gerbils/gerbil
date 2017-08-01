@@ -1202,19 +1202,19 @@
      string->symbol)
    (keyword->string kw)))
 
-(define (bytes->string bstr)
-  (let* ((in (open-input-u8vector `(char-encoding: UTF-8 init: ,bstr)))
+(define (bytes->string bstr #!optional (enc 'UTF-8))
+  (let* ((in (open-input-u8vector `(char-encoding: ,enc init: ,bstr)))
          (len (u8vector-length bstr))
          (out (make-string len))
          (n (read-substring out 0 len in)))
     (string-shrink! out n)
     out))
 
-(define (string->bytes str)
-  (substring->bytes str 0 (string-length str)))
+(define (string->bytes str #!optional (enc 'UTF-8))
+  (substring->bytes str 0 (string-length str) enc))
 
-(define (substring->bytes str start end)
-  (let ((out (open-output-u8vector '(char-encoding: UTF-8))))
+(define (substring->bytes str start end #!optional (enc 'UTF-8))
+  (let ((out (open-output-u8vector `(char-encoding: ,enc))))
     (write-substring str start end out)
     (get-output-u8vector out)))
 

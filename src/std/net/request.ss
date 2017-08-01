@@ -374,14 +374,7 @@ package: std/net
 
 (def (request-text req)
   (def (get-text enc)
-    (let* ((data (request-content req))
-           (in   (open-input-u8vector [init: data char-encoding: enc]))
-           (len  (u8vector-length data))
-           (out  (make-string len))
-           (len  (read-substring out 0 len in)))
-      (string-shrink! out len)
-      out))
-
+    (bytes->string (request-content req) enc))
   (cond
    ((request-encoding req) => get-text)
    (else
