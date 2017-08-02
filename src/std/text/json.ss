@@ -18,7 +18,8 @@ package: std/text
 ;;;  Scheme lists
 (import :gerbil/gambit/ports
         :gerbil/gambit/bits
-        :std/error)
+        :std/error
+        (only-in :std/srfi/1 reverse!))
 (export read-json write-json
         string->json-object json-object->string
         json-symbolic-keys)
@@ -130,7 +131,7 @@ package: std/text
     (let (next (read-json-list-next port))
       (if next
         (lp (cons next els))
-        (reverse els)))))
+        (reverse! els)))))
 
 (def (read-json-list-next port)
   (skip-whitespace port)
@@ -154,6 +155,17 @@ package: std/text
 
 (def hexes "0123456789abcdef")
 (def HEXES "0123456789ABCDEF")
+(def hextab
+  (let (ht (make-hash-table-eq))
+    (def (put str)
+      (let (len (string-length str))
+        (let lp ((k 0))
+          (when (fx< k len)
+            (hash-put! ht (##string-ref str k) k)
+            (lp (fx1+ k))))))
+    (put hexes)
+    (put HEXES)
+    ht))
 
 (def (read-json-string port)
   (def (read-escape-char port)
@@ -182,20 +194,17 @@ package: std/text
              (integer->char val)))))))
 
   (def (hex-value char)
-    (let lp ((n 0))
-      (if (fx< n 16)
-        (if (or (eq? char (string-ref hexes n))
-                (eq? char (string-ref HEXES n)))
-          n
-          (lp (fx1+ n)))
-        (raise-invalid-token port char))))
+    (cond
+     ((hash-get hextab char) => values)
+     (else
+      (raise-invalid-token port char))))
 
   (read-char port)
   (let lp ((chars []))
     (let (char (read-char port))
       (case char
         ((#\")
-         (list->string (reverse chars)))
+         (list->string (reverse! chars)))
         ((#\\)
          (lp (cons (read-escape-char port) chars)))
         (else
@@ -208,7 +217,7 @@ package: std/text
   ;; read until a terminal is encountered and let string->number
   ;; parse it liberally
   (def (parse chars)
-    (let (str (list->string (reverse chars)))
+    (let (str (list->string (reverse! chars)))
       (or (string->number str)
           (raise-invalid-token port str))))
 
@@ -236,7 +245,7 @@ package: std/text
   (cond
    ((number? obj)
     (cond
-     ((integer? obj)
+     ((and (integer? obj) (exact? obj))
       (display obj port))
      ((inexact? obj)
       (when (and (fl> obj 0.0) (fl< obj 1.0))
