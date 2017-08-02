@@ -245,12 +245,25 @@ package: std/text
   (cond
    ((number? obj)
     (cond
-     ((and (integer? obj) (exact? obj))
+     ((and (exact? obj) (integer? obj))
       (display obj port))
      ((inexact? obj)
-      (when (and (fl> obj 0.0) (fl< obj 1.0))
-        (display #\0 port))               ; JSON requires leading 0
-      (display obj port))
+      (let (mag (abs obj))
+        (cond
+         ((and (integer? mag) (fl< mag 1e10))
+          (display obj port)
+          (display #\0 port))
+         ((and (fl< mag 1.0) (fl>= mag 1e-3))
+          (cond
+           ((flnegative? obj)
+            (display #\- port)
+            (display #\0 port)
+            (display mag port))
+           (else
+            (display #\0 port)
+            (display obj port))))
+         (else
+          (display obj port)))))
      ((rational? obj)
       (write-json-object (exact->inexact obj) port))
      (else
