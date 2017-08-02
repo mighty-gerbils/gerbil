@@ -6,6 +6,7 @@
         "generic-test"
         "iter-test"
         "event-test"
+        "text/json-test"
         "actor/xdr-test"
         "actor-test")
 
@@ -25,6 +26,7 @@
   [generic-runtime-test generic-macro-test
    iter-test
    event-test
+   json-test
    actor-xdr-test
    actor-rpc-test actor-rpc-stream-test
    (if config-enable-sqlite [sqlite-test] []) ...
