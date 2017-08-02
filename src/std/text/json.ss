@@ -18,7 +18,8 @@ package: std/text
 ;;;  Scheme lists
 (import :gerbil/gambit/ports
         :gerbil/gambit/bits
-        :std/error)
+        :std/error
+        (only-in :std/srfi/1 reverse!))
 (export read-json write-json
         string->json-object json-object->string
         json-symbolic-keys)
@@ -130,7 +131,7 @@ package: std/text
     (let (next (read-json-list-next port))
       (if next
         (lp (cons next els))
-        (reverse els)))))
+        (reverse! els)))))
 
 (def (read-json-list-next port)
   (skip-whitespace port)
@@ -195,7 +196,7 @@ package: std/text
     (let (char (read-char port))
       (case char
         ((#\")
-         (list->string (reverse chars)))
+         (list->string (reverse! chars)))
         ((#\\)
          (lp (cons (read-escape-char port) chars)))
         (else
@@ -208,7 +209,7 @@ package: std/text
   ;; read until a terminal is encountered and let string->number
   ;; parse it liberally
   (def (parse chars)
-    (let (str (list->string (reverse chars)))
+    (let (str (list->string (reverse! chars)))
       (or (string->number str)
           (raise-invalid-token port str))))
 
