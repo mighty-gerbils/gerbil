@@ -16,7 +16,8 @@ package: std
   check-output check-predicate check-exception
   !check-fail? !check-fail-e
   run-tests! test-report-summary!
-  )
+  run-test-suite!
+  test-result)
 
 (defstruct !check-fail (e value))
 (defstruct !test-suite (desc thunk tests))
@@ -140,6 +141,16 @@ package: std
     (unless (null? tests)
       (eprintf "--- Test Summary\n")
       (for-each test-suite-summary! tests))))
+
+(def (test-result)
+  (let lp ((rest *tests*))
+    (match rest
+      ([suite . rest]
+       (if (ormap (? (or !test-case-fail !test-case-error))
+                  (!test-suite-tests suite))
+         'FAILURE
+         (lp rest)))
+      (else 'OK))))
 
 (def (test-suite-summary! suite)
   (def (print-failed tc)
