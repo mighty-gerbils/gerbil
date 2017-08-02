@@ -245,7 +245,7 @@ package: std/text
   (cond
    ((number? obj)
     (cond
-     ((integer? obj)
+     ((and (integer? obj) (exact? obj))
       (display obj port))
      ((inexact? obj)
       (when (and (fl> obj 0.0) (fl< obj 1.0))
