@@ -517,7 +517,7 @@ Raises a syntax error; used for meaningful error reporting in syntax-rules macro
 
 ### MOP Macros
 
-#### defstruct-type defclass-tye
+#### defstruct-type defclass-type
 ```
 (defstruct-type id super make instance? type-body ...)
 
@@ -2031,7 +2031,7 @@ Symbols related to thread programming; spawn and with-lock primitives.
     + [unwind-protect](#unwind-protect)
     + [syntax-error](#syntax-error)
   * [MOP Macros](#mop-macros)
-    + [defstruct-type defclass-tye](#defstruct-type-defclass-tye)
+    + [defstruct-type defclass-type](#defstruct-type-defclass-type)
     + [defstruct define-struct](#defstruct-define-struct)
     + [defclass define-class](#defclass-define-class)
     + [defmethod](#defmethod)
