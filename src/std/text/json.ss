@@ -155,6 +155,17 @@ package: std/text
 
 (def hexes "0123456789abcdef")
 (def HEXES "0123456789ABCDEF")
+(def hextab
+  (let (ht (make-hash-table-eq))
+    (def (put str)
+      (let (len (string-length str))
+        (let lp ((k 0))
+          (when (fx< k len)
+            (hash-put! ht (##string-ref str k) k)
+            (lp (fx1+ k))))))
+    (put hexes)
+    (put HEXES)
+    ht))
 
 (def (read-json-string port)
   (def (read-escape-char port)
@@ -183,13 +194,10 @@ package: std/text
              (integer->char val)))))))
 
   (def (hex-value char)
-    (let lp ((n 0))
-      (if (fx< n 16)
-        (if (or (eq? char (string-ref hexes n))
-                (eq? char (string-ref HEXES n)))
-          n
-          (lp (fx1+ n)))
-        (raise-invalid-token port char))))
+    (cond
+     ((hash-get hextab char) => values)
+     (else
+      (raise-invalid-token port char))))
 
   (read-char port)
   (let lp ((chars []))
