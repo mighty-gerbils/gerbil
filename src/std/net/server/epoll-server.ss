@@ -24,17 +24,19 @@ package: std/net/server
   (def (do-epoll)
     (let (count (epoll-wait epoll evts maxevts))
       (when (fxpositive? count)
-        (for (k (in-range count))
-          (let ((fd (epoll-event-fd evts k))
-                (ready (epoll-event-events evts k)))
-            (with ((!socket-state _ io-in io-out)
-                   (hash-ref fdtab fd))
-              (unless (fxzero? (fxand ready (fxior EPOLLIN EPOLLHUP EPOLLERR)))
-                (when io-in
-                  (io-state-signal-ready! io-in 'ready)))
-              (unless (fxzero? (fxand ready (fxior EPOLLOUT EPOLLHUP EPOLLERR)))
-                (when io-out
-                  (io-state-signal-ready! io-out 'ready)))))))))
+        (let lp ((k 0))
+          (when (fx< k count)
+            (let ((fd (epoll-event-fd evts k))
+                  (ready (epoll-event-events evts k)))
+              (with ((!socket-state _ io-in io-out)
+                     (hash-ref fdtab fd))
+                (unless (fxzero? (fxand ready (fxior EPOLLIN EPOLLHUP EPOLLERR)))
+                  (when io-in
+                    (io-state-signal-ready! io-in 'ready)))
+                (unless (fxzero? (fxand ready (fxior EPOLLOUT EPOLLHUP EPOLLERR)))
+                  (when io-out
+                    (io-state-signal-ready! io-out 'ready)))
+                (lp (fx1+ k)))))))))
 
   (def (add-socket sock)
     (let* ((fd (fd-e sock))
