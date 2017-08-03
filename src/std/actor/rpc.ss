@@ -53,6 +53,7 @@ package: std/actor
   set-rpc-keep-alive-interval!
   set-rpc-idle-timeout!
   set-rpc-call-timeout!
+  rpc-canonical-address
   )
 
 (def current-rpc-server
@@ -134,13 +135,29 @@ package: std/actor
   (thread-join! rpcd))
 
 (def (rpc-connect rpcd id address proto)
-  (!!rpc.connect rpcd id (canonical-address address) proto))
+  (cond
+   ((rpc-canonical-address address)
+    => (lambda (address)
+         (!!rpc.connect rpcd id address proto)))
+   (else
+    (error "Bad rpc address" address))))
 
 (def (rpc-register rpcd id proto)
   (!!rpc.register rpcd id proto))
 
 (def (rpc-unregister rpcd id)
   (!!rpc.unregister rpcd id))
+
+(def (rpc-canonical-address address)
+  (cond
+   ((resolved-address? address)         ; resolved inet address
+    address)
+   ((or (inet-address? address)         ; unresolved inet address
+        (inet-address-string? address))
+    (resolve-address address))
+   ((string? address)                   ; treat as unix domain
+    address)
+   (else #f)))
 
 (def (rpc-server proto addresses)
   (let* ((socksrv (start-socket-server!))
@@ -166,7 +183,6 @@ package: std/actor
     (with-catch values (cut thread-join! thread))
     (thread-send server msg))
   (spawn/name 'rpc-monitor thread-monitor (current-thread) thread msg))
-
 
 (def (make-actor-table)
   (make-sync-hash (make-hash-table test: uuid=? hash: uuid-hash)))
@@ -210,11 +226,20 @@ package: std/actor
       (rpc-monitor thr)))
 
   (def (open-connection address)
-    (let (thr (spawn rpc-client-connection (current-thread) actors socksrv address connect-e))
-      (hash-put! conns address thr)
-      (hash-put! threads thr address)
-      (rpc-monitor thr)
-      thr))
+    (cond
+     ((hash-get conns address) => values)
+     ((list? address) #f)               ; passive address, can't connect
+     (else
+      (let (address (rpc-canonical-address address))
+        (cond
+         ((not address) #f)
+         ((hash-get conns address) => values)
+         (else
+          (let (thr (spawn rpc-client-connection (current-thread) actors socksrv address connect-e))
+            (hash-put! conns address thr)
+            (hash-put! threads thr address)
+            (rpc-monitor thr)
+            thr)))))))
 
   (def (handle-protocol-action msg)
     (with ((message content src dest opt) msg)
@@ -230,15 +255,10 @@ package: std/actor
           (else
            (warning "Unexpected protocol mesage ~a" msg))))
         ((!rpc.connect id address proto k)
-         (cond
-          ((hash-get conns address)
-           => (lambda (handler)
-                (!!value src (make-remote handler id address proto) k)))
-          ((list? address)
-           (!!error src (make-rpc-error 'rpc-server "invalid address") k))
-          (else
-           (let (handler (open-connection address))
-             (!!value src (make-remote handler id address proto) k)))))
+         (let (handler (open-connection address))
+           (if handler
+             (!!value src (make-remote handler id address proto) k)
+             (!!error src (make-rpc-error 'rpc-server "invalid address") k))))
         ((!rpc.register id proto k)
          (let (uuid (UUID id))
            (if (actor-table-key? actors uuid)
@@ -315,17 +335,14 @@ package: std/actor
     (<< ((? message? msg)
          (let (dest (message-dest msg))
            (cond
+            ((eq? (current-thread) dest)
+             (handle-protocol-action msg))
             ((remote? dest)
              (let (address (remote-address dest))
-               (cond
-                ((hash-get conns address)
-                 => (lambda (handler)
-                      (thread-send handler msg)))
-                ((list? address)      ; it's a passive address; can't connect
-                 (rpc-send-error-response msg "ivalid address"))
-                (else
-                 (let (thr (open-connection address))
-                   (thread-send thr msg))))))
+               (let (handler (open-connection address))
+                 (if handler
+                   (thread-send handler msg)
+                   (rpc-send-error-response msg "ivalid address")))))
             ((handle? dest)
              (let (uuid (handle-uuid dest))
                (match (actor-table-get actors uuid)
@@ -333,8 +350,6 @@ package: std/actor
                   (send actor msg))
                  (else
                   (rpc-send-error-response msg "unknown actor")))))
-            ((eq? (current-thread) dest)
-             (handle-protocol-action msg))
             (else
              (warning "bad destination ~a" dest)
              (rpc-send-error-response msg "bad destination")))))
