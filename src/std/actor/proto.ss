@@ -19,7 +19,7 @@ package: std/actor
   (struct-out actor-error remote-error rpc-error)
   (struct-out handle remote)
   remote=? remote-hash
-  (struct-out !rpc !call !value !error !event !stream !yield !end !continue !close !abort)
+  (struct-out !rpc !call !value !error !event !stream !yield !end !continue !close !abort !token)
   !!call !!call-recv !!value !!error !!event
   !!stream !!stream-recv !!yield !!end !!continue !!close !!abort
   (struct-out !protocol !rpc-protocol)
@@ -96,11 +96,14 @@ package: std/actor
 (defstruct (!abort !rpc) (k)
   final: #t)
 
+(defstruct !token ()
+  final: #t)
+
 (defrules !!call ()
   ((recur dest e)
-   (recur dest e (gensym 'k) send-message #f #t))
+   (recur dest e (make-!token) send-message #f #t))
   ((recur dest e timeout: timeo)
-   (recur dest e (gensym 'k) send-message/timeout timeo #t))
+   (recur dest e (make-!token) send-message/timeout timeo #t))
   ((recur dest e k)
    (recur dest e k send-message #f #t))
   ((recur dest e k timeout: timeo)
@@ -141,9 +144,9 @@ package: std/actor
 
 (defrules !!stream ()
   ((recur dest e)
-   (recur dest e (gensym 'k) send-message #f #t))
+   (recur dest e (make-!token) send-message #f #t))
   ((recur dest e timeout: timeo)
-   (recur dest e (gensym 'k) send-message/timeout timeo #t))
+   (recur dest e (make-!token) send-message/timeout timeo #t))
   ((recur dest e k)
    (recur dest e k send-message #f #t))
   ((recur dest e k timeout: timeo)
@@ -419,9 +422,9 @@ package: std/actor
          (defn-!!kall
            #'(defrules !!kall ()
                ((_ dest arg ...)
-                (!!call dest (make-kall arg ...) (gensym 'k)))
+                (!!call dest (make-kall arg ...) (make-!token)))
                ((_ dest arg ... timeout: timeo)
-                (!!call dest (make-kall arg ...) (gensym 'k) timeout: timeo))
+                (!!call dest (make-kall arg ...) (make-!token) timeout: timeo))
                ((_ dest arg ... k)
                 (!!call dest (make-kall arg ...) k))
                ((_ dest arg ... k timeout: timeo)
@@ -513,9 +516,9 @@ package: std/actor
          (defn-!!kall
            #'(defrules !!kall ()
                ((_ dest arg ...)
-                (!!stream dest (make-kall arg ...) (gensym 'k)))
+                (!!stream dest (make-kall arg ...) (make-!token)))
                ((_ dest arg ... timeout: timeo)
-                (!!stream dest (make-kall arg ...) (gensym 'k) timeout: timeo))
+                (!!stream dest (make-kall arg ...) (make-!token) timeout: timeo))
                ((_ dest arg ... k)
                 (!!stream dest (make-kall arg ...) k))
                ((_ dest arg ... k timeout: timeo)
