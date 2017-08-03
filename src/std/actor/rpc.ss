@@ -110,8 +110,6 @@ package: std/actor
   (connection-accept sock sa)
   (connection-shutdown)
   (connection-close)
-  call:
-  (lookup id)
   ;; client -> server
   call:
   (connect id address proto)
@@ -168,16 +166,50 @@ package: std/actor
     (thread-send server msg))
   (spawn/name 'rpc-monitor thread-monitor (current-thread) thread msg))
 
+(defstruct actor-table (ht mx)
+  constructor: :init!
+  final: #t)
+
+(defmethod {:init! actor-table}
+  (lambda (self)
+    (struct-instance-init! self
+      (make-hash-table test: uuid=? hash: uuid-hash)
+      (make-mutex))))
+
+(def (actor-table-put! at uuid actor proto)
+  (with ((actor-table ht mx) at)
+    (mutex-lock! mx)
+    (hash-put! ht uuid (values actor proto))
+    (mutex-unlock! mx)))
+
+(def (actor-table-get at uuid)
+  (with ((actor-table ht mx) at)
+    (mutex-lock! mx)
+    (let (val (hash-get ht uuid))
+      (mutex-unlock! mx)
+      val)))
+
+(def (actor-table-key? at uuid)
+  (with ((actor-table ht mx) at)
+    (mutex-lock! mx)
+    (let (res (hash-key? ht uuid))
+      (mutex-unlock! mx)
+      res)))
+
+(def (actor-table-remove! at uuid)
+  (with ((actor-table ht mx) at)
+    (mutex-lock! mx)
+    (hash-remove! ht uuid)
+    (mutex-unlock! mx)))
+
 (def (rpc-server-loop socksrv socks sas proto)
   (def connect-e
     (!rpc-protocol-connect proto))
   (def accept-e
     (!rpc-protocol-accept proto))
-  (def actors                           ; uuid-symbol => src
-    (make-hash-table-eq))
-  (def protos                           ; uuid-symbol => proto
-    (make-hash-table-eq))
-  (def actor-threads                    ; thread => [uuid-symbol ...]
+  (def actors                           ; uuid => (values actor proto)
+    (make-actor-table))
+  (def actor-threads                    ; thread => [uuid ...]
     (make-hash-table-eq))
   (def conns                            ; address => thread
     (make-hash-table))
@@ -194,14 +226,14 @@ package: std/actor
   (def (accept-connection cli clisa)
     (let* ((cliaddr (socket-address->address clisa))
            (address (list cliaddr server-connection))
-           (thr (spawn rpc-server-connection (current-thread) cli clisa address accept-e)))
+           (thr (spawn rpc-server-connection (current-thread) actors cli clisa address accept-e)))
       (set! server-connection (1+ server-connection))
       (hash-put! conns address thr)
       (hash-put! threads thr address)
       (rpc-monitor thr)))
 
   (def (open-connection address)
-    (let (thr (spawn rpc-client-connection (current-thread) socksrv address connect-e))
+    (let (thr (spawn rpc-client-connection (current-thread) actors socksrv address connect-e))
       (hash-put! conns address thr)
       (hash-put! threads thr address)
       (rpc-monitor thr)
@@ -210,16 +242,6 @@ package: std/actor
   (def (handle-protocol-action msg)
     (with ((message content src dest opt) msg)
       (match content
-        ((!rpc.lookup id k)
-         (let* ((uuid (UUID id))
-                (uuids (uuid->symbol uuid)))
-           (cond
-            ((hash-get actors uuids)
-             => (lambda (actor)
-                  (let (proto (hash-get protos uuids))
-                    (!!value src (values actor proto) k))))
-            (else
-             (!!value src #f k)))))
         ((!rpc.connection-accept cli cliaddr)
          (accept-connection cli cliaddr))
         ((!rpc.connection-shutdown)
@@ -241,35 +263,30 @@ package: std/actor
            (let (handler (open-connection address))
              (!!value src (make-remote handler id address proto) k)))))
         ((!rpc.register id proto k)
-         (let* ((uuid (UUID id))
-                (uuids (uuid->symbol uuid)))
-           (if (hash-key? actors uuids)
-             (!!error src "duplicate actor" k)
+         (let (uuid (UUID id))
+           (if (actor-table-key? actors uuid)
+             (!!error src "duplicate registration" k)
              (let (thread (actor-thread-e src))
-                (hash-put! actors uuids src)
-                (hash-put! protos uuids proto)
-                (hash-update! actor-threads thread (cut cons uuids <>) [])
-                (rpc-monitor thread)
-                (!!value src uuid k)))))
+               (actor-table-put! actors uuid src proto)
+               (hash-update! actor-threads thread (cut cons uuid <>) [])
+               (rpc-monitor thread)
+               (!!value src uuid k)))))
         ((!rpc.unregister id k)
          (let* ((uuid (UUID id))
-                (uuids (uuid->symbol uuid))
                 (thread (actor-thread-e src)))
-           (hash-remove! actors uuids)
-           (hash-remove! protos uuids)
-           (let (actor-rest (remove uuids (hash-ref actor-threads thread [])))
+           (actor-table-remove! actors uuid)
+           (let (actor-rest (remf (cut uuid=? <> uuid) (hash-ref actor-threads thread [])))
              (if (null? actor-rest)
                (hash-remove! actor-threads thread)
                (hash-put! actor-threads thread actor-rest)))
            (!!value src (void) k)))
         ((!rpc.resolve id k)
-         (let* ((uuid (UUID id))
-                (uuids (uuid->symbol uuid)))
-           (cond
-            ((hash-get actors uuids)
-             => (lambda (actor) (!!value src actor k)))
-            (else
-             (!!value src #f k)))))
+         (let (uuid (UUID id))
+           (match (actor-table-get actors uuid)
+             ((values actor proto)
+              (!!value src actor k))
+             (else
+              (!!value src #f k)))))
         ((!rpc.server-address k)
          (let (addresses (map socket-address->address sas))
            (!!value src addresses k)))
@@ -314,8 +331,7 @@ package: std/actor
     (cond
      ((hash-get actor-threads thread)
       => (lambda (uuids)
-           (for-each (cut hash-remove! actors <>) uuids)
-           (for-each (cut hash-remove! protos <>) uuids)
+           (for-each (cut actor-table-remove! actors <>) uuids)
            (hash-remove! actor-threads thread)))))
 
   (def (loop)
@@ -334,13 +350,12 @@ package: std/actor
                  (let (thr (open-connection address))
                    (thread-send thr msg))))))
             ((handle? dest)
-             (let* ((uuid (handle-uuid dest))
-                    (uuids (uuid->symbol uuid)))
-               (cond
-                ((hash-get actors uuids)
-                 => (lambda (actor) (send actor msg)))
-                (else
-                 (rpc-send-error-response msg "unknown actor")))))
+             (let (uuid (handle-uuid dest))
+               (match (actor-table-get actors uuid)
+                 ((values actor proto)
+                  (send actor msg))
+                 (else
+                  (rpc-send-error-response msg "unknown actor")))))
             ((eq? (current-thread) dest)
              (handle-protocol-action msg))
             (else
@@ -405,19 +420,19 @@ package: std/actor
         (ignore (lp))
         (else (void)))))
 
-(def (rpc-server-connection rpc-server sock sa cliaddr proto-e)
+(def (rpc-server-connection rpc-server actors sock sa cliaddr proto-e)
   (try
    (rpc-set-nodelay! sock (socket-address-family sa))
-   (rpc-connection-loop rpc-server sock cliaddr proto-e)
+   (rpc-connection-loop rpc-server actors sock cliaddr proto-e)
    (catch (e)
      (rpc-connection-cleanup rpc-server e sock))))
 
-(def (rpc-client-connection rpc-server socksrv address proto-e)
+(def (rpc-client-connection rpc-server actors socksrv address proto-e)
   (try
    (let* ((sa (socket-address address))
           (cli (server-connect socksrv sa)))
      (rpc-set-nodelay! cli (socket-address-family sa))
-     (rpc-connection-loop rpc-server cli address proto-e))
+     (rpc-connection-loop rpc-server actors cli address proto-e))
    (catch (e)
      (rpc-connection-cleanup rpc-server e #f))))
 
@@ -451,7 +466,7 @@ package: std/actor
    (else
     (error "bad timeout; expected finite positive real or #f" dt))))
 
-(def (rpc-connection-loop rpc-server sock peer-address proto-e)
+(def (rpc-connection-loop rpc-server actors sock peer-address proto-e)
   (def input
     (server-input-buffer sock))
   (def output
@@ -549,7 +564,7 @@ package: std/actor
 
   (def (dispatch-call msg bytes)
     (let (uuid (message-dest msg))
-      (match (!!rpc.lookup rpc-server uuid)
+      (match (actor-table-get actors uuid)
         ((values actor proto)
          (let (e (unmarshal-message-content msg proto bytes))
            (if (message? e)
