@@ -42,7 +42,7 @@ package: std/actor
 (defstruct proxy (handler))
 
 ;;; send primitives
-(def (send dest msg (check-dead? (proxy? dest)))
+(def (send dest msg (check-dead? #f))
   (let lp ((dest dest))
     (cond
      ((thread? dest)
@@ -54,11 +54,11 @@ package: std/actor
      (else
       (lp (call-method ':actor dest))))))
 
-(def (send-message dest value (options #f) (check-dead? #f))
+(def (send-message dest value (options #f) (check-dead? (proxy? dest)))
   (send dest (make-message value (current-thread) dest options)
         check-dead?))
 
-(def (send-message/timeout dest value timeo (check-dead? #f))
+(def (send-message/timeout dest value timeo (check-dead? (proxy? dest)))
   (send dest (make-message value (current-thread) dest [timeout: timeo])
         check-dead?))
 
