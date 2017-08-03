@@ -11,6 +11,7 @@ package: std/actor
         :std/event
         :std/logger
         :std/misc/pqueue
+        :std/misc/sync
         :std/net/address
         :std/net/server
         :std/os/socket
@@ -166,41 +167,17 @@ package: std/actor
     (thread-send server msg))
   (spawn/name 'rpc-monitor thread-monitor (current-thread) thread msg))
 
-(defstruct actor-table (ht mx)
-  constructor: :init!
-  final: #t)
 
-(defmethod {:init! actor-table}
-  (lambda (self)
-    (struct-instance-init! self
-      (make-hash-table test: uuid=? hash: uuid-hash)
-      (make-mutex))))
-
+(def (make-actor-table)
+  (make-sync-hash (make-hash-table test: uuid=? hash: uuid-hash)))
 (def (actor-table-put! at uuid actor proto)
-  (with ((actor-table ht mx) at)
-    (mutex-lock! mx)
-    (hash-put! ht uuid (values actor proto))
-    (mutex-unlock! mx)))
-
-(def (actor-table-get at uuid)
-  (with ((actor-table ht mx) at)
-    (mutex-lock! mx)
-    (let (val (hash-get ht uuid))
-      (mutex-unlock! mx)
-      val)))
-
-(def (actor-table-key? at uuid)
-  (with ((actor-table ht mx) at)
-    (mutex-lock! mx)
-    (let (res (hash-key? ht uuid))
-      (mutex-unlock! mx)
-      res)))
-
-(def (actor-table-remove! at uuid)
-  (with ((actor-table ht mx) at)
-    (mutex-lock! mx)
-    (hash-remove! ht uuid)
-    (mutex-unlock! mx)))
+  (sync-hash-put! at uuid (values actor proto)))
+(def actor-table-get
+  sync-hash-get)
+(def actor-table-key?
+  sync-hash-key?)
+(def actor-table-remove!
+  sync-hash-remove!)
 
 (def (rpc-server-loop socksrv socks sas proto)
   (def connect-e
