@@ -1,0 +1,61 @@
+#!/usr/bin/env gxi
+;; -*- Gerbil -*-
+
+(import :gerbil/expander
+        :std/sugar)
+
+(def (main mod . args)
+  (let* ((ctx (import-module (string->symbol mod) #f #t))
+         (main-id (find-runtime-symbol ctx 'main))
+         (main-fn (eval main-id)))
+    (profile main-fn args)))
+
+(def (find-export-binding ctx id)
+  (cond
+   ((find (match <>
+            ((module-export _ _ 0 (eq? id)) #t)
+            (else #f))
+          (module-context-export ctx))
+    => core-resolve-module-export)
+   (else #f)))
+
+(def (find-runtime-symbol ctx id)
+  (cond
+   ((find-export-binding ctx id)
+    => (lambda (bind)
+         (unless (runtime-binding? bind)
+           (error "export is not a runtime binding" id))
+         (binding-id bind)))
+   (else
+    (error "module does not export symbol" (expander-context-id ctx) id))))
+
+(def (profile fun args)
+  (try
+   (dynamic-wind
+       profile-start!
+       (cut apply fun args)
+       profile-end!)
+   (finally
+    (call-with-output-file "gxprof.out" (cut write samples <>)))))
+
+(def samples [])
+
+(def (profile-start!)
+  (##interrupt-vector-set! 2 profile-heartbeat!))
+
+(def (profile-end!)
+  (##interrupt-vector-set! 2 ##thread-heartbeat!))
+
+(def (profile-heartbeat!)
+  (##continuation-capture
+   (lambda (cont)
+     (##thread-heartbeat!)
+     (set! samples (cons (continuation->sample cont) samples)))))
+
+(def (continuation->sample cont)
+  (let lp ((cont (##continuation-next-frame cont #t)) (bt []))
+    (if cont
+      (let (trace (##procedure-friendly-name (##continuation-creator cont)))
+        (lp (##continuation-next-frame cont #t)
+            (cons trace bt)))
+      (reverse bt))))
