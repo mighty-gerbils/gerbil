@@ -117,6 +117,7 @@
     "misc/uuid"
     "misc/queue"
     "misc/pqueue"
+    "misc/sync"
     (gxc:  "misc/ports" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc:  "misc/threads" "-e" "(include \"~~lib/_gambit#.scm\")")
     ;; :std/actor
