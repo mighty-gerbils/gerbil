@@ -46,9 +46,12 @@ package: std/actor
   (let lp ((dest dest))
     (cond
      ((thread? dest)
-      (if (or (not check-dead?) (not (thread-dead? dest)))
-        (thread-send dest msg)
-        (raise (make-actor-error 'send "Cannot send message; dead thread" dest msg))))
+      (cond
+       ((not check-dead?)
+        (thread-send dest msg))
+       ((thread-send/check dest msg))
+       (else
+        (raise (make-actor-error 'send "Cannot send message; dead thread" dest msg)))))
      ((proxy? dest)
       (lp (proxy-handler dest)))
      (else
@@ -61,6 +64,16 @@ package: std/actor
 (def (send-message/timeout dest value timeo (check-dead? (proxy? dest)))
   (send dest (make-message value (current-thread) dest [timeout: timeo])
         check-dead?))
+
+(extern thread-send/check)
+(begin-foreign
+  (namespace ("std/actor/message#" send thread-send/check))
+  (define (thread-send/check thread msg)
+    (declare (not interrupts-enabled))
+    (macro-check-initialized-thread thread (send thread msg)
+      (if (macro-thread-end-condvar thread)
+        (##thread-send thread msg)
+        #f))))
 
 (defsyntax (-> stx)
   (syntax-case stx ()
