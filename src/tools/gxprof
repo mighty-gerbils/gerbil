@@ -55,7 +55,7 @@
 (def (continuation->sample cont)
   (let lp ((cont (##continuation-next-frame cont #t)) (bt []))
     (if cont
-      (let (trace (##procedure-friendly-name (##continuation-creator cont)))
+      (let (trace (##procedure-name (##continuation-creator cont)))
         (lp (##continuation-next-frame cont #t)
             (cons trace bt)))
       (reverse bt))))
