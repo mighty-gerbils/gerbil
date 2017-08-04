@@ -404,21 +404,16 @@ END-C
   (xdr-binary-write (opaque-data obj) port))
 
 (def (xdr-structure-write obj port)
-  (cond
-   ((find-method obj ':xdr)
-    => (lambda (xdrf)
-         (xdr-write-object (xdrf obj) port)))
-   (else
-    (let (type-id (##type-id (object-type obj)))
-      (cond
-       ((xdr-type-registry-get type-id)
-        => (lambda (xdr)
-             (write-u8 xdr-proto-type-structure port)
-             (xdr-write-object type-id port)
-             ((XDR-write xdr) obj port)))
-       (else
-        (xdr-write-object (make-opaque type-id (object->u8vector obj))
-                          port)))))))
+  (let (type-id (##type-id (object-type obj)))
+    (cond
+     ((xdr-type-registry-get type-id)
+      => (lambda (xdr)
+           (write-u8 xdr-proto-type-structure port)
+           (xdr-write-object type-id port)
+           ((XDR-write xdr) obj port)))
+     (else
+      (xdr-write-object (make-opaque type-id (object->u8vector obj))
+                        port)))))
 
 (def (int? obj)
   (and (integer? obj)
