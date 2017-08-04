@@ -833,6 +833,11 @@ package: std/actor
          (warning "unexpected message ~a" bogus)
          (loop))))
 
+  (def (run)
+    ;; create a denv cell and bubble up the cache; cf parameter perf considerations
+    (parameterize ((current-xdr-type-registry *default-proto-type-registry*))
+      (loop)))
+
   (let (thread (spawn/name 'rpc-connection-reader reader-loop (current-thread)))
     (set! reader thread)
     (rpc-monitor thread))
@@ -843,8 +848,7 @@ package: std/actor
 
   (reset-idle-timeout)
   (try
-   (parameterize ((current-xdr-type-registry *default-proto-type-registry*))
-     (loop))
+   (run)
    (catch (e)
      (log-error "unhandled exception" e)
      (close-connection))))
