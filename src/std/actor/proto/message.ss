@@ -53,6 +53,11 @@ package: std/actor/proto
 ;; wire representation
 ;; rpc-proto-message-type dest content
 (def (rpc-proto-write-message msg proto port)
+  (current-xdr-type-registry
+   (if proto
+     (!protocol-types proto)
+     *default-proto-type-registry*))
+
   (with ((message content _ dest) msg)
     (cond
      ((!rpc? content)
@@ -101,22 +106,18 @@ package: std/actor/proto
                              "unknown rpc message type" content))))
      (else
       (write-u8 rpc-proto-message-raw port)))
-    (parameterize ((current-xdr-type-registry
-                    (if proto
-                      (!protocol-types proto)
-                      *default-proto-type-registry*)))
-      (match content
-        ((or (!call e)
-             (!value e)
-             (!error e)
-             (!event e)
-             (!stream e)
-             (!yield e))
-         (xdr-write-object e port))
-        ((? (or !end? !continue? !close? !abort?))
-         (void))
-        (else
-         (xdr-write-object content port))))
+    (match content
+      ((or (!call e)
+           (!value e)
+           (!error e)
+           (!event e)
+           (!stream e)
+           (!yield e))
+       (xdr-write-object e port))
+      ((? (or !end? !continue? !close? !abort?))
+       (void))
+      (else
+       (xdr-write-object content port)))
     (force-output port)))
 
 (def (rpc-proto-unmarshal-message proto u8v)
@@ -167,42 +168,43 @@ package: std/actor/proto
 
 ;; return modify msg content in place, return it
 (def (rpc-proto-read-message-content msg proto port)
-  (parameterize ((current-xdr-type-registry
-                  (if proto
-                    (!protocol-types proto)
-                    *default-proto-type-registry*)))
-    (let (content (message-e msg))
+  (current-xdr-type-registry
+   (if proto
+     (!protocol-types proto)
+     *default-proto-type-registry*))
+
+  (let (content (message-e msg))
+    (cond
+     ((!rpc? content)
       (cond
-       ((!rpc? content)
-        (cond
-         ((!call? content)
-          (set! (!call-e content)
-            (xdr-read-object port)))
-         ((!value? content)
-          (set! (!value-e content)
-            (xdr-read-object port)))
-         ((!error? content)
-          (let* ((e (xdr-read-object port))
-                 (e (if (string? e)
-                      (make-remote-error 'rpc e)
-                      e)))
-            (set! (!error-e content)
-              e)))
-         ((!event? content)
-          (set! (!event-e content)
-            (xdr-read-object port)))
-         ((!stream? content)
-          (set! (!stream-e content)
-            (xdr-read-object port)))
-         ((!yield? content)
-          (set! (!yield-e content)
-            (xdr-read-object port)))
-         ;; !end/!continue/!close/!abort are empty
-         ))
-       (else
-        (set! (message-e msg)
-          (xdr-read-object port))))
-      msg)))
+       ((!call? content)
+        (set! (!call-e content)
+          (xdr-read-object port)))
+       ((!value? content)
+        (set! (!value-e content)
+          (xdr-read-object port)))
+       ((!error? content)
+        (let* ((e (xdr-read-object port))
+               (e (if (string? e)
+                    (make-remote-error 'rpc e)
+                    e)))
+          (set! (!error-e content)
+            e)))
+       ((!event? content)
+        (set! (!event-e content)
+          (xdr-read-object port)))
+       ((!stream? content)
+        (set! (!stream-e content)
+          (xdr-read-object port)))
+       ((!yield? content)
+        (set! (!yield-e content)
+          (xdr-read-object port)))
+       ;; !end/!continue/!close/!abort are empty
+       ))
+     (else
+      (set! (message-e msg)
+        (xdr-read-object port))))
+    msg))
 
 
 (def (read-u32 port)
