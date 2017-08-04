@@ -843,7 +843,8 @@ package: std/actor
 
   (reset-idle-timeout)
   (try
-   (loop)
+   (parameterize ((current-xdr-type-registry *default-proto-type-registry*))
+     (loop))
    (catch (e)
      (log-error "unhandled exception" e)
      (close-connection))))
