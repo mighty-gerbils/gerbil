@@ -157,6 +157,8 @@ package: gerbil
     make-struct-predicate
     make-struct-field-accessor
     make-struct-field-mutator
+    make-struct-field-unchecked-accessor
+    make-struct-field-unchecked-mutator
     struct-field-ref
     struct-field-set!
     unchecked-field-ref
@@ -165,6 +167,8 @@ package: gerbil
     make-class-predicate
     make-class-slot-accessor
     make-class-slot-mutator
+    make-class-slot-unchecked-accessor
+    make-class-slot-unchecked-mutator
     class-slot-ref
     class-slot-set!
     unchecked-slot-ref
@@ -1132,10 +1136,10 @@ package: gerbil
              [off #'getf #'setf])))
 
         (def (struct-opt? key)
-          (memq (stx-e key) '(fields: id: name: plist: constructor:)))
+          (memq (stx-e key) '(fields: id: name: plist: constructor: unchecked:)))
 
         (def (class-opt? key)
-          (memq (stx-e key) '(slots: id: name: plist: constructor:)))
+          (memq (stx-e key) '(slots: id: name: plist: constructor: unchecked:)))
 
         (def (module-type-id type-t)
           (cond
@@ -1156,16 +1160,22 @@ package: gerbil
            (with-syntax* (((values els)
                            (or (stx-getq (if struct? fields: slots:) #'rest)
                                []))
-                          ((make-instance make-predicate make-getf make-setf)
+                          ((make-instance make-predicate
+                                          make-getf make-setf
+                                          make-ugetf make-usetf)
                            (if struct?
                              #'(make-struct-instance
                                 make-struct-predicate
                                 make-struct-field-accessor
-                                make-struct-field-mutator)
+                                make-struct-field-mutator
+                                make-struct-field-unchecked-accessor
+                                make-struct-field-unchecked-mutator)
                              #'(make-class-instance
                                 make-class-predicate
                                 make-class-slot-accessor
-                                make-class-slot-mutator)))
+                                make-class-slot-mutator
+                                make-class-slot-unchecked-accessor
+                                make-class-slot-unchecked-mutator)))
                           (type-id
                            (or (stx-getq id: #'rest)
                                (if (module-context? (current-expander-context))
@@ -1202,6 +1212,10 @@ package: gerbil
                                    (apply make-instance type-t $args)))))
                           (def-predicate
                             (wrap #'(def instance? (make-predicate type-t))))
+                          ((values attrs)
+                           (if struct?
+                             (stx-map slotify els (iota (stx-length els)))
+                             els))
                           (((def-getf def-setf) ...)
                            (stx-map
                             (lambda (ref)
@@ -1211,15 +1225,29 @@ package: gerbil
                                    #'(def getf (make-getf type-t 'key)))
                                   (wrap
                                    #'(def setf (make-setf type-t 'key)))])))
-                            (if struct?
-                              (stx-map slotify els (iota (stx-length els)))
-                              els))))
+                            attrs))
+                          (((def-ugetf def-usetf) ...)
+                           (if (stx-e (stx-getq unchecked: #'rest))
+                             (stx-map
+                              (lambda (ref)
+                                (syntax-case ref ()
+                                  ((key getf setf)
+                                   (with-syntax ((ugetf (stx-identifier #'getf "&" #'getf))
+                                                 (usetf (stx-identifier #'setf "&" #'setf)))
+                                     [(wrap
+                                       #'(def ugetf (make-ugetf type-t 'key)))
+                                      (wrap
+                                       #'(def usetf (make-usetf type-t 'key)))]))))
+                              attrs)
+                             [])))
              (wrap
               #'(begin def-type
                        def-predicate
                        def-make
                        def-getf ...
-                       def-setf ...)))))))
+                       def-setf ...
+                       def-ugetf ...
+                       def-usetf ...)))))))
 
     (defsyntax (defstruct-type stx)
       (generate-typedef stx #t))
@@ -1362,7 +1390,7 @@ package: gerbil
       (def (typedef-body? stx)
         (def (body-opt? key)
           (memq (stx-e key)
-                '(id: name: constructor: transparent: final: plist:)))
+                '(id: name: constructor: transparent: final: plist: unchecked:)))
         (stx-plist? stx body-opt?))
 
       (def (generate-typedef stx id super-ref els body struct?)
@@ -1430,12 +1458,17 @@ package: gerbil
                         (if (null? plist) plist
                             (with-syntax ((plist plist))
                               [plist: #'(quote plist)])))
+                       ((values type-unchecked)
+                        (or (alet (e (stx-getq unchecked: body))
+                              [unchecked: e])
+                            []))
                        ((type-body ...)
                         [type-attr ...
                          type-id ...
                          type-name ...
                          type-ctor ...
-                         type-plist ...])
+                         type-plist ...
+                         type-unchecked ...])
                        (typedef
                          (wrap
                           #'(deftype-type type::t type-super

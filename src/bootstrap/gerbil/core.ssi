@@ -392,6 +392,10 @@ namespace: gerbil/core
                     (make-struct-predicate make-struct-predicate)
                     (make-struct-field-accessor make-struct-field-accessor)
                     (make-struct-field-mutator make-struct-field-mutator)
+                    (make-struct-field-unchecked-accessor
+                     make-struct-field-unchecked-accessor)
+                    (make-struct-field-unchecked-mutator
+                     make-struct-field-unchecked-mutator)
                     (struct-field-ref struct-field-ref)
                     (struct-field-set! struct-field-set!)
                     (unchecked-field-ref unchecked-field-ref)
@@ -400,6 +404,10 @@ namespace: gerbil/core
                     (make-class-predicate make-class-predicate)
                     (make-class-slot-accessor make-class-slot-accessor)
                     (make-class-slot-mutator make-class-slot-mutator)
+                    (make-class-slot-unchecked-accessor
+                     make-class-slot-unchecked-accessor)
+                    (make-class-slot-unchecked-mutator
+                     make-class-slot-unchecked-mutator)
                     (class-slot-ref class-slot-ref)
                     (class-slot-set! class-slot-set!)
                     (unchecked-slot-ref unchecked-slot-ref)

@@ -7,12 +7,16 @@ package: gerbil/compiler
    (@struct-type gxc#symbol-table::t #f 2 :init! ()))
   (declare-type gxc#symbol-table? (@struct-pred gxc#symbol-table::t))
   (declare-type gxc#make-symbol-table (@struct-cons gxc#symbol-table::t))
-  (declare-type gxc#symbol-table-gensyms (@struct-getf gxc#symbol-table::t 0))
-  (declare-type gxc#symbol-table-bindings (@struct-getf gxc#symbol-table::t 1))
+  (declare-type
+   gxc#symbol-table-gensyms
+   (@struct-getf gxc#symbol-table::t 0 #f))
+  (declare-type
+   gxc#symbol-table-bindings
+   (@struct-getf gxc#symbol-table::t 1 #f))
   (declare-type
    gxc#symbol-table-gensyms-set!
-   (@struct-setf gxc#symbol-table::t 0))
+   (@struct-setf gxc#symbol-table::t 0 #f))
   (declare-type
    gxc#symbol-table-bindings-set!
-   (@struct-setf gxc#symbol-table::t 1))
+   (@struct-setf gxc#symbol-table::t 1 #f))
   (declare-method gxc#symbol-table::t :init! gxc#symbol-table:::init! #f))

@@ -7,16 +7,18 @@ package: gerbil/expander
    (@struct-type gx#expander-context::t #f 2 :init! ()))
   (declare-type gx#expander-context? (@struct-pred gx#expander-context::t))
   (declare-type gx#make-expander-context (@struct-cons gx#expander-context::t))
-  (declare-type gx#expander-context-id (@struct-getf gx#expander-context::t 0))
+  (declare-type
+   gx#expander-context-id
+   (@struct-getf gx#expander-context::t 0 #f))
   (declare-type
    gx#expander-context-table
-   (@struct-getf gx#expander-context::t 1))
+   (@struct-getf gx#expander-context::t 1 #f))
   (declare-type
    gx#expander-context-id-set!
-   (@struct-setf gx#expander-context::t 0))
+   (@struct-setf gx#expander-context::t 0 #f))
   (declare-type
    gx#expander-context-table-set!
-   (@struct-setf gx#expander-context::t 1))
+   (@struct-setf gx#expander-context::t 1 #f))
   (declare-type
    gx#root-context::t
    (@struct-type gx#root-context::t gx#expander-context::t 0 :init! ()))
@@ -27,12 +29,14 @@ package: gerbil/expander
    (@struct-type gx#context-phi::t gx#expander-context::t 3 :init! ()))
   (declare-type gx#phi-context? (@struct-pred gx#phi-context::t))
   (declare-type gx#make-phi-context (@struct-cons gx#phi-context::t))
-  (declare-type gx#phi-context-super (@struct-getf gx#phi-context::t 0))
-  (declare-type gx#phi-context-up (@struct-getf gx#phi-context::t 1))
-  (declare-type gx#phi-context-down (@struct-getf gx#phi-context::t 2))
-  (declare-type gx#phi-context-super-set! (@struct-setf gx#phi-context::t 0))
-  (declare-type gx#phi-context-up-set! (@struct-setf gx#phi-context::t 1))
-  (declare-type gx#phi-context-down-set! (@struct-setf gx#phi-context::t 2))
+  (declare-type gx#phi-context-super (@struct-getf gx#phi-context::t 0 #f))
+  (declare-type gx#phi-context-up (@struct-getf gx#phi-context::t 1 #f))
+  (declare-type gx#phi-context-down (@struct-getf gx#phi-context::t 2 #f))
+  (declare-type
+   gx#phi-context-super-set!
+   (@struct-setf gx#phi-context::t 0 #f))
+  (declare-type gx#phi-context-up-set! (@struct-setf gx#phi-context::t 1 #f))
+  (declare-type gx#phi-context-down-set! (@struct-setf gx#phi-context::t 2 #f))
   (declare-type
    gx#top-context::t
    (@struct-type gx#top-context::t gx#phi-context::t 0 :init! ()))
@@ -43,47 +47,59 @@ package: gerbil/expander
    (@struct-type gx#module-context::t gx#top-context::t 6 :init! ()))
   (declare-type gx#module-context? (@struct-pred gx#module-context::t))
   (declare-type gx#make-module-context (@struct-cons gx#module-context::t))
-  (declare-type gx#module-context-ns (@struct-getf gx#module-context::t 0))
-  (declare-type gx#module-context-path (@struct-getf gx#module-context::t 1))
-  (declare-type gx#module-context-import (@struct-getf gx#module-context::t 2))
-  (declare-type gx#module-context-export (@struct-getf gx#module-context::t 3))
-  (declare-type gx#module-context-e (@struct-getf gx#module-context::t 4))
-  (declare-type gx#module-context-code (@struct-getf gx#module-context::t 5))
+  (declare-type gx#module-context-ns (@struct-getf gx#module-context::t 0 #f))
+  (declare-type
+   gx#module-context-path
+   (@struct-getf gx#module-context::t 1 #f))
+  (declare-type
+   gx#module-context-import
+   (@struct-getf gx#module-context::t 2 #f))
+  (declare-type
+   gx#module-context-export
+   (@struct-getf gx#module-context::t 3 #f))
+  (declare-type gx#module-context-e (@struct-getf gx#module-context::t 4 #f))
+  (declare-type
+   gx#module-context-code
+   (@struct-getf gx#module-context::t 5 #f))
   (declare-type
    gx#module-context-ns-set!
-   (@struct-setf gx#module-context::t 0))
+   (@struct-setf gx#module-context::t 0 #f))
   (declare-type
    gx#module-context-path-set!
-   (@struct-setf gx#module-context::t 1))
+   (@struct-setf gx#module-context::t 1 #f))
   (declare-type
    gx#module-context-import-set!
-   (@struct-setf gx#module-context::t 2))
+   (@struct-setf gx#module-context::t 2 #f))
   (declare-type
    gx#module-context-export-set!
-   (@struct-setf gx#module-context::t 3))
-  (declare-type gx#module-context-e-set! (@struct-setf gx#module-context::t 4))
+   (@struct-setf gx#module-context::t 3 #f))
+  (declare-type
+   gx#module-context-e-set!
+   (@struct-setf gx#module-context::t 4 #f))
   (declare-type
    gx#module-context-code-set!
-   (@struct-setf gx#module-context::t 5))
+   (@struct-setf gx#module-context::t 5 #f))
   (declare-type
    gx#prelude-context::t
    (@struct-type gx#prelude-context::t gx#top-context::t 3 :init! ()))
   (declare-type gx#prelude-context? (@struct-pred gx#prelude-context::t))
   (declare-type gx#make-prelude-context (@struct-cons gx#prelude-context::t))
-  (declare-type gx#prelude-context-path (@struct-getf gx#prelude-context::t 0))
+  (declare-type
+   gx#prelude-context-path
+   (@struct-getf gx#prelude-context::t 0 #f))
   (declare-type
    gx#prelude-context-import
-   (@struct-getf gx#prelude-context::t 1))
-  (declare-type gx#prelude-context-e (@struct-getf gx#prelude-context::t 2))
+   (@struct-getf gx#prelude-context::t 1 #f))
+  (declare-type gx#prelude-context-e (@struct-getf gx#prelude-context::t 2 #f))
   (declare-type
    gx#prelude-context-path-set!
-   (@struct-setf gx#prelude-context::t 0))
+   (@struct-setf gx#prelude-context::t 0 #f))
   (declare-type
    gx#prelude-context-import-set!
-   (@struct-setf gx#prelude-context::t 1))
+   (@struct-setf gx#prelude-context::t 1 #f))
   (declare-type
    gx#prelude-context-e-set!
-   (@struct-setf gx#prelude-context::t 2))
+   (@struct-setf gx#prelude-context::t 2 #f))
   (declare-type
    gx#local-context::t
    (@struct-type gx#local-context::t gx#phi-context::t 0 :init! ()))
@@ -104,12 +120,12 @@ package: gerbil/expander
   (declare-type gx#binding::t (@struct-type gx#binding::t #f 3 #f ()))
   (declare-type gx#binding? (@struct-pred gx#binding::t))
   (declare-type gx#make-binding (@struct-cons gx#binding::t))
-  (declare-type gx#binding-id (@struct-getf gx#binding::t 0))
-  (declare-type gx#binding-key (@struct-getf gx#binding::t 1))
-  (declare-type gx#binding-phi (@struct-getf gx#binding::t 2))
-  (declare-type gx#binding-id-set! (@struct-setf gx#binding::t 0))
-  (declare-type gx#binding-key-set! (@struct-setf gx#binding::t 1))
-  (declare-type gx#binding-phi-set! (@struct-setf gx#binding::t 2))
+  (declare-type gx#binding-id (@struct-getf gx#binding::t 0 #f))
+  (declare-type gx#binding-key (@struct-getf gx#binding::t 1 #f))
+  (declare-type gx#binding-phi (@struct-getf gx#binding::t 2 #f))
+  (declare-type gx#binding-id-set! (@struct-setf gx#binding::t 0 #f))
+  (declare-type gx#binding-key-set! (@struct-setf gx#binding::t 1 #f))
+  (declare-type gx#binding-phi-set! (@struct-setf gx#binding::t 2 #f))
   (declare-type
    gx#runtime-binding::t
    (@struct-type gx#runtime-binding::t gx#binding::t 0 #f ()))
@@ -132,10 +148,10 @@ package: gerbil/expander
   (declare-type gx#make-module-binding (@struct-cons gx#module-binding::t))
   (declare-type
    gx#module-binding-context
-   (@struct-getf gx#module-binding::t 0))
+   (@struct-getf gx#module-binding::t 0 #f))
   (declare-type
    gx#module-binding-context-set!
-   (@struct-setf gx#module-binding::t 0))
+   (@struct-setf gx#module-binding::t 0 #f))
   (declare-type
    gx#extern-binding::t
    (@struct-type gx#extern-binding::t gx#top-binding::t 0 #f ()))
@@ -146,50 +162,60 @@ package: gerbil/expander
    (@struct-type gx#syntax-binding::t gx#binding::t 1 #f ((final: . #t))))
   (declare-type gx#syntax-binding? (@struct-pred gx#syntax-binding::t))
   (declare-type gx#make-syntax-binding (@struct-cons gx#syntax-binding::t))
-  (declare-type gx#syntax-binding-e (@struct-getf gx#syntax-binding::t 0))
-  (declare-type gx#syntax-binding-e-set! (@struct-setf gx#syntax-binding::t 0))
+  (declare-type gx#syntax-binding-e (@struct-getf gx#syntax-binding::t 0 #f))
+  (declare-type
+   gx#syntax-binding-e-set!
+   (@struct-setf gx#syntax-binding::t 0 #f))
   (declare-type
    gx#import-binding::t
    (@struct-type gx#import-binding::t gx#binding::t 3 #f ((final: . #t))))
   (declare-type gx#import-binding? (@struct-pred gx#import-binding::t))
   (declare-type gx#make-import-binding (@struct-cons gx#import-binding::t))
-  (declare-type gx#import-binding-e (@struct-getf gx#import-binding::t 0))
+  (declare-type gx#import-binding-e (@struct-getf gx#import-binding::t 0 #f))
   (declare-type
    gx#import-binding-context
-   (@struct-getf gx#import-binding::t 1))
-  (declare-type gx#import-binding-weak? (@struct-getf gx#import-binding::t 2))
-  (declare-type gx#import-binding-e-set! (@struct-setf gx#import-binding::t 0))
+   (@struct-getf gx#import-binding::t 1 #f))
+  (declare-type
+   gx#import-binding-weak?
+   (@struct-getf gx#import-binding::t 2 #f))
+  (declare-type
+   gx#import-binding-e-set!
+   (@struct-setf gx#import-binding::t 0 #f))
   (declare-type
    gx#import-binding-context-set!
-   (@struct-setf gx#import-binding::t 1))
+   (@struct-setf gx#import-binding::t 1 #f))
   (declare-type
    gx#import-binding-weak?-set!
-   (@struct-setf gx#import-binding::t 2))
+   (@struct-setf gx#import-binding::t 2 #f))
   (declare-type
    gx#alias-binding::t
    (@struct-type gx#alias-binding::t gx#binding::t 1 #f ((final: . #t))))
   (declare-type gx#alias-binding? (@struct-pred gx#alias-binding::t))
   (declare-type gx#make-alias-binding (@struct-cons gx#alias-binding::t))
-  (declare-type gx#alias-binding-e (@struct-getf gx#alias-binding::t 0))
-  (declare-type gx#alias-binding-e-set! (@struct-setf gx#alias-binding::t 0))
+  (declare-type gx#alias-binding-e (@struct-getf gx#alias-binding::t 0 #f))
+  (declare-type
+   gx#alias-binding-e-set!
+   (@struct-setf gx#alias-binding::t 0 #f))
   (declare-type gx#expander::t (@struct-type gx#expander::t #f 1 #f ()))
   (declare-type gx#expander? (@struct-pred gx#expander::t))
   (declare-type gx#make-expander (@struct-cons gx#expander::t))
-  (declare-type gx#expander-e (@struct-getf gx#expander::t 0))
-  (declare-type gx#expander-e-set! (@struct-setf gx#expander::t 0))
+  (declare-type gx#expander-e (@struct-getf gx#expander::t 0 #f))
+  (declare-type gx#expander-e-set! (@struct-setf gx#expander::t 0 #f))
   (declare-type
    gx#core-expander::t
    (@struct-type gx#core-expander::t gx#expander::t 2 #f ()))
   (declare-type gx#core-expander? (@struct-pred gx#core-expander::t))
   (declare-type gx#make-core-expander (@struct-cons gx#core-expander::t))
-  (declare-type gx#core-expander-id (@struct-getf gx#core-expander::t 0))
+  (declare-type gx#core-expander-id (@struct-getf gx#core-expander::t 0 #f))
   (declare-type
    gx#core-expander-compile-top
-   (@struct-getf gx#core-expander::t 1))
-  (declare-type gx#core-expander-id-set! (@struct-setf gx#core-expander::t 0))
+   (@struct-getf gx#core-expander::t 1 #f))
+  (declare-type
+   gx#core-expander-id-set!
+   (@struct-setf gx#core-expander::t 0 #f))
   (declare-type
    gx#core-expander-compile-top-set!
-   (@struct-setf gx#core-expander::t 1))
+   (@struct-setf gx#core-expander::t 1 #f))
   (declare-type
    gx#expression-form::t
    (@struct-type gx#expression-form::t gx#core-expander::t 0 #f ()))
@@ -264,44 +290,56 @@ package: gerbil/expander
    (@struct-type gx#macro-expander::t gx#macro-expander::t 2 #f ()))
   (declare-type gx#user-expander? (@struct-pred gx#user-expander::t))
   (declare-type gx#make-user-expander (@struct-cons gx#user-expander::t))
-  (declare-type gx#user-expander-context (@struct-getf gx#user-expander::t 0))
-  (declare-type gx#user-expander-phi (@struct-getf gx#user-expander::t 1))
+  (declare-type
+   gx#user-expander-context
+   (@struct-getf gx#user-expander::t 0 #f))
+  (declare-type gx#user-expander-phi (@struct-getf gx#user-expander::t 1 #f))
   (declare-type
    gx#user-expander-context-set!
-   (@struct-setf gx#user-expander::t 0))
-  (declare-type gx#user-expander-phi-set! (@struct-setf gx#user-expander::t 1))
+   (@struct-setf gx#user-expander::t 0 #f))
+  (declare-type
+   gx#user-expander-phi-set!
+   (@struct-setf gx#user-expander::t 1 #f))
   (declare-type
    gx#expander-mark::t
    (@struct-type gx#expander-mark::t #f 4 #f ()))
   (declare-type gx#expander-mark? (@struct-pred gx#expander-mark::t))
   (declare-type gx#make-expander-mark (@struct-cons gx#expander-mark::t))
-  (declare-type gx#expander-mark-subst (@struct-getf gx#expander-mark::t 0))
-  (declare-type gx#expander-mark-context (@struct-getf gx#expander-mark::t 1))
-  (declare-type gx#expander-mark-phi (@struct-getf gx#expander-mark::t 2))
-  (declare-type gx#expander-mark-trace (@struct-getf gx#expander-mark::t 3))
+  (declare-type gx#expander-mark-subst (@struct-getf gx#expander-mark::t 0 #f))
+  (declare-type
+   gx#expander-mark-context
+   (@struct-getf gx#expander-mark::t 1 #f))
+  (declare-type gx#expander-mark-phi (@struct-getf gx#expander-mark::t 2 #f))
+  (declare-type gx#expander-mark-trace (@struct-getf gx#expander-mark::t 3 #f))
   (declare-type
    gx#expander-mark-subst-set!
-   (@struct-setf gx#expander-mark::t 0))
+   (@struct-setf gx#expander-mark::t 0 #f))
   (declare-type
    gx#expander-mark-context-set!
-   (@struct-setf gx#expander-mark::t 1))
-  (declare-type gx#expander-mark-phi-set! (@struct-setf gx#expander-mark::t 2))
+   (@struct-setf gx#expander-mark::t 1 #f))
+  (declare-type
+   gx#expander-mark-phi-set!
+   (@struct-setf gx#expander-mark::t 2 #f))
   (declare-type
    gx#expander-mark-trace-set!
-   (@struct-setf gx#expander-mark::t 3))
+   (@struct-setf gx#expander-mark::t 3 #f))
   (declare-type
    gx#syntax-error::t
    (@struct-type gx#syntax-error::t error::t 3 #!void ()))
   (declare-type gx#syntax-error? (@struct-pred gx#syntax-error::t))
   (declare-type gx#make-syntax-error (@struct-cons gx#syntax-error::t))
-  (declare-type gx#syntax-error-context (@struct-getf gx#syntax-error::t 0))
-  (declare-type gx#syntax-error-marks (@struct-getf gx#syntax-error::t 1))
-  (declare-type gx#syntax-error-phi (@struct-getf gx#syntax-error::t 2))
+  (declare-type gx#syntax-error-context (@struct-getf gx#syntax-error::t 0 #f))
+  (declare-type gx#syntax-error-marks (@struct-getf gx#syntax-error::t 1 #f))
+  (declare-type gx#syntax-error-phi (@struct-getf gx#syntax-error::t 2 #f))
   (declare-type
    gx#syntax-error-context-set!
-   (@struct-setf gx#syntax-error::t 0))
-  (declare-type gx#syntax-error-marks-set! (@struct-setf gx#syntax-error::t 1))
-  (declare-type gx#syntax-error-phi-set! (@struct-setf gx#syntax-error::t 2))
+   (@struct-setf gx#syntax-error::t 0 #f))
+  (declare-type
+   gx#syntax-error-marks-set!
+   (@struct-setf gx#syntax-error::t 1 #f))
+  (declare-type
+   gx#syntax-error-phi-set!
+   (@struct-setf gx#syntax-error::t 2 #f))
   (declare-type
    gx#eval-syntax
    (@case-lambda (1 gx#eval-syntax__0) (2 gx#eval-syntax__opt-lambda5681)))
