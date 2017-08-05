@@ -12,6 +12,7 @@ build_stage1() {
     ./build2_fini.sh
     ./build_stdlib.sh || die
     ./build_lang.sh || die
+    ./build_tools.sh || die
 }
 
 build_stage2() {
@@ -21,6 +22,7 @@ build_stage2() {
     ./build2_fini.sh
     ./build_stdlib.sh || die
     ./build_lang.sh || die
+    ./build_tools.sh || die
 }
 
 if [[ "xstage2" = "x${1:-}" ]]; then
