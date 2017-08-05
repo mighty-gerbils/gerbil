@@ -431,10 +431,10 @@ package: std/actor
                 (!!call dest (make-kall arg ...) timeout: timeo))))
          (defn-xdr
            #'(begin
-               (def (kall-xdr-read port)
-                 (xdr-vector-like-read (cut make-object kall::t <>) 1 port))
-               (def (kall-xdr-write obj port)
-                 (xdr-vector-like-write obj 1 port))
+               (def (kall-xdr-read buffer)
+                 (xdr-vector-like-read (cut make-object kall::t <>) 1 buffer))
+               (def (kall-xdr-write obj buffer)
+                 (xdr-vector-like-write obj 1 buffer))
                (def kall::xdr
                  (make-XDR kall? kall-xdr-read kall-xdr-write))
                (hash-put! (!protocol-types proto::proto) 'kall-rt-id kall::xdr))))
@@ -475,10 +475,10 @@ package: std/actor
                 (!!event dest (make-kall arg ...)))))
          (defn-xdr
            #'(begin
-               (def (kall-xdr-read port)
-                 (xdr-vector-like-read (cut make-object kall::t <>) 1 port))
-               (def (kall-xdr-write obj port)
-                 (xdr-vector-like-write obj 1 port))
+               (def (kall-xdr-read buffer)
+                 (xdr-vector-like-read (cut make-object kall::t <>) 1 buffer))
+               (def (kall-xdr-write obj buffer)
+                 (xdr-vector-like-write obj 1 buffer))
                (def kall::xdr
                  (make-XDR kall? kall-xdr-read kall-xdr-write))
                (hash-put! (!protocol-types proto::proto) 'kall-rt-id kall::xdr))))
@@ -525,10 +525,10 @@ package: std/actor
                 (!!stream dest (make-kall arg ...) timeout: timeo))))
          (defn-xdr
            #'(begin
-               (def (kall-xdr-read port)
-                 (xdr-vector-like-read (cut make-object kall::t <>) 1 port))
-               (def (kall-xdr-write obj port)
-                 (xdr-vector-like-write obj 1 port))
+               (def (kall-xdr-read buffer)
+                 (xdr-vector-like-read (cut make-object kall::t <>) 1 buffer))
+               (def (kall-xdr-write obj buffer)
+                 (xdr-vector-like-write obj 1 buffer))
                (def kall::xdr
                  (make-XDR kall? kall-xdr-read kall-xdr-write))
                (hash-put! (!protocol-types proto::proto) 'kall-rt-id kall::xdr))))
@@ -559,11 +559,11 @@ package: std/actor
                         (make-XDR
                          (lambda (obj)
                            (struct-instance? struct::t obj))
-                         (lambda (port)
+                         (lambda (buffer)
                            (xdr-vector-like-read (cut make-object struct::t <>)
-                                                 1 port))
-                         (lambda (obj port)
-                           (xdr-vector-like-write obj 1 port)))))))))
+                                                 1 buffer))
+                         (lambda (obj buffer)
+                           (xdr-vector-like-write obj 1 buffer)))))))))
 
   (def (generate-proto-structures proto-id structures)
     (map (cut generate-proto-structure proto-id <>)
