@@ -197,6 +197,16 @@
     (lambda (obj val)
       (##structure-set! obj val off klass #f))))
 
+(define (make-struct-field-unchecked-accessor klass field)
+  (let ((off (fx1+ (struct-field-offset klass field))))
+    (lambda (obj)
+      (##unchecked-structure-ref obj off klass #f))))
+
+(define (make-struct-field-unchecked-mutator klass field)
+  (let ((off (fx1+ (struct-field-offset klass field))))
+    (lambda (obj val)
+      (##unchecked-structure-set! obj val off klass #f))))
+
 (define (struct-field-offset klass field)
   (fx+ field
        (cond
@@ -395,6 +405,14 @@
 (define (make-class-slot-mutator klass slot)
   (lambda (obj val)
     (class-slot-set! klass obj slot val)))
+
+(define (make-class-slot-unchecked-accessor klass slot)
+  (lambda (obj)
+    (unchecked-slot-ref obj slot)))
+
+(define (make-class-slot-unchecked-mutator klass slot)
+  (lambda (obj val)
+    (unchecked-slot-set! obj slot val)))
 
 (define (class-slot-offset klass slot)
   (cond
