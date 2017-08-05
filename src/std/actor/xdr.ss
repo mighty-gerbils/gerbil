@@ -7,6 +7,7 @@ package: std/actor
         :gerbil/gambit/fixnum
         :std/error
         :std/misc/buffer
+        :std/text/utf8
         (only-in :std/srfi/1 reverse!))
 (export #t)
 
@@ -220,15 +221,15 @@ END-C
       (raise-xdr-error 'xdr-read "premature buffer end" buffer))))
 
 (def (xdr-string-read buffer)
-  (xdr-binary-read buffer bytes->string))
+  (xdr-binary-read buffer utf8->string))
 
 (def (xdr-symbol-read buffer)
   (xdr-binary-read
-   buffer (lambda (bytes) (string->symbol (bytes->string bytes)))))
+   buffer (lambda (bytes) (string->symbol (utf8->string bytes)))))
 
 (def (xdr-keyword-read buffer)
   (xdr-binary-read
-   buffer (lambda (bytes) (string->keyword (bytes->string bytes)))))
+   buffer (lambda (bytes) (string->keyword (utf8->string bytes)))))
 
 (def (xdr-vector-like-read makef start buffer)
   (let* ((len (xdr-read-object buffer))
@@ -358,15 +359,15 @@ END-C
 
 (def (xdr-string-write obj buffer)
   (buffer-write-u8 xdr-proto-type-string buffer)
-  (xdr-binary-write (string->bytes obj) buffer))
+  (xdr-binary-write (string->utf8 obj) buffer))
 
 (def (xdr-symbol-write obj buffer)
   (buffer-write-u8 xdr-proto-type-symbol buffer)
-  (xdr-binary-write (string->bytes (symbol->string obj)) buffer))
+  (xdr-binary-write (string->utf8 (symbol->string obj)) buffer))
 
 (def (xdr-keyword-write obj buffer)
   (buffer-write-u8 xdr-proto-type-keyword buffer)
-  (xdr-binary-write (string->bytes (keyword->string obj)) buffer))
+  (xdr-binary-write (string->utf8 (keyword->string obj)) buffer))
 
 (def (xdr-vector-like-write obj start buffer)
   (let* ((len (##vector-length obj))
