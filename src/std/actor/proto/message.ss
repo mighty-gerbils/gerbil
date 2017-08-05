@@ -53,70 +53,71 @@ package: std/actor/proto
 ;; wire representation
 ;; rpc-proto-message-type dest content
 (def (rpc-proto-write-message msg proto port)
+  (current-xdr-type-registry
+   (if proto
+     (!protocol-types proto)
+     *default-proto-type-registry*))
+
   (with ((message content _ dest) msg)
     (cond
      ((!rpc? content)
       (match content
         ((!call _ k)
-         (write-u8 rpc-proto-message-call port)
+         (##write-u8 rpc-proto-message-call port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!value _ k)
-         (write-u8 rpc-proto-message-value port)
+         (##write-u8 rpc-proto-message-value port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!error _ k)
-         (write-u8 rpc-proto-message-error port)
+         (##write-u8 rpc-proto-message-error port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((? !event? content)
-         (write-u8 rpc-proto-message-event port)
+         (##write-u8 rpc-proto-message-event port)
          (xdr-uuid-write dest port))
         ((!stream _ k)
-         (write-u8 rpc-proto-message-stream port)
+         (##write-u8 rpc-proto-message-stream port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!yield _ k)
-         (write-u8 rpc-proto-message-yield port)
+         (##write-u8 rpc-proto-message-yield port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!end k)
-         (write-u8 rpc-proto-message-end port)
+         (##write-u8 rpc-proto-message-end port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!continue k)
-         (write-u8 rpc-proto-message-continue port)
+         (##write-u8 rpc-proto-message-continue port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!close k)
-         (write-u8 rpc-proto-message-close port)
+         (##write-u8 rpc-proto-message-close port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!abort k)
-         (write-u8 rpc-proto-message-abort port)
+         (##write-u8 rpc-proto-message-abort port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         (else
          (raise-rpc-io-error 'rpc-proto-write-message
                              "unknown rpc message type" content))))
      (else
-      (write-u8 rpc-proto-message-raw port)))
-    (parameterize ((current-xdr-type-registry
-                    (if proto
-                      (!protocol-types proto)
-                      *default-proto-type-registry*)))
-      (match content
-        ((or (!call e)
-             (!value e)
-             (!error e)
-             (!event e)
-             (!stream e)
-             (!yield e))
-         (xdr-write-object e port))
-        ((? (or !end? !continue? !close? !abort?))
-         (void))
-        (else
-         (xdr-write-object content port))))
+      (##write-u8 rpc-proto-message-raw port)))
+    (match content
+      ((or (!call e)
+           (!value e)
+           (!error e)
+           (!event e)
+           (!stream e)
+           (!yield e))
+       (xdr-write-object e port))
+      ((? (or !end? !continue? !close? !abort?))
+       (void))
+      (else
+       (xdr-write-object content port)))
     (force-output port)))
 
 (def (rpc-proto-unmarshal-message proto u8v)
@@ -125,7 +126,7 @@ package: std/actor/proto
     (rpc-proto-read-message-content msg proto inp)))
 
 (def (rpc-proto-read-message-envelope port)
-  (let* ((type (read-u8 port))
+  (let* ((type (##read-u8 port))
          (dest (xdr-uuid-read port)))
     (make-message
      (cond
@@ -167,48 +168,49 @@ package: std/actor/proto
 
 ;; return modify msg content in place, return it
 (def (rpc-proto-read-message-content msg proto port)
-  (parameterize ((current-xdr-type-registry
-                  (if proto
-                    (!protocol-types proto)
-                    *default-proto-type-registry*)))
-    (let (content (message-e msg))
+  (current-xdr-type-registry
+   (if proto
+     (!protocol-types proto)
+     *default-proto-type-registry*))
+
+  (let (content (message-e msg))
+    (cond
+     ((!rpc? content)
       (cond
-       ((!rpc? content)
-        (cond
-         ((!call? content)
-          (set! (!call-e content)
-            (xdr-read-object port)))
-         ((!value? content)
-          (set! (!value-e content)
-            (xdr-read-object port)))
-         ((!error? content)
-          (let* ((e (xdr-read-object port))
-                 (e (if (string? e)
-                      (make-remote-error 'rpc e)
-                      e)))
-            (set! (!error-e content)
-              e)))
-         ((!event? content)
-          (set! (!event-e content)
-            (xdr-read-object port)))
-         ((!stream? content)
-          (set! (!stream-e content)
-            (xdr-read-object port)))
-         ((!yield? content)
-          (set! (!yield-e content)
-            (xdr-read-object port)))
-         ;; !end/!continue/!close/!abort are empty
-         ))
-       (else
-        (set! (message-e msg)
-          (xdr-read-object port))))
-      msg)))
+       ((!call? content)
+        (set! (!call-e content)
+          (xdr-read-object port)))
+       ((!value? content)
+        (set! (!value-e content)
+          (xdr-read-object port)))
+       ((!error? content)
+        (let* ((e (xdr-read-object port))
+               (e (if (string? e)
+                    (make-remote-error 'rpc e)
+                    e)))
+          (set! (!error-e content)
+            e)))
+       ((!event? content)
+        (set! (!event-e content)
+          (xdr-read-object port)))
+       ((!stream? content)
+        (set! (!stream-e content)
+          (xdr-read-object port)))
+       ((!yield? content)
+        (set! (!yield-e content)
+          (xdr-read-object port)))
+       ;; !end/!continue/!close/!abort are empty
+       ))
+     (else
+      (set! (message-e msg)
+        (xdr-read-object port))))
+    msg))
 
 
 (def (read-u32 port)
   (let lp ((k 0) (value 0))
     (if (fx< k 4)
-      (let (e (read-u8 port))
+      (let (e (##read-u8 port))
         (cond
          ((eof-object? e)
           (raise-io-error 'read-u32 "premature port end"))
@@ -222,12 +224,12 @@ package: std/actor/proto
   (let lp ((k 0) (value uint))
     (if (fx< k 4)
       (begin
-        (write-u8 (fxand value #xff) port)
+        (##write-u8 (fxand value #xff) port)
         (lp (fx1+ k) (fxarithmetic-shift value -8)))
       k)))
 
 (def (write-u8/force-output u8 port)
-  (write-u8 u8 port)
+  (##write-u8 u8 port)
   (force-output port))
 
 ;;; default XDR protocol

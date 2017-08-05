@@ -5,7 +5,6 @@ package: std
 
 (declare (fixnum) (not safe))
 
-(import (only-in :gerbil/gambit/misc subvector-move!))
 (export sort sort! stable-sort stable-sort!)
 
 ;; front-end procs
