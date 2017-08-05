@@ -11,6 +11,8 @@ package: std/misc
         buffer-write-u8 buffer-write-subu8vector buffer-push-u8vector
         buffer-output-u8vector)
 
+(declare (not safe))
+
 ;;; input buffers
 (defstruct input-buffer (e rlo rhi)
   final: #t
