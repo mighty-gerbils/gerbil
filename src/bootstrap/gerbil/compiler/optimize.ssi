@@ -92,13 +92,21 @@ namespace: gxc
          (%#define-runtime !struct-getf? gxc#!struct-getf?)
          (%#define-runtime make-!struct-getf gxc#make-!struct-getf)
          (%#define-runtime !struct-getf-off gxc#!struct-getf-off)
+         (%#define-runtime !struct-getf-unchecked? gxc#!struct-getf-unchecked?)
          (%#define-runtime !struct-getf-off-set! gxc#!struct-getf-off-set!)
+         (%#define-runtime
+          !struct-getf-unchecked?-set!
+          gxc#!struct-getf-unchecked?-set!)
          (%#define-syntax !struct-getf |gxc[:0:]#!struct-getf|)
          (%#define-runtime !struct-setf::t gxc#!struct-setf::t)
          (%#define-runtime !struct-setf? gxc#!struct-setf?)
          (%#define-runtime make-!struct-setf gxc#make-!struct-setf)
          (%#define-runtime !struct-setf-off gxc#!struct-setf-off)
+         (%#define-runtime !struct-setf-unchecked? gxc#!struct-setf-unchecked?)
          (%#define-runtime !struct-setf-off-set! gxc#!struct-setf-off-set!)
+         (%#define-runtime
+          !struct-setf-unchecked?-set!
+          gxc#!struct-setf-unchecked?-set!)
          (%#define-syntax !struct-setf |gxc[:0:]#!struct-setf|)
          (%#define-runtime !lambda::t gxc#!lambda::t)
          (%#define-runtime !lambda? gxc#!lambda?)
@@ -124,8 +132,8 @@ namespace: gxc
          (%#define-syntax !case-lambda |gxc[:0:]#!case-lambda|)
          (%#define-runtime !struct-type:::init! gxc#!struct-type:::init!)
          (%#begin (%#define-runtime
-                   !lambda:::init!__opt-lambda19524
-                   gxc#!lambda:::init!__opt-lambda19524)
+                   !lambda:::init!__opt-lambda19768
+                   gxc#!lambda:::init!__opt-lambda19768)
                   (%#begin (%#define-runtime
                             !lambda:::init!__0
                             gxc#!lambda:::init!__0)
@@ -140,8 +148,8 @@ namespace: gxc
           !struct-type-lookup-method
           gxc#!struct-type-lookup-method)
          (%#begin (%#define-runtime
-                   optimizer-declare-type!__opt-lambda19491
-                   gxc#optimizer-declare-type!__opt-lambda19491)
+                   optimizer-declare-type!__opt-lambda19735
+                   gxc#optimizer-declare-type!__opt-lambda19735)
                   (%#begin (%#define-runtime
                             optimizer-declare-type!__0
                             gxc#optimizer-declare-type!__0)
@@ -149,8 +157,8 @@ namespace: gxc
                             optimizer-declare-type!
                             gxc#optimizer-declare-type!)))
          (%#begin (%#define-runtime
-                   optimizer-declare-method!__opt-lambda19467
-                   gxc#optimizer-declare-method!__opt-lambda19467)
+                   optimizer-declare-method!__opt-lambda19711
+                   gxc#optimizer-declare-method!__opt-lambda19711)
                   (%#begin (%#define-runtime
                             optimizer-declare-method!__0
                             gxc#optimizer-declare-method!__0)
@@ -204,8 +212,8 @@ namespace: gxc
          (%#define-runtime case-lambda-expr? gxc#case-lambda-expr?)
          (%#define-runtime opt-lambda-expr? gxc#opt-lambda-expr?)
          (%#begin (%#define-runtime
-                   lift-case-lambda-clauses__opt-lambda16652
-                   gxc#lift-case-lambda-clauses__opt-lambda16652)
+                   lift-case-lambda-clauses__opt-lambda16896
+                   gxc#lift-case-lambda-clauses__opt-lambda16896)
                   (%#begin (%#define-runtime
                             lift-case-lambda-clauses__0
                             gxc#lift-case-lambda-clauses__0)
@@ -256,12 +264,30 @@ namespace: gxc
          (%#define-runtime
           basic-expression-type-make-struct-predicate
           gxc#basic-expression-type-make-struct-predicate)
+         (%#begin (%#define-runtime
+                   basic-expression-type-make-struct-field-accessor__opt-lambda12892
+                   gxc#basic-expression-type-make-struct-field-accessor__opt-lambda12892)
+                  (%#begin (%#define-runtime
+                            basic-expression-type-make-struct-field-accessor__0
+                            gxc#basic-expression-type-make-struct-field-accessor__0)
+                           (%#define-runtime
+                            basic-expression-type-make-struct-field-accessor
+                            gxc#basic-expression-type-make-struct-field-accessor)))
+         (%#begin (%#define-runtime
+                   basic-expression-type-make-struct-field-mutator__opt-lambda12762
+                   gxc#basic-expression-type-make-struct-field-mutator__opt-lambda12762)
+                  (%#begin (%#define-runtime
+                            basic-expression-type-make-struct-field-mutator__0
+                            gxc#basic-expression-type-make-struct-field-mutator__0)
+                           (%#define-runtime
+                            basic-expression-type-make-struct-field-mutator
+                            gxc#basic-expression-type-make-struct-field-mutator)))
          (%#define-runtime
-          basic-expression-type-make-struct-field-accessor
-          gxc#basic-expression-type-make-struct-field-accessor)
+          basic-expression-type-make-struct-field-unchecked-accessor
+          gxc#basic-expression-type-make-struct-field-unchecked-accessor)
          (%#define-runtime
-          basic-expression-type-make-struct-field-mutator
-          gxc#basic-expression-type-make-struct-field-mutator)
+          basic-expression-type-make-struct-field-unchecked-mutator
+          gxc#basic-expression-type-make-struct-field-unchecked-mutator)
          (%#define-runtime
           basic-expression-type-ref%
           gxc#basic-expression-type-ref%)
