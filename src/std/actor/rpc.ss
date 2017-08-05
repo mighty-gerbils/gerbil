@@ -12,6 +12,7 @@ package: std/actor
         :std/logger
         :std/misc/pqueue
         :std/misc/sync
+        :std/misc/buffer
         :std/net/address
         :std/net/server
         :std/os/socket
@@ -514,7 +515,7 @@ package: std/actor
      ((void? data)                      ; keep-alive
       (loop))
      ((u8vector? data)                  ; incoming message
-      (let (bytes (open-input-u8vector data))
+      (let (bytes (open-input-buffer data))
         (let (msg (try (rpc-proto-read-message-envelope bytes)
                        (catch (exception? e) e)))
           (if (message? msg)

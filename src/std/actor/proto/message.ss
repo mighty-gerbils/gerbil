@@ -3,13 +3,12 @@
 ;;; actor wire protocol implementation
 package: std/actor/proto
 
-(import :gerbil/gambit/ports
-        :std/error
+(import :std/error
         :std/misc/uuid
+        :std/misc/buffer
         :std/actor/message
         :std/actor/proto
-        :std/actor/xdr
-        )
+        :std/actor/xdr)
 (export #t)
 
 ;;; wire protocol implementation
@@ -46,9 +45,9 @@ package: std/actor/proto
 
 ;;; protocol i/o
 (def (rpc-proto-marshal-message msg proto)
-  (let (outp (open-output-u8vector))
+  (let (outp (open-output-buffer))
     (rpc-proto-write-message msg proto outp)
-    (get-output-u8vector outp)))
+    (buffer-output-u8vector outp)))
 
 ;; wire representation
 ;; rpc-proto-message-type dest content
@@ -63,49 +62,49 @@ package: std/actor/proto
      ((!rpc? content)
       (match content
         ((!call _ k)
-         (##write-u8 rpc-proto-message-call port)
+         (buffer-write-u8 rpc-proto-message-call port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!value _ k)
-         (##write-u8 rpc-proto-message-value port)
+         (buffer-write-u8 rpc-proto-message-value port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!error _ k)
-         (##write-u8 rpc-proto-message-error port)
+         (buffer-write-u8 rpc-proto-message-error port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((? !event? content)
-         (##write-u8 rpc-proto-message-event port)
+         (buffer-write-u8 rpc-proto-message-event port)
          (xdr-uuid-write dest port))
         ((!stream _ k)
-         (##write-u8 rpc-proto-message-stream port)
+         (buffer-write-u8 rpc-proto-message-stream port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!yield _ k)
-         (##write-u8 rpc-proto-message-yield port)
+         (buffer-write-u8 rpc-proto-message-yield port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!end k)
-         (##write-u8 rpc-proto-message-end port)
+         (buffer-write-u8 rpc-proto-message-end port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!continue k)
-         (##write-u8 rpc-proto-message-continue port)
+         (buffer-write-u8 rpc-proto-message-continue port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!close k)
-         (##write-u8 rpc-proto-message-close port)
+         (buffer-write-u8 rpc-proto-message-close port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         ((!abort k)
-         (##write-u8 rpc-proto-message-abort port)
+         (buffer-write-u8 rpc-proto-message-abort port)
          (xdr-uuid-write dest port)
          (xdr-int-write k port))
         (else
          (raise-rpc-io-error 'rpc-proto-write-message
                              "unknown rpc message type" content))))
      (else
-      (##write-u8 rpc-proto-message-raw port)))
+      (buffer-write-u8 rpc-proto-message-raw port)))
     (match content
       ((or (!call e)
            (!value e)
@@ -117,16 +116,15 @@ package: std/actor/proto
       ((? (or !end? !continue? !close? !abort?))
        (void))
       (else
-       (xdr-write-object content port)))
-    (force-output port)))
+       (xdr-write-object content port)))))
 
 (def (rpc-proto-unmarshal-message proto u8v)
-  (let* ((inp (open-input-u8vector u8v))
+  (let* ((inp (open-input-buffer u8v))
          (msg (rpc-proto-read-message-envelope inp)))
     (rpc-proto-read-message-content msg proto inp)))
 
 (def (rpc-proto-read-message-envelope port)
-  (let* ((type (##read-u8 port))
+  (let* ((type (buffer-read-u8 port))
          (dest (xdr-uuid-read port)))
     (make-message
      (cond
@@ -210,7 +208,7 @@ package: std/actor/proto
 (def (read-u32 port)
   (let lp ((k 0) (value 0))
     (if (fx< k 4)
-      (let (e (##read-u8 port))
+      (let (e (buffer-read-u8 port))
         (cond
          ((eof-object? e)
           (raise-io-error 'read-u32 "premature port end"))
@@ -224,13 +222,9 @@ package: std/actor/proto
   (let lp ((k 0) (value uint))
     (if (fx< k 4)
       (begin
-        (##write-u8 (fxand value #xff) port)
+        (buffer-write-u8 (fxand value #xff) port)
         (lp (fx1+ k) (fxarithmetic-shift value -8)))
       k)))
-
-(def (write-u8/force-output u8 port)
-  (##write-u8 u8 port)
-  (force-output port))
 
 ;;; default XDR protocol
 (def (xdr-uuid-read port)
