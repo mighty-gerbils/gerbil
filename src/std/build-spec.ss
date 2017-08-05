@@ -40,6 +40,7 @@
     "parser/grammar"
     "parser"
     ;; :std/text
+    "text/utf8"
     "text/hex"
     (gsc: "text/base64")
     (ssi: "text/base64")
