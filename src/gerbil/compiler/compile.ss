@@ -66,7 +66,9 @@ namespace: gxc
   (%#struct-ref              void)
   (%#struct-set!             void)
   (%#struct-direct-ref       void)
-  (%#struct-direct-set!      void))
+  (%#struct-direct-set!      void)
+  (%#struct-unchecked-ref    void)
+  (%#struct-unchecked-set!   void))
 
 (defcompile-method #f &void-special-form
   (%#begin          void)
@@ -101,7 +103,9 @@ namespace: gxc
   (%#struct-ref              false)
   (%#struct-set!             false)
   (%#struct-direct-ref       false)
-  (%#struct-direct-set!      false))
+  (%#struct-direct-set!      false)
+  (%#struct-unchecked-ref    false)
+  (%#struct-unchecked-set!   false))
 
 (defcompile-method #f &false-special-form
   (%#begin          false)
@@ -160,7 +164,9 @@ namespace: gxc
   (%#struct-ref              true)
   (%#struct-set!             true)
   (%#struct-direct-ref       true)
-  (%#struct-direct-set!      true))
+  (%#struct-direct-set!      true)
+  (%#struct-unchecked-ref    true)
+  (%#struct-unchecked-set!   true))
 
 (defcompile-method apply-find-lambda-expression (&find-lambda-expression &false)
   (%#begin                   find-lambda-expression-begin%)
@@ -198,7 +204,9 @@ namespace: gxc
   (%#struct-ref              generate-runtime-empty)
   (%#struct-set!             generate-runtime-empty)
   (%#struct-direct-ref       generate-runtime-empty)
-  (%#struct-direct-set!      generate-runtime-empty))
+  (%#struct-direct-set!      generate-runtime-empty)
+  (%#struct-unchecked-ref    generate-runtime-empty)
+  (%#struct-unchecked-set!   generate-runtime-empty))
 
 (defcompile-method apply-generate-loader (&generate-loader &generate-runtime-empty)
   (%#begin                   generate-runtime-begin%)
@@ -224,7 +232,9 @@ namespace: gxc
   (%#struct-ref              generate-runtime-struct-ref%)
   (%#struct-set!             generate-runtime-struct-setq%)
   (%#struct-direct-ref       generate-runtime-struct-direct-ref%)
-  (%#struct-direct-set!      generate-runtime-struct-direct-setq%))
+  (%#struct-direct-set!      generate-runtime-struct-direct-setq%)
+  (%#struct-unchecked-ref    generate-runtime-struct-unchecked-ref%)
+  (%#struct-unchecked-set!   generate-runtime-struct-unchecked-setq%))
 
 (defcompile-method apply-generate-runtime-phi (&generate-runtime-phi
                                                &generate-runtime)
@@ -249,7 +259,9 @@ namespace: gxc
   (%#struct-ref              collect-operands)
   (%#struct-set!             collect-operands)
   (%#struct-direct-ref       collect-operands)
-  (%#struct-direct-set!      collect-operands))
+  (%#struct-direct-set!      collect-operands)
+  (%#struct-unchecked-ref    collect-operands)
+  (%#struct-unchecked-set!   collect-operands))
 
 (defcompile-method apply-generate-meta (&generate-meta &void-expression)
   (%#begin          generate-meta-begin%)
@@ -288,6 +300,8 @@ namespace: gxc
   (%#struct-set!             generate-meta-phi-expr)
   (%#struct-direct-ref       generate-meta-phi-expr)
   (%#struct-direct-set!      generate-meta-phi-expr)
+  (%#struct-unchecked-ref    generate-meta-phi-expr)
+  (%#struct-unchecked-set!   generate-meta-phi-expr)
   (%#declare                 void))
 
 ;;; generic collectors
@@ -1015,6 +1029,23 @@ namespace: gxc
                                (compile-e #'off)  ; off (incl type)
                                (compile-e #'type) ; type
                                '(quote #f)])))    ; where
+
+(def (generate-runtime-struct-unchecked-ref% stx)
+  (ast-case stx ()
+    ((_ type off obj)
+     ['##unchecked-structure-ref (compile-e #'obj)  ; obj
+                                 (compile-e #'off)  ; off (incl type)
+                                 (compile-e #'type) ; type
+                                 '(quote #f)])))    ; where
+
+(def (generate-runtime-struct-unchecked-setq% stx)
+  (ast-case stx ()
+    ((_ type off obj val)
+     ['##unchecked-structure-set! (compile-e #'obj)  ; obj
+                                  (compile-e #'val)  ; val
+                                  (compile-e #'off)  ; off (incl type)
+                                  (compile-e #'type) ; type
+                                  '(quote #f)])))    ; where
 
 ;;; loader
 (def (generate-runtime-loader-import% stx)

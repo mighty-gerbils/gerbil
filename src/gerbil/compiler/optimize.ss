@@ -132,8 +132,8 @@ namespace: gxc
 (defstruct (!procedure !type) ())
 (defstruct (!struct-pred !procedure) ())
 (defstruct (!struct-cons !procedure) ())
-(defstruct (!struct-getf !procedure) (off))
-(defstruct (!struct-setf !procedure) (off))
+(defstruct (!struct-getf !procedure) (off unchecked?))
+(defstruct (!struct-setf !procedure) (off unchecked?))
 (defstruct (!lambda !procedure) (arity dispatch inline inline-typedecl)
   constructor: :init!)
 (defstruct (!case-lambda !procedure) (clauses))
@@ -230,7 +230,9 @@ namespace: gxc
   (%#struct-ref              xform-identity)
   (%#struct-set!             xform-identity)
   (%#struct-direct-ref       xform-identity)
-  (%#struct-direct-set!      xform-identity))
+  (%#struct-direct-set!      xform-identity)
+  (%#struct-unchecked-ref    xform-identity)
+  (%#struct-unchecked-set!   xform-identity))
 
 (defcompile-method #f &identity-special-form
   (%#begin          xform-identity)
@@ -265,7 +267,9 @@ namespace: gxc
   (%#struct-ref              xform-operands)
   (%#struct-set!             xform-operands)
   (%#struct-direct-ref       xform-operands)
-  (%#struct-direct-set!      xform-operands))
+  (%#struct-direct-set!      xform-operands)
+  (%#struct-unchecked-ref    xform-operands)
+  (%#struct-unchecked-set!   xform-operands))
 
 (defcompile-method #f (&basic-xform &basic-xform-expression &identity)
   (%#begin          xform-begin%)
@@ -288,7 +292,9 @@ namespace: gxc
   (%#struct-ref              collect-operands)
   (%#struct-set!             collect-operands)
   (%#struct-direct-ref       collect-operands)
-  (%#struct-direct-set!      collect-operands))
+  (%#struct-direct-set!      collect-operands)
+  (%#struct-unchecked-ref    collect-operands)
+  (%#struct-unchecked-set!   collect-operands))
 
 (defcompile-method apply-lift-top-lambdas (&lift-top-lambdas &basic-xform)
   (%#define-values  lift-top-lambda-define-values%)
@@ -875,23 +881,33 @@ namespace: gxc
      (make-!struct-pred (identifier-symbol #'type-t)))
     (_ #f)))
 
-(def (basic-expression-type-make-struct-field-accessor stx args)
+(def (basic-expression-type-make-struct-field-accessor stx args (unchecked? #f))
   (ast-case args (%#quote %#ref)
     (((%#ref type-t) (%#quote off))
-     (make-!struct-getf (identifier-symbol #'type-t) (stx-e #'off)))
+     (make-!struct-getf (identifier-symbol #'type-t) (stx-e #'off) unchecked?))
     (_ #f)))
 
-(def (basic-expression-type-make-struct-field-mutator stx args)
+(def (basic-expression-type-make-struct-field-mutator stx args (unchecked? #f))
   (ast-case args (%#quote %#ref)
     (((%#ref type-t) (%#quote off))
-     (make-!struct-setf (identifier-symbol #'type-t) (stx-e #'off)))
+     (make-!struct-setf (identifier-symbol #'type-t) (stx-e #'off) unchecked?))
     (_ #f)))
+
+(def (basic-expression-type-make-struct-field-unchecked-accessor stx args)
+  (basic-expression-type-make-struct-field-accessor stx args #t))
+
+(def (basic-expression-type-make-struct-field-unchecked-mutator stx args)
+  (basic-expression-type-make-struct-field-mutator stx args #t))
 
 (defbasic-expression-type-builtin
   (make-struct-type basic-expression-type-make-struct-type)
   (make-struct-predicate basic-expression-type-make-struct-predicate)
   (make-struct-field-accessor basic-expression-type-make-struct-field-accessor)
-  (make-struct-field-mutator basic-expression-type-make-struct-field-mutator))
+  (make-struct-field-mutator basic-expression-type-make-struct-field-mutator)
+  (make-struct-field-unchecked-accessor
+   basic-expression-type-make-struct-field-unchecked-accessor)
+  (make-struct-field-unchecked-mutator
+   basic-expression-type-make-struct-field-unchecked-mutator))
 
 (def (basic-expression-type-ref% stx)
   (ast-case stx ()
@@ -979,7 +995,7 @@ namespace: gxc
 
 (defmethod {optimize-call !struct-getf}
   (lambda (self stx args)
-    (with ((!struct-getf struct-t off) self)
+    (with ((!struct-getf struct-t off unchecked?) self)
       (let (struct-type (optimizer-resolve-type struct-t))
         (match struct-type
           ((!struct-type struct-type-id _ fields xfields _ plist)
@@ -988,9 +1004,13 @@ namespace: gxc
                ((expr)
                 (let ((expr (compile-e #'expr))
                       (off (fx+ off xfields 1))
-                      (op (if (and plist (assgetq final: plist))
-                          '%#struct-direct-ref
-                          '%#struct-ref)))
+                      (op (cond
+                           (unchecked?
+                            '%#struct-unchecked-ref)
+                           ((and plist (assgetq final: plist))
+                            '%#struct-direct-ref)
+                           (else
+                            '%#struct-ref))))
                   (xform-wrap-source
                    [op ['%#ref struct-t] ['%#quote off] expr]
                    stx)))
@@ -1006,7 +1026,7 @@ namespace: gxc
 
 (defmethod {optimize-call !struct-setf}
   (lambda (self stx args)
-    (with ((!struct-setf struct-t off) self)
+    (with ((!struct-setf struct-t off unchecked?) self)
       (let (struct-type (optimizer-resolve-type struct-t))
         (match struct-type
           ((!struct-type struct-type-id _ fields xfields _ plist)
@@ -1016,9 +1036,13 @@ namespace: gxc
                 (let ((expr (compile-e #'expr))
                       (val (compile-e #'val))
                       (off (fx+ off xfields 1))
-                      (op (if (and plist (assgetq final: plist))
-                          '%#struct-direct-set!
-                          '%#struct-set!)))
+                      (op (cond
+                           (unchecked?
+                            '%#struct-unchecked-set!)
+                           ((and plist (assgetq final: plist))
+                            '%#struct-direct-set!)
+                           (else
+                            '%#struct-set!))))
                   (xform-wrap-source
                    [op ['%#ref struct-t] ['%#quote off] expr val]
                    stx)))
@@ -1136,13 +1160,13 @@ namespace: gxc
 
 (defmethod {typedecl !struct-getf}
   (lambda (self)
-    (with ((!struct-getf struct-t off) self)
-      ['@struct-getf struct-t off])))
+    (with ((!struct-getf struct-t off unchecked?) self)
+      ['@struct-getf struct-t off unchecked?])))
 
 (defmethod {typedecl !struct-setf}
   (lambda (self)
-    (with ((!struct-setf struct-t off) self)
-      ['@struct-setf struct-t off])))
+    (with ((!struct-setf struct-t off unchecked?) self)
+      ['@struct-setf struct-t off unchecked?])))
 
 (defmethod {typedecl !lambda}
   (lambda (self)

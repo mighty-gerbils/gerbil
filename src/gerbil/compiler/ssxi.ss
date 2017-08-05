@@ -73,12 +73,16 @@ namespace: gxc
    (make-!struct-cons 'type)))
 
 (defrules @struct-getf ()
+  ((_ type off unchecked?)
+   (make-!struct-getf 'type off unchecked?))
   ((_ type off)
-   (make-!struct-getf 'type off)))
+   (make-!struct-getf 'type off #f)))
 
 (defrules @struct-setf ()
+  ((_ type off unchecked?)
+   (make-!struct-setf 'type off unchecked?))
   ((_ type off)
-   (make-!struct-setf 'type off)))
+   (make-!struct-setf 'type off #f)))
 
 (defrules @lambda ()
   ((_ arity inline: inline-rules)
