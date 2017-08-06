@@ -104,21 +104,21 @@ package: std/actor
       (syntax-case rest (=> ! else)
         (((! evt => K) . rest)
          (lp #'rest clauses
-             (cons #'(handle-evt evt K) events)
+             (cons #'(cons evt K) events)
              else-e))
         (((! (var evt) body ...) . rest)
          (identifier? #'var)
          (lp #'rest clauses
-             (cons #'(handle-evt evt (lambda (var) body ...)) events)
+             (cons #'(cons evt (lambda (var) body ...)) events)
              else-e))
         (((! ((var ...) evt) body ...) . rest)
          (identifier-list? #'(var ...))
          (lp #'rest clauses
-             (cons #'(handle-evt evt (lambda (var ...) body ...)) events)
+             (cons #'(cons evt (lambda (var ...) body ...)) events)
              else-e))
         (((! evt body ...) . rest)
          (lp #'rest clauses
-             (cons #'(handle-evt evt (lambda (_) body ...)) events)
+             (cons #'(cons evt (lambda (_) body ...)) events)
              else-e))
         (((else body ...) . rest)
          (if else-e
@@ -205,31 +205,84 @@ package: std/actor
 (def (mailbox-wait! events loop)
   (def (simple-events? events)
     (match events
-      ([evt . rest]
-       (and (or (time? (event-selector evt))
-                (not (event-selector evt)))
+      ([sel . rest]
+       (and (simple-selector? sel)
             (simple-events? rest)))
       (else #t)))
 
+  (def (simple-selector? sel)
+    (match sel
+      ([evt . K]
+       (simple-event? evt))))
+
+  (def (simple-event? evt)
+    (or (not evt)
+        (time? evt)
+        (real? evt)
+        (and (event-object? evt)
+             (simple-event? (event-selector evt)))))
+
+  (def (event-object? evt)
+    (or (event? evt)
+        (event-handler? evt)))
+
+  (def (selector-e sel)
+    (match sel
+      ([evt . K]
+       (if (event-object? evt)
+         (event-selector evt)
+         evt))))
+
+  (def (selector-dispatch sel)
+    (match sel
+      ([evt . K]
+       (if (event-object? evt)
+         (event-value (handle-evt evt K))
+         (K evt)))))
+
   (def (timeout-e events)
+    (def now #f)
     (let lp ((rest events) (timeo (macro-absent-obj)) (deadline #f))
       (match rest
         ([evt . rest]
-         (let (sel (event-selector evt))
-           (if (time? sel)
+         (let (sel (selector-e evt))
+           (cond
+            ((time? sel)
              (let (evt-deadline (time->seconds sel))
                (if (or (not deadline) (< evt-deadline deadline))
                  (lp rest sel evt-deadline)
-                 (lp rest timeo deadline)))
-             (lp rest timeo deadline))))
+                 (lp rest timeo deadline))))
+            ((real? sel)
+             (unless now
+               (set! now (##current-time-point)))
+             (let (evt-deadline (+ now sel))
+               (if (or (not deadline) (< evt-deadline deadline))
+                 (lp rest sel evt-deadline)
+                 (lp rest timeo deadline))))
+            (else
+             (lp rest timeo deadline)))))
         (else timeo))))
 
   (def (dispatch-e events timeo)
     (match events
       ([evt . rest]
-       (if (eq? timeo (event-selector evt))
-         (event-value evt)
+       (if (eq? timeo (selector-e evt))
+         (selector-dispatch evt)
          (dispatch-e rest timeo)))))
+
+  (def (sync-events events)
+    (let lp ((rest events) (r []))
+      (match rest
+        ([[evt . K] . rest]
+         (cond
+          ((not evt)
+           (lp rest r))
+          ((or (time? evt) (real? evt))
+           (lp rest (cons (handle-evt (handle-evt evt (lambda (_) evt)) K) r)))
+          (else
+           (lp rest (cons (handle-evt evt K) r)))))
+        (else
+         (reverse r)))))
 
   (cond
    ((null? events)
@@ -241,7 +294,8 @@ package: std/actor
         (dispatch-e events timeo)
         (loop next))))
    (else
-    (let* ((mb (##thread-mailbox-get! (current-thread)))
+    (let* ((events (sync-events events))
+           (mb (##thread-mailbox-get! (current-thread)))
            (mutex (macro-mailbox-mutex mb))
            (condvar (macro-mailbox-condvar mb)))
       (mutex-lock! mutex)
