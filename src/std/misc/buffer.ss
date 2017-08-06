@@ -6,7 +6,7 @@ package: std/misc
 
 (import (only-in :std/srfi/1 reverse!))
 (export open-input-buffer input-buffer?
-        buffer-read-u8 buffer-read-subu8vector
+        buffer-read-u8 buffer-read-subu8vector buffer-peek-u8
         open-output-buffer output-buffer?
         buffer-write-u8 buffer-write-subu8vector buffer-push-u8vector
         buffer-output-u8vector)
@@ -49,6 +49,13 @@ package: std/misc
       (set! (&input-buffer-rlo buf)
         rhi)
       have))))
+
+(def (buffer-peek-u8 buf)
+  (let ((rlo (&input-buffer-rlo buf))
+        (rhi (&input-buffer-rhi buf)))
+    (if (##fx< rlo rhi)
+      (##u8vector-ref (&input-buffer-e buf) rlo)
+      (eof-object))))
 
 ;;; output buffers
 (defstruct output-buffer (e wlo whi chunks)
