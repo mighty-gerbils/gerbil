@@ -106,16 +106,6 @@ package: std/actor
          (lp #'rest clauses
              (cons #'(cons evt K) events)
              else-e))
-        (((! (var evt) body ...) . rest)
-         (identifier? #'var)
-         (lp #'rest clauses
-             (cons #'(cons evt (lambda (var) body ...)) events)
-             else-e))
-        (((! ((var ...) evt) body ...) . rest)
-         (identifier-list? #'(var ...))
-         (lp #'rest clauses
-             (cons #'(cons evt (lambda (var ...) body ...)) events)
-             else-e))
         (((! evt body ...) . rest)
          (lp #'rest clauses
              (cons #'(cons evt (lambda (_) body ...)) events)
