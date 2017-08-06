@@ -5,14 +5,14 @@ package: std/actor
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/os
-        :std/event
+        (only-in :std/event !)
         :std/error)
 (export
   (struct-out message proxy)
   (struct-out actor-error)
   actor-error:::init!
   -> send send-message send-message/timeout
-  << <- receive-message
+  << <-
   !)
 
 ;; ~~lib/_gambit#.scm
@@ -88,221 +88,123 @@ package: std/actor
 ;; receive macros
 ;; <- matches a structured message, << raw matches the raw message
 (begin-syntax
-  (def (generate-receive stx generate-test-e generate-recv-e)
+  (def (generate-receive stx generate-recv-e)
     (syntax-case stx ()
       ((_ clause ...)
-       (with-syntax* (((values clauses events else-e)
+       (with-syntax* (((values clauses events else-clause)
                        (parse-receive stx #'(clause ...)))
-                      ((event ...) events)
-                      (test-e (generate-test-e stx clauses))
-                      (recv-e (generate-recv-e stx clauses))
-                      (else-e else-e))
-         #'(receive-message test-e recv-e else-e [event ...])))))
+                      (loop (genident 'loop))
+                      (recv-e (generate-recv-e stx clauses #'loop)))
+         (cond
+          ((and (null? events) (not else-clause))
+           #'(let loop ()
+               (let (next (thread-mailbox-next))
+                 (recv-e next))))
+          (else-clause
+           (with-syntax (((else-body ...) else-clause))
+             #'(let loop ()
+                 (let (next (mailbox-next))
+                   (if (eq? next mailbox-empty)
+                     ((lambda () (thread-mailbox-rewind) else-body ...))
+                     (recv-e next))))))
+          (else
+           (with-syntax (((evt-arg ...) events))
+             #'(let ((values timeo K) (receive-timeout evt-arg ...))
+                 (let loop ()
+                   (let (next (thread-mailbox-next timeo mailbox-timeout))
+                     (if (eq? next mailbox-timeout)
+                       (begin
+                         (thread-mailbox-rewind)
+                         (K timeo))
+                       (recv-e next))))))))))))
+
+  (def (generate-receive-recv-raw stx clauses loop)
+    (with-syntax ((((pat body ...) ...) clauses)
+                  (loop loop))
+      #'(lambda (msg)
+          (match msg
+            (pat (thread-mailbox-extract-and-rewind) body ...) ...
+            (else (loop))))))
+
+  (def (generate-receive-recv-msg stx clauses loop)
+    (with-syntax* (((macro . body) stx)
+                   (@message (stx-identifier #'macro '@message))
+                   (@value   (stx-identifier #'macro '@value))
+                   (@source  (stx-identifier #'macro '@source))
+                   (@dest    (stx-identifier #'macro '@dest))
+                   (@options (stx-identifier #'macro '@options))
+                   (((pat body ...) ...) clauses)
+                   (loop loop))
+      #'(lambda (@message)
+          (match @message
+            ((message @value @source @dest @options)
+             (match @value
+               (pat (thread-mailbox-extract-and-rewind) body ...) ...
+               (else (loop))))
+            (else (loop))))))
 
   (def (parse-receive stx clauses)
     (let lp ((rest clauses) (clauses []) (events []) (else-e #f))
-      (syntax-case rest (=> ! else)
-        (((! evt => K) . rest)
-         (lp #'rest clauses
-             (cons #'(cons evt K) events)
-             else-e))
-        (((! evt body ...) . rest)
-         (lp #'rest clauses
-             (cons #'(cons evt (lambda (_) body ...)) events)
-             else-e))
-        (((else body ...) . rest)
-         (if else-e
-           (raise-syntax-error #f "Bad syntax; duplicate else"
-                               stx (stx-car #'rest))
-           (lp #'rest clauses events
-               #'(lambda () body ...))))
-        ((clause . rest)
-         (lp #'rest
-             (cons #'clause clauses)
-             events else-e))
+      (syntax-case rest ()
+        ((hd . rest)
+         (syntax-case #'hd (=> ! else)
+           ((! evt => K)
+            (lp #'rest clauses
+                (cons* #'K #'evt events)
+                else-e))
+           ((! evt body ...)
+            (lp #'rest clauses
+                (cons* #'(lambda ($e) body ...) #'evt events)
+                else-e))
+           ((else body ...)
+            (cond
+             (else-e
+              (raise-syntax-error #f "Bad syntax; duplicate else clause" stx #'hd))
+             ((not (stx-null? #'rest))
+              (raise-syntax-error #f "Bad syntax; else clause must be last" stx #'hd))
+             ((not (null? events))
+              (raise-syntax-error #f "Bad syntax; else clause incompatible with cuts" stx #'hd))
+             (else
+              (lp #'rest clauses events #'(body ...)))))
+           ((pat body ...)
+            (lp #'rest
+                (cons #'(pat body ...) clauses)
+                events else-e))))
         (()
-         (values (reverse clauses) (reverse events) else-e))
-        (_ (raise-syntax-error #f "Bad syntax; bad clause" stx rest)))))
-
-  (def (generate-receive-raw-test-e stx clauses)
-    (with-syntax ((((hd . body) ...) clauses))
-      #'(lambda (msg)
-          (match msg
-            (hd #t) ...
-            (else #f)))))
-
-  (def (generate-receive-raw-recv-e stx clauses)
-    (with-syntax (((clause ...) clauses))
-      #'(lambda (msg)
-          (match msg clause ...))))
-
-  (def (generate-receive-msg-test-e stx clauses)
-    (with-syntax* ((((hd . body) ...) clauses)
-                   ((macro . body) stx)
-                   (@message (stx-identifier #'macro '@message))
-                   (@value   (stx-identifier #'macro '@value))
-                   (@source  (stx-identifier #'macro '@source))
-                   (@dest    (stx-identifier #'macro '@dest))
-                   (@options (stx-identifier #'macro '@options)))
-      #'(lambda (@message)
-          (match @message
-            ((message @value @source @dest @options)
-             (match @value
-               (hd #t) ...
-               (else #f)))
-            (else #f)))))
-
-  (def (generate-receive-msg-recv-e stx clauses)
-    (with-syntax* (((clause ...) clauses)
-                   ((macro . body) stx)
-                   (@message (stx-identifier #'macro '@message))
-                   (@value   (stx-identifier #'macro '@value))
-                   (@source  (stx-identifier #'macro '@source))
-                   (@dest    (stx-identifier #'macro '@dest))
-                   (@options (stx-identifier #'macro '@options)))
-      #'(lambda (@message)
-          (match @message
-            ((message @value @source @dest @options)
-             (match @value
-               clause ...))))))
-
-    )
+         (values (reverse clauses) (reverse events) else-e))))))
 
 (defsyntax (<< stx)
-  (generate-receive stx generate-receive-raw-test-e generate-receive-raw-recv-e))
+  (generate-receive stx generate-receive-recv-raw))
 
 (defsyntax (<- stx)
-  (generate-receive stx generate-receive-msg-test-e generate-receive-msg-recv-e))
+  (generate-receive stx generate-receive-recv-msg))
 
-;; receive-message
-(def (receive-message test-e receive-e else-e events)
-  (def (loop next)
-    (cond
-     ((eq? next mailbox-empty)
-      (if else-e
-        (begin
-          (thread-mailbox-rewind)
-          (else-e))
-        (mailbox-wait! events loop)))
-     ((test-e next)
-      (thread-mailbox-extract-and-rewind)
-      (receive-e next))
-     (else
-      (loop (mailbox-next)))))
-  (thread-mailbox-rewind)
-  (loop (mailbox-next)))
-
-(def (mailbox-wait! events loop)
-  (def (simple-events? events)
-    (match events
-      ([sel . rest]
-       (and (simple-selector? sel)
-            (simple-events? rest)))
-      (else #t)))
-
-  (def (simple-selector? sel)
-    (match sel
-      ([evt . K]
-       (simple-event? evt))))
-
-  (def (simple-event? evt)
-    (or (not evt)
-        (time? evt)
-        (real? evt)
-        (and (event-object? evt)
-             (simple-event? (event-selector evt)))))
-
-  (def (event-object? evt)
-    (or (event? evt)
-        (event-handler? evt)))
-
-  (def (selector-e sel)
-    (match sel
-      ([evt . K]
-       (if (event-object? evt)
-         (event-selector evt)
-         evt))))
-
-  (def (selector-dispatch sel)
-    (match sel
-      ([evt . K]
-       (if (event-object? evt)
-         (event-value (handle-evt evt K))
-         (K evt)))))
-
-  (def (timeout-e events)
-    (def now #f)
-    (let lp ((rest events) (timeo (macro-absent-obj)) (deadline #f))
-      (match rest
-        ([evt . rest]
-         (let (sel (selector-e evt))
-           (cond
-            ((time? sel)
-             (let (evt-deadline (time->seconds sel))
-               (if (or (not deadline) (< evt-deadline deadline))
-                 (lp rest sel evt-deadline)
-                 (lp rest timeo deadline))))
-            ((real? sel)
-             (unless now
-               (set! now (##current-time-point)))
-             (let (evt-deadline (+ now sel))
-               (if (or (not deadline) (< evt-deadline deadline))
-                 (lp rest sel evt-deadline)
-                 (lp rest timeo deadline))))
-            (else
-             (lp rest timeo deadline)))))
-        (else timeo))))
-
-  (def (dispatch-e events timeo)
-    (match events
-      ([evt . rest]
-       (if (eq? timeo (selector-e evt))
-         (selector-dispatch evt)
-         (dispatch-e rest timeo)))))
-
-  (def (sync-events events)
-    (let lp ((rest events) (r []))
-      (match rest
-        ([[evt . K] . rest]
-         (cond
-          ((not evt)
-           (lp rest r))
-          ((or (time? evt) (real? evt))
-           (lp rest (cons (handle-evt (handle-evt evt (lambda (_) evt)) K) r)))
-          (else
-           (lp rest (cons (handle-evt evt K) r)))))
+(def (receive-timeout . args)
+  (def now #f)
+  (let lp ((rest args) (timeo (macro-absent-obj)) (deadline #f) (K void))
+    (match rest
+      ([evt k . rest]
+       (cond
+        ((not evt)
+         (lp rest timeo deadline K))
+        ((time? evt)
+         (let (evt-deadline (time->seconds evt))
+           (if (or (not deadline) (< evt-deadline deadline))
+             (lp rest evt evt-deadline k)
+             (lp rest timeo deadline K))))
+        ((real? evt)
+         (unless now
+           (set! now (##current-time-point)))
+         (let (evt-deadline (+ now evt))
+           (if (or (not deadline) (< evt-deadline deadline))
+             (lp rest (seconds->time evt-deadline) evt-deadline k)
+             (lp rest timeo deadline K))))
         (else
-         (reverse r)))))
-
-  (cond
-   ((null? events)
-    (loop (thread-mailbox-next)))
-   ((simple-events? events)
-    (let* ((timeo (timeout-e events))
-           (next (thread-mailbox-next timeo mailbox-timeout)))
-      (if (eq? next mailbox-timeout)
-        (dispatch-e events timeo)
-        (loop next))))
-   (else
-    (let* ((events (sync-events events))
-           (mb (##thread-mailbox-get! (current-thread)))
-           (mutex (macro-mailbox-mutex mb))
-           (condvar (macro-mailbox-condvar mb)))
-      (mutex-lock! mutex)
-      (let (next (mailbox-next))
-        (if (eq? next mailbox-empty)
-          (apply sync
-            (handle-evt
-             (cons mutex condvar)
-             (lambda (mutex condvar)
-               (loop (mailbox-next))))
-            events)
-          (begin
-            (mutex-unlock! mutex)
-            (loop next))))))))
+         (error "Illegal event; expected time, real, or #f" evt))))
+      (else
+       (values timeo K)))))
 
 (def mailbox-timeout '#(timeout))
-
 (extern mailbox-empty mailbox-next)
 
 (begin-foreign
