@@ -10,7 +10,6 @@ package: std/actor
         :std/format
         :std/event
         :std/logger
-        :std/misc/pqueue
         :std/misc/sync
         :std/misc/buffer
         :std/net/address
@@ -476,20 +475,19 @@ package: std/actor
     (make-hash-table-eq))
   (def continuation-timeouts            ; wire-id => timeout
     (make-hash-table-eqv))
-  (def timeouts-pqueue
-    (make-pqueue (lambda (evt) (time->seconds (event-selector evt)))))
+  (def next-timeout #f)                 ; timeout-evt or #f
   (def next-continuation-id 0)
   (def idle-timeout #f)
   (def reader #f)
   (def writer #f)
 
   (def (reset-idle-timeout)
-    (set! idle-timeout
-      (if rpc-idle-timeout
-        (seconds->time
-         (+ (time->seconds (current-time))
-            rpc-idle-timeout))
-        never-evt)))
+    (cond
+     (rpc-idle-timeout
+      (set! idle-timeout (make-timeout-evt rpc-idle-timeout)))
+     ((eq? idle-timeout never-evt))
+     (else
+      (set! idle-timeout never-evt))))
 
   (def (close-connection)
     (server-close sock)
@@ -648,16 +646,10 @@ package: std/actor
                (hash-put! continuations wire-id (values src k proto #f))
                (set! (!call-k content) wire-id)
                (alet (timeo (rpc-options-timeout opts rpc-call-timeout))
-                 (let* ((abs-timeo
-                         (if (real? timeo)
-                           (seconds->time
-                            (+ (time->seconds (current-time)) timeo))
-                           timeo))
-                        (timeo-evt
-                         (rec evt (handle-evt abs-timeo (lambda (_) evt)))))
+                 (let (timeo-evt (make-timeout-evt timeo))
                    (hash-put! timeouts timeo-evt wire-id)
                    (hash-put! continuation-timeouts wire-id timeo-evt)
-                   (pqueue-push! timeouts-pqueue timeo-evt)))
+                   (set-timeout! timeo-evt)))
                (marshal-and-write msg proto #t)))
             ((!stream _ k)
              (let (wire-id (next-continuation-id!))
@@ -665,15 +657,10 @@ package: std/actor
                (hash-put! stream-continuations k wire-id)
                (set! (!stream-k content) wire-id)
                (alet (timeo (rpc-options-timeout opts #f))
-                 (let* ((abs-timeo
-                         (if (real? timeo)
-                           (seconds->time
-                            (+ (time->seconds (current-time)) timeo))
-                           timeo))
-                        (timeo-evt (rec evt (handle-evt abs-timeo (lambda (_) evt)))))
+                 (let (timeo-evt (make-timeout-evt timeo))
                    (hash-put! timeouts timeo-evt wire-id)
                    (hash-put! continuation-timeouts wire-id timeo-evt)
-                   (pqueue-push! timeouts-pqueue timeo-evt)))
+                   (set-timeout! timeo-evt)))
                (marshal-and-write msg proto #t)))
             ((? !value?)
              (marshal-and-write msg proto #t))
@@ -778,11 +765,15 @@ package: std/actor
       (hash-remove! stream-actors wire-id)
       (dispatch-remote-error (make-!error what wire-id) dest)))
 
-  (def (dispatch-timeout timeo)
-    (cond
-     ((hash-get timeouts timeo)
-      => (lambda (wire-id)
-           (dispatch-error wire-id "timeout")))))
+  (def (dispatch-timeout nil)
+    (let (timeo next-timeout)
+      (set! next-timeout #f)
+      (cond
+       ((hash-get timeouts timeo)
+        => (lambda (wire-id)
+             (dispatch-error wire-id "timeout")))
+       (else
+        (loop)))))
 
   (def (writer-loop)
     (let lp ()
@@ -797,16 +788,22 @@ package: std/actor
            (warning "unexpected message ~a" bogus)
            (lp)))))
 
+  (def (timeout< a b)
+    (< (time->seconds (event-selector a))
+       (time->seconds (event-selector b))))
+
+  (def (set-timeout! timeo-evt)
+    (when (or (not next-timeout) (timeout< timeo-evt next-timeout))
+      (set! next-timeout timeo-evt)))
+
   (def (timeout-event)
-    (let lp ()
-      (if (pqueue-empty? timeouts-pqueue)
-        never-evt
-        (let (timeo (pqueue-peek timeouts-pqueue))
-          (if (hash-get timeouts timeo)
-            timeo
-            (begin
-              (pqueue-pop! timeouts-pqueue)
-              (lp)))))))
+    (unless next-timeout
+      (hash-for-each
+        (lambda (timeo-evt _)
+          (set-timeout! timeo-evt))
+        timeouts))
+    (or next-timeout
+        never-evt))
 
   (def (loop)
     (<< (! (timeout-event)
