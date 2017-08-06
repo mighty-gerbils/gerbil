@@ -21,6 +21,9 @@ package: std/net/server
   (def maxevts 1024)
   (def evts (make-epoll-events maxevts))
 
+  (def poll-in (fxior EPOLLIN EPOLLHUP EPOLLERR))
+  (def poll-out (fxior EPOLLOUT EPOLLHUP EPOLLERR))
+
   (def (do-epoll)
     (let (count (epoll-wait epoll evts maxevts))
       (when (fxpositive? count)
@@ -30,10 +33,10 @@ package: std/net/server
                   (ready (epoll-event-events evts k)))
               (with ((!socket-state _ io-in io-out)
                      (hash-ref fdtab fd))
-                (unless (fxzero? (fxand ready (fxior EPOLLIN EPOLLHUP EPOLLERR)))
+                (unless (fxzero? (fxand ready poll-in))
                   (when io-in
                     (io-state-signal-ready! io-in 'ready)))
-                (unless (fxzero? (fxand ready (fxior EPOLLOUT EPOLLHUP EPOLLERR)))
+                (unless (fxzero? (fxand ready poll-out))
                   (when io-out
                     (io-state-signal-ready! io-out 'ready)))
                 (lp (fx1+ k)))))))))
