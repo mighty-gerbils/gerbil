@@ -77,5 +77,5 @@ package: misc/rpc-perf
        ((server)
         (run-server (hash-get opt 'address)))))
    (catch (getopt-error? exn)
-     (getopt-display-help exn "nullproto" (current-error-port))
+     (getopt-display-help exn "baseline" (current-error-port))
      (exit 1))))
