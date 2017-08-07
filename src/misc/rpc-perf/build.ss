@@ -4,7 +4,9 @@
 (import :std/make)
 
 (def build-spec
-  '((exe: "nullproto")))
+  '((exe: "baseline-port")
+    (exe: "baseline-socket")
+    (exe: "nullproto")))
 
 (def build-spec-static
   '((static-exe: "nullproto"
@@ -26,7 +28,7 @@
              optimize: #t
              static: #t
              depgraph: depgraph
-             prefix: "perf/rpc"
+             prefix: "misc/rpc-perf"
              build-spec-static)))
     ([]
      (let (depgraph (call-with-input-file "build-deps" read))
@@ -35,5 +37,5 @@
              optimize: #t
              static: #t
              depgraph: depgraph
-             prefix: "perf/rpc"
+             prefix: "misc/rpc-perf"
              build-spec)))))
