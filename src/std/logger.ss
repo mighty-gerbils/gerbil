@@ -18,7 +18,9 @@ package: std
   (make-parameter #f))
 
 (def (start-logger! (output (current-error-port)))
-  (unless (current-logger)
+  (cond
+   ((current-logger) => values)
+   (else
     (let* (((values port own-port?)
             (cond
              ((output-port? output)
@@ -29,7 +31,7 @@ package: std
               (error "Bad output; expected filename or port" output))))
            (srv (spawn logger-server port own-port?)))
       (current-logger srv)
-      srv)))
+      srv))))
 
 (defstruct !log-message (source level e))
 
