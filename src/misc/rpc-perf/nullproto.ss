@@ -4,7 +4,7 @@
 ;;     -gsc-option -prelude '(declare (not safe))'
 ;;     -gsc-option -e '(include "~~lib/_gambit#.scm")'
 ;;     nullproto.ss
-package: perf/rpc
+package: misc/rpc-perf
 
 (import :gerbil/gambit/threads
         :std/actor
