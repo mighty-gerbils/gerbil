@@ -199,28 +199,6 @@ package: std/actor/proto
         (xdr-read-object buffer))))
     msg))
 
-
-(def (read-u32 buffer)
-  (let lp ((k 0) (value 0))
-    (if (fx< k 4)
-      (let (e (buffer-read-u8 buffer))
-        (cond
-         ((eof-object? e)
-          (raise-io-error 'read-u32 "premature buffer end"))
-         (else
-          (lp (fx1+ k)
-              (fxior (fxarithmetic-shift e (fx* k 8))
-                     value)))))
-      value)))
-
-(def (write-u32 uint buffer)
-  (let lp ((k 0) (value uint))
-    (if (fx< k 4)
-      (begin
-        (buffer-write-u8 (fxand value #xff) buffer)
-        (lp (fx1+ k) (fxarithmetic-shift value -8)))
-      k)))
-
 ;;; default XDR protocol
 (def (xdr-uuid-read buffer)
   (let (bytes (xdr-binary-read buffer values))
