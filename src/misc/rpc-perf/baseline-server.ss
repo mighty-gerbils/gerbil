@@ -40,19 +40,17 @@ package: misc/rpc-perf
   (server-close sock))
 
 (def (do-recv inp)
-  (let* ((len (server-input-read-u32 inp))
-         (bytes (make-u8vector len))
-         (rd (server-input-read inp bytes)))
-    (if (fx= rd len)
-      (u8vector->object bytes)
-      (error "EOF"))))
+  (let* ((len (server-buffer-read-u32 inp))
+         (bytes (make-u8vector len)))
+    (server-buffer-read-bytes bytes inp)
+    (u8vector->object bytes)))
 
 (def (do-send outp obj)
   (let* ((bytes (object->u8vector obj))
          (len (u8vector-length bytes)))
-    (server-output-write-u32 outp len)
-    (server-output-write outp bytes)
-    (server-output-force outp)))
+    (server-buffer-write-u32 len outp)
+    (server-buffer-write-bytes bytes outp)
+    (server-buffer-force-output outp)))
 
 (def (main . args)
   (def srvcmd
