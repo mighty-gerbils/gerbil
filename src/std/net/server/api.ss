@@ -3,7 +3,7 @@
 ;;; socket server api
 package: std/net/server
 
-(import (only-in :gerbil/gambit/threads spawn)
+(import (only-in :gerbil/gambit/threads spawn thread-join!)
         (only-in :gerbil/gambit/os time? seconds->time)
         :std/net/server/base
         :std/net/server/basic-server
@@ -15,7 +15,9 @@ package: std/net/server
         :std/error
         :std/logger
         )
-(export start-socket-server! server-shutdown!
+(export start-socket-server! stop-socket-server! current-socket-server
+        native-poll-server-impl
+        server-shutdown!
         server-connect
         server-listen server-accept
         server-send server-send-all
@@ -28,7 +30,10 @@ package: std/net/server
   (linux
    (import :std/net/server/epoll-server)))
 
-(def (default-server-impl)
+(def current-socket-server
+  (make-parameter #f))
+
+(def (native-poll-server-impl)
   (cond-expand
     (linux epoll-socket-server)
     (else basic-socket-server)))
@@ -39,12 +44,21 @@ package: std/net/server
     []))
 
 ;; start a server
-(def (start-socket-server! (impl (default-server-impl)))
-  (start-logger!)
-  (spawn impl))
+(def (start-socket-server! (impl basic-socket-server))
+  (cond
+   ((current-socket-server) => values)
+   (else
+    (start-logger!)
+    (let (srv (spawn impl))
+      (current-socket-server srv)
+      srv))))
+
+(def (stop-socket-server! (srv (current-socket-server)))
+  (server-shutdown! srv))
 
 (def (server-shutdown! srv)
-  (!!socket-server.shutdown! srv))
+  (!!socket-server.shutdown! srv)
+  (thread-join! srv))
 
 (defrules with-error-close ()
   ((_ sock body ...)

@@ -127,7 +127,8 @@ package: std/actor
 ;;; rpc-server
 (def (start-rpc-server! proto: (proto (rpc-null-proto)) . addresses)
   (start-logger!)
-  (spawn rpc-server proto addresses))
+  (let (socksrv (start-socket-server!))
+    (spawn rpc-server socksrv proto addresses)))
 
 (def (stop-rpc-server! rpcd)
   (!!rpc.shutdown rpcd)
@@ -158,9 +159,8 @@ package: std/actor
     address)
    (else #f)))
 
-(def (rpc-server proto addresses)
-  (let* ((socksrv (start-socket-server!))
-         (sas     (map socket-address addresses))
+(def (rpc-server socksrv proto addresses)
+  (let* ((sas     (map socket-address addresses))
          (_       (for-each rpc-unlink-unix-socket sas))
          (socks   (map (cut server-listen socksrv <>) sas)))
     (parameterize ((current-rpc-server (current-thread)))
@@ -169,9 +169,7 @@ package: std/actor
        (catch (e)
          (unless (eq? e 'shutdown)
            (log-error "unhandled exception" e)
-           (raise e)))
-       (finally
-        (server-shutdown! socksrv))))))
+           (raise e)))))))
 
 (def (rpc-unlink-unix-socket sa)
   (when (eq? (socket-address-family sa) AF_UNIX)
