@@ -173,9 +173,6 @@ END-C
    (xdr-read-object buffer)
    (xdr-read-object buffer)))
 
-(def xdr-int-fixnum-bytes
-  (##fxarithmetic-shift-right (##fxlength ##max-fixnum) 3))
-
 (def (xdr-int-read buffer)
   (let* ((hd (buffer-read-u8 buffer))
          (_  (when (eof-object? hd)
@@ -192,11 +189,11 @@ END-C
           (cond
            ((eof-object? u8)
             (raise-xdr-error 'xdr-read "premature buffer end" buffer))
-           ((##fx< k xdr-int-fixnum-bytes)
-            (lp (##fx+ k 1)
-                (##fxior (##fxarithmetic-shift-left u8 shift)
-                         value)
-                (##fx+ shift 8)))
+           ((##fxarithmetic-shift-left? u8 shift)
+            => (lambda (bits)
+                 (lp (##fx+ k 1)
+                     (##fxior bits value)
+                     (##fx+ shift 8))))
            (else
             (lp (##fx+ k 1)
                 (bitwise-ior (arithmetic-shift u8 shift)
