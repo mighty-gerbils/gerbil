@@ -113,7 +113,7 @@ namespace: gxc
               (path-expand (string-append str-id ".ss") odir)))
            (library-path
             (string->symbol
-             (string-append ":" str-id)))
+             (string-append ":" str-id ".ss")))
            (ssxi-path
             (if (and artefact-path (file-exists? artefact-path))
               artefact-path
@@ -161,7 +161,7 @@ namespace: gxc
 (def (optimizer-declare-type! sym type (local? #f))
   (unless (!type? type)
     (error "bad declaration: expected !type" sym type))
-  (verbose "declare-type " sym " " (##vector->list type))
+  (verbose "declare-type " sym " " (struct->list type))
   (hash-put! (if local?
                (current-compile-local-type)
                (optimizer-info-type (current-compile-optimizer-info)))
