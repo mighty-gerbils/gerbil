@@ -1,0 +1,5 @@
+#!/bin/bash
+for x in {1..10}; do
+    ./nullproto client 10000 &
+done
+wait

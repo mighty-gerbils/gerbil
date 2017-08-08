@@ -261,7 +261,7 @@
                                 '#f))))
                      (let ((_library-path19858_
                             (string->symbol
-                             (string-append '":" _str-id19848_))))
+                             (string-append '":" _str-id19848_ '".ss"))))
                        (let ((_ssxi-path19860_
                               (if (if _artefact-path19856_
                                       (file-exists? _artefact-path19856_)
@@ -545,7 +545,7 @@
            '"declare-type "
            _sym19737_
            '" "
-           (##vector->list _type19738_))
+           (struct->list _type19738_))
           (table-set!
            (if _local?19739_
                (gxc#current-compile-local-type)

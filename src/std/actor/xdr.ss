@@ -3,10 +3,11 @@
 ;;; actor rpc wire data representation
 package: std/actor
 
-(import :gerbil/gambit/ports
-        :gerbil/gambit/bits
+(import :gerbil/gambit/bits
         :gerbil/gambit/fixnum
         :std/error
+        :std/misc/buffer
+        :std/text/utf8
         (only-in :std/srfi/1 reverse!))
 (export #t)
 
@@ -59,13 +60,13 @@ END-C
 (define (raise-xdr-error where what . irritants)
   (raise (make-xdr-error what irritants where)))
 
-(def (xdr-read port types)
+(def (xdr-read buffer types)
   (parameterize ((current-xdr-type-registry types))
-    (xdr-read-object port)))
+    (xdr-read-object buffer)))
 
-(def (xdr-write obj port types)
+(def (xdr-write obj buffer types)
   (parameterize ((current-xdr-type-registry types))
-    (xdr-write-object obj port)))
+    (xdr-write-object obj buffer)))
 
 ;; Gerbil eXternal Data Representation
 ;; non acyclic objects
@@ -104,23 +105,23 @@ END-C
 (def *xdr-proto-types*
   (make-vector 16))
 
-(def (xdr-read-object port)
-  (let (type (##read-u8 port))
+(def (xdr-read-object buffer)
+  (let (type (buffer-read-u8 buffer))
     (cond
      ((eof-object? type))
      ((and (fixnum? type) (fx>= type 0) (fx< type (vector-length *xdr-proto-types*)))
       (let (xdr (vector-ref *xdr-proto-types* type))
-        ((XDR-read xdr) port)))
+        ((XDR-read xdr) buffer)))
      (else
-      (raise-xdr-error 'xdr-read  "unknown object type" type port)))))
+      (raise-xdr-error 'xdr-read  "unknown object type" type buffer)))))
 
-(def (xdr-write-object obj port)
+(def (xdr-write-object obj buffer)
   (let (type (xdr-object-type obj))
     (if type
       (let (xdr (vector-ref *xdr-proto-types* type))
-        ((XDR-write xdr) obj port))
+        ((XDR-write xdr) obj buffer))
       (let (xdr (vector-ref *xdr-proto-types* xdr-proto-type-opaque))
-        ((XDR-write xdr) (make-opaque #f (object->u8vector obj)) port)))))
+        ((XDR-write xdr) (make-opaque #f (object->u8vector obj)) buffer)))))
 
 (def (xdr-object-type obj)
   (cond
@@ -167,35 +168,32 @@ END-C
 (def (xdr-null-read . args)
   '())
 
-(def (xdr-pair-read port)
+(def (xdr-pair-read buffer)
   (cons
-   (xdr-read-object port)
-   (xdr-read-object port)))
+   (xdr-read-object buffer)
+   (xdr-read-object buffer)))
 
-(def xdr-int-fixnum-bytes
-  (##fxarithmetic-shift-right (##fxlength ##max-fixnum) 3))
-
-(def (xdr-int-read port)
-  (let* ((hd (##read-u8 port))
+(def (xdr-int-read buffer)
+  (let* ((hd (buffer-read-u8 buffer))
          (_  (when (eof-object? hd)
-               (raise-xdr-error 'xdr-read "premature port end" port)))
+               (raise-xdr-error 'xdr-read "premature end of input" buffer)))
          (sign (not (##fxzero? (##fxand hd #x80))))
          (bytes (##fxand hd #x7f))
          (bytes (if (##fx< bytes 127)
                   bytes
-                  (xdr-read-object port))))
+                  (xdr-read-object buffer))))
     (let lp ((k 0) (value 0) (shift 0))
       (cond
        ((##fx< k bytes)
-        (let (u8 (##read-u8 port))
+        (let (u8 (buffer-read-u8 buffer))
           (cond
            ((eof-object? u8)
-            (raise-xdr-error 'xdr-read "premature port end" port))
-           ((##fx< k xdr-int-fixnum-bytes)
-            (lp (##fx+ k 1)
-                (##fxior (##fxarithmetic-shift-left u8 shift)
-                         value)
-                (##fx+ shift 8)))
+            (raise-xdr-error 'xdr-read "premature end of input" buffer))
+           ((##fxarithmetic-shift-left? u8 shift)
+            => (lambda (bits)
+                 (lp (##fx+ k 1)
+                     (##fxior bits value)
+                     (##fx+ shift 8))))
            (else
             (lp (##fx+ k 1)
                 (bitwise-ior (arithmetic-shift u8 shift)
@@ -204,61 +202,61 @@ END-C
          (sign (- value))
          (else value)))))
 
-(def (xdr-float-read port)
+(def (xdr-float-read buffer)
   (let* ((bytes (make-u8vector 8))
-         (ilen (##read-subu8vector bytes 0 8 port)))
+         (ilen (buffer-read-subu8vector bytes 0 8 buffer)))
     (if (fx= ilen 8)
       (xdr-bytes->float bytes)
-      (raise-xdr-error 'xdr-read "premature port end" port))))
+      (raise-xdr-error 'xdr-read "premature end of input" buffer))))
 
-(def (xdr-binary-read port K)
-  (let* ((len (xdr-read-object port))
+(def (xdr-binary-read buffer K)
+  (let* ((len (xdr-read-object buffer))
          (buf (make-u8vector len))
-         (ilen (##read-subu8vector buf 0 len port)))
+         (ilen (buffer-read-subu8vector buf 0 len buffer)))
     (if (fx= len ilen)
       (K buf)
-      (raise-xdr-error 'xdr-read "premature port end" port))))
+      (raise-xdr-error 'xdr-read "premature end of input" buffer))))
 
-(def (xdr-string-read port)
-  (xdr-binary-read port bytes->string))
+(def (xdr-string-read buffer)
+  (xdr-binary-read buffer utf8->string))
 
-(def (xdr-symbol-read port)
+(def (xdr-symbol-read buffer)
   (xdr-binary-read
-   port (lambda (bytes) (string->symbol (bytes->string bytes)))))
+   buffer (lambda (bytes) (string->symbol (utf8->string bytes)))))
 
-(def (xdr-keyword-read port)
+(def (xdr-keyword-read buffer)
   (xdr-binary-read
-   port (lambda (bytes) (string->keyword (bytes->string bytes)))))
+   buffer (lambda (bytes) (string->keyword (utf8->string bytes)))))
 
-(def (xdr-vector-like-read makef start port)
-  (let* ((len (xdr-read-object port))
+(def (xdr-vector-like-read makef start buffer)
+  (let* ((len (xdr-read-object buffer))
          (obj (makef len))
          (ilen (fx+ start len)))
     (let lp ((k start))
       (if (fx< k ilen)
         (begin
-          (##vector-set! obj k (xdr-read-object port))
+          (##vector-set! obj k (xdr-read-object buffer))
           (lp (fx1+ k)))
         obj))))
 
-(def (xdr-values-read port)
-  (xdr-vector-like-read ##make-values 0 port))
+(def (xdr-values-read buffer)
+  (xdr-vector-like-read ##make-values 0 buffer))
 
-(def (xdr-vector-read port)
-  (xdr-vector-like-read ##make-vector 0 port))
+(def (xdr-vector-read buffer)
+  (xdr-vector-like-read ##make-vector 0 buffer))
 
-(def (xdr-u8vector-read port)
-  (xdr-binary-read port values))
+(def (xdr-u8vector-read buffer)
+  (xdr-binary-read buffer values))
 
-(def (xdr-inline-list-read port)
+(def (xdr-inline-list-read buffer)
   (let lp ((lst []))
-    (let (next (xdr-read-object port))
+    (let (next (xdr-read-object buffer))
       (if (null? next)
         (reverse! lst)
         (lp (cons next lst))))))
 
-(def (xdr-hash-read port)
-  (let* ((htype (##read-u8 port))
+(def (xdr-hash-read buffer)
+  (let* ((htype (buffer-read-u8 buffer))
          (makef (cond
                  ((eq? htype xdr-proto-type-hash-eq)
                   list->hash-table-eq)
@@ -266,41 +264,41 @@ END-C
                   list->hash-table-eqv)
                  (else
                   list->hash-table)))
-         (pairs (xdr-inline-list-read port)))
+         (pairs (xdr-inline-list-read buffer)))
     (makef pairs)))
 
-(def (xdr-opaque-read port)
-  (let* ((type (xdr-read-object port))
-         (bytes (xdr-binary-read port values)))
+(def (xdr-opaque-read buffer)
+  (let* ((type (xdr-read-object buffer))
+         (bytes (xdr-binary-read buffer values)))
     (u8vector->object bytes)))
 
-(def (xdr-structure-read port)
-  (let (type-id (xdr-read-object port))
+(def (xdr-structure-read buffer)
+  (let (type-id (xdr-read-object buffer))
     (cond
      ((xdr-type-registry-get type-id)
       => (lambda (xdr)
-           ((XDR-read xdr) port)))
+           ((XDR-read xdr) buffer)))
      (else
-      (raise-xdr-error 'xdr-read "unknown structure type" type-id port)))))
+      (raise-xdr-error 'xdr-read "unknown structure type" type-id buffer)))))
 
 ;;; xdr writers
 (defrules defxdr-atom-write ()
   ((_ id type)
-   (def (id obj port)
-     (##write-u8 type port))))
+   (def (id obj buffer)
+     (buffer-write-u8 type buffer))))
 
 (defxdr-atom-write xdr-void-write  xdr-proto-type-void)
 (defxdr-atom-write xdr-false-write xdr-proto-type-false)
 (defxdr-atom-write xdr-true-write  xdr-proto-type-true)
 (defxdr-atom-write xdr-null-write  xdr-proto-type-null)
 
-(def (xdr-pair-write obj port)
-  (##write-u8 xdr-proto-type-pair port)
-  (xdr-write-object (car obj) port)
-  (xdr-write-object (cdr obj) port))
+(def (xdr-pair-write obj buffer)
+  (buffer-write-u8 xdr-proto-type-pair buffer)
+  (xdr-write-object (car obj) buffer)
+  (xdr-write-object (cdr obj) buffer))
 
-(def (xdr-int-write obj port)
-  (##write-u8 xdr-proto-type-int port)
+(def (xdr-int-write obj buffer)
+  (buffer-write-u8 xdr-proto-type-int buffer)
   (cond
    ((fixnum? obj)
     (let* ((neg? (##fx< obj 0))
@@ -311,10 +309,10 @@ END-C
            (rem (##fxand bits #b111))
            (bytes (if (##fxzero? rem) bytes (##fx+ bytes 1)))
            (hd (##fxior sign bytes)))
-      (##write-u8 hd port)
+      (buffer-write-u8 hd buffer)
       (let lp ((k 0) (value value))
         (when (##fx< k bytes)
-          (##write-u8 (##fxand value #xff) port)
+          (buffer-write-u8 (##fxand value #xff) buffer)
           (lp (##fx+ k 1)
               (##fxarithmetic-shift-right value 8))))))
    (else
@@ -334,96 +332,96 @@ END-C
                 (fxior (fxarithmetic-shift sign 7)
                        127)
                 #t))))
-      (##write-u8 hd port)
+      (buffer-write-u8 hd buffer)
       (when len
-        (xdr-int-write bytes port))
+        (xdr-int-write bytes buffer))
       (let lp ((k 0) (value value))
         (when (fx< k bytes)
-          (##write-u8 (bitwise-and value #xff) port)
+          (buffer-write-u8 (bitwise-and value #xff) buffer)
           (lp (fx1+ k) (arithmetic-shift value -8))))))))
 
-(def (xdr-float-write obj port)
+(def (xdr-float-write obj buffer)
   (let (obj (if (exact? obj)
               (exact->inexact obj)
               obj))
-    (##write-u8 xdr-proto-type-float port)
+    (buffer-write-u8 xdr-proto-type-float buffer)
     (let (bytes (make-u8vector 8))
       (xdr-float->bytes! obj bytes)
-      (##write-subu8vector bytes 0 8 port))))
+      (buffer-write-subu8vector bytes 0 8 buffer))))
 
-(def (xdr-binary-write bytes port)
+(def (xdr-binary-write bytes buffer)
   (let (len (u8vector-length bytes))
-    (xdr-int-write len port)
-    (##write-subu8vector bytes 0 len port)))
+    (xdr-int-write len buffer)
+    (buffer-write-subu8vector bytes 0 len buffer)))
 
-(def (xdr-string-write obj port)
-  (##write-u8 xdr-proto-type-string port)
-  (xdr-binary-write (string->bytes obj) port))
+(def (xdr-string-write obj buffer)
+  (buffer-write-u8 xdr-proto-type-string buffer)
+  (xdr-binary-write (string->utf8 obj) buffer))
 
-(def (xdr-symbol-write obj port)
-  (##write-u8 xdr-proto-type-symbol port)
-  (xdr-binary-write (string->bytes (symbol->string obj)) port))
+(def (xdr-symbol-write obj buffer)
+  (buffer-write-u8 xdr-proto-type-symbol buffer)
+  (xdr-binary-write (string->utf8 (symbol->string obj)) buffer))
 
-(def (xdr-keyword-write obj port)
-  (##write-u8 xdr-proto-type-keyword port)
-  (xdr-binary-write (string->bytes (keyword->string obj)) port))
+(def (xdr-keyword-write obj buffer)
+  (buffer-write-u8 xdr-proto-type-keyword buffer)
+  (xdr-binary-write (string->utf8 (keyword->string obj)) buffer))
 
-(def (xdr-vector-like-write obj start port)
+(def (xdr-vector-like-write obj start buffer)
   (let* ((len (##vector-length obj))
          (olen (fx- len start)))
-    (xdr-int-write olen port)
+    (xdr-int-write olen buffer)
     (let lp ((k start))
       (when (fx< k len)
-        (xdr-write-object (##vector-ref obj k) port)
+        (xdr-write-object (##vector-ref obj k) buffer)
         (lp (fx1+ k))))))
 
-(def (xdr-values-write obj port)
-  (##write-u8 xdr-proto-type-values port)
-  (xdr-vector-like-write obj 0 port))
+(def (xdr-values-write obj buffer)
+  (buffer-write-u8 xdr-proto-type-values buffer)
+  (xdr-vector-like-write obj 0 buffer))
 
-(def (xdr-vector-write obj port)
-  (##write-u8 xdr-proto-type-vector port)
-  (xdr-vector-like-write obj 0 port))
+(def (xdr-vector-write obj buffer)
+  (buffer-write-u8 xdr-proto-type-vector buffer)
+  (xdr-vector-like-write obj 0 buffer))
 
-(def (xdr-u8vector-write obj port)
-  (##write-u8 xdr-proto-type-u8vector port)
-  (xdr-binary-write obj port))
+(def (xdr-u8vector-write obj buffer)
+  (buffer-write-u8 xdr-proto-type-u8vector buffer)
+  (xdr-binary-write obj buffer))
 
-(def (xdr-inline-list-write obj port)
-  (for-each (cut xdr-pair-write <> port) obj)
-  (xdr-null-write '() port))
+(def (xdr-inline-list-write obj buffer)
+  (for-each (cut xdr-pair-write <> buffer) obj)
+  (xdr-null-write '() buffer))
 
-(def (xdr-hash-write obj port)
-  (##write-u8 xdr-proto-type-hash port)
+(def (xdr-hash-write obj buffer)
+  (buffer-write-u8 xdr-proto-type-hash buffer)
   (let (testf (##vector-ref obj 2))     ; _system#.scm
     (cond
      ((or (not testf)
           (eq? testf eq?)
           (eq? testf ##eq?))
-      (##write-u8 xdr-proto-type-hash-eq port))
+      (buffer-write-u8 xdr-proto-type-hash-eq buffer))
      ((or (eq? testf eqv?)
           (eq? testf ##eqv?))
-      (##write-u8 xdr-proto-type-hash-eqv port))
+      (buffer-write-u8 xdr-proto-type-hash-eqv buffer))
      (else
-      (##write-u8 xdr-proto-type-hash-equal port))))
-  (xdr-inline-list-write (hash->list obj) port))
+      (buffer-write-u8 xdr-proto-type-hash-equal buffer))))
+  (xdr-inline-list-write (hash->list obj) buffer))
 
-(def (xdr-opaque-write obj port)
-  (##write-u8 xdr-proto-type-opaque port)
-  (xdr-write-object (opaque-type obj) port)
-  (xdr-binary-write (opaque-data obj) port))
+(def (xdr-opaque-write obj buffer)
+  (buffer-write-u8 xdr-proto-type-opaque buffer)
+  (xdr-write-object (opaque-type obj) buffer)
+  (xdr-binary-write (opaque-data obj) buffer))
 
-(def (xdr-structure-write obj port)
+(def (xdr-structure-write obj buffer)
   (let (type-id (##type-id (object-type obj)))
     (cond
      ((xdr-type-registry-get type-id)
       => (lambda (xdr)
-           (##write-u8 xdr-proto-type-structure port)
-           (xdr-write-object type-id port)
-           ((XDR-write xdr) obj port)))
+           (buffer-write-u8 xdr-proto-type-structure buffer)
+           (xdr-write-object type-id buffer)
+           ((XDR-write xdr) obj buffer)))
      (else
       (xdr-write-object (make-opaque type-id (object->u8vector obj))
-                        port)))))
+                        buffer)))))
 
 (def (int? obj)
   (and (integer? obj)
@@ -459,14 +457,14 @@ END-C
          (indices (iota len))
          (reader-vector (make-vector len)))
 
-    (def (read-e port)
-      (let (index (##read-u8 port))
+    (def (read-e buffer)
+      (let (index (buffer-read-u8 buffer))
         (when (eof-object? index)
-          (raise-xdr-error 'xdr-read "premature port end" port))
+          (raise-xdr-error 'xdr-read "premature end of input" buffer))
         (let (xdr-read-e (vector-ref reader-vector index))
-          (xdr-read-e port))))
+          (xdr-read-e buffer))))
 
-    (def (write-e obj port)
+    (def (write-e obj buffer)
       (let lp ((pred-rest preds) (writer-rest writers) (index 0))
         (match pred-rest
           ([pred . pred-rest]
@@ -474,8 +472,8 @@ END-C
              ([write-e . writer-rest]
               (if (pred obj)
                 (begin
-                  (##write-u8 index port)
-                  (write-e obj port))
+                  (buffer-write-u8 index buffer)
+                  (write-e obj buffer))
                 (lp pred-rest writer-rest (fx1+ index))))))
           (else
            (raise-xdr-error 'xdr-write "unknown object type" obj)))))

@@ -40,6 +40,7 @@
     "parser/grammar"
     "parser"
     ;; :std/text
+    "text/utf8"
     "text/hex"
     (gsc: "text/base64")
     (ssi: "text/base64")
@@ -115,6 +116,7 @@
     ;; :std/misc
     "misc/shuffle"
     "misc/uuid"
+    "misc/buffer"
     "misc/queue"
     "misc/pqueue"
     "misc/sync"

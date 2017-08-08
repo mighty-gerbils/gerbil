@@ -15,6 +15,7 @@ package: std
   make-event-set
   handle-evt                            ;
   wrap-evt choice-evt
+  make-timeout-evt
   event?                                ; event predicates
   event-handler?
   event-set?

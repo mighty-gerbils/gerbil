@@ -5,6 +5,7 @@
 (import :gerbil/gambit/random
         :std/test
         :std/actor/xdr
+        :std/misc/buffer
         :std/iter)
 (export actor-xdr-test)
 
@@ -12,9 +13,9 @@
   (test-suite "test :std/actor/xdr serialization"
 
     (def (check-serialize obj)
-        (let (p (open-output-u8vector))
+        (let (p (open-output-buffer))
           (xdr-write-object obj p)
-          (let (q (open-input-u8vector (get-output-u8vector p)))
+          (let (q (open-input-buffer (buffer-output-u8vector p)))
             (check (xdr-read-object q) => obj))))
 
     (test-case "test primitive object serialization"
@@ -47,6 +48,7 @@
       (check-serialize '#u8(127 0 0 1))
       (check-serialize '(#u8(127 0 0 1) . 8080))
       (check-serialize (random-u8vector 1000))
+      (check-serialize (list (random-u8vector 200) (random-u8vector 200) (random-u8vector 200)))
       (check-serialize (list->hash-table '((a . 1) (b . 2) (c . 3))))
       (check-serialize (list->hash-table-eq '((a . 1) (b . 2) (c . 3))))
       ;; opaque

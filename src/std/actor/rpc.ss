@@ -8,10 +8,9 @@ package: std/actor
         :gerbil/gambit/exceptions
         :std/sugar
         :std/format
-        :std/event
         :std/logger
-        :std/misc/pqueue
         :std/misc/sync
+        :std/misc/buffer
         :std/net/address
         :std/net/server
         :std/os/socket
@@ -128,7 +127,8 @@ package: std/actor
 ;;; rpc-server
 (def (start-rpc-server! proto: (proto (rpc-null-proto)) . addresses)
   (start-logger!)
-  (spawn rpc-server proto addresses))
+  (let (socksrv (start-socket-server!))
+    (spawn rpc-server socksrv proto addresses)))
 
 (def (stop-rpc-server! rpcd)
   (!!rpc.shutdown rpcd)
@@ -159,9 +159,8 @@ package: std/actor
     address)
    (else #f)))
 
-(def (rpc-server proto addresses)
-  (let* ((socksrv (start-socket-server!))
-         (sas     (map socket-address addresses))
+(def (rpc-server socksrv proto addresses)
+  (let* ((sas     (map socket-address addresses))
          (_       (for-each rpc-unlink-unix-socket sas))
          (socks   (map (cut server-listen socksrv <>) sas)))
     (parameterize ((current-rpc-server (current-thread)))
@@ -170,9 +169,7 @@ package: std/actor
        (catch (e)
          (unless (eq? e 'shutdown)
            (log-error "unhandled exception" e)
-           (raise e)))
-       (finally
-        (server-shutdown! socksrv))))))
+           (raise e)))))))
 
 (def (rpc-unlink-unix-socket sa)
   (when (eq? (socket-address-family sa) AF_UNIX)
@@ -475,20 +472,21 @@ package: std/actor
     (make-hash-table-eq))
   (def continuation-timeouts            ; wire-id => timeout
     (make-hash-table-eqv))
-  (def timeouts-pqueue
-    (make-pqueue (lambda (evt) (time->seconds (event-selector evt)))))
+  (def next-timeout #f)
   (def next-continuation-id 0)
   (def idle-timeout #f)
   (def reader #f)
   (def writer #f)
 
   (def (reset-idle-timeout)
-    (set! idle-timeout
-      (if rpc-idle-timeout
+    (cond
+     (rpc-idle-timeout
+      (set! idle-timeout
         (seconds->time
-         (+ (time->seconds (current-time))
-            rpc-idle-timeout))
-        never-evt)))
+         (+ (##current-time-point) rpc-idle-timeout))))
+     ((not idle-timeout))
+     (else
+      (set! idle-timeout #f))))
 
   (def (close-connection)
     (server-close sock)
@@ -514,7 +512,7 @@ package: std/actor
      ((void? data)                      ; keep-alive
       (loop))
      ((u8vector? data)                  ; incoming message
-      (let (bytes (open-input-u8vector data))
+      (let (bytes (open-input-buffer data))
         (let (msg (try (rpc-proto-read-message-envelope bytes)
                        (catch (exception? e) e)))
           (if (message? msg)
@@ -575,7 +573,7 @@ package: std/actor
                  (else
                   (loop)))))))
         (else
-         (warning "cannot route call; no actor binding ~a" (uuid->symbol uuid))
+         (warning "cannot route call; no actor binding ~a" (uuid->string uuid))
          (match (message-e msg)
            ((or (!call _ k) (!stream _ k))
             (dispatch-remote-error (make-!error "no binding" k) uuid))
@@ -647,16 +645,9 @@ package: std/actor
                (hash-put! continuations wire-id (values src k proto #f))
                (set! (!call-k content) wire-id)
                (alet (timeo (rpc-options-timeout opts rpc-call-timeout))
-                 (let* ((abs-timeo
-                         (if (real? timeo)
-                           (seconds->time
-                            (+ (time->seconds (current-time)) timeo))
-                           timeo))
-                        (timeo-evt
-                         (rec evt (handle-evt abs-timeo (lambda (_) evt)))))
-                   (hash-put! timeouts timeo-evt wire-id)
-                   (hash-put! continuation-timeouts wire-id timeo-evt)
-                   (pqueue-push! timeouts-pqueue timeo-evt)))
+                 (hash-put! timeouts timeo wire-id)
+                 (hash-put! continuation-timeouts wire-id timeo)
+                 (set-timeout! timeo))
                (marshal-and-write msg proto #t)))
             ((!stream _ k)
              (let (wire-id (next-continuation-id!))
@@ -664,15 +655,9 @@ package: std/actor
                (hash-put! stream-continuations k wire-id)
                (set! (!stream-k content) wire-id)
                (alet (timeo (rpc-options-timeout opts #f))
-                 (let* ((abs-timeo
-                         (if (real? timeo)
-                           (seconds->time
-                            (+ (time->seconds (current-time)) timeo))
-                           timeo))
-                        (timeo-evt (rec evt (handle-evt abs-timeo (lambda (_) evt)))))
-                   (hash-put! timeouts timeo-evt wire-id)
-                   (hash-put! continuation-timeouts wire-id timeo-evt)
-                   (pqueue-push! timeouts-pqueue timeo-evt)))
+                 (hash-put! timeouts timeo wire-id)
+                 (hash-put! continuation-timeouts wire-id timeo)
+                 (set-timeout! timeo))
                (marshal-and-write msg proto #t)))
             ((? !value?)
              (marshal-and-write msg proto #t))
@@ -778,14 +763,17 @@ package: std/actor
       (dispatch-remote-error (make-!error what wire-id) dest)))
 
   (def (dispatch-timeout timeo)
+    (set! next-timeout #f)
     (cond
      ((hash-get timeouts timeo)
       => (lambda (wire-id)
-           (dispatch-error wire-id "timeout")))))
+           (dispatch-error wire-id "timeout")))
+     (else
+      (loop))))
 
   (def (writer-loop)
     (let lp ()
-      (<< (! (or rpc-keep-alive never-evt)
+      (<< (! rpc-keep-alive
              (write-e output (void))
              (lp))
           ((? u8vector? data)
@@ -796,16 +784,22 @@ package: std/actor
            (warning "unexpected message ~a" bogus)
            (lp)))))
 
+  (def (timeout< a b)
+    (< (time->seconds a)
+       (time->seconds b)))
+
+  (def (set-timeout! timeo)
+    (when (or (not next-timeout) (timeout< timeo next-timeout))
+      (set! next-timeout timeo)))
+
   (def (timeout-event)
-    (let lp ()
-      (if (pqueue-empty? timeouts-pqueue)
-        never-evt
-        (let (timeo (pqueue-peek timeouts-pqueue))
-          (if (hash-get timeouts timeo)
-            timeo
-            (begin
-              (pqueue-pop! timeouts-pqueue)
-              (lp)))))))
+    (unless next-timeout
+      (unless (fxzero? (hash-length timeouts))
+        (hash-for-each
+          (lambda (timeo _)
+            (set-timeout! timeo))
+          timeouts)))
+    next-timeout)
 
   (def (loop)
     (<< (! (timeout-event)
@@ -854,25 +848,21 @@ package: std/actor
      (close-connection))))
 
 (def (rpc-options-timeout opts default)
-  (def nil (lambda (_) 'nil))
-  (if opts
-    (let (timeo (pgetq timeout: opts nil))
-      (cond
-       ((eq? timeo 'nil)                ; not specified
-        default)
-       ((not timeo)                     ; no timeout
-        #f)
-       ((real? timeo)                   ; relative timeout
-        (if (positive? timeo)
-          (if (finite? timeo)
-            timeo
-            #f)                         ; +inf.0
-          0))
-       ((time? timeo)                   ; absolute timeout
-        timeo)
-       (else                            ; not quite a timeout, we'll do default
-        default)))
-    default))
+  (def (timeout dt default)
+    (cond
+     ((real? dt)                        ; rel time
+      (seconds->time
+       (+ (##current-time-point) dt)))
+     ((time? dt) dt)                    ; abs time
+     ((not dt) dt)                      ; bottom
+     (else
+      (timeout default #f))))
+  (cond
+   ((and opts (memq timeout: opts))
+    => (lambda (plist)
+         (timeout (cadr plist) default)))
+   (else
+    (timeout default #f))))
 
 (def (rpc-connection-shutdown rpc-server)
   (!!rpc.connection-shutdown rpc-server)
