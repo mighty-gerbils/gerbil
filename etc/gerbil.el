@@ -140,6 +140,7 @@ The hook is run after scheme-mode-hook."
                        "let-registers"
                        "spawn" "try" "while"
                        "continue" "yield" "coroutine"
+                       "<-" "<<" "->"
                        )
                      t)
      "\\>")
@@ -153,19 +154,11 @@ The hook is run after scheme-mode-hook."
   (gerbil-fontlock-add
    '("\\_<\\(\\sw+:\\)\\_>"
      (1 font-lock-builtin-face)))
-  (gerbil-fontlock-add
-   '("\\([_#]\\)"
-     (1 font-lock-builtin-face)))
-  (gerbil-fontlock-add
-   '("\\<\\(#[tf]\\|#!\\w+\\)"
-     (1 font-lock-builtin-face)))
+
   (gerbil-fontlock-add
    '("\\<\\(<>\\|<\\.\\.\\.>\\>\\)"
      (1 font-lock-builtin-face)))
 
-  (gerbil-fontlock-add
-   '("\\_<\\([?!]\\)"
-     (1 font-lock-builtin-face)))
   (gerbil-fontlock-add
    '("\\_<\\([.][.][.]\\)"
      (1 font-lock-builtin-face)))
@@ -260,6 +253,17 @@ The hook is run after scheme-mode-hook."
    '("(\\(defregister\\|defvar\\|defconst\\)\\s-+\\(\\sw+\\)"
      (1 font-lock-keyword-face)
      (2 font-lock-variable-name-face)))
+
+  (gerbil-fontlock-add
+   '("\\_<\\([?!&]+\\)"
+     (1 font-lock-builtin-face)))
+  (gerbil-fontlock-add
+   '("\\<\\(#[tf]\\|#!\\w+\\)"
+     (1 font-lock-builtin-face)))
+  (gerbil-fontlock-add
+   '("\\([_#]+\\)"
+     (1 font-lock-builtin-face)))
+
   (gerbil-fontlock-add
    '("\\([()]\\)"
      (1 paren-face)))
