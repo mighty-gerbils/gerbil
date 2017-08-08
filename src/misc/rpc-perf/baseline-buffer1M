@@ -1,5 +1,5 @@
 #!/bin/bash
 for x in {1..10}; do
-    ./baseline-server client 10000 &
+    ./baseline-buffer client 100000 &
 done
 wait

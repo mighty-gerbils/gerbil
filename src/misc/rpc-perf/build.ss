@@ -5,7 +5,7 @@
 
 (def build-spec
   '((exe: "baseline-port")
-    (exe: "baseline-server")
+    (exe: "baseline-buffer")
     (exe: "baseline-io")
     (exe: "nullproto")))
 
