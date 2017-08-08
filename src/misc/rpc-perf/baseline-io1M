@@ -1,0 +1,5 @@
+#!/bin/bash
+for x in {1..10}; do
+    ./baseline-io client 100000 &
+done
+wait
