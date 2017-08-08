@@ -573,7 +573,7 @@ package: std/actor
                  (else
                   (loop)))))))
         (else
-         (warning "cannot route call; no actor binding ~a" (uuid->symbol uuid))
+         (warning "cannot route call; no actor binding ~a" (uuid->string uuid))
          (match (message-e msg)
            ((or (!call _ k) (!stream _ k))
             (dispatch-remote-error (make-!error "no binding" k) uuid))
