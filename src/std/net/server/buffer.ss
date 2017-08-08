@@ -228,7 +228,8 @@ package: std/net/server
           (set! (&output-buffer-wlo obuf)
             (##fx- end start+have))))
        (else                            ; does not fit
-        (server-send-all sock buf 0 wlo)
+        (when (##fx> wlo 0)
+          (server-send-all sock buf 0 wlo))
         (set! (&output-buffer-wlo obuf) 0)
         (server-send-all sock u8v start end))))))
 
