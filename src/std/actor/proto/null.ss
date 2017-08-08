@@ -84,11 +84,9 @@ package: std/actor/proto
      ((eq? e rpc-proto-message)
       (let (len (server-buffer-read-u32 ibuf))
         (if (fx<= len rpc-proto-message-max-length)
-          (let* ((buf (make-u8vector len))
-                 (rd  (server-buffer-read-bytes buf ibuf)))
-            (if (fx= rd len)
-              buf
-              (raise-rpc-io-error 'rpc-proto-read "premature end of input" rd len)))
+          (let (buf (make-u8vector len))
+            (server-buffer-read-bytes buf ibuf)
+            buf)
           (raise-rpc-io-error 'rpc-proto-read "message too long" len))))
      ((eof-object? e) e)
      (else
