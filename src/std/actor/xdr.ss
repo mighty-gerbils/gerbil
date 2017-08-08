@@ -176,7 +176,7 @@ END-C
 (def (xdr-int-read buffer)
   (let* ((hd (buffer-read-u8 buffer))
          (_  (when (eof-object? hd)
-               (raise-xdr-error 'xdr-read "premature buffer end" buffer)))
+               (raise-xdr-error 'xdr-read "premature end of input" buffer)))
          (sign (not (##fxzero? (##fxand hd #x80))))
          (bytes (##fxand hd #x7f))
          (bytes (if (##fx< bytes 127)
@@ -188,7 +188,7 @@ END-C
         (let (u8 (buffer-read-u8 buffer))
           (cond
            ((eof-object? u8)
-            (raise-xdr-error 'xdr-read "premature buffer end" buffer))
+            (raise-xdr-error 'xdr-read "premature end of input" buffer))
            ((##fxarithmetic-shift-left? u8 shift)
             => (lambda (bits)
                  (lp (##fx+ k 1)
@@ -207,7 +207,7 @@ END-C
          (ilen (buffer-read-subu8vector bytes 0 8 buffer)))
     (if (fx= ilen 8)
       (xdr-bytes->float bytes)
-      (raise-xdr-error 'xdr-read "premature buffer end" buffer))))
+      (raise-xdr-error 'xdr-read "premature end of input" buffer))))
 
 (def (xdr-binary-read buffer K)
   (let* ((len (xdr-read-object buffer))
@@ -215,7 +215,7 @@ END-C
          (ilen (buffer-read-subu8vector buf 0 len buffer)))
     (if (fx= len ilen)
       (K buf)
-      (raise-xdr-error 'xdr-read "premature buffer end" buffer))))
+      (raise-xdr-error 'xdr-read "premature end of input" buffer))))
 
 (def (xdr-string-read buffer)
   (xdr-binary-read buffer utf8->string))
@@ -460,7 +460,7 @@ END-C
     (def (read-e buffer)
       (let (index (buffer-read-u8 buffer))
         (when (eof-object? index)
-          (raise-xdr-error 'xdr-read "premature buffer end" buffer))
+          (raise-xdr-error 'xdr-read "premature end of input" buffer))
         (let (xdr-read-e (vector-ref reader-vector index))
           (xdr-read-e buffer))))
 
