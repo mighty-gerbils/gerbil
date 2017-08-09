@@ -9,7 +9,8 @@ package: std/misc
         buffer-read-u8 buffer-read-subu8vector buffer-peek-u8
         open-output-buffer output-buffer?
         buffer-write-u8 buffer-write-subu8vector buffer-push-u8vector
-        buffer-output-u8vector)
+        buffer-output-u8vector buffer-output-chunks buffer-output-length
+        buffer-output-reset!)
 
 (declare (not safe))
 
@@ -142,25 +143,30 @@ package: std/misc
     (set! (&output-buffer-wlo buf)
       0)))
 
-(def (buffer-output-u8vector buf (reset? #f))
+(def (buffer-output-u8vector buf)
+  (let (chunks (buffer-output-chunks buf))
+    (##append-u8vectors chunks)))
+
+(def (buffer-output-chunks buf)
   (let* ((wlo (&output-buffer-wlo buf))
          (chunk (&output-buffer-e buf))
-         (chunks (&output-buffer-chunks buf))
-         (bytes
-          (cond
-           ((##fx> wlo 0)
-            (##u8vector-shrink! chunk wlo)
-            (set! (&output-buffer-e buf) #f) ; invalidate chunk
-            (if (null? chunks)
-              chunk
-              (##append-u8vectors (reverse! (cons chunk chunks)))))
-           ((and (pair? chunks) (null? (##cdr chunks)))
-            (##car chunks))
-           (else
-            (##append-u8vectors (reverse! chunks))))))
-    (when reset?
-      (buffer-output-reset! buf))
-    bytes))
+         (chunks (&output-buffer-chunks buf)))
+    (if  (##fx> wlo 0)
+      (begin
+        (##u8vector-shrink! chunk wlo)
+        (set! (&output-buffer-e buf) #f) ; invalidate for reset
+        (if (null? chunks)
+          [chunk]
+          (reverse! (cons chunk chunks))))
+      (reverse! chunks))))
+
+(def (buffer-output-length buf)
+  (let ((wlo (&output-buffer-wlo buf))
+        (chunks (&output-buffer-chunks buf)))
+    (if (null? chunks)
+      wlo
+      (foldl (lambda (chunk r) (##fx+ (##u8vector-length chunk) r))
+             wlo chunks))))
 
 (def (buffer-output-reset! buf)
   (unless (&output-buffer-e buf)
