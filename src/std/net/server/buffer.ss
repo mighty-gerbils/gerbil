@@ -26,12 +26,14 @@ package: std/net/server
 
 (declare (not safe))
 
+(def default-buffer-size 4096)
+
 ;;; input buffers
 (defstruct input-buffer (sock e rlo rhi)
   final: #t
   unchecked: #t)
 
-(def (server-input-buffer sock (size 4096))
+(def (server-input-buffer sock (size default-buffer-size))
   (make-input-buffer sock (make-u8vector size) 0 0))
 
 (def (server-buffer-read-u8 ibuf)
@@ -166,7 +168,7 @@ package: std/net/server
   final: #t
   unchecked: #t)
 
-(def (server-output-buffer sock (size 4096))
+(def (server-output-buffer sock (size default-buffer-size))
   (make-output-buffer sock (make-u8vector size) 0 size))
 
 (def (server-buffer-write-u8 u8 obuf)
