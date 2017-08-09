@@ -112,17 +112,26 @@ package: std/misc
           (cons chunk (&output-buffer-chunks buf))))))))
 
 (def (buffer-push-u8vector bytes buf)
-  (let (wlo (&output-buffer-wlo buf))
-    (if (##fx> wlo 0)
+  (let* ((wlo (&output-buffer-wlo buf))
+         (whi (&output-buffer-whi buf))
+         (have (##fx- whi wlo))
+         (end (##u8vector-length bytes)))
+    (cond
+     ((##fx<= end have)                 ; fits in current chunk, write
+      (##subu8vector-move! bytes 0 end (&output-buffer-e buf) wlo)
+      (set! (&output-buffer-wlo buf)
+        (##fx+ wlo end)))
+     ((##fx> wlo 0)                     ; chunk has data, flush it
       (let (chunk (&output-buffer-e buf))
         (##u8vector-shrink! chunk wlo)
         (set! (&output-buffer-chunks buf)
           (cons bytes
                 (cons chunk
                       (&output-buffer-chunks buf))))
-        (buffer-reset-chunk! buf))
+        (buffer-reset-chunk! buf)))
+     (else
       (set! (&output-buffer-chunks buf)
-        (cons bytes (&output-buffer-chunks buf))))))
+        (cons bytes (&output-buffer-chunks buf)))))))
 
 (def (buffer-next-chunk! buf)
   (let* ((whi (&output-buffer-whi buf))
