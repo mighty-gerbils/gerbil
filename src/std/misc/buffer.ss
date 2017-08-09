@@ -73,14 +73,8 @@ package: std/misc
         (##u8vector-set! (&output-buffer-e buf) wlo u8)
         (set! (&output-buffer-wlo buf)
           (##fx+ wlo 1)))
-      (let (chunk (make-u8vector whi))
-        (set! (&output-buffer-chunks buf)
-          (cons (&output-buffer-e buf)
-                (&output-buffer-chunks buf)))
-        (set! (&output-buffer-e buf)
-          chunk)
-        (set! (&output-buffer-wlo buf)
-          0)
+      (begin
+        (buffer-next-chunk! buf)
         (buffer-write-u8 u8 buf)))))
 
 (def (buffer-write-subu8vector bytes start end buf)
@@ -94,42 +88,25 @@ package: std/misc
       (set! (&output-buffer-wlo buf)
         (##fx+ wlo need)))
      ((##fxzero? have)                  ; current chunk full, flush it
-      (let (chunk (make-u8vector whi))
-        (set! (&output-buffer-chunks buf)
-          (cons (&output-buffer-e buf)
-                (&output-buffer-chunks buf)))
-        (set! (&output-buffer-e buf)
-          chunk)
-        (set! (&output-buffer-wlo buf)
-          0)
-        (buffer-write-subu8vector bytes start end buf)))
+      (buffer-next-chunk! buf)
+      (buffer-write-subu8vector bytes start end buf))
      ((##fx<= need whi)                 ; fits fragmented
       (let ((chunk (&output-buffer-e buf))
             (start+have (##fx+ start have)))
         (##subu8vector-move! bytes start start+have chunk wlo)
-        (set! (&output-buffer-chunks buf)
-          (cons chunk (&output-buffer-chunks buf)))
-        (let (chunk (make-u8vector whi))
-          (set! (&output-buffer-e buf)
-            chunk)
-          (set! (&output-buffer-wlo buf)
-            0)
-          (buffer-write-subu8vector bytes start+have end buf))))
+        (buffer-next-chunk! buf)
+        (buffer-write-subu8vector bytes start+have end buf)))
      ((##fx> wlo 0)                     ; does not fit, data to flush
       (let (chunk1 (&output-buffer-e buf))
         (##u8vector-shrink! chunk1 wlo)
-        (let (chunk2 (##u8vector-copy bytes))
+        (let (chunk2 (##u8vector-copy bytes)) ; XXX this i don't like
           (set! (&output-buffer-chunks buf)
             (cons chunk2
                   (cons chunk1
                         (&output-buffer-chunks buf))))
-          (let (chunk (make-u8vector whi))
-            (set! (&output-buffer-e buf)
-              chunk))
-          (set! (&output-buffer-wlo buf)
-            0))))
-     (else
-      (let (chunk (##u8vector-copy bytes))
+          (buffer-reset-chunk! buf))))
+     (else                              ; does not fit, empty  chunk
+      (let (chunk (##u8vector-copy bytes)) ; XXX this i don't like
         (set! (&output-buffer-chunks buf)
           (cons chunk (&output-buffer-chunks buf))))))))
 
@@ -142,13 +119,28 @@ package: std/misc
           (cons bytes
                 (cons chunk
                       (&output-buffer-chunks buf))))
-        (let* ((whi (&output-buffer-whi buf))
-               (chunk (make-u8vector whi)))
-          (set! (&output-buffer-e buf)
-            chunk))
-        (set! (&output-buffer-wlo buf) 0))
+        (buffer-reset-chunk! buf))
       (set! (&output-buffer-chunks buf)
         (cons bytes (&output-buffer-chunks buf))))))
+
+(def (buffer-next-chunk! buf)
+  (let* ((whi (&output-buffer-whi buf))
+         (chunk (make-u8vector whi)))
+    (set! (&output-buffer-chunks buf)
+      (cons (&output-buffer-e buf)
+            (&output-buffer-chunks buf)))
+    (set! (&output-buffer-e buf)
+      chunk)
+    (set! (&output-buffer-wlo buf)
+      0)))
+
+(def (buffer-reset-chunk! buf)
+  (let* ((whi (&output-buffer-whi buf))
+         (chunk (make-u8vector whi)))
+    (set! (&output-buffer-e buf)
+      chunk)
+    (set! (&output-buffer-wlo buf)
+      0)))
 
 (def (buffer-output-u8vector buf (reset? #f))
   (let* ((wlo (&output-buffer-wlo buf))
