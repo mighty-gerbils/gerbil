@@ -352,7 +352,7 @@ END-C
 (def (xdr-binary-write bytes buffer)
   (let (len (u8vector-length bytes))
     (xdr-int-write len buffer)
-    (buffer-write-subu8vector bytes 0 len buffer)))
+    (buffer-push-u8vector bytes buffer)))
 
 (def (xdr-string-write obj buffer)
   (buffer-write-u8 xdr-proto-type-string buffer)

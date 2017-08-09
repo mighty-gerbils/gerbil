@@ -735,6 +735,20 @@ package: std/actor
                (dispatch-stream-error msg wire-id "message too large"))
               (else
                (loop))))))
+       ((output-buffer? e)
+        (if (fx<= (buffer-output-length e) rpc-proto-message-max-length)
+          (begin
+            (thread-send writer e)
+            (loop))
+          (let (content (message-e msg))
+            (warning "message too large; not sending %d bytes" (buffer-output-length e))
+            (match content
+              ((or (!call e wire-id) (!stream e wire-id))
+               (dispatch-error wire-id "message too large"))
+              ((!yield wire-id)
+               (dispatch-stream-error msg wire-id "message too large"))
+              (else
+               (loop))))))
        (local-error?
         (log-error "marshal error" e)
         (let (content (message-e msg))
@@ -778,6 +792,9 @@ package: std/actor
              (lp))
           ((? u8vector? data)
            (write-e output data)
+           (lp))
+          ((? output-buffer? buf)
+           (write-e output buf)
            (lp))
           ('exit (void))
           (bogus

@@ -47,7 +47,7 @@ package: std/actor/proto
 (def (rpc-proto-marshal-message msg proto)
   (let (outp (open-output-buffer))
     (rpc-proto-write-message msg proto outp)
-    (buffer-output-u8vector outp)))
+    outp))
 
 ;; wire representation
 ;; rpc-proto-message-type dest content
