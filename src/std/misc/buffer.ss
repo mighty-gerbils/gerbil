@@ -154,7 +154,9 @@ package: std/misc
 
 (def (buffer-output-u8vector buf)
   (let (chunks (buffer-output-chunks buf))
-    (##append-u8vectors chunks)))
+    (if (null? (##cdr chunks))
+      (##car chunks)
+      (##append-u8vectors chunks))))
 
 (def (buffer-output-chunks buf)
   (let* ((wlo (&output-buffer-wlo buf))
