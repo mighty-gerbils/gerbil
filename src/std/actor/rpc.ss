@@ -58,50 +58,11 @@ package: std/actor
 (def current-rpc-server
   (make-parameter #f))
 
-(def (xdr-handle-read port)
-  (let (uuid (xdr-read-object port))
-    (make-handle (current-rpc-server) uuid)))
-
-(def (xdr-handle-write obj port)
-  (with ((handle _ uuid) obj)
-    (xdr-write-object uuid port)))
-
-(def (xdr-remote-read port)
-  (let* ((uuid (xdr-read-object port))
-         (address (xdr-read-object port))
-         (proto (xdr-read-object port)))
-    (make-remote (current-rpc-server)
-                 address uuid
-                 (xdr-type-registry-get proto))))
-
-(def (xdr-remote-write obj port)
-  (with ((remote _ uuid address proto) obj)
-    (xdr-write-object uuid port)
-    (xdr-write-object address port)
-    (xdr-write-object (and proto (!protocol-id proto)) port)))
-
-(def (xdr-error-read error-t port)
-  (xdr-vector-like-read (cut make-object error-t <>) 1 port))
-
-(def (xdr-error-write obj port)
-  (xdr-vector-like-write obj 1 port))
-
-(def (xdr-actor-error-read port)
-  (xdr-error-read actor-error::t port))
-
-(def (xdr-remote-error-read port)
-  (xdr-error-read remote-error::t port))
-
-(def (xdr-rpc-error-read port)
-  (xdr-error-read rpc-error::t port))
-
 (defproto-default-type
-  (uuid::t uuid-t uuid? xdr-uuid-read xdr-uuid-write)
-  (handle::t handle-t handle? xdr-handle-read xdr-handle-write)
-  (remote::t remote-t remote? xdr-remote-read xdr-remote-write)
-  (actor-error::t actor-error-t actor-error? xdr-actor-error-read xdr-error-write)
-  (remote-error::t remote-error-t remote-error? xdr-remote-error-read xdr-error-write)
-  (rpc-error::t rpc-error-t rpc-error? xdr-rpc-error-read xdr-error-write))
+  (uuid::t xdr-read-uuid xdr-write-uuid)
+  (actor-error::t)
+  (remote-error::t)
+  (rpc-error::t))
 
 ;; rpc server protocol
 (defproto rpc
@@ -846,7 +807,7 @@ package: std/actor
 
   (def (run)
     ;; create a denv cell and bubble up the cache; cf parameter perf considerations
-    (parameterize ((current-xdr-type-registry *default-proto-type-registry*))
+    (parameterize ((current-xdr-type-registry +xdr-default-type-registry+))
       (loop)))
 
   (let (thread (spawn/name 'rpc-connection-reader reader-loop (current-thread)))

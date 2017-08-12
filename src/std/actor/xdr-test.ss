@@ -14,9 +14,9 @@
 
     (def (check-serialize obj)
         (let (p (open-output-buffer))
-          (xdr-write-object obj p)
+          (xdr-write obj p)
           (let (q (open-input-buffer (buffer-output-u8vector p)))
-            (check (xdr-read-object q) => obj))))
+            (check (xdr-read q) => obj))))
 
     (test-case "test primitive object serialization"
       ;; primitive objects

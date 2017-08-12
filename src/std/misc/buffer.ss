@@ -4,9 +4,11 @@
 ;;; Warning: Low level unsafe interface; let their be Dragons.
 package: std/misc
 
-(import (only-in :std/srfi/1 reverse!))
+(import :std/error
+        (only-in :std/srfi/1 reverse!))
 (export open-input-buffer input-buffer?
         buffer-read-u8 buffer-read-subu8vector buffer-peek-u8
+        buffer-read-bytes
         open-output-buffer output-buffer?
         buffer-write-u8 buffer-write-subu8vector buffer-push-u8vector
         buffer-output-u8vector buffer-output-chunks buffer-output-length
@@ -50,6 +52,12 @@ package: std/misc
       (set! (&input-buffer-rlo buf)
         rhi)
       have))))
+
+(def (buffer-read-bytes bytes buf)
+  (let* ((len (u8vector-length bytes))
+         (rd (buffer-read-subu8vector bytes 0 len buf)))
+    (unless (##fx= rd len)
+      (raise-io-error 'buffer-read-bytes "premature end of input"))))
 
 (def (buffer-peek-u8 buf)
   (let ((rlo (&input-buffer-rlo buf))

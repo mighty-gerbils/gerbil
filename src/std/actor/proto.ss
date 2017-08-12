@@ -25,7 +25,6 @@ package: std/actor
   (struct-out !protocol !rpc-protocol)
   defproto
   defproto-default-type
-  *default-proto-type-registry*
   (phi: +1 make-protocol-info protocol-info?
         protocol-info-runtime-identifier
         protocol-info-id
@@ -375,13 +374,9 @@ package: std/actor
          ((values extend-infos) (map syntax-local-value extend))
          ((extend::proto ...)   (map protocol-info-runtime-identifier extend-infos))
          (make-proto
-          #'(begin
-              (def proto::proto
+          #'(def proto::proto
                 (make-!protocol 'id [extend::proto ...]
-                                (hash-copy *default-proto-type-registry* )))
-              (hash-put! (!protocol-types proto::proto)
-                         (!protocol-id proto::proto)
-                         proto::proto))))
+                                (hash-copy +xdr-default-type-registry+ )))))
       (let lp ((rest #'(extend::proto ...)) (merges []))
         (syntax-case rest ()
           ((extender . rest)
@@ -432,11 +427,11 @@ package: std/actor
          (defn-xdr
            #'(begin
                (def (kall-xdr-read buffer)
-                 (xdr-vector-like-read (cut make-object kall::t <>) 1 buffer))
+                 (xdr-read-struct kall::t buffer))
                (def (kall-xdr-write obj buffer)
-                 (xdr-vector-like-write obj 1 buffer))
+                 (xdr-write-struct obj buffer))
                (def kall::xdr
-                 (make-XDR kall? kall-xdr-read kall-xdr-write))
+                 (make-XDR kall-xdr-read kall-xdr-write))
                (hash-put! (!protocol-types proto::proto) 'kall-rt-id kall::xdr))))
       #'(begin defn-kall defn-!kall defn-!!kall defn-xdr)))
 
@@ -476,11 +471,11 @@ package: std/actor
          (defn-xdr
            #'(begin
                (def (kall-xdr-read buffer)
-                 (xdr-vector-like-read (cut make-object kall::t <>) 1 buffer))
+                 (xdr-read-struct kall::t buffer))
                (def (kall-xdr-write obj buffer)
-                 (xdr-vector-like-write obj 1 buffer))
+                 (xdr-write-struct obj buffer))
                (def kall::xdr
-                 (make-XDR kall? kall-xdr-read kall-xdr-write))
+                 (make-XDR kall-xdr-read kall-xdr-write))
                (hash-put! (!protocol-types proto::proto) 'kall-rt-id kall::xdr))))
       #'(begin defn-kall defn-!kall defn-!!kall defn-xdr)))
 
@@ -526,11 +521,11 @@ package: std/actor
          (defn-xdr
            #'(begin
                (def (kall-xdr-read buffer)
-                 (xdr-vector-like-read (cut make-object kall::t <>) 1 buffer))
+                 (xdr-read-struct kall::t buffer))
                (def (kall-xdr-write obj buffer)
-                 (xdr-vector-like-write obj 1 buffer))
+                 (xdr-write-struct obj buffer))
                (def kall::xdr
-                 (make-XDR kall? kall-xdr-read kall-xdr-write))
+                 (make-XDR kall-xdr-read kall-xdr-write))
                (hash-put! (!protocol-types proto::proto) 'kall-rt-id kall::xdr))))
       #'(begin defn-kall defn-!kall defn-!!kall defn-xdr)))
 
@@ -546,8 +541,7 @@ package: std/actor
                       (proto::proto  (stx-identifier proto-id proto-id "::proto")))
          #'(hash-put! (!protocol-types proto::proto)
                       (##type-id struct::t)
-                      (make-XDR (lambda (obj) (struct-instance? struct::t obj))
-                                struct-xdr-read struct-xdr-write))))
+                      (make-XDR struct-xdr-read struct-xdr-write))))
       (struct-id
        (with-syntax*
            (((values info) (syntax-local-value #'struct-id))
@@ -557,13 +551,9 @@ package: std/actor
              (hash-put! (!protocol-types proto::proto)
                         (##type-id struct::t)
                         (make-XDR
-                         (lambda (obj)
-                           (struct-instance? struct::t obj))
                          (lambda (buffer)
-                           (xdr-vector-like-read (cut make-object struct::t <>)
-                                                 1 buffer))
-                         (lambda (obj buffer)
-                           (xdr-vector-like-write obj 1 buffer)))))))))
+                           (xdr-read-struct struct::t buffer))
+                         xdr-write-struct)))))))
 
   (def (generate-proto-structures proto-id structures)
     (map (cut generate-proto-structure proto-id <>)
@@ -605,20 +595,18 @@ package: std/actor
                 (begin defn-stream ...)
                 (begin defn-struct ...))))))
 
-;; default proto type registry
-(def *default-proto-type-registry*
-  (make-hash-table-eq))
-
 ;; default protocol types
 (defrules defproto-default-type ()
   ((_ rule ...)
    (begin (defproto-default-type-decl rule) ...)))
 
 (defrules defproto-default-type-decl ()
-  ((_ (type::t type-t type? xdr-type-read xdr-type-write))
-   (begin
-     (def type-t
-       (make-XDR type? xdr-type-read xdr-type-write))
-     (hash-put! *default-proto-type-registry*
-                (##type-id type::t)
-                type-t))))
+  ((_ (type::t xdr-read-e xdr-write-e))
+   (hash-put! +xdr-default-type-registry+
+              (##type-id type::t)
+              (make-XDR xdr-read-e xdr-write-e)))
+  ((_ (type::t))
+   (hash-put! +xdr-default-type-registry+
+              (##type-id type::t)
+              (make-XDR (lambda (buffer) (xdr-read-struct type::t buffer))
+                        xdr-write-struct))))
