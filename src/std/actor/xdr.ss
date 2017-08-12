@@ -69,8 +69,7 @@ package: std/actor
           (else
            (raise-xdr-error 'xdr-write "unknown object tag" tag)))))
    (else
-    (buffer-write-u8 xdr-tag-opaque buf)
-    (xdr-write-opaque obj buf))))
+    (raise-xdr-error 'xdr-write "cannot serialize object" obj))))
 
 ;; object tags
 (def xdr-tag-void      0)
@@ -90,7 +89,9 @@ package: std/actor
 (def xdr-tag-u8vector 15)
 (def xdr-tag-hash     16)
 (def xdr-tag-object   17)
-(def xdr-tag-opaque   18)
+(def xdr-tag-ratnum   18)
+(def xdr-tag-cpxnum   19)
+(def xdr-tag-opaque   20)
 
 (def xdr-tag-hash-equal 0)
 (def xdr-tag-hash-eq    1)
@@ -142,8 +143,14 @@ package: std/actor
     xdr-tag-object)
    ((hash-table? obj)
     xdr-tag-hash)
-   (else
-    xdr-tag-opaque)))
+   ((opaque? obj)
+    xdr-tag-opaque)
+   (else #f)))
+
+(def (xdr-subtype-bigint-tag obj)
+  (if (< obj 0)
+    xdr-tag-sint
+    xdr-tag-uint))
 
 (extern namespace: #f
   macro-type-fixnum
@@ -158,7 +165,10 @@ package: std/actor
   macro-subtype-keyword
   macro-subtype-string
   macro-subtype-u8vector
-  macro-subtype-flonum)
+  macro-subtype-flonum
+  macro-subtype-ratnum
+  macro-subtype-cpxnum
+  macro-subtype-bignum)
 
 (defxdr-type-tags
   ((macro-type-fixnum)  => xdr-type-fixnum-tag)
@@ -175,7 +185,10 @@ package: std/actor
   ((macro-subtype-keyword)   xdr-tag-keyword)
   ((macro-subtype-string)    xdr-tag-string)
   ((macro-subtype-u8vector)  xdr-tag-u8vector)
-  ((macro-subtype-flonum)    xdr-tag-flonum))
+  ((macro-subtype-flonum)    xdr-tag-flonum)
+  ((macro-subtype-bignum)    => xdr-subtype-bigint-tag)
+  ((macro-subtype-ratnum)    xdr-tag-ratnum)
+  ((macro-subtype-cpxnum)    xdr-tag-cpxnum))
 
 ;; i/o operators
 (def (xdr-read-void buf)
@@ -349,9 +362,7 @@ package: std/actor
     (u8vector->object bytes)))
 
 (def (xdr-write-opaque obj buf)
-  (let* ((obj (if (opaque? obj)
-                (opaque-e obj)
-                obj))
+  (let* ((obj (opaque-e obj))
          (bytes (object->u8vector obj)))
     (xdr-write-u8vector bytes buf)))
 
@@ -396,6 +407,29 @@ package: std/actor
 (def (xdr-write-sint obj buf)
   (xdr-write-uint (- obj) buf))
 
+(def (xdr-read-ratnum buf)
+  (let* ((num (xdr-read buf))
+         (den (xdr-read buf)))
+    (if (and (integer? num) (exact? num)
+             (integer? den) (exact? den))
+      (##ratnum-make num den)
+      (raise-xdr-error 'xdr-read-ratnum "malformed rational number" num den))))
+
+(def (xdr-write-ratnum obj buf)
+  (xdr-write (##ratnum-numerator obj) buf)
+  (xdr-write (##ratnum-denominator obj) buf))
+
+(def (xdr-read-cpxnum buf)
+  (let* ((real (xdr-read buf))
+         (imag (xdr-read buf)))
+    (if (and (real? real) (real? imag))
+      (##cpxnum-make real imag)
+      (raise-xdr-error 'xdr-read-cpxnum "malformed complex number" real imag))))
+
+(def (xdr-write-cpxnum obj buf)
+  (xdr-write (##cpxnum-real obj) buf)
+  (xdr-write (##cpxnum-imag obj) buf))
+
 (def (xdr-read-inline-list buf)
   (let lp ((r []))
     (let (next (xdr-read buf))
@@ -436,6 +470,8 @@ package: std/actor
   (xdr-tag-u8vector xdr-read-u8vector xdr-write-u8vector)
   (xdr-tag-hash     xdr-read-hash     xdr-write-hash)
   (xdr-tag-object   xdr-read-object   xdr-write-object)
+  (xdr-tag-ratnum   xdr-read-ratnum   xdr-write-ratnum)
+  (xdr-tag-cpxnum   xdr-read-cpxnum   xdr-write-cpxnum)
   (xdr-tag-opaque   xdr-read-opaque   xdr-write-opaque))
 
 ;; struct xdr
