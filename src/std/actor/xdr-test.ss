@@ -59,9 +59,5 @@
       (check-serialize (list->hash-table-eq '((a . 1) (b . 2) (c . 3))))
       (check-serialize 3+5i)
       (check-serialize 3/5)
-      ;; opaque
-      (check-serialize-opaque '#!key)
-      (check-serialize-opaque '#!eof)
-
-      )
+      (check-serialize '#!eof))
     ))
