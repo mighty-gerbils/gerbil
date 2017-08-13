@@ -14,9 +14,15 @@
 
     (def (check-serialize obj)
         (let (p (open-output-buffer))
-          (xdr-write-object obj p)
+          (xdr-write obj p)
           (let (q (open-input-buffer (buffer-output-u8vector p)))
-            (check (xdr-read-object q) => obj))))
+            (check (xdr-read q) => obj))))
+
+    (def (check-serialize-opaque obj)
+        (let (p (open-output-buffer))
+          (xdr-write (opaque obj) p)
+          (let (q (open-input-buffer (buffer-output-u8vector p)))
+            (check (xdr-read q) => obj))))
 
     (test-case "test primitive object serialization"
       ;; primitive objects
@@ -51,9 +57,7 @@
       (check-serialize (list (random-u8vector 200) (random-u8vector 200) (random-u8vector 200)))
       (check-serialize (list->hash-table '((a . 1) (b . 2) (c . 3))))
       (check-serialize (list->hash-table-eq '((a . 1) (b . 2) (c . 3))))
-      ;; opaque
-      (check-serialize '#!key)
-      (check-serialize '#!eof)
       (check-serialize 3+5i)
-      )
+      (check-serialize 3/5)
+      (check-serialize '#!eof))
     ))

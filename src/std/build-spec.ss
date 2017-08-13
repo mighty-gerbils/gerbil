@@ -124,7 +124,7 @@
     (gxc:  "misc/threads" "-e" "(include \"~~lib/_gambit#.scm\")")
     ;; :std/actor
     (gxc: "actor/message" "-e" "(include \"~~lib/_gambit#.scm\")")
-    "actor/xdr"
+    (gxc: "actor/xdr"  "-e" "(include \"~~lib/_gambit#.scm\")")
     "actor/proto"
     "actor/proto/message"
     "actor/proto/null"
