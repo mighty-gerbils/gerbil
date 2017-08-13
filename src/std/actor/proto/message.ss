@@ -52,9 +52,10 @@ package: std/actor/proto
 ;; wire representation
 ;; rpc-proto-message-type dest content
 (def (rpc-proto-write-message msg proto buffer)
-  (when proto
-    (current-xdr-type-registry
-     (!protocol-types proto)))
+  (current-xdr-type-registry
+   (if proto
+     (!protocol-types proto)
+     +xdr-default-type-registry+))
 
   (with ((message content _ dest) msg)
     (cond
@@ -160,8 +161,10 @@ package: std/actor/proto
 
 ;; return modify msg content in place, return it
 (def (rpc-proto-read-message-content msg proto buffer)
-  (when proto
-    (current-xdr-type-registry (!protocol-types proto)))
+  (current-xdr-type-registry
+   (if proto
+     (!protocol-types proto)
+     +xdr-default-type-registry+))
 
   (let (content (message-e msg))
     (cond
