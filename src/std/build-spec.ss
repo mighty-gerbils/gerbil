@@ -76,6 +76,11 @@
          '((gxc: "os/epoll" "-e" "(include \"~~lib/_gambit#.scm\")")
            (gxc: "os/inotify" "-e" "(include \"~~lib/_gambit#.scm\")")))
         (else '()))
+    ;; :std/net/bio
+    "net/bio/input"
+    "net/bio/output"
+    "net/bio/buffer"
+    "net/bio"
     ;; :std/net/server
     "net/server/base"
     (gxc: "net/server/server"  "-e" "(include \"~~lib/_gambit#.scm\")")

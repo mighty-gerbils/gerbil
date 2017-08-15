@@ -40,7 +40,8 @@ package: std/net/bio
 (def (open-output-buffer (chunksz 256))
   (make-chunked-output-buffer (make-u8vector chunksz) 0 chunksz
                               chunked-buffer-drain!
-                              chunked-buffer-write))
+                              chunked-buffer-write
+                              []))
 
 (def (chunked-buffer-drain! buf need)
   (let ((wlo (&output-buffer-wlo buf))
