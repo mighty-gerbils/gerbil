@@ -16,8 +16,9 @@ package: std/net/bio
 ;;; rhi: read range hi mark, where the read must end
 ;;; fill: lambda (buf need) => fixnum?
 ;;;       fill the buffer with need bytes in read range
-;;; read: lambda (buf bytes start end) => fixnum?
-;;;       read direct; may buffer
+;;; read: lambda (bytes start end buf) => fixnum?
+;;;       read unbuffered
+;;;       precondition: buffer is empty
 (defstruct input-buffer (e rlo rhi fill read)
   unchecked: #t)
 
