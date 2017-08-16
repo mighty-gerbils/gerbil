@@ -23,6 +23,12 @@ package: std/net/bio
 (defstruct output-buffer (e wlo whi drain write)
   unchecked: #t)
 
+(def (bio-output-drain! buf need)
+  ((&output-buffer-drain buf) buf need))
+
+(def (bio-output-write bytes start end buf)
+  ((&output-buffer-write buf) bytes start end buf))
+
 (def (bio-write-u8 u8 buf)
   (let ((wlo (&output-buffer-wlo buf))
         (whi (&output-buffer-whi buf)))
@@ -32,7 +38,7 @@ package: std/net/bio
         (set! (&output-buffer-wlo buf)
           (##fx+ wlo 1)))
       (begin
-        ((&output-buffer-drain buf) buf 1)
+        (bio-output-drain! buf 1)
         (bio-write-u8 u8 buf)))))
 
 (def (bio-write-subu8vector bytes start end buf)
@@ -52,23 +58,23 @@ package: std/net/bio
           (##subu8vector-move! bytes start start+have (&output-buffer-e buf) wlo)
           (set! (&output-buffer-wlo buf)
             whi)
-          ((&output-buffer-drain buf) buf (##fx- need have))
+          (bio-output-drain! buf (##fx- need have))
           (when (##fx< start+have end)
             (bio-write-subu8vector bytes start+have end buf)))
         (begin
-          ((&output-buffer-drain buf) buf need)
+          (bio-output-drain! buf need)
           (bio-write-subu8vector bytes start end buf))))
      (else                    ; does not fit in buffer, write directly
       (when (##fx> wlo 0)
-        ((&output-buffer-drain buf) buf need))
-      ((&output-buffer-write buf) bytes start end buf)))))
+        (bio-output-drain! buf need))
+      (bio-output-write bytes start end buf)))))
 
 (def (bio-write-subu8vector-unbuffered bytes start end buf)
   (let (wlo (&output-buffer-wlo buf))
     (when (##fx> wlo 0)
       (let (need (##fx- end start))
-        ((&output-buffer-drain buf) buf need)))
-    ((&output-buffer-write buf) bytes start end buf)))
+        (bio-output-drain! buf need)))
+    (bio-output-write bytes start end buf)))
 
 (def (bio-write-bytes bytes buf)
   (bio-write-subu8vector bytes 0 (u8vector-length bytes) buf))
@@ -86,7 +92,7 @@ package: std/net/bio
         (set! (&output-buffer-wlo buf)
           wlo+4))
       (begin
-        ((&output-buffer-drain buf) buf 4)
+        (bio-output-drain! buf 4)
         (bio-write-u32 u32 buf)))))
 
 (def (bio-put-u32 u32 u8v start)
@@ -106,4 +112,4 @@ package: std/net/bio
 (def (bio-force-output buf)
   (let (wlo (&output-buffer-wlo buf))
     (when (##fx> wlo 0)
-      ((&output-buffer-drain buf) buf 0))))
+      (bio-output-drain! buf 0))))

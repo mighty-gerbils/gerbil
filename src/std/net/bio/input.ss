@@ -22,6 +22,12 @@ package: std/net/bio
 (defstruct input-buffer (e rlo rhi fill read)
   unchecked: #t)
 
+(def (bio-input-fill! buf need)
+  ((&input-buffer-fill buf) buf need))
+
+(def (bio-input-read bytes start end buf)
+  ((&input-buffer-read buf) bytes start end buf))
+
 (def (bio-read-u8 buf)
   (let ((rlo (&input-buffer-rlo buf))
         (rhi (&input-buffer-rhi buf)))
@@ -30,7 +36,7 @@ package: std/net/bio
         (set! (&input-buffer-rlo buf)
           (##fx+ rlo 1))
         u8)
-      (let (rd ((&input-buffer-fill buf) buf 1))
+      (let (rd (bio-input-fill! buf 1))
         (if (##fxzero? rd)
           (eof-object)
           (let* ((rlo (&input-buffer-rlo buf))
@@ -44,7 +50,7 @@ package: std/net/bio
         (rhi (&input-buffer-rhi buf)))
     (if (##fx< rlo rhi)
       (##u8vector-ref (&input-buffer-e buf) rlo)
-      (let (rd ((&input-buffer-fill buf) buf 1))
+      (let (rd (bio-input-fill! buf 1))
         (if (##fxzero? rd)
           (eof-object)
           (let (rlo (&input-buffer-rlo buf))
@@ -67,18 +73,18 @@ package: std/net/bio
           (set! (&input-buffer-rlo buf)
             rhi)
           (let* ((need (##fx- need have))
-                 (rd ((&input-buffer-fill buf) buf need)))
+                 (rd (bio-input-fill! buf need)))
             (if (##fxzero? rd)
               count
               (lp (##fx+ start have) need (##fx+ count have))))))
        ;; have none, does it make sense to buffer?
        ((##fx< need (##u8vector-length (&input-buffer-e buf)))
-        (let (rd ((&input-buffer-fill buf) buf need))
+        (let (rd (bio-input-fill! buf need))
           (if (##fxzero? rd)
             count
             (lp start need count))))
        (else                            ; too large, read unbuffered
-        (##fx+ count ((&input-buffer-read buf) bytes start end buf)))))))
+        (##fx+ count (bio-input-read bytes start end buf)))))))
 
 (def (bio-read-subu8vector* bytes start end buf)
   (let* ((want (##fx- end start))
@@ -109,9 +115,9 @@ package: std/net/bio
         (##subu8vector-move! (&input-buffer-e buf) rlo rhi bytes start)
         (set! (&input-buffer-rlo buf)
           rhi)
-        (##fx+ have ((&input-buffer-read buf) bytes (##fx+ start have) end buf))))
+        (##fx+ have (bio-input-read bytes (##fx+ start have) end buf))))
      (else                              ; have none
-      ((&input-buffer-read buf) bytes start end buf)))))
+      (bio-input-read bytes start end buf)))))
 
 (def (bio-read-bytes bytes buf)
   (let* ((len (u8vector-length bytes))
@@ -134,7 +140,7 @@ package: std/net/bio
         (set! (&input-buffer-rlo buf)
           rlo+4)
         u32)
-      (let* ((_ ((&input-buffer-fill buf) buf 4))
+      (let* ((_ (bio-input-fill! buf 4))
              (rlo (&input-buffer-rlo buf))
              (rhi (&input-buffer-rhi buf))
              (rlo+4 (##fx+ rlo 4)))
