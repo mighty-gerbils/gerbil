@@ -121,7 +121,6 @@
     ;; :std/misc
     "misc/shuffle"
     "misc/uuid"
-    "misc/buffer"
     "misc/queue"
     "misc/pqueue"
     "misc/sync"
