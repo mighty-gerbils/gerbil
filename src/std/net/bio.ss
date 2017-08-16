@@ -32,6 +32,7 @@ package: std/net
   open-fixed-output-buffer
   make-fixed-output-buffer
   open-chunked-output-buffer
+  open-serializer-output-buffer
   chunked-output-buffer?
   chunked-output-chunks
   chunked-output-u8vector

@@ -37,12 +37,19 @@ package: std/net/bio
 
 ;; chunked output buffers
 (defstruct (chunked-output-buffer output-buffer) (chunks)
+  final: #t
   unchecked: #t)
 
-(def (open-chunked-output-buffer (chunksz 256))
+(def (open-chunked-output-buffer (chunksz 1024))
   (make-chunked-output-buffer (make-u8vector chunksz) 0 chunksz
                               chunked-buffer-drain!
                               chunked-buffer-write
+                              []))
+
+(def (open-serializer-output-buffer (chunksz 256))
+  (make-chunked-output-buffer (make-u8vector chunksz) 0 chunksz
+                              chunked-buffer-drain!
+                              chunked-buffer-push
                               []))
 
 (def (chunked-buffer-drain! buf need)
@@ -63,6 +70,16 @@ package: std/net/bio
   (let (chunks (&chunked-output-buffer-chunks buf))
     (set! (&chunked-output-buffer-chunks buf)
       (cons (##subu8vector bytes start end) chunks))))
+
+(def (chunked-buffer-push bytes start end buf)
+  (let* ((bytes
+          (if (and (##fx= start 0)
+                   (##fx= end (##u8vector-length bytes)))
+            bytes
+            (##subu8vector bytes start end)))
+         (chunks (&chunked-output-buffer-chunks buf)))
+    (set! (&chunked-output-buffer-chunks buf)
+      (cons bytes chunks))))
 
 (def (chunked-output-u8vector buf)
   (let (chunks (chunked-output-chunks buf))
