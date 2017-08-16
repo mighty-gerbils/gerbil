@@ -70,6 +70,12 @@ package: std/net/bio
         ((&output-buffer-drain buf) buf need)))
     ((&output-buffer-write buf) bytes start end buf)))
 
+(def (bio-write-bytes bytes buf)
+  (bio-write-subu8vector bytes 0 (u8vector-length bytes) buf))
+
+(def (bio-write-bytes-unbuffered bytes buf)
+  (bio-write-subu8vector-unbuffered bytes 0 (u8vector-length bytes) buf))
+
 (def (bio-write-u32 u32 buf)
   (let* ((wlo (&output-buffer-wlo buf))
          (whi (&output-buffer-whi buf))

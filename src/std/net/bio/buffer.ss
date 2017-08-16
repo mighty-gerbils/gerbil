@@ -10,6 +10,8 @@ package: std/net/bio
         (only-in :std/srfi/1 reverse!))
 (export #t)
 
+(declare (not safe))
+
 ;; fixed input buffers
 (def (open-input-buffer bytes (rlo 0) (rhi (u8vector-length bytes)))
   (make-input-buffer bytes rlo rhi fixed-buffer-fill! fixed-buffer-read))
@@ -79,3 +81,11 @@ package: std/net/bio
           [chunk]
           (reverse! (cons chunk chunks))))
       (reverse! chunks))))
+
+(def (chunked-output-length buf)
+  (let ((wlo (&output-buffer-wlo buf))
+        (chunks (&chunked-output-buffer-chunks buf)))
+    (if (null? chunks)
+      wlo
+      (foldl (lambda (chunk r) (##fx+ (##u8vector-length chunk) r))
+             wlo chunks))))

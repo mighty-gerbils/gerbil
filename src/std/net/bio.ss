@@ -23,6 +23,8 @@ package: std/net
   bio-write-u8
   bio-write-subu8vector
   bio-write-subu8vector-unbuffered
+  bio-write-bytes
+  bio-write-bytes-unbuffered
   bio-write-u32
   ;; buffers
   open-input-buffer
@@ -31,4 +33,5 @@ package: std/net
   open-output-buffer
   chunked-output-buffer?
   chunked-output-chunks
-  chunked-output-u8vector)
+  chunked-output-u8vector
+  chunked-output-length)
