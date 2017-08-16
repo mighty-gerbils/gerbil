@@ -10,7 +10,7 @@ package: std/actor
         :std/format
         :std/logger
         :std/misc/sync
-        :std/misc/buffer
+        :std/net/bio
         :std/net/address
         :std/net/server
         :std/os/socket
@@ -696,13 +696,13 @@ package: std/actor
                (dispatch-stream-error msg wire-id "message too large"))
               (else
                (loop))))))
-       ((output-buffer? e)
-        (if (fx<= (buffer-output-length e) rpc-proto-message-max-length)
+       ((chunked-output-buffer? e)
+        (if (fx<= (chunked-output-length e) rpc-proto-message-max-length)
           (begin
             (thread-send writer e)
             (loop))
           (let (content (message-e msg))
-            (warning "message too large; not sending %d bytes" (buffer-output-length e))
+            (warning "message too large; not sending %d bytes" (chunked-output-length e))
             (match content
               ((or (!call e wire-id) (!stream e wire-id))
                (dispatch-error wire-id "message too large"))

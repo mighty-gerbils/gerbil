@@ -5,7 +5,7 @@
 (import :gerbil/gambit/random
         :std/test
         :std/actor/xdr
-        :std/misc/buffer
+        :std/net/bio
         :std/iter)
 (export actor-xdr-test)
 
@@ -15,13 +15,13 @@
     (def (check-serialize obj)
         (let (p (open-output-buffer))
           (xdr-write obj p)
-          (let (q (open-input-buffer (buffer-output-u8vector p)))
+          (let (q (open-input-buffer (chunked-output-u8vector p)))
             (check (xdr-read q) => obj))))
 
     (def (check-serialize-opaque obj)
         (let (p (open-output-buffer))
           (xdr-write (opaque obj) p)
-          (let (q (open-input-buffer (buffer-output-u8vector p)))
+          (let (q (open-input-buffer (chunked-output-u8vector p)))
             (check (xdr-read q) => obj))))
 
     (test-case "test primitive object serialization"

@@ -4,9 +4,9 @@
 package: std/actor/proto
 
 (import :std/net/server
+        :std/net/bio
         :std/actor/proto
         :std/actor/proto/message
-        :std/misc/buffer
         )
 
 (export rpc-proto-accept-e
@@ -103,9 +103,9 @@ package: std/actor/proto
     (server-buffer-write-u32 (u8vector-length obj) obuf)
     (server-buffer-write-bytes obj obuf)
     (server-buffer-force-output obuf))
-   ((output-buffer? obj)
-    (let* ((len (buffer-output-length obj))
-           (chunks (buffer-output-chunks obj)))
+   ((chunked-output-buffer? obj)
+    (let* ((len (chunked-output-length obj))
+           (chunks (chunked-output-chunks obj)))
       (server-buffer-write-u8 rpc-proto-message obuf)
       (server-buffer-write-u32 len obuf)
       (for-each (cut server-buffer-write-bytes <> obuf) chunks)

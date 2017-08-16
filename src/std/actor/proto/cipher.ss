@@ -4,6 +4,7 @@
 package: std/actor/proto
 
 (import :std/net/server
+        :std/net/bio
         :std/crypto/etc
         :std/crypto/digest
         :std/crypto/cipher
@@ -14,7 +15,6 @@ package: std/actor/proto
         :std/actor/proto/message
         :std/actor/proto/null
         :std/actor/proto/cookie
-        :std/misc/buffer
         )
 (export rpc-cipher-proto
         rpc-cookie-cipher-proto
@@ -116,10 +116,10 @@ package: std/actor/proto
       (server-buffer-write-u32 (u8vector-length ctext) obuf)
       (server-buffer-write-bytes ctext obuf)
       (server-buffer-force-output obuf)))
-   ((output-buffer? obj)
+   ((chunked-output-buffer? obj)
     ;; TODO optimize away the copy of data
     ;;      encryption needs streaming interface
-    (rpc-cipher-proto-write obuf (buffer-output-u8vector obj) secret key iv))
+    (rpc-cipher-proto-write obuf (chunked-output-u8vector obj) secret key iv))
    (else
     (raise-rpc-io-error 'rpc-proto-write "unexpected object" obj))))
 
