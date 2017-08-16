@@ -57,34 +57,38 @@ package: std/net/bio
             (##u8vector-ref (&input-buffer-e buf) rlo)))))))
 
 (def (bio-read-subu8vector bytes start end buf)
-  (let lp ((start start) (need (##fx- end start)) (count 0))
-    (let* ((rlo (&input-buffer-rlo buf))
-           (rhi (&input-buffer-rhi buf))
-           (rlo+need (##fx+ rlo need)))
-      (cond
-       ((##fx<= rlo+need rhi)           ; have all
-        (##subu8vector-move! (&input-buffer-e buf) rlo rlo+need bytes start)
-        (set! (&input-buffer-rlo buf)
-          rlo+need)
-        (##fx+ need count))
-       ((##fx< rlo rhi)                 ; have some
-        (let (have (##fx- rhi rlo))
-          (##subu8vector-move! (&input-buffer-e buf) rlo rhi bytes start)
-          (set! (&input-buffer-rlo buf)
-            rhi)
-          (let* ((need (##fx- need have))
-                 (rd (bio-input-fill! buf need)))
-            (if (##fxzero? rd)
-              count
-              (lp (##fx+ start have) need (##fx+ count have))))))
-       ;; have none, does it make sense to buffer?
-       ((##fx< need (##u8vector-length (&input-buffer-e buf)))
-        (let (rd (bio-input-fill! buf need))
-          (if (##fxzero? rd)
-            count
-            (lp start need count))))
-       (else                            ; too large, read unbuffered
-        (##fx+ count (bio-input-read bytes start end buf)))))))
+  (let* ((rlo (&input-buffer-rlo buf))
+         (rhi (&input-buffer-rhi buf))
+         (need (##fx- end start))
+         (rlo+need (##fx+ rlo need)))
+    (cond
+     ((##fx<= rlo+need rhi)             ; have all
+      (##subu8vector-move! (&input-buffer-e buf) rlo rlo+need bytes start)
+      (set! (&input-buffer-rlo buf)
+        rlo+need)
+      need)
+     ((##fx< rlo rhi)                   ; have some
+      (##subu8vector-move! (&input-buffer-e buf) rlo rhi bytes start)
+      (set! (&input-buffer-rlo buf)
+        rhi)
+      (let* ((have (##fx- rhi rlo))
+             (need (##fx- need have)))
+        ;; does it make sense to buffer?
+        (if (##fx< need (##u8vector-length (&input-buffer-e buf)))
+          (let (rd (bio-input-fill! buf need))
+            (if (##fx> rd 0)
+              (##fx+ have (bio-read-subu8vector bytes (##fx+ start have) end buf))
+              have))
+          (##fx+ have (bio-input-read bytes (##fx+ start have) end buf)))))
+     ;; have none, does it make sense to buffer?
+     ((##fx< need (##u8vector-length (&input-buffer-e buf)))
+      (let (rd (bio-input-fill! buf need))
+        (if (##fx> rd 0)
+          (bio-read-subu8vector bytes start end buf)
+          0)))
+     ;; read unbuffered
+     (else
+      (bio-input-read bytes start end buf)))))
 
 (def (bio-read-subu8vector* bytes start end buf)
   (let* ((want (##fx- end start))
