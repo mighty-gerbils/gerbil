@@ -51,9 +51,9 @@ package: std/net/server
             (set! (&input-buffer-rhi buf)
               rhi+rd)
             (if (##fx< rd want)
-              (if (##fxzero? rd)
-                count
-                (lp rhi+rd (##fx- want rd) (##fx+ count rd)))
+              (if (##fx> rd 0)
+                (lp rhi+rd (##fx- want rd) (##fx+ count rd))
+                count)
               (##fx+ count rd))))))))
 
 (def (server-input-read bytes start end buf)
