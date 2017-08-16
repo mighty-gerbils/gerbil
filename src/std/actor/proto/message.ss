@@ -45,7 +45,7 @@ package: std/actor/proto
 
 ;;; protocol i/o
 (def (rpc-proto-marshal-message msg proto)
-  (let (outp (open-output-buffer))
+  (let (outp (open-chunked-output-buffer))
     (rpc-proto-write-message msg proto outp)
     outp))
 

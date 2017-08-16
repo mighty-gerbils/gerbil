@@ -31,7 +31,7 @@ package: std/net
   open-input-buffer
   open-fixed-output-buffer
   make-fixed-output-buffer
-  open-output-buffer
+  open-chunked-output-buffer
   chunked-output-buffer?
   chunked-output-chunks
   chunked-output-u8vector

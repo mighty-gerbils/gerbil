@@ -23,7 +23,7 @@ package: std/net/bio
   0)
 
 ;; fixed output buffers
-(def (open-fixed-output-buffer (size 1024))
+(def (open-fixed-output-buffer size)
   (make-fixed-output-buffer (make-u8vector size) 0 size))
 
 (def (make-fixed-output-buffer bytes wlo whi)
@@ -39,7 +39,7 @@ package: std/net/bio
 (defstruct (chunked-output-buffer output-buffer) (chunks)
   unchecked: #t)
 
-(def (open-output-buffer (chunksz 256))
+(def (open-chunked-output-buffer (chunksz 256))
   (make-chunked-output-buffer (make-u8vector chunksz) 0 chunksz
                               chunked-buffer-drain!
                               chunked-buffer-write
