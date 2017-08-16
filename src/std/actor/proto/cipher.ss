@@ -14,8 +14,7 @@ package: std/actor/proto
         :std/actor/proto
         :std/actor/proto/message
         :std/actor/proto/null
-        :std/actor/proto/cookie
-        )
+        :std/actor/proto/cookie)
 (export rpc-cipher-proto
         rpc-cookie-cipher-proto
         rpc-cipher-proto-key-exchange)
@@ -33,18 +32,18 @@ package: std/actor/proto
          (_    (DH-generate-key dh))
          (pubk (DH-pub-key dh))
          (bytes (BN->bytes pubk)))
-    (server-buffer-write-u8 rpc-proto-key-exchange obuf)
-    (server-buffer-write-u32 (u8vector-length bytes) obuf)
-    (server-buffer-write-bytes bytes obuf)
-    (server-buffer-force-output obuf)
-    (let (e (server-buffer-read-u8 ibuf))
+    (bio-write-u8 rpc-proto-key-exchange obuf)
+    (bio-write-u32 (u8vector-length bytes) obuf)
+    (bio-write-bytes bytes obuf)
+    (bio-force-output obuf)
+    (let (e (bio-read-u8 ibuf))
       (cond
        ((eq? e rpc-proto-key-exchange)
-        (let* ((sz (server-buffer-read-u32 ibuf))
+        (let* ((sz (bio-read-u32 ibuf))
                (_ (when (fx> sz 1024)
                     (raise-rpc-io-error 'rpc-proto-key-exchange "inordinately sized key" sz)))
                (bytes (make-u8vector sz))
-               (_ (server-buffer-read-bytes bytes ibuf))
+               (_ (bio-read-bytes bytes ibuf))
                (peerk (bytes->BN bytes)))
           (DH-compute-key dh peerk)))
        ((eof-object? e)
@@ -60,14 +59,14 @@ package: std/actor/proto
     (cut rpc-cipher-proto-read <> secret key hmac iv ctext)))
 
 (def (rpc-cipher-proto-read ibuf secret key hmac iv ctext)
-  (let (e (server-buffer-read-u8 ibuf))
+  (let (e (bio-read-u8 ibuf))
     (cond
      ((eq? e rpc-proto-message)
       (let* ((digest (make-digest ::digest-type))
              (cipher (make-cipher ::cipher-type))
-             (_      (server-buffer-read-bytes hmac ibuf))
-             (_      (server-buffer-read-bytes iv ibuf))
-             (size   (server-buffer-read-u32 ibuf))
+             (_      (bio-read-bytes hmac ibuf))
+             (_      (bio-read-bytes iv ibuf))
+             (size   (bio-read-u32 ibuf))
              (_      (unless (fx<= size rpc-proto-message-max-length)
                        (raise-rpc-io-error 'rpc-proto-read "message too large" size)))
              (ctext  (let (buf (unbox ctext))
@@ -75,7 +74,7 @@ package: std/actor/proto
                            (let (buf (make-u8vector size))
                              (set! (box ctext) buf)
                              buf))))
-             (rd     (server-buffer-read-subu8vector ctext 0 size ibuf))
+             (rd     (bio-read-subu8vector ctext 0 size ibuf))
              (_      (when (fx< rd size)
                        (raise-rpc-io-error 'rpc-proto-read "incomplete message" rd size)))
              (_      (digest-update! digest secret))
@@ -99,10 +98,10 @@ package: std/actor/proto
 (def (rpc-cipher-proto-write obuf obj secret key iv)
   (cond
    ((eq? obj #!void)
-    (server-buffer-write-u8 rpc-proto-keep-alive obuf)
-    (server-buffer-force-output obuf))
+    (bio-write-u8 rpc-proto-keep-alive obuf)
+    (bio-force-output obuf))
    ((u8vector? obj)
-    (server-buffer-write-u8 rpc-proto-message obuf)
+    (bio-write-u8 rpc-proto-message obuf)
     (let* ((digest (make-digest ::digest-type))
            (cipher (make-cipher ::cipher-type))
            (_      (random-bytes! iv))
@@ -111,11 +110,11 @@ package: std/actor/proto
            (_      (digest-update! digest iv))
            (_      (digest-update! digest ctext))
            (hmac   (digest-final! digest)))
-      (server-buffer-write-bytes hmac obuf)
-      (server-buffer-write-bytes iv obuf)
-      (server-buffer-write-u32 (u8vector-length ctext) obuf)
-      (server-buffer-write-bytes ctext obuf)
-      (server-buffer-force-output obuf)))
+      (bio-write-bytes hmac obuf)
+      (bio-write-bytes iv obuf)
+      (bio-write-u32 (u8vector-length ctext) obuf)
+      (bio-write-bytes ctext obuf)
+      (bio-force-output obuf)))
    ((chunked-output-buffer? obj)
     ;; TODO optimize away the copy of data
     ;;      encryption needs streaming interface
@@ -151,7 +150,7 @@ package: std/actor/proto
 (def (rpc-cookie-cipher-proto-connect ibuf obuf cookie)
   (rpc-proto-connect-e ibuf obuf rpc-proto-cookie-cipher
     (lambda (ibuf obuf)
-      (let (e (server-buffer-read-u8 ibuf))
+      (let (e (bio-read-u8 ibuf))
         (cond
          ((eq? e rpc-proto-challenge)
           (rpc-cookie-proto-challenge-respond ibuf obuf cookie)

@@ -26,6 +26,7 @@ package: std/net
   bio-write-bytes
   bio-write-bytes-unbuffered
   bio-write-u32
+  bio-force-output
   ;; buffers
   open-input-buffer
   open-fixed-output-buffer

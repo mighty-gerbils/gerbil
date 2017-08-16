@@ -418,9 +418,9 @@ package: std/actor
 
 (def (rpc-connection-loop rpc-server actors sock peer-address proto-e)
   (def input
-    (server-input-buffer sock))
+    (open-server-input-buffer sock))
   (def output
-    (server-output-buffer sock))
+    (open-server-output-buffer sock))
   (defvalues (read-e write-e)
     (proto-e input output))
   (def continuations                    ; wire-id => (values actor k proto stream?)
