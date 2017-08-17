@@ -91,10 +91,10 @@ package: std/net/bio
       (bio-input-read bytes start end buf)))))
 
 (def (bio-read-subu8vector* bytes start end buf)
-  (let* ((want (##fx- end start))
-         (rlo  (&input-buffer-rlo buf))
+  (let* ((rlo  (&input-buffer-rlo buf))
          (rhi  (&input-buffer-rhi buf))
          (have (##fx- rhi rlo))
+         (want (##fx- end start))
          (copy (##fxmin want have)))
     (when (##fx> copy 0)
       (let (rlo+copy (##fx+ rlo copy))
