@@ -19,7 +19,6 @@ package: std/net/server
 
 ;;; input buffers
 (defstruct (server-input-buffer input-buffer) (sock)
-  final: #t
   unchecked: #t)
 
 (def (open-server-input-buffer sock (size default-buffer-size))

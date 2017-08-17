@@ -37,7 +37,6 @@ package: std/net/bio
 
 ;; chunked output buffers
 (defstruct (chunked-output-buffer output-buffer) (chunks)
-  final: #t
   unchecked: #t)
 
 (def (open-chunked-output-buffer (chunksz 1024))
