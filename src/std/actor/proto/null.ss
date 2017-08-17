@@ -4,9 +4,9 @@
 package: std/actor/proto
 
 (import :std/net/server
+        :std/net/bio
         :std/actor/proto
         :std/actor/proto/message
-        :std/misc/buffer
         )
 
 (export rpc-proto-accept-e
@@ -22,21 +22,21 @@ package: std/actor/proto
   (def (bad-hello e)
     (raise-rpc-io-error 'rpc-proto-accept "bad hello" e))
 
-  (let (e (server-buffer-read-u8 ibuf))
+  (let (e (bio-read-u8 ibuf))
     (cond
      ((eof-object? e)
       (connection-closed))
      ((eq? e rpc-proto-connect-hello)
-      (let (e (server-buffer-read-u8 ibuf))
+      (let (e (bio-read-u8 ibuf))
         (cond
          ((eof-object? e)
           (connection-closed))
          ((eq? e proto-t)
-          (server-buffer-write-u8 rpc-proto-connect-accept obuf)
+          (bio-write-u8 rpc-proto-connect-accept obuf)
           (K ibuf obuf))
          (else
-          (server-buffer-write-u8 rpc-proto-connect-reject obuf)
-          (server-buffer-force-output obuf)
+          (bio-write-u8 rpc-proto-connect-reject obuf)
+          (bio-force-output obuf)
           (bad-hello e)))))
      (else
       (bad-hello)))))
@@ -49,10 +49,10 @@ package: std/actor/proto
   (def (bad-hello)
     (raise-rpc-io-error 'rpc-proto-connect "bad hello"))
 
-  (server-buffer-write-u8 rpc-proto-connect-hello obuf)
-  (server-buffer-write-u8 proto-t obuf)
-  (server-buffer-force-output obuf)
-  (let (e (server-buffer-read-u8 ibuf))
+  (bio-write-u8 rpc-proto-connect-hello obuf)
+  (bio-write-u8 proto-t obuf)
+  (bio-force-output obuf)
+  (let (e (bio-read-u8 ibuf))
     (cond
      ((eof-object? e)
       (connection-closed))
@@ -67,7 +67,7 @@ package: std/actor/proto
 (def (rpc-null-proto-accept ibuf obuf)
   (rpc-proto-accept-e ibuf obuf rpc-proto-null
     (lambda (ibuf obuf)
-      (server-buffer-force-output obuf)
+      (bio-force-output obuf)
       (values rpc-null-proto-read
               rpc-null-proto-write))))
 
@@ -78,15 +78,15 @@ package: std/actor/proto
               rpc-null-proto-write))))
 
 (def (rpc-null-proto-read ibuf)
-  (let (e (server-buffer-read-u8 ibuf))
+  (let (e (bio-read-u8 ibuf))
     (cond
      ((eq? e rpc-proto-keep-alive)
       #!void)
      ((eq? e rpc-proto-message)
-      (let (len (server-buffer-read-u32 ibuf))
+      (let (len (bio-read-u32 ibuf))
         (if (fx<= len rpc-proto-message-max-length)
           (let (buf (make-u8vector len))
-            (server-buffer-read-bytes buf ibuf)
+            (bio-read-bytes buf ibuf)
             buf)
           (raise-rpc-io-error 'rpc-proto-read "message too long" len))))
      ((eof-object? e) e)
@@ -96,20 +96,20 @@ package: std/actor/proto
 (def (rpc-null-proto-write obuf obj)
   (cond
    ((eq? obj #!void)
-    (server-buffer-write-u8 rpc-proto-keep-alive obuf)
-    (server-buffer-force-output obuf))
+    (bio-write-u8 rpc-proto-keep-alive obuf)
+    (bio-force-output obuf))
    ((u8vector? obj)
-    (server-buffer-write-u8 rpc-proto-message obuf)
-    (server-buffer-write-u32 (u8vector-length obj) obuf)
-    (server-buffer-write-bytes obj obuf)
-    (server-buffer-force-output obuf))
-   ((output-buffer? obj)
-    (let* ((len (buffer-output-length obj))
-           (chunks (buffer-output-chunks obj)))
-      (server-buffer-write-u8 rpc-proto-message obuf)
-      (server-buffer-write-u32 len obuf)
-      (for-each (cut server-buffer-write-bytes <> obuf) chunks)
-      (server-buffer-force-output obuf)))
+    (bio-write-u8 rpc-proto-message obuf)
+    (bio-write-u32 (u8vector-length obj) obuf)
+    (bio-write-bytes obj obuf)
+    (bio-force-output obuf))
+   ((chunked-output-buffer? obj)
+    (let* ((len (chunked-output-length obj))
+           (chunks (chunked-output-chunks obj)))
+      (bio-write-u8 rpc-proto-message obuf)
+      (bio-write-u32 len obuf)
+      (for-each (cut bio-write-bytes <> obuf) chunks)
+      (bio-force-output obuf)))
    (else
     (raise-rpc-io-error 'rpc-proto-write "unexpected object" obj))))
 

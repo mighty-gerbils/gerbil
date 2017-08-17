@@ -5,7 +5,7 @@ package: std/actor
 
 (import :gerbil/gambit/bits
         :std/error
-        :std/misc/buffer
+        :std/net/bio
         (only-in :std/srfi/1 reverse!))
 (export #t)
 
@@ -48,7 +48,7 @@ package: std/actor
 
 ;; generic i/o inteface
 (def (xdr-read buf)
-  (let (tag (buffer-read-u8 buf))
+  (let (tag (bio-read-u8 buf))
     (cond
      ((eof-object? tag)
       (raise-xdr-error 'xdr-read "premature end of input" buf))
@@ -64,7 +64,7 @@ package: std/actor
          (cond
           ((##vector-ref +xdr-write+ tag)
            => (lambda (writef)
-                (buffer-write-u8 tag buf)
+                (bio-write-u8 tag buf)
                 (writef obj buf)))
           (else
            (raise-xdr-error 'xdr-write "unknown object tag" tag)))))
@@ -222,7 +222,7 @@ package: std/actor
 (def (xdr-read-flonum buf)
   ;; TODO read directly from buffer
   (let* ((bytes (make-u8vector 8))
-         (rd (buffer-read-subu8vector bytes 0 8 buf)))
+         (rd (bio-read-subu8vector bytes 0 8 buf)))
     (if (##fx= rd 8)
       (xdr-bytes->float bytes)
       (raise-xdr-error 'xdr-read-flonum "premature end of input" buf))))
@@ -231,7 +231,7 @@ package: std/actor
   ;; TODO write directly to buffer
   (let (bytes (make-u8vector 8))
     (xdr-float->bytes! obj bytes)
-    (buffer-write-subu8vector bytes 0 8 buf)))
+    (bio-write-subu8vector bytes 0 8 buf)))
 
 (def (xdr-read-pair buf)
   (let* ((hd (xdr-read buf))
@@ -306,15 +306,15 @@ package: std/actor
   (let* ((len (xdr-read-uint buf))
          (_ (check-max-rope-length! 'xdr-read-u8vector len))
          (bytes (make-u8vector len)))
-    (buffer-read-bytes bytes buf)
+    (bio-read-bytes bytes buf)
     bytes))
 
 (def (xdr-write-u8vector obj buf)
   (xdr-write-uint (##u8vector-length obj) buf)
-  (buffer-push-u8vector obj buf))
+  (bio-write-bytes obj buf))
 
 (def (xdr-read-hash buf)
-  (let* ((htype (buffer-read-u8 buf))
+  (let* ((htype (bio-read-u8 buf))
          (makef (cond
                  ((##fx= htype xdr-tag-hash-equal)
                   list->hash-table)
@@ -333,13 +333,13 @@ package: std/actor
      ((or (not testf)
           (eq? testf eq?)
           (eq? testf ##eq?))
-      (buffer-write-u8 xdr-tag-hash-eq buf))
+      (bio-write-u8 xdr-tag-hash-eq buf))
      ((or (eq? testf eqv?)
           (eq? testf ##eqv?))
-      (buffer-write-u8 xdr-tag-hash-eqv buf))
+      (bio-write-u8 xdr-tag-hash-eqv buf))
      ((or (eq? testf equal?)
           (eq? testf ##equal?))
-      (buffer-write-u8 xdr-tag-hash-equal buf))
+      (bio-write-u8 xdr-tag-hash-equal buf))
      (else
       (raise-xdr-error 'xdr-wrie-hash "unknown hash test function" testf)))
     (xdr-write-inline-list (hash->list obj) buf)))
@@ -373,11 +373,11 @@ package: std/actor
     (xdr-write-u8vector bytes buf)))
 
 (def (xdr-read-uint buf)
-  (let (bits (buffer-read-u8 buf))
+  (let (bits (bio-read-u8 buf))
     (if (##fxzero? (##fxand bits #x80))
       bits
       (let lp ((val (##fxand bits #x7f)) (shift 7))
-        (let (bits (buffer-read-u8 buf))
+        (let (bits (bio-read-u8 buf))
           (if (##fxzero? (##fxand bits #x80))
             (cond
              ((##fxarithmetic-shift-left? bits shift)
@@ -400,11 +400,11 @@ package: std/actor
     (let lp ((val obj))
       (if (##fx> val #x7f)
         (let (bits (##fxior (##fxand val #x7f) #x80))
-          (buffer-write-u8 bits buf)
+          (bio-write-u8 bits buf)
           (lp (##fxarithmetic-shift-right val 7)))
-        (buffer-write-u8 val buf)))
+        (bio-write-u8 val buf)))
     (let (bits (##fxior (bitwise-and obj #x7f) #x80))
-      (buffer-write-u8 bits buf)
+      (bio-write-u8 bits buf)
       (xdr-write-uint (arithmetic-shift obj -7) buf))))
 
 (def (xdr-read-sint buf)
@@ -449,7 +449,7 @@ package: std/actor
       (begin
         (xdr-write (##car rest) buf)
         (lp (##cdr rest)))
-      (buffer-write-u8 xdr-tag-null buf))))
+      (bio-write-u8 xdr-tag-null buf))))
 
 ;; tag dispatch
 (defrules defxdr-io ()

@@ -3,6 +3,7 @@ package: misc/rpc-perf
 
 (import :gerbil/gambit/threads
         :std/net/server
+        :std/net/bio
         :std/sugar
         :std/getopt)
 (export main)
@@ -13,8 +14,8 @@ package: misc/rpc-perf
 (def (run-client address count)
   (let* ((socksrv (start-socket-server!))
          (sock (server-connect socksrv address))
-         (inp (server-input-buffer sock))
-         (outp (server-output-buffer sock)))
+         (inp (open-server-input-buffer sock))
+         (outp (open-server-output-buffer sock)))
     (let lp ((k 0))
       (when (fx< k count)
         (do-send outp (make-message))
@@ -31,8 +32,8 @@ package: misc/rpc-perf
         (lp)))))
 
 (def (run-client-connection sock)
-  (def inp (server-input-buffer sock))
-  (def outp (server-output-buffer sock))
+  (def inp (open-server-input-buffer sock))
+  (def outp (open-server-output-buffer sock))
   (let lp ()
     (let (next (do-recv inp))
       (do-send outp next)
@@ -40,17 +41,17 @@ package: misc/rpc-perf
   (server-close sock))
 
 (def (do-recv inp)
-  (let* ((len (server-buffer-read-u32 inp))
+  (let* ((len (bio-read-u32 inp))
          (bytes (make-u8vector len)))
-    (server-buffer-read-bytes bytes inp)
+    (bio-read-bytes bytes inp)
     (u8vector->object bytes)))
 
 (def (do-send outp obj)
   (let* ((bytes (object->u8vector obj))
          (len (u8vector-length bytes)))
-    (server-buffer-write-u32 len outp)
-    (server-buffer-write-bytes bytes outp)
-    (server-buffer-force-output outp)))
+    (bio-write-u32 len outp)
+    (bio-write-bytes bytes outp)
+    (bio-force-output outp)))
 
 (def (main . args)
   (def srvcmd

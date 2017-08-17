@@ -5,7 +5,7 @@ package: std/actor/proto
 
 (import :std/error
         :std/misc/uuid
-        :std/misc/buffer
+        :std/net/bio
         :std/actor/message
         :std/actor/proto
         :std/actor/xdr)
@@ -45,7 +45,7 @@ package: std/actor/proto
 
 ;;; protocol i/o
 (def (rpc-proto-marshal-message msg proto)
-  (let (outp (open-output-buffer))
+  (let (outp (open-serializer-output-buffer))
     (rpc-proto-write-message msg proto outp)
     outp))
 
@@ -62,55 +62,55 @@ package: std/actor/proto
      ((!rpc? content)
       (match content
         ((!call e k)
-         (buffer-write-u8 rpc-proto-message-call buffer)
+         (bio-write-u8 rpc-proto-message-call buffer)
          (xdr-write-uuid dest buffer)
          (xdr-write-uint k buffer)
          (xdr-write e buffer))
         ((!value e k)
-         (buffer-write-u8 rpc-proto-message-value buffer)
+         (bio-write-u8 rpc-proto-message-value buffer)
          (xdr-write-uuid dest buffer)
          (xdr-write-uint k buffer)
          (xdr-write e buffer))
         ((!error e k)
-         (buffer-write-u8 rpc-proto-message-error buffer)
+         (bio-write-u8 rpc-proto-message-error buffer)
          (xdr-write-uuid dest buffer)
          (xdr-write-uint k buffer)
          (xdr-write e buffer))
         ((!event e)
-         (buffer-write-u8 rpc-proto-message-event buffer)
+         (bio-write-u8 rpc-proto-message-event buffer)
          (xdr-write-uuid dest buffer)
          (xdr-write e buffer))
         ((!stream e k)
-         (buffer-write-u8 rpc-proto-message-stream buffer)
+         (bio-write-u8 rpc-proto-message-stream buffer)
          (xdr-write-uuid dest buffer)
          (xdr-write-uint k buffer)
          (xdr-write e buffer))
         ((!yield e k)
-         (buffer-write-u8 rpc-proto-message-yield buffer)
+         (bio-write-u8 rpc-proto-message-yield buffer)
          (xdr-write-uuid dest buffer)
          (xdr-write-uint k buffer)
          (xdr-write e buffer))
         ((!end k)
-         (buffer-write-u8 rpc-proto-message-end buffer)
+         (bio-write-u8 rpc-proto-message-end buffer)
          (xdr-write-uuid dest buffer)
          (xdr-write-uint k buffer))
         ((!continue k)
-         (buffer-write-u8 rpc-proto-message-continue buffer)
+         (bio-write-u8 rpc-proto-message-continue buffer)
          (xdr-write-uuid dest buffer)
          (xdr-write-uint k buffer))
         ((!close k)
-         (buffer-write-u8 rpc-proto-message-close buffer)
+         (bio-write-u8 rpc-proto-message-close buffer)
          (xdr-write-uuid dest buffer)
          (xdr-write-uint k buffer))
         ((!abort k)
-         (buffer-write-u8 rpc-proto-message-abort buffer)
+         (bio-write-u8 rpc-proto-message-abort buffer)
          (xdr-write-uuid dest buffer)
          (xdr-write-uint k buffer))
         (else
          (raise-rpc-io-error 'rpc-proto-write-message
                              "unknown rpc message type" content))))
      (else
-      (buffer-write-u8 rpc-proto-message-raw buffer)
+      (bio-write-u8 rpc-proto-message-raw buffer)
       (xdr-write content buffer)))))
 
 (def (rpc-proto-unmarshal-message proto u8v)
@@ -119,7 +119,7 @@ package: std/actor/proto
     (rpc-proto-read-message-content msg proto inp)))
 
 (def (rpc-proto-read-message-envelope buffer)
-  (let* ((type (buffer-read-u8 buffer))
+  (let* ((type (bio-read-u8 buffer))
          (dest (xdr-read-uuid buffer)))
     (make-message
      (cond
@@ -202,8 +202,8 @@ package: std/actor/proto
 ;;; default XDR protocol
 (def (xdr-read-uuid buffer)
   (let (bytes (make-u8vector uuid-length))
-    (buffer-read-bytes bytes buffer)
+    (bio-read-bytes bytes buffer)
     (make-uuid bytes #f)))
 
 (def (xdr-write-uuid obj buffer)
-  (buffer-write-subu8vector (uuid->u8vector obj) 0 uuid-length buffer))
+  (bio-write-subu8vector (uuid->u8vector obj) 0 uuid-length buffer))
