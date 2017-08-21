@@ -6,7 +6,8 @@ package: std/text
 (import :gerbil/gambit/bits
         :std/error)
 (export string->utf8 utf8->string
-        utf8-encode utf8-decode)
+        utf8-encode utf8-decode
+        string-utf8-length)
 
 (declare (not safe))
 
@@ -14,6 +15,11 @@ package: std/text
   (if (string? str)
     (utf8-encode str)
     (error "Bad argument; expcted string" str)))
+
+(def (string-utf8-length str)
+  (if (string? str)
+    (utf8-encode-length str)
+    (error "Bad argument; expected string" str)))
 
 (def (utf8->string u8v)
   (if (u8vector? u8v)
