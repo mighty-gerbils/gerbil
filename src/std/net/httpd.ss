@@ -351,18 +351,11 @@ package: std/net
     (set! response-timeout timeo)
     (error "Bad timeout; expected time, real, or #f" timeo)))
 
-(def request-url-rx
-  (pregexp "^(?:[^:]+://[^/]*)?([^?]*)(?:[?](.*))?$"))
-
 (def (read-request! req)
   (let* ((ibuf (http-request-buf req))
          ((values method url proto) (read-request-line ibuf))
          ((values path params)
-          (match (pregexp-match request-url-rx url)
-            ([_ path params]
-             (values path params))
-            (else
-             (raise-io-error 'http-read-request "Invalid url" url))))
+          (split-request-url url))
          (headers (read-request-headers ibuf)))
     (set! (http-request-method req)
       method)
@@ -376,6 +369,24 @@ package: std/net
       proto)
     (set! (http-request-headers req)
       headers)))
+
+(def split-request-url-rx
+  (pregexp "^[^/]+://[^/]*(/.*)$"))
+
+(def (split-request-url url)
+  (cond
+   ((string-index url #\:)              ; absolute uri
+    => (lambda (ix)
+         (match (pregexp-match split-request-url-rx url)
+           ([_ base]
+            (split-request-url base))
+           (else
+            (raise-io-error 'http-read-request "invalid url" url)))))
+   ((string-index url #\?)             ; parameters
+    => (lambda (ix)
+         (values (substring url 0 ix) (substring url ix (string-length url)))))
+   (else
+    (values url #f))))
 
 (def (read-request-line ibuf)
   (let* ((_ (read-skip* ibuf CR LF))
