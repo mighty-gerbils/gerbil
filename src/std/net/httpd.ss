@@ -122,7 +122,6 @@ package: std/net
   (while #t
     (try
      (let (clisock (server-accept sock cliaddr))
-       (debug "accepted connection from ~a" (socket-address->string cliaddr))
        (spawn http-request-handler handlers clisock (socket-address->address cliaddr)))
      (catch (os-exception? e)
        (log-error "error accepting connection" e)))))
