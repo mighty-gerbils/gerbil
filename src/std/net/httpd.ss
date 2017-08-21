@@ -18,8 +18,7 @@ package: std/net
         :std/error
         :std/pregexp
         (only-in :std/srfi/1 reverse!)
-        (only-in :std/srfi/13 string-titlecase!)
-        (only-in :std/srfi/19 date->string current-date))
+        (only-in :std/srfi/13 string-titlecase!))
 
 (export http-request?
         http-request-method http-request-url http-request-path http-request-params
@@ -330,8 +329,30 @@ package: std/net
         (for-each (cut http-response-chunk res <>) chunks)
         (http-response-end res)))))
 
-(def (http-date)
-  (date->string (current-date) "~a, ~m ~b ~Y ~H:~M:~S UTC"))
+(extern http-date)
+(begin-foreign
+  (namespace ("std/net/httpd#" http-date))
+  (define-macro (define-c-lambda id args ret #!optional (name #f))
+    (let ((name (or name (##symbol->string id))))
+      `(define ,id
+         (c-lambda ,args ,ret ,name))))
+
+  (c-declare #<<END-C
+#include <time.h>
+#include <string.h>
+__thread char buf[64];
+static char *ffi_http_date () {
+ struct tm tm;
+ time_t t = time(NULL);
+ asctime_r (gmtime_r (&t, &tm), buf);
+ // clobber newline
+ buf[strlen(buf)-1] = 0;
+ return buf;
+}
+END-C
+)
+  (define-c-lambda http-date () char-string
+    "ffi_http_date"))
 
 ;;; i/o helpers
 ;; limits
