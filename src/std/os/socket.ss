@@ -172,13 +172,20 @@ package: std/os
     (socket-listen sock backlog)))
 
 (def (socket-accept sock (sa #f))
-  (alet (fd (do-retry-nonblock (_accept (fd-e sock) sa)
-              (_accept sock sa)
-              EAGAIN EWOULDBLOCK))
-    (let (raw (fdopen fd 'inout 'socket))
-      (fd-set-nonblock raw)
-      (fd-set-closeonexec raw)
-      raw)))
+  (cond-expand
+    (linux
+     (alet (fd (do-retry-nonblock (_accept4 (fd-e sock) sa)
+                                  (_accept sock sa)
+                                  EAGAIN EWOULDBLOCK))
+       (fdopen fd 'inout 'socket)))
+    (else
+     (alet (fd (do-retry-nonblock (_accept (fd-e sock) sa)
+                                  (_accept sock sa)
+                                  EAGAIN EWOULDBLOCK))
+       (let (raw (fdopen fd 'inout 'socket))
+         (fd-set-nonblock raw)
+         (fd-set-closeonexec raw)
+         raw)))))
 
 (def (socket-connect sock sa)
   (let (sa (socket-address sa))
