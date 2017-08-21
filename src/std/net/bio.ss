@@ -18,6 +18,7 @@ package: std/net
   bio-read-bytes
   bio-read-bytes-unbuffered
   bio-read-u32
+  bio-input-skip
   ;; output
   output-buffer?
   bio-write-u8
