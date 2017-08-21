@@ -94,7 +94,7 @@ package: std/net/server
 (def (timeout timeo)
   (cond
    ((real? timeo)
-    (seconds->time (+ timeo (##current-time-point))))
+    (seconds->time (+ (##current-time-point) timeo)))
    ((or (time? timeo) (not timeo))
     timeo)
    (else
