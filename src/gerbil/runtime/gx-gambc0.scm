@@ -1129,6 +1129,11 @@
    ((and (pair? lst) (assq key lst)) => cdr)
    (else (E key))))
 
+(define (assget key lst #!optional (E false))
+  (cond
+   ((and (pair? lst) (assoc key lst)) => cdr)
+   (else (E key))))
+
 (define (pgetq key lst #!optional (E false))
   (pget key lst E memq))
 
