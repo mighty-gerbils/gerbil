@@ -1361,9 +1361,9 @@
     (dynamic-wind
       (lambda ()
         (declare (not interrupts-enabled))
-        (when once
-          (error "Cannot reenter unwind protected block"))
-        (set! once #t))
+        (if once
+          (error "Cannot re-enter unwind protected block")
+          (set! once #t)))
       K fini)))
 
 ;; gerbil errors
