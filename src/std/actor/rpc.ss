@@ -170,14 +170,16 @@ package: std/actor
     (make-hash-table-eq))
   (def acceptors
     (map (lambda (sock sa)
-           (spawn rpc-server-accept (current-thread) sock (socket-address-family sa)))
+           (spawn/name 'rpc-server-accept
+             rpc-server-accept (current-thread) sock (socket-address-family sa)))
          socks sas))
   (def server-connection 0)
 
   (def (accept-connection cli clisa)
     (let* ((cliaddr (socket-address->address clisa))
            (address (list cliaddr server-connection))
-           (thr (spawn rpc-server-connection (current-thread) actors cli clisa address accept-e)))
+           (thr (spawn/name 'rpc-connection
+                  rpc-server-connection (current-thread) actors cli clisa address accept-e)))
       (set! server-connection (1+ server-connection))
       (hash-put! conns address thr)
       (hash-put! threads thr address)
@@ -193,7 +195,8 @@ package: std/actor
          ((not address) #f)
          ((hash-get conns address) => values)
          (else
-          (let (thr (spawn rpc-client-connection (current-thread) actors socksrv address connect-e))
+          (let (thr (spawn/name 'rpc-connection
+                      rpc-client-connection (current-thread) actors socksrv address connect-e))
             (hash-put! conns address thr)
             (hash-put! threads thr address)
             (rpc-monitor thr)
