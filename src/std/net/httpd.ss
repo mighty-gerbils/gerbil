@@ -22,7 +22,7 @@ package: std/net
 
 (export http-request?
         http-request-method http-request-url http-request-path http-request-params
-        http-request-proto http-request-client
+        http-request-proto http-request-client http-request-headers
         http-request-body
         http-response?
         http-response-write
@@ -372,6 +372,11 @@ END-C
     (set! response-timeout timeo)
     (error "Bad timeout; expected time, real, or #f" timeo)))
 
+(def (set-httpd-max-request-body-length! len)
+  (if (and (fixnum? len) (fx> len 0))
+    (set! max-request-body-length len)
+    (error "Bad max request length; expected positive fixnum" len)))
+
 (def (read-request! req)
   (let* ((ibuf (http-request-buf req))
          ((values method url proto) (read-request-line ibuf))
@@ -405,7 +410,7 @@ END-C
             (raise-io-error 'http-read-request "invalid url" url)))))
    ((string-index url #\?)             ; parameters
     => (lambda (ix)
-         (values (substring url 0 ix) (substring url ix (string-length url)))))
+         (values (substring url 0 ix) (substring url (fx1+ ix) (string-length url)))))
    (else
     (values url #f))))
 
