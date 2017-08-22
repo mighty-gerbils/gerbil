@@ -71,16 +71,21 @@ package: gerbil/gambit
   (spawn/name/args name f args))
 
 (def (spawn/name/args name f args)
-  (unless (procedure? f)
-    (error "Expected procedure" f))
-  (thread-start!
-   (make-thread
-    (if (null? args) f
-        (lambda () (apply f args)))
-    name)))
+  (def (thread-main thunk)
+    ;; install an abortive handler to reliably unwind stacks
+    (lambda () (with-catch ##primordial-exception-handler thunk)))
+
+  (if (procedure? f)
+    (thread-start!
+     (make-thread
+      (thread-main
+       (if (null? args) f
+           (lambda () (apply f args))))
+      name))
+    (error "Bad argument; expected procedure" f)))
 
 (def (with-lock mx proc)
-  (mutex-lock! mx)
-  (unwind-protect
-    (proc)
-    (mutex-unlock! mx)))
+  (dynamic-wind
+      (cut mutex-lock! mx)
+      proc
+      (cut mutex-unlock! mx)))
