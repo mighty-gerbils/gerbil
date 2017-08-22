@@ -1373,13 +1373,26 @@ style, and CDATA:
 ```
 ### Web Applications
 
-Gerbil supports web applications with fastcgi and a rack-style interface
-for request handling.
+Gerbil offers two options to support web applications:
+- fastcgi with a rack-style interface in `:std/web/rack`.
+- an embedded http server in `:std/net/httpd`.
+
+The rack/fastcgi server has been in the standard library since early
+releases of Gerbil and has a very simple interface familiar from other
+languages. It works with standard ports so it supports non-development
+versions of Gambit which don't have raw devices.
+
+The embedded http server is a new development in Gerbil-v0.12-DEV, and
+utilizes raw devices. It is significantly faster and offers a low
+level interface oriented towards API programming.
+
+#### Web programing with rack/fastcgi
+
 This is the obligatory hello web example:
 ```
 (import :std/web/rack)
 (def (respond env data)
-  (values 200 '((Content . "text/html")) "hello world\n"))
+  (values 200 '((Content-Type . "text/plain")) "hello world\n"))
 (start-rack-fastcgi-server! "127.0.0.1:9000" respond)
 
 ```
@@ -1406,6 +1419,44 @@ the response:
       (yield (format "~a: ~a\n" key val)))
     (yield "</pre>\n")))
 ```
+
+#### Web programming with the embedded httpd
+
+Here is the hello world example using the embedded httpd:
+```
+(import :std/net/httpd)
+
+;; start the httpd
+(def httpd
+  (start-http-server! "127.0.0.1:8080"))
+
+;; define a handler
+(def (hello-handler req res)
+  (http-response-write res
+                       200                                ; status
+                       '(("Content-Type" . "text/plain")) ; headers
+                       "hello world\n"))
+
+;; register the handler
+> (http-register-handler httpd "/hello" hello-handler)
+
+```
+
+Here, we start an httpd server, which is a background thread serving
+HTTP requests. We then register a handler for the `/hello` path, which
+will serve all requests for `/hello` and subpaths.
+
+The handler is a function that accepts two arguments: a request and a
+response. This handler does not read the response body, and simply
+responds with hello world with a single `http-response-write` call.
+
+We can see the handler at work with curl:
+```
+$ curl http://localhost:8080/hello
+hello world
+```
+
+For more exampes of httpd handlers, see the [httpd tutorial(tutorial/httpd.md).
 
 ### Databases
 
