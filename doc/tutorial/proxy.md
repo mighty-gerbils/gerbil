@@ -41,7 +41,7 @@ There are two build scripts, `build.ss` for building dynamic executables for loc
 
 For the examples we'll build dynamic executables, as they are much faster to compile:
 ```
-$ cd $GERBIL_HOME/src/tutorial/kvstore
+$ cd $GERBIL_HOME/src/tutorial/proxy
 $ ./build.ss
 ... compile tcp-proxy
 ... compile exe tcp-proxy
