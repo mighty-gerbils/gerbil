@@ -9,7 +9,8 @@
         "text/json-test"
         "text/utf8-test"
         "actor/xdr-test"
-        "actor-test")
+        "actor-test"
+        "net/httpd-test")
 
 (cond-expand
   (config-have-sqlite
@@ -31,6 +32,7 @@
    utf8-test
    actor-xdr-test
    actor-rpc-test actor-rpc-stream-test
+   httpd-test
    (if config-enable-sqlite [sqlite-test] []) ...
    (if config-enable-lmdb [lmdb-test] []) ...
    (if config-enable-leveldb [leveldb-test] []) ...

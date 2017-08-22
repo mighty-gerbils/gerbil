@@ -1,0 +1,83 @@
+;;; -*- Gerbil -*-
+;;; (C) vyzo at hackzen.org
+;;; std/net/httpd unit-test
+
+(import :std/test
+        :std/net/httpd
+        :std/net/request
+        )
+(export httpd-test)
+
+(def httpd-test
+  (test-suite "test :std/net/httpd"
+
+    (def server-address
+      "127.0.0.1:9999")
+
+    (def server-url
+      (string-append "http://" server-address))
+
+
+    (def greeting
+      "hello there!")
+
+    (def greeting-not-found
+      "these aren't the droids you are looking for")
+
+    (def (write-simple-handler req res)
+      (http-response-write res 200 '(("Content-Type" . "text/plain"))
+                           greeting))
+
+    (def (write-chunked-handler req res)
+      (http-response-begin res 200 '(("Content-Type" . "text/plain")))
+      (http-response-chunk res "hello ")
+      (http-response-chunk res "there!")
+      (http-response-end res))
+
+    (def (root-handler req res)
+      (http-response-write res 200 [] "nil"))
+
+    (def (default-handler req res)
+      (http-response-write res 404 '(("Content-Type" . "text/plain"))
+                           greeting-not-found))
+
+    (def httpd (start-http-server! server-address))
+
+    (test-case "test basic handlers"
+      (http-register-handler httpd "/simple" write-simple-handler)
+      (http-register-handler httpd "/chunked" write-chunked-handler)
+      (http-register-handler httpd "/" root-handler)
+
+      (let (req (http-get (string-append server-url "/")))
+        (check (request-status req) => 200)
+        (check (request-text req) => "nil")
+        (request-close req))
+
+      (let (req (http-get (string-append server-url "/simple")))
+        (check (request-status req) => 200)
+        (check (request-text req) => greeting)
+        (request-close req))
+
+      (let (req (http-get (string-append server-url "/simple/nested")))
+        (check (request-status req) => 200)
+        (check (request-text req) => greeting)
+        (request-close req))
+
+      (let (req (http-get (string-append server-url "/chunked")))
+        (check (request-status req) => 200)
+        (check (request-text req) => greeting)
+        (request-close req))
+
+      (let (req (http-get (string-append server-url "/bogus")))
+        (check (request-status req) => 404)
+        (check (request-text req) => "")
+        (request-close req))
+
+      (http-register-handler httpd "" default-handler)
+      (let (req (http-get (string-append server-url "/bogus")))
+        (check (request-status req) => 404)
+        (check (request-text req) => greeting-not-found)
+        (request-close req))
+      )
+
+    (stop-http-server! httpd)))
