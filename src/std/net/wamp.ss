@@ -183,7 +183,7 @@ package: std/net
     (def (monitor cli thread)
       (with-catch void (cut thread-join! thread))
       (!!wamp.remove-thread cli thread))
-    (spawn monitor-thread (current-thread) thread))
+    (spawn/name 'wamp-monitor monitor (current-thread) thread))
 
   (def (remove-thread! thread)
     (alet (topics (hash-get actor-subscriptions thread))
