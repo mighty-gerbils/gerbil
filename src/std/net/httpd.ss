@@ -438,7 +438,8 @@ END-C
         (raise-io-error 'http-read-request "too many headers" count))))))
 
 (def (read-header ibuf)
-  (let* ((key (string-titlecase! (read-token ibuf COL)))
+  (let* ((key (read-token ibuf COL))
+         (_ (string-titlecase! key))
          (_ (read-skip ibuf COL))
          (_ (read-skip* ibuf SPC))
          (val (read-token ibuf CR))
