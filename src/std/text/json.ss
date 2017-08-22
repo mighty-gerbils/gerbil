@@ -347,7 +347,6 @@ package: std/text
   (def escape
     '((#\" . #\")
       (#\\ . #\\)
-      (#\/ . #\/)
       (#\backspace . #\b)
       (#\newline . #\n)
       (#\page . #\f)
