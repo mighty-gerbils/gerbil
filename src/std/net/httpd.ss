@@ -216,7 +216,7 @@ package: std/net
    (catch (e)
      (unless (memq e '(abort eof))
        (log-error "unhandled exception" e))
-     (raise e))
+     e)
    (finally
     (server-close sock))))
 
