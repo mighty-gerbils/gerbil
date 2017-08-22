@@ -5,6 +5,7 @@
 (import :std/test
         :std/net/httpd
         :std/net/request
+        :gerbil/gambit/random
         )
 (export httpd-test)
 
@@ -40,6 +41,9 @@
     (def (default-handler req res)
       (http-response-write res 404 '(("Content-Type" . "text/plain"))
                            greeting-not-found))
+
+    (def (echo-handler req res)
+      (http-response-write res 200 [] (http-request-body req)))
 
     (def httpd (start-http-server! server-address))
 
@@ -79,5 +83,21 @@
         (check (request-text req) => greeting-not-found)
         (request-close req))
       )
+
+    (test-case "test POST handler"
+      (http-register-handler httpd "/echo" echo-handler)
+
+      ;; small text body
+      (let (req (http-post (string-append server-url "/echo")
+                           data: greeting))
+        (check (request-status req) => 200)
+        (check (request-text req) => greeting))
+
+      ;; large data blob (bigger than server buffer)
+      (let* ((data (random-u8vector 16384))
+             (req (http-post (string-append server-url "/echo")
+                             data: data)))
+        (check (request-status req) => 200)
+        (check (request-content req) => data)))
 
     (stop-http-server! httpd)))
