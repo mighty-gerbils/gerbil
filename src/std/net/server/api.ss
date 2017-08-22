@@ -78,7 +78,7 @@ package: std/net/server
       (unless rcon
         (unless (wait-out ssock (abs-timeout timeo))
           (close ssock 'inout #f)
-          (raise-timeout 'server-connect "Operation timeout exceeded" addr)))
+          (raise-timeout 'server-connect "connect timeout" addr)))
       (let (errno (or rcon (socket-getsockopt sock SOL_SOCKET SO_ERROR)))
         (if (fxzero? errno)
           ssock
@@ -97,7 +97,7 @@ package: std/net/server
       (socket-listen sock backlog)
       (!!socket-server.add srv sock))))
 
-;; => !socket | #f if tiemout
+;; => !socket
 (def (server-accept ssock (sa #f) (timeo #f))
   (with ((!socket sock srv) ssock)
     (let (timeo (abs-timeout timeo))
@@ -107,11 +107,12 @@ package: std/net/server
             (let (cli (socket-accept sock sa))
               (if cli
                 (!!socket-server.add srv cli)
-                (and (wait-in ssock timeo)
-                     (lp))))
+                (if (wait-in ssock timeo)
+                  (lp)
+                  (raise-timeout 'server-accept "accept timeout" ssock))))
             (raise-io-error 'server-accept "Socket is not open for input" ssock)))))))
 
-;; => count | #f if timeout
+;; => count
 (def (server-send ssock buf (start 0) (end (u8vector-length buf)) (timeo #f))
   (with ((!socket sock) ssock)
     (let (timeo (abs-timeout timeo))
@@ -120,13 +121,12 @@ package: std/net/server
           (if wait-out
             (let (r (socket-send sock buf start end))
               (or r
-                  (and (wait-out ssock timeo)
-                       (lp))))
+                  (if (wait-out ssock timeo)
+                    (lp)
+                    (raise-timeout 'server-send "send timeout" ssock))))
             (raise-io-error 'server-send "Socket is not open for output" ssock)))))))
 
-;; => count | #f
-;; try to fill the buffer with recvs, may return fewer bytes or #f
-;; if timeout is reached
+;; => count
 (def (server-send-all ssock buf (start 0) (end (u8vector-length buf)) (timeo #f))
   (with ((!socket sock) ssock)
     (let (timeo (abs-timeout timeo))
@@ -139,13 +139,12 @@ package: std/net/server
                  (r (lp (fx+ count r) (fx+ start r)))
                  ((wait-out ssock timeo)
                   (lp count start))
-                 ((fxpositive? count)
-                  count)
-                 (else #f)))
+                 (else
+                  (raise-timeout 'server-send-all "send timeout" ssock))))
               count)
             (raise-io-error 'server-send-all "Socket is not open for output" ssock)))))))
 
-;; => count | #f if timeout
+;; => count
 (def (server-recv ssock buf (start 0) (end (u8vector-length buf)) (timeo #f))
   (with ((!socket sock) ssock)
     (let (timeo (abs-timeout timeo))
@@ -154,13 +153,12 @@ package: std/net/server
           (if wait-in
             (let (r (socket-recv sock buf start end))
               (or r
-                  (and (wait-in ssock timeo)
-                       (lp))))
+                  (if (wait-in ssock timeo)
+                    (lp)
+                    (raise-timeout 'server-recv "receive timeout" ssock))))
             (raise-io-error 'server-recv "Socket is not open for input" ssock)))))))
 
-;; => count | #f
-;; try to fill the buffer with recvs, may return fewer bytes or #f
-;; if timeout is reached or end of input is reached
+;; => count
 (def (server-recv-all ssock buf (start 0) (end (u8vector-length buf)) (timeo #f))
   (with ((!socket sock) ssock)
     (let (timeo (abs-timeout timeo))
@@ -172,12 +170,9 @@ package: std/net/server
               (let (r (socket-recv sock buf start end))
                 (cond
                  ((not r)
-                  (cond
-                   ((wait-in ssock timeo)
-                    (lp count start))
-                   ((fxpositive? count)
-                    count)
-                   (else #f)))
+                  (if (wait-in ssock timeo)
+                    (lp count start)
+                    (raise-timeout 'server-recv-all "receive timeout" ssock)))
                  ((fxzero? r)
                   count)
                  (else

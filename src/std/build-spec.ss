@@ -92,6 +92,7 @@
     "net/server/api"
     "net/server/buffer"
     "net/server"
+    "net/httpd"
     ;; :std/xml
     ,@(if config-enable-libxml
         `((gsc: "xml/_libxml"

@@ -121,7 +121,7 @@ package: gerbil
     box? box unbox set-box!
     make-list cons*
     foldl foldr andmap ormap filter filter-map iota last last-pair
-    memf assgetq find
+    memf assgetq assget find
     remove remq remv remf
     pgetq pgetv pget
     subvector subvector->list subvector-fill!

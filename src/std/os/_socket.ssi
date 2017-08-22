@@ -9,6 +9,7 @@ package: std/os
   _bind
   _listen
   _accept
+  _accept4 ;; linux only
   _connect
   _shutdown
 

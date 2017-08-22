@@ -109,6 +109,33 @@ package: std/net/bio
       (##u8vector-set! u8v (##fx+ start 2) (##fxand bits #xff))
       (##u8vector-set! u8v (##fx+ start 3) b0))))
 
+(def (bio-write-char char buf)
+  (let (c (##char->integer char))
+    (cond
+     ((##fx<= c #x7f)
+      (bio-write-u8 c buf))
+     ((##fx<= c #x7ff)
+      (bio-write-u8 (##fxior #xc0 (##fxarithmetic-shift-right c 6)))
+      (bio-write-u8 (##fxior #x80 (##fxand c #x3f))))
+     ((##fx<= c #xffff)
+      (bio-write-u8 (##fxior #xe0 (##fxarithmetic-shift-right c 12)))
+      (bio-write-u8 (##fxior #x80 (##fxand (##fxarithmetic-shift-right c 6) #x3f)))
+      (bio-write-u8 (##fxior #x80 (##fxand c #x3f))))
+     (else                              ; max char is #x10ffff
+      (bio-write-u8 (##fxior #xf0 (##fxarithmetic-shift-right c 18)))
+      (bio-write-u8 (##fxior #x80 (##fxand (##fxarithmetic-shift-right c 12) #x3f)))
+      (bio-write-u8 (##fxior #x80 (##fxand (##fxarithmetic-shift-right c 6) #x3f)))
+      (bio-write-u8 (##fxior #x80 (##fxand c #x3f)))))))
+
+(def (bio-write-substring str start end buf)
+  (let lp ((i start))
+    (when (##fx< i end)
+      (bio-write-char (##string-ref str i) buf)
+      (lp (##fx+ i 1)))))
+
+(def (bio-write-string str buf)
+  (bio-write-substring str 0 (string-length str) buf))
+
 (def (bio-force-output buf)
   (let (wlo (&output-buffer-wlo buf))
     (when (##fx> wlo 0)

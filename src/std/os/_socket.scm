@@ -295,6 +295,7 @@ END-C
 static ___SCMOBJ ffi_free (void *ptr);
 static int ffi_bind (int fd, struct sockaddr *sa);
 static int ffi_accept (int fd, struct sockaddr *sa);
+static int ffi_accept4 (int fd, struct sockaddr *sa);
 static int ffi_connect (int fd, struct sockaddr *sa);
 static int ffi_send (int fd, ___SCMOBJ bytes, int start, int end, int flags);
 static int ffi_sendto (int fd, ___SCMOBJ bytes, int start, int end, int flags, struct sockaddr *sa);
@@ -371,6 +372,8 @@ END-C
   "listen")
 (define-c-lambda __accept (int sockaddr*) int
   "ffi_accept")
+(define-c-lambda __accept4 (int sockaddr*) int
+  "ffi_accept4")
 (define-c-lambda __connect (int sockaddr*) int
   "ffi_connect")
 (define-c-lambda __shutdown (int int) int
@@ -399,6 +402,7 @@ END-C
 (define-with-errno _bind __bind (fd sa))
 (define-with-errno _listen __listen (fd backlog))
 (define-with-errno _accept __accept (fd sa))
+(define-with-errno _accept4 __accept4 (fd sa))
 (define-with-errno _connect __connect (fd sa))
 (define-with-errno _shutdown __shutdown (fd how))
 
@@ -569,6 +573,22 @@ int ffi_accept (int fd, struct sockaddr *sa)
  } else {
   return accept (fd, NULL, 0);
  }
+}
+
+int ffi_accept4 (int fd, struct sockaddr *sa)
+{
+#ifdef __linux__
+ if (sa)
+ {
+  GETSALEN (sa, salen);
+  return accept4 (fd, sa, &salen, SOCK_NONBLOCK|SOCK_CLOEXEC|0);
+ } else {
+  return accept4 (fd, NULL, 0, SOCK_NONBLOCK|SOCK_CLOEXEC|0);
+ }
+#else
+ errno = 1;
+ return -1;
+#endif
 }
 
 int ffi_connect (int fd, struct sockaddr *sa)

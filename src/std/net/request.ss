@@ -258,12 +258,12 @@ package: std/net
 (def (http-request-read-body port headers)
   (def (length-e headers)
     (cond
-     ((assoc "Content-Length" headers)
-      => (match <> ([_ . len] (string->number len))))
+     ((assget "Content-Length" headers)
+      => string->number)
      (else #f)))
 
   (cond
-   ((assoc "Transfer-Encoding" headers)
+   ((assget "Transfer-Encoding" headers)
     => (lambda (tenc)
          (if (not (equal? "identity" tenc))
            (http-request-read-chunked-body port)

@@ -6,6 +6,7 @@ package: std/net/server
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
         :gerbil/gambit/misc
+        :gerbil/gambit/os
         :std/net/server/base
         :std/net/server/server
         :std/os/fd)
@@ -16,7 +17,7 @@ package: std/net/server
   (def socks (make-hash-table-eq))
 
   (def (wait-io! io timeo)
-    (##wait-for-io! io (or timeo #t)))
+    (##wait-for-io! io (if timeo (time->seconds timeo) #t)))
 
   (def (add-socket sock)
     (let* ((io-in (fd-io-in sock))
