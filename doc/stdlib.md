@@ -25,9 +25,13 @@
   * [std/misc/pqueue](#stdmiscpqueue)
   * [std/misc/queue](#stdmiscqueue)
   * [std/misc/shuffle](#stdmiscshuffle)
+  * [std/misc/sync](#stdmiscsync)
+  * [std/misc/threads](#stdmiscthreads)
   * [std/misc/uuid](#stdmiscuuid)
 - [std/net](#stdnet)
   * [std/net/address](#stdnetaddress)
+  * [std/net/bio](#stdnetbio)
+  * [std/net/httpd](#stdnethttpd)
   * [std/net/request](#stdnetrequest)
   * [std/net/server](#stdnetserver)
   * [std/net/socks](#stdnetsocks)
@@ -53,6 +57,7 @@
   * [std/text/base64](#stdtextbase64)
   * [std/text/hex](#stdtexthex)
   * [std/text/json](#stdtextjson)
+  * [std/text/utf8](#stdtextutf8)
   * [std/text/yaml](#stdtextyaml)
   * [std/text/zlib](#stdtextzlib)
 - [std/web](#stdweb)
@@ -75,21 +80,19 @@ Package for actor-oriented concurrent and distributed programming.
   (struct-out message proxy)
   (struct-out actor-error)
   -> send send-message send-message/timeout
-  << <- receive-message
-  !
+  << <- !
 
 ;; :std/actor/proto
   rpc-io-error? raise-rpc-io-error
   (struct-out remote-error rpc-error)
   (struct-out handle remote)
   remote=? remote-hash canonical-address
-  (struct-out !rpc !call !value !error !event !stream !yield !end !continue !close !abort)
+  (struct-out !rpc !call !value !error !event !stream !yield !end !continue !close !abort !token)
   !!call !!call-recv !!value !!error !!event
   !!stream !!stream-recv !!yield !!end !!continue !!close !!abort
   (struct-out !protocol !rpc-protocol)
   defproto
   defproto-default-type
-  *default-proto-type-registry*
   (phi: +1 make-protocol-info protocol-info?
         protocol-info-runtime-identifier
         protocol-info-id
@@ -496,6 +499,19 @@ Shuffling.
   shuffle vector-shuffle vector-shuffle!
 ```
 
+### std/misc/sync
+Synchronized data structures.
+
+```
+(import :std/misc/sync)
+
+;; exports:
+
+  make-sync-hash sync-hash?
+  sync-hash-get sync-hash-key? sync-hash-put! sync-hash-remove!
+  sync-hash-do)
+```
+
 ### std/misc/threads
 Thread utilities.
 
@@ -516,10 +532,9 @@ UUIDs.
 ;; export:
 
   UUID uuid-length uuid::t make-uuid
-  uuid? uuid=?
-  uuid-hash
-  uuid->u8vector
-  uuid->symbol
+  uuid? uuid=?   uuid-hash
+  uuid->u8vector u8vector->uuid
+  uuid->string string->uuid
   random-uuid
 ```
 
@@ -542,6 +557,83 @@ Internet addresses as host-port pairs.
   inet-address? inet-address
   inet-address-string? inet-address->string string->inet-address
   resolve-address resolved-address?
+```
+
+### std/net/bio
+
+Binary I/O Buffers -- low level (unsafe) interface for buffered i/o
+over raw devices and things.
+
+```
+(import :std/net/bio)
+
+;; exports:
+
+  ;; :std/net/bio/input
+  input-buffer?
+  bio-read-u8
+  bio-peek-u8
+  bio-read-subu8vector
+  bio-read-subu8vector*
+  bio-read-subu8vector-unbuffered
+  bio-read-bytes
+  bio-read-bytes-unbuffered
+  bio-read-u32
+  bio-input-skip
+
+;; :std/net/bio/output
+  output-buffer?
+  bio-write-u8
+  bio-write-subu8vector
+  bio-write-subu8vector-unbuffered
+  bio-write-bytes
+  bio-write-bytes-unbuffered
+  bio-write-u32
+  bio-write-char
+  bio-write-substring
+  bio-write-string
+  bio-force-output
+
+;; :std/net/bio/buffer
+  open-input-buffer
+  open-fixed-output-buffer
+  make-fixed-output-buffer
+  open-chunked-output-buffer
+  open-serializer-output-buffer
+  chunked-output-buffer?
+  chunked-output-chunks
+  chunked-output-u8vector
+  chunked-output-length
+
+```
+
+### std/net/httpd
+Embedded HTTP server.
+
+```
+(import :std/net/httpd)
+
+;; exports:
+
+  http-request?
+  http-request-method http-request-url http-request-path http-request-params
+  http-request-proto http-request-client http-request-headers
+  http-request-body
+  http-request-timeout-set!
+  http-response?
+  http-response-write
+  http-response-begin http-response-chunk http-response-end
+  http-response-force-output
+  http-response-timeout-set!
+  current-http-server
+  start-http-server!
+  stop-http-server!
+  http-register-handler
+  set-httpd-request-timeout!
+  set-httpd-response-timeout!
+  set-httpd-max-request-headers!
+  set-httpd-max-token-length!
+  set-httpd-max-request-body-length!
 ```
 
 ### std/net/request
@@ -574,7 +666,9 @@ Package for programming with sockets and platform-optimized i/o multiplexing.
 ;; exports:
 
 ;; :std/net/server/api
-  start-socket-server! server-shutdown!
+  start-socket-server! stop-socket-server! current-socket-server
+  native-poll-server-impl
+  server-shutdown!
   server-connect
   server-listen server-accept
   server-send server-send-all
@@ -583,16 +677,12 @@ Package for programming with sockets and platform-optimized i/o multiplexing.
   server-close server-close-input server-close-output
 
 ;; :std/net/server/buffer
-  server-input-buffer
-  server-input-read-u8
-  server-input-read-u32
-  server-input-read
-  server-input-read*
-  server-output-buffer
-  server-output-write-u8
-  server-output-write-u32
-  server-output-write
-  server-output-force
+  open-server-input-buffer
+  server-input-buffer?
+  server-input-buffer-timeout-set!
+  open-server-output-buffer
+  server-output-buffer?
+  server-output-buffer-timeout-set!
 
 ;; :std/net/server/basic-server
   basic-socket-server
@@ -1102,6 +1192,19 @@ JSON encoding and decoding.
   read-json write-json
   string->json-object json-object->string
   json-symbolic-keys
+```
+
+### std/text/utf8
+Faster UTF8 encoding and decoding.
+
+```
+(import :std/text/utf8)
+
+;; exports
+
+  string->utf8 utf8->string
+  string-utf8-length
+  utf8-encode utf8-decode
 ```
 
 ### std/text/yaml
