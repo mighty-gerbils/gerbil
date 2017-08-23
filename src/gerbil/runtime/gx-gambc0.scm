@@ -542,18 +542,25 @@
 (define (struct->list obj #!optional (start 0))
   (subvector->list obj start))
 
-(define (class->list obj #!optional (init-list? #f))
-  (error "XXX")
-  )
+(define (class->list obj)
+  (let* ((klass (object-type obj))
+         (slots (type-descriptor-slots klass)))
+    (cons klass
+          (hash-fold
+           (lambda (slot off r)
+             (if (keyword? slot)
+               (cons* slot (unchecked-field-ref obj off) r)
+               r))
+           '() slots))))
 
 (define (unchecked-field-ref obj off)
   (##vector-ref obj (fx1+ off)))
 (define (unchecked-field-set! obj off val)
   (##vector-set! obj (fx1+ off) val))
 (define (unchecked-slot-ref obj slot)
-  (unchecked-field-ref obj (class-slot-offset (object-type obj))))
+  (unchecked-field-ref obj (class-slot-offset (object-type obj) slot)))
 (define (unchecked-slot-set! obj slot val)
-  (unchecked-field-set! obj (class-slot-offset (object-type obj)) val))
+  (unchecked-field-set! obj (class-slot-offset (object-type obj) slot) val))
 
 (define (slot-ref obj slot #!optional (E &slot-error))
   (&slot-e obj slot (lambda (off) (##vector-ref obj (fx1+ off))) E))
@@ -895,8 +902,7 @@
 
 (define (subvector->list obj #!optional (start 0))
   (let ((lst (##vector->list obj)))
-    (if (fxzero? start) lst
-        (list-tail lst start))))
+    (list-tail lst start)))
 
 (define make-hash-table make-table)
 (define (make-hash-table-eq . args)
