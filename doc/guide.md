@@ -1101,7 +1101,7 @@ but usually actors communicate with structured messages:
 
 ```
 Actors process messages and events with two main macros, `<<` and `<-`.
-They both synchronized on multiple events and pattern match incoming messages;
+They both synchronize on the thread's mailbox and pattern match incoming messages;
 the difference is that `<<` matches on raw messages and `<-` matches on
 structured message values.
 Within a `<-` pattern body, the variables `@message`, `@value`, `@source`,
