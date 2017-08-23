@@ -24,16 +24,21 @@ package: std/net
         http-request-method http-request-url http-request-path http-request-params
         http-request-proto http-request-client http-request-headers
         http-request-body
+        http-request-timeout-set!
         http-response?
         http-response-write
         http-response-begin http-response-chunk http-response-end
         http-response-force-output
+        http-response-timeout-set!
         current-http-server
         start-http-server!
         stop-http-server!
         http-register-handler
         set-httpd-request-timeout!
-        set-httpd-response-timeout!)
+        set-httpd-response-timeout!
+        set-httpd-max-request-headers!
+        set-httpd-max-token-length!
+        set-httpd-max-request-body-length!)
 
 (defstruct http-request (buf client method url path params proto headers data)
   final: #t)
@@ -236,6 +241,11 @@ package: std/net
          #f))
       data)))
 
+(def (http-request-timeout-set! req timeo)
+  (with ((http-request ibuf) req)
+    (set! (server-input-buffer-timeout ibuf)
+      timeo)))
+
 ;; response
 ;; write a full response
 (def (http-response-write res status headers body)
@@ -294,10 +304,6 @@ package: std/net
       (error "illegal response; not writing chunks" res output))
     (write-chunk obuf chunk)))
 
-;; force output of current chunks
-(def (http-response-force-output res)
-  (bio-force-output (http-response-buf res)))
-
 ;; end chunked response
 (def (http-response-end res)
   (with ((http-response obuf output) res)
@@ -306,6 +312,15 @@ package: std/net
     (set! (http-response-output res) 'END)
     (write-last-chunk obuf)
     (bio-force-output obuf)))
+
+;; force output of current chunks
+(def (http-response-force-output res)
+  (bio-force-output (http-response-buf res)))
+
+(def (http-response-timeout-set! res timeo)
+  (with ((http-response obuf) res)
+    (set! (server-output-buffer-timeout obuf)
+      timeo)))
 
 ;;; server internal
 (def (http-request-skip-body req)
@@ -362,20 +377,23 @@ END-C
 (def max-token-length 1024)
 (def max-request-body-length (expt 2 20)) ; 1MB
 
-(def (set-httpd-request-timeout! timeo)
-  (if (or (not timeo) (real? timeo) (time? timeo))
-    (set! request-timeout timeo)
-    (error "Bad timeout; expected time, real, or #f" timeo)))
+(defrules defsetter ()
+  ((_ (setf id) pred)
+   (def (setf val)
+     (if (? pred val)
+       (set! id val)
+       (error "Cannot set httpd parameter; Bad argument" val)))))
 
-(def (set-httpd-response-timeout! timeo)
-  (if (or (not timeo) (real? timeo) (time? timeo))
-    (set! response-timeout timeo)
-    (error "Bad timeout; expected time, real, or #f" timeo)))
-
-(def (set-httpd-max-request-body-length! len)
-  (if (and (fixnum? len) (fx> len 0))
-    (set! max-request-body-length len)
-    (error "Bad max request length; expected positive fixnum" len)))
+(defsetter (set-httpd-request-timeout! request-timeout)
+  (or not real? time?))
+(defsetter (set-httpd-response-timeout! response-timeout)
+  (or not real? time?))
+(defsetter (set-httpd-max-request-headers! max-request-headers)
+  (and fixnum? fxpositive?))
+(defsetter (set-httpd-max-token-length! max-token-length)
+  (and fixnum? fxpositive?))
+(defsetter (set-httpd-max-request-body-length! max-request-body-length)
+  (and fixnum? fxpositive?))
 
 (def (read-request! req)
   (let* ((ibuf (http-request-buf req))
