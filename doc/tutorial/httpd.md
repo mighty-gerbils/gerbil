@@ -2,6 +2,18 @@
 
 <!-- toc -->
 
+- [Preliminaries](#preliminaries)
+- [A Simple Web Server](#a-simple-web-server)
+  * [The main function](#the-main-function)
+  * [Request Handlers](#request-handlers)
+    + [The `/` handler](#the--handler)
+    + [The `/echo` handler](#the-echo-handler)
+    + [The `/headers` handler](#the-headers-handler)
+    + [The default handler](#the-default-handler)
+  * [Examples](#examples)
+
+<!-- tocstop -->
+
 ## Preliminaries
 
 In this tutorial we illustrate web programming with the embedded Gerbil http server.
