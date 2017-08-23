@@ -112,9 +112,6 @@
   (and (type-descriptor? klass)
        (not (type-descriptor-mixin klass))))
 
-(define &class-type::t
-  (##structure ##type-type '##class-type## 'class-type 24 #f '#()))
-
 (define (class-type? klass)
   (and (type-descriptor? klass)
        (type-descriptor-mixin klass)
@@ -148,7 +145,7 @@
   (make-type-descriptor id name super #f fields plist ctor #f #f))
 
 (define (make-class-type-descriptor id name super mixin fields plist ctor slots)
-  (make-type-descriptor id name (or super &class-type::t) mixin fields plist ctor slots #f))
+  (make-type-descriptor id name super mixin fields plist ctor slots #f))
 
 (define (type-descriptor-mixin klass)
   (##vector-ref klass 6))
