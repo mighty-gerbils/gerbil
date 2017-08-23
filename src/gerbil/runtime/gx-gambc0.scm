@@ -540,18 +540,28 @@
     (error "Missing constructor" klass kons-id))))
 
 (define (struct->list obj #!optional (start 0))
-  (subvector->list obj start))
+  (if (object? obj)
+    (subvector->list obj start)
+    (error "Not an object" obj)))
 
 (define (class->list obj)
-  (let* ((klass (object-type obj))
-         (slots (type-descriptor-slots klass)))
-    (cons klass
-          (hash-fold
-           (lambda (slot off r)
-             (if (keyword? slot)
-               (cons* slot (unchecked-field-ref obj off) r)
-               r))
-           '() slots))))
+  (if (object? obj)
+    (let ((klass (object-type obj)))
+      (if (type-descriptor? klass)
+        (cond
+         ((type-descriptor-slots klass)
+          => (lambda (slots)
+               (cons klass
+                     (hash-fold
+                      (lambda (slot off r)
+                        (if (keyword? slot)
+                          (cons* slot (unchecked-field-ref obj off) r)
+                          r))
+                      '() slots))))
+         (else
+          (list klass)))
+        (error "Not a class type" obj klass)))
+    (error "Not an object" obj)))
 
 (define (unchecked-field-ref obj off)
   (##vector-ref obj (fx1+ off)))
