@@ -1450,7 +1450,7 @@ Symbols related to foreign objects.
 ```
 
 #### `:gerbil/gambit/hash`
-Symbols related to hash-tabls and hashing.
+Symbols related to hash-tables and hashing.
 
 ```
   object->serial-number

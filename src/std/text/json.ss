@@ -283,7 +283,7 @@ package: std/text
    ((void? obj)
     (display 'null port))
    (else
-    (write-json-object (call-method ':json obj) port))))
+    (write-json-object {:json obj} port))))
 
 (def (write-json-list obj port)
   (display #\[ port)
