@@ -120,6 +120,7 @@
     "crypto/dh"
     "crypto"
     ;; :std/misc
+    "misc/rtd"
     "misc/shuffle"
     "misc/uuid"
     "misc/queue"

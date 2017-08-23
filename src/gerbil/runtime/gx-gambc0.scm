@@ -112,9 +112,6 @@
   (and (type-descriptor? klass)
        (not (type-descriptor-mixin klass))))
 
-(define &class-type::t
-  (##structure ##type-type '##class-type## 'class-type 24 #f '#()))
-
 (define (class-type? klass)
   (and (type-descriptor? klass)
        (type-descriptor-mixin klass)
@@ -148,7 +145,7 @@
   (make-type-descriptor id name super #f fields plist ctor #f #f))
 
 (define (make-class-type-descriptor id name super mixin fields plist ctor slots)
-  (make-type-descriptor id name (or super &class-type::t) mixin fields plist ctor slots #f))
+  (make-type-descriptor id name super mixin fields plist ctor slots #f))
 
 (define (type-descriptor-mixin klass)
   (##vector-ref klass 6))
@@ -540,20 +537,37 @@
     (error "Missing constructor" klass kons-id))))
 
 (define (struct->list obj #!optional (start 0))
-  (subvector->list obj start))
+  (if (object? obj)
+    (subvector->list obj start)
+    (error "Not an object" obj)))
 
-(define (class->list obj #!optional (init-list? #f))
-  (error "XXX")
-  )
+(define (class->list obj)
+  (if (object? obj)
+    (let ((klass (object-type obj)))
+      (if (type-descriptor? klass)
+        (cond
+         ((type-descriptor-slots klass)
+          => (lambda (slots)
+               (cons klass
+                     (hash-fold
+                      (lambda (slot off r)
+                        (if (keyword? slot)
+                          (cons* slot (unchecked-field-ref obj off) r)
+                          r))
+                      '() slots))))
+         (else
+          (list klass)))
+        (error "Not a class type" obj klass)))
+    (error "Not an object" obj)))
 
 (define (unchecked-field-ref obj off)
   (##vector-ref obj (fx1+ off)))
 (define (unchecked-field-set! obj off val)
   (##vector-set! obj (fx1+ off) val))
 (define (unchecked-slot-ref obj slot)
-  (unchecked-field-ref obj (class-slot-offset (object-type obj))))
+  (unchecked-field-ref obj (class-slot-offset (object-type obj) slot)))
 (define (unchecked-slot-set! obj slot val)
-  (unchecked-field-set! obj (class-slot-offset (object-type obj)) val))
+  (unchecked-field-set! obj (class-slot-offset (object-type obj) slot) val))
 
 (define (slot-ref obj slot #!optional (E &slot-error))
   (&slot-e obj slot (lambda (off) (##vector-ref obj (fx1+ off))) E))
@@ -895,8 +909,7 @@
 
 (define (subvector->list obj #!optional (start 0))
   (let ((lst (##vector->list obj)))
-    (if (fxzero? start) lst
-        (list-tail lst start))))
+    (list-tail lst start)))
 
 (define make-hash-table make-table)
 (define (make-hash-table-eq . args)

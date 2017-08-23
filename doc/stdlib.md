@@ -487,6 +487,25 @@ Double-edged queues.
   queue->list
 ```
 
+### std/misc/rtd
+Miscellaneous type descriptor utilities.
+
+```
+(import :std/misc/rtd)
+
+;; exports:
+
+  object-class
+  type? type-id type-name type-super
+  type-descriptor?
+  type-descriptor-mixin
+  type-descriptor-fields
+  type-descriptor-plist
+  type-descriptor-ctor
+  type-descriptor-slots
+  type-descriptor-methods
+```
+
 
 ### std/misc/shuffle
 Shuffling.
