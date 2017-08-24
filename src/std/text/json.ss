@@ -270,6 +270,10 @@ package: std/text
       (error "Bad JSON object" obj))))
    ((string? obj)
     (write-json-string obj port))
+   ((symbol? obj)
+    (write-json-string (symbol->string obj) port))
+   ((keyword? obj)
+    (write-json-string (keyword->string obj) port))
    ((list? obj)
     (write-json-list obj port))
    ((vector? obj)
@@ -319,11 +323,13 @@ package: std/text
 (def (write-json-hash obj port)
   (def (string-e key)
     (cond
+     ((string? key) key)
      ((symbol? key)
       (symbol->string key))
-     ((string? key) key)
+     ((keyword? key)
+      (keyword->string key))
      (else
-      (error "Illegal hash key; must be symbol or string" obj key))))
+      (error "Illegal hash key; must be symbol, keyword or string" obj key))))
 
   (display #\{ port)
   (let (lst (hash->list obj))
