@@ -3,7 +3,7 @@
 ;;; safe type descriptor accessors
 package: std/misc
 
-(export object-class
+(export (rename: checked-object-type object-type)
         type? type-id type-name type-super
         type-descriptor?
         (rename: checked-type-descriptor-mixin type-descriptor-mixin)
@@ -21,7 +21,7 @@ package: std/misc
   type-descriptor-slots
   type-descriptor-methods)
 
-(def (object-class obj)
+(def (checked-object-type obj)
   (if (object? obj)
     (object-type obj)
     (error "Not an object" obj)))

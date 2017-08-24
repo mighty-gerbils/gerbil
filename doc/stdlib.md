@@ -495,7 +495,7 @@ Miscellaneous type descriptor utilities.
 
 ;; exports:
 
-  object-class
+  object-type
   type? type-id type-name type-super
   type-descriptor?
   type-descriptor-mixin
@@ -505,7 +505,6 @@ Miscellaneous type descriptor utilities.
   type-descriptor-slots
   type-descriptor-methods
 ```
-
 
 ### std/misc/shuffle
 Shuffling.
