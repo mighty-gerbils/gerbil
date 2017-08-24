@@ -16,6 +16,9 @@
               ))
 
 (c-declare #<<END-C
+#ifdef __linux__
+#define _GNU_SOURCE
+#endif
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/socket.h>
