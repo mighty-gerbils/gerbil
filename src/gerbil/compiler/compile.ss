@@ -941,7 +941,10 @@ namespace: gxc
 (def (generate-runtime-quote% stx)
   (def (generate1 datum)
     (cond
-     ((or (null? datum) (interned-symbol? datum) (self-quoting? datum))
+     ((or (null? datum)
+          (interned-symbol? datum)
+          (self-quoting? datum)
+          (eof-object? datum))
       datum)
      ((uninterned-symbol? datum)
       (generate-runtime-gensym-reference datum #t))
