@@ -79,13 +79,16 @@ package: gerbil/gambit
     (lambda () (with-catch ##primordial-exception-handler thunk)))
 
   (if (procedure? f)
-    (thread-start!
-     (make-thread
-      (thread-main
-       (if (null? args) f
-           (lambda () (apply f args))))
-      name))
+    (spawn-thread
+     (thread-main
+      (if (null? args) f
+          (lambda () (apply f args))))
+     name)
     (error "Bad argument; expected procedure" f)))
+
+(def (spawn-thread thunk name)
+  (thread-start!
+   (make-thread thunk name)))
 
 (def (with-lock mx proc)
   (dynamic-wind
