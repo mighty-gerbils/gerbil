@@ -1,11 +1,14 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gerbil/gambit/threads#spawn
-    (lambda (_f349_ . _args350_)
+    (lambda (_f352_ . _args353_)
       (gerbil/gambit/threads#spawn/name/args
-       (let ((_$e352_ (##procedure-name _f349_))) (if _$e352_ _$e352_ '#!void))
-       _f349_
-       _args350_)))
+       (let ((_$e355_ (##procedure-name _f352_))) (if _$e355_ _$e355_ '#!void))
+       _f352_
+       _args353_)))
+  (define gerbil/gambit/threads#spawn*
+    (lambda (_f349_ . _args350_)
+      (gerbil/gambit/threads#spawn/name/args '#!void _f349_ _args350_)))
   (define gerbil/gambit/threads#spawn/name
     (lambda (_name345_ _f346_ . _args347_)
       (gerbil/gambit/threads#spawn/name/args _name345_ _f346_ _args347_)))
