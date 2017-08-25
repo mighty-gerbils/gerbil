@@ -1909,7 +1909,7 @@ Symbols related to thread programming; spawn and with-lock primitives.
 
 ```
 ;; Gerbil specific primitives
-  spawn spawn/name spawn/name/args with-lock
+  spawn spawn* spawn/name spawn/name/args spawn-thread with-lock
 
 ;; Gambit primitives
   current-thread
