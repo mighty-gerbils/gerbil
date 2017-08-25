@@ -78,9 +78,11 @@ namespace: gerbil/gambit/threads
           (current-processor current-processor)
           (processor-id processor-id))
          (%#define-runtime spawn gerbil/gambit/threads#spawn)
+         (%#define-runtime spawn* gerbil/gambit/threads#spawn*)
          (%#define-runtime spawn/name gerbil/gambit/threads#spawn/name)
          (%#define-runtime
           spawn/name/args
           gerbil/gambit/threads#spawn/name/args)
+         (%#define-runtime spawn-thread gerbil/gambit/threads#spawn-thread)
          (%#define-runtime with-lock gerbil/gambit/threads#with-lock))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/gambit/threads__0"))
