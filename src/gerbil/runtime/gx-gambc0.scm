@@ -397,11 +397,11 @@
 
 (define (make-class-slot-accessor klass slot)
   (lambda (obj)
-    (class-slot-ref klass obj slot)))
+    (slot-ref obj slot)))
 
 (define (make-class-slot-mutator klass slot)
   (lambda (obj val)
-    (class-slot-set! klass obj slot val)))
+    (slot-set! obj slot val)))
 
 (define (make-class-slot-unchecked-accessor klass slot)
   (lambda (obj)
@@ -569,20 +569,20 @@
 (define (unchecked-slot-set! obj slot val)
   (unchecked-field-set! obj (class-slot-offset (object-type obj) slot) val))
 
+(define-macro (&slot-e obj slot K E)
+  `(if (object? ,obj)
+     (let ((klass (object-type ,obj)))
+       (cond
+        ((and (type-descriptor? klass) (class-slot-offset klass ,slot))
+         => ,K)
+        (else (,E ,obj ,slot))))
+     (,E ,obj ,slot)))
+
 (define (slot-ref obj slot #!optional (E &slot-error))
   (&slot-e obj slot (lambda (off) (##vector-ref obj (fx1+ off))) E))
 
 (define (slot-set! obj slot val #!optional (E &slot-error))
   (&slot-e obj slot (lambda (off) (##vector-set! obj (fx1+ off) val)) E))
-
-(define (&slot-e obj slot K E)
-  (if (object? obj)
-    (let ((klass (object-type obj)))
-      (cond
-       ((and (type-descriptor? klass) (class-slot-offset klass slot))
-        => K)
-       (else (E obj slot))))
-    (E obj slot)))
 
 (define (&slot-error obj slot)
   (error "Cannot find slot" obj slot))
