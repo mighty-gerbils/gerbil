@@ -83,5 +83,6 @@ namespace: gerbil/gambit/threads
          (%#define-runtime
           spawn/name/args
           gerbil/gambit/threads#spawn/name/args)
+         (%#define-runtime spawn-thread gerbil/gambit/threads#spawn-thread)
          (%#define-runtime with-lock gerbil/gambit/threads#with-lock))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/gambit/threads__0"))
