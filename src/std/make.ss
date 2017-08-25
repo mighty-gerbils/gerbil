@@ -6,7 +6,8 @@ package: std
 (import :gerbil/compiler
         :gerbil/expander
         :gerbil/gambit/misc
-        :gerbil/gambit/ports)
+        :gerbil/gambit/ports
+        "sort")
 (export make make-depgraph make-depgraph/spec shell-config)
 
 ;; buildspec: [<build> ...]
@@ -150,6 +151,9 @@ package: std
         (lp (append bset new) new)))))
 
 (def (make-depgraph files)
+  (def (symbol<? a b)
+    (string<? (symbol->string a) (symbol->string b)))
+
   (def (depgraph file)
     (let* ((mod (import-module file))
            (ht  (make-hash-table-eq))
@@ -174,7 +178,7 @@ package: std
             (else
              (error "Unexpected module import" hd))))
           (else
-           [file (expander-context-id mod) (hash-keys ht) ...])))))
+           [file (expander-context-id mod) (sort (hash-keys ht) symbol<?) ...])))))
   (map depgraph files))
 
 (def (make-depgraph/spec spec)
