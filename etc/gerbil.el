@@ -138,7 +138,7 @@ The hook is run after scheme-mode-hook."
                        "foldl" "foldr" "andmap" "ormap"
                        "size-of" "type-of"
                        "let-registers"
-                       "spawn" "spawn/name" "try" "while"
+                       "spawn" "spawn*" "spawn/name" "try" "while"
                        "continue" "yield" "coroutine"
                        "<-" "<<" "->"
                        )

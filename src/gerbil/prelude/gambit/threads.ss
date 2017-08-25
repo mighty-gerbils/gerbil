@@ -67,6 +67,9 @@ package: gerbil/gambit
 (def (spawn f . args)
   (spawn/name/args (or (##procedure-name f) #!void) f args))
 
+(def (spawn* f . args)
+  (spawn/name/args #!void f args))
+
 (def (spawn/name name f . args)
   (spawn/name/args name f args))
 
