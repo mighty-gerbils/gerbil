@@ -1,7 +1,7 @@
 ;; -*- Gerbil -*-
 
 (def ldflags (env-ldflags))
-(def ccflags (env-ccflags))
+(def cppflags (env-cppflags))
 
 (def build-spec
   `("build-config"
@@ -51,14 +51,14 @@
     "text/json"
     ,@(if config-enable-libyaml
         `((gsc: "text/libyaml"
-                "-cc-options" ,(ccflags "")
+                "-cc-options" ,(cppflags "")
                 "-ld-options" ,(ldflags "-lyaml"))
           (ssi: "text/libyaml")
           "text/yaml")
         '())
     ,@(if config-enable-zlib
         `((gsc: "text/_zlib"
-                "-cc-options" ,(ccflags "")
+                "-cc-options" ,(cppflags "")
                 "-ld-options" ,(ldflags "-lz"))
           (ssi: "text/_zlib")
           "text/zlib")
@@ -117,7 +117,7 @@
         '())
     ;; :std/crypto
     (gsc: "crypto/libcrypto"
-          "-cc-options" ,(ccflags "")
+          "-cc-options" ,(cppflags "")
           "-ld-options" ,(ldflags "-lcrypto")
           "-e" "(include \"~~lib/_gambit#.scm\")")
     (ssi: "crypto/libcrypto")
@@ -153,28 +153,28 @@
     (gxc: "db/conpool" "-e" "(include \"~~lib/_gambit#.scm\")")
     ,@(if config-enable-sqlite
         `((gsc: "db/_sqlite"
-                "-cc-options" ,(ccflags "")
+                "-cc-options" ,(cppflags "")
                 "-ld-options" ,(ldflags "-lsqlite3"))
           (ssi: "db/_sqlite")
           "db/sqlite")
         '())
     ,@(if config-enable-mysql
         `((gsc: "db/_mysql"
-                "-cc-options" ,(ccflags "")
+                "-cc-options" ,(cppflags "")
                 "-ld-options" ,(ldflags "-lpthread -lmysqlclient"))
           (ssi: "db/_mysql")
           "db/mysql")
         '())
     ,@(if config-enable-lmdb
         `((gsc: "db/_lmdb"
-                "-cc-options" ,(ccflags "")
+                "-cc-options" ,(cppflags "")
                 "-ld-options" ,(ldflags "-llmdb"))
           (ssi: "db/_lmdb")
           "db/lmdb")
         '())
     ,@(if config-enable-leveldb
         `((gsc: "db/_leveldb"
-                "-cc-options" ,(ccflags "")
+                "-cc-options" ,(cppflags "")
                 "-ld-options" ,(ldflags "-lleveldb"))
           (ssi: "db/_leveldb")
           "db/leveldb")
