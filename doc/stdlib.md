@@ -324,6 +324,7 @@ Common error base classes.
 ;; exports:
 
   <error>
+  <exception>
   (struct-out io-error timeout-error)
   raise-io-error
   raise-timeout
