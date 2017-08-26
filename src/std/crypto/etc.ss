@@ -9,6 +9,7 @@ package: std/crypto
         random-bytes random-bytes!)
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
+        :std/error
         :std/format
         :std/crypto/libcrypto)
 
@@ -23,23 +24,18 @@ package: std/crypto
   macro-character-port-rbuf
   macro-character-port-rlo-set!)
 
-(defsyntax <error>
-  (make-runtime-struct-info
-   runtime-identifier: (quote-syntax error::t)))
-
 (defstruct (libcrypto-error <error>) ()
-  id: std/crypto#libcrypto-error::t
   constructor: :init!)
 
 (defmethod {:init! libcrypto-error}
   (lambda (self errno irritants)
     (struct-instance-init!
      self
+     (or (ERR_reason_error_string errno) "Unknown error")
+     (cons errno irritants)
      (string-append
       (or (ERR_lib_error_string errno) "?") ":"
-      (or (ERR_func_error_string errno) "?"))
-     (or (ERR_reason_error_string errno) "Unknown error")
-     (cons errno irritants))))
+      (or (ERR_func_error_string errno) "?")))))
 
 (defmethod {display-exception libcrypto-error}
   (lambda (self port)
