@@ -41,8 +41,6 @@
 (apply run-tests! tests)
 (test-report-summary!)
 
-(let (res (test-result))
-  (displayln res)
-  (case (test-result)
-    ((OK) (exit 0))
-    (else (exit 1))))
+(case (test-result)
+  ((OK) (exit 0))
+  (else (exit 1)))

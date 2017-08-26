@@ -140,7 +140,8 @@ package: std
   (let (tests (reverse *tests*))
     (unless (null? tests)
       (eprintf "--- Test Summary\n")
-      (for-each test-suite-summary! tests))))
+      (for-each test-suite-summary! tests)
+      (eprintf "~a~n" (test-result)))))
 
 (def (test-result)
   (let lp ((rest *tests*))
