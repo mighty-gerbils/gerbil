@@ -19,9 +19,23 @@ package: std
   run-test-suite!
   test-result)
 
-(defstruct !check-fail (e value))
+(defstruct !check-fail (e value loc))
+(defstruct !check-error (exn check loc))
 (defstruct !test-suite (desc thunk tests))
 (defstruct !test-case (desc checks fail error))
+
+(defmethod {display-exception !check-error}
+  (lambda (self port)
+    (with ((!check-error exn check loc) self)
+      (fprintf port "~a at ~a: " check loc)
+      (display-exception exn port))))
+
+;; this is only necessary for stray checks outside a test-case
+(defmethod {display-exception !check-fail}
+  (lambda (self port)
+    (with ((!check-fail check value loc) self)
+      (fprintf port "check ~a at ~a FAILED: ~a~n"
+               check loc value))))
 
 (def *test-verbose* #t)
 
@@ -58,7 +72,8 @@ package: std
   ((_ eqf expr value)
    (let (val value)
      (print-check-e expr eqf val)
-     (test-check-e '(check eqf expr value) eqf (lambda () expr) val))))
+     (test-check-e '(check eqf expr value) eqf (lambda () expr) val
+                   (location expr)))))
 
 (defrules check-eq? ()
   ((_ expr value)
@@ -86,13 +101,15 @@ package: std
   ((_ expr value)
    (let (val value)
      (print-check-e expr equal? val)
-     (test-check-e '(check equal? expr value) equal-values? (lambda () expr) val))))
+     (test-check-e '(check equal? expr value) equal-values? (lambda () expr) val
+                   (location expr)))))
 
 (defrules check-not-equal? ()
   ((_ expr value)
    (let (val value)
      (print-check-e expr equal? value)
-     (test-check-e '(check not-equal? expr value) not-equal-values? (lambda () expr) val))))
+     (test-check-e '(check not-equal? expr value) not-equal-values? (lambda () expr) val
+                   (location expr)))))
 
 (def (equal-values? obj-a obj-b)
   (if (##values? obj-a)
@@ -108,19 +125,39 @@ package: std
   ((_ expr value)
    (let (val value)
      (verbose "... check ~a outputs ~s~n" 'expr val)
-     (test-check-output '(check-output expr value) (lambda () expr) value))))
+     (test-check-output '(check-output expr value) (lambda () expr) value
+                        (location expr)))))
 
 (defrules check-predicate ()
   ((_ expr pred)
    (begin
      (verbose "... check ~a is ~a~n" 'expr 'pred)
-     (test-check-predicate '(check-predicate expr pred)  (lambda () expr) pred))))
+     (test-check-predicate '(check-predicate expr pred)  (lambda () expr) pred
+                           (location expr)))))
 
 (defrules check-exception ()
   ((_ expr exn-pred)
    (begin
-     (printf "... check ~a raises ~a~n" 'expr 'exn-pred)
-     (test-check-exception '(check-exception expr pred) (lambda () expr) exn-pred))))
+     (verbose "... check ~a raises ~a~n" 'expr 'exn-pred)
+     (test-check-exception '(check-exception expr pred) (lambda () expr) exn-pred
+                           (location expr)))))
+
+(defsyntax (location stx)
+  (syntax-case stx ()
+    ((_ expr)
+     (with-syntax ((loc
+                    (cond
+                     ((stx-source #'expr)
+                      => (lambda (loc)
+                           (call-with-output-string "" (cut ##display-locat loc #t <>))))
+                     (else '?))))
+       #'(quote loc)))))
+
+(def (with-check-error thunk what loc)
+  (try
+   (thunk)
+   (catch (e)
+     (raise (make-!check-error e what loc)))))
 
 (def current-test-case
   (make-parameter #f))
@@ -140,7 +177,8 @@ package: std
   (let (tests (reverse *tests*))
     (unless (null? tests)
       (eprintf "--- Test Summary\n")
-      (for-each test-suite-summary! tests))))
+      (for-each test-suite-summary! tests)
+      (eprintf "~a~n" (test-result)))))
 
 (def (test-result)
   (let lp ((rest *tests*))
@@ -157,9 +195,10 @@ package: std
     (cond
      ((!test-case-fail tc)
       => (lambda (fail)
-           (eprintf "~a: Check FAILED ~a~n"
+           (eprintf "~a: Check FAILED ~a at ~a~n"
                     (!test-case-desc tc)
-                    (!check-fail-e fail))))
+                    (!check-fail-e fail)
+                    (!check-fail-loc fail))))
      ((!test-case-error tc)
       => (lambda (exn)
            (eprintf "~a: ERROR " (!test-case-desc tc))
@@ -222,8 +261,9 @@ package: std
   (cond
    ((!test-case-fail tc)
     => (lambda (fail)
-         (eprintf "*** FAILED: ~a; value: ~s~n"
+         (eprintf "*** FAILED: ~a at ~a; value: ~s~n"
                   (!check-fail-e fail)
+                  (!check-fail-loc fail)
                   (!check-fail-value fail))))
    ((!test-case-error tc)
     => (lambda (e)
@@ -237,26 +277,26 @@ package: std
     (set! (!test-case-checks tc)
       (fx1+ (!test-case-checks tc)))))
 
-(def (test-check-e what eqf thunk value)
+(def (test-check-e what eqf thunk value loc)
   (test-case-add-check! (current-test-case))
-  (let (val (thunk))
+  (let (val (with-check-error thunk what loc))
     (unless (eqf val value)
-      (raise (make-!check-fail what val)))))
+      (raise (make-!check-fail what val loc)))))
 
-(def (test-check-output what thunk value)
+(def (test-check-output what thunk value loc)
   (test-case-add-check! (current-test-case))
-  (let (val (with-output-to-string [] thunk))
+  (let (val (with-output-to-string [] (cut with-check-error thunk what loc)))
     (unless (equal? val value)
-      (raise (make-!check-fail what val)))))
+      (raise (make-!check-fail what val loc)))))
 
-(def (test-check-predicate what thunk pred)
+(def (test-check-predicate what thunk pred loc)
   (test-case-add-check! (current-test-case))
-  (let (val (thunk))
+  (let (val (with-check-error thunk what loc))
     (unless (pred val)
-      (raise (make-!check-fail what val)))))
+      (raise (make-!check-fail what val loc)))))
 
-(def (test-check-exception what thunk pred)
+(def (test-check-exception what thunk pred loc)
   (test-case-add-check! (current-test-case))
   (let (val (with-catch values thunk))
     (unless (pred val)
-      (raise (make-!check-fail what val)))))
+      (raise (make-!check-fail what val loc)))))
