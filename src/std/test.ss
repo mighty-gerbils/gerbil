@@ -249,6 +249,8 @@ package: std
        (set! (!test-case-fail tc) e))
      (catch (e)
        (set! (!test-case-error tc) e)))
+    (when *test-verbose*
+      (force-output))
     (test-case-end! tc)))
 
 (def (test-case-begin! tc)
