@@ -9,6 +9,15 @@
    (else
     identity)))
 
+(def ccflags
+  (cond
+   ((getenv "CCFLAGS" #f)
+    => (lambda (flags)
+         (lambda (more)
+           (string-append flags " " more))))
+   (else
+    identity)))
+
 (def build-spec
   `("build-config"
     "format"
@@ -56,12 +65,16 @@
     (ssi: "text/base64")
     "text/json"
     ,@(if config-enable-libyaml
-        `((gsc: "text/libyaml" "-ld-options" ,(ldflags "-lyaml"))
+        `((gsc: "text/libyaml"
+                "-cc-options" ,(ccflags "")
+                "-ld-options" ,(ldflags "-lyaml"))
           (ssi: "text/libyaml")
           "text/yaml")
         '())
     ,@(if config-enable-zlib
-        `((gsc: "text/_zlib" "-ld-options" ,(ldflags "-lz"))
+        `((gsc: "text/_zlib"
+                "-cc-options" ,(ccflags "")
+                "-ld-options" ,(ldflags "-lz"))
           (ssi: "text/_zlib")
           "text/zlib")
         '())
@@ -119,6 +132,7 @@
         '())
     ;; :std/crypto
     (gsc: "crypto/libcrypto"
+          "-cc-options" ,(ccflags "")
           "-ld-options" ,(ldflags "-lcrypto")
           "-e" "(include \"~~lib/_gambit#.scm\")")
     (ssi: "crypto/libcrypto")
@@ -153,22 +167,30 @@
     "db/dbi"
     (gxc: "db/conpool" "-e" "(include \"~~lib/_gambit#.scm\")")
     ,@(if config-enable-sqlite
-        `((gsc: "db/_sqlite" "-ld-options" ,(ldflags "-lsqlite3"))
+        `((gsc: "db/_sqlite"
+                "-cc-options" ,(ccflags "")
+                "-ld-options" ,(ldflags "-lsqlite3"))
           (ssi: "db/_sqlite")
           "db/sqlite")
         '())
     ,@(if config-enable-mysql
-        `((gsc: "db/_mysql" "-ld-options" ,(ldflags "-lpthread -lmysqlclient"))
+        `((gsc: "db/_mysql"
+                "-cc-options" ,(ccflags "")
+                "-ld-options" ,(ldflags "-lpthread -lmysqlclient"))
           (ssi: "db/_mysql")
           "db/mysql")
         '())
     ,@(if config-enable-lmdb
-        `((gsc: "db/_lmdb" "-ld-options" ,(ldflags "-llmdb"))
+        `((gsc: "db/_lmdb"
+                "-cc-options" ,(ccflags "")
+                "-ld-options" ,(ldflags "-llmdb"))
           (ssi: "db/_lmdb")
           "db/lmdb")
         '())
     ,@(if config-enable-leveldb
-        `((gsc: "db/_leveldb" "-ld-options" ,(ldflags "-lleveldb"))
+        `((gsc: "db/_leveldb"
+                "-cc-options" ,(ccflags "")
+                "-ld-options" ,(ldflags "-lleveldb"))
           (ssi: "db/_leveldb")
           "db/leveldb")
         '())
