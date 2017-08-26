@@ -6,6 +6,10 @@ package: std
 (import :std/format)
 (export #t)
 
+(defsyntax <exception>
+  (make-runtime-struct-info
+   runtime-identifier: (quote-syntax exception::t)))
+
 (defsyntax <error>
   (make-runtime-struct-info
    runtime-identifier: (quote-syntax error::t)))

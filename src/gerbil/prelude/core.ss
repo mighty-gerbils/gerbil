@@ -204,9 +204,9 @@ package: gerbil
     current-exception-handler with-exception-handler
     with-catch
     error raise raise-type-error
-    error::t type-error::t
-    exception? error? type-error?
-    error-trace error-message error-irritants
+    exception? error-object? type-error?
+    exception::t error::t
+    error? error-trace error-message error-irritants
     ;; OS
     exit getenv setenv
     current-directory create-directory create-directory*
