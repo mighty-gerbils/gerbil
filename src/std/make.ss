@@ -8,7 +8,10 @@ package: std
         :gerbil/gambit/misc
         :gerbil/gambit/ports
         "sort")
-(export make make-depgraph make-depgraph/spec shell-config)
+(export make make-depgraph make-depgraph/spec
+        shell-config
+        env-ccflags
+        env-ldflags)
 
 ;; buildspec: [<build> ...]
 ;;  <build>:
@@ -210,6 +213,26 @@ package: std
     (unless (zero? status)
       (error "Error executing config script" cmd args status))
     (read-line proc)))
+
+(def (env-ldflags)
+  (cond
+   ((getenv "LDFLAGS" #f)
+    => (lambda (flags)
+         (lambda (lib)
+           (string-append flags " " lib))))
+   (else
+    identity)))
+
+(def (env-ccflags)
+  (cond
+   ((getenv "CCFLAGS" #f)
+    => (lambda (flags)
+         (lambda (more)
+           (if (string-empty? more)
+             flags
+             (string-append flags " " more)))))
+   (else
+    identity)))
 
 (def (build? spec settings depgraph)
   (match spec
