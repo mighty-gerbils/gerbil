@@ -1380,29 +1380,30 @@
       K fini)))
 
 ;; gerbil errors
-(define exception-object::t (macro-type-exception))
-(define error-object::t     (macro-type-error-exception))
+(define exception-type::t (macro-type-exception))
 
 (define (type-descriptor-super-set! type super)
   (##vector-set! type 4 super))
 
-(define error::t
-  (make-struct-type 'gerbil#error::t #f 3 'error '() #f))
-(type-descriptor-super-set! error::t error-object::t)
+(define exception::t
+  (make-struct-type 'gerbil#exception::t #f 0 'exception '() #f))
+(type-descriptor-super-set! exception::t exception-type::t)
 
-(define type-error::t
-  (make-struct-type 'gerbil#type-error::t error::t 1 'type-error '() #f))
+(define error::t
+  (make-struct-type 'gerbil#error::t exception::t 3 'error '() #f))
 
 ;; some minimal integration with gambit exception
 (define (exception? obj)
-  (##structure-instance-of? obj (##type-id exception-object::t)))
+  (##structure-instance-of? obj (##type-id exception-type::t)))
 
 (define (error? obj)
-  (##structure-instance-of? obj (##type-id error-object::t)))
+  (##structure-instance-of? obj (##type-id error::t)))
+
+(define (error-object? obj)
+  (error-exception? obj))
 
 (define (type-error? obj)
-  (or (struct-instance? type-error::t obj)
-      (##structure-instance-of? obj (##type-id (macro-type-type-exception)))))
+  (##structure-instance-of? obj (##type-id (macro-type-type-exception))))
 
 (define (error-message obj)
   (if (error? obj)
@@ -1414,7 +1415,7 @@
        (##vector-ref obj 2)))
 
 (define (error-trace obj)
-  (and (struct-instance? error::t obj)
+  (and (error? obj)
        (##vector-ref obj 3)))
 
 (define (datum-parsing-exception-filepos e)
