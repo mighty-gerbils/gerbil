@@ -20,8 +20,15 @@ package: std
   test-result)
 
 (defstruct !check-fail (e value loc))
+(defstruct !check-error (e check loc))
 (defstruct !test-suite (desc thunk tests))
 (defstruct !test-case (desc checks fail error))
+
+(defmethod {display-exception !check-error}
+  (lambda (self port)
+    (with ((!check-error exn check loc) self)
+      (fprintf port "~a at ~a: " check loc)
+      (display-exception exn port))))
 
 (def *test-verbose* #t)
 
@@ -138,6 +145,12 @@ package: std
                            (call-with-output-string "" (cut ##display-locat loc #t <>))))
                      (else '?))))
        #'(quote loc)))))
+
+(def (with-check-error thunk what loc)
+  (try
+   (thunk)
+   (catch (e)
+     (raise (make-!check-error e what loc)))))
 
 (def current-test-case
   (make-parameter #f))
@@ -259,19 +272,19 @@ package: std
 
 (def (test-check-e what eqf thunk value loc)
   (test-case-add-check! (current-test-case))
-  (let (val (thunk))
+  (let (val (with-check-error thunk what loc))
     (unless (eqf val value)
       (raise (make-!check-fail what val loc)))))
 
 (def (test-check-output what thunk value loc)
   (test-case-add-check! (current-test-case))
-  (let (val (with-output-to-string [] thunk))
+  (let (val (with-output-to-string [] (cut with-check-error thunk what loc)))
     (unless (equal? val value)
       (raise (make-!check-fail what val loc)))))
 
 (def (test-check-predicate what thunk pred loc)
   (test-case-add-check! (current-test-case))
-  (let (val (thunk))
+  (let (val (with-check-error thunk what loc))
     (unless (pred val)
       (raise (make-!check-fail what val loc)))))
 
