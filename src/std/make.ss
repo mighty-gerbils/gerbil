@@ -10,7 +10,7 @@ package: std
         "sort")
 (export make make-depgraph make-depgraph/spec
         shell-config
-        env-ccflags
+        env-cppflags
         env-ldflags)
 
 ;; buildspec: [<build> ...]
@@ -223,9 +223,9 @@ package: std
    (else
     identity)))
 
-(def (env-ccflags)
+(def (env-cppflags)
   (cond
-   ((getenv "CCFLAGS" #f)
+   ((getenv "CPPFLAGS" #f)
     => (lambda (flags)
          (lambda (more)
            (if (string-empty? more)
