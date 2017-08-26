@@ -20,7 +20,7 @@ package: std
   test-result)
 
 (defstruct !check-fail (e value loc))
-(defstruct !check-error (e check loc))
+(defstruct !check-error (exn check loc))
 (defstruct !test-suite (desc thunk tests))
 (defstruct !test-case (desc checks fail error))
 
@@ -29,6 +29,13 @@ package: std
     (with ((!check-error exn check loc) self)
       (fprintf port "~a at ~a: " check loc)
       (display-exception exn port))))
+
+;; this is only necessary for stray checks outside a test-case
+(defmethod {display-exception !check-fail}
+  (lambda (self port)
+    (with ((!check-fail check value loc) self)
+      (fprintf port "check ~a at ~a FAILED: ~a~n"
+               check loc value))))
 
 (def *test-verbose* #t)
 
