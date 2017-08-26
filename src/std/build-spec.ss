@@ -1,24 +1,7 @@
 ;; -*- Gerbil -*-
 
-(def ldflags
-  (cond
-   ((getenv "LDFLAGS" #f)
-    => (lambda (flags)
-         (lambda (lib)
-           (string-append flags " " lib))))
-   (else
-    identity)))
-
-(def ccflags
-  (cond
-   ((getenv "CCFLAGS" #f)
-    => (lambda (flags)
-         (lambda (more)
-           (if (string-empty? more)
-             flags
-             (string-append flags " " more)))))
-   (else
-    identity)))
+(def ldflags (env-ldflags))
+(def ccflags (env-ccflags))
 
 (def build-spec
   `("build-config"
