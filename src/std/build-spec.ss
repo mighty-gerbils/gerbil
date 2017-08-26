@@ -14,7 +14,9 @@
    ((getenv "CCFLAGS" #f)
     => (lambda (flags)
          (lambda (more)
-           (string-append flags " " more))))
+           (if (string-empty? more)
+             flags
+             (string-append flags " " more)))))
    (else
     identity)))
 
