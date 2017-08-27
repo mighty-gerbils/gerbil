@@ -16,9 +16,15 @@
         (let (q (open-input-u8vector (get-output-u8vector p)))
           (check (read-json q) => obj))))
 
+    (def (check-encode-decode= obj)
+      (let (p (open-output-u8vector))
+        (write-json obj p)
+        (let (q (open-input-u8vector (get-output-u8vector p)))
+          (checkf = (read-json q) obj))))
+
     (def (check-encode-decode-number num)
-      (check-encode-decode num)
-      (check-encode-decode (- num)))
+      (check-encode-decode= num)
+      (check-encode-decode= (- num)))
 
     (test-case "test object encoding and decoding"
       (check-encode-decode #t)

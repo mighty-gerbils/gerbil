@@ -248,24 +248,9 @@ package: std/text
      ((and (exact? obj) (integer? obj))
       (display obj port))
      ((inexact? obj)
-      (let (mag (abs obj))
-        (cond
-         ((and (integer? mag) (fl< mag 1e10))
-          (display obj port)
-          (display #\0 port))
-         ((and (fl< mag 1.0) (fl>= mag 1e-3))
-          (cond
-           ((flnegative? obj)
-            (display #\- port)
-            (display #\0 port)
-            (display mag port))
-           (else
-            (display #\0 port)
-            (display obj port))))
-         (else
-          (display obj port)))))
+      (write-json-inexact obj port))
      ((rational? obj)
-      (write-json-object (exact->inexact obj) port))
+      (write-json-inexact (exact->inexact obj) port))
      (else
       (error "Bad JSON object" obj))))
    ((string? obj)
@@ -288,6 +273,17 @@ package: std/text
     (display 'null port))
    (else
     (write-json-object {:json obj} port))))
+
+(def (write-json-inexact obj port)
+  (let* ((mag (abs obj))
+         (str (number->string mag)))
+    (when (flnegative? obj)
+      (write-char #\- port))
+    (when (eq? (string-ref str 0) #\.)
+      (write-char #\0 port))
+    (write-string str port)
+    (when (eq? (string-ref str (fx1- (string-length str))) #\.)
+      (write-char #\0 port))))
 
 (def (write-json-list obj port)
   (display #\[ port)
