@@ -246,26 +246,11 @@ package: std/text
    ((number? obj)
     (cond
      ((and (exact? obj) (integer? obj))
-      (display obj port))
+      (write-string (number->string obj) port))
      ((inexact? obj)
-      (let (mag (abs obj))
-        (cond
-         ((and (integer? mag) (fl< mag 1e10))
-          (display obj port)
-          (display #\0 port))
-         ((and (fl< mag 1.0) (fl>= mag 1e-3))
-          (cond
-           ((flnegative? obj)
-            (display #\- port)
-            (display #\0 port)
-            (display mag port))
-           (else
-            (display #\0 port)
-            (display obj port))))
-         (else
-          (display obj port)))))
+      (write-json-inexact obj port))
      ((rational? obj)
-      (write-json-object (exact->inexact obj) port))
+      (write-json-inexact (exact->inexact obj) port))
      (else
       (error "Bad JSON object" obj))))
    ((string? obj)
@@ -281,44 +266,55 @@ package: std/text
    ((hash-table? obj)
     (write-json-hash obj port))
    ((eq? #t obj)
-    (display 'true port))
+    (write-string "true" port))
    ((eq? #f obj)
-    (display 'false port))
+    (write-string "false" port))
    ((void? obj)
-    (display 'null port))
+    (write-string "null" port))
    (else
     (write-json-object {:json obj} port))))
 
+(def (write-json-inexact obj port)
+  (let* ((mag (abs obj))
+         (str (number->string mag)))
+    (when (flnegative? obj)
+      (write-char #\- port))
+    (when (eq? (string-ref str 0) #\.)
+      (write-char #\0 port))
+    (write-string str port)
+    (when (eq? (string-ref str (fx1- (string-length str))) #\.)
+      (write-char #\0 port))))
+
 (def (write-json-list obj port)
-  (display #\[ port)
+  (write-char #\[ port)
   (let lp ((rest obj))
     (match rest
       ([val]                            ; last one
        (write-json-object val port)
-       (display #\] port))
+       (write-char #\] port))
       ([val . rest]
        (write-json-object val port)
-       (display "," port)
+       (write-char #\, port)
        (lp rest))
       ([]                               ; empty
-       (display #\] port)))))
+       (write-char #\] port)))))
 
 (def (write-json-vector obj port)
   (let (len (vector-length obj))
     (if (fxpositive? len)
       (let (last (fx1- len))
         (begin
-          (display #\[ port)
+          (write-char #\[ port)
           (let lp ((n 0))
             (if (fx= n last)
               (begin
                 (write-json-object (##vector-ref obj n) port)
-                (display #\] port))
+                (write-char #\] port))
               (begin
                 (write-json-object (##vector-ref obj n) port)
-                (display "," port)
+                (write-char #\, port)
                 (lp (fx1+ n)))))))
-      (display "[]" port))))
+      (write-string "[]" port))))
 
 (def (write-json-hash obj port)
   (def (string-e key)
@@ -331,23 +327,23 @@ package: std/text
      (else
       (error "Illegal hash key; must be symbol, keyword or string" obj key))))
 
-  (display #\{ port)
+  (write-char #\{ port)
   (let (lst (hash->list obj))
     (let lp ((rest lst))
       (match rest
         ([[key . val]]                  ; last one
          (write (string-e key) port)
-         (display ":" port)
+         (write-char #\: port)
          (write-json-object val port)
-         (display #\} port))
+         (write-char #\} port))
         ([[key . val] . rest]
          (write (string-e key) port)
-         (display ":" port)
+         (write-char #\: port)
          (write-json-object val port)
-         (display "," port)
+         (write-char #\, port)
          (lp rest))
         ([]                             ; empty
-         (display #\} port))))))
+         (write-char #\} port))))))
 
 (def (write-json-string obj port)
   (def escape
@@ -365,11 +361,11 @@ package: std/text
 
   (def (write-uchar char port)
     (let (int (char->integer char))
-      (display "\\u" port)
+      (write-string "\\u" port)
       (let lp ((n 0) (mask #xf000) (shift -12))
         (when (fx< n 4)
           (let (char (string-ref hexes (arithmetic-shift (bitwise-and int mask) shift)))
-            (display char port)
+            (write-char char port)
             (lp (fx1+ n) (arithmetic-shift mask -4) (fx+ shift 4)))))))
 
   (def (write-str obj port)
@@ -380,14 +376,14 @@ package: std/text
             (cond
              ((assq char escape)
               => (lambda (esc)
-                   (display #\\ port)
-                   (display (cdr esc) port)))
+                   (write-char #\\ port)
+                   (write-char (cdr esc) port)))
              ((safe-char? char)
-              (display char port))
+              (write-char char port))
              (else
               (write-uchar char port)))
             (lp (fx1+ n)))))))
 
-  (display #\" port)
+  (write-char #\" port)
   (write-str obj port)
-  (display #\" port))
+  (write-char #\" port))
