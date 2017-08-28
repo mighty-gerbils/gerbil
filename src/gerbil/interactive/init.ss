@@ -51,3 +51,7 @@
 (defrules reload ()
   ((_ mod ...)
    (begin (begin (begin-syntax (reload-module 'mod)) (import mod)) ...)))
+
+(def (enter! mod)
+  (parameterize ((gx#current-expander-context (gx#import-module mod #f #t)))
+    (##repl)))
