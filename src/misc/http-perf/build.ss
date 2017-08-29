@@ -4,11 +4,15 @@
 (import :std/make)
 
 (def build-spec
-  '((exe: "hellod")))
+  '((exe: "hellod")
+    (exe: "baseline")))
 
 (def build-spec-static
   '((static-exe: "hellod"
                  "-cc-options" "--param max-gcse-memory=300000000"
+                 "-prelude" "(declare (not safe))"
+                 "-e" "(include \"~~lib/_gambit#.scm\")")
+    (static-exe: "baseline"
                  "-prelude" "(declare (not safe))"
                  "-e" "(include \"~~lib/_gambit#.scm\")")))
 
