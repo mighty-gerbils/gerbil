@@ -4,7 +4,8 @@
 (import :std/make)
 
 (def build-spec
-  '((exe: "hellod")))
+  '((exe: "hellod")
+    (exe: "baseline")))
 
 (def build-spec-static
   '((static-exe: "hellod"
