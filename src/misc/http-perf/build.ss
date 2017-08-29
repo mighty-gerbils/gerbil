@@ -11,6 +11,9 @@
   '((static-exe: "hellod"
                  "-cc-options" "--param max-gcse-memory=300000000"
                  "-prelude" "(declare (not safe))"
+                 "-e" "(include \"~~lib/_gambit#.scm\")")
+    (static-exe: "baseline"
+                 "-prelude" "(declare (not safe))"
                  "-e" "(include \"~~lib/_gambit#.scm\")")))
 
 (def srcdir (path-normalize (path-directory (this-source-file))))
