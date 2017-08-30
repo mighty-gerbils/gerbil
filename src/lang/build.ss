@@ -12,5 +12,6 @@
         libdir: libdir
         optimize: #t
         static: #t
+        debug: 'env
         depgraph: depgraph
         build-spec))
