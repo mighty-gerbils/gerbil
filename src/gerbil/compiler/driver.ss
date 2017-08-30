@@ -29,6 +29,7 @@ namespace: gxc
         (keep-scm?   (pgetq keep-scm: opts))
         (verbosity   (pgetq verbose: opts))
         (optimize    (pgetq optimize: opts))
+        (debug       (pgetq debug: opts))
         (gen-ssxi    (pgetq generate-ssxi: opts))
         (static      (pgetq static: opts)))
     (when outdir
@@ -41,6 +42,7 @@ namespace: gxc
                    (current-compile-keep-scm keep-scm?)
                    (current-compile-verbose verbosity)
                    (current-compile-optimize optimize)
+                   (current-compile-debug debug)
                    (current-compile-generate-ssxi gen-ssxi)
                    (current-compile-static static)
                    (current-compile-timestamp (compile-timestamp)))
@@ -124,7 +126,8 @@ namespace: gxc
            (deps (map (cut compile-cache <> gxc-cache) deps))
            (bin-scm (compile-cache bin-scm gxc-cache))
            (gsc-opts (or (pgetq gsc-options: opts) []))
-           (gsc-args ["-exe" "-o" output-bin gsc-opts ...
+           (gsc-args ["-exe" "-o" output-bin
+                      (gsc-debug-options) ... gsc-opts ...
                       "-e" include-gx-gambc-macros
                       gx-gambc0 gx-gambc-init deps ... bin-scm output-scm])
            (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
@@ -425,12 +428,30 @@ namespace: gxc
   (unless (current-compile-keep-scm)
     (delete-file path)))
 
+(def (gsc-debug-options)
+  (cond
+   ((current-compile-debug)
+    => (lambda (debug)
+         (case debug
+           ((env)
+            ["-debug-environments"])
+           ((src)
+            ["-debug-environments" "-debug-source"])
+           ((all #t)
+            ["-debug"])
+           (else
+            (raise-compile-error "unknown debug option" debug )))))
+   (else [])))
+
 (def (gsc-compile-file path)
   (let* ((gsc-args
           (cond
            ((current-compile-gsc-options)
             => (lambda (opts) [opts ... path]))
            (else [path])))
+         (gsc-args
+          [(gsc-debug-options) ... gsc-args ...])
+         (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
          (proc (open-process [path: "gsc" arguments: gsc-args
                                     stdout-redirection: #f]))
          (status (process-status proc)))
