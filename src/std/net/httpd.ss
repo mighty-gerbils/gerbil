@@ -220,7 +220,8 @@ package: std/net
    (loop)
    (catch (e)
      (unless (memq e '(abort eof))
-       (log-error "unhandled exception" e))
+       (log-error "unhandled exception" e)
+       (raise e))
      e)
    (finally
     (server-close sock))))
