@@ -12,4 +12,5 @@
         bindir: srcdir
         prefix: "tutorial/proxy"
         optimize: #t
+        debug: 'env
         build-spec))

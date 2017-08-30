@@ -31,13 +31,15 @@ package: std
        prefix: (prefix #f)
        force:  (force? #f)
        optimize: (optimize #f)
+       debug:  (debug? #f)
        static: (static #f)
        verbose: (verbose #f)
        depgraph: (depgraph #f))
   (let* ((srcdir (or srcdir (error "srcdir must be specified")))
          (libdir (or libdir "~/.gerbil/lib"))
          (settings  [srcdir: srcdir libdir: libdir bindir: bindir
-                     prefix: prefix force: force? optimize: optimize
+                     prefix: prefix force: force?
+                     optimize: optimize debug: debug?
                      static: static verbose: verbose])
          (buildset (if (not force?)
                      (filter (cut build? <> settings depgraph) buildspec)
@@ -317,6 +319,7 @@ package: std
     [invoke-gsc: invoke-gsc?
      output-dir: (pgetq libdir: settings )
      optimize: (pgetq optimize: settings)
+     debug: (pgetq debug: settings)
      generate-ssxi: #t
      static: (pgetq static: settings)
      verbose: (pgetq verbose: settings)
@@ -448,6 +451,7 @@ package: std
     [invoke-gsc: #t
      output-file: binpath
      verbose: (pgetq verbose: settings)
+     debug: (pgetq debug: settings)
      (if gsc-opts [gsc-options: gsc-opts] []) ...])
   (gxc-compile mod gsc-opts [static: #t settings ...] #f)
   (displayln "... compile static exe " mod " -> " (path-strip-directory binpath))

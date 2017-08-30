@@ -15,7 +15,9 @@
     (displayln " -S                          don't invoke gsc")
     (displayln " -static                     compile modules for static linking; with -exe, compile a statically linked executable")
     (displayln " -v                          be verbose during compilation")
-    (displayln " -g                          add -debug to gsc options; enables -s")
+    (displayln " -g                          invoke gsc with -debug; enables -s")
+    (displayln " -genv                       invoke gsc with -debug-environments")
+    (displayln " -gsrc                       invoke gsc with -debug-environments -debug-source")
     (displayln " -no-ssxi                    don't generate .ssxi modules for cross-module optimization")
     (displayln " -cc-options <string>        add [-cc-options <string>] to gsc options")
     (displayln " -ld-options <string>        add [-ld-options <string>] to gsc options")
@@ -28,6 +30,7 @@
   (def keep-scm #f)
   (def verbose #f)
   (def optimize #f)
+  (def debug #f)
   (def generate-ssxi #t) ; enable by default (only when optimizing)
   (def static #f)
   (def gsc-options #f)
@@ -39,18 +42,19 @@
       (if gsc-options
         (append gsc-options opt)
         opt)))
-  
+
   (def (make-opts)
-    [invoke-gsc: invoke-gsc 
-     keep-scm: keep-scm 
+    [invoke-gsc: invoke-gsc
+     keep-scm: keep-scm
      verbose: verbose
      optimize: optimize
+     debug: debug
      static: static
      generate-ssxi: generate-ssxi
      gsc-options: gsc-options
      output-dir: outdir
      output-file: outfile])
-  
+
   (let lp ((rest args))
     (match rest
       ([arg . rest]
@@ -77,7 +81,13 @@
           (lp rest))
          (("-g")
           (set! keep-scm #t)
-          (add-gsc-option! ["-debug"])
+          (set! debug #t)
+          (lp rest))
+         (("-genv")
+          (set! debug 'env)
+          (lp rest))
+         (("-gsrc")
+          (set! debug 'src)
           (lp rest))
          (("-v")
           (set! verbose #t)

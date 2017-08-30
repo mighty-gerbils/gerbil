@@ -34,6 +34,7 @@ namespace: gxc
          (%#define-runtime
           current-compile-optimize
           gxc#current-compile-optimize)
+         (%#define-runtime current-compile-debug gxc#current-compile-debug)
          (%#define-runtime
           current-compile-generate-ssxi
           gxc#current-compile-generate-ssxi)

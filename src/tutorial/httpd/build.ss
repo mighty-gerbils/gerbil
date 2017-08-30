@@ -13,6 +13,7 @@
   (make srcdir: srcdir
         bindir: srcdir
         optimize: #t
+        debug: 'env
         static: #t
         prefix: "tutorial/httpd"
         build-spec))
