@@ -37,6 +37,7 @@
        (make srcdir: srcdir
              bindir: srcdir
              optimize: #t
+             debug: 'env
              static: #t
              depgraph: depgraph
              prefix: "misc/http-perf"

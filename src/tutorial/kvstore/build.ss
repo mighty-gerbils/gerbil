@@ -11,5 +11,6 @@
         bindir: srcdir
         prefix: "tutorial/kvstore"
         optimize: #t
+        debug: 'env
         depgraph: depgraph
         build-spec))

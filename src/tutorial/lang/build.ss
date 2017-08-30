@@ -10,5 +10,6 @@
   (make srcdir: srcdir
         prefix: "tutorial/lang"
         optimize: #t
+        debug: 'env
         depgraph: depgraph
         build-spec))
