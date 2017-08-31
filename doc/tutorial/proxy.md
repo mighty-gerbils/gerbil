@@ -37,7 +37,8 @@ Gambit's `##wait-for-io!`.
 This tutorial requires a very recent version of Gambit that supports raw devices ([gambit#272](https://github.com/gambit/gambit/pull/272)).
 
 The source code for the tutorial  is available at [$GERBIL_HOME/src/tutorial/proxy](../../src/tutorial/proxy).
-There are two build scripts, `build.ss` for building dynamic executables for local use and `build-static.ss`for building static executables you can deploy on servers.
+The build script, `build.ss`, by default will build dynamkic executables for local use; there
+also is a rule `build.ss static` to build static executables you can deploy on servers.
 
 For the examples we'll build dynamic executables, as they are much faster to compile:
 ```
