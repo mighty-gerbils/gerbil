@@ -1,14 +1,1 @@
-(("dot-app.ss" tutorial/lang/dot-app gerbil/core)
- ("auto-export.ss" tutorial/lang/auto-export gerbil/core)
- ("sexp.ss" tutorial/lang/sexp gerbil/core)
- ("scuby-etc.ss" tutorial/lang/scuby-etc std/parser/base gerbil/core)
- ("scuby-grammar.ss"
-  tutorial/lang/scuby-grammar
-  tutorial/lang/scuby-etc
-  std/parser/grammar)
- ("scuby.ss"
-  tutorial/lang/scuby
-  std/parser/base
-  std/sugar
-  gerbil/core
-  tutorial/lang/scuby-grammar))
+(("dot-app.ss" tutorial/lang/dot-app gerbil/core) ("auto-export.ss" tutorial/lang/auto-export gerbil/core) ("sexp.ss" tutorial/lang/sexp gerbil/core) ("scuby-etc.ss" tutorial/lang/scuby-etc gerbil/core std/parser/base) ("scuby-grammar.ss" tutorial/lang/scuby-grammar std/parser/grammar tutorial/lang/scuby-etc) ("scuby.ss" tutorial/lang/scuby gerbil/core std/parser/base std/sugar tutorial/lang/scuby-grammar))
