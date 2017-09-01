@@ -28,6 +28,26 @@ The hook is run after scheme-mode-hook."
   :type 'hook
   :group 'gerbil)
 
+(defun gerbil-import-file (fname)
+  (comint-check-source fname)
+  (comint-send-string
+   (scheme-proc)
+   (concat "(import \"" fname "\")\n")))
+
+(defun gerbil-reload-file (fname)
+  (comint-check-source fname)
+  (comint-send-string
+   (scheme-proc)
+   (concat "(reload \"" fname "\")\n")))
+
+(defun gerbil-import-current-buffer ()
+  (interactive)
+  (gerbil-import-file buffer-file-name))
+
+(defun gerbil-reload-current-buffer ()
+  (interactive)
+  (gerbil-reload-file buffer-file-name))
+
 (defun gerbil-put (syms prop v)
   (dolist (x syms)
     (put x prop v)))
