@@ -35,7 +35,7 @@
 
 (define (_gx#load-expander-runtime!)
   (__gx#load-module "gerbil/expander__rt")
-  (load (path-expand "gx-gambc" (_gx#gerbil-libdir))))
+  (load (path-expand "gx-gambc" __gx#libdir)))
 
 (define (_gx#load-expander!)
   (if (not __gx#expander-loaded)
