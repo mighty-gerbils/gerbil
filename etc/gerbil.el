@@ -54,8 +54,14 @@ The hook is run after scheme-mode-hook."
     (with-current-buffer buf
       (goto-char (point-max))
       (insert-before-markers "> gxc " fname "\n"))
-    (start-process "gxc" buf "gxc" fname)
-    (display-buffer buf)))
+    (let ((proc (start-process "gxc" buf "gxc" fname)))
+      (set-process-sentinel proc 'gerbil-compile-sentinel)
+      (display-buffer buf))))
+
+(defun gerbil-compile-sentinel (proc evt)
+  (let ((buf (process-buffer proc)))
+    (when (and buf (equal evt "finished\n"))
+      (kill-buffer buf))))
 
 (defun gerbil-put (syms prop v)
   (dolist (x syms)
