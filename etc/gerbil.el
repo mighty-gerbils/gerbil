@@ -10,8 +10,7 @@
   (scheme-mode-variables)
   (run-hooks 'scheme-mode-hook)
   (gerbil-init)
-  (run-hooks 'gerbil-mode-hook)
-  )
+  (run-hooks 'gerbil-mode-hook))
 
 (defun gerbil-mode-init ()
   (use-local-map scheme-mode-map)
@@ -47,6 +46,16 @@ The hook is run after scheme-mode-hook."
 (defun gerbil-reload-current-buffer ()
   (interactive)
   (gerbil-reload-file buffer-file-name))
+
+(defun gerbil-compile-current-buffer ()
+  (interactive)
+  (let ((fname buffer-file-name)
+        (buf (get-buffer-create "*gerbil-compile*")))
+    (with-current-buffer buf
+      (goto-char (point-max))
+      (insert-before-markers "> gxc " fname "\n"))
+    (start-process "gxc" buf "gxc" fname)
+    (display-buffer buf)))
 
 (defun gerbil-put (syms prop v)
   (dolist (x syms)
