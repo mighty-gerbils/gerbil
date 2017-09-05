@@ -47,14 +47,18 @@ The hook is run after scheme-mode-hook."
   (interactive)
   (gerbil-reload-file buffer-file-name))
 
+(defvar gerbil-compile-optimize t)
+
 (defun gerbil-compile-current-buffer ()
   (interactive)
   (let ((fname buffer-file-name)
         (buf (get-buffer-create "*gerbil-compile*")))
     (with-current-buffer buf
       (goto-char (point-max))
-      (insert  "> gxc " fname "\n"))
-    (let ((proc (start-process "gxc" buf "gxc" fname)))
+      (insert  "> gxc " (if gerbil-compile-optimize "-O " "") fname "\n"))
+    (let ((proc (if gerbil-compile-optimize
+                    (start-process "gxc" buf "gxc" "-O" fname)
+                  (start-process "gxc" buf "gxc" fname))))
       (set-process-sentinel proc 'gerbil-compile-sentinel)
       (display-buffer buf))))
 
