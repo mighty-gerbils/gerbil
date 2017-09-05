@@ -58,16 +58,42 @@ The hook is run after scheme-mode-hook."
       (set-process-sentinel proc 'gerbil-compile-sentinel)
       (display-buffer buf))))
 
+(defvar gerbil-error-locat-rx
+  "\\(\\\"\\(\\\\\\\\\\|\\\\\"\\|[^\\\"\n]\\)+\\\"\\)@\\([0-9]+\\)\\.\\([0-9]+\\)[^0-9]")
+
 (defun gerbil-compile-sentinel (proc evt)
   (let ((buf (process-buffer proc)))
     (when buf
       (cond
        ((equal evt "finished\n")
         (kill-buffer buf))
+       ((or (string-prefix-p "exited" evt)
+            (string-prefix-p "failed" evt))
+        (with-current-buffer buf
+          (goto-char (point-max))
+          (when (re-search-backward gerbil-error-locat-rx nil t)
+            (let ((loc (gerbil-extract-locat (buffer-substring (point) (point-max)))))
+              (with-current-buffer (car loc)
+                (goto-line (cadr loc))
+                (forward-char (- (caddr loc) 1))
+                (mark-sexp))))))
        (t
         (with-current-buffer buf
           (goto-char (point-max))
           (insert "\nProcess " evt)))))))
+
+(defun gerbil-extract-locat (str)
+  (and (string-match gerbil-error-locat-rx str)
+       (let* ((name (substring str
+                               (match-beginning 1)
+                               (match-end 1)))
+              (line (substring str
+                               (match-beginning 3)
+                               (match-end 3)))
+              (col (substring str
+                              (match-beginning 4)
+                              (match-end 4))))
+         (list (read name) (read line) (read col)))))
 
 (defun gerbil-put (syms prop v)
   (dolist (x syms)
