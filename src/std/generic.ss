@@ -3,7 +3,8 @@
 ;;; Generics support macros
 package: std
 
-(import :gerbil/gambit)
+(import :gerbil/gambit
+        (rename-in <MOP> (defmethod defmethod~)))
 (export #t)
 
 (begin-syntax
@@ -87,53 +88,54 @@ package: std
 
   (syntax-case stx (@method)
     ((_ (@method id type) impl . opts)
-     (and (identifier? #'id)
-          (syntax-local-type-info? #'type)
-          (stx-plist? #'opts class-method-option?))
-     (with-syntax* (((values klass)
-                     (syntax-local-value #'type))
-                    (type::t
-                     (runtime-type-identifier klass))
-                    (name
-                     (stx-identifier #'id #'type "::" #'id))
-                    (defimpl
-                      (wrap #'(def name impl)))
-                    (rebind?
-                     (and (stx-e (stx-getq rebind: #'rest)) #t))
-                    (bind
-                     (wrap #'(bind-method! type::t 'id name rebind?))))
-       (wrap #'(begin defimpl bind))))
+     (with-syntax ((body (stx-cdr stx)))
+       (wrap #'(defmethod~ . body))))
 
     ((_ (generic-id (arg-id type-id) ...) body ...)
-     (and (identifier? #'generic-id)
-          (generic-info? (syntax-local-value #'generic-id false))
-          (identifier-list? #'(arg-id ...))
-          (stx-andmap generic-type-id? #'(type-id ...)))
-     (with-syntax* ((pred-id (genident #'generic-id))
-                    (impl-id (genident #'generic-id))
-                    (generic::t
-                     (@ (syntax-local-value #'generic-id)
-                        dispatch-table))
-                    (@next-method
-                     (datum->syntax #'generic-id '@next-method))
-                    ((values type-infos)
-                     (stx-map syntax-local-value #'(type-id ...)))
-                    (((predicate-check arg-type) ...)
-                     (map generate-generic-dispatch
-                          (syntax->list #'(arg-id ...))
-                          type-infos))
-                    (defpred
-                     (wrap
-                      #'(def (pred-id arg-id ...)
-                          (and predicate-check ...))))
-                    (defimpl
-                     (wrap
-                      #'(def (impl-id @next-method arg-id ...)
-                          body ...))))
-       (wrap
-        #'(begin
-            defpred defimpl
-            (generic-add-method! generic::t pred-id impl-id [arg-type ...])))))))
+     (cond
+      ((and (identifier? #'generic-id)
+            (generic-info? (syntax-local-value #'generic-id false))
+            (identifier-list? #'(arg-id ...))
+            (stx-andmap generic-type-id? #'(type-id ...)))
+       (with-syntax* ((pred-id (genident #'generic-id))
+                      (impl-id (genident #'generic-id))
+                      (generic::t
+                       (@ (syntax-local-value #'generic-id)
+                          dispatch-table))
+                      (@next-method
+                       (datum->syntax #'generic-id '@next-method))
+                      ((values type-infos)
+                       (stx-map syntax-local-value #'(type-id ...)))
+                      (((predicate-check arg-type) ...)
+                       (map generate-generic-dispatch
+                            (syntax->list #'(arg-id ...))
+                            type-infos))
+                      (defpred
+                        (wrap
+                         #'(def (pred-id arg-id ...)
+                             (and predicate-check ...))))
+                      (defimpl
+                        (wrap
+                         #'(def (impl-id @next-method arg-id ...)
+                             body ...))))
+         (wrap
+          #'(begin
+              defpred defimpl
+              (generic-add-method! generic::t pred-id impl-id [arg-type ...])))))
+      ((not (identifier? #'generic-id))
+       (raise-syntax-error #f "Bad syntax; expected method identifier"
+                           stx #'generic-id))
+      ((not (generic-info? (syntax-local-value #'generic-id false)))
+       (raise-syntax-error #f "Bad syntax; exected generic method identifier"
+                           stx #'generic-id))
+      ((not (identifier-list? #'(arg-id ...)))
+       (let (bad-id (find (? (not identifier?)) #'(arg-id ...)))
+         (raise-syntax-error #f "Bad syntax; expected identifier"
+                             stx bad-id)))
+      (else
+       (let (bad-id (find (? (not generic-type-id?)) #'(type-id ...)))
+         (raise-syntax-error #f "Bad syntax; expected generic type identifier"
+                             stx bad-id)))))))
 
 (defgeneric-type <t> () true)
 (defgeneric-type <void> (void) void?)

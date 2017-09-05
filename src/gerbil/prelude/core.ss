@@ -1574,23 +1574,30 @@ package: gerbil
 
       (syntax-case stx (@method)
         ((_ (@method id type) impl . rest)
-         (and (identifier? #'id)
-              (syntax-local-type-info? #'type)
-              (stx-plist? #'rest method-opt?))
-         (with-syntax* (((values klass)
-                         (syntax-local-value #'type))
-                        ((values rebind?)
-                         (and (stx-e (stx-getq rebind: #'rest)) #t))
-                        (type::t
-                         (runtime-type-identifier klass))
-                        (name
-                         (stx-identifier #'id #'type "::" #'id))
-                        (defimpl
-                          (wrap #'(def name impl)))
-                        (rebind? rebind?)
-                        (bind
-                         (wrap #'(bind-method! type::t 'id name rebind?))))
-           (wrap #'(begin defimpl bind))))))
+         (cond
+          ((and (identifier? #'id)
+                (syntax-local-type-info? #'type)
+                (stx-plist? #'rest method-opt?))
+           (with-syntax* (((values klass)
+                           (syntax-local-value #'type))
+                          ((values rebind?)
+                           (and (stx-e (stx-getq rebind: #'rest)) #t))
+                          (type::t
+                           (runtime-type-identifier klass))
+                          (name
+                           (stx-identifier #'id #'type "::" #'id))
+                          (defimpl
+                            (wrap #'(def name impl)))
+                          (rebind? rebind?)
+                          (bind
+                           (wrap #'(bind-method! type::t 'id name rebind?))))
+             (wrap #'(begin defimpl bind))))
+          ((not (identifier? #'id))
+           (raise-syntax-error #f "Bad syntax; expected method identifier" stx #'id))
+          ((not (syntax-local-type-info? #'type))
+           (raise-syntax-error #f "Bad syntax; expected type identifier" stx #'type))
+          (else
+           (raise-syntax-error #f "Bad syntax; illegal method options" stx))))))
 
     (defrules @method ()
       ((_ id obj arg ...)
