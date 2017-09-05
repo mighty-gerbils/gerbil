@@ -58,6 +58,8 @@ The hook is run after scheme-mode-hook."
       (set-process-sentinel proc 'gerbil-compile-sentinel)
       (display-buffer buf))))
 
+(defvar gerbil-compile-mark-rx
+  "^> gxc")
 (defvar gerbil-error-locat-rx
   "\\(\\\"\\(\\\\\\\\\\|\\\\\"\\|[^\\\"\n]\\)+\\\"\\)@\\([0-9]+\\)\\.\\([0-9]+\\)[^0-9]")
 
@@ -71,12 +73,15 @@ The hook is run after scheme-mode-hook."
             (string-prefix-p "failed" evt))
         (with-current-buffer buf
           (goto-char (point-max))
-          (when (re-search-backward gerbil-error-locat-rx nil t)
-            (let ((loc (gerbil-extract-locat (buffer-substring (point) (point-max)))))
-              (with-current-buffer (car loc)
-                (goto-line (cadr loc))
-                (forward-char (- (caddr loc) 1))
-                (mark-sexp))))))
+          (when (re-search-backward gerbil-compile-mark-rx nil t)
+            (let (limit (point))
+              (goto-char (point-max))
+              (when (re-search-backward gerbil-error-locat-rx limit t)
+                (let ((loc (gerbil-extract-locat (buffer-substring (point) (point-max)))))
+                  (with-current-buffer (car loc)
+                    (goto-line (cadr loc))
+                    (forward-char (- (caddr loc) 1))
+                    (mark-sexp))))))))
        (t
         (with-current-buffer buf
           (goto-char (point-max))
