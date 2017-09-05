@@ -10,8 +10,7 @@
   (scheme-mode-variables)
   (run-hooks 'scheme-mode-hook)
   (gerbil-init)
-  (run-hooks 'gerbil-mode-hook)
-  )
+  (run-hooks 'gerbil-mode-hook))
 
 (defun gerbil-mode-init ()
   (use-local-map scheme-mode-map)
@@ -47,6 +46,63 @@ The hook is run after scheme-mode-hook."
 (defun gerbil-reload-current-buffer ()
   (interactive)
   (gerbil-reload-file buffer-file-name))
+
+(defvar gerbil-compile-optimize t)
+
+(defun gerbil-compile-current-buffer ()
+  (interactive)
+  (let ((fname buffer-file-name)
+        (buf (get-buffer-create "*gerbil-compile*")))
+    (with-current-buffer buf
+      (goto-char (point-max))
+      (insert  "> gxc " (if gerbil-compile-optimize "-O " "") fname "\n"))
+    (let ((proc (if gerbil-compile-optimize
+                    (start-process "gxc" buf "gxc" "-O" fname)
+                  (start-process "gxc" buf "gxc" fname))))
+      (set-process-sentinel proc 'gerbil-compile-sentinel)
+      (display-buffer buf))))
+
+(defvar gerbil-compile-mark-rx
+  "^> gxc")
+(defvar gerbil-error-locat-rx
+  "\\(\\\"\\(\\\\\\\\\\|\\\\\"\\|[^\\\"\n]\\)+\\\"\\)@\\([0-9]+\\)\\.\\([0-9]+\\)[^0-9]")
+
+(defun gerbil-compile-sentinel (proc evt)
+  (let ((buf (process-buffer proc)))
+    (when buf
+      (cond
+       ((equal evt "finished\n")
+        (kill-buffer buf))
+       ((or (string-prefix-p "exited" evt)
+            (string-prefix-p "failed" evt))
+        (with-current-buffer buf
+          (goto-char (point-max))
+          (when (re-search-backward gerbil-compile-mark-rx nil t)
+            (let (limit (point))
+              (goto-char (point-max))
+              (when (re-search-backward gerbil-error-locat-rx limit t)
+                (let ((loc (gerbil-extract-locat (buffer-substring (point) (point-max)))))
+                  (with-current-buffer (car loc)
+                    (goto-line (cadr loc))
+                    (forward-char (- (caddr loc) 1))
+                    (mark-sexp))))))))
+       (t
+        (with-current-buffer buf
+          (goto-char (point-max))
+          (insert "\nProcess " evt)))))))
+
+(defun gerbil-extract-locat (str)
+  (and (string-match gerbil-error-locat-rx str)
+       (let* ((name (substring str
+                               (match-beginning 1)
+                               (match-end 1)))
+              (line (substring str
+                               (match-beginning 3)
+                               (match-end 3)))
+              (col (substring str
+                              (match-beginning 4)
+                              (match-end 4))))
+         (list (read name) (read line) (read col)))))
 
 (defun gerbil-put (syms prop v)
   (dolist (x syms)
