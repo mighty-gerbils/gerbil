@@ -66,11 +66,14 @@ The hook is run after scheme-mode-hook."
   (interactive)
   (let* ((dir (file-name-directory buffer-file-name))
          (build (gerbil-find-build-script dir))
+         (build-dir (file-name-directory build))
+         (build-script (file-name-nondirectory build))
          (buf (get-buffer-create "*gerbil-compile*")))
     (with-current-buffer buf
       (goto-char (point-max))
       (insert "> build " build "\n"))
-    (let ((proc (start-process "build" buf build)))
+    (let ((proc (start-process "build" buf "sh" "-c"
+                               (concat "cd " build-dir " && ./" build-script))))
       (set-process-sentinel proc 'gerbil-compile-sentinel)
       (display-buffer buf))))
 
