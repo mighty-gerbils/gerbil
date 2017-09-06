@@ -62,8 +62,34 @@ The hook is run after scheme-mode-hook."
       (set-process-sentinel proc 'gerbil-compile-sentinel)
       (display-buffer buf))))
 
+(defun gerbil-build ()
+  (interactive)
+  (let* ((dir (file-name-directory buffer-file-name))
+         (build (gerbil-find-build-script dir))
+         (build-dir (file-name-directory build))
+         (build-script (file-name-nondirectory build))
+         (buf (get-buffer-create "*gerbil-compile*")))
+    (with-current-buffer buf
+      (goto-char (point-max))
+      (insert "> build " build "\n"))
+    (let ((proc (start-process "build" buf "sh" "-c"
+                               (concat "cd " build-dir " && ./" build-script))))
+      (set-process-sentinel proc 'gerbil-compile-sentinel)
+      (display-buffer buf))))
+
+(defun gerbil-find-build-script (dir)
+  (let ((files (directory-files dir nil "^build.ss$")))
+    (cond
+     (files
+      (concat dir (car files)))
+     ((equal dir "/")
+      (error "Cannot locate build script"))
+     (t
+      (let ((dir (file-name-directory (directory-file-name dir))))
+        (gerbil-find-build-script dir))))))
+
 (defvar gerbil-compile-mark-rx
-  "^> gxc")
+  "^> \\(gxc\\|build\\)")
 (defvar gerbil-error-locat-rx
   "\\(\\\"\\(\\\\\\\\\\|\\\\\"\\|[^\\\"\n]\\)+\\\"\\)@\\([0-9]+\\)\\.\\([0-9]+\\)[^0-9]")
 
@@ -82,10 +108,10 @@ The hook is run after scheme-mode-hook."
               (goto-char (point-max))
               (when (re-search-backward gerbil-error-locat-rx limit t)
                 (let ((loc (gerbil-extract-locat (buffer-substring (point) (point-max)))))
-                  (with-current-buffer (car loc)
-                    (goto-line (cadr loc))
-                    (forward-char (- (caddr loc) 1))
-                    (mark-sexp))))))))
+                  (switch-to-buffer (car loc))
+                  (goto-line (cadr loc))
+                  (forward-char (- (caddr loc) 1))
+                  (mark-sexp)))))))
        (t
         (with-current-buffer buf
           (goto-char (point-max))
