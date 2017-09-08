@@ -40,7 +40,7 @@ $GERBIL_HOME/bin/gxi-script build1.ss || die
 
 ## finalize build
 echo ">>> finalizing build"
-cp -v boot/*.scm $GERBIL_TARGET/lib
+cp -v gerbil/boot/*.scm $GERBIL_TARGET/lib
 cp -v gerbil/interactive/*.ss $GERBIL_TARGET/lib
 cp -v gerbil/gxi gerbil/gxc gerbil/gxi-build-script $GERBIL_TARGET/bin
 (cd $GERBIL_TARGET/bin && ln -s gxi gxi-script)
