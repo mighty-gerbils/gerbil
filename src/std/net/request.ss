@@ -154,7 +154,7 @@ package: std/net
 (def url-rx
   (pregexp "(?:(https?)://)?([^/:]+)(:[0-9]+)?(/.*)?"))
 
-(def (http-request method url headers body history redirect)
+(def (http-request method url user-headers body history redirect)
   ;; extra headers:
   ;;  Host: url host
   ;;  Content-Length: binary body length if body is string/bytes
@@ -176,7 +176,7 @@ package: std/net
               ((80 443) host)
               (else                     ; non-standard port
                (format "~a:~a" host port))))
-           (headers (http-headers-cons [["Host" . host-header]] headers))
+           (headers (http-headers-cons [["Host" . host-header]] user-headers))
            (body
             (cond
              ((not body) #f)
@@ -210,7 +210,7 @@ package: std/net
                 (error "URL redirection loop" url)
                 (begin
                   (request-close req)
-                  (http-request method new-url headers body (cons url history) #t))))))
+                  (http-request method new-url user-headers body (cons url history) #t))))))
        (else req)))))
 
 (def (http-request-write port method target headers body)
