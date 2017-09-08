@@ -27,9 +27,11 @@ package: std/text
     (error "Bad argument; expected u8vector" u8v)))
 
 (def (utf8-encode str)
-  (let* ((u8vlen (utf8-encode-length str))
-         (u8v (make-u8vector u8vlen)))
-    (utf8-encode! str u8v)
+  (let* ((slen (string-length str))
+         (u8vlen (fx* slen 4))
+         (u8v (make-u8vector u8vlen))
+         (count (utf8-encode! str u8v)))
+    (##u8vector-shrink! u8v count)
     u8v))
 
 (def (utf8-encode-length str)
@@ -53,7 +55,7 @@ package: std/text
 (def (utf8-encode! str u8v)
   (let (slen (##string-length str))
     (let lp ((i 0) (j 0))
-      (when (##fx< i slen)
+      (if (##fx< i slen)
         (let* ((char (##string-ref str i))
                (c (##char->integer char)))
           (cond
@@ -74,7 +76,8 @@ package: std/text
             (##u8vector-set! u8v (##fx+ j 1) (##fxior #x80 (##fxand (##fxarithmetic-shift-right c 12) #x3f)))
             (##u8vector-set! u8v (##fx+ j 2) (##fxior #x80 (##fxand (##fxarithmetic-shift-right c 6) #x3f)))
             (##u8vector-set! u8v (##fx+ j 3) (##fxior #x80 (##fxand c #x3f)))
-            (lp (##fx+ i 1) (##fx+ j 4)))))))))
+            (lp (##fx+ i 1) (##fx+ j 4)))))
+        j))))
 
 (def (utf8-decode u8v)
   (let* ((u8vlen (##u8vector-length u8v))
