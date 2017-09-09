@@ -929,9 +929,9 @@ package: gerbil
           body ...)
        (stx-andmap identifier? #'(var ...))
        (let $loop ((var init) ...)
-         (if (not test)
-           (begin body ... ($loop (begin var step ...) ...))
-           (begin #!void fini ...)))))
+         (if test
+           (begin #!void fini ...)
+           (begin body ... ($loop (begin var step ...) ...))))))
 
     (defrules do-while ()
       ((_ hd (test . fini) . body)
