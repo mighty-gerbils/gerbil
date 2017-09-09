@@ -721,12 +721,17 @@ namespace: gxc
        (generate-values #'hd #'body)))))
 
 (def (generate-runtime-letrec*-values% stx)
-  ;; TODO The recent Gambits we require nowdays support letrec* natively; use it!
+  ;; Note: historically this has been desugared as described below.
+  ;; The recent Gambit we require nowdays supports letrec* natively;
+  ;; so we now use it in the case of simple lets (single bindings)
+  ;;
+  ;; TODO use native letrec* for cases with values as well instead of desugaring
+  ;;
   ;; Desugaring:
   ;;  let* pre-bind ...      ; bindings with no forward references to the rec block
-  ;;   let bind ...          ; recursive expressions
+  ;;   let id-bind ...       ; recursive expression bindings
   ;;    letrec rec-bind ...  ; lambda bindings
-  ;;     set! bind expr ...  ; binding initialization
+  ;;     set! id expr ...    ; binding initialization
   ;;      let* post-bind ... ; bindings with no forward references to them
   ;;       body ...
 
@@ -906,22 +911,29 @@ namespace: gxc
             ['%#begin expr (generate-let* rest body)]))))
       (else body)))
 
+  (def (generate-simple hd body)
+    (generate-runtime-simple-let 'letrec* hd body #f))
+
+  (def (generate-values hd body)
+    (let* (((values pre-bind rec-pre rec-bind rec-init post-bind)
+            (linearize hd))
+           (body (if (null? post-bind) body
+                     (generate-let* post-bind body)))
+           (body (if (null? rec-init) body
+                     ['%#begin rec-init ... body]))
+           (body (if (null? rec-bind) body
+                     ['%#letrec-values rec-bind body]))
+           (body (if (null? rec-pre) body
+                     ['%#let-values rec-pre body]))
+           (body (if (null? pre-bind) body
+                     (generate-let* pre-bind body))))
+      (compile-e body)))
+
   (ast-case stx ()
     ((_ hd body)
-     (let* (((values pre-bind rec-pre rec-bind rec-init post-bind)
-             (linearize #'hd))
-            (body #'body)
-            (body (if (null? post-bind) body
-                      (generate-let* post-bind body)))
-            (body (if (null? rec-init) body
-                      ['%#begin rec-init ... body]))
-            (body (if (null? rec-bind) body
-                      ['%#letrec-values rec-bind body]))
-            (body (if (null? rec-pre) body
-                      ['%#let-values rec-pre body]))
-            (body (if (null? pre-bind) body
-                      (generate-let* pre-bind body))))
-       (compile-e body)))))
+     (if (generate-runtime-simple-let? #'hd)
+       (generate-simple #'hd #'body)
+       (generate-values #'hd #'body)))))
 
 (def (generate-runtime-receive% stx)
   (ast-case stx ()
