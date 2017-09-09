@@ -3206,55 +3206,55 @@
                                  _L9735_
                                  _L9736_))
                         (cons (cons (gx#datum->syntax '#f 'if)
-                                    (cons (cons (gx#datum->syntax '#f 'not)
-                                                (cons _L9733_ '()))
+                                    (cons _L9733_
                                           (cons (cons (gx#datum->syntax
                                                        '#f
                                                        'begin)
-                                                      (begin
-                                                        '#!void
-                                                        (foldr (lambda (_g97809798_
+                                                      (cons '#!void
+                                                            (begin
+                                                              '#!void
+                                                              (foldr (lambda (_g97809798_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                _g97819801_)
-                         (cons _g97809798_ _g97819801_))
-                       (cons (cons (gx#datum->syntax '#f '$loop)
-                                   (begin
-                                     (gx#syntax-check-splice-targets
-                                      _L9734_
-                                      _L9736_)
-                                     (foldr (lambda (_g97829804_
-                                                     _g97839807_
-                                                     _g97849809_)
-                                              (cons (cons (gx#datum->syntax
-                                                           '#f
-                                                           'begin)
-                                                          (cons _g97839807_
-                                                                (begin
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          '#!void
-                          (foldr (lambda (_g97859812_ _g97869815_)
-                                   (cons _g97859812_ _g97869815_))
-                                 '()
-                                 _g97829804_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    _g97849809_))
-                                            '()
-                                            _L9734_
-                                            _L9736_)))
-                             '())
-                       _L9730_)))
+                                      _g97819801_)
+                               (cons _g97809798_ _g97819801_))
+                             '()
+                             _L9732_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (cons (cons (gx#datum->syntax
                                                              '#f
                                                              'begin)
-                                                            (cons '#!void
+                                                            (begin
+                                                              '#!void
+                                                              (foldr (lambda (_g97829804_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (begin
-                            '#!void
-                            (foldr (lambda (_g97879818_ _g97889821_)
-                                     (cons _g97879818_ _g97889821_))
-                                   '()
-                                   _L9732_))))
+                                      _g97839807_)
+                               (cons _g97829804_ _g97839807_))
+                             (cons (cons (gx#datum->syntax '#f '$loop)
+                                         (begin
+                                           (gx#syntax-check-splice-targets
+                                            _L9734_
+                                            _L9736_)
+                                           (foldr (lambda (_g97849810_
+                                                           _g97859813_
+                                                           _g97869815_)
+                                                    (cons (cons (gx#datum->syntax
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         '#f
+                         'begin)
+                        (cons _g97859813_
+                              (begin
+                                '#!void
+                                (foldr (lambda (_g97879818_ _g97889821_)
+                                         (cons _g97879818_ _g97889821_))
+                                       '()
+                                       _g97849810_))))
+                  _g97869815_))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                  '()
+                                                  _L9734_
+                                                  _L9736_)))
+                                   '())
+                             _L9730_)))
               '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                               '()))))
