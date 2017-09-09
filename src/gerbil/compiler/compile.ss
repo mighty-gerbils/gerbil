@@ -721,8 +721,7 @@ namespace: gxc
        (generate-values #'hd #'body)))))
 
 (def (generate-runtime-letrec*-values% stx)
-  ;; I love my internal defs, so optimize them a tad (gambit has no internal
-  ;;   letrec* (yet) to do the work)
+  ;; TODO The recent Gambits we require nowdays support letrec* natively; use it!
   ;; Desugaring:
   ;;  let* pre-bind ...      ; bindings with no forward references to the rec block
   ;;   let bind ...          ; recursive expressions
@@ -730,6 +729,7 @@ namespace: gxc
   ;;     set! bind expr ...  ; binding initialization
   ;;      let* post-bind ... ; bindings with no forward references to them
   ;;       body ...
+
   (def (linearize forms)
     (let* ((closures (collect-closures forms))
            (bindings (collect-bindings forms))
@@ -995,8 +995,21 @@ namespace: gxc
 
 (def (generate-runtime-call% stx)
   (ast-case stx ()
-    ((_ . exprs)
-     (map compile-e #'exprs))))
+    ((_ rator . rands)
+     (let ((rator (compile-e #'rator))
+           (rands (map compile-e #'rands)))
+       (ast-case rator (letrec lambda)
+         ;; decompile let loops -- Gambit optimizes them
+         ((letrec ((id (lambda (arg ...) body ...))) ret)
+          (eq? #'id #'ret)
+          (if (fx= (length rands) (length #'(arg ...)))
+            (let* ((id #'id)
+                   (args #'(arg ...))
+                   (body #'(body ...))
+                   (init (map list args rands)))
+              ['let id init body ...])
+            (raise-compile-error "Illegal loop application; arity mismatch" stx)))
+         (_ (cons rator rands)))))))
 
 (def (generate-runtime-if% stx)
   (ast-case stx ()
