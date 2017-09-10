@@ -222,7 +222,6 @@ namespace: gxc
   (%#let-values              generate-runtime-let-values%)
   (%#letrec-values           generate-runtime-letrec-values%)
   (%#letrec*-values          generate-runtime-letrec*-values%)
-  (%#receive                 generate-runtime-receive%)
   (%#quote                   generate-runtime-quote%)
   (%#call                    generate-runtime-call%)
   (%#if                      generate-runtime-if%)
@@ -721,242 +720,39 @@ namespace: gxc
        (generate-values #'hd #'body)))))
 
 (def (generate-runtime-letrec*-values% stx)
-  ;; Note: historically this has been desugared as described below.
-  ;; The recent Gambit we require nowdays supports letrec* natively;
-  ;; so we now use it in the case of simple lets (single bindings)
-  ;;
-  ;; TODO use native letrec* for cases with values as well instead of desugaring
-  ;;
-  ;; Desugaring:
-  ;;  let* pre-bind ...      ; bindings with no forward references to the rec block
-  ;;   let id-bind ...       ; recursive expression bindings
-  ;;    letrec rec-bind ...  ; lambda bindings
-  ;;     set! id expr ...    ; binding initialization
-  ;;      let* post-bind ... ; bindings with no forward references to them
-  ;;       body ...
-
-  (def (linearize forms)
-    (let* ((closures (collect-closures forms))
-           (bindings (collect-bindings forms))
-           ((values pre-bind forms bindings closures)
-            (lift-pre forms bindings closures))
-           ((values post-bind forms bindings closures)
-            (lift-post forms bindings closures))
-           ((values rec-pre rec-bind rec-init)
-            (lift-rec forms)))
-      (values pre-bind rec-pre rec-bind rec-init post-bind)))
-
-  (def (collect-closures forms)
-    (map (match <> ([_ expr] (collect-expression-refs expr))) forms))
-
-  (def (collect-bindings forms)
-    (map (match <>
-           ([bind _]
-            (let lp ((rest bind) (r []))
-              (match rest
-                ([id . rest]
-                 (if (identifier? id)
-                   (lp rest (cons (binding-id (resolve-identifier id)) r))
-                   (lp rest r)))
-                (else
-                 (if (identifier? rest)
-                   (cons (binding-id (resolve-identifier rest)) r)
-                   r))))))
-         forms))
-
-  (def (closure-reference? closure bindings)
-    (ormap (cut hash-get closure <>) bindings))
-
-  (def (is-lambda-form? form)
-    (match form
-      ([bind expr]
-       (is-lambda-expr? expr))))
-
-  (def (is-lambda-expr? expr)
-    (ast-case expr ()
-      ((hd . _)
-       (memq (stx-e #'hd) '(%#lambda %#case-lambda)))))
-
-  (def (lift-pre forms bindings closures)
-    ;; lift bindings into a preceding let*
-    ;; A binding will be lifted if the expression:
-    ;;  1. is not recursive or a lambda
-    ;;  2. the lift would result in no forward or recursive references
-    ;;  3. no effect reordering will occur from the lift
-    ;;     this is currently _very_ conservative: it stops lifting in the
-    ;;     first non-trivial non-lambda expression with forward references
-    (let lp ((rest-forms forms) (rest-bindings bindings) (rest-closures closures)
-             (post-forms []) (post-bindings []) (post-closures [])
-             (pre-forms []))
-      (match* (rest-forms rest-bindings rest-closures)
-        (([form . rest-forms]
-          [bindings . rest-bindings]
-          [closure . rest-closures])
-         (cond
-          ((is-lambda-form? form)            ; lambda binding, continue
-           (lp rest-forms rest-bindings rest-closures
-               (cons form post-forms)
-               (cons bindings post-bindings)
-               (cons closure post-closures)
-               pre-forms))
-          ((or (closure-reference? closure bindings)
-               (ormap (cut closure-reference? closure <>) post-bindings)
-               (ormap (cut closure-reference? closure <>) rest-bindings))
-           ;; forward or recursive references, break
-           (values
-             (reverse pre-forms)
-             (foldr cons (cons form rest-forms) post-forms)
-             (foldr cons (cons bindings rest-bindings) post-bindings)
-             (foldr cons (cons closure rest-closures) post-closures)))
-          (else                         ; lift
-           (lp rest-forms rest-bindings rest-closures
-               post-forms post-bindings post-closures
-               (cons form pre-forms)))))
-        (else
-         (values
-           (reverse pre-forms)
-           (reverse post-forms)
-           (reverse post-bindings)
-           (reverse post-closures))))))
-
-  (def (lift-post forms bindings closures)
-    ;; lift bindings and succeeding let*
-    ;; like lift-pre, but it pushes bindings downwards
-    ;; A binding will be lifted id the expression:
-    ;; 1. is not recursive or a lambda
-    ;; 2. the lift would result in no forward or recursive references
-    ;; 3  no effect reordering will occur from the lift (very conservative)
-    (let lp ((rest-forms (reverse forms))
-             (rest-bindings (reverse bindings))
-             (rest-closures (reverse closures))
-             (pre-forms []) (pre-bindings []) (pre-closures [])
-             (post-forms []))
-      (match* (rest-forms rest-bindings rest-closures)
-        (([form . rest-forms]
-          [bindings . rest-bindings]
-          [closure . rest-closures])
-         (cond
-          ((is-lambda-form? form)            ; lambda-form, continue
-           (lp rest-forms rest-bindings rest-closures
-               (cons form pre-forms)
-               (cons bindings pre-bindings)
-               (cons closure pre-closures)
-               post-forms))
-          ((or (closure-reference? closure bindings)
-               (ormap (cut closure-reference? <> bindings) rest-closures)
-               (ormap (cut closure-reference? <> bindings) pre-closures))
-           ;; forward or recursive reference, break
-           (values
-             post-forms
-             (foldl cons (cons form pre-forms) rest-forms)
-             (foldl cons (cons bindings pre-bindings) rest-bindings)
-             (foldl cons (cons closure pre-closures) rest-closures)))
-          (else                         ; lift
-           (lp rest-forms rest-bindings rest-closures
-               pre-forms pre-bindings pre-closures
-               (cons form post-forms)))))
-        (else
-         (values
-           post-forms
-           pre-forms
-           pre-bindings
-           pre-closures)))))
-
-  (def (lift-rec forms)
-    (let lp ((rest forms) (pre []) (bind []) (init []))
+  (def (generate-values hd body)
+    (let lp ((rest hd) (bind []))
       (match rest
-        ([form . rest]
-         (if (is-lambda-form? form)
-           (lp rest pre (cons form bind) init)
-           (ast-case form ()
-             (((#f) expr)
-              (lp rest pre bind
-                  (cons #'expr init)))
-             (((id) expr)
+        ([hd-bind . rest]
+         (ast-case hd-bind ()
+           (((id) expr)
+            (let ((eid (generate-runtime-binding-id* #'id))
+                  (expr (compile-e #'expr)))
+              (lp rest (cons [eid expr] bind))))
+           ((hd expr)
+            (let* ((vals (generate-runtime-temporary))
+                   (tmp  (generate-runtime-temporary))
+                   (expr (compile-e #'expr))
+                   (check-values (generate-runtime-check-values tmp #'hd))
+                   (refs (generate-runtime-let-values-bind vals #'hd)))
               (lp rest
-                  (cons [[#'id] ['%#quote #!void]] pre)
-                  bind
-                  (cons ['%#set! #'id #'expr] init)))
-             ((hd expr)
-              (let* ((vars
-                      (let lp ((rest #'hd) (r []))
-                        (match rest
-                          ([#f . rest]
-                           (lp rest r))
-                          ([id . rest]
-                           (lp rest (cons id r)))
-                          (else
-                           (if (identifier? rest)
-                             (foldl cons [rest] r)
-                             (reverse r))))))
-                     (recv ['%#receive #'hd #'expr]))
-                (lp rest
-                    (foldl (lambda (var pre) (cons [[var] ['%#quote #!void]] pre))
-                           pre vars)
-                    bind
-                    (cons recv init)))))))
+                  (foldl cons
+                         (cons [vals ['let [[tmp expr]] check-values tmp]]
+                               bind)
+                         refs))))))
         (else
-         (values
-           (reverse pre)
-           (reverse bind)
-           (reverse init))))))
-
-  (def (generate-let* hd body)
-    (match hd
-      ([bind . rest]
-       (match bind
-         ([hd expr]
-          (if (stx-ormap identifier? hd)
-            ['%#let-values [bind] (generate-let* rest body)]
-            ['%#begin expr (generate-let* rest body)]))))
-      (else body)))
+         (let ((bind (reverse bind))
+               (body (compile-e body)))
+           ['letrec* bind body])))))
 
   (def (generate-simple hd body)
     (generate-runtime-simple-let 'letrec* hd body #f))
-
-  (def (generate-values hd body)
-    (let* (((values pre-bind rec-pre rec-bind rec-init post-bind)
-            (linearize hd))
-           (body (if (null? post-bind) body
-                     (generate-let* post-bind body)))
-           (body (if (null? rec-init) body
-                     ['%#begin rec-init ... body]))
-           (body (if (null? rec-bind) body
-                     ['%#letrec-values rec-bind body]))
-           (body (if (null? rec-pre) body
-                     ['%#let-values rec-pre body]))
-           (body (if (null? pre-bind) body
-                     (generate-let* pre-bind body))))
-      (compile-e body)))
 
   (ast-case stx ()
     ((_ hd body)
      (if (generate-runtime-simple-let? #'hd)
        (generate-simple #'hd #'body)
        (generate-values #'hd #'body)))))
-
-(def (generate-runtime-receive% stx)
-  (ast-case stx ()
-    ((_ hd expr)
-     (let* ((tmp (generate-runtime-temporary))
-            (check (generate-runtime-check-values tmp #'hd))
-            (setq
-             (let lp ((rest #'hd) (k 0) (setq []))
-               (match rest
-                 ([#f . rest]
-                  (lp rest (fx1+ k) setq))
-                 ([id . rest]
-                  (lp rest
-                      (fx1+ k)
-                      (cons ['set! (generate-runtime-identifier id) ['values-ref tmp k]]
-                            setq)))
-                 ((? identifier? id)
-                  (foldl cons
-                         [['set! (generate-runtime-identifier id) ['values->list tmp k]]]
-                         setq))
-                 (else
-                  (reverse setq))))))
-       ['let [[tmp (compile-e #'expr)]] check setq ...]))))
 
 (def (generate-runtime-simple-let? hd)
   (let lp ((rest hd))
