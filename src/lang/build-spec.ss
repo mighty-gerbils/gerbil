@@ -1,7 +1,10 @@
 ;; -*- Gerbil -*-
 (def build-spec
   '("scheme/stubs"
-    (gxc: "scheme/base-impl" "-e" "(include \"~~lib/_gambit#.scm\")")
+    "scheme/base-etc"
+    "scheme/base-vectors"
+    (gxc: "scheme/base-ports" "-e" "(include \"~~lib/_gambit#.scm\")")
+    "scheme/base-impl"
     "scheme/base"
     "scheme/case-lambda"
     "scheme/char-impl"
