@@ -392,6 +392,7 @@ package: std
   (def prefix  (pgetq prefix: settings))
 
   (displayln "... copy ssi " mod)
+  (create-directory* (path-directory libpath))
   (when (file-exists? libpath)
     (delete-file libpath))
   (copy-file srcpath libpath)
