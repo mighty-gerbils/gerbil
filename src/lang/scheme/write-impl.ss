@@ -4,7 +4,8 @@
 package: scheme
 
 (import :scheme/stubs
-        :gerbil/gambit
+        :gerbil/gambit/readtables
+        :gerbil/gambit/ports
         :std/sugar)
 (export #t)
 

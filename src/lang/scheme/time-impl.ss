@@ -4,7 +4,7 @@
 package: scheme
 
 (import :scheme/stubs
-        :gerbil/gambit)
+        :gerbil/gambit/os)
 (export #t)
 
 (begin-foreign
