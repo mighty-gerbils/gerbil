@@ -756,13 +756,27 @@ namespace: gxc
                (body (compile-e body)))
            ['letrec* bind body])))))
 
-  (def (generate-simple hd body)
-    (generate-runtime-simple-let 'letrec* hd body #f))
+  (def (generate-letrec? hd)
+    (let lp ((rest hd))
+      (match rest
+        ([hd-bind . rest]
+         (ast-case hd-bind ()
+           (((id) expr)
+            (and (is-lambda-expr? #'expr)
+                 (lp rest)))))
+        (else #t))))
+
+  (def (is-lambda-expr? expr)
+    (ast-case expr (%#lambda)
+      ((%#lambda hd . body) #t)
+      (_ #f)))
 
   (ast-case stx ()
     ((_ hd body)
      (if (generate-runtime-simple-let? #'hd)
-       (generate-simple #'hd #'body)
+       (if (generate-letrec? #'hd)
+         (generate-runtime-simple-let 'letrec #'hd #'body #f)
+         (generate-runtime-simple-let 'letrec* #'hd #'body #f))
        (generate-values #'hd #'body)))))
 
 (def (generate-runtime-simple-let? hd)
