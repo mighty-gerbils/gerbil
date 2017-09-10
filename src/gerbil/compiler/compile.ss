@@ -620,7 +620,18 @@ namespace: gxc
 
 (def (generate-runtime-let-values% stx (compiled-body? #f))
   (def (generate-simple hd body)
-    (generate-runtime-simple-let 'let hd body compiled-body?))
+    (coalesce-let*
+     (generate-runtime-simple-let 'let hd body compiled-body?)))
+
+  (def (coalesce-let* code)
+    (ast-case code (let let*)
+      ((let ((id expr)) (let () body ...))
+       ['let [[#'id #'expr]] #'(body ...) ...])
+      ((let ((id expr)) (let ((id2 expr2)) body ...))
+       ['let* [[#'id #'expr] [#'id2 #'expr2]] #'(body ...) ...])
+      ((let ((id expr)) (let* (bind ...) body ...))
+       ['let* [[#'id #'expr] #'(bind ...) ...] #'(body ...) ...])
+      (_ code)))
 
   (def (generate-values hd body)
     (let lp ((rest hd) (bind []) (check []) (post []))
