@@ -3,7 +3,8 @@
 ;;; R7RS (scheme base) library
 package: scheme
 
-(import :gerbil/gambit
+(import :gerbil/gambit/exceptions
+        :gerbil/gambit/ports
         :std/srfi/9
         :scheme/base-impl)
 

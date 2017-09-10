@@ -929,9 +929,9 @@ package: gerbil
           body ...)
        (stx-andmap identifier? #'(var ...))
        (let $loop ((var init) ...)
-         (if (not test)
-           (begin body ... ($loop (begin var step ...) ...))
-           (begin #!void fini ...)))))
+         (if test
+           (begin #!void fini ...)
+           (begin body ... ($loop (begin var step ...) ...))))))
 
     (defrules do-while ()
       ((_ hd (test . fini) . body)
@@ -1112,7 +1112,26 @@ package: gerbil
          (lambda args body ...)))
       ((_ id expr)
        (identifier? #'id)
-       (define-syntax id expr))))
+       (define-syntax id expr)))
+
+    (defsyntax (definline stx)
+      (syntax-case stx ()
+        ((_ (id arg ...) body ...)
+         (and (identifier? #'id)
+              (identifier-list? #'(arg ...)))
+         (with-syntax* ((impl (stx-identifier #'id #'id "__impl"))
+                        ((xarg ...) (gentemps #'(arg ...)))
+                        (defstx
+                          (syntax/loc stx
+                            (defrules id ()
+                              ((_ xarg ...)
+                               ((lambda (arg ...) body ...) xarg ...))
+                              (ref (identifier? #'ref) #'impl))))
+                        (defimpl
+                          (syntax/loc stx
+                            (def (impl arg ...) body ...))))
+           (syntax/loc stx
+             (begin defimpl defstx)))))))
 
   (import <sugar:3>))
 

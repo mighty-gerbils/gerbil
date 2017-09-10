@@ -620,7 +620,18 @@ namespace: gxc
 
 (def (generate-runtime-let-values% stx (compiled-body? #f))
   (def (generate-simple hd body)
-    (generate-runtime-simple-let 'let hd body compiled-body?))
+    (coalesce-let*
+     (generate-runtime-simple-let 'let hd body compiled-body?)))
+
+  (def (coalesce-let* code)
+    (ast-case code (let let*)
+      ((let ((id expr)) (let () body ...))
+       ['let [[#'id #'expr]] #'(body ...) ...])
+      ((let ((id expr)) (let ((id2 expr2)) body ...))
+       ['let* [[#'id #'expr] [#'id2 #'expr2]] #'(body ...) ...])
+      ((let ((id expr)) (let* (bind ...) body ...))
+       ['let* [[#'id #'expr] #'(bind ...) ...] #'(body ...) ...])
+      (_ code)))
 
   (def (generate-values hd body)
     (let lp ((rest hd) (bind []) (check []) (post []))
@@ -720,206 +731,53 @@ namespace: gxc
        (generate-values #'hd #'body)))))
 
 (def (generate-runtime-letrec*-values% stx)
-  ;; I love my internal defs, so optimize them a tad (gambit has no internal
-  ;;   letrec* (yet) to do the work)
-  (def (linearize forms)
-    (let* ((closures (collect-closures forms))
-           (bindings (collect-bindings forms))
-           ((values pre-bind forms bindings closures)
-            (lift-pre forms bindings closures))
-           ((values post-bind forms bindings closures)
-            (lift-post forms bindings closures))
-           ((values rec-pre rec-bind rec-init)
-            (lift-rec forms)))
-      (values pre-bind rec-pre rec-bind rec-init post-bind)))
-
-  (def (collect-closures forms)
-    (map (match <> ([_ expr] (collect-expression-refs expr))) forms))
-
-  (def (collect-bindings forms)
-    (map (match <>
-           ([bind _]
-            (let lp ((rest bind) (r []))
-              (match rest
-                ([id . rest]
-                 (if (identifier? id)
-                   (lp rest (cons (binding-id (resolve-identifier id)) r))
-                   (lp rest r)))
-                (else
-                 (if (identifier? rest)
-                   (cons rest r)
-                   r))))))
-         forms))
-
-  (def (lift-pre hd bindings closures)
-    ;; lift bindings into a preceding let*
-    ;; A binding can be lifted if the expression:
-    ;;  1. is not recursive
-    ;;  2. has no forward references
-    ;;  3. no effect reordering will occur from the lift (very conservative)
-    ;; If any binding is lifted in a pass, then loop again so that lambdas can be
-    ;;  bubbled up (so that's quadratic at worst case)
-    (let lp ((rest-forms hd) (rest-bindings bindings) (rest-closures closures)
-             (post-forms []) (post-bindings []) (post-closures [])
-             (pre-forms []) (lifted? #f))
-      (match* (rest-forms rest-bindings rest-closures)
-        (([form . rest-forms]
-          [bindings . rest-bindings]
-          [closure . rest-closures])
-         (if (or (closure-reference? closure bindings)
-                 (ormap (cut closure-reference? closure <>) rest-bindings)
-                 (ormap (cut closure-reference? closure <>) post-bindings)
-                 (and (is-effect-bind? form)
-                      (find is-effect-bind? post-forms)))
-           ;; cannot lift
-           (lp rest-forms rest-bindings rest-closures
-               (cons form post-forms)
-               (cons bindings post-bindings)
-               (cons closure post-closures)
-               pre-forms lifted?)
-           ;; yessir
-           (lp rest-forms rest-bindings rest-closures
-               post-forms post-bindings post-closures
-               (cons form pre-forms) #t)))
-        (else
-         (if lifted?
-           ;; reloop if any has been lifted
-           (lp (reverse post-forms)
-               (reverse post-bindings)
-               (reverse post-closures)
-               [] [] []
-               pre-forms #f)
-           (values (reverse pre-forms)
-                   (reverse post-forms)
-                   (reverse post-bindings)
-                   (reverse post-closures)))))))
-
-  (def (lift-post hd bindings closures)
-    ;; similar to lift-pre, but push down to a trailing let*
-    ;; a binding can be lifted (pushed) if
-    ;;  1. is not recursive
-    ;;  2. there no backwards references to it
-    ;;  3. no effect re-ordering will occur
-    (let lp ((rest-forms (reverse hd))
-             (rest-bindings (reverse bindings))
-             (rest-closures (reverse closures))
-             (pre-forms []) (pre-bindings []) (pre-closures [])
-             (post-forms []) (lifted? #f))
-      (match* (rest-forms rest-bindings rest-closures)
-        (([form . rest-forms]
-          [bindings . rest-bindings]
-          [closure . rest-closures])
-         (if (or (closure-reference? closure bindings)
-                 (ormap (cut closure-reference? <> bindings) rest-closures)
-                 (ormap (cut closure-reference? <> bindings) pre-closures)
-                 (and (is-effect-bind? form)
-                      (find is-effect-bind? pre-forms)))
-           ;; cannot lift
-           (lp rest-forms rest-bindings rest-closures
-               (cons form pre-forms)
-               (cons bindings pre-bindings)
-               (cons closure pre-closures)
-               post-forms lifted?)
-           ;; yessir
-           (lp rest-forms rest-bindings rest-closures
-               pre-forms pre-bindings pre-closures
-               (cons form post-forms) #t)))
-        (else
-         (if lifted?
-           (lp (reverse pre-forms)
-               (reverse pre-bindings)
-               (reverse pre-closures)
-               [] [] []
-               post-forms #f)
-           (values post-forms
-                   pre-forms
-                   pre-bindings
-                   pre-closures))))))
-
-  (def (lift-rec forms)
-    (let lp ((rest forms) (pre []) (bind []) (init []))
+  (def (generate-values hd body)
+    (let lp ((rest hd) (bind []))
       (match rest
-        ([bind-hd . rest]
-         (ast-case bind-hd ()
-           (((#f) expr)
-            (lp rest pre bind
-                (cons (compile-e #'expr) init)))
+        ([hd-bind . rest]
+         (ast-case hd-bind ()
            (((id) expr)
-            (let (eid (generate-runtime-binding-id #'id))
-              (if (is-lambda-expr? #'expr)
-                (lp rest pre
-                    (cons [eid (compile-e #'expr)] bind)
-                    init)
-                (lp rest
-                  (cons [eid #!void] pre)
-                  bind
-                  (cons ['set! eid (compile-e #'expr)] init)))))
+            (let ((eid (generate-runtime-binding-id* #'id))
+                  (expr (compile-e #'expr)))
+              (lp rest (cons [eid expr] bind))))
            ((hd expr)
             (let* ((vals (generate-runtime-temporary))
+                   (tmp  (generate-runtime-temporary))
                    (expr (compile-e #'expr))
-                   (check-values (generate-runtime-check-values vals #'hd))
+                   (check-values (generate-runtime-check-values tmp #'hd))
                    (refs (generate-runtime-let-values-bind vals #'hd)))
               (lp rest
-                  (foldl (lambda (ref r) (cons [(car ref) #!void] r))
-                         pre refs)
-                  bind
-                  (cons
-                   ['let [[vals expr]]
-                     check-values
-                     (map (cut cons 'set! <>) refs)]
-                   init))))))
+                  (foldl cons
+                         (cons [vals ['let [[tmp expr]] check-values tmp]]
+                               bind)
+                         refs))))))
         (else
-         (values (reverse pre)
-                 (reverse bind)
-                 (reverse init))))))
+         (let ((bind (reverse bind))
+               (body (compile-e body)))
+           ['letrec* bind body])))))
 
-  (def (closure-reference? closure bindings)
-    (ormap (cut hash-get closure <>) bindings))
-
-  (def (is-effect-bind? hd-bind)
-    (ast-case hd-bind ()
-      ((_ expr) (is-effect-expr? #'expr))))
-
-  ;; very very simple and conservative
-  (def (is-effect-expr? expr)
-    (ast-case expr ()
-      ((hd . _)
-       (not (memq (stx-e #'hd)
-                  '(%#lambda %#case-lambda %#quote %#quote-syntax %#ref))))))
+  (def (generate-letrec? hd)
+    (let lp ((rest hd))
+      (match rest
+        ([hd-bind . rest]
+         (ast-case hd-bind ()
+           (((id) expr)
+            (and (is-lambda-expr? #'expr)
+                 (lp rest)))))
+        (else #t))))
 
   (def (is-lambda-expr? expr)
-    (ast-case expr ()
-      ((hd . _)
-       (memq (stx-e #'hd) '(%#lambda %#case-lambda)))))
-
-  (def (generate-let* hd body)
-    (match hd
-      ([bind . rest]
-       (match bind
-         ([hd expr]
-          (if (stx-ormap identifier? hd)
-            (generate-runtime-let-values%
-             ['%#let-values [bind] (generate-let* rest body)]
-             #t)
-            ['begin (compile-e expr) (generate-let* rest body)]))))
-      (else body)))
+    (ast-case expr (%#lambda)
+      ((%#lambda hd . body) #t)
+      (_ #f)))
 
   (ast-case stx ()
     ((_ hd body)
-     (let ((values pre rec-pre rec-bind rec-init post)
-           (linearize #'hd))
-       (let* ((body (compile-e #'body))
-              (body (if (null? post) body
-                        (generate-let* post body)))
-              (body (if (null? rec-init) body
-                        ['begin rec-init ... body]))
-              (body (if (null? rec-bind) body
-                        ['letrec rec-bind body]))
-              (body (if (null? rec-pre) body
-                        ['let rec-pre body]))
-              (body (if (null? pre) body
-                        (generate-let* pre body))))
-         body)))))
+     (if (generate-runtime-simple-let? #'hd)
+       (if (generate-letrec? #'hd)
+         (generate-runtime-simple-let 'letrec #'hd #'body #f)
+         (generate-runtime-simple-let 'letrec* #'hd #'body #f))
+       (generate-values #'hd #'body)))))
 
 (def (generate-runtime-simple-let? hd)
   (let lp ((rest hd))
@@ -970,8 +828,21 @@ namespace: gxc
 
 (def (generate-runtime-call% stx)
   (ast-case stx ()
-    ((_ . exprs)
-     (map compile-e #'exprs))))
+    ((_ rator . rands)
+     (let ((rator (compile-e #'rator))
+           (rands (map compile-e #'rands)))
+       (ast-case rator (letrec lambda)
+         ;; decompile let loops -- Gambit optimizes them
+         ((letrec ((id (lambda (arg ...) body ...))) ret)
+          (eq? #'id #'ret)
+          (if (fx= (length rands) (length #'(arg ...)))
+            (let* ((id #'id)
+                   (args #'(arg ...))
+                   (body #'(body ...))
+                   (init (map list args rands)))
+              ['let id init body ...])
+            (raise-compile-error "Illegal loop application; arity mismatch" stx)))
+         (_ (cons rator rands)))))))
 
 (def (generate-runtime-if% stx)
   (ast-case stx ()

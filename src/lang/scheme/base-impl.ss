@@ -3,10 +3,15 @@
 ;;; R7RS (scheme base) library -- implementation details
 package: scheme
 
-(import :gerbil/gambit
-        :scheme/stubs
+(import :scheme/stubs
+        :scheme/base-etc
+        :scheme/base-vectors
+        :scheme/base-ports
         (phi: +1 :gerbil/expander :gerbil/gambit))
-(export #t)
+(export #t
+        (import: :scheme/base-etc)
+        (import: :scheme/base-vectors)
+        (import: :scheme/base-ports))
 
 ;; macros
 ;; R7RS spec:
@@ -95,25 +100,11 @@ package: scheme
 
 ;; this differs from Gerbil include in that it admits multiple paths
 (defrules r7rs-include ()
+  ((_ path)
+   (include path))
   ((_ path ...)
    (begin (include path) ...)))
 
-;; misc
-(defrules defeqv ()
-  ((_ id is? =?)
-   (def* id
-     ((x y)
-      (and (is? x)
-           (is? y)
-           (=? x y)))
-     ((x y . rest)
-      (let* ((y-rest (cons y rest))
-             (x-y-rest (cons x y-rest)))
-        (and (andmap is? x-y-rest)
-             (andmap (cut =? x <>) y-rest)))))))
-
-(defeqv boolean=? boolean? eq?)
-(defeqv symbol=? symbol? eq?)
 
 ;; R7RS spec:
 ;; "Raises an exception by invoking the current exception han-
@@ -134,23 +125,6 @@ package: scheme
 ;; a library module.
 (defstub raise-continuable)
 
-;; numerics
-(def (exact-integer? obj)
-  (and (number? obj)
-       (exact? obj)
-       (integer? obj)))
-
-(def (square x)
-  (expt x 2))
-
-;; original author: brad [gambiteer]
-(def (exact-integer-sqrt y)
-  (if (and (exact-integer? y)
-           (not (negative? y)))
-    (let (s-r (##exact-int.sqrt y))
-      (values (car s-r) (cdr s-r)))
-    (error "exact-integer-sqrt: Argument is not a nonnegative exact integer: " y)))
-
 ;; number theoretic functions are not my forte, so I am passing on these for now
 (defstub floor/)
 (defstub floor-quotient)
@@ -159,188 +133,6 @@ package: scheme
 (defstub truncate-quotient)
 (defstub truncate-remainder)
 
-;; lists
-(def (list-copy lst)
-  (foldr cons [] lst))
-
-(def (list-set! lst k obj)
-  (set! (car (list-tail lst k))
-    obj))
-
-;; vectors
-(defrules defvector-copy ()
-  ((_ id copy-e subvector-e length-e)
-   (def* id
-     ((vec)
-      (copy-e vec))
-     ((vec start)
-      (subvector-e vec start (length-e vec)))
-     ((vec start end)
-      (subvector-e vec start end)))))
-
-(defrules defvector-copy! ()
-  ((_ id move-e length-e)
-   (def* id
-     ((dest dest-start src)
-      (move-e src 0 (length-e src) dest dest-start))
-     ((dest dest-start src src-start)
-      (move-e src src-start (length-e src) dest dest-start))
-     ((dest dest-start src src-start src-end)
-      (move-e src src-start src-end dest dest-start)))))
-
-(defrules defvector-for-each ()
-  ((_ id length-e ref-e)
-   (def* id
-     ((proc vec)
-      (let (len (length-e vec))
-        (let lp ((x 0))
-          (when (fx< x len)
-            (proc (ref-e vec x))
-            (lp (fx1+ x))))))
-     ((proc vec1 vec2)
-      (let ((len1 (length-e vec1))
-            (len2 (length-e vec2)))
-        (let lp ((x 0))
-          (when (and (fx< x len1) (fx< x len2))
-            (proc (ref-e vec1 x) (ref-e vec2 x))
-            (lp (fx1+ x))))))
-     ((proc . vecs)
-      (let (lens (map length-e vecs))
-        (let lp ((x 0))
-          (when (andmap (cut fx< x <>) lens)
-            (apply proc (map (cut ref-e <> x) vecs))
-            (lp (fx1+ x)))))))))
-
-(defrules defvector-map ()
-  ((_ id make-e length-e ref-e set-e)
-   (def* id
-     ((proc vec)
-      (let* ((len (length-e vec))
-             (res (make-e len)))
-        (let lp ((x 0))
-          (if (fx< x len)
-            (let (val (proc (ref-e vec x)))
-              (set-e res x val)
-              (lp (fx1+ x)))
-            res))))
-     ((proc vec1 vec2)
-      (let* ((len1 (length-e vec1))
-             (len2 (length-e vec2))
-             (len (min len1 len2))
-             (res (make-e len)))
-        (let lp ((x 0))
-          (if (fx< x len)
-            (let (val (proc (ref-e vec1 x) (ref-e vec2 x)))
-              (set-e res x val)
-              (lp (fx1+ x)))
-            res))))
-     ((proc . vecs)
-      (let* ((lens (map length-e vecs))
-             (len (apply min lens))
-             (res (make-e len)))
-        (let lp ((x 0))
-          (if (fx< x len)
-            (let (val (apply proc (map (cut ref-e <> x) vecs)))
-              (set-e res x val)
-              (lp (fx1+ x)))
-            res)))))))
-
-(defrules defvector->vector ()
-  ((_ id length-e ref-e make-e is? set-e)
-   (def (id vec (start 0) (end (length-e vec)))
-     (let* ((len (fx- end start))
-            (res (make-e len)))
-       (let lp ((x 0))
-         (if (fx< x len)
-           (let (val (ref-e vec (fx+ start x)))
-             (unless (is? val)
-               (error "Illegal argument" vec x val))
-             (set-e res x val)
-             (lp (fx1+ x)))
-           res))))))
-
-(defvector-for-each vector-for-each vector-length ##vector-ref)
-(defvector-map r7rs-vector-map make-vector vector-length ##vector-ref ##vector-set!)
-(defvector-copy r7rs-vector-copy vector-copy subvector vector-length)
-(defvector-copy! vector-copy! subvector-move! vector-length)
-
-;; strings
-(defvector-for-each string-for-each string-length ##string-ref)
-(defvector-map string-map make-string string-length ##string-ref ##string-set!)
-(defvector-copy r7rs-string-copy string-copy substring string-length)
-(defvector-copy! string-copy! substring-move! string-length)
-(defvector->vector vector->string vector-length ##vector-ref make-string char? ##string-set!)
-(defvector->vector string->vector string-length ##string-ref make-vector true ##vector-set!)
-
-;; byte vectors
-(defvector-copy bytevector-copy u8vector-copy subu8vector u8vector-length)
-(defvector-copy! bytevector-copy! subu8vector-move! u8vector-length)
-
-;; i/o
-(def (read-bytevector k (port (current-input-port)))
-  (unless (and (fixnum? k) (fx> k 0))
-    (error "Illegal argument; expected positive fixnum" k))
-  (let* ((bytes (make-u8vector k))
-         (rd (read-subu8vector bytes 0 k port)))
-    (cond
-     ((fxzero? rd)
-      (eof-object))
-     ((fx< rd k)
-      (u8vector-shrink! bytes rd)
-      bytes)
-     (else
-      bytes))))
-
-(def (read-bytevector! bytes (port (current-input-port)) (start 0) (end (u8vector-length bytes)))
-  (unless (and (fixnum? start) (fixnum? end) (fx< start end))
-    (error "Illegal bytevector range; need at least one char" start end))
-  (let (rd (read-subu8vector bytes start end port))
-    (if (fxzero? rd)
-      (eof-object)
-      rd)))
-
-(def (write-bytevector bytes (port (current-output-port)) (start 0) (end (u8vector-length bytes)))
-  (write-subu8vector bytes start end port))
-
-(def (read-error? obj)
-  (or (datum-parsing-exception? obj)
-      (expression-parsing-exception? obj)))
-
-(def (file-error? obj)
-  (or (no-such-file-or-directory-exception? obj)
-      (os-exception? obj)))
-
-;; _gambit#.scm
-(extern namespace: #f
-  macro-byte-port?
-  macro-character-port?)
-
-(def (binary-port? obj)
-  (macro-byte-port? obj))
-
-(def (textual-port? obj)
-  (macro-character-port? obj))
-
-
-;; R7RS spec:
-;; "The call-with-port procedure calls proc with port as an
-;;  argument. If proc returns, then the port is closed auto-
-;;  matically and the values yielded by the proc are returned.
-;;  If proc does not return, then the port must not be closed
-;;  automatically unless it is possible to prove that the port
-;;  will never again be used for a read or write operation."
-;;
-;; We can't prove anything about the behaviour of the exception
-;; handler, so we can't close a port in an exceptoin catcher.
-;; The only sensible thing to do is to close it on a normal
-;; return and will a close by the finalizer otherwise.
-(def (call-with-port port proc)
-  (let* ((will (make-will port close-port))
-         (res (proc port)))
-    (will-execute! will)
-    res))
-
-
 ;; R7RS spec:
 ;; "Returns #t if port is still open and capable of performing
 ;;  input or output, respectively, and #f otherwise."
@@ -348,69 +140,3 @@ package: scheme
 ;; Not possible to implement without kernel support from Gambit
 (defstub input-port-open?)
 (defstub output-port-open?)
-
-;; _gambit#.scm
-(extern namespace: #f
-  macro-port-mutex-lock!
-  macro-port-mutex-unlock!
-  macro-character-port-rlo
-  macro-character-port-rhi
-  macro-character-port-peek-eof?
-  macro-byte-port-rlo
-  macro-byte-port-rhi
-  macro-byte-port-rbuf
-  macro-byte-port-rbuf-fill
-  )
-
-(def (port-buffered-chars? port)
-  (or (fx< (macro-character-port-rlo port)
-           (macro-character-port-rhi port))
-      (macro-character-port-peek-eof? port)))
-
-(def (check-byte-port/lock! port proc)
-  (unless (macro-byte-port? port)
-    (error "Illegal argument; expected byte-port" port))
-  (macro-port-mutex-lock! port)
-  (when (port-buffered-chars? port)
-    (macro-port-mutex-unlock! port)
-    (##raise-nonempty-input-port-character-buffer-exception port proc port)))
-
-(def (u8-ready? port)
-  (check-byte-port/lock! port u8-ready?)
-  (let ((byte-rlo (macro-byte-port-rlo port))
-        (byte-rhi (macro-byte-port-rhi port)))
-    (if (fx< byte-rlo byte-rhi)
-      (begin
-        (macro-port-mutex-unlock! port)
-        #t)
-      (let (res ((macro-byte-port-rbuf-fill port) port 1 #f))
-        (macro-port-mutex-unlock! port)
-        (cond
-         ((eq? res ##err-code-EAGAIN)   ; read-u8 would block
-          #f)
-         ((fixnum? res)
-          (##raise-os-io-exception port #f res peek-u8 port))
-         (else #t))))))
-
-(def (peek-u8 port)
-  (check-byte-port/lock! port peek-u8)
-  (let lp ()
-    (let ((byte-rlo (macro-byte-port-rlo port))
-          (byte-rhi (macro-byte-port-rhi port)))
-      (if (fx< byte-rlo byte-rhi)
-        (let (byte (u8vector-ref (macro-byte-port-rbuf port) byte-rlo))
-          (macro-port-mutex-unlock! port)
-          byte)
-        (let (res ((macro-byte-port-rbuf-fill port) port 1 #t))
-          (cond
-           ((eq? res ##err-code-EAGAIN) ; timeout thunk => #f => eof
-            (macro-port-mutex-unlock! port)
-            (eof-object))
-           ((fixnum? res)
-            (macro-port-mutex-unlock! port)
-            (##raise-os-io-exception port #f res peek-u8 port))
-           (res                    ; some bytes were added to the buffer
-            (lp))
-           (else                   ; no bytes were added - eof reached
-            (macro-port-mutex-unlock! port)
-            (eof-object))))))))

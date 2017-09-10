@@ -187,9 +187,9 @@ package: std
   (map depgraph files))
 
 (def (make-depgraph/spec spec)
-  (def (file-e mod)
+  (def (file-e mod ext)
     (if (string-empty? (path-extension mod))
-      (string-append mod ".ss")
+      (string-append mod ext)
       mod))
 
   (let lp ((rest spec) (files []))
@@ -197,13 +197,15 @@ package: std
       ([hd . rest]
        (match hd
          ((? string?)
-          (lp rest (cons (file-e hd) files)))
+          (lp rest (cons (file-e hd ".ss") files)))
          ([gxc: mod . opts]
-          (lp rest (cons (file-e mod) files)))
+          (lp rest (cons (file-e mod ".ss") files)))
          ([exe: mod . opts]
-          (lp rest (cons (file-e mod) files)))
+          (lp rest (cons (file-e mod ".ss") files)))
          ([static-exe: mod . opts]
-          (lp rest (cons (file-e mod) files)))
+          (lp rest (cons (file-e mod ".ss") files)))
+         ([ssi: mod . opts]
+          (lp rest (cons (file-e mod ".ssi") files)))
          (else
           (lp rest files))))
       (else
@@ -390,6 +392,7 @@ package: std
   (def prefix  (pgetq prefix: settings))
 
   (displayln "... copy ssi " mod)
+  (create-directory* (path-directory libpath))
   (when (file-exists? libpath)
     (delete-file libpath))
   (copy-file srcpath libpath)

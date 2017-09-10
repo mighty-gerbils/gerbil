@@ -900,7 +900,10 @@ namespace: gerbil/core
                                                (%#quote "gerbil/core__5")))
                                       (%#define-syntax
                                        defsyntax
-                                       |gerbil/core::<sugar>::<sugar:3>[:0:]#defsyntax|))))
+                                       |gerbil/core::<sugar>::<sugar:3>[:0:]#defsyntax|))
+                             (%#define-syntax
+                              definline
+                              |gerbil/core::<sugar>::<sugar:3>[:0:]#definline|)))
                    (%#import (in: #f <sugar:3>))))
          (%#import
           (in: #f <sugar>)

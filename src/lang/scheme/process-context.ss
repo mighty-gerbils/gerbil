@@ -3,7 +3,7 @@
 ;;; R7RS (scheme process-context) library
 package: scheme
 
-(import :gerbil/gambit
+(import :gerbil/gambit/os
         :scheme/process-context-impl)
 
 (export

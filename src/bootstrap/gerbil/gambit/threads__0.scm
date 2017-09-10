@@ -1,37 +1,37 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gerbil/gambit/threads#spawn
-    (lambda (_f355_ . _args356_)
+    (lambda (_f356_ . _args357_)
       (gerbil/gambit/threads#spawn/name/args
-       (let ((_$e358_ (##procedure-name _f355_))) (if _$e358_ _$e358_ '#!void))
-       _f355_
-       _args356_)))
+       (let ((_$e359_ (##procedure-name _f356_))) (if _$e359_ _$e359_ '#!void))
+       _f356_
+       _args357_)))
   (define gerbil/gambit/threads#spawn*
-    (lambda (_f352_ . _args353_)
-      (gerbil/gambit/threads#spawn/name/args '#!void _f352_ _args353_)))
+    (lambda (_f353_ . _args354_)
+      (gerbil/gambit/threads#spawn/name/args '#!void _f353_ _args354_)))
   (define gerbil/gambit/threads#spawn/name
-    (lambda (_name348_ _f349_ . _args350_)
-      (gerbil/gambit/threads#spawn/name/args _name348_ _f349_ _args350_)))
+    (lambda (_name349_ _f350_ . _args351_)
+      (gerbil/gambit/threads#spawn/name/args _name349_ _f350_ _args351_)))
   (define gerbil/gambit/threads#spawn/name/args
-    (lambda (_name338_ _f339_ _args340_)
-      (let ((_thread-main342_
-             (lambda (_thunk345_)
-               (lambda ()
-                 (with-catch ##primordial-exception-handler _thunk345_)))))
-        (if (procedure? _f339_)
+    (lambda (_name339_ _f340_ _args341_)
+      (letrec ((_thread-main343_
+                (lambda (_thunk346_)
+                  (lambda ()
+                    (with-catch ##primordial-exception-handler _thunk346_)))))
+        (if (procedure? _f340_)
             (gerbil/gambit/threads#spawn-thread
-             (_thread-main342_
-              (if (null? _args340_)
-                  _f339_
-                  (lambda () (apply _f339_ _args340_))))
-             _name338_)
-            (error '"Bad argument; expected procedure" _f339_)))))
+             (_thread-main343_
+              (if (null? _args341_)
+                  _f340_
+                  (lambda () (apply _f340_ _args341_))))
+             _name339_)
+            (error '"Bad argument; expected procedure" _f340_)))))
   (define gerbil/gambit/threads#spawn-thread
-    (lambda (_thunk335_ _name336_)
-      (thread-start! (make-thread _thunk335_ _name336_))))
+    (lambda (_thunk336_ _name337_)
+      (thread-start! (make-thread _thunk336_ _name337_))))
   (define gerbil/gambit/threads#with-lock
-    (lambda (_mx330_ _proc331_)
+    (lambda (_mx331_ _proc332_)
       (dynamic-wind
-       (lambda () (mutex-lock! _mx330_))
-       _proc331_
-       (lambda () (mutex-unlock! _mx330_))))))
+       (lambda () (mutex-lock! _mx331_))
+       _proc332_
+       (lambda () (mutex-unlock! _mx331_))))))
