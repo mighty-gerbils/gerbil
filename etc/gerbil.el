@@ -48,6 +48,7 @@ The hook is run after scheme-mode-hook."
   (gerbil-reload-file buffer-file-name))
 
 (defvar gerbil-compile-optimize t)
+(defvar gerbil-build-directory nil)
 
 (defun gerbil-compile-current-buffer ()
   (interactive)
@@ -56,6 +57,7 @@ The hook is run after scheme-mode-hook."
     (with-current-buffer buf
       (goto-char (point-max))
       (insert  "> gxc " (if gerbil-compile-optimize "-O " "") fname "\n"))
+    (setq gerbil-build-directory nil)
     (let ((proc (if gerbil-compile-optimize
                     (start-process "gxc" buf "gxc" "-O" fname)
                   (start-process "gxc" buf "gxc" fname))))
@@ -72,6 +74,7 @@ The hook is run after scheme-mode-hook."
     (with-current-buffer buf
       (goto-char (point-max))
       (insert "> build " build "\n"))
+    (setq gerbil-build-directory build-dir)
     (let ((proc (start-process "build" buf "sh" "-c"
                                (concat "cd " build-dir " && ./" build-script))))
       (set-process-sentinel proc 'gerbil-compile-sentinel)
@@ -107,8 +110,11 @@ The hook is run after scheme-mode-hook."
             (let (limit (point))
               (goto-char (point-max))
               (when (re-search-backward gerbil-error-locat-rx limit t)
-                (let ((loc (gerbil-extract-locat (buffer-substring (point) (point-max)))))
-                  (switch-to-buffer (car loc))
+                (let* ((loc (gerbil-extract-locat (buffer-substring (point) (point-max))))
+                       (fname (if gerbil-build-directory
+                                  (concat gerbil-build-directory (car loc))
+                                (car loc))))
+                  (find-file fname)
                   (goto-line (cadr loc))
                   (forward-char (- (caddr loc) 1))
                   (mark-sexp)))))))
