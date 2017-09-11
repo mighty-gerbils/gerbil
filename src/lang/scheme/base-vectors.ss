@@ -3,7 +3,6 @@
 ;;; R7RS (scheme base) library -- implementation details
 package: scheme
 
-(import)
 (export #t)
 
 ;; vectors
