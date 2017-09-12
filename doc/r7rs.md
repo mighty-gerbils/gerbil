@@ -19,10 +19,10 @@ modules.
 In pure Gerbil, you can also evaluate R7RS expression by using the
 `eval` procedure provided by `:scheme/eval`.
 
-You can also start the Gerbil interpreter in an r7rs repl, by setting the
-environment variable `GERBIL_LANG=r7rs`.
+You can also start the Gerbil interpreter in an r7rs repl, by passing
+the option `--lang r7rs`.
 ```
-$ GERBIL_LANG=r7rs gxi
+$ gxi --lang r7rs
 R7RS Scheme in Gerbil v0.12-DEV on Gambit v4.8.8
 > _
 ```
