@@ -31,13 +31,23 @@
   (set! _gx#eval-module gx#core-eval-module))
 
 ;; load the interpreter environment
+(define (gerbil-lang)
+  (string->symbol (getenv "GERBIL_LANG" "gerbil")))
+
 (define (_gx#load-gxi #!optional (hook-expander? #t))
   (_gx#init-gx!)
   (let* ((core (gx#import-module ':gerbil/core))
          (pre  (gx#make-prelude-context core)))
     (gx#current-expander-module-prelude pre)
     (gx#core-bind-root-syntax! ':<core> pre #t)
-    (gx#eval-syntax '(import :gerbil/core)))
+    (let ((lang (gerbil-lang)))
+      (case lang
+        ((gerbil)
+         (gx#eval-syntax '(import :gerbil/core)))
+        ((r7rs)
+         (gx#eval-syntax '(import :scheme/r7rs :scheme/base)))
+        (else
+         (gx#eval-syntax `(import ,lang))))))
   (when hook-expander?
     ;; avoid loops from phi evals
     (gx#current-expander-compile _gx#compile-top-source)
@@ -56,16 +66,23 @@
       (list ##stdin-port ##console-port))))
 
 (define (_gx#gxi-init-interactive! cmdline)
-  ;; load gerbil interactive init
-  (let ((init-file (path-expand "lib/init.ss" (getenv "GERBIL_HOME"))))
-    (gx#eval-syntax `(include ,init-file)))
-  ;; if it exists, load user's ~/.gerbil/init.ss
-  (let ((init-file "~/.gerbil/init.ss"))
-    (if (file-exists? init-file)
-      (gx#eval-syntax `(include ,init-file)))))
+  (define (load-init init.ss)
+    ;; load gerbil interactive init
+    (let ((init-file (path-expand (string-append "lib/" init.ss) (getenv "GERBIL_HOME"))))
+      (gx#eval-syntax `(include ,init-file)))
+    ;; if it exists, load user's ~/.gerbil/init.ss
+    (let ((init-file (string-append "~/.gerbil/" init.ss)))
+      (if (file-exists? init-file)
+        (gx#eval-syntax `(include ,init-file)))))
+
+  (case (gerbil-lang)
+    ((gerbil)
+     (load-init "init.ss"))
+    ((r7rs)
+     (load-init "r7rs-init.ss"))))
 
 ;; hook load to be able to load raw gambit code when the expander is hooked
-(define (load path)
+(define (load-scheme path)
   (parameterize ((_gx#loading-scheme-source path))
     (##load path (lambda args #f) #t #t #f)))
 

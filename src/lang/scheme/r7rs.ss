@@ -43,7 +43,7 @@ package: scheme
               (spath (string-join spath #\/))
               (spath (string-append ":" spath))
               (mpath (string->symbol spath)))
-         (stx-wrap-source mpath (stx-source set))))))
+         (datum->syntax #'id mpath (stx-source set))))))
 
   (syntax-case stx ()
     ((_ import-set ...)
@@ -61,6 +61,10 @@ package: scheme
            (spath (map symbol->string spath))
            (spath (string-join spath #\/)))
       (string->symbol spath)))
+
+  (def (top-module-id ids)
+    (let (lid (library-module-id ids))
+      (string->symbol (string-append ":" (symbol->string lid)))))
 
   (def (expand-decls decls)
     (let lp ((rest decls) (body []))
@@ -96,6 +100,10 @@ package: scheme
                                stx #'(id ids ...) (expander-context-id ctx)))
          (with-syntax (((body ...) (expand-decls #'(decl ...))))
            #'(begin body ...)))
+        ((top-context? ctx)
+         (with-syntax ((mid (datum->syntax #'id (top-module-id #'(id ids ...))))
+                       ((body ...) (expand-decls #'(decl ...))))
+           #'(module mid body ...)))
         (else
          (raise-syntax-error #f "Bad syntax; illegal context" stx)))))))
 

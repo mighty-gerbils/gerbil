@@ -5,6 +5,7 @@ Here we explore language extensibility in Gerbil by definition of custom prelude
 <!-- toc -->
 
 - [Preliminaries](#preliminaries)
+- [Custom Languages in the REPL](#custom-languages-in-the-repl)
 - [Custom Module Expansion](#custom-module-expansion)
   * [Custom References and Procedure Application](#custom-references-and-procedure-application)
   * [Custom Body Expansion](#custom-body-expansion)
@@ -33,6 +34,21 @@ $ ./build.ss
 ... compile scuby-etc
 ... compile scuby-grammar
 ... compile scuby
+```
+
+## Custom Languages in the REPL
+
+Before we go into the examples, it should be noted that if your
+language uses an s-expression syntax, you can also use its prelude for
+custom initial bindings in the repl by starting `gxi` with the
+`--lang` option. Simply set it to the module path of your custom
+language, and your repl will obtain initial bindings by importing the
+custom prelude.
+
+For instance, to use our dot-app language in the repl:
+```
+$ gxi --lang :tutorial/lang/dot-app
+> _
 ```
 
 ## Custom Module Expansion

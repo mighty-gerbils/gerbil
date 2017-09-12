@@ -3,16 +3,31 @@
 Gerbil supports R7RS as a custom language for library modules with the
 `:scheme/r7rs` prelude.  As such you can write and import modules
 written in R7RS Scheme and mix them freely with other Gerbil
-modules. You can also evaluate R7RS expression by using the `eval`
-procedure provided by `:scheme/eval`.
+modules.
 
 <!-- toc -->
 
+- [R7RS in the REPL](#r7rs-in-the-repl)
 - [R7RS Library Modules](#r7rs-library-modules)
 - [Evaluating R7RS Expressions](#evaluating-r7rs-expressions)
 - [Implementation Restrictions](#implementation-restrictions)
 
 <!-- tocstop -->
+
+## R7RS in the REPL
+
+In pure Gerbil, you can also evaluate R7RS expression by using the
+`eval` procedure provided by `:scheme/eval`.
+
+You can also start the Gerbil interpreter in an r7rs repl, by passing
+the option `--lang r7rs`.
+```
+$ gxi --lang r7rs
+R7RS Scheme in Gerbil v0.12-DEV on Gambit v4.8.8
+> _
+```
+
+The top context uses r7rs scheme syntax and includes bindings from `(scheme base)`.
 
 ## R7RS Library Modules
 
@@ -171,9 +186,8 @@ $ gxi
 
 ## Implementation Restrictions
 
-- The `define-library` can appear at most once per file module;
-  it is also not supported in top scope, as it does not make
-  sense with Gerbil module semantics.
+- The `define-library` can appear at most once per library module and
+  the library id must match the id of the enclosing module.
 
 - The following procedures from `(scheme base)` are not implemented:
 ```
