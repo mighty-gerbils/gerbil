@@ -300,18 +300,10 @@
 
 (define (_gx#compile-letrec*-values% stx)
   (define (compile-simple hd-ids exprs body)
-    (let lp ((rest hd-ids) (exprs exprs) (bind '()) (post '()))
-      (core-match rest
-        (((? &AST-id? hd) . rest)
-         (let ((id (&SRC hd)))
-           (lp rest (cdr exprs)
-               (cons `(,id #!void) bind)
-               (cons `(,id ,(car exprs)) post))))
-        ((_ . rest)
-         (lp rest (cdr exprs) bind
-             (cons `(#f ,(car exprs)) post)))
-        (else
-         (compile-bind bind post body)))))
+    (&SRC
+     `(##letrec* ,(map list (map _gx#compile-head-id hd-ids) exprs)
+                 ,body)
+     stx))
 
   (define (compile-values hd-ids exprs body)
     (let lp ((rest hd-ids) (exprs exprs) (bind '()) (post '()))
