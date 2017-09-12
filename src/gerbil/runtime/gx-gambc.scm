@@ -47,7 +47,7 @@
         ((r7rs)
          (gx#eval-syntax '(import :scheme/r7rs :scheme/base)))
         (else
-         (error "Unknown language" lang)))))
+         (gx#eval-syntax `(import ,lang))))))
   (when hook-expander?
     ;; avoid loops from phi evals
     (gx#current-expander-compile _gx#compile-top-source)
