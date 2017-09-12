@@ -171,9 +171,8 @@ $ gxi
 
 ## Implementation Restrictions
 
-- The `define-library` can appear at most once per file module;
-  it is also not supported in top scope, as it does not make
-  sense with Gerbil module semantics.
+- The `define-library` can appear at most once per library module and
+  the library id must match the id of the enclosing module.
 
 - The following procedures from `(scheme base)` are not implemented:
 ```
