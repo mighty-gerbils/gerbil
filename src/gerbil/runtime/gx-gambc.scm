@@ -65,7 +65,7 @@
       (gx#eval-syntax `(include ,init-file)))))
 
 ;; hook load to be able to load raw gambit code when the expander is hooked
-(define (load path)
+(define (load-scheme path)
   (parameterize ((_gx#loading-scheme-source path))
     (##load path (lambda args #f) #t #t #f)))
 
