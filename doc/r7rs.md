@@ -3,8 +3,7 @@
 Gerbil supports R7RS as a custom language for library modules with the
 `:scheme/r7rs` prelude.  As such you can write and import modules
 written in R7RS Scheme and mix them freely with other Gerbil
-modules. You can also evaluate R7RS expression by using the `eval`
-procedure provided by `:scheme/eval`.
+modules.
 
 <!-- toc -->
 
@@ -13,6 +12,21 @@ procedure provided by `:scheme/eval`.
 - [Implementation Restrictions](#implementation-restrictions)
 
 <!-- tocstop -->
+
+## R7RS in the REPL
+
+In pure Gerbil, you can also evaluate R7RS expression by using the
+`eval` procedure provided by `:scheme/eval`.
+
+You can also start the Gerbil interpreter in an r7rs repl, by setting the
+environment variable `GERBIL_LANG=r7rs`.
+```
+$ GERBIL_LANG=r7rs gxi
+R7RS Scheme in Gerbil v0.12-DEV on Gambit v4.8.8
+> _
+```
+
+The top context uses r7rs scheme syntax and includes bindings from `(scheme base)`.
 
 ## R7RS Library Modules
 

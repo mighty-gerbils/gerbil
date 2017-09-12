@@ -66,14 +66,20 @@
       (list ##stdin-port ##console-port))))
 
 (define (_gx#gxi-init-interactive! cmdline)
-  (when (eq? (gerbil-lang) 'gerbil)
+  (define (load-init init.ss)
     ;; load gerbil interactive init
-    (let ((init-file (path-expand "lib/init.ss" (getenv "GERBIL_HOME"))))
+    (let ((init-file (path-expand (string-append "lib/" init.ss) (getenv "GERBIL_HOME"))))
       (gx#eval-syntax `(include ,init-file)))
     ;; if it exists, load user's ~/.gerbil/init.ss
-    (let ((init-file "~/.gerbil/init.ss"))
+    (let ((init-file (string-append "~/.gerbil/" init.ss)))
       (if (file-exists? init-file)
-        (gx#eval-syntax `(include ,init-file))))))
+        (gx#eval-syntax `(include ,init-file)))))
+
+  (case (gerbil-lang)
+    ((gerbil)
+     (load-init "init.ss"))
+    ((r7rs)
+     (load-init "r7rs-init.ss"))))
 
 ;; hook load to be able to load raw gambit code when the expander is hooked
 (define (load-scheme path)
