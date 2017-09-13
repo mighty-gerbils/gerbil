@@ -6,6 +6,7 @@ package: scheme
 (import :gerbil/gambit/exceptions
         :gerbil/gambit/ports
         :std/srfi/9
+        :std/text/utf8
         :scheme/base-impl)
 
 (export
@@ -198,7 +199,7 @@ package: scheme
   string-ref
   string-set!
   string->symbol
-  (rename: string->bytes string->utf8)
+  string->utf8
   string->vector
   substring
   symbol=?
@@ -215,7 +216,7 @@ package: scheme
   unless
   unquote
   unquote-splicing
-  (rename: bytes->string utf8->string)
+  utf8->string
   values
   vector
   vector?
