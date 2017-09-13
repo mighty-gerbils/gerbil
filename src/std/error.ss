@@ -3,7 +3,6 @@
 ;;; Gerbil error objects
 package: std
 
-(import :std/format)
 (export #t)
 
 (defsyntax <exception>
@@ -16,18 +15,19 @@ package: std
 
 (defmethod {display-exception <error>}
   (lambda (self port)
-    (cond
-     ((error-trace self)
-      => (lambda (where) (fprintf port "~a: " where))))
-    (fprintf port "[~a] " (##type-name (object-type self)))
-    (fprintf port "~a~n" (error-message self))
-    (let (irritants (error-irritants self))
-      (unless (null? irritants)
-        (display "--- irritants: " port)
-        (for-each
-          (lambda (obj) (fprintf port "~a " obj))
-          irritants)
-        (newline port)))))
+    (parameterize ((current-output-port port))
+      (cond
+       ((error-trace self)
+        => (lambda (where) (display* where ": "))))
+      (display* "[" (##type-name (object-type self)) "] ")
+      (displayln (error-message self))
+      (let (irritants (error-irritants self))
+        (unless (null? irritants)
+          (display "--- irritants: ")
+          (for-each
+            (lambda (obj) (display* obj " "))
+            irritants)
+          (newline))))))
 
 (defstruct (io-error <error>) ())
 (defstruct (timeout-error <error>) ())
