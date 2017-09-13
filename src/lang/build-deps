@@ -1,5 +1,5 @@
 (("scheme/stubs.ss" scheme/stubs gerbil/core)
- ("scheme/base-etc.ss" scheme/base-etc gerbil/core)
+ ("scheme/base-etc.ss" scheme/base-etc gerbil/core gerbil/gambit/hash)
  ("scheme/base-vectors.ss" scheme/base-vectors gerbil/core)
  ("scheme/base-ports.ss"
   scheme/base-ports
@@ -19,9 +19,11 @@
  ("scheme/base.ss"
   scheme/base
   gerbil/core
-  gerbil/gambit
+  gerbil/gambit/exceptions
+  gerbil/gambit/ports
   scheme/base-impl
-  std/srfi/9)
+  std/srfi/9
+  std/text/utf8)
  ("scheme/case-lambda.ss" scheme/case-lambda gerbil/core)
  ("scheme/char-impl.ss" scheme/char-impl gerbil/core scheme/stubs)
  ("scheme/char.ss" scheme/char gerbil/core scheme/char-impl std/srfi/13)
@@ -51,7 +53,7 @@
  ("scheme/process-context.ss"
   scheme/process-context
   gerbil/core
-  gerbil/gambit
+  gerbil/gambit/os
   scheme/process-context-impl)
  ("scheme/read.ss" scheme/read gerbil/core)
  ("scheme/repl-impl.ss"
@@ -63,13 +65,14 @@
  ("scheme/time-impl.ss"
   scheme/time-impl
   gerbil/core
-  gerbil/gambit
+  gerbil/gambit/os
   scheme/stubs)
  ("scheme/time.ss" scheme/time gerbil/core scheme/time-impl)
  ("scheme/write-impl.ss"
   scheme/write-impl
   gerbil/core
-  gerbil/gambit
+  gerbil/gambit/ports
+  gerbil/gambit/readtables
   scheme/stubs
   std/sugar)
  ("scheme/write.ss" scheme/write gerbil/core scheme/write-impl)
