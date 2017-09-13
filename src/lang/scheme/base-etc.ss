@@ -54,20 +54,20 @@ package: scheme
     (cond
      ((##eq? obj1 obj2))
      ((##table-ref ht obj1 #f)
-      #f)
+      => (cut ##eq? <> obj2))
      ((number? obj1)
       (##eqv? obj1 obj2))
      ((##pair? obj1)
       (and (##pair? obj2)
            (begin
-             (##table-set! ht obj1 #t)
+             (##table-set! ht obj1 obj2)
              (and (equal (##car obj1) (##car obj1))
                   (equal (##cdr obj1) (##cdr obj2))))))
      ((##vector? obj1)
       (and (##vector? obj2)
            (let (len (##vector-length obj1))
              (and (##fx= len (##vector-length obj2))
-                  (begin (##table-set! ht obj1 #t)
+                  (begin (##table-set! ht obj1 obj2)
                          (vector-equal obj1 obj2 len))))))
      ((##string? obj2)
       (and (##string? obj2)
@@ -105,7 +105,7 @@ package: scheme
      ((table? obj1)
       (and (table? obj2)
            (begin
-             (##table-set! ht obj1 #t)
+             (##table-set! ht obj1 obj2)
              (table-equal obj1 obj2))))
      ((##structure? obj1)
       (and (##structure? obj2)
@@ -118,12 +118,12 @@ package: scheme
                     (and (##fx= len (##vector-length obj2))
                          (##fx= (##fxand (##type-flags t1) 1) 0) ; not opaque
                          (begin
-                           (##table-set! ht obj1 #t)
+                           (##table-set! ht obj1 obj2)
                            (vector-equal obj1 obj2 len))))))))
      ((##box? obj1)
       (and (##box? obj2)
            (begin
-             (##table-set! ht obj1 #t)
+             (##table-set! ht obj1 obj2)
              (equal (##unbox obj1) (##unbox obj2)))))
      (else #f)))
 
