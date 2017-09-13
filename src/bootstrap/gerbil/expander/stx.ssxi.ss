@@ -35,10 +35,10 @@ package: gerbil/expander
    (@struct-setf gx#syntax-quote::t 1 #f))
   (declare-type
    gx#datum->syntax
-   (@case-lambda (2 gx#datum->syntax__0) (3 gx#datum->syntax__opt-lambda3949)))
+   (@case-lambda (2 gx#datum->syntax__0) (3 gx#datum->syntax__opt-lambda3946)))
   (declare-type
    gx#stx-unwrap
-   (@case-lambda (1 gx#stx-unwrap__0) (2 gx#stx-unwrap__opt-lambda3925)))
+   (@case-lambda (1 gx#stx-unwrap__0) (2 gx#stx-unwrap__opt-lambda3922)))
   (declare-type
    gx#genident
    (@case-lambda

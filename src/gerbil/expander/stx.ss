@@ -161,13 +161,12 @@ namespace: gx
   (self-quoting? (stx-e stx)))
 
 (def (self-quoting? x)
-  (or (boolean? x)
-      (char? x)
+  (or (immediate? x)
       (number? x)
       (keyword? x)
       (string? x)
-      (void? x)
-      (dssl-object? x)))
+      (vector? x)
+      (u8vector? x)))
 
 (def (stx-boolean? e)
   (boolean? (stx-e e)))

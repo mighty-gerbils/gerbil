@@ -897,13 +897,8 @@
   (eq? obj #!optional))
 
 (define (immediate? obj)
-  (or (fixnum? obj)
-      (char? obj)
-      (boolean? obj)
-      (null? obj)
-      (void? obj)
-      (eof-object? obj)
-      (dssl-object? obj)))
+  (let ((t (##type obj)))
+    (##fxzero? (##fxand t #b1))))
 
 (define (nonnegative-fixnum? obj)
   (and (fixnum? obj)

@@ -28,4 +28,4 @@ package: gerbil/expander
     (1 gx#macro-expand-syntax-case__0)
     (2 gx#macro-expand-syntax-case__1)
     (3 gx#macro-expand-syntax-case__2)
-    (4 gx#macro-expand-syntax-case__opt-lambda13160))))
+    (4 gx#macro-expand-syntax-case__opt-lambda13157))))
