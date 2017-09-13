@@ -37,15 +37,15 @@ namespace: gx
          (%#define-runtime syntax-e gx#syntax-e)
          (%#define-runtime syntax->datum gx#syntax->datum)
          (%#begin (%#define-runtime
-                   datum->syntax__opt-lambda3949
-                   gx#datum->syntax__opt-lambda3949)
+                   datum->syntax__opt-lambda3946
+                   gx#datum->syntax__opt-lambda3946)
                   (%#begin (%#define-runtime
                             datum->syntax__0
                             gx#datum->syntax__0)
                            (%#define-runtime datum->syntax gx#datum->syntax)))
          (%#begin (%#define-runtime
-                   stx-unwrap__opt-lambda3925
-                   gx#stx-unwrap__opt-lambda3925)
+                   stx-unwrap__opt-lambda3922
+                   gx#stx-unwrap__opt-lambda3922)
                   (%#begin (%#define-runtime stx-unwrap__0 gx#stx-unwrap__0)
                            (%#define-runtime stx-unwrap gx#stx-unwrap)))
          (%#define-runtime stx-wrap gx#stx-wrap)
