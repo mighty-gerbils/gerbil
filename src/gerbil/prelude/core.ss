@@ -250,6 +250,8 @@ package: gerbil
     displayln display*
     ;;flush-output-port
     ;; etc...
+    ;; equality
+    equal-shared?
     ;; Module loading
     load-module
     ;; keyword argument dispatch
