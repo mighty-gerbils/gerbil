@@ -47,21 +47,23 @@ package: scheme
 
 
 ;; equality that terminates in recursive structures
+;; it's also a lot slower than native equal?, so it is offered as a separate function
 (def (r7rs-equal? obj1 obj2)
   (def ht (make-hash-table-eq))
 
   (def (equal obj1 obj2)
     (cond
      ((##eq? obj1 obj2))
-     ((##table-ref ht obj1 #f)
-      => (cut ##eq? <> obj2))
+     ((immediate? obj1) #f)             ; should be eq?
      ((number? obj1)
       (##eqv? obj1 obj2))
+     ((##table-ref ht obj1 #f)
+      => (cut ##eq? <> obj2))
      ((##pair? obj1)
       (and (##pair? obj2)
            (begin
              (##table-set! ht obj1 obj2)
-             (and (equal (##car obj1) (##car obj1))
+             (and (equal (##car obj1) (##car obj2))
                   (equal (##cdr obj1) (##cdr obj2))))))
      ((##vector? obj1)
       (and (##vector? obj2)
