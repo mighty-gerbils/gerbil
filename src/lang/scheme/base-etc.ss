@@ -70,7 +70,7 @@ package: scheme
            (let (len (##vector-length obj1))
              (and (##fx= len (##vector-length obj2))
                   (begin (##table-set! ht obj1 obj2)
-                         (vector-equal obj1 obj2 len))))))
+                         (vector-equal obj1 obj2 0 len))))))
      ((##string? obj2)
       (and (##string? obj2)
            (##string-equal? obj1 obj2)))
@@ -121,7 +121,7 @@ package: scheme
                          (##fx= (##fxand (##type-flags t1) 1) 0) ; not opaque
                          (begin
                            (##table-set! ht obj1 obj2)
-                           (vector-equal obj1 obj2 len))))))))
+                           (vector-equal obj1 obj2 1 len))))))))
      ((##box? obj1)
       (and (##box? obj2)
            (begin
@@ -129,8 +129,8 @@ package: scheme
              (equal (##unbox obj1) (##unbox obj2)))))
      (else #f)))
 
-  (def (vector-equal obj1 obj2 len)
-    (let lp ((i 0))
+  (def (vector-equal obj1 obj2 i len)
+    (let lp ((i i))
       (if (##fx< i len)
         (and (equal (##vector-ref obj1 i) (##vector-ref obj2 i))
              (lp (##fx+ i 1)))
