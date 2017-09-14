@@ -204,3 +204,9 @@ char-foldcase string-foldcase
 - The `delay-force` special from `(scheme base)` is not implemented.
 - The `cond-expand` special form does not understand `library` features.
 - The `#true` and `#false` datums are not recognized by the reader.
+
+- `equal?` is the default `equal?` from Gerbil/Gambit, which doesn't
+  do sharing check and may not terminate in infinite recursive
+  structures.  There is a separate implementation `r7rs-equal?` that
+  terminates in recursive structures albeit at the cost of
+  performance.
