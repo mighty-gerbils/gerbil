@@ -207,6 +207,6 @@ char-foldcase string-foldcase
 
 - `equal?` is the default `equal?` from Gerbil/Gambit, which doesn't
   do sharing check and may not terminate in infinite recursive
-  structures.  There is a separate implementation `r7rs-equal?` that
-  terminates in recursive structures albeit at the cost of
-  performance.
+  structures.  There is a separate implementation `equal-shared?` exported
+  by `(scheme base)` that terminates in recursive structures albeit at the
+  cost of performance degradation.

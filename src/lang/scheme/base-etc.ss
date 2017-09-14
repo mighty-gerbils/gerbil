@@ -48,7 +48,7 @@ package: scheme
 
 ;; equality that terminates in recursive structures
 ;; it's also a lot slower than native equal?, so it is offered as a separate function
-(def (r7rs-equal? obj1 obj2)
+(def (equal-shared? obj1 obj2)
   (def ht (make-hash-table-eq))
 
   (def (equal obj1 obj2)
