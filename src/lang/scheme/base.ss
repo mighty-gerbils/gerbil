@@ -72,7 +72,8 @@ package: scheme
   eof-object
   eof-object?
   eq?
-  (rename: r7rs-equal? equal?)
+  equal?
+  r7rs-equal?
   eqv?
   error
   (rename: error-exception? error-object?)
