@@ -9,7 +9,8 @@ package: std/srfi
   current-date current-julian-day current-modified-julian-day
   current-time
   time-resolution
-  (struct-out time)
+  (except-out (struct-out time) make-time)
+  (rename: make-time% make-time)
   time<=? time<? time=? time>=? time>?
   time-difference time-difference!
   add-duration add-duration!
