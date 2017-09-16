@@ -1,4 +1,3 @@
-
 ;;
 ;; SRFI-19: Time Data Types and Procedures.
 ;;
@@ -17,6 +16,7 @@
 ;; 2013-08-19: Some code formatting improvements
 ;; 2016-01-28: [vyzo] imported to Gerbil, dropped bh specifics and some comment cosmetics
 ;; 2017-07-08: [vyzo] use ##current-time-point with ns accuracy for get-time-of-day
+;; 2017-09-15: [fare] make make-time stricter, update leap second database.
 ;;
 ;; ## TODO
 ;;  * The exception handling presumes user code to be written in a very specific style using exception
@@ -164,10 +164,10 @@
 
 (define (tm:time-error caller type value)
   (if (member type tm:time-error-types)
-                                     (if value
-                                         (error caller "TIME-ERROR type ~S: ~S" type value)
-                                         (error caller "TIME-ERROR type ~S" type))
-                                     (error caller "TIME-ERROR unsupported error type ~S" type)))
+    (if value
+      (error "TIME-ERROR type" caller type value)
+      (error "TIME-ERROR type" caller type))
+    (error "TIME-ERROR unsupported error type" caller type)))
 
 ;; A table of leap seconds
 ;; See ftp://maia.usno.navy.mil/ser7/tai-utc.dat
@@ -197,10 +197,14 @@
               (loop (read-line port))))))
     table))
 
-;; each entry is ( utc seconds since epoch . # seconds to add for tai )
-;; note they go higher to lower, and end in 1972.
+;; Each entry is ( utc seconds since epoch . # seconds to add for tai )
+;; Note they go higher to lower, and end in 1972 (previous one is in 1968 before the Unix epoch).
 (define tm:leap-second-table
-  '((1136073600 . 33)
+  '((1483228800 . 37)
+    (1435708800 . 36)
+    (1341100800 . 35)
+    (1230768000 . 34)
+    (1136073600 . 33)
     (915148800 . 32)
     (867715200 . 31)
     (820454400 . 30)
@@ -224,6 +228,7 @@
     (94694400 . 12)
     (78796800 . 11)
     (63072000 . 10)))
+
 
 (define (read-leap-second-table filename)
   (set! tm:leap-second-table (tm:read-tai-utc-data filename))
@@ -253,7 +258,21 @@
 ;;; the time structure; creates the accessors, too.
 ;;; wf: changed to match srfi documentation. uses mzscheme structures & inspectors
 ;;; vyzo: change to use gerbil defstruct
+;;; fare: added checking in make-time
 (defstruct time (type nanosecond second))
+
+;; Safer variant of make-time
+(define (make-time% type second nanosecond)
+  (case type
+    ((time-tai time-utc time-monotonic time-thread time-process time-duration) #t)
+    (else (error "Wrong time type" type)))
+  (unless (integer? second)
+    (error "Invalid time second" second))
+  (unless (and (integer? nanosecond)
+               (<= (if (eq? type time-duration) -999999999 0) nanosecond 999999999))
+    (error "Invalid time nanosecond" nanosecond))
+  (make-time type second nanosecond))
+
 
 ;; thanks, Martin Gasbichler ...
 
@@ -294,7 +313,7 @@
 
 (define (tm:current-time-utc)
   (receive (seconds ns) (tm:get-time-of-day)
-	   (make-time time-utc ns seconds )))
+	   (make-time time-utc ns seconds)))
 
 (define (tm:current-time-tai)
   (receive (seconds ns) (tm:get-time-of-day)
@@ -428,7 +447,7 @@
             (nsec-plus (+ (time-nanosecond time1) (time-nanosecond duration))))
         (let ((r (remainder nsec-plus tm:nano))
               (q (quotient nsec-plus tm:nano)))
-                                        ; (set-time-type! time3 (time-type time1))
+          ;; (set-time-type! time3 (time-type time1))
           (if (negative? r)
               (begin
                 (time-second-set! time3 (+ sec-plus q -1))
