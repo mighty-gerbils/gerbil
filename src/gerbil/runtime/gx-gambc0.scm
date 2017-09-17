@@ -15,8 +15,7 @@
 ;;;  Sufficient to bootstrap the compiler
 ;;;
 
-(define (gerbil-version-string)
-  "v0.12-DEV")
+(include "gx-version.scm")
 
 (define (gerbil-system-version-string)
   (string-append "Gerbil " (gerbil-version-string) " on Gambit " (system-version-string)))
