@@ -1549,7 +1549,7 @@
                 (##table-set! ht y (find bx))
                 #f)
               (let ((rx (find bx)) (ry (find by)))
-                (or (eq? rx ry)
+                (or (##eq? rx ry)
                     (let ((nx (##car rx)) (ny (##car ry)))
                       (if (##fx> nx ny)
                           (begin
