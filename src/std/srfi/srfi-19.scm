@@ -261,14 +261,17 @@
 ;;; fare: added checking in make-time
 (defstruct time (type nanosecond second))
 
+(define (exact-integer? x)
+  (and (real? x) (exact? x) (integer? x)))
+
 ;; Safer variant of make-time
 (define (make-time% type second nanosecond)
   (case type
     ((time-tai time-utc time-monotonic time-thread time-process time-duration) #t)
     (else (error "Wrong time type" type)))
-  (unless (integer? second)
+  (unless (exact-integer? second)
     (error "Invalid time second" second))
-  (unless (and (integer? nanosecond)
+  (unless (and (exact-integer? nanosecond)
                (<= (if (eq? type time-duration) -999999999 0) nanosecond 999999999))
     (error "Invalid time nanosecond" nanosecond))
   (make-time type second nanosecond))
