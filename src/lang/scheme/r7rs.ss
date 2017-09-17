@@ -3,7 +3,8 @@
 ;;; R7RS prelude
 package: scheme
 
-(import (only-in :scheme/base begin cond-expand include include-ci and or not))
+(import
+  (only-in :scheme/base begin cond-expand include include-ci and or not))
 (export
   (rename: r7rs-import import)
   (rename: r7rs-export export)
@@ -14,6 +15,17 @@ package: scheme
 (provide r7rs)
 
 (defsyntax (r7rs-import stx)
+  (def (string-e e)
+    (cond
+     ((symbol? e)
+      (symbol->string e))
+     ((number? e)
+      (number->string e))
+     ((string? e)
+      e)
+     (else
+      (raise-syntax-error #f "Bad syntax; illlegal token" stx e))))
+
   (def (import-spec-e set)
     (syntax-case set (only except prefix rename)
       ((only in id ...)
@@ -37,9 +49,9 @@ package: scheme
           #'(rename-in spec (id new-id) ...)
           (stx-source set))))
       ((id ids ...)
-       (identifier-list? #'(id ids ...))
+       (identifier? #'id)
        (let* ((spath (map stx-e #'(id ids ...)))
-              (spath (map symbol->string spath))
+              (spath (map string-e spath))
               (spath (string-join spath #\/))
               (spath (string-append ":" spath))
               (mpath (string->symbol spath)))
