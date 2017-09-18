@@ -261,9 +261,6 @@
 ;;; fare: added checking in make-time
 (defstruct time (type nanosecond second))
 
-(define (exact-integer? x)
-  (and (real? x) (exact? x) (integer? x)))
-
 ;; Safer variant of make-time
 (define (make-time% type second nanosecond)
   (case type

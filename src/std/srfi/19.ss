@@ -3,7 +3,8 @@
 ;;; SRFI-19: time data types and procedures
 package: std/srfi
 
-(import "srfi-support" "8")
+(import "srfi-support" "8"
+        :gerbil/gambit/exact)
 (export
   time-duration time-monotonic time-process time-tai time-thread time-utc
   current-date current-julian-day current-modified-julian-day
