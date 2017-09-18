@@ -5,6 +5,7 @@ package: scheme
 
 (import :gerbil/gambit/exceptions
         :gerbil/gambit/ports
+        :gerbil/gambit/exact
         :std/srfi/9
         :std/text/utf8
         :scheme/base-impl)
@@ -80,7 +81,7 @@ package: scheme
   (rename: error-exception-parameters error-object-irritants)
   (rename: error-exception-message error-object-message)
   even?
-  (rename: inexact->exact exact)
+  exact
   exact?
   exact-integer?
   exact-integer-sqrt
@@ -100,7 +101,7 @@ package: scheme
   if
   (rename: r7rs-include include)
   include-ci
-  (rename: exact->inexact inexact)
+  inexact
   inexact?
   input-port?
   input-port-open?
