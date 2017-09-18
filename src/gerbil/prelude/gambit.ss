@@ -18,7 +18,8 @@ package: gerbil
         "gambit/os"
         "gambit/system"
         "gambit/foreign"
-        "gambit/misc")
+        "gambit/misc"
+        "gambit/exact")
 
 (export (import: "gambit/threads"
                  "gambit/continuations"
@@ -35,4 +36,5 @@ package: gerbil
                  "gambit/os"
                  "gambit/system"
                  "gambit/foreign"
-                 "gambit/misc"))
+                 "gambit/misc"
+                 "gambit/exact"))
