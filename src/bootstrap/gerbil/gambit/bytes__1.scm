@@ -1,45 +1,45 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (define |gerbil/gambit/bytes[:0:]#@bytes|
-  (lambda (_stx419_)
-    (let* ((_g422436_
-            (lambda (_g423432_)
-              (gx#raise-syntax-error '#f '"Bad syntax" _g423432_)))
-           (_g421511_
-            (lambda (_g423440_)
-              (if (gx#stx-pair? _g423440_)
-                  (let ((_e425443_ (gx#syntax-e _g423440_)))
-                    (let ((_hd426447_ (##car _e425443_))
-                          (_tl427450_ (##cdr _e425443_)))
-                      (if (gx#stx-pair? _tl427450_)
-                          (let ((_e428453_ (gx#syntax-e _tl427450_)))
-                            (let ((_hd429457_ (##car _e428453_))
-                                  (_tl430460_ (##cdr _e428453_)))
-                              (if (gx#stx-null? _tl430460_)
-                                  ((lambda (_L463_)
-                                     (if (gx#stx-string? _L463_)
-                                         (let* ((_g480488_
-                                                 (lambda (_g481484_)
+  (lambda (_stx332_)
+    (let* ((_g335349_
+            (lambda (_g336345_)
+              (gx#raise-syntax-error '#f '"Bad syntax" _g336345_)))
+           (_g334424_
+            (lambda (_g336353_)
+              (if (gx#stx-pair? _g336353_)
+                  (let ((_e338356_ (gx#syntax-e _g336353_)))
+                    (let ((_hd339360_ (##car _e338356_))
+                          (_tl340363_ (##cdr _e338356_)))
+                      (if (gx#stx-pair? _tl340363_)
+                          (let ((_e341366_ (gx#syntax-e _tl340363_)))
+                            (let ((_hd342370_ (##car _e341366_))
+                                  (_tl343373_ (##cdr _e341366_)))
+                              (if (gx#stx-null? _tl343373_)
+                                  ((lambda (_L376_)
+                                     (if (gx#stx-string? _L376_)
+                                         (let* ((_g393401_
+                                                 (lambda (_g394397_)
                                                    (gx#raise-syntax-error
                                                     '#f
                                                     '"Bad syntax"
-                                                    _g481484_)))
-                                                (_g479507_
-                                                 (lambda (_g481492_)
-                                                   ((lambda (_L495_)
+                                                    _g394397_)))
+                                                (_g392420_
+                                                 (lambda (_g394405_)
+                                                   ((lambda (_L408_)
                                                       (let ()
                                                         (cons (gx#datum->syntax
                                                                '#f
                                                                'quote)
-                                                              (cons _L495_
+                                                              (cons _L408_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    _g481492_))))
-                                           (_g479507_
-                                            (string->bytes (gx#stx-e _L463_))))
-                                         (_g422436_ _g423440_)))
-                                   _hd429457_)
-                                  (_g422436_ _g423440_))))
-                          (_g422436_ _g423440_))))
-                  (_g422436_ _g423440_)))))
-      (_g421511_ _stx419_))))
+                                                    _g394405_))))
+                                           (_g392420_
+                                            (string->bytes (gx#stx-e _L376_))))
+                                         (_g335349_ _g336353_)))
+                                   _hd342370_)
+                                  (_g335349_ _g336353_))))
+                          (_g335349_ _g336353_))))
+                  (_g335349_ _g336353_)))))
+      (_g334424_ _stx332_))))
