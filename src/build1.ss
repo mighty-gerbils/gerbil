@@ -37,6 +37,7 @@
     "gerbil/prelude/gambit/readtables.ss"
     "gerbil/prelude/gambit/fixnum.ss"
     "gerbil/prelude/gambit/flonum.ss"
+    "gerbil/prelude/gambit/exact.ss"
     "gerbil/prelude/gambit.ss"))
 
 (def gerbil-libdir

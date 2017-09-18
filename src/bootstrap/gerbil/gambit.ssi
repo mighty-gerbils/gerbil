@@ -18,7 +18,8 @@ namespace: gerbil/gambit
           :gerbil/gambit/os
           :gerbil/gambit/system
           :gerbil/gambit/foreign
-          :gerbil/gambit/misc)
+          :gerbil/gambit/misc
+          :gerbil/gambit/exact)
          (%#export
           (import: :gerbil/gambit/threads)
           (import: :gerbil/gambit/continuations)
@@ -35,4 +36,5 @@ namespace: gerbil/gambit
           (import: :gerbil/gambit/os)
           (import: :gerbil/gambit/system)
           (import: :gerbil/gambit/foreign)
-          (import: :gerbil/gambit/misc)))
+          (import: :gerbil/gambit/misc)
+          (import: :gerbil/gambit/exact)))

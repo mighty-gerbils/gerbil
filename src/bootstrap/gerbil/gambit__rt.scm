@@ -15,4 +15,5 @@
   (load-module "gerbil/gambit/os__rt")
   (load-module "gerbil/gambit/system__rt")
   (load-module "gerbil/gambit/foreign__rt")
-  (load-module "gerbil/gambit/misc__rt"))
+  (load-module "gerbil/gambit/misc__rt")
+  (load-module "gerbil/gambit/exact__rt"))

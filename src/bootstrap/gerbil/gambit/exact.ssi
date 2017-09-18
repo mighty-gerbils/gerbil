@@ -1,0 +1,20 @@
+prelude: :gerbil/core
+package: gerbil/gambit
+namespace: gerbil/gambit/exact
+
+(%#begin (%#export #t)
+         (%#define-alias exact inexact->exact)
+         (%#define-alias inexact exact->inexact)
+         (%#define-runtime
+          exact-integer?__impl
+          gerbil/gambit/exact#exact-integer?__impl)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref _gx#load-module)
+                           (%#quote "gerbil/gambit/exact__1")))
+                  (%#define-syntax
+                   exact-integer?
+                   |gerbil/gambit/exact[:0:]#exact-integer?|))
+         (%#define-runtime
+          exact-integer-sqrt
+          gerbil/gambit/exact#exact-integer-sqrt))
+(%#call (%#ref _gx#load-module) (%#quote "gerbil/gambit/exact__0"))
