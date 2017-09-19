@@ -137,6 +137,7 @@
     "misc/sync"
     (gxc:  "misc/ports" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc:  "misc/threads" "-e" "(include \"~~lib/_gambit#.scm\")")
+    "misc/process"
     ;; :std/actor
     (gxc: "actor/message" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc: "actor/xdr"  "-e" "(include \"~~lib/_gambit#.scm\")")
