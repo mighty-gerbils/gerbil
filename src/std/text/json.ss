@@ -25,10 +25,10 @@ package: std/text
         json-symbolic-keys)
 
 (def (read-json (port (current-input-port)))
-  (read-json-object port))
+  (read-json-object port #f))
 
 (def (string->json-object str)
-  (read-json-object (open-input-string str)))
+  (read-json-object (open-input-string str) #f))
 
 (def (write-json obj (port (current-output-port)))
   (write-json-object obj port))
@@ -48,20 +48,24 @@ package: std/text
     (raise-io-error 'read-json "Incomplete JSON object; EOF reached" port)
     (raise-io-error 'read-json "Invalid JSON token" port char)))
 
-(def (read-json-object port)
+(def (read-json-object port (raise-eof? #t))
   (skip-whitespace port)
   (let (char (peek-char port))
-    (case char
-      ((#\{) (read-json-hash port))
-      ((#\[) (read-json-list port))
-      ((#\") (read-json-string port))
-      ((#\t) (read-json-true port))
-      ((#\f) (read-json-false port))
-      ((#\n) (read-json-null port))
-      ((#\- #\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)
-       (read-json-number port))
-      (else
-       (raise-invalid-token port char)))))
+    (if (eof-object? char)
+      (if raise-eof?
+        (raise-io-error 'read-json "EOF reached" port)
+        #!eof)
+      (case char
+        ((#\{) (read-json-hash port))
+        ((#\[) (read-json-list port))
+        ((#\") (read-json-string port))
+        ((#\t) (read-json-true port))
+        ((#\f) (read-json-false port))
+        ((#\n) (read-json-null port))
+        ((#\- #\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9)
+         (read-json-number port))
+        (else
+         (raise-invalid-token port char))))))
 
 (def (skip-whitespace port)
   (let (char (peek-char port))
