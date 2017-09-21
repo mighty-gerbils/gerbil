@@ -6,6 +6,7 @@
         "generic-test"
         "iter-test"
         "event-test"
+        "misc/string-test"
         "text/json-test"
         "text/utf8-test"
         "actor/xdr-test"
@@ -30,6 +31,7 @@
    event-test
    json-test
    utf8-test
+   string-test
    actor-xdr-test
    actor-rpc-test actor-rpc-stream-test
    httpd-test
