@@ -5,7 +5,11 @@ package: std/misc
 
 (import :gerbil/gambit/ports
         :std/sugar)
-(export copy-port)
+(export copy-port
+        read-all-as-string
+        read-file-string
+        read-all-as-lines
+        read-file-lines)
 
 ;; _gambit#.scm
 (extern namespace: #f
@@ -27,6 +31,7 @@ package: std/misc
   macro-byte-port-rbuf-fill
   )
 
+;; Copy all data from port in to port out
 (def (copy-port in out)
   (cond
    ((not (input-port? in))
@@ -144,3 +149,28 @@ package: std/misc
     (unless (eof-object? next)
       (write next out)
       (lp (read in)))))
+
+;; Read all the contents of a port as a string
+(def (read-all-as-string port)
+  (let ((string (read-line port #f)))
+    (if (string? string) string ""))) ;; if it's an eof-object? or whatelse, return ""
+
+;; Read the contents of a file into a string
+(def (read-file-string file settings: (settings '()))
+  (call-with-input-file (cons* path: file settings) read-all-as-string))
+
+;; Read all the contents of a port as a list of strings, one per line
+(def (read-all-as-lines
+      port
+      separator: (separator #\newline)
+      include-separator?: (include-separator? #f))
+  (let loop ((lines '()))
+    (let ((line (read-line port separator include-separator?)))
+      (if (string? line)
+        (loop (cons line lines))
+        (reverse lines)))))
+
+;; Read the contents of a file into a list of lines
+(def (read-file-lines file settings: (settings '()))
+  (call-with-input-file (cons* path: file settings) read-all-as-lines))
+
