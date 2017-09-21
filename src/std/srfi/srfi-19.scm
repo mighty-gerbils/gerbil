@@ -262,7 +262,7 @@
 (defstruct time (type nanosecond second))
 
 ;; Safer variant of make-time
-(define (make-time% type second nanosecond)
+(define (make-time% type nanosecond second)
   (case type
     ((time-tai time-utc time-monotonic time-thread time-process time-duration) #t)
     (else (error "Wrong time type" type)))
@@ -271,15 +271,15 @@
   (unless (and (exact-integer? nanosecond)
                (<= (if (eq? type time-duration) -999999999 0) nanosecond 999999999))
     (error "Invalid time nanosecond" nanosecond))
-  (make-time type second nanosecond))
+  (make-time type nanosecond second))
 
 
 ;; thanks, Martin Gasbichler ...
 
 (define (copy-time time)
   (make-time (time-type time)
-             (time-second time)
-             (time-nanosecond time)))
+             (time-nanosecond time)
+             (time-second time)))
 
 
 ;;; current-time
