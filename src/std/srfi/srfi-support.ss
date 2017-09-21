@@ -45,7 +45,7 @@ package: std/srfi
   ((_ args (((var ...) proc)) body1 ...)
    (stx-andmap identifier? #'(var ...))
    (call-with-values (lambda () (proc args))
-     (lambda (var ...) body1 ...)))
+     (lambda (temp var ...) body1 ...)))
   ((_ args (rest) body1 ...)
    (identifier? #'rest)
    (let ((rest args)) body1 ...))
