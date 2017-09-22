@@ -1,5 +1,5 @@
 ;; -*- Gerbil -*-
-package: utils
+package: std/misc
 ;;;; String utilities
 
 (export
@@ -12,10 +12,6 @@ package: utils
 (import
   :std/srfi/13)
 
-
-;; TODO: find a welcoming home for this macro.
-(defrules first-value ()
-  ((_ form) (with ((values x . _) form) x)))
 
 ;; If the string ends with given suffix, return the beginning of the string up to the suffix.
 ;; Otherwise, return the entire string. NB: Only remove the suffix once.
