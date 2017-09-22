@@ -52,7 +52,7 @@ package: utils
   (let/cc return
     (for-each
       (lambda (eol) (let-values (((prefix suffix found?) (string-split-suffix eol string)))
-                      (when found? (return (values prefix suffix found?)))))
+                      (when found? (return prefix suffix found?))))
       [+crlf+ +lf+ +cr+]) ;; NB: note how the longer +crlf+ is *before* +lf+.
     (values string "" #f)))
 

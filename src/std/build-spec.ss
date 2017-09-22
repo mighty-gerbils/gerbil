@@ -134,6 +134,7 @@
     "misc/uuid"
     "misc/queue"
     "misc/pqueue"
+    "misc/string"
     "misc/sync"
     (gxc:  "misc/ports" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc:  "misc/threads" "-e" "(include \"~~lib/_gambit#.scm\")")
