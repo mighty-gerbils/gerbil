@@ -192,7 +192,8 @@ package: std
              (hash-put! ht key default)
              (lp args rest))))
          ((!rest key _ value-e)
-          (hash-put! ht key (map value-e rest)))))
+          (hash-put! ht key (map value-e rest))
+          ht)))
       (else
        (unless (null? rest)
          (raise-getopt-error "Unexpected arguments" rest))
