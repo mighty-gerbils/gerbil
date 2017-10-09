@@ -1,37 +1,44 @@
 #!/usr/bin/env bash
 set -eu
 
-die() {
-    "*** Build failed"
-    exit 1
-}
+#===============================================================================
+# note: not exporting 'GERBIL_TARGET'. is it needed?
+#===============================================================================
 
-unset GERBIL_HOME
-export GERBIL_HOME=$(dirname $(cd ${0%/*} && echo $PWD))
-export GERBIL_TARGET=$GERBIL_HOME/bootstrap/stage0
+## preconditions
+if [ -z "${GERBIL_SETUP+x}" ]; then
+  (1>&2 echo "ERROR: Do not call this script directly.") && exit 1
+fi
+source "${BUILD_SCRIPT_DIR}/common.sh"
+source "${BUILD_SCRIPT_DIR}/build_common.sh"
 
-echo "[*] Building gerbil stage0"
+## constants
+readonly GERBIL_TARGET="${GERBIL_BASE}/bootstrap/stage0"
+readonly TARGET_BIN="${GERBIL_TARGET}/bin"
+readonly TARGET_LIB="${GERBIL_TARGET}/lib"
 
-echo ">>> preparing $GERBIL_TARGET"
-rm -rf $GERBIL_TARGET/{bin,lib}
-mkdir $GERBIL_TARGET/{bin,lib}
+## feedback
+feedback_low "Building gerbil stage0"
+
+## preparing target directory
+feedback_mid "preparing ${GERBIL_TARGET}"
+target_setup "${GERBIL_TARGET}"
 
 ## gerbil runtime
-echo ">>> compiling runtime"
-(cd gerbil/runtime && ./build.scm $GERBIL_TARGET/lib)
+feedback_mid "compiling runtime"
+compile_runtime "${TARGET_LIB}"
 
 ## gerbil bootstrap
-echo ">>> preparing bootstrap"
-rsync -auv bootstrap/gerbil $GERBIL_TARGET/lib
-find $GERBIL_TARGET/lib -name \*.scm > .build.stage0
+feedback_mid "preparing bootstrap"
+rsync -auv bootstrap/gerbil "${TARGET_LIB}"
+find "${TARGET_LIB}" -name \*.scm > .build.stage0
 
-echo ">>> compiling gerbil core"
-gsi build0.scm || die
+feedback_mid "compiling gerbil core"
+gsi "${BUILD_SCRIPT_DIR}/build0.scm" || die
+
+## cleaning up
 rm -f .build.stage0
 
 ## finalize build
-echo ">>> finalizing build"
-cp -v gerbil/boot/*.scm $GERBIL_TARGET/lib
-cp -v gerbil/interactive/*.ss $GERBIL_TARGET/lib
-cp -v gerbil/gxi gerbil/gxc gerbil/gxi-build-script $GERBIL_TARGET/bin
-(cd $GERBIL_TARGET/bin && ln -s gxi gxi-script)
+feedback_mid "finalizing build"
+finalize_build "${TARGET_LIB}" "${TARGET_BIN}"
