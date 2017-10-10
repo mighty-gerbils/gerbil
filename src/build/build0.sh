@@ -9,8 +9,8 @@ set -eu
 if [ -z "${GERBIL_SETUP+x}" ]; then
   (1>&2 echo "ERROR: Do not call this script directly.") && exit 1
 fi
-source "${BUILD_SCRIPT_DIR}/common.sh"
-source "${BUILD_SCRIPT_DIR}/build_common.sh"
+source "${BUILD_DIR}/common.sh"
+source "${BUILD_DIR}/build_common.sh"
 
 ## constants
 readonly GERBIL_TARGET="${GERBIL_BASE}/bootstrap/stage0"
@@ -34,7 +34,7 @@ rsync -auv bootstrap/gerbil "${TARGET_LIB}"
 find "${TARGET_LIB}" -name \*.scm > .build.stage0
 
 feedback_mid "compiling gerbil core"
-gsi "${BUILD_SCRIPT_DIR}/build0.scm" || die
+gsi "${BUILD_DIR}/build0.scm" || die
 
 ## cleaning up
 rm -f .build.stage0

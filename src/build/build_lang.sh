@@ -5,9 +5,9 @@ set -eu
 if [ -z "${GERBIL_SETUP+x}" ]; then
   (1>&2 echo "ERROR: Do not call this script directly.") && exit 1
 fi
-source "${BUILD_SCRIPT_DIR}/common.sh"
+source "${BUILD_DIR}/common.sh"
 
 ## main
-feedback_low "Building gerbil stdlib"
+feedback_low "Building gerbil languages"
 export PATH="${GERBIL_BASE}/bin:${PATH}"
-cd std && ./build-deps-gen.ss  && ./build.ss
+cd lang && ./build.ss

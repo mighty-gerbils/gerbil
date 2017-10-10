@@ -5,16 +5,16 @@
 # This file should be sourced immediately after checking for setup
 #===============================================================================
 
-## Color output if 'tput' is available and if output is directed at terminal
-COLOR_OUT_RESET="";COLOR_OUT1="";COLOR_OUT2=""
-COLOR_ERR_RESET="";COLOR_ERR=""
-source "${BUILD_SCRIPT_DIR}/colors.sh"
-
 # Global Constants
 readonly GERBIL_SOURCE
 readonly GERBIL_BASE
-readonly BUILD_SCRIPT_DIR
+readonly BUILD_DIR
 readonly GERBIL_SETUP
+
+## Color output if 'tput' is available and if output is directed at terminal
+COLOR_OUT_RESET="";COLOR_OUT1="";COLOR_OUT2=""
+COLOR_ERR_RESET="";COLOR_ERR=""
+source "${BUILD_DIR}/colors.sh"
 
 # Functions Library
 feedback_err() {
