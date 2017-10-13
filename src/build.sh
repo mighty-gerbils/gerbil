@@ -188,7 +188,8 @@ else
          ;;
        *)
          feedback_err "Unknown command."
-         feedback_err "Correct usage: ./build.sh [stdlib|lang|tools]"
+         feedback_err \
+           "Correct usage: ./build.sh [stdlib|lang|tools|stage0|stage1 [final]]"
          die
          ;;
   esac
