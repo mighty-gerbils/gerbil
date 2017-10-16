@@ -2,7 +2,7 @@
 set -eu
 
 #===============================================================================
-# Assuming this script is run with: `cd $GERBIL_BASE/src && ./build.sh`
+# This script must be run with: `cd $GERBIL_BASE/src && ./build.sh`
 #===============================================================================
 
 ## global constants
@@ -39,7 +39,7 @@ target_setup () {
 
 compile_runtime () {
   local target_lib="${1}"
-  (cd gerbil/runtime && ./build.scm "${target_lib}")
+  (cd gerbil/runtime && "${GERBIL_GSI_SCRIPT}" build.scm "${target_lib}")
 }
 
 finalize_build () {
@@ -76,7 +76,7 @@ stage0 () {
   find "${target_lib}" -name \*.scm > .build.stage0
   
   feedback_mid "compiling gerbil core"
-  gsi "${GERBIL_BUILD}/build0.scm" || die
+  "${GERBIL_GSI}" "${GERBIL_BUILD}/build0.scm" || die
   
   ## cleaning up
   rm -f .build.stage0
@@ -155,8 +155,6 @@ build_lang () {
   (cd lang && ./build.ss)
 }
 
-#===============================================================================
-## main
 build_gerbil() {
   feedback_low "Building Gerbil"
   stage0       || die
@@ -165,6 +163,12 @@ build_gerbil() {
   build_lang   || die
   build_tools  || die
 }
+
+## main
+#===============================================================================
+
+## load configuration file
+source "${GERBIL_SOURCE}/conf.sh" || die
 
 ## handling command line
 if [ -z "${1+x}" ]; then

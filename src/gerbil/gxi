@@ -2,8 +2,12 @@
 set -eu
 
 if [ -z "${GERBIL_HOME:-}" ]; then
-    GERBIL_HOME=$(dirname $(cd ${0%/*} && echo $PWD))
+    GERBIL_HOME="$(dirname "$(cd ${0%/*} && echo $PWD)")"
     export GERBIL_HOME
+fi
+
+if [ -z "${GERBIL_GSI:-}" ]; then
+    source "${GERBIL_HOME}/src/conf.sh"
 fi
 
 if [ $# -gt 0 ]; then
@@ -25,7 +29,12 @@ if [ $# -gt 0 ]; then
 fi
 
 if [[ "x" = "x$@" ]]; then
-    gsi ${GSIOPTIONS:-} $GERBIL_HOME/lib/gxi-init $GERBIL_HOME/lib/gxi-interactive -
+    "${GERBIL_GSI}" ${GSIOPTIONS:-} \
+                    "${GERBIL_HOME}/lib/gxi-init" \
+                    "${GERBIL_HOME}/lib/gxi-interactive" \
+                    -
 else
-    gsi ${GSIOPTIONS:-} $GERBIL_HOME/lib/gxi-init "$@"
+    "${GERBIL_GSI}" ${GSIOPTIONS:-} \
+                    "${GERBIL_HOME}/lib/gxi-init" \
+                    "$@"
 fi
