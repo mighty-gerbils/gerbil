@@ -80,6 +80,18 @@ $ LDFLAGS=-L/usr/local/opt/openssl/lib \
   ./build.sh
 ```
 
+If the Gambit interpreter has a nonstandard name or installation path:
+1. Manually edit the file at `$GAMBIT_HOME/src/conf.sh`
+2. `cd $GERBIL_HOME/src && ./build.sh`
+
+For example, if the gambit interpreter is called `gambit-interpreter`
+instead of `gsi`, `conf.sh` should look like this:
+```
+$ export GERBIL_GSI="gambit-interpreter"
+```
+Both variables accept either full paths or names which can be found through
+`$PATH`
+
 # Using Gerbil
 The Gerbil interpreter is `$GERBIL_HOME/bin/gxi`, and the compiler is
 `$GERBIL_HOME/bin/gxc`.

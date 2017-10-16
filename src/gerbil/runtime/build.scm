@@ -1,5 +1,4 @@
 #!/usr/bin/env gsi-script
-
 (##namespace (""))
 
 (define *gx-modules*
