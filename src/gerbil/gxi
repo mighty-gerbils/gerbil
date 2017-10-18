@@ -6,6 +6,10 @@ if [ -z "${GERBIL_HOME:-}" ]; then
     export GERBIL_HOME
 fi
 
+if [ -z "${GERBIL_GSI:-}" ]; then
+    source "${GERBIL_HOME}/lib/conf.sh"
+fi
+
 if [ $# -gt 0 ]; then
     case $1 in
         -:*)
@@ -25,7 +29,12 @@ if [ $# -gt 0 ]; then
 fi
 
 if [[ "x" = "x$@" ]]; then
-    gsi ${GSIOPTIONS:-} $GERBIL_HOME/lib/gxi-init $GERBIL_HOME/lib/gxi-interactive -
+    "${GERBIL_GSI}" ${GSIOPTIONS:-} \
+                    "${GERBIL_HOME}/lib/gxi-init" \
+                    "${GERBIL_HOME}/lib/gxi-interactive" \
+                    -
 else
-    gsi ${GSIOPTIONS:-} $GERBIL_HOME/lib/gxi-init "$@"
+    "${GERBIL_GSI}" ${GSIOPTIONS:-} \
+                    "${GERBIL_HOME}/lib/gxi-init" \
+                    "$@"
 fi
