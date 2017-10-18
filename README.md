@@ -80,6 +80,22 @@ $ LDFLAGS=-L/usr/local/opt/openssl/lib \
   ./build.sh
 ```
 
+Gerbil expects the Gambit interpreter to be called `gsi`;
+if the Gambit interpreter has a nonstandard name or installation path
+(e.g., `gsi` is the name for the ghostscript interpreter in Arch Linux)
+then:
+1. Manually edit the file at `$GAMBIT_HOME/src/conf.sh`
+2. Continue build as normal: `cd $GERBIL_HOME/src && ./build.sh`
+
+For example, if the gambit interpreter is called `gambit-interpreter`
+instead of `gsi`, `conf.sh` should look like this:
+```
+$ export GERBIL_GSI="gambit-interpreter"
+```
+Acceptable values include:
+1. a name visible through `$PATH`
+2. an absolute path to the executable
+
 # Using Gerbil
 The Gerbil interpreter is `$GERBIL_HOME/bin/gxi`, and the compiler is
 `$GERBIL_HOME/bin/gxc`.
