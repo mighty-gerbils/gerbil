@@ -1,4 +1,3 @@
-#!/usr/bin/env gxi-build-script
 ;; -*- Gerbil -*-
 ;; build-deps depgraph generator
 (import "make" "build-config")

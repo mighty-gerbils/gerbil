@@ -52,7 +52,6 @@ finalize_build () {
         "${target_lib}"
   cp -v gerbil/gxi \
         gerbil/gxc \
-        gerbil/gxi-build-script \
         "${target_bin}"
   (cd "${target_bin}" && ln -s gxi gxi-script)
 }
@@ -146,8 +145,12 @@ build_tools () {
 build_stdlib () {
   feedback_low "Building gerbil stdlib"
   export PATH="${GERBIL_BASE}/bin:${PATH}"
-  export GERBIL_HOME="${GERBIL_BASE}" #required by gxi-build-script and build.ss
-  (cd std && ./build-deps-gen.ss  && ./build.ss)
+  export GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
+  (cd std \
+   && "${GERBIL_GSI}" -e '(include "~~lib/_gambit#.scm")' \
+                      "${GERBIL_BASE}/lib/gxi-init" \
+                      build-deps-gen.ss \
+   && ./build.ss)
 }
 
 build_lang () {
