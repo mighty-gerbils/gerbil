@@ -2,7 +2,7 @@
 set -eu
 
 if [ -z "${GERBIL_HOME:-}" ]; then
-    GERBIL_HOME=$(dirname $(cd ${0%/*} && echo $PWD))
+    GERBIL_HOME="$(dirname "$(cd ${0%/*} && echo $PWD)")"
     export GERBIL_HOME
 fi
 

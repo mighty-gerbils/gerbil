@@ -2,7 +2,7 @@
 set -eu
 
 #===============================================================================
-# Assuming this script is run with: `cd $GERBIL_BASE/src && ./build.sh`
+# This script must be run with: `cd $GERBIL_BASE/src && ./build.sh`
 #===============================================================================
 
 ## global constants
@@ -157,8 +157,6 @@ build_lang () {
   (cd lang && ./build.ss)
 }
 
-#===============================================================================
-## main
 build_gerbil() {
   feedback_low "Building Gerbil"
   stage0       || die
@@ -168,6 +166,8 @@ build_gerbil() {
   build_tools  || die
 }
 
+## main
+#===============================================================================
 ## load configuration file
 source "${GERBIL_CONFIG}" || die
 
