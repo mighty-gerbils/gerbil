@@ -1,4 +1,6 @@
 #!/usr/bin/env gsi-script
+;the above line is not used as a shabang
+;its purpose is as a directive for gsi-script
 
 (##namespace (""))
 

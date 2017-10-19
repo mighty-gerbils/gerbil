@@ -40,7 +40,7 @@ target_setup () {
 
 compile_runtime () {
   local target_lib="${1}"
-  (cd gerbil/runtime && "${GERBIL_GSI_SCRIPT}" build.scm "${target_lib}")
+  (cd gerbil/runtime && "gsi-script" build.scm "${target_lib}")
 }
 
 finalize_build () {
