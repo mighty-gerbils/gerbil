@@ -1,3 +1,4 @@
+@;gsi-script
 (##namespace (""))
 
 (define file-list ".build.stage0")
