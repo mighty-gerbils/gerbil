@@ -37,6 +37,9 @@ package: std/crypto
   EVP_CIPHER_CTX_key_length EVP_CIPHER_CTX_iv_length
   EVP_CIPHER_CTX_copy
   EVP_get_cipherbyname EVP_get_cipherbynid
+  HMAC_CTX?
+  HMAC_CTX_create
+  HMAC_Init HMAC_Update HMAC_Final HMAC
   BN? BN_num_bytes BN_bin2bn BN_bn2bin
   DH* DH? DH_pub_key
   DH_new DH_get_1024_160 DH_get_2048_224 DH_get_2048_256
