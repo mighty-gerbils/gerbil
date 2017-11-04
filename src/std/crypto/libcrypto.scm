@@ -22,6 +22,7 @@
 #include <openssl/err.h>
 #include <openssl/dh.h>
 #include <openssl/bn.h>
+#include <openssl/hmac.h>
 END-C
 )
 
@@ -242,6 +243,34 @@ END-C
 (define-c-lambda/const-pointer EVP_get_cipherbyname (char-string) EVP_CIPHER*)
 (define-c-lambda/const-pointer EVP_get_cipherbynid (int) EVP_CIPHER*)
 
+;;; HMAC
+(c-declare #<<END-C
+static ___SCMOBJ ffi_release_HMAC_CTX (void *ptr);
+static HMAC_CTX *ffi_create_HMAC_CTX ();
+static int ffi_HMAC_Init (HMAC_CTX *ctx, ___SCMOBJ key, EVP_MD *type);
+static int ffi_HMAC_Update (HMAC_CTX *ctx, ___SCMOBJ bytes, int start, int end);
+static int ffi_HMAC_Final (HMAC_CTX *ctx, ___SCMOBJ bytes);
+static void ffi_HMAC (EVP_MD *type, ___SCMOBJ key, ___SCMOBJ bytes, int start, int end, ___SCMOBJ digest);
+END-C
+)
+
+(c-define-type HMAC_CTX "HMAC_CTX")
+(c-define-type HMAC_CTX*
+  (pointer HMAC_CTX (HMAC_CTX*) "ffi_release_HMAC_CTX"))
+
+(define-c-type-predicate HMAC_CTX? HMAC_CTX*)
+
+(define-c-lambda HMAC_CTX_create () HMAC_CTX*
+  "ffi_create_HMAC_CTX")
+(define-c-lambda HMAC_Init (HMAC_CTX* scheme-object EVP_MD*) int
+  "ffi_HMAC_Init")
+(define-c-lambda HMAC_Update (HMAC_CTX* scheme-object int int) int
+  "ffi_HMAC_Update")
+(define-c-lambda HMAC_Final (HMAC_CTX* scheme-object) int
+  "ffi_HMAC_Final")
+(define-c-lambda HMAC (EVP_MD* scheme-object scheme-object int int scheme-object) void
+  "ffi_HMAC")
+
 ;;; BN
 (c-declare #<<END-C
 static ___SCMOBJ ffi_BN_free (void *bn);
@@ -382,6 +411,42 @@ static int ffi_EVP_DecryptFinal (EVP_CIPHER_CTX *ctx, ___SCMOBJ out, int start)
   } else {
     return -1;
   }
+}
+
+static HMAC_CTX *ffi_create_HMAC_CTX ()
+{
+  HMAC_CTX *ctx = (HMAC_CTX*)malloc (sizeof (HMAC_CTX));
+  if (ctx) {
+    HMAC_CTX_init (ctx);
+  }
+  return ctx;
+}
+
+static ___SCMOBJ ffi_release_HMAC_CTX (void *ptr)
+{
+  HMAC_CTX_cleanup ((HMAC_CTX*) ptr);
+  free (ptr);
+  return ___FIX (___NO_ERR);
+}
+
+static int ffi_HMAC_Init (HMAC_CTX *ctx, ___SCMOBJ key, EVP_MD *type)
+{
+  return HMAC_Init (ctx, U8_DATA (key), U8_LEN (key), type);
+}
+
+static int ffi_HMAC_Update (HMAC_CTX *ctx, ___SCMOBJ bytes, int start, int end)
+{
+  return HMAC_Update (ctx, U8_DATA (bytes) + start, end - start);
+}
+
+static int ffi_HMAC_Final (HMAC_CTX *ctx, ___SCMOBJ bytes)
+{
+  return HMAC_Final (ctx, U8_DATA (bytes), NULL);
+}
+
+static void ffi_HMAC (EVP_MD *type, ___SCMOBJ key, ___SCMOBJ bytes, int start, int end, ___SCMOBJ digest)
+{
+  HMAC (type, U8_DATA (key), U8_LEN (key), U8_DATA (bytes) + start, end - start, U8_DATA (digest), NULL);
 }
 
 static ___SCMOBJ ffi_BN_free (void *bn)
