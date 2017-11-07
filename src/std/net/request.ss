@@ -141,7 +141,7 @@ package: std/net
                   params:   (params #f))
   (let ((url (url-target-e url params))
         (headers (make-http/1.1-headers headers cookies)))
-    (http-request 'DELETE url #f [] #f)))
+    (http-request 'DELETE url headers #f [] #f)))
 
 (def (http-options url
                    headers:  (headers #f)
