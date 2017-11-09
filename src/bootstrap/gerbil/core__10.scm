@@ -1,54 +1,53 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core::<match>[1]#_g30757_| (gx#core-quote-syntax 'apply))
-  (define |gerbil/core::<match>[1]#_g30758_|
-    (gx#core-quote-syntax 'quasiquote))
-  (define |gerbil/core::<match>[1]#_g30759_| (gx#core-quote-syntax 'quote))
-  (define |gerbil/core::<match>[1]#_g30762_| (gx#core-quote-syntax 'vector))
-  (define |gerbil/core::<match>[1]#_g30763_| (gx#core-quote-syntax 'values))
-  (define |gerbil/core::<match>[1]#_g30764_| (gx#core-quote-syntax 'values))
-  (define |gerbil/core::<match>[1]#_g30765_| (gx#core-quote-syntax 'box))
-  (define |gerbil/core::<match>[1]#_g30766_| (gx#core-quote-syntax '@list))
-  (define |gerbil/core::<match>[1]#_g30767_| (gx#core-quote-syntax 'cons*))
-  (define |gerbil/core::<match>[1]#_g30768_| (gx#core-quote-syntax 'cons))
-  (define |gerbil/core::<match>[1]#_g30769_| (gx#core-quote-syntax 'not))
-  (define |gerbil/core::<match>[1]#_g30770_| (gx#core-quote-syntax 'or))
-  (define |gerbil/core::<match>[1]#_g30771_| (gx#core-quote-syntax 'and))
-  (define |gerbil/core::<match>[1]#_g30772_| (gx#core-quote-syntax '?))
-  (define |gerbil/core::<match>[1]#_g30773_| (gx#core-quote-syntax '=>))
-  (define |gerbil/core::<match>[1]#_g30774_| (gx#core-quote-syntax '=>))
-  (define |gerbil/core::<match>[1]#_g30783_| (gx#core-quote-syntax 'else))
-  (define |gerbil/core::<match>[1]#_g30788_| (gx#core-quote-syntax 'else))
-  (define |gerbil/core::<match>[1]#_g30789_| (gx#core-quote-syntax '<...>))
-  (define |gerbil/core::<match>[1]#_g30790_| (gx#core-quote-syntax '<>))
-  (define |gerbil/core::<match>[1]#_g30807_| (gx#core-quote-syntax '=>))
-  (define |gerbil/core::<match>[1]#_g30808_| (gx#core-quote-syntax '=>))
-  (define |gerbil/core::<match>[1]#_g30809_| (gx#core-quote-syntax 'not))
-  (define |gerbil/core::<match>[1]#_g30810_| (gx#core-quote-syntax 'or))
-  (define |gerbil/core::<match>[1]#_g30813_| (gx#core-quote-syntax 'and))
+  (define |gerbil/core$<match>[1]#_g30757_| (gx#core-quote-syntax 'apply))
+  (define |gerbil/core$<match>[1]#_g30758_| (gx#core-quote-syntax 'quasiquote))
+  (define |gerbil/core$<match>[1]#_g30759_| (gx#core-quote-syntax 'quote))
+  (define |gerbil/core$<match>[1]#_g30762_| (gx#core-quote-syntax 'vector))
+  (define |gerbil/core$<match>[1]#_g30763_| (gx#core-quote-syntax 'values))
+  (define |gerbil/core$<match>[1]#_g30764_| (gx#core-quote-syntax 'values))
+  (define |gerbil/core$<match>[1]#_g30765_| (gx#core-quote-syntax 'box))
+  (define |gerbil/core$<match>[1]#_g30766_| (gx#core-quote-syntax '@list))
+  (define |gerbil/core$<match>[1]#_g30767_| (gx#core-quote-syntax 'cons*))
+  (define |gerbil/core$<match>[1]#_g30768_| (gx#core-quote-syntax 'cons))
+  (define |gerbil/core$<match>[1]#_g30769_| (gx#core-quote-syntax 'not))
+  (define |gerbil/core$<match>[1]#_g30770_| (gx#core-quote-syntax 'or))
+  (define |gerbil/core$<match>[1]#_g30771_| (gx#core-quote-syntax 'and))
+  (define |gerbil/core$<match>[1]#_g30772_| (gx#core-quote-syntax '?))
+  (define |gerbil/core$<match>[1]#_g30773_| (gx#core-quote-syntax '=>))
+  (define |gerbil/core$<match>[1]#_g30774_| (gx#core-quote-syntax '=>))
+  (define |gerbil/core$<match>[1]#_g30783_| (gx#core-quote-syntax 'else))
+  (define |gerbil/core$<match>[1]#_g30788_| (gx#core-quote-syntax 'else))
+  (define |gerbil/core$<match>[1]#_g30789_| (gx#core-quote-syntax '<...>))
+  (define |gerbil/core$<match>[1]#_g30790_| (gx#core-quote-syntax '<>))
+  (define |gerbil/core$<match>[1]#_g30807_| (gx#core-quote-syntax '=>))
+  (define |gerbil/core$<match>[1]#_g30808_| (gx#core-quote-syntax '=>))
+  (define |gerbil/core$<match>[1]#_g30809_| (gx#core-quote-syntax 'not))
+  (define |gerbil/core$<match>[1]#_g30810_| (gx#core-quote-syntax 'or))
+  (define |gerbil/core$<match>[1]#_g30813_| (gx#core-quote-syntax 'and))
   (begin
-    (define |gerbil/core::<match>[1]#match-macro::t|
+    (define |gerbil/core$<match>[1]#match-macro::t|
       (make-class-type
        'gerbil.core#match-macro::t
-       (cons |gerbil/core::<MOP>::<MOP:3>[1]#macro-object::t| '())
+       (cons |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t| '())
        '()
        'match-macro
        '()
        '#f))
-    (define |gerbil/core::<match>[1]#match-macro?|
-      (make-class-predicate |gerbil/core::<match>[1]#match-macro::t|))
-    (define |gerbil/core::<match>[1]#make-match-macro|
+    (define |gerbil/core$<match>[1]#match-macro?|
+      (make-class-predicate |gerbil/core$<match>[1]#match-macro::t|))
+    (define |gerbil/core$<match>[1]#make-match-macro|
       (lambda _$args24856_
         (apply make-class-instance
-               |gerbil/core::<match>[1]#match-macro::t|
+               |gerbil/core$<match>[1]#match-macro::t|
                _$args24856_)))
-    (define |gerbil/core::<match>[1]#syntax-local-match-macro?|
+    (define |gerbil/core$<match>[1]#syntax-local-match-macro?|
       (lambda (_stx24853_)
         (if (gx#identifier? _stx24853_)
-            (|gerbil/core::<match>[1]#match-macro?|
+            (|gerbil/core$<match>[1]#match-macro?|
              (gx#syntax-local-value _stx24853_ false))
             '#f)))
-    (define |gerbil/core::<match>[1]#parse-match-pattern|
+    (define |gerbil/core$<match>[1]#parse-match-pattern|
       (let ((_opt-lambda2316924839_
              (lambda (_stx23171_ _match-stx23173_)
                (letrec ((_parse123175_
@@ -98,7 +97,7 @@
                                                  (_tl2368123765_
                                                   (##cdr _e2367923758_)))
                                              ((lambda (_L23768_)
-                                                (if (|gerbil/core::<match>[1]#syntax-local-match-macro?|
+                                                (if (|gerbil/core$<match>[1]#syntax-local-match-macro?|
                                                      _L23768_)
                                                     (_parse123175_
                                                      (gx#core-apply-expander
@@ -129,7 +128,7 @@
                                              (if (gx#identifier?
                                                   _hd2367023794_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30757_|
+                                                      |gerbil/core$<match>[1]#_g30757_|
                                                       _hd2367023794_)
                                                      (if (gx#stx-pair?
                                                           _tl2367123797_)
@@ -172,7 +171,7 @@
                                              (if (gx#identifier?
                                                   _hd2366223848_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30758_|
+                                                      |gerbil/core$<match>[1]#_g30758_|
                                                       _hd2366223848_)
                                                      (if (gx#stx-pair?
                                                           _tl2366323851_)
@@ -205,7 +204,7 @@
                                              (if (gx#identifier?
                                                   _hd2365523888_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30759_|
+                                                      |gerbil/core$<match>[1]#_g30759_|
                                                       _hd2365523888_)
                                                      (if (gx#stx-pair?
                                                           _tl2365623891_)
@@ -292,7 +291,7 @@
                                                  (_tl2364423981_
                                                   (##cdr _e2364223974_)))
                                              ((lambda (_L23984_ _L23986_)
-                                                (if (|gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-class-info?|
+                                                (if (|gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-class-info?|
                                                      _L23986_)
                                                     (cons 'class:
                                                           (cons (gx#syntax-local-value
@@ -315,7 +314,7 @@
                                                  (_tl2363924011_
                                                   (##cdr _e2363724004_)))
                                              ((lambda (_L24014_ _L24016_)
-                                                (if (|gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-struct-info?|
+                                                (if (|gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-struct-info?|
                                                      _L24016_)
                                                     (cons 'struct:
                                                           (cons (gx#syntax-local-value
@@ -402,7 +401,7 @@
                                              (if (gx#identifier?
                                                   _hd2362224101_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30762_|
+                                                      |gerbil/core$<match>[1]#_g30762_|
                                                       _hd2362224101_)
                                                      ((lambda (_L24107_)
                                                         (cons 'vector:
@@ -429,7 +428,7 @@
                                              (if (gx#identifier?
                                                   _hd2361824129_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30763_|
+                                                      |gerbil/core$<match>[1]#_g30763_|
                                                       _hd2361824129_)
                                                      ((lambda (_L24135_)
                                                         (cons 'values:
@@ -456,7 +455,7 @@
                                              (if (gx#identifier?
                                                   _hd2361124157_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30764_|
+                                                      |gerbil/core$<match>[1]#_g30764_|
                                                       _hd2361124157_)
                                                      (if (gx#stx-pair?
                                                           _tl2361224160_)
@@ -502,7 +501,7 @@
                                              (if (gx#identifier?
                                                   _hd2360224218_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30765_|
+                                                      |gerbil/core$<match>[1]#_g30765_|
                                                       _hd2360224218_)
                                                      (if (gx#stx-pair?
                                                           _tl2360324221_)
@@ -536,7 +535,7 @@
                                              (if (gx#identifier?
                                                   _hd2359824258_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30766_|
+                                                      |gerbil/core$<match>[1]#_g30766_|
                                                       _hd2359824258_)
                                                      ((lambda (_L24264_)
                                                         (_parse-list23177_
@@ -559,7 +558,7 @@
                                              (if (gx#identifier?
                                                   _hd2358824286_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30767_|
+                                                      |gerbil/core$<match>[1]#_g30767_|
                                                       _hd2358824286_)
                                                      (if (gx#stx-pair?
                                                           _tl2358924289_)
@@ -613,7 +612,7 @@
                                              (if (gx#identifier?
                                                   _hd2357624342_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30768_|
+                                                      |gerbil/core$<match>[1]#_g30768_|
                                                       _hd2357624342_)
                                                      (if (gx#stx-pair?
                                                           _tl2357724345_)
@@ -656,7 +655,7 @@
                                              (if (gx#identifier?
                                                   _hd2356824396_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30769_|
+                                                      |gerbil/core$<match>[1]#_g30769_|
                                                       _hd2356824396_)
                                                      (if (gx#stx-pair?
                                                           _tl2356924399_)
@@ -690,7 +689,7 @@
                                              (if (gx#identifier?
                                                   _hd2356424436_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30770_|
+                                                      |gerbil/core$<match>[1]#_g30770_|
                                                       _hd2356424436_)
                                                      ((lambda (_L24442_)
                                                         (if (gx#stx-list?
@@ -743,7 +742,7 @@
                                              (if (gx#identifier?
                                                   _hd2356024521_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30771_|
+                                                      |gerbil/core$<match>[1]#_g30771_|
                                                       _hd2356024521_)
                                                      ((lambda (_L24527_)
                                                         (if (gx#stx-list?
@@ -796,7 +795,7 @@
                                              (if (gx#identifier?
                                                   _hd2355324606_)
                                                  (if (gx#free-identifier=?
-                                                      |gerbil/core::<match>[1]#_g30772_|
+                                                      |gerbil/core$<match>[1]#_g30772_|
                                                       _hd2355324606_)
                                                      (if (gx#stx-pair?
                                                           _tl2355424609_)
@@ -848,7 +847,7 @@
                               (_tl2466424718_ (##cdr _e2466224711_)))
                           (if (gx#identifier? _hd2466324715_)
                               (if (gx#free-identifier=?
-                                   |gerbil/core::<match>[1]#_g30773_|
+                                   |gerbil/core$<match>[1]#_g30773_|
                                    _hd2466324715_)
                                   (if (gx#stx-pair? _tl2466424718_)
                                       (let ((_e2466524721_
@@ -892,7 +891,7 @@
                                                (##cdr _e2464824759_)))
                                           (if (gx#identifier? _hd2464924763_)
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core::<match>[1]#_g30774_|
+                                                   |gerbil/core$<match>[1]#_g30774_|
                                                    _hd2464924763_)
                                                   (if (gx#stx-pair?
                                                        _tl2465024766_)
@@ -1191,9 +1190,9 @@
                   ((fx= _g30775_ 2) (apply _opt-lambda2316924839_ _g30776_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
-                    |gerbil/core::<match>[1]#parse-match-pattern|
+                    |gerbil/core$<match>[1]#parse-match-pattern|
                     _g30776_)))))))
-    (define |gerbil/core::<match>[1]#match-pattern?|
+    (define |gerbil/core$<match>[1]#match-pattern?|
       (lambda (_stx23155_)
         (call-with-escape
          (lambda (_E23159_)
@@ -1205,9 +1204,9 @@
                     (_E!23162_ _e23165_))))
             (lambda ()
               (begin
-                (|gerbil/core::<match>[1]#parse-match-pattern| _stx23155_)
+                (|gerbil/core$<match>[1]#parse-match-pattern| _stx23155_)
                 '#t)))))))
-    (define |gerbil/core::<match>[1]#match-pattern-vars|
+    (define |gerbil/core$<match>[1]#match-pattern-vars|
       (lambda (_ptree21944_)
         (letrec ((_loop21947_
                   (lambda (_ptree22222_ _vars22224_ _K22225_)
@@ -1948,7 +1947,7 @@
                                   (_g2195821985_ _g2196021989_)))))
                       (_g2195722036_ _rest21953_)))))
           (_loop21947_ _ptree21944_ '() values))))
-    (define |gerbil/core::<match>[1]#generate-match1|
+    (define |gerbil/core$<match>[1]#generate-match1|
       (lambda (_stx18760_ _tgt18762_ _ptree18763_ _K18764_ _E18765_)
         (letrec ((_generate118767_
                   (lambda (_tgt20297_ _ptree20299_ _K20300_ _E20301_)
@@ -3595,7 +3594,7 @@
                                       (_g1967619693_ _g1967719697_))
                                   (_g1967619693_ _g1967719697_)))))
                       (_g1967520293_
-                       (|gerbil/core::<match>[1]#match-pattern-vars|
+                       (|gerbil/core$<match>[1]#match-pattern-vars|
                         _hd19671_)))))
                  (_generate-simple-vector18770_
                   (lambda (_tgt19511_
@@ -3756,9 +3755,9 @@
                            _K19158_
                            _E19159_)
                     (let* ((_rtd19161_
-                            (if (|gerbil/core::<MOP>::<MOP:2>[1]#extended-struct-info?|
+                            (if (|gerbil/core$<MOP>$<MOP:2>[1]#extended-struct-info?|
                                  _info19154_)
-                                (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor|
+                                (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-exhibitor|
                                  _info19154_)
                                 '#f))
                            (_fields19171_
@@ -3766,17 +3765,17 @@
                                             (_k19169_ '0))
                               (if _rtd19167_
                                   (_lp19164_
-                                   (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor-e|
-                                    (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-super|
+                                   (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-exhibitor-e|
+                                    (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-super|
                                      _rtd19167_))
-                                   (fx+ (length (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-fields|
+                                   (fx+ (length (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-fields|
                                                  _rtd19167_))
                                         _k19169_))
                                   _k19169_)))
                            (_final?19174_
                             (if _rtd19161_
                                 (assgetq 'final:
-                                         (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-plist|
+                                         (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-plist|
                                           _rtd19161_))
                                 '#f))
                            (_g1917719185_
@@ -3960,7 +3959,7 @@
                                                           'struct-instance?))))))
                                               _g1920819219_))))
                                      (_g1920619413_
-                                      (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-identifier|
+                                      (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-identifier|
                                        _info19154_)))))
                                _g1917819189_))))
                       (_g1917619417_ _tgt19156_))))
@@ -3971,9 +3970,9 @@
                            _K18779_
                            _E18780_)
                     (letrec* ((_rtd18782_
-                               (if (|gerbil/core::<MOP>::<MOP:2>[1]#extended-class-info?|
+                               (if (|gerbil/core$<MOP>$<MOP:2>[1]#extended-class-info?|
                                     _info18775_)
-                                   (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor|
+                                   (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-exhibitor|
                                     _info18775_)
                                    '#f))
                               (_known-slot?18784_
@@ -3989,7 +3988,7 @@
                               (_final?18785_
                                (if _rtd18782_
                                    (assgetq 'final:
-                                            (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-plist|
+                                            (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-plist|
                                              _rtd18782_))
                                    '#f))
                               (_rtd-known-slot?18786_
@@ -3997,7 +3996,7 @@
                                  (if _rtd19135_
                                      (let ((_$e19139_
                                             (memq _slot19137_
-                                                  (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-slots|
+                                                  (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-slots|
                                                    _rtd19135_))))
                                        (if _$e19139_
                                            _$e19139_
@@ -4005,8 +4004,8 @@
                                                     (_rtd-known-slot?18786_
                                                      _g1914219144_
                                                      _slot19137_))
-                                                  (map |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor-e|
-                                                       (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-super|
+                                                  (map |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-exhibitor-e|
+                                                       (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-super|
                                                         _rtd19135_)))))
                                      '#f)))
                               (_recur18787_
@@ -4228,7 +4227,7 @@
                                   (gx#datum->syntax '#f 'class-instance?))))))
                        _g1884818859_))))
               (_g1884618909_
-               (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-identifier|
+               (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-identifier|
                 _info18775_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 _g1882018831_))))
@@ -4236,7 +4235,7 @@
                                  _g1879018801_))))
                         (_g1878818917_ (gx#genident 'class)))))))
           (_generate118767_ _tgt18762_ _ptree18763_ _K18764_ _E18765_))))
-    (define |gerbil/core::<match>[1]#generate-match*|
+    (define |gerbil/core$<match>[1]#generate-match*|
       (lambda (_stx17759_ _tgt-lst17761_ _clauses17762_)
         (letrec ((_parse-body17764_
                   (lambda (_hd-len18582_)
@@ -4298,7 +4297,7 @@
                              (cons (cons (gx#genident 'try-match)
                                          (cons (gx#stx-map
                                                 (lambda (_g1871018712_)
-                                                  (|gerbil/core::<match>[1]#parse-match-pattern|
+                                                  (|gerbil/core$<match>[1]#parse-match-pattern|
                                                    _g1871018712_
                                                    _stx17759_))
                                                 _L18698_)
@@ -4333,7 +4332,7 @@
                          (_tl1865718734_ (##cdr _e1865518727_)))
                      (if (gx#identifier? _hd1865618731_)
                          (if (gx#free-identifier=?
-                              |gerbil/core::<match>[1]#_g30783_|
+                              |gerbil/core$<match>[1]#_g30783_|
                               _hd1865618731_)
                              ((lambda (_L18737_)
                                 (if (if (gx#stx-list? _L18737_)
@@ -4800,7 +4799,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                     _g1801218023_))))
                            (_g1801018049_
-                            (|gerbil/core::<match>[1]#generate-match1|
+                            (|gerbil/core$<match>[1]#generate-match1|
                              _stx17759_
                              _L17873_
                              _L17825_
@@ -4828,7 +4827,7 @@
                                                      (_g1791217929_
                                                       _g1791317933_)))))
                                          (_g1791118065_
-                                          (|gerbil/core::<match>[1]#match-pattern-vars|
+                                          (|gerbil/core$<match>[1]#match-pattern-vars|
                                            _L17825_)))))
                                    _g1788617897_))))
                           (_g1788418069_ (gx#genident 'K))))
@@ -4844,7 +4843,7 @@
                         (_g1778118077_ _rest17778_))))))
           (_generate-body17766_
            (_parse-body17764_ (gx#stx-length _tgt-lst17761_))))))
-    (define |gerbil/core::<match>[1]#generate-match|
+    (define |gerbil/core$<match>[1]#generate-match|
       (lambda (_stx17661_ _tgt17663_ _clauses17664_)
         (letrec ((_reclause17666_
                   (lambda (_clause17669_)
@@ -4890,18 +4889,18 @@
                                            (##cdr _e1767617741_)))
                                       (if (gx#identifier? _hd1767717745_)
                                           (if (gx#free-identifier=?
-                                               |gerbil/core::<match>[1]#_g30788_|
+                                               |gerbil/core$<match>[1]#_g30788_|
                                                _hd1767717745_)
                                               ((lambda () _clause17669_))
                                               (_g1767217734_ _g1767517738_))
                                           (_g1767217734_ _g1767517738_))))
                                   (_g1767217734_ _g1767517738_)))))
                       (_g1767117755_ _clause17669_)))))
-          (|gerbil/core::<match>[1]#generate-match*|
+          (|gerbil/core$<match>[1]#generate-match*|
            _stx17661_
            (cons _tgt17663_ '())
            (gx#stx-map _reclause17666_ _clauses17664_)))))
-    (define |gerbil/core::<match>[:0:]#match|
+    (define |gerbil/core$<match>[:0:]#match|
       (lambda (_stx24868_)
         (let* ((_g2487324902_
                 (lambda (_g2487424898_)
@@ -4948,7 +4947,7 @@
                                              (cons _L24987_ '()))))))
                            _g2497324984_))))
                   (_g2497125002_
-                   (|gerbil/core::<match>[1]#generate-match|
+                   (|gerbil/core$<match>[1]#generate-match|
                     _stx24868_
                     _L24960_
                     _L24929_)))))
@@ -4974,7 +4973,7 @@
                                       (_tl2488825034_ (##cdr _e2488625027_)))
                                   (if (gx#identifier? _hd2488725031_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core::<match>[1]#_g30789_|
+                                           |gerbil/core$<match>[1]#_g30789_|
                                            _hd2488725031_)
                                           ((lambda (_L25037_)
                                              (if (gx#stx-list? _L25037_)
@@ -5033,7 +5032,7 @@
                                       (_tl2488125139_ (##cdr _e2487925132_)))
                                   (if (gx#identifier? _hd2488025136_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core::<match>[1]#_g30790_|
+                                           |gerbil/core$<match>[1]#_g30790_|
                                            _hd2488025136_)
                                           ((lambda (_L25142_)
                                              (if (gx#stx-list? _L25142_)
@@ -5080,7 +5079,7 @@
                               (_g2487125115_ _g2487425119_))))
                       (_g2487125115_ _g2487425119_)))))
           (_g2487025220_ _stx24868_))))
-    (define |gerbil/core::<match>[:0:]#match*|
+    (define |gerbil/core$<match>[:0:]#match*|
       (lambda (_stx25224_)
         (let* ((_g2522725251_
                 (lambda (_g2522825247_)
@@ -5205,7 +5204,7 @@
                    _g2539925410_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (_g2539725439_
-                                                   (|gerbil/core::<match>[1]#generate-match*|
+                                                   (|gerbil/core$<match>[1]#generate-match*|
                                                     _stx25224_
                                                     (begin
                                                       '#!void
@@ -5246,7 +5245,7 @@
                               (_g2522725251_ _g2522825255_))))
                       (_g2522725251_ _g2522825255_)))))
           (_g2522625463_ _stx25224_))))
-    (define |gerbil/core::<match>[:0:]#with|
+    (define |gerbil/core$<match>[:0:]#with|
       (lambda (_$stx25469_)
         (let* ((_g2547525558_
                 (lambda (_g2547625554_)
@@ -5460,7 +5459,7 @@
                                                             _L25798_
                                                             _L25799_
                                                             _L25800_)
-                                                     (if (|gerbil/core::<match>[1]#match-pattern?|
+                                                     (if (|gerbil/core$<match>[1]#match-pattern?|
                                                           _L25799_)
                                                          (cons _L25800_
                                                                (cons (cons (cons _L25799_
@@ -5564,7 +5563,7 @@
                               (_g2547325831_ _g2547625835_))))
                       (_g2547325831_ _g2547625835_)))))
           (_g2547225913_ _$stx25469_))))
-    (define |gerbil/core::<match>[:0:]#with*|
+    (define |gerbil/core$<match>[:0:]#with*|
       (lambda (_$stx25921_)
         (let* ((_g2592625978_
                 (lambda (_g2592725974_)
@@ -5749,7 +5748,7 @@
                               (_g2592526061_ _g2592726065_))))
                       (_g2592526061_ _g2592726065_)))))
           (_g2592426187_ _$stx25921_))))
-    (define |gerbil/core::<match>[:0:]#?|
+    (define |gerbil/core$<match>[:0:]#?|
       (lambda (_$stx26193_)
         (let* ((_g2620426348_
                 (lambda (_g2620526344_)
@@ -5794,7 +5793,7 @@
                               (_tl2633926402_ (##cdr _e2633726395_)))
                           (if (gx#identifier? _hd2633826399_)
                               (if (gx#free-identifier=?
-                                   |gerbil/core::<match>[1]#_g30807_|
+                                   |gerbil/core$<match>[1]#_g30807_|
                                    _hd2633826399_)
                                   (if (gx#stx-pair? _tl2633926402_)
                                       (let ((_e2634026405_
@@ -5937,7 +5936,7 @@
                                                (##cdr _e2630026538_)))
                                           (if (gx#identifier? _hd2630126542_)
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core::<match>[1]#_g30808_|
+                                                   |gerbil/core$<match>[1]#_g30808_|
                                                    _hd2630126542_)
                                                   (if (gx#stx-pair?
                                                        _tl2630226545_)
@@ -6054,7 +6053,7 @@
                                                (##cdr _e2626326702_)))
                                           (if (gx#identifier? _hd2626426706_)
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core::<match>[1]#_g30809_|
+                                                   |gerbil/core$<match>[1]#_g30809_|
                                                    _hd2626426706_)
                                                   (if (gx#stx-pair?
                                                        _tl2626526709_)
@@ -6117,7 +6116,7 @@
                                                (##cdr _e2623926782_)))
                                           (if (gx#identifier? _hd2624026786_)
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core::<match>[1]#_g30810_|
+                                                   |gerbil/core$<match>[1]#_g30810_|
                                                    _hd2624026786_)
                                                   (if (gx#stx-pair/null?
                                                        _tl2624126789_)
@@ -6211,7 +6210,7 @@
                                                (##cdr _e2621526892_)))
                                           (if (gx#identifier? _hd2621626896_)
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core::<match>[1]#_g30813_|
+                                                   |gerbil/core$<match>[1]#_g30813_|
                                                    _hd2621626896_)
                                                   (if (gx#stx-pair/null?
                                                        _tl2621726899_)
@@ -6286,7 +6285,7 @@
                               (_g2619726865_ _g2620526869_))))
                       (_g2619726865_ _g2620526869_)))))
           (_g2619626975_ _$stx26193_))))
-    (define |gerbil/core::<match>[:0:]#defsyntax-for-match|
+    (define |gerbil/core$<match>[:0:]#defsyntax-for-match|
       (lambda (_$stx26981_)
         (let* ((_g2698627020_
                 (lambda (_g2698727016_)
@@ -6459,7 +6458,7 @@
                               (_g2698527077_ _g2698727081_))))
                       (_g2698527077_ _g2698727081_)))))
           (_g2698427145_ _$stx26981_))))
-    (define |gerbil/core::<match>[:0:]#defrules-for-match|
+    (define |gerbil/core$<match>[:0:]#defrules-for-match|
       (lambda (_$stx27149_)
         (let* ((_g2715327168_
                 (lambda (_g2715427164_)

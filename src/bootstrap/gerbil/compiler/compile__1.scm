@@ -341,7 +341,7 @@
                       (_g26202956_ _g26232960_)))))
           (_g26193014_ _$stx2616_))))
     (define |gxc[:0:]#meta-state|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g11112_|
        'expander-identifiers:
@@ -363,7 +363,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gxc#meta-state::t
         '#f
         'meta-state
@@ -371,7 +371,7 @@
         '()
         '(src n open blocks))))
     (define |gxc[:0:]#meta-state-block|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g11124_|
        'expander-identifiers:
@@ -393,7 +393,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gxc#meta-state-block::t
         '#f
         'meta-state-block

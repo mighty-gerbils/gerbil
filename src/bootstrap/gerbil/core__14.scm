@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core::<more-syntax-sugar>[:0:]#identifier-rules|
+  (define |gerbil/core$<more-syntax-sugar>[:0:]#identifier-rules|
     (lambda (_$stx28549_)
       (let* ((_g2855328564_
               (lambda (_g2855428560_)
@@ -22,7 +22,7 @@
                          _tl2855828578_)))
                     (_g2855328564_ _g2855428568_)))))
         (_g2855228594_ _$stx28549_))))
-  (define |gerbil/core::<more-syntax-sugar>[:0:]#quasisyntax|
+  (define |gerbil/core$<more-syntax-sugar>[:0:]#quasisyntax|
     (lambda (_$stx28598_)
       (let ((_g2860128608_
              (lambda (_g2860228604_)

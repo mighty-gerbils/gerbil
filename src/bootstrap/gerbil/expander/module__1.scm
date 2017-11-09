@@ -60,7 +60,7 @@
   (define |gx[1]#_g11598_| (gx#core-quote-syntax 'user-expander))
   (begin
     (define |gx[:0:]#module-import|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g11541_|
        'expander-identifiers:
@@ -82,7 +82,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#module-import::t
         '#f
         'module-import
@@ -90,7 +90,7 @@
         '((final: . #t))
         '(source name phi weak?))))
     (define |gx[:0:]#module-export|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g11553_|
        'expander-identifiers:
@@ -115,7 +115,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#module-export::t
         '#f
         'module-export
@@ -123,7 +123,7 @@
         '((final: . #t))
         '(context key phi name weak?))))
     (define |gx[:0:]#import-set|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g11567_|
        'expander-identifiers:
@@ -140,7 +140,7 @@
                                                              '())))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#import-set::t
         '#f
         'import-set
@@ -148,7 +148,7 @@
         '((final: . #t))
         '(source phi imports))))
     (define |gx[:0:]#export-set|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g11577_|
        'expander-identifiers:
@@ -165,7 +165,7 @@
                                                              '())))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#export-set::t
         '#f
         'export-set
@@ -173,7 +173,7 @@
         '((final: . #t))
         '(source phi exports))))
     (define |gx[:0:]#import-expander|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g11587_|
        'expander-identifiers:
@@ -182,7 +182,7 @@
                    (cons |gx[1]#_g11590_|
                          (cons |gx[1]#_g11591_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#import-expander::t
         |gx[1]#_g11592_|
         'import-expander
@@ -190,7 +190,7 @@
         '()
         '())))
     (define |gx[:0:]#export-expander|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g11593_|
        'expander-identifiers:
@@ -199,7 +199,7 @@
                    (cons |gx[1]#_g11596_|
                          (cons |gx[1]#_g11597_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#export-expander::t
         |gx[1]#_g11598_|
         'export-expander

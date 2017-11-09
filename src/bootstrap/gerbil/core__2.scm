@@ -1,9 +1,9 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core::<syntax-sugar>[1]#_g30575_|
+  (define |gerbil/core$<syntax-sugar>[1]#_g30575_|
     (gx#core-quote-syntax 'values))
   (begin
-    (define |gerbil/core::<syntax-sugar>[:0:]#syntax-rules|
+    (define |gerbil/core$<syntax-sugar>[:0:]#syntax-rules|
       (lambda (_stx336_)
         (let* ((_g339363_
                 (lambda (_g340359_)
@@ -208,7 +208,7 @@
                               (_g339363_ _g340367_))))
                       (_g339363_ _g340367_)))))
           (_g338668_ _stx336_))))
-    (define |gerbil/core::<syntax-sugar>[:0:]#with-syntax|
+    (define |gerbil/core$<syntax-sugar>[:0:]#with-syntax|
       (lambda (_stx674_)
         (let* ((_g679764_
                 (lambda (_g680760_)
@@ -521,7 +521,7 @@
                               (_g6771047_ _g6801051_))))
                       (_g6771047_ _g6801051_)))))
           (_g6761129_ _stx674_))))
-    (define |gerbil/core::<syntax-sugar>[:0:]#with-syntax*|
+    (define |gerbil/core$<syntax-sugar>[:0:]#with-syntax*|
       (lambda (_stx1137_)
         (let* ((_g11421219_
                 (lambda (_g11431215_)
@@ -646,7 +646,7 @@
                                                                _hd11781371_)
                                                               (if (gx#free-identifier=?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           |gerbil/core::<syntax-sugar>[1]#_g30575_|
+                           |gerbil/core$<syntax-sugar>[1]#_g30575_|
                            _hd11781371_)
                           (if (gx#stx-pair? _tl11761364_)
                               (let ((_e11801377_ (gx#syntax-e _tl11761364_)))
@@ -803,7 +803,7 @@
                               (_g11401458_ _g11431462_))))
                       (_g11401458_ _g11431462_)))))
           (_g11391540_ _stx1137_))))
-    (define |gerbil/core::<syntax-sugar>[:0:]#syntax/loc|
+    (define |gerbil/core$<syntax-sugar>[:0:]#syntax/loc|
       (lambda (_stx1547_)
         (let* ((_g15501568_
                 (lambda (_g15511564_)
