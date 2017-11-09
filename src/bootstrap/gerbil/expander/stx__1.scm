@@ -28,7 +28,7 @@
   (define |gx[1]#_g4040_| (gx#core-quote-syntax 'AST))
   (begin
     (define |gx[:0:]#identifier-wrap|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g4015_|
        'expander-identifiers:
@@ -39,7 +39,7 @@
                                (cons (cons |gx[1]#_g4020_| '())
                                      (cons (cons |gx[1]#_g4021_| '()) '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#identifier-wrap::t
         |gx[1]#_g4022_|
         'syntax
@@ -47,7 +47,7 @@
         '((final: . #t))
         '(marks))))
     (define |gx[:0:]#syntax-wrap|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g4023_|
        'expander-identifiers:
@@ -58,7 +58,7 @@
                                (cons (cons |gx[1]#_g4028_| '())
                                      (cons (cons |gx[1]#_g4029_| '()) '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#syntax-wrap::t
         |gx[1]#_g4030_|
         'syntax
@@ -66,7 +66,7 @@
         '((final: . #t))
         '(mark))))
     (define |gx[:0:]#syntax-quote|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g4031_|
        'expander-identifiers:
@@ -80,7 +80,7 @@
                                                  (cons |gx[1]#_g4039_| '()))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#syntax-quote::t
         |gx[1]#_g4040_|
         'syntax

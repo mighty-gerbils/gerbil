@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core::<module-sugar>[:0:]#require|
+  (define |gerbil/core$<module-sugar>[:0:]#require|
     (lambda (_$stx28613_)
       (let* ((_g2861828637_
               (lambda (_g2861928633_)
@@ -52,7 +52,7 @@
                             (_g2861728683_ _g2861928687_))))
                     (_g2861728683_ _g2861928687_)))))
         (_g2861628704_ _$stx28613_))))
-  (define |gerbil/core::<module-sugar>[:0:]#defsyntax-for-import|
+  (define |gerbil/core$<module-sugar>[:0:]#defsyntax-for-import|
     (lambda (_$stx28708_)
       (let* ((_g2871328753_
               (lambda (_g2871428749_)
@@ -190,7 +190,7 @@
                             (_g2871228854_ _g2871428858_))))
                     (_g2871228854_ _g2871428858_)))))
         (_g2871128908_ _$stx28708_))))
-  (define |gerbil/core::<module-sugar>[:0:]#defsyntax-for-export|
+  (define |gerbil/core$<module-sugar>[:0:]#defsyntax-for-export|
     (lambda (_$stx28913_)
       (let* ((_g2891828958_
               (lambda (_g2891928954_)
@@ -328,7 +328,7 @@
                             (_g2891729059_ _g2891929063_))))
                     (_g2891729059_ _g2891929063_)))))
         (_g2891629113_ _$stx28913_))))
-  (define |gerbil/core::<module-sugar>[:0:]#only-in|
+  (define |gerbil/core$<module-sugar>[:0:]#only-in|
     (gx#make-import-expander
      (lambda (_stx29118_)
        (let* ((_g2912129145_
@@ -449,7 +449,7 @@
                              (_g2912129145_ _g2912229149_))))
                      (_g2912129145_ _g2912229149_)))))
          (_g2912029267_ _stx29118_)))))
-  (define |gerbil/core::<module-sugar>[:0:]#except-in|
+  (define |gerbil/core$<module-sugar>[:0:]#except-in|
     (gx#make-import-expander
      (lambda (_stx29272_)
        (let* ((_g2927529299_
@@ -570,14 +570,14 @@
                              (_g2927529299_ _g2927629303_))))
                      (_g2927529299_ _g2927629303_)))))
          (_g2927429421_ _stx29272_)))))
-  (define |gerbil/core::<module-sugar>[1]#module-import-rename|
+  (define |gerbil/core$<module-sugar>[1]#module-import-rename|
     (lambda (_in29473_ _rename29475_)
       (gx#make-module-import
        (gx#module-import-source _in29473_)
        _rename29475_
        (gx#module-import-phi _in29473_)
        (gx#module-import-weak? _in29473_))))
-  (define |gerbil/core::<module-sugar>[1]#prefix-identifier-key|
+  (define |gerbil/core$<module-sugar>[1]#prefix-identifier-key|
     (lambda (_name29426_ _pre29428_)
       (let* ((_name2942929437_ _name29426_)
              (_E2943229443_
@@ -593,7 +593,7 @@
               (let* ((_id29467_ _hd2943429461_) (_mark29470_ _tl2943529464_))
                 (_K2943329457_ _mark29470_ _id29467_)))
             (_else2943129449_)))))
-  (define |gerbil/core::<module-sugar>[:0:]#rename-in|
+  (define |gerbil/core$<module-sugar>[:0:]#rename-in|
     (gx#make-import-expander
      (lambda (_stx29477_)
        (let* ((_g2948029513_
@@ -732,7 +732,7 @@
                           ((lambda (_rename29677_)
                              (begin
                                (hash-put! _found29635_ _name29670_ '#t)
-                               (cons (|gerbil/core::<module-sugar>[1]#module-import-rename|
+                               (cons (|gerbil/core$<module-sugar>[1]#module-import-rename|
                                       _in29666_
                                       _rename29677_)
                                      _r29668_)))
@@ -787,7 +787,7 @@
                              (_g2948029513_ _g2948129517_))))
                      (_g2948029513_ _g2948129517_)))))
          (_g2947929699_ _stx29477_)))))
-  (define |gerbil/core::<module-sugar>[:0:]#prefix-in|
+  (define |gerbil/core$<module-sugar>[:0:]#prefix-in|
     (gx#make-import-expander
      (lambda (_stx29705_)
        (let* ((_g2970829726_
@@ -822,7 +822,7 @@
                                                              _L29765_))
                                                            (_rename-e29790_
                                                             (lambda (_name29787_)
-                                                              (|gerbil/core::<module-sugar>[1]#prefix-identifier-key|
+                                                              (|gerbil/core$<module-sugar>[1]#prefix-identifier-key|
                                                                _name29787_
                                                                _pre29781_)))
                                                            (_fold-e29800_
@@ -830,7 +830,7 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                               (lambda (_in29796_ _r29798_)
                                 (if (gx#module-import? _in29796_)
-                                    (cons (|gerbil/core::<module-sugar>[1]#module-import-rename|
+                                    (cons (|gerbil/core$<module-sugar>[1]#module-import-rename|
                                            _in29796_
                                            (_rename-e29790_
                                             (gx#module-import-name _in29796_)))
@@ -853,7 +853,7 @@
                              (_g2970829726_ _g2970929730_))))
                      (_g2970829726_ _g2970929730_)))))
          (_g2970729805_ _stx29705_)))))
-  (define |gerbil/core::<module-sugar>[:0:]#except-out|
+  (define |gerbil/core$<module-sugar>[:0:]#except-out|
     (gx#make-export-expander
      (lambda (_stx29809_)
        (let* ((_g2981229836_
@@ -974,7 +974,7 @@
                              (_g2981229836_ _g2981329840_))))
                      (_g2981229836_ _g2981329840_)))))
          (_g2981129958_ _stx29809_)))))
-  (define |gerbil/core::<module-sugar>[1]#module-export-rename|
+  (define |gerbil/core$<module-sugar>[1]#module-export-rename|
     (lambda (_out29963_ _rename29965_)
       (gx#make-module-export
        (gx#module-export-context _out29963_)
@@ -982,7 +982,7 @@
        (gx#module-export-phi _out29963_)
        _rename29965_
        (gx#module-export-weak? _out29963_))))
-  (define |gerbil/core::<module-sugar>[:0:]#rename-out|
+  (define |gerbil/core$<module-sugar>[:0:]#rename-out|
     (gx#make-export-expander
      (lambda (_stx29967_)
        (let* ((_g2997030003_
@@ -1121,7 +1121,7 @@
                           ((lambda (_rename30167_)
                              (begin
                                (hash-put! _found30125_ _name30160_ '#t)
-                               (cons (|gerbil/core::<module-sugar>[1]#module-export-rename|
+                               (cons (|gerbil/core$<module-sugar>[1]#module-export-rename|
                                       _out30156_
                                       _rename30167_)
                                      _r30158_)))
@@ -1176,7 +1176,7 @@
                              (_g2997030003_ _g2997130007_))))
                      (_g2997030003_ _g2997130007_)))))
          (_g2996930189_ _stx29967_)))))
-  (define |gerbil/core::<module-sugar>[:0:]#prefix-out|
+  (define |gerbil/core$<module-sugar>[:0:]#prefix-out|
     (gx#make-export-expander
      (lambda (_stx30195_)
        (let* ((_g3019830216_
@@ -1211,7 +1211,7 @@
                                                              _L30255_))
                                                            (_rename-e30280_
                                                             (lambda (_name30277_)
-                                                              (|gerbil/core::<module-sugar>[1]#prefix-identifier-key|
+                                                              (|gerbil/core$<module-sugar>[1]#prefix-identifier-key|
                                                                _name30277_
                                                                _pre30271_)))
                                                            (_fold-e30290_
@@ -1219,7 +1219,7 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                               (lambda (_out30286_ _r30288_)
                                 (if (gx#module-export? _out30286_)
-                                    (cons (|gerbil/core::<module-sugar>[1]#module-export-rename|
+                                    (cons (|gerbil/core$<module-sugar>[1]#module-export-rename|
                                            _out30286_
                                            (_rename-e30280_
                                             (gx#module-export-name
@@ -1243,7 +1243,7 @@
                              (_g3019830216_ _g3019930220_))))
                      (_g3019830216_ _g3019930220_)))))
          (_g3019730295_ _stx30195_)))))
-  (define |gerbil/core::<module-sugar>[:0:]#struct-out|
+  (define |gerbil/core$<module-sugar>[:0:]#struct-out|
     (gx#make-export-expander
      (lambda (_stx30299_)
        (let* ((_g3030230322_
@@ -1319,7 +1319,7 @@
                                                       (gx#syntax-local-value
                                                        _L30435_
                                                        false)))
-                                                 (if (|gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info?|
+                                                 (if (|gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info?|
                                                       _info30450_)
                                                      (let* ((_g3045230469_
                                                              (slot-ref

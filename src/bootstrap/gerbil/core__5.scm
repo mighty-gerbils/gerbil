@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core::<sugar>::<sugar:3>[:0:]#defsyntax|
+  (define |gerbil/core$<sugar>$<sugar:3>[:0:]#defsyntax|
     (lambda (_$stx12887_)
       (let* ((_g1289212931_
               (lambda (_g1289312927_)
@@ -133,7 +133,7 @@
                             (_g1289112987_ _g1289312991_))))
                     (_g1289112987_ _g1289312991_)))))
         (_g1289013085_ _$stx12887_))))
-  (define |gerbil/core::<sugar>::<sugar:3>[:0:]#definline|
+  (define |gerbil/core$<sugar>$<sugar:3>[:0:]#definline|
     (lambda (_stx13090_)
       (let* ((_g1309313130_
               (lambda (_g1309413126_)
