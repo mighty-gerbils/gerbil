@@ -315,9 +315,23 @@ namespace: gx
 (def (core-module-path->id path)
   (string->symbol (core-module-path->namespace path)))
 
+(def (sanitize-path path)
+  (define sanitize-chars '(#\< #\> #\:))
+  (let ((dir (path-directory path))
+	(filename (path-strip-directory path)))
+    (string-join
+      `(,dir
+	,@(map (lambda (x)
+		 (if (memq x sanitize-chars)
+		   (append-strings (list "__" (number->string (char->integer x)) "__"))
+		   (string x)))
+	       (string->list filename)))
+      "")))
+
 ;; rel: source-location/path
 (def (core-resolve-module-path stx-path (rel #f))
   (let* ((path (stx-e stx-path))
+	 (path (sanitize-path path))
          (path (if (string-empty? (path-extension path))
                  (string-append path ".ss")
                  path)))
@@ -328,6 +342,7 @@ namespace: gx
 (def (core-resolve-library-module-path libpath)
   (let* ((spath (symbol->string (stx-e libpath)))
          (spath (substring spath 1 (string-length spath)))
+	 (spath (sanitize-path spath))
          (ext (path-extension spath))
          (ssi (if (string-empty? ext)
                 (string-append spath ".ssi")
