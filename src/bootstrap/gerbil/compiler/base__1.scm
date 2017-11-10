@@ -218,7 +218,7 @@
                       (_g338362_ _g339366_)))))
           (_g337667_ _stx335_))))
     (define |gxc[:0:]#symbol-table|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g2606_|
        'expander-identifiers:
@@ -232,7 +232,7 @@
                                                  (cons |gxc[1]#_g2613_| '()))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gxc#symbol-table::t
         '#f
         'symbol-table

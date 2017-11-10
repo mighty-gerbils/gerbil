@@ -1,48 +1,48 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core::<more-sugar>[1]#setq-macro::t|
+  (define |gerbil/core$<more-sugar>[1]#setq-macro::t|
     (make-class-type
      'gerbil.core#setq-macro::t
-     (cons |gerbil/core::<MOP>::<MOP:3>[1]#macro-object::t| '())
+     (cons |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t| '())
      '()
      'setq-macro
      '()
      '#f))
-  (define |gerbil/core::<more-sugar>[1]#setq-macro?|
-    (make-class-predicate |gerbil/core::<more-sugar>[1]#setq-macro::t|))
-  (define |gerbil/core::<more-sugar>[1]#make-setq-macro|
+  (define |gerbil/core$<more-sugar>[1]#setq-macro?|
+    (make-class-predicate |gerbil/core$<more-sugar>[1]#setq-macro::t|))
+  (define |gerbil/core$<more-sugar>[1]#make-setq-macro|
     (lambda _$args27227_
       (apply make-class-instance
-             |gerbil/core::<more-sugar>[1]#setq-macro::t|
+             |gerbil/core$<more-sugar>[1]#setq-macro::t|
              _$args27227_)))
-  (define |gerbil/core::<more-sugar>[1]#setf-macro::t|
+  (define |gerbil/core$<more-sugar>[1]#setf-macro::t|
     (make-class-type
      'gerbil.core#setf-macro::t
-     (cons |gerbil/core::<MOP>::<MOP:3>[1]#macro-object::t| '())
+     (cons |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t| '())
      '()
      'setf-macro
      '()
      '#f))
-  (define |gerbil/core::<more-sugar>[1]#setf-macro?|
-    (make-class-predicate |gerbil/core::<more-sugar>[1]#setf-macro::t|))
-  (define |gerbil/core::<more-sugar>[1]#make-setf-macro|
+  (define |gerbil/core$<more-sugar>[1]#setf-macro?|
+    (make-class-predicate |gerbil/core$<more-sugar>[1]#setf-macro::t|))
+  (define |gerbil/core$<more-sugar>[1]#make-setf-macro|
     (lambda _$args27223_
       (apply make-class-instance
-             |gerbil/core::<more-sugar>[1]#setf-macro::t|
+             |gerbil/core$<more-sugar>[1]#setf-macro::t|
              _$args27223_)))
-  (define |gerbil/core::<more-sugar>[1]#syntax-local-setf-macro?|
+  (define |gerbil/core$<more-sugar>[1]#syntax-local-setf-macro?|
     (lambda (_stx27220_)
       (if (gx#identifier? _stx27220_)
-          (|gerbil/core::<more-sugar>[1]#setf-macro?|
+          (|gerbil/core$<more-sugar>[1]#setf-macro?|
            (gx#syntax-local-value _stx27220_ false))
           '#f)))
-  (define |gerbil/core::<more-sugar>[1]#syntax-local-setq-macro?|
+  (define |gerbil/core$<more-sugar>[1]#syntax-local-setq-macro?|
     (lambda (_stx27217_)
       (if (gx#identifier? _stx27217_)
-          (|gerbil/core::<more-sugar>[1]#setq-macro?|
+          (|gerbil/core$<more-sugar>[1]#setq-macro?|
            (gx#syntax-local-value _stx27217_ false))
           '#f)))
-  (define |gerbil/core::<more-sugar>[:0:]#set!|
+  (define |gerbil/core$<more-sugar>[:0:]#set!|
     (lambda (_stx27231_)
       (let* ((_g2723727296_
               (lambda (_g2723827292_)
@@ -94,7 +94,7 @@
                               (let ((_hd2727827372_ (##car _e2727727368_))
                                     (_tl2727927375_ (##cdr _e2727727368_)))
                                 ((lambda (_L27378_)
-                                   (if (|gerbil/core::<more-sugar>[1]#syntax-local-setq-macro?|
+                                   (if (|gerbil/core$<more-sugar>[1]#syntax-local-setq-macro?|
                                         _L27378_)
                                        (gx#core-apply-expander
                                         (gx#syntax-local-e _L27378_)
@@ -233,7 +233,7 @@
                                             (_tl2724827566_
                                              (##cdr _e2724627559_)))
                                         ((lambda (_L27569_)
-                                           (if (|gerbil/core::<more-sugar>[1]#syntax-local-setf-macro?|
+                                           (if (|gerbil/core$<more-sugar>[1]#syntax-local-setf-macro?|
                                                 (gx#datum->syntax '#f 'setfid))
                                                (gx#core-apply-expander
                                                 (gx#syntax-local-e _L27569_)
@@ -244,7 +244,7 @@
                             (_g2723427532_ _g2723827536_))))
                     (_g2723427532_ _g2723827536_)))))
         (_g2723327584_ _stx27231_))))
-  (define |gerbil/core::<more-sugar>[:0:]#values-set!|
+  (define |gerbil/core$<more-sugar>[:0:]#values-set!|
     (lambda (_stx27589_)
       (let* ((_g2759227616_
               (lambda (_g2759327612_)
@@ -396,7 +396,7 @@
                             (_g2759227616_ _g2759327620_))))
                     (_g2759227616_ _g2759327620_)))))
         (_g2759127794_ _stx27589_))))
-  (define |gerbil/core::<more-sugar>[:0:]#parameterize|
+  (define |gerbil/core$<more-sugar>[:0:]#parameterize|
     (lambda (_stx27800_)
       (let* ((_g2780427862_
               (lambda (_g2780527858_)
@@ -695,7 +695,7 @@
                             (_g2780328139_ _g2780528143_))))
                     (_g2780328139_ _g2780528143_)))))
         (_g2780228221_ _stx27800_))))
-  (define |gerbil/core::<more-sugar>[:0:]#let/cc|
+  (define |gerbil/core$<more-sugar>[:0:]#let/cc|
     (lambda (_$stx28229_)
       (let* ((_g2823328257_
               (lambda (_g2823428253_)
@@ -771,7 +771,7 @@
                             (_g2823328257_ _g2823428261_))))
                     (_g2823328257_ _g2823428261_)))))
         (_g2823228342_ _$stx28229_))))
-  (define |gerbil/core::<more-sugar>[:0:]#let/esc|
+  (define |gerbil/core$<more-sugar>[:0:]#let/esc|
     (lambda (_$stx28347_)
       (let* ((_g2835128375_
               (lambda (_g2835228371_)
@@ -847,7 +847,7 @@
                             (_g2835128375_ _g2835228379_))))
                     (_g2835128375_ _g2835228379_)))))
         (_g2835028460_ _$stx28347_))))
-  (define |gerbil/core::<more-sugar>[:0:]#unwind-protect|
+  (define |gerbil/core$<more-sugar>[:0:]#unwind-protect|
     (lambda (_$stx28465_)
       (let* ((_g2846928487_
               (lambda (_g2847028483_)

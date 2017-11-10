@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core::<MOP>::<MOP:1>[1]#generate-typedef|
+  (define |gerbil/core$<MOP>$<MOP:1>[1]#generate-typedef|
     (lambda (_stx13500_ _struct?13502_)
       (letrec ((_wrap13504_
                 (lambda (_e-stx14817_)
@@ -994,9 +994,9 @@
                               (_g1351113538_ _g1351213542_))))
                       (_g1351113538_ _g1351213542_)))))
           (_g1351014728_ _stx13500_)))))
-  (define |gerbil/core::<MOP>::<MOP:1>[:0:]#defstruct-type|
+  (define |gerbil/core$<MOP>$<MOP:1>[:0:]#defstruct-type|
     (lambda (_stx14824_)
-      (|gerbil/core::<MOP>::<MOP:1>[1]#generate-typedef| _stx14824_ '#t)))
-  (define |gerbil/core::<MOP>::<MOP:1>[:0:]#defclass-type|
+      (|gerbil/core$<MOP>$<MOP:1>[1]#generate-typedef| _stx14824_ '#t)))
+  (define |gerbil/core$<MOP>$<MOP:1>[:0:]#defclass-type|
     (lambda (_stx14827_)
-      (|gerbil/core::<MOP>::<MOP:1>[1]#generate-typedef| _stx14827_ '#f))))
+      (|gerbil/core$<MOP>$<MOP:1>[1]#generate-typedef| _stx14827_ '#f))))

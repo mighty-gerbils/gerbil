@@ -5,11 +5,11 @@
   (define |gx[1]#_g2844_| (gx#core-quote-syntax 'else))
   (begin
     (define |gx[:0:]#<error>|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-info|
        'runtime-identifier:
        |gx[1]#_g2842_|))
     (define |gx[:0:]#AST|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-info|
        'runtime-identifier:
        |gx[1]#_g2843_|))
     (define |gx[:0:]#core-syntax-case|

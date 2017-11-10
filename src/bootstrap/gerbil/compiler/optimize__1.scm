@@ -103,7 +103,7 @@
   (define |gxc[1]#_g20563_| (gx#core-quote-syntax '!procedure))
   (begin
     (define |gxc[:0:]#optimizer-info|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g20466_|
        'expander-identifiers:
@@ -117,7 +117,7 @@
                                                  (cons |gxc[1]#_g20473_| '()))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
         '#f
         'optimizer-info
@@ -125,7 +125,7 @@
         '()
         '(type ssxi))))
     (define |gxc[:0:]#!type|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g20474_|
        'expander-identifiers:
@@ -137,7 +137,7 @@
                                      (cons (cons |gxc[1]#_g20479_| '())
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
         '#f
         '!type
@@ -145,7 +145,7 @@
         '()
         '(id))))
     (define |gxc[:0:]#!alias|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g20480_|
        'expander-identifiers:
@@ -154,7 +154,7 @@
                    (cons |gxc[1]#_g20483_|
                          (cons |gxc[1]#_g20484_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
         |gxc[1]#_g20485_|
         '!alias
@@ -162,7 +162,7 @@
         '()
         '())))
     (define |gxc[:0:]#!struct-type|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g20486_|
        'expander-identifiers:
@@ -188,7 +188,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
         |gxc[1]#_g20503_|
         '!struct-type
@@ -196,7 +196,7 @@
         '()
         '(super fields xfields ctor plist methods))))
     (define |gxc[:0:]#!procedure|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g20504_|
        'expander-identifiers:
@@ -205,7 +205,7 @@
                    (cons |gxc[1]#_g20507_|
                          (cons |gxc[1]#_g20508_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
         |gxc[1]#_g20509_|
         '!procedure
@@ -213,7 +213,7 @@
         '()
         '())))
     (define |gxc[:0:]#!struct-pred|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g20510_|
        'expander-identifiers:
@@ -222,7 +222,7 @@
                    (cons |gxc[1]#_g20513_|
                          (cons |gxc[1]#_g20514_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
         |gxc[1]#_g20515_|
         '!struct-pred
@@ -230,7 +230,7 @@
         '()
         '())))
     (define |gxc[:0:]#!struct-cons|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g20516_|
        'expander-identifiers:
@@ -239,7 +239,7 @@
                    (cons |gxc[1]#_g20519_|
                          (cons |gxc[1]#_g20520_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
         |gxc[1]#_g20521_|
         '!struct-cons
@@ -247,7 +247,7 @@
         '()
         '())))
     (define |gxc[:0:]#!struct-getf|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g20522_|
        'expander-identifiers:
@@ -261,7 +261,7 @@
                                                  (cons |gxc[1]#_g20530_| '()))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
         |gxc[1]#_g20531_|
         '!struct-getf
@@ -269,7 +269,7 @@
         '()
         '(off unchecked?))))
     (define |gxc[:0:]#!struct-setf|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g20532_|
        'expander-identifiers:
@@ -283,7 +283,7 @@
                                                  (cons |gxc[1]#_g20540_| '()))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
         |gxc[1]#_g20541_|
         '!struct-setf
@@ -291,7 +291,7 @@
         '()
         '(off unchecked?))))
     (define |gxc[:0:]#!lambda|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g20542_|
        'expander-identifiers:
@@ -313,7 +313,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
         |gxc[1]#_g20555_|
         '!lambda
@@ -321,7 +321,7 @@
         '()
         '(arity dispatch inline inline-typedecl))))
     (define |gxc[:0:]#!case-lambda|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gxc[1]#_g20556_|
        'expander-identifiers:
@@ -333,7 +333,7 @@
                                      (cons (cons |gxc[1]#_g20562_| '())
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
         |gxc[1]#_g20563_|
         '!case-lambda

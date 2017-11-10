@@ -1,9 +1,9 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core::<MOP>::<MOP:2>[1]#_g30732_|
+  (define |gerbil/core$<MOP>$<MOP:2>[1]#_g30732_|
     (gx#core-quote-syntax '@method))
   (begin
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-info::t|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-info::t|
       (make-class-type
        'gerbil.core#runtime-type-info::t
        '()
@@ -11,50 +11,50 @@
        'runtime-type-info::t
        '()
        '#f))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-info?|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-info?|
       (make-class-predicate
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-info::t|))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-identifier|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-info::t|))
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-identifier|
       (make-class-slot-accessor
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-info::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-info::t|
        'runtime-identifier))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-identifier-set!|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-identifier-set!|
       (make-class-slot-mutator
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-info::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-info::t|
        'runtime-identifier))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-info::t|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-info::t|
       (make-class-type
        'gerbil.core#runtime-struct-info::t
-       (cons |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-info::t| '())
+       (cons |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-info::t| '())
        '()
        'struct-info
        '()
        '#f))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-info?|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-info?|
       (make-class-predicate
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-info::t|))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-info|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-info::t|))
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-info|
       (lambda _$args16277_
         (apply make-class-instance
-               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-info::t|
+               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-info::t|
                _$args16277_)))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-info::t|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-info::t|
       (make-class-type
        'gerbil.core#runtime-class-info::t
-       (cons |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-info::t| '())
+       (cons |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-info::t| '())
        '()
        'class-info
        '()
        '#f))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-info?|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-info?|
       (make-class-predicate
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-info::t|))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-info|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-info::t|))
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-class-info|
       (lambda _$args16273_
         (apply make-class-instance
-               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-info::t|
+               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-info::t|
                _$args16273_)))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info::t|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info::t|
       (make-class-type
        'gerbil.core#expander-type-info::t
        '()
@@ -62,75 +62,75 @@
        'expander-type-info::t
        '()
        '#f))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info?|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info?|
       (make-class-predicate
-       |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info::t|))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-identifiers|
+       |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info::t|))
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-identifiers|
       (make-class-slot-accessor
-       |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info::t|
        'expander-identifiers))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-identifiers-set!|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-identifiers-set!|
       (make-class-slot-mutator
-       |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info::t|
        'expander-identifiers))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#extended-runtime-type-info::t|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#extended-runtime-type-info::t|
       (make-class-type
        'gerbil.core#extended-runtime-type-info
-       (cons |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-info::t| '())
+       (cons |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-info::t| '())
        '(type-exhibitor)
        'extended-runtime-type-info::t
        '()
        '#f))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#extended-runtime-type-info?|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#extended-runtime-type-info?|
       (make-class-predicate
-       |gerbil/core::<MOP>::<MOP:2>[1]#extended-runtime-type-info::t|))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor|
+       |gerbil/core$<MOP>$<MOP:2>[1]#extended-runtime-type-info::t|))
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-exhibitor|
       (make-class-slot-accessor
-       |gerbil/core::<MOP>::<MOP:2>[1]#extended-runtime-type-info::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#extended-runtime-type-info::t|
        'type-exhibitor))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor-set!|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-exhibitor-set!|
       (make-class-slot-mutator
-       |gerbil/core::<MOP>::<MOP:2>[1]#extended-runtime-type-info::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#extended-runtime-type-info::t|
        'type-exhibitor))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#extended-struct-info::t|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#extended-struct-info::t|
       (make-class-type
        'gerbil.core#extended-stuct-info::t
-       (cons |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-info::t|
-             (cons |gerbil/core::<MOP>::<MOP:2>[1]#extended-runtime-type-info::t|
-                   (cons |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info::t|
+       (cons |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-info::t|
+             (cons |gerbil/core$<MOP>$<MOP:2>[1]#extended-runtime-type-info::t|
+                   (cons |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info::t|
                          '())))
        '()
        'struct-info
        '()
        '#f))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#extended-struct-info?|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#extended-struct-info?|
       (make-class-predicate
-       |gerbil/core::<MOP>::<MOP:2>[1]#extended-struct-info::t|))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+       |gerbil/core$<MOP>$<MOP:2>[1]#extended-struct-info::t|))
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
       (lambda _$args16269_
         (apply make-class-instance
-               |gerbil/core::<MOP>::<MOP:2>[1]#extended-struct-info::t|
+               |gerbil/core$<MOP>$<MOP:2>[1]#extended-struct-info::t|
                _$args16269_)))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#extended-class-info::t|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#extended-class-info::t|
       (make-class-type
        'gerbil.core#extended-class-info::t
-       (cons |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-info::t|
-             (cons |gerbil/core::<MOP>::<MOP:2>[1]#extended-runtime-type-info::t|
-                   (cons |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info::t|
+       (cons |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-info::t|
+             (cons |gerbil/core$<MOP>$<MOP:2>[1]#extended-runtime-type-info::t|
+                   (cons |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info::t|
                          '())))
        '()
        'class-info
        '()
        '#f))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#extended-class-info?|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#extended-class-info?|
       (make-class-predicate
-       |gerbil/core::<MOP>::<MOP:2>[1]#extended-class-info::t|))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#make-extended-class-info|
+       |gerbil/core$<MOP>$<MOP:2>[1]#extended-class-info::t|))
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#make-extended-class-info|
       (lambda _$args16265_
         (apply make-class-instance
-               |gerbil/core::<MOP>::<MOP:2>[1]#extended-class-info::t|
+               |gerbil/core$<MOP>$<MOP:2>[1]#extended-class-info::t|
                _$args16265_)))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|
       (make-struct-type
        'gerbil.core#runtime-rtd-exhibitor::t
        '#f
@@ -138,98 +138,98 @@
        'runtime-rtd-exhibitor::t
        '()
        '#f))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor?|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-exhibitor?|
       (make-struct-predicate
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-id|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|))
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-id|
       (make-struct-field-accessor
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|
        '0))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-super|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-super|
       (make-struct-field-accessor
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|
        '1))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-name|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-name|
       (make-struct-field-accessor
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|
        '2))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-ctor|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-ctor|
       (make-struct-field-accessor
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|
        '3))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-plist|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-plist|
       (make-struct-field-accessor
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|
        '4))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-id-set!|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-id-set!|
       (make-struct-field-mutator
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|
        '0))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-super-set!|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-super-set!|
       (make-struct-field-mutator
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|
        '1))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-name-set!|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-name-set!|
       (make-struct-field-mutator
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|
        '2))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-ctor-set!|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-ctor-set!|
       (make-struct-field-mutator
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|
        '3))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-plist-set!|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-plist-set!|
       (make-struct-field-mutator
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|
        '4))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-exhibitor::t|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-exhibitor::t|
       (make-struct-type
        'gerbil.core#runtime-struct-exhibitor::t
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|
        '1
        'struct-exhibitor
        '()
        '#f))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-exhibitor?|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-exhibitor?|
       (make-struct-predicate
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-exhibitor::t|))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-exhibitor::t|))
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
       (lambda _$args16261_
         (apply make-struct-instance
-               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-exhibitor::t|
+               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-exhibitor::t|
                _$args16261_)))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-fields|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-fields|
       (make-struct-field-accessor
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-exhibitor::t|
        '0))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-fields-set!|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-fields-set!|
       (make-struct-field-mutator
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-exhibitor::t|
        '0))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-exhibitor::t|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-exhibitor::t|
       (make-struct-type
        'gerbil.core#runtime-class-exhibitor::t
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-rtd-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-rtd-exhibitor::t|
        '1
        'class-exhibitor
        '()
        '#f))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-exhibitor?|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-exhibitor?|
       (make-struct-predicate
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-exhibitor::t|))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-class-exhibitor|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-exhibitor::t|))
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-class-exhibitor|
       (lambda _$args16257_
         (apply make-struct-instance
-               |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-exhibitor::t|
+               |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-exhibitor::t|
                _$args16257_)))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-slots|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-slots|
       (make-struct-field-accessor
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-exhibitor::t|
        '0))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-slots-set!|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-slots-set!|
       (make-struct-field-mutator
-       |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-exhibitor::t|
+       |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-exhibitor::t|
        '0))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-type-info?|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?|
       (let ((_opt-lambda1622916243_
              (lambda (_stx16231_ _is?16233_)
                (if (gx#identifier? _stx16231_)
@@ -237,7 +237,7 @@
                           (gx#syntax-local-value _stx16231_ false)))
                      (if _e1623416236_
                          (let ((_e16240_ _e1623416236_))
-                           (if (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-info?|
+                           (if (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-info?|
                                 _e16240_)
                                (_is?16233_ _e16240_)
                                '#f))
@@ -253,29 +253,29 @@
                   ((fx= _g30717_ 2) (apply _opt-lambda1622916243_ _g30718_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
-                    |gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-type-info?|
+                    |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?|
                     _g30718_)))))))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-struct-info?|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-struct-info?|
       (lambda (_stx16227_)
-        (|gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-type-info?|
+        (|gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?|
          _stx16227_
-         |gerbil/core::<MOP>::<MOP:2>[1]#runtime-struct-info?|)))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-class-info?|
+         |gerbil/core$<MOP>$<MOP:2>[1]#runtime-struct-info?|)))
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-class-info?|
       (lambda (_stx16224_)
-        (|gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-type-info?|
+        (|gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?|
          _stx16224_
-         |gerbil/core::<MOP>::<MOP:2>[1]#runtime-class-info?|)))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor-e|
+         |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-info?|)))
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-exhibitor-e|
       (lambda (_id16218_)
         (if _id16218_
             (let ((_info16221_ (gx#syntax-local-value _id16218_)))
-              (if (|gerbil/core::<MOP>::<MOP:2>[1]#extended-runtime-type-info?|
+              (if (|gerbil/core$<MOP>$<MOP:2>[1]#extended-runtime-type-info?|
                    _info16221_)
-                  (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-exhibitor|
+                  (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-exhibitor|
                    _info16221_)
                   '#f))
             '#f)))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info::apply-macro-expander|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info::apply-macro-expander|
       (lambda (_self15983_ _stx15985_)
         (let* ((_g1598716007_
                 (lambda (_g1598816003_)
@@ -401,7 +401,7 @@
                                                (_g1607016101_ _g1607116105_))))
                                        (_g1607016101_ _g1607116105_)))))
                            (_g1606916210_
-                            (|gerbil/core::<MOP>::<MOP:2>[1]#expander-type-identifiers|
+                            (|gerbil/core$<MOP>$<MOP:2>[1]#expander-type-identifiers|
                              _self15983_))))
                        _arg1600116050_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -414,10 +414,10 @@
                       (_g1598716007_ _g1598816011_)))))
           (_g1598616214_ _stx15985_))))
     (bind-method!
-     |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info::t|
+     |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info::t|
      'apply-macro-expander
-     |gerbil/core::<MOP>::<MOP:2>[1]#expander-type-info::apply-macro-expander|)
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#typedef-body?|
+     |gerbil/core$<MOP>$<MOP:2>[1]#expander-type-info::apply-macro-expander|)
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#typedef-body?|
       (lambda (_stx15974_)
         (letrec ((_body-opt?15977_
                   (lambda (_key15980_)
@@ -430,7 +430,7 @@
                             plist:
                             unchecked:)))))
           (gx#stx-plist? _stx15974_ _body-opt?15977_))))
-    (define |gerbil/core::<MOP>::<MOP:2>[1]#generate-typedef|
+    (define |gerbil/core$<MOP>$<MOP:2>[1]#generate-typedef|
       (lambda (_stx14831_
                _id14833_
                _super-ref14834_
@@ -1224,10 +1224,10 @@
                                                  (_g1499115942_
                                                   (if _struct?14837_
                                                       (if _super14846_
-                                                          (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-identifier|
+                                                          (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-identifier|
                                                            _super14846_)
                                                           '#f)
-                                                      (map |gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-identifier|
+                                                      (map |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-identifier|
                                                            _super14846_))))))
                                            _g1496514976_))))
                                   (_g1496315946_
@@ -1247,7 +1247,7 @@
                (if _struct?14837_
                    (gx#datum->syntax '#f 'defstruct-type)
                    (gx#datum->syntax '#f 'defclass-type))))))))
-    (define |gerbil/core::<MOP>::<MOP:2>[:0:]#defstruct|
+    (define |gerbil/core$<MOP>$<MOP:2>[:0:]#defstruct|
       (lambda (_stx16290_)
         (letrec ((_generate16293_
                   (lambda (_hd16377_ _fields16379_ _body16380_)
@@ -1261,7 +1261,7 @@
                             (lambda (_g1638416402_)
                               ((lambda ()
                                  (if (gx#identifier? _hd16377_)
-                                     (|gerbil/core::<MOP>::<MOP:2>[1]#generate-typedef|
+                                     (|gerbil/core$<MOP>$<MOP:2>[1]#generate-typedef|
                                       _stx16290_
                                       _hd16377_
                                       '#f
@@ -1293,10 +1293,10 @@
                                                   ((lambda (_L16436_ _L16438_)
                                                      (if (if (gx#identifier?
                                                               _L16438_)
-                                                             (|gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-struct-info?|
+                                                             (|gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-struct-info?|
                                                               _L16436_)
                                                              '#f)
-                                                         (|gerbil/core::<MOP>::<MOP:2>[1]#generate-typedef|
+                                                         (|gerbil/core$<MOP>$<MOP:2>[1]#generate-typedef|
                                                           _stx16290_
                                                           _L16438_
                                                           _L16436_
@@ -1338,7 +1338,7 @@
                                                       _L16355_)
                                                (if (if (gx#identifier-list?
                                                         _L16354_)
-                                                       (|gerbil/core::<MOP>::<MOP:2>[1]#typedef-body?|
+                                                       (|gerbil/core$<MOP>$<MOP:2>[1]#typedef-body?|
                                                         _L16352_)
                                                        '#f)
                                                    (_generate16293_
@@ -1354,7 +1354,7 @@
                                 (_g1629616315_ _g1629716319_))))
                         (_g1629616315_ _g1629716319_)))))
             (_g1629516373_ _stx16290_)))))
-    (define |gerbil/core::<MOP>::<MOP:2>[:0:]#defclass|
+    (define |gerbil/core$<MOP>$<MOP:2>[:0:]#defclass|
       (lambda (_stx16457_)
         (letrec ((_generate16460_
                   (lambda (_hd16544_ _slots16546_ _body16547_)
@@ -1368,7 +1368,7 @@
                             (lambda (_g1655116566_)
                               ((lambda ()
                                  (if (gx#identifier? _hd16544_)
-                                     (|gerbil/core::<MOP>::<MOP:2>[1]#generate-typedef|
+                                     (|gerbil/core$<MOP>$<MOP:2>[1]#generate-typedef|
                                       _stx16457_
                                       _hd16544_
                                       '()
@@ -1392,10 +1392,10 @@
                                       ((lambda (_L16590_ _L16592_)
                                          (if (if (gx#stx-list? _L16590_)
                                                  (gx#stx-andmap
-                                                  |gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-type-info?|
+                                                  |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?|
                                                   _L16590_)
                                                  '#f)
-                                             (|gerbil/core::<MOP>::<MOP:2>[1]#generate-typedef|
+                                             (|gerbil/core$<MOP>$<MOP:2>[1]#generate-typedef|
                                               _stx16457_
                                               _L16592_
                                               (gx#syntax->list _L16590_)
@@ -1433,7 +1433,7 @@
                                                       _L16522_)
                                                (if (if (gx#identifier-list?
                                                         _L16521_)
-                                                       (|gerbil/core::<MOP>::<MOP:2>[1]#typedef-body?|
+                                                       (|gerbil/core$<MOP>$<MOP:2>[1]#typedef-body?|
                                                         _L16519_)
                                                        '#f)
                                                    (_generate16460_
@@ -1449,7 +1449,7 @@
                                 (_g1646316482_ _g1646416486_))))
                         (_g1646316482_ _g1646416486_)))))
             (_g1646216540_ _stx16457_)))))
-    (define |gerbil/core::<MOP>::<MOP:2>[:0:]#defmethod|
+    (define |gerbil/core$<MOP>$<MOP:2>[:0:]#defmethod|
       (lambda (_stx16609_)
         (letrec ((_wrap16612_
                   (lambda (_e-stx16917_)
@@ -1481,7 +1481,7 @@
                                                  (##cdr _e1662816672_)))
                                             (if (gx#identifier? _hd1662916676_)
                                                 (if (gx#free-identifier=?
-                                                     |gerbil/core::<MOP>::<MOP:2>[1]#_g30732_|
+                                                     |gerbil/core$<MOP>$<MOP:2>[1]#_g30732_|
                                                      _hd1662916676_)
                                                     (if (gx#stx-pair?
                                                          _tl1663016679_)
@@ -1509,7 +1509,7 @@
                                                   _L16715_
                                                   _L16716_)
                                            (if (if (gx#identifier? _L16716_)
-                                                   (if (|gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-type-info?|
+                                                   (if (|gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?|
                                                         _L16715_)
                                                        (gx#stx-plist?
                                                         _L16712_
@@ -1617,7 +1617,7 @@
                   _g1674816759_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (_g1674616906_
-                                                  (|gerbil/core::<MOP>::<MOP:2>[1]#runtime-type-identifier|
+                                                  (|gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-identifier|
                                                    _klass16741_)))
                                                (if (not (gx#identifier?
                                                          _L16716_))
@@ -1626,7 +1626,7 @@
                                                     '"Bad syntax; expected method identifier"
                                                     _stx16609_
                                                     _L16716_)
-                                                   (if (not (|gerbil/core::<MOP>::<MOP:2>[1]#syntax-local-type-info?|
+                                                   (if (not (|gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?|
                                                              _L16715_))
                                                        (gx#raise-syntax-error
                                                         '#f
@@ -1654,7 +1654,7 @@
                                 (_g1661616645_ _g1661716649_))))
                         (_g1661616645_ _g1661716649_)))))
             (_g1661516910_ _stx16609_)))))
-    (define |gerbil/core::<MOP>::<MOP:2>[:0:]#@method|
+    (define |gerbil/core$<MOP>$<MOP:2>[:0:]#@method|
       (lambda (_$stx16920_)
         (let* ((_g1692516974_
                 (lambda (_g1692616970_)
@@ -1847,7 +1847,7 @@
                               (_g1692417073_ _g1692617077_))))
                       (_g1692417073_ _g1692617077_)))))
           (_g1692317179_ _$stx16920_))))
-    (define |gerbil/core::<MOP>::<MOP:2>[:0:]#@|
+    (define |gerbil/core$<MOP>$<MOP:2>[:0:]#@|
       (lambda (_$stx17185_)
         (let* ((_g1719017230_
                 (lambda (_g1719117226_)
@@ -1976,7 +1976,7 @@
                               (_g1718917331_ _g1719117335_))))
                       (_g1718917331_ _g1719117335_)))))
           (_g1718817385_ _$stx17185_))))
-    (define |gerbil/core::<MOP>::<MOP:2>[:0:]#@-set!|
+    (define |gerbil/core$<MOP>$<MOP:2>[:0:]#@-set!|
       (lambda (_$stx17390_)
         (let* ((_g1739517447_
                 (lambda (_g1739617443_)

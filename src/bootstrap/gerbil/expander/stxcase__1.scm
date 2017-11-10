@@ -11,7 +11,7 @@
   (define |gx[1]#_g14317_| (gx#core-quote-syntax 'syntax-pattern-depth-set!))
   (define |gx[1]#_g14318_| (gx#core-quote-syntax 'expander))
   (define |gx[:0:]#syntax-pattern|
-    (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+    (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
      'runtime-identifier:
      |gx[1]#_g14309_|
      'expander-identifiers:
@@ -25,7 +25,7 @@
                                                (cons |gx[1]#_g14317_| '()))
                                          '()))))))
      'type-exhibitor:
-     (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+     (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
       'gx#syntax-pattern::t
       |gx[1]#_g14318_|
       'syntax-pattern

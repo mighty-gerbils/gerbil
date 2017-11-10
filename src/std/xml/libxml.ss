@@ -41,7 +41,7 @@ package: std/xml
    ((string? source) parse-string)
    ((u8vector? source)
     (lambda (src url enc opt)
-      (parse-u8vector src 0 (u8vector-length src) enc opt)))
+      (parse-u8vector src 0 (u8vector-length src) url enc opt)))
    ((input-port? source) parse-port)
    (else
     (error "Illegal source; Expected string, u8vector, or input-port"

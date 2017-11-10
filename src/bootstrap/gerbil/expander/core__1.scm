@@ -252,7 +252,7 @@
   (define |gx[1]#_g6119_| (gx#core-quote-syntax '<error>))
   (begin
     (define |gx[:0:]#expander-context|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5872_|
        'expander-identifiers:
@@ -266,7 +266,7 @@
                                                  (cons |gx[1]#_g5879_| '()))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#expander-context::t
         '#f
         'expander-context
@@ -274,7 +274,7 @@
         '()
         '(id table))))
     (define |gx[:0:]#root-context|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5880_|
        'expander-identifiers:
@@ -283,7 +283,7 @@
                    (cons |gx[1]#_g5883_|
                          (cons |gx[1]#_g5884_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#root-context::t
         |gx[1]#_g5885_|
         'root-context
@@ -291,7 +291,7 @@
         '()
         '())))
     (define |gx[:0:]#phi-context|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5886_|
        'expander-identifiers:
@@ -308,7 +308,7 @@
                                                              '())))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#context-phi::t
         |gx[1]#_g5897_|
         'phi-context
@@ -316,7 +316,7 @@
         '()
         '(super up down))))
     (define |gx[:0:]#top-context|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5898_|
        'expander-identifiers:
@@ -325,7 +325,7 @@
                    (cons |gx[1]#_g5901_|
                          (cons |gx[1]#_g5902_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#top-context::t
         |gx[1]#_g5903_|
         'top-context
@@ -333,7 +333,7 @@
         '()
         '())))
     (define |gx[:0:]#module-context|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5904_|
        'expander-identifiers:
@@ -359,7 +359,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#module-context::t
         |gx[1]#_g5921_|
         'module-context
@@ -367,7 +367,7 @@
         '()
         '(ns path import export e code))))
     (define |gx[:0:]#prelude-context|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5922_|
        'expander-identifiers:
@@ -384,7 +384,7 @@
                                                              '())))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#prelude-context::t
         |gx[1]#_g5933_|
         'prelude-context
@@ -392,7 +392,7 @@
         '()
         '(path import e))))
     (define |gx[:0:]#local-context|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5934_|
        'expander-identifiers:
@@ -401,7 +401,7 @@
                    (cons |gx[1]#_g5937_|
                          (cons |gx[1]#_g5938_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#local-context::t
         |gx[1]#_g5939_|
         'local-context
@@ -409,7 +409,7 @@
         '()
         '())))
     (define |gx[:0:]#binding|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5940_|
        'expander-identifiers:
@@ -426,7 +426,7 @@
                                                              '())))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#binding::t
         '#f
         'binding
@@ -434,7 +434,7 @@
         '()
         '(id key phi))))
     (define |gx[:0:]#runtime-binding|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5950_|
        'expander-identifiers:
@@ -443,7 +443,7 @@
                    (cons |gx[1]#_g5953_|
                          (cons |gx[1]#_g5954_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#runtime-binding::t
         |gx[1]#_g5955_|
         'runtime-binding
@@ -451,7 +451,7 @@
         '()
         '())))
     (define |gx[:0:]#local-binding|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5956_|
        'expander-identifiers:
@@ -460,7 +460,7 @@
                    (cons |gx[1]#_g5959_|
                          (cons |gx[1]#_g5960_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#local-binding::t
         |gx[1]#_g5961_|
         'local-binding
@@ -468,7 +468,7 @@
         '()
         '())))
     (define |gx[:0:]#top-binding|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5962_|
        'expander-identifiers:
@@ -477,7 +477,7 @@
                    (cons |gx[1]#_g5965_|
                          (cons |gx[1]#_g5966_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#top-binding::t
         |gx[1]#_g5967_|
         'top-binding
@@ -485,7 +485,7 @@
         '()
         '())))
     (define |gx[:0:]#module-binding|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5968_|
        'expander-identifiers:
@@ -496,7 +496,7 @@
                                (cons (cons |gx[1]#_g5973_| '())
                                      (cons (cons |gx[1]#_g5974_| '()) '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#module-binding::t
         |gx[1]#_g5975_|
         'module-binding
@@ -504,7 +504,7 @@
         '()
         '(context))))
     (define |gx[:0:]#extern-binding|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5976_|
        'expander-identifiers:
@@ -513,7 +513,7 @@
                    (cons |gx[1]#_g5979_|
                          (cons |gx[1]#_g5980_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#extern-binding::t
         |gx[1]#_g5981_|
         'extern-binding
@@ -521,7 +521,7 @@
         '()
         '())))
     (define |gx[:0:]#syntax-binding|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5982_|
        'expander-identifiers:
@@ -532,7 +532,7 @@
                                (cons (cons |gx[1]#_g5987_| '())
                                      (cons (cons |gx[1]#_g5988_| '()) '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#syntax-binding::t
         |gx[1]#_g5989_|
         'syntax-binding
@@ -540,7 +540,7 @@
         '((final: . #t))
         '(e))))
     (define |gx[:0:]#import-binding|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g5990_|
        'expander-identifiers:
@@ -557,7 +557,7 @@
                                                              '())))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#import-binding::t
         |gx[1]#_g6001_|
         'import-binding
@@ -565,7 +565,7 @@
         '((final: . #t))
         '(e context weak?))))
     (define |gx[:0:]#alias-binding|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6002_|
        'expander-identifiers:
@@ -576,7 +576,7 @@
                                (cons (cons |gx[1]#_g6007_| '())
                                      (cons (cons |gx[1]#_g6008_| '()) '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#alias-binding::t
         |gx[1]#_g6009_|
         'alias-binding
@@ -584,7 +584,7 @@
         '((final: . #t))
         '(e))))
     (define |gx[:0:]#expander|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6010_|
        'expander-identifiers:
@@ -595,7 +595,7 @@
                                (cons (cons |gx[1]#_g6014_| '())
                                      (cons (cons |gx[1]#_g6015_| '()) '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#expander::t
         '#f
         'expander
@@ -603,7 +603,7 @@
         '()
         '(e))))
     (define |gx[:0:]#core-expander|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6016_|
        'expander-identifiers:
@@ -617,7 +617,7 @@
                                                  (cons |gx[1]#_g6024_| '()))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#core-expander::t
         |gx[1]#_g6025_|
         'core-expander
@@ -625,7 +625,7 @@
         '()
         '(id compile-top))))
     (define |gx[:0:]#expression-form|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6026_|
        'expander-identifiers:
@@ -634,7 +634,7 @@
                    (cons |gx[1]#_g6029_|
                          (cons |gx[1]#_g6030_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#expression-form::t
         |gx[1]#_g6031_|
         'expression-form
@@ -642,7 +642,7 @@
         '()
         '())))
     (define |gx[:0:]#special-form|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6032_|
        'expander-identifiers:
@@ -651,7 +651,7 @@
                    (cons |gx[1]#_g6035_|
                          (cons |gx[1]#_g6036_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#special-form::t
         |gx[1]#_g6037_|
         'special-form
@@ -659,7 +659,7 @@
         '()
         '())))
     (define |gx[:0:]#definition-form|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6038_|
        'expander-identifiers:
@@ -668,7 +668,7 @@
                    (cons |gx[1]#_g6041_|
                          (cons |gx[1]#_g6042_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#definition-form::t
         |gx[1]#_g6043_|
         'definition-form
@@ -676,7 +676,7 @@
         '()
         '())))
     (define |gx[:0:]#top-special-form|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6044_|
        'expander-identifiers:
@@ -685,7 +685,7 @@
                    (cons |gx[1]#_g6047_|
                          (cons |gx[1]#_g6048_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#top-special-form::t
         |gx[1]#_g6049_|
         'top-special-form
@@ -693,7 +693,7 @@
         '()
         '())))
     (define |gx[:0:]#module-special-form|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6050_|
        'expander-identifiers:
@@ -702,7 +702,7 @@
                    (cons |gx[1]#_g6053_|
                          (cons |gx[1]#_g6054_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#module-special-form::t
         |gx[1]#_g6055_|
         'module-special-form
@@ -710,7 +710,7 @@
         '()
         '())))
     (define |gx[:0:]#feature-expander|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6056_|
        'expander-identifiers:
@@ -719,7 +719,7 @@
                    (cons |gx[1]#_g6059_|
                          (cons |gx[1]#_g6060_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#feature-expander::t
         |gx[1]#_g6061_|
         'feature-expander
@@ -727,7 +727,7 @@
         '()
         '())))
     (define |gx[:0:]#private-feature-expander|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6062_|
        'expander-identifiers:
@@ -736,7 +736,7 @@
                    (cons |gx[1]#_g6065_|
                          (cons |gx[1]#_g6066_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#private-feature-expander::t
         |gx[1]#_g6067_|
         'private-feature-expander
@@ -744,7 +744,7 @@
         '()
         '())))
     (define |gx[:0:]#reserved-expander|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6068_|
        'expander-identifiers:
@@ -753,7 +753,7 @@
                    (cons |gx[1]#_g6071_|
                          (cons |gx[1]#_g6072_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#reserved-expander::t
         |gx[1]#_g6073_|
         'reserved-expander
@@ -761,7 +761,7 @@
         '()
         '())))
     (define |gx[:0:]#macro-expander|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6074_|
        'expander-identifiers:
@@ -770,7 +770,7 @@
                    (cons |gx[1]#_g6077_|
                          (cons |gx[1]#_g6078_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#core-macro::t
         |gx[1]#_g6079_|
         'macro-expander
@@ -778,7 +778,7 @@
         '()
         '())))
     (define |gx[:0:]#rename-macro-expander|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6080_|
        'expander-identifiers:
@@ -787,7 +787,7 @@
                    (cons |gx[1]#_g6083_|
                          (cons |gx[1]#_g6084_| (cons '() (cons '() '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#rename-macro-expander::t
         |gx[1]#_g6085_|
         'rename-macro-expander
@@ -795,7 +795,7 @@
         '()
         '())))
     (define |gx[:0:]#user-expander|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6086_|
        'expander-identifiers:
@@ -809,7 +809,7 @@
                                                  (cons |gx[1]#_g6094_| '()))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#macro-expander::t
         |gx[1]#_g6095_|
         'user-expander
@@ -817,7 +817,7 @@
         '()
         '(context phi))))
     (define |gx[:0:]#expander-mark|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6096_|
        'expander-identifiers:
@@ -839,7 +839,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#expander-mark::t
         '#f
         'expander-mark
@@ -847,7 +847,7 @@
         '()
         '(subst context phi trace))))
     (define |gx[:0:]#syntax-error|
-      (|gerbil/core::<MOP>::<MOP:2>[1]#make-extended-struct-info|
+      (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
        |gx[1]#_g6108_|
        'expander-identifiers:
@@ -864,7 +864,7 @@
                                                              '())))
                                            '()))))))
        'type-exhibitor:
-       (|gerbil/core::<MOP>::<MOP:2>[1]#make-runtime-struct-exhibitor|
+       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#syntax-error::t
         |gx[1]#_g6119_|
         'syntax-error

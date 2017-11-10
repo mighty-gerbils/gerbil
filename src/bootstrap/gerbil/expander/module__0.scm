@@ -1276,7 +1276,7 @@
                                 '1
                                 gx#expander-context::t
                                 '#f)
-                               '"::"
+                               '"$"
                                _bind-id10599_)
                               _bind-id10599_))
                          (_ns10603_ (symbol->string _mod-id10601_))

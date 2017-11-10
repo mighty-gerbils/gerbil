@@ -125,6 +125,7 @@
           "-e" "(include \"~~lib/_gambit#.scm\")")
     "crypto/digest"
     "crypto/cipher"
+    "crypto/hmac"
     "crypto/bn"
     "crypto/dh"
     "crypto"

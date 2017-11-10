@@ -1,17 +1,17 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core::<sugar>::<sugar:1>[1]#_g30602_|
+  (define |gerbil/core$<sugar>$<sugar:1>[1]#_g30602_|
     (gx#core-quote-syntax 'values))
-  (define |gerbil/core::<sugar>::<sugar:1>[1]#_g30603_|
+  (define |gerbil/core$<sugar>$<sugar:1>[1]#_g30603_|
     (gx#core-quote-syntax 'values))
-  (define |gerbil/core::<sugar>::<sugar:1>[1]#_g30612_|
+  (define |gerbil/core$<sugar>$<sugar:1>[1]#_g30612_|
     (gx#core-quote-syntax '=>))
-  (define |gerbil/core::<sugar>::<sugar:1>[1]#_g30613_|
+  (define |gerbil/core$<sugar>$<sugar:1>[1]#_g30613_|
     (gx#core-quote-syntax 'else))
-  (define |gerbil/core::<sugar>::<sugar:1>[1]#_g30614_|
+  (define |gerbil/core$<sugar>$<sugar:1>[1]#_g30614_|
     (gx#core-quote-syntax 'else))
   (begin
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#defrules|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#defrules|
       (lambda (_$stx1629_)
         (let* ((_g16331661_
                 (lambda (_g16341657_)
@@ -99,7 +99,7 @@
                               (_g16331661_ _g16341665_))))
                       (_g16331661_ _g16341665_)))))
           (_g16321762_ _$stx1629_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#defsyntax%|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#defsyntax%|
       (lambda (_$stx1767_)
         (let* ((_g17721811_
                 (lambda (_g17731807_)
@@ -222,7 +222,7 @@
                               (_g17711866_ _g17731870_))))
                       (_g17711866_ _g17731870_)))))
           (_g17701964_ _$stx1767_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#defalias|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#defalias|
       (lambda (_$stx1969_)
         (let* ((_g19731991_
                 (lambda (_g19741987_)
@@ -261,7 +261,7 @@
                               (_g19731991_ _g19741995_))))
                       (_g19731991_ _g19741995_)))))
           (_g19722046_ _$stx1969_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#define|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#define|
       (lambda (_$stx2050_)
         (let* ((_g20552094_
                 (lambda (_g20562090_)
@@ -385,7 +385,7 @@
                               (_g20542149_ _g20562153_))))
                       (_g20542149_ _g20562153_)))))
           (_g20532247_ _$stx2050_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#let*-values|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#let*-values|
       (lambda (_$stx2252_)
         (let* ((_g22572302_
                 (lambda (_g22582298_)
@@ -542,7 +542,7 @@
                               (_g22562403_ _g22582407_))))
                       (_g22562403_ _g22582407_)))))
           (_g22552485_ _$stx2252_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#let|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#let|
       (lambda (_$stx2491_)
         (let* ((_g24962560_
                 (lambda (_g24972556_)
@@ -771,7 +771,7 @@
                               (_g24952645_ _g24972649_))))
                       (_g24952645_ _g24972649_)))))
           (_g24942821_ _$stx2491_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#let*|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#let*|
       (lambda (_$stx2828_)
         (let* ((_g28322856_
                 (lambda (_g28332852_)
@@ -842,7 +842,7 @@
                               (_g28322856_ _g28332860_))))
                       (_g28322856_ _g28332860_)))))
           (_g28312941_ _$stx2828_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#letrec|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#letrec|
       (lambda (_$stx2946_)
         (let* ((_g29502974_
                 (lambda (_g29512970_)
@@ -913,7 +913,7 @@
                               (_g29502974_ _g29512978_))))
                       (_g29502974_ _g29512978_)))))
           (_g29493059_ _$stx2946_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#letrec*|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#letrec*|
       (lambda (_$stx3064_)
         (let* ((_g30683092_
                 (lambda (_g30693088_)
@@ -984,7 +984,7 @@
                               (_g30683092_ _g30693096_))))
                       (_g30683092_ _g30693096_)))))
           (_g30673177_ _$stx3064_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#~let|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#~let|
       (lambda (_stx3182_)
         (letrec ((_let-head?3185_
                   (lambda (_x3665_)
@@ -1006,7 +1006,7 @@
                                           (_tl36743705_ (##cdr _e36723698_)))
                                       (if (gx#identifier? _hd36733702_)
                                           (if (gx#free-identifier=?
-                                               |gerbil/core::<sugar>::<sugar:1>[1]#_g30602_|
+                                               |gerbil/core$<sugar>$<sugar:1>[1]#_g30602_|
                                                _hd36733702_)
                                               ((lambda (_L3708_)
                                                  (gx#stx-andmap
@@ -1037,7 +1037,7 @@
                                           (_tl36143645_ (##cdr _e36123638_)))
                                       (if (gx#identifier? _hd36133642_)
                                           (if (gx#free-identifier=?
-                                               |gerbil/core::<sugar>::<sugar:1>[1]#_g30603_|
+                                               |gerbil/core$<sugar>$<sugar:1>[1]#_g30603_|
                                                _hd36133642_)
                                               ((lambda (_L3648_) _L3648_)
                                                _tl36143645_)
@@ -1335,7 +1335,7 @@
                                 (_g31893517_ _g31913521_))))
                         (_g31893517_ _g31913521_)))))
             (_g31883601_ _stx3182_)))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#and|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#and|
       (lambda (_$stx3728_)
         (let* ((_g37343760_
                 (lambda (_g37353756_)
@@ -1386,7 +1386,7 @@
                               (_g37323845_ _g37353849_))))
                       (_g37323845_ _g37353849_)))))
           (_g37313866_ _$stx3728_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#or|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#or|
       (lambda (_$stx3870_)
         (let* ((_g38763902_
                 (lambda (_g38773898_)
@@ -1449,7 +1449,7 @@
                               (_g38743987_ _g38773991_))))
                       (_g38743987_ _g38773991_)))))
           (_g38734008_ _$stx3870_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#cond|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#cond|
       (lambda (_$stx4012_)
         (let* ((_g40214112_
                 (lambda (_g40224108_)
@@ -1598,7 +1598,7 @@
                                                   (if (gx#identifier?
                                                        _hd40684310_)
                                                       (if (gx#free-identifier=?
-                                                           |gerbil/core::<sugar>::<sugar:1>[1]#_g30612_|
+                                                           |gerbil/core$<sugar>$<sugar:1>[1]#_g30612_|
                                                            _hd40684310_)
                                                           (if (gx#stx-pair?
                                                                _tl40694313_)
@@ -1656,7 +1656,7 @@
                                                (##cdr _e40514378_)))
                                           (if (gx#identifier? _hd40524382_)
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core::<sugar>::<sugar:1>[1]#_g30613_|
+                                                   |gerbil/core$<sugar>$<sugar:1>[1]#_g30613_|
                                                    _hd40524382_)
                                                   ((lambda ()
                                                      (cons (gx#datum->syntax
@@ -1690,7 +1690,7 @@
                                                (##cdr _e40334419_)))
                                           (if (gx#identifier? _hd40344423_)
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core::<sugar>::<sugar:1>[1]#_g30614_|
+                                                   |gerbil/core$<sugar>$<sugar:1>[1]#_g30614_|
                                                    _hd40344423_)
                                                   (if (gx#stx-pair/null?
                                                        _tl40354426_)
@@ -1762,7 +1762,7 @@
                               (_g40164487_ _g40224491_))))
                       (_g40164487_ _g40224491_)))))
           (_g40154508_ _$stx4012_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#when|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#when|
       (lambda (_$stx4514_)
         (let* ((_g45184542_
                 (lambda (_g45194538_)
@@ -1834,7 +1834,7 @@
                               (_g45184542_ _g45194546_))))
                       (_g45184542_ _g45194546_)))))
           (_g45174627_ _$stx4514_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#unless|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#unless|
       (lambda (_$stx4632_)
         (let* ((_g46364660_
                 (lambda (_g46374656_)
@@ -1906,7 +1906,7 @@
                               (_g46364660_ _g46374664_))))
                       (_g46364660_ _g46374664_)))))
           (_g46354745_ _$stx4632_))))
-    (define |gerbil/core::<sugar>::<sugar:1>[:0:]#syntax-error|
+    (define |gerbil/core$<sugar>$<sugar:1>[:0:]#syntax-error|
       (lambda (_stx4750_)
         (let* ((_g47534777_
                 (lambda (_g47544773_)
