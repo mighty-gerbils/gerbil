@@ -61,7 +61,7 @@ package: std
    (check-equal? expr value))
   ((_ expr ? pred)
    (check-predicate expr (? pred)))
-  ((eqf expr value)
+  ((_ eqf expr value)
    (checkf eqf expr value)))
 
 (defrules print-check-e ()
