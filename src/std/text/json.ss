@@ -92,19 +92,22 @@ package: std/text
     (let lp ()
       (let (key (read-json-hash-key port))
         (if key
-          (let (val (read-json-object port))
-            (hash-put! obj key val)
-            (skip-whitespace port)
-            (let (char (peek-char port))
-              (case char
-                ((#\,)
-                 (read-char port)
-                 (lp))
-                ((#\})
-                 (read-char port)
-                 obj)
-                (else
-                 (raise-invalid-token port char)))))
+          ;; If you see a duplicate key, it's as likely an attack as a bug. #LangSec
+          (if (hash-key? obj key)
+            (error "Duplicate hash key in JSON input" key)
+            (let (val (read-json-object port))
+              (hash-put! obj key val)
+              (skip-whitespace port)
+              (let (char (peek-char port))
+                (case char
+                  ((#\,)
+                   (read-char port)
+                   (lp))
+                  ((#\})
+                   (read-char port)
+                   obj)
+                  (else
+                   (raise-invalid-token port char))))))
           obj)))))                   ; empty or trailing #\, [liberal]
 
 (def (read-json-hash-key port)
