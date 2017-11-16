@@ -125,13 +125,19 @@ package: scheme
 ;; a library module.
 (defstub raise-continuable)
 
-;; number theoretic functions are not my forte, so I am passing on these for now
-(defstub floor/)
-(defstub floor-quotient)
-(defstub floor-remainder)
-(defstub truncate/)
-(defstub truncate-quotient)
-(defstub truncate-remainder)
+(def (floor/ n divisor)
+  (if (and (<= 0 n) (<= 0 divisor))
+    (values (quotient n divisor) (remainder n divisor))
+    (let ((m (modulo n divisor)))
+      (values (quotient (- n m) divisor) m))))
+(def (floor-quotient n divisor)
+  (if (eq? (<= 0 n) (<= 0 divisor))
+    (quotient n divisor)
+    (quotient (- n (modulo n divisor)) divisor)))
+(def floor-remainder modulo)
+(def (truncate/ x y) (values (quotient x y) (remainder x y)))
+(def truncate-quotient quotient)
+(def truncate-remainder remainder)
 
 ;; R7RS spec:
 ;; "Returns #t if port is still open and capable of performing
