@@ -4,6 +4,7 @@
 ;;;
 ;;; Taylor Campbell wrote this code; he places it in the public domain.
 ;;; Will Clinger [wdc] made some corrections, also in the public domain.
+;;; Francois-Rene Rideau [fare] made tweaks for gerbil, also in the public domain.
 
 ;;; --------------------
 ;;; Exported procedure index
@@ -448,11 +449,13 @@
 ;;;   [R5RS] Create a vector of length LENGTH.  If FILL is present,
 ;;;   initialize each slot in the vector with it; if not, the vector's
 ;;;   initial contents are unspecified.
-(define make-vector make-vector)
+;;Gerbil: commented out, since would shadow the import from <runtime>, that we instead just reexport
+;(define make-vector make-vector)
 
 ;;; (VECTOR <elt> ...) -> vector
 ;;;   [R5RS] Create a vector containing ELEMENT ..., in order.
-(define vector vector)
+;;Gerbil: commented out, since would shadow the import from <runtime>, that we instead just reexport
+;(define vector vector)
 
 ;;; This ought to be able to be implemented much more efficiently -- if
 ;;; we have the number of arguments available to us, we can create the
@@ -662,7 +665,8 @@
 
 ;;; (VECTOR? <value>) -> boolean
 ;;;   [R5RS] Return #T if VALUE is a vector and #F if not.
-(define vector? vector?)
+;;Gerbil: commented out, since would shadow the import from <runtime>, that we instead just reexport
+;(define vector? vector?)
 
 ;;; (VECTOR-EMPTY? <vector>) -> boolean
 ;;;   Return #T if VECTOR has zero elements in it, i.e. VECTOR's length
@@ -730,11 +734,13 @@
 ;;; (VECTOR-REF <vector> <index>) -> value
 ;;;   [R5RS] Return the value that the location in VECTOR at INDEX is
 ;;;   mapped to in the store.
-(define vector-ref vector-ref)
+;;Gerbil: commented out, since would shadow the import from <runtime>, that we instead just reexport
+;(define vector-ref vector-ref)
 
 ;;; (VECTOR-LENGTH <vector>) -> exact, nonnegative integer
 ;;;   [R5RS] Return the length of VECTOR.
-(define vector-length vector-length)
+;;Gerbil: commented out, since would shadow the import from <runtime>, that we instead just reexport
+;(define vector-length vector-length)
 
 
 
@@ -1078,7 +1084,8 @@
 
 ;;; (VECTOR-SET! <vector> <index> <value>) -> unspecified
 ;;;   [R5RS] Assign the location at INDEX in VECTOR to VALUE.
-(define vector-set! vector-set!)
+;;Gerbil: commented out, since would shadow the import from <runtime>, that we instead just reexport
+;(define vector-set! vector-set!)
 
 ;;; (VECTOR-SWAP! <vector> <index1> <index2>) -> unspecified
 ;;;   Swap the values in the locations at INDEX1 and INDEX2.
@@ -1095,7 +1102,7 @@
 ;;;   is 0, and END, whose default is the length of VECTOR, with VALUE.
 ;;;
 ;;; This one can probably be made really fast natively.
-(define vector-fill!
+(define %%vector-fill! ;; Gerbil: renamed to vector-fill on export
   (let ((%vector-fill! vector-fill!))   ; Take the native one, under
                                         ;   the assumption that it's
                                         ;   faster, so we can use it if
@@ -1103,7 +1110,7 @@
                                         ;   arguments.
     (lambda (vec value . maybe-start+end)
       (if (null? maybe-start+end)
-          (%vector-fill! vec value)     ;+++
+        (%vector-fill! vec value)     ;+++
           (let-vector-start+end vector-fill! vec maybe-start+end
                                 (start end)
             (do ((i start (+ i 1)))
@@ -1205,7 +1212,7 @@
 ;;;   [R5RS+] Produce a list containing the elements in the locations
 ;;;   between START, whose default is 0, and END, whose default is the
 ;;;   length of VECTOR, from VECTOR.
-(define vector->list
+(define %%vector->list ;; Gerbil: renamed to vector->list on export
   (let ((%vector->list vector->list))
     (lambda (vec . maybe-start+end)
       (if (null? maybe-start+end)       ; Oughta use CASE-LAMBDA.
@@ -1248,7 +1255,7 @@
 ;;; and causes - to fail as well.  Given a LENGTH* that computes the
 ;;; length of a list's cycle, this wouldn't diverge, and would work
 ;;; great for circular lists.
-(define list->vector
+(define %%list->vector ;; Gerbil: renamed to list->vector on export
   (let ((%list->vector list->vector))
     (lambda (lst . maybe-start+end)
       ;; Checking the type of a proper list is expensive, so we do it
@@ -1269,7 +1276,7 @@
                         (error "list was too short"
                                `(list was ,lst)
                                `(attempted end was ,end)
-                               `(while calling ,list->vector)))
+                               `(while calling ,%%list->vector)))
                        ((pair? l)
                         (values (car l) (cdr l)))
                        (else
@@ -1282,7 +1289,7 @@
                                ;; function PROPER-LIST?.
                                (list list? lst)
                                `(while calling
-                                 ,list->vector))))))))))))
+                                 ,%%list->vector))))))))))))
 
 ;;; (REVERSE-LIST->VECTOR <list> [<start> <end>]) -> vector
 ;;;   Produce a vector containing the elements in LIST, which must be a
