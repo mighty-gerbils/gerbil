@@ -3,6 +3,8 @@ package: std/misc
 ;;;; String utilities
 
 (export
+  string-split-prefix
+  string-trim-prefix
   string-split-suffix
   string-trim-suffix
   string-split-eol
@@ -11,6 +13,22 @@ package: std/misc
 
 (import
   :std/srfi/13)
+
+
+;; If the string starts with given prefix, return the end of the string after the prefix.
+;; Otherwise, return the entire string. NB: Only remove the prefix once.
+(def (string-trim-prefix prefix string)
+  (if (string-prefix? prefix string)
+    (string-drop string (string-length prefix))
+    string))
+
+;; Split a string based on the given prefix, if present.
+;; Return two values:
+;; - the trimmed string,
+;; - the prefix (eq? to the argument) if found, or an empty string if not found
+(def (string-split-suffix suffix string)
+  (let ((trimmed (string-trim-suffix suffix string)))
+    (if (eq? trimmed string) (values string "") (values trimmed suffix))))
 
 
 ;; If the string ends with given suffix, return the beginning of the string up to the suffix.
@@ -23,7 +41,7 @@ package: std/misc
 ;; Split a string based on the given suffix, if present.
 ;; Return two values:
 ;; - the trimmed string,
-;; - the suffix (eq? to the argument) if found, or an empty string if not found, and
+;; - the suffix (eq? to the argument) if found, or an empty string if not found
 (def (string-split-suffix suffix string)
   (let ((trimmed (string-trim-suffix suffix string)))
     (if (eq? trimmed string) (values string "") (values trimmed suffix))))
