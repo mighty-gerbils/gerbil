@@ -26,9 +26,9 @@ package: std/misc
 ;; Return two values:
 ;; - the trimmed string,
 ;; - the prefix (eq? to the argument) if found, or an empty string if not found
-(def (string-split-suffix suffix string)
-  (let ((trimmed (string-trim-suffix suffix string)))
-    (if (eq? trimmed string) (values string "") (values trimmed suffix))))
+(def (string-split-prefix prefix string)
+  (let ((trimmed (string-trim-prefix prefix string)))
+    (if (eq? trimmed string) (values string "") (values trimmed prefix))))
 
 
 ;; If the string ends with given suffix, return the beginning of the string up to the suffix.
