@@ -16,8 +16,9 @@ package: std/os
   macro-raw-device-port?
   macro-raw-device-port-rdevice-condvar
   macro-raw-device-port-wdevice-condvar
-  macro-raw-device-port-device
-  macro-raw-device-port-id)
+  macro-raw-device-port-specific
+  macro-raw-device-port-id
+  macro-raw-device-port-type)
 
 (def (open-raw-device direction id fd)
   (def (fail)
@@ -29,7 +30,7 @@ package: std/os
             (##os-device-open-raw-from-fd fd (##psettings->device-flags psettings)))
        (if (##fixnum? device)
          (##raise-os-exception #f device open-raw-device direction id fd)
-         (##make-raw-device-port device fd id direction))))))
+         (##make-raw-device-port direction device id [id fd] fd))))))
 
 (def (fdopen fd dir t)
   (let (dirx
@@ -42,7 +43,7 @@ package: std/os
     (open-raw-device dirx t fd)))
 
 (def (fd-e raw)
-  (values (macro-raw-device-port-device raw)))
+  (values (macro-raw-device-port-specific raw)))
 
 (def (fd-io-in raw)
   (values (macro-raw-device-port-rdevice-condvar raw)))
@@ -51,13 +52,13 @@ package: std/os
   (values (macro-raw-device-port-wdevice-condvar raw)))
 
 (def (fd-type raw)
-  (values (macro-raw-device-port-id raw)))
+  (values (macro-raw-device-port-type raw)))
 
 (def (fd? obj)
   (values (macro-raw-device-port? obj)))
 
 (def (fd-type? obj t)
   (and (macro-raw-device-port? obj)
-       (eq? (macro-raw-device-port-id obj) t)))
+       (eq? (fd-type obj) t)))
 
 (bind-method! (macro-type-raw-device-port) 'destroy close-port)
