@@ -415,7 +415,11 @@ static int ffi_EVP_DecryptFinal (EVP_CIPHER_CTX *ctx, ___SCMOBJ out, int start)
 
 static HMAC_CTX *ffi_create_HMAC_CTX ()
 {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
   HMAC_CTX *ctx = (HMAC_CTX*)malloc (sizeof (HMAC_CTX));
+#else
+  HMAC_CTX *ctx = HMAC_CTX_new ();
+#endif
   if (ctx) {
     HMAC_CTX_init (ctx);
   }
@@ -424,8 +428,12 @@ static HMAC_CTX *ffi_create_HMAC_CTX ()
 
 static ___SCMOBJ ffi_release_HMAC_CTX (void *ptr)
 {
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
   HMAC_CTX_cleanup ((HMAC_CTX*) ptr);
   free (ptr);
+#else
+  HMAC_CTX_free ((HMAC_CTX*) ptr);
+#endif
   return ___FIX (___NO_ERR);
 }
 
