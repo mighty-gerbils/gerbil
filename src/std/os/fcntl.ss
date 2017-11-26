@@ -12,7 +12,7 @@ package: std/os
   F_DUPFD F_GETFD F_SETFD F_GETFL F_SETFL
   FD_CLOEXEC
   O_CREAT O_EXCL O_NOCTTY O_TRUNC
-  O_APPEND O_DSYNC O_NONBLOCK O_SYNC
+  O_APPEND O_NONBLOCK O_SYNC
   O_ACCMODE
   O_RDONLY O_RDWR O_WRONLY
   ;; F_SETLK F_SETLK F_SETLKW
@@ -80,7 +80,7 @@ package: std/os
               ;; F_GETLK F_SETLK F_SETLKW
               ;; F_RDLCK F_UNLCK F_WRLCK
               O_CREAT O_EXCL O_NOCTTY O_TRUNC
-              O_APPEND O_DSYNC O_NONBLOCK O_SYNC
+              O_APPEND O_NONBLOCK O_SYNC
               O_ACCMODE
               O_RDONLY O_RDWR O_WRONLY
               __fcntl0 __fcntl1 __errno
@@ -110,7 +110,6 @@ package: std/os
   (define-const O_TRUNC)
 
   (define-const O_APPEND)
-  (define-const O_DSYNC)
   (define-const O_NONBLOCK)
   (define-const O_SYNC)
 
