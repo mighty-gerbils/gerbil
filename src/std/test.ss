@@ -47,14 +47,14 @@ package: std
     (apply printf fmt args)))
 
 (defrules test-suite ()
-  ((_ desc body ...)
+  ((_ desc body body-rest ...)
    (stx-string? #'desc)
-   (make-test-suite desc (lambda () body ...))))
+   (make-test-suite desc (lambda () body body-rest ...))))
 
 (defrules test-case ()
-  ((_ desc body ...)
+  ((_ desc body body-rest ...)
    (stx-string? #'desc)
-   (run-test-case! desc (lambda () body ...))))
+   (run-test-case! desc (lambda () body body-rest ...))))
 
 (defrules check (=> ?)
   ((_ expr => value)
