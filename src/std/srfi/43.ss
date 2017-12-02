@@ -34,14 +34,14 @@ package: std/srfi
   ;; * Mutators
   vector-set!
   vector-swap!
-  vector-fill!
+  (rename: %%vector-fill! vector-fill!)
   vector-reverse!
   vector-copy!                    vector-reverse-copy!
   vector-reverse!
 
   ;; * Conversion
-  vector->list                    reverse-vector->list
-  list->vector                    reverse-list->vector
+  (rename: %%vector->list vector->list) reverse-vector->list
+  (rename: %%list->vector list->vector) reverse-list->vector
   )
 
 (include "srfi-43.scm")
