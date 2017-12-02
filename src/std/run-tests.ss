@@ -7,6 +7,7 @@
         "iter-test"
         "event-test"
         "misc/string-test"
+        "text/csv-test"
         "text/json-test"
         "text/utf8-test"
         "actor/xdr-test"
@@ -29,6 +30,7 @@
   [generic-runtime-test generic-macro-test
    iter-test
    event-test
+   csv-test
    json-test
    utf8-test
    string-test
