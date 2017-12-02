@@ -48,6 +48,7 @@
     "text/hex"
     (gsc: "text/base64")
     (ssi: "text/base64")
+    "text/csv"
     "text/json"
     ,@(if config-enable-libyaml
         `((gsc: "text/libyaml"
@@ -130,6 +131,7 @@
     "crypto/dh"
     "crypto"
     ;; :std/misc
+    "misc/list"
     "misc/rtd"
     "misc/shuffle"
     "misc/uuid"
