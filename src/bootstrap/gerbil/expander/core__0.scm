@@ -1890,12 +1890,57 @@
                                           '#f)))
                                 '#f)
                             _xval4557_
-                            (gx#raise-syntax-error
-                             '#f
-                             '"Bad binding; rebind conflict"
-                             _key4480_
-                             _xval4557_
-                             _val4481_)))))
+                            (if (if (##structure-direct-instance-of?
+                                     _val4481_
+                                     'gx#import-binding::t)
+                                    (##structure-instance-of?
+                                     _xval4557_
+                                     'gx#binding::t)
+                                    '#f)
+                                (gx#raise-syntax-error
+                                 '#f
+                                 '"Bad binding; import conflict"
+                                 _key4480_
+                                 (cons (##structure-ref
+                                        _val4481_
+                                        '1
+                                        gx#binding::t
+                                        '#f)
+                                       (cons (##structure-ref
+                                              (##direct-structure-ref
+                                               _val4481_
+                                               '5
+                                               gx#import-binding::t
+                                               '#f)
+                                              '1
+                                              gx#expander-context::t
+                                              '#f)
+                                             '()))
+                                 (cons (##structure-ref
+                                        _xval4557_
+                                        '1
+                                        gx#binding::t
+                                        '#f)
+                                       (cons (if (##structure-direct-instance-of?
+                                                  _xval4557_
+                                                  'gx#import-binding::t)
+                                                 (##structure-ref
+                                                  (##direct-structure-ref
+                                                   _xval4557_
+                                                   '5
+                                                   gx#import-binding::t
+                                                   '#f)
+                                                  '1
+                                                  gx#expander-context::t
+                                                  '#f)
+                                                 _xval4557_)
+                                             '())))
+                                (gx#raise-syntax-error
+                                 '#f
+                                 '"Bad binding; rebind conflict"
+                                 _key4480_
+                                 _val4481_
+                                 _xval4557_))))))
                  (_gensubst4487_
                   (lambda (_subst4552_ _id4553_)
                     (let ((_eid4555_
