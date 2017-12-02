@@ -55,6 +55,7 @@
 - [std/test](#stdtest)
 - [std/text](#stdtext)
   * [std/text/base64](#stdtextbase64)
+  * [std/text/csv](#stdtextcsv)
   * [std/text/hex](#stdtexthex)
   * [std/text/json](#stdtextjson)
   * [std/text/utf8](#stdtextutf8)
@@ -1185,6 +1186,32 @@ Base64 encoding and decoding.
   subu8vector->base64-string)
   base64-decode base64-decode-substring
   base64-encode base64-encode-subu8vector
+```
+
+### std/text/csv
+
+CSV parser and unparser.
+It is configurable through parameters to fit whichever CSV options your files use,
+defaulting to the "standard" from the creativyst specification.
+Parameters for RFC4180 are just a call-with- function call around.
+
+The parameters are: `csv-separator` `csv-quote` `csv-unquoted-quotequote?` `csv-loose-quote?`
+`csv-eol` `csv-line-endings` `csv-skip-whitespace?` `csv-allow-binary?`
+
+Functions to locally set the parameters to known values are `call-with-creativyst-csv-syntax` `call-with-rfc4180-csv-syntax` `call-with-strict-rfc4180-csv-syntax`
+
+The parsing and unparsing functions are `read-csv-line` `read-csv-lines` `read-csv-file` `write-csv-line` `write-csv-lines`.
+
+```
+(import :std/text/csv)
+
+;; exports:
+
+  csv-separator csv-quote csv-unquoted-quotequote? csv-loose-quote?
+  csv-eol csv-line-endings csv-skip-whitespace?
+  csv-allow-binary?
+  call-with-creativyst-csv-syntax call-with-rfc4180-csv-syntax call-with-strict-rfc4180-csv-syntax
+  read-csv-line read-csv-lines read-csv-file write-csv-line write-csv-lines
 ```
 
 ### std/text/hex
