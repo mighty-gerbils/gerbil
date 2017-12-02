@@ -21,6 +21,7 @@
 - [std/logger](#stdlogger)
 - [std/make](#stdmake)
 - [std/misc](#stdmisc)
+  * [std/misc/list](#stdmisclist)
   * [std/misc/ports](#stdmiscports)
   * [std/misc/pqueue](#stdmiscpqueue)
   * [std/misc/queue](#stdmiscqueue)
@@ -451,8 +452,25 @@ Standard library build tool.
 
 Miscellaneous libraries.
 
+### std/misc/list
+
+List utilities.
+
+```
+(import :std/misc/ports)
+
+;; exports:
+  plist->alist
+  length=? length=n?
+  length<? length<n? length<=? length<=n?
+  length>? length>n? length>=? length>=n?
+  call-with-list-builder
+  snoc append1
+```
+
 ### std/misc/ports
-Port utilites.
+
+Port utilities.
 
 ```
 (import :std/misc/ports)

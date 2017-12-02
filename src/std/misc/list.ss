@@ -2,7 +2,13 @@
 package: std/misc
 ;;;; List utilities
 
-(export #t)
+(export
+  plist->alist
+  length=? length=n?
+  length<? length<n? length<=? length<=n?
+  length>? length>n? length>=? length>=n?
+  call-with-list-builder
+  snoc append1)
 
 (import
   :std/srfi/1
