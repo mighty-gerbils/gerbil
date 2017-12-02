@@ -11,14 +11,18 @@ package: std/misc
   snoc append1)
 
 (import
-  :std/srfi/1
-  :utils/base)
+  :std/error :std/srfi/1)
 
 ;; This function transform a property list (k1 v1 k2 v2 ...) into
 ;; an association list ((k1 . v1) (k2 . v2) ...).
 ;; NB: it uses equal? as the equality predicate for keys.
 (def (plist->alist plist)
-  (hash->list (plist->hash-table plist)))
+  (let loop ((p plist))
+    (match p
+      ([k v . rest] (cons (cons k v) (loop rest)))
+      ([] [])
+      ([_] (error "Odd number of elements in plist" plist)))))
+
 
 ;; Are the two lists of the same length. Note: diverges if either list is circular.
 (def (length=? x y) ;; Same as (= (length x) (length y))
@@ -69,12 +73,12 @@ package: std/misc
 ;; : (list X) <- (<- (<- X) ((list X) <-))
 (def (call-with-list-builder fun)
   (let* ((head (cons #f '())) ;; use a traditional implementation of queue as cons of tail and head
-         (poke (λ (val)
+         (poke (lambda (val)
                  (let ((old-tail (car head))
                        (new-tail (cons val '())))
                    (set-cdr! old-tail new-tail)
                    (set-car! head new-tail))))
-         (peek (λ () (cdr head))))
+         (peek (lambda () (cdr head))))
     (set-car! head head)
     (fun poke peek)
     (peek)))
