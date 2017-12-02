@@ -24,6 +24,7 @@
   * [std/misc/list](#stdmisclist)
   * [std/misc/ports](#stdmiscports)
   * [std/misc/pqueue](#stdmiscpqueue)
+  * [std/misc/process](#stdmiscprocess)
   * [std/misc/queue](#stdmiscqueue)
   * [std/misc/shuffle](#stdmiscshuffle)
   * [std/misc/sync](#stdmiscsync)
@@ -141,6 +142,7 @@ Library for thread-based coroutines.
 (import :std/coroutine)
 
 ;; exports:
+
   coroutine coroutine? continue yield coroutine-stop!
 ```
 
@@ -453,13 +455,13 @@ Standard library build tool.
 Miscellaneous libraries.
 
 ### std/misc/list
-
 List utilities.
 
 ```
 (import :std/misc/ports)
 
 ;; exports:
+
   plist->alist
   length=? length=n?
   length<? length<n? length<=? length<=n?
@@ -469,7 +471,6 @@ List utilities.
 ```
 
 ### std/misc/ports
-
 Port utilities.
 
 ```
@@ -478,6 +479,8 @@ Port utilities.
 ;; exports:
 
   copy-port
+  read-all-as-string read-file-string
+  read-all-as-lines read-file-lines
 ```
 
 
@@ -491,6 +494,23 @@ Heap-based priority queues.
 
   make-pqueue pqueue? pqueue-empty? pqueue-size
   pqueue-peek pqueue-pop! pqueue-push!
+```
+
+### std/misc/process
+Process spawning utilities
+
+These utilities synchronously spawn a subprocess,
+spawn a coprocess function in a thread to interact with the process
+(default: `std/misc/ports#read-all-as-string`),
+check the status of the process upon termination,
+and return the result of that coprocess if successful.
+
+```
+(import :std/misc/process)
+
+;; exports:
+
+  run-process run-process/batch
 ```
 
 ### std/misc/queue
@@ -537,6 +557,20 @@ Shuffling.
   shuffle vector-shuffle vector-shuffle!
 ```
 
+### std/misc/string
+String utilities
+
+```
+(import :std/misc/string)
+
+;; exports:
+
+  string-split-prefix string-trim-prefix
+  string-split-suffix string-trim-suffix
+  string-split-eol string-trim-eol
+  +cr+ +lf+ +crlf+
+```
+
 ### std/misc/sync
 Synchronized data structures.
 
@@ -547,7 +581,7 @@ Synchronized data structures.
 
   make-sync-hash sync-hash?
   sync-hash-get sync-hash-key? sync-hash-put! sync-hash-remove!
-  sync-hash-do)
+  sync-hash-do
 ```
 
 ### std/misc/threads
@@ -1034,6 +1068,7 @@ inotify for linux.
 (import :std/os/inotify)
 
 ;; exports:
+
   inotify-init inotify? inotify-close
   inotify-add-watch inotify-rm-watch
   inotify
