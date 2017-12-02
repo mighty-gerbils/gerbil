@@ -542,8 +542,17 @@ namespace: gx
                (and (binding? xval)
                     (eq? (binding-id val) (binding-id xval)))))
       xval)
+     ((and (import-binding? val)
+           (binding? xval))
+      ;; common case: be somewhat more friendly to the user at fault
+      (raise-syntax-error #f "Bad binding; import conflict" key
+                          [(binding-id val) (expander-context-id (import-binding-context val))]
+                          [(binding-id xval)
+                           (if (import-binding? xval)
+                             (expander-context-id (import-binding-context xval))
+                             xval)]))
      (else
-      (raise-syntax-error #f "Bad binding; rebind conflict" key xval val))))
+      (raise-syntax-error #f "Bad binding; rebind conflict" key val xval))))
 
   (def (gensubst subst id)
     (let (eid (gensym (if (uninterned-symbol? id) '% id)))
