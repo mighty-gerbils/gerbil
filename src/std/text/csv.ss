@@ -32,8 +32,7 @@ package: std/text
   csv-eol csv-line-endings csv-skip-whitespace?
   csv-allow-binary?
   call-with-creativyst-csv-syntax call-with-rfc4180-csv-syntax call-with-strict-rfc4180-csv-syntax
-  read-csv-line read-csv-lines read-csv-file write-csv-line write-csv-lines
-  )
+  read-csv-line read-csv-lines read-csv-file write-csv-line write-csv-lines)
 
 (import
   :std/error :std/misc/list :std/misc/string :std/srfi/1 :std/srfi/13 :std/sugar)
@@ -166,7 +165,6 @@ package: std/text
 ;; Entries are read as strings;
 ;; it is up to you to interpret the strings as whatever you want.
 (def (read-csv-line port)
-  (validate-csv-parameters)
   (def ss (open-output-string))
   (def fields '())
   (def had-quotes? #f)
@@ -271,6 +269,7 @@ package: std/text
 ;; Entries are read as strings;
 ;; it is up to you to interpret the strings as whatever you want.
 (def (read-csv-lines port)
+  (validate-csv-parameters)
   (call-with-list-builder (lambda (c _) (until (accept-eof port) (c (read-csv-line port))))))
 
 ;; Open the file designated by the path, using the provided settings if any,
