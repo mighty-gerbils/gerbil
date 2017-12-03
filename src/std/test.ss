@@ -139,7 +139,7 @@ package: std
   ((_ expr exn-pred)
    (begin
      (verbose "... check ~a raises ~a~n" 'expr 'exn-pred)
-     (test-check-exception '(check-exception expr pred) (lambda () expr) exn-pred
+     (test-check-exception '(check-exception expr exn-pred) (lambda () expr) exn-pred
                            (location expr)))))
 
 (defsyntax (location stx)
@@ -299,6 +299,10 @@ package: std
 
 (def (test-check-exception what thunk pred loc)
   (test-case-add-check! (current-test-case))
-  (let (val (with-catch values thunk))
-    (unless (pred val)
-      (raise (make-!check-fail what val loc)))))
+  (let/cc success
+    (let/cc fail-to-throw
+      (let ((val (with-catch values (lambda () (thunk) (fail-to-throw)))))
+        (if (pred val)
+          (success)
+          (raise (make-!check-fail what val loc)))))
+    (raise (make-!check-fail what '(failed to throw an exception) loc))))
