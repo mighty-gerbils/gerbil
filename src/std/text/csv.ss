@@ -313,7 +313,8 @@ package: std/text
     ((? not) (void))
     ((? number?) (display field port))
     ((? string?) (write-csv-string-safely field port))
-    ((? symbol?) (write-csv-string-safely (symbol->string field) port))))
+    ((? symbol?) (write-csv-string-safely (symbol->string field) port))
+    (else (error "invalid CSV field" field))))
 
 (def (write-csv-string-safely string port)
   (if (string-needs-quoting? string)
