@@ -11,23 +11,23 @@ package: std/misc
   snoc append1)
 
 (import
+  <host-runtime>
   :std/error :std/srfi/1)
 
 ;; This function transform a property list (k1 v1 k2 v2 ...) into
 ;; an association list ((k1 . v1) (k2 . v2) ...).
-;; NB: it uses equal? as the equality predicate for keys.
 (def (plist->alist plist)
   (let loop ((p plist))
     (match p
       ([k v . rest] (cons (cons k v) (loop rest)))
       ([] [])
-      ([_] (error "Odd number of elements in plist" plist)))))
+      (else (error "improper plist" plist)))))
 
 
 ;; Are the two lists of the same length. Note: diverges if either list is circular.
 (def (length=? x y) ;; Same as (= (length x) (length y))
-  (let ((nx? (null? x))
-        (ny? (null? y)))
+  (let ((nx? (not (pair? x)))
+        (ny? (not (pair? y))))
     (cond
      (nx? ny?)
      (ny? #f)
@@ -35,15 +35,17 @@ package: std/misc
 
 ;; Is the list of a given length?
 (def (length=n? x n) ;; (= (length x) n)
-  (cond
-   ((null? x) (= 0 n))
-   ((= 0 n) #f)
-   (else (length=n? (cdr x) (- n 1)))))
+  (and (fixnum? n) (fx<= 0 n)
+       (let loop ((x x) (n n))
+         (cond
+          ((not (pair? x)) (fxzero? n))
+          ((fxzero? n) #f)
+          (else (loop (cdr x) (fx- n 1)))))))
 
 ;; Is the first list strictly shorter than the latter?
 (def (length<? x y) ;; (< (length x) (length y))
-  (let ((nx? (null? x))
-        (ny? (null? y)))
+  (let ((nx? (not (pair? x)))
+        (ny? (not (pair? y))))
     (cond
      (nx? (not ny?))
      (ny? #f)
@@ -51,9 +53,18 @@ package: std/misc
 
 (def (length<n? x n) ;; (< (length x) n)
   (cond
-   ((null? x) (not (zero? n)))
-   ((zero? n) #f)
-   (else (length<n? (cdr x) (- n 1)))))
+   ((fixnum? n)
+    (and (fxpositive? n)
+         (let loop ((x x) (n n))
+           (cond
+            ((not (pair? x)) (not (fxzero? n)))
+            ((fxzero? n) #f)
+            (else (loop (cdr x) (fx- n 1)))))))
+   ((real? n)
+    (and (positive? n)
+         (or (< ##max-fixnum n)
+             (length<n? x (inexact->exact (ceiling n))))))
+   (else (error "not a real number" n))))
 
 (def (length<=? x y) (not (length<? y x)))
 (def (length<=n? x n) (length<n? x (1+ n)))
