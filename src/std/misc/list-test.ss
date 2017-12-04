@@ -82,5 +82,10 @@
           (put! 2)
           (put! (copy-list (get-list-so-far)))
           (put! 3)))
-       '(1 2 (1 2) 3)))))
-
+       '(1 2 (1 2) 3)))
+    (test-case "test snoc"
+      (check-equal? (snoc 3 []) [3])
+      (check-equal? (snoc 1 [3 2]) [3 2 1]))
+    (test-case "test append1"
+      (check-equal? (append1 [] 3) [3])
+      (check-equal? (append1 [3 2] 1) [3 2 1]))))
