@@ -34,16 +34,23 @@ package: std/misc
      (else (length=? (cdr x) (cdr y))))))
 
 ;; Is the list of a given length?
-(def (length=n? x n) ;; (= (length x) n)
-  (and (fixnum? n) (fx<= 0 n)
-       (let loop ((x x) (n n))
-         (cond
-          ((not (pair? x)) (fxzero? n))
-          ((fxzero? n) #f)
-          (else (loop (cdr x) (fx- n 1)))))))
+(def (length=n? x n) ;; Efficient version of (= (length x) n)
+  (cond
+   ((fixnum? n)
+    (and (fx<= 0 n)
+         (let loop ((x x) (n n))
+           (cond
+            ((not (pair? x)) (fxzero? n))
+            ((fxzero? n) #f)
+            (else (loop (cdr x) (fx- n 1)))))))
+   ((integer? n)
+    (and (<= 0 n ##max-fixnum)
+         (length=n? x (inexact->exact n))))
+   ((number? n) #f)
+   (else (error "not a number" n))))
 
 ;; Is the first list strictly shorter than the latter?
-(def (length<? x y) ;; (< (length x) (length y))
+(def (length<? x y) ;; Efficient version of (< (length x) (length y))
   (let ((nx? (not (pair? x)))
         (ny? (not (pair? y))))
     (cond
@@ -51,15 +58,25 @@ package: std/misc
      (ny? #f)
      (else (length<? (cdr x) (cdr y))))))
 
-(def (length<n? x n) ;; (< (length x) n)
+(def (length<=n? x n) ;; Efficient version of (<= (length x) n)
   (cond
    ((fixnum? n)
-    (and (fxpositive? n)
+    (and (fx<= 0 n)
          (let loop ((x x) (n n))
            (cond
-            ((not (pair? x)) (not (fxzero? n)))
+            ((not (pair? x)) #t)
             ((fxzero? n) #f)
             (else (loop (cdr x) (fx- n 1)))))))
+   ((real? n)
+    (and (positive? n)
+         (or (< ##max-fixnum n)
+             (length<=n? x (inexact->exact (floor n))))))
+   (else (error "not a real number" n))))
+
+(def (length<n? x n) ;; Efficient version of (< (length x) n)
+  (cond
+   ((fixnum? n)
+    (and (fxpositive? n) (length<=n? x (fx- n 1))))
    ((real? n)
     (and (positive? n)
          (or (< ##max-fixnum n)
@@ -67,7 +84,6 @@ package: std/misc
    (else (error "not a real number" n))))
 
 (def (length<=? x y) (not (length<? y x)))
-(def (length<=n? x n) (length<n? x (1+ n)))
 (def (length>? x y) (length<? y x))
 (def (length>n? x n) (not (length<=n? x n)))
 (def (length>=? x y) (length<=? y x))
