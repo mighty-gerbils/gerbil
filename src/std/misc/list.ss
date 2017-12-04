@@ -1,0 +1,119 @@
+;; -*- Gerbil -*-
+package: std/misc
+;;;; List utilities
+
+(export
+  plist->alist
+  length=? length=n?
+  length<? length<n? length<=? length<=n?
+  length>? length>n? length>=? length>=n?
+  call-with-list-builder
+  snoc append1)
+
+(import
+  <host-runtime>
+  :std/error :std/srfi/1)
+
+;; This function transform a property list (k1 v1 k2 v2 ...) into
+;; an association list ((k1 . v1) (k2 . v2) ...).
+(def (plist->alist plist)
+  (let loop ((p plist))
+    (match p
+      ([k v . rest] (cons (cons k v) (loop rest)))
+      ([] [])
+      (else (error "improper plist" plist)))))
+
+
+;; Are the two lists of the same length. Note: diverges if either list is circular.
+(def (length=? x y) ;; Same as (= (length x) (length y))
+  (let ((nx? (not (pair? x)))
+        (ny? (not (pair? y))))
+    (cond
+     (nx? ny?)
+     (ny? #f)
+     (else (length=? (cdr x) (cdr y))))))
+
+;; Is the list of a given length?
+(def (length=n? x n) ;; Efficient version of (= (length x) n)
+  (cond
+   ((fixnum? n)
+    (and (fx<= 0 n)
+         (let loop ((x x) (n n))
+           (cond
+            ((not (pair? x)) (fxzero? n))
+            ((fxzero? n) #f)
+            (else (loop (cdr x) (fx- n 1)))))))
+   ((integer? n)
+    (and (<= 0 n ##max-fixnum)
+         (length=n? x (inexact->exact n))))
+   ((number? n) #f)
+   (else (error "not a number" n))))
+
+;; Is the first list strictly shorter than the latter?
+(def (length<? x y) ;; Efficient version of (< (length x) (length y))
+  (let ((nx? (not (pair? x)))
+        (ny? (not (pair? y))))
+    (cond
+     (nx? (not ny?))
+     (ny? #f)
+     (else (length<? (cdr x) (cdr y))))))
+
+(def (length<=n? x n) ;; Efficient version of (<= (length x) n)
+  (cond
+   ((fixnum? n)
+    (and (fx<= 0 n)
+         (let loop ((x x) (n n))
+           (cond
+            ((not (pair? x)) #t)
+            ((fxzero? n) #f)
+            (else (loop (cdr x) (fx- n 1)))))))
+   ((real? n)
+    (and (positive? n)
+         (or (< ##max-fixnum n)
+             (length<=n? x (inexact->exact (floor n))))))
+   (else (error "not a real number" n))))
+
+(def (length<n? x n) ;; Efficient version of (< (length x) n)
+  (cond
+   ((fixnum? n)
+    (and (fxpositive? n) (length<=n? x (fx- n 1))))
+   ((real? n)
+    (and (positive? n)
+         (or (< ##max-fixnum n)
+             (length<n? x (inexact->exact (ceiling n))))))
+   (else (error "not a real number" n))))
+
+(def (length<=? x y) (not (length<? y x)))
+(def (length>? x y) (length<? y x))
+(def (length>n? x n) (not (length<=n? x n)))
+(def (length>=? x y) (length<=? y x))
+(def (length>=n? x n) (not (length<n? x n)))
+
+;; This function helps built a list, by calling a building function that takes two arguments:
+;; The first, which could be called poke (or put!, enqueue!, append-one-element-at-the-end!)
+;; takes an element and puts it at the end of the list. The second, which could be called peek
+;; (or get, get-list-so-far, get-shared-list-that-is-mutated-when-you-put), returns the
+;; list of elements that poke has been called with, so far. When the building function returns,
+;; call-with-list-builder will return the state of the list, as if by calling the peek function.
+;; NB: this implementation accumulates elements by mutating a shared queue of cons cells;
+;; in case of continuations, that same list is shared by all executions.
+;; : (list X) <- (<- (<- X) ((list X) <-))
+(def (call-with-list-builder fun)
+  (let* ((head (cons #f '())) ;; use a traditional implementation of queue as cons of tail and head
+         (poke (lambda (val)
+                 (let ((old-tail (car head))
+                       (new-tail (cons val '())))
+                   (set-cdr! old-tail new-tail)
+                   (set-car! head new-tail))))
+         (peek (lambda () (cdr head))))
+    (set-car! head head)
+    (fun poke peek)
+    (peek)))
+
+;; Like cons, but puts the element at the end of the list
+;; (List A) <- A (List A)
+(def (snoc x l) (append l [x]))
+
+;; append one element at the end of a list
+;; (List A) <- (List A) A
+(def (append1 l x) (append l [x]))

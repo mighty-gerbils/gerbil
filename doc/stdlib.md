@@ -21,8 +21,10 @@
 - [std/logger](#stdlogger)
 - [std/make](#stdmake)
 - [std/misc](#stdmisc)
+  * [std/misc/list](#stdmisclist)
   * [std/misc/ports](#stdmiscports)
   * [std/misc/pqueue](#stdmiscpqueue)
+  * [std/misc/process](#stdmiscprocess)
   * [std/misc/queue](#stdmiscqueue)
   * [std/misc/shuffle](#stdmiscshuffle)
   * [std/misc/sync](#stdmiscsync)
@@ -55,6 +57,7 @@
 - [std/test](#stdtest)
 - [std/text](#stdtext)
   * [std/text/base64](#stdtextbase64)
+  * [std/text/csv](#stdtextcsv)
   * [std/text/hex](#stdtexthex)
   * [std/text/json](#stdtextjson)
   * [std/text/utf8](#stdtextutf8)
@@ -139,6 +142,7 @@ Library for thread-based coroutines.
 (import :std/coroutine)
 
 ;; exports:
+
   coroutine coroutine? continue yield coroutine-stop!
 ```
 
@@ -450,8 +454,24 @@ Standard library build tool.
 
 Miscellaneous libraries.
 
+### std/misc/list
+List utilities.
+
+```
+(import :std/misc/ports)
+
+;; exports:
+
+  plist->alist
+  length=? length=n?
+  length<? length<n? length<=? length<=n?
+  length>? length>n? length>=? length>=n?
+  call-with-list-builder
+  snoc append1
+```
+
 ### std/misc/ports
-Port utilites.
+Port utilities.
 
 ```
 (import :std/misc/ports)
@@ -459,6 +479,8 @@ Port utilites.
 ;; exports:
 
   copy-port
+  read-all-as-string read-file-string
+  read-all-as-lines read-file-lines
 ```
 
 
@@ -472,6 +494,23 @@ Heap-based priority queues.
 
   make-pqueue pqueue? pqueue-empty? pqueue-size
   pqueue-peek pqueue-pop! pqueue-push!
+```
+
+### std/misc/process
+Process spawning utilities
+
+These utilities synchronously spawn a subprocess,
+spawn a coprocess function in a thread to interact with the process
+(default: `std/misc/ports#read-all-as-string`),
+check the status of the process upon termination,
+and return the result of that coprocess if successful.
+
+```
+(import :std/misc/process)
+
+;; exports:
+
+  run-process run-process/batch
 ```
 
 ### std/misc/queue
@@ -518,6 +557,20 @@ Shuffling.
   shuffle vector-shuffle vector-shuffle!
 ```
 
+### std/misc/string
+String utilities
+
+```
+(import :std/misc/string)
+
+;; exports:
+
+  string-split-prefix string-trim-prefix
+  string-split-suffix string-trim-suffix
+  string-split-eol string-trim-eol
+  +cr+ +lf+ +crlf+
+```
+
 ### std/misc/sync
 Synchronized data structures.
 
@@ -528,7 +581,7 @@ Synchronized data structures.
 
   make-sync-hash sync-hash?
   sync-hash-get sync-hash-key? sync-hash-put! sync-hash-remove!
-  sync-hash-do)
+  sync-hash-do
 ```
 
 ### std/misc/threads
@@ -1015,6 +1068,7 @@ inotify for linux.
 (import :std/os/inotify)
 
 ;; exports:
+
   inotify-init inotify? inotify-close
   inotify-add-watch inotify-rm-watch
   inotify
@@ -1185,6 +1239,32 @@ Base64 encoding and decoding.
   subu8vector->base64-string)
   base64-decode base64-decode-substring
   base64-encode base64-encode-subu8vector
+```
+
+### std/text/csv
+
+CSV parser and unparser.
+It is configurable through parameters to fit whichever CSV options your files use,
+defaulting to the "standard" from the creativyst specification.
+Parameters for RFC4180 are just a call-with- function call around.
+
+The parameters are: `csv-separator` `csv-quote` `csv-unquoted-quotequote?` `csv-loose-quote?`
+`csv-eol` `csv-line-endings` `csv-skip-whitespace?` `csv-allow-binary?`
+
+Functions to locally set the parameters to known values are `call-with-creativyst-csv-syntax` `call-with-rfc4180-csv-syntax` `call-with-strict-rfc4180-csv-syntax`
+
+The parsing and unparsing functions are `read-csv-line` `read-csv-lines` `read-csv-file` `write-csv-line` `write-csv-lines`.
+
+```
+(import :std/text/csv)
+
+;; exports:
+
+  csv-separator csv-quote csv-unquoted-quotequote? csv-loose-quote?
+  csv-eol csv-line-endings csv-skip-whitespace?
+  csv-allow-binary?
+  call-with-creativyst-csv-syntax call-with-rfc4180-csv-syntax call-with-strict-rfc4180-csv-syntax
+  read-csv-line read-csv-lines read-csv-file write-csv-line write-csv-lines
 ```
 
 ### std/text/hex
