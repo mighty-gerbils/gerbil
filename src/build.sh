@@ -58,29 +58,29 @@ finalize_build () {
 stage0 () {
   local target_bin="${GERBIL_STAGE0}/bin"
   local target_lib="${GERBIL_STAGE0}/lib"
-  
+
   ## feedback
   feedback_low "Building gerbil stage0"
-  
+
   ## preparing target directory
   feedback_mid "preparing ${GERBIL_STAGE0}"
   target_setup "${GERBIL_STAGE0}"
-  
+
   ## gerbil runtime
   feedback_mid "compiling runtime"
   compile_runtime "${target_lib}"
-  
+
   ## gerbil bootstrap
   feedback_mid "preparing bootstrap"
   rsync -auv bootstrap/gerbil "${target_lib}"
   find "${target_lib}" -name \*.scm > .build.stage0
-  
+
   feedback_mid "compiling gerbil core"
   gsi "${GERBIL_BUILD}/build0.scm" || die
-  
+
   ## cleaning up
   rm -f .build.stage0
-  
+
   ## finalize build
   feedback_mid "finalizing build"
   finalize_build "${target_lib}" "${target_bin}"
@@ -91,24 +91,24 @@ stage1 () {
   local final_string="[final]"
   local final=""
   [ "final" = "${1:-}" ] && final="1"
-  
+
   ## constants
   local target_bin="${GERBIL_BASE}/bin"
   local target_lib="${GERBIL_BASE}/lib"
   local target_lib_gerbil="${GERBIL_BASE}/lib/gerbil"
   local target_lib_static="${GERBIL_BASE}/lib/static"
-  
+
   ## feedback
   feedback_low "Building gerbil stage1 ${final:+${final_string}}"
-  
+
   ## preparing target directory
   feedback_mid "preparing ${GERBIL_BASE}"
   target_setup "${GERBIL_BASE}"
-  
+
   ## gerbil runtime
   feedback_mid "compiling runtime"
   compile_runtime "${target_lib}"
-  
+
   ## stage1 build
   feedback_mid "preparing core build"
   mkdir -p "${target_lib_gerbil}"
@@ -122,16 +122,25 @@ stage1 () {
   export GERBIL_HOME="${GERBIL_STAGE0}" # required by gxi-script
   export GERBIL_TARGET="${GERBIL_BASE}" # required by build1.ss
   "${GERBIL_STAGE0}/bin/gxi-script" "${GERBIL_BUILD}/build1.ss" || die
-  
+
   ## finalize build
   feedback_mid "finalizing build ${final:+${final_string}}"
   finalize_build "${target_lib}" "${target_bin}"
-  
+
   ## clean up stage0
   if [ -n "${final}" ]; then
     feedback_low "Cleaning up bootstrap"
     rm -rf "${GERBIL_STAGE0}"
   fi
+}
+
+## reset build layout -- touch .keep files for scm
+build_layout () {
+  feedback_low "Resetting build layout structure"
+  mkdir -p "${GERBIL_STAGE0}"
+  touch "${GERBIL_STAGE0}/.keep"
+  touch "${GERBIL_BASE}/bin/.keep"
+  touch "${GERBIL_BASE}/lib/.keep"
 }
 
 ## commands
@@ -185,6 +194,9 @@ else
          ;;
        "stage1")
          stage1 "${2:-}" || die
+         ;;
+       "layout")
+         build_layout || die
          ;;
        *)
          feedback_err "Unknown command."
