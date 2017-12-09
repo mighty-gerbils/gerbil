@@ -3,7 +3,7 @@
 ;;; Gerbil interactive environment initialization
 
 ;; Pleasantly greet user
-(displayln (gerbil-system-version-string))
+(displayln gerbil-greeting)
 
 ;; Import Gambit prelude
 (import :gerbil/gambit)

@@ -23,6 +23,10 @@
 (define (gerbil-system)
   'gerbil-gambit)
 
+(define gerbil-greeting
+  (gerbil-system-version-string))
+(set! gerbil-greeting gerbil-greeting) ; allow user mutation
+
 (define &current-module-libpath
   (make-parameter #f))
 (define &current-module-registry
