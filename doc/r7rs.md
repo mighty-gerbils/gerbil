@@ -51,10 +51,11 @@ With this in mind, we can reproduce the Life example from the R7RS report.
 First, let's define the `(example grid)` library:
 ```
 $ mkdir example
-$ cat > example/grid.ss
-prelude: :scheme/r7rs
-package: example
 
+$ cat > example/gerbil.pkg
+(prelude: :scheme/r7rs package: example)
+
+$ cat > example/grid.ss
 (define-library (example grid)
   (export make rows cols ref each
           (rename put! set!))
@@ -89,9 +90,6 @@ package: example
 And then we define the `(example life)` library:
 ```
 $ cat > example/life.ss
-prelude: :scheme/r7rs
-package: example
-
 (define-library (example life)
   (export life)
   (import (except (scheme base) set!)
