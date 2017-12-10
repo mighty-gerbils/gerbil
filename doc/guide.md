@@ -23,6 +23,7 @@ interpreter prompt.
   * [Library Modules](#library-modules)
   * [Executable Modules](#executable-modules)
   * [Prelude Modules and Custom Languages](#prelude-modules-and-custom-languages)
+  * [Implicit Package Declations](#implicit-package-declations)
 - [Standard Library](#standard-library)
   * [Optional Libraries](#optional-libraries)
   * [Additional Syntactic Sugar](#additional-syntactic-sugar)
@@ -730,6 +731,21 @@ by the prelude.
 Custom languages are a big topic and this only touches the surface;
 they  are further explored in the
 [Custom Language tutorial](tutorial/lang.md).
+
+### Implicit Package Declations
+
+As of `Gerbil-v0.12-DEV-845-g39f54e4`, you can ellide the `package:` and
+`prelude:` declations in your module and have them automatically deduced
+from the file system layout of your library/package.
+You can do so by creating a `gerbil.pkg` file in the root of your library,
+which contains a property list.
+
+The `package:` property specifies the prefix package at the root of your
+hierarhcy. The package of individual modules will extend this prefix to
+mirror the directory structure.
+
+The `prelude:` property specifies an implicit custom prelude for s-expression
+based languages.
 
 ## Standard Library
 
