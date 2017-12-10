@@ -219,7 +219,11 @@ namespace: gx
                      "Bad syntax; Illegal package name" pkg))))
          (lp rest pre ns pkg)))
       (else
-       (let* ((prelude
+       (let* (((values pre ns pkg)
+               (if pkg
+                 (values pre ns pkg)
+                 (core-read-module-package path pre ns)))
+              (prelude
                (cond
                 ((core-bound-module-prelude? pre)
                  (syntax-local-e pre))
@@ -236,8 +240,12 @@ namespace: gx
          (values prelude module-id module-ns body))))))
 
 (def (core-read-module/lang path)
-  (def (read-body inp pre pkg ns args)
-    (let* ((prelude
+  (def (read-body inp pre ns pkg args)
+    (let* (((values pre ns pkg)
+            (if pkg
+              (values pre ns pkg)
+              (core-read-module-package path pre ns)))
+           (prelude
             (import-module pre))
            (read-module-body
             (cond
@@ -281,7 +289,7 @@ namespace: gx
               (pkg (and pkg (string-e pkg "package")))
               (ns (pgetq namespace: args))
               (ns (and ns (string-e ns "namespace"))))
-         (read-body inp prelude pkg ns args)))
+         (read-body inp prelude ns pkg args)))
       (else
        (raise-syntax-error #f "Illegal #lang arguments; missing prelude" path))))
 
@@ -308,6 +316,38 @@ namespace: gx
       (raise-syntax-error #f "Illegal module syntax" path)))
 
   (call-with-input-file path read-e))
+
+(def (core-read-module-package path pre ns)
+  (def (string-e e)
+    (cond
+     ((symbol? e)
+      (symbol->string e))
+     ((string? e) e)
+     (else
+      (raise-syntax-error #f "Unexpected datum" e))))
+
+  (let lp ((dir (path-directory path))
+           (pkg-path []))
+    (let (gerbil.pkg (path-expand "gerbil.pkg" dir))
+      (if (file-exists? gerbil.pkg)
+        (let* ((plist (call-with-input-file gerbil.pkg read))
+               (root (pgetq package: plist))
+               (pkg (let (pkg-path
+                          (if root
+                            (cons (string-e root) pkg-path)
+                            pkg-path))
+                      (and (not (null? pkg-path))
+                           (string-join pkg-path "/"))))
+               (ns (alet (ns (or ns (pgetq namespace: plist)))
+                     (string-e ns)))
+               (pre (or pre (pgetq prelude: plist))))
+          (values pre ns pkg))
+        (let (dir* (path-strip-trailing-directory-separator dir))
+          (if (or (string-empty? dir*) (equal? dir dir*))
+            (values pre ns #f)         ; reached root -- no gerbil.pkg
+            (let ((xpath (path-strip-directory dir*))
+                  (xdir (path-directory dir*)))
+              (lp xdir (cons xpath pkg-path)))))))))
 
 (def (core-module-path->namespace path)
   (path-strip-extension (path-strip-directory path)))
