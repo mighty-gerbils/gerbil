@@ -747,6 +747,11 @@ mirror the directory structure.
 The `prelude:` property specifies an implicit custom prelude for s-expression
 based languages.
 
+If the gerbil.pkg file is empty, then it is treated as an empty
+property list.  This allows you to simply touch a gerbil.pkg at the
+root of your source hierarchy when you don't need a custom prelude and
+use a directory structure that mimics your logical package structure.
+
 ## Standard Library
 
 The gerbil standard library is located at `src/std`; it includes
