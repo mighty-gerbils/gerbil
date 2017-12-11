@@ -324,24 +324,32 @@ namespace: gx
       (symbol->string e))
      ((string? e) e)
      (else
-      (raise-syntax-error #f "Unexpected datum" e))))
+      (raise-syntax-error #f "Malformed package info; unexpected datum" e))))
 
   (let lp ((dir (path-directory path))
            (pkg-path []))
     (let (gerbil.pkg (path-expand "gerbil.pkg" dir))
       (if (file-exists? gerbil.pkg)
-        (let* ((plist (call-with-input-file gerbil.pkg read))
-               (root (pgetq package: plist))
-               (pkg (let (pkg-path
-                          (if root
-                            (cons (string-e root) pkg-path)
-                            pkg-path))
-                      (and (not (null? pkg-path))
-                           (string-join pkg-path "/"))))
-               (ns (alet (ns (or ns (pgetq namespace: plist)))
-                     (string-e ns)))
-               (pre (or pre (pgetq prelude: plist))))
-          (values pre ns pkg))
+        (let (plist (call-with-input-file gerbil.pkg read))
+          (cond
+           ((eof-object? plist)         ; empty
+            (let (pkg (and (not (null? pkg-path))
+                           (string-join pkg-path "/")))
+              (values pre ns pkg)))
+           ((list? plist)               ; property list
+            (let* ((root (pgetq package: plist))
+                   (pkg (let (pkg-path
+                              (if root
+                                (cons (string-e root) pkg-path)
+                                pkg-path))
+                          (and (not (null? pkg-path))
+                               (string-join pkg-path "/"))))
+                   (ns (let (ns (or ns (pgetq namespace: plist)))
+                         (and ns (string-e ns))))
+                   (pre (or pre (pgetq prelude: plist))))
+              (values pre ns pkg)))
+           (else
+            (raise-syntax-error #f "Malformed package info; unexpected datum" plist))))
         (let (dir* (path-strip-trailing-directory-separator dir))
           (if (or (string-empty? dir*) (equal? dir dir*))
             (values pre ns #f)         ; reached root -- no gerbil.pkg
