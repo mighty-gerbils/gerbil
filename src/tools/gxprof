@@ -1,8 +1,8 @@
 #!/usr/bin/env gxi
 ;; -*- Gerbil -*-
 ;; Rudimentary gerbil profiler
-;; Invocation: gxprof exe-module arg ...
-;; Imports library module exe-module and executes main with arguments arg ...
+;; Invocation: gxprof exe-module-path arg ...
+;; Imports module exe-module and executes main with arguments arg ...
 ;; Output: gxprof.out in current directory on main function return
 ;;         contains  continuation backtraces from thread heartbeat interrupt
 ;;         as a list [[procedure-name ....] ...]
@@ -11,10 +11,16 @@
         :std/sugar)
 
 (def (main mod . args)
-  (let* ((ctx (import-module (string->symbol mod) #f #t))
+  (let* ((ctx (import-module (module-path mod) #f #t))
          (main-id (find-runtime-symbol ctx 'main))
          (main-fn (eval main-id)))
     (profile main-fn args)))
+
+(def (module-path str)
+  (if (and (> (string-length str) 0)
+           (eq? (string-ref str 0) #\:))
+    (string->symbol str)
+    str))
 
 (def (find-export-binding ctx id)
   (cond
