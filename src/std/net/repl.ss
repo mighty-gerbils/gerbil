@@ -50,7 +50,7 @@ package: std/net
         (let* ((tgroup (make-thread-group 'repl-client))
                (thread (make-thread (lambda () (repl-client client passwd))
                                     'repl tgroup))
-               (state (make-repl-client-state client tgroup)))
+               (state (make-repl-client-state client thread)))
           (thread-group-specific-set! tgroup state)
           (thread-start! thread)
           (let (monitor (spawn/name 'repl-client-monitor repl-client-monitor thread tgroup))
@@ -83,7 +83,7 @@ package: std/net
     (close-port client)
     (thread-terminate! (repl-state-reader state))))
 
-(def (repl-client-reader state in out tgroup)
+(def (repl-client-reader state in out repl-thread)
   (let loop ((mode 'input))
     (let (c (read-char in))
       (if (eof-object? c)
@@ -112,9 +112,12 @@ package: std/net
            (loop 'input))
           ((#\xff)                      ; IAC
            (case c
-             ((#\xf4)                   ; INTERRUPT
-              (##thread-interrupt!
-               (thread-group->thread-list tgroup))
+             ((#\xf4)                   ; INTERRUPT (C-c)
+              ;; a bit of a hack, but we want to force an interrupt
+              ;; in the repl thread (eg because of a loop) and not
+              ;; leave dangling threads waiting for the interrupt
+              ;; to complete
+              (##thread-int! repl-thread (lambda () (raise 'interrupt)))
               (loop 'input))
              ((#\xfb #\xfc #\xfd #\xfe) ; WILL/WONT/DO/DONT
               (loop c))
@@ -123,13 +126,13 @@ package: std/net
           (else
            (loop 'input)))))))
 
-(def (make-repl-client-state client tgroup)
+(def (make-repl-client-state client thread)
   (let* (((values in-rd in-wr)
           (open-string-pipe '(direction: input permanent-close: #f)))
          (_ (##vector-set! in-rd 4 (lambda (port) '(repl)))) ; port-name
          (channel (##make-repl-channel-ports in-rd client))
          (state (make-repl-state client channel #f #f))
-         (reader (make-thread (lambda () (repl-client-reader state client in-wr tgroup))
+         (reader (make-thread (lambda () (repl-client-reader state client in-wr thread))
                               'repl-client-reader)))
     (set! (repl-state-reader state) reader)
     state))
