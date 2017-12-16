@@ -113,11 +113,7 @@ package: std/net
           ((#\xff)                      ; IAC
            (case c
              ((#\xf4)                   ; INTERRUPT (C-c)
-              ;; a bit of a hack, but we want to force an interrupt
-              ;; in the repl thread (eg because of a loop) and not
-              ;; leave dangling threads waiting for the interrupt
-              ;; to complete
-              (##thread-int! repl-thread (lambda () (raise 'interrupt)))
+              (##thread-int! repl-thread ##user-interrupt!)
               (loop 'input))
              ((#\xfb #\xfc #\xfd #\xfe) ; WILL/WONT/DO/DONT
               (loop c))
