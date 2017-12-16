@@ -28,7 +28,11 @@ package: std/net
 
 (def (stop-repl-server! server)
   (close-port (thread-specific server))
-  (thread-join! server))
+  (try
+   (thread-join! server)
+   (catch (uncaught-exception? e)
+     (unless (os-exception? (uncaught-exception-reason e))
+       (raise e)))))
 
 (def (repl-server sock passwd)
   (let lp ()
