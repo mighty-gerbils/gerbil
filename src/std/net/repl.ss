@@ -60,8 +60,8 @@ package: std/net
 (def (repl-client-monitor thread tgroup)
   (try
    (thread-join! thread)
-   (catch (e)
-     (log-error "repl client error" e))
+   (catch (uncaught-exception? e)
+     (log-error "repl client error" (uncaught-exception-reason e)))
    (finally
     (thread-group-terminate! tgroup))))
 
