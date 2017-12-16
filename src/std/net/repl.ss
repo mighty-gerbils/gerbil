@@ -6,7 +6,9 @@ package: std/net
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
         :gerbil/gambit/exceptions
-        :std/sugar)
+        :std/sugar
+        :std/logger
+        :std/net/address)
 (export start-repl-server!
         stop-repl-server!)
 
@@ -19,10 +21,11 @@ package: std/net
 
 (def (start-repl-server! password: (passwd #f)
                          address: (address "127.0.0.1:7000"))
+  (start-logger!)
   (let* ((sock (open-tcp-server [server-address: address
                                  eol-encoding: 'cr-lf
                                  reuse-address: #t]))
-         (server (spawn repl-server sock passwd)))
+         (server (spawn/name 'repl-server repl-server sock passwd)))
     (thread-specific-set! server sock)
     server))
 
@@ -38,13 +41,29 @@ package: std/net
   (let lp ()
     (let (client (read sock))
       (unless (eof-object? client)
-        (let* ((tgroup (make-thread-group 'repl-server))
+        (let (sinfo (tcp-client-peer-socket-info client))
+          (debug "accepted repl connection from ~a"
+                 (inet-address->string
+                  (cons
+                   (socket-info-address sinfo)
+                   (socket-info-port-number sinfo)))))
+        (let* ((tgroup (make-thread-group 'repl-client))
                (thread (make-thread (lambda () (repl-client client passwd))
                                     'repl tgroup))
-               (state (make-repl-server-state client tgroup)))
+               (state (make-repl-client-state client tgroup)))
           (thread-group-specific-set! tgroup state)
           (thread-start! thread)
+          (let (monitor (spawn/name 'repl-client-monitor repl-client-monitor thread tgroup))
+            (thread-specific-set! monitor tgroup))
           (lp))))))
+
+(def (repl-client-monitor thread tgroup)
+  (try
+   (thread-join! thread)
+   (catch (e)
+     (log-error "repl client error" e))
+   (finally
+    (thread-group-terminate! tgroup))))
 
 (def (repl-client client passwd)
   (when passwd
@@ -55,7 +74,7 @@ package: std/net
         (unless (equal? pw passwd)
           (lp)))))
 
-  (let (state (repl-server-state))
+  (let (state (repl-client-state))
     (thread-start! (repl-state-reader state))
     (parameterize ((current-input-port  (##repl-input-port))
                    (current-output-port (##repl-output-port))
@@ -104,13 +123,13 @@ package: std/net
           (else
            (loop 'input)))))))
 
-(def (make-repl-server-state client tgroup)
+(def (make-repl-client-state client tgroup)
   (let* (((values in-rd in-wr)
           (open-string-pipe '(direction: input permanent-close: #f)))
          (channel (##make-repl-channel-ports in-rd client))
          (state (make-repl-state client channel #f #f))
          (reader (make-thread (lambda () (repl-client-reader state client in-wr tgroup))
-                              'repl-reader)))
+                              'repl-client-reader)))
     (set! (repl-state-reader state) reader)
     state))
 
@@ -120,7 +139,7 @@ package: std/net
 (def (repl-context-command repl-context src)
   (if (eof-object? src)
     (cond
-     ((repl-server-state)
+     ((repl-client-state)
       => (lambda (state)
            (if (repl-state-eof state)
              ;; hard eof, exit to repl invocation
@@ -144,7 +163,7 @@ package: std/net
 ;; override make-repl-channel to recover the repl server channel
 (def (make-repl-channel thread)
   (cond
-   ((repl-server-state thread)
+   ((repl-client-state thread)
     => repl-state-channel)
    (else
     (##default-thread-make-repl-channel thread))))
@@ -152,7 +171,7 @@ package: std/net
 (##thread-make-repl-channel-set! make-repl-channel)
 
 ;; retrieve the repl-state associated with a thread-group or its parents
-(def (repl-server-state (thread (current-thread)))
+(def (repl-client-state (thread (current-thread)))
   (let lp ((tgroup (thread-thread-group thread)))
     (cond
      ((not tgroup) #f)
