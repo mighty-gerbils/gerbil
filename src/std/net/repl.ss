@@ -126,6 +126,7 @@ package: std/net
 (def (make-repl-client-state client tgroup)
   (let* (((values in-rd in-wr)
           (open-string-pipe '(direction: input permanent-close: #f)))
+         (_ (##vector-set! in-rd 4 (lambda (port) '(repl)))) ; port-name
          (channel (##make-repl-channel-ports in-rd client))
          (state (make-repl-state client channel #f #f))
          (reader (make-thread (lambda () (repl-client-reader state client in-wr tgroup))
