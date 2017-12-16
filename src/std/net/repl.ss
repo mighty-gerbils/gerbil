@@ -12,8 +12,6 @@ package: std/net
 
 (extern namespace: #f
   macro-repl-context-level
-  macro-repl-channel-input-port
-  macro-repl-channel-output-port
   replx)
 
 (defstruct repl-state (client channel reader eof)
@@ -55,12 +53,9 @@ package: std/net
 
   (let (state (repl-server-state))
     (thread-start! (repl-state-reader state))
-    (parameterize ((current-input-port
-                    (macro-repl-channel-input-port (repl-state-channel state)))
-                   (current-output-port
-                    (macro-repl-channel-output-port (repl-state-channel state)))
-                   (current-error-port
-                    (macro-repl-channel-output-port (repl-state-channel state))))
+    (parameterize ((current-input-port  (##repl-input-port))
+                   (current-output-port (##repl-output-port))
+                   (current-error-port  (##repl-output-port)))
       (replx))
     (close-port client)
     (thread-terminate! (repl-state-reader state))))
