@@ -65,7 +65,9 @@ package: std/net
    (catch (uncaught-exception? e)
      (log-error "repl client error" (uncaught-exception-reason e)))
    (finally
-    (thread-group-terminate! tgroup))))
+    ;; this is not yet implemented in gambit (noop), so do it by hand
+    ;; (thread-group-terminate! tgroup)
+    (for-each thread-terminate! (thread-group->thread-list tgroup)))))
 
 (def (repl-client client passwd)
   (when passwd
