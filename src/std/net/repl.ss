@@ -84,7 +84,7 @@ package: std/net
     (thread-terminate! (repl-state-reader state))))
 
 (def (repl-client-reader state in out repl-thread)
-  (let loop ((mode 'input))
+  (def (loop mode)
     (let (c (read-char in))
       (if (eof-object? c)
         (begin
@@ -120,7 +120,14 @@ package: std/net
              (else
               (loop 'input))))
           (else
-           (loop 'input)))))))
+           (loop 'input))))))
+
+  (try
+   (loop 'input)
+   (catch (e)
+     (log-error "repl reader error" e)
+     (set! (repl-state-eof state) #t)
+     (close-output-port out))))
 
 (def (make-repl-client-state client thread)
   (let* (((values in-rd in-wr)
