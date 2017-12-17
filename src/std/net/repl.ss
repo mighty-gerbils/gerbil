@@ -14,6 +14,8 @@ package: std/net
 
 (extern namespace: #f
   macro-repl-context-level
+  macro-repl-channel-last-owner-set!
+  macro-port-name-set!
   replx)
 
 (defstruct repl-state (client channel reader eof)
@@ -132,8 +134,9 @@ package: std/net
 (def (make-repl-client-state client thread)
   (let* (((values in-rd in-wr)
           (open-string-pipe '(direction: input permanent-close: #f)))
-         (_ (##vector-set! in-rd 4 (lambda (port) '(repl)))) ; port-name
+         (_ (macro-port-name-set! in-rd (lambda (port) '(repl)))) ; more descriptive port name
          (channel (##make-repl-channel-ports in-rd client))
+         (_ (macro-repl-channel-last-owner-set! channel thread)) ; suppress REPL is now... message
          (state (make-repl-state client channel #f #f))
          (reader (make-thread (lambda () (repl-client-reader state client in-wr thread))
                               'repl-client-reader)))
