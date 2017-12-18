@@ -26,7 +26,9 @@
   * [std/misc/pqueue](#stdmiscpqueue)
   * [std/misc/process](#stdmiscprocess)
   * [std/misc/queue](#stdmiscqueue)
+  * [std/misc/rtd](#stdmiscrtd)
   * [std/misc/shuffle](#stdmiscshuffle)
+  * [std/misc/string](#stdmiscstring)
   * [std/misc/sync](#stdmiscsync)
   * [std/misc/threads](#stdmiscthreads)
   * [std/misc/uuid](#stdmiscuuid)
@@ -35,6 +37,7 @@
   * [std/net/bio](#stdnetbio)
   * [std/net/httpd](#stdnethttpd)
   * [std/net/request](#stdnetrequest)
+  * [std/net/repl](#stdnetrepl)
   * [std/net/server](#stdnetserver)
   * [std/net/socks](#stdnetsocks)
   * [std/net/uri](#stdneturi)
@@ -728,6 +731,21 @@ HTTP requests library.
   request-port
 ```
 
+### std/net/repl
+
+Network repl for debugging live programs.
+
+```
+(import :std/net/repl)
+
+;; start a network repl server
+(start-repl-server! password: (passwd #f)
+                    address: (address "127.0.0.1:7000"))
+=> thread
+
+;; stop the network repl server
+(stop-repl-server! repl-server-thread)
+```
 
 ### std/net/server
 Package for programming with sockets and platform-optimized i/o multiplexing.
