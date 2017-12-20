@@ -955,10 +955,19 @@ namespace: gxc
 
 ;;; runtime-phi
 (def (generate-runtime-phi-quote-syntax% stx)
+  ;; This is generally insufficient - it can only reference module-level
+  ;; identifiers from the current module; it also discards marks which
+  ;; affects cross module references to macro introduced bindings in
+  ;; macro-generating macros [i know, esoteric but still...]
+  ;; I haven't run in too much pain because of this yet, and there
+  ;; are general work arounds using quote-syntax that can remedy
+  ;; the situation until this is fixed.
+  ;; TODO:
+  ;; - compile quotes that refer to modules other than the current
+  ;;   module context
+  ;; - compile quoted marks
   (def (generate-quote q)
     (if (identifier? q)
-      ;; this is generally insufficient - it can only reference module-level
-      ;; identifiers
       (generate-runtime-identifier q)
       ;; and this is even more complicated, don't bother...
       (raise-compile-error "Cannot quote non-identifier syntax" stx q)))

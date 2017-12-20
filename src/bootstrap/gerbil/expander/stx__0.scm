@@ -10,8 +10,8 @@
      '#f))
   (define gx#identifier-wrap? (make-struct-predicate gx#identifier-wrap::t))
   (define gx#make-identifier-wrap
-    (lambda _$args3999_
-      (apply make-struct-instance gx#identifier-wrap::t _$args3999_)))
+    (lambda _$args4026_
+      (apply make-struct-instance gx#identifier-wrap::t _$args4026_)))
   (define gx#identifier-wrap-marks
     (make-struct-field-accessor gx#identifier-wrap::t '0))
   (define gx#identifier-wrap-marks-set!
@@ -26,8 +26,8 @@
      '#f))
   (define gx#syntax-wrap? (make-struct-predicate gx#syntax-wrap::t))
   (define gx#make-syntax-wrap
-    (lambda _$args3996_
-      (apply make-struct-instance gx#syntax-wrap::t _$args3996_)))
+    (lambda _$args4023_
+      (apply make-struct-instance gx#syntax-wrap::t _$args4023_)))
   (define gx#syntax-wrap-mark
     (make-struct-field-accessor gx#syntax-wrap::t '0))
   (define gx#syntax-wrap-mark-set!
@@ -42,8 +42,8 @@
      '#f))
   (define gx#syntax-quote? (make-struct-predicate gx#syntax-quote::t))
   (define gx#make-syntax-quote
-    (lambda _$args3993_
-      (apply make-struct-instance gx#syntax-quote::t _$args3993_)))
+    (lambda _$args4020_
+      (apply make-struct-instance gx#syntax-quote::t _$args4020_)))
   (define gx#syntax-quote-context
     (make-struct-field-accessor gx#syntax-quote::t '0))
   (define gx#syntax-quote-marks
@@ -52,90 +52,115 @@
     (make-struct-field-mutator gx#syntax-quote::t '0))
   (define gx#syntax-quote-marks-set!
     (make-struct-field-mutator gx#syntax-quote::t '1))
-  (define gx#identifier? (lambda (_stx3991_) (symbol? (gx#stx-e _stx3991_))))
+  (define gx#identifier? (lambda (_stx4018_) (symbol? (gx#stx-e _stx4018_))))
   (define gx#identifier-quote?
-    (lambda (_stx3989_)
-      (if (##structure-direct-instance-of? _stx3989_ 'gx#syntax-quote::t)
-          (symbol? (##structure-ref _stx3989_ '1 AST::t '#f))
+    (lambda (_stx4016_)
+      (if (##structure-direct-instance-of? _stx4016_ 'gx#syntax-quote::t)
+          (symbol? (##structure-ref _stx4016_ '1 AST::t '#f))
           '#f)))
   (define gx#sealed-syntax?
-    (lambda (_stx3984_)
-      (let ((_$e3986_
-             (##structure-direct-instance-of? _stx3984_ 'gx#syntax-quote::t)))
-        (if _$e3986_
-            _$e3986_
-            (if (##structure-instance-of? _stx3984_ 'gerbil#AST::t)
-                (gx#sealed-syntax? (##structure-ref _stx3984_ '1 AST::t '#f))
+    (lambda (_stx4011_)
+      (let ((_$e4013_
+             (##structure-direct-instance-of? _stx4011_ 'gx#syntax-quote::t)))
+        (if _$e4013_
+            _$e4013_
+            (if (##structure-instance-of? _stx4011_ 'gerbil#AST::t)
+                (gx#sealed-syntax? (##structure-ref _stx4011_ '1 AST::t '#f))
                 '#f)))))
   (define gx#syntax-e
-    (lambda (_stx3980_)
-      (let ((_stx3982_ (gx#stx-unwrap__0 _stx3980_)))
-        (if (##structure-instance-of? _stx3982_ 'gerbil#AST::t)
-            (##structure-ref _stx3982_ '1 AST::t '#f)
-            _stx3982_))))
+    (lambda (_stx4007_)
+      (let ((_stx4009_ (gx#stx-unwrap__0 _stx4007_)))
+        (if (##structure-instance-of? _stx4009_ 'gerbil#AST::t)
+            (##structure-ref _stx4009_ '1 AST::t '#f)
+            _stx4009_))))
   (define gx#syntax->datum
-    (lambda (_stx3978_)
-      (if (##structure-instance-of? _stx3978_ 'gerbil#AST::t)
-          (gx#syntax->datum (##structure-ref _stx3978_ '1 AST::t '#f))
-          (if (pair? _stx3978_)
-              (cons (gx#syntax->datum (car _stx3978_))
-                    (gx#syntax->datum (cdr _stx3978_)))
-              (if (vector? _stx3978_)
-                  (vector-map gx#syntax->datum _stx3978_)
-                  (if (box? _stx3978_)
-                      (box (gx#syntax->datum (unbox _stx3978_)))
-                      _stx3978_))))))
+    (lambda (_stx4005_)
+      (if (##structure-instance-of? _stx4005_ 'gerbil#AST::t)
+          (gx#syntax->datum (##structure-ref _stx4005_ '1 AST::t '#f))
+          (if (pair? _stx4005_)
+              (cons (gx#syntax->datum (car _stx4005_))
+                    (gx#syntax->datum (cdr _stx4005_)))
+              (if (vector? _stx4005_)
+                  (vector-map gx#syntax->datum _stx4005_)
+                  (if (box? _stx4005_)
+                      (box (gx#syntax->datum (unbox _stx4005_)))
+                      _stx4005_))))))
   (begin
     (define gx#datum->syntax__opt-lambda3946
-      (lambda (_stx3948_ _datum3949_ _src3950_)
-        (letrec ((_wrap-datum3952_
-                  (lambda (_e3959_ _marks3960_)
-                    (let _recur3962_ ((_e3964_ _e3959_))
-                      (if (symbol? _e3964_)
-                          (##structure
-                           gx#identifier-wrap::t
-                           _e3964_
-                           _src3950_
-                           _marks3960_)
-                          (if (pair? _e3964_)
-                              (cons (_recur3962_ (car _e3964_))
-                                    (_recur3962_ (cdr _e3964_)))
-                              (if (vector? _e3964_)
-                                  (vector-map _recur3962_ _e3964_)
-                                  (if (box? _e3964_)
-                                      (box (_recur3962_ (unbox _e3964_)))
-                                      _e3964_)))))))
-                 (_wrap-outer3953_
-                  (lambda (_e3957_)
-                    (if (##structure-instance-of? _e3957_ 'gerbil#AST::t)
-                        _e3957_
-                        (##structure AST::t _e3957_ _src3950_)))))
+      (lambda (_stx3948_ _datum3949_ _src3950_ _quote?3951_)
+        (letrec ((_wrap-datum3953_
+                  (lambda (_e3977_ _marks3978_)
+                    (_wrap-inner3955_
+                     _e3977_
+                     (lambda (_g39793981_)
+                       (##structure
+                        gx#identifier-wrap::t
+                        _g39793981_
+                        _src3950_
+                        _marks3978_)))))
+                 (_wrap-quote3954_
+                  (lambda (_e3969_ _ctx3970_ _marks3971_)
+                    (_wrap-inner3955_
+                     _e3969_
+                     (lambda (_g39723974_)
+                       (##structure
+                        gx#syntax-quote::t
+                        _g39723974_
+                        _src3950_
+                        _ctx3970_
+                        _marks3971_)))))
+                 (_wrap-inner3955_
+                  (lambda (_e3962_ _wrap-e3963_)
+                    (let _recur3965_ ((_e3967_ _e3962_))
+                      (if (symbol? _e3967_)
+                          (_wrap-e3963_ _e3967_)
+                          (if (pair? _e3967_)
+                              (cons (_recur3965_ (car _e3967_))
+                                    (_recur3965_ (cdr _e3967_)))
+                              (if (vector? _e3967_)
+                                  (vector-map _recur3965_ _e3967_)
+                                  (if (box? _e3967_)
+                                      (box (_recur3965_ (unbox _e3967_)))
+                                      _e3967_)))))))
+                 (_wrap-outer3956_
+                  (lambda (_e3960_)
+                    (if (##structure-instance-of? _e3960_ 'gerbil#AST::t)
+                        _e3960_
+                        (##structure AST::t _e3960_ _src3950_)))))
           (if (##structure-instance-of? _datum3949_ 'gerbil#AST::t)
               _datum3949_
               (if (not _stx3948_)
                   (##structure AST::t _datum3949_ _src3950_)
                   (if (gx#identifier? _stx3948_)
-                      (let ((_stx3955_ (gx#stx-unwrap__0 _stx3948_)))
-                        (if (gx#identifier-quote? _stx3955_)
-                            (##structure
-                             gx#syntax-quote::t
-                             _datum3949_
-                             _src3950_
-                             (##direct-structure-ref
-                              _stx3955_
-                              '3
-                              gx#syntax-quote::t
-                              '#f)
-                             (##direct-structure-ref
-                              _stx3955_
-                              '4
-                              gx#syntax-quote::t
-                              '#f))
-                            (_wrap-outer3953_
-                             (_wrap-datum3952_
+                      (let ((_stx3958_ (gx#stx-unwrap__0 _stx3948_)))
+                        (_wrap-outer3956_
+                         (if (##structure-direct-instance-of?
+                              _stx3958_
+                              'gx#syntax-quote::t)
+                             (if _quote?3951_
+                                 (_wrap-quote3954_
+                                  _datum3949_
+                                  (##direct-structure-ref
+                                   _stx3958_
+                                   '3
+                                   gx#syntax-quote::t
+                                   '#f)
+                                  (##direct-structure-ref
+                                   _stx3958_
+                                   '4
+                                   gx#syntax-quote::t
+                                   '#f))
+                                 (_wrap-datum3953_
+                                  _datum3949_
+                                  (##direct-structure-ref
+                                   _stx3958_
+                                   '4
+                                   gx#syntax-quote::t
+                                   '#f)))
+                             (_wrap-datum3953_
                               _datum3949_
                               (##direct-structure-ref
-                               _stx3955_
+                               _stx3958_
                                '3
                                gx#identifier-wrap::t
                                '#f)))))
@@ -143,22 +168,32 @@
                              _stx3948_)))))))
     (begin
       (define gx#datum->syntax__0
-        (lambda (_stx3969_ _datum3970_)
-          (let ((_src3972_ '#f))
+        (lambda (_stx3987_ _datum3988_)
+          (let* ((_src3990_ '#f) (_quote?3992_ '#t))
             (gx#datum->syntax__opt-lambda3946
-             _stx3969_
-             _datum3970_
-             _src3972_))))
+             _stx3987_
+             _datum3988_
+             _src3990_
+             _quote?3992_))))
+      (define gx#datum->syntax__1
+        (lambda (_stx3994_ _datum3995_ _src3996_)
+          (let ((_quote?3998_ '#t))
+            (gx#datum->syntax__opt-lambda3946
+             _stx3994_
+             _datum3995_
+             _src3996_
+             _quote?3998_))))
       (define gx#datum->syntax
-        (lambda _g4002_
-          (let ((_g4001_ (length _g4002_)))
-            (cond ((fx= _g4001_ 2) (apply gx#datum->syntax__0 _g4002_))
-                  ((fx= _g4001_ 3)
-                   (apply gx#datum->syntax__opt-lambda3946 _g4002_))
+        (lambda _g4029_
+          (let ((_g4028_ (length _g4029_)))
+            (cond ((fx= _g4028_ 2) (apply gx#datum->syntax__0 _g4029_))
+                  ((fx= _g4028_ 3) (apply gx#datum->syntax__1 _g4029_))
+                  ((fx= _g4028_ 4)
+                   (apply gx#datum->syntax__opt-lambda3946 _g4029_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#datum->syntax
-                    _g4002_))))))))
+                    _g4029_))))))))
   (begin
     (define gx#stx-unwrap__opt-lambda3922
       (lambda (_stx3924_ _marks3925_)
@@ -230,15 +265,15 @@
           (let ((_marks3942_ '()))
             (gx#stx-unwrap__opt-lambda3922 _stx3940_ _marks3942_))))
       (define gx#stx-unwrap
-        (lambda _g4004_
-          (let ((_g4003_ (length _g4004_)))
-            (cond ((fx= _g4003_ 1) (apply gx#stx-unwrap__0 _g4004_))
-                  ((fx= _g4003_ 2)
-                   (apply gx#stx-unwrap__opt-lambda3922 _g4004_))
+        (lambda _g4031_
+          (let ((_g4030_ (length _g4031_)))
+            (cond ((fx= _g4030_ 1) (apply gx#stx-unwrap__0 _g4031_))
+                  ((fx= _g4030_ 2)
+                   (apply gx#stx-unwrap__opt-lambda3922 _g4031_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#stx-unwrap
-                    _g4004_))))))))
+                    _g4031_))))))))
   (define gx#stx-wrap
     (lambda (_stx3917_ _marks3918_)
       (foldl1 (lambda (_mark3920_ _stx3921_)
@@ -363,7 +398,7 @@
   (define gx#stx-false? (lambda (_x3765_) (not (gx#stx-e _x3765_))))
   (define gx#stx-identifier
     (lambda (_template3762_ . _args3763_)
-      (gx#datum->syntax__opt-lambda3946
+      (gx#datum->syntax__1
        _template3762_
        (apply make-symbol (map gx#stx-e _args3763_))
        (gx#stx-source _template3762_))))
@@ -418,15 +453,15 @@
           (let ((_src3704_ '#f))
             (gx#genident__opt-lambda3684 _e3702_ _src3704_))))
       (define gx#genident
-        (lambda _g4006_
-          (let ((_g4005_ (length _g4006_)))
-            (cond ((fx= _g4005_ 0) (apply gx#genident__0 _g4006_))
-                  ((fx= _g4005_ 1) (apply gx#genident__1 _g4006_))
-                  ((fx= _g4005_ 2) (apply gx#genident__opt-lambda3684 _g4006_))
+        (lambda _g4033_
+          (let ((_g4032_ (length _g4033_)))
+            (cond ((fx= _g4032_ 0) (apply gx#genident__0 _g4033_))
+                  ((fx= _g4032_ 1) (apply gx#genident__1 _g4033_))
+                  ((fx= _g4032_ 2) (apply gx#genident__opt-lambda3684 _g4033_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#genident
-                    _g4006_))))))))
+                    _g4033_))))))))
   (define gx#gentemps
     (lambda (_stx-lst3683_) (gx#stx-map1 gx#genident _stx-lst3683_)))
   (define gx#syntax->list (lambda (_stx3681_) (gx#stx-map1 values _stx3681_)))
@@ -447,14 +482,14 @@
                 (let ((_rest3675_ _tl36523672_)) (_K36503667_ _rest3675_)))
               (_else36483662_))))))
   (define gx#stx-for-each
-    (lambda _g4008_
-      (let ((_g4007_ (length _g4008_)))
-        (cond ((fx= _g4007_ 2) (apply gx#stx-for-each1 _g4008_))
-              ((fx= _g4007_ 3) (apply gx#stx-for-each2 _g4008_))
+    (lambda _g4035_
+      (let ((_g4034_ (length _g4035_)))
+        (cond ((fx= _g4034_ 2) (apply gx#stx-for-each1 _g4035_))
+              ((fx= _g4034_ 3) (apply gx#stx-for-each2 _g4035_))
               (else
                (##raise-wrong-number-of-arguments-exception
                 gx#stx-for-each
-                _g4008_))))))
+                _g4035_))))))
   (define gx#stx-for-each1
     (lambda (_f3583_ _stx3584_)
       (let _lp3586_ ((_rest3588_ _stx3584_))
@@ -527,14 +562,14 @@
                   (_K35023571_ _xrest3581_ _xhd3579_)))
               (_try-match34983537_))))))
   (define gx#stx-map
-    (lambda _g4010_
-      (let ((_g4009_ (length _g4010_)))
-        (cond ((fx= _g4009_ 2) (apply gx#stx-map1 _g4010_))
-              ((fx= _g4009_ 3) (apply gx#stx-map2 _g4010_))
+    (lambda _g4037_
+      (let ((_g4036_ (length _g4037_)))
+        (cond ((fx= _g4036_ 2) (apply gx#stx-map1 _g4037_))
+              ((fx= _g4036_ 3) (apply gx#stx-map2 _g4037_))
               (else
                (##raise-wrong-number-of-arguments-exception
                 gx#stx-map
-                _g4010_))))))
+                _g4037_))))))
   (define gx#stx-map1
     (lambda (_f3431_ _stx3432_)
       (let _recur3434_ ((_rest3436_ _stx3432_))
@@ -792,15 +827,15 @@
           (let ((_key?3017_ gx#stx-keyword?))
             (gx#stx-plist?__opt-lambda2930 _stx3015_ _key?3017_))))
       (define gx#stx-plist?
-        (lambda _g4012_
-          (let ((_g4011_ (length _g4012_)))
-            (cond ((fx= _g4011_ 1) (apply gx#stx-plist?__0 _g4012_))
-                  ((fx= _g4011_ 2)
-                   (apply gx#stx-plist?__opt-lambda2930 _g4012_))
+        (lambda _g4039_
+          (let ((_g4038_ (length _g4039_)))
+            (cond ((fx= _g4038_ 1) (apply gx#stx-plist?__0 _g4039_))
+                  ((fx= _g4038_ 2)
+                   (apply gx#stx-plist?__opt-lambda2930 _g4039_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#stx-plist?
-                    _g4012_))))))))
+                    _g4039_))))))))
   (begin
     (define gx#stx-getq__opt-lambda2848
       (lambda (_key2850_ _stx2851_ _key=?2852_)
@@ -839,11 +874,11 @@
           (let ((_key=?2925_ gx#stx-eq?))
             (gx#stx-getq__opt-lambda2848 _key2922_ _stx2923_ _key=?2925_))))
       (define gx#stx-getq
-        (lambda _g4014_
-          (let ((_g4013_ (length _g4014_)))
-            (cond ((fx= _g4013_ 2) (apply gx#stx-getq__0 _g4014_))
-                  ((fx= _g4013_ 3) (apply gx#stx-getq__opt-lambda2848 _g4014_))
+        (lambda _g4041_
+          (let ((_g4040_ (length _g4041_)))
+            (cond ((fx= _g4040_ 2) (apply gx#stx-getq__0 _g4041_))
+                  ((fx= _g4040_ 3) (apply gx#stx-getq__opt-lambda2848 _g4041_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#stx-getq
-                    _g4014_)))))))))
+                    _g4041_)))))))))

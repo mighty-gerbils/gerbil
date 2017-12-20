@@ -55,12 +55,18 @@ namespace: gx
     (box (syntax->datum (unbox stx))))
    (else stx)))
 
-(def (datum->syntax stx datum (src #f))
+(def (datum->syntax stx datum (src #f) (quote? #t))
   (def (wrap-datum e marks)
+    (wrap-inner e (cut make-identifier-wrap <> src marks)))
+
+  (def (wrap-quote e ctx marks)
+    (wrap-inner e (cut make-syntax-quote <> src ctx marks)))
+
+  (def (wrap-inner e wrap-e)
     (let recur ((e e))
       (cond
        ((symbol? e)
-        (make-identifier-wrap e src marks))
+        (wrap-e e))
        ((pair? e)
         (cons (recur (car e))
               (recur (cdr e))))
@@ -80,11 +86,11 @@ namespace: gx
     (make-AST datum src))
    ((identifier? stx)
     (let (stx (stx-unwrap stx))
-      (if (identifier-quote? stx)
-        (make-syntax-quote datum src
-                           (syntax-quote-context stx)
-                           (syntax-quote-marks stx))
-        (wrap-outer
+      (wrap-outer
+       (if (syntax-quote? stx)
+         (if quote?
+           (wrap-quote datum (syntax-quote-context stx) (syntax-quote-marks stx))
+           (wrap-datum datum (syntax-quote-marks stx)))
          (wrap-datum datum (identifier-wrap-marks stx))))))
    (else
     (error "Bad template syntax; expected identifier" stx))))

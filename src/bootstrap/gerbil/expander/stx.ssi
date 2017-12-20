@@ -42,6 +42,9 @@ namespace: gx
                   (%#begin (%#define-runtime
                             datum->syntax__0
                             gx#datum->syntax__0)
+                           (%#define-runtime
+                            datum->syntax__1
+                            gx#datum->syntax__1)
                            (%#define-runtime datum->syntax gx#datum->syntax)))
          (%#begin (%#define-runtime
                    stx-unwrap__opt-lambda3922
