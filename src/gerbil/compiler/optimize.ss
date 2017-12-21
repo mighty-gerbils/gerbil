@@ -5,8 +5,8 @@ package: gerbil/compiler
 namespace: gxc
 
 (import :gerbil/expander
-        :gerbil/compiler/base
-        :gerbil/compiler/compile
+        "base"
+        "compile"
         <syntax-case> <syntax-sugar>
         (only-in :gerbil/gambit/exceptions display-exception))
 (export #t)

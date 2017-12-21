@@ -4,8 +4,7 @@
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/compiler/base
-        :gerbil/compiler/optimize)
+(import "base" "optimize")
 (export #t ast-rules)
 
 (defrules declare-type ()

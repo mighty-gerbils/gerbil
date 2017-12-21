@@ -5,9 +5,9 @@ package: gerbil/compiler
 namespace: gxc
 
 (import :gerbil/expander
-        :gerbil/compiler/base
-        :gerbil/compiler/compile
-        :gerbil/compiler/optimize
+        "base"
+        "compile"
+        "optimize"
         (only-in :gerbil/gambit/misc
                  pretty-print)
         (only-in :gerbil/gambit/ports
@@ -404,7 +404,8 @@ namespace: gxc
 
 (def (generate-runtime-phi stx)
   (let (lifts (box []))
-    (parameterize ((current-compile-lift lifts))
+    (parameterize ((current-compile-lift lifts)
+                   (current-compile-marks (make-hash-table-eq)))
       (let (code (apply-generate-runtime-phi stx))
         (if (null? (unbox lifts)) code
             ['begin (reverse (unbox lifts)) ... code])))))
