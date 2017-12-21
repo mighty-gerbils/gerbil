@@ -771,6 +771,12 @@ namespace: gx
               (current-directory))))))
     (path-expand path (path-normalize reldir))))
 
+(def (core-deserialize-mark repr (ctx (current-expander-context)))
+  (match repr
+    ([phi . subs]
+     (let (subst (and (not (null? subs)) (list->hash-table-eq subs)))
+       (make-expander-mark subst ctx phi #f)))))
+
 (def (syntax-local-rewrap stx)
   (stx-rewrap stx (current-expander-marks)))
 (def (syntax-local-unwrap stx)

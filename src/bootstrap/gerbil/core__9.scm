@@ -1,37 +1,97 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30741_|
-    (gx#core-quote-syntax 'runtime-type-info::t))
+    (gx#make-syntax-quote
+     'runtime-type-info::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30742_|
-    (gx#core-quote-syntax 'runtime-struct-info::t))
+    (gx#make-syntax-quote
+     'runtime-struct-info::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30743_|
-    (gx#core-quote-syntax 'runtime-class-info::t))
+    (gx#make-syntax-quote
+     'runtime-class-info::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30744_|
-    (gx#core-quote-syntax 'expander-type-info::t))
+    (gx#make-syntax-quote
+     'expander-type-info::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30745_|
-    (gx#core-quote-syntax 'extended-runtime-type-info::t))
+    (gx#make-syntax-quote
+     'extended-runtime-type-info::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30746_|
-    (gx#core-quote-syntax 'extended-struct-info::t))
+    (gx#make-syntax-quote
+     'extended-struct-info::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30747_|
-    (gx#core-quote-syntax 'extended-class-info::t))
+    (gx#make-syntax-quote
+     'extended-class-info::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30748_|
-    (gx#core-quote-syntax 'runtime-rtd-exhibitor::t))
+    (gx#make-syntax-quote
+     'runtime-rtd-exhibitor::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30749_|
-    (gx#core-quote-syntax 'runtime-struct-exhibitor::t))
+    (gx#make-syntax-quote
+     'runtime-struct-exhibitor::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30750_|
-    (gx#core-quote-syntax 'runtime-class-exhibitor::t))
+    (gx#make-syntax-quote
+     'runtime-class-exhibitor::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30751_|
-    (gx#core-quote-syntax 'macro-object::t))
+    (gx#make-syntax-quote
+     'macro-object::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30752_|
-    (gx#core-quote-syntax 'macro-object::t))
+    (gx#make-syntax-quote
+     'macro-object::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30753_|
-    (gx#core-quote-syntax 'make-macro-object))
+    (gx#make-syntax-quote
+     'make-macro-object
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30754_|
-    (gx#core-quote-syntax 'macro-object?))
+    (gx#make-syntax-quote 'macro-object? #f (gx#current-expander-context) '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30755_|
-    (gx#core-quote-syntax 'macro-object-macro))
+    (gx#make-syntax-quote
+     'macro-object-macro
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<MOP>$<MOP:3>[2]#_g30756_|
-    (gx#core-quote-syntax 'macro-object-macro-set!))
+    (gx#make-syntax-quote
+     'macro-object-macro-set!
+     #f
+     (gx#current-expander-context)
+     '()))
   (begin
     (define |gerbil/core$<MOP>$<MOP:3>[:1:]#runtime-type-info|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-class-info|

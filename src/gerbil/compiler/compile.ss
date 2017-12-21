@@ -4,8 +4,8 @@
 package: gerbil/compiler
 namespace: gxc
 
-(import :gerbil/compiler/base
-        :gerbil/expander
+(import :gerbil/expander
+        "base"
         <syntax-case> <syntax-sugar>
         (only-in :gerbil/gambit/hvectors
                  s8vector? u8vector? s16vector? u16vector?
@@ -19,6 +19,8 @@ namespace: gxc
 
 ;; quote-syntax lifts
 (def current-compile-lift
+  (make-parameter #f))
+(def current-compile-marks
   (make-parameter #f))
 
 (def (compile-e stx . args)
@@ -447,7 +449,10 @@ namespace: gxc
         ((expander-mark-subst mark)
          => (lambda (ht)
               (cond
-               ((hash-get ht eid) => values)
+               ((hash-get ht eid)
+                => (lambda (id)
+                     (if (interned-symbol? id) id
+                         (generate-runtime-gensym-reference id))))
                (else
                 (generate-runtime-identifier-key eid)))))
         (else
@@ -955,31 +960,79 @@ namespace: gxc
 
 ;;; runtime-phi
 (def (generate-runtime-phi-quote-syntax% stx)
-  ;; This is generally insufficient - it can only reference module-level
-  ;; identifiers from the current module; it also discards marks which
-  ;; affects cross module references to macro introduced bindings in
-  ;; macro-generating macros [i know, esoteric but still...]
-  ;; I haven't run in too much pain because of this yet, and there
-  ;; are general work arounds using quote-syntax that can remedy
-  ;; the situation until this is fixed.
-  ;; TODO:
-  ;; - compile quotes that refer to modules other than the current
-  ;;   module context
-  ;; - compile quoted marks
-  (def (generate-quote q)
-    (if (identifier? q)
-      (generate-runtime-identifier q)
-      ;; and this is even more complicated, don't bother...
-      (raise-compile-error "Cannot quote non-identifier syntax" stx q)))
+  (def (add-lift! expr)
+    (set! (box (current-compile-lift))
+      (cons expr (unbox (current-compile-lift)))))
+
+  (def (generate-simple stxq)
+    (let ((gid (generate-runtime-temporary #t))
+          (qid (generate-runtime-identifier stxq)))
+      (add-lift! ['define gid
+                   ['gx#make-syntax-quote ['quote qid]
+                                          #f
+                                          ['gx#current-expander-context]
+                                          ['quote []]]])
+      gid))
+
+  (def (generate-serialized stxq marks)
+    (let* ((mark-refs (map generate-mark marks))
+           (gid (generate-runtime-temporary #t))
+           (qid (generate-runtime-identifier stxq)))
+      (add-lift! ['define gid
+                   ['gx#make-syntax-quote ['quote qid]
+                                          #f
+                                          ['gx#current-expander-context]
+                                          ['list mark-refs ...]]])
+      gid))
+
+  (def (generate-mark mark)
+    (cond
+     ((hash-get (current-compile-marks) mark)
+      => values)
+     (else
+      (let* ((gid (generate-runtime-temporary #t))
+             (repr (serialize-mark mark))
+             (ctx (core-context-top (expander-mark-context mark)))
+             (ctx-ref
+              (if (eq? ctx (current-expander-context))
+                ['gx#current-expander-context]
+                ['gx#import-module ['quote (context-ref ctx)]])))
+        (hash-put! (current-compile-marks) mark gid)
+        (add-lift! ['define gid
+                     ['gx#core-deserialize-mark ['quote repr] ctx-ref]])
+        gid))))
+
+  (def (serialize-mark mark)
+    (def (quote-e sym)
+      (if (interned-symbol? sym) sym
+          (generate-runtime-gensym-reference sym)))
+
+    (with ((expander-mark subst ctx phi trace) mark)
+      (let (subs (if subst (hash->list subst) []))
+        (cons phi
+              (map (lambda (pair) (cons (quote-e (car pair)) (quote-e (cdr pair))))
+                   subs)))))
+
+  (def (context-ref ctx)
+    (if (module-context? (phi-context-super ctx))
+      (context-ref-nested ctx)
+      (make-symbol ":" (expander-context-id ctx))))
+
+  (def (context-ref-nested ctx)
+    (let lp ((ctx ctx) (r []))
+      (let (super (phi-context-super ctx))
+        (if (module-context? super)
+          (lp super (cons (car (module-context-path ctx)) r))
+          (cons (make-symbol ":" (expander-context-id ctx)) r)))))
 
   (ast-case stx ()
     ((_ stxq)
-     (let ((gid (generate-runtime-temporary #t))
-           (quote-e (generate-quote #'stxq)))
-       (set! (box (current-compile-lift))
-         (cons ['define gid ['gx#core-quote-syntax ['quote quote-e]]]
-               (unbox (current-compile-lift))))
-       gid))))
+     (if (identifier? #'stxq)
+       (let (marks (syntax-quote-marks #'stxq))
+         (if (null? marks)
+           (generate-simple #'stxq)
+           (generate-serialized #'stxq marks)))
+       (raise-compile-error "Cannot quote non-identifier syntax" #'stxq)))))
 
 (def (generate-runtime-phi-define-runtime% stx)
   (ast-case stx ()

@@ -1,78 +1,78 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gerbil/gambit/ports#write-string
-    (let ((_opt-lambda572577_
-           (lambda (_str574_ _port575_)
+    (let ((_opt-lambda573578_
+           (lambda (_str575_ _port576_)
              (write-substring
-              _str574_
+              _str575_
               '0
-              (string-length _str574_)
-              _port575_))))
-      (lambda _g587_
-        (let ((_g586_ (length _g587_)))
-          (cond ((fx= _g586_ 1)
-                 (apply (lambda (_str580_)
-                          (let ((_port582_ (current-output-port)))
-                            (_opt-lambda572577_ _str580_ _port582_)))
-                        _g587_))
-                ((fx= _g586_ 2) (apply _opt-lambda572577_ _g587_))
+              (string-length _str575_)
+              _port576_))))
+      (lambda _g588_
+        (let ((_g587_ (length _g588_)))
+          (cond ((fx= _g587_ 1)
+                 (apply (lambda (_str581_)
+                          (let ((_port583_ (current-output-port)))
+                            (_opt-lambda573578_ _str581_ _port583_)))
+                        _g588_))
+                ((fx= _g587_ 2) (apply _opt-lambda573578_ _g588_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/ports#write-string
-                  _g587_)))))))
+                  _g588_)))))))
   (define gerbil/gambit/ports#read-string
-    (let ((_opt-lambda558563_
-           (lambda (_str560_ _port561_)
-             (read-substring _str560_ '0 (string-length _str560_) _port561_))))
-      (lambda _g589_
-        (let ((_g588_ (length _g589_)))
-          (cond ((fx= _g588_ 1)
-                 (apply (lambda (_str566_)
-                          (let ((_port568_ (current-input-port)))
-                            (_opt-lambda558563_ _str566_ _port568_)))
-                        _g589_))
-                ((fx= _g588_ 2) (apply _opt-lambda558563_ _g589_))
+    (let ((_opt-lambda559564_
+           (lambda (_str561_ _port562_)
+             (read-substring _str561_ '0 (string-length _str561_) _port562_))))
+      (lambda _g590_
+        (let ((_g589_ (length _g590_)))
+          (cond ((fx= _g589_ 1)
+                 (apply (lambda (_str567_)
+                          (let ((_port569_ (current-input-port)))
+                            (_opt-lambda559564_ _str567_ _port569_)))
+                        _g590_))
+                ((fx= _g589_ 2) (apply _opt-lambda559564_ _g590_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/ports#read-string
-                  _g589_)))))))
+                  _g590_)))))))
   (define gerbil/gambit/ports#write-u8vector
-    (let ((_opt-lambda544549_
-           (lambda (_bytes546_ _port547_)
+    (let ((_opt-lambda545550_
+           (lambda (_bytes547_ _port548_)
              (write-subu8vector
-              _bytes546_
+              _bytes547_
               '0
-              (u8vector-length _bytes546_)
-              _port547_))))
-      (lambda _g591_
-        (let ((_g590_ (length _g591_)))
-          (cond ((fx= _g590_ 1)
-                 (apply (lambda (_bytes552_)
-                          (let ((_port554_ (current-output-port)))
-                            (_opt-lambda544549_ _bytes552_ _port554_)))
-                        _g591_))
-                ((fx= _g590_ 2) (apply _opt-lambda544549_ _g591_))
+              (u8vector-length _bytes547_)
+              _port548_))))
+      (lambda _g592_
+        (let ((_g591_ (length _g592_)))
+          (cond ((fx= _g591_ 1)
+                 (apply (lambda (_bytes553_)
+                          (let ((_port555_ (current-output-port)))
+                            (_opt-lambda545550_ _bytes553_ _port555_)))
+                        _g592_))
+                ((fx= _g591_ 2) (apply _opt-lambda545550_ _g592_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/ports#write-u8vector
-                  _g591_)))))))
+                  _g592_)))))))
   (define gerbil/gambit/ports#read-u8vector
-    (let ((_opt-lambda530535_
-           (lambda (_bytes532_ _port533_)
+    (let ((_opt-lambda531536_
+           (lambda (_bytes533_ _port534_)
              (read-subu8vector
-              _bytes532_
+              _bytes533_
               '0
-              (u8vector-length _bytes532_)
-              _port533_))))
-      (lambda _g593_
-        (let ((_g592_ (length _g593_)))
-          (cond ((fx= _g592_ 1)
-                 (apply (lambda (_bytes538_)
-                          (let ((_port540_ (current-input-port)))
-                            (_opt-lambda530535_ _bytes538_ _port540_)))
-                        _g593_))
-                ((fx= _g592_ 2) (apply _opt-lambda530535_ _g593_))
+              (u8vector-length _bytes533_)
+              _port534_))))
+      (lambda _g594_
+        (let ((_g593_ (length _g594_)))
+          (cond ((fx= _g593_ 1)
+                 (apply (lambda (_bytes539_)
+                          (let ((_port541_ (current-input-port)))
+                            (_opt-lambda531536_ _bytes539_ _port541_)))
+                        _g594_))
+                ((fx= _g593_ 2) (apply _opt-lambda531536_ _g594_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/ports#read-u8vector
-                  _g593_))))))))
+                  _g594_))))))))

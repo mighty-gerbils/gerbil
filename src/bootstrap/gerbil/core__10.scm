@@ -1,30 +1,55 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core$<match>[1]#_g30757_| (gx#core-quote-syntax 'apply))
-  (define |gerbil/core$<match>[1]#_g30758_| (gx#core-quote-syntax 'quasiquote))
-  (define |gerbil/core$<match>[1]#_g30759_| (gx#core-quote-syntax 'quote))
-  (define |gerbil/core$<match>[1]#_g30762_| (gx#core-quote-syntax 'vector))
-  (define |gerbil/core$<match>[1]#_g30763_| (gx#core-quote-syntax 'values))
-  (define |gerbil/core$<match>[1]#_g30764_| (gx#core-quote-syntax 'values))
-  (define |gerbil/core$<match>[1]#_g30765_| (gx#core-quote-syntax 'box))
-  (define |gerbil/core$<match>[1]#_g30766_| (gx#core-quote-syntax '@list))
-  (define |gerbil/core$<match>[1]#_g30767_| (gx#core-quote-syntax 'cons*))
-  (define |gerbil/core$<match>[1]#_g30768_| (gx#core-quote-syntax 'cons))
-  (define |gerbil/core$<match>[1]#_g30769_| (gx#core-quote-syntax 'not))
-  (define |gerbil/core$<match>[1]#_g30770_| (gx#core-quote-syntax 'or))
-  (define |gerbil/core$<match>[1]#_g30771_| (gx#core-quote-syntax 'and))
-  (define |gerbil/core$<match>[1]#_g30772_| (gx#core-quote-syntax '?))
-  (define |gerbil/core$<match>[1]#_g30773_| (gx#core-quote-syntax '=>))
-  (define |gerbil/core$<match>[1]#_g30774_| (gx#core-quote-syntax '=>))
-  (define |gerbil/core$<match>[1]#_g30783_| (gx#core-quote-syntax 'else))
-  (define |gerbil/core$<match>[1]#_g30788_| (gx#core-quote-syntax 'else))
-  (define |gerbil/core$<match>[1]#_g30789_| (gx#core-quote-syntax '<...>))
-  (define |gerbil/core$<match>[1]#_g30790_| (gx#core-quote-syntax '<>))
-  (define |gerbil/core$<match>[1]#_g30807_| (gx#core-quote-syntax '=>))
-  (define |gerbil/core$<match>[1]#_g30808_| (gx#core-quote-syntax '=>))
-  (define |gerbil/core$<match>[1]#_g30809_| (gx#core-quote-syntax 'not))
-  (define |gerbil/core$<match>[1]#_g30810_| (gx#core-quote-syntax 'or))
-  (define |gerbil/core$<match>[1]#_g30813_| (gx#core-quote-syntax 'and))
+  (define |gerbil/core$<match>[1]#_g30757_|
+    (gx#make-syntax-quote 'apply #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30758_|
+    (gx#make-syntax-quote 'quasiquote #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30759_|
+    (gx#make-syntax-quote 'quote #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30762_|
+    (gx#make-syntax-quote 'vector #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30763_|
+    (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30764_|
+    (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30765_|
+    (gx#make-syntax-quote 'box #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30766_|
+    (gx#make-syntax-quote '@list #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30767_|
+    (gx#make-syntax-quote 'cons* #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30768_|
+    (gx#make-syntax-quote 'cons #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30769_|
+    (gx#make-syntax-quote 'not #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30770_|
+    (gx#make-syntax-quote 'or #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30771_|
+    (gx#make-syntax-quote 'and #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30772_|
+    (gx#make-syntax-quote '? #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30773_|
+    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30774_|
+    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30783_|
+    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30788_|
+    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30789_|
+    (gx#make-syntax-quote '<...> #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30790_|
+    (gx#make-syntax-quote '<> #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30807_|
+    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30808_|
+    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30809_|
+    (gx#make-syntax-quote 'not #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30810_|
+    (gx#make-syntax-quote 'or #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g30813_|
+    (gx#make-syntax-quote 'and #f (gx#current-expander-context) '()))
   (begin
     (define |gerbil/core$<match>[1]#match-macro::t|
       (make-class-type

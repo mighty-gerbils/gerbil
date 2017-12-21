@@ -1,7 +1,7 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define |gerbil/core$<MOP>$<MOP:2>[1]#_g30732_|
-    (gx#core-quote-syntax '@method))
+    (gx#make-syntax-quote '@method #f (gx#current-expander-context) '()))
   (begin
     (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-info::t|
       (make-class-type

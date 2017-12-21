@@ -1,8 +1,11 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gx[1]#_g2842_| (gx#core-quote-syntax 'error::t))
-  (define |gx[1]#_g2843_| (gx#core-quote-syntax 'AST::t))
-  (define |gx[1]#_g2844_| (gx#core-quote-syntax 'else))
+  (define |gx[1]#_g2842_|
+    (gx#make-syntax-quote 'error::t #f (gx#current-expander-context) '()))
+  (define |gx[1]#_g2843_|
+    (gx#make-syntax-quote 'AST::t #f (gx#current-expander-context) '()))
+  (define |gx[1]#_g2844_|
+    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
   (begin
     (define |gx[:0:]#<error>|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-info|
