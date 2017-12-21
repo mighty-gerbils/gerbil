@@ -168,9 +168,24 @@ namespace: gx
           (hash-put! (current-expander-module-registry) id ctx)
           ctx))))
 
+  (def (import-submodule rpath)
+    (with ([origin . refs] rpath)
+      (let (ctx (core-import-module origin reload?))
+        (let lp ((rest refs) (ctx ctx))
+          (match rest
+            ([id . rest]
+             (let (bind (resolve-identifier id 0 ctx))
+               (if (and (syntax-binding? bind)
+                        (module-context? (syntax-binding-e bind)))
+                 (lp rest (syntax-binding-e bind))
+                 (error "Cannot import submodule; not bound as a module" rpath id bind))))
+            (else ctx))))))
+
   (cond
    ((and (not reload?) (hash-get (current-expander-module-registry) rpath))
     => values)
+   ((list? rpath)
+    (import-submodule rpath))
    ((core-library-module-path? rpath)
     (let (ctx (core-import-module (core-resolve-library-module-path rpath)
                                   reload?))
