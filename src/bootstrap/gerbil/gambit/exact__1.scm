@@ -1,7 +1,21 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/gambit/exact[1]#_g528_| (gx#core-quote-syntax 'syntax))
-  (define |gerbil/gambit/exact[1]#_g529_| (gx#core-quote-syntax 'lambda))
+  (define |gerbil/gambit/exact[1]#_g528_|
+    (gx#core-deserialize-mark
+     '(0 (_obj427_ . _%508_) (ref . _ref467_))
+     (gx#import-module '(:gerbil/core <sugar> <sugar:3>))))
+  (define |gerbil/gambit/exact[1]#_g529_|
+    (gx#make-syntax-quote
+     'syntax
+     #f
+     (gx#current-expander-context)
+     (list |gerbil/gambit/exact[1]#_g528_|)))
+  (define |gerbil/gambit/exact[1]#_g530_|
+    (gx#make-syntax-quote
+     'lambda
+     #f
+     (gx#current-expander-context)
+     (list |gerbil/gambit/exact[1]#_g528_|)))
   (define |gerbil/gambit/exact[:0:]#exact-integer?|
     (lambda (_$stx430_)
       (let* ((_g435450_
@@ -12,7 +26,7 @@
                 ((lambda (_L457_)
                    (if (gx#identifier? _L457_)
                        (cons (gx#datum->syntax
-                              |gerbil/gambit/exact[1]#_g528_|
+                              |gerbil/gambit/exact[1]#_g529_|
                               'syntax
                               '#f
                               '#f)
@@ -33,7 +47,7 @@
                                 (if (gx#stx-null? _tl443493_)
                                     ((lambda (_L496_)
                                        (cons (cons (gx#datum->syntax
-                                                    |gerbil/gambit/exact[1]#_g529_|
+                                                    |gerbil/gambit/exact[1]#_g530_|
                                                     'lambda
                                                     '#f
                                                     '#f)

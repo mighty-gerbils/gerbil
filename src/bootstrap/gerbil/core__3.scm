@@ -1,15 +1,15 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g30602_|
-    (gx#core-quote-syntax 'values))
+    (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g30603_|
-    (gx#core-quote-syntax 'values))
+    (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g30612_|
-    (gx#core-quote-syntax '=>))
+    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g30613_|
-    (gx#core-quote-syntax 'else))
+    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g30614_|
-    (gx#core-quote-syntax 'else))
+    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
   (begin
     (define |gerbil/core$<sugar>$<sugar:1>[:0:]#defrules|
       (lambda (_$stx1629_)

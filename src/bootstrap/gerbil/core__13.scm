@@ -1,29 +1,45 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define |gerbil/core$<more-sugar>[2]#_g30840_|
-    (gx#core-quote-syntax 'setq-macro::t))
+    (gx#make-syntax-quote 'setq-macro::t #f (gx#current-expander-context) '()))
   (define |gerbil/core$<more-sugar>[2]#_g30841_|
-    (gx#core-quote-syntax 'macro-object::t))
+    (gx#make-syntax-quote
+     'macro-object::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<more-sugar>[2]#_g30842_|
-    (gx#core-quote-syntax 'setq-macro::t))
+    (gx#make-syntax-quote 'setq-macro::t #f (gx#current-expander-context) '()))
   (define |gerbil/core$<more-sugar>[2]#_g30843_|
-    (gx#core-quote-syntax 'make-setq-macro))
+    (gx#make-syntax-quote
+     'make-setq-macro
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<more-sugar>[2]#_g30844_|
-    (gx#core-quote-syntax 'setq-macro?))
+    (gx#make-syntax-quote 'setq-macro? #f (gx#current-expander-context) '()))
   (define |gerbil/core$<more-sugar>[2]#_g30845_|
-    (gx#core-quote-syntax 'macro-object))
+    (gx#make-syntax-quote 'macro-object #f (gx#current-expander-context) '()))
   (define |gerbil/core$<more-sugar>[2]#_g30846_|
-    (gx#core-quote-syntax 'setf-macro::t))
+    (gx#make-syntax-quote 'setf-macro::t #f (gx#current-expander-context) '()))
   (define |gerbil/core$<more-sugar>[2]#_g30847_|
-    (gx#core-quote-syntax 'macro-object::t))
+    (gx#make-syntax-quote
+     'macro-object::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<more-sugar>[2]#_g30848_|
-    (gx#core-quote-syntax 'setf-macro::t))
+    (gx#make-syntax-quote 'setf-macro::t #f (gx#current-expander-context) '()))
   (define |gerbil/core$<more-sugar>[2]#_g30849_|
-    (gx#core-quote-syntax 'make-setf-macro))
+    (gx#make-syntax-quote
+     'make-setf-macro
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<more-sugar>[2]#_g30850_|
-    (gx#core-quote-syntax 'setf-macro?))
+    (gx#make-syntax-quote 'setf-macro? #f (gx#current-expander-context) '()))
   (define |gerbil/core$<more-sugar>[2]#_g30851_|
-    (gx#core-quote-syntax 'macro-object))
+    (gx#make-syntax-quote 'macro-object #f (gx#current-expander-context) '()))
   (begin
     (define |gerbil/core$<more-sugar>[:1:]#setq-macro|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-class-info|

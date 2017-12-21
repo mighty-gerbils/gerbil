@@ -1,17 +1,33 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define |gerbil/core$<match>[2]#_g30816_|
-    (gx#core-quote-syntax 'match-macro::t))
+    (gx#make-syntax-quote
+     'match-macro::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[2]#_g30817_|
-    (gx#core-quote-syntax 'macro-object::t))
+    (gx#make-syntax-quote
+     'macro-object::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[2]#_g30818_|
-    (gx#core-quote-syntax 'match-macro::t))
+    (gx#make-syntax-quote
+     'match-macro::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[2]#_g30819_|
-    (gx#core-quote-syntax 'make-match-macro))
+    (gx#make-syntax-quote
+     'make-match-macro
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[2]#_g30820_|
-    (gx#core-quote-syntax 'match-macro?))
+    (gx#make-syntax-quote 'match-macro? #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[2]#_g30821_|
-    (gx#core-quote-syntax 'macro-object))
+    (gx#make-syntax-quote 'macro-object #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[:1:]#match-macro|
     (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-class-info|
      'runtime-identifier:

@@ -1,13 +1,49 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gxc[1]#_g2606_| (gx#core-quote-syntax 'symbol-table::t))
-  (define |gxc[1]#_g2607_| (gx#core-quote-syntax 'symbol-table::t))
-  (define |gxc[1]#_g2608_| (gx#core-quote-syntax 'make-symbol-table))
-  (define |gxc[1]#_g2609_| (gx#core-quote-syntax 'symbol-table?))
-  (define |gxc[1]#_g2610_| (gx#core-quote-syntax 'symbol-table-gensyms))
-  (define |gxc[1]#_g2611_| (gx#core-quote-syntax 'symbol-table-bindings))
-  (define |gxc[1]#_g2612_| (gx#core-quote-syntax 'symbol-table-gensyms-set!))
-  (define |gxc[1]#_g2613_| (gx#core-quote-syntax 'symbol-table-bindings-set!))
+  (define |gxc[1]#_g2606_|
+    (gx#make-syntax-quote
+     'symbol-table::t
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gxc[1]#_g2607_|
+    (gx#make-syntax-quote
+     'symbol-table::t
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gxc[1]#_g2608_|
+    (gx#make-syntax-quote
+     'make-symbol-table
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gxc[1]#_g2609_|
+    (gx#make-syntax-quote 'symbol-table? #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g2610_|
+    (gx#make-syntax-quote
+     'symbol-table-gensyms
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gxc[1]#_g2611_|
+    (gx#make-syntax-quote
+     'symbol-table-bindings
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gxc[1]#_g2612_|
+    (gx#make-syntax-quote
+     'symbol-table-gensyms-set!
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gxc[1]#_g2613_|
+    (gx#make-syntax-quote
+     'symbol-table-bindings-set!
+     #f
+     (gx#current-expander-context)
+     '()))
   (begin
     (define |gxc[:0:]#ast-case|
       (lambda (_stx332_)

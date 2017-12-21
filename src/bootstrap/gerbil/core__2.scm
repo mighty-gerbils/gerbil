@@ -1,7 +1,7 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define |gerbil/core$<syntax-sugar>[1]#_g30575_|
-    (gx#core-quote-syntax 'values))
+    (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
   (begin
     (define |gerbil/core$<syntax-sugar>[:0:]#syntax-rules|
       (lambda (_stx336_)

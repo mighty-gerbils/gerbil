@@ -14,9 +14,9 @@ namespace: gxc
            (0 open-process 0 open-process))
           (spec:
            (:gerbil/gambit/os)
+           (0 time->seconds 0 time->seconds)
            (0 file-info-size 0 file-info-size)
            (0 current-time 0 current-time)
-           (0 time->seconds 0 time->seconds)
            (0 file-info 0 file-info)))
          (%#export
           (spec: 0 compile-file compile-file)
@@ -24,15 +24,15 @@ namespace: gxc
           (spec: 0 compile-static-exe compile-static-exe))
          (%#define-runtime compile-timestamp gxc#compile-timestamp)
          (%#begin (%#define-runtime
-                   compile-file__opt-lambda21174
-                   gxc#compile-file__opt-lambda21174)
+                   compile-file__opt-lambda21274
+                   gxc#compile-file__opt-lambda21274)
                   (%#begin (%#define-runtime
                             compile-file__0
                             gxc#compile-file__0)
                            (%#define-runtime compile-file gxc#compile-file)))
          (%#begin (%#define-runtime
-                   compile-exe-stub__opt-lambda21160
-                   gxc#compile-exe-stub__opt-lambda21160)
+                   compile-exe-stub__opt-lambda21260
+                   gxc#compile-exe-stub__opt-lambda21260)
                   (%#begin (%#define-runtime
                             compile-exe-stub__0
                             gxc#compile-exe-stub__0)
@@ -40,8 +40,8 @@ namespace: gxc
                             compile-exe-stub
                             gxc#compile-exe-stub)))
          (%#begin (%#define-runtime
-                   compile-static-exe__opt-lambda21146
-                   gxc#compile-static-exe__opt-lambda21146)
+                   compile-static-exe__opt-lambda21246
+                   gxc#compile-static-exe__opt-lambda21246)
                   (%#begin (%#define-runtime
                             compile-static-exe__0
                             gxc#compile-static-exe__0)
