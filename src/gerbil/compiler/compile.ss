@@ -990,11 +990,16 @@ namespace: gxc
      ((hash-get (current-compile-marks) mark)
       => values)
      (else
-      ;; TODO serialize mark context reference -- just the (top) module context
-      (let ((gid (generate-runtime-temporary #t))
-            (repr (serialize-mark mark)))
+      (let* ((gid (generate-runtime-temporary #t))
+             (repr (serialize-mark mark))
+             (ctx (core-context-top (expander-mark-context mark)))
+             (ctx-ref
+              (if (eq? ctx (current-expander-context))
+                ['gx#current-expander-context]
+                ['gx#import-module ['quote (context-ref ctx)]])))
         (hash-put! (current-compile-marks) mark gid)
-        (add-lift! ['define gid ['gx#core-deserialize-mark ['quote repr]]])
+        (add-lift! ['define gid
+                     ['gx#core-deserialize-mark ['quote repr] ctx-ref]])
         gid))))
 
   (def (serialize-mark mark)
@@ -1007,6 +1012,18 @@ namespace: gxc
         (cons phi
               (map (lambda (pair) (cons (quote-e (car pair)) (quote-e (cdr pair))))
                    subs)))))
+
+  (def (context-ref ctx)
+    (if (module-context? (phi-context-super ctx))
+      (context-ref-nested ctx)
+      (make-symbol ":" (expander-context-id ctx))))
+
+  (def (context-ref-nested ctx)
+    (let lp ((ctx ctx) (r []))
+      (let (super (phi-context-super ctx))
+        (if (module-context? super)
+          (lp super (cons (car (module-context-path ctx)) r))
+          (cons (make-symbol ":" (expander-context-id ctx)) r)))))
 
   (ast-case stx ()
     ((_ stxq)
