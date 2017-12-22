@@ -46,6 +46,7 @@ package: gerbil/gambit
 
   ;; miscellanea
   make-thread-group thread-group? thread-group-name
+  thread-group-specific thread-group-specific-set!
   thread-group-parent thread-group-resume! thread-group-suspend!
   thread-group-terminate! thread-group->thread-group-list
   thread-group->thread-group-vector thread-group->thread-list
