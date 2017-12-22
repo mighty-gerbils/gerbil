@@ -96,3 +96,9 @@ package: gerbil/gambit
       (cut mutex-lock! mx)
       proc
       (cut mutex-unlock! mx)))
+
+;; thread-group-terminate! is currently not implemented in Gambit
+;; this is a recursive termination implementation
+(def (thread-group-kill! tg)
+  (for-each thread-group-kill! (thread-group->thread-group-list tg))
+  (for-each thread-terminate! (thread-group->thread-list tg)))

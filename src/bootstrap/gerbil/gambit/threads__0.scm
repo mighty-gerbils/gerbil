@@ -1,37 +1,44 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gerbil/gambit/threads#spawn
-    (lambda (_f621_ . _args622_)
+    (lambda (_f623_ . _args624_)
       (gerbil/gambit/threads#spawn/name/args
-       (let ((_$e624_ (##procedure-name _f621_))) (if _$e624_ _$e624_ '#!void))
-       _f621_
-       _args622_)))
+       (let ((_$e626_ (##procedure-name _f623_))) (if _$e626_ _$e626_ '#!void))
+       _f623_
+       _args624_)))
   (define gerbil/gambit/threads#spawn*
-    (lambda (_f618_ . _args619_)
-      (gerbil/gambit/threads#spawn/name/args '#!void _f618_ _args619_)))
+    (lambda (_f620_ . _args621_)
+      (gerbil/gambit/threads#spawn/name/args '#!void _f620_ _args621_)))
   (define gerbil/gambit/threads#spawn/name
-    (lambda (_name614_ _f615_ . _args616_)
-      (gerbil/gambit/threads#spawn/name/args _name614_ _f615_ _args616_)))
+    (lambda (_name616_ _f617_ . _args618_)
+      (gerbil/gambit/threads#spawn/name/args _name616_ _f617_ _args618_)))
   (define gerbil/gambit/threads#spawn/name/args
-    (lambda (_name604_ _f605_ _args606_)
-      (letrec ((_thread-main608_
-                (lambda (_thunk611_)
+    (lambda (_name606_ _f607_ _args608_)
+      (letrec ((_thread-main610_
+                (lambda (_thunk613_)
                   (lambda ()
-                    (with-catch ##primordial-exception-handler _thunk611_)))))
-        (if (procedure? _f605_)
+                    (with-catch ##primordial-exception-handler _thunk613_)))))
+        (if (procedure? _f607_)
             (gerbil/gambit/threads#spawn-thread
-             (_thread-main608_
-              (if (null? _args606_)
-                  _f605_
-                  (lambda () (apply _f605_ _args606_))))
-             _name604_)
-            (error '"Bad argument; expected procedure" _f605_)))))
+             (_thread-main610_
+              (if (null? _args608_)
+                  _f607_
+                  (lambda () (apply _f607_ _args608_))))
+             _name606_)
+            (error '"Bad argument; expected procedure" _f607_)))))
   (define gerbil/gambit/threads#spawn-thread
-    (lambda (_thunk601_ _name602_)
-      (thread-start! (make-thread _thunk601_ _name602_))))
+    (lambda (_thunk603_ _name604_)
+      (thread-start! (make-thread _thunk603_ _name604_))))
   (define gerbil/gambit/threads#with-lock
-    (lambda (_mx596_ _proc597_)
+    (lambda (_mx598_ _proc599_)
       (dynamic-wind
-       (lambda () (mutex-lock! _mx596_))
-       _proc597_
-       (lambda () (mutex-unlock! _mx596_))))))
+       (lambda () (mutex-lock! _mx598_))
+       _proc599_
+       (lambda () (mutex-unlock! _mx598_)))))
+  (define gerbil/gambit/threads#thread-group-kill!
+    (lambda (_tg596_)
+      (begin
+        (for-each
+         gerbil/gambit/threads#thread-group-kill!
+         (thread-group->thread-group-list _tg596_))
+        (for-each thread-terminate! (thread-group->thread-list _tg596_))))))
