@@ -253,7 +253,7 @@ package: std/actor
 ;;  !!message is a macro that wraps and sends to dest
 ;;
 (begin-syntax
-  (defstruct protocol-info (id runtime-identifier extend calls events)
+  (defstruct protocol-info (id runtime-identifier extend calls events streams)
     id: std/actor#protocol-info::t))
 
 (defsyntax (defproto stx)
@@ -349,7 +349,7 @@ package: std/actor
                  (reverse structures)))
         (_ (raise-syntax-error #f "Bad syntax; bad clause" stx rest)))))
 
-  (def (generate-make-proto-info proto-id id extend calls events)
+  (def (generate-make-proto-info proto-id id extend calls events streams)
     (def (type-id id)
       (stx-identifier proto-id proto-id "." id))
 
@@ -358,13 +358,15 @@ package: std/actor
                    (proto::proto (stx-identifier #'proto-id #'proto-id "::proto"))
                    ((extend-id ...) extend)
                    ((call-id ...) (map type-id (map stx-car calls)))
-                   ((event-id ...) (map type-id (map stx-car events))))
+                   ((event-id ...) (map type-id (map stx-car events)))
+                   ((stream-id ...) (map type-id (map stx-car streams))))
       #'(defsyntax proto-id
           (make-protocol-info 'id
                               (quote-syntax proto::proto)
                               [(quote-syntax extend-id) ...]
                               [(quote-syntax call-id) ...]
-                              [(quote-syntax event-id) ...]))))
+                              [(quote-syntax event-id) ...]
+                              [(quote-syntax stream-id) ...]))))
 
   (def (generate-make-proto-registry proto-id id extend)
     (with-syntax*
@@ -568,7 +570,7 @@ package: std/actor
            (parse-proto-body #'(clause ...)))
           (id (or id (generate-proto-id #'proto-id)))
           (defn-proto-info
-            (generate-make-proto-info #'proto-id #'id extend calls events))
+            (generate-make-proto-info #'proto-id #'id extend calls events streams))
           (defn-proto-registry
             (generate-make-proto-registry #'proto-id #'id extend))
           ((defn-call ...)
