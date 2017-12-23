@@ -52,6 +52,7 @@ namespace: gxc
          (apply compile-e stx args))))))
 
 (defcompile-method #f &void-expression
+  (%#begin-annotation        void)
   (%#lambda                       void)
   (%#case-lambda                  void)
   (%#let-values              void)
@@ -89,6 +90,7 @@ namespace: gxc
 (defcompile-method #f (&void &void-special-form &void-expression))
 
 (defcompile-method #f &false-expression
+  (%#begin-annotation        false)
   (%#lambda                       false)
   (%#case-lambda                  false)
   (%#let-values              false)
@@ -142,6 +144,7 @@ namespace: gxc
   (%#begin                   find-runtime-begin%)
   (%#begin-syntax            false)
   (%#begin-foreign           true)
+  (%#begin-annotation        true)
   (%#module                  false)
   (%#import                  false)
   (%#export                  false)
@@ -172,6 +175,7 @@ namespace: gxc
 
 (defcompile-method apply-find-lambda-expression (&find-lambda-expression &false)
   (%#begin                   find-lambda-expression-begin%)
+  (%#begin-annotation        find-lambda-expression-begin-annotation%)
   (%#lambda                       values)
   (%#case-lambda                  values)
   (%#let-values              find-lambda-expression-let-values%)
@@ -182,6 +186,7 @@ namespace: gxc
   (%#begin                   generate-runtime-empty)
   (%#begin-syntax            generate-runtime-empty)
   (%#begin-foreign           generate-runtime-empty)
+  (%#begin-annotation        generate-runtime-empty)
   (%#module                  generate-runtime-empty)
   (%#import                  generate-runtime-empty)
   (%#export                  generate-runtime-empty)
@@ -217,6 +222,7 @@ namespace: gxc
 (defcompile-method apply-generate-runtime (&generate-runtime &generate-runtime-empty)
   (%#begin                   generate-runtime-begin%)
   (%#begin-foreign           generate-runtime-begin-foreign%)
+  (%#begin-annotation        generate-runtime-begin-annotation%)
   (%#define-values           generate-runtime-define-values%)
   (%#declare                 generate-runtime-declare%)
   (%#lambda                       generate-runtime-lambda%)
@@ -245,6 +251,7 @@ namespace: gxc
 
 (defcompile-method apply-collect-expression-refs &collect-expression-refs
   (%#begin                   collect-begin%)
+  (%#begin-annotation        collect-begin-annotation%)
   (%#lambda                       collect-body-lambda%)
   (%#case-lambda                  collect-body-case-lambda%)
   (%#let-values              collect-body-let-values%)
@@ -285,6 +292,7 @@ namespace: gxc
   (%#define-syntax           generate-meta-define-syntax%)
   (%#define-alias            generate-meta-define-alias%)
   (%#define-values           generate-meta-phi-define-values%)
+  (%#begin-annotation        generate-meta-phi-expr)
   (%#lambda                       generate-meta-phi-expr)
   (%#case-lambda                  generate-meta-phi-expr)
   (%#let-values              generate-meta-phi-expr)
@@ -324,6 +332,11 @@ namespace: gxc
      (let (ctx (syntax-local-e #'id))
        (parameterize ((current-expander-context ctx))
          (apply compile-e (module-context-code ctx) args))))))
+
+(def (collect-begin-annotation% stx . args)
+  (ast-case stx ()
+    ((_ ann expr)
+     (apply compile-e #'expr args))))
 
 (def (collect-body-lambda% stx . args)
   (ast-case stx ()
@@ -487,6 +500,12 @@ namespace: gxc
   (ast-case stx ()
     ((_ . body)
      ['begin (syntax->datum #'body) ...])))
+
+(def (generate-runtime-begin-annotation% stx)
+  (ast-case stx ()
+    ((_ ann expr)
+     ['begin ['declare (map syntax->datum #'ann) ...]
+             (compile-e #'expr)])))
 
 (def (generate-runtime-declare% stx)
   (ast-case stx ()
@@ -1363,6 +1382,11 @@ namespace: gxc
   (ast-case stx ()
     ((_ . body)
      (compile-e (last #'body)))))
+
+(def (find-lambda-expression-begin-annotation% stx)
+  (ast-case stx ()
+    ((_ ann body)
+     (compile-e #'body))))
 
 (def (find-lambda-expression-let-values% stx)
   (ast-case stx ()

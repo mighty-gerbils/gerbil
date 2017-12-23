@@ -214,6 +214,7 @@ namespace: gxc
     (apply-optimize-call stx)))
 
 (defcompile-method #f &identity-expression
+  (%#begin-annotation        xform-identity)
   (%#lambda                       xform-identity)
   (%#case-lambda                  xform-identity)
   (%#let-values              xform-identity)
@@ -251,6 +252,7 @@ namespace: gxc
 (defcompile-method #f (&identity &identity-special-form &identity-expression))
 
 (defcompile-method #f &basic-xform-expression
+  (%#begin-annotation        xform-begin-annotation%)
   (%#lambda                       xform-lambda%)
   (%#case-lambda                  xform-case-lambda%)
   (%#let-values              xform-let-values%)
@@ -279,6 +281,7 @@ namespace: gxc
 (defcompile-method apply-collect-mutators (&collect-mutators &void)
   (%#begin                   collect-begin%)
   (%#module                  collect-module%)
+  (%#begin-annotation        collect-begin-annotation%)
   (%#lambda                       collect-body-lambda%)
   (%#case-lambda                  collect-body-case-lambda%)
   (%#let-values              collect-body-let-values%)
@@ -307,24 +310,26 @@ namespace: gxc
   (%#ref   expression-subst-ref%))
 
 (defcompile-method apply-collect-type-info (&collect-type-info &void)
-  (%#begin          collect-begin%)
-  (%#module         collect-module%)
-  (%#define-values  collect-type-define-values%)
-  (%#lambda              collect-body-lambda%)
-  (%#case-lambda         collect-body-case-lambda%)
-  (%#let-values     collect-type-let-values%)
-  (%#letrec-values  collect-type-let-values%)
-  (%#letrec*-values collect-type-let-values%)
-  (%#call           collect-type-call%)
-  (%#if             collect-operands)
-  (%#set!           collect-body-setq%))
+  (%#begin            collect-begin%)
+  (%#module           collect-module%)
+  (%#define-values    collect-type-define-values%)
+  (%#begin-annotation collect-begin-annotation%)
+  (%#lambda                collect-body-lambda%)
+  (%#case-lambda           collect-body-case-lambda%)
+  (%#let-values       collect-type-let-values%)
+  (%#letrec-values    collect-type-let-values%)
+  (%#letrec*-values   collect-type-let-values%)
+  (%#call             collect-type-call%)
+  (%#if               collect-operands)
+  (%#set!             collect-body-setq%))
 
 (defcompile-method apply-basic-expression-type (&basic-expression-type &false)
-  (%#begin  basic-expression-type-begin%)
-  (%#lambda      basic-expression-type-lambda%)
-  (%#case-lambda basic-expression-type-case-lambda%)
-  (%#call   basic-expression-type-call%)
-  (%#ref    basic-expression-type-ref%))
+  (%#begin            basic-expression-type-begin%)
+  (%#begin-annotation basic-expression-type-begin-annotation%)
+  (%#lambda                basic-expression-type-lambda%)
+  (%#case-lambda           basic-expression-type-case-lambda%)
+  (%#call             basic-expression-type-call%)
+  (%#ref              basic-expression-type-ref%))
 
 (defcompile-method apply-optimize-call (&optimize-call &basic-xform)
   (%#call optimize-call%))
@@ -373,6 +378,14 @@ namespace: gxc
      (let (expr (apply compile-e #'expr args))
        (xform-wrap-source
         ['%#define-values #'hd expr]
+        stx)))))
+
+(def (xform-begin-annotation% stx . args)
+  (ast-case stx ()
+    ((_ ann expr)
+     (let (expr (apply compile-e #'expr args))
+       (xform-wrap-source
+        ['%#begin-annotation #'ann expr]
         stx)))))
 
 (def (xform-lambda% stx . args)
@@ -792,6 +805,11 @@ namespace: gxc
     ((_ expr)
      (compile-e #'expr))
     (_ #f)))
+
+(def (basic-expression-type-begin-annotation% stx)
+  (ast-case stx ()
+    ((_ ann expr)
+     (compile-e #'expr))))
 
 (def (basic-expression-type-lambda% stx)
   (ast-case stx (%#call %#ref)
