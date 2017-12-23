@@ -1,122 +1,157 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gx#core-compile-top-syntax
-    (lambda (_stx12859_)
-      (let* ((_e1286012867_ _stx12859_)
-             (_E1286212871_
+    (lambda (_stx12913_)
+      (let* ((_e1291412921_ _stx12913_)
+             (_E1291612925_
               (lambda ()
-                (gx#raise-syntax-error '#f '"Bad syntax" _e1286012867_)))
-             (_E1286112885_
+                (gx#raise-syntax-error '#f '"Bad syntax" _e1291412921_)))
+             (_E1291512939_
               (lambda ()
-                (if (gx#stx-pair? _e1286012867_)
-                    (let ((_e1286312875_ (gx#syntax-e _e1286012867_)))
-                      (let ((_hd1286412878_ (##car _e1286312875_))
-                            (_tl1286512880_ (##cdr _e1286312875_)))
-                        (let ((_form12883_ _hd1286412878_))
+                (if (gx#stx-pair? _e1291412921_)
+                    (let ((_e1291712929_ (gx#syntax-e _e1291412921_)))
+                      (let ((_hd1291812932_ (##car _e1291712929_))
+                            (_tl1291912934_ (##cdr _e1291712929_)))
+                        (let ((_form12937_ _hd1291812932_))
                           (if '#t
                               (call-method
-                               (gx#syntax-local-e__0 _form12883_)
+                               (gx#syntax-local-e__0 _form12937_)
                                'compile-top-syntax
-                               _stx12859_)
-                              (_E1286212871_)))))
-                    (_E1286212871_)))))
-        (_E1286112885_))))
+                               _stx12913_)
+                              (_E1291612925_)))))
+                    (_E1291612925_)))))
+        (_E1291512939_))))
   (define gx#core-expander::compile-top-syntax
-    (lambda (_self12819_ _stx12820_)
-      (let* ((_self1282112829_ _self12819_)
-             (_E1282312833_
-              (lambda () (error '"No clause matching" _self1282112829_)))
-             (_K1282412845_
-              (lambda (_K12836_)
-                (let ((_$e12838_ (gx#stx-source _stx12820_)))
-                  (if _$e12838_
-                      ((lambda (_g1284012842_)
+    (lambda (_self12873_ _stx12874_)
+      (let* ((_self1287512883_ _self12873_)
+             (_E1287712887_
+              (lambda () (error '"No clause matching" _self1287512883_)))
+             (_K1287812899_
+              (lambda (_K12890_)
+                (let ((_$e12892_ (gx#stx-source _stx12874_)))
+                  (if _$e12892_
+                      ((lambda (_g1289412896_)
                          (gx#stx-wrap-source
-                          (_K12836_ _stx12820_)
-                          _g1284012842_))
-                       _$e12838_)
-                      (_K12836_ _stx12820_))))))
+                          (_K12890_ _stx12874_)
+                          _g1289412896_))
+                       _$e12892_)
+                      (_K12890_ _stx12874_))))))
         (if (##structure-instance-of?
-             _self1282112829_
+             _self1287512883_
              (##type-id gx#core-expander::t))
-            (let* ((_e1282512848_ (##vector-ref _self1282112829_ '1))
-                   (_e1282612851_ (##vector-ref _self1282112829_ '2))
-                   (_e1282712854_ (##vector-ref _self1282112829_ '3))
-                   (_K12857_ _e1282712854_))
-              (_K1282412845_ _K12857_))
-            (_E1282312833_)))))
+            (let* ((_e1287912902_ (##vector-ref _self1287512883_ '1))
+                   (_e1288012905_ (##vector-ref _self1287512883_ '2))
+                   (_e1288112908_ (##vector-ref _self1287512883_ '3))
+                   (_K12911_ _e1288112908_))
+              (_K1287812899_ _K12911_))
+            (_E1287712887_)))))
   (bind-method!
    gx#core-expander::t
    'compile-top-syntax
    gx#core-expander::compile-top-syntax
    '#f)
   (define gx#core-compile-top-error
-    (lambda (_stx12817_)
-      (gx#raise-syntax-error 'compile '"Cannot compile form" _stx12817_)))
+    (lambda (_stx12871_)
+      (gx#raise-syntax-error 'compile '"Cannot compile form" _stx12871_)))
   (define gx#core-compile-top-begin%
-    (lambda (_stx12787_)
-      (let* ((_e1278812795_ _stx12787_)
-             (_E1279012799_
+    (lambda (_stx12841_)
+      (let* ((_e1284212849_ _stx12841_)
+             (_E1284412853_
               (lambda ()
-                (gx#raise-syntax-error '#f '"Bad syntax" _e1278812795_)))
-             (_E1278912813_
+                (gx#raise-syntax-error '#f '"Bad syntax" _e1284212849_)))
+             (_E1284312867_
               (lambda ()
-                (if (gx#stx-pair? _e1278812795_)
-                    (let ((_e1279112803_ (gx#syntax-e _e1278812795_)))
-                      (let ((_hd1279212806_ (##car _e1279112803_))
-                            (_tl1279312808_ (##cdr _e1279112803_)))
-                        (let ((_body12811_ _tl1279312808_))
+                (if (gx#stx-pair? _e1284212849_)
+                    (let ((_e1284512857_ (gx#syntax-e _e1284212849_)))
+                      (let ((_hd1284612860_ (##car _e1284512857_))
+                            (_tl1284712862_ (##cdr _e1284512857_)))
+                        (let ((_body12865_ _tl1284712862_))
                           (if '#t
                               (cons '%#begin
                                     (gx#stx-map1
                                      gx#core-compile-top-syntax
-                                     _body12811_))
-                              (_E1279012799_)))))
-                    (_E1279012799_)))))
-        (_E1278912813_))))
+                                     _body12865_))
+                              (_E1284412853_)))))
+                    (_E1284412853_)))))
+        (_E1284312867_))))
   (define gx#core-compile-top-begin-syntax%
-    (lambda (_stx12756_)
-      (let* ((_e1275712764_ _stx12756_)
-             (_E1275912768_
+    (lambda (_stx12810_)
+      (let* ((_e1281112818_ _stx12810_)
+             (_E1281312822_
               (lambda ()
-                (gx#raise-syntax-error '#f '"Bad syntax" _e1275712764_)))
-             (_E1275812783_
+                (gx#raise-syntax-error '#f '"Bad syntax" _e1281112818_)))
+             (_E1281212837_
               (lambda ()
-                (if (gx#stx-pair? _e1275712764_)
-                    (let ((_e1276012772_ (gx#syntax-e _e1275712764_)))
-                      (let ((_hd1276112775_ (##car _e1276012772_))
-                            (_tl1276212777_ (##cdr _e1276012772_)))
-                        (let ((_body12780_ _tl1276212777_))
+                (if (gx#stx-pair? _e1281112818_)
+                    (let ((_e1281412826_ (gx#syntax-e _e1281112818_)))
+                      (let ((_hd1281512829_ (##car _e1281412826_))
+                            (_tl1281612831_ (##cdr _e1281412826_)))
+                        (let ((_body12834_ _tl1281612831_))
                           (if '#t
                               (cons '%#begin-syntax
                                     (call-with-parameters
                                      (lambda ()
                                        (gx#stx-map1
                                         gx#core-compile-top-syntax
-                                        _body12780_))
+                                        _body12834_))
                                      gx#current-expander-phi
                                      (fx+ (gx#current-expander-phi) '1)))
-                              (_E1275912768_)))))
-                    (_E1275912768_)))))
-        (_E1275812783_))))
+                              (_E1281312822_)))))
+                    (_E1281312822_)))))
+        (_E1281212837_))))
   (define gx#core-compile-top-begin-foreign%
-    (lambda (_stx12726_)
-      (let* ((_e1272712734_ _stx12726_)
-             (_E1272912738_
+    (lambda (_stx12780_)
+      (let* ((_e1278112788_ _stx12780_)
+             (_E1278312792_
               (lambda ()
-                (gx#raise-syntax-error '#f '"Bad syntax" _e1272712734_)))
-             (_E1272812752_
+                (gx#raise-syntax-error '#f '"Bad syntax" _e1278112788_)))
+             (_E1278212806_
               (lambda ()
-                (if (gx#stx-pair? _e1272712734_)
-                    (let ((_e1273012742_ (gx#syntax-e _e1272712734_)))
-                      (let ((_hd1273112745_ (##car _e1273012742_))
-                            (_tl1273212747_ (##cdr _e1273012742_)))
-                        (let ((_body12750_ _tl1273212747_))
+                (if (gx#stx-pair? _e1278112788_)
+                    (let ((_e1278412796_ (gx#syntax-e _e1278112788_)))
+                      (let ((_hd1278512799_ (##car _e1278412796_))
+                            (_tl1278612801_ (##cdr _e1278412796_)))
+                        (let ((_body12804_ _tl1278612801_))
                           (if '#t
-                              (cons '%#begin-foreign _body12750_)
-                              (_E1272912738_)))))
-                    (_E1272912738_)))))
-        (_E1272812752_))))
+                              (cons '%#begin-foreign _body12804_)
+                              (_E1278312792_)))))
+                    (_E1278312792_)))))
+        (_E1278212806_))))
+  (define gx#core-compile-top-begin-annotation%
+    (lambda (_stx12726_)
+      (let* ((_e1272712740_ _stx12726_)
+             (_E1272912744_
+              (lambda ()
+                (gx#raise-syntax-error '#f '"Bad syntax" _e1272712740_)))
+             (_E1272812776_
+              (lambda ()
+                (if (gx#stx-pair? _e1272712740_)
+                    (let ((_e1273012748_ (gx#syntax-e _e1272712740_)))
+                      (let ((_hd1273112751_ (##car _e1273012748_))
+                            (_tl1273212753_ (##cdr _e1273012748_)))
+                        (if (gx#stx-pair? _tl1273212753_)
+                            (let ((_e1273312756_ (gx#syntax-e _tl1273212753_)))
+                              (let ((_hd1273412759_ (##car _e1273312756_))
+                                    (_tl1273512761_ (##cdr _e1273312756_)))
+                                (let ((_ann12764_ _hd1273412759_))
+                                  (if (gx#stx-pair? _tl1273512761_)
+                                      (let ((_e1273612766_
+                                             (gx#syntax-e _tl1273512761_)))
+                                        (let ((_hd1273712769_
+                                               (##car _e1273612766_))
+                                              (_tl1273812771_
+                                               (##cdr _e1273612766_)))
+                                          (let ((_expr12774_ _hd1273712769_))
+                                            (if (gx#stx-null? _tl1273812771_)
+                                                (if '#t
+                                                    (gx#core-compile-top-syntax
+                                                     _expr12774_)
+                                                    (_E1272912744_))
+                                                (_E1272912744_)))))
+                                      (_E1272912744_)))))
+                            (_E1272912744_))))
+                    (_E1272912744_)))))
+        (_E1272812776_))))
   (define gx#core-compile-top-import%
     (lambda (_stx12696_)
       (let* ((_e1269712704_ _stx12696_)
@@ -574,17 +609,17 @@
              _stx12161_
              _form12163_))))
       (define gx#core-compile-top-let-values%
-        (lambda _g12889_
-          (let ((_g12888_ (length _g12889_)))
-            (cond ((fx= _g12888_ 1)
-                   (apply gx#core-compile-top-let-values%__0 _g12889_))
-                  ((fx= _g12888_ 2)
+        (lambda _g12943_
+          (let ((_g12942_ (length _g12943_)))
+            (cond ((fx= _g12942_ 1)
+                   (apply gx#core-compile-top-let-values%__0 _g12943_))
+                  ((fx= _g12942_ 2)
                    (apply gx#core-compile-top-let-values%__opt-lambda12101
-                          _g12889_))
+                          _g12943_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-compile-top-let-values%
-                    _g12889_))))))))
+                    _g12943_))))))))
   (define gx#core-compile-top-letrec-values%
     (lambda (_stx12100_)
       (gx#core-compile-top-let-values%__opt-lambda12101
