@@ -23,14 +23,15 @@ package: std/actor
   !!call !!call-recv !!value !!error !!event
   !!stream !!stream-recv !!yield !!end !!continue !!close !!abort
   (struct-out !protocol !rpc-protocol)
-  defproto
+  defproto proto-out
   defproto-default-type
   (phi: +1 make-protocol-info protocol-info?
         protocol-info-runtime-identifier
         protocol-info-id
         protocol-info-extend
         protocol-info-calls
-        protocol-info-events))
+        protocol-info-events
+        protocol-info-streams))
 
 (defstruct (rpc-io-error io-error) ())
 
@@ -241,20 +242,19 @@ package: std/actor
 ;; defproto name
 ;;   [extend: proto-id]
 ;;   [id: proto-id]
-;;   [call: (message . args) => type] ...
-;;   [event: (message . args)] ...
-;;   [struct: (struct . types)] ...
+;;   [call:] (message arg ...) ...
+;;   [event: (message arg ...)  ...]
+;;   [stream: (message arg ...) ...]
+;;   [struct: struct-id ...]
 ;;  args:
-;;   _ or id or (id type)
-;;  types:
-;;   _ or xdr-type decl
-;; messages: call: or event:
+;;   _ or id
+;; messages:
 ;;  creates message struct and !message and !!message macros
-;;  !message wraps a !call or !event around the value
-;;  !!message wraps and sends to dest
+;;  !message is a match macro that wraps a !call or !event around the value
+;;  !!message is a macro that wraps and sends to dest
 ;;
 (begin-syntax
-  (defstruct protocol-info (id runtime-identifier extend calls events)
+  (defstruct protocol-info (id runtime-identifier extend calls events streams)
     id: std/actor#protocol-info::t))
 
 (defsyntax (defproto stx)
@@ -350,7 +350,7 @@ package: std/actor
                  (reverse structures)))
         (_ (raise-syntax-error #f "Bad syntax; bad clause" stx rest)))))
 
-  (def (generate-make-proto-info proto-id id extend calls events)
+  (def (generate-make-proto-info proto-id id extend calls events streams)
     (def (type-id id)
       (stx-identifier proto-id proto-id "." id))
 
@@ -359,13 +359,15 @@ package: std/actor
                    (proto::proto (stx-identifier #'proto-id #'proto-id "::proto"))
                    ((extend-id ...) extend)
                    ((call-id ...) (map type-id (map stx-car calls)))
-                   ((event-id ...) (map type-id (map stx-car events))))
+                   ((event-id ...) (map type-id (map stx-car events)))
+                   ((stream-id ...) (map type-id (map stx-car streams))))
       #'(defsyntax proto-id
           (make-protocol-info 'id
                               (quote-syntax proto::proto)
                               [(quote-syntax extend-id) ...]
                               [(quote-syntax call-id) ...]
-                              [(quote-syntax event-id) ...]))))
+                              [(quote-syntax event-id) ...]
+                              [(quote-syntax stream-id) ...]))))
 
   (def (generate-make-proto-registry proto-id id extend)
     (with-syntax*
@@ -417,12 +419,8 @@ package: std/actor
          (defn-!!kall
            #'(defrules !!kall ()
                ((_ dest arg ...)
-                (!!call dest (make-kall arg ...) (make-!token)))
+                (!!call dest (make-kall arg ...)))
                ((_ dest arg ... timeout: timeo)
-                (!!call dest (make-kall arg ...) (make-!token) timeout: timeo))
-               ((_ dest arg ... k)
-                (!!call dest (make-kall arg ...) k))
-               ((_ dest arg ... k timeout: timeo)
                 (!!call dest (make-kall arg ...) timeout: timeo))))
          (defn-xdr
            #'(begin
@@ -511,12 +509,8 @@ package: std/actor
          (defn-!!kall
            #'(defrules !!kall ()
                ((_ dest arg ...)
-                (!!stream dest (make-kall arg ...) (make-!token)))
+                (!!stream dest (make-kall arg ...)))
                ((_ dest arg ... timeout: timeo)
-                (!!stream dest (make-kall arg ...) (make-!token) timeout: timeo))
-               ((_ dest arg ... k)
-                (!!stream dest (make-kall arg ...) k))
-               ((_ dest arg ... k timeout: timeo)
                 (!!stream dest (make-kall arg ...) timeout: timeo))))
          (defn-xdr
            #'(begin
@@ -577,7 +571,7 @@ package: std/actor
            (parse-proto-body #'(clause ...)))
           (id (or id (generate-proto-id #'proto-id)))
           (defn-proto-info
-            (generate-make-proto-info #'proto-id #'id extend calls events))
+            (generate-make-proto-info #'proto-id #'id extend calls events streams))
           (defn-proto-registry
             (generate-make-proto-registry #'proto-id #'id extend))
           ((defn-call ...)
@@ -594,6 +588,35 @@ package: std/actor
                 (begin defn-event ...)
                 (begin defn-stream ...)
                 (begin defn-struct ...))))))
+
+;; (defstruct protocol-info (id runtime-identifier extend calls events streams)
+(defsyntax-for-export (proto-out stx)
+  (def (message-ids ids)
+    (let lp ((rest ids) (mids []))
+      (match rest
+        ([id . rest]
+         (lp rest
+             (cons* id (stx-identifier id "!" id) (stx-identifier id "!!" id)
+                    mids)))
+        (else mids))))
+
+  (syntax-case stx ()
+    ((_ id ...)
+     (let lp ((rest #'(id ...)) (ids []))
+       (match rest
+         ([id . rest]
+          (match (syntax-local-value id false)
+            ((protocol-info _ rtid _ calls evts streams)
+             (lp rest
+                 [id rtid
+                     (message-ids calls) ...
+                     (message-ids evts) ...
+                     (message-ids streams) ...
+                     ids ...]))
+            (else
+             (raise-syntax-error #f "Not defined as a protocol" stx id))))
+         (else
+          (cons 'begin: ids)))))))
 
 ;; default protocol types
 (defrules defproto-default-type ()
