@@ -241,17 +241,16 @@ package: std/actor
 ;; defproto name
 ;;   [extend: proto-id]
 ;;   [id: proto-id]
-;;   [call: (message . args) => type] ...
-;;   [event: (message . args)] ...
-;;   [struct: (struct . types)] ...
+;;   [call:] (message arg ...) ...
+;;   [event: (message arg ...)  ...]
+;;   [stream: (message arg ...) ...]
+;;   [struct: struct-id ...]
 ;;  args:
-;;   _ or id or (id type)
-;;  types:
-;;   _ or xdr-type decl
-;; messages: call: or event:
+;;   _ or id
+;; messages:
 ;;  creates message struct and !message and !!message macros
-;;  !message wraps a !call or !event around the value
-;;  !!message wraps and sends to dest
+;;  !message is a match macro that wraps a !call or !event around the value
+;;  !!message is a macro that wraps and sends to dest
 ;;
 (begin-syntax
   (defstruct protocol-info (id runtime-identifier extend calls events)
@@ -417,12 +416,8 @@ package: std/actor
          (defn-!!kall
            #'(defrules !!kall ()
                ((_ dest arg ...)
-                (!!call dest (make-kall arg ...) (make-!token)))
+                (!!call dest (make-kall arg ...)))
                ((_ dest arg ... timeout: timeo)
-                (!!call dest (make-kall arg ...) (make-!token) timeout: timeo))
-               ((_ dest arg ... k)
-                (!!call dest (make-kall arg ...) k))
-               ((_ dest arg ... k timeout: timeo)
                 (!!call dest (make-kall arg ...) timeout: timeo))))
          (defn-xdr
            #'(begin
@@ -511,12 +506,8 @@ package: std/actor
          (defn-!!kall
            #'(defrules !!kall ()
                ((_ dest arg ...)
-                (!!stream dest (make-kall arg ...) (make-!token)))
+                (!!stream dest (make-kall arg ...)))
                ((_ dest arg ... timeout: timeo)
-                (!!stream dest (make-kall arg ...) (make-!token) timeout: timeo))
-               ((_ dest arg ... k)
-                (!!stream dest (make-kall arg ...) k))
-               ((_ dest arg ... k timeout: timeo)
                 (!!stream dest (make-kall arg ...) timeout: timeo))))
          (defn-xdr
            #'(begin
