@@ -94,7 +94,7 @@ namespace: gx
     (%#define-runtime   define:  ,core-expand-define-runtime%
                         ,core-compile-top-define-runtime%)
     (%#begin-annotation expr:    ,core-expand-begin-annotation%
-                        #f) ;; XXX
+                        ,core-compile-top-begin-annotation%)
     (%#lambda                expr:    ,core-expand-lambda%
                         ,core-compile-top-lambda%)
     (%#case-lambda           expr:    ,core-expand-case-lambda%

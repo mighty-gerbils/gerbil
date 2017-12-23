@@ -41,6 +41,11 @@ namespace: gx
     ((_ . body)
      (cons '%#begin-foreign body))))
 
+(def (core-compile-top-begin-annotation% stx)
+  (core-syntax-case stx ()
+    ((_ ann expr)
+     (core-compile-top-syntax expr))))
+
 (def (core-compile-top-import% stx)
   (core-syntax-case stx ()
     ((_ . body)
