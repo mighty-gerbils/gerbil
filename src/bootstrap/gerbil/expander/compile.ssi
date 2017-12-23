@@ -20,6 +20,9 @@ namespace: gx
           core-compile-top-begin-foreign%
           gx#core-compile-top-begin-foreign%)
          (%#define-runtime
+          core-compile-top-begin-annotation%
+          gx#core-compile-top-begin-annotation%)
+         (%#define-runtime
           core-compile-top-import%
           gx#core-compile-top-import%)
          (%#define-runtime

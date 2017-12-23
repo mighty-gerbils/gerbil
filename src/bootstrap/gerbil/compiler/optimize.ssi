@@ -132,8 +132,8 @@ namespace: gxc
          (%#define-syntax !case-lambda |gxc[:0:]#!case-lambda|)
          (%#define-runtime !struct-type:::init! gxc#!struct-type:::init!)
          (%#begin (%#define-runtime
-                   !lambda:::init!__opt-lambda20299
-                   gxc#!lambda:::init!__opt-lambda20299)
+                   !lambda:::init!__opt-lambda20638
+                   gxc#!lambda:::init!__opt-lambda20638)
                   (%#begin (%#define-runtime
                             !lambda:::init!__0
                             gxc#!lambda:::init!__0)
@@ -148,8 +148,8 @@ namespace: gxc
           !struct-type-lookup-method
           gxc#!struct-type-lookup-method)
          (%#begin (%#define-runtime
-                   optimizer-declare-type!__opt-lambda20266
-                   gxc#optimizer-declare-type!__opt-lambda20266)
+                   optimizer-declare-type!__opt-lambda20605
+                   gxc#optimizer-declare-type!__opt-lambda20605)
                   (%#begin (%#define-runtime
                             optimizer-declare-type!__0
                             gxc#optimizer-declare-type!__0)
@@ -157,8 +157,8 @@ namespace: gxc
                             optimizer-declare-type!
                             gxc#optimizer-declare-type!)))
          (%#begin (%#define-runtime
-                   optimizer-declare-method!__opt-lambda20242
-                   gxc#optimizer-declare-method!__opt-lambda20242)
+                   optimizer-declare-method!__opt-lambda20581
+                   gxc#optimizer-declare-method!__opt-lambda20581)
                   (%#begin (%#define-runtime
                             optimizer-declare-method!__0
                             gxc#optimizer-declare-method!__0)
@@ -196,6 +196,7 @@ namespace: gxc
          (%#define-runtime xform-begin% gxc#xform-begin%)
          (%#define-runtime xform-module% gxc#xform-module%)
          (%#define-runtime xform-define-values% gxc#xform-define-values%)
+         (%#define-runtime xform-begin-annotation% gxc#xform-begin-annotation%)
          (%#define-runtime xform-lambda% gxc#xform-lambda%)
          (%#define-runtime xform-case-lambda% gxc#xform-case-lambda%)
          (%#define-runtime xform-let-values% gxc#xform-let-values%)
@@ -212,8 +213,8 @@ namespace: gxc
          (%#define-runtime case-lambda-expr? gxc#case-lambda-expr?)
          (%#define-runtime opt-lambda-expr? gxc#opt-lambda-expr?)
          (%#begin (%#define-runtime
-                   lift-case-lambda-clauses__opt-lambda17427
-                   gxc#lift-case-lambda-clauses__opt-lambda17427)
+                   lift-case-lambda-clauses__opt-lambda17696
+                   gxc#lift-case-lambda-clauses__opt-lambda17696)
                   (%#begin (%#define-runtime
                             lift-case-lambda-clauses__0
                             gxc#lift-case-lambda-clauses__0)
@@ -244,6 +245,9 @@ namespace: gxc
           basic-expression-type-begin%
           gxc#basic-expression-type-begin%)
          (%#define-runtime
+          basic-expression-type-begin-annotation%
+          gxc#basic-expression-type-begin-annotation%)
+         (%#define-runtime
           basic-expression-type-lambda%
           gxc#basic-expression-type-lambda%)
          (%#define-runtime
@@ -265,8 +269,8 @@ namespace: gxc
           basic-expression-type-make-struct-predicate
           gxc#basic-expression-type-make-struct-predicate)
          (%#begin (%#define-runtime
-                   basic-expression-type-make-struct-field-accessor__opt-lambda13423
-                   gxc#basic-expression-type-make-struct-field-accessor__opt-lambda13423)
+                   basic-expression-type-make-struct-field-accessor__opt-lambda13625
+                   gxc#basic-expression-type-make-struct-field-accessor__opt-lambda13625)
                   (%#begin (%#define-runtime
                             basic-expression-type-make-struct-field-accessor__0
                             gxc#basic-expression-type-make-struct-field-accessor__0)
@@ -274,8 +278,8 @@ namespace: gxc
                             basic-expression-type-make-struct-field-accessor
                             gxc#basic-expression-type-make-struct-field-accessor)))
          (%#begin (%#define-runtime
-                   basic-expression-type-make-struct-field-mutator__opt-lambda13293
-                   gxc#basic-expression-type-make-struct-field-mutator__opt-lambda13293)
+                   basic-expression-type-make-struct-field-mutator__opt-lambda13495
+                   gxc#basic-expression-type-make-struct-field-mutator__opt-lambda13495)
                   (%#begin (%#define-runtime
                             basic-expression-type-make-struct-field-mutator__0
                             gxc#basic-expression-type-make-struct-field-mutator__0)
