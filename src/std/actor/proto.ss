@@ -23,14 +23,15 @@ package: std/actor
   !!call !!call-recv !!value !!error !!event
   !!stream !!stream-recv !!yield !!end !!continue !!close !!abort
   (struct-out !protocol !rpc-protocol)
-  defproto
+  defproto proto-out
   defproto-default-type
   (phi: +1 make-protocol-info protocol-info?
         protocol-info-runtime-identifier
         protocol-info-id
         protocol-info-extend
         protocol-info-calls
-        protocol-info-events))
+        protocol-info-events
+        protocol-info-streams))
 
 (defstruct (rpc-io-error io-error) ())
 
@@ -587,6 +588,35 @@ package: std/actor
                 (begin defn-event ...)
                 (begin defn-stream ...)
                 (begin defn-struct ...))))))
+
+;; (defstruct protocol-info (id runtime-identifier extend calls events streams)
+(defsyntax-for-export (proto-out stx)
+  (def (message-ids ids)
+    (let lp ((rest ids) (mids []))
+      (match rest
+        ([id . rest]
+         (lp rest
+             (cons* id (stx-identifier id "!" id) (stx-identifier id "!!" id)
+                    mids)))
+        (else mids))))
+
+  (syntax-case stx ()
+    ((_ id ...)
+     (let lp ((rest #'(id ...)) (ids []))
+       (match rest
+         ([id . rest]
+          (match (syntax-local-value id false)
+            ((protocol-info _ rtid _ calls evts streams)
+             (lp rest
+                 [id rtid
+                     (message-ids calls) ...
+                     (message-ids evts) ...
+                     (message-ids streams) ...
+                     ids ...]))
+            (else
+             (raise-syntax-error #f "Not defined as a protocol" stx id))))
+         (else
+          (cons 'begin: ids)))))))
 
 ;; default protocol types
 (defrules defproto-default-type ()
