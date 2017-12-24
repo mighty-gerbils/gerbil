@@ -139,40 +139,40 @@ package: gerbil/compiler
   (declare-method gxc#!struct-type::t :init! gxc#!struct-type:::init! #f)
   (begin
     (declare-type
-     gxc#!lambda:::init!__opt-lambda20638
+     gxc#!lambda:::init!__opt-lambda20658
      (@lambda 6 struct-instance-init!))
     (declare-type
      gxc#!lambda:::init!
      (@case-lambda
       (4 gxc#!lambda:::init!__0)
       (5 gxc#!lambda:::init!__1)
-      (6 gxc#!lambda:::init!__opt-lambda20638))))
+      (6 gxc#!lambda:::init!__opt-lambda20658))))
   (declare-method gxc#!lambda::t :init! gxc#!lambda:::init! #f)
   (declare-type
    gxc#optimizer-declare-type!
    (@case-lambda
     (2 gxc#optimizer-declare-type!__0)
-    (3 gxc#optimizer-declare-type!__opt-lambda20605)))
+    (3 gxc#optimizer-declare-type!__opt-lambda20625)))
   (declare-type
    gxc#optimizer-declare-method!
    (@case-lambda
     (3 gxc#optimizer-declare-method!__0)
-    (4 gxc#optimizer-declare-method!__opt-lambda20581)))
+    (4 gxc#optimizer-declare-method!__opt-lambda20601)))
   (declare-type
    gxc#lift-case-lambda-clauses
    (@case-lambda
     (3 gxc#lift-case-lambda-clauses__0)
-    (4 gxc#lift-case-lambda-clauses__opt-lambda17696)))
+    (4 gxc#lift-case-lambda-clauses__opt-lambda17716)))
   (declare-type
    gxc#basic-expression-type-make-struct-field-accessor
    (@case-lambda
     (2 gxc#basic-expression-type-make-struct-field-accessor__0)
-    (3 gxc#basic-expression-type-make-struct-field-accessor__opt-lambda13625)))
+    (3 gxc#basic-expression-type-make-struct-field-accessor__opt-lambda13645)))
   (declare-type
    gxc#basic-expression-type-make-struct-field-mutator
    (@case-lambda
     (2 gxc#basic-expression-type-make-struct-field-mutator__0)
-    (3 gxc#basic-expression-type-make-struct-field-mutator__opt-lambda13495)))
+    (3 gxc#basic-expression-type-make-struct-field-mutator__opt-lambda13515)))
   (declare-method
    gxc#!struct-pred::t
    optimize-call

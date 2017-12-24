@@ -502,9 +502,11 @@
                            (_K1144811504_
                             (lambda (_refs11459_ _origin11460_)
                               (let ((_ctx11462_
-                                     (gx#core-import-module__opt-lambda11426
-                                      _origin11460_
-                                      _reload?11429_)))
+                                     (if _origin11460_
+                                         (gx#core-import-module__opt-lambda11426
+                                          _origin11460_
+                                          _reload?11429_)
+                                         (gx#current-expander-context))))
                                 (let _lp11464_ ((_rest11466_ _refs11459_)
                                                 (_ctx11467_ _ctx11462_))
                                   (let* ((_rest1146811476_ _rest11466_)
