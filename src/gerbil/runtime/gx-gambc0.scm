@@ -75,9 +75,13 @@
   (> (modification-time file1)
      (modification-time file2)))
 
-;; explicit namespace reference for loading compiled modules
+;; hook for loading compiled module phases
+;; when this parameter is set, phase modules will be reloaded
+(define _gx#reload-module
+  (make-parameter #f))
+
 (define (_gx#load-module modpath)
-  (load-module modpath #f))
+  (load-module modpath (_gx#reload-module)))
 
 ;; introspection repl: this is part of gx-gambc0 so that it is available
 ;; to all binaries.
