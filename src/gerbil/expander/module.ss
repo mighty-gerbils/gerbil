@@ -170,7 +170,9 @@ namespace: gx
 
   (def (import-submodule rpath)
     (with ([origin . refs] rpath)
-      (let (ctx (core-import-module origin reload?))
+      (let (ctx (if origin
+                  (core-import-module origin reload?)
+                  (current-expander-context)))
         (let lp ((rest refs) (ctx ctx))
           (match rest
             ([id . rest]
