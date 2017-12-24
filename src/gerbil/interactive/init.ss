@@ -8,50 +8,38 @@
 ;; Import Gambit prelude
 (import :gerbil/gambit)
 
-;; Intercative development
+;; Interactive development utilities
+;; Module reloading
 (begin-syntax
-  (def (reload-module mod)
+  (def (reload-module! mod)
     (cond
      ((string? mod)                     ; file path, resource it
-      (import-module mod #t))
+      (import-module mod #t #t))
      ((symbol? mod)
       (let (str (symbol->string mod))
         (cond
          ((string-empty? str)
           (error "Invalid module path" mod))
          ((eq? (string-ref str 0) #\:)  ; library module
-          (let (modpath (substring str 1 (string-length str)))
-            (reload-compiled-module modpath)
-            (import-module mod #t)))
+          (parameterize ((_gx#reload-module #t))
+            (import-module mod #t #t)))
          (else                          ; top module
           (void)))))
      (else
-      (error "Invalid module path" mod))))
+      (error "Invalid module path" mod)))))
 
-  (def (reload-compiled-module modpath)
-    (def (reload modpath)
-      (with-catch display-exception (cut load-module modpath #t)))
-
-    (let ((registry (&current-module-registry))
-          (modrt (string-append modpath "__rt")))
-      (if (hash-get registry modpath)
-        (reload modpath)
-        (let lp ((k 1))
-          (let (modk (string-append modpath "__" (number->string k)))
-            (if (hash-get registry modk)
-              (begin
-                (reload modk)
-                (lp (fx1+ k)))
-              (let (mod0 (string-append modpath "__0"))
-                (when (hash-get registry mod0)
-                  (reload mod0)))))))
-      (when (hash-get registry modrt)
-        (reload modrt)))))
+(defsyntax (reload! stx)
+  (syntax-case stx ()
+    ((_ mod)
+     (begin
+       (reload-module! (stx-e #'mod))
+       #'(import mod)))))
 
 (defrules reload ()
   ((_ mod ...)
-   (begin (begin (begin-syntax (reload-module 'mod)) (import mod)) ...)))
+   (begin (reload! mod) ...)))
 
+;; Enter a nested repl with the syntactic context of a module
 (def (enter! mod)
   (parameterize ((gx#current-expander-context (gx#import-module mod #f #t)))
     (##repl)))
@@ -60,3 +48,22 @@
 ;; in gerbil mode for out of tree sources
 (when (getenv "EMACS" #f)
   (set! ##repl-path-normalize-hook values))
+
+;; Macro expansion
+;; These two macros expand a form, pretty print the expansion, and
+;; return a quoted syntax of the expansion for debugging purposes.
+;; @expand uses core-expand* while @expand1 performs a single step
+;; expansion with core-expand1
+(defsyntax (@expand stx)
+  (syntax-case stx ()
+    ((_ expr)
+     (with-syntax ((expr* (gx#core-expand* #'expr)))
+       (pretty-print (syntax->datum #'expr*))
+       #'(quote-syntax expr*)))))
+
+(defsyntax (@expand1 stx)
+  (syntax-case stx ()
+    ((_ expr)
+     (with-syntax ((expr* (gx#core-expand1 #'expr)))
+       (pretty-print (syntax->datum #'expr*))
+       #'(quote-syntax expr*)))))
