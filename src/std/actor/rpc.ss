@@ -89,7 +89,7 @@ package: std/actor
 (def (start-rpc-server! proto: (proto (rpc-null-proto)) . addresses)
   (start-logger!)
   (let (socksrv (start-socket-server!))
-    (spawn rpc-server socksrv proto addresses)))
+    (spawn/group 'rpc-server rpc-server socksrv proto addresses)))
 
 (def (stop-rpc-server! rpcd)
   (!!rpc.shutdown rpcd)

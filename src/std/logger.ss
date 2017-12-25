@@ -29,7 +29,7 @@ package: std
               (values (open-output-file [path: output append: #t]) #t))
              (else
               (error "Bad output; expected filename or port" output))))
-           (srv (spawn logger-server port own-port?)))
+           (srv (spawn/name 'logger logger-server port own-port?)))
       (current-logger srv)
       srv))))
 

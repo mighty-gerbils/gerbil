@@ -3,7 +3,7 @@
 ;;; socket server api
 package: std/net/server
 
-(import (only-in :gerbil/gambit/threads spawn thread-join!)
+(import (only-in :gerbil/gambit/threads spawn/group thread-join!)
         (only-in :gerbil/gambit/os time? seconds->time)
         :std/net/server/base
         :std/net/server/basic-server
@@ -49,7 +49,7 @@ package: std/net/server
    ((current-socket-server) => values)
    (else
     (start-logger!)
-    (let (srv (spawn impl))
+    (let (srv (spawn/group 'socket-server impl))
       (current-socket-server srv)
       srv))))
 

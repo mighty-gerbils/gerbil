@@ -59,7 +59,7 @@ package: std/net
   (let* ((socksrv (start-socket-server!))
          (sas (map socket-address (cons addr addrs)))
          (socks (map (cut server-listen socksrv <>) sas)))
-    (spawn http-server socks sas)))
+    (spawn/group 'http-server http-server socks sas)))
 
 (def (stop-http-server! httpd)
   (!!httpd.shutdown httpd)
@@ -80,7 +80,8 @@ package: std/net
 
   (def acceptors
     (map (lambda (sock sa)
-           (spawn http-server-accept handlers sock (socket-address-family sa)))
+           (spawn/name 'http-server-accept
+                       http-server-accept handlers sock (socket-address-family sa)))
          socks sas))
 
   (def (shutdown!)

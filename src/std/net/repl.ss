@@ -27,7 +27,7 @@ package: std/net
   (let* ((sock (open-tcp-server [server-address: address
                                  eol-encoding: 'cr-lf
                                  reuse-address: #t]))
-         (server (spawn/name 'repl-server repl-server sock passwd)))
+         (server (spawn/group 'repl-server repl-server sock passwd)))
     (thread-specific-set! server sock)
     server))
 

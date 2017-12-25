@@ -185,7 +185,7 @@ package: std/actor
   (let* (((values inp outp)
           (open-vector-pipe [permanent-close: #t direction: 'input]
                             [permanent-close: #t direction: 'output]))
-         (handler (spawn stream-handler outp))
+         (handler (spawn/name '!!stream-recv stream-handler outp))
          (close (lambda () (!!close handler k))))
     (make-will inp (lambda (_) (close)))
     (values inp close)))
