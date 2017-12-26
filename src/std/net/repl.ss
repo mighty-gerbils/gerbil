@@ -8,7 +8,8 @@ package: std/net
         :gerbil/gambit/exceptions
         :std/sugar
         :std/logger
-        :std/net/address)
+        :std/net/address
+        :std/misc/threads)
 (export start-repl-server!
         stop-repl-server!)
 
