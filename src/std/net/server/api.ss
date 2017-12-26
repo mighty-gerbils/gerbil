@@ -3,8 +3,8 @@
 ;;; socket server api
 package: std/net/server
 
-(import (only-in :gerbil/gambit/threads spawn/group thread-join!)
-        (only-in :gerbil/gambit/os time? seconds->time)
+(import :gerbil/gambit/threads
+        :gerbil/gambit/os
         :std/net/server/base
         :std/net/server/basic-server
         :std/os/socket
@@ -14,7 +14,7 @@ package: std/net/server
         :std/sugar
         :std/error
         :std/logger
-        )
+        :std/misc/threads)
 (export start-socket-server! stop-socket-server! current-socket-server
         native-poll-server-impl
         server-shutdown!
@@ -23,8 +23,7 @@ package: std/net/server
         server-send server-send-all
         server-recv server-recv-all
         server-socket-e
-        server-close server-close-input server-close-output
-        )
+        server-close server-close-input server-close-output)
 
 (cond-expand
   (linux
@@ -57,8 +56,12 @@ package: std/net/server
   (server-shutdown! srv))
 
 (def (server-shutdown! srv)
-  (!!socket-server.shutdown! srv)
-  (thread-join! srv))
+  (let (tgroup (thread-thread-group srv))
+    (try
+     (!!socket-server.shutdown! srv)
+     (thread-join! srv)
+     (finally
+      (thread-group-kill! tgroup)))))
 
 (defrules with-error-close ()
   ((_ sock body ...)

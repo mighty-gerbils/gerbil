@@ -11,6 +11,7 @@ package: std/net
         :std/sugar
         :std/logger
         :std/misc/completion
+        :std/misc/threads
         :std/net/websocket
         :std/actor/message
         :std/actor/proto
@@ -156,8 +157,12 @@ package: std/net
 
 ;; close a wamp client
 (def (wamp-close cli)
-  (!!wamp.shutdown cli)
-  (thread-join! cli))
+  (let (tgroup (thread-thread-group cli))
+    (try
+     (!!wamp.shutdown cli)
+     (thread-join! cli)
+     (finally
+      (thread-group-kill! tgroup)))))
 
 ;; wamp client actor protocol
 (defproto wamp

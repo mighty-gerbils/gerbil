@@ -33,12 +33,16 @@ package: std/net
     server))
 
 (def (stop-repl-server! server)
-  (close-port (thread-specific server))
-  (try
-   (thread-join! server)
-   (catch (uncaught-exception? e)
-     (unless (os-exception? (uncaught-exception-reason e))
-       (raise e)))))
+  (let ((tgroup (thread-thread-group server))
+        (port (thread-specific server)))
+    (try
+     (close-port port)
+     (thread-join! server)
+     (catch (uncaught-exception? e)
+       (unless (os-exception? (uncaught-exception-reason e))
+         (raise e)))
+     (finally
+      (thread-group-kill! tgroup)))))
 
 (def (repl-server sock passwd)
   (let lp ()

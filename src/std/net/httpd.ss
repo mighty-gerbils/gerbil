@@ -12,6 +12,7 @@ package: std/net
         :std/actor/message
         :std/actor/proto
         :std/misc/sync
+        :std/misc/threads
         :std/text/utf8
         :std/logger
         :std/sugar
@@ -62,8 +63,12 @@ package: std/net
     (spawn/group 'http-server http-server socks sas)))
 
 (def (stop-http-server! httpd)
-  (!!httpd.shutdown httpd)
-  (thread-join! httpd))
+  (let (tgroup (thread-thread-group httpd))
+    (try
+     (!!httpd.shutdown httpd)
+     (thread-join! httpd)
+     (finally
+      (thread-group-kill! tgroup)))))
 
 ;; handler: lambda (request response)
 (def (http-register-handler httpd path handler)
