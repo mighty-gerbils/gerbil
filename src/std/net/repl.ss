@@ -200,12 +200,14 @@ package: std/net
 
 ;; these two functions allow you to visit arbitrary threads outside the
 ;; repl thread group.
-;; taint! installs the current repl state for a thread-group
-;;  and returns its specific value
-;; untaint! restores (or clears) a thread-group's state
+;; taint! installs the current repl state for a thread-group (defaults
+;; to the primordial thread-group) and returns its specific value for later
+;; untaint.
+;; untaint! restores (or clears) the thread-group's state (defaultis to
+;; the primordial thread-group again)
 ;; Note: the functions are not exported, because they are not useful to
 ;;       other programs; they are intended to be invoked interactively in
-;;       a net repl with their fully qualifide name
+;;       a net repl with their fully qualified name
 (def (taint! (tgroup #f))
   (cond
    ((repl-client-state)
