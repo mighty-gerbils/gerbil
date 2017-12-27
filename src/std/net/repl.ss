@@ -197,3 +197,35 @@ package: std/net
              (lp (thread-group-parent tgroup)))))
      (else
       (lp (thread-group-parent tgroup))))))
+
+;; these two functions allow you to visit arbitrary threads outside the
+;; repl thread group.
+;; taint! installs the current repl state for a thread-group
+;;  and returns its specific value
+;; untaint! restores (or clears) a thread-group's state
+;; Note: the functions are not exported, because they are not useful to
+;;       other programs; they are intended to be invoked interactively in
+;;       a net repl with their fully qualifide name
+(def (taint! (tgroup #f))
+  (cond
+   ((repl-client-state)
+    => (lambda (state)
+         (let* ((tgroup (or tgroup (primordial-thread-group)))
+                (ostate (thread-group-specific tgroup)))
+           (thread-group-specific-set! tgroup state)
+           ostate)))
+   (else
+    (error "No repl state"))))
+
+(def (untaint! (tgroup #f) (state #f))
+  (let (tgroup (or tgroup (primordial-thread-group)))
+    (if (repl-state? (thread-group-specific tgroup))
+      (thread-group-specific-set! tgroup state)
+      (error "No tainted repl state in thread-group" tgroup))))
+
+(def (primordial-thread-group)
+  (let lp ((tg (thread-thread-group (current-thread))))
+    (cond
+     ((thread-group-parent tg)
+      => lp)
+     (else tg))))
