@@ -224,10 +224,3 @@ package: std/net
     (if (repl-state? (thread-group-specific tgroup))
       (thread-group-specific-set! tgroup state)
       (error "No tainted repl state in thread-group" tgroup))))
-
-(def (primordial-thread-group)
-  (let lp ((tg (thread-thread-group (current-thread))))
-    (cond
-     ((thread-group-parent tg)
-      => lp)
-     (else tg))))

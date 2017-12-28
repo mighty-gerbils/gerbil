@@ -5,9 +5,17 @@ package: std/misc
 
 (import :gerbil/gambit/threads
         :std/sugar)
-(export thread-group-kill!
+(export primordial-thread-group
+        thread-group-kill!
         thread-raise! thread-abort! thread-abort?
         spawn/abort spawn/name/abort)
+
+(def (primordial-thread-group)
+  (let lp ((tg (current-thread-group)))
+    (cond
+     ((thread-group-parent tg)
+      => lp)
+     (else tg))))
 
 ;; thread-group-kill!  kills all threads and children groups in the thread group
 ;; in addition, it removes the thread group from its parent, making
