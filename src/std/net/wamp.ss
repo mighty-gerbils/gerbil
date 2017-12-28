@@ -72,7 +72,11 @@ package: std/net
                               cookies: cookies
                               params: params))
          (details
-          (completion-wait! compl)))
+          (try
+           (completion-wait! compl)
+           (catch (e)
+             (thread-group-kill! (thread-thread-group client))
+             (raise e)))))
     (values client details)))
 
 (def (wamp-client-main compl url realm
