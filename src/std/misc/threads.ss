@@ -18,11 +18,11 @@ package: std/misc
      (else tg))))
 
 ;; thread-group-kill!  kills all threads and children groups in the thread group
-;; in addition, it removes the thread group from its parent, making
-;; it invisible to other threads.
-;; A thread group that has been killed, should not be used again
-;; Note: this function exists because thread-group-terminate! is
-;;       not implemented yet
+;; in addition, it removes the thread group from its parent, making it unreachable
+;; from the thread-group structure and eligible for garbage collection.
+;; A thread group that has been killed, should not be used again to spawn threads
+;; in it, but it's safe to call multiple times.
+;; Note: this function exists because thread-group-terminate! is not implemented
 ;;       NOT SMP SAFE
 (extern thread-group-kill!)
 
