@@ -11,19 +11,17 @@ package: std/misc
         spawn/abort spawn/name/abort)
 
 (def (primordial-thread-group)
-  (let lp ((tg (current-thread-group)))
-    (cond
-     ((thread-group-parent tg)
-      => lp)
-     (else tg))))
+  (thread-thread-group ##primordial-thread))
 
-;; thread-group-kill!  kills all threads and children groups in the thread group
-;; in addition, it removes the thread group from its parent, making it unreachable
-;; from the thread-group structure and eligible for garbage collection.
+;; thread-group-kill! kills all threads and children groups in the thread group
+;; In addition, it detaches the thread group from its parent, making it unreachable
+;; from the primordial thread-group structure and eligible for garbage collection.
 ;; A thread group that has been killed, should not be used again to spawn threads
-;; in it, but it's safe to call multiple times.
-;; Note: this function exists because thread-group-terminate! is not implemented
-;;       NOT SMP SAFE
+;; in it.
+;; Note: this procedure is a combination of the not yet implemented primitive
+;;       thread-group-terminate! and a thread-group-detach! operation that
+;;       makes the thread-group free-standing.
+;;       === NOT SMP SAFE ===
 (extern thread-group-kill!)
 
 (begin-foreign
