@@ -86,8 +86,7 @@ package: gerbil/gambit
   (if (procedure? f)
     (let ((thunk (if (null? args) f
                      (lambda () (apply f args))))
-          (tgroup (or tgroup
-                      (thread-thread-group (current-thread)))))
+          (tgroup (or tgroup (current-thread-group))))
       (thread-start!
        (make-thread (thread-main thunk) name tgroup)))
     (error "Bad argument; expected procedure" f)))
@@ -95,6 +94,9 @@ package: gerbil/gambit
 (def (spawn-thread thunk name)
   (thread-start!
    (make-thread thunk name)))
+
+(def (current-thread-group)
+  (thread-thread-group (current-thread)))
 
 (def (with-lock mx proc)
   (dynamic-wind
