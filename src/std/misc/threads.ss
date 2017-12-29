@@ -45,21 +45,22 @@ package: std/misc
             (begin
               (kill-tgroup! (##vector-ref tgroups i))
               (lp (##fx+ i 1)))
-            (begin
-              (kill-threads! tg)
-              (if (macro-tgroup-parent tg)
-                (begin
-                  ;; this is broken
-                  ;; (macro-tgroup-tgroups-deq-remove! tg)
-                  ;; so do it by hand instead
-                  (let ((next (macro-tgroup-tgroups-deq-next tg))
-                        (prev (macro-tgroup-tgroups-deq-prev tg)))
-                    (##vector-set! prev 1 next)
-                    (##vector-set! next 2 prev)
-                    (macro-tgroup-tgroups-deq-next-set! tg tg)
-                    (macro-tgroup-tgroups-deq-prev-set! tg tg))
-                  ;; and mark it as unreachable
-                  (macro-tgroup-parent-set! tg #f))))))))
+            (kill-threads! tg)))))
+
+    (define (detach-tgroup! tg)
+      (if (macro-tgroup-parent tg)
+        (begin
+          ;; this is broken:
+          ;; (macro-tgroup-tgroups-deq-remove! tg)
+          ;; so do it by hand instead
+          (let ((next (macro-tgroup-tgroups-deq-next tg))
+                (prev (macro-tgroup-tgroups-deq-prev tg)))
+            (##vector-set! prev 1 next)
+            (##vector-set! next 2 prev)
+            (macro-tgroup-tgroups-deq-next-set! tg tg)
+            (macro-tgroup-tgroups-deq-prev-set! tg tg))
+          ;; and mark it as unreachable
+          (macro-tgroup-parent-set! tg #f))))
 
     (define (check-tgroup! tg)
       (let ((mytg (macro-thread-tgroup (##current-thread))))
@@ -75,6 +76,7 @@ package: std/misc
       (begin
         (check-tgroup! tg)
         (kill-tgroup! tg)
+        (detach-tgroup! tg)
         (void))
       (error "Bad argument; expected thread-group" tg))))
 
