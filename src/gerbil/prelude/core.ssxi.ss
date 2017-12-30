@@ -21,6 +21,26 @@ package: gerbil
                  obj
                  (%#call (%#ref ##type-id) klass)))))))
 
+;; gx-gambc0: struct-instance-init! [custom struct constructors]
+(declare-type*
+ (struct-instance-init!
+  (@lambda (1) inline:
+      (lambda (ast)
+        (ast-case ast (%#call %#ref)
+          ((%#call _ self)
+           #'(%#quote #!void))
+          ((%#call _ (%#ref self) arg ...)
+           (with-syntax (((off ...) (iota (length #'(arg ...)) 1)))
+             #'(%#begin
+                (%#call (%#ref ##vector-set!) (%#ref self) (%#quote off) arg)
+                ...)))
+          ((%#call _ self arg ...)
+           (with-syntax (($self (gensym 'self))
+                         ((off ...) (iota (length #'(arg ...)) 1)))
+             #'(%#let-values ((($self) self))
+                  (%#call (%#ref ##vector-set!) self (%#quote off) arg)
+                  ...))))))))
+
 ;; gx-gambc0: simple runtime functions that should be inlined
 (declare-type*
  (true (@lambda (0) inline:
