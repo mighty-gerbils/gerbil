@@ -121,6 +121,14 @@
 (define (_gx#pp-syntax stx)
   (pp (&AST->datum stx)))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; This is a primitive eval that can be used to bootstrap the Gerbil expander
+;;; directly from source (without an expander bootstrap).
+;;; It was used in early Gerbil, and could be used again if you want to (painfully)
+;;; bootstrap the expander from source again, perhaps for trust purposes.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;;;
 ;;; Host Eval
 ;;;
@@ -230,6 +238,8 @@
   (make-&module 'module ns super (make-hash-table-eq) id path #f #f))
 
 ;;; eval
+(cond-expand (gerbil-bootstrap-expander
+
 ;;  expand => compile => ##eval
 (define (_gx#eval stx #!optional (ctx _gx#*top*) (expression? #f))
   (parameterize ((&current-context ctx))
@@ -321,14 +331,6 @@
      (&AST-id? id)
      (expand1 id))
     (else stx)))
-
-;; iso to gerbil.expander syntax-error
-(define-struct (syntax-error error::t) (context marks phi)
-  id: gx#syntax-error::t)
-
-(define (_gx#raise-syntax-error where what stx . details)
-  (raise
-    (make-syntax-error what (cons stx details) where (&current-context) #f #f)))
 
 (define (_gx#resolve-path path #!optional (loc #f))
   (error "XXX"))
@@ -442,6 +444,7 @@
     (body
      (cons '%#begin (reverse body)))))
 
+;;; core macros
 (define-core-special-form (begin stx)
   (define (expand-special hd K rest r)
     (K rest (cons (_gx#expand* hd) r)))
@@ -1493,6 +1496,17 @@
   (make-&struct-info 'AST::t 'AST))
 (define-core-syntax <error>
   (make-&struct-info 'error::t '<error>))
+
+)
+(else ))
+
+;; iso to gerbil.expander syntax-error
+(define-struct (syntax-error error::t) (context marks phi)
+  id: gx#syntax-error::t)
+
+(define (_gx#raise-syntax-error where what stx . details)
+  (raise
+    (make-syntax-error what (cons stx details) where (&current-context) #f #f)))
 
 (define source-location?
   ##locat?)
