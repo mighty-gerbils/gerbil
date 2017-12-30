@@ -35,7 +35,7 @@
   (_gx#raise-syntax-error 'compile "Bad syntax; cannot compile" stx detail))
 
 (define (_gx#compile-ignore% stx)
-  (&SRC '(##begin) stx))
+  (&SRC '(##void) stx))
 
 (define (_gx#compile-begin% stx)
   (core-ast-case stx ()

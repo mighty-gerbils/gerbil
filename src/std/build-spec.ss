@@ -140,6 +140,7 @@
     "misc/pqueue"
     "misc/string"
     "misc/sync"
+    "misc/completion"
     (gxc:  "misc/ports" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc:  "misc/threads" "-e" "(include \"~~lib/_gambit#.scm\")")
     "misc/process"

@@ -1908,8 +1908,9 @@ Symbols related to the Gambit system.
 Symbols related to thread programming; spawn and with-lock primitives.
 
 ```
-;; Gerbil specific primitives
-  spawn spawn* spawn/name spawn/name/args spawn-thread with-lock
+;; Gerbil thread primitives
+  spawn spawn* spawn/name spawn/group spawn-actor spawn-thread with-lock
+  current-thread-group
 
 ;; Gambit primitives
   current-thread

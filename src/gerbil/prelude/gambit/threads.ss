@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; gambit specific runtime symbols: threads
+;;; thread primitives and gambit runtime symbols
 package: gerbil/gambit
 
 (export #t)
@@ -66,39 +66,40 @@ package: gerbil/gambit
   )
 
 (def (spawn f . args)
-  (spawn/name/args (or (##procedure-name f) #!void) f args))
+  (spawn-actor f args (or (##procedure-name f) #!void) #f))
 
 (def (spawn* f . args)
-  (spawn/name/args #!void f args))
+  (spawn-actor f args #!void #f))
 
 (def (spawn/name name f . args)
-  (spawn/name/args name f args))
+  (spawn-actor f args name #f))
 
-(def (spawn/name/args name f args)
+(def (spawn/group name f . args)
+  (let (tgroup (make-thread-group name))
+    (spawn-actor f args name tgroup)))
+
+(def (spawn-actor f args name tgroup)
   (def (thread-main thunk)
     ;; install an abortive handler to reliably unwind stacks
     (lambda () (with-catch ##primordial-exception-handler thunk)))
 
   (if (procedure? f)
-    (spawn-thread
-     (thread-main
-      (if (null? args) f
-          (lambda () (apply f args))))
-     name)
+    (let ((thunk (if (null? args) f
+                     (lambda () (apply f args))))
+          (tgroup (or tgroup (current-thread-group))))
+      (thread-start!
+       (make-thread (thread-main thunk) name tgroup)))
     (error "Bad argument; expected procedure" f)))
 
 (def (spawn-thread thunk name)
   (thread-start!
    (make-thread thunk name)))
 
+(def (current-thread-group)
+  (thread-thread-group (current-thread)))
+
 (def (with-lock mx proc)
   (dynamic-wind
       (cut mutex-lock! mx)
       proc
       (cut mutex-unlock! mx)))
-
-;; thread-group-terminate! is currently not implemented in Gambit
-;; this is a recursive termination implementation
-(def (thread-group-kill! tg)
-  (for-each thread-group-kill! (thread-group->thread-group-list tg))
-  (for-each thread-terminate! (thread-group->thread-list tg)))

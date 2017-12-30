@@ -25,7 +25,7 @@ package: std/net/server
 (def (server-loop poll-io do-poll add-socket close-socket shutdown!)
   (def poll-thread
     (and poll-io
-         (spawn server-poll (current-thread) poll-io)))
+         (spawn/name 'server-poll server-poll (current-thread) poll-io)))
 
   (try
    (let loop ()

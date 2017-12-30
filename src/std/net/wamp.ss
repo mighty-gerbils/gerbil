@@ -10,6 +10,8 @@ package: std/net
         :std/error
         :std/sugar
         :std/logger
+        :std/misc/completion
+        :std/misc/threads
         :std/net/websocket
         :std/actor/message
         :std/actor/proto
@@ -62,17 +64,48 @@ package: std/net
                          cookies: (cookies #f)
                          params: (params #f))
   (start-logger!)
-  (let* ((headers
-          (cons '("Sec-WebSocket-Protocol" . "wamp.2.json")
-                (or headers [])))
-         (ws (open-websocket-client url
-                                    redirect: redirect
-                                    headers: headers
-                                    cookies: cookies
-                                    params: params)))
-    (let ((values sid details) (wamp-open-session ws realm))
-      (values (spawn wamp-client ws realm sid)
-              details))))
+  (let* ((compl (make-completion))
+         (client (spawn/group 'wamp-client wamp-client-main
+                              compl url realm
+                              redirect: redirect
+                              headers: headers
+                              cookies: cookies
+                              params: params))
+         (details
+          (try
+           (completion-wait! compl)
+           (catch (e)
+             (thread-group-kill! (thread-thread-group client))
+             (raise e)))))
+    (values client details)))
+
+(def (wamp-client-main compl url realm
+                       redirect: redirect
+                       headers: headers
+                       cookies: cookies
+                       params: params)
+  (def (open-session)
+    (let* ((headers
+            (cons '("Sec-WebSocket-Protocol" . "wamp.2.json")
+                  (or headers [])))
+           (ws (open-websocket-client url
+                                      redirect: redirect
+                                      headers: headers
+                                      cookies: cookies
+                                      params: params))
+           ((values sid details)
+            (try
+             (wamp-open-session ws realm)
+             (catch (e)
+               (websocket-close ws)
+               (raise e)))))
+      (values ws sid details)))
+
+  (let ((values ws sid details)
+        (with-completion-error compl
+          (open-session)))
+    (completion-post! compl details)
+    (wamp-client ws realm sid)))
 
 ;; synchronous client interface
 ;; => (values details args kws)
@@ -111,7 +144,7 @@ package: std/net
   (let* (((values inp outp)
           (open-vector-pipe [permanent-close: #t direction: 'input]
                             [permanent-close: #t direction: 'output]))
-         (handler (spawn event-handler outp))
+         (handler (spawn/name 'wamp-receive event-handler outp))
          (close (lambda () (!!wamp.close-stream handler))))
     (make-will inp (lambda (_) (close)))
     (values inp close)))
@@ -128,8 +161,12 @@ package: std/net
 
 ;; close a wamp client
 (def (wamp-close cli)
-  (!!wamp.shutdown cli)
-  (thread-join! cli))
+  (let (tgroup (thread-thread-group cli))
+    (try
+     (!!wamp.shutdown cli)
+     (thread-join! cli)
+     (finally
+      (thread-group-kill! tgroup)))))
 
 ;; wamp client actor protocol
 (defproto wamp
@@ -177,7 +214,7 @@ package: std/net
     (make-hash-table-eqv))
 
   (def reader
-    (spawn wamp-reader (current-thread) ws))
+    (spawn/name 'wamp-reader wamp-reader (current-thread) ws))
 
   (def (monitor-thread thread)
     (def (monitor cli thread)

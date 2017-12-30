@@ -10,6 +10,7 @@ package: std/actor
         :std/format
         :std/logger
         :std/misc/sync
+        :std/misc/threads
         :std/net/bio
         :std/net/address
         :std/net/server
@@ -89,11 +90,15 @@ package: std/actor
 (def (start-rpc-server! proto: (proto (rpc-null-proto)) . addresses)
   (start-logger!)
   (let (socksrv (start-socket-server!))
-    (spawn rpc-server socksrv proto addresses)))
+    (spawn/group 'rpc-server rpc-server socksrv proto addresses)))
 
 (def (stop-rpc-server! rpcd)
-  (!!rpc.shutdown rpcd)
-  (thread-join! rpcd))
+  (let (tgroup (thread-thread-group rpcd))
+    (try
+     (!!rpc.shutdown rpcd)
+     (thread-join! rpcd)
+     (finally
+      (thread-group-kill! tgroup)))))
 
 (def (rpc-connect rpcd id address proto)
   (cond

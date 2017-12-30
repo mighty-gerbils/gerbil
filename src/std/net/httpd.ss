@@ -12,6 +12,7 @@ package: std/net
         :std/actor/message
         :std/actor/proto
         :std/misc/sync
+        :std/misc/threads
         :std/text/utf8
         :std/logger
         :std/sugar
@@ -59,11 +60,15 @@ package: std/net
   (let* ((socksrv (start-socket-server!))
          (sas (map socket-address (cons addr addrs)))
          (socks (map (cut server-listen socksrv <>) sas)))
-    (spawn http-server socks sas)))
+    (spawn/group 'http-server http-server socks sas)))
 
 (def (stop-http-server! httpd)
-  (!!httpd.shutdown httpd)
-  (thread-join! httpd))
+  (let (tgroup (thread-thread-group httpd))
+    (try
+     (!!httpd.shutdown httpd)
+     (thread-join! httpd)
+     (finally
+      (thread-group-kill! tgroup)))))
 
 ;; handler: lambda (request response)
 (def (http-register-handler httpd path handler)
@@ -80,7 +85,8 @@ package: std/net
 
   (def acceptors
     (map (lambda (sock sa)
-           (spawn http-server-accept handlers sock (socket-address-family sa)))
+           (spawn/name 'http-server-accept
+                       http-server-accept handlers sock (socket-address-family sa)))
          socks sas))
 
   (def (shutdown!)

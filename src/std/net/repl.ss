@@ -8,7 +8,8 @@ package: std/net
         :gerbil/gambit/exceptions
         :std/sugar
         :std/logger
-        :std/net/address)
+        :std/net/address
+        :std/misc/threads)
 (export start-repl-server!
         stop-repl-server!)
 
@@ -27,17 +28,21 @@ package: std/net
   (let* ((sock (open-tcp-server [server-address: address
                                  eol-encoding: 'cr-lf
                                  reuse-address: #t]))
-         (server (spawn/name 'repl-server repl-server sock passwd)))
+         (server (spawn/group 'repl-server repl-server sock passwd)))
     (thread-specific-set! server sock)
     server))
 
 (def (stop-repl-server! server)
-  (close-port (thread-specific server))
-  (try
-   (thread-join! server)
-   (catch (uncaught-exception? e)
-     (unless (os-exception? (uncaught-exception-reason e))
-       (raise e)))))
+  (let ((tgroup (thread-thread-group server))
+        (port (thread-specific server)))
+    (try
+     (close-port port)
+     (thread-join! server)
+     (catch (uncaught-exception? e)
+       (unless (os-exception? (uncaught-exception-reason e))
+         (raise e)))
+     (finally
+      (thread-group-kill! tgroup)))))
 
 (def (repl-server sock passwd)
   (let lp ()
@@ -192,3 +197,30 @@ package: std/net
              (lp (thread-group-parent tgroup)))))
      (else
       (lp (thread-group-parent tgroup))))))
+
+;; these two functions allow you to visit arbitrary threads outside the
+;; repl thread group.
+;; taint! installs the current repl state for a thread-group (defaults
+;; to the primordial thread-group) and returns its specific value for later
+;; untaint.
+;; untaint! restores (or clears) the thread-group's state (defaultis to
+;; the primordial thread-group again)
+;; Note: the functions are not exported, because they are not useful to
+;;       other programs; they are intended to be invoked interactively in
+;;       a net repl with their fully qualified name
+(def (taint! (tgroup #f))
+  (cond
+   ((repl-client-state)
+    => (lambda (state)
+         (let* ((tgroup (or tgroup (primordial-thread-group)))
+                (ostate (thread-group-specific tgroup)))
+           (thread-group-specific-set! tgroup state)
+           ostate)))
+   (else
+    (error "No repl state"))))
+
+(def (untaint! (tgroup #f) (state #f))
+  (let (tgroup (or tgroup (primordial-thread-group)))
+    (if (repl-state? (thread-group-specific tgroup))
+      (thread-group-specific-set! tgroup state)
+      (error "No tainted repl state in thread-group" tgroup))))
