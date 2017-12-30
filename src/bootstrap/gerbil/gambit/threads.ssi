@@ -82,12 +82,11 @@ namespace: gerbil/gambit/threads
          (%#define-runtime spawn gerbil/gambit/threads#spawn)
          (%#define-runtime spawn* gerbil/gambit/threads#spawn*)
          (%#define-runtime spawn/name gerbil/gambit/threads#spawn/name)
-         (%#define-runtime
-          spawn/name/args
-          gerbil/gambit/threads#spawn/name/args)
+         (%#define-runtime spawn/group gerbil/gambit/threads#spawn/group)
+         (%#define-runtime spawn-actor gerbil/gambit/threads#spawn-actor)
          (%#define-runtime spawn-thread gerbil/gambit/threads#spawn-thread)
-         (%#define-runtime with-lock gerbil/gambit/threads#with-lock)
          (%#define-runtime
-          thread-group-kill!
-          gerbil/gambit/threads#thread-group-kill!))
+          current-thread-group
+          gerbil/gambit/threads#current-thread-group)
+         (%#define-runtime with-lock gerbil/gambit/threads#with-lock))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/gambit/threads__0"))
