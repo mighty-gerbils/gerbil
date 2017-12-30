@@ -21,12 +21,14 @@ package: std/misc
 ;; Note: this procedure is a combination of the not yet implemented primitive
 ;;       thread-group-terminate! and a thread-group-detach! operation that
 ;;       makes the thread-group free-standing.
-;;       === NOT SMP SAFE ===
 (extern thread-group-kill!)
 
 (begin-foreign
   (namespace ("std/misc/threads#" thread-group-kill!))
 
+  ;; === NOT SMP SAFE ===
+  ;; there may be more threads spawned in another processor while we are
+  ;; killing the group; needs to iterate on SMP.
   (define (thread-group-kill! tg)
     (declare (not interrupts-enabled))
 
@@ -47,6 +49,8 @@ package: std/misc
               (lp (##fx+ i 1)))
             (kill-threads! tg)))))
 
+    ;; === SMP BROKEN ===
+    ;; deq struct layout has an extra lock field before prev next
     (define (detach-tgroup! tg)
       (if (macro-tgroup-parent tg)
         (begin
@@ -96,7 +100,7 @@ package: std/misc
   (try
    (apply f args)
    (catch (thread-abort? e)
-     (thread-release-locks! (current-thread))
+     (thread-release-locks!)
      (raise e))))
 
 (def (thread-abort! thread)
@@ -125,21 +129,27 @@ package: std/misc
              (##not (macro-terminated-thread-given-initialized? thread))
              (macro-started-thread-given-initialized? thread))
       (begin
+        ;; === SMP BROKEN ===
+        ;; this is (##thread-intr! thread #t thunk) in SMP
         (##thread-int! thread (lambda () (raise obj)))
         (##void))
       #f))
 
-  (define (thread-release-locks! thread)
+  (define (thread-release-locks!)
     (declare (not interrupts-enabled))
-    (let loop ()
-      (let ((next-btq (macro-btq-deq-next thread)))
-        (if (##not (##eq? next-btq thread))
-          (begin
-            (btq-release! next-btq)
-            (loop))))))
+    (let ((thread (current-thread)))
+      (let loop ()
+        (let ((next-btq (macro-btq-deq-next thread)))
+          (if (##not (##eq? next-btq thread))
+            (begin
+              (btq-release! next-btq)
+              (loop)))))))
 
   ;; lifted from ##btq-abandon! only we are releasing the mutexes normally
   ;; instead of abandoning them
+  ;; === SMP BROKEN ===
+  ;; this is based in the uniprocessor implementation; need a different
+  ;; version for smp
   (define (btq-release! btq)
     (declare (not interrupts-enabled))
     (##primitive-lock! btq 1 9)
