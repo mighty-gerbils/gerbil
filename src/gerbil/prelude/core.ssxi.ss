@@ -35,10 +35,10 @@ package: gerbil
                 (%#call (%#ref ##vector-set!) (%#ref self) (%#quote off) arg)
                 ...)))
           ((%#call _ self arg ...)
-           (with-syntax (($self (gensym 'self))
+           (with-syntax (($self (make-symbol (gensym '__self)))
                          ((off ...) (iota (length #'(arg ...)) 1)))
              #'(%#let-values ((($self) self))
-                  (%#call (%#ref ##vector-set!) self (%#quote off) arg)
+                  (%#call (%#ref ##vector-set!) (%#ref $self) (%#quote off) arg)
                   ...))))))))
 
 ;; gx-gambc0: simple runtime functions that should be inlined
