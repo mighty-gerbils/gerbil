@@ -4,8 +4,13 @@
 package: gerbil/compiler
 namespace: gxc
 
-(import "base" "optimize")
-(export #t ast-rules)
+(import "base" "optimize"
+        (only-in <syntax-case> syntax)
+        (only-in <syntax-sugar> with-syntax with-syntax*)
+        :gerbil/core)
+(export #t ast-rules ast-case
+        syntax with-syntax with-syntax*
+        (import: :gerbil/core))
 
 (defrules declare-type ()
   ((_ symbol type-expr)
