@@ -21,6 +21,7 @@
 - [std/logger](#stdlogger)
 - [std/make](#stdmake)
 - [std/misc](#stdmisc)
+  * [std/misc/completion](#stdmisccompletion)
   * [std/misc/list](#stdmisclist)
   * [std/misc/ports](#stdmiscports)
   * [std/misc/pqueue](#stdmiscpqueue)
@@ -457,6 +458,24 @@ Standard library build tool.
 
 Miscellaneous libraries.
 
+### std/misc/completion
+
+Asynchronous completion tokens
+
+```
+(import :std/misc/completion)
+
+;; exports
+
+  make-completion
+  completion?
+  completion-ready?
+  completion-wait!
+  completion-post!
+  completion-error!
+  with-completion-error
+```
+
 ### std/misc/list
 List utilities.
 
@@ -595,7 +614,10 @@ Thread utilities.
 
 ;; exports:
 
-  spawn/abort spawn/name/abort thread-abort! thread-abort?
+  primordial-thread-group
+  thread-group-kill!
+  thread-raise! thread-abort! thread-abort?
+  spawn/abort spawn/name/abort
 ```
 
 ### std/misc/uuid
