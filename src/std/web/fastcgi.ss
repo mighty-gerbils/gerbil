@@ -10,6 +10,7 @@ package: std/web
         :std/iter
         :std/logger
         :std/net/address
+        :std/text/utf8
         )
 (export
   start-fastcgi-server!
@@ -240,8 +241,8 @@ package: std/web
              (rd    (read-subu8vector vdata 0 vlen port))
              (_     (when (fx< rd vlen)
                       (raise-io-error 'fcgi-read-key-value-pairs "premature port end")))
-             (key   (string->symbol (bytes->string kdata)))
-             (value (bytes->string vdata)))
+             (key   (string->symbol (utf8->string kdata)))
+             (value (utf8->string vdata)))
         (lp (read-length port)
             (cons (cons key value) r))))))
 
@@ -262,7 +263,7 @@ package: std/web
 ;; chunk data into records
 (def (fcgi-write-data port type reqid data)
   (let* ((data (if (string? data)
-                 (string->bytes data)
+                 (string->utf8 data)
                  data))
          (len (u8vector-length data)))
     (let lp ((start 0))
@@ -287,12 +288,12 @@ package: std/web
         (write-u8 nb0 port))))
 
   (for ([key . value] alst)
-    (let* ((kdata (string->bytes
+    (let* ((kdata (string->utf8
                    (symbol->string
                     key)))
            (klen  (u8vector-length kdata))
            (vdata (if (string? value)
-                    (string->bytes value)
+                    (string->utf8 value)
                     value))
            (vlen  (u8vector-length vdata)))
       (write-length port klen)

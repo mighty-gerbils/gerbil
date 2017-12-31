@@ -7,6 +7,7 @@ package: std/text
         :std/error
         :std/iter
         :std/pregexp
+        :std/text/utf8
         :std/text/libyaml)
 (export yaml-load yaml-dump)
 
@@ -135,7 +136,7 @@ package: std/text
               (lp)))))))
 
   (def (parse-scalar data tag)
-    (let (str (bytes->string data))
+    (let (str (utf8->string data))
       (cond
        ((hash-get yaml-scalar-tags tag)
         => (cut <> str))
