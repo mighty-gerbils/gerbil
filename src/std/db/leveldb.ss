@@ -7,7 +7,8 @@ package: std/db
         :gerbil/gambit/misc
         :std/db/_leveldb
         :std/error
-        :std/iter)
+        :std/iter
+        :std/text/utf8)
 (export leveldb-error?
         leveldb?
         leveldb-open leveldb-close
@@ -49,7 +50,7 @@ package: std/db
 (def (value-bytes key)
   (cond
    ((u8vector? key) key)
-   ((string? key) (string->bytes key))
+   ((string? key) (string->utf8 key))
    (else
     (error "Bad argument: expected u8vector or string" key))))
 

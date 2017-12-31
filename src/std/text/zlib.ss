@@ -6,13 +6,14 @@ package: std/text
 (import :gerbil/gambit/ports
         :std/sugar
         :std/error
+        :std/text/utf8
         :std/text/_zlib)
 (export compress compress-gz uncompress)
 
 (def (compress data (level Z_DEFAULT_COMPRESSION))
   (cond
    ((u8vector? data) (compress-bytes data level))
-   ((string? data) (compress-bytes (string->bytes data) level))
+   ((string? data) (compress-bytes (string->utf8 data) level))
    ((input-port? data) (compress-port data level))
    (else
     (error "Bad input source" data))))
@@ -32,7 +33,7 @@ package: std/text
 (def (compress-gz data (level Z_DEFAULT_COMPRESSION))
   (cond
    ((u8vector? data) (compress-gz-bytes data level))
-   ((string? data) (compress-gz-bytes (string->bytes data) level))
+   ((string? data) (compress-gz-bytes (string->utf8 data) level))
    ((input-port? data) (compress-gz-port data level))
    (else
     (error "Bad input source" data))))

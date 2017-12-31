@@ -5,6 +5,7 @@ package: std/misc
 
 (import :std/pregexp
         :std/text/hex
+        :std/text/utf8
         (only-in :std/crypto/digest md5)
         (only-in :std/crypto/etc random-bytes!)
         (only-in :gerbil/gambit/hash equal?-hash))
@@ -43,7 +44,7 @@ package: std/misc
     (make-uuid bytes #f)))
 
 (def (content-uuid str)
-  (let* ((bytes (string->bytes str))
+  (let* ((bytes (string->utf8 str))
          (hash (md5 bytes)))
     (make-uuid hash #f)))
 

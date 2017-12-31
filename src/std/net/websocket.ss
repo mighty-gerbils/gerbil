@@ -15,6 +15,7 @@ package: std/net
         :std/crypto/etc
         :std/misc/queue
         :std/net/request
+        :std/text/utf8
         :std/text/base64)
 (export open-websocket-client
         websocket?
@@ -70,8 +71,8 @@ package: std/net
 
        (let* ((accept64 (and Sec-WebSocket-Accept (cdr Sec-WebSocket-Accept)))
               (digest (make-digest digest::sha1))
-              (_ (digest-update! digest (string->bytes nonce64)))
-              (_ (digest-update! digest (string->bytes wsmagic)))
+              (_ (digest-update! digest (string->utf8 nonce64)))
+              (_ (digest-update! digest (string->utf8 wsmagic)))
               (verify (digest-final! digest))
               (verify64 (base64-encode verify)))
          (unless (equal? accept64 verify64)
@@ -150,7 +151,7 @@ package: std/net
 (def (websocket-write ws obj)
   (cond
    ((string? obj)
-    (websocket-send ws (string->bytes obj) 'text))
+    (websocket-send ws (string->utf8 obj) 'text))
    ((u8vector? obj)
     (websocket-send ws obj 'binary))
    (else
@@ -194,7 +195,7 @@ package: std/net
     ((values data 'binary)
      data)
     ((values data 'text)
-     (bytes->string data))
+     (utf8->string data))
     (#f #f)))
 
 (def (websocket-close ws (how 1000))

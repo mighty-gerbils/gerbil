@@ -8,6 +8,7 @@ package: std/net
                  force-output close-port)
         :std/pregexp
         :std/error
+        :std/text/utf8
         :std/net/address)
 (export open-socks5-client open-socks4-client
         socks5-open socks5-connect socks5-bind socks5-accept
@@ -193,7 +194,7 @@ package: std/net
          (out
           (cond
            ((string? host)
-            (let* ((fqdn    (string->bytes host))
+            (let* ((fqdn    (string->utf8 host))
                    (fqdnlen (##u8vector-length fqdn))
                    (_ (when (fx> fqdnlen 255)
                         (error "Domain name too long" host fqdnlen)))
@@ -237,7 +238,7 @@ package: std/net
       ((#x03)
        (let (buf (##make-u8vector (##read-u8 sock) 0))
          (recv-msg sock buf)
-         (cons (bytes->string buf) (recv-port))))
+         (cons (utf8->string buf) (recv-port))))
       ((#x04)
        (let (addr (##make-u8vector 16 0))
          (recv-msg sock addr)
@@ -261,12 +262,12 @@ package: std/net
 (def (socks4-send-request sock cmd host port userid)
   (let* ((porthi (fxand (fxarithmetic-shift port -8) #xff))
          (portlo (fxand port #xff))
-         (userid (and userid (string->bytes userid)))
+         (userid (and userid (string->utf8 userid)))
          (userlen (if userid (##u8vector-length userid) 0))
          (out
           (cond
            ((string? host)
-            (let* ((fqdn    (string->bytes host))
+            (let* ((fqdn    (string->utf8 host))
                    (fqdnlen (##u8vector-length fqdn))
                    (len     (fx+ 8 userlen 1 fqdnlen 1))
                    (out     (##make-u8vector len 0)))
