@@ -29,10 +29,12 @@
     (make-struct-field-mutator gxc#symbol-table::t '1))
   (define gxc#symbol-table:::init!
     (lambda (_self679_)
-      (struct-instance-init!
-       _self679_
-       (make-hash-table-eq)
-       (make-hash-table-eq))))
+      (if (##fx< '2 (##vector-length _self679_))
+          (begin
+            (##vector-set! _self679_ '1 (make-hash-table-eq))
+            (##vector-set! _self679_ '2 (make-hash-table-eq)))
+          (error '"struct-instance-init!: too many arguments for struct"
+                 _self679_))))
   (bind-method! gxc#symbol-table::t ':init! gxc#symbol-table:::init! '#f)
   (define gxc#raise-compile-error
     (lambda (_message675_ _stx676_ . _details677_)
