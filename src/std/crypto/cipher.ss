@@ -4,6 +4,7 @@
 package: std/crypto
 
 (import :gerbil/gambit/ports
+        :std/text/utf8
         :std/crypto/libcrypto
         :std/crypto/etc)
 
@@ -193,7 +194,7 @@ package: std/crypto
 (def (encrypt cipher key iv in)
   (cond
    ((string? in)
-    (encrypt-u8vector cipher key iv (string->bytes in)))
+    (encrypt-u8vector cipher key iv (string->utf8 in)))
    ((u8vector? in)
     (encrypt-u8vector cipher key iv in))
    ((input-port? in)

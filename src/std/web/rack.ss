@@ -10,6 +10,7 @@ package: std/web
         :std/iter
         :std/error
         :std/logger
+        :std/text/utf8
         )
 (export start-rack-fastcgi-server!)
 
@@ -51,7 +52,7 @@ package: std/web
           (status-text (hash-ref *http-response-codes* status "(Unknown)"))
           (body-data (cond
                       ((u8vector? body) body)
-                      ((string? body) (string->bytes body))
+                      ((string? body) (string->utf8 body))
                       (else (collect-data body))))
           (hout (open-output-u8vector)))
      (fprintf hout "Status: ~a ~a\r\n" status status-text)

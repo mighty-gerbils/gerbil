@@ -8,6 +8,7 @@ package: std/os
         :std/os/fd
         :std/os/fcntl
         :std/net/address
+        :std/text/utf8
         :std/sugar
         (only-in :gerbil/gambit/ports close-port))
 
@@ -299,7 +300,7 @@ package: std/os
     sa))
 
 (def (socket-address-un path)
-  (let (pathlen (u8vector-length (string->bytes path)))
+  (let (pathlen (string-utf8-length path))
     (if (fx< pathlen UNIX_MAX_PATH)
       (let (sa (make-socket-address-un))
         (sockaddr_un_path_set sa path)

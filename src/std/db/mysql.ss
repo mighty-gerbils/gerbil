@@ -14,6 +14,7 @@ package: std/db
         :std/os/fd
         :std/os/fcntl
         :std/os/pipe
+        :std/text/utf8
         (only-in :std/srfi/19
                  make-date date?
                  date-nanosecond date-second
@@ -192,7 +193,7 @@ package: std/db
                  (mysql_bind_set_double bind k ptr)
                  (loop ptr)))
               ((string? arg)
-               (let* ((len (fx1+ (u8vector-length (string->bytes arg))))
+               (let* ((len (fx1+ (string-utf8-length arg)))
                       (ptr (check-ptr (make_blob_ptr len))))
                  (string_ptr_set ptr arg)
                  (mysql_bind_set_string bind k ptr len)

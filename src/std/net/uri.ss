@@ -5,7 +5,8 @@ package: std/net
 
 (import (only-in :gerbil/gambit/ports
                  with-output-to-string
-                 with-output-to-u8vector write-u8))
+                 with-output-to-u8vector write-u8)
+        :std/text/utf8)
 
 (export uri-encode uri-decode form-url-encode form-url-decode
         make-uri-encoding-table
@@ -74,7 +75,7 @@ package: std/net
   (def (write-hex n)
     (write-char (##string-ref "0123456789ABCDEF" n)))
 
-  (let* ((utf8 (string->bytes str))
+  (let* ((utf8 (string->utf8 str))
          (len  (u8vector-length utf8)))
     (let lp ((n 0))
       (when (fx< n len)
@@ -110,10 +111,10 @@ package: std/net
     (unless (and (vector? encoding) (fx= (vector-length encoding) 256))
       (error "Bad encoding table" encoding)))
 
-  (let* ((utf8 (string->bytes str))
+  (let* ((utf8 (string->utf8 str))
          (len  (u8vector-length utf8))
          (pct  (char->integer #\%)))
-    (bytes->string
+    (utf8->string
      (with-output-to-u8vector []
        (lambda ()
          (let lp ((n 0))

@@ -11,6 +11,7 @@ package: std/crypto
         :gerbil/gambit/ports
         :std/error
         :std/format
+        :std/text/utf8
         :std/crypto/libcrypto)
 
 ;; _gambit#
@@ -97,12 +98,12 @@ package: std/crypto
 
 (def* call-with-binary-input-string
   ((proc in)
-   (call-with-binary-input-u8vector proc (string->bytes in)))
+   (call-with-binary-input-u8vector proc (string->utf8 in)))
   ((proc in start)
    (call-with-binary-input-u8vector proc
-     (substring->bytes in start (##string-length in))))
+     (utf8-encode in start (##string-length in))))
   ((proc in start end)
-   (call-with-binary-input-u8vector proc (substring->bytes in start end))))
+   (call-with-binary-input-u8vector proc (utf8-encode in start end))))
 
 (def (call-with-binary-input-port proc in (fill? #t))
   (cond
@@ -135,7 +136,7 @@ package: std/crypto
     (let lp ()
       (let (rd (##read-substring buf 0 512 in need))
         (unless (fxzero? rd)
-          (let (bytes (substring->bytes buf 0 rd))
+          (let (bytes (utf8-encode buf 0 rd))
             (proc bytes 0 (##u8vector-length bytes))
             (lp)))))))
 
@@ -144,9 +145,9 @@ package: std/crypto
     (lambda ()
       (if (##fx< (macro-character-port-rlo port)
                  (macro-character-port-rhi port))
-        (let (buf (substring->bytes (macro-character-port-rbuf port)
-                                    (macro-character-port-rlo port)
-                                    (macro-character-port-rhi port)))
+        (let (buf (utf8-encode (macro-character-port-rbuf port)
+                               (macro-character-port-rlo port)
+                               (macro-character-port-rhi port)))
           (macro-character-port-rlo-set! port (macro-character-port-rhi port))
           buf)
         #f))))

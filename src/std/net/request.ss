@@ -11,6 +11,7 @@ package: std/net
         :std/net/uri
         :std/text/json
         :std/text/zlib
+        :std/text/utf8
         :std/srfi/13)
 (export
   http-get http-head http-post http-put http-delete http-options
@@ -181,7 +182,7 @@ package: std/net
             (cond
              ((not body) #f)
              ((u8vector? body) body)
-             ((string? body) (string->bytes body))
+             ((string? body) (string->utf8 body))
              (else
               (error "bad request body" body))))
            (headers
@@ -331,7 +332,7 @@ package: std/net
             (raise-io-error 'request-read-response-line
                             "Incomplete response; connection closed" port))
            ((eq? next lf)
-            (bytes->string (list->u8vector (reverse r))))
+            (utf8->string (list->u8vector (reverse r))))
            (else
             (lp (cons* next cr r))))))
         (else
@@ -374,7 +375,9 @@ package: std/net
 
 (def (request-text req)
   (def (get-text enc)
-    (bytes->string (request-content req) enc))
+    (if (eq? enc 'UTF-8)
+      (utf8->string (request-content req))
+      (bytes->string (request-content req) enc)))
   (cond
    ((request-encoding req) => get-text)
    (else
