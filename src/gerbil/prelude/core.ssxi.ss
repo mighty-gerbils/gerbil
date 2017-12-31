@@ -30,16 +30,22 @@ package: gerbil
           ((%#call _ self)
            #'(%#quote #!void))
           ((%#call _ (%#ref self) arg ...)
-           (with-syntax (((off ...) (iota (length #'(arg ...)) 1)))
-             #'(%#begin
-                (%#call (%#ref ##vector-set!) (%#ref self) (%#quote off) arg)
-                ...)))
-          ((%#call _ self arg ...)
-           (with-syntax (($self (make-symbol (gensym '__self)))
-                         ((off ...) (iota (length #'(arg ...)) 1)))
+           (with-syntax* (((values arg-count) (length #'(arg ...)))
+                          ((off ...) (iota arg-count 1))
+                          (count arg-count))
+             #'(%#if (%#call (%#ref ##fx<)
+                             (%#quote count)
+                             (%#call (%#ref ##vector-length) (%#ref self)))
+                 (%#begin
+                  (%#call (%#ref ##vector-set!) (%#ref self) (%#quote off) arg)
+                  ...)
+                 (%#call (%#ref error)
+                         (%#quote "struct-instance-init!: too many arguments for struct")
+                         (%#ref self)))))
+          ((%#call recur self arg ...)
+           (with-syntax (($self (make-symbol (gensym '__self))))
              #'(%#let-values ((($self) self))
-                  (%#call (%#ref ##vector-set!) (%#ref $self) (%#quote off) arg)
-                  ...))))))))
+                  (%#call recur (%#ref $self) arg ...)))))))))
 
 ;; gx-gambc0: simple runtime functions that should be inlined
 (declare-type*
