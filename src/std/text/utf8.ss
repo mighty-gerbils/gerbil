@@ -120,7 +120,7 @@ package: std/text
                               (##fxand byte3 #x3f)))))
               (##string-set! str j char)
               (lp i+3 (##fx+ j 1))))
-           (else
+           ((##fx<= byte #xf4)
             (let* ((i+4 (##fx+ i 4))
                    (_ (unless (##fx<= i+4 u8vlen)
                         (raise-io-error 'utf8-decode! "incomplete character" byte)))
@@ -134,5 +134,8 @@ package: std/text
                               (##fxarithmetic-shift-left (##fxand byte3 #x3f) 6)
                               (##fxand byte4 #x3f)))))
               (##string-set! str j char)
-              (lp i+4 (##fx+ j 1))))))
+              (lp i+4 (##fx+ j 1))))
+           (else
+            (##string-set! str j #\xfffd) ; UTF-8 replacement character
+            (lp (##fx+ i 1) (##fx+ j 1)))))
         j))))
