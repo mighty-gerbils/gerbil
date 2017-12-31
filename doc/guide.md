@@ -464,6 +464,36 @@ destructuring  pairs tagged with `'foo`:
 
 ```
 
+#### begin-syntax
+If you need to shift the phase of the expander to evaluate support code
+for macros, you can do so with `begin-syntax`:
+```
+(begin-syntax form ...)
+```
+
+For example, the following macro uses a utility function in the fender,
+which is defined at phi=+1:
+```
+(begin-syntax
+  (def (identifier-or-keyword? stx)
+    (or (identifier? stx)
+        (stx-keyword? stx)))
+
+  (def (identifiers-or-keywords? lst)
+    (andmap identifier-or-keyword? lst)))
+
+(defrules qlist ()
+  ((_ (key val) ...)
+   (identifiers-or-keywords? #'(key ...))
+   [['key . val] ...]))
+
+```
+
+The full meta-syntactic tower is supported, so you can use the full
+language at phi=+1 and shift higher with a nested `begin-syntax`. You
+will have to import `:gerbil/core` at higher phases however, as the
+prelude only provides bindings for phi=+1.
+
 ## Modules and Libraries
 
 Modules are self-contained pieces of code. All identifiers

@@ -25,7 +25,7 @@ ahead of time compilation and compiled macros.
 The source code for Gerbil is hosted on [Github](https://github.com/vyzo/gerbil),
 with the latest release available in [releases](https://github.com/vyzo/gerbil/releases).
 
-For cutting-edge Gerbil, you can clone the repository:
+For the latest Gerbil, you can clone the repository:
 ```
 $ git clone https://github.com/vyzo/gerbil.git
 ```
@@ -58,7 +58,7 @@ $ sudo apt-get install openssl libssl-dev sqlite3 libsqlite3-dev
 The optional libraries can be enabled or disabled at build-time
 by editing `$GERBIL_HOME/src/std/build-features.ss`.
 You can also enable features later, by editing `build-features.ss` and
-running `build_stdlib.sh` in `$GERBIL_HOME/src/`.
+running `./build.sh stdlib` in `$GERBIL_HOME/src/`.
 
 
 ## Build Instructions
