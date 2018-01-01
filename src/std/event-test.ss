@@ -50,30 +50,26 @@
             (sel4 (cons mx4 cv4)))
         (check (select [sel3 sel4] 2) => sel3)))
 
-    #;(test-case "test sync selectors"
+    (test-case "test sync selectors"
       (check (sync 1) => #f)
 
       (def thr1 (spawn void))
-      (check (sync 1 thr1) => thr1)
+      (check (sync thr1 1) => thr1)
 
       (def thr2 (spawn (lambda () (thread-sleep! 2))))
-      (check (sync 1 thr2) => #f)
-      (check (sync thr2) => thr2)
+      (check (sync thr2 1) => #f)
+      (check (sync thr2 2) => thr2)
 
-      (def lock3 (make-mutex))
-      (def thr3 (spawn (lambda () (thread-sleep! 1) (mutex-unlock! lock3))))
-      (mutex-lock! lock3 #f thr3)
-      (check (sync lock3) => lock3)
+      (def mx3 (make-mutex))
+      (def cv3 (make-condition-variable))
+      (mutex-lock! mx3)
+      (def thr4 (spawn (lambda () (thread-sleep! 1) (mutex-lock! mx3) (condition-variable-signal! cv3) (mutex-unlock! mx3))))
+      (check (sync (cons mx3 cv3)) => (cons mx3 cv3))
 
-      (def lock4 (make-mutex))
-      (def cv4 (make-condition-variable))
-      (mutex-lock! lock4)
-      (def thr4 (spawn (lambda () (thread-sleep! 1) (mutex-lock! lock4) (condition-variable-signal! cv4) (mutex-unlock! lock4))))
-      (check (sync [lock4 . cv4]) => (values lock4 cv4))
-
-      (def /dev/null (open-input-file "/dev/null"))
-      (check (sync /dev/null) => /dev/null)
-      (close-port /dev/null))
+      ;;(def /dev/null (open-input-file "/dev/null"))
+      ;;(check (sync /dev/null) => /dev/null)
+      ;;(close-port /dev/null)
+      )
 
     #;(test-case "test sync events"
       (check (sync never-evt 0) => #f)
