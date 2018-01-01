@@ -9,7 +9,23 @@
 
 (def event-test
   (test-suite "test :std/event library"
-    (test-case "test select"
+    (test-case "test wait"
+      (def thr1 (spawn* void))
+      (check (wait thr1 1) => thr1)
+
+      (def thr2 (spawn* (lambda () (thread-sleep! 2))))
+      (check (wait thr2 1) => #f)
+      (check (wait thr2 2) => thr2)
+
+      (def mx3 (make-mutex))
+      (def cv3 (make-condition-variable))
+      (mutex-lock! mx3)
+      (def thr3 (spawn* (lambda () (thread-sleep! 1) (mutex-lock! mx3) (condition-variable-signal! cv3) (mutex-unlock! mx3))))
+      (let (sel3 (cons mx3 cv3))
+        (check (wait sel3 2) => sel3))
+      )
+
+    #;(test-case "test select"
       (check (select 1 []) => 1)
 
       (def thr1 (spawn void))
@@ -34,7 +50,7 @@
       (check (select #f [/dev/null]) => /dev/null)
       (close-port /dev/null))
 
-    (test-case "test sync selectors"
+    #;(test-case "test sync selectors"
       (check (sync 1) => #f)
 
       (def thr1 (spawn void))
@@ -59,7 +75,7 @@
       (check (sync /dev/null) => /dev/null)
       (close-port /dev/null))
 
-    (test-case "test sync events"
+    #;(test-case "test sync events"
       (check (sync never-evt 0) => #f)
       (check (sync always-evt 0) => always-evt)
       (check (sync (handle-evt 1 (lambda (_) 'timeout))) => 'timeout)
