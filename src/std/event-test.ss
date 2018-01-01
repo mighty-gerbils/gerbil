@@ -22,33 +22,33 @@
       (mutex-lock! mx3)
       (def thr3 (spawn* (lambda () (thread-sleep! 1) (mutex-lock! mx3) (condition-variable-signal! cv3) (mutex-unlock! mx3))))
       (let (sel3 (cons mx3 cv3))
-        (check (wait sel3 2) => sel3))
-      )
+        (check (wait sel3 2) => sel3)))
 
-    #;(test-case "test select"
-      (check (select 1 []) => 1)
+    (test-case "test select"
+      (def thr1 (spawn* void))
+      (def thr2 (spawn* (lambda () (thread-sleep! 1))))
+      (check (select [thr1 thr2] 1) => thr1)
 
-      (def thr1 (spawn void))
-      (check (select 1 [thr1]) => thr1)
+      (def mx3 (make-mutex))
+      (def cv3 (make-condition-variable))
+      (mutex-lock! mx3)
+      (check (select [thr2 (cons mx3 cv3)] 2) => thr2)
 
-      (def thr2 (spawn (lambda () (thread-sleep! 2))))
-      (check (select 1 [thr2]) => 1)
-      (check (select #f [thr2]) => thr2)
-
-      (def lock3 (make-mutex))
-      (def thr3 (spawn (lambda () (thread-sleep! 1) (mutex-unlock! lock3))))
-      (mutex-lock! lock3 #f thr3)
-      (check (select #f [lock3]) => lock3)
-
-      (def lock4 (make-mutex))
+      (mutex-lock! mx3)
+      (def mx4 (make-mutex))
       (def cv4 (make-condition-variable))
-      (mutex-lock! lock4)
-      (def thr4 (spawn (lambda () (thread-sleep! 1) (mutex-lock! lock4) (condition-variable-signal! cv4) (mutex-unlock! lock4))))
-      (check (select #f [[lock4 . cv4]]) => (cons lock4 cv4))
+      (mutex-lock! mx4)
 
-      (def /dev/null (open-input-file "/dev/null"))
-      (check (select #f [/dev/null]) => /dev/null)
-      (close-port /dev/null))
+      (let ((sel3 (cons mx3 cv3))
+            (sel4 (cons mx4 cv4)))
+        (check (select [sel3 sel4] 0) => #f))
+
+      (mutex-lock! mx3)
+      (mutex-lock! mx4)
+      (def thr3 (spawn* (lambda () (thread-sleep! 1) (mutex-lock! mx3) (condition-variable-signal! cv3) (mutex-unlock! mx3))))
+      (let ((sel3 (cons mx3 cv3))
+            (sel4 (cons mx4 cv4)))
+        (check (select [sel3 sel4] 2) => sel3)))
 
     #;(test-case "test sync selectors"
       (check (sync 1) => #f)
