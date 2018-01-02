@@ -65,7 +65,7 @@ package: std
          (mx (make-mutex 'select))
          (cv (make-condition-variable 'select))
          (selection (make-selection #f mx cv))
-         (threads (map (lambda (xsel) (spawn/name 'select select1 selection xsel timeo))
+         (threads (map (lambda (xsel) (spawn/name 'select select1 selection xsel))
                        xsels))
          (abs-timeo (if timeo (timeout->abs-timeout timeo) (macro-absent-obj)))
          (finalize!
@@ -87,8 +87,8 @@ package: std
         (finalize!)
         #f)))))
 
-(def (select1 selection xsel timeo)
-  (when ((selector-wait xsel) (selector-sel xsel) timeo)
+(def (select1 selection xsel)
+  (when ((selector-wait xsel) (selector-sel xsel) #f)
     (mutex-lock! (selection-mx selection))
     (unless (selection-e selection)
       (set! (selection-e selection) xsel)
