@@ -5,7 +5,7 @@ package: std/misc
 
 (import :gerbil/gambit/threads)
 (export make-sync-hash sync-hash?
-        sync-hash-get sync-hash-key? sync-hash-put! sync-hash-remove!
+        sync-hash-get sync-hash-ref sync-hash-key? sync-hash-put! sync-hash-remove!
         sync-hash-do)
 
 (defstruct sync-hash (ht mx)
@@ -20,6 +20,13 @@ package: std/misc
   (with ((sync-hash ht mx) sht)
     (mutex-lock! mx)
     (let (val (hash-get ht key))
+      (mutex-unlock! mx)
+      val)))
+
+(def (sync-hash-ref sht key default)
+  (with ((sync-hash ht mx) sht)
+    (mutex-lock! mx)
+    (let (val (hash-ref ht key default))
       (mutex-unlock! mx)
       val)))
 
