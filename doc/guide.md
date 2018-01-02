@@ -1047,53 +1047,60 @@ For example:
 ### Event Programming
 
 The `:std/event` library provides procedures and macros for event-driven
-programming in the style of PLT-Scheme. There are two main procedures
-for multi-event synchronization: the low level `select` and the high
-level `sync`.
+programming.
 
-#### select
-`select` works with selectors. A selector is
-- a mutex which becomes ready when the current thread acquires it.
-- a locked mutex-condvar-pair which atomically unlocks the mutex and waits for the condition variable. It becomes ready when the condition variable is signalled.
-- A naked i/o condvar which is waited for i/o becomes ready when the runtime signals that it.
-- A thread which becomes ready when the thread completes.
-- An input port, which signals when a single read operation at the level of the port will not block; it becomes ready either when the buffer fills or when the port i/o condition is signalled.
-- A timeout, which is a real for a relative timeout or a time object for an absolute timeout.
+#### wait and select
+These are the low level primitives, which wait and multiplex on primitive selectors:
+- Threads, which signal when the thread therminates.
+- Pairs of a locked mutex with a condition variable, which signal when the condition signals after the mutex has been unlocked.
+- Naked i/o condvars, which are signaled by the runtime scheduler.
 
-The signature of select is
+`wait` blocks the current thread until a selector is signalled, while `select` blocks on
+multiple selectors concurrently, using a thread for each selector. Both procedures accept
+an optional timeout and return the selector that was signalled or `#f` in the case of timeout.
 ```
-(def (select timeout [selector ...])
-  ...)
+(def (wait selector (timeout #f)) ...)
+(def (select list-of-selectors (timeout #f)) ...)
 ```
 
-When invoked with a timeout and a list of selectors, `select` returns
-when one of the selectors is ready. For example:
+For example:
 ```
 (import :std/event)
-(import :gerbil/gambit/threads)
 (def my-thread (spawn (lambda () (thread-sleep! 10))))
-> (select 1 [my-thread])
-=> 1 ; after a second elapses
-> (select #f [my-thread])
-=> my-thread ; after the thread completes its sleep
+> (wait my-thead 1)      ; or (select [my-thread] 1)
+=> #f                    ; after a second elapses
+> (wait my-thread)       ; or (select [my-thread])
+=> my-thread             ; after the thread completes its sleep
+
 ```
 
 #### sync
-`sync` works with events. An event is
-- a low-level selector
-- `never-evt`  which is never ready, and `always-evt` which is always ready
-- An event object, constructured with `make-event` or `wrap-evt`
-- An event set object, constructred with `choice-evt`
-- An event handler, constructed with `handle-evt`; it is an event tied with a continuation function which is tail invoked with the value of the event. Multiple continuations can be chained with `handle-evt` each receiving the values of the previous, starting with the value of the vent.
+`sync` is the high-level synchronization primitive from PLT-Scheme, which works with
+high level events.
+
+A valid argument for `sync` is any synchronizable object, automatically wrapped with `wrap-evt`:
+- events
+- primitive selectors
+- input ports
+- timeouts
+- any object that implements the `:event` method to return a synchronizable object
+
+An event is
+- the primitive events `never-evt` (bottom) and `always-evt` (top)
+- an event object, constructured with `make-event` or `wrap-evt`
+- an event-set object, constructred with `choice-evt`
+- an event-handler object, constructed with `handle-evt`; it is an event tied with a continuation function which is tail invoked with the value of the event. Multiple continuations can be chained with `handle-evt` each receiving the values of the previous, starting with the value of the vent.
 
 `sync` accepts an arbitrary of events as arguments, and returns when exactly one of them is
-ready. The value of sync is the value of the event: by default, timeouts has a value of #f
-and other events have usually the selector as value.
+ready. The value of sync is the value of the event: by default, timeouts have a value of #f
+and other events have usually the synchronizer as value.
+
+
 For example:
 ```
 (def my-thread (spawn (lambda () (thread-sleep! 10))))
 > (sync 1 my-thread)
-=> 1 ; after a second elapses
+=> #f ; after a second elapses
 > (sync my-thread)
 => my-thread ; after the thread completes its sleep
 
@@ -1118,26 +1125,27 @@ timeout 5
 
 #### Sync Macros
 
-The library also offers a comple of macros, `!` and `!!` which simplify
-event driven programming. `!` syncs a single event while `!!` syncs
+The library also offers a couple of macros, `!` and `!*`, which simplify
+event driven programming. `!` syncs a single event while `!*` syncs
 multiple events.
-For instance, using `!!` the loop from the previous example can
-be rewritten as
+
+For example:
 ```
+;; sync on my-thread
+(! my-thread (displayln "my thread exited"))
+
+;; rewrite the previous example loop:
 (let lp ((n 0))
-  (!! (1 (displayln "timeout " n) (lp (fx1+ n)))
+  (!* (1 (displayln "timeout " n) (lp (fx1+ n)))
       (my-thread
        (thread-join! my-thread))))
 ```
 
-The two macros are defined with `defrules` in `src/std/event.ss` with
-easy to follow definitions.
-
 ### Actors
 
-At the low-level Gerbil builds on Gambit's thread mailboxes, and blends
-them with events to provide actor-oriented programming capabilities and
-remote inter-actor communication.
+At the low-level Gerbil builds on Gambit's thread mailboxes to provide
+actor-oriented programming capabilities and remote interactor
+communication.
 
 #### Messages
 
