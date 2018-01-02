@@ -53,10 +53,15 @@ package: std/net/httpd
 
 ;;; implementation
 (def (http-server socks sas mux)
+  (def get-handler
+    (bound-method-ref mux 'get-handler))
+  (def put-handler!
+    (bound-method-ref mux 'put-handler!))
+
   (def acceptors
     (map (lambda (sock sa)
            (spawn/name 'http-server-accept
-                       http-server-accept mux sock (socket-address-family sa)))
+                       http-server-accept get-handler sock (socket-address-family sa)))
          socks sas))
 
   (def (shutdown!)
@@ -70,7 +75,7 @@ package: std/net/httpd
 
   (def (loop)
     (<- ((!httpd.register host path handler k)
-         {put-handler! mux host path handler}
+         (put-handler! host path handler)
          (!!value (void) k)
          (loop))
         ((!httpd.shutdown)
@@ -97,12 +102,12 @@ package: std/net/httpd
    (finally
     (shutdown!))))
 
-(def (http-server-accept mux sock safamily)
+(def (http-server-accept get-handler sock safamily)
   (def cliaddr (make-socket-address safamily))
   (while #t
     (try
      (let (clisock (server-accept sock cliaddr))
        (spawn/name 'http-request-handler
-                   http-request-handler mux clisock (socket-address->address cliaddr)))
+                   http-request-handler get-handler clisock (socket-address->address cliaddr)))
      (catch (os-exception? e)
        (log-error "error accepting connection" e)))))

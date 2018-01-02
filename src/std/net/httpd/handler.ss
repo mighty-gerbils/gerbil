@@ -37,7 +37,7 @@ package: std/net/httpd
 (defstruct http-response (buf output close?)
   final: #t)
 
-(def (http-request-handler mux sock addr)
+(def (http-request-handler get-handler sock addr)
   (def ibuf (open-server-input-buffer sock))
   (def obuf (open-server-output-buffer sock))
 
@@ -88,7 +88,7 @@ package: std/net/httpd
           (http-response-write res 200 [] #f))
          ((eq? method 'TRACE)
           (http-response-trace res req))
-         ({get-handler mux host path}
+         ((get-handler host path)
           => (lambda (handler)
                (if (procedure? handler)
                  (try
