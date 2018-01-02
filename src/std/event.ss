@@ -219,7 +219,7 @@ package: std
   (let (evt (wrap-evt obj))
     (if (event-set? evt)
       (make-event-set (map (cut make-event-handler <> K) (event-set-e evt)))
-      (make-event-handler (wrap-evt obj) K))))
+      (make-event-handler evt K))))
 
 (def (choice-evt . args)
   (let lp ((rest args) (evts []))
