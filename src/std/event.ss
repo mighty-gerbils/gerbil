@@ -204,7 +204,7 @@ package: std
    ((input-port? obj)
     (input-port-evt obj))
    (else
-    (wrap-evt (call-method obj ':event)))))
+    (wrap-evt {:event obj}))))
 
 (def (handle-evt obj K)
   (let (evt (wrap-evt obj))
@@ -218,7 +218,9 @@ package: std
       ([obj . rest]
        (let (evt (wrap-evt obj))
          (if (event-set? evt)
-           (lp rest (foldl cons evts (event-set-e evt)))
+           (if (null? evts) ; consing optimization
+             (lp rest (event-set-e evt))
+             (lp rest (foldl cons evts (event-set-e evt))))
            (lp rest (cons evt evts)))))
       (else
        (make-event-set evts)))))
