@@ -47,7 +47,7 @@ package: std/net
   final: #t)
 
 (defproto httpd
-  (register path handler)
+  (register host path handler)
   event:
   (join thread)
   (shutdown))
@@ -55,12 +55,12 @@ package: std/net
 (def current-http-server
   (make-parameter #f))
 
-(def (start-http-server! addr . addrs)
+(def (start-http-server! mux: (mux (make-default-http-mux)) . addresses)
   (start-logger!)
   (let* ((socksrv (start-socket-server!))
-         (sas (map socket-address (cons addr addrs)))
+         (sas (map socket-address addresses))
          (socks (map (cut server-listen socksrv <>) sas)))
-    (spawn/group 'http-server http-server socks sas)))
+    (spawn/group 'http-server http-server socks sas mux)))
 
 (def (stop-http-server! httpd)
   (let (tgroup (thread-thread-group httpd))
@@ -71,22 +71,47 @@ package: std/net
       (thread-group-kill! tgroup)))))
 
 ;; handler: lambda (request response)
-(def (http-register-handler httpd path handler)
+(def (http-register-handler httpd path handler (host #f))
   (if (string? path)
     (if (procedure? handler)
-      (!!httpd.register httpd path handler)
+      (!!httpd.register httpd host path handler)
       (error "Bad handler; expected procedure" handler))
     (error "Bad path; expected string" path)))
 
-;;; implementation
-(def (http-server socks sas)
-  (def handlers
-    (make-sync-hash (make-hash-table)))
+;; multiplexer: an object with two methods:
+;; - {put-handler! mux host path handler}
+;; - {get-handler mux host path}
+;;
+;; default mux implementation
+(defstruct default-http-mux (t)
+  constructor: :init!
+  final: #t)
 
+(defmethod {:init! default-http-mux}
+  (lambda (self)
+    (struct-instance-init! self (make-sync-hash (make-hash-table)))))
+
+(defmethod {put-handler! default-http-mux}
+  (lambda (self host path handler)
+    (sync-hash-put! (default-http-mux-t self) path handler)))
+
+(defmethod {get-handler default-http-mux}
+  (lambda (self host path)
+    (sync-hash-do (default-http-mux-t self)
+      (lambda (ht)
+        (let lp ((path path))
+          (cond
+           ((hash-get ht path) => values)
+           ((string-rindex path #\/)
+            => (lambda (ix) (lp (substring path 0 ix))))
+           (else #f)))))))
+
+;;; implementation
+(def (http-server socks sas mux)
   (def acceptors
     (map (lambda (sock sa)
            (spawn/name 'http-server-accept
-                       http-server-accept handlers sock (socket-address-family sa)))
+                       http-server-accept mux sock (socket-address-family sa)))
          socks sas))
 
   (def (shutdown!)
@@ -99,8 +124,8 @@ package: std/net
     (spawn/name 'http-server-monitor join (current-thread) thread))
 
   (def (loop)
-    (<- ((!httpd.register path handler k)
-         (sync-hash-put! handlers path handler)
+    (<- ((!httpd.register host path handler k)
+         {put-handler! mux host path handler}
          (!!value (void) k)
          (loop))
         ((!httpd.shutdown)
@@ -127,30 +152,20 @@ package: std/net
    (finally
     (shutdown!))))
 
-(def (http-server-accept handlers sock safamily)
+(def (http-server-accept mux sock safamily)
   (def cliaddr (make-socket-address safamily))
   (while #t
     (try
      (let (clisock (server-accept sock cliaddr))
        (spawn/name 'http-request-handler
-                   http-request-handler handlers clisock (socket-address->address cliaddr)))
+                   http-request-handler mux clisock (socket-address->address cliaddr)))
      (catch (os-exception? e)
        (log-error "error accepting connection" e)))))
 
 
-(def (http-request-handler handlers sock addr)
+(def (http-request-handler mux sock addr)
   (def ibuf (open-server-input-buffer sock))
   (def obuf (open-server-output-buffer sock))
-
-  (def (get-handler path)
-    (sync-hash-do handlers
-      (lambda (ht)
-        (let lp ((path path))
-          (cond
-           ((hash-get ht path) => values)
-           ((string-rindex path #\/)
-            => (lambda (ix) (lp (substring path 0 ix))))
-           (else #f))))))
 
   (def (loop)
     (let ((req (make-http-request ibuf addr #f #f #f #f #f #f #!void))
@@ -178,6 +193,10 @@ package: std/net
              (path    (http-request-path req))
              (proto   (http-request-proto req))
              (headers (http-request-headers req))
+             (host
+              (cond
+               ((assoc "Host" headers) => cdr)
+               (else #f)))
              (close?
               (case proto
                 (("HTTP/1.1")
@@ -198,7 +217,7 @@ package: std/net
           (http-response-write res 200 [] #f))
          ((eq? method 'TRACE)
           (http-response-trace res req))
-         ((get-handler path)
+         ({get-handler mux host path}
           => (lambda (handler)
                (try
                 (handler req res)
