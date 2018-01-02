@@ -24,7 +24,7 @@ package: tutorial/proxy
     (socket-bind sock laddr)
     (socket-listen sock 10)
     (while #t
-      (sync (fd-io-in sock))
+      (wait (fd-io-in sock))
       (try
        (let (cli (socket-accept sock caddr))
          (when cli
@@ -38,7 +38,7 @@ package: tutorial/proxy
    (let* ((srvsock (socket (socket-address-family raddr) SOCK_STREAM))
           (rcon (socket-connect srvsock raddr)))
      (unless rcon
-       (sync (fd-io-out srvsock)))
+       (wait (fd-io-out srvsock)))
      (let (r (or rcon (socket-getsockopt srvsock SOL_SOCKET SO_ERROR)))
        (unless (fxzero? r)
          (error (format "Connection error: ~a" (strerror r))))
@@ -54,7 +54,7 @@ package: tutorial/proxy
      (let (rd (socket-recv isock buf))
        (cond
         ((not rd)
-         (sync (fd-io-in isock))
+         (wait (fd-io-in isock))
          (lp))
         ((fxzero? rd)
          (close-input-port isock)
@@ -69,7 +69,7 @@ package: tutorial/proxy
                                (raise e))))
                  (cond
                   ((not wr)
-                   (sync (fd-io-out osock))
+                   (wait (fd-io-out osock))
                    (lp2 start))
                   (else
                    (lp2 (fx+ start wr)))))
