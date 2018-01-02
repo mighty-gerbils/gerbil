@@ -64,12 +64,7 @@
       (def cv3 (make-condition-variable))
       (mutex-lock! mx3)
       (def thr4 (spawn (lambda () (thread-sleep! 1) (mutex-lock! mx3) (condition-variable-signal! cv3) (mutex-unlock! mx3))))
-      (check (sync (cons mx3 cv3)) => (cons mx3 cv3))
-
-      ;;(def /dev/null (open-input-file "/dev/null"))
-      ;;(check (sync /dev/null) => /dev/null)
-      ;;(close-port /dev/null)
-      )
+      (check (sync (cons mx3 cv3)) => (cons mx3 cv3)))
 
     (test-case "test sync events"
       (check (sync never-evt 0) => #f)
@@ -79,4 +74,21 @@
       (check (sync (choice-evt never-evt (handle-evt 1 (lambda (_) 'timeout)))) => 'timeout)
       (check (sync (handle-evt (choice-evt never-evt (handle-evt 1 (lambda (_) 'timeout)))
                                values))
-             => 'timeout))))
+             => 'timeout))
+
+    (test-case "test sync input ports"
+      (let ()
+        (def /dev/null (open-input-file "/dev/null"))
+        (check (sync /dev/null) => /dev/null)
+        (close-port /dev/null))
+
+      (let ()
+        (def srv (open-tcp-server "127.0.0.1:9999"))
+        (spawn* (lambda () (thread-sleep! 1) (open-tcp-client "127.0.0.1:9999")))
+        (check (sync srv) => srv)
+        (close-port srv))
+
+      (let ()
+        (defvalues (in out) (open-string-pipe '(direction: input permanent-close: #t)))
+        (spawn* (lambda () (thread-sleep! 1) (write "hello" out) (force-output out)))
+        (check (sync in) => in)))))
