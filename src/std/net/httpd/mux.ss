@@ -11,10 +11,9 @@ package: std/net/httpd
 ;; - {get-handler mux host path} => handler or #f
 ;;
 
-;; default mux implementation
+;; default mux implementation; paths are resolved with an exact match
 (defstruct default-http-mux (t)
-  constructor: :init!
-  final: #t)
+  constructor: :init!)
 
 (defmethod {:init! default-http-mux}
   (lambda (self)
@@ -25,6 +24,17 @@ package: std/net/httpd
     (sync-hash-put! (default-http-mux-t self) path handler)))
 
 (defmethod {get-handler default-http-mux}
+  (lambda (self host path)
+    (sync-hash-get (default-http-mux-t self) path)))
+
+;; recursive mux -- resolves paths up to their parent; allows for default
+;; handlers with an empty path
+(defstruct (recursive-http-mux default-http-mux) ())
+
+(defmethod {:init! recursive-http-mux}
+  default-http-mux:::init!)
+
+(defmethod {get-handler recursive-http-mux}
   (lambda (self host path)
     (sync-hash-do (default-http-mux-t self)
       (lambda (ht)

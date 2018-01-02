@@ -10,6 +10,7 @@ package: std/net
         stop-http-server!
         current-http-server
         make-default-http-mux
+        make-recursive-http-mux
         http-register-handler
         http-request?
         http-request-method http-request-url http-request-path http-request-params

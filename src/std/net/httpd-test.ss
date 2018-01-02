@@ -18,7 +18,6 @@
     (def server-url
       (string-append "http://" server-address))
 
-
     (def greeting
       "hello there!")
 
@@ -45,7 +44,8 @@
     (def (echo-handler req res)
       (http-response-write res 200 [] (http-request-body req)))
 
-    (def httpd (start-http-server! server-address))
+    (def httpd
+      (start-http-server! server-address mux: (make-recursive-http-mux)))
 
     (test-case "test basic handlers"
       (http-register-handler httpd "/simple" write-simple-handler)
