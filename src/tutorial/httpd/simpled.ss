@@ -12,11 +12,10 @@ package: tutorial/httpd
 (export main)
 
 (def (run address)
-  (let (httpd (start-http-server! address))
+  (let (httpd (start-http-server! address mux: (make-default-http-mux default-handler)))
     (http-register-handler httpd "/" root-handler)
     (http-register-handler httpd "/echo" echo-handler)
     (http-register-handler httpd "/headers" headers-handler)
-    (http-register-handler httpd "" default-handler)
     (thread-join! httpd)))
 
 ;; /
