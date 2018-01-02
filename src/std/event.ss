@@ -11,8 +11,8 @@ package: std
 (export wait select sync
         wrap-evt handle-evt choice-evt
         never-evt always-evt
-        sync-object? event? event-handler? event-set?
-        make-event event-e event-e-set!
+        sync-object?
+        make-event event? event-e event-e-set!
         ! !!)
 
 ;;; Low level event programming primitives:
@@ -226,6 +226,9 @@ package: std
 
 ;;; sync
 (def (sync . args)
+  (def mutexes
+    (make-hash-table-eq))
+
   (def (loop rest sels sel-evts timeo timeo-evt)
     (match rest
       ([evt . rest]
@@ -297,10 +300,11 @@ package: std
               (lp rest-sels rest-evts))))))))
 
   (def (check-mutex! rz sels)
-    (when (and (pair? rz)
-               (find (lambda (sel) (and (pair? sel) (eq? (car rz) (car sel))))
-                     sels))
-      (abort! sels (cut error "Duplicate mutex synchronizer" rz))))
+    (when (pair? rz)
+      (let (mx (car rz))
+        (if (hash-get mutexes mx)
+          (abort! sels (cut error "Duplicate mutex synchronizer" rz))
+          (hash-put! mutexes mx #t)))))
 
   (def (abort! sels E)
     (for-each abort-selector! sels)
