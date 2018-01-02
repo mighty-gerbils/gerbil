@@ -17,11 +17,7 @@ package: std/misc
     (struct-instance-init! self ht (make-mutex 'sync-hash))))
 
 (def (sync-hash-get sht key)
-  (with ((sync-hash ht mx) sht)
-    (mutex-lock! mx)
-    (let (val (hash-get ht key))
-      (mutex-unlock! mx)
-      val)))
+  (sync-hash-ref sht key #f))
 
 (def (sync-hash-ref sht key default)
   (with ((sync-hash ht mx) sht)
