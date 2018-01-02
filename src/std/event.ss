@@ -201,9 +201,8 @@ package: std
     (make-event obj event-e event-e))
    ((or (time? obj) (real? obj))
     (make-event (timeout->abs-timeout obj) event-e false))
-
-   ;; TODO input ports
-
+   ((input-port? obj)
+    (input-port-evt obj))
    (else
     (wrap-evt (call-method obj ':event)))))
 
@@ -342,3 +341,155 @@ package: std
           (mutex? (car obj))
           (condition-variable? (cdr obj)))
       (io-condition-variable? obj)))
+
+(def (input-port-evt port)
+  (cond
+   ((macro-u8vector-port? port)
+    (make-u8vector-port-evt port))
+   ((macro-string-port? port)
+    (make-string-port-evt port))
+   ((macro-vector-port? port)
+    (make-vector-port-evt port))
+   ((macro-device-port? port)
+    (make-device-port-evt port))
+   ((macro-tcp-server-port? port)
+    (make-tcp-server-port-evt port))
+   ((macro-raw-device-port? port)
+    (make-raw-device-port-evt port))
+   (else
+    (error "can't wrap event around unknown port type" port))))
+
+(def (make-u8vector-port-evt port)
+  (def (rbuf-check port)
+    (fx< (macro-byte-port-rlo port)
+         (macro-byte-port-rhi port)))
+
+  (def (rbuf-fill port)
+    (macro-byte-port-rbuf-fill port))
+
+  (def (condvar-e port)
+    (macro-u8vector-port-rcondvar port))
+
+  (def (poll evt)
+    (user-port-poll (event-e evt) rbuf-check rbuf-fill condvar-e))
+
+  (make-event port poll event-e))
+
+(def (make-string-port-evt port)
+  (def (rbuf-check port)
+    (fx< (macro-character-port-rlo port)
+         (macro-character-port-rhi port)))
+
+  (def (rbuf-fill port)
+    (macro-character-port-rbuf-fill port))
+
+  (def (condvar-e port)
+    (macro-string-port-rcondvar port))
+
+  (def (poll evt)
+    (user-port-poll (event-e evt) rbuf-check rbuf-fill condvar-e))
+
+  (make-event port poll event-e))
+
+(def (make-vector-port-evt port)
+  (def (rbuf-check port)
+    (fx< (macro-vector-port-rlo port)
+         (macro-vector-port-rhi port)))
+
+  (def (rbuf-fill port)
+    (macro-vector-port-rbuf-fill port))
+
+  (def (condvar-e port)
+    (macro-vector-port-rcondvar port))
+
+  (def (poll evt)
+    (user-port-poll (event-e evt) rbuf-check rbuf-fill))
+
+  (make-event port poll event-e))
+
+(def (user-port-poll port rbuf-check rbuf-fill condvar-e)
+  (def (fill! port)
+    (input-port-rbuf-fill! port (rbuf-fill port)))
+
+  (let* ((mx (macro-port-mutex port)))
+    (mutex-lock! mx)
+    (cond
+     ((rbuf-check port)
+      (mutex-unlock! mx)
+      #t)
+     ((fill! port)
+      (mutex-unlock! mx)
+      #t)
+     (else
+      (cons mx (condvar-e port))))))
+
+(def (input-port-rbuf-fill! port fill)
+  (let lp ()
+    (let (r (fill port 1 #f))
+      (cond
+       ((eq? r ##err-code-EINTR)        ; interrupted
+        (lp))
+       ((eq? r ##err-code-EAGAIN) #f)   ; would block
+       (else #t)))))
+
+(def (make-device-port-evt port)
+  (def (fill! port)
+    (input-port-rbuf-fill! port (macro-byte-port-rbuf-fill port)))
+
+  (def (poll evt)
+    (let* ((port (event-e evt))
+           (mx (macro-port-mutex port)))
+      (cond
+       ((or (fx< (macro-byte-port-rlo port)
+                 (macro-byte-port-rhi port))
+            (fx< (macro-character-port-rlo port)
+                 (macro-character-port-rhi port)))
+        (mutex-unlock! mx)
+        #t)
+       ((fill! port)
+        (mutex-unlock! mx)
+        #t)
+       (else
+        (mutex-unlock! mx)
+        (macro-device-port-rdevice-condvar port)))))
+
+  (make-event port poll event-e))
+
+(def (make-tcp-server-port-evt port)
+  (def (poll evt)
+    (let (port (event-e evt))
+      (macro-tcp-server-port-rdevice-condvar port)))
+
+  (make-event port poll event-e))
+
+(def (make-raw-device-port-evt port)
+  (def (poll evt)
+    (let (port (event-e evt))
+      (macro-raw-device-port-rdevice-condvar port)))
+
+  (make-event port poll event-e))
+
+;; _gambit#
+(extern namespace: #f
+  macro-u8vector-port?
+  macro-u8vector-port-rcondvar
+  macro-string-port?
+  macro-string-port-rcondvar
+  macro-vector-port?
+  macro-vector-port-rbuf-fill
+  macro-vector-port-rcondvar
+  macro-device-port?
+  macro-device-port-rdevice-condvar
+  macro-tcp-server-port?
+  macro-tcp-server-port-rdevice-condvar
+  macro-raw-device-port?
+  macro-raw-device-port-rdevice-condvar
+  macro-port-mutex
+  macro-byte-port-rlo
+  macro-byte-port-rhi
+  macro-byte-port-rbuf-fill
+  macro-character-port-rlo
+  macro-character-port-rhi
+  macro-character-port-rbuf-fill
+  macro-vector-port-rlo
+  macro-vector-port-rhi)
