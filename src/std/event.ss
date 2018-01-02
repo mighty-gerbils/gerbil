@@ -13,7 +13,6 @@ package: std
         never-evt always-evt
         sync-object? event? event-handler? event-set?
         make-event event-e event-e-set!
-        make-event-set
         ! !!)
 
 ;;; Low level event programming primitives:
@@ -209,14 +208,19 @@ package: std
     (wrap-evt (call-method obj ':event)))))
 
 (def (handle-evt obj K)
-  (make-event-handler (wrap-evt obj) K))
+  (let (evt (wrap-evt obj))
+    (if (event-set? evt)
+      (make-event-set (map (cut make-event-handler <> K) (event-set-e evt)))
+      (make-event-handler (wrap-evt obj) K))))
 
 (def (choice-evt . args)
   (let lp ((rest args) (evts []))
     (match rest
       ([obj . rest]
        (let (evt (wrap-evt obj))
-         (lp rest (cons evt evts))))
+         (if (event-set? evt)
+           (lp rest (foldl cons evts (event-set-e evt)))
+           (lp rest (cons evt evts)))))
       (else
        (make-event-set evts)))))
 

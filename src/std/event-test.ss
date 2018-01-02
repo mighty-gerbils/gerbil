@@ -71,7 +71,7 @@
       ;;(close-port /dev/null)
       )
 
-    #;(test-case "test sync events"
+    (test-case "test sync events"
       (check (sync never-evt 0) => #f)
       (check (sync always-evt 0) => always-evt)
       (check (sync (handle-evt 1 (lambda (_) 'timeout))) => 'timeout)
