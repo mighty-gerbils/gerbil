@@ -30,7 +30,6 @@ package: std/net/httpd
         set-httpd-max-token-length!
         set-httpd-max-request-body-length!)
 
-
 (declare (not safe))
 
 (defstruct http-request (buf client method url path params proto headers data)
@@ -94,21 +93,25 @@ package: std/net/httpd
           (http-response-trace res req))
          ({get-handler mux host path}
           => (lambda (handler)
-               (try
-                (handler req res)
-                (catch (io-error? e)
-                  (log-error "request i/o error" e)
-                  (unless (http-response-output res)
-                    (set! (http-response-close? res) #t)
-                    (http-response-write res 500 [] #f))
-                  (raise 'abort))
-                (catch (e)
-                  (log-error "request handler error" e)
-                  (if (http-response-output res)
-                    ;; if there was output from the handler, the connection
-                    ;; is unusable; abort
-                    (raise 'abort)
-                    (http-response-write res 500 [] #f))))))
+               (if (procedure? handler)
+                 (try
+                  (handler req res)
+                  (catch (io-error? e)
+                    (log-error "request i/o error" e)
+                    (unless (http-response-output res)
+                      (set! (http-response-close? res) #t)
+                      (http-response-write res 500 [] #f))
+                    (raise 'abort))
+                  (catch (e)
+                    (log-error "request handler error" e)
+                    (if (http-response-output res)
+                      ;; if there was output from the handler, the connection
+                      ;; is unusable; abort
+                      (raise 'abort)
+                      (http-response-write res 500 [] #f))))
+                 (begin
+                   (warning "request handler is not a procedure: ~a ~a ~a" host path handler)
+                   (http-response-write res 500 [] #f)))))
          (else
           (http-response-write res 404 [] #f)))
 
