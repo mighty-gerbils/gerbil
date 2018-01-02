@@ -13,7 +13,7 @@ package: std
         never-evt always-evt
         sync-object?
         make-event event? event-e event-e-set!
-        ! !!)
+        ! !*)
 
 ;;; Low level event programming primitives:
 ;;; - (wait selector (timeout #f))
@@ -317,18 +317,15 @@ package: std
         [] [] #f #f))
 
 ;;; sync macros
-(defrules ! (=>)
-  ((_ evt => K)
-   (sync (handle-evt evt K)))
-  ((_ evt body rest ...)
-   (let (_ (sync evt))
-     body rest ...)))
+(defrules ! ()
+  ((_ . clause)
+   (sync (!-clause clause))))
 
-(defrules !! ()
+(defrules !* ()
   ((_ clause ...)
-   (sync (!!-clause clause) ...)))
+   (sync (!-clause clause) ...)))
 
-(defrules !!-clause (=>)
+(defrules !-clause (=>)
   ((_ (evt => K))
    (handle-evt evt K))
   ((_ (evt body rest ...))
