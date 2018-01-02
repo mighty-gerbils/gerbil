@@ -67,10 +67,7 @@ package: std/net/httpd
              (path    (http-request-path req))
              (proto   (http-request-proto req))
              (headers (http-request-headers req))
-             (host
-              (cond
-               ((assoc "Host" headers) => cdr)
-               (else #f)))
+             (host    (assget "Host" headers))
              (close?
               (case proto
                 (("HTTP/1.1")
