@@ -65,7 +65,7 @@ package: std
          (mx (make-mutex 'select))
          (cv (make-condition-variable 'select))
          (selection (make-selection #f mx cv))
-         (threads (map (lambda (xsel) (spawn/name 'select select1 selection xsel timeo))
+         (threads (map (lambda (xsel) (spawn/name 'select select1 selection xsel))
                        xsels))
          (abs-timeo (if timeo (timeout->abs-timeout timeo) (macro-absent-obj)))
          (finalize!
@@ -87,8 +87,8 @@ package: std
         (finalize!)
         #f)))))
 
-(def (select1 selection xsel timeo)
-  (when ((selector-wait xsel) (selector-sel xsel) timeo)
+(def (select1 selection xsel)
+  (when ((selector-wait xsel) (selector-sel xsel) #f)
     (mutex-lock! (selection-mx selection))
     (unless (selection-e selection)
       (set! (selection-e selection) xsel)
@@ -162,7 +162,7 @@ package: std
   macro-condvar-name
   macro-mutex-btq-owner)
 
-;;; An event object is an object wrapping some arbitrary state with 2 methods:
+;;; An event object is an object wrapping some arbitrary state with 3 methods:
 ;;; - (poll evt)
 ;;;  This method is called at the begining of synchronization with sync
 ;;;  and should return a synchronizer, which can be:
@@ -174,7 +174,12 @@ package: std
 ;;; - (ready evt) => value
 ;;;  Called when the synchronizer returned by poll is ready and the event
 ;;;  has been selected; the returned value is the result of the synchronization
-(defstruct event (e poll ready)
+;;;
+;;; - (abort evt)
+;;;  Called if the synchronization aborts prior to calling poll in the event.
+;;;
+(defstruct event (e poll ready abort)
+  constructor: :init!
   final: #t)
 
 (defstruct event-handler (e K)
@@ -182,6 +187,10 @@ package: std
 
 (defstruct event-set (e)
   final: #t)
+
+(defmethod {:init! event}
+  (lambda (self e poll ready (abort void))
+    (struct-instance-init! self e poll ready abort)))
 
 (def (sync-object? obj)
   (or (event? obj)
@@ -198,19 +207,19 @@ package: std
   (cond
    ((sync-object? obj) obj)
    ((sync-selector? obj)
-    (make-event obj event-e event-e))
+    (make-event obj event-e event-e event-abort-sync-selector))
    ((or (time? obj) (real? obj))
     (make-event (timeout->abs-timeout obj) event-e false))
    ((input-port? obj)
     (input-port-evt obj))
    (else
-    (wrap-evt (call-method obj ':event)))))
+    (wrap-evt {:event obj}))))
 
 (def (handle-evt obj K)
   (let (evt (wrap-evt obj))
     (if (event-set? evt)
       (make-event-set (map (cut make-event-handler <> K) (event-set-e evt)))
-      (make-event-handler (wrap-evt obj) K))))
+      (make-event-handler evt K))))
 
 (def (choice-evt . args)
   (let lp ((rest args) (evts []))
@@ -218,7 +227,9 @@ package: std
       ([obj . rest]
        (let (evt (wrap-evt obj))
          (if (event-set? evt)
-           (lp rest (foldl cons evts (event-set-e evt)))
+           (if (null? evts) ; consing optimization
+             (lp rest (event-set-e evt))
+             (lp rest (foldl cons evts (event-set-e evt))))
            (lp rest (cons evt evts)))))
       (else
        (make-event-set evts)))))
@@ -231,14 +242,10 @@ package: std
   (def (loop rest sels sel-evts timeo timeo-evt)
     (match rest
       ([evt . rest]
-       (cond
-        ((or (event? evt) (event-handler? evt))
-         (poll evt rest sels sel-evts timeo timeo-evt))
-        ((event-set? evt)
+       (if (or (event? evt) (event-handler? evt))
+         (poll evt rest sels sel-evts timeo timeo-evt)
          (loop (foldl cons rest (shuffle (event-set-e evt)))
-               sels sel-evts timeo timeo-evt))
-        (else
-         (abort! sels (cut error "Unexpected sync object" evt)))))
+               sels sel-evts timeo timeo-evt)))
       (else
        (cond
         ((not (null? sels))
@@ -258,7 +265,7 @@ package: std
        ((not rz)
         (loop rest sels sel-evts timeo timeo-evt))
        ((true? rz)
-        (for-each abort-selector! sels)
+        (abort-selectors! rest sels)
         (dispatch-evt evt))
        ((time? rz)
         (if timeo
@@ -268,10 +275,10 @@ package: std
             (loop rest sels sel-evts timeo timeo-evt))
           (loop rest sels sel-evts rz evt)))
        ((sync-selector? rz)
-        (check-mutex! rz sels)
+        (check-mutex! rz rest sels)
         (loop rest (cons rz sels) (cons evt sel-evts) timeo timeo-evt))
        (else
-        (abort! sels (cut error "Bad synchronizer" evt rz))))))
+        (abort! rest sels (cut error "Bad synchronizer" evt rz))))))
 
   (def (poll-evt evt)
     (let lp ((evt evt))
@@ -298,20 +305,33 @@ package: std
               (dispatch-evt evt)
               (lp rest-sels rest-evts))))))))
 
-  (def (check-mutex! rz sels)
+  (def (check-mutex! rz rest sels)
     (when (pair? rz)
       (let (mx (car rz))
         (if (hash-get mutexes mx)
-          (abort! sels (cut error "Duplicate mutex synchronizer" rz))
+          (abort! rest sels (cut error "Duplicate mutex synchronizer" rz))
           (hash-put! mutexes mx #t)))))
 
-  (def (abort! sels E)
-    (for-each abort-selector! sels)
+  (def (abort! rest sels E)
+    (abort-selectors! rest sels)
     (E))
+
+  (def (abort-selectors! rest sels)
+    (for-each abort-selector! sels)
+    (for-each abort-evt! rest))
 
   (def (abort-selector! sel)
     (when (pair? sel)
       (mutex-unlock! (car sel))))
+
+  (def (abort-evt! evt)
+    (cond
+     ((event? evt)
+      ((event-abort evt) evt))
+     ((event-handler? evt)
+      (abort-evt! (event-handler-e evt)))
+     (else
+      (for-each abort-evt! (event-set-e evt)))))
 
   (loop (shuffle (map wrap-evt args))
         [] [] #f #f))
@@ -338,6 +358,11 @@ package: std
           (mutex? (car obj))
           (condition-variable? (cdr obj)))
       (io-condition-variable? obj)))
+
+(def (event-abort-sync-selector evt)
+  (let (sel (event-e evt))
+    (when (pair? sel)
+      (mutex-unlock! (car sel)))))
 
 (def (input-port-evt port)
   (cond

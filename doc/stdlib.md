@@ -346,16 +346,12 @@ Event-driven programming facilities.
 
 ;; exports:
 
-  select
-  ! !! sync poll
+  wait select sync
+  ! !*
   never-evt always-evt
-  make-event
-  make-event-set
-  handle-evt
-  wrap-evt choice-evt
-  event? event-handler? event-set?  event-ready?
-  event-selector event-value
-  thread-dead?
+  wrap-evt handle-evt choice-evt
+  sync-object?
+  make-event event? event-e event-e-set!
 ```
 
 ## std/format
