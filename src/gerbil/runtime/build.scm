@@ -14,15 +14,21 @@
   (for-each display args)
   (newline))
 
+(define (runtime-smp?)
+  (not (##vector-ref (thread-thread-group ##primordial-thread) 3)))
+
 (define (compile modf)
   (displayln "... compile " modf)
   (let ((proc (open-process
-               (list path: "gsc"
-                     arguments: (list "-o" *libdir*
-                                      "-cc-options" "--param max-gcse-memory=300000000"
-                                      "-e" "(include \"gx-gambc#.scm\")"
-                                      (string-append modf ".scm"))
-                     stdout-redirection: #f))))
+               `(path: "gsc"
+                       arguments: ("-o" ,*libdir*
+                                   "-cc-options" "--param max-gcse-memory=300000000"
+                                   ,@(if (runtime-smp?)
+                                       '("-e" "(define-cond-expand-feature|enable-smp|)")
+                                       '())
+                                   "-e" "(include \"gx-gambc#.scm\")"
+                                   ,(string-append modf ".scm"))
+                       stdout-redirection: #f))))
     (if (not (zero? (process-status proc)))
       (error "Compilation error; gsc exit with nonzero status" modf))))
 
