@@ -41,8 +41,9 @@ and handles 3 request URLs:
 ### The main function
 
 The server `main` function uses getopt to parse arguments and then
-calls the `run` function. It starts an http server, and registers
-handlers using `http-register-handler` for the various paths we want to handle:
+calls the `run` function. It starts an http server using the default
+handler multiplexer, and registers handlers using `http-register-handler`
+for the various paths we want to handle:
 ```
 (def (main . args)
   (def gopt
@@ -58,11 +59,10 @@ handlers using `http-register-handler` for the various paths we want to handle:
      (exit 1))))
 
 (def (run address)
-  (let (httpd (start-http-server! address))
+  (let (httpd (start-http-server! address mux: (make-default-http-mux default-handler)))
     (http-register-handler httpd "/" root-handler)
     (http-register-handler httpd "/echo" echo-handler)
     (http-register-handler httpd "/headers" headers-handler)
-    (http-register-handler httpd "" default-handler)
     (thread-join! httpd)))
 ```
 
@@ -71,8 +71,7 @@ handlers using `http-register-handler` for the various paths we want to handle:
 Request handlers are functions that accept two arguments: a request
 and a response object. The request object bundles the request together,
 while the response object offers an interface to write the response.
-Request handlers are dispatched in a new thread for the registered path
-and its subpaths.
+Request handlers are dispatched in a new thread.
 
 #### The `/` handler
 
@@ -131,9 +130,9 @@ interface.
 
 #### The default handler
 
-The default handler is invoked when there is no other matching handler.
-If no deault handler is registered, then the server simply responds with
-a 404.
+The default handler is invoked when there is no matching handler.
+If no deault handler is registered with the multiplexer, then the server
+simply responds with a 404.
 
 Here, we registered a slightly friendlier handler that uses the force to
 print an informative message:

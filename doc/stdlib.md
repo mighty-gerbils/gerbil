@@ -708,6 +708,12 @@ Embedded HTTP server.
 
 ;; exports:
 
+  current-http-server
+  start-http-server!
+  stop-http-server!
+  http-register-handler
+  make-default-http-mux
+  make-recursive-http-mux
   http-request?
   http-request-method http-request-url http-request-path http-request-params
   http-request-proto http-request-client http-request-headers
@@ -718,10 +724,6 @@ Embedded HTTP server.
   http-response-begin http-response-chunk http-response-end
   http-response-force-output
   http-response-timeout-set!
-  current-http-server
-  start-http-server!
-  stop-http-server!
-  http-register-handler
   set-httpd-request-timeout!
   set-httpd-response-timeout!
   set-httpd-max-request-headers!
@@ -1237,6 +1239,7 @@ Commonly used macros.
   while until
   hash hash-eq hash-eqv
   defmethod/alias
+  using
 ```
 
 ## std/test

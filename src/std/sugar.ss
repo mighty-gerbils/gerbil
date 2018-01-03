@@ -90,6 +90,18 @@ package: std
            (defmethod {method type} body ...)
            (bind-method! type::t 'alias method-impl) ...)))))
 
+(defrules using ()
+  ((_ obj method ...)
+   (begin (using-method obj method) ...)))
+
+(defrules using-method ()
+  ((_ obj method)
+   (identifier? #'method)
+   (def method (checked-bound-method-ref obj 'method)))
+  ((_ obj (method method-id))
+   (and (identifier? #'method) (identifier? #'method-id))
+   (def method (checked-bound-method-ref obj 'method-id))))
+
 (defrules assert! ()
   ((_ expr)
    (unless expr

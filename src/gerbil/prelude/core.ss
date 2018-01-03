@@ -187,6 +187,7 @@ package: gerbil
     call-method
     bind-method!
     method-ref direct-method-ref bound-method-ref
+    checked-method-ref checked-bound-method-ref
     find-method
     next-method call-next-method
     struct-subtype? class-subtype?

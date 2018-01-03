@@ -434,6 +434,8 @@ namespace: gerbil/core
                     (method-ref method-ref)
                     (direct-method-ref direct-method-ref)
                     (bound-method-ref bound-method-ref)
+                    (checked-method-ref checked-method-ref)
+                    (checked-bound-method-ref checked-bound-method-ref)
                     (find-method find-method)
                     (next-method next-method)
                     (call-next-method call-next-method)

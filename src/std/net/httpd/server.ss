@@ -1,0 +1,110 @@
+;;; -*- Gerbil -*-
+;;; (C) vyzo
+;;; embedded HTTP/1.1 server
+package: std/net/httpd
+
+(import :gerbil/gambit/threads
+        :gerbil/gambit/exceptions
+        :std/net/httpd/handler
+        :std/net/httpd/mux
+        :std/net/server
+        :std/os/socket
+        :std/actor/message
+        :std/actor/proto
+        :std/misc/threads
+        :std/logger
+        :std/sugar)
+(export start-http-server!
+        stop-http-server!
+        http-register-handler
+        current-http-server)
+
+(defproto httpd
+  (register host path handler)
+  event:
+  (join thread)
+  (shutdown))
+
+(def current-http-server
+  (make-parameter #f))
+
+(def (start-http-server! mux: (mux (make-default-http-mux)) . addresses)
+  (start-logger!)
+  (let* ((socksrv (start-socket-server!))
+         (sas (map socket-address addresses))
+         (socks (map (cut server-listen socksrv <>) sas)))
+    (spawn/group 'http-server http-server socks sas mux)))
+
+(def (stop-http-server! httpd)
+  (let (tgroup (thread-thread-group httpd))
+    (try
+     (!!httpd.shutdown httpd)
+     (thread-join! httpd)
+     (finally
+      (thread-group-kill! tgroup)))))
+
+;; handler: lambda (request response)
+(def (http-register-handler httpd path handler (host #f))
+  (if (string? path)
+    (if (procedure? handler)
+      (!!httpd.register httpd host path handler)
+      (error "Bad handler; expected procedure" handler))
+    (error "Bad path; expected string" path)))
+
+;;; implementation
+(def (http-server socks sas mux)
+  (using mux get-handler put-handler!)
+
+  (def acceptors
+    (map (lambda (sock sa)
+           (spawn/name 'http-server-accept
+                       http-server-accept get-handler sock (socket-address-family sa)))
+         socks sas))
+
+  (def (shutdown!)
+    (for-each server-close socks))
+
+  (def (monitor thread)
+    (def (join server thread)
+      (with-catch void (cut thread-join! thread))
+      (!!httpd.join server thread))
+    (spawn/name 'http-server-monitor join (current-thread) thread))
+
+  (def (loop)
+    (<- ((!httpd.register host path handler k)
+         (put-handler! host path handler)
+         (!!value (void) k)
+         (loop))
+        ((!httpd.shutdown)
+         (void))
+        ((!httpd.join thread)
+         (try
+          (thread-join! thread)
+          (warning "acceptor thread ~a exited unexpectedly" (thread-name thread))
+          (catch (uncaught-exception? e)
+            (log-error "acceptor error" (uncaught-exception-reason e)))
+          (catch (e)
+            (log-error "acceptor error" e)))
+         (loop))
+        (bogus
+         (warning "unexpected message ~a" bogus)
+         (loop))))
+
+  (try
+   (for-each monitor acceptors)
+   (loop)
+   (catch (e)
+     (log-error "unhandled exception" e)
+     (raise e))
+   (finally
+    (shutdown!))))
+
+(def (http-server-accept get-handler sock safamily)
+  (def cliaddr (make-socket-address safamily))
+  (while #t
+    (try
+     (let (clisock (server-accept sock cliaddr))
+       (spawn/name 'http-request-handler
+                   http-request-handler get-handler clisock (socket-address->address cliaddr)))
+     (catch (os-exception? e)
+       (log-error "error accepting connection" e)))))
