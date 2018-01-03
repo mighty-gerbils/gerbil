@@ -298,7 +298,8 @@ END-C
 
 (def (read-request! req)
   (let* ((ibuf (http-request-buf req))
-         ((values method url proto) (read-request-line ibuf))
+         ((values method url proto)
+          (read-request-line ibuf))
          ((values path params)
           (split-request-url url))
          (headers (read-request-headers ibuf)))
