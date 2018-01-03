@@ -882,6 +882,9 @@
 (define (raise-type-error where type obj)
   (##raise-type-exception obj type where (list obj)))
 
+(define absent-obj
+  (macro-absent-obj))
+
 (define _gx#atom (make-vector 0))
 
 (define (true . _)

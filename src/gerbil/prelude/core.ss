@@ -251,6 +251,7 @@ package: gerbil
     displayln display*
     ;;flush-output-port
     ;; etc...
+    absent-obj ; gambit api missing optional parameter
     ;; equality
     equal-shared?
     ;; Module loading

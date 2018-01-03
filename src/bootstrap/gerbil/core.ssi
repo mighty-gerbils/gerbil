@@ -547,6 +547,7 @@ namespace: gerbil/core
                     (with-output-to-u8vector with-output-to-u8vector)
                     (displayln displayln)
                     (display* display*)
+                    (absent-obj absent-obj)
                     (equal-shared? equal-shared?)
                     (load-module load-module)
                     (keyword-dispatch keyword-dispatch)
