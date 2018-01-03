@@ -54,11 +54,9 @@ package: std/net/httpd
 ;;; implementation
 (def (http-server socks sas mux)
   (def get-handler
-    (or (bound-method-ref mux 'get-handler)
-        (error "Missing mux method" mux 'get-handler)))
+    (checked-bound-method-ref mux 'get-handler))
   (def put-handler!
-    (or (bound-method-ref mux 'put-handler!)
-        (error "Missing mux method" mux 'put-handler!)))
+    (checked-bound-method-ref mux 'put-handler!))
 
   (def acceptors
     (map (lambda (sock sa)
