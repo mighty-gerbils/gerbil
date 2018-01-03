@@ -11,7 +11,8 @@ package: std
 (export make make-depgraph make-depgraph/spec
         shell-config
         env-cppflags
-        env-ldflags)
+        env-ldflags
+        include-gambit-sharp)
 
 ;; buildspec: [<build> ...]
 ;;  <build>:
@@ -239,6 +240,14 @@ package: std
              (string-append flags " " more)))))
    (else
     identity)))
+
+(def (include-gambit-sharp)
+  (cond
+   ((gerbil-runtime-smp?)
+    '("-e" "(define-cond-expand-feature|enable-smp|)"
+      "-e" "(include \"~~lib/_gambit#.scm\")"))
+   (else
+    '("-e" "(include \"~~lib/_gambit#.scm\")"))))
 
 (def (build? spec settings depgraph)
   (match spec
