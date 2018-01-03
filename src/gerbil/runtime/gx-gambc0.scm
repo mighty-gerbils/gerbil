@@ -11,8 +11,6 @@
 
 ;;;
 ;;; Host Runtime
-;;;  Implementation of a source compatible subset of gerbil.runtime
-;;;  Sufficient to bootstrap the compiler
 ;;;
 
 (include "gx-version.scm")
@@ -27,6 +25,23 @@
   (gerbil-system-version-string))
 (set! gerbil-greeting gerbil-greeting) ; allow user mutation
 
+(define (gerbil-runtime-smp?)
+  ;; voodoo hack; this relies on the deq of the thread-group structure having
+  ;; 3 fields in UP and 4 fields in SMP
+  ;; maybe one day marc will provide a primitive/principled way to figure that out, but
+  ;; until that day comes we really need to know in order to have the right cond-expand
+  ;; branch when we include _gambit# or gx-gambc# (which includes _gambit#)
+  (not (##vector-ref (thread-thread-group ##primordial-thread) 3)))
+
+(cond-expand
+  (enable-smp
+   (unless (gerbil-runtime-smp?)
+     (display "*** WARNING -- SMP compiled Gerbil on UP Gambit runtime\n" ##stderr-port)))
+  (else
+   (when (gerbil-runtime-smp?)
+     (display "*** WARNING -- UP compiled Gerbil on SMP Gambit runtime\n" ##stderr-port))))
+
+;;; Dynamic Module Loading
 (define &current-module-libpath
   (make-parameter #f))
 (define &current-module-registry
