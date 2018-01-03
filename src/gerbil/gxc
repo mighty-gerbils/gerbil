@@ -19,6 +19,7 @@
     (displayln " -genv                       invoke gsc with -debug-environments")
     (displayln " -gsrc                       invoke gsc with -debug-environments -debug-source")
     (displayln " -no-ssxi                    don't generate .ssxi modules for cross-module optimization")
+    (displayln " -include-gambit-sharp       include _gambit# with necessary cond expand features")
     (displayln " -cc-options <string>        add [-cc-options <string>] to gsc options")
     (displayln " -ld-options <string>        add [-ld-options <string>] to gsc options")
     (displayln " -gsc-flag   <opt>           add [<opt>] to gsc options")
@@ -106,6 +107,13 @@
             ([file . rest]
              (set! outfile file)
              (lp rest))))
+         (("-include-gambit-sharp")
+          (add-gsc-option!
+           (if (gerbil-runtime-smp?)
+             '("-e" "(define-cond-expand-feature|enable-smp|)"
+               "-e" "(include \"~~lib/_gambit#.scm\")")
+             '("-e" "(include \"~~lib/_gambit#.scm\")")))
+          (lp rest))
          (("-cc-options")
           (match rest
             ([opt . rest]
