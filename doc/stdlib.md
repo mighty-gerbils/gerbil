@@ -1239,6 +1239,7 @@ Commonly used macros.
   while until
   hash hash-eq hash-eqv
   defmethod/alias
+  using
 ```
 
 ## std/test
