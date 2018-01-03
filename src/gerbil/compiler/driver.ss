@@ -128,9 +128,12 @@ namespace: gxc
            (deps (map (cut compile-cache <> gxc-cache) deps))
            (bin-scm (compile-cache bin-scm gxc-cache))
            (gsc-opts (or (pgetq gsc-options: opts) []))
+           (gsc-gx-macros (if (gerbil-runtime-smp?)
+                            ["-e" "(define-cond-expand-feature|enable-smp|)"
+                             "-e" include-gx-gambc-macros]
+                            ["-e" include-gx-gambc-macros]))
            (gsc-args ["-exe" "-o" output-bin
-                      (gsc-debug-options) ... gsc-opts ...
-                      "-e" include-gx-gambc-macros
+                      (gsc-debug-options) ... gsc-opts ... gsc-gx-macros ...
                       gx-gambc0 gx-gambc-init deps ... bin-scm output-scm])
            (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
            (proc (open-process [path: "gsc" arguments: gsc-args
