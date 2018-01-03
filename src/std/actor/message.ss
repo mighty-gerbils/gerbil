@@ -15,19 +15,6 @@ package: std/actor
   << <-
   !)
 
-;; ~~lib/_gambit#.scm
-(extern namespace: #f
-  macro-absent-obj
-  macro-mailbox-mutex
-  macro-mailbox-condvar
-  macro-mailbox-cursor
-  macro-mailbox-cursor-set!
-  macro-mailbox-fifo
-  macro-fifo-next
-  macro-fifo-next-set!
-  macro-fifo-elem
-  macro-fifo-tail-set!)
-
 (defstruct (actor-error <error>) ()
   constructor: :init!)
 
@@ -181,7 +168,7 @@ package: std/actor
 
 (def (receive-timeout . args)
   (def now #f)
-  (let lp ((rest args) (timeo (macro-absent-obj)) (deadline #f) (K void))
+  (let lp ((rest args) (timeo absent-obj) (deadline #f) (K void))
     (match rest
       ([evt k . rest]
        (cond

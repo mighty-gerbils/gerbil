@@ -20,11 +20,7 @@ package: std/db
       (make-mutex) (make-condition-variable)
       [] [] max)))
 
-;; _gambit#.scm
-(extern namespace: #f
-  macro-absent-obj)
-
-(def (conpool-get cp (timeo (macro-absent-obj)))
+(def (conpool-get cp (timeo absent-obj))
   (with ((conpool connect mx cv _ out max) cp)
     (let lp ()
       (mutex-lock! mx)

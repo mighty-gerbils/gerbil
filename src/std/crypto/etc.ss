@@ -18,7 +18,6 @@ package: std/crypto
 (extern namespace: #f
   macro-byte-input-port?
   macro-character-input-port?
-  macro-absent-obj
   macro-port-mutex
   macro-character-port-rlo
   macro-character-port-rhi
@@ -123,7 +122,7 @@ package: std/crypto
       (proc bytes 0 (##u8vector-length bytes))))
 
   (let ((buf (##make-u8vector 1024))
-        (need (if fill? 1 (macro-absent-obj))))
+        (need (if fill? 1 absent-obj)))
     (let lp ()
       (let (rd (##read-subu8vector buf 0 1024 in need))
         (unless (fxzero? rd)
@@ -132,7 +131,7 @@ package: std/crypto
 
 (def (call-with-binary-input-character-port proc in fill?)
   (let ((buf (##make-string 512))
-        (need (if fill? 1 (macro-absent-obj))))
+        (need (if fill? 1 absent-obj)))
     (let lp ()
       (let (rd (##read-substring buf 0 512 in need))
         (unless (fxzero? rd)

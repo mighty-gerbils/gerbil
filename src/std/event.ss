@@ -67,7 +67,7 @@ package: std
          (selection (make-selection #f mx cv))
          (threads (map (lambda (xsel) (spawn/name 'select select1 selection xsel))
                        xsels))
-         (abs-timeo (if timeo (timeout->abs-timeout timeo) (macro-absent-obj)))
+         (abs-timeo (if timeo (timeout->abs-timeout timeo) absent-obj))
          (finalize!
           (lambda ()
             (for-each thread-terminate! threads)
@@ -125,7 +125,7 @@ package: std
 
 (def (selector-wait-thread sel timeo)
   (try
-   (thread-join! sel (or timeo (macro-absent-obj)))
+   (thread-join! sel (or timeo absent-obj))
    #t
    (catch (uncaught-exception? e) #t)
    (catch (terminated-thread-exception? e) #t)
@@ -133,7 +133,7 @@ package: std
 
 (def (selector-wait-condvar sel timeo)
   (with ([mx . cv] sel)
-    (mutex-unlock! mx cv (or timeo (macro-absent-obj)))))
+    (mutex-unlock! mx cv (or timeo absent-obj))))
 
 (def (selector-abort-condvar sel)
   (with ([mx . cv] sel)
@@ -158,7 +158,6 @@ package: std
 
 ;; _gambit#
 (extern namespace: #f
-  macro-absent-obj
   macro-condvar-name
   macro-mutex-btq-owner)
 
