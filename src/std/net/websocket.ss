@@ -157,14 +157,11 @@ package: std/net
    (else
     (error "Bad argument; expected bytes or string" obj))))
 
-(extern namespace: #f
-  macro-absent-obj)
-
 (def (websocket-recv ws (timeo #f) (raise-timeo? #t))
   (let (timeo
         (cond
          ((not timeo)
-          (macro-absent-obj))
+          absent-obj)
          ((real? timeo)
           (seconds->time (+ (##current-time-point) timeo)))
          ((time? timeo)

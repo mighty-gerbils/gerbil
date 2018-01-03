@@ -69,7 +69,7 @@
     "net/uri"
     "net/socks"
     "net/request"
-    (gxc: "net/websocket" "-e" "(include \"~~lib/_gambit#.scm\")")
+    "net/websocket"
     "net/wamp"
     (gxc: "net/repl" "-e" "(include \"~~lib/_gambit#.scm\")")
     ;; std/os
@@ -93,7 +93,7 @@
     "net/bio"
     ;; :std/net/server
     "net/server/base"
-    (gxc: "net/server/server"  "-e" "(include \"~~lib/_gambit#.scm\")")
+    "net/server/server"
     "net/server/basic-server"
     ,@(cond-expand
         (linux
@@ -160,7 +160,7 @@
     "web/fastcgi"
     "web/rack"
     "db/dbi"
-    (gxc: "db/conpool" "-e" "(include \"~~lib/_gambit#.scm\")")
+    "db/conpool"
     ,@(if config-enable-sqlite
         `((gsc: "db/_sqlite"
                 "-cc-options" ,(cppflags "")

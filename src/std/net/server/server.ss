@@ -75,8 +75,6 @@ package: std/net/server
     (condition-variable-broadcast! cv)
     (mutex-unlock! mx)))
 
-(extern namespace: #f macro-absent-obj)
-
 (def (io-state-wait-io! iostate timeo how)
   (with ((!io-state _ mx cv) iostate)
     (let lp ()
@@ -92,7 +90,7 @@ package: std/net/server
         (else
          (set! (!io-state-e iostate)
            'blocked)
-         (and (mutex-unlock! mx cv (or timeo (macro-absent-obj)))
+         (and (mutex-unlock! mx cv (or timeo absent-obj))
               (lp)))))))
 
 (def (io-state-close-in! iostate sock shutdown)
