@@ -628,6 +628,10 @@
   (and (object? obj)
        (find-method (object-type obj) id)))
 
+(define (checked-method-ref obj id)
+  (or (method-ref obj id)
+      (error "Missing method" obj id)))
+
 (define (bound-method-ref obj id)
   (cond
    ((method-ref obj id)
@@ -635,6 +639,11 @@
          (lambda args
            (apply method obj args))))
    (else #f)))
+
+(define (checked-bound-method-ref obj id)
+  (let ((method (checked-method-ref obj id)))
+    (lambda args
+      (apply method obj args))))
 
 (define (find-method klass id)
   (define (cache-method! klass id method)
