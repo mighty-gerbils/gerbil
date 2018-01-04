@@ -68,7 +68,7 @@ package: std/net/server
                ((out)
                 (set! (!socket-wait-out ssock) #f)
                 (set! (!socket-state-io-out state) #f)
-                (close-io-out! sock io-out)
+                (close-io-out! sock)
                 (unless io-in
                   (hash-remove! socks sock)
                   (close-port sock)))
