@@ -376,7 +376,8 @@ namespace: gxc
             (if rt
               ['begin loader-code ['load-module rt]]
               loader-code)))
-      (compile-scm-file (compile-output-file ctx 'rt ".scm") loader-code)))
+      (parameterize ((current-compile-gsc-options #f))
+        (compile-scm-file (compile-output-file ctx 'rt ".scm") loader-code))))
 
   (let (all-modules (cons ctx (lift-nested-modules ctx)))
     (for-each compile1 all-modules)))
