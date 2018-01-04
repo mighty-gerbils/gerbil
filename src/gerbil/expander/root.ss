@@ -221,4 +221,6 @@ namespace: gx
        (core-bind-feature! sys-type #f 0 self)
        (when (linux-variant? sys-type)
          (core-bind-feature! 'linux #f 0 self)))
-      (else (void)))))
+      (else (void)))
+    (when (gerbil-runtime-smp?)
+      (core-bind-feature! 'gerbil-smp #f 0 self))))
