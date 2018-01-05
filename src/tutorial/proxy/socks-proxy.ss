@@ -4,7 +4,7 @@
 package: tutorial/proxy
 
 (import :gerbil/gambit/threads
-        :std/net/server
+        :std/net/socket
         :std/net/address
         :std/os/socket
         :std/getopt
@@ -13,21 +13,19 @@ package: tutorial/proxy
 (export main)
 
 (def (run address)
-  (def srv (start-socket-server!))
-
   (let* ((sa (socket-address address))
-         (ssock (server-listen srv sa)))
+         (ssock (ssocket-listen sa)))
     (while #t
       (try
-       (let (cli (server-accept ssock sa))
+       (let (cli (ssocket-accept ssock sa))
          (debug "Accepted connection from ~a" (socket-address->string sa))
-         (spawn proxy srv cli))
+         (spawn proxy cli))
        (catch (e)
          (log-error "Error accepting connection" e))))))
 
-(def (proxy srv clisock)
+(def (proxy clisock)
   (try
-   (let (srvsock (proxy-handshake srv clisock))
+   (let (srvsock (proxy-handshake clisock))
      (spawn proxy-io clisock srvsock)
      (spawn proxy-io srvsock clisock))
    (catch (e)
@@ -55,10 +53,10 @@ package: tutorial/proxy
 ;;   93: request rejected because the client program and identd
 ;;   report different user-ids.
 
-(def (proxy-handshake srv clisock)
+(def (proxy-handshake clisock)
   (try
    (let* ((hdr (make-u8vector 1024))
-          (rd (server-recv clisock hdr)))
+          (rd (ssocket-recv clisock hdr)))
      (if (fx< rd 9)                  ; header + NUL userid terminator
        (error "Incomplete request" hdr)
        (let* ((vn (u8vector-ref hdr 0))
@@ -69,9 +67,9 @@ package: tutorial/proxy
          (if (fx= vn 4)
            (case cd
              ((1)                       ; CONNECT
-              (proxy-connect srv clisock (cons dstip dstport)))
+              (proxy-connect clisock (cons dstip dstport)))
              ((2)                       ; BIND
-              (proxy-bind srv clisock))
+              (proxy-bind clisock))
              (else
               (proxy-handshake-reject clisock (cons dstip dstport))
               (error "Uknown command" cd)))
@@ -79,45 +77,45 @@ package: tutorial/proxy
              (proxy-handshake-reject clisock (cons dstip dstport))
              (error "Uknown protocol version" vn))))))
    (catch (e)
-     (server-close clisock)
+     (ssocket-close clisock)
      (raise e))))
 
-(def (proxy-connect srv clisock addr)
-  (let (srvsock (server-connect srv addr))
+(def (proxy-connect clisock addr)
+  (let (srvsock (ssocket-connect addr))
     (try
      (proxy-handshake-accept clisock addr)
      srvsock
      (catch (e)
-       (server-close srvsock)
+       (ssocket-close srvsock)
        (raise e)))))
 
-(def (proxy-bind srv clisock)
-  (let* ((srvsock (server-listen srv ":0"))
+(def (proxy-bind clisock)
+  (let* ((srvsock (ssocket-listen ":0"))
          (srvaddr (socket-address->address
                    (socket-getsockname
-                    (server-socket-e srvsock)
+                    (ssocket-socket srvsock)
                     (make-socket-address-in)))))
     (try
      (proxy-handshake-accept clisock srvaddr)
      (let* ((newcli
              (try
-              (server-accept srvsock)
+              (ssocket-accept srvsock)
               (catch (e)
                 (proxy-handshake-reject clisock srvaddr)
                 (raise e))))
             (newcliaddr
              (socket-address->address
               (socket-getpeername
-               (server-socket-e newcli)
+               (ssocket-socket newcli)
                (make-socket-address-in)))))
        (try
         (proxy-handshake-accept clisock newcliaddr)
         newcli
         (catch (e)
-          (server-close newcli)
+          (ssocket-close newcli)
           (raise e))))
      (finally
-      (server-close srvsock)))))
+      (ssocket-close srvsock)))))
 
 (def (proxy-handshake-accept clisock addr)
   (proxy-handshake-reply 90 clisock addr))
@@ -133,24 +131,24 @@ package: tutorial/proxy
       (u8vector-set! resp 2 (fxand (fxshift port -8) #xff))
       (u8vector-set! resp 3 (fxand port #xff))
       (subu8vector-move! ip 0 4 resp 4))
-    (server-send-all clisock resp)))
+    (ssocket-send-all clisock resp)))
 
 (def (proxy-io isock osock)
   (def buf (make-u8vector 4096))
   (try
    (let lp ()
-     (let (rd (server-recv isock buf))
+     (let (rd (ssocket-recv isock buf))
        (cond
         ((fxzero? rd)
-         (server-close-input isock)
-         (server-close-output osock #t))
+         (ssocket-close-input isock)
+         (ssocket-close-output osock #t))
         (else
-         (server-send-all osock buf 0 rd)
+         (ssocket-send-all osock buf 0 rd)
          (lp)))))
    (catch (e)
      (log-error "Error proxying connection" e)
-     (server-close-input isock)
-     (server-close-output osock #t))))
+     (ssocket-close-input isock)
+     (ssocket-close-output osock #t))))
 
 (def (main . args)
   (def gopt

@@ -8,11 +8,10 @@ with the `:std/os/socket` package. This packages utilizes raw devices and opens 
 through FFI, thus providing access to the full POSIX socket programming API with a
 nonblocking interface.
 
-The second one is an anonymous SOCKS4 proxy, written using the `:std/net/server` package.
-This package provides high level network programming facilities using multiplexed
-i/o optimized for the operating system of the host. On linux this utilizes `epoll`
-and soon `kqueue` on BSD/MacOS, with a fallback implementation of polling using
-Gambit's `##wait-for-io!`.
+The second one is an anonymous SOCKS4 proxy, written using the `:std/net/socket` package.
+This package provides high level network programming facilities for synchronous socket
+i/o, and can transparently use a custom socket server for scheduling i/o with native
+host primitives like `epoll` on Linux.
 
 <!-- toc -->
 
@@ -193,9 +192,9 @@ Connection closed by foreign host.
 ## A SOCKS4 Proxy
 
 The [socks proxy](../../src/tutorial/proxy/socks-proxy.ss) listens to a local port and
-proxies connections using the SOCKS4 protocol. The implementation uses multiplexed I/O
-with the `:std/net/server` package, which hides the nonblocking nature of the `:std/os/socket`
-interface and utilizes high performance polling with low level host primitives like epoll.
+proxies connections using the SOCKS4 protocol. The implementation uses synchronous I/O
+with the `:std/net/socket` package, which hides the nonblocking nature of the `:std/os/socket`
+interface and can utilize custom i/o schedulers with a socket server (eg epoll in Linux).
 
 ### The main function
 
@@ -217,19 +216,17 @@ a single argument -- the local address to bind:
 
 ### The server main loop
 
-The server main loop starts a `socket-server` to use for multiplexing I/O, and creates
-a listening socket to the specified address. It then loops accepting connections to proxy:
+The server main loop creates a listening socket to the specified
+address and then loops accepting connections to proxy:
 ```
 (def (run address)
-  (def srv (start-socket-server!))
-
   (let* ((sa (socket-address address))
-         (ssock (server-listen srv sa)))
+         (ssock (ssocket-listen sa)))
     (while #t
       (try
-       (let (cli (server-accept ssock sa))
+       (let (cli (ssocket-accept ssock sa))
          (debug "Accepted connection from ~a" (socket-address->string sa))
-         (spawn proxy srv cli))
+         (spawn proxy cli))
        (catch (e)
          (log-error "Error accepting connection" e))))))
 ```
@@ -238,9 +235,9 @@ a listening socket to the specified address. It then loops accepting connections
 
 This procedure performs a handshake, establishes proxying according to the request:
 ```
-(def (proxy srv clisock)
+(def (proxy clisock)
   (try
-   (let (srvsock (proxy-handshake srv clisock))
+   (let (srvsock (proxy-handshake clisock))
      (spawn proxy-io clisock srvsock)
      (spawn proxy-io srvsock clisock))
    (catch (e)
@@ -250,10 +247,10 @@ This procedure performs a handshake, establishes proxying according to the reque
 The `proxy-handshake` function contains the details of the protocol implementation,
 ignoring supplied userids (it's anonymous proxy):
 ```
-(def (proxy-handshake srv clisock)
+(def (proxy-handshake clisock)
   (try
    (let* ((hdr (make-u8vector 1024))
-          (rd (server-recv clisock hdr)))
+          (rd (ssocket-recv clisock hdr)))
      (if (fx< rd 9)                  ; header + NUL userid terminator
        (error "Incomplete request" hdr)
        (let* ((vn (u8vector-ref hdr 0))
@@ -264,9 +261,9 @@ ignoring supplied userids (it's anonymous proxy):
          (if (fx= vn 4)
            (case cd
              ((1)                       ; CONNECT
-              (proxy-connect srv clisock (cons dstip dstport)))
+              (proxy-connect clisock (cons dstip dstport)))
              ((2)                       ; BIND
-              (proxy-bind srv clisock))
+              (proxy-bind clisock))
              (else
               (proxy-handshake-reject clisock (cons dstip dstport))
               (error "Uknown command" cd)))
@@ -274,7 +271,7 @@ ignoring supplied userids (it's anonymous proxy):
              (proxy-handshake-reject clisock (cons dstip dstport))
              (error "Uknown protocol version" vn))))))
    (catch (e)
-     (server-close clisock)
+     (ssocket-close clisock)
      (raise e))))
 ```
 
@@ -283,42 +280,42 @@ ignoring supplied userids (it's anonymous proxy):
 New connections are established with `proxy-connect`, while socket binding
 is preformed with `proxy-bind`:
 ```
-(def (proxy-connect srv clisock addr)
-  (let (srvsock (server-connect srv addr))
+(def (proxy-connect clisock addr)
+  (let (srvsock (ssocket-connect addr))
     (try
      (proxy-handshake-accept clisock addr)
      srvsock
      (catch (e)
-       (server-close srvsock)
+       (ssocket-close srvsock)
        (raise e)))))
 
-(def (proxy-bind srv clisock)
-  (let* ((srvsock (server-listen srv ":0"))
+(def (proxy-bind clisock)
+  (let* ((srvsock (ssocket-listen ":0"))
          (srvaddr (socket-address->address
                    (socket-getsockname
-                    (server-socket-e srvsock)
+                    (ssocket-socket srvsock)
                     (make-socket-address-in)))))
     (try
      (proxy-handshake-accept clisock srvaddr)
      (let* ((newcli
              (try
-              (server-accept srvsock)
+              (ssocket-accept srvsock)
               (catch (e)
                 (proxy-handshake-reject clisock srvaddr)
                 (raise e))))
             (newcliaddr
              (socket-address->address
               (socket-getpeername
-               (server-socket-e newcli)
+               (ssocket-socket newcli)
                (make-socket-address-in)))))
        (try
         (proxy-handshake-accept clisock newcliaddr)
         newcli
         (catch (e)
-          (server-close newcli)
+          (ssocket-close newcli)
           (raise e))))
      (finally
-      (server-close srvsock)))))
+      (ssocket-close srvsock)))))
 
 (def (proxy-handshake-accept clisock addr)
   (proxy-handshake-reply 90 clisock addr))
@@ -334,8 +331,7 @@ is preformed with `proxy-bind`:
       (u8vector-set! resp 2 (fxand (fxshift port -8) #xff))
       (u8vector-set! resp 3 (fxand port #xff))
       (subu8vector-move! ip 0 4 resp 4))
-    (server-send-all clisock resp)))
-
+    (ssocket-send-all clisock resp)))
 ```
 
 ### Proxy I/O
@@ -348,18 +344,18 @@ through the socket server:
   (def buf (make-u8vector 4096))
   (try
    (let lp ()
-     (let (rd (server-recv isock buf))
+     (let (rd (ssocket-recv isock buf))
        (cond
         ((fxzero? rd)
-         (server-close-input isock)
-         (server-close-output osock #t))
+         (ssocket-close-input isock)
+         (ssocket-close-output osock #t))
         (else
-         (server-send-all osock buf 0 rd)
+         (ssocket-send-all osock buf 0 rd)
          (lp)))))
    (catch (e)
      (log-error "Error proxying connection" e)
-     (server-close-input isock)
-     (server-close-output osock #t))))
+     (ssocket-close-input isock)
+     (ssocket-close-output osock #t))))
 ```
 
 ### Using the proxy
