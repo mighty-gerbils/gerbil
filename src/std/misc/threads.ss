@@ -8,7 +8,8 @@ package: std/misc
 (export primordial-thread-group
         thread-dead?
         thread-group-kill!
-        thread-raise! thread-abort! thread-abort?)
+        thread-raise! thread-abort! thread-abort?
+        thread-async!)
 
 (def (primordial-thread-group)
   (thread-thread-group ##primordial-thread))
@@ -123,20 +124,32 @@ package: std/misc
   (make-thread-abort))
 
 (def (thread-abort! thread)
+  (thread-raise! thread +thread-abort+))
+
+(def (thread-raise! thread obj)
   (cond
    ((not (thread? thread))
-    (error "Expected thread" thread))
+    (error "Bad argument; expected thread" thread))
    ((eq? thread (current-thread))
-    (raise +thread-abort+))
+    (raise obj))
    (else
-    (thread-raise! thread +thread-abort+))))
+    (thread-intr! thread (cut raise obj)))))
 
-(extern thread-raise! thread-release-locks!)
+(def (thread-async! thread thunk)
+  (cond
+   ((not (thread? thread))
+    (error "Bad argument; expected thread" thread))
+   ((eq? thread (current-thread))
+    (thunk))
+   (else
+    (thread-intr! thread thunk))))
+
+(extern thread-intr!)
 
 (begin-foreign
-  (namespace ("std/misc/threads#" thread-raise! thread-release-locks! btq-release!))
+  (namespace ("std/misc/threads#" thread-intr!))
 
-  (define (thread-raise! thread obj)
+  (define (thread-intr! thread thunk)
     (declare (not interrupts-enabled))
     (if (and (macro-initialized-thread? thread)
              (##not (macro-terminated-thread-given-initialized? thread))
@@ -148,8 +161,8 @@ package: std/misc
       (begin
         (cond-expand
           (enable-smp
-           (##thread-intr! thread #t (lambda () (raise obj))))
+           (##thread-intr! thread #t thunk))
           (else
-           (##thread-int! thread (lambda () (raise obj)))))
+           (##thread-int! thread thunk)))
         (##void))
       #f)))
