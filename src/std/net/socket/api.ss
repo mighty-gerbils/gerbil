@@ -18,6 +18,8 @@ package: std/net/socket
         ssocket-socket
         ssocket-close ssocket-close-input ssocket-close-output)
 
+(declare (not safe))
+
 ;;; synchronous socket constructors
 ;; => !socket that is connected and ready
 (def (ssocket-connect addr (timeo #f))
