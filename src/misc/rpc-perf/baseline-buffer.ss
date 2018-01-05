@@ -2,7 +2,7 @@
 package: misc/rpc-perf
 
 (import :gerbil/gambit/threads
-        :std/net/server
+        :std/net/socket
         :std/net/bio
         :std/sugar
         :std/getopt)
@@ -12,33 +12,31 @@ package: misc/rpc-perf
   final: #t)
 
 (def (run-client address count)
-  (let* ((socksrv (start-socket-server!))
-         (sock (server-connect socksrv address))
-         (inp (open-server-input-buffer sock))
-         (outp (open-server-output-buffer sock)))
+  (let* ((sock (ssocket-connect address))
+         (inp (open-ssocket-input-buffer sock))
+         (outp (open-ssocket-output-buffer sock)))
     (let lp ((k 0))
       (when (fx< k count)
         (do-send outp (make-message))
         (do-recv inp)
         (lp (fx1+ k))))
-    (server-close sock)))
+    (ssocket-close sock)))
 
 (def (run-server address)
-  (let* ((socksrv (start-socket-server!))
-         (sock (server-listen socksrv address)))
+  (let (sock (ssocket-listen address))
     (let lp ()
-      (let (cli (server-accept sock))
+      (let (cli (ssocket-accept sock))
         (spawn run-client-connection cli)
         (lp)))))
 
 (def (run-client-connection sock)
-  (def inp (open-server-input-buffer sock))
-  (def outp (open-server-output-buffer sock))
+  (def inp (open-ssocket-input-buffer sock))
+  (def outp (open-ssocket-output-buffer sock))
   (let lp ()
     (let (next (do-recv inp))
       (do-send outp next)
       (lp)))
-  (server-close sock))
+  (ssocket-close sock))
 
 (def (do-recv inp)
   (let* ((len (bio-read-u32 inp))
