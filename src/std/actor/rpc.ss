@@ -13,7 +13,7 @@ package: std/actor
         :std/misc/threads
         :std/net/bio
         :std/net/address
-        :std/net/server
+        :std/net/socket
         :std/os/socket
         :std/misc/uuid
         :std/actor/message
@@ -89,8 +89,7 @@ package: std/actor
 ;;; rpc-server
 (def (start-rpc-server! proto: (proto (rpc-null-proto)) . addresses)
   (start-logger!)
-  (let (socksrv (start-socket-server!))
-    (spawn/group 'rpc-server rpc-server socksrv proto addresses)))
+  (spawn/group 'rpc-server rpc-server proto addresses))
 
 (def (stop-rpc-server! rpcd)
   (let (tgroup (thread-thread-group rpcd))
@@ -125,13 +124,13 @@ package: std/actor
     address)
    (else #f)))
 
-(def (rpc-server socksrv proto addresses)
+(def (rpc-server proto addresses)
   (let* ((sas     (map socket-address addresses))
          (_       (for-each rpc-unlink-unix-socket sas))
-         (socks   (map (cut server-listen socksrv <>) sas)))
+         (socks   (map ssocket-listen sas)))
     (parameterize ((current-rpc-server (current-thread)))
       (try
-       (rpc-server-loop socksrv socks sas proto)
+       (rpc-server-loop socks sas proto)
        (catch (e)
          (unless (eq? e 'shutdown)
            (log-error "unhandled exception" e)
@@ -158,7 +157,7 @@ package: std/actor
 (def actor-table-remove!
   sync-hash-remove!)
 
-(def (rpc-server-loop socksrv socks sas proto)
+(def (rpc-server-loop socks sas proto)
   (def connect-e
     (!rpc-protocol-connect proto))
   (def accept-e
@@ -201,7 +200,7 @@ package: std/actor
          ((hash-get conns address) => values)
          (else
           (let (thr (spawn/name 'rpc-connection
-                      rpc-client-connection (current-thread) actors socksrv address connect-e))
+                      rpc-client-connection (current-thread) actors address connect-e))
             (hash-put! conns address thr)
             (hash-put! threads thr address)
             (rpc-monitor thr)
@@ -321,8 +320,6 @@ package: std/actor
              (rpc-send-error-response msg "bad destination")))))
         ((? thread? thread)
          (cond
-          ((eq? thread socksrv)
-           (error "socket server has exited unexpectedly"))
           ((memq thread acceptors)
            (warning "acceptor thread has exited abnormally ~a" thread))
           (else
@@ -331,13 +328,12 @@ package: std/actor
          (warning "unexepected message ~a"  value)))
     (loop))
 
-  (rpc-monitor socksrv)
   (for-each rpc-monitor acceptors)
   (try
    (loop)
    (catch (e)
      (for-each (cut !!rpc.shutdown <>) (hash-keys actor-threads))
-     (for-each server-close socks)
+     (for-each ssocket-close socks)
      (for-each (lambda (thread)
                  (thread-send thread 'shutdown)
                  (!!rpc.connection-close thread))
@@ -350,7 +346,7 @@ package: std/actor
   (while #t
     (try
      (let* ((cliaddr (make-socket-address safamily))
-            (clisock (server-accept sock cliaddr)))
+            (clisock (ssocket-accept sock cliaddr)))
        (debug "accepted connection from ~a"
               (let (clistr (socket-address->string cliaddr))
                 (if (string-empty? clistr) ; UNIX client
@@ -385,10 +381,10 @@ package: std/actor
    (catch (e)
      (rpc-connection-cleanup rpc-server e sock))))
 
-(def (rpc-client-connection rpc-server actors socksrv address proto-e)
+(def (rpc-client-connection rpc-server actors address proto-e)
   (try
    (let* ((sa (socket-address address))
-          (cli (server-connect socksrv sa)))
+          (cli (ssocket-connect sa)))
      (rpc-set-nodelay! cli (socket-address-family sa))
      (rpc-connection-loop rpc-server actors cli address proto-e))
    (catch (e)
@@ -397,7 +393,7 @@ package: std/actor
 (def (rpc-set-nodelay! sock safamily)
   (when (or (eq? safamily AF_INET)
             (eq? safamily AF_INET6))
-    (socket-setsockopt (server-socket-e sock) IPPROTO_TCP TCP_NODELAY 1)))
+    (socket-setsockopt (ssocket-socket sock) IPPROTO_TCP TCP_NODELAY 1)))
 
 (def rpc-keep-alive 60) ; keep-alive interval
 
@@ -426,9 +422,9 @@ package: std/actor
 
 (def (rpc-connection-loop rpc-server actors sock peer-address proto-e)
   (def input
-    (open-server-input-buffer sock))
+    (open-ssocket-input-buffer sock))
   (def output
-    (open-server-output-buffer sock))
+    (open-ssocket-output-buffer sock))
   (defvalues (read-e write-e)
     (proto-e input output))
   (def continuations                    ; wire-id => (values actor k proto stream?)
@@ -458,7 +454,7 @@ package: std/actor
       (set! idle-timeout #f))))
 
   (def (close-connection)
-    (server-close sock)
+    (ssocket-close sock)
     (thread-send writer 'exit)
     (for-each
       (lambda (wire-id)
@@ -866,5 +862,5 @@ package: std/actor
 (def (rpc-connection-cleanup rpc-server exn sock)
   (log-error "connection error" exn)
   (when sock
-    (server-close sock))
+    (ssocket-close sock))
   (rpc-connection-shutdown rpc-server))
