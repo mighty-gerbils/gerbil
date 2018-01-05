@@ -102,6 +102,13 @@
     "net/server/api"
     "net/server/buffer"
     "net/server"
+    ;; :std/net/socket
+    "net/socket/base"
+    "net/socket/basic-socket"
+    "net/socket/api"
+    "net/socket/buffer"
+    "net/socket"
+    ;; :std/net/httpd
     "net/httpd/mux"
     "net/httpd/handler"
     "net/httpd/server"
