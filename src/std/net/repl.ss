@@ -38,6 +38,7 @@ package: std/net
         (port (thread-specific server)))
     (try
      (close-port port)
+     (thread-async! server void)
      (thread-join! server)
      (catch (uncaught-exception? e)
        (unless (os-exception? (uncaught-exception-reason e))
