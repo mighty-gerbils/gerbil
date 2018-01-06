@@ -1,15 +1,14 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; socket server -- epoll server implementation
-package: std/net/server
+;;; synchronous sockets  -- epoll server implementation
+package: std/net/socket
 
 (require linux)
-
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
         :gerbil/gambit/misc
-        :std/net/server/base
-        :std/net/server/server
+        :std/net/socket/base
+        :std/net/socket/basic-server
         :std/os/fd
         :std/os/epoll
         :std/iter)
@@ -18,7 +17,7 @@ package: std/net/server
 (def (epoll-socket-server)
   (def fdtab (make-hash-table-eq))
   (def epoll (epoll-create))
-  (def maxevts 1024)
+  (def maxevts 8192)
   (def evts (make-epoll-events maxevts))
 
   (def poll-in (fxior EPOLLIN EPOLLHUP EPOLLERR))
@@ -42,7 +41,8 @@ package: std/net/server
                 (lp (fx1+ k)))))))))
 
   (def (add-socket sock)
-    (let* ((fd (fd-e sock))
+    (let* ((self (current-thread))
+           (fd (fd-e sock))
            (io-in
             (and (fd-io-in sock)
                  (make-!io-state)))
@@ -59,9 +59,9 @@ package: std/net/server
                    (io-state-wait-io! io-out timeo 'output))))
            (close
             (lambda (ssock dir shutdown)
-              (!!socket-server.close (!socket-srv ssock) ssock dir shutdown)))
+              (!!socket-server.close self ssock dir shutdown)))
            (ssock
-            (make-!socket sock (current-thread) wait-in wait-out close))
+            (make-!socket sock wait-in wait-out close))
            (state
             (make-!socket-state sock io-in io-out))
            (events EPOLLET)
@@ -84,7 +84,7 @@ package: std/net/server
     (def (close-io-out! io-out sock)
       (io-state-close-out! io-out sock shutdown))
 
-    (with ((!socket sock _ wait-in wait-out) ssock)
+    (with ((!socket sock wait-in wait-out) ssock)
       (when (or wait-in wait-out)
         (let (state (hash-get fdtab (fd-e sock)))
           (match state

@@ -1,10 +1,10 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
-;;; socket server -- server building blocks
-package: std/net/server
+;;; synchronous sockets -- socket server building blocks
+package: std/net/socket
 
 (import :gerbil/gambit/threads
-        :std/net/server/base
+        :std/net/socket/base
         :std/os/socket
         :std/actor/message
         :std/actor/proto

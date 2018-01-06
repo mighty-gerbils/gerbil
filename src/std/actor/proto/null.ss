@@ -3,12 +3,9 @@
 ;;; actor rpc null protocol
 package: std/actor/proto
 
-(import :std/net/server
-        :std/net/bio
+(import :std/net/bio
         :std/actor/proto
-        :std/actor/proto/message
-        )
-
+        :std/actor/proto/message)
 (export rpc-proto-accept-e
         rpc-proto-connect-e
         rpc-null-proto

@@ -4,7 +4,7 @@
 package: std/net/httpd
 
 (import :gerbil/gambit/os
-        :std/net/server
+        :std/net/socket
         :std/net/bio
         :std/text/utf8
         :std/logger
@@ -38,16 +38,16 @@ package: std/net/httpd
   final: #t)
 
 (def (http-request-handler get-handler sock addr)
-  (def ibuf (open-server-input-buffer sock))
-  (def obuf (open-server-output-buffer sock))
+  (def ibuf (open-ssocket-input-buffer sock))
+  (def obuf (open-ssocket-output-buffer sock))
 
   (def (loop)
     (let ((req (make-http-request ibuf addr #f #f #f #f #f #f #!void))
           (res (make-http-response obuf #f #f)))
 
-      (set! (server-input-buffer-timeout ibuf)
+      (set! (ssocket-input-buffer-timeout ibuf)
          request-timeout)
-      (set! (server-output-buffer-timeout obuf)
+      (set! (ssocket-output-buffer-timeout obuf)
         response-timeout)
 
       (try
@@ -124,7 +124,7 @@ package: std/net/httpd
        (raise e))
      e)
    (finally
-    (server-close sock))))
+    (ssocket-close sock))))
 
 ;;; handler interface
 ;; request
@@ -144,7 +144,7 @@ package: std/net/httpd
 
 (def (http-request-timeout-set! req timeo)
   (with ((http-request ibuf) req)
-    (set! (server-input-buffer-timeout ibuf)
+    (set! (ssocket-input-buffer-timeout ibuf)
       timeo)))
 
 ;; response
@@ -220,7 +220,7 @@ package: std/net/httpd
 
 (def (http-response-timeout-set! res timeo)
   (with ((http-response obuf) res)
-    (set! (server-output-buffer-timeout obuf)
+    (set! (ssocket-output-buffer-timeout obuf)
       timeo)))
 
 ;;; server internal

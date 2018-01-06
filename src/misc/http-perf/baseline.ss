@@ -1,7 +1,7 @@
-;; -*- Grebil -*-
+;; -*- Gerbil -*-
 package: misc/http-perf
 
-(import :std/net/server
+(import :std/net/socket
         :std/getopt
         :std/sugar)
 (export main)
@@ -19,12 +19,11 @@ package: misc/http-perf
     "\r\n")))
 
 (def (run-server address)
-  (let* ((socksrv (start-socket-server!))
-         (sock (server-listen socksrv address)))
+  (let ((sock (ssocket-listen address)))
     (let lp ()
-      (let (cli (server-accept sock))
-        (server-send-all cli response)
-        (server-close cli)
+      (let (cli (ssocket-accept sock))
+        (ssocket-send-all cli response)
+        (ssocket-close cli)
         (lp)))))
 
 (def (main . args)

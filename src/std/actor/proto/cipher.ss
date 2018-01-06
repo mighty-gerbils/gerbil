@@ -3,8 +3,7 @@
 ;;; actor rpc cookie authen protocol
 package: std/actor/proto
 
-(import :std/net/server
-        :std/net/bio
+(import :std/net/bio
         :std/crypto/etc
         :std/crypto/digest
         :std/crypto/cipher

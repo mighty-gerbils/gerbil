@@ -7,7 +7,7 @@ package: std/net/httpd
         :gerbil/gambit/exceptions
         :std/net/httpd/handler
         :std/net/httpd/mux
-        :std/net/server
+        :std/net/socket
         :std/os/socket
         :std/actor/message
         :std/actor/proto
@@ -30,9 +30,8 @@ package: std/net/httpd
 
 (def (start-http-server! mux: (mux (make-default-http-mux)) . addresses)
   (start-logger!)
-  (let* ((socksrv (start-socket-server!))
-         (sas (map socket-address addresses))
-         (socks (map (cut server-listen socksrv <>) sas)))
+  (let* ((sas (map socket-address addresses))
+         (socks (map ssocket-listen sas)))
     (spawn/group 'http-server http-server socks sas mux)))
 
 (def (stop-http-server! httpd)
@@ -62,7 +61,7 @@ package: std/net/httpd
          socks sas))
 
   (def (shutdown!)
-    (for-each server-close socks))
+    (for-each ssocket-close socks))
 
   (def (monitor thread)
     (def (join server thread)
@@ -103,7 +102,7 @@ package: std/net/httpd
   (def cliaddr (make-socket-address safamily))
   (while #t
     (try
-     (let (clisock (server-accept sock cliaddr))
+     (let (clisock (ssocket-accept sock cliaddr))
        (spawn/name 'http-request-handler
                    http-request-handler get-handler clisock (socket-address->address cliaddr)))
      (catch (os-exception? e)
