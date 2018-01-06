@@ -39,7 +39,7 @@
   * [std/net/httpd](#stdnethttpd)
   * [std/net/request](#stdnetrequest)
   * [std/net/repl](#stdnetrepl)
-  * [std/net/server](#stdnetserver)
+  * [std/net/socket](#stdnetsocket)
   * [std/net/socks](#stdnetsocks)
   * [std/net/uri](#stdneturi)
   * [std/net/wamp](#stdnetwamp)
@@ -767,38 +767,32 @@ Network repl for debugging live programs.
 (stop-repl-server! repl-server-thread)
 ```
 
-### std/net/server
-Package for programming with sockets and platform-optimized i/o multiplexing.
+### std/net/socket
+Synchronous Socket programming API.
 
 ```
-(import :std/net/server)
+(import :std/net/socket)
 
-;; exports:
+;; synchronous socket interface
+  ssocket-connect
+  ssocket-listen
+  ssocket-accept
+  ssocket-send ssocket-send-all
+  ssocket-recv ssocket-recv-all
+  ssocket-socket
+  ssocket-close ssocket-close-input ssocket-close-output
 
-;; :std/net/server/api
-  start-socket-server! stop-socket-server! current-socket-server
-  native-poll-server-impl
-  server-shutdown!
-  server-connect
-  server-listen server-accept
-  server-send server-send-all
-  server-recv server-recv-all
-  server-socket-e
-  server-close server-close-input server-close-output
+;; bio buffers
+  open-ssocket-input-buffer
+  ssocket-input-buffer?
+  ssocket-input-buffer-timeout-set!
+  open-ssocket-output-buffer
+  ssocket-output-buffer?
+  ssocket-output-buffer-timeout-set!
 
-;; :std/net/server/buffer
-  open-server-input-buffer
-  server-input-buffer?
-  server-input-buffer-timeout-set!
-  open-server-output-buffer
-  server-output-buffer?
-  server-output-buffer-timeout-set!
-
-;; :std/net/server/basic-server
-  basic-socket-server
-
-;; :std/net/server/epoll-server (linux)
-  epoll-socket-server
+;; socket server
+  start-socket-server!
+  stop-socket-server!
 
 ```
 
