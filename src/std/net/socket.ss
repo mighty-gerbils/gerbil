@@ -9,4 +9,4 @@ package: std/net
 
 (export (import: :std/net/socket/api
                  :std/net/socket/buffer
-                 :std/net/server))
+                 :std/net/socket/server))
