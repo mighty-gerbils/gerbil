@@ -91,17 +91,6 @@
     "net/bio/output"
     "net/bio/buffer"
     "net/bio"
-    ;; :std/net/server
-    "net/server/base"
-    "net/server/server"
-    "net/server/basic-server"
-    ,@(cond-expand
-        (linux
-         '("net/server/epoll-server"))
-        (else '()))
-    "net/server/api"
-    "net/server/buffer"
-    "net/server"
     ;; :std/net/socket
     "net/socket/base"
     "net/socket/basic-socket"
