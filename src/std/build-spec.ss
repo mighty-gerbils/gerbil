@@ -107,6 +107,12 @@
     "net/socket/basic-socket"
     "net/socket/api"
     "net/socket/buffer"
+    "net/socket/basic-server"
+    ,@(cond-expand
+        (linux
+         '("net/socket/epoll-server"))
+        (else '()))
+    "net/socket/server"
     "net/socket"
     ;; :std/net/httpd
     "net/httpd/mux"

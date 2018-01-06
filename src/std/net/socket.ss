@@ -4,6 +4,9 @@
 package: std/net
 
 (import :std/net/socket/api
-        :std/net/socket/buffer)
+        :std/net/socket/buffer
+        :std/net/socket/server)
+
 (export (import: :std/net/socket/api
-                 :std/net/socket/buffer))
+                 :std/net/socket/buffer
+                 :std/net/server))
