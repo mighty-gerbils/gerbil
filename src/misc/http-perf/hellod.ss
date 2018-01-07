@@ -4,7 +4,8 @@ package: misc/http-perf
 (import :std/net/httpd
         :std/getopt
         :std/sugar
-        :gerbil/gambit/threads)
+        :gerbil/gambit/threads
+        :std/misc/threads)
 (export main)
 
 (def (run-server address count)
@@ -21,7 +22,7 @@ package: misc/http-perf
       (hello-handler req res)
       (set! n (fx1+ n))
       (unless (fx< n count)
-        (stop-http-server! httpd)))
+        (spawn-thread (cut stop-http-server! httpd) (void) (primordial-thread-group))))
     handler))
 
 (def (main . args)
