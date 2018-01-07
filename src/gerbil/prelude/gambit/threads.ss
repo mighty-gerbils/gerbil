@@ -80,8 +80,28 @@ package: gerbil/gambit
 
 (def (spawn-actor f args name tgroup)
   (def (thread-main thunk)
-    ;; install an abortive handler to reliably unwind stacks
-    (lambda () (with-catch ##primordial-exception-handler thunk)))
+    ;; install an abortive handler to force stack unwinding
+    ;; this ensures that unwind-protect finalizers are invoked if
+    ;; the actor exits with an unhandled exception.
+    ;; debugging: when the unhandled-actor-exception-hook is set, then
+    ;; it is invoked with the continuation and exception before unwinding
+    ;; the stack.
+    ;; in particular, set the hook to dump-stack-trace! to dump the
+    ;; continuation backtrace together with the exception to ##stderr-port
+    (lambda ()
+      (with-exception-handler
+       (lambda (exn)
+         (##continuation-capture
+          (lambda (cont)
+            (when unhandled-actor-exception-hook
+              (with-catch void (cut unhandled-actor-exception-hook cont exn)))
+            ;; unwind stack and continue with the primordial exception handler
+            ;; see discussion in gambit#295 about ##continuation-last
+            (##continuation-graft
+             (##continuation-last cont)
+             ##primordial-exception-handler
+             exn))))
+       thunk)))
 
   (if (procedure? f)
     (let ((thunk (if (null? args) f
@@ -103,3 +123,35 @@ package: gerbil/gambit
       (cut mutex-lock! mx)
       proc
       (cut mutex-unlock! mx)))
+
+;; actor debug hook
+(def unhandled-actor-exception-hook #f)
+(def (unhandled-actor-exception-hook-set! proc)
+  (if (procedure? proc)
+    (set! unhandled-actor-exception-hook proc)
+    (error "Bad argument; expected procedure" proc)))
+
+;; hook to dump continuation backtraces to ##stderr-port
+(extern dump-stack-trace!)
+(begin-foreign
+  (namespace ("gerbil/gambit/threads#" dump-stack-trace!))
+
+  (define (dump-stack-trace! cont exn)
+    (let ((out (open-output-string)))
+      (display "*** Unhandled exception in " out)
+      (display (current-thread) out)
+      (newline out)
+      (display-exception exn out)
+      (display "Continuation backtrace: " out)
+      (newline out)
+
+      (##display-continuation-backtrace
+       cont
+       out
+       #f                               ; display-env?
+       #f                               ; all-frames?
+       ##backtrace-default-max-head
+       ##backtrace-default-max-tail
+       0)
+
+      (##write-string (get-output-string out) ##stderr-port))))
