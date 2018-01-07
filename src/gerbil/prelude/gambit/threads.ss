@@ -111,9 +111,9 @@ package: gerbil/gambit
        (make-thread (thread-main thunk) name tgroup)))
     (error "Bad argument; expected procedure" f)))
 
-(def (spawn-thread thunk name)
+(def (spawn-thread thunk (name absent-obj) (tgroup absent-obj))
   (thread-start!
-   (make-thread thunk name)))
+   (make-thread thunk name tgroup)))
 
 (def (current-thread-group)
   (thread-thread-group (current-thread)))
