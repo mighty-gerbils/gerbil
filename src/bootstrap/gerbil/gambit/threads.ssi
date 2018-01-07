@@ -88,5 +88,13 @@ namespace: gerbil/gambit/threads
          (%#define-runtime
           current-thread-group
           gerbil/gambit/threads#current-thread-group)
-         (%#define-runtime with-lock gerbil/gambit/threads#with-lock))
+         (%#define-runtime with-lock gerbil/gambit/threads#with-lock)
+         (%#define-runtime
+          unhandled-actor-exception-hook
+          gerbil/gambit/threads#unhandled-actor-exception-hook)
+         (%#define-runtime
+          unhandled-actor-exception-hook-set!
+          gerbil/gambit/threads#unhandled-actor-exception-hook-set!)
+         (%#extern
+          (dump-stack-trace! gerbil/gambit/threads#dump-stack-trace!)))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/gambit/threads__0"))
