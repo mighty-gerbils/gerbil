@@ -127,16 +127,16 @@ package: gerbil/gambit
 ;; actor debug hook
 (def unhandled-actor-exception-hook #f)
 (def (unhandled-actor-exception-hook-set! proc)
-  (if (procedure? proc)
+  (if (or (not proc) (procedure? proc))
     (set! unhandled-actor-exception-hook proc)
-    (error "Bad argument; expected procedure" proc)))
+    (error "Bad argument; expected procedure or #f" proc)))
 
 ;; hook to dump continuation backtraces to ##stderr-port
 (extern dump-stack-trace!)
 (begin-foreign
   (namespace ("gerbil/gambit/threads#" dump-stack-trace!))
 
-  (define (dump-stack-trace! cont exn)
+  (define (dump-stack-trace! cont exn #!optional (error-port ##stderr-port))
     (let ((out (open-output-string)))
       (display "*** Unhandled exception in " out)
       (display (current-thread) out)
@@ -154,4 +154,4 @@ package: gerbil/gambit
        ##backtrace-default-max-tail
        0)
 
-      (##write-string (get-output-string out) ##stderr-port))))
+      (##write-string (get-output-string out) error-port))))
