@@ -589,14 +589,15 @@ package: std/actor
                 (begin defn-stream ...)
                 (begin defn-struct ...))))))
 
-;; (defstruct protocol-info (id runtime-identifier extend calls events streams)
 (defsyntax-for-export (proto-out stx)
   (def (message-ids ids)
     (let lp ((rest ids) (mids []))
       (match rest
         ([id . rest]
          (lp rest
-             (cons* id (stx-identifier id "!" id) (stx-identifier id "!!" id)
+             (cons* ['struct-out id]
+                    (stx-identifier id "!" id)
+                    (stx-identifier id "!!" id)
                     mids)))
         (else mids))))
 
