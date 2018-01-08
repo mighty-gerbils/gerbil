@@ -95,6 +95,9 @@ namespace: gerbil/gambit/threads
          (%#define-runtime
           unhandled-actor-exception-hook-set!
           gerbil/gambit/threads#unhandled-actor-exception-hook-set!)
+         (%#define-runtime
+          with-exception-stack-trace
+          gerbil/gambit/threads#with-exception-stack-trace)
          (%#extern
           (dump-stack-trace! gerbil/gambit/threads#dump-stack-trace!)))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/gambit/threads__0"))

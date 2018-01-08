@@ -131,6 +131,17 @@ package: gerbil/gambit
     (set! unhandled-actor-exception-hook proc)
     (error "Bad argument; expected procedure or #f" proc)))
 
+;; evaluate a thunk with an exception handler that dumps the stack trace
+(def (with-exception-stack-trace thunk (error-port ##stderr-port))
+  (with-exception-handler
+   (let (E (current-exception-handler))
+     (lambda (exn)
+       (##continuation-capture
+        (lambda (cont)
+          (dump-stack-trace! cont exn error-port)
+          (E exn)))))
+   thunk))
+
 ;; hook to dump continuation backtraces to ##stderr-port
 (extern dump-stack-trace!)
 (begin-foreign
