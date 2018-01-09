@@ -4,7 +4,8 @@
 (import :std/make)
 
 (def build-spec
-  '((exe: "gxprof")))
+  '((exe: "gxprof")
+    (exe: "gxtags")))
 
 (def srcdir
   (path-normalize (path-directory (this-source-file))))
