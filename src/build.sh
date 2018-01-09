@@ -146,8 +146,9 @@ build_layout () {
 ## commands
 build_tools () {
   feedback_low "Building gerbil tools"
-  # just the gxprof script for now, which we copy
-  cp -v tools/gxprof "${GERBIL_BASE}/bin"
+  export PATH="${GERBIL_BASE}/bin:${PATH}"
+  export GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
+  (cd tools && ./build.ss deps && ./build.ss)
 }
 
 build_stdlib () {

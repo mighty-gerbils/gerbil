@@ -1,4 +1,3 @@
-#!/usr/bin/env gxi
 ;; -*- Gerbil -*-
 ;; Rudimentary gerbil profiler
 ;; Invocation: gxprof exe-module-path arg ...
@@ -9,6 +8,7 @@
 
 (import :gerbil/expander
         :std/sugar)
+(export main)
 
 (def (main mod . args)
   (let* ((ctx (import-module (module-path mod) #f #t))
