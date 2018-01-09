@@ -163,7 +163,8 @@ package: std
                      (else
                       (raise-getopt-error "Missing value for option" hd))))
                   ((!flag key)
-                   (hash-put! ht key #t)))))
+                   (hash-put! ht key #t)
+                   (lp rest*)))))
           (else
            (raise-getopt-error "Unknown option" hd))))
         (else                           ; doesn't look like an option
@@ -297,17 +298,19 @@ package: std
 
 (def (display-option-help opts port)
   (for-each (match <>
-              ((!option _ help short long _ default)
-               (fprintf port " ~a ~a:~a ~a [default: ~a]~n"
+              ((!option id help short long _ default)
+               (fprintf port " ~a ~a <~a> ~a ~a [default: ~a]~n"
                         (or short "")
                         (or long "")
-                        (tabs (or short "") " " (or long ""))
+                        id
+                        (tabs (or short "") " " (or long "") " <" (symbol->string id) ">")
                         (or help "?")
                         default))
               ((!flag _ help short long)
-               (fprintf port " ~a ~a:\t\t ~a~n"
+               (fprintf port " ~a ~a ~a ~a~n"
                         (or short "")
                         (or long "")
+                        (tabs (or short "") " " (or long ""))
                         (or help "?"))))
             opts))
 
