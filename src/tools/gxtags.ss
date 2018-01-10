@@ -41,6 +41,7 @@
      (exit 1))))
 
 (def (run inputs tagfile append?)
+  (_gx#load-expander!)
   (call-with-output-file [path: tagfile append: append?]
     (lambda (output)
       (for-each (cut tag-input <> output) inputs))))
