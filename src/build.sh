@@ -180,6 +180,7 @@ build_gerbil() {
   build_stdlib || die
   build_lang   || die
   build_tools  || die
+  build_tags   || die
 }
 
 ## handling command line
