@@ -9,6 +9,8 @@
         :gerbil/gambit
         :std/getopt
         :std/sugar
+        :std/text/utf8
+        :std/misc/ports
         (only-in :std/srfi/1 delete-duplicates reverse!))
 (export main)
 
@@ -163,9 +165,54 @@
     (reverse! tags)))
 
 (def (write-tags tags filename output)
-  ;; TODO write actual tags :)
-  (pretty-print tags output)
-  )
+  (let* ((lines (list->vector (read-file-lines filename)))
+         (offsets (file-line-offsets filename))
+         (tmp (open-output-string)))
+    (for-each
+      (match <>
+        ([_ name loc]
+         (let* ((line (source-location-line loc))
+                (anchor (vector-ref lines (fx1- line)))
+                (offset (vector-ref offsets (fx1- line))))
+           (write-string anchor tmp)
+           (write-char #\x7f tmp)
+           (display name tmp)
+           (write-char #\x01 tmp)
+           (display line tmp)
+           (write-char #\, tmp)
+           (display offset tmp)
+           (newline tmp))))
+      tags)
+    (let* ((str (get-output-string tmp))
+           (len (string-utf8-length str)))
+      (write-char #\x0c output)
+      (newline output)
+      (write-string filename output)
+      (write-char #\, output)
+      (display len output)
+      (newline output)
+      (write-string str output))))
+
+(def +nl+
+  (char->integer #\newline))
+
+(def (file-line-offsets filename)
+  (call-with-input-file filename
+    (lambda (inp)
+      (let lp ((i 0) (offs [0]))
+        (let (next (read-u8 inp))
+          (cond
+           ((eof-object? next)
+            (list->vector (reverse! offs)))
+           ((eq? next +nl+)
+            (let (i+1 (fx1+ i))
+              (lp i+1 (cons i+1 offs))))
+           (else
+            (lp (fx1+ i) offs))))))))
+
+(def (source-location-line locat)
+  (let (filepos (##position->filepos (##locat-position locat)))
+    (fx1+ (##filepos-line filepos))))
 
 (def (try-import-module filename)
   (try
