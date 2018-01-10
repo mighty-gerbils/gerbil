@@ -175,7 +175,7 @@
         (with ([_ name loc] tag)
           (let (path (source-location-path loc))
             (cond
-             ((equal? path filepath)
+             ((or (equal? path filepath) (not path))
               (let* ((line (source-location-line loc))
                      (anchor (vector-ref lines (fx1- line)))
                      (offset (vector-ref offsets (fx1- line))))
@@ -187,7 +187,7 @@
                 (write-char #\, tmp)
                 (display offset tmp)
                 (newline tmp)))
-             (path
+             (else
               (set! out-of-file-tags
                 (cons tag out-of-file-tags)))))))
       tags)
