@@ -146,8 +146,9 @@ build_layout () {
 ## commands
 build_tools () {
   feedback_low "Building gerbil tools"
-  # just the gxprof script for now, which we copy
-  cp -v tools/gxprof "${GERBIL_BASE}/bin"
+  export PATH="${GERBIL_BASE}/bin:${PATH}"
+  export GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
+  (cd tools && ./build.ss deps && ./build.ss)
 }
 
 build_stdlib () {
@@ -164,6 +165,12 @@ build_lang () {
   (cd lang && ./build.ss)
 }
 
+build_tags () {
+  feedback_low "Build gerbil tags"
+  export PATH="${GERBIL_BASE}/bin:${PATH}"
+  gxtags gerbil std lang
+}
+
 #===============================================================================
 ## main
 build_gerbil() {
@@ -173,6 +180,7 @@ build_gerbil() {
   build_stdlib || die
   build_lang   || die
   build_tools  || die
+  build_tags   || die
 }
 
 ## handling command line
@@ -197,6 +205,9 @@ else
          ;;
        "layout")
          build_layout || die
+         ;;
+       "tags")
+         build_tags || die
          ;;
        *)
          feedback_err "Unknown command."

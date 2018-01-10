@@ -1,0 +1,241 @@
+;; -*- Gerbil -*-
+;; Generate emacs TAGS from gerbil sources
+;; only exported symbols are tagged.
+;; Usage: gxtags [-a] [-o tags-file] file-or-directory ...
+
+(import :gerbil/expander
+        (only-in :gerbil/compiler/base ast-case)
+        (only-in <syntax-case> syntax)
+        :gerbil/gambit
+        :std/getopt
+        :std/sugar
+        :std/text/utf8
+        :std/misc/ports
+        (only-in :std/srfi/1 delete-duplicates reverse!))
+(export main make-tags)
+
+(def (main . args)
+  (def gopt
+    (getopt (flag 'append "-a"
+               help: "append to existing tag file")
+            (option 'output "-o" default: "TAGS"
+               help: "explicit name of file for tag table")
+            (flag 'help "-h" "--help"
+               help: "display help")
+            (rest-arguments 'input
+               help: "source file or directory")))
+
+  (def (help what)
+    (getopt-display-help what "gxtags"))
+
+  (try
+   (let (opt (getopt-parse gopt args))
+     (if (hash-get opt 'help)
+       (help gopt)
+       (let (inputs (hash-get opt 'input))
+         (if (null? inputs)
+           (begin
+             (help gopt)
+             (exit 1))
+           (run (hash-get opt 'input)
+                (hash-get opt 'output)
+                (hash-get opt 'append))))))
+   (catch (getopt-error? exn)
+     (help exn)
+     (exit 1))))
+
+(def (run inputs tagfile append?)
+  (_gx#load-expander!)
+  (make-tags inputs tagfile append?))
+
+(def current-tags-path
+  (make-parameter #f))
+
+(def (make-tags inputs tagfile (append? #f))
+  (call-with-output-file [path: tagfile append: append?]
+    (lambda (output)
+      (parameterize ((current-tags-path (path-normalize tagfile)))
+        (for-each (cut tag-input <> output) inputs)))))
+
+(def (file-directory? path)
+  (eq? (file-type path) 'directory))
+
+(def (tag-input input output)
+  (if (file-exists? input)
+    (if (file-directory? input)
+      (tag-directory input output)
+      (tag-source-file input output))
+    (error "No such file or directory" input)))
+
+(def (tag-directory dirname output)
+  (let* ((dir (open-directory dirname))
+         (files (read-all dir)))
+    (close-port dir)
+    (for-each
+      (lambda (file)
+        (let (path (path-expand file dirname))
+          (when (or (file-directory? path)
+                    (member (path-extension path) '(".ss" ".ssi")))
+            (tag-input path output))))
+      files)))
+
+(def (tag-source-file filename output)
+  (cond
+   ((try-import-module filename)
+    => (lambda (ctx)
+         (displayln "TAG " filename)
+         (let (xtab (make-hash-table-eq)) ; binding-id -> [export-name ...]
+          (for-each
+            (lambda (xport)
+              (let (bind (core-resolve-module-export xport))
+                (hash-update! xtab (binding-id bind)
+                              (cut cons (module-export-name xport) <>)
+                              [])))
+            (module-context-export ctx))
+          (write-tags (module-tags ctx xtab) filename output))))
+   (else
+    (displayln "SKIP " filename))))
+
+(def (module-tags ctx xtab)
+  (def tags [])
+
+  (def loc #f)
+
+  (defrules with-loc ()
+    ((_ stx body rest ...)
+     (let (K (lambda () body rest ...))
+       (let (new-loc (stx-source stx))
+         (if new-loc
+           (let (save-loc loc)
+             (set! loc new-loc)
+             (K)
+             (set! loc save-loc))
+           (K))))))
+
+  (def (tag! eid name)
+    (set! tags
+      (cons [eid name loc] tags)))
+
+  (def (tag-e stx)
+    (with-loc stx
+      (ast-case stx (%#begin
+                     %#begin-syntax
+                     %#define-values
+                     %#define-syntax
+                     %#extern
+                     %#module)
+        ((%#begin expr ...)
+         (for-each tag-e #'(expr ...)))
+        ((%#begin-syntax expr ...)
+         (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
+           (for-each tag-e #'(expr ...))))
+        ((%#define-values (id ...) _)
+         (for-each tag-def (filter values #'(id ...))))
+        ((%#define-syntax id _)
+         (tag-def #'id))
+        ((%#extern decl ...)
+         (for-each tag-decl #'(decl ...)))
+        ((%#module id expr ...)
+         (let ((eid (binding-id (resolve-identifier #'id)))
+               (ctx (syntax-local-e #'id)))
+           (parameterize ((current-expander-context ctx))
+             (tag-name! eid)
+             (for-each tag-e #'(expr ...)))))
+        (_ (void)))))
+
+  (def (tag-def id)
+    (with-loc id
+      (tag-name! (binding-id (resolve-identifier id)))))
+
+  (def (tag-decl decl)
+    (ast-case decl ()
+      ((id eid)
+       (with-loc #'id
+         (tag-name! (stx-e #'eid))))))
+
+  (def (tag-name! eid)
+    (alet (names (hash-get xtab eid))
+      (for-each
+        (lambda (name)
+          (tag! eid name))
+        (delete-duplicates names eq?))))
+
+  (let (stx (module-context-code ctx))
+    ;; also tag the module id itself with library prefix
+    (let* ((id (expander-context-id ctx))
+           (gid (make-symbol ":" id)))
+      (with-loc stx
+        (tag! 'module gid)))
+    (parameterize ((current-expander-context ctx)
+                   (current-expander-phi 0))
+      (tag-e stx))
+    (reverse! tags)))
+
+(def (write-tags tags filename output)
+  (let* ((lines (list->vector (read-file-lines filename)))
+         (offsets (file-line-offsets filename))
+         (tmp (open-output-string))
+         (filepath (path-normalize filename))
+         (rfilepath (path-normalize filepath #t (current-tags-path)))
+         (out-of-file-tags []))
+    (for-each
+      (lambda (tag)
+        (with ([_ name loc] tag)
+          (let (path (source-location-path loc))
+            (cond
+             ((or (equal? path filepath) (not path))
+              (let* ((line (source-location-line loc))
+                     (anchor (vector-ref lines (fx1- line)))
+                     (offset (vector-ref offsets (fx1- line))))
+                (write-string anchor tmp)
+                (write-char #\x7f tmp)
+                (display name tmp)
+                (write-char #\x01 tmp)
+                (display line tmp)
+                (write-char #\, tmp)
+                (display offset tmp)
+                (newline tmp)))
+             (else
+              (set! out-of-file-tags
+                (cons tag out-of-file-tags)))))))
+      tags)
+    (let* ((str (get-output-string tmp))
+           (len (string-utf8-length str)))
+      (write-char #\x0c output)
+      (newline output)
+      (write-string rfilepath output)
+      (write-char #\, output)
+      (display len output)
+      (newline output)
+      (write-string str output)
+      (unless (null? out-of-file-tags)
+        (let* ((tags (reverse! out-of-file-tags))
+               (path (source-location-path (caddar tags)))
+               (filename (path-normalize path #t)))
+          (write-tags tags filename output))))))
+
+(def +nl+
+  (char->integer #\newline))
+
+(def (file-line-offsets filename)
+  (call-with-input-file filename
+    (lambda (inp)
+      (let lp ((i 0) (offs [0]))
+        (let (next (read-u8 inp))
+          (cond
+           ((eof-object? next)
+            (list->vector (reverse! offs)))
+           ((eq? next +nl+)
+            (let (i+1 (fx1+ i))
+              (lp i+1 (cons i+1 offs))))
+           (else
+            (lp (fx1+ i) offs))))))))
+
+(def (source-location-line locat)
+  (let (filepos (##position->filepos (##locat-position locat)))
+    (fx1+ (##filepos-line filepos))))
+
+(def (try-import-module filename)
+  (try
+   (import-module filename)
+   (catch (e) #f)))
