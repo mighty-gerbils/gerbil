@@ -12,7 +12,7 @@
         :std/text/utf8
         :std/misc/ports
         (only-in :std/srfi/1 delete-duplicates reverse!))
-(export main)
+(export main make-tags)
 
 (def (main . args)
   (def gopt
@@ -46,9 +46,16 @@
 
 (def (run inputs tagfile append?)
   (_gx#load-expander!)
+  (make-tags inputs tagfile append?))
+
+(def current-tags-path
+  (make-parameter #f))
+
+(def (make-tags inputs tagfile append?)
   (call-with-output-file [path: tagfile append: append?]
     (lambda (output)
-      (for-each (cut tag-input <> output) inputs))))
+      (parameterize ((current-tags-path (path-normalize tagfile)))
+        (for-each (cut tag-input <> output) inputs)))))
 
 (def (file-directory? path)
   (eq? (file-type path) 'directory))
@@ -169,6 +176,7 @@
          (offsets (file-line-offsets filename))
          (tmp (open-output-string))
          (filepath (path-normalize filename))
+         (rfilepath (path-normalize filepath #t (current-tags-path)))
          (out-of-file-tags []))
     (for-each
       (lambda (tag)
@@ -195,7 +203,7 @@
            (len (string-utf8-length str)))
       (write-char #\x0c output)
       (newline output)
-      (write-string filename output)
+      (write-string rfilepath output)
       (write-char #\, output)
       (display len output)
       (newline output)
