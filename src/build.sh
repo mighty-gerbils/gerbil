@@ -165,6 +165,12 @@ build_lang () {
   (cd lang && ./build.ss)
 }
 
+build_tags () {
+  feedback_low "Build gerbil tags"
+  export PATH="${GERBIL_BASE}/bin:${PATH}"
+  gxtags gerbil/prelude std
+}
+
 #===============================================================================
 ## main
 build_gerbil() {
@@ -198,6 +204,9 @@ else
          ;;
        "layout")
          build_layout || die
+         ;;
+       "tags")
+         build_tags || die
          ;;
        *)
          feedback_err "Unknown command."
