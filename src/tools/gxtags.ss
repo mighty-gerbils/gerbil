@@ -51,7 +51,7 @@
 (def current-tags-path
   (make-parameter #f))
 
-(def (make-tags inputs tagfile append?)
+(def (make-tags inputs tagfile (append? #f))
   (call-with-output-file [path: tagfile append: append?]
     (lambda (output)
       (parameterize ((current-tags-path (path-normalize tagfile)))
