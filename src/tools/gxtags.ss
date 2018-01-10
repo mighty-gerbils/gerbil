@@ -4,10 +4,12 @@
 ;; Usage: gxtags [-a] [-o tags-file] file-or-directory ...
 
 (import :gerbil/expander
+        (only-in :gerbil/compiler/base ast-case)
+        (only-in <syntax-case> syntax)
         :gerbil/gambit
         :std/getopt
         :std/sugar
-        )
+        (only-in :std/srfi/1 delete-duplicates reverse!))
 (export main)
 
 (def (main . args)
@@ -69,5 +71,103 @@
       files)))
 
 (def (tag-source-file filename output)
-  (displayln "TAG " filename)
+  (cond
+   ((try-import-module filename)
+    => (lambda (ctx)
+         (displayln "TAG " filename)
+         (let (xtab (make-hash-table-eq)) ; binding-id -> [export-name ...]
+          (for-each
+            (lambda (xport)
+              (let (bind (core-resolve-module-export xport))
+                (hash-update! xtab (binding-id bind)
+                              (cut cons (module-export-name xport) <>)
+                              [])))
+            (module-context-export ctx))
+          (write-tags (module-tags ctx xtab) filename output))))
+   (else
+    (displayln "SKIP " filename))))
+
+(def (module-tags ctx xtab)
+  (def tags [])
+
+  (def loc #f)
+
+  (defrules with-loc ()
+    ((_ stx body rest ...)
+     (let (K (lambda () body rest ...))
+       (let (new-loc (stx-source stx))
+         (if new-loc
+           (let (save-loc loc)
+             (set! loc new-loc)
+             (K)
+             (set! loc save-loc))
+           (K))))))
+
+  (def (tag! eid name)
+    (set! tags
+      (cons [eid name loc] tags)))
+
+  (def (tag-e stx)
+    (with-loc stx
+      (ast-case stx (%#begin
+                     %#begin-syntax
+                     %#define-values
+                     %#define-syntax
+                     %#extern
+                     %#module)
+        ((%#begin expr ...)
+         (for-each tag-e #'(expr ...)))
+        ((%#begin-syntax expr ...)
+         (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
+           (for-each tag-e #'(expr ...))))
+        ((%#define-values (id ...) _)
+         (for-each tag-def (filter values #'(id ...))))
+        ((%#define-syntax id _)
+         (tag-def #'id))
+        ((%#extern decl ...)
+         (for-each tag-decl #'(decl ...)))
+        ((%#module id expr ...)
+         (let ((eid (binding-id (resolve-identifier #'id)))
+               (ctx (syntax-local-e #'id)))
+           (parameterize ((current-expander-context ctx))
+             (tag-name! eid)
+             (for-each tag-e #'(expr ...)))))
+        (_ (void)))))
+
+  (def (tag-def id)
+    (with-loc id
+      (tag-name! (binding-id (resolve-identifier id)))))
+
+  (def (tag-decl decl)
+    (ast-case decl ()
+      ((id eid)
+       (with-loc #'id
+         (tag-name! (stx-e #'eid))))))
+
+  (def (tag-name! eid)
+    (alet (names (hash-get xtab eid))
+      (for-each
+        (lambda (name)
+          (tag! eid name))
+        (delete-duplicates names eq?))))
+
+  (let (stx (module-context-code ctx))
+    ;; also tag the module id itself with library prefix
+    (let* ((id (expander-context-id ctx))
+           (gid (make-symbol ":" id)))
+      (with-loc stx
+        (tag! 'module gid)))
+    (parameterize ((current-expander-context ctx)
+                   (current-expander-phi 0))
+      (tag-e stx))
+    (reverse! tags)))
+
+(def (write-tags tags filename output)
+  ;; TODO write actual tags :)
+  (pretty-print tags output)
   )
+
+(def (try-import-module filename)
+  (try
+   (import-module filename)
+   (catch (e) #f)))
