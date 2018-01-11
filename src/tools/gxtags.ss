@@ -68,9 +68,7 @@
     (error "No such file or directory" input)))
 
 (def (tag-directory dirname output)
-  (let* ((dir (open-directory dirname))
-         (files (read-all dir)))
-    (close-port dir)
+  (let (files (directory-files dirname))
     (for-each
       (lambda (file)
         (let (path (path-expand file dirname))
