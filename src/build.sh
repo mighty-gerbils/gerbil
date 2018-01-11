@@ -168,6 +168,7 @@ build_lang () {
 build_tags () {
   feedback_low "Build gerbil tags"
   export PATH="${GERBIL_BASE}/bin:${PATH}"
+  export GERBIL_HOME="${GERBIL_BASE}" #required by gxtags
   gxtags gerbil std lang
 }
 
