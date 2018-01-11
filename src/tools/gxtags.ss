@@ -172,7 +172,10 @@
     (reverse! tags)))
 
 (def (write-tags tags filename output)
-  (let* ((lines (list->vector (read-file-lines filename)))
+  (let* ((lines (read-file-lines filename))
+         (lines (if (null? lines)
+                  '#("") ; empty module, need an anchor
+                  (list->vector lines)))
          (offsets (file-line-offsets filename))
          (tmp (open-output-string))
          (filepath (path-normalize filename))
