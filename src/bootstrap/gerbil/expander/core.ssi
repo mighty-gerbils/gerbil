@@ -29,6 +29,9 @@ namespace: gx
          (%#define-runtime
           current-expander-module-library-path
           gx#current-expander-module-library-path)
+         (%#define-runtime
+          current-expander-module-library-package-cache
+          gx#current-expander-module-library-package-cache)
          (%#define-runtime expander-context::t gx#expander-context::t)
          (%#define-runtime expander-context? gx#expander-context?)
          (%#define-runtime make-expander-context gx#make-expander-context)
