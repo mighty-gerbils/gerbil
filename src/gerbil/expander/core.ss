@@ -33,6 +33,8 @@ namespace: gx
   (make-parameter #f))
 (def current-expander-module-library-path
   (make-parameter #f))
+(def current-expander-module-library-package-cache
+  (make-parameter #f))
 
 ;; expander context
 (defstruct expander-context (id table)

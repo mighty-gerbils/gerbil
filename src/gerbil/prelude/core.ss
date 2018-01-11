@@ -148,7 +148,7 @@ package: gerbil
     substring-fill! substring-move! string-shrink!
     append-strings
     string-map string-index string-rindex
-    string-split string-join string-empty?
+    string-split string-join string-empty? string-prefix?
     ;; MOP
     type-descriptor?
     struct-type?

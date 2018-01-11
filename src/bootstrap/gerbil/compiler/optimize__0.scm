@@ -76,7 +76,7 @@
                           gx#module-context::t
                           '#f))
                         (_$e21243_
-                         (gx#core-context-prelude__opt-lambda11975
+                         (gx#core-context-prelude__opt-lambda12030
                           _ctx21195_)))
                    (if _$e21243_
                        ((lambda (_g2124521247_)
@@ -109,7 +109,7 @@
                               '#!void
                               (begin
                                 (let ((_$e21224_
-                                       (gx#core-context-prelude__opt-lambda11975
+                                       (gx#core-context-prelude__opt-lambda12030
                                         _hd21222_)))
                                   (if _$e21224_
                                       ((lambda (_pre21227_)
@@ -267,7 +267,7 @@
                               _library-path21168_)))
                     (begin
                       (gxc#verbose '"Loading ssxi module " _ssxi-path21170_)
-                      (gx#import-module__opt-lambda12010
+                      (gx#import-module__opt-lambda12065
                        _ssxi-path21170_
                        '#t
                        '#t))))))

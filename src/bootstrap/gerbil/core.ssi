@@ -386,6 +386,7 @@ namespace: gerbil/core
                     (string-split string-split)
                     (string-join string-join)
                     (string-empty? string-empty?)
+                    (string-prefix? string-prefix?)
                     (type-descriptor? type-descriptor?)
                     (struct-type? struct-type?)
                     (class-type? class-type?)

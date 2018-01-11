@@ -87,8 +87,8 @@ namespace: gx
           gx#current-module-reader-args)
          (%#define-runtime module-context:::init! gx#module-context:::init!)
          (%#begin (%#define-runtime
-                   prelude-context:::init!__opt-lambda12062
-                   gx#prelude-context:::init!__opt-lambda12062)
+                   prelude-context:::init!__opt-lambda12117
+                   gx#prelude-context:::init!__opt-lambda12117)
                   (%#begin (%#define-runtime
                             prelude-context:::init!__0
                             gx#prelude-context:::init!__0)
@@ -105,8 +105,8 @@ namespace: gx
           gx#export-expander::apply-export-expander)
          (%#define-runtime module-source-path gx#module-source-path)
          (%#begin (%#define-runtime
-                   import-module__opt-lambda12010
-                   gx#import-module__opt-lambda12010)
+                   import-module__opt-lambda12065
+                   gx#import-module__opt-lambda12065)
                   (%#begin (%#define-runtime
                             import-module__0
                             gx#import-module__0)
@@ -117,8 +117,8 @@ namespace: gx
          (%#define-runtime eval-module gx#eval-module)
          (%#define-runtime core-eval-module gx#core-eval-module)
          (%#begin (%#define-runtime
-                   core-context-prelude__opt-lambda11975
-                   gx#core-context-prelude__opt-lambda11975)
+                   core-context-prelude__opt-lambda12030
+                   gx#core-context-prelude__opt-lambda12030)
                   (%#begin (%#define-runtime
                             core-context-prelude__0
                             gx#core-context-prelude__0)
@@ -129,8 +129,8 @@ namespace: gx
           core-module->prelude-context
           gx#core-module->prelude-context)
          (%#begin (%#define-runtime
-                   core-import-module__opt-lambda11846
-                   gx#core-import-module__opt-lambda11846)
+                   core-import-module__opt-lambda11901
+                   gx#core-import-module__opt-lambda11901)
                   (%#begin (%#define-runtime
                             core-import-module__0
                             gx#core-import-module__0)
@@ -148,8 +148,8 @@ namespace: gx
           gx#core-module-path->namespace)
          (%#define-runtime core-module-path->id gx#core-module-path->id)
          (%#begin (%#define-runtime
-                   core-resolve-module-path__opt-lambda11465
-                   gx#core-resolve-module-path__opt-lambda11465)
+                   core-resolve-module-path__opt-lambda11520
+                   gx#core-resolve-module-path__opt-lambda11520)
                   (%#begin (%#define-runtime
                             core-resolve-module-path__0
                             gx#core-resolve-module-path__0)
@@ -159,6 +159,21 @@ namespace: gx
          (%#define-runtime
           core-resolve-library-module-path
           gx#core-resolve-library-module-path)
+         (%#define-runtime
+          core-library-package-path-prefix
+          gx#core-library-package-path-prefix)
+         (%#begin (%#define-runtime
+                   core-library-package-plist__opt-lambda11412
+                   gx#core-library-package-plist__opt-lambda11412)
+                  (%#begin (%#define-runtime
+                            core-library-package-plist__0
+                            gx#core-library-package-plist__0)
+                           (%#define-runtime
+                            core-library-package-plist
+                            gx#core-library-package-plist)))
+         (%#define-runtime
+          core-library-package-cache
+          gx#core-library-package-cache)
          (%#define-runtime
           core-library-module-path?
           gx#core-library-module-path?)

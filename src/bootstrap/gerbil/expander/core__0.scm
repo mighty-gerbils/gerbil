@@ -11,6 +11,8 @@
   (define gx#current-expander-module-prelude (make-parameter '#f))
   (define gx#current-expander-module-registry (make-parameter '#f))
   (define gx#current-expander-module-library-path (make-parameter '#f))
+  (define gx#current-expander-module-library-package-cache
+    (make-parameter '#f))
   (define gx#expander-context::t
     (make-struct-type
      'gx#expander-context::t
