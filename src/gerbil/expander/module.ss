@@ -455,8 +455,9 @@ namespace: gx
    ((current-expander-module-library-package-cache)
     => values)
    (else
-    (current-expander-module-library-package-cache (make-hash-table))
-    (core-library-package-cache))))
+    (let (cache (make-hash-table))
+      (current-expander-module-library-package-cache cache)
+      cache))))
 
 (def (core-library-module-path? stx)
   (core-special-module-path? stx #\:))
