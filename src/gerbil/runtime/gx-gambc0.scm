@@ -1290,6 +1290,16 @@
 (define (string-empty? str)
   (##fxzero? (string-length str)))
 
+(define (string-prefix? str prefix)
+  (let ((str-len (string-length str))
+        (prefix-len (string-length prefix)))
+    (and (##fx<= prefix-len str-len)
+         (let lp ((i 0))
+           (if (##fx< i prefix-len)
+             (and (eq? (##string-ref str i) (##string-ref prefix i))
+                  (lp (##fx+ i 1)))
+             #t)))))
+
 (define (string-index str char #!optional (start 0))
   (let ((len (string-length str)))
     (let lp ((k start))
