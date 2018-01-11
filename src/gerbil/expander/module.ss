@@ -347,9 +347,9 @@ namespace: gx
            (pkg-path []))
     (let (gerbil.pkg (path-expand "gerbil.pkg" dir))
       (if (file-exists? gerbil.pkg)
-        (let (plist (call-with-input-file gerbil.pkg read))
+        (let (plist (core-library-package-plist dir #t))
           (cond
-           ((eof-object? plist)         ; empty
+           ((null? plist)               ; empty
             (let (pkg (and (not (null? pkg-path))
                            (string-join pkg-path "/")))
               (values pre ns pkg)))
@@ -403,15 +403,60 @@ namespace: gx
     (let lp ((rest (current-expander-module-library-path)))
       (match rest
         ([dir . rest]
-         (let (compiled-path (path-expand ssi dir))
-           (if (file-exists? compiled-path)
-             (path-normalize compiled-path)
-             (let (src-path (path-expand src dir))
-               (if (file-exists? src-path)
-                 (path-normalize src-path)
-                 (lp rest))))))
+         (def (resolve ssi src)
+           (let (compiled-path (path-expand ssi dir))
+             (if (file-exists? compiled-path)
+               (path-normalize compiled-path)
+               (let (src-path (path-expand src dir))
+                 (if (file-exists? src-path)
+                   (path-normalize src-path)
+                   (lp rest))))))
+         (cond
+          ((core-library-package-path-prefix dir)
+           => (lambda (prefix)
+                (if (string-prefix? spath prefix)
+                  (let ((ssi (substring ssi (string-length prefix) (string-length ssi)))
+                        (src (substring src (string-length prefix) (string-length src))))
+                    (resolve ssi src))
+                  (lp rest))))
+          (else
+           (resolve ssi src))))
         ([] (raise-syntax-error #f "Cannot find library module" libpath))))))
 
+(def (core-library-package-path-prefix dir)
+  (cond
+   ((pgetq package: (core-library-package-plist dir))
+    => (lambda (pkg)
+         (string-append (symbol->string pkg) "/")))
+   (else #f)))
+
+(def (core-library-package-plist dir (exists? #f))
+  (let (cache (core-library-package-cache))
+    (cond
+     ((hash-get cache dir)
+      => values)
+     (else
+      (let* ((gerbil.pkg (path-expand "gerbil.pkg" dir))
+             (plist
+              (if (or exists? (file-exists? gerbil.pkg))
+                (let (e (call-with-input-file gerbil.pkg read))
+                  (cond
+                   ((eof-object? e) [])
+                   ((list? e) e)
+                   (else
+                    (raise-syntax-error #f "Malformed package info; unexpected datum"
+                                        gerbil.pkg e))))
+                [])))
+        (hash-put! cache dir plist)
+        plist)))))
+
+(def (core-library-package-cache)
+  (cond
+   ((current-expander-module-library-package-cache)
+    => values)
+   (else
+    (current-expander-module-library-package-cache (make-hash-table))
+    (core-library-package-cache))))
 
 (def (core-library-module-path? stx)
   (core-special-module-path? stx #\:))
