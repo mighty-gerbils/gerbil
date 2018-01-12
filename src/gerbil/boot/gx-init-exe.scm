@@ -56,9 +56,11 @@
                  (filter (lambda (path) (not (string-empty? path)))
                          (string-split ev #\:))))
            (else '())))
+         (userpath
+          (path-expand "lib" (getenv "GERBIL_PATH" "~/.gerbil")))
          (loadpath
-            (if (file-exists? "~/.gerbil/lib")
-              (cons (path-normalize "~/.gerbil/lib") loadpath)
+            (if (file-exists? userpath)
+              (cons (path-normalize userpath) loadpath)
               loadpath)))
     ((eval '&current-module-libpath) (cons __gx#libdir loadpath))
     ((eval '&current-module-registry) (make-hash-table))

@@ -37,10 +37,12 @@
                    (filter (lambda (path) (not (string-empty? path)))
                            (string-split ev #\:))))
              (else '())))
+           (userpath
+            (path-expand "lib" (getenv "GERBIL_PATH" "~/.gerbil")))
            (loadpath
-            (if (file-exists? "~/.gerbil/lib")
-              (cons (path-normalize "~/.gerbil/lib") loadpath)
-              (cons "~/.gerbil/lib" loadpath)))) ; maybe later (interactive gxi)
+            (if (file-exists? userpath)
+              (cons (path-normalize userpath) loadpath) ; exists, pin it
+              (cons userpath loadpath)))) ; maybe later (interactive gxi)
       (&current-module-libpath (cons libdir loadpath))
       (_gx#gerbil-loadpath loadpath))
     (&current-module-registry (make-hash-table))

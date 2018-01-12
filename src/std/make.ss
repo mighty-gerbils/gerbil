@@ -35,8 +35,10 @@ package: std
        static: (static #f)
        verbose: (verbose #f)
        depgraph: (depgraph #f))
-  (let* ((srcdir (or srcdir (error "srcdir must be specified")))
-         (libdir (or libdir "~/.gerbil/lib"))
+  (let* ((gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
+         (srcdir (or srcdir (error "srcdir must be specified")))
+         (libdir (or libdir (path-expand "lib" gerbil-path)))
+         (bindir (or bindir (path-expand "bin" gerbil-path)))
          (settings  [srcdir: srcdir libdir: libdir bindir: bindir
                      prefix: prefix force: force?
                      optimize: optimize debug: debug?
