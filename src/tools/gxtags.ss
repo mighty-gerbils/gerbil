@@ -1,7 +1,8 @@
-;; -*- Gerbil -*-
-;; Generate emacs TAGS from gerbil sources
-;; only exported symbols are tagged.
-;; Usage: gxtags [-a] [-o tags-file] file-or-directory ...
+;;; -*- Gerbil -*-
+;;; © vyzo
+;;; Generate emacs TAGS from gerbil sources
+;;; only exported symbols are tagged.
+;;; Usage: gxtags [-a] [-o tags-file] file-or-directory ...
 
 (import :gerbil/expander
         (only-in :gerbil/compiler/base ast-case)
