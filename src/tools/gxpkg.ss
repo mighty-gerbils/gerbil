@@ -27,6 +27,7 @@
              (rest-arguments 'pkg help: "package to install")))
   (def uninstall-cmd
     (command 'uninstall help: "uninstall one or more packages"
+             (flag 'force "-f" "--force" help: "force uninstallation")
              (rest-arguments 'pkg help: "package to uninstall")))
   (def link-cmd
     (command 'link help: "link a local development package"
@@ -34,6 +35,7 @@
              (argument 'src help: "path to package source directory")))
   (def unlink-cmd
     (command 'unlink help: "unlink one or more local development packages"
+             (flag 'force "-f" "--force" help: "force unlink")
              (rest-arguments 'pkg help: "package to unlink")))
   (def compile-cmd
     (command 'compile help: "recompile one or more packages"
@@ -63,12 +65,12 @@
        ((install)
         (install-pkgs (hash-ref opt 'pkg)))
        ((uninstall)
-        (uninstall-pkgs (hash-ref opt 'pkg)))
+        (uninstall-pkgs (hash-ref opt 'pkg) (hash-get opt 'force)))
        ((link)
         (link-pkg (hash-ref opt 'pkg)
                   (hash-ref opt 'src)))
        ((unlink)
-        (unlink-pkgs (hash-ref opt 'pkg)))
+        (unlink-pkgs (hash-ref opt 'pkg) (hash-get opt 'force)))
        ((compile)
         (compile-pkgs (hash-ref opt 'pkg)))
        ((build)
@@ -99,13 +101,13 @@
 (def (install-pkgs pkgs)
   (IMPLEMENTME install-pkgs))
 
-(def (uninstall-pkgs pkgs)
+(def (uninstall-pkgs pkgs force?)
   (IMPLEMENTME uninstall-pkgs))
 
 (def (link-pkg pkg src)
   (IMPLEMENTME link-pkg))
 
-(def (unlink-pkgs pkgs)
+(def (unlink-pkgs pkgs force?)
   (IMPLEMENTME unlink-pkgs))
 
 (def (compile-pkgs pkgs)
