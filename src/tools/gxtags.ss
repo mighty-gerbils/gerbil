@@ -137,6 +137,12 @@
         ((%#module id expr ...)
          (let ((eid (binding-id (resolve-identifier #'id)))
                (ctx (syntax-local-e #'id)))
+           ;; this only tags bindings if they are exported by the parent
+           ;; module; this works well for prelude-style module structures
+           ;; but doesn't tag bindings reachable because the module itself
+           ;; is exported
+           ;; TODO if the module is exported, add module's exports to the
+           ;;      tag table
            (parameterize ((current-expander-context ctx))
              (tag-name! eid)
              (for-each tag-e #'(expr ...)))))
