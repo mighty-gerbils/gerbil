@@ -5,7 +5,8 @@
 
 (def build-spec
   '((exe: "gxprof")
-    (exe: "gxtags")))
+    (exe: "gxtags")
+    (exe: "gxpkg")))
 
 (def srcdir
   (path-normalize (path-directory (this-source-file))))
