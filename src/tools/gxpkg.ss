@@ -3,15 +3,15 @@
 ;;; The Gerbil Package Manager
 ;;;
 ;;; Usage:
-;;;   gxpkg action pkg ....
+;;;   gxpkg action arg ....
 ;;; Actions:
-;;;   install
-;;;   uninstall
-;;;   link
-;;;   unlink
-;;;   compile
-;;;   build
-;;;   clean
+;;;   install pkg ...
+;;;   uninstall pkg ...
+;;;   link pkg src
+;;;   unlink pkg ...
+;;;   compile pkg ...
+;;;   build pkg ...
+;;;   clean pkg ...
 ;;; Packages:
 ;;;   all                     -- action applies to all packages
 ;;;   github.com/user/package -- github based packages
@@ -39,15 +39,15 @@
              (rest-arguments 'pkg help: "package to unlink")))
   (def compile-cmd
     (command 'compile help: "recompile one or more packages"
-             (rest-arguments 'pkg help: "package to compile")))
+             (rest-arguments 'pkg help: "package to compile; all for all installed packages")))
   (def build-cmd
     (command 'build help: "rebuild one or more packages and their dependents"
-             (rest-arguments 'pkg help: "package to build")))
+             (rest-arguments 'pkg help: "package to build; all for all installed packages")))
   (def clean-cmd
     (command 'clean help: "clean compilation artefacts from one or more packages"
-             (rest-arguments 'pkg help: "package to clean")))
+             (rest-arguments 'pkg help: "package to clean; all for all installed packages")))
   (def help-cmd
-    (command 'help help: "display help"
+    (command 'help help: "display help; help <command> for command help"
              (optional-argument 'command value: string->symbol)))
   (def gopt
     (getopt install-cmd
