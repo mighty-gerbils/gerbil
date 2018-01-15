@@ -22,6 +22,7 @@
         :gerbil/gambit/exceptions)
 (export main
         ;; script api
+        pkg-root-dir
         pkg-install pkg-uninstall pkg-update
         pkg-link pkg-unlink
         pkg-build pkg-clean
@@ -55,6 +56,8 @@
              (rest-arguments 'pkg help: "package to clean; all for all installed packages")))
   (def list-cmd
     (command 'list help: "list installed packages"))
+  (def retag-cmd
+    (command 'retag help: "retag installed packages"))
   (def help-cmd
     (command 'help help: "display help; help <command> for command help"
              (optional-argument 'command value: string->symbol)))
@@ -67,6 +70,7 @@
             build-cmd
             clean-cmd
             list-cmd
+            retag-cmd
             help-cmd))
 
   (try
@@ -89,6 +93,8 @@
         (clean-pkgs (hash-ref opt 'pkg)))
        ((list)
         (list-pkgs))
+       ((retag)
+        (retag-pkgs))
        ((help)
         (let (topic
               (hash-get
@@ -98,6 +104,8 @@
                         (unlink unlink-cmd)
                         (build build-cmd)
                         (clean clean-cmd)
+                        (list list-cmd)
+                        (retag retag-cmd)
                         (help help-cmd))
                (hash-get opt 'command)))
           (getopt-display-help (or topic gopt) "gxpkg")))))
@@ -109,26 +117,36 @@
      (exit 2))))
 
 ;;; commands
+(defrules fold-pkgs ()
+  ((_ pkgs action action-arg ...)
+   (let lp ((rest pkgs) (retag? #f))
+     (match rest
+       ([pkg . rest]
+        (if (action pkg action-arg ...)
+          (lp rest #t)
+          (lp rest retag?)))
+       (else
+        (when retag?
+          (pkg-retag)))))))
+
 (def (install-pkgs pkgs)
-  (for-each pkg-install pkgs)
-  (for-each pkg-tag pkgs))
+  (def (install pkg)
+    (when (pkg-install pkg) ; don't tag if it was already installed
+      (pkg-tag pkg)))
+  (for-each install pkgs))
 
 (def (uninstall-pkgs pkgs force?)
-  (for-each (cut pkg-uninstall <> force?) pkgs)
-  (unless (null? pkgs)
-    (pkg-retag)))
+  (fold-pkgs pkgs pkg-uninstall force?))
+
+(def (update-pkgs pkgs)
+  (fold-pkgs pkgs pkg-update))
 
 (def (link-pkg pkg src)
   (pkg-link pkg src)
   (pkg-tag pkg))
 
 (def (unlink-pkgs pkgs force?)
-  (for-each (cut pkg-unlink <> force?) pkgs)
-  (pkg-retag))
-
-(def (update-pkgs pkgs)
-  (for-each pkg-update pkgs)
-  (pkg-retag))
+  (fold-pkgs pkgs pkg-unlink force?))
 
 (def (build-pkgs pkgs)
   (for-each pkg-build pkgs))
@@ -139,6 +157,9 @@
 (def (list-pkgs)
   (for-each displayln (pkg-list)))
 
+(def (retag-pkgs)
+  (pkg-retag))
+
 ;;; action implementation -- script api
 (defrules IMPLEMENTME ()
   ((_ what)
@@ -148,9 +169,9 @@
   (path-expand "pkg" (getenv "GERBIL_PATH" "~/.gerbil")))
 
 (def pkg-root-dir
-  (let (f (delay (create-directory* +pkg-root-dir+)))
+  (let (once (delay (create-directory* +pkg-root-dir+)))
     (lambda ()
-      (force f)
+      (force once)
       +pkg-root-dir+)))
 
 (def (pkg-install pkg)
