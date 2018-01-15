@@ -81,7 +81,7 @@ package: std
         (with-syntax ((struct::t (@ type-info runtime-identifier)))
           #'((struct-instance? struct::t arg-id) struct::t)))
        ((runtime-class-info? type-info)
-        (with-syntax ((class:t (@ type-info runtime-identifier)))
+        (with-syntax ((class::t (@ type-info runtime-identifier)))
           #'((class-instace? class::t arg-id) class::t)))
        (else
         (raise-syntax-error #f "Bad syntax; unknown argument type" stx)))))
