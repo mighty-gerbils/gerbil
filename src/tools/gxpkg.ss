@@ -119,7 +119,7 @@
      (exit 2))))
 
 ;;; commands
-(defrules fold-pkgs ()
+(defrules fold-pkgs-retag ()
   ((_ pkgs action action-arg ...)
    (let lp ((rest pkgs) (retag? #f))
      (match rest
@@ -138,17 +138,17 @@
   (for-each install pkgs))
 
 (def (uninstall-pkgs pkgs force?)
-  (fold-pkgs pkgs pkg-uninstall force?))
+  (fold-pkgs-retag pkgs pkg-uninstall force?))
 
 (def (update-pkgs pkgs)
-  (fold-pkgs pkgs pkg-update))
+  (fold-pkgs-retag pkgs pkg-update))
 
 (def (link-pkg pkg src)
   (pkg-link pkg src)
   (pkg-tag pkg))
 
 (def (unlink-pkgs pkgs force?)
-  (fold-pkgs pkgs pkg-unlink force?))
+  (fold-pkgs-retag pkgs pkg-unlink force?))
 
 (def (build-pkgs pkgs)
   (for-each pkg-build pkgs))
