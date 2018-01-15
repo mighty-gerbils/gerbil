@@ -10,11 +10,10 @@
 ;;;   update pkg ...
 ;;;   link pkg src
 ;;;   unlink pkg ...
-;;;   compile pkg ...
 ;;;   build pkg ...
 ;;;   clean pkg ...
 ;;; Packages:
-;;;   all                     -- action applies to all packages
+;;;   all                     -- action applies to all packages where sensible to do so
 ;;;   github.com/user/package -- github based packages
 ;;;   TODO gitlab, bitbucket etc
 
@@ -25,8 +24,9 @@
         ;; script api
         pkg-install pkg-uninstall pkg-update
         pkg-link pkg-unlink
-        pkg-compile pkg-build pkg-clean
-        pkg-list)
+        pkg-build pkg-clean
+        pkg-list
+        pkg-tag pkg-retag)
 
 (def (main . args)
   (def install-cmd
@@ -35,7 +35,7 @@
   (def uninstall-cmd
     (command 'uninstall help: "uninstall one or more packages"
              (flag 'force "-f" "--force" help: "force uninstallation")
-             (rest-arguments 'pkg help: "package to uninstall")))
+             (rest-arguments 'pkg help: "package to uninstall; all for all installed packages")))
   (def update-cmd
     (command 'update help: "update one or more packages"
              (rest-arguments 'pkg help: "package to update; all for all installed packages")))
@@ -46,10 +46,7 @@
   (def unlink-cmd
     (command 'unlink help: "unlink one or more local development packages"
              (flag 'force "-f" "--force" help: "force unlink")
-             (rest-arguments 'pkg help: "package to unlink")))
-  (def compile-cmd
-    (command 'compile help: "recompile one or more packages"
-             (rest-arguments 'pkg help: "package to compile; all for all installed packages")))
+             (rest-arguments 'pkg help: "package to unlink; all for all linked packages")))
   (def build-cmd
     (command 'build help: "rebuild one or more packages and their dependents"
              (rest-arguments 'pkg help: "package to build; all for all installed packages")))
@@ -67,7 +64,6 @@
             update-cmd
             link-cmd
             unlink-cmd
-            compile-cmd
             build-cmd
             clean-cmd
             list-cmd
@@ -87,8 +83,6 @@
                   (hash-ref opt 'src)))
        ((unlink)
         (unlink-pkgs (hash-ref opt 'pkg) (hash-get opt 'force)))
-       ((compile)
-        (compile-pkgs (hash-ref opt 'pkg)))
        ((build)
         (build-pkgs (hash-ref opt 'pkg)))
        ((clean)
@@ -102,7 +96,6 @@
                         (uninstall uninstall-cmd)
                         (link link-cmd)
                         (unlink unlink-cmd)
-                        (compile compile-cmd)
                         (build build-cmd)
                         (clean clean-cmd)
                         (help help-cmd))
@@ -113,26 +106,29 @@
      (exit 1))
    (catch (e)
      (display-exception e (current-error-port))
-     (exit 1))))
+     (exit 2))))
 
 ;;; commands
 (def (install-pkgs pkgs)
-  (for-each pkg-install pkgs))
+  (for-each pkg-install pkgs)
+  (for-each pkg-tag pkgs))
 
 (def (uninstall-pkgs pkgs force?)
-  (for-each (cut pkg-uninstall <> force?) pkgs))
+  (for-each (cut pkg-uninstall <> force?) pkgs)
+  (unless (null? pkgs)
+    (pkg-retag)))
 
 (def (link-pkg pkg src)
-  (pkg-link pkg src))
+  (pkg-link pkg src)
+  (pkg-tag pkg))
 
 (def (unlink-pkgs pkgs force?)
-  (for-each (cut pkg-unlink <> force?) pkgs))
+  (for-each (cut pkg-unlink <> force?) pkgs)
+  (pkg-retag))
 
 (def (update-pkgs pkgs)
-  (for-each pkg-update pkgs))
-
-(def (compile-pkgs pkgs)
-  (for-each pkg-compile pkgs))
+  (for-each pkg-update pkgs)
+  (pkg-retag))
 
 (def (build-pkgs pkgs)
   (for-each pkg-build pkgs))
@@ -148,29 +144,41 @@
   ((_ what)
    (error "XXX IMPLEMENT ME: " 'what)))
 
+(def +pkg-root-dir+
+  (path-expand "pkg" (getenv "GERBIL_PATH" "~/.gerbil")))
+
+(def pkg-root-dir
+  (let (f (delay (create-directory* +pkg-root-dir+)))
+    (lambda ()
+      (force f)
+      +pkg-root-dir+)))
+
 (def (pkg-install pkg)
-  (IMPLEMENTME install-pkg))
+  (IMPLEMENTME pkg-install))
 
 (def (pkg-uninstall pkg (force? #f))
-  (IMPLEMENTME uninstall-pkg))
-
-(def (pkg-link pkg src)
-  (IMPLEMENTME link-pkg))
-
-(def (pkg-unlink pkg (force? #f))
-  (IMPLEMENTME unlink-pkg))
+  (IMPLEMENTME pkg-uninstall))
 
 (def (pkg-update pkg)
-  (IMPLEMENTME update-pkg))
+  (IMPLEMENTME pkg-update))
 
-(def (pkg-compile pkg)
-  (IMPLEMENTME compile-pkg))
+(def (pkg-link pkg src)
+  (IMPLEMENTME pkg-link))
+
+(def (pkg-unlink pkg (force? #f))
+  (IMPLEMENTME pkg-unlink))
 
 (def (pkg-build pkg)
-  (IMPLEMENTME build-pkg))
+  (IMPLEMENTME pkg-build))
 
 (def (pkg-clean pkg)
   (IMPLEMENTME pkg-clean))
 
 (def (pkg-list pkg)
   (IMPLEMENTME pkg-list))
+
+(def (pkg-tag pkg)
+  (IMPLEMENTME pkg-tag))
+
+(def (pkg-retag)
+  (IMPLEMENTME pkg-retag))
