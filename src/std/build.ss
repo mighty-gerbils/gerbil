@@ -13,7 +13,7 @@
         libdir: libdir
         optimize: #t
         static: #t
-        debug: 'env
+        debug: 'src
         depgraph: depgraph
         prefix: "std"
         build-spec))
