@@ -29,7 +29,7 @@
         pkg-link pkg-unlink
         pkg-build pkg-clean
         pkg-list
-        pkg-tag pkg-retag)
+        pkg-retag)
 
 (def (main . args)
   (def install-cmd
@@ -132,10 +132,7 @@
           (pkg-retag)))))))
 
 (def (install-pkgs pkgs)
-  (def (install pkg)
-    (when (pkg-install pkg) ; don't tag if it was already installed
-      (pkg-tag pkg)))
-  (for-each install pkgs))
+  (fold-pkgs-retag pkgs pkg-install))
 
 (def (uninstall-pkgs pkgs force?)
   (fold-pkgs-retag pkgs pkg-uninstall force?))
