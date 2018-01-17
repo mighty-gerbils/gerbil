@@ -6,7 +6,7 @@ package: std/generic
 (import :gerbil/gambit/threads)
 (export type-of linear-type-of type-linearize-class
         make-generic generic? generic-id generic-dispatch
-        generic-dispatch)
+        generic-bind! generic-dispatch)
 
 (declare (not safe))
 
@@ -167,6 +167,71 @@ package: std/generic
 (defmethod {:init! generic-table}
   (lambda (self)
     (struct-instance-init! self [] (make-vector 10 #f) (make-mutex 'generic-table))))
+
+;;; Generic Method binding
+
+(def (generic-bind! gen signature method)
+  (unless (procedure? method)
+    (error "Bad method; expected procedure" method))
+  (let ((arity (length signature))
+        (mx (&generic-mx gen)))
+    (mutex-lock! mx)
+    (let (tabs (&generic-tabs gen))
+      (if (##fx< arity (##vector-length tabs))
+        (cond
+         ((##vector-ref tabs arity)
+          => (lambda (gtab)
+               (generic-bind-method! gtab signature method)))
+         (else
+          (let (gtab (make-generic-table))
+            (##vector-set! tabs arity gtab)
+            (generic-bind-method! gtab signature method))))
+        (let ((new-tabs (make-vector (fx1+ arity) #f))
+              (gtab (make-generic-table)))
+          (##subvector-move! tabs 0 (##vector-length tabs) new-tabs 0)
+          (##vector-set! new-tabs arity gtab)
+          (set! (&generic-tabs gen) new-tabs)
+          (generic-bind-method! gtab signature method))))
+    (mutex-unlock! mx)))
+
+(def (generic-bind-method! gtab signature method)
+  (let (new-methods (generic-add-method (&generic-table-methods gtab) signature method))
+    (let (mx (&generic-table-mx gtab))
+      (mutex-lock! mx)
+      (set! (&generic-table-methods gtab)
+        new-methods)
+      ;; invalidate cache
+      (set! (&generic-table-cache gtab)
+        (make-vector (##vector-length (&generic-table-cache gtab)) #f))
+      (mutex-unlock! mx))))
+
+(def (generic-add-method methods signature method)
+  (let recur ((rest methods))
+    (match rest
+      ([hd . rest]
+       (with ([hd-signature . hd-method] hd)
+         (cond
+          ((generic-dispatch-before? signature hd-signature)
+           (cons* (cons signature method) hd rest))
+          ((equal? signature hd-signature)
+           (cons (cons signature method) rest))
+          (else
+           (cons hd (recur rest))))))
+      (else
+       [(cons signature method)]))))
+
+(def (generic-dispatch-before? sig-a sig-b)
+  (let lp ((rest-a sig-a) (rest-b sig-b))
+    (match rest-a
+      ([type-a . rest-a]
+       (with ([type-b . rest-b] rest-b)
+         (and (not (generic-dispatch-type<? type-b type-a))
+              (or (generic-dispatch-type<? type-a type-b)
+                  (lp rest-a rest-b)))))
+      (else #f))))
+
+(def (generic-dispatch-type<? type-a type-b)
+  (memq (car type-b) type-a))
 
 ;;; Generic Method Dispatch
 
