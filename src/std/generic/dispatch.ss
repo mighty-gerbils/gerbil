@@ -195,14 +195,23 @@ package: std/generic
     (mutex-unlock! mx)))
 
 (def (generic-bind-method! gtab signature method)
+  (def (invalidate? cache)
+    (let (cache-len (##vector-length cache))
+      (let lp ((i 0))
+        (if (##fx< i cache-len)
+          (or (##vector-ref cache i)
+              (lp (##fx+ i 1)))
+          #f))))
+
   (let (new-methods (generic-add-method (&generic-table-methods gtab) signature method))
     (let (mx (&generic-table-mx gtab))
       (mutex-lock! mx)
       (set! (&generic-table-methods gtab)
         new-methods)
-      ;; invalidate cache
-      (set! (&generic-table-cache gtab)
-        (make-vector (##vector-length (&generic-table-cache gtab)) #f))
+      ;; invalidate cache if it has any entries
+      (when (invalidate? (&generic-table-cache gtab))
+        (set! (&generic-table-cache gtab)
+          (make-vector (##vector-length (&generic-table-cache gtab)) #f)))
       (mutex-unlock! mx))))
 
 (def (generic-add-method methods signature method)
