@@ -310,12 +310,12 @@ package: std/generic
 ;; and reasonably fast dispatch
 (def (generic-dispatch-cache-lookup cache args)
   (declare (not interrupts-enabled))
-  (def (lookup hash rest)
+  (def (lookup hash shift rest)
     (match rest
       ([arg . rest]
        (let* ((tid (type-of arg))
-              (hash (##fxxor hash (##symbol-hash tid))))
-         (match (lookup hash rest)
+              (hash (##fxxor hash (##fxarithmetic-shift (##symbol-hash tid) shift))))
+         (match (lookup hash (##fx+ shift 1) rest)
            ([xtid . xrest]
             (and (##eq? tid xtid)
                  xrest))
@@ -325,15 +325,16 @@ package: std/generic
               (ix (##fxmodulo hash len)))
          (##vector-ref cache ix)))))
 
-  (let (proc (lookup 0 args))
+  (let (proc (lookup 0 0 args))
     (and (##procedure? proc) proc)))
 
 ;; cache the result of method dispatch
 (def (generic-dispatch-cache! gtab args method)
   (let* ((arg-types (map type-of args))
          (entry (foldl cons method arg-types))
-         (hash (foldl (lambda (tid r) (##fxxor r (##symbol-hash tid)))
-                      0 arg-types)))
+         (hash (foldl (lambda (tid shift r)
+                        (##fxxor r (##fxarithmetic-shift (##symbol-hash tid) shift)))
+                      0 arg-types (iota (length args)))))
     (let lp ((cache (&generic-table-cache gtab)))
       (let* ((len (##vector-length cache))
              (ix (##fxmodulo hash len)))
@@ -347,11 +348,14 @@ package: std/generic
   (def cache-len (##vector-length cache))
 
   (def (hash-entry entry)
-    (match entry
-      ([tid . rest]
-       (##fxxor (##symbol-hash tid)
-                (hash-entry rest)))
-      (else 0)))
+    (let lp ((rest entry) (count 0) (r []))
+      (match rest
+        ([tid . rest]
+         (lp rest (##fx+ count 1) (cons tid r)))
+        (else
+         (foldl (lambda (tid shift r)
+                  (##fxxor r (##fxarithmetic-shift (##symbol-hash tid) shift)))
+                0 r (iota count))))))
 
   (def (rehash! new-cache)
     (def new-cache-len (##vector-length new-cache))
