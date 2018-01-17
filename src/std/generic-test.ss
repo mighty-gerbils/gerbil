@@ -12,32 +12,29 @@
     (test-case "test default dispatch"
       (check (generic-dispatch my-generic 1 2) => #f))
 
-    (generic-add-method! my-generic
-                     (lambda (a b) (and (number? a) (number? b)))
-                     (lambda (next-method a b) ['number+ a b])
-                     '((number t) (number t)))
-    (generic-add-method! my-generic
-                     (lambda (a b) (and (string? a) (string? b)))
-                     (lambda (next-method a b) ['string+ a b])
-                     '((string t) (string t)))
+    (generic-bind! my-generic
+                   '((number t) (number t))
+                   (lambda (a b) ['number+ a b]))
+    (generic-bind! my-generic
+                   '((string t) (string t))
+                   (lambda (a b) ['string+ a b]))
 
     (test-case "test multimethod dispatch"
       (check (generic-dispatch my-generic 1 2) => '(number+ 1 2))
       (check (generic-dispatch my-generic "a" "b") => '(string+ "a" "b")))
 
-    (generic-add-method! my-generic
-                     (lambda (a b) (and (fixnum? a) (fixnum? b)))
-                     (lambda (next-method a b) ['fixnum+ a b])
-                     '((fixnum number t) (fixnum number t)))
+    (generic-bind! my-generic
+                   '((fixnum number t) (fixnum number t))
+                     (lambda (a b) ['fixnum+ a b]))
     (test-case "test specialization"
       (check (generic-dispatch my-generic 1 2) => '(fixnum+ 1 2))
       (check (generic-dispatch my-generic 1.0 2.0) => '(number+ 1.0 2.0)))
 
     (defstruct A (x))
-    (generic-add-method! my-generic
-                         (lambda (a b) (and (A? a) (A? b)))
-                         (lambda (next-method a b) ['A+ (A-x a) (A-x b)])
-                         [A::t A::t])
+    (generic-bind! my-generic
+                   [(type-linearize-class A::t)
+                    (type-linearize-class A::t)]
+                   (lambda (a b) ['A+ (A-x a) (A-x b)]))
     (test-case "test user type dispatch"
       (check (generic-dispatch my-generic (make-A 1) (make-A 2)) => '(A+ 1 2)))))
 

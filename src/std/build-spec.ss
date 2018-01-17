@@ -13,6 +13,9 @@
     "error"
     "getopt"
     "logger"
+    (gxc: "generic/dispatch" "-e" "(include \"~~lib/_gambit#.scm\")")
+    "generic/macros"
+    (gxc: "generic/builtin" "-e" "(include \"~~lib/_gambit#.scm\")")
     "generic"
     (gxc: "event" "-e" "(include \"~~lib/_gambit#.scm\")")
     "coroutine"
