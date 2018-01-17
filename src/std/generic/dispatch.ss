@@ -79,10 +79,13 @@ package: std/generic
     (type-linearize-record-type klass)))
 
 (def (type-linearize-class-type klass)
-  (foldr (lambda (klass r)
-           (cons (##type-id klass) r))
-         [(##type-id klass) 'object 't]
-         (type-descriptor-mixin klass)))
+  (let lp ((rest (type-descriptor-mixin klass))
+           (r [(##type-id klass)]))
+    (match rest
+      ([klass . rest]
+       (lp rest (cons (##type-id klass) r)))
+      (else
+       (foldl cons '(object t) r)))))
 
 (def (type-linearize-struct-type klass)
   (type-linearize-record-type klass '(object t)))
