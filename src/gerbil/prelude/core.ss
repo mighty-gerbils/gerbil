@@ -191,10 +191,6 @@ package: gerbil
     find-method
     next-method call-next-method
     struct-subtype? class-subtype?
-    ;; generics
-    make-generic generic? generic-id
-    generic-add-method!
-    generic-dispatch
     ;; control
     current-error-port
     make-promise promise?
