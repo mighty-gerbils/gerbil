@@ -6,7 +6,7 @@ package: std/generic
 (import :gerbil/gambit/threads)
 (export type-of linear-type-of type-linearize-class
         make-generic generic? generic-id generic-dispatch
-        generic-bind! generic-dispatch)
+        generic-bind! generic-dispatch generic-dispatch-next)
 
 (declare (not safe))
 
@@ -304,6 +304,36 @@ package: std/generic
          (and (memq (car sign-tids) arg-tids)
               (lp rest-args rest-sign))))
       (else #t))))
+
+;; @next-method implementation
+(def (generic-dispatch-next gen method . args)
+  (def (drop method methods)
+    (let lp ((rest methods))
+      (match rest
+        ([[signature . proc] . rest]
+         (if (eq? method proc)
+           rest
+           (lp rest)))
+        (else []))))
+
+  (let ((arity (##length args))
+        (tabs (&generic-tabs gen)))
+    (cond
+     ((and (##fx< arity (##vector-length tabs))
+           (##vector-ref tabs arity))
+      => (lambda (gtab)
+           (let (methods (drop method (&generic-table-methods gtab)))
+             (cond
+              ((generic-dispatch-find-method methods args)
+               => (lambda (method)
+                    (apply method args)))
+              ((&generic-default gen)
+               => (lambda (method)
+                    (apply method args)))
+              (else
+               (error "No next method matching arguments" (generic-id gen) args))))))
+     (else
+      (error "Cannot dispatch next method; no dispatch table" (generic-id gen) args)))))
 
 ;; The cache is a perfect hash table represented as a vector containing
 ;; cache entries. A cache entry is an inverted arg type id improper list

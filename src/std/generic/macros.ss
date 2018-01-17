@@ -107,6 +107,8 @@ package: std/generic
             (stx-andmap generic-type-id? #'(type-id ...)))
        (with-syntax* ((impl-id
                        (generic-impl-id #'generic-id #'(type-id ...)))
+                      (@next-method
+                       (stx-identifier #'generic-id '@next-method))
                       (generic::t
                        (@ (syntax-local-value #'generic-id)
                           table))
@@ -114,10 +116,16 @@ package: std/generic
                        (stx-map syntax-local-value #'(type-id ...)))
                       ((arg-type ...)
                        (map generic-type-e type-infos))
+                      (impl
+                       (syntax/loc stx
+                         (lambda (arg-id ...) body ...)))
                       (defimpl
                         (syntax/loc stx
-                          (def (impl-id arg-id ...)
-                            body ...))))
+                          (def impl-id
+                            (let (@next-method
+                                  (lambda (arg-id ...)
+                                    (generic-dispatch-next generic::t impl-id arg-id ...)))
+                              impl)))))
          (syntax/loc stx
            (begin
              defimpl
