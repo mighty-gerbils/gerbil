@@ -34,8 +34,8 @@ package: std/generic
       (cond
        ((##char? obj)      'char)
        ((##eq? obj '())    'null)
-       ((##eq? obj #f)     'false)
-       ((##eq? obj #t)     'true)
+       ((##eq? obj #f)     'boolean)
+       ((##eq? obj #t)     'boolean)
        ((##eq? obj #!void) 'void)
        ((##eq? obj #!eof)  'eof)
        (else 'unknown))))))
@@ -63,8 +63,8 @@ package: std/generic
       (cond
        ((##char? obj)      '(char t))
        ((##eq? obj '())    '(null t))
-       ((##eq? obj #f)     '(false boolean t))
-       ((##eq? obj #t)     '(true boolean t))
+       ((##eq? obj #f)     '(boolean t))
+       ((##eq? obj #t)     '(boolean t))
        ((##eq? obj #!void) '(void t))
        ((##eq? obj #!eof)  '(eof t))
        (else '(unknown)))))))
