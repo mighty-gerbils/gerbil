@@ -276,9 +276,11 @@ package: std/generic
       (when method
         (let (mx (&generic-table-mx gtab))
           (mutex-lock! mx)
+          ;; we only cache if there was no concurrent redefinition
           (when (eq? methods (&generic-table-methods gtab))
-            ;; we only cache if there was no concurrent redefinition
-            (generic-dispatch-cache! gtab args method))
+            ;; don't try to cache if a concurrent cache miss already did so
+            (unless (generic-dispatch-cache-lookup (&generic-table-cache gtab) args)
+              (generic-dispatch-cache! gtab args method)))
           (mutex-unlock! mx)))
       method))))
 
