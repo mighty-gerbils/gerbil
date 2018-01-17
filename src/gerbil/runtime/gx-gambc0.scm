@@ -852,9 +852,13 @@
   (let recur ((rest dtree))
     (core-match rest
       ((hd . rest)
-       (if (generic-dispatch-before? method hd)
-         (cons* method hd rest)
-         (cons hd (recur rest))))
+       (cond
+        ((generic-dispatch-before? method hd)
+         (cons* method hd rest))
+        ((generic-dispatch-replace? method hd)
+         (cons method rest))
+        (else
+         (cons hd (recur rest)))))
       (else
        (list method)))))
 
@@ -876,6 +880,11 @@
 
 (define (generic-type<? type-a type-b)
   (memq (car type-b) type-a))
+
+(define (generic-dispatch-replace? method-a method-b)
+  (let ((type-a (##vector-ref method-a 2))
+        (type-b (##vector-ref method-b 2)))
+    (equal? type-a type-b)))
 
 ;;; etc
 ;; use gambit type for this
