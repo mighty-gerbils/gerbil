@@ -166,11 +166,10 @@ package: std/generic
 
 (defmethod {:init! generic-table}
   (lambda (self)
-    (struct-instance-init! self [] (vector #f) (make-mutex 'generic-table))))
+    (struct-instance-init! self [] (make-vector 10 #f) (make-mutex 'generic-table))))
 
 ;;; Generic Method Dispatch
 
-;; generic-dispatch
 (def (generic-dispatch gen . args)
   (let ((arity (##length args))
         (tabs (&generic-tabs gen)))
@@ -257,7 +256,54 @@ package: std/generic
 
 ;; cache the result of method dispatch
 (def (generic-dispatch-cache! gtab args method)
-  (error "XXX IMPLEMENT ME: generic-dispatch-cache!"))
+  (let* ((arg-types (map type-of args))
+         (entry (foldl cons method arg-types))
+         (hash (foldl (lambda (tid r) (##fxxor r (##symbol-hash tid)))
+                      0 arg-types)))
+    (let lp ((cache (&generic-table-cache gtab)))
+      (let* ((len (##vector-length cache))
+             (ix (##fxmodulo hash len)))
+        (if (##vector-ref cache ix)     ; conflict
+          (lp (generic-dispatch-cache-rehash cache))
+          (begin
+            (##vector-set! cache ix entry)
+            (set! (&generic-table-cache gtab) cache)))))))
+
+(def (generic-dispatch-cache-rehash cache)
+  (def cache-len (##vector-length cache))
+
+  (def (hash-entry entry)
+    (match entry
+      ([tid . rest]
+       (##fxxor (##symbol-hash tid)
+                (hash-entry rest)))
+      (else 0)))
+
+  (def (rehash! new-cache)
+    (def new-cache-len (##vector-length new-cache))
+    (let lp ((i 0))
+      (if (##fx< i cache-len)
+        (let (entry (##vector-ref cache i))
+          (if entry
+            (let* ((hash (hash-entry entry))
+                   (ix (##fxmodulo hash new-cache-len)))
+              (if (##vector-ref new-cache ix)
+                #f
+                (begin
+                  (##vector-set! new-cache ix entry)
+                  (lp (##fx+ i 1)))))
+            (lp (##fx+ i 1))))
+        #t)))
+
+    (let retry ((new-cache-len (inexact->exact (floor (* cache-len 1.5)))))
+      (if (##fx< new-cache-len +max-cache-size+)
+        (let (new-cache (make-vector new-cache-len #f))
+          (if (rehash! new-cache)
+            new-cache
+            (retry (inexact->exact (floor (* new-cache-len 1.5))))))
+        (error "Cannot rehash generic cache; maximum cache size exceeded"))))
+
+(def +max-cache-size+ (expt 2 16)) ; 64K ought to be enough for everyone -- famous last words
 
 ;;; _gambit#
 (extern namespace: #f
