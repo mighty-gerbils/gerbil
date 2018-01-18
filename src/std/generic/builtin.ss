@@ -6,7 +6,7 @@ package: std/generic
 (import :std/generic/macros)
 (export #t)
 
-
+;; primitive types
 (defprimitive-type <t> ())
 (defprimitive-type <null> (null))
 (defprimitive-type <boolean> (boolean))
@@ -32,7 +32,6 @@ package: std/generic
 (defprimitive-type <continuation> (continuation))
 (defprimitive-type <promise> (promise))
 (defprimitive-type <foreign> (foreign))
-(defprimitive-type <object> (object))
 (defprimitive-type <s8vector> (s8vector))
 (defprimitive-type <u8vector> (u8vector))
 (defprimitive-type <s16vector> (s16vector))
@@ -43,6 +42,9 @@ package: std/generic
 (defprimitive-type <s64vector> (s64vector))
 (defprimitive-type <u64vector> (u64vector))
 (defprimitive-type <f64vector> (f64vector))
+
+;; Gerbil object virtual base type (structs and classes)
+(defprimitive-type <object> (object))
 
 ;; TODO: define all relevant builtin gambit types
 ;; exception base class
