@@ -368,7 +368,8 @@ package: std/generic
       (let* ((len (##vector-length cache))
              (ix (##fxmodulo hash len)))
         (if (##vector-ref cache ix)     ; conflict
-          (lp (generic-dispatch-cache-rehash cache))
+          (cond
+           ((generic-dispatch-cache-rehash cache) => lp))
           (begin
             (##vector-set! cache ix entry)
             (set! (&generic-table-cache gtab) cache)))))))
@@ -408,7 +409,11 @@ package: std/generic
           (if (rehash! new-cache)
             new-cache
             (retry (inexact->exact (floor (* new-cache-len 1.5))))))
-        (error "Cannot rehash generic cache; maximum cache size exceeded"))))
+        (begin
+          ;; that's a cache pathology -- i'd like to know about it.
+          (display "*** Warning: cannot rehash generic cache; maximum cache size exceeded\n"
+                   ##stderr-port)
+          #f))))
 
 (def +max-cache-size+ (expt 2 16)) ; 64K ought to be enough for everyone -- famous last words
 
