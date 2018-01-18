@@ -252,10 +252,7 @@ package: std/generic
            (##vector-ref tabs arity))
       => (lambda (gtab)
            (cond
-            ((generic-dispatch-method gtab args)
-             => (lambda (method)
-                  (apply method args)))
-            ((&generic-default gen)
+            ((generic-dispatch-method gtab args (&generic-default gen))
              => (lambda (method)
                   (apply method args)))
             (else
@@ -266,13 +263,13 @@ package: std/generic
      (else
       (error "No method matching arguments" (generic-id gen) args)))))
 
-(def (generic-dispatch-method gtab args)
+(def (generic-dispatch-method gtab args default)
   (cond
    ((generic-dispatch-cache-lookup (&generic-table-cache gtab) args)
     => values)
    (else
     (let* ((methods (&generic-table-methods gtab))
-           (method (generic-dispatch-find-method methods args)))
+           (method (or (generic-dispatch-find-method methods args) default)))
       (when method
         (let (mx (&generic-table-mx gtab))
           (mutex-lock! mx)
