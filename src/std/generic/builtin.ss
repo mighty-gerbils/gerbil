@@ -46,7 +46,7 @@ package: std/generic
 ;; Gerbil object virtual base type (structs and classes)
 (defprimitive-type <object> (object))
 
-;; TODO: define all relevant builtin gambit types
+;; builtin Gambit objects
 ;; exception base class
 (defbuiltin-type <exception> (macro-type-exception))
 ;; hash-tables and time
