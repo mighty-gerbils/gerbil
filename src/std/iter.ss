@@ -38,8 +38,7 @@ package: std
 (def (iter-nil? obj)
   (eq? iter-nil obj))
 
-(defgeneric :iter
-  (lambda (obj) (call-method obj ':iter)))
+(defgeneric :iter)
 (defmethod (:iter (iter iterator))
   iter)
 (defmethod (:iter (obj <pair>))
@@ -55,7 +54,11 @@ package: std
 (defmethod (:iter (obj <procedure>))
   (iter-coroutine obj))
 (defmethod (:iter (obj <port>))
-  (iter-input-port obj))
+  (if (input-port? obj)
+    (iter-input-port obj)
+    (error "Cannot iterate on port; not an input-port" obj)))
+(defmethod (:iter (obj <object>))
+  {:iter obj})
 
 (def (iter-list lst)
   (def (value-e iter)
