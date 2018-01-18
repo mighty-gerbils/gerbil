@@ -834,7 +834,7 @@ finally-clause:
 ### Generics
 
 Gerbil supports generic multi-method dispatch, with the requisite
-macros provided by `:std/generic`.
+runtime support and macros provided by `:std/generic`.
 For example, the following defines a generic method `my-add` that
 dispatches on numbers and strings:
 ```
@@ -860,7 +860,7 @@ on numbers and strings. We can use the generic method as a procedure:
 => "ab"
 ```
 
-We can easily define methods for user-defined types as well.
+We can similarly define methods for user-defined types as well.
 Here we define an implementation for instances of a struct `A`:
 ```
 > (my-add (make-A 1) (make-A 2))
