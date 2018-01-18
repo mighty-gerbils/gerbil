@@ -5,7 +5,7 @@ package: std
 
 (export #t)
 
-(defsyntax <exception>
+(defsyntax exception
   (make-runtime-struct-info
    runtime-identifier: (quote-syntax exception::t)))
 
