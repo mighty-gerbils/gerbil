@@ -408,33 +408,41 @@
                  coprocess: void)))
 
 ;;; internal
-(def (pkg-plist pkg)
-  (let* ((root (pkg-root-dir))
-         (path (path-expand pkg root))
-         (gerbil.pkg (path-expand "gerbil.pkg" path))
-         (_ (unless (file-exists? gerbil.pkg)
-              (error "Bad package; missing gerbil.pkg" pkg)))
-         (plist (call-with-input-file gerbil.pkg read)))
-    (if (eof-object? plist)
-      []
-      plist)))
+(def +pkg-plist+
+  (make-hash-table))
 
-(def (pkg-dependents pkg)
+(def (pkg-plist pkg)
+  (cond
+   ((hash-get +pkg-plist+ pkg)
+    => values)
+   (else
+    (let* ((root (pkg-root-dir))
+           (path (path-expand pkg root))
+           (gerbil.pkg (path-expand "gerbil.pkg" path))
+           (_ (unless (file-exists? gerbil.pkg)
+                (error "Bad package; missing gerbil.pkg" pkg)))
+           (plist (call-with-input-file gerbil.pkg read))
+           (plist (if (eof-object? plist) [] plist)))
+      (hash-put! +pkg-plist+ pkg plist)
+      plist))))
+
+(def (pkg-dependents pkg (pkgs (pkg-list)))
   (def (dependent xpkg)
     (let* ((plist (pkg-plist xpkg))
            (deps (or (pgetq depend: plist) [])))
       (and (member pkg deps)
            xpkg)))
-  (filter-map dependent (pkg-list)))
+  (filter-map dependent pkgs))
 
 (def (pkg-dependents* pkg)
-  (let (deps (pkg-dependents pkg))
+  (let* ((pkgs (pkg-list))
+         (deps (pkg-dependents pkg pkgs)))
     (let lp ((rest deps) (r []))
       (match rest
         ([pkg . rest]
          (if (member pkg r)
            (lp rest r)
-           (let (deps (pkg-dependents pkg))
+           (let (deps (pkg-dependents pkg pkgs))
              (lp (foldl cons rest deps)
                  (cons pkg r)))))
         (else r)))))
