@@ -174,7 +174,27 @@
       +pkg-root-dir+)))
 
 (def (pkg-install pkg)
-  (IMPLEMENTME pkg-install))
+  (def (github-clone-url pkg)
+    (string-append "https://" pkg ".git"))
+  (cond
+   ((string-prefix? pkg "github.com/")
+    (pkg-install-git pkg (github-clone-url pkg)))
+   (else
+    (error "Unknown package provider" pkg))))
+
+(def (pkg-install-git pkg clone-url)
+  (let* ((root (pkg-root-dir))
+         (dest (path-expand pkg root)))
+    (if (file-exists? dest)
+      #f
+      (let (path (path-directory dest))
+        (create-directory* path)
+        (run-process ["git" "clone" "-q" clone-url]
+                     directory: path
+                     coprocess: void
+                     stdout-redirection: #f)
+        (pkg-build pkg)
+        #t))))
 
 (def (pkg-uninstall pkg)
   (IMPLEMENTME pkg-uninstall))
