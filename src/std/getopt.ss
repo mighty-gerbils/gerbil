@@ -11,6 +11,7 @@ package: std
         getopt-error?
         getopt-parse
         getopt-display-help
+        getopt-display-help-topic
         option
         flag
         command
@@ -240,6 +241,16 @@ package: std
     (getopt-display-help (getopt-error-e obj) program port))
    (else
     (error "Unexpected object; expected a getopt, getopt-error, or command" obj))))
+
+(def (getopt-display-help-topic gopt topic program (port (current-output-port)))
+  (let lp ((rest (!getopt-cmds gopt)))
+    (match rest
+      ([cmd . rest]
+       (if (eq? topic (!top-key cmd))
+         (getopt-display-help cmd program port)
+         (lp rest)))
+      (else
+       (getopt-display-help gopt program port)))))
 
 (def (display-help-getopt obj program port)
   (with ((!getopt opts cmds args) obj)
