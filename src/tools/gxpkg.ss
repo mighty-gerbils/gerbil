@@ -121,17 +121,21 @@
      (exit 2))))
 
 ;;; commands
-(defrules fold-pkgs-retag ()
+(defrules fold-pkgs ()
   ((_ pkgs action action-arg ...)
-   (let lp ((rest pkgs) (retag? #f))
+   (let lp ((rest pkgs) (result #f))
      (match rest
        ([pkg . rest]
         (if (action pkg action-arg ...)
           (lp rest #t)
-          (lp rest retag?)))
+          (lp rest result)))
        (else
-        (when retag?
-          (pkg-retag)))))))
+        result)))))
+
+(defrules fold-pkgs-retag ()
+  ((_ pkgs action action-arg ...)
+   (when (fold-pkgs pkgs action action-arg ...)
+     (pkg-retag))))
 
 (def (install-pkgs pkgs)
   (fold-pkgs-retag pkgs pkg-install))
@@ -140,7 +144,9 @@
   (fold-pkgs-retag pkgs pkg-uninstall))
 
 (def (update-pkgs pkgs)
-  (fold-pkgs-retag pkgs pkg-update))
+  (when (fold-pkgs pkgs pkg-update)
+    (for-each pkg-build pkgs)
+    (pkg-retag)))
 
 (def (link-pkg pkg src)
   (pkg-link pkg src))
@@ -232,8 +238,6 @@
            (let* ((result (run-process ["git" "pull"]
                                        directory: dest))
                   (update? (not (equal? result "Already up-to-date.\n"))))
-             (when update?
-               (pkg-build pkg))
              update?)))))
 
 (def (pkg-link pkg src)
