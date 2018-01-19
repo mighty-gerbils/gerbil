@@ -41,12 +41,14 @@
              (rest-arguments 'pkg help: "package to install")))
   (def uninstall-cmd
     (command 'uninstall help: "uninstall one or more packages"
+             (flag 'force "-f" help: "force uninstall even if there are orphaned dependencies")
              (rest-arguments 'pkg help: "package to uninstall")))
   (def update-cmd
     (command 'update help: "update one or more packages"
              (rest-arguments 'pkg help: "package to update")))
   (def link-cmd
     (command 'link help: "link a local development package"
+             (flag 'force "-f" help: "force unlink even if there are orphaned dependencies")
              (argument 'pkg help: "package to link")
              (argument 'src help: "path to package source directory")))
   (def unlink-cmd
@@ -83,14 +85,14 @@
        ((install)
         (install-pkgs (hash-ref opt 'pkg)))
        ((uninstall)
-        (uninstall-pkgs (hash-ref opt 'pkg)))
+        (uninstall-pkgs (hash-ref opt 'pkg) (hash-get opt 'force)))
        ((update)
         (update-pkgs (hash-ref opt 'pkg)))
        ((link)
         (link-pkg (hash-ref opt 'pkg)
                   (hash-ref opt 'src)))
        ((unlink)
-        (unlink-pkgs (hash-ref opt 'pkg)))
+        (unlink-pkgs (hash-ref opt 'pkg) (hash-get opt 'force)))
        ((build)
         (build-pkgs (hash-ref opt 'pkg)))
        ((clean)
@@ -140,8 +142,8 @@
 (def (install-pkgs pkgs)
   (fold-pkgs-retag pkgs pkg-install))
 
-(def (uninstall-pkgs pkgs)
-  (fold-pkgs-retag pkgs pkg-uninstall))
+(def (uninstall-pkgs pkgs force?)
+  (fold-pkgs-retag pkgs pkg-uninstall force?))
 
 (def (update-pkgs pkgs)
   (when (fold-pkgs pkgs pkg-update)
@@ -151,8 +153,8 @@
 (def (link-pkg pkg src)
   (pkg-link pkg src))
 
-(def (unlink-pkgs pkgs)
-  (for-each pkg-unlink pkgs))
+(def (unlink-pkgs pkgs force?)
+  (for-each (cut pkg-unlink <> force?) pkgs))
 
 (def (build-pkgs pkgs)
   (for-each pkg-build pkgs))
@@ -207,15 +209,17 @@
         (pkg-build pkg)
         #t))))
 
-(def (pkg-uninstall pkg)
+(def (pkg-uninstall pkg (force? #f))
   (let* ((root (pkg-root-dir))
          (dest (path-expand pkg root)))
     (and (file-exists? dest)
          (not (file-symbolic-link? dest))
          (begin
-           ;; We could do some sanity checks about the dependent packages
-           ;; - make sure there are no dependents that would break
-           ;; - clean the package
+           (unless force?
+             (let (deps (pkg-dependents pkg))
+               (unless (null? deps)
+                 (error "Refuse to uninstall package; orphaned dependencies" deps))))
+           #;(pkg-clean pkg)
            (displayln "... uninstall " pkg)
            (run-process ["rm" "-rf" (path-normalize dest)]
                         coprocess: void)
@@ -254,16 +258,17 @@
     (create-directory* (path-directory dest))
     (create-symbolic-link src dest)))
 
-(def (pkg-unlink pkg)
+(def (pkg-unlink pkg (force? #f))
   (let* ((root (pkg-root-dir))
          (dest (path-expand pkg root)))
     (when (file-exists? dest)
       (unless (file-symbolic-link? dest)
         (error "Cannot unlink package; not a symbolic link" dest))
-      ;; We could do some sanity checks about dependent packages:
-      ;; - make sure we have no packages installed that depend on the pkg
-      ;; - clean the pkg from the build dir.
-      ;; ... but for now just unlink!
+      (unless force?
+        (let (deps (pkg-dependents pkg))
+          (unless (null? deps)
+            (error "Refuse to unlink package; orphaned dependencies" deps))))
+      #;(pkg-clean pkg)
       (delete-file dest))))
 
 (def (pkg-build pkg)
