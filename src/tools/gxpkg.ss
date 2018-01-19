@@ -434,7 +434,9 @@
         ([pkg . rest]
          (let (deps (pkg-dependents pkg))
            (lp (foldl cons rest deps)
-               (cons pkg rest))))
+               (if (member pkg r)
+                 r
+                 (cons pkg r)))))
         (else r)))))
 
 (def (file-directory? path)
