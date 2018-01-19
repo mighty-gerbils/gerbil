@@ -216,7 +216,25 @@
            #t))))
 
 (def (pkg-update pkg)
-  (IMPLEMENTME pkg-update))
+  (cond
+   ((string-prefix? pkg "github.com/")
+    (pkg-update-git pkg))
+   (else
+    (error "Unknown package provider" pkg))))
+
+(def (pkg-update-git pkg)
+  (let* ((root (pkg-root-dir))
+         (dest (path-expand pkg root)))
+    (and (file-exists? dest)
+         (not (file-symbolic-link? dest))
+         (begin
+           (displayln "... update " pkg)
+           (let* ((result (run-process ["git" "pull"]
+                                       directory: dest))
+                  (update? (not (equal? result "Already up-to-date.\n"))))
+             (when update?
+               (pkg-build pkg))
+             update?)))))
 
 (def (pkg-link pkg src)
   (let* ((root (pkg-root-dir))
