@@ -32,7 +32,8 @@
         pkg-link pkg-unlink
         pkg-build pkg-clean
         pkg-list
-        pkg-retag)
+        pkg-retag
+        pkg-plist pkg-dependents)
 
 (def (main . args)
   (def install-cmd
@@ -273,7 +274,13 @@
   (for/collect (pkg (cut walk root "")) pkg))
 
 (def (pkg-retag)
-  (IMPLEMENTME pkg-retag))
+  (let* ((root (pkg-root-dir))
+         (dirs (filter (lambda (file) (file-directory? (path-expand file root)))
+                       (directory-files root))))
+    (displayln "... tagging packages")
+    (run-process ["gxtags" dirs ...]
+                 directory: root
+                 coprocess: void)))
 
 ;;; internal
 (def (pkg-plist pkg)
