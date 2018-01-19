@@ -236,8 +236,9 @@
 (def (pkg-update-git pkg)
   (let* ((root (pkg-root-dir))
          (dest (path-expand pkg root)))
-    (and (file-exists? dest)
-         (not (file-symbolic-link? dest))
+    (unless (file-exists? dest)
+      (error "Cannot update uknown package" pkg))
+    (and (not (file-symbolic-link? dest))
          (begin
            (displayln "... update " pkg)
            (let* ((result (run-process ["git" "pull"]
@@ -281,6 +282,8 @@
       (for-each (cut pkg-build <> #f) (map car sorted)))
     (let* ((root (pkg-root-dir))
            (path (path-expand pkg root))
+           (_ (unless (file-exists? path)
+                (error "Cannot build unknown package" pkg)))
            (plist (pkg-plist pkg))
            (build (pgetq build: plist))
            (build.ss (path-expand (or build "build.ss") path))
@@ -334,6 +337,8 @@
 
   (let* ((root (pkg-root-dir))
          (path (path-expand pkg root))
+         (_ (unless (file-exists? path)
+                (error "Cannot clean unknown package" pkg)))
          (plist (pkg-plist pkg))
          (build (pgetq build: plist))
          (build.ss (path-expand (or build "build.ss") path))
