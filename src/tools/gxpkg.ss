@@ -220,7 +220,7 @@
              (let (deps (pkg-dependents pkg))
                (unless (null? deps)
                  (error "Refuse to uninstall package; orphaned dependencies" deps))))
-           #;(pkg-clean pkg)
+           (pkg-clean pkg)
            (displayln "... uninstall " pkg)
            (run-process ["rm" "-rf" (path-normalize dest)]
                         coprocess: void)
@@ -269,7 +269,7 @@
         (let (deps (pkg-dependents pkg))
           (unless (null? deps)
             (error "Refuse to unlink package; orphaned dependencies" deps))))
-      #;(pkg-clean pkg)
+      (pkg-clean pkg)
       (delete-file dest))))
 
 (def (pkg-build pkg (dependents? #t))
@@ -300,7 +300,74 @@
         (for-each pkg-build (pkg-dependents pkg))))))
 
 (def (pkg-clean pkg)
-  (IMPLEMENTME pkg-clean))
+  (def gpath (getenv "GERBIL_PATH" "~/.gerbil"))
+  (def libdir (path-expand "lib" gpath))
+  (def bindir (path-expand "bin" gpath))
+
+  (def (clean-lib mod)
+    (let* ((modpath (path-expand mod libdir))
+           (moddir (path-directory modpath))
+           (modname (path-strip-directory modpath))
+           (mod-dot (string-append modname "."))
+           (mod-us (string-append modname "__")))
+      (for-each
+        (lambda (file)
+          (when (or (string-prefix? file mod-dot)
+                    (string-prefix? file mod-us))
+            (let (path (path-expand file moddir))
+              (delete-file path))))
+        (directory-files moddir)))
+    (let* ((static-modname
+            (string-join (string-split mod #\/)
+                         "__"))
+           (static-path
+            (path-expand
+             (string-append static-modname ".scm")
+             (path-expand "static" libdir))))
+      (when (file-exists? static-path)
+        (delete-file static-path))))
+
+  (def (clean-bin exe)
+    (let (bin (path-expand exe bindir))
+      (when (file-exists? bin)
+        (delete-file bin))))
+
+  (let* ((root (pkg-root-dir))
+         (path (path-expand pkg root))
+         (plist (pkg-plist pkg))
+         (build (pgetq build: plist))
+         (build.ss (path-expand (or build "build.ss") path))
+         (_ (unless (file-exists? build.ss)
+              (error "Cannot build package; missing build script" build.ss)))
+         (build.ss (path-normalize build.ss))
+         (build-spec (run-process [build.ss "spec"]
+                                  directory: path
+                                  coprocess: read))
+         (prefix (pgetq package: plist))
+         (prefix (and prefix (symbol->string prefix)))
+         (with-prefix
+          (if prefix
+            (lambda (mod) (string-append prefix "/" mod))
+            values)))
+    (for-each
+      (match <>
+        ((? string? modf)
+         (clean-lib (with-prefix modf)))
+        ([gxc: modf . _]
+         (clean-lib (with-prefix modf)))
+        ([gsc: modf . _]
+         (clean-lib (with-prefix modf)))
+        ([ssi: modf . _]
+         (clean-lib (with-prefix modf)))
+        ([exe: modf . opts]
+         (clean-lib (with-prefix modf))
+         (clean-bin (or (pgetq bin: opts) modf)))
+        ([static-exe: modf . opts]
+         (clean-lib (with-prefix modf))
+         (clean-bin (or (pgetq bin: opts) modf)))
+        (unexpected
+         (displayln "Ignoring unexpected build artifact " unexpected)))
+      build-spec)))
 
 (def (pkg-list)
   (def root (pkg-root-dir))
