@@ -278,7 +278,7 @@
 (def (pkg-build pkg (dependents? #t))
   (if (equal? pkg "all")
     (let* ((pkgs (pkg-list))
-           (deps (map pkg-dependents* pkgs))
+           (deps (map (cut pkg-dependents* <> pkgs) pkgs))
            (pkgs+deps (map cons pkgs deps))
            (sorted (sort pkgs+deps (lambda (pa pb) (member (car pb) (cdr pa))))))
       (for-each (cut pkg-build <> #f) (map car sorted)))
@@ -434,9 +434,8 @@
            xpkg)))
   (filter-map dependent pkgs))
 
-(def (pkg-dependents* pkg)
-  (let* ((pkgs (pkg-list))
-         (deps (pkg-dependents pkg pkgs)))
+(def (pkg-dependents* pkg (pkgs (pkg-list)))
+  (let (deps (pkg-dependents pkg pkgs))
     (let lp ((rest deps) (r []))
       (match rest
         ([pkg . rest]
