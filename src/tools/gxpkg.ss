@@ -46,7 +46,7 @@
              (rest-arguments 'pkg help: "package to uninstall")))
   (def update-cmd
     (command 'update help: "update one or more packages"
-             (rest-arguments 'pkg help: "package to update")))
+             (rest-arguments 'pkg help: "package to update; all for all packages")))
   (def link-cmd
     (command 'link help: "link a local development package"
              (argument 'pkg help: "package to link")
@@ -228,6 +228,8 @@
 
 (def (pkg-update pkg)
   (cond
+   ((equal? pkg "all")
+    (fold-pkgs (pkg-list) pkg-update))
    ((string-prefix? pkg "github.com/")
     (pkg-update-git pkg))
    (else
