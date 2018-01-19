@@ -21,6 +21,7 @@
 
 (import :std/getopt
         :std/sugar
+        :std/iter
         :gerbil/gambit/os
         :gerbil/gambit/exceptions)
 (export main
@@ -212,13 +213,34 @@
 (def (pkg-clean pkg)
   (IMPLEMENTME pkg-clean))
 
-(def (pkg-list pkg)
-  (IMPLEMENTME pkg-list))
+(def (pkg-list)
+  (def root (pkg-root-dir))
+
+  (def (walk dir pkgpath)
+    (for-each
+      (lambda (file)
+        (let* ((path (path-expand file dir))
+               (gerbil.pkg (path-expand "gerbil.pkg" path))
+               (pkgpath
+                (if (string-empty? pkgpath)
+                  file
+                  (string-append pkgpath "/" file))))
+          (cond
+           ((file-exists? gerbil.pkg)
+            (yield pkgpath))
+           ((file-directory? path)
+            (walk path pkgpath)))))
+    (directory-files dir)))
+
+  (for/collect (pkg (cut walk root "")) pkg))
 
 (def (pkg-retag)
   (IMPLEMENTME pkg-retag))
 
 ;;; internal
+(def (file-directory? path)
+  (eq? (file-type path) 'directory))
+
 (def (file-symbolic-link? path)
   (eq? (file-info-type (file-info path #f))
        'symbolic-link))
