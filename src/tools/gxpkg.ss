@@ -432,10 +432,10 @@
     (let lp ((rest deps) (r []))
       (match rest
         ([pkg . rest]
-         (let (deps (pkg-dependents pkg))
-           (lp (foldl cons rest deps)
-               (if (member pkg r)
-                 r
+         (if (member pkg r)
+           (lp rest r)
+           (let (deps (pkg-dependents pkg))
+             (lp (foldl cons rest deps)
                  (cons pkg r)))))
         (else r)))))
 
