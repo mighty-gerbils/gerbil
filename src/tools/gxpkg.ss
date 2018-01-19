@@ -15,12 +15,13 @@
 ;;;   list
 ;;;   retag
 ;;; Packages:
-;;;   all                     -- action applies to all packages where sensible to do so
 ;;;   github.com/user/package -- github based packages
+;;;   TODO all                -- action applies to all packages where sensible to do so
 ;;;   TODO gitlab, bitbucket etc
 
 (import :std/getopt
         :std/sugar
+        :gerbil/gambit/os
         :gerbil/gambit/exceptions)
 (export main
         ;; script api
@@ -37,25 +38,23 @@
              (rest-arguments 'pkg help: "package to install")))
   (def uninstall-cmd
     (command 'uninstall help: "uninstall one or more packages"
-             (flag 'force "-f" "--force" help: "force uninstallation")
-             (rest-arguments 'pkg help: "package to uninstall; all for all installed packages")))
+             (rest-arguments 'pkg help: "package to uninstall")))
   (def update-cmd
     (command 'update help: "update one or more packages"
-             (rest-arguments 'pkg help: "package to update; all for all installed packages")))
+             (rest-arguments 'pkg help: "package to update")))
   (def link-cmd
     (command 'link help: "link a local development package"
              (argument 'pkg help: "package to link")
              (argument 'src help: "path to package source directory")))
   (def unlink-cmd
     (command 'unlink help: "unlink one or more local development packages"
-             (flag 'force "-f" "--force" help: "force unlink")
-             (rest-arguments 'pkg help: "package to unlink; all for all linked packages")))
+             (rest-arguments 'pkg help: "package to unlink")))
   (def build-cmd
     (command 'build help: "rebuild one or more packages and their dependents"
-             (rest-arguments 'pkg help: "package to build; all for all installed packages")))
+             (rest-arguments 'pkg help: "package to build")))
   (def clean-cmd
     (command 'clean help: "clean compilation artefacts from one or more packages"
-             (rest-arguments 'pkg help: "package to clean; all for all installed packages")))
+             (rest-arguments 'pkg help: "package to clean")))
   (def list-cmd
     (command 'list help: "list installed packages"))
   (def retag-cmd
@@ -81,14 +80,14 @@
        ((install)
         (install-pkgs (hash-ref opt 'pkg)))
        ((uninstall)
-        (uninstall-pkgs (hash-ref opt 'pkg) (hash-get opt 'force)))
+        (uninstall-pkgs (hash-ref opt 'pkg)))
        ((update)
         (update-pkgs (hash-ref opt 'pkg)))
        ((link)
         (link-pkg (hash-ref opt 'pkg)
                   (hash-ref opt 'src)))
        ((unlink)
-        (unlink-pkgs (hash-ref opt 'pkg) (hash-get opt 'force)))
+        (unlink-pkgs (hash-ref opt 'pkg)))
        ((build)
         (build-pkgs (hash-ref opt 'pkg)))
        ((clean)
@@ -134,18 +133,17 @@
 (def (install-pkgs pkgs)
   (fold-pkgs-retag pkgs pkg-install))
 
-(def (uninstall-pkgs pkgs force?)
-  (fold-pkgs-retag pkgs pkg-uninstall force?))
+(def (uninstall-pkgs pkgs)
+  (fold-pkgs-retag pkgs pkg-uninstall))
 
 (def (update-pkgs pkgs)
   (fold-pkgs-retag pkgs pkg-update))
 
 (def (link-pkg pkg src)
-  (pkg-link pkg src)
-  (pkg-tag pkg))
+  (pkg-link pkg src))
 
-(def (unlink-pkgs pkgs force?)
-  (fold-pkgs-retag pkgs pkg-unlink force?))
+(def (unlink-pkgs pkgs)
+  (for-each pkg-unlink pkgs))
 
 (def (build-pkgs pkgs)
   (for-each pkg-build pkgs))
@@ -176,17 +174,37 @@
 (def (pkg-install pkg)
   (IMPLEMENTME pkg-install))
 
-(def (pkg-uninstall pkg (force? #f))
+(def (pkg-uninstall pkg)
   (IMPLEMENTME pkg-uninstall))
 
 (def (pkg-update pkg)
   (IMPLEMENTME pkg-update))
 
 (def (pkg-link pkg src)
-  (IMPLEMENTME pkg-link))
+  (let* ((root (pkg-root-dir))
+         (dest (path-expand pkg root)))
+    (when (file-exists? dest)
+      (error "Cannot link package; destination already exists" pkg dest))
+    ;; We could do some sanity checks about the source package:
+    ;; - make sure the source exists, and is a directory
+    ;; - make sure it's a valid pkg with a build.ss
+    ;; - install dependencies of the package (as listed in gerbil.pkg)
+    ;; - etc ...
+    ;; ... but where to stop, so just trust the user and link!
+    (create-directory* (path-directory dest))
+    (create-symbolic-link src dest)))
 
-(def (pkg-unlink pkg (force? #f))
-  (IMPLEMENTME pkg-unlink))
+(def (pkg-unlink pkg)
+  (let* ((root (pkg-root-dir))
+         (dest (path-expand pkg root)))
+    (when (file-exists? dest)
+      (unless (file-symbolic-link? dest)
+        (error "Cannot unlink package; not a symbolic link" dest))
+      ;; We could do some sanity checks about dependent packages:
+      ;; - make sure we have no packages installed that depend on the pkg
+      ;; - clean the pkg from the build dir.
+      ;; ... but for now just unlink!
+      (delete-file dest))))
 
 (def (pkg-build pkg)
   (IMPLEMENTME pkg-build))
@@ -197,8 +215,10 @@
 (def (pkg-list pkg)
   (IMPLEMENTME pkg-list))
 
-(def (pkg-tag pkg)
-  (IMPLEMENTME pkg-tag))
-
 (def (pkg-retag)
   (IMPLEMENTME pkg-retag))
+
+;;; internal
+(def (file-symbolic-link? path)
+  (eq? (file-info-type (file-info path #f))
+       'symbolic-link))
