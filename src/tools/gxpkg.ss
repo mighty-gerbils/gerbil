@@ -404,8 +404,7 @@
                        (directory-files root))))
     (displayln "... tagging packages")
     (run-process ["gxtags" dirs ...]
-                 directory: root
-                 coprocess: void)))
+                 directory: root)))
 
 ;;; internal
 (def +pkg-plist+
