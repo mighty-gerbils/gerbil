@@ -1,7 +1,8 @@
-;; -*- Gerbil -*-
-;; Generate emacs TAGS from gerbil sources
-;; only exported symbols are tagged.
-;; Usage: gxtags [-a] [-o tags-file] file-or-directory ...
+;;; -*- Gerbil -*-
+;;; © vyzo
+;;; Generate emacs TAGS from gerbil sources
+;;; only exported symbols are tagged.
+;;; Usage: gxtags [-a] [-o tags-file] file-or-directory ...
 
 (import :gerbil/expander
         (only-in :gerbil/compiler/base ast-case)
@@ -136,6 +137,12 @@
         ((%#module id expr ...)
          (let ((eid (binding-id (resolve-identifier #'id)))
                (ctx (syntax-local-e #'id)))
+           ;; this only tags bindings if they are exported by the parent
+           ;; module; this works well for prelude-style module structures
+           ;; but doesn't tag bindings reachable because the module itself
+           ;; is exported
+           ;; TODO if the module is exported, add module's exports to the
+           ;;      tag table
            (parameterize ((current-expander-context ctx))
              (tag-name! eid)
              (for-each tag-e #'(expr ...)))))

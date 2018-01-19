@@ -1,10 +1,11 @@
-;; -*- Gerbil -*-
-;; Rudimentary gerbil profiler
-;; Invocation: gxprof exe-module-path arg ...
-;; Imports module exe-module and executes main with arguments arg ...
-;; Output: gxprof.out in current directory on main function return
-;;         contains  continuation backtraces from thread heartbeat interrupt
-;;         as a list [[procedure-name ....] ...]
+;;; -*- Gerbil -*-
+;;; © vyzo
+;;; Rudimentary gerbil profiler
+;;; Invocation: gxprof exe-module-path arg ...
+;;; Imports module exe-module and executes main with arguments arg ...
+;;; Output: gxprof.out in current directory on main function return
+;;;         contains  continuation backtraces from thread heartbeat interrupt
+;;;         as a list [[procedure-name ....] ...]
 
 (import :gerbil/expander
         :std/sugar)
