@@ -49,11 +49,11 @@
              (rest-arguments 'pkg help: "package to update")))
   (def link-cmd
     (command 'link help: "link a local development package"
-             (flag 'force "-f" help: "force unlink even if there are orphaned dependencies")
              (argument 'pkg help: "package to link")
              (argument 'src help: "path to package source directory")))
   (def unlink-cmd
     (command 'unlink help: "unlink one or more local development packages"
+             (flag 'force "-f" help: "force unlink even if there are orphaned dependencies")
              (rest-arguments 'pkg help: "package to unlink")))
   (def build-cmd
     (command 'build help: "rebuild one or more packages and their dependents"
