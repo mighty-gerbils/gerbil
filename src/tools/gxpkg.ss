@@ -313,13 +313,14 @@
            (modname (path-strip-directory modpath))
            (mod-dot (string-append modname "."))
            (mod-us (string-append modname "__")))
-      (for-each
-        (lambda (file)
-          (when (or (string-prefix? file mod-dot)
-                    (string-prefix? file mod-us))
-            (let (path (path-expand file moddir))
-              (delete-file path))))
-        (directory-files moddir)))
+      (when (file-exists? moddir)
+        (for-each
+          (lambda (file)
+            (when (or (string-prefix? file mod-dot)
+                      (string-prefix? file mod-us))
+              (let (path (path-expand file moddir))
+                (delete-file path))))
+          (directory-files moddir))))
     (let* ((static-modname
             (string-join (string-split mod #\/)
                          "__"))
