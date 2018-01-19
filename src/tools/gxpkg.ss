@@ -22,6 +22,7 @@
 (import :std/getopt
         :std/sugar
         :std/iter
+        :std/misc/process
         :gerbil/gambit/os
         :gerbil/gambit/exceptions)
 (export main
@@ -208,7 +209,24 @@
       (delete-file dest))))
 
 (def (pkg-build pkg)
-  (IMPLEMENTME pkg-build))
+  (let* ((root (pkg-root-dir))
+         (path (path-expand pkg root))
+         (plist (pkg-plist pkg))
+         (build (pgetq build: plist))
+         (build.ss (path-expand (or build "build.ss") path))
+         (_ (unless (file-exists? build.ss)
+              (error "Cannot build package; missing build script" build.ss)))
+         (build.ss (path-normalize build.ss)))
+    (displayln "... build " pkg)
+    (run-process [build.ss "deps"]
+                 directory: path
+                 coprocess: void
+                 stdout-redirection: #f)
+    (run-process [build.ss "compile"]
+                 directory: path
+                 coprocess: void
+                 stdout-redirection: #f)
+    (for-each pkg-build (pkg-dependents pkg))))
 
 (def (pkg-clean pkg)
   (IMPLEMENTME pkg-clean))
@@ -238,6 +256,25 @@
   (IMPLEMENTME pkg-retag))
 
 ;;; internal
+(def (pkg-plist pkg)
+  (let* ((root (pkg-root-dir))
+         (path (path-expand pkg root))
+         (gerbil.pkg (path-expand "gerbil.pkg" path))
+         (_ (unless (file-exists? gerbil.pkg)
+              (error "Bad package; missing gerbil.pkg" pkg)))
+         (plist (call-with-input-file gerbil.pkg read)))
+    (if (eof-object? plist)
+      []
+      plist)))
+
+(def (pkg-dependents pkg)
+  (def (dependent xpkg)
+    (let* ((plist (pkg-plist xpkg))
+           (deps (or (pgetq depend: plist) [])))
+      (and (member pkg deps)
+           xpkg)))
+  (filter-map dependent (pkg-list)))
+
 (def (file-directory? path)
   (eq? (file-type path) 'directory))
 
