@@ -16,12 +16,13 @@
 ;;;   retag
 ;;; Packages:
 ;;;   github.com/user/package -- github based packages
-;;;   TODO all                -- action applies to all packages where sensible to do so
+;;;   all                     -- action applies to all packages where sensible to do so
 ;;;   TODO gitlab, bitbucket etc
 
 (import :std/getopt
         :std/sugar
         :std/iter
+        :std/sort
         :std/misc/process
         :gerbil/gambit/os
         :gerbil/gambit/exceptions)
@@ -33,7 +34,7 @@
         pkg-build pkg-clean
         pkg-list
         pkg-retag
-        pkg-plist pkg-dependents)
+        pkg-plist pkg-dependents pkg-dependents*)
 
 (def (main . args)
   (def install-cmd
@@ -56,7 +57,7 @@
              (rest-arguments 'pkg help: "package to unlink")))
   (def build-cmd
     (command 'build help: "rebuild one or more packages and their dependents"
-             (rest-arguments 'pkg help: "package to build")))
+             (rest-arguments 'pkg help: "package to build; all for all packages")))
   (def clean-cmd
     (command 'clean help: "clean compilation artefacts from one or more packages"
              (rest-arguments 'pkg help: "package to clean")))
@@ -271,25 +272,32 @@
       #;(pkg-clean pkg)
       (delete-file dest))))
 
-(def (pkg-build pkg)
-  (let* ((root (pkg-root-dir))
-         (path (path-expand pkg root))
-         (plist (pkg-plist pkg))
-         (build (pgetq build: plist))
-         (build.ss (path-expand (or build "build.ss") path))
-         (_ (unless (file-exists? build.ss)
-              (error "Cannot build package; missing build script" build.ss)))
-         (build.ss (path-normalize build.ss)))
-    (displayln "... build " pkg)
-    (run-process [build.ss "deps"]
-                 directory: path
-                 coprocess: void
-                 stdout-redirection: #f)
-    (run-process [build.ss "compile"]
-                 directory: path
-                 coprocess: void
-                 stdout-redirection: #f)
-    (for-each pkg-build (pkg-dependents pkg))))
+(def (pkg-build pkg (dependents? #t))
+  (if (equal? pkg "all")
+    (let* ((pkgs (pkg-list))
+           (deps (map pkg-dependents* pkgs))
+           (pkgs+deps (map cons pkgs deps))
+           (sorted (sort pkgs+deps (lambda (pa pb) (member (car pb) (cdr pa))))))
+      (for-each (cut pkg-build <> #f) (map car sorted)))
+    (let* ((root (pkg-root-dir))
+           (path (path-expand pkg root))
+           (plist (pkg-plist pkg))
+           (build (pgetq build: plist))
+           (build.ss (path-expand (or build "build.ss") path))
+           (_ (unless (file-exists? build.ss)
+                (error "Cannot build package; missing build script" build.ss)))
+           (build.ss (path-normalize build.ss)))
+      (displayln "... build " pkg)
+      (run-process [build.ss "deps"]
+                   directory: path
+                   coprocess: void
+                   stdout-redirection: #f)
+      (run-process [build.ss "compile"]
+                   directory: path
+                   coprocess: void
+                   stdout-redirection: #f)
+      (when dependents?
+        (for-each pkg-build (pkg-dependents pkg))))))
 
 (def (pkg-clean pkg)
   (IMPLEMENTME pkg-clean))
@@ -343,6 +351,16 @@
       (and (member pkg deps)
            xpkg)))
   (filter-map dependent (pkg-list)))
+
+(def (pkg-dependents* pkg)
+  (let (deps (pkg-dependents pkg))
+    (let lp ((rest deps) (r []))
+      (match rest
+        ([pkg . rest]
+         (let (deps (pkg-dependents pkg))
+           (lp (foldl cons rest deps)
+               (cons pkg rest))))
+        (else r)))))
 
 (def (file-directory? path)
   (eq? (file-type path) 'directory))
