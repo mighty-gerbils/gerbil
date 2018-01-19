@@ -189,16 +189,31 @@
     (if (file-exists? dest)
       #f
       (let (path (path-directory dest))
+        (displayln "... install " pkg)
         (create-directory* path)
         (run-process ["git" "clone" "-q" clone-url]
                      directory: path
                      coprocess: void
                      stdout-redirection: #f)
+        (let* ((plist (pkg-plist pkg))
+               (deps (or (pgetq depend: plist) [])))
+          (for-each pkg-install deps))
         (pkg-build pkg)
         #t))))
 
 (def (pkg-uninstall pkg)
-  (IMPLEMENTME pkg-uninstall))
+  (let* ((root (pkg-root-dir))
+         (dest (path-expand pkg root)))
+    (and (file-exists? dest)
+         (not (file-symbolic-link? dest))
+         (begin
+           ;; We could do some sanity checks about the dependent packages
+           ;; - make sure there are no dependents that would break
+           ;; - clean the package
+           (displayln "... uninstall " pkg)
+           (run-process ["rm" "-rf" (path-normalize dest)]
+                        coprocess: void)
+           #t))))
 
 (def (pkg-update pkg)
   (IMPLEMENTME pkg-update))
