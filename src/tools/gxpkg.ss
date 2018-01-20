@@ -234,6 +234,11 @@
            (let* ((result (run-process ["git" "pull"]
                                        directory: dest))
                   (update? (not (equal? result "Already up-to-date.\n"))))
+             ;; the package dependencies might have changed, so install them
+             (when update?
+               (let* ((plist (pkg-list pkg))
+                      (deps  (or (pgetq depend: plist) [])))
+                 (for-each pkg-install deps)))
              update?)))))
 
 (def (pkg-link pkg src)
