@@ -202,7 +202,7 @@
 
 (def (pkg-install-deps pkg)
   (let* ((plist (pkg-list pkg))
-         (deps  (or (pgetq depend: plist) [])))
+         (deps  (pgetq depend: plist [])))
     (for-each pkg-install deps)))
 
 (def (pkg-uninstall pkg (force? #f))
@@ -355,10 +355,10 @@
          (clean-lib (with-prefix modf)))
         ([exe: modf . opts]
          (clean-lib (with-prefix modf))
-         (clean-bin (or (pgetq bin: opts) modf)))
+         (clean-bin (pgetq bin: opts modf)))
         ([static-exe: modf . opts]
          (clean-lib (with-prefix modf))
-         (clean-bin (or (pgetq bin: opts) modf)))
+         (clean-bin (pgetq bin: opts modf)))
         (unexpected
          (displayln "Ignoring unexpected build artifact " unexpected)))
       build-spec)))
@@ -424,7 +424,7 @@
 (def (pkg-dependents pkg (pkgs (pkg-list)))
   (def (dependent xpkg)
     (let* ((plist (pkg-plist xpkg))
-           (deps (or (pgetq depend: plist) [])))
+           (deps (pgetq depend: plist [])))
       (and (member pkg deps)
            xpkg)))
   (filter-map dependent pkgs))
