@@ -136,6 +136,14 @@
 
 (def (update-pkgs pkgs)
   (when (fold-pkgs pkgs pkg-update)
+    ;; the package dependencies might have changed, so install them
+    (for-each
+      (lambda (pkg)
+        (if (equal? pkg "all")
+          (for-each pkg-install-deps (pkg-list))
+          (pkg-install-deps pkg)))
+      pkgs)
+    ;; rebuild packages
     (for-each pkg-build pkgs)
     (pkg-retag)))
 
@@ -192,11 +200,14 @@
                      directory: path
                      coprocess: void
                      stdout-redirection: #f)
-        (let* ((plist (pkg-plist pkg))
-               (deps (or (pgetq depend: plist) [])))
-          (for-each pkg-install deps))
+        (pkg-install-deps pkg)
         (pkg-build pkg)
         #t))))
+
+(def (pkg-install-deps pkg)
+  (let* ((plist (pkg-list pkg))
+         (deps  (or (pgetq depend: plist) [])))
+    (for-each pkg-install deps)))
 
 (def (pkg-uninstall pkg (force? #f))
   (let* ((root (pkg-root-dir))
@@ -234,11 +245,6 @@
            (let* ((result (run-process ["git" "pull"]
                                        directory: dest))
                   (update? (not (equal? result "Already up-to-date.\n"))))
-             ;; the package dependencies might have changed, so install them
-             (when update?
-               (let* ((plist (pkg-list pkg))
-                      (deps  (or (pgetq depend: plist) [])))
-                 (for-each pkg-install deps)))
              update?)))))
 
 (def (pkg-link pkg src)
