@@ -46,3 +46,19 @@ package: std/net/httpd
             => (lambda (ix) (lp (substring path 0 ix))))
            (else
             (default-http-mux-default self))))))))
+
+;; custom mux -- it dispatches all resolutions/registrations to user supplied functions
+(defstruct custom-http-mux (get put)
+  constructor: :init! final: #t)
+
+(defmethod {:init! custom-http-mux}
+  (lambda (self get (put void))
+    (struct-instance-init! self get put)))
+
+(defmethod {get-handler custom-http-mux}
+  (lambda (self host path)
+    ((custom-http-mux-get self) host path)))
+
+(defmethod {put-handler custom-http-mux}
+  (lambda (self host path handler)
+    ((custom-http-mux-put self) host path handler)))
