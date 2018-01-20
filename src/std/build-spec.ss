@@ -10,6 +10,7 @@
     "sort"
     "sugar"
     "make"
+    "build-script"
     "error"
     "getopt"
     "logger"
