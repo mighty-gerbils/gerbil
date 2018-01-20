@@ -166,10 +166,6 @@
   (pkg-retag))
 
 ;;; action implementation -- script api
-(defrules IMPLEMENTME ()
-  ((_ what)
-   (error "XXX IMPLEMENT ME: " 'what)))
-
 (def +pkg-root-dir+
   (path-expand "pkg" (getenv "GERBIL_PATH" "~/.gerbil")))
 
