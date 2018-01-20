@@ -1044,26 +1044,37 @@
 (define (last lst)
   (car (last-pair lst)))
 
-(define (assgetq key lst #!optional (E false))
+(define (assgetq key lst #!optional (default #f))
+  (assget* key lst default assq))
+
+(define (assgetv key lst #!optional (default #f))
+  (assget* key lst default assv))
+
+(define (assget key lst #!optional (default #f))
+  (assget* key lst default assoc))
+
+(define (assget* key lst default assf)
   (cond
-   ((and (pair? lst) (assq key lst)) => cdr)
-   (else (E key))))
+   ((and (pair? lst) (assf key lst)) => cdr)
+   ((procedure? default)
+    (default key))
+   (else default)))
 
-(define (assget key lst #!optional (E false))
-  (cond
-   ((and (pair? lst) (assoc key lst)) => cdr)
-   (else (E key))))
+(define (pgetq key lst #!optional (default #f))
+  (pget* key lst default memq))
 
-(define (pgetq key lst #!optional (E false))
-  (pget key lst E memq))
+(define (pgetv key lst #!optional (default #f))
+  (pget* key lst default memv))
 
-(define (pgetv key lst #!optional (E false))
-  (pget key lst E memv))
+(define (pget key lst #!optional (default #f))
+  (pget* key lst default member))
 
-(define (pget key lst #!optional (E false) (getf member))
+(define (pget* key lst default getf)
   (cond
    ((getf key lst) => cadr)
-   (else (E key))))
+   ((procedure? default)
+    (default key))
+   (else default)))
 
 (define (find pred lst)
   (cond

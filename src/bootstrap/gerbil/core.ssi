@@ -301,6 +301,7 @@ namespace: gerbil/core
                     (last-pair last-pair)
                     (memf memf)
                     (assgetq assgetq)
+                    (assgetv assgetv)
                     (assget assget)
                     (find find)
                     (remove remove)
