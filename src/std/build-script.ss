@@ -59,8 +59,9 @@ package: std
                                      prefix: @prefix
                                      @build-spec)))
                             ([]
-                             (displayln "... make deps")
-                             (main "deps")
+                             (unless (file-exists? "build-deps")
+                               (displayln "... make deps")
+                               (main "deps"))
                              (displayln "... compile")
                              (main "compile")))))))
        #'(begin
