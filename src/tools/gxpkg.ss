@@ -281,12 +281,7 @@
            (path (path-expand pkg root))
            (_ (unless (file-exists? path)
                 (error "Cannot build unknown package" pkg)))
-           (plist (pkg-plist pkg))
-           (build (pgetq build: plist))
-           (build.ss (path-expand (or build "build.ss") path))
-           (_ (unless (file-exists? build.ss)
-                (error "Cannot build package; missing build script" build.ss)))
-           (build.ss (path-normalize build.ss)))
+           (build.ss (pkg-build-script pkg)))
       (displayln "... build " pkg)
       (run-process [build.ss "deps"]
                    directory: path
@@ -336,16 +331,12 @@
   (let* ((root (pkg-root-dir))
          (path (path-expand pkg root))
          (_ (unless (file-exists? path)
-                (error "Cannot clean unknown package" pkg)))
-         (plist (pkg-plist pkg))
-         (build (pgetq build: plist))
-         (build.ss (path-expand (or build "build.ss") path))
-         (_ (unless (file-exists? build.ss)
-              (error "Cannot build package; missing build script" build.ss)))
-         (build.ss (path-normalize build.ss))
+              (error "Cannot clean unknown package" pkg)))
+         (build.ss (pkg-build-script pkg))
          (build-spec (run-process [build.ss "spec"]
                                   directory: path
                                   coprocess: read))
+         (plist (pkg-plist pkg))
          (prefix (pgetq package: plist))
          (prefix (and prefix (symbol->string prefix)))
          (with-prefix
@@ -419,6 +410,16 @@
            (plist (if (eof-object? plist) [] plist)))
       (hash-put! +pkg-plist+ pkg plist)
       plist))))
+
+(def (pkg-build-script pkg)
+  (let* ((root (pkg-root-dir))
+         (path (path-expand pkg root))
+         (plist (pkg-plist pkg))
+         (build (pgetq build: plist))
+         (build.ss (path-expand (or build "build.ss") path)))
+    (unless (file-exists? build.ss)
+      (error "Bad package; missing build script" pkg build.ss))
+    (path-normalize build.ss)))
 
 (def (pkg-dependents pkg (pkgs (pkg-list)))
   (def (dependent xpkg)
