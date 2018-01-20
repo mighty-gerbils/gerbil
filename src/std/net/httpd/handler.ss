@@ -11,8 +11,7 @@ package: std/net/httpd
         :std/sugar
         :std/error
         :std/pregexp
-        (only-in :std/srfi/1 reverse!)
-        (only-in :std/srfi/13 string-titlecase!))
+        (only-in :std/srfi/1 reverse!))
 (export http-request-handler
         http-request?
         http-request-method http-request-url http-request-path http-request-params
@@ -364,12 +363,24 @@ END-C
 
 (def (read-header ibuf)
   (let* ((key (read-token ibuf COL))
-         (_ (string-titlecase! key))
+         (_ (header-titlecase! key))
          (_ (read-skip ibuf COL))
          (_ (read-skip* ibuf SPC))
          (val (read-token ibuf CR))
          (_ (read-skip ibuf CR LF)))
     (cons key val)))
+
+(def (header-titlecase! str)
+  (let (len (string-length str))
+    (let lp ((i 0) (upcase? #t))
+      (if (fx< i len)
+        (let (char (string-ref str i))
+          (if (char-alphabetic? char)
+            (let (char (if upcase? (char-upcase char) (char-downcase char)))
+              (string-set! str i char)
+              (lp (fx1+ i) #f))
+            (lp (fx1+ i) #t)))
+        str))))
 
 (def (read-token ibuf sep)
   (let lp ((chars []) (count 0))
