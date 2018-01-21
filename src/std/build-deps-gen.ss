@@ -6,7 +6,7 @@
 (include "build-spec.ss")
 
 (let (srcdir (path-normalize (path-directory (this-source-file))))
-  (add-load-path (path-normalize (path-expand ".." srcdir))))
+  (cons-load-path (path-normalize (path-expand ".." srcdir))))
 
 (displayln "... generate stdlib depgraph")
 (let (depgraph (make-depgraph/spec build-spec))
