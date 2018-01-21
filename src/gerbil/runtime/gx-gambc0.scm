@@ -1381,10 +1381,7 @@
   (unless (procedure? K)
     (##raise-type-exception 2 'procedure 'keyword-dispatch
                             (cons* kwt K all-args)))
-  (let ((keys
-         (if kwt
-           (make-hash-table-eq hash: keyword-hash size: (##vector-length kwt))
-           (make-hash-table-eq hash: keyword-hash))))
+  (let ((keys (make-hash-table-eq hash: keyword-hash)))
     (let lp ((rest all-args) (args #f) (tail #f))
       (core-match rest
         ((hd . hd-rest)
