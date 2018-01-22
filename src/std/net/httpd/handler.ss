@@ -413,25 +413,29 @@ END-C
           (lp i (cdr rest)))
         str))))
 
-(def (read-skip ibuf . cs)
-  (let lp ((rest cs))
-    (match rest
-      ([c . rest]
-       (let (next (bio-read-u8 ibuf))
-         (if (eq? c next)
-           (lp rest)
-           (raise-io-error 'http-read-request "Unexpected character" c))))
-      (else
-       (void)))))
+(def* read-skip
+  ((ibuf c)
+   (let (next (bio-read-u8 ibuf))
+    (unless (eq? c next)
+      (raise-io-error 'http-read-request "Unexpected character" next))))
+  ((ibuf c1 c2)
+   (read-skip ibuf c1)
+   (read-skip ibuf c2)))
 
-(def (read-skip* ibuf c . cs)
-  (let lp ()
-    (let (next (bio-peek-u8 ibuf))
-      (when (eq? next c)
-        (bio-read-u8 ibuf)
-        (unless (null? cs)
-          (apply read-skip ibuf cs))
-        (lp)))))
+(def* read-skip*
+  ((ibuf c)
+   (let lp ()
+     (let (next (bio-peek-u8 ibuf))
+       (when (eq? next c)
+         (bio-read-u8 ibuf)
+         (lp)))))
+  ((ibuf c1 c2)
+   (let lp ()
+     (let (next (bio-peek-u8 ibuf))
+       (when (eq? next c1)
+         (bio-read-u8 ibuf)
+         (read-skip ibuf c2)
+         (lp))))))
 
 (def (read-request-body ibuf headers)
   (def (read-simple-body)
