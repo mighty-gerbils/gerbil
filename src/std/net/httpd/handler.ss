@@ -397,12 +397,21 @@ END-C
        ((eof-object? next)
         (raise 'eof))
        ((eq? next sep)
-        (list->string (reverse! chars)))
+        (token-chars->string chars count))
        ((fx< count max-token-length)
         (let (char (integer->char (bio-read-u8 ibuf)))
           (lp (cons char chars) (fx1+ count))))
        (else
         (raise-io-error 'http-read-request "Maximum token length exceeded" count))))))
+
+(def (token-chars->string chars count)
+  (let (str (make-string count))
+    (let lp ((i count) (rest chars))
+      (if (fx> i 0)
+        (let (i (fx1- i))
+          (string-set! str i (car rest))
+          (lp i (cdr rest)))
+        str))))
 
 (def (read-skip ibuf . cs)
   (let lp ((rest cs))
