@@ -27,7 +27,9 @@ package: std/net/httpd
         set-httpd-response-timeout!
         set-httpd-max-request-headers!
         set-httpd-max-token-length!
-        set-httpd-max-request-body-length!)
+        set-httpd-max-request-body-length!
+        set-httpd-input-buffer-size!
+        set-httpd-output-buffer-size!)
 
 (declare (not safe))
 
@@ -37,8 +39,8 @@ package: std/net/httpd
   final: #t)
 
 (def (http-request-handler get-handler sock addr)
-  (def ibuf (open-ssocket-input-buffer sock))
-  (def obuf (open-ssocket-output-buffer sock))
+  (def ibuf (open-ssocket-input-buffer sock input-buffer-size))
+  (def obuf (open-ssocket-output-buffer sock output-buffer-size))
 
   (def (loop)
     (let ((req (make-http-request ibuf addr #f #f #f #f #f #f #!void))
@@ -276,6 +278,8 @@ END-C
 (def max-request-headers 256)
 (def max-token-length 1024)
 (def max-request-body-length (expt 2 20)) ; 1MB
+(def input-buffer-size 4096)
+(def output-buffer-size 4096)
 
 (defrules defsetter ()
   ((_ (setf id) pred)
@@ -293,6 +297,10 @@ END-C
 (defsetter (set-httpd-max-token-length! max-token-length)
   (and fixnum? fxpositive?))
 (defsetter (set-httpd-max-request-body-length! max-request-body-length)
+  (and fixnum? fxpositive?))
+(defsetter (set-httpd-input-buffer-size! input-buffer-size)
+  (and fixnum? fxpositive?))
+(defsetter (set-httpd-output-buffer-size! output-buffer-size)
   (and fixnum? fxpositive?))
 
 (def (read-request! req)
