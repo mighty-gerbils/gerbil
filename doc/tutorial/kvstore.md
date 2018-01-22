@@ -321,15 +321,7 @@ The `main` function is the entry of the program:
        ((put) (kvstore-put! opt))
        ((remove) (kvstore-remove! opt))
        ((help)
-        (let (topic
-              (hash-get
-               (hash-eq (get getcmd)
-                        (ref refcmd)
-                        (put putcmd)
-                        (remove delcmd)
-                        (help helpcmd))
-               (hash-get opt 'command)))
-          (getopt-display-help (or topic gopt) "kvstorec")))))
+        (getopt-display-help-topic gopt (hash-get opt 'command) "kvstorec"))))
    (catch (getopt-error? exn)
      (getopt-display-help exn "kvstorec" (current-error-port))
      (exit 1))
