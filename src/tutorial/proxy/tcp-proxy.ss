@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; transparent TCP proxy
-package: tutorial/proxy
-
 (import :gerbil/gambit/threads
         :std/os/socket
         :std/os/fd
@@ -11,8 +9,7 @@ package: tutorial/proxy
         :std/getopt
         :std/logger
         :std/sugar
-        :std/format
-        )
+        :std/format)
 (export main)
 
 (def (run local remote)

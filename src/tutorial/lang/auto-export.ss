@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Custom prelude that rebinds %%begin-module
-package: tutorial/lang
-
 (import :gerbil/core) ;; so that we can re-export
 (export (import: :gerbil/core)
         (rename: my-%%begin-module %%begin-module))

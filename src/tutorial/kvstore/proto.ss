@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; kvstore protocol
-package: tutorial/kvstore
-
 (import :std/actor)
 (export #t)
 

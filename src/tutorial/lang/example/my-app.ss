@@ -2,7 +2,6 @@
 ;;; (C) vyzo at hackzen.org
 ;;; Simple example that uses the dot-app prelude
 prelude: :tutorial/lang/dot-app
-package: tutorial/lang/example
 
 (export #t)
 

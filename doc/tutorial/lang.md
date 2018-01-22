@@ -148,7 +148,6 @@ For a contrived example, consider the code in [example/my-app.ss](../../src/tuto
 
 ```
 $ cat example/my-app.ss
-package: tutorial/lang/example
 prelude: :tutorial/lang/dot-app
 
 (export #t)
@@ -211,7 +210,6 @@ with a single definition `greet` and no export directive in sight:
 ```
 $ cat example/my-auto-export.ss
 prelude: :tutorial/lang/auto-export
-package: tutorial/lang/example
 
 ;; everything is automagically exported, so no export directive needed
 (def (greet x)
@@ -254,7 +252,7 @@ used as a `#lang` prelude, in contrast to the gerbil core prelude.
 The [example](../../src/tutorial/lang/example/my-sexp.ss) demonstrates just that:
 ```
 $ cat example/my-sexp.ss
-#lang :tutorial/lang/sexp package: tutorial/lang/example
+#lang :tutorial/lang/sexp
 (export #t)
 
 (def (greet x)

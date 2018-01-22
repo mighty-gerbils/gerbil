@@ -1,4 +1,4 @@
-#lang :tutorial/lang/sexp package: tutorial/lang/example
+#lang :tutorial/lang/sexp
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Simple example that uses the sexp #lang

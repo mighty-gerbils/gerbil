@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Simple web server
-package: tutorial/httpd
-
 (import :std/net/httpd
         :std/net/address
         :std/text/json

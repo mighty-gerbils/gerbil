@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Custom #lang prelude for an sexp language identical to gerbil
-package: tutorial/lang
-
 (import :gerbil/core) ;; so that we can re-export
 (export (import: :gerbil/core)
         (phi: +1 read-module-body))

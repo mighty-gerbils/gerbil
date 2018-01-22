@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; kvstore daemon
-package: tutorial/kvstore
-
 (import :gerbil/gambit
         :std/sugar
         :std/getopt

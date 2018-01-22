@@ -1,4 +1,4 @@
-#lang :std/parser/grammar package: tutorial/lang
+#lang :std/parser/grammar
 
 (import :tutorial/lang/scuby-etc)
 
