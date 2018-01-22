@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; SOCKS4 proxy
-package: tutorial/proxy
-
 (import :gerbil/gambit/threads
         :std/net/socket
         :std/net/address

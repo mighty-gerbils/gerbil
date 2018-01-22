@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Custom #lang prelude for a language with a custom surface syntax
-package: tutorial/lang
-
 (import :gerbil/core
         (phi: +1
               :std/sugar

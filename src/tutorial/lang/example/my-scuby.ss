@@ -1,4 +1,4 @@
-#lang :tutorial/lang/scuby package: tutorial/lang/example
+#lang :tutorial/lang/scuby
 
 def (fibo n)
   def (fibo-r x y k)
