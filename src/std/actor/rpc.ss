@@ -343,17 +343,22 @@ package: std/actor
      (raise e))))
 
 (def (rpc-server-accept rpc-server sock safamily)
-  (while #t
+  (def (loop)
+    (let* ((cliaddr (make-socket-address safamily))
+           (clisock (ssocket-accept sock cliaddr)))
+      (debug "accepted connection from ~a"
+             (let (clistr (socket-address->string cliaddr))
+               (if (string-empty? clistr) ; UNIX client
+                 "?" clistr)))
+      (!!rpc.connection-accept rpc-server clisock cliaddr)
+      (loop)))
+
+  (let again ()
     (try
-     (let* ((cliaddr (make-socket-address safamily))
-            (clisock (ssocket-accept sock cliaddr)))
-       (debug "accepted connection from ~a"
-              (let (clistr (socket-address->string cliaddr))
-                (if (string-empty? clistr) ; UNIX client
-                  "?" clistr)))
-       (!!rpc.connection-accept rpc-server clisock cliaddr))
+     (loop)
      (catch (os-exception? e)
-       (log-error "error accepting connection" e)))))
+       (log-error "error accepting connection" e)
+       (again)))))
 
 (def (rpc-send-error-response msg what)
   (when (message? msg)
