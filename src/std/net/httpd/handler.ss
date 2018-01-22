@@ -45,7 +45,7 @@ package: std/net/httpd
           (res (make-http-response obuf #f #f)))
 
       (set! (ssocket-input-buffer-timeout ibuf)
-         request-timeout)
+        request-timeout)
       (set! (ssocket-output-buffer-timeout obuf)
         response-timeout)
 

@@ -100,10 +100,16 @@ package: std/net/httpd
 
 (def (http-server-accept get-handler sock safamily)
   (def cliaddr (make-socket-address safamily))
-  (while #t
-    (try
-     (let (clisock (ssocket-accept sock cliaddr))
+
+  (def (loop)
+    (let (clisock (ssocket-accept sock cliaddr))
        (spawn/name 'http-request-handler
-                   http-request-handler get-handler clisock (socket-address->address cliaddr)))
+                   http-request-handler get-handler clisock (socket-address->address cliaddr))
+       (loop)))
+
+  (let again ()
+    (try
+     (loop)
      (catch (os-exception? e)
-       (log-error "error accepting connection" e)))))
+       (log-error "error accepting connection" e)
+       (again)))))
