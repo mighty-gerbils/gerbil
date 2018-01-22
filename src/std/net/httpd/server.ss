@@ -28,10 +28,13 @@ package: std/net/httpd
 (def current-http-server
   (make-parameter #f))
 
-(def (start-http-server! mux: (mux (make-default-http-mux)) . addresses)
+(def (start-http-server! mux: (mux (make-default-http-mux))
+                         backlog: (backlog 10)
+                         sockopts: (sockopts [SO_REUSEADDR])
+                         . addresses)
   (start-logger!)
   (let* ((sas (map socket-address addresses))
-         (socks (map ssocket-listen sas)))
+         (socks (map (cut ssocket-listen <> backlog sockopts) sas)))
     (spawn/group 'http-server http-server socks sas mux)))
 
 (def (stop-http-server! httpd)
