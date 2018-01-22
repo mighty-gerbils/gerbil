@@ -26,4 +26,6 @@ package: std/net
         set-httpd-response-timeout!
         set-httpd-max-request-headers!
         set-httpd-max-token-length!
-        set-httpd-max-request-body-length!)
+        set-httpd-max-request-body-length!
+        set-httpd-input-buffer-size!
+        set-httpd-output-buffer-size!)
