@@ -53,7 +53,7 @@ hello world
 The "hello world" script:
 ```
 $ cat > hello.ss <<EOF
-#!/usr/bin/env gxi-script
+#!/usr/bin/env gxi
 
 (def (main . args)
   (displayln "hello world"))
@@ -189,7 +189,7 @@ When the head of the s-expresion is a setf-macro it
 is invoked to expand the syntax.
 If the head is a plain identifier, as is the case
 in the example below, to expands an `identifier-set!`
-invokation.
+invocation.
 ```
 > (def a-pair (cons 'a 'b))
 > (set! (car a-pair) 'c)
@@ -743,7 +743,7 @@ The initial bindings in a module come from the prelude and the root context
 which is the parent context of every module.
 
 The root context is a special context that contains the core macro expanders
-for provide the core language.
+that provide the core language.
 The prelude context on the other hand, is an ordinary module that
 exports any number of bindings that form the language of the module.
 
@@ -781,7 +781,7 @@ they  are further explored in the
 
 ### Implicit Package Declations
 
-As of `Gerbil-v0.12-DEV-845-g39f54e4`, you can ellide the `package:` and
+As of `Gerbil-v0.12-DEV-845-g39f54e4`, you can elide the `package:` and
 `prelude:` declations in your module and have them automatically deduced
 from the file system layout of your library/package.
 You can do so by creating a `gerbil.pkg` file in the root of your library,
