@@ -555,7 +555,7 @@
 
 (define (&constructor-init! klass kons-id obj args)
   (cond
-   ((direct-method-ref klass kons-id)
+   ((&find-method klass kons-id)
     => (lambda (kons)
          (apply kons obj args)
          obj))
@@ -648,17 +648,21 @@
 (define (find-method klass id)
   (cond
    ((type-descriptor? klass)
-    (cond
-     ((direct-method-ref klass id) => values)
-     ((type-descriptor-mixin klass)
-      => (lambda (mixin)
-           (mixin-find-method mixin id)))
-     (else
-      (struct-find-method (##type-super klass) id))))
+    (&find-method klass id))
    ((##type? klass)
     (or (builtin-method-ref klass id)
         (builtin-find-method (##type-super klass) id)))
    (else #f)))
+
+(define (&find-method klass id)
+  (cond
+   ((direct-method-ref klass id)
+    => values)
+   ((type-descriptor-mixin klass)
+    => (lambda (mixin)
+         (mixin-find-method mixin id)))
+   (else
+    (struct-find-method (##type-super klass) id))))
 
 (define (struct-find-method klass id)
   (cond
