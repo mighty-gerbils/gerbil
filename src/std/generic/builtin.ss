@@ -47,6 +47,8 @@ package: std/generic
 (defprimitive-type <object> (object))
 
 ;; builtin Gambit objects
+;; type descriptors: record types and classes
+(defbuiltin-type <type> ##type-type)
 ;; exception base class
 (defbuiltin-type <exception> (macro-type-exception))
 ;; hash-tables and time
