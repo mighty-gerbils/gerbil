@@ -109,13 +109,13 @@ package: gerbil/expander
    gx#phi-context:::init!
    (@case-lambda
     (2 gx#phi-context:::init!__0)
-    (3 gx#phi-context:::init!__opt-lambda6275)))
+    (3 gx#phi-context:::init!__opt-lambda7374)))
   (declare-method gx#phi-context::t :init! gx#phi-context:::init! #f)
   (declare-type
    gx#local-context:::init!
    (@case-lambda
     (1 gx#local-context:::init!__0)
-    (2 gx#local-context:::init!__opt-lambda6261)))
+    (2 gx#local-context:::init!__opt-lambda7238)))
   (declare-method gx#local-context::t :init! gx#local-context:::init! #f)
   (declare-type gx#binding::t (@struct-type gx#binding::t #f 3 #f ()))
   (declare-type gx#binding? (@struct-pred gx#binding::t))
@@ -342,29 +342,29 @@ package: gerbil/expander
    (@struct-setf gx#syntax-error::t 2 #f))
   (declare-type
    gx#eval-syntax
-   (@case-lambda (1 gx#eval-syntax__0) (2 gx#eval-syntax__opt-lambda6170)))
+   (@case-lambda (1 gx#eval-syntax__0) (2 gx#eval-syntax__opt-lambda7025)))
   (declare-type
    gx#core-expand
-   (@case-lambda (1 gx#core-expand__0) (2 gx#core-expand__opt-lambda6154)))
+   (@case-lambda (1 gx#core-expand__0) (2 gx#core-expand__opt-lambda7009)))
   (declare-type
    gx#core-expand*
-   (@case-lambda (1 gx#core-expand*__0) (2 gx#core-expand*__opt-lambda6019)))
+   (@case-lambda (1 gx#core-expand*__0) (2 gx#core-expand*__opt-lambda6874)))
   (declare-type
    gx#core-expand-block
    (@case-lambda
     (2 gx#core-expand-block__0)
     (3 gx#core-expand-block__1)
-    (4 gx#core-expand-block__opt-lambda5747)))
+    (4 gx#core-expand-block__opt-lambda6602)))
   (declare-type
    gx#core-expand-include%
    (@case-lambda
     (1 gx#core-expand-include%__0)
-    (2 gx#core-expand-include%__opt-lambda5496)))
+    (2 gx#core-expand-include%__opt-lambda6351)))
   (declare-type
    gx#core-apply-expander
    (@case-lambda
     (2 gx#core-apply-expander__0)
-    (3 gx#core-apply-expander__opt-lambda5465)))
+    (3 gx#core-apply-expander__opt-lambda6320)))
   (declare-method
    gx#expander::t
    apply-macro-expander
@@ -384,7 +384,7 @@ package: gerbil/expander
    gx#top-special-form::apply-macro-expander
    (@case-lambda
     (2 gx#top-special-form::apply-macro-expander__0)
-    (3 gx#top-special-form::apply-macro-expander__opt-lambda5395)))
+    (3 gx#top-special-form::apply-macro-expander__opt-lambda5884)))
   (declare-method
    gx#top-special-form::t
    apply-macro-expander
@@ -404,12 +404,12 @@ package: gerbil/expander
    gx#core-apply-user-expander
    (@case-lambda
     (2 gx#core-apply-user-expander__0)
-    (3 gx#core-apply-user-expander__opt-lambda5286)))
+    (3 gx#core-apply-user-expander__opt-lambda5409)))
   (declare-type
    gx#user-expander::apply-macro-expander
    (@case-lambda
     (2 gx#core-apply-user-expander__0)
-    (3 gx#core-apply-user-expander__opt-lambda5286)))
+    (3 gx#core-apply-user-expander__opt-lambda5409)))
   (declare-method
    gx#user-expander::t
    apply-macro-expander

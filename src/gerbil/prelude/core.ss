@@ -1605,8 +1605,17 @@ package: gerbil
                            (runtime-type-identifier klass))
                           (name
                            (stx-identifier #'id #'type "::" #'id))
+                          (@next-method
+                           (stx-identifier #'id '@next-method))
                           (defimpl
-                            (wrap #'(def name impl)))
+                            (wrap
+                             #'(def name
+                                 (let-syntax
+                                     ((@next-method
+                                       (syntax-rules ()
+                                         ((_ obj arg (... ...))
+                                          (call-next-method type::t obj 'id arg (... ...))))))
+                                   impl))))
                           (rebind? rebind?)
                           (bind
                            (wrap #'(bind-method! type::t 'id name rebind?))))

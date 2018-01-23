@@ -281,13 +281,30 @@ For instance:
       (printf "{point x:~a y:~a}~n" x y))))
 > {print my-point}
 {point x:1 y:2}
-...
+
 (defmethod {print point-3d}
   (lambda (self)
     (with ((point-3d x y z) self)
       (printf "{point-3d x:~a y:~a z:~a}~n" x y z))))
 > {print my-point}
 {point-3d x:1 y:2 z:0}
+```
+
+If you want to dispatch to the next method in the hierarchy, then you can use
+the `@next-method` macro that is locally bound inside your method definition:
+```
+(defmethod {identify point}
+  (lambda (self)
+    (displayln 'point)))
+
+(defmethod {identify point-3d}
+  (lambda (self)
+    (displayln 'point-3d)
+    (@next-method self)))
+
+> {identify my-point}
+point-3d
+point
 ```
 
 #### Constructors
@@ -304,8 +321,8 @@ For example:
 (defmethod {:init! point-3d}
   (lambda (self x y (z 0))
     (set! (point-x self) x)
-    (set! (point-x self) y)
-    (set! (point-y self) z)))
+    (set! (point-y self) y)
+    (set! (point-z self) z)))
 > (def my-point (make-point-3d 1 2))
 > (point-3d-z my-point)
 => 0

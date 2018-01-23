@@ -646,35 +646,47 @@
       (apply method obj args))))
 
 (define (find-method klass id)
-  (define (cache-method! klass id method)
-    (when method
-      (bind-method! klass id method #t)) ; rebind, it's ok to race
-    method)
-
   (cond
    ((type-descriptor? klass)
     (cond
      ((direct-method-ref klass id) => values)
-     ((type-descriptor-mixin klass)     ; we can't cache for classes
-      (mixin-method-ref klass id))
+     ((type-descriptor-mixin klass)
+      => (lambda (mixin)
+           (mixin-find-method mixin id)))
      (else
-      (cache-method! klass id (struct-find-method (##type-super klass) id)))))
+      (struct-find-method (##type-super klass) id))))
    ((##type? klass)
-    (cond
-     ((hash-get builtin-type-methods (##type-id klass))
-      => (lambda (mtab)
-           (hash-get mtab id)))
-     (else #f)))
+    (or (builtin-method-ref klass id)
+        (builtin-find-method (##type-super klass) id)))
    (else #f)))
 
 (define (struct-find-method klass id)
-  (and (type-descriptor? klass)
-       (or (direct-method-ref klass id)
-           (struct-find-method (##type-super klass) id))))
+  (cond
+   ((type-descriptor? klass)
+    (or (direct-method-ref klass id)
+        (struct-find-method (##type-super klass) id)))
+   ((##type? klass)
+    (or (builtin-method-ref klass id)
+        (builtin-find-method (##type-super klass) id)))
+   (else #f)))
 
 (define (class-find-method klass id)
-  (or (direct-method-ref klass id)
-      (mixin-method-ref klass id)))
+  (and (type-descriptor? klass)
+       (or (direct-method-ref klass id)
+           (mixin-method-ref klass id))))
+
+(define (mixin-find-method mixin id)
+  (let lp ((rest mixin))
+    (core-match rest
+      ((klass . rest)
+       (or (direct-method-ref klass id)
+           (lp rest)))
+      (else #f))))
+
+(define (builtin-find-method klass id)
+  (and (##type? klass)
+       (or (builtin-method-ref klass id)
+           (builtin-find-method (##type-super klass) id))))
 
 (define (direct-method-ref klass id)
   (cond
@@ -686,8 +698,14 @@
   (cond
    ((type-descriptor-mixin klass)
     => (lambda (mixin)
-         (ormap (lambda (rtd) (direct-method-ref rtd id))
-                mixin)))
+         (mixin-find-method mixin id)))
+   (else #f)))
+
+(define (builtin-method-ref klass id)
+  (cond
+   ((hash-get builtin-type-methods (##type-id klass))
+    => (lambda (mtab)
+         (hash-get mtab id)))
    (else #f)))
 
 (define (bind-method! klass id proc #!optional (rebind? #t))
@@ -695,6 +713,9 @@
     (if (and (not rebind?) (hash-get ht id))
       (error "Method already bound" klass id)
       (hash-put! ht id proc)))
+
+  (unless (procedure? proc)
+    (error "Bad method; expected procedure" proc))
 
   (cond
    ((type-descriptor? klass)
@@ -714,35 +735,40 @@
                ht)))))
       (bind! ht)))
    (else
-    (error "Expected type-descriptor" klass))))
+    (error "Bad class; expected type-descriptor" klass))))
 
 (define (next-method subklass obj id)
   (let ((klass (object-type obj))
         (type-id (##type-id subklass)))
-    (and (type-descriptor? klass)
-         (cond
-          ((type-descriptor-mixin klass)
-           => (lambda (mixin)
-                (let lp ((rest (cons klass mixin)))
-                  (core-match rest
-                    ((klass . rest)
-                     (if (eq? type-id (##type-id klass))
-                       (let lp2 ((rest rest))
-                         (core-match rest
-                           ((klass . rest)
-                            (cond
-                             ((direct-method-ref klass id) => values)
-                             (else
-                              (lp2 rest))))
-                           (else #f)))
-                       (lp rest)))
-                    (else #f)))))
-          (else
-           (let lp ((klass klass))
-             (and klass
+    (cond
+     ((type-descriptor? klass)
+      (cond
+       ((type-descriptor-mixin klass)
+        => (lambda (mixin)
+             (let lp ((rest (cons klass mixin)))
+               (core-match rest
+                 ((klass . rest)
                   (if (eq? type-id (##type-id klass))
-                    (struct-find-method (##type-super klass) id)
-                    (lp (##type-super klass))))))))))
+                    (mixin-find-method rest id)
+                    (lp rest)))
+                 (else #f)))))
+       (else
+        (let lp ((klass klass))
+          (cond
+           ((eq? type-id (##type-id klass))
+            (struct-find-method (##type-super klass) id))
+           ((##type-super klass)
+            => lp)
+           (else #f))))))
+     ((##type? klass)
+      (let lp ((klass klass))
+        (cond
+         ((eq? type-id (##type-id klass))
+          (builtin-find-method (##type-super klass) id))
+         ((##type-super klass)
+          => lp)
+         (else #f))))
+     (else #f))))
 
 (define (call-next-method subklass obj id . args)
   (cond

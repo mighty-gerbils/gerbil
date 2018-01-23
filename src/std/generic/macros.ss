@@ -122,9 +122,11 @@ package: std/generic
                       (defimpl
                         (syntax/loc stx
                           (def impl-id
-                            (let (@next-method
-                                  (lambda (arg-id ...)
-                                    (generic-dispatch-next generic::t impl-id arg-id ...)))
+                            (let-syntax
+                                ((@next-method
+                                  (syntax-rules ()
+                                    ((_ arg-id ...)
+                                     (generic-dispatch-next generic::t impl-id arg-id ...)))))
                               impl)))))
          (syntax/loc stx
            (begin

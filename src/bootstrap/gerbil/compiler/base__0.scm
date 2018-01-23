@@ -17,8 +17,8 @@
     (make-struct-type 'gxc#symbol-table::t '#f '2 'symbol-table '() ':init!))
   (define gxc#symbol-table? (make-struct-predicate gxc#symbol-table::t))
   (define gxc#make-symbol-table
-    (lambda _$args681_
-      (apply make-struct-instance gxc#symbol-table::t _$args681_)))
+    (lambda _$args803_
+      (apply make-struct-instance gxc#symbol-table::t _$args803_)))
   (define gxc#symbol-table-gensyms
     (make-struct-field-accessor gxc#symbol-table::t '0))
   (define gxc#symbol-table-bindings
@@ -28,13 +28,13 @@
   (define gxc#symbol-table-bindings-set!
     (make-struct-field-mutator gxc#symbol-table::t '1))
   (define gxc#symbol-table:::init!
-    (lambda (_self679_)
-      (if (##fx< '2 (##vector-length _self679_))
+    (lambda (_self801_)
+      (if (##fx< '2 (##vector-length _self801_))
           (begin
-            (##vector-set! _self679_ '1 (make-hash-table-eq))
-            (##vector-set! _self679_ '2 (make-hash-table-eq)))
+            (##vector-set! _self801_ '1 (make-hash-table-eq))
+            (##vector-set! _self801_ '2 (make-hash-table-eq)))
           (error '"struct-instance-init!: too many arguments for struct"
-                 _self679_))))
+                 _self801_))))
   (bind-method! gxc#symbol-table::t ':init! gxc#symbol-table:::init! '#f)
   (define gxc#raise-compile-error
     (lambda (_message675_ _stx676_ . _details677_)
