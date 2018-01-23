@@ -53,7 +53,7 @@ hello world
 The "hello world" script:
 ```
 $ cat > hello.ss <<EOF
-#!/usr/bin/env gxi-script
+#!/usr/bin/env gxi
 
 (def (main . args)
   (displayln "hello world"))
