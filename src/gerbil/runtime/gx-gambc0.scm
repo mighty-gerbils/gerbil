@@ -661,9 +661,14 @@
    (else #f)))
 
 (define (struct-find-method klass id)
-  (and (type-descriptor? klass)
-       (or (direct-method-ref klass id)
-           (struct-find-method (##type-super klass) id))))
+  (cond
+   ((type-descriptor? klass)
+    (or (direct-method-ref klass id)
+        (struct-find-method (##type-super klass) id)))
+   ((##type? klass)
+    (or (builtin-method-ref klass id)
+        (builtin-find-method (##type-super klass) id)))
+   (else #f)))
 
 (define (class-find-method klass id)
   (and (type-descriptor? klass)
@@ -735,30 +740,35 @@
 (define (next-method subklass obj id)
   (let ((klass (object-type obj))
         (type-id (##type-id subklass)))
-    (and (type-descriptor? klass)
-         (cond
-          ((type-descriptor-mixin klass)
-           => (lambda (mixin)
-                (let lp ((rest (cons klass mixin)))
-                  (core-match rest
-                    ((klass . rest)
-                     (if (eq? type-id (##type-id klass))
-                       (let lp2 ((rest rest))
-                         (core-match rest
-                           ((klass . rest)
-                            (cond
-                             ((direct-method-ref klass id) => values)
-                             (else
-                              (lp2 rest))))
-                           (else #f)))
-                       (lp rest)))
-                    (else #f)))))
-          (else
-           (let lp ((klass klass))
-             (and klass
+    (cond
+     ((type-descriptor? klass)
+      (cond
+       ((type-descriptor-mixin klass)
+        => (lambda (mixin)
+             (let lp ((rest (cons klass mixin)))
+               (core-match rest
+                 ((klass . rest)
                   (if (eq? type-id (##type-id klass))
-                    (struct-find-method (##type-super klass) id)
-                    (lp (##type-super klass))))))))))
+                    (mixin-find-method rest id)
+                    (lp rest)))
+                 (else #f)))))
+       (else
+        (let lp ((klass klass))
+          (cond
+           ((eq? type-id (##type-id klass))
+            (struct-find-method (##type-super klass) id))
+           ((##type-super klass)
+            => lp)
+           (else #f))))))
+     ((##type? klass)
+      (let lp ((klass klass))
+        (cond
+         ((eq? type-id (##type-id klass))
+          (builtin-find-method (##type-super klass) id))
+         ((##type-super klass)
+          => lp)
+         (else #f))))
+     (else #f))))
 
 (define (call-next-method subklass obj id . args)
   (cond
