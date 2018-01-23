@@ -646,25 +646,18 @@
       (apply method obj args))))
 
 (define (find-method klass id)
-  (define (cache-method! klass id method)
-    (when method
-      (bind-method! klass id method #t)) ; rebind, it's ok to race
-    method)
-
   (cond
    ((type-descriptor? klass)
     (cond
      ((direct-method-ref klass id) => values)
-     ((type-descriptor-mixin klass)     ; we can't cache for classes
-      (mixin-method-ref klass id))
+     ((type-descriptor-mixin klass)
+      => (lambda (mixin)
+           (mixin-find-method mixin id)))
      (else
-      (cache-method! klass id (struct-find-method (##type-super klass) id)))))
+      (struct-find-method (##type-super klass) id))))
    ((##type? klass)
-    (cond
-     ((hash-get builtin-type-methods (##type-id klass))
-      => (lambda (mtab)
-           (hash-get mtab id)))
-     (else #f)))
+    (or (builtin-method-ref klass id)
+        (builtin-find-method (##type-super klass) id)))
    (else #f)))
 
 (define (struct-find-method klass id)
@@ -673,8 +666,22 @@
            (struct-find-method (##type-super klass) id))))
 
 (define (class-find-method klass id)
-  (or (direct-method-ref klass id)
-      (mixin-method-ref klass id)))
+  (and (type-descriptor? klass)
+       (or (direct-method-ref klass id)
+           (mixin-method-ref klass id))))
+
+(define (mixin-find-method mixin id)
+  (let lp ((rest mixin))
+    (core-match rest
+      ((klass . rest)
+       (or (direct-method-ref klass id)
+           (lp rest)))
+      (else #f))))
+
+(define (builtin-find-method klass id)
+  (and (##type? klass)
+       (or (builtin-method-ref klass id)
+           (builtin-find-method (##type-super klass) id))))
 
 (define (direct-method-ref klass id)
   (cond
@@ -686,8 +693,14 @@
   (cond
    ((type-descriptor-mixin klass)
     => (lambda (mixin)
-         (ormap (lambda (rtd) (direct-method-ref rtd id))
-                mixin)))
+         (mixin-find-method mixin id)))
+   (else #f)))
+
+(define (builtin-method-ref klass id)
+  (cond
+   ((hash-get builtin-type-methods (##type-id klass))
+    => (lambda (mtab)
+         (hash-get mtab id)))
    (else #f)))
 
 (define (bind-method! klass id proc #!optional (rebind? #t))
