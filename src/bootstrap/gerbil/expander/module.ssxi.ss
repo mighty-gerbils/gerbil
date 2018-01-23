@@ -93,7 +93,7 @@ package: gerbil/expander
    gx#prelude-context:::init!
    (@case-lambda
     (2 gx#prelude-context:::init!__0)
-    (3 gx#prelude-context:::init!__opt-lambda12117)))
+    (3 gx#prelude-context:::init!__opt-lambda13827)))
   (declare-method gx#prelude-context::t :init! gx#prelude-context:::init! #f)
   (declare-method gx#import-expander::t :init! gx#import-expander:::init! #f)
   (declare-method gx#export-expander::t :init! gx#export-expander:::init! #f)
@@ -112,58 +112,58 @@ package: gerbil/expander
    (@case-lambda
     (1 gx#import-module__0)
     (2 gx#import-module__1)
-    (3 gx#import-module__opt-lambda12065)))
+    (3 gx#import-module__opt-lambda13164)))
   (declare-type
    gx#core-context-prelude
    (@case-lambda
     (0 gx#core-context-prelude__0)
-    (1 gx#core-context-prelude__opt-lambda12030)))
+    (1 gx#core-context-prelude__opt-lambda13129)))
   (declare-type
    gx#core-import-module
    (@case-lambda
     (1 gx#core-import-module__0)
-    (2 gx#core-import-module__opt-lambda11901)))
+    (2 gx#core-import-module__opt-lambda13000)))
   (declare-type
    gx#core-resolve-module-path
    (@case-lambda
     (1 gx#core-resolve-module-path__0)
-    (2 gx#core-resolve-module-path__opt-lambda11520)))
+    (2 gx#core-resolve-module-path__opt-lambda12619)))
   (declare-type
    gx#core-library-package-plist
    (@case-lambda
     (1 gx#core-library-package-plist__0)
-    (2 gx#core-library-package-plist__opt-lambda11412)))
+    (2 gx#core-library-package-plist__opt-lambda12511)))
   (declare-type
    gx#core-bind-import!
    (@case-lambda
     (1 gx#core-bind-import!__0)
     (2 gx#core-bind-import!__1)
-    (3 gx#core-bind-import!__opt-lambda11303)))
+    (3 gx#core-bind-import!__opt-lambda12402)))
   (declare-type
    gx#core-bind-weak-import!
    (@case-lambda
     (1 gx#core-bind-weak-import!__0)
-    (2 gx#core-bind-weak-import!__opt-lambda11289)))
+    (2 gx#core-bind-weak-import!__opt-lambda12388)))
   (declare-type
    gx#core-module-export->import
    (@case-lambda
     (1 gx#core-module-export->import__0)
     (2 gx#core-module-export->import__1)
-    (3 gx#core-module-export->import__opt-lambda11105)))
+    (3 gx#core-module-export->import__opt-lambda12204)))
   (declare-type
    gx#core-expand-import%
    (@case-lambda
     (1 gx#core-expand-import%__0)
-    (2 gx#core-expand-import%__opt-lambda10177)))
+    (2 gx#core-expand-import%__opt-lambda11276)))
   (declare-type
    gx#core-expand-export%
    (@case-lambda
     (1 gx#core-expand-export%__0)
-    (2 gx#core-expand-export%__opt-lambda9686)))
+    (2 gx#core-expand-export%__opt-lambda10785)))
   (declare-type
    gx#core-bind-feature!
    (@case-lambda
     (1 gx#core-bind-feature!__0)
     (2 gx#core-bind-feature!__1)
     (3 gx#core-bind-feature!__2)
-    (4 gx#core-bind-feature!__opt-lambda9619))))
+    (4 gx#core-bind-feature!__opt-lambda10718))))

@@ -110,8 +110,8 @@ namespace: gx
          (%#define-runtime make-local-context gx#make-local-context)
          (%#define-syntax local-context |gx[:0:]#local-context|)
          (%#begin (%#define-runtime
-                   phi-context:::init!__opt-lambda6275
-                   gx#phi-context:::init!__opt-lambda6275)
+                   phi-context:::init!__opt-lambda7374
+                   gx#phi-context:::init!__opt-lambda7374)
                   (%#begin (%#define-runtime
                             phi-context:::init!__0
                             gx#phi-context:::init!__0)
@@ -119,8 +119,8 @@ namespace: gx
                             phi-context:::init!
                             gx#phi-context:::init!)))
          (%#begin (%#define-runtime
-                   local-context:::init!__opt-lambda6261
-                   gx#local-context:::init!__opt-lambda6261)
+                   local-context:::init!__opt-lambda7238
+                   gx#local-context:::init!__opt-lambda7238)
                   (%#begin (%#define-runtime
                             local-context:::init!__0
                             gx#local-context:::init!__0)
@@ -303,14 +303,14 @@ namespace: gx
          (%#define-syntax syntax-error |gx[:0:]#syntax-error|)
          (%#define-runtime raise-syntax-error gx#raise-syntax-error)
          (%#begin (%#define-runtime
-                   eval-syntax__opt-lambda6170
-                   gx#eval-syntax__opt-lambda6170)
+                   eval-syntax__opt-lambda7025
+                   gx#eval-syntax__opt-lambda7025)
                   (%#begin (%#define-runtime eval-syntax__0 gx#eval-syntax__0)
                            (%#define-runtime eval-syntax gx#eval-syntax)))
          (%#define-runtime eval-syntax* gx#eval-syntax*)
          (%#begin (%#define-runtime
-                   core-expand__opt-lambda6154
-                   gx#core-expand__opt-lambda6154)
+                   core-expand__opt-lambda7009
+                   gx#core-expand__opt-lambda7009)
                   (%#begin (%#define-runtime core-expand__0 gx#core-expand__0)
                            (%#define-runtime core-expand gx#core-expand)))
          (%#define-runtime core-expand-top gx#core-expand-top)
@@ -319,8 +319,8 @@ namespace: gx
           core-expand-expression+1
           gx#core-expand-expression+1)
          (%#begin (%#define-runtime
-                   core-expand*__opt-lambda6019
-                   gx#core-expand*__opt-lambda6019)
+                   core-expand*__opt-lambda6874
+                   gx#core-expand*__opt-lambda6874)
                   (%#begin (%#define-runtime
                             core-expand*__0
                             gx#core-expand*__0)
@@ -328,8 +328,8 @@ namespace: gx
          (%#define-runtime core-expand1 gx#core-expand1)
          (%#define-runtime core-expand-head gx#core-expand-head)
          (%#begin (%#define-runtime
-                   core-expand-block__opt-lambda5747
-                   gx#core-expand-block__opt-lambda5747)
+                   core-expand-block__opt-lambda6602
+                   gx#core-expand-block__opt-lambda6602)
                   (%#begin (%#define-runtime
                             core-expand-block__0
                             gx#core-expand-block__0)
@@ -344,8 +344,8 @@ namespace: gx
           core-expand-cond-expand%
           gx#core-expand-cond-expand%)
          (%#begin (%#define-runtime
-                   core-expand-include%__opt-lambda5496
-                   gx#core-expand-include%__opt-lambda5496)
+                   core-expand-include%__opt-lambda6351
+                   gx#core-expand-include%__opt-lambda6351)
                   (%#begin (%#define-runtime
                             core-expand-include%__0
                             gx#core-expand-include%__0)
@@ -353,8 +353,8 @@ namespace: gx
                             core-expand-include%
                             gx#core-expand-include%)))
          (%#begin (%#define-runtime
-                   core-apply-expander__opt-lambda5465
-                   gx#core-apply-expander__opt-lambda5465)
+                   core-apply-expander__opt-lambda6320
+                   gx#core-apply-expander__opt-lambda6320)
                   (%#begin (%#define-runtime
                             core-apply-expander__0
                             gx#core-apply-expander__0)
@@ -371,8 +371,8 @@ namespace: gx
           core-expander::apply-macro-expander
           gx#core-expander::apply-macro-expander)
          (%#begin (%#define-runtime
-                   top-special-form::apply-macro-expander__opt-lambda5395
-                   gx#top-special-form::apply-macro-expander__opt-lambda5395)
+                   top-special-form::apply-macro-expander__opt-lambda5884
+                   gx#top-special-form::apply-macro-expander__opt-lambda5884)
                   (%#begin (%#define-runtime
                             top-special-form::apply-macro-expander__0
                             gx#top-special-form::apply-macro-expander__0)
@@ -386,8 +386,8 @@ namespace: gx
           rename-macro-expander::apply-macro-expander
           gx#rename-macro-expander::apply-macro-expander)
          (%#begin (%#define-runtime
-                   core-apply-user-expander__opt-lambda5286
-                   gx#core-apply-user-expander__opt-lambda5286)
+                   core-apply-user-expander__opt-lambda5409
+                   gx#core-apply-user-expander__opt-lambda5409)
                   (%#begin (%#define-runtime
                             core-apply-user-expander__0
                             gx#core-apply-user-expander__0)
