@@ -696,6 +696,9 @@
       (error "Method already bound" klass id)
       (hash-put! ht id proc)))
 
+  (unless (procedure? proc)
+    (error "Bad method; expected procedure" proc))
+
   (cond
    ((type-descriptor? klass)
     (let ((ht (type-descriptor-methods klass)))
@@ -714,7 +717,7 @@
                ht)))))
       (bind! ht)))
    (else
-    (error "Expected type-descriptor" klass))))
+    (error "Bad class; expected type-descriptor" klass))))
 
 (define (next-method subklass obj id)
   (let ((klass (object-type obj))
