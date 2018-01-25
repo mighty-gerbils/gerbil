@@ -23,7 +23,7 @@ package: std/xml
 (defrules defproc ()                    ; see through *TOP*
   ((_ proc sxml-to-xml-proc)
    (def (proc sxml (port (current-output-port)))
-     (sxml-to-xml-proc (cadr sxml) port))))
+     (sxml-to-xml-proc (item sxml) port))))
 
 (defproc print-sxml->html       sxml>>html)
 (defproc print-sxml->html*      sxml>>html*)
@@ -38,7 +38,16 @@ package: std/xml
 (defproc pretty-print-sxml->xhtml-file sxml>>pretty-xhtml-file)
 
 (def (write-xml sxml (port (current-output-port)))
-  (sxml>>xml-fast (cadr sxml) port))
+  (sxml>>xml-fast (item sxml) port))
 
 (def (write-html sxml (port (current-output-port)))
-  (sxml>>html-fast (cadr sxml) port))
+  (sxml>>html-fast (item sxml) port))
+
+(def (item sxml)
+  (match sxml
+    (['*TOP* . rest]
+     (match rest
+       ([['@ . attrs] . rest]
+        rest)
+       (else rest)))
+    (else sxml)))
