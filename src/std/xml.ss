@@ -4,9 +4,11 @@
 package: std
 
 (import :std/build-config
+        :std/xml/ssax
         :std/xml/sxml
         :std/xml/print)
-(export (import: :std/xml/sxml
+(export (import: :std/xml/ssax
+                 :std/xml/sxml
                  :std/xml/print))
 (cond-expand
   (config-have-libxml
