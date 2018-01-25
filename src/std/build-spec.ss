@@ -119,13 +119,13 @@
                 "-ld-options" ,(shell-config "xml2-config" "--libs")
                 "-e" "(include \"~~lib/_gambit#.scm\")")
           (ssi: "xml/_libxml")
-          "xml/libxml"
-          "xml/sxml"
-          (gsc: "xml/sxml-to-xml")
-          (ssi: "xml/sxml-to-xml")
-          "xml/print"
-          "xml")
+          "xml/libxml")
         '())
+    "xml/sxml"
+    (gsc: "xml/sxml-to-xml")
+    (ssi: "xml/sxml-to-xml")
+    "xml/print"
+    "xml"
     ;; :std/crypto
     (gsc: "crypto/libcrypto"
           "-cc-options" ,(cppflags "")
