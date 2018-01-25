@@ -4,7 +4,8 @@
 package: std/xml
 
 (import :std/xml/sxml-to-xml)
-(export print-sxml->html
+(export write-xml write-html
+        print-sxml->html
         print-sxml->html*
         print-sxml->html-fast
         print-sxml->xhtml
@@ -21,8 +22,8 @@ package: std/xml
 
 (defrules defproc ()                    ; see through *TOP*
   ((_ proc sxml-to-xml-proc)
-   (def (proc tree)
-     (sxml-to-xml-proc (cadr tree)))))
+   (def (proc sxml (port (current-output-port)))
+     (sxml-to-xml-proc (cadr sxml) port))))
 
 (defproc print-sxml->html       sxml>>html)
 (defproc print-sxml->html*      sxml>>html*)
@@ -35,3 +36,9 @@ package: std/xml
 (defproc print-sxml->xml-fast   sxml>>xml-fast)
 (defproc pretty-print-sxml->xml-file   sxml>>pretty-xml-file)
 (defproc pretty-print-sxml->xhtml-file sxml>>pretty-xhtml-file)
+
+(def (write-xml sxml (port (current-output-port)))
+  (sxml>>xml-fast (cadr sxml) port))
+
+(def (write-html sxml (port (current-output-port)))
+  (sxml>>html-fast (cadr sxml) port))
