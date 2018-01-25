@@ -16,7 +16,7 @@ package: std/srfi
   time-difference time-difference!
   add-duration add-duration!
   subtract-duration subtract-duration!
-  make-date date?
+  date make-date date?
   date-nanosecond date-second date-minute date-hour
   date-day date-month date-year date-zone-offset
   date-year-day date-week-day date-week-number
