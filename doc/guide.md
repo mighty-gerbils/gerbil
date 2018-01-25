@@ -818,7 +818,7 @@ The build configuration for the std library is specified in
 If you have the required libraries (documented in build-features) in your
 system, you can enable building by setting the `(enable feature #f)`
 statement in `build-features.ss` to `#t`. You can then build the optional
-library modules by running `$GERBIL_HOME/src/build_stdlib.sh`.
+library modules by running `$GERBIL_HOME/src/build.sh stdlib`.
 
 ### Additional Syntactic Sugar
 
@@ -1414,15 +1414,14 @@ The following is a convertible JSON object:
 ### XML
 
 Gerbil supports XML and HTML with the `:std/xml` library.
-The library uses `libxml2` to parse XML and HTML and converts it
-to the standard Scheme SXML representation.
-It also provides routines for searching and selecting content
-from SXML trees, as well as XML/HTML output routines.
+The library supports parsing and manipulation with Oleg's SSAX/SXPath and
+provides some additional facilities for processing SXML.
 
-Because of the `libxml2` foreign dependency, the `:std/xml` library
-is not built by default. You can build it by editing `std/build-features.ss`
-to set `(enable libxml #t)` and rerunning the std library build script as
-described earlier in the guide.
+Optionally, when configured so, the library can also use `libxml2` to parse
+XML and real world HTML.
+The `libxml2` dependent components are not built by default.
+You can build them by editing `std/build-features.ss` to set `(enable libxml #t)`
+and rerunning the std library build script as described earlier in the guide.
 
 For example, here is a parse of the bing front page without scripts,
 style, and CDATA:
