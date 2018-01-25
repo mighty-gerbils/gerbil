@@ -1414,11 +1414,11 @@ The following is a convertible JSON object:
 ### XML
 
 Gerbil supports XML and HTML with the `:std/xml` library.
-The library supports parsing and manipulation with Oleg's SSAX/SXPath and
-provides some additional facilities for processing SXML.
+The library supports parsing and querying with Oleg's SXML/SSAX/SXPath and
+provides additional facilities for processing SXML.
 
 Optionally, when configured so, the library can also use `libxml2` to parse
-XML and real world HTML.
+real world HTML (and plain old XML).
 The `libxml2` dependent components are not built by default.
 You can build them by editing `std/build-features.ss` to set `(enable libxml #t)`
 and rerunning the std library build script as described earlier in the guide.
