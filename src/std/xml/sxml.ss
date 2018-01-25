@@ -29,9 +29,7 @@ package: std/xml
 (def (attribute-e key attrs)
   (cond
    ((and (pair? attrs) (assq key attrs))
-    => (match <>
-         ([_ value] value)
-         ([] #!void)))
+    => cadr)
    (else #f)))
 
 ;; node => list of node
