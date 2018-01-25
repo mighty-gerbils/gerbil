@@ -122,6 +122,7 @@
           "xml/libxml")
         '())
     (gxc: "xml/ssax" "-cc-options" "--param max-gcse-memory=300000000")
+    "xml/sxpath"
     "xml/sxml"
     (gsc: "xml/sxml-to-xml")
     (ssi: "xml/sxml-to-xml")
