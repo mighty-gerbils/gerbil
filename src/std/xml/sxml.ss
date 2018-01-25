@@ -22,11 +22,11 @@ package: std/xml
 (def (sxml-attribute-e n key)
   (cond
    ((sxml-attributes n)
-    => (cut attribute-e key <>))
+    => (cut sxml-attribute-getq key <>))
    (else #f)))
 
 ;; attribute list => value
-(def (attribute-e key attrs)
+(def (sxml-attribute-getq key attrs)
   (cond
    ((and (pair? attrs) (assq key attrs))
     => cadr)
