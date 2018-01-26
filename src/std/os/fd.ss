@@ -12,7 +12,6 @@ package: std/os
 (extern namespace: #f
   macro-direction-in macro-direction-out macro-direction-inout
   macro-port-name
-  macro-type-raw-device-port
   macro-raw-device-port?
   macro-raw-device-port-rdevice-condvar
   macro-raw-device-port-wdevice-condvar
@@ -60,5 +59,3 @@ package: std/os
 (def (fd-type? obj t)
   (and (macro-raw-device-port? obj)
        (eq? (fd-type obj) t)))
-
-(bind-method! (macro-type-raw-device-port) 'destroy close-port)

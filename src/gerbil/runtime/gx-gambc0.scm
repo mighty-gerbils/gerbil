@@ -781,6 +781,9 @@
    (else
     (error "Cannot find next method" obj id))))
 
+;;; builtin object methods
+(bind-method! (macro-type-port) 'destroy close-port)
+
 ;;; etc
 ;; use gambit type for this
 (define (raise-type-error where type obj)
