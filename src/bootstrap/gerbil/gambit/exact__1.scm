@@ -1,53 +1,53 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/gambit/exact[1]#_g528_|
+  (define |gerbil/gambit/exact[1]#_g530_|
     (gx#core-deserialize-mark
-     '(0 (_obj427_ . _%508_) (ref . _ref467_))
+     '(0 (ref . _ref469_) (_obj429_ . _%510_))
      (gx#import-module '(:gerbil/core <sugar> <sugar:3>))))
-  (define |gerbil/gambit/exact[1]#_g529_|
+  (define |gerbil/gambit/exact[1]#_g531_|
     (gx#make-syntax-quote
      'syntax
      #f
      (gx#current-expander-context)
-     (list |gerbil/gambit/exact[1]#_g528_|)))
-  (define |gerbil/gambit/exact[1]#_g530_|
+     (list |gerbil/gambit/exact[1]#_g530_|)))
+  (define |gerbil/gambit/exact[1]#_g532_|
     (gx#make-syntax-quote
      'lambda
      #f
      (gx#current-expander-context)
-     (list |gerbil/gambit/exact[1]#_g528_|)))
+     (list |gerbil/gambit/exact[1]#_g530_|)))
   (define |gerbil/gambit/exact[:0:]#exact-integer?|
-    (lambda (_$stx430_)
-      (let* ((_g435450_
-              (lambda (_g436446_)
-                (gx#raise-syntax-error '#f '"Bad syntax" _g436446_)))
-             (_g434469_
-              (lambda (_g436454_)
-                ((lambda (_L457_)
-                   (if (gx#identifier? _L457_)
+    (lambda (_$stx432_)
+      (let* ((_g437452_
+              (lambda (_g438448_)
+                (gx#raise-syntax-error '#f '"Bad syntax" _g438448_)))
+             (_g436471_
+              (lambda (_g438456_)
+                ((lambda (_L459_)
+                   (if (gx#identifier? _L459_)
                        (cons (gx#datum->syntax
-                              |gerbil/gambit/exact[1]#_g529_|
+                              |gerbil/gambit/exact[1]#_g531_|
                               'syntax
                               '#f
                               '#f)
                              (cons (gx#datum->syntax '#f 'exact-integer?__impl)
                                    '()))
-                       (_g435450_ _g436454_)))
-                 _g436454_)))
-             (_g433510_
-              (lambda (_g436473_)
-                (if (gx#stx-pair? _g436473_)
-                    (let ((_e438476_ (gx#syntax-e _g436473_)))
-                      (let ((_hd439480_ (##car _e438476_))
-                            (_tl440483_ (##cdr _e438476_)))
-                        (if (gx#stx-pair? _tl440483_)
-                            (let ((_e441486_ (gx#syntax-e _tl440483_)))
-                              (let ((_hd442490_ (##car _e441486_))
-                                    (_tl443493_ (##cdr _e441486_)))
-                                (if (gx#stx-null? _tl443493_)
-                                    ((lambda (_L496_)
+                       (_g437452_ _g438456_)))
+                 _g438456_)))
+             (_g435512_
+              (lambda (_g438475_)
+                (if (gx#stx-pair? _g438475_)
+                    (let ((_e440478_ (gx#syntax-e _g438475_)))
+                      (let ((_hd441482_ (##car _e440478_))
+                            (_tl442485_ (##cdr _e440478_)))
+                        (if (gx#stx-pair? _tl442485_)
+                            (let ((_e443488_ (gx#syntax-e _tl442485_)))
+                              (let ((_hd444492_ (##car _e443488_))
+                                    (_tl445495_ (##cdr _e443488_)))
+                                (if (gx#stx-null? _tl445495_)
+                                    ((lambda (_L498_)
                                        (cons (cons (gx#datum->syntax
-                                                    |gerbil/gambit/exact[1]#_g530_|
+                                                    |gerbil/gambit/exact[1]#_g532_|
                                                     'lambda
                                                     '#f
                                                     '#f)
@@ -72,9 +72,9 @@
                                          '())))
                        '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                             (cons _L496_ '())))
-                                     _hd442490_)
-                                    (_g434469_ _g436473_))))
-                            (_g434469_ _g436473_))))
-                    (_g434469_ _g436473_)))))
-        (_g433510_ _$stx430_)))))
+                                             (cons _L498_ '())))
+                                     _hd444492_)
+                                    (_g436471_ _g438475_))))
+                            (_g436471_ _g438475_))))
+                    (_g436471_ _g438475_)))))
+        (_g435512_ _$stx432_)))))
