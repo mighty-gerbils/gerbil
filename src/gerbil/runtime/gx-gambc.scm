@@ -181,35 +181,38 @@
   (_gx#compile (gx#core-compile-top-syntax stx)))
 
 (define (_gx#eval-import in)
-  (define (import-context in)
+  (define mods (make-hash-table-eq))
+
+  (define (import1 in phi)
     (cond
      ((gx#module-import? in)
-      (gx#module-export-context
-         (gx#module-import-source in)))
+      (let ((iphi (fx+ phi (gx#module-import-phi in))))
+        (when (fxzero? iphi)
+          (eval1
+           (gx#module-export-context
+            (gx#module-import-source in))))))
+     ((gx#module-context? in)
+      (when (fxzero? phi)
+        (eval1 in)))
      ((gx#import-set? in)
-      (gx#import-set-source in))
-     ((gx#module-context? in) in)
+      (let ((iphi (fx+ phi (gx#import-set-phi in))))
+        (cond
+         ((fxzero? iphi)
+          (eval1 (gx#import-set-source in)))
+         ((fxpositive? iphi)
+          (for-each (lambda (in) (import1 in iphi))
+                    (gx#module-context-import (gx#import-set-source in)))))))
      (else
       (error "Unexpected import" in))))
 
-  (define (import1 in)
-    (_gx#eval-module (import-context in)))
+  (define (eval1 ctx)
+    (unless (hash-get mods ctx)
+      (hash-put! mods ctx #t)
+      (_gx#eval-module ctx)))
 
-  (define (import* lst)
-    (let ((tab (make-hash-table-eq)))
-      (let lp ((rest lst) (mods '()))
-        (core-match rest
-          ((in . rest)
-           (let ((ctx (import-context in)))
-             (if (hash-get tab ctx)
-               (lp rest mods)
-               (begin
-                 (hash-put! tab ctx #t)
-                 (lp rest (cons ctx mods))))))
-          (else
-           (for-each _gx#eval-module (reverse mods)))))))
-
-  ((if (pair? in) import* import1) in))
+  (if (pair? in)
+    (for-each (lambda (in) (import1 in 0)) in)
+    (import1 in 0)))
 
 ;; bootstrap module eval - init-gx! sets to gx#core-eval-module
 (define (_gx#eval-module obj)

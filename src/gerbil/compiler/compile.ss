@@ -947,6 +947,35 @@ namespace: gxc
 
 ;;; loader
 (def (generate-runtime-loader-import% stx)
+  (def (import-set-template in phi)
+    (let ((iphi (fx+ phi (import-set-phi in)))
+          (imports (module-context-import (import-set-source in))))
+      (let lp ((rest imports) (r []))
+        (match rest
+          ([in . rest]
+           (cond
+            ((module-context? in)
+             (if (fxzero? iphi)
+               (lp rest (cons in r))
+               (lp rest r)))
+            ((module-import? in)
+             (let (iphi (fx+ phi (module-import-phi in)))
+               (if (fxzero? iphi)
+                 (lp rest (cons (module-export-context (module-import-source in)) r))
+                 (lp rest r))))
+            ((import-set? in)
+             (let (xphi (fx+ iphi (import-set-phi in)))
+               (cond
+                ((fxzero? xphi)
+                 (lp rest (cons (import-set-source in) r)))
+                ((fxpositive? xphi)
+                 (lp rest (foldl cons r (import-set-template in iphi))))
+                (else
+                 (lp rest r)))))
+            (else
+             (lp rest r))))
+          (else r)))))
+
   (ast-case stx ()
     ((_ . imports)
      (let (ht (make-hash-table-eq))
@@ -965,13 +994,19 @@ namespace: gxc
              ((module-context? in)
               (K in rest))
              ((module-import? in)
-              (if (fxpositive? (module-import-phi in))
-                (lp rest loads)
-                (K (module-export-context (module-import-source in)) rest)))
+              (if (fxzero? (module-import-phi in))
+                (K (module-export-context (module-import-source in)) rest)
+                (lp rest loads)))
              ((import-set? in)
-              (if (fxpositive? (import-set-phi in))
-                (lp rest loads)
-                (K (import-set-source in) rest)))
+              (let (phi (import-set-phi in))
+                (cond
+                 ((fxzero? phi)
+                  (K (import-set-source in) rest))
+                 ((fxpositive? phi)
+                  (let (deps (import-set-template in 0))
+                    (lp (foldl cons rest deps) loads)))
+                 (else
+                  (lp rest loads)))))
              (else
               (raise-compile-error "Unexpected import" stx in))))
            (else
