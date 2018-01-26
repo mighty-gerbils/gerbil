@@ -756,27 +756,26 @@ namespace: gx
     (def deps (make-hash-table-eq))
 
     (def (bind! hd)
-      (core-bind-import! hd current-ctx)
-      ;; track expansion-time eval deps
-      (when (and (fxpositive? (module-import-phi hd))
-                 (fxzero? (module-export-phi
-                           (module-import-source hd))))
-        (hash-put! deps
-                   (module-export-context
-                    (module-import-source hd))
-                   #t)))
+      (core-bind-import! hd current-ctx))
 
     (let lp ((rest rbody) (body []))
       (match rest
         ([hd . rest]
          (cond
           ((module-import? hd)
-           (bind! hd))
+           (bind! hd)
+           (when (fxpositive? (module-import-phi hd))
+             (hash-put! deps
+                        (module-export-context
+                         (module-import-source hd))
+                        #t)))
           ((import-set? hd)
-           (for-each bind! (import-set-imports hd)))
+           (for-each bind! (import-set-imports hd))
+           (when (fxpositive? (import-set-phi hd))
+             (hash-put! deps (import-set-source hd) #t)))
+          ((module-context? hd))
           (else
-           (unless (module-context? hd)
-             (raise-syntax-error #f "Unexpected import" stx hd))))
+           (raise-syntax-error #f "Unexpected import" stx hd)))
          (lp rest (cons hd body)))
         (else
          (when (module-context? current-ctx)
