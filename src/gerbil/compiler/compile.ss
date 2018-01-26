@@ -947,6 +947,31 @@ namespace: gxc
 
 ;;; loader
 (def (generate-runtime-loader-import% stx)
+  (def (import-set-template in phi)
+    (let ((iphi (fx+ phi (import-set-phi in)))
+          (imports (module-context-import (import-set-source in))))
+      (let lp ((rest imports) (r []))
+        (match rest
+          ([in . rest]
+           (cond
+            ((module-context? in)
+             (if (fxpositive? iphi)
+               (lp rest r)
+               (lp rest (cons in r))))
+            ((module-import? in)
+             (let (iphi (fx+ phi (module-import-phi in)))
+               (if (fxpositive? iphi)
+                 (lp rest r)
+                 (lp rest (cons (module-export-context (module-import-source in)) r)))))
+            ((import-set? in)
+             (let (xphi (fx+ iphi (import-set-phi in)))
+               (if (fxpositive? xphi)
+                 (lp rest (foldl cons r (import-set-template in iphi)))
+                 (lp rest (cons (import-set-source in) r)))))
+            (else
+             (lp rest r))))
+          (else r)))))
+
   (ast-case stx ()
     ((_ . imports)
      (let (ht (make-hash-table-eq))
@@ -970,7 +995,8 @@ namespace: gxc
                 (K (module-export-context (module-import-source in)) rest)))
              ((import-set? in)
               (if (fxpositive? (import-set-phi in))
-                (lp rest loads)
+                (let (deps (import-set-template in 0))
+                  (lp (foldl cons rest deps) loads))
                 (K (import-set-source in) rest)))
              (else
               (raise-compile-error "Unexpected import" stx in))))
