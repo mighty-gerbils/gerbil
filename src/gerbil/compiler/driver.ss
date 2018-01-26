@@ -186,6 +186,35 @@ namespace: gxc
 (def (find-runtime-module-deps ctx)
   (def ht (make-hash-table-eq))
 
+  (def (import-set-template in phi)
+    (let ((iphi (fx+ phi (import-set-phi in)))
+          (imports (module-context-import (import-set-source in))))
+      (let lp ((rest imports) (r []))
+        (match rest
+          ([in . rest]
+           (cond
+            ((module-context? in)
+             (if (fxzero? iphi)
+               (lp rest (cons in r))
+               (lp rest r)))
+            ((module-import? in)
+             (let (iphi (fx+ phi (module-import-phi in)))
+               (if (fxzero? iphi)
+                 (lp rest (cons (module-export-context (module-import-source in)) r))
+                 (lp rest r))))
+            ((import-set? in)
+             (let (xphi (fx+ iphi (import-set-phi in)))
+               (cond
+                ((fxzero? xphi)
+                 (lp rest (cons (import-set-source in) r)))
+                ((fxpositive? xphi)
+                 (lp rest (foldl cons r (import-set-template in iphi))))
+                (else
+                 (lp rest r)))))
+            (else
+             (lp rest r))))
+          (else r)))))
+
   (def (find-deps rest deps)
     (match rest
       ([hd . rest]
@@ -224,11 +253,14 @@ namespace: gxc
         ((module-export? hd)
          (find-deps (cons (module-export-context hd) rest) deps))
         ((import-set? hd)
-         ;; TODO track negative phase imports for sets imported at phi>0
-         ;;      this requires the differential phase to be tracked recursively.
-         (if (fxzero? (import-set-phi hd))
-           (find-deps (cons (import-set-source hd) rest) deps)
-           (find-deps rest deps)))
+         (cond
+          ((fxzero? (import-set-phi hd))
+           (find-deps (cons (import-set-source hd) rest) deps))
+          ((fxpositive? (import-set-phi hd))
+           (let (xdeps (import-set-template hd 0))
+             (find-deps (foldl cons rest xdeps) deps)))
+          (else
+           (find-deps rest deps))))
         (else
          (error "Unexpected module import" hd))))
       (else deps)))
