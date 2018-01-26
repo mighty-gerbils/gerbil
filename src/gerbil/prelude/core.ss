@@ -1138,8 +1138,7 @@ package: gerbil
 (import <sugar> (phi: +1 <sugar>) (phi: +2 <sugar>))
 
 (module <MOP>
-  (export (import: <MOP:1> <MOP:2>)
-          (phi: +1 (import: <MOP:2> <MOP:3>)))
+  (export (import: <MOP:1> <MOP:2> <MOP:3>))
 
   (module <MOP:1>
     (export #t)

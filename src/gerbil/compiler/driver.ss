@@ -224,7 +224,9 @@ namespace: gxc
         ((module-export? hd)
          (find-deps (cons (module-export-context hd) rest) deps))
         ((import-set? hd)
-         (if (fxzero? (module-import-phi hd))
+         ;; TODO track negative phase imports for sets imported at phi>0
+         ;;      this requires the differential phase to be tracked recursively.
+         (if (fxzero? (import-set-phi hd))
            (find-deps (cons (import-set-source hd) rest) deps)
            (find-deps rest deps)))
         (else
