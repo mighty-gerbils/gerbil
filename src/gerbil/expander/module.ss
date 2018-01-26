@@ -771,7 +771,9 @@ namespace: gx
        ((module-import? in)
         (cons in r))
        ((import-set? in)
-        (foldl cons r (import-set-imports in)))
+        (foldl cons (cons (import-set-source in) r) (import-set-imports in)))
+       ((module-context? in)
+        (cons in r))
        (else r)))
 
     (let lp ((rest rbody) (body []))
@@ -923,10 +925,12 @@ namespace: gx
     (def current-phi (current-export-expander-phi))
 
     (def (import->export in)
-      (with ((module-import out key phi) in)
-        (and (fx= phi current-phi)
-             (eq? src (module-export-context out))
-             (make-module-export current-ctx key phi key #t))))
+      (match in
+        ((module-import out key phi)
+         (and (fx= phi current-phi)
+              (eq? src (module-export-context out))
+              (make-module-export current-ctx key phi key #t)))
+        (else #f)))
 
     (def (fold-e in r)
       (let (out (import->export in))
