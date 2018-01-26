@@ -915,8 +915,7 @@ namespace: gerbil/core
           (%#begin (%#export
                     (import: (in: #f <MOP:1>))
                     (import: (in: #f <MOP:2>))
-                    (phi: 1 (import: (in: #f <MOP:2>)))
-                    (phi: 1 (import: (in: #f <MOP:3>))))
+                    (import: (in: #f <MOP:3>)))
                    (%#module
                     <MOP:1>
                     (%#begin (%#export #t)

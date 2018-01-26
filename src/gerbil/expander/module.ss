@@ -766,14 +766,6 @@ namespace: gx
                     (module-import-source hd))
                    #t)))
 
-    (def (fold-e in r)
-      (cond
-       ((module-import? in)
-        (cons in r))
-       ((import-set? in)
-        (foldl cons r (import-set-imports in)))
-       (else r)))
-
     (let lp ((rest rbody) (body []))
       (match rest
         ([hd . rest]
@@ -789,7 +781,7 @@ namespace: gx
         (else
          (when (module-context? current-ctx)
            (set! (module-context-import current-ctx)
-             (foldl fold-e (module-context-import current-ctx) body)))
+             (foldl cons (module-context-import current-ctx) body)))
          ;; eval expander deps
          (hash-for-each (lambda (ctx _) (eval-module ctx)) deps)
          body))))
@@ -924,13 +916,22 @@ namespace: gx
 
     (def (import->export in)
       (with ((module-import out key phi) in)
-        (and (fx= phi current-phi)
-             (eq? src (module-export-context out))
-             (make-module-export current-ctx key phi key #t))))
+        (make-module-export current-ctx key phi key #t)))
 
     (def (fold-e in r)
-      (let (out (import->export in))
-        (if out (cons out r) r)))
+      (match in
+        ((module-import out key phi)
+         (if (and (fx= phi current-phi)
+                  (eq? src (module-export-context out)))
+           (cons (import->export in) r)
+           r))
+        ((import-set ctx phi imports)
+         (if (and (fx= phi current-phi)
+                  (eq? src ctx))
+           (foldl (lambda (in r) (cons (import->export in) r))
+                  r imports)
+           r))
+        (else r)))
 
     (cons (make-export-set src current-phi
             (foldl fold-e [] (module-context-import current-ctx)))

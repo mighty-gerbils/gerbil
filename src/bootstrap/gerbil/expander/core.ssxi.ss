@@ -109,13 +109,13 @@ package: gerbil/expander
    gx#phi-context:::init!
    (@case-lambda
     (2 gx#phi-context:::init!__0)
-    (3 gx#phi-context:::init!__opt-lambda7374)))
+    (3 gx#phi-context:::init!__opt-lambda7378)))
   (declare-method gx#phi-context::t :init! gx#phi-context:::init! #f)
   (declare-type
    gx#local-context:::init!
    (@case-lambda
     (1 gx#local-context:::init!__0)
-    (2 gx#local-context:::init!__opt-lambda7238)))
+    (2 gx#local-context:::init!__opt-lambda7242)))
   (declare-method gx#local-context::t :init! gx#local-context:::init! #f)
   (declare-type gx#binding::t (@struct-type gx#binding::t #f 3 #f ()))
   (declare-type gx#binding? (@struct-pred gx#binding::t))
@@ -342,29 +342,29 @@ package: gerbil/expander
    (@struct-setf gx#syntax-error::t 2 #f))
   (declare-type
    gx#eval-syntax
-   (@case-lambda (1 gx#eval-syntax__0) (2 gx#eval-syntax__opt-lambda7025)))
+   (@case-lambda (1 gx#eval-syntax__0) (2 gx#eval-syntax__opt-lambda7029)))
   (declare-type
    gx#core-expand
-   (@case-lambda (1 gx#core-expand__0) (2 gx#core-expand__opt-lambda7009)))
+   (@case-lambda (1 gx#core-expand__0) (2 gx#core-expand__opt-lambda7013)))
   (declare-type
    gx#core-expand*
-   (@case-lambda (1 gx#core-expand*__0) (2 gx#core-expand*__opt-lambda6874)))
+   (@case-lambda (1 gx#core-expand*__0) (2 gx#core-expand*__opt-lambda6878)))
   (declare-type
    gx#core-expand-block
    (@case-lambda
     (2 gx#core-expand-block__0)
     (3 gx#core-expand-block__1)
-    (4 gx#core-expand-block__opt-lambda6602)))
+    (4 gx#core-expand-block__opt-lambda6606)))
   (declare-type
    gx#core-expand-include%
    (@case-lambda
     (1 gx#core-expand-include%__0)
-    (2 gx#core-expand-include%__opt-lambda6351)))
+    (2 gx#core-expand-include%__opt-lambda6355)))
   (declare-type
    gx#core-apply-expander
    (@case-lambda
     (2 gx#core-apply-expander__0)
-    (3 gx#core-apply-expander__opt-lambda6320)))
+    (3 gx#core-apply-expander__opt-lambda6324)))
   (declare-method
    gx#expander::t
    apply-macro-expander
@@ -384,7 +384,7 @@ package: gerbil/expander
    gx#top-special-form::apply-macro-expander
    (@case-lambda
     (2 gx#top-special-form::apply-macro-expander__0)
-    (3 gx#top-special-form::apply-macro-expander__opt-lambda5884)))
+    (3 gx#top-special-form::apply-macro-expander__opt-lambda5888)))
   (declare-method
    gx#top-special-form::t
    apply-macro-expander
@@ -404,12 +404,12 @@ package: gerbil/expander
    gx#core-apply-user-expander
    (@case-lambda
     (2 gx#core-apply-user-expander__0)
-    (3 gx#core-apply-user-expander__opt-lambda5409)))
+    (3 gx#core-apply-user-expander__opt-lambda5413)))
   (declare-type
    gx#user-expander::apply-macro-expander
    (@case-lambda
     (2 gx#core-apply-user-expander__0)
-    (3 gx#core-apply-user-expander__opt-lambda5409)))
+    (3 gx#core-apply-user-expander__opt-lambda5413)))
   (declare-method
    gx#user-expander::t
    apply-macro-expander
@@ -420,83 +420,83 @@ package: gerbil/expander
    (@case-lambda
     (1 gx#resolve-identifier__0)
     (2 gx#resolve-identifier__1)
-    (3 gx#resolve-identifier__opt-lambda5250)))
+    (3 gx#resolve-identifier__opt-lambda5254)))
   (declare-type
    gx#bind-identifier!
    (@case-lambda
     (2 gx#bind-identifier!__0)
     (3 gx#bind-identifier!__1)
     (4 gx#bind-identifier!__2)
-    (5 gx#bind-identifier!__opt-lambda5208)))
+    (5 gx#bind-identifier!__opt-lambda5212)))
   (declare-type
    gx#core-resolve-identifier
    (@case-lambda
     (1 gx#core-resolve-identifier__0)
     (2 gx#core-resolve-identifier__1)
-    (3 gx#core-resolve-identifier__opt-lambda5180)))
+    (3 gx#core-resolve-identifier__opt-lambda5184)))
   (declare-type
    gx#core-bind!
    (@case-lambda
     (2 gx#core-bind!__0)
     (3 gx#core-bind!__1)
     (4 gx#core-bind!__2)
-    (5 gx#core-bind!__opt-lambda4969)))
+    (5 gx#core-bind!__opt-lambda4973)))
   (declare-type
    gx#core-context-top
    (@case-lambda
     (0 gx#core-context-top__0)
     (1 gx#core-context-top__1)
-    (2 gx#core-context-top__opt-lambda4792)))
+    (2 gx#core-context-top__opt-lambda4796)))
   (declare-type
    gx#core-context-root
    (@case-lambda
     (0 gx#core-context-root__0)
-    (1 gx#core-context-root__opt-lambda4777)))
+    (1 gx#core-context-root__opt-lambda4781)))
   (declare-type
    gx#core-context-rebind?
    (@case-lambda
     (0 gx#core-context-rebind?__0)
-    (1 gx#core-context-rebind?__opt-lambda4761)
-    ((1) gx#core-context-rebind?__opt-lambda4761)))
+    (1 gx#core-context-rebind?__opt-lambda4765)
+    ((1) gx#core-context-rebind?__opt-lambda4765)))
   (declare-type
    gx#core-context-namespace
    (@case-lambda
     (0 gx#core-context-namespace__0)
-    (1 gx#core-context-namespace__opt-lambda4744)))
+    (1 gx#core-context-namespace__opt-lambda4748)))
   (declare-type
    gx#expander-binding?
    (@case-lambda
     (1 gx#expander-binding?__0)
-    (2 gx#expander-binding?__opt-lambda4730)))
+    (2 gx#expander-binding?__opt-lambda4734)))
   (declare-type
    gx#core-bound-identifier?
    (@case-lambda
     (1 gx#core-bound-identifier?__0)
-    (2 gx#core-bound-identifier?__opt-lambda4693)))
+    (2 gx#core-bound-identifier?__opt-lambda4697)))
   (declare-type
    gx#core-quote-syntax
    (@case-lambda
     (1 gx#core-quote-syntax__0)
     (2 gx#core-quote-syntax__1)
     (3 gx#core-quote-syntax__2)
-    (4 gx#core-quote-syntax__opt-lambda4639)))
+    (4 gx#core-quote-syntax__opt-lambda4643)))
   (declare-type
    gx#core-resolve-path
    (@case-lambda
     (1 gx#core-resolve-path__0)
-    (2 gx#core-resolve-path__opt-lambda4603)))
+    (2 gx#core-resolve-path__opt-lambda4607)))
   (declare-type
    gx#core-deserialize-mark
    (@case-lambda
     (1 gx#core-deserialize-mark__0)
-    (2 gx#core-deserialize-mark__opt-lambda4559)))
+    (2 gx#core-deserialize-mark__opt-lambda4563)))
   (declare-type
    gx#syntax-local-e
    (@case-lambda
     (1 gx#syntax-local-e__0)
-    (2 gx#syntax-local-e__opt-lambda4507)))
+    (2 gx#syntax-local-e__opt-lambda4511)))
   (declare-type
    gx#syntax-local-value
    (@case-lambda
     (1 gx#syntax-local-value__0)
-    (2 gx#syntax-local-value__opt-lambda4491))))
+    (2 gx#syntax-local-value__opt-lambda4495))))
