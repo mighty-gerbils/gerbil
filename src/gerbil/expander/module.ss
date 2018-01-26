@@ -764,10 +764,10 @@ namespace: gx
          (cond
           ((module-import? hd)
            (bind! hd)
-           (when (fxpositive? (module-import-phi hd))
+           (when (and (fxpositive? (module-import-phi hd))
+                      (fxzero? (module-export-phi (module-import-source hd))))
              (hash-put! deps
-                        (module-export-context
-                         (module-import-source hd))
+                        (module-export-context (module-import-source hd))
                         #t)))
           ((import-set? hd)
            (for-each bind! (import-set-imports hd))
