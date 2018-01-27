@@ -155,7 +155,15 @@ package: std/actor/rpc
               (with ((message content _ dest) msg)
                 (match content
                   ((or (!call _ k) (!stream _ k))
-                   (dispatch-remote-error (make-!error "unmarshal error" k) dest))
+                   (cond
+                    ((actor-table-get actors dest)
+                     ;; we have an actor binding (and hence a protocol) so it's
+                     ;; a userland marshaling error
+                     (dispatch-remote-error (make-!error "unmarshal error" k) dest))
+                    (else
+                     ;; we probably failed to unmarshal because there is no binding
+                     (warning "bogus call; no actor binding ~a" (uuid->string dest))
+                     (dispatch-remote-error (make-!error "no binding" k) dest))))
                   ((or (!value _ k) (!error _ k) (!yield _ k))
                    (cond
                     ((hash-get continuations k)
