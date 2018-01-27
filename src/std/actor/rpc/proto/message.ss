@@ -12,7 +12,7 @@ package: std/actor/rpc/proto
         :std/actor/rpc/base)
 (export #t)
 
-#;(declare (not safe))
+(declare (not safe))
 
 ;;; wire protocol implementation
 ;; Handshake:

@@ -19,7 +19,7 @@ package: std/actor/rpc
         :std/actor/rpc/proto/message)
 (export #t)
 
-#;(declare (not safe))
+(declare (not safe))
 
 (def (rpc-server-connection rpc-server actors sock sa cliaddr proto-e)
   (try
