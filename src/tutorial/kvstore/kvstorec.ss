@@ -11,7 +11,7 @@
 
 (def (kvstore-connect opt)
   (let (rpcd (start-rpc-server! proto: (rpc-cookie-proto)))
-    (rpc-connect rpcd 'kvstore (hash-get opt 'server) kvstore::proto)))
+    (rpc-connect rpcd 'kvstore (hash-get opt 'server))))
 
 (def (kvstore-get opt)
   (let* ((remote (kvstore-connect opt))

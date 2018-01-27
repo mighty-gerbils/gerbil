@@ -73,6 +73,9 @@ The protocol for communicating with the daemon is defined in
   (ref key)
   (put! key val)
   (remove! key))
+
+;; bind the protocol for the kvstore actor
+(bind-protocol! 'kvstore kvstore::proto)
 ```
 
 This defines a protocol with four calls, `get`, `ref`, `put!`, and `remove!`.
@@ -189,7 +192,7 @@ responding to messages using the `<-` reaction macro:
   (def (remove! key)
     ...)
 
-  (rpc-register rpcd 'kvstore kvstore::proto)
+  (rpc-register rpcd 'kvstore)
   (while #t
     (<- ((!kvstore.get key k)
          (try
@@ -342,7 +345,7 @@ proceeds to call the server with RPC:
 ```
 (def (kvstore-connect opt)
   (let (rpcd (start-rpc-server! proto: (rpc-cookie-proto)))
-    (rpc-connect rpcd 'kvstore (hash-get opt 'server) kvstore::proto)))
+    (rpc-connect rpcd 'kvstore (hash-get opt 'server))))
 
 (def (kvstore-get opt)
   (let* ((remote (kvstore-connect opt))
