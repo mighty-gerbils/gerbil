@@ -126,33 +126,34 @@ package: std/actor/rpc
      ((u8vector? data)                  ; incoming message
       (let (msg (try (rpc-proto-unmarshal-message data)
                      (catch (exception? e) e)))
-        (if (message? msg)
-          (with ((message content _ dest) msg)
-            (match content
-              ((? (or !call? !event? !stream?))
-               (dispatch-call msg))
-              ((? !value?)
-               (dispatch-value msg !value-k !value-k-set!))
-              ((? !error?)
-               (dispatch-value msg !error-k !error-k-set!))
-              ((? !yield?)
-               (dispatch-value msg !yield-k !yield-k-set!))
-              ((? !end?)
-               (dispatch-value msg !end-k !end-k-set!))
-              ((? !continue?)
-               (dispatch-control msg !continue-k !continue-k-set!))
-              ((? !close?)
-               (dispatch-control msg !close-k !close-k-set!))
-              ((? !abort?)
-               (dispatch-control msg !abort-k !abort-k-set!))
-              (else
-               (dispatch-call msg))))
-          ;; unmarshal error -- is it a recoverable payload unmarshal error?
-          (let* ((_ (log-error "unmarshal error" msg))
-                 (msg (try (rpc-proto-unmarshal-envelope data)
-                           (catch (exception? e) e))))
-            (if (message? msg)
-              (with ((message content _ dest) msg)
+        (match msg
+          ((message content _ dest)
+           (match content
+             ((? (or !call? !event? !stream?))
+              (dispatch-call msg))
+             ((? !value?)
+              (dispatch-value msg !value-k !value-k-set!))
+             ((? !error?)
+              (dispatch-value msg !error-k !error-k-set!))
+             ((? !yield?)
+              (dispatch-value msg !yield-k !yield-k-set!))
+             ((? !end?)
+              (dispatch-value msg !end-k !end-k-set!))
+             ((? !continue?)
+              (dispatch-control msg !continue-k !continue-k-set!))
+             ((? !close?)
+              (dispatch-control msg !close-k !close-k-set!))
+             ((? !abort?)
+              (dispatch-control msg !abort-k !abort-k-set!))
+             (else
+              (dispatch-call msg))))
+          (else
+           ;; unmarshal error -- is it a recoverable payload unmarshal error?
+           (log-error "unmarshal error" msg)
+           (let (msg (try (rpc-proto-unmarshal-envelope data)
+                          (catch (exception? e) e)))
+             (match msg
+               ((message content _ dest)
                 (match content
                   ((or (!call _ k) (!stream _ k))
                    (cond
@@ -181,8 +182,9 @@ package: std/actor/rpc
                      (loop)))
                   (else
                    (loop))))
-              ;; envelope error -- unrecoverable
-              (close-connection))))))
+               (else
+                ;; envelope error -- unrecoverable
+                (close-connection))))))))
      ((eof-object? data)
       (close-connection))
      (else
