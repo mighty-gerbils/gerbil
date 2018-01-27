@@ -9,6 +9,8 @@ package: std/actor/rpc/proto
         :std/actor/message
         :std/actor/proto
         :std/actor/xdr
+        :std/sugar
+        :std/logger
         :std/actor/rpc/base)
 (export #t)
 
@@ -47,19 +49,18 @@ package: std/actor/rpc/proto
 (def rpc-proto-cookie-cipher #x03)
 
 ;;; protocol i/o
-(def (rpc-proto-marshal-message msg)
+(def (rpc-proto-marshal-message msg proto)
   (let (outp (open-serializer-output-buffer))
-    (rpc-proto-write-message msg outp)
+    (rpc-proto-write-message msg proto outp)
     outp))
 
 ;; wire representation
 ;; rpc-proto-message-type dest content
-(def (rpc-proto-write-message msg buffer)
+(def (rpc-proto-write-message msg proto buffer)
   (with ((message content _ dest) msg)
-    (let (proto (lookup-protocol dest))
-      (if proto
-        (current-xdr-type-registry (!protocol-types proto))
-        (raise-rpc-io-error 'rpc-proto-write-message "unknown protocol" dest)))
+    (if proto
+      (current-xdr-type-registry (!protocol-types proto))
+      (current-xdr-type-registry +xdr-default-type-registry+))
     (cond
      ((!rpc? content)
       (match content
@@ -114,68 +115,6 @@ package: std/actor/rpc/proto
       (bio-write-u8 rpc-proto-message-raw buffer)
       (xdr-write content buffer)))))
 
-(def (rpc-proto-unmarshal-message u8v)
-  (let (inp (open-input-buffer u8v))
-    (rpc-proto-read-message inp)))
-
-(def (rpc-proto-read-message buffer)
-  (let* ((type (bio-read-u8 buffer))
-         (dest (xdr-read-uuid buffer))
-         (proto (lookup-protocol dest)))
-    (unless proto
-      (raise-rpc-io-error 'rpc-proto-read-message "unknown protocol" dest))
-    (current-xdr-type-registry (!protocol-types proto))
-    (make-message
-     (cond
-      ((eq? type rpc-proto-message-call)
-       (let* ((k (xdr-read-uint buffer))
-              (e (xdr-read buffer)))
-         (make-!call e k)))
-      ((eq? type rpc-proto-message-value)
-       (let* ((k (xdr-read-uint buffer))
-              (e (xdr-read buffer)))
-         (make-!value e k)))
-      ((eq? type rpc-proto-message-error)
-       (let* ((k (xdr-read-uint buffer))
-              (e (xdr-read buffer))
-              (e (if (string? e)
-                    (make-remote-error 'rpc e)
-                    e)))
-         (make-!error e k)))
-      ((eq? type rpc-proto-message-event)
-       (let (e (xdr-read buffer))
-         (make-!event e)))
-      ((eq? type rpc-proto-message-raw)
-       (xdr-read buffer))
-      ((eq? type rpc-proto-message-stream)
-       (let* ((k (xdr-read-uint buffer))
-              (e (xdr-read buffer)))
-         (make-!stream e k)))
-      ((eq? type rpc-proto-message-yield)
-       (let* ((k (xdr-read-uint buffer))
-              (e (xdr-read buffer)))
-         (make-!yield e k)))
-      ((eq? type rpc-proto-message-end)
-       (let (k (xdr-read-uint buffer))
-         (make-!end k)))
-      ((eq? type rpc-proto-message-continue)
-       (let (k (xdr-read-uint buffer))
-         (make-!continue k)))
-      ((eq? type rpc-proto-message-close)
-       (let (k (xdr-read-uint buffer))
-         (make-!close k)))
-      ((eq? type rpc-proto-message-abort)
-       (let (k (xdr-read-uint buffer))
-         (make-!abort k)))
-      (else
-       (raise-rpc-io-error 'rpc-proto-read-message
-                           "unmarshal error; unexpected message type" type)))
-     #!void dest #f)))
-
-(def (rpc-proto-unmarshal-envelope u8v)
-  (let (inp (open-input-buffer u8v))
-    (rpc-proto-read-envelope inp)))
-
 (def (rpc-proto-read-envelope buffer)
   (let* ((type (bio-read-u8 buffer))
          (dest (xdr-read-uuid buffer)))
@@ -216,3 +155,24 @@ package: std/actor/rpc/proto
        (raise-rpc-io-error 'rpc-proto-read-message
                            "unmarshal error; unexpected message type" type)))
      #!void dest #f)))
+
+(def (rpc-proto-read-payload! proto msg buffer)
+  (current-xdr-type-registry (!protocol-types proto))
+  (try
+   (let (value (message-e msg))
+     (unless (!end? value)
+       (let (payload (xdr-read buffer))
+         (cond
+          ((void? value)
+           (set! (message-e msg) payload))
+          ((!error? value)
+           (let (e (if (string? payload)
+                     (make-remote-error 'rpc payload)
+                     payload))
+             (##vector-set! value 1 e)))
+          (else
+           (##vector-set! value 1 payload)))))
+     #t)
+   (catch (e)
+     (log-error "error unmarshalling message payload" e)
+     #f)))

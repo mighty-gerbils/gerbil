@@ -118,7 +118,7 @@
     (test-case "test RPC errors"
       (def locald (start-rpc-server!))
       (def rfoo
-        (make-remote locald 'foo rpc-server-address8))
+        (make-remote locald 'foo rpc-server-address8 hello::proto))
 
       (check (with-catch values (cut !!hello.hello rfoo 'a)) ? rpc-error?)
 

@@ -74,7 +74,7 @@ package: std/actor/rpc
     (open-ssocket-output-buffer sock))
   (defvalues (read-e write-e)
     (proto-e input output))
-  (def continuations                    ; wire-id => (values actor k stream?)
+  (def continuations                    ; wire-id => (values actor proto k stream?)
     (make-hash-table-eqv))
   (def stream-continuations             ; k => wire-id
     (make-hash-table-eq))
@@ -108,7 +108,7 @@ package: std/actor/rpc
         (cond
          ((hash-get continuations wire-id)
           => (lambda (cont)
-               (with ((values actor k stream?) cont)
+               (with ((values actor proto k stream?) cont)
                  (!!error actor (make-rpc-error 'rpc-connection "connection error") k))))))
       (hash-keys continuations))
     (hash-for-each
@@ -124,57 +124,24 @@ package: std/actor/rpc
      ((void? data)                      ; keep-alive
       (loop))
      ((u8vector? data)                  ; incoming message
-      (let (msg (try (rpc-proto-unmarshal-message data)
-                     (catch (exception? e) e)))
+      (let* ((buffer (open-input-buffer data))
+             (msg (try (rpc-proto-read-envelope buffer)
+                       (catch (exception? e) e))))
         (match msg
           ((message content _ dest)
            (match content
              ((? (or !call? !event? !stream?))
-              (dispatch-call msg))
+              (dispatch-call msg buffer))
              ((? (or !value? !error? !yield? !end?))
-              (dispatch-value msg))
+              (dispatch-value msg buffer))
              ((? (or !continue? !close? !abort?))
-              (dispatch-control msg))
+              (dispatch-control msg buffer))
              (else
-              (dispatch-call msg))))
+              (dispatch-call msg buffer))))
           (else
-           ;; unmarshal error -- is it a recoverable payload unmarshal error?
+           ;; envelope error -- unrecoverable
            (log-error "unmarshal error" msg)
-           (let (msg (try (rpc-proto-unmarshal-envelope data)
-                          (catch (exception? e) e)))
-             (match msg
-               ((message content _ dest)
-                (match content
-                  ((or (!call _ k) (!stream _ k))
-                   (cond
-                    ((actor-table-get actors dest)
-                     ;; we have an actor binding (and hence a protocol) so it's
-                     ;; a userland marshaling error
-                     (dispatch-remote-error (make-!error "unmarshal error" k) dest))
-                    (else
-                     ;; we probably failed to unmarshal because there is no binding
-                     (warning "bogus message; no actor binding ~a" (uuid->string dest))
-                     (dispatch-remote-error (make-!error "no binding" k) dest))))
-                  ((? !event?)
-                   (unless (actor-table-get actors dest)
-                     ;; same here, so warn about it
-                     (warning "bogus message; no actor binding ~a" (uuid->string dest)))
-                   (loop))
-                  ((or (!value _ k) (!error _ k) (!yield _ k))
-                   (cond
-                    ((hash-get continuations k)
-                     => (match <>
-                          ((values actor cont stream?)
-                           (!!error actor (make-rpc-error 'rpc-connection "unmarshal error") cont)
-                           (remove-continuation! k)))))
-                   (if (!yield? content)
-                     (dispatch-remote-error (make-!abort k) dest)
-                     (loop)))
-                  (else
-                   (loop))))
-               (else
-                ;; envelope error -- unrecoverable
-                (close-connection))))))))
+           (close-connection)))))
      ((eof-object? data)
       (close-connection))
      (else
@@ -188,17 +155,27 @@ package: std/actor/rpc
         (unless (eof-object? next)
           (lp)))))
 
-  (def (dispatch-call msg)
+  (def (dispatch-call msg buffer)
     (let (uuid (message-dest msg))
       (cond
        ((actor-table-get actors uuid)
-        => (lambda (actor)
-             (set! (message-dest msg)
-               actor)
-             (set! (message-source msg)
-               (make-remote (current-thread) uuid peer-address))
-             (send actor msg)
-             (loop)))
+        => (match <>
+             ((values actor proto)
+              (cond
+               ((rpc-proto-read-payload! proto msg buffer)
+                (set! (message-dest msg)
+                  actor)
+                (set! (message-source msg)
+                  (make-remote (current-thread) uuid peer-address proto))
+                (send actor msg)
+                (loop))
+               ((or (!call? (message-e msg)) (!stream? (message-e msg)))
+                (let (k (if (!call? (message-e msg))
+                          (!call-k (message-e msg))
+                          (!stream-k (message-e msg))))
+                  (dispatch-remote-error (make-!error "unmarshal error" k) uuid)))
+               (else
+                (loop))))))
         (else
          (warning "cannot route message; no actor binding ~a" (uuid->string uuid))
          (match (message-e msg)
@@ -207,27 +184,34 @@ package: std/actor/rpc
            (else
             (loop)))))))
 
-  (def (dispatch-value msg)
+  (def (dispatch-value msg buffer)
     (let* ((content (message-e msg))
            (cont    (value-k content)))
       (cond
        ((hash-get continuations cont)
         => (match <>
-             ((values actor k stream?)
-              (value-k-set! (message-e msg) k)
-              (set! (message-source msg)
-                (make-remote (current-thread) (message-dest msg) peer-address))
-              (unless (!yield? content)
-                (remove-continuation! cont))
-              (send actor msg)
-              (loop))))
+             ((values actor proto k stream?)
+              (cond
+               ((rpc-proto-read-payload! proto msg buffer)
+                (value-k-set! (message-e msg) k)
+                (set! (message-source msg)
+                  (make-remote (current-thread) (message-dest msg) peer-address proto))
+                (unless (!yield? content)
+                  (remove-continuation! cont))
+                (send actor msg)
+                (loop))
+               (else
+                (remove-continuation! cont)
+                (if (!yield? content)
+                  (dispatch-remote-error (make-!error "unmarshal error" cont) (message-dest msg))
+                  (loop)))))))
        (else
         (warning "cannot route message; bogus continuation ~a" cont)
         (if (!yield? content)
           (dispatch-remote-error (make-!abort cont) (message-dest msg))
           (loop))))))
 
-  (def (dispatch-control msg)
+  (def (dispatch-control msg buffer)
     (let* ((content (message-e msg))
            (wire-id (value-k content))
            (stream (hash-get stream-actors wire-id)))
@@ -249,50 +233,50 @@ package: std/actor/rpc
     (##vector-set! obj (fx1- (##vector-length obj)) k))
 
   (def (dispatch-remote-error what dest)
-    (marshal-and-write (make-message what (void) dest #f) #f))
+    (marshal-and-write (make-message what (void) dest #f) #f #f))
 
   (def (write-message msg)
     (with ((message content src dest opts) msg)
       (if (remote? dest)
-        (with ((remote _ uuid address) dest)
+        (with ((remote _ uuid address proto) dest)
           (set! (message-dest msg)
             uuid)
           ;; keep track of continuation and timeout
           (match content
             ((!call _ k)
              (let (wire-id (next-continuation-id!))
-               (hash-put! continuations wire-id (values src k #f))
+               (hash-put! continuations wire-id (values src proto k #f))
                (set! (!call-k content) wire-id)
                (alet (timeo (rpc-options-timeout opts rpc-call-timeout))
                  (hash-put! timeouts timeo wire-id)
                  (hash-put! continuation-timeouts wire-id timeo)
                  (set-timeout! timeo))
-               (marshal-and-write msg #t)))
+               (marshal-and-write msg proto #t)))
             ((!stream _ k)
              (let (wire-id (next-continuation-id!))
-               (hash-put! continuations wire-id (values src k #t))
+               (hash-put! continuations wire-id (values src proto k #t))
                (hash-put! stream-continuations k wire-id)
                (set! (!stream-k content) wire-id)
                (alet (timeo (rpc-options-timeout opts #f))
                  (hash-put! timeouts timeo wire-id)
                  (hash-put! continuation-timeouts wire-id timeo)
                  (set-timeout! timeo))
-               (marshal-and-write msg #t)))
+               (marshal-and-write msg proto #t)))
             ((? !value?)
-             (marshal-and-write msg #t))
+             (marshal-and-write msg proto #t))
             ((!yield _ wire-id)
              (hash-put! stream-actors wire-id (cons src dest))
-             (marshal-and-write msg #t))
+             (marshal-and-write msg proto #t))
             ((or (!error _ wire-id)
                  (!end wire-id))
              (hash-remove! stream-actors wire-id)
-             (marshal-and-write msg #t))
+             (marshal-and-write msg proto #t))
             ((!continue k)
              (let (wire-id (hash-get stream-continuations k))
                (if wire-id
                  (begin
                    (set! (!continue-k content) wire-id)
-                   (marshal-and-write msg #t))
+                   (marshal-and-write msg proto #t))
                  (begin
                    (warning "bad continue; unknown stream ~a" k)
                    (loop)))))
@@ -301,7 +285,7 @@ package: std/actor/rpc
                (if wire-id
                  (begin
                    (set! (!close-k content) wire-id)
-                   (marshal-and-write msg #t))
+                   (marshal-and-write msg proto #t))
                  (begin
                    (warning "bad close; unknown stream ~a" k)
                    (loop)))))
@@ -311,12 +295,12 @@ package: std/actor/rpc
                  (begin
                    (set! (!abort-k content) wire-id)
                    (remove-continuation! wire-id)
-                   (marshal-and-write msg #t))
+                   (marshal-and-write msg proto #t))
                  (begin
                    (warning "bad abort; unknown stream ~a" k)
                    (loop)))))
             (else
-             (marshal-and-write msg #t))))
+             (marshal-and-write msg proto #t))))
         (begin
           (warning "bad handle; no protocol ~a ~a" dest msg)
           (loop)))))
@@ -329,15 +313,15 @@ package: std/actor/rpc
   (def (remove-continuation! wire-id)
     (alet (cont (hash-get continuations wire-id))
       (hash-remove! continuations wire-id)
-      (with ((values _ k stream?) cont)
+      (with ((values _ _ k stream?) cont)
         (when stream?
           (hash-remove! stream-continuations k)))
       (alet (timeo (hash-get continuation-timeouts wire-id))
         (hash-remove! continuation-timeouts wire-id)
         (hash-remove! timeouts timeo))))
 
-  (def (marshal-and-write msg local-error?)
-    (let (e (try (rpc-proto-marshal-message msg)
+  (def (marshal-and-write msg proto local-error?)
+    (let (e (try (rpc-proto-marshal-message msg proto)
                  (catch (exception? e) e)))
       (cond
        ((u8vector? e)
@@ -383,7 +367,7 @@ package: std/actor/rpc
         (loop)))))
 
   (def (dispatch-error wire-id what)
-    (with ((values actor k stream?) (hash-ref continuations wire-id))
+    (with ((values actor proto k stream?) (hash-ref continuations wire-id))
       (!!error actor (make-rpc-error 'rpc-connection what) k)
       (remove-continuation! wire-id)
       (loop)))

@@ -37,8 +37,8 @@ package: std/actor/rpc
   (connection-close)
   ;; client -> server
   call:
-  (connect id address)
-  (register id)
+  (connect id address proto)
+  (register id proto)
   (unregister id)
   (resolve id)
   (server-address)
@@ -65,13 +65,13 @@ package: std/actor/rpc
     (error "Bad protocol" proto))
   (hash-put! +protocols+ (UUID id) proto))
 
-(definline (lookup-protocol uuid)
+(def (lookup-protocol uuid)
   (hash-get +protocols+ uuid))
 
 (def (make-actor-table)
   (make-sync-hash (make-uuid-table)))
-(defalias actor-table-put!
-  sync-hash-put!)
+(def (actor-table-put! at uuid actor proto)
+  (sync-hash-put! at uuid (values actor proto)))
 (defalias actor-table-get
   sync-hash-get)
 (defalias actor-table-key?
