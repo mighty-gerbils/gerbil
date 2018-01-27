@@ -131,20 +131,10 @@ package: std/actor/rpc
            (match content
              ((? (or !call? !event? !stream?))
               (dispatch-call msg))
-             ((? !value?)
-              (dispatch-value msg !value-k !value-k-set!))
-             ((? !error?)
-              (dispatch-value msg !error-k !error-k-set!))
-             ((? !yield?)
-              (dispatch-value msg !yield-k !yield-k-set!))
-             ((? !end?)
-              (dispatch-value msg !end-k !end-k-set!))
-             ((? !continue?)
-              (dispatch-control msg !continue-k !continue-k-set!))
-             ((? !close?)
-              (dispatch-control msg !close-k !close-k-set!))
-             ((? !abort?)
-              (dispatch-control msg !abort-k !abort-k-set!))
+             ((? (or !value? !error? !yield? !end?))
+              (dispatch-value msg))
+             ((? (or !continue? !close? !abort?))
+              (dispatch-control msg))
              (else
               (dispatch-call msg))))
           (else
@@ -217,7 +207,7 @@ package: std/actor/rpc
            (else
             (loop)))))))
 
-  (def (dispatch-value msg value-k value-k-set!)
+  (def (dispatch-value msg)
     (let* ((content (message-e msg))
            (cont    (value-k content)))
       (cond
@@ -237,7 +227,7 @@ package: std/actor/rpc
           (dispatch-remote-error (make-!abort cont) (message-dest msg))
           (loop))))))
 
-  (def (dispatch-control msg value-k value-k-set!)
+  (def (dispatch-control msg)
     (let* ((content (message-e msg))
            (wire-id (value-k content))
            (stream (hash-get stream-actors wire-id)))
@@ -251,6 +241,12 @@ package: std/actor/rpc
         (begin
           (warning "bad control message; unknown stream ~a" wire-id)
           (dispatch-remote-error (make-!error "uknown stream" wire-id) (message-dest msg))))))
+
+  (def (value-k obj)
+    (##vector-ref obj (fx1- (##vector-length obj))))
+
+  (def (value-k-set! obj k)
+    (##vector-set! obj (fx1- (##vector-length obj)) k))
 
   (def (dispatch-remote-error what dest)
     (marshal-and-write (make-message what (void) dest #f) #f))
