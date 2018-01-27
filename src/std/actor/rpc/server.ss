@@ -49,7 +49,7 @@ package: std/actor/rpc
   set-rpc-keep-alive-interval!
   set-rpc-idle-timeout!
   set-rpc-call-timeout!
-  rpc-canonical-address
+  bind-protocol!
   )
 
 (def current-rpc-server
@@ -68,16 +68,16 @@ package: std/actor/rpc
      (finally
       (thread-group-kill! tgroup)))))
 
-(def (rpc-connect rpcd id address proto)
+(def (rpc-connect rpcd id address)
   (cond
    ((rpc-canonical-address address)
     => (lambda (address)
-         (!!rpc.connect rpcd id address proto)))
+         (!!rpc.connect rpcd id address)))
    (else
     (error "Bad rpc address" address))))
 
-(def (rpc-register rpcd id proto)
-  (!!rpc.register rpcd id proto))
+(def (rpc-register rpcd id)
+  (!!rpc.register rpcd id))
 
 (def (rpc-unregister rpcd id)
   (!!rpc.unregister rpcd id))
@@ -171,20 +171,25 @@ package: std/actor/rpc
                 (remove-thread! src)))
           (else
            (warning "Unexpected protocol mesage ~a" msg))))
-        ((!rpc.connect id address proto k)
-         (let (handler (open-connection address))
-           (if handler
-             (!!value src (make-remote handler id address proto) k)
-             (!!error src (make-rpc-error 'rpc-server "invalid address") k))))
-        ((!rpc.register id proto k)
+        ((!rpc.connect id address k)
+         (let (uuid (UUID id))
+           (if (lookup-protocol uuid)
+             (let (handler (open-connection address))
+               (if handler
+                 (!!value src (make-remote handler id address) k)
+                 (!!error src (make-rpc-error 'rpc-server "invalid address") k)))
+             (!!error src "no protocol" k))))
+        ((!rpc.register id k)
          (let (uuid (UUID id))
            (if (actor-table-key? actors uuid)
              (!!error src "duplicate registration" k)
-             (let (thread (actor-thread-e src))
-               (actor-table-put! actors uuid src proto)
-               (hash-update! actor-threads thread (cut cons uuid <>) [])
-               (rpc-monitor thread)
-               (!!value src uuid k)))))
+             (if (lookup-protocol uuid)
+               (let (thread (actor-thread-e src))
+                 (actor-table-put! actors uuid src)
+                 (hash-update! actor-threads thread (cut cons uuid <>) [])
+                 (rpc-monitor thread)
+                 (!!value src uuid k))
+               (!!error src "no protocol" k)))))
         ((!rpc.unregister id k)
          (let* ((uuid (UUID id))
                 (thread (actor-thread-e src)))
@@ -196,11 +201,7 @@ package: std/actor/rpc
            (!!value src (void) k)))
         ((!rpc.resolve id k)
          (let (uuid (UUID id))
-           (match (actor-table-get actors uuid)
-             ((values actor proto)
-              (!!value src actor k))
-             (else
-              (!!value src #f k)))))
+           (!!value src (actor-table-get actors uuid) k)))
         ((!rpc.server-address k)
          (let (addresses (map socket-address->address sas))
            (!!value src addresses k)))
@@ -262,11 +263,11 @@ package: std/actor/rpc
                    (rpc-send-error-response msg "ivalid address")))))
             ((handle? dest)
              (let (uuid (handle-uuid dest))
-               (match (actor-table-get actors uuid)
-                 ((values actor proto)
-                  (send actor msg))
-                 (else
-                  (rpc-send-error-response msg "unknown actor")))))
+               (cond
+                ((actor-table-get actors uuid)
+                 => (lambda (actor) (send actor msg)))
+                (else
+                 (rpc-send-error-response msg "unknown actor")))))
             (else
              (warning "bad destination ~a" dest)
              (rpc-send-error-response msg "bad destination")))))

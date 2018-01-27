@@ -12,6 +12,8 @@ package: std/actor/rpc/proto
         rpc-null-proto-read
         rpc-null-proto-write)
 
+#;(declare (not safe))
+
 ;; generic rpc hello
 (def (rpc-proto-accept-e ibuf obuf proto-t K)
   (def (connection-closed)

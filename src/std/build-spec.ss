@@ -159,11 +159,11 @@
     (gxc: "actor/message" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc: "actor/xdr"  "-e" "(include \"~~lib/_gambit#.scm\")")
     "actor/proto"
+    "actor/rpc/base"
     "actor/rpc/proto/message"
     "actor/rpc/proto/null"
     "actor/rpc/proto/cookie"
     "actor/rpc/proto/cipher"
-    "actor/rpc/base"
     "actor/rpc/connection"
     "actor/rpc/server"
     "actor/rpc"

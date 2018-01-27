@@ -6,11 +6,20 @@ package: std/actor/rpc
 (import :gerbil/gambit/threads
         :std/misc/uuid
         :std/misc/sync
+        :std/net/bio
         :std/actor/message
         :std/actor/proto
-        :std/actor/xdr
-        :std/actor/rpc/proto/message)
+        :std/actor/xdr)
 (export #t)
+
+(def (xdr-read-uuid buffer)
+  (let (bytes (make-u8vector uuid-length))
+    (bio-read-bytes bytes buffer)
+    (make-uuid bytes #f)))
+
+(def (xdr-write-uuid obj buffer)
+  (bio-write-subu8vector (uuid->u8vector obj) 0 uuid-length buffer))
+
 
 (defproto-default-type
   (uuid::t xdr-read-uuid xdr-write-uuid)
@@ -28,8 +37,8 @@ package: std/actor/rpc
   (connection-close)
   ;; client -> server
   call:
-  (connect id address proto)
-  (register id proto)
+  (connect id address)
+  (register id)
   (unregister id)
   (resolve id)
   (server-address)
@@ -48,15 +57,26 @@ package: std/actor/rpc
 (def (make-uuid-table)
   (make-hash-table test: uuid=? hash: uuid-hash))
 
+(def +protocols+
+  (make-uuid-table))
+
+(def (bind-protocol! id proto)
+  (unless (!protocol? proto)
+    (error "Bad protocol" proto))
+  (hash-put! +protocols+ (UUID id) proto))
+
+(def (lookup-protocol uuid)
+  (hash-get +protocols+ uuid))
+
 (def (make-actor-table)
   (make-sync-hash (make-uuid-table)))
-(def (actor-table-put! at uuid actor proto)
-  (sync-hash-put! at uuid (values actor proto)))
-(def actor-table-get
+(defalias actor-table-put!
+  sync-hash-put!)
+(defalias actor-table-get
   sync-hash-get)
-(def actor-table-key?
+(defalias actor-table-key?
   sync-hash-key?)
-(def actor-table-remove!
+(defalias actor-table-remove!
   sync-hash-remove!)
 
 (def (rpc-send-error-response msg what)

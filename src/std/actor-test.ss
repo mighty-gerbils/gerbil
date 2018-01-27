@@ -13,8 +13,10 @@
   call: (hello a)
   stream: (hello-stream a))
 
+(bind-protocol! 'foo hello::proto)
+
 (def (hello-server remoted)
-  (!!rpc.register remoted 'foo hello::proto)
+  (rpc-register remoted 'foo)
   (let lp ()
     (<- ((!hello.hello val k)
          (!!value @source val k)
@@ -26,7 +28,7 @@
          (lp)))))
 
 (def (hello-void-server remoted)
-  (!!rpc.register remoted 'foo hello::proto)
+  (rpc-register remoted 'foo)
   (let lp ()
     (<- ((!rpc.shutdown)
          (void))
@@ -56,7 +58,7 @@
 
       (def locald  (start-rpc-server!))
       (def rfoo
-        (rpc-connect locald 'foo rpc-server-address1 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address1))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (stop-rpc-server! remoted)
@@ -73,7 +75,7 @@
       (def locald
         (start-rpc-server! proto: (rpc-cookie-proto rpc-cookie)))
       (def rfoo
-        (rpc-connect locald 'foo rpc-server-address2 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address2))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (stop-rpc-server! remoted)
@@ -90,7 +92,7 @@
       (def locald
         (start-rpc-server! proto: (rpc-cipher-proto)))
       (def rfoo
-        (rpc-connect locald 'foo rpc-server-address3 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address3))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (stop-rpc-server! remoted)
@@ -107,7 +109,7 @@
       (def locald
         (start-rpc-server! proto: (rpc-cookie-cipher-proto rpc-cookie)))
       (def rfoo
-        (rpc-connect locald 'foo rpc-server-address4 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address4))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (stop-rpc-server! remoted)
@@ -116,7 +118,7 @@
     (test-case "test RPC errors"
       (def locald (start-rpc-server!))
       (def rfoo
-        (make-remote locald 'foo rpc-server-address8 hello::proto))
+        (make-remote locald 'foo rpc-server-address8))
 
       (check (with-catch values (cut !!hello.hello rfoo 'a)) ? rpc-error?)
 
@@ -141,7 +143,7 @@
 
       (def locald  (start-rpc-server!))
       (def rfoo
-        (rpc-connect locald 'foo rpc-server-address10 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address10))
       (check (!!hello.hello rfoo 'a timeout: 1) => 'a)
 
       (!!rpc.monitor locald rfoo)
@@ -153,7 +155,7 @@
       (stop-rpc-server! locald))))
 
 (def (hello-stream-server remoted N)
-  (!!rpc.register remoted 'foo hello::proto)
+  (rpc-register remoted 'foo)
   (let lp ()
     (<- ((!hello.hello-stream _ k)
          (let lp2 ((n 0))
@@ -169,7 +171,7 @@
          (void)))))
 
 (def (hello-stream-close-server remoted)
-  (!!rpc.register remoted 'foo hello::proto)
+  (rpc-register remoted 'foo)
   (let lp ()
     (<- ((!hello.hello-stream _ k)
          (let (source @source)
@@ -193,7 +195,7 @@
       (check (!!rpc.resolve remoted 'foo) => hellod)
       (def locald  (start-rpc-server!))
       (def rfoo
-        (rpc-connect locald 'foo rpc-server-address5 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address5))
 
       (let (k (gensym 'stream))
         (send-message/timeout rfoo (make-!stream (make-hello.hello-stream "stream") k) 1)
@@ -218,7 +220,7 @@
       (check (!!rpc.resolve remoted 'foo) => hellod)
       (def locald  (start-rpc-server!))
       (def rfoo
-        (rpc-connect locald 'foo rpc-server-address6 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address6))
 
       (let ((values inp close) (!!hello.hello-stream rfoo "stream"))
         (let lp ((n 0))
@@ -237,7 +239,7 @@
       (check (!!rpc.resolve remoted 'foo) => hellod)
       (def locald  (start-rpc-server!))
       (def rfoo
-        (rpc-connect locald 'foo rpc-server-address9 hello::proto))
+        (rpc-connect locald 'foo rpc-server-address9))
 
       (let ((values inp close) (!!hello.hello-stream rfoo "stream"))
         (close)

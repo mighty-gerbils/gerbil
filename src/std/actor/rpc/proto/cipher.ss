@@ -18,6 +18,8 @@ package: std/actor/rpc/proto
         rpc-cookie-cipher-proto
         rpc-cipher-proto-key-exchange)
 
+#;(declare (not safe))
+
 ;; aes-128-gcm with sha256 hmac
 (def ::digest-type        digest::sha256)
 (def ::digest-size       (digest-size  ::digest-type))

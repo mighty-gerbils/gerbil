@@ -15,6 +15,8 @@ package: std/actor/rpc/proto
         rpc-cookie-proto-challenge
         rpc-cookie-proto-challenge-respond)
 
+#;(declare (not safe))
+
 (def challenge-digest digest::sha256)
 (def challenge-length (digest-size challenge-digest))
 
