@@ -49,7 +49,7 @@ package: std/actor/rpc
     (set! rpc-keep-alive dt)
     (error "bad keep-alive; expected positive real or #f" dt)))
 
-(def rpc-idle-timeout (* 2 3600))
+(def rpc-idle-timeout #f)
 
 (def (set-rpc-idle-timeout! dt)
   (if (or (not dt) (and (real? dt) (positive? dt)))
