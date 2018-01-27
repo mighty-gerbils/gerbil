@@ -65,7 +65,7 @@ package: std/actor/rpc
     (error "Bad protocol" proto))
   (hash-put! +protocols+ (UUID id) proto))
 
-(def (lookup-protocol uuid)
+(definline (lookup-protocol uuid)
   (hash-get +protocols+ uuid))
 
 (def (make-actor-table)
