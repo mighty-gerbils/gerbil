@@ -4,6 +4,7 @@
 package: std/actor
 
 (import :gerbil/gambit/bits
+        :gerbil/gambit/os
         :std/error
         :std/net/bio
         (only-in :std/srfi/1 reverse!))
@@ -92,6 +93,7 @@ package: std/actor
 (def xdr-tag-object   17)
 (def xdr-tag-ratnum   18)
 (def xdr-tag-cpxnum   19)
+(def xdr-tag-time     20)
 (def xdr-tag-opaque   64)
 
 (def xdr-tag-hash-equal 0)
@@ -145,6 +147,8 @@ package: std/actor
     xdr-tag-object)
    ((hash-table? obj)
     xdr-tag-hash)
+   ((time? obj)
+    xdr-tag-time)
    ((opaque? obj)
     xdr-tag-opaque)
    (else #f)))
@@ -436,6 +440,12 @@ package: std/actor
   (xdr-write (##cpxnum-real obj) buf)
   (xdr-write (##cpxnum-imag obj) buf))
 
+(def (xdr-read-time buf)
+  (seconds->time (xdr-read-flonum buf)))
+
+(def (xdr-write-time tm buf)
+  (xdr-write-flonum (time->seconds tm) buf))
+
 (def (xdr-read-inline-list buf)
   (let lp ((r []))
     (let (next (xdr-read buf))
@@ -479,6 +489,7 @@ package: std/actor
   (xdr-tag-object   xdr-read-object   xdr-write-object)
   (xdr-tag-ratnum   xdr-read-ratnum   xdr-write-ratnum)
   (xdr-tag-cpxnum   xdr-read-cpxnum   xdr-write-cpxnum)
+  (xdr-tag-time     xdr-read-time     xdr-write-time)
   (xdr-tag-opaque   xdr-read-opaque   xdr-write-opaque))
 
 ;; struct xdr
