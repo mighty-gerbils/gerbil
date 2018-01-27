@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor rpc
-package: std/actor
+package: std/actor/rpc
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/os
@@ -19,10 +19,10 @@ package: std/actor
         :std/actor/message
         :std/actor/xdr
         :std/actor/proto
-        :std/actor/proto/message
-        :std/actor/proto/null
-        :std/actor/proto/cookie
-        :std/actor/proto/cipher
+        :std/actor/rpc/proto/message
+        :std/actor/rpc/proto/null
+        :std/actor/rpc/proto/cookie
+        :std/actor/rpc/proto/cipher
         )
 (export
   current-rpc-server

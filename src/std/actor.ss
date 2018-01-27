@@ -5,8 +5,8 @@ package: std
 
 (import :std/actor/message
         :std/actor/proto
-        :std/actor/rpc)
+        :std/actor/rpc/server)
 
 (export (import: :std/actor/message
                  :std/actor/proto
-                 :std/actor/rpc))
+                 :std/actor/rpc/server))

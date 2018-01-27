@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor wire protocol implementation
-package: std/actor/proto
+package: std/actor/rpc/proto
 
 (import :std/error
         :std/misc/uuid
