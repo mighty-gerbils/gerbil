@@ -162,8 +162,13 @@ package: std/actor/rpc
                      (dispatch-remote-error (make-!error "unmarshal error" k) dest))
                     (else
                      ;; we probably failed to unmarshal because there is no binding
-                     (warning "bogus call; no actor binding ~a" (uuid->string dest))
+                     (warning "bogus message; no actor binding ~a" (uuid->string dest))
                      (dispatch-remote-error (make-!error "no binding" k) dest))))
+                  ((? !event?)
+                   (unless (actor-table-get actors dest)
+                     ;; same here, so warn about it
+                     (warning "bogus message; no actor binding ~a" (uuid->string dest)))
+                   (loop))
                   ((or (!value _ k) (!error _ k) (!yield _ k))
                    (cond
                     ((hash-get continuations k)
@@ -203,7 +208,7 @@ package: std/actor/rpc
              (send actor msg)
              (loop)))
         (else
-         (warning "cannot route call; no actor binding ~a" (uuid->string uuid))
+         (warning "cannot route message; no actor binding ~a" (uuid->string uuid))
          (match (message-e msg)
            ((or (!call _ k) (!stream _ k))
             (dispatch-remote-error (make-!error "no binding" k) uuid))
@@ -225,7 +230,7 @@ package: std/actor/rpc
               (send actor msg)
               (loop))))
        (else
-        (warning "cannot route value; bogus continuation ~a" cont)
+        (warning "cannot route message; bogus continuation ~a" cont)
         (if (!yield? content)
           (dispatch-remote-error (make-!abort cont) (message-dest msg))
           (loop))))))
