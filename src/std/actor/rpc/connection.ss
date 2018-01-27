@@ -145,11 +145,31 @@ package: std/actor/rpc
                (dispatch-control msg !close-k !close-k-set!))
               ((? !abort?)
                (dispatch-control msg !abort-k !abort-k-set!))
-              ((? not)
+              (else
                (dispatch-call msg))))
-          (begin
-            (log-error "unmarshall error" msg)
-            (close-connection)))))
+          ;; unmarshal error -- is it a recoverable payload unmarshal error?
+          (let* ((_ (log-error "unmarshal error" msg))
+                 (msg (try (rpc-proto-unmarshal-envelope data)
+                           (catch (exception? e) e))))
+            (if (message? msg)
+              (with ((message content _ dest) msg)
+                (match content
+                  ((or (!call _ k) (!stream _ k))
+                   (dispatch-remote-error (make-!error "unmarshal error" k) dest))
+                  ((or (!value _ k) (!error _ k) (!yield _ k))
+                   (cond
+                    ((hash-get continuations k)
+                     => (match <>
+                          ((values actor cont stream?)
+                           (!!error actor (make-rpc-error 'rpc-connection "unmarshal error") cont)
+                           (remove-continuation! k)))))
+                   (if (!yield? content)
+                     (dispatch-remote-error (make-!abort k) dest)
+                     (loop)))
+                  (else
+                   (loop))))
+              ;; envelope error -- unrecoverable
+              (close-connection))))))
      ((eof-object? data)
       (close-connection))
      (else
