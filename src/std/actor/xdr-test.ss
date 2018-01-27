@@ -3,6 +3,7 @@
 ;;; :std/actor/xdr unit-test
 
 (import :gerbil/gambit/random
+        :gerbil/gambit/os
         :std/test
         :std/actor/xdr
         :std/net/bio
@@ -12,17 +13,17 @@
 (def actor-xdr-test
   (test-suite "test :std/actor/xdr serialization"
 
-    (def (check-serialize obj)
+    (def (check-serialize obj (obj-e values))
         (let (p (open-serializer-output-buffer))
           (xdr-write obj p)
           (let (q (open-input-buffer (chunked-output-u8vector p)))
-            (check (xdr-read q) => obj))))
+            (check (obj-e (xdr-read q)) => (obj-e obj)))))
 
     (def (check-serialize-opaque obj)
         (let (p (open-serializer-output-buffer))
           (xdr-write (opaque obj) p)
           (let (q (open-input-buffer (chunked-output-u8vector p)))
-            (check (xdr-read q) => obj))))
+            (check (opaque-value (xdr-read q)) => obj))))
 
     (test-case "test primitive object serialization"
       ;; primitive objects
@@ -57,7 +58,8 @@
       (check-serialize (list (random-u8vector 200) (random-u8vector 200) (random-u8vector 200)))
       (check-serialize (list->hash-table '((a . 1) (b . 2) (c . 3))))
       (check-serialize (list->hash-table-eq '((a . 1) (b . 2) (c . 3))))
+      (check-serialize (current-time) time->seconds)
       (check-serialize 3+5i)
       (check-serialize 3/5)
-      (check-serialize '#!eof))
-    ))
+      (check-serialize '#!eof)
+      (check-serialize-opaque 1))))
