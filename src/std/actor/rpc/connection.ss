@@ -1,0 +1,511 @@
+;;; -*- Gerbil -*-
+;;; (C) vyzo
+;;; actor rpc connections
+package: std/actor/rpc
+
+(import :gerbil/gambit/threads
+        :gerbil/gambit/os
+        :gerbil/gambit/exceptions
+        :std/sugar
+        :std/logger
+        :std/net/bio
+        :std/net/socket
+        :std/os/socket
+        :std/misc/uuid
+        :std/actor/message
+        :std/actor/xdr
+        :std/actor/proto
+        :std/actor/rpc/base
+        :std/actor/rpc/proto/message)
+(export #t)
+
+(def (rpc-server-connection rpc-server actors sock sa cliaddr proto-e)
+  (try
+   (rpc-set-nodelay! sock (socket-address-family sa))
+   (rpc-connection-loop rpc-server actors sock cliaddr proto-e)
+   (catch (e)
+     (rpc-connection-cleanup rpc-server e sock))))
+
+(def (rpc-client-connection rpc-server actors address proto-e)
+  (try
+   (let* ((sa (socket-address address))
+          (cli (ssocket-connect sa)))
+     (rpc-set-nodelay! cli (socket-address-family sa))
+     (rpc-connection-loop rpc-server actors cli address proto-e))
+   (catch (e)
+     (rpc-connection-cleanup rpc-server e #f))))
+
+(def (rpc-set-nodelay! sock safamily)
+  (when (or (eq? safamily AF_INET)
+            (eq? safamily AF_INET6))
+    (socket-setsockopt (ssocket-socket sock) IPPROTO_TCP TCP_NODELAY 1)))
+
+(def rpc-keep-alive 60) ; keep-alive interval
+
+(def (set-rpc-keep-alive-interval! dt)
+  (if (or (not dt) (and (real? dt) (positive? dt)))
+    (set! rpc-keep-alive dt)
+    (error "bad keep-alive; expected positive real or #f" dt)))
+
+(def rpc-idle-timeout (* 2 3600))
+
+(def (set-rpc-idle-timeout! dt)
+  (if (or (not dt) (and (real? dt) (positive? dt)))
+    (set! rpc-idle-timeout dt)
+    (error "bad idle interval; expected positive real or #f" dt)))
+
+(def rpc-call-timeout 60)
+
+(def (set-rpc-call-timeout! dt)
+  (cond
+   ((and (real? dt) (positive? dt) (finite? dt))
+    (set! rpc-call-timeout dt))
+   ((not dt)
+    (set! rpc-call-timeout #f))
+   (else
+    (error "bad timeout; expected finite positive real or #f" dt))))
+
+(def (rpc-connection-loop rpc-server actors sock peer-address proto-e)
+  (def input
+    (open-ssocket-input-buffer sock))
+  (def output
+    (open-ssocket-output-buffer sock))
+  (defvalues (read-e write-e)
+    (proto-e input output))
+  (def continuations                    ; wire-id => (values actor k proto stream?)
+    (make-hash-table-eqv))
+  (def stream-continuations             ; k => wire-id
+    (make-hash-table-eq))
+  (def stream-actors                    ; wire-id => [actor . dest]
+    (make-hash-table-eqv))
+  (def timeouts                         ; timeout => wire-id
+    (make-hash-table-eq))
+  (def continuation-timeouts            ; wire-id => timeout
+    (make-hash-table-eqv))
+  (def next-timeout #f)
+  (def next-continuation-id 0)
+  (def idle-timeout #f)
+  (def reader #f)
+  (def writer #f)
+
+  (def (reset-idle-timeout)
+    (cond
+     (rpc-idle-timeout
+      (set! idle-timeout
+        (seconds->time
+         (+ (##current-time-point) rpc-idle-timeout))))
+     ((not idle-timeout))
+     (else
+      (set! idle-timeout #f))))
+
+  (def (close-connection)
+    (ssocket-close sock)
+    (thread-send writer 'exit)
+    (for-each
+      (lambda (wire-id)
+        (cond
+         ((hash-get continuations wire-id)
+          => (lambda (cont)
+               (with ((values actor k proto stream?) cont)
+                 (!!error actor (make-rpc-error 'rpc-connection "connection error") k))))))
+      (hash-keys continuations))
+    (hash-for-each
+      (lambda (wire-id stream)
+        (with ([actor . dest] stream)
+          (let (abort (make-message (make-!abort wire-id) dest actor #f))
+            (send actor abort))))
+      stream-actors)
+    (rpc-connection-shutdown rpc-server))
+
+  (def (read-message data)
+    (cond
+     ((void? data)                      ; keep-alive
+      (loop))
+     ((u8vector? data)                  ; incoming message
+      (let (bytes (open-input-buffer data))
+        (let (msg (try (rpc-proto-read-message-envelope bytes)
+                       (catch (exception? e) e)))
+          (if (message? msg)
+            (with ((message content _ dest) msg)
+              (match content
+                ((? (or !call? !event? !stream?))
+                 (dispatch-call msg bytes))
+                ((? !value?)
+                 (dispatch-value msg bytes !value-k !value-k-set!))
+                ((? !error?)
+                 (dispatch-value msg bytes !error-k !error-k-set!))
+                ((? !yield?)
+                 (dispatch-value msg bytes !yield-k !yield-k-set!))
+                ((? !end?)
+                 (dispatch-value msg bytes !end-k !end-k-set!))
+                ((? !continue?)
+                 (dispatch-control msg bytes !continue-k !continue-k-set!))
+                ((? !close?)
+                 (dispatch-control msg bytes !close-k !close-k-set!))
+                ((? !abort?)
+                 (dispatch-control msg bytes !abort-k !abort-k-set!))
+                ((? not)
+                 (dispatch-call msg bytes))))
+            (begin
+              (log-error "read error" msg)
+              (close-connection))))))
+     ((eof-object? data)
+      (close-connection))
+     (else
+      (log-error "connection error" data)
+      (close-connection))))
+
+  (def (reader-loop connection-thread)
+    (let lp ()
+      (let (next (read-e input))
+        (thread-send connection-thread (cons 'read next))
+        (unless (eof-object? next)
+          (lp)))))
+
+  (def (dispatch-call msg bytes)
+    (let (uuid (message-dest msg))
+      (match (actor-table-get actors uuid)
+        ((values actor proto)
+         (let (e (unmarshal-message-content msg proto bytes))
+           (if (message? e)
+             (begin
+               (set! (message-dest msg)
+                 actor)
+               (set! (message-source msg)
+                 (make-remote (current-thread) uuid peer-address proto))
+               (send actor msg)
+               (loop))
+             (begin
+               (log-error "unmarshal error" e)
+               (match (message-e msg)
+                 ((or (!call _ k) (!stream _ k))
+                  (dispatch-remote-error (make-!error "unmarshal error" k) uuid))
+                 (else
+                  (loop)))))))
+        (else
+         (warning "cannot route call; no actor binding ~a" (uuid->string uuid))
+         (match (message-e msg)
+           ((or (!call _ k) (!stream _ k))
+            (dispatch-remote-error (make-!error "no binding" k) uuid))
+           (else
+            (loop)))))))
+
+  (def (dispatch-value msg bytes value-k value-k-set!)
+    (let* ((content (message-e msg))
+           (cont    (value-k content)))
+      (cond
+       ((hash-get continuations cont)
+        => (match <>
+             ((values actor k proto stream?)
+              (let (e (unmarshal-message-content msg proto bytes))
+                (if (message? e)
+                  (begin
+                    (value-k-set! (message-e msg) k)
+                    (set! (message-source msg)
+                      (make-remote (current-thread) (message-dest msg) peer-address proto))
+                    (unless (!yield? content)
+                      (remove-continuation! cont))
+                    (send actor msg)
+                    (loop))
+                  (begin
+                    (log-error "unmarshal error" e)
+                    (!!error actor (make-rpc-error 'rpc-connection "unmarshal error") k)
+                    (remove-continuation! cont)
+                    (if (!yield? content)
+                      (dispatch-remote-error (make-!abort cont) (message-dest msg))
+                      (loop))))))))
+       (else
+        (warning "cannot route value; bogus continuation ~a" cont)
+        (if (!yield? content)
+          (dispatch-remote-error (make-!abort cont) (message-dest msg))
+          (loop))))))
+
+  (def (dispatch-control msg bytes value-k value-k-set!)
+    (let* ((content (message-e msg))
+           (wire-id (value-k content))
+           (stream (hash-get stream-actors wire-id)))
+      (if stream
+        (with ([actor . dest] stream)
+          (set! (message-source msg) dest)
+          (send actor msg)
+          (when (!abort? content)
+            (hash-remove! stream-actors wire-id))
+          (loop))
+        (begin
+          (warning "bad control message; unknown stream ~a" wire-id)
+          (dispatch-remote-error (make-!error "uknown stream" wire-id) (message-dest msg))))))
+
+  (def (dispatch-remote-error what dest)
+    (marshal-and-write (make-message what (void) dest #f) #f #f))
+
+  (def (unmarshal-message-content msg proto bytes)
+    (try (rpc-proto-read-message-content msg proto bytes)
+         (catch (exception? e) e)))
+
+  (def (write-message msg)
+    (with ((message content src dest opts) msg)
+      (if (remote? dest)
+        (with ((remote _ uuid address proto) dest)
+          (set! (message-dest msg)
+            uuid)
+          ;; keep track of continuation and timeout
+          (match content
+            ((!call _ k)
+             (let (wire-id (next-continuation-id!))
+               (hash-put! continuations wire-id (values src k proto #f))
+               (set! (!call-k content) wire-id)
+               (alet (timeo (rpc-options-timeout opts rpc-call-timeout))
+                 (hash-put! timeouts timeo wire-id)
+                 (hash-put! continuation-timeouts wire-id timeo)
+                 (set-timeout! timeo))
+               (marshal-and-write msg proto #t)))
+            ((!stream _ k)
+             (let (wire-id (next-continuation-id!))
+               (hash-put! continuations wire-id (values src k proto #t))
+               (hash-put! stream-continuations k wire-id)
+               (set! (!stream-k content) wire-id)
+               (alet (timeo (rpc-options-timeout opts #f))
+                 (hash-put! timeouts timeo wire-id)
+                 (hash-put! continuation-timeouts wire-id timeo)
+                 (set-timeout! timeo))
+               (marshal-and-write msg proto #t)))
+            ((? !value?)
+             (marshal-and-write msg proto #t))
+            ((!yield _ wire-id)
+             (hash-put! stream-actors wire-id (cons src dest))
+             (marshal-and-write msg proto #t))
+            ((or (!error _ wire-id)
+                 (!end wire-id))
+             (hash-remove! stream-actors wire-id)
+             (marshal-and-write msg proto #t))
+            ((!continue k)
+             (let (wire-id (hash-get stream-continuations k))
+               (if wire-id
+                 (begin
+                   (set! (!continue-k content) wire-id)
+                   (marshal-and-write msg proto #t))
+                 (begin
+                   (warning "bad continue; unknown stream ~a" k)
+                   (loop)))))
+            ((!close k)
+             (let (wire-id (hash-get stream-continuations k))
+               (if wire-id
+                 (begin
+                   (set! (!close-k content) wire-id)
+                   (marshal-and-write msg proto #t))
+                 (begin
+                   (warning "bad close; unknown stream ~a" k)
+                   (loop)))))
+            ((!abort k)
+             (let (wire-id (hash-get stream-continuations k))
+               (if wire-id
+                 (begin
+                   (set! (!abort-k content) wire-id)
+                   (remove-continuation! wire-id)
+                   (marshal-and-write msg proto #t))
+                 (begin
+                   (warning "bad abort; unknown stream ~a" k)
+                   (loop)))))
+            (else
+             (marshal-and-write msg proto #t))))
+        (begin
+          (warning "bad handle; no protocol ~a ~a" dest msg)
+          (loop)))))
+
+  (def (next-continuation-id!)
+    (let (next next-continuation-id)
+      (set! next-continuation-id (1+ next))
+      next))
+
+  (def (remove-continuation! wire-id)
+    (alet (cont (hash-get continuations wire-id))
+      (hash-remove! continuations wire-id)
+      (with ((values _ k _ stream?) cont)
+        (when stream?
+          (hash-remove! stream-continuations k)))
+      (alet (timeo (hash-get continuation-timeouts wire-id))
+        (hash-remove! continuation-timeouts wire-id)
+        (hash-remove! timeouts timeo))))
+
+  (def (marshal-and-write msg proto local-error?)
+    (let (e (try (rpc-proto-marshal-message msg proto)
+                 (catch (exception? e) e)))
+      (cond
+       ((u8vector? e)
+        (if (fx<= (u8vector-length e) rpc-proto-message-max-length)
+          (begin
+            (thread-send writer e)
+            (loop))
+          (let (content (message-e msg))
+            (warning "message too large; not sending %d bytes" (u8vector-length e))
+            (match content
+              ((or (!call e wire-id) (!stream e wire-id))
+               (dispatch-error wire-id "message too large"))
+              ((!yield wire-id)
+               (dispatch-stream-error msg wire-id "message too large"))
+              (else
+               (loop))))))
+       ((chunked-output-buffer? e)
+        (if (fx<= (chunked-output-length e) rpc-proto-message-max-length)
+          (begin
+            (thread-send writer e)
+            (loop))
+          (let (content (message-e msg))
+            (warning "message too large; not sending %d bytes" (chunked-output-length e))
+            (match content
+              ((or (!call e wire-id) (!stream e wire-id))
+               (dispatch-error wire-id "message too large"))
+              ((!yield wire-id)
+               (dispatch-stream-error msg wire-id "message too large"))
+              (else
+               (loop))))))
+       (local-error?
+        (log-error "marshal error" e)
+        (let (content (message-e msg))
+          (match content
+            ((or (!call e wire-id) (!stream e wire-id))
+             (dispatch-error wire-id "marshal error"))
+            ((!yield wire-id)
+             (dispatch-stream-error msg wire-id "marshal error"))
+            (else
+             (loop)))))
+       (else
+        (log-error "marshal error" e)
+        (loop)))))
+
+  (def (dispatch-error wire-id what)
+    (with ((values actor k proto stream?) (hash-ref continuations wire-id))
+      (!!error actor (make-rpc-error 'rpc-connection what) k)
+      (remove-continuation! wire-id)
+      (loop)))
+
+  (def (dispatch-stream-error msg wire-id what)
+    (with ((message _ src dest) msg)
+      (let (abort (make-message (make-!abort wire-id) dest src #f))
+        (send src abort))
+      (hash-remove! stream-actors wire-id)
+      (dispatch-remote-error (make-!error what wire-id) dest)))
+
+  (def (dispatch-timeout timeo)
+    (set! next-timeout #f)
+    (cond
+     ((hash-get timeouts timeo)
+      => (lambda (wire-id)
+           (dispatch-error wire-id "timeout")))
+     (else
+      (loop))))
+
+  (def (writer-loop)
+    (let lp ()
+      (<< (! rpc-keep-alive
+             (write-e output (void))
+             (lp))
+          ((? u8vector? data)
+           (write-e output data)
+           (lp))
+          ((? output-buffer? buf)
+           (write-e output buf)
+           (lp))
+          ('exit (void))
+          (bogus
+           (warning "unexpected message ~a" bogus)
+           (lp)))))
+
+  (def (timeout< a b)
+    (< (time->seconds a)
+       (time->seconds b)))
+
+  (def (set-timeout! timeo)
+    (when (or (not next-timeout) (timeout< timeo next-timeout))
+      (set! next-timeout timeo)))
+
+  (def (timeout-event)
+    (unless next-timeout
+      (unless (fxzero? (hash-length timeouts))
+        (hash-for-each
+          (lambda (timeo _)
+            (set-timeout! timeo))
+          timeouts)))
+    next-timeout)
+
+  (def (loop)
+    (<< (! (timeout-event)
+           => dispatch-timeout)
+        (! idle-timeout
+           (close-connection))
+        ((? message? msg)
+         (reset-idle-timeout)
+         (write-message msg))
+        (['read . data]
+         (reset-idle-timeout)
+         (read-message data))
+        ('shutdown
+         (close-connection))
+        ((? thread? thread)
+         (try
+          (thread-join! thread)
+          (warning "connection error: i/o thread ~a exited unexpectedly" (thread-name thread))
+          (catch (uncaught-exception? e)
+            (log-error "connection error" (uncaught-exception-reason e)))
+          (catch (e)
+            (log-error "connection error" e)))
+         (close-connection))
+        (bogus
+         (warning "unexpected message ~a" bogus)
+         (loop))))
+
+  (def (run)
+    ;; create a denv cell and bubble up the cache; cf parameter perf considerations
+    (parameterize ((current-xdr-type-registry +xdr-default-type-registry+))
+      (loop)))
+
+  (let (thread (spawn/name 'rpc-connection-reader reader-loop (current-thread)))
+    (set! reader thread)
+    (rpc-monitor thread))
+
+  (let (thread (spawn/name 'rpc-connection-writer writer-loop))
+    (set! writer thread)
+    (rpc-monitor thread))
+
+  (reset-idle-timeout)
+  (try
+   (run)
+   (catch (e)
+     (log-error "unhandled exception" e)
+     (close-connection))))
+
+(def (rpc-options-timeout opts default)
+  (def (timeout dt default)
+    (cond
+     ((real? dt)                        ; rel time
+      (seconds->time
+       (+ (##current-time-point) dt)))
+     ((time? dt) dt)                    ; abs time
+     ((not dt) dt)                      ; bottom
+     (else
+      (timeout default #f))))
+  (cond
+   ((and opts (memq timeout: opts))
+    => (lambda (plist)
+         (timeout (cadr plist) default)))
+   (else
+    (timeout default #f))))
+
+(def (rpc-connection-shutdown rpc-server)
+  (!!rpc.connection-shutdown rpc-server)
+  (let lp ()
+    (<< ((? message? msg)
+         (with ((message content) msg)
+           (match content
+             ((!rpc.connection-close)
+              (rpc-send-error-responses "connection error"))
+             (else
+              (rpc-send-error-response msg "connection error")
+              (lp)))))
+        (ignore (lp)))))
+
+(def (rpc-connection-cleanup rpc-server exn sock)
+  (log-error "connection error" exn)
+  (when sock
+    (ssocket-close sock))
+  (rpc-connection-shutdown rpc-server))
