@@ -50,7 +50,7 @@ package: std/actor
 (defstruct (handle proxy) (uuid)
   constructor: :init!)
 
-(defstruct (remote handle) (address proto)
+(defstruct (remote handle) (address)
   final: #t)
 
 (defmethod {:init! handle}
@@ -58,8 +58,8 @@ package: std/actor
     (struct-instance-init! self handler (UUID id))))
 
 (defmethod {:init! remote}
-  (lambda (self handler id address proto)
-    (struct-instance-init! self handler (UUID id) address proto)))
+  (lambda (self handler id address)
+    (struct-instance-init! self handler (UUID id) address)))
 
 (def (remote=? a b)
   (with (((remote proxy-a uuid-a address-a) a)

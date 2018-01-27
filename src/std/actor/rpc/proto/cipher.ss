@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor rpc cookie authen protocol
-package: std/actor/proto
+package: std/actor/rpc/proto
 
 (import :std/net/bio
         :std/crypto/etc
@@ -11,12 +11,14 @@ package: std/actor/proto
         :std/crypto/bn
         :std/actor/xdr
         :std/actor/proto
-        :std/actor/proto/message
-        :std/actor/proto/null
-        :std/actor/proto/cookie)
+        :std/actor/rpc/proto/message
+        :std/actor/rpc/proto/null
+        :std/actor/rpc/proto/cookie)
 (export rpc-cipher-proto
         rpc-cookie-cipher-proto
         rpc-cipher-proto-key-exchange)
+
+(declare (not safe))
 
 ;; aes-128-gcm with sha256 hmac
 (def ::digest-type        digest::sha256)

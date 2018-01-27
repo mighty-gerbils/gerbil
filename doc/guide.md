@@ -1313,15 +1313,16 @@ to bind and a wire protocol implementation with a keyword.
 
 In one shell:
 ```
+(bind-protocol! 'echo echo::proto)
 (def (my-echo rpcd)
-  (rpc-register rpcd 'echo echo::proto)
+  (rpc-register rpcd 'echo)
   (let lp ()
     (<- ((!echo.hello what k)
           (displayln @source " says " what)
           (!!value what k)
           (lp)))))
-(def remoted (start-rpc-server! "127.0.0.1:9999"))
-(def echod (spawn my-echo remoted))
+(def serverd (start-rpc-server! "127.0.0.1:9999"))
+(def echod (spawn my-echo serverd))
 ```
 This starts an rpc server at port 9999 in the localhost.
 The echo actor binds itself under the id `echo` using the
@@ -1329,8 +1330,9 @@ echo protocol `echo::proto` for marshalling and unmarshalling.
 
 In a different shell, we can connect to our echo with a `remote` handle:
 ```
-(def locald (start-rpc-server!))
-(def echod (rpc-connect locald 'echo "127.0.0.1:9999" echo::proto))
+(bind-protocol! 'echo echo::proto)
+(def clientd (start-rpc-server!))
+(def echod (rpc-connect clientd 'echo "127.0.0.1:9999"))
 > (!!echo.hello echod 'hello)
 => 'hello
 ```

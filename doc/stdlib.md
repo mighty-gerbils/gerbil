@@ -93,12 +93,12 @@ Package for actor-oriented concurrent and distributed programming.
   rpc-io-error? raise-rpc-io-error
   (struct-out remote-error rpc-error)
   (struct-out handle remote)
-  remote=? remote-hash canonical-address
+  remote=? remote-hash
   (struct-out !rpc !call !value !error !event !stream !yield !end !continue !close !abort !token)
   !!call !!call-recv !!value !!error !!event
   !!stream !!stream-recv !!yield !!end !!continue !!close !!abort
   (struct-out !protocol !rpc-protocol)
-  defproto
+  defproto proto-out
   defproto-default-type
   (phi: +1 make-protocol-info protocol-info?
         protocol-info-runtime-identifier
@@ -136,6 +136,7 @@ Package for actor-oriented concurrent and distributed programming.
   set-rpc-keep-alive-interval!
   set-rpc-idle-timeout!
   set-rpc-call-timeout!
+  bind-protocol!
 ```
 
 ## std/coroutine

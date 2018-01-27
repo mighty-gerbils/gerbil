@@ -1,16 +1,18 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor rpc null protocol
-package: std/actor/proto
+package: std/actor/rpc/proto
 
 (import :std/net/bio
         :std/actor/proto
-        :std/actor/proto/message)
+        :std/actor/rpc/proto/message)
 (export rpc-proto-accept-e
         rpc-proto-connect-e
         rpc-null-proto
         rpc-null-proto-read
         rpc-null-proto-write)
+
+(declare (not safe))
 
 ;; generic rpc hello
 (def (rpc-proto-accept-e ibuf obuf proto-t K)

@@ -1,19 +1,21 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor rpc cookie authen protocol
-package: std/actor/proto
+package: std/actor/rpc/proto
 
 (import :std/net/bio
         :std/crypto/etc
         :std/crypto/digest
         :std/actor/xdr
         :std/actor/proto
-        :std/actor/proto/message
-        :std/actor/proto/null)
+        :std/actor/rpc/proto/message
+        :std/actor/rpc/proto/null)
 (export rpc-cookie-proto
         rpc-generate-cookie!
         rpc-cookie-proto-challenge
         rpc-cookie-proto-challenge-respond)
+
+(declare (not safe))
 
 (def challenge-digest digest::sha256)
 (def challenge-length (digest-size challenge-digest))

@@ -1,15 +1,18 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor wire protocol implementation
-package: std/actor/proto
+package: std/actor/rpc/proto
 
 (import :std/error
         :std/misc/uuid
         :std/net/bio
         :std/actor/message
         :std/actor/proto
-        :std/actor/xdr)
+        :std/actor/xdr
+        :std/actor/rpc/base)
 (export #t)
+
+(declare (not safe))
 
 ;;; wire protocol implementation
 ;; Handshake:
@@ -44,20 +47,19 @@ package: std/actor/proto
 (def rpc-proto-cookie-cipher #x03)
 
 ;;; protocol i/o
-(def (rpc-proto-marshal-message msg proto)
+(def (rpc-proto-marshal-message msg)
   (let (outp (open-serializer-output-buffer))
-    (rpc-proto-write-message msg proto outp)
+    (rpc-proto-write-message msg outp)
     outp))
 
 ;; wire representation
 ;; rpc-proto-message-type dest content
-(def (rpc-proto-write-message msg proto buffer)
-  (current-xdr-type-registry
-   (if proto
-     (!protocol-types proto)
-     +xdr-default-type-registry+))
-
+(def (rpc-proto-write-message msg buffer)
   (with ((message content _ dest) msg)
+    (let (proto (lookup-protocol dest))
+      (if proto
+        (current-xdr-type-registry (!protocol-types proto))
+        (raise-rpc-io-error 'rpc-proto-write-message "unknown protocol" dest)))
     (cond
      ((!rpc? content)
       (match content
@@ -107,41 +109,52 @@ package: std/actor/proto
          (xdr-write-uuid dest buffer)
          (xdr-write-uint k buffer))
         (else
-         (raise-rpc-io-error 'rpc-proto-write-message
-                             "unknown rpc message type" content))))
+         (raise-rpc-io-error 'rpc-proto-write-message "unknown rpc message type" content))))
      (else
       (bio-write-u8 rpc-proto-message-raw buffer)
       (xdr-write content buffer)))))
 
-(def (rpc-proto-unmarshal-message proto u8v)
-  (let* ((inp (open-input-buffer u8v))
-         (msg (rpc-proto-read-message-envelope inp)))
-    (rpc-proto-read-message-content msg proto inp)))
+(def (rpc-proto-unmarshal-message u8v)
+  (let (inp (open-input-buffer u8v))
+    (rpc-proto-read-message inp)))
 
-(def (rpc-proto-read-message-envelope buffer)
+(def (rpc-proto-read-message buffer)
   (let* ((type (bio-read-u8 buffer))
-         (dest (xdr-read-uuid buffer)))
+         (dest (xdr-read-uuid buffer))
+         (proto (lookup-protocol dest)))
+    (unless proto
+      (raise-rpc-io-error 'rpc-proto-read-message "unknown protocol" dest))
+    (current-xdr-type-registry (!protocol-types proto))
     (make-message
      (cond
       ((eq? type rpc-proto-message-call)
-       (let (k (xdr-read-uint buffer))
-         (make-!call #f k)))
+       (let* ((k (xdr-read-uint buffer))
+              (e (xdr-read buffer)))
+         (make-!call e k)))
       ((eq? type rpc-proto-message-value)
-       (let (k (xdr-read-uint buffer))
-         (make-!value #f k)))
+       (let* ((k (xdr-read-uint buffer))
+              (e (xdr-read buffer)))
+         (make-!value e k)))
       ((eq? type rpc-proto-message-error)
-       (let (k (xdr-read-uint buffer))
-         (make-!error #f k)))
+       (let* ((k (xdr-read-uint buffer))
+              (e (xdr-read buffer))
+              (e (if (string? e)
+                    (make-remote-error 'rpc e)
+                    e)))
+         (make-!error e k)))
       ((eq? type rpc-proto-message-event)
-       (make-!event #f))
+       (let (e (xdr-read buffer))
+         (make-!event e)))
       ((eq? type rpc-proto-message-raw)
-       #f)
+       (xdr-read buffer))
       ((eq? type rpc-proto-message-stream)
-       (let (k (xdr-read-uint buffer))
-         (make-!stream #f k)))
+       (let* ((k (xdr-read-uint buffer))
+              (e (xdr-read buffer)))
+         (make-!stream e k)))
       ((eq? type rpc-proto-message-yield)
-       (let (k (xdr-read-uint buffer))
-         (make-!yield #f k)))
+       (let* ((k (xdr-read-uint buffer))
+              (e (xdr-read buffer)))
+         (make-!yield e k)))
       ((eq? type rpc-proto-message-end)
        (let (k (xdr-read-uint buffer))
          (make-!end k)))
@@ -159,51 +172,47 @@ package: std/actor/proto
                            "unmarshal error; unexpected message type" type)))
      #!void dest #f)))
 
-;; return modify msg content in place, return it
-(def (rpc-proto-read-message-content msg proto buffer)
-  (current-xdr-type-registry
-   (if proto
-     (!protocol-types proto)
-     +xdr-default-type-registry+))
+(def (rpc-proto-unmarshal-envelope u8v)
+  (let (inp (open-input-buffer u8v))
+    (rpc-proto-read-envelope inp)))
 
-  (let (content (message-e msg))
-    (cond
-     ((!rpc? content)
-      (cond
-       ((!call? content)
-        (set! (!call-e content)
-          (xdr-read buffer)))
-       ((!value? content)
-        (set! (!value-e content)
-          (xdr-read buffer)))
-       ((!error? content)
-        (let* ((e (xdr-read buffer))
-               (e (if (string? e)
-                    (make-remote-error 'rpc e)
-                    e)))
-          (set! (!error-e content)
-            e)))
-       ((!event? content)
-        (set! (!event-e content)
-          (xdr-read buffer)))
-       ((!stream? content)
-        (set! (!stream-e content)
-          (xdr-read buffer)))
-       ((!yield? content)
-        (set! (!yield-e content)
-          (xdr-read buffer)))
-       ;; !end/!continue/!close/!abort are empty
-       ))
-     (else
-      (set! (message-e msg)
-        (xdr-read buffer))))
-    msg))
-
-;;; default XDR protocol
-(def (xdr-read-uuid buffer)
-  (let (bytes (make-u8vector uuid-length))
-    (bio-read-bytes bytes buffer)
-    (make-uuid bytes #f)))
-
-(def (xdr-write-uuid obj buffer)
-  (bio-write-subu8vector (uuid->u8vector obj) 0 uuid-length buffer))
+(def (rpc-proto-read-envelope buffer)
+  (let* ((type (bio-read-u8 buffer))
+         (dest (xdr-read-uuid buffer)))
+    (make-message
+     (cond
+      ((eq? type rpc-proto-message-call)
+       (let (k (xdr-read-uint buffer))
+         (make-!call #!void k)))
+      ((eq? type rpc-proto-message-value)
+       (let (k (xdr-read-uint buffer))
+         (make-!value #!void k)))
+      ((eq? type rpc-proto-message-error)
+       (let (k (xdr-read-uint buffer))
+         (make-!error #!void k)))
+      ((eq? type rpc-proto-message-event)
+       (make-!event #!void))
+      ((eq? type rpc-proto-message-raw)
+       #!void)
+      ((eq? type rpc-proto-message-stream)
+       (let (k (xdr-read-uint buffer))
+         (make-!stream #!void k)))
+      ((eq? type rpc-proto-message-yield)
+       (let (k (xdr-read-uint buffer))
+         (make-!yield #!void k)))
+      ((eq? type rpc-proto-message-end)
+       (let (k (xdr-read-uint buffer))
+         (make-!end k)))
+      ((eq? type rpc-proto-message-continue)
+       (let (k (xdr-read-uint buffer))
+         (make-!continue k)))
+      ((eq? type rpc-proto-message-close)
+       (let (k (xdr-read-uint buffer))
+         (make-!close k)))
+      ((eq? type rpc-proto-message-abort)
+       (let (k (xdr-read-uint buffer))
+         (make-!abort k)))
+      (else
+       (raise-rpc-io-error 'rpc-proto-read-message
+                           "unmarshal error; unexpected message type" type)))
+     #!void dest #f)))

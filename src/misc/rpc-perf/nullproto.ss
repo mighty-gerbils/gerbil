@@ -16,9 +16,11 @@ package: misc/rpc-perf
 (defproto null-proto
   (call))
 
+(bind-protocol! 'null null-proto::proto)
+
 (def (run-client rpc-proto address count)
   (let* ((rpcd (start-rpc-server! proto: rpc-proto))
-         (srv (rpc-connect rpcd 'null address null-proto::proto)))
+         (srv (rpc-connect rpcd 'null address)))
     (let lp ((k 0))
       (when (fx< k count)
         (!!null-proto.call srv)
@@ -26,14 +28,14 @@ package: misc/rpc-perf
 
 (def (run-server rpc-proto address)
   (let (rpcd (start-rpc-server! address proto: rpc-proto))
-    (rpc-register rpcd 'null null-proto::proto)
+    (rpc-register rpcd 'null)
     (while #t
       (<- ((!null-proto.call k)
            (!!value (void) k))))))
 
 (def (run-server-prof rpc-proto address count)
   (let (rpcd (start-rpc-server! address proto: rpc-proto))
-    (rpc-register rpcd 'null null-proto::proto)
+    (rpc-register rpcd 'null)
     (let lp ((n 0))
       (when (fx< n count)
         (<- ((!null-proto.call k)

@@ -14,3 +14,6 @@
   (ref key)
   (put! key val)
   (remove! key))
+
+;; bind the protocol for the kvstore actor
+(bind-protocol! 'kvstore kvstore::proto)

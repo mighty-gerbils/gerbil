@@ -49,7 +49,7 @@
          (lmdb-txn-abort txn)
          (raise e)))))
 
-  (rpc-register rpcd 'kvstore kvstore::proto)
+  (rpc-register rpcd 'kvstore)
   (while #t
     (<- ((!kvstore.get key k)
          (try
