@@ -23,7 +23,7 @@
         (let (p (open-serializer-output-buffer))
           (xdr-write (opaque obj) p)
           (let (q (open-input-buffer (chunked-output-u8vector p)))
-            (check (xdr-read q) => obj))))
+            (check (opaque-value (xdr-read q)) => obj))))
 
     (test-case "test primitive object serialization"
       ;; primitive objects
@@ -61,5 +61,5 @@
       (check-serialize (current-time) time->seconds)
       (check-serialize 3+5i)
       (check-serialize 3/5)
-      (check-serialize '#!eof))
-    ))
+      (check-serialize '#!eof)
+      (check-serialize-opaque 1))))

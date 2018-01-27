@@ -13,8 +13,23 @@ package: std/actor
 (declare (not safe))
 
 ;; special object to force gambit serialization
-(defstruct opaque (e)
-  final: #t)
+(defstruct opaque (e bytes)
+  constructor: :init! final: #t)
+
+(defmethod {:init! opaque}
+  (lambda (self e (bytes #f))
+    (struct-instance-init! self e bytes)))
+
+(def (opaque-value opq)
+  (cond
+   ((opaque-bytes opq)
+    => (lambda (bytes)
+         (let (obj (u8vector->object bytes))
+           (set! (opaque-e opq) obj)
+           (set! (opaque-bytes opq) #f)
+           obj)))
+   (else
+    (opaque-e opq))))
 
 (defstruct (xdr-error io-error) ())
 
@@ -369,11 +384,12 @@ package: std/actor
 
 (def (xdr-read-opaque buf)
   (let (bytes (xdr-read-u8vector buf))
-    (u8vector->object bytes)))
+    (make-opaque #f bytes)))
 
 (def (xdr-write-opaque obj buf)
-  (let* ((obj (opaque-e obj))
-         (bytes (object->u8vector obj)))
+  (let (bytes
+        (or (opaque-bytes obj)
+            (object->u8vector (opaque-e obj))))
     (xdr-write-u8vector bytes buf)))
 
 (def (xdr-read-uint buf)
