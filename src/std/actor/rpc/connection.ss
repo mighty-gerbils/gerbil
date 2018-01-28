@@ -162,7 +162,7 @@ package: std/actor/rpc
         => (match <>
              ((values actor proto)
               (cond
-               ((rpc-proto-read-payload! msg buffer proto)
+               ((read-payload! msg buffer proto)
                 (set! (message-dest msg)
                   actor)
                 (set! (message-source msg)
@@ -192,7 +192,7 @@ package: std/actor/rpc
         => (match <>
              ((values actor proto k stream?)
               (cond
-               ((rpc-proto-read-payload! msg buffer proto)
+               ((read-payload! msg buffer proto)
                 (value-k-set! (message-e msg) k)
                 (set! (message-source msg)
                   (make-remote (current-thread) (message-dest msg) peer-address proto))
@@ -225,6 +225,13 @@ package: std/actor/rpc
         (begin
           (warning "bad control message; unknown stream ~a" wire-id)
           (dispatch-remote-error (make-!error "uknown stream" wire-id) (message-dest msg))))))
+
+  (def (read-payload! msg buffer proto)
+    (try
+     (rpc-proto-read-payload! msg buffer proto)
+     (catch (e)
+       (log-error "unmarshal error" e)
+       #f)))
 
   (def (value-k obj)
     (##vector-ref obj (fx1- (##vector-length obj))))
