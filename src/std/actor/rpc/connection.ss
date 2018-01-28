@@ -201,6 +201,7 @@ package: std/actor/rpc
                 (send actor msg)
                 (loop))
                (else
+                (!!error actor (make-rpc-error 'rpc-connection "unmarshal error") k)
                 (remove-continuation! cont)
                 (if (!yield? content)
                   (dispatch-remote-error (make-!abort cont) (message-dest msg))
