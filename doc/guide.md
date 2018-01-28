@@ -1313,9 +1313,8 @@ to bind and a wire protocol implementation with a keyword.
 
 In one shell:
 ```
-(bind-protocol! 'echo echo::proto)
 (def (my-echo rpcd)
-  (rpc-register rpcd 'echo)
+  (rpc-register rpcd 'echo echo::proto)
   (let lp ()
     (<- ((!echo.hello what k)
           (displayln @source " says " what)
@@ -1330,17 +1329,25 @@ echo protocol `echo::proto` for marshalling and unmarshalling.
 
 In a different shell, we can connect to our echo with a `remote` handle:
 ```
-(bind-protocol! 'echo echo::proto)
 (def clientd (start-rpc-server!))
-(def echod (rpc-connect clientd 'echo "127.0.0.1:9999"))
+(def echod (rpc-connect clientd 'echo "127.0.0.1:9999" echo::proto))
 > (!!echo.hello echod 'hello)
 => 'hello
 ```
 
-By default, a null protocol is used which does no authentication
-or encryption is used. This is suitable for local development only,
-if you intend to expose your actors over the Internet you should use
-authentication and encryption.
+If your actors are well-known (application scoped), then you can globally bind
+a protocol to the name with `bind-protocol!` and you don't need to specify
+the protocol in `rpc-register` and `rpc-connect`:
+```
+(bind-protocol! 'echo echo::proto)
+(def clientd ...)
+(def echod (rpc-connect clientd 'echo "127.0.0.1:9999"))
+```
+
+By default, a null rpc protocol is used which does no authentication
+or encryption. If you intend to expose your actors to the Internet
+you should use authentication and optionally encryption.
+
 For authentication, you can generate a shared cookie with `rpc-generate-cookie!`
 and start your rpc-server using the `rpc-cookie-proto`:
 ```

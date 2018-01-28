@@ -9,8 +9,6 @@ package: std/actor/rpc/proto
         :std/actor/message
         :std/actor/proto
         :std/actor/xdr
-        :std/sugar
-        :std/logger
         :std/actor/rpc/base)
 (export #t)
 
@@ -158,21 +156,18 @@ package: std/actor/rpc/proto
 
 (def (rpc-proto-read-payload! msg buffer proto)
   (current-xdr-type-registry (!protocol-types proto))
-  (try
-   (let (value (message-e msg))
-     (unless (!end? value)
+  (let (value (message-e msg))
+    (match value
+      ((? (or !call? !value? !event? !stream? !yield?))
        (let (payload (xdr-read buffer))
-         (cond
-          ((void? value)
-           (set! (message-e msg) payload))
-          ((!error? value)
-           (let (e (if (string? payload)
-                     (make-remote-error 'rpc payload)
-                     payload))
-             (##vector-set! value 1 e)))
-          (else
-           (##vector-set! value 1 payload)))))
-     #t)
-   (catch (e)
-     (log-error "error unmarshalling message payload" e)
-     #f)))
+         (##vector-set! value 1 payload)))
+      ((? !error?)
+       (let* ((payload (xdr-read buffer))
+              (e (if (string? payload)
+                   (make-remote-error 'rpc payload)
+                   payload)))
+         (##vector-set! value 1 e)))
+      ((? void?)
+       (let (payload (xdr-read buffer))
+         (set! (message-e msg) payload)))
+      (else (void)))))
