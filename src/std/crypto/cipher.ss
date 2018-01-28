@@ -16,7 +16,7 @@ package: std/crypto
   encrypt-init!
   encrypt-update! encrypt-update/nocheck!
   encrypt-final! encrypt-final/nocheck!
-  decrypt decrypt-u8vector
+  decrypt decrypt-u8vector decrypt-u8vector!
   decrypt-init!
   decrypt-update! decrypt-update/nocheck!
   decrypt-final! decrypt-final/nocheck!
@@ -228,6 +228,13 @@ package: std/crypto
                                    decrypt-init!
                                    decrypt-update/nocheck!
                                    decrypt-final/nocheck!))
+
+(def (decrypt-u8vector! cipher key iv bytes start end buf)
+  (decrypt-init! cipher key iv)
+  (let* ((ulen (decrypt-update/nocheck! cipher buf bytes start end))
+         (flen (decrypt-final/nocheck! cipher buf ulen))
+         (olen (fx+ ulen flen)))
+    olen))
 
 (def (decrypt-port cipher key iv inp)
   (cipher-port-encrypt/decrypt cipher key iv inp
