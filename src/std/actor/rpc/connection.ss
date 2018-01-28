@@ -203,7 +203,7 @@ package: std/actor/rpc
                (else
                 (remove-continuation! cont)
                 (if (!yield? content)
-                  (dispatch-remote-error (make-!error "unmarshal error" cont) (message-dest msg))
+                  (dispatch-remote-error (make-!abort cont) (message-dest msg))
                   (loop)))))))
        (else
         (warning "cannot route message; bogus continuation ~a" cont)
