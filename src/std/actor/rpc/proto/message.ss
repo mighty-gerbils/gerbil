@@ -51,12 +51,12 @@ package: std/actor/rpc/proto
 ;;; protocol i/o
 (def (rpc-proto-marshal-message msg proto)
   (let (outp (open-serializer-output-buffer))
-    (rpc-proto-write-message msg proto outp)
+    (rpc-proto-write-message msg outp proto)
     outp))
 
 ;; wire representation
 ;; rpc-proto-message-type dest content
-(def (rpc-proto-write-message msg proto buffer)
+(def (rpc-proto-write-message msg buffer proto)
   (with ((message content _ dest) msg)
     (if proto
       (current-xdr-type-registry (!protocol-types proto))
@@ -156,7 +156,7 @@ package: std/actor/rpc/proto
                            "unmarshal error; unexpected message type" type)))
      #!void dest #f)))
 
-(def (rpc-proto-read-payload! proto msg buffer)
+(def (rpc-proto-read-payload! msg buffer proto)
   (current-xdr-type-registry (!protocol-types proto))
   (try
    (let (value (message-e msg))

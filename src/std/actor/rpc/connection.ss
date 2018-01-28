@@ -162,7 +162,7 @@ package: std/actor/rpc
         => (match <>
              ((values actor proto)
               (cond
-               ((rpc-proto-read-payload! proto msg buffer)
+               ((rpc-proto-read-payload! msg buffer proto)
                 (set! (message-dest msg)
                   actor)
                 (set! (message-source msg)
@@ -192,7 +192,7 @@ package: std/actor/rpc
         => (match <>
              ((values actor proto k stream?)
               (cond
-               ((rpc-proto-read-payload! proto msg buffer)
+               ((rpc-proto-read-payload! msg buffer proto)
                 (value-k-set! (message-e msg) k)
                 (set! (message-source msg)
                   (make-remote (current-thread) (message-dest msg) peer-address proto))
