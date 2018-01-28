@@ -201,7 +201,7 @@
         #t))))
 
 (def (pkg-install-deps pkg)
-  (let* ((plist (pkg-list pkg))
+  (let* ((plist (pkg-plist pkg))
          (deps  (pgetq depend: plist [])))
     (for-each pkg-install deps)))
 
