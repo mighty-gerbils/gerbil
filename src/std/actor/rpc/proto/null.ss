@@ -85,7 +85,7 @@ package: std/actor/rpc/proto
       (let (len (bio-read-u32 ibuf))
         (if (fx<= len rpc-proto-message-max-length)
           (let (buf (make-u8vector len))
-            (bio-read-bytes buf ibuf)
+            (bio-read-bytes-unbuffered buf ibuf)
             buf)
           (raise-rpc-io-error 'rpc-proto-read "message too long" len))))
      ((eof-object? e) e)

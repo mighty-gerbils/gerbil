@@ -75,7 +75,7 @@ package: std/actor/rpc/proto
                            (let (buf (make-u8vector size))
                              (set! (box ctext) buf)
                              buf))))
-             (rd     (bio-read-subu8vector ctext 0 size ibuf))
+             (rd     (bio-read-subu8vector-unbuffered ctext 0 size ibuf))
              (_      (when (fx< rd size)
                        (raise-rpc-io-error 'rpc-proto-read "incomplete message" rd size)))
              (_      (digest-update! digest secret))
