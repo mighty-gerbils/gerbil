@@ -57,9 +57,9 @@ package: std/actor/rpc/proto
         (hmac  (make-u8vector ::digest-size))
         (iv    (make-u8vector ::cipher-iv-length))
         (ctext (box (make-u8vector 4096))))
-    (cut rpc-cipher-proto-read <> secret key hmac iv ctext)))
+    (cut rpc-cipher-proto-read <> <> secret key hmac iv ctext)))
 
-(def (rpc-cipher-proto-read ibuf secret key hmac iv ctext)
+(def (rpc-cipher-proto-read ibuf bytes secret key hmac iv ctext)
   (let (e (bio-read-u8 ibuf))
     (cond
      ((eq? e rpc-proto-message)
@@ -84,7 +84,9 @@ package: std/actor/rpc/proto
              (hmac*  (digest-final! digest))
              (_      (unless (equal? hmac hmac*)
                        (raise-rpc-io-error 'rpc-proto-read "HMAC failure"))))
-        (decrypt-u8vector cipher key iv ctext 0 size)))
+        ;; TODO reuse the bytes buffer in decrypt-u8vector
+        (let (res (decrypt-u8vector cipher key iv ctext 0 size))
+          (values res (u8vector-length res)))))
      ((eq? e rpc-proto-keep-alive)
       #!void)
      ((eof-object? e) e)
