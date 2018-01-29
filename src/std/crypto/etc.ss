@@ -88,11 +88,8 @@ package: std/crypto
   ((proc in)
    (proc in 0 (##u8vector-length in)))
   ((proc in start)
-   (check-bytes-start in start)
    (proc in start (##u8vector-length in)))
   ((proc in start end)
-   (check-bytes-start in start)
-   (check-bytes-end in start end)
    (proc in start end)))
 
 (def* call-with-binary-input-string

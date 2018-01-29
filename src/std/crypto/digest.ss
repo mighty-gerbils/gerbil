@@ -44,19 +44,8 @@ package: std/crypto
       (error "Digest has been finalized" digest)))
 
 (def (digest-update! digest bytes (start #f) (end #f))
-  (check-bytes bytes)
-  (let* ((start
-          (if start
-            (begin
-              (check-bytes-start bytes start)
-              start)
-            0))
-         (end
-          (if end
-            (begin
-              (check-bytes-end bytes start end)
-              end)
-            (##u8vector-length bytes))))
+  (let* ((start (or start 0))
+         (end (or end (u8vector-length bytes))))
     (with-libcrypto-error
      (EVP_DigestUpdate (digest-context digest) bytes start end))))
 
@@ -70,12 +59,7 @@ package: std/crypto
 (def (digest-final! digest (bytes #f))
   (let* ((ctx (digest-context digest))
          (size (EVP_MD_CTX_size ctx))
-         (bytes
-          (if bytes
-            (begin
-              (check-bytes bytes size)
-              bytes)
-            (make-u8vector size))))
+         (bytes (or bytes (make-u8vector size))))
     (with-libcrypto-error (EVP_DigestFinal ctx bytes))
     (set! (digest-ctx digest) #f)
     bytes))
