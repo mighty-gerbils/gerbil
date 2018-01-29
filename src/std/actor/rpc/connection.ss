@@ -503,7 +503,7 @@ package: std/actor/rpc
                     (unless ok
                       ;; that needs to marshal and can take time, so we need to  do it
                       ;; without the lock; hence the little dance.
-                      (dispath-remote-error (make-!abort cont) (message-dest msg)))))
+                      (dispatch-remote-error (make-!abort cont) (message-dest msg)))))
                  ((continuation-table-remove! cont-table cont)
                   ;; there is no race here, because continuation-table-remove! is
                   ;; atomic and returns #f if no continuation was removed
