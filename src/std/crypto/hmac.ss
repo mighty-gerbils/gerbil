@@ -24,34 +24,18 @@ package: std/crypto
       (struct-instance-init! self md ctx))))
 
 (def (hmac-init! hmac key)
-  (check-bytes key)
   (with-libcrypto-error
    (HMAC_Init (hmac-ctx hmac) key (hmac-md hmac))))
 
 (def (hmac-update! hmac bytes (start #f) (end #f))
-  (check-bytes bytes)
-  (let* ((start
-          (if start
-            (begin
-              (check-bytes-start bytes start)
-              start)
-            0))
-         (end
-          (if end
-            (begin
-              (check-bytes-end bytes start end)
-              end)
-            (##u8vector-length bytes))))
+  (let* ((start (or start 0))
+         (end (or end (u8vector-length bytes))))
     (with-libcrypto-error
      (HMAC_Update (hmac-ctx hmac) bytes start end))))
 
 (def (hmac-final! hmac (bytes #f))
   (let* ((size (EVP_MD_size (hmac-md hmac)))
-         (bytes (if bytes
-                  (begin
-                    (check-bytes bytes size)
-                    bytes)
-                  (make-u8vector size))))
+         (bytes (or bytes (make-u8vector size))))
     (with-libcrypto-error
      (HMAC_Final (hmac-ctx hmac) bytes))
     bytes))
@@ -59,20 +43,8 @@ package: std/crypto
 (def (hmac-digest md key bytes (start #f) (end #f))
   (unless (EVP_MD? md)
     (error "Bad digest type" md))
-  (check-bytes key)
-  (check-bytes bytes)
-  (let* ((start
-          (if start
-            (begin
-              (check-bytes-start bytes start)
-              start)
-            0))
-         (end
-          (if end
-            (begin
-              (check-bytes-end bytes start end)
-              end)
-            (##u8vector-length bytes)))
+  (let* ((start (or start 0))
+         (end (or end (u8vector-length bytes)))
          (size
           (EVP_MD_size md))
          (digest

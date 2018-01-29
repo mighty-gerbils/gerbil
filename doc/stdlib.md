@@ -181,14 +181,14 @@ Cryptography based on libcrypto.
   cipher make-cipher cipher? cipher-type cipher-ctx cipher-context
   cipher-name cipher-block-size cipher-key-length cipher-iv-length
   cipher-copy
-  encrypt encrypt-u8vector
+  encrypt encrypt-u8vector encrypt-u8vector!
   encrypt-init!
-  encrypt-update! encrypt-update/nocheck!
-  encrypt-final! encrypt-final/nocheck!
-  decrypt decrypt-u8vector
+  encrypt-update!
+  encrypt-final!
+  decrypt decrypt-u8vector decrypt-u8vector!
   decrypt-init!
-  decrypt-update! decrypt-update/nocheck!
-  decrypt-final! decrypt-final/nocheck!
+  decrypt-update!
+  decrypt-final!
 
   cipher::rc4 make-rc4-cipher rc4-cipher?
 

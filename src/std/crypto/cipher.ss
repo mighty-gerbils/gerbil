@@ -12,14 +12,14 @@ package: std/crypto
   cipher make-cipher cipher? cipher-type cipher-ctx cipher-context
   cipher-name cipher-block-size cipher-key-length cipher-iv-length
   cipher-copy
-  encrypt encrypt-u8vector
+  encrypt encrypt-u8vector encrypt-u8vector!
   encrypt-init!
-  encrypt-update! encrypt-update/nocheck!
-  encrypt-final! encrypt-final/nocheck!
+  encrypt-update!
+  encrypt-final!
   decrypt decrypt-u8vector decrypt-u8vector!
   decrypt-init!
-  decrypt-update! decrypt-update/nocheck!
-  decrypt-final! decrypt-final/nocheck!
+  decrypt-update!
+  decrypt-final!
   )
 
 (defstruct cipher (type ctx)
@@ -73,16 +73,6 @@ package: std/crypto
              (u8vector-length iv))
     (error "Bad cipher iv; iv length mismatch")))
 
-(def (cipher-check-buffer-size ctx bufsz inl)
-  (let (blocksz (EVP_CIPHER_CTX_block_size ctx))
-    (when (fx< bufsz (fx1- (fx+ inl blocksz)))
-      (error "Bad cipher buffer; insufficient buffer space" bufsz blocksz inl))))
-
-(def (cipher-check-buffer-size/final ctx bufsz)
-  (let (blocksz (EVP_CIPHER_CTX_block_size ctx))
-    (when (fx< bufsz blocksz)
-      (error "Bad cipher buffer; insufficient buffer space" bufsz blocksz))))
-
 (def (cipher-init! cipher key iv EVP-init)
   (cipher-check-key+iv-length cipher key iv)
   (with-libcrypto-error
@@ -90,22 +80,12 @@ package: std/crypto
              (cipher-type cipher)
              key iv)))
 
-(def (cipher-update/nocheck! ctx out out-start in start end EVP-update)
+(def (cipher-update! ctx out out-start in start end EVP-update)
   (let (r (EVP-update ctx out out-start in start end))
     (if (not (fxnegative? r)) r
         (raise-libcrypto-error ctx))))  ; racey with multiple threads
 
-(def (cipher-update! ctx out out-start in start end EVP-update)
-  (cipher-check-buffer-size ctx (fx- (u8vector-length out) out-start) (fx- end start))
-  (cipher-update/nocheck! ctx out out-start in start end EVP_EncryptUpdate))
-
-(def (cipher-final/nocheck! ctx out out-start EVP-final)
-  (let (r (EVP-final ctx out out-start))
-    (if (not (fxnegative? r)) r
-        (raise-libcrypto-error ctx))))  ; racey with multiple threads
-
 (def (cipher-final! ctx out out-start EVP-final)
-  (cipher-check-buffer-size/final ctx (fx- (u8vector-length out) out-start))
   (let (r (EVP-final ctx out out-start))
     (if (not (fxnegative? r)) r
         (raise-libcrypto-error ctx))))  ; racey with multiple threads
@@ -114,10 +94,7 @@ package: std/crypto
 (def (encrypt-init! cipher key iv)
   (cipher-init! cipher key iv EVP_EncryptInit))
 
-(def (encrypt-update/nocheck! cipher out out-start in start end)
-  (cipher-update/nocheck! (cipher-context cipher) out out-start in start end EVP_EncryptUpdate))
-
-(def (encrypt-update! cipher out out-start in (start 0) (end (u8vector-length in)))
+(def (encrypt-update! cipher out out-start in start end)
   (cipher-update! (cipher-context cipher) out out-start in start end EVP_EncryptUpdate))
 
 (def (encrypt-final! cipher out (out-start 0))
@@ -125,26 +102,13 @@ package: std/crypto
     (set! (cipher-ctx cipher) #f)
     olen))
 
-(def (encrypt-final/nocheck! cipher out (out-start 0))
-  (let (olen (cipher-final/nocheck! (cipher-context cipher) out out-start EVP_EncryptFinal))
-    (set! (cipher-ctx cipher) #f)
-    olen))
-
 (def (decrypt-init! cipher key iv)
   (cipher-init! cipher key iv EVP_DecryptInit))
 
-(def (decrypt-update/nocheck! cipher out out-start in start end)
-  (cipher-update/nocheck! (cipher-context cipher) out out-start in start end EVP_DecryptUpdate))
-
-(def (decrypt-update! cipher out out-start in (start 0) (end (u8vector-length in)))
+(def (decrypt-update! cipher out out-start in start end)
   (cipher-update! (cipher-context cipher) out out-start in start end EVP_DecryptUpdate))
 
 (def (decrypt-final! cipher out (out-start 0))
-  (let (olen (cipher-final/nocheck! (cipher-context cipher) out out-start EVP_DecryptFinal))
-    (set! (cipher-ctx cipher) #f)
-    olen))
-
-(def (decrypt-final/nocheck! cipher out (out-start 0))
   (let (olen (cipher-final! (cipher-context cipher) out out-start EVP_DecryptFinal))
     (set! (cipher-ctx cipher) #f)
     olen))
@@ -205,14 +169,21 @@ package: std/crypto
 (def (encrypt-u8vector cipher key iv in (start 0) (end (u8vector-length in)))
   (cipher-u8vector-encrypt/decrypt cipher key iv in start end
                                    encrypt-init!
-                                   encrypt-update/nocheck!
-                                   encrypt-final/nocheck!))
+                                   encrypt-update!
+                                   encrypt-final!))
+
+(def (encrypt-u8vector! cipher key iv bytes start end buf)
+  (encrypt-init! cipher key iv)
+  (let* ((ulen (encrypt-update! cipher buf 0 bytes start end))
+         (flen (encrypt-final! cipher buf ulen))
+         (olen (fx+ ulen flen)))
+    olen))
 
 (def (encrypt-port cipher key iv inp)
   (cipher-port-encrypt/decrypt cipher key iv inp
                                encrypt-init!
-                               encrypt-update/nocheck!
-                               encrypt-final/nocheck!))
+                               encrypt-update!
+                               encrypt-final!))
 
 (def (decrypt cipher key iv in)
   (cond
@@ -226,21 +197,21 @@ package: std/crypto
 (def (decrypt-u8vector cipher key iv in (start 0) (end (u8vector-length in)))
   (cipher-u8vector-encrypt/decrypt cipher key iv in start end
                                    decrypt-init!
-                                   decrypt-update/nocheck!
-                                   decrypt-final/nocheck!))
+                                   decrypt-update!
+                                   decrypt-final!))
 
 (def (decrypt-u8vector! cipher key iv bytes start end buf)
   (decrypt-init! cipher key iv)
-  (let* ((ulen (decrypt-update/nocheck! cipher buf 0 bytes start end))
-         (flen (decrypt-final/nocheck! cipher buf ulen))
+  (let* ((ulen (decrypt-update! cipher buf 0 bytes start end))
+         (flen (decrypt-final! cipher buf ulen))
          (olen (fx+ ulen flen)))
     olen))
 
 (def (decrypt-port cipher key iv inp)
   (cipher-port-encrypt/decrypt cipher key iv inp
                                decrypt-init!
-                               decrypt-update/nocheck!
-                               decrypt-final/nocheck!))
+                               decrypt-update!
+                               decrypt-final!))
 
 ;;; Library defined Ciphers
 (defsyntax (define-cipher stx)

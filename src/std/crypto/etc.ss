@@ -4,7 +4,6 @@
 package: std/crypto
 
 (export libcrypto-error? raise-libcrypto-error with-libcrypto-error
-        check-bytes check-bytes-start check-bytes-end check-bytes-range
         call-with-binary-input
         random-bytes random-bytes!)
 (import :gerbil/gambit/threads
@@ -53,26 +52,6 @@ package: std/crypto
      (when (fxzero? res)
        (apply raise-libcrypto-error '(irritants ...))))))
 
-(def (check-bytes bytes (size #f))
-  (unless (u8vector? bytes)
-    (error "Expected bytes" bytes))
-  (when size
-    (unless (fx= (u8vector-length bytes) size)
-      (error (format "Expected bytes with size ~a" size) bytes size))))
-
-(def (check-bytes-start bytes start)
-  (unless (and (fixnum? start) (fx<= 0 start (u8vector-length bytes)))
-    (error "Invalid byte range start" start (u8vector-length bytes))))
-
-(def (check-bytes-end bytes start end)
-  (unless (and (fixnum? end) (fx<= start end (u8vector-length bytes)))
-    (error "Invalid byte range end" end start (u8vector-length bytes))))
-
-(def (check-bytes-range bytes start end)
-  (check-bytes bytes)
-  (check-bytes-start bytes start)
-  (check-bytes-end bytes start end))
-
 (def (call-with-binary-input proc in . args)
   (cond
    ((u8vector? in)
@@ -88,11 +67,8 @@ package: std/crypto
   ((proc in)
    (proc in 0 (##u8vector-length in)))
   ((proc in start)
-   (check-bytes-start in start)
    (proc in start (##u8vector-length in)))
   ((proc in start end)
-   (check-bytes-start in start)
-   (check-bytes-end in start end)
    (proc in start end)))
 
 (def* call-with-binary-input-string
