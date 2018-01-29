@@ -49,6 +49,7 @@ package: std/actor/rpc
     (set! rpc-keep-alive dt)
     (error "bad keep-alive; expected positive real or #f" dt)))
 
+;; TODO idle-timeout is ignored
 (def rpc-idle-timeout #f)
 
 (def (set-rpc-idle-timeout! dt)
@@ -67,181 +68,123 @@ package: std/actor/rpc
    (else
     (error "bad timeout; expected finite positive real or #f" dt))))
 
+;; connection state: message continuations
+(defstruct continuation-table
+  (mx                      ; mutex
+   continuations           ; wire-id => (values actor proto k stream?)
+   stream-continuations    ; k => wire-id
+   stream-actors           ; wire-id => [actor . dest]
+   timeouts                ; timeout => wire-id
+   continuation-timeouts)  ; wire-id => timeout
+  final: #t unchecked: #t
+  constructor: :init!)
+
+(defmethod {:init! continuation-table}
+  (lambda (self)
+    (struct-instance-init! self
+      (make-mutex 'continuation-table)
+      (make-hash-table-eqv)                     ; continuations
+      (make-hash-table-eq)                      ; stream-continuations
+      (make-hash-table-eqv)                     ; stream-actors
+      (make-hash-table-eq)                      ; timeouts
+      (make-hash-table-eqv))))                  ; continuation-timeouts
+
+(defrules with-continuation-table ()
+  ((_ cont-table body ...)
+   (let (mx (&continuation-table-mx cont-table))
+     (mutex-lock! mx)
+     (let (res (begin body ...))
+       (mutex-unlock! mx)
+       res))))
+
+(defrules continuation-table-do ()
+  ((_ cont-table body ...)
+   (let (mx (&continuation-table-mx cont-table))
+     (mutex-lock! mx)
+     body ...
+     (mutex-unlock! mx))))
+
+(def (continuation-table-get cont-table cont)
+  (with-continuation-table cont-table
+    (let (ct (&continuation-table-continuations cont-table))
+      (hash-get ct cont))))
+
+(def (continuation-table-remove! cont-table cont)
+  (with-continuation-table cont-table
+    (let (ct (&continuation-table-continuations cont-table))
+      (alet (continuation (hash-get ct cont))
+        (hash-remove! ct cont)
+        (with ((values _ _ k stream?) continuation)
+          (when stream?
+            (hash-remove! (&continuation-table-stream-continuations cont-table) k)))
+        (let (tt (&continuation-table-continuation-timeouts cont-table))
+          (alet (timeo (hash-get tt cont))
+            (hash-remove! tt cont)
+            (hash-remove! (&continuation-table-timeouts cont-table) timeo)))
+        continuation))))
+
+(def (continuation-table-get-stream-actor cont-table cont)
+  (with-continuation-table cont-table
+    (let (st (&continuation-table-stream-actors cont-table))
+      (hash-get st cont))))
+
+(def (continuation-table-put-stream-actor! cont-table cont val)
+  (with-continuation-table cont-table
+    (let (st (&continuation-table-stream-actors cont-table))
+      (hash-put! st cont val))))
+
+(def (continuation-table-remove-stream-actor! cont-table cont)
+  (with-continuation-table cont-table
+    (let (st (&continuation-table-stream-actors cont-table))
+      (hash-remove! st cont))))
+
+(def (continuation-table-get-stream-cont cont-table k)
+  (with-continuation-table cont-table
+    (let (sct (&continuation-table-stream-continuations cont-table))
+      (hash-get sct k))))
+
+(def (continuation-table-get-timeout cont-table timeo)
+  (with-continuation-table cont-table
+    (let (tt (&continuation-table-timeouts cont-table))
+      (hash-get tt timeo))))
+
+;; the main thread of the connection; it's the proxy actor in remote handles
 (def (rpc-connection-loop rpc-server actors sock peer-address proto-e)
-  (def input
+  (def input-buffer
     (open-ssocket-input-buffer sock))
-  (def output
+  (def output-buffer
     (open-ssocket-output-buffer sock))
   (defvalues (read-e write-e)
-    (proto-e input output))
-  (def continuations                    ; wire-id => (values actor proto k stream?)
-    (make-hash-table-eqv))
-  (def stream-continuations             ; k => wire-id
-    (make-hash-table-eq))
-  (def stream-actors                    ; wire-id => [actor . dest]
-    (make-hash-table-eqv))
-  (def timeouts                         ; timeout => wire-id
-    (make-hash-table-eq))
-  (def continuation-timeouts            ; wire-id => timeout
-    (make-hash-table-eqv))
+    (proto-e input-buffer output-buffer))
+  (def cont-table
+    (make-continuation-table))
+
   (def next-timeout #f)
   (def next-continuation-id 0)
-  (def idle-timeout #f)
-  (def reader #f)
-  (def writer #f)
 
-  (def (reset-idle-timeout)
-    (cond
-     (rpc-idle-timeout
-      (set! idle-timeout
-        (seconds->time
-         (+ (##current-time-point) rpc-idle-timeout))))
-     ((not idle-timeout))
-     (else
-      (set! idle-timeout #f))))
+  (def writer
+    (spawn/name 'rpc-connection-writer rpc-connection-writer
+                output-buffer write-e))
+  (def reader
+    (spawn/name 'rpc-connection-reader rpc-connection-reader
+                (current-thread) peer-address input-buffer actors cont-table writer read-e))
 
   (def (close-connection)
     (ssocket-close sock)
     (thread-send writer 'exit)
-    (for-each
-      (lambda (wire-id)
-        (cond
-         ((hash-get continuations wire-id)
-          => (lambda (cont)
-               (with ((values actor proto k stream?) cont)
-                 (!!error actor (make-rpc-error 'rpc-connection "connection error") k))))))
-      (hash-keys continuations))
-    (hash-for-each
-      (lambda (wire-id stream)
-        (with ([actor . dest] stream)
-          (let (abort (make-message (make-!abort wire-id) dest actor #f))
-            (send actor abort))))
-      stream-actors)
+    (continuation-table-do cont-table
+      (hash-for-each
+       (lambda (wire-id cont)
+         (with ((values actor proto k stream?) cont)
+           (!!error actor (make-rpc-error 'rpc "connection error") k)))
+       (&continuation-table-continuations cont-table))
+      (hash-for-each
+       (lambda (wire-id stream)
+         (with ([actor . dest] stream)
+           (let (abort (make-message (make-!abort wire-id) dest actor #f))
+             (send actor abort))))
+       (&continuation-table-stream-actors cont-table)))
     (rpc-connection-shutdown rpc-server))
-
-  (def (read-message data)
-    (cond
-     ((void? data)                      ; keep-alive
-      (loop))
-     ((u8vector? data)                  ; incoming message
-      (let* ((buffer (open-input-buffer data))
-             (msg (try (rpc-proto-read-envelope buffer)
-                       (catch (exception? e) e))))
-        (match msg
-          ((message content _ dest)
-           (match content
-             ((? (or !call? !event? !stream?))
-              (dispatch-call msg buffer))
-             ((? (or !value? !error? !yield? !end?))
-              (dispatch-value msg buffer))
-             ((? (or !continue? !close? !abort?))
-              (dispatch-control msg buffer))
-             (else
-              (dispatch-call msg buffer))))
-          (else
-           ;; envelope error -- unrecoverable
-           (log-error "unmarshal error" msg)
-           (close-connection)))))
-     ((eof-object? data)
-      (close-connection))
-     (else
-      (log-error "connection error" data)
-      (close-connection))))
-
-  (def (reader-loop connection-thread)
-    (let lp ()
-      (let (next (read-e input))
-        (thread-send connection-thread (cons 'read next))
-        (unless (eof-object? next)
-          (lp)))))
-
-  (def (dispatch-call msg buffer)
-    (let (uuid (message-dest msg))
-      (cond
-       ((actor-table-get actors uuid)
-        => (match <>
-             ((values actor proto)
-              (cond
-               ((read-payload! msg buffer proto)
-                (set! (message-dest msg)
-                  actor)
-                (set! (message-source msg)
-                  (make-remote (current-thread) uuid peer-address proto))
-                (send actor msg)
-                (loop))
-               ((or (!call? (message-e msg)) (!stream? (message-e msg)))
-                (let (k (if (!call? (message-e msg))
-                          (!call-k (message-e msg))
-                          (!stream-k (message-e msg))))
-                  (dispatch-remote-error (make-!error "unmarshal error" k) uuid)))
-               (else
-                (loop))))))
-        (else
-         (warning "cannot route message; no actor binding ~a" (uuid->string uuid))
-         (match (message-e msg)
-           ((or (!call _ k) (!stream _ k))
-            (dispatch-remote-error (make-!error "no binding" k) uuid))
-           (else
-            (loop)))))))
-
-  (def (dispatch-value msg buffer)
-    (let* ((content (message-e msg))
-           (cont    (value-k content)))
-      (cond
-       ((hash-get continuations cont)
-        => (match <>
-             ((values actor proto k stream?)
-              (cond
-               ((read-payload! msg buffer proto)
-                (value-k-set! (message-e msg) k)
-                (set! (message-source msg)
-                  (make-remote (current-thread) (message-dest msg) peer-address proto))
-                (unless (!yield? content)
-                  (remove-continuation! cont))
-                (send actor msg)
-                (loop))
-               (else
-                (!!error actor (make-rpc-error 'rpc-connection "unmarshal error") k)
-                (remove-continuation! cont)
-                (if (!yield? content)
-                  (dispatch-remote-error (make-!abort cont) (message-dest msg))
-                  (loop)))))))
-       (else
-        (warning "cannot route message; bogus continuation ~a" cont)
-        (if (!yield? content)
-          (dispatch-remote-error (make-!abort cont) (message-dest msg))
-          (loop))))))
-
-  (def (dispatch-control msg buffer)
-    (let* ((content (message-e msg))
-           (wire-id (value-k content))
-           (stream (hash-get stream-actors wire-id)))
-      (if stream
-        (with ([actor . dest] stream)
-          (set! (message-source msg) dest)
-          (send actor msg)
-          (when (!abort? content)
-            (hash-remove! stream-actors wire-id))
-          (loop))
-        (begin
-          (warning "bad control message; unknown stream ~a" wire-id)
-          (dispatch-remote-error (make-!error "uknown stream" wire-id) (message-dest msg))))))
-
-  (def (read-payload! msg buffer proto)
-    (try
-     (rpc-proto-read-payload! msg buffer proto)
-     (catch (e)
-       (log-error "unmarshal error" e)
-       #f)))
-
-  (def (value-k obj)
-    (##vector-ref obj (fx1- (##vector-length obj))))
-
-  (def (value-k-set! obj k)
-    (##vector-set! obj (fx1- (##vector-length obj)) k))
-
-  (def (dispatch-remote-error what dest)
-    (marshal-and-write (make-message what (void) dest #f) #f #f))
 
   (def (write-message msg)
     (with ((message content src dest opts) msg)
@@ -253,34 +196,43 @@ package: std/actor/rpc
           (match content
             ((!call _ k)
              (let (wire-id (next-continuation-id!))
-               (hash-put! continuations wire-id (values src proto k #f))
+               (continuation-table-do cont-table
+                 (hash-put! (&continuation-table-continuations cont-table)
+                            wire-id (values src proto k #f))
+                 (alet (timeo (rpc-options-timeout opts rpc-call-timeout))
+                   (hash-put! (&continuation-table-timeouts cont-table)
+                              timeo wire-id)
+                   (hash-put! (&continuation-table-continuation-timeouts cont-table)
+                              wire-id timeo)
+                   (set-timeout! timeo)))
                (set! (!call-k content) wire-id)
-               (alet (timeo (rpc-options-timeout opts rpc-call-timeout))
-                 (hash-put! timeouts timeo wire-id)
-                 (hash-put! continuation-timeouts wire-id timeo)
-                 (set-timeout! timeo))
                (marshal-and-write msg proto #t)))
             ((!stream _ k)
              (let (wire-id (next-continuation-id!))
-               (hash-put! continuations wire-id (values src proto k #t))
-               (hash-put! stream-continuations k wire-id)
+               (continuation-table-do cont-table
+                 (hash-put! (&continuation-table-continuations cont-table)
+                            wire-id (values src proto k #t))
+                 (hash-put! (&continuation-table-stream-continuations cont-table)
+                            k wire-id)
+                 (alet (timeo (rpc-options-timeout opts #f))
+                   (hash-put! (&continuation-table-timeouts cont-table)
+                              timeo wire-id)
+                   (hash-put! (&continuation-table-continuation-timeouts cont-table)
+                              wire-id timeo)
+                   (set-timeout! timeo)))
                (set! (!stream-k content) wire-id)
-               (alet (timeo (rpc-options-timeout opts #f))
-                 (hash-put! timeouts timeo wire-id)
-                 (hash-put! continuation-timeouts wire-id timeo)
-                 (set-timeout! timeo))
                (marshal-and-write msg proto #t)))
             ((? !value?)
              (marshal-and-write msg proto #t))
             ((!yield _ wire-id)
-             (hash-put! stream-actors wire-id (cons src dest))
+             (continuation-table-put-stream-actor! cont-table wire-id (cons src dest))
              (marshal-and-write msg proto #t))
             ((or (!error _ wire-id)
                  (!end wire-id))
-             (hash-remove! stream-actors wire-id)
+             (continuation-table-remove-stream-actor! cont-table wire-id)
              (marshal-and-write msg proto #t))
             ((!continue k)
-             (let (wire-id (hash-get stream-continuations k))
+             (let (wire-id (continuation-table-get-stream-cont cont-table k))
                (if wire-id
                  (begin
                    (set! (!continue-k content) wire-id)
@@ -289,7 +241,7 @@ package: std/actor/rpc
                    (warning "bad continue; unknown stream ~a" k)
                    (loop)))))
             ((!close k)
-             (let (wire-id (hash-get stream-continuations k))
+             (let (wire-id (continuation-table-get-stream-cont cont-table k))
                (if wire-id
                  (begin
                    (set! (!close-k content) wire-id)
@@ -298,11 +250,11 @@ package: std/actor/rpc
                    (warning "bad close; unknown stream ~a" k)
                    (loop)))))
             ((!abort k)
-             (let (wire-id (hash-get stream-continuations k))
+             (let (wire-id (continuation-table-get-stream-cont cont-table k))
                (if wire-id
                  (begin
                    (set! (!abort-k content) wire-id)
-                   (remove-continuation! wire-id)
+                   (continuation-table-remove! cont-table wire-id)
                    (marshal-and-write msg proto #t))
                  (begin
                    (warning "bad abort; unknown stream ~a" k)
@@ -317,16 +269,6 @@ package: std/actor/rpc
     (let (next next-continuation-id)
       (set! next-continuation-id (1+ next))
       next))
-
-  (def (remove-continuation! wire-id)
-    (alet (cont (hash-get continuations wire-id))
-      (hash-remove! continuations wire-id)
-      (with ((values _ _ k stream?) cont)
-        (when stream?
-          (hash-remove! stream-continuations k)))
-      (alet (timeo (hash-get continuation-timeouts wire-id))
-        (hash-remove! continuation-timeouts wire-id)
-        (hash-remove! timeouts timeo))))
 
   (def (marshal-and-write msg proto local-error?)
     (let (e (try (rpc-proto-marshal-message msg proto)
@@ -375,42 +317,30 @@ package: std/actor/rpc
         (loop)))))
 
   (def (dispatch-error wire-id what)
-    (with ((values actor proto k stream?) (hash-ref continuations wire-id))
-      (!!error actor (make-rpc-error 'rpc-connection what) k)
-      (remove-continuation! wire-id)
-      (loop)))
+    (match (continuation-table-remove! cont-table wire-id)
+      ((values actor proto k stream?)
+       (!!error actor (make-rpc-error 'rpc what) k))
+      (else (void)))
+    (loop))
 
   (def (dispatch-stream-error msg wire-id what)
     (with ((message _ src dest) msg)
       (let (abort (make-message (make-!abort wire-id) dest src #f))
         (send src abort))
-      (hash-remove! stream-actors wire-id)
+      (continuation-table-remove-stream-actor! cont-table wire-id)
       (dispatch-remote-error (make-!error what wire-id) dest)))
+
+  (def (dispatch-remote-error what dest)
+    (marshal-and-write (make-message what (void) dest #f) #f #f))
 
   (def (dispatch-timeout timeo)
     (set! next-timeout #f)
     (cond
-     ((hash-get timeouts timeo)
+     ((continuation-table-get-timeout cont-table timeo)
       => (lambda (wire-id)
            (dispatch-error wire-id "timeout")))
      (else
       (loop))))
-
-  (def (writer-loop)
-    (let lp ()
-      (<< (! rpc-keep-alive
-             (write-e output (void))
-             (lp))
-          ((? u8vector? data)
-           (write-e output data)
-           (lp))
-          ((? output-buffer? buf)
-           (write-e output buf)
-           (lp))
-          ('exit (void))
-          (bogus
-           (warning "unexpected message ~a" bogus)
-           (lp)))))
 
   (def (timeout< a b)
     (< (time->seconds a)
@@ -422,25 +352,23 @@ package: std/actor/rpc
 
   (def (timeout-event)
     (unless next-timeout
-      (unless (fxzero? (hash-length timeouts))
-        (hash-for-each
-          (lambda (timeo _)
-            (set-timeout! timeo))
-          timeouts)))
+      (continuation-table-do cont-table
+        (let (timeouts (&continuation-table-timeouts cont-table))
+          (unless (fxzero? (hash-length timeouts))
+            (hash-for-each
+             (lambda (timeo _)
+               (set-timeout! timeo))
+             timeouts)))))
     next-timeout)
 
   (def (loop)
     (<< (! (timeout-event)
            => dispatch-timeout)
-        (! idle-timeout
-           (close-connection))
         ((? message? msg)
-         (reset-idle-timeout)
          (write-message msg))
-        (['read . data]
-         (reset-idle-timeout)
-         (read-message data))
         ('shutdown
+         (close-connection))
+        ((? eof-object?)
          (close-connection))
         ((? thread? thread)
          (try
@@ -456,25 +384,190 @@ package: std/actor/rpc
          (loop))))
 
   (def (run)
-    ;; create a denv cell and bubble up the cache; cf parameter perf considerations
+    ;; create a denv cell for current-xdr-type-registry
     (parameterize ((current-xdr-type-registry +xdr-default-type-registry+))
       (loop)))
 
-  (let (thread (spawn/name 'rpc-connection-reader reader-loop (current-thread)))
-    (set! reader thread)
-    (rpc-monitor thread))
-
-  (let (thread (spawn/name 'rpc-connection-writer writer-loop))
-    (set! writer thread)
-    (rpc-monitor thread))
-
-  (reset-idle-timeout)
+  (rpc-monitor reader)
+  (rpc-monitor writer)
   (try
    (run)
    (catch (e)
      (log-error "unhandled exception" e)
      (close-connection))))
 
+;; the writer of the connection: receives marshaled outbound messages
+;; and writes them to the socket
+(def (rpc-connection-writer sockbuf write-e)
+  (def (loop)
+    (<< (! rpc-keep-alive
+           (write-e sockbuf (void))
+           (loop))
+        ((? output-buffer? buf)
+         (write-e sockbuf buf)
+         (loop))
+        ((? u8vector? data)
+         (write-e sockbuf data)
+         (loop))
+        ('exit (void))
+        (bogus
+         (warning "unexpected message ~a" bogus)
+         (loop))))
+  (try
+   (loop)
+   (catch (e)
+     (log-error "unhandled exception" e))))
+
+;; the reader of the connection: reads, unmarshals, and dispatches inbound messages
+(def (rpc-connection-reader conn connaddr sockbuf actor-table cont-table writer read-e)
+  (def (loop u8buf)
+    (match (read-e sockbuf u8buf)
+      ((values u8buf count)
+       (let* ((buffer (open-input-buffer u8buf 0 count))
+              (msg (read-envelope buffer)))
+         (match msg
+           ((message content)
+            (match content
+             ((? (or !call? !event? !stream?))
+              (dispatch-call msg buffer))
+             ((? (or !value? !error? !yield? !end?))
+              (dispatch-value msg buffer))
+             ((? (or !continue? !close? !abort?))
+              (dispatch-control msg buffer))
+             (else
+              (dispatch-call msg buffer))))
+           (else (void)))
+         (loop u8buf)))
+
+      ((? void?)
+       (loop u8buf))
+
+      ((? eof-object?)
+       (thread-send conn #!eof))
+
+      (unexpected
+       (error "read unexpected object" unexpected))))
+
+  (def (dispatch-call msg buffer)
+    (let (uuid (message-dest msg))
+      (cond
+       ((actor-table-get actor-table uuid)
+        => (match <>
+             ((values actor proto)
+              (cond
+               ((read-payload! msg buffer proto)
+                (set! (message-dest msg)
+                  actor)
+                (set! (message-source msg)
+                  (make-remote conn uuid connaddr proto))
+                ;; it is possible that the actor unregistered while unmarshalling
+                ;; but i can live with that race -- it is equivalent to receiving
+                ;; a message while unregistering.
+                ;; also note that eliminating that race would require a lock
+                ;; on the actor-table, which we want to avoid as it's server
+                ;; scoped (shared by all connections in the ensemble)
+                (send actor msg))
+               ((or (!call? (message-e msg)) (!stream? (message-e msg)))
+                (let* ((content (message-e msg))
+                       (k (if (!call? content)
+                          (!call-k content)
+                          (!stream-k content))))
+                  (dispatch-remote-error (make-!error "unmarshal error" k) uuid)))))))
+        (else
+         (warning "cannot route message; no actor binding ~a" (uuid->string uuid))
+         (match (message-e msg)
+           ((or (!call _ k) (!stream _ k))
+            (dispatch-remote-error (make-!error "no binding" k) uuid))
+           (else (void)))))))
+
+  (def (dispatch-value msg buffer)
+    (let* ((content (message-e msg))
+           (cont    (value-k content)))
+      (cond
+       ((continuation-table-get cont-table cont)
+        => (match <>
+             ((values actor proto k stream?)
+              (cond
+               ((read-payload! msg buffer proto)
+                (value-k-set! content k)
+                (set! (message-source msg)
+                  (make-remote conn (message-dest msg) connaddr proto))
+                (cond
+                 ((!yield? content)
+                  ;; race with timeout, so we need to lock and check the cont table again
+                  (let (ok
+                        (with-continuation-table cont-table
+                          (if (hash-get (&continuation-table-continuations cont-table) cont)
+                            (begin (send actor msg) #t)
+                            #f)))
+                    (unless ok
+                      ;; that needs to marshal and can take time, so we need to  do it
+                      ;; without the lock; hence the little dance.
+                      (dispatch-remote-error (make-!abort cont) (message-dest msg)))))
+                 ((continuation-table-remove! cont-table cont)
+                  ;; there is no race here, because continuation-table-remove! is
+                  ;; atomic and returns #f if no continuation was removed
+                  (send actor msg))))
+               (else
+                (when (continuation-table-remove! cont-table cont)
+                  (!!error actor (make-rpc-error 'rpc "unmarshal error") k))
+                (when (!yield? content)
+                  (dispatch-remote-error (make-!abort cont) (message-dest msg))))))))
+       (else
+        (warning "cannot route message; bogus continuation ~a" cont)
+        (when (!yield? content)
+          (dispatch-remote-error (make-!abort cont) (message-dest msg)))))))
+
+  (def (dispatch-control msg buffer)
+    (let* ((content (message-e msg))
+           (cont    (value-k content))
+           (stream  (continuation-table-get-stream-actor cont-table cont)))
+      (if stream
+        (with ([actor . dest] stream)
+          (set! (message-source msg) dest)
+          (send actor msg)
+          (when (!abort? content)
+            (continuation-table-remove-stream-actor! cont-table cont)))
+        (begin
+          (warning "bad control message; unknown stream ~a" cont)
+          (dispatch-remote-error (make-!error "uknown stream" cont) (message-dest msg))))))
+
+  (def (value-k obj)
+    (##vector-ref obj (fx1- (##vector-length obj))))
+
+  (def (value-k-set! obj k)
+    (##vector-set! obj (fx1- (##vector-length obj)) k))
+
+  (def (dispatch-remote-error err dest)
+    (let* ((msg (make-message err (void) dest #f))
+           (data (rpc-proto-marshal-message msg #f)))
+      (thread-send writer data)))
+
+  (def (read-envelope buffer)
+    (try
+     (rpc-proto-read-envelope buffer)
+     (catch (exception? e)
+       (log-error "read error" e)
+       e)))
+
+  (def (read-payload! msg buffer proto)
+    (try
+     (rpc-proto-read-payload! msg buffer proto)
+     (catch (e)
+       (log-error "unmarshal error" e)
+       #f)))
+
+  (def (run)
+    ;; create denv cell for current-xdr-type-registry
+    (parameterize ((current-xdr-type-registry +xdr-default-type-registry+))
+      (loop (make-u8vector 4096))))
+
+  (try
+   (run)
+   (catch (e)
+     (log-error "unhandled exception" e))))
+
+;;; utilities
 (def (rpc-options-timeout opts default)
   (def (timeout dt default)
     (cond
@@ -510,3 +603,22 @@ package: std/actor/rpc
   (when sock
     (ssocket-close sock))
   (rpc-connection-shutdown rpc-server))
+
+(def (rpc-send-error-response msg what)
+  (when (message? msg)
+    (with ((message content src dest) msg)
+      (match content
+        ((or (!call _ k) (!stream _ k))
+         (!!error (message-source msg) (make-rpc-error 'rpc what) k))
+        ((!yield k)
+         (let (abort (make-message (make-!abort k) dest src #f))
+           (send src abort)))
+        (else (void))))))
+
+(def (rpc-send-error-responses what)
+  (let lp ()
+    (<< ((? message? msg)
+         (rpc-send-error-response msg what)
+         (lp))
+        (ignore (lp))
+        (else (void)))))

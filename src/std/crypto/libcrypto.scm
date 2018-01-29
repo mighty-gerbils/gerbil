@@ -137,12 +137,14 @@ static ___SCMOBJ ffi_release_EVP_CIPHER_CTX (void *ptr);
 static EVP_CIPHER_CTX *ffi_create_EVP_CIPHER_CTX ();
 static int ffi_EVP_EncryptInit (EVP_CIPHER_CTX *ctx, EVP_CIPHER *type,
                                 ___SCMOBJ key, ___SCMOBJ iv);
-static int ffi_EVP_EncryptUpdate (EVP_CIPHER_CTX *ctx, ___SCMOBJ out,
+static int ffi_EVP_EncryptUpdate (EVP_CIPHER_CTX *ctx,
+                                  ___SCMOBJ out, int out_start,
                                   ___SCMOBJ in, int start, int end);
 static int ffi_EVP_EncryptFinal (EVP_CIPHER_CTX *ctx, ___SCMOBJ out, int start);
 static int ffi_EVP_DecryptInit (EVP_CIPHER_CTX *ctx, EVP_CIPHER *type,
                                 ___SCMOBJ key, ___SCMOBJ iv);
-static int ffi_EVP_DecryptUpdate (EVP_CIPHER_CTX *ctx, ___SCMOBJ out,
+static int ffi_EVP_DecryptUpdate (EVP_CIPHER_CTX *ctx,
+                                  ___SCMOBJ out, int out_start,
                                   ___SCMOBJ in, int start, int end);
 static int ffi_EVP_DecryptFinal (EVP_CIPHER_CTX *ctx, ___SCMOBJ out, int start);
 END-C
@@ -162,13 +164,13 @@ END-C
   "ffi_create_EVP_CIPHER_CTX")
 (define-c-lambda EVP_EncryptInit (EVP_CIPHER_CTX* EVP_CIPHER* scheme-object scheme-object) int
   "ffi_EVP_EncryptInit")
-(define-c-lambda EVP_EncryptUpdate (EVP_CIPHER_CTX* scheme-object scheme-object int int) int
+(define-c-lambda EVP_EncryptUpdate (EVP_CIPHER_CTX* scheme-object int scheme-object int int) int
   "ffi_EVP_EncryptUpdate")
 (define-c-lambda EVP_EncryptFinal (EVP_CIPHER_CTX* scheme-object int) int
   "ffi_EVP_EncryptFinal")
 (define-c-lambda EVP_DecryptInit (EVP_CIPHER_CTX* EVP_CIPHER* scheme-object scheme-object) int
   "ffi_EVP_DecryptInit")
-(define-c-lambda EVP_DecryptUpdate (EVP_CIPHER_CTX* scheme-object scheme-object int int) int
+(define-c-lambda EVP_DecryptUpdate (EVP_CIPHER_CTX* scheme-object int scheme-object int int) int
   "ffi_EVP_DecryptUpdate")
 (define-c-lambda EVP_DecryptFinal (EVP_CIPHER_CTX* scheme-object int) int
   "ffi_EVP_DecryptFinal")
@@ -359,11 +361,12 @@ static int ffi_EVP_EncryptInit (EVP_CIPHER_CTX *ctx, EVP_CIPHER *type,
   return EVP_EncryptInit_ex (ctx, type, NULL, U8_DATA (key), U8_DATA (iv));
 }
 
-static int ffi_EVP_EncryptUpdate (EVP_CIPHER_CTX *ctx, ___SCMOBJ out,
+static int ffi_EVP_EncryptUpdate (EVP_CIPHER_CTX *ctx,
+                                  ___SCMOBJ out, int out_start,
                                   ___SCMOBJ in, int start, int end)
 {
   int r, olen;
-  r = EVP_EncryptUpdate (ctx, U8_DATA (out), &olen,
+  r = EVP_EncryptUpdate (ctx, U8_DATA (out) + out_start, &olen,
                          U8_DATA (in) + start, end - start);
   if (r) {
     return olen;
@@ -389,11 +392,12 @@ static int ffi_EVP_DecryptInit (EVP_CIPHER_CTX *ctx, EVP_CIPHER *type,
   return EVP_DecryptInit_ex (ctx, type, NULL, U8_DATA (key), U8_DATA (iv));
 }
 
-static int ffi_EVP_DecryptUpdate (EVP_CIPHER_CTX *ctx, ___SCMOBJ out,
+static int ffi_EVP_DecryptUpdate (EVP_CIPHER_CTX *ctx,
+                                  ___SCMOBJ out, int out_start,
                                   ___SCMOBJ in, int start, int end)
 {
   int r, olen;
-  r = EVP_DecryptUpdate (ctx, U8_DATA (out), &olen,
+  r = EVP_DecryptUpdate (ctx, U8_DATA (out) + out_start, &olen,
                          U8_DATA (in) + start, end - start);
   if (r) {
     return olen;

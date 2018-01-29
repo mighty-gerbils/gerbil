@@ -7,6 +7,7 @@
 package: misc/rpc-perf
 
 (import :gerbil/gambit/threads
+        :gerbil/gambit/random
         :std/actor
         :std/net/address
         :std/getopt
@@ -14,7 +15,8 @@ package: misc/rpc-perf
 (export main)
 
 (defproto null-proto
-  (call))
+  (call)
+  (echo arg))
 
 (bind-protocol! 'null null-proto::proto)
 
@@ -26,12 +28,25 @@ package: misc/rpc-perf
         (!!null-proto.call srv)
         (lp (fx1+ k))))))
 
+(def (run-echo-client rpc-proto address count size)
+  (let* ((rpcd (start-rpc-server! proto: rpc-proto))
+         (srv (rpc-connect rpcd 'null address))
+         (data (random-u8vector size)))
+    (let lp ((k 0))
+      (when (fx< k count)
+        (let (res (!!null-proto.echo srv data))
+          (unless (equal? data res)
+            (error "Bad echo response" data res))
+          (lp (fx1+ k)))))))
+
 (def (run-server rpc-proto address)
   (let (rpcd (start-rpc-server! address proto: rpc-proto))
     (rpc-register rpcd 'null)
     (while #t
       (<- ((!null-proto.call k)
-           (!!value (void) k))))))
+           (!!value (void) k))
+          ((!null-proto.echo arg k)
+           (!!value arg k))))))
 
 (def (run-server-prof rpc-proto address count)
   (let (rpcd (start-rpc-server! address proto: rpc-proto))
@@ -53,6 +68,13 @@ package: misc/rpc-perf
     (command 'client help: "run as a client"
              (argument 'count help: "number of calls"
                        value: string->number)))
+  (def echocmd
+    (command 'echo help: "run as an echo client"
+             (argument 'count help: "number of calls"
+                       value: string->number)
+             (optional-argument 'size help: "size of payload"
+                                value: string->number
+                                default: 1024)))
   (def gopt
     (getopt (option 'address "-a" "--address"
                     help: "server address"
@@ -63,7 +85,8 @@ package: misc/rpc-perf
                     value: string->symbol)
             srvcmd
             srvprofcmd
-            clicmd))
+            clicmd
+            echocmd))
 
   (try
    (let ((values cmd opt) (getopt-parse gopt args))
@@ -82,6 +105,11 @@ package: misc/rpc-perf
           (run-client rpc-proto
                       (hash-get opt 'address)
                       (hash-get opt 'count)))
+         ((echo)
+          (run-echo-client rpc-proto
+                           (hash-get opt 'address)
+                           (hash-get opt 'count)
+                           (hash-get opt 'size)))
          ((server)
           (run-server rpc-proto
                       (hash-get opt 'address)))

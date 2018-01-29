@@ -78,22 +78,3 @@ package: std/actor/rpc
   sync-hash-key?)
 (defalias actor-table-remove!
   sync-hash-remove!)
-
-(def (rpc-send-error-response msg what)
-  (when (message? msg)
-    (with ((message content src dest) msg)
-      (match content
-        ((or (!call _ k) (!stream _ k))
-         (!!error (message-source msg) (make-rpc-error 'rpc-server what) k))
-        ((!yield k)
-         (let (abort (make-message (make-!abort k) dest src #f))
-           (send src abort)))
-        (else (void))))))
-
-(def (rpc-send-error-responses what)
-  (let lp ()
-    (<< ((? message? msg)
-         (rpc-send-error-response msg what)
-         (lp))
-        (ignore (lp))
-        (else (void)))))

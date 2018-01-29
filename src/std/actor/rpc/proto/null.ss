@@ -76,7 +76,7 @@ package: std/actor/rpc/proto
       (values rpc-null-proto-read
               rpc-null-proto-write))))
 
-(def (rpc-null-proto-read ibuf)
+(def (rpc-null-proto-read ibuf bytes)
   (let (e (bio-read-u8 ibuf))
     (cond
      ((eq? e rpc-proto-keep-alive)
@@ -84,9 +84,12 @@ package: std/actor/rpc/proto
      ((eq? e rpc-proto-message)
       (let (len (bio-read-u32 ibuf))
         (if (fx<= len rpc-proto-message-max-length)
-          (let (buf (make-u8vector len))
-            (bio-read-bytes-unbuffered buf ibuf)
-            buf)
+          (let (bytes
+                (if (fx< (u8vector-length bytes) len)
+                  (make-u8vector len)
+                  bytes))
+            (bio-read-subu8vector-unbuffered bytes 0 len ibuf)
+            (values bytes len))
           (raise-rpc-io-error 'rpc-proto-read "message too long" len))))
      ((eof-object? e) e)
      (else
