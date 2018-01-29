@@ -26,6 +26,7 @@ package: std/actor/rpc/proto
 (def ::cipher-type        cipher::aes-128-cbc)
 (def ::cipher-key-length (cipher-key-length ::cipher-type))
 (def ::cipher-iv-length  (cipher-iv-length  ::cipher-type))
+(def ::cipher-block-size (cipher-block-size ::cipher-type))
 (def ::DH::new            DH-get-1024-160)
 
 (def (rpc-cipher-proto-key-exchange ibuf obuf)
@@ -71,10 +72,11 @@ package: std/actor/rpc/proto
              (_      (unless (fx<= size rpc-proto-message-max-length)
                        (raise-rpc-io-error 'rpc-proto-read "message too large" size)))
              (ctext  (let (buf (unbox ctext))
-                       (if (fx< size (u8vector-length buf)) buf
-                           (let (buf (make-u8vector size))
-                             (set! (box ctext) buf)
-                             buf))))
+                       (if (fx< (u8vector-length buf) size)
+                         (let (buf (make-u8vector size))
+                           (set! (box ctext) buf)
+                           buf)
+                         buf)))
              (rd     (bio-read-subu8vector-unbuffered ctext 0 size ibuf))
              (_      (when (fx< rd size)
                        (raise-rpc-io-error 'rpc-proto-read "incomplete message" rd size)))
@@ -96,11 +98,12 @@ package: std/actor/rpc/proto
       (raise-rpc-io-error 'rpc-proto-read "bad message" e)))))
 
 (def (rpc-cipher-proto-write-e secret)
-  (let ((key (subu8vector secret 0 ::cipher-key-length))
-        (iv  (make-u8vector ::cipher-iv-length)))
-    (cut rpc-cipher-proto-write <> <> secret key iv)))
+  (let ((key   (subu8vector secret 0 ::cipher-key-length))
+        (iv    (make-u8vector ::cipher-iv-length))
+        (ctext (box (make-u8vector 4096))))
+    (cut rpc-cipher-proto-write <> <> secret key iv ctext)))
 
-(def (rpc-cipher-proto-write obuf obj secret key iv)
+(def (rpc-cipher-proto-write obuf obj secret key iv ctext)
   (cond
    ((eq? obj #!void)
     (bio-write-u8 rpc-proto-keep-alive obuf)
@@ -121,9 +124,38 @@ package: std/actor/rpc/proto
       (bio-write-bytes ctext obuf)
       (bio-force-output obuf)))
    ((chunked-output-buffer? obj)
-    ;; TODO optimize away the copy of data
-    ;;      encryption needs streaming interface
-    (rpc-cipher-proto-write obuf (chunked-output-u8vector obj) secret key iv))
+    (bio-write-u8 rpc-proto-message obuf)
+    (let* ((digest (make-digest ::digest-type))
+           (cipher (make-cipher ::cipher-type))
+           (_      (random-bytes! iv))
+           (plen   (chunked-output-length obj))
+           (chunks (chunked-output-chunks obj))
+           (maxlen (fx+ plen ::cipher-block-size))
+           (ctext  (let (buf (unbox ctext))
+                     (if (fx< (u8vector-length buf) maxlen)
+                       (let (buf (make-u8vector maxlen))
+                         (set! (box ctext) buf)
+                         buf)
+                       buf)))
+           (_      (encrypt-init! cipher key iv))
+           (clen   (foldl
+                     (lambda (chunk r)
+                       (let (count (encrypt-update/nocheck! cipher
+                                                            ctext r
+                                                            chunk 0 (u8vector-length chunk)))
+                         (fx+ r count)))
+                     0 chunks))
+           (flen   (encrypt-final/nocheck! cipher ctext clen))
+           (clen   (fx+ clen flen))
+           (_      (digest-update! digest secret))
+           (_      (digest-update! digest iv))
+           (_      (digest-update! digest ctext 0 clen))
+           (hmac   (digest-final! digest)))
+      (bio-write-bytes hmac obuf)
+      (bio-write-bytes iv obuf)
+      (bio-write-u32 clen obuf)
+      (bio-write-subu8vector ctext 0 clen obuf)
+      (bio-force-output obuf)))
    (else
     (raise-rpc-io-error 'rpc-proto-write "unexpected object" obj))))
 
