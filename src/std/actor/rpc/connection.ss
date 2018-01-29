@@ -49,6 +49,7 @@ package: std/actor/rpc
     (set! rpc-keep-alive dt)
     (error "bad keep-alive; expected positive real or #f" dt)))
 
+;; TODO idle-timeout is ignored
 (def rpc-idle-timeout #f)
 
 (def (set-rpc-idle-timeout! dt)
@@ -67,6 +68,7 @@ package: std/actor/rpc
    (else
     (error "bad timeout; expected finite positive real or #f" dt))))
 
+;; connection state: message continuations
 (defstruct continuation-table
   (mx                      ; mutex
    continuations           ; wire-id => (values actor proto k stream?)
@@ -146,6 +148,7 @@ package: std/actor/rpc
     (let (tt (&continuation-table-timeouts cont-table))
       (hash-get tt timeo))))
 
+;; the main thread of the connection; it's the proxy actor in remote handles
 (def (rpc-connection-loop rpc-server actors sock peer-address proto-e)
   (def input-buffer
     (open-ssocket-input-buffer sock))
@@ -155,15 +158,16 @@ package: std/actor/rpc
     (proto-e input-buffer output-buffer))
   (def cont-table
     (make-continuation-table))
+
+  (def next-timeout #f)
+  (def next-continuation-id 0)
+
   (def writer
     (spawn/name 'rpc-connection-writer rpc-connection-writer
                 output-buffer write-e))
   (def reader
     (spawn/name 'rpc-connection-reader rpc-connection-reader
                 (current-thread) peer-address input-buffer actors cont-table writer read-e))
-
-  (def next-timeout #f)
-  (def next-continuation-id 0)
 
   (def (close-connection)
     (ssocket-close sock)
@@ -392,6 +396,8 @@ package: std/actor/rpc
      (log-error "unhandled exception" e)
      (close-connection))))
 
+;; the writer of the connection: receives marshaled outbound messages
+;; and writes them to the socket
 (def (rpc-connection-writer sockbuf write-e)
   (def (loop)
     (<< (! rpc-keep-alive
@@ -412,6 +418,7 @@ package: std/actor/rpc
    (catch (e)
      (log-error "unhandled exception" e))))
 
+;; the reader of the connection: reads, unmarshals, and dispatches inbound messages
 (def (rpc-connection-reader conn connaddr sockbuf actor-table cont-table writer read-e)
   (def (loop u8buf)
     (match (read-e sockbuf u8buf)
@@ -457,7 +464,8 @@ package: std/actor/rpc
                 ;; but i can live with that race -- it is equivalent to receiving
                 ;; a message while unregistering.
                 ;; also note that eliminating that race would require a lock
-                ;; on the actor-table, which we want to avoid (it's global)
+                ;; on the actor-table, which we want to avoid as it's server
+                ;; scoped (shared by all connections in the ensemble)
                 (send actor msg))
                ((or (!call? (message-e msg)) (!stream? (message-e msg)))
                 (let* ((content (message-e msg))
@@ -559,6 +567,7 @@ package: std/actor/rpc
    (catch (e)
      (log-error "unhandled exception" e))))
 
+;;; utilities
 (def (rpc-options-timeout opts default)
   (def (timeout dt default)
     (cond
