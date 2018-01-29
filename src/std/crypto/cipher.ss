@@ -14,12 +14,12 @@ package: std/crypto
   cipher-copy
   encrypt encrypt-u8vector encrypt-u8vector!
   encrypt-init!
-  encrypt-update! encrypt-update/check!
-  encrypt-final! encrypt-final/check!
+  encrypt-update!
+  encrypt-final!
   decrypt decrypt-u8vector decrypt-u8vector!
   decrypt-init!
-  decrypt-update! decrypt-update/check!
-  decrypt-final! decrypt-final/check!
+  decrypt-update!
+  decrypt-final!
   )
 
 (defstruct cipher (type ctx)
@@ -73,16 +73,6 @@ package: std/crypto
              (u8vector-length iv))
     (error "Bad cipher iv; iv length mismatch")))
 
-(def (cipher-check-buffer-size ctx bufsz inl)
-  (let (blocksz (EVP_CIPHER_CTX_block_size ctx))
-    (when (fx< bufsz (fx1- (fx+ inl blocksz)))
-      (error "Bad cipher buffer; insufficient buffer space" bufsz blocksz inl))))
-
-(def (cipher-check-buffer-size/final ctx bufsz)
-  (let (blocksz (EVP_CIPHER_CTX_block_size ctx))
-    (when (fx< bufsz blocksz)
-      (error "Bad cipher buffer; insufficient buffer space" bufsz blocksz))))
-
 (def (cipher-init! cipher key iv EVP-init)
   (cipher-check-key+iv-length cipher key iv)
   (with-libcrypto-error
@@ -95,18 +85,10 @@ package: std/crypto
     (if (not (fxnegative? r)) r
         (raise-libcrypto-error ctx))))  ; racey with multiple threads
 
-(def (cipher-update/check! ctx out out-start in start end EVP-update)
-  (cipher-check-buffer-size ctx (fx- (u8vector-length out) out-start) (fx- end start))
-  (cipher-update! ctx out out-start in start end EVP_EncryptUpdate))
-
 (def (cipher-final! ctx out out-start EVP-final)
   (let (r (EVP-final ctx out out-start))
     (if (not (fxnegative? r)) r
         (raise-libcrypto-error ctx))))  ; racey with multiple threads
-
-(def (cipher-final/check! ctx out out-start EVP-final)
-  (cipher-check-buffer-size/final ctx (fx- (u8vector-length out) out-start))
-  (cipher-final! ctx out out-start EVP-final))
 
 ;; encrypt/decrypt streaming interface
 (def (encrypt-init! cipher key iv)
@@ -115,16 +97,8 @@ package: std/crypto
 (def (encrypt-update! cipher out out-start in start end)
   (cipher-update! (cipher-context cipher) out out-start in start end EVP_EncryptUpdate))
 
-(def (encrypt-update/check! cipher out out-start in (start 0) (end (u8vector-length in)))
-  (cipher-update/check! (cipher-context cipher) out out-start in start end EVP_EncryptUpdate))
-
 (def (encrypt-final! cipher out (out-start 0))
   (let (olen (cipher-final! (cipher-context cipher) out out-start EVP_EncryptFinal))
-    (set! (cipher-ctx cipher) #f)
-    olen))
-
-(def (encrypt-final/check! cipher out (out-start 0))
-  (let (olen (cipher-final/check! (cipher-context cipher) out out-start EVP_EncryptFinal))
     (set! (cipher-ctx cipher) #f)
     olen))
 
@@ -134,16 +108,8 @@ package: std/crypto
 (def (decrypt-update! cipher out out-start in start end)
   (cipher-update! (cipher-context cipher) out out-start in start end EVP_DecryptUpdate))
 
-(def (decrypt-update/check! cipher out out-start in (start 0) (end (u8vector-length in)))
-  (cipher-update/check! (cipher-context cipher) out out-start in start end EVP_DecryptUpdate))
-
 (def (decrypt-final! cipher out (out-start 0))
   (let (olen (cipher-final! (cipher-context cipher) out out-start EVP_DecryptFinal))
-    (set! (cipher-ctx cipher) #f)
-    olen))
-
-(def (decrypt-final/check! cipher out (out-start 0))
-  (let (olen (cipher-final/check! (cipher-context cipher) out out-start EVP_DecryptFinal))
     (set! (cipher-ctx cipher) #f)
     olen))
 
