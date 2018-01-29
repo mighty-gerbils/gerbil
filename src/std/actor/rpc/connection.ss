@@ -454,7 +454,10 @@ package: std/actor/rpc
                 (set! (message-source msg)
                   (make-remote conn uuid connaddr proto))
                 ;; it is possible that the actor unregistered while unmarshalling
-                ;; but i can live with that race (it's hard to fix)
+                ;; but i can live with that race -- it is equivalent to receiving
+                ;; a message while unregistering.
+                ;; also note that eliminating that race would require a lock
+                ;; on the actor-table, which we want to avoid (it's global)
                 (send actor msg))
                ((or (!call? (message-e msg)) (!stream? (message-e msg)))
                 (let* ((content (message-e msg))
@@ -483,11 +486,19 @@ package: std/actor/rpc
                   (make-remote conn (message-dest msg) connaddr proto))
                 (cond
                  ((!yield? content)
-                  ;; race with timeout, so we need to lock
-                  (continuation-table-do cont-table
-                    (when (hash-get (&continuation-table-continuations cont-table) cont)
-                      (send actor msg))))
+                  ;; race with timeout, so we need to lock and check the cont table again
+                  (let (ok
+                        (with-continuation-table cont-table
+                          (if (hash-get (&continuation-table-continuations cont-table) cont)
+                            (begin (send actor msg) #t)
+                            #f)))
+                    (unless ok
+                      ;; that needs to marshal and can take time, so we need to  do it
+                      ;; without the lock; hence the little dance.
+                      (dispath-remote-error (make-!abort cont) (message-dest msg)))))
                  ((continuation-table-remove! cont-table cont)
+                  ;; there is no race here, because continuation-table-remove! is
+                  ;; atomic and returns #f if no continuation was removed
                   (send actor msg))))
                (else
                 (when (continuation-table-remove! cont-table cont)
