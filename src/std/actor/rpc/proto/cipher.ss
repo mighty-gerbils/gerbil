@@ -140,12 +140,12 @@ package: std/actor/rpc/proto
            (_      (encrypt-init! cipher key iv))
            (clen   (foldl
                      (lambda (chunk r)
-                       (let (count (encrypt-update/nocheck! cipher
-                                                            ctext r
-                                                            chunk 0 (u8vector-length chunk)))
+                       (let (count (encrypt-update! cipher
+                                                    ctext r
+                                                    chunk 0 (u8vector-length chunk)))
                          (fx+ r count)))
                      0 chunks))
-           (flen   (encrypt-final/nocheck! cipher ctext clen))
+           (flen   (encrypt-final! cipher ctext clen))
            (clen   (fx+ clen flen))
            (_      (digest-update! digest secret))
            (_      (digest-update! digest iv))
