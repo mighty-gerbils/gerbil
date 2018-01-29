@@ -11,6 +11,27 @@ package: scheme
   (c-declare #<<END-C
 #include <time.h>
 #include <stdio.h>
+
+#ifdef __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
+
+#ifndef CLOCK_MONOTONIC
+#define CLOCK_MONOTONIC 0
+#endif
+#define clock_gettime ffi_clock_gettime
+
+static clock_serv_t ffi_clock_svc;
+static int ffi_clock_gettime (int ignore, struct timespec *ts)
+{
+ mach_timespec_t mts;
+ clock_get_time(ffi_clock_svc, &mts);
+ ts->tv_sec = mts.tv_sec;
+ ts->tv_nsec = mts.tv_nsec;
+ return 0;
+}
+#endif
+
 static long ffi_jiffie_res;
 static struct timespec ffi_jiffie_start;
 static long ffi_get_jiffies ()
@@ -39,6 +60,8 @@ END-C
 )
 
 (c-initialize #<<END-C
+#ifndef __MACH__
+
 struct timespec ts;
 int r = clock_getres (CLOCK_MONOTONIC, &ts);
 if (r)
@@ -56,6 +79,14 @@ if (r)
 }
 
 err:
+
+#else
+
+host_get_clock_service(mach_host_self(), REALTIME_CLOCK, &ffi_clock_svc);
+ffi_jiffie_res = CLOCK_GET_TIME_RES;
+
+#endif
+
 END-C
 )
 
