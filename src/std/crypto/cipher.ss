@@ -12,7 +12,7 @@ package: std/crypto
   cipher make-cipher cipher? cipher-type cipher-ctx cipher-context
   cipher-name cipher-block-size cipher-key-length cipher-iv-length
   cipher-copy
-  encrypt encrypt-u8vector
+  encrypt encrypt-u8vector encrypt-u8vector!
   encrypt-init!
   encrypt-update! encrypt-update/check!
   encrypt-final! encrypt-final/check!
@@ -205,6 +205,13 @@ package: std/crypto
                                    encrypt-init!
                                    encrypt-update!
                                    encrypt-final!))
+
+(def (encrypt-u8vector! cipher key iv bytes start end buf)
+  (encrypt-init! cipher key iv)
+  (let* ((ulen (encrypt-update! cipher buf 0 bytes start end))
+         (flen (encrypt-final! cipher buf ulen))
+         (olen (fx+ ulen flen)))
+    olen))
 
 (def (encrypt-port cipher key iv inp)
   (cipher-port-encrypt/decrypt cipher key iv inp
