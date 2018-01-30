@@ -148,6 +148,39 @@ package: std/actor/rpc
     (let (tt (&continuation-table-timeouts cont-table))
       (hash-get tt timeo))))
 
+;; DEBUG
+(def (continuation-table-dump! cont-table (port ##stderr-port))
+  (parameterize ((current-output-port port))
+    (continuation-table-do cont-table
+      (with ((continuation-table _ conts sconts sactors tmos ctmos) cont-table)
+        (displayln "=== continuation-table ===")
+        (displayln "continuations: " (hash-length conts))
+        (hash-for-each
+         (lambda (wire-id continuation)
+           (with ((values actor proto k stream?) continuation)
+             (displayln wire-id " -> " [actor proto k stream?])))
+         conts)
+        (displayln "stream-continuations: " (hash-length sconts))
+        (hash-for-each
+         (lambda (k wire-id)
+           (displayln k " -> " wire-id))
+         sconts)
+        (displayln "stream-actors: " (hash-length sactors))
+        (hash-for-each
+         (lambda (wire-id sactor)
+           (displayln wire-id " -> " sactor))
+         sactors)
+        (displayln "timeouts: " (hash-length tmos))
+        (hash-for-each
+         (lambda (tmo wire-id)
+           (displayln tmo " ("(time->seconds tmo) ")" " -> " wire-id))
+         tmos)
+        (displayln "continuation-timeouts: " (hash-length ctmos))
+        (hash-for-each
+         (lambda (wire-id tmo)
+           (displayln wire-id " -> " tmo " ("(time->seconds tmo) ")"))
+         ctmos)))))
+
 ;; the main thread of the connection; it's the proxy actor in remote handles
 (def (rpc-connection-loop rpc-server actors sock peer-address proto-e)
   (def input-buffer
@@ -366,9 +399,9 @@ package: std/actor/rpc
            => dispatch-timeout)
         ((? message? msg)
          (write-message msg))
-        ('shutdown
-         (close-connection))
         ((? eof-object?)
+         (close-connection))
+        ('shutdown
          (close-connection))
         ((? thread? thread)
          (try
@@ -379,6 +412,13 @@ package: std/actor/rpc
           (catch (e)
             (log-error "connection error" e)))
          (close-connection))
+        ;; DEBUG
+        ('dump-continuation-table
+         (continuation-table-dump! cont-table)
+         (loop))
+        (['dump-continuation-table port]
+         (continuation-table-dump! cont-table port)
+         (loop))
         (bogus
          (warning "unexpected message ~a" bogus)
          (loop))))
