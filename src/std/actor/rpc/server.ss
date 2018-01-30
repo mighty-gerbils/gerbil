@@ -284,9 +284,41 @@ package: std/actor/rpc
            (warning "acceptor thread has exited abnormally ~a" thread))
           (else
            (remove-thread! thread))))
+        ;; DEBUG
+        ('dump
+         (dump! ##stderr-port))
+        (['dump port]
+         (dump! port))
         (value
          (warning "unexepected message ~a"  value)))
     (loop))
+
+  (def (dump! port)
+    (parameterize ((current-output-port port))
+      (displayln "=== rpc-server ===")
+      (actor-table-do actors
+        (lambda (ht)
+          (displayln "actors: " (hash-length ht))
+          (hash-for-each
+           (lambda (uuid actor-state)
+             (with ((values actor proto) actor-state)
+               (displayln (uuid->string uuid) " -> " [actor proto])))
+           ht)))
+      (displayln "actor-threads: " (hash-length actor-threads))
+      (hash-for-each
+       (lambda (thread uuids)
+         (displayln thread " -> " (map uuid->string uuids)))
+       actor-threads)
+      (displayln "connections: " (hash-length conns))
+      (hash-for-each
+       (lambda (address conn)
+         (displayln address " -> " conn))
+       conns)
+      (displayln "monitors: " (hash-length monitors))
+      (hash-for-each
+       (lambda (conn mons)
+         (displayln conn " -> " mons))
+       monitors)))
 
   (for-each rpc-monitor acceptors)
   (try

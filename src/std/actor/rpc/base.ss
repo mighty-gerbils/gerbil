@@ -78,3 +78,5 @@ package: std/actor/rpc
   sync-hash-key?)
 (defalias actor-table-remove!
   sync-hash-remove!)
+(defalias actor-table-do
+  sync-hash-do)
