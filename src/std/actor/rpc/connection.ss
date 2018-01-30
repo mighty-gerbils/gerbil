@@ -153,7 +153,6 @@ package: std/actor/rpc
   (parameterize ((current-output-port port))
     (continuation-table-do cont-table
       (with ((continuation-table _ conts sconts sactors tmos ctmos) cont-table)
-        (displayln "=== continuation-table ===")
         (displayln "continuations: " (hash-length conts))
         (hash-for-each
          (lambda (wire-id continuation)
@@ -394,6 +393,15 @@ package: std/actor/rpc
              timeouts)))))
     next-timeout)
 
+  (def (dump! port)
+    (parameterize ((current-output-port port))
+      (displayln "=== rpc-connection ===")
+      (displayln "peer-address: " peer-address)
+      (displayln "next-continuation-id: " next-continuation-id)
+      (displayln "next-timeout: " (and next-timeout (time->seconds next-timeout))))
+    (continuation-table-dump! cont-table port)
+    (loop))
+
   (def (loop)
     (<< (! (timeout-event)
            => dispatch-timeout)
@@ -413,12 +421,10 @@ package: std/actor/rpc
             (log-error "connection error" e)))
          (close-connection))
         ;; DEBUG
-        ('dump-continuation-table
-         (continuation-table-dump! cont-table)
-         (loop))
-        (['dump-continuation-table port]
-         (continuation-table-dump! cont-table port)
-         (loop))
+        ('dump
+         (dump! ##stderr-port))
+        (['dump port]
+         (dump! port))
         (bogus
          (warning "unexpected message ~a" bogus)
          (loop))))
