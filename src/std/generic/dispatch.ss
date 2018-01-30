@@ -403,12 +403,12 @@ package: std/generic
             (lp (##fx+ i 1))))
         #t)))
 
-    (let retry ((new-cache-len (inexact->exact (floor (* cache-len 1.5)))))
+    (let retry ((new-cache-len (##fxquotient (##fx* 3 cache-len) 2)))
       (if (##fx< new-cache-len +max-cache-size+)
         (let (new-cache (make-vector new-cache-len #f))
           (if (rehash! new-cache)
             new-cache
-            (retry (inexact->exact (floor (* new-cache-len 1.5))))))
+            (retry (##fxquotient (##fx* 3 new-cache-len) 2))))
         (begin
           ;; that's a cache pathology -- i'd like to know about it.
           (display "*** Warning: cannot rehash generic cache; maximum cache size exceeded\n"
