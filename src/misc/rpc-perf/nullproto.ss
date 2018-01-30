@@ -12,7 +12,7 @@ package: misc/rpc-perf
         :std/net/address
         :std/getopt
         :std/sugar)
-(export main)
+(export main (proto-out null-proto))
 
 (defproto null-proto
   (call)
