@@ -41,24 +41,33 @@ package: scheme
        (with-syntax (((feat ...) (hash-keys feats)))
          #'(quote (feat ...)))))))
 
-;; R7RS spec:
-;; (guard (variable cond-clause ...) body ...)
-;; "Semantics: The body is evaluated with an exception han-
-;;  dler that binds the raised object (see raise in section 6.11)
-;;  to variable and, within the scope of that binding, evalu-
-;;  ates the clauses as if they were the clauses of a cond ex-
-;;  pression. That implicit cond expression is evaluated with
-;;  the continuation and dynamic environment of the guard
-;;  expression. If every cond clause’s test evaluates to #f
-;;  and there is no else clause, then raise-continuable is
-;;  invoked on the raised object within the dynamic environ-
-;;  ment of the original call to raise or raise-continuable,
-;;  except that the current exception handler is that of the
-;;  guard expression."
-;;
-;; There is no raise-continiuable per se in Gerbil on Gambit
-;; [see comments on raise-continuable stub] but this macro
-;; is still usable by implementing in the following manner
+;;; R7RS exceptions
+;; with-exception-handler installs the previous exception handler during handler
+;; dispatch; this is unspecified by r7rs and is what allows us to actually implement
+;; raise-continuable as raise with the same semantics of switching the exception handler.
+(def (r7rs-with-exception-handler handler thunk)
+  (with-exception-handler
+   (let (E (current-exception-handler))
+     (lambda (exn)
+       (with-exception-handler E (cut handler exn))))
+   thunk))
+
+;; All exceptions are continuable in gambit, so raise is always continuable.
+(def (raise-continuable exn)
+  (raise exn))
+
+;; the intention in r7rs raise is to give up and not return. so what gives? simply put,
+;; if the exception handler returns we have to terminate the thread -- but it would be
+;; rude to bypass the primordial exception handler hook in doing so.
+(def (r7rs-raise exn)
+  (raise exn)
+  ;; this normally terminates the thread, unless primordial-exception-handler-hook
+  ;; objects
+  (##primordial-exception-handler exn)
+  ;; no really, we can't continue
+  (##thread-end-with-uncaught-exception! exn))
+
+;; guard also switches exception handlers
 (defrules guard (else)
   ((_ (var clause ... (else else-body ...)) body ...)
    (identifier? #'var)
@@ -106,24 +115,6 @@ package: scheme
    (begin (include path) ...)))
 
 
-;; R7RS spec:
-;; "Raises an exception by invoking the current exception han-
-;;  dler on obj . The handler is called with the same dynamic
-;;  environment as the call to raise-continuable, except
-;;  that: (1) the current exception handler is the one that was
-;;  in place when the handler being called was installed, and
-;;  (2) if the handler being called returns, then it will again
-;;  become the current exception handler."
-;;
-;; This CANNOT be implemented without kernel changes in Gambit
-;; as the previous exception handler is not accessible anywhere
-;; but hidden on the local stack frame at the time of installation.
-;; On the same time, all Gambit exceptions are continuable in the
-;; sense that the exception handler can return, it just happens
-;; that the current exception handler is itself during its invocation
-;; So it will remain a stub; seek professional help if you need this in
-;; a library module.
-(defstub raise-continuable)
 
 (def (floor/ n divisor)
   (if (and (<= 0 n) (<= 0 divisor))
