@@ -61,6 +61,9 @@ package: scheme
 ;; rude to bypass the primordial exception handler hook in doing so.
 (def (r7rs-raise exn)
   (raise exn)
+  ;; per spec: If the handler returns, a secondary exception is raised in the
+  ;; same dynamic environment as the handler.
+  (error "Exception handler returned in non continuable exception" exn)
   ;; this normally terminates the thread, unless primordial-exception-handler-hook
   ;; objects
   (##primordial-exception-handler exn)
