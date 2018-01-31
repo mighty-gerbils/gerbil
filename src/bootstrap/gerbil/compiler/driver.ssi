@@ -24,15 +24,15 @@ namespace: gxc
           (spec: 0 compile-static-exe compile-static-exe))
          (%#define-runtime compile-timestamp gxc#compile-timestamp)
          (%#begin (%#define-runtime
-                   compile-file__opt-lambda24488
-                   gxc#compile-file__opt-lambda24488)
+                   compile-file__opt-lambda24450
+                   gxc#compile-file__opt-lambda24450)
                   (%#begin (%#define-runtime
                             compile-file__0
                             gxc#compile-file__0)
                            (%#define-runtime compile-file gxc#compile-file)))
          (%#begin (%#define-runtime
-                   compile-exe-stub__opt-lambda24474
-                   gxc#compile-exe-stub__opt-lambda24474)
+                   compile-exe-stub__opt-lambda24436
+                   gxc#compile-exe-stub__opt-lambda24436)
                   (%#begin (%#define-runtime
                             compile-exe-stub__0
                             gxc#compile-exe-stub__0)
@@ -40,8 +40,8 @@ namespace: gxc
                             compile-exe-stub
                             gxc#compile-exe-stub)))
          (%#begin (%#define-runtime
-                   compile-static-exe__opt-lambda24460
-                   gxc#compile-static-exe__opt-lambda24460)
+                   compile-static-exe__opt-lambda24422
+                   gxc#compile-static-exe__opt-lambda24422)
                   (%#begin (%#define-runtime
                             compile-static-exe__0
                             gxc#compile-static-exe__0)

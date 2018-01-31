@@ -74,6 +74,16 @@ namespace: gx
          (%#define-runtime make-export-expander gx#make-export-expander)
          (%#define-syntax export-expander |gx[:0:]#export-expander|)
          (%#define-runtime
+          import-export-expander::t
+          gx#import-export-expander::t)
+         (%#define-runtime import-export-expander? gx#import-export-expander?)
+         (%#define-runtime
+          make-import-export-expander
+          gx#make-import-export-expander)
+         (%#define-syntax
+          import-export-expander
+          |gx[:0:]#import-export-expander|)
+         (%#define-runtime
           current-import-expander-phi
           gx#current-import-expander-phi)
          (%#define-runtime
@@ -87,16 +97,22 @@ namespace: gx
           gx#current-module-reader-args)
          (%#define-runtime module-context:::init! gx#module-context:::init!)
          (%#begin (%#define-runtime
-                   prelude-context:::init!__opt-lambda13903
-                   gx#prelude-context:::init!__opt-lambda13903)
+                   prelude-context:::init!__opt-lambda14022
+                   gx#prelude-context:::init!__opt-lambda14022)
                   (%#begin (%#define-runtime
                             prelude-context:::init!__0
                             gx#prelude-context:::init!__0)
                            (%#define-runtime
                             prelude-context:::init!
                             gx#prelude-context:::init!)))
+         (%#define-runtime
+          import-export-expander-init!
+          gx#import-export-expander-init!)
          (%#define-runtime import-expander:::init! gx#import-expander:::init!)
          (%#define-runtime export-expander:::init! gx#export-expander:::init!)
+         (%#define-runtime
+          import-export-expander:::init!
+          gx#import-export-expander:::init!)
          (%#define-runtime
           import-expander::apply-import-expander
           gx#import-expander::apply-import-expander)

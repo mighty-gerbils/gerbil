@@ -78,25 +78,20 @@ package: gerbil/expander
   (declare-type
    gx#export-set-exports-set!
    (@struct-setf gx#export-set::t 2 #f))
-  (declare-type
-   gx#import-expander::t
-   (@struct-type gx#import-expander::t gx#user-expander::t 0 :init! ()))
-  (declare-type gx#import-expander? (@struct-pred gx#import-expander::t))
-  (declare-type gx#make-import-expander (@struct-cons gx#import-expander::t))
-  (declare-type
-   gx#export-expander::t
-   (@struct-type gx#export-expander::t gx#user-expander::t 0 :init! ()))
-  (declare-type gx#export-expander? (@struct-pred gx#export-expander::t))
-  (declare-type gx#make-export-expander (@struct-cons gx#export-expander::t))
   (declare-method gx#module-context::t :init! gx#module-context:::init! #f)
   (declare-type
    gx#prelude-context:::init!
    (@case-lambda
     (2 gx#prelude-context:::init!__0)
-    (3 gx#prelude-context:::init!__opt-lambda13903)))
+    (3 gx#prelude-context:::init!__opt-lambda14022)))
   (declare-method gx#prelude-context::t :init! gx#prelude-context:::init! #f)
   (declare-method gx#import-expander::t :init! gx#import-expander:::init! #f)
   (declare-method gx#export-expander::t :init! gx#export-expander:::init! #f)
+  (declare-method
+   gx#import-export-expander::t
+   :init!
+   gx#import-export-expander:::init!
+   #f)
   (declare-method
    gx#import-expander::t
    apply-import-expander
