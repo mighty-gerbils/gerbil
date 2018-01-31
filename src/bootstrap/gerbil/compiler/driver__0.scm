@@ -3,233 +3,233 @@
   (define gxc#compile-timestamp
     (lambda () (inexact->exact (floor (time->seconds (current-time))))))
   (begin
-    (define gxc#compile-file__opt-lambda24484
-      (lambda (_srcpath24486_ _opts24487_)
+    (define gxc#compile-file__opt-lambda24488
+      (lambda (_srcpath24490_ _opts24491_)
         (begin
-          (if (string? _srcpath24486_)
+          (if (string? _srcpath24490_)
               '#!void
               (gxc#raise-compile-error
                '"Invalid module source path"
-               _srcpath24486_))
-          (let ((_outdir24489_ (pgetq 'output-dir: _opts24487_))
-                (_invoke-gsc?24490_ (pgetq 'invoke-gsc: _opts24487_))
-                (_gsc-options24491_ (pgetq 'gsc-options: _opts24487_))
-                (_keep-scm?24492_ (pgetq 'keep-scm: _opts24487_))
-                (_verbosity24493_ (pgetq 'verbose: _opts24487_))
-                (_optimize24494_ (pgetq 'optimize: _opts24487_))
-                (_debug24495_ (pgetq 'debug: _opts24487_))
-                (_gen-ssxi24496_ (pgetq 'generate-ssxi: _opts24487_))
-                (_static24497_ (pgetq 'static: _opts24487_)))
+               _srcpath24490_))
+          (let ((_outdir24493_ (pgetq 'output-dir: _opts24491_))
+                (_invoke-gsc?24494_ (pgetq 'invoke-gsc: _opts24491_))
+                (_gsc-options24495_ (pgetq 'gsc-options: _opts24491_))
+                (_keep-scm?24496_ (pgetq 'keep-scm: _opts24491_))
+                (_verbosity24497_ (pgetq 'verbose: _opts24491_))
+                (_optimize24498_ (pgetq 'optimize: _opts24491_))
+                (_debug24499_ (pgetq 'debug: _opts24491_))
+                (_gen-ssxi24500_ (pgetq 'generate-ssxi: _opts24491_))
+                (_static24501_ (pgetq 'static: _opts24491_)))
             (begin
-              (if _outdir24489_ (create-directory* _outdir24489_) '#!void)
-              (if _optimize24494_ (gxc#optimizer-info-init!) '#!void)
+              (if _outdir24493_ (create-directory* _outdir24493_) '#!void)
+              (if _optimize24498_ (gxc#optimizer-info-init!) '#!void)
               (call-with-parameters
                (lambda ()
                  (begin
-                   (gxc#verbose '"compile " _srcpath24486_)
+                   (gxc#verbose '"compile " _srcpath24490_)
                    (gxc#compile-top-module
-                    (gx#import-module__0 _srcpath24486_))))
+                    (gx#import-module__0 _srcpath24490_))))
                gxc#current-compile-output-dir
-               _outdir24489_
+               _outdir24493_
                gxc#current-compile-invoke-gsc
-               _invoke-gsc?24490_
+               _invoke-gsc?24494_
                gxc#current-compile-gsc-options
-               _gsc-options24491_
+               _gsc-options24495_
                gxc#current-compile-keep-scm
-               _keep-scm?24492_
+               _keep-scm?24496_
                gxc#current-compile-verbose
-               _verbosity24493_
+               _verbosity24497_
                gxc#current-compile-optimize
-               _optimize24494_
+               _optimize24498_
                gxc#current-compile-debug
-               _debug24495_
+               _debug24499_
                gxc#current-compile-generate-ssxi
-               _gen-ssxi24496_
+               _gen-ssxi24500_
                gxc#current-compile-static
-               _static24497_
+               _static24501_
                gxc#current-compile-timestamp
                (gxc#compile-timestamp)))))))
     (begin
       (define gxc#compile-file__0
-        (lambda (_srcpath24503_)
-          (let ((_opts24505_ '()))
-            (gxc#compile-file__opt-lambda24484 _srcpath24503_ _opts24505_))))
+        (lambda (_srcpath24507_)
+          (let ((_opts24509_ '()))
+            (gxc#compile-file__opt-lambda24488 _srcpath24507_ _opts24509_))))
       (define gxc#compile-file
-        (lambda _g24513_
-          (let ((_g24512_ (length _g24513_)))
-            (cond ((fx= _g24512_ 1) (apply gxc#compile-file__0 _g24513_))
-                  ((fx= _g24512_ 2)
-                   (apply gxc#compile-file__opt-lambda24484 _g24513_))
+        (lambda _g24517_
+          (let ((_g24516_ (length _g24517_)))
+            (cond ((fx= _g24516_ 1) (apply gxc#compile-file__0 _g24517_))
+                  ((fx= _g24516_ 2)
+                   (apply gxc#compile-file__opt-lambda24488 _g24517_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#compile-file
-                    _g24513_))))))))
+                    _g24517_))))))))
   (begin
-    (define gxc#compile-exe-stub__opt-lambda24470
-      (lambda (_srcpath24472_ _opts24473_)
+    (define gxc#compile-exe-stub__opt-lambda24474
+      (lambda (_srcpath24476_ _opts24477_)
         (gxc#do-compile-exe
-         _srcpath24472_
-         _opts24473_
+         _srcpath24476_
+         _opts24477_
          gxc#compile-exe-stub-module)))
     (begin
       (define gxc#compile-exe-stub__0
-        (lambda (_srcpath24478_)
-          (let ((_opts24480_ '()))
-            (gxc#compile-exe-stub__opt-lambda24470
-             _srcpath24478_
-             _opts24480_))))
+        (lambda (_srcpath24482_)
+          (let ((_opts24484_ '()))
+            (gxc#compile-exe-stub__opt-lambda24474
+             _srcpath24482_
+             _opts24484_))))
       (define gxc#compile-exe-stub
-        (lambda _g24515_
-          (let ((_g24514_ (length _g24515_)))
-            (cond ((fx= _g24514_ 1) (apply gxc#compile-exe-stub__0 _g24515_))
-                  ((fx= _g24514_ 2)
-                   (apply gxc#compile-exe-stub__opt-lambda24470 _g24515_))
+        (lambda _g24519_
+          (let ((_g24518_ (length _g24519_)))
+            (cond ((fx= _g24518_ 1) (apply gxc#compile-exe-stub__0 _g24519_))
+                  ((fx= _g24518_ 2)
+                   (apply gxc#compile-exe-stub__opt-lambda24474 _g24519_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#compile-exe-stub
-                    _g24515_))))))))
+                    _g24519_))))))))
   (begin
-    (define gxc#compile-static-exe__opt-lambda24456
-      (lambda (_srcpath24458_ _opts24459_)
+    (define gxc#compile-static-exe__opt-lambda24460
+      (lambda (_srcpath24462_ _opts24463_)
         (gxc#do-compile-exe
-         _srcpath24458_
-         _opts24459_
+         _srcpath24462_
+         _opts24463_
          gxc#compile-exe-static-module)))
     (begin
       (define gxc#compile-static-exe__0
-        (lambda (_srcpath24464_)
-          (let ((_opts24466_ '()))
-            (gxc#compile-static-exe__opt-lambda24456
-             _srcpath24464_
-             _opts24466_))))
+        (lambda (_srcpath24468_)
+          (let ((_opts24470_ '()))
+            (gxc#compile-static-exe__opt-lambda24460
+             _srcpath24468_
+             _opts24470_))))
       (define gxc#compile-static-exe
-        (lambda _g24517_
-          (let ((_g24516_ (length _g24517_)))
-            (cond ((fx= _g24516_ 1) (apply gxc#compile-static-exe__0 _g24517_))
-                  ((fx= _g24516_ 2)
-                   (apply gxc#compile-static-exe__opt-lambda24456 _g24517_))
+        (lambda _g24521_
+          (let ((_g24520_ (length _g24521_)))
+            (cond ((fx= _g24520_ 1) (apply gxc#compile-static-exe__0 _g24521_))
+                  ((fx= _g24520_ 2)
+                   (apply gxc#compile-static-exe__opt-lambda24460 _g24521_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#compile-static-exe
-                    _g24517_))))))))
+                    _g24521_))))))))
   (define gxc#do-compile-exe
-    (lambda (_srcpath24446_ _opts24447_ _compile-e24448_)
+    (lambda (_srcpath24450_ _opts24451_ _compile-e24452_)
       (begin
-        (if (string? _srcpath24446_)
+        (if (string? _srcpath24450_)
             '#!void
             (gxc#raise-compile-error
              '"Invalid module source path"
-             _srcpath24446_))
-        (let ((_outdir24450_ (pgetq 'output-dir: _opts24447_))
-              (_invoke-gsc?24451_ (pgetq 'invoke-gsc: _opts24447_))
-              (_gsc-options24452_ (pgetq 'gsc-options: _opts24447_))
-              (_keep-scm?24453_ (pgetq 'keep-scm: _opts24447_))
-              (_verbosity24454_ (pgetq 'verbose: _opts24447_)))
+             _srcpath24450_))
+        (let ((_outdir24454_ (pgetq 'output-dir: _opts24451_))
+              (_invoke-gsc?24455_ (pgetq 'invoke-gsc: _opts24451_))
+              (_gsc-options24456_ (pgetq 'gsc-options: _opts24451_))
+              (_keep-scm?24457_ (pgetq 'keep-scm: _opts24451_))
+              (_verbosity24458_ (pgetq 'verbose: _opts24451_)))
           (begin
-            (if _outdir24450_ (create-directory* _outdir24450_) '#!void)
+            (if _outdir24454_ (create-directory* _outdir24454_) '#!void)
             (call-with-parameters
              (lambda ()
                (begin
-                 (gxc#verbose '"compile exe " _srcpath24446_)
-                 (_compile-e24448_
-                  (gx#import-module__0 _srcpath24446_)
-                  _opts24447_)))
+                 (gxc#verbose '"compile exe " _srcpath24450_)
+                 (_compile-e24452_
+                  (gx#import-module__0 _srcpath24450_)
+                  _opts24451_)))
              gxc#current-compile-output-dir
-             _outdir24450_
+             _outdir24454_
              gxc#current-compile-invoke-gsc
-             _invoke-gsc?24451_
+             _invoke-gsc?24455_
              gxc#current-compile-gsc-options
-             _gsc-options24452_
+             _gsc-options24456_
              gxc#current-compile-keep-scm
-             _keep-scm?24453_
+             _keep-scm?24457_
              gxc#current-compile-verbose
-             _verbosity24454_
+             _verbosity24458_
              gxc#current-compile-timestamp
              (gxc#compile-timestamp)))))))
   (define gxc#compile-exe-stub-module
-    (lambda (_ctx24410_ _opts24411_)
-      (letrec ((_generate-stub24413_
+    (lambda (_ctx24414_ _opts24415_)
+      (letrec ((_generate-stub24417_
                 (lambda ()
-                  (let* ((_mod-str24439_
+                  (let* ((_mod-str24443_
                           (symbol->string
                            (##structure-ref
-                            _ctx24410_
+                            _ctx24414_
                             '1
                             gx#expander-context::t
                             '#f)))
-                         (_mod-rt24441_ (string-append _mod-str24439_ '"__rt"))
-                         (_mod-main24443_
-                          (gxc#find-runtime-symbol _ctx24410_ 'main)))
+                         (_mod-rt24445_ (string-append _mod-str24443_ '"__rt"))
+                         (_mod-main24447_
+                          (gxc#find-runtime-symbol _ctx24414_ 'main)))
                     (begin
                       (write '(##namespace ("")))
                       (newline)
                       (write (cons '_gx#start!
-                                   (cons _mod-rt24441_
+                                   (cons _mod-rt24445_
                                          (cons (cons 'quote
-                                                     (cons _mod-main24443_
+                                                     (cons _mod-main24447_
                                                            '()))
                                                '()))))
                       (newline)))))
-               (_compile-stub24414_
-                (lambda (_output-scm24421_ _output-bin24422_)
-                  (let* ((_init-stub24424_
+               (_compile-stub24418_
+                (lambda (_output-scm24425_ _output-bin24426_)
+                  (let* ((_init-stub24428_
                           (path-expand
                            '"lib/gx-init-exe.scm"
                            (getenv '"GERBIL_HOME")))
-                         (_gxc-cache24426_ (gxc#compile-cache-directory))
-                         (_init-stub24428_
+                         (_gxc-cache24430_ (gxc#compile-cache-directory))
+                         (_init-stub24432_
                           (gxc#compile-cache
-                           _init-stub24424_
-                           _gxc-cache24426_))
-                         (_gsc-args24430_
+                           _init-stub24428_
+                           _gxc-cache24430_))
+                         (_gsc-args24434_
                           (cons '"-exe"
                                 (cons '"-o"
-                                      (cons _output-bin24422_
-                                            (cons _init-stub24428_
-                                                  (cons _output-scm24421_
+                                      (cons _output-bin24426_
+                                            (cons _init-stub24432_
+                                                  (cons _output-scm24425_
                                                         '()))))))
-                         (_g24518_
+                         (_g24522_
                           (gxc#verbose
                            '"invoke gsc "
-                           (cons 'gsc _gsc-args24430_)))
-                         (_proc24433_
+                           (cons 'gsc _gsc-args24434_)))
+                         (_proc24437_
                           (open-process
                            (cons 'path:
                                  (cons '"gsc"
                                        (cons 'arguments:
-                                             (cons _gsc-args24430_
+                                             (cons _gsc-args24434_
                                                    (cons 'stdout-redirection:
                                                          (cons '#f '()))))))))
-                         (_status24435_ (process-status _proc24433_)))
-                    (if (zero? _status24435_)
+                         (_status24439_ (process-status _proc24437_)))
+                    (if (zero? _status24439_)
                         '#!void
                         (gxc#raise-compile-error
                          '"Compilation error; gsc exit with nonzero status"
-                         _output-scm24421_
-                         _output-bin24422_
-                         _status24435_))))))
-        (let* ((_output-bin24416_
-                (gxc#compile-exe-output-file _ctx24410_ _opts24411_))
-               (_output-scm24418_ (string-append _output-bin24416_ '".scm")))
+                         _output-scm24425_
+                         _output-bin24426_
+                         _status24439_))))))
+        (let* ((_output-bin24420_
+                (gxc#compile-exe-output-file _ctx24414_ _opts24415_))
+               (_output-scm24422_ (string-append _output-bin24420_ '".scm")))
           (begin
-            (with-output-to-file _output-scm24418_ _generate-stub24413_)
+            (with-output-to-file _output-scm24422_ _generate-stub24417_)
             (if (gxc#current-compile-invoke-gsc)
-                (_compile-stub24414_ _output-scm24418_ _output-bin24416_)
+                (_compile-stub24418_ _output-scm24422_ _output-bin24420_)
                 '#!void)
             (if (gxc#current-compile-keep-scm)
                 '#!void
-                (delete-file _output-scm24418_)))))))
+                (delete-file _output-scm24422_)))))))
   (define gxc#compile-exe-static-module
-    (lambda (_ctx24342_ _opts24343_)
-      (letrec ((_generate-stub24345_
+    (lambda (_ctx24346_ _opts24347_)
+      (letrec ((_generate-stub24349_
                 (lambda ()
-                  (let ((_mod-main24408_
-                         (gxc#find-runtime-symbol _ctx24342_ 'main)))
+                  (let ((_mod-main24412_
+                         (gxc#find-runtime-symbol _ctx24346_ 'main)))
                     (begin
                       (write '(##namespace ("")))
                       (newline)
                       (write (cons 'apply
-                                   (cons _mod-main24408_
+                                   (cons _mod-main24412_
                                          (cons (cons 'cdr
                                                      (cons (cons 'command-line
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -238,643 +238,657 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                '()))))
                       (newline)))))
-               (_compile-stub24346_
-                (lambda (_output-scm24353_ _output-bin24354_)
-                  (let* ((_gerbil-home24356_ (getenv '"GERBIL_HOME"))
-                         (_gx-version24358_
+               (_compile-stub24350_
+                (lambda (_output-scm24357_ _output-bin24358_)
+                  (let* ((_gerbil-home24360_ (getenv '"GERBIL_HOME"))
+                         (_gx-version24362_
                           (path-expand
                            '"lib/static/gx-version.scm"
-                           _gerbil-home24356_))
-                         (_gx-gambc024360_
+                           _gerbil-home24360_))
+                         (_gx-gambc024364_
                           (path-expand
                            '"lib/static/gx-gambc0.scm"
-                           _gerbil-home24356_))
-                         (_gx-gambc-init24362_
+                           _gerbil-home24360_))
+                         (_gx-gambc-init24366_
                           (path-expand
                            '"lib/gx-init-static-exe.scm"
-                           _gerbil-home24356_))
-                         (_gx-gambc-macros24364_
+                           _gerbil-home24360_))
+                         (_gx-gambc-macros24368_
                           (path-expand
                            '"lib/static/gx-gambc#.scm"
-                           _gerbil-home24356_))
-                         (_include-gx-gambc-macros24366_
+                           _gerbil-home24360_))
+                         (_include-gx-gambc-macros24370_
                           (string-append
                            '"(include \""
-                           _gx-gambc-macros24364_
+                           _gx-gambc-macros24368_
                            '"\")"))
-                         (_bin-scm24368_
-                          (gxc#find-static-module-file _ctx24342_))
-                         (_deps24370_
-                          (gxc#find-runtime-module-deps _ctx24342_))
-                         (_deps24372_
-                          (map gxc#find-static-module-file _deps24370_))
-                         (_deps24377_
-                          (filter (lambda (_$obj24374_)
-                                    (not (gxc#file-empty? _$obj24374_)))
-                                  _deps24372_))
-                         (_gxc-cache24379_ (gxc#compile-cache-directory))
-                         (_g24519_
+                         (_bin-scm24372_
+                          (gxc#find-static-module-file _ctx24346_))
+                         (_deps24374_
+                          (gxc#find-runtime-module-deps _ctx24346_))
+                         (_deps24376_
+                          (map gxc#find-static-module-file _deps24374_))
+                         (_deps24381_
+                          (filter (lambda (_$obj24378_)
+                                    (not (gxc#file-empty? _$obj24378_)))
+                                  _deps24376_))
+                         (_gxc-cache24383_ (gxc#compile-cache-directory))
+                         (_g24523_
                           (gxc#compile-cache
-                           _gx-version24358_
-                           _gxc-cache24379_))
-                         (_gx-gambc024382_
+                           _gx-version24362_
+                           _gxc-cache24383_))
+                         (_gx-gambc024386_
                           (gxc#compile-cache
-                           _gx-gambc024360_
-                           _gxc-cache24379_))
-                         (_gx-gambc-init24384_
+                           _gx-gambc024364_
+                           _gxc-cache24383_))
+                         (_gx-gambc-init24388_
                           (gxc#compile-cache
-                           _gx-gambc-init24362_
-                           _gxc-cache24379_))
-                         (_deps24390_
-                          (map (lambda (_g2438524387_)
+                           _gx-gambc-init24366_
+                           _gxc-cache24383_))
+                         (_deps24394_
+                          (map (lambda (_g2438924391_)
                                  (gxc#compile-cache
-                                  _g2438524387_
-                                  _gxc-cache24379_))
-                               _deps24377_))
-                         (_bin-scm24392_
-                          (gxc#compile-cache _bin-scm24368_ _gxc-cache24379_))
-                         (_gsc-opts24397_
-                          (let ((_$e24394_ (pgetq 'gsc-options: _opts24343_)))
-                            (if _$e24394_ _$e24394_ '())))
-                         (_gsc-args24399_
+                                  _g2438924391_
+                                  _gxc-cache24383_))
+                               _deps24381_))
+                         (_bin-scm24396_
+                          (gxc#compile-cache _bin-scm24372_ _gxc-cache24383_))
+                         (_gsc-opts24401_
+                          (let ((_$e24398_ (pgetq 'gsc-options: _opts24347_)))
+                            (if _$e24398_ _$e24398_ '())))
+                         (_gsc-args24403_
                           (cons '"-exe"
                                 (cons '"-o"
-                                      (cons _output-bin24354_
+                                      (cons _output-bin24358_
                                             (foldr1 cons
                                                     (foldr1 cons
                                                             (cons '"-e"
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (cons _include-gx-gambc-macros24366_
-                                (cons _gx-gambc024382_
-                                      (cons _gx-gambc-init24384_
+                          (cons _include-gx-gambc-macros24370_
+                                (cons _gx-gambc024386_
+                                      (cons _gx-gambc-init24388_
                                             (foldr1 cons
-                                                    (cons _bin-scm24392_
-                                                          (cons _output-scm24353_
+                                                    (cons _bin-scm24396_
+                                                          (cons _output-scm24357_
                                                                 '()))
-                                                    _deps24390_)))))
-                    _gsc-opts24397_)
+                                                    _deps24394_)))))
+                    _gsc-opts24401_)
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (gxc#gsc-debug-options))))))
-                         (_g24520_
+                         (_g24524_
                           (gxc#verbose
                            '"invoke gsc "
-                           (cons 'gsc _gsc-args24399_)))
-                         (_proc24402_
+                           (cons 'gsc _gsc-args24403_)))
+                         (_proc24406_
                           (open-process
                            (cons 'path:
                                  (cons '"gsc"
                                        (cons 'arguments:
-                                             (cons _gsc-args24399_
+                                             (cons _gsc-args24403_
                                                    (cons 'stdout-redirection:
                                                          (cons '#f '()))))))))
-                         (_status24404_ (process-status _proc24402_)))
-                    (if (zero? _status24404_)
+                         (_status24408_ (process-status _proc24406_)))
+                    (if (zero? _status24408_)
                         '#!void
                         (gxc#raise-compile-error
                          '"Compilation error; gsc exit with nonzero status"
-                         _output-scm24353_
-                         _output-bin24354_
-                         _status24404_))))))
-        (let* ((_output-bin24348_
-                (gxc#compile-exe-output-file _ctx24342_ _opts24343_))
-               (_output-scm24350_ (string-append _output-bin24348_ '".scm")))
+                         _output-scm24357_
+                         _output-bin24358_
+                         _status24408_))))))
+        (let* ((_output-bin24352_
+                (gxc#compile-exe-output-file _ctx24346_ _opts24347_))
+               (_output-scm24354_ (string-append _output-bin24352_ '".scm")))
           (begin
-            (with-output-to-file _output-scm24350_ _generate-stub24345_)
+            (with-output-to-file _output-scm24354_ _generate-stub24349_)
             (if (gxc#current-compile-invoke-gsc)
-                (_compile-stub24346_ _output-scm24350_ _output-bin24348_)
+                (_compile-stub24350_ _output-scm24354_ _output-bin24352_)
                 '#!void)
             (if (gxc#current-compile-keep-scm)
                 '#!void
-                (delete-file _output-scm24350_)))))))
+                (delete-file _output-scm24354_)))))))
   (define gxc#compile-cache-directory
     (lambda ()
-      (let* ((_cachedir24337_ (getenv '"GERBIL_CACHE" '"~/.cache/gerbil"))
-             (_gxc-cache24339_ (path-expand '"gxc" _cachedir24337_)))
+      (let* ((_cachedir24341_ (getenv '"GERBIL_CACHE" '"~/.cache/gerbil"))
+             (_gxc-cache24343_ (path-expand '"gxc" _cachedir24341_)))
         (begin
-          (create-directory* _gxc-cache24339_)
-          (path-normalize _gxc-cache24339_)))))
+          (create-directory* _gxc-cache24343_)
+          (path-normalize _gxc-cache24343_)))))
   (define gxc#compile-cache
-    (lambda (_file24331_ _gxc-cache24332_)
-      (let ((_cachefile24334_
+    (lambda (_file24335_ _gxc-cache24336_)
+      (let ((_cachefile24338_
              (path-expand
-              (path-strip-directory _file24331_)
-              _gxc-cache24332_)))
+              (path-strip-directory _file24335_)
+              _gxc-cache24336_)))
         (begin
-          (if (file-exists? _cachefile24334_)
-              (if (file-newer? _file24331_ _cachefile24334_)
+          (if (file-exists? _cachefile24338_)
+              (if (file-newer? _file24335_ _cachefile24338_)
                   (begin
-                    (delete-file _cachefile24334_)
-                    (copy-file _file24331_ _cachefile24334_))
+                    (delete-file _cachefile24338_)
+                    (copy-file _file24335_ _cachefile24338_))
                   '#!void)
-              (copy-file _file24331_ _cachefile24334_))
-          _cachefile24334_))))
+              (copy-file _file24335_ _cachefile24338_))
+          _cachefile24338_))))
   (define gxc#find-export-binding
-    (lambda (_ctx24281_ _id24282_)
-      (let ((_$e24328_
-             (find (lambda (_e2428324285_)
-                     (let* ((_g2428724297_ _e2428324285_)
-                            (_E2429024301_
+    (lambda (_ctx24285_ _id24286_)
+      (let ((_$e24332_
+             (find (lambda (_e2428724289_)
+                     (let* ((_g2429124301_ _e2428724289_)
+                            (_E2429424305_
                              (lambda ()
-                               (error '"No clause matching" _g2428724297_)))
-                            (_else2428924305_ (lambda () '#f))
-                            (_K2429124309_ (lambda () '#t)))
+                               (error '"No clause matching" _g2429124301_)))
+                            (_else2429324309_ (lambda () '#f))
+                            (_K2429524313_ (lambda () '#t)))
                        (if (##structure-direct-instance-of?
-                            _g2428724297_
+                            _g2429124301_
                             (##type-id gx#module-export::t))
-                           (let* ((_e2429224312_
-                                   (##vector-ref _g2428724297_ '1))
-                                  (_e2429324315_
-                                   (##vector-ref _g2428724297_ '2))
-                                  (_e2429424318_
-                                   (##vector-ref _g2428724297_ '3)))
-                             (if (##eq? _e2429424318_ '0)
-                                 (let ((_e2429524321_
-                                        (##vector-ref _g2428724297_ '4)))
-                                   (if ((lambda (_g2432324325_)
-                                          (eq? _g2432324325_ _id24282_))
-                                        _e2429524321_)
-                                       (_K2429124309_)
-                                       (_else2428924305_)))
-                                 (_else2428924305_)))
-                           (_else2428924305_))))
-                   (##structure-ref _ctx24281_ '9 gx#module-context::t '#f))))
-        (if _$e24328_ (gx#core-resolve-module-export _$e24328_) '#f))))
+                           (let* ((_e2429624316_
+                                   (##vector-ref _g2429124301_ '1))
+                                  (_e2429724319_
+                                   (##vector-ref _g2429124301_ '2))
+                                  (_e2429824322_
+                                   (##vector-ref _g2429124301_ '3)))
+                             (if (##eq? _e2429824322_ '0)
+                                 (let ((_e2429924325_
+                                        (##vector-ref _g2429124301_ '4)))
+                                   (if ((lambda (_g2432724329_)
+                                          (eq? _g2432724329_ _id24286_))
+                                        _e2429924325_)
+                                       (_K2429524313_)
+                                       (_else2429324309_)))
+                                 (_else2429324309_)))
+                           (_else2429324309_))))
+                   (##structure-ref _ctx24285_ '9 gx#module-context::t '#f))))
+        (if _$e24332_ (gx#core-resolve-module-export _$e24332_) '#f))))
   (define gxc#find-runtime-symbol
-    (lambda (_ctx24273_ _id24274_)
-      (let ((_$e24276_ (gxc#find-export-binding _ctx24273_ _id24274_)))
-        (if _$e24276_
-            ((lambda (_bind24279_)
+    (lambda (_ctx24277_ _id24278_)
+      (let ((_$e24280_ (gxc#find-export-binding _ctx24277_ _id24278_)))
+        (if _$e24280_
+            ((lambda (_bind24283_)
                (begin
                  (if (##structure-instance-of?
-                      _bind24279_
+                      _bind24283_
                       'gx#runtime-binding::t)
                      '#!void
                      (gxc#raise-compile-error
                       '"export is not a runtime binding"
-                      _id24274_))
-                 (##structure-ref _bind24279_ '1 gx#binding::t '#f)))
-             _$e24276_)
+                      _id24278_))
+                 (##structure-ref _bind24283_ '1 gx#binding::t '#f)))
+             _$e24280_)
             (gxc#raise-compile-error
              '"module does not export symbol"
-             (##structure-ref _ctx24273_ '1 gx#expander-context::t '#f)
-             _id24274_)))))
+             (##structure-ref _ctx24277_ '1 gx#expander-context::t '#f)
+             _id24278_)))))
   (define gxc#find-runtime-module-deps
-    (lambda (_ctx24160_)
-      (letrec* ((_ht24162_ (make-hash-table-eq))
-                (_import-set-template24163_
-                 (lambda (_in24225_ _phi24226_)
-                   (let ((_iphi24228_
-                          (fx+ _phi24226_
+    (lambda (_ctx24164_)
+      (letrec* ((_ht24166_ (make-hash-table-eq))
+                (_import-set-template24167_
+                 (lambda (_in24229_ _phi24230_)
+                   (let ((_iphi24232_
+                          (fx+ _phi24230_
                                (##direct-structure-ref
-                                _in24225_
+                                _in24229_
                                 '2
                                 gx#import-set::t
                                 '#f)))
-                         (_imports24229_
+                         (_imports24233_
                           (##structure-ref
                            (##direct-structure-ref
-                            _in24225_
+                            _in24229_
                             '1
                             gx#import-set::t
                             '#f)
                            '8
                            gx#module-context::t
                            '#f)))
-                     (let _lp24231_ ((_rest24233_ _imports24229_)
-                                     (_r24234_ '()))
-                       (let* ((_rest2423524243_ _rest24233_)
-                              (_E2423824247_
+                     (let _lp24235_ ((_rest24237_ _imports24233_)
+                                     (_r24238_ '()))
+                       (let* ((_rest2423924247_ _rest24237_)
+                              (_E2424224251_
                                (lambda ()
                                  (error '"No clause matching"
-                                        _rest2423524243_)))
-                              (_else2423724251_ (lambda () _r24234_))
-                              (_K2423924261_
-                               (lambda (_rest24254_ _in24255_)
+                                        _rest2423924247_)))
+                              (_else2424124255_ (lambda () _r24238_))
+                              (_K2424324265_
+                               (lambda (_rest24258_ _in24259_)
                                  (if (##structure-instance-of?
-                                      _in24255_
+                                      _in24259_
                                       'gx#module-context::t)
-                                     (if (fxzero? _iphi24228_)
-                                         (_lp24231_
-                                          _rest24254_
-                                          (cons _in24255_ _r24234_))
-                                         (_lp24231_ _rest24254_ _r24234_))
+                                     (if (fxzero? _iphi24232_)
+                                         (_lp24235_
+                                          _rest24258_
+                                          (cons _in24259_ _r24238_))
+                                         (_lp24235_ _rest24258_ _r24238_))
                                      (if (##structure-direct-instance-of?
-                                          _in24255_
+                                          _in24259_
                                           'gx#module-import::t)
-                                         (let ((_iphi24257_
-                                                (fx+ _phi24226_
+                                         (let ((_iphi24261_
+                                                (fx+ _phi24230_
                                                      (##direct-structure-ref
-                                                      _in24255_
+                                                      _in24259_
                                                       '3
                                                       gx#module-import::t
                                                       '#f))))
-                                           (if (fxzero? _iphi24257_)
-                                               (_lp24231_
-                                                _rest24254_
+                                           (if (fxzero? _iphi24261_)
+                                               (_lp24235_
+                                                _rest24258_
                                                 (cons (##direct-structure-ref
                                                        (##direct-structure-ref
-                                                        _in24255_
+                                                        _in24259_
                                                         '1
                                                         gx#module-import::t
                                                         '#f)
                                                        '1
                                                        gx#module-export::t
                                                        '#f)
-                                                      _r24234_))
-                                               (_lp24231_
-                                                _rest24254_
-                                                _r24234_)))
+                                                      _r24238_))
+                                               (_lp24235_
+                                                _rest24258_
+                                                _r24238_)))
                                          (if (##structure-direct-instance-of?
-                                              _in24255_
+                                              _in24259_
                                               'gx#import-set::t)
-                                             (let ((_xphi24259_
-                                                    (fx+ _iphi24228_
+                                             (let ((_xphi24263_
+                                                    (fx+ _iphi24232_
                                                          (##direct-structure-ref
-                                                          _in24255_
+                                                          _in24259_
                                                           '2
                                                           gx#import-set::t
                                                           '#f))))
-                                               (if (fxzero? _xphi24259_)
-                                                   (_lp24231_
-                                                    _rest24254_
+                                               (if (fxzero? _xphi24263_)
+                                                   (_lp24235_
+                                                    _rest24258_
                                                     (cons (##direct-structure-ref
-                                                           _in24255_
+                                                           _in24259_
                                                            '1
                                                            gx#import-set::t
                                                            '#f)
-                                                          _r24234_))
+                                                          _r24238_))
                                                    (if (fxpositive?
-                                                        _xphi24259_)
-                                                       (_lp24231_
-                                                        _rest24254_
+                                                        _xphi24263_)
+                                                       (_lp24235_
+                                                        _rest24258_
                                                         (foldl1 cons
-                                                                _r24234_
-                                                                (_import-set-template24163_
+                                                                _r24238_
+                                                                (_import-set-template24167_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _in24255_
-                         _iphi24228_)))
-               (_lp24231_ _rest24254_ _r24234_))))
+                         _in24259_
+                         _iphi24232_)))
+               (_lp24235_ _rest24258_ _r24238_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                             (_lp24231_
-                                              _rest24254_
-                                              _r24234_)))))))
-                         (if (##pair? _rest2423524243_)
-                             (let ((_hd2424024264_ (##car _rest2423524243_))
-                                   (_tl2424124266_ (##cdr _rest2423524243_)))
-                               (let* ((_in24269_ _hd2424024264_)
-                                      (_rest24271_ _tl2424124266_))
-                                 (_K2423924261_ _rest24271_ _in24269_)))
-                             (_else2423724251_)))))))
-                (_find-deps24164_
-                 (lambda (_rest24171_ _deps24172_)
-                   (let* ((_rest2417324181_ _rest24171_)
-                          (_E2417624185_
+                                             (_lp24235_
+                                              _rest24258_
+                                              _r24238_)))))))
+                         (if (##pair? _rest2423924247_)
+                             (let ((_hd2424424268_ (##car _rest2423924247_))
+                                   (_tl2424524270_ (##cdr _rest2423924247_)))
+                               (let* ((_in24273_ _hd2424424268_)
+                                      (_rest24275_ _tl2424524270_))
+                                 (_K2424324265_ _rest24275_ _in24273_)))
+                             (_else2424124255_)))))))
+                (_find-deps24168_
+                 (lambda (_rest24175_ _deps24176_)
+                   (let* ((_rest2417724185_ _rest24175_)
+                          (_E2418024189_
                            (lambda ()
-                             (error '"No clause matching" _rest2417324181_)))
-                          (_else2417524189_ (lambda () _deps24172_))
-                          (_K2417724213_
-                           (lambda (_rest24192_ _hd24193_)
+                             (error '"No clause matching" _rest2417724185_)))
+                          (_else2417924193_ (lambda () _deps24176_))
+                          (_K2418124217_
+                           (lambda (_rest24196_ _hd24197_)
                              (if (##structure-instance-of?
-                                  _hd24193_
+                                  _hd24197_
                                   'gx#module-context::t)
-                                 (let ((_id24195_
+                                 (let ((_id24199_
                                         (##structure-ref
-                                         _hd24193_
+                                         _hd24197_
                                          '1
                                          gx#expander-context::t
                                          '#f))
-                                       (_imports24196_
+                                       (_imports24200_
                                         (##structure-ref
-                                         _hd24193_
+                                         _hd24197_
                                          '8
                                          gx#module-context::t
                                          '#f)))
-                                   (if (table-ref _ht24162_ _id24195_ '#f)
-                                       (_find-deps24164_
-                                        _rest24192_
-                                        _deps24172_)
-                                       (let ((_$e24198_
+                                   (if (table-ref _ht24166_ _id24199_ '#f)
+                                       (_find-deps24168_
+                                        _rest24196_
+                                        _deps24176_)
+                                       (let ((_$e24202_
                                               (gx#core-context-prelude__opt-lambda13205
-                                               _hd24193_)))
-                                         (if _$e24198_
-                                             ((lambda (_pre24201_)
-                                                (let ((_xdeps24203_
-                                                       (_find-deps24164_
-                                                        (cons _pre24201_
-                                                              _imports24196_)
-                                                        _deps24172_)))
+                                               _hd24197_)))
+                                         (if _$e24202_
+                                             ((lambda (_pre24205_)
+                                                (let ((_xdeps24207_
+                                                       (_find-deps24168_
+                                                        (cons _pre24205_
+                                                              _imports24200_)
+                                                        _deps24176_)))
                                                   (begin
                                                     (table-set!
-                                                     _ht24162_
-                                                     _id24195_
-                                                     _hd24193_)
-                                                    (_find-deps24164_
-                                                     _rest24192_
-                                                     (cons _hd24193_
-                                                           _xdeps24203_)))))
-                                              _$e24198_)
-                                             (let ((_xdeps24205_
-                                                    (_find-deps24164_
-                                                     _imports24196_
-                                                     _deps24172_)))
+                                                     _ht24166_
+                                                     _id24199_
+                                                     _hd24197_)
+                                                    (_find-deps24168_
+                                                     _rest24196_
+                                                     (cons _hd24197_
+                                                           _xdeps24207_)))))
+                                              _$e24202_)
+                                             (let ((_xdeps24209_
+                                                    (_find-deps24168_
+                                                     _imports24200_
+                                                     _deps24176_)))
                                                (begin
                                                  (table-set!
-                                                  _ht24162_
-                                                  _id24195_
-                                                  _hd24193_)
-                                                 (_find-deps24164_
-                                                  _rest24192_
-                                                  (cons _hd24193_
-                                                        _xdeps24205_))))))))
+                                                  _ht24166_
+                                                  _id24199_
+                                                  _hd24197_)
+                                                 (_find-deps24168_
+                                                  _rest24196_
+                                                  (cons _hd24197_
+                                                        _xdeps24209_))))))))
                                  (if (##structure-instance-of?
-                                      _hd24193_
+                                      _hd24197_
                                       'gx#prelude-context::t)
-                                     (let ((_id24207_
+                                     (let ((_id24211_
                                             (##structure-ref
-                                             _hd24193_
+                                             _hd24197_
                                              '1
                                              gx#expander-context::t
                                              '#f)))
-                                       (if (table-ref _ht24162_ _id24207_ '#f)
-                                           (_find-deps24164_
-                                            _rest24192_
-                                            _deps24172_)
-                                           (let ((_xdeps24209_
-                                                  (_find-deps24164_
+                                       (if (table-ref _ht24166_ _id24211_ '#f)
+                                           (_find-deps24168_
+                                            _rest24196_
+                                            _deps24176_)
+                                           (let ((_xdeps24213_
+                                                  (_find-deps24168_
                                                    (##structure-ref
-                                                    _hd24193_
+                                                    _hd24197_
                                                     '7
                                                     gx#prelude-context::t
                                                     '#f)
-                                                   _deps24172_)))
+                                                   _deps24176_)))
                                              (if (table-ref
-                                                  _ht24162_
-                                                  _id24207_
+                                                  _ht24166_
+                                                  _id24211_
                                                   '#f)
-                                                 (_find-deps24164_
-                                                  _rest24192_
-                                                  _xdeps24209_)
+                                                 (_find-deps24168_
+                                                  _rest24196_
+                                                  _xdeps24213_)
                                                  (begin
                                                    (table-set!
-                                                    _ht24162_
-                                                    _id24207_
-                                                    _hd24193_)
-                                                   (_find-deps24164_
-                                                    _rest24192_
-                                                    (cons _hd24193_
-                                                          _xdeps24209_)))))))
+                                                    _ht24166_
+                                                    _id24211_
+                                                    _hd24197_)
+                                                   (_find-deps24168_
+                                                    _rest24196_
+                                                    (cons _hd24197_
+                                                          _xdeps24213_)))))))
                                      (if (##structure-direct-instance-of?
-                                          _hd24193_
+                                          _hd24197_
                                           'gx#module-import::t)
                                          (if (fxzero? (##direct-structure-ref
-                                                       _hd24193_
+                                                       _hd24197_
                                                        '3
                                                        gx#module-import::t
                                                        '#f))
-                                             (_find-deps24164_
+                                             (_find-deps24168_
                                               (cons (##direct-structure-ref
-                                                     _hd24193_
+                                                     _hd24197_
                                                      '1
                                                      gx#module-import::t
                                                      '#f)
-                                                    _rest24192_)
-                                              _deps24172_)
-                                             (_find-deps24164_
-                                              _rest24192_
-                                              _deps24172_))
+                                                    _rest24196_)
+                                              _deps24176_)
+                                             (_find-deps24168_
+                                              _rest24196_
+                                              _deps24176_))
                                          (if (##structure-direct-instance-of?
-                                              _hd24193_
+                                              _hd24197_
                                               'gx#module-export::t)
-                                             (_find-deps24164_
+                                             (_find-deps24168_
                                               (cons (##direct-structure-ref
-                                                     _hd24193_
+                                                     _hd24197_
                                                      '1
                                                      gx#module-export::t
                                                      '#f)
-                                                    _rest24192_)
-                                              _deps24172_)
+                                                    _rest24196_)
+                                              _deps24176_)
                                              (if (##structure-direct-instance-of?
-                                                  _hd24193_
+                                                  _hd24197_
                                                   'gx#import-set::t)
                                                  (if (fxzero? (##direct-structure-ref
-                                                               _hd24193_
+                                                               _hd24197_
                                                                '2
                                                                gx#import-set::t
                                                                '#f))
-                                                     (_find-deps24164_
+                                                     (_find-deps24168_
                                                       (cons (##direct-structure-ref
-                                                             _hd24193_
+                                                             _hd24197_
                                                              '1
                                                              gx#import-set::t
                                                              '#f)
-                                                            _rest24192_)
-                                                      _deps24172_)
+                                                            _rest24196_)
+                                                      _deps24176_)
                                                      (if (fxpositive?
                                                           (##direct-structure-ref
-                                                           _hd24193_
+                                                           _hd24197_
                                                            '2
                                                            gx#import-set::t
                                                            '#f))
-                                                         (let ((_xdeps24211_
-                                                                (_import-set-template24163_
+                                                         (let ((_xdeps24215_
+                                                                (_import-set-template24167_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _hd24193_
+                         _hd24197_
                          '0)))
-                   (_find-deps24164_
-                    (foldl1 cons _rest24192_ _xdeps24211_)
-                    _deps24172_))
-                 (_find-deps24164_ _rest24192_ _deps24172_)))
+                   (_find-deps24168_
+                    (foldl1 cons _rest24196_ _xdeps24215_)
+                    _deps24176_))
+                 (_find-deps24168_ _rest24196_ _deps24176_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (error '"Unexpected module import"
-                                                        _hd24193_)))))))))
-                     (if (##pair? _rest2417324181_)
-                         (let ((_hd2417824216_ (##car _rest2417324181_))
-                               (_tl2417924218_ (##cdr _rest2417324181_)))
-                           (let* ((_hd24221_ _hd2417824216_)
-                                  (_rest24223_ _tl2417924218_))
-                             (_K2417724213_ _rest24223_ _hd24221_)))
-                         (_else2417524189_))))))
+                                                        _hd24197_)))))))))
+                     (if (##pair? _rest2417724185_)
+                         (let ((_hd2418224220_ (##car _rest2417724185_))
+                               (_tl2418324222_ (##cdr _rest2417724185_)))
+                           (let* ((_hd24225_ _hd2418224220_)
+                                  (_rest24227_ _tl2418324222_))
+                             (_K2418124217_ _rest24227_ _hd24225_)))
+                         (_else2417924193_))))))
         (reverse (filter gx#expander-context-id
-                         (_find-deps24164_
-                          (let ((_$e24166_
+                         (_find-deps24168_
+                          (let ((_$e24170_
                                  (gx#core-context-prelude__opt-lambda13205
-                                  _ctx24160_)))
-                            (if _$e24166_
-                                ((lambda (_pre24169_)
-                                   (cons _pre24169_
+                                  _ctx24164_)))
+                            (if _$e24170_
+                                ((lambda (_pre24173_)
+                                   (cons _pre24173_
                                          (##structure-ref
-                                          _ctx24160_
+                                          _ctx24164_
                                           '8
                                           gx#module-context::t
                                           '#f)))
-                                 _$e24166_)
+                                 _$e24170_)
                                 (##structure-ref
-                                 _ctx24160_
+                                 _ctx24164_
                                  '8
                                  gx#module-context::t
                                  '#f)))
                           '()))))))
   (define gxc#find-static-module-file
-    (lambda (_ctx24099_)
-      (let* ((_scm24101_
+    (lambda (_ctx24103_)
+      (let* ((_scm24105_
               (string-append
                (gxc#static-module-name
-                (##structure-ref _ctx24099_ '1 gx#expander-context::t '#f))
+                (##structure-ref _ctx24103_ '1 gx#expander-context::t '#f))
                '".scm"))
-             (_dirs24103_ (gx#current-expander-module-library-path))
-             (_dirs24112_
-              (let ((_$e24105_ (gxc#current-compile-output-dir)))
-                (if _$e24105_
-                    ((lambda (_g2410724109_) (cons _g2410724109_ _dirs24103_))
-                     _$e24105_)
-                    _dirs24103_)))
-             (_dirs24118_
-              (map (lambda (_g2411324115_)
-                     (path-expand '"static" _g2411324115_))
-                   _dirs24112_)))
-        (let _lp24121_ ((_rest24123_ _dirs24118_))
-          (let* ((_rest2412424132_ _rest24123_)
-                 (_E2412724136_
-                  (lambda () (error '"No clause matching" _rest2412424132_)))
-                 (_else2412624140_
+             (_dirs24107_ (gx#current-expander-module-library-path))
+             (_dirs24116_
+              (let ((_$e24109_ (gxc#current-compile-output-dir)))
+                (if _$e24109_
+                    ((lambda (_g2411124113_) (cons _g2411124113_ _dirs24107_))
+                     _$e24109_)
+                    _dirs24107_)))
+             (_dirs24122_
+              (map (lambda (_g2411724119_)
+                     (path-expand '"static" _g2411724119_))
+                   _dirs24116_)))
+        (let _lp24125_ ((_rest24127_ _dirs24122_))
+          (let* ((_rest2412824136_ _rest24127_)
+                 (_E2413124140_
+                  (lambda () (error '"No clause matching" _rest2412824136_)))
+                 (_else2413024144_
                   (lambda ()
                     (gxc#raise-compile-error
                      '"cannot find static module"
-                     (##structure-ref _ctx24099_ '1 gx#expander-context::t '#f)
-                     _scm24101_)))
-                 (_K2412824148_
-                  (lambda (_rest24143_ _dir24144_)
-                    (let ((_path24146_ (path-expand _scm24101_ _dir24144_)))
-                      (if (file-exists? _path24146_)
-                          _path24146_
-                          (_lp24121_ _rest24143_))))))
-            (if (##pair? _rest2412424132_)
-                (let ((_hd2412924151_ (##car _rest2412424132_))
-                      (_tl2413024153_ (##cdr _rest2412424132_)))
-                  (let* ((_dir24156_ _hd2412924151_)
-                         (_rest24158_ _tl2413024153_))
-                    (_K2412824148_ _rest24158_ _dir24156_)))
-                (_else2412624140_)))))))
+                     (##structure-ref _ctx24103_ '1 gx#expander-context::t '#f)
+                     _scm24105_)))
+                 (_K2413224152_
+                  (lambda (_rest24147_ _dir24148_)
+                    (let ((_path24150_ (path-expand _scm24105_ _dir24148_)))
+                      (if (file-exists? _path24150_)
+                          _path24150_
+                          (_lp24125_ _rest24147_))))))
+            (if (##pair? _rest2412824136_)
+                (let ((_hd2413324155_ (##car _rest2412824136_))
+                      (_tl2413424157_ (##cdr _rest2412824136_)))
+                  (let* ((_dir24160_ _hd2413324155_)
+                         (_rest24162_ _tl2413424157_))
+                    (_K2413224152_ _rest24162_ _dir24160_)))
+                (_else2413024144_)))))))
   (define gxc#file-empty?
-    (lambda (_path24097_)
-      (zero? (file-info-size (file-info _path24097_ '#t)))))
+    (lambda (_path24101_)
+      (zero? (file-info-size (file-info _path24101_ '#t)))))
   (define gxc#compile-top-module
-    (lambda (_ctx24094_)
+    (lambda (_ctx24098_)
       (call-with-parameters
        (lambda ()
          (begin
            (gxc#verbose
             '"compile "
-            (##structure-ref _ctx24094_ '1 gx#expander-context::t '#f))
+            (##structure-ref _ctx24098_ '1 gx#expander-context::t '#f))
            (if (gxc#current-compile-optimize)
-               (gxc#optimize! _ctx24094_)
+               (gxc#optimize! _ctx24098_)
                '#!void)
-           (gxc#collect-bindings _ctx24094_)
-           (gxc#compile-runtime-code _ctx24094_)
-           (gxc#compile-meta-code _ctx24094_)
+           (gxc#collect-bindings _ctx24098_)
+           (gxc#compile-runtime-code _ctx24098_)
+           (gxc#compile-meta-code _ctx24098_)
            (if (if (gxc#current-compile-optimize)
                    (gxc#current-compile-generate-ssxi)
                    '#f)
-               (gxc#compile-ssxi-code _ctx24094_)
+               (gxc#compile-ssxi-code _ctx24098_)
                '#!void)))
        gx#current-expander-context
-       _ctx24094_
+       _ctx24098_
        gx#current-expander-phi
        '0
        gx#current-expander-marks
        '()
        gxc#current-compile-symbol-table
-       (let ((__obj24510 (make-object gxc#symbol-table::t '2)))
-         (begin (gxc#symbol-table:::init! __obj24510) __obj24510))
+       (let ((__obj24514 (make-object gxc#symbol-table::t '2)))
+         (begin (gxc#symbol-table:::init! __obj24514) __obj24514))
        gxc#current-compile-runtime-sections
        (make-hash-table-eq)
        gxc#current-compile-runtime-names
        (make-table))))
   (define gxc#collect-bindings
-    (lambda (_ctx24092_)
+    (lambda (_ctx24096_)
       (gxc#apply-collect-bindings
-       (##structure-ref _ctx24092_ '11 gx#module-context::t '#f))))
+       (##structure-ref _ctx24096_ '11 gx#module-context::t '#f))))
   (define gxc#compile-runtime-code
     (lambda (_ctx24051_)
       (letrec ((_compile124053_
-                (lambda (_ctx24081_)
-                  (let* ((_code24083_
+                (lambda (_ctx24085_)
+                  (let* ((_code24087_
                           (##structure-ref
-                           _ctx24081_
+                           _ctx24085_
                            '11
                            gx#module-context::t
                            '#f))
-                         (_rt24087_
-                          (if (gxc#apply-find-runtime-code _code24083_)
-                              (let ((_idstr24085_
+                         (_rt24091_
+                          (if (gxc#apply-find-runtime-code _code24087_)
+                              (let ((_idstr24089_
                                      (symbol->string
                                       (##structure-ref
-                                       _ctx24081_
+                                       _ctx24085_
                                        '1
                                        gx#expander-context::t
                                        '#f))))
-                                (string-append _idstr24085_ '"__0"))
+                                (string-append _idstr24089_ '"__0"))
                               '#f)))
                     (begin
-                      (if _rt24087_
+                      (if _rt24091_
                           (begin
                             (table-set!
                              (gxc#current-compile-runtime-sections)
-                             _ctx24081_
-                             _rt24087_)
+                             _ctx24085_
+                             _rt24091_)
                             (_generate-runtime-code24054_
-                             _ctx24081_
-                             _code24083_))
+                             _ctx24085_
+                             _code24087_))
                           (if (gxc#current-compile-static)
-                              (let ((_path24090_
+                              (let ((_path24094_
                                      (gxc#compile-static-output-file
-                                      _ctx24081_)))
+                                      _ctx24085_)))
                                 (with-output-to-file
                                  (cons 'path:
-                                       (cons _path24090_
+                                       (cons _path24094_
                                              (cons 'permissions:
                                                    (cons '420 '()))))
                                  void))
                               '#!void))
                       (_generate-loader-code24055_
-                       _ctx24081_
-                       _code24083_
-                       _rt24087_)))))
+                       _ctx24085_
+                       _code24087_
+                       _rt24091_)))))
                (_generate-runtime-code24054_
                 (lambda (_ctx24069_ _code24070_)
-                  (let* ((_runtime-code24073_
+                  (let* ((_lifts24072_ (box '()))
+                         (_runtime-code24075_
                           (call-with-parameters
                            (lambda () (gxc#apply-generate-runtime _code24070_))
                            gx#current-expander-context
-                           _ctx24069_))
-                         (_scm024075_
+                           _ctx24069_
+                           gx#current-expander-phi
+                           '0
+                           gxc#current-compile-lift
+                           _lifts24072_
+                           gxc#current-compile-marks
+                           (make-hash-table-eq)))
+                         (_runtime-code24077_
+                          (if (null? (unbox _lifts24072_))
+                              _runtime-code24075_
+                              (cons 'begin
+                                    (foldr1 cons
+                                            (cons _runtime-code24075_ '())
+                                            (reverse (unbox _lifts24072_))))))
+                         (_scm024079_
                           (gxc#compile-output-file _ctx24069_ '0 '".scm")))
                     (if (gxc#current-compile-static)
-                        (let ((_scms24078_
+                        (let ((_scms24082_
                                (gxc#compile-static-output-file _ctx24069_)))
                           (begin
                             (call-with-parameters
                              (lambda ()
                                (gxc#compile-scm-file
-                                _scm024075_
-                                _runtime-code24073_))
+                                _scm024079_
+                                _runtime-code24077_))
                              gxc#current-compile-keep-scm
                              '#t)
-                            (if (file-exists? _scms24078_)
-                                (delete-file _scms24078_)
+                            (if (file-exists? _scms24082_)
+                                (delete-file _scms24082_)
                                 '#!void)
                             (gxc#verbose
                              '"copy static module "
-                             _scm024075_
+                             _scm024079_
                              '" => "
-                             _scms24078_)
-                            (copy-file _scm024075_ _scms24078_)
+                             _scms24082_)
+                            (copy-file _scm024079_ _scms24082_)
                             (if (gxc#current-compile-keep-scm)
                                 '#!void
-                                (delete-file _scm024075_))))
+                                (delete-file _scm024079_))))
                         (gxc#compile-scm-file
-                         _scm024075_
-                         _runtime-code24073_)))))
+                         _scm024079_
+                         _runtime-code24077_)))))
                (_generate-loader-code24055_
                 (lambda (_ctx24059_ _code24060_ _rt24061_)
                   (let* ((_loader-code24064_
@@ -1027,13 +1041,13 @@
                                         (_E2396423979_))))
                                 (_E2396423979_))))
                         (_E2396423979_))))))
-        (let ((_g24521_ (gxc#generate-meta-code _ctx23953_)))
+        (let ((_g24525_ (gxc#generate-meta-code _ctx23953_)))
           (begin
-            (let ((_g24522_ (values-count _g24521_)))
-              (if (not (fx= _g24522_ 2))
-                  (error "Context expects 2 values" _g24522_)))
-            (let ((_ssi-code23958_ (values-ref _g24521_ 0))
-                  (_phi-code23959_ (values-ref _g24521_ 1)))
+            (let ((_g24526_ (values-count _g24525_)))
+              (if (not (fx= _g24526_ 2))
+                  (error "Context expects 2 values" _g24526_)))
+            (let ((_ssi-code23958_ (values-ref _g24525_ 0))
+                  (_phi-code23959_ (values-ref _g24525_ 1)))
               (begin
                 (_compile-ssi23955_ _ssi-code23958_)
                 (for-each _compile-phi23956_ _phi-code23959_))))))))
@@ -1067,10 +1081,10 @@
   (define gxc#generate-meta-code
     (lambda (_ctx23929_)
       (let* ((_state23931_
-              (let ((__obj24511 (make-object gxc#meta-state::t '4)))
+              (let ((__obj24515 (make-object gxc#meta-state::t '4)))
                 (begin
-                  (gxc#meta-state:::init! __obj24511 _ctx23929_)
-                  __obj24511)))
+                  (gxc#meta-state:::init! __obj24515 _ctx23929_)
+                  __obj24515)))
              (_ssi-code23933_
               (gxc#apply-generate-meta
                (##structure-ref _ctx23929_ '11 gx#module-context::t '#f)
@@ -1146,7 +1160,7 @@
                     (cons _path23888_ '()))))
              (_gsc-args23897_
               (foldr1 cons _gsc-args23895_ (gxc#gsc-debug-options)))
-             (_g24523_
+             (_g24527_
               (gxc#verbose '"invoke gsc " (cons 'gsc _gsc-args23897_)))
              (_proc23900_
               (open-process

@@ -231,6 +231,7 @@ namespace: gxc
   (%#letrec-values           generate-runtime-letrec-values%)
   (%#letrec*-values          generate-runtime-letrec*-values%)
   (%#quote                   generate-runtime-quote%)
+  (%#quote-syntax            generate-runtime-quote-syntax%)
   (%#call                    generate-runtime-call%)
   (%#if                      generate-runtime-if%)
   (%#ref                     generate-runtime-ref%)
@@ -246,7 +247,6 @@ namespace: gxc
 
 (defcompile-method apply-generate-runtime-phi (&generate-runtime-phi
                                                &generate-runtime)
-  (%#quote-syntax   generate-runtime-phi-quote-syntax%)
   (%#define-runtime generate-runtime-phi-define-runtime%))
 
 (defcompile-method apply-collect-expression-refs &collect-expression-refs
@@ -1013,7 +1013,7 @@ namespace: gxc
             ['begin (map (cut list 'load-module <>) (reverse loads)) ...])))))))
 
 ;;; runtime-phi
-(def (generate-runtime-phi-quote-syntax% stx)
+(def (generate-runtime-quote-syntax% stx)
   (def (add-lift! expr)
     (set! (box (current-compile-lift))
       (cons expr (unbox (current-compile-lift)))))

@@ -366,6 +366,10 @@
             '%#letrec*-values
             gxc#generate-runtime-letrec*-values%)
            (table-set! _tbl11984_ '%#quote gxc#generate-runtime-quote%)
+           (table-set!
+            _tbl11984_
+            '%#quote-syntax
+            gxc#generate-runtime-quote-syntax%)
            (table-set! _tbl11984_ '%#call gxc#generate-runtime-call%)
            (table-set! _tbl11984_ '%#if gxc#generate-runtime-if%)
            (table-set! _tbl11984_ '%#ref gxc#generate-runtime-ref%)
@@ -415,10 +419,6 @@
        (let ((_tbl11974_ (make-hash-table-eq)))
          (begin
            (hash-copy! _tbl11974_ (force gxc#&generate-runtime))
-           (table-set!
-            _tbl11974_
-            '%#quote-syntax
-            gxc#generate-runtime-phi-quote-syntax%)
            (table-set!
             _tbl11974_
             '%#define-runtime
@@ -5440,7 +5440,7 @@
                            _tl55925607_)))
                       (_g55875597_ _g55885600_)))))
           (_g55865678_ _stx5583_)))))
-  (define gxc#generate-runtime-phi-quote-syntax%
+  (define gxc#generate-runtime-quote-syntax%
     (lambda (_stx5406_)
       (letrec ((_add-lift!5408_
                 (lambda (_expr5581_)

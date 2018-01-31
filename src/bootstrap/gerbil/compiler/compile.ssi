@@ -9,16 +9,16 @@ namespace: gxc
           (in: :gerbil/core <syntax-sugar>)
           (spec:
            (:gerbil/gambit/hvectors)
-           (0 f64vector? 0 f64vector?)
-           (0 u16vector? 0 u16vector?)
-           (0 s8vector? 0 s8vector?)
-           (0 u8vector? 0 u8vector?)
+           (0 f32vector? 0 f32vector?)
            (0 u32vector? 0 u32vector?)
+           (0 s8vector? 0 s8vector?)
+           (0 u16vector? 0 u16vector?)
+           (0 u8vector? 0 u8vector?)
            (0 u64vector? 0 u64vector?)
-           (0 s32vector? 0 s32vector?)
-           (0 s16vector? 0 s16vector?)
            (0 s64vector? 0 s64vector?)
-           (0 f32vector? 0 f32vector?)))
+           (0 f64vector? 0 f64vector?)
+           (0 s16vector? 0 s16vector?)
+           (0 s32vector? 0 s32vector?)))
          (%#export #t)
          (%#define-runtime current-compile-methods gxc#current-compile-methods)
          (%#define-runtime current-compile-lift gxc#current-compile-lift)
@@ -207,8 +207,8 @@ namespace: gxc
           generate-runtime-loader-import%
           gxc#generate-runtime-loader-import%)
          (%#define-runtime
-          generate-runtime-phi-quote-syntax%
-          gxc#generate-runtime-phi-quote-syntax%)
+          generate-runtime-quote-syntax%
+          gxc#generate-runtime-quote-syntax%)
          (%#define-runtime
           generate-runtime-phi-define-runtime%
           gxc#generate-runtime-phi-define-runtime%)
