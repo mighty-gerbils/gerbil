@@ -198,17 +198,25 @@
              (cons `(,(_gx#compile-head-id id) ,(car exprs)) bind)
              post))
         ((hd . rest)
-         (&AST-list? hd)
-         (let* ((hd (&AST->list hd))
-                (len (length hd))
-                (tmp (&SRC (gensym))))
+         (cond
+          ((&AST-id? hd)
            (lp rest (cdr exprs)
-               (cons `(,tmp ,(car exprs)) bind)
-               (cons (cons* tmp len
-                            (filter-map (lambda (id k)
-                                          (and (&AST-e id) (cons (&SRC id) k)))
-                                        hd (iota len)))
-                     post))))
+               (cons `(,(_gx#compile-head-id hd) (values->list ,(car exprs)))
+                     bind)
+               post))
+          ((&AST-list? hd)
+           (let* ((hd (&AST->list hd))
+                  (len (length hd))
+                  (tmp (&SRC (gensym))))
+             (lp rest (cdr exprs)
+                 (cons `(,tmp ,(car exprs)) bind)
+                 (cons (cons* tmp len
+                              (filter-map (lambda (id k)
+                                            (and (&AST-e id) (cons (&SRC id) k)))
+                                          hd (iota len)))
+                       post))))
+          (else
+           (_gx#compile-error stx hd))))
         (else
          (&SRC
           `(##let ,(reverse bind)
@@ -250,19 +258,29 @@
              (cons `(,(_gx#compile-head-id id) ,(car exprs)) bind)
              post))
         ((hd . rest)
-         (let* ((hd (&AST->list hd))
-                (len (length hd))
-                (tmp (&SRC (gensym))))
+         (cond
+          ((&AST-id? hd)
            (lp rest (cdr exprs)
-               (foldl (lambda (id r)
-                        (if (&AST-e id) (cons `(,(&SRC id) #!void) r) r))
-                      pre hd)
-               (cons `(,tmp ,(car exprs)) bind)
-               (cons (cons* tmp len
-                            (filter-map (lambda (id k)
-                                          (and (&AST-e id) (cons (&SRC id) k)))
-                                        hd (iota len)))
-                     post))))
+               pre
+               (cons `(,(_gx#compile-head-id hd) (values->list ,(car exprs)))
+                     bind)
+               post))
+          ((&AST-list? hd)
+           (let* ((hd (&AST->list hd))
+                  (len (length hd))
+                  (tmp (&SRC (gensym))))
+             (lp rest (cdr exprs)
+                 (foldl (lambda (id r)
+                          (if (&AST-e id) (cons `(,(&SRC id) #!void) r) r))
+                        pre hd)
+                 (cons `(,tmp ,(car exprs)) bind)
+                 (cons (cons* tmp len
+                              (filter-map (lambda (id k)
+                                            (and (&AST-e id) (cons (&SRC id) k)))
+                                          hd (iota len)))
+                       post))))
+          (else
+           (_gx#compile-error stx hd))))
         (else
          (compile-inner pre bind post body)))))
 
@@ -317,18 +335,27 @@
            (lp rest (cdr exprs) bind
                (cons `(#f ,(car exprs)) post))))
         ((hd . rest)
-         (let* ((hd (&AST->list hd))
-                (len (length hd))
-                (tmp (&SRC (gensym))))
-           (lp rest (cdr exprs)
-               (foldl (lambda (id r)
-                        (if (&AST-e id) (cons `(,(&SRC id) #!void) r) r))
-                      bind hd)
-               (cons (cons* tmp (car exprs) len
-                            (filter-map (lambda (id k)
-                                          (and (&AST-e id) (cons (&SRC id) k)))
-                                        hd (iota len)))
-                     post))))
+         (cond
+          ((&AST-id? hd)
+           (let ((id (&SRC hd)))
+             (lp rest (cdr exprs)
+                 (cons `(,id #!void) bind)
+                 (cons `(,id (values->list ,(car exprs))) post))))
+          ((&AST-list? hd)
+           (let* ((hd (&AST->list hd))
+                  (len (length hd))
+                  (tmp (&SRC (gensym))))
+             (lp rest (cdr exprs)
+                 (foldl (lambda (id r)
+                          (if (&AST-e id) (cons `(,(&SRC id) #!void) r) r))
+                        bind hd)
+                 (cons (cons* tmp (car exprs) len
+                              (filter-map (lambda (id k)
+                                            (and (&AST-e id) (cons (&SRC id) k)))
+                                          hd (iota len)))
+                       post))))
+          (else
+           (_gx#compile-error stx hd))))
         (else
          (compile-bind bind post body)))))
 
