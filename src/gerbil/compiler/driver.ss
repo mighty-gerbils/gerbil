@@ -340,9 +340,17 @@ namespace: gxc
       (generate-loader-code ctx code rt)))
 
   (def (generate-runtime-code ctx code)
-    (let* ((runtime-code
-            (parameterize ((current-expander-context ctx))
+    (let* ((lifts (box []))
+           (runtime-code
+            (parameterize ((current-expander-context ctx)
+                           (current-expander-phi 0)
+                           (current-compile-lift lifts)
+                           (current-compile-marks (make-hash-table-eq)))
               (apply-generate-runtime code)))
+           (runtime-code
+            (if (null? (unbox lifts))
+              runtime-code
+              ['begin (reverse (unbox lifts)) ... runtime-code]))
            (scm0 (compile-output-file ctx 0 ".scm")))
       (if (current-compile-static)
         (let (scms (compile-static-output-file ctx))
