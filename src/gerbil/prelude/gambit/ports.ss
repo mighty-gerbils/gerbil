@@ -45,7 +45,18 @@ package: gerbil/gambit
   socket-info-address
   tcp-client-peer-socket-info
   tcp-client-self-socket-info
+  tcp-client-local-socket-info ; v4.8.8-20180130
   tcp-server-socket-info
+
+  ;; UDP v4.8.8-20180130
+  open-udp
+  udp-destination-set!
+  udp-local-socket-info
+  udp-read-subu8vector
+  udp-read-u8vector
+  udp-source-socket-info
+  udp-write-subu8vector
+  udp-write-u8vector
 
   open-directory
 
