@@ -163,7 +163,7 @@ package: scheme
   quasiquote
   quote
   quotient
-  raise
+  (rename: r7rs-raise raise)
   raise-continuable
   rational?
   rationalize
@@ -234,7 +234,7 @@ package: scheme
   vector-set!
   vector->string
   when
-  with-exception-handler
+  (rename: r7rs-with-exception-handler with-exception-handler)
   write-bytevector
   write-char
   write-string

@@ -189,7 +189,7 @@ $ gxi
 
 - The following procedures from `(scheme base)` are not implemented:
 ```
-raise-continuable input-port-open? output-port-open?
+input-port-open? output-port-open?
 ```
 
 - The following procedures from `(scheme char)` are not implemented:
