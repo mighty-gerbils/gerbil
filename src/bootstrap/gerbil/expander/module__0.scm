@@ -10,8 +10,8 @@
      '#f))
   (define gx#module-import? (make-struct-predicate gx#module-import::t))
   (define gx#make-module-import
-    (lambda _$args14082_
-      (apply make-struct-instance gx#module-import::t _$args14082_)))
+    (lambda _$args14204_
+      (apply make-struct-instance gx#module-import::t _$args14204_)))
   (define gx#module-import-source
     (make-struct-field-accessor gx#module-import::t '0))
   (define gx#module-import-name
@@ -38,8 +38,8 @@
      '#f))
   (define gx#module-export? (make-struct-predicate gx#module-export::t))
   (define gx#make-module-export
-    (lambda _$args14079_
-      (apply make-struct-instance gx#module-export::t _$args14079_)))
+    (lambda _$args14201_
+      (apply make-struct-instance gx#module-export::t _$args14201_)))
   (define gx#module-export-context
     (make-struct-field-accessor gx#module-export::t '0))
   (define gx#module-export-key
@@ -70,8 +70,8 @@
      '#f))
   (define gx#import-set? (make-struct-predicate gx#import-set::t))
   (define gx#make-import-set
-    (lambda _$args14076_
-      (apply make-struct-instance gx#import-set::t _$args14076_)))
+    (lambda _$args14198_
+      (apply make-struct-instance gx#import-set::t _$args14198_)))
   (define gx#import-set-source
     (make-struct-field-accessor gx#import-set::t '0))
   (define gx#import-set-phi (make-struct-field-accessor gx#import-set::t '1))
@@ -93,8 +93,8 @@
      '#f))
   (define gx#export-set? (make-struct-predicate gx#export-set::t))
   (define gx#make-export-set
-    (lambda _$args14073_
-      (apply make-struct-instance gx#export-set::t _$args14073_)))
+    (lambda _$args14195_
+      (apply make-struct-instance gx#export-set::t _$args14195_)))
   (define gx#export-set-source
     (make-struct-field-accessor gx#export-set::t '0))
   (define gx#export-set-phi (make-struct-field-accessor gx#export-set::t '1))
@@ -107,152 +107,164 @@
   (define gx#export-set-exports-set!
     (make-struct-field-mutator gx#export-set::t '2))
   (define gx#import-expander::t
-    (make-struct-type
+    (make-class-type
      'gx#import-expander::t
-     gx#user-expander::t
-     '0
+     (cons gx#user-expander::t '())
+     '()
      'import-expander
      '()
      ':init!))
-  (define gx#import-expander? (make-struct-predicate gx#import-expander::t))
+  (define gx#import-expander? (make-class-predicate gx#import-expander::t))
   (define gx#make-import-expander
-    (lambda _$args14070_
-      (apply make-struct-instance gx#import-expander::t _$args14070_)))
+    (lambda _$args14192_
+      (apply make-class-instance gx#import-expander::t _$args14192_)))
   (define gx#export-expander::t
-    (make-struct-type
+    (make-class-type
      'gx#export-expander::t
-     gx#user-expander::t
-     '0
+     (cons gx#user-expander::t '())
+     '()
      'export-expander
      '()
      ':init!))
-  (define gx#export-expander? (make-struct-predicate gx#export-expander::t))
+  (define gx#export-expander? (make-class-predicate gx#export-expander::t))
   (define gx#make-export-expander
-    (lambda _$args14067_
-      (apply make-struct-instance gx#export-expander::t _$args14067_)))
+    (lambda _$args14189_
+      (apply make-class-instance gx#export-expander::t _$args14189_)))
+  (define gx#import-export-expander::t
+    (make-class-type
+     'gx#import-export-expander::t
+     (cons gx#import-expander::t (cons gx#export-expander::t '()))
+     '()
+     'import-export-expander
+     '()
+     ':init!))
+  (define gx#import-export-expander?
+    (make-class-predicate gx#import-export-expander::t))
+  (define gx#make-import-export-expander
+    (lambda _$args14186_
+      (apply make-class-instance gx#import-export-expander::t _$args14186_)))
   (define gx#current-import-expander-phi (make-parameter '#f))
   (define gx#current-export-expander-phi (make-parameter '#f))
   (define gx#current-module-reader-path (make-parameter '#f))
   (define gx#current-module-reader-args (make-parameter '#f))
   (define gx#module-context:::init!
-    (lambda (_self14061_ _id14062_ _super14063_ _ns14064_ _path14065_)
-      (if (##fx< '11 (##vector-length _self14061_))
+    (lambda (_self14180_ _id14181_ _super14182_ _ns14183_ _path14184_)
+      (if (##fx< '11 (##vector-length _self14180_))
           (begin
-            (##vector-set! _self14061_ '1 _id14062_)
-            (##vector-set! _self14061_ '2 (make-hash-table-eq))
-            (##vector-set! _self14061_ '3 _super14063_)
-            (##vector-set! _self14061_ '4 '#f)
-            (##vector-set! _self14061_ '5 '#f)
-            (##vector-set! _self14061_ '6 _ns14064_)
-            (##vector-set! _self14061_ '7 _path14065_)
-            (##vector-set! _self14061_ '8 '())
-            (##vector-set! _self14061_ '9 '())
-            (##vector-set! _self14061_ '10 '#f)
-            (##vector-set! _self14061_ '11 '#f))
+            (##vector-set! _self14180_ '1 _id14181_)
+            (##vector-set! _self14180_ '2 (make-hash-table-eq))
+            (##vector-set! _self14180_ '3 _super14182_)
+            (##vector-set! _self14180_ '4 '#f)
+            (##vector-set! _self14180_ '5 '#f)
+            (##vector-set! _self14180_ '6 _ns14183_)
+            (##vector-set! _self14180_ '7 _path14184_)
+            (##vector-set! _self14180_ '8 '())
+            (##vector-set! _self14180_ '9 '())
+            (##vector-set! _self14180_ '10 '#f)
+            (##vector-set! _self14180_ '11 '#f))
           (error '"struct-instance-init!: too many arguments for struct"
-                 _self14061_))))
+                 _self14180_))))
   (bind-method! gx#module-context::t ':init! gx#module-context:::init! '#f)
   (begin
-    (define gx#prelude-context:::init!__opt-lambda13903
-      (lambda (_self13905_ _ctx13906_ _root13907_)
-        (let ((_super13915_
-               (let ((_$e13909_ _root13907_))
-                 (if _$e13909_
-                     _$e13909_
-                     (let ((_$e13912_ (gx#core-context-root__0)))
-                       (if _$e13912_
-                           _$e13912_
+    (define gx#prelude-context:::init!__opt-lambda14022
+      (lambda (_self14024_ _ctx14025_ _root14026_)
+        (let ((_super14034_
+               (let ((_$e14028_ _root14026_))
+                 (if _$e14028_
+                     _$e14028_
+                     (let ((_$e14031_ (gx#core-context-root__0)))
+                       (if _$e14031_
+                           _$e14031_
                            (make-struct-instance gx#root-context::t)))))))
-          (if _ctx13906_
-              (let ((_id13918_
+          (if _ctx14025_
+              (let ((_id14037_
                      (##structure-ref
-                      _ctx13906_
+                      _ctx14025_
                       '1
                       gx#expander-context::t
                       '#f))
-                    (_path13919_
-                     (##structure-ref _ctx13906_ '7 gx#module-context::t '#f))
-                    (_in13920_
+                    (_path14038_
+                     (##structure-ref _ctx14025_ '7 gx#module-context::t '#f))
+                    (_in14039_
                      (map gx#core-module-export->import
                           (##structure-ref
-                           _ctx13906_
+                           _ctx14025_
                            '9
                            gx#module-context::t
                            '#f)))
-                    (_e13921_
-                     (make-promise (lambda () (gx#eval-module _ctx13906_)))))
+                    (_e14040_
+                     (make-promise (lambda () (gx#eval-module _ctx14025_)))))
                 (begin
-                  (if (##fx< '8 (##vector-length _self13905_))
+                  (if (##fx< '8 (##vector-length _self14024_))
                       (begin
-                        (##vector-set! _self13905_ '1 _id13918_)
-                        (##vector-set! _self13905_ '2 (make-hash-table-eq))
-                        (##vector-set! _self13905_ '3 _super13915_)
-                        (##vector-set! _self13905_ '4 '#f)
-                        (##vector-set! _self13905_ '5 '#f)
-                        (##vector-set! _self13905_ '6 _path13919_)
-                        (##vector-set! _self13905_ '7 _in13920_)
-                        (##vector-set! _self13905_ '8 _e13921_))
+                        (##vector-set! _self14024_ '1 _id14037_)
+                        (##vector-set! _self14024_ '2 (make-hash-table-eq))
+                        (##vector-set! _self14024_ '3 _super14034_)
+                        (##vector-set! _self14024_ '4 '#f)
+                        (##vector-set! _self14024_ '5 '#f)
+                        (##vector-set! _self14024_ '6 _path14038_)
+                        (##vector-set! _self14024_ '7 _in14039_)
+                        (##vector-set! _self14024_ '8 _e14040_))
                       (error '"struct-instance-init!: too many arguments for struct"
-                             _self13905_))
+                             _self14024_))
                   (for-each
-                   (lambda (_g1392213924_)
+                   (lambda (_g1404114043_)
                      (gx#core-bind-weak-import!__opt-lambda12464
-                      _g1392213924_
-                      _self13905_))
-                   _in13920_)))
-              (if (##fx< '8 (##vector-length _self13905_))
+                      _g1404114043_
+                      _self14024_))
+                   _in14039_)))
+              (if (##fx< '8 (##vector-length _self14024_))
                   (begin
-                    (##vector-set! _self13905_ '1 '#f)
-                    (##vector-set! _self13905_ '2 (make-hash-table-eq))
-                    (##vector-set! _self13905_ '3 _super13915_)
-                    (##vector-set! _self13905_ '4 '#f)
-                    (##vector-set! _self13905_ '5 '#f)
-                    (##vector-set! _self13905_ '6 '#f)
-                    (##vector-set! _self13905_ '7 '())
-                    (##vector-set! _self13905_ '8 '#f))
+                    (##vector-set! _self14024_ '1 '#f)
+                    (##vector-set! _self14024_ '2 (make-hash-table-eq))
+                    (##vector-set! _self14024_ '3 _super14034_)
+                    (##vector-set! _self14024_ '4 '#f)
+                    (##vector-set! _self14024_ '5 '#f)
+                    (##vector-set! _self14024_ '6 '#f)
+                    (##vector-set! _self14024_ '7 '())
+                    (##vector-set! _self14024_ '8 '#f))
                   (error '"struct-instance-init!: too many arguments for struct"
-                         _self13905_))))))
+                         _self14024_))))))
     (begin
       (define gx#prelude-context:::init!__0
-        (lambda (_self13930_ _ctx13931_)
-          (let ((_root13933_ '#f))
-            (gx#prelude-context:::init!__opt-lambda13903
-             _self13930_
-             _ctx13931_
-             _root13933_))))
+        (lambda (_self14049_ _ctx14050_)
+          (let ((_root14052_ '#f))
+            (gx#prelude-context:::init!__opt-lambda14022
+             _self14049_
+             _ctx14050_
+             _root14052_))))
       (define gx#prelude-context:::init!
-        (lambda _g14098_
-          (let ((_g14097_ (length _g14098_)))
-            (cond ((fx= _g14097_ 2)
-                   (apply gx#prelude-context:::init!__0 _g14098_))
-                  ((fx= _g14097_ 3)
-                   (apply gx#prelude-context:::init!__opt-lambda13903
-                          _g14098_))
+        (lambda _g14220_
+          (let ((_g14219_ (length _g14220_)))
+            (cond ((fx= _g14219_ 2)
+                   (apply gx#prelude-context:::init!__0 _g14220_))
+                  ((fx= _g14219_ 3)
+                   (apply gx#prelude-context:::init!__opt-lambda14022
+                          _g14220_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#prelude-context:::init!
-                    _g14098_))))))))
+                    _g14220_))))))))
   (bind-method! gx#prelude-context::t ':init! gx#prelude-context:::init! '#f)
-  (define gx#import-expander:::init!
-    (lambda (_self13779_ _e13780_)
-      (if (##fx< '3 (##vector-length _self13779_))
+  (define gx#import-export-expander-init!
+    (lambda (_self13898_ _e13899_)
+      (if (##fx< '3 (##vector-length _self13898_))
           (begin
-            (##vector-set! _self13779_ '1 _e13780_)
-            (##vector-set! _self13779_ '2 (gx#current-expander-context))
-            (##vector-set! _self13779_ '3 (fx- (gx#current-expander-phi) '1)))
+            (##vector-set! _self13898_ '1 _e13899_)
+            (##vector-set! _self13898_ '2 (gx#current-expander-context))
+            (##vector-set! _self13898_ '3 (fx- (gx#current-expander-phi) '1)))
           (error '"struct-instance-init!: too many arguments for struct"
-                 _self13779_))))
+                 _self13898_))))
+  (define gx#import-expander:::init! gx#import-export-expander-init!)
   (bind-method! gx#import-expander::t ':init! gx#import-expander:::init! '#f)
-  (define gx#export-expander:::init!
-    (lambda (_self13654_ _e13655_)
-      (if (##fx< '3 (##vector-length _self13654_))
-          (begin
-            (##vector-set! _self13654_ '1 _e13655_)
-            (##vector-set! _self13654_ '2 (gx#current-expander-context))
-            (##vector-set! _self13654_ '3 (fx- (gx#current-expander-phi) '1)))
-          (error '"struct-instance-init!: too many arguments for struct"
-                 _self13654_))))
+  (define gx#export-expander:::init! gx#import-export-expander-init!)
   (bind-method! gx#export-expander::t ':init! gx#export-expander:::init! '#f)
+  (define gx#import-export-expander:::init! gx#import-export-expander-init!)
+  (bind-method!
+   gx#import-export-expander::t
+   ':init!
+   gx#import-export-expander:::init!
+   '#f)
   (define gx#import-expander::apply-import-expander
     (lambda (_g1352413527_ _g1352513529_)
       (gx#core-apply-user-expander__opt-lambda5413
@@ -310,16 +322,16 @@
              _reload?13258_
              _eval?13260_))))
       (define gx#import-module
-        (lambda _g14100_
-          (let ((_g14099_ (length _g14100_)))
-            (cond ((fx= _g14099_ 1) (apply gx#import-module__0 _g14100_))
-                  ((fx= _g14099_ 2) (apply gx#import-module__1 _g14100_))
-                  ((fx= _g14099_ 3)
-                   (apply gx#import-module__opt-lambda13240 _g14100_))
+        (lambda _g14222_
+          (let ((_g14221_ (length _g14222_)))
+            (cond ((fx= _g14221_ 1) (apply gx#import-module__0 _g14222_))
+                  ((fx= _g14221_ 2) (apply gx#import-module__1 _g14222_))
+                  ((fx= _g14221_ 3)
+                   (apply gx#import-module__opt-lambda13240 _g14222_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#import-module
-                    _g14100_))))))))
+                    _g14222_))))))))
   (define gx#eval-module
     (lambda (_mod13239_) ((gx#current-expander-module-eval) _mod13239_)))
   (define gx#core-eval-module
@@ -371,16 +383,16 @@
           (let ((_ctx13220_ (gx#current-expander-context)))
             (gx#core-context-prelude__opt-lambda13205 _ctx13220_))))
       (define gx#core-context-prelude
-        (lambda _g14102_
-          (let ((_g14101_ (length _g14102_)))
-            (cond ((fx= _g14101_ 0)
-                   (apply gx#core-context-prelude__0 _g14102_))
-                  ((fx= _g14101_ 1)
-                   (apply gx#core-context-prelude__opt-lambda13205 _g14102_))
+        (lambda _g14224_
+          (let ((_g14223_ (length _g14224_)))
+            (cond ((fx= _g14223_ 0)
+                   (apply gx#core-context-prelude__0 _g14224_))
+                  ((fx= _g14223_ 1)
+                   (apply gx#core-context-prelude__opt-lambda13205 _g14224_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-context-prelude
-                    _g14102_))))))))
+                    _g14224_))))))))
   (define gx#core-module->prelude-context
     (lambda (_ctx13197_)
       (let* ((_ht13199_ (gx#current-expander-module-registry))
@@ -388,10 +400,10 @@
         (if _$e13201_
             (values _$e13201_)
             (let ((_pre13204_
-                   (let ((__obj14093 (make-object gx#prelude-context::t '8)))
+                   (let ((__obj14215 (make-object gx#prelude-context::t '8)))
                      (begin
-                       (gx#prelude-context:::init!__0 __obj14093 _ctx13197_)
-                       __obj14093))))
+                       (gx#prelude-context:::init!__0 __obj14215 _ctx13197_)
+                       __obj14215))))
               (begin
                 (table-set! _ht13199_ _ctx13197_ _pre13204_)
                 _pre13204_))))))
@@ -406,16 +418,16 @@
                           '#!void)
                       (call-with-parameters
                        (lambda ()
-                         (let ((_g14103_ (gx#core-read-module _path13166_)))
+                         (let ((_g14225_ (gx#core-read-module _path13166_)))
                            (begin
-                             (let ((_g14104_ (values-count _g14103_)))
-                               (if (not (fx= _g14104_ 4))
+                             (let ((_g14226_ (values-count _g14225_)))
+                               (if (not (fx= _g14226_ 4))
                                    (error "Context expects 4 values"
-                                          _g14104_)))
-                             (let ((_pre13169_ (values-ref _g14103_ 0))
-                                   (_id13170_ (values-ref _g14103_ 1))
-                                   (_ns13171_ (values-ref _g14103_ 2))
-                                   (_body13172_ (values-ref _g14103_ 3)))
+                                          _g14226_)))
+                             (let ((_pre13169_ (values-ref _g14225_ 0))
+                                   (_id13170_ (values-ref _g14225_ 1))
+                                   (_ns13171_ (values-ref _g14225_ 2))
+                                   (_body13172_ (values-ref _g14225_ 3)))
                                (let* ((_prelude13177_
                                        (if (##structure-instance-of?
                                             _pre13169_
@@ -435,29 +447,29 @@
                                                               (gx#current-expander-module-prelude)))
                                                          (if _$e13174_
                                                              _$e13174_
-                                                             (let ((__obj14094
+                                                             (let ((__obj14216
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             (make-object gx#prelude-context::t '8)))
                        (begin
-                         (gx#prelude-context:::init!__0 __obj14094 '#f)
-                         __obj14094))))
+                         (gx#prelude-context:::init!__0 __obj14216 '#f)
+                         __obj14216))))
                (error '"Cannot import module; unknown prelude"
                       _rpath13078_
                       _pre13169_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                       (_ctx13179_
-                                       (let ((__obj14095
+                                       (let ((__obj14217
                                               (make-object
                                                gx#module-context::t
                                                '11)))
                                          (begin
                                            (gx#module-context:::init!
-                                            __obj14095
+                                            __obj14217
                                             _id13170_
                                             _prelude13177_
                                             _ns13171_
                                             _path13166_)
-                                           __obj14095)))
+                                           __obj14217)))
                                       (_body13181_
                                        (gx#core-expand-module-begin
                                         _body13172_
@@ -615,15 +627,15 @@
              _rpath13190_
              _reload?13192_))))
       (define gx#core-import-module
-        (lambda _g14106_
-          (let ((_g14105_ (length _g14106_)))
-            (cond ((fx= _g14105_ 1) (apply gx#core-import-module__0 _g14106_))
-                  ((fx= _g14105_ 2)
-                   (apply gx#core-import-module__opt-lambda13076 _g14106_))
+        (lambda _g14228_
+          (let ((_g14227_ (length _g14228_)))
+            (cond ((fx= _g14227_ 1) (apply gx#core-import-module__0 _g14228_))
+                  ((fx= _g14227_ 2)
+                   (apply gx#core-import-module__opt-lambda13076 _g14228_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-import-module
-                    _g14106_))))))))
+                    _g14228_))))))))
   (define gx#core-read-module
     (lambda (_path13072_)
       (with-exception-catcher
@@ -643,7 +655,7 @@
         (let* ((_e1294012964_ _body12936_)
                (_E1295612986_
                 (lambda ()
-                  (let ((_g14107_
+                  (let ((_g14229_
                          (if _pkg12939_
                              (values _pre12937_ _ns12938_ _pkg12939_)
                              (gx#core-read-module-package
@@ -651,12 +663,12 @@
                               _pre12937_
                               _ns12938_))))
                     (begin
-                      (let ((_g14108_ (values-count _g14107_)))
-                        (if (not (fx= _g14108_ 3))
-                            (error "Context expects 3 values" _g14108_)))
-                      (let ((_pre12968_ (values-ref _g14107_ 0))
-                            (_ns12969_ (values-ref _g14107_ 1))
-                            (_pkg12970_ (values-ref _g14107_ 2)))
+                      (let ((_g14230_ (values-count _g14229_)))
+                        (if (not (fx= _g14230_ 3))
+                            (error "Context expects 3 values" _g14230_)))
+                      (let ((_pre12968_ (values-ref _g14229_ 0))
+                            (_ns12969_ (values-ref _g14229_ 1))
+                            (_pkg12970_ (values-ref _g14229_ 2)))
                         (let* ((_prelude12972_
                                 (if (gx#core-bound-module-prelude? _pre12968_)
                                     (gx#syntax-local-e__0 _pre12968_)
@@ -804,7 +816,7 @@
                          _ns12853_
                          _pkg12854_
                          _args12855_)
-                  (let ((_g14109_
+                  (let ((_g14231_
                          (if _pkg12854_
                              (values _pre12852_ _ns12853_ _pkg12854_)
                              (gx#core-read-module-package
@@ -812,12 +824,12 @@
                               _pre12852_
                               _ns12853_))))
                     (begin
-                      (let ((_g14110_ (values-count _g14109_)))
-                        (if (not (fx= _g14110_ 3))
-                            (error "Context expects 3 values" _g14110_)))
-                      (let ((_pre12857_ (values-ref _g14109_ 0))
-                            (_ns12858_ (values-ref _g14109_ 1))
-                            (_pkg12859_ (values-ref _g14109_ 2)))
+                      (let ((_g14232_ (values-count _g14231_)))
+                        (if (not (fx= _g14232_ 3))
+                            (error "Context expects 3 values" _g14232_)))
+                      (let ((_pre12857_ (values-ref _g14231_ 0))
+                            (_ns12858_ (values-ref _g14231_ 1))
+                            (_pkg12859_ (values-ref _g14231_ 2)))
                         (let* ((_prelude12861_
                                 (gx#import-module__0 _pre12857_))
                                (_read-module-body12915_
@@ -1115,17 +1127,17 @@
              _stx-path12711_
              _rel12713_))))
       (define gx#core-resolve-module-path
-        (lambda _g14112_
-          (let ((_g14111_ (length _g14112_)))
-            (cond ((fx= _g14111_ 1)
-                   (apply gx#core-resolve-module-path__0 _g14112_))
-                  ((fx= _g14111_ 2)
+        (lambda _g14234_
+          (let ((_g14233_ (length _g14234_)))
+            (cond ((fx= _g14233_ 1)
+                   (apply gx#core-resolve-module-path__0 _g14234_))
+                  ((fx= _g14233_ 2)
                    (apply gx#core-resolve-module-path__opt-lambda12695
-                          _g14112_))
+                          _g14234_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-resolve-module-path
-                    _g14112_))))))))
+                    _g14234_))))))))
   (define gx#core-resolve-library-module-path
     (lambda (_libpath12624_)
       (let* ((_spath12626_ (symbol->string (gx#stx-e _libpath12624_)))
@@ -1244,17 +1256,17 @@
              _dir12610_
              _exists?12612_))))
       (define gx#core-library-package-plist
-        (lambda _g14114_
-          (let ((_g14113_ (length _g14114_)))
-            (cond ((fx= _g14113_ 1)
-                   (apply gx#core-library-package-plist__0 _g14114_))
-                  ((fx= _g14113_ 2)
+        (lambda _g14236_
+          (let ((_g14235_ (length _g14236_)))
+            (cond ((fx= _g14235_ 1)
+                   (apply gx#core-library-package-plist__0 _g14236_))
+                  ((fx= _g14235_ 2)
                    (apply gx#core-library-package-plist__opt-lambda12587
-                          _g14114_))
+                          _g14236_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-library-package-plist
-                    _g14114_))))))))
+                    _g14236_))))))))
   (define gx#core-library-package-cache
     (lambda ()
       (let ((_$e12583_ (gx#current-expander-module-library-package-cache)))
@@ -1373,16 +1385,16 @@
              _ctx12542_
              _force-weak?12544_))))
       (define gx#core-bind-import!
-        (lambda _g14116_
-          (let ((_g14115_ (length _g14116_)))
-            (cond ((fx= _g14115_ 1) (apply gx#core-bind-import!__0 _g14116_))
-                  ((fx= _g14115_ 2) (apply gx#core-bind-import!__1 _g14116_))
-                  ((fx= _g14115_ 3)
-                   (apply gx#core-bind-import!__opt-lambda12478 _g14116_))
+        (lambda _g14238_
+          (let ((_g14237_ (length _g14238_)))
+            (cond ((fx= _g14237_ 1) (apply gx#core-bind-import!__0 _g14238_))
+                  ((fx= _g14237_ 2) (apply gx#core-bind-import!__1 _g14238_))
+                  ((fx= _g14237_ 3)
+                   (apply gx#core-bind-import!__opt-lambda12478 _g14238_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-import!
-                    _g14116_))))))))
+                    _g14238_))))))))
   (begin
     (define gx#core-bind-weak-import!__opt-lambda12464
       (lambda (_in12466_ _ctx12467_)
@@ -1395,16 +1407,16 @@
              _in12472_
              _ctx12474_))))
       (define gx#core-bind-weak-import!
-        (lambda _g14118_
-          (let ((_g14117_ (length _g14118_)))
-            (cond ((fx= _g14117_ 1)
-                   (apply gx#core-bind-weak-import!__0 _g14118_))
-                  ((fx= _g14117_ 2)
-                   (apply gx#core-bind-weak-import!__opt-lambda12464 _g14118_))
+        (lambda _g14240_
+          (let ((_g14239_ (length _g14240_)))
+            (cond ((fx= _g14239_ 1)
+                   (apply gx#core-bind-weak-import!__0 _g14240_))
+                  ((fx= _g14239_ 2)
+                   (apply gx#core-bind-weak-import!__opt-lambda12464 _g14240_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-weak-import!
-                    _g14118_))))))))
+                    _g14240_))))))))
   (define gx#core-resolve-module-export
     (lambda (_out12357_)
       (letrec ((_subst12359_
@@ -1527,19 +1539,19 @@
              _rename12349_
              _dphi12351_))))
       (define gx#core-module-export->import
-        (lambda _g14120_
-          (let ((_g14119_ (length _g14120_)))
-            (cond ((fx= _g14119_ 1)
-                   (apply gx#core-module-export->import__0 _g14120_))
-                  ((fx= _g14119_ 2)
-                   (apply gx#core-module-export->import__1 _g14120_))
-                  ((fx= _g14119_ 3)
+        (lambda _g14242_
+          (let ((_g14241_ (length _g14242_)))
+            (cond ((fx= _g14241_ 1)
+                   (apply gx#core-module-export->import__0 _g14242_))
+                  ((fx= _g14241_ 2)
+                   (apply gx#core-module-export->import__1 _g14242_))
+                  ((fx= _g14241_ 3)
                    (apply gx#core-module-export->import__opt-lambda12280
-                          _g14120_))
+                          _g14242_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-module-export->import
-                    _g14120_))))))))
+                    _g14242_))))))))
   (define gx#core-expand-module%
     (lambda (_stx12210_)
       (letrec ((_make-context12212_
@@ -1580,15 +1592,15 @@
                                         (cons _bind-id12267_
                                               (cons _path12273_ '())))))
                               _bind-id12267_)))
-                    (let ((__obj14096 (make-object gx#module-context::t '11)))
+                    (let ((__obj14218 (make-object gx#module-context::t '11)))
                       (begin
                         (gx#module-context:::init!
-                         __obj14096
+                         __obj14218
                          _mod-id12269_
                          _super12265_
                          _ns12271_
                          _path12278_)
-                        __obj14096))))))
+                        __obj14218))))))
         (let* ((_e1221312223_ _stx12210_)
                (_E1221512227_
                 (lambda ()
@@ -2505,7 +2517,7 @@
                                          '#f)
                                         '#!void)
                                     (table-for-each
-                                     (lambda (_ctx11406_ _g14121_)
+                                     (lambda (_ctx11406_ _g14243_)
                                        (gx#eval-module _ctx11406_))
                                      _deps11383_)
                                     _body11389_)))
@@ -2630,15 +2642,15 @@
              _stx11808_
              _internal-expand?11810_))))
       (define gx#core-expand-import%
-        (lambda _g14123_
-          (let ((_g14122_ (length _g14123_)))
-            (cond ((fx= _g14122_ 1) (apply gx#core-expand-import%__0 _g14123_))
-                  ((fx= _g14122_ 2)
-                   (apply gx#core-expand-import%__opt-lambda11353 _g14123_))
+        (lambda _g14245_
+          (let ((_g14244_ (length _g14245_)))
+            (cond ((fx= _g14244_ 1) (apply gx#core-expand-import%__0 _g14245_))
+                  ((fx= _g14244_ 2)
+                   (apply gx#core-expand-import%__opt-lambda11353 _g14245_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand-import%
-                    _g14123_))))))))
+                    _g14245_))))))))
   (define gx#core-import-nested-module
     (lambda (_spath11282_ _where11283_)
       (let* ((_e1128411291_ _spath11282_)
@@ -2724,7 +2736,7 @@
   (begin
     (define gx#core-expand-export%__opt-lambda10789
       (lambda (_stx10791_ _internal-expand?10792_)
-        (letrec* ((_make-export__opt-lambda11226__1408514086_
+        (letrec* ((_make-export__opt-lambda11226__1420714208_
                    (lambda (_bind11228_ _phi11229_ _ctx11230_ _name11231_)
                      (let* ((_key11233_
                              (##structure-ref
@@ -2751,49 +2763,49 @@
                               (##structure-direct-instance-of?
                                _bind11228_
                                'gx#import-binding::t)))))))
-                  (_make-export__0__1408714090_
+                  (_make-export__0__1420914212_
                    (lambda (_bind11244_)
                      (let* ((_phi11246_ (gx#current-export-expander-phi))
                             (_ctx11248_ (gx#current-expander-context))
                             (_name11250_ '#f))
-                       (_make-export__opt-lambda11226__1408514086_
+                       (_make-export__opt-lambda11226__1420714208_
                         _bind11244_
                         _phi11246_
                         _ctx11248_
                         _name11250_))))
-                  (_make-export__1__1408814091_
+                  (_make-export__1__1421014213_
                    (lambda (_bind11252_ _phi11253_)
                      (let* ((_ctx11255_ (gx#current-expander-context))
                             (_name11257_ '#f))
-                       (_make-export__opt-lambda11226__1408514086_
+                       (_make-export__opt-lambda11226__1420714208_
                         _bind11252_
                         _phi11253_
                         _ctx11255_
                         _name11257_))))
-                  (_make-export__2__1408914092_
+                  (_make-export__2__1421114214_
                    (lambda (_bind11259_ _phi11260_ _ctx11261_)
                      (let ((_name11263_ '#f))
-                       (_make-export__opt-lambda11226__1408514086_
+                       (_make-export__opt-lambda11226__1420714208_
                         _bind11259_
                         _phi11260_
                         _ctx11261_
                         _name11263_))))
                   (_make-export10794_
-                   (lambda _g14125_
-                     (let ((_g14124_ (length _g14125_)))
-                       (cond ((fx= _g14124_ 1)
-                              (apply _make-export__0__1408714090_ _g14125_))
-                             ((fx= _g14124_ 2)
-                              (apply _make-export__1__1408814091_ _g14125_))
-                             ((fx= _g14124_ 3)
-                              (apply _make-export__2__1408914092_ _g14125_))
-                             ((fx= _g14124_ 4)
-                              (apply _make-export__opt-lambda11226__1408514086_
-                                     _g14125_))
+                   (lambda _g14247_
+                     (let ((_g14246_ (length _g14247_)))
+                       (cond ((fx= _g14246_ 1)
+                              (apply _make-export__0__1420914212_ _g14247_))
+                             ((fx= _g14246_ 2)
+                              (apply _make-export__1__1421014213_ _g14247_))
+                             ((fx= _g14246_ 3)
+                              (apply _make-export__2__1421114214_ _g14247_))
+                             ((fx= _g14246_ 4)
+                              (apply _make-export__opt-lambda11226__1420714208_
+                                     _g14247_))
                              (else
                               (##raise-wrong-number-of-arguments-exception
                                'case-lambda-dispatch
-                               _g14125_))))))
+                               _g14247_))))))
                   (_expand110795_
                    (lambda (_hd10941_ _K10942_ _rest10943_ _r10944_)
                      (let* ((_e1094510977_ _hd10941_)
@@ -2936,7 +2948,7 @@
                                      ((lambda (_bind11097_)
                                         (_K10942_
                                          _rest10943_
-                                         (cons (_make-export__opt-lambda11226__1408514086_
+                                         (cons (_make-export__opt-lambda11226__1420714208_
                                                 _bind11097_
                                                 _phi11092_
                                                 (gx#current-expander-context)
@@ -3007,7 +3019,7 @@
                                                ((lambda (_bind11146_)
                                                   (_K10942_
                                                    _rest10943_
-                                                   (cons (_make-export__opt-lambda11226__1408514086_
+                                                   (cons (_make-export__opt-lambda11226__1420714208_
                                                           _bind11146_
                                                           _phi11141_
                                                           (gx#current-expander-context)
@@ -3040,7 +3052,7 @@
                                            ((lambda (_bind11157_)
                                               (_K10942_
                                                _rest10943_
-                                               (cons (_make-export__0__1408714090_
+                                               (cons (_make-export__0__1420914212_
                                                       _bind11157_)
                                                      _r10944_)))
                                             _$e11154_)
@@ -3103,7 +3115,7 @@
                  (_lp11172_ _bind-rest11197_ _set11175_)
                  (_lp11172_
                   _bind-rest11197_
-                  (cons (_make-export__2__1408914092_
+                  (cons (_make-export__2__1421114214_
                          _bind11198_
                          _current-phi11165_
                          _current-ctx11163_)
@@ -3350,15 +3362,15 @@
              _stx11273_
              _internal-expand?11275_))))
       (define gx#core-expand-export%
-        (lambda _g14127_
-          (let ((_g14126_ (length _g14127_)))
-            (cond ((fx= _g14126_ 1) (apply gx#core-expand-export%__0 _g14127_))
-                  ((fx= _g14126_ 2)
-                   (apply gx#core-expand-export%__opt-lambda10789 _g14127_))
+        (lambda _g14249_
+          (let ((_g14248_ (length _g14249_)))
+            (cond ((fx= _g14248_ 1) (apply gx#core-expand-export%__0 _g14249_))
+                  ((fx= _g14248_ 2)
+                   (apply gx#core-expand-export%__opt-lambda10789 _g14249_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand-export%
-                    _g14127_))))))))
+                    _g14249_))))))))
   (define gx#core-expand-export-source
     (lambda (_hd10788_)
       (gx#core-expand-export%__opt-lambda10789
@@ -3433,14 +3445,14 @@
              _phi10749_
              _ctx10751_))))
       (define gx#core-bind-feature!
-        (lambda _g14129_
-          (let ((_g14128_ (length _g14129_)))
-            (cond ((fx= _g14128_ 1) (apply gx#core-bind-feature!__0 _g14129_))
-                  ((fx= _g14128_ 2) (apply gx#core-bind-feature!__1 _g14129_))
-                  ((fx= _g14128_ 3) (apply gx#core-bind-feature!__2 _g14129_))
-                  ((fx= _g14128_ 4)
-                   (apply gx#core-bind-feature!__opt-lambda10722 _g14129_))
+        (lambda _g14251_
+          (let ((_g14250_ (length _g14251_)))
+            (cond ((fx= _g14250_ 1) (apply gx#core-bind-feature!__0 _g14251_))
+                  ((fx= _g14250_ 2) (apply gx#core-bind-feature!__1 _g14251_))
+                  ((fx= _g14250_ 3) (apply gx#core-bind-feature!__2 _g14251_))
+                  ((fx= _g14250_ 4)
+                   (apply gx#core-bind-feature!__opt-lambda10722 _g14251_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-feature!
-                    _g14129_)))))))))
+                    _g14251_)))))))))

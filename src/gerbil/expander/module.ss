@@ -22,11 +22,14 @@ namespace: gx
   id: gx#export-set::t
   final: #t)
 
-(defstruct (import-expander user-expander) ()
+(defclass (import-expander user-expander) ()
   id: gx#import-expander::t
   constructor: :init!)
-(defstruct (export-expander user-expander) ()
+(defclass (export-expander user-expander) ()
   id: gx#export-expander::t
+  constructor: :init!)
+(defclass (import-export-expander import-expander export-expander) ()
+  id: gx#import-export-expander::t
   constructor: :init!)
 
 (def current-import-expander-phi
@@ -58,15 +61,18 @@ namespace: gx
         (struct-instance-init! self #f (make-hash-table-eq) super #f #f
                                #f [] #f)))))
 
+(def (import-export-expander-init! self e)
+  (struct-instance-init! self
+      e (current-expander-context) (fx1- (current-expander-phi))))
+
 (defmethod {:init! import-expander}
-  (lambda (self e)
-    (struct-instance-init! self
-      e (current-expander-context) (fx1- (current-expander-phi)))))
+  import-export-expander-init!)
 
 (defmethod {:init! export-expander}
-  (lambda (self e)
-    (struct-instance-init! self
-      e (current-expander-context) (fx1- (current-expander-phi)))))
+  import-export-expander-init!)
+
+(defmethod {:init! import-export-expander}
+  import-export-expander-init!)
 
 (defmethod {apply-import-expander import-expander}
   (cut core-apply-user-expander <> <> 'apply-import-expander))

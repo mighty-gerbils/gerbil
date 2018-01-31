@@ -693,6 +693,9 @@ namespace: gerbil/core
                     (make-import-expander gx#make-import-expander)
                     (export-expander? gx#export-expander?)
                     (make-export-expander gx#make-export-expander)
+                    (import-export-expander? gx#import-export-expander?)
+                    (make-import-export-expander
+                     gx#make-import-export-expander)
                     (module-import? gx#module-import?)
                     (make-module-import gx#make-module-import)
                     (module-import-source gx#module-import-source)
@@ -1518,6 +1521,15 @@ namespace: gerbil/core
                    (%#define-syntax
                     defsyntax-for-export
                     |gerbil/core$<module-sugar>[:0:]#defsyntax-for-export|)
+                   (%#define-syntax
+                    defsyntax-for-import-export
+                    |gerbil/core$<module-sugar>[:0:]#defsyntax-for-import-export|)
+                   (%#define-syntax
+                    for-syntax
+                    |gerbil/core$<module-sugar>[:0:]#for-syntax|)
+                   (%#define-syntax
+                    for-template
+                    |gerbil/core$<module-sugar>[:0:]#for-template|)
                    (%#define-syntax
                     only-in
                     |gerbil/core$<module-sugar>[:0:]#only-in|)

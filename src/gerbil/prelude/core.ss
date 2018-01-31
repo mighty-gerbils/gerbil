@@ -334,6 +334,7 @@ package: gerbil
     user-expander-context user-expander-phi
     import-expander? make-import-expander
     export-expander? make-export-expander
+    import-export-expander? make-import-export-expander
     module-import? make-module-import
     module-import-source module-import-name module-import-phi
     module-import-weak?
@@ -2517,6 +2518,25 @@ package: gerbil
     ((recur (id . args) body ...)
      (identifier? #'id)
      (recur id (lambda args body ...))))
+
+  (defrules defsyntax-for-import-export ()
+    ((_ id expr)
+     (identifier? #'id)
+     (defsyntax id
+       (make-import-export-expander expr)))
+    ((recur (id . args) body ...)
+     (identifier? #'id)
+     (recur id (lambda args body ...))))
+
+  (defsyntax-for-import-export (for-syntax stx)
+    (syntax-case stx ()
+      ((_ body ...)
+       #'(phi: +1 body ...))))
+
+  (defsyntax-for-import-export (for-template stx)
+    (syntax-case stx ()
+      ((_ body ...)
+       #'(phi: -1 body ...))))
 
   (defsyntax-for-import (only-in stx)
     (syntax-case stx ()

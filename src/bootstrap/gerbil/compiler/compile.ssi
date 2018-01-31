@@ -10,14 +10,14 @@ namespace: gxc
           (spec:
            (:gerbil/gambit/hvectors)
            (0 f32vector? 0 f32vector?)
-           (0 u32vector? 0 u32vector?)
            (0 s8vector? 0 s8vector?)
            (0 u16vector? 0 u16vector?)
-           (0 u8vector? 0 u8vector?)
-           (0 u64vector? 0 u64vector?)
-           (0 s64vector? 0 s64vector?)
            (0 f64vector? 0 f64vector?)
+           (0 u8vector? 0 u8vector?)
+           (0 s64vector? 0 s64vector?)
            (0 s16vector? 0 s16vector?)
+           (0 u32vector? 0 u32vector?)
+           (0 u64vector? 0 u64vector?)
            (0 s32vector? 0 s32vector?)))
          (%#export #t)
          (%#define-runtime current-compile-methods gxc#current-compile-methods)
@@ -95,8 +95,8 @@ namespace: gxc
           generate-runtime-binding-id*
           gxc#generate-runtime-binding-id*)
          (%#begin (%#define-runtime
-                   generate-runtime-gensym-reference__opt-lambda10993
-                   gxc#generate-runtime-gensym-reference__opt-lambda10993)
+                   generate-runtime-gensym-reference__opt-lambda10955
+                   gxc#generate-runtime-gensym-reference__opt-lambda10955)
                   (%#begin (%#define-runtime
                             generate-runtime-gensym-reference__0
                             gxc#generate-runtime-gensym-reference__0)
@@ -110,8 +110,8 @@ namespace: gxc
           generate-runtime-identifier-key
           gxc#generate-runtime-identifier-key)
          (%#begin (%#define-runtime
-                   generate-runtime-temporary__opt-lambda10937
-                   gxc#generate-runtime-temporary__opt-lambda10937)
+                   generate-runtime-temporary__opt-lambda10899
+                   gxc#generate-runtime-temporary__opt-lambda10899)
                   (%#begin (%#define-runtime
                             generate-runtime-temporary__0
                             gxc#generate-runtime-temporary__0)
@@ -145,8 +145,8 @@ namespace: gxc
           generate-runtime-case-lambda%
           gxc#generate-runtime-case-lambda%)
          (%#begin (%#define-runtime
-                   generate-runtime-let-values%__opt-lambda7984
-                   gxc#generate-runtime-let-values%__opt-lambda7984)
+                   generate-runtime-let-values%__opt-lambda7946
+                   gxc#generate-runtime-let-values%__opt-lambda7946)
                   (%#begin (%#define-runtime
                             generate-runtime-let-values%__0
                             gxc#generate-runtime-let-values%__0)
@@ -157,8 +157,8 @@ namespace: gxc
           generate-runtime-let-values-bind
           gxc#generate-runtime-let-values-bind)
          (%#begin (%#define-runtime
-                   generate-runtime-letrec-values%__opt-lambda7563
-                   gxc#generate-runtime-letrec-values%__opt-lambda7563)
+                   generate-runtime-letrec-values%__opt-lambda7525
+                   gxc#generate-runtime-letrec-values%__opt-lambda7525)
                   (%#begin (%#define-runtime
                             generate-runtime-letrec-values%__0
                             gxc#generate-runtime-letrec-values%__0)

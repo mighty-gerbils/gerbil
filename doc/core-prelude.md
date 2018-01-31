@@ -811,7 +811,7 @@ Variant of `syntax-rules` that constructs a setq macro and not a plain macro exp
 
 Fails with a syntax error if the `cond-expand` features `feature ...` are not satisfied.
 
-#### defsyntax-for-import defsyntax-for-export
+#### defsyntax-for-import defsyntax-for-export defsyntax-for-import-export
 ```
 (defsyntax-for-import id expr)
 
@@ -823,9 +823,28 @@ Fails with a syntax error if the `cond-expand` features `feature ...` are not sa
 (defsyntax-for-export (id . args) body ...)
 => (defsyntax-for-export id (lambda args body ...))
 
+(defsyntax-for-import-export id expr)
+
+(defsyntax-for-import-export (id . args) body ...)
+=> (defsyntax-for-import-export id (lambda args body ...))
+
 ```
 
 Define import and export macro expanders.
+
+#### for-syntax for-template
+```
+(import (for-syntax import-spec ...))
+(export (for-syntax export-spec ...))
+
+(import (for-template import-spec ...))
+(export (for-template export-spec ...))
+```
+
+Import/export expanders that switch the phase of the import/export;
+`for-syntax` switches by +1, `for-template` switches by -1, just like
+the phi: directive.
+
 
 #### only-in
 ```
@@ -2052,7 +2071,8 @@ Symbols related to thread programming; spawn and with-lock primitives.
     + [identifier-rules](#identifier-rules)
   * [Module Sugar](#module-sugar)
     + [require](#require)
-    + [defsyntax-for-import defsyntax-for-export](#defsyntax-for-import-defsyntax-for-export)
+    + [defsyntax-for-import defsyntax-for-export defsyntax-for-import-export](#defsyntax-for-import-defsyntax-for-export-defsyntax-for-import-export)
+    + [for-syntax for-template](#for-syntax-for-template)
     + [only-in](#only-in)
     + [except-in except-out](#except-in-except-out)
     + [rename-in rename-out](#rename-in-rename-out)
