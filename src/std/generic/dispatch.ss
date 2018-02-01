@@ -121,8 +121,10 @@ package: std/generic
   ((macro-subtype-cpxnum)       cpxnum  (cpxnum number t))
   ((macro-subtype-symbol)       symbol)
   ((macro-subtype-keyword)      keyword)
+  ((macro-subtype-frame)        frame)
   ((macro-subtype-continuation) continuation)
   ((macro-subtype-promise)      promise)
+  ((macro-subtype-weak)         weak)
   ((macro-subtype-procedure)    procedure)
   ((macro-subtype-foreign)      foreign)
   ((macro-subtype-string)       string)
@@ -433,6 +435,7 @@ package: std/generic
   macro-subtype-frame
   macro-subtype-continuation
   macro-subtype-promise
+  macro-subtype-weak
   macro-subtype-procedure
   macro-subtype-foreign
   macro-subtype-string
