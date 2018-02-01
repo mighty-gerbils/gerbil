@@ -184,6 +184,7 @@ The hook is run after scheme-mode-hook."
                 identifier-rules
                 letrec*
                 while
+                let-hash
                 )
               'scheme-indent-function 1)
   (gerbil-put '(syntax-case ast-case core-syntax-case core-ast-case
@@ -191,18 +192,12 @@ The hook is run after scheme-mode-hook."
                  )
               'scheme-indent-function 2)
   (gerbil-put '(def defvalues extern
-                 defalias defsyntax defrule defrules defrules*
-                  defstruct defclass defmethod
-                  definline definline*
-                  define-values define-syntaxes
-                  defsyntax/parameter
-                  ;; defgeneric defasm struct
-                  ;; :- :~
-                  struct union class interface object
+                defalias defsyntax defrule defrules defrules*
+                defstruct defclass defgeneric defmethod
+                definline definline*
+                define-values define-syntaxes
                 )
               'scheme-indent-function 'defun)
-  (gerbil-put '(let-registers)
-              'scheme-indent-function 'scheme-let-indent)
   )
 
 (defun gerbil-init-fontlock ()
@@ -230,25 +225,27 @@ The hook is run after scheme-mode-hook."
                        "syntax" "quasisyntax" "unsyntax" "unsyntax-splicing"
                        "syntax/loc"
                        "define-values" "define-alias"
-                       "syntax-parameterize"
                        "alet" "alet*"
                        "error" "raise"
                        "cond-expand"
                        "let/cc" "let/esc"
-                       "unwind-protect" "finally" "catch"
+                       "unwind-protect"
                        "begin-foreign"
                        "cut"
-                       "object"
                        "with" "with*"
                        "match" "match*"
                        "lazy"
                        "sync" "wait"
                        "foldl" "foldr" "andmap" "ormap"
-                       "size-of" "type-of"
-                       "let-registers"
+                       "type-of"
                        "spawn" "spawn*" "spawn/name" "spawn/group"
-                       "try" "while"
+                       ;; sugar
+                       "try" "finally" "catch"
+                       "while" "using"
+                       "hash" "hash-eq" "hash-eqv" "let-hash"
+                       ;; coroutines
                        "continue" "yield" "coroutine"
+                       ;; actor messaging
                        "<-" "<<" "->"
                        )
                      t)
