@@ -1232,7 +1232,7 @@ Commonly used macros.
   with-destroy
   assert!
   while until
-  hash hash-eq hash-eqv
+  hash hash-eq hash-eqv let-hash
   defmethod/alias
   using
 ```

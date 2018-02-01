@@ -144,3 +144,40 @@ package: std
        #'(let (ht (make-ht size: size))
            (hash-put! ht `key val) ...
            ht)))))
+
+;; the hash deconstructor macro
+;; usage: (let-hash a-hash body ...)
+;; rebinds %%ref so that identifiers starting with a dot are looked up in the hash:
+;;  .x  -> (hash-ref a-hash 'x) ; strong accessor
+;;  .?x -> (hash-get a-hash 'x) ; weak accessor
+;;  ..x -> (%%ref .x)           ; escape
+(defsyntax (let-hash stx)
+  (syntax-case stx ()
+    ((macro expr body ...)
+     (with-syntax ((@ref (stx-identifier #'macro '%%ref)))
+       #'(let (ht expr)
+           (let-syntax
+               ((var-ref
+                 (syntax-rules ()
+                   ((_ id) (@ref id)))))
+             (let-syntax
+                 ((@ref
+                   (lambda (stx)
+                     (syntax-case stx ()
+                       ((_ id)
+                        (let (str (symbol->string (stx-e #'id)))
+                          (def (str->symbol start)
+                            (string->symbol (substring str start (string-length str))))
+                          (if (eq? (string-ref str 0) #\.) ; hash accessor?
+                            (cond
+                             ((eq? (string-ref str 1) #\.) ; escape
+                              (with-syntax ((sym (str->symbol 1)))
+                                #'(var-ref sym)))
+                             ((eq? (string-ref str 1) #\?) ; weak
+                              (with-syntax ((sym (str->symbol 2)))
+                                #'(hash-get ht 'sym)))
+                             (else
+                              (with-syntax ((sym (str->symbol 1)))
+                                #'(hash-ref ht 'sym))))
+                            #'(var-ref id))))))))
+               body ...)))))))
