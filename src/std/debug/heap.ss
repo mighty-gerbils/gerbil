@@ -4,8 +4,9 @@
 package: std/debug
 
 (import :gerbil/gambit/hvectors
-        (only-in :std/generic type-of))
-(export memory-usage heap-type-stats walk-heap!)
+        (only-in :std/generic type-of)
+        :std/sort)
+(export memory-usage heap-type-stats dump-heap-stats! walk-heap!)
 
 (def (memory-usage)
   (let (stats (##process-statistics))
@@ -24,6 +25,19 @@ package: std/debug
          (hash-update! types t 1+ 0)))
      live)
     (values (hash-length live) types)))
+
+(def (dump-heap-stats! (port ##stderr-port))
+  (##gc)
+  (let* ((mem (memory-usage))
+         ((values count types) (heap-type-stats)))
+    (parameterize ((current-output-port port))
+      (displayln "=== memory usage ===")
+      (for-each (match <> ([key . val] (displayln key ": " val)))
+                mem)
+      (displayln "=== heap type stats ===")
+      (displayln "=== object count: " count)
+      (for-each (match <> ([key . val] (displayln key " " val)))
+                (sort (hash->list types) (lambda (a b) (> (cdr a) (cdr b))))))))
 
 ;;; heap walking
 (def (walk-heap! walk: (walk #f) root: (root #f) seen: (seen #f))
