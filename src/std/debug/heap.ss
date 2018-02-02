@@ -292,3 +292,88 @@ package: std/debug
           ,continue)))
 
     (macro-walk-object obj)))
+
+;;; still object accounting
+(begin-foreign
+  (namespace ("std/debug/heap#"
+              count-still-objects count-still-objects/refcount
+              get-still-objects get-still-objects/refcount))
+
+(c-declare #<<END-C
+// these are defined in gambit/lib/mem.c
+#define ___PSTATE_MEM(var) ___ps->mem.var
+#define still_objs ___PSTATE_MEM(still_objs_)
+#define ___STILL_LINK_OFS 0
+#define ___STILL_REFCOUNT_OFS 1
+#define ___STILL_BODY_OFS 6
+#define ___STILL_HAND_OFS ___STILL_BODY_OFS
+END-C
+)
+
+(define count-still-objects
+  (c-lambda () int #<<END-C
+int count = 0;
+___WORD *base = ___CAST(___WORD*,still_objs);
+while (base != 0)
+{
+ count++;
+ base = ___CAST(___WORD*,base[___STILL_LINK_OFS]);
+}
+___return(count);
+END-C
+))
+
+(define count-still-objects/refcount
+  (c-lambda () int #<<END-C
+int count = 0;
+___WORD *base = ___CAST(___WORD*,still_objs);
+while (base != 0)
+{
+ if (base[___STILL_REFCOUNT_OFS])
+  {
+   count++;
+  }
+ base = ___CAST(___WORD*,base[___STILL_LINK_OFS]);
+}
+___return(count);
+END-C
+))
+
+(define get-still-objects
+  (c-lambda (scheme-object int) int #<<END-C
+int count = 0;
+___WORD *base = ___CAST(___WORD*,still_objs);
+while (base != 0 && count < ___arg2)
+{
+ ___SCMOBJ next = ___TAG((base + ___STILL_HAND_OFS - ___BODY_OFS),
+                         (___HD_SUBTYPE(base[___STILL_BODY_OFS-1]) == ___sPAIR?
+                          ___tPAIR : ___tSUBTYPED));
+ ___VECTORSET(___arg1, ___FIX(count), next);
+ count++;
+ base = ___CAST(___WORD*,base[___STILL_LINK_OFS]);
+}
+___return(count);
+END-C
+))
+
+(define get-still-objects/refcount
+  (c-lambda (scheme-object int) int #<<END-C
+int count = 0;
+___WORD *base = ___CAST(___WORD*,still_objs);
+while (base != 0 && count < ___arg2)
+{
+ if (base[___STILL_REFCOUNT_OFS])
+  {
+   ___SCMOBJ next = ___TAG((base + ___STILL_HAND_OFS - ___BODY_OFS),
+                           (___HD_SUBTYPE(base[___STILL_BODY_OFS-1]) == ___sPAIR?
+                            ___tPAIR : ___tSUBTYPED));
+   ___VECTORSET(___arg1, ___FIX(count), next);
+    count++;
+  }
+ base = ___CAST(___WORD*,base[___STILL_LINK_OFS]);
+}
+___return(count);
+END-C
+))
+
+)
