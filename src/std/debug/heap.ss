@@ -44,12 +44,14 @@ package: std/debug
                 (sort (hash->list types) (lambda (a b) (> (cdr a) (cdr b))))))))
 
 ;;; heap walking
-(def (walk-heap! walk: (walk #f) root: (root #f) seen: (seen #f))
-  (let (seen (or seen (make-hash-table-eq)))
+(def (walk-heap! walk: (walk #f) root: (root #f))
+  (let (seen (make-hash-table-eq))
 
     (def (visit container i obj)
       (cond
        ((hash-get seen obj)
+        (walk-no-recursive-scan))
+       ((eq? seen obj)
         (walk-no-recursive-scan))
        ((##mem-allocated? obj)
         (hash-put! seen obj #t)
