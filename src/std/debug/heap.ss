@@ -17,8 +17,8 @@ package: std/debug
       (gc-still     . ,(inexact->exact (f64vector-ref stats 19))))))
 
 (def (heap-type-stats)
-  (let* ((types (make-hash-table-eq))
-         (live (walk-heap!)))
+  (let* ((live (walk-heap!))
+         (types (make-hash-table-eq)))
     (hash-for-each
      (lambda (obj _)
        (let (t (type-of obj))
