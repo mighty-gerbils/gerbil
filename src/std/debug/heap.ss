@@ -29,13 +29,15 @@ package: std/debug
 (def (dump-heap-stats! (port ##stderr-port))
   (##gc)
   (let* ((mem (memory-usage))
-         ((values count types) (heap-type-stats)))
+         ((values count types) (heap-type-stats))
+         (still-count (count-still-objects/refcount)))
     (parameterize ((current-output-port port))
       (displayln "=== memory usage ===")
       (for-each (match <> ([key . val] (displayln key ": " val)))
                 mem)
       (displayln "=== heap type stats ===")
       (displayln "=== object count: " count)
+      (displayln "=== rstill count: " still-count)
       (for-each (match <> ([key . val] (displayln key " " val)))
                 (sort (hash->list types) (lambda (a b) (> (cdr a) (cdr b))))))))
 
@@ -74,8 +76,22 @@ package: std/debug
   (def (scan-keyword obj)
     (walk-from-object! obj visit))
 
+  (def (scan-still obj)
+    (walk-from-object! obj visit))
+
   (walk-interned-symbols! scan-symbol-and-global-var)
-  (walk-interned-keywords! scan-keyword))
+  (walk-interned-keywords! scan-keyword)
+  (walk-still-objects! scan-still))
+
+(def (walk-still-objects! scan)
+  ;; TODO SMP: this only walks the stills in the current processor
+  (let* ((count (count-still-objects/refcount))
+         (vec   (make-vector count))
+         (count (get-still-objects/refcount vec count)))
+    (let lp ((i 0))
+      (when (fx< i count)
+        (scan (##vector-ref vec i))
+        (lp (fx1+ i))))))
 
 (defrules walk-seq ()
   ((_ e1 e2) (or e1 e2)))
@@ -292,3 +308,91 @@ package: std/debug
           ,continue)))
 
     (macro-walk-object obj)))
+
+;;; still object accounting
+(extern
+  count-still-objects count-still-objects/refcount
+  get-still-objects get-still-objects/refcount)
+(begin-foreign
+  (namespace ("std/debug/heap#"
+              count-still-objects count-still-objects/refcount
+              get-still-objects get-still-objects/refcount))
+
+(c-declare #<<END-C
+// these are defined in gambit/lib/mem.c
+#define ___PSTATE_MEM(var) ___ps->mem.var
+#define still_objs ___PSTATE_MEM(still_objs_)
+#define ___STILL_LINK_OFS 0
+#define ___STILL_REFCOUNT_OFS 1
+#define ___STILL_BODY_OFS 6
+#define ___STILL_HAND_OFS ___STILL_BODY_OFS
+END-C
+)
+
+(define count-still-objects
+  (c-lambda () int #<<END-C
+int count = 0;
+___WORD *base = ___CAST(___WORD*,still_objs);
+while (base != 0)
+{
+ count++;
+ base = ___CAST(___WORD*,base[___STILL_LINK_OFS]);
+}
+___return(count);
+END-C
+))
+
+(define count-still-objects/refcount
+  (c-lambda () int #<<END-C
+int count = 0;
+___WORD *base = ___CAST(___WORD*,still_objs);
+while (base != 0)
+{
+ if (base[___STILL_REFCOUNT_OFS])
+  {
+   count++;
+  }
+ base = ___CAST(___WORD*,base[___STILL_LINK_OFS]);
+}
+___return(count);
+END-C
+))
+
+(define get-still-objects
+  (c-lambda (scheme-object int) int #<<END-C
+int count = 0;
+___WORD *base = ___CAST(___WORD*,still_objs);
+while (base != 0 && count < ___arg2)
+{
+ ___SCMOBJ next = ___TAG((base + ___STILL_HAND_OFS - ___BODY_OFS),
+                         (___HD_SUBTYPE(base[___STILL_BODY_OFS-1]) == ___sPAIR?
+                          ___tPAIR : ___tSUBTYPED));
+ ___VECTORSET(___arg1, ___FIX(count), next);
+ count++;
+ base = ___CAST(___WORD*,base[___STILL_LINK_OFS]);
+}
+___return(count);
+END-C
+))
+
+(define get-still-objects/refcount
+  (c-lambda (scheme-object int) int #<<END-C
+int count = 0;
+___WORD *base = ___CAST(___WORD*,still_objs);
+while (base != 0 && count < ___arg2)
+{
+ if (base[___STILL_REFCOUNT_OFS])
+  {
+   ___SCMOBJ next = ___TAG((base + ___STILL_HAND_OFS - ___BODY_OFS),
+                           (___HD_SUBTYPE(base[___STILL_BODY_OFS-1]) == ___sPAIR?
+                            ___tPAIR : ___tSUBTYPED));
+   ___VECTORSET(___arg1, ___FIX(count), next);
+    count++;
+  }
+ base = ___CAST(___WORD*,base[___STILL_LINK_OFS]);
+}
+___return(count);
+END-C
+))
+
+)
