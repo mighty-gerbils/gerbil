@@ -29,19 +29,43 @@ package: std/debug
 (def (dump-heap-stats! (port ##stderr-port))
   (##gc)
   (let* ((mem (memory-usage))
-         (still-count (count-still-objects))
-         (rstill-count (count-still-objects/refcount))
-         ((values count types) (heap-type-stats)))
+         ((values still refcounted)
+          (count-still))
+         ((values count types)
+          (heap-type-stats)))
     (parameterize ((current-output-port port))
       (displayln "=== memory usage ===")
       (for-each (match <> ([key . val] (displayln key ": " val)))
                 mem)
-      (displayln "=== heap type stats ===")
-      (displayln "=== objects: " count)
-      (displayln "=== still: " still-count)
-      (displayln "=== refcounted: " rstill-count)
+      (displayln "=== heap summary ===")
+      (displayln "objects: " count)
+      (displayln "still: " still)
+      (displayln "refcounted: " refcounted)
+      (displayln "=== heap type counts ===")
       (for-each (match <> ([key . val] (displayln key " " val)))
                 (sort (hash->list types) (lambda (a b) (> (cdr a) (cdr b))))))))
+
+;;; still objects
+(def (count-still)
+  ;; TODO SMP count on all processors
+  (let ((still (count-still-objects))
+        (refcounted (count-still-objects/refcount)))
+    (values still refcounted)))
+
+(def (still-objects/refcount)
+  (get-still count-still-objects/refcount get-still-objects/refcount))
+
+(def (still-objects)
+  (get-still count-still-objects get-still-objects))
+
+(def (get-still countf getf)
+  ;; TODO SMP: collect on all processors
+  (let* ((count (countf))
+         (vec   (make-vector count))
+         (count (getf vec)))
+    (when (fx< count (vector-length vec))
+      (vector-shrink! vec count))
+    vec))
 
 ;;; heap walking
 (def (walk-heap! walk: (walk #f) root: (root #f))
@@ -88,13 +112,11 @@ package: std/debug
   (walk-still-objects! scan-still))
 
 (def (walk-still-objects! scan)
-  ;; TODO SMP: this only walks the stills in the current processor
-  (let* ((count (count-still-objects/refcount))
-         (vec   (make-vector count))
-         (count (get-still-objects/refcount vec count)))
+  (let* ((still (still-objects/refcount))
+         (count (vector-length still)))
     (let lp ((i 0))
       (when (fx< i count)
-        (scan (##vector-ref vec i))
+        (scan (##vector-ref still i))
         (lp (fx1+ i))))))
 
 (defrules walk-seq ()
@@ -363,10 +385,11 @@ END-C
 ))
 
 (define get-still-objects
-  (c-lambda (scheme-object int) int #<<END-C
+  (c-lambda (scheme-object) int #<<END-C
 int count = 0;
+int max = ___INT(___VECTORLENGTH(___arg1));
 ___WORD *base = ___CAST(___WORD*,still_objs);
-while (base != 0 && count < ___arg2)
+while (base != 0 && count < max)
 {
  ___SCMOBJ next = ___TAG((base + ___STILL_HAND_OFS - ___BODY_OFS),
                          (___HD_SUBTYPE(base[___STILL_BODY_OFS-1]) == ___sPAIR?
@@ -380,10 +403,11 @@ END-C
 ))
 
 (define get-still-objects/refcount
-  (c-lambda (scheme-object int) int #<<END-C
+  (c-lambda (scheme-object) int #<<END-C
 int count = 0;
+int max = ___INT(___VECTORLENGTH(___arg1));
 ___WORD *base = ___CAST(___WORD*,still_objs);
-while (base != 0 && count < ___arg2)
+while (base != 0 && count < max)
 {
  if (base[___STILL_REFCOUNT_OFS])
   {
