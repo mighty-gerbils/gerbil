@@ -29,13 +29,15 @@ package: std/debug
 (def (dump-heap-stats! (port ##stderr-port))
   (##gc)
   (let* ((mem (memory-usage))
-         ((values count types) (heap-type-stats)))
+         ((values count types) (heap-type-stats))
+         (still-count (count-still-objects/refcount)))
     (parameterize ((current-output-port port))
       (displayln "=== memory usage ===")
       (for-each (match <> ([key . val] (displayln key ": " val)))
                 mem)
       (displayln "=== heap type stats ===")
       (displayln "=== object count: " count)
+      (displayln "=== rstill count: " still-count)
       (for-each (match <> ([key . val] (displayln key " " val)))
                 (sort (hash->list types) (lambda (a b) (> (cdr a) (cdr b))))))))
 
@@ -74,8 +76,22 @@ package: std/debug
   (def (scan-keyword obj)
     (walk-from-object! obj visit))
 
+  (def (scan-still obj)
+    (walk-from-object! obj visit))
+
   (walk-interned-symbols! scan-symbol-and-global-var)
-  (walk-interned-keywords! scan-keyword))
+  (walk-interned-keywords! scan-keyword)
+  (walk-still-objects! scan-still))
+
+(def (walk-still-objects! scan)
+  ;; TODO SMP: this only walks the stills in the current processor
+  (let* ((count (count-still-objects/refcount))
+         (vec   (make-vector count))
+         (count (get-still-objects/refcount vec count)))
+    (let lp ((i 0))
+      (when (fx< i count)
+        (scan (##vector-ref vec i))
+        (lp (fx1+ i))))))
 
 (defrules walk-seq ()
   ((_ e1 e2) (or e1 e2)))
@@ -294,6 +310,9 @@ package: std/debug
     (macro-walk-object obj)))
 
 ;;; still object accounting
+(extern
+  count-still-objects count-still-objects/refcount
+  get-still-objects get-still-objects/refcount)
 (begin-foreign
   (namespace ("std/debug/heap#"
               count-still-objects count-still-objects/refcount
