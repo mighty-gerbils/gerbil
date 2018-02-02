@@ -62,7 +62,7 @@ package: std/debug
   ;; TODO SMP: collect on all processors
   (let* ((count (countf))
          (vec   (make-vector count))
-         (count (getf vec count)))
+         (count (getf vec)))
     (when (fx< count (vector-length vec))
       (vector-shrink! vec count))
     vec))
@@ -385,10 +385,11 @@ END-C
 ))
 
 (define get-still-objects
-  (c-lambda (scheme-object int) int #<<END-C
+  (c-lambda (scheme-object) int #<<END-C
 int count = 0;
+int max = ___INT(___VECTORLENGTH(___arg1));
 ___WORD *base = ___CAST(___WORD*,still_objs);
-while (base != 0 && count < ___arg2)
+while (base != 0 && count < max)
 {
  ___SCMOBJ next = ___TAG((base + ___STILL_HAND_OFS - ___BODY_OFS),
                          (___HD_SUBTYPE(base[___STILL_BODY_OFS-1]) == ___sPAIR?
@@ -402,10 +403,11 @@ END-C
 ))
 
 (define get-still-objects/refcount
-  (c-lambda (scheme-object int) int #<<END-C
+  (c-lambda (scheme-object) int #<<END-C
 int count = 0;
+int max = ___INT(___VECTORLENGTH(___arg1));
 ___WORD *base = ___CAST(___WORD*,still_objs);
-while (base != 0 && count < ___arg2)
+while (base != 0 && count < max)
 {
  if (base[___STILL_REFCOUNT_OFS])
   {
