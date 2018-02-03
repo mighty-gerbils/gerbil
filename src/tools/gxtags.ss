@@ -10,6 +10,7 @@
         :gerbil/gambit
         :std/getopt
         :std/sugar
+        :std/sort
         :std/text/utf8
         :std/misc/ports
         (only-in :std/srfi/1 delete-duplicates reverse!))
@@ -69,7 +70,7 @@
     (error "No such file or directory" input)))
 
 (def (tag-directory dirname output)
-  (let (files (directory-files dirname))
+  (let (files (sort (directory-files dirname) string<?))
     (for-each
       (lambda (file)
         (let (path (path-expand file dirname))
