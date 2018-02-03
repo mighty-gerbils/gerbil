@@ -149,7 +149,7 @@ package: std/actor/rpc
       (hash-get tt timeo))))
 
 ;; DEBUG
-(def (continuation-table-dump! cont-table (port ##stderr-port))
+(def (continuation-table-dump! cont-table (port (current-error-port)))
   (parameterize ((current-output-port port))
     (continuation-table-do cont-table
       (with ((continuation-table _ conts sconts sactors tmos ctmos) cont-table)
@@ -422,7 +422,7 @@ package: std/actor/rpc
          (close-connection))
         ;; DEBUG
         ('dump
-         (dump! ##stderr-port))
+         (dump! (current-error-port)))
         (['dump port]
          (dump! port))
         (bogus

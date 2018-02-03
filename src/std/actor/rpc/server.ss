@@ -286,7 +286,7 @@ package: std/actor/rpc
            (remove-thread! thread))))
         ;; DEBUG
         ('dump
-         (dump! ##stderr-port))
+         (dump! (current-error-port)))
         (['dump port]
          (dump! port))
         (value
