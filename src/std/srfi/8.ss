@@ -6,6 +6,6 @@ package: std/srfi
 (export #t)
 
 (defrules receive ()
-  ((_ formals expression body ...)
-   (call-with-values (lambda () expression)
-     (lambda formals body ...))))
+  ((_ formals expr body ...)
+   (let-values ((formals expr))
+     body ...)))

@@ -5,9 +5,10 @@ package: std/srfi
 
 (export #t)
 
-(define (check-arg pred val caller)
-  (if (pred val) val
-      (error "Bad argument" val pred caller)))
+(defrules check-arg ()
+  ((_ pred val caller)
+   (if (pred val) val
+       (error "Bad argument" val 'pred 'caller))))
 
 (defrules let-optionals ()
   ((_ args opt-spec . body)

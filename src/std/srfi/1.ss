@@ -3,7 +3,8 @@
 ;;; SRFI-1: list library
 package: std/srfi
 
-(import "srfi-support" "8")
+(import :std/srfi/srfi-support
+        :std/srfi/8)
 (export
   xcons tree-copy make-list list-tabulate cons* list-copy
   proper-list? circular-list? dotted-list? not-pair? null-list? list=
@@ -36,4 +37,8 @@ package: std/srfi
   lset-union  lset-intersection  lset-difference  lset-xor  lset-diff+intersection
   lset-union! lset-intersection! lset-difference! lset-xor! lset-diff+intersection!
   )
+
+(declare
+  (not safe)           ; olin meticulously checks his arguments
+  (fixnum))            ; and deals almost exclusively with indices and counters
 (include "srfi-1.scm")

@@ -269,6 +269,7 @@
 ;;; IOTA count [start step]	(start start+step ... start+(count-1)*step)
 
 (define (iota count . maybe-start+step)
+  (declare (mostly-fixnum-flonum)) ; vyzo: (declare (fixnum)) in module scope
   (check-arg integer? count iota)
   (if (< count 0) (error "Negative step count" iota count))
   (let-optionals maybe-start+step ((start 0) (step 1))

@@ -2,7 +2,10 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-13: charset library
 package: std/srfi
-(import :gerbil/gambit/bits "srfi-support" "8" "9")
+(import :gerbil/gambit/bits
+        :std/srfi/srfi-support
+        :std/srfi/8
+        :std/srfi/9)
 
 (export
   char-set? char-set= char-set<=
