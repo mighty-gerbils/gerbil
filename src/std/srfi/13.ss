@@ -3,7 +3,10 @@
 ;;; SRFI-13: string library
 package: std/srfi
 
-(import :gerbil/gambit/bits "srfi-support" "8" "14")
+(import :gerbil/gambit/bits
+        :std/srfi/srfi-support
+        :std/srfi/8
+        :std/srfi/14)
 (export
   string-map string-map!
   string-fold       string-unfold

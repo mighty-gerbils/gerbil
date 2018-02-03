@@ -3,7 +3,8 @@
 ;;; SRFI-1: list library
 package: std/srfi
 
-(import "srfi-support" "8")
+(import :std/srfi/srfi-support
+        :std/srfi/8)
 (export
   xcons tree-copy make-list list-tabulate cons* list-copy
   proper-list? circular-list? dotted-list? not-pair? null-list? list=
