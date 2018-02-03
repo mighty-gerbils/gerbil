@@ -36,4 +36,8 @@ package: std/srfi
   lset-union  lset-intersection  lset-difference  lset-xor  lset-diff+intersection
   lset-union! lset-intersection! lset-difference! lset-xor! lset-diff+intersection!
   )
+
+(declare
+  (not safe)           ; olin meticulously checks his arguments
+  (fixnum))            ; and he almost exclusively deals with counters
 (include "srfi-1.scm")
