@@ -26,7 +26,7 @@ package: std/debug
      live)
     (values (hash-length live) types)))
 
-(def (dump-heap-stats! (port ##stderr-port))
+(def (dump-heap-stats! (port (current-error-port)))
   (##gc)
   (let* ((mem (memory-usage))
          ((values still refcounted)

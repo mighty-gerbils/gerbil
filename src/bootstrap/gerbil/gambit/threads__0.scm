@@ -122,7 +122,7 @@
         (let ((_g694_ (length _g695_)))
           (cond ((fx= _g694_ 1)
                  (apply (lambda (_thunk611_)
-                          (let ((_error-port613_ ##stderr-port))
+                          (let ((_error-port613_ (current-error-port)))
                             (_opt-lambda597608_ _thunk611_ _error-port613_)))
                         _g695_))
                 ((fx= _g694_ 2) (apply _opt-lambda597608_ _g695_))
@@ -132,7 +132,11 @@
                   _g695_)))))))
   (begin
     (namespace ("gerbil/gambit/threads#" dump-stack-trace!))
-    (define (dump-stack-trace! cont exn #!optional (error-port ##stderr-port))
+    (define (dump-stack-trace!
+             cont
+             exn
+             #!optional
+             (error-port (current-error-port)))
       (let ((out (open-output-string)))
         (display "*** Unhandled exception in " out)
         (display (current-thread) out)
