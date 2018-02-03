@@ -40,5 +40,5 @@ package: std/srfi
 
 (declare
   (not safe)           ; olin meticulously checks his arguments
-  (fixnum))            ; and he almost exclusively deals with counters
+  (fixnum))            ; and deals almost exclusively with indices and counters
 (include "srfi-1.scm")
