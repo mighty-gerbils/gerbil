@@ -43,6 +43,10 @@ package: std/srfi
   string-replace
   )
 
+(declare
+  (not safe)                  ; olin meticulously checks his arguments
+  (fixnum))                   ; and deals with indices exclusively
+
 ;; this is ASCII only; help yourself if you have the unicode expertise
 ;; to correctly implement it, patches welcome)
 (def a:int (char->integer #\a))
