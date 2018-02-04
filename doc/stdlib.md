@@ -12,6 +12,7 @@
   * [std/db/lmdb](#stddblmdb)
   * [std/db/mysql](#stddbmysql)
   * [std/db/sqlite](#stddbsqlite)
+- [std/debug/heap](#stddebugheap)
 - [std/error](#stderror)
 - [std/event](#stdevent)
 - [std/format](#stdformat)
@@ -324,6 +325,21 @@ SQLite dbi driver.
   sqlite-open
 ```
 
+## std/debug/heap
+
+Heap debugging utilities
+
+```
+(import :std/debug/heap)
+
+;; exports:
+
+  memory-usage
+  heap-type-stats
+  dump-heap-stats!
+  walk-heap!
+```
+
 ## std/error
 Common error base classes.
 
@@ -333,7 +349,7 @@ Common error base classes.
 ;; exports:
 
   <error>
-  <exception>
+  exception
   (struct-out io-error timeout-error)
   raise-io-error
   raise-timeout
