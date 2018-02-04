@@ -14,9 +14,9 @@
     "error"
     "getopt"
     "logger"
-    (gxc: "generic/dispatch" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (gxc: "generic/dispatch" ,@(include-gambit-sharp))
     "generic/macros"
-    (gxc: "generic/builtin" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (gxc: "generic/builtin" ,@(include-gambit-sharp))
     "generic"
     (gxc: "event" ,@(include-gambit-sharp))
     "coroutine"
@@ -24,7 +24,7 @@
     "test"
     "stxparam"
     ;; debugging
-    (gxc: "debug/heap" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (gxc: "debug/heap" ,@(include-gambit-sharp))
     "debug/memleak"
     "debug/threads"
     ;; SRFI: This is my grandfather's axe; my father replaced the head
