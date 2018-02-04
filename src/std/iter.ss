@@ -118,7 +118,8 @@ package: std
   (def (fini-e iter)
     (match (iterator-e iter)
       ([cort . _]
-       (coroutine-stop! cort iter-end))
+       (coroutine-stop! cort iter-end)
+       (set! (iterator-e iter) #f))
       (else (void))))
   (let (iter (make-iterator proc start-e value-e next-e fini-e))
     (make-will iter fini-e)
