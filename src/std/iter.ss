@@ -4,6 +4,7 @@
 package: std
 
 (import :gerbil/gambit/ports
+        :gerbil/gambit/misc
         :std/generic
         :std/coroutine
         )
@@ -115,8 +116,13 @@ package: std
     (set! (cdr (iterator-e iter))
       iter-nil))
   (def (fini-e iter)
-    (coroutine-stop! (car (iterator-e iter)) iter-end))
-  (make-iterator proc start-e value-e next-e fini-e))
+    (match (iterator-e iter)
+      ([cort . _]
+       (coroutine-stop! cort iter-end))
+      (else (void))))
+  (let (iter (make-iterator proc start-e value-e next-e fini-e))
+    (make-will iter fini-e)
+    iter))
 
 (def (iter-input-port port (read-e read))
   (def (value-e iter)
