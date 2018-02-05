@@ -3,41 +3,55 @@
 (require 'scheme)
 (require 'cmuscheme)
 
-(defun gerbil-mode ()
-  (interactive)
-  (kill-all-local-variables)
-  (gerbil-mode-init)
-  (scheme-mode-variables)
-  (run-hooks 'scheme-mode-hook)
-  (gerbil-init)
-  (run-hooks 'gerbil-mode-hook))
-
-(defun gerbil-mode-init ()
-  (use-local-map scheme-mode-map)
-  (setq major-mode 'gerbil-mode)
-  (setq mode-name "Gerbil"))
-
-(defgroup gerbil nil
+(defgroup gerbil-mode nil
   "Editing Gerbil code"
+  :prefix "gerbil-mode-"
   :group 'scheme)
 
-(defcustom gerbil-mode-hook nil
-  "hook run when entering `gerbil-mode'.
-The hook is run after scheme-mode-hook."
-  :type 'hook
-  :group 'gerbil)
+;; Redefine the function scheme-send-region from `cmuscheme' so
+;; that we can keep track of all text sent to Gambit's stdin.
+;; By Christopher Eames (Chream) <chream-gmx.com> 2018.
+
+(defun scheme-send-region (start end)
+  "Send the current region to the inferior Scheme process."
+  (interactive "r")
+  (scheme-send-string (buffer-substring start end)))
+
+(defun scheme-send-string (str)
+  "Send a string to the inferior Scheme process."
+  (gerbil-send-string str))
+
+(defun scheme-compile-region (start end)
+  (interactive)
+  (gerbil-compile-current-buffer))
+
+(defun gerbil-message (string)
+  (message (concat "Gerbil-info : SENT=" string " ...")))
+
+(defun gerbil-send-string (string)
+  (let ((string (concat string "\n"))
+        (string-len (length string)))
+    (comint-check-source string)
+    (comint-send-string (scheme-proc) string)
+    (gerbil-message (subseq string 0 (string-match "\n" string)))))
+
+;; -------
 
 (defun gerbil-import-file (fname)
-  (comint-check-source fname)
-  (comint-send-string
-   (scheme-proc)
-   (concat "(import \"" fname "\")\n")))
+  (let ((string (concat "(import \"" fname "\")\n")))
+    (comint-check-source fname)
+    (comint-send-string
+     (scheme-proc)
+     string)
+    (gerbil-message (string-trim string))))
 
 (defun gerbil-reload-file (fname)
-  (comint-check-source fname)
-  (comint-send-string
-   (scheme-proc)
-   (concat "(reload \"" fname "\")\n")))
+  (let ((string (concat "(reload \"" fname "\")\n")))
+    (comint-check-source fname)
+    (comint-send-string
+     (scheme-proc)
+     string)
+    (gerbil-message (string-trim string))))
 
 (defun gerbil-import-current-buffer ()
   (interactive)
@@ -52,11 +66,13 @@ The hook is run after scheme-mode-hook."
 
 (defun gerbil-compile-current-buffer ()
   (interactive)
-  (let ((fname buffer-file-name)
-        (buf (get-buffer-create "*gerbil-compile*")))
+  (let* ((fname buffer-file-name)
+         (buf (get-buffer-create "*gerbil-compile*"))
+         (cmd-text (concat "> gxc " (if gerbil-compile-optimize "-O " "") fname "\n")))
     (with-current-buffer buf
       (goto-char (point-max))
-      (insert  "> gxc " (if gerbil-compile-optimize "-O " "") fname "\n"))
+      (insert cmd-text))
+    (message cmd-text)
     (setq gerbil-build-directory nil)
     (let ((proc (if gerbil-compile-optimize
                     (start-process "gxc" buf "gxc" "-O" fname)
@@ -393,5 +409,35 @@ The hook is run after scheme-mode-hook."
   (gerbil-init-fontlock)
   (when window-system
     (gerbil-pretty-lambdas)))
+
+
+(defvar gerbil-mode-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map scheme-mode-map)
+    (define-key map (kbd "C-c C-f") 'gerbil-compile-current-buffer)
+    (define-key map (kbd "C-c C-i") 'gerbil-import-current-buffer)
+    (define-key map (kbd "C-c C-r") 'gerbil-reload-current-buffer)
+    (define-key map (kbd "C-c C-c") 'scheme-send-definition)
+    (define-key map (kbd "C-c C-b") 'gerbil-build)
+    map))
+
+
+;;;###autoload
+(define-derived-mode gerbil-mode scheme-mode
+  "Gerbil" "Major mode for Gerbil."
+  (kill-all-local-variables)
+  (use-local-map gerbil-mode-map)
+  (setq mode-name "Gerbil")
+  (setq scheme-program-name "gxi")
+  (setq comment-start ";;")
+  (scheme-mode-variables)
+  (gerbil-init))
+
+
+;;;###autoload
+(progn
+  (add-to-list 'auto-mode-alist '("\\.ss\\'" . gerbil-mode))
+  (modify-coding-system-alist 'file "\\.ss\\'"  'utf-8))
+
 
 (provide 'gerbil)
