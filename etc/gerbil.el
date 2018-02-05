@@ -38,16 +38,20 @@
 ;; -------
 
 (defun gerbil-import-file (fname)
-  (comint-check-source fname)
-  (comint-send-string
-   (scheme-proc)
-   (concat "(import \"" fname "\")\n")))
+  (let ((string (concat "(import \"" fname "\")\n")))
+    (comint-check-source fname)
+    (comint-send-string
+     (scheme-proc)
+     string)
+    (gerbil-message (string-trim string))))
 
 (defun gerbil-reload-file (fname)
-  (comint-check-source fname)
-  (comint-send-string
-   (scheme-proc)
-   (concat "(reload \"" fname "\")\n")))
+  (let ((string (concat "(reload \"" fname "\")\n")))
+    (comint-check-source fname)
+    (comint-send-string
+     (scheme-proc)
+     (concat "(reload \"" fname "\")\n"))
+    (gerbil-message (string-trim string))))
 
 (defun gerbil-import-current-buffer ()
   (interactive)
@@ -62,11 +66,13 @@
 
 (defun gerbil-compile-current-buffer ()
   (interactive)
-  (let ((fname buffer-file-name)
-        (buf (get-buffer-create "*gerbil-compile*")))
+  (let* ((fname buffer-file-name)
+         (buf (get-buffer-create "*gerbil-compile*"))
+         (cmd-text (concat "> gxc " (if gerbil-compile-optimize "-O " "") fname "\n")))
     (with-current-buffer buf
       (goto-char (point-max))
-      (insert  "> gxc " (if gerbil-compile-optimize "-O " "") fname "\n"))
+      (insert cmd-text))
+    (message cmd-text)
     (setq gerbil-build-directory nil)
     (let ((proc (if gerbil-compile-optimize
                     (start-process "gxc" buf "gxc" "-O" fname)
