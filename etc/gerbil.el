@@ -50,7 +50,7 @@
     (comint-check-source fname)
     (comint-send-string
      (scheme-proc)
-     (concat "(reload \"" fname "\")\n"))
+     string)
     (gerbil-message (string-trim string))))
 
 (defun gerbil-import-current-buffer ()
@@ -424,7 +424,7 @@
 
 ;;;###autoload
 (define-derived-mode gerbil-mode scheme-mode
-  "Gauche" "Major mode for Gauche."
+  "Gerbil" "Major mode for Gerbil."
   (kill-all-local-variables)
   (use-local-map gerbil-mode-map)
   (setq mode-name "Gerbil")
