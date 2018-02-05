@@ -3,29 +3,18 @@
 (require 'scheme)
 (require 'cmuscheme)
 
-(defun gerbil-mode ()
-  (interactive)
-  (kill-all-local-variables)
-  (gerbil-mode-init)
-  (scheme-mode-variables)
-  (run-hooks 'scheme-mode-hook)
-  (gerbil-init)
-  (run-hooks 'gerbil-mode-hook))
-
-(defun gerbil-mode-init ()
-  (use-local-map scheme-mode-map)
-  (setq major-mode 'gerbil-mode)
-  (setq mode-name "Gerbil"))
-
-(defgroup gerbil nil
+(defgroup gerbil-mode nil
   "Editing Gerbil code"
+  :prefix "gerbil-mode-"
   :group 'scheme)
 
-(defcustom gerbil-mode-hook nil
-  "hook run when entering `gerbil-mode'.
-The hook is run after scheme-mode-hook."
-  :type 'hook
-  :group 'gerbil)
+  (interactive)
+  (gerbil-compile-current-buffer))
+
+(defun gerbil-message (string)
+  (message (concat "Gerbil-info : SENT=" string " ...")))
+
+
 
 (defun gerbil-import-file (fname)
   (comint-check-source fname)
@@ -393,5 +382,35 @@ The hook is run after scheme-mode-hook."
   (gerbil-init-fontlock)
   (when window-system
     (gerbil-pretty-lambdas)))
+
+
+(defvar gerbil-mode-map
+  (let ((map (make-sparse-keymap)))
+    (set-keymap-parent map scheme-mode-map)
+    (define-key map (kbd "C-c C-f") 'gerbil-compile-current-buffer)
+    (define-key map (kbd "C-c C-i") 'gerbil-import-current-buffer)
+    (define-key map (kbd "C-c C-r") 'gerbil-reload-current-buffer)
+    (define-key map (kbd "C-c C-c") 'scheme-send-definition)
+    (define-key map (kbd "C-c C-b") 'gerbil-build)
+    map))
+
+
+;;;###autoload
+(define-derived-mode gerbil-mode scheme-mode
+  "Gauche" "Major mode for Gauche."
+  (kill-all-local-variables)
+  (use-local-map gerbil-mode-map)
+  (setq mode-name "Gerbil")
+  (setq scheme-program-name "gxi")
+  (setq comment-start ";;")
+  (scheme-mode-variables)
+  (gerbil-init))
+
+
+;;;###autoload
+(progn
+  (add-to-list 'auto-mode-alist '("\\.ss\\'" . gerbil-mode))
+  (modify-coding-system-alist 'file "\\.ss\\'"  'utf-8))
+
 
 (provide 'gerbil)
