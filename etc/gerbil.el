@@ -8,13 +8,34 @@
   :prefix "gerbil-mode-"
   :group 'scheme)
 
+;; Redefine the function scheme-send-region from `cmuscheme' so
+;; that we can keep track of all text sent to Gambit's stdin.
+;; By Christopher Eames (Chream) <chream-gmx.com> 2018.
+
+(defun scheme-send-region (start end)
+  "Send the current region to the inferior Scheme process."
+  (interactive "r")
+  (scheme-send-string (buffer-substring start end)))
+
+(defun scheme-send-string (str)
+  "Send a string to the inferior Scheme process."
+  (gerbil-send-string str))
+
+(defun scheme-compile-region (start end)
   (interactive)
   (gerbil-compile-current-buffer))
 
 (defun gerbil-message (string)
   (message (concat "Gerbil-info : SENT=" string " ...")))
 
+(defun gerbil-send-string (string)
+  (let ((string (concat string "\n"))
+        (string-len (length string)))
+    (comint-check-source string)
+    (comint-send-string (scheme-proc) string)
+    (gerbil-message (subseq string 0 (string-match "\n" string)))))
 
+;; -------
 
 (defun gerbil-import-file (fname)
   (comint-check-source fname)
