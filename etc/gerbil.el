@@ -201,10 +201,12 @@
                 letrec*
                 while
                 let-hash
+                for for* for/collect
                 )
               'scheme-indent-function 1)
   (gerbil-put '(syntax-case ast-case core-syntax-case core-ast-case
-                 do-while
+                do-while
+                for/fold
                  )
               'scheme-indent-function 2)
   (gerbil-put '(def defvalues extern
@@ -261,6 +263,8 @@
                        "hash" "hash-eq" "hash-eqv" "let-hash"
                        ;; coroutines
                        "continue" "yield" "coroutine"
+                       ;; iterators
+                       "for" "for*" "for/collect" "for/fold"
                        ;; actor messaging
                        "<-" "<<" "->"
                        )

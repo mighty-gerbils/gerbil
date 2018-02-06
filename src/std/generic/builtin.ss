@@ -52,7 +52,7 @@ package: std/generic
 ;; exception base class
 (defbuiltin-type <exception> (macro-type-exception))
 ;; hash-tables and time
-(defbuiltin-type <hash-table> (macro-type-table))
+(defbuiltin-type <hash-table> (##structure-type (make-hash-table)))
 (defbuiltin-type <time> (macro-type-time))
 ;; thread related objects
 (defbuiltin-type <thread> (macro-type-thread))
@@ -78,7 +78,6 @@ package: std/generic
 ;; _gambit#
 (extern namespace: #f
   macro-type-exception
-  macro-type-table
   macro-type-thread
   macro-type-tgroup
   macro-type-mutex
