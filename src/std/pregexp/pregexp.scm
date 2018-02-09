@@ -673,8 +673,9 @@
 
 (define pregexp
   (lambda (s)
-    (set! *pregexp-space-sensitive?* #t) ;in case it got corrupted
-    (list ':sub (car (pregexp-read-pattern s 0 (string-length s))))))
+    (parameterize ((pregexp-space-sensitive? #t))
+      ;;(set! *pregexp-space-sensitive?* #t) ;in case it got corrupted
+      (list ':sub (car (pregexp-read-pattern s 0 (string-length s)))))))
 
 
 #;(define pregexp-match-positions
