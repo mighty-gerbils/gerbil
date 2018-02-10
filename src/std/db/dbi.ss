@@ -6,6 +6,7 @@ package: std/db
 (import (only-in :gerbil/gambit/misc make-will)
         :std/sugar
         :std/iter
+        :std/generic
         :std/error)
 (export
   (struct-out connection statement sql-error)
@@ -15,8 +16,7 @@ package: std/db
   sql-bind sql-clear sql-reset sql-reset/clear sql-finalize
   sql-eval sql-eval-query
   sql-exec sql-query in-sql-query sql-columns
-  sql-txn-begin sql-txn-commit sql-txn-abort
-  )
+  sql-txn-begin sql-txn-commit sql-txn-abort)
 
 (defstruct connection (e txn-begin txn-commit txn-abort)
   constructor: :init!)
@@ -137,6 +137,10 @@ package: std/db
 (def (sql-query stmt)
   (for/collect (row (in-sql-query stmt)) row))
 
+;;; iterators
+(defmethod (:iter (stmt statement))
+  (in-sql-query stmt))
+
 (def (in-sql-query stmt)
   (if (statement-e stmt)
     (make-iterator stmt sql-query-start sql-query-row sql-query-fetch sql-query-fini)
@@ -163,6 +167,7 @@ package: std/db
     (unless (iter-end? stmt)
       {query-fini stmt})))
 
+;;; metadata
 (def (sql-columns stmt)
   (if (statement-e stmt)
     {columns stmt}
