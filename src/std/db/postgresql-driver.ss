@@ -9,6 +9,7 @@ package: std/db
         :std/actor/proto
         :std/actor/message
         :std/net/bio
+        :std/text/utf8
         :std/logger
         :std/sugar
         :std/error
@@ -119,7 +120,7 @@ package: std/db
        (sync!)
        (apply raise-sql-error 'postgresql-prepare! msg irritants)))
     (match (recv!)
-      (['RowDescription field-count . fields]
+      (['RowDescription . fields]
        (set! cols fields))
       (['NoData]
        (set! cols [])))
@@ -158,7 +159,6 @@ package: std/db
 
   (def (query-start name params)
     ;; Bind ("" name params) ->  BindComplete | ErrorResponse
-    ;; create vector-pipe; set query-output, return query-input
     (send! ['Bind "" name . params])
     (match (recv!)
       (['BindComplete]
@@ -176,11 +176,10 @@ package: std/db
     ;;                          CommandComplete | EmptyQueryResponse
     ;;                          | ErrorResponse | PortalSuspended.
     ;; Sync                  -> ReadyForQuery
-    ;; pump to query-output, close on end -- inline errors + close
     (send! '(Execute "" 0))
     (let lp ()
       (match (recv!)
-        (['DataRow count . cols]
+        (['DataRow . cols]
          (write cols query-output)
          (lp))
         (['CommandComplete tag]
@@ -348,25 +347,104 @@ package: std/db
   '())
 
 (def (unmarshal-authen-request bio)
-  (error "XXX IMPLEMENT ME: unmarshal-authen-request"))
+  (let (t (bio-read-u32 bio))
+    (case (t)
+      ((0) '(AuthenticationOk))
+      ((2) '(AuthenticationKerberosV5))
+      ((3) '(AuthenticationCleartextPassword))
+      ((5)
+       (let (salt (make-u8vector 4))
+         (bio-read-bytes salt bio)
+         ['AuthenticationMD5Password salt]))
+      ((6) '(AuthenticationSCMCredential))
+      ((7) '(AuthenticationGSS))
+      ((8)
+       (let (data (unmarshal-bytes-rest bio))
+         ['AuthenticationGSSContinue data]))
+      ((9) '(AuthenticationSSPI))
+      ((10)
+       (let (mechanisms (unmarshal-string-list bio))
+         ['AuthenticationSASL . mechanisms]))
+      ((11)
+       (let (data (unmarshal-bytes-rest bio))
+         ['AuthenticationSASLContinue data]))
+      ((12)
+       (let (data (unmarshal-bytes-rest bio))
+         ['AuthenticationSASLFinal data]))
+      (else
+       [t '...]))))
+
+(def (unmarshal-string-list bio)
+  (let lp ((r []))
+    (let (next (unmarshal-string bio))
+      (if (string-empty? next)
+        (reverse r)
+        (lp (cons next r))))))
+
+(def (unmarshal-string bio)
+  (let lp ((bytes []))
+    (let (next (bio-read-u8 bio))
+      (if (fx= next 0)
+        (utf8->string (list->u8vector (reverse bytes)))
+        (lp (cons next bytes))))))
+
+(def (unmarshal-bytes-rest bio)
+  (let* ((count (bio-input-count bio))
+         (data (make-u8vector count)))
+    (bio-read-bytes data bio)
+    data))
 
 (def (unmarshal-complete bio)
-  (error "XXX IMPLEMENT ME: unmarshal-complete"))
+  (let (tag (unmarshal-string bio))
+    [tag]))
 
 (def (unmarshal-data-row bio)
-  (error "XXX IMPLEMENT ME: unmarshal-data-row"))
+  (let (count (bio-read-u16 bio))
+    (let lp ((i 0) (r []))
+      (if (fx< i count)
+        (let (len (bio-read-s32 bio))
+          (if (fx>= len 0)
+            (let (str (bio-input-utf8-decode len bio))
+              (lp (fx1+ i) (cons str r)))
+            (lp (fx1+ i) (cons #f r)))) ; NULL
+        (reverse r)))))
 
 (def (unmarshal-error-notice bio)
-  (error "XXX IMPLEMENT ME: unmarshal-error-notice"))
+  (let lp ((r []))
+    (let (t (bio-read-u8 bio))
+      (if (fx= t 0)
+        (let* ((alist (reverse r))
+               (msg (assgetq #\M alist)))
+          (cons msg alist))
+        (let (field (unmarshal-string bio))
+          (lp (cons (cons (integer->char t) field))))))))
 
 (def (unmarshal-param-description bio)
-  (error "XXX IMPLEMENT ME: unmarshal-param-description"))
+  (let (count (bio-read-u16 bio))
+    (let lp ((i 0) (r []))
+      (if (fx< i count)
+        (let (oid (bio-read-u32 bio))
+          (lp (fx1+ i) (cons oid r)))
+        (reverse r)))))
 
 (def (unmarshal-row-description bio)
-  (error "XXX IMPLEMENT ME: unmarshal-row-description"))
+  (let (count (bio-read-u16 bio))
+    (let lp ((i 0) (r []))
+      (if (fx< i count)
+        (let* ((field-name (unmarshal-string bio))
+               (table-id (bio-read-u32 bio))
+               (attr-id (bio-read-u16 bio))
+               (type-id (bio-read-u32 bio))
+               (type-sz (bio-read-s16 bio))
+               (modifier (bio-read-u32 bio))
+               (fmt (bio-read-u16 bio)))
+          (lp (fx1+ i)
+              (cons [field-name table-id attr-id type-id type-sz modifier fmt] r)))
+        (reverse r)))))
 
 (def (unmarshal-ready bio)
-  (error "XXX IMPLEMENT ME: unmarshal-ready"))
+  (let (status (bio-read-u8 bio))
+    [(integer->char status)]))
 
 ;;; message marshaling
 (def (marshal-fail what)
@@ -376,29 +454,77 @@ package: std/db
 (def (marshal-empty body)
   '#u8())
 
+(def (marshal-string str bio)
+  (bio-write-string str bio)
+  (bio-write-u8 0 bio))
+
 (def (marshal-startup body)
-  (error "XXX IMPLEMENT ME: marshal-startup"))
+  (with ([[param . value] ...] body)
+    (let (bio (open-serializer-output-buffer))
+      (bio-write-u32 196608 bio) ; Protocol v3.0
+      (for-each
+        (lambda (param value)
+          (marshal-string param bio)
+          (marshal-string value bio))
+        param value)
+      (bio-write-u8 0 bio))))
 
 (def (marshal-bind body)
-  (error "XXX IMPLEMENT ME: marshal-bind"))
+  (with ([portal-name stmt-name . params] body)
+    (let (bio (open-serializer-output-buffer))
+      (marshal-string portal-name bio)
+      (marshal-string stmt-name bio)
+      (bio-write-u16 0 bio)
+      (for-each
+        (lambda (param)
+          (cond
+           ((not param)
+            (bio-write-s32 -1 bio))
+           ((string? param)
+            (let (len (string-utf8-length param))
+              (bio-write-u32 len bio)
+              (bio-write-string param bio)))
+           ((u8vector? param)
+            (bio-write-u32 (u8vector-length param) bio)
+            (bio-write-bytes param bio))
+           (else
+            (raise-io-error 'postgresql-send! "Cannot marshal; bad parameter" param))))
+        params)
+      (bio-write-u16 0 bio)
+      bio)))
 
 (def (marshal-close body)
-  (error "XXX IMPLEMENT ME: marshal-close"))
+  (marshal-describe body))
 
 (def (marshal-describe body)
-  (error "XXX IMPLEMENT ME: marshal-describe"))
+  (with ([what name] body)
+    (let (bio (open-serializer-output-buffer))
+      (bio-write-u8 (char->integer what) bio)
+      (marshal-string name bio)
+      bio)))
 
 (def (marshal-exec body)
-  (error "XXX IMPLEMENT ME: marshal-exec"))
+  (with ([portal limit] body)
+    (let (bio (open-serializer-output-buffer))
+      (marshal-string portal bio)
+      (bio-write-u32 0 bio)
+      bio)))
 
 (def (marshal-parse body)
-  (error "XXX IMPLEMENT ME: marshal-parse"))
+  (with ([stmt sql] body)
+    (let (bio (open-serializer-output-buffer))
+      (marshal-string stmt bio)
+      (marshal-string sql bio)
+      (bio-write-u16 0 bio)
+      bio)))
 
 (def (marshal-passwd body)
-  (error "XXX IMPLEMENT ME: marshal-passwd"))
+  (with ([passwd] body)
+    (string->utf8 passwd)))
 
 (def (marshal-query body)
-  (error "XXX IMPLEMENT ME: marshal-query"))
+  (with ([sql] body)
+    (string->utf8 sql)))
 
 ;;; dispatch tables
 (def +backend-messages+
