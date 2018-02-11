@@ -9,8 +9,15 @@ package: std/db
         :std/actor/message
         :std/logger
         :std/sugar
+        :std/error
         :std/db/dbi)
-(export #t)
+(export postgresql-connect!
+        postgresql-prepare-statement!
+        postgresql-close-statement!
+        postgresql-exec!
+        postgresql-query!
+        postgreql-close!
+        postgresql-drain!)
 
 ;;; driver interface
 (defproto postgresql
@@ -139,7 +146,7 @@ package: std/db
          (lp))
         (['CommandComplete tag]
          (set! res tag))
-        (['PortalSuspended]
+        ([(or 'PortalSuspended 'EmptyQueryResponse)]
          (void))
         (['ErrorResponse msg . irritants]
          (sync!)
@@ -176,7 +183,7 @@ package: std/db
          (lp))
         (['CommandComplete tag]
          (void))
-        (['PortalSuspended]
+        ([(or 'PortalSuspended 'EmptyQueryResponse)]
          (void))
         (['ErrorResponse msg . irritants]
          (write (make-sql-error msg irritants 'postgresql-query-pump!)
@@ -245,9 +252,129 @@ package: std/db
 
 ;;; Protocol I/O
 (def (postgresql-send! sock msg)
-  (error "XXX IMPLEMENT ME: postgresql-send!")
-  )
+  (error "XXX IMPLEMENT ME: postgresql-send!"))
 
 (def (postgresql-recv! sock buf)
-  (error "XXX IMPLEMENT ME: postgresql-recv!")
-  )
+  (error "XXX IMPLEMENT ME: postgresql-recv!"))
+
+;;; message unmarshaling
+(def (unmarshal-ignore bio)
+  '(...))
+
+(def (unmarshal-empty bio)
+  '())
+
+(def (unmarshal-authen-request bio)
+  (error "XXX IMPLEMENT ME: unmarshal-authen-request"))
+
+(def (unmarshal-complete bio)
+  (error "XXX IMPLEMENT ME: unmarshal-complete"))
+
+(def (unmarshal-data-row bio)
+  (error "XXX IMPLEMENT ME: unmarshal-data-row"))
+
+(def (unmarshal-error-notice bio)
+  (error "XXX IMPLEMENT ME: unmarshal-error-notice"))
+
+(def (unmarshal-param-description bio)
+  (error "XXX IMPLEMENT ME: unmarshal-param-description"))
+
+(def (unmarshal-row-description bio)
+  (error "XXX IMPLEMENT ME: unmarshal-row-description"))
+
+(def (unmarshal-ready bio)
+  (error "XXX IMPLEMENT ME: unmarshal-ready"))
+
+;;; message marshaling
+(def (marshal-fail what)
+  (lambda (body)
+    (raise-io-error 'postgresql-send! "Cannot marshal; unsupported message" (cons what body))))
+
+(def (marshal-empty body)
+  '#u8())
+
+(def (marshal-bind body)
+  (error "XXX IMPLEMENT ME: marshal-bind"))
+
+(def (marshal-close body)
+  (error "XXX IMPLEMENT ME: marshal-close"))
+
+(def (marshal-describe body)
+  (error "XXX IMPLEMENT ME: marshal-describe"))
+
+(def (marshal-exec body)
+  (error "XXX IMPLEMENT ME: marshal-exec"))
+
+(def (marshal-parse body)
+  (error "XXX IMPLEMENT ME: marshal-parse"))
+
+(def (marshal-passwd body)
+  (error "XXX IMPLEMENT ME: marshal-passwd"))
+
+(def (marshal-query body)
+  (error "XXX IMPLEMENT ME: marshal-query"))
+
+;;; dispatch tables
+(def +backend-messages+
+  (make-vector 256))
+(def +frontend-messages+
+  (make-hash-table-eq))
+
+(defrules defmessage-backend ()
+  ((_ (id char unmarshal) ...)
+   (begin
+     (let (t (char->integer char))
+       (vector-set! +backend-messages+ t (cons 'id unmarshal)))
+     ...)))
+
+(defrules defmessage-frontend ()
+  ((_ (id char marshal) ...)
+   (begin
+     (let (t (char->integer char))
+       (hash-put! +frontend-messages+ 'id (cons t marshal)))
+     ...)))
+
+(defmessage-backend
+  (AuthenticationRequest    #\R unmarshal-authen-request)
+  (BackendKeyData           #\K unmarshal-ignore)
+  (BindComplete             #\2 unmarshal-empty)
+  (CloseComplete            #\3 unmarshal-empty)
+  (CommandComplete          #\C unmarshal-complete)
+  (CopyData                 #\d unmarshal-ignore)
+  (CopyDone                 #\c unmarshal-ignore)
+  (CopyInResponse           #\G unmarshal-ignore)
+  (CopyOutResponse          #\H unmarshal-ignore)
+  (CopyBothResponse         #\W unmarshal-ignore)
+  (DataRow                  #\D unmarshal-data-row)
+  (EmptyQueryResponse       #\I unmarshal-empty)
+  (ErrorResponse            #\E unmarshal-error-notice)
+  (FunctionCallResponse     #\V unmarshal-ignore)
+  (NegotiateProtocolVersion #\v unmarshal-ignore)
+  (NoData                   #\n unmarshal-empty)
+  (NoticeResponse           #\N unmarshal-error-notice)
+  (NotificationResponse     #\A unmarshal-ignore)
+  (ParameterDescription     #\t unmarshal-param-description)
+  (ParameterStatus          #\S unmarshal-ignore)
+  (ParseComplete            #\1 unmarshal-empty)
+  (PortalSuspended          #\s unmarshal-empty)
+  (ReadyForQuery            #\Z unmarshal-ready)
+  (RowDescription           #\T unmarshal-row-description))
+
+(defmessage-frontend
+  (Bind                     #\B  marshal-bind)
+  (Close                    #\C  marshal-close)
+  (CopyData                 #\d (marshal-fail 'CopyData))
+  (CopyDone                 #\c (marshal-fail 'CopyDone))
+  (CopyFail                 #\f (marshal-fail 'CopyFail))
+  (Describe                 #\D  marshal-describe)
+  (Execute                  #\E  marshal-exec)
+  (Flush                    #\H  marshal-empty)
+  (FunctionCall             #\F (marshal-fail 'FunctionCall))
+  (GSSResponse              #\p (marshal-fail 'GSSResponse))
+  (Parse                    #\P  marshal-parse)
+  (PasswordMessage          #\p  marshal-passwd)
+  (Query                    #\Q  marshal-query)
+  (SASLInitialResponse      #\p (marshal-fail 'SASLInitialResponse)) ; TODO
+  (SASLResponse             #\p (marshal-fail 'SASLResponse)) ; TODO
+  (Sync                     #\S  marshal-empty)
+  (Terminate                #\X  marshal-empty))
