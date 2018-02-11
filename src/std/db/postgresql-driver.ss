@@ -5,8 +5,10 @@ package: std/db
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
+        :gerbil/gambit/bits
         :std/actor/proto
         :std/actor/message
+        :std/net/bio
         :std/logger
         :std/sugar
         :std/error
@@ -252,10 +254,91 @@ package: std/db
 
 ;;; Protocol I/O
 (def (postgresql-send! sock msg)
-  (error "XXX IMPLEMENT ME: postgresql-send!"))
+  (def (marshal-and-write tid body marshal)
+    (let* ((payload (marshal body))
+           (payload-len
+            (cond
+             ((u8vector? payload)
+              (u8vector-length payload))
+             ((chunked-output-buffer? payload)
+              (chunked-output-length payload))
+             (else
+              (raise-io-error 'postgresql-send! "unexpected payload" tid body payload)))))
+      (when tid
+        (write-u8 tid sock))
+      (write-u32 (fx+ payload-len 4) sock)
+      (if (u8vector? payload)
+        (let (len (u8vector-length payload))
+          (when (fx> len 0)
+            (write-subu8vector payload 0 len sock)))
+        (for-each
+          (lambda (u8v)
+            (write-subu8vector u8v 0 (u8vector-length u8v) sock))
+          (chunked-output-chunks payload)))
+      (force-output sock)))
+
+  (def (write-u32 u32 sock)
+    (write-u8 (##fxand (##fxarithmetic-shift-right u32 24) #xff) sock)
+    (write-u8 (##fxand (##fxarithmetic-shift-right u32 16) #xff) sock)
+    (write-u8 (##fxand (##fxarithmetic-shift-right u32 8) #xff) sock)
+    (write-u8 (##fxand u32 #xff) sock))
+
+  (with ([tag . body] msg)
+    (cond
+     ((hash-get +frontend-messages+ tag)
+      => (match <>
+           ([tid . marshal]
+            (marshal-and-write tid body marshal))))
+     ((eq? tag 'StartupMessage)
+      (marshal-and-write #f body marshal-startup))
+     (else
+      (raise-io-error 'postgresql-send! "cannot marshal; unknown message tag" msg)))))
 
 (def (postgresql-recv! sock buf)
-  (error "XXX IMPLEMENT ME: postgresql-recv!"))
+  (def (read-u32 sock u8v)
+    (let (rd (read-subu8vector u8v 0 4 sock))
+      (cond
+       ((fx< rd 4)
+        (raise-io-error 'postgresql-recv! "premature end of input" rd))
+       ((##fxarithmetic-shift-left? (##u8vector-ref u8v 0) 24)
+        => (lambda (bits)
+             (##fxior bits
+                      (##fxarithmetic-shift-left (##u8vector-ref u8v 1) 16)
+                      (##fxarithmetic-shift-left (##u8vector-ref u8v 2) 8)
+                      (##u8vector-ref u8v 3))))
+       (else
+        (bitwise-ior (arithmetic-shift (##u8vector-ref u8v 0) 24)
+                     (##fxarithmetic-shift-left (##u8vector-ref u8v 1) 16)
+                     (##fxarithmetic-shift-left (##u8vector-ref u8v 2) 8)
+                     (##u8vector-ref u8v 3))))))
+
+  (let* ((tid (read-u8 sock))
+         (_ (when (eof-object? tid)
+              (raise-io-error 'postgresql-recv! "connection closed")))
+         (payload-len (read-u32 sock (unbox buf)))
+         (payload-len (fx- payload-len 4))
+         (u8buf
+          (let (u8buf (unbox buf))
+            (if (fx< (u8vector-length u8buf) payload-len)
+              (let (u8buf (make-u8vector payload-len))
+                (set! (box buf) u8buf)
+                u8buf)
+              u8buf)))
+         (rd
+          (if (fx> payload-len 0)
+            (read-subu8vector u8buf 0 payload-len sock)
+            0))
+         (_ (when (fx< rd payload-len)
+              (raise-io-error 'postgresql-recv! "premature end of input" rd tid payload-len)))
+         (bio (open-input-buffer u8buf 0 payload-len)))
+    (cond
+     ((vector-ref +backend-messages+ tid)
+      => (match <>
+           ([tag . unmarshal]
+            (let (body (unmarshal bio))
+              (cons tag body)))))
+     (else
+      (raise-io-error 'postgresql-recv! "unexpected backend message" tid)))))
 
 ;;; message unmarshaling
 (def (unmarshal-ignore bio)
@@ -292,6 +375,9 @@ package: std/db
 
 (def (marshal-empty body)
   '#u8())
+
+(def (marshal-startup body)
+  (error "XXX IMPLEMENT ME: marshal-startup"))
 
 (def (marshal-bind body)
   (error "XXX IMPLEMENT ME: marshal-bind"))
