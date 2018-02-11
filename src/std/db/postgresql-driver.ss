@@ -5,7 +5,8 @@ package: std/db
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
-        :std/actor
+        :std/actor/proto
+        :std/actor/message
         :std/logger
         :std/sugar
         :std/db/dbi)
@@ -63,14 +64,29 @@ package: std/db
 (def (postgreql-driver sock)
   (def query-output #f)
 
+  (def buffer (box (make-u8vector 1024)))
+
   (def (send! msg)
-    (error "XXX IMPLEMENT ME: send!"))
+    (postgresql-send! sock msg))
 
   (def (recv!)
-    (error "XXX IMPLEMENT ME: recv!"))
+    (match (postgresql-recv! sock buffer)
+      (['NoticeResponse msg . irritants]
+       (notice! msg irritants)
+       (recv!))
+      (msg msg)))
+
+  (def (notice! msg irritants)
+    (warning "NOTICE: ~a ~a" msg irritants))
 
   (def (sync!)
-    (error "XXX IMPLEMENT ME: sync!"))
+    (send! '(Sync))
+    (let lp ()
+      (match (recv!)
+        (['ReadyForQuery status]
+         (void))
+        (else
+         (lp)))))
 
   (def (prepare name sql)
     ;; Parse (name sql) -> ParseComplete | ErrorResponse
@@ -153,22 +169,20 @@ package: std/db
     ;; Sync                  -> ReadyForQuery
     ;; pump to query-output, close on end -- inline errors + close
     (send! '(Execute "" 0))
-    (try
-     (let lp ()
-       (match (recv!)
-         (['DataRow count . cols]
-          (write cols query-output)
-          (lp))
-         (['CommandComplete tag]
-          (void))
-         (['PortalSuspended]
-          (void))
-         (['ErrorResponse msg . irritants]
-          (write (make-sql-error msg irritants 'postgresql-query-pump!)
-                 query-output))))
-     (finally
-      (close-output-port query-output)
-      (set! query-output #f)))
+    (let lp ()
+      (match (recv!)
+        (['DataRow count . cols]
+         (write cols query-output)
+         (lp))
+        (['CommandComplete tag]
+         (void))
+        (['PortalSuspended]
+         (void))
+        (['ErrorResponse msg . irritants]
+         (write (make-sql-error msg irritants 'postgresql-query-pump!)
+                query-output))))
+    (close-output-port query-output)
+    (set! query-output #f)
     (sync!))
 
   (def (close name)
@@ -224,5 +238,16 @@ package: std/db
        (raise e)))
    (finally
     (when query-output
+      (write (make-sql-error "driver error" [] 'postgresql-driver)
+             query-output)
       (close-output-port query-output))
     (close-port sock))))
+
+;;; Protocol I/O
+(def (postgresql-send! sock msg)
+  (error "XXX IMPLEMENT ME: postgresql-send!")
+  )
+
+(def (postgresql-recv! sock buf)
+  (error "XXX IMPLEMENT ME: postgresql-recv!")
+  )
