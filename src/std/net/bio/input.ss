@@ -185,3 +185,8 @@ package: std/net/bio
         (let (rlo+count (##fx+ rlo count))
           (set! (&input-buffer-rlo buf)
             rlo+count))))))
+
+(def (bio-input-count buf)
+  (let ((rlo (&input-buffer-rlo buf))
+        (rhi (&input-buffer-rhi buf)))
+    (##fx- rhi rlo)))
