@@ -1,12 +1,11 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
-;;; PostgreSQL driver and dbi interface
+;;; PostgreSQL dbi interface
 package: std/db
 
-(import :gerbil/gambit/threads
-        :std/db/dbi
-        :std/iter
-        :std/actor)
+(import :std/db/dbi
+        :std/db/postgresql-driver
+        :std/iter)
 (export postgresql-connect)
 
 (defstruct (postgresql-connection connection) ()
@@ -27,7 +26,6 @@ package: std/db
   (let (driver (postgresql-connect! host port user passwd db))
     (make-postgresql-connection driver)))
 
-;;; dbi
 (defmethod {close postgresql-connection}
   (lambda (self)
     (postgreql-close! self)))
@@ -72,18 +70,23 @@ package: std/db
 
 (defmethod {query-fetch postgresql-statement}
   (lambda (self)
+    (def (result->row cols)
+      (error "XXX IMPLEMENT ME result->row"))
     (cond
      ((postgresql-statement-inp self)
       => (lambda (inp)
-           (let (row (read inp))
-             (if (eof-object? row)
-               (begin
-                 (set! (postgresql-statement-inp self) #f)
-                 (set! (postgresql-statement-row self) #f)
-                 iter-end)
-               (begin
+           (let (next (read inp))
+             (cond
+              ((eof-object? next)
+               (set! (postgresql-statement-inp self) #f)
+               (set! (postgresql-statement-row self) #f)
+               iter-end)
+              ((exception? next)
+               (raise next))
+              (else
+               (let (row (result->row next))
                  (set! (postgresql-statement-row self) row)
-                 (void))))))
+                 (void)))))))
      (else iter-end))))
 
 (defmethod {query-row postgresql-statement}
@@ -99,51 +102,3 @@ package: std/db
 (defmethod {columns postgresql-statement}
   (lambda (self)
     (error "XXX IMPLEMENT ME: postgresql-statement::columns")))
-
-;;; driver interface
-(defproto postgresql
-  (prepare name sql)
-  (exec name params)
-  (query name params)
-  event:
-  (close name)
-  (shutdown))
-
-(defrules with-driver ()
-  ((_ conn driver body ...)
-   (cond
-    ((connection-e conn)
-     => (lambda (driver) body ...))
-    (else
-     (error "connection has been closed" conn)))))
-
-(def (postgresql-prepare-statement! conn name sql)
-  (with-driver conn driver
-    (!!postgresql.prepare driver name sql)))
-
-(def (postgresql-close-statement! conn name)
-  (alet (driver (connection-e conn))
-    (!!postgresql.close driver name)))
-
-(def (postgresql-exec! conn name bind)
-  (with-driver conn driver
-    (!!postgresql.exec driver name bind)))
-
-(def (postgresql-query! conn name bind)
-  (with-driver conn driver
-    (!!postgresql.query driver name bind)))
-
-(def (postgreql-close! conn)
-  (alet (driver (connection-e conn))
-    (!!postgresql.shutdown driver)))
-
-(def (postgresql-drain! inp)
-  (def (drain inp)
-    (let lp ()
-      (unless (eof-object? (read inp))
-        (lp))))
-  (spawn/name 'postgresql-drain drain inp))
-
-;;; driver implementation
-(def (postgresql-connect! host port user passwd db)
-  (error "XXX IMPLEMENT ME: postgresql-connect!"))

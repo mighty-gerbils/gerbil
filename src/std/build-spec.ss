@@ -174,6 +174,7 @@
     "web/rack"
     "db/dbi"
     "db/conpool"
+    "db/postgresql-driver"
     "db/postgresql"
     ,@(if config-enable-sqlite
         `((gsc: "db/_sqlite"
