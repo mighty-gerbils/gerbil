@@ -109,6 +109,15 @@ package: std/net/bio
       (##u8vector-set! u8v (##fx+ start 2) (##fxand bits #xff))
       (##u8vector-set! u8v (##fx+ start 3) b0))))
 
+(def (bio-write-s32 s32 buf)
+  (error "XXX IMPLEMENT ME: bio-write-s32"))
+
+(def (bio-write-u16 u16 buf)
+  (error "XXX IMPLEMENT ME: bio-write-u16"))
+
+(def (bio-write-s16 s16 buf)
+  (error "XXX IMPLEMENT ME: bio-write-s16"))
+
 (def (bio-write-char char buf)
   (let (c (##char->integer char))
     (cond

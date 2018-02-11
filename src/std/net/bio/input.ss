@@ -169,6 +169,18 @@ package: std/net/bio
                  (##fxarithmetic-shift-left (##u8vector-ref u8v (##fx+ start 2)) 8)
                  (##u8vector-ref u8v (##fx+ start 3))))))
 
+(def (bio-read-s32 buf)
+  (error "XXX IMPLEMENT ME: bio-read-s32"))
+
+(def (bio-read-u16 buf)
+  (error "XXX IMPLEMENT ME: bio-read-u16"))
+
+(def (bio-read-s16 buf)
+  (error "XXX IMPLEMENT ME: bio-read-s16"))
+
+(def (bio-input-utf8-decode count buf)
+  (error "XXX IMPLEMENT ME: bio-input-utf8-decode"))
+
 (def (bio-input-skip count buf)
   (let lp ((count count))
     (let* ((rlo (&input-buffer-rlo buf))
