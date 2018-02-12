@@ -5,8 +5,9 @@ package: std/db
 
 (import :std/db/dbi
         :std/db/postgresql-driver
-        :std/iter)
-(export postgresql-connect)
+        :std/iter
+        :std/srfi/19)
+(export postgresql-connect defcatalog)
 
 (defstruct (postgresql-connection connection) ()
   final: #t)
@@ -52,6 +53,7 @@ package: std/db
         (if (fx= type-oid 16)
           (serialize-boolean arg)
           #f))
+       ((string? arg) arg)
        ((hash-get +pg-catalog-serialize+ type-oid)
         => (cut <> arg))
        (else
@@ -141,5 +143,58 @@ package: std/db
 (def +pg-catalog-deserialize+
   (make-hash-table-eq))
 
+(defrules defcatalog ()
+  ((_ (oids serialize deserialize) ...)
+   (begin
+     (defcatalog-type oids serialize deserialize) ...)))
+
+(defrules defcatalog-type ()
+  ((_ (oid ...) serialize deserialize)
+   (begin
+     (hash-put! +pg-catalog-serialize+ oid serialize) ...
+     (hash-put! +pg-catalog-deserialize+ oid deserialize) ...)))
+
 (def (serialize-boolean arg)
   (if arg "t" "f"))
+
+(def (deserialize-boolean str)
+  (if (member str '("t" "true" "TRUE" "y" "yes" "on" "1")) #t #f))
+
+(def (serialize-date date)
+  (date->string date "~Y-~m-~d"))
+
+(def (deserialize-date str)
+  (string->date str "~Y-~m-~d"))
+
+(def (serialize-timestamp date)
+  (date->string date "~Y-~m-~d ~H:~M:~S"))
+
+(def (deserialize-timestamp str)
+  (string->date str "~Y-~m-~d ~H:~M:~S"))
+
+(def (serialize-timestamptz date)
+  (date->string date "~Y-~m-~d ~H:~M:~S~z"))
+
+(def (deserialize-timestamptz str)
+  (string->date str "~Y-~m-~d ~H:~M:~S~z"))
+
+(defcatalog
+  ;; BOOLOID
+  ((16) serialize-boolean deserialize-boolean)
+  ;; INT8OID INT2OID INT4OID FLOAT4OID FLOAT8OID NUMERICOID
+  ((20 21 23 700 701 1700) number->string string->number)
+  ;; CHAROID TEXTOID BPCHAROID VARCHAROID
+  ((18 25 1042 1043) identity identity)
+  ;; DATEOID
+  ((1082) serialize-date deserialize-date)
+  ;; TIMESTAMPOID
+  ((1114) serialize-timestamp deserialize-timestamp)
+  ;; TIMESTAMPTZOID
+  ((1184) serialize-timestamptz deserialize-timestamptz)
+
+  ;; Add more from the catalog here depending on actual needs...
+  ;; - automagic json serialization/deserialization?
+  ;;   add JSONOID with json-object->string string->json-object
+  ;; - automagic uuid conversion?
+  ;;   add UUIDOID with uuid->string string->uuid
+  )
