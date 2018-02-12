@@ -10,6 +10,8 @@ package: std/db
         :std/actor/message
         :std/net/bio
         :std/text/utf8
+        :std/text/hex
+        :std/crypto
         :std/logger
         :std/sugar
         :std/error
@@ -68,10 +70,73 @@ package: std/db
 
 ;;; driver implementation
 (def (postgresql-connect! host port user passwd db)
-  (start-logger!)
-  (error "XXX IMPLEMENT ME: postgresql-connect!"))
+  (def buffer
+    (box (make-u8vector 1024)))
 
-(def (postgreql-driver sock)
+  (def (start-driver! sock)
+    (let lp ()
+      (match (postgresql-recv! sock buffer)
+        (['ReadyForQuery _]
+         (spawn/name 'postgresql-connection postgresql-driver sock))
+        (['ErrorResponse msg . irritants]
+         (apply raise-io-error 'postgresql-connect! msg irritants))
+        (['NoticeResponse msg . irritants]
+         (warning "NOTICE: ~a ~a" msg irritants)
+         (lp))
+        (else
+         (lp)))))
+
+  (def (authen-pass sock pass)
+    (postgresql-send! sock ['PasswordMessage pass])
+    (match (postgresql-recv! sock buffer)
+      (['AuthenticationRequest 'AuthenticationOk]
+       (start-driver! sock))
+      (['ErrorResponse msg . irritants]
+       (apply raise-io-error 'postgresql-connect! msg irritants))
+      (unexpected
+       (raise-io-error 'postgresql-connect! "unexpected message" unexpected))))
+
+  (def (authen-cleartext sock)
+    (authen-pass sock passwd))
+
+  (def (authen-md5 sock salt)
+    (def (md5-hex data)
+      (hex-encode (md5 data)))
+
+    (let* ((word1 (string-append passwd user))
+           (word2 (md5-hex word1))
+           (word3 (u8vector-append (string->utf8 word2) salt))
+           (word4 (md5-hex word3))
+           (pass (string-append "md5" word4)))
+      (authen-pass sock pass)))
+
+  (def (authen-sasl sock mechanisms)
+    (error "XXX IMPLEMENT ME: authen-sasl"))
+
+  (start-logger!)
+  (let (sock (open-tcp-client [server-address: host port-number: port]))
+    (try
+     (postgresql-send! sock ['StartupMessage ["user" . user] ["db" . db]])
+     (match (postgresql-recv! sock buffer)
+       (['AuthenticationRequest what . rest]
+        (case what
+          ((AuthenticationOk)
+           (start-driver! sock))
+          ((AuthenticationCleartextPassword)
+           (authen-cleartext sock))
+          ((AuthenticationMD5Password)
+           (authen-md5 sock (car rest)))
+          ((AuthenticationSASL)
+           (authen-sasl sock rest))
+          (else
+           (raise-io-error 'postgresql-connect! "unsupported authentication mechanism" what))))
+       (unexpected
+        (raise-io-error 'postgresql-connect! "unexpected message" unexpected)))
+     (catch (e)
+       (close-port sock)
+       (raise e)))))
+
+(def (postgresql-driver sock)
   (def query-output #f)
 
   (def buffer (box (make-u8vector 1024)))
@@ -93,7 +158,7 @@ package: std/db
     (send! '(Sync))
     (let lp ()
       (match (recv!)
-        (['ReadyForQuery status]
+        (['ReadyForQuery _]
          (void))
         (else
          (lp)))))
@@ -246,7 +311,7 @@ package: std/db
        (raise e)))
    (finally
     (when query-output
-      (write (make-sql-error "driver error" [] 'postgresql-driver)
+      (write (make-sql-error "connection error" [] 'postgresql-driver)
              query-output)
       (close-output-port query-output))
     (close-port sock))))
