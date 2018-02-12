@@ -62,8 +62,10 @@ package: std/db
     (!!postgresql.query driver name bind)))
 
 (def (postgresql-continue! conn token)
-  (with-driver conn driver
-    (!!postgresql.continue driver token)))
+  (if (!token? token)
+    (with-driver conn driver
+      (!!postgresql.continue driver token))
+    (error "Bad argument; illegal query token" token)))
 
 (def (postgresql-close! conn)
   (alet (driver (connection-e conn))
@@ -203,6 +205,7 @@ package: std/db
     (when query-output
       (close-output-port query-output)
       (set! query-output #f)
+      (set! query-token #f)
       (sync!)
       (let (to-close deferred-close)
         (set! deferred-close #f)
@@ -310,6 +313,7 @@ package: std/db
                   query-output))))
       (close-output-port query-output)
       (set! query-output #f)
+      (set! query-token #f)
       (sync!)))
 
   (def (close name)
