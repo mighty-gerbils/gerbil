@@ -29,7 +29,7 @@ package: std/db
 
 (defmethod {close postgresql-connection}
   (lambda (self)
-    (postgreql-close! self)))
+    (postgresql-close! self)))
 
 (defmethod {prepare postgresql-connection}
   (lambda (self sql)
@@ -109,18 +109,22 @@ package: std/db
     (cond
      ((postgresql-statement-inp self)
       => (lambda (inp)
-           (let (next (read inp))
-             (cond
-              ((eof-object? next)
-               (set! (postgresql-statement-inp self) #f)
-               (set! (postgresql-statement-row self) #f)
-               iter-end)
-              ((exception? next)
-               (raise next))
-              (else
-               (let (row (result->row next))
-                 (set! (postgresql-statement-row self) row)
-                 (void)))))))
+           (let again ()
+             (let (next (read inp))
+               (cond
+                ((eof-object? next)
+                 (set! (postgresql-statement-inp self) #f)
+                 (set! (postgresql-statement-row self) #f)
+                 iter-end)
+                ((exception? next)
+                 (raise next))
+                ((query-token? next)
+                 (postgresql-continue! (postgresql-statement-conn self) next)
+                 (again))
+                (else
+                 (let (row (result->row next))
+                   (set! (postgresql-statement-row self) row)
+                   (void))))))))
      (else iter-end))))
 
 (defmethod {query-row postgresql-statement}

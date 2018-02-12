@@ -22,8 +22,10 @@ package: std/db
         postgresql-close-statement!
         postgresql-exec!
         postgresql-query!
-        postgreql-close!
-        postgresql-drain!)
+        postgresql-continue!
+        postgresql-close!
+        postgresql-drain!
+        (rename: !token? query-token?))
 
 ;;; driver interface
 (defproto postgresql
@@ -31,6 +33,7 @@ package: std/db
   (exec name params)
   (query name params)
   event:
+  (continue token)
   (close name)
   (shutdown))
 
@@ -58,7 +61,11 @@ package: std/db
   (with-driver conn driver
     (!!postgresql.query driver name bind)))
 
-(def (postgreql-close! conn)
+(def (postgresql-continue! conn token)
+  (with-driver conn driver
+    (!!postgresql.continue driver token)))
+
+(def (postgresql-close! conn)
   (alet (driver (connection-e conn))
     (!!postgresql.shutdown driver)))
 
@@ -162,9 +169,13 @@ package: std/db
      (raise e))))
 
 (def (postgresql-driver sock)
+  (def query-limit 1000)
   (def query-output #f)
+  (def query-token #f)
 
   (def buffer (box (make-u8vector 1024)))
+
+  (def deferred-close [])
 
   (def (send! msg)
     (postgresql-send! sock msg))
@@ -188,6 +199,15 @@ package: std/db
         (else
          (lp)))))
 
+  (def (maybe-sync!)
+    (when query-output
+      (close-output-port query-output)
+      (set! query-output #f)
+      (sync!)
+      (let (to-close deferred-close)
+        (set! deferred-close #f)
+        (for-each close to-close))))
+
   (def (prepare name sql)
     ;; Parse (name sql) -> ParseComplete | ErrorResponse
     ;; Describe (name)  -> ParameterDescription | ErrorResponse
@@ -196,6 +216,7 @@ package: std/db
     (def params #f)
     (def cols #f)
 
+    (maybe-sync!)
     (send! ['Parse name sql])
     (match (recv!)
       (['ParseComplete] (void))
@@ -225,6 +246,7 @@ package: std/db
     ;; Sync                  -> ReadyForQuery
     (def res #f)
 
+    (maybe-sync!)
     (send! ['Bind "" name . params])
     (match (recv!)
       (['BindComplete]
@@ -232,7 +254,7 @@ package: std/db
       (['ErrorResponse msg . irritants]
        (sync!)
        (apply raise-sql-error 'postgresql-exec! msg irritants)))
-    (send! '(Execute "" 0))
+    (send! '(Execute "" 1))
     (let lp ()
       (match (recv!)
         (['DataRow count . cols]
@@ -248,14 +270,17 @@ package: std/db
     res)
 
   (def (query-start name params)
+    (maybe-sync!)
     ;; Bind ("" name params) ->  BindComplete | ErrorResponse
     (send! ['Bind "" name . params])
     (match (recv!)
       (['BindComplete]
-       (let ((values inp outp)
-             (open-vector-pipe [permanent-close: #t direction: 'input]
-                               [permanent-close: #t direction: 'output]))
+       (let (((values inp outp)
+              (open-vector-pipe [permanent-close: #t direction: 'input]
+                                [permanent-close: #t direction: 'output]))
+             (token (make-!token)))
          (set! query-output outp)
+         (set! query-token token)
          inp))
       (['ErrorResponse msg . irritants]
        (sync!)
@@ -266,34 +291,42 @@ package: std/db
     ;;                          CommandComplete | EmptyQueryResponse
     ;;                          | ErrorResponse | PortalSuspended.
     ;; Sync                  -> ReadyForQuery
-    (send! '(Execute "" 0))
-    (let lp ()
-      (match (recv!)
-        (['DataRow . cols]
-         (write cols query-output)
-         (lp))
-        (['CommandComplete tag]
-         (void))
-        ([(or 'PortalSuspended 'EmptyQueryResponse)]
-         (void))
-        (['ErrorResponse msg . irritants]
-         (write (make-sql-error msg irritants 'postgresql-query-pump!)
-                query-output))))
-    (close-output-port query-output)
-    (set! query-output #f)
-    (sync!))
+    (send! '(Execute "" query-limit))
+    (let/cc break
+      (let lp ()
+        (match (recv!)
+          (['DataRow . cols]
+           (write cols query-output)
+           (lp))
+          (['CommandComplete tag]
+           (void))
+          (['PortalSuspended]
+           (write query-token query-output)
+           (break))
+          (['EmptyQueryResponse]
+           (void))
+          (['ErrorResponse msg . irritants]
+           (write (make-sql-error msg irritants 'postgresql-query-pump!)
+                  query-output))))
+      (close-output-port query-output)
+      (set! query-output #f)
+      (sync!)))
 
   (def (close name)
     ;; Close (name) -> CloseComplete | ErrorResponse
-    (send! ['Close #\s name])
-    (match (recv!)
-      (['CloseComplete]
-       (void))
-      (['ErrorResponse msg . irritants]
-       (warning "error closing statement ~a: ~a" name msg)))
-    (sync!))
+    (if query-output
+      (set! deferred-close (cons name deferred-close))
+      (begin
+        (send! ['Close #\s name])
+        (match (recv!)
+          (['CloseComplete]
+           (void))
+          (['ErrorResponse msg . irritants]
+           (warning "error closing statement ~a: ~a" name msg)))
+        (sync!))))
 
   (def (shutdown!)
+    (sync!)
     (send! '(Terminate))
     (raise 'shutdown))
 
@@ -320,6 +353,9 @@ package: std/db
          (do-action k (exec name params)))
         ((postgresql.query name params k)
          (do-action k (query-start name params) (query-pump)))
+        ((postgresql.continue token)
+         (when (eq? token query-token)
+           (query-pump)))
         ((postgresql.close name)
          (close name))
         ((postgresql.shutdown)
