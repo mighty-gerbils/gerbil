@@ -114,6 +114,7 @@
     "net/httpd/handler"
     "net/httpd/server"
     "net/httpd"
+    "net/sasl"
     ;; :std/xml
     ,@(if config-enable-libxml
         `((gsc: "xml/_libxml"
