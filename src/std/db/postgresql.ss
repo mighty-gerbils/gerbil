@@ -45,7 +45,21 @@ package: std/db
 
 (defmethod {bind postgresql-statement}
   (lambda (self . args)
-    (error "XXX IMPLEMENT ME: postgresql-statement::bind")))
+    (def (value->binding type-oid arg)
+      (cond
+       ((not arg)
+        ;; #f is NULL normally ... unless it's a BOOL
+        (if (fx= type-oid 16)
+          (serialize-boolean arg)
+          #f))
+       ((hash-get +pg-catalog-serialize+ type-oid)
+        => (cut <> arg))
+       (else
+        (error "Cannot bind; unknown parameter type" type-oid arg))))
+
+    (let* ((params (postgresql-statement-params self))
+           (bind (map value->binding params args)))
+      (set! (postgresql-statement-bind self) bind))))
 
 (defmethod {clear postgresql-statement}
   (lambda (self)
@@ -71,7 +85,25 @@ package: std/db
 (defmethod {query-fetch postgresql-statement}
   (lambda (self)
     (def (result->row cols)
-      (error "XXX IMPLEMENT ME result->row"))
+      (let (res (map result->value cols (postgresql-statement-cols self)))
+        (cond
+         ((null? res) #f)
+         ((null? (cdr res))
+          (car res))
+         (else
+          (list->vector res)))))
+
+    (def (result->value res col)
+      (and res ; NULL is #f
+           (let (type-oid (list-ref col 3))
+             (value-e res type-oid))))
+
+    (def (value-e res type-oid)
+      (cond
+       ((hash-get +pg-catalog-deserialize+ type-oid)
+        => (cut <> res))
+       (else res)))
+
     (cond
      ((postgresql-statement-inp self)
       => (lambda (inp)
@@ -101,4 +133,13 @@ package: std/db
 
 (defmethod {columns postgresql-statement}
   (lambda (self)
-    (error "XXX IMPLEMENT ME: postgresql-statement::columns")))
+    (map car (postgresql-statement-cols self))))
+
+;;; catalog/pg_type.h
+(def +pg-catalog-serialize+
+  (make-hash-table-eq))
+(def +pg-catalog-deserialize+
+  (make-hash-table-eq))
+
+(def (serialize-boolean arg)
+  (if arg "t" "f"))
