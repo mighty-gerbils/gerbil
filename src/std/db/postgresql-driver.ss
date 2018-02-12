@@ -9,6 +9,7 @@ package: std/db
         :std/actor/proto
         :std/actor/message
         :std/net/bio
+        :std/net/sasl
         :std/text/utf8
         :std/text/hex
         :std/crypto
@@ -70,6 +71,9 @@ package: std/db
 
 ;;; driver implementation
 (def (postgresql-connect! host port user passwd db)
+  (def sock
+    (open-tcp-client [server-address: host port-number: port]))
+
   (def buffer
     (box (make-u8vector 1024)))
 
@@ -86,15 +90,24 @@ package: std/db
         (else
          (lp)))))
 
+  (defrules send! ()
+    ((_ msg)
+     (postgresql-send! sock msg)))
+
+  (defrules recv! ()
+    ((_ clause ...)
+     (match (postgresql-recv! sock buffer)
+       clause ...
+       (['ErrorResponse msg . irritants]
+        (apply raise-io-error 'postgresql-connect! msg irritants))
+       (unexpected
+        (raise-io-error 'postgresql-connect! "unexpected message" unexpected)))))
+
   (def (authen-pass sock pass)
-    (postgresql-send! sock ['PasswordMessage pass])
-    (match (postgresql-recv! sock buffer)
-      (['AuthenticationRequest 'AuthenticationOk]
-       (start-driver! sock))
-      (['ErrorResponse msg . irritants]
-       (apply raise-io-error 'postgresql-connect! msg irritants))
-      (unexpected
-       (raise-io-error 'postgresql-connect! "unexpected message" unexpected))))
+    (send! ['PasswordMessage pass])
+    (recv!
+     (['AuthenticationRequest 'AuthenticationOk]
+      (start-driver! sock))))
 
   (def (authen-cleartext sock)
     (authen-pass sock passwd))
@@ -111,30 +124,42 @@ package: std/db
       (authen-pass sock pass)))
 
   (def (authen-sasl sock mechanisms)
-    (error "XXX IMPLEMENT ME: authen-sasl"))
+    (unless (member "SCRAM-SHA-256" mechanisms)
+      (raise-io-error 'postgresql-connect! "unknown SASL authentication mechanisms" mechanisms))
+    (let* ((ctx (scram-sha-256-begin "" passwd))
+           (msg (scram-client-first-message ctx)))
+      (send! ['SASLInitialResponse "SCRAM-SHA-256" msg])
+      (recv!
+       (['AuthenticationRequest 'AuthenticationSASLContinue msg]
+        (scram-server-first-message! ctx msg)
+        (let (msg (scram-client-final-message ctx))
+          (send! ['SASLResponse msg])
+          (recv!
+           (['AuthenticationRequest 'AuthenticationSASLFinal data]
+            (scram-server-final-message! ctx msg)
+            (recv!
+             (['AuthenticationRequest 'AuthenticationOk]
+              (start-driver! sock))))))))))
 
   (start-logger!)
-  (let (sock (open-tcp-client [server-address: host port-number: port]))
-    (try
-     (postgresql-send! sock ['StartupMessage ["user" . user] ["db" . db]])
-     (match (postgresql-recv! sock buffer)
-       (['AuthenticationRequest what . rest]
-        (case what
-          ((AuthenticationOk)
-           (start-driver! sock))
-          ((AuthenticationCleartextPassword)
-           (authen-cleartext sock))
-          ((AuthenticationMD5Password)
-           (authen-md5 sock (car rest)))
-          ((AuthenticationSASL)
-           (authen-sasl sock rest))
-          (else
-           (raise-io-error 'postgresql-connect! "unsupported authentication mechanism" what))))
-       (unexpected
-        (raise-io-error 'postgresql-connect! "unexpected message" unexpected)))
-     (catch (e)
-       (close-port sock)
-       (raise e)))))
+  (try
+   (send! ['StartupMessage ["user" . user] ["db" . db]])
+   (recv!
+    (['AuthenticationRequest what . rest]
+     (case what
+       ((AuthenticationOk)
+        (start-driver! sock))
+       ((AuthenticationCleartextPassword)
+        (authen-cleartext sock))
+       ((AuthenticationMD5Password)
+        (authen-md5 sock (car rest)))
+       ((AuthenticationSASL)
+        (authen-sasl sock rest))
+       (else
+        (raise-io-error 'postgresql-connect! "unsupported authentication mechanism" what)))))
+   (catch (e)
+     (close-port sock)
+     (raise e))))
 
 (def (postgresql-driver sock)
   (def query-output #f)
@@ -431,10 +456,10 @@ package: std/db
        (let (mechanisms (unmarshal-string-list bio))
          ['AuthenticationSASL . mechanisms]))
       ((11)
-       (let (data (unmarshal-bytes-rest bio))
+       (let (data (unmarshal-string-rest bio))
          ['AuthenticationSASLContinue data]))
       ((12)
-       (let (data (unmarshal-bytes-rest bio))
+       (let (data (unmarshal-string-rest bio))
          ['AuthenticationSASLFinal data]))
       (else
        [t '...]))))
@@ -458,6 +483,10 @@ package: std/db
          (data (make-u8vector count)))
     (bio-read-bytes data bio)
     data))
+
+(def (unmarshal-string-rest bio)
+  (let (count (bio-input-count bio))
+    (bio-input-utf8-decode count bio)))
 
 (def (unmarshal-complete bio)
   (let (tag (unmarshal-string bio))
@@ -591,6 +620,21 @@ package: std/db
   (with ([sql] body)
     (string->utf8 sql)))
 
+(def (marshal-sasl-initial-reponse body)
+  (with ([mechanism data] body)
+    (let (bio (open-serializer-output-buffer))
+      (marshal-string mechanism bio)
+      (if data
+        (let (len (string-utf8-length data))
+          (bio-write-u32 len bio)
+          (bio-write-string data bio))
+        (bio-write-s32 -1 bio))
+      bio)))
+
+(def (marshal-sasl-response body)
+  (with ([data] body)
+    (string->utf8 data)))
+
 ;;; dispatch tables
 (def +backend-messages+
   (make-vector 256))
@@ -651,7 +695,7 @@ package: std/db
   (Parse                    #\P  marshal-parse)
   (PasswordMessage          #\p  marshal-passwd)
   (Query                    #\Q  marshal-query)
-  (SASLInitialResponse      #\p (marshal-fail 'SASLInitialResponse)) ; TODO
-  (SASLResponse             #\p (marshal-fail 'SASLResponse)) ; TODO
+  (SASLInitialResponse      #\p  marshal-sasl-initial-reponse)
+  (SASLResponse             #\p  marshal-sasl-response)
   (Sync                     #\S  marshal-empty)
   (Terminate                #\X  marshal-empty))
