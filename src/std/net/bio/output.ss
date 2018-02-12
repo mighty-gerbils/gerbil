@@ -6,7 +6,7 @@ package: std/net/bio
 
 (import :gerbil/gambit/bits
         :std/error)
-(export #t)
+(export (except-out #t 2^16 2^32))
 
 (declare (not safe))
 
@@ -109,14 +109,38 @@ package: std/net/bio
       (##u8vector-set! u8v (##fx+ start 2) (##fxand bits #xff))
       (##u8vector-set! u8v (##fx+ start 3) b0))))
 
+(def 2^32 (expt 2 32))
+
 (def (bio-write-s32 s32 buf)
-  (error "XXX IMPLEMENT ME: bio-write-s32"))
+  (let (u32 (if (< s32 0)
+              (+ 2^32 s32)
+              s32))
+    (bio-write-u32 u32 buf)))
 
 (def (bio-write-u16 u16 buf)
-  (error "XXX IMPLEMENT ME: bio-write-u16"))
+  (let* ((wlo (&output-buffer-wlo buf))
+         (whi (&output-buffer-whi buf))
+         (wlo+2 (##fx+ wlo 2)))
+    (if (##fx<= wlo+2 whi)
+      (begin
+        (bio-put-u16 u16 (&output-buffer-e buf) wlo)
+        (set! (&output-buffer-wlo buf)
+          wlo+2))
+      (begin
+        (bio-output-drain! buf 2)
+        (bio-write-u16 u16 buf)))))
+
+(def (bio-put-u16 u16 u8v start)
+  (##u8vector-set! u8v start (##fxand (##fxarithmetic-shift-right u16 8) #xff))
+  (##u8vector-set! u8v (##fx+ start 1) (##fxand u16 #xff)))
+
+(def 2^16 (expt 2 16))
 
 (def (bio-write-s16 s16 buf)
-  (error "XXX IMPLEMENT ME: bio-write-s16"))
+  (let (u16 (if (##fx< s16 0)
+              (##fx+ 2^16 s16)
+              s16))
+    (bio-write-u16 u16 buf)))
 
 (def (bio-write-char char buf)
   (let (c (##char->integer char))
