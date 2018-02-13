@@ -39,17 +39,35 @@ package: std/db
 (defrules with-driver ()
   ((_ conn driver body ...)
    (cond
+    ((thread? conn)
+     (let (driver conn)
+       body ...))
     ((connection-e conn)
      => (lambda (driver) body ...))
     (else
      (error "connection has been closed" conn)))))
+
+(defrules get-driver ()
+  ((_ conn)
+   (if (thread? conn) conn (connection-e conn))))
+
+#;(defrules DEBUG ()
+  ((_ what arg ...)
+   (begin
+     (display what)
+     (begin (write arg) (display " ")) ...
+     (newline))))
+
+(defrules DEBUG ()
+  ((_ what arg ...)
+   (void)))
 
 (def (postgresql-prepare-statement! conn name sql)
   (with-driver conn driver
     (!!postgresql.prepare driver name sql)))
 
 (def (postgresql-close-statement! conn name)
-  (alet (driver (connection-e conn))
+  (alet (driver (get-driver conn))
     (!!postgresql.close driver name)))
 
 (def (postgresql-exec! conn name bind)
@@ -67,7 +85,7 @@ package: std/db
     (error "Bad argument; illegal query token" token)))
 
 (def (postgresql-close! conn)
-  (alet (driver (connection-e conn))
+  (alet (driver (get-driver conn))
     (!!postgresql.shutdown driver)))
 
 ;;; driver implementation
@@ -79,6 +97,7 @@ package: std/db
     (box (make-u8vector 1024)))
 
   (def (start-driver! sock)
+    (DEBUG "STARTING DRIVER")
     (let lp ()
       (match (postgresql-recv! sock buffer)
         (['ReadyForQuery _]
@@ -111,12 +130,14 @@ package: std/db
       (start-driver! sock))))
 
   (def (authen-cleartext sock)
+    (DEBUG "AUTHEN CLEARTEXT")
     (authen-pass sock passwd))
 
   (def (authen-md5 sock salt)
     (def (md5-hex data)
       (hex-encode (md5 data)))
 
+    (DEBUG "AUTHEN MD5")
     (let* ((word1 (string-append passwd user))
            (word2 (md5-hex word1))
            (word3 (u8vector-append (string->utf8 word2) salt))
@@ -125,6 +146,8 @@ package: std/db
       (authen-pass sock pass)))
 
   (def (authen-sasl sock mechanisms)
+
+    (DEBUG "AUTHEN SASL")
     (unless (member "SCRAM-SHA-256" mechanisms)
       (raise-io-error 'postgresql-connect! "unknown SASL authentication mechanisms" mechanisms))
     (let* ((ctx (scram-sha-256-begin "" passwd))
@@ -136,17 +159,20 @@ package: std/db
         (let (msg (scram-client-final-message ctx))
           (send! ['SASLResponse msg])
           (recv!
-           (['AuthenticationRequest 'AuthenticationSASLFinal data]
+           (['AuthenticationRequest 'AuthenticationSASLFinal msg]
             (scram-server-final-message! ctx msg)
             (recv!
              (['AuthenticationRequest 'AuthenticationOk]
               (start-driver! sock))))))))))
 
   (start-logger!)
+
+  (DEBUG "START")
   (try
    (send! ['StartupMessage ["user" . user] (if db [["db" . db]] []) ...])
    (recv!
     (['AuthenticationRequest what . rest]
+     (DEBUG "AUTHENTICATION REQUEST " what)
      (case what
        ((AuthenticationOk)
         (start-driver! sock))
@@ -184,8 +210,7 @@ package: std/db
   (def (notice! msg irritants)
     (warning "NOTICE: ~a ~a" msg irritants))
 
-  (def (sync!)
-    (send! '(Sync))
+  (def (resync!)
     (let lp ()
       (match (recv!)
         (['ReadyForQuery _]
@@ -200,9 +225,9 @@ package: std/db
       (close-output-port query-output)
       (set! query-output #f)
       (set! query-token #f)
-      (sync!)
+      (resync!)
       (let (to-close deferred-close)
-        (set! deferred-close #f)
+        (set! deferred-close [])
         (for-each close to-close))))
 
   (def (prepare name sql)
@@ -215,24 +240,29 @@ package: std/db
 
     (maybe-sync!)
     (send! ['Parse name sql])
+    (send! '(Sync))
     (match (recv!)
-      (['ParseComplete] (void))
+      (['ParseComplete]
+       (resync!)
+       (void))
       (['ErrorResponse msg . irritants]
-       (sync!)
+       (resync!)
        (apply raise-sql-error 'postgresql-prepare! msg irritants)))
-    (send! ['Describe #\s name])
+
+    (send! ['Describe #\S name])
+    (send! '(Sync))
     (match (recv!)
       (['ParameterDescription . query-params]
        (set! params query-params))
       (['ErrorResponse msg . irritants]
-       (sync!)
+       (resync!)
        (apply raise-sql-error 'postgresql-prepare! msg irritants)))
     (match (recv!)
       (['RowDescription . fields]
        (set! cols fields))
       (['NoData]
        (set! cols [])))
-    (sync!)
+    (resync!)
     (values params cols))
 
   (def (exec name params)
@@ -245,13 +275,14 @@ package: std/db
 
     (maybe-sync!)
     (send! ['Bind "" name . params])
+    (send! '(Execute "" 1))
+    (send! '(Sync))
     (match (recv!)
       (['BindComplete]
        (void))
       (['ErrorResponse msg . irritants]
-       (sync!)
+       (resync!)
        (apply raise-sql-error 'postgresql-exec! msg irritants)))
-    (send! '(Execute "" 1))
     (let lp ()
       (match (recv!)
         (['DataRow count . cols]
@@ -261,15 +292,27 @@ package: std/db
         ([(or 'PortalSuspended 'EmptyQueryResponse)]
          (void))
         (['ErrorResponse msg . irritants]
-         (sync!)
+         (resync!)
          (apply raise-sql-error 'postgreql-exec msg irritants))))
-    (sync!)
+    (resync!)
     res)
 
+  ;; Query backpressure mechanism: the query pump reads and buffers up
+  ;; to query-limit rows before requiring a continue signal from
+  ;; the query client.
+  ;; The plan was originally to use (named) portals with Execute limit
+  ;; and rely on PortalSuspended to implement backpressure.
+  ;; Unfortunately, the server (tested with 10.1) doesn't start
+  ;; sending anything back until it sees a Sync; this kills
+  ;; the portal unless it's in a BEGIN/COMMIT block so the backpressure
+  ;; idea using portal suspension can't work without wrapping every
+  ;; query in an explicit txn (which is undesirable for obvious reasons)
   (def (query-start name params)
-    (maybe-sync!)
     ;; Bind ("" name params) ->  BindComplete | ErrorResponse
+    (maybe-sync!)
     (send! ['Bind "" name . params])
+    (send! '(Execute "" 0))
+    (send! '(Sync))
     (match (recv!)
       (['BindComplete]
        (let (((values inp outp)
@@ -280,7 +323,7 @@ package: std/db
          (set! query-token token)
          inp))
       (['ErrorResponse msg . irritants]
-       (sync!)
+       (resync!)
        (apply raise-sql-error 'postgresql-query-start! msg irritants))))
 
   (def (query-pump)
@@ -288,43 +331,46 @@ package: std/db
     ;;                          CommandComplete | EmptyQueryResponse
     ;;                          | ErrorResponse | PortalSuspended.
     ;; Sync                  -> ReadyForQuery
-    (send! '(Execute "" query-limit))
     (let/cc break
-      (let lp ()
-        (match (recv!)
-          (['DataRow . cols]
-           (write cols query-output)
-           (lp))
-          (['CommandComplete tag]
-           (void))
-          (['PortalSuspended]
-           (write query-token query-output)
-           (break))
-          (['EmptyQueryResponse]
-           (void))
-          (['ErrorResponse msg . irritants]
-           (write (make-sql-error msg irritants 'postgresql-query-pump!)
-                  query-output))))
+      (let lp ((i 0))
+        (if (fx< i query-limit)
+          (match (recv!)
+            (['DataRow . cols]
+             (write cols query-output)
+             (lp (fx1+ i)))
+            (['CommandComplete tag]
+             (void))
+            (['PortalSuspended]
+             (void))
+            (['EmptyQueryResponse]
+             (void))
+            (['ErrorResponse msg . irritants]
+             (write (make-sql-error msg irritants 'postgresql-query-pump!)
+                    query-output)))
+          (begin
+            (write query-token query-output)
+            (break))))
       (close-output-port query-output)
       (set! query-output #f)
       (set! query-token #f)
-      (sync!)))
+      (resync!)))
 
   (def (close name)
     ;; Close (name) -> CloseComplete | ErrorResponse
     (if query-output
       (set! deferred-close (cons name deferred-close))
       (begin
-        (send! ['Close #\s name])
+        (send! ['Close #\S name])
+        (send! '(Sync))
         (match (recv!)
           (['CloseComplete]
            (void))
           (['ErrorResponse msg . irritants]
            (warning "error closing statement ~a: ~a" name msg)))
-        (sync!))))
+        (resync!))))
 
   (def (shutdown!)
-    (sync!)
+    (send! '(Sync))
     (send! '(Terminate))
     (raise 'shutdown))
 
@@ -345,18 +391,18 @@ package: std/db
            continue ...))))
 
   (def (loop)
-    (<- ((postgresql.prepare name sql k)
+    (<- ((!postgresql.prepare name sql k)
          (do-action k (prepare name sql)))
-        ((postgresql.exec name params k)
+        ((!postgresql.exec name params k)
          (do-action k (exec name params)))
-        ((postgresql.query name params k)
+        ((!postgresql.query name params k)
          (do-action k (query-start name params) (query-pump)))
-        ((postgresql.continue token)
+        ((!postgresql.continue token)
          (when (eq? token query-token)
            (query-pump)))
-        ((postgresql.close name)
+        ((!postgresql.close name)
          (close name))
-        ((postgresql.shutdown)
+        ((!postgresql.shutdown)
          (shutdown!))
         (bogus
          (warning "unexpected message: ~a" bogus)))
@@ -406,6 +452,7 @@ package: std/db
     (write-u8 (##fxand (##fxarithmetic-shift-right u32 8) #xff) sock)
     (write-u8 (##fxand u32 #xff) sock))
 
+  (DEBUG "SEND " msg)
   (with ([tag . body] msg)
     (cond
      ((hash-get +frontend-messages+ tag)
@@ -435,6 +482,7 @@ package: std/db
                      (##fxarithmetic-shift-left (##u8vector-ref u8v 2) 8)
                      (##u8vector-ref u8v 3))))))
 
+  (DEBUG "RECEIVE!")
   (let* ((tid (read-u8 sock))
          (_ (when (eof-object? tid)
               (raise-io-error 'postgresql-recv! "connection closed")))
@@ -454,12 +502,17 @@ package: std/db
          (_ (when (fx< rd payload-len)
               (raise-io-error 'postgresql-recv! "premature end of input" rd tid payload-len)))
          (bio (open-input-buffer u8buf 0 payload-len)))
+
+    (DEBUG "READ MESSAGE " tid payload-len)
     (cond
      ((vector-ref +backend-messages+ tid)
       => (match <>
            ([tag . unmarshal]
-            (let (body (unmarshal bio))
-              (cons tag body)))))
+            (DEBUG "UNMARSHAL " tag)
+            (let* ((body (unmarshal bio))
+                   (msg (cons tag body)))
+              (DEBUG "RECEIVE " msg)
+              msg))))
      (else
       (raise-io-error 'postgresql-recv! "unexpected backend message" tid)))))
 
@@ -472,7 +525,7 @@ package: std/db
 
 (def (unmarshal-authen-request bio)
   (let (t (bio-read-u32 bio))
-    (case (t)
+    (case t
       ((0) '(AuthenticationOk))
       ((2) '(AuthenticationKerberosV5))
       ((3) '(AuthenticationCleartextPassword))
@@ -545,7 +598,7 @@ package: std/db
                (msg (assgetq #\M alist)))
           (cons msg alist))
         (let (field (unmarshal-string bio))
-          (lp (cons (cons (integer->char t) field))))))))
+          (lp (cons (cons (integer->char t) field) r)))))))
 
 (def (unmarshal-param-description bio)
   (let (count (bio-read-u16 bio))
@@ -564,7 +617,7 @@ package: std/db
                (attr-id (bio-read-u16 bio))
                (type-id (bio-read-u32 bio))
                (type-sz (bio-read-s16 bio))
-               (modifier (bio-read-u32 bio))
+               (modifier (bio-read-s32 bio))
                (fmt (bio-read-u16 bio)))
           (lp (fx1+ i)
               (cons [field-name table-id attr-id type-id type-sz modifier fmt] r)))
@@ -603,6 +656,7 @@ package: std/db
       (marshal-string portal-name bio)
       (marshal-string stmt-name bio)
       (bio-write-u16 0 bio)
+      (bio-write-u16 (length params) bio)
       (for-each
         (lambda (param)
           (cond
@@ -648,11 +702,15 @@ package: std/db
 
 (def (marshal-passwd body)
   (with ([passwd] body)
-    (string->utf8 passwd)))
+    (let (bio (open-serializer-output-buffer))
+      (marshal-string passwd bio)
+      bio)))
 
 (def (marshal-query body)
   (with ([sql] body)
-    (string->utf8 sql)))
+    (let (bio (open-serializer-output-buffer))
+      (marshal-string sql bio)
+      bio)))
 
 (def (marshal-sasl-initial-reponse body)
   (with ([mechanism data] body)
@@ -671,7 +729,7 @@ package: std/db
 
 ;;; dispatch tables
 (def +backend-messages+
-  (make-vector 256))
+  (make-vector 256 #f))
 (def +frontend-messages+
   (make-hash-table-eq))
 
