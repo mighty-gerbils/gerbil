@@ -144,7 +144,7 @@ package: std/db
 
   (start-logger!)
   (try
-   (send! ['StartupMessage ["user" . user] ["db" . db]])
+   (send! ['StartupMessage ["user" . user] (if db [["db" . db]] []) ...])
    (recv!
     (['AuthenticationRequest what . rest]
      (case what
