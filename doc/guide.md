@@ -1544,17 +1544,19 @@ For more exampes of httpd handlers, see the [httpd tutorial](tutorial/httpd.md).
 
 ### Databases
 
-Gerbil include support for SQL databases (MySQL, SQLite) and key-value
-stores (LevelDB, LMDB) in the `:std/db` package.
+Gerbil include support for SQL databases (SQLite, PostgreSQL, MySQL)
+and key-value stores (LevelDB, LMDB) with the `:std/db` package.
 
 #### SQL Databases
 
-The `:std/db/dbi` library provides a the implementation of the
-database interface, while individual modules (`:std/db/sqlite` and
-`:std/db/mysql`) provide the drivers for particular databases.
-Note that none of the drivers are built by default, as they are FFI
-drivers, so you will need to enable them for your installation in
-`$GERBIL_HOME/src/std/build-features.ss`.
+The `:std/db/dbi` library provides the implementation of the
+database interface, while individual modules (`:std/db/sqlite`,
+`:std/db/postgresql` and `:std/db/mysql`) provide the drivers for
+particular databases.
+
+Note that not all drivers are built by default, as some are FFI
+drivers (SQLite, MySQL), so you will need to enable them for your
+installation in `$GERBIL_HOME/src/std/build-features.ss`.
 
 Here is an example of using the dbi interface with SQLite.
 First, the necessary imports and a connection to an in-memory database:

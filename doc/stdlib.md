@@ -11,6 +11,7 @@
   * [std/db/leveldb](#stddbleveldb)
   * [std/db/lmdb](#stddblmdb)
   * [std/db/mysql](#stddbmysql)
+  * [std/db/postgresql](#stddbpostgresql)
   * [std/db/sqlite](#stddbsqlite)
 - [std/debug/heap](#stddebugheap)
 - [std/error](#stderror)
@@ -312,6 +313,17 @@ MySQL dbi driver.
 
   mysql-connect
 ```
+
+### std/db/postgresql
+PostgreSQL dbi driver.
+
+```
+(import :std/db/postgresql)
+
+;; exports:
+
+  postgreql-connect
+  defcatalog
 
 
 ### std/db/sqlite
