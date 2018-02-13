@@ -324,6 +324,7 @@ PostgreSQL dbi driver.
 
   postgreql-connect
   defcatalog
+  defcatalog-default
   default-catalog
   current-catalog
 

@@ -9,6 +9,7 @@ package: std/db
         :std/srfi/19)
 (export postgresql-connect
         defcatalog
+        defcatalog-default
         default-catalog
         current-catalog)
 
@@ -178,6 +179,12 @@ package: std/db
    (begin
      (hash-put! (catalog-s name) oid serialize) ...
      (hash-put! (catalog-d name) oid deserialize) ...)))
+
+(defrules defcatalog-default ()
+  ((_ clause ...)
+   (begin
+     (defcatalog-type default-catalog . clause)
+     ...)))
 
 (def (serialize-boolean arg)
   (if arg "t" "f"))
