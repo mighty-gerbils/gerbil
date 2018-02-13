@@ -84,4 +84,47 @@
              => 2001)
       (check (postgresql-exec! pg "stmt0" [])
              => "DROP TABLE"))
-    ))
+
+    (test-case "test postgresql dbi"
+      (def db (sql-connect postgresql-connect user: "test" passwd: "test"))
+
+      (try
+       (let (stmt (sql-prepare db "DROP TABLE Users"))
+         (sql-exec stmt))
+       (catch (sql-error? e) (void)))
+
+      (let (stmt (sql-prepare db "CREATE TABLE Users (FirstName VARCHAR, LastName VARCHAR, Secret VARCHAR)"))
+        (check (sql-exec stmt) ? void?)
+        (sql-finalize stmt))
+
+      (let (stmt (sql-prepare db "INSERT INTO Users (FirstName, LastName, Secret) VALUES ($1, $2, $3)"))
+        (sql-txn-begin db)
+        (sql-bind stmt "John" "Smith" "very secret")
+        (check (sql-exec stmt) ? void?)
+        (sql-bind stmt "Marc" "Smith" "oh so secret")
+        (check (sql-exec stmt) ? void?)
+        (sql-txn-commit db)
+        (sql-finalize stmt))
+
+      (let (stmt (sql-prepare db "SELECT * FROM Users"))
+        (check (sql-query stmt) => '(#("John" "Smith" "very secret")
+                                      #("Marc" "Smith" "oh so secret"))))
+
+      (let (stmt (sql-prepare db "SELECT * FROM Users WHERE FirstName = $1"))
+        (sql-bind stmt "John")
+        (check (sql-query stmt) => '(#("John" "Smith" "very secret")))
+        (sql-finalize stmt))
+
+      (let (stmt (sql-prepare db "DELETE FROM Users WHERE FirstName = $1"))
+        (sql-bind stmt "Marc")
+        (check (sql-exec stmt) ? void?)
+        (sql-finalize stmt))
+
+      (let (stmt (sql-prepare db "SELECT * FROM Users"))
+        (check (sql-query stmt) => '(#("John" "Smith" "very secret")))
+        (sql-finalize stmt))
+
+      (let (stmt (sql-prepare db "DROP TABLE Users"))
+        (sql-exec stmt))
+
+      (sql-close db))))

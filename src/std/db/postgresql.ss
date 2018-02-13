@@ -35,7 +35,7 @@ package: std/db
   (lambda (self sql)
     (let* ((name (symbol->string (gensym 'stmt)))
            ((values params cols)
-            (postgresql-prepare-statement! self name)))
+            (postgresql-prepare-statement! self name sql)))
       (make-postgresql-statement name self params cols))))
 
 (defmethod {finalize postgresql-statement}
@@ -61,7 +61,8 @@ package: std/db
 
     (let* ((params (postgresql-statement-params self))
            (bind (map value->binding params args)))
-      (set! (postgresql-statement-bind self) bind))))
+      (set! (postgresql-statement-bind self) bind)
+      (void))))
 
 (defmethod {clear postgresql-statement}
   (lambda (self)
@@ -179,13 +180,17 @@ package: std/db
 (def (deserialize-timestamptz str)
   (string->date str "~Y-~m-~d ~H:~M:~S~z"))
 
+(def (identity-string obj)
+  (if (string? obj) obj
+      (error "Bad argument; expected string" obj)))
+
 (defcatalog
   ;; BOOLOID
   ((16) serialize-boolean deserialize-boolean)
   ;; INT8OID INT2OID INT4OID FLOAT4OID FLOAT8OID NUMERICOID
   ((20 21 23 700 701 1700) number->string string->number)
   ;; CHAROID TEXTOID BPCHAROID VARCHAROID
-  ((18 25 1042 1043) identity identity)
+  ((18 25 1042 1043) identity-string identity)
   ;; DATEOID
   ((1082) serialize-date deserialize-date)
   ;; TIMESTAMPOID
