@@ -83,7 +83,8 @@
               (postgresql-query! pg "stmt2" []))
              => 2001)
       (check (postgresql-exec! pg "stmt0" [])
-             => "DROP TABLE"))
+             => "DROP TABLE")
+      (postgresql-close! pg))
 
     (test-case "test postgresql dbi"
       (def db (sql-connect postgresql-connect user: "test" passwd: "test"))
