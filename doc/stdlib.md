@@ -41,6 +41,7 @@
   * [std/net/httpd](#stdnethttpd)
   * [std/net/request](#stdnetrequest)
   * [std/net/repl](#stdnetrepl)
+  * [std/net/sasl](#stdnetsasl)
   * [std/net/socket](#stdnetsocket)
   * [std/net/socks](#stdnetsocks)
   * [std/net/uri](#stdneturi)
@@ -229,7 +230,7 @@ Database connection pool.
 ;; exports:
 
   make-conpool conpool?
-  conpool-get conpool-put conpool-close
+  conpool-get conpool-put conpool-release conpool-close
 ```
 
 
@@ -797,6 +798,23 @@ Network repl for debugging live programs.
 
 ;; stop the network repl server
 (stop-repl-server! repl-server-thread)
+```
+
+### std/net/sasl
+
+SASL authentication support.
+
+```
+(import :std/net/sasl)
+
+;; SCRAM methods
+  scram-sha-1-begin
+  scram-sha-256-begin
+  scram-context?
+  scram-client-first-message
+  scram-server-first-message!
+  scram-client-final-message
+  scram-server-final-message!
 ```
 
 ### std/net/socket
