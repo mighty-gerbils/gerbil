@@ -22,7 +22,7 @@ package: std/db
 (def (postgresql-connect host: (host "127.0.0.1")
                          port: (port 5432)
                          user: user
-                         passwd: (passwd #f)
+                         passwd: passwd
                          db: (db #f))
   (let (driver (postgresql-connect! host port user passwd db))
     (make-postgresql-connection driver)))
