@@ -7,7 +7,10 @@ package: std/db
         :std/db/postgresql-driver
         :std/iter
         :std/srfi/19)
-(export postgresql-connect defcatalog)
+(export postgresql-connect
+        defcatalog
+        default-catalog
+        current-catalog)
 
 (defstruct (postgresql-connection connection) ()
   final: #t)
@@ -54,7 +57,7 @@ package: std/db
           (serialize-boolean arg)
           #f))
        ((string? arg) arg)
-       ((hash-get +pg-catalog-serialize+ type-oid)
+       ((catalog-serializer (current-catalog) type-oid)
         => (cut <> arg))
        (else
         (error "Cannot bind; unknown parameter type" type-oid arg))))
@@ -103,7 +106,7 @@ package: std/db
 
     (def (value-e res type-oid)
       (cond
-       ((hash-get +pg-catalog-deserialize+ type-oid)
+       ((catalog-deserializer (current-catalog) type-oid)
         => (cut <> res))
        (else res)))
 
@@ -140,21 +143,41 @@ package: std/db
     (map car (postgresql-statement-cols self))))
 
 ;;; catalog/pg_type.h
-(def +pg-catalog-serialize+
-  (make-hash-table-eq))
-(def +pg-catalog-deserialize+
-  (make-hash-table-eq))
+(defstruct catalog (s d)
+  constructor: :init!
+  final: #t)
+
+(defmethod {:init! catalog}
+  (lambda (self . mixin)
+    (let ((s (make-hash-table-eq))
+          (d (make-hash-table-eq)))
+      (for-each
+        (lambda (mixin)
+          (hash-merge! s (catalog-s mixin))
+          (hash-merge! d (catalog-d mixin)))
+        mixin)
+      (struct-instance-init! self s d))))
+
+(def (catalog-serializer c oid)
+  (hash-get (catalog-s c) oid))
+
+(def (catalog-deserializer c oid)
+  (hash-get (catalog-d c) oid))
 
 (defrules defcatalog ()
-  ((_ (oids serialize deserialize) ...)
+  ((_ (name mixin ...) (oids serialize deserialize) ...)
    (begin
-     (defcatalog-type oids serialize deserialize) ...)))
+     (def name (make-catalog mixin ...))
+     (defcatalog-type name oids serialize deserialize) ...))
+  ((recur name . body)
+   (identifier? #'name)
+   (recur (name) . body)))
 
 (defrules defcatalog-type ()
-  ((_ (oid ...) serialize deserialize)
+  ((_ name (oid ...) serialize deserialize)
    (begin
-     (hash-put! +pg-catalog-serialize+ oid serialize) ...
-     (hash-put! +pg-catalog-deserialize+ oid deserialize) ...)))
+     (hash-put! (catalog-s name) oid serialize) ...
+     (hash-put! (catalog-d name) oid deserialize) ...)))
 
 (def (serialize-boolean arg)
   (if arg "t" "f"))
@@ -184,7 +207,7 @@ package: std/db
   (if (string? obj) obj
       (error "Bad argument; expected string" obj)))
 
-(defcatalog
+(defcatalog default-catalog
   ;; BOOLOID
   ((16) serialize-boolean deserialize-boolean)
   ;; INT8OID INT2OID INT4OID FLOAT4OID FLOAT8OID NUMERICOID
@@ -204,3 +227,6 @@ package: std/db
   ;; - automagic uuid conversion?
   ;;   add UUIDOID with uuid->string string->uuid
   )
+
+(def current-catalog
+  (make-parameter default-catalog))
