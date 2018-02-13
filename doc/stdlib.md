@@ -328,7 +328,7 @@ PostgreSQL dbi driver.
   defcatalog-default
   default-catalog
   current-catalog
-
+```
 
 ### std/db/sqlite
 SQLite dbi driver.
