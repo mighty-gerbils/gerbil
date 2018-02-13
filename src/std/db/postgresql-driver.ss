@@ -24,7 +24,6 @@ package: std/db
         postgresql-query!
         postgresql-continue!
         postgresql-close!
-        postgresql-drain!
         (rename: !token? query-token?))
 
 ;;; driver interface
@@ -70,13 +69,6 @@ package: std/db
 (def (postgresql-close! conn)
   (alet (driver (connection-e conn))
     (!!postgresql.shutdown driver)))
-
-(def (postgresql-drain! inp)
-  (def (drain inp)
-    (let lp ()
-      (unless (eof-object? (read inp))
-        (lp))))
-  (spawn/name 'postgresql-drain drain inp))
 
 ;;; driver implementation
 (def (postgresql-connect! host port user passwd db)

@@ -132,10 +132,7 @@ package: std/db
     (postgresql-statement-row self)))
 
 (defmethod {query-fini postgresql-statement}
-  (lambda (self)
-    (alet (inp (postgresql-statement-inp self))
-      (postgresql-drain! inp))
-    (postgresql-statement::reset self)))
+  postgresql-statement::reset)
 
 (defmethod {columns postgresql-statement}
   (lambda (self)
