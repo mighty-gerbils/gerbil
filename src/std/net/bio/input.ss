@@ -5,8 +5,9 @@
 package: std/net/bio
 
 (import :gerbil/gambit/bits
+        :std/text/utf8
         :std/error)
-(export #t)
+(export (except-out #t 2^15 2^16 2^31 2^32))
 
 (declare (not safe))
 
@@ -169,6 +170,60 @@ package: std/net/bio
                  (##fxarithmetic-shift-left (##u8vector-ref u8v (##fx+ start 2)) 8)
                  (##u8vector-ref u8v (##fx+ start 3))))))
 
+(def 2^31 (expt 2 31))
+(def 2^32 (expt 2 32))
+
+(def (bio-read-s32 buf)
+  (let (u32 (bio-read-u32 buf))
+    (if (> u32 2^31)
+      (- u32 2^32)
+      u32)))
+
+(def (bio-read-u16 buf)
+  (let* ((rlo (&input-buffer-rlo buf))
+         (rhi (&input-buffer-rhi buf))
+         (rlo+2 (##fx+ rlo 2)))
+    (if (##fx<= rlo+2 rhi)
+      (let (u16 (bio-get-u16 (&input-buffer-e buf) rlo))
+        (set! (&input-buffer-rlo buf)
+          rlo+2)
+        u16)
+      (let* ((_ (bio-input-fill! buf 2))
+             (rlo (&input-buffer-rlo buf))
+             (rhi (&input-buffer-rhi buf))
+             (rlo+2 (##fx+ rlo 2)))
+        (if (##fx<= rlo+2 rhi)
+          (let (u16 (bio-get-u16 (&input-buffer-e buf) rlo))
+            (set! (&input-buffer-rlo buf)
+              rlo+2)
+            u16)
+          (raise-io-error 'bio-read-u16 "Premature end of input" buf rlo rhi))))))
+
+(def (bio-get-u16 u8v start)
+  (##fxior (##fxarithmetic-shift-left (##u8vector-ref u8v start) 8)
+           (##u8vector-ref u8v (##fx+ start 1))))
+
+(def 2^15 (expt 2 15))
+(def 2^16 (expt 2 16))
+
+(def (bio-read-s16 buf)
+  (let (u16 (bio-read-u16 buf))
+    (if (##fx> u16 2^15)
+      (##fx- u16 2^16)
+      u16)))
+
+(def (bio-input-utf8-decode count buf)
+  (let* ((rlo (&input-buffer-rlo buf))
+         (rhi (&input-buffer-rhi buf))
+         (rlo+count (##fx+ rlo count)))
+    (if (##fx<= rlo+count rhi)
+      (let (str (utf8-decode (&input-buffer-e buf) rlo rlo+count))
+        (set! (&input-buffer-rlo buf)
+          rlo+count)
+        str)
+      ;; TODO fill buffer, streaming decode
+      (raise-io-error 'bio-input-utf8-decode "not enough bytes" buf count))))
+
 (def (bio-input-skip count buf)
   (let lp ((count count))
     (let* ((rlo (&input-buffer-rlo buf))
@@ -185,3 +240,8 @@ package: std/net/bio
         (let (rlo+count (##fx+ rlo count))
           (set! (&input-buffer-rlo buf)
             rlo+count))))))
+
+(def (bio-input-count buf)
+  (let ((rlo (&input-buffer-rlo buf))
+        (rhi (&input-buffer-rhi buf)))
+    (##fx- rhi rlo)))

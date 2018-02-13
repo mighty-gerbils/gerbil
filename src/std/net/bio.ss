@@ -18,7 +18,12 @@ package: std/net
   bio-read-bytes
   bio-read-bytes-unbuffered
   bio-read-u32
+  bio-read-s32
+  bio-read-u16
+  bio-read-s16
+  bio-input-utf8-decode
   bio-input-skip
+  bio-input-count
   ;; output
   output-buffer?
   bio-write-u8
@@ -27,6 +32,9 @@ package: std/net
   bio-write-bytes
   bio-write-bytes-unbuffered
   bio-write-u32
+  bio-write-s32
+  bio-write-u16
+  bio-write-s16
   bio-write-char
   bio-write-substring
   bio-write-string

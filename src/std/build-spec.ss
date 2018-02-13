@@ -114,6 +114,7 @@
     "net/httpd/handler"
     "net/httpd/server"
     "net/httpd"
+    "net/sasl"
     ;; :std/xml
     ,@(if config-enable-libxml
         `((gsc: "xml/_libxml"
@@ -174,6 +175,8 @@
     "web/rack"
     "db/dbi"
     "db/conpool"
+    "db/postgresql-driver"
+    "db/postgresql"
     ,@(if config-enable-sqlite
         `((gsc: "db/_sqlite"
                 "-cc-options" ,(cppflags "")
