@@ -146,7 +146,6 @@ package: std/db
       (authen-pass sock pass)))
 
   (def (authen-sasl sock mechanisms)
-
     (DEBUG "AUTHEN SASL")
     (unless (member "SCRAM-SHA-256" mechanisms)
       (raise-io-error 'postgresql-connect! "unknown SASL authentication mechanisms" mechanisms))
@@ -166,8 +165,7 @@ package: std/db
               (start-driver! sock))))))))))
 
   (start-logger!)
-
-  (DEBUG "START")
+  (DEBUG "STARTUP")
   (try
    (send! ['StartupMessage ["user" . user] (if db [["db" . db]] []) ...])
    (recv!
@@ -240,17 +238,14 @@ package: std/db
 
     (maybe-sync!)
     (send! ['Parse name sql])
+    (send! ['Describe #\S name])
     (send! '(Sync))
     (match (recv!)
       (['ParseComplete]
-       (resync!)
        (void))
       (['ErrorResponse msg . irritants]
        (resync!)
        (apply raise-sql-error 'postgresql-prepare! msg irritants)))
-
-    (send! ['Describe #\S name])
-    (send! '(Sync))
     (match (recv!)
       (['ParameterDescription . query-params]
        (set! params query-params))
@@ -285,7 +280,7 @@ package: std/db
        (apply raise-sql-error 'postgresql-exec! msg irritants)))
     (let lp ()
       (match (recv!)
-        (['DataRow count . cols]
+        (['DataRow . cols]
          (lp))
         (['CommandComplete tag]
          (set! res tag))
@@ -324,7 +319,7 @@ package: std/db
          inp))
       (['ErrorResponse msg . irritants]
        (resync!)
-       (apply raise-sql-error 'postgresql-query-start! msg irritants))))
+       (apply raise-sql-error 'postgresql-query! msg irritants))))
 
   (def (query-pump)
     ;; Execute ("")          -> DataRow ...
@@ -340,12 +335,10 @@ package: std/db
              (lp (fx1+ i)))
             (['CommandComplete tag]
              (void))
-            (['PortalSuspended]
-             (void))
-            (['EmptyQueryResponse]
+            ([(or 'PortalSuspended 'EmptyQueryResponse)]
              (void))
             (['ErrorResponse msg . irritants]
-             (write (make-sql-error msg irritants 'postgresql-query-pump!)
+             (write (make-sql-error msg irritants 'postgresql-query!)
                     query-output)))
           (begin
             (write query-token query-output)
@@ -371,6 +364,7 @@ package: std/db
 
   (def (shutdown!)
     (send! '(Sync))
+    (resync!)
     (send! '(Terminate))
     (raise 'shutdown))
 
