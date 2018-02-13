@@ -195,6 +195,8 @@ package: std/db
 
   (def (maybe-sync!)
     (when query-output
+      (write (make-sql-error "portal expired" [] 'postgresql-query-pump!)
+             query-output)
       (close-output-port query-output)
       (set! query-output #f)
       (set! query-token #f)
