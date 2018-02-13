@@ -8,7 +8,7 @@ package: std/db
         :std/error
         :std/logger)
 (export make-conpool conpool?
-        conpool-get conpool-put conpool-close)
+        conpool-get conpool-put conpool-release conpool-close)
 
 (defstruct conpool (e mx cv conns out max)
   constructor: :init!
@@ -58,6 +58,14 @@ package: std/db
       (remq conn out))
     (condition-variable-signal! cv)
     (mutex-unlock! mx)))
+
+(def (conpool-release cp conn)
+  (with ((conpool _ mx cv conns out) cp)
+    (mutex-lock! mx)
+    (set! (conpool-out cp)
+      (remq conn out))
+    (mutex-unlock! mx)
+    {destroy conn}))
 
 (def (conpool-close cp)
   (def (close conn)
