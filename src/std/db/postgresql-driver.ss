@@ -8,6 +8,7 @@ package: std/db
         :gerbil/gambit/bits
         :std/actor/proto
         :std/actor/message
+        :std/misc/channel
         :std/net/bio
         :std/net/sasl
         :std/text/utf8
@@ -218,9 +219,8 @@ package: std/db
 
   (def (maybe-sync!)
     (when query-output
-      (write (make-sql-error "portal expired" [] 'postgresql-query-pump!)
-             query-output)
-      (close-output-port query-output)
+      (channel-sync query-output (make-sql-error "portal expired" [] 'postgresql-query-pump!))
+      (channel-close query-output)
       (set! query-output #f)
       (set! query-token #f)
       (resync!)
@@ -295,8 +295,10 @@ package: std/db
   ;; Query backpressure mechanism: the query pump reads and buffers up
   ;; to query-limit rows before requiring a continue signal from
   ;; the query client.
+  ;; If the client aborts (or issues a new query), the remaining results
+  ;; of the query will be skipped over on resync.
   ;; The plan was originally to use (named) portals with Execute limit
-  ;; and rely on PortalSuspended to implement backpressure.
+  ;; and rely on PortalSuspended to implement staging of input.
   ;; Unfortunately, the server (tested with 10.1) doesn't start
   ;; sending anything back until it sees a Sync; this kills
   ;; the portal unless it's in a BEGIN/COMMIT block so the backpressure
@@ -310,13 +312,11 @@ package: std/db
     (send! '(Sync))
     (match (recv!)
       (['BindComplete]
-       (let (((values inp outp)
-              (open-vector-pipe [permanent-close: #t direction: 'input]
-                                [permanent-close: #t direction: 'output]))
+       (let ((ch (make-channel query-limit))
              (token (make-!token)))
-         (set! query-output outp)
+         (set! query-output ch)
          (set! query-token token)
-         inp))
+         ch))
       (['ErrorResponse msg . irritants]
        (resync!)
        (apply raise-sql-error 'postgresql-query! msg irritants))))
@@ -327,23 +327,22 @@ package: std/db
     ;;                          | ErrorResponse | PortalSuspended.
     ;; Sync                  -> ReadyForQuery
     (let/cc break
-      (let lp ((i 0))
-        (if (fx< i query-limit)
-          (match (recv!)
-            (['DataRow . cols]
-             (write cols query-output)
-             (lp (fx1+ i)))
-            (['CommandComplete tag]
-             (void))
-            ([(or 'PortalSuspended 'EmptyQueryResponse)]
-             (void))
-            (['ErrorResponse msg . irritants]
-             (write (make-sql-error msg irritants 'postgresql-query!)
-                    query-output)))
-          (begin
-            (write query-token query-output)
-            (break))))
-      (close-output-port query-output)
+      (let lp ()
+        (match (recv!)
+          (['DataRow . cols]
+           (cond
+            ((channel-try-put query-output cols)
+             (lp))
+            (else
+             (channel-sync query-output cols query-token)
+             (break))))
+          (['CommandComplete tag]
+           (void))
+          ([(or 'PortalSuspended 'EmptyQueryResponse)]
+           (void))
+          (['ErrorResponse msg . irritants]
+           (channel-sync query-output (make-sql-error msg irritants 'postgresql-query!)))))
+      (channel-close query-output)
       (set! query-output #f)
       (set! query-token #f)
       (resync!)))
@@ -410,9 +409,8 @@ package: std/db
        (raise e)))
    (finally
     (when query-output
-      (write (make-sql-error "connection error" [] 'postgresql-driver)
-             query-output)
-      (close-output-port query-output))
+      (channel-sync query-output (make-sql-error "connection error" [] 'postgresql-driver))
+      (channel-close query-output))
     (close-port sock))))
 
 ;;; Protocol I/O

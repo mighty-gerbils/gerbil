@@ -6,6 +6,7 @@ package: std/db
 (import :std/db/dbi
         :std/db/postgresql-driver
         :std/iter
+        :std/misc/channel
         :std/srfi/19)
 (export postgresql-connect
         defcatalog
@@ -115,7 +116,7 @@ package: std/db
      ((postgresql-statement-inp self)
       => (lambda (inp)
            (let again ()
-             (let (next (read inp))
+             (let (next (channel-get inp))
                (cond
                 ((eof-object? next)
                  (set! (postgresql-statement-inp self) #f)

@@ -7,6 +7,8 @@
         "iter-test"
         "event-test"
         "misc/string-test"
+        "misc/list-test"
+        "misc/channel-test"
         "text/csv-test"
         "text/json-test"
         "text/utf8-test"
@@ -35,6 +37,8 @@
    json-test
    utf8-test
    string-test
+   list-test
+   channel-test
    actor-xdr-test
    actor-rpc-test actor-rpc-stream-test
    httpd-test

@@ -23,6 +23,7 @@
 - [std/logger](#stdlogger)
 - [std/make](#stdmake)
 - [std/misc](#stdmisc)
+  * [std/misc/channel](#stdmiscchannel)
   * [std/misc/completion](#stdmisccompletion)
   * [std/misc/list](#stdmisclist)
   * [std/misc/ports](#stdmiscports)
@@ -486,6 +487,21 @@ Standard library build tool.
 ## std/misc
 
 Miscellaneous libraries.
+
+### std/misc/channel
+
+Buffered channels.
+
+```
+(import :std/misc/channel)
+
+;; exports
+
+  make-channel channel?
+  channel-put channel-try-put channel-sync
+  channel-get channel-try-get
+  channel-close channel-closed?
+```
 
 ### std/misc/completion
 
