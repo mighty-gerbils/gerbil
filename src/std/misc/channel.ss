@@ -46,6 +46,7 @@ package: std/misc
 
 (def (channel-try-put ch val)
   (with ((channel q mx cv limit eof) ch)
+    (mutex-lock! mx)
     (cond
      (eof
       (mutex-unlock! mx)
