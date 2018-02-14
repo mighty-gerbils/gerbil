@@ -56,7 +56,7 @@ package: std/misc
       (mutex-unlock! mx)
       #f))))
 
-(def (channel-sync ch val)
+(def (channel-sync ch . vals)
   (with ((channel q mx cv limit eof) ch)
     (mutex-lock! mx)
     (cond
@@ -64,8 +64,9 @@ package: std/misc
       (mutex-unlock! mx)
       (raise-io-error 'channel-sync "channel is closed" ch))
      (else
-      (enqueue! q val)
-      (condition-variable-broadcast! cv)
+      (unless (null? vals)
+        (for-each (cut enqueue! q <>) vals)
+        (condition-variable-broadcast! cv))
       (mutex-unlock! mx)))))
 
 (def (channel-get ch (timeo absent-obj) (default #f))
@@ -73,13 +74,14 @@ package: std/misc
     (let lp ()
       (mutex-lock! mx)
       (cond
-       ((&channel-eof ch)
-        (mutex-unlock! mx)
-        #!eof)
        ((queue-empty? q)
-        (if (mutex-unlock! mx cv timeo)
-          (lp)
-          default))
+        (cond
+         ((&channel-eof ch)
+          (mutex-unlock! mx)
+          #!eof)
+         ((mutex-unlock! mx cv timeo)
+          (lp))
+         (else default)))
        (else
         (let (next (dequeue! q))
           (condition-variable-broadcast! cv)
@@ -90,12 +92,9 @@ package: std/misc
   (with ((channel q mx cv _ eof) ch)
     (mutex-lock! mx)
     (cond
-     (eof
-      (mutex-unlock! mx)
-      #!eof)
      ((queue-empty? q)
       (mutex-unlock! mx)
-      default)
+      (if eof #!eof default))
      (else
       (let (next (dequeue! q))
         (condition-variable-broadcast! cv)
