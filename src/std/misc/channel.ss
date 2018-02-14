@@ -4,6 +4,7 @@
 package: std/misc
 
 (import :gerbil/gambit/threads
+        :gerbil/gambit/os
         :std/misc/queue
         :std/error)
 (export make-channel channel?
@@ -23,24 +24,25 @@ package: std/misc
       (make-condition-variable 'channel)
       limit #f)))
 
-(def (channel-put ch val (timeo absent-obj))
-  (with ((channel q mx cv limit) ch)
-    (let lp ()
-      (mutex-lock! mx)
-      (cond
-       ((&channel-eof ch)
-        (mutex-unlock! mx)
-        (raise-io-error 'channel-put "channel is closed" ch))
-       ((or (not limit) (fx< (queue-length q) limit))
-        (enqueue! q val)
-        (when (fx= (queue-length q) 1)
-          (condition-variable-broadcast! cv))
-        (mutex-unlock! mx)
-        #t)
-       (else
-        (if (mutex-unlock! mx cv timeo)
-          (lp)
-          #f))))))
+(def (channel-put ch val (timeo #f))
+  (let (timeo (make-timeout timeo))
+    (with ((channel q mx cv limit) ch)
+      (let lp ()
+        (mutex-lock! mx)
+        (cond
+         ((&channel-eof ch)
+          (mutex-unlock! mx)
+          (raise-io-error 'channel-put "channel is closed" ch))
+         ((or (not limit) (fx< (queue-length q) limit))
+          (enqueue! q val)
+          (when (fx= (queue-length q) 1)
+            (condition-variable-broadcast! cv))
+          (mutex-unlock! mx)
+          #t)
+         (else
+          (if (mutex-unlock! mx cv timeo)
+            (lp)
+            #f)))))))
 
 (def (channel-try-put ch val)
   (with ((channel q mx cv limit eof) ch)
@@ -71,24 +73,25 @@ package: std/misc
         (condition-variable-broadcast! cv))
       (mutex-unlock! mx)))))
 
-(def (channel-get ch (timeo absent-obj) (default #f))
-  (with ((channel q mx cv) ch)
-    (let lp ()
-      (mutex-lock! mx)
-      (cond
-       ((queue-empty? q)
+(def (channel-get ch (timeo #f) (default #f))
+  (let (timeo (make-timeout timeo))
+    (with ((channel q mx cv) ch)
+      (let lp ()
+        (mutex-lock! mx)
         (cond
-         ((&channel-eof ch)
-          (mutex-unlock! mx)
-          #!eof)
-         ((mutex-unlock! mx cv timeo)
-          (lp))
-         (else default)))
-       (else
-        (let (next (dequeue! q))
-          (condition-variable-broadcast! cv)
-          (mutex-unlock! mx)
-          next))))))
+         ((queue-empty? q)
+          (cond
+           ((&channel-eof ch)
+            (mutex-unlock! mx)
+            #!eof)
+           ((mutex-unlock! mx cv timeo)
+            (lp))
+           (else default)))
+         (else
+          (let (next (dequeue! q))
+            (condition-variable-broadcast! cv)
+            (mutex-unlock! mx)
+            next)))))))
 
 (def (channel-try-get ch (default #f))
   (with ((channel q mx cv _ eof) ch)
@@ -113,3 +116,12 @@ package: std/misc
 
 (def (channel-closed? ch)
   (channel-eof ch))
+
+(def (make-timeout t)
+  (cond
+   ((not t) absent-obj)
+   ((time? t) t)
+   ((real? t)
+    (seconds->time (+ (##current-time-point) t)))
+   (else
+    (error "Bad argument; expected timeout or #f" t))))
