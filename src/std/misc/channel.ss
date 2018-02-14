@@ -45,10 +45,10 @@ package: std/misc
             #f)))))))
 
 (def (channel-try-put ch val)
-  (with ((channel q mx cv limit eof) ch)
+  (with ((channel q mx cv limit) ch)
     (mutex-lock! mx)
     (cond
-     (eof
+     ((&channel-eof ch)
       (mutex-unlock! mx)
       (raise-io-error 'channel-try-put "channel is closed" ch))
      ((or (not limit) (fx< (queue-length q) limit))
@@ -62,10 +62,10 @@ package: std/misc
       #f))))
 
 (def (channel-sync ch . vals)
-  (with ((channel q mx cv limit eof) ch)
+  (with ((channel q mx cv limit) ch)
     (mutex-lock! mx)
     (cond
-     (eof
+     ((&channel-eof ch)
       (mutex-unlock! mx)
       (raise-io-error 'channel-sync "channel is closed" ch))
      (else
@@ -95,12 +95,12 @@ package: std/misc
             next)))))))
 
 (def (channel-try-get ch (default #f))
-  (with ((channel q mx cv _ eof) ch)
+  (with ((channel q mx cv) ch)
     (mutex-lock! mx)
     (cond
      ((queue-empty? q)
       (mutex-unlock! mx)
-      (if eof #!eof default))
+      (if (&channel-eof ch) #!eof default))
      (else
       (let (next (dequeue! q))
         (condition-variable-broadcast! cv)
