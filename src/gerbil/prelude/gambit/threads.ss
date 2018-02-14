@@ -66,9 +66,6 @@ package: gerbil/gambit
   )
 
 (def (spawn f . args)
-  (spawn-actor f args (or (##procedure-name f) #!void) #f))
-
-(def (spawn* f . args)
   (spawn-actor f args #!void #f))
 
 (def (spawn/name name f . args)
