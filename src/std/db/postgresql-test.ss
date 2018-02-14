@@ -5,6 +5,7 @@
         :std/db/dbi
         :std/db/postgresql-driver
         :std/db/postgresql
+        :std/misc/channel
         :std/sugar)
 (export postgresql-test)
 
@@ -19,7 +20,7 @@
 
       (def (query-count-results inp)
         (let lp ((i 0))
-          (let (next (read inp))
+          (let (next (channel-get inp))
             (cond
              ((eof-object? next) i)
              ((query-token? next)
@@ -32,7 +33,7 @@
 
       (def (query-results inp)
         (let lp ((r []))
-          (let (next (read inp))
+          (let (next (channel-get inp))
             (cond
              ((eof-object? next)
               (reverse r))
