@@ -10,23 +10,23 @@
 (def event-test
   (test-suite "test :std/event library"
     (test-case "test wait"
-      (def thr1 (spawn* void))
+      (def thr1 (spawn void))
       (check (wait thr1 1) => thr1)
 
-      (def thr2 (spawn* (lambda () (thread-sleep! 2))))
+      (def thr2 (spawn (lambda () (thread-sleep! 2))))
       (check (wait thr2 1) => #f)
       (check (wait thr2 2) => thr2)
 
       (def mx3 (make-mutex))
       (def cv3 (make-condition-variable))
       (mutex-lock! mx3)
-      (def thr3 (spawn* (lambda () (thread-sleep! 1) (mutex-lock! mx3) (condition-variable-signal! cv3) (mutex-unlock! mx3))))
+      (def thr3 (spawn (lambda () (thread-sleep! 1) (mutex-lock! mx3) (condition-variable-signal! cv3) (mutex-unlock! mx3))))
       (let (sel3 (cons mx3 cv3))
         (check (wait sel3 2) => sel3)))
 
     (test-case "test select"
-      (def thr1 (spawn* void))
-      (def thr2 (spawn* (lambda () (thread-sleep! 1))))
+      (def thr1 (spawn void))
+      (def thr2 (spawn (lambda () (thread-sleep! 1))))
       (check (select [thr1 thr2] 1) => thr1)
 
       (def mx3 (make-mutex))
@@ -45,7 +45,7 @@
 
       (mutex-lock! mx3)
       (mutex-lock! mx4)
-      (def thr3 (spawn* (lambda () (thread-sleep! 1) (mutex-lock! mx3) (condition-variable-signal! cv3) (mutex-unlock! mx3))))
+      (def thr3 (spawn (lambda () (thread-sleep! 1) (mutex-lock! mx3) (condition-variable-signal! cv3) (mutex-unlock! mx3))))
       (let ((sel3 (cons mx3 cv3))
             (sel4 (cons mx4 cv4)))
         (check (select [sel3 sel4] 2) => sel3)))
@@ -84,11 +84,11 @@
 
       (let ()
         (def srv (open-tcp-server "127.0.0.1:9999"))
-        (spawn* (lambda () (thread-sleep! 1) (open-tcp-client "127.0.0.1:9999")))
+        (spawn (lambda () (thread-sleep! 1) (open-tcp-client "127.0.0.1:9999")))
         (check (sync srv) => srv)
         (close-port srv))
 
       (let ()
         (defvalues (in out) (open-string-pipe '(direction: input permanent-close: #t)))
-        (spawn* (lambda () (thread-sleep! 1) (write "hello" out) (force-output out)))
+        (spawn (lambda () (thread-sleep! 1) (write "hello" out) (force-output out)))
         (check (sync in) => in)))))
