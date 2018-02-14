@@ -1,0 +1,114 @@
+;;; -*- Gerbil -*-
+;;; (C) vyzo at hackzen.org
+;;; buffered channels
+package: std/misc
+
+(import :gerbil/gambit/threads
+        :std/misc/queue
+        :std/error)
+(export make-channel channel?
+        channel-put channel-try-put channel-sync
+        channel-get channel-try-get
+        channel-close channel-closed?)
+
+(defstruct channel (q mx cv limit eof)
+  constructor: :init!
+  final: #t unchecked: #t)
+
+(defmethod {:init! channel}
+  (lambda (self (limit #f))
+    (struct-instance-init! self
+      (make-queue)
+      (make-mutex 'channel)
+      (make-condition-variable 'channel)
+      limit #f)))
+
+(def (channel-put ch val (timeo absent-obj))
+  (with ((channel q mx cv limit) ch)
+    (let lp ()
+      (mutex-lock! mx)
+      (cond
+       ((&channel-eof ch)
+        (mutex-unlock! mx)
+        (raise-io-error 'channel-put "channel is closed" ch))
+       ((or (not limit) (fx< (queue-length q) limit))
+        (enqueue! q val)
+        (mutex-unlock! mx)
+        (condition-variable-broadcast! cv)
+        #t)
+       (else
+        (if (mutex-unlock! mx cv timeo)
+          (lp)
+          #f))))))
+
+(def (channel-try-put ch val)
+  (with ((channel q mx cv limit eof) ch)
+    (cond
+     (eof
+      (mutex-unlock! mx)
+      (raise-io-error 'channel-try-put "channel is closed" ch))
+     ((or (not limit) (fx< (queue-length q) limit))
+      (enqueue! q val)
+      (mutex-unlock! mx)
+      (condition-variable-broadcast! cv)
+      #t)
+     (else
+      (mutex-unlock! mx)
+      #f))))
+
+(def (channel-sync ch val)
+  (with ((channel q mx cv limit eof) ch)
+    (mutex-lock! mx)
+    (cond
+     (eof
+      (mutex-unlock! mx)
+      (raise-io-error 'channel-sync "channel is closed" ch))
+     (else
+      (enqueue! q val)
+      (mutex-unlock! mx)
+      (condition-variable-broadcast! cv)))))
+
+(def (channel-get ch (timeo absent-obj) (default #f))
+  (with ((channel q mx cv) ch)
+    (let lp ()
+      (mutex-lock! mx)
+      (cond
+       ((&channel-eof ch)
+        (mutex-unlock! mx)
+        #!eof)
+       ((queue-empty? q)
+        (if (mutex-unlock! mx cv timeo)
+          (lp)
+          default))
+       (else
+        (let (next (dequeue! q))
+          (mutex-unlock! mx)
+          (condition-variable-broadcast! cv)
+          next))))))
+
+(def (channel-try-get ch (default #f))
+  (with ((channel q mx cv _ eof) ch)
+    (mutex-lock! mx)
+    (cond
+     (eof
+      (mutex-unlock! mx)
+      #!eof)
+     ((queue-empty? q)
+      (mutex-unlock! mx)
+      default)
+     (else
+      (let (next (dequeue! q))
+        (mutex-unlock! mx)
+        (condition-variable-broadcast! cv)
+        next)))))
+
+(def (channel-close ch)
+  (with ((channel q mx cv _ eof) ch)
+    (unless eof
+      (mutex-lock! mx)
+      (set! (&channel-eof ch) #t)
+      (mutex-unlock! mx)
+      (condition-variable-broadcast! (channel-cv ch)))))
+
+(def (channel-closed? ch)
+  (channel-eof ch))

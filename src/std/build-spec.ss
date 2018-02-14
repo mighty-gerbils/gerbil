@@ -155,6 +155,7 @@
     "misc/string"
     "misc/sync"
     "misc/completion"
+    "misc/channel"
     (gxc:  "misc/ports" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc:  "misc/threads" "-e" "(include \"~~lib/_gambit#.scm\")")
     "misc/process"
