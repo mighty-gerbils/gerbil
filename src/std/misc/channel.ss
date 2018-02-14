@@ -33,7 +33,8 @@ package: std/misc
         (raise-io-error 'channel-put "channel is closed" ch))
        ((or (not limit) (fx< (queue-length q) limit))
         (enqueue! q val)
-        (condition-variable-broadcast! cv)
+        (when (fx= (queue-length q) 1)
+          (condition-variable-broadcast! cv))
         (mutex-unlock! mx)
         #t)
        (else
@@ -49,7 +50,8 @@ package: std/misc
       (raise-io-error 'channel-try-put "channel is closed" ch))
      ((or (not limit) (fx< (queue-length q) limit))
       (enqueue! q val)
-      (condition-variable-broadcast! cv)
+      (when (fx= (queue-length q) 1)
+        (condition-variable-broadcast! cv))
       (mutex-unlock! mx)
       #t)
      (else
