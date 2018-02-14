@@ -36,7 +36,7 @@ package: std/misc
          ((or (not limit) (fx< (queue-length q) limit))
           (enqueue! q val)
           (when (fx= (queue-length q) 1)
-            (condition-variable-broadcast! cv))
+            (condition-variable-broadcast! cv)) ; unblock readers
           (mutex-unlock! mx)
           #t)
          (else
@@ -54,7 +54,7 @@ package: std/misc
      ((or (not limit) (fx< (queue-length q) limit))
       (enqueue! q val)
       (when (fx= (queue-length q) 1)
-        (condition-variable-broadcast! cv))
+        (condition-variable-broadcast! cv)) ; unblock readers
       (mutex-unlock! mx)
       #t)
      (else
@@ -76,7 +76,7 @@ package: std/misc
 
 (def (channel-get ch (timeo #f) (default #f))
   (let (timeo (make-timeout timeo))
-    (with ((channel q mx cv) ch)
+    (with ((channel q mx cv limit) ch)
       (let lp ()
         (mutex-lock! mx)
         (cond
@@ -90,12 +90,13 @@ package: std/misc
            (else default)))
          (else
           (let (next (dequeue! q))
-            (condition-variable-broadcast! cv)
+            (when (and limit (fx= (queue-length q) (fx1- limit)))
+              (condition-variable-broadcast! cv)) ; unblock writers
             (mutex-unlock! mx)
             next)))))))
 
 (def (channel-try-get ch (default #f))
-  (with ((channel q mx cv) ch)
+  (with ((channel q mx cv limit) ch)
     (mutex-lock! mx)
     (cond
      ((queue-empty? q)
@@ -103,7 +104,8 @@ package: std/misc
       (if (&channel-eof ch) #!eof default))
      (else
       (let (next (dequeue! q))
-        (condition-variable-broadcast! cv)
+        (when (and limit (fx= (queue-length q) (fx1- limit)))
+          (condition-variable-broadcast! cv)) ; unblock writers
         (mutex-unlock! mx)
         next)))))
 
