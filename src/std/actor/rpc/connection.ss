@@ -12,6 +12,7 @@ package: std/actor/rpc
         :std/net/socket
         :std/os/socket
         :std/misc/uuid
+        :std/misc/threads
         :std/actor/message
         :std/actor/xdr
         :std/actor/proto
@@ -194,6 +195,9 @@ package: std/actor/rpc
   (def next-timeout #f)
   (def next-continuation-id 0)
 
+  (def next-heartbeat
+    (seconds->time (+ (##current-time-point) 60)))
+
   (def writer
     (spawn/name 'rpc-connection-writer rpc-connection-writer
                 output-buffer write-e))
@@ -360,6 +364,28 @@ package: std/actor/rpc
              timeouts)))))
     next-timeout)
 
+  (def (heartbeat!)
+    (let (dead-continuations
+          (with-continuation-table cont-table
+            (hash-fold
+             (lambda (wire-id continuation r)
+               (with ((values actor _ _ _) continuation)
+                 (if (and (thread? actor) (thread-dead? actor))
+                   (cons wire-id r)
+                   r)))
+             [] (&continuation-table-continuations cont-table))))
+      (for-each
+        (lambda (wire-id)
+          (match (continuation-table-remove! cont-table wire-id)
+            ((values actor proto k stream?)
+             (debug "removing continuation ~a for dead actor ~a" wire-id actor)
+             (when stream?
+               (dispatch-remote-error (make-!abort wire-id) null-uuid)))
+            (else (void))))
+        dead-continuations))
+    (set! next-heartbeat
+      (seconds->time (+ (##current-time-point) 60))))
+
   (def (dump! port)
     (parameterize ((current-output-port port))
       (displayln "=== rpc-connection ===")
@@ -371,6 +397,8 @@ package: std/actor/rpc
   (def (loop)
     (<< (! (timeout-event)
            => dispatch-timeout)
+        (! next-heartbeat
+           (heartbeat!))
         ((? message? msg)
          (write-message msg))
         ((? eof-object?)
@@ -543,7 +571,8 @@ package: std/actor/rpc
           (continuation-table-remove-stream-actor! cont-table cont))
         (begin
           (warning "bad control message; unknown stream ~a" cont)
-          (dispatch-remote-error (make-!error "uknown stream" cont) (message-dest msg))))))
+          (unless (!abort? content)
+            (dispatch-remote-error (make-!error "uknown stream" cont) (message-dest msg)))))))
 
   (def (value-k obj)
     (##vector-ref obj (fx1- (##vector-length obj))))
