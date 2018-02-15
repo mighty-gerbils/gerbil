@@ -5,6 +5,7 @@ package: std/actor/rpc/proto
 
 (import :std/net/bio
         :std/actor/proto
+        :std/actor/rpc/base
         :std/actor/rpc/proto/message)
 (export rpc-proto-accept-e
         rpc-proto-connect-e

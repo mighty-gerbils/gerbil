@@ -24,7 +24,7 @@ package: std/actor
               !token)
   !!call !!call-recv !!value !!error !!event
   !!stream !!stream-recv !!yield !!end !!continue !!close !!abort !!sync
-  (struct-out !protocol !rpc-protocol)
+  (struct-out !protocol)
   defproto proto-out
   defproto-default-type
   (phi: +1 make-protocol-info protocol-info?
@@ -236,18 +236,13 @@ package: std/actor
 (defsyntax (!!sync stx)
   (syntax-case stx ()
     ((_ dest k)
-     #'(send-message dest (make-!sync k)))
+     #'(send-message dest (make-!sync k) #f #t))
     ((macro k)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message dest (make-!sync k))))))
-
-;;; wire rpc protocols
-(defstruct !rpc-protocol (connect accept)
-  id: std/actor#rpc-protocol::t)
+       #'(send-message dest (make-!sync k) #f #t)))))
 
 ;;; protocol interface specifications
 (defstruct !protocol (id super types)
-  id: std/actor#protocol::t
   final: #t)
 
 ;; defproto name
