@@ -236,10 +236,10 @@ package: std/actor
 (defsyntax (!!sync stx)
   (syntax-case stx ()
     ((_ dest k)
-     #'(send-message dest (make-!sync k)))
+     #'(send-message dest (make-!sync k) #f #t))
     ((macro k)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message dest (make-!sync k))))))
+       #'(send-message dest (make-!sync k) #f #t)))))
 
 ;;; wire rpc protocols
 (defstruct !rpc-protocol (connect accept)
