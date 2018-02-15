@@ -11,6 +11,7 @@ package: std/actor/rpc/proto
         :std/crypto/bn
         :std/actor/xdr
         :std/actor/proto
+        :std/actor/rpc/base
         :std/actor/rpc/proto/message
         :std/actor/rpc/proto/null
         :std/actor/rpc/proto/cookie)

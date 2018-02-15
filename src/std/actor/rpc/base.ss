@@ -12,6 +12,9 @@ package: std/actor/rpc
         :std/actor/xdr)
 (export #t)
 
+;;; wire rpc protocols
+(defstruct !rpc-protocol (connect accept))
+
 (def (xdr-read-uuid buffer)
   (let (bytes (make-u8vector uuid-length))
     (bio-read-bytes bytes buffer)

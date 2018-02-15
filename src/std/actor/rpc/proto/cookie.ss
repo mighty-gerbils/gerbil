@@ -8,6 +8,7 @@ package: std/actor/rpc/proto
         :std/crypto/digest
         :std/actor/xdr
         :std/actor/proto
+        :std/actor/rpc/base
         :std/actor/rpc/proto/message
         :std/actor/rpc/proto/null)
 (export rpc-cookie-proto
