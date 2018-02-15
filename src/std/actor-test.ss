@@ -199,8 +199,7 @@
       (def rfoo
         (rpc-connect locald 'foo rpc-server-address5))
 
-      (let (k (gensym 'stream))
-        (send-message/timeout rfoo (make-!stream (make-hello.hello-stream "stream") k) 1)
+      (let (k (!!hello.hello-stream rfoo "stream"))
         (let lp ((n 0))
           (when (< n N)
             (<- ((!yield x (eq? k))
@@ -225,7 +224,7 @@
       (def rfoo
         (rpc-connect locald 'foo rpc-server-address6))
 
-      (let ((values inp close) (!!hello.hello-stream rfoo "stream"))
+      (let ((values inp close) (!!pipe (!!hello.hello-stream rfoo "stream")))
         (let lp ((n 0))
           (when (< n N)
             (check (read inp) => n)
@@ -244,7 +243,7 @@
       (def rfoo
         (rpc-connect locald 'foo rpc-server-address9))
 
-      (let ((values inp close) (!!hello.hello-stream rfoo "stream"))
+      (let ((values inp close) (!!pipe (!!hello.hello-stream rfoo "stream")))
         (close)
         (let lp ((n 0))
           (let (next (read inp))

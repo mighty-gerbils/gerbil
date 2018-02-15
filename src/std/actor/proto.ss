@@ -9,11 +9,11 @@ package: std/actor
         :gerbil/gambit/hash
         :std/event
         :std/error
+        :std/sugar
         :std/net/address
         :std/misc/uuid
         :std/actor/message
-        :std/actor/xdr
-        )
+        :std/actor/xdr)
 (export
   rpc-io-error? raise-rpc-io-error
   (struct-out actor-error remote-error rpc-error)
@@ -22,8 +22,8 @@ package: std/actor
   (struct-out !rpc !call !value !error !event
               !stream !yield !end !continue !close !abort !sync
               !token)
-  !!call !!call-recv !!value !!error !!event
-  !!stream !!stream-recv !!yield !!end !!continue !!close !!abort !!sync
+  !!call !!value !!error !!event
+  !!stream !!pipe !!yield !!end !!continue !!close !!abort !!sync
   (struct-out !protocol)
   defproto proto-out
   defproto-default-type
@@ -157,13 +157,26 @@ package: std/actor
   ((recur dest e k timeout: timeo)
    (recur dest e k send-message/timeout timeo #t))
   ((_ actor e k send-e args ...)
-   (let ((token k)
-         (dest actor))
-     (!!stream-recv e token dest send-e args ...))))
+   (let ((token k) (dest actor))
+     (send-e dest (make-!stream e token) args ...)
+     token)))
 
-(def (!!stream-recv e k dest send-e . send-args)
-  (def (stream-handler outp)
-    (apply send-e dest (make-!stream e k) send-args)
+(defrules !!pipe ()
+  ((_ stream-start)
+   (!!stream-pipe (lambda () stream-start))))
+
+(def (!!stream-pipe start)
+  (def (stream-start outp)
+    (let/cc break
+      (let (k (try
+               (start)
+               (catch (e)
+                 (write e outp)
+                 (close-port outp)
+                 (break))))
+        (stream-handler k outp))))
+
+  (def (stream-handler k outp)
     (let lp ((close? #f))
       (<- ((!yield val (eq? k))
            (write val outp)
@@ -182,14 +195,14 @@ package: std/actor
                    obj))
              (write err outp)
              (close-port outp)))
-          ((!close k)
+          ((!close _)
            (lp #t)))))
 
   (let* (((values inp outp)
           (open-vector-pipe [permanent-close: #t direction: 'input]
                             [permanent-close: #t direction: 'output]))
-         (handler (spawn/name '!!stream-recv stream-handler outp))
-         (close (lambda () (!!close handler k))))
+         (handler (spawn/name 'stream-pipe stream-start outp))
+         (close (lambda () (!!close handler (void)))))
     (make-will inp (lambda (_) (close)))
     (values inp close)))
 
