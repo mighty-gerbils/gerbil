@@ -7,7 +7,7 @@
 (export generic-runtime-test generic-macro-test)
 
 (def generic-runtime-test
-  (test-suite "test generics runtime support"
+  (test-suite "test :std/generic support"
     (def my-generic (make-generic 'my-generic (lambda args #f)))
     (test-case "test default dispatch"
       (check (generic-dispatch my-generic 1 2) => #f))
@@ -40,7 +40,7 @@
 
 
 (def generic-macro-test
-  (test-suite "test :std/generic library"
+  (test-suite "test :std/generic macros"
     (defgeneric my-add
       (lambda args #f))
 

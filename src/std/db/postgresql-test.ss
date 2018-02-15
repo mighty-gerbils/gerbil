@@ -10,7 +10,7 @@
 (export postgresql-test)
 
 (def postgresql-test
-  (test-suite "test :std/db/postgresql library"
+  (test-suite "test :std/db/postgresql"
     (test-case "test postgresql driver"
       (def pg (postgresql-connect! "127.0.0.1" 5432 "test" "test" #f))
 

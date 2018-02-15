@@ -8,7 +8,7 @@
 (export event-test)
 
 (def event-test
-  (test-suite "test :std/event library"
+  (test-suite "test :std/event"
     (test-case "test wait"
       (def thr1 (spawn void))
       (check (wait thr1 1) => thr1)

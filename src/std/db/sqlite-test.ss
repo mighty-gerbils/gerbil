@@ -7,7 +7,7 @@
 (export sqlite-test)
 
 (def sqlite-test
-  (test-suite "test :std/db/sqlite library"
+  (test-suite "test :std/db/sqlite"
     (def db (sql-connect sqlite-open ":memory:"))
     (test-case "prepare table"
       (let (stmt (sql-prepare db "CREATE TABLE Users (FirstName VARCHAR, LastName VARCHAR, Secret VARCHAR)"))
