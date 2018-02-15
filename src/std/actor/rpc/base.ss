@@ -51,6 +51,9 @@ package: std/actor/rpc
   (disconnect remote)
   (shutdown))
 
+(def null-uuid
+  (u8vector->uuid (make-u8vector uuid-length)))
+
 (def (rpc-monitor thread (msg thread))
   (def (thread-monitor server thread msg)
     (with-catch values (cut thread-join! thread))
