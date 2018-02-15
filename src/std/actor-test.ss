@@ -162,6 +162,7 @@
            (if (< n N)
              (begin
                (!!yield n k)
+               (!!sync k)
                (<- ((!continue (eq? k))
                     (lp2 (1+ n)))))
              (begin
@@ -177,6 +178,7 @@
          (let (source @source)
            (let lp2 ((n 0))
              (!!yield n k)
+             (!!sync k)
              (<- ((!continue k)
                   (lp2 (1+ n)))
                  ((!close k)
@@ -203,8 +205,9 @@
           (when (< n N)
             (<- ((!yield x (eq? k))
                  (check x => n)
-                 (!!continue k)
-                 (lp (1+ n))))))
+                 (<- ((!sync (eq? k))
+                      (!!continue k)
+                      (lp (1+ n))))))))
         (let (end (thread-receive))
           (check end ? message?)
           (check (message-e end) ? !end?)))

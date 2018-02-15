@@ -1276,6 +1276,7 @@ through it in a background thread:
       (if (< n N)
         (begin
           (!!yield dest n k)
+          (!!sync dest k)               ; request back pressure
           (<- ((!continue k)            ; flow control
                (lp (1+ n)))
               ((!close k)               ; stream closed

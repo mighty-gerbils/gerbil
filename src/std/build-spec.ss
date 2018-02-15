@@ -162,7 +162,7 @@
     ;; :std/actor
     (gxc: "actor/message" "-e" "(include \"~~lib/_gambit#.scm\")")
     (gxc: "actor/xdr"  "-e" "(include \"~~lib/_gambit#.scm\")")
-    "actor/proto"
+    (gxc: "actor/proto" "-cc-options" "--param max-gcse-memory=300000000")
     "actor/rpc/base"
     "actor/rpc/proto/message"
     "actor/rpc/proto/null"

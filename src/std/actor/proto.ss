@@ -19,9 +19,11 @@ package: std/actor
   (struct-out actor-error remote-error rpc-error)
   (struct-out handle remote)
   remote=? remote-hash
-  (struct-out !rpc !call !value !error !event !stream !yield !end !continue !close !abort !token)
+  (struct-out !rpc !call !value !error !event
+              !stream !yield !end !continue !close !abort !sync
+              !token)
   !!call !!call-recv !!value !!error !!event
-  !!stream !!stream-recv !!yield !!end !!continue !!close !!abort
+  !!stream !!stream-recv !!yield !!end !!continue !!close !!abort !!sync
   (struct-out !protocol !rpc-protocol)
   defproto proto-out
   defproto-default-type
@@ -96,6 +98,8 @@ package: std/actor
   final: #t)
 (defstruct (!abort !rpc) (k)
   final: #t)
+(defstruct (!sync !rpc) (k)
+  final: #t)
 
 (defstruct !token ()
   final: #t)
@@ -160,13 +164,15 @@ package: std/actor
 (def (!!stream-recv e k dest send-e . send-args)
   (def (stream-handler outp)
     (apply send-e dest (make-!stream e k) send-args)
-    (let lp ((source #f) (close? #f))
+    (let lp ((close? #f))
       (<- ((!yield val (eq? k))
            (write val outp)
+           (lp close?))
+          ((!sync (eq? k))
            (if close?
-             (!!close @source k)
-             (!!continue @source k))
-           (lp @source #f))
+             (!!close k)
+             (!!continue k))
+           (lp close?))
           ((!end (eq? k))
            (close-port outp))
           ((!error obj k)
@@ -177,11 +183,7 @@ package: std/actor
              (write err outp)
              (close-port outp)))
           ((!close k)
-           (if source
-             (begin
-               (!!close source k)
-               (lp source #f))
-             (lp source #t))))))
+           (lp #t)))))
 
   (let* (((values inp outp)
           (open-vector-pipe [permanent-close: #t direction: 'input]
@@ -230,6 +232,14 @@ package: std/actor
     ((macro k)
      (with-syntax ((dest (stx-identifier #'macro '@source)))
        #'(send-message dest (make-!abort k))))))
+
+(defsyntax (!!sync stx)
+  (syntax-case stx ()
+    ((_ dest k)
+     #'(send-message dest (make-!sync k)))
+    ((macro k)
+     (with-syntax ((dest (stx-identifier #'macro '@source)))
+       #'(send-message dest (make-!sync k))))))
 
 ;;; wire rpc protocols
 (defstruct !rpc-protocol (connect accept)
