@@ -11,7 +11,7 @@
 (def (copy-list lst) (foldr cons '() lst))
 
 (def list-test
-  (test-suite "test suite for std/misc/list"
+  (test-suite "test :std/misc/list"
     (test-case "test length=?"
       (check-equal? (length=? '(1 2 3) '(a b c)) #t)
       (check-equal? (length=? '(1 2 3) '(a b c d)) #f)

@@ -6,7 +6,7 @@
         :std/db/mysql)
 (export mysql-test)
 (def mysql-test
-  (test-suite "test :std/db/mysql library"
+  (test-suite "test :std/db/mysql"
     (def db (sql-connect mysql-connect host: "localhost" user: "test" passwd: "test" db: "test"))
 
     (test-case "prepare tables"

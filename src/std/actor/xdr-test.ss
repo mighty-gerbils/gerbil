@@ -11,7 +11,7 @@
 (export actor-xdr-test)
 
 (def actor-xdr-test
-  (test-suite "test :std/actor/xdr serialization"
+  (test-suite "test :std/actor/xdr"
 
     (def (check-serialize obj (obj-e values))
         (let (p (open-serializer-output-buffer))

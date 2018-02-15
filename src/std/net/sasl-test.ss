@@ -7,7 +7,7 @@
 (export sasl-test)
 
 (def sasl-test
-  (test-suite "test :std/net/sasl library"
+  (test-suite "test :std/net/sasl"
 
     (def (check-scram-method scram-begin user pass r cfm sfm csm ssm)
       (def ctx (scram-begin user pass))

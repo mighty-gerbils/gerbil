@@ -45,7 +45,7 @@ package: std/text
    (begin (test-read csv lists) (test-write lists (string-append csv +lf+)))))
 
 (def csv-test
-  (test-suite "test suite for utils/csv"
+  (test-suite "test :std/text/csv"
     (test-case "test-empty-fields"
       (test-both
        "1,2,3
