@@ -98,10 +98,12 @@ Package for actor-oriented concurrent and distributed programming.
   (struct-out remote-error rpc-error)
   (struct-out handle remote)
   remote=? remote-hash
-  (struct-out !rpc !call !value !error !event !stream !yield !end !continue !close !abort !token)
-  !!call !!call-recv !!value !!error !!event
-  !!stream !!stream-recv !!yield !!end !!continue !!close !!abort
-  (struct-out !protocol !rpc-protocol)
+  (struct-out !rpc !call !value !error !event
+              !stream !yield !end !continue !close !abort !sync
+              !token)
+  !!call !!value !!error !!event
+  !!stream !!pipe !!yield !!end !!continue !!close !!abort !!sync
+  (struct-out !protocol)
   defproto proto-out
   defproto-default-type
   (phi: +1 make-protocol-info protocol-info?
