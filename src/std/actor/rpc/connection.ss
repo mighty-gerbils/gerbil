@@ -563,7 +563,7 @@ package: std/actor/rpc
                   (dispatch-remote-error (make-!abort cont) (message-dest msg))))))))
        (else
         (warning "cannot route message; bogus continuation ~a" cont)
-        (when (!yield? content)
+        (when (!sync? content)
           (dispatch-remote-error (make-!abort cont) (message-dest msg)))))))
 
   (def (dispatch-control msg buffer)
