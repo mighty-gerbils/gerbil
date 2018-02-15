@@ -254,15 +254,10 @@ package: std/actor/rpc
                    (set-timeout! timeo)))
                (set! (!stream-k content) wire-id)
                (marshal-and-write msg proto #t)))
-            ((? !value?)
+            ((? (or !value? !yield? !error? !end?))
              (marshal-and-write msg proto #t))
-            ((or (!yield _ wire-id)
-                 (!sync wire-id))
+            ((!sync wire-id)
              (continuation-table-put-stream-actor! cont-table wire-id (cons src dest))
-             (marshal-and-write msg proto #t))
-            ((or (!error _ wire-id)
-                 (!end wire-id))
-             (continuation-table-remove-stream-actor! cont-table wire-id)
              (marshal-and-write msg proto #t))
             ((!continue k)
              (let (wire-id (continuation-table-get-stream-cont cont-table k))
@@ -303,7 +298,21 @@ package: std/actor/rpc
       (set! next-continuation-id (1+ next))
       next))
 
-  (def (marshal-and-write msg proto local-error?)
+  (def (marshal-and-write msg proto dispatch-marshal-error?)
+    (defrules dispatch-marshal-error ()
+      ((_ what)
+       (let ((content (message-e msg))
+             (dest    (message-dest msg)))
+         (match content
+           ((or (!call e wire-id) (!stream e wire-id))
+            (dispatch-error wire-id what))
+           ((or (!error e wire-id) (!yield e wire-id))
+            (if dispatch-marshal-error?
+              (dispatch-remote-error (make-!error what wire-id) dest)
+              (loop)))
+           (else
+            (loop))))))
+
     (let (e (try (rpc-proto-marshal-message msg proto)
                  (catch (exception? e) e)))
       (cond
@@ -312,39 +321,20 @@ package: std/actor/rpc
           (begin
             (thread-send writer e)
             (loop))
-          (let (content (message-e msg))
+          (begin
             (warning "message too large; not sending %d bytes" (u8vector-length e))
-            (match content
-              ((or (!call e wire-id) (!stream e wire-id))
-               (dispatch-error wire-id "message too large"))
-              ((!yield wire-id)
-               (dispatch-stream-error msg wire-id "message too large"))
-              (else
-               (loop))))))
+            (dispatch-marshal-error "message too large"))))
        ((chunked-output-buffer? e)
         (if (fx<= (chunked-output-length e) rpc-proto-message-max-length)
           (begin
             (thread-send writer e)
             (loop))
-          (let (content (message-e msg))
+          (begin
             (warning "message too large; not sending %d bytes" (chunked-output-length e))
-            (match content
-              ((or (!call e wire-id) (!stream e wire-id))
-               (dispatch-error wire-id "message too large"))
-              ((!yield wire-id)
-               (dispatch-stream-error msg wire-id "message too large"))
-              (else
-               (loop))))))
-       (local-error?
+            (dispatch-marshal-error "message too large"))))
+       (dispatch-marshal-error?
         (log-error "marshal error" e)
-        (let (content (message-e msg))
-          (match content
-            ((or (!call e wire-id) (!stream e wire-id))
-             (dispatch-error wire-id "marshal error"))
-            ((!yield wire-id)
-             (dispatch-stream-error msg wire-id "marshal error"))
-            (else
-             (loop)))))
+        (dispatch-marshal-error "marshal error"))
        (else
         (log-error "marshal error" e)
         (loop)))))
@@ -355,13 +345,6 @@ package: std/actor/rpc
        (!!error actor (make-rpc-error 'rpc what) k))
       (else (void)))
     (loop))
-
-  (def (dispatch-stream-error msg wire-id what)
-    (with ((message _ src dest) msg)
-      (let (abort (make-message (make-!abort wire-id) dest src #f))
-        (send src abort))
-      (continuation-table-remove-stream-actor! cont-table wire-id)
-      (dispatch-remote-error (make-!error what wire-id) dest)))
 
   (def (dispatch-remote-error what dest)
     (marshal-and-write (make-message what (void) dest #f) #f #f))
@@ -574,8 +557,7 @@ package: std/actor/rpc
         (with ([actor . dest] stream)
           (set! (message-source msg) dest)
           (send actor msg)
-          (when (!abort? content)
-            (continuation-table-remove-stream-actor! cont-table cont)))
+          (continuation-table-remove-stream-actor! cont-table cont))
         (begin
           (warning "bad control message; unknown stream ~a" cont)
           (dispatch-remote-error (make-!error "uknown stream" cont) (message-dest msg))))))
