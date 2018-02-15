@@ -298,7 +298,21 @@ package: std/actor/rpc
       (set! next-continuation-id (1+ next))
       next))
 
-  (def (marshal-and-write msg proto local-error?)
+  (def (marshal-and-write msg proto dispatch-marshal-error?)
+    (defrules dispatch-marshal-error ()
+      ((_ what)
+       (let ((content (message-e msg))
+             (dest    (message-dest msg)))
+         (match content
+           ((or (!call e wire-id) (!stream e wire-id))
+            (dispatch-error wire-id what))
+           ((or (!error e wire-id) (!yield e wire-id))
+            (if dispatch-marshal-error?
+              (dispatch-remote-error (make-!error what wire-id) dest)
+              (loop)))
+           (else
+            (loop))))))
+
     (let (e (try (rpc-proto-marshal-message msg proto)
                  (catch (exception? e) e)))
       (cond
@@ -307,33 +321,20 @@ package: std/actor/rpc
           (begin
             (thread-send writer e)
             (loop))
-          (let (content (message-e msg))
+          (begin
             (warning "message too large; not sending %d bytes" (u8vector-length e))
-            (match content
-              ((or (!call e wire-id) (!stream e wire-id))
-               (dispatch-error wire-id "message too large"))
-              (else
-               (loop))))))
+            (dispatch-marshal-error "message too large"))))
        ((chunked-output-buffer? e)
         (if (fx<= (chunked-output-length e) rpc-proto-message-max-length)
           (begin
             (thread-send writer e)
             (loop))
-          (let (content (message-e msg))
+          (begin
             (warning "message too large; not sending %d bytes" (chunked-output-length e))
-            (match content
-              ((or (!call e wire-id) (!stream e wire-id))
-               (dispatch-error wire-id "message too large"))
-              (else
-               (loop))))))
-       (local-error?
+            (dispatch-marshal-error "message too large"))))
+       (dispatch-marshal-error?
         (log-error "marshal error" e)
-        (let (content (message-e msg))
-          (match content
-            ((or (!call e wire-id) (!stream e wire-id))
-             (dispatch-error wire-id "marshal error"))
-            (else
-             (loop)))))
+        (dispatch-marshal-error "marshal error"))
        (else
         (log-error "marshal error" e)
         (loop)))))
