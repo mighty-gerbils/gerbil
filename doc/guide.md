@@ -1259,13 +1259,11 @@ or error message and the continuation token:
 #### Streams
 
 In addition to calls and events, actors can also open streams.
-A stream is like a call, but it returns multiple values using `!!yield`
-until the stream's end or an error occurs.
+A stream is like a call, but it returns multiple values using
+`!!yield` until the stream's end or an error occurs.
 
 For example, the following server generates a stream of numbers as
-specified by the argument. Yielded values can be processed directly, or with
-the `!!stream` macro which constructs a vector port and pipes objects
-through it in a background thread:
+specified by the argument:
 ```
 (defproto simple-stream
   stream: (count N))
@@ -1276,7 +1274,7 @@ through it in a background thread:
       (if (< n N)
         (begin
           (!!yield dest n k)
-          (!!sync dest k)               ; request back pressure
+          (!!sync dest k)               ; request sync
           (<- ((!continue k)            ; flow control
                (lp (1+ n)))
               ((!close k)               ; stream closed
@@ -1291,8 +1289,15 @@ through it in a background thread:
          (lp)))))
 
 (def my-stream (spawn my-simple-stream))
+```
 
-> (let ((values inp close) (!!simple-stream.count my-stream 5))
+Yielded values can be processed as messages, or with the `!!pipe`
+macro which constructs a vector pipe and pipes the yielded values
+through it in a background thread.
+
+Here is an example that uses a pipe:
+```
+> (let ((values inp close) (!!pipe (!!simple-stream.count my-stream 5)))
     (for (x inp)
       (displayln x)))
 0
@@ -1300,6 +1305,22 @@ through it in a background thread:
 2
 3
 4
+```
+
+The pipe may be convenient, but it forgoes end-to-end back pressure
+and synchronization with `!!sync`. Here is the same example again,
+but with explicit processing of messages through the actor mailbox:
+```
+(let (k (!!simple-stream.count my-stream 5))
+  (let lp ()
+    (<- ((!yield x (eq? k))
+         (displayln x)
+         (lp))
+        ((!sync (eq? k))
+         (!!continue k)
+         (lp))
+        ((!end (eq? k))
+         (void)))))
 ```
 
 #### RPC
