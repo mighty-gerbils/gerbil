@@ -256,7 +256,8 @@ package: std/actor/rpc
                (marshal-and-write msg proto #t)))
             ((? !value?)
              (marshal-and-write msg proto #t))
-            ((!yield _ wire-id)
+            ((or (!yield _ wire-id)
+                 (!sync wire-id))
              (continuation-table-put-stream-actor! cont-table wire-id (cons src dest))
              (marshal-and-write msg proto #t))
             ((or (!error _ wire-id)
@@ -476,7 +477,7 @@ package: std/actor/rpc
             (match content
              ((? (or !call? !event? !stream?))
               (dispatch-call msg buffer))
-             ((? (or !value? !error? !yield? !end?))
+             ((? (or !value? !error? !yield? !end? !sync?))
               (dispatch-value msg buffer))
              ((? (or !continue? !close? !abort?))
               (dispatch-control msg buffer))
@@ -539,7 +540,7 @@ package: std/actor/rpc
                 (set! (message-source msg)
                   (make-remote conn (message-dest msg) connaddr proto))
                 (cond
-                 ((!yield? content)
+                 ((or (!yield? content) (!sync? content))
                   ;; race with timeout, so we need to lock and check the cont table again
                   (let (ok
                         (with-continuation-table cont-table
@@ -549,7 +550,8 @@ package: std/actor/rpc
                     (unless ok
                       ;; that needs to marshal and can take time, so we need to  do it
                       ;; without the lock; hence the little dance.
-                      (dispatch-remote-error (make-!abort cont) (message-dest msg)))))
+                      (when (!sync? content)
+                        (dispatch-remote-error (make-!abort cont) (message-dest msg))))))
                  ((continuation-table-remove! cont-table cont)
                   ;; there is no race here, because continuation-table-remove! is
                   ;; atomic and returns #f if no continuation was removed
@@ -557,7 +559,7 @@ package: std/actor/rpc
                (else
                 (when (continuation-table-remove! cont-table cont)
                   (!!error actor (make-rpc-error 'rpc "unmarshal error") k))
-                (when (!yield? content)
+                (when (!sync? content)
                   (dispatch-remote-error (make-!abort cont) (message-dest msg))))))))
        (else
         (warning "cannot route message; bogus continuation ~a" cont)

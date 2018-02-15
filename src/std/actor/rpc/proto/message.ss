@@ -39,6 +39,7 @@ package: std/actor/rpc/proto
 (def rpc-proto-message-continue #x08)
 (def rpc-proto-message-close    #x09)
 (def rpc-proto-message-abort    #x0A)
+(def rpc-proto-message-sync     #x0B)
 (def rpc-proto-message-max-length (expt 2 20)) ; 1MB
 ;; protocols
 (def rpc-proto-null          #x00)
@@ -107,6 +108,10 @@ package: std/actor/rpc/proto
          (bio-write-u8 rpc-proto-message-abort buffer)
          (xdr-write-uuid dest buffer)
          (xdr-write-uint k buffer))
+        ((!sync k)
+         (bio-write-u8 rpc-proto-message-sync buffer)
+         (xdr-write-uuid dest buffer)
+         (xdr-write-uint k buffer))
         (else
          (raise-rpc-io-error 'rpc-proto-write-message "unknown rpc message type" content))))
      (else
@@ -149,6 +154,9 @@ package: std/actor/rpc/proto
       ((eq? type rpc-proto-message-abort)
        (let (k (xdr-read-uint buffer))
          (make-!abort k)))
+      ((eq? type rpc-proto-message-sync)
+       (let (k (xdr-read-uint buffer))
+         (make-!sync k)))
       (else
        (raise-rpc-io-error 'rpc-proto-read-message
                            "unmarshal error; unexpected message type" type)))
