@@ -216,7 +216,8 @@ package: std/actor/rpc
            (let (abort (make-message (make-!abort wire-id) dest actor #f))
              (send actor abort))))
        (&continuation-table-stream-actors cont-table)))
-    (rpc-connection-shutdown rpc-server))
+    (rpc-connection-shutdown rpc-server)
+    (raise 'shutdown))
 
   (def (write-message msg)
     (with ((message content src dest opts) msg)
@@ -265,18 +266,14 @@ package: std/actor/rpc
                  (begin
                    (set! (!continue-k content) wire-id)
                    (marshal-and-write msg proto #t))
-                 (begin
-                   (warning "bad continue; unknown stream ~a" k)
-                   (loop)))))
+                 (warning "bad continue; unknown stream ~a" k))))
             ((!close k)
              (let (wire-id (continuation-table-get-stream-cont cont-table k))
                (if wire-id
                  (begin
                    (set! (!close-k content) wire-id)
                    (marshal-and-write msg proto #t))
-                 (begin
-                   (warning "bad close; unknown stream ~a" k)
-                   (loop)))))
+                 (warning "bad close; unknown stream ~a" k))))
             ((!abort k)
              (let (wire-id (continuation-table-get-stream-cont cont-table k))
                (if wire-id
@@ -284,14 +281,10 @@ package: std/actor/rpc
                    (set! (!abort-k content) wire-id)
                    (continuation-table-remove! cont-table wire-id)
                    (marshal-and-write msg proto #t))
-                 (begin
-                   (warning "bad abort; unknown stream ~a" k)
-                   (loop)))))
+                 (warning "bad abort; unknown stream ~a" k))))
             (else
              (marshal-and-write msg proto #t))))
-        (begin
-          (warning "bad handle; no protocol ~a ~a" dest msg)
-          (loop)))))
+        (warning "bad handle; no protocol ~a ~a" dest msg))))
 
   (def (next-continuation-id!)
     (let (next next-continuation-id)
@@ -307,28 +300,22 @@ package: std/actor/rpc
            ((or (!call e wire-id) (!stream e wire-id))
             (dispatch-error wire-id what))
            ((or (!error e wire-id) (!yield e wire-id))
-            (if dispatch-marshal-error?
-              (dispatch-remote-error (make-!error what wire-id) dest)
-              (loop)))
-           (else
-            (loop))))))
+            (when dispatch-marshal-error?
+              (dispatch-remote-error (make-!error what wire-id) dest)))
+           (else (void))))))
 
     (let (e (try (rpc-proto-marshal-message msg proto)
                  (catch (exception? e) e)))
       (cond
        ((u8vector? e)
         (if (fx<= (u8vector-length e) rpc-proto-message-max-length)
-          (begin
-            (thread-send writer e)
-            (loop))
+          (thread-send writer e)
           (begin
             (warning "message too large; not sending %d bytes" (u8vector-length e))
             (dispatch-marshal-error "message too large"))))
        ((chunked-output-buffer? e)
         (if (fx<= (chunked-output-length e) rpc-proto-message-max-length)
-          (begin
-            (thread-send writer e)
-            (loop))
+          (thread-send writer e)
           (begin
             (warning "message too large; not sending %d bytes" (chunked-output-length e))
             (dispatch-marshal-error "message too large"))))
@@ -336,15 +323,13 @@ package: std/actor/rpc
         (log-error "marshal error" e)
         (dispatch-marshal-error "marshal error"))
        (else
-        (log-error "marshal error" e)
-        (loop)))))
+        (log-error "marshal error" e)))))
 
   (def (dispatch-error wire-id what)
     (match (continuation-table-remove! cont-table wire-id)
       ((values actor proto k stream?)
        (!!error actor (make-rpc-error 'rpc what) k))
-      (else (void)))
-    (loop))
+      (else (void))))
 
   (def (dispatch-remote-error what dest)
     (marshal-and-write (make-message what (void) dest #f) #f #f))
@@ -354,9 +339,7 @@ package: std/actor/rpc
     (cond
      ((continuation-table-get-timeout cont-table timeo)
       => (lambda (wire-id)
-           (dispatch-error wire-id "timeout")))
-     (else
-      (loop))))
+           (dispatch-error wire-id "timeout")))))
 
   (def (timeout< a b)
     (< (time->seconds a)
@@ -383,8 +366,7 @@ package: std/actor/rpc
       (displayln "peer-address: " peer-address)
       (displayln "next-continuation-id: " next-continuation-id)
       (displayln "next-timeout: " (and next-timeout (time->seconds next-timeout))))
-    (continuation-table-dump! cont-table port)
-    (loop))
+    (continuation-table-dump! cont-table port))
 
   (def (loop)
     (<< (! (timeout-event)
@@ -410,8 +392,8 @@ package: std/actor/rpc
         (['dump port]
          (dump! port))
         (bogus
-         (warning "unexpected message ~a" bogus)
-         (loop))))
+         (warning "unexpected message ~a" bogus)))
+    (loop))
 
   (def (run)
     ;; create a denv cell for current-xdr-type-registry
@@ -423,8 +405,9 @@ package: std/actor/rpc
   (try
    (run)
    (catch (e)
-     (log-error "unhandled exception" e)
-     (close-connection))))
+     (unless (eq? 'shutdown e)
+       (log-error "unhandled exception" e)
+       (with-catch void close-connection)))))
 
 ;; the writer of the connection: receives marshaled outbound messages
 ;; and writes them to the socket
