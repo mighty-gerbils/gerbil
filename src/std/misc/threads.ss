@@ -6,12 +6,20 @@ package: std/misc
 (import :gerbil/gambit/threads
         :std/sugar)
 (export primordial-thread-group
+        thread-dead?
         thread-group-kill!
         thread-raise! thread-abort! thread-abort?
         spawn/abort spawn/name/abort)
 
 (def (primordial-thread-group)
   (thread-thread-group ##primordial-thread))
+
+(extern thread-dead?)
+(begin-foreign
+  (namespace ("std/misc/threads#" thread-dead?))
+  (define (thread-dead? thread)
+    (not (macro-thread-end-condvar thread))))
+
 
 ;; thread-group-kill! kills all threads and children groups in the thread group
 ;; In addition, it detaches the thread group from its parent, making it unreachable
