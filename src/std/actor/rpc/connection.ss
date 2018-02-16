@@ -173,13 +173,8 @@ package: std/actor/rpc
         (displayln "timeouts: " (hash-length tmos))
         (hash-for-each
          (lambda (tmo wire-id)
-           (displayln tmo " ("(time->seconds tmo) ")" " -> " wire-id))
-         tmos)
-        (displayln "continuation-timeouts: " (hash-length ctmos))
-        (hash-for-each
-         (lambda (wire-id tmo)
-           (displayln wire-id " -> " tmo " ("(time->seconds tmo) ")"))
-         ctmos)))))
+           (displayln (time->seconds tmo) " -> " wire-id))
+         tmos)))))
 
 ;; the main thread of the connection; it's the proxy actor in remote handles
 (def (rpc-connection-loop rpc-server actors sock peer-address proto-e)
@@ -556,7 +551,7 @@ package: std/actor/rpc
                 (when (!sync? content)
                   (dispatch-remote-error (make-!abort cont) (message-dest msg))))))))
        (else
-        (warning "cannot route message; bogus continuation ~a" cont)
+        (warning "cannot route message; unknown continuation ~a" cont)
         (when (!sync? content)
           (dispatch-remote-error (make-!abort cont) (message-dest msg)))))))
 
@@ -570,7 +565,7 @@ package: std/actor/rpc
           (send actor msg)
           (continuation-table-remove-stream-actor! cont-table cont))
         (begin
-          (warning "bad control message; unknown stream ~a" cont)
+          (warning "unexpected control message; unknown stream ~a" cont)
           (unless (!abort? content)
             (dispatch-remote-error (make-!error "uknown stream" cont) (message-dest msg)))))))
 
