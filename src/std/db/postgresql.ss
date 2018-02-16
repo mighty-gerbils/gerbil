@@ -16,7 +16,7 @@ package: std/db
 
 (defstruct (postgresql-connection connection) ()
   final: #t)
-(defstruct (postgresql-statement statement) (conn params cols bind row inp)
+(defstruct (postgresql-statement statement) (conn params cols bind row inp token)
   constructor: :init!
   final: #t)
 
@@ -46,8 +46,8 @@ package: std/db
 (defmethod {finalize postgresql-statement}
   (lambda (self)
     (with ((postgresql-statement name conn) self)
-      (postgresql-close-statement! conn name)
-      (postgresql-statement::reset self))))
+      (postgresql-statement::reset self)
+      (postgresql-close-statement! conn name))))
 
 (defmethod {bind postgresql-statement}
   (lambda (self . args)
@@ -75,8 +75,11 @@ package: std/db
 
 (defmethod {reset postgresql-statement}
   (lambda (self)
-    (set! (postgresql-statement-inp self) #f)
-    (set! (postgresql-statement-row self) #f)))
+    (alet (token (postgresql-statement-token self))
+      (postgresql-reset! (postgresql-statement-conn self) token)
+      (set! (postgresql-statement-token self) #f)
+      (set! (postgresql-statement-inp self) #f)
+      (set! (postgresql-statement-row self) #f))))
 
 (defmethod {exec postgresql-statement}
   (lambda (self)
@@ -86,7 +89,8 @@ package: std/db
 (defmethod {query-start postgresql-statement}
   (lambda (self)
     (with ((postgresql-statement name conn _ _ bind) self)
-      (let (inp (postgresql-query! conn name (or bind [])))
+      (let ((values inp token) (postgresql-query! conn name (or bind [])))
+        (set! (postgresql-statement-token self) token)
         (set! (postgresql-statement-inp self) inp)
         (set! (postgresql-statement-row self) #f)))))
 
@@ -119,6 +123,7 @@ package: std/db
              (let (next (channel-get inp))
                (cond
                 ((eof-object? next)
+                 (set! (postgresql-statement-token self) #f)
                  (set! (postgresql-statement-inp self) #f)
                  (set! (postgresql-statement-row self) #f)
                  iter-end)
