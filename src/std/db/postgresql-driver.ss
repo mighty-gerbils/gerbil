@@ -24,6 +24,7 @@ package: std/db
         postgresql-exec!
         postgresql-query!
         postgresql-continue!
+        postgresql-reset!
         postgresql-close!
         (rename: !token? query-token?))
 
@@ -34,6 +35,7 @@ package: std/db
   (query name params)
   event:
   (continue token)
+  (reset token)
   (close name)
   (shutdown))
 
@@ -83,6 +85,12 @@ package: std/db
   (if (!token? token)
     (with-driver conn driver
       (!!postgresql.continue driver token))
+    (error "Bad argument; illegal query token" token)))
+
+(def (postgresql-reset! conn token)
+  (if (!token? token)
+    (alet (driver (get-driver conn))
+      (!!postgresql.reset driver token))
     (error "Bad argument; illegal query token" token)))
 
 (def (postgresql-close! conn)
@@ -316,7 +324,7 @@ package: std/db
              (token (make-!token)))
          (set! query-output ch)
          (set! query-token token)
-         ch))
+         (values ch token)))
       (['ErrorResponse msg . irritants]
        (resync!)
        (apply raise-sql-error 'postgresql-query! msg irritants))))
@@ -393,6 +401,9 @@ package: std/db
         ((!postgresql.continue token)
          (when (eq? token query-token)
            (query-pump)))
+        ((!postgresql.reset token)
+         (when (eq? token query-token)
+           (maybe-sync!)))
         ((!postgresql.close name)
          (close name))
         ((!postgresql.shutdown)

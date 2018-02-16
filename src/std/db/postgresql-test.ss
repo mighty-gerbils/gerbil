@@ -18,32 +18,34 @@
         (lambda (res)
           (equal? (values->list res) args)))
 
-      (def (query-count-results inp)
-        (let lp ((i 0))
-          (let (next (channel-get inp))
-            (cond
-             ((eof-object? next) i)
-             ((query-token? next)
-              (postgresql-continue! pg next)
-              (lp i))
-             ((exception? next)
-              (raise next))
-             (else
-              (lp (fx1+ i)))))))
+      (def (query-count-results res)
+        (let ((values inp token) res)
+          (let lp ((i 0))
+            (let (next (channel-get inp))
+              (cond
+               ((eof-object? next) i)
+               ((query-token? next)
+                (postgresql-continue! pg next)
+                (lp i))
+               ((exception? next)
+                (raise next))
+               (else
+                (lp (fx1+ i))))))))
 
-      (def (query-results inp)
-        (let lp ((r []))
-          (let (next (channel-get inp))
-            (cond
-             ((eof-object? next)
-              (reverse r))
-             ((query-token? next)
-              (postgresql-continue! pg next)
-              (lp r))
-             ((exception? next)
-              (raise next))
-             (else
-              (lp (cons next r)))))))
+      (def (query-results res)
+        (let ((values inp token) res)
+          (let lp ((r []))
+            (let (next (channel-get inp))
+              (cond
+               ((eof-object? next)
+                (reverse r))
+               ((query-token? next)
+                (postgresql-continue! pg next)
+                (lp r))
+               ((exception? next)
+                (raise next))
+               (else
+                (lp (cons next r))))))))
 
       (def (genstring g)
         (symbol->string
