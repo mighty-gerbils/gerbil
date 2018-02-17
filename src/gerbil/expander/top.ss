@@ -588,7 +588,7 @@ namespace: gx
         (y (unwrap yid)))
     (and (stx-eq? x y)
          (eq? (context x) (context y))
-         (andmap eq? (marks x) (marks y)))))
+         (equal? (marks x) (marks y)))))
 
 (def (underscore? stx)
   (and (identifier? stx)
