@@ -227,6 +227,7 @@
                        "module" "extern" "cond-expand" "require" "provide"
                        "if" "apply" "eval" "set!"
                        "when" "unless" "not"
+                       "case-lambda"
                        "core-syntax-case" "core-ast-case"
                        "syntax-case" "ast-case" "ast-rules"
                        "identifier-rules"
