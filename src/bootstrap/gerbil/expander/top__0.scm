@@ -2409,7 +2409,7 @@
               (_y8124_ (_unwrap8121_ _yid8117_)))
           (if (gx#stx-eq? _x8123_ _y8124_)
               (if (eq? (_context8119_ _x8123_) (_context8119_ _y8124_))
-                  (andmap eq? (_marks8120_ _x8123_) (_marks8120_ _y8124_))
+                  (equal? (_marks8120_ _x8123_) (_marks8120_ _y8124_))
                   '#f)
               '#f)))))
   (define gx#underscore?
