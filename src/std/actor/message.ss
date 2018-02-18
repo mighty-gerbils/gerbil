@@ -134,7 +134,7 @@ package: std/actor
     (let lp ((rest clauses) (clauses []) (events []) (else-e #f))
       (syntax-case rest ()
         ((hd . rest)
-         (syntax-case #'hd (=> ! else)
+         (syntax-case #'hd (=> ! else unquote unquote-splicing)
            ((! evt => K)
             (lp #'rest clauses
                 (cons* #'K #'evt events)
@@ -153,6 +153,18 @@ package: std/actor
               (raise-syntax-error #f "Bad syntax; else clause incompatible with cuts" stx #'hd))
              (else
               (lp #'rest clauses events #'(body ...)))))
+           ((unquote macro-expr)
+            (syntax-case #'macro-expr ()
+              ((macro . args)
+               (let* ((expander (syntax-local-e #'macro))
+                      (new-clause (core-apply-expander expander #'macro-expr)))
+                 (lp (cons new-clause #'rest) clauses events else-e)))))
+           ((unquote-splicing macro-expr)
+            (syntax-case #'macro-expr ()
+              ((macro . args)
+               (let* ((expander (syntax-local-e #'macro))
+                      (new-clauses (core-apply-expander expander #'macro-expr)))
+                 (lp (stx-foldr cons #'rest new-clauses) clauses events else-e)))))
            ((pat body ...)
             (lp #'rest
                 (cons #'(pat body ...) clauses)
