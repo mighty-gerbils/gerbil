@@ -3,8 +3,7 @@
 ;;; syntax parameters
 package: std
 
-(export defsyntax-parameter syntax-parameterize
-        (for-syntax #t))
+(export #t (for-syntax #t))
 
 (begin-syntax
   (defclass syntax-parameter (key default))
@@ -22,7 +21,7 @@ package: std
       (or (syntax-local-e key-stx false)
           (syntax-parameter-default param))))
 
-  (defmethod {apply-method-expander syntax-parameter}
+  (defmethod {apply-macro-expander syntax-parameter}
     (lambda (self stx)
       (let (e (syntax-parameter-e self))
         (core-apply-expander e stx)))))
