@@ -61,6 +61,7 @@
 - [std/pregexp](#stdpregexp)
 - [std/sort](#stdsort)
 - [std/srfi](#stdsrfi)
+- [std/stxparam](#stdstxparam)
 - [std/sugar](#stdsugar)
 - [std/test](#stdtest)
 - [std/text](#stdtext)
@@ -1285,6 +1286,23 @@ Sorting using Olin Shivers' withdrawn SRFI-32 implementation.
 
 See [SRFI Support](srfi.md)
 
+
+## std/stxparam
+
+Syntax parameters.
+
+```
+(import :std/stxparam)
+
+;; exports
+  defsyntax-parameter syntax-parameterize
+
+;; exports for-syntax
+ (class syntax-parameter (key default))
+ syntax-parameter-value
+ syntax-parameter-e
+
+```
 
 
 ## std/sugar
