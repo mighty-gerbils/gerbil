@@ -239,7 +239,7 @@
                        "let-values" "letrec-values" "letrec*-values"
                        "letrec*" "rec"
                        "quote" "quasiquote" "unquote" "unquote-splicing"
-                       "parameterize"
+                       "parameterize" "syntax-parameterize"
                        "quote-syntax"
                        "syntax" "quasisyntax" "unsyntax" "unsyntax-splicing"
                        "syntax/loc"

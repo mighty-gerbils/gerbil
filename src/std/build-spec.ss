@@ -22,6 +22,7 @@
     "coroutine"
     "iter"
     "test"
+    "stxparam"
     ;; debugging
     (gxc: "debug/heap" "-e" "(include \"~~lib/_gambit#.scm\")")
     ;; SRFI: This is my grandfather's axe; my father replaced the head

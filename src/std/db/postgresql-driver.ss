@@ -375,21 +375,19 @@ package: std/db
     (send! '(Terminate))
     (raise 'shutdown))
 
-  (defsyntax (do-action stx)
-    (syntax-case stx ()
-      ((macro k action)
-       (with-syntax ((@source (stx-identifier #'macro '@source)))
-         #'(try
-            (let (res action)
-              (!!value @source res k))
-            (catch (e)
-              (!!error @source e k)
-              (unless (sql-error? e)
-                (raise e))))))
-      ((recur k action continue ...)
-       #'(begin
-           (recur k action)
-           continue ...))))
+  (defrules do-action ()
+    ((_ k action)
+     (try
+      (let (res action)
+        (!!value res k))
+      (catch (e)
+        (!!error e k)
+        (unless (sql-error? e)
+          (raise e)))))
+    ((recur k action continue ...)
+     (begin
+       (recur k action)
+       continue ...)))
 
   (def (loop)
     (<- ((!postgresql.prepare name sql k)
