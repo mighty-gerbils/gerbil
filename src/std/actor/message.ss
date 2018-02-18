@@ -6,13 +6,15 @@ package: std/actor
 (import :gerbil/gambit/threads
         :gerbil/gambit/os
         (only-in :std/event !)
-        :std/error)
+        :std/error
+        :std/stxparam)
 (export
   (struct-out message proxy)
   (struct-out actor-error)
   actor-error:::init!
   -> send send-message send-message/timeout
   << <-
+  @message @value @source @dest @options
   !)
 
 (defstruct (actor-error <error>) ()
@@ -62,14 +64,30 @@ package: std/actor
         (##thread-send thread msg)
         #f))))
 
-(defsyntax (-> stx)
-  (syntax-case stx ()
-    ((macro msg)
-     (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message dest msg)))
-    ((macro msg timeout: timeo)
-     (with-syntax ((dest (stx-identifier #'macro '@source)))
-       #'(send-message/timeout dest msg)))))
+(defrules defparam ()
+  ((_ macro param)
+   (begin
+     (defsyntax-parameter param #f)
+     (defsyntax (macro stx)
+       (if (identifier? stx)
+         (cond
+          ((syntax-parameter-value (quote-syntax param))
+           => values)
+          (else
+           (raise-syntax-error #f "Bad syntax; not in reaction context" stx)))
+         (raise-syntax-error #f "Bad syntax" stx))))))
+
+(defparam @message @@message)
+(defparam @value @@value)
+(defparam @source @@source)
+(defparam @dest @@dest)
+(defparam @options @@options)
+
+(defrules -> ()
+  ((_ msg)
+   (send-message @source msg))
+  ((_ msg timeout: timeo)
+   (send-message/timeout @source msg)))
 
 ;;; receive primitives
 ;; receive macros
@@ -114,20 +132,19 @@ package: std/actor
             (else (loop))))))
 
   (def (generate-receive-recv-msg stx clauses loop)
-    (with-syntax* (((macro . body) stx)
-                   (@message (stx-identifier #'macro '@message))
-                   (@value   (stx-identifier #'macro '@value))
-                   (@source  (stx-identifier #'macro '@source))
-                   (@dest    (stx-identifier #'macro '@dest))
-                   (@options (stx-identifier #'macro '@options))
-                   (((pat body ...) ...) clauses)
-                   (loop loop))
-      #'(lambda (@message)
-          (match @message
-            ((message @value @source @dest @options)
-             (match @value
-               (pat (thread-mailbox-extract-and-rewind) body ...) ...
-               (else (loop))))
+    (with-syntax ((((pat body ...) ...) clauses)
+                  (loop loop))
+      #'(lambda ($message)
+          (match $message
+            ((message $value $source $dest $options)
+             (syntax-parameterize ((@@message (quote-syntax $message))
+                                   (@@value   (quote-syntax $value))
+                                   (@@source  (quote-syntax $source))
+                                   (@@dest    (quote-syntax $dest))
+                                   (@@options (quote-syntax $options)))
+               (match $value
+                 (pat (thread-mailbox-extract-and-rewind) body ...) ...
+                 (else (loop)))))
             (else (loop))))))
 
   (def (parse-receive stx clauses)
