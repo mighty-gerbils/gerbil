@@ -12,6 +12,7 @@ package: std/actor
         :std/sugar
         :std/net/address
         :std/misc/uuid
+        :std/misc/completion
         :std/actor/message
         :std/actor/xdr)
 (export
@@ -166,14 +167,10 @@ package: std/actor
    (!!stream-pipe (lambda () stream-start))))
 
 (def (!!stream-pipe start)
-  (def (stream-start outp)
+  (def (stream-start compl outp)
     (let/cc break
-      (let (k (try
-               (start)
-               (catch (e)
-                 (write e outp)
-                 (close-port outp)
-                 (break))))
+      (let (k (with-completion-error compl (start)))
+        (completion-post! compl (void))
         (stream-handler k outp))))
 
   (def (stream-handler k outp)
@@ -198,11 +195,13 @@ package: std/actor
           ((!close _)
            (lp #t)))))
 
-  (let* (((values inp outp)
+  (let* ((compl (make-completion))
+         ((values inp outp)
           (open-vector-pipe [permanent-close: #t direction: 'input]
                             [permanent-close: #t direction: 'output]))
-         (handler (spawn/name 'stream-pipe stream-start outp))
+         (handler (spawn/name 'stream-pipe stream-start compl outp))
          (close (lambda () (!!close handler (void)))))
+    (completion-wait! compl)
     (make-will inp (lambda (_) (close)))
     (values inp close)))
 
