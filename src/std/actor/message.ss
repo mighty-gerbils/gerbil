@@ -15,6 +15,7 @@ package: std/actor
   -> send send-message send-message/timeout
   << <-
   @message @value @source @dest @options
+  @@message @@value @@source @@dest @@options
   !)
 
 (defstruct (actor-error <error>) ()
