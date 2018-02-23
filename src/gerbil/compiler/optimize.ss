@@ -867,9 +867,9 @@ namespace: gxc
 
 (def (basic-expression-type-make-struct-type stx args)
   (ast-case args (%#quote %#ref)
-    (((%#quote type-id) (%#quote #f) (%#quote fields) name (%#quote plist) (%#quote ctor))
+    (((%#quote type-id) (%#quote #f) (%#quote fields) name (%#quote plist) (%#quote ctor) . _)
      (make-!struct-type (stx-e #'type-id) #f (stx-e #'fields) 0 (stx-e #'ctor) (stx-e #'plist)))
-    (((%#quote type-id) (%#ref super) (%#quote fields) name (%#quote plist) (%#quote ctor))
+    (((%#quote type-id) (%#ref super) (%#quote fields) name (%#quote plist) (%#quote ctor) . _)
      (let* ((super-t (and (stx-e #'super) (identifier-symbol #'super)))
             (super-type (and super-t (optimizer-resolve-type super-t))))
        (when (and super-type (not (!struct-type? super-type)))
