@@ -146,6 +146,22 @@
 (define (make-type-descriptor type-id type-name type-super
                               rtd-mixin rtd-fields rtd-plist
                               rtd-ctor rtd-slots rtd-methods)
+
+  (define (put-props! ht key)
+    (define (put-plist! ht key plist)
+      (cond
+       ((assgetq key plist)
+        => (lambda (lst)
+             (for-each (lambda (id) (hash-put! ht id #t)) lst)))))
+
+    (define (put-e plist)
+      (put-plist! ht key plist))
+
+    (put-e rtd-plist)
+    (when rtd-mixin
+      (for-each (lambda (klass) (put-e (type-descriptor-plist klass)))
+                rtd-mixin)))
+
   (let* ((transparent? (assgetq transparent: rtd-plist))
          (field-names
           (cond
@@ -166,28 +182,35 @@
             field-names))
          (printable
           (if transparent?
-            #f ; they are all printable
+            #f                          ; all printable
             (let ((ht (make-hash-table-eq)))
-              (define (put-printable! plist)
-                (cond
-                 ((assgetq print: plist)
-                  => (lambda (lst)
-                       (for-each (lambda (id) (hash-put! ht id #t)) lst)))))
-              (put-printable! rtd-plist)
-              (when rtd-mixin
-                (for-each (lambda (klass) (put-printable! (type-descriptor-plist klass)))
-                          rtd-mixin))
+              (put-props! ht print:)
+              ht)))
+         (equality
+          (if transparent?
+            #f                          ; all equality comparable
+            (let ((ht (make-hash-table-eq)))
+              (put-props! ht equal:)
               ht)))
          (field-info
           (let recur ((rest canonical-fields))
             (core-match rest
               ((id . rest)
-               (cons* id (if (or transparent? (hash-get printable id)) 0 1) #f
-                      (recur rest)))
-              (else '())))))
+               (let ((flags
+                      (if transparent? 0
+                          (fxior (if (hash-get printable id) 0 1)
+                                 (if (hash-get equality id)  0 4)))))
+                 (cons* id flags #f (recur rest))))
+              (else '()))))
+         (opaque?
+          (if (or transparent? (assq equal: rtd-plist))
+            (if type-super
+              (fx= (fxand (##type-flags type-super) 1) 1)
+              #f)
+            #t)))
     (##structure ##type-type
                  type-id type-name
-                 (+ 24 (if transparent? 0 1))
+                 (+ 24 (if opaque? 1 0))
                  type-super
                  (list->vector field-info)
                  rtd-mixin rtd-fields rtd-plist rtd-ctor
