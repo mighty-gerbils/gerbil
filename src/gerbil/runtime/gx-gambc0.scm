@@ -154,12 +154,13 @@
         => (lambda (lst)
              (for-each (lambda (id) (hash-put! ht id #t)) lst)))))
 
-    (define (put-e plist)
-      (put-plist! ht key plist))
-
-    (put-e rtd-plist)
+    (put-plist! ht key rtd-plist)
     (when rtd-mixin
-      (for-each (lambda (klass) (put-e (type-descriptor-plist klass)))
+      (for-each (lambda (klass)
+                  (let ((plist (type-descriptor-plist klass)))
+                    (if (assgetq transparent: plist)
+                      (put-plist! ht slots: plist)
+                      (put-plist! ht key plist))))
                 rtd-mixin)))
 
   (let* ((transparent? (assgetq transparent: rtd-plist))
