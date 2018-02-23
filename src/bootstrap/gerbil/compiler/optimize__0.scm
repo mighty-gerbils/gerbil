@@ -10,7 +10,8 @@
      '2
      'optimizer-info
      '()
-     ':init!))
+     ':init!
+     '(type ssxi)))
   (define gxc#optimizer-info? (make-struct-predicate gxc#optimizer-info::t))
   (define gxc#make-optimizer-info
     (lambda _$args23600_
@@ -274,7 +275,8 @@
         (if (##structure-ref _ctx23372_ '1 gx#expander-context::t '#f)
             (with-exception-catcher _catch-e23374_ _import-e23375_)
             '#f))))
-  (define gxc#!type::t (make-struct-type 'gxc#!type::t '#f '1 '!type '() '#f))
+  (define gxc#!type::t
+    (make-struct-type 'gxc#!type::t '#f '1 '!type '() '#f '(id)))
   (define gxc#!type? (make-struct-predicate gxc#!type::t))
   (define gxc#make-!type
     (lambda _$args23369_
@@ -282,7 +284,7 @@
   (define gxc#!type-id (make-struct-field-accessor gxc#!type::t '0))
   (define gxc#!type-id-set! (make-struct-field-mutator gxc#!type::t '0))
   (define gxc#!alias::t
-    (make-struct-type 'gxc#!alias::t gxc#!type::t '0 '!alias '() '#f))
+    (make-struct-type 'gxc#!alias::t gxc#!type::t '0 '!alias '() '#f '()))
   (define gxc#!alias? (make-struct-predicate gxc#!alias::t))
   (define gxc#make-!alias
     (lambda _$args23366_
@@ -294,7 +296,8 @@
      '6
      '!struct-type
      '()
-     ':init!))
+     ':init!
+     '(super fields xfields ctor plist methods)))
   (define gxc#!struct-type? (make-struct-predicate gxc#!struct-type::t))
   (define gxc#make-!struct-type
     (lambda _$args23363_
@@ -324,7 +327,14 @@
   (define gxc#!struct-type-methods-set!
     (make-struct-field-mutator gxc#!struct-type::t '5))
   (define gxc#!procedure::t
-    (make-struct-type 'gxc#!procedure::t gxc#!type::t '0 '!procedure '() '#f))
+    (make-struct-type
+     'gxc#!procedure::t
+     gxc#!type::t
+     '0
+     '!procedure
+     '()
+     '#f
+     '()))
   (define gxc#!procedure? (make-struct-predicate gxc#!procedure::t))
   (define gxc#make-!procedure
     (lambda _$args23360_
@@ -336,7 +346,8 @@
      '0
      '!struct-pred
      '()
-     '#f))
+     '#f
+     '()))
   (define gxc#!struct-pred? (make-struct-predicate gxc#!struct-pred::t))
   (define gxc#make-!struct-pred
     (lambda _$args23357_
@@ -348,7 +359,8 @@
      '0
      '!struct-cons
      '()
-     '#f))
+     '#f
+     '()))
   (define gxc#!struct-cons? (make-struct-predicate gxc#!struct-cons::t))
   (define gxc#make-!struct-cons
     (lambda _$args23354_
@@ -360,7 +372,8 @@
      '2
      '!struct-getf
      '()
-     '#f))
+     '#f
+     '(off unchecked?)))
   (define gxc#!struct-getf? (make-struct-predicate gxc#!struct-getf::t))
   (define gxc#make-!struct-getf
     (lambda _$args23351_
@@ -380,7 +393,8 @@
      '2
      '!struct-setf
      '()
-     '#f))
+     '#f
+     '(off unchecked?)))
   (define gxc#!struct-setf? (make-struct-predicate gxc#!struct-setf::t))
   (define gxc#make-!struct-setf
     (lambda _$args23348_
@@ -400,7 +414,8 @@
      '4
      '!lambda
      '()
-     ':init!))
+     ':init!
+     '(arity dispatch inline inline-typedecl)))
   (define gxc#!lambda? (make-struct-predicate gxc#!lambda::t))
   (define gxc#make-!lambda
     (lambda _$args23345_
@@ -424,7 +439,8 @@
      '1
      '!case-lambda
      '()
-     '#f))
+     '#f
+     '(clauses)))
   (define gxc#!case-lambda? (make-struct-predicate gxc#!case-lambda::t))
   (define gxc#make-!case-lambda
     (lambda _$args23342_
@@ -5995,93 +6011,96 @@
                                             (_tl1635916501_
                                              (##cdr _e1635716496_)))
                                         (if (gx#stx-null? _tl1635916501_)
-                                            (if (gx#stx-null? _tl1635316485_)
-                                                ((lambda (_L16504_
-                                                          _L16505_
-                                                          _L16506_
-                                                          _L16507_
-                                                          _L16508_
-                                                          _L16509_)
-                                                   (let* ((_super-t16555_
-                                                           (if (gx#stx-e
-                                                                _L16508_)
-                                                               (gxc#generate-runtime-binding-id
-                                                                _L16508_)
-                                                               '#f))
-                                                          (_super-type16557_
-                                                           (if _super-t16555_
-                                                               (gxc#optimizer-resolve-type
-                                                                _super-t16555_)
-                                                               '#f)))
-                                                     (begin
-                                                       (if (if _super-type16557_
-                                                               (not (##structure-instance-of?
+                                            ((lambda (_L16504_
+                                                      _L16505_
+                                                      _L16506_
+                                                      _L16507_
+                                                      _L16508_
+                                                      _L16509_)
+                                               (let* ((_super-t16555_
+                                                       (if (gx#stx-e _L16508_)
+                                                           (gxc#generate-runtime-binding-id
+                                                            _L16508_)
+                                                           '#f))
+                                                      (_super-type16557_
+                                                       (if _super-t16555_
+                                                           (gxc#optimizer-resolve-type
+                                                            _super-t16555_)
+                                                           '#f)))
+                                                 (begin
+                                                   (if (if _super-type16557_
+                                                           (not (##structure-instance-of?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             _super-type16557_
-                             'gxc#!struct-type::t))
-                       '#f)
-                   (gxc#raise-compile-error
-                    '"Illegal struct-type construction; invalid super type"
-                    _stx16246_
-                    _L16508_)
-                   '#!void)
-               (let ((_fields16573_ (gx#stx-e _L16507_))
-                     (_xfields16574_
-                      (if _super-type16557_
-                          (let ((_super-fields1655916562_
-                                 (##structure-ref
-                                  _super-type16557_
-                                  '3
-                                  gxc#!struct-type::t
-                                  '#f))
-                                (_super-xfields1656016564_
-                                 (##structure-ref
-                                  _super-type16557_
-                                  '4
-                                  gxc#!struct-type::t
-                                  '#f)))
-                            (if _super-fields1655916562_
-                                (if _super-xfields1656016564_
-                                    (let ((_super-fields16567_
-                                           _super-fields1655916562_)
-                                          (_super-xfields16568_
-                                           _super-xfields1656016564_))
-                                      (fx+ _super-fields16567_
-                                           _super-xfields16568_))
-                                    '#f)
-                                '#f))
-                          '#f))
-                     (_plist16575_ (gx#stx-e _L16505_))
-                     (_ctor16576_
-                      (let ((_$e16570_ (gx#stx-e _L16504_)))
-                        (if _$e16570_
-                            (values _$e16570_)
-                            (if _super-type16557_
-                                (##structure-ref
-                                 _super-type16557_
-                                 '5
-                                 gxc#!struct-type::t
-                                 '#f)
-                                (if _super-t16555_ '#!void '#f))))))
-                 (let ((__obj23617 (make-object gxc#!struct-type::t '7)))
-                   (begin
-                     (gxc#!struct-type:::init!
-                      __obj23617
-                      (gx#stx-e _L16509_)
-                      _super-t16555_
-                      _fields16573_
-                      _xfields16574_
-                      _ctor16576_
-                      _plist16575_)
-                     __obj23617))))))
+                         _super-type16557_
+                         'gxc#!struct-type::t))
+                   '#f)
+               (gxc#raise-compile-error
+                '"Illegal struct-type construction; invalid super type"
+                _stx16246_
+                _L16508_)
+               '#!void)
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                 _hd1635816499_
-                                                 _hd1634916475_
-                                                 _hd1634016451_
-                                                 _hd1633716443_
-                                                 _hd1632816419_
-                                                 _hd1631916395_)
-                                                (_g1625016371_ _g1625216374_))
+                                                   (let ((_fields16573_
+                                                          (gx#stx-e _L16507_))
+                                                         (_xfields16574_
+                                                          (if _super-type16557_
+                                                              (let ((_super-fields1655916562_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                             (##structure-ref
+                              _super-type16557_
+                              '3
+                              gxc#!struct-type::t
+                              '#f))
+                            (_super-xfields1656016564_
+                             (##structure-ref
+                              _super-type16557_
+                              '4
+                              gxc#!struct-type::t
+                              '#f)))
+                        (if _super-fields1655916562_
+                            (if _super-xfields1656016564_
+                                (let ((_super-fields16567_
+                                       _super-fields1655916562_)
+                                      (_super-xfields16568_
+                                       _super-xfields1656016564_))
+                                  (fx+ _super-fields16567_
+                                       _super-xfields16568_))
+                                '#f)
+                            '#f))
+                      '#f))
+                 (_plist16575_ (gx#stx-e _L16505_))
+                 (_ctor16576_
+                  (let ((_$e16570_ (gx#stx-e _L16504_)))
+                    (if _$e16570_
+                        (values _$e16570_)
+                        (if _super-type16557_
+                            (##structure-ref
+                             _super-type16557_
+                             '5
+                             gxc#!struct-type::t
+                             '#f)
+                            (if _super-t16555_ '#!void '#f))))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                     (let ((__obj23617
+                                                            (make-object
+                                                             gxc#!struct-type::t
+                                                             '7)))
+                                                       (begin
+                                                         (gxc#!struct-type:::init!
+                                                          __obj23617
+                                                          (gx#stx-e _L16509_)
+                                                          _super-t16555_
+                                                          _fields16573_
+                                                          _xfields16574_
+                                                          _ctor16576_
+                                                          _plist16575_)
+                                                         __obj23617))))))
+                                             _hd1635816499_
+                                             _hd1634916475_
+                                             _hd1634016451_
+                                             _hd1633716443_
+                                             _hd1632816419_
+                                             _hd1631916395_)
                                             (_g1625016371_ _g1625216374_))))
                                     (_g1625016371_ _g1625216374_))
                                 (_g1625016371_ _g1625216374_))
@@ -6247,32 +6266,31 @@
                                                      (##cdr _e1630316703_)))
                                                 (if (gx#stx-null?
                                                      _tl1630516708_)
-                                                    (if (gx#stx-null?
-                                                         _tl1629916692_)
-                                                        ((lambda (_L16711_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _L16712_
-                          _L16713_
-                          _L16714_
-                          _L16715_)
-                   (let ((__obj23618 (make-object gxc#!struct-type::t '7)))
-                     (begin
-                       (gxc#!struct-type:::init!
-                        __obj23618
-                        (gx#stx-e _L16715_)
-                        '#f
-                        (gx#stx-e _L16714_)
-                        '0
-                        (gx#stx-e _L16711_)
-                        (gx#stx-e _L16712_))
-                       __obj23618)))
-                 _hd1630416706_
-                 _hd1629516682_
-                 _hd1628616658_
-                 _hd1628316650_
-                 _hd1626516602_)
-                (_g1624916578_ _g1625216581_))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                    ((lambda (_L16711_
+                                                              _L16712_
+                                                              _L16713_
+                                                              _L16714_
+                                                              _L16715_)
+                                                       (let ((__obj23618
+                                                              (make-object
+                                                               gxc#!struct-type::t
+                                                               '7)))
+                                                         (begin
+                                                           (gxc#!struct-type:::init!
+                                                            __obj23618
+                                                            (gx#stx-e _L16715_)
+                                                            '#f
+                                                            (gx#stx-e _L16714_)
+                                                            '0
+                                                            (gx#stx-e _L16711_)
+                                                            (gx#stx-e
+                                                             _L16712_))
+                                                           __obj23618)))
+                                                     _hd1630416706_
+                                                     _hd1629516682_
+                                                     _hd1628616658_
+                                                     _hd1628316650_
+                                                     _hd1626516602_)
                                                     (_g1624916578_
                                                      _g1625216581_))))
                                             (_g1624916578_ _g1625216581_))

@@ -7,7 +7,8 @@
      '4
      'module-import
      '((final: . #t))
-     '#f))
+     '#f
+     '(source name phi weak?)))
   (define gx#module-import? (make-struct-predicate gx#module-import::t))
   (define gx#make-module-import
     (lambda _$args14204_
@@ -35,7 +36,8 @@
      '5
      'module-export
      '((final: . #t))
-     '#f))
+     '#f
+     '(context key phi name weak?)))
   (define gx#module-export? (make-struct-predicate gx#module-export::t))
   (define gx#make-module-export
     (lambda _$args14201_
@@ -67,7 +69,8 @@
      '3
      'import-set
      '((final: . #t))
-     '#f))
+     '#f
+     '(source phi imports)))
   (define gx#import-set? (make-struct-predicate gx#import-set::t))
   (define gx#make-import-set
     (lambda _$args14198_
@@ -90,7 +93,8 @@
      '3
      'export-set
      '((final: . #t))
-     '#f))
+     '#f
+     '(source phi exports)))
   (define gx#export-set? (make-struct-predicate gx#export-set::t))
   (define gx#make-export-set
     (lambda _$args14195_

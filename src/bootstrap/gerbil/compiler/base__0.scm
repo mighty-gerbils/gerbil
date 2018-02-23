@@ -14,7 +14,14 @@
   (define gxc#current-compile-static (make-parameter '#f))
   (define gxc#current-compile-timestamp (make-parameter '#f))
   (define gxc#symbol-table::t
-    (make-struct-type 'gxc#symbol-table::t '#f '2 'symbol-table '() ':init!))
+    (make-struct-type
+     'gxc#symbol-table::t
+     '#f
+     '2
+     'symbol-table
+     '()
+     ':init!
+     '(gensyms bindings)))
   (define gxc#symbol-table? (make-struct-predicate gxc#symbol-table::t))
   (define gxc#make-symbol-table
     (lambda _$args805_
