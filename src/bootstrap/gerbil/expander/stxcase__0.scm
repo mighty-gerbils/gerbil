@@ -7,7 +7,8 @@
      '2
      'syntax-pattern
      '()
-     '#f))
+     '#f
+     '(id depth)))
   (define gx#syntax-pattern? (make-struct-predicate gx#syntax-pattern::t))
   (define gx#make-syntax-pattern
     (lambda _$args17917_

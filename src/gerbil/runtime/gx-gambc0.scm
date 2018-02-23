@@ -150,14 +150,40 @@
          (field-names
           (cond
            ((assq fields: rtd-plist) => cdr)
-           ((assq  slots: rtd-plist) => cdr)
-           (else
-            (make-list rtd-fields ':))))
+           (else '())))
+         (field-names
+          (cond
+           ((assq slots: rtd-plist)
+            => (lambda (slots)
+                 (append field-names (cdr slots))))
+           (else field-names)))
+         (_
+          (unless (fx= rtd-fields (length field-names))
+            (error "Bad field descriptor; length mismatch" type-id rtd-fields field-names)))
+         (canonical-fields
+          (if type-super
+            (list-tail field-names (type-descriptor-fields type-super))
+            field-names))
+         (printable
+          (if transparent?
+            #f ; they are all printable
+            (let ((ht (make-hash-table-eq)))
+              (define (put-printable! plist)
+                (cond
+                 ((assgetq print: plist)
+                  => (lambda (lst)
+                       (for-each (lambda (id) (hash-put! ht id #t)) lst)))))
+              (put-printable! rtd-plist)
+              (when rtd-mixin
+                (for-each (lambda (klass) (put-printable! (type-descriptor-plist klass)))
+                          rtd-mixin))
+              ht)))
          (field-info
-          (let recur ((rest field-names))
+          (let recur ((rest canonical-fields))
             (core-match rest
               ((id . rest)
-               (cons* id (if transparent? 0 1) #f (recur rest)))
+               (cons* id (if (or transparent? (hash-get printable id)) 0 1) #f
+                      (recur rest)))
               (else '())))))
     (##structure ##type-type
                  type-id type-name
@@ -188,7 +214,7 @@
 (define (type-descriptor-methods-set! klass ht)
   (##vector-set! klass 11 ht))
 
-(define (make-struct-type id super fields name plist ctor)
+(define (make-struct-type id super fields name plist ctor #!optional (field-names #f))
   (when (and super (not (struct-type? super)))
     (error "Illegal super type; not a struct-type" super))
   (when (and super (assgetq final: (type-descriptor-plist super)))
@@ -198,9 +224,22 @@
           (if super (type-descriptor-fields super) 0))
          (std-fields
           (fx+ fields super-fields))
+         (std-field-names
+          (let* ((super-fields
+                  (if super
+                    (assgetq fields: (type-descriptor-plist super))
+                    '()))
+                 (field-names
+                  (or field-names (make-list fields ':))))
+            (append super-fields field-names)))
+         (_
+          (unless (fx= std-fields (length std-field-names))
+            (error "Bad field specification; length mismatch" id std-fields std-field-names)))
+         (std-plist
+          (cons (cons fields: std-field-names) plist))
          (ctor
           (or ctor (and super (type-descriptor-ctor super)))))
-    (make-struct-type-descriptor id name super std-fields plist ctor)))
+    (make-struct-type-descriptor id name super std-fields std-plist ctor)))
 
 (define (make-struct-predicate klass)
   (let ((tid (##type-id klass)))
@@ -357,9 +396,13 @@
          (mixin (if std-super (expand-struct-mixin super) super)))
     (let-values (((std-fields std-slots std-slot-list)
                   (make-slots (if std-super (type-descriptor-fields std-super) 0))))
-      (let ((std-mixin  (class-linearize-mixins mixin))
-            (std-plist  (cons (cons slots: std-slot-list) plist))
-            (std-ctor   (or ctor (find-super-ctor super))))
+      (let* ((std-mixin  (class-linearize-mixins mixin))
+             (std-plist  (if std-super
+                           (let ((fields (assgetq fields: (type-descriptor-plist std-super))))
+                             (cons (cons fields: fields) plist))
+                           plist))
+             (std-plist  (cons (cons slots: std-slot-list) std-plist))
+             (std-ctor   (or ctor (find-super-ctor super))))
         (make-class-type-descriptor id name std-super std-mixin std-fields std-plist std-ctor std-slots)))))
 
 (define (class-linearize-mixins klass-lst)

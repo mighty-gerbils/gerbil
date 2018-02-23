@@ -20,7 +20,8 @@
      '2
      'expander-context
      '()
-     ':init!))
+     ':init!
+     '(id table)))
   (define gx#expander-context? (make-struct-predicate gx#expander-context::t))
   (define gx#make-expander-context
     (lambda _$args7414_
@@ -40,7 +41,8 @@
      '0
      'root-context
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#root-context? (make-struct-predicate gx#root-context::t))
   (define gx#make-root-context
     (lambda _$args7411_
@@ -52,7 +54,8 @@
      '3
      'phi-context
      '()
-     '#f))
+     '#f
+     '(super up down)))
   (define gx#phi-context? (make-struct-predicate gx#phi-context::t))
   (define gx#make-phi-context
     (lambda _$args7408_
@@ -75,7 +78,8 @@
      '0
      'top-context
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#top-context? (make-struct-predicate gx#top-context::t))
   (define gx#make-top-context
     (lambda _$args7405_
@@ -87,7 +91,8 @@
      '6
      'module-context
      '()
-     '#f))
+     '#f
+     '(ns path import export e code)))
   (define gx#module-context? (make-struct-predicate gx#module-context::t))
   (define gx#make-module-context
     (lambda _$args7402_
@@ -123,7 +128,8 @@
      '3
      'prelude-context
      '()
-     '#f))
+     '#f
+     '(path import e)))
   (define gx#prelude-context? (make-struct-predicate gx#prelude-context::t))
   (define gx#make-prelude-context
     (lambda _$args7399_
@@ -147,7 +153,8 @@
      '0
      'local-context
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#local-context? (make-struct-predicate gx#local-context::t))
   (define gx#make-local-context
     (lambda _$args7396_
@@ -214,7 +221,7 @@
                     _g7420_))))))))
   (bind-method! gx#local-context::t ':init! gx#local-context:::init! '#f)
   (define gx#binding::t
-    (make-struct-type 'gx#binding::t '#f '3 'binding '() '#f))
+    (make-struct-type 'gx#binding::t '#f '3 'binding '() '#f '(id key phi)))
   (define gx#binding? (make-struct-predicate gx#binding::t))
   (define gx#make-binding
     (lambda _$args7118_
@@ -232,7 +239,8 @@
      '0
      'runtime-binding
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#runtime-binding? (make-struct-predicate gx#runtime-binding::t))
   (define gx#make-runtime-binding
     (lambda _$args7115_
@@ -244,7 +252,8 @@
      '0
      'local-binding
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#local-binding? (make-struct-predicate gx#local-binding::t))
   (define gx#make-local-binding
     (lambda _$args7112_
@@ -256,7 +265,8 @@
      '0
      'top-binding
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#top-binding? (make-struct-predicate gx#top-binding::t))
   (define gx#make-top-binding
     (lambda _$args7109_
@@ -268,7 +278,8 @@
      '1
      'module-binding
      '()
-     '#f))
+     '#f
+     '(context)))
   (define gx#module-binding? (make-struct-predicate gx#module-binding::t))
   (define gx#make-module-binding
     (lambda _$args7106_
@@ -284,7 +295,8 @@
      '0
      'extern-binding
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#extern-binding? (make-struct-predicate gx#extern-binding::t))
   (define gx#make-extern-binding
     (lambda _$args7103_
@@ -296,7 +308,8 @@
      '1
      'syntax-binding
      '((final: . #t))
-     '#f))
+     '#f
+     '(e)))
   (define gx#syntax-binding? (make-struct-predicate gx#syntax-binding::t))
   (define gx#make-syntax-binding
     (lambda _$args7100_
@@ -312,7 +325,8 @@
      '3
      'import-binding
      '((final: . #t))
-     '#f))
+     '#f
+     '(e context weak?)))
   (define gx#import-binding? (make-struct-predicate gx#import-binding::t))
   (define gx#make-import-binding
     (lambda _$args7097_
@@ -336,7 +350,8 @@
      '1
      'alias-binding
      '((final: . #t))
-     '#f))
+     '#f
+     '(e)))
   (define gx#alias-binding? (make-struct-predicate gx#alias-binding::t))
   (define gx#make-alias-binding
     (lambda _$args7094_
@@ -346,7 +361,7 @@
   (define gx#alias-binding-e-set!
     (make-struct-field-mutator gx#alias-binding::t '0))
   (define gx#expander::t
-    (make-struct-type 'gx#expander::t '#f '1 'expander '() '#f))
+    (make-struct-type 'gx#expander::t '#f '1 'expander '() '#f '(e)))
   (define gx#expander? (make-struct-predicate gx#expander::t))
   (define gx#make-expander
     (lambda _$args7091_
@@ -360,7 +375,8 @@
      '2
      'core-expander
      '()
-     '#f))
+     '#f
+     '(id compile-top)))
   (define gx#core-expander? (make-struct-predicate gx#core-expander::t))
   (define gx#make-core-expander
     (lambda _$args7088_
@@ -380,7 +396,8 @@
      '0
      'expression-form
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#expression-form? (make-struct-predicate gx#expression-form::t))
   (define gx#make-expression-form
     (lambda _$args7085_
@@ -392,7 +409,8 @@
      '0
      'special-form
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#special-form? (make-struct-predicate gx#special-form::t))
   (define gx#make-special-form
     (lambda _$args7082_
@@ -404,7 +422,8 @@
      '0
      'definition-form
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#definition-form? (make-struct-predicate gx#definition-form::t))
   (define gx#make-definition-form
     (lambda _$args7079_
@@ -416,7 +435,8 @@
      '0
      'top-special-form
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#top-special-form? (make-struct-predicate gx#top-special-form::t))
   (define gx#make-top-special-form
     (lambda _$args7076_
@@ -428,7 +448,8 @@
      '0
      'module-special-form
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#module-special-form?
     (make-struct-predicate gx#module-special-form::t))
   (define gx#make-module-special-form
@@ -441,7 +462,8 @@
      '0
      'feature-expander
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#feature-expander? (make-struct-predicate gx#feature-expander::t))
   (define gx#make-feature-expander
     (lambda _$args7070_
@@ -453,7 +475,8 @@
      '0
      'private-feature-expander
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#private-feature-expander?
     (make-struct-predicate gx#private-feature-expander::t))
   (define gx#make-private-feature-expander
@@ -466,7 +489,8 @@
      '0
      'reserved-expander
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#reserved-expander?
     (make-struct-predicate gx#reserved-expander::t))
   (define gx#make-reserved-expander
@@ -479,7 +503,8 @@
      '0
      'macro-expander
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#macro-expander? (make-struct-predicate gx#macro-expander::t))
   (define gx#make-macro-expander
     (lambda _$args7061_
@@ -491,7 +516,8 @@
      '0
      'rename-macro-expander
      '()
-     '#f))
+     '#f
+     '()))
   (define gx#rename-macro-expander?
     (make-struct-predicate gx#rename-macro-expander::t))
   (define gx#make-rename-macro-expander
@@ -504,7 +530,8 @@
      '2
      'user-expander
      '()
-     '#f))
+     '#f
+     '(context phi)))
   (define gx#user-expander? (make-struct-predicate gx#user-expander::t))
   (define gx#make-user-expander
     (lambda _$args7055_
@@ -518,7 +545,14 @@
   (define gx#user-expander-phi-set!
     (make-struct-field-mutator gx#user-expander::t '1))
   (define gx#expander-mark::t
-    (make-struct-type 'gx#expander-mark::t '#f '4 'expander-mark '() '#f))
+    (make-struct-type
+     'gx#expander-mark::t
+     '#f
+     '4
+     'expander-mark
+     '()
+     '#f
+     '(subst context phi trace)))
   (define gx#expander-mark? (make-struct-predicate gx#expander-mark::t))
   (define gx#make-expander-mark
     (lambda _$args7052_
@@ -540,7 +574,14 @@
   (define gx#expander-mark-trace-set!
     (make-struct-field-mutator gx#expander-mark::t '3))
   (define gx#syntax-error::t
-    (make-struct-type 'gx#syntax-error::t error::t '3 'syntax-error '() '#f))
+    (make-struct-type
+     'gx#syntax-error::t
+     error::t
+     '3
+     'syntax-error
+     '()
+     '#f
+     '(context marks phi)))
   (define gx#syntax-error? (make-struct-predicate gx#syntax-error::t))
   (define gx#make-syntax-error
     (lambda _$args7049_

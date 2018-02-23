@@ -6707,7 +6707,14 @@
          _stx4103_)
         '#!void)))
   (define gxc#meta-state::t
-    (make-struct-type 'gxc#meta-state::t '#f '4 'meta-state '() ':init!))
+    (make-struct-type
+     'gxc#meta-state::t
+     '#f
+     '4
+     'meta-state
+     '()
+     ':init!
+     '(src n open blocks)))
   (define gxc#meta-state? (make-struct-predicate gxc#meta-state::t))
   (define gxc#make-meta-state
     (lambda _$args4100_
@@ -6748,7 +6755,8 @@
      '4
      'meta-state-block
      '()
-     '#f))
+     '#f
+     '(ctx phi n code)))
   (define gxc#meta-state-block?
     (make-struct-predicate gxc#meta-state-block::t))
   (define gxc#make-meta-state-block

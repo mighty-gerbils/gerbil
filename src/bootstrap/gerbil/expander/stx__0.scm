@@ -7,7 +7,8 @@
      '1
      'syntax
      '((final: . #t))
-     '#f))
+     '#f
+     '(marks)))
   (define gx#identifier-wrap? (make-struct-predicate gx#identifier-wrap::t))
   (define gx#make-identifier-wrap
     (lambda _$args4450_
@@ -23,7 +24,8 @@
      '1
      'syntax
      '((final: . #t))
-     '#f))
+     '#f
+     '(mark)))
   (define gx#syntax-wrap? (make-struct-predicate gx#syntax-wrap::t))
   (define gx#make-syntax-wrap
     (lambda _$args4447_
@@ -39,7 +41,8 @@
      '2
      'syntax
      '((final: . #t))
-     '#f))
+     '#f
+     '(context marks)))
   (define gx#syntax-quote? (make-struct-predicate gx#syntax-quote::t))
   (define gx#make-syntax-quote
     (lambda _$args4444_
