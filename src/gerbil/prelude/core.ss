@@ -1487,9 +1487,10 @@ package: gerbil
                                   plist))
                                (plist
                                 (cond
-                                 ((stx-getq print: body)
+                                 ((stx-e (stx-getq print: body))
                                   => (lambda (print)
-                                       (cons [print: . print] plist)))
+                                       (let (print (if (eq? print #t) els print))
+                                         (cons [print: . print] plist))))
                                  (else plist))))
                           plist))
                        ((values type-plist)
