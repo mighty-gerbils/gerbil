@@ -1419,7 +1419,7 @@ package: gerbil
       (def (typedef-body? stx)
         (def (body-opt? key)
           (memq (stx-e key)
-                '(id: name: constructor: transparent: final: plist: unchecked: print:)))
+                '(id: name: constructor: transparent: final: plist: unchecked: print: equal:)))
         (stx-plist? stx body-opt?))
 
       (def (generate-typedef stx id super-ref els body struct?)
@@ -1491,6 +1491,13 @@ package: gerbil
                                   => (lambda (print)
                                        (let (print (if (eq? print #t) els print))
                                          (cons [print: . print] plist))))
+                                 (else plist)))
+                               (plist
+                                (cond
+                                 ((stx-e (stx-getq equal: body))
+                                  => (lambda (equal)
+                                       (let (equal (if (eq? equal #t) els equal))
+                                         (cons [equal: . equal] plist))))
                                  (else plist))))
                           plist))
                        ((values type-plist)
