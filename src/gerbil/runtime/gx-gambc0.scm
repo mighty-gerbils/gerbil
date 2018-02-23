@@ -160,11 +160,30 @@
          (_
           (unless (fx= rtd-fields (length field-names))
             (error "Bad field descriptor; length mismatch" type-id rtd-fields field-names)))
+         (printable
+          (if transparent?
+            #f ; they are all printable
+            (let ((ht (make-hash-table-eq)))
+              (define (put-printable! plist)
+                (cond
+                 ((assgetq print: plist)
+                  => (lambda (lst)
+                       (for-each (lambda (id) (hash-put! ht id #t)) lst)))))
+              (put-printable! rtd-plist)
+              (if rtd-mixin
+                (for-each (lambda (klass) (put-printable! (type-descriptor-plist klass)))
+                          rtd-mixin)
+                (let lp ((next type-super))
+                  (when next
+                    (put-printable! (type-descriptor-plist next))
+                    (lp (##type-super next)))))
+              ht)))
          (field-info
           (let recur ((rest field-names))
             (core-match rest
               ((id . rest)
-               (cons* id (if transparent? 0 1) #f (recur rest)))
+               (cons* id (if (or transparent? (hash-get printable id)) 0 1) #f
+                      (recur rest)))
               (else '())))))
     (##structure ##type-type
                  type-id type-name
