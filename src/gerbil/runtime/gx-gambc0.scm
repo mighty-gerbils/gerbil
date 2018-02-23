@@ -160,6 +160,10 @@
          (_
           (unless (fx= rtd-fields (length field-names))
             (error "Bad field descriptor; length mismatch" type-id rtd-fields field-names)))
+         (canonical-fields
+          (if type-super
+            (list-tail field-names (type-descriptor-fields type-super))
+            field-names))
          (printable
           (if transparent?
             #f ; they are all printable
@@ -170,16 +174,12 @@
                   => (lambda (lst)
                        (for-each (lambda (id) (hash-put! ht id #t)) lst)))))
               (put-printable! rtd-plist)
-              (if rtd-mixin
+              (when rtd-mixin
                 (for-each (lambda (klass) (put-printable! (type-descriptor-plist klass)))
-                          rtd-mixin)
-                (let lp ((next type-super))
-                  (when next
-                    (put-printable! (type-descriptor-plist next))
-                    (lp (##type-super next)))))
+                          rtd-mixin))
               ht)))
          (field-info
-          (let recur ((rest field-names))
+          (let recur ((rest canonical-fields))
             (core-match rest
               ((id . rest)
                (cons* id (if (or transparent? (hash-get printable id)) 0 1) #f
