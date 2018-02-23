@@ -1152,7 +1152,14 @@ package: gerbil
         (def (slotify field off)
           (syntax-case field ()
             ((getf setf)
+             [off #'getf #'setf])
+            ((field getf setf)
              [off #'getf #'setf])))
+
+        (def (field-id field)
+          (syntax-case field ()
+            ((getf setf) ':)
+            ((field getf setf) #'field)))
 
         (def (struct-opt? key)
           (memq (stx-e key) '(fields: id: name: plist: constructor: unchecked:)))
@@ -1210,10 +1217,13 @@ package: gerbil
                            (stx-getq constructor: #'rest))
                           (type-rtd
                            (if struct?
-                             (with-syntax ((fields (stx-length els)))
+                             (with-syntax ((fields (stx-length els))
+                                           ((field-id ...)
+                                            (stx-map field-id els)))
                                #'(make-struct-type 'type-id
                                    super fields
-                                   'type-name type-plist 'type-ctor))
+                                   'type-name type-plist 'type-ctor
+                                   '(field-id ...)))
                              (with-syntax (((super ...)
                                             #'super)
                                            ((slot ...)
@@ -1359,24 +1369,24 @@ package: gerbil
       (defstruct-type runtime-rtd-exhibitor::t #f
         #f runtime-type-exhibitor?
         fields:
-        ((runtime-type-id    runtime-type-id-set!)
-         (runtime-type-super runtime-type-super-set!)
-         (runtime-type-name  runtime-type-name-set!)
-         (runtime-type-ctor  runtime-type-ctor-set!)
-         (runtime-type-plist runtime-type-plist-set!))
+        ((id    runtime-type-id    runtime-type-id-set!)
+         (super runtime-type-super runtime-type-super-set!)
+         (name  runtime-type-name  runtime-type-name-set!)
+         (ctor  runtime-type-ctor  runtime-type-ctor-set!)
+         (plist runtime-type-plist runtime-type-plist-set!))
         id:   gerbil.core#runtime-rtd-exhibitor::t)
 
       (defstruct-type runtime-struct-exhibitor::t runtime-rtd-exhibitor::t
         make-runtime-struct-exhibitor runtime-struct-exhibitor?
         fields:
-        ((runtime-struct-fields runtime-struct-fields-set!))
+        ((fields runtime-struct-fields runtime-struct-fields-set!))
         id:   gerbil.core#runtime-struct-exhibitor::t
         name: struct-exhibitor)
 
       (defstruct-type runtime-class-exhibitor::t runtime-rtd-exhibitor::t
         make-runtime-class-exhibitor runtime-class-exhibitor?
         fields:
-        ((runtime-class-slots runtime-class-slots-set!))
+        ((slots runtime-class-slots runtime-class-slots-set!))
         id:   gerbil.core#runtime-class-exhibitor::t
         name: class-exhibitor)
 
@@ -1409,7 +1419,7 @@ package: gerbil
       (def (typedef-body? stx)
         (def (body-opt? key)
           (memq (stx-e key)
-                '(id: name: constructor: transparent: final: plist: unchecked:)))
+                '(id: name: constructor: transparent: final: plist: unchecked: print:)))
         (stx-plist? stx body-opt?))
 
       (def (generate-typedef stx id super-ref els body struct?)
@@ -1451,7 +1461,7 @@ package: gerbil
                        ((values type-attr)
                         (cond
                          ((stx-null? els) [])
-                         (struct?         [fields: #'((getf setf) ...)])
+                         (struct?         [fields: #'((attr getf setf) ...)])
                          (else            [slots:  #'((attr getf setf) ...)])))
                        ((values type-name)
                         [name: (or (stx-getq name: body) id)])
@@ -1464,14 +1474,23 @@ package: gerbil
                               [constructor: e])
                             []))
                        ((values plist)
-                        (let* ((plist (or (stx-getq plist: body)
-                                          []))
-                               (plist (if (stx-e (stx-getq transparent: body))
-                                        (cons [transparent: . #t] plist)
-                                        plist))
-                               (plist (if (stx-e (stx-getq final: body))
-                                        (cons [final: . #t] plist)
-                                        plist)))
+                        (let* ((plist
+                                (or (stx-getq plist: body)
+                                    []))
+                               (plist
+                                (if (stx-e (stx-getq transparent: body))
+                                  (cons [transparent: . #t] plist)
+                                  plist))
+                               (plist
+                                (if (stx-e (stx-getq final: body))
+                                  (cons [final: . #t] plist)
+                                  plist))
+                               (plist
+                                (cond
+                                 ((stx-getq print: body)
+                                  => (lambda (print)
+                                       (cons [print: . print] plist)))
+                                 (else plist))))
                           plist))
                        ((values type-plist)
                         (if (null? plist) plist
