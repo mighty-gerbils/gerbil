@@ -25,6 +25,7 @@
     "stxparam"
     ;; debugging
     (gxc: "debug/heap" "-e" "(include \"~~lib/_gambit#.scm\")")
+    "debug/threads"
     ;; SRFI: This is my grandfather's axe; my father replaced the head
     ;;       and i have replaced the handle.
     "srfi/srfi-support"
