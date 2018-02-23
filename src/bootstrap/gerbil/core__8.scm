@@ -11,10 +11,10 @@
   (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object?|
     (make-class-predicate |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|))
   (define |gerbil/core$<MOP>$<MOP:3>[1]#make-macro-object|
-    (lambda _$args18136_
+    (lambda _$args18139_
       (apply make-class-instance
              |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
-             _$args18136_)))
+             _$args18139_)))
   (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object-macro|
     (make-class-slot-accessor
      |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
@@ -24,10 +24,10 @@
      |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
      'macro))
   (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander|
-    (lambda (_self18132_ _stx18134_)
+    (lambda (_self18135_ _stx18137_)
       (gx#core-apply-expander
-       (|gerbil/core$<MOP>$<MOP:3>[1]#macro-object-macro| _self18132_)
-       _stx18134_)))
+       (|gerbil/core$<MOP>$<MOP:3>[1]#macro-object-macro| _self18135_)
+       _stx18137_)))
   (bind-method!
    |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
    'apply-macro-expander
