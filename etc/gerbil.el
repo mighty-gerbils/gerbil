@@ -413,6 +413,26 @@
   (when window-system
     (gerbil-pretty-lambdas)))
 
+(defun restart-scheme ()
+  (interactive)
+  (let ((process (scheme-get-process)))
+    (when process
+      (ignore-errors
+        (switch-to-buffer "*scheme*")
+        (comint-clear-buffer))
+      (ignore-errors (kill-process process))
+      (sleep-for 1))) ;; <-- poor man's substitute for waitpid(), with a race condition
+  ;; TODO: elisp doesn't have a synchronous waitpid, so instead we should implement an asynchronous one,
+  ;; using callbacks: use (set-process-sentinel PROCESS SENTINEL) to watch for the death of the process;
+  ;; and while we're at it, also set a timer and use kill -9 < https://youtu.be/Fow7iUaKrq4 >
+  ;; if the process failed to die after one second or two.
+  (switch-to-buffer "*scheme*")
+  (run-scheme scheme-program-name)
+  (comint-clear-buffer)
+  (message "Happy Happy Joy Joy")
+  nil)
+
+(global-set-key (kbd "C-x 9") 'restart-scheme)
 
 (defvar gerbil-mode-map
   (let ((map (make-sparse-keymap)))
