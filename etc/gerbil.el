@@ -428,7 +428,7 @@
   ;; if the process failed to die after one second or two.
   (switch-to-buffer "*scheme*")
   (run-scheme scheme-program-name)
-  (comint-clear-buffer)
+  (ignore-errors (comint-clear-buffer))
   (message "Happy Happy Joy Joy")
   nil)
 
@@ -440,8 +440,9 @@
     (define-key map (kbd "C-c C-f") 'gerbil-compile-current-buffer)
     (define-key map (kbd "C-c C-i") 'gerbil-import-current-buffer)
     (define-key map (kbd "C-c C-r") 'gerbil-reload-current-buffer)
-    (define-key map (kbd "C-c C-c") 'scheme-send-definition)
     (define-key map (kbd "C-c C-b") 'gerbil-build)
+    (define-key map (kbd "C-c C-e") 'scheme-send-definition)
+    (define-key map (kbd "C-c C-c") 'scheme-send-region)
     map))
 
 
