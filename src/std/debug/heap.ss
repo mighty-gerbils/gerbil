@@ -61,7 +61,7 @@ package: std/debug
 (def (get-still countf getf)
   ;; TODO SMP: collect on all processors
   (let* ((count (countf))
-         (vec   (make-vector count))
+         (vec   (make-vector (1+ count))) ; + room for the vector itself
          (count (getf vec)))
     (when (fx< count (vector-length vec))
       (vector-shrink! vec count))
