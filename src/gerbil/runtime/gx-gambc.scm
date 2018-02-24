@@ -61,9 +61,13 @@
     (set! ##main-readtable _gx#*readtable*)
     (for-each
       (lambda (port)
-        (when (macro-character-input-port? port)
-          (macro-character-port-input-readtable-set! port _gx#*readtable*)))
-      (list ##stdin-port ##console-port))))
+        (input-port-readtable-set! port _gx#*readtable*))
+      (list ##stdin-port ##console-port))
+    (for-each
+      (lambda (port)
+        (output-port-readtable-set! port
+         (readtable-sharing-allowed?-set (output-port-readtable port) #t)))
+      (list ##stdout-port ##console-port))))
 
 (define (_gx#gxi-init-interactive! cmdline)
   (define (load-init init.ss)
