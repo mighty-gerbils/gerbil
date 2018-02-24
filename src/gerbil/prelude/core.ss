@@ -808,7 +808,7 @@ package: gerbil
                      (pos  (fxmodulo (keyword-hash key) (vector-length pht))))
                 (if (vector-ref pht pos) ; collision?
                   (if (fx< (vector-length pht) 8192)
-                    (rehash (make-vector (fx1+ (* 2 (vector-length pht))) #f))
+                    (rehash (make-vector (quotient (fx* 3 (vector-length pht)) 2) #f))
                     (error "Unresolvable keyword collision" kws))
                   (begin
                     (vector-set! pht pos key)
