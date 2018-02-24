@@ -428,7 +428,7 @@
   ;; if the process failed to die after one second or two.
   (switch-to-buffer "*scheme*")
   (run-scheme scheme-program-name)
-  (comint-clear-buffer)
+  (ignore-errors (comint-clear-buffer))
   (message "Happy Happy Joy Joy")
   nil)
 
