@@ -1688,7 +1688,9 @@
                                   (if (fx< (vector-length _pht5416_) '8192)
                                       (_rehash5413_
                                        (make-vector
-                                        (fx1+ (* '2 (vector-length _pht5416_)))
+                                        (quotient
+                                         (fx* '3 (vector-length _pht5416_))
+                                         '2)
                                         '#f))
                                       (error '"Unresolvable keyword collision"
                                              _kws5410_))
