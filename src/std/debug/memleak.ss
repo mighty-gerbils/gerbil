@@ -61,14 +61,14 @@ package: std/debug
 (def (dump-heap-summary! summary (port (current-error-port)))
   (def (display-pair el)
     (with ([key . val] el)
-      (when (> val 0)
+      (when (not (zero? val))
         (displayln key ": " val))))
 
   (def (cmp-count a b)
     (> (cdr a) (cdr b)))
 
   (def (display-list? lst)
-    (find (lambda (el) (> (cdr el) 0)) lst))
+    (find (lambda (el) (not (zero? (cdr el)))) lst))
 
   (parameterize ((current-output-port port))
     (with (#(mem [live still refcounted] heap frame) summary)
