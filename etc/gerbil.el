@@ -35,6 +35,8 @@
     (comint-send-string (scheme-proc) string)
     (gerbil-message (subseq string 0 (string-match "\n" string)))))
 
+;; -------
+
 ;; fare's erlang style restart
 (defun restart-scheme ()
   (interactive)
@@ -55,7 +57,7 @@
   (message "Happy Happy Joy Joy")
   nil)
 
-;; this is bound to C-x 9 below
+;; this is globally bound to C-x 9 below
 
 ;; -------
 
