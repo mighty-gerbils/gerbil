@@ -13,7 +13,10 @@
   * [std/db/mysql](#stddbmysql)
   * [std/db/postgresql](#stddbpostgresql)
   * [std/db/sqlite](#stddbsqlite)
-- [std/debug/heap](#stddebugheap)
+- [std/debug](#stddebug)
+  * [std/debug/heap](#stddebugheap)
+  * [std/debug/memleak](#stddebugmemleak)
+  * [std/debug/threads](#stddebugthreads)
 - [std/error](#stderror)
 - [std/event](#stdevent)
 - [std/format](#stdformat)
@@ -345,7 +348,11 @@ SQLite dbi driver.
   sqlite-open
 ```
 
-## std/debug/heap
+## std/debug
+
+Debugging utilities
+
+### std/debug/heap
 
 Heap debugging utilities
 
@@ -358,6 +365,40 @@ Heap debugging utilities
   heap-type-stats
   dump-heap-stats!
   walk-heap!
+  count-still
+  still-objects
+  still-objects/refcount
+```
+
+### std/debug/memleak
+
+Memory leak debugging utilities
+
+```
+(import :std/debug/memleak)
+
+;; exports:
+
+  heap-summary heap-summary-delta
+  dump-heap-summary!
+  watch-heap!
+
+```
+
+### std/debug/threads
+
+Thread debugging utilities
+
+```
+(import :std/debug/threads)
+
+;; exports:
+
+  dump-thread-stack-trace!
+  dump-thread!
+  dump-thread-group!
+  dump-thread-group!*
+  dump-all-threads!
 ```
 
 ## std/error

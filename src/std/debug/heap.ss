@@ -6,7 +6,8 @@ package: std/debug
 (import :gerbil/gambit/hvectors
         (only-in :std/generic type-of)
         :std/sort)
-(export memory-usage heap-type-stats dump-heap-stats! walk-heap!)
+(export memory-usage heap-type-stats dump-heap-stats! walk-heap!
+        count-still still-objects still-objects/refcount)
 
 (def (memory-usage)
   (let (stats (##process-statistics))
