@@ -61,7 +61,7 @@ package: std/debug
 (def (dump-heap-summary! summary (port (current-error-port)))
   (def (display-pair el)
     (with ([key . val] el)
-      (when (not (zero? val))
+      (unless (zero? val)
         (displayln key ": " val))))
 
   (def (cmp-count a b)
