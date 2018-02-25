@@ -69,19 +69,17 @@
       (check-equal? (length<n? '(1 2 3) 6.022e23) #t)
       (check-exception (length<n? '(1 2 3) 2+3i) (error-with-message? "not a real number"))
       (check-exception (length<n? '(1 2 3) 'foo) (error-with-message? "not a real number")))
-    (test-case "test call-with-list-builder"
+    (test-case "test with-list-builder"
       (check-equal?
-       (call-with-list-builder
-        (lambda (put! _)
-          (put! 1) (put! 2) (put! 3)))
+       (with-list-builder (put!)
+         (put! 1) (put! 2) (put! 3))
        '(1 2 3))
       (check-equal?
-       (call-with-list-builder
-        (lambda (put! get-list-so-far)
-          (put! 1)
-          (put! 2)
-          (put! (copy-list (get-list-so-far)))
-          (put! 3)))
+       (with-list-builder (put! get-list-so-far)
+         (put! 1)
+         (put! 2)
+         (put! (copy-list (get-list-so-far)))
+         (put! 3))
        '(1 2 (1 2) 3)))
     (test-case "test snoc"
       (check-equal? (snoc 3 []) [3])

@@ -151,8 +151,7 @@ package: std/text
   (accept char-csv-space? port))
 
 (def (accept-spaces port)
-  (call-with-list-builder
-   (lambda (c _) (let loop () (let ((x (accept-space port))) (when x (c x) (loop)))))))
+  (with-list-builder (c) (let loop () (let ((x (accept-space port))) (when x (c x) (loop))))))
 
 (def (accept-quote port)
   (accept (cut eqv? <> (csv-quote)) port))
