@@ -153,6 +153,7 @@
     "misc/rtd"
     "misc/shuffle"
     "misc/uuid"
+    "misc/repr"
     "misc/queue"
     "misc/pqueue"
     "misc/string"
