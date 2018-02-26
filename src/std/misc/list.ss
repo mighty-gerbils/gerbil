@@ -1,6 +1,7 @@
 ;; -*- Gerbil -*-
-package: std/misc
+;;; © fare@tunes.org
 ;;;; List utilities
+package: std/misc
 
 (export
   plist->alist
@@ -8,7 +9,9 @@ package: std/misc
   length<? length<n? length<=? length<=n?
   length>? length>n? length>=? length>=n?
   call-with-list-builder with-list-builder
-  snoc append1)
+  snoc append1
+  for-each!
+  push!)
 
 (import
   <host-runtime>
@@ -121,3 +124,18 @@ package: std/misc
 ;; Append one element at the end of a list
 ;; (List A) <- (List A) A
 (def (append1 l x) (append l [x]))
+
+;; Variant of for-each with arguments reversed, which nest-s nicer.
+;; The name also makes it more obvious that this is used for side-effects.
+;; Unlike for-each, also works on improper lists, ended by non-pairs other than '()
+;; : <- (list X) (<- X)
+(def (for-each! list fun)
+  (match list
+    ([elem . more] (fun elem) (for-each! more fun))
+    (_ (void))))
+
+;; Analog to CL:PUSH, hence the argument order.
+;; TODO: use setq-macro, look at the set! defn in prelude/core.ss
+(defrules push! ()
+  ((_ element list) (set! list (cons element list))))
+
