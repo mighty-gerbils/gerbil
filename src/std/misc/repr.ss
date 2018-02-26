@@ -1,6 +1,7 @@
 ;; -*- Gerbil -*-
-package: std/misc
+;;; © fare@tunes.org
 ;;;; Sourceable Representation of Gerbil entities
+package: std/misc
 
 (export
   default-representation-options current-representation-options
@@ -32,29 +33,26 @@ package: std/misc
       prefix: (prefix "")
       separator: (separator " ")
       suffix: (suffix "")
-      display-element: (display-element (lambda (x) (display x port))))
+      display-element: (display-element display))
   (display prefix port)
   (def first? #t)
-  (for-each
+  (for-each! ;; NB: also works on improper lists.
+   list
    (lambda (elem)
      (if first?
        (set! first? #f)
        (display separator port))
-     (display-element elem))
-   list)
+     (display-element elem port)))
   (display suffix port))
 
 ;; Print an evaluable representation of an object on the given port with the given options.
 ;; The port defaults to (current-output-port). The options are reserved for future use.
-;; : <- Any port: Port options: Table
-(def (print-representation
-      x
-      port: (port (current-output-port))
-      options: (options (current-representation-options)))
+;; : <- Any (Optional Port) (Optional Table)
+(def (print-representation x (port (current-output-port)) (options (current-representation-options)))
 
   ;; Our universal utilities: print (recurse), repr, display, write
-  (def (p y) (print-representation y port: port options: options))
-  (def (r y) (repr y options: options))
+  (def (p y (q port)) (print-representation y q options))
+  (def (r y) (repr y options))
   (def (d y) (display y port))
   (def (w y) (write y port))
   (def (simple? x) (or (number? x) (boolean? x) (string? x) (char? x) (void? x) (eof-object? x)))
@@ -85,27 +83,25 @@ package: std/misc
      (sort (map (lambda (k) (cons (r k) (hash-ref x k))) (hash-keys x)) ;; sort keys by repr
            (lambda (krv1 krv2) (string<? (car krv1) (car krv2))))
      port: port prefix: "(hash " suffix: ")"
-     display-element: (match <> ([kr . v] (d "(") (d kr) (d " ") (p v) (d ")")))))
+     display-element: (lambda (x _) (match x ([kr . v] (d "(") (d kr) (d " ") (p v) (d ")"))))))
    ((representable? x)
-    {:pr x port: port options: options})
+    {:pr x port options})
    ((and (object? x) (find-method (object-type x) ':pr))
-    => (lambda (m) (m x port: port options: options)))
+    => (lambda (m) (m x port options)))
    ((and (object? x) (struct-type? (object-type x)))
     (display-separated
      (cdr (struct->list x))
      port: port prefix: (format "(~a " (##type-name (object-type x))) suffix: ")"
      display-element: p))
    (else
-    (print-unrepresentable-object x port: port))))
+    (print-unrepresentable-object x port options))))
 
 ;; Given an object without a known evaluable representation, a port and options,
 ;; print a general-purpose escape, using the #42 syntax and putting in a string
 ;; a hint as to what the value is, as obtained from the write function.
-;; : <- Any port: Port options: Table
+;; : <- Any Port Table
 (def (print-unrepresentable-object
-      object
-      port: (port (current-output-port))
-      options: (options (current-representation-options)))
+      object (port (current-output-port)) (options (current-representation-options)))
   (def (d x) (display x port))
   (def (w x) (write x port))
   (d "(begin0 #") (d (object->serial-number object)) (d " ") (w (object->string object)) (d ")"))
@@ -114,20 +110,21 @@ package: std/misc
 (defclass representable ())
 
 ;; Given an object, a port and options, print a representation of the object.
-;; : <- Any port: Port options: Table
+;; : <- Any (Optional Port) (Optional Table)
 (defmethod {:pr representable} print-unrepresentable-object)
 
 ;; Short hand for the print-representation function
-;; : <- Any port: Port options: Table
+;; : <- Any (Optional Port) (Optional Table)
+
 (def pr (values print-representation))
 
 ;; Print a representation, then print a newline
-;; : <- Any port: Port options: Table
-(def (prn x port: (p (current-output-port)) options: (o (current-representation-options)))
-  (pr x port: p options: o) (newline p))
+;; : <- Any (Optional Port) (Optional Table)
+(def (prn x (p (current-output-port)) (o (current-representation-options)))
+  (pr x p o) (newline p))
 
 ;; Return a representation of the object, as a string, with given options.
-;; : <- Any options: Table
-(def (repr x options: (options (current-representation-options)))
+;; : <- Any (Optional Table)
+(def (repr x (options (current-representation-options)))
   (call-with-output-string
-    [] (lambda (port) (print-representation x port: port options: options))))
+    [] (lambda (port) (print-representation x port options))))
