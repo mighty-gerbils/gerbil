@@ -74,7 +74,6 @@ package: scheme
   eof-object?
   eq?
   equal?
-  equal-shared? ;; not R7RS strictly speaking
   eqv?
   error
   (rename: error-exception? error-object?)
