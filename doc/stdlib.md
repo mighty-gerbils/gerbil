@@ -34,6 +34,7 @@
   * [std/misc/process](#stdmiscprocess)
   * [std/misc/queue](#stdmiscqueue)
   * [std/misc/rtd](#stdmiscrtd)
+  * [std/misc/shared](#stdmiscshared)
   * [std/misc/shuffle](#stdmiscshuffle)
   * [std/misc/string](#stdmiscstring)
   * [std/misc/sync](#stdmiscsync)
@@ -656,6 +657,18 @@ Miscellaneous type descriptor utilities.
   type-descriptor-slots
   type-descriptor-methods
 ```
+
+### std/misc/shared
+Shared-structure equality.
+
+```
+(import :std/misc/shared)
+
+;; exports:
+
+  equal-shared?
+```
+
 
 ### std/misc/shuffle
 Shuffling.
