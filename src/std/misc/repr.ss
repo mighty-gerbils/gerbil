@@ -74,9 +74,9 @@ package: std/misc
    ((vector? x) ;; vector: print as (vector ...).
     (display-separated (vector->list x)
                        prefix: "(vector " separator: " " display-element: p suffix: ")" port: port))
-   ((u8vector? x) ;; u8vector: print as (u8vector ...).
+   ((u8vector? x) ;; u8vector: print as #u8(...), knowing that elements are all bytes.
     (display-separated (u8vector->list x)
-                       prefix: "(u8vector " separator: " " display-element: p suffix: ")" port: port))
+                       prefix: "#u8(" separator: " " display-element: d suffix: ")" port: port))
    ((hash-table? x) ;; hash-table: print as (hash ...)
     ;; NB: also assumes (1) it is a equal? table, and (2) you use :std/sugar ...
     (display-separated
