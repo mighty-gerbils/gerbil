@@ -36,10 +36,7 @@ starting with v4.6.0 used to work as well.
 
 If you want to use the latest development Gerbil from master
 (v0.12-DEV), then the latest version of Gambit from master is also
-required. The
-[Getting Started](https://github.com/vyzo/gerbil/wiki/Getting-Started-with-Gerbil-development)
-wiki page contains more detailed instructions for configuring and installing
-the latest Gambit.
+required.
 
 The core system has no dependencies outside Gambit, but the standard
 library has several mostly optional dependencies. The only hard dependency
@@ -99,6 +96,9 @@ that should get you started:
 - The [Gerbil wiki](https://github.com/vyzo/gerbil/wiki/Gerbil-Scheme) at Github
   contains a small but growing collection of pages that can help you
   get started with Gerbil programming.
+- The [Getting Started](https://github.com/vyzo/gerbil/wiki/Getting-Started-with-Gerbil-development)
+  wiki page in particular covers the very basics for setting up your Gerbil installation
+  and writing your first code.
 - The [Gerbil Tutorial](doc/tutorial.md) provides a few hands-on guides on Gerbil programming.
 - The [Gerbil Core Prelude](doc/core-prelude.md) documents the core
   language prelude.
