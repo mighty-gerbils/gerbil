@@ -9,6 +9,7 @@ package: std/db
         :std/actor/proto
         :std/actor/message
         :std/misc/channel
+        :std/misc/list
         :std/net/bio
         :std/net/sasl
         :std/text/utf8
@@ -358,7 +359,7 @@ package: std/db
   (def (close name)
     ;; Close (name) -> CloseComplete | ErrorResponse
     (if query-output
-      (set! deferred-close (cons name deferred-close))
+      (push! name deferred-close)
       (begin
         (send! ['Close #\S name])
         (send! '(Sync))
