@@ -36,8 +36,10 @@ starting with v4.6.0 used to work as well.
 
 If you want to use the latest development Gerbil from master
 (v0.12-DEV), then the latest version of Gambit from master is also
-required, as important pieces of the standard library utilize raw
-device support ([gambit#272](https://github.com/gambit/gambit/pull/272)).
+required. The
+[Getting Started](https://github.com/vyzo/gerbil/wiki/Getting-Started-with-Gerbil-development)
+wiki page contains more detailed instructions for configuring and installing
+the latest Gambit.
 
 The core system has no dependencies outside Gambit, but the standard
 library has several mostly optional dependencies. The only hard dependency
@@ -127,11 +129,11 @@ that Gerbil on Gambit is dual licensed under LGPLv2.1 and Apache 2.0.
 
 Gerbil's primary author and maintainer is vyzo-at-hackzen.org, aka in
 the Net as Dimitris Vyzovitis. The obligatory copyright notice, had I
-bothered polluted everything with more than a (C) vyzo at hackzen.org,
-would read like this:
+bothered and polluted everything with more than a (C) vyzo, would read
+like this:
 
 ```
-(C) 2007-2017 Dimitris Vyzovitis <vyzo -at- hackzen.org>
+© 2007-2018 Dimitris Vyzovitis <vyzo -at- hackzen.org>
 Gerbil is Free Software, distributed under the GNU LGPLv2.1 or later
 and the Apache 2.0 license.
 ```
@@ -141,7 +143,7 @@ and the Apache 2.0 license.
 Gerbil has been my private Scheme for many years, evolved out of a set
 of common macros that i used across different implementations and
 eventually a full-blown PLT macro language. As such I have had
-multiple backends that work with the Gerbil macro system, but I have
+multiple backends that supported the Gerbil dialect, but I have
 elected to base the canonical version of Gerbil on Gambit.
 
 At the prompting of some friends (they know who they are), who
@@ -151,7 +153,7 @@ version of the macro system and compiler.
 That means that the system is entirely self-hosted in Gambit.
 
 Gerbil is under continuous use and development.
-The core language has been stable for a while, but I am busy porting
+The core language has been stable for a while, but we are busy porting
 batteries, adding features, fixing bugs, and expanding the scope of
 syntactic abstraction.
 
