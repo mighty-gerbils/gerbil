@@ -85,6 +85,18 @@ package: std/misc
   (define-macro (macro-table-hash ht)
     `(##vector-ref ,ht 3))
 
+  (define (struct-field-flags type)
+    (let loop ((type type) (r '()))
+      (if type
+        (let ((fields (##type-fields type)))
+          (loop (##type-super type)
+                (let recur ((i 0))
+                  (if (##fx< i (##vector-length fields))
+                    (let ((flag (##vector-ref fields (##fx+ i 1))))
+                      (cons flag (recur (##fx+ i 3))))
+                    r))))
+          r)))
+
   (define (interleave? x y k)
     (let ((ht (make-eq-table)))
 
@@ -168,7 +180,6 @@ package: std/misc
                                   x)
                                  k))))))))
             ((##structure? x)
-             ;; TODO: use ##type-flags to honor skip-equal flag on fields
              (and (##structure? y)
                   (let* ((type-x
                           (##structure-type x))
@@ -184,11 +195,15 @@ package: std/misc
                                 (##fx= (##fxand (##type-flags type-x) 1) 0) ; not opaque
                                 (if (union-find ht x y)
                                   0
-                                  (let f ((i 1) (k (##fx- k 1)))
-                                    (if (##fx= i n)
-                                      k
-                                      (let ((k (e? (##vector-ref x i) (##vector-ref y i) k)))
-                                        (and k (f (##fx+ i 1) k))))))))))))
+                                  (let ((fields (struct-field-flags type-x)))
+                                    (let f ((i 1) (k (##fx- k 1)) (fields fields))
+                                      (if (##fx= i n)
+                                        k
+                                        (let ((flags (car fields)))
+                                          (if (##fx= (##fxand flags 4) 0) ; test equality
+                                            (let ((k (e? (##vector-ref x i) (##vector-ref y i) k)))
+                                              (and k (f (##fx+ i 1) k (cdr fields))))
+                                            (f (##fx+ i 1) k (cdr fields))))))))))))))
             ((##box? x)
              (and (##box? y)
                   (if (union-find ht x y)
@@ -264,7 +279,6 @@ package: std/misc
                                 x)
                                k)))))))
               ((##structure? x)
-               ;; TODO: use ##type-flags to honor skip-equal flag on fields
                (and (##structure? y)
                     (let* ((type-x
                             (##structure-type x))
@@ -278,11 +292,15 @@ package: std/misc
                            (let ((n (##vector-length x)))
                              (and (##fx= n (##vector-length y))
                                   (##fx= (##fxand (##type-flags type-x) 1) 0) ; not opaque
-                                  (let f ((i 1) (k k))
-                                    (if (##fx= i n)
-                                      k
-                                      (let ((k (e? (##vector-ref x i) (##vector-ref y i) k)))
-                                        (and k (f (##fx+ i 1) k)))))))))))
+                                  (let ((fields (struct-field-flags type-x)))
+                                    (let f ((i 1) (k k) (fields fields))
+                                      (if (##fx= i n)
+                                        k
+                                        (let ((flags (car fields)))
+                                          (if (##fx= (##fxand flags 4) 0) ; test equality
+                                            (let ((k (e? (##vector-ref x i) (##vector-ref y i) k)))
+                                              (and k (f (##fx+ i 1) k (cdr fields))))
+                                            (f (##fx+ i 1) k (cdr fields)))))))))))))
               ((##box? x)
                (and (##box? y)
                     (e? (##unbox x) (##unbox y) k)))
@@ -362,7 +380,6 @@ package: std/misc
                             x)
                            k)))))))
         ((##structure? x)
-         ;; TODO: use ##type-flags to honor skip-equal flag on fields
          (and (##structure? y)
               (let* ((type-x
                       (##structure-type x))
@@ -376,13 +393,17 @@ package: std/misc
                      (let ((n (##vector-length x)))
                        (and (##fx= n (##vector-length y))
                             (##fx= (##fxand (##type-flags type-x) 1) 0) ; not opaque
-                            (let f ((i 1) (k k))
-                              (if (##fx= i n)
-                                k
-                                (let ((k (precheck? (##vector-ref x i)
-                                                    (##vector-ref y i)
-                                                    (##fx- k 1))))
-                                  (and k (f (##fx+ i 1) k)))))))))))
+                            (let ((fields (struct-field-flags type-x)))
+                              (let f ((i 1) (k k) (fields fields))
+                                (if (or (##fx= i n) (##fx<= k 0))
+                                  k
+                                  (let ((flags (car fields)))
+                                    (if (##fx= (##fxand flags 4) 0) ; test equality
+                                      (let ((k (precheck? (##vector-ref x i)
+                                                          (##vector-ref y i)
+                                                          (##fx- k 1))))
+                                        (and k (f (##fx+ i 1) k (cdr fields))))
+                                      (f (##fx+ i 1) k (cdr fields)))))))))))))
         ((##box? x)
          (and (##box? y)
               (if (##fx<= k 0)
