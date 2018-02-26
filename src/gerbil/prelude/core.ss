@@ -248,8 +248,6 @@ package: gerbil
     ;;flush-output-port
     ;; etc...
     absent-obj ; gambit api missing optional parameter
-    ;; equality
-    equal-shared?
     ;; Module loading
     load-module
     ;; keyword argument dispatch
