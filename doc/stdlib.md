@@ -770,6 +770,7 @@ Thread utilities.
 ;; exports:
 
   primordial-thread-group
+  thread-group->thread-list* all-threads
   thread-dead?
   thread-group-kill!
   thread-raise! thread-abort! thread-abort?
