@@ -1,3 +1,123 @@
+### 2-27-2018: Gerbil-v0.12
+
+The 1500 commit monster has landed!
+
+- language features:
+  - gerbil.pkg: gerbil package directives, recognized by the expander and package manager
+  - properly support read-only GERBIL_HOME
+  - GERBIL_PATH and ~/.gerbil for user environment
+  - support the SMP scheduler
+  - new versioning scheme with git describe
+- tools:
+  - gxprof: the Gerbil proflier
+  - gxtags: emacs TAGS for Gerbil sources
+  - gxpkg: the Gerbil Package Manager
+- build: new build script [david varela]
+- prelude:
+  - gerbil/core:
+    - defstruct/defclass:
+      - accept printer and equality specification
+      - type macro is applicable
+      - unchecked accessor/mutators for dragon power up
+    - for-syntax, for-tempate import/export expanders
+    - definline macro
+    - defmethod defines @next-method macro
+    - match understands apply patterns
+  - gerbil/gambit/threads: spawn zoo
+- expander:
+  - support internal declares
+  - parse gerbil.pkg for implicit package declarations and load path rebasing
+  - fix evaluation time for negative phase imports; eval templates at phi=0 import time.
+  - fix mark tracking in syntax (the macro)
+  - datum->syntax accepts optional parameter to borrow marks from syntax quotes
+- compiler:
+  - compiled syntax marks; MacroMacro Liberation day.
+  - support debug options
+  - correctly track imports for side-effects
+  - optimize struct-instance-init! and unchecked accessors/mutators
+  - new options for gxc: -gsc-flag -gsc-option -genv -gsrc -include-gambit-sharp
+- runtime:
+  - reduce weight of gx-gambc1, cond-expand out the now unused bootstrap eval
+  - absent-obj
+  - custom structure equality and printing
+  - load path consing
+  - replx
+  - implement class->list
+  - methods for builtin record types
+- interpreter:
+  - system wide interactive init
+  - reload
+  - enter!
+- stdlib:
+  - the stdlib is now built with debug environments and sources to allow debug introspection
+  - NEW packages and libraries:
+    - std/build-script: easy package build scripts.
+    - std/crypto
+      - std/crypto/hmac: HMAC support
+    - std/debug: debugging utilities.
+      - std/debug/heap: heap walking and statistics
+      - std/debug/memleak: memory leak monitoring
+      - std/debug/threads: thread stack dumping
+    - std/db
+      - std/db/postgres: pure Gerbil PostgreSQL driver
+    - std/misc
+      - std/misc/completion: asynchronous completion tokens
+      - std/misc/channel: buffered channels
+      - std/misc/list: list utilities [fare]
+      - std/misc/pqueue: heap-based priority queues
+      - std/misc/process: process utilities [fare]
+      - std/misc/rtd: safe runtime type descriptor accessors
+      - std/misc/repr: sourcable object representation [fare]
+      - std/misc/shared: equal-shared? for infinite-structure safe equality
+      - std/misc/string: string utilities [fare]
+      - std/misc/sync: synchronous data structures
+      - std/misc/threads: thread utilities
+    - std/net
+      - std/net/bio: binary i/o buffers.
+      - std/net/httpd: embedded HTTP/1.1 server.
+      - std/net/repl: network REPL
+      - std/net/sasl: SASL SCRAM authentication.
+      - std/net/socket: easy raw device socket api.
+      - std/net/websocket: websocket client.
+      - std/net/wamp: wamp client.
+    - std/os: programming with raw devices
+      - ... let there be dragons
+    - std/stxparam: syntax parameters.
+    - std/text
+      - std/text/utf8: fast utf8 encoding and decoding.
+      - std/text/csv: csv parser [fare]
+    - std/xml:
+      - std/xml/ssax: Oleg's SSAX parser
+      - std/xml/sxpath: Oleg's SXPath library
+  - REWRITTEN packages and libraries:
+    - std/actor: the RPC subsystem has been rewritten for performance and raw devices; streams support synchronization.
+    - std/coroutine: new implementation without using sync.
+    - std/event: the library internals have been rewritten; new wait and select primitives.
+    - std/db/mysql: the driver has been rewritten to use dediceted threads per connection.
+    - std/generic: package has been rewritten for fast cached type-based dispatch.
+  - features and fixes
+    - std/crypto: more consistent api, more digests and cipers
+    - std/db/conpool: timeouts, release, api improvements
+    - std/db/leveldb: iterators
+    - std/error: timeout errors
+    - std/getopt: bug fixes, help topic display
+    - std/make: deterministic order for depgraphs, renamed binaries, debug options
+    - std/misc/ports: more utilities
+    - std/net/request: request-close for explicitly closing the request socket
+    - std/text/json: json-symbolic-keys parameter
+    - std/srfi/19: several fixes
+    - std/sugar: let-hash, with-destroy, using macros
+- languages:
+  - r7rs
+    - gxi --lang r7rs for repl
+    - raise-continuable and r7rs-compliant exception handling
+- doc:
+   - stdlib.md: overview of standard library
+   - core-prelude: document :gerbil/gambit symbols
+   - tutorial:
+     - proxy: network programming in Gerbil
+     - httpd: web programming with the Gerbil httpd
+
 ### 6-5-2017: Gerbil-v0.11
 - stdlib:
   - std/db
