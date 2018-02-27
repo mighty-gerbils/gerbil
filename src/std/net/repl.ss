@@ -5,6 +5,7 @@ package: std/net
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
+        :gerbil/gambit/readtables
         :gerbil/gambit/exceptions
         :std/sugar
         :std/logger
@@ -54,6 +55,8 @@ package: std/net
                   (cons
                    (socket-info-address sinfo)
                    (socket-info-port-number sinfo)))))
+        (output-port-readtable-set! client
+         (readtable-sharing-allowed?-set (output-port-readtable client) #t))
         (let* ((tgroup (make-thread-group 'repl-client))
                (thread (make-thread (lambda () (repl-client client passwd))
                                     'repl tgroup))
