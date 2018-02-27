@@ -84,6 +84,8 @@ package: std/misc
            (lambda (krv1 krv2) (string<? (car krv1) (car krv2))))
      port prefix: "(hash " suffix: ")"
      display-element: (lambda (x _) (match x ([kr . v] (d "(") (d kr) (d " ") (p v) (d ")"))))))
+   ((and (procedure? x) (##procedure-name x))
+    => (lambda (name) (display name port)))
    ((and (object? x) (find-method (object-type x) ':pr))
     => (lambda (m) (m x port options)))
    ((and (object? x) (assgetq transparent: (type-descriptor-plist (object-type x))))
