@@ -10,7 +10,7 @@ package: std/misc
 
 (import
   :gerbil/gambit/hash :gerbil/gambit/ports
-  :std/format :std/misc/list :std/misc/rtd :std/sort :std/srfi/1)
+  :std/format :std/misc/list :std/misc/rtd :std/sort)
 
 ;; Default options for printing an evaluable representation. Keep it empty for now.
 ;; Note: we don't actually use options yet, but
