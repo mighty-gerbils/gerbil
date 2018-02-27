@@ -33,6 +33,7 @@
   * [std/misc/pqueue](#stdmiscpqueue)
   * [std/misc/process](#stdmiscprocess)
   * [std/misc/queue](#stdmiscqueue)
+  * [std/misc/repr](#stdmiscrepr)
   * [std/misc/rtd](#stdmiscrtd)
   * [std/misc/shared](#stdmiscshared)
   * [std/misc/shuffle](#stdmiscshuffle)
@@ -638,6 +639,58 @@ Double-edged queues.
   enqueue! enqueue-front! dequeue!
   queue->list
 ```
+
+### std/misc/repr
+Sourceable Representation of Gerbil entities
+
+```
+(import :std/misc/repr)
+
+;; exports:
+
+  pr prn repr
+  default-representation-options current-representation-options
+  display-separated print-representation print-unrepresentable-object representable
+```
+
+`print-representatoin` is a function (also available with the short-hand name `pr`)
+that takes an object, optionally a port and a table of options, and
+displays on that port source-code representation of the object
+that can be evaluated back into an equivalent object.
+
+`prn` does the same as `pr` then follows with a newline.
+
+`repr` does not take a port as argument and instead
+returns the representation as a string.
+
+`default-representation-options` is the default table of options.
+No options are currently defined, and the default table is currently empty.
+In the future, options may be defined for pretty-printing, etc.
+
+`current-representation-options` is a parameter returning the current options,
+and initially returns the `default-representation-options`.
+
+Behavior of `pr` can be specialized for new classes of objects by defining
+new methods on `:pr`, as in:
+
+```
+(defmethod {:pr my-class}
+  (lambda (self (port (current-output-port)) (options (current-representation-options)))
+    ...))
+```
+
+`display-separated` is a helper function that takes a list of objects, an optional port,
+and as keywords a `prefix:` string (empty by default), a `suffix:` string (empty by default),
+a `separator` string (defaulting to a single space `" "`), and
+a `display-element:` function (the function `display` by default),
+and displays each element of the list with the given prefix, suffix, separator and display function.
+
+`print-unrepresentable-object` is a helper function to use as fallback
+for objects that can't otherwise be displayed.
+
+`representable` is an abstract mixin class that defines a method for `:pr`,
+that calls `print-unrepresentable-object`.
+
 
 ### std/misc/rtd
 Miscellaneous type descriptor utilities.

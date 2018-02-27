@@ -151,8 +151,7 @@ package: std/text
   (accept char-csv-space? port))
 
 (def (accept-spaces port)
-  (call-with-list-builder
-   (lambda (c _) (let loop () (let ((x (accept-space port))) (when x (c x) (loop)))))))
+  (with-list-builder (c) (let loop () (let ((x (accept-space port))) (when x (c x) (loop))))))
 
 (def (accept-quote port)
   (accept (cut eqv? <> (csv-quote)) port))
@@ -251,7 +250,7 @@ package: std/text
      (else
       (raise-io-error 'read-csv-line "end of field expected"))))
   (def (add x)
-    (set! fields (cons x fields)))
+    (push! x fields))
   (def (add-char c)
     (unless (or (csv-allow-binary?) (char-ascii-text? c))
       (raise-io-error 'read-csv-line "binary data not allowed" c))

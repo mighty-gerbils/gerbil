@@ -5,6 +5,7 @@ package: std
 
 (import :gerbil/gambit
         :std/error
+        :std/misc/list
         :std/sugar
         :std/format)
 (export
@@ -216,7 +217,7 @@ package: std
   (set! *tests* []))
 
 (def (test-add-test! suite)
-  (set! *tests* (cons suite *tests*)))
+  (push! suite *tests*))
 
 (def (run-test-suite! suite)
   (test-suite-begin! suite)

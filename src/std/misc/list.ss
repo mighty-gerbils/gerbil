@@ -1,14 +1,17 @@
 ;; -*- Gerbil -*-
-package: std/misc
+;;; © fare@tunes.org
 ;;;; List utilities
+package: std/misc
 
 (export
   plist->alist
   length=? length=n?
   length<? length<n? length<=? length<=n?
   length>? length>n? length>=? length>=n?
-  call-with-list-builder
-  snoc append1)
+  call-with-list-builder with-list-builder
+  snoc append1
+  for-each!
+  push!)
 
 (import
   <host-runtime>
@@ -89,14 +92,14 @@ package: std/misc
 (def (length>=? x y) (length<=? y x))
 (def (length>=n? x n) (not (length<n? x n)))
 
-;; This function helps built a list, by calling a building function that takes two arguments:
-;; The first, which could be called poke (or put!, enqueue!, append-one-element-at-the-end!)
+;; Build a list, by calling a building function that takes two arguments:
+;; The first, which could be called poke! (or put!, enqueue!, append-one-element-at-the-end!)
 ;; takes an element and puts it at the end of the list. The second, which could be called peek
 ;; (or get, get-list-so-far, get-shared-list-that-is-mutated-when-you-put), returns the
-;; list of elements that poke has been called with, so far. When the building function returns,
+;; list of elements that poke! has been called with, so far. When the building function returns,
 ;; call-with-list-builder will return the state of the list, as if by calling the peek function.
 ;; NB: this implementation accumulates elements by mutating a shared queue of cons cells;
-;; in case of continuations, that same list is shared by all executions.
+;; in case of multiple entries by continuations, that same list is shared by all executions.
 ;; : (list X) <- (<- (<- X) ((list X) <-))
 (def (call-with-list-builder fun)
   (let* ((head (cons #f '())) ;; use a traditional implementation of queue as cons of tail and head
@@ -110,10 +113,29 @@ package: std/misc
     (fun poke peek)
     (peek)))
 
+(defrules with-list-builder ()
+  ((_ (c r) body1 body+ ...) (call-with-list-builder (lambda (c r) body1 body+ ...)))
+  ((_ (c) body1 body+ ...) (with-list-builder (c _) body1 body+ ...)))
+
 ;; Like cons, but puts the element at the end of the list
 ;; (List A) <- A (List A)
 (def (snoc x l) (append l [x]))
 
-;; append one element at the end of a list
+;; Append one element at the end of a list
 ;; (List A) <- (List A) A
 (def (append1 l x) (append l [x]))
+
+;; Variant of for-each with arguments reversed, which nest-s nicer.
+;; The name also makes it more obvious that this is used for side-effects.
+;; Unlike for-each, also works on improper lists, ended by non-pairs other than '()
+;; : <- (list X) (<- X)
+(def (for-each! list fun)
+  (match list
+    ([elem . more] (fun elem) (for-each! more fun))
+    (_ (void))))
+
+;; Analog to CL:PUSH, hence the argument order.
+;; TODO: use setq-macro, look at the set! defn in prelude/core.ss
+(defrules push! ()
+  ((_ element list) (set! list (cons element list))))
+
