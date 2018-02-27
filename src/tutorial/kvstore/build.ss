@@ -12,12 +12,10 @@
   '("proto"
     (static-exe: "kvstored"
                  "-ld-options" "-lz -llmdb -lcrypto"
-                 "-prelude" "(declare (not safe))"
-                 "-e" "(include \"~~lib/_gambit#.scm\")")
+                 "-prelude" "(declare (not safe))")
     (static-exe: "kvstorec"
                  "-ld-options" "-lcrypto"
-                 "-prelude" "(declare (not safe))"
-                 "-e" "(include \"~~lib/_gambit#.scm\")")))
+                 "-prelude" "(declare (not safe))")))
 
 (def srcdir
   (path-normalize (path-directory (this-source-file))))

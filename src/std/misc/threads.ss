@@ -9,7 +9,8 @@ package: std/misc
         thread-dead?
         thread-group-kill!
         thread-raise! thread-abort! thread-abort?
-        spawn/abort spawn/name/abort)
+        thread-async!
+        on-all-processors)
 
 (def (primordial-thread-group)
   (thread-thread-group ##primordial-thread))
@@ -32,47 +33,11 @@ package: std/misc
 (extern thread-group-kill!)
 
 (begin-foreign
-  (namespace ("std/misc/threads#" thread-group-kill!))
+  (namespace ("std/misc/threads#" thread-group-kill!
+              tgroup-kill! tgroup-kill-threads! tgroup-detach!))
 
-  ;; === NOT SMP SAFE ===
-  ;; there may be more threads spawned in another processor while we are
-  ;; killing the group; needs to iterate on SMP.
   (define (thread-group-kill! tg)
     (declare (not interrupts-enabled))
-
-    (define (kill-threads! tg)
-      (let ((threads (##tgroup->thread-vector tg)))
-        (let lp ((i 0))
-          (if (##fx< i (##vector-length threads))
-            (begin
-              (##thread-terminate! (##vector-ref threads i))
-              (lp (##fx+ i 1)))))))
-
-    (define (kill-tgroup! tg)
-      (let ((tgroups (##tgroup->tgroup-vector tg)))
-        (let lp ((i 0))
-          (if (##fx< i (##vector-length tgroups))
-            (begin
-              (kill-tgroup! (##vector-ref tgroups i))
-              (lp (##fx+ i 1)))
-            (kill-threads! tg)))))
-
-    ;; === SMP BROKEN ===
-    ;; deq struct layout has an extra lock field before prev next
-    (define (detach-tgroup! tg)
-      (if (macro-tgroup-parent tg)
-        (begin
-          ;; this is broken:
-          ;; (macro-tgroup-tgroups-deq-remove! tg)
-          ;; so do it by hand instead
-          (let ((next (macro-tgroup-tgroups-deq-next tg))
-                (prev (macro-tgroup-tgroups-deq-prev tg)))
-            (##vector-set! prev 1 next)
-            (##vector-set! next 2 prev)
-            (macro-tgroup-tgroups-deq-next-set! tg tg)
-            (macro-tgroup-tgroups-deq-prev-set! tg tg))
-          ;; and mark it as unreachable
-          (macro-tgroup-parent-set! tg #f))))
 
     (define (check-tgroup! tg)
       (let ((mytg (macro-thread-tgroup (##current-thread))))
@@ -87,10 +52,65 @@ package: std/misc
     (if (macro-tgroup? tg)
       (begin
         (check-tgroup! tg)
-        (kill-tgroup! tg)
-        (detach-tgroup! tg)
+        (cond-expand
+          (enable-smp
+           ;; there may be more threads spawned in another processor from within the
+           ;; tgroup while we are killing it; needs to iterate on SMP.
+           (let lp ()
+             (if (##fx> (tgroup-kill! tg) 0)
+               (lp))))
+          (else
+           (tgroup-kill! tg)))
+        (tgroup-detach! tg)
         (void))
-      (error "Bad argument; expected thread-group" tg))))
+      (error "Bad argument; expected thread-group" tg)))
+
+
+  (define (tgroup-kill! tg)
+    (declare (not interrupts-enabled))
+    (let ((tgroups (##tgroup->tgroup-vector tg)))
+      (let lp ((i 0) (r 0))
+        (if (##fx< i (##vector-length tgroups))
+          (let ((count (tgroup-kill! (##vector-ref tgroups i))))
+            (lp (##fx+ i 1) (##fx+ r count)))
+          (let ((count (tgroup-kill-threads! tg)))
+            (##fx+ r count))))))
+
+  (define (tgroup-kill-threads! tg)
+    (declare (not interrupts-enabled))
+    (let ((threads (##tgroup->thread-vector tg)))
+      (let lp ((i 0))
+        (if (##fx< i (##vector-length threads))
+          (begin
+            (##thread-terminate! (##vector-ref threads i))
+            (lp (##fx+ i 1)))
+          i))))
+
+  (define (tgroup-detach! tg)
+    (declare (not interrupts-enabled))
+    (if (macro-tgroup-parent tg)
+        (begin
+          ;; this is broken:
+          ;; (macro-tgroup-tgroups-deq-remove! tg)
+          ;; so do it by hand instead
+          (let ((next (macro-tgroup-tgroups-deq-next tg))
+                (prev (macro-tgroup-tgroups-deq-prev tg)))
+            (cond-expand
+              (enable-smp
+               (##vector-set! prev 2 next)
+               (##vector-set! next 3 prev))
+              (else
+               (##vector-set! prev 1 next)
+               (##vector-set! next 2 prev)))
+            (macro-tgroup-tgroups-deq-next-set! tg tg)
+            (macro-tgroup-tgroups-deq-prev-set! tg tg))
+          ;; and mark it as unreachable
+          (cond-expand
+            (enable-smp
+             ;; no parent field mutator defined
+             (##vector-set! tg 8 #f))
+            (else
+             (macro-tgroup-parent-set! tg #f)))))))
 
 ;; asynchronous thread aborts
 (defstruct thread-abort ()
@@ -104,74 +124,63 @@ package: std/misc
 (def +thread-abort+
   (make-thread-abort))
 
-(def (with-abort-handler f args)
-  (try
-   (apply f args)
-   (catch (thread-abort? e)
-     (thread-release-locks!)
-     (raise e))))
-
 (def (thread-abort! thread)
+  (thread-raise! thread +thread-abort+))
+
+(def (thread-raise! thread obj)
   (cond
    ((not (thread? thread))
-    (error "Expected thread" thread))
+    (error "Bad argument; expected thread" thread))
    ((eq? thread (current-thread))
-    (raise +thread-abort+))
+    (raise obj))
    (else
-    (thread-raise! thread +thread-abort+))))
+    (thread-intr! thread (cut raise obj)))))
 
-(def (spawn/abort f . args)
-  (spawn/name (or (##procedure-name f) (void)) with-abort-handler f args))
+(def (thread-async! thread thunk)
+  (cond
+   ((not (thread? thread))
+    (error "Bad argument; expected thread" thread))
+   ((eq? thread (current-thread))
+    (thunk))
+   (else
+    (thread-intr! thread thunk))))
 
-(def (spawn/name/abort name f . args)
-  (spawn/name name with-abort-handler f args))
-
-(extern thread-raise! thread-release-locks!)
+(extern thread-intr!)
 
 (begin-foreign
-  (namespace ("std/misc/threads#" thread-raise! thread-release-locks! btq-release!))
+  (namespace ("std/misc/threads#" thread-intr!))
 
-  (define (thread-raise! thread obj)
+  (define (thread-intr! thread thunk)
     (declare (not interrupts-enabled))
     (if (and (macro-initialized-thread? thread)
              (##not (macro-terminated-thread-given-initialized? thread))
-             (macro-started-thread-given-initialized? thread))
+             (cond-expand
+               (enable-smp
+                (macro-started-thread? thread))
+               (else
+                (macro-started-thread-given-initialized? thread))))
       (begin
-        ;; === SMP BROKEN ===
-        ;; this is (##thread-intr! thread #t thunk) in SMP
-        (##thread-int! thread (lambda () (raise obj)))
+        (cond-expand
+          (enable-smp
+           (##thread-intr! thread #t thunk))
+          (else
+           (##thread-int! thread thunk)))
         (##void))
-      #f))
+      #f)))
 
-  (define (thread-release-locks!)
-    (declare (not interrupts-enabled))
-    (let ((thread (current-thread)))
-      (let loop ()
-        (let ((next-btq (macro-btq-deq-next thread)))
-          (if (##not (##eq? next-btq thread))
-            (begin
-              (btq-release! next-btq)
-              (loop)))))))
-
-  ;; lifted from ##btq-abandon! only we are releasing the mutexes normally
-  ;; instead of abandoning them
-  ;; === SMP BROKEN ===
-  ;; this is based in the uniprocessor implementation; need a different
-  ;; version for smp
-  (define (btq-release! btq)
-    (declare (not interrupts-enabled))
-    (##primitive-lock! btq 1 9)
-    (macro-btq-deq-remove! btq)
-    (let ((leftmost (macro-btq-leftmost btq)))
-      (if (##eq? leftmost btq)
-        (begin
-          (macro-btq-unlink! btq (macro-mutex-state-not-abandoned))
-          (##primitive-unlock! btq 1 9))
-        (if (macro-mutex? btq)
-          (##mutex-signal-no-reschedule! btq leftmost #f)
-          (begin
-            (let ((owner (macro-btq-owner btq)))
-              (if (macro-thread? owner)
-                (##thread-effective-priority-downgrade! owner)))
-            (macro-btq-unlink! btq (macro-mutex-state-not-abandoned))
-            (##primitive-unlock! btq 1 9)))))))
+;; execute a thunk on all available processors
+;; returns a list of threads for each processor; the threads are pinned on smp
+(def (on-all-processors thunk)
+  (cond-expand
+    (gerbil-smp
+     (let* ((count (##current-vm-processor-count))
+            (processors (map ##processor (iota count)))
+            (threads (map (lambda (proc)
+                            (let (thr (make-thread thunk))
+                              (##thread-pin! thr proc)
+                              thr))
+                          processors)))
+       (for-each thread-start! threads)
+       threads))
+    (else
+     [(spawn-thread thunk)])))

@@ -9,11 +9,9 @@
 
 (def build-spec-static
   '((static-exe: "tcp-proxy"
-                 "-prelude" "(declare (not safe))"
-                 "-e" "(include \"~~lib/_gambit#.scm\")")
+                 "-prelude" "(declare (not safe))")
     (static-exe: "socks-proxy"
-                 "-prelude" "(declare (not safe))"
-                 "-e" "(include \"~~lib/_gambit#.scm\")")))
+                 "-prelude" "(declare (not safe))")))
 (def srcdir
   (path-normalize (path-directory (this-source-file))))
 

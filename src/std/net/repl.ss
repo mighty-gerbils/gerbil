@@ -38,6 +38,7 @@ package: std/net
         (port (thread-specific server)))
     (try
      (close-port port)
+     (thread-async! server void)
      (thread-join! server)
      (catch (uncaught-exception? e)
        (unless (os-exception? (uncaught-exception-reason e))
@@ -123,7 +124,7 @@ package: std/net
           ((#\xff)                      ; IAC
            (case c
              ((#\xf4)                   ; INTERRUPT (C-c)
-              (##thread-int! repl-thread ##user-interrupt!)
+              (thread-async! repl-thread ##user-interrupt!)
               (loop 'input))
              ((#\xfb #\xfc #\xfd #\xfe) ; WILL/WONT/DO/DONT
               (loop c))
