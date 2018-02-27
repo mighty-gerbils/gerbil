@@ -83,12 +83,23 @@ package: std/misc
                        prefix: "#u8(" separator: " " display-element: d suffix: ")"))
 
    ((hash-table? x) ;; hash-table: print as (hash ...)
-    ;; NB: also assumes (1) it is a equal? table, and (2) you use :std/sugar ...
-    (display-separated
-     (sort (map (lambda (k) (cons (r k) (hash-ref x k))) (hash-keys x)) ;; sort keys by repr
-           (lambda (krv1 krv2) (string<? (car krv1) (car krv2))))
-     port prefix: "(hash " suffix: ")"
-     display-element: (lambda (x _) (match x ([kr . v] (d "(") (d kr) (d " ") (p v) (d ")"))))))
+    (let (prefix
+          (let (testf (##vector-ref x 2))
+            (cond
+             ((or (not testf)
+                  (eq? testf eq?)
+                  (eq? testf ##eq?))
+              "(hash-eq")
+             ((or (eq? testf eqv?)
+                  (eq? testf ##eqv?))
+              "(hash-eqv")
+             (else
+              "(hash"))))
+      (display-separated
+       (sort (map (lambda (k) (cons (r k) (hash-ref x k))) (hash-keys x)) ;; sort keys by repr
+             (lambda (krv1 krv2) (string<? (car krv1) (car krv2))))
+       port prefix: prefix suffix: ")"
+       display-element: (lambda (x _) (match x ([kr . v] (d "(") (d kr) (d " ") (p v) (d ")")))))))
 
    ((and (procedure? x) (##procedure-name x))
     => (lambda (name) (display name port)))
