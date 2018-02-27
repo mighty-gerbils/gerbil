@@ -89,17 +89,25 @@ package: std/misc
              ((or (not testf)
                   (eq? testf eq?)
                   (eq? testf ##eq?))
-              "(hash-eq")
+              "(hash-eq ")
              ((or (eq? testf eqv?)
                   (eq? testf ##eqv?))
-              "(hash-eqv")
+              "(hash-eqv ")
              (else
-              "(hash"))))
+              "(hash "))))
       (display-separated
-       (sort (map (lambda (k) (cons (r k) (hash-ref x k))) (hash-keys x)) ;; sort keys by repr
+       (sort (hash-map (lambda (k v) (cons (r k) v)) x) ;; sort keys by repr
              (lambda (krv1 krv2) (string<? (car krv1) (car krv2))))
        port prefix: prefix suffix: ")"
-       display-element: (lambda (x _) (match x ([kr . v] (d "(") (d kr) (d " ") (p v) (d ")")))))))
+       display-element:
+       (lambda (x _)
+         (with ([kr . v] x)
+           (d "(")
+           (if (eq? (string-ref kr 0) #\')
+             (d (substring kr 1 (string-length kr)))
+             (begin (d ",") (d kr)))
+           (d " ") (p v)
+           (d ")"))))))
 
    ((and (procedure? x) (##procedure-name x))
     => (lambda (name) (display name port)))
