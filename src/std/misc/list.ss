@@ -13,10 +13,6 @@ package: std/misc
   for-each!
   push!)
 
-(import
-  <host-runtime>
-  :std/error :std/srfi/1)
-
 ;; This function transform a property list (k1 v1 k2 v2 ...) into
 ;; an association list ((k1 . v1) (k2 . v2) ...).
 (def (plist->alist plist)
@@ -138,4 +134,3 @@ package: std/misc
 ;; TODO: use setq-macro, look at the set! defn in prelude/core.ss
 (defrules push! ()
   ((_ element list) (set! list (cons element list))))
-
