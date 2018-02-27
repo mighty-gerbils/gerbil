@@ -12,7 +12,8 @@ package: std/net
         :std/net/address
         :std/misc/threads)
 (export start-repl-server!
-        stop-repl-server!)
+        stop-repl-server!
+        taint! untaint!)
 
 (extern namespace: #f
   macro-repl-context-level
@@ -209,9 +210,7 @@ package: std/net
 ;; untaint.
 ;; untaint! restores (or clears) the thread-group's state (defaultis to
 ;; the primordial thread-group again)
-;; Note: the functions are not exported, because they are not useful to
-;;       other programs; they are intended to be invoked interactively in
-;;       a net repl with their fully qualified name
+;; NOTE: these functions are intended for interactive use
 (def (taint! (tgroup #f))
   (cond
    ((repl-client-state)
