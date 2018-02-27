@@ -31,12 +31,8 @@ $ git clone https://github.com/vyzo/gerbil.git
 ```
 
 ## Dependencies
-I have tested the bootstrap with Gambit v4.8.x, but older versions
-starting with v4.6.0 used to work as well.
 
-If you want to use the latest development Gerbil from master
-(v0.12-DEV), then the latest version of Gambit from master is also
-required.
+The latest Gerbil release (v0.12) requires Gambit v4.8.9.
 
 The core system has no dependencies outside Gambit, but the standard
 library has several mostly optional dependencies. The only hard dependency
