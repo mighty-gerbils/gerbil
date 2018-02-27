@@ -88,10 +88,12 @@ package: std/misc
     => (lambda (name) (display name port)))
    ((and (object? x) (find-method (object-type x) ':pr))
     => (lambda (m) (m x port options)))
-   ((and (object? x) (assgetq transparent: (type-descriptor-plist (object-type x))))
+   ((and (object? x)
+         (let (t (object-type x))
+           (and (type-descriptor? t) (assgetq transparent: (type-descriptor-plist t)))))
     (display-separated
-     (cdr (struct->list x)) port
-     prefix: (format "(~a " (##type-name (object-type x))) suffix: ")" display-element: p))
+     (cdr (if (struct-type? (object-type x)) (struct->list x) (class->list x))) port
+     prefix: (format "(~a " (type-name (object-type x))) suffix: ")" display-element: p))
    (else
     (print-unrepresentable-object x port options))))
 
