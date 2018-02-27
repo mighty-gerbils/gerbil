@@ -35,4 +35,4 @@ package: std/debug
             (thread-group->thread-group-list tg)))
 
 (def (dump-all-threads! (port (current-error-port)))
-  (dump-thread-group!* (primordial-thread-group)))
+  (dump-thread-group!* (primordial-thread-group) port))

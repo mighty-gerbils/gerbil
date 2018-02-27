@@ -6,6 +6,7 @@ package: std/misc
 (import :gerbil/gambit/threads
         :std/sugar)
 (export primordial-thread-group
+        thread-group->thread-list* all-threads
         thread-dead?
         thread-group-kill!
         thread-raise! thread-abort! thread-abort?
@@ -14,6 +15,18 @@ package: std/misc
 
 (def (primordial-thread-group)
   (thread-thread-group ##primordial-thread))
+
+(def (thread-group->thread-list* tg)
+  (let lp ((rest (thread-group->thread-group-list tg))
+           (r (thread-group->thread-list tg)))
+    (match rest
+      ([tg . rest]
+       (lp (foldl cons rest (thread-group->thread-group-list tg))
+           (foldl cons r (thread-group->thread-list tg))))
+      (else r))))
+
+(def (all-threads)
+  (thread-group->thread-list* (primordial-thread-group)))
 
 (extern thread-dead?)
 (begin-foreign
