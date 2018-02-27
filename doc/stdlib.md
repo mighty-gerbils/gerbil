@@ -770,9 +770,11 @@ Thread utilities.
 ;; exports:
 
   primordial-thread-group
+  thread-dead?
   thread-group-kill!
   thread-raise! thread-abort! thread-abort?
-  spawn/abort spawn/name/abort
+  thread-async!
+  on-all-processors
 ```
 
 ### std/misc/uuid
