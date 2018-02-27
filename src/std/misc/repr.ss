@@ -29,7 +29,7 @@ package: std/misc
 ;; : <- (List Any) port: Port prefix: String separator: String suffix: String display-element: (<- Any)
 (def (display-separated
       list
-      port: (port (current-output-port))
+      (port (current-output-port))
       prefix: (prefix "")
       separator: (separator " ")
       suffix: (suffix "")
@@ -64,7 +64,7 @@ package: std/misc
    ((or (symbol? x) (null? x)) ;; requires slightly more care: write it after a quote.
     (d "'") (w x))
    ((pair? x) ;; pair: print as [ ... ].
-    (display-separated x prefix: "[" separator: " " display-element: p port: port)
+    (display-separated x port prefix: "[" separator: " " display-element: p)
     (let ((end (cdr (last-pair x))))
       (cond
        ((null? end) (void))
@@ -72,27 +72,24 @@ package: std/misc
        (else (d " ") (p end) (d " ..."))))
     (d "]"))
    ((vector? x) ;; vector: print as (vector ...).
-    (display-separated (vector->list x)
-                       prefix: "(vector " separator: " " display-element: p suffix: ")" port: port))
+    (display-separated (vector->list x) port
+                       prefix: "(vector " separator: " " display-element: p suffix: ")"))
    ((u8vector? x) ;; u8vector: print as #u8(...), knowing that elements are all bytes.
-    (display-separated (u8vector->list x)
-                       prefix: "#u8(" separator: " " display-element: d suffix: ")" port: port))
+    (display-separated (u8vector->list x) port
+                       prefix: "#u8(" separator: " " display-element: d suffix: ")"))
    ((hash-table? x) ;; hash-table: print as (hash ...)
     ;; NB: also assumes (1) it is a equal? table, and (2) you use :std/sugar ...
     (display-separated
      (sort (map (lambda (k) (cons (r k) (hash-ref x k))) (hash-keys x)) ;; sort keys by repr
            (lambda (krv1 krv2) (string<? (car krv1) (car krv2))))
-     port: port prefix: "(hash " suffix: ")"
+     port prefix: "(hash " suffix: ")"
      display-element: (lambda (x _) (match x ([kr . v] (d "(") (d kr) (d " ") (p v) (d ")"))))))
-   ((representable? x)
-    {:pr x port options})
    ((and (object? x) (find-method (object-type x) ':pr))
     => (lambda (m) (m x port options)))
-   ((and (object? x) (struct-type? (object-type x)))
+   ((and (object? x) (assgetq transparent: (type-descriptor-plist (object-type x))))
     (display-separated
-     (cdr (struct->list x))
-     port: port prefix: (format "(~a " (##type-name (object-type x))) suffix: ")"
-     display-element: p))
+     (cdr (struct->list x)) port
+     prefix: (format "(~a " (##type-name (object-type x))) suffix: ")" display-element: p))
    (else
     (print-unrepresentable-object x port options))))
 
