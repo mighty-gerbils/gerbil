@@ -96,7 +96,7 @@ static ___SCMOBJ ffi_free (void *ptr)
 
 static z_stream *ffi_make_z_stream ()
 {
- z_stream *zs = malloc (sizeof (z_stream));
+ z_stream *zs = (z_stream *)malloc (sizeof (z_stream));
  if (zs) {
   memset (zs, 0, sizeof (z_stream));
  }

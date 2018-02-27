@@ -43,7 +43,7 @@ static long ffi_get_jiffies ()
   goto err;
  }
 
- int r = clock_gettime (CLOCK_MONOTONIC, &ts);
+ int r; r = clock_gettime (CLOCK_MONOTONIC, &ts);
  if (r)
  {
   perror ("clock_gettime");
