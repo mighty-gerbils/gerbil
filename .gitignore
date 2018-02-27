@@ -9,4 +9,3 @@ lib
 *.so
 
 src/std/build-deps
-src/gerbil/runtime/gx-version.scm
