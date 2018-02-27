@@ -4,10 +4,15 @@
 package: std/debug
 
 (import :gerbil/gambit/hvectors
-        (only-in :std/generic type-of)
+        :std/generic
         :std/sort)
 (export memory-usage heap-type-stats dump-heap-stats! walk-heap!
         count-still still-objects still-objects/refcount)
+
+(cond-expand
+  (gerbil-smp
+   (import :gerbil/gambit/threads
+           :std/misc/threads)))
 
 (def (memory-usage)
   (let (stats (##process-statistics))
@@ -48,7 +53,20 @@ package: std/debug
 
 ;;; still objects
 (def (count-still)
-  ;; TODO SMP count on all processors
+  (cond-expand
+    (gerbil-smp
+     (let* ((threads (on-all-processors count-still1))
+            (vals (map thread-join! threads)))
+       (foldl (lambda (v r)
+                (with (((values x y) v)
+                       ((values rx ry) r))
+                  (values (fx+ x rx) (fx+ y ry))))
+              (values 0 0)
+              vals)))
+    (else
+     (count-still1))))
+
+(def (count-still1)
   (let ((still (count-still-objects))
         (refcounted (count-still-objects/refcount)))
     (values still refcounted)))
@@ -60,13 +78,23 @@ package: std/debug
   (get-still count-still-objects get-still-objects))
 
 (def (get-still countf getf)
-  ;; TODO SMP: collect on all processors
-  (let* ((count (countf))
-         (vec   (make-vector (1+ count))) ; + room for the vector itself
-         (count (getf vec)))
-    (when (fx< count (vector-length vec))
-      (vector-shrink! vec count))
-    vec))
+  (cond-expand
+    (gerbil-smp
+     (let* ((threads (on-all-processors (cut get-still1 countf getf)))
+            (vectors (map thread-join! threads)))
+       (append-vectors vectors)))
+    (else
+     (get-still1 countf getf))))
+
+(def (get-still1 countf getf)
+  (let (count (countf))
+    (if (fx> count 0)
+      (let* ((vec   (make-vector (fx1+ count))) ; + room for the vector itself
+             (count (getf vec)))
+        (when (fx< count (vector-length vec))
+          (vector-shrink! vec count))
+        vec)
+      '#())))
 
 ;;; heap walking
 (def (walk-heap! walk: (walk #f) root: (root #f))
