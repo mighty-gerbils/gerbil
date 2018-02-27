@@ -9,7 +9,8 @@ package: std/misc
         thread-dead?
         thread-group-kill!
         thread-raise! thread-abort! thread-abort?
-        thread-async!)
+        thread-async!
+        on-all-processors)
 
 (def (primordial-thread-group)
   (thread-thread-group ##primordial-thread))
@@ -166,3 +167,20 @@ package: std/misc
            (##thread-int! thread thunk)))
         (##void))
       #f)))
+
+;; execute a thunk on all available processors
+;; returns a list of threads for each processor; the threads are pinned on smp
+(def (on-all-processors thunk)
+  (cond-expand
+    (gerbil-smp
+     (let* ((count (##current-vm-processor-count))
+            (processors (map ##processor (iota count)))
+            (threads (map (lambda (proc)
+                            (let (thr (make-thread thunk))
+                              (##thread-pin! thr proc)
+                              thr))
+                          processors)))
+       (for-each thread-start! threads)
+       threads))
+    (else
+     [(spawn-thread thunk)])))
