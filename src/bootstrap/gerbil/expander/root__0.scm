@@ -654,7 +654,14 @@
                                         '#!void)))
                                 '#!void)))
                         '#!void)))
-                '#!void))))))
+                '#!void))
+          (if (gerbil-runtime-smp?)
+              (gx#core-bind-feature!__opt-lambda10722
+               'gerbil-smp
+               '#f
+               '0
+               _self15708_)
+              '#!void)))))
   (bind-method!
    gx#expander-context::t
    'bind-core-features!
