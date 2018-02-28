@@ -1205,7 +1205,7 @@ For example, a simple echo actor:
 
 Beyond structured messages, Gerbil provides protocols for structured interaction.
 Protocol messages can be one way messages (instances of `!event`), a remote
-call (instances of `!call`) or a value for a previous call (`!value` or `!error).
+call (instances of `!call`) or a value for a previous call (`!value` or `!error`).
 
 Protocols are defined with `defproto`, which defines structures and macros
 for using the protocol interfaces, together with marshalling support.
