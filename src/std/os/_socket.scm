@@ -559,7 +559,7 @@ static socklen_t sockaddr_len (struct sockaddr *sa)
 
 #define GETSALEN(sa, salen) \
  socklen_t salen = sockaddr_len (sa); \
- if (salen < 0) return -1;
+ if (salen == (socklen_t)-1) return -1;
 
 static int ffi_bind (int fd, struct sockaddr *sa)
 {
@@ -865,12 +865,17 @@ int ffi_setsockopt_mreq (int fd, int level, int opt, ___SCMOBJ maddr, ___SCMOBJ 
 
 int ffi_setsockopt_mreq_src (int fd, int level, int opt, ___SCMOBJ maddr, ___SCMOBJ iaddr, ___SCMOBJ saddr)
 {
+#ifndef __OpenBSD__
  struct ip_mreq_source mreq;
  socklen_t olen = sizeof (struct ip_mreq_source);
  memcpy (&mreq.imr_multiaddr, U8_DATA (maddr), sizeof (struct in_addr));
  memcpy (&mreq.imr_interface, U8_DATA (iaddr), sizeof (struct in_addr));
  memcpy (&mreq.imr_sourceaddr, U8_DATA (saddr), sizeof (struct in_addr));
  return setsockopt (fd, level, opt, &mreq, olen);
+#else
+ errno = EINVAL;
+ return -1;
+#endif
 }
 
 int ffi_setsockopt_mreq6 (int fd, int level, int opt, ___SCMOBJ maddr, int ifindex)
