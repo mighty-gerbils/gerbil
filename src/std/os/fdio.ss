@@ -4,6 +4,7 @@
 package: std/os
 
 (import :std/os/fd
+        :std/os/fcntl
         :std/os/error)
 (export #t)
 
@@ -17,12 +18,34 @@ package: std/os
     (fdwrite raw bytes start end)
     EAGAIN EWOULDBLOCK))
 
-(extern _read _write)
+(def (open path flags (mode 0))
+  (let* ((fd (check-os-error (_open path flags mode)
+               (open path flags mode)))
+         (raw (fdopen fd (file-direction flags) 'file)))
+    (fd-set-nonblock raw)
+    (fd-set-closeonexec raw)
+    raw))
+
+(def (file-direction flags)
+  (cond
+   ((fx= (fxand flags O_RDWR) O_RDWR)
+    'inout)
+   ((fx= (fxand flags O_RDONLY) O_RDONLY)
+    'in)
+   ((fx= (fxand flags O_WRONLY) O_WRONLY)
+    'out)
+   (else
+    (error "Unspecified file direction" flags))))
+
+(extern _read _write _open)
 
 ;;; FFI impl
 (begin-foreign
   (c-declare "#include <unistd.h>")
   (c-declare "#include <errno.h>")
+  (c-declare "#include <sys/types.h>")
+  (c-declare "#include <sys/stat.h>")
+  (c-declare "#include <fcntl.h>")
 
   (define-macro (define-c-lambda id args ret #!optional (name #f))
     (let ((name (or name (##symbol->string id))))
@@ -44,7 +67,7 @@ package: std/os
            r))))
 
   (namespace ("std/os/fdio#"
-              __read _read __write _write
+              __read _read __write _write _open __open
               __errno))
 
   (define-c-lambda __errno () int
@@ -57,9 +80,12 @@ package: std/os
     "ffi_read")
   (define-c-lambda __write (int scheme-object int int) int
     "ffi_write")
+  (define-c-lambda __open (UTF-8-string int int) int
+    "open")
 
   (define-with-errno _read __read (fd bytes start end))
   (define-with-errno _write __write (fd bytes start end))
+  (define-with-errno _open __open (path flags mode))
 
   (c-declare #<<END-C
 
