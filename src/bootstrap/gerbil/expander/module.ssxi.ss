@@ -83,7 +83,7 @@ package: gerbil/expander
    gx#prelude-context:::init!
    (@case-lambda
     (2 gx#prelude-context:::init!__0)
-    (3 gx#prelude-context:::init!__opt-lambda14022)))
+    (3 gx#prelude-context:::init!__opt-lambda14031)))
   (declare-method gx#prelude-context::t :init! gx#prelude-context:::init! #f)
   (declare-method gx#import-expander::t :init! gx#import-expander:::init! #f)
   (declare-method gx#export-expander::t :init! gx#export-expander:::init! #f)
@@ -107,17 +107,17 @@ package: gerbil/expander
    (@case-lambda
     (1 gx#import-module__0)
     (2 gx#import-module__1)
-    (3 gx#import-module__opt-lambda13240)))
+    (3 gx#import-module__opt-lambda13249)))
   (declare-type
    gx#core-context-prelude
    (@case-lambda
     (0 gx#core-context-prelude__0)
-    (1 gx#core-context-prelude__opt-lambda13205)))
+    (1 gx#core-context-prelude__opt-lambda13214)))
   (declare-type
    gx#core-import-module
    (@case-lambda
     (1 gx#core-import-module__0)
-    (2 gx#core-import-module__opt-lambda13076)))
+    (2 gx#core-import-module__opt-lambda13085)))
   (declare-type
    gx#core-resolve-module-path
    (@case-lambda

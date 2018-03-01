@@ -263,6 +263,13 @@ namespace: gx
          (values prelude module-id module-ns body))))))
 
 (def (core-read-module/lang path)
+  (def (default-read-module-body inp)
+    (let lp ((body []))
+      (let (next (read-syntax inp))
+        (if (eof-object? next)
+          (reverse body)
+          (lp (cons next body))))))
+
   (def (read-body inp pre ns pkg args)
     (let* (((values pre ns pkg)
             (if pkg
@@ -284,9 +291,7 @@ namespace: gx
                          (raise-syntax-error #f
                            "Illegal #lang prelude; read-module-body is not a procedure"
                            path pre proc)))))
-             (else
-              (raise-syntax-error #f
-                "Illegal #lang prelude; does not export read-module-body for syntax" path pre))))
+             (else default-read-module-body)))
            (path-id (core-module-path->namespace path))
            (pkg-id (if pkg (string-append pkg "/" path-id) path-id))
            (module-id (string->symbol pkg-id))

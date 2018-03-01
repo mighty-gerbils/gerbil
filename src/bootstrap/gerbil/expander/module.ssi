@@ -97,8 +97,8 @@ namespace: gx
           gx#current-module-reader-args)
          (%#define-runtime module-context:::init! gx#module-context:::init!)
          (%#begin (%#define-runtime
-                   prelude-context:::init!__opt-lambda14022
-                   gx#prelude-context:::init!__opt-lambda14022)
+                   prelude-context:::init!__opt-lambda14031
+                   gx#prelude-context:::init!__opt-lambda14031)
                   (%#begin (%#define-runtime
                             prelude-context:::init!__0
                             gx#prelude-context:::init!__0)
@@ -121,8 +121,8 @@ namespace: gx
           gx#export-expander::apply-export-expander)
          (%#define-runtime module-source-path gx#module-source-path)
          (%#begin (%#define-runtime
-                   import-module__opt-lambda13240
-                   gx#import-module__opt-lambda13240)
+                   import-module__opt-lambda13249
+                   gx#import-module__opt-lambda13249)
                   (%#begin (%#define-runtime
                             import-module__0
                             gx#import-module__0)
@@ -133,8 +133,8 @@ namespace: gx
          (%#define-runtime eval-module gx#eval-module)
          (%#define-runtime core-eval-module gx#core-eval-module)
          (%#begin (%#define-runtime
-                   core-context-prelude__opt-lambda13205
-                   gx#core-context-prelude__opt-lambda13205)
+                   core-context-prelude__opt-lambda13214
+                   gx#core-context-prelude__opt-lambda13214)
                   (%#begin (%#define-runtime
                             core-context-prelude__0
                             gx#core-context-prelude__0)
@@ -145,8 +145,8 @@ namespace: gx
           core-module->prelude-context
           gx#core-module->prelude-context)
          (%#begin (%#define-runtime
-                   core-import-module__opt-lambda13076
-                   gx#core-import-module__opt-lambda13076)
+                   core-import-module__opt-lambda13085
+                   gx#core-import-module__opt-lambda13085)
                   (%#begin (%#define-runtime
                             core-import-module__0
                             gx#core-import-module__0)
