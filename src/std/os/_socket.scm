@@ -723,7 +723,7 @@ int ffi_getsockname (int fd, struct sockaddr *sa)
 struct sockaddr *ffi_make_sockaddr (int family)
 {
  socklen_t salen = sockaddr_family_len (family);
- if (salen < 0)
+ if (salen == (socklen_t)-1)
   return NULL;
 
  struct sockaddr *sa = (struct sockaddr*)malloc (salen);
