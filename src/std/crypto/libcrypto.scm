@@ -297,7 +297,7 @@ static ___SCMOBJ ffi_DH_free (void *dh);
 static BIGNUM *ffi_DH_pub_key (DH *dh);
 static int ffi_DH_compute_key (___SCMOBJ secret, BIGNUM *pubkey, DH *dh);
 
-#if (defined __OpenBSD__) || (defined LIBRESSL_VERSION_NUMBER)
+#if OPENSSL_VERSION_NUMBER < 0x10002000L || defined (LIBRESSL_VERSION_NUMBER)
 #include "libcrypto-rfc5114.c"
 #endif
 END-C
