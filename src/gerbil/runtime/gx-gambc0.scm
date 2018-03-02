@@ -172,10 +172,11 @@
     (put-plist! ht key rtd-plist)
     (when rtd-mixin
       (for-each (lambda (klass)
-                  (let ((plist (type-descriptor-plist klass)))
-                    (if (assgetq transparent: plist)
-                      (put-plist! ht slots: plist)
-                      (put-plist! ht key plist))))
+                  (when (type-descriptor-mixin klass) ; ignore structs
+                    (let ((plist (type-descriptor-plist klass)))
+                      (if (assgetq transparent: plist)
+                        (put-plist! ht slots: plist)
+                        (put-plist! ht key plist)))))
                 rtd-mixin)))
 
   (let* ((transparent? (assgetq transparent: rtd-plist))
