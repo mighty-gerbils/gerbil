@@ -205,16 +205,24 @@ package: std/generic
               (lp (##fx+ i 1)))
           #f))))
 
-  (let (new-methods (generic-add-method (&generic-table-methods gtab) signature method))
-    (let (mx (&generic-table-mx gtab))
-      (mutex-lock! mx)
-      (set! (&generic-table-methods gtab)
-        new-methods)
-      ;; invalidate cache if it has any entries
-      (when (invalidate? (&generic-table-cache gtab))
-        (set! (&generic-table-cache gtab)
-          (make-vector (##vector-length (&generic-table-cache gtab)) #f)))
-      (mutex-unlock! mx))))
+  (let again ()
+    (let* ((old-methods (&generic-table-methods gtab))
+           (new-methods (generic-add-method old-methods signature method)))
+      (let (mx (&generic-table-mx gtab))
+        (mutex-lock! mx)
+        (cond
+         ((eq? old-methods (&generic-table-methods gtab))
+          (set! (&generic-table-methods gtab)
+            new-methods)
+          ;; invalidate cache if it has any entries
+          (when (invalidate? (&generic-table-cache gtab))
+            (set! (&generic-table-cache gtab)
+              (make-vector (##vector-length (&generic-table-cache gtab)) #f)))
+          (mutex-unlock! mx))
+         (else
+          ;; concurrent redefinition, try again
+          (mutex-unlock! mx)
+          (again)))))))
 
 (def (generic-add-method methods signature method)
   (let recur ((rest methods))
