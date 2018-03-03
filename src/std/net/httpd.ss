@@ -5,7 +5,8 @@ package: std/net
 
 (import :std/net/httpd/mux
         :std/net/httpd/handler
-        :std/net/httpd/server)
+        :std/net/httpd/server
+        :std/net/httpd/file)
 (export start-http-server!
         stop-http-server!
         current-http-server
@@ -20,6 +21,7 @@ package: std/net
         http-response?
         http-response-write
         http-response-begin http-response-chunk http-response-end
+        http-response-file
         http-response-force-output
         http-response-timeout-set!
         set-httpd-request-timeout!
