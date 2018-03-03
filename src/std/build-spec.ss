@@ -87,7 +87,11 @@
     (gxc: "os/fdio" ,@(include-gambit-sharp))
     (gxc: "os/fcntl" ,@(include-gambit-sharp))
     (gxc: "os/pipe" ,@(include-gambit-sharp))
-    (gsc: "os/_socket" ,@(include-gambit-sharp))
+    ,(cond-expand
+       (linux
+        `(gsc: "os/_socket" "-cc-options" "-D_GNU_SOURCE" ,@(include-gambit-sharp)))
+       (else
+        (gsc: "os/_socket" ,@(include-gambit-sharp))))
     (ssi: "os/_socket")
     "os/socket"
     ,@(cond-expand
