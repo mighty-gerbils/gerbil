@@ -15,10 +15,9 @@ package: std/net/httpd
 (declare (not safe))
 
 (def open-flags
-  (cond-expand
-    (linux
-     (fxior O_RDONLY O_NOATIME))
-    (else O_RDONLY)))
+  (if O_NOATIME
+    (fxior O_RDONLY O_NOATIME)
+    O_RDONLY))
 
 (def (http-response-file res headers path)
   (let (file (open path open-flags))
@@ -26,7 +25,7 @@ package: std/net/httpd
 
 (def (http-response-write-file res headers file)
   (let (buf (get-file-buffer))
-    (http-response-begin 200 headers)
+    (http-response-begin res 200 headers)
     (let lp ()
       (let (rd (fdread file buf))
         (cond
