@@ -200,11 +200,11 @@ package: std/net/httpd
       (write-crlf obuf))))
 
 ;; write the next chunk in the response
-(def (http-response-chunk res chunk)
+(def (http-response-chunk res chunk (start 0) (end #f))
   (with ((http-response obuf output) res)
     (unless (eq? output 'CHUNK)
       (error "illegal response; not writing chunks" res output))
-    (write-chunk obuf chunk)))
+    (write-chunk obuf chunk start end)))
 
 ;; end chunked response
 (def (http-response-end res)
@@ -532,25 +532,33 @@ END-C
   (bio-write-u8 CR obuf)
   (bio-write-u8 LF obuf))
 
-(def (write-chunk obuf chunk)
-  (let (len
-        (cond
-         ((u8vector? chunk)
-          (u8vector-length chunk))
-         ((string? chunk)
-          (string-utf8-length chunk))
-         ((not chunk)
-          0)
-         (else
-          (error "Bad chunk; expected u8vector or string" chunk))))
+(def (write-chunk obuf chunk start end)
+  (let* ((end
+          (cond
+           (end end)
+           ((u8vector? chunk)
+            (u8vector-length chunk))
+           ((string? chunk)
+            (string-length chunk))
+           ((not chunk) 0)
+           (else
+            (error "Bad chunk; expected u8vector or string" chunk))))
+         (len
+          (cond
+           ((u8vector? chunk)
+            (fx- end start))
+           ((string? chunk)
+            (string-utf8-length chunk start end))
+           (else
+            0))))
     (when (fx> len 0)
       (bio-write-string (number->string len 16) obuf)
       (write-crlf obuf)
       (cond
        ((u8vector? chunk)
-        (bio-write-bytes chunk obuf))
+        (bio-write-subu8vector chunk start end obuf))
        ((string? chunk)
-        (bio-write-string chunk obuf)))
+        (bio-write-substring chunk start end obuf)))
       (write-crlf obuf))))
 
 (def (write-last-chunk obuf)

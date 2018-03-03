@@ -116,6 +116,7 @@
     "net/httpd/mux"
     "net/httpd/handler"
     "net/httpd/server"
+    "net/httpd/file"
     "net/httpd"
     "net/sasl"
     ;; :std/xml

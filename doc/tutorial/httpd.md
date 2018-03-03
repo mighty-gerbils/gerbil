@@ -37,6 +37,7 @@ and handles 3 request URLs:
 - `/` which greets the requestor
 - `/echo` which echoes back the body of the request
 - `/headers[?json]` which echoes back the headers of the request
+- `/self` which prints the source code of the program
 
 ### The main function
 
@@ -63,6 +64,7 @@ for the various paths we want to handle:
     (http-register-handler httpd "/" root-handler)
     (http-register-handler httpd "/echo" echo-handler)
     (http-register-handler httpd "/headers" headers-handler)
+    (http-register-handler httpd "/self" self-handler)
     (thread-join! httpd)))
 ```
 
@@ -126,6 +128,17 @@ interface.
             headers)
   (http-response-end res))
 
+```
+
+#### The `/self` handler
+
+The self handler responds by printing the server source code.
+The handler uses the `http-response-file` procedure, which sends
+a file as an http response using fast raw device i/o.
+
+```
+(def (self-handler req res)
+  (http-response-file res '(("Content-Type" . "text/plain")) "simpled.ss"))
 ```
 
 #### The default handler

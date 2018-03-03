@@ -14,6 +14,7 @@
     (http-register-handler httpd "/" root-handler)
     (http-register-handler httpd "/echo" echo-handler)
     (http-register-handler httpd "/headers" headers-handler)
+    (http-register-handler httpd "/self" self-handler)
     (thread-join! httpd)))
 
 ;; /
@@ -53,6 +54,11 @@
                (http-response-chunk res (string-append key ": " val "\n"))))
             headers)
   (http-response-end res))
+
+;; /self
+;; own program representation
+(def (self-handler req res)
+  (http-response-file res '(("Content-Type" . "text/plain")) "simpled.ss"))
 
 ;; default
 (def (default-handler req res)

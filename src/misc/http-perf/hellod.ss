@@ -11,10 +11,14 @@ package: misc/http-perf
 (def (run-server address count)
   (let (httpd (start-http-server! address))
     (http-register-handler httpd "/" (if count (profile-handler httpd count) hello-handler))
+    (http-register-handler httpd "/self" self-handler)
     (thread-join! httpd)))
 
 (def (hello-handler req res)
   (http-response-write res 200 '(("Content-Type" . "text/plain")) "hello!\n"))
+
+(def (self-handler req res)
+  (http-response-file res '(("Content-Type" . "text/plain")) "hellod.ss"))
 
 (def (profile-handler httpd count)
   (let (n 0)
