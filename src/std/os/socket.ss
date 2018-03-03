@@ -176,13 +176,13 @@ package: std/os
   (cond-expand
     (linux
      (alet (fd (do-retry-nonblock (_accept4 (fd-e sock) sa)
-                                  (_accept sock sa)
-                                  EAGAIN EWOULDBLOCK))
+                 (socket-accept sock sa)
+                 EAGAIN EWOULDBLOCK))
        (fdopen fd 'inout 'socket)))
     (else
      (alet (fd (do-retry-nonblock (_accept (fd-e sock) sa)
-                                  (_accept sock sa)
-                                  EAGAIN EWOULDBLOCK))
+                 (socket-accept sock sa)
+                 EAGAIN EWOULDBLOCK))
        (let (raw (fdopen fd 'inout 'socket))
          (fd-set-nonblock raw)
          (fd-set-closeonexec raw)
@@ -515,7 +515,7 @@ package: std/os
 
 (defrules defsockopt ()
   ((_ level opt getf setf)
-   (unless (fxnegative? opt)
+   (when opt
      (hash-put! (hash-ref socket-sockopts level)
                 opt
                 (values (@sockopt-getf getf) (@sockopt-setf setf))))))
