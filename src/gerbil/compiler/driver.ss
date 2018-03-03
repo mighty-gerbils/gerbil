@@ -111,18 +111,23 @@ namespace: gxc
       (write `(apply ,mod-main (cdr (command-line)))) (newline)))
 
   (def (static-include gsc-opts home)
-    (def static-dir (path-expand "lib/static" home))
+    (def static-dir
+      (path-expand "lib/static" home))
+    (def user-static-dir
+      (path-expand "lib/static" (getenv "GERBIL_PATH" "~/.gerbil")))
+    (def cppflags
+      (string-append "-I " static-dir " -I " user-static-dir))
+
     (cond
      ((member "-cc-options" gsc-opts)
       => (lambda (rest)
            (let* ((cell (cdr rest))
                   (opt (car cell)))
              (set! (car cell)
-               (string-append opt " -I " static-dir))
+               (string-append opt " " cppflags))
              gsc-opts)))
      (else
-      (cons* "-cc-options" (string-append "-I " static-dir)
-             gsc-opts))))
+      (cons* "-cc-options" cppflags gsc-opts))))
 
   (def (compile-stub output-scm output-bin)
     (let* ((gerbil-home (getenv "GERBIL_HOME"))

@@ -328,6 +328,13 @@
       (when (file-exists? bin)
         (delete-file bin))))
 
+  (def (clean-static-include file)
+    (let* ((filename (path-strip-directory file))
+           (static-path
+            (path-expand filename (path-expand "static" libdir))))
+      (when (file-exists? static-path)
+        (delete-file static-path))))
+
   (let* ((root (pkg-root-dir))
          (path (path-expand pkg root))
          (_ (unless (file-exists? path)
@@ -359,6 +366,8 @@
         ([static-exe: modf . opts]
          (clean-lib (with-prefix modf))
          (clean-bin (pgetq bin: opts modf)))
+        ([static-include: file]
+         (clean-static-include file))
         (unexpected
          (displayln "Ignoring unexpected build artifact " unexpected)))
       build-spec)))
