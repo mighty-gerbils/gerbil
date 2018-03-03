@@ -884,6 +884,7 @@ Embedded HTTP server.
   http-response?
   http-response-write
   http-response-begin http-response-chunk http-response-end
+  http-response-file
   http-response-force-output
   http-response-timeout-set!
   set-httpd-request-timeout!
@@ -1077,7 +1078,7 @@ Reading and writing from raw devices.
 
 ;; exports:
 
-  fdread fdwrite _read _write
+  open fdread fdwrite _read _write
 ```
 
 ### std/os/fcntl
