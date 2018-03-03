@@ -110,6 +110,20 @@ namespace: gxc
       (write '(##namespace (""))) (newline)
       (write `(apply ,mod-main (cdr (command-line)))) (newline)))
 
+  (def (static-include gsc-opts home)
+    (def static-dir (path-expand "lib/static" home))
+    (cond
+     ((member "-cc-options" gsc-opts)
+      => (lambda (rest)
+           (let* ((cell (cdr rest))
+                  (opt (car cell)))
+             (set! (car cell)
+               (string-append opt " -I " static-dir))
+             gsc-opts)))
+     (else
+      (cons* "-cc-options" (string-append "-I " static-dir)
+             gsc-opts))))
+
   (def (compile-stub output-scm output-bin)
     (let* ((gerbil-home (getenv "GERBIL_HOME"))
            (gx-version (path-expand "lib/static/gx-version.scm" gerbil-home))
@@ -128,6 +142,7 @@ namespace: gxc
            (deps (map (cut compile-cache <> gxc-cache) deps))
            (bin-scm (compile-cache bin-scm gxc-cache))
            (gsc-opts (or (pgetq gsc-options: opts) []))
+           (gsc-opts (static-include gsc-opts gerbil-home))
            (gsc-gx-macros (if (gerbil-runtime-smp?)
                             ["-e" "(define-cond-expand-feature|enable-smp|)"
                              "-e" include-gx-gambc-macros]

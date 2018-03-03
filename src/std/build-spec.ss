@@ -139,6 +139,7 @@
           "-cc-options" ,(cppflags "")
           "-ld-options" ,(ldflags "-lcrypto")
           ,@(include-gambit-sharp))
+    (static-include: "crypto/libcrypto-rfc5114.c")
     (ssi: "crypto/libcrypto")
     (gxc: "crypto/etc" ,@(include-gambit-sharp))
     "crypto/digest"

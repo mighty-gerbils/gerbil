@@ -6,14 +6,14 @@ package: gerbil/compiler
    gxc#compile-file
    (@case-lambda
     (1 gxc#compile-file__0)
-    (2 gxc#compile-file__opt-lambda24453)))
+    (2 gxc#compile-file__opt-lambda24471)))
   (declare-type
    gxc#compile-exe-stub
    (@case-lambda
     (1 gxc#compile-exe-stub__0)
-    (2 gxc#compile-exe-stub__opt-lambda24439)))
+    (2 gxc#compile-exe-stub__opt-lambda24457)))
   (declare-type
    gxc#compile-static-exe
    (@case-lambda
     (1 gxc#compile-static-exe__0)
-    (2 gxc#compile-static-exe__opt-lambda24425))))
+    (2 gxc#compile-static-exe__opt-lambda24443))))

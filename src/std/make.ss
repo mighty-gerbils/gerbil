@@ -267,6 +267,8 @@ package: std
     ([static-exe: modf . opts]
      (or (compile-static-exe? modf opts settings)
          (library-deps-newer? modf settings depgraph opts)))
+    ([static-include: file]
+     (copy-static? file settings))
     ([copy: file]
      (copy-compiled? file settings))
     (else
@@ -311,6 +313,8 @@ package: std
      (compile-exe modf opts settings))
     ([static-exe: modf . opts]
      (compile-static-exe modf opts settings))
+    ([static-include: file]
+     (copy-static file settings))
     ([copy: file]
      (copy-compiled file settings))
     (else
@@ -471,6 +475,20 @@ package: std
   (displayln "... compile static exe " mod " -> " (path-strip-directory binpath))
   (gxc#compile-static-exe srcpath gxc-opts))
 
+(def (copy-static? file settings)
+  (def spath (static-file-path file settings))
+  (and (pgetq static: settings)
+       (or (not (file-exists? spath))
+           (file-newer? file spath))))
+
+(def (copy-static file settings)
+  (def spath (static-file-path file settings))
+
+  (displayln "... copy static include " file)
+  (when (file-exists? spath)
+    (delete-file spath))
+  (copy-file file spath))
+
 (def (copy-compiled? file settings)
   (def srcpath (source-path file #f settings))
   (def libpath (library-path file #f settings))
@@ -537,3 +555,9 @@ package: std
             (path-strip-extension base)))
          (scm (string-append base ".scm")))
     (path-expand scm staticdir)))
+
+(def (static-file-path file settings)
+  (let* ((libdir (pgetq libdir: settings))
+         (staticdir (path-expand "static" libdir))
+         (filename (path-strip-directory file)))
+    (path-expand filename staticdir)))

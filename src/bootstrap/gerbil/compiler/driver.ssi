@@ -10,29 +10,29 @@ namespace: gxc
           (spec: (:gerbil/gambit/misc) (0 pretty-print 0 pretty-print))
           (spec:
            (:gerbil/gambit/ports)
-           (0 process-status 0 process-status)
-           (0 open-process 0 open-process))
+           (0 open-process 0 open-process)
+           (0 process-status 0 process-status))
           (spec:
            (:gerbil/gambit/os)
+           (0 file-info 0 file-info)
            (0 time->seconds 0 time->seconds)
            (0 file-info-size 0 file-info-size)
-           (0 current-time 0 current-time)
-           (0 file-info 0 file-info)))
+           (0 current-time 0 current-time)))
          (%#export
           (spec: 0 compile-file compile-file)
           (spec: 0 compile-exe-stub compile-exe-stub)
           (spec: 0 compile-static-exe compile-static-exe))
          (%#define-runtime compile-timestamp gxc#compile-timestamp)
          (%#begin (%#define-runtime
-                   compile-file__opt-lambda24453
-                   gxc#compile-file__opt-lambda24453)
+                   compile-file__opt-lambda24471
+                   gxc#compile-file__opt-lambda24471)
                   (%#begin (%#define-runtime
                             compile-file__0
                             gxc#compile-file__0)
                            (%#define-runtime compile-file gxc#compile-file)))
          (%#begin (%#define-runtime
-                   compile-exe-stub__opt-lambda24439
-                   gxc#compile-exe-stub__opt-lambda24439)
+                   compile-exe-stub__opt-lambda24457
+                   gxc#compile-exe-stub__opt-lambda24457)
                   (%#begin (%#define-runtime
                             compile-exe-stub__0
                             gxc#compile-exe-stub__0)
@@ -40,8 +40,8 @@ namespace: gxc
                             compile-exe-stub
                             gxc#compile-exe-stub)))
          (%#begin (%#define-runtime
-                   compile-static-exe__opt-lambda24425
-                   gxc#compile-static-exe__opt-lambda24425)
+                   compile-static-exe__opt-lambda24443
+                   gxc#compile-static-exe__opt-lambda24443)
                   (%#begin (%#define-runtime
                             compile-static-exe__0
                             gxc#compile-static-exe__0)

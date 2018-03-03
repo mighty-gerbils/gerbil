@@ -12,8 +12,7 @@
 (def build-spec-static
   '((static-exe: "nullproto"
                  "-ld-options" "-lcrypto"
-                 "-prelude" "(declare (not safe))"
-                 "-e" "(include \"~~lib/_gambit#.scm\")")))
+                 "-prelude" "(declare (not safe))")))
 
 (def srcdir (path-normalize (path-directory (this-source-file))))
 
