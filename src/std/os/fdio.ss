@@ -19,12 +19,20 @@ package: std/os
     EAGAIN EWOULDBLOCK))
 
 (def (open path flags (mode 0))
-  (let* ((fd (check-os-error (_open path flags mode)
-               (open path flags mode)))
-         (raw (fdopen fd (file-direction flags) 'file)))
-    (fd-set-nonblock raw)
-    (fd-set-closeonexec raw)
-    raw))
+  (cond-expand
+    (linux
+     (let* ((flags (fxior flags O_NONBLOCK O_CLOEXEC))
+            (fd (check-os-error (_open path flags mode)
+                  (open path flags mode)))
+            (raw (fdopen fd (file-direction flags) 'file)))
+       raw))
+    (else
+     (let* ((fd (check-os-error (_open path flags mode)
+                  (open path flags mode)))
+            (raw (fdopen fd (file-direction flags) 'file)))
+       (fd-set-nonblock raw)
+       (fd-set-closeonexec raw)
+       raw))))
 
 (def (file-direction flags)
   (cond
