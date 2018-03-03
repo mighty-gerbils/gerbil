@@ -3,7 +3,8 @@
 ;;; httpd file response handler
 package: std/net/httpd
 
-(import :std/net/httpd/handler
+(import :gerbil/gambit/ports
+        :std/net/httpd/handler
         :std/os/fd
         :std/os/fdio
         :std/os/fcntl
@@ -21,7 +22,10 @@ package: std/net/httpd
 
 (def (http-response-file res headers path)
   (let (file (open path open-flags))
-    (http-response-write-file res headers file)))
+    (try
+     (http-response-write-file res headers file)
+     (finally
+      (close-port file)))))
 
 (def (http-response-write-file res headers file)
   (let (buf (get-file-buffer))
