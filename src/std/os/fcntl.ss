@@ -64,8 +64,9 @@ package: std/os
 ;;; FFI impl
 (begin-foreign
   (c-declare "#include <errno.h>")
-  (c-declare "#include <sys/types.h>")
   (c-declare "#include <unistd.h>")
+  (c-declare "#include <sys/types.h>")
+  (c-declare "#include <sys/stat.h>")
   (c-declare "#include <fcntl.h>")
 
   (define-macro (define-c-lambda id args ret #!optional (name #f))
