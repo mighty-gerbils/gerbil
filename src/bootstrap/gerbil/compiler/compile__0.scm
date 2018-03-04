@@ -1222,7 +1222,7 @@
           (gxc#generate-runtime-binding-id _id10977_)
           (gxc#generate-runtime-temporary__0))))
   (begin
-    (define gxc#generate-runtime-gensym-reference__opt-lambda10955
+    (define gxc#generate-runtime-gensym-reference__%
       (lambda (_sym10957_ _quote?10958_)
         (let* ((_ht10960_
                 (##structure-ref
@@ -1248,7 +1248,7 @@
       (define gxc#generate-runtime-gensym-reference__0
         (lambda (_sym10970_)
           (let ((_quote?10972_ '#f))
-            (gxc#generate-runtime-gensym-reference__opt-lambda10955
+            (gxc#generate-runtime-gensym-reference__%
              _sym10970_
              _quote?10972_))))
       (define gxc#generate-runtime-gensym-reference
@@ -1257,8 +1257,7 @@
             (cond ((fx= _g12076_ 1)
                    (apply gxc#generate-runtime-gensym-reference__0 _g12077_))
                   ((fx= _g12076_ 2)
-                   (apply gxc#generate-runtime-gensym-reference__opt-lambda10955
-                          _g12077_))
+                   (apply gxc#generate-runtime-gensym-reference__% _g12077_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#generate-runtime-gensym-reference
@@ -1309,7 +1308,7 @@
                         (_K1091810942_ _mark10952_ _eid10950_)))
                     (_E1091710926_)))))))
   (begin
-    (define gxc#generate-runtime-temporary__opt-lambda10899
+    (define gxc#generate-runtime-temporary__%
       (lambda (_top10901_)
         (if _top10901_
             (let ((_ns10903_
@@ -1333,15 +1332,14 @@
       (define gxc#generate-runtime-temporary__0
         (lambda ()
           (let ((_top10910_ '#f))
-            (gxc#generate-runtime-temporary__opt-lambda10899 _top10910_))))
+            (gxc#generate-runtime-temporary__% _top10910_))))
       (define gxc#generate-runtime-temporary
         (lambda _g12079_
           (let ((_g12078_ (length _g12079_)))
             (cond ((fx= _g12078_ 0)
                    (apply gxc#generate-runtime-temporary__0 _g12079_))
                   ((fx= _g12078_ 1)
-                   (apply gxc#generate-runtime-temporary__opt-lambda10899
-                          _g12079_))
+                   (apply gxc#generate-runtime-temporary__% _g12079_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#generate-runtime-temporary
@@ -1502,8 +1500,7 @@
                                                          ((lambda ()
                                                             (let* ((_tmp10517_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (gxc#generate-runtime-temporary__opt-lambda10899
-                             '#t))
+                            (gxc#generate-runtime-temporary__% '#t))
                            (_body10621_
                             (let _lp10519_ ((_rest10521_ _L10480_)
                                             (_k10522_ '0)
@@ -3004,7 +3001,7 @@
                       (_g88908918_ _g88918921_)))))
           (_g88899020_ _stx8883_)))))
   (begin
-    (define gxc#generate-runtime-let-values%__opt-lambda7946
+    (define gxc#generate-runtime-let-values%__%
       (lambda (_stx7948_ _compiled-body?7949_)
         (letrec ((_generate-simple7951_
                   (lambda (_hd8870_ _body8871_)
@@ -3700,7 +3697,7 @@
       (define gxc#generate-runtime-let-values%__0
         (lambda (_stx8876_)
           (let ((_compiled-body?8878_ '#f))
-            (gxc#generate-runtime-let-values%__opt-lambda7946
+            (gxc#generate-runtime-let-values%__%
              _stx8876_
              _compiled-body?8878_))))
       (define gxc#generate-runtime-let-values%
@@ -3709,8 +3706,7 @@
             (cond ((fx= _g12104_ 1)
                    (apply gxc#generate-runtime-let-values%__0 _g12105_))
                   ((fx= _g12104_ 2)
-                   (apply gxc#generate-runtime-let-values%__opt-lambda7946
-                          _g12105_))
+                   (apply gxc#generate-runtime-let-values%__% _g12105_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#generate-runtime-let-values%
@@ -3783,7 +3779,7 @@
                       (_g78567922_ _g78607925_)))))
           (_g78557944_ _rest7852_)))))
   (begin
-    (define gxc#generate-runtime-letrec-values%__opt-lambda7525
+    (define gxc#generate-runtime-letrec-values%__%
       (lambda (_stx7527_ _compiled-body?7528_)
         (letrec ((_generate-simple7530_
                   (lambda (_hd7834_ _body7835_)
@@ -4011,7 +4007,7 @@
       (define gxc#generate-runtime-letrec-values%__0
         (lambda (_stx7840_)
           (let ((_compiled-body?7842_ '#f))
-            (gxc#generate-runtime-letrec-values%__opt-lambda7525
+            (gxc#generate-runtime-letrec-values%__%
              _stx7840_
              _compiled-body?7842_))))
       (define gxc#generate-runtime-letrec-values%
@@ -4020,8 +4016,7 @@
             (cond ((fx= _g12106_ 1)
                    (apply gxc#generate-runtime-letrec-values%__0 _g12107_))
                   ((fx= _g12106_ 2)
-                   (apply gxc#generate-runtime-letrec-values%__opt-lambda7525
-                          _g12107_))
+                   (apply gxc#generate-runtime-letrec-values%__% _g12107_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#generate-runtime-letrec-values%
@@ -4427,7 +4422,7 @@
                                         (eof-object? _datum6888_)))))))
                       _datum6888_
                       (if (uninterned-symbol? _datum6888_)
-                          (gxc#generate-runtime-gensym-reference__opt-lambda10955
+                          (gxc#generate-runtime-gensym-reference__%
                            _datum6888_
                            '#t)
                           (if (pair? _datum6888_)
@@ -5447,8 +5442,7 @@
                    (cons _expr5543_ (unbox (gxc#current-compile-lift))))))
                (_generate-simple5371_
                 (lambda (_stxq5538_)
-                  (let ((_gid5540_
-                         (gxc#generate-runtime-temporary__opt-lambda10899 '#t))
+                  (let ((_gid5540_ (gxc#generate-runtime-temporary__% '#t))
                         (_qid5541_
                          (gxc#generate-runtime-identifier _stxq5538_)))
                     (begin
@@ -5473,9 +5467,7 @@
                 (lambda (_stxq5528_ _marks5529_)
                   (let* ((_mark-refs5531_
                           (map _generate-mark5373_ _marks5529_))
-                         (_gid5533_
-                          (gxc#generate-runtime-temporary__opt-lambda10899
-                           '#t))
+                         (_gid5533_ (gxc#generate-runtime-temporary__% '#t))
                          (_qid5535_
                           (gxc#generate-runtime-identifier _stxq5528_)))
                     (begin
@@ -5506,8 +5498,7 @@
                     (if _$e5516_
                         (values _$e5516_)
                         (let* ((_gid5519_
-                                (gxc#generate-runtime-temporary__opt-lambda10899
-                                 '#t))
+                                (gxc#generate-runtime-temporary__% '#t))
                                (_repr5521_ (_serialize-mark5374_ _mark5514_))
                                (_ctx5523_
                                 (gx#core-context-top__1

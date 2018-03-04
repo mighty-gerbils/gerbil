@@ -990,7 +990,7 @@
                     (_E97129727_)))))
         (_E97119761_))))
   (begin
-    (define gx#core-expand-lambda%__opt-lambda9650
+    (define gx#core-expand-lambda%__%
       (lambda (_stx9652_ _wrap?9653_)
         (let* ((_e96549664_ _stx9652_)
                (_E96569668_
@@ -1046,13 +1046,12 @@
       (define gx#core-expand-lambda%__0
         (lambda (_stx9702_)
           (let ((_wrap?9704_ '#t))
-            (gx#core-expand-lambda%__opt-lambda9650 _stx9702_ _wrap?9704_))))
+            (gx#core-expand-lambda%__% _stx9702_ _wrap?9704_))))
       (define gx#core-expand-lambda%
         (lambda _g10694_
           (let ((_g10693_ (length _g10694_)))
             (cond ((fx= _g10693_ 1) (apply gx#core-expand-lambda%__0 _g10694_))
-                  ((fx= _g10693_ 2)
-                   (apply gx#core-expand-lambda%__opt-lambda9650 _g10694_))
+                  ((fx= _g10693_ 2) (apply gx#core-expand-lambda%__% _g10694_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand-lambda%
@@ -1076,7 +1075,7 @@
                                 '%#case-lambda
                                 (gx#stx-map1
                                  (lambda (_clause9642_)
-                                   (gx#core-expand-lambda%__opt-lambda9650
+                                   (gx#core-expand-lambda%__%
                                     (gx#stx-wrap-source
                                      (cons '%#case-lambda-clause _clause9642_)
                                      (let ((_$e9644_
@@ -1147,7 +1146,7 @@
                     (_E95739585_)))))
         (_E95729612_))))
   (begin
-    (define gx#core-expand-letrec-values%__opt-lambda9513
+    (define gx#core-expand-letrec-values%__%
       (lambda (_stx9515_ _form9516_)
         (let* ((_e95179527_ _stx9515_)
                (_E95199531_
@@ -1205,26 +1204,21 @@
       (define gx#core-expand-letrec-values%__0
         (lambda (_stx9563_)
           (let ((_form9565_ '%#letrec-values))
-            (gx#core-expand-letrec-values%__opt-lambda9513
-             _stx9563_
-             _form9565_))))
+            (gx#core-expand-letrec-values%__% _stx9563_ _form9565_))))
       (define gx#core-expand-letrec-values%
         (lambda _g10696_
           (let ((_g10695_ (length _g10696_)))
             (cond ((fx= _g10695_ 1)
                    (apply gx#core-expand-letrec-values%__0 _g10696_))
                   ((fx= _g10695_ 2)
-                   (apply gx#core-expand-letrec-values%__opt-lambda9513
-                          _g10696_))
+                   (apply gx#core-expand-letrec-values%__% _g10696_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand-letrec-values%
                     _g10696_))))))))
   (define gx#core-expand-letrec*-values%
     (lambda (_stx9512_)
-      (gx#core-expand-letrec-values%__opt-lambda9513
-       _stx9512_
-       '%#letrec*-values)))
+      (gx#core-expand-letrec-values%__% _stx9512_ '%#letrec*-values)))
   (define gx#core-expand-let-bind?
     (lambda (_stx9469_)
       (if (gx#stx-list? _stx9469_)
@@ -1412,7 +1406,7 @@
                                              '#!void))
                                            (gx#stx-for-each2
                                             (lambda (_g92879290_ _g92889292_)
-                                              (gx#core-expand-let-bind-syntax!__opt-lambda9105
+                                              (gx#core-expand-let-bind-syntax!__%
                                                _g92879290_
                                                _g92889292_
                                                '#t))
@@ -1504,7 +1498,7 @@
                     (_E91659177_)))))
         (_E91649201_))))
   (begin
-    (define gx#core-expand-let-bind-syntax!__opt-lambda9105
+    (define gx#core-expand-let-bind-syntax!__%
       (lambda (_bind9107_ _e9108_ _rebind?9109_)
         (let* ((_e91109120_ _bind9107_)
                (_E91129124_
@@ -1536,7 +1530,7 @@
       (define gx#core-expand-let-bind-syntax!__0
         (lambda (_bind9153_ _e9154_)
           (let ((_rebind?9156_ '#f))
-            (gx#core-expand-let-bind-syntax!__opt-lambda9105
+            (gx#core-expand-let-bind-syntax!__%
              _bind9153_
              _e9154_
              _rebind?9156_))))
@@ -1546,8 +1540,7 @@
             (cond ((fx= _g10699_ 2)
                    (apply gx#core-expand-let-bind-syntax!__0 _g10700_))
                   ((fx= _g10699_ 3)
-                   (apply gx#core-expand-let-bind-syntax!__opt-lambda9105
-                          _g10700_))
+                   (apply gx#core-expand-let-bind-syntax!__% _g10700_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand-let-bind-syntax!
@@ -2170,7 +2163,7 @@
                       (_E83628371_)))))
           (_E83618385_)))))
   (begin
-    (define gx#macro-expand-let-values__opt-lambda8256
+    (define gx#macro-expand-let-values__%
       (lambda (_stx8258_ _form8259_)
         (letrec ((_generate8261_
                   (lambda (_bind8304_)
@@ -2251,28 +2244,24 @@
       (define gx#macro-expand-let-values__0
         (lambda (_stx8350_)
           (let ((_form8352_ '%#let-values))
-            (gx#macro-expand-let-values__opt-lambda8256
-             _stx8350_
-             _form8352_))))
+            (gx#macro-expand-let-values__% _stx8350_ _form8352_))))
       (define gx#macro-expand-let-values
         (lambda _g10702_
           (let ((_g10701_ (length _g10702_)))
             (cond ((fx= _g10701_ 1)
                    (apply gx#macro-expand-let-values__0 _g10702_))
                   ((fx= _g10701_ 2)
-                   (apply gx#macro-expand-let-values__opt-lambda8256 _g10702_))
+                   (apply gx#macro-expand-let-values__% _g10702_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#macro-expand-let-values
                     _g10702_))))))))
   (define gx#macro-expand-letrec-values
     (lambda (_stx8255_)
-      (gx#macro-expand-let-values__opt-lambda8256 _stx8255_ '%#letrec-values)))
+      (gx#macro-expand-let-values__% _stx8255_ '%#letrec-values)))
   (define gx#macro-expand-letrec*-values
     (lambda (_stx8253_)
-      (gx#macro-expand-let-values__opt-lambda8256
-       _stx8253_
-       '%#letrec*-values)))
+      (gx#macro-expand-let-values__% _stx8253_ '%#letrec*-values)))
   (define gx#macro-expand-if
     (lambda (_stx8144_)
       (let* ((_e81458171_ _stx8144_)
@@ -2426,7 +2415,7 @@
           (if (not (gx#underscore? _x8110_)) _x8110_ '#f)
           '#f)))
   (begin
-    (define gx#check-duplicate-identifiers__opt-lambda8054
+    (define gx#check-duplicate-identifiers__%
       (lambda (_stx8056_ _where8057_)
         (let _lp8059_ ((_rest8061_ (gx#syntax->list _stx8056_)))
           (let* ((_rest80628070_ _rest8061_)
@@ -2462,17 +2451,14 @@
       (define gx#check-duplicate-identifiers__0
         (lambda (_stx8103_)
           (let ((_where8105_ _stx8103_))
-            (gx#check-duplicate-identifiers__opt-lambda8054
-             _stx8103_
-             _where8105_))))
+            (gx#check-duplicate-identifiers__% _stx8103_ _where8105_))))
       (define gx#check-duplicate-identifiers
         (lambda _g10704_
           (let ((_g10703_ (length _g10704_)))
             (cond ((fx= _g10703_ 1)
                    (apply gx#check-duplicate-identifiers__0 _g10704_))
                   ((fx= _g10703_ 2)
-                   (apply gx#check-duplicate-identifiers__opt-lambda8054
-                          _g10704_))
+                   (apply gx#check-duplicate-identifiers__% _g10704_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#check-duplicate-identifiers
@@ -2485,12 +2471,12 @@
            (if _$e8052_ _$e8052_ (gx#stx-false? _x8050_))))
        _stx8048_)))
   (begin
-    (define gx#core-bind-values!__opt-lambda8010
+    (define gx#core-bind-values!__%
       (lambda (_stx8012_ _rebind?8013_ _phi8014_ _ctx8015_)
         (gx#stx-for-each1
          (lambda (_id8017_)
            (if (gx#identifier? _id8017_)
-               (gx#core-bind-runtime!__opt-lambda7949
+               (gx#core-bind-runtime!__%
                 _id8017_
                 _rebind?8013_
                 _phi8014_
@@ -2503,7 +2489,7 @@
           (let* ((_rebind?8024_ '#f)
                  (_phi8026_ (gx#current-expander-phi))
                  (_ctx8028_ (gx#current-expander-context)))
-            (gx#core-bind-values!__opt-lambda8010
+            (gx#core-bind-values!__%
              _stx8022_
              _rebind?8024_
              _phi8026_
@@ -2512,7 +2498,7 @@
         (lambda (_stx8030_ _rebind?8031_)
           (let* ((_phi8033_ (gx#current-expander-phi))
                  (_ctx8035_ (gx#current-expander-context)))
-            (gx#core-bind-values!__opt-lambda8010
+            (gx#core-bind-values!__%
              _stx8030_
              _rebind?8031_
              _phi8033_
@@ -2520,7 +2506,7 @@
       (define gx#core-bind-values!__2
         (lambda (_stx8037_ _rebind?8038_ _phi8039_)
           (let ((_ctx8041_ (gx#current-expander-context)))
-            (gx#core-bind-values!__opt-lambda8010
+            (gx#core-bind-values!__%
              _stx8037_
              _rebind?8038_
              _phi8039_
@@ -2531,8 +2517,7 @@
             (cond ((fx= _g10705_ 1) (apply gx#core-bind-values!__0 _g10706_))
                   ((fx= _g10705_ 2) (apply gx#core-bind-values!__1 _g10706_))
                   ((fx= _g10705_ 3) (apply gx#core-bind-values!__2 _g10706_))
-                  ((fx= _g10705_ 4)
-                   (apply gx#core-bind-values!__opt-lambda8010 _g10706_))
+                  ((fx= _g10705_ 4) (apply gx#core-bind-values!__% _g10706_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-values!
@@ -2559,7 +2544,7 @@
             (gx#core-quote-syntax__0 _id7992_)
             (if (not _bind7995_)
                 (if (let ((_$e7997_
-                           (gx#core-context-rebind?__opt-lambda4765
+                           (gx#core-context-rebind?__%
                             (gx#core-context-top__0))))
                       (if _$e7997_
                           _$e7997_
@@ -2576,15 +2561,11 @@
                  _form7993_
                  _id7992_))))))
   (begin
-    (define gx#core-bind-runtime!__opt-lambda7949
+    (define gx#core-bind-runtime!__%
       (lambda (_id7951_ _rebind?7952_ _phi7953_ _ctx7954_)
         (let* ((_key7956_ (gx#core-identifier-key _id7951_))
                (_eid7958_
-                (gx#make-binding-id__opt-lambda7716
-                 _key7956_
-                 '#f
-                 _phi7953_
-                 _ctx7954_))
+                (gx#make-binding-id__% _key7956_ '#f _phi7953_ _ctx7954_))
                (_bind7960_
                 (if (##structure-instance-of? _ctx7954_ 'gx#module-context::t)
                     (##structure
@@ -2612,7 +2593,7 @@
                              _eid7958_
                              _key7956_
                              _phi7953_))))))
-          (gx#bind-identifier!__opt-lambda5212
+          (gx#bind-identifier!__%
            _id7951_
            _bind7960_
            _rebind?7952_
@@ -2624,7 +2605,7 @@
           (let* ((_rebind?7968_ '#f)
                  (_phi7970_ (gx#current-expander-phi))
                  (_ctx7972_ (gx#current-expander-context)))
-            (gx#core-bind-runtime!__opt-lambda7949
+            (gx#core-bind-runtime!__%
              _id7966_
              _rebind?7968_
              _phi7970_
@@ -2633,7 +2614,7 @@
         (lambda (_id7974_ _rebind?7975_)
           (let* ((_phi7977_ (gx#current-expander-phi))
                  (_ctx7979_ (gx#current-expander-context)))
-            (gx#core-bind-runtime!__opt-lambda7949
+            (gx#core-bind-runtime!__%
              _id7974_
              _rebind?7975_
              _phi7977_
@@ -2641,7 +2622,7 @@
       (define gx#core-bind-runtime!__2
         (lambda (_id7981_ _rebind?7982_ _phi7983_)
           (let ((_ctx7985_ (gx#current-expander-context)))
-            (gx#core-bind-runtime!__opt-lambda7949
+            (gx#core-bind-runtime!__%
              _id7981_
              _rebind?7982_
              _phi7983_
@@ -2652,14 +2633,13 @@
             (cond ((fx= _g10707_ 1) (apply gx#core-bind-runtime!__0 _g10708_))
                   ((fx= _g10707_ 2) (apply gx#core-bind-runtime!__1 _g10708_))
                   ((fx= _g10707_ 3) (apply gx#core-bind-runtime!__2 _g10708_))
-                  ((fx= _g10707_ 4)
-                   (apply gx#core-bind-runtime!__opt-lambda7949 _g10708_))
+                  ((fx= _g10707_ 4) (apply gx#core-bind-runtime!__% _g10708_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-runtime!
                     _g10708_))))))))
   (begin
-    (define gx#core-bind-runtime-reference!__opt-lambda7904
+    (define gx#core-bind-runtime-reference!__%
       (lambda (_id7906_ _eid7907_ _rebind?7908_ _phi7909_ _ctx7910_)
         (let* ((_key7912_ (gx#core-identifier-key _id7906_))
                (_bind7914_
@@ -2681,7 +2661,7 @@
                          _eid7907_
                          _key7912_
                          _phi7909_)))))
-          (gx#bind-identifier!__opt-lambda5212
+          (gx#bind-identifier!__%
            _id7906_
            _bind7914_
            _rebind?7908_
@@ -2693,7 +2673,7 @@
           (let* ((_rebind?7923_ '#f)
                  (_phi7925_ (gx#current-expander-phi))
                  (_ctx7927_ (gx#current-expander-context)))
-            (gx#core-bind-runtime-reference!__opt-lambda7904
+            (gx#core-bind-runtime-reference!__%
              _id7920_
              _eid7921_
              _rebind?7923_
@@ -2703,7 +2683,7 @@
         (lambda (_id7929_ _eid7930_ _rebind?7931_)
           (let* ((_phi7933_ (gx#current-expander-phi))
                  (_ctx7935_ (gx#current-expander-context)))
-            (gx#core-bind-runtime-reference!__opt-lambda7904
+            (gx#core-bind-runtime-reference!__%
              _id7929_
              _eid7930_
              _rebind?7931_
@@ -2712,7 +2692,7 @@
       (define gx#core-bind-runtime-reference!__2
         (lambda (_id7937_ _eid7938_ _rebind?7939_ _phi7940_)
           (let ((_ctx7942_ (gx#current-expander-context)))
-            (gx#core-bind-runtime-reference!__opt-lambda7904
+            (gx#core-bind-runtime-reference!__%
              _id7937_
              _eid7938_
              _rebind?7939_
@@ -2728,16 +2708,15 @@
                   ((fx= _g10709_ 4)
                    (apply gx#core-bind-runtime-reference!__2 _g10710_))
                   ((fx= _g10709_ 5)
-                   (apply gx#core-bind-runtime-reference!__opt-lambda7904
-                          _g10710_))
+                   (apply gx#core-bind-runtime-reference!__% _g10710_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-runtime-reference!
                     _g10710_))))))))
   (begin
-    (define gx#core-bind-extern!__opt-lambda7864
+    (define gx#core-bind-extern!__%
       (lambda (_id7866_ _eid7867_ _rebind?7868_ _phi7869_ _ctx7870_)
-        (gx#bind-identifier!__opt-lambda5212
+        (gx#bind-identifier!__%
          _id7866_
          (##structure
           gx#extern-binding::t
@@ -2753,7 +2732,7 @@
           (let* ((_rebind?7878_ '#f)
                  (_phi7880_ (gx#current-expander-phi))
                  (_ctx7882_ (gx#current-expander-context)))
-            (gx#core-bind-extern!__opt-lambda7864
+            (gx#core-bind-extern!__%
              _id7875_
              _eid7876_
              _rebind?7878_
@@ -2763,7 +2742,7 @@
         (lambda (_id7884_ _eid7885_ _rebind?7886_)
           (let* ((_phi7888_ (gx#current-expander-phi))
                  (_ctx7890_ (gx#current-expander-context)))
-            (gx#core-bind-extern!__opt-lambda7864
+            (gx#core-bind-extern!__%
              _id7884_
              _eid7885_
              _rebind?7886_
@@ -2772,7 +2751,7 @@
       (define gx#core-bind-extern!__2
         (lambda (_id7892_ _eid7893_ _rebind?7894_ _phi7895_)
           (let ((_ctx7897_ (gx#current-expander-context)))
-            (gx#core-bind-extern!__opt-lambda7864
+            (gx#core-bind-extern!__%
              _id7892_
              _eid7893_
              _rebind?7894_
@@ -2784,16 +2763,15 @@
             (cond ((fx= _g10711_ 2) (apply gx#core-bind-extern!__0 _g10712_))
                   ((fx= _g10711_ 3) (apply gx#core-bind-extern!__1 _g10712_))
                   ((fx= _g10711_ 4) (apply gx#core-bind-extern!__2 _g10712_))
-                  ((fx= _g10711_ 5)
-                   (apply gx#core-bind-extern!__opt-lambda7864 _g10712_))
+                  ((fx= _g10711_ 5) (apply gx#core-bind-extern!__% _g10712_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-extern!
                     _g10712_))))))))
   (begin
-    (define gx#core-bind-syntax!__opt-lambda7818
+    (define gx#core-bind-syntax!__%
       (lambda (_id7820_ _e7821_ _rebind?7822_ _phi7823_ _ctx7824_)
-        (gx#bind-identifier!__opt-lambda5212
+        (gx#bind-identifier!__%
          _id7820_
          (let ((_key7829_ (gx#core-identifier-key _id7820_))
                (_e7830_ (if (let ((_$e7826_
@@ -2813,11 +2791,7 @@
                              _phi7823_))))
            (##structure
             gx#syntax-binding::t
-            (gx#make-binding-id__opt-lambda7716
-             _key7829_
-             '#t
-             _phi7823_
-             _ctx7824_)
+            (gx#make-binding-id__% _key7829_ '#t _phi7823_ _ctx7824_)
             _key7829_
             _phi7823_
             _e7830_))
@@ -2830,7 +2804,7 @@
           (let* ((_rebind?7838_ '#f)
                  (_phi7840_ (gx#current-expander-phi))
                  (_ctx7842_ (gx#current-expander-context)))
-            (gx#core-bind-syntax!__opt-lambda7818
+            (gx#core-bind-syntax!__%
              _id7835_
              _e7836_
              _rebind?7838_
@@ -2840,7 +2814,7 @@
         (lambda (_id7844_ _e7845_ _rebind?7846_)
           (let* ((_phi7848_ (gx#current-expander-phi))
                  (_ctx7850_ (gx#current-expander-context)))
-            (gx#core-bind-syntax!__opt-lambda7818
+            (gx#core-bind-syntax!__%
              _id7844_
              _e7845_
              _rebind?7846_
@@ -2849,7 +2823,7 @@
       (define gx#core-bind-syntax!__2
         (lambda (_id7852_ _e7853_ _rebind?7854_ _phi7855_)
           (let ((_ctx7857_ (gx#current-expander-context)))
-            (gx#core-bind-syntax!__opt-lambda7818
+            (gx#core-bind-syntax!__%
              _id7852_
              _e7853_
              _rebind?7854_
@@ -2861,16 +2835,15 @@
             (cond ((fx= _g10713_ 2) (apply gx#core-bind-syntax!__0 _g10714_))
                   ((fx= _g10713_ 3) (apply gx#core-bind-syntax!__1 _g10714_))
                   ((fx= _g10713_ 4) (apply gx#core-bind-syntax!__2 _g10714_))
-                  ((fx= _g10713_ 5)
-                   (apply gx#core-bind-syntax!__opt-lambda7818 _g10714_))
+                  ((fx= _g10713_ 5) (apply gx#core-bind-syntax!__% _g10714_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-syntax!
                     _g10714_))))))))
   (begin
-    (define gx#core-bind-root-syntax!__opt-lambda7801
+    (define gx#core-bind-root-syntax!__%
       (lambda (_id7803_ _e7804_ _rebind?7805_)
-        (gx#core-bind-syntax!__opt-lambda7818
+        (gx#core-bind-syntax!__%
          _id7803_
          _e7804_
          _rebind?7805_
@@ -2880,34 +2853,27 @@
       (define gx#core-bind-root-syntax!__0
         (lambda (_id7810_ _e7811_)
           (let ((_rebind?7813_ '#f))
-            (gx#core-bind-root-syntax!__opt-lambda7801
-             _id7810_
-             _e7811_
-             _rebind?7813_))))
+            (gx#core-bind-root-syntax!__% _id7810_ _e7811_ _rebind?7813_))))
       (define gx#core-bind-root-syntax!
         (lambda _g10716_
           (let ((_g10715_ (length _g10716_)))
             (cond ((fx= _g10715_ 2)
                    (apply gx#core-bind-root-syntax!__0 _g10716_))
                   ((fx= _g10715_ 3)
-                   (apply gx#core-bind-root-syntax!__opt-lambda7801 _g10716_))
+                   (apply gx#core-bind-root-syntax!__% _g10716_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-root-syntax!
                     _g10716_))))))))
   (begin
-    (define gx#core-bind-alias!__opt-lambda7759
+    (define gx#core-bind-alias!__%
       (lambda (_id7761_ _alias-id7762_ _rebind?7763_ _phi7764_ _ctx7765_)
-        (gx#bind-identifier!__opt-lambda5212
+        (gx#bind-identifier!__%
          _id7761_
          (let ((_key7767_ (gx#core-identifier-key _id7761_)))
            (##structure
             gx#alias-binding::t
-            (gx#make-binding-id__opt-lambda7716
-             _key7767_
-             '#t
-             _phi7764_
-             _ctx7765_)
+            (gx#make-binding-id__% _key7767_ '#t _phi7764_ _ctx7765_)
             _key7767_
             _phi7764_
             _alias-id7762_))
@@ -2920,7 +2886,7 @@
           (let* ((_rebind?7775_ '#f)
                  (_phi7777_ (gx#current-expander-phi))
                  (_ctx7779_ (gx#current-expander-context)))
-            (gx#core-bind-alias!__opt-lambda7759
+            (gx#core-bind-alias!__%
              _id7772_
              _alias-id7773_
              _rebind?7775_
@@ -2930,7 +2896,7 @@
         (lambda (_id7781_ _alias-id7782_ _rebind?7783_)
           (let* ((_phi7785_ (gx#current-expander-phi))
                  (_ctx7787_ (gx#current-expander-context)))
-            (gx#core-bind-alias!__opt-lambda7759
+            (gx#core-bind-alias!__%
              _id7781_
              _alias-id7782_
              _rebind?7783_
@@ -2939,7 +2905,7 @@
       (define gx#core-bind-alias!__2
         (lambda (_id7789_ _alias-id7790_ _rebind?7791_ _phi7792_)
           (let ((_ctx7794_ (gx#current-expander-context)))
-            (gx#core-bind-alias!__opt-lambda7759
+            (gx#core-bind-alias!__%
              _id7789_
              _alias-id7790_
              _rebind?7791_
@@ -2951,23 +2917,20 @@
             (cond ((fx= _g10717_ 2) (apply gx#core-bind-alias!__0 _g10718_))
                   ((fx= _g10717_ 3) (apply gx#core-bind-alias!__1 _g10718_))
                   ((fx= _g10717_ 4) (apply gx#core-bind-alias!__2 _g10718_))
-                  ((fx= _g10717_ 5)
-                   (apply gx#core-bind-alias!__opt-lambda7759 _g10718_))
+                  ((fx= _g10717_ 5) (apply gx#core-bind-alias!__% _g10718_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-alias!
                     _g10718_))))))))
   (begin
-    (define gx#make-binding-id__opt-lambda7716
+    (define gx#make-binding-id__%
       (lambda (_key7718_ _syntax?7719_ _phi7720_ _ctx7721_)
         (if (uninterned-symbol? _key7718_)
             (gensym 'L)
             (if (pair? _key7718_)
                 (gensym (car _key7718_))
                 (if (##structure-instance-of? _ctx7721_ 'gx#top-context::t)
-                    (let ((_ns7723_
-                           (gx#core-context-namespace__opt-lambda4748
-                            _ctx7721_)))
+                    (let ((_ns7723_ (gx#core-context-namespace__% _ctx7721_)))
                       (if (if (fxzero? _phi7720_) (not _syntax?7719_) '#f)
                           (if _ns7723_
                               (make-symbol _ns7723_ '"#" _key7718_)
@@ -2994,7 +2957,7 @@
           (let* ((_syntax?7736_ '#f)
                  (_phi7738_ (gx#current-expander-phi))
                  (_ctx7740_ (gx#current-expander-context)))
-            (gx#make-binding-id__opt-lambda7716
+            (gx#make-binding-id__%
              _key7734_
              _syntax?7736_
              _phi7738_
@@ -3003,7 +2966,7 @@
         (lambda (_key7742_ _syntax?7743_)
           (let* ((_phi7745_ (gx#current-expander-phi))
                  (_ctx7747_ (gx#current-expander-context)))
-            (gx#make-binding-id__opt-lambda7716
+            (gx#make-binding-id__%
              _key7742_
              _syntax?7743_
              _phi7745_
@@ -3011,7 +2974,7 @@
       (define gx#make-binding-id__2
         (lambda (_key7749_ _syntax?7750_ _phi7751_)
           (let ((_ctx7753_ (gx#current-expander-context)))
-            (gx#make-binding-id__opt-lambda7716
+            (gx#make-binding-id__%
              _key7749_
              _syntax?7750_
              _phi7751_
@@ -3022,8 +2985,7 @@
             (cond ((fx= _g10719_ 1) (apply gx#make-binding-id__0 _g10720_))
                   ((fx= _g10719_ 2) (apply gx#make-binding-id__1 _g10720_))
                   ((fx= _g10719_ 3) (apply gx#make-binding-id__2 _g10720_))
-                  ((fx= _g10719_ 4)
-                   (apply gx#make-binding-id__opt-lambda7716 _g10720_))
+                  ((fx= _g10719_ 4) (apply gx#make-binding-id__% _g10720_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#make-binding-id

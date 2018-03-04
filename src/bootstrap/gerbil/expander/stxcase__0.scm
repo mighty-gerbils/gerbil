@@ -605,7 +605,7 @@
                       (_E1741117423_)))))
           (_E1741017445_)))))
   (begin
-    (define gx#macro-expand-syntax-case__opt-lambda16675
+    (define gx#macro-expand-syntax-case__%
       (lambda (_stx16677_ _identifier=?16678_ _unwrap-e16679_ _wrap-e16680_)
         (letrec ((_generate-bindings16682_
                   (lambda (_target17267_
@@ -1542,7 +1542,7 @@
           (let* ((_identifier=?17381_ 'free-identifier=?)
                  (_unwrap-e17383_ 'syntax-e)
                  (_wrap-e17385_ 'quote-syntax))
-            (gx#macro-expand-syntax-case__opt-lambda16675
+            (gx#macro-expand-syntax-case__%
              _stx17379_
              _identifier=?17381_
              _unwrap-e17383_
@@ -1550,7 +1550,7 @@
       (define gx#macro-expand-syntax-case__1
         (lambda (_stx17387_ _identifier=?17388_)
           (let* ((_unwrap-e17390_ 'syntax-e) (_wrap-e17392_ 'quote-syntax))
-            (gx#macro-expand-syntax-case__opt-lambda16675
+            (gx#macro-expand-syntax-case__%
              _stx17387_
              _identifier=?17388_
              _unwrap-e17390_
@@ -1558,7 +1558,7 @@
       (define gx#macro-expand-syntax-case__2
         (lambda (_stx17394_ _identifier=?17395_ _unwrap-e17396_)
           (let ((_wrap-e17398_ 'quote-syntax))
-            (gx#macro-expand-syntax-case__opt-lambda16675
+            (gx#macro-expand-syntax-case__%
              _stx17394_
              _identifier=?17395_
              _unwrap-e17396_
@@ -1573,8 +1573,7 @@
                   ((fx= _g17952_ 3)
                    (apply gx#macro-expand-syntax-case__2 _g17953_))
                   ((fx= _g17952_ 4)
-                   (apply gx#macro-expand-syntax-case__opt-lambda16675
-                          _g17953_))
+                   (apply gx#macro-expand-syntax-case__% _g17953_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#macro-expand-syntax-case
@@ -1583,7 +1582,7 @@
     (lambda (_stx16674_)
       (if (gx#identifier? _stx16674_)
           (##structure-instance-of?
-           (gx#syntax-local-e__opt-lambda4511 _stx16674_ false)
+           (gx#syntax-local-e__% _stx16674_ false)
            'gx#syntax-pattern::t)
           '#f)))
   (define gx#syntax-check-splice-targets

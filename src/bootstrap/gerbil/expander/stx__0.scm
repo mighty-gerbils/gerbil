@@ -89,7 +89,7 @@
                       (box (gx#syntax->datum (unbox _stx4429_)))
                       _stx4429_))))))
   (begin
-    (define gx#datum->syntax__opt-lambda4370
+    (define gx#datum->syntax__%
       (lambda (_stx4372_ _datum4373_ _src4374_ _quote?4375_)
         (letrec ((_wrap-datum4377_
                   (lambda (_e4401_ _marks4402_)
@@ -173,7 +173,7 @@
       (define gx#datum->syntax__0
         (lambda (_stx4411_ _datum4412_)
           (let* ((_src4414_ '#f) (_quote?4416_ '#t))
-            (gx#datum->syntax__opt-lambda4370
+            (gx#datum->syntax__%
              _stx4411_
              _datum4412_
              _src4414_
@@ -181,7 +181,7 @@
       (define gx#datum->syntax__1
         (lambda (_stx4418_ _datum4419_ _src4420_)
           (let ((_quote?4422_ '#t))
-            (gx#datum->syntax__opt-lambda4370
+            (gx#datum->syntax__%
              _stx4418_
              _datum4419_
              _src4420_
@@ -191,14 +191,13 @@
           (let ((_g4452_ (length _g4453_)))
             (cond ((fx= _g4452_ 2) (apply gx#datum->syntax__0 _g4453_))
                   ((fx= _g4452_ 3) (apply gx#datum->syntax__1 _g4453_))
-                  ((fx= _g4452_ 4)
-                   (apply gx#datum->syntax__opt-lambda4370 _g4453_))
+                  ((fx= _g4452_ 4) (apply gx#datum->syntax__% _g4453_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#datum->syntax
                     _g4453_))))))))
   (begin
-    (define gx#stx-unwrap__opt-lambda4346
+    (define gx#stx-unwrap__%
       (lambda (_stx4348_ _marks4349_)
         (let _lp4351_ ((_e4353_ _stx4348_)
                        (_marks4354_ _marks4349_)
@@ -265,14 +264,12 @@
     (begin
       (define gx#stx-unwrap__0
         (lambda (_stx4364_)
-          (let ((_marks4366_ '()))
-            (gx#stx-unwrap__opt-lambda4346 _stx4364_ _marks4366_))))
+          (let ((_marks4366_ '())) (gx#stx-unwrap__% _stx4364_ _marks4366_))))
       (define gx#stx-unwrap
         (lambda _g4455_
           (let ((_g4454_ (length _g4455_)))
             (cond ((fx= _g4454_ 1) (apply gx#stx-unwrap__0 _g4455_))
-                  ((fx= _g4454_ 2)
-                   (apply gx#stx-unwrap__opt-lambda4346 _g4455_))
+                  ((fx= _g4454_ 2) (apply gx#stx-unwrap__% _g4455_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#stx-unwrap
@@ -439,7 +436,7 @@
                 (_K41404166_ _rest4176_ _hd4174_)))
             (_try-match41364160_)))))
   (begin
-    (define gx#genident__opt-lambda4108
+    (define gx#genident__%
       (lambda (_e4110_ _src4111_)
         (gx#stx-wrap-source
          (gensym (let ((_e4113_ (gx#stx-e _e4110_)))
@@ -450,17 +447,16 @@
       (define gx#genident__0
         (lambda ()
           (let* ((_e4122_ 'g) (_src4124_ '#f))
-            (gx#genident__opt-lambda4108 _e4122_ _src4124_))))
+            (gx#genident__% _e4122_ _src4124_))))
       (define gx#genident__1
         (lambda (_e4126_)
-          (let ((_src4128_ '#f))
-            (gx#genident__opt-lambda4108 _e4126_ _src4128_))))
+          (let ((_src4128_ '#f)) (gx#genident__% _e4126_ _src4128_))))
       (define gx#genident
         (lambda _g4457_
           (let ((_g4456_ (length _g4457_)))
             (cond ((fx= _g4456_ 0) (apply gx#genident__0 _g4457_))
                   ((fx= _g4456_ 1) (apply gx#genident__1 _g4457_))
-                  ((fx= _g4456_ 2) (apply gx#genident__opt-lambda4108 _g4457_))
+                  ((fx= _g4456_ 2) (apply gx#genident__% _g4457_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#genident
@@ -788,7 +784,7 @@
     (lambda (_stx3446_ _k3447_)
       (gx#stx-car (gx#stx-list-tail _stx3446_ _k3447_))))
   (begin
-    (define gx#stx-plist?__opt-lambda3354
+    (define gx#stx-plist?__%
       (lambda (_stx3356_ _key?3357_)
         (let _lp3359_ ((_rest3361_ _stx3356_))
           (let* ((_g33623372_ (gx#stx-e _rest3361_))
@@ -828,19 +824,18 @@
       (define gx#stx-plist?__0
         (lambda (_stx3439_)
           (let ((_key?3441_ gx#stx-keyword?))
-            (gx#stx-plist?__opt-lambda3354 _stx3439_ _key?3441_))))
+            (gx#stx-plist?__% _stx3439_ _key?3441_))))
       (define gx#stx-plist?
         (lambda _g4463_
           (let ((_g4462_ (length _g4463_)))
             (cond ((fx= _g4462_ 1) (apply gx#stx-plist?__0 _g4463_))
-                  ((fx= _g4462_ 2)
-                   (apply gx#stx-plist?__opt-lambda3354 _g4463_))
+                  ((fx= _g4462_ 2) (apply gx#stx-plist?__% _g4463_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#stx-plist?
                     _g4463_))))))))
   (begin
-    (define gx#stx-getq__opt-lambda3272
+    (define gx#stx-getq__%
       (lambda (_key3274_ _stx3275_ _key=?3276_)
         (let _lp3278_ ((_rest3280_ _stx3275_))
           (let* ((_g32813289_ (gx#syntax-e _rest3280_))
@@ -875,12 +870,12 @@
       (define gx#stx-getq__0
         (lambda (_key3346_ _stx3347_)
           (let ((_key=?3349_ gx#stx-eq?))
-            (gx#stx-getq__opt-lambda3272 _key3346_ _stx3347_ _key=?3349_))))
+            (gx#stx-getq__% _key3346_ _stx3347_ _key=?3349_))))
       (define gx#stx-getq
         (lambda _g4465_
           (let ((_g4464_ (length _g4465_)))
             (cond ((fx= _g4464_ 2) (apply gx#stx-getq__0 _g4465_))
-                  ((fx= _g4464_ 3) (apply gx#stx-getq__opt-lambda3272 _g4465_))
+                  ((fx= _g4464_ 3) (apply gx#stx-getq__% _g4465_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#stx-getq

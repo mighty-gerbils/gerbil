@@ -560,7 +560,7 @@
                     (_E1469514704_)))))
         (_E1469414718_))))
   (begin
-    (define gx#core-compile-top-let-values%__opt-lambda14625
+    (define gx#core-compile-top-let-values%__%
       (lambda (_stx14627_ _form14628_)
         (let* ((_e1462914642_ _stx14627_)
                (_E1463114646_
@@ -605,31 +605,24 @@
       (define gx#core-compile-top-let-values%__0
         (lambda (_stx14685_)
           (let ((_form14687_ '%#let-values))
-            (gx#core-compile-top-let-values%__opt-lambda14625
-             _stx14685_
-             _form14687_))))
+            (gx#core-compile-top-let-values%__% _stx14685_ _form14687_))))
       (define gx#core-compile-top-let-values%
         (lambda _g15591_
           (let ((_g15590_ (length _g15591_)))
             (cond ((fx= _g15590_ 1)
                    (apply gx#core-compile-top-let-values%__0 _g15591_))
                   ((fx= _g15590_ 2)
-                   (apply gx#core-compile-top-let-values%__opt-lambda14625
-                          _g15591_))
+                   (apply gx#core-compile-top-let-values%__% _g15591_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-compile-top-let-values%
                     _g15591_))))))))
   (define gx#core-compile-top-letrec-values%
     (lambda (_stx14624_)
-      (gx#core-compile-top-let-values%__opt-lambda14625
-       _stx14624_
-       '%#letrec-values)))
+      (gx#core-compile-top-let-values%__% _stx14624_ '%#letrec-values)))
   (define gx#core-compile-top-letrec*-values%
     (lambda (_stx14622_)
-      (gx#core-compile-top-let-values%__opt-lambda14625
-       _stx14622_
-       '%#letrec*-values)))
+      (gx#core-compile-top-let-values%__% _stx14622_ '%#letrec*-values)))
   (define gx#core-compile-top-quote%
     (lambda (_stx14581_)
       (let* ((_e1458214592_ _stx14581_)

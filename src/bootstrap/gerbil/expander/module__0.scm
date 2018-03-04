@@ -170,7 +170,7 @@
                  _self14189_))))
   (bind-method! gx#module-context::t ':init! gx#module-context:::init! '#f)
   (begin
-    (define gx#prelude-context:::init!__opt-lambda14031
+    (define gx#prelude-context:::init!__%
       (lambda (_self14033_ _ctx14034_ _root14035_)
         (let ((_super14043_
                (let ((_$e14037_ _root14035_))
@@ -213,9 +213,7 @@
                              _self14033_))
                   (for-each
                    (lambda (_g1405014052_)
-                     (gx#core-bind-weak-import!__opt-lambda12464
-                      _g1405014052_
-                      _self14033_))
+                     (gx#core-bind-weak-import!__% _g1405014052_ _self14033_))
                    _in14048_)))
               (if (##fx< '8 (##vector-length _self14033_))
                   (begin
@@ -233,7 +231,7 @@
       (define gx#prelude-context:::init!__0
         (lambda (_self14058_ _ctx14059_)
           (let ((_root14061_ '#f))
-            (gx#prelude-context:::init!__opt-lambda14031
+            (gx#prelude-context:::init!__%
              _self14058_
              _ctx14059_
              _root14061_))))
@@ -243,8 +241,7 @@
             (cond ((fx= _g14228_ 2)
                    (apply gx#prelude-context:::init!__0 _g14229_))
                   ((fx= _g14228_ 3)
-                   (apply gx#prelude-context:::init!__opt-lambda14031
-                          _g14229_))
+                   (apply gx#prelude-context:::init!__% _g14229_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#prelude-context:::init!
@@ -271,7 +268,7 @@
    '#f)
   (define gx#import-expander::apply-import-expander
     (lambda (_g1353313536_ _g1353413538_)
-      (gx#core-apply-user-expander__opt-lambda5413
+      (gx#core-apply-user-expander__%
        _g1353313536_
        _g1353413538_
        'apply-import-expander)))
@@ -282,7 +279,7 @@
    '#f)
   (define gx#export-expander::apply-export-expander
     (lambda (_g1340413407_ _g1340513409_)
-      (gx#core-apply-user-expander__opt-lambda5413
+      (gx#core-apply-user-expander__%
        _g1340413407_
        _g1340513409_
        'apply-export-expander)))
@@ -299,7 +296,7 @@
               (if (pair? _path13277_) (last _path13277_) _path13277_)))
         (if (string? _path13279_) _path13279_ '#f))))
   (begin
-    (define gx#import-module__opt-lambda13249
+    (define gx#import-module__%
       (lambda (_path13251_ _reload?13252_ _eval?13253_)
         (let ((_ctx13255_
                ((gx#current-expander-module-import)
@@ -314,24 +311,17 @@
       (define gx#import-module__0
         (lambda (_path13260_)
           (let* ((_reload?13262_ '#f) (_eval?13264_ '#f))
-            (gx#import-module__opt-lambda13249
-             _path13260_
-             _reload?13262_
-             _eval?13264_))))
+            (gx#import-module__% _path13260_ _reload?13262_ _eval?13264_))))
       (define gx#import-module__1
         (lambda (_path13266_ _reload?13267_)
           (let ((_eval?13269_ '#f))
-            (gx#import-module__opt-lambda13249
-             _path13266_
-             _reload?13267_
-             _eval?13269_))))
+            (gx#import-module__% _path13266_ _reload?13267_ _eval?13269_))))
       (define gx#import-module
         (lambda _g14231_
           (let ((_g14230_ (length _g14231_)))
             (cond ((fx= _g14230_ 1) (apply gx#import-module__0 _g14231_))
                   ((fx= _g14230_ 2) (apply gx#import-module__1 _g14231_))
-                  ((fx= _g14230_ 3)
-                   (apply gx#import-module__opt-lambda13249 _g14231_))
+                  ((fx= _g14230_ 3) (apply gx#import-module__% _g14231_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#import-module
@@ -351,8 +341,7 @@
         (let _recur13237_ ((_e13239_ _obj13233_))
           (if (##structure-instance-of? _e13239_ 'gx#module-context::t)
               (begin
-                (let ((_$e13241_
-                       (gx#core-context-prelude__opt-lambda13214 _e13239_)))
+                (let ((_$e13241_ (gx#core-context-prelude__% _e13239_)))
                   (if _$e13241_ (_recur13237_ _$e13241_) '#!void))
                 (_force-e13235_ gx#module-context-e _e13239_))
               (if (##structure-instance-of? _e13239_ 'gx#prelude-context::t)
@@ -367,7 +356,7 @@
                             (gx#core-resolve-library-module-path _e13239_)))
                           (error '"Cannot eval module" _obj13233_)))))))))
   (begin
-    (define gx#core-context-prelude__opt-lambda13214
+    (define gx#core-context-prelude__%
       (lambda (_ctx13216_)
         (let _lp13218_ ((_e13220_ _ctx13216_))
           (if (let ((_$e13222_
@@ -385,14 +374,14 @@
       (define gx#core-context-prelude__0
         (lambda ()
           (let ((_ctx13229_ (gx#current-expander-context)))
-            (gx#core-context-prelude__opt-lambda13214 _ctx13229_))))
+            (gx#core-context-prelude__% _ctx13229_))))
       (define gx#core-context-prelude
         (lambda _g14233_
           (let ((_g14232_ (length _g14233_)))
             (cond ((fx= _g14232_ 0)
                    (apply gx#core-context-prelude__0 _g14233_))
                   ((fx= _g14232_ 1)
-                   (apply gx#core-context-prelude__opt-lambda13214 _g14233_))
+                   (apply gx#core-context-prelude__% _g14233_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-context-prelude
@@ -412,7 +401,7 @@
                 (table-set! _ht13208_ _ctx13206_ _pre13213_)
                 _pre13213_))))))
   (begin
-    (define gx#core-import-module__opt-lambda13085
+    (define gx#core-import-module__%
       (lambda (_rpath13087_ _reload?13088_)
         (letrec ((_import-source13090_
                   (lambda (_path13175_)
@@ -479,7 +468,7 @@
                                         _body13181_
                                         _ctx13188_))
                                       (_body13192_
-                                       (gx#core-quote-syntax__opt-lambda4643
+                                       (gx#core-quote-syntax__%
                                         (gx#core-cons '%#begin _body13190_)
                                         _path13175_
                                         _ctx13188_
@@ -529,7 +518,7 @@
                             (lambda (_refs13118_ _origin13119_)
                               (let ((_ctx13121_
                                      (if _origin13119_
-                                         (gx#core-import-module__opt-lambda13085
+                                         (gx#core-import-module__%
                                           _origin13119_
                                           _reload?13088_)
                                          (gx#current-expander-context))))
@@ -545,7 +534,7 @@
                                          (_K1313113151_
                                           (lambda (_rest13146_ _id13147_)
                                             (let ((_bind13149_
-                                                   (gx#resolve-identifier__opt-lambda5254
+                                                   (gx#resolve-identifier__%
                                                     _id13147_
                                                     '0
                                                     _ctx13126_)))
@@ -602,7 +591,7 @@
                     (_import-submodule13091_ _rpath13087_)
                     (if (gx#core-library-module-path? _rpath13087_)
                         (let ((_ctx13096_
-                               (gx#core-import-module__opt-lambda13085
+                               (gx#core-import-module__%
                                 (gx#core-resolve-library-module-path
                                  _rpath13087_)
                                 _reload?13088_)))
@@ -627,15 +616,12 @@
       (define gx#core-import-module__0
         (lambda (_rpath13199_)
           (let ((_reload?13201_ '#f))
-            (gx#core-import-module__opt-lambda13085
-             _rpath13199_
-             _reload?13201_))))
+            (gx#core-import-module__% _rpath13199_ _reload?13201_))))
       (define gx#core-import-module
         (lambda _g14237_
           (let ((_g14236_ (length _g14237_)))
             (cond ((fx= _g14236_ 1) (apply gx#core-import-module__0 _g14237_))
-                  ((fx= _g14236_ 2)
-                   (apply gx#core-import-module__opt-lambda13085 _g14237_))
+                  ((fx= _g14236_ 2) (apply gx#core-import-module__% _g14237_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-import-module
@@ -681,7 +667,7 @@
                                         (gx#core-resolve-library-module-path
                                          _pre12977_)
                                         (if (gx#stx-string? _pre12977_)
-                                            (gx#core-resolve-module-path__opt-lambda12695
+                                            (gx#core-resolve-module-path__%
                                              _pre12977_
                                              _path12941_)
                                             (gx#stx-e _pre12977_)))))
@@ -1055,9 +1041,7 @@
           (let ((_gerbil.pkg12733_ (path-expand '"gerbil.pkg" _dir12730_)))
             (if (file-exists? _gerbil.pkg12733_)
                 (let ((_plist12735_
-                       (gx#core-library-package-plist__opt-lambda12587
-                        _dir12730_
-                        '#t)))
+                       (gx#core-library-package-plist__% _dir12730_ '#t)))
                   (if (null? _plist12735_)
                       (let ((_pkg12737_
                              (if (not (null? _pkg-path12731_))
@@ -1115,14 +1099,14 @@
     (lambda (_path12718_)
       (string->symbol (gx#core-module-path->namespace _path12718_))))
   (begin
-    (define gx#core-resolve-module-path__opt-lambda12695
+    (define gx#core-resolve-module-path__%
       (lambda (_stx-path12697_ _rel12698_)
         (let* ((_path12700_ (gx#stx-e _stx-path12697_))
                (_path12702_
                 (if (string-empty? (path-extension _path12700_))
                     (string-append _path12700_ '".ss")
                     _path12700_)))
-          (gx#core-resolve-path__opt-lambda4607
+          (gx#core-resolve-path__%
            _path12702_
            (let ((_$e12705_ (gx#stx-source _stx-path12697_)))
              (if _$e12705_ _$e12705_ _rel12698_))))))
@@ -1130,17 +1114,14 @@
       (define gx#core-resolve-module-path__0
         (lambda (_stx-path12711_)
           (let ((_rel12713_ '#f))
-            (gx#core-resolve-module-path__opt-lambda12695
-             _stx-path12711_
-             _rel12713_))))
+            (gx#core-resolve-module-path__% _stx-path12711_ _rel12713_))))
       (define gx#core-resolve-module-path
         (lambda _g14243_
           (let ((_g14242_ (length _g14243_)))
             (cond ((fx= _g14242_ 1)
                    (apply gx#core-resolve-module-path__0 _g14243_))
                   ((fx= _g14242_ 2)
-                   (apply gx#core-resolve-module-path__opt-lambda12695
-                          _g14243_))
+                   (apply gx#core-resolve-module-path__% _g14243_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-resolve-module-path
@@ -1226,7 +1207,7 @@
              _$e12619_)
             '#f))))
   (begin
-    (define gx#core-library-package-plist__opt-lambda12587
+    (define gx#core-library-package-plist__%
       (lambda (_dir12589_ _exists?12590_)
         (let* ((_cache12592_ (gx#core-library-package-cache))
                (_$e12594_ (table-ref _cache12592_ _dir12589_ '#f)))
@@ -1259,17 +1240,14 @@
       (define gx#core-library-package-plist__0
         (lambda (_dir12610_)
           (let ((_exists?12612_ '#f))
-            (gx#core-library-package-plist__opt-lambda12587
-             _dir12610_
-             _exists?12612_))))
+            (gx#core-library-package-plist__% _dir12610_ _exists?12612_))))
       (define gx#core-library-package-plist
         (lambda _g14245_
           (let ((_g14244_ (length _g14245_)))
             (cond ((fx= _g14244_ 1)
                    (apply gx#core-library-package-plist__0 _g14245_))
                   ((fx= _g14244_ 2)
-                   (apply gx#core-library-package-plist__opt-lambda12587
-                          _g14245_))
+                   (apply gx#core-library-package-plist__% _g14245_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-library-package-plist
@@ -1297,20 +1275,16 @@
           '#f)))
   (define gx#core-bound-prelude?
     (lambda (_stx12569_)
-      (gx#core-bound-identifier?__opt-lambda4697
+      (gx#core-bound-identifier?__%
        _stx12569_
        (lambda (_g1257012572_)
-         (gx#expander-binding?__opt-lambda4734
-          _g1257012572_
-          gx#prelude-context?)))))
+         (gx#expander-binding?__% _g1257012572_ gx#prelude-context?)))))
   (define gx#core-bound-module?
     (lambda (_stx12563_)
-      (gx#core-bound-identifier?__opt-lambda4697
+      (gx#core-bound-identifier?__%
        _stx12563_
        (lambda (_g1256412566_)
-         (gx#expander-binding?__opt-lambda4734
-          _g1256412566_
-          gx#module-context?)))))
+         (gx#expander-binding?__% _g1256412566_ gx#module-context?)))))
   (define gx#core-bound-module-prelude?
     (lambda (_stx12550_)
       (letrec ((_module-prelude?12552_
@@ -1324,21 +1298,19 @@
                         (##structure-instance-of?
                          _e12558_
                          'gx#prelude-context::t))))))
-        (gx#core-bound-identifier?__opt-lambda4697
+        (gx#core-bound-identifier?__%
          _stx12550_
          (lambda (_g1255312555_)
-           (gx#expander-binding?__opt-lambda4734
-            _g1255312555_
-            _module-prelude?12552_))))))
+           (gx#expander-binding?__% _g1255312555_ _module-prelude?12552_))))))
   (begin
-    (define gx#core-bind-import!__opt-lambda12478
+    (define gx#core-bind-import!__%
       (lambda (_in12480_ _ctx12481_ _force-weak?12482_)
         (let* ((_in1248312492_ _in12480_)
                (_E1248512496_
                 (lambda () (error '"No clause matching" _in1248312492_)))
                (_K1248612509_
                 (lambda (_weak?12499_ _phi12500_ _key12501_ _source12502_)
-                  (gx#core-bind!__opt-lambda4973
+                  (gx#core-bind!__%
                    _key12501_
                    (let ((_e12504_
                           (gx#core-resolve-module-export _source12502_)))
@@ -1380,14 +1352,14 @@
         (lambda (_in12535_)
           (let* ((_ctx12537_ (gx#current-expander-context))
                  (_force-weak?12539_ '#f))
-            (gx#core-bind-import!__opt-lambda12478
+            (gx#core-bind-import!__%
              _in12535_
              _ctx12537_
              _force-weak?12539_))))
       (define gx#core-bind-import!__1
         (lambda (_in12541_ _ctx12542_)
           (let ((_force-weak?12544_ '#f))
-            (gx#core-bind-import!__opt-lambda12478
+            (gx#core-bind-import!__%
              _in12541_
              _ctx12542_
              _force-weak?12544_))))
@@ -1396,30 +1368,27 @@
           (let ((_g14246_ (length _g14247_)))
             (cond ((fx= _g14246_ 1) (apply gx#core-bind-import!__0 _g14247_))
                   ((fx= _g14246_ 2) (apply gx#core-bind-import!__1 _g14247_))
-                  ((fx= _g14246_ 3)
-                   (apply gx#core-bind-import!__opt-lambda12478 _g14247_))
+                  ((fx= _g14246_ 3) (apply gx#core-bind-import!__% _g14247_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-import!
                     _g14247_))))))))
   (begin
-    (define gx#core-bind-weak-import!__opt-lambda12464
+    (define gx#core-bind-weak-import!__%
       (lambda (_in12466_ _ctx12467_)
-        (gx#core-bind-import!__opt-lambda12478 _in12466_ _ctx12467_ '#t)))
+        (gx#core-bind-import!__% _in12466_ _ctx12467_ '#t)))
     (begin
       (define gx#core-bind-weak-import!__0
         (lambda (_in12472_)
           (let ((_ctx12474_ (gx#current-expander-context)))
-            (gx#core-bind-weak-import!__opt-lambda12464
-             _in12472_
-             _ctx12474_))))
+            (gx#core-bind-weak-import!__% _in12472_ _ctx12474_))))
       (define gx#core-bind-weak-import!
         (lambda _g14249_
           (let ((_g14248_ (length _g14249_)))
             (cond ((fx= _g14248_ 1)
                    (apply gx#core-bind-weak-import!__0 _g14249_))
                   ((fx= _g14248_ 2)
-                   (apply gx#core-bind-weak-import!__opt-lambda12464 _g14249_))
+                   (apply gx#core-bind-weak-import!__% _g14249_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-weak-import!
@@ -1492,7 +1461,7 @@
                 (_K1236312381_ _phi12397_ _key12392_ _ctx12387_))
               (_E1236212374_))))))
   (begin
-    (define gx#core-module-export->import__opt-lambda12280
+    (define gx#core-module-export->import__%
       (lambda (_out12282_ _rename12283_ _dphi12284_)
         (let* ((_out1228512295_ _out12282_)
                (_E1228712299_
@@ -1534,14 +1503,14 @@
       (define gx#core-module-export->import__0
         (lambda (_out12342_)
           (let* ((_rename12344_ '#f) (_dphi12346_ '0))
-            (gx#core-module-export->import__opt-lambda12280
+            (gx#core-module-export->import__%
              _out12342_
              _rename12344_
              _dphi12346_))))
       (define gx#core-module-export->import__1
         (lambda (_out12348_ _rename12349_)
           (let ((_dphi12351_ '0))
-            (gx#core-module-export->import__opt-lambda12280
+            (gx#core-module-export->import__%
              _out12348_
              _rename12349_
              _dphi12351_))))
@@ -1553,8 +1522,7 @@
                   ((fx= _g14250_ 2)
                    (apply gx#core-module-export->import__1 _g14251_))
                   ((fx= _g14250_ 3)
-                   (apply gx#core-module-export->import__opt-lambda12280
-                          _g14251_))
+                   (apply gx#core-module-export->import__% _g14251_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-module-export->import
@@ -1816,7 +1784,7 @@
                                                      (##cdr _e1202112033_)))
                                                 (let ((_form12041_
                                                        _hd1202212036_))
-                                                  (if (gx#core-bound-identifier?__opt-lambda4697
+                                                  (if (gx#core-bound-identifier?__%
                                                        _form12041_
                                                        gx#special-form-binding?)
                                                       (_lp11979_
@@ -1910,7 +1878,7 @@
                               (_K1198712091_ _rest12101_ _hd12099_)))
                           (_else1198511999_)))))))
         (_expand-body11975_
-         (gx#core-expand-block__opt-lambda6606
+         (gx#core-expand-block__%
           (cons '%#begin-module _body11972_)
           _expand-special11974_
           '#f
@@ -1965,11 +1933,11 @@
                                         (_tl1187211887_ (##cdr _e1187011882_)))
                                     (let* ((_macro11890_ _hd1187111885_)
                                            (_body11892_ _tl1187211887_))
-                                      (if (gx#core-bound-identifier?__opt-lambda4697
+                                      (if (gx#core-bound-identifier?__%
                                            _macro11890_
                                            gx#syntax-binding?)
                                           (_K11821_
-                                           (cons (gx#core-apply-expander__opt-lambda6324
+                                           (cons (gx#core-apply-expander__%
                                                   (gx#syntax-local-e__0
                                                    _macro11890_)
                                                   _hd11853_
@@ -2057,7 +2025,7 @@
                       (_E1182511834_)))))
           (_E1182411849_)))))
   (begin
-    (define gx#core-expand-import%__opt-lambda11353
+    (define gx#core-expand-import%__%
       (lambda (_stx11355_ _internal-expand?11356_)
         (letrec ((_expand111358_
                   (lambda (_hd11800_ _K11801_ _rest11802_ _r11803_)
@@ -2077,7 +2045,7 @@
                             (if (gx#stx-string? _hd11800_)
                                 (_import111359_
                                  (gx#import-module__0
-                                  (gx#core-resolve-module-path__opt-lambda12695
+                                  (gx#core-resolve-module-path__%
                                    _hd11800_
                                    (gx#stx-source _stx11355_)))
                                  _K11801_
@@ -2126,7 +2094,7 @@
                               _ctx11789_
                               _dphi11794_
                               (map (lambda (_g1179511797_)
-                                     (gx#core-module-export->import__opt-lambda12280
+                                     (gx#core-module-export->import__%
                                       _g1179511797_
                                       '#f
                                       _dphi11794_))
@@ -2425,7 +2393,7 @@
                                                        '#f)))
                                                  (if _$e11559_
                                                      ((lambda (_out11562_)
-                                                        (cons (gx#core-module-export->import__opt-lambda12280
+                                                        (cons (gx#core-module-export->import__%
                                                                _out11562_
                                                                _name11557_
                                                                (fx- _phi11556_
@@ -2645,15 +2613,12 @@
       (define gx#core-expand-import%__0
         (lambda (_stx11808_)
           (let ((_internal-expand?11810_ '#f))
-            (gx#core-expand-import%__opt-lambda11353
-             _stx11808_
-             _internal-expand?11810_))))
+            (gx#core-expand-import%__% _stx11808_ _internal-expand?11810_))))
       (define gx#core-expand-import%
         (lambda _g14254_
           (let ((_g14253_ (length _g14254_)))
             (cond ((fx= _g14253_ 1) (apply gx#core-expand-import%__0 _g14254_))
-                  ((fx= _g14253_ 2)
-                   (apply gx#core-expand-import%__opt-lambda11353 _g14254_))
+                  ((fx= _g14253_ 2) (apply gx#core-expand-import%__% _g14254_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand-import%
@@ -2698,10 +2663,7 @@
                                                       (if '#t
                                                           (let ((_bind11344_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (gx#resolve-identifier__opt-lambda5254
-                          _id11340_
-                          '0
-                          _ctx11316_)))
+                         (gx#resolve-identifier__% _id11340_ '0 _ctx11316_)))
                     (begin
                       (if (if (##structure-direct-instance-of?
                                _bind11344_
@@ -2737,11 +2699,11 @@
         (_E1128511350_))))
   (define gx#core-expand-import-source
     (lambda (_hd11280_)
-      (gx#core-expand-import%__opt-lambda11353
+      (gx#core-expand-import%__%
        (cons 'import-internal% (cons _hd11280_ '()))
        '#t)))
   (begin
-    (define gx#core-expand-export%__opt-lambda10789
+    (define gx#core-expand-export%__%
       (lambda (_stx10791_ _internal-expand?10792_)
         (letrec* ((_make-export__opt-lambda11226__1421614217_
                    (lambda (_bind11228_ _phi11229_ _ctx11230_ _name11231_)
@@ -2870,7 +2832,7 @@
                                                   (if (gx#stx-string?
                                                        _hd11022_)
                                                       (gx#import-module__0
-                                                       (gx#core-resolve-module-path__opt-lambda12695
+                                                       (gx#core-resolve-module-path__%
                                                         _hd11022_
                                                         (gx#stx-source
                                                          _stx10791_)))
@@ -3365,22 +3327,19 @@
       (define gx#core-expand-export%__0
         (lambda (_stx11273_)
           (let ((_internal-expand?11275_ '#f))
-            (gx#core-expand-export%__opt-lambda10789
-             _stx11273_
-             _internal-expand?11275_))))
+            (gx#core-expand-export%__% _stx11273_ _internal-expand?11275_))))
       (define gx#core-expand-export%
         (lambda _g14258_
           (let ((_g14257_ (length _g14258_)))
             (cond ((fx= _g14257_ 1) (apply gx#core-expand-export%__0 _g14258_))
-                  ((fx= _g14257_ 2)
-                   (apply gx#core-expand-export%__opt-lambda10789 _g14258_))
+                  ((fx= _g14257_ 2) (apply gx#core-expand-export%__% _g14258_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand-export%
                     _g14258_))))))))
   (define gx#core-expand-export-source
     (lambda (_hd10788_)
-      (gx#core-expand-export%__opt-lambda10789
+      (gx#core-expand-export%__%
        (cons 'export-macro% (cons _hd10788_ '()))
        '#t)))
   (define gx#core-expand-provide%
@@ -3412,9 +3371,9 @@
                     (_E1076110770_)))))
         (_E1076010784_))))
   (begin
-    (define gx#core-bind-feature!__opt-lambda10722
+    (define gx#core-bind-feature!__%
       (lambda (_id10724_ _private?10725_ _phi10726_ _ctx10727_)
-        (gx#core-bind-syntax!__opt-lambda7818
+        (gx#core-bind-syntax!__%
          _id10724_
          ((if _private?10725_
               gx#make-private-feature-expander
@@ -3429,7 +3388,7 @@
           (let* ((_private?10734_ '#f)
                  (_phi10736_ (gx#current-expander-phi))
                  (_ctx10738_ (gx#current-expander-context)))
-            (gx#core-bind-feature!__opt-lambda10722
+            (gx#core-bind-feature!__%
              _id10732_
              _private?10734_
              _phi10736_
@@ -3438,7 +3397,7 @@
         (lambda (_id10740_ _private?10741_)
           (let* ((_phi10743_ (gx#current-expander-phi))
                  (_ctx10745_ (gx#current-expander-context)))
-            (gx#core-bind-feature!__opt-lambda10722
+            (gx#core-bind-feature!__%
              _id10740_
              _private?10741_
              _phi10743_
@@ -3446,7 +3405,7 @@
       (define gx#core-bind-feature!__2
         (lambda (_id10747_ _private?10748_ _phi10749_)
           (let ((_ctx10751_ (gx#current-expander-context)))
-            (gx#core-bind-feature!__opt-lambda10722
+            (gx#core-bind-feature!__%
              _id10747_
              _private?10748_
              _phi10749_
@@ -3457,8 +3416,7 @@
             (cond ((fx= _g14259_ 1) (apply gx#core-bind-feature!__0 _g14260_))
                   ((fx= _g14259_ 2) (apply gx#core-bind-feature!__1 _g14260_))
                   ((fx= _g14259_ 3) (apply gx#core-bind-feature!__2 _g14260_))
-                  ((fx= _g14259_ 4)
-                   (apply gx#core-bind-feature!__opt-lambda10722 _g14260_))
+                  ((fx= _g14259_ 4) (apply gx#core-bind-feature!__% _g14260_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-feature!

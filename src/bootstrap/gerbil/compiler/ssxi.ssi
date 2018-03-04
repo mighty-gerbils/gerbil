@@ -8,8 +8,8 @@ namespace: gxc
           (spec: (:gerbil/core <syntax-case>) (0 syntax 0 syntax))
           (spec:
            (:gerbil/core <syntax-sugar>)
-           (0 with-syntax 0 with-syntax)
-           (0 with-syntax* 0 with-syntax*))
+           (0 with-syntax* 0 with-syntax*)
+           (0 with-syntax 0 with-syntax))
           :gerbil/core)
          (%#export
           #t

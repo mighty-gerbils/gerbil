@@ -264,7 +264,7 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
   (begin
-    (define gx#root-context:::init!__opt-lambda16565
+    (define gx#root-context:::init!__%
       (lambda (_self16567_ _bind?16568_)
         (begin
           (if (##fx< '2 (##vector-length _self16567_))
@@ -283,23 +283,21 @@
       (define gx#root-context:::init!__0
         (lambda (_self16573_)
           (let ((_bind?16575_ '#t))
-            (gx#root-context:::init!__opt-lambda16565
-             _self16573_
-             _bind?16575_))))
+            (gx#root-context:::init!__% _self16573_ _bind?16575_))))
       (define gx#root-context:::init!
         (lambda _g16581_
           (let ((_g16580_ (length _g16581_)))
             (cond ((fx= _g16580_ 1)
                    (apply gx#root-context:::init!__0 _g16581_))
                   ((fx= _g16580_ 2)
-                   (apply gx#root-context:::init!__opt-lambda16565 _g16581_))
+                   (apply gx#root-context:::init!__% _g16581_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#root-context:::init!
                     _g16581_))))))))
   (bind-method! gx#root-context::t ':init! gx#root-context:::init! '#f)
   (begin
-    (define gx#top-context:::init!__opt-lambda16421
+    (define gx#top-context:::init!__%
       (lambda (_self16423_ _super16424_)
         (let ((_super16432_
                (let ((_$e16426_ _super16424_))
@@ -326,22 +324,19 @@
       (define gx#top-context:::init!__0
         (lambda (_self16437_)
           (let ((_super16439_ '#f))
-            (gx#top-context:::init!__opt-lambda16421
-             _self16437_
-             _super16439_))))
+            (gx#top-context:::init!__% _self16437_ _super16439_))))
       (define gx#top-context:::init!
         (lambda _g16583_
           (let ((_g16582_ (length _g16583_)))
             (cond ((fx= _g16582_ 1) (apply gx#top-context:::init!__0 _g16583_))
-                  ((fx= _g16582_ 2)
-                   (apply gx#top-context:::init!__opt-lambda16421 _g16583_))
+                  ((fx= _g16582_ 2) (apply gx#top-context:::init!__% _g16583_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#top-context:::init!
                     _g16583_))))))))
   (bind-method! gx#top-context::t ':init! gx#top-context:::init! '#f)
   (begin
-    (define gx#expander-context::bind-core-syntax-expanders!__opt-lambda16152
+    (define gx#expander-context::bind-core-syntax-expanders!__%
       (lambda (_self16154_ _bindings16155_)
         (for-each
          (lambda (_bind16157_)
@@ -458,7 +453,7 @@
       (define gx#expander-context::bind-core-syntax-expanders!__0
         (lambda (_self16293_)
           (let ((_bindings16295_ gx#*core-syntax-expanders*))
-            (gx#expander-context::bind-core-syntax-expanders!__opt-lambda16152
+            (gx#expander-context::bind-core-syntax-expanders!__%
              _self16293_
              _bindings16295_))))
       (define gx#expander-context::bind-core-syntax-expanders!
@@ -468,7 +463,7 @@
                    (apply gx#expander-context::bind-core-syntax-expanders!__0
                           _g16585_))
                   ((fx= _g16584_ 2)
-                   (apply gx#expander-context::bind-core-syntax-expanders!__opt-lambda16152
+                   (apply gx#expander-context::bind-core-syntax-expanders!__%
                           _g16585_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -480,7 +475,7 @@
    gx#expander-context::bind-core-syntax-expanders!
    '#f)
   (begin
-    (define gx#expander-context::bind-core-macro-expanders!__opt-lambda15924
+    (define gx#expander-context::bind-core-macro-expanders!__%
       (lambda (_self15926_ _bindings15927_)
         (for-each
          (lambda (_bind15929_)
@@ -562,7 +557,7 @@
       (define gx#expander-context::bind-core-macro-expanders!__0
         (lambda (_self16024_)
           (let ((_bindings16026_ gx#*core-macro-expanders*))
-            (gx#expander-context::bind-core-macro-expanders!__opt-lambda15924
+            (gx#expander-context::bind-core-macro-expanders!__%
              _self16024_
              _bindings16026_))))
       (define gx#expander-context::bind-core-macro-expanders!
@@ -572,7 +567,7 @@
                    (apply gx#expander-context::bind-core-macro-expanders!__0
                           _g16587_))
                   ((fx= _g16586_ 2)
-                   (apply gx#expander-context::bind-core-macro-expanders!__opt-lambda15924
+                   (apply gx#expander-context::bind-core-macro-expanders!__%
                           _g16587_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -604,12 +599,8 @@
                               (_else1577415788_)))
                         (_else1577415788_))))))
         (begin
-          (gx#core-bind-feature!__opt-lambda10722 'gerbil '#f '0 _self15717_)
-          (gx#core-bind-feature!__opt-lambda10722
-           (gerbil-system)
-           '#f
-           '0
-           _self15717_)
+          (gx#core-bind-feature!__% 'gerbil '#f '0 _self15717_)
+          (gx#core-bind-feature!__% (gerbil-system) '#f '0 _self15717_)
           (let* ((_g1572015732_ (system-type))
                  (_E1572315736_
                   (lambda () (error '"No clause matching" _g1572015732_)))
@@ -617,22 +608,18 @@
                  (_K1572415747_
                   (lambda (_sys-type15743_ _sys-vendor15744_ _sys-cpu15745_)
                     (begin
-                      (gx#core-bind-feature!__opt-lambda10722
+                      (gx#core-bind-feature!__%
                        _sys-cpu15745_
                        '#f
                        '0
                        _self15717_)
-                      (gx#core-bind-feature!__opt-lambda10722
+                      (gx#core-bind-feature!__%
                        _sys-type15743_
                        '#f
                        '0
                        _self15717_)
                       (if (_linux-variant?15719_ _sys-type15743_)
-                          (gx#core-bind-feature!__opt-lambda10722
-                           'linux
-                           '#f
-                           '0
-                           _self15717_)
+                          (gx#core-bind-feature!__% 'linux '#f '0 _self15717_)
                           '#!void)))))
             (if (##pair? _g1572015732_)
                 (let ((_hd1572515750_ (##car _g1572015732_))
@@ -656,11 +643,7 @@
                         '#!void)))
                 '#!void))
           (if (gerbil-runtime-smp?)
-              (gx#core-bind-feature!__opt-lambda10722
-               'gerbil-smp
-               '#f
-               '0
-               _self15717_)
+              (gx#core-bind-feature!__% 'gerbil-smp '#f '0 _self15717_)
               '#!void)))))
   (bind-method!
    gx#expander-context::t
