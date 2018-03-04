@@ -556,6 +556,14 @@ namespace: gxc
      ['%#define-values [id] (compile-e impl)]
      stx))
 
+  (def (opt-lambda-dispatch-name id)
+    (if (uninterned-symbol? id)
+      (let (str (symbol->string id))
+        (if (string-prefix? str "opt-lambda")
+          "%"
+          id))
+      id))
+
   (ast-case stx ()
     ((_ (id) expr)
      (and (identifier? #'id)
@@ -584,7 +592,7 @@ namespace: gxc
           (opt-lambda-expr? #'expr))
      (ast-case #'expr ()
        ((_ (((xid) lambda-expr)) case-lambda-expr)
-        (let* ((lambda-id (make-symbol (stx-e #'id) "__" (stx-e #'xid)))
+        (let* ((lambda-id (make-symbol (stx-e #'id) "__" (opt-lambda-dispatch-name (stx-e #'xid))))
                (lambda-id (core-quote-syntax lambda-id (stx-source stx)))
                (_ (core-bind-runtime! lambda-id))
                (new-case-lambda-expr

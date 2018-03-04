@@ -1,439 +1,439 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gxc[1]#_g23687_|
-    (gx#make-syntax-quote
-     'optimizer-info::t
-     #f
-     (gx#current-expander-context)
-     '()))
-  (define |gxc[1]#_g23688_|
-    (gx#make-syntax-quote
-     'optimizer-info::t
-     #f
-     (gx#current-expander-context)
-     '()))
-  (define |gxc[1]#_g23689_|
-    (gx#make-syntax-quote
-     'make-optimizer-info
-     #f
-     (gx#current-expander-context)
-     '()))
-  (define |gxc[1]#_g23690_|
-    (gx#make-syntax-quote
-     'optimizer-info?
-     #f
-     (gx#current-expander-context)
-     '()))
-  (define |gxc[1]#_g23691_|
-    (gx#make-syntax-quote
-     'optimizer-info-type
-     #f
-     (gx#current-expander-context)
-     '()))
   (define |gxc[1]#_g23692_|
     (gx#make-syntax-quote
-     'optimizer-info-ssxi
+     'optimizer-info::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23693_|
     (gx#make-syntax-quote
-     'optimizer-info-type-set!
+     'optimizer-info::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23694_|
     (gx#make-syntax-quote
-     'optimizer-info-ssxi-set!
+     'make-optimizer-info
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23695_|
-    (gx#make-syntax-quote '!type::t #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     'optimizer-info?
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23696_|
-    (gx#make-syntax-quote '!type::t #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     'optimizer-info-type
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23697_|
-    (gx#make-syntax-quote 'make-!type #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     'optimizer-info-ssxi
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23698_|
-    (gx#make-syntax-quote '!type? #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     'optimizer-info-type-set!
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23699_|
-    (gx#make-syntax-quote '!type-id #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     'optimizer-info-ssxi-set!
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23700_|
-    (gx#make-syntax-quote '!type-id-set! #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '!type::t #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23701_|
-    (gx#make-syntax-quote '!alias::t #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '!type::t #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23702_|
-    (gx#make-syntax-quote '!type::t #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote 'make-!type #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23703_|
-    (gx#make-syntax-quote '!alias::t #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '!type? #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23704_|
-    (gx#make-syntax-quote 'make-!alias #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '!type-id #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23705_|
-    (gx#make-syntax-quote '!alias? #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '!type-id-set! #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23706_|
-    (gx#make-syntax-quote '!type #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '!alias::t #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23707_|
-    (gx#make-syntax-quote
-     '!struct-type::t
-     #f
-     (gx#current-expander-context)
-     '()))
-  (define |gxc[1]#_g23708_|
     (gx#make-syntax-quote '!type::t #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23708_|
+    (gx#make-syntax-quote '!alias::t #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23709_|
-    (gx#make-syntax-quote
-     '!struct-type::t
-     #f
-     (gx#current-expander-context)
-     '()))
+    (gx#make-syntax-quote 'make-!alias #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23710_|
-    (gx#make-syntax-quote
-     'make-!struct-type
-     #f
-     (gx#current-expander-context)
-     '()))
+    (gx#make-syntax-quote '!alias? #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23711_|
-    (gx#make-syntax-quote '!struct-type? #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '!type #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23712_|
     (gx#make-syntax-quote
-     '!struct-type-super
+     '!struct-type::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23713_|
-    (gx#make-syntax-quote
-     '!struct-type-fields
-     #f
-     (gx#current-expander-context)
-     '()))
+    (gx#make-syntax-quote '!type::t #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23714_|
     (gx#make-syntax-quote
-     '!struct-type-xfields
+     '!struct-type::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23715_|
     (gx#make-syntax-quote
-     '!struct-type-ctor
+     'make-!struct-type
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23716_|
-    (gx#make-syntax-quote
-     '!struct-type-plist
-     #f
-     (gx#current-expander-context)
-     '()))
+    (gx#make-syntax-quote '!struct-type? #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23717_|
     (gx#make-syntax-quote
-     '!struct-type-methods
+     '!struct-type-super
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23718_|
     (gx#make-syntax-quote
-     '!struct-type-super-set!
+     '!struct-type-fields
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23719_|
     (gx#make-syntax-quote
-     '!struct-type-fields-set!
+     '!struct-type-xfields
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23720_|
     (gx#make-syntax-quote
-     '!struct-type-xfields-set!
+     '!struct-type-ctor
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23721_|
     (gx#make-syntax-quote
-     '!struct-type-ctor-set!
+     '!struct-type-plist
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23722_|
     (gx#make-syntax-quote
-     '!struct-type-plist-set!
+     '!struct-type-methods
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23723_|
     (gx#make-syntax-quote
-     '!struct-type-methods-set!
+     '!struct-type-super-set!
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23724_|
-    (gx#make-syntax-quote '!type #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     '!struct-type-fields-set!
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23725_|
-    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     '!struct-type-xfields-set!
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23726_|
-    (gx#make-syntax-quote '!type::t #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     '!struct-type-ctor-set!
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23727_|
-    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     '!struct-type-plist-set!
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23728_|
+    (gx#make-syntax-quote
+     '!struct-type-methods-set!
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gxc[1]#_g23729_|
+    (gx#make-syntax-quote '!type #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23730_|
+    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23731_|
+    (gx#make-syntax-quote '!type::t #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23732_|
+    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23733_|
     (gx#make-syntax-quote
      'make-!procedure
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23729_|
-    (gx#make-syntax-quote '!procedure? #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g23730_|
-    (gx#make-syntax-quote '!type #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g23731_|
-    (gx#make-syntax-quote
-     '!struct-pred::t
-     #f
-     (gx#current-expander-context)
-     '()))
-  (define |gxc[1]#_g23732_|
-    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g23733_|
-    (gx#make-syntax-quote
-     '!struct-pred::t
-     #f
-     (gx#current-expander-context)
-     '()))
   (define |gxc[1]#_g23734_|
+    (gx#make-syntax-quote '!procedure? #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23735_|
+    (gx#make-syntax-quote '!type #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23736_|
+    (gx#make-syntax-quote
+     '!struct-pred::t
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gxc[1]#_g23737_|
+    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23738_|
+    (gx#make-syntax-quote
+     '!struct-pred::t
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gxc[1]#_g23739_|
     (gx#make-syntax-quote
      'make-!struct-pred
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23735_|
-    (gx#make-syntax-quote '!struct-pred? #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g23736_|
-    (gx#make-syntax-quote '!procedure #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g23737_|
-    (gx#make-syntax-quote
-     '!struct-cons::t
-     #f
-     (gx#current-expander-context)
-     '()))
-  (define |gxc[1]#_g23738_|
-    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g23739_|
-    (gx#make-syntax-quote
-     '!struct-cons::t
-     #f
-     (gx#current-expander-context)
-     '()))
   (define |gxc[1]#_g23740_|
+    (gx#make-syntax-quote '!struct-pred? #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23741_|
+    (gx#make-syntax-quote '!procedure #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23742_|
+    (gx#make-syntax-quote
+     '!struct-cons::t
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gxc[1]#_g23743_|
+    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23744_|
+    (gx#make-syntax-quote
+     '!struct-cons::t
+     #f
+     (gx#current-expander-context)
+     '()))
+  (define |gxc[1]#_g23745_|
     (gx#make-syntax-quote
      'make-!struct-cons
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23741_|
-    (gx#make-syntax-quote '!struct-cons? #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g23742_|
-    (gx#make-syntax-quote '!procedure #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g23743_|
-    (gx#make-syntax-quote
-     '!struct-getf::t
-     #f
-     (gx#current-expander-context)
-     '()))
-  (define |gxc[1]#_g23744_|
-    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g23745_|
-    (gx#make-syntax-quote
-     '!struct-getf::t
-     #f
-     (gx#current-expander-context)
-     '()))
   (define |gxc[1]#_g23746_|
-    (gx#make-syntax-quote
-     'make-!struct-getf
-     #f
-     (gx#current-expander-context)
-     '()))
+    (gx#make-syntax-quote '!struct-cons? #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23747_|
-    (gx#make-syntax-quote '!struct-getf? #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '!procedure #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23748_|
     (gx#make-syntax-quote
-     '!struct-getf-off
+     '!struct-getf::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23749_|
-    (gx#make-syntax-quote
-     '!struct-getf-unchecked?
-     #f
-     (gx#current-expander-context)
-     '()))
+    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23750_|
     (gx#make-syntax-quote
-     '!struct-getf-off-set!
+     '!struct-getf::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23751_|
     (gx#make-syntax-quote
-     '!struct-getf-unchecked?-set!
+     'make-!struct-getf
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23752_|
-    (gx#make-syntax-quote '!procedure #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '!struct-getf? #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23753_|
     (gx#make-syntax-quote
-     '!struct-setf::t
+     '!struct-getf-off
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23754_|
-    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     '!struct-getf-unchecked?
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23755_|
     (gx#make-syntax-quote
-     '!struct-setf::t
+     '!struct-getf-off-set!
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23756_|
     (gx#make-syntax-quote
-     'make-!struct-setf
+     '!struct-getf-unchecked?-set!
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23757_|
-    (gx#make-syntax-quote '!struct-setf? #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '!procedure #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23758_|
     (gx#make-syntax-quote
-     '!struct-setf-off
+     '!struct-setf::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23759_|
-    (gx#make-syntax-quote
-     '!struct-setf-unchecked?
-     #f
-     (gx#current-expander-context)
-     '()))
+    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23760_|
     (gx#make-syntax-quote
-     '!struct-setf-off-set!
+     '!struct-setf::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23761_|
     (gx#make-syntax-quote
-     '!struct-setf-unchecked?-set!
+     'make-!struct-setf
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g23762_|
-    (gx#make-syntax-quote '!procedure #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '!struct-setf? #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23763_|
-    (gx#make-syntax-quote '!lambda::t #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     '!struct-setf-off
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23764_|
-    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     '!struct-setf-unchecked?
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23765_|
-    (gx#make-syntax-quote '!lambda::t #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     '!struct-setf-off-set!
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23766_|
-    (gx#make-syntax-quote 'make-!lambda #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote
+     '!struct-setf-unchecked?-set!
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g23767_|
-    (gx#make-syntax-quote '!lambda? #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '!procedure #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23768_|
-    (gx#make-syntax-quote '!lambda-arity #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '!lambda::t #f (gx#current-expander-context) '()))
   (define |gxc[1]#_g23769_|
+    (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23770_|
+    (gx#make-syntax-quote '!lambda::t #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23771_|
+    (gx#make-syntax-quote 'make-!lambda #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23772_|
+    (gx#make-syntax-quote '!lambda? #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23773_|
+    (gx#make-syntax-quote '!lambda-arity #f (gx#current-expander-context) '()))
+  (define |gxc[1]#_g23774_|
     (gx#make-syntax-quote
      '!lambda-dispatch
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23770_|
+  (define |gxc[1]#_g23775_|
     (gx#make-syntax-quote
      '!lambda-inline
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23771_|
+  (define |gxc[1]#_g23776_|
     (gx#make-syntax-quote
      '!lambda-inline-typedecl
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23772_|
+  (define |gxc[1]#_g23777_|
     (gx#make-syntax-quote
      '!lambda-arity-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23773_|
+  (define |gxc[1]#_g23778_|
     (gx#make-syntax-quote
      '!lambda-dispatch-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23774_|
+  (define |gxc[1]#_g23779_|
     (gx#make-syntax-quote
      '!lambda-inline-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23775_|
+  (define |gxc[1]#_g23780_|
     (gx#make-syntax-quote
      '!lambda-inline-typedecl-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23776_|
+  (define |gxc[1]#_g23781_|
     (gx#make-syntax-quote '!procedure #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g23777_|
+  (define |gxc[1]#_g23782_|
     (gx#make-syntax-quote
      '!case-lambda::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23778_|
+  (define |gxc[1]#_g23783_|
     (gx#make-syntax-quote '!procedure::t #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g23779_|
+  (define |gxc[1]#_g23784_|
     (gx#make-syntax-quote
      '!case-lambda::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23780_|
+  (define |gxc[1]#_g23785_|
     (gx#make-syntax-quote
      'make-!case-lambda
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23781_|
+  (define |gxc[1]#_g23786_|
     (gx#make-syntax-quote '!case-lambda? #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g23782_|
+  (define |gxc[1]#_g23787_|
     (gx#make-syntax-quote
      '!case-lambda-clauses
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23783_|
+  (define |gxc[1]#_g23788_|
     (gx#make-syntax-quote
      '!case-lambda-clauses-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g23784_|
+  (define |gxc[1]#_g23789_|
     (gx#make-syntax-quote '!procedure #f (gx#current-expander-context) '()))
   (begin
     (define |gxc[:0:]#optimizer-info|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g23687_|
+       |gxc[1]#_g23692_|
        'expander-identifiers:
        (cons '#f
-             (cons |gxc[1]#_g23688_|
-                   (cons |gxc[1]#_g23689_|
-                         (cons |gxc[1]#_g23690_|
-                               (cons (cons |gxc[1]#_g23691_|
-                                           (cons |gxc[1]#_g23692_| '()))
-                                     (cons (cons |gxc[1]#_g23693_|
-                                                 (cons |gxc[1]#_g23694_| '()))
+             (cons |gxc[1]#_g23693_|
+                   (cons |gxc[1]#_g23694_|
+                         (cons |gxc[1]#_g23695_|
+                               (cons (cons |gxc[1]#_g23696_|
+                                           (cons |gxc[1]#_g23697_| '()))
+                                     (cons (cons |gxc[1]#_g23698_|
+                                                 (cons |gxc[1]#_g23699_| '()))
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
@@ -446,14 +446,14 @@
     (define |gxc[:0:]#!type|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g23695_|
+       |gxc[1]#_g23700_|
        'expander-identifiers:
        (cons '#f
-             (cons |gxc[1]#_g23696_|
-                   (cons |gxc[1]#_g23697_|
-                         (cons |gxc[1]#_g23698_|
-                               (cons (cons |gxc[1]#_g23699_| '())
-                                     (cons (cons |gxc[1]#_g23700_| '())
+             (cons |gxc[1]#_g23701_|
+                   (cons |gxc[1]#_g23702_|
+                         (cons |gxc[1]#_g23703_|
+                               (cons (cons |gxc[1]#_g23704_| '())
+                                     (cons (cons |gxc[1]#_g23705_| '())
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
@@ -466,16 +466,16 @@
     (define |gxc[:0:]#!alias|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g23701_|
+       |gxc[1]#_g23706_|
        'expander-identifiers:
-       (cons |gxc[1]#_g23702_|
-             (cons |gxc[1]#_g23703_|
-                   (cons |gxc[1]#_g23704_|
-                         (cons |gxc[1]#_g23705_| (cons '() (cons '() '()))))))
+       (cons |gxc[1]#_g23707_|
+             (cons |gxc[1]#_g23708_|
+                   (cons |gxc[1]#_g23709_|
+                         (cons |gxc[1]#_g23710_| (cons '() (cons '() '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g23706_|
+        |gxc[1]#_g23711_|
         '!alias
         '#f
         '()
@@ -483,33 +483,33 @@
     (define |gxc[:0:]#!struct-type|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g23707_|
+       |gxc[1]#_g23712_|
        'expander-identifiers:
-       (cons |gxc[1]#_g23708_|
-             (cons |gxc[1]#_g23709_|
-                   (cons |gxc[1]#_g23710_|
-                         (cons |gxc[1]#_g23711_|
-                               (cons (cons |gxc[1]#_g23712_|
-                                           (cons |gxc[1]#_g23713_|
-                                                 (cons |gxc[1]#_g23714_|
-                                                       (cons |gxc[1]#_g23715_|
-                                                             (cons |gxc[1]#_g23716_|
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (cons |gxc[1]#_g23717_| '()))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                     (cons (cons |gxc[1]#_g23718_|
+       (cons |gxc[1]#_g23713_|
+             (cons |gxc[1]#_g23714_|
+                   (cons |gxc[1]#_g23715_|
+                         (cons |gxc[1]#_g23716_|
+                               (cons (cons |gxc[1]#_g23717_|
+                                           (cons |gxc[1]#_g23718_|
                                                  (cons |gxc[1]#_g23719_|
                                                        (cons |gxc[1]#_g23720_|
                                                              (cons |gxc[1]#_g23721_|
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           (cons |gxc[1]#_g23722_|
-                                 (cons |gxc[1]#_g23723_| '()))))))
+                           (cons |gxc[1]#_g23722_| '()))))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                     (cons (cons |gxc[1]#_g23723_|
+                                                 (cons |gxc[1]#_g23724_|
+                                                       (cons |gxc[1]#_g23725_|
+                                                             (cons |gxc[1]#_g23726_|
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           (cons |gxc[1]#_g23727_|
+                                 (cons |gxc[1]#_g23728_| '()))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g23724_|
+        |gxc[1]#_g23729_|
         '!struct-type
         ':init!
         '()
@@ -517,16 +517,16 @@
     (define |gxc[:0:]#!procedure|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g23725_|
+       |gxc[1]#_g23730_|
        'expander-identifiers:
-       (cons |gxc[1]#_g23726_|
-             (cons |gxc[1]#_g23727_|
-                   (cons |gxc[1]#_g23728_|
-                         (cons |gxc[1]#_g23729_| (cons '() (cons '() '()))))))
+       (cons |gxc[1]#_g23731_|
+             (cons |gxc[1]#_g23732_|
+                   (cons |gxc[1]#_g23733_|
+                         (cons |gxc[1]#_g23734_| (cons '() (cons '() '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g23730_|
+        |gxc[1]#_g23735_|
         '!procedure
         '#f
         '()
@@ -534,16 +534,16 @@
     (define |gxc[:0:]#!struct-pred|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g23731_|
+       |gxc[1]#_g23736_|
        'expander-identifiers:
-       (cons |gxc[1]#_g23732_|
-             (cons |gxc[1]#_g23733_|
-                   (cons |gxc[1]#_g23734_|
-                         (cons |gxc[1]#_g23735_| (cons '() (cons '() '()))))))
+       (cons |gxc[1]#_g23737_|
+             (cons |gxc[1]#_g23738_|
+                   (cons |gxc[1]#_g23739_|
+                         (cons |gxc[1]#_g23740_| (cons '() (cons '() '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g23736_|
+        |gxc[1]#_g23741_|
         '!struct-pred
         '#f
         '()
@@ -551,16 +551,16 @@
     (define |gxc[:0:]#!struct-cons|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g23737_|
+       |gxc[1]#_g23742_|
        'expander-identifiers:
-       (cons |gxc[1]#_g23738_|
-             (cons |gxc[1]#_g23739_|
-                   (cons |gxc[1]#_g23740_|
-                         (cons |gxc[1]#_g23741_| (cons '() (cons '() '()))))))
+       (cons |gxc[1]#_g23743_|
+             (cons |gxc[1]#_g23744_|
+                   (cons |gxc[1]#_g23745_|
+                         (cons |gxc[1]#_g23746_| (cons '() (cons '() '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g23742_|
+        |gxc[1]#_g23747_|
         '!struct-cons
         '#f
         '()
@@ -568,21 +568,21 @@
     (define |gxc[:0:]#!struct-getf|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g23743_|
+       |gxc[1]#_g23748_|
        'expander-identifiers:
-       (cons |gxc[1]#_g23744_|
-             (cons |gxc[1]#_g23745_|
-                   (cons |gxc[1]#_g23746_|
-                         (cons |gxc[1]#_g23747_|
-                               (cons (cons |gxc[1]#_g23748_|
-                                           (cons |gxc[1]#_g23749_| '()))
-                                     (cons (cons |gxc[1]#_g23750_|
-                                                 (cons |gxc[1]#_g23751_| '()))
+       (cons |gxc[1]#_g23749_|
+             (cons |gxc[1]#_g23750_|
+                   (cons |gxc[1]#_g23751_|
+                         (cons |gxc[1]#_g23752_|
+                               (cons (cons |gxc[1]#_g23753_|
+                                           (cons |gxc[1]#_g23754_| '()))
+                                     (cons (cons |gxc[1]#_g23755_|
+                                                 (cons |gxc[1]#_g23756_| '()))
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g23752_|
+        |gxc[1]#_g23757_|
         '!struct-getf
         '#f
         '()
@@ -590,21 +590,21 @@
     (define |gxc[:0:]#!struct-setf|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g23753_|
+       |gxc[1]#_g23758_|
        'expander-identifiers:
-       (cons |gxc[1]#_g23754_|
-             (cons |gxc[1]#_g23755_|
-                   (cons |gxc[1]#_g23756_|
-                         (cons |gxc[1]#_g23757_|
-                               (cons (cons |gxc[1]#_g23758_|
-                                           (cons |gxc[1]#_g23759_| '()))
-                                     (cons (cons |gxc[1]#_g23760_|
-                                                 (cons |gxc[1]#_g23761_| '()))
+       (cons |gxc[1]#_g23759_|
+             (cons |gxc[1]#_g23760_|
+                   (cons |gxc[1]#_g23761_|
+                         (cons |gxc[1]#_g23762_|
+                               (cons (cons |gxc[1]#_g23763_|
+                                           (cons |gxc[1]#_g23764_| '()))
+                                     (cons (cons |gxc[1]#_g23765_|
+                                                 (cons |gxc[1]#_g23766_| '()))
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g23762_|
+        |gxc[1]#_g23767_|
         '!struct-setf
         '#f
         '()
@@ -612,21 +612,21 @@
     (define |gxc[:0:]#!lambda|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g23763_|
+       |gxc[1]#_g23768_|
        'expander-identifiers:
-       (cons |gxc[1]#_g23764_|
-             (cons |gxc[1]#_g23765_|
-                   (cons |gxc[1]#_g23766_|
-                         (cons |gxc[1]#_g23767_|
-                               (cons (cons |gxc[1]#_g23768_|
-                                           (cons |gxc[1]#_g23769_|
-                                                 (cons |gxc[1]#_g23770_|
-                                                       (cons |gxc[1]#_g23771_|
+       (cons |gxc[1]#_g23769_|
+             (cons |gxc[1]#_g23770_|
+                   (cons |gxc[1]#_g23771_|
+                         (cons |gxc[1]#_g23772_|
+                               (cons (cons |gxc[1]#_g23773_|
+                                           (cons |gxc[1]#_g23774_|
+                                                 (cons |gxc[1]#_g23775_|
+                                                       (cons |gxc[1]#_g23776_|
                                                              '()))))
-                                     (cons (cons |gxc[1]#_g23772_|
-                                                 (cons |gxc[1]#_g23773_|
-                                                       (cons |gxc[1]#_g23774_|
-                                                             (cons |gxc[1]#_g23775_|
+                                     (cons (cons |gxc[1]#_g23777_|
+                                                 (cons |gxc[1]#_g23778_|
+                                                       (cons |gxc[1]#_g23779_|
+                                                             (cons |gxc[1]#_g23780_|
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -634,7 +634,7 @@
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g23776_|
+        |gxc[1]#_g23781_|
         '!lambda
         ':init!
         '()
@@ -642,19 +642,19 @@
     (define |gxc[:0:]#!case-lambda|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g23777_|
+       |gxc[1]#_g23782_|
        'expander-identifiers:
-       (cons |gxc[1]#_g23778_|
-             (cons |gxc[1]#_g23779_|
-                   (cons |gxc[1]#_g23780_|
-                         (cons |gxc[1]#_g23781_|
-                               (cons (cons |gxc[1]#_g23782_| '())
-                                     (cons (cons |gxc[1]#_g23783_| '())
+       (cons |gxc[1]#_g23783_|
+             (cons |gxc[1]#_g23784_|
+                   (cons |gxc[1]#_g23785_|
+                         (cons |gxc[1]#_g23786_|
+                               (cons (cons |gxc[1]#_g23787_| '())
+                                     (cons (cons |gxc[1]#_g23788_| '())
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         '#f
-        |gxc[1]#_g23784_|
+        |gxc[1]#_g23789_|
         '!case-lambda
         '#f
         '()
@@ -672,19 +672,19 @@
                               (_tl1215512192_ (##cdr _e1215312185_)))
                           (if (gx#stx-pair/null? _tl1215512192_)
                               (if (fx>= (gx#stx-length _tl1215512192_) '0)
-                                  (let ((_g23785_
+                                  (let ((_g23790_
                                          (gx#syntax-split-splice
                                           _tl1215512192_
                                           '0)))
                                     (begin
-                                      (let ((_g23786_ (values-count _g23785_)))
-                                        (if (not (fx= _g23786_ 2))
+                                      (let ((_g23791_ (values-count _g23790_)))
+                                        (if (not (fx= _g23791_ 2))
                                             (error "Context expects 2 values"
-                                                   _g23786_)))
+                                                   _g23791_)))
                                       (let ((_target1215612195_
-                                             (values-ref _g23785_ 0))
+                                             (values-ref _g23790_ 0))
                                             (_tl1215812198_
-                                             (values-ref _g23785_ 1)))
+                                             (values-ref _g23790_ 1)))
                                         (if (gx#stx-null? _tl1215812198_)
                                             (letrec ((_loop1215912201_
                                                       (lambda (_hd1215712205_

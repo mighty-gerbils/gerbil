@@ -110,8 +110,8 @@ namespace: gx
          (%#define-runtime make-local-context gx#make-local-context)
          (%#define-syntax local-context |gx[:0:]#local-context|)
          (%#begin (%#define-runtime
-                   phi-context:::init!__opt-lambda7378
-                   gx#phi-context:::init!__opt-lambda7378)
+                   phi-context:::init!__%
+                   gx#phi-context:::init!__%)
                   (%#begin (%#define-runtime
                             phi-context:::init!__0
                             gx#phi-context:::init!__0)
@@ -119,8 +119,8 @@ namespace: gx
                             phi-context:::init!
                             gx#phi-context:::init!)))
          (%#begin (%#define-runtime
-                   local-context:::init!__opt-lambda7242
-                   gx#local-context:::init!__opt-lambda7242)
+                   local-context:::init!__%
+                   gx#local-context:::init!__%)
                   (%#begin (%#define-runtime
                             local-context:::init!__0
                             gx#local-context:::init!__0)
@@ -302,15 +302,11 @@ namespace: gx
          (%#define-runtime syntax-error-phi-set! gx#syntax-error-phi-set!)
          (%#define-syntax syntax-error |gx[:0:]#syntax-error|)
          (%#define-runtime raise-syntax-error gx#raise-syntax-error)
-         (%#begin (%#define-runtime
-                   eval-syntax__opt-lambda7029
-                   gx#eval-syntax__opt-lambda7029)
+         (%#begin (%#define-runtime eval-syntax__% gx#eval-syntax__%)
                   (%#begin (%#define-runtime eval-syntax__0 gx#eval-syntax__0)
                            (%#define-runtime eval-syntax gx#eval-syntax)))
          (%#define-runtime eval-syntax* gx#eval-syntax*)
-         (%#begin (%#define-runtime
-                   core-expand__opt-lambda7013
-                   gx#core-expand__opt-lambda7013)
+         (%#begin (%#define-runtime core-expand__% gx#core-expand__%)
                   (%#begin (%#define-runtime core-expand__0 gx#core-expand__0)
                            (%#define-runtime core-expand gx#core-expand)))
          (%#define-runtime core-expand-top gx#core-expand-top)
@@ -318,9 +314,7 @@ namespace: gx
          (%#define-runtime
           core-expand-expression+1
           gx#core-expand-expression+1)
-         (%#begin (%#define-runtime
-                   core-expand*__opt-lambda6878
-                   gx#core-expand*__opt-lambda6878)
+         (%#begin (%#define-runtime core-expand*__% gx#core-expand*__%)
                   (%#begin (%#define-runtime
                             core-expand*__0
                             gx#core-expand*__0)
@@ -328,8 +322,8 @@ namespace: gx
          (%#define-runtime core-expand1 gx#core-expand1)
          (%#define-runtime core-expand-head gx#core-expand-head)
          (%#begin (%#define-runtime
-                   core-expand-block__opt-lambda6606
-                   gx#core-expand-block__opt-lambda6606)
+                   core-expand-block__%
+                   gx#core-expand-block__%)
                   (%#begin (%#define-runtime
                             core-expand-block__0
                             gx#core-expand-block__0)
@@ -344,8 +338,8 @@ namespace: gx
           core-expand-cond-expand%
           gx#core-expand-cond-expand%)
          (%#begin (%#define-runtime
-                   core-expand-include%__opt-lambda6355
-                   gx#core-expand-include%__opt-lambda6355)
+                   core-expand-include%__%
+                   gx#core-expand-include%__%)
                   (%#begin (%#define-runtime
                             core-expand-include%__0
                             gx#core-expand-include%__0)
@@ -353,8 +347,8 @@ namespace: gx
                             core-expand-include%
                             gx#core-expand-include%)))
          (%#begin (%#define-runtime
-                   core-apply-expander__opt-lambda6324
-                   gx#core-apply-expander__opt-lambda6324)
+                   core-apply-expander__%
+                   gx#core-apply-expander__%)
                   (%#begin (%#define-runtime
                             core-apply-expander__0
                             gx#core-apply-expander__0)
@@ -371,8 +365,8 @@ namespace: gx
           core-expander::apply-macro-expander
           gx#core-expander::apply-macro-expander)
          (%#begin (%#define-runtime
-                   top-special-form::apply-macro-expander__opt-lambda5888
-                   gx#top-special-form::apply-macro-expander__opt-lambda5888)
+                   top-special-form::apply-macro-expander__%
+                   gx#top-special-form::apply-macro-expander__%)
                   (%#begin (%#define-runtime
                             top-special-form::apply-macro-expander__0
                             gx#top-special-form::apply-macro-expander__0)
@@ -386,8 +380,8 @@ namespace: gx
           rename-macro-expander::apply-macro-expander
           gx#rename-macro-expander::apply-macro-expander)
          (%#begin (%#define-runtime
-                   core-apply-user-expander__opt-lambda5413
-                   gx#core-apply-user-expander__opt-lambda5413)
+                   core-apply-user-expander__%
+                   gx#core-apply-user-expander__%)
                   (%#begin (%#define-runtime
                             core-apply-user-expander__0
                             gx#core-apply-user-expander__0)
@@ -399,8 +393,8 @@ namespace: gx
           user-expander::apply-macro-expander
           gx#user-expander::apply-macro-expander)
          (%#begin (%#define-runtime
-                   resolve-identifier__opt-lambda5254
-                   gx#resolve-identifier__opt-lambda5254)
+                   resolve-identifier__%
+                   gx#resolve-identifier__%)
                   (%#begin (%#define-runtime
                             resolve-identifier__0
                             gx#resolve-identifier__0)
@@ -410,9 +404,7 @@ namespace: gx
                            (%#define-runtime
                             resolve-identifier
                             gx#resolve-identifier)))
-         (%#begin (%#define-runtime
-                   bind-identifier!__opt-lambda5212
-                   gx#bind-identifier!__opt-lambda5212)
+         (%#begin (%#define-runtime bind-identifier!__% gx#bind-identifier!__%)
                   (%#begin (%#define-runtime
                             bind-identifier!__0
                             gx#bind-identifier!__0)
@@ -426,8 +418,8 @@ namespace: gx
                             bind-identifier!
                             gx#bind-identifier!)))
          (%#begin (%#define-runtime
-                   core-resolve-identifier__opt-lambda5184
-                   gx#core-resolve-identifier__opt-lambda5184)
+                   core-resolve-identifier__%
+                   gx#core-resolve-identifier__%)
                   (%#begin (%#define-runtime
                             core-resolve-identifier__0
                             gx#core-resolve-identifier__0)
@@ -438,9 +430,7 @@ namespace: gx
                             core-resolve-identifier
                             gx#core-resolve-identifier)))
          (%#define-runtime core-resolve-binding gx#core-resolve-binding)
-         (%#begin (%#define-runtime
-                   core-bind!__opt-lambda4973
-                   gx#core-bind!__opt-lambda4973)
+         (%#begin (%#define-runtime core-bind!__% gx#core-bind!__%)
                   (%#begin (%#define-runtime core-bind!__0 gx#core-bind!__0)
                            (%#define-runtime core-bind!__1 gx#core-bind!__1)
                            (%#define-runtime core-bind!__2 gx#core-bind!__2)
@@ -451,9 +441,7 @@ namespace: gx
          (%#define-runtime core-context-put! gx#core-context-put!)
          (%#define-runtime core-context-resolve gx#core-context-resolve)
          (%#define-runtime core-context-bind! gx#core-context-bind!)
-         (%#begin (%#define-runtime
-                   core-context-top__opt-lambda4796
-                   gx#core-context-top__opt-lambda4796)
+         (%#begin (%#define-runtime core-context-top__% gx#core-context-top__%)
                   (%#begin (%#define-runtime
                             core-context-top__0
                             gx#core-context-top__0)
@@ -464,8 +452,8 @@ namespace: gx
                             core-context-top
                             gx#core-context-top)))
          (%#begin (%#define-runtime
-                   core-context-root__opt-lambda4781
-                   gx#core-context-root__opt-lambda4781)
+                   core-context-root__%
+                   gx#core-context-root__%)
                   (%#begin (%#define-runtime
                             core-context-root__0
                             gx#core-context-root__0)
@@ -473,8 +461,8 @@ namespace: gx
                             core-context-root
                             gx#core-context-root)))
          (%#begin (%#define-runtime
-                   core-context-rebind?__opt-lambda4765
-                   gx#core-context-rebind?__opt-lambda4765)
+                   core-context-rebind?__%
+                   gx#core-context-rebind?__%)
                   (%#begin (%#define-runtime
                             core-context-rebind?__0
                             gx#core-context-rebind?__0)
@@ -482,8 +470,8 @@ namespace: gx
                             core-context-rebind?
                             gx#core-context-rebind?)))
          (%#begin (%#define-runtime
-                   core-context-namespace__opt-lambda4748
-                   gx#core-context-namespace__opt-lambda4748)
+                   core-context-namespace__%
+                   gx#core-context-namespace__%)
                   (%#begin (%#define-runtime
                             core-context-namespace__0
                             gx#core-context-namespace__0)
@@ -491,8 +479,8 @@ namespace: gx
                             core-context-namespace
                             gx#core-context-namespace)))
          (%#begin (%#define-runtime
-                   expander-binding?__opt-lambda4734
-                   gx#expander-binding?__opt-lambda4734)
+                   expander-binding?__%
+                   gx#expander-binding?__%)
                   (%#begin (%#define-runtime
                             expander-binding?__0
                             gx#expander-binding?__0)
@@ -512,8 +500,8 @@ namespace: gx
           private-feature-binding?
           gx#private-feature-binding?)
          (%#begin (%#define-runtime
-                   core-bound-identifier?__opt-lambda4697
-                   gx#core-bound-identifier?__opt-lambda4697)
+                   core-bound-identifier?__%
+                   gx#core-bound-identifier?__%)
                   (%#begin (%#define-runtime
                             core-bound-identifier?__0
                             gx#core-bound-identifier?__0)
@@ -523,8 +511,8 @@ namespace: gx
          (%#define-runtime core-identifier=? gx#core-identifier=?)
          (%#define-runtime core-extern-symbol? gx#core-extern-symbol?)
          (%#begin (%#define-runtime
-                   core-quote-syntax__opt-lambda4643
-                   gx#core-quote-syntax__opt-lambda4643)
+                   core-quote-syntax__%
+                   gx#core-quote-syntax__%)
                   (%#begin (%#define-runtime
                             core-quote-syntax__0
                             gx#core-quote-syntax__0)
@@ -541,8 +529,8 @@ namespace: gx
          (%#define-runtime core-list gx#core-list)
          (%#define-runtime core-cons* gx#core-cons*)
          (%#begin (%#define-runtime
-                   core-resolve-path__opt-lambda4607
-                   gx#core-resolve-path__opt-lambda4607)
+                   core-resolve-path__%
+                   gx#core-resolve-path__%)
                   (%#begin (%#define-runtime
                             core-resolve-path__0
                             gx#core-resolve-path__0)
@@ -550,8 +538,8 @@ namespace: gx
                             core-resolve-path
                             gx#core-resolve-path)))
          (%#begin (%#define-runtime
-                   core-deserialize-mark__opt-lambda4563
-                   gx#core-deserialize-mark__opt-lambda4563)
+                   core-deserialize-mark__%
+                   gx#core-deserialize-mark__%)
                   (%#begin (%#define-runtime
                             core-deserialize-mark__0
                             gx#core-deserialize-mark__0)
@@ -561,9 +549,7 @@ namespace: gx
          (%#define-runtime syntax-local-rewrap gx#syntax-local-rewrap)
          (%#define-runtime syntax-local-unwrap gx#syntax-local-unwrap)
          (%#define-runtime syntax-local-introduce gx#syntax-local-introduce)
-         (%#begin (%#define-runtime
-                   syntax-local-e__opt-lambda4511
-                   gx#syntax-local-e__opt-lambda4511)
+         (%#begin (%#define-runtime syntax-local-e__% gx#syntax-local-e__%)
                   (%#begin (%#define-runtime
                             syntax-local-e__0
                             gx#syntax-local-e__0)
@@ -571,8 +557,8 @@ namespace: gx
                             syntax-local-e
                             gx#syntax-local-e)))
          (%#begin (%#define-runtime
-                   syntax-local-value__opt-lambda4495
-                   gx#syntax-local-value__opt-lambda4495)
+                   syntax-local-value__%
+                   gx#syntax-local-value__%)
                   (%#begin (%#define-runtime
                             syntax-local-value__0
                             gx#syntax-local-value__0)
