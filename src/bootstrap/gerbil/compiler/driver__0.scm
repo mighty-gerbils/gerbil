@@ -4,225 +4,304 @@
     (lambda () (inexact->exact (floor (time->seconds (current-time))))))
   (begin
     (define gxc#compile-file__%
-      (lambda (_srcpath24480_ _opts24481_)
+      (lambda (_srcpath24549_ _opts24550_)
         (begin
-          (if (string? _srcpath24480_)
+          (if (string? _srcpath24549_)
               '#!void
               (gxc#raise-compile-error
                '"Invalid module source path"
-               _srcpath24480_))
-          (let ((_outdir24483_ (pgetq 'output-dir: _opts24481_))
-                (_invoke-gsc?24484_ (pgetq 'invoke-gsc: _opts24481_))
-                (_gsc-options24485_ (pgetq 'gsc-options: _opts24481_))
-                (_keep-scm?24486_ (pgetq 'keep-scm: _opts24481_))
-                (_verbosity24487_ (pgetq 'verbose: _opts24481_))
-                (_optimize24488_ (pgetq 'optimize: _opts24481_))
-                (_debug24489_ (pgetq 'debug: _opts24481_))
-                (_gen-ssxi24490_ (pgetq 'generate-ssxi: _opts24481_))
-                (_static24491_ (pgetq 'static: _opts24481_)))
+               _srcpath24549_))
+          (let ((_outdir24552_ (pgetq 'output-dir: _opts24550_))
+                (_invoke-gsc?24553_ (pgetq 'invoke-gsc: _opts24550_))
+                (_gsc-options24554_ (pgetq 'gsc-options: _opts24550_))
+                (_keep-scm?24555_ (pgetq 'keep-scm: _opts24550_))
+                (_verbosity24556_ (pgetq 'verbose: _opts24550_))
+                (_optimize24557_ (pgetq 'optimize: _opts24550_))
+                (_debug24558_ (pgetq 'debug: _opts24550_))
+                (_gen-ssxi24559_ (pgetq 'generate-ssxi: _opts24550_))
+                (_static24560_ (pgetq 'static: _opts24550_)))
             (begin
-              (if _outdir24483_ (create-directory* _outdir24483_) '#!void)
-              (if _optimize24488_ (gxc#optimizer-info-init!) '#!void)
+              (if _outdir24552_ (create-directory* _outdir24552_) '#!void)
+              (if _optimize24557_ (gxc#optimizer-info-init!) '#!void)
               (call-with-parameters
                (lambda ()
                  (begin
-                   (gxc#verbose '"compile " _srcpath24480_)
+                   (gxc#verbose '"compile " _srcpath24549_)
                    (gxc#compile-top-module
-                    (gx#import-module__0 _srcpath24480_))))
+                    (gx#import-module__0 _srcpath24549_))))
                gxc#current-compile-output-dir
-               _outdir24483_
+               _outdir24552_
                gxc#current-compile-invoke-gsc
-               _invoke-gsc?24484_
+               _invoke-gsc?24553_
                gxc#current-compile-gsc-options
-               _gsc-options24485_
+               _gsc-options24554_
                gxc#current-compile-keep-scm
-               _keep-scm?24486_
+               _keep-scm?24555_
                gxc#current-compile-verbose
-               _verbosity24487_
+               _verbosity24556_
                gxc#current-compile-optimize
-               _optimize24488_
+               _optimize24557_
                gxc#current-compile-debug
-               _debug24489_
+               _debug24558_
                gxc#current-compile-generate-ssxi
-               _gen-ssxi24490_
+               _gen-ssxi24559_
                gxc#current-compile-static
-               _static24491_
+               _static24560_
                gxc#current-compile-timestamp
                (gxc#compile-timestamp)))))))
     (begin
       (define gxc#compile-file__0
-        (lambda (_srcpath24497_)
-          (let ((_opts24499_ '()))
-            (gxc#compile-file__% _srcpath24497_ _opts24499_))))
+        (lambda (_srcpath24566_)
+          (let ((_opts24568_ '()))
+            (gxc#compile-file__% _srcpath24566_ _opts24568_))))
       (define gxc#compile-file
-        (lambda _g24507_
-          (let ((_g24506_ (length _g24507_)))
-            (cond ((fx= _g24506_ 1) (apply gxc#compile-file__0 _g24507_))
-                  ((fx= _g24506_ 2) (apply gxc#compile-file__% _g24507_))
+        (lambda _g24576_
+          (let ((_g24575_ (length _g24576_)))
+            (cond ((fx= _g24575_ 1) (apply gxc#compile-file__0 _g24576_))
+                  ((fx= _g24575_ 2) (apply gxc#compile-file__% _g24576_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#compile-file
-                    _g24507_))))))))
+                    _g24576_))))))))
   (begin
     (define gxc#compile-exe-stub__%
-      (lambda (_srcpath24466_ _opts24467_)
+      (lambda (_srcpath24535_ _opts24536_)
         (gxc#do-compile-exe
-         _srcpath24466_
-         _opts24467_
+         _srcpath24535_
+         _opts24536_
          gxc#compile-exe-stub-module)))
     (begin
       (define gxc#compile-exe-stub__0
-        (lambda (_srcpath24472_)
-          (let ((_opts24474_ '()))
-            (gxc#compile-exe-stub__% _srcpath24472_ _opts24474_))))
+        (lambda (_srcpath24541_)
+          (let ((_opts24543_ '()))
+            (gxc#compile-exe-stub__% _srcpath24541_ _opts24543_))))
       (define gxc#compile-exe-stub
-        (lambda _g24509_
-          (let ((_g24508_ (length _g24509_)))
-            (cond ((fx= _g24508_ 1) (apply gxc#compile-exe-stub__0 _g24509_))
-                  ((fx= _g24508_ 2) (apply gxc#compile-exe-stub__% _g24509_))
+        (lambda _g24578_
+          (let ((_g24577_ (length _g24578_)))
+            (cond ((fx= _g24577_ 1) (apply gxc#compile-exe-stub__0 _g24578_))
+                  ((fx= _g24577_ 2) (apply gxc#compile-exe-stub__% _g24578_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#compile-exe-stub
-                    _g24509_))))))))
+                    _g24578_))))))))
   (begin
     (define gxc#compile-static-exe__%
-      (lambda (_srcpath24452_ _opts24453_)
+      (lambda (_srcpath24521_ _opts24522_)
         (gxc#do-compile-exe
-         _srcpath24452_
-         _opts24453_
+         _srcpath24521_
+         _opts24522_
          gxc#compile-exe-static-module)))
     (begin
       (define gxc#compile-static-exe__0
-        (lambda (_srcpath24458_)
-          (let ((_opts24460_ '()))
-            (gxc#compile-static-exe__% _srcpath24458_ _opts24460_))))
+        (lambda (_srcpath24527_)
+          (let ((_opts24529_ '()))
+            (gxc#compile-static-exe__% _srcpath24527_ _opts24529_))))
       (define gxc#compile-static-exe
-        (lambda _g24511_
-          (let ((_g24510_ (length _g24511_)))
-            (cond ((fx= _g24510_ 1) (apply gxc#compile-static-exe__0 _g24511_))
-                  ((fx= _g24510_ 2) (apply gxc#compile-static-exe__% _g24511_))
+        (lambda _g24580_
+          (let ((_g24579_ (length _g24580_)))
+            (cond ((fx= _g24579_ 1) (apply gxc#compile-static-exe__0 _g24580_))
+                  ((fx= _g24579_ 2) (apply gxc#compile-static-exe__% _g24580_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#compile-static-exe
-                    _g24511_))))))))
+                    _g24580_))))))))
   (define gxc#do-compile-exe
-    (lambda (_srcpath24440_ _opts24441_ _compile-e24442_)
+    (lambda (_srcpath24509_ _opts24510_ _compile-e24511_)
       (begin
-        (if (string? _srcpath24440_)
+        (if (string? _srcpath24509_)
             '#!void
             (gxc#raise-compile-error
              '"Invalid module source path"
-             _srcpath24440_))
-        (let ((_outdir24444_ (pgetq 'output-dir: _opts24441_))
-              (_invoke-gsc?24445_ (pgetq 'invoke-gsc: _opts24441_))
-              (_gsc-options24446_ (pgetq 'gsc-options: _opts24441_))
-              (_keep-scm?24447_ (pgetq 'keep-scm: _opts24441_))
-              (_verbosity24448_ (pgetq 'verbose: _opts24441_)))
+             _srcpath24509_))
+        (let ((_outdir24513_ (pgetq 'output-dir: _opts24510_))
+              (_invoke-gsc?24514_ (pgetq 'invoke-gsc: _opts24510_))
+              (_gsc-options24515_ (pgetq 'gsc-options: _opts24510_))
+              (_keep-scm?24516_ (pgetq 'keep-scm: _opts24510_))
+              (_verbosity24517_ (pgetq 'verbose: _opts24510_)))
           (begin
-            (if _outdir24444_ (create-directory* _outdir24444_) '#!void)
+            (if _outdir24513_ (create-directory* _outdir24513_) '#!void)
             (call-with-parameters
              (lambda ()
                (begin
-                 (gxc#verbose '"compile exe " _srcpath24440_)
-                 (_compile-e24442_
-                  (gx#import-module__0 _srcpath24440_)
-                  _opts24441_)))
+                 (gxc#verbose '"compile exe " _srcpath24509_)
+                 (_compile-e24511_
+                  (gx#import-module__0 _srcpath24509_)
+                  _opts24510_)))
              gxc#current-compile-output-dir
-             _outdir24444_
+             _outdir24513_
              gxc#current-compile-invoke-gsc
-             _invoke-gsc?24445_
+             _invoke-gsc?24514_
              gxc#current-compile-gsc-options
-             _gsc-options24446_
+             _gsc-options24515_
              gxc#current-compile-keep-scm
-             _keep-scm?24447_
+             _keep-scm?24516_
              gxc#current-compile-verbose
-             _verbosity24448_
+             _verbosity24517_
              gxc#current-compile-timestamp
              (gxc#compile-timestamp)))))))
   (define gxc#compile-exe-stub-module
-    (lambda (_ctx24404_ _opts24405_)
-      (letrec ((_generate-stub24407_
+    (lambda (_ctx24473_ _opts24474_)
+      (letrec ((_generate-stub24476_
                 (lambda ()
-                  (let* ((_mod-str24433_
+                  (let* ((_mod-str24502_
                           (symbol->string
                            (##structure-ref
-                            _ctx24404_
+                            _ctx24473_
                             '1
                             gx#expander-context::t
                             '#f)))
-                         (_mod-rt24435_ (string-append _mod-str24433_ '"__rt"))
-                         (_mod-main24437_
-                          (gxc#find-runtime-symbol _ctx24404_ 'main)))
+                         (_mod-rt24504_ (string-append _mod-str24502_ '"__rt"))
+                         (_mod-main24506_
+                          (gxc#find-runtime-symbol _ctx24473_ 'main)))
                     (begin
                       (write '(##namespace ("")))
                       (newline)
                       (write (cons '_gx#start!
-                                   (cons _mod-rt24435_
+                                   (cons _mod-rt24504_
                                          (cons (cons 'quote
-                                                     (cons _mod-main24437_
+                                                     (cons _mod-main24506_
                                                            '()))
                                                '()))))
                       (newline)))))
-               (_compile-stub24408_
-                (lambda (_output-scm24415_ _output-bin24416_)
-                  (let* ((_init-stub24418_
+               (_compile-stub24477_
+                (lambda (_output-scm24484_ _output-bin24485_)
+                  (let* ((_init-stub24487_
                           (path-expand
                            '"lib/gx-init-exe.scm"
                            (getenv '"GERBIL_HOME")))
-                         (_gxc-cache24420_ (gxc#compile-cache-directory))
-                         (_init-stub24422_
+                         (_gxc-cache24489_ (gxc#compile-cache-directory))
+                         (_init-stub24491_
                           (gxc#compile-cache
-                           _init-stub24418_
-                           _gxc-cache24420_))
-                         (_gsc-args24424_
+                           _init-stub24487_
+                           _gxc-cache24489_))
+                         (_gsc-args24493_
                           (cons '"-exe"
                                 (cons '"-o"
-                                      (cons _output-bin24416_
-                                            (cons _init-stub24422_
-                                                  (cons _output-scm24415_
+                                      (cons _output-bin24485_
+                                            (cons _init-stub24491_
+                                                  (cons _output-scm24484_
                                                         '()))))))
-                         (_g24512_
+                         (_g24581_
                           (gxc#verbose
                            '"invoke gsc "
-                           (cons 'gsc _gsc-args24424_)))
-                         (_proc24427_
+                           (cons 'gsc _gsc-args24493_)))
+                         (_proc24496_
                           (open-process
                            (cons 'path:
                                  (cons '"gsc"
                                        (cons 'arguments:
-                                             (cons _gsc-args24424_
+                                             (cons _gsc-args24493_
                                                    (cons 'stdout-redirection:
                                                          (cons '#f '()))))))))
-                         (_status24429_ (process-status _proc24427_)))
-                    (if (zero? _status24429_)
+                         (_status24498_ (process-status _proc24496_)))
+                    (if (zero? _status24498_)
                         '#!void
                         (gxc#raise-compile-error
                          '"Compilation error; gsc exit with nonzero status"
-                         _output-scm24415_
-                         _output-bin24416_
-                         _status24429_))))))
-        (let* ((_output-bin24410_
-                (gxc#compile-exe-output-file _ctx24404_ _opts24405_))
-               (_output-scm24412_ (string-append _output-bin24410_ '".scm")))
+                         _output-scm24484_
+                         _output-bin24485_
+                         _status24498_))))))
+        (let* ((_output-bin24479_
+                (gxc#compile-exe-output-file _ctx24473_ _opts24474_))
+               (_output-scm24481_ (string-append _output-bin24479_ '".scm")))
           (begin
-            (with-output-to-file _output-scm24412_ _generate-stub24407_)
+            (with-output-to-file _output-scm24481_ _generate-stub24476_)
             (if (gxc#current-compile-invoke-gsc)
-                (_compile-stub24408_ _output-scm24412_ _output-bin24410_)
+                (_compile-stub24477_ _output-scm24481_ _output-bin24479_)
                 '#!void)
             (if (gxc#current-compile-keep-scm)
                 '#!void
-                (delete-file _output-scm24412_)))))))
+                (delete-file _output-scm24481_)))))))
   (define gxc#compile-exe-static-module
     (lambda (_ctx24314_ _opts24315_)
-      (letrec ((_generate-stub24317_
+      (letrec ((_reset-declare24317_
                 (lambda ()
-                  (let ((_mod-main24402_
-                         (gxc#find-runtime-symbol _ctx24314_ 'main)))
+                  '(declare
+                     (gambit-scheme)
+                     (block)
+                     (core)
+                     (inline)
+                     (inline-primitives)
+                     (inlining-limit 350)
+                     (constant-fold)
+                     (lambda-lift)
+                     (standard-bindings)
+                     (extended-bindings)
+                     (run-time-bindings)
+                     (safe)
+                     (interrupts-enabled)
+                     (proper-tail-calls)
+                     (not generative-lambda)
+                     (optimize-dead-local-variables)
+                     (optimize-dead-definitions)
+                     (generic)
+                     (mostly-fixnum-flonum))))
+               (_user-declare24318_
+                (lambda ()
+                  (let* ((_gsc-opts24414_ (pgetq 'gsc-options: _opts24315_))
+                         (_gsc-prelude24416_
+                          (member '"-prelude" _gsc-opts24414_))
+                         (_gsc-prelude24418_
+                          (if _gsc-prelude24416_
+                              (read (open-input-string
+                                     (cadr _gsc-prelude24416_)))
+                              '#f)))
+                    (let _lift24421_ ((_expr24423_ _gsc-prelude24418_))
+                      (let* ((_expr2442424436_ _expr24423_)
+                             (_E2442824440_
+                              (lambda ()
+                                (error '"No clause matching"
+                                       _expr2442424436_)))
+                             (_else2442724444_ (lambda () '#f))
+                             (_try-match2442624460_
+                              (lambda ()
+                                (let ((_K2442924450_
+                                       (lambda (_exprs24448_)
+                                         (ormap1 _lift24421_ _exprs24448_))))
+                                  (if (##pair? _expr2442424436_)
+                                      (let ((_hd2443024453_
+                                             (##car _expr2442424436_))
+                                            (_tl2443124455_
+                                             (##cdr _expr2442424436_)))
+                                        (if (##eq? _hd2443024453_ 'begin)
+                                            (let ((_exprs24458_
+                                                   _tl2443124455_))
+                                              (_K2442924450_ _exprs24458_))
+                                            (_else2442724444_)))
+                                      (_else2442724444_)))))
+                             (_K2443224464_ (lambda () _expr24423_)))
+                        (if (##pair? _expr2442424436_)
+                            (let ((_hd2443324467_ (##car _expr2442424436_))
+                                  (_tl2443424469_ (##cdr _expr2442424436_)))
+                              (if (##eq? _hd2443324467_ 'declare)
+                                  (_K2443224464_)
+                                  (_try-match2442624460_)))
+                            (_try-match2442624460_)))))))
+               (_generate-stub24319_
+                (lambda (_deps24405_)
+                  (let ((_mod-main24407_
+                         (gxc#find-runtime-symbol _ctx24314_ 'main))
+                        (_reset-decl24408_ (_reset-declare24317_))
+                        (_user-decl24409_ (_user-declare24318_)))
                     (begin
                       (write '(##namespace ("")))
                       (newline)
+                      (write '(declare (optimize-dead-definitions)))
+                      (newline)
+                      (for-each
+                       (lambda (_dep24411_)
+                         (begin
+                           (write (cons 'include (cons _dep24411_ '())))
+                           (newline)
+                           (write '(##namespace ("")))
+                           (write _reset-decl24408_)
+                           (if _user-decl24409_
+                               (write _user-decl24409_)
+                               '#!void)
+                           (newline)))
+                       _deps24405_)
                       (write (cons 'apply
-                                   (cons _mod-main24402_
+                                   (cons _mod-main24407_
                                          (cons (cons 'cdr
                                                      (cons (cons 'command-line
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -231,159 +310,162 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                '()))))
                       (newline)))))
-               (_static-include24318_
-                (lambda (_gsc-opts24384_ _home24385_)
-                  (letrec* ((_static-dir24387_
-                             (path-expand '"lib/static" _home24385_))
-                            (_user-static-dir24388_
+               (_static-include24320_
+                (lambda (_gsc-opts24388_ _home24389_)
+                  (letrec* ((_static-dir24391_
+                             (path-expand '"lib/static" _home24389_))
+                            (_user-static-dir24392_
                              (path-expand
                               '"lib/static"
                               (getenv '"GERBIL_PATH" '"~/.gerbil")))
-                            (_cppflags24389_
+                            (_cppflags24393_
                              (string-append
                               '"-I "
-                              _static-dir24387_
+                              _static-dir24391_
                               '" -I "
-                              _user-static-dir24388_)))
-                    (let ((_$e24391_ (member '"-cc-options" _gsc-opts24384_)))
-                      (if _$e24391_
-                          ((lambda (_rest24394_)
-                             (let* ((_cell24396_ (cdr _rest24394_))
-                                    (_opt24398_ (car _cell24396_)))
+                              _user-static-dir24392_)))
+                    (let ((_$e24395_ (member '"-cc-options" _gsc-opts24388_)))
+                      (if _$e24395_
+                          ((lambda (_rest24398_)
+                             (let* ((_cell24400_ (cdr _rest24398_))
+                                    (_opt24402_ (car _cell24400_)))
                                (begin
                                  (set-car!
-                                  _cell24396_
+                                  _cell24400_
                                   (string-append
-                                   _opt24398_
+                                   _opt24402_
                                    '" "
-                                   _cppflags24389_))
-                                 _gsc-opts24384_)))
-                           _$e24391_)
+                                   _cppflags24393_))
+                                 _gsc-opts24388_)))
+                           _$e24395_)
                           (cons* '"-cc-options"
-                                 _cppflags24389_
-                                 _gsc-opts24384_))))))
-               (_compile-stub24319_
-                (lambda (_output-scm24326_ _output-bin24327_)
-                  (let* ((_gerbil-home24329_ (getenv '"GERBIL_HOME"))
-                         (_gx-version24331_
+                                 _cppflags24393_
+                                 _gsc-opts24388_))))))
+               (_compile-stub24321_
+                (lambda (_output-scm24328_ _output-bin24329_)
+                  (let* ((_gerbil-home24331_ (getenv '"GERBIL_HOME"))
+                         (_gx-version24333_
                           (path-expand
                            '"lib/static/gx-version.scm"
-                           _gerbil-home24329_))
-                         (_gx-gambc024333_
+                           _gerbil-home24331_))
+                         (_gx-gambc024335_
                           (path-expand
                            '"lib/static/gx-gambc0.scm"
-                           _gerbil-home24329_))
-                         (_gx-gambc-init24335_
+                           _gerbil-home24331_))
+                         (_gx-gambc-init24337_
                           (path-expand
                            '"lib/gx-init-static-exe.scm"
-                           _gerbil-home24329_))
-                         (_gx-gambc-macros24337_
+                           _gerbil-home24331_))
+                         (_gx-gambc-macros24339_
                           (path-expand
                            '"lib/static/gx-gambc#.scm"
-                           _gerbil-home24329_))
-                         (_include-gx-gambc-macros24339_
+                           _gerbil-home24331_))
+                         (_include-gx-gambc-macros24341_
                           (string-append
                            '"(include \""
-                           _gx-gambc-macros24337_
+                           _gx-gambc-macros24339_
                            '"\")"))
-                         (_bin-scm24341_
+                         (_bin-scm24343_
                           (gxc#find-static-module-file _ctx24314_))
-                         (_deps24343_
-                          (gxc#find-runtime-module-deps _ctx24314_))
                          (_deps24345_
-                          (map gxc#find-static-module-file _deps24343_))
-                         (_deps24350_
-                          (filter (lambda (_$obj24347_)
-                                    (not (gxc#file-empty? _$obj24347_)))
-                                  _deps24345_))
-                         (_gxc-cache24352_ (gxc#compile-cache-directory))
-                         (_g24513_
+                          (gxc#find-runtime-module-deps _ctx24314_))
+                         (_deps24347_
+                          (map gxc#find-static-module-file _deps24345_))
+                         (_deps24352_
+                          (filter (lambda (_$obj24349_)
+                                    (not (gxc#file-empty? _$obj24349_)))
+                                  _deps24347_))
+                         (_gxc-cache24354_ (gxc#compile-cache-directory))
+                         (_g24582_
                           (gxc#compile-cache
-                           _gx-version24331_
-                           _gxc-cache24352_))
-                         (_gx-gambc024355_
+                           _gx-version24333_
+                           _gxc-cache24354_))
+                         (_gx-gambc024357_
                           (gxc#compile-cache
-                           _gx-gambc024333_
-                           _gxc-cache24352_))
-                         (_gx-gambc-init24357_
+                           _gx-gambc024335_
+                           _gxc-cache24354_))
+                         (_gx-gambc-init24359_
                           (gxc#compile-cache
-                           _gx-gambc-init24335_
-                           _gxc-cache24352_))
-                         (_deps24363_
-                          (map (lambda (_g2435824360_)
+                           _gx-gambc-init24337_
+                           _gxc-cache24354_))
+                         (_deps24365_
+                          (map (lambda (_g2436024362_)
                                  (gxc#compile-cache
-                                  _g2435824360_
-                                  _gxc-cache24352_))
-                               _deps24350_))
-                         (_bin-scm24365_
-                          (gxc#compile-cache _bin-scm24341_ _gxc-cache24352_))
-                         (_gsc-opts24370_
-                          (let ((_$e24367_ (pgetq 'gsc-options: _opts24315_)))
-                            (if _$e24367_ _$e24367_ '())))
+                                  _g2436024362_
+                                  _gxc-cache24354_))
+                               _deps24352_))
+                         (_bin-scm24367_
+                          (gxc#compile-cache _bin-scm24343_ _gxc-cache24354_))
                          (_gsc-opts24372_
-                          (_static-include24318_
-                           _gsc-opts24370_
-                           _gerbil-home24329_))
-                         (_gsc-gx-macros24374_
+                          (let ((_$e24369_ (pgetq 'gsc-options: _opts24315_)))
+                            (if _$e24369_ _$e24369_ '())))
+                         (_gsc-opts24374_
+                          (_static-include24320_
+                           _gsc-opts24372_
+                           _gerbil-home24331_))
+                         (_gsc-gx-macros24376_
                           (if (gerbil-runtime-smp?)
                               (cons '"-e"
                                     (cons '"(define-cond-expand-feature|enable-smp|)"
                                           (cons '"-e"
-                                                (cons _include-gx-gambc-macros24339_
+                                                (cons _include-gx-gambc-macros24341_
                                                       '()))))
                               (cons '"-e"
-                                    (cons _include-gx-gambc-macros24339_
+                                    (cons _include-gx-gambc-macros24341_
                                           '()))))
-                         (_gsc-args24376_
+                         (_gsc-args24378_
                           (cons '"-exe"
                                 (cons '"-o"
-                                      (cons _output-bin24327_
+                                      (cons _output-bin24329_
                                             (foldr1 cons
                                                     (foldr1 cons
                                                             (foldr1 cons
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (cons _gx-gambc024355_
-                                  (cons _gx-gambc-init24357_
-                                        (foldr1 cons
-                                                (cons _bin-scm24365_
-                                                      (cons _output-scm24326_
-                                                            '()))
-                                                _deps24363_)))
-                            _gsc-gx-macros24374_)
-                    _gsc-opts24372_)
+                            (cons _output-scm24328_ '())
+                            _gsc-gx-macros24376_)
+                    _gsc-opts24374_)
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (gxc#gsc-debug-options))))))
-                         (_g24514_
+                         (_g24583_
+                          (with-output-to-file
+                           _output-scm24328_
+                           (lambda ()
+                             (_generate-stub24319_
+                              (cons _gx-gambc024357_
+                                    (cons _gx-gambc-init24359_
+                                          (foldr1 cons
+                                                  (cons _bin-scm24367_ '())
+                                                  _deps24365_)))))))
+                         (_g24584_
                           (gxc#verbose
                            '"invoke gsc "
-                           (cons 'gsc _gsc-args24376_)))
-                         (_proc24379_
+                           (cons 'gsc _gsc-args24378_)))
+                         (_proc24383_
                           (open-process
                            (cons 'path:
                                  (cons '"gsc"
                                        (cons 'arguments:
-                                             (cons _gsc-args24376_
+                                             (cons _gsc-args24378_
                                                    (cons 'stdout-redirection:
                                                          (cons '#f '()))))))))
-                         (_status24381_ (process-status _proc24379_)))
-                    (if (zero? _status24381_)
+                         (_status24385_ (process-status _proc24383_)))
+                    (if (zero? _status24385_)
                         '#!void
                         (gxc#raise-compile-error
                          '"Compilation error; gsc exit with nonzero status"
-                         _output-scm24326_
-                         _output-bin24327_
-                         _status24381_))))))
-        (let* ((_output-bin24321_
+                         _output-scm24328_
+                         _output-bin24329_
+                         _status24385_))))))
+        (let* ((_output-bin24323_
                 (gxc#compile-exe-output-file _ctx24314_ _opts24315_))
-               (_output-scm24323_ (string-append _output-bin24321_ '".scm")))
-          (begin
-            (with-output-to-file _output-scm24323_ _generate-stub24317_)
-            (if (gxc#current-compile-invoke-gsc)
-                (_compile-stub24319_ _output-scm24323_ _output-bin24321_)
-                '#!void)
-            (if (gxc#current-compile-keep-scm)
-                '#!void
-                (delete-file _output-scm24323_)))))))
+               (_output-scm24325_ (string-append _output-bin24323_ '".scm")))
+          (if (gxc#current-compile-invoke-gsc)
+              (begin
+                (_compile-stub24321_ _output-scm24325_ _output-bin24323_)
+                (if (gxc#current-compile-keep-scm)
+                    '#!void
+                    (delete-file _output-scm24325_)))
+              '#!void)))))
   (define gxc#compile-cache-directory
     (lambda ()
       (let* ((_cachedir24309_ (getenv '"GERBIL_CACHE" '"~/.cache/gerbil"))
@@ -821,8 +903,8 @@
        gx#current-expander-marks
        '()
        gxc#current-compile-symbol-table
-       (let ((__obj24504 (make-object gxc#symbol-table::t '2)))
-         (begin (gxc#symbol-table:::init! __obj24504) __obj24504))
+       (let ((__obj24573 (make-object gxc#symbol-table::t '2)))
+         (begin (gxc#symbol-table:::init! __obj24573) __obj24573))
        gxc#current-compile-runtime-sections
        (make-hash-table-eq)
        gxc#current-compile-runtime-names
@@ -1082,13 +1164,13 @@
                                         (_E2393123946_))))
                                 (_E2393123946_))))
                         (_E2393123946_))))))
-        (let ((_g24515_ (gxc#generate-meta-code _ctx23920_)))
+        (let ((_g24585_ (gxc#generate-meta-code _ctx23920_)))
           (begin
-            (let ((_g24516_ (values-count _g24515_)))
-              (if (not (fx= _g24516_ 2))
-                  (error "Context expects 2 values" _g24516_)))
-            (let ((_ssi-code23925_ (values-ref _g24515_ 0))
-                  (_phi-code23926_ (values-ref _g24515_ 1)))
+            (let ((_g24586_ (values-count _g24585_)))
+              (if (not (fx= _g24586_ 2))
+                  (error "Context expects 2 values" _g24586_)))
+            (let ((_ssi-code23925_ (values-ref _g24585_ 0))
+                  (_phi-code23926_ (values-ref _g24585_ 1)))
               (begin
                 (_compile-ssi23922_ _ssi-code23925_)
                 (for-each _compile-phi23923_ _phi-code23926_))))))))
@@ -1122,10 +1204,10 @@
   (define gxc#generate-meta-code
     (lambda (_ctx23896_)
       (let* ((_state23898_
-              (let ((__obj24505 (make-object gxc#meta-state::t '4)))
+              (let ((__obj24574 (make-object gxc#meta-state::t '4)))
                 (begin
-                  (gxc#meta-state:::init! __obj24505 _ctx23896_)
-                  __obj24505)))
+                  (gxc#meta-state:::init! __obj24574 _ctx23896_)
+                  __obj24574)))
              (_ssi-code23900_
               (gxc#apply-generate-meta
                (##structure-ref _ctx23896_ '11 gx#module-context::t '#f)
@@ -1201,7 +1283,7 @@
                     (cons _path23855_ '()))))
              (_gsc-args23864_
               (foldr1 cons _gsc-args23862_ (gxc#gsc-debug-options)))
-             (_g24517_
+             (_g24587_
               (gxc#verbose '"invoke gsc " (cons 'gsc _gsc-args23864_)))
              (_proc23867_
               (open-process
