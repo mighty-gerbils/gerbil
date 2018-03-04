@@ -105,10 +105,59 @@ namespace: gxc
       (delete-file output-scm))))
 
 (def (compile-exe-static-module ctx opts)
-  (def (generate-stub)
-    (let (mod-main (find-runtime-symbol ctx 'main))
+  (def (reset-declare)
+    '(declare
+       (gambit-scheme)
+       (block)
+       (core)
+       (inline)
+       (inline-primitives)
+       (inlining-limit 350)
+       (constant-fold)
+       (lambda-lift)
+       (standard-bindings)
+       (extended-bindings)
+       (run-time-bindings)
+       (safe)
+       (interrupts-enabled)
+       (proper-tail-calls)
+       (not generative-lambda)
+       (optimize-dead-local-variables)
+       (optimize-dead-definitions)
+       (generic)
+       (mostly-fixnum-flonum)))
+
+  (def (user-declare)
+    (let* ((gsc-opts (pgetq gsc-options: opts))
+           (gsc-prelude (member "-prelude" gsc-opts))
+           (gsc-prelude
+            (and gsc-prelude
+                 (read (open-input-string (cadr gsc-prelude))))))
+      (let lift ((expr gsc-prelude))
+        (match expr
+          (['declare . _] expr)
+          (['begin . exprs]
+           (ormap lift exprs))
+          (else #f)))))
+
+  (def (generate-stub deps)
+    (let ((mod-main (find-runtime-symbol ctx 'main))
+          (reset-decl (reset-declare))
+          (user-decl (user-declare)))
       (write '(##namespace (""))) (newline)
-      (write `(apply ,mod-main (cdr (command-line)))) (newline)))
+      (write '(declare (optimize-dead-definitions))) (newline)
+      (for-each
+        (lambda (dep)
+          (write `(include ,dep))
+          (newline)
+          (write '(##namespace ("")))
+          (write reset-decl)
+          (when user-decl
+            (write user-decl))
+          (newline))
+        deps)
+      (write `(apply ,mod-main (cdr (command-line))))
+      (newline)))
 
   (def (static-include gsc-opts home)
     (def static-dir
@@ -154,7 +203,9 @@ namespace: gxc
                             ["-e" include-gx-gambc-macros]))
            (gsc-args ["-exe" "-o" output-bin
                       (gsc-debug-options) ... gsc-opts ... gsc-gx-macros ...
-                      gx-gambc0 gx-gambc-init deps ... bin-scm output-scm])
+                      output-scm])
+           (_ (with-output-to-file output-scm
+                (cut generate-stub [gx-gambc0 gx-gambc-init deps ... bin-scm])))
            (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
            (proc (open-process [path: "gsc" arguments: gsc-args
                                       stdout-redirection: #f]))
@@ -165,11 +216,10 @@ namespace: gxc
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin ".scm")))
-    (with-output-to-file output-scm generate-stub)
     (when (current-compile-invoke-gsc)
-      (compile-stub output-scm output-bin))
-    (unless (current-compile-keep-scm)
-      (delete-file output-scm))))
+      (compile-stub output-scm output-bin)
+      (unless (current-compile-keep-scm)
+        (delete-file output-scm)))))
 
 (def (compile-cache-directory)
   (let* ((cachedir (getenv "GERBIL_CACHE" "~/.cache/gerbil"))

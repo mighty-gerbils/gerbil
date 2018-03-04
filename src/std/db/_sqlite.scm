@@ -190,11 +190,13 @@ static void ffi_sqlite3_column_blob (sqlite3_stmt* stmt, int col, ___SCMOBJ byte
  memcpy (U8_DATA (bytes), blob, U8_LEN (bytes));
 }
 
+#ifndef ___HAVE_FFI_FREE
+#define ___HAVE_FFI_FREE
 ___SCMOBJ ffi_free (void *ptr)
 {
  free (ptr);
  return ___FIX (___NO_ERR);
 }
-
+#endif
 END-C
 )
