@@ -338,11 +338,14 @@ END-C
 
  ;; ffi helper implementation
 (c-declare #<<END-C
+#ifndef ___HAVE_FFI_FREE
+#define ___HAVE_FFI_FREE
 ___SCMOBJ ffi_free (void *ptr)
 {
  free (ptr);
  return ___FIX (___NO_ERR);
 }
+#endif
 
 int ffi_mdb_get (MDB_txn *txn, MDB_dbi dbi, ___SCMOBJ key, MDB_val *data)
 {

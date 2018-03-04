@@ -327,11 +327,14 @@ END-C
   ((c-lambda () int "___return (sizeof (int));")))
 
 (c-declare #<<END-C
+#ifndef ___HAVE_FFI_FREE
+#define ___HAVE_FFI_FREE
 ___SCMOBJ ffi_free (void *ptr)
 {
  free (ptr);
  return ___FIX (___NO_ERR);
 }
+#endif
 
 MYSQL* ffi_mysql_init ()
 {

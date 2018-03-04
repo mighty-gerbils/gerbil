@@ -88,11 +88,14 @@ END-C
   "deflateBound")
 
 (c-declare #<<END-C
+#ifndef ___HAVE_FFI_FREE
+#define ___HAVE_FFI_FREE
 static ___SCMOBJ ffi_free (void *ptr)
 {
  free (ptr);
  return ___FIX (___NO_ERR);
 }
+#endif
 
 static z_stream *ffi_make_z_stream ()
 {

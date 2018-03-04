@@ -170,11 +170,14 @@ END-C
   "ffi_slice_bytes")
 
 (c-declare #<<END-C
+#ifndef ___HAVE_FFI_FREE
+#define ___HAVE_FFI_FREE
 ___SCMOBJ ffi_free (void *ptr)
 {
  free (ptr);
  return ___FIX (___NO_ERR);
 }
+#endif
 
 ___SCMOBJ ffi_free_errptr (void *ptr)
 {
@@ -183,7 +186,7 @@ ___SCMOBJ ffi_free_errptr (void *ptr)
  return ___FIX (___NO_ERR);
 }
 
-static ___SCMOBJ ffi_free_slice (void *ptr)
+___SCMOBJ ffi_free_slice (void *ptr)
 {
  slice_t* slice = (slice_t*)ptr;
  if (slice->own)
