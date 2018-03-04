@@ -10,11 +10,9 @@
 (def build-spec-static
   '((static-exe: "hellod"
                  "-cc-options" "--param max-gcse-memory=300000000"
-                 "-prelude" "(declare (not safe))"
-                 "-e" "(include \"~~lib/_gambit#.scm\")")
+                 "-prelude" "(declare (not safe))")
     (static-exe: "baseline"
-                 "-prelude" "(declare (not safe))"
-                 "-e" "(include \"~~lib/_gambit#.scm\")")))
+                 "-prelude" "(declare (not safe))")))
 
 (def srcdir (path-normalize (path-directory (this-source-file))))
 
