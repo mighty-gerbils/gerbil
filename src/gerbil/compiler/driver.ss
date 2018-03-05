@@ -129,7 +129,7 @@ namespace: gxc
 
   (def (user-declare)
     (let* ((gsc-opts (pgetq gsc-options: opts))
-           (gsc-prelude (member "-prelude" gsc-opts))
+           (gsc-prelude (and gsc-opts (member "-prelude" gsc-opts)))
            (gsc-prelude
             (and gsc-prelude
                  (read (open-input-string (cadr gsc-prelude))))))
