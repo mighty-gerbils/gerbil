@@ -1,30 +1,30 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define |gerbil/core$<more-syntax-sugar>[:0:]#identifier-rules|
-    (lambda (_$stx29101_)
-      (let* ((_g2910529116_
-              (lambda (_g2910629112_)
-                (gx#raise-syntax-error '#f '"Bad syntax" _g2910629112_)))
-             (_g2910429146_
-              (lambda (_g2910629120_)
-                (if (gx#stx-pair? _g2910629120_)
-                    (let ((_e2910829123_ (gx#syntax-e _g2910629120_)))
-                      (let ((_hd2910929127_ (##car _e2910829123_))
-                            (_tl2911029130_ (##cdr _e2910829123_)))
-                        ((lambda (_L29133_)
+    (lambda (_$stx31994_)
+      (let* ((_g3199832009_
+              (lambda (_g3199932005_)
+                (gx#raise-syntax-error '#f '"Bad syntax" _g3199932005_)))
+             (_g3199732039_
+              (lambda (_g3199932013_)
+                (if (gx#stx-pair? _g3199932013_)
+                    (let ((_e3200132016_ (gx#syntax-e _g3199932013_)))
+                      (let ((_hd3200232020_ (##car _e3200132016_))
+                            (_tl3200332023_ (##cdr _e3200132016_)))
+                        ((lambda (_L32026_)
                            (cons (gx#datum->syntax '#f 'make-setq-macro)
                                  (cons 'macro:
                                        (cons (cons (gx#datum->syntax
                                                     '#f
                                                     'syntax-rules)
-                                                   _L29133_)
+                                                   _L32026_)
                                              '()))))
-                         _tl2911029130_)))
-                    (_g2910529116_ _g2910629120_)))))
-        (_g2910429146_ _$stx29101_))))
+                         _tl3200332023_)))
+                    (_g3199832009_ _g3199932013_)))))
+        (_g3199732039_ _$stx31994_))))
   (define |gerbil/core$<more-syntax-sugar>[:0:]#quasisyntax|
-    (lambda (_$stx29150_)
-      (let ((_g2915329160_
-             (lambda (_g2915429156_)
-               (gx#raise-syntax-error '#f '"Bad syntax" _g2915429156_))))
-        (_g2915329160_ _$stx29150_)))))
+    (lambda (_$stx32043_)
+      (let ((_g3204632053_
+             (lambda (_g3204732049_)
+               (gx#raise-syntax-error '#f '"Bad syntax" _g3204732049_))))
+        (_g3204632053_ _$stx32043_)))))
