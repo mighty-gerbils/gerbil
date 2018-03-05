@@ -359,6 +359,9 @@ namespace: gerbil/core
                     (hash-copy! hash-copy!)
                     (hash-merge hash-merge)
                     (hash-merge! hash-merge!)
+                    (eq?-hash eq?-hash)
+                    (eqv?-hash eqv?-hash)
+                    (equal?-hash equal?-hash)
                     (uninterned-symbol? uninterned-symbol?)
                     (interned-symbol? interned-symbol?)
                     (gensym gensym)
@@ -858,6 +861,15 @@ namespace: gerbil/core
                              (%#define-syntax
                               ~case-test
                               |gerbil/core$<sugar>$<sugar:2>[:0:]#~case-test|)
+                             (%#define-syntax
+                              ~case-dispatch
+                              |gerbil/core$<sugar>$<sugar:2>[:0:]#~case-dispatch|)
+                             (%#define-syntax
+                              ~case-dispatch*
+                              |gerbil/core$<sugar>$<sugar:2>[:0:]#~case-dispatch*|)
+                             (%#define-syntax
+                              ~case-dispatch-bsearch
+                              |gerbil/core$<sugar>$<sugar:2>[:0:]#~case-dispatch-bsearch|)
                              (%#define-syntax
                               do
                               |gerbil/core$<sugar>$<sugar:2>[:0:]#do|)
