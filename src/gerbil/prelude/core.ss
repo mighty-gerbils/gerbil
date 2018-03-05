@@ -1208,17 +1208,20 @@ package: gerbil
 
       (syntax-case stx ()
         ((_ e clause ...)
-         (let ((values datums dispatch default)
-               (parse-clauses #'e #'(clause ...)))
+         (let* (((values datums dispatch default)
+                 (parse-clauses #'e #'(clause ...)))
+                (datum-count (count-datums datums)))
            (cond
-            ((< (count-datums datums) 6)
+            ((< datum-count 6)
              (generate-simple-case #'e datums dispatch default))
-            ((symbolic-datums? datums)
-             (generate-symbolic-dispatch #'e datums dispatch default))
             ((char-datums? datums)
              (generate-char-dispatch #'e datums dispatch default))
             ((fixnum-datums? datums)
              (generate-fixnum-dispatch #'e datums dispatch default))
+            ((< datum-count 12)
+             (generate-simple-case #'e datums dispatch default))
+            ((symbolic-datums? datums)
+             (generate-symbolic-dispatch #'e datums dispatch default))
             (else
              (generate-generic-dispatch #'e datums dispatch default)))))))
 
