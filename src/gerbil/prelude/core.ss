@@ -930,7 +930,7 @@ package: gerbil
         (andmap (lambda% (lst) (andmap symbol? lst)) datums))
 
       (define (char-datums? datums)
-        (andmap (lambda% (lst) (andmap char? lst) datums)))
+        (andmap (lambda% (lst) (andmap char? lst)) datums))
 
       (define (fixnum-datums? datums)
         (andmap (lambda% (lst) (andmap fixnum? lst)) datums))
@@ -951,7 +951,7 @@ package: gerbil
               (((datum ...) . datums)
                (syntax-case dispatch ()
                  ((cont . rest)
-                  (with-syntax ((E (recur #'datums #'rest default)))
+                  (with-syntax ((E (recur #'datums #'rest)))
                     #'(if (or (~case-test datum e) ...)
                         cont E)))))
               (_ default)))))
@@ -1211,7 +1211,7 @@ package: gerbil
         ((_ d x K1 K2 K3)
          (with-syntax ((x0 (stx-e #'d))
                        (x1 (fx1+ (stx-e #'d))))
-           #'(if (##fx= x x0) K1 (if ##=fx x x1) K2 K3)))
+           #'(if (##fx= x x0) K1 (if (##fx= x x1) K2 K3))))
         ((_ d x K ...)
          #'(~case-dispatch-bsearch d x K ...))))
 
@@ -1220,7 +1220,7 @@ package: gerbil
         (let lp ((i 0) (rest lst) (left '()))
           (if (fx< i mid)
             (lp (fx1+ i) (cdr rest) (cons (car rest) left))
-            (values rest (reverse left)))))
+            (values (reverse left) rest))))
 
       (syntax-case stx ()
         ((_ d x K ...)
