@@ -1,4 +1,4 @@
-#!/usr/bin/env gxi-script
+#!/usr/bin/env gxi
 ;; -*- Gerbil -*-
 
 (import :gerbil/compiler)
