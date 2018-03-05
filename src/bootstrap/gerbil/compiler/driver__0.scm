@@ -240,7 +240,9 @@
                 (lambda ()
                   (let* ((_gsc-opts24414_ (pgetq 'gsc-options: _opts24315_))
                          (_gsc-prelude24416_
-                          (member '"-prelude" _gsc-opts24414_))
+                          (if _gsc-opts24414_
+                              (member '"-prelude" _gsc-opts24414_)
+                              '#f))
                          (_gsc-prelude24418_
                           (if _gsc-prelude24416_
                               (read (open-input-string
