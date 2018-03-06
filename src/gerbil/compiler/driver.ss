@@ -86,22 +86,22 @@ namespace: gxc
 
   (def (compile-stub output-scm output-bin)
     (let* ((init-stub  (path-expand "lib/gx-init-exe.scm" (getenv "GERBIL_HOME")))
-           (gsc-args ["-exe" "-o" output-bin output-scm])
-           (_ (with-output-to-file output-scm (cut generate-stub init-stub)))
-           (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
-           (proc (open-process [path: "gsc" arguments: gsc-args
-                                      stdout-redirection: #f]))
-           (status (process-status proc)))
-      (unless (zero? status)
-        (raise-compile-error "Compilation error; gsc exit with nonzero status"
-                             output-scm output-bin status))))
+           (gsc-args ["-exe" "-o" output-bin output-scm]))
+      (with-output-to-file output-scm (cut generate-stub init-stub))
+      (when (current-compile-invoke-gsc)
+        (verbose "invoke gsc " (cons 'gsc gsc-args))
+        (let* ((proc (open-process [path: "gsc" arguments: gsc-args
+                                          stdout-redirection: #f]))
+               (status (process-status proc)))
+          (unless (zero? status)
+            (raise-compile-error "Compilation error; gsc exit with nonzero status"
+                                 output-scm output-bin status))))))
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin ".scm")))
-    (when (current-compile-invoke-gsc)
-      (compile-stub output-scm output-bin)
-      (unless (current-compile-keep-scm)
-        (delete-file output-scm)))))
+    (compile-stub output-scm output-bin)
+    (unless (current-compile-keep-scm)
+      (delete-file output-scm))))
 
 (def (compile-exe-static-module ctx opts)
   (def (reset-declare)
@@ -195,23 +195,23 @@ namespace: gxc
                             ["-e" include-gx-gambc-macros]))
            (gsc-args ["-exe" "-o" output-bin
                       (gsc-debug-options) ... gsc-opts ... gsc-gx-macros ...
-                      output-scm])
-           (_ (with-output-to-file output-scm
-                (cut generate-stub [gx-gambc0 gx-gambc-init deps ... bin-scm])))
-           (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
-           (proc (open-process [path: "gsc" arguments: gsc-args
+                      output-scm]))
+      (with-output-to-file output-scm
+        (cut generate-stub [gx-gambc0 gx-gambc-init deps ... bin-scm]))
+      (when (current-compile-invoke-gsc)
+        (verbose "invoke gsc " (cons 'gsc gsc-args))
+        (let* ((proc (open-process [path: "gsc" arguments: gsc-args
                                       stdout-redirection: #f]))
-           (status (process-status proc)))
-      (unless (zero? status)
-        (raise-compile-error "Compilation error; gsc exit with nonzero status"
-                             output-scm output-bin status))))
+               (status (process-status proc)))
+          (unless (zero? status)
+            (raise-compile-error "Compilation error; gsc exit with nonzero status"
+                                 output-scm output-bin status))))))
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin ".scm")))
-    (when (current-compile-invoke-gsc)
-      (compile-stub output-scm output-bin)
-      (unless (current-compile-keep-scm)
-        (delete-file output-scm)))))
+    (compile-stub output-scm output-bin)
+    (unless (current-compile-keep-scm)
+      (delete-file output-scm))))
 
 (def (compile-cache-directory)
   (let* ((cachedir (getenv "GERBIL_CACHE" "~/.cache/gerbil"))
