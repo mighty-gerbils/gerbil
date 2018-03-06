@@ -76,18 +76,18 @@ namespace: gxc
       (compile-e (import-module srcpath) opts))))
 
 (def (compile-exe-stub-module ctx opts)
-  (def (generate-stub)
+  (def (generate-stub gx-init-stub)
     (let* ((mod-str (symbol->string (expander-context-id ctx)))
            (mod-rt  (string-append mod-str "__rt"))
            (mod-main (find-runtime-symbol ctx 'main)))
       (write '(##namespace (""))) (newline)
+      (write `(include ,gx-init-stub)) (newline)
       (write `(_gx#start! ,mod-rt (quote ,mod-main))) (newline)))
 
   (def (compile-stub output-scm output-bin)
     (let* ((init-stub  (path-expand "lib/gx-init-exe.scm" (getenv "GERBIL_HOME")))
-           (gxc-cache (compile-cache-directory))
-           (init-stub (compile-cache init-stub gxc-cache))
-           (gsc-args ["-exe" "-o" output-bin init-stub output-scm])
+           (gsc-args ["-exe" "-o" output-bin output-scm])
+           (_ (with-output-to-file output-scm (cut generate-stub init-stub)))
            (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
            (proc (open-process [path: "gsc" arguments: gsc-args
                                       stdout-redirection: #f]))
@@ -98,11 +98,10 @@ namespace: gxc
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin ".scm")))
-    (with-output-to-file output-scm generate-stub)
     (when (current-compile-invoke-gsc)
-      (compile-stub output-scm output-bin))
-    (unless (current-compile-keep-scm)
-      (delete-file output-scm))))
+      (compile-stub output-scm output-bin)
+      (unless (current-compile-keep-scm)
+        (delete-file output-scm)))))
 
 (def (compile-exe-static-module ctx opts)
   (def (reset-declare)
