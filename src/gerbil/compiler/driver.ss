@@ -213,21 +213,6 @@ namespace: gxc
     (unless (current-compile-keep-scm)
       (delete-file output-scm))))
 
-(def (compile-cache-directory)
-  (let* ((cachedir (getenv "GERBIL_CACHE" "~/.cache/gerbil"))
-         (gxc-cache (path-expand "gxc" cachedir)))
-    (create-directory* gxc-cache)
-    (path-normalize gxc-cache)))
-
-(def (compile-cache file gxc-cache)
-  (let (cachefile (path-expand (path-strip-directory file) gxc-cache))
-    (if (file-exists? cachefile)
-      (when (file-newer? file cachefile)
-        (delete-file cachefile)
-        (copy-file file cachefile))
-      (copy-file file cachefile))
-    cachefile))
-
 (def (find-export-binding ctx id)
   (cond
    ((find (match <>
