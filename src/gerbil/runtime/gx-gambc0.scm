@@ -864,9 +864,6 @@
    (else
     (error "Cannot find next method" obj id))))
 
-;;; builtin object methods
-(bind-method! (macro-type-port) 'destroy close-port)
-
 ;;; etc
 ;; use gambit type for this
 (define (raise-type-error where type obj)
@@ -1430,8 +1427,9 @@
   (##vector-set! type 4 super))
 
 (define exception::t
-  (make-struct-type 'gerbil#exception::t #f 0 'exception '() #f))
-(type-descriptor-super-set! exception::t exception-type::t)
+  (let ((t (make-struct-type 'gerbil#exception::t #f 0 'exception '() #f)))
+    (type-descriptor-super-set! t exception-type::t)
+    t))
 
 (define error::t
   (make-struct-type 'gerbil#error::t exception::t 3 'error '() #f))

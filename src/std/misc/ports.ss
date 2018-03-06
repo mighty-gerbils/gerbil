@@ -13,6 +13,7 @@ package: std/misc
 
 ;; _gambit#.scm
 (extern namespace: #f
+  macro-type-port
   macro-byte-port?
   macro-character-port?
   macro-port-mutex-lock!
@@ -30,6 +31,8 @@ package: std/misc
   macro-byte-port-rbuf
   macro-byte-port-rbuf-fill
   )
+
+(bind-method! (macro-type-port) 'destroy close-port)
 
 ;; Copy all data from port in to port out
 (def (copy-port in out)
@@ -173,4 +176,3 @@ package: std/misc
 ;; Read the contents of a file into a list of lines
 (def (read-file-lines file settings: (settings '()))
   (call-with-input-file (cons* path: file settings) read-all-as-lines))
-
