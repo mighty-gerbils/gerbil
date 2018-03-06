@@ -51,8 +51,6 @@ namespace: gxc
          (%#define-runtime
           compile-exe-static-module
           gxc#compile-exe-static-module)
-         (%#define-runtime compile-cache-directory gxc#compile-cache-directory)
-         (%#define-runtime compile-cache gxc#compile-cache)
          (%#define-runtime find-export-binding gxc#find-export-binding)
          (%#define-runtime find-runtime-symbol gxc#find-runtime-symbol)
          (%#define-runtime
