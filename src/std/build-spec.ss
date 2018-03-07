@@ -161,6 +161,7 @@
     "misc/repr"
     "misc/queue"
     "misc/pqueue"
+    "misc/lru"
     "misc/string"
     "misc/sync"
     "misc/completion"
