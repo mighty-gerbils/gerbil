@@ -79,9 +79,8 @@ package: gerbil
                (ast-rules (%#call)
                  ((%#call _ arg)
                   arg))))
- (cons* (@lambda (1) inline:
+ (cons* (@lambda (2) inline:
             (ast-rules (%#call)
-              ((%#call _ x) x)
               ((%#call _ x y)
                (%#call (%#ref cons) x y))
               ((%#call recur x y rest ...)
