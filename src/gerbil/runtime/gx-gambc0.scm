@@ -1032,10 +1032,11 @@
       (lp (fx1+ n) (cons val r))
       r)))
 
-(define (cons* x y . rest)
-  (if (null? rest)
-    (cons x y)
-    (cons x (apply cons* y rest))))
+(define (cons* x . rest)
+  (let recur ((x x) (rest rest))
+    (if (pair? rest)
+      (cons x (recur (##car rest) (##cdr rest)))
+      x)))
 
 (define (foldl1 f iv rest)
   (core-match rest
