@@ -78,7 +78,13 @@ package: gerbil
  (identity (@lambda 1 inline:
                (ast-rules (%#call)
                  ((%#call _ arg)
-                  arg)))))
+                  arg))))
+ (cons* (@lambda (2) inline:
+            (ast-rules (%#call)
+              ((%#call _ x y)
+               (%#call (%#ref cons) x y))
+              ((%#call recur x y rest ...)
+               (%#call (%#ref cons) x (%#call recur y rest ...)))))))
 
 ;; gx-gambc0: simple hash-table ops
 (declare-type*
@@ -121,11 +127,11 @@ package: gerbil
 
 ;; gx-gambc0: foldings
 (declare-type*
- (foldl (@case-lambda (3 foldl1) ((4) #f)))
- (foldr (@case-lambda (3 foldr1) ((4) #f)))
- (andmap (@case-lambda (2 andmap1) ((3) #f)))
- (ormap (@case-lambda (2 ormap1) ((3) #f)))
- (filter-map (@case-lambda (2 filter-map1) ((3) #f))))
+ (foldl (@case-lambda (3 foldl1) (4 foldl2) ((5) #f)))
+ (foldr (@case-lambda (3 foldr1) (4 foldr2) ((5) #f)))
+ (andmap (@case-lambda (2 andmap1) (3 andmap2) ((4) #f)))
+ (ormap (@case-lambda (2 ormap1) (3 ormap2) ((4) #f)))
+ (filter-map (@case-lambda (2 filter-map1) (3 filter-map2) ((4) #f))))
 
 ;; gx-gambc0: call/cc and friends
 (declare-type*
