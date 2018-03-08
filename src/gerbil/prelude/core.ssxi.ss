@@ -78,7 +78,14 @@ package: gerbil
  (identity (@lambda 1 inline:
                (ast-rules (%#call)
                  ((%#call _ arg)
-                  arg)))))
+                  arg))))
+ (cons* (@lambda (1) inline:
+            (ast-rules (%#call)
+              ((%#call _ x) x)
+              ((%#call _ x y)
+               (%#call (%#ref cons) x y))
+              ((%#call recur x y rest ...)
+               (%#call (%#ref cons) x (%#call recur y rest ...)))))))
 
 ;; gx-gambc0: simple hash-table ops
 (declare-type*
