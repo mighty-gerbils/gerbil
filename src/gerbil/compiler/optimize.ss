@@ -1207,32 +1207,69 @@ namespace: gxc
 (defmethod {optimize-call !kw-lambda}
   (lambda (self stx args)
     (with ((!kw-lambda _ table dispatch) self)
-      (if table
-        (match (optimizer-lookup-type dispatch)
-          ((!kw-lambda-primary _ keys main)
-           (let ((values pargs kwargs)
-                 (!kw-lambda-split-args args))
-             (for-each
-               (lambda (kw)
-                 (unless (memq (car kw) keys)
-                   (raise-compile-error "Illegal kw-lambda application; unexpected keyword"
-                                        stx keys kw)))
-               kwargs)
+      (match (optimizer-lookup-type dispatch)
+        ((!kw-lambda-primary _ keys main)
+         (let ((values pargs kwargs)
+               (!kw-lambda-split-args args))
+           (verbose "dispatch kw-lambda => " main)
+           (if table
              (let (xargs
                    (map (lambda (key)
                           (cond
                            ((assgetq key kwargs) => values)
                            (else '(%#ref absent-value))))
                         keys))
-               (verbose "dispatch kw-lambda => " main)
+               (for-each
+                 (lambda (kw)
+                   (unless (memq (car kw) keys)
+                     (raise-compile-error "Illegal kw-lambda application; unexpected keyword"
+                                          stx keys kw)))
+                 kwargs)
                (compile-e
                 (xform-wrap-source
                  ['%#call ['%#ref main] ['%#quote #f] xargs ... pargs ...]
-                 stx)))))
+                 stx)))
+             (let* ((kwt (make-symbol (gensym '__kwt)))
+                    (kwvars
+                     (map (lambda (_) (make-symbol (gensym '__kw)))
+                          kwargs))
+                    (kwbind
+                     (map (lambda (kw kwvar) [[kwvar] (cdr kw)])
+                          kwargs kwvars))
+                    (kwset
+                     (map (lambda (kw kwvar)
+                            ['%#call '(%#ref hash-put!) ['%#ref kwt]
+                                     ['%#quote (car kw)]
+                                     ['%#ref kwvar]])
+                          kwargs kwvars))
+                    (xkwargs
+                     (map (lambda (kw kwvar)
+                            (cons (car kw) ['%#ref kwvar]))
+                          kwargs kwvars))
+                    (xargs
+                     (map (lambda (key)
+                            (cond
+                             ((assgetq key xkwargs) => values)
+                             (else '(%#ref absent-value))))
+                          keys)))
+               (compile-e
+                (xform-wrap-source
+                 ['%#let-values kwbind
+                   ['%#let-values [[[kwt]
+                                    (xform-wrap-source
+                                     ['%#call '(%#ref make-hash-table-eq)
+                                             '(%#quote size:)
+                                             ['%#quote (length kwargs)]]
+                                     stx)]]
+                     ['%#begin
+                      kwset ...
+                      (xform-wrap-source
+                       ['%#call ['%#ref main] ['%#ref kwt] xargs ... pargs ...]
+                       stx)]]]
+                 stx))))))
           (else
            (verbose "unknown keyword dispatch lambda " dispatch)
-           (xform-call% stx)))
-        (xform-call% stx)))))
+           (xform-call% stx))))))
 
 (def (!kw-lambda-split-args args)
   (let lp ((rest args) (pargs []) (kwargs []))
