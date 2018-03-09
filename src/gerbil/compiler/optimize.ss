@@ -137,6 +137,8 @@ namespace: gxc
 (defstruct (!lambda !procedure) (arity dispatch inline inline-typedecl)
   constructor: :init!)
 (defstruct (!case-lambda !procedure) (clauses))
+(defstruct (!kw-lambda !procedure) (table dispatch))
+(defstruct (!kw-lambda-primary !procedure) (keys main))
 
 (defmethod {:init! !struct-type}
   (lambda (self id super fields xfields ctor plist)
@@ -519,9 +521,9 @@ namespace: gxc
          (%#lambda (kwt . _) (%#call (%#ref -apply1) (%#ref -xid) (%#ref -kwt) . _)))))
       (%#lambda args (%#call (%#ref -apply2) (%#ref -keyword-dispatch) (%#quote _)
                         (%#ref -id) (%#ref -args))))
-     (and (free-identifier=? #'-apply1 'apply)
-          (free-identifier=? #'-apply2 'apply)
-          (free-identifier=? #'-keyword-dispatch 'keyword-dispatch)
+     (and (eq? (identifier-symbol #'-apply1) 'apply)
+          (eq? (identifier-symbol #'-apply2) 'apply)
+          (eq? (identifier-symbol #'-keyword-dispatch) 'keyword-dispatch)
           (free-identifier=? #'id #'-id)
           (free-identifier=? #'xid #'-xid)
           (free-identifier=? #'args #'-args)
@@ -877,7 +879,7 @@ namespace: gxc
      (compile-e #'expr))))
 
 (def (basic-expression-type-lambda% stx)
-  (ast-case stx (%#call %#ref)
+  (ast-case stx (%#call %#ref %#quote)
     ((_ args (%#call (%#ref -apply) (%#ref -make-instance) (%#ref type-t) (%#ref xargs)))
      ;; defstruct constructor
      (and (identifier? #'args)
@@ -904,6 +906,29 @@ namespace: gxc
      ;; delegate dispatch
      (dispatch-lambda-form? #'form)
      (make-!lambda 'lambda (lambda-form-arity #'form) (dispatch-lambda-form-delegate #'form)))
+    ((_ args (%#call (%#ref -apply) (%#ref -keyword-dispatch) (%#quote kwt)
+                     (%#ref dispatch) (%#ref -args)))
+     ;; kw-lambda
+     (and (identifier? #'args)
+          (eq? (identifier-symbol #'-apply) 'apply)
+          (eq? (identifier-symbol #'-keyword-dispatch) 'keyword-dispatch)
+          (free-identifier=? #'args #'-args))
+     (make-!kw-lambda 'kw-lambda (stx-e #'kwt) (identifier-symbol #'dispatch)))
+    ((_ (kwvar . args)
+        (%#call (%#ref -apply) (%#ref main) (%#ref -kwvar)
+                (%#call (%#ref -hash-ref) (%#ref -xkwvar) (%#quote key) (%#ref -absent-value))
+                ...
+                (%#ref -args)))
+     ;; kw-lambda dispatch
+     (and (identifier? #'kwvar)
+          (identifier? #'args)
+          (eq? (identifier-symbol #'-apply) 'apply)
+          (free-identifier=? #'kwvar #'-kwvar)
+          (andmap stx-keyword? #'(key ...))
+          (andmap (lambda (id) (eq? (identifier-symbol id) 'hash-ref)) #'(-hash-ref ...))
+          (andmap (lambda (id) (eq? (identifier-symbol id) 'absent-value)) #'(-absent-value ...))
+          (andmap (cut free-identifier=? <> #'kwvar) #'(-xkwvar ...)))
+     (make-!kw-lambda-primary 'kw-lambda-dispatch (map stx-e #'(key ...)) (identifier-symbol #'main)))
     ;; TODO generic lambda type for call arity checking
     (_ #f)))
 
@@ -1179,6 +1204,55 @@ namespace: gxc
       ([arity]
        (fx>= (length args) arity)))))
 
+(defmethod {optimize-call !kw-lambda}
+  (lambda (self stx args)
+    (with ((!kw-lambda _ table dispatch) self)
+      (if table
+        (match (optimizer-lookup-type dispatch)
+          ((!kw-lambda-primary _ keys main)
+           (let ((values pargs kwargs)
+                 (!kw-lambda-split-args args))
+             (for-each
+               (lambda (kw)
+                 (unless (memq (car kw) keys)
+                   (raise-compile-error "Illegal kw-lambda application; unexpected keyword"
+                                        stx keys kw)))
+               kwargs)
+             (let (xargs
+                   (map (lambda (key)
+                          (cond
+                           ((assgetq key kwargs) => values)
+                           (else '(%#ref absent-value))))
+                        keys))
+               (verbose "dispatch kw-lambda => " main)
+               (compile-e
+                (xform-wrap-source
+                 ['%#call ['%#ref main] ['%#quote #f] xargs ... pargs ...]
+                 stx)))))
+          (else
+           (verbose "unknown keyword dispatch lambda " dispatch)
+           (xform-call% stx)))
+        (xform-call% stx)))))
+
+(def (!kw-lambda-split-args args)
+  (let lp ((rest args) (pargs []) (kwargs []))
+    (ast-case rest (%#quote)
+      (((%#quote #!key) key . rest)
+       (lp #'rest (cons #'key pargs) kwargs))
+      (((%#quote #!rest) . rest)
+       (values (foldl cons #'rest pargs) (reverse kwargs)))
+      (((%#quote kw) val . rest)
+       (stx-keyword? #'kw)
+       (lp #'rest pargs (cons (cons (stx-e #'kw) #'val) kwargs)))
+      ((val . rest)
+       (lp #'rest (cons #'val pargs) kwargs))
+      (()
+       (values (reverse pargs) (reverse kwargs))))))
+
+(defmethod {optimize-call !kw-lambda-primary}
+  (lambda (self stx args)
+    (xform-call% stx)))
+
 ;;; apply-generate-ssxi
 (def (generate-ssxi-module% stx)
   (ast-case stx ()
@@ -1267,6 +1341,16 @@ namespace: gxc
     (with ((!case-lambda _ clauses) self)
       (let (clauses (map clause-e clauses))
         ['@case-lambda clauses ...]))))
+
+(defmethod {typedecl !kw-lambda}
+  (lambda (self)
+    (with ((!kw-lambda _ table dispatch) self)
+      ['@kw-lambda table dispatch])))
+
+(defmethod {typedecl !kw-lambda-primary}
+  (lambda (self)
+    (with ((!kw-lambda-primary _ keys main) self)
+      ['@kw-lambda-dispatch keys main])))
 
 ;;; utilities
 (def (identifier-symbol stx)
