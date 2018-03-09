@@ -248,7 +248,8 @@ package: gerbil
     displayln display*
     ;;flush-output-port
     ;; etc...
-    absent-obj ; gambit api missing optional parameter
+    absent-obj   ; gambit api missing optional parameter
+    absent-value ; unbound hash reference atom
     ;; Module loading
     load-module
     ;; keyword argument dispatch
@@ -759,8 +760,6 @@ package: gerbil
                 (primary pre ... opt ...))))))
 
       (define (generate-kw-primary kwvar kwargs args body)
-        (define absent (genident 'absent))
-
         (define (make-body kwargs body)
           (if (pair? kwargs)
             (let* ((next (car kwargs))
@@ -773,21 +772,17 @@ package: gerbil
                             (var var)
                             (tmp (genident var))
                             (default default)
-                            (body (make-body rest body))
-                            (absent absent))
-                #'(let-values (((tmp) (hash-ref kwvar 'key absent)))
-                    (let-values (((var) (if (eq? tmp absent) default tmp)))
+                            (body (make-body rest body)))
+                #'(let-values (((tmp) (hash-ref kwvar 'key absent-value)))
+                    (let-values (((var) (if (eq? tmp absent-value) default tmp)))
                       body))))
             (cons 'begin body)))
 
-        (with-syntax* ((kwvar kwvar)
-                       (args args)
-                       (body (make-body kwargs body))
-                       (impl (syntax/loc stx
-                               (lambda (kwvar . args) body)))
-                       (absent absent))
-          #'(let-values (((absent) (make-vector 0)))
-              impl)))
+        (with-syntax ((kwvar kwvar)
+                      (args args)
+                      (body (make-body kwargs body)))
+          (syntax/loc stx
+            (lambda (kwvar . args) body))))
 
       (define (generate-kw-dispatch primary kwargs strict?)
         ;; when the procedure doesn't accept arbitrary keywords (strict? = #t)
