@@ -872,7 +872,8 @@
 (define absent-obj
   (macro-absent-obj))
 
-(define _gx#atom (make-vector 0))
+(define absent-value
+  '#(#!void))
 
 (define (true . _)
   #t)
@@ -983,7 +984,7 @@
   (plist->hash-table plst (make-hash-table-eqv)))
 
 (define (hash-key? ht k)
-  (not (eq? _gx#atom (hash-ref ht k _gx#atom))))
+  (not (eq? (hash-ref ht k absent-value) absent-value)))
 
 (define hash-for-each
   table-for-each)
