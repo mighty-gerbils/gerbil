@@ -510,6 +510,24 @@ namespace: gxc
           (case-lambda-expr? #'case-lambda-expr)))
     (_ #f)))
 
+(def (kw-lambda-expr? expr)
+  (ast-case expr (%#let-values %#lambda %#call %#ref %#quote)
+    ((%#let-values
+      (((id)
+        (%#let-values
+         (((xid) _))
+         (%#lambda (kwt . _) (%#call (%#ref -apply1) (%#ref -xid) (%#ref -kwt) . _)))))
+      (%#lambda args (%#call (%#ref -apply2) (%#ref -keyword-dispatch) (%#quote _)
+                        (%#ref -id) (%#ref -args))))
+     (and (free-identifier=? #'-apply1 'apply)
+          (free-identifier=? #'-apply2 'apply)
+          (free-identifier=? #'-keyword-dispatch 'keyword-dispatch)
+          (free-identifier=? #'id #'-id)
+          (free-identifier=? #'xid #'-xid)
+          (free-identifier=? #'args #'-args)
+          (free-identifier=? #'kwt #'-kwt)))
+    (_ #f)))
+
 (def (lift-case-lambda-clauses stx id clauses (gensym? #f))
   (let lp ((rest clauses) (ids []) (impls []) (clauses []))
     (match rest
@@ -564,6 +582,14 @@ namespace: gxc
           id))
       id))
 
+  (def (kw-lambda-dispatch-name id name)
+    (if (uninterned-symbol? id)
+      (let (str (symbol->string id))
+        (if (string-prefix? str "kw-lambda")
+          name
+          id))
+      id))
+
   (ast-case stx ()
     ((_ (id) expr)
      (and (identifier? #'id)
@@ -607,6 +633,37 @@ namespace: gxc
                     ['%#define-values [#'id] new-case-lambda-expr]
                     stx))]
         stx)))))
+    ((_ (id) expr)
+     (and (identifier? #'id)
+          (kw-lambda-expr? #'expr))
+     (ast-case #'expr ()
+       ((_ (((get-kws) (_ (((main) main-impl)) get-kws-impl)))
+           kw-dispatch)
+        (let* ((get-kws-id
+                (make-symbol (stx-e #'id) "__" (kw-lambda-dispatch-name (stx-e #'get-kws) "@")))
+               (main-id
+                (make-symbol (stx-e #'id) "__" (kw-lambda-dispatch-name (stx-e #'main) "%")))
+               (_ (core-bind-runtime! get-kws-id))
+               (_ (core-bind-runtime! main-id))
+               (new-kw-dispatch
+                (apply-expression-subst #'kw-dispatch #'get-kws get-kws-id))
+               (new-get-kws
+                (apply-expression-subst #'get-kws-impl #'main main-id)))
+          (verbose "lift kw-lambda dispatch " (identifier-symbol #'id)
+                   " => " (identifier-symbol get-kws-id)
+                   " => " (identifier-symbol main-id))
+          (xform-wrap-source
+           ['%#begin (lift-top-lambda-define-values%
+                      (xform-wrap-source
+                       ['%#define-values [main-id] #'main-impl]
+                       stx))
+                     (xform-wrap-source
+                      ['%#define-values [get-kws-id] new-get-kws]
+                      stx)
+                     (xform-wrap-source
+                      ['%#define-values [#'id] new-kw-dispatch]
+                      stx)]
+           stx)))))
     ((_ hd expr)
      (xform-wrap-source
       ['%#define-values #'hd (compile-e #'expr)]
