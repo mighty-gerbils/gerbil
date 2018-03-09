@@ -12,7 +12,10 @@ package: std
         shell-config
         env-cppflags
         env-ldflags
-        include-gambit-sharp)
+        include-gambit-sharp
+        pkg-config
+        pkg-config-libs
+        pkg-config-cflags)
 
 ;; buildspec: [<build> ...]
 ;;  <build>:
@@ -561,3 +564,23 @@ package: std
          (staticdir (path-expand "static" libdir))
          (filename (path-strip-directory file)))
     (path-expand filename staticdir)))
+
+;; lib: library to ask configuration for
+;; args: [<arg> ...]
+;;  <arg>: additionnal arguments to pass to pkg-config
+(def (pkg-config lib . args)
+  (apply shell-config "pkg-config" lib args))
+
+;; calls pkg-config in order to return `ld-options`.
+;;
+;; libs: [<lib> ...]
+;;  <lib>: library to get ld-options for
+(def (pkg-config-libs . libs)
+  (string-join (map (lambda (l) (pkg-config l "--libs")) libs) " "))
+
+;; calls pkg-config in order to return `cc-options`.
+;;
+;; libs: [<lib> ...]
+;;  <lib>: library to get cc-options for
+(def (pkg-config-cflags . libs)
+  (string-join (map (lambda (l) (pkg-config l "--cflags")) libs) " "))
