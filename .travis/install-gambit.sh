@@ -7,7 +7,6 @@ if [ ! -f $HOME/gambit/bin/gsi ]; then
   ./configure --prefix=$HOME/gambit --enable-single-host
   make
   make install
-  make bootstrap
   popd
 fi
 
