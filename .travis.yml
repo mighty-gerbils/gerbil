@@ -9,3 +9,4 @@ install:
 script:
   - echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
   - (cd src; env GERBIL_HOME=${TRAVIS_BUILD_DIR} ./build.sh)
+  - env GERBIL_HOME=${TRAVIS_BUILD_DIR} PATH=${TRAVIS_BUILD_DIR}/bin:$PATH ./src/std/run-tests.ss
