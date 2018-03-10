@@ -1295,7 +1295,7 @@ namespace: gxc
       (match (optimizer-lookup-type dispatch)
         ((!kw-lambda-primary _ keys main)
          (let ((values pargs kwargs)
-               (!kw-lambda-split-args args))
+               (!kw-lambda-split-args stx args))
            (verbose "dispatch kw-lambda => " main)
            (if table
              (let (xargs
@@ -1307,7 +1307,7 @@ namespace: gxc
                (for-each
                  (lambda (kw)
                    (unless (memq (car kw) keys)
-                     (raise-compile-error "Illegal kw-lambda application; unexpected keyword"
+                     (raise-compile-error "Illegal keyword lambda application; unexpected keyword"
                                           stx keys kw)))
                  kwargs)
                (compile-e
@@ -1356,7 +1356,7 @@ namespace: gxc
            (verbose "unknown keyword dispatch lambda " dispatch)
            (xform-call% stx))))))
 
-(def (!kw-lambda-split-args args)
+(def (!kw-lambda-split-args stx args)
   (let lp ((rest args) (pargs []) (kwargs []))
     (ast-case rest (%#quote)
       (((%#quote #!key) key . rest)
@@ -1365,7 +1365,10 @@ namespace: gxc
        (values (foldl cons #'rest pargs) (reverse kwargs)))
       (((%#quote kw) val . rest)
        (stx-keyword? #'kw)
-       (lp #'rest pargs (cons (cons (stx-e #'kw) #'val) kwargs)))
+       (let (kw (stx-e #'kw))
+         (if (assq kw kwargs)
+           (raise-compile-error "Illegal keyword lambda application; duplicate keyword" stx kw)
+           (lp #'rest pargs (cons (cons kw #'val) kwargs)))))
       ((val . rest)
        (lp #'rest (cons #'val pargs) kwargs))
       (()
