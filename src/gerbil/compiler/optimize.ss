@@ -703,7 +703,7 @@ namespace: gxc
                  (opt-lambda-expr? #'expr))
             (ast-case #'expr ()
               ((_ (((xid) lambda-expr)) case-lambda-expr)
-               (let* ((lambda-id (make-symbol (stx-e #'id) "__" (stx-e #'xid) (gensym '__)))
+               (let* ((lambda-id (make-symbol (stx-e #'id) (gensym '__)))
                       (lambda-id (core-quote-syntax lambda-id (stx-source stx)))
                       (_ (core-bind-runtime! lambda-id))
                       (new-case-lambda-expr
@@ -737,9 +737,9 @@ namespace: gxc
               ((_ (((get-kws) (_ (((main) main-impl)) get-kws-impl)))
                   kw-dispatch)
                (let* ((get-kws-id
-                       (make-symbol (stx-e #'id) "__" (stx-e #'get-kws) (gensym '__)))
+                       (make-symbol (stx-e #'id) (gensym '__)))
                       (main-id
-                       (make-symbol (stx-e #'id) "__" (stx-e #'main) (gensym '__)))
+                       (make-symbol (stx-e #'id) (gensym '__)))
                       (_ (core-bind-runtime! get-kws-id))
                       (_ (core-bind-runtime! main-id))
                       (new-kw-dispatch
@@ -836,7 +836,7 @@ namespace: gxc
                  (opt-lambda-expr? #'expr))
             (ast-case #'expr ()
               ((_ (((xid) lambda-expr)) case-lambda-expr)
-               (let* ((lambda-id (make-symbol (stx-e #'id) "__" (stx-e #'xid) (gensym '__)))
+               (let* ((lambda-id (make-symbol (stx-e #'id) (gensym '__)))
                       (lambda-id (core-quote-syntax lambda-id (stx-source stx)))
                       (_ (core-bind-runtime! lambda-id))
                       (new-case-lambda-expr
@@ -851,9 +851,9 @@ namespace: gxc
               ((_ (((get-kws) (_ (((main) main-impl)) get-kws-impl)))
                   kw-dispatch)
                (let* ((get-kws-id
-                       (make-symbol (stx-e #'id) "__" (stx-e #'get-kws) (gensym '__)))
+                       (make-symbol (stx-e #'id) (gensym '__)))
                       (main-id
-                       (make-symbol (stx-e #'id) "__" (stx-e #'main) (gensym '__)))
+                       (make-symbol (stx-e #'id) (gensym '__)))
                       (_ (core-bind-runtime! get-kws-id))
                       (_ (core-bind-runtime! main-id))
                       (new-kw-dispatch
