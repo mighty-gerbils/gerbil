@@ -762,46 +762,44 @@ namespace: gxc
 
   (ast-case stx ()
     ((_ (bind ...) body)
-     (ormap lift-kw-lambda? #'(bind ...))
-     (parameterize ((current-expander-context (make-local-context)))
-       (let* (((values lift1 lift2 hd)
-               (lift-kw-lambda-bindings #'(bind ...)))
-              (expr
-               (xform-wrap-source
-                ['%#let-values hd #'body]
-                stx))
-              (expr
-               (xform-wrap-source
-                ['%#let-values lift2 expr]
-                stx))
-              (expr
-               (xform-wrap-source
-                ['%#let-values lift1 expr]
-                stx)))
-         (lift-top-lambda-let-values% expr))))
-    ((_ (bind ...) body)
      (ormap lift-top-lambda-binding? #'(bind ...))
      (parameterize ((current-expander-context (make-local-context)))
-       (let* (((values lift1 lift2 hd)
-               (compile-bindings #'(bind ...)))
-              (body (compile-e #'body))
-              (expr
-               (xform-wrap-source
-                ['%#let-values hd body]
-                stx))
-              (expr
-               (if (null? lift2)
-                 expr
+       (if (ormap lift-kw-lambda? #'(bind ...))
+         (let* (((values lift1 lift2 hd)
+                 (lift-kw-lambda-bindings #'(bind ...)))
+                (expr
+                 (xform-wrap-source
+                  ['%#let-values hd #'body]
+                  stx))
+                (expr
                  (xform-wrap-source
                   ['%#let-values lift2 expr]
-                  stx)))
-              (expr
-               (if (null? lift1)
-                 expr
+                  stx))
+                (expr
                  (xform-wrap-source
                   ['%#let-values lift1 expr]
-                  stx))))
-         expr)))
+                  stx)))
+           (lift-top-lambda-let-values% expr))
+         (let* (((values lift1 lift2 hd)
+                 (compile-bindings #'(bind ...)))
+                (body (compile-e #'body))
+                (expr
+                 (xform-wrap-source
+                  ['%#let-values hd body]
+                  stx))
+                (expr
+                 (if (null? lift2)
+                   expr
+                   (xform-wrap-source
+                    ['%#let-values lift2 expr]
+                    stx)))
+                (expr
+                 (if (null? lift1)
+                   expr
+                   (xform-wrap-source
+                    ['%#let-values lift1 expr]
+                    stx))))
+           expr))))
     (_ (xform-let-values% stx))))
 
 (def (lift-top-lambda-letrec-values% stx)
