@@ -2705,7 +2705,7 @@
   (begin
     (define gx#core-expand-export%__%
       (lambda (_stx11046_ _internal-expand?11047_)
-        (letrec* ((_make-export__opt-lambda11481__1447114472_
+        (letrec* ((_make-export__1447114472_
                    (lambda (_bind11483_ _phi11484_ _ctx11485_ _name11486_)
                      (let* ((_key11488_
                              (##structure-ref
@@ -2737,7 +2737,7 @@
                      (let* ((_phi11501_ (gx#current-export-expander-phi))
                             (_ctx11503_ (gx#current-expander-context))
                             (_name11505_ '#f))
-                       (_make-export__opt-lambda11481__1447114472_
+                       (_make-export__1447114472_
                         _bind11499_
                         _phi11501_
                         _ctx11503_
@@ -2746,7 +2746,7 @@
                    (lambda (_bind11507_ _phi11508_)
                      (let* ((_ctx11510_ (gx#current-expander-context))
                             (_name11512_ '#f))
-                       (_make-export__opt-lambda11481__1447114472_
+                       (_make-export__1447114472_
                         _bind11507_
                         _phi11508_
                         _ctx11510_
@@ -2754,7 +2754,7 @@
                   (_make-export__2__1447514478_
                    (lambda (_bind11514_ _phi11515_ _ctx11516_)
                      (let ((_name11518_ '#f))
-                       (_make-export__opt-lambda11481__1447114472_
+                       (_make-export__1447114472_
                         _bind11514_
                         _phi11515_
                         _ctx11516_
@@ -2769,8 +2769,7 @@
                              ((fx= _g14510_ 3)
                               (apply _make-export__2__1447514478_ _g14511_))
                              ((fx= _g14510_ 4)
-                              (apply _make-export__opt-lambda11481__1447114472_
-                                     _g14511_))
+                              (apply _make-export__1447114472_ _g14511_))
                              (else
                               (##raise-wrong-number-of-arguments-exception
                                'case-lambda-dispatch
@@ -2917,7 +2916,7 @@
                                      ((lambda (_bind11352_)
                                         (_K11197_
                                          _rest11198_
-                                         (cons (_make-export__opt-lambda11481__1447114472_
+                                         (cons (_make-export__1447114472_
                                                 _bind11352_
                                                 _phi11347_
                                                 (gx#current-expander-context)
@@ -2988,7 +2987,7 @@
                                                ((lambda (_bind11401_)
                                                   (_K11197_
                                                    _rest11198_
-                                                   (cons (_make-export__opt-lambda11481__1447114472_
+                                                   (cons (_make-export__1447114472_
                                                           _bind11401_
                                                           _phi11396_
                                                           (gx#current-expander-context)

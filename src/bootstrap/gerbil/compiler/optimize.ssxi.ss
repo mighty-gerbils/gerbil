@@ -136,6 +136,40 @@ package: gerbil/compiler
   (declare-type
    gxc#!case-lambda-clauses-set!
    (@struct-setf gxc#!case-lambda::t 0 #f))
+  (declare-type
+   gxc#!kw-lambda::t
+   (@struct-type gxc#!kw-lambda::t gxc#!procedure::t 2 #f ()))
+  (declare-type gxc#!kw-lambda? (@struct-pred gxc#!kw-lambda::t))
+  (declare-type gxc#make-!kw-lambda (@struct-cons gxc#!kw-lambda::t))
+  (declare-type gxc#!kw-lambda-table (@struct-getf gxc#!kw-lambda::t 0 #f))
+  (declare-type gxc#!kw-lambda-dispatch (@struct-getf gxc#!kw-lambda::t 1 #f))
+  (declare-type
+   gxc#!kw-lambda-table-set!
+   (@struct-setf gxc#!kw-lambda::t 0 #f))
+  (declare-type
+   gxc#!kw-lambda-dispatch-set!
+   (@struct-setf gxc#!kw-lambda::t 1 #f))
+  (declare-type
+   gxc#!kw-lambda-primary::t
+   (@struct-type gxc#!kw-lambda-primary::t gxc#!procedure::t 2 #f ()))
+  (declare-type
+   gxc#!kw-lambda-primary?
+   (@struct-pred gxc#!kw-lambda-primary::t))
+  (declare-type
+   gxc#make-!kw-lambda-primary
+   (@struct-cons gxc#!kw-lambda-primary::t))
+  (declare-type
+   gxc#!kw-lambda-primary-keys
+   (@struct-getf gxc#!kw-lambda-primary::t 0 #f))
+  (declare-type
+   gxc#!kw-lambda-primary-main
+   (@struct-getf gxc#!kw-lambda-primary::t 1 #f))
+  (declare-type
+   gxc#!kw-lambda-primary-keys-set!
+   (@struct-setf gxc#!kw-lambda-primary::t 0 #f))
+  (declare-type
+   gxc#!kw-lambda-primary-main-set!
+   (@struct-setf gxc#!kw-lambda-primary::t 1 #f))
   (declare-method gxc#!struct-type::t :init! gxc#!struct-type:::init! #f)
   (begin
     (declare-type gxc#!lambda:::init!__% (@lambda 6 struct-instance-init!))
@@ -197,6 +231,16 @@ package: gerbil/compiler
    optimize-call
    gxc#!case-lambda::optimize-call
    #f)
+  (declare-method
+   gxc#!kw-lambda::t
+   optimize-call
+   gxc#!kw-lambda::optimize-call
+   #f)
+  (declare-method
+   gxc#!kw-lambda-primary::t
+   optimize-call
+   gxc#!kw-lambda-primary::optimize-call
+   #f)
   (declare-method gxc#!alias::t typedecl gxc#!alias::typedecl #f)
   (declare-method gxc#!struct-type::t typedecl gxc#!struct-type::typedecl #f)
   (declare-method gxc#!struct-pred::t typedecl gxc#!struct-pred::typedecl #f)
@@ -205,6 +249,12 @@ package: gerbil/compiler
   (declare-method gxc#!struct-setf::t typedecl gxc#!struct-setf::typedecl #f)
   (declare-method gxc#!lambda::t typedecl gxc#!lambda::typedecl #f)
   (declare-method gxc#!case-lambda::t typedecl gxc#!case-lambda::typedecl #f)
+  (declare-method gxc#!kw-lambda::t typedecl gxc#!kw-lambda::typedecl #f)
+  (declare-method
+   gxc#!kw-lambda-primary::t
+   typedecl
+   gxc#!kw-lambda-primary::typedecl
+   #f)
   (declare-type
    gxc#identifier-symbol
    (@lambda 1 gxc#generate-runtime-binding-id)))

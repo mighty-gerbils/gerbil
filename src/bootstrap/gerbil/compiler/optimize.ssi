@@ -130,6 +130,28 @@ namespace: gxc
           !case-lambda-clauses-set!
           gxc#!case-lambda-clauses-set!)
          (%#define-syntax !case-lambda |gxc[:0:]#!case-lambda|)
+         (%#define-runtime !kw-lambda::t gxc#!kw-lambda::t)
+         (%#define-runtime !kw-lambda? gxc#!kw-lambda?)
+         (%#define-runtime make-!kw-lambda gxc#make-!kw-lambda)
+         (%#define-runtime !kw-lambda-table gxc#!kw-lambda-table)
+         (%#define-runtime !kw-lambda-dispatch gxc#!kw-lambda-dispatch)
+         (%#define-runtime !kw-lambda-table-set! gxc#!kw-lambda-table-set!)
+         (%#define-runtime
+          !kw-lambda-dispatch-set!
+          gxc#!kw-lambda-dispatch-set!)
+         (%#define-syntax !kw-lambda |gxc[:0:]#!kw-lambda|)
+         (%#define-runtime !kw-lambda-primary::t gxc#!kw-lambda-primary::t)
+         (%#define-runtime !kw-lambda-primary? gxc#!kw-lambda-primary?)
+         (%#define-runtime make-!kw-lambda-primary gxc#make-!kw-lambda-primary)
+         (%#define-runtime !kw-lambda-primary-keys gxc#!kw-lambda-primary-keys)
+         (%#define-runtime !kw-lambda-primary-main gxc#!kw-lambda-primary-main)
+         (%#define-runtime
+          !kw-lambda-primary-keys-set!
+          gxc#!kw-lambda-primary-keys-set!)
+         (%#define-runtime
+          !kw-lambda-primary-main-set!
+          gxc#!kw-lambda-primary-main-set!)
+         (%#define-syntax !kw-lambda-primary |gxc[:0:]#!kw-lambda-primary|)
          (%#define-runtime !struct-type:::init! gxc#!struct-type:::init!)
          (%#begin (%#define-runtime !lambda:::init!__% gxc#!lambda:::init!__%)
                   (%#begin (%#define-runtime
@@ -210,6 +232,7 @@ namespace: gxc
          (%#define-runtime lambda-expr? gxc#lambda-expr?)
          (%#define-runtime case-lambda-expr? gxc#case-lambda-expr?)
          (%#define-runtime opt-lambda-expr? gxc#opt-lambda-expr?)
+         (%#define-runtime kw-lambda-expr? gxc#kw-lambda-expr?)
          (%#begin (%#define-runtime
                    lift-case-lambda-clauses__%
                    gxc#lift-case-lambda-clauses__%)
@@ -311,6 +334,13 @@ namespace: gxc
           !case-lambda::optimize-call
           gxc#!case-lambda::optimize-call)
          (%#define-runtime !lambda-arity-match? gxc#!lambda-arity-match?)
+         (%#define-runtime
+          !kw-lambda::optimize-call
+          gxc#!kw-lambda::optimize-call)
+         (%#define-runtime !kw-lambda-split-args gxc#!kw-lambda-split-args)
+         (%#define-runtime
+          !kw-lambda-primary::optimize-call
+          gxc#!kw-lambda-primary::optimize-call)
          (%#define-runtime generate-ssxi-module% gxc#generate-ssxi-module%)
          (%#define-runtime
           generate-ssxi-define-values%
@@ -324,5 +354,9 @@ namespace: gxc
          (%#define-runtime !struct-setf::typedecl gxc#!struct-setf::typedecl)
          (%#define-runtime !lambda::typedecl gxc#!lambda::typedecl)
          (%#define-runtime !case-lambda::typedecl gxc#!case-lambda::typedecl)
+         (%#define-runtime !kw-lambda::typedecl gxc#!kw-lambda::typedecl)
+         (%#define-runtime
+          !kw-lambda-primary::typedecl
+          gxc#!kw-lambda-primary::typedecl)
          (%#define-runtime identifier-symbol gxc#identifier-symbol))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize__0"))
