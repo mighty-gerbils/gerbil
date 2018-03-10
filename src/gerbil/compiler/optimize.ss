@@ -675,8 +675,8 @@ namespace: gxc
   (def (bind-e id expr (compile? #t))
     [[id] (if compile? (compile-e expr) expr)])
 
-  (def (compile-bindings rest)
-    (let lp ((rest rest) (lift1 []) (lift2 []) (bind []))
+  (def (compile-bindings bindings)
+    (let lp ((rest bindings) (lift1 []) (lift2 []) (bind []))
       (match rest
         ([hd . rest]
          (ast-case hd ()
@@ -719,7 +719,66 @@ namespace: gxc
                  (reverse lift2)
                  (reverse bind))))))
 
+  (def (lift-kw-lambda? bind)
+    (ast-case bind ()
+      (((id) expr)
+       (and (identifier? #'id) (kw-lambda-expr? #'expr)))
+      (_ #f)))
+
+  (def (lift-kw-lambda-bindings bindings)
+    (let lp ((rest bindings) (lift1 []) (lift2 []) (bind []))
+      (match rest
+        ([hd . rest]
+         (ast-case hd ()
+           (((id) expr)
+            (and (identifier? #'id)
+                 (kw-lambda-expr? #'expr))
+            (ast-case #'expr ()
+              ((_ (((get-kws) (_ (((main) main-impl)) get-kws-impl)))
+                  kw-dispatch)
+               (let* ((get-kws-id
+                       (make-symbol (stx-e #'id) "__" (stx-e #'get-kws) (gensym '__)))
+                      (main-id
+                       (make-symbol (stx-e #'id) "__" (stx-e #'main) (gensym '__)))
+                      (_ (core-bind-runtime! get-kws-id))
+                      (_ (core-bind-runtime! main-id))
+                      (new-kw-dispatch
+                       (apply-expression-subst #'kw-dispatch #'get-kws get-kws-id))
+                      (new-get-kws
+                       (apply-expression-subst #'get-kws-impl #'main main-id)))
+                 (verbose "lift kw-lambda dispatch " (identifier-symbol #'id)
+                          " => " (identifier-symbol get-kws-id)
+                          " => " (identifier-symbol main-id))
+                 (lp rest
+                     (cons (bind-e main-id #'main-impl #f) lift1)
+                     (cons (bind-e get-kws-id new-get-kws #f) lift2)
+                     (cons (bind-e #'id new-kw-dispatch #f) bind))))))
+           ((hd expr)
+            (lp rest lift1 lift2 (cons [#'hd #'expr] bind)))))
+        (else
+         (values (reverse lift1)
+                 (reverse lift2)
+                 (reverse bind))))))
+
   (ast-case stx ()
+    ((_ (bind ...) body)
+     (ormap lift-kw-lambda? #'(bind ...))
+     (parameterize ((current-expander-context (make-local-context)))
+       (let* (((values lift1 lift2 hd)
+               (lift-kw-lambda-bindings #'(bind ...)))
+              (expr
+               (xform-wrap-source
+                ['%#let-values hd #'body]
+                stx))
+              (expr
+               (xform-wrap-source
+                ['%#let-values lift2 expr]
+                stx))
+              (expr
+               (xform-wrap-source
+                ['%#let-values lift1 expr]
+                stx)))
+         (lift-top-lambda-let-values% expr))))
     ((_ (bind ...) body)
      (ormap lift-top-lambda-binding? #'(bind ...))
      (parameterize ((current-expander-context (make-local-context)))
@@ -785,6 +844,31 @@ namespace: gxc
                  (verbose "lift opt-lambda dispatch "(identifier-symbol #'id) " => " (identifier-symbol lambda-id))
                  (lp (cons (bind-e #'id new-case-lambda-expr #f) rest)
                      (cons (bind-e lambda-id #'lambda-expr) bind))))))
+           (((id) expr)
+            (and (identifier? #'id)
+                 (kw-lambda-expr? #'expr))
+            (ast-case #'expr ()
+              ((_ (((get-kws) (_ (((main) main-impl)) get-kws-impl)))
+                  kw-dispatch)
+               (let* ((get-kws-id
+                       (make-symbol (stx-e #'id) "__" (stx-e #'get-kws) (gensym '__)))
+                      (main-id
+                       (make-symbol (stx-e #'id) "__" (stx-e #'main) (gensym '__)))
+                      (_ (core-bind-runtime! get-kws-id))
+                      (_ (core-bind-runtime! main-id))
+                      (new-kw-dispatch
+                       (apply-expression-subst #'kw-dispatch #'get-kws get-kws-id))
+                      (new-get-kws
+                       (apply-expression-subst #'get-kws-impl #'main main-id)))
+                 (verbose "lift kw-lambda dispatch " (identifier-symbol #'id)
+                          " => " (identifier-symbol get-kws-id)
+                          " => " (identifier-symbol main-id))
+                 (lp (cons* (bind-e main-id #'main-impl #f)
+                            (bind-e get-kws-id new-get-kws #f)
+                            (bind-e #'id new-kw-dispatch #f)
+                            rest)
+                     bind)
+                 ))))
            ((hd expr)
             (lp rest (cons [#'hd (compile-e #'expr)] bind)))))
         (else
@@ -806,7 +890,8 @@ namespace: gxc
     (((id) expr)
      (and (identifier? #'id)
           (or (case-lambda-expr? #'expr)
-              (opt-lambda-expr? #'expr))))
+              (opt-lambda-expr? #'expr)
+              (kw-lambda-expr? #'expr))))
     (_ #f)))
 
 ;;; apply-subst-refs
