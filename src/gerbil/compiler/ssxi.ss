@@ -99,3 +99,11 @@ namespace: gxc
 (defrules @case-lambda ()
   ((_ (arity dispatch) ...)
    (make-!case-lambda 'case-lambda [(@lambda arity dispatch) ...])))
+
+(defrules @kw-lambda ()
+  ((_ tab dispatch)
+   (make-!kw-lambda 'kw-lambda 'tab 'dispatch)))
+
+(defrules @kw-lambda-dispatch ()
+  ((_ keys main)
+   (make-!kw-lambda-primary 'kw-lambda-dispatch 'keys 'main)))

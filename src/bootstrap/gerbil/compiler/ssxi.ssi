@@ -35,4 +35,6 @@ namespace: gxc
          (%#define-syntax @struct-getf |gxc[:0:]#@struct-getf|)
          (%#define-syntax @struct-setf |gxc[:0:]#@struct-setf|)
          (%#define-syntax @lambda |gxc[:0:]#@lambda|)
-         (%#define-syntax @case-lambda |gxc[:0:]#@case-lambda|))
+         (%#define-syntax @case-lambda |gxc[:0:]#@case-lambda|)
+         (%#define-syntax @kw-lambda |gxc[:0:]#@kw-lambda|)
+         (%#define-syntax @kw-lambda-dispatch |gxc[:0:]#@kw-lambda-dispatch|))

@@ -137,6 +137,8 @@ namespace: gxc
 (defstruct (!lambda !procedure) (arity dispatch inline inline-typedecl)
   constructor: :init!)
 (defstruct (!case-lambda !procedure) (clauses))
+(defstruct (!kw-lambda !procedure) (table dispatch))
+(defstruct (!kw-lambda-primary !procedure) (keys main))
 
 (defmethod {:init! !struct-type}
   (lambda (self id super fields xfields ctor plist)
@@ -510,6 +512,24 @@ namespace: gxc
           (case-lambda-expr? #'case-lambda-expr)))
     (_ #f)))
 
+(def (kw-lambda-expr? expr)
+  (ast-case expr (%#let-values %#lambda %#call %#ref %#quote)
+    ((%#let-values
+      (((id)
+        (%#let-values
+         (((xid) _))
+         (%#lambda (kwt . _) (%#call (%#ref -apply1) (%#ref -xid) (%#ref -kwt) . _)))))
+      (%#lambda args (%#call (%#ref -apply2) (%#ref -keyword-dispatch) (%#quote _)
+                        (%#ref -id) (%#ref -args))))
+     (and (eq? (identifier-symbol #'-apply1) 'apply)
+          (eq? (identifier-symbol #'-apply2) 'apply)
+          (eq? (identifier-symbol #'-keyword-dispatch) 'keyword-dispatch)
+          (free-identifier=? #'id #'-id)
+          (free-identifier=? #'xid #'-xid)
+          (free-identifier=? #'args #'-args)
+          (free-identifier=? #'kwt #'-kwt)))
+    (_ #f)))
+
 (def (lift-case-lambda-clauses stx id clauses (gensym? #f))
   (let lp ((rest clauses) (ids []) (impls []) (clauses []))
     (match rest
@@ -564,6 +584,14 @@ namespace: gxc
           id))
       id))
 
+  (def (kw-lambda-dispatch-name id name)
+    (if (uninterned-symbol? id)
+      (let (str (symbol->string id))
+        (if (string-prefix? str "kw-lambda")
+          name
+          id))
+      id))
+
   (ast-case stx ()
     ((_ (id) expr)
      (and (identifier? #'id)
@@ -607,6 +635,37 @@ namespace: gxc
                     ['%#define-values [#'id] new-case-lambda-expr]
                     stx))]
         stx)))))
+    ((_ (id) expr)
+     (and (identifier? #'id)
+          (kw-lambda-expr? #'expr))
+     (ast-case #'expr ()
+       ((_ (((get-kws) (_ (((main) main-impl)) get-kws-impl)))
+           kw-dispatch)
+        (let* ((get-kws-id
+                (make-symbol (stx-e #'id) "__" (kw-lambda-dispatch-name (stx-e #'get-kws) "@")))
+               (main-id
+                (make-symbol (stx-e #'id) "__" (kw-lambda-dispatch-name (stx-e #'main) "%")))
+               (_ (core-bind-runtime! get-kws-id))
+               (_ (core-bind-runtime! main-id))
+               (new-kw-dispatch
+                (apply-expression-subst #'kw-dispatch #'get-kws get-kws-id))
+               (new-get-kws
+                (apply-expression-subst #'get-kws-impl #'main main-id)))
+          (verbose "lift kw-lambda dispatch " (identifier-symbol #'id)
+                   " => " (identifier-symbol get-kws-id)
+                   " => " (identifier-symbol main-id))
+          (xform-wrap-source
+           ['%#begin (lift-top-lambda-define-values%
+                      (xform-wrap-source
+                       ['%#define-values [main-id] #'main-impl]
+                       stx))
+                     (xform-wrap-source
+                      ['%#define-values [get-kws-id] new-get-kws]
+                      stx)
+                     (xform-wrap-source
+                      ['%#define-values [#'id] new-kw-dispatch]
+                      stx)]
+           stx)))))
     ((_ hd expr)
      (xform-wrap-source
       ['%#define-values #'hd (compile-e #'expr)]
@@ -616,8 +675,8 @@ namespace: gxc
   (def (bind-e id expr (compile? #t))
     [[id] (if compile? (compile-e expr) expr)])
 
-  (def (compile-bindings rest)
-    (let lp ((rest rest) (lift1 []) (lift2 []) (bind []))
+  (def (compile-bindings bindings)
+    (let lp ((rest bindings) (lift1 []) (lift2 []) (bind []))
       (match rest
         ([hd . rest]
          (ast-case hd ()
@@ -644,7 +703,7 @@ namespace: gxc
                  (opt-lambda-expr? #'expr))
             (ast-case #'expr ()
               ((_ (((xid) lambda-expr)) case-lambda-expr)
-               (let* ((lambda-id (make-symbol (stx-e #'id) "__" (stx-e #'xid) (gensym '__)))
+               (let* ((lambda-id (make-symbol (stx-e #'id) (gensym '__)))
                       (lambda-id (core-quote-syntax lambda-id (stx-source stx)))
                       (_ (core-bind-runtime! lambda-id))
                       (new-case-lambda-expr
@@ -660,7 +719,66 @@ namespace: gxc
                  (reverse lift2)
                  (reverse bind))))))
 
+  (def (lift-kw-lambda? bind)
+    (ast-case bind ()
+      (((id) expr)
+       (and (identifier? #'id) (kw-lambda-expr? #'expr)))
+      (_ #f)))
+
+  (def (lift-kw-lambda-bindings bindings)
+    (let lp ((rest bindings) (lift1 []) (lift2 []) (bind []))
+      (match rest
+        ([hd . rest]
+         (ast-case hd ()
+           (((id) expr)
+            (and (identifier? #'id)
+                 (kw-lambda-expr? #'expr))
+            (ast-case #'expr ()
+              ((_ (((get-kws) (_ (((main) main-impl)) get-kws-impl)))
+                  kw-dispatch)
+               (let* ((get-kws-id
+                       (make-symbol (stx-e #'id) (gensym '__)))
+                      (main-id
+                       (make-symbol (stx-e #'id) (gensym '__)))
+                      (_ (core-bind-runtime! get-kws-id))
+                      (_ (core-bind-runtime! main-id))
+                      (new-kw-dispatch
+                       (apply-expression-subst #'kw-dispatch #'get-kws get-kws-id))
+                      (new-get-kws
+                       (apply-expression-subst #'get-kws-impl #'main main-id)))
+                 (verbose "lift kw-lambda dispatch " (identifier-symbol #'id)
+                          " => " (identifier-symbol get-kws-id)
+                          " => " (identifier-symbol main-id))
+                 (lp rest
+                     (cons (bind-e main-id #'main-impl #f) lift1)
+                     (cons (bind-e get-kws-id new-get-kws #f) lift2)
+                     (cons (bind-e #'id new-kw-dispatch #f) bind))))))
+           ((hd expr)
+            (lp rest lift1 lift2 (cons [#'hd #'expr] bind)))))
+        (else
+         (values (reverse lift1)
+                 (reverse lift2)
+                 (reverse bind))))))
+
   (ast-case stx ()
+    ((_ (bind ...) body)
+     (ormap lift-kw-lambda? #'(bind ...))
+     (parameterize ((current-expander-context (make-local-context)))
+       (let* (((values lift1 lift2 hd)
+               (lift-kw-lambda-bindings #'(bind ...)))
+              (expr
+               (xform-wrap-source
+                ['%#let-values hd #'body]
+                stx))
+              (expr
+               (xform-wrap-source
+                ['%#let-values lift2 expr]
+                stx))
+              (expr
+               (xform-wrap-source
+                ['%#let-values lift1 expr]
+                stx)))
+         (lift-top-lambda-let-values% expr))))
     ((_ (bind ...) body)
      (ormap lift-top-lambda-binding? #'(bind ...))
      (parameterize ((current-expander-context (make-local-context)))
@@ -718,7 +836,7 @@ namespace: gxc
                  (opt-lambda-expr? #'expr))
             (ast-case #'expr ()
               ((_ (((xid) lambda-expr)) case-lambda-expr)
-               (let* ((lambda-id (make-symbol (stx-e #'id) "__" (stx-e #'xid) (gensym '__)))
+               (let* ((lambda-id (make-symbol (stx-e #'id) (gensym '__)))
                       (lambda-id (core-quote-syntax lambda-id (stx-source stx)))
                       (_ (core-bind-runtime! lambda-id))
                       (new-case-lambda-expr
@@ -726,6 +844,31 @@ namespace: gxc
                  (verbose "lift opt-lambda dispatch "(identifier-symbol #'id) " => " (identifier-symbol lambda-id))
                  (lp (cons (bind-e #'id new-case-lambda-expr #f) rest)
                      (cons (bind-e lambda-id #'lambda-expr) bind))))))
+           (((id) expr)
+            (and (identifier? #'id)
+                 (kw-lambda-expr? #'expr))
+            (ast-case #'expr ()
+              ((_ (((get-kws) (_ (((main) main-impl)) get-kws-impl)))
+                  kw-dispatch)
+               (let* ((get-kws-id
+                       (make-symbol (stx-e #'id) (gensym '__)))
+                      (main-id
+                       (make-symbol (stx-e #'id) (gensym '__)))
+                      (_ (core-bind-runtime! get-kws-id))
+                      (_ (core-bind-runtime! main-id))
+                      (new-kw-dispatch
+                       (apply-expression-subst #'kw-dispatch #'get-kws get-kws-id))
+                      (new-get-kws
+                       (apply-expression-subst #'get-kws-impl #'main main-id)))
+                 (verbose "lift kw-lambda dispatch " (identifier-symbol #'id)
+                          " => " (identifier-symbol get-kws-id)
+                          " => " (identifier-symbol main-id))
+                 (lp (cons* (bind-e main-id #'main-impl #f)
+                            (bind-e get-kws-id new-get-kws #f)
+                            (bind-e #'id new-kw-dispatch #f)
+                            rest)
+                     bind)
+                 ))))
            ((hd expr)
             (lp rest (cons [#'hd (compile-e #'expr)] bind)))))
         (else
@@ -747,7 +890,8 @@ namespace: gxc
     (((id) expr)
      (and (identifier? #'id)
           (or (case-lambda-expr? #'expr)
-              (opt-lambda-expr? #'expr))))
+              (opt-lambda-expr? #'expr)
+              (kw-lambda-expr? #'expr))))
     (_ #f)))
 
 ;;; apply-subst-refs
@@ -820,7 +964,7 @@ namespace: gxc
      (compile-e #'expr))))
 
 (def (basic-expression-type-lambda% stx)
-  (ast-case stx (%#call %#ref)
+  (ast-case stx (%#call %#ref %#quote)
     ((_ args (%#call (%#ref -apply) (%#ref -make-instance) (%#ref type-t) (%#ref xargs)))
      ;; defstruct constructor
      (and (identifier? #'args)
@@ -847,6 +991,29 @@ namespace: gxc
      ;; delegate dispatch
      (dispatch-lambda-form? #'form)
      (make-!lambda 'lambda (lambda-form-arity #'form) (dispatch-lambda-form-delegate #'form)))
+    ((_ args (%#call (%#ref -apply) (%#ref -keyword-dispatch) (%#quote kwt)
+                     (%#ref dispatch) (%#ref -args)))
+     ;; kw-lambda
+     (and (identifier? #'args)
+          (eq? (identifier-symbol #'-apply) 'apply)
+          (eq? (identifier-symbol #'-keyword-dispatch) 'keyword-dispatch)
+          (free-identifier=? #'args #'-args))
+     (make-!kw-lambda 'kw-lambda (stx-e #'kwt) (identifier-symbol #'dispatch)))
+    ((_ (kwvar . args)
+        (%#call (%#ref -apply) (%#ref main) (%#ref -kwvar)
+                (%#call (%#ref -hash-ref) (%#ref -xkwvar) (%#quote key) (%#ref -absent-value))
+                ...
+                (%#ref -args)))
+     ;; kw-lambda dispatch
+     (and (identifier? #'kwvar)
+          (identifier? #'args)
+          (eq? (identifier-symbol #'-apply) 'apply)
+          (free-identifier=? #'kwvar #'-kwvar)
+          (andmap stx-keyword? #'(key ...))
+          (andmap (lambda (id) (eq? (identifier-symbol id) 'hash-ref)) #'(-hash-ref ...))
+          (andmap (lambda (id) (eq? (identifier-symbol id) 'absent-value)) #'(-absent-value ...))
+          (andmap (cut free-identifier=? <> #'kwvar) #'(-xkwvar ...)))
+     (make-!kw-lambda-primary 'kw-lambda-dispatch (map stx-e #'(key ...)) (identifier-symbol #'main)))
     ;; TODO generic lambda type for call arity checking
     (_ #f)))
 
@@ -1122,6 +1289,92 @@ namespace: gxc
       ([arity]
        (fx>= (length args) arity)))))
 
+(defmethod {optimize-call !kw-lambda}
+  (lambda (self stx args)
+    (with ((!kw-lambda _ table dispatch) self)
+      (match (optimizer-lookup-type dispatch)
+        ((!kw-lambda-primary _ keys main)
+         (let ((values pargs kwargs)
+               (!kw-lambda-split-args args))
+           (verbose "dispatch kw-lambda => " main)
+           (if table
+             (let (xargs
+                   (map (lambda (key)
+                          (cond
+                           ((assgetq key kwargs) => values)
+                           (else '(%#ref absent-value))))
+                        keys))
+               (for-each
+                 (lambda (kw)
+                   (unless (memq (car kw) keys)
+                     (raise-compile-error "Illegal kw-lambda application; unexpected keyword"
+                                          stx keys kw)))
+                 kwargs)
+               (compile-e
+                (xform-wrap-source
+                 ['%#call ['%#ref main] ['%#quote #f] xargs ... pargs ...]
+                 stx)))
+             (let* ((kwt (make-symbol (gensym '__kwt)))
+                    (kwvars
+                     (map (lambda (_) (make-symbol (gensym '__kw)))
+                          kwargs))
+                    (kwbind
+                     (map (lambda (kw kwvar) [[kwvar] (cdr kw)])
+                          kwargs kwvars))
+                    (kwset
+                     (map (lambda (kw kwvar)
+                            ['%#call '(%#ref hash-put!) ['%#ref kwt]
+                                     ['%#quote (car kw)]
+                                     ['%#ref kwvar]])
+                          kwargs kwvars))
+                    (xkwargs
+                     (map (lambda (kw kwvar)
+                            (cons (car kw) ['%#ref kwvar]))
+                          kwargs kwvars))
+                    (xargs
+                     (map (lambda (key)
+                            (cond
+                             ((assgetq key xkwargs) => values)
+                             (else '(%#ref absent-value))))
+                          keys)))
+               (compile-e
+                (xform-wrap-source
+                 ['%#let-values kwbind
+                   ['%#let-values [[[kwt]
+                                    (xform-wrap-source
+                                     ['%#call '(%#ref make-hash-table-eq)
+                                             '(%#quote size:)
+                                             ['%#quote (length kwargs)]]
+                                     stx)]]
+                     ['%#begin
+                      kwset ...
+                      (xform-wrap-source
+                       ['%#call ['%#ref main] ['%#ref kwt] xargs ... pargs ...]
+                       stx)]]]
+                 stx))))))
+          (else
+           (verbose "unknown keyword dispatch lambda " dispatch)
+           (xform-call% stx))))))
+
+(def (!kw-lambda-split-args args)
+  (let lp ((rest args) (pargs []) (kwargs []))
+    (ast-case rest (%#quote)
+      (((%#quote #!key) key . rest)
+       (lp #'rest (cons #'key pargs) kwargs))
+      (((%#quote #!rest) . rest)
+       (values (foldl cons #'rest pargs) (reverse kwargs)))
+      (((%#quote kw) val . rest)
+       (stx-keyword? #'kw)
+       (lp #'rest pargs (cons (cons (stx-e #'kw) #'val) kwargs)))
+      ((val . rest)
+       (lp #'rest (cons #'val pargs) kwargs))
+      (()
+       (values (reverse pargs) (reverse kwargs))))))
+
+(defmethod {optimize-call !kw-lambda-primary}
+  (lambda (self stx args)
+    (xform-call% stx)))
+
 ;;; apply-generate-ssxi
 (def (generate-ssxi-module% stx)
   (ast-case stx ()
@@ -1210,6 +1463,16 @@ namespace: gxc
     (with ((!case-lambda _ clauses) self)
       (let (clauses (map clause-e clauses))
         ['@case-lambda clauses ...]))))
+
+(defmethod {typedecl !kw-lambda}
+  (lambda (self)
+    (with ((!kw-lambda _ table dispatch) self)
+      ['@kw-lambda table dispatch])))
+
+(defmethod {typedecl !kw-lambda-primary}
+  (lambda (self)
+    (with ((!kw-lambda-primary _ keys main) self)
+      ['@kw-lambda-dispatch keys main])))
 
 ;;; utilities
 (def (identifier-symbol stx)
