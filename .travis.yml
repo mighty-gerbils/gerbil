@@ -1,0 +1,11 @@
+language: c
+cache:
+  directories:
+    - /home/travis/gambit
+install:
+  - sudo apt-get -qq update
+  - sudo apt-get -y install openssl libssl-dev sqlite3 libsqlite3-dev
+  - bash .travis/install-gambit.sh
+script:
+  - echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
+  - (cd src; env GERBIL_HOME=${TRAVIS_BUILD_DIR} ./build.sh)
