@@ -510,19 +510,20 @@ namespace: gxc
 
 ;;; utilities
 (def (compile-scm-file path code)
-  (verbose "compile " path)
-  (with-output-to-file [path: path permissions: #o644]
-    (lambda ()
-      (pretty-print
-       '(declare
-          (block)
-          (standard-bindings)
-          (extended-bindings)))
-      (pretty-print code)))
-  (when (current-compile-invoke-gsc)
-    (gsc-compile-file path))
-  (unless (current-compile-keep-scm)
-    (delete-file path)))
+  (let ((path (sanitize-path path)))
+    (verbose "compile " path)
+    (with-output-to-file [path: path permissions: #o644]
+      (lambda ()
+        (pretty-print
+         '(declare
+            (block)
+            (standard-bindings)
+            (extended-bindings)))
+        (pretty-print code)))
+    (when (current-compile-invoke-gsc)
+      (gsc-compile-file path))
+    (unless (current-compile-keep-scm)
+      (delete-file path))))
 
 (def (gsc-debug-options)
   (cond
