@@ -24,8 +24,8 @@
      '(gensyms bindings)))
   (define gxc#symbol-table? (make-struct-predicate gxc#symbol-table::t))
   (define gxc#make-symbol-table
-    (lambda _$args859_
-      (apply make-struct-instance gxc#symbol-table::t _$args859_)))
+    (lambda _$args877_
+      (apply make-struct-instance gxc#symbol-table::t _$args877_)))
   (define gxc#symbol-table-gensyms
     (make-struct-field-accessor gxc#symbol-table::t '0))
   (define gxc#symbol-table-bindings
@@ -35,21 +35,40 @@
   (define gxc#symbol-table-bindings-set!
     (make-struct-field-mutator gxc#symbol-table::t '1))
   (define gxc#symbol-table:::init!
-    (lambda (_self857_)
-      (if (##fx< '2 (##vector-length _self857_))
+    (lambda (_self875_)
+      (if (##fx< '2 (##vector-length _self875_))
           (begin
-            (##vector-set! _self857_ '1 (make-hash-table-eq))
-            (##vector-set! _self857_ '2 (make-hash-table-eq)))
+            (##vector-set! _self875_ '1 (make-hash-table-eq))
+            (##vector-set! _self875_ '2 (make-hash-table-eq)))
           (error '"struct-instance-init!: too many arguments for struct"
-                 _self857_))))
+                 _self875_))))
   (bind-method! gxc#symbol-table::t ':init! gxc#symbol-table:::init! '#f)
   (define gxc#raise-compile-error
-    (lambda (_message731_ _stx732_ . _details733_)
+    (lambda (_message749_ _stx750_ . _details751_)
       (apply gx#raise-syntax-error
              'compile
-             _message731_
-             _stx732_
-             _details733_)))
+             _message749_
+             _stx750_
+             _details751_)))
   (define gxc#verbose
-    (lambda _args729_
-      (if (gxc#current-compile-verbose) (apply displayln _args729_) '#!void))))
+    (lambda _args747_
+      (if (gxc#current-compile-verbose) (apply displayln _args747_) '#!void)))
+  (define gxc#module-path-reserved-chars '":#<>&!?*;()[]{}|'`\"\\")
+  (define gxc#module-id->path-string
+    (lambda (_id729_)
+      (let* ((_str731_ (if (symbol? _id729_) (symbol->string _id729_) _id729_))
+             (_len733_ (string-length _str731_))
+             (_res735_ (make-string _len733_)))
+        (let _lp738_ ((_i740_ '0))
+          (if (fx< _i740_ _len733_)
+              (let* ((_char742_ (string-ref _str731_ _i740_))
+                     (_xchar744_
+                      (if (string-index
+                           gxc#module-path-reserved-chars
+                           _char742_)
+                          '#\_
+                          _char742_)))
+                (begin
+                  (string-set! _res735_ _i740_ _xchar744_)
+                  (_lp738_ (fx+ _i740_ '1))))
+              _res735_))))))
