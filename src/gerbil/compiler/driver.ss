@@ -77,7 +77,7 @@ namespace: gxc
 
 (def (compile-exe-stub-module ctx opts)
   (def (generate-stub gx-init-stub)
-    (let* ((mod-str (symbol->string (expander-context-id ctx)))
+    (let* ((mod-str (module-id->path-string (expander-context-id ctx)))
            (mod-rt  (string-append mod-str "__rt"))
            (mod-main (find-runtime-symbol ctx 'main)))
       (write '(##namespace (""))) (newline)
@@ -375,7 +375,7 @@ namespace: gxc
   (def (compile1 ctx)
     (let* ((code (module-context-code ctx))
            (rt (and (apply-find-runtime-code code)
-                    (let (idstr (symbol->string (expander-context-id ctx)))
+                    (let (idstr (module-id->path-string (expander-context-id ctx)))
                       (string-append idstr "__0")))))
       (cond
        (rt
@@ -557,7 +557,7 @@ namespace: gxc
 
 (def (compile-output-file ctx n ext)
   (def (module-relative-path ctx)
-    (path-strip-directory (symbol->string (expander-context-id ctx))))
+    (path-strip-directory (module-id->path-string (expander-context-id ctx))))
 
   (def (module-source-directory ctx)
     (path-directory
@@ -582,7 +582,7 @@ namespace: gxc
      ((current-compile-output-dir)
       => (lambda (outdir)
            (path-expand
-            (file-name (symbol->string (expander-context-id ctx)))
+            (file-name (module-id->path-string (expander-context-id ctx)))
             outdir)))
      (else
       (path-expand
@@ -594,11 +594,11 @@ namespace: gxc
     path))
 
 (def (compile-static-output-file ctx)
-  (def (file-name idstr)
-    (string-append (static-module-name idstr) ".scm"))
+  (def (file-name id)
+    (string-append (static-module-name id) ".scm"))
 
   (def (file-path)
-    (let (file (file-name (symbol->string (expander-context-id ctx))))
+    (let (file (file-name (expander-context-id ctx)))
       (cond
        ((current-compile-output-dir)
         => (lambda (outdir)
@@ -623,7 +623,8 @@ namespace: gxc
 (def (static-module-name idstr)
   (cond
    ((string? idstr)
-    (let (strs (string-split idstr #\/))
+    (let* ((str (module-id->path-string idstr))
+           (strs (string-split str #\/)))
       (string-join strs "__")))
    ((symbol? idstr)
     (static-module-name (symbol->string idstr)))

@@ -68,3 +68,20 @@ namespace: gxc
 (def (verbose . args)
   (when (current-compile-verbose)
     (apply displayln args)))
+
+;; these characters are restricted to avoid confusing shells and other tools
+(def module-path-reserved-chars
+  ":#<>&!?*;()[]{}|'`\"\\")
+
+(def (module-id->path-string id)
+  (let* ((str (if (symbol? id) (symbol->string id) id))
+         (len (string-length str))
+         (res (make-string len)))
+    (let lp ((i 0))
+      (if (fx< i len)
+        (let* ((char (string-ref str i))
+               (xchar (if (string-index module-path-reserved-chars char)
+                        #\_ char)))
+          (string-set! res i xchar)
+          (lp (fx1+ i)))
+        res))))
