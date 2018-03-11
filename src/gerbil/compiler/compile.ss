@@ -984,7 +984,7 @@ namespace: gxc
            (let (id (expander-context-id ctx))
              (if (hash-get ht id)
                (lp rest loads)
-               (let (rt (string-append (symbol->string id) "__rt"))
+               (let (rt (string-append (module-id->path-string id) "__rt"))
                  (hash-put! ht id rt)
                  (lp rest (cons rt loads))))))
 
@@ -1360,7 +1360,7 @@ namespace: gxc
 (defmethod {:init! meta-state}
   (lambda (self ctx)
     (struct-instance-init! self
-      (symbol->string (expander-context-id ctx))
+      (module-id->path-string (expander-context-id ctx))
       1 (make-hash-table-eq) [])))
 
 (defstruct meta-state-block (ctx phi n code)

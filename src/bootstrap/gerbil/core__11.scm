@@ -1,47 +1,47 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gerbil/core$<match>[2]#_g35104_|
+  (define |gerbil/core$<match>[2]#_g35345_|
     (gx#make-syntax-quote
      'match-macro::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g35105_|
+  (define |gerbil/core$<match>[2]#_g35346_|
     (gx#make-syntax-quote
      'macro-object::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g35106_|
+  (define |gerbil/core$<match>[2]#_g35347_|
     (gx#make-syntax-quote
      'match-macro::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g35107_|
+  (define |gerbil/core$<match>[2]#_g35348_|
     (gx#make-syntax-quote
      'make-match-macro
      #f
      (gx#current-expander-context)
      '()))
-  (define |gerbil/core$<match>[2]#_g35108_|
+  (define |gerbil/core$<match>[2]#_g35349_|
     (gx#make-syntax-quote 'match-macro? #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[2]#_g35109_|
+  (define |gerbil/core$<match>[2]#_g35350_|
     (gx#make-syntax-quote 'macro-object #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[:1:]#match-macro|
     (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-class-info|
      'runtime-identifier:
-     |gerbil/core$<match>[2]#_g35104_|
+     |gerbil/core$<match>[2]#_g35345_|
      'expander-identifiers:
-     (cons (cons |gerbil/core$<match>[2]#_g35105_| '())
-           (cons |gerbil/core$<match>[2]#_g35106_|
-                 (cons |gerbil/core$<match>[2]#_g35107_|
-                       (cons |gerbil/core$<match>[2]#_g35108_|
+     (cons (cons |gerbil/core$<match>[2]#_g35346_| '())
+           (cons |gerbil/core$<match>[2]#_g35347_|
+                 (cons |gerbil/core$<match>[2]#_g35348_|
+                       (cons |gerbil/core$<match>[2]#_g35349_|
                              (cons '() (cons '() '()))))))
      'type-exhibitor:
      (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-class-exhibitor|
       'gerbil.core#match-macro::t
-      (list |gerbil/core$<match>[2]#_g35109_|)
+      (list |gerbil/core$<match>[2]#_g35350_|)
       'match-macro
       '#f
       '()

@@ -106,7 +106,7 @@ namespace: gxc
 
   (def (import-e)
     (let* ((str-id (string-append
-                    (symbol->string (expander-context-id ctx))
+                    (module-id->path-string (expander-context-id ctx))
                     ".ssxi"))
            (artefact-path
             (alet (odir (current-compile-output-dir))

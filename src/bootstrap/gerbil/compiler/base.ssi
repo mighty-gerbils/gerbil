@@ -56,5 +56,9 @@ namespace: gxc
          (%#define-syntax symbol-table |gxc[:0:]#symbol-table|)
          (%#define-runtime symbol-table:::init! gxc#symbol-table:::init!)
          (%#define-runtime raise-compile-error gxc#raise-compile-error)
-         (%#define-runtime verbose gxc#verbose))
+         (%#define-runtime verbose gxc#verbose)
+         (%#define-runtime
+          module-path-reserved-chars
+          gxc#module-path-reserved-chars)
+         (%#define-runtime module-id->path-string gxc#module-id->path-string))
 (%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/base__0"))

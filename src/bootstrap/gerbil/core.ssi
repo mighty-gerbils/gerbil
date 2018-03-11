@@ -548,6 +548,7 @@ namespace: gerbil/core
                     (displayln displayln)
                     (display* display*)
                     (absent-obj absent-obj)
+                    (absent-value absent-value)
                     (load-module load-module)
                     (keyword-dispatch keyword-dispatch)
                     (gerbil-version-string gerbil-version-string)
