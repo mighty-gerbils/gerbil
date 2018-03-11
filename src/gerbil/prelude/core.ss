@@ -172,6 +172,7 @@ package: gerbil
     make-class-slot-unchecked-mutator
     class-slot-ref
     class-slot-set!
+    class-slot-offset
     unchecked-slot-ref
     unchecked-slot-set!
     object? object-type
