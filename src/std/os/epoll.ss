@@ -49,20 +49,17 @@ package: std/os
 (def (epoll-event-events evts k)
   (epoll_evt_events evts k))
 
-(def evtptr-cache
-  (make-hash-table-eq weak-keys: #t))
-(def evtptr-cache-mutex
-  (make-mutex))
+(def evtptr-key
+  'std/os/epoll#evtptr)
 
 (def (get-evtptr)
-  (with-lock evtptr-cache-mutex
-    (lambda ()
-      (cond
-       ((hash-get evtptr-cache (current-thread)) => values)
-       (else
-        (let (evtptr (check-ptr (make_epoll_evt 1)))
-          (hash-put! evtptr-cache (current-thread) evtptr)
-          evtptr))))))
+  (cond
+   ((thread-local-get evtptr-key)
+    => values)
+   (else
+    (let (evtptr (check-ptr (make_epoll_evt 1)))
+      (thread-local-set! evtptr-key evtptr)
+      evtptr))))
 
 (extern
   EPOLLIN EPOLLOUT EPOLLERR EPOLLHUP EPOLLET EPOLLONESHOT

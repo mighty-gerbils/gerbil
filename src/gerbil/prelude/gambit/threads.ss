@@ -3,7 +3,7 @@
 ;;; thread primitives and gambit runtime symbols
 package: gerbil/gambit
 
-(export #t)
+(export (except-out #t construct-actor-thread *thread-locals* *thread-locals-mutex*))
 (extern namespace: #f
   current-thread
   thread?
@@ -65,6 +65,7 @@ package: gerbil/gambit
   processor? current-processor processor-id
   )
 
+;;; spawn and friends
 (def (spawn f . args)
   (spawn-actor f args #!void #f))
 
@@ -105,23 +106,71 @@ package: gerbil/gambit
                      (lambda () (apply f args))))
           (tgroup (or tgroup (current-thread-group))))
       (thread-start!
-       (make-thread (thread-main thunk) name tgroup)))
+       (thread-init!
+        (construct-actor-thread #f)
+        (thread-main thunk) name tgroup)))
     (error "Bad argument; expected procedure" f)))
+
+(extern
+  actor-thread? construct-actor-thread
+  actor-thread-locals actor-thread-locals-set!)
+(begin-foreign
+  (namespace ("gerbil/gambit/threads#"
+              construct-actor-thread actor-thread?
+              actor-thread-locals actor-thread-locals-set!))
+  (define-type-of-thread actor-thread
+    constructor: construct-actor-thread
+    locals))
 
 (def (spawn-thread thunk (name absent-obj) (tgroup absent-obj))
   (thread-start!
    (make-thread thunk name tgroup)))
 
-(def (current-thread-group)
-  (thread-thread-group (current-thread)))
+;;; thread locals
+(def (thread-local-ref key (default absent-obj))
+  (let (tab (thread-local-table))
+    (hash-ref tab key default)))
 
-(def (with-lock mx proc)
-  (dynamic-wind
-      (cut mutex-lock! mx)
-      proc
-      (cut mutex-unlock! mx)))
+(def (thread-local-get key)
+  (thread-local-ref key #f))
 
-;; actor debug hook
+(def (thread-local-set! key value)
+  (let (tab (thread-local-table))
+    (hash-put! tab key value)))
+
+(def (thread-local-clear! key)
+  (let (tab (thread-local-table))
+    (hash-remove! tab key)))
+
+(def (thread-local-table)
+  (let (thr (current-thread))
+    (if (actor-thread? thr)
+      (cond
+       ((actor-thread-locals thr) => values)
+       (else
+        (let (tab (make-hash-table-eq))
+          (actor-thread-locals-set! thr tab)
+          tab)))
+      (begin
+        (mutex-lock! *thread-locals-mutex*)
+        (cond
+         ((hash-get *thread-locals* thr)
+          => (lambda (tab)
+               (mutex-unlock! *thread-locals-mutex*)
+               tab))
+         (else
+          (let (tab (make-hash-table-eq))
+            (hash-put! *thread-locals* thr tab)
+            (mutex-unlock! *thread-locals-mutex*)
+            tab)))))))
+
+(def *thread-locals*
+  (make-hash-table-eq weak-keys: #t))
+
+(def *thread-locals-mutex*
+  (make-mutex 'thread-locals))
+
+;;; actor debug hooks
 (def unhandled-actor-exception-hook #f)
 (def (unhandled-actor-exception-hook-set! proc)
   (if (or (not proc) (procedure? proc))
@@ -163,3 +212,13 @@ package: gerbil/gambit
        0)
 
       (##write-string (get-output-string out) error-port))))
+
+;;; utitilities
+(def (current-thread-group)
+  (thread-thread-group (current-thread)))
+
+(def (with-lock mx proc)
+  (dynamic-wind
+      (cut mutex-lock! mx)
+      proc
+      (cut mutex-unlock! mx)))

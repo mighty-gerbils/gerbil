@@ -97,19 +97,17 @@ package: std/os
                   evts)))
       (reverse evts))))
 
-(def buffer-cache
-  (make-hash-table-eq weak-keys: #t))
-(def buffer-cache-mutex
-  (make-mutex))
+(def buffer-key
+  'std/os/inotify#buffer)
+
 (def (get-buffer)
-  (with-lock buffer-cache-mutex
-    (lambda ()
-      (cond
-       ((hash-get buffer-cache (current-thread)) => values)
-       (else
-        (let (buf (make-u8vector 4096))
-          (hash-put! buffer-cache (current-thread) buf)
-          buf))))))
+  (cond
+   ((thread-local-get buffer-key)
+    => values)
+   (else
+    (let (buf (make-u8vector 4096))
+      (thread-local-set! buffer-key buf)
+      buf))))
 
 (extern
   _inotify_init _inotify_add_watch _inotify_rm_watch
