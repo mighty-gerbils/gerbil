@@ -128,21 +128,21 @@ package: gerbil/gambit
 
 ;;; thread locals
 (def (thread-local-ref key (default absent-obj))
-  (let (tab (thread-locals-table))
+  (let (tab (thread-local-table))
     (hash-ref tab key default)))
 
 (def (thread-local-get key)
   (thread-local-ref key #f))
 
 (def (thread-local-set! key value)
-  (let (tab (thread-locals-table))
+  (let (tab (thread-local-table))
     (hash-put! tab key value)))
 
 (def (thread-local-clear! key)
-  (let (tab (thread-locals-table))
+  (let (tab (thread-local-table))
     (hash-remove! tab key)))
 
-(def (thread-locals-table)
+(def (thread-local-table)
   (let (thr (current-thread))
     (if (actor-thread? thr)
       (cond
