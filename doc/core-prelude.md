@@ -1928,7 +1928,10 @@ Symbols related to thread programming; spawn and with-lock primitives.
 
 ```
 ;; Gerbil thread primitives
-  spawn spawn/name spawn/group spawn-actor spawn-thread with-lock
+  spawn spawn/name spawn/group spawn-actor spawn-thread
+  thread-local-ref thread-local-get thread-local-set! thread-local-clear!
+  thread-local-table
+  with-lock
   current-thread-group
 
 ;; Gambit primitives
