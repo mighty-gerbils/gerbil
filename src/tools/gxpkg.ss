@@ -304,24 +304,30 @@
            (moddir (path-directory modpath))
            (modname (path-strip-directory modpath))
            (mod-dot (string-append modname "."))
-           (mod-us (string-append modname "__")))
+           (mod-us (string-append modname "__"))
+           (mod-nested (string-append modname "$")))
       (when (file-exists? moddir)
         (for-each
           (lambda (file)
             (when (or (string-prefix? file mod-dot)
-                      (string-prefix? file mod-us))
+                      (string-prefix? file mod-us)
+                      (string-prefix? file mod-nested))
               (let (path (path-expand file moddir))
                 (delete-file path))))
           (directory-files moddir))))
-    (let* ((static-modname
-            (string-join (string-split mod #\/)
-                         "__"))
-           (static-path
-            (path-expand
-             (string-append static-modname ".scm")
-             (path-expand "static" libdir))))
-      (when (file-exists? static-path)
-        (delete-file static-path))))
+
+    (let* ((static-libdir (path-expand "static" libdir))
+           (static-modname (string-join (string-split mod #\/) "__"))
+           (mod-self (string-append static-modname ".scm"))
+           (mod-nested (string-append static-modname "$")))
+      (when (file-exists? static-libdir)
+        (for-each
+          (lambda (file)
+            (when (or (equal? file mod-self)
+                      (string-prefix? file mod-nested))
+              (let (path (path-expand file static-libdir))
+                (delete-file path))))
+          (directory-files static-libdir)))))
 
   (def (clean-bin exe)
     (let (bin (path-expand exe bindir))
