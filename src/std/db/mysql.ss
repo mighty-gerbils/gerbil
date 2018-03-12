@@ -119,20 +119,16 @@ package: std/db
               (int_ptr_ref ptr)))
           (lp)))))
 
-(def intptr-cache
-  (make-hash-table-eq weak-keys: #t))
-(def intptr-cache-mutex
-  (make-mutex))
+(def intptr-key
+  'std/db/mysql#intptr)
 
 (def (get-intptr)
-  (with-lock intptr-cache-mutex
-    (lambda ()
-      (cond
-       ((hash-get intptr-cache (current-thread)) => values)
-       (else
-        (let (intptr (check-ptr (make_int_ptr)))
-          (hash-put! intptr-cache (current-thread) intptr)
-          intptr))))))
+  (cond
+   ((thread-local-get intptr-key) => values)
+   (else
+    (let (intptr (check-ptr (make_int_ptr)))
+      (thread-local-set! intptr-key intptr)
+      intptr))))
 
 (defmethod {close mysql-connection}
   (lambda (self)

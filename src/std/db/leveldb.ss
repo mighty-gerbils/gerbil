@@ -145,23 +145,19 @@ package: std/db
     (slice_bytes slice bytes)
     bytes))
 
-(def errptr-cache
-  (make-hash-table-eq weak-keys: #t))
-(def errptr-cache-mutex
-  (make-mutex))
+(def errptr-key
+  'std/db/leveldb#errptr)
 
 (def (get-errptr)
-  (with-lock errptr-cache-mutex
-    (lambda ()
-      (cond
-       ((hash-get errptr-cache (current-thread))
-        => (lambda (errptr)
-             (errptr_clear errptr)
-             errptr))
-       (else
-        (let (errptr (check-ptr get-errptr (make_errptr)))
-          (hash-put! errptr-cache (current-thread) errptr)
-          errptr))))))
+  (cond
+   ((thread-local-get errptr-key)
+    => (lambda (errptr)
+         (errptr_clear errptr)
+         errptr))
+   (else
+    (let (errptr (check-ptr get-errptr (make_errptr)))
+      (thread-local-set! errptr-key errptr)
+      errptr))))
 
 ;; Write batches
 (def (leveldb-writebatch)
