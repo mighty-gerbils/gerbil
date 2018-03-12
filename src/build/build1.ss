@@ -16,12 +16,13 @@
     "gerbil/compiler/optimize.ss"
     "gerbil/compiler/driver.ss"
     "gerbil/compiler/ssxi.ss"
-    "gerbil/compiler.ss"
-    ))
+    "gerbil/compiler.ss"))
 
-(def gerbil-prelude
-  '("gerbil/prelude/core.ss"
-    "gerbil/prelude/gambit/ports.ss"
+(def gerbil-prelude-core
+  '("gerbil/prelude/core.ss"))
+
+(def gerbil-prelude-runtime
+  '("gerbil/prelude/gambit/ports.ss"
     "gerbil/prelude/gambit/bytes.ss"
     "gerbil/prelude/gambit/misc.ss"
     "gerbil/prelude/gambit/random.ss"
@@ -50,15 +51,18 @@
                       gsc-options: ["-cc-options" "--param max-gcse-memory=300000000"]]))
 
 (def optimize-prelude #f) ; meaningless before macros are also optimized
-(def optimize-modules #t)
+(def optimize-modules #t) ; runtime code, we want these optimizations
 
 (def debug-prelude #f)   ; almost exclusively macros and externs, not worth the bloat
 (def debug-modules 'src) ; full introspection
 
 (displayln "building gerbil in " gerbil-libdir)
-;; compile prelude: don't clobber core.ssxi, generate static stubs
+;; compile core prelude: don't clobber core.ssxi, generate static stubs
 (for-each (cut compile1 <> debug-prelude optimize-prelude #f #t)
-          gerbil-prelude)
-;; compile expander/compiler: we want ssxis for that, but no static yet
+          gerbil-prelude-core)
+;; compile gambit prelude: we want debug and optimizations as there are runtime definitions
+(for-each (cut compile1 <> debug-modules optimize-modules #t #t)
+          gerbil-prelude-runtime)
+;; compile expander/compiler: we want ssxis for that, but no static
 (for-each (cut compile1 <> debug-modules optimize-modules #t #f)
           gerbil-modules)
