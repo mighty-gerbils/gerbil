@@ -37,6 +37,13 @@ package: std/text
 (import
   :std/error :std/misc/list :std/misc/string :std/srfi/1 :std/srfi/13 :std/sugar)
 
+;;; constants
+(def +line-endings+
+  [+cr+ +lf+ +crlf+])
+
+(def +strict-line-endings+
+  [+crlf+ +lf+])
+
 ; -----------------------------------------------------------------------------
 ;;; Parameters
 
@@ -62,7 +69,7 @@ package: std/text
 (def csv-eol (make-parameter +crlf+))
 
 ;; Acceptable line endings when importing CSV
-(def csv-line-endings (make-parameter [+cr+ +lf+ +crlf+]))
+(def csv-line-endings (make-parameter +line-endings+))
 
 (def (call-with-creativyst-csv-syntax thunk)
   (parameterize
@@ -72,7 +79,7 @@ package: std/text
        (csv-loose-quote? #f)
        (csv-allow-binary? #t)
        (csv-eol +crlf+)
-       (csv-line-endings [+cr+ +lf+ +crlf+])
+       (csv-line-endings +line-endings+)
        (csv-skip-whitespace? #t))
     (thunk)))
 
@@ -84,17 +91,17 @@ package: std/text
        (csv-loose-quote? #f)
        (csv-allow-binary? #t)
        (csv-eol +lf+)
-       (csv-line-endings [+crlf+ +lf+])
+       (csv-line-endings +strict-line-endings+)
        (csv-skip-whitespace? #f))
     (thunk)))
 
 (def (call-with-strict-rfc4180-csv-syntax thunk)
   (call-with-rfc4180-csv-syntax
-   (lambda () (parameterize ((csv-line-endings '(+crlf+)) (csv-allow-binary? #f))
+   (lambda () (parameterize ((csv-line-endings +strict-line-endings+) (csv-allow-binary? #f))
                 (thunk)))))
 
 (def (valid-eol? x)
-  (member x [+cr+ +lf+ +crlf+]))
+  (member x +line-endings+))
 
 (def (validate-csv-parameters)
   (assert! (char? (csv-separator)))
