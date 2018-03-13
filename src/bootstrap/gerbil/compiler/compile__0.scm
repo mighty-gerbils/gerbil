@@ -261,7 +261,7 @@
            (table-set! _tbl12714_ '%#begin gxc#count-values-begin%)
            (table-set!
             _tbl12714_
-            '%#begin-annottion
+            '%#begin-annotation
             gxc#count-values-begin-annotation%)
            (table-set! _tbl12714_ '%#lambda gxc#count-values-single%)
            (table-set! _tbl12714_ '%#case-lambda gxc#count-values-single%)
