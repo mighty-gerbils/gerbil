@@ -65,6 +65,8 @@
      actor-thread
      constructor:
      construct-actor-thread
+     id:
+     gerbil#actor-thread::t
      locals))
   (define gerbil/gambit/threads#spawn-thread
     (let ((_opt-lambda724730_

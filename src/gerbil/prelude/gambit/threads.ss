@@ -120,6 +120,7 @@ package: gerbil/gambit
               actor-thread-locals actor-thread-locals-set!))
   (define-type-of-thread actor-thread
     constructor: construct-actor-thread
+    id: gerbil#actor-thread::t
     locals))
 
 (def (spawn-thread thunk (name absent-obj) (tgroup absent-obj))
