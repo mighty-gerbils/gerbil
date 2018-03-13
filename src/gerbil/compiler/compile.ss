@@ -182,6 +182,18 @@ namespace: gxc
   (%#letrec-values           find-lambda-expression-let-values%)
   (%#letrec*-values          find-lambda-expression-let-values%))
 
+(defcompile-method apply-count-values (&count-values &false-expression)
+  (%#begin                   count-values-begin%)
+  (%#begin-annottion         count-values-begin-annotation%)
+  (%#lambda                       count-values-single%)
+  (%#case-lambda                  count-values-single%)
+  (%#let-values              count-values-let-values%)
+  (%#letrec-values           count-values-let-values%)
+  (%#letrec*-values          count-values-let-values%)
+  (%#quote                   count-values-single%)
+  (%#call                    count-values-call%)
+  (%#if                      count-values-if%))
+
 (defcompile-method #f &generate-runtime-empty
   (%#begin                   generate-runtime-empty)
   (%#begin-syntax            generate-runtime-empty)
@@ -533,36 +545,62 @@ namespace: gxc
                     ((id . rest)
                      (lp #'rest (fx1+ k)
                          (cons ['define (generate-runtime-binding-id #'id)
-                                 ['values-ref tmp k]]
+                                 (generate-runtime-values-ref tmp k #'rest)]
                                r)))
                     (id
                      (identifier? #'id)
                      (foldl cons
                             [['define (generate-runtime-binding-id #'id)
-                               ['values->list tmp k]]]
+                               (generate-runtime-values->list tmp k)]]
                             r))
                     (_ (reverse r))))))
           ['begin
            ['define tmp (compile-e #'expr)]
-           (generate-runtime-check-values tmp #'hd)
+           (generate-runtime-check-values tmp #'hd #'expr)
            body ...]))))))
 
-(def (generate-runtime-check-values vals hd)
-  (let* ((len (stx-length hd))
-         (cmp (if (stx-list? hd) 'fx= 'fx>=))
-         (errmsg
-          (string-append
-           (if (stx-list? hd)
-             "Context expects "
-             "Context expects at least ")
-           (number->string len)
-           " values"))
-         (count (generate-runtime-temporary)))
-    (if (and (not (stx-list? hd)) (fx= len 0))
-      #!void
-      ['let [[count ['values-count vals]]]
-        ['if ['not [cmp count len]]
-          ['error errmsg count]]])))
+(def (generate-runtime-check-values vals hd expr)
+  (cond
+   ((apply-count-values expr)
+    => (lambda (count)
+         (let ((len (stx-length hd))
+               (cmp (if (stx-list? hd) fx= fx>=)))
+           (if (or (fx= len 0) (cmp count len))
+             #!void
+             (raise-compile-error "Value count mismatch" expr hd)))))
+   (else
+    (let* ((len (stx-length hd))
+           (cmp (if (stx-list? hd) '##fx= '##fx>=))
+           (errmsg
+            (string-append
+             (if (stx-list? hd)
+               "Context expects "
+               "Context expects at least ")
+             (number->string len)
+             " values"))
+           (count (generate-runtime-temporary)))
+      (if (and (not (stx-list? hd)) (fx= len 0))
+        #!void
+        ['let [[count (generate-runtime-values-count vals)]]
+          ['if ['not [cmp count len]]
+            ['error errmsg count]]])))))
+
+(def (generate-runtime-values-count var)
+  ['if ['##values? var] ['##vector-length var] 1])
+
+(def (generate-runtime-values-ref var i rest)
+  (if (and (fx= i 0) (not (stx-pair? rest)))
+    ['if ['##values? var] ['##vector-ref var 0] var]
+    ['##vector-ref var i]))
+
+(def (generate-runtime-values->list var i)
+  (cond
+   ((fx= i 0)
+    ['if ['##values? var] ['##vector->list var] ['list var]])
+   ((fx= i 1)
+    ['if ['##values? var] ['##cdr ['##vector->list var]] '(quote ())])
+   (else
+    ['list-tail ['##vector->list var] i])))
 
 (def (generate-runtime-lambda% stx)
   (ast-case stx ()
@@ -619,9 +657,9 @@ namespace: gxc
            (condition
             (cond
              ((stx-list? hd)
-              ['fx= arglen len])
+              ['##fx= arglen len])
              ((> len 0)
-              ['fx>= arglen len])
+              ['##fx>= arglen len])
              (else #t)))
            (dispatch
             (if (dispatch-case? hd body)
@@ -668,9 +706,9 @@ namespace: gxc
               (lp #'rest (cons [eid expr] bind) check post)))
            ((hd expr)
             (let* ((vals (generate-runtime-temporary))
-                   (expr (compile-e #'expr))
-                   (check-values (generate-runtime-check-values vals #'hd))
-                   (refs (generate-runtime-let-values-bind vals #'hd)))
+                   (check-values (generate-runtime-check-values vals #'hd #'expr))
+                   (refs (generate-runtime-let-values-bind vals #'hd))
+                   (expr (compile-e #'expr)))
               (lp #'rest
                   (cons [vals expr] bind)
                   (cons check-values check)
@@ -704,12 +742,14 @@ namespace: gxc
       ((id . rest)
        (lp #'rest
            (fx1+ k)
-           (cons [(generate-runtime-binding-id #'id) ['values-ref vals k]]
+           (cons [(generate-runtime-binding-id #'id)
+                  (generate-runtime-values-ref vals k #'rest)]
                  r)))
       (tail
        (identifier? #'tail)
        (foldl cons
-              [[(generate-runtime-binding-id #'tail) ['values->list vals k]]]
+              [[(generate-runtime-binding-id #'tail)
+                (generate-runtime-values->list vals k)]]
               r))
       (_ (reverse r)))))
 
@@ -728,9 +768,9 @@ namespace: gxc
               (lp #'rest (cons [eid expr] bind) check post)))
            ((hd expr)
             (let* ((vals (generate-runtime-temporary))
-                   (expr (compile-e #'expr))
-                   (check-values (generate-runtime-check-values vals #'hd))
-                   (refs (generate-runtime-let-values-bind vals #'hd)))
+                   (check-values (generate-runtime-check-values vals #'hd #'expr))
+                   (refs (generate-runtime-let-values-bind vals #'hd))
+                   (expr (compile-e #'expr)))
               (lp #'rest
                   (foldl cons
                          (cons [vals expr] bind)
@@ -767,9 +807,9 @@ namespace: gxc
            ((hd expr)
             (let* ((vals (generate-runtime-temporary))
                    (tmp  (generate-runtime-temporary))
-                   (expr (compile-e #'expr))
-                   (check-values (generate-runtime-check-values tmp #'hd))
-                   (refs (generate-runtime-let-values-bind vals #'hd)))
+                   (check-values (generate-runtime-check-values tmp #'hd #'expr))
+                   (refs (generate-runtime-let-values-bind vals #'hd))
+                   (expr (compile-e #'expr)))
               (lp rest
                   (foldl cons
                          (cons [vals ['let [[tmp expr]] check-values tmp]]
@@ -1444,3 +1484,36 @@ namespace: gxc
   (ast-case stx ()
     ((_ bind body)
      (compile-e #'body))))
+
+;; count-values
+(def (count-values-single% stx)
+  1)
+
+(def (count-values-begin% stx)
+  (ast-case stx ()
+    ((_ expr ...)
+     (compile-e (last #'(expr ...))))))
+
+(def (count-values-begin-annotation% stx)
+  (ast-case stx ()
+    ((_ ann body)
+     (compile-e #'body))))
+
+(def (count-values-let-values% stx)
+  (ast-case stx ()
+    ((_ bind body)
+     (compile-e #'body))))
+
+(def (count-values-call% stx)
+  (ast-case stx (%#ref)
+    ((_ (%#ref -values) rand ...)
+     (free-identifier=? #'-values 'values)
+     (length #'(rand ...)))
+    (_ #f)))
+
+(def (count-values-if% stx)
+  (ast-case stx ()
+    ((_ test K E)
+     (alet* ((c1 (compile-e #'K))
+             (c2 (compile-e #'E)))
+       (and (fx= c1 c2) c1)))))

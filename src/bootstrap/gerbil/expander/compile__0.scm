@@ -610,9 +610,9 @@
       (define gx#core-compile-top-let-values%
         (lambda _g15846_
           (let ((_g15845_ (length _g15846_)))
-            (cond ((fx= _g15845_ 1)
+            (cond ((##fx= _g15845_ 1)
                    (apply gx#core-compile-top-let-values%__0 _g15846_))
-                  ((fx= _g15845_ 2)
+                  ((##fx= _g15845_ 2)
                    (apply gx#core-compile-top-let-values%__% _g15846_))
                   (else
                    (##raise-wrong-number-of-arguments-exception

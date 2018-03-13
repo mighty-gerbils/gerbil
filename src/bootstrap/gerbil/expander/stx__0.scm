@@ -189,9 +189,9 @@
       (define gx#datum->syntax
         (lambda _g4708_
           (let ((_g4707_ (length _g4708_)))
-            (cond ((fx= _g4707_ 2) (apply gx#datum->syntax__0 _g4708_))
-                  ((fx= _g4707_ 3) (apply gx#datum->syntax__1 _g4708_))
-                  ((fx= _g4707_ 4) (apply gx#datum->syntax__% _g4708_))
+            (cond ((##fx= _g4707_ 2) (apply gx#datum->syntax__0 _g4708_))
+                  ((##fx= _g4707_ 3) (apply gx#datum->syntax__1 _g4708_))
+                  ((##fx= _g4707_ 4) (apply gx#datum->syntax__% _g4708_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#datum->syntax
@@ -268,8 +268,8 @@
       (define gx#stx-unwrap
         (lambda _g4710_
           (let ((_g4709_ (length _g4710_)))
-            (cond ((fx= _g4709_ 1) (apply gx#stx-unwrap__0 _g4710_))
-                  ((fx= _g4709_ 2) (apply gx#stx-unwrap__% _g4710_))
+            (cond ((##fx= _g4709_ 1) (apply gx#stx-unwrap__0 _g4710_))
+                  ((##fx= _g4709_ 2) (apply gx#stx-unwrap__% _g4710_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#stx-unwrap
@@ -454,9 +454,9 @@
       (define gx#genident
         (lambda _g4712_
           (let ((_g4711_ (length _g4712_)))
-            (cond ((fx= _g4711_ 0) (apply gx#genident__0 _g4712_))
-                  ((fx= _g4711_ 1) (apply gx#genident__1 _g4712_))
-                  ((fx= _g4711_ 2) (apply gx#genident__% _g4712_))
+            (cond ((##fx= _g4711_ 0) (apply gx#genident__0 _g4712_))
+                  ((##fx= _g4711_ 1) (apply gx#genident__1 _g4712_))
+                  ((##fx= _g4711_ 2) (apply gx#genident__% _g4712_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#genident
@@ -483,8 +483,8 @@
   (define gx#stx-for-each
     (lambda _g4714_
       (let ((_g4713_ (length _g4714_)))
-        (cond ((fx= _g4713_ 2) (apply gx#stx-for-each1 _g4714_))
-              ((fx= _g4713_ 3) (apply gx#stx-for-each2 _g4714_))
+        (cond ((##fx= _g4713_ 2) (apply gx#stx-for-each1 _g4714_))
+              ((##fx= _g4713_ 3) (apply gx#stx-for-each2 _g4714_))
               (else
                (##raise-wrong-number-of-arguments-exception
                 gx#stx-for-each
@@ -563,8 +563,8 @@
   (define gx#stx-map
     (lambda _g4716_
       (let ((_g4715_ (length _g4716_)))
-        (cond ((fx= _g4715_ 2) (apply gx#stx-map1 _g4716_))
-              ((fx= _g4715_ 3) (apply gx#stx-map2 _g4716_))
+        (cond ((##fx= _g4715_ 2) (apply gx#stx-map1 _g4716_))
+              ((##fx= _g4715_ 3) (apply gx#stx-map2 _g4716_))
               (else
                (##raise-wrong-number-of-arguments-exception
                 gx#stx-map
@@ -828,8 +828,8 @@
       (define gx#stx-plist?
         (lambda _g4718_
           (let ((_g4717_ (length _g4718_)))
-            (cond ((fx= _g4717_ 1) (apply gx#stx-plist?__0 _g4718_))
-                  ((fx= _g4717_ 2) (apply gx#stx-plist?__% _g4718_))
+            (cond ((##fx= _g4717_ 1) (apply gx#stx-plist?__0 _g4718_))
+                  ((##fx= _g4717_ 2) (apply gx#stx-plist?__% _g4718_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#stx-plist?
@@ -874,8 +874,8 @@
       (define gx#stx-getq
         (lambda _g4720_
           (let ((_g4719_ (length _g4720_)))
-            (cond ((fx= _g4719_ 2) (apply gx#stx-getq__0 _g4720_))
-                  ((fx= _g4719_ 3) (apply gx#stx-getq__% _g4720_))
+            (cond ((##fx= _g4719_ 2) (apply gx#stx-getq__0 _g4720_))
+                  ((##fx= _g4719_ 3) (apply gx#stx-getq__% _g4720_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#stx-getq
