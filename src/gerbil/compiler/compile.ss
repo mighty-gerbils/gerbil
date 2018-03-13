@@ -399,37 +399,37 @@ namespace: gxc
                                   syntax?)))))
 
 (def (generate-runtime-binding-id id)
-  (let (bind (resolve-identifier id))
-    (cond
-     (bind
-      (let ((eid (binding-id bind))
-            (ht (symbol-table-bindings (current-compile-symbol-table))))
-        (cond
-         ((interned-symbol? eid) eid)
-         ((hash-get ht eid) => values)
-         ((local-binding? bind)
-          (let (gid (generate-runtime-gensym-reference eid))
-            (hash-put! ht eid gid)
-            gid))
-         ((module-binding? bind)
-          (let (gid
-                (cond
-                 ((module-context-ns (module-binding-context bind))
-                  => (lambda (ns) (make-symbol ns "#" eid)))
-                 (else (generate-runtime-gensym-reference eid))))
-            (hash-put! ht eid gid)
-            gid))
-         (else
-          ;; module bindings have been mapped in collect-bindings.
-          (raise-compile-error "Cannot compile reference to uninterned binding"
-                               id eid bind)))))
-     ((interned-symbol? (stx-e id))
-      ;; implicit extern or optimizer introduced symbol
-      (stx-e id))
-     (else
-      ;; gensymed reference, where did you get this one?
-      (raise-compile-error "Cannot compile reference to uninterned identifier"
-                           id)))))
+  (cond
+   ((and (syntax-quote? id) (resolve-identifier id))
+    => (lambda (bind)
+         (let ((eid (binding-id bind))
+               (ht (symbol-table-bindings (current-compile-symbol-table))))
+           (cond
+            ((interned-symbol? eid) eid)
+            ((hash-get ht eid) => values)
+            ((local-binding? bind)
+             (let (gid (generate-runtime-gensym-reference eid))
+               (hash-put! ht eid gid)
+               gid))
+            ((module-binding? bind)
+             (let (gid
+                   (cond
+                    ((module-context-ns (module-binding-context bind))
+                     => (lambda (ns) (make-symbol ns "#" eid)))
+                    (else (generate-runtime-gensym-reference eid))))
+               (hash-put! ht eid gid)
+               gid))
+            (else
+             ;; module bindings have been mapped in collect-bindings.
+             (raise-compile-error "Cannot compile reference to uninterned binding"
+                                  id eid bind))))))
+   ((interned-symbol? (stx-e id))
+    ;; implicit extern or optimizer introduced symbol
+    (stx-e id))
+   (else
+    ;; gensymed reference, where did you get this one?
+    (raise-compile-error "Cannot compile reference to uninterned identifier"
+                         id))))
 
 (def (generate-runtime-binding-id* id)
   (if (identifier? id)
