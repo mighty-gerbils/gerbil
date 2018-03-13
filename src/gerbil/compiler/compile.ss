@@ -570,7 +570,7 @@ namespace: gxc
              (raise-compile-error "Value count mismatch" expr hd)))))
    (else
     (let* ((len (stx-length hd))
-           (cmp (if (stx-list? hd) 'fx= 'fx>=))
+           (cmp (if (stx-list? hd) '##fx= '##fx>=))
            (errmsg
             (string-append
              (if (stx-list? hd)
@@ -657,9 +657,9 @@ namespace: gxc
            (condition
             (cond
              ((stx-list? hd)
-              ['fx= arglen len])
+              ['##fx= arglen len])
              ((> len 0)
-              ['fx>= arglen len])
+              ['##fx>= arglen len])
              (else #t)))
            (dispatch
             (if (dispatch-case? hd body)
