@@ -224,7 +224,7 @@
 
 ;;; Make a list of length LEN.
 
-(define (make-list len . maybe-elt)
+#;(define (make-list len . maybe-elt)
   (check-arg (lambda (n) (and (integer? n) (>= n 0))) len make-list)
   (let ((elt (cond ((null? maybe-elt) #f) ; Default value
 		   ((null? (cdr maybe-elt)) (car maybe-elt))
@@ -252,7 +252,7 @@
 ;;;
 ;;; (cons first (unfold not-pair? car cdr rest values))
 
-(define (cons* first . rest)
+#;(define (cons* first . rest)
   (let recur ((x first) (rest rest))
     (if (pair? rest)
 	(cons x (recur (car rest) (cdr rest)))
@@ -268,8 +268,8 @@
 
 ;;; IOTA count [start step]	(start start+step ... start+(count-1)*step)
 
-(define (iota count . maybe-start+step)
-  (declare (mostly-fixnum-flonum)) ; vyzo: (declare (fixnum)) in module scope
+#;(define (iota count . maybe-start+step)
+  (declare (generic) (mostly-fixnum-flonum)) ; vyzo: (declare (fixnum)) in module scope
   (check-arg integer? count iota)
   (if (< count 0) (error "Negative step count" iota count))
   (let-optionals maybe-start+step ((start 0) (step 1))
@@ -592,9 +592,9 @@
 	(values x suffix))))
 
 
-(define (last lis) (car (last-pair lis)))
+#;(define (last lis) (car (last-pair lis)))
 
-(define (last-pair lis)
+#;(define (last-pair lis)
   (check-arg pair? lis last-pair)
   (let lp ((lis lis))
     (let ((tail (cdr lis)))
@@ -829,7 +829,7 @@
 	    (cons (f seed) (recur (g seed)))))))
 
 
-(define (fold kons knil lis1 . lists)
+#;(define (fold kons knil lis1 . lists)
   (check-arg procedure? kons fold)
   (if (pair? lists)
       (let lp ((lists (cons lis1 lists)) (ans knil))	; N-ary case
@@ -842,7 +842,7 @@
 	    (lp (cdr lis) (kons (car lis) ans))))))
 
 
-(define (fold-right kons knil lis1 . lists)
+#;(define (fold-right kons knil lis1 . lists)
   (check-arg procedure? kons fold-right)
   (if (pair? lists)
       (let recur ((lists (cons lis1 lists)))		; N-ary case
@@ -855,6 +855,8 @@
 	    (let ((head (car lis)))
 	      (kons head (recur (cdr lis))))))))
 
+(defalias fold foldl)
+(defalias fold-right foldr)
 
 (define (pair-fold-right f zero lis1 . lists)
   (check-arg procedure? f pair-fold-right)
@@ -959,7 +961,7 @@
 
 
 ;;; Map F across L, and save up all the non-false results.
-(define (filter-map f lis1 . lists)
+#;(define (filter-map f lis1 . lists)
   (check-arg procedure? f filter-map)
   (if (pair? lists)
       (let recur ((lists (cons lis1 lists)))
@@ -1000,7 +1002,7 @@
 
 
 ;;; We extend MAP to handle arguments of unequal length.
-(define map map-in-order)
+#;(define map map-in-order)
 
 
 ;;; filter, remove, partition
@@ -1011,7 +1013,7 @@
 ;; This FILTER shares the longest tail of L that has no deleted elements.
 ;; If Scheme had multi-continuation calls, they could be made more efficient.
 
-(define (filter pred lis)			; Sleazing with EQ? makes this
+#;(define (filter pred lis)			; Sleazing with EQ? makes this
   (check-arg procedure? pred filter)		; one faster.
   (let recur ((lis lis))
     (if (null-list? lis) lis			; Use NOT-PAIR? to handle dotted lists.
@@ -1210,7 +1212,7 @@
     (filter! (lambda (y) (not (= x y))) lis)))
 
 ;;; Extended from R4RS to take an optional comparison argument.
-(define (member x lis . maybe-=)
+#;(define (member x lis . maybe-=)
   (let ((= (:optional maybe-= equal?)))
     (find-tail (lambda (y) (= x y)) lis)))
 
@@ -1255,7 +1257,7 @@
 ;;;;;;;;;;;;;;;
 
 ;;; Extended from R4RS to take an optional comparison argument.
-(define (assoc x lis . maybe-=)
+#;(define (assoc x lis . maybe-=)
   (let ((= (:optional maybe-= equal?)))
     (find (lambda (entry) (= x (car entry))) lis)))
 
@@ -1277,7 +1279,7 @@
 ;;; find find-tail take-while drop-while span break any every list-index
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (find pred list)
+#;(define (find pred list)
   (cond ((find-tail pred list) => car)
 	(else #f)))
 
@@ -1432,7 +1434,7 @@
 ;;;   FILTER in this source code share longest common tails between args
 ;;;   and results to get structure sharing in the lset procedures.
 
-(define (%lset2<= = lis1 lis2) (every (lambda (x) (member x lis2 =)) lis1))
+(define (%lset2<= = lis1 lis2) (every (lambda (x) (srfi-1-member x lis2 =)) lis1))
 
 (define (lset<= = . lists)
   (check-arg procedure? = lset<=)
@@ -1458,7 +1460,7 @@
 
 (define (lset-adjoin = lis . elts)
   (check-arg procedure? = lset-adjoin)
-  (fold (lambda (elt ans) (if (member elt ans =) ans (cons elt ans)))
+  (fold (lambda (elt ans) (if (srfi-1-member elt ans =) ans (cons elt ans)))
 	lis elts))
 
 
@@ -1497,7 +1499,7 @@
     (cond ((any null-list? lists) '())		; Short cut
 	  ((null? lists)          lis1)		; Short cut
 	  (else (filter (lambda (x)
-			  (every (lambda (lis) (member x lis =)) lists))
+			  (every (lambda (lis) (srfi-1-member x lis =)) lists))
 			lis1)))))
 
 (define (lset-intersection! = lis1 . lists)
@@ -1506,7 +1508,7 @@
     (cond ((any null-list? lists) '())		; Short cut
 	  ((null? lists)          lis1)		; Short cut
 	  (else (filter! (lambda (x)
-			   (every (lambda (lis) (member x lis =)) lists))
+			   (every (lambda (lis) (srfi-1-member x lis =)) lists))
 			 lis1)))))
 
 
@@ -1516,7 +1518,7 @@
     (cond ((null? lists)     lis1)	; Short cut
 	  ((memq lis1 lists) '())	; Short cut
 	  (else (filter (lambda (x)
-			  (every (lambda (lis) (not (member x lis =)))
+			  (every (lambda (lis) (not (srfi-1-member x lis =)))
 				 lists))
 			lis1)))))
 
@@ -1526,7 +1528,7 @@
     (cond ((null? lists)     lis1)	; Short cut
 	  ((memq lis1 lists) '())	; Short cut
 	  (else (filter! (lambda (x)
-			   (every (lambda (lis) (not (member x lis =)))
+			   (every (lambda (lis) (not (srfi-1-member x lis =)))
 				  lists))
 			 lis1)))))
 
@@ -1547,7 +1549,7 @@
 	      (cond ((null? a-b)     (lset-difference = b a))
 		    ((null? a-int-b) (append b a))
 		    (else (fold (lambda (xb ans)
-				  (if (member xb a-int-b =) ans (cons xb ans)))
+				  (if (srfi-1-member xb a-int-b =) ans (cons xb ans)))
 				a-b
 				b)))))
 	  '() lists))
@@ -1569,7 +1571,7 @@
 	      (cond ((null? a-b)     (lset-difference! = b a))
 		    ((null? a-int-b) (append! b a))
 		    (else (pair-fold (lambda (b-pair ans)
-				       (if (member (car b-pair) a-int-b =) ans
+				       (if (srfi-1-member (car b-pair) a-int-b =) ans
 					   (begin (set-cdr! b-pair ans) b-pair)))
 				     a-b
 				     b)))))
@@ -1581,7 +1583,7 @@
   (cond ((every null-list? lists) (values lis1 '()))	; Short cut
 	((memq lis1 lists)        (values '() lis1))	; Short cut
 	(else (partition (lambda (elt)
-			   (not (any (lambda (lis) (member elt lis =))
+			   (not (any (lambda (lis) (srfi-1-member elt lis =))
 				     lists)))
 			 lis1))))
 
@@ -1590,6 +1592,6 @@
   (cond ((every null-list? lists) (values lis1 '()))	; Short cut
 	((memq lis1 lists)        (values '() lis1))	; Short cut
 	(else (partition! (lambda (elt)
-			    (not (any (lambda (lis) (member elt lis =))
+			    (not (any (lambda (lis) (srfi-1-member elt lis =))
 				      lists)))
 			  lis1))))
