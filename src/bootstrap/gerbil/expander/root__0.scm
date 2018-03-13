@@ -287,9 +287,9 @@
       (define gx#root-context:::init!
         (lambda _g16836_
           (let ((_g16835_ (length _g16836_)))
-            (cond ((fx= _g16835_ 1)
+            (cond ((##fx= _g16835_ 1)
                    (apply gx#root-context:::init!__0 _g16836_))
-                  ((fx= _g16835_ 2)
+                  ((##fx= _g16835_ 2)
                    (apply gx#root-context:::init!__% _g16836_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -328,8 +328,10 @@
       (define gx#top-context:::init!
         (lambda _g16838_
           (let ((_g16837_ (length _g16838_)))
-            (cond ((fx= _g16837_ 1) (apply gx#top-context:::init!__0 _g16838_))
-                  ((fx= _g16837_ 2) (apply gx#top-context:::init!__% _g16838_))
+            (cond ((##fx= _g16837_ 1)
+                   (apply gx#top-context:::init!__0 _g16838_))
+                  ((##fx= _g16837_ 2)
+                   (apply gx#top-context:::init!__% _g16838_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#top-context:::init!
@@ -459,10 +461,10 @@
       (define gx#expander-context::bind-core-syntax-expanders!
         (lambda _g16840_
           (let ((_g16839_ (length _g16840_)))
-            (cond ((fx= _g16839_ 1)
+            (cond ((##fx= _g16839_ 1)
                    (apply gx#expander-context::bind-core-syntax-expanders!__0
                           _g16840_))
-                  ((fx= _g16839_ 2)
+                  ((##fx= _g16839_ 2)
                    (apply gx#expander-context::bind-core-syntax-expanders!__%
                           _g16840_))
                   (else
@@ -563,10 +565,10 @@
       (define gx#expander-context::bind-core-macro-expanders!
         (lambda _g16842_
           (let ((_g16841_ (length _g16842_)))
-            (cond ((fx= _g16841_ 1)
+            (cond ((##fx= _g16841_ 1)
                    (apply gx#expander-context::bind-core-macro-expanders!__0
                           _g16842_))
-                  ((fx= _g16841_ 2)
+                  ((##fx= _g16841_ 2)
                    (apply gx#expander-context::bind-core-macro-expanders!__%
                           _g16842_))
                   (else

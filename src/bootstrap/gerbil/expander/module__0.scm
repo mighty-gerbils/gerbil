@@ -238,9 +238,9 @@
       (define gx#prelude-context:::init!
         (lambda _g14484_
           (let ((_g14483_ (length _g14484_)))
-            (cond ((fx= _g14483_ 2)
+            (cond ((##fx= _g14483_ 2)
                    (apply gx#prelude-context:::init!__0 _g14484_))
-                  ((fx= _g14483_ 3)
+                  ((##fx= _g14483_ 3)
                    (apply gx#prelude-context:::init!__% _g14484_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -319,9 +319,9 @@
       (define gx#import-module
         (lambda _g14486_
           (let ((_g14485_ (length _g14486_)))
-            (cond ((fx= _g14485_ 1) (apply gx#import-module__0 _g14486_))
-                  ((fx= _g14485_ 2) (apply gx#import-module__1 _g14486_))
-                  ((fx= _g14485_ 3) (apply gx#import-module__% _g14486_))
+            (cond ((##fx= _g14485_ 1) (apply gx#import-module__0 _g14486_))
+                  ((##fx= _g14485_ 2) (apply gx#import-module__1 _g14486_))
+                  ((##fx= _g14485_ 3) (apply gx#import-module__% _g14486_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#import-module
@@ -378,9 +378,9 @@
       (define gx#core-context-prelude
         (lambda _g14488_
           (let ((_g14487_ (length _g14488_)))
-            (cond ((fx= _g14487_ 0)
+            (cond ((##fx= _g14487_ 0)
                    (apply gx#core-context-prelude__0 _g14488_))
-                  ((fx= _g14487_ 1)
+                  ((##fx= _g14487_ 1)
                    (apply gx#core-context-prelude__% _g14488_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -413,14 +413,17 @@
                        (lambda ()
                          (let ((_g14489_ (gx#core-read-module _path13430_)))
                            (begin
-                             (let ((_g14490_ (values-count _g14489_)))
-                               (if (not (fx= _g14490_ 4))
+                             (let ((_g14490_
+                                    (if (##values? _g14489_)
+                                        (##vector-length _g14489_)
+                                        1)))
+                               (if (not (##fx= _g14490_ 4))
                                    (error "Context expects 4 values"
                                           _g14490_)))
-                             (let ((_pre13433_ (values-ref _g14489_ 0))
-                                   (_id13434_ (values-ref _g14489_ 1))
-                                   (_ns13435_ (values-ref _g14489_ 2))
-                                   (_body13436_ (values-ref _g14489_ 3)))
+                             (let ((_pre13433_ (##vector-ref _g14489_ 0))
+                                   (_id13434_ (##vector-ref _g14489_ 1))
+                                   (_ns13435_ (##vector-ref _g14489_ 2))
+                                   (_body13436_ (##vector-ref _g14489_ 3)))
                                (let* ((_prelude13441_
                                        (if (##structure-instance-of?
                                             _pre13433_
@@ -620,8 +623,10 @@
       (define gx#core-import-module
         (lambda _g14492_
           (let ((_g14491_ (length _g14492_)))
-            (cond ((fx= _g14491_ 1) (apply gx#core-import-module__0 _g14492_))
-                  ((fx= _g14491_ 2) (apply gx#core-import-module__% _g14492_))
+            (cond ((##fx= _g14491_ 1)
+                   (apply gx#core-import-module__0 _g14492_))
+                  ((##fx= _g14491_ 2)
+                   (apply gx#core-import-module__% _g14492_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-import-module
@@ -653,12 +658,15 @@
                               _pre13201_
                               _ns13202_))))
                     (begin
-                      (let ((_g14494_ (values-count _g14493_)))
-                        (if (not (fx= _g14494_ 3))
+                      (let ((_g14494_
+                             (if (##values? _g14493_)
+                                 (##vector-length _g14493_)
+                                 1)))
+                        (if (not (##fx= _g14494_ 3))
                             (error "Context expects 3 values" _g14494_)))
-                      (let ((_pre13232_ (values-ref _g14493_ 0))
-                            (_ns13233_ (values-ref _g14493_ 1))
-                            (_pkg13234_ (values-ref _g14493_ 2)))
+                      (let ((_pre13232_ (##vector-ref _g14493_ 0))
+                            (_ns13233_ (##vector-ref _g14493_ 1))
+                            (_pkg13234_ (##vector-ref _g14493_ 2)))
                         (let* ((_prelude13236_
                                 (if (gx#core-bound-module-prelude? _pre13232_)
                                     (gx#syntax-local-e__0 _pre13232_)
@@ -821,12 +829,15 @@
                               _pre13108_
                               _ns13109_))))
                     (begin
-                      (let ((_g14496_ (values-count _g14495_)))
-                        (if (not (fx= _g14496_ 3))
+                      (let ((_g14496_
+                             (if (##values? _g14495_)
+                                 (##vector-length _g14495_)
+                                 1)))
+                        (if (not (##fx= _g14496_ 3))
                             (error "Context expects 3 values" _g14496_)))
-                      (let ((_pre13113_ (values-ref _g14495_ 0))
-                            (_ns13114_ (values-ref _g14495_ 1))
-                            (_pkg13115_ (values-ref _g14495_ 2)))
+                      (let ((_pre13113_ (##vector-ref _g14495_ 0))
+                            (_ns13114_ (##vector-ref _g14495_ 1))
+                            (_pkg13115_ (##vector-ref _g14495_ 2)))
                         (let* ((_prelude13117_
                                 (gx#import-module__0 _pre13113_))
                                (_read-module-body13171_
@@ -1118,9 +1129,9 @@
       (define gx#core-resolve-module-path
         (lambda _g14498_
           (let ((_g14497_ (length _g14498_)))
-            (cond ((fx= _g14497_ 1)
+            (cond ((##fx= _g14497_ 1)
                    (apply gx#core-resolve-module-path__0 _g14498_))
-                  ((fx= _g14497_ 2)
+                  ((##fx= _g14497_ 2)
                    (apply gx#core-resolve-module-path__% _g14498_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -1244,9 +1255,9 @@
       (define gx#core-library-package-plist
         (lambda _g14500_
           (let ((_g14499_ (length _g14500_)))
-            (cond ((fx= _g14499_ 1)
+            (cond ((##fx= _g14499_ 1)
                    (apply gx#core-library-package-plist__0 _g14500_))
-                  ((fx= _g14499_ 2)
+                  ((##fx= _g14499_ 2)
                    (apply gx#core-library-package-plist__% _g14500_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -1366,9 +1377,9 @@
       (define gx#core-bind-import!
         (lambda _g14502_
           (let ((_g14501_ (length _g14502_)))
-            (cond ((fx= _g14501_ 1) (apply gx#core-bind-import!__0 _g14502_))
-                  ((fx= _g14501_ 2) (apply gx#core-bind-import!__1 _g14502_))
-                  ((fx= _g14501_ 3) (apply gx#core-bind-import!__% _g14502_))
+            (cond ((##fx= _g14501_ 1) (apply gx#core-bind-import!__0 _g14502_))
+                  ((##fx= _g14501_ 2) (apply gx#core-bind-import!__1 _g14502_))
+                  ((##fx= _g14501_ 3) (apply gx#core-bind-import!__% _g14502_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-import!
@@ -1385,9 +1396,9 @@
       (define gx#core-bind-weak-import!
         (lambda _g14504_
           (let ((_g14503_ (length _g14504_)))
-            (cond ((fx= _g14503_ 1)
+            (cond ((##fx= _g14503_ 1)
                    (apply gx#core-bind-weak-import!__0 _g14504_))
-                  ((fx= _g14503_ 2)
+                  ((##fx= _g14503_ 2)
                    (apply gx#core-bind-weak-import!__% _g14504_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -1517,11 +1528,11 @@
       (define gx#core-module-export->import
         (lambda _g14506_
           (let ((_g14505_ (length _g14506_)))
-            (cond ((fx= _g14505_ 1)
+            (cond ((##fx= _g14505_ 1)
                    (apply gx#core-module-export->import__0 _g14506_))
-                  ((fx= _g14505_ 2)
+                  ((##fx= _g14505_ 2)
                    (apply gx#core-module-export->import__1 _g14506_))
-                  ((fx= _g14505_ 3)
+                  ((##fx= _g14505_ 3)
                    (apply gx#core-module-export->import__% _g14506_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -2617,8 +2628,10 @@
       (define gx#core-expand-import%
         (lambda _g14509_
           (let ((_g14508_ (length _g14509_)))
-            (cond ((fx= _g14508_ 1) (apply gx#core-expand-import%__0 _g14509_))
-                  ((fx= _g14508_ 2) (apply gx#core-expand-import%__% _g14509_))
+            (cond ((##fx= _g14508_ 1)
+                   (apply gx#core-expand-import%__0 _g14509_))
+                  ((##fx= _g14508_ 2)
+                   (apply gx#core-expand-import%__% _g14509_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand-import%
@@ -2762,13 +2775,13 @@
                   (_make-export11049_
                    (lambda _g14511_
                      (let ((_g14510_ (length _g14511_)))
-                       (cond ((fx= _g14510_ 1)
+                       (cond ((##fx= _g14510_ 1)
                               (apply _make-export__0__1447314476_ _g14511_))
-                             ((fx= _g14510_ 2)
+                             ((##fx= _g14510_ 2)
                               (apply _make-export__1__1447414477_ _g14511_))
-                             ((fx= _g14510_ 3)
+                             ((##fx= _g14510_ 3)
                               (apply _make-export__2__1447514478_ _g14511_))
-                             ((fx= _g14510_ 4)
+                             ((##fx= _g14510_ 4)
                               (apply _make-export__1447114472_ _g14511_))
                              (else
                               (##raise-wrong-number-of-arguments-exception
@@ -3330,8 +3343,10 @@
       (define gx#core-expand-export%
         (lambda _g14513_
           (let ((_g14512_ (length _g14513_)))
-            (cond ((fx= _g14512_ 1) (apply gx#core-expand-export%__0 _g14513_))
-                  ((fx= _g14512_ 2) (apply gx#core-expand-export%__% _g14513_))
+            (cond ((##fx= _g14512_ 1)
+                   (apply gx#core-expand-export%__0 _g14513_))
+                  ((##fx= _g14512_ 2)
+                   (apply gx#core-expand-export%__% _g14513_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand-export%
@@ -3412,10 +3427,14 @@
       (define gx#core-bind-feature!
         (lambda _g14515_
           (let ((_g14514_ (length _g14515_)))
-            (cond ((fx= _g14514_ 1) (apply gx#core-bind-feature!__0 _g14515_))
-                  ((fx= _g14514_ 2) (apply gx#core-bind-feature!__1 _g14515_))
-                  ((fx= _g14514_ 3) (apply gx#core-bind-feature!__2 _g14515_))
-                  ((fx= _g14514_ 4) (apply gx#core-bind-feature!__% _g14515_))
+            (cond ((##fx= _g14514_ 1)
+                   (apply gx#core-bind-feature!__0 _g14515_))
+                  ((##fx= _g14514_ 2)
+                   (apply gx#core-bind-feature!__1 _g14515_))
+                  ((##fx= _g14514_ 3)
+                   (apply gx#core-bind-feature!__2 _g14515_))
+                  ((##fx= _g14514_ 4)
+                   (apply gx#core-bind-feature!__% _g14515_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-feature!

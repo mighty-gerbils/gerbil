@@ -179,8 +179,8 @@
       (define gx#phi-context:::init!
         (lambda _g7673_
           (let ((_g7672_ (length _g7673_)))
-            (cond ((fx= _g7672_ 2) (apply gx#phi-context:::init!__0 _g7673_))
-                  ((fx= _g7672_ 3) (apply gx#phi-context:::init!__% _g7673_))
+            (cond ((##fx= _g7672_ 2) (apply gx#phi-context:::init!__0 _g7673_))
+                  ((##fx= _g7672_ 3) (apply gx#phi-context:::init!__% _g7673_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#phi-context:::init!
@@ -206,8 +206,10 @@
       (define gx#local-context:::init!
         (lambda _g7675_
           (let ((_g7674_ (length _g7675_)))
-            (cond ((fx= _g7674_ 1) (apply gx#local-context:::init!__0 _g7675_))
-                  ((fx= _g7674_ 2) (apply gx#local-context:::init!__% _g7675_))
+            (cond ((##fx= _g7674_ 1)
+                   (apply gx#local-context:::init!__0 _g7675_))
+                  ((##fx= _g7674_ 2)
+                   (apply gx#local-context:::init!__% _g7675_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#local-context:::init!
@@ -613,8 +615,8 @@
       (define gx#eval-syntax
         (lambda _g7677_
           (let ((_g7676_ (length _g7677_)))
-            (cond ((fx= _g7676_ 1) (apply gx#eval-syntax__0 _g7677_))
-                  ((fx= _g7676_ 2) (apply gx#eval-syntax__% _g7677_))
+            (cond ((##fx= _g7676_ 1) (apply gx#eval-syntax__0 _g7677_))
+                  ((##fx= _g7676_ 2) (apply gx#eval-syntax__% _g7677_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#eval-syntax
@@ -636,8 +638,8 @@
       (define gx#core-expand
         (lambda _g7679_
           (let ((_g7678_ (length _g7679_)))
-            (cond ((fx= _g7678_ 1) (apply gx#core-expand__0 _g7679_))
-                  ((fx= _g7678_ 2) (apply gx#core-expand__% _g7679_))
+            (cond ((##fx= _g7678_ 1) (apply gx#core-expand__0 _g7679_))
+                  ((##fx= _g7678_ 2) (apply gx#core-expand__% _g7679_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand
@@ -821,8 +823,8 @@
       (define gx#core-expand*
         (lambda _g7682_
           (let ((_g7681_ (length _g7682_)))
-            (cond ((fx= _g7681_ 1) (apply gx#core-expand*__0 _g7682_))
-                  ((fx= _g7681_ 2) (apply gx#core-expand*__% _g7682_))
+            (cond ((##fx= _g7681_ 1) (apply gx#core-expand*__0 _g7682_))
+                  ((##fx= _g7681_ 2) (apply gx#core-expand*__% _g7682_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand*
@@ -1093,9 +1095,9 @@
       (define gx#core-expand-block
         (lambda _g7684_
           (let ((_g7683_ (length _g7684_)))
-            (cond ((fx= _g7683_ 2) (apply gx#core-expand-block__0 _g7684_))
-                  ((fx= _g7683_ 3) (apply gx#core-expand-block__1 _g7684_))
-                  ((fx= _g7683_ 4) (apply gx#core-expand-block__% _g7684_))
+            (cond ((##fx= _g7683_ 2) (apply gx#core-expand-block__0 _g7684_))
+                  ((##fx= _g7683_ 3) (apply gx#core-expand-block__1 _g7684_))
+                  ((##fx= _g7683_ 4) (apply gx#core-expand-block__% _g7684_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand-block
@@ -1324,8 +1326,10 @@
       (define gx#core-expand-include%
         (lambda _g7686_
           (let ((_g7685_ (length _g7686_)))
-            (cond ((fx= _g7685_ 1) (apply gx#core-expand-include%__0 _g7686_))
-                  ((fx= _g7685_ 2) (apply gx#core-expand-include%__% _g7686_))
+            (cond ((##fx= _g7685_ 1)
+                   (apply gx#core-expand-include%__0 _g7686_))
+                  ((##fx= _g7685_ 2)
+                   (apply gx#core-expand-include%__% _g7686_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand-include%
@@ -1361,8 +1365,8 @@
       (define gx#core-apply-expander
         (lambda _g7688_
           (let ((_g7687_ (length _g7688_)))
-            (cond ((fx= _g7687_ 2) (apply gx#core-apply-expander__0 _g7688_))
-                  ((fx= _g7687_ 3) (apply gx#core-apply-expander__% _g7688_))
+            (cond ((##fx= _g7687_ 2) (apply gx#core-apply-expander__0 _g7688_))
+                  ((##fx= _g7687_ 3) (apply gx#core-apply-expander__% _g7688_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-apply-expander
@@ -1437,10 +1441,10 @@
       (define gx#top-special-form::apply-macro-expander
         (lambda _g7690_
           (let ((_g7689_ (length _g7690_)))
-            (cond ((fx= _g7689_ 2)
+            (cond ((##fx= _g7689_ 2)
                    (apply gx#top-special-form::apply-macro-expander__0
                           _g7690_))
-                  ((fx= _g7689_ 3)
+                  ((##fx= _g7689_ 3)
                    (apply gx#top-special-form::apply-macro-expander__%
                           _g7690_))
                   (else
@@ -1537,9 +1541,9 @@
       (define gx#core-apply-user-expander
         (lambda _g7692_
           (let ((_g7691_ (length _g7692_)))
-            (cond ((fx= _g7691_ 2)
+            (cond ((##fx= _g7691_ 2)
                    (apply gx#core-apply-user-expander__0 _g7692_))
-                  ((fx= _g7691_ 3)
+                  ((##fx= _g7691_ 3)
                    (apply gx#core-apply-user-expander__% _g7692_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -1609,9 +1613,9 @@
       (define gx#resolve-identifier
         (lambda _g7694_
           (let ((_g7693_ (length _g7694_)))
-            (cond ((fx= _g7693_ 1) (apply gx#resolve-identifier__0 _g7694_))
-                  ((fx= _g7693_ 2) (apply gx#resolve-identifier__1 _g7694_))
-                  ((fx= _g7693_ 3) (apply gx#resolve-identifier__% _g7694_))
+            (cond ((##fx= _g7693_ 1) (apply gx#resolve-identifier__0 _g7694_))
+                  ((##fx= _g7693_ 2) (apply gx#resolve-identifier__1 _g7694_))
+                  ((##fx= _g7693_ 3) (apply gx#resolve-identifier__% _g7694_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#resolve-identifier
@@ -1663,10 +1667,10 @@
       (define gx#bind-identifier!
         (lambda _g7696_
           (let ((_g7695_ (length _g7696_)))
-            (cond ((fx= _g7695_ 2) (apply gx#bind-identifier!__0 _g7696_))
-                  ((fx= _g7695_ 3) (apply gx#bind-identifier!__1 _g7696_))
-                  ((fx= _g7695_ 4) (apply gx#bind-identifier!__2 _g7696_))
-                  ((fx= _g7695_ 5) (apply gx#bind-identifier!__% _g7696_))
+            (cond ((##fx= _g7695_ 2) (apply gx#bind-identifier!__0 _g7696_))
+                  ((##fx= _g7695_ 3) (apply gx#bind-identifier!__1 _g7696_))
+                  ((##fx= _g7695_ 4) (apply gx#bind-identifier!__2 _g7696_))
+                  ((##fx= _g7695_ 5) (apply gx#bind-identifier!__% _g7696_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#bind-identifier!
@@ -1738,11 +1742,11 @@
       (define gx#core-resolve-identifier
         (lambda _g7698_
           (let ((_g7697_ (length _g7698_)))
-            (cond ((fx= _g7697_ 1)
+            (cond ((##fx= _g7697_ 1)
                    (apply gx#core-resolve-identifier__0 _g7698_))
-                  ((fx= _g7697_ 2)
+                  ((##fx= _g7697_ 2)
                    (apply gx#core-resolve-identifier__1 _g7698_))
-                  ((fx= _g7697_ 3)
+                  ((##fx= _g7697_ 3)
                    (apply gx#core-resolve-identifier__% _g7698_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -2057,10 +2061,10 @@
       (define gx#core-bind!
         (lambda _g7700_
           (let ((_g7699_ (length _g7700_)))
-            (cond ((fx= _g7699_ 2) (apply gx#core-bind!__0 _g7700_))
-                  ((fx= _g7699_ 3) (apply gx#core-bind!__1 _g7700_))
-                  ((fx= _g7699_ 4) (apply gx#core-bind!__2 _g7700_))
-                  ((fx= _g7699_ 5) (apply gx#core-bind!__% _g7700_))
+            (cond ((##fx= _g7699_ 2) (apply gx#core-bind!__0 _g7700_))
+                  ((##fx= _g7699_ 3) (apply gx#core-bind!__1 _g7700_))
+                  ((##fx= _g7699_ 4) (apply gx#core-bind!__2 _g7700_))
+                  ((##fx= _g7699_ 5) (apply gx#core-bind!__% _g7700_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind!
@@ -2257,9 +2261,9 @@
       (define gx#core-context-top
         (lambda _g7702_
           (let ((_g7701_ (length _g7702_)))
-            (cond ((fx= _g7701_ 0) (apply gx#core-context-top__0 _g7702_))
-                  ((fx= _g7701_ 1) (apply gx#core-context-top__1 _g7702_))
-                  ((fx= _g7701_ 2) (apply gx#core-context-top__% _g7702_))
+            (cond ((##fx= _g7701_ 0) (apply gx#core-context-top__0 _g7702_))
+                  ((##fx= _g7701_ 1) (apply gx#core-context-top__1 _g7702_))
+                  ((##fx= _g7701_ 2) (apply gx#core-context-top__% _g7702_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-context-top
@@ -2279,8 +2283,8 @@
       (define gx#core-context-root
         (lambda _g7704_
           (let ((_g7703_ (length _g7704_)))
-            (cond ((fx= _g7703_ 0) (apply gx#core-context-root__0 _g7704_))
-                  ((fx= _g7703_ 1) (apply gx#core-context-root__% _g7704_))
+            (cond ((##fx= _g7703_ 0) (apply gx#core-context-root__0 _g7704_))
+                  ((##fx= _g7703_ 1) (apply gx#core-context-root__% _g7704_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-context-root
@@ -2305,9 +2309,12 @@
       (define gx#core-context-rebind?
         (lambda _g7706_
           (let ((_g7705_ (length _g7706_)))
-            (cond ((fx= _g7705_ 0) (apply gx#core-context-rebind?__0 _g7706_))
-                  ((fx= _g7705_ 1) (apply gx#core-context-rebind?__% _g7706_))
-                  ((fx>= _g7705_ 1) (apply gx#core-context-rebind?__% _g7706_))
+            (cond ((##fx= _g7705_ 0)
+                   (apply gx#core-context-rebind?__0 _g7706_))
+                  ((##fx= _g7705_ 1)
+                   (apply gx#core-context-rebind?__% _g7706_))
+                  ((##fx>= _g7705_ 1)
+                   (apply gx#core-context-rebind?__% _g7706_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-context-rebind?
@@ -2331,9 +2338,9 @@
       (define gx#core-context-namespace
         (lambda _g7708_
           (let ((_g7707_ (length _g7708_)))
-            (cond ((fx= _g7707_ 0)
+            (cond ((##fx= _g7707_ 0)
                    (apply gx#core-context-namespace__0 _g7708_))
-                  ((fx= _g7707_ 1)
+                  ((##fx= _g7707_ 1)
                    (apply gx#core-context-namespace__% _g7708_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -2354,8 +2361,8 @@
       (define gx#expander-binding?
         (lambda _g7710_
           (let ((_g7709_ (length _g7710_)))
-            (cond ((fx= _g7709_ 1) (apply gx#expander-binding?__0 _g7710_))
-                  ((fx= _g7709_ 2) (apply gx#expander-binding?__% _g7710_))
+            (cond ((##fx= _g7709_ 1) (apply gx#expander-binding?__0 _g7710_))
+                  ((##fx= _g7709_ 2) (apply gx#expander-binding?__% _g7710_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#expander-binding?
@@ -2408,9 +2415,9 @@
       (define gx#core-bound-identifier?
         (lambda _g7712_
           (let ((_g7711_ (length _g7712_)))
-            (cond ((fx= _g7711_ 1)
+            (cond ((##fx= _g7711_ 1)
                    (apply gx#core-bound-identifier?__0 _g7712_))
-                  ((fx= _g7711_ 2)
+                  ((##fx= _g7711_ 2)
                    (apply gx#core-bound-identifier?__% _g7712_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -2488,10 +2495,10 @@
       (define gx#core-quote-syntax
         (lambda _g7714_
           (let ((_g7713_ (length _g7714_)))
-            (cond ((fx= _g7713_ 1) (apply gx#core-quote-syntax__0 _g7714_))
-                  ((fx= _g7713_ 2) (apply gx#core-quote-syntax__1 _g7714_))
-                  ((fx= _g7713_ 3) (apply gx#core-quote-syntax__2 _g7714_))
-                  ((fx= _g7713_ 4) (apply gx#core-quote-syntax__% _g7714_))
+            (cond ((##fx= _g7713_ 1) (apply gx#core-quote-syntax__0 _g7714_))
+                  ((##fx= _g7713_ 2) (apply gx#core-quote-syntax__1 _g7714_))
+                  ((##fx= _g7713_ 3) (apply gx#core-quote-syntax__2 _g7714_))
+                  ((##fx= _g7713_ 4) (apply gx#core-quote-syntax__% _g7714_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-quote-syntax
@@ -2534,8 +2541,8 @@
       (define gx#core-resolve-path
         (lambda _g7716_
           (let ((_g7715_ (length _g7716_)))
-            (cond ((fx= _g7715_ 1) (apply gx#core-resolve-path__0 _g7716_))
-                  ((fx= _g7715_ 2) (apply gx#core-resolve-path__% _g7716_))
+            (cond ((##fx= _g7715_ 1) (apply gx#core-resolve-path__0 _g7716_))
+                  ((##fx= _g7715_ 2) (apply gx#core-resolve-path__% _g7716_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-resolve-path
@@ -2572,8 +2579,10 @@
       (define gx#core-deserialize-mark
         (lambda _g7718_
           (let ((_g7717_ (length _g7718_)))
-            (cond ((fx= _g7717_ 1) (apply gx#core-deserialize-mark__0 _g7718_))
-                  ((fx= _g7717_ 2) (apply gx#core-deserialize-mark__% _g7718_))
+            (cond ((##fx= _g7717_ 1)
+                   (apply gx#core-deserialize-mark__0 _g7718_))
+                  ((##fx= _g7717_ 2)
+                   (apply gx#core-deserialize-mark__% _g7718_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-deserialize-mark
@@ -2613,8 +2622,8 @@
       (define gx#syntax-local-e
         (lambda _g7720_
           (let ((_g7719_ (length _g7720_)))
-            (cond ((fx= _g7719_ 1) (apply gx#syntax-local-e__0 _g7720_))
-                  ((fx= _g7719_ 2) (apply gx#syntax-local-e__% _g7720_))
+            (cond ((##fx= _g7719_ 1) (apply gx#syntax-local-e__0 _g7720_))
+                  ((##fx= _g7719_ 2) (apply gx#syntax-local-e__% _g7720_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#syntax-local-e
@@ -2634,8 +2643,8 @@
       (define gx#syntax-local-value
         (lambda _g7722_
           (let ((_g7721_ (length _g7722_)))
-            (cond ((fx= _g7721_ 1) (apply gx#syntax-local-value__0 _g7722_))
-                  ((fx= _g7721_ 2) (apply gx#syntax-local-value__% _g7722_))
+            (cond ((##fx= _g7721_ 1) (apply gx#syntax-local-value__0 _g7722_))
+                  ((##fx= _g7721_ 2) (apply gx#syntax-local-value__% _g7722_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#syntax-local-value

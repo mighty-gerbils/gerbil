@@ -74,7 +74,7 @@
              (thread-start! (make-thread _thunk726_ _name727_ _tgroup728_)))))
       (lambda _g783_
         (let ((_g782_ (length _g783_)))
-          (cond ((fx= _g782_ 1)
+          (cond ((##fx= _g782_ 1)
                  (apply (lambda (_thunk733_)
                           (let* ((_name735_ absent-obj)
                                  (_tgroup737_ absent-obj))
@@ -83,7 +83,7 @@
                              _name735_
                              _tgroup737_)))
                         _g783_))
-                ((fx= _g782_ 2)
+                ((##fx= _g782_ 2)
                  (apply (lambda (_thunk739_ _name740_)
                           (let ((_tgroup742_ absent-obj))
                             (_opt-lambda724730_
@@ -91,7 +91,7 @@
                              _name740_
                              _tgroup742_)))
                         _g783_))
-                ((fx= _g782_ 3) (apply _opt-lambda724730_ _g783_))
+                ((##fx= _g782_ 3) (apply _opt-lambda724730_ _g783_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/threads#spawn-thread
@@ -103,12 +103,12 @@
                (hash-ref _tab713_ _key710_ _default711_)))))
       (lambda _g785_
         (let ((_g784_ (length _g785_)))
-          (cond ((fx= _g784_ 1)
+          (cond ((##fx= _g784_ 1)
                  (apply (lambda (_key718_)
                           (let ((_default720_ absent-obj))
                             (_opt-lambda708715_ _key718_ _default720_)))
                         _g785_))
-                ((fx= _g784_ 2) (apply _opt-lambda708715_ _g785_))
+                ((##fx= _g784_ 2) (apply _opt-lambda708715_ _g785_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/threads#thread-local-ref
@@ -186,12 +186,12 @@
               _thunk659_))))
       (lambda _g787_
         (let ((_g786_ (length _g787_)))
-          (cond ((fx= _g786_ 1)
+          (cond ((##fx= _g786_ 1)
                  (apply (lambda (_thunk671_)
                           (let ((_error-port673_ (current-error-port)))
                             (_opt-lambda657668_ _thunk671_ _error-port673_)))
                         _g787_))
-                ((fx= _g786_ 2) (apply _opt-lambda657668_ _g787_))
+                ((##fx= _g786_ 2) (apply _opt-lambda657668_ _g787_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/threads#with-exception-stack-trace

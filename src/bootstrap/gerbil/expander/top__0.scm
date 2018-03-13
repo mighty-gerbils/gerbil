@@ -268,11 +268,12 @@
                     '#f))
                   (_g10944_ (_eval-body10686_ _rbody10689_)))
              (begin
-               (let ((_g10945_ (values-count _g10944_)))
-                 (if (not (fx= _g10945_ 2))
+               (let ((_g10945_
+                      (if (##values? _g10944_) (##vector-length _g10944_) 1)))
+                 (if (not (##fx= _g10945_ 2))
                      (error "Context expects 2 values" _g10945_)))
-               (let ((_expanded-body10691_ (values-ref _g10944_ 0))
-                     (_value10692_ (values-ref _g10944_ 1)))
+               (let ((_expanded-body10691_ (##vector-ref _g10944_ 0))
+                     (_value10692_ (##vector-ref _g10944_ 1)))
                  (gx#core-quote-syntax__1
                   (if (##structure-instance-of?
                        (gx#current-expander-context)
@@ -915,14 +916,15 @@
                                                             _expr10068_)))
                                                       (begin
                                                         (let ((_g10947_
-                                                               (values-count
-                                                                _g10946_)))
-                                                          (if (not (fx= _g10947_
+                                                               (if (##values?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                2))
+                            _g10946_)
+                           (##vector-length _g10946_)
+                           1)))
+                  (if (not (##fx= _g10947_ 2))
                       (error "Context expects 2 values" _g10947_)))
-                (let ((_e-stx10070_ (values-ref _g10946_ 0))
-                      (_e10071_ (values-ref _g10946_ 1)))
+                (let ((_e-stx10070_ (##vector-ref _g10946_ 0))
+                      (_e10071_ (##vector-ref _g10946_ 1)))
                   (begin
                     (gx#core-bind-syntax!__0 _id10058_ _e10071_)
                     (gx#core-quote-syntax__1
@@ -1051,8 +1053,10 @@
       (define gx#core-expand-lambda%
         (lambda _g10949_
           (let ((_g10948_ (length _g10949_)))
-            (cond ((fx= _g10948_ 1) (apply gx#core-expand-lambda%__0 _g10949_))
-                  ((fx= _g10948_ 2) (apply gx#core-expand-lambda%__% _g10949_))
+            (cond ((##fx= _g10948_ 1)
+                   (apply gx#core-expand-lambda%__0 _g10949_))
+                  ((##fx= _g10948_ 2)
+                   (apply gx#core-expand-lambda%__% _g10949_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-expand-lambda%
@@ -1209,9 +1213,9 @@
       (define gx#core-expand-letrec-values%
         (lambda _g10951_
           (let ((_g10950_ (length _g10951_)))
-            (cond ((fx= _g10950_ 1)
+            (cond ((##fx= _g10950_ 1)
                    (apply gx#core-expand-letrec-values%__0 _g10951_))
-                  ((fx= _g10950_ 2)
+                  ((##fx= _g10950_ 2)
                    (apply gx#core-expand-letrec-values%__% _g10951_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -1485,11 +1489,14 @@
                                                   _expr9452_)))
                                             (begin
                                               (let ((_g10953_
-                                                     (values-count _g10952_)))
-                                                (if (not (fx= _g10953_ 2))
+                                                     (if (##values? _g10952_)
+                                                         (##vector-length
+                                                          _g10952_)
+                                                         1)))
+                                                (if (not (##fx= _g10953_ 2))
                                                     (error "Context expects 2 values"
                                                            _g10953_)))
-                                              (let ((_e9454_ (values-ref
+                                              (let ((_e9454_ (##vector-ref
                                                               _g10952_
                                                               1)))
                                                 _e9454_)))
@@ -1538,9 +1545,9 @@
       (define gx#core-expand-let-bind-syntax!
         (lambda _g10955_
           (let ((_g10954_ (length _g10955_)))
-            (cond ((fx= _g10954_ 2)
+            (cond ((##fx= _g10954_ 2)
                    (apply gx#core-expand-let-bind-syntax!__0 _g10955_))
-                  ((fx= _g10954_ 3)
+                  ((##fx= _g10954_ 3)
                    (apply gx#core-expand-let-bind-syntax!__% _g10955_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -2249,9 +2256,9 @@
       (define gx#macro-expand-let-values
         (lambda _g10957_
           (let ((_g10956_ (length _g10957_)))
-            (cond ((fx= _g10956_ 1)
+            (cond ((##fx= _g10956_ 1)
                    (apply gx#macro-expand-let-values__0 _g10957_))
-                  ((fx= _g10956_ 2)
+                  ((##fx= _g10956_ 2)
                    (apply gx#macro-expand-let-values__% _g10957_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -2456,9 +2463,9 @@
       (define gx#check-duplicate-identifiers
         (lambda _g10959_
           (let ((_g10958_ (length _g10959_)))
-            (cond ((fx= _g10958_ 1)
+            (cond ((##fx= _g10958_ 1)
                    (apply gx#check-duplicate-identifiers__0 _g10959_))
-                  ((fx= _g10958_ 2)
+                  ((##fx= _g10958_ 2)
                    (apply gx#check-duplicate-identifiers__% _g10959_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -2515,10 +2522,10 @@
       (define gx#core-bind-values!
         (lambda _g10961_
           (let ((_g10960_ (length _g10961_)))
-            (cond ((fx= _g10960_ 1) (apply gx#core-bind-values!__0 _g10961_))
-                  ((fx= _g10960_ 2) (apply gx#core-bind-values!__1 _g10961_))
-                  ((fx= _g10960_ 3) (apply gx#core-bind-values!__2 _g10961_))
-                  ((fx= _g10960_ 4) (apply gx#core-bind-values!__% _g10961_))
+            (cond ((##fx= _g10960_ 1) (apply gx#core-bind-values!__0 _g10961_))
+                  ((##fx= _g10960_ 2) (apply gx#core-bind-values!__1 _g10961_))
+                  ((##fx= _g10960_ 3) (apply gx#core-bind-values!__2 _g10961_))
+                  ((##fx= _g10960_ 4) (apply gx#core-bind-values!__% _g10961_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-values!
@@ -2631,10 +2638,14 @@
       (define gx#core-bind-runtime!
         (lambda _g10963_
           (let ((_g10962_ (length _g10963_)))
-            (cond ((fx= _g10962_ 1) (apply gx#core-bind-runtime!__0 _g10963_))
-                  ((fx= _g10962_ 2) (apply gx#core-bind-runtime!__1 _g10963_))
-                  ((fx= _g10962_ 3) (apply gx#core-bind-runtime!__2 _g10963_))
-                  ((fx= _g10962_ 4) (apply gx#core-bind-runtime!__% _g10963_))
+            (cond ((##fx= _g10962_ 1)
+                   (apply gx#core-bind-runtime!__0 _g10963_))
+                  ((##fx= _g10962_ 2)
+                   (apply gx#core-bind-runtime!__1 _g10963_))
+                  ((##fx= _g10962_ 3)
+                   (apply gx#core-bind-runtime!__2 _g10963_))
+                  ((##fx= _g10962_ 4)
+                   (apply gx#core-bind-runtime!__% _g10963_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-runtime!
@@ -2702,13 +2713,13 @@
       (define gx#core-bind-runtime-reference!
         (lambda _g10965_
           (let ((_g10964_ (length _g10965_)))
-            (cond ((fx= _g10964_ 2)
+            (cond ((##fx= _g10964_ 2)
                    (apply gx#core-bind-runtime-reference!__0 _g10965_))
-                  ((fx= _g10964_ 3)
+                  ((##fx= _g10964_ 3)
                    (apply gx#core-bind-runtime-reference!__1 _g10965_))
-                  ((fx= _g10964_ 4)
+                  ((##fx= _g10964_ 4)
                    (apply gx#core-bind-runtime-reference!__2 _g10965_))
-                  ((fx= _g10964_ 5)
+                  ((##fx= _g10964_ 5)
                    (apply gx#core-bind-runtime-reference!__% _g10965_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -2761,10 +2772,10 @@
       (define gx#core-bind-extern!
         (lambda _g10967_
           (let ((_g10966_ (length _g10967_)))
-            (cond ((fx= _g10966_ 2) (apply gx#core-bind-extern!__0 _g10967_))
-                  ((fx= _g10966_ 3) (apply gx#core-bind-extern!__1 _g10967_))
-                  ((fx= _g10966_ 4) (apply gx#core-bind-extern!__2 _g10967_))
-                  ((fx= _g10966_ 5) (apply gx#core-bind-extern!__% _g10967_))
+            (cond ((##fx= _g10966_ 2) (apply gx#core-bind-extern!__0 _g10967_))
+                  ((##fx= _g10966_ 3) (apply gx#core-bind-extern!__1 _g10967_))
+                  ((##fx= _g10966_ 4) (apply gx#core-bind-extern!__2 _g10967_))
+                  ((##fx= _g10966_ 5) (apply gx#core-bind-extern!__% _g10967_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-extern!
@@ -2833,10 +2844,10 @@
       (define gx#core-bind-syntax!
         (lambda _g10969_
           (let ((_g10968_ (length _g10969_)))
-            (cond ((fx= _g10968_ 2) (apply gx#core-bind-syntax!__0 _g10969_))
-                  ((fx= _g10968_ 3) (apply gx#core-bind-syntax!__1 _g10969_))
-                  ((fx= _g10968_ 4) (apply gx#core-bind-syntax!__2 _g10969_))
-                  ((fx= _g10968_ 5) (apply gx#core-bind-syntax!__% _g10969_))
+            (cond ((##fx= _g10968_ 2) (apply gx#core-bind-syntax!__0 _g10969_))
+                  ((##fx= _g10968_ 3) (apply gx#core-bind-syntax!__1 _g10969_))
+                  ((##fx= _g10968_ 4) (apply gx#core-bind-syntax!__2 _g10969_))
+                  ((##fx= _g10968_ 5) (apply gx#core-bind-syntax!__% _g10969_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-syntax!
@@ -2858,9 +2869,9 @@
       (define gx#core-bind-root-syntax!
         (lambda _g10971_
           (let ((_g10970_ (length _g10971_)))
-            (cond ((fx= _g10970_ 2)
+            (cond ((##fx= _g10970_ 2)
                    (apply gx#core-bind-root-syntax!__0 _g10971_))
-                  ((fx= _g10970_ 3)
+                  ((##fx= _g10970_ 3)
                    (apply gx#core-bind-root-syntax!__% _g10971_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
@@ -2915,10 +2926,10 @@
       (define gx#core-bind-alias!
         (lambda _g10973_
           (let ((_g10972_ (length _g10973_)))
-            (cond ((fx= _g10972_ 2) (apply gx#core-bind-alias!__0 _g10973_))
-                  ((fx= _g10972_ 3) (apply gx#core-bind-alias!__1 _g10973_))
-                  ((fx= _g10972_ 4) (apply gx#core-bind-alias!__2 _g10973_))
-                  ((fx= _g10972_ 5) (apply gx#core-bind-alias!__% _g10973_))
+            (cond ((##fx= _g10972_ 2) (apply gx#core-bind-alias!__0 _g10973_))
+                  ((##fx= _g10972_ 3) (apply gx#core-bind-alias!__1 _g10973_))
+                  ((##fx= _g10972_ 4) (apply gx#core-bind-alias!__2 _g10973_))
+                  ((##fx= _g10972_ 5) (apply gx#core-bind-alias!__% _g10973_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#core-bind-alias!
@@ -2983,10 +2994,10 @@
       (define gx#make-binding-id
         (lambda _g10975_
           (let ((_g10974_ (length _g10975_)))
-            (cond ((fx= _g10974_ 1) (apply gx#make-binding-id__0 _g10975_))
-                  ((fx= _g10974_ 2) (apply gx#make-binding-id__1 _g10975_))
-                  ((fx= _g10974_ 3) (apply gx#make-binding-id__2 _g10975_))
-                  ((fx= _g10974_ 4) (apply gx#make-binding-id__% _g10975_))
+            (cond ((##fx= _g10974_ 1) (apply gx#make-binding-id__0 _g10975_))
+                  ((##fx= _g10974_ 2) (apply gx#make-binding-id__1 _g10975_))
+                  ((##fx= _g10974_ 3) (apply gx#make-binding-id__2 _g10975_))
+                  ((##fx= _g10974_ 4) (apply gx#make-binding-id__% _g10975_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gx#make-binding-id
