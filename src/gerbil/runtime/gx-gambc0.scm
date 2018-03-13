@@ -1173,12 +1173,16 @@
     (fold* f (cons lst rest)))))
 
 (define (filter f lst)
-  (core-match lst
-    ((hd . rest)
-     (if (f hd)
-       (cons hd (filter f rest))
-       (filter f rest)))
-    (else '())))
+  (let recur ((lst lst))
+    (core-match lst
+      ((hd . rest)
+       (if (f hd)
+         (let ((tail (recur rest)))
+           (if (eq? tail rest)
+             lst
+             (cons hd tail)))
+         (recur rest)))
+      (else '()))))
 
 (define (filter-map1 f lst)
   (let recur ((rest lst))
@@ -1220,9 +1224,9 @@
     (fold* f (cons lst rest)))))
 
 (define (iota count #!optional (start 0) (step 1))
-  (let lp ((k 0) (x start) (r '()))
-    (if (< k count)
-      (lp (fx1+ k) (+ x step) (cons x r))
+  (let lp ((i 0) (x start) (r '()))
+    (if (fx< i count)
+      (lp (fx1+ i) (+ x step) (cons x r))
       (reverse r))))
 
 (define (last-pair lst)

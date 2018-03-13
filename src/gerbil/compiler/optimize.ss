@@ -643,8 +643,12 @@ namespace: gxc
            kw-dispatch)
         (let* ((get-kws-id
                 (make-symbol (stx-e #'id) "__" (kw-lambda-dispatch-name (stx-e #'get-kws) "@")))
+               (get-kws-id
+                (core-quote-syntax get-kws-id (stx-source stx)))
                (main-id
                 (make-symbol (stx-e #'id) "__" (kw-lambda-dispatch-name (stx-e #'main) "%")))
+               (main-id
+                (core-quote-syntax main-id (stx-source stx)))
                (_ (core-bind-runtime! get-kws-id))
                (_ (core-bind-runtime! main-id))
                (new-kw-dispatch
@@ -738,8 +742,12 @@ namespace: gxc
                   kw-dispatch)
                (let* ((get-kws-id
                        (make-symbol (stx-e #'id) (gensym '__)))
+                      (get-kws-id
+                       (core-quote-syntax get-kws-id (stx-source stx)))
                       (main-id
                        (make-symbol (stx-e #'id) (gensym '__)))
+                      (main-id
+                       (core-quote-syntax main-id (stx-source stx)))
                       (_ (core-bind-runtime! get-kws-id))
                       (_ (core-bind-runtime! main-id))
                       (new-kw-dispatch
@@ -850,8 +858,12 @@ namespace: gxc
                   kw-dispatch)
                (let* ((get-kws-id
                        (make-symbol (stx-e #'id) (gensym '__)))
+                      (get-kws-id
+                       (core-quote-syntax get-kws-id (stx-source stx)))
                       (main-id
                        (make-symbol (stx-e #'id) (gensym '__)))
+                      (main-id
+                       (core-quote-syntax main-id (stx-source stx)))
                       (_ (core-bind-runtime! get-kws-id))
                       (_ (core-bind-runtime! main-id))
                       (new-kw-dispatch
@@ -1479,4 +1491,6 @@ namespace: gxc
 
 ;;; utilities
 (def (identifier-symbol stx)
-  (generate-runtime-binding-id stx))
+  (if (syntax-quote? stx)
+    (generate-runtime-binding-id stx)
+    (stx-e stx)))
