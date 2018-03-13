@@ -581,9 +581,12 @@ namespace: gxc
            (count (generate-runtime-temporary)))
       (if (and (not (stx-list? hd)) (fx= len 0))
         #!void
-        ['let [[count ['values-count vals]]]
+        ['let [[count (generate-runtime-values-count vals)]]
           ['if ['not [cmp count len]]
             ['error errmsg count]]])))))
+
+(def (generate-runtime-values-count var)
+  ['if ['##values? var] ['##vector-length var] 1])
 
 (def (generate-runtime-values-ref var i rest)
   (if (and (fx= i 0) (not (stx-pair? rest)))
