@@ -254,7 +254,4 @@ package: gerbil/compiler
    gxc#!kw-lambda-primary::t
    typedecl
    gxc#!kw-lambda-primary::typedecl
-   #f)
-  (declare-type
-   gxc#identifier-symbol
-   (@lambda 1 gxc#generate-runtime-binding-id)))
+   #f))
