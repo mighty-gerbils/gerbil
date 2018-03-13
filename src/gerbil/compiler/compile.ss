@@ -410,6 +410,12 @@ namespace: gxc
                  (make-binding-id (generate-runtime-gensym-reference eid)
                                   syntax?)))))
 
+(def (runtime-identifier=? id1 id2)
+  (def (symbol-e id)
+    (if (symbol? id) id
+        (generate-runtime-binding-id id)))
+  (eq? (symbol-e id1) (symbol-e id2)))
+
 (def (generate-runtime-binding-id id)
   (cond
    ((and (syntax-quote? id) (resolve-identifier id))
@@ -612,10 +618,6 @@ namespace: gxc
   (stx-map generate-runtime-binding-id* hd))
 
 (def (generate-runtime-case-lambda% stx)
-  (def (runtime-identifier=? id-stx sym)
-    (alet (bind (resolve-identifier id-stx))
-      (eq? (binding-id bind) sym)))
-
   (def (dispatch-case? hd body)
     (let (form [hd body])
       (ast-case form (%#call %#ref)
