@@ -184,7 +184,7 @@ namespace: gxc
 
 (defcompile-method apply-count-values (&count-values &false-expression)
   (%#begin                   count-values-begin%)
-  (%#begin-annottion         count-values-begin-annotation%)
+  (%#begin-annotation        count-values-begin-annotation%)
   (%#lambda                       count-values-single%)
   (%#case-lambda                  count-values-single%)
   (%#let-values              count-values-let-values%)
