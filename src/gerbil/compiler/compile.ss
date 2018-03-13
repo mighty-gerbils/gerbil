@@ -545,13 +545,13 @@ namespace: gxc
                     ((id . rest)
                      (lp #'rest (fx1+ k)
                          (cons ['define (generate-runtime-binding-id #'id)
-                                 ['values-ref tmp k]]
+                                 (generate-runtime-values-ref tmp k #'rest)]
                                r)))
                     (id
                      (identifier? #'id)
                      (foldl cons
                             [['define (generate-runtime-binding-id #'id)
-                               ['values->list tmp k]]]
+                               (generate-runtime-values->list tmp k)]]
                             r))
                     (_ (reverse r))))))
           ['begin
@@ -584,6 +584,20 @@ namespace: gxc
         ['let [[count ['values-count vals]]]
           ['if ['not [cmp count len]]
             ['error errmsg count]]])))))
+
+(def (generate-runtime-values-ref var i rest)
+  (if (and (fx= i 0) (not (stx-pair? rest)))
+    ['if ['##values? var] ['##vector-ref var 0] var]
+    ['##vector-ref var i]))
+
+(def (generate-runtime-values->list var i)
+  (cond
+   ((fx= i 0)
+    ['if ['##values? var] ['##vector->list var] ['list var]])
+   ((fx= i 1)
+    ['if ['##values? var] ['##cdr ['##vector->list var]] '(quote ())])
+   (else
+    ['list-tail ['##vector->list var] i])))
 
 (def (generate-runtime-lambda% stx)
   (ast-case stx ()
@@ -725,12 +739,14 @@ namespace: gxc
       ((id . rest)
        (lp #'rest
            (fx1+ k)
-           (cons [(generate-runtime-binding-id #'id) ['values-ref vals k]]
+           (cons [(generate-runtime-binding-id #'id)
+                  (generate-runtime-values-ref vals k #'rest)]
                  r)))
       (tail
        (identifier? #'tail)
        (foldl cons
-              [[(generate-runtime-binding-id #'tail) ['values->list vals k]]]
+              [[(generate-runtime-binding-id #'tail)
+                (generate-runtime-values->list vals k)]]
               r))
       (_ (reverse r)))))
 
