@@ -2535,24 +2535,31 @@ package: gerbil
                        ((values final?)
                         (and rtd (assgetq final: (runtime-type-plist rtd))))
                        (target tgt)
-                       (type::t
-                        (runtime-type-identifier info))
-                       (type-instance?
-                        (if final?
-                          #'direct-struct-instance?
-                          #'struct-instance?)))
+                       (instance-check
+                        (if (expander-type-info? info)
+                          (with-syntax ((instance?
+                                         (cadddr (expander-type-identifiers info))))
+                            #'(instance? target))
+                          (with-syntax ((type::t
+                                         (runtime-type-identifier info))
+                                        (type-instance?
+                                         (if final?
+                                           #'direct-struct-instance?
+                                           #'struct-instance?)))
+                            #'(type-instance? type::t target)))))
           (syntax-case body ()
             ((simple: body)
              (let (K (generate-simple-vector tgt #'body 1 K E))
-               (if (and rtd (fx<= (stx-length #'body) fields))
-                 [#'if #'(type-instance? type::t target)
-                       K E]
+               (if rtd
+                 (if (fx<= (stx-length #'body) fields)
+                   [#'if #'instance-check K E]
+                   (raise-syntax-error #f "Bad struct pattern; too many elements to match"
+                                       stx (runtime-type-identifier info)))
                  (with-syntax ((len (stx-length #'body)))
-                   [#'if #'(and (type-instance? type::t target)
-                                (##fx< len (##vector-length target)))
+                   [#'if #'(and instance-check (##fx< len (##vector-length target)))
                          K E]))))
             ((list: body)
-             [#'if #'(type-instance? type::t target)
+             [#'if #'instance-check
                    (generate-list-vector tgt #'body #'struct->list 1 K E)
                    E]))))
 
