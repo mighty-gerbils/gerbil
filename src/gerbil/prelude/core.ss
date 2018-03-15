@@ -2690,7 +2690,7 @@ package: gerbil
              ((_ clause body)
               (if (stx-e #'clause)
                 (generate1 #'clause #'body E)
-                #'body))))
+                #'(%#begin-annotation @match-body body)))))
           ((hd . rest)
            (syntax-case #'hd ()
              ((try clause body)
