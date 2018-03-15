@@ -522,6 +522,9 @@ namespace: gxc
 (def (generate-runtime-begin-annotation% stx)
   (ast-case stx ()
     ((_ ann expr)
+     (identifier? #'ann) ; optimizer annotation mark
+     (compile-e #'expr))
+    ((_ ann expr)
      ['begin ['declare (map syntax->datum #'ann) ...]
              (compile-e #'expr)])))
 
