@@ -2678,19 +2678,22 @@ package: gerbil
                         (syntax/loc stx
                           (lambda () (error "No clause matching" target ...))))
                        (body
-                        (generate-clauses body #'($E))))
-          #'(begin-annotation @match
-              (let (($E fail))
-                body))))
+                        (generate-clauses body #'($E)))
+                       (match-expr
+                        (syntax/loc stx
+                          (let (($E fail))
+                            body))))
+          #'(begin-annotation @match match-expr)))
 
       (def (generate-clauses rest E)
         (syntax-case rest ()
           ((hd)
            (syntax-case #'hd ()
              ((_ clause body)
-              (if (stx-e #'clause)
-                (generate1 #'clause #'body E)
-                #'(%#begin-annotation @match-body body)))))
+              ['begin-annotation '@match-body
+                (if (stx-e #'clause)
+                  (generate1 #'clause #'body E)
+                  #'body)])))
           ((hd . rest)
            (syntax-case #'hd ()
              ((try clause body)
@@ -2702,7 +2705,7 @@ package: gerbil
                 (with-syntax ((rest-body (generate-clauses #'rest #'(try))))
                   #'(let ((try (begin-annotation @match-else (lambda () body))))
                       rest-body))))))
-          (_ E)))
+          (_ ['begin-annotation '@match-body E])))
 
       (def (generate1 clause body E)
         (let recur ((rest clause) (rest-targets tgt-lst))
