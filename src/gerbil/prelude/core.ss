@@ -2410,11 +2410,24 @@ package: gerbil
              (with-syntax (($hd (genident 'hd))
                            ($tl (genident 'tl)))
                ['if #'(##pair? target)
-                    ['let #'(($hd (##car target))
-                             ($tl (##cdr target)))
-                          (generate1 #'$hd #'hd
-                                     (generate1 #'$tl #'tl K E)
-                                     E)]
+                    (let ((hd-pat (stx-e #'hd))
+                          (tl-pat (stx-e #'tl)))
+                      (cond
+                       ((and (equal? hd-pat '(any:))
+                             (equal? tl-pat '(any:)))
+                        K)
+                       ((equal? tl-pat '(any:))
+                        ['let #'(($hd (##car target)))
+                              (generate1 #'$hd #'hd K E)])
+                       ((equal? hd-pat '(any:))
+                        ['let #'(($tl (##cdr target)))
+                              (generate1 #'$tl #'tl K E)])
+                       (else
+                        ['let #'(($hd (##car target))
+                                 ($tl (##cdr target)))
+                              (generate1 #'$hd #'hd
+                                         (generate1 #'$tl #'tl K E)
+                                         E)])))
                     E]))
             ((null:)
              ['if #'(##null? target) K E])
@@ -2439,12 +2452,13 @@ package: gerbil
              (syntax-case #'body ()
                ((simple: body)
                 (with-syntax ((len (stx-length #'body)))
-                  ['if #'(and (##vector? target)
-                              (##fx= (##vector-length target) len))
-                       (generate-simple-vector tgt #'body 0 K E)
+                  ['if #'(##vector? target)
+                       ['if #'(##fx= (##vector-length target) len)
+                            (generate-simple-vector tgt #'body 0 K E)
+                            E]
                        E]))
                ((list: body)
-                ['if #'(vector? target)
+                ['if #'(##vector? target)
                      (generate-list-vector tgt #'body 'subvector->list 0 K E)
                      E])))
             ((struct: info body)
@@ -2556,8 +2570,10 @@ package: gerbil
                    (raise-syntax-error #f "Bad struct pattern; too many elements to match"
                                        stx (runtime-type-identifier info)))
                  (with-syntax ((len (stx-length #'body)))
-                   ['if #'(and instance-check (##fx< len (##vector-length target)))
-                        K E]))))
+                   ['if #'instance-check
+                     ['if #'(##fx< len (##vector-length target))
+                          K E]
+                     E]))))
             ((list: body)
              ['if #'instance-check
                (generate-list-vector tgt #'body #'struct->list 1 K E)
