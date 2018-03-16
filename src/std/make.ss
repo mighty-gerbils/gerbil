@@ -55,6 +55,10 @@ package: std
                      buildset)))
     (for-each (cut build <> settings) buildset)))
 
+(def (message . rest)
+  (apply displayln rest)
+  (force-output))
+
 (def (expand-build-deps buildset buildspec depgraph)
   (def module-ids (make-hash-table))
   (def module-deps (make-hash-table-eq))
@@ -346,7 +350,7 @@ package: std
      (if gsc-opts [gsc-options: gsc-opts] []) ...])
   (def srcpath (source-path mod ".ss" settings))
 
-  (displayln "... compile " mod)
+  (message "... compile " mod)
   (compile-file srcpath gxc-opts))
 
 (def (gsc-compile? mod settings)
@@ -384,7 +388,7 @@ package: std
      (else (path-expand "std" libdir))))
 
   (create-directory* libpath)
-  (displayln "... compile foreign " mod)
+  (message "... compile foreign " mod)
   (let* ((proc (open-process [path: "gsc"
                               arguments: ["-o" libpath gsc-opts ... srcpath]
                               stdout-redirection: #f]))
@@ -409,12 +413,12 @@ package: std
   (def rtpath  (library-path mod "__rt.scm" settings))
   (def prefix  (pgetq prefix: settings))
 
-  (displayln "... copy ssi " mod)
+  (message "... copy ssi " mod)
   (create-directory* (path-directory libpath))
   (when (file-exists? libpath)
     (delete-file libpath))
   (copy-file srcpath libpath)
-  (displayln "... compile loader " mod)
+  (message "... compile loader " mod)
   (with-output-to-file rtpath
     (lambda ()
       (for-each (lambda (dep) (pretty-print `(load-module ,dep)))
@@ -446,7 +450,7 @@ package: std
      output-file: binpath
      verbose: (pgetq verbose: settings)])
   (gxc-compile mod gsc-opts settings)
-  (displayln "... compile exe " mod " -> " (path-strip-directory binpath))
+  (message "... compile exe " mod " -> " (path-strip-directory binpath))
   (compile-exe-stub srcpath gxc-opts))
 
 (def (compile-exe-gsc-opts opts)
@@ -475,7 +479,7 @@ package: std
      debug: (pgetq debug: settings)
      (if gsc-opts [gsc-options: gsc-opts] []) ...])
   (gxc-compile mod gsc-opts [static: #t settings ...] #f)
-  (displayln "... compile static exe " mod " -> " (path-strip-directory binpath))
+  (message "... compile static exe " mod " -> " (path-strip-directory binpath))
   (gxc#compile-static-exe srcpath gxc-opts))
 
 (def (copy-static? file settings)
@@ -487,7 +491,7 @@ package: std
 (def (copy-static file settings)
   (def spath (static-file-path file settings))
 
-  (displayln "... copy static include " file)
+  (message "... copy static include " file)
   (when (file-exists? spath)
     (delete-file spath))
   (copy-file file spath))
@@ -501,7 +505,7 @@ package: std
   (def srcpath (source-path file #f settings))
   (def libpath (library-path file #f settings))
 
-  (displayln "... copy std/" file)
+  (message "... copy std/" file)
   (when (file-exists? libpath)
     (delete-file libpath))
   (copy-file srcpath libpath))
