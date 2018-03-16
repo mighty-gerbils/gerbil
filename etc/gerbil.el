@@ -450,6 +450,7 @@
     (define-key map (kbd "C-c C-c") 'scheme-send-region)
     map))
 
+(defvar gerbil-program-name "gxi")
 
 ;;;###autoload
 (define-derived-mode gerbil-mode scheme-mode
@@ -457,7 +458,7 @@
   (kill-all-local-variables)
   (use-local-map gerbil-mode-map)
   (setq mode-name "Gerbil")
-  (setq scheme-program-name "gxi")
+  (setq scheme-program-name gerbil-program-name)
   (setq comment-start ";;")
   (scheme-mode-variables)
   (gerbil-init))
