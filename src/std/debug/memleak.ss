@@ -3,7 +3,8 @@
 ;;; memory leak debugging utilities
 package: std/debug
 
-(import :gerbil/gambit/threads
+(import :gerbil/gambit/ports
+        :gerbil/gambit/threads
         :std/debug/heap
         :std/sort
         (only-in :std/generic type-of))
@@ -99,10 +100,12 @@ package: std/debug
   (thread-sleep! initial-delay)
   (let (summary (heap-summary))
     (dump! summary port)
+    (force-output port)
     (let lp ((prev-summary summary))
       (thread-sleep! period)
       (let (summary (heap-summary))
         (dump! (heap-summary-delta prev-summary summary) port)
+        (force-output port)
         (lp summary)))))
 
 (def (frame-creator frame)
