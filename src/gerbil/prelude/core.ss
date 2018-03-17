@@ -2563,13 +2563,11 @@ package: gerbil
                             #'(type-instance? type::t target)))))
           (syntax-case body ()
             ((simple: body)
-             (let (K (generate-simple-vector tgt #'body 1 K E))
-               (if rtd
-                 (if (fx<= (stx-length #'body) fields)
-                   ['if #'instance-check K E]
-                   (raise-syntax-error #f "Bad struct pattern; too many elements to match"
-                                       stx (runtime-type-identifier info)))
-                 (with-syntax ((len (stx-length #'body)))
+             (let ((K (generate-simple-vector tgt #'body 1 K E))
+                   (len (stx-length #'body)))
+               (if (and rtd (fx<= len fields))
+                 ['if #'instance-check K E]
+                 (with-syntax ((len len))
                    ['if #'instance-check
                      ['if #'(##fx< len (##vector-length target))
                           K E]
