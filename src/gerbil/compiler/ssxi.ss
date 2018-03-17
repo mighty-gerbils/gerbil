@@ -4,9 +4,7 @@
 package: gerbil/compiler
 namespace: gxc
 
-(import "base" "optimize"
-        (only-in <syntax-case> syntax)
-        (only-in <syntax-sugar> with-syntax with-syntax*)
+(import "base" "optimize-base"
         :gerbil/core)
 (export #t ast-rules ast-case
         syntax with-syntax with-syntax*
