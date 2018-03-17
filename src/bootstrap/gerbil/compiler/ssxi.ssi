@@ -4,12 +4,7 @@ namespace: gxc
 
 (%#begin (%#import
           :gerbil/compiler/base
-          :gerbil/compiler/optimize
-          (spec: (:gerbil/core <syntax-case>) (0 syntax 0 syntax))
-          (spec:
-           (:gerbil/core <syntax-sugar>)
-           (0 with-syntax* 0 with-syntax*)
-           (0 with-syntax 0 with-syntax))
+          :gerbil/compiler/optimize-base
           :gerbil/core)
          (%#export
           #t

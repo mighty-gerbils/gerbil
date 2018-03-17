@@ -1,0 +1,39 @@
+prelude: :gerbil/core
+package: gerbil/compiler
+namespace: gxc
+
+(%#begin (%#import
+          :gerbil/expander
+          :gerbil/compiler/base
+          :gerbil/compiler/compile
+          :gerbil/compiler/optimize-base
+          :gerbil/compiler/optimize-xform)
+         (%#export #t)
+         (%#define-runtime &optimize-call gxc#&optimize-call)
+         (%#define-runtime apply-optimize-call gxc#apply-optimize-call)
+         (%#define-runtime optimize-call% gxc#optimize-call%)
+         (%#define-runtime
+          !struct-pred::optimize-call
+          gxc#!struct-pred::optimize-call)
+         (%#define-runtime
+          !struct-cons::optimize-call
+          gxc#!struct-cons::optimize-call)
+         (%#define-runtime
+          !struct-getf::optimize-call
+          gxc#!struct-getf::optimize-call)
+         (%#define-runtime
+          !struct-setf::optimize-call
+          gxc#!struct-setf::optimize-call)
+         (%#define-runtime !lambda::optimize-call gxc#!lambda::optimize-call)
+         (%#define-runtime
+          !case-lambda::optimize-call
+          gxc#!case-lambda::optimize-call)
+         (%#define-runtime !lambda-arity-match? gxc#!lambda-arity-match?)
+         (%#define-runtime
+          !kw-lambda::optimize-call
+          gxc#!kw-lambda::optimize-call)
+         (%#define-runtime !kw-lambda-split-args gxc#!kw-lambda-split-args)
+         (%#define-runtime
+          !kw-lambda-primary::optimize-call
+          gxc#!kw-lambda-primary::optimize-call))
+(%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize-call__0"))

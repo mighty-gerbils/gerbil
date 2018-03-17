@@ -1,78 +1,78 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gerbil/gambit/ports#write-string
-    (let ((_opt-lambda629634_
-           (lambda (_str631_ _port632_)
+    (let ((_opt-lambda630635_
+           (lambda (_str632_ _port633_)
              (write-substring
-              _str631_
+              _str632_
               '0
-              (string-length _str631_)
-              _port632_))))
-      (lambda _g644_
-        (let ((_g643_ (length _g644_)))
-          (cond ((##fx= _g643_ 1)
-                 (apply (lambda (_str637_)
-                          (let ((_port639_ (current-output-port)))
-                            (_opt-lambda629634_ _str637_ _port639_)))
-                        _g644_))
-                ((##fx= _g643_ 2) (apply _opt-lambda629634_ _g644_))
+              (string-length _str632_)
+              _port633_))))
+      (lambda _g645_
+        (let ((_g644_ (length _g645_)))
+          (cond ((##fx= _g644_ 1)
+                 (apply (lambda (_str638_)
+                          (let ((_port640_ (current-output-port)))
+                            (_opt-lambda630635_ _str638_ _port640_)))
+                        _g645_))
+                ((##fx= _g644_ 2) (apply _opt-lambda630635_ _g645_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/ports#write-string
-                  _g644_)))))))
+                  _g645_)))))))
   (define gerbil/gambit/ports#read-string
-    (let ((_opt-lambda615620_
-           (lambda (_str617_ _port618_)
-             (read-substring _str617_ '0 (string-length _str617_) _port618_))))
-      (lambda _g646_
-        (let ((_g645_ (length _g646_)))
-          (cond ((##fx= _g645_ 1)
-                 (apply (lambda (_str623_)
-                          (let ((_port625_ (current-input-port)))
-                            (_opt-lambda615620_ _str623_ _port625_)))
-                        _g646_))
-                ((##fx= _g645_ 2) (apply _opt-lambda615620_ _g646_))
+    (let ((_opt-lambda616621_
+           (lambda (_str618_ _port619_)
+             (read-substring _str618_ '0 (string-length _str618_) _port619_))))
+      (lambda _g647_
+        (let ((_g646_ (length _g647_)))
+          (cond ((##fx= _g646_ 1)
+                 (apply (lambda (_str624_)
+                          (let ((_port626_ (current-input-port)))
+                            (_opt-lambda616621_ _str624_ _port626_)))
+                        _g647_))
+                ((##fx= _g646_ 2) (apply _opt-lambda616621_ _g647_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/ports#read-string
-                  _g646_)))))))
+                  _g647_)))))))
   (define gerbil/gambit/ports#write-u8vector
-    (let ((_opt-lambda601606_
-           (lambda (_bytes603_ _port604_)
+    (let ((_opt-lambda602607_
+           (lambda (_bytes604_ _port605_)
              (write-subu8vector
-              _bytes603_
+              _bytes604_
               '0
-              (u8vector-length _bytes603_)
-              _port604_))))
-      (lambda _g648_
-        (let ((_g647_ (length _g648_)))
-          (cond ((##fx= _g647_ 1)
-                 (apply (lambda (_bytes609_)
-                          (let ((_port611_ (current-output-port)))
-                            (_opt-lambda601606_ _bytes609_ _port611_)))
-                        _g648_))
-                ((##fx= _g647_ 2) (apply _opt-lambda601606_ _g648_))
+              (u8vector-length _bytes604_)
+              _port605_))))
+      (lambda _g649_
+        (let ((_g648_ (length _g649_)))
+          (cond ((##fx= _g648_ 1)
+                 (apply (lambda (_bytes610_)
+                          (let ((_port612_ (current-output-port)))
+                            (_opt-lambda602607_ _bytes610_ _port612_)))
+                        _g649_))
+                ((##fx= _g648_ 2) (apply _opt-lambda602607_ _g649_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/ports#write-u8vector
-                  _g648_)))))))
+                  _g649_)))))))
   (define gerbil/gambit/ports#read-u8vector
-    (let ((_opt-lambda587592_
-           (lambda (_bytes589_ _port590_)
+    (let ((_opt-lambda588593_
+           (lambda (_bytes590_ _port591_)
              (read-subu8vector
-              _bytes589_
+              _bytes590_
               '0
-              (u8vector-length _bytes589_)
-              _port590_))))
-      (lambda _g650_
-        (let ((_g649_ (length _g650_)))
-          (cond ((##fx= _g649_ 1)
-                 (apply (lambda (_bytes595_)
-                          (let ((_port597_ (current-input-port)))
-                            (_opt-lambda587592_ _bytes595_ _port597_)))
-                        _g650_))
-                ((##fx= _g649_ 2) (apply _opt-lambda587592_ _g650_))
+              (u8vector-length _bytes590_)
+              _port591_))))
+      (lambda _g651_
+        (let ((_g650_ (length _g651_)))
+          (cond ((##fx= _g650_ 1)
+                 (apply (lambda (_bytes596_)
+                          (let ((_port598_ (current-input-port)))
+                            (_opt-lambda588593_ _bytes596_ _port598_)))
+                        _g651_))
+                ((##fx= _g650_ 2) (apply _opt-lambda588593_ _g651_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/ports#read-u8vector
-                  _g650_))))))))
+                  _g651_))))))))
