@@ -1521,7 +1521,16 @@ package: gerbil
                           (syntax/loc stx
                             (def (impl arg ...) body ...))))
            (syntax/loc stx
-             (begin defimpl defstx)))))))
+             (begin defimpl defstx))))))
+
+    (defrules defconst (quote)
+      ((_ id (quote expr))
+       (identifier? #'id)
+       (defrules id ()
+         (x (identifier? #'x) (quote expr))))
+      ((recur id expr)
+       (and (identifier? #'id) (stx-datum? #'expr))
+       (recur id (quote expr)))))
 
   (import <sugar:3>))
 
