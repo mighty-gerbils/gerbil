@@ -1,128 +1,128 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gxc[1]#_g12874_|
+  (define |gxc[1]#_g12939_|
     (gx#make-syntax-quote 'meta-state::t #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g12875_|
+  (define |gxc[1]#_g12940_|
     (gx#make-syntax-quote 'meta-state::t #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g12876_|
+  (define |gxc[1]#_g12941_|
     (gx#make-syntax-quote
      'make-meta-state
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12877_|
+  (define |gxc[1]#_g12942_|
     (gx#make-syntax-quote 'meta-state? #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g12878_|
+  (define |gxc[1]#_g12943_|
     (gx#make-syntax-quote
      'meta-state-src
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12879_|
+  (define |gxc[1]#_g12944_|
     (gx#make-syntax-quote 'meta-state-n #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g12880_|
+  (define |gxc[1]#_g12945_|
     (gx#make-syntax-quote
      'meta-state-open
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12881_|
+  (define |gxc[1]#_g12946_|
     (gx#make-syntax-quote
      'meta-state-blocks
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12882_|
+  (define |gxc[1]#_g12947_|
     (gx#make-syntax-quote
      'meta-state-src-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12883_|
+  (define |gxc[1]#_g12948_|
     (gx#make-syntax-quote
      'meta-state-n-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12884_|
+  (define |gxc[1]#_g12949_|
     (gx#make-syntax-quote
      'meta-state-open-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12885_|
+  (define |gxc[1]#_g12950_|
     (gx#make-syntax-quote
      'meta-state-blocks-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12886_|
+  (define |gxc[1]#_g12951_|
     (gx#make-syntax-quote
      'meta-state-block::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12887_|
+  (define |gxc[1]#_g12952_|
     (gx#make-syntax-quote
      'meta-state-block::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12888_|
+  (define |gxc[1]#_g12953_|
     (gx#make-syntax-quote
      'make-meta-state-block
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12889_|
+  (define |gxc[1]#_g12954_|
     (gx#make-syntax-quote
      'meta-state-block?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12890_|
+  (define |gxc[1]#_g12955_|
     (gx#make-syntax-quote
      'meta-state-block-ctx
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12891_|
+  (define |gxc[1]#_g12956_|
     (gx#make-syntax-quote
      'meta-state-block-phi
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12892_|
+  (define |gxc[1]#_g12957_|
     (gx#make-syntax-quote
      'meta-state-block-n
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12893_|
+  (define |gxc[1]#_g12958_|
     (gx#make-syntax-quote
      'meta-state-block-code
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12894_|
+  (define |gxc[1]#_g12959_|
     (gx#make-syntax-quote
      'meta-state-block-ctx-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12895_|
+  (define |gxc[1]#_g12960_|
     (gx#make-syntax-quote
      'meta-state-block-phi-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12896_|
+  (define |gxc[1]#_g12961_|
     (gx#make-syntax-quote
      'meta-state-block-n-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g12897_|
+  (define |gxc[1]#_g12962_|
     (gx#make-syntax-quote
      'meta-state-block-code-set!
      #f
@@ -250,19 +250,19 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                                  _tl34333600_)
                                 '0)
-                          (let ((_g12870_
+                          (let ((_g12935_
                                  (gx#syntax-split-splice _tl34333600_ '0)))
                             (begin
-                              (let ((_g12871_
-                                     (if (##values? _g12870_)
-                                         (##vector-length _g12870_)
+                              (let ((_g12936_
+                                     (if (##values? _g12935_)
+                                         (##vector-length _g12935_)
                                          1)))
-                                (if (not (##fx= _g12871_ 2))
+                                (if (not (##fx= _g12936_ 2))
                                     (error "Context expects 2 values"
-                                           _g12871_)))
+                                           _g12936_)))
                               (let ((_target34343603_
-                                     (##vector-ref _g12870_ 0))
-                                    (_tl34363606_ (##vector-ref _g12870_ 1)))
+                                     (##vector-ref _g12935_ 0))
+                                    (_tl34363606_ (##vector-ref _g12935_ 1)))
                                 (if (gx#stx-null? _tl34363606_)
                                     (letrec ((_loop34373609_
                                               (lambda (_hd34353613_
@@ -287,17 +287,17 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              _tl34303590_)
                             '0)
-                      (let ((_g12872_
+                      (let ((_g12937_
                              (gx#syntax-split-splice _tl34303590_ '0)))
                         (begin
-                          (let ((_g12873_
-                                 (if (##values? _g12872_)
-                                     (##vector-length _g12872_)
+                          (let ((_g12938_
+                                 (if (##values? _g12937_)
+                                     (##vector-length _g12937_)
                                      1)))
-                            (if (not (##fx= _g12873_ 2))
-                                (error "Context expects 2 values" _g12873_)))
-                          (let ((_target34433633_ (##vector-ref _g12872_ 0))
-                                (_tl34453636_ (##vector-ref _g12872_ 1)))
+                            (if (not (##fx= _g12938_ 2))
+                                (error "Context expects 2 values" _g12938_)))
+                          (let ((_target34433633_ (##vector-ref _g12937_ 0))
+                                (_tl34453636_ (##vector-ref _g12937_ 1)))
                             (if (gx#stx-null? _tl34453636_)
                                 (letrec ((_loop34463639_
                                           (lambda (_hd34443643_
@@ -454,21 +454,21 @@
     (define |gxc[:0:]#meta-state|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g12874_|
+       |gxc[1]#_g12939_|
        'expander-identifiers:
        (cons '#f
-             (cons |gxc[1]#_g12875_|
-                   (cons |gxc[1]#_g12876_|
-                         (cons |gxc[1]#_g12877_|
-                               (cons (cons |gxc[1]#_g12878_|
-                                           (cons |gxc[1]#_g12879_|
-                                                 (cons |gxc[1]#_g12880_|
-                                                       (cons |gxc[1]#_g12881_|
+             (cons |gxc[1]#_g12940_|
+                   (cons |gxc[1]#_g12941_|
+                         (cons |gxc[1]#_g12942_|
+                               (cons (cons |gxc[1]#_g12943_|
+                                           (cons |gxc[1]#_g12944_|
+                                                 (cons |gxc[1]#_g12945_|
+                                                       (cons |gxc[1]#_g12946_|
                                                              '()))))
-                                     (cons (cons |gxc[1]#_g12882_|
-                                                 (cons |gxc[1]#_g12883_|
-                                                       (cons |gxc[1]#_g12884_|
-                                                             (cons |gxc[1]#_g12885_|
+                                     (cons (cons |gxc[1]#_g12947_|
+                                                 (cons |gxc[1]#_g12948_|
+                                                       (cons |gxc[1]#_g12949_|
+                                                             (cons |gxc[1]#_g12950_|
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -484,21 +484,21 @@
     (define |gxc[:0:]#meta-state-block|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gxc[1]#_g12886_|
+       |gxc[1]#_g12951_|
        'expander-identifiers:
        (cons '#f
-             (cons |gxc[1]#_g12887_|
-                   (cons |gxc[1]#_g12888_|
-                         (cons |gxc[1]#_g12889_|
-                               (cons (cons |gxc[1]#_g12890_|
-                                           (cons |gxc[1]#_g12891_|
-                                                 (cons |gxc[1]#_g12892_|
-                                                       (cons |gxc[1]#_g12893_|
+             (cons |gxc[1]#_g12952_|
+                   (cons |gxc[1]#_g12953_|
+                         (cons |gxc[1]#_g12954_|
+                               (cons (cons |gxc[1]#_g12955_|
+                                           (cons |gxc[1]#_g12956_|
+                                                 (cons |gxc[1]#_g12957_|
+                                                       (cons |gxc[1]#_g12958_|
                                                              '()))))
-                                     (cons (cons |gxc[1]#_g12894_|
-                                                 (cons |gxc[1]#_g12895_|
-                                                       (cons |gxc[1]#_g12896_|
-                                                             (cons |gxc[1]#_g12897_|
+                                     (cons (cons |gxc[1]#_g12959_|
+                                                 (cons |gxc[1]#_g12960_|
+                                                       (cons |gxc[1]#_g12961_|
+                                                             (cons |gxc[1]#_g12962_|
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

@@ -200,6 +200,8 @@ namespace: gxc
          (%#define-runtime apply-lift-top-lambdas gxc#apply-lift-top-lambdas)
          (%#define-runtime &expression-subst gxc#&expression-subst)
          (%#define-runtime apply-expression-subst gxc#apply-expression-subst)
+         (%#define-runtime &expression-subst* gxc#&expression-subst*)
+         (%#define-runtime apply-expression-subst* gxc#apply-expression-subst*)
          (%#define-runtime &collect-type-info gxc#&collect-type-info)
          (%#define-runtime apply-collect-type-info gxc#apply-collect-type-info)
          (%#define-runtime &basic-expression-type gxc#&basic-expression-type)
@@ -208,6 +210,19 @@ namespace: gxc
           gxc#apply-basic-expression-type)
          (%#define-runtime &optimize-call gxc#&optimize-call)
          (%#define-runtime apply-optimize-call gxc#apply-optimize-call)
+         (%#define-runtime &optmize-annotated gxc#&optmize-annotated)
+         (%#define-runtime
+          apply-optimize-annotated
+          gxc#apply-optimize-annotated)
+         (%#define-runtime &push-match-vars gxc#&push-match-vars)
+         (%#define-runtime apply-push-match-vars gxc#apply-push-match-vars)
+         (%#define-runtime &find-expression gxc#&find-expression)
+         (%#define-runtime &find-var-refs gxc#&find-var-refs)
+         (%#define-runtime apply-find-var-refs gxc#apply-find-var-refs)
+         (%#define-runtime &collect-runtime-refs gxc#&collect-runtime-refs)
+         (%#define-runtime
+          apply-collect-runtime-refs
+          gxc#apply-collect-runtime-refs)
          (%#define-runtime &generate-ssxi gxc#&generate-ssxi)
          (%#define-runtime apply-generate-ssxi gxc#apply-generate-ssxi)
          (%#define-runtime xform-identity gxc#xform-identity)
@@ -255,6 +270,9 @@ namespace: gxc
           lift-top-lambda-binding?
           gxc#lift-top-lambda-binding?)
          (%#define-runtime expression-subst-ref% gxc#expression-subst-ref%)
+         (%#define-runtime expression-subst*-ref% gxc#expression-subst*-ref%)
+         (%#define-runtime expression-subst-setq% gxc#expression-subst-setq%)
+         (%#define-runtime expression-subst*-setq% gxc#expression-subst*-setq%)
          (%#define-runtime
           collect-type-define-values%
           gxc#collect-type-define-values%)
@@ -341,6 +359,42 @@ namespace: gxc
          (%#define-runtime
           !kw-lambda-primary::optimize-call
           gxc#!kw-lambda-primary::optimize-call)
+         (%#define-runtime optimize-annotation% gxc#optimize-annotation%)
+         (%#define-runtime optimize-match gxc#optimize-match)
+         (%#define-runtime optimize-match-body gxc#optimize-match-body)
+         (%#define-runtime
+          optimize-match-basic-blocks
+          gxc#optimize-match-basic-blocks)
+         (%#define-runtime
+          optimize-match-lift-basic-blocks
+          gxc#optimize-match-lift-basic-blocks)
+         (%#define-runtime
+          optimize-match-fold-basic-blocks
+          gxc#optimize-match-fold-basic-blocks)
+         (%#define-runtime optimize-match-block gxc#optimize-match-block)
+         (%#define-runtime
+          optimize-match-prune-blocks
+          gxc#optimize-match-prune-blocks)
+         (%#define-runtime
+          collect-runtime-refs-ref%
+          gxc#collect-runtime-refs-ref%)
+         (%#define-runtime
+          collect-runtime-refs-setq%
+          gxc#collect-runtime-refs-setq%)
+         (%#define-runtime
+          push-match-vars-let-values%
+          gxc#push-match-vars-let-values%)
+         (%#define-runtime push-match-vars-if% gxc#push-match-vars-if%)
+         (%#define-runtime push-match-vars-call% gxc#push-match-vars-call%)
+         (%#define-runtime push-match-vars-stop gxc#push-match-vars-stop)
+         (%#define-runtime find-body% gxc#find-body%)
+         (%#define-runtime find-begin-annotation% gxc#find-begin-annotation%)
+         (%#define-runtime find-lambda% gxc#find-lambda%)
+         (%#define-runtime find-case-lambda% gxc#find-case-lambda%)
+         (%#define-runtime find-let-values% gxc#find-let-values%)
+         (%#define-runtime find-setq% gxc#find-setq%)
+         (%#define-runtime find-var-refs-ref% gxc#find-var-refs-ref%)
+         (%#define-runtime find-var-refs-setq% gxc#find-var-refs-setq%)
          (%#define-runtime generate-ssxi-module% gxc#generate-ssxi-module%)
          (%#define-runtime
           generate-ssxi-define-values%
