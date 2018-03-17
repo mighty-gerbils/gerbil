@@ -377,7 +377,9 @@ namespace: gxc
        (cond
         ((lookup-block #'rator)
          => (lambda (block)
-              (optimize-e (inline-block block #'(id ...)))))
+              (if (splice-block? block)
+                expr
+                (optimize-e (inline-block block #'(id ...))))))
         (else
          expr)))
 
@@ -394,37 +396,39 @@ namespace: gxc
          (cond
           ((lookup-block #'rator)
            => (lambda (block)
-                (let (inline (inline-block block #'(id ...)))
-                  (let fuse ((inline inline) (expr expr))
-                    (ast-case inline (%#if %#letrec-values %#let-values %#ref)
-                      ((%#if test K E)
-                       ;; only inline conditionals if we can fuse the match tree
-                       (case (assert-e #'test)
-                         ((#t)
-                          (optimize-e #'K))
-                         ((#f)
-                          (optimize-f #'E))
-                         (else expr)))
+                (if (splice-block? block)
+                  expr
+                  (let (inline (inline-block block #'(id ...)))
+                    (let fuse ((inline inline) (expr expr))
+                      (ast-case inline (%#if %#letrec-values %#let-values %#ref)
+                        ((%#if test K E)
+                         ;; only inline conditionals if we can fuse the match tree
+                         (case (assert-e #'test)
+                           ((#t)
+                            (optimize-e #'K))
+                           ((#f)
+                            (optimize-f #'E))
+                           (else expr)))
 
-                      ((%#letrec-values . _)
-                       ;; don't inline splices
-                       expr)
+                        ((%#letrec-values . _)
+                         ;; don't inline splices
+                         expr)
 
-                      ((%#let-values (((_) (%#ref _)) ...) body)
-                       (ast-case #'body (%#call)
-                         ((%#call . _)
-                          ;; inline continuation dispatch
-                          inline)
-                         (_
-                          ;; don't inline non-linear patterns
-                          expr)))
+                        ((%#let-values (((_) (%#ref _)) ...) body)
+                         (ast-case #'body (%#call)
+                           ((%#call . _)
+                            ;; inline continuation dispatch
+                            inline)
+                           (_
+                            ;; don't inline non-linear patterns
+                            expr)))
 
-                      ((%#let-values (((id) expr) ...) body)
-                       (bind-e (map cons #'(id ...) #'(expr ...))
-                               #'body
-                               (lambda (e) (fuse e e))))
+                        ((%#let-values (((id) expr) ...) body)
+                         (bind-e (map cons #'(id ...) #'(expr ...))
+                                 #'body
+                                 (lambda (e) (fuse e e))))
 
-                      (_ (optimize-f inline)))))))
+                        (_ (optimize-f inline))))))))
           (else expr)))
 
         (_ (optimize-e expr)))))
@@ -574,6 +578,15 @@ namespace: gxc
            #'body
            (let (subst (map cons #'(id ...) args))
              (apply-expression-subst* #'body subst)))))))
+
+  (def (splice-block? block)
+    (let (kont (caddr block))
+      (ast-case kont (%#lambda)
+        ((%#lambda (id ...) body)
+         (ast-case #'body (%#let-values %#letrec-values)
+           ((%#letrec-values . _) #t)
+           ((%#let-values bind (%#letrec-values . _)) #t)
+           (_ #f))))))
 
   (with-assert assert
     (with-bind bind
