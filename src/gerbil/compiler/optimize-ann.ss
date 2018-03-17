@@ -277,7 +277,7 @@ namespace: gxc
            (else #f))))))
 
   (def (fold-assert-type expr val env)
-    (ast-case expr (%#call %#ref %#quote)
+    (ast-case expr (%#call %#ref %#quote %#lambda)
       ((%#call (%#ref pred) (%#ref id))
        (cond
         ((predicate-type #'pred)
@@ -303,6 +303,9 @@ namespace: gxc
                     (cons [#'id sym (stx-e #'datum) val] env))
                    (_ env)))))
          (else env)))
+
+      ((%#call (%#lambda (id) body) (%#ref xid))
+       (fold-assert-type (apply-expression-subst #'body #'id #'xid) val env))
 
       (_ env)))
 
@@ -437,34 +440,38 @@ namespace: gxc
        ((assoc sexpr env-assert)
         => cdr)
        (else
-        (ast-case expr (%#call %#ref %#quote)
-          ((%#call (%#ref pred) (%#ref id))
-           (cond
-            ((predicate-type #'pred)
-             => (lambda (t)
-                  (assert-type #'id t)))
-            (else #!void)))
+        (let assert ((expr expr))
+          (ast-case expr (%#call %#ref %#quote %#lambda)
+            ((%#call (%#ref pred) (%#ref id))
+             (cond
+              ((predicate-type #'pred)
+               => (lambda (t)
+                    (assert-type #'id t)))
+              (else #!void)))
 
-          ((%#call (%#ref primop) target (%#quote datum))
-           (case (identifier-symbol #'primop)
-             ((##fx= fx=)
-              (ast-case #'target (%#call %#ref)
-                ((%#call (%#ref count) (%#ref id))
-                 (cond
-                  ((countf-symbol #'count)
-                   => (lambda (sym)
-                        (assert-count #'id sym (stx-e #'datum))))
-                  (else #!void)))
-                (_ #!void)))
-             ((##eq? eq? ##eqv? eqv? ##equal? equal?)
-              => (lambda (sym)
-                   (ast-case #'target (%#ref)
-                     ((%#ref id)
-                      (assert-eqf #'id (eqf-symbol sym) (stx-e #'datum)))
-                     (_ #!void))))
-             (else #!void)))
+            ((%#call (%#ref primop) target (%#quote datum))
+             (case (identifier-symbol #'primop)
+               ((##fx= fx=)
+                (ast-case #'target (%#call %#ref)
+                  ((%#call (%#ref count) (%#ref id))
+                   (cond
+                    ((countf-symbol #'count)
+                     => (lambda (sym)
+                          (assert-count #'id sym (stx-e #'datum))))
+                    (else #!void)))
+                  (_ #!void)))
+               ((##eq? eq? ##eqv? eqv? ##equal? equal?)
+                => (lambda (sym)
+                     (ast-case #'target (%#ref)
+                       ((%#ref id)
+                        (assert-eqf #'id (eqf-symbol sym) (stx-e #'datum)))
+                       (_ #!void))))
+               (else #!void)))
 
-          (_ #!void))))))
+            ((%#call (%#lambda (id) body) (%#ref xid))
+             (assert (apply-expression-subst #'body #'id #'xid)))
+
+            (_ #!void)))))))
 
   (def (assert-type id t)
     (def (super-e t)
