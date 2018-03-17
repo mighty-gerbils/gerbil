@@ -351,7 +351,7 @@ namespace: gxc
         val)))
 
   (def (optimize-e expr)
-    (ast-case expr (%#if %#let-values %#call %#ref)
+    (ast-case expr (%#if %#let-values %#letrec-values %#lambda %#call %#ref)
       ((%#if test K E)
        (case (assert-e #'test)
          ((#t)
@@ -366,22 +366,27 @@ namespace: gxc
               K
               ['%#if #'test K E])))))
 
-      ((%#let-values (((_) (%#ref _)) ...) _)
-       expr)
+      ((%#call (%#ref rator) (%#ref id) ...)
+       (cond
+        ((lookup-block #'rator)
+         => (lambda (block)
+              (if (nonlinear-block? block)
+                expr
+                (optimize-e (inline-block block #'(id ...))))))
+        (else
+         expr)))
+
+      ((%#let-values (((id) (%#ref xid)) ...) body)
+       (let (body (optimize-e #'body))
+         ['%#let-values #'(((id) (%#ref xid)) ...) body]))
 
       ((%#let-values (((id) expr) ...) body)
        (bind-e (map cons #'(id ...) #'(expr ...))
                #'body))
 
-      ((%#call (%#ref rator) (%#ref id) ...)
-       (cond
-        ((lookup-block #'rator)
-         => (lambda (block)
-              (if (splice-block? block)
-                expr
-                (optimize-e (inline-block block #'(id ...))))))
-        (else
-         expr)))
+      ((%#letrec-values (((K) (%#lambda (id ...) expr)) bind ...) body)
+       (let (expr (optimize-e #'expr))
+         ['%#letrec-values [[[#'K] ['%#lambda #'(id ...) expr]] #'(bind ...) ...] #'body]))
 
       (_ expr)))
 
@@ -396,11 +401,11 @@ namespace: gxc
          (cond
           ((lookup-block #'rator)
            => (lambda (block)
-                (if (splice-block? block)
+                (if (nonlinear-block? block)
                   expr
                   (let (inline (inline-block block #'(id ...)))
                     (let fuse ((inline inline) (expr expr))
-                      (ast-case inline (%#if %#letrec-values %#let-values %#ref)
+                      (ast-case inline (%#if %#let-values %#ref)
                         ((%#if test K E)
                          ;; only inline conditionals if we can fuse the match tree
                          (case (assert-e #'test)
@@ -410,18 +415,11 @@ namespace: gxc
                             (optimize-f #'E))
                            (else expr)))
 
-                        ((%#letrec-values . _)
-                         ;; don't inline splices
-                         expr)
-
                         ((%#let-values (((_) (%#ref _)) ...) body)
                          (ast-case #'body (%#call)
                            ((%#call . _)
                             ;; inline continuation dispatch
-                            inline)
-                           (_
-                            ;; don't inline non-linear patterns
-                            expr)))
+                            inline)))
 
                         ((%#let-values (((id) expr) ...) body)
                          (bind-e (map cons #'(id ...) #'(expr ...))
@@ -579,14 +577,22 @@ namespace: gxc
            (let (subst (map cons #'(id ...) args))
              (apply-expression-subst* #'body subst)))))))
 
-  (def (splice-block? block)
+  (def (nonlinear-block? block)
+    (def (nonlinear-expr? expr)
+      (ast-case expr (%#let-values %#letrec-values %#ref)
+        ((%#letrec-values . _) #t)
+        ((%#let-values (((_) (%#ref _)) ...) body)
+         (ast-case #'body (%#call)
+           ((%#call . _) #f)
+           (_ #t)))
+        ((%#let-values _ body)
+         (nonlinear-expr? #'body))
+        (_ #f)))
+
     (let (kont (caddr block))
       (ast-case kont (%#lambda)
         ((%#lambda (id ...) body)
-         (ast-case #'body (%#let-values %#letrec-values)
-           ((%#letrec-values . _) #t)
-           ((%#let-values bind (%#letrec-values . _)) #t)
-           (_ #f))))))
+         (nonlinear-expr? #'body)))))
 
   (with-assert assert
     (with-bind bind
