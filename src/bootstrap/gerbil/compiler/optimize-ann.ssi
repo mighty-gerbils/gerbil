@@ -32,6 +32,12 @@ namespace: gxc
           optimize-match-prune-blocks
           gxc#optimize-match-prune-blocks)
          (%#define-runtime
+          optimize-match-fuse-restart-blocks
+          gxc#optimize-match-fuse-restart-blocks)
+         (%#define-runtime
+          optimize-match-assert-restart
+          gxc#optimize-match-assert-restart)
+         (%#define-runtime
           push-match-vars-let-values%
           gxc#push-match-vars-let-values%)
          (%#define-runtime push-match-vars-if% gxc#push-match-vars-if%)

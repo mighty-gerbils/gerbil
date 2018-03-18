@@ -950,10 +950,11 @@
                                        (let ((_eid14434_
                                               (gxc#identifier-symbol
                                                _L14422_)))
-                                         (table-set!
+                                         (hash-update!
                                           _ht14386_
                                           _eid14434_
-                                          '#t)))
+                                          1+
+                                          '0)))
                                      _hd1439514417_)
                                     (_g1438814401_ _g1438914404_))))
                             (_g1438814401_ _g1438914404_))))
@@ -987,10 +988,11 @@
                                                       (gxc#identifier-symbol
                                                        _L14365_)))
                                                  (begin
-                                                   (table-set!
+                                                   (hash-update!
                                                     _ht14316_
                                                     _eid14380_
-                                                    '#t)
+                                                    1+
+                                                    '0)
                                                    (gxc#compile-e
                                                     _L14364_
                                                     _ht14316_))))
