@@ -147,8 +147,8 @@ namespace: gxc
        (ast-case #'K (%#let-values %#ref)
          ((%#let-values (((_) (%#ref _)) ...) _)
           ;; pattern var bind -- we end the block, it's either the end of match
-          ;; or a splice/non-linear pattern forces us to capture variables and stop
-          ;; optimizing
+          ;; or a splice/non-linear pattern forces us to capture variables and
+          ;; create a macro block that doesn't get inlined.
           (ast-case #'E (%#call)
             ((%#call . _)
              (values body []))

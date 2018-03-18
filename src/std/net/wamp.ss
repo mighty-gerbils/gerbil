@@ -398,11 +398,15 @@ package: std/net
         [args])))
 
   (def (loop)
-    (<- ;; rpc calls
+    (<- ((!wamp.receive msg)
+         (receive msg))
+
+        ;; rpc calls
         ((!wamp.call name opts args kws k)
          (let (reqid (request-id))
            (hash-put! pend-calls reqid (cons @source k))
            (wamp-send ws [CALL reqid (or opts empty-hash) name (message-tail args kws) ...])))
+
         ((!wamp.register proc name opts k)
          (cond
           ((hash-get procedure-registrations name)
@@ -411,6 +415,7 @@ package: std/net
            (let (reqid (request-id))
              (hash-put! pend-registrations reqid (cons (cons @source k) (cons name proc)))
              (wamp-send ws [REGISTER reqid (or opts empty-hash) name])))))
+
         ((!wamp.unregister name k)
          (cond
           ((hash-get procedure-registrations name)
@@ -440,24 +445,24 @@ package: std/net
              (hash-put! pend-topic-subscriptions topic [(cons @source k)])
              (wamp-send ws [SUBSCRIBE reqid (or opts empty-hash) topic])))))
 
-        ;; events
-        ((!wamp.receive msg)
-         (receive msg))
-
-        ;; pubsub
         ((!wamp.unsubscribe topic)
          (remove-actor-subscription! topic @source))
+
         ((!wamp.publish topic opts args kws)
          (let (reqid (request-id))
            (wamp-send ws [PUBLISH reqid (or opts empty-hash) topic (message-tail args kws) ...])))
+
         ;; control
         ((!wamp.shutdown)
          (wamp-send ws [GOODBYE empty-hash "wamp.error.close_realm"])
          (raise 'shutdown))
+
         ((!wamp.close-connection e)
          (raise e))
+
         ((!wamp.remove-thread thread)
          (remove-thread! thread))
+
         (bogus
          (warning "unexpected message: ~a" bogus)))
     (loop))
