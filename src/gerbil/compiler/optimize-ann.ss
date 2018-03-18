@@ -199,7 +199,7 @@ namespace: gxc
        (let ((values body body-blocks)
              (basic-block body bind assert))
          (fold-blocks (foldl cons rest body-blocks)
-           (cons [name continue: ['%#lambda (reverse (map car bind)) body] bind assert]
+           (cons [name continue: ['%#lambda (reverse (map car bind)) body] assert bind]
                  blocks))))
       ([] blocks)))
 
@@ -209,7 +209,7 @@ namespace: gxc
        (let ((values body body-blocks)
              (basic-block #'body [] []))
          (fold-blocks body-blocks
-           (cons [name restart: ['%#lambda [] body]]
+           (cons [name restart: ['%#lambda [] body] []]
                  blocks)))))))
 
 (def (optimize-match-fold-basic-blocks blocks)
@@ -217,26 +217,31 @@ namespace: gxc
     (match rest
       ([block . rest]
        (match block
-         ([name restart: kont]
+         ([name restart: kont assert]
           (ast-case kont (%#lambda)
             ((%#lambda () body)
-             (let* ((body (optimize-match-block #'body [] [] rest))
-                    (block (cons name ['%#lambda [] body]))
+             (let* ((body (optimize-match-block #'body assert [] rest))
+                    (block [name restart: ['%#lambda [] body] assert])
                     (blocks (cons block blocks))
-                    (rest (optimize-match-prune-blocks rest blocks)))
+                    (rest (optimize-match-prune-blocks rest blocks))
+                    (rest (optimize-match-fuse-restart-blocks rest blocks)))
                (lp rest blocks)))))
-         ([name continue: kont bind assert]
+         ([name continue: kont assert bind]
           (ast-case kont (%#lambda)
             ((%#lambda (id ...) body)
-             (let* ((body (optimize-match-block #'body bind assert rest))
-                    (block (cons name ['%#lambda #'(id ...) body]))
+             (let* ((body (optimize-match-block #'body assert bind rest))
+                    (block [name continue: ['%#lambda #'(id ...) body] assert bind])
                     (blocks (cons block blocks))
-                    (rest (optimize-match-prune-blocks rest blocks)))
+                    (rest (optimize-match-prune-blocks rest blocks))
+                    (rest (optimize-match-fuse-restart-blocks rest blocks)))
                (lp rest blocks)))))))
       (else
-       (reverse blocks)))))
+       (foldl (lambda (block r)
+                (with ([name _ kont . _] block)
+                  (cons (cons name kont) r)))
+              [] blocks)))))
 
-(def (optimize-match-block body bind assert blocks)
+(def (optimize-match-block body assert bind blocks)
   (defrules with-assert ()
     ((_ assert expr)
      (do-assert assert (lambda () expr))))
@@ -335,7 +340,9 @@ namespace: gxc
         val)))
 
   (def (do-bind bind K)
-    (do-bind! (fold-bind-env bind env-bind) K))
+    (if (pair? bind)
+      (do-bind! (fold-bind-env bind env-bind) K)
+      (K)))
 
   (def (fold-bind-env bind env)
     (let lp ((rest bind) (env env))
@@ -609,9 +616,8 @@ namespace: gxc
   (def rtab (make-hash-table-eq))
 
   (for-each
-    (match <>
-      ([K . kont]
-       (apply-collect-runtime-refs kont rtab)))
+    (lambda (block)
+      (apply-collect-runtime-refs (caddr block) rtab))
     konts)
 
   (let lp ((rest blocks) (r []))
@@ -626,6 +632,52 @@ namespace: gxc
             (lp rest r)))))
       (else
        (reverse r)))))
+
+(def (optimize-match-fuse-restart-blocks blocks konts)
+  (match blocks
+    ([[name restart: kont _] . rest]
+     (def rtab (make-hash-table-eq))
+
+     (for-each
+       (lambda (block)
+         (apply-collect-runtime-refs (caddr block) rtab))
+       konts)
+
+     (if (fx= (hash-ref rtab (identifier-symbol name)) 1)
+       (let* ((rblock
+               (find (lambda (block) (apply-find-var-refs (caddr block) [name]))
+                     konts))
+              (assert
+               (optimize-match-assert-restart rblock name)))
+         (cons [name restart: kont assert] rest))
+       blocks))
+
+    (else blocks)))
+
+(def (optimize-match-assert-restart block name)
+  (def (assert-restart expr assert)
+    (ast-case expr (%#if %#call %#ref %#let-values %#letrec-values %#lambda)
+      ((%#if test K E)
+       (or (assert-restart #'K (cons (cons #'test #t) assert))
+           (assert-restart #'E (cons (cons #'test #f) assert))))
+
+      ((%#call (%#ref rator) . _)
+       (and (free-identifier=? #'rator name)
+            assert))
+
+      ((%#let-values _ body)
+       (assert-restart #'body assert))
+
+      ((%#letrec-values (((K) (%#lambda (id ...) expr)) bind ...) body)
+       (assert-restart #'expr assert))
+
+      (_ #f)))
+
+  (match block
+    ([_ _ kont assert . maybe-bind]
+     (ast-case kont (%#lambda)
+       ((%#lambda (id ...) body)
+        (assert-restart #'body assert))))))
 
 ;;; apply-push-match-vars
 (def (push-match-vars-let-values% stx vars K)

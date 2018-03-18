@@ -292,13 +292,13 @@ namespace: gxc
   (ast-case stx ()
     ((_ id)
      (let (eid (identifier-symbol #'id))
-       (hash-put! ht eid #t)))))
+       (hash-update! ht eid 1+ 0)))))
 
 (def (collect-runtime-refs-setq% stx ht)
   (ast-case stx ()
     ((_ id expr)
      (let (eid (identifier-symbol #'id))
-       (hash-put! ht eid #t)
+       (hash-update! ht eid 1+ 0)
        (compile-e #'expr ht)))))
 
 ;;; &find-expression
