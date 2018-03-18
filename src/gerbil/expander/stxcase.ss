@@ -493,13 +493,16 @@ namespace: gx
               (target (genident))
               (first (if (null? clauses) E (car clause-ids))))
          (stx-wrap-source
-          (core-list 'let-values
-            [[[E] (core-list 'lambda%
-                    [target] (core-list 'raise-syntax-error
-                               #f "Bad syntax" target))]]
-            (generate-body
-             (generate-bindings target ids clauses clause-ids E)
-             [first expr]))
+          (core-list 'begin-annotation '@syntax-case
+            (stx-wrap-source
+             (core-list 'let-values
+               [[[E] (core-list 'lambda%
+                       [target] (core-list 'raise-syntax-error
+                                  #f "Bad syntax" target))]]
+               (generate-body
+                (generate-bindings target ids clauses clause-ids E)
+                [first expr]))
+             (stx-source stx)))
           (stx-source stx))))))))
 
 ;;; utilities
