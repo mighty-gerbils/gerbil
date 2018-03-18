@@ -1521,7 +1521,16 @@ package: gerbil
                           (syntax/loc stx
                             (def (impl arg ...) body ...))))
            (syntax/loc stx
-             (begin defimpl defstx)))))))
+             (begin defimpl defstx))))))
+
+    (defrules defconst (quote)
+      ((_ id (quote expr))
+       (identifier? #'id)
+       (defrules id ()
+         (x (identifier? #'x) (quote expr))))
+      ((recur id expr)
+       (and (identifier? #'id) (stx-datum? #'expr))
+       (recur id (quote expr)))))
 
   (import <sugar:3>))
 
@@ -2374,23 +2383,23 @@ package: gerbil
             ((?: hd . rest)
              (syntax-case #'rest ()
                (()
-                [#'if #'(? hd target) K E])
+                ['if #'(? hd target) K E])
                ((pat)
-                [#'if #'(? hd target)
-                      (generate1 tgt #'pat K E)
-                      E])
+                ['if #'(? hd target)
+                     (generate1 tgt #'pat K E)
+                     E])
                ((=>: pat)
                 (with-syntax (($tgt (genident 'e)))
-                  [#'let #'(($tgt (hd target)))
-                         [#'if #'$tgt
-                               (generate1 #'$tgt #'pat K E)
-                               E]]))
+                  ['let #'(($tgt (hd target)))
+                        ['if #'$tgt
+                          (generate1 #'$tgt #'pat K E)
+                          E]]))
                ((:: proc =>: pat)
                 (with-syntax (($tgt (genident 'e)))
-                  [#'if #'(? hd target)
-                        [#'let #'(($tgt (proc target)))
-                               (generate1 #'$tgt #'pat K E)]
-                        E]))))
+                  ['if #'(? hd target)
+                       ['let #'(($tgt (proc target)))
+                             (generate1 #'$tgt #'pat K E)]
+                       E]))))
             ((and: . rest)
              (syntax-case #'rest ()
                ((hd . rest)
@@ -2409,44 +2418,58 @@ package: gerbil
             ((cons: hd tl)
              (with-syntax (($hd (genident 'hd))
                            ($tl (genident 'tl)))
-               [#'if #'(##pair? target)
-                     [#'let #'(($hd (##car target))
-                               ($tl (##cdr target)))
-                            (generate1 #'$hd #'hd
-                                       (generate1 #'$tl #'tl K E)
-                                       E)]
-                     E]))
+               ['if #'(##pair? target)
+                    (let ((hd-pat (stx-e #'hd))
+                          (tl-pat (stx-e #'tl)))
+                      (cond
+                       ((and (equal? hd-pat '(any:))
+                             (equal? tl-pat '(any:)))
+                        K)
+                       ((equal? tl-pat '(any:))
+                        ['let #'(($hd (##car target)))
+                              (generate1 #'$hd #'hd K E)])
+                       ((equal? hd-pat '(any:))
+                        ['let #'(($tl (##cdr target)))
+                              (generate1 #'$tl #'tl K E)])
+                       (else
+                        ['let #'(($hd (##car target))
+                                 ($tl (##cdr target)))
+                              (generate1 #'$hd #'hd
+                                         (generate1 #'$tl #'tl K E)
+                                         E)])))
+                    E]))
             ((null:)
-             [#'if #'(##null? target) K E])
+             ['if #'(##null? target) K E])
             ((splice: hd rest)
              (generate-splice tgt #'hd #'rest K E))
             ((box: pat)
              (with-syntax (($tgt (genident 'e)))
-               [#'if #'(##box? target)
-                     [#'let #'(($tgt (##unbox target)))
-                            (generate1 #'$tgt #'pat K E)]
-                     E]))
+               ['if #'(##box? target)
+                    ['let #'(($tgt (##unbox target)))
+                          (generate1 #'$tgt #'pat K E)]
+                    E]))
             ((values: body)
              (syntax-case #'body ()
                ((simple: body)
                 (with-syntax ((len (stx-length #'body)))
-                  [#'if #'(##fx= (values-count target) len)
-                        (generate-simple-vector tgt #'body 0 K E)
-                        E]))
+                  ['if #'(##fx= (values-count target) len)
+                       (generate-simple-vector tgt #'body 0 K E)
+                       E]))
                ((list: body)
-                (generate-list-vector tgt #'body #'values->list 0 K E))))
+                (generate-list-vector tgt #'body 'values->list 0 K E))))
             ((vector: body)
              (syntax-case #'body ()
                ((simple: body)
                 (with-syntax ((len (stx-length #'body)))
-                  [#'if #'(and (##vector? target)
-                               (##fx= (##vector-length target) len))
-                        (generate-simple-vector tgt #'body 0 K E)
-                        E]))
+                  ['if #'(##vector? target)
+                       ['if #'(##fx= (##vector-length target) len)
+                            (generate-simple-vector tgt #'body 0 K E)
+                            E]
+                       E]))
                ((list: body)
-                [#'if #'(vector? target)
-                      (generate-list-vector tgt #'body #'subvector->list 0 K E)
-                      E])))
+                ['if #'(##vector? target)
+                     (generate-list-vector tgt #'body 'subvector->list 0 K E)
+                     E])))
             ((struct: info body)
              (generate-struct (stx-e #'info) tgt #'body K E))
             ((class: info body)
@@ -2457,16 +2480,16 @@ package: gerbil
                                    ((or (symbol? e)
                                         (keyword? e)
                                         (immediate? e))
-                                    #'##eq?)
-                                   ((number? e) #'eqv?)
-                                   (else #'equal?)))))
-               [#'if #'(eql target (quote datum)) K E]))
+                                    '##eq?)
+                                   ((number? e) 'eqv?)
+                                   (else 'equal?)))))
+               ['if #'(eql target (quote datum)) K E]))
             ((apply: getf pat)
              (with-syntax (($tgt (genident 'e)))
-               [#'let #'(($tgt (getf target)))
-                      (generate1 #'$tgt #'pat K E)]))
+               ['let #'(($tgt (getf target)))
+                     (generate1 #'$tgt #'pat K E)]))
             ((var: id)
-             [#'let #'((id target)) K])
+             ['let #'((id target)) K])
             ((any:) K))))
 
       (def (generate-splice tgt hd rest K E)
@@ -2508,18 +2531,18 @@ package: gerbil
              (with-syntax (($tgt (genident 'e))
                            (target tgt)
                            (k off))
-               [#'let #'(($tgt (##vector-ref target k)))
-                      (generate1 #'$tgt #'hd
-                                 (recur #'rest (fx1+ off))
-                                 E)]))
+               ['let #'(($tgt (##vector-ref target k)))
+                     (generate1 #'$tgt #'hd
+                                (recur #'rest (fx1+ off))
+                                E)]))
             (_ K))))
 
       (def (generate-list-vector tgt body tgt->list start K E)
         (with-syntax (($tgt (genident 'e))
                       (target tgt)
                       (target->list tgt->list))
-          [#'let #'(($tgt (target->list target)))
-                 (generate1 #'$tgt body K E)]))
+          ['let #'(($tgt (target->list target)))
+                (generate1 #'$tgt body K E)]))
 
       (def (generate-struct info tgt body K E)
         (with-syntax* (((values rtd)
@@ -2535,26 +2558,33 @@ package: gerbil
                        ((values final?)
                         (and rtd (assgetq final: (runtime-type-plist rtd))))
                        (target tgt)
-                       (type::t
-                        (runtime-type-identifier info))
-                       (type-instance?
-                        (if final?
-                          #'direct-struct-instance?
-                          #'struct-instance?)))
+                       (instance-check
+                        (if (expander-type-info? info)
+                          (with-syntax ((instance?
+                                         (cadddr (expander-type-identifiers info))))
+                            #'(instance? target))
+                          (with-syntax ((type::t
+                                         (runtime-type-identifier info))
+                                        (type-instance?
+                                         (if final?
+                                           #'direct-struct-instance?
+                                           #'struct-instance?)))
+                            #'(type-instance? type::t target)))))
           (syntax-case body ()
             ((simple: body)
-             (let (K (generate-simple-vector tgt #'body 1 K E))
-               (if (and rtd (fx<= (stx-length #'body) fields))
-                 [#'if #'(type-instance? type::t target)
-                       K E]
-                 (with-syntax ((len (stx-length #'body)))
-                   [#'if #'(and (type-instance? type::t target)
-                                (##fx< len (##vector-length target)))
-                         K E]))))
+             (let ((K (generate-simple-vector tgt #'body 1 K E))
+                   (len (stx-length #'body)))
+               (if (and rtd (fx<= len fields))
+                 ['if #'instance-check K E]
+                 (with-syntax ((len len))
+                   ['if #'instance-check
+                     ['if #'(##fx< len (##vector-length target))
+                          K E]
+                     E]))))
             ((list: body)
-             [#'if #'(type-instance? type::t target)
-                   (generate-list-vector tgt #'body #'struct->list 1 K E)
-                   E]))))
+             ['if #'instance-check
+               (generate-list-vector tgt #'body #'struct->list 1 K E)
+               E]))))
 
       (def (generate-class info tgt body K E)
         (def rtd
@@ -2586,15 +2616,15 @@ package: gerbil
                             ($off (genident 'slot))
                             ($tgt (genident 'e))
                             ((values K)
-                             [#'let #'(($tgt (##vector-ref target (fx1+ $off))))
+                             ['let #'(($tgt (##vector-ref target (fx1+ $off))))
                                    (generate1 #'$tgt #'pat
                                               (recur klass #'rest)
                                               E)]))
                (if (known-slot? #'key)
-                 [#'let #'(($off (class-slot-offset $klass key)))
-                        K]
-                 [#'let #'(($off (class-slot-offset $klass key)))
-                        [#'if #'$off K E]])))
+                 ['let #'(($off (class-slot-offset $klass key)))
+                       K]
+                 ['let #'(($off (class-slot-offset $klass key)))
+                       ['if #'$off K E]])))
             (_ K)))
 
         (with-syntax* (($klass (genident 'class))
@@ -2605,10 +2635,10 @@ package: gerbil
                         (if final?
                           #'direct-class-instance?
                           #'class-instance?)))
-          [#'if #'(type-instance? type::t target)
-                [#'let #'(($klass (object-type target)))
-                       (recur #'$klass body)]
-                E]))
+          ['if #'(type-instance? type::t target)
+               ['let #'(($klass (object-type target)))
+                     (recur #'$klass body)]
+               E]))
 
       (generate1 tgt ptree K E))
 
@@ -2655,30 +2685,34 @@ package: gerbil
                         (syntax/loc stx
                           (lambda () (error "No clause matching" target ...))))
                        (body
-                        (generate-clauses body #'($E))))
-          #'(let (($E fail))
-              body)))
+                        (generate-clauses body #'($E)))
+                       (match-expr
+                        (syntax/loc stx
+                          (let (($E fail))
+                            body))))
+          #'(begin-annotation @match match-expr)))
 
       (def (generate-clauses rest E)
         (syntax-case rest ()
           ((hd)
            (syntax-case #'hd ()
              ((_ clause body)
-              (if (stx-e #'clause)
-                (generate1 #'clause #'body E)
-                #'body))))
+              ['begin-annotation '@match-body
+                (if (stx-e #'clause)
+                  (generate1 #'clause #'body E)
+                  #'body)])))
           ((hd . rest)
            (syntax-case #'hd ()
              ((try clause body)
-              (with-syntax ((body
-                             (if (stx-e #'clause)
-                               (generate1 #'clause #'body E)
-                               #'body))
-                            (rest-body
-                             (generate-clauses #'rest #'(try))))
-                #'(let ((try (lambda () body)))
-                    rest-body)))))
-          (_ E)))
+              (if (stx-e #'clause)
+                (with-syntax ((body (generate1 #'clause #'body E))
+                              (rest-body (generate-clauses #'rest #'(try))))
+                  #'(let ((try (lambda () body)))
+                      rest-body))
+                (with-syntax ((rest-body (generate-clauses #'rest #'(try))))
+                  #'(let ((try (begin-annotation @match-else (lambda () body))))
+                      rest-body))))))
+          (_ ['begin-annotation '@match-body E])))
 
       (def (generate1 clause body E)
         (let recur ((rest clause) (rest-targets tgt-lst))

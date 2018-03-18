@@ -95,8 +95,11 @@ namespace: gx
 ;; (%#begin-annotation annotation expr ...)
 (def (core-expand-begin-annotation% stx)
   (core-syntax-case stx ()
-    ;; XXX
-    ))
+    ((_ ann expr)
+     (core-quote-syntax
+      [(core-quote-syntax '%#begin-annotation) ann
+       (core-expand-expression expr)]
+      (stx-source stx)))))
 
 ;; local expression blocks -- lambda/let mf
 (def (core-expand-local-block stx body)

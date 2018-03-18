@@ -1,0 +1,46 @@
+prelude: :gerbil/core
+package: gerbil/compiler
+namespace: gxc
+
+(%#begin (%#import
+          :gerbil/expander
+          :gerbil/compiler/base
+          :gerbil/compiler/compile
+          :gerbil/compiler/optimize-base
+          :gerbil/compiler/optimize-xform)
+         (%#export #t)
+         (%#define-runtime &optmize-annotated gxc#&optmize-annotated)
+         (%#define-runtime
+          apply-optimize-annotated
+          gxc#apply-optimize-annotated)
+         (%#define-runtime &push-match-vars gxc#&push-match-vars)
+         (%#define-runtime apply-push-match-vars gxc#apply-push-match-vars)
+         (%#define-runtime optimize-annotation% gxc#optimize-annotation%)
+         (%#define-runtime optimize-match gxc#optimize-match)
+         (%#define-runtime optimize-match-body gxc#optimize-match-body)
+         (%#define-runtime
+          optimize-match-basic-blocks
+          gxc#optimize-match-basic-blocks)
+         (%#define-runtime
+          optimize-match-lift-basic-blocks
+          gxc#optimize-match-lift-basic-blocks)
+         (%#define-runtime
+          optimize-match-fold-basic-blocks
+          gxc#optimize-match-fold-basic-blocks)
+         (%#define-runtime optimize-match-block gxc#optimize-match-block)
+         (%#define-runtime
+          optimize-match-prune-blocks
+          gxc#optimize-match-prune-blocks)
+         (%#define-runtime
+          optimize-match-fuse-restart-blocks
+          gxc#optimize-match-fuse-restart-blocks)
+         (%#define-runtime
+          optimize-match-assert-restart
+          gxc#optimize-match-assert-restart)
+         (%#define-runtime
+          push-match-vars-let-values%
+          gxc#push-match-vars-let-values%)
+         (%#define-runtime push-match-vars-if% gxc#push-match-vars-if%)
+         (%#define-runtime push-match-vars-call% gxc#push-match-vars-call%)
+         (%#define-runtime push-match-vars-stop gxc#push-match-vars-stop))
+(%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize-ann__0"))

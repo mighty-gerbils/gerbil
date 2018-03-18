@@ -1,0 +1,114 @@
+prelude: :gerbil/core
+package: gerbil/compiler
+namespace: gxc
+
+(%#begin (%#import
+          :gerbil/expander
+          :gerbil/compiler/base
+          :gerbil/compiler/compile
+          :gerbil/compiler/optimize-base
+          :gerbil/compiler/optimize-xform)
+         (%#export #t)
+         (%#define-runtime &collect-type-info gxc#&collect-type-info)
+         (%#define-runtime apply-collect-type-info gxc#apply-collect-type-info)
+         (%#define-runtime &basic-expression-type gxc#&basic-expression-type)
+         (%#define-runtime
+          apply-basic-expression-type
+          gxc#apply-basic-expression-type)
+         (%#define-runtime &lift-top-lambdas gxc#&lift-top-lambdas)
+         (%#define-runtime apply-lift-top-lambdas gxc#apply-lift-top-lambdas)
+         (%#define-runtime
+          collect-type-define-values%
+          gxc#collect-type-define-values%)
+         (%#define-runtime
+          collect-type-let-values%
+          gxc#collect-type-let-values%)
+         (%#define-runtime collect-type-call% gxc#collect-type-call%)
+         (%#define-runtime
+          basic-expression-type-begin%
+          gxc#basic-expression-type-begin%)
+         (%#define-runtime
+          basic-expression-type-begin-annotation%
+          gxc#basic-expression-type-begin-annotation%)
+         (%#define-runtime
+          basic-expression-type-lambda%
+          gxc#basic-expression-type-lambda%)
+         (%#define-runtime
+          basic-expression-type-case-lambda%
+          gxc#basic-expression-type-case-lambda%)
+         (%#define-runtime
+          basic-expression-type-builtin
+          gxc#basic-expression-type-builtin)
+         (%#begin (%#begin-syntax
+                   (%#call (%#ref _gx#load-module)
+                           (%#quote "gerbil/compiler/optimize-top__1")))
+                  (%#define-syntax
+                   defbasic-expression-type-builtin
+                   |gxc[:0:]#defbasic-expression-type-builtin|))
+         (%#define-runtime
+          basic-expression-type-call%
+          gxc#basic-expression-type-call%)
+         (%#define-runtime
+          basic-expression-type-make-struct-type
+          gxc#basic-expression-type-make-struct-type)
+         (%#define-runtime
+          basic-expression-type-make-struct-predicate
+          gxc#basic-expression-type-make-struct-predicate)
+         (%#begin (%#define-runtime
+                   basic-expression-type-make-struct-field-accessor__%
+                   gxc#basic-expression-type-make-struct-field-accessor__%)
+                  (%#begin (%#define-runtime
+                            basic-expression-type-make-struct-field-accessor__0
+                            gxc#basic-expression-type-make-struct-field-accessor__0)
+                           (%#define-runtime
+                            basic-expression-type-make-struct-field-accessor
+                            gxc#basic-expression-type-make-struct-field-accessor)))
+         (%#begin (%#define-runtime
+                   basic-expression-type-make-struct-field-mutator__%
+                   gxc#basic-expression-type-make-struct-field-mutator__%)
+                  (%#begin (%#define-runtime
+                            basic-expression-type-make-struct-field-mutator__0
+                            gxc#basic-expression-type-make-struct-field-mutator__0)
+                           (%#define-runtime
+                            basic-expression-type-make-struct-field-mutator
+                            gxc#basic-expression-type-make-struct-field-mutator)))
+         (%#define-runtime
+          basic-expression-type-make-struct-field-unchecked-accessor
+          gxc#basic-expression-type-make-struct-field-unchecked-accessor)
+         (%#define-runtime
+          basic-expression-type-make-struct-field-unchecked-mutator
+          gxc#basic-expression-type-make-struct-field-unchecked-mutator)
+         (%#define-runtime
+          basic-expression-type-ref%
+          gxc#basic-expression-type-ref%)
+         (%#define-runtime dispatch-lambda-form? gxc#dispatch-lambda-form?)
+         (%#define-runtime
+          dispatch-lambda-form-delegate
+          gxc#dispatch-lambda-form-delegate)
+         (%#define-runtime lambda-form-arity gxc#lambda-form-arity)
+         (%#define-runtime lambda-expr? gxc#lambda-expr?)
+         (%#define-runtime case-lambda-expr? gxc#case-lambda-expr?)
+         (%#define-runtime opt-lambda-expr? gxc#opt-lambda-expr?)
+         (%#define-runtime kw-lambda-expr? gxc#kw-lambda-expr?)
+         (%#begin (%#define-runtime
+                   lift-case-lambda-clauses__%
+                   gxc#lift-case-lambda-clauses__%)
+                  (%#begin (%#define-runtime
+                            lift-case-lambda-clauses__0
+                            gxc#lift-case-lambda-clauses__0)
+                           (%#define-runtime
+                            lift-case-lambda-clauses
+                            gxc#lift-case-lambda-clauses)))
+         (%#define-runtime
+          lift-top-lambda-define-values%
+          gxc#lift-top-lambda-define-values%)
+         (%#define-runtime
+          lift-top-lambda-let-values%
+          gxc#lift-top-lambda-let-values%)
+         (%#define-runtime
+          lift-top-lambda-letrec-values%
+          gxc#lift-top-lambda-letrec-values%)
+         (%#define-runtime
+          lift-top-lambda-binding?
+          gxc#lift-top-lambda-binding?))
+(%#call (%#ref _gx#load-module) (%#quote "gerbil/compiler/optimize-top__0"))

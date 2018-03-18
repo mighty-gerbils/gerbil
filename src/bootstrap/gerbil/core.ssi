@@ -921,7 +921,10 @@ namespace: gerbil/core
                                        |gerbil/core$<sugar>$<sugar:3>[:0:]#defsyntax|))
                              (%#define-syntax
                               definline
-                              |gerbil/core$<sugar>$<sugar:3>[:0:]#definline|)))
+                              |gerbil/core$<sugar>$<sugar:3>[:0:]#definline|)
+                             (%#define-syntax
+                              defconst
+                              |gerbil/core$<sugar>$<sugar:3>[:0:]#defconst|)))
                    (%#import (in: #f <sugar:3>))))
          (%#import
           (in: #f <sugar>)

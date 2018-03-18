@@ -398,9 +398,7 @@ package: std/net
         [args])))
 
   (def (loop)
-    (<- ((!wamp.receive msg)
-         (receive msg))
-        ;; rpc
+    (<- ;; rpc calls
         ((!wamp.call name opts args kws k)
          (let (reqid (request-id))
            (hash-put! pend-calls reqid (cons @source k))
@@ -422,6 +420,8 @@ package: std/net
                   (wamp-send ws [UNREGISTER reqid regid]))))
           (else
            (!!error "procedure is not registered" k))))
+
+
         ;; pubsub
         ((!wamp.subscribe topic opts k)
          (cond
@@ -439,6 +439,12 @@ package: std/net
              (hash-put! pend-subscriptions reqid topic)
              (hash-put! pend-topic-subscriptions topic [(cons @source k)])
              (wamp-send ws [SUBSCRIBE reqid (or opts empty-hash) topic])))))
+
+        ;; events
+        ((!wamp.receive msg)
+         (receive msg))
+
+        ;; pubsub
         ((!wamp.unsubscribe topic)
          (remove-actor-subscription! topic @source))
         ((!wamp.publish topic opts args kws)
@@ -490,26 +496,26 @@ package: std/net
 ;;; Protocol Details
 (def empty-hash (make-hash-table))
 
-(def HELLO         1)
-(def WELCOME       2)
-(def ABORT         3)
-(def GOODBYE       6)
-(def ERROR         8)
-(def PUBLISH      16)
-(def PUBLISHED    17)
-(def SUBSCRIBE    32)
-(def SUBSCRIBED   33)
-(def UNSUBSCRIBE  34)
-(def UNSUBSCRIBED 35)
-(def EVENT        36)
-(def CALL         48)
-(def RESULT       50)
-(def REGISTER     64)
-(def REGISTERED   65)
-(def UNREGISTER   66)
-(def UNREGISTERED 67)
-(def INVOCATION   68)
-(def YIELD        70)
+(defconst HELLO         1)
+(defconst WELCOME       2)
+(defconst ABORT         3)
+(defconst GOODBYE       6)
+(defconst ERROR         8)
+(defconst PUBLISH      16)
+(defconst PUBLISHED    17)
+(defconst SUBSCRIBE    32)
+(defconst SUBSCRIBED   33)
+(defconst UNSUBSCRIBE  34)
+(defconst UNSUBSCRIBED 35)
+(defconst EVENT        36)
+(defconst CALL         48)
+(defconst RESULT       50)
+(defconst REGISTER     64)
+(defconst REGISTERED   65)
+(defconst UNREGISTER   66)
+(defconst UNREGISTERED 67)
+(defconst INVOCATION   68)
+(defconst YIELD        70)
 
 (def session-details
   (hash
