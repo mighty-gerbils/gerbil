@@ -354,17 +354,20 @@ namespace: gx
                                           vars svars tlvars)))))]]
                       (cons* $lp $target linit)))
 
+                  (let (body
+                        (core-list 'let-values
+                          [[[$target $tl]
+                            (core-list 'syntax-split-splice target rlen)]]
+                          (recur tl vars $tl E make-loop)))
                   (core-list 'if
                     (core-list 'stx-pair/null? target)
-                    (core-list 'if
-                      (core-list 'fx>=
-                        (core-list 'stx-length target) rlen)
-                      (core-list 'let-values
-                        [[[$target $tl]
-                          (core-list 'syntax-split-splice target rlen)]]
-                        (recur tl vars $tl E make-loop))
-                      E)
-                    E)))))
+                    (if (zero? rlen)
+                        body
+                        (core-list 'if
+                          (core-list 'fx>=
+                            (core-list 'stx-length target) rlen)
+                          body E))
+                    E))))))
             ((null)
              (core-list 'if
                (core-list 'stx-null? target)
