@@ -1,4 +1,4 @@
-(declare (block) (standard-bindings) (extended-bindings))
+(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 100))
 (begin
   (define |gerbil/core$<syntax-sugar>[1]#_g41029_|
     (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))

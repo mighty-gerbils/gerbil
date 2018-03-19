@@ -10,4 +10,7 @@ package: gerbil/compiler
    (@case-lambda (1 gxc#compile-exe-stub__0) (2 gxc#compile-exe-stub__%)))
   (declare-type
    gxc#compile-static-exe
-   (@case-lambda (1 gxc#compile-static-exe__0) (2 gxc#compile-static-exe__%))))
+   (@case-lambda (1 gxc#compile-static-exe__0) (2 gxc#compile-static-exe__%)))
+  (declare-type
+   gxc#compile-scm-file
+   (@case-lambda (2 gxc#compile-scm-file__0) (3 gxc#compile-scm-file__%))))

@@ -1,4 +1,4 @@
-(declare (block) (standard-bindings) (extended-bindings))
+(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 100))
 (begin
   (define |gx[1]#_g7890_|
     (gx#make-syntax-quote

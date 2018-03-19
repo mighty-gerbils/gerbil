@@ -1,4 +1,4 @@
-(declare (block) (standard-bindings) (extended-bindings))
+(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 100))
 (begin
   (define |gerbil/core$<match>[2]#_g41248_|
     (gx#make-syntax-quote

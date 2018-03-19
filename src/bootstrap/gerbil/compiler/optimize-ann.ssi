@@ -19,6 +19,9 @@ namespace: gxc
           gxc#apply-generate-runtime-repr)
          (%#define-runtime &push-match-vars gxc#&push-match-vars)
          (%#define-runtime apply-push-match-vars gxc#apply-push-match-vars)
+         (%#define-runtime
+          current-annotation-optimizer
+          gxc#current-annotation-optimizer)
          (%#define-runtime optimize-annotation% gxc#optimize-annotation%)
          (%#define-runtime optimize-match gxc#optimize-match)
          (%#define-runtime optimize-match-body gxc#optimize-match-body)

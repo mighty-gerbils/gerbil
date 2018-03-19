@@ -1,4 +1,4 @@
-(declare (block) (standard-bindings) (extended-bindings))
+(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 100))
 (begin
   (define |gerbil/core$<MOP>$<MOP:1>[1]#generate-typedef|
     (lambda (_stx17235_ _struct?17237_)
