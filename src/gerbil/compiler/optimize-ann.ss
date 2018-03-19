@@ -10,6 +10,7 @@ namespace: gxc
         "optimize-base"
         "optimize-xform")
 (export #t)
+(declare (inlining-limit 100))
 
 (defcompile-method apply-optimize-annotated (&optmize-annotated &basic-xform)
   (%#begin-annotation optimize-annotation%))

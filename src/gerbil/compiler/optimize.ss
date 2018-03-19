@@ -14,6 +14,7 @@ namespace: gxc
         "optimize-call"
         (only-in :gerbil/gambit/exceptions display-exception))
 (export #t)
+(declare (inlining-limit 100))
 
 ;; sticky to persist across batch compilation and avoid reloading ssxi modules
 (def (optimizer-info-init!)
