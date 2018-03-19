@@ -333,10 +333,8 @@ namespace: gxc
      (for-each (cut apply compile-e <> args) (stx-e #'body)))))
 
 (def (collect-begin-syntax% stx . args)
-  (ast-case stx ()
-    ((_ . body)
-     (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-       (for-each (cut apply compile-e <> args) (stx-e #'body))))))
+  (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
+    (apply collect-begin% stx args)))
 
 (def (collect-module% stx . args)
   (ast-case stx ()
@@ -349,6 +347,17 @@ namespace: gxc
   (ast-case stx ()
     ((_ ann expr)
      (apply compile-e #'expr args))))
+
+(def (collect-define-values% stx . args)
+  (ast-case stx ()
+    ((_ hd expr)
+     (apply compile-e #'expr args))))
+
+(def (collect-define-syntax% stx . args)
+  (ast-case stx ()
+    ((_ id expr)
+     (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
+       (apply compile-e #'expr args)))))
 
 (def (collect-body-lambda% stx . args)
   (ast-case stx ()

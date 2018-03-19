@@ -13,6 +13,7 @@ namespace: gxc
 
 (defcompile-method apply-collect-type-info (&collect-type-info &void)
   (%#begin            collect-begin%)
+  (%#begin-syntax     collect-begin-syntax%)
   (%#module           collect-module%)
   (%#define-values    collect-type-define-values%)
   (%#begin-annotation collect-begin-annotation%)

@@ -79,8 +79,11 @@ namespace: gxc
 
 (defcompile-method apply-collect-mutators (&collect-mutators &void)
   (%#begin                   collect-begin%)
-  (%#module                  collect-module%)
+  (%#begin-syntax            collect-begin-syntax%)
   (%#begin-annotation        collect-begin-annotation%)
+  (%#module                  collect-module%)
+  (%#define-values           collect-define-values%)
+  (%#define-syntax           collect-define-syntax%)
   (%#lambda                       collect-body-lambda%)
   (%#case-lambda                  collect-body-case-lambda%)
   (%#let-values              collect-body-let-values%)
