@@ -1,145 +1,145 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gx[1]#_g4745_|
+  (define |gx[1]#_g4885_|
     (gx#make-syntax-quote
      'identifier-wrap::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4746_|
+  (define |gx[1]#_g4886_|
     (gx#make-syntax-quote 'AST::t #f (gx#current-expander-context) '()))
-  (define |gx[1]#_g4747_|
+  (define |gx[1]#_g4887_|
     (gx#make-syntax-quote
      'identifier-wrap::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4748_|
+  (define |gx[1]#_g4888_|
     (gx#make-syntax-quote
      'make-identifier-wrap
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4749_|
+  (define |gx[1]#_g4889_|
     (gx#make-syntax-quote
      'identifier-wrap?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4750_|
+  (define |gx[1]#_g4890_|
     (gx#make-syntax-quote
      'identifier-wrap-marks
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4751_|
+  (define |gx[1]#_g4891_|
     (gx#make-syntax-quote
      'identifier-wrap-marks-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4752_|
+  (define |gx[1]#_g4892_|
     (gx#make-syntax-quote 'AST #f (gx#current-expander-context) '()))
-  (define |gx[1]#_g4753_|
+  (define |gx[1]#_g4893_|
     (gx#make-syntax-quote
      'syntax-wrap::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4754_|
+  (define |gx[1]#_g4894_|
     (gx#make-syntax-quote 'AST::t #f (gx#current-expander-context) '()))
-  (define |gx[1]#_g4755_|
+  (define |gx[1]#_g4895_|
     (gx#make-syntax-quote
      'syntax-wrap::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4756_|
+  (define |gx[1]#_g4896_|
     (gx#make-syntax-quote
      'make-syntax-wrap
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4757_|
+  (define |gx[1]#_g4897_|
     (gx#make-syntax-quote 'syntax-wrap? #f (gx#current-expander-context) '()))
-  (define |gx[1]#_g4758_|
+  (define |gx[1]#_g4898_|
     (gx#make-syntax-quote
      'syntax-wrap-mark
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4759_|
+  (define |gx[1]#_g4899_|
     (gx#make-syntax-quote
      'syntax-wrap-mark-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4760_|
+  (define |gx[1]#_g4900_|
     (gx#make-syntax-quote 'AST #f (gx#current-expander-context) '()))
-  (define |gx[1]#_g4761_|
+  (define |gx[1]#_g4901_|
     (gx#make-syntax-quote
      'syntax-quote::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4762_|
+  (define |gx[1]#_g4902_|
     (gx#make-syntax-quote 'AST::t #f (gx#current-expander-context) '()))
-  (define |gx[1]#_g4763_|
+  (define |gx[1]#_g4903_|
     (gx#make-syntax-quote
      'syntax-quote::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4764_|
+  (define |gx[1]#_g4904_|
     (gx#make-syntax-quote
      'make-syntax-quote
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4765_|
+  (define |gx[1]#_g4905_|
     (gx#make-syntax-quote 'syntax-quote? #f (gx#current-expander-context) '()))
-  (define |gx[1]#_g4766_|
+  (define |gx[1]#_g4906_|
     (gx#make-syntax-quote
      'syntax-quote-context
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4767_|
+  (define |gx[1]#_g4907_|
     (gx#make-syntax-quote
      'syntax-quote-marks
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4768_|
+  (define |gx[1]#_g4908_|
     (gx#make-syntax-quote
      'syntax-quote-context-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4769_|
+  (define |gx[1]#_g4909_|
     (gx#make-syntax-quote
      'syntax-quote-marks-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g4770_|
+  (define |gx[1]#_g4910_|
     (gx#make-syntax-quote 'AST #f (gx#current-expander-context) '()))
   (begin
     (define |gx[:0:]#identifier-wrap|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gx[1]#_g4745_|
+       |gx[1]#_g4885_|
        'expander-identifiers:
-       (cons |gx[1]#_g4746_|
-             (cons |gx[1]#_g4747_|
-                   (cons |gx[1]#_g4748_|
-                         (cons |gx[1]#_g4749_|
-                               (cons (cons |gx[1]#_g4750_| '())
-                                     (cons (cons |gx[1]#_g4751_| '()) '()))))))
+       (cons |gx[1]#_g4886_|
+             (cons |gx[1]#_g4887_|
+                   (cons |gx[1]#_g4888_|
+                         (cons |gx[1]#_g4889_|
+                               (cons (cons |gx[1]#_g4890_| '())
+                                     (cons (cons |gx[1]#_g4891_| '()) '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#identifier-wrap::t
-        |gx[1]#_g4752_|
+        |gx[1]#_g4892_|
         'syntax
         '#f
         '((final: . #t))
@@ -147,18 +147,18 @@
     (define |gx[:0:]#syntax-wrap|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gx[1]#_g4753_|
+       |gx[1]#_g4893_|
        'expander-identifiers:
-       (cons |gx[1]#_g4754_|
-             (cons |gx[1]#_g4755_|
-                   (cons |gx[1]#_g4756_|
-                         (cons |gx[1]#_g4757_|
-                               (cons (cons |gx[1]#_g4758_| '())
-                                     (cons (cons |gx[1]#_g4759_| '()) '()))))))
+       (cons |gx[1]#_g4894_|
+             (cons |gx[1]#_g4895_|
+                   (cons |gx[1]#_g4896_|
+                         (cons |gx[1]#_g4897_|
+                               (cons (cons |gx[1]#_g4898_| '())
+                                     (cons (cons |gx[1]#_g4899_| '()) '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#syntax-wrap::t
-        |gx[1]#_g4760_|
+        |gx[1]#_g4900_|
         'syntax
         '#f
         '((final: . #t))
@@ -166,21 +166,21 @@
     (define |gx[:0:]#syntax-quote|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
        'runtime-identifier:
-       |gx[1]#_g4761_|
+       |gx[1]#_g4901_|
        'expander-identifiers:
-       (cons |gx[1]#_g4762_|
-             (cons |gx[1]#_g4763_|
-                   (cons |gx[1]#_g4764_|
-                         (cons |gx[1]#_g4765_|
-                               (cons (cons |gx[1]#_g4766_|
-                                           (cons |gx[1]#_g4767_| '()))
-                                     (cons (cons |gx[1]#_g4768_|
-                                                 (cons |gx[1]#_g4769_| '()))
+       (cons |gx[1]#_g4902_|
+             (cons |gx[1]#_g4903_|
+                   (cons |gx[1]#_g4904_|
+                         (cons |gx[1]#_g4905_|
+                               (cons (cons |gx[1]#_g4906_|
+                                           (cons |gx[1]#_g4907_| '()))
+                                     (cons (cons |gx[1]#_g4908_|
+                                                 (cons |gx[1]#_g4909_| '()))
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
         'gx#syntax-quote::t
-        |gx[1]#_g4770_|
+        |gx[1]#_g4910_|
         'syntax
         '#f
         '((final: . #t))

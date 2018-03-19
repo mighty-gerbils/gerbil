@@ -14,8 +14,8 @@
      '(type ssxi)))
   (define gxc#optimizer-info? (make-struct-predicate gxc#optimizer-info::t))
   (define gxc#make-optimizer-info
-    (lambda _$args13497_
-      (apply make-struct-instance gxc#optimizer-info::t _$args13497_)))
+    (lambda _$args14793_
+      (apply make-struct-instance gxc#optimizer-info::t _$args14793_)))
   (define gxc#optimizer-info-type
     (make-struct-field-accessor gxc#optimizer-info::t '0))
   (define gxc#optimizer-info-ssxi
@@ -25,28 +25,28 @@
   (define gxc#optimizer-info-ssxi-set!
     (make-struct-field-mutator gxc#optimizer-info::t '1))
   (define gxc#optimizer-info:::init!
-    (lambda (_self13495_)
-      (if (##fx< '2 (##vector-length _self13495_))
+    (lambda (_self14791_)
+      (if (##fx< '2 (##vector-length _self14791_))
           (begin
-            (##vector-set! _self13495_ '1 (make-hash-table-eq))
-            (##vector-set! _self13495_ '2 (make-hash-table-eq)))
+            (##vector-set! _self14791_ '1 (make-hash-table-eq))
+            (##vector-set! _self14791_ '2 (make-hash-table-eq)))
           (error '"struct-instance-init!: too many arguments for struct"
-                 _self13495_))))
+                 _self14791_))))
   (bind-method! gxc#optimizer-info::t ':init! gxc#optimizer-info:::init! '#f)
   (define gxc#!type::t
     (make-struct-type 'gxc#!type::t '#f '1 '!type '() '#f '(id)))
   (define gxc#!type? (make-struct-predicate gxc#!type::t))
   (define gxc#make-!type
-    (lambda _$args13370_
-      (apply make-struct-instance gxc#!type::t _$args13370_)))
+    (lambda _$args14666_
+      (apply make-struct-instance gxc#!type::t _$args14666_)))
   (define gxc#!type-id (make-struct-field-accessor gxc#!type::t '0))
   (define gxc#!type-id-set! (make-struct-field-mutator gxc#!type::t '0))
   (define gxc#!alias::t
     (make-struct-type 'gxc#!alias::t gxc#!type::t '0 '!alias '() '#f '()))
   (define gxc#!alias? (make-struct-predicate gxc#!alias::t))
   (define gxc#make-!alias
-    (lambda _$args13367_
-      (apply make-struct-instance gxc#!alias::t _$args13367_)))
+    (lambda _$args14663_
+      (apply make-struct-instance gxc#!alias::t _$args14663_)))
   (define gxc#!struct-type::t
     (make-struct-type
      'gxc#!struct-type::t
@@ -58,8 +58,8 @@
      '(super fields xfields ctor plist methods)))
   (define gxc#!struct-type? (make-struct-predicate gxc#!struct-type::t))
   (define gxc#make-!struct-type
-    (lambda _$args13364_
-      (apply make-struct-instance gxc#!struct-type::t _$args13364_)))
+    (lambda _$args14660_
+      (apply make-struct-instance gxc#!struct-type::t _$args14660_)))
   (define gxc#!struct-type-super
     (make-struct-field-accessor gxc#!struct-type::t '0))
   (define gxc#!struct-type-fields
@@ -95,8 +95,8 @@
      '()))
   (define gxc#!procedure? (make-struct-predicate gxc#!procedure::t))
   (define gxc#make-!procedure
-    (lambda _$args13361_
-      (apply make-struct-instance gxc#!procedure::t _$args13361_)))
+    (lambda _$args14657_
+      (apply make-struct-instance gxc#!procedure::t _$args14657_)))
   (define gxc#!struct-pred::t
     (make-struct-type
      'gxc#!struct-pred::t
@@ -108,8 +108,8 @@
      '()))
   (define gxc#!struct-pred? (make-struct-predicate gxc#!struct-pred::t))
   (define gxc#make-!struct-pred
-    (lambda _$args13358_
-      (apply make-struct-instance gxc#!struct-pred::t _$args13358_)))
+    (lambda _$args14654_
+      (apply make-struct-instance gxc#!struct-pred::t _$args14654_)))
   (define gxc#!struct-cons::t
     (make-struct-type
      'gxc#!struct-cons::t
@@ -121,8 +121,8 @@
      '()))
   (define gxc#!struct-cons? (make-struct-predicate gxc#!struct-cons::t))
   (define gxc#make-!struct-cons
-    (lambda _$args13355_
-      (apply make-struct-instance gxc#!struct-cons::t _$args13355_)))
+    (lambda _$args14651_
+      (apply make-struct-instance gxc#!struct-cons::t _$args14651_)))
   (define gxc#!struct-getf::t
     (make-struct-type
      'gxc#!struct-getf::t
@@ -134,8 +134,8 @@
      '(off unchecked?)))
   (define gxc#!struct-getf? (make-struct-predicate gxc#!struct-getf::t))
   (define gxc#make-!struct-getf
-    (lambda _$args13352_
-      (apply make-struct-instance gxc#!struct-getf::t _$args13352_)))
+    (lambda _$args14648_
+      (apply make-struct-instance gxc#!struct-getf::t _$args14648_)))
   (define gxc#!struct-getf-off
     (make-struct-field-accessor gxc#!struct-getf::t '0))
   (define gxc#!struct-getf-unchecked?
@@ -155,8 +155,8 @@
      '(off unchecked?)))
   (define gxc#!struct-setf? (make-struct-predicate gxc#!struct-setf::t))
   (define gxc#make-!struct-setf
-    (lambda _$args13349_
-      (apply make-struct-instance gxc#!struct-setf::t _$args13349_)))
+    (lambda _$args14645_
+      (apply make-struct-instance gxc#!struct-setf::t _$args14645_)))
   (define gxc#!struct-setf-off
     (make-struct-field-accessor gxc#!struct-setf::t '0))
   (define gxc#!struct-setf-unchecked?
@@ -176,8 +176,8 @@
      '(arity dispatch inline inline-typedecl)))
   (define gxc#!lambda? (make-struct-predicate gxc#!lambda::t))
   (define gxc#make-!lambda
-    (lambda _$args13346_
-      (apply make-struct-instance gxc#!lambda::t _$args13346_)))
+    (lambda _$args14642_
+      (apply make-struct-instance gxc#!lambda::t _$args14642_)))
   (define gxc#!lambda-arity (make-struct-field-accessor gxc#!lambda::t '0))
   (define gxc#!lambda-dispatch (make-struct-field-accessor gxc#!lambda::t '1))
   (define gxc#!lambda-inline (make-struct-field-accessor gxc#!lambda::t '2))
@@ -201,8 +201,8 @@
      '(clauses)))
   (define gxc#!case-lambda? (make-struct-predicate gxc#!case-lambda::t))
   (define gxc#make-!case-lambda
-    (lambda _$args13343_
-      (apply make-struct-instance gxc#!case-lambda::t _$args13343_)))
+    (lambda _$args14639_
+      (apply make-struct-instance gxc#!case-lambda::t _$args14639_)))
   (define gxc#!case-lambda-clauses
     (make-struct-field-accessor gxc#!case-lambda::t '0))
   (define gxc#!case-lambda-clauses-set!
@@ -218,8 +218,8 @@
      '(table dispatch)))
   (define gxc#!kw-lambda? (make-struct-predicate gxc#!kw-lambda::t))
   (define gxc#make-!kw-lambda
-    (lambda _$args13340_
-      (apply make-struct-instance gxc#!kw-lambda::t _$args13340_)))
+    (lambda _$args14636_
+      (apply make-struct-instance gxc#!kw-lambda::t _$args14636_)))
   (define gxc#!kw-lambda-table
     (make-struct-field-accessor gxc#!kw-lambda::t '0))
   (define gxc#!kw-lambda-dispatch
@@ -240,8 +240,8 @@
   (define gxc#!kw-lambda-primary?
     (make-struct-predicate gxc#!kw-lambda-primary::t))
   (define gxc#make-!kw-lambda-primary
-    (lambda _$args13337_
-      (apply make-struct-instance gxc#!kw-lambda-primary::t _$args13337_)))
+    (lambda _$args14633_
+      (apply make-struct-instance gxc#!kw-lambda-primary::t _$args14633_)))
   (define gxc#!kw-lambda-primary-keys
     (make-struct-field-accessor gxc#!kw-lambda-primary::t '0))
   (define gxc#!kw-lambda-primary-main
@@ -251,260 +251,260 @@
   (define gxc#!kw-lambda-primary-main-set!
     (make-struct-field-mutator gxc#!kw-lambda-primary::t '1))
   (define gxc#!struct-type:::init!
-    (lambda (_self13329_
-             _id13330_
-             _super13331_
-             _fields13332_
-             _xfields13333_
-             _ctor13334_
-             _plist13335_)
-      (if (##fx< '7 (##vector-length _self13329_))
+    (lambda (_self14625_
+             _id14626_
+             _super14627_
+             _fields14628_
+             _xfields14629_
+             _ctor14630_
+             _plist14631_)
+      (if (##fx< '7 (##vector-length _self14625_))
           (begin
-            (##vector-set! _self13329_ '1 _id13330_)
-            (##vector-set! _self13329_ '2 _super13331_)
-            (##vector-set! _self13329_ '3 _fields13332_)
-            (##vector-set! _self13329_ '4 _xfields13333_)
-            (##vector-set! _self13329_ '5 _ctor13334_)
-            (##vector-set! _self13329_ '6 _plist13335_)
-            (##vector-set! _self13329_ '7 '#f))
+            (##vector-set! _self14625_ '1 _id14626_)
+            (##vector-set! _self14625_ '2 _super14627_)
+            (##vector-set! _self14625_ '3 _fields14628_)
+            (##vector-set! _self14625_ '4 _xfields14629_)
+            (##vector-set! _self14625_ '5 _ctor14630_)
+            (##vector-set! _self14625_ '6 _plist14631_)
+            (##vector-set! _self14625_ '7 '#f))
           (error '"struct-instance-init!: too many arguments for struct"
-                 _self13329_))))
+                 _self14625_))))
   (bind-method! gxc#!struct-type::t ':init! gxc#!struct-type:::init! '#f)
   (begin
     (define gxc#!lambda:::init!__%
-      (lambda (_self13173_
-               _id13174_
-               _arity13175_
-               _dispatch13176_
-               _inline13177_
-               _typedecl13178_)
-        (if (##fx< '5 (##vector-length _self13173_))
+      (lambda (_self14469_
+               _id14470_
+               _arity14471_
+               _dispatch14472_
+               _inline14473_
+               _typedecl14474_)
+        (if (##fx< '5 (##vector-length _self14469_))
             (begin
-              (##vector-set! _self13173_ '1 _id13174_)
-              (##vector-set! _self13173_ '2 _arity13175_)
-              (##vector-set! _self13173_ '3 _dispatch13176_)
-              (##vector-set! _self13173_ '4 _inline13177_)
-              (##vector-set! _self13173_ '5 _typedecl13178_))
+              (##vector-set! _self14469_ '1 _id14470_)
+              (##vector-set! _self14469_ '2 _arity14471_)
+              (##vector-set! _self14469_ '3 _dispatch14472_)
+              (##vector-set! _self14469_ '4 _inline14473_)
+              (##vector-set! _self14469_ '5 _typedecl14474_))
             (error '"struct-instance-init!: too many arguments for struct"
-                   _self13173_))))
+                   _self14469_))))
     (begin
       (define gxc#!lambda:::init!__0
-        (lambda (_self13183_ _id13184_ _arity13185_ _dispatch13186_)
-          (let* ((_inline13188_ '#f) (_typedecl13190_ '#f))
-            (if (##fx< '5 (##vector-length _self13183_))
+        (lambda (_self14479_ _id14480_ _arity14481_ _dispatch14482_)
+          (let* ((_inline14484_ '#f) (_typedecl14486_ '#f))
+            (if (##fx< '5 (##vector-length _self14479_))
                 (begin
-                  (##vector-set! _self13183_ '1 _id13184_)
-                  (##vector-set! _self13183_ '2 _arity13185_)
-                  (##vector-set! _self13183_ '3 _dispatch13186_)
-                  (##vector-set! _self13183_ '4 _inline13188_)
-                  (##vector-set! _self13183_ '5 _typedecl13190_))
+                  (##vector-set! _self14479_ '1 _id14480_)
+                  (##vector-set! _self14479_ '2 _arity14481_)
+                  (##vector-set! _self14479_ '3 _dispatch14482_)
+                  (##vector-set! _self14479_ '4 _inline14484_)
+                  (##vector-set! _self14479_ '5 _typedecl14486_))
                 (error '"struct-instance-init!: too many arguments for struct"
-                       _self13183_)))))
+                       _self14479_)))))
       (define gxc#!lambda:::init!__1
-        (lambda (_self13192_
-                 _id13193_
-                 _arity13194_
-                 _dispatch13195_
-                 _inline13196_)
-          (let ((_typedecl13198_ '#f))
-            (if (##fx< '5 (##vector-length _self13192_))
+        (lambda (_self14488_
+                 _id14489_
+                 _arity14490_
+                 _dispatch14491_
+                 _inline14492_)
+          (let ((_typedecl14494_ '#f))
+            (if (##fx< '5 (##vector-length _self14488_))
                 (begin
-                  (##vector-set! _self13192_ '1 _id13193_)
-                  (##vector-set! _self13192_ '2 _arity13194_)
-                  (##vector-set! _self13192_ '3 _dispatch13195_)
-                  (##vector-set! _self13192_ '4 _inline13196_)
-                  (##vector-set! _self13192_ '5 _typedecl13198_))
+                  (##vector-set! _self14488_ '1 _id14489_)
+                  (##vector-set! _self14488_ '2 _arity14490_)
+                  (##vector-set! _self14488_ '3 _dispatch14491_)
+                  (##vector-set! _self14488_ '4 _inline14492_)
+                  (##vector-set! _self14488_ '5 _typedecl14494_))
                 (error '"struct-instance-init!: too many arguments for struct"
-                       _self13192_)))))
+                       _self14488_)))))
       (define gxc#!lambda:::init!
-        (lambda _g13500_
-          (let ((_g13499_ (length _g13500_)))
-            (cond ((##fx= _g13499_ 4) (apply gxc#!lambda:::init!__0 _g13500_))
-                  ((##fx= _g13499_ 5) (apply gxc#!lambda:::init!__1 _g13500_))
-                  ((##fx= _g13499_ 6)
-                   (apply (lambda (_self13200_
-                                   _id13201_
-                                   _arity13202_
-                                   _dispatch13203_
-                                   _inline13204_
-                                   _typedecl13205_)
-                            (if (##fx< '5 (##vector-length _self13200_))
+        (lambda _g14796_
+          (let ((_g14795_ (length _g14796_)))
+            (cond ((##fx= _g14795_ 4) (apply gxc#!lambda:::init!__0 _g14796_))
+                  ((##fx= _g14795_ 5) (apply gxc#!lambda:::init!__1 _g14796_))
+                  ((##fx= _g14795_ 6)
+                   (apply (lambda (_self14496_
+                                   _id14497_
+                                   _arity14498_
+                                   _dispatch14499_
+                                   _inline14500_
+                                   _typedecl14501_)
+                            (if (##fx< '5 (##vector-length _self14496_))
                                 (begin
-                                  (##vector-set! _self13200_ '1 _id13201_)
-                                  (##vector-set! _self13200_ '2 _arity13202_)
+                                  (##vector-set! _self14496_ '1 _id14497_)
+                                  (##vector-set! _self14496_ '2 _arity14498_)
                                   (##vector-set!
-                                   _self13200_
+                                   _self14496_
                                    '3
-                                   _dispatch13203_)
-                                  (##vector-set! _self13200_ '4 _inline13204_)
+                                   _dispatch14499_)
+                                  (##vector-set! _self14496_ '4 _inline14500_)
                                   (##vector-set!
-                                   _self13200_
+                                   _self14496_
                                    '5
-                                   _typedecl13205_))
+                                   _typedecl14501_))
                                 (error '"struct-instance-init!: too many arguments for struct"
-                                       _self13200_)))
-                          _g13500_))
+                                       _self14496_)))
+                          _g14796_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#!lambda:::init!
-                    _g13500_))))))))
+                    _g14796_))))))))
   (bind-method! gxc#!lambda::t ':init! gxc#!lambda:::init! '#f)
   (define gxc#!struct-type-vtab
-    (lambda (_type13042_)
-      (let ((_$e13044_
-             (##structure-ref _type13042_ '7 gxc#!struct-type::t '#f)))
-        (if _$e13044_
-            (values _$e13044_)
-            (let ((_vtab13047_ (make-hash-table-eq)))
+    (lambda (_type14338_)
+      (let ((_$e14340_
+             (##structure-ref _type14338_ '7 gxc#!struct-type::t '#f)))
+        (if _$e14340_
+            (values _$e14340_)
+            (let ((_vtab14343_ (make-hash-table-eq)))
               (begin
                 (##structure-set!
-                 _type13042_
-                 _vtab13047_
+                 _type14338_
+                 _vtab14343_
                  '7
                  gxc#!struct-type::t
                  '#f)
-                _vtab13047_))))))
+                _vtab14343_))))))
   (define gxc#!struct-type-lookup-method
-    (lambda (_type13033_ _method13034_)
-      (let ((_vtab1303513037_
-             (##structure-ref _type13033_ '7 gxc#!struct-type::t '#f)))
-        (if _vtab1303513037_
-            (let ((_vtab13040_ _vtab1303513037_))
-              (table-ref _vtab13040_ _method13034_ '#f))
+    (lambda (_type14329_ _method14330_)
+      (let ((_vtab1433114333_
+             (##structure-ref _type14329_ '7 gxc#!struct-type::t '#f)))
+        (if _vtab1433114333_
+            (let ((_vtab14336_ _vtab1433114333_))
+              (table-ref _vtab14336_ _method14330_ '#f))
             '#f))))
   (begin
     (define gxc#optimizer-declare-type!__%
-      (lambda (_sym13017_ _type13018_ _local?13019_)
+      (lambda (_sym14313_ _type14314_ _local?14315_)
         (begin
-          (if (##structure-instance-of? _type13018_ 'gxc#!type::t)
+          (if (##structure-instance-of? _type14314_ 'gxc#!type::t)
               '#!void
               (error '"bad declaration: expected !type"
-                     _sym13017_
-                     _type13018_))
+                     _sym14313_
+                     _type14314_))
           (gxc#verbose
            '"declare-type "
-           _sym13017_
+           _sym14313_
            '" "
-           (struct->list _type13018_))
+           (struct->list _type14314_))
           (table-set!
-           (if _local?13019_
+           (if _local?14315_
                (gxc#current-compile-local-type)
                (##structure-ref
                 (gxc#current-compile-optimizer-info)
                 '1
                 gxc#optimizer-info::t
                 '#f))
-           _sym13017_
-           _type13018_))))
+           _sym14313_
+           _type14314_))))
     (begin
       (define gxc#optimizer-declare-type!__0
-        (lambda (_sym13024_ _type13025_)
-          (let ((_local?13027_ '#f))
+        (lambda (_sym14320_ _type14321_)
+          (let ((_local?14323_ '#f))
             (gxc#optimizer-declare-type!__%
-             _sym13024_
-             _type13025_
-             _local?13027_))))
+             _sym14320_
+             _type14321_
+             _local?14323_))))
       (define gxc#optimizer-declare-type!
-        (lambda _g13502_
-          (let ((_g13501_ (length _g13502_)))
-            (cond ((##fx= _g13501_ 2)
-                   (apply gxc#optimizer-declare-type!__0 _g13502_))
-                  ((##fx= _g13501_ 3)
-                   (apply gxc#optimizer-declare-type!__% _g13502_))
+        (lambda _g14798_
+          (let ((_g14797_ (length _g14798_)))
+            (cond ((##fx= _g14797_ 2)
+                   (apply gxc#optimizer-declare-type!__0 _g14798_))
+                  ((##fx= _g14797_ 3)
+                   (apply gxc#optimizer-declare-type!__% _g14798_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#optimizer-declare-type!
-                    _g13502_))))))))
+                    _g14798_))))))))
   (begin
     (define gxc#optimizer-declare-method!__%
-      (lambda (_type-t12993_ _method12994_ _sym12995_ _rebind?12996_)
-        (let ((_type12998_ (gxc#optimizer-resolve-type _type-t12993_)))
-          (if (##structure-instance-of? _type12998_ 'gxc#!struct-type::t)
-              (let ((_vtab13000_ (gxc#!struct-type-vtab _type12998_)))
-                (if _rebind?12996_
-                    (if (hash-key? _vtab13000_ _method12994_)
+      (lambda (_type-t14289_ _method14290_ _sym14291_ _rebind?14292_)
+        (let ((_type14294_ (gxc#optimizer-resolve-type _type-t14289_)))
+          (if (##structure-instance-of? _type14294_ 'gxc#!struct-type::t)
+              (let ((_vtab14296_ (gxc#!struct-type-vtab _type14294_)))
+                (if _rebind?14292_
+                    (if (hash-key? _vtab14296_ _method14290_)
                         (gxc#verbose
                          '"declare-method: [warning] skip rebind on existing method"
-                         _type-t12993_
+                         _type-t14289_
                          '" "
-                         _method12994_)
+                         _method14290_)
                         (gxc#verbose
                          '"declare-method: skip rebind method "
-                         _type-t12993_
+                         _type-t14289_
                          '" "
-                         _method12994_))
-                    (if (hash-key? _vtab13000_ _method12994_)
+                         _method14290_))
+                    (if (hash-key? _vtab14296_ _method14290_)
                         (error '"declare-method: duplicate method declaration")
                         (begin
                           (gxc#verbose
                            '"declare-method "
-                           _type-t12993_
+                           _type-t14289_
                            '" "
-                           _method12994_
+                           _method14290_
                            '" => "
-                           _sym12995_)
-                          (table-set! _vtab13000_ _method12994_ _sym12995_)))))
-              (if (not _type12998_)
-                  (gxc#verbose '"declare-method: unknown type " _type-t12993_)
+                           _sym14291_)
+                          (table-set! _vtab14296_ _method14290_ _sym14291_)))))
+              (if (not _type14294_)
+                  (gxc#verbose '"declare-method: unknown type " _type-t14289_)
                   (error '"declare-method: bad method declaration; no method table"
-                         _type-t12993_
-                         _type12998_))))))
+                         _type-t14289_
+                         _type14294_))))))
     (begin
       (define gxc#optimizer-declare-method!__0
-        (lambda (_type-t13005_ _method13006_ _sym13007_)
-          (let ((_rebind?13009_ '#f))
+        (lambda (_type-t14301_ _method14302_ _sym14303_)
+          (let ((_rebind?14305_ '#f))
             (gxc#optimizer-declare-method!__%
-             _type-t13005_
-             _method13006_
-             _sym13007_
-             _rebind?13009_))))
+             _type-t14301_
+             _method14302_
+             _sym14303_
+             _rebind?14305_))))
       (define gxc#optimizer-declare-method!
-        (lambda _g13504_
-          (let ((_g13503_ (length _g13504_)))
-            (cond ((##fx= _g13503_ 3)
-                   (apply gxc#optimizer-declare-method!__0 _g13504_))
-                  ((##fx= _g13503_ 4)
-                   (apply gxc#optimizer-declare-method!__% _g13504_))
+        (lambda _g14800_
+          (let ((_g14799_ (length _g14800_)))
+            (cond ((##fx= _g14799_ 3)
+                   (apply gxc#optimizer-declare-method!__0 _g14800_))
+                  ((##fx= _g14799_ 4)
+                   (apply gxc#optimizer-declare-method!__% _g14800_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#optimizer-declare-method!
-                    _g13504_))))))))
+                    _g14800_))))))))
   (define gxc#optimizer-lookup-type
-    (lambda (_sym12981_)
-      (let ((_$e12989_
-             (let ((_ht1298212984_ (gxc#current-compile-local-type)))
-               (if _ht1298212984_
-                   (let ((_ht12987_ _ht1298212984_))
-                     (table-ref _ht12987_ _sym12981_ '#f))
+    (lambda (_sym14277_)
+      (let ((_$e14285_
+             (let ((_ht1427814280_ (gxc#current-compile-local-type)))
+               (if _ht1427814280_
+                   (let ((_ht14283_ _ht1427814280_))
+                     (table-ref _ht14283_ _sym14277_ '#f))
                    '#f))))
-        (if _$e12989_
-            _$e12989_
+        (if _$e14285_
+            _$e14285_
             (table-ref
              (##structure-ref
               (gxc#current-compile-optimizer-info)
               '1
               gxc#optimizer-info::t
               '#f)
-             _sym12981_
+             _sym14277_
              '#f)))))
   (define gxc#optimizer-resolve-type
-    (lambda (_sym12973_)
-      (let ((_type1297412976_ (gxc#optimizer-lookup-type _sym12973_)))
-        (if _type1297412976_
-            (let ((_type12979_ _type1297412976_))
-              (if (##structure-instance-of? _type12979_ 'gxc#!alias::t)
+    (lambda (_sym14269_)
+      (let ((_type1427014272_ (gxc#optimizer-lookup-type _sym14269_)))
+        (if _type1427014272_
+            (let ((_type14275_ _type1427014272_))
+              (if (##structure-instance-of? _type14275_ 'gxc#!alias::t)
                   (gxc#optimizer-resolve-type
-                   (##structure-ref _type12979_ '1 gxc#!type::t '#f))
-                  _type12979_))
+                   (##structure-ref _type14275_ '1 gxc#!type::t '#f))
+                  _type14275_))
             '#f))))
   (define gxc#optimizer-lookup-method
-    (lambda (_type-t12968_ _method12969_)
-      (let ((_type12971_ (gxc#optimizer-resolve-type _type-t12968_)))
-        (if (##structure-instance-of? _type12971_ 'gxc#!struct-type::t)
-            (gxc#!struct-type-lookup-method _type12971_ _method12969_)
+    (lambda (_type-t14264_ _method14265_)
+      (let ((_type14267_ (gxc#optimizer-resolve-type _type-t14264_)))
+        (if (##structure-instance-of? _type14267_ 'gxc#!struct-type::t)
+            (gxc#!struct-type-lookup-method _type14267_ _method14265_)
             '#f))))
   (define gxc#identifier-symbol
-    (lambda (_stx12966_)
-      (if (##structure-direct-instance-of? _stx12966_ 'gx#syntax-quote::t)
-          (gxc#generate-runtime-binding-id _stx12966_)
-          (gx#stx-e _stx12966_)))))
+    (lambda (_stx14262_)
+      (if (##structure-direct-instance-of? _stx14262_ 'gx#syntax-quote::t)
+          (gxc#generate-runtime-binding-id _stx14262_)
+          (gx#stx-e _stx14262_)))))

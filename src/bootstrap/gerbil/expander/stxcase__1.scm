@@ -1,75 +1,75 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (define |gx[1]#_g18297_|
+  (define |gx[1]#_g18491_|
     (gx#make-syntax-quote
      'syntax-pattern::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g18298_|
+  (define |gx[1]#_g18492_|
     (gx#make-syntax-quote 'expander::t #f (gx#current-expander-context) '()))
-  (define |gx[1]#_g18299_|
+  (define |gx[1]#_g18493_|
     (gx#make-syntax-quote
      'syntax-pattern::t
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g18300_|
+  (define |gx[1]#_g18494_|
     (gx#make-syntax-quote
      'make-syntax-pattern
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g18301_|
+  (define |gx[1]#_g18495_|
     (gx#make-syntax-quote
      'syntax-pattern?
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g18302_|
+  (define |gx[1]#_g18496_|
     (gx#make-syntax-quote
      'syntax-pattern-id
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g18303_|
+  (define |gx[1]#_g18497_|
     (gx#make-syntax-quote
      'syntax-pattern-depth
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g18304_|
+  (define |gx[1]#_g18498_|
     (gx#make-syntax-quote
      'syntax-pattern-id-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g18305_|
+  (define |gx[1]#_g18499_|
     (gx#make-syntax-quote
      'syntax-pattern-depth-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gx[1]#_g18306_|
+  (define |gx[1]#_g18500_|
     (gx#make-syntax-quote 'expander #f (gx#current-expander-context) '()))
   (define |gx[:0:]#syntax-pattern|
     (|gerbil/core$<MOP>$<MOP:2>[1]#make-extended-struct-info|
      'runtime-identifier:
-     |gx[1]#_g18297_|
+     |gx[1]#_g18491_|
      'expander-identifiers:
-     (cons |gx[1]#_g18298_|
-           (cons |gx[1]#_g18299_|
-                 (cons |gx[1]#_g18300_|
-                       (cons |gx[1]#_g18301_|
-                             (cons (cons |gx[1]#_g18302_|
-                                         (cons |gx[1]#_g18303_| '()))
-                                   (cons (cons |gx[1]#_g18304_|
-                                               (cons |gx[1]#_g18305_| '()))
+     (cons |gx[1]#_g18492_|
+           (cons |gx[1]#_g18493_|
+                 (cons |gx[1]#_g18494_|
+                       (cons |gx[1]#_g18495_|
+                             (cons (cons |gx[1]#_g18496_|
+                                         (cons |gx[1]#_g18497_| '()))
+                                   (cons (cons |gx[1]#_g18498_|
+                                               (cons |gx[1]#_g18499_| '()))
                                          '()))))))
      'type-exhibitor:
      (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|
       'gx#syntax-pattern::t
-      |gx[1]#_g18306_|
+      |gx[1]#_g18500_|
       'syntax-pattern
       '#f
       '()

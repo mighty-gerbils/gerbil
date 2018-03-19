@@ -13,6 +13,10 @@ namespace: gxc
          (%#define-runtime
           apply-optimize-annotated
           gxc#apply-optimize-annotated)
+         (%#define-runtime &generate-runtime-repr gxc#&generate-runtime-repr)
+         (%#define-runtime
+          apply-generate-runtime-repr
+          gxc#apply-generate-runtime-repr)
          (%#define-runtime &push-match-vars gxc#&push-match-vars)
          (%#define-runtime apply-push-match-vars gxc#apply-push-match-vars)
          (%#define-runtime optimize-annotation% gxc#optimize-annotation%)
@@ -37,6 +41,16 @@ namespace: gxc
          (%#define-runtime
           optimize-match-assert-restart
           gxc#optimize-match-assert-restart)
+         (%#define-runtime optimize-syntax-case gxc#optimize-syntax-case)
+         (%#define-runtime
+          optimize-syntax-case-body
+          gxc#optimize-syntax-case-body)
+         (%#define-runtime
+          optimize-syntax-case-clauses
+          gxc#optimize-syntax-case-clauses)
+         (%#define-runtime
+          optimize-syntax-case-closure
+          gxc#optimize-syntax-case-closure)
          (%#define-runtime
           push-match-vars-let-values%
           gxc#push-match-vars-let-values%)

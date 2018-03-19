@@ -1270,9 +1270,15 @@ namespace: gerbil/core
                               (%#define-runtime
                                runtime-class-slots-set!
                                |gerbil/core$<MOP>$<MOP:2>[1]#runtime-class-slots-set!|)
-                              (%#define-runtime
-                               syntax-local-type-info?
-                               |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?|)
+                              (%#begin (%#define-runtime
+                                        syntax-local-type-info?__%
+                                        |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?__%|)
+                                       (%#begin (%#define-runtime
+                                                 syntax-local-type-info?__0
+                                                 |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?__0|)
+                                                (%#define-runtime
+                                                 syntax-local-type-info?
+                                                 |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-type-info?|)))
                               (%#define-runtime
                                syntax-local-struct-info?
                                |gerbil/core$<MOP>$<MOP:2>[1]#syntax-local-struct-info?|)
@@ -1411,9 +1417,15 @@ namespace: gerbil/core
                     (%#define-runtime
                      syntax-local-match-macro?
                      |gerbil/core$<match>[1]#syntax-local-match-macro?|)
-                    (%#define-runtime
-                     parse-match-pattern
-                     |gerbil/core$<match>[1]#parse-match-pattern|)
+                    (%#begin (%#define-runtime
+                              parse-match-pattern__%
+                              |gerbil/core$<match>[1]#parse-match-pattern__%|)
+                             (%#begin (%#define-runtime
+                                       parse-match-pattern__0
+                                       |gerbil/core$<match>[1]#parse-match-pattern__0|)
+                                      (%#define-runtime
+                                       parse-match-pattern
+                                       |gerbil/core$<match>[1]#parse-match-pattern|)))
                     (%#define-runtime
                      match-pattern?
                      |gerbil/core$<match>[1]#match-pattern?|)
