@@ -1,8 +1,8 @@
-(declare (block) (standard-bindings) (extended-bindings))
+(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 100))
 (begin
   (define |gerbil/gambit/exact[1]#_g585_|
     (gx#core-deserialize-mark
-     '(0 (_obj484_ . _%565_) (ref . _ref524_))
+     '(0 (ref . _ref524_) (_obj484_ . _%565_))
      (gx#import-module '(:gerbil/core <sugar> <sugar:3>))))
   (define |gerbil/gambit/exact[1]#_g586_|
     (gx#make-syntax-quote

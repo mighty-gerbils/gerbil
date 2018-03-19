@@ -354,17 +354,20 @@ namespace: gx
                                           vars svars tlvars)))))]]
                       (cons* $lp $target linit)))
 
+                  (let (body
+                        (core-list 'let-values
+                          [[[$target $tl]
+                            (core-list 'syntax-split-splice target rlen)]]
+                          (recur tl vars $tl E make-loop)))
                   (core-list 'if
                     (core-list 'stx-pair/null? target)
-                    (core-list 'if
-                      (core-list 'fx>=
-                        (core-list 'stx-length target) rlen)
-                      (core-list 'let-values
-                        [[[$target $tl]
-                          (core-list 'syntax-split-splice target rlen)]]
-                        (recur tl vars $tl E make-loop))
-                      E)
-                    E)))))
+                    (if (zero? rlen)
+                        body
+                        (core-list 'if
+                          (core-list 'fx>=
+                            (core-list 'stx-length target) rlen)
+                          body E))
+                    E))))))
             ((null)
              (core-list 'if
                (core-list 'stx-null? target)
@@ -389,15 +392,16 @@ namespace: gx
                    (recur body vars $e E k))
                  E)))
             ((datum)
-             (core-list 'if
-               (core-list 'stx-datum? target)
+             (let ($e (genident 'e))
                (core-list 'if
-                 (core-list 'equal?
-                   (core-list 'stx-e target)
-                   body)
-                 (k vars)
-                 E)
-               E))
+                 (core-list 'stx-datum? target)
+                 (core-list 'let-values
+                   [[[$e] (core-list 'stx-e target)]]
+                   (core-list 'if
+                     (core-list 'equal? $e body)
+                     (k vars)
+                     E))
+                 E)))
             (else (BUG e))))))
 
     (def (splice-rlen e)
@@ -493,13 +497,16 @@ namespace: gx
               (target (genident))
               (first (if (null? clauses) E (car clause-ids))))
          (stx-wrap-source
-          (core-list 'let-values
-            [[[E] (core-list 'lambda%
-                    [target] (core-list 'raise-syntax-error
-                               #f "Bad syntax" target))]]
-            (generate-body
-             (generate-bindings target ids clauses clause-ids E)
-             [first expr]))
+          (core-list 'begin-annotation '@syntax-case
+            (stx-wrap-source
+             (core-list 'let-values
+               [[[E] (core-list 'lambda%
+                       [target] (core-list 'raise-syntax-error
+                                  #f "Bad syntax" target))]]
+               (generate-body
+                (generate-bindings target ids clauses clause-ids E)
+                [first expr]))
+             (stx-source stx)))
           (stx-source stx))))))))
 
 ;;; utilities

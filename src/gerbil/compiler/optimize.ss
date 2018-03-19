@@ -14,6 +14,7 @@ namespace: gxc
         "optimize-call"
         (only-in :gerbil/gambit/exceptions display-exception))
 (export #t)
+(declare (inlining-limit 100))
 
 ;; sticky to persist across batch compilation and avoid reloading ssxi modules
 (def (optimizer-info-init!)
@@ -123,11 +124,18 @@ namespace: gxc
 
 (defcompile-method apply-generate-ssxi (&generate-ssxi &generate-runtime-empty)
   (%#begin         generate-runtime-begin%)
+  (%#begin-syntax  generate-ssxi-begin-syntax%)
   (%#module        generate-ssxi-module%)
   (%#define-values generate-ssxi-define-values%)
   (%#call          generate-ssxi-call%))
 
 ;;; apply-generate-ssxi
+(def (generate-ssxi-begin-syntax% stx)
+  (ast-case stx ()
+    ((_ . forms)
+     (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
+       (generate-runtime-begin% stx)))))
+
 (def (generate-ssxi-module% stx)
   (ast-case stx ()
     ((_ id . body)

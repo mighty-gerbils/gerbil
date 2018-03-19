@@ -1,4 +1,4 @@
-(declare (block) (standard-bindings) (extended-bindings))
+(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 100))
 (define |gerbil/gambit/bytes[:0:]#@bytes|
   (lambda (_stx390_)
     (let* ((_g393407_

@@ -25,6 +25,9 @@ namespace: gxc
          (%#define-runtime optimize-source gxc#optimize-source)
          (%#define-runtime &generate-ssxi gxc#&generate-ssxi)
          (%#define-runtime apply-generate-ssxi gxc#apply-generate-ssxi)
+         (%#define-runtime
+          generate-ssxi-begin-syntax%
+          gxc#generate-ssxi-begin-syntax%)
          (%#define-runtime generate-ssxi-module% gxc#generate-ssxi-module%)
          (%#define-runtime
           generate-ssxi-define-values%

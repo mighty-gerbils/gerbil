@@ -12,6 +12,7 @@ namespace: gxc
                  s32vector? u32vector? s64vector? u64vector?
                  f32vector? f64vector?))
 (export #t)
+(declare (inlining-limit 100))
 
 ;; compilation method dispatch table
 (def current-compile-methods
@@ -333,10 +334,8 @@ namespace: gxc
      (for-each (cut apply compile-e <> args) (stx-e #'body)))))
 
 (def (collect-begin-syntax% stx . args)
-  (ast-case stx ()
-    ((_ . body)
-     (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
-       (for-each (cut apply compile-e <> args) (stx-e #'body))))))
+  (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
+    (apply collect-begin% stx args)))
 
 (def (collect-module% stx . args)
   (ast-case stx ()
@@ -349,6 +348,17 @@ namespace: gxc
   (ast-case stx ()
     ((_ ann expr)
      (apply compile-e #'expr args))))
+
+(def (collect-define-values% stx . args)
+  (ast-case stx ()
+    ((_ hd expr)
+     (apply compile-e #'expr args))))
+
+(def (collect-define-syntax% stx . args)
+  (ast-case stx ()
+    ((_ id expr)
+     (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
+       (apply compile-e #'expr args)))))
 
 (def (collect-body-lambda% stx . args)
   (ast-case stx ()
@@ -491,7 +501,7 @@ namespace: gxc
 
 (def (generate-runtime-temporary (top #f))
   (if top
-    (let ((ns (module-context-ns (current-expander-context)))
+    (let ((ns (module-context-ns (core-context-top (current-expander-context))))
           (phi (current-expander-phi)))
       (if (fxpositive? phi)
         (make-symbol ns "[" (number->string phi) "]#_" (gensym) "_")

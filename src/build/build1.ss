@@ -55,7 +55,7 @@
                       debug: debug optimize: optimize? generate-ssxi: gen-ssxi? static: static?
                       gsc-options: ["-cc-options" "--param max-gcse-memory=300000000"]]))
 
-(def optimize-prelude #f) ; meaningless before macros are also optimized
+(def optimize-prelude #t) ; macros are now optimized, so this is enabled
 (def optimize-modules #t) ; runtime code, we want these optimizations
 
 (def debug-prelude #f)   ; almost exclusively macros and externs, not worth the bloat
