@@ -392,15 +392,16 @@ namespace: gx
                    (recur body vars $e E k))
                  E)))
             ((datum)
-             (core-list 'if
-               (core-list 'stx-datum? target)
+             (let ($e (genident 'e))
                (core-list 'if
-                 (core-list 'equal?
-                   (core-list 'stx-e target)
-                   body)
-                 (k vars)
-                 E)
-               E))
+                 (core-list 'stx-datum? target)
+                 (core-list 'let-values
+                   [[[$e] (core-list 'stx-e target)]]
+                   (core-list 'if
+                     (core-list 'equal? $e body)
+                     (k vars)
+                     E))
+                 E)))
             (else (BUG e))))))
 
     (def (splice-rlen e)
