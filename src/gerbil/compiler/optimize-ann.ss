@@ -24,22 +24,28 @@ namespace: gxc
   (%#if            push-match-vars-if%)
   (%#call          push-match-vars-call%))
 
+(def current-annotation-optimizer
+  (make-parameter #f))
+
 ;;; apply-optimize-annotated
 (def (optimize-annotation% stx)
   (ast-case stx ()
     ((_ ann expr)
      (identifier? #'ann)
-     (case (stx-e #'ann)
-       ((@match)
-        (verbose "Optimizing match expansion")
-        (optimize-match #'expr))
-       ((@syntax-case)
-        (verbose "Optimizing syntax-case expansion")
-        (optimize-syntax-case #'expr))
-       (else
-        (verbose "Ignoring uknown annotation " (stx-e #'ann))
-        (compile-e #'expr))))
-    (_ (xform-begin-annotation% stx))))
+     (let (ann (stx-e #'ann))
+       (case ann
+         ((@match)
+          (verbose "Optimizing match expansion")
+          (parameterize ((current-annotation-optimizer ann))
+            (optimize-match #'expr)))
+         ((@syntax-case)
+          (verbose "Optimizing syntax-case expansion")
+          (parameterize ((current-annotation-optimizer ann))
+            (optimize-syntax-case #'expr)))
+         (else
+          (verbose "Ignoring uknown annotation " ann)
+          (compile-e #'expr)))))
+     (_ (xform-begin-annotation% stx))))
 
 ;;; optimize-match
 (def (optimize-match stx)
