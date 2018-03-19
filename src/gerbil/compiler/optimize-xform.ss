@@ -72,8 +72,10 @@ namespace: gxc
 
 (defcompile-method #f (&basic-xform &basic-xform-expression &identity)
   (%#begin          xform-begin%)
+  (%#begin-syntax   xform-begin-syntax%)
   (%#module         xform-module%)
-  (%#define-values  xform-define-values%))
+  (%#define-values  xform-define-values%)
+  (%#define-syntax  xform-define-syntax%))
 
 (defcompile-method apply-collect-mutators (&collect-mutators &void)
   (%#begin                   collect-begin%)
@@ -151,6 +153,15 @@ namespace: gxc
         ['%#begin forms ...]
         stx)))))
 
+(def (xform-begin-syntax% stx . args)
+  (ast-case stx ()
+    ((_ . forms)
+     (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
+       (let (forms (map (xform-apply-compile-e args) #'forms))
+         (xform-wrap-source
+          ['%#begin-syntax forms ...]
+          stx))))))
+
 (def (xform-module% stx . args)
   (ast-case stx ()
     ((_ id . body)
@@ -172,6 +183,15 @@ namespace: gxc
        (xform-wrap-source
         ['%#define-values #'hd expr]
         stx)))))
+
+(def (xform-define-syntax% stx . args)
+  (ast-case stx ()
+    ((_ id expr)
+     (parameterize ((current-expander-phi (fx1+ (current-expander-phi))))
+       (let (expr (apply compile-e #'expr args))
+         (xform-wrap-source
+          ['%#define-syntax #'id expr]
+          stx))))))
 
 (def (xform-begin-annotation% stx . args)
   (ast-case stx ()

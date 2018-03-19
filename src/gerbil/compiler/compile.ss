@@ -491,7 +491,7 @@ namespace: gxc
 
 (def (generate-runtime-temporary (top #f))
   (if top
-    (let ((ns (module-context-ns (current-expander-context)))
+    (let ((ns (module-context-ns (core-context-top (current-expander-context))))
           (phi (current-expander-phi)))
       (if (fxpositive? phi)
         (make-symbol ns "[" (number->string phi) "]#_" (gensym) "_")
