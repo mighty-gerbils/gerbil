@@ -772,10 +772,10 @@ namespace: gxc
   ;; don't forget the fender, it is inside the continuation -- that's
   ;; the point where we lift arguments for dispatch
 
-  (def (xform-e expr kont-id kont-box)
+  (def (xform-e expr kont-id kont-box negation-id)
     (ast-case expr (%#if %#let-values %#letrec-values %#ref %#lambda %#call)
       ((%#if test K E)
-       (let (K (xform-e #'K kont-id kont-box))
+       (let (K (xform-e #'K kont-id kont-box negation-id))
          ['%#if #'test K #'E]))
 
       ((%#let-values (((tgt tl) (%#call (%#ref split-splice) . args))) body)
@@ -783,18 +783,18 @@ namespace: gxc
        (let* ((id (make-symbol (gensym '__splice)))
               (id (core-quote-syntax id))
               (_ (core-bind-runtime! id))
-              (body (xform-e #'body kont-id kont-box)))
+              (body (xform-e #'body kont-id kont-box negation-id)))
          ['%#let-values [[[id] #'(%#call (%#ref split-splice) . args)]]
            ['%#let-values [[[#'tgt] ['%#call '(%#ref ##vector-ref) ['%#ref id] '(%#quote 0)]]
                            [[#'tl] ['%#call '(%#ref ##vector-ref) ['%#ref id] '(%#quote 1)]]]
               body]]))
 
       ((%#let-values bind body)
-       (let (body (xform-e #'body kont-id kont-box))
+       (let (body (xform-e #'body kont-id kont-box negation-id))
          ['%#let-values #'bind body]))
 
       ((%#letrec-values (((id) lambda-expr)) body)
-       (let (lambda-expr (xform-loop-e #'lambda-expr kont-id kont-box))
+       (let (lambda-expr (xform-loop-e #'lambda-expr kont-id kont-box negation-id))
          ['%#letrec-values [[[#'id] lambda-expr]] #'body]))
 
       ((%#call (%#lambda (id ...) body) arg ...)
@@ -803,10 +803,12 @@ namespace: gxc
           (free-identifier=? #'E negation-id)
           (let (kont #'(%#lambda (id ...) K))
             (set! (box kont-box) kont)
-            (let (body
-                  ['%#if #'fender
-                     ['%#call ['%#ref kont-id] #'(id ...) ...]
-                     #'(%#call (%#ref E) (%#ref xarg))])
+            (let* ((kont-args
+                    (map (lambda (id) ['%#ref id]) #'(id ...)))
+                   (body
+                    ['%#if #'fender
+                           ['%#call ['%#ref kont-id] kont-args ...]
+                           #'(%#call (%#ref E) (%#ref xarg))]))
               (if (null? #'(id ...))
                 body
                 ['%#let-values (map (lambda (id arg) [[id] arg]) #'(id ...) #'(arg ...))
@@ -816,20 +818,24 @@ namespace: gxc
             (set! (box kont-box) kont)
             ['%#call ['%#ref kont-id] #'(arg ...) ...]))))))
 
-  (def (xform-loop-e expr kont-id kont-box)
+  (def (xform-loop-e expr kont-id kont-box negation-id)
     (ast-case expr (%#lambda %#if)
       ((%#lambda (id ...) (%#if test K E))
-       (let (E (xform-e #'E kont-id kont-box))
+       (let (E (xform-e #'E kont-id kont-box negation-id))
          ['%#lambda #'(id ...) ['%#if #'test #'K E]]))))
 
-  (def (clause-e clause-lambda kont-id)
+  (def (clause-e clause-lambda kont-id rest)
     (def kont-box (box #f))
 
-    (ast-case clause-lambda (%#lambda)
-      ((%#lambda (id) body)
-       (let (body (xform-e #'body kont-id kont-box))
-         (values ['%#lambda #'(id) body]
-                 (unbox kont-box))))))
+    (let (negation-id
+          (match rest
+            ([[clause-id . clause] . _] clause-id)
+            (else negation-id)))
+      (ast-case clause-lambda (%#lambda)
+        ((%#lambda (id) body)
+         (let (body (xform-e #'body kont-id kont-box negation-id))
+           (values ['%#lambda #'(id) body]
+                   (unbox kont-box)))))))
 
   (let lp ((rest clauses) (clauses []) (konts []))
     (match rest
@@ -839,7 +845,7 @@ namespace: gxc
                 (id (core-quote-syntax id))
                 (_ (core-bind-runtime! id))
                 ((values clause-lambda kont)
-                 (clause-e clause-lambda id)))
+                 (clause-e clause-lambda id rest)))
            (lp rest
                (cons [clause-id . clause-lambda] clauses)
                (cons [id . kont] konts)))))
