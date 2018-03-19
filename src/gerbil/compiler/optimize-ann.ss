@@ -788,9 +788,11 @@ namespace: gxc
            (_ (core-bind-runtime! id))
            ((values clauses konts)
             (optimize-syntax-case-clauses clauses (car negation)))
-           (clauses (map (cut optimize-syntax-case-closure <> id) clauses))
+           (clauses (map (cut optimize-syntax-case-closure <> <> id)
+                         clauses
+                         [(map car (cdr clauses)) ... (car negation)]))
            (clauses (normalize clauses))
-           (negation (optimize-syntax-case-closure negation id))
+           (negation (optimize-syntax-case-closure negation #f id))
            (body (optimize-match-body stx negation clauses konts)))
       (xform-wrap-source
        ['%#let-values [[[id] expr]] body]
@@ -880,7 +882,7 @@ namespace: gxc
       (else
        (values (reverse clauses) (reverse konts))))))
 
-(def (optimize-syntax-case-closure clause target)
+(def (optimize-syntax-case-closure clause negation target)
   (def (closure-e expr)
     (ast-case expr (%#if %#let-values %#letrec-values %#ref %#lambda %#call)
       ((%#if test K E)
@@ -891,8 +893,8 @@ namespace: gxc
        ['%#letrec-values [[[#'id] (closure-e #'lambda-expr)]] #'body])
       ((%#lambda (id ...) body)
        ['%#lambda #'(id ...) (closure-e #'body)])
-      ((%#call (%#ref rator) (%#ref arg))
-       (free-identifier=? #'arg target)
+      ((%#call (%#ref rator) _)
+       (free-identifier=? #'rator negation)
        ['%#call #'(%#ref rator)])
       ((%#call (%#ref rator) arg ...)
        expr)))
@@ -901,7 +903,7 @@ namespace: gxc
     (ast-case kont (%#lambda)
       ((%#lambda (obj) body)
        (let* ((body (apply-expression-subst #'body #'obj target))
-              (body (closure-e body)))
+              (body (if negation (closure-e body) body)))
          (cons id ['%#lambda [] body]))))))
 
 ;;; apply-push-match-vars
