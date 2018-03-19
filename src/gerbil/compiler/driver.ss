@@ -464,7 +464,7 @@ namespace: gxc
              (parameterize ((current-expander-context phi-ctx)
                             (current-expander-phi phi))
                (generate-runtime-phi code)))
-         (compile-scm-file (compile-output-file ctx n ".scm") code)))))
+         (compile-scm-file (compile-output-file ctx n ".scm") code #t)))))
 
   (let ((values ssi-code phi-code)
         (generate-meta-code ctx))
@@ -509,15 +509,16 @@ namespace: gxc
     (reverse (unbox modules))))
 
 ;;; utilities
-(def (compile-scm-file path code)
+(def (compile-scm-file path code (phi? #f))
   (verbose "compile " path)
   (with-output-to-file [path: path permissions: #o644]
     (lambda ()
       (pretty-print
-       '(declare
+       `(declare
           (block)
           (standard-bindings)
-          (extended-bindings)))
+          (extended-bindings)
+          ,@(if phi? '((inlining-limit 100)) '())))
       (pretty-print code)))
   (when (current-compile-invoke-gsc)
     (gsc-compile-file path))
