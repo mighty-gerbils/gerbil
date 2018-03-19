@@ -14,6 +14,9 @@ namespace: gxc
 (defcompile-method apply-optimize-annotated (&optmize-annotated &basic-xform)
   (%#begin-annotation optimize-annotation%))
 
+(defcompile-method apply-generate-runtime-repr (&generate-runtime-repr &generate-runtime)
+  (%#quote-syntax identity))
+
 (defcompile-method apply-push-match-vars &push-match-vars
   (%#lambda             xform-lambda%)
   (%#let-values    push-match-vars-let-values%)
@@ -248,7 +251,7 @@ namespace: gxc
         (match rest
           ([assert . rest]
            (with ([expr . val] assert)
-             (let* ((sexpr (apply-generate-runtime expr))
+             (let* ((sexpr (apply-generate-runtime-repr expr))
                     (env-assert (cons (cons sexpr val) env-assert))
                     (env-type (fold-assert-type expr val env-type)))
                (lp rest env-assert env-type))))
@@ -276,7 +279,7 @@ namespace: gxc
            (else #f))))))
 
   (def (fold-assert-type expr val env)
-    (ast-case expr (%#call %#ref %#quote %#lambda)
+    (ast-case expr (%#call %#ref %#quote %#quote-syntax %#lambda)
       ((%#call (%#ref pred) (%#ref id))
        (cond
         ((predicate-type #'pred)
@@ -308,6 +311,17 @@ namespace: gxc
 
       ((%#call (%#ref primop) (%#quote datum) target)
        (fold-assert-type #'(%#call (%#ref primop) target (%#quote datum)) val env))
+
+      ((%#call (%#ref primop) (%#ref id) (%#quote-syntax qstx))
+       (case (identifier-symbol #'primop)
+         ((gx#free-identifier=? gx#stx-eq?)
+          => (lambda (sym)
+               (let (sym (eqf-symbol sym))
+                 (cons [#'id sym #'qstx val] env))))
+         (else env)))
+
+      ((%#call (%#ref primop) (%#quote-syntax qstx) (%#ref id))
+       (fold-assert-type #'(%#call (%#ref primop) (%#ref id) (%#quote-syntax qstx)) val env))
 
       ((%#call (%#lambda (id) body) (%#ref xid))
        (fold-assert-type (apply-expression-subst #'body #'id #'xid) val env))
@@ -357,7 +371,7 @@ namespace: gxc
       (match rest
         ([bind . rest]
          (with ([id . expr] bind)
-           (let (sexpr (apply-generate-runtime expr))
+           (let (sexpr (apply-generate-runtime-repr expr))
              (lp rest (cons (cons sexpr id) env)))))
         (else env))))
 
@@ -386,8 +400,8 @@ namespace: gxc
          (else
           (let ((K (optimize-t #'K #'test))
                 (E (optimize-f #'E #'test)))
-            (if (equal? (apply-generate-runtime K)
-                        (apply-generate-runtime E))
+            (if (equal? (apply-generate-runtime-repr K)
+                        (apply-generate-runtime-repr E))
               K
               ['%#if #'test K E])))))
 
@@ -456,8 +470,8 @@ namespace: gxc
            (else
             (let ((K (optimize-t #'K #'test optimize-f))
                   (E (optimize-f #'E #'test)))
-              (if (equal? (apply-generate-runtime K)
-                          (apply-generate-runtime E))
+              (if (equal? (apply-generate-runtime-repr K)
+                          (apply-generate-runtime-repr E))
                 K
                 ['%#if #'test K E])))))
 
@@ -477,13 +491,13 @@ namespace: gxc
         (_ expr))))
 
   (def (assert-e expr)
-    (let (sexpr (apply-generate-runtime expr))
+    (let (sexpr (apply-generate-runtime-repr expr))
       (cond
        ((assoc sexpr env-assert)
         => cdr)
        (else
         (let assert ((expr expr))
-          (ast-case expr (%#call %#ref %#quote %#lambda)
+          (ast-case expr (%#call %#ref %#quote %#quote-syntax %#lambda)
             ((%#call (%#ref pred) (%#ref id))
              (cond
               ((predicate-type #'pred)
@@ -515,6 +529,16 @@ namespace: gxc
 
             ((%#call (%#ref primop) (%#quote datum) target)
              (assert #'(%#call (%#ref primop) target (%#quote datum))))
+
+            ((%#call (%#ref primop) (%#ref id) (%#quote-syntax qstx))
+             (case (identifier-symbol #'primop)
+               ((gx#free-identifier=? gx#stx-eq?)
+                => (lambda (sym)
+                     (assert-eqf #'id (eqf-symbol sym) #'qstx)))
+               (else #!void)))
+
+            ((%#call (%#ref primop) (%#quote-syntax qstx) (%#ref id))
+             (assert #'(%#call (%#ref primop) (%#ref id) (%#quote-syntax qstx))))
 
             ((%#call (%#lambda (id) body) (%#ref xid))
              (assert (apply-expression-subst #'body #'id #'xid)))
@@ -582,9 +606,13 @@ namespace: gxc
   (def (assert-eqf id sym datum)
     (def (eqf sym)
       (case sym
-        ((eq? free-identifier=? stx-eq?) eq?)
+        ((eq?) eq?)
         ((eqv?) eqv?)
-        (else equal?)))
+        ((equal?) equal?)
+        ((free-identifier=?) free-identifier=?)
+        ((stx-eq?) stx-eq?)
+        (else
+         (raise-compile-error "Unexpected eqf symbol" body sym))))
 
     (let lp ((rest env-type))
       (match rest
@@ -607,7 +635,7 @@ namespace: gxc
       (match rest
         ([bind . rest]
          (with ([id . expr] bind)
-           (let (sexpr (apply-generate-runtime expr))
+           (let (sexpr (apply-generate-runtime-repr expr))
              (cond
               ((assget sexpr env-bind)
                => (lambda (xid)
