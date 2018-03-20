@@ -5,11 +5,11 @@
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41039_|
     (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41042_|
-    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41043_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41044_|
-    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
   (begin
     (define |gerbil/core$<sugar>$<sugar:1>[:0:]#defrules|
       (lambda (_$stx1687_)
@@ -1972,7 +1972,7 @@
                                                (##car _e40914477_)))
                                           (if (gx#identifier? _hd40924481_)
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core$<sugar>$<sugar:1>[1]#_g41042_|
+                                                   |gerbil/core$<sugar>$<sugar:1>[1]#_g41044_|
                                                    _hd40924481_)
                                                   (if (gx#stx-pair/null?
                                                        _tl40934484_)
@@ -2171,7 +2171,7 @@
                                                       (if (gx#identifier?
                                                            _hd41264368_)
                                                           (if (gx#free-identifier=?
-                                                               |gerbil/core$<sugar>$<sugar:1>[1]#_g41044_|
+                                                               |gerbil/core$<sugar>$<sugar:1>[1]#_g41042_|
                                                                _hd41264368_)
                                                               (if (gx#stx-pair?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

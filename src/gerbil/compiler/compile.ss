@@ -924,9 +924,21 @@ namespace: gxc
          (_ (cons rator rands)))))))
 
 (def (generate-runtime-if% stx)
+  (def (boolean-e code)
+    (ast-case code (if let quote)
+      ((let ((id expr1)) (if xid yid expr2))
+       (and (stx-eq? #'id #'xid) (stx-eq? #'id #'yid))
+       ['if (boolean-e #'expr1) '(quote #t) (boolean-e #'expr2)])
+      ((if test K E)
+       ['if #'test (boolean-e #'K) (boolean-e #'E)])
+      (_ code)))
+
   (ast-case stx ()
-    ((_ . exprs)
-     ['if (map compile-e #'exprs) ...])))
+    ((_ test K E)
+     (let ((test (boolean-e (compile-e #'test)))
+           (K (compile-e #'K))
+           (E (compile-e #'E)))
+       ['if test K E]))))
 
 (def (generate-runtime-ref% stx)
   (ast-case stx ()
