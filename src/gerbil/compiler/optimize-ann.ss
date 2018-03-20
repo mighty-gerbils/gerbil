@@ -26,7 +26,7 @@ namespace: gxc
   (%#call          push-match-vars-call%))
 
 (def current-annotation-optimizer
-  (make-parameter #f))
+  (make-parameter []))
 
 ;;; apply-optimize-annotated
 (def (optimize-annotation% stx)
@@ -34,18 +34,17 @@ namespace: gxc
     ((_ ann expr)
      (identifier? #'ann)
      (let (ann (stx-e #'ann))
-       (case ann
-         ((@match)
-          (verbose "Optimizing match expansion")
-          (parameterize ((current-annotation-optimizer ann))
-            (optimize-match #'expr)))
-         ((@syntax-case)
-          (verbose "Optimizing syntax-case expansion")
-          (parameterize ((current-annotation-optimizer ann))
-            (optimize-syntax-case #'expr)))
-         (else
-          (verbose "Ignoring uknown annotation " ann)
-          (compile-e #'expr)))))
+       (parameterize ((current-annotation-optimizer
+                       (cons ann (current-annotation-optimizer))))
+         (case ann
+           ((@match)
+            (verbose "Optimizing match expansion")
+            (optimize-match #'expr))
+           ((@syntax-case)
+            (verbose "Optimizing syntax-case expansion")
+            (optimize-syntax-case #'expr))
+           (else
+            (compile-e #'expr))))))
      (_ (xform-begin-annotation% stx))))
 
 ;;; optimize-match
@@ -690,7 +689,10 @@ namespace: gxc
 
   (with-assert assert
     (with-bind bind
-      (optimize-e body))))
+      (if (memq '@match:prefix (current-annotation-optimizer))
+        (with-splice
+         (optimize-e body))
+        (optimize-e body)))))
 
 (def (optimize-match-prune-blocks blocks konts)
   (def rtab (make-hash-table-eq))
