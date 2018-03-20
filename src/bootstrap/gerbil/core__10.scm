@@ -5,43 +5,43 @@
   (define |gerbil/core$<match>[1]#_g41185_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41186_|
-    (gx#make-syntax-quote 'quote #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g41187_|
     (gx#make-syntax-quote 'quasiquote #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g41188_|
+  (define |gerbil/core$<match>[1]#_g41187_|
     (gx#make-syntax-quote 'quote #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g41188_|
+    (gx#make-syntax-quote 'apply #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41189_|
     (gx#make-syntax-quote 'quasiquote #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41190_|
-    (gx#make-syntax-quote 'apply #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote 'quote #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41191_|
-    (gx#make-syntax-quote '? #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g41192_|
-    (gx#make-syntax-quote 'and #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g41193_|
-    (gx#make-syntax-quote 'or #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g41194_|
-    (gx#make-syntax-quote 'not #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g41195_|
-    (gx#make-syntax-quote 'cons #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g41196_|
-    (gx#make-syntax-quote 'cons* #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g41197_|
-    (gx#make-syntax-quote '@list #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g41198_|
-    (gx#make-syntax-quote 'box #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g41199_|
-    (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g41200_|
     (gx#make-syntax-quote 'vector #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g41192_|
+    (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g41193_|
+    (gx#make-syntax-quote 'box #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g41194_|
+    (gx#make-syntax-quote '@list #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g41195_|
+    (gx#make-syntax-quote 'cons* #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g41196_|
+    (gx#make-syntax-quote 'cons #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g41197_|
+    (gx#make-syntax-quote 'not #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g41198_|
+    (gx#make-syntax-quote 'or #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g41199_|
+    (gx#make-syntax-quote 'and #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g41200_|
+    (gx#make-syntax-quote '? #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41209_|
     (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41214_|
     (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41215_|
-    (gx#make-syntax-quote '<> #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<match>[1]#_g41216_|
     (gx#make-syntax-quote '<...> #f (gx#current-expander-context) '()))
+  (define |gerbil/core$<match>[1]#_g41216_|
+    (gx#make-syntax-quote '<> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41221_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41222_|
@@ -51,7 +51,7 @@
   (define |gerbil/core$<match>[1]#_g41224_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41225_|
-    (gx#make-syntax-quote 'and #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41226_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41227_|
@@ -61,7 +61,7 @@
   (define |gerbil/core$<match>[1]#_g41229_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41230_|
-    (gx#make-syntax-quote 'or #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41231_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41232_|
@@ -71,11 +71,11 @@
   (define |gerbil/core$<match>[1]#_g41234_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41235_|
-    (gx#make-syntax-quote 'not #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41236_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41237_|
-    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote 'not #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41238_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41239_|
@@ -85,7 +85,7 @@
   (define |gerbil/core$<match>[1]#_g41241_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41242_|
-    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote 'or #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41243_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41244_|
@@ -95,7 +95,7 @@
   (define |gerbil/core$<match>[1]#_g41246_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41247_|
-    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote 'and #f (gx#current-expander-context) '()))
   (begin
     (define |gerbil/core$<match>[1]#match-macro::t|
       (make-class-type
@@ -189,7 +189,7 @@
                                                              _hd2924129405_)
                                                             (if (gx#free-identifier=?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         |gerbil/core$<match>[1]#_g41184_|
+                         |gerbil/core$<match>[1]#_g41185_|
                          _hd2924129405_)
                         (if (gx#stx-pair? _tl2924229408_)
                             (let ((_e2924729371_ (gx#syntax-e _tl2924229408_)))
@@ -220,7 +220,7 @@
                                               (if (gx#identifier?
                                                    _hd2926029316_)
                                                   (if (gx#free-identifier=?
-                                                       |gerbil/core$<match>[1]#_g41185_|
+                                                       |gerbil/core$<match>[1]#_g41184_|
                                                        _hd2926029316_)
                                                       (if (gx#stx-pair?
                                                            _tl2926129319_)
@@ -465,37 +465,31 @@
                                   (let ((_L28540_ _hd2824728534_)
                                         (_L28542_ _hd2824428524_))
                                     (if (if (gx#identifier? _L28542_)
-                                            (let ((_$e28555_
-                                                   (gx#free-identifier=?
-                                                    _L28542_
-                                                    (gx#datum->syntax
-                                                     '#f
-                                                     'eq?))))
-                                              (if _$e28555_
-                                                  _$e28555_
-                                                  (let ((_$e28559_
-                                                         (gx#free-identifier=?
-                                                          _L28542_
-                                                          (gx#datum->syntax
-                                                           '#f
-                                                           'eqv?))))
-                                                    (if _$e28559_
-                                                        _$e28559_
-                                                        (gx#free-identifier=?
-                                                         _L28542_
-                                                         (gx#datum->syntax
-                                                          '#f
-                                                          'equal?))))))
+                                            (if (gx#free-identifier=?
+                                                 _L28542_
+                                                 (gx#datum->syntax '#f 'eq?))
+                                                '#t
+                                                (if (gx#free-identifier=?
+                                                     _L28542_
+                                                     (gx#datum->syntax
+                                                      '#f
+                                                      'eqv?))
+                                                    '#t
+                                                    (gx#free-identifier=?
+                                                     _L28542_
+                                                     (gx#datum->syntax
+                                                      '#f
+                                                      'equal?))))
                                             '#f)
                                         (___kont3848938490_ _L28540_ _L28542_)
                                         (if (gx#identifier? _hd2824428524_)
                                             (if (gx#free-identifier=?
-                                                 |gerbil/core$<match>[1]#_g41186_|
+                                                 |gerbil/core$<match>[1]#_g41187_|
                                                  _hd2824428524_)
                                                 (___kont3849138492_
                                                  _hd2824728534_)
                                                 (if (gx#free-identifier=?
-                                                     |gerbil/core$<match>[1]#_g41187_|
+                                                     |gerbil/core$<match>[1]#_g41186_|
                                                      _hd2824428524_)
                                                     (___kont3849338494_
                                                      _hd2824728534_)
@@ -536,7 +530,7 @@
                                                     (if (gx#identifier?
                                                          _hd2823928574_)
                                                         (if (gx#free-identifier=?
-                                                             |gerbil/core$<match>[1]#_g41188_|
+                                                             |gerbil/core$<match>[1]#_g41190_|
                                                              _hd2823928574_)
                                                             (___match3878138782_
                                                              _e2823828570_
@@ -551,7 +545,7 @@
                          _hd2823928574_
                          _tl2824028577_)
                         (if (gx#free-identifier=?
-                             |gerbil/core$<match>[1]#_g41190_|
+                             |gerbil/core$<match>[1]#_g41188_|
                              _hd2823928574_)
                             (if (gx#stx-pair? _tl2824828537_)
                                 (let ((_e2827128406_
@@ -690,7 +684,7 @@
                                       (_hd2814929202_ (##car _e2814829198_)))
                                   (if (gx#identifier? _hd2814929202_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core$<match>[1]#_g41191_|
+                                           |gerbil/core$<match>[1]#_g41200_|
                                            _hd2814929202_)
                                           (if (gx#stx-pair? _tl2815029205_)
                                               (let ((_e2815129208_
@@ -708,21 +702,21 @@
                                                _hd2814929202_
                                                _tl2815029205_))
                                           (if (gx#free-identifier=?
-                                               |gerbil/core$<match>[1]#_g41192_|
+                                               |gerbil/core$<match>[1]#_g41199_|
                                                _hd2814929202_)
                                               (___match3853338534_
                                                _e2814829198_
                                                _hd2814929202_
                                                _tl2815029205_)
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core$<match>[1]#_g41193_|
+                                                   |gerbil/core$<match>[1]#_g41198_|
                                                    _hd2814929202_)
                                                   (___match3854338544_
                                                    _e2814829198_
                                                    _hd2814929202_
                                                    _tl2815029205_)
                                                   (if (gx#free-identifier=?
-                                                       |gerbil/core$<match>[1]#_g41194_|
+                                                       |gerbil/core$<match>[1]#_g41197_|
                                                        _hd2814929202_)
                                                       (if (gx#stx-pair?
                                                            _tl2815029205_)
@@ -742,7 +736,7 @@
                    _hd2814929202_
                    _tl2815029205_))
               (if (gx#free-identifier=?
-                   |gerbil/core$<match>[1]#_g41195_|
+                   |gerbil/core$<match>[1]#_g41196_|
                    _hd2814929202_)
                   (if (gx#stx-pair? _tl2815029205_)
                       (let ((_e2817428944_ (gx#syntax-e _tl2815029205_)))
@@ -770,7 +764,7 @@
                        _hd2814929202_
                        _tl2815029205_))
                   (if (gx#free-identifier=?
-                       |gerbil/core$<match>[1]#_g41196_|
+                       |gerbil/core$<match>[1]#_g41195_|
                        _hd2814929202_)
                       (if (gx#stx-pair? _tl2815029205_)
                           (let ((_e2818628888_ (gx#syntax-e _tl2815029205_)))
@@ -796,11 +790,11 @@
                            _hd2814929202_
                            _tl2815029205_))
                       (if (gx#free-identifier=?
-                           |gerbil/core$<match>[1]#_g41197_|
+                           |gerbil/core$<match>[1]#_g41194_|
                            _hd2814929202_)
                           (___kont3846938470_ _tl2815029205_)
                           (if (gx#free-identifier=?
-                               |gerbil/core$<match>[1]#_g41198_|
+                               |gerbil/core$<match>[1]#_g41193_|
                                _hd2814929202_)
                               (if (gx#stx-pair? _tl2815029205_)
                                   (let ((_e2820028820_
@@ -820,7 +814,7 @@
                                    _hd2814929202_
                                    _tl2815029205_))
                               (if (gx#free-identifier=?
-                                   |gerbil/core$<match>[1]#_g41199_|
+                                   |gerbil/core$<match>[1]#_g41192_|
                                    _hd2814929202_)
                                   (if (gx#stx-pair? _tl2815029205_)
                                       (let ((_e2820928759_
@@ -836,7 +830,7 @@
                                                _tl2815029205_))))
                                       (___kont3847738478_ _tl2815029205_))
                                   (if (gx#free-identifier=?
-                                       |gerbil/core$<match>[1]#_g41200_|
+                                       |gerbil/core$<match>[1]#_g41191_|
                                        _hd2814929202_)
                                       (___kont3847938480_ _tl2815029205_)
                                       (___match3869538696_
@@ -1333,11 +1327,9 @@
                                          _tl2681827126_)
                                   (let ((_L27129_ _hd2681727123_)
                                         (_L27131_ _hd2681427113_))
-                                    (if (let ((_$e27144_
-                                               (gx#stx-eq? 'values: _L27131_)))
-                                          (if _$e27144_
-                                              _$e27144_
-                                              (gx#stx-eq? 'vector: _L27131_)))
+                                    (if (if (gx#stx-eq? 'values: _L27131_)
+                                            '#t
+                                            (gx#stx-eq? 'vector: _L27131_))
                                         (___kont3899738998_ _L27129_ _L27131_)
                                         (if (gx#stx-datum? _hd2681427113_)
                                             (let ((_e2682327062_
@@ -1363,11 +1355,9 @@
                                          _tl2677027380_)
                                   (let ((_L27383_ _tl2677027380_)
                                         (_L27385_ _hd2676927377_))
-                                    (if (let ((_$e27396_
-                                               (gx#stx-eq? 'and: _L27385_)))
-                                          (if _$e27396_
-                                              _$e27396_
-                                              (gx#stx-eq? 'or: _L27385_)))
+                                    (if (if (gx#stx-eq? 'and: _L27385_)
+                                            '#t
+                                            (gx#stx-eq? 'or: _L27385_))
                                         (___kont3898738988_ _L27383_ _L27385_)
                                         (if (gx#stx-datum? _hd2676927377_)
                                             (let ((_e2677527338_
@@ -2364,17 +2354,17 @@
                                                 (_g2506025088_
                                                  (let ((_e25092_
                                                         (gx#stx-e _L25047_)))
-                                                   (if (let ((_$e25095_
-                                                              (symbol? _e25092_)))
-                                                         (if _$e25095_
-                                                             _$e25095_
-                                                             (let ((_$e25099_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (keyword? _e25092_)))
-                       (if _$e25099_ _$e25099_ (immediate? _e25092_)))))
-               '##eq?
-               (if (number? _e25092_) 'eqv? 'equal?)))))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                                   (if (if (symbol? _e25092_)
+                                                           '#t
+                                                           (if (keyword?
+                                                                _e25092_)
+                                                               '#t
+                                                               (immediate?
+                                                                _e25092_)))
+                                                       '##eq?
+                                                       (if (number? _e25092_)
+                                                           'eqv?
+                                                           'equal?)))))))
                                            (___kont3957139572_
                                             (lambda (_L24967_ _L24969_)
                                               (let* ((_g2498524993_
@@ -4664,7 +4654,7 @@
                                   (_hd2948229738_ (##car _e2948129734_)))
                               (if (gx#identifier? _hd2948229738_)
                                   (if (gx#free-identifier=?
-                                       |gerbil/core$<match>[1]#_g41215_|
+                                       |gerbil/core$<match>[1]#_g41216_|
                                        _hd2948229738_)
                                       (___match4012740128_
                                        _e2947829724_
@@ -4674,7 +4664,7 @@
                                        _hd2948229738_
                                        _tl2948329741_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core$<match>[1]#_g41216_|
+                                           |gerbil/core$<match>[1]#_g41215_|
                                            _hd2948229738_)
                                           (___match4014340144_
                                            _e2947829724_
@@ -5705,7 +5695,7 @@
                              _tl3090431159_)
                       (if (gx#identifier? _hd3090331156_)
                           (if (gx#free-identifier=?
-                               |gerbil/core$<match>[1]#_g41221_|
+                               |gerbil/core$<match>[1]#_g41222_|
                                _hd3090331156_)
                               (if (gx#stx-pair? _tl3090431159_)
                                   (let ((_e3090531162_
@@ -5750,7 +5740,7 @@
                                                              _hd3094231007_)
                                                             (if (gx#free-identifier=?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         |gerbil/core$<match>[1]#_g41222_|
+                         |gerbil/core$<match>[1]#_g41221_|
                          _hd3094231007_)
                         (if (gx#stx-pair? _tl3094331010_)
                             (let ((_e3094431013_ (gx#syntax-e _tl3094331010_)))
@@ -5787,7 +5777,7 @@
                                       (_hd3090331156_ (##car _e3090231152_)))
                                   (if (gx#identifier? _hd3090331156_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core$<match>[1]#_g41223_|
+                                           |gerbil/core$<match>[1]#_g41224_|
                                            _hd3090331156_)
                                           (if (gx#stx-pair? _tl3090431159_)
                                               (let ((_e3090531162_
@@ -5833,7 +5823,7 @@
                                 (_hd3094231007_ (##car _e3094131003_)))
                             (if (gx#identifier? _hd3094231007_)
                                 (if (gx#free-identifier=?
-                                     |gerbil/core$<match>[1]#_g41224_|
+                                     |gerbil/core$<match>[1]#_g41223_|
                                      _hd3094231007_)
                                     (if (gx#stx-pair? _tl3094331010_)
                                         (let ((_e3094431013_
@@ -5995,7 +5985,7 @@
                                            (##car _e3081731506_)))
                                       (if (gx#identifier? _hd3081831510_)
                                           (if (gx#free-identifier=?
-                                               |gerbil/core$<match>[1]#_g41225_|
+                                               |gerbil/core$<match>[1]#_g41247_|
                                                _hd3081831510_)
                                               (if (gx#stx-pair/null?
                                                    _tl3081931513_)
@@ -6039,7 +6029,7 @@
                                _hd3081531500_)
                               (if (gx#identifier? _hd3088331266_)
                                   (if (gx#free-identifier=?
-                                       |gerbil/core$<match>[1]#_g41226_|
+                                       |gerbil/core$<match>[1]#_g41246_|
                                        _hd3088331266_)
                                       (if (gx#stx-pair? _tl3088431269_)
                                           (let ((_e3090531162_
@@ -6083,7 +6073,7 @@
                             (_hd3094231007_ (##car _e3094131003_)))
                         (if (gx#identifier? _hd3094231007_)
                             (if (gx#free-identifier=?
-                                 |gerbil/core$<match>[1]#_g41227_|
+                                 |gerbil/core$<match>[1]#_g41245_|
                                  _hd3094231007_)
                                 (if (gx#stx-pair? _tl3094331010_)
                                     (let ((_e3094431013_
@@ -6129,7 +6119,7 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            _hd3088331266_)
                           (if (gx#free-identifier=?
-                               |gerbil/core$<match>[1]#_g41228_|
+                               |gerbil/core$<match>[1]#_g41244_|
                                _hd3088331266_)
                               (if (gx#stx-pair? _tl3088431269_)
                                   (let ((_e3090531162_
@@ -6174,7 +6164,7 @@
                                                              _hd3094231007_)
                                                             (if (gx#free-identifier=?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         |gerbil/core$<match>[1]#_g41229_|
+                         |gerbil/core$<match>[1]#_g41243_|
                          _hd3094231007_)
                         (if (gx#stx-pair? _tl3094331010_)
                             (let ((_e3094431013_ (gx#syntax-e _tl3094331010_)))
@@ -6200,7 +6190,7 @@
                   (_g3080630952_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core$<match>[1]#_g41230_|
+                                                   |gerbil/core$<match>[1]#_g41242_|
                                                    _hd3081831510_)
                                                   (if (gx#stx-pair/null?
                                                        _tl3081931513_)
@@ -6243,7 +6233,7 @@
                                    _hd3081531500_)
                                   (if (gx#identifier? _hd3088331266_)
                                       (if (gx#free-identifier=?
-                                           |gerbil/core$<match>[1]#_g41231_|
+                                           |gerbil/core$<match>[1]#_g41241_|
                                            _hd3088331266_)
                                           (if (gx#stx-pair? _tl3088431269_)
                                               (let ((_e3090531162_
@@ -6289,7 +6279,7 @@
                                 (_hd3094231007_ (##car _e3094131003_)))
                             (if (gx#identifier? _hd3094231007_)
                                 (if (gx#free-identifier=?
-                                     |gerbil/core$<match>[1]#_g41232_|
+                                     |gerbil/core$<match>[1]#_g41240_|
                                      _hd3094231007_)
                                     (if (gx#stx-pair? _tl3094331010_)
                                         (let ((_e3094431013_
@@ -6326,7 +6316,7 @@
                           (___kont4034340344_ _hd3088331266_ _hd3081531500_)
                           (if (gx#identifier? _hd3088331266_)
                               (if (gx#free-identifier=?
-                                   |gerbil/core$<match>[1]#_g41233_|
+                                   |gerbil/core$<match>[1]#_g41239_|
                                    _hd3088331266_)
                                   (if (gx#stx-pair? _tl3088431269_)
                                       (let ((_e3090531162_
@@ -6372,7 +6362,7 @@
                         (_hd3094231007_ (##car _e3094131003_)))
                     (if (gx#identifier? _hd3094231007_)
                         (if (gx#free-identifier=?
-                             |gerbil/core$<match>[1]#_g41234_|
+                             |gerbil/core$<match>[1]#_g41238_|
                              _hd3094231007_)
                             (if (gx#stx-pair? _tl3094331010_)
                                 (let ((_e3094431013_
@@ -6399,7 +6389,7 @@
                       (_g3080630952_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (if (gx#free-identifier=?
-                                                       |gerbil/core$<match>[1]#_g41235_|
+                                                       |gerbil/core$<match>[1]#_g41237_|
                                                        _hd3081831510_)
                                                       (if (gx#stx-pair?
                                                            _tl3081931513_)
@@ -6465,7 +6455,7 @@
                                     (_hd3094231007_ (##car _e3094131003_)))
                                 (if (gx#identifier? _hd3094231007_)
                                     (if (gx#free-identifier=?
-                                         |gerbil/core$<match>[1]#_g41237_|
+                                         |gerbil/core$<match>[1]#_g41235_|
                                          _hd3094231007_)
                                         (if (gx#stx-pair? _tl3094331010_)
                                             (let ((_e3094431013_
@@ -6507,7 +6497,7 @@
                                        _hd3081531500_)
                                       (if (gx#identifier? _hd3088331266_)
                                           (if (gx#free-identifier=?
-                                               |gerbil/core$<match>[1]#_g41238_|
+                                               |gerbil/core$<match>[1]#_g41234_|
                                                _hd3088331266_)
                                               (if (gx#stx-pair? _tl3088431269_)
                                                   (let ((_e3090531162_
@@ -6551,7 +6541,7 @@
                                     (_hd3094231007_ (##car _e3094131003_)))
                                 (if (gx#identifier? _hd3094231007_)
                                     (if (gx#free-identifier=?
-                                         |gerbil/core$<match>[1]#_g41239_|
+                                         |gerbil/core$<match>[1]#_g41233_|
                                          _hd3094231007_)
                                         (if (gx#stx-pair? _tl3094331010_)
                                             (let ((_e3094431013_
@@ -6592,7 +6582,7 @@
                                _hd3081531500_)
                               (if (gx#identifier? _hd3088331266_)
                                   (if (gx#free-identifier=?
-                                       |gerbil/core$<match>[1]#_g41240_|
+                                       |gerbil/core$<match>[1]#_g41232_|
                                        _hd3088331266_)
                                       (if (gx#stx-pair? _tl3088431269_)
                                           (let ((_e3090531162_
@@ -6636,7 +6626,7 @@
                             (_hd3094231007_ (##car _e3094131003_)))
                         (if (gx#identifier? _hd3094231007_)
                             (if (gx#free-identifier=?
-                                 |gerbil/core$<match>[1]#_g41241_|
+                                 |gerbil/core$<match>[1]#_g41231_|
                                  _hd3094231007_)
                                 (if (gx#stx-pair? _tl3094331010_)
                                     (let ((_e3094431013_
@@ -6671,7 +6661,7 @@
                           (___kont4034340344_ _hd3088331266_ _hd3081531500_)
                           (if (gx#identifier? _hd3088331266_)
                               (if (gx#free-identifier=?
-                                   |gerbil/core$<match>[1]#_g41242_|
+                                   |gerbil/core$<match>[1]#_g41230_|
                                    _hd3088331266_)
                                   (if (gx#stx-pair? _tl3088431269_)
                                       (let ((_e3090531162_
@@ -6717,7 +6707,7 @@
                         (_hd3094231007_ (##car _e3094131003_)))
                     (if (gx#identifier? _hd3094231007_)
                         (if (gx#free-identifier=?
-                             |gerbil/core$<match>[1]#_g41243_|
+                             |gerbil/core$<match>[1]#_g41229_|
                              _hd3094231007_)
                             (if (gx#stx-pair? _tl3094331010_)
                                 (let ((_e3094431013_
@@ -6759,7 +6749,7 @@
                                                       (if (gx#identifier?
                                                            _hd3088331266_)
                                                           (if (gx#free-identifier=?
-                                                               |gerbil/core$<match>[1]#_g41244_|
+                                                               |gerbil/core$<match>[1]#_g41228_|
                                                                _hd3088331266_)
                                                               (if (gx#stx-pair?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -6799,7 +6789,7 @@
                                                 (if (gx#identifier?
                                                      _hd3094231007_)
                                                     (if (gx#free-identifier=?
-                                                         |gerbil/core$<match>[1]#_g41245_|
+                                                         |gerbil/core$<match>[1]#_g41227_|
                                                          _hd3094231007_)
                                                         (if (gx#stx-pair?
                                                              _tl3094331010_)
@@ -6843,7 +6833,7 @@
                                               (if (gx#identifier?
                                                    _hd3088331266_)
                                                   (if (gx#free-identifier=?
-                                                       |gerbil/core$<match>[1]#_g41246_|
+                                                       |gerbil/core$<match>[1]#_g41226_|
                                                        _hd3088331266_)
                                                       (if (gx#stx-pair?
                                                            _tl3088431269_)
@@ -6887,7 +6877,7 @@
                                              (##car _e3094131003_)))
                                         (if (gx#identifier? _hd3094231007_)
                                             (if (gx#free-identifier=?
-                                                 |gerbil/core$<match>[1]#_g41247_|
+                                                 |gerbil/core$<match>[1]#_g41225_|
                                                  _hd3094231007_)
                                                 (if (gx#stx-pair?
                                                      _tl3094331010_)

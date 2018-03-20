@@ -1949,10 +1949,9 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             _ns9187_)
                            (symbol->string (gx#stx-e _ns9187_))
-                           (if (let ((_$e9191_ (gx#stx-string? _ns9187_)))
-                                 (if _$e9191_
-                                     _$e9191_
-                                     (gx#stx-false? _ns9187_)))
+                           (if (if (gx#stx-string? _ns9187_)
+                                   '#t
+                                   (gx#stx-false? _ns9187_))
                                (gx#stx-e _ns9187_)
                                (gx#raise-syntax-error
                                 '#f
@@ -2395,7 +2394,7 @@
                                (##structure-ref _ye8558_ '1 gx#binding::t '#f))
                           '#f)
                       '#f)))
-            (if (let ((_$e8563_ _xe8557_)) (if _$e8563_ _$e8563_ _ye8558_))
+            (if (if _xe8557_ '#t _ye8558_)
                 '#f
                 (gx#stx-eq? _xid8554_ _yid8555_))))))
   (define gx#bound-identifier=?
@@ -2580,12 +2579,9 @@
         (if (##structure-instance-of? _bind8417_ 'gx#runtime-binding::t)
             (gx#core-quote-syntax__0 _id8414_)
             (if (not _bind8417_)
-                (if (let ((_$e8419_
-                           (gx#core-context-rebind?__%
-                            (gx#core-context-top__0))))
-                      (if _$e8419_
-                          _$e8419_
-                          (gx#core-extern-symbol? (gx#stx-e _id8414_))))
+                (if (if (gx#core-context-rebind?__% (gx#core-context-top__0))
+                        '#t
+                        (gx#core-extern-symbol? (gx#stx-e _id8414_)))
                     (gx#core-quote-syntax__0 _id8414_)
                     (gx#raise-syntax-error
                      '#f
@@ -2815,15 +2811,13 @@
         (gx#bind-identifier!__%
          _id8242_
          (let ((_key8251_ (gx#core-identifier-key _id8242_))
-               (_e8252_ (if (let ((_$e8248_
-                                   (##structure-instance-of?
-                                    _e8243_
-                                    'gx#expander::t)))
-                              (if _$e8248_
-                                  _$e8248_
-                                  (##structure-instance-of?
-                                   _e8243_
-                                   'gx#expander-context::t)))
+               (_e8252_ (if (if (##structure-instance-of?
+                                 _e8243_
+                                 'gx#expander::t)
+                                '#t
+                                (##structure-instance-of?
+                                 _e8243_
+                                 'gx#expander-context::t))
                             _e8243_
                             (##structure
                              gx#user-expander::t

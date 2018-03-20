@@ -405,10 +405,9 @@
                               (list _tgt949_
                                     _hd947_
                                     (let ((_e1225_ (gx#stx-e _hd947_)))
-                                      (if (let ((_$e1228_ (keyword? _e1225_)))
-                                            (if _$e1228_
-                                                _$e1228_
-                                                (immediate? _e1225_)))
+                                      (if (if (keyword? _e1225_)
+                                              '#t
+                                              (immediate? _e1225_))
                                           (gx#datum->syntax '#f 'eq?)
                                           (if (number? _e1225_)
                                               (gx#datum->syntax '#f 'eqv?)

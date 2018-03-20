@@ -333,8 +333,9 @@
           '#f)))
   (define gx#stx-wrap-source
     (lambda (_stx4630_ _src4631_)
-      (if (let ((_$e4633_ (##structure-instance-of? _stx4630_ 'gerbil#AST::t)))
-            (if _$e4633_ _$e4633_ (not _src4631_)))
+      (if (if (##structure-instance-of? _stx4630_ 'gerbil#AST::t)
+              '#t
+              (not _src4631_))
           _stx4630_
           (##structure AST::t _stx4630_ _src4631_))))
   (define gx#stx-datum?
