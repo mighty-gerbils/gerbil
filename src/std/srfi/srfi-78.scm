@@ -232,28 +232,37 @@
 ; (*) is a compile-time check that (arg ...) is a list
 ; of pairwise disjoint bound variables at this point.
 
+;; vyzo: added annotation to tame the optimizer, reordered clauses
+;;       for optimal match trees with prefix matching.
 (define-syntax check-ec
   (begin-annotation @match:prefix
     (syntax-rules (nested =>)
       ((check-ec expr => expected)
        (check-ec:make (nested) expr (=> equal?) expected ()))
-      ((check-ec expr (=> equal) expected)
-       (check-ec:make (nested) expr (=> equal) expected ()))
+
       ((check-ec expr => expected (arg ...))
        (check-ec:make (nested) expr (=> equal?) expected (arg ...)))
+
+      ((check-ec expr (=> equal) expected)
+       (check-ec:make (nested) expr (=> equal) expected ()))
+
       ((check-ec expr (=> equal) expected (arg ...))
        (check-ec:make (nested) expr (=> equal) expected (arg ...)))
 
       ((check-ec qualifiers expr => expected)
        (check-ec:make qualifiers expr (=> equal?) expected ()))
-      ((check-ec qualifiers expr (=> equal) expected)
-       (check-ec:make qualifiers expr (=> equal) expected ()))
+
       ((check-ec qualifiers expr => expected (arg ...))
        (check-ec:make qualifiers expr (=> equal?) expected (arg ...)))
+
+      ((check-ec qualifiers expr (=> equal) expected)
+       (check-ec:make qualifiers expr (=> equal) expected ()))
+
       ((check-ec qualifiers expr (=> equal) expected (arg ...))
        (check-ec:make qualifiers expr (=> equal) expected (arg ...)))
 
       ((check-ec (nested q1 ...) q etc ...)
        (check-ec (nested q1 ... q) etc ...))
+
       ((check-ec q1 q2             etc ...)
        (check-ec (nested q1 q2)    etc ...)))))
