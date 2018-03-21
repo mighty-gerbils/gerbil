@@ -81,13 +81,13 @@ package: std/os
   (define-c-lambda __errno () int
     "___return (errno);")
 
-  (c-declare "static int ffi_read (int fd, ___SCMOBJ bytes, int start, int end);")
-  (c-declare "static int write_read (int fd, ___SCMOBJ bytes, int start, int end);")
+  (c-declare "static int ffi_fdio_read (int fd, ___SCMOBJ bytes, int start, int end);")
+  (c-declare "static int ffi_fdio_write (int fd, ___SCMOBJ bytes, int start, int end);")
 
   (define-c-lambda __read (int scheme-object int int) int
-    "ffi_read")
+    "ffi_fdio_read")
   (define-c-lambda __write (int scheme-object int int) int
-    "ffi_write")
+    "ffi_fdio_write")
   (define-c-lambda __open (UTF-8-string int int) int
     "open")
 
@@ -96,16 +96,18 @@ package: std/os
   (define-with-errno _open __open (path flags mode))
 
   (c-declare #<<END-C
-
+#ifndef ___HAVE_FFI_U8VECTOR
+#define ___HAVE_FFI_U8VECTOR
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
 #define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
+#endif
 
-int ffi_read (int fd, ___SCMOBJ bytes, int start, int end)
+int ffi_fdio_read (int fd, ___SCMOBJ bytes, int start, int end)
 {
  return read (fd, U8_DATA (bytes) + start, end - start);
 }
 
-int ffi_write (int fd, ___SCMOBJ bytes, int start, int end)
+int ffi_fdio_write (int fd, ___SCMOBJ bytes, int start, int end)
 {
  return write (fd, U8_DATA (bytes) + start, end - start);
 }

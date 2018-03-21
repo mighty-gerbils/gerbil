@@ -32,8 +32,11 @@
 #include <linux/netlink.h>
 #endif
 
+#ifndef ___HAVE_FFI_U8VECTOR
+#define ___HAVE_FFI_U8VECTOR
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
 #define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
+#endif
 END-C
 )
 
@@ -66,6 +69,13 @@ END-C
                 "#define " str " " (##number->string value) "\n"
                 "#endif\n")))
     `(c-declare ,code)))
+
+(define-macro (define-guard guard defn)
+  (if (eval `(cond-expand (,guard #t) (else #f)))
+    '(begin)
+    (begin
+      (eval `(define-cond-expand-feature ,guard))
+      defn)))
 
 ;;; Constants
 (define-const  AF_UNSPEC)
@@ -201,48 +211,48 @@ END-C
 
 (c-declare #<<END-C
 static ___SCMOBJ ffi_free (void *ptr);
-static int ffi_bind (int fd, struct sockaddr *sa);
-static int ffi_accept (int fd, struct sockaddr *sa);
-static int ffi_accept4 (int fd, struct sockaddr *sa);
-static int ffi_connect (int fd, struct sockaddr *sa);
-static int ffi_send (int fd, ___SCMOBJ bytes, int start, int end, int flags);
-static int ffi_sendto (int fd, ___SCMOBJ bytes, int start, int end, int flags, struct sockaddr *sa);
-static int ffi_sendmsg (int fd, ___SCMOBJ name, ___SCMOBJ io, ___SCMOBJ ctl, int flags);
-static int ffi_recv (int fd, ___SCMOBJ bytes, int start, int end, int flags);
-static int ffi_recvfrom (int fd, ___SCMOBJ bytes, int start, int end, int flags, struct sockaddr *sa);
-static int ffi_recvmsg (int fd, ___SCMOBJ name, int *rname, ___SCMOBJ io, ___SCMOBJ ctl, int *rctl, int flags, int *rflags);
-static int ffi_getpeername (int fd, struct sockaddr *sa);
-static int ffi_getsockname (int fd, struct sockaddr *sa);
-static struct sockaddr *ffi_make_sockaddr (int family);
-static void ffi_sockaddr_in_addr (struct sockaddr *sa, ___SCMOBJ bytes);
-static void ffi_sockaddr_in_addr_set (struct sockaddr *sa, ___SCMOBJ bytes);
-static int ffi_sockaddr_in_port (struct sockaddr *sa);
-static void ffi_sockaddr_in_port_set (struct sockaddr *sa, int port);
-static void ffi_sockaddr_in6_addr (struct sockaddr *sa, ___SCMOBJ bytes);
-static void ffi_sockaddr_in6_addr_set (struct sockaddr *sa, ___SCMOBJ bytes);
-static int ffi_sockaddr_in6_port (struct sockaddr *sa);
-static void ffi_sockaddr_in6_port_set (struct sockaddr *sa, int port);
-static char *ffi_sockaddr_un_path (struct sockaddr *sa);
-static void ffi_sockaddr_un_path_set (struct sockaddr *sa, char *path);
-static int ffi_sockaddr_len (struct sockaddr *sa);
-static int ffi_sockaddr_bytes (struct sockaddr *sa, ___SCMOBJ bytes);
-static int ffi_sockaddr_bytes_set (struct sockaddr *sa, ___SCMOBJ bytes);
-static int ffi_getsockopt_int (int fd, int level, int opt);
-static int ffi_setsockopt_int (int fd, int level, int opt, int val);
-static int ffi_getsockopt_tv (int fd, int level, int opt, struct timeval *tv);
-static int ffi_setsockopt_tv (int fd, int level, int opt, struct timeval *tv);
-static int ffi_getsockopt_sa (int fd, int level, int opt, struct sockaddr *sa);
-static int ffi_setsockopt_sa (int fd, int level, int opt, struct sockaddr *sa);
-static int ffi_setsockopt_mreq (int fd, int level, int opt, ___SCMOBJ maddr, ___SCMOBJ laddr);
-static int ffi_setsockopt_mreq_src (int fd, int level, int opt, ___SCMOBJ maddr, ___SCMOBJ iaddr, ___SCMOBJ saddr);
-static int ffi_setsockopt_mreq6 (int fd, int level, int opt, ___SCMOBJ maddr, int ifindex);
-static int ffi_getsockopt_bytes (int fd, int level, int opt, ___SCMOBJ bytes);
-static int ffi_setsockopt_bytes (int fd, int level, int opt, ___SCMOBJ bytes);
-static int ffi_getsockopt_linger (int fd, int level, int opt, struct linger *linger);
-static int ffi_setsockopt_linger (int fd, int level, int opt, struct linger *linger);
-static int *ffi_make_int_ptr ();
-static struct timeval *ffi_make_tv ();
-static struct linger *ffi_make_linger ();
+static int ffi_socket_bind (int fd, struct sockaddr *sa);
+static int ffi_socket_accept (int fd, struct sockaddr *sa);
+static int ffi_socket_accept4 (int fd, struct sockaddr *sa);
+static int ffi_socket_connect (int fd, struct sockaddr *sa);
+static int ffi_socket_send (int fd, ___SCMOBJ bytes, int start, int end, int flags);
+static int ffi_socket_sendto (int fd, ___SCMOBJ bytes, int start, int end, int flags, struct sockaddr *sa);
+static int ffi_socket_sendmsg (int fd, ___SCMOBJ name, ___SCMOBJ io, ___SCMOBJ ctl, int flags);
+static int ffi_socket_recv (int fd, ___SCMOBJ bytes, int start, int end, int flags);
+static int ffi_socket_recvfrom (int fd, ___SCMOBJ bytes, int start, int end, int flags, struct sockaddr *sa);
+static int ffi_socket_recvmsg (int fd, ___SCMOBJ name, int *rname, ___SCMOBJ io, ___SCMOBJ ctl, int *rctl, int flags, int *rflags);
+static int ffi_socket_getpeername (int fd, struct sockaddr *sa);
+static int ffi_socket_getsockname (int fd, struct sockaddr *sa);
+static struct sockaddr *ffi_socket_make_sockaddr (int family);
+static void ffi_socket_sockaddr_in_addr (struct sockaddr *sa, ___SCMOBJ bytes);
+static void ffi_socket_sockaddr_in_addr_set (struct sockaddr *sa, ___SCMOBJ bytes);
+static int ffi_socket_sockaddr_in_port (struct sockaddr *sa);
+static void ffi_socket_sockaddr_in_port_set (struct sockaddr *sa, int port);
+static void ffi_socket_sockaddr_in6_addr (struct sockaddr *sa, ___SCMOBJ bytes);
+static void ffi_socket_sockaddr_in6_addr_set (struct sockaddr *sa, ___SCMOBJ bytes);
+static int ffi_socket_sockaddr_in6_port (struct sockaddr *sa);
+static void ffi_socket_sockaddr_in6_port_set (struct sockaddr *sa, int port);
+static char *ffi_socket_sockaddr_un_path (struct sockaddr *sa);
+static void ffi_socket_sockaddr_un_path_set (struct sockaddr *sa, char *path);
+static int ffi_socket_sockaddr_len (struct sockaddr *sa);
+static int ffi_socket_sockaddr_bytes (struct sockaddr *sa, ___SCMOBJ bytes);
+static int ffi_socket_sockaddr_bytes_set (struct sockaddr *sa, ___SCMOBJ bytes);
+static int ffi_socket_getsockopt_int (int fd, int level, int opt);
+static int ffi_socket_setsockopt_int (int fd, int level, int opt, int val);
+static int ffi_socket_getsockopt_tv (int fd, int level, int opt, struct timeval *tv);
+static int ffi_socket_setsockopt_tv (int fd, int level, int opt, struct timeval *tv);
+static int ffi_socket_getsockopt_sa (int fd, int level, int opt, struct sockaddr *sa);
+static int ffi_socket_setsockopt_sa (int fd, int level, int opt, struct sockaddr *sa);
+static int ffi_socket_setsockopt_mreq (int fd, int level, int opt, ___SCMOBJ maddr, ___SCMOBJ laddr);
+static int ffi_socket_setsockopt_mreq_src (int fd, int level, int opt, ___SCMOBJ maddr, ___SCMOBJ iaddr, ___SCMOBJ saddr);
+static int ffi_socket_setsockopt_mreq6 (int fd, int level, int opt, ___SCMOBJ maddr, int ifindex);
+static int ffi_socket_getsockopt_bytes (int fd, int level, int opt, ___SCMOBJ bytes);
+static int ffi_socket_setsockopt_bytes (int fd, int level, int opt, ___SCMOBJ bytes);
+static int ffi_socket_getsockopt_linger (int fd, int level, int opt, struct linger *linger);
+static int ffi_socket_setsockopt_linger (int fd, int level, int opt, struct linger *linger);
+static int *ffi_socket_make_int_ptr ();
+static struct timeval *ffi_socket_make_tv ();
+static struct linger *ffi_socket_make_linger ();
 END-C
 )
 
@@ -250,12 +260,15 @@ END-C
 (c-define-type sockaddr*
   (pointer sockaddr (sockaddr*) "ffi_free"))
 
-(c-define-type int*
-  (pointer int (int*) "ffi_free"))
+(define-guard ffi-have-int*
+  (c-define-type int*
+    (pointer int (int*) "ffi_free")))
 
-(c-define-type timeval (struct "timeval"))
-(c-define-type timeval*
-  (pointer timeval (timeval*) "ffi_free"))
+(define-guard ffi-have-timeval
+  (c-define-type timeval (struct "timeval")))
+(define-guard ffi-have-timeval*
+  (c-define-type timeval*
+    (pointer timeval (timeval*) "ffi_free")))
 
 (c-define-type linger (struct "linger"))
 (c-define-type linger*
@@ -275,36 +288,36 @@ END-C
 (define-c-lambda __socket (int int int) int
   "socket")
 (define-c-lambda __bind (int sockaddr*) int
-  "ffi_bind")
+  "ffi_socket_bind")
 (define-c-lambda __listen (int int) int
   "listen")
 (define-c-lambda __accept (int sockaddr*) int
-  "ffi_accept")
+  "ffi_socket_accept")
 (define-c-lambda __accept4 (int sockaddr*) int
-  "ffi_accept4")
+  "ffi_socket_accept4")
 (define-c-lambda __connect (int sockaddr*) int
-  "ffi_connect")
+  "ffi_socket_connect")
 (define-c-lambda __shutdown (int int) int
   "shutdown")
 
 (define-c-lambda __send (int scheme-object int int int) int
-  "ffi_send")
+  "ffi_socket_send")
 (define-c-lambda __sendto (int scheme-object int int int sockaddr*) int
-  "ffi_sendto")
+  "ffi_socket_sendto")
 (define-c-lambda __sendmsg (int scheme-object scheme-object scheme-object int) int
-  "ffi_sendmsg")
+  "ffi_socket_sendmsg")
 
 (define-c-lambda __recv (int scheme-object int int int) int
-  "ffi_recv")
+  "ffi_socket_recv")
 (define-c-lambda __recvfrom (int scheme-object int int int sockaddr*) int
-  "ffi_recvfrom")
+  "ffi_socket_recvfrom")
 (define-c-lambda __recvmsg (int scheme-object int* scheme-object scheme-object int* int int*) int
-  "ffi_recvmsg")
+  "ffi_socket_recvmsg")
 
 (define-c-lambda __getpeername (int sockaddr*) int
-  "ffi_getpeername")
+  "ffi_socket_getpeername")
 (define-c-lambda __getsockname (int sockaddr*) int
-  "ffi_getsockname")
+  "ffi_socket_getsockname")
 
 (define-with-errno _socket __socket (domain type proto))
 (define-with-errno _bind __bind (fd sa))
@@ -325,7 +338,7 @@ END-C
 (define-with-errno _getsockname __getsockname (fd sa))
 
 (define-c-lambda make_sockaddr (int) sockaddr*
-  "ffi_make_sockaddr")
+  "ffi_socket_make_sockaddr")
 
 (define (sockaddr? obj)
   (and (foreign? obj)
@@ -334,58 +347,58 @@ END-C
 (define-c-lambda sockaddr_family (sockaddr*) int
   "___return (___arg1->sa_family);")
 (define-c-lambda sockaddr_in_addr (sockaddr* scheme-object) void
-  "ffi_sockaddr_in_addr")
+  "ffi_socket_sockaddr_in_addr")
 (define-c-lambda sockaddr_in_addr_set (sockaddr* scheme-object) void
-  "ffi_sockaddr_in_addr_set")
+  "ffi_socket_sockaddr_in_addr_set")
 (define-c-lambda sockaddr_in_port (sockaddr*) int
-  "ffi_sockaddr_in_port")
+  "ffi_socket_sockaddr_in_port")
 (define-c-lambda sockaddr_in_port_set (sockaddr* int) void
-  "ffi_sockaddr_in_port_set")
+  "ffi_socket_sockaddr_in_port_set")
 (define-c-lambda sockaddr_in6_addr (sockaddr* scheme-object) void
-  "ffi_sockaddr_in6_addr")
+  "ffi_socket_sockaddr_in6_addr")
 (define-c-lambda sockaddr_in6_addr_set (sockaddr* scheme-object) void
-  "ffi_sockaddr_in6_addr_set")
+  "ffi_socket_sockaddr_in6_addr_set")
 (define-c-lambda sockaddr_in6_port (sockaddr*) int
-  "ffi_sockaddr_in6_port")
+  "ffi_socket_sockaddr_in6_port")
 (define-c-lambda sockaddr_in6_port_set (sockaddr* int) void
-  "ffi_sockaddr_in6_port_set")
+  "ffi_socket_sockaddr_in6_port_set")
 (define-c-lambda sockaddr_un_path (sockaddr*) UTF-8-string
-  "ffi_sockaddr_un_path")
+  "ffi_socket_sockaddr_un_path")
 (define-c-lambda sockaddr_un_path_set (sockaddr* UTF-8-string) void
-  "ffi_sockaddr_un_path_set")
+  "ffi_socket_sockaddr_un_path_set")
 (define-c-lambda sockaddr_len (sockaddr*) int
-  "ffi_sockaddr_len")
+  "ffi_socket_sockaddr_len")
 (define-c-lambda sockaddr_bytes (sockaddr* scheme-object) int
-  "ffi_sockaddr_bytes")
+  "ffi_socket_sockaddr_bytes")
 (define-c-lambda sockaddr_bytes_set (sockaddr* scheme-object) int
-  "ffi_sockaddr_bytes_set")
+  "ffi_socket_sockaddr_bytes_set")
 
 (define-c-lambda __getsockopt_int (int int int) int
-  "ffi_getsockopt_int")
+  "ffi_socket_getsockopt_int")
 (define-c-lambda __setsockopt_int (int int int int) int
-  "ffi_setsockopt_int")
+  "ffi_socket_setsockopt_int")
 (define-c-lambda __getsockopt_tv (int int int timeval*) int
-  "ffi_getsockopt_tv")
+  "ffi_socket_getsockopt_tv")
 (define-c-lambda __setsockopt_tv (int int int timeval*) int
-  "ffi_setsockopt_tv")
+  "ffi_socket_setsockopt_tv")
 (define-c-lambda __getsockopt_sa (int int int sockaddr*) int
-  "ffi_getsockopt_sa")
+  "ffi_socket_getsockopt_sa")
 (define-c-lambda __setsockopt_sa (int int int sockaddr*) int
-  "ffi_setsockopt_sa")
+  "ffi_socket_setsockopt_sa")
 (define-c-lambda __setsockopt_mreq (int int int scheme-object scheme-object) int
-  "ffi_setsockopt_mreq")
+  "ffi_socket_setsockopt_mreq")
 (define-c-lambda __setsockopt_mreq_src (int int int scheme-object scheme-object scheme-object) int
-  "ffi_setsockopt_mreq_src")
+  "ffi_socket_setsockopt_mreq_src")
 (define-c-lambda __setsockopt_mreq6 (int int int scheme-object int) int
-  "ffi_setsockopt_mreq6")
+  "ffi_socket_setsockopt_mreq6")
 (define-c-lambda __getsockopt_bytes (int int int scheme-object) int
-  "ffi_getsockopt_bytes")
+  "ffi_socket_getsockopt_bytes")
 (define-c-lambda __setsockopt_bytes (int int int scheme-object) int
-  "ffi_setsockopt_bytes")
+  "ffi_socket_setsockopt_bytes")
 (define-c-lambda __getsockopt_linger (int int int linger*) int
-  "ffi_getsockopt_linger")
+  "ffi_socket_getsockopt_linger")
 (define-c-lambda __setsockopt_linger (int int int linger*) int
-  "ffi_setsockopt_linger")
+  "ffi_socket_setsockopt_linger")
 
 (define-with-errno _getsockopt_int __getsockopt_int (fd level opt))
 (define-with-errno _setsockopt_int __setsockopt_int (fd level opt val))
@@ -402,12 +415,12 @@ END-C
 (define-with-errno _setsockopt_linger __setsockopt_linger (fd level opt linger))
 
 (define-c-lambda make_int_ptr () int*
-  "ffi_make_int_ptr")
+  "ffi_socket_make_int_ptr")
 (define-c-lambda int_ptr_value (int*) int
   "___return (*___arg1);")
 
 (define-c-lambda make_tv () timeval*
-  "ffi_make_tv")
+  "ffi_socket_make_tv")
 (define-c-lambda tv_sec (timeval*) int
   "___return (___arg1->tv_sec);")
 (define-c-lambda tv_sec_set (timeval* int) void
@@ -418,7 +431,7 @@ END-C
   "___arg1->tv_usec = ___arg2; ___return;")
 
 (define-c-lambda make_linger () linger*
-  "ffi_make_linger")
+  "ffi_socket_make_linger")
 (define-c-lambda linger_onoff (linger*) int
   "___return (___arg1->l_onoff);")
 (define-c-lambda linger_onoff_set (linger* int) void
@@ -438,7 +451,7 @@ ___SCMOBJ ffi_free (void *ptr)
 }
 #endif
 
-static socklen_t sockaddr_family_len (int family)
+static socklen_t ___sockaddr_family_len (int family)
 {
  switch (family)
  {
@@ -457,25 +470,25 @@ static socklen_t sockaddr_family_len (int family)
  }
 }
 
-static socklen_t sockaddr_len (struct sockaddr *sa)
+static socklen_t ___sockaddr_len (struct sockaddr *sa)
 {
- int r = sockaddr_family_len (sa->sa_family);
+ int r = ___sockaddr_family_len (sa->sa_family);
  if (r < 0)
   errno = EINVAL;
  return r;
 }
 
 #define GETSALEN(sa, salen) \
- socklen_t salen = sockaddr_len (sa); \
+ socklen_t salen = ___sockaddr_len (sa); \
  if (salen == (socklen_t)-1) return -1;
 
-static int ffi_bind (int fd, struct sockaddr *sa)
+static int ffi_socket_bind (int fd, struct sockaddr *sa)
 {
  GETSALEN (sa, salen);
  return bind (fd, sa, salen);
 }
 
-int ffi_accept (int fd, struct sockaddr *sa)
+int ffi_socket_accept (int fd, struct sockaddr *sa)
 {
  if (sa)
  {
@@ -486,7 +499,7 @@ int ffi_accept (int fd, struct sockaddr *sa)
  }
 }
 
-int ffi_accept4 (int fd, struct sockaddr *sa)
+int ffi_socket_accept4 (int fd, struct sockaddr *sa)
 {
 #ifdef __linux__
  if (sa)
@@ -502,24 +515,24 @@ int ffi_accept4 (int fd, struct sockaddr *sa)
 #endif
 }
 
-int ffi_connect (int fd, struct sockaddr *sa)
+int ffi_socket_connect (int fd, struct sockaddr *sa)
 {
  GETSALEN (sa, salen);
  return connect (fd, sa, salen);
 }
 
-int ffi_send (int fd, ___SCMOBJ bytes, int start, int end, int flags)
+int ffi_socket_send (int fd, ___SCMOBJ bytes, int start, int end, int flags)
 {
  return send (fd, U8_DATA (bytes) + start, end - start, flags);
 }
 
-int ffi_sendto (int fd, ___SCMOBJ bytes, int start, int end, int flags, struct sockaddr *sa)
+int ffi_socket_sendto (int fd, ___SCMOBJ bytes, int start, int end, int flags, struct sockaddr *sa)
 {
  GETSALEN (sa, salen);
  return sendto (fd, U8_DATA (bytes) + start, end - start, flags, sa, salen);
 }
 
-int ffi_sendmsg (int fd, ___SCMOBJ name, ___SCMOBJ io, ___SCMOBJ ctl, int flags)
+int ffi_socket_sendmsg (int fd, ___SCMOBJ name, ___SCMOBJ io, ___SCMOBJ ctl, int flags)
 {
  void *msg_name = NULL;
  socklen_t msg_namelen = 0;
@@ -557,18 +570,18 @@ int ffi_sendmsg (int fd, ___SCMOBJ name, ___SCMOBJ io, ___SCMOBJ ctl, int flags)
  return sendmsg (fd, &msg, flags);
 }
 
-int ffi_recv (int fd, ___SCMOBJ bytes, int start, int end, int flags)
+int ffi_socket_recv (int fd, ___SCMOBJ bytes, int start, int end, int flags)
 {
  return recv (fd, U8_DATA (bytes) + start, end - start, flags);
 }
 
-int ffi_recvfrom (int fd, ___SCMOBJ bytes, int start, int end, int flags, struct sockaddr *sa)
+int ffi_socket_recvfrom (int fd, ___SCMOBJ bytes, int start, int end, int flags, struct sockaddr *sa)
 {
  GETSALEN (sa, salen);
  return recvfrom (fd, U8_DATA (bytes) + start, end - start, flags, sa, &salen);
  }
 
-int ffi_recvmsg (int fd, ___SCMOBJ name, int *rname, ___SCMOBJ io, ___SCMOBJ ctl, int *rctl, int flags, int *rflags)
+int ffi_socket_recvmsg (int fd, ___SCMOBJ name, int *rname, ___SCMOBJ io, ___SCMOBJ ctl, int *rctl, int flags, int *rflags)
 {
  void *msg_name = NULL;
  socklen_t msg_namelen = 0;
@@ -616,21 +629,21 @@ int ffi_recvmsg (int fd, ___SCMOBJ name, int *rname, ___SCMOBJ io, ___SCMOBJ ctl
  return r;
 }
 
-int ffi_getpeername (int fd, struct sockaddr *sa)
+int ffi_socket_getpeername (int fd, struct sockaddr *sa)
 {
  GETSALEN (sa, salen);
  return getpeername (fd, sa, &salen);
 }
 
-int ffi_getsockname (int fd, struct sockaddr *sa)
+int ffi_socket_getsockname (int fd, struct sockaddr *sa)
 {
  GETSALEN (sa, salen);
  return getsockname (fd, sa, &salen);
 }
 
-struct sockaddr *ffi_make_sockaddr (int family)
+struct sockaddr *ffi_socket_make_sockaddr (int family)
 {
- socklen_t salen = sockaddr_family_len (family);
+ socklen_t salen = ___sockaddr_family_len (family);
  if (salen == (socklen_t)-1)
   return NULL;
 
@@ -643,87 +656,87 @@ struct sockaddr *ffi_make_sockaddr (int family)
  return sa;;
 }
 
-void ffi_sockaddr_in_addr (struct sockaddr *sa, ___SCMOBJ bytes)
+void ffi_socket_sockaddr_in_addr (struct sockaddr *sa, ___SCMOBJ bytes)
 {
  struct sockaddr_in *sa_in = (struct sockaddr_in*)sa;
  memcpy (U8_DATA (bytes), &sa_in->sin_addr, sizeof (struct in_addr));
 }
 
-void ffi_sockaddr_in_addr_set (struct sockaddr *sa, ___SCMOBJ bytes)
+void ffi_socket_sockaddr_in_addr_set (struct sockaddr *sa, ___SCMOBJ bytes)
 {
  struct sockaddr_in *sa_in = (struct sockaddr_in*)sa;
  memcpy (&sa_in->sin_addr, U8_DATA (bytes), sizeof (struct in_addr));
 }
 
-int ffi_sockaddr_in_port (struct sockaddr *sa)
+int ffi_socket_sockaddr_in_port (struct sockaddr *sa)
 {
  struct sockaddr_in *sa_in = (struct sockaddr_in*)sa;
  return ntohs (sa_in->sin_port);
 }
 
-void ffi_sockaddr_in_port_set (struct sockaddr *sa, int port)
+void ffi_socket_sockaddr_in_port_set (struct sockaddr *sa, int port)
 {
  struct sockaddr_in *sa_in = (struct sockaddr_in*)sa;
  sa_in->sin_port = htons (port);
 }
 
-void ffi_sockaddr_in6_addr (struct sockaddr *sa, ___SCMOBJ bytes)
+void ffi_socket_sockaddr_in6_addr (struct sockaddr *sa, ___SCMOBJ bytes)
 {
  struct sockaddr_in6 *sa_in6 = (struct sockaddr_in6*)sa;
  memcpy (U8_DATA (bytes), &sa_in6->sin6_addr, sizeof (struct in6_addr));
 }
 
-void ffi_sockaddr_in6_addr_set (struct sockaddr *sa, ___SCMOBJ bytes)
+void ffi_socket_sockaddr_in6_addr_set (struct sockaddr *sa, ___SCMOBJ bytes)
 {
  struct sockaddr_in6 *sa_in6 = (struct sockaddr_in6*)sa;
  memcpy (&sa_in6->sin6_addr, U8_DATA (bytes), sizeof (struct in6_addr));
 }
 
-int ffi_sockaddr_in6_port (struct sockaddr *sa)
+int ffi_socket_sockaddr_in6_port (struct sockaddr *sa)
 {
  struct sockaddr_in6 *sa_in6 = (struct sockaddr_in6*)sa;
  return ntohs (sa_in6->sin6_port);
 }
 
-void ffi_sockaddr_in6_port_set (struct sockaddr *sa, int port)
+void ffi_socket_sockaddr_in6_port_set (struct sockaddr *sa, int port)
 {
  struct sockaddr_in6 *sa_in6 = (struct sockaddr_in6*)sa;
  sa_in6->sin6_port = htons (port);
 }
 
-char *ffi_sockaddr_un_path (struct sockaddr *sa)
+char *ffi_socket_sockaddr_un_path (struct sockaddr *sa)
 {
  struct sockaddr_un *sa_un = (struct sockaddr_un*)sa;
  return sa_un->sun_path;
 }
 
-void ffi_sockaddr_un_path_set (struct sockaddr *sa, char *path)
+void ffi_socket_sockaddr_un_path_set (struct sockaddr *sa, char *path)
 {
  struct sockaddr_un *sa_un = (struct sockaddr_un*)sa;
  strncpy (sa_un->sun_path, path, sizeof (sa_un->sun_path));
 }
 
-int ffi_sockaddr_len (struct sockaddr *sa)
+int ffi_socket_sockaddr_len (struct sockaddr *sa)
 {
  GETSALEN (sa, salen);
  return salen;
 }
 
-int ffi_sockaddr_bytes (struct sockaddr *sa, ___SCMOBJ bytes)
+int ffi_socket_sockaddr_bytes (struct sockaddr *sa, ___SCMOBJ bytes)
 {
  GETSALEN (sa, salen);
  memcpy (U8_DATA (bytes), sa, salen);
  return 0;
 }
 
-int ffi_sockaddr_bytes_set (struct sockaddr *sa, ___SCMOBJ bytes)
+int ffi_socket_sockaddr_bytes_set (struct sockaddr *sa, ___SCMOBJ bytes)
 {
  GETSALEN (sa, salen);
  memcpy (sa, U8_DATA (bytes), salen);
  return 0;
 }
 
-int ffi_getsockopt_int (int fd, int level, int opt)
+int ffi_socket_getsockopt_int (int fd, int level, int opt)
 {
  int val;
  socklen_t olen = sizeof (int);
@@ -732,37 +745,37 @@ int ffi_getsockopt_int (int fd, int level, int opt)
  return val;
 }
 
-int ffi_setsockopt_int (int fd, int level, int opt, int val)
+int ffi_socket_setsockopt_int (int fd, int level, int opt, int val)
 {
  socklen_t olen = sizeof (int);
  return setsockopt (fd, level, opt, &val, olen);
  }
 
-int ffi_getsockopt_tv (int fd, int level, int opt, struct timeval *tv)
+int ffi_socket_getsockopt_tv (int fd, int level, int opt, struct timeval *tv)
 {
  socklen_t olen = sizeof (struct timeval);
  return getsockopt (fd, level, opt, tv, &olen);
 }
 
-int ffi_setsockopt_tv (int fd, int level, int opt, struct timeval *tv)
+int ffi_socket_setsockopt_tv (int fd, int level, int opt, struct timeval *tv)
 {
  socklen_t olen = sizeof (struct timeval);
  return setsockopt (fd, level, opt, tv, olen);
 }
 
-static int ffi_getsockopt_sa (int fd, int level, int opt, struct sockaddr *sa)
+static int ffi_socket_getsockopt_sa (int fd, int level, int opt, struct sockaddr *sa)
 {
  GETSALEN (sa, salen);
  return getsockopt (fd, level, opt, sa, &salen);
 }
 
-int ffi_setsockopt_sa (int fd, int level, int opt, struct sockaddr *sa)
+int ffi_socket_setsockopt_sa (int fd, int level, int opt, struct sockaddr *sa)
 {
  GETSALEN (sa, salen);
  return setsockopt (fd, level, opt, sa, salen);
 }
 
-int ffi_setsockopt_mreq (int fd, int level, int opt, ___SCMOBJ maddr, ___SCMOBJ laddr)
+int ffi_socket_setsockopt_mreq (int fd, int level, int opt, ___SCMOBJ maddr, ___SCMOBJ laddr)
 {
  struct ip_mreq mreq;
  socklen_t olen = sizeof (struct ip_mreq);
@@ -771,7 +784,7 @@ int ffi_setsockopt_mreq (int fd, int level, int opt, ___SCMOBJ maddr, ___SCMOBJ 
  return setsockopt (fd, level, opt, &mreq, olen);
 }
 
-int ffi_setsockopt_mreq_src (int fd, int level, int opt, ___SCMOBJ maddr, ___SCMOBJ iaddr, ___SCMOBJ saddr)
+int ffi_socket_setsockopt_mreq_src (int fd, int level, int opt, ___SCMOBJ maddr, ___SCMOBJ iaddr, ___SCMOBJ saddr)
 {
 #ifndef __OpenBSD__
  struct ip_mreq_source mreq;
@@ -786,7 +799,7 @@ int ffi_setsockopt_mreq_src (int fd, int level, int opt, ___SCMOBJ maddr, ___SCM
 #endif
 }
 
-int ffi_setsockopt_mreq6 (int fd, int level, int opt, ___SCMOBJ maddr, int ifindex)
+int ffi_socket_setsockopt_mreq6 (int fd, int level, int opt, ___SCMOBJ maddr, int ifindex)
 {
  struct ipv6_mreq mreq;
  socklen_t olen = sizeof (struct ipv6_mreq);
@@ -795,7 +808,7 @@ int ffi_setsockopt_mreq6 (int fd, int level, int opt, ___SCMOBJ maddr, int ifind
  return setsockopt (fd, level, opt, &mreq, olen);
 }
 
-int ffi_getsockopt_bytes (int fd, int level, int opt, ___SCMOBJ bytes)
+int ffi_socket_getsockopt_bytes (int fd, int level, int opt, ___SCMOBJ bytes)
 {
  socklen_t olen = U8_LEN (bytes);
  int r = getsockopt (fd, level, opt, U8_DATA (bytes), &olen);
@@ -804,35 +817,35 @@ int ffi_getsockopt_bytes (int fd, int level, int opt, ___SCMOBJ bytes)
  return olen;
 }
 
-int ffi_setsockopt_bytes (int fd, int level, int opt, ___SCMOBJ bytes)
+int ffi_socket_setsockopt_bytes (int fd, int level, int opt, ___SCMOBJ bytes)
 {
  socklen_t olen = U8_LEN (bytes);
  return setsockopt (fd, level, opt, U8_DATA (bytes), olen);
 }
 
-int ffi_getsockopt_linger (int fd, int level, int opt, struct linger *linger)
+int ffi_socket_getsockopt_linger (int fd, int level, int opt, struct linger *linger)
 {
  socklen_t olen = sizeof (struct linger);
  return getsockopt (fd, level, opt, linger, &olen);
 }
 
-int ffi_setsockopt_linger (int fd, int level, int opt, struct linger *linger)
+int ffi_socket_setsockopt_linger (int fd, int level, int opt, struct linger *linger)
 {
  socklen_t olen = sizeof (struct linger);
  return setsockopt (fd, level, opt, linger, olen);
 }
 
-static int *ffi_make_int_ptr ()
+static int *ffi_socket_make_int_ptr ()
 {
  return (int*)malloc (sizeof (int));
 }
 
-struct timeval *ffi_make_tv ()
+struct timeval *ffi_socket_make_tv ()
 {
  return (struct timeval*)malloc (sizeof (struct timeval));
 }
 
-struct linger *ffi_make_linger ()
+struct linger *ffi_socket_make_linger ()
 {
  return (struct linger*)malloc (sizeof (struct linger));
 }
