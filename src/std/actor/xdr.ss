@@ -538,14 +538,18 @@ package: std/actor
 
 (begin-foreign
   (c-declare #<<END-C
+#ifndef ___HAVE_FFI_U8VECTOR
+#define ___HAVE_FFI_U8VECTOR
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
+#define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
+#endif
 
-static double ffi_read_float_bytes (___SCMOBJ bytes)
+static double ffi_xdr_read_float_bytes (___SCMOBJ bytes)
 {
  return *(double*)(U8_DATA (bytes));
 }
 
-static int ffi_write_float_bytes (double val, ___SCMOBJ bytes)
+static int ffi_xdr_write_float_bytes (double val, ___SCMOBJ bytes)
 {
  *(double*)(U8_DATA (bytes)) = val;
   return 0;
@@ -560,9 +564,9 @@ END-C
 
   (define-c-lambda std/actor/xdr#xdr-float->bytes!
     (double scheme-object) int
-    "ffi_write_float_bytes")
+    "ffi_xdr_write_float_bytes")
 
   (define-c-lambda std/actor/xdr#xdr-bytes->float
     (scheme-object) double
-    "ffi_read_float_bytes")
+    "ffi_xdr_read_float_bytes")
 )

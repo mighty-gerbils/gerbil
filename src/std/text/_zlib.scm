@@ -15,8 +15,11 @@
 #include <string.h>
 #include <zlib.h>
 
+#ifndef ___HAVE_FFI_U8VECTOR
+#define ___HAVE_FFI_U8VECTOR
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
 #define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
+#endif
 END-C
 )
 
@@ -33,10 +36,10 @@ END-C
 
 (c-declare #<<END-C
 static ___SCMOBJ ffi_free (void *ptr);
-static z_stream *ffi_make_z_stream ();
-static int ffi_compress (___SCMOBJ dest, ___SCMOBJ src, int level);
-static int ffi_inflate (z_stream *zs, ___SCMOBJ dest, ___SCMOBJ src,  int start);
-static int ffi_deflate (z_stream* zs, ___SCMOBJ dest, ___SCMOBJ src, int start, int flush);
+static z_stream *ffi_zlib_make_z_stream ();
+static int ffi_zlib_compress (___SCMOBJ dest, ___SCMOBJ src, int level);
+static int ffi_zlib_inflate (z_stream *zs, ___SCMOBJ dest, ___SCMOBJ src,  int start);
+static int ffi_zlib_deflate (z_stream* zs, ___SCMOBJ dest, ___SCMOBJ src, int start, int flush);
 END-C
 )
 
@@ -57,7 +60,7 @@ END-C
   (pointer z_stream (z_stream*) "ffi_free"))
 
 (define-c-lambda make_z_stream () z_stream*
-  "ffi_make_z_stream")
+  "ffi_zlib_make_z_stream")
 (define-c-lambda z_stream_total_in (z_stream*) unsigned-long
   "___return (___arg1->total_in);")
 (define-c-lambda z_stream_total_out (z_stream*) unsigned-long
@@ -70,18 +73,18 @@ END-C
   "___return (___arg1->msg);")
 (define-c-lambda compressBound (unsigned-long) unsigned-long)
 (define-c-lambda compress2 (scheme-object scheme-object int) int
-  "ffi_compress")
+  "ffi_zlib_compress")
 (define-c-lambda inflateInit (z_stream*) int
   "___return (inflateInit2 (___arg1, MAX_WBITS + 32));")
 (define-c-lambda inflate (z_stream* scheme-object scheme-object int) int
-  "ffi_inflate")
+  "ffi_zlib_inflate")
 (define-c-lambda inflateEnd (z_stream*) int)
 (define-c-lambda deflateInit (z_stream* int) int
   "deflateInit")
 (define-c-lambda deflateInit_gz (z_stream* int) int
   "___return (deflateInit2 (___arg1, ___arg2, Z_DEFLATED, MAX_WBITS + 16, MAX_MEM_LEVEL, Z_DEFAULT_STRATEGY ));")
 (define-c-lambda deflate (z_stream* scheme-object scheme-object int int) int
-  "ffi_deflate")
+  "ffi_zlib_deflate")
 (define-c-lambda deflateEnd (z_stream*) int
   "deflateEnd")
 (define-c-lambda deflateBound (z_stream* unsigned-long) unsigned-long
@@ -97,7 +100,7 @@ static ___SCMOBJ ffi_free (void *ptr)
 }
 #endif
 
-static z_stream *ffi_make_z_stream ()
+static z_stream *ffi_zlib_make_z_stream ()
 {
  z_stream *zs = (z_stream *)malloc (sizeof (z_stream));
  if (zs) {
@@ -106,7 +109,7 @@ static z_stream *ffi_make_z_stream ()
  return zs;
 }
 
-static int ffi_compress (___SCMOBJ dest, ___SCMOBJ src, int level)
+static int ffi_zlib_compress (___SCMOBJ dest, ___SCMOBJ src, int level)
 {
  size_t destlen = U8_LEN (dest);
  int r = compress2 (U8_DATA (dest), &destlen,
@@ -119,7 +122,7 @@ static int ffi_compress (___SCMOBJ dest, ___SCMOBJ src, int level)
  }
 }
 
-static int ffi_inflate (z_stream *zs, ___SCMOBJ dest, ___SCMOBJ src,  int start)
+static int ffi_zlib_inflate (z_stream *zs, ___SCMOBJ dest, ___SCMOBJ src,  int start)
 {
  zs->next_out = U8_DATA (dest);
  zs->avail_out = U8_LEN (dest);
@@ -133,7 +136,7 @@ static int ffi_inflate (z_stream *zs, ___SCMOBJ dest, ___SCMOBJ src,  int start)
  return inflate (zs, Z_SYNC_FLUSH);
 }
 
-static int ffi_deflate (z_stream* zs, ___SCMOBJ dest, ___SCMOBJ src, int start, int flush)
+static int ffi_zlib_deflate (z_stream* zs, ___SCMOBJ dest, ___SCMOBJ src, int start, int flush)
 {
  zs->next_out = U8_DATA (dest);
  zs->avail_out = U8_LEN (dest);

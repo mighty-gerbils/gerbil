@@ -26,8 +26,11 @@
 #include <string.h>
 #include <mysql/mysql.h>
 
+#ifndef ___HAVE_FFI_U8VECTOR
+#define ___HAVE_FFI_U8VECTOR
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
 #define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
+#endif
 
 END-C
 )
@@ -51,9 +54,15 @@ END-C
     `(define ,symbol
        ((c-lambda () int ,ref)))))
 
+(define-macro (define-guard guard defn)
+  (if (eval `(cond-expand (,guard #t) (else #f)))
+    '(begin)
+    (begin
+      (eval `(define-cond-expand-feature ,guard))
+      defn)))
+
 (define-const MYSQL_NO_DATA)
 (define-const MYSQL_DATA_TRUNCATED)
-
 (define-const MYSQL_TYPE_BIT)
 (define-const MYSQL_TYPE_TINY)
 (define-const MYSQL_TYPE_SHORT)
@@ -81,7 +90,7 @@ static int ffi_mysql_stmt_prepare_begin (int ofd, MYSQL_STMT* mystmt, char *sql)
 static int ffi_mysql_stmt_reset_begin (int ofd, MYSQL_STMT* mystmt);
 static int ffi_mysql_stmt_execute_begin (int ofd, MYSQL_STMT* mystmt);
 static int ffi_mysql_stmt_fetch_begin (int ofd, MYSQL_STMT* mystmt);
-static MYSQL_BIND* ffi_make_mysql_bind (unsigned count);
+static MYSQL_BIND* ffi_mysql_make_bind (unsigned count);
 static void ffi_mysql_bind_null (MYSQL_BIND* mybind, int k);
 static void ffi_mysql_bind_set_null (MYSQL_BIND* mybind, int k, my_bool* is_null);
 static int ffi_mysql_bind_get_null (MYSQL_BIND* mybind, int k);
@@ -108,21 +117,21 @@ static unsigned ffi_mysql_bind_get_time_day (MYSQL_BIND* mybind, int k);
 static unsigned ffi_mysql_bind_get_time_month (MYSQL_BIND* mybind, int k);
 static unsigned ffi_mysql_bind_get_time_year (MYSQL_BIND* mybind, int k);
 
-static int ffi_start_mysql_connection_thread (int ifd, int ofd);
-static int ffi_read_int (int ifd, int *ptr);
-static void ffi_close (int fd);
+static int ffi_mysql_start_connection_thread (int ifd, int ofd);
+static int ffi_mysql_read_int (int ifd, int *ptr);
+static void ffi_mysql_close (int fd);
 
-static unsigned long* ffi_make_ulong_ptr ();
-static void ffi_long_ptr_set (long* ptr, long val);
-static long long* ffi_make_bigint_ptr ();
-static void ffi_bigint_ptr_set (long long* ptr, long val);
-static float* ffi_make_float_ptr ();
-static void ffi_float_ptr_set (float* ptr, float val);
-static double* ffi_make_double_ptr ();
-static void ffi_double_ptr_set (double* ptr, double val);
-static void* ffi_make_blob_ptr (unsigned len);
-static void ffi_string_ptr_set (void* ptr, char* str);
-static void ffi_blob_ptr_set (void* ptr, ___SCMOBJ bytes);
+static unsigned long* ffi_mysql_make_ulong_ptr ();
+static void ffi_mysql_long_ptr_set (long* ptr, long val);
+static long long* ffi_mysql_make_bigint_ptr ();
+static void ffi_mysql_bigint_ptr_set (long long* ptr, long val);
+static float* ffi_mysql_make_float_ptr ();
+static void ffi_mysql_float_ptr_set (float* ptr, float val);
+static double* ffi_mysql_make_double_ptr ();
+static void ffi_mysql_double_ptr_set (double* ptr, double val);
+static void* ffi_mysql_make_blob_ptr (unsigned len);
+static void ffi_mysql_string_ptr_set (void* ptr, char* str);
+static void ffi_mysql_blob_ptr_set (void* ptr, ___SCMOBJ bytes);
 
 static void ffi_mysql_time_set_second_part (MYSQL_TIME* ptr, unsigned long val);
 static void ffi_mysql_time_set_second (MYSQL_TIME* ptr, unsigned val);
@@ -200,23 +209,31 @@ END-C
 (c-define-type my_bool "my_bool")
 (c-define-type my_bool*
   (pointer my_bool (my_bool*) "ffi_free"))
-(c-define-type int*
-  (pointer int (int*) "ffi_free"))
-(c-define-type long*
-  (pointer long (long*) "ffi_free"))
-(c-define-type long-long*
-  (pointer long-long (long-long*) "ffi_free"))
-(c-define-type float*
-  (pointer float (float*) "ffi_free"))
-(c-define-type double*
-  (pointer double (double*) "ffi_free"))
-(c-define-type void*
-  (pointer void (void*) "ffi_free"))
-(c-define-type ulong*
-  (pointer unsigned-long (ulong*) "ffi_free"))
+
+(define-guard ffi-have-int*
+  (c-define-type int*
+    (pointer int (int*) "ffi_free")))
+(define-guard ffi-have-long*
+  (c-define-type long*
+    (pointer long (long*) "ffi_free")))
+(define-guard ffi-have-log-long*
+  (c-define-type long-long*
+    (pointer long-long (long-long*) "ffi_free")))
+(define-guard ffi-have-float*
+  (c-define-type float*
+    (pointer float (float*) "ffi_free")))
+(define-guard ffi-have-double*
+  (c-define-type double*
+    (pointer double (double*) "ffi_free")))
+(define-guard ffi-have-void*
+  (c-define-type void*
+    (pointer void (void*) "ffi_free")))
+(define-guard ffi-have-ulong*
+  (c-define-type ulong*
+    (pointer unsigned-long (ulong*) "ffi_free")))
 
 (define-c-lambda make_mysql_bind (unsigned-int) MYSQL_BIND*
-  "ffi_make_mysql_bind")
+  "ffi_mysql_make_bind")
 (define-c-lambda mysql_bind_null (MYSQL_BIND* int) void
   "ffi_mysql_bind_null")
 (define-c-lambda mysql_bind_set_null (MYSQL_BIND* int my_bool*) void
@@ -268,43 +285,43 @@ END-C
 (define-c-lambda mysql_bind_get_time_year (MYSQL_BIND* int) unsigned-int
   "ffi_mysql_bind_get_time_year")
 
-(define-c-lambda __start_mysql_connection_thread (int int) int
-  "ffi_start_mysql_connection_thread")
+(define-c-lambda __mysql_start_connection_thread (int int) int
+  "ffi_mysql_start_connection_thread")
 (define-c-lambda __read_int (int int*) int
-  "ffi_read_int")
+  "ffi_mysql_read_int")
 (define-c-lambda __close (int) void
-  "ffi_close")
+  "ffi_mysql_close")
 
-(define-c-lambda make_bool_ptr () my_bool*
-  "ffi_make_bool_ptr")
+(define-c-lambda make_my_bool_ptr () my_bool*
+  "ffi_mysql_make_my_bool_ptr")
 (define-c-lambda make_int_ptr () int*
-  "ffi_make_int_ptr")
+  "ffi_mysql_make_int_ptr")
 (define-c-lambda int_ptr_ref (int*) int
   "___return (*___arg1);")
 (define-c-lambda make_long_ptr () long*
-  "ffi_make_long_ptr")
+  "ffi_mysql_make_long_ptr")
 (define-c-lambda long_ptr_set (long* long) void
-  "ffi_long_ptr_set")
+  "ffi_mysql_long_ptr_set")
 (define-c-lambda make_ulong_ptr () ulong*
-  "ffi_make_ulong_ptr")
+  "ffi_mysql_make_ulong_ptr")
 (define-c-lambda make_bigint_ptr () long-long*
-  "ffi_make_bigint_ptr")
+  "ffi_mysql_make_bigint_ptr")
 (define-c-lambda bigint_ptr_set (long-long* long-long) void
-  "ffi_bigint_ptr_set")
+  "ffi_mysql_bigint_ptr_set")
 (define-c-lambda make_float_ptr () float*
   "___return ((float*)malloc (sizeof (float)));")
 (define-c-lambda float_ptr_set (float* float) void
-  "ffi_float_ptr_set")
+  "ffi_mysql_float_ptr_set")
 (define-c-lambda make_double_ptr () double*
-  "ffi_make_double_ptr")
+  "ffi_mysql_make_double_ptr")
 (define-c-lambda double_ptr_set (double* double) void
-  "ffi_double_ptr_set")
+  "ffi_mysql_double_ptr_set")
 (define-c-lambda make_blob_ptr (unsigned-int) void*
-  "ffi_make_blob_ptr")
+  "ffi_mysql_make_blob_ptr")
 (define-c-lambda string_ptr_set (void* UTF-8-string) void
-  "ffi_string_ptr_set")
+  "ffi_mysql_string_ptr_set")
 (define-c-lambda blob_ptr_set (void* scheme-object) void
-  "ffi_blob_ptr_set")
+  "ffi_mysql_blob_ptr_set")
 
 (define-c-lambda make_time_ptr () MYSQL_TIME*
   "___return ((MYSQL_TIME*)malloc (sizeof (MYSQL_TIME)));")
@@ -594,13 +611,13 @@ write_again:
  goto again;
 
 out:
- ffi_close (data->ifd);
- ffi_close (data->ofd);
+ ffi_mysql_close (data->ifd);
+ ffi_mysql_close (data->ofd);
  free (data);
  return NULL;
 }
 
-int ffi_start_mysql_connection_thread (int ifd, int ofd)
+int ffi_mysql_start_connection_thread (int ifd, int ofd)
 {
  int r;
  pthread_t thread;
@@ -609,8 +626,8 @@ int ffi_start_mysql_connection_thread (int ifd, int ofd)
  arg = (worker_data*)malloc (sizeof (worker_data));
  if (!arg)
  {
-  ffi_close (ifd);
-  ffi_close (ofd);
+  ffi_mysql_close (ifd);
+  ffi_mysql_close (ofd);
   return -ENOMEM;
  }
  arg->ifd = ifd;
@@ -619,8 +636,8 @@ int ffi_start_mysql_connection_thread (int ifd, int ofd)
  r = pthread_create (&thread, NULL, ffi_mysql_connection_worker, arg);
  if (r)
  {
-  ffi_close (ifd);
-  ffi_close (ofd);
+  ffi_mysql_close (ifd);
+  ffi_mysql_close (ofd);
   free (arg);
   return -r;
  }
@@ -628,7 +645,7 @@ int ffi_start_mysql_connection_thread (int ifd, int ofd)
  return 0;
 }
 
-int ffi_read_int (int ifd, int *ptr)
+int ffi_mysql_read_int (int ifd, int *ptr)
 {
  int r;
 
@@ -646,7 +663,7 @@ again:
  return r;
 }
 
-void ffi_close (int fd)
+void ffi_mysql_close (int fd)
 {
  int r;
 
@@ -657,7 +674,7 @@ again:
 }
 
 
-MYSQL_BIND* ffi_make_mysql_bind (unsigned count)
+MYSQL_BIND* ffi_mysql_make_bind (unsigned count)
 {
  size_t sz = count * sizeof (MYSQL_BIND);
  MYSQL_BIND* res = malloc (sz);
@@ -804,7 +821,7 @@ unsigned ffi_mysql_bind_get_time_year (MYSQL_BIND* mybind, int k)
  return ((MYSQL_TIME*)(mybind[k].buffer))->year;
 }
 
-my_bool* ffi_make_bool_ptr ()
+my_bool* ffi_mysql_make_my_bool_ptr ()
 {
  my_bool* res = malloc (sizeof (my_bool));
  if (res)
@@ -814,7 +831,7 @@ my_bool* ffi_make_bool_ptr ()
  return res;
 }
 
-int* ffi_make_int_ptr ()
+int* ffi_mysql_make_int_ptr ()
 {
  int* res = malloc (sizeof (int));
  if (res)
@@ -824,7 +841,7 @@ int* ffi_make_int_ptr ()
  return res;
 }
 
-long* ffi_make_long_ptr ()
+long* ffi_mysql_make_long_ptr ()
 {
  long* res = malloc (sizeof (long));
  if (res)
@@ -834,12 +851,12 @@ long* ffi_make_long_ptr ()
  return res;
 }
 
-void ffi_long_ptr_set (long* ptr, long val)
+void ffi_mysql_long_ptr_set (long* ptr, long val)
 {
  *ptr = val;
 }
 
-unsigned long* ffi_make_ulong_ptr ()
+unsigned long* ffi_mysql_make_ulong_ptr ()
 {
  unsigned long* res = malloc (sizeof (long));
  if (res)
@@ -849,7 +866,7 @@ unsigned long* ffi_make_ulong_ptr ()
  return res;
 }
 
-long long* ffi_make_bigint_ptr ()
+long long* ffi_mysql_make_bigint_ptr ()
 {
  long long* res = malloc (sizeof (long long));
  if (res)
@@ -859,12 +876,12 @@ long long* ffi_make_bigint_ptr ()
  return res;
 }
 
-void ffi_bigint_ptr_set (long long* ptr, long val)
+void ffi_mysql_bigint_ptr_set (long long* ptr, long val)
 {
  *ptr = val;
 }
 
-float* ffi_make_float_ptr ()
+float* ffi_mysql_make_float_ptr ()
 {
  float* res = malloc (sizeof (float));
  if (res)
@@ -874,12 +891,12 @@ float* ffi_make_float_ptr ()
  return res;
 }
 
-void ffi_float_ptr_set (float* ptr, float val)
+void ffi_mysql_float_ptr_set (float* ptr, float val)
 {
  *ptr = val;
 }
 
-double* ffi_make_double_ptr ()
+double* ffi_mysql_make_double_ptr ()
 {
  double* res = malloc (sizeof (double));
  if (res)
@@ -889,12 +906,12 @@ double* ffi_make_double_ptr ()
  return res;
 }
 
-void ffi_double_ptr_set (double* ptr, double val)
+void ffi_mysql_double_ptr_set (double* ptr, double val)
 {
  *ptr = val;
 }
 
-void* ffi_make_blob_ptr (unsigned len)
+void* ffi_mysql_make_blob_ptr (unsigned len)
 {
  void* res = malloc (len);
  if (res)
@@ -904,12 +921,12 @@ void* ffi_make_blob_ptr (unsigned len)
  return res;
 }
 
-void ffi_string_ptr_set (void* ptr, char* str)
+void ffi_mysql_string_ptr_set (void* ptr, char* str)
 {
  strcpy (ptr, str);
 }
 
-void ffi_blob_ptr_set (void* ptr, ___SCMOBJ bytes)
+void ffi_mysql_blob_ptr_set (void* ptr, ___SCMOBJ bytes)
 {
  memcpy (ptr, U8_DATA (bytes), U8_LEN (bytes));
 }

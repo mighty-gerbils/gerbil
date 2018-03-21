@@ -211,8 +211,11 @@ END-C
 ;;  - parse a byte-input-port
 
 (c-declare #<<END-C
+#ifndef ___HAVE_FFI_U8VECTOR
+#define ___HAVE_FFI_U8VECTOR
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
 #define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
+#endif
 END-C
 )
 
@@ -274,18 +277,18 @@ END-C
 ;;  re-enter ffi upcalls with multiple threads
 ;;  [*Read-port with concurrent threads parsing -> abrupt exit 71]
 (c-declare #<<END-C
-typedef struct io_context {
+typedef struct libxml_io_context {
   ___SCMOBJ data;
   int off;
-} *io_context_t;
+} *libxml_io_context_t;
 
-static void ffi_iocontext_init (io_context_t ioctx, ___SCMOBJ data) {
+static void ffi_libxml_iocontext_init (libxml_io_context_t ioctx, ___SCMOBJ data) {
   ioctx->data = data;
   ioctx->off = 0;
 }
 
-static int ffi_iocontext_read (void *ctx, char *buf, int buflen) {
-  io_context_t ioctx = (io_context_t)ctx;
+static int ffi_libxml_iocontext_read (void *ctx, char *buf, int buflen) {
+  libxml_io_context_t ioctx = (libxml_io_context_t)ctx;
   int rlen = buflen;
   int wlen = 0;
 
@@ -316,7 +319,7 @@ again:
   }
 }
 
-static int ffi_ioclose (void *ctx) {
+static int ffi_libxml_ioclose (void *ctx) {
   return 0;
 }
 
@@ -330,9 +333,9 @@ END-C
         int)                            ; options
        xmlDocPtr
        #<<END-C
-struct io_context ioctx;
-ffi_iocontext_init (&ioctx, ___arg1);
-___return (xmlReadIO (ffi_iocontext_read, ffi_ioclose, &ioctx,
+struct libxml_io_context ioctx;
+ffi_libxml_iocontext_init (&ioctx, ___arg1);
+___return (xmlReadIO (ffi_libxml_iocontext_read, ffi_libxml_ioclose, &ioctx,
                       ___arg2, ___arg3, ___arg4));
 END-C
 ))
@@ -344,9 +347,9 @@ END-C
         int)                            ; options
        xmlDocPtr
        #<<END-C
-struct io_context ioctx;
-ffi_iocontext_init (&ioctx, ___arg1);
-___return (htmlReadIO (ffi_iocontext_read, ffi_ioclose, &ioctx,
+struct libxml_io_context ioctx;
+ffi_libxml_iocontext_init (&ioctx, ___arg1);
+___return (htmlReadIO (ffi_libxml_iocontext_read, ffi_libxml_ioclose, &ioctx,
                        ___arg2, ___arg3, ___arg4));
 END-C
 ))

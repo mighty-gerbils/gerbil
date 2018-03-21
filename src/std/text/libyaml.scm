@@ -21,8 +21,11 @@
 #include <stdio.h>
 #include <yaml.h>
 
+#ifndef ___HAVE_FFI_U8VECTOR
+#define ___HAVE_FFI_U8VECTOR
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
 #define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
+#endif
 END-C
 )
 
@@ -37,6 +40,13 @@ END-C
     `(define ,symbol
        ((c-lambda () int ,ref)))))
 
+(define-macro (define-guard guard defn)
+  (if (eval `(cond-expand (,guard #t) (else #f)))
+    '(begin)
+    (begin
+      (eval `(define-cond-expand-feature ,guard))
+      defn)))
+
 (define-const YAML_NO_EVENT)
 (define-const YAML_STREAM_START_EVENT)
 (define-const YAML_STREAM_END_EVENT)
@@ -50,39 +60,41 @@ END-C
 (define-const YAML_MAPPING_END_EVENT)
 
 (c-declare #<<END-C
-static FILE* ffi_open_input_file (const char *path);
-static FILE* ffi_open_output_file (const char *path);
-static ___SCMOBJ ffi_release_event (void *ptr);
-static ___SCMOBJ ffi_release_parser (void *ptr);
-static ___SCMOBJ ffi_release_emitter (void *ptr);
-static yaml_parser_t *ffi_make_parser ();
-static yaml_event_t *ffi_make_event ();
-static yaml_emitter_t *ffi_make_emitter ();
-static void ffi_event_scalar_bytes (yaml_event_t *event, ___SCMOBJ bytes);
+static FILE* ffi_yaml_open_input_file (const char *path);
+static FILE* ffi_yaml_open_output_file (const char *path);
+static ___SCMOBJ ffi_yaml_release_event (void *ptr);
+static ___SCMOBJ ffi_yaml_release_parser (void *ptr);
+static ___SCMOBJ ffi_yaml_release_emitter (void *ptr);
+static yaml_parser_t *ffi_yaml_make_parser ();
+static yaml_event_t *ffi_yaml_make_event ();
+static yaml_emitter_t *ffi_yaml_make_emitter ();
+static void ffi_yaml_event_scalar_bytes (yaml_event_t *event, ___SCMOBJ bytes);
 END-C
 )
 
-(c-define-type FILE "FILE")
-(c-define-type FILE* (pointer FILE (FILE*)))
+(define-guard ffi-have-FILE
+  (c-define-type FILE "FILE"))
+(define-guard ffi-have-FILE*
+  (c-define-type FILE* (pointer FILE (FILE*))))
 (c-define-type yaml_event_t "yaml_event_t")
 (c-define-type yaml_event_t*
-  (pointer yaml_event_t (yaml_event_t*) "ffi_release_event"))
+  (pointer yaml_event_t (yaml_event_t*) "ffi_yaml_release_event"))
 (c-define-type yaml_parser_t "yaml_parser_t")
 (c-define-type yaml_parser_t*
-  (pointer yaml_parser_t (yaml_parser_t*) "ffi_release_parser"))
+  (pointer yaml_parser_t (yaml_parser_t*) "ffi_yaml_release_parser"))
 (c-define-type yaml_emitter_t "yaml_emitter_t")
 (c-define-type yaml_emitter_t*
-  (pointer yaml_emitter_t (yaml_emitter_t*) "ffi_release_emitter"))
+  (pointer yaml_emitter_t (yaml_emitter_t*) "ffi_yaml_release_emitter"))
 
 (define-c-lambda open_yaml_input_file (UTF-8-string) FILE*
-  "ffi_open_input_file")
+  "ffi_yaml_open_input_file")
 (define-c-lambda open_yaml_output_file (UTF-8-string) FILE*
-  "ffi_open_output_file")
+  "ffi_yaml_open_output_file")
 (define-c-lambda close_yaml_file (FILE*) void
   "fclose")
 
 (define-c-lambda make_yaml_parser () yaml_parser_t*
-  "ffi_make_parser")
+  "ffi_yaml_make_parser")
 (define-c-lambda yaml_parser_initialize (yaml_parser_t*) void
   "yaml_parser_initialize")
 (define-c-lambda yaml_parser_delete (yaml_parser_t*) void
@@ -95,7 +107,7 @@ END-C
   "___return (___arg1->error);")
 
 (define-c-lambda make_yaml_emitter () yaml_emitter_t*
-  "ffi_make_emitter")
+  "ffi_yaml_make_emitter")
 (define-c-lambda yaml_emitter_initialize (yaml_emitter_t*) void
   "yaml_emitter_initialize")
 (define-c-lambda yaml_emitter_delete (yaml_emitter_t*) void
@@ -108,7 +120,7 @@ END-C
   "___return (___arg1->error);")
 
 (define-c-lambda make_yaml_event () yaml_event_t*
-  "ffi_make_event")
+  "ffi_yaml_make_event")
 (define-c-lambda yaml_event_delete (yaml_event_t*) void
   "yaml_event_delete")
 (define-c-lambda yaml_event_type (yaml_event_t*) int
@@ -120,7 +132,7 @@ END-C
 (define-c-lambda yaml_event_scalar_length (yaml_event_t*) size_t
   "___return (___arg1->data.scalar.length);")
 (define-c-lambda yaml_event_scalar_bytes (yaml_event_t* scheme-object) void
-  "ffi_event_scalar_bytes")
+  "ffi_yaml_event_scalar_bytes")
 
 (define-c-lambda yaml_event_stream_start (yaml_event_t*) int
   "___return (yaml_stream_start_event_initialize (___arg1, YAML_UTF8_ENCODING));")
@@ -142,50 +154,50 @@ END-C
   "yaml_mapping_end_event_initialize")
 
 (c-declare #<<END-C
-static FILE* ffi_open_input_file (const char *path)
+static FILE* ffi_yaml_open_input_file (const char *path)
 {
  return fopen (path, "rb");
 }
 
-static FILE* ffi_open_output_file (const char *path)
+static FILE* ffi_yaml_open_output_file (const char *path)
 {
  return fopen (path, "wb");
 }
 
-static yaml_parser_t *ffi_make_parser ()
+static yaml_parser_t *ffi_yaml_make_parser ()
 {
  return malloc (sizeof (yaml_parser_t));
 }
 
-static ___SCMOBJ ffi_release_parser (void *ptr)
+static ___SCMOBJ ffi_yaml_release_parser (void *ptr)
 {
  free (ptr);
  return ___FIX (___NO_ERR);
 }
 
-static yaml_emitter_t *ffi_make_emitter ()
+static yaml_emitter_t *ffi_yaml_make_emitter ()
 {
  return malloc (sizeof (yaml_emitter_t));
 }
 
-static ___SCMOBJ ffi_release_emitter (void *ptr)
+static ___SCMOBJ ffi_yaml_release_emitter (void *ptr)
 {
  free (ptr);
  return ___FIX (___NO_ERR);
 }
 
-static yaml_event_t *ffi_make_event ()
+static yaml_event_t *ffi_yaml_make_event ()
 {
  return malloc (sizeof (yaml_event_t));
 }
 
-static ___SCMOBJ ffi_release_event (void *ptr)
+static ___SCMOBJ ffi_yaml_release_event (void *ptr)
 {
  free (ptr);
  return ___FIX (___NO_ERR);
 }
 
-static void ffi_event_scalar_bytes (yaml_event_t *event, ___SCMOBJ bytes)
+static void ffi_yaml_event_scalar_bytes (yaml_event_t *event, ___SCMOBJ bytes)
 {
  memcpy (U8_DATA (bytes), event->data.scalar.value, event->data.scalar.length);
 }

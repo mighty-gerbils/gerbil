@@ -258,7 +258,7 @@ package: std/net/httpd
 #include <time.h>
 #include <string.h>
 __thread char buf[64];
-static char *ffi_http_date () {
+static char *ffi_httpd_date () {
  struct tm tm;
  time_t t = time(NULL);
  asctime_r (gmtime_r (&t, &tm), buf);
@@ -269,7 +269,7 @@ static char *ffi_http_date () {
 END-C
 )
   (define-c-lambda http-date () char-string
-    "ffi_http_date"))
+    "ffi_httpd_date"))
 
 ;;; i/o helpers
 ;; limits

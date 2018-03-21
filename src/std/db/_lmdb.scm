@@ -21,8 +21,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifndef ___HAVE_FFI_U8VECTOR
+#define ___HAVE_FFI_U8VECTOR
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
 #define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
+#endif
 END-C
 )
 
@@ -37,6 +40,12 @@ END-C
     `(define ,symbol
        ((c-lambda () int ,ref)))))
 
+(define-macro (define-guard guard defn)
+  (if (eval `(cond-expand (,guard #t) (else #f)))
+    '(begin)
+    (begin
+      (eval `(define-cond-expand-feature ,guard))
+      defn)))
 
 ;;; constants
 ;; Environment flags
@@ -147,15 +156,18 @@ END-C
   (pointer MDB_stat (MDB_stat*) "ffi_free"))
 (c-define-type MDB_envinfo*
   (pointer MDB_envinfo (MDB_envinfo*) "ffi_free"))
-(c-define-type int*
-  (pointer int (int*) "ffi_free"))
-(c-define-type unsigned-int*
-  (pointer unsigned-int (unsigned-int*) "ffi_free"))
-(c-define-type size_t*
-  (pointer size_t (size_t*) "ffi_free"))
-(c-define-type UTF-8-string*
-  (pointer UTF-8-string (UTF-8-string*) "ffi_free"))
-
+(define-guard ffi-have-int*
+  (c-define-type int*
+    (pointer int (int*) "ffi_free")))
+(define-guard ffi-have-unsigned-int*
+  (c-define-type unsigned-int*
+    (pointer unsigned-int (unsigned-int*) "ffi_free")))
+(define-guard ffi-have-size_t*
+  (c-define-type size_t*
+    (pointer size_t (size_t*) "ffi_free")))
+(define-guard ffi-have-UTF-8-string*
+  (c-define-type UTF-8-string*
+    (pointer UTF-8-string (UTF-8-string*) "ffi_free")))
 
 ;;; API
 ;; ffi hekpers
