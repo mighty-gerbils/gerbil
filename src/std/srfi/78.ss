@@ -8,7 +8,6 @@ package: std/srfi
         check-report
         check-set-mode!
         check-reset!
-        check-passed?
-        )
+        check-passed?)
 
 (include "srfi-78.scm")
