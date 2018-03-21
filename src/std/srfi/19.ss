@@ -37,8 +37,7 @@ package: std/srfi
   time-tai->time-utc time-tai->time-utc!
   time-utc->date time-utc->julian-day time-utc->modified-julian-day
   time-utc->time-monotonic time-utc->time-tai time-utc->time-tai!
-  date->string string->date
-  )
+  date->string string->date)
 (include "srfi-19.scm")
 (defalias set-time-type! time-type-set!)
 (defalias set-time-second! time-second-set!)

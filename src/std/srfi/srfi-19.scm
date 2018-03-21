@@ -17,6 +17,7 @@
 ;; 2016-01-28: [vyzo] imported to Gerbil, dropped bh specifics and some comment cosmetics
 ;; 2017-07-08: [vyzo] use ##current-time-point with ns accuracy for get-time-of-day
 ;; 2017-09-15: [fare] make make-time stricter, update leap second database.
+;; 2018-03-21: [vyzo] stop neutering the mutators, it makes no sense.
 ;;
 ;; ## TODO
 ;;  * The exception handling presumes user code to be written in a very specific style using exception
@@ -586,37 +587,47 @@
 
 ;; -- date structures
 
-;; vyzo: defstruct for gerbil
-(defstruct date (nanosecond second minute hour day month year zone-offset))
+;; vyzo: defstruct for gerbil, with equality defined
+(defstruct date (nanosecond second minute hour day month year zone-offset)
+  equal: #t)
 
-;; redefine setters
+(defalias tm:set-date-nanosecond! date-nanosecond-set!)
+(defalias tm:set-date-second! date-second-set!)
+(defalias tm:set-date-minute! date-minute-set!)
+(defalias tm:set-date-hour! date-hour-set!)
+(defalias tm:set-date-day! date-day-set!)
+(defalias tm:set-date-month! date-month-set!)
+(defalias tm:set-date-year! date-year-set!)
+(defalias tm:set-date-zone-offset! date-zone-offset-set!)
 
-(define tm:set-date-nanosecond! (values date-nanosecond-set!))
-(define tm:set-date-second! (values date-second-set!))
-(define tm:set-date-minute! (values date-minute-set!))
-(define tm:set-date-hour! (values date-hour-set!))
-(define tm:set-date-day! (values date-day-set!))
-(define tm:set-date-month! (values date-month-set!))
-(define tm:set-date-year! (values date-year-set!))
-(define tm:set-date-zone-offset! (values date-zone-offset-set!))
+;; redefine setters -- vyzo: why? PEBKAC if the user breaks contract
+;;                     we don't even export them.
+;; (define tm:set-date-nanosecond! (values date-nanosecond-set!))
+;; (define tm:set-date-second! (values date-second-set!))
+;; (define tm:set-date-minute! (values date-minute-set!))
+;; (define tm:set-date-hour! (values date-hour-set!))
+;; (define tm:set-date-day! (values date-day-set!))
+;; (define tm:set-date-month! (values date-month-set!))
+;; (define tm:set-date-year! (values date-year-set!))
+;; (define tm:set-date-zone-offset! (values date-zone-offset-set!))
 
-(set! date-second-set! (lambda (date val)
-                         (tm:time-error 'date-second-set! 'dates-are-immutable date)))
+;; (set! date-second-set! (lambda (date val)
+;;                          (tm:time-error 'date-second-set! 'dates-are-immutable date)))
 
-(set! date-minute-set! (lambda (date val)
-                         (tm:time-error 'date-minute-set! 'dates-are-immutable date)))
+;; (set! date-minute-set! (lambda (date val)
+;;                          (tm:time-error 'date-minute-set! 'dates-are-immutable date)))
 
-(set! date-day-set! (lambda (date val)
-                      (tm:time-error 'date-day-set! 'dates-are-immutable date)))
+;; (set! date-day-set! (lambda (date val)
+;;                       (tm:time-error 'date-day-set! 'dates-are-immutable date)))
 
-(set! date-month-set! (lambda (date val)
-                        (tm:time-error 'date-month-set! 'dates-are-immutable date)))
+;; (set! date-month-set! (lambda (date val)
+;;                         (tm:time-error 'date-month-set! 'dates-are-immutable date)))
 
-(set! date-year-set! (lambda (date val)
-                       (tm:time-error 'date-year-set! 'dates-are-immutable date)))
+;; (set! date-year-set! (lambda (date val)
+;;                        (tm:time-error 'date-year-set! 'dates-are-immutable date)))
 
-(set! date-zone-offset-set! (lambda (date val)
-                              (tm:time-error 'date-zone-offset-set! 'dates-are-immutable date)))
+;; (set! date-zone-offset-set! (lambda (date val)
+;;                               (tm:time-error 'date-zone-offset-set! 'dates-are-immutable date)))
 
 ;; gives the julian day which starts at noon.
 (define (tm:encode-julian-day-number day month year)
