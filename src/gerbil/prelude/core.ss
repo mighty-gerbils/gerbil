@@ -2715,23 +2715,28 @@ package: gerbil
           (_ ['begin-annotation '@match-body E])))
 
       (def (generate1 clause body E)
-        (let recur ((rest clause) (rest-targets tgt-lst))
-          (syntax-case rest ()
-            ((ptree . rest)
-             (syntax-case rest-targets ()
-               ((target . rest-targets)
-                (with-syntax* (($K (genident 'K))
-                               ((var ...)
-                                (match-pattern-vars #'ptree))
-                               (body
-                                (recur #'rest #'rest-targets))
-                               (dispatch
-                                (generate-match1 stx #'target #'ptree
-                                                 #'($K var ...)
-                                                 E)))
-                  #'(let (($K (lambda (var ...) body)))
-                      dispatch)))))
-            (_ body))))
+        (with-syntax (($K (genident 'K))
+                      ((var ...)
+                       (apply append (map match-pattern-vars clause))))
+          (check-duplicate-identifiers #'(var ...) stx)
+          (with-syntax*
+              ((dispatch
+                (let recur ((rest clause) (rest-targets tgt-lst))
+                  (syntax-case rest ()
+                    ((ptree . rest)
+                     (syntax-case rest-targets ()
+                       ((target . rest-targets)
+                        (generate-match1 stx #'target #'ptree
+                                         (recur #'rest #'rest-targets)
+                                         E))))
+                    (_ #'($K var ...)))))
+               (body body)
+               (kont
+                (syntax/loc stx
+                  (lambda (var ...) body))))
+            (syntax/loc stx
+              (let ($K kont)
+                dispatch)))))
 
       (generate-body (parse-body (stx-length tgt-lst))))
 
