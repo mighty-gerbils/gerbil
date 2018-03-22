@@ -2456,7 +2456,7 @@ package: gerbil
                        (generate-simple-vector tgt #'body 0 K E)
                        E]))
                ((list: body)
-                (generate-list-vector tgt #'body 'values->list 0 K E))))
+                (generate-list-vector tgt #'body 'values->list K E))))
             ((vector: body)
              (syntax-case #'body ()
                ((simple: body)
@@ -2468,7 +2468,7 @@ package: gerbil
                        E]))
                ((list: body)
                 ['if #'(##vector? target)
-                     (generate-list-vector tgt #'body 'subvector->list 0 K E)
+                     (generate-list-vector tgt #'body 'vector->list K E)
                      E])))
             ((struct: info body)
              (generate-struct (stx-e #'info) tgt #'body K E))
@@ -2537,11 +2537,20 @@ package: gerbil
                                 E)]))
             (_ K))))
 
-      (def (generate-list-vector tgt body tgt->list start K E)
-        (with-syntax (($tgt (genident 'e))
-                      (target tgt)
-                      (target->list tgt->list))
-          ['let #'(($tgt (target->list target)))
+      (def (generate-list-vector tgt body ->list K E)
+        (with-syntax* (($tgt (genident 'e))
+                       (target tgt)
+                       (target->list
+                        (case ->list
+                          ((values->list)
+                           #'(values->list target))
+                          ((vector->list)
+                           #'(##vector->list target))
+                          ((struct->list)
+                           #'(##cdr (##vector->list target)))
+                          (else
+                           (raise-syntax-error #f "Unexpected list conversion" stx ->list)))))
+          ['let #'(($tgt target->list))
                 (generate1 #'$tgt body K E)]))
 
       (def (generate-struct info tgt body K E)
@@ -2583,7 +2592,7 @@ package: gerbil
                      E]))))
             ((list: body)
              ['if #'instance-check
-               (generate-list-vector tgt #'body #'struct->list 1 K E)
+               (generate-list-vector tgt #'body 'struct->list K E)
                E]))))
 
       (def (generate-class info tgt body K E)
