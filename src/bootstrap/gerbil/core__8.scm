@@ -1,4 +1,4 @@
-(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 100))
+(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::t|
     (make-class-type

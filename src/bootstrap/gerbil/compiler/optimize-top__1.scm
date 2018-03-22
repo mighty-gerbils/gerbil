@@ -1,4 +1,4 @@
-(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 100))
+(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (define |gxc[:0:]#defbasic-expression-type-builtin|
   (lambda (_$stx17398_)
     (let* ((_g1740217431_

@@ -1,6 +1,5 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (declare (inlining-limit 100))
   (define gxc#&identity-expression
     (make-promise
      (lambda ()

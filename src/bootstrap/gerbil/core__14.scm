@@ -1,4 +1,4 @@
-(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 100))
+(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |gerbil/core$<more-syntax-sugar>[:0:]#identifier-rules|
     (lambda (_$stx33277_)
