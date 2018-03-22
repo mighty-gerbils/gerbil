@@ -17,7 +17,6 @@ package: std/srfi
   :range :real-range :char-range
   :port
   :dispatched
-  :do :let :parallel :while :until
-  )
+  :do :let :parallel :while :until)
 
 (include "srfi-42.scm")

@@ -233,7 +233,7 @@
 
 (define (read-leap-second-table filename)
   (set! tm:leap-second-table (tm:read-tai-utc-data filename))
-  (values))
+  (void))
 
 
 (define (tm:leap-second-delta utc-seconds)
@@ -996,7 +996,7 @@
 ;; Your implementation might want to do something...
 ;;
 (define (tm:locale-print-time-zone date port)
-  (values))
+  (void))
 
 ;; Again, locale specific.
 (define (tm:locale-am/pm hr)
@@ -1176,7 +1176,7 @@
 
 (define (tm:date-printer date index format-string str-len port)
   (if (>= index str-len)
-      (values)
+      (void)
       (let ((current-char (string-ref format-string index)))
         (if (not (char=? current-char #\~))
             (begin
@@ -1408,7 +1408,7 @@
         (locale-reader-abbr-month   (tm:make-locale-reader tm:locale-abbr-month->index))
         (locale-reader-long-month   (tm:make-locale-reader tm:locale-long-month->index))
         (char-fail                  (lambda (ch) #t))
-        (do-nothing                 (lambda (val object) (values)))
+        (do-nothing                 (lambda (val object) (void)))
         )
 
     (list
@@ -1512,7 +1512,7 @@
               (begin (read-char port) (skip-until port skipper))))))
   (if (>= index str-len)
       (begin
-        (values))
+        (void))
       (let ((current-char (string-ref format-string index)))
         (if (not (char=? current-char #\~))
             (let ((port-char (read-char port)))

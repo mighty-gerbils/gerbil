@@ -56,6 +56,7 @@
 ;   The code generation for a :do is delegated to do-ec:do.
 
 (define-syntax do-ec
+  (begin-annotation @match:prefix
   (syntax-rules (nested if not and or begin :do let)
 
     ; explicit nesting -> implicit nesting
@@ -93,7 +94,7 @@
 ; anything else -> call generator-macro in CPS; reentry at (*)
 
     ((do-ec (g arg1 arg ...) cmd)
-     (g (do-ec:do cmd) arg1 arg ...) )))
+     (g (do-ec:do cmd) arg1 arg ...) ))))
 
 
 ; (do-ec:do cmd (:do olet lbs ne1? ilet ne2? lss))
@@ -181,7 +182,7 @@
     ((ec-simplify expression)
      expression )))
 
-(module __a)  ; break phi section
+(module $1)  ; break phi section
 
 ; ==========================================================================
 ; The special generators :do, :let, :parallel, :while, and :until
@@ -219,6 +220,7 @@
 ;    the :do-generator next and merging next into result.
 
 (define-syntax :parallel-1  ; used as
+  (begin-annotation @match:prefix
   (syntax-rules (:do let)
 
     ; process next element of to-do, reentry at (**)
@@ -253,9 +255,9 @@
 
     ; no more gens -> continue with cc, reentry at (*)
     ((:parallel-1 (cc ...) () result)
-     (cc ... result) )))
+     (cc ... result) ))))
 
-(module __b)
+(module $2)
 
 (define-syntax :while
   (syntax-rules ()
@@ -376,7 +378,7 @@
     ((:until-1 cc test (:do olet lbs ne1? ilet ne2? lss))
      (:do cc olet lbs ne1? ilet (and ne2? (not test)) lss) )))
 
-(module __c)
+(module $3)
 
 ; ==========================================================================
 ; The typed generators :list :string :vector etc.
@@ -466,7 +468,7 @@
 ;   'design.scm' for more details.
 
 
-(module __d)
+(module $4)
 
 (define-syntax :integers
   (syntax-rules (index)
@@ -637,7 +639,7 @@
           ((read-proc port)) ))))
 
 
-(module __e)
+(module $5)
 
 ; ==========================================================================
 ; The typed generator :dispatched and utilities for constructing dispatchers
@@ -820,7 +822,7 @@
      (:dispatched cc var :-dispatch arg1 arg ...) )))
 
 
-(module __f)
+(module $6)
 
 ; ==========================================================================
 ; The utility comprehensions fold-ec, fold3-ec
@@ -861,7 +863,7 @@
        result ))))
 
 
-(module __g)
+(module $7)
 ; ==========================================================================
 ; The comprehensions list-ec string-ec vector-ec etc.
 ; ==========================================================================
@@ -932,7 +934,7 @@
              vec
              (error "vector is too long for the comprehension") ))))))
 
-(module __h)
+(module $8)
 
 (define-syntax sum-ec
   (syntax-rules ()
@@ -991,7 +993,7 @@
                 (set! stop #t) ))
        result ))))
 
-(module __i)
+(module $9)
 
 ; (ec-guarded-do-ec stop (nested q ...) cmd)
 ;   constructs (do-ec q ... cmd) where the generators gen in q ... are
