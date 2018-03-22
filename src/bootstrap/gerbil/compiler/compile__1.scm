@@ -1,4 +1,4 @@
-(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 100))
+(declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |gxc[1]#_g14652_|
     (gx#make-syntax-quote 'meta-state::t #f (gx#current-expander-context) '()))

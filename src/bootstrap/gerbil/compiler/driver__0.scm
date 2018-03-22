@@ -1192,7 +1192,7 @@
                                         (foldr1 cons
                                                 '()
                                                 (if _phi?48494_
-                                                    '((inlining-limit 100))
+                                                    '((inlining-limit 200))
                                                     '())))))))
                (pretty-print _code48493_))))
           (if (gxc#current-compile-invoke-gsc)

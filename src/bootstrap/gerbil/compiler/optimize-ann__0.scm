@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (declare (inlining-limit 100))
+  (declare (inlining-limit 200))
   (define gxc#&optmize-annotated
     (make-promise
      (lambda ()

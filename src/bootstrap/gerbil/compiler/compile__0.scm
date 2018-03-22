@@ -1,6 +1,5 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
-  (declare (inlining-limit 100))
   (define gxc#current-compile-methods (make-parameter '#f))
   (define gxc#current-compile-lift (make-parameter '#f))
   (define gxc#current-compile-marks (make-parameter '#f))
