@@ -10,7 +10,6 @@ namespace: gxc
         "optimize-base"
         "optimize-xform")
 (export #t)
-(declare (inlining-limit 100))
 
 (defcompile-method apply-collect-type-info (&collect-type-info &void)
   (%#begin            collect-begin%)

@@ -518,7 +518,7 @@ namespace: gxc
           (block)
           (standard-bindings)
           (extended-bindings)
-          ,@(if phi? '((inlining-limit 100)) '())))
+          ,@(if phi? '((inlining-limit 200)) '())))
       (pretty-print code)))
   (when (current-compile-invoke-gsc)
     (gsc-compile-file path))

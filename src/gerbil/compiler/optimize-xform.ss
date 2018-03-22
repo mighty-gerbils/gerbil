@@ -9,7 +9,6 @@ namespace: gxc
         "compile"
         "optimize-base")
 (export #t)
-(declare (inlining-limit 100))
 
 (defcompile-method #f &identity-expression
   (%#begin-annotation        xform-identity)

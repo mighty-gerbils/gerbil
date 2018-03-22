@@ -12,7 +12,6 @@ namespace: gxc
                  s32vector? u32vector? s64vector? u64vector?
                  f32vector? f64vector?))
 (export #t)
-(declare (inlining-limit 100))
 
 ;; compilation method dispatch table
 (def current-compile-methods
