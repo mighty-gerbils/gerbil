@@ -1,4 +1,4 @@
-(define-syntax define-opt
+#;(define-syntax define-opt
   (syntax-rules (optional)
     ((define-opt (name . bindings) . bodies)
       (define-opt "seek-optional" bindings () ((name . bindings) . bodies)))
@@ -36,3 +36,8 @@
       (define name body))		; for compatibilibility with define
 ))
 
+;; all that was pretty, but Gerbil lambdas already support optional arguments and have
+;; optimized dispatch by the compiler
+(defrules define-opt (optional)
+  ((_ (id arg ... (optional . opt-args)) body ...)
+   (def (id arg ... . opt-args) body ...)))
