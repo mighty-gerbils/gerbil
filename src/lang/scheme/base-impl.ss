@@ -117,7 +117,28 @@ package: scheme
   ((_ path ...)
    (begin (include path) ...)))
 
+;; these accept an optional comparator procedure per spec
+(def* r7rs-assoc
+  ((x lst) (assoc x lst))
+  ((x lst cmpf)
+   (let lp ((rest lst))
+     (match rest
+       ([hd . rest]
+        (if (cmpf (car hd) x)
+          hd
+          (lp rest)))
+       (else #f)))))
 
+(def* r7rs-member
+  ((x lst) (member x lst))
+  ((x lst cmpf)
+   (let lp ((lst lst))
+     (match lst
+       ([hd . rest]
+        (if (cmpf hd x)
+          lst
+          (lp rest)))
+       (else #f)))))
 
 (def (floor/ n divisor)
   (if (and (<= 0 n) (<= 0 divisor))

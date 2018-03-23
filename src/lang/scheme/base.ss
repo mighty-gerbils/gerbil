@@ -17,7 +17,7 @@ package: scheme
   and
   append
   apply
-  assoc
+  (rename: r7rs-assoc assoc)
   assq
   assv
   begin
@@ -132,7 +132,7 @@ package: scheme
   make-vector
   map
   max
-  member
+  (rename: r7rs-member member)
   memq
   memv
   min
