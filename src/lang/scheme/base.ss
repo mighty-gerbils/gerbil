@@ -171,7 +171,7 @@ package: scheme
   read-char
   read-error?
   read-line
-  read-string
+  (rename: r7rs-read-string read-string)
   read-u8
   real?
   remainder

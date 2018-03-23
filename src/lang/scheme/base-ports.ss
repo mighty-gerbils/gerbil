@@ -8,6 +8,20 @@ package: scheme
         :gerbil/gambit/exceptions)
 (export #t)
 
+(def (r7rs-read-string k (port (current-input-port)))
+  (unless (and (fixnum? k) (fx> k 0))
+    (error "Illegal argument; expected positive fixnum" k))
+  (let* ((str (make-string k))
+         (rd (read-substring str 0 k port)))
+    (cond
+     ((fxzero? rd)
+      (eof-object))
+     ((fx< rd k)
+      (string-shrink! str rd)
+      str)
+     (else
+      str))))
+
 (def (read-bytevector k (port (current-input-port)))
   (unless (and (fixnum? k) (fx> k 0))
     (error "Illegal argument; expected positive fixnum" k))
