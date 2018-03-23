@@ -109,11 +109,45 @@ package: gerbil/gambit
 (def (write-string str (port (current-output-port)))
   (write-substring str 0 (string-length str) port))
 
-(def (read-string str (port (current-input-port)))
-  (read-substring str 0 (string-length str) port))
+(def (read-string obj (port (current-input-port)))
+  (cond
+   ((fixnum? obj)
+    ;; r7rs semantics
+    (unless (##fx> obj 0)
+      (error "Bad argument; expected positive fixnum" obj))
+    (let* ((str (make-string obj))
+           (rd (read-substring str 0 obj port)))
+      (cond
+       ((##fxzero? rd)
+        (eof-object))
+       ((##fx< rd obj)
+        (string-shrink! str rd)
+        str)
+       (else str))))
+   ((string? obj)
+    (read-substring obj 0 (##string-length obj) port))
+   (else
+    (error "Bad argument; expected string or positive fixnum" obj))))
 
 (def (write-u8vector bytes (port (current-output-port)))
   (write-subu8vector bytes 0 (u8vector-length bytes) port))
 
-(def (read-u8vector bytes (port (current-input-port)))
-  (read-subu8vector bytes 0 (u8vector-length bytes) port))
+(def (read-u8vector obj (port (current-input-port)))
+  (cond
+   ((fixnum? obj)
+    ;; r7rs semantics
+    (unless (##fx> obj 0)
+      (error "Bad argument; expected positive fixnum" obj))
+    (let* ((bytes (make-u8vector obj))
+           (rd (read-subu8vector bytes 0 obj port)))
+      (cond
+       ((##fxzero? rd)
+        (eof-object))
+       ((##fx< rd obj)
+        (u8vector-shrink! bytes rd)
+        bytes)
+       (else bytes))))
+   ((u8vector? obj)
+    (read-subu8vector obj 0 (##u8vector-length obj) port))
+   (else
+    (error "Bad argument; expected u8vector or positive fixnum" obj))))
