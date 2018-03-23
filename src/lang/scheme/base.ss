@@ -92,7 +92,7 @@ package: scheme
   floor-quotient
   floor-remainder
   (rename: force-output flush-output-port)
-  for-each
+  (rename: r7rs-for-each for-each)
   gcd
   (rename: get-output-u8vector get-output-bytevector)
   get-output-string
@@ -130,7 +130,7 @@ package: scheme
   make-parameter
   make-string
   make-vector
-  map
+  (rename: r7rs-map map)
   max
   (rename: r7rs-member member)
   memq

@@ -117,29 +117,83 @@ package: scheme
   ((_ path ...)
    (begin (include path) ...)))
 
-;; these accept an optional comparator procedure per spec
+;; assoc and member: these accept an optional comparator procedure per spec
 (def* r7rs-assoc
-  ((x lst) (assoc x lst))
+  ((x lst)
+   (assoc x lst))
   ((x lst cmpf)
-   (let lp ((rest lst))
-     (match rest
-       ([hd . rest]
-        (if (cmpf (car hd) x)
-          hd
-          (lp rest)))
-       (else #f)))))
+   (assoc3 x lst cmpf)))
+
+(def (assoc3 x lst cmpf)
+  (let lp ((rest lst))
+    (match rest
+      ([hd . rest]
+       (if (cmpf (car hd) x)
+         hd
+         (lp rest)))
+      (else #f))))
 
 (def* r7rs-member
-  ((x lst) (member x lst))
+  ((x lst)
+   (member x lst))
   ((x lst cmpf)
-   (let lp ((lst lst))
-     (match lst
-       ([hd . rest]
-        (if (cmpf hd x)
-          lst
-          (lp rest)))
-       (else #f)))))
+   (member3 x lst cmpf)))
 
+(def (member3 x lst cmpf)
+  (let lp ((lst lst))
+    (match lst
+      ([hd . rest]
+       (if (cmpf hd x)
+         lst
+         (lp rest)))
+      (else #f))))
+
+;; map and for-each: these accept lists of different lengths
+(def* r7rs-map
+  ((f lst)
+   (map f lst))
+  ((f lst1 lst2)
+   (map2 f lst1 lst2))
+  ((f lst1 lst2 . rest)
+   (apply mapN f lst1 lst2 rest)))
+
+(def (map2 f lst1 lst2)
+  (let recur ((rest-x lst1) (rest-y lst2))
+    (match* (rest-x rest-y)
+      (([x . rest-x] [y . rest-y])
+       (cons (f x y) (recur rest-x rest-y)))
+      (else []))))
+
+(def (mapN f . lsts)
+  (let recur ((rest lsts))
+    (if (andmap pair? rest)
+      (cons (apply f (map car rest))
+            (recur (map cdr rest)))
+      [])))
+
+(def* r7rs-for-each
+  ((f lst)
+   (for-each f lst))
+  ((f lst1 lst2)
+   (for-each2 f lst1 lst2))
+  ((f lst1 lst2 . rest)
+   (apply for-eachN f lst1 lst2 rest)))
+
+(def (for-each2 f lst1 lst2)
+  (let lp ((rest-x lst1) (rest-y lst2))
+    (match* (rest-x rest-y)
+      (([x . rest-x] [y . rest-y])
+       (f x y)
+       (lp rest-x rest-y))
+      (else (void)))))
+
+(def (for-eachN f . lsts)
+  (let lp ((rest lsts))
+    (when (andmap pair? rest)
+      (apply f (map car rest))
+      (lp (map cdr rest)))))
+
+;; mathematical functions
 (def (floor/ n divisor)
   (if (and (<= 0 n) (<= 0 divisor))
     (values (quotient n divisor) (remainder n divisor))
