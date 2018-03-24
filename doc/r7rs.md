@@ -192,7 +192,7 @@ $ gxi
 char-foldcase string-foldcase
 ```
 
-- The `delay-force` special from `(scheme base)` is not implemented.
+- The `delay-force` special from `(scheme lazy)` is not implemented.
 
 - The `#true` and `#false` datums are not recognized by the reader.
 
