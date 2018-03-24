@@ -1,7 +1,7 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gxc#&identity-expression
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl17013_ (make-hash-table-eq)))
          (begin
@@ -30,7 +30,7 @@
            (table-set! _tbl17013_ '%#struct-unchecked-set! gxc#xform-identity)
            _tbl17013_)))))
   (define gxc#&identity-special-form
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl17009_ (make-hash-table-eq)))
          (begin
@@ -48,7 +48,7 @@
            (table-set! _tbl17009_ '%#declare gxc#xform-identity)
            _tbl17009_)))))
   (define gxc#&identity
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl17005_ (make-hash-table-eq)))
          (begin
@@ -56,7 +56,7 @@
            (hash-copy! _tbl17005_ (force gxc#&identity-expression))
            _tbl17005_)))))
   (define gxc#&basic-xform-expression
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl17001_ (make-hash-table-eq)))
          (begin
@@ -88,7 +88,7 @@
            (table-set! _tbl17001_ '%#struct-unchecked-set! gxc#xform-operands)
            _tbl17001_)))))
   (define gxc#&basic-xform
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl16997_ (make-hash-table-eq)))
          (begin
@@ -101,7 +101,7 @@
            (table-set! _tbl16997_ '%#define-syntax gxc#xform-define-syntax%)
            _tbl16997_)))))
   (define gxc#&collect-mutators
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl16993_ (make-hash-table-eq)))
          (begin
@@ -151,7 +151,7 @@
        gxc#current-compile-methods
        (force gxc#&collect-mutators))))
   (define gxc#&expression-subst
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl16983_ (make-hash-table-eq)))
          (begin
@@ -167,7 +167,7 @@
        gxc#current-compile-methods
        (force gxc#&expression-subst))))
   (define gxc#&expression-subst*
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl16973_ (make-hash-table-eq)))
          (begin
@@ -182,7 +182,7 @@
        gxc#current-compile-methods
        (force gxc#&expression-subst*))))
   (define gxc#&find-expression
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl16963_ (make-hash-table-eq)))
          (begin
@@ -210,7 +210,7 @@
            (table-set! _tbl16963_ '%#struct-unchecked-set! gxc#find-body%)
            _tbl16963_)))))
   (define gxc#&find-var-refs
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl16959_ (make-hash-table-eq)))
          (begin
@@ -225,7 +225,7 @@
        gxc#current-compile-methods
        (force gxc#&find-var-refs))))
   (define gxc#&collect-runtime-refs
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl16949_ (make-hash-table-eq)))
          (begin

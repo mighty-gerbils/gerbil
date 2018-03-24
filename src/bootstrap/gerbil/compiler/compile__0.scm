@@ -34,7 +34,7 @@
                     (_g1304713057_ _g1304813060_)))))
         (_g1304613085_ _stx13044_))))
   (define gxc#&void-expression
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl13041_ (make-hash-table-eq)))
          (begin
@@ -60,7 +60,7 @@
            (table-set! _tbl13041_ '%#struct-unchecked-set! void)
            _tbl13041_)))))
   (define gxc#&void-special-form
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl13037_ (make-hash-table-eq)))
          (begin
@@ -78,7 +78,7 @@
            (table-set! _tbl13037_ '%#declare void)
            _tbl13037_)))))
   (define gxc#&void
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl13033_ (make-hash-table-eq)))
          (begin
@@ -86,7 +86,7 @@
            (hash-copy! _tbl13033_ (force gxc#&void-expression))
            _tbl13033_)))))
   (define gxc#&false-expression
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl13029_ (make-hash-table-eq)))
          (begin
@@ -112,7 +112,7 @@
            (table-set! _tbl13029_ '%#struct-unchecked-set! false)
            _tbl13029_)))))
   (define gxc#&false-special-form
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl13025_ (make-hash-table-eq)))
          (begin
@@ -130,7 +130,7 @@
            (table-set! _tbl13025_ '%#declare false)
            _tbl13025_)))))
   (define gxc#&false
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl13021_ (make-hash-table-eq)))
          (begin
@@ -138,7 +138,7 @@
            (hash-copy! _tbl13021_ (force gxc#&false-expression))
            _tbl13021_)))))
   (define gxc#&collect-bindings
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl13017_ (make-hash-table-eq)))
          (begin
@@ -163,7 +163,7 @@
        gxc#current-compile-methods
        (force gxc#&collect-bindings))))
   (define gxc#&lift-modules
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl13007_ (make-hash-table-eq)))
          (begin
@@ -178,7 +178,7 @@
        gxc#current-compile-methods
        (force gxc#&lift-modules))))
   (define gxc#&find-runtime-code
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl12997_ (make-hash-table-eq)))
          (begin
@@ -221,7 +221,7 @@
        gxc#current-compile-methods
        (force gxc#&find-runtime-code))))
   (define gxc#&find-lambda-expression
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl12987_ (make-hash-table-eq)))
          (begin
@@ -253,7 +253,7 @@
        gxc#current-compile-methods
        (force gxc#&find-lambda-expression))))
   (define gxc#&count-values
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl12977_ (make-hash-table-eq)))
          (begin
@@ -285,7 +285,7 @@
        gxc#current-compile-methods
        (force gxc#&count-values))))
   (define gxc#&generate-runtime-empty
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl12967_ (make-hash-table-eq)))
          (begin
@@ -343,7 +343,7 @@
             gxc#generate-runtime-empty)
            _tbl12967_)))))
   (define gxc#&generate-loader
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl12963_ (make-hash-table-eq)))
          (begin
@@ -361,7 +361,7 @@
        gxc#current-compile-methods
        (force gxc#&generate-loader))))
   (define gxc#&generate-runtime
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl12953_ (make-hash-table-eq)))
          (begin
@@ -446,7 +446,7 @@
        gxc#current-compile-methods
        (force gxc#&generate-runtime))))
   (define gxc#&generate-runtime-phi
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl12943_ (make-hash-table-eq)))
          (begin
@@ -463,7 +463,7 @@
        gxc#current-compile-methods
        (force gxc#&generate-runtime-phi))))
   (define gxc#&collect-expression-refs
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl12933_ (make-hash-table-eq)))
          (begin
@@ -511,7 +511,7 @@
        gxc#current-compile-methods
        (force gxc#&collect-expression-refs))))
   (define gxc#&generate-meta
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl12923_ (make-hash-table-eq)))
          (begin
@@ -548,7 +548,7 @@
        gxc#current-compile-methods
        (force gxc#&generate-meta))))
   (define gxc#&generate-meta-phi
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl12913_ (make-hash-table-eq)))
          (begin

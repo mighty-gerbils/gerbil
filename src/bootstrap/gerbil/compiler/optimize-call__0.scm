@@ -1,7 +1,7 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gxc#&optimize-call
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl44962_ (make-hash-table-eq)))
          (begin
