@@ -70,26 +70,46 @@ package: scheme
   ;; no really, we can't continue
   (##thread-end-with-uncaught-exception! exn))
 
-;; guard also switches exception handlers
+;; guard has rather insane semantics of jumping back when there is no else clause
 (defrules guard (else)
-  ((_ (var clause ... (else else-body ...)) body ...)
-   (identifier? #'var)
-   (with-exception-handler
-    (let (handler (current-exception-handler))
-      (lambda (var)
-        (with-exception-handler
-         handler
-         (lambda () (cond clause ... (else else-body ...))))))
+  ((_ (exn) body ...)
+   (identifier? #'exn)
+   (let () body ...))
+  ((_ (exn clause ... (else else-body ...)) body ...)
+   (identifier? #'exn)
+   (with-catch
+    (lambda (exn)
+      (cond clause ... (else else-body ...)))
     (lambda () body ...)))
-  ((_ (var clause ...) body ...)
-   (identifier? #'var)
-   (with-exception-handler
-    (let (handler (current-exception-handler))
-      (lambda (var)
-        (with-exception-handler
-         handler
-         (lambda () (cond clause ... (else (raise var)))))))
-    (lambda () body ...))))
+  ((_ (exn clause ...) body ...)
+   (identifier? #'exn)
+   (continuation-capture
+    (lambda (cont)
+      (with-exception-handler
+       (let (handler (current-exception-handler))
+         (lambda (exn)
+           (with-exception-handler
+            handler
+            (lambda () (~guard (exn cont) clause ...)))))
+       (lambda () body ...))))))
+
+(defrules ~guard (=>)
+  ((_ (exn cont))
+   (raise exn))
+  ((recur (exn cont) (test) rest ...)
+   (let (val test)
+     (if val
+       (continuation-return cont val)
+       (recur (exn cont) rest ...))))
+  ((recur (exn cont) (test => K) rest ...)
+   (let (val test)
+     (if val
+       (continuation-graft cont K val)
+       (recur (exn cont) rest ...))))
+  ((recur (exn cont) (test body ...) rest ...)
+   (if test
+     (continuation-graft cont (lambda () body ...))
+     (recur (exn cont) rest ...))))
 
 ;; Gerbil on Gambit is fundamentally case sensitivie, so there
 ;; is no concept of of case-insensitive symbols
