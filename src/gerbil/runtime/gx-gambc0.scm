@@ -1478,6 +1478,9 @@
 (define make-promise
   ##make-promise)
 
+(define promise?
+  ##promise?)
+
 (define (call-with-parameters thunk . rest)
   (core-match rest
     ((param val . rest)

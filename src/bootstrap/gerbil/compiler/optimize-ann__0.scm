@@ -2,7 +2,7 @@
 (begin
   (declare (inlining-limit 200))
   (define gxc#&optmize-annotated
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl39625_ (make-hash-table-eq)))
          (begin
@@ -16,7 +16,7 @@
        gxc#current-compile-methods
        (force gxc#&optmize-annotated))))
   (define gxc#&generate-runtime-repr
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl39615_ (make-hash-table-eq)))
          (begin
@@ -30,7 +30,7 @@
        gxc#current-compile-methods
        (force gxc#&generate-runtime-repr))))
   (define gxc#&push-match-vars
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl39605_ (make-hash-table-eq)))
          (begin

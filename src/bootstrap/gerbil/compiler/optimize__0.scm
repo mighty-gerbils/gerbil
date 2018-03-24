@@ -244,7 +244,7 @@
             (let ((_stx47617_ (gxc#apply-optimize-annotated _stx47615_)))
               (gxc#apply-optimize-call _stx47617_)))))))
   (define gxc#&generate-ssxi
-    (make-promise
+    (##make-promise
      (lambda ()
        (let ((_tbl47610_ (make-hash-table-eq)))
          (begin
