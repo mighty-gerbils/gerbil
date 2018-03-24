@@ -57,7 +57,7 @@ package: scheme
   close-port
   complex?
   cond
-  cond-expand
+  (rename: r7rs-cond-expand cond-expand)
   cons
   current-error-port
   current-input-port

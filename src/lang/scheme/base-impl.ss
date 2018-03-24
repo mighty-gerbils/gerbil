@@ -15,6 +15,70 @@ package: scheme
 
 ;; macros
 ;; R7RS spec:
+(defsyntax (r7rs-cond-expand stx)
+  (def (satisfy clauses)
+    (match clauses
+      ([hd . rest]
+       (syntax-case hd (else)
+         ((else body ...)
+          (if (null? rest)
+            #'(body ...)
+            (raise-syntax-error #f "Bad syntax; misplaced else" stx hd)))
+         ((condition body ...)
+          (if (satisfied? #'condition)
+            #'(body ...)
+            (satisfy rest)))))
+      (else [])))
+
+  (def (satisfied? condition)
+    (syntax-case condition ()
+      (id
+       (identifier? #'id)
+       (core-bound-identifier? #'id feature-binding?))
+      ((combinator body ...)
+       (let (body #'(body ...))
+         (case (stx-e #'combinator)
+           ((not)
+            (not (ormap satisfied? body)))
+           ((and)
+            (andmap satisfied? body))
+           ((or)
+            (ormap satisfied? body))
+           ((|library|)  ; the bars to avoid confusing emacs font-lock
+            (andmap library? body))
+           (else
+            (raise-syntax-error #f "Bad sytnax" stx #'combinator)))))))
+
+  (def (library? lib)
+    (syntax-case lib ()
+      ((id ids ...)
+       (identifier? #'id)
+       (let* ((spath (map stx-e #'(id ids ...)))
+              (spath (map string-e spath))
+              (spath (string-join spath #\/))
+              (spath (string-append ":" spath))
+              (mpath (string->symbol spath))
+              (mid   (datum->syntax #'id mpath)))
+         (cond
+          ((core-bound-module? mid)
+           #t)
+          ((with-catch false (cut import-module mpath))
+           #t)
+          (else #f))))))
+
+  (def (string-e e)
+    (cond
+     ((symbol? e)
+      (symbol->string e))
+     ((number? e)
+      (number->string e))
+     (else
+      (raise-syntax-error #f "Bad syntax; illlegal token" stx e))))
+
+  (syntax-case stx ()
+    ((_ clause ...)
+     (cons 'begin (satisfy #'(clause ...))))))
+
 (defsyntax (features stx)
   (syntax-case stx ()
     ((_)
