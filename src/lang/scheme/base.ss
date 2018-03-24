@@ -236,7 +236,7 @@ package: scheme
   (rename: r7rs-with-exception-handler with-exception-handler)
   write-bytevector
   write-char
-  write-string
+  (rename: r7rs-write-string write-string)
   write-u8
   zero?
   )
