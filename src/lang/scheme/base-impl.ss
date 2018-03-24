@@ -228,7 +228,7 @@ package: scheme
 (def truncate-quotient quotient)
 (def truncate-remainder remainder)
 
-;; these accept start/end arguments
+;; these accept optional range arguments
 (def* r7rs-string->list
   ((str)
    (string->list str))
@@ -244,6 +244,22 @@ package: scheme
    (vector->list* vec start (vector-length vec)))
   ((vec start end)
    (vector->list* vec start end)))
+
+(def* r7rs-string-fill!
+  ((str val)
+   (string-fill! str val))
+  ((str val start)
+   (string-fill!* str val start (string-length str)))
+  ((str val start end)
+   (string-fill!* str val start end)))
+
+(def* r7rs-vector-fill!
+  ((vec val)
+   (vector-fill! vec val))
+  ((vec val start)
+   (vector-fill!* vec val start (vector-length vec)))
+  ((vec val start end)
+   (vector-fill!* vec val start end)))
 
 ;; R7RS spec:
 ;; "Returns #t if port is still open and capable of performing

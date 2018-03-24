@@ -191,7 +191,7 @@ package: scheme
   string-append
   (rename: r7rs-string-copy string-copy)
   string-copy!
-  string-fill!
+  (rename: r7rs-string-fill! string-fill!)
   string-for-each
   string-length
   (rename: r7rs-string->list string->list)
@@ -224,7 +224,7 @@ package: scheme
   vector-append
   (rename: r7rs-vector-copy vector-copy)
   vector-copy!
-  vector-fill!
+  (rename: r7rs-vector-fill! vector-fill!)
   vector-for-each
   vector-length
   (rename: r7rs-vector->list vector->list)
