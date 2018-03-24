@@ -194,17 +194,15 @@ char-foldcase string-foldcase
 
 - The `delay-force` special from `(scheme base)` is not implemented.
 
-- The `cond-expand` special form does not understand `library` features.
-
 - The `#true` and `#false` datums are not recognized by the reader.
 
 - The reader doesn't accept shared structures by default, as cycles
   are not currently supported in syntax objects. You can enable it on
   a per-port basis with a custom readtable, but be advised that the repl
-  will loop when given a recursive shared structure as syntax input.
+  will loop when given an cyclic structure as syntax input.
 
 - `equal?` is the default `equal?` from Gerbil/Gambit, which doesn't
   do sharing check and may not terminate in infinite recursive
   structures.  There is a separate implementation `equal-shared?` exported
-  by `(std misc shared)` that terminates in recursive structures albeit at the
+  by `(std misc shared)` that terminates in cyclic structures albeit at the
   cost of performance degradation.
