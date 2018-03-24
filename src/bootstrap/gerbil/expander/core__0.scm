@@ -752,10 +752,12 @@
                                                      (gx#resolve-identifier__0
                                                       _form7347_)
                                                      '#f)))
-                                            (if (if (not _bind7349_)
-                                                    '#t
-                                                    (not (gx#core-expander-binding?
-                                                          _bind7349_)))
+                                            (if (let ((_$e7351_
+                                                       (not _bind7349_)))
+                                                  (if _$e7351_
+                                                      _$e7351_
+                                                      (not (gx#core-expander-binding?
+                                                            _bind7349_))))
                                                 (_expand-e7321_
                                                  '%%app
                                                  (cons '%%app _hd7323_))
@@ -1824,68 +1826,76 @@
       (lambda (_key5388_ _val5389_ _rebind?5390_ _phi5391_ _ctx5392_)
         (letrec ((_update-binding5394_
                   (lambda (_xval5465_)
-                    (if (if (_rebind?5390_ _ctx5392_ _xval5465_ _val5389_)
-                            '#t
-                            (if (if (##structure-direct-instance-of?
-                                     _xval5465_
-                                     'gx#import-binding::t)
-                                    (if (##direct-structure-ref
+                    (if (let ((_$e5467_
+                               (_rebind?5390_ _ctx5392_ _xval5465_ _val5389_)))
+                          (if _$e5467_
+                              _$e5467_
+                              (let ((_$e5473_
+                                     (if (##structure-direct-instance-of?
+                                          _xval5465_
+                                          'gx#import-binding::t)
+                                         (let ((_$e5470_
+                                                (##direct-structure-ref
+                                                 _xval5465_
+                                                 '6
+                                                 gx#import-binding::t
+                                                 '#f)))
+                                           (if _$e5470_
+                                               _$e5470_
+                                               (if (##structure-instance-of?
+                                                    _val5389_
+                                                    'gx#binding::t)
+                                                   (not (##structure-direct-instance-of?
+                                                         _val5389_
+                                                         'gx#import-binding::t))
+                                                   '#f)))
+                                         '#f)))
+                                (if _$e5473_
+                                    _$e5473_
+                                    (if (##structure-instance-of?
                                          _xval5465_
-                                         '6
-                                         gx#import-binding::t
-                                         '#f)
-                                        '#t
+                                         'gx#extern-binding::t)
                                         (if (##structure-instance-of?
                                              _val5389_
-                                             'gx#binding::t)
-                                            (not (##structure-direct-instance-of?
+                                             'gx#runtime-binding::t)
+                                            (eq? (##structure-ref
                                                   _val5389_
-                                                  'gx#import-binding::t))
-                                            '#f))
-                                    '#f)
-                                '#t
-                                (if (##structure-instance-of?
-                                     _xval5465_
-                                     'gx#extern-binding::t)
-                                    (if (##structure-instance-of?
-                                         _val5389_
-                                         'gx#runtime-binding::t)
-                                        (eq? (##structure-ref
-                                              _val5389_
-                                              '1
-                                              gx#binding::t
-                                              '#f)
-                                             (##structure-ref
-                                              _xval5465_
-                                              '1
-                                              gx#binding::t
-                                              '#f))
-                                        '#f)
-                                    '#f)))
+                                                  '1
+                                                  gx#binding::t
+                                                  '#f)
+                                                 (##structure-ref
+                                                  _xval5465_
+                                                  '1
+                                                  gx#binding::t
+                                                  '#f))
+                                            '#f)
+                                        '#f)))))
                         _val5389_
                         (if (if (##structure-direct-instance-of?
                                  _val5389_
                                  'gx#import-binding::t)
-                                (if (##direct-structure-ref
-                                     _val5389_
-                                     '6
-                                     gx#import-binding::t
-                                     '#f)
-                                    '#t
-                                    (if (##structure-instance-of?
-                                         _xval5465_
-                                         'gx#binding::t)
-                                        (eq? (##structure-ref
-                                              _val5389_
-                                              '1
-                                              gx#binding::t
-                                              '#f)
-                                             (##structure-ref
-                                              _xval5465_
-                                              '1
-                                              gx#binding::t
-                                              '#f))
-                                        '#f))
+                                (let ((_$e5476_
+                                       (##direct-structure-ref
+                                        _val5389_
+                                        '6
+                                        gx#import-binding::t
+                                        '#f)))
+                                  (if _$e5476_
+                                      _$e5476_
+                                      (if (##structure-instance-of?
+                                           _xval5465_
+                                           'gx#binding::t)
+                                          (eq? (##structure-ref
+                                                _val5389_
+                                                '1
+                                                gx#binding::t
+                                                '#f)
+                                               (##structure-ref
+                                                _xval5465_
+                                                '1
+                                                gx#binding::t
+                                                '#f))
+                                          '#f)))
                                 '#f)
                             _xval5465_
                             (if (if (##structure-direct-instance-of?

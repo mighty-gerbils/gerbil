@@ -5,11 +5,11 @@
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41222_|
     (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41225_|
-    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41226_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41227_|
-    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
+    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (begin
     (define |gerbil/core$<sugar>$<sugar:1>[:0:]#defrules|
       (lambda (_$stx1687_)
@@ -1980,7 +1980,7 @@
                                                (##car _e40914477_)))
                                           (if (gx#identifier? _hd40924481_)
                                               (if (gx#free-identifier=?
-                                                   |gerbil/core$<sugar>$<sugar:1>[1]#_g41227_|
+                                                   |gerbil/core$<sugar>$<sugar:1>[1]#_g41225_|
                                                    _hd40924481_)
                                                   (if (gx#stx-pair/null?
                                                        _tl40934484_)
@@ -2194,7 +2194,7 @@
                                                                _hd41384312_)
                                                               (if (gx#free-identifier=?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           |gerbil/core$<sugar>$<sugar:1>[1]#_g41225_|
+                           |gerbil/core$<sugar>$<sugar:1>[1]#_g41227_|
                            _hd41384312_)
                           (if (gx#stx-pair? _tl41394315_)
                               (let ((_e41404318_ (gx#syntax-e _tl41394315_)))

@@ -359,9 +359,13 @@
     (define gx#core-context-prelude__%
       (lambda (_ctx13689_)
         (let _lp13691_ ((_e13693_ _ctx13689_))
-          (if (if (##structure-instance-of? _e13693_ 'gx#module-context::t)
-                  '#t
-                  (##structure-instance-of? _e13693_ 'gx#local-context::t))
+          (if (let ((_$e13695_
+                     (##structure-instance-of?
+                      _e13693_
+                      'gx#module-context::t)))
+                (if _$e13695_
+                    _$e13695_
+                    (##structure-instance-of? _e13693_ 'gx#local-context::t)))
               (_lp13691_ (##structure-ref _e13693_ '3 gx#phi-context::t '#f))
               (if (##structure-instance-of? _e13693_ 'gx#prelude-context::t)
                   _e13693_
@@ -711,17 +715,16 @@
                                                         _pkg13488_)
                                                        (symbol->string
                                                         (gx#stx-e _pkg13488_))
-                                                       (if (if (gx#stx-string?
-                                                                _pkg13488_)
-                                                               '#t
-                                                               (gx#stx-false?
-                                                                _pkg13488_))
-                                                           (gx#stx-e
-                                                            _pkg13488_)
-                                                           (gx#raise-syntax-error
-                                                            'import
-                                                            '"Bad syntax; Illegal package name"
-                                                            _pkg13488_)))))
+                                                       (if (let ((_$e13492_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (gx#stx-string? _pkg13488_)))
+                     (if _$e13492_ _$e13492_ (gx#stx-false? _pkg13488_)))
+                   (gx#stx-e _pkg13488_)
+                   (gx#raise-syntax-error
+                    'import
+                    '"Bad syntax; Illegal package name"
+                    _pkg13488_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                               (_lp13416_
                                                _rest13490_
                                                _pre13419_
@@ -753,16 +756,16 @@
                                                         _ns13517_)
                                                        (symbol->string
                                                         (gx#stx-e _ns13517_))
-                                                       (if (if (gx#stx-string?
-                                                                _ns13517_)
-                                                               '#t
-                                                               (gx#stx-false?
-                                                                _ns13517_))
-                                                           (gx#stx-e _ns13517_)
-                                                           (gx#raise-syntax-error
-                                                            'import
-                                                            '"Bad syntax; illegal namespace"
-                                                            _ns13517_)))))
+                                                       (if (let ((_$e13521_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                          (gx#stx-string? _ns13517_)))
+                     (if _$e13521_ _$e13521_ (gx#stx-false? _ns13517_)))
+                   (gx#stx-e _ns13517_)
+                   (gx#raise-syntax-error
+                    'import
+                    '"Bad syntax; illegal namespace"
+                    _ns13517_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                               (_lp13416_
                                                _rest13519_
                                                _pre13419_
@@ -1078,9 +1081,10 @@
                            _plist13208_))))
                 (let ((_dir*13231_
                        (path-strip-trailing-directory-separator _dir13203_)))
-                  (if (if (string-empty? _dir*13231_)
-                          '#t
-                          (equal? _dir13203_ _dir*13231_))
+                  (if (let ((_$e13233_ (string-empty? _dir*13231_)))
+                        (if _$e13233_
+                            _$e13233_
+                            (equal? _dir13203_ _dir*13231_)))
                       (values _pre13196_ _ns13197_ '#f)
                       (let ((_xpath13236_ (path-strip-directory _dir*13231_))
                             (_xdir13237_ (path-directory _dir*13231_)))
@@ -1211,9 +1215,10 @@
               (values _$e13067_)
               (let* ((_gerbil.pkg13070_ (path-expand '"gerbil.pkg" _dir13062_))
                      (_plist13077_
-                      (if (if _exists?13063_
-                              '#t
-                              (file-exists? _gerbil.pkg13070_))
+                      (if (let ((_$e13072_ _exists?13063_))
+                            (if _$e13072_
+                                _$e13072_
+                                (file-exists? _gerbil.pkg13070_)))
                           (let ((_e13075_
                                  (call-with-input-file
                                   _gerbil.pkg13070_
@@ -1549,9 +1554,10 @@
                                       '7
                                       gx#module-context::t
                                       '#f)))
-                                (if (if (pair? _path12746_)
-                                        '#t
-                                        (null? _path12746_))
+                                (if (let ((_$e12748_ (pair? _path12746_)))
+                                      (if _$e12748_
+                                          _$e12748_
+                                          (null? _path12746_)))
                                     (cons _bind-id12740_ _path12746_)
                                     (if (not _path12746_)
                                         _bind-id12740_
@@ -3054,19 +3060,18 @@
                                                    (lambda (_bind-rest11670_
                                                             _bind11671_
                                                             _key11672_)
-                                                     (if (if (##structure-direct-instance-of?
-                                                              _bind11671_
-                                                              'gx#import-binding::t)
-                                                             '#t
-                                                             (gx#private-feature-binding?
-                                                              _bind11671_))
-                                                         (_lp11645_
-                                                          _bind-rest11670_
-                                                          _set11648_)
-                                                         (_lp11645_
-                                                          _bind-rest11670_
-                                                          (cons (_make-export__2__1469314696_
+                                                     (if (let ((_$e11674_
+                                                                (##structure-direct-instance-of?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         _bind11671_
+                         'gx#import-binding::t)))
+                   (if _$e11674_
+                       _$e11674_
+                       (gx#private-feature-binding? _bind11671_)))
+                 (_lp11645_ _bind-rest11670_ _set11648_)
+                 (_lp11645_
+                  _bind-rest11670_
+                  (cons (_make-export__2__1469314696_
                          _bind11671_
                          _current-phi11638_
                          _current-ctx11636_)
