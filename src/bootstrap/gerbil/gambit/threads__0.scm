@@ -165,7 +165,8 @@
   (define gerbil/gambit/threads#unhandled-actor-exception-hook '#f)
   (define gerbil/gambit/threads#unhandled-actor-exception-hook-set!
     (lambda (_proc689_)
-      (if (if (not _proc689_) '#t (procedure? _proc689_))
+      (if (let ((_$e691_ (not _proc689_)))
+            (if _$e691_ _$e691_ (procedure? _proc689_)))
           (set! gerbil/gambit/threads#unhandled-actor-exception-hook _proc689_)
           (error '"Bad argument; expected procedure or #f" _proc689_))))
   (define gerbil/gambit/threads#with-exception-stack-trace

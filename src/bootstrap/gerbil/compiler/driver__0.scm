@@ -4,220 +4,220 @@
     (lambda () (inexact->exact (floor (time->seconds (current-time))))))
   (begin
     (define gxc#compile-file__%
-      (lambda (_srcpath49140_ _opts49141_)
+      (lambda (_srcpath48769_ _opts48770_)
         (begin
-          (if (string? _srcpath49140_)
+          (if (string? _srcpath48769_)
               '#!void
               (gxc#raise-compile-error
                '"Invalid module source path"
-               _srcpath49140_))
-          (let ((_outdir49143_ (pgetq 'output-dir: _opts49141_))
-                (_invoke-gsc?49144_ (pgetq 'invoke-gsc: _opts49141_))
-                (_gsc-options49145_ (pgetq 'gsc-options: _opts49141_))
-                (_keep-scm?49146_ (pgetq 'keep-scm: _opts49141_))
-                (_verbosity49147_ (pgetq 'verbose: _opts49141_))
-                (_optimize49148_ (pgetq 'optimize: _opts49141_))
-                (_debug49149_ (pgetq 'debug: _opts49141_))
-                (_gen-ssxi49150_ (pgetq 'generate-ssxi: _opts49141_))
-                (_static49151_ (pgetq 'static: _opts49141_)))
+               _srcpath48769_))
+          (let ((_outdir48772_ (pgetq 'output-dir: _opts48770_))
+                (_invoke-gsc?48773_ (pgetq 'invoke-gsc: _opts48770_))
+                (_gsc-options48774_ (pgetq 'gsc-options: _opts48770_))
+                (_keep-scm?48775_ (pgetq 'keep-scm: _opts48770_))
+                (_verbosity48776_ (pgetq 'verbose: _opts48770_))
+                (_optimize48777_ (pgetq 'optimize: _opts48770_))
+                (_debug48778_ (pgetq 'debug: _opts48770_))
+                (_gen-ssxi48779_ (pgetq 'generate-ssxi: _opts48770_))
+                (_static48780_ (pgetq 'static: _opts48770_)))
             (begin
-              (if _outdir49143_ (create-directory* _outdir49143_) '#!void)
-              (if _optimize49148_ (gxc#optimizer-info-init!) '#!void)
+              (if _outdir48772_ (create-directory* _outdir48772_) '#!void)
+              (if _optimize48777_ (gxc#optimizer-info-init!) '#!void)
               (call-with-parameters
                (lambda ()
                  (begin
-                   (gxc#verbose '"compile " _srcpath49140_)
+                   (gxc#verbose '"compile " _srcpath48769_)
                    (gxc#compile-top-module
-                    (gx#import-module__0 _srcpath49140_))))
+                    (gx#import-module__0 _srcpath48769_))))
                gxc#current-compile-output-dir
-               _outdir49143_
+               _outdir48772_
                gxc#current-compile-invoke-gsc
-               _invoke-gsc?49144_
+               _invoke-gsc?48773_
                gxc#current-compile-gsc-options
-               _gsc-options49145_
+               _gsc-options48774_
                gxc#current-compile-keep-scm
-               _keep-scm?49146_
+               _keep-scm?48775_
                gxc#current-compile-verbose
-               _verbosity49147_
+               _verbosity48776_
                gxc#current-compile-optimize
-               _optimize49148_
+               _optimize48777_
                gxc#current-compile-debug
-               _debug49149_
+               _debug48778_
                gxc#current-compile-generate-ssxi
-               _gen-ssxi49150_
+               _gen-ssxi48779_
                gxc#current-compile-static
-               _static49151_
+               _static48780_
                gxc#current-compile-timestamp
                (gxc#compile-timestamp)))))))
     (begin
       (define gxc#compile-file__0
-        (lambda (_srcpath49157_)
-          (let ((_opts49159_ '()))
-            (gxc#compile-file__% _srcpath49157_ _opts49159_))))
+        (lambda (_srcpath48786_)
+          (let ((_opts48788_ '()))
+            (gxc#compile-file__% _srcpath48786_ _opts48788_))))
       (define gxc#compile-file
-        (lambda _g49180_
-          (let ((_g49179_ (length _g49180_)))
-            (cond ((##fx= _g49179_ 1) (apply gxc#compile-file__0 _g49180_))
-                  ((##fx= _g49179_ 2) (apply gxc#compile-file__% _g49180_))
+        (lambda _g48809_
+          (let ((_g48808_ (length _g48809_)))
+            (cond ((##fx= _g48808_ 1) (apply gxc#compile-file__0 _g48809_))
+                  ((##fx= _g48808_ 2) (apply gxc#compile-file__% _g48809_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#compile-file
-                    _g49180_))))))))
+                    _g48809_))))))))
   (begin
     (define gxc#compile-exe-stub__%
-      (lambda (_srcpath49126_ _opts49127_)
+      (lambda (_srcpath48755_ _opts48756_)
         (gxc#do-compile-exe
-         _srcpath49126_
-         _opts49127_
+         _srcpath48755_
+         _opts48756_
          gxc#compile-exe-stub-module)))
     (begin
       (define gxc#compile-exe-stub__0
-        (lambda (_srcpath49132_)
-          (let ((_opts49134_ '()))
-            (gxc#compile-exe-stub__% _srcpath49132_ _opts49134_))))
+        (lambda (_srcpath48761_)
+          (let ((_opts48763_ '()))
+            (gxc#compile-exe-stub__% _srcpath48761_ _opts48763_))))
       (define gxc#compile-exe-stub
-        (lambda _g49182_
-          (let ((_g49181_ (length _g49182_)))
-            (cond ((##fx= _g49181_ 1) (apply gxc#compile-exe-stub__0 _g49182_))
-                  ((##fx= _g49181_ 2) (apply gxc#compile-exe-stub__% _g49182_))
+        (lambda _g48811_
+          (let ((_g48810_ (length _g48811_)))
+            (cond ((##fx= _g48810_ 1) (apply gxc#compile-exe-stub__0 _g48811_))
+                  ((##fx= _g48810_ 2) (apply gxc#compile-exe-stub__% _g48811_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#compile-exe-stub
-                    _g49182_))))))))
+                    _g48811_))))))))
   (begin
     (define gxc#compile-static-exe__%
-      (lambda (_srcpath49112_ _opts49113_)
+      (lambda (_srcpath48741_ _opts48742_)
         (gxc#do-compile-exe
-         _srcpath49112_
-         _opts49113_
+         _srcpath48741_
+         _opts48742_
          gxc#compile-exe-static-module)))
     (begin
       (define gxc#compile-static-exe__0
-        (lambda (_srcpath49118_)
-          (let ((_opts49120_ '()))
-            (gxc#compile-static-exe__% _srcpath49118_ _opts49120_))))
+        (lambda (_srcpath48747_)
+          (let ((_opts48749_ '()))
+            (gxc#compile-static-exe__% _srcpath48747_ _opts48749_))))
       (define gxc#compile-static-exe
-        (lambda _g49184_
-          (let ((_g49183_ (length _g49184_)))
-            (cond ((##fx= _g49183_ 1)
-                   (apply gxc#compile-static-exe__0 _g49184_))
-                  ((##fx= _g49183_ 2)
-                   (apply gxc#compile-static-exe__% _g49184_))
+        (lambda _g48813_
+          (let ((_g48812_ (length _g48813_)))
+            (cond ((##fx= _g48812_ 1)
+                   (apply gxc#compile-static-exe__0 _g48813_))
+                  ((##fx= _g48812_ 2)
+                   (apply gxc#compile-static-exe__% _g48813_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#compile-static-exe
-                    _g49184_))))))))
+                    _g48813_))))))))
   (define gxc#do-compile-exe
-    (lambda (_srcpath49100_ _opts49101_ _compile-e49102_)
+    (lambda (_srcpath48729_ _opts48730_ _compile-e48731_)
       (begin
-        (if (string? _srcpath49100_)
+        (if (string? _srcpath48729_)
             '#!void
             (gxc#raise-compile-error
              '"Invalid module source path"
-             _srcpath49100_))
-        (let ((_outdir49104_ (pgetq 'output-dir: _opts49101_))
-              (_invoke-gsc?49105_ (pgetq 'invoke-gsc: _opts49101_))
-              (_gsc-options49106_ (pgetq 'gsc-options: _opts49101_))
-              (_keep-scm?49107_ (pgetq 'keep-scm: _opts49101_))
-              (_verbosity49108_ (pgetq 'verbose: _opts49101_)))
+             _srcpath48729_))
+        (let ((_outdir48733_ (pgetq 'output-dir: _opts48730_))
+              (_invoke-gsc?48734_ (pgetq 'invoke-gsc: _opts48730_))
+              (_gsc-options48735_ (pgetq 'gsc-options: _opts48730_))
+              (_keep-scm?48736_ (pgetq 'keep-scm: _opts48730_))
+              (_verbosity48737_ (pgetq 'verbose: _opts48730_)))
           (begin
-            (if _outdir49104_ (create-directory* _outdir49104_) '#!void)
+            (if _outdir48733_ (create-directory* _outdir48733_) '#!void)
             (call-with-parameters
              (lambda ()
                (begin
-                 (gxc#verbose '"compile exe " _srcpath49100_)
-                 (_compile-e49102_
-                  (gx#import-module__0 _srcpath49100_)
-                  _opts49101_)))
+                 (gxc#verbose '"compile exe " _srcpath48729_)
+                 (_compile-e48731_
+                  (gx#import-module__0 _srcpath48729_)
+                  _opts48730_)))
              gxc#current-compile-output-dir
-             _outdir49104_
+             _outdir48733_
              gxc#current-compile-invoke-gsc
-             _invoke-gsc?49105_
+             _invoke-gsc?48734_
              gxc#current-compile-gsc-options
-             _gsc-options49106_
+             _gsc-options48735_
              gxc#current-compile-keep-scm
-             _keep-scm?49107_
+             _keep-scm?48736_
              gxc#current-compile-verbose
-             _verbosity49108_
+             _verbosity48737_
              gxc#current-compile-timestamp
              (gxc#compile-timestamp)))))))
   (define gxc#compile-exe-stub-module
-    (lambda (_ctx49066_ _opts49067_)
-      (letrec ((_generate-stub49069_
-                (lambda (_gx-init-stub49091_)
-                  (let* ((_mod-str49093_
+    (lambda (_ctx48695_ _opts48696_)
+      (letrec ((_generate-stub48698_
+                (lambda (_gx-init-stub48720_)
+                  (let* ((_mod-str48722_
                           (gxc#module-id->path-string
                            (##structure-ref
-                            _ctx49066_
+                            _ctx48695_
                             '1
                             gx#expander-context::t
                             '#f)))
-                         (_mod-rt49095_ (string-append _mod-str49093_ '"__rt"))
-                         (_mod-main49097_
-                          (gxc#find-runtime-symbol _ctx49066_ 'main)))
+                         (_mod-rt48724_ (string-append _mod-str48722_ '"__rt"))
+                         (_mod-main48726_
+                          (gxc#find-runtime-symbol _ctx48695_ 'main)))
                     (begin
                       (write '(##namespace ("")))
                       (newline)
-                      (write (cons 'include (cons _gx-init-stub49091_ '())))
+                      (write (cons 'include (cons _gx-init-stub48720_ '())))
                       (newline)
                       (write (cons '_gx#start!
-                                   (cons _mod-rt49095_
+                                   (cons _mod-rt48724_
                                          (cons (cons 'quote
-                                                     (cons _mod-main49097_
+                                                     (cons _mod-main48726_
                                                            '()))
                                                '()))))
                       (newline)))))
-               (_compile-stub49070_
-                (lambda (_output-scm49077_ _output-bin49078_)
-                  (let* ((_init-stub49080_
+               (_compile-stub48699_
+                (lambda (_output-scm48706_ _output-bin48707_)
+                  (let* ((_init-stub48709_
                           (path-expand
                            '"lib/gx-init-exe.scm"
                            (getenv '"GERBIL_HOME")))
-                         (_gsc-args49082_
+                         (_gsc-args48711_
                           (cons '"-exe"
                                 (cons '"-o"
-                                      (cons _output-bin49078_
-                                            (cons _output-scm49077_ '()))))))
+                                      (cons _output-bin48707_
+                                            (cons _output-scm48706_ '()))))))
                     (begin
                       (with-output-to-file
-                       _output-scm49077_
-                       (lambda () (_generate-stub49069_ _init-stub49080_)))
+                       _output-scm48706_
+                       (lambda () (_generate-stub48698_ _init-stub48709_)))
                       (if (gxc#current-compile-invoke-gsc)
                           (begin
                             (gxc#verbose
                              '"invoke gsc "
-                             (cons 'gsc _gsc-args49082_))
-                            (let* ((_proc49086_
+                             (cons 'gsc _gsc-args48711_))
+                            (let* ((_proc48715_
                                     (open-process
                                      (cons 'path:
                                            (cons '"gsc"
                                                  (cons 'arguments:
-                                                       (cons _gsc-args49082_
+                                                       (cons _gsc-args48711_
                                                              (cons 'stdout-redirection:
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (cons '#f '()))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                   (_status49088_
-                                    (process-status _proc49086_)))
-                              (if (zero? _status49088_)
+                                   (_status48717_
+                                    (process-status _proc48715_)))
+                              (if (zero? _status48717_)
                                   '#!void
                                   (gxc#raise-compile-error
                                    '"Compilation error; gsc exit with nonzero status"
-                                   _output-scm49077_
-                                   _output-bin49078_
-                                   _status49088_))))
+                                   _output-scm48706_
+                                   _output-bin48707_
+                                   _status48717_))))
                           '#!void))))))
-        (let* ((_output-bin49072_
-                (gxc#compile-exe-output-file _ctx49066_ _opts49067_))
-               (_output-scm49074_ (string-append _output-bin49072_ '".scm")))
+        (let* ((_output-bin48701_
+                (gxc#compile-exe-output-file _ctx48695_ _opts48696_))
+               (_output-scm48703_ (string-append _output-bin48701_ '".scm")))
           (begin
-            (_compile-stub49070_ _output-scm49074_ _output-bin49072_)
+            (_compile-stub48699_ _output-scm48703_ _output-bin48701_)
             (if (gxc#current-compile-keep-scm)
                 '#!void
-                (delete-file _output-scm49074_)))))))
+                (delete-file _output-scm48703_)))))))
   (define gxc#compile-exe-static-module
-    (lambda (_ctx48927_ _opts48928_)
-      (letrec ((_reset-declare48930_
+    (lambda (_ctx48556_ _opts48557_)
+      (letrec ((_reset-declare48559_
                 (lambda ()
                   '(declare
                      (gambit-scheme)
@@ -239,61 +239,61 @@
                      (optimize-dead-definitions)
                      (generic)
                      (mostly-fixnum-flonum))))
-               (_user-declare48931_
+               (_user-declare48560_
                 (lambda ()
-                  (let* ((_gsc-opts49009_ (pgetq 'gsc-options: _opts48928_))
-                         (_gsc-prelude49011_
-                          (if _gsc-opts49009_
-                              (member '"-prelude" _gsc-opts49009_)
+                  (let* ((_gsc-opts48638_ (pgetq 'gsc-options: _opts48557_))
+                         (_gsc-prelude48640_
+                          (if _gsc-opts48638_
+                              (member '"-prelude" _gsc-opts48638_)
                               '#f))
-                         (_gsc-prelude49013_
-                          (if _gsc-prelude49011_
+                         (_gsc-prelude48642_
+                          (if _gsc-prelude48640_
                               (read (open-input-string
-                                     (cadr _gsc-prelude49011_)))
+                                     (cadr _gsc-prelude48640_)))
                               '#f)))
-                    (let _lift49016_ ((_expr49018_ _gsc-prelude49013_))
-                      (let* ((_expr4901949031_ _expr49018_)
-                             (_else4902249039_ (lambda () '#f)))
-                        (let ((_K4902749059_ (lambda () _expr49018_))
-                              (_K4902449045_
-                               (lambda (_exprs49043_)
-                                 (ormap1 _lift49016_ _exprs49043_))))
-                          (if (##pair? _expr4901949031_)
-                              (let ((_hd4902849062_ (##car _expr4901949031_)))
-                                (if (##eq? _hd4902849062_ 'declare)
-                                    (_K4902749059_)
-                                    (let ((_tl4902649050_
-                                           (##cdr _expr4901949031_)))
-                                      (if (##eq? _hd4902849062_ 'begin)
-                                          (let ((_exprs49053_ _tl4902649050_))
-                                            (_K4902449045_ _exprs49053_))
-                                          (_else4902249039_)))))
-                              (_else4902249039_))))))))
-               (_generate-stub48932_
-                (lambda (_deps49000_)
-                  (let ((_mod-main49002_
-                         (gxc#find-runtime-symbol _ctx48927_ 'main))
-                        (_reset-decl49003_ (_reset-declare48930_))
-                        (_user-decl49004_ (_user-declare48931_)))
+                    (let _lift48645_ ((_expr48647_ _gsc-prelude48642_))
+                      (let* ((_expr4864848660_ _expr48647_)
+                             (_else4865148668_ (lambda () '#f)))
+                        (let ((_K4865648688_ (lambda () _expr48647_))
+                              (_K4865348674_
+                               (lambda (_exprs48672_)
+                                 (ormap1 _lift48645_ _exprs48672_))))
+                          (if (##pair? _expr4864848660_)
+                              (let ((_hd4865748691_ (##car _expr4864848660_)))
+                                (if (##eq? _hd4865748691_ 'declare)
+                                    (_K4865648688_)
+                                    (let ((_tl4865548679_
+                                           (##cdr _expr4864848660_)))
+                                      (if (##eq? _hd4865748691_ 'begin)
+                                          (let ((_exprs48682_ _tl4865548679_))
+                                            (_K4865348674_ _exprs48682_))
+                                          (_else4865148668_)))))
+                              (_else4865148668_))))))))
+               (_generate-stub48561_
+                (lambda (_deps48629_)
+                  (let ((_mod-main48631_
+                         (gxc#find-runtime-symbol _ctx48556_ 'main))
+                        (_reset-decl48632_ (_reset-declare48559_))
+                        (_user-decl48633_ (_user-declare48560_)))
                     (begin
                       (write '(##namespace ("")))
                       (newline)
                       (write '(declare (optimize-dead-definitions)))
                       (newline)
                       (for-each
-                       (lambda (_dep49006_)
+                       (lambda (_dep48635_)
                          (begin
-                           (write (cons 'include (cons _dep49006_ '())))
+                           (write (cons 'include (cons _dep48635_ '())))
                            (newline)
                            (write '(##namespace ("")))
-                           (write _reset-decl49003_)
-                           (if _user-decl49004_
-                               (write _user-decl49004_)
+                           (write _reset-decl48632_)
+                           (if _user-decl48633_
+                               (write _user-decl48633_)
                                '#!void)
                            (newline)))
-                       _deps49000_)
+                       _deps48629_)
                       (write (cons 'apply
-                                   (cons _mod-main49002_
+                                   (cons _mod-main48631_
                                          (cons (cons 'cdr
                                                      (cons (cons 'command-line
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
@@ -302,886 +302,886 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                '()))))
                       (newline)))))
-               (_static-include48933_
-                (lambda (_gsc-opts48983_ _home48984_)
-                  (letrec* ((_static-dir48986_
-                             (path-expand '"lib/static" _home48984_))
-                            (_user-static-dir48987_
+               (_static-include48562_
+                (lambda (_gsc-opts48612_ _home48613_)
+                  (letrec* ((_static-dir48615_
+                             (path-expand '"lib/static" _home48613_))
+                            (_user-static-dir48616_
                              (path-expand
                               '"lib/static"
                               (getenv '"GERBIL_PATH" '"~/.gerbil")))
-                            (_cppflags48988_
+                            (_cppflags48617_
                              (string-append
                               '"-I "
-                              _static-dir48986_
+                              _static-dir48615_
                               '" -I "
-                              _user-static-dir48987_)))
-                    (let ((_$e48990_ (member '"-cc-options" _gsc-opts48983_)))
-                      (if _$e48990_
-                          ((lambda (_rest48993_)
-                             (let* ((_cell48995_ (cdr _rest48993_))
-                                    (_opt48997_ (car _cell48995_)))
+                              _user-static-dir48616_)))
+                    (let ((_$e48619_ (member '"-cc-options" _gsc-opts48612_)))
+                      (if _$e48619_
+                          ((lambda (_rest48622_)
+                             (let* ((_cell48624_ (cdr _rest48622_))
+                                    (_opt48626_ (car _cell48624_)))
                                (begin
                                  (set-car!
-                                  _cell48995_
+                                  _cell48624_
                                   (string-append
-                                   _opt48997_
+                                   _opt48626_
                                    '" "
-                                   _cppflags48988_))
-                                 _gsc-opts48983_)))
-                           _$e48990_)
+                                   _cppflags48617_))
+                                 _gsc-opts48612_)))
+                           _$e48619_)
                           (cons '"-cc-options"
-                                (cons _cppflags48988_ _gsc-opts48983_)))))))
-               (_compile-stub48934_
-                (lambda (_output-scm48941_ _output-bin48942_)
-                  (let* ((_gerbil-home48944_ (getenv '"GERBIL_HOME"))
-                         (_gx-gambc048946_
+                                (cons _cppflags48617_ _gsc-opts48612_)))))))
+               (_compile-stub48563_
+                (lambda (_output-scm48570_ _output-bin48571_)
+                  (let* ((_gerbil-home48573_ (getenv '"GERBIL_HOME"))
+                         (_gx-gambc048575_
                           (path-expand
                            '"lib/static/gx-gambc0.scm"
-                           _gerbil-home48944_))
-                         (_gx-gambc-init48948_
+                           _gerbil-home48573_))
+                         (_gx-gambc-init48577_
                           (path-expand
                            '"lib/gx-init-static-exe.scm"
-                           _gerbil-home48944_))
-                         (_gx-gambc-macros48950_
+                           _gerbil-home48573_))
+                         (_gx-gambc-macros48579_
                           (path-expand
                            '"lib/static/gx-gambc#.scm"
-                           _gerbil-home48944_))
-                         (_include-gx-gambc-macros48952_
+                           _gerbil-home48573_))
+                         (_include-gx-gambc-macros48581_
                           (string-append
                            '"(include \""
-                           _gx-gambc-macros48950_
+                           _gx-gambc-macros48579_
                            '"\")"))
-                         (_bin-scm48954_
-                          (gxc#find-static-module-file _ctx48927_))
-                         (_deps48956_
-                          (gxc#find-runtime-module-deps _ctx48927_))
-                         (_deps48958_
-                          (map gxc#find-static-module-file _deps48956_))
-                         (_deps48963_
-                          (filter (lambda (_$obj48960_)
-                                    (not (gxc#file-empty? _$obj48960_)))
-                                  _deps48958_))
-                         (_gsc-opts48968_
-                          (let ((_$e48965_ (pgetq 'gsc-options: _opts48928_)))
-                            (if _$e48965_ _$e48965_ '())))
-                         (_gsc-opts48970_
-                          (_static-include48933_
-                           _gsc-opts48968_
-                           _gerbil-home48944_))
-                         (_gsc-gx-macros48972_
+                         (_bin-scm48583_
+                          (gxc#find-static-module-file _ctx48556_))
+                         (_deps48585_
+                          (gxc#find-runtime-module-deps _ctx48556_))
+                         (_deps48587_
+                          (map gxc#find-static-module-file _deps48585_))
+                         (_deps48592_
+                          (filter (lambda (_$obj48589_)
+                                    (not (gxc#file-empty? _$obj48589_)))
+                                  _deps48587_))
+                         (_gsc-opts48597_
+                          (let ((_$e48594_ (pgetq 'gsc-options: _opts48557_)))
+                            (if _$e48594_ _$e48594_ '())))
+                         (_gsc-opts48599_
+                          (_static-include48562_
+                           _gsc-opts48597_
+                           _gerbil-home48573_))
+                         (_gsc-gx-macros48601_
                           (if (gerbil-runtime-smp?)
                               (cons '"-e"
                                     (cons '"(define-cond-expand-feature|enable-smp|)"
                                           (cons '"-e"
-                                                (cons _include-gx-gambc-macros48952_
+                                                (cons _include-gx-gambc-macros48581_
                                                       '()))))
                               (cons '"-e"
-                                    (cons _include-gx-gambc-macros48952_
+                                    (cons _include-gx-gambc-macros48581_
                                           '()))))
-                         (_gsc-args48974_
+                         (_gsc-args48603_
                           (cons '"-exe"
                                 (cons '"-o"
-                                      (cons _output-bin48942_
+                                      (cons _output-bin48571_
                                             (foldr1 cons
                                                     (foldr1 cons
                                                             (foldr1 cons
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            (cons _output-scm48941_ '())
-                            _gsc-gx-macros48972_)
-                    _gsc-opts48970_)
+                            (cons _output-scm48570_ '())
+                            _gsc-gx-macros48601_)
+                    _gsc-opts48599_)
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                     (gxc#gsc-debug-options)))))))
                     (begin
                       (with-output-to-file
-                       _output-scm48941_
+                       _output-scm48570_
                        (lambda ()
-                         (_generate-stub48932_
-                          (cons _gx-gambc048946_
-                                (cons _gx-gambc-init48948_
+                         (_generate-stub48561_
+                          (cons _gx-gambc048575_
+                                (cons _gx-gambc-init48577_
                                       (foldr1 cons
-                                              (cons _bin-scm48954_ '())
-                                              _deps48963_))))))
+                                              (cons _bin-scm48583_ '())
+                                              _deps48592_))))))
                       (if (gxc#current-compile-invoke-gsc)
                           (begin
                             (gxc#verbose
                              '"invoke gsc "
-                             (cons 'gsc _gsc-args48974_))
-                            (let* ((_proc48978_
+                             (cons 'gsc _gsc-args48603_))
+                            (let* ((_proc48607_
                                     (open-process
                                      (cons 'path:
                                            (cons '"gsc"
                                                  (cons 'arguments:
-                                                       (cons _gsc-args48974_
+                                                       (cons _gsc-args48603_
                                                              (cons 'stdout-redirection:
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            (cons '#f '()))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                   (_status48980_
-                                    (process-status _proc48978_)))
-                              (if (zero? _status48980_)
+                                   (_status48609_
+                                    (process-status _proc48607_)))
+                              (if (zero? _status48609_)
                                   '#!void
                                   (gxc#raise-compile-error
                                    '"Compilation error; gsc exit with nonzero status"
-                                   _output-scm48941_
-                                   _output-bin48942_
-                                   _status48980_))))
+                                   _output-scm48570_
+                                   _output-bin48571_
+                                   _status48609_))))
                           '#!void))))))
-        (let* ((_output-bin48936_
-                (gxc#compile-exe-output-file _ctx48927_ _opts48928_))
-               (_output-scm48938_ (string-append _output-bin48936_ '".scm")))
+        (let* ((_output-bin48565_
+                (gxc#compile-exe-output-file _ctx48556_ _opts48557_))
+               (_output-scm48567_ (string-append _output-bin48565_ '".scm")))
           (begin
-            (_compile-stub48934_ _output-scm48938_ _output-bin48936_)
+            (_compile-stub48563_ _output-scm48567_ _output-bin48565_)
             (if (gxc#current-compile-keep-scm)
                 '#!void
-                (delete-file _output-scm48938_)))))))
+                (delete-file _output-scm48567_)))))))
   (define gxc#find-export-binding
-    (lambda (_ctx48877_ _id48878_)
-      (let ((_$e48924_
-             (find (lambda (_e4887948881_)
-                     (let* ((_g4888348893_ _e4887948881_)
-                            (_else4888548901_ (lambda () '#f))
-                            (_K4888748905_ (lambda () '#t)))
+    (lambda (_ctx48506_ _id48507_)
+      (let ((_$e48553_
+             (find (lambda (_e4850848510_)
+                     (let* ((_g4851248522_ _e4850848510_)
+                            (_else4851448530_ (lambda () '#f))
+                            (_K4851648534_ (lambda () '#t)))
                        (if (##structure-direct-instance-of?
-                            _g4888348893_
+                            _g4851248522_
                             'gx#module-export::t)
-                           (let* ((_e4888848908_
-                                   (##vector-ref _g4888348893_ '1))
-                                  (_e4888948911_
-                                   (##vector-ref _g4888348893_ '2))
-                                  (_e4889048914_
-                                   (##vector-ref _g4888348893_ '3)))
-                             (if (##eq? _e4889048914_ '0)
-                                 (let ((_e4889148917_
-                                        (##vector-ref _g4888348893_ '4)))
-                                   (if ((lambda (_g4891948921_)
-                                          (eq? _g4891948921_ _id48878_))
-                                        _e4889148917_)
-                                       (_K4888748905_)
-                                       (_else4888548901_)))
-                                 (_else4888548901_)))
-                           (_else4888548901_))))
-                   (##structure-ref _ctx48877_ '9 gx#module-context::t '#f))))
-        (if _$e48924_ (gx#core-resolve-module-export _$e48924_) '#f))))
+                           (let* ((_e4851748537_
+                                   (##vector-ref _g4851248522_ '1))
+                                  (_e4851848540_
+                                   (##vector-ref _g4851248522_ '2))
+                                  (_e4851948543_
+                                   (##vector-ref _g4851248522_ '3)))
+                             (if (##eq? _e4851948543_ '0)
+                                 (let ((_e4852048546_
+                                        (##vector-ref _g4851248522_ '4)))
+                                   (if ((lambda (_g4854848550_)
+                                          (eq? _g4854848550_ _id48507_))
+                                        _e4852048546_)
+                                       (_K4851648534_)
+                                       (_else4851448530_)))
+                                 (_else4851448530_)))
+                           (_else4851448530_))))
+                   (##structure-ref _ctx48506_ '9 gx#module-context::t '#f))))
+        (if _$e48553_ (gx#core-resolve-module-export _$e48553_) '#f))))
   (define gxc#find-runtime-symbol
-    (lambda (_ctx48869_ _id48870_)
-      (let ((_$e48872_ (gxc#find-export-binding _ctx48869_ _id48870_)))
-        (if _$e48872_
-            ((lambda (_bind48875_)
+    (lambda (_ctx48498_ _id48499_)
+      (let ((_$e48501_ (gxc#find-export-binding _ctx48498_ _id48499_)))
+        (if _$e48501_
+            ((lambda (_bind48504_)
                (begin
                  (if (##structure-instance-of?
-                      _bind48875_
+                      _bind48504_
                       'gx#runtime-binding::t)
                      '#!void
                      (gxc#raise-compile-error
                       '"export is not a runtime binding"
-                      _id48870_))
-                 (##structure-ref _bind48875_ '1 gx#binding::t '#f)))
-             _$e48872_)
+                      _id48499_))
+                 (##structure-ref _bind48504_ '1 gx#binding::t '#f)))
+             _$e48501_)
             (gxc#raise-compile-error
              '"module does not export symbol"
-             (##structure-ref _ctx48869_ '1 gx#expander-context::t '#f)
-             _id48870_)))))
+             (##structure-ref _ctx48498_ '1 gx#expander-context::t '#f)
+             _id48499_)))))
   (define gxc#find-runtime-module-deps
-    (lambda (_ctx48756_)
-      (letrec* ((_ht48758_ (make-hash-table-eq))
-                (_import-set-template48759_
-                 (lambda (_in48821_ _phi48822_)
-                   (let ((_iphi48824_
-                          (fx+ _phi48822_
+    (lambda (_ctx48385_)
+      (letrec* ((_ht48387_ (make-hash-table-eq))
+                (_import-set-template48388_
+                 (lambda (_in48450_ _phi48451_)
+                   (let ((_iphi48453_
+                          (fx+ _phi48451_
                                (##direct-structure-ref
-                                _in48821_
+                                _in48450_
                                 '2
                                 gx#import-set::t
                                 '#f)))
-                         (_imports48825_
+                         (_imports48454_
                           (##structure-ref
                            (##direct-structure-ref
-                            _in48821_
+                            _in48450_
                             '1
                             gx#import-set::t
                             '#f)
                            '8
                            gx#module-context::t
                            '#f)))
-                     (let _lp48827_ ((_rest48829_ _imports48825_)
-                                     (_r48830_ '()))
-                       (let* ((_rest4883148839_ _rest48829_)
-                              (_else4883348847_ (lambda () _r48830_))
-                              (_K4883548857_
-                               (lambda (_rest48850_ _in48851_)
+                     (let _lp48456_ ((_rest48458_ _imports48454_)
+                                     (_r48459_ '()))
+                       (let* ((_rest4846048468_ _rest48458_)
+                              (_else4846248476_ (lambda () _r48459_))
+                              (_K4846448486_
+                               (lambda (_rest48479_ _in48480_)
                                  (if (##structure-instance-of?
-                                      _in48851_
+                                      _in48480_
                                       'gx#module-context::t)
-                                     (if (fxzero? _iphi48824_)
-                                         (_lp48827_
-                                          _rest48850_
-                                          (cons _in48851_ _r48830_))
-                                         (_lp48827_ _rest48850_ _r48830_))
+                                     (if (fxzero? _iphi48453_)
+                                         (_lp48456_
+                                          _rest48479_
+                                          (cons _in48480_ _r48459_))
+                                         (_lp48456_ _rest48479_ _r48459_))
                                      (if (##structure-direct-instance-of?
-                                          _in48851_
+                                          _in48480_
                                           'gx#module-import::t)
-                                         (let ((_iphi48853_
-                                                (fx+ _phi48822_
+                                         (let ((_iphi48482_
+                                                (fx+ _phi48451_
                                                      (##direct-structure-ref
-                                                      _in48851_
+                                                      _in48480_
                                                       '3
                                                       gx#module-import::t
                                                       '#f))))
-                                           (if (fxzero? _iphi48853_)
-                                               (_lp48827_
-                                                _rest48850_
+                                           (if (fxzero? _iphi48482_)
+                                               (_lp48456_
+                                                _rest48479_
                                                 (cons (##direct-structure-ref
                                                        (##direct-structure-ref
-                                                        _in48851_
+                                                        _in48480_
                                                         '1
                                                         gx#module-import::t
                                                         '#f)
                                                        '1
                                                        gx#module-export::t
                                                        '#f)
-                                                      _r48830_))
-                                               (_lp48827_
-                                                _rest48850_
-                                                _r48830_)))
+                                                      _r48459_))
+                                               (_lp48456_
+                                                _rest48479_
+                                                _r48459_)))
                                          (if (##structure-direct-instance-of?
-                                              _in48851_
+                                              _in48480_
                                               'gx#import-set::t)
-                                             (let ((_xphi48855_
-                                                    (fx+ _iphi48824_
+                                             (let ((_xphi48484_
+                                                    (fx+ _iphi48453_
                                                          (##direct-structure-ref
-                                                          _in48851_
+                                                          _in48480_
                                                           '2
                                                           gx#import-set::t
                                                           '#f))))
-                                               (if (fxzero? _xphi48855_)
-                                                   (_lp48827_
-                                                    _rest48850_
+                                               (if (fxzero? _xphi48484_)
+                                                   (_lp48456_
+                                                    _rest48479_
                                                     (cons (##direct-structure-ref
-                                                           _in48851_
+                                                           _in48480_
                                                            '1
                                                            gx#import-set::t
                                                            '#f)
-                                                          _r48830_))
+                                                          _r48459_))
                                                    (if (fxpositive?
-                                                        _xphi48855_)
-                                                       (_lp48827_
-                                                        _rest48850_
+                                                        _xphi48484_)
+                                                       (_lp48456_
+                                                        _rest48479_
                                                         (foldl1 cons
-                                                                _r48830_
-                                                                (_import-set-template48759_
+                                                                _r48459_
+                                                                (_import-set-template48388_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _in48851_
-                         _iphi48824_)))
-               (_lp48827_ _rest48850_ _r48830_))))
+                         _in48480_
+                         _iphi48453_)))
+               (_lp48456_ _rest48479_ _r48459_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                             (_lp48827_
-                                              _rest48850_
-                                              _r48830_)))))))
-                         (if (##pair? _rest4883148839_)
-                             (let ((_hd4883648860_ (##car _rest4883148839_))
-                                   (_tl4883748862_ (##cdr _rest4883148839_)))
-                               (let* ((_in48865_ _hd4883648860_)
-                                      (_rest48867_ _tl4883748862_))
-                                 (_K4883548857_ _rest48867_ _in48865_)))
-                             (_else4883348847_)))))))
-                (_find-deps48760_
-                 (lambda (_rest48767_ _deps48768_)
-                   (let* ((_rest4876948777_ _rest48767_)
-                          (_else4877148785_ (lambda () _deps48768_))
-                          (_K4877348809_
-                           (lambda (_rest48788_ _hd48789_)
+                                             (_lp48456_
+                                              _rest48479_
+                                              _r48459_)))))))
+                         (if (##pair? _rest4846048468_)
+                             (let ((_hd4846548489_ (##car _rest4846048468_))
+                                   (_tl4846648491_ (##cdr _rest4846048468_)))
+                               (let* ((_in48494_ _hd4846548489_)
+                                      (_rest48496_ _tl4846648491_))
+                                 (_K4846448486_ _rest48496_ _in48494_)))
+                             (_else4846248476_)))))))
+                (_find-deps48389_
+                 (lambda (_rest48396_ _deps48397_)
+                   (let* ((_rest4839848406_ _rest48396_)
+                          (_else4840048414_ (lambda () _deps48397_))
+                          (_K4840248438_
+                           (lambda (_rest48417_ _hd48418_)
                              (if (##structure-instance-of?
-                                  _hd48789_
+                                  _hd48418_
                                   'gx#module-context::t)
-                                 (let ((_id48791_
+                                 (let ((_id48420_
                                         (##structure-ref
-                                         _hd48789_
+                                         _hd48418_
                                          '1
                                          gx#expander-context::t
                                          '#f))
-                                       (_imports48792_
+                                       (_imports48421_
                                         (##structure-ref
-                                         _hd48789_
+                                         _hd48418_
                                          '8
                                          gx#module-context::t
                                          '#f)))
-                                   (if (table-ref _ht48758_ _id48791_ '#f)
-                                       (_find-deps48760_
-                                        _rest48788_
-                                        _deps48768_)
-                                       (let ((_$e48794_
+                                   (if (table-ref _ht48387_ _id48420_ '#f)
+                                       (_find-deps48389_
+                                        _rest48417_
+                                        _deps48397_)
+                                       (let ((_$e48423_
                                               (gx#core-context-prelude__%
-                                               _hd48789_)))
-                                         (if _$e48794_
-                                             ((lambda (_pre48797_)
-                                                (let ((_xdeps48799_
-                                                       (_find-deps48760_
-                                                        (cons _pre48797_
-                                                              _imports48792_)
-                                                        _deps48768_)))
+                                               _hd48418_)))
+                                         (if _$e48423_
+                                             ((lambda (_pre48426_)
+                                                (let ((_xdeps48428_
+                                                       (_find-deps48389_
+                                                        (cons _pre48426_
+                                                              _imports48421_)
+                                                        _deps48397_)))
                                                   (begin
                                                     (table-set!
-                                                     _ht48758_
-                                                     _id48791_
-                                                     _hd48789_)
-                                                    (_find-deps48760_
-                                                     _rest48788_
-                                                     (cons _hd48789_
-                                                           _xdeps48799_)))))
-                                              _$e48794_)
-                                             (let ((_xdeps48801_
-                                                    (_find-deps48760_
-                                                     _imports48792_
-                                                     _deps48768_)))
+                                                     _ht48387_
+                                                     _id48420_
+                                                     _hd48418_)
+                                                    (_find-deps48389_
+                                                     _rest48417_
+                                                     (cons _hd48418_
+                                                           _xdeps48428_)))))
+                                              _$e48423_)
+                                             (let ((_xdeps48430_
+                                                    (_find-deps48389_
+                                                     _imports48421_
+                                                     _deps48397_)))
                                                (begin
                                                  (table-set!
-                                                  _ht48758_
-                                                  _id48791_
-                                                  _hd48789_)
-                                                 (_find-deps48760_
-                                                  _rest48788_
-                                                  (cons _hd48789_
-                                                        _xdeps48801_))))))))
+                                                  _ht48387_
+                                                  _id48420_
+                                                  _hd48418_)
+                                                 (_find-deps48389_
+                                                  _rest48417_
+                                                  (cons _hd48418_
+                                                        _xdeps48430_))))))))
                                  (if (##structure-instance-of?
-                                      _hd48789_
+                                      _hd48418_
                                       'gx#prelude-context::t)
-                                     (let ((_id48803_
+                                     (let ((_id48432_
                                             (##structure-ref
-                                             _hd48789_
+                                             _hd48418_
                                              '1
                                              gx#expander-context::t
                                              '#f)))
-                                       (if (table-ref _ht48758_ _id48803_ '#f)
-                                           (_find-deps48760_
-                                            _rest48788_
-                                            _deps48768_)
-                                           (let ((_xdeps48805_
-                                                  (_find-deps48760_
+                                       (if (table-ref _ht48387_ _id48432_ '#f)
+                                           (_find-deps48389_
+                                            _rest48417_
+                                            _deps48397_)
+                                           (let ((_xdeps48434_
+                                                  (_find-deps48389_
                                                    (##structure-ref
-                                                    _hd48789_
+                                                    _hd48418_
                                                     '7
                                                     gx#prelude-context::t
                                                     '#f)
-                                                   _deps48768_)))
+                                                   _deps48397_)))
                                              (if (table-ref
-                                                  _ht48758_
-                                                  _id48803_
+                                                  _ht48387_
+                                                  _id48432_
                                                   '#f)
-                                                 (_find-deps48760_
-                                                  _rest48788_
-                                                  _xdeps48805_)
+                                                 (_find-deps48389_
+                                                  _rest48417_
+                                                  _xdeps48434_)
                                                  (begin
                                                    (table-set!
-                                                    _ht48758_
-                                                    _id48803_
-                                                    _hd48789_)
-                                                   (_find-deps48760_
-                                                    _rest48788_
-                                                    (cons _hd48789_
-                                                          _xdeps48805_)))))))
+                                                    _ht48387_
+                                                    _id48432_
+                                                    _hd48418_)
+                                                   (_find-deps48389_
+                                                    _rest48417_
+                                                    (cons _hd48418_
+                                                          _xdeps48434_)))))))
                                      (if (##structure-direct-instance-of?
-                                          _hd48789_
+                                          _hd48418_
                                           'gx#module-import::t)
                                          (if (fxzero? (##direct-structure-ref
-                                                       _hd48789_
+                                                       _hd48418_
                                                        '3
                                                        gx#module-import::t
                                                        '#f))
-                                             (_find-deps48760_
+                                             (_find-deps48389_
                                               (cons (##direct-structure-ref
-                                                     _hd48789_
+                                                     _hd48418_
                                                      '1
                                                      gx#module-import::t
                                                      '#f)
-                                                    _rest48788_)
-                                              _deps48768_)
-                                             (_find-deps48760_
-                                              _rest48788_
-                                              _deps48768_))
+                                                    _rest48417_)
+                                              _deps48397_)
+                                             (_find-deps48389_
+                                              _rest48417_
+                                              _deps48397_))
                                          (if (##structure-direct-instance-of?
-                                              _hd48789_
+                                              _hd48418_
                                               'gx#module-export::t)
-                                             (_find-deps48760_
+                                             (_find-deps48389_
                                               (cons (##direct-structure-ref
-                                                     _hd48789_
+                                                     _hd48418_
                                                      '1
                                                      gx#module-export::t
                                                      '#f)
-                                                    _rest48788_)
-                                              _deps48768_)
+                                                    _rest48417_)
+                                              _deps48397_)
                                              (if (##structure-direct-instance-of?
-                                                  _hd48789_
+                                                  _hd48418_
                                                   'gx#import-set::t)
                                                  (if (fxzero? (##direct-structure-ref
-                                                               _hd48789_
+                                                               _hd48418_
                                                                '2
                                                                gx#import-set::t
                                                                '#f))
-                                                     (_find-deps48760_
+                                                     (_find-deps48389_
                                                       (cons (##direct-structure-ref
-                                                             _hd48789_
+                                                             _hd48418_
                                                              '1
                                                              gx#import-set::t
                                                              '#f)
-                                                            _rest48788_)
-                                                      _deps48768_)
+                                                            _rest48417_)
+                                                      _deps48397_)
                                                      (if (fxpositive?
                                                           (##direct-structure-ref
-                                                           _hd48789_
+                                                           _hd48418_
                                                            '2
                                                            gx#import-set::t
                                                            '#f))
-                                                         (let ((_xdeps48807_
-                                                                (_import-set-template48759_
+                                                         (let ((_xdeps48436_
+                                                                (_import-set-template48388_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _hd48789_
+                         _hd48418_
                          '0)))
-                   (_find-deps48760_
-                    (foldl1 cons _rest48788_ _xdeps48807_)
-                    _deps48768_))
-                 (_find-deps48760_ _rest48788_ _deps48768_)))
+                   (_find-deps48389_
+                    (foldl1 cons _rest48417_ _xdeps48436_)
+                    _deps48397_))
+                 (_find-deps48389_ _rest48417_ _deps48397_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  (error '"Unexpected module import"
-                                                        _hd48789_)))))))))
-                     (if (##pair? _rest4876948777_)
-                         (let ((_hd4877448812_ (##car _rest4876948777_))
-                               (_tl4877548814_ (##cdr _rest4876948777_)))
-                           (let* ((_hd48817_ _hd4877448812_)
-                                  (_rest48819_ _tl4877548814_))
-                             (_K4877348809_ _rest48819_ _hd48817_)))
-                         (_else4877148785_))))))
+                                                        _hd48418_)))))))))
+                     (if (##pair? _rest4839848406_)
+                         (let ((_hd4840348441_ (##car _rest4839848406_))
+                               (_tl4840448443_ (##cdr _rest4839848406_)))
+                           (let* ((_hd48446_ _hd4840348441_)
+                                  (_rest48448_ _tl4840448443_))
+                             (_K4840248438_ _rest48448_ _hd48446_)))
+                         (_else4840048414_))))))
         (reverse (filter gx#expander-context-id
-                         (_find-deps48760_
-                          (let ((_$e48762_
-                                 (gx#core-context-prelude__% _ctx48756_)))
-                            (if _$e48762_
-                                ((lambda (_pre48765_)
-                                   (cons _pre48765_
+                         (_find-deps48389_
+                          (let ((_$e48391_
+                                 (gx#core-context-prelude__% _ctx48385_)))
+                            (if _$e48391_
+                                ((lambda (_pre48394_)
+                                   (cons _pre48394_
                                          (##structure-ref
-                                          _ctx48756_
+                                          _ctx48385_
                                           '8
                                           gx#module-context::t
                                           '#f)))
-                                 _$e48762_)
+                                 _$e48391_)
                                 (##structure-ref
-                                 _ctx48756_
+                                 _ctx48385_
                                  '8
                                  gx#module-context::t
                                  '#f)))
                           '()))))))
   (define gxc#find-static-module-file
-    (lambda (_ctx48695_)
-      (let* ((_scm48697_
+    (lambda (_ctx48324_)
+      (let* ((_scm48326_
               (string-append
                (gxc#static-module-name
-                (##structure-ref _ctx48695_ '1 gx#expander-context::t '#f))
+                (##structure-ref _ctx48324_ '1 gx#expander-context::t '#f))
                '".scm"))
-             (_dirs48699_ (gx#current-expander-module-library-path))
-             (_dirs48708_
-              (let ((_$e48701_ (gxc#current-compile-output-dir)))
-                (if _$e48701_
-                    ((lambda (_g4870348705_) (cons _g4870348705_ _dirs48699_))
-                     _$e48701_)
-                    _dirs48699_)))
-             (_dirs48714_
-              (map (lambda (_g4870948711_)
-                     (path-expand '"static" _g4870948711_))
-                   _dirs48708_)))
-        (let _lp48717_ ((_rest48719_ _dirs48714_))
-          (let* ((_rest4872048728_ _rest48719_)
-                 (_else4872248736_
+             (_dirs48328_ (gx#current-expander-module-library-path))
+             (_dirs48337_
+              (let ((_$e48330_ (gxc#current-compile-output-dir)))
+                (if _$e48330_
+                    ((lambda (_g4833248334_) (cons _g4833248334_ _dirs48328_))
+                     _$e48330_)
+                    _dirs48328_)))
+             (_dirs48343_
+              (map (lambda (_g4833848340_)
+                     (path-expand '"static" _g4833848340_))
+                   _dirs48337_)))
+        (let _lp48346_ ((_rest48348_ _dirs48343_))
+          (let* ((_rest4834948357_ _rest48348_)
+                 (_else4835148365_
                   (lambda ()
                     (gxc#raise-compile-error
                      '"cannot find static module"
-                     (##structure-ref _ctx48695_ '1 gx#expander-context::t '#f)
-                     _scm48697_)))
-                 (_K4872448744_
-                  (lambda (_rest48739_ _dir48740_)
-                    (let ((_path48742_ (path-expand _scm48697_ _dir48740_)))
-                      (if (file-exists? _path48742_)
-                          _path48742_
-                          (_lp48717_ _rest48739_))))))
-            (if (##pair? _rest4872048728_)
-                (let ((_hd4872548747_ (##car _rest4872048728_))
-                      (_tl4872648749_ (##cdr _rest4872048728_)))
-                  (let* ((_dir48752_ _hd4872548747_)
-                         (_rest48754_ _tl4872648749_))
-                    (_K4872448744_ _rest48754_ _dir48752_)))
-                (_else4872248736_)))))))
+                     (##structure-ref _ctx48324_ '1 gx#expander-context::t '#f)
+                     _scm48326_)))
+                 (_K4835348373_
+                  (lambda (_rest48368_ _dir48369_)
+                    (let ((_path48371_ (path-expand _scm48326_ _dir48369_)))
+                      (if (file-exists? _path48371_)
+                          _path48371_
+                          (_lp48346_ _rest48368_))))))
+            (if (##pair? _rest4834948357_)
+                (let ((_hd4835448376_ (##car _rest4834948357_))
+                      (_tl4835548378_ (##cdr _rest4834948357_)))
+                  (let* ((_dir48381_ _hd4835448376_)
+                         (_rest48383_ _tl4835548378_))
+                    (_K4835348373_ _rest48383_ _dir48381_)))
+                (_else4835148365_)))))))
   (define gxc#file-empty?
-    (lambda (_path48693_)
-      (zero? (file-info-size (file-info _path48693_ '#t)))))
+    (lambda (_path48322_)
+      (zero? (file-info-size (file-info _path48322_ '#t)))))
   (define gxc#compile-top-module
-    (lambda (_ctx48690_)
+    (lambda (_ctx48319_)
       (call-with-parameters
        (lambda ()
          (begin
            (gxc#verbose
             '"compile "
-            (##structure-ref _ctx48690_ '1 gx#expander-context::t '#f))
+            (##structure-ref _ctx48319_ '1 gx#expander-context::t '#f))
            (if (gxc#current-compile-optimize)
-               (gxc#optimize! _ctx48690_)
+               (gxc#optimize! _ctx48319_)
                '#!void)
-           (gxc#collect-bindings _ctx48690_)
-           (gxc#compile-runtime-code _ctx48690_)
-           (gxc#compile-meta-code _ctx48690_)
+           (gxc#collect-bindings _ctx48319_)
+           (gxc#compile-runtime-code _ctx48319_)
+           (gxc#compile-meta-code _ctx48319_)
            (if (if (gxc#current-compile-optimize)
                    (gxc#current-compile-generate-ssxi)
                    '#f)
-               (gxc#compile-ssxi-code _ctx48690_)
+               (gxc#compile-ssxi-code _ctx48319_)
                '#!void)))
        gx#current-expander-context
-       _ctx48690_
+       _ctx48319_
        gx#current-expander-phi
        '0
        gx#current-expander-marks
        '()
        gxc#current-compile-symbol-table
-       (let ((__obj49177 (make-object gxc#symbol-table::t '2)))
-         (begin (gxc#symbol-table:::init! __obj49177) __obj49177))
+       (let ((__obj48806 (make-object gxc#symbol-table::t '2)))
+         (begin (gxc#symbol-table:::init! __obj48806) __obj48806))
        gxc#current-compile-runtime-sections
        (make-hash-table-eq)
        gxc#current-compile-runtime-names
        (make-table))))
   (define gxc#collect-bindings
-    (lambda (_ctx48688_)
+    (lambda (_ctx48317_)
       (gxc#apply-collect-bindings
-       (##structure-ref _ctx48688_ '11 gx#module-context::t '#f))))
+       (##structure-ref _ctx48317_ '11 gx#module-context::t '#f))))
   (define gxc#compile-runtime-code
-    (lambda (_ctx48642_)
-      (letrec ((_compile148644_
-                (lambda (_ctx48677_)
-                  (let* ((_code48679_
+    (lambda (_ctx48271_)
+      (letrec ((_compile148273_
+                (lambda (_ctx48306_)
+                  (let* ((_code48308_
                           (##structure-ref
-                           _ctx48677_
+                           _ctx48306_
                            '11
                            gx#module-context::t
                            '#f))
-                         (_rt48683_
-                          (if (gxc#apply-find-runtime-code _code48679_)
-                              (let ((_idstr48681_
+                         (_rt48312_
+                          (if (gxc#apply-find-runtime-code _code48308_)
+                              (let ((_idstr48310_
                                      (gxc#module-id->path-string
                                       (##structure-ref
-                                       _ctx48677_
+                                       _ctx48306_
                                        '1
                                        gx#expander-context::t
                                        '#f))))
-                                (string-append _idstr48681_ '"__0"))
+                                (string-append _idstr48310_ '"__0"))
                               '#f)))
                     (begin
-                      (if _rt48683_
+                      (if _rt48312_
                           (begin
                             (table-set!
                              (gxc#current-compile-runtime-sections)
-                             _ctx48677_
-                             _rt48683_)
-                            (_generate-runtime-code48645_
-                             _ctx48677_
-                             _code48679_))
+                             _ctx48306_
+                             _rt48312_)
+                            (_generate-runtime-code48274_
+                             _ctx48306_
+                             _code48308_))
                           (if (gxc#current-compile-static)
-                              (let ((_path48686_
+                              (let ((_path48315_
                                      (gxc#compile-static-output-file
-                                      _ctx48677_)))
+                                      _ctx48306_)))
                                 (with-output-to-file
                                  (cons 'path:
-                                       (cons _path48686_
+                                       (cons _path48315_
                                              (cons 'permissions:
                                                    (cons '420 '()))))
                                  void))
                               '#!void))
-                      (_generate-loader-code48646_
-                       _ctx48677_
-                       _code48679_
-                       _rt48683_)))))
-               (_generate-runtime-code48645_
-                (lambda (_ctx48661_ _code48662_)
-                  (let* ((_lifts48664_ (box '()))
-                         (_runtime-code48667_
+                      (_generate-loader-code48275_
+                       _ctx48306_
+                       _code48308_
+                       _rt48312_)))))
+               (_generate-runtime-code48274_
+                (lambda (_ctx48290_ _code48291_)
+                  (let* ((_lifts48293_ (box '()))
+                         (_runtime-code48296_
                           (call-with-parameters
-                           (lambda () (gxc#apply-generate-runtime _code48662_))
+                           (lambda () (gxc#apply-generate-runtime _code48291_))
                            gx#current-expander-context
-                           _ctx48661_
+                           _ctx48290_
                            gx#current-expander-phi
                            '0
                            gxc#current-compile-lift
-                           _lifts48664_
+                           _lifts48293_
                            gxc#current-compile-marks
                            (make-hash-table-eq)))
-                         (_runtime-code48669_
-                          (if (null? (unbox _lifts48664_))
-                              _runtime-code48667_
+                         (_runtime-code48298_
+                          (if (null? (unbox _lifts48293_))
+                              _runtime-code48296_
                               (cons 'begin
                                     (foldr1 cons
-                                            (cons _runtime-code48667_ '())
-                                            (reverse (unbox _lifts48664_))))))
-                         (_scm048671_
-                          (gxc#compile-output-file _ctx48661_ '0 '".scm")))
+                                            (cons _runtime-code48296_ '())
+                                            (reverse (unbox _lifts48293_))))))
+                         (_scm048300_
+                          (gxc#compile-output-file _ctx48290_ '0 '".scm")))
                     (if (gxc#current-compile-static)
-                        (let ((_scms48674_
-                               (gxc#compile-static-output-file _ctx48661_)))
+                        (let ((_scms48303_
+                               (gxc#compile-static-output-file _ctx48290_)))
                           (begin
                             (call-with-parameters
                              (lambda ()
                                (gxc#compile-scm-file__0
-                                _scm048671_
-                                _runtime-code48669_))
+                                _scm048300_
+                                _runtime-code48298_))
                              gxc#current-compile-keep-scm
                              '#t)
-                            (if (file-exists? _scms48674_)
-                                (delete-file _scms48674_)
+                            (if (file-exists? _scms48303_)
+                                (delete-file _scms48303_)
                                 '#!void)
                             (gxc#verbose
                              '"copy static module "
-                             _scm048671_
+                             _scm048300_
                              '" => "
-                             _scms48674_)
-                            (copy-file _scm048671_ _scms48674_)
+                             _scms48303_)
+                            (copy-file _scm048300_ _scms48303_)
                             (if (gxc#current-compile-keep-scm)
                                 '#!void
-                                (delete-file _scm048671_))))
+                                (delete-file _scm048300_))))
                         (gxc#compile-scm-file__0
-                         _scm048671_
-                         _runtime-code48669_)))))
-               (_generate-loader-code48646_
-                (lambda (_ctx48650_ _code48651_ _rt48652_)
-                  (let* ((_loader-code48655_
+                         _scm048300_
+                         _runtime-code48298_)))))
+               (_generate-loader-code48275_
+                (lambda (_ctx48279_ _code48280_ _rt48281_)
+                  (let* ((_loader-code48284_
                           (call-with-parameters
-                           (lambda () (gxc#apply-generate-loader _code48651_))
+                           (lambda () (gxc#apply-generate-loader _code48280_))
                            gx#current-expander-context
-                           _ctx48650_))
-                         (_loader-code48657_
-                          (if _rt48652_
+                           _ctx48279_))
+                         (_loader-code48286_
+                          (if _rt48281_
                               (cons 'begin
-                                    (cons _loader-code48655_
+                                    (cons _loader-code48284_
                                           (cons (cons 'load-module
-                                                      (cons _rt48652_ '()))
+                                                      (cons _rt48281_ '()))
                                                 '())))
-                              _loader-code48655_)))
+                              _loader-code48284_)))
                     (call-with-parameters
                      (lambda ()
                        (gxc#compile-scm-file__0
-                        (gxc#compile-output-file _ctx48650_ 'rt '".scm")
-                        _loader-code48657_))
+                        (gxc#compile-output-file _ctx48279_ 'rt '".scm")
+                        _loader-code48286_))
                      gxc#current-compile-gsc-options
                      '#f)))))
-        (let ((_all-modules48648_
-               (cons _ctx48642_ (gxc#lift-nested-modules _ctx48642_))))
-          (for-each _compile148644_ _all-modules48648_)))))
+        (let ((_all-modules48277_
+               (cons _ctx48271_ (gxc#lift-nested-modules _ctx48271_))))
+          (for-each _compile148273_ _all-modules48277_)))))
   (define gxc#compile-meta-code
-    (lambda (_ctx48544_)
-      (letrec ((_compile-ssi48546_
-                (lambda (_code48612_)
-                  (let* ((_path48614_
-                          (gxc#compile-output-file _ctx48544_ '#f '".ssi"))
-                         (_prelude48625_
-                          (let* ((_super48616_
+    (lambda (_ctx48173_)
+      (letrec ((_compile-ssi48175_
+                (lambda (_code48241_)
+                  (let* ((_path48243_
+                          (gxc#compile-output-file _ctx48173_ '#f '".ssi"))
+                         (_prelude48254_
+                          (let* ((_super48245_
                                   (##structure-ref
-                                   _ctx48544_
+                                   _ctx48173_
                                    '3
                                    gx#phi-context::t
                                    '#f))
-                                 (_$e48618_
+                                 (_$e48247_
                                   (##structure-ref
-                                   _super48616_
+                                   _super48245_
                                    '1
                                    gx#expander-context::t
                                    '#f)))
-                            (if _$e48618_
-                                ((lambda (_g4862048622_)
-                                   (make-symbol '":" _g4862048622_))
-                                 _$e48618_)
+                            (if _$e48247_
+                                ((lambda (_g4824948251_)
+                                   (make-symbol '":" _g4824948251_))
+                                 _$e48247_)
                                 ':<root>)))
-                         (_ns48627_
+                         (_ns48256_
                           (##structure-ref
-                           _ctx48544_
+                           _ctx48173_
                            '6
                            gx#module-context::t
                            '#f))
-                         (_idstr48629_
+                         (_idstr48258_
                           (symbol->string
                            (##structure-ref
-                            _ctx48544_
+                            _ctx48173_
                             '1
                             gx#expander-context::t
                             '#f)))
-                         (_pkg48636_
-                          (let ((_$e48631_ (string-rindex _idstr48629_ '#\/)))
-                            (if _$e48631_
-                                ((lambda (_x48634_)
+                         (_pkg48265_
+                          (let ((_$e48260_ (string-rindex _idstr48258_ '#\/)))
+                            (if _$e48260_
+                                ((lambda (_x48263_)
                                    (string->symbol
-                                    (substring _idstr48629_ '0 _x48634_)))
-                                 _$e48631_)
+                                    (substring _idstr48258_ '0 _x48263_)))
+                                 _$e48260_)
                                 '#f)))
-                         (_rt48638_
+                         (_rt48267_
                           (table-ref
                            (gxc#current-compile-runtime-sections)
-                           _ctx48544_
+                           _ctx48173_
                            '#f)))
                     (begin
-                      (gxc#verbose '"compile " _path48614_)
+                      (gxc#verbose '"compile " _path48243_)
                       (with-output-to-file
                        (cons 'path:
-                             (cons _path48614_
+                             (cons _path48243_
                                    (cons 'permissions: (cons '420 '()))))
                        (lambda ()
                          (begin
-                           (displayln '"prelude:" '" " _prelude48625_)
-                           (if _pkg48636_
-                               (displayln '"package:" '" " _pkg48636_)
+                           (displayln '"prelude:" '" " _prelude48254_)
+                           (if _pkg48265_
+                               (displayln '"package:" '" " _pkg48265_)
                                '#!void)
-                           (displayln '"namespace:" '" " _ns48627_)
+                           (displayln '"namespace:" '" " _ns48256_)
                            (newline)
-                           (pretty-print _code48612_)
-                           (if _rt48638_
+                           (pretty-print _code48241_)
+                           (if _rt48267_
                                (pretty-print
                                 (cons '%#call
                                       (cons (cons '%#ref
                                                   (cons '_gx#load-module '()))
                                             (cons (cons '%#quote
-                                                        (cons _rt48638_ '()))
+                                                        (cons _rt48267_ '()))
                                                   '()))))
                                '#!void))))))))
-               (_compile-phi48547_
-                (lambda (_part48552_)
-                  (let* ((_part4855348566_ _part48552_)
-                         (_E4855548570_
+               (_compile-phi48176_
+                (lambda (_part48181_)
+                  (let* ((_part4818248195_ _part48181_)
+                         (_E4818448199_
                           (lambda ()
-                            (error '"No clause matching" _part4855348566_)))
-                         (_K4855648581_
-                          (lambda (_code48573_
-                                   _n48574_
-                                   _phi48575_
-                                   _phi-ctx48576_)
-                            (let ((_code48579_
+                            (error '"No clause matching" _part4818248195_)))
+                         (_K4818548210_
+                          (lambda (_code48202_
+                                   _n48203_
+                                   _phi48204_
+                                   _phi-ctx48205_)
+                            (let ((_code48208_
                                    (call-with-parameters
                                     (lambda ()
-                                      (gxc#generate-runtime-phi _code48573_))
+                                      (gxc#generate-runtime-phi _code48202_))
                                     gx#current-expander-context
-                                    _phi-ctx48576_
+                                    _phi-ctx48205_
                                     gx#current-expander-phi
-                                    _phi48575_)))
+                                    _phi48204_)))
                               (gxc#compile-scm-file__%
                                (gxc#compile-output-file
-                                _ctx48544_
-                                _n48574_
+                                _ctx48173_
+                                _n48203_
                                 '".scm")
-                               _code48579_
+                               _code48208_
                                '#t)))))
-                    (if (##pair? _part4855348566_)
-                        (let ((_hd4855748584_ (##car _part4855348566_))
-                              (_tl4855848586_ (##cdr _part4855348566_)))
-                          (let ((_phi-ctx48589_ _hd4855748584_))
-                            (if (##pair? _tl4855848586_)
-                                (let ((_hd4855948591_ (##car _tl4855848586_))
-                                      (_tl4856048593_ (##cdr _tl4855848586_)))
-                                  (let ((_phi48596_ _hd4855948591_))
-                                    (if (##pair? _tl4856048593_)
-                                        (let ((_hd4856148598_
-                                               (##car _tl4856048593_))
-                                              (_tl4856248600_
-                                               (##cdr _tl4856048593_)))
-                                          (let ((_n48603_ _hd4856148598_))
-                                            (if (##pair? _tl4856248600_)
-                                                (let ((_hd4856348605_
-                                                       (##car _tl4856248600_))
-                                                      (_tl4856448607_
-                                                       (##cdr _tl4856248600_)))
-                                                  (let ((_code48610_
-                                                         _hd4856348605_))
-                                                    (if (##null? _tl4856448607_)
-                                                        (_K4855648581_
-                                                         _code48610_
-                                                         _n48603_
-                                                         _phi48596_
-                                                         _phi-ctx48589_)
-                                                        (_E4855548570_))))
-                                                (_E4855548570_))))
-                                        (_E4855548570_))))
-                                (_E4855548570_))))
-                        (_E4855548570_))))))
-        (let ((_g49185_ (gxc#generate-meta-code _ctx48544_)))
+                    (if (##pair? _part4818248195_)
+                        (let ((_hd4818648213_ (##car _part4818248195_))
+                              (_tl4818748215_ (##cdr _part4818248195_)))
+                          (let ((_phi-ctx48218_ _hd4818648213_))
+                            (if (##pair? _tl4818748215_)
+                                (let ((_hd4818848220_ (##car _tl4818748215_))
+                                      (_tl4818948222_ (##cdr _tl4818748215_)))
+                                  (let ((_phi48225_ _hd4818848220_))
+                                    (if (##pair? _tl4818948222_)
+                                        (let ((_hd4819048227_
+                                               (##car _tl4818948222_))
+                                              (_tl4819148229_
+                                               (##cdr _tl4818948222_)))
+                                          (let ((_n48232_ _hd4819048227_))
+                                            (if (##pair? _tl4819148229_)
+                                                (let ((_hd4819248234_
+                                                       (##car _tl4819148229_))
+                                                      (_tl4819348236_
+                                                       (##cdr _tl4819148229_)))
+                                                  (let ((_code48239_
+                                                         _hd4819248234_))
+                                                    (if (##null? _tl4819348236_)
+                                                        (_K4818548210_
+                                                         _code48239_
+                                                         _n48232_
+                                                         _phi48225_
+                                                         _phi-ctx48218_)
+                                                        (_E4818448199_))))
+                                                (_E4818448199_))))
+                                        (_E4818448199_))))
+                                (_E4818448199_))))
+                        (_E4818448199_))))))
+        (let ((_g48814_ (gxc#generate-meta-code _ctx48173_)))
           (begin
-            (let ((_g49186_
-                   (if (##values? _g49185_) (##vector-length _g49185_) 1)))
-              (if (not (##fx= _g49186_ 2))
-                  (error "Context expects 2 values" _g49186_)))
-            (let ((_ssi-code48549_ (##vector-ref _g49185_ 0))
-                  (_phi-code48550_ (##vector-ref _g49185_ 1)))
+            (let ((_g48815_
+                   (if (##values? _g48814_) (##vector-length _g48814_) 1)))
+              (if (not (##fx= _g48815_ 2))
+                  (error "Context expects 2 values" _g48815_)))
+            (let ((_ssi-code48178_ (##vector-ref _g48814_ 0))
+                  (_phi-code48179_ (##vector-ref _g48814_ 1)))
               (begin
-                (_compile-ssi48546_ _ssi-code48549_)
-                (for-each _compile-phi48547_ _phi-code48550_))))))))
+                (_compile-ssi48175_ _ssi-code48178_)
+                (for-each _compile-phi48176_ _phi-code48179_))))))))
   (define gxc#compile-ssxi-code
-    (lambda (_ctx48527_)
-      (let* ((_path48529_ (gxc#compile-output-file _ctx48527_ '#f '".ssxi.ss"))
-             (_code48531_
+    (lambda (_ctx48156_)
+      (let* ((_path48158_ (gxc#compile-output-file _ctx48156_ '#f '".ssxi.ss"))
+             (_code48160_
               (gxc#apply-generate-ssxi
-               (##structure-ref _ctx48527_ '11 gx#module-context::t '#f)))
-             (_idstr48533_
+               (##structure-ref _ctx48156_ '11 gx#module-context::t '#f)))
+             (_idstr48162_
               (symbol->string
-               (##structure-ref _ctx48527_ '1 gx#expander-context::t '#f)))
-             (_pkg48540_
-              (let ((_$e48535_ (string-rindex _idstr48533_ '#\/)))
-                (if _$e48535_
-                    ((lambda (_x48538_)
-                       (string->symbol (substring _idstr48533_ '0 _x48538_)))
-                     _$e48535_)
+               (##structure-ref _ctx48156_ '1 gx#expander-context::t '#f)))
+             (_pkg48169_
+              (let ((_$e48164_ (string-rindex _idstr48162_ '#\/)))
+                (if _$e48164_
+                    ((lambda (_x48167_)
+                       (string->symbol (substring _idstr48162_ '0 _x48167_)))
+                     _$e48164_)
                     '#f))))
         (begin
-          (gxc#verbose '"compile " _path48529_)
+          (gxc#verbose '"compile " _path48158_)
           (with-output-to-file
            (cons 'path:
-                 (cons _path48529_ (cons 'permissions: (cons '420 '()))))
+                 (cons _path48158_ (cons 'permissions: (cons '420 '()))))
            (lambda ()
              (begin
                (displayln '"prelude: :gerbil/compiler/ssxi")
-               (if _pkg48540_ (displayln '"package: " _pkg48540_) '#!void)
+               (if _pkg48169_ (displayln '"package: " _pkg48169_) '#!void)
                (newline)
-               (pretty-print _code48531_))))))))
+               (pretty-print _code48160_))))))))
   (define gxc#generate-meta-code
-    (lambda (_ctx48520_)
-      (let* ((_state48522_
-              (let ((__obj49178 (make-object gxc#meta-state::t '4)))
+    (lambda (_ctx48149_)
+      (let* ((_state48151_
+              (let ((__obj48807 (make-object gxc#meta-state::t '4)))
                 (begin
-                  (gxc#meta-state:::init! __obj49178 _ctx48520_)
-                  __obj49178)))
-             (_ssi-code48524_
+                  (gxc#meta-state:::init! __obj48807 _ctx48149_)
+                  __obj48807)))
+             (_ssi-code48153_
               (gxc#apply-generate-meta
-               (##structure-ref _ctx48520_ '11 gx#module-context::t '#f)
-               _state48522_)))
-        (values _ssi-code48524_ (gxc#meta-state-end! _state48522_)))))
+               (##structure-ref _ctx48149_ '11 gx#module-context::t '#f)
+               _state48151_)))
+        (values _ssi-code48153_ (gxc#meta-state-end! _state48151_)))))
   (define gxc#generate-runtime-phi
-    (lambda (_stx48513_)
-      (let ((_lifts48515_ (box '())))
+    (lambda (_stx48142_)
+      (let ((_lifts48144_ (box '())))
         (call-with-parameters
          (lambda ()
-           (let ((_code48518_ (gxc#apply-generate-runtime-phi _stx48513_)))
-             (if (null? (unbox _lifts48515_))
-                 _code48518_
+           (let ((_code48147_ (gxc#apply-generate-runtime-phi _stx48142_)))
+             (if (null? (unbox _lifts48144_))
+                 _code48147_
                  (cons 'begin
                        (foldr1 cons
-                               (cons _code48518_ '())
-                               (reverse (unbox _lifts48515_)))))))
+                               (cons _code48147_ '())
+                               (reverse (unbox _lifts48144_)))))))
          gxc#current-compile-lift
-         _lifts48515_
+         _lifts48144_
          gxc#current-compile-marks
          (make-hash-table-eq)))))
   (define gxc#lift-nested-modules
-    (lambda (_ctx48509_)
-      (let ((_modules48511_ (box '())))
+    (lambda (_ctx48138_)
+      (let ((_modules48140_ (box '())))
         (begin
           (gxc#apply-lift-modules
-           (##structure-ref _ctx48509_ '11 gx#module-context::t '#f)
-           _modules48511_)
-          (reverse (unbox _modules48511_))))))
+           (##structure-ref _ctx48138_ '11 gx#module-context::t '#f)
+           _modules48140_)
+          (reverse (unbox _modules48140_))))))
   (begin
     (define gxc#compile-scm-file__%
-      (lambda (_path48492_ _code48493_ _phi?48494_)
+      (lambda (_path48121_ _code48122_ _phi?48123_)
         (begin
-          (gxc#verbose '"compile " _path48492_)
+          (gxc#verbose '"compile " _path48121_)
           (with-output-to-file
            (cons 'path:
-                 (cons _path48492_ (cons 'permissions: (cons '420 '()))))
+                 (cons _path48121_ (cons 'permissions: (cons '420 '()))))
            (lambda ()
              (begin
                (pretty-print
@@ -1191,195 +1191,196 @@
                                   (cons (cons 'extended-bindings '())
                                         (foldr1 cons
                                                 '()
-                                                (if _phi?48494_
+                                                (if _phi?48123_
                                                     '((inlining-limit 200))
                                                     '())))))))
-               (pretty-print _code48493_))))
+               (pretty-print _code48122_))))
           (if (gxc#current-compile-invoke-gsc)
-              (gxc#gsc-compile-file _path48492_)
+              (gxc#gsc-compile-file _path48121_)
               '#!void)
           (if (gxc#current-compile-keep-scm)
               '#!void
-              (delete-file _path48492_)))))
+              (delete-file _path48121_)))))
     (begin
       (define gxc#compile-scm-file__0
-        (lambda (_path48500_ _code48501_)
-          (let ((_phi?48503_ '#f))
-            (gxc#compile-scm-file__% _path48500_ _code48501_ _phi?48503_))))
+        (lambda (_path48129_ _code48130_)
+          (let ((_phi?48132_ '#f))
+            (gxc#compile-scm-file__% _path48129_ _code48130_ _phi?48132_))))
       (define gxc#compile-scm-file
-        (lambda _g49188_
-          (let ((_g49187_ (length _g49188_)))
-            (cond ((##fx= _g49187_ 2) (apply gxc#compile-scm-file__0 _g49188_))
-                  ((##fx= _g49187_ 3) (apply gxc#compile-scm-file__% _g49188_))
+        (lambda _g48817_
+          (let ((_g48816_ (length _g48817_)))
+            (cond ((##fx= _g48816_ 2) (apply gxc#compile-scm-file__0 _g48817_))
+                  ((##fx= _g48816_ 3) (apply gxc#compile-scm-file__% _g48817_))
                   (else
                    (##raise-wrong-number-of-arguments-exception
                     gxc#compile-scm-file
-                    _g49188_))))))))
+                    _g48817_))))))))
   (define gxc#gsc-debug-options
     (lambda ()
-      (let ((_$e48480_ (gxc#current-compile-debug)))
-        (if _$e48480_
-            ((lambda (_debug48483_)
-               (let ((_$e48485_ _debug48483_))
-                 (if (eq? 'env _$e48485_)
+      (let ((_$e48109_ (gxc#current-compile-debug)))
+        (if _$e48109_
+            ((lambda (_debug48112_)
+               (let ((_$e48114_ _debug48112_))
+                 (if (eq? 'env _$e48114_)
                      (cons '"-debug-environments" '())
-                     (if (eq? 'src _$e48485_)
+                     (if (eq? 'src _$e48114_)
                          (cons '"-debug-environments"
                                (cons '"-debug-source" '()))
-                         (if (if (eq? 'all _$e48485_) '#t (eq? '#t _$e48485_))
+                         (if (let ((_$e48117_ (eq? 'all _$e48114_)))
+                               (if _$e48117_ _$e48117_ (eq? '#t _$e48114_)))
                              (cons '"-debug" '())
                              (gxc#raise-compile-error
                               '"unknown debug option"
-                              _debug48483_))))))
-             _$e48480_)
+                              _debug48112_))))))
+             _$e48109_)
             '()))))
   (define gxc#gsc-compile-file
-    (lambda (_path48462_)
-      (let* ((_gsc-args48469_
-              (let ((_$e48464_ (gxc#current-compile-gsc-options)))
-                (if _$e48464_
-                    ((lambda (_opts48467_)
-                       (foldr1 cons (cons _path48462_ '()) _opts48467_))
-                     _$e48464_)
-                    (cons _path48462_ '()))))
-             (_gsc-args48471_
-              (foldr1 cons _gsc-args48469_ (gxc#gsc-debug-options)))
-             (_g49189_
-              (gxc#verbose '"invoke gsc " (cons 'gsc _gsc-args48471_)))
-             (_proc48474_
+    (lambda (_path48091_)
+      (let* ((_gsc-args48098_
+              (let ((_$e48093_ (gxc#current-compile-gsc-options)))
+                (if _$e48093_
+                    ((lambda (_opts48096_)
+                       (foldr1 cons (cons _path48091_ '()) _opts48096_))
+                     _$e48093_)
+                    (cons _path48091_ '()))))
+             (_gsc-args48100_
+              (foldr1 cons _gsc-args48098_ (gxc#gsc-debug-options)))
+             (_g48818_
+              (gxc#verbose '"invoke gsc " (cons 'gsc _gsc-args48100_)))
+             (_proc48103_
               (open-process
                (cons 'path:
                      (cons '"gsc"
                            (cons 'arguments:
-                                 (cons _gsc-args48471_
+                                 (cons _gsc-args48100_
                                        (cons 'stdout-redirection:
                                              (cons '#f '()))))))))
-             (_status48476_ (process-status _proc48474_)))
-        (if (zero? _status48476_)
+             (_status48105_ (process-status _proc48103_)))
+        (if (zero? _status48105_)
             '#!void
             (gxc#raise-compile-error
              '"Compilation error; gsc exit with nonzero status"
-             _path48462_
-             _status48476_)))))
+             _path48091_
+             _status48105_)))))
   (define gxc#compile-output-file
-    (lambda (_ctx48434_ _n48435_ _ext48436_)
-      (letrec ((_module-relative-path48438_
-                (lambda (_ctx48460_)
+    (lambda (_ctx48063_ _n48064_ _ext48065_)
+      (letrec ((_module-relative-path48067_
+                (lambda (_ctx48089_)
                   (path-strip-directory
                    (gxc#module-id->path-string
                     (##structure-ref
-                     _ctx48460_
+                     _ctx48089_
                      '1
                      gx#expander-context::t
                      '#f)))))
-               (_module-source-directory48439_
-                (lambda (_ctx48456_)
+               (_module-source-directory48068_
+                (lambda (_ctx48085_)
                   (path-directory
-                   (let ((_mpath48458_
+                   (let ((_mpath48087_
                           (##structure-ref
-                           _ctx48456_
+                           _ctx48085_
                            '7
                            gx#module-context::t
                            '#f)))
-                     (if (string? _mpath48458_)
-                         _mpath48458_
-                         (last _mpath48458_))))))
-               (_section-string48440_
-                (lambda (_n48454_)
-                  (if (number? _n48454_)
-                      (number->string _n48454_)
-                      (if (symbol? _n48454_)
-                          (symbol->string _n48454_)
-                          (if (string? _n48454_)
-                              _n48454_
+                     (if (string? _mpath48087_)
+                         _mpath48087_
+                         (last _mpath48087_))))))
+               (_section-string48069_
+                (lambda (_n48083_)
+                  (if (number? _n48083_)
+                      (number->string _n48083_)
+                      (if (symbol? _n48083_)
+                          (symbol->string _n48083_)
+                          (if (string? _n48083_)
+                              _n48083_
                               (gxc#raise-compile-error
                                '"Unexpected section"
-                               _n48454_))))))
-               (_file-name48441_
-                (lambda (_path48452_)
-                  (if _n48435_
+                               _n48083_))))))
+               (_file-name48070_
+                (lambda (_path48081_)
+                  (if _n48064_
                       (string-append
-                       _path48452_
+                       _path48081_
                        '"__"
-                       (_section-string48440_ _n48435_)
-                       _ext48436_)
-                      (string-append _path48452_ _ext48436_))))
-               (_file-path48442_
+                       (_section-string48069_ _n48064_)
+                       _ext48065_)
+                      (string-append _path48081_ _ext48065_))))
+               (_file-path48071_
                 (lambda ()
-                  (let ((_$e48447_ (gxc#current-compile-output-dir)))
-                    (if _$e48447_
-                        ((lambda (_outdir48450_)
+                  (let ((_$e48076_ (gxc#current-compile-output-dir)))
+                    (if _$e48076_
+                        ((lambda (_outdir48079_)
                            (path-expand
-                            (_file-name48441_
+                            (_file-name48070_
                              (gxc#module-id->path-string
                               (##structure-ref
-                               _ctx48434_
+                               _ctx48063_
                                '1
                                gx#expander-context::t
                                '#f)))
-                            _outdir48450_))
-                         _$e48447_)
+                            _outdir48079_))
+                         _$e48076_)
                         (path-expand
-                         (_file-name48441_
-                          (_module-relative-path48438_ _ctx48434_))
-                         (_module-source-directory48439_ _ctx48434_)))))))
-        (let ((_path48444_ (_file-path48442_)))
+                         (_file-name48070_
+                          (_module-relative-path48067_ _ctx48063_))
+                         (_module-source-directory48068_ _ctx48063_)))))))
+        (let ((_path48073_ (_file-path48071_)))
           (begin
-            (create-directory* (path-directory _path48444_))
-            _path48444_)))))
+            (create-directory* (path-directory _path48073_))
+            _path48073_)))))
   (define gxc#compile-static-output-file
-    (lambda (_ctx48417_)
-      (letrec ((_file-name48419_
-                (lambda (_id48432_)
-                  (string-append (gxc#static-module-name _id48432_) '".scm")))
-               (_file-path48420_
+    (lambda (_ctx48046_)
+      (letrec ((_file-name48048_
+                (lambda (_id48061_)
+                  (string-append (gxc#static-module-name _id48061_) '".scm")))
+               (_file-path48049_
                 (lambda ()
-                  (let* ((_file48425_
-                          (_file-name48419_
+                  (let* ((_file48054_
+                          (_file-name48048_
                            (##structure-ref
-                            _ctx48417_
+                            _ctx48046_
                             '1
                             gx#expander-context::t
                             '#f)))
-                         (_$e48427_ (gxc#current-compile-output-dir)))
-                    (if _$e48427_
-                        ((lambda (_outdir48430_)
+                         (_$e48056_ (gxc#current-compile-output-dir)))
+                    (if _$e48056_
+                        ((lambda (_outdir48059_)
                            (path-expand
-                            _file48425_
-                            (path-expand '"static" _outdir48430_)))
-                         _$e48427_)
-                        (path-expand _file48425_ '"static"))))))
-        (let ((_path48422_ (_file-path48420_)))
+                            _file48054_
+                            (path-expand '"static" _outdir48059_)))
+                         _$e48056_)
+                        (path-expand _file48054_ '"static"))))))
+        (let ((_path48051_ (_file-path48049_)))
           (begin
-            (create-directory* (path-directory _path48422_))
-            _path48422_)))))
+            (create-directory* (path-directory _path48051_))
+            _path48051_)))))
   (define gxc#compile-exe-output-file
-    (lambda (_ctx48404_ _opts48405_)
-      (let ((_$e48407_ (pgetq 'output-file: _opts48405_)))
-        (if _$e48407_
-            (values _$e48407_)
-            (let* ((_mod-str48410_
+    (lambda (_ctx48033_ _opts48034_)
+      (let ((_$e48036_ (pgetq 'output-file: _opts48034_)))
+        (if _$e48036_
+            (values _$e48036_)
+            (let* ((_mod-str48039_
                     (symbol->string
                      (##structure-ref
-                      _ctx48404_
+                      _ctx48033_
                       '1
                       gx#expander-context::t
                       '#f)))
-                   (_$e48412_ (string-rindex _mod-str48410_ '#\/)))
-              (if _$e48412_
-                  ((lambda (_ix48415_)
+                   (_$e48041_ (string-rindex _mod-str48039_ '#\/)))
+              (if _$e48041_
+                  ((lambda (_ix48044_)
                      (substring
-                      _mod-str48410_
-                      (fx+ _ix48415_ '1)
-                      (string-length _mod-str48410_)))
-                   _$e48412_)
-                  _mod-str48410_))))))
+                      _mod-str48039_
+                      (fx+ _ix48044_ '1)
+                      (string-length _mod-str48039_)))
+                   _$e48041_)
+                  _mod-str48039_))))))
   (define gxc#static-module-name
-    (lambda (_idstr48397_)
-      (if (string? _idstr48397_)
-          (let* ((_str48399_ (gxc#module-id->path-string _idstr48397_))
-                 (_strs48401_ (string-split _str48399_ '#\/)))
-            (string-join _strs48401_ '"__"))
-          (if (symbol? _idstr48397_)
-              (gxc#static-module-name (symbol->string _idstr48397_))
-              (error '"Bad module id" _idstr48397_))))))
+    (lambda (_idstr48026_)
+      (if (string? _idstr48026_)
+          (let* ((_str48028_ (gxc#module-id->path-string _idstr48026_))
+                 (_strs48030_ (string-split _str48028_ '#\/)))
+            (string-join _strs48030_ '"__"))
+          (if (symbol? _idstr48026_)
+              (gxc#static-module-name (symbol->string _idstr48026_))
+              (error '"Bad module id" _idstr48026_))))))

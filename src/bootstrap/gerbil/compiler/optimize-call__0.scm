@@ -3,238 +3,238 @@
   (define gxc#&optimize-call
     (make-promise
      (lambda ()
-       (let ((_tbl45333_ (make-hash-table-eq)))
+       (let ((_tbl44962_ (make-hash-table-eq)))
          (begin
-           (hash-copy! _tbl45333_ (force gxc#&basic-xform))
-           (table-set! _tbl45333_ '%#call gxc#optimize-call%)
-           _tbl45333_)))))
+           (hash-copy! _tbl44962_ (force gxc#&basic-xform))
+           (table-set! _tbl44962_ '%#call gxc#optimize-call%)
+           _tbl44962_)))))
   (define gxc#apply-optimize-call
-    (lambda (_stx45326_ . _args45328_)
+    (lambda (_stx44955_ . _args44957_)
       (call-with-parameters
-       (lambda () (apply gxc#compile-e _stx45326_ _args45328_))
+       (lambda () (apply gxc#compile-e _stx44955_ _args44957_))
        gxc#current-compile-methods
        (force gxc#&optimize-call))))
   (define gxc#optimize-call%
-    (lambda (_stx45232_)
-      (let* ((___stx4533645337_ _stx45232_)
-             (_g4523545255_
+    (lambda (_stx44861_)
+      (let* ((___stx4496544966_ _stx44861_)
+             (_g4486444884_
               (lambda ()
-                (gx#raise-syntax-error '#f '"Bad syntax" ___stx4533645337_))))
-        (let ((___kont4533845339_
-               (lambda (_L45299_ _L45300_)
-                 (let* ((_rator-id45318_ (gxc#identifier-symbol _L45300_))
-                        (_rator-type45320_
-                         (gxc#optimizer-resolve-type _rator-id45318_)))
+                (gx#raise-syntax-error '#f '"Bad syntax" ___stx4496544966_))))
+        (let ((___kont4496744968_
+               (lambda (_L44928_ _L44929_)
+                 (let* ((_rator-id44947_ (gxc#identifier-symbol _L44929_))
+                        (_rator-type44949_
+                         (gxc#optimizer-resolve-type _rator-id44947_)))
                    (if (##structure-instance-of?
-                        _rator-type45320_
+                        _rator-type44949_
                         'gxc#!procedure::t)
                        (begin
                          (gxc#verbose
                           '"optimize-call "
-                          _rator-id45318_
+                          _rator-id44947_
                           '" => "
-                          _rator-type45320_
+                          _rator-type44949_
                           '" "
                           (##structure-ref
-                           _rator-type45320_
+                           _rator-type44949_
                            '1
                            gxc#!type::t
                            '#f))
                          (call-method
-                          _rator-type45320_
+                          _rator-type44949_
                           'optimize-call
-                          _stx45232_
-                          _L45299_))
-                       (if (not _rator-type45320_)
-                           (gxc#xform-call% _stx45232_)
+                          _stx44861_
+                          _L44928_))
+                       (if (not _rator-type44949_)
+                           (gxc#xform-call% _stx44861_)
                            (gxc#raise-compile-error
                             '"Illegal application; not a procedure"
-                            _stx45232_
-                            _rator-type45320_))))))
-              (___kont4534045341_ (lambda () (gxc#xform-call% _stx45232_))))
-          (if (gx#stx-pair? ___stx4533645337_)
-              (let ((_e4523945267_ (gx#stx-e ___stx4533645337_)))
-                (let ((_tl4524145272_ (##cdr _e4523945267_))
-                      (_hd4524045270_ (##car _e4523945267_)))
-                  (if (gx#stx-pair? _tl4524145272_)
-                      (let ((_e4524245275_ (gx#stx-e _tl4524145272_)))
-                        (let ((_tl4524445280_ (##cdr _e4524245275_))
-                              (_hd4524345278_ (##car _e4524245275_)))
-                          (if (gx#stx-pair? _hd4524345278_)
-                              (let ((_e4524545283_ (gx#stx-e _hd4524345278_)))
-                                (let ((_tl4524745288_ (##cdr _e4524545283_))
-                                      (_hd4524645286_ (##car _e4524545283_)))
-                                  (if (gx#identifier? _hd4524645286_)
-                                      (if (gx#stx-eq? '%#ref _hd4524645286_)
-                                          (if (gx#stx-pair? _tl4524745288_)
-                                              (let ((_e4524845291_
+                            _stx44861_
+                            _rator-type44949_))))))
+              (___kont4496944970_ (lambda () (gxc#xform-call% _stx44861_))))
+          (if (gx#stx-pair? ___stx4496544966_)
+              (let ((_e4486844896_ (gx#stx-e ___stx4496544966_)))
+                (let ((_tl4487044901_ (##cdr _e4486844896_))
+                      (_hd4486944899_ (##car _e4486844896_)))
+                  (if (gx#stx-pair? _tl4487044901_)
+                      (let ((_e4487144904_ (gx#stx-e _tl4487044901_)))
+                        (let ((_tl4487344909_ (##cdr _e4487144904_))
+                              (_hd4487244907_ (##car _e4487144904_)))
+                          (if (gx#stx-pair? _hd4487244907_)
+                              (let ((_e4487444912_ (gx#stx-e _hd4487244907_)))
+                                (let ((_tl4487644917_ (##cdr _e4487444912_))
+                                      (_hd4487544915_ (##car _e4487444912_)))
+                                  (if (gx#identifier? _hd4487544915_)
+                                      (if (gx#stx-eq? '%#ref _hd4487544915_)
+                                          (if (gx#stx-pair? _tl4487644917_)
+                                              (let ((_e4487744920_
                                                      (gx#stx-e
-                                                      _tl4524745288_)))
-                                                (let ((_tl4525045296_
-                                                       (##cdr _e4524845291_))
-                                                      (_hd4524945294_
-                                                       (##car _e4524845291_)))
+                                                      _tl4487644917_)))
+                                                (let ((_tl4487944925_
+                                                       (##cdr _e4487744920_))
+                                                      (_hd4487844923_
+                                                       (##car _e4487744920_)))
                                                   (if (gx#stx-null?
-                                                       _tl4525045296_)
-                                                      (___kont4533845339_
-                                                       _tl4524445280_
-                                                       _hd4524945294_)
-                                                      (___kont4534045341_))))
-                                              (___kont4534045341_))
-                                          (___kont4534045341_))
-                                      (___kont4534045341_))))
-                              (___kont4534045341_))))
-                      (___kont4534045341_))))
-              (___kont4534045341_))))))
+                                                       _tl4487944925_)
+                                                      (___kont4496744968_
+                                                       _tl4487344909_
+                                                       _hd4487844923_)
+                                                      (___kont4496944970_))))
+                                              (___kont4496944970_))
+                                          (___kont4496944970_))
+                                      (___kont4496944970_))))
+                              (___kont4496944970_))))
+                      (___kont4496944970_))))
+              (___kont4496944970_))))))
   (define gxc#!struct-pred::optimize-call
-    (lambda (_self45086_ _stx45087_ _args45088_)
-      (let* ((_self4508945095_ _self45086_)
-             (_E4509145099_
-              (lambda () (error '"No clause matching" _self4508945095_)))
-             (_K4509245224_
-              (lambda (_struct-t45102_)
-                (let* ((_struct-type45104_
-                        (gxc#optimizer-resolve-type _struct-t45102_))
-                       (_struct-type4510545119_ _struct-type45104_)
-                       (_else4510845127_
+    (lambda (_self44715_ _stx44716_ _args44717_)
+      (let* ((_self4471844724_ _self44715_)
+             (_E4472044728_
+              (lambda () (error '"No clause matching" _self4471844724_)))
+             (_K4472144853_
+              (lambda (_struct-t44731_)
+                (let* ((_struct-type44733_
+                        (gxc#optimizer-resolve-type _struct-t44731_))
+                       (_struct-type4473444748_ _struct-type44733_)
+                       (_else4473744756_
                         (lambda ()
                           (gxc#raise-compile-error
                            '"Illegal struct predicate application; not a struct type"
-                           _stx45087_
-                           _struct-t45102_
-                           _struct-type45104_))))
-                  (let ((_K4511145199_
-                         (lambda (_plist45138_ _struct-type-id45139_)
-                           (let* ((___stx4537445375_ _args45088_)
-                                  (_g4514245152_
+                           _stx44716_
+                           _struct-t44731_
+                           _struct-type44733_))))
+                  (let ((_K4474044828_
+                         (lambda (_plist44767_ _struct-type-id44768_)
+                           (let* ((___stx4500345004_ _args44717_)
+                                  (_g4477144781_
                                    (lambda ()
                                      (gx#raise-syntax-error
                                       '#f
                                       '"Bad syntax"
-                                      ___stx4537445375_))))
-                             (let ((___kont4537645377_
-                                    (lambda (_L45172_)
-                                      (let ((_expr45193_
-                                             (gxc#compile-e _L45172_))
-                                            (_op45194_
-                                             (if (if _plist45138_
+                                      ___stx4500345004_))))
+                             (let ((___kont4500545006_
+                                    (lambda (_L44801_)
+                                      (let ((_expr44822_
+                                             (gxc#compile-e _L44801_))
+                                            (_op44823_
+                                             (if (if _plist44767_
                                                      (assgetq 'final:
-                                                              _plist45138_)
+                                                              _plist44767_)
                                                      '#f)
                                                  '%#struct-direct-instance?
                                                  '%#struct-instance?)))
                                         (gxc#xform-wrap-source
-                                         (cons _op45194_
+                                         (cons _op44823_
                                                (cons (cons '%#quote
-                                                           (cons _struct-type-id45139_
+                                                           (cons _struct-type-id44768_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                     (cons _expr45193_ '())))
-                                         _stx45087_))))
-                                   (___kont4537845379_
+                                                     (cons _expr44822_ '())))
+                                         _stx44716_))))
+                                   (___kont4500745008_
                                     (lambda ()
                                       (gxc#raise-compile-error
                                        '"Illegal struct predicate application"
-                                       _stx45087_))))
-                               (if (gx#stx-pair? ___stx4537445375_)
-                                   (let ((_e4514545164_
-                                          (gx#stx-e ___stx4537445375_)))
-                                     (let ((_tl4514745169_
-                                            (##cdr _e4514545164_))
-                                           (_hd4514645167_
-                                            (##car _e4514545164_)))
-                                       (if (gx#stx-null? _tl4514745169_)
-                                           (___kont4537645377_ _hd4514645167_)
-                                           (___kont4537845379_))))
-                                   (___kont4537845379_))))))
-                        (_K4511045132_
-                         (lambda () (gxc#xform-call% _stx45087_))))
-                    (let ((_try-match4510745135_
+                                       _stx44716_))))
+                               (if (gx#stx-pair? ___stx4500345004_)
+                                   (let ((_e4477444793_
+                                          (gx#stx-e ___stx4500345004_)))
+                                     (let ((_tl4477644798_
+                                            (##cdr _e4477444793_))
+                                           (_hd4477544796_
+                                            (##car _e4477444793_)))
+                                       (if (gx#stx-null? _tl4477644798_)
+                                           (___kont4500545006_ _hd4477544796_)
+                                           (___kont4500745008_))))
+                                   (___kont4500745008_))))))
+                        (_K4473944761_
+                         (lambda () (gxc#xform-call% _stx44716_))))
+                    (let ((_try-match4473644764_
                            (lambda ()
-                             (if (##eq? _struct-type4510545119_ '#f)
-                                 (_K4511045132_)
-                                 (_else4510845127_)))))
+                             (if (##eq? _struct-type4473444748_ '#f)
+                                 (_K4473944761_)
+                                 (_else4473744756_)))))
                       (if (##structure-instance-of?
-                           _struct-type4510545119_
+                           _struct-type4473444748_
                            'gxc#!struct-type::t)
-                          (let* ((_e4511245202_
-                                  (##vector-ref _struct-type4510545119_ '1))
-                                 (_e4511345207_
-                                  (##vector-ref _struct-type4510545119_ '2))
-                                 (_e4511445210_
-                                  (##vector-ref _struct-type4510545119_ '3))
-                                 (_e4511545213_
-                                  (##vector-ref _struct-type4510545119_ '4))
-                                 (_e4511645216_
-                                  (##vector-ref _struct-type4510545119_ '5))
-                                 (_e4511745219_
-                                  (##vector-ref _struct-type4510545119_ '6)))
-                            (let ((_struct-type-id45205_ _e4511245202_)
-                                  (_plist45222_ _e4511745219_))
-                              (_K4511145199_
-                               _plist45222_
-                               _struct-type-id45205_)))
-                          (_try-match4510745135_))))))))
-        (if (##structure-instance-of? _self4508945095_ 'gxc#!struct-pred::t)
-            (let* ((_e4509345227_ (##vector-ref _self4508945095_ '1))
-                   (_struct-t45230_ _e4509345227_))
-              (_K4509245224_ _struct-t45230_))
-            (_E4509145099_)))))
+                          (let* ((_e4474144831_
+                                  (##vector-ref _struct-type4473444748_ '1))
+                                 (_e4474244836_
+                                  (##vector-ref _struct-type4473444748_ '2))
+                                 (_e4474344839_
+                                  (##vector-ref _struct-type4473444748_ '3))
+                                 (_e4474444842_
+                                  (##vector-ref _struct-type4473444748_ '4))
+                                 (_e4474544845_
+                                  (##vector-ref _struct-type4473444748_ '5))
+                                 (_e4474644848_
+                                  (##vector-ref _struct-type4473444748_ '6)))
+                            (let ((_struct-type-id44834_ _e4474144831_)
+                                  (_plist44851_ _e4474644848_))
+                              (_K4474044828_
+                               _plist44851_
+                               _struct-type-id44834_)))
+                          (_try-match4473644764_))))))))
+        (if (##structure-instance-of? _self4471844724_ 'gxc#!struct-pred::t)
+            (let* ((_e4472244856_ (##vector-ref _self4471844724_ '1))
+                   (_struct-t44859_ _e4472244856_))
+              (_K4472144853_ _struct-t44859_))
+            (_E4472044728_)))))
   (bind-method!
    gxc#!struct-pred::t
    'optimize-call
    gxc#!struct-pred::optimize-call
    '#f)
   (define gxc#!struct-cons::optimize-call
-    (lambda (_self44860_ _stx44861_ _args44862_)
-      (let* ((_self4486344869_ _self44860_)
-             (_E4486544873_
-              (lambda () (error '"No clause matching" _self4486344869_)))
-             (_K4486644956_
-              (lambda (_struct-t44876_)
-                (let* ((_struct-type44878_
-                        (gxc#optimizer-resolve-type _struct-t44876_))
-                       (_struct-type4487944892_ _struct-type44878_)
-                       (_else4488244900_
+    (lambda (_self44489_ _stx44490_ _args44491_)
+      (let* ((_self4449244498_ _self44489_)
+             (_E4449444502_
+              (lambda () (error '"No clause matching" _self4449244498_)))
+             (_K4449544585_
+              (lambda (_struct-t44505_)
+                (let* ((_struct-type44507_
+                        (gxc#optimizer-resolve-type _struct-t44505_))
+                       (_struct-type4450844521_ _struct-type44507_)
+                       (_else4451144529_
                         (lambda ()
                           (gxc#raise-compile-error
                            '"Illegal struct constructor application; not a struct type"
-                           _stx44861_
-                           _struct-t44876_
-                           _struct-type44878_))))
-                  (let ((_K4488544930_
-                         (lambda (_ctor44911_
-                                  _xfields44912_
-                                  _fields44913_
-                                  _type-id44914_)
-                           (let* ((_args44916_ (map gxc#compile-e _args44862_))
-                                  (_$e44918_
-                                   (if _ctor44911_
-                                       (if _xfields44912_
+                           _stx44490_
+                           _struct-t44505_
+                           _struct-type44507_))))
+                  (let ((_K4451444559_
+                         (lambda (_ctor44540_
+                                  _xfields44541_
+                                  _fields44542_
+                                  _type-id44543_)
+                           (let* ((_args44545_ (map gxc#compile-e _args44491_))
+                                  (_$e44547_
+                                   (if _ctor44540_
+                                       (if _xfields44541_
                                            (gxc#!struct-type-lookup-method
-                                            _struct-type44878_
-                                            _ctor44911_)
+                                            _struct-type44507_
+                                            _ctor44540_)
                                            '#f)
                                        '#f)))
-                             (if _$e44918_
-                                 ((lambda (_kons44921_)
-                                    (let ((_$obj44923_
+                             (if _$e44547_
+                                 ((lambda (_kons44550_)
+                                    (let ((_$obj44552_
                                            (make-symbol (gensym '__obj))))
                                       (gxc#xform-wrap-source
                                        (cons '%#let-values
-                                             (cons (cons (cons (cons _$obj44923_
+                                             (cons (cons (cons (cons _$obj44552_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '())
                        (cons (cons '%#call
                                    (cons (cons '%#ref (cons 'make-object '()))
                                          (cons (cons '%#ref
-                                                     (cons _struct-t44876_
+                                                     (cons _struct-t44505_
                                                            '()))
                                                (cons (cons '%#quote
-                                                           (cons (fx+ _fields44913_
+                                                           (cons (fx+ _fields44542_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              _xfields44912_)
+                              _xfields44541_)
                          '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                      '()))))
@@ -246,614 +246,617 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                               (gxc#xform-wrap-source
                                (cons '%#call
-                                     (cons (cons '%#ref (cons _kons44921_ '()))
+                                     (cons (cons '%#ref (cons _kons44550_ '()))
                                            (cons (cons '%#ref
-                                                       (cons _$obj44923_ '()))
-                                                 _args44916_)))
-                               _stx44861_))
-                             (cons (cons '%#ref (cons _$obj44923_ '())) '())))
+                                                       (cons _$obj44552_ '()))
+                                                 _args44545_)))
+                               _stx44490_))
+                             (cons (cons '%#ref (cons _$obj44552_ '())) '())))
                  '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                       _stx44861_)))
-                                  _$e44918_)
-                                 (if (if _ctor44911_ '#t (not _xfields44912_))
+                                       _stx44490_)))
+                                  _$e44547_)
+                                 (if (let ((_$e44554_ _ctor44540_))
+                                       (if _$e44554_
+                                           _$e44554_
+                                           (not _xfields44541_)))
                                      (gxc#xform-wrap-source
                                       (cons '%#call
                                             (cons (cons '%#ref
                                                         (cons 'make-struct-instance
                                                               '()))
                                                   (cons (cons '%#ref
-                                                              (cons _struct-t44876_
+                                                              (cons _struct-t44505_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '()))
-                _args44916_)))
+                _args44545_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                      _stx44861_)
-                                     (let ((_arity44928_
-                                            (fx+ _fields44913_
-                                                 _xfields44912_)))
-                                       (if (fx= _arity44928_
-                                                (length _args44916_))
+                                      _stx44490_)
+                                     (let ((_arity44557_
+                                            (fx+ _fields44542_
+                                                 _xfields44541_)))
+                                       (if (fx= _arity44557_
+                                                (length _args44545_))
                                            (gxc#xform-wrap-source
                                             (cons '%#call
                                                   (cons (cons '%#ref
                                                               (cons '##structure
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '()))
-                (cons (cons '%#ref (cons _struct-t44876_ '())) _args44916_)))
+                (cons (cons '%#ref (cons _struct-t44505_ '())) _args44545_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            _stx44861_)
+                                            _stx44490_)
                                            (gxc#raise-compile-error
                                             '"Illegal struct constructor application; arity mismatch"
-                                            _stx44861_
-                                            _struct-t44876_
-                                            _arity44928_))))))))
-                        (_K4488444905_
+                                            _stx44490_
+                                            _struct-t44505_
+                                            _arity44557_))))))))
+                        (_K4451344534_
                          (lambda ()
                            (begin
                              (gxc#verbose
                               '"cannot inline struct constructor; unknown struct type "
-                              _struct-t44876_)
-                             (gxc#xform-call% _stx44861_)))))
-                    (let ((_try-match4488144908_
+                              _struct-t44505_)
+                             (gxc#xform-call% _stx44490_)))))
+                    (let ((_try-match4451044537_
                            (lambda ()
-                             (if (##eq? _struct-type4487944892_ '#f)
-                                 (_K4488444905_)
-                                 (_else4488244900_)))))
+                             (if (##eq? _struct-type4450844521_ '#f)
+                                 (_K4451344534_)
+                                 (_else4451144529_)))))
                       (if (##structure-instance-of?
-                           _struct-type4487944892_
+                           _struct-type4450844521_
                            'gxc#!struct-type::t)
-                          (let* ((_e4488644933_
-                                  (##vector-ref _struct-type4487944892_ '1))
-                                 (_e4488744938_
-                                  (##vector-ref _struct-type4487944892_ '2))
-                                 (_e4488844941_
-                                  (##vector-ref _struct-type4487944892_ '3))
-                                 (_e4488944946_
-                                  (##vector-ref _struct-type4487944892_ '4))
-                                 (_e4489044951_
-                                  (##vector-ref _struct-type4487944892_ '5)))
-                            (let ((_type-id44936_ _e4488644933_)
-                                  (_fields44944_ _e4488844941_)
-                                  (_xfields44949_ _e4488944946_)
-                                  (_ctor44954_ _e4489044951_))
-                              (_K4488544930_
-                               _ctor44954_
-                               _xfields44949_
-                               _fields44944_
-                               _type-id44936_)))
-                          (_try-match4488144908_))))))))
-        (if (##structure-instance-of? _self4486344869_ 'gxc#!struct-cons::t)
-            (let* ((_e4486744959_ (##vector-ref _self4486344869_ '1))
-                   (_struct-t44962_ _e4486744959_))
-              (_K4486644956_ _struct-t44962_))
-            (_E4486544873_)))))
+                          (let* ((_e4451544562_
+                                  (##vector-ref _struct-type4450844521_ '1))
+                                 (_e4451644567_
+                                  (##vector-ref _struct-type4450844521_ '2))
+                                 (_e4451744570_
+                                  (##vector-ref _struct-type4450844521_ '3))
+                                 (_e4451844575_
+                                  (##vector-ref _struct-type4450844521_ '4))
+                                 (_e4451944580_
+                                  (##vector-ref _struct-type4450844521_ '5)))
+                            (let ((_type-id44565_ _e4451544562_)
+                                  (_fields44573_ _e4451744570_)
+                                  (_xfields44578_ _e4451844575_)
+                                  (_ctor44583_ _e4451944580_))
+                              (_K4451444559_
+                               _ctor44583_
+                               _xfields44578_
+                               _fields44573_
+                               _type-id44565_)))
+                          (_try-match4451044537_))))))))
+        (if (##structure-instance-of? _self4449244498_ 'gxc#!struct-cons::t)
+            (let* ((_e4449644588_ (##vector-ref _self4449244498_ '1))
+                   (_struct-t44591_ _e4449644588_))
+              (_K4449544585_ _struct-t44591_))
+            (_E4449444502_)))))
   (bind-method!
    gxc#!struct-cons::t
    'optimize-call
    gxc#!struct-cons::optimize-call
    '#f)
   (define gxc#!struct-getf::optimize-call
-    (lambda (_self44571_ _stx44572_ _args44573_)
-      (let* ((_self4457444582_ _self44571_)
-             (_E4457644586_
-              (lambda () (error '"No clause matching" _self4457444582_)))
-             (_K4457744720_
-              (lambda (_unchecked?44589_ _off44590_ _struct-t44591_)
-                (let* ((_struct-type44593_
-                        (gxc#optimizer-resolve-type _struct-t44591_))
-                       (_struct-type4459444608_ _struct-type44593_)
-                       (_else4459744616_
+    (lambda (_self44200_ _stx44201_ _args44202_)
+      (let* ((_self4420344211_ _self44200_)
+             (_E4420544215_
+              (lambda () (error '"No clause matching" _self4420344211_)))
+             (_K4420644349_
+              (lambda (_unchecked?44218_ _off44219_ _struct-t44220_)
+                (let* ((_struct-type44222_
+                        (gxc#optimizer-resolve-type _struct-t44220_))
+                       (_struct-type4422344237_ _struct-type44222_)
+                       (_else4422644245_
                         (lambda ()
                           (gxc#raise-compile-error
                            '"Illegal struct predicate application; not a struct type"
-                           _stx44572_
-                           _struct-t44591_
-                           _struct-type44593_))))
-                  (let ((_K4460044691_
-                         (lambda (_plist44627_
-                                  _xfields44628_
-                                  _fields44629_
-                                  _struct-type-id44630_)
-                           (if _xfields44628_
-                               (let* ((___stx4542245423_ _args44573_)
-                                      (_g4463344643_
+                           _stx44201_
+                           _struct-t44220_
+                           _struct-type44222_))))
+                  (let ((_K4422944320_
+                         (lambda (_plist44256_
+                                  _xfields44257_
+                                  _fields44258_
+                                  _struct-type-id44259_)
+                           (if _xfields44257_
+                               (let* ((___stx4505145052_ _args44202_)
+                                      (_g4426244272_
                                        (lambda ()
                                          (gx#raise-syntax-error
                                           '#f
                                           '"Bad syntax"
-                                          ___stx4542245423_))))
-                                 (let ((___kont4542445425_
-                                        (lambda (_L44663_)
-                                          (let ((_expr44684_
-                                                 (gxc#compile-e _L44663_))
-                                                (_off44685_
-                                                 (fx+ _off44590_
-                                                      _xfields44628_
+                                          ___stx4505145052_))))
+                                 (let ((___kont4505345054_
+                                        (lambda (_L44292_)
+                                          (let ((_expr44313_
+                                                 (gxc#compile-e _L44292_))
+                                                (_off44314_
+                                                 (fx+ _off44219_
+                                                      _xfields44257_
                                                       '1))
-                                                (_op44686_
-                                                 (if _unchecked?44589_
+                                                (_op44315_
+                                                 (if _unchecked?44218_
                                                      '%#struct-unchecked-ref
-                                                     (if (if _plist44627_
+                                                     (if (if _plist44256_
                                                              (assgetq 'final:
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              _plist44627_)
+                              _plist44256_)
                      '#f)
                  '%#struct-direct-ref
                  '%#struct-ref))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                             (gxc#xform-wrap-source
-                                             (cons _op44686_
+                                             (cons _op44315_
                                                    (cons (cons '%#ref
-                                                               (cons _struct-t44591_
+                                                               (cons _struct-t44220_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '()))
-                 (cons (cons '%#quote (cons _off44685_ '()))
-                       (cons _expr44684_ '()))))
+                 (cons (cons '%#quote (cons _off44314_ '()))
+                       (cons _expr44313_ '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                             _stx44572_))))
-                                       (___kont4542645427_
+                                             _stx44201_))))
+                                       (___kont4505545056_
                                         (lambda ()
                                           (gxc#raise-compile-error
                                            '"Illegal struct accessor application"
-                                           _stx44572_))))
-                                   (if (gx#stx-pair? ___stx4542245423_)
-                                       (let ((_e4463644655_
-                                              (gx#stx-e ___stx4542245423_)))
-                                         (let ((_tl4463844660_
-                                                (##cdr _e4463644655_))
-                                               (_hd4463744658_
-                                                (##car _e4463644655_)))
-                                           (if (gx#stx-null? _tl4463844660_)
-                                               (___kont4542445425_
-                                                _hd4463744658_)
-                                               (___kont4542645427_))))
-                                       (___kont4542645427_))))
+                                           _stx44201_))))
+                                   (if (gx#stx-pair? ___stx4505145052_)
+                                       (let ((_e4426544284_
+                                              (gx#stx-e ___stx4505145052_)))
+                                         (let ((_tl4426744289_
+                                                (##cdr _e4426544284_))
+                                               (_hd4426644287_
+                                                (##car _e4426544284_)))
+                                           (if (gx#stx-null? _tl4426744289_)
+                                               (___kont4505345054_
+                                                _hd4426644287_)
+                                               (___kont4505545056_))))
+                                       (___kont4505545056_))))
                                (begin
                                  (gxc#verbose
                                   '"struct-getf: incomplete struct "
-                                  _struct-type-id44630_)
-                                 (gxc#xform-call% _stx44572_)))))
-                        (_K4459944621_
-                         (lambda () (gxc#xform-call% _stx44572_))))
-                    (let ((_try-match4459644624_
+                                  _struct-type-id44259_)
+                                 (gxc#xform-call% _stx44201_)))))
+                        (_K4422844250_
+                         (lambda () (gxc#xform-call% _stx44201_))))
+                    (let ((_try-match4422544253_
                            (lambda ()
-                             (if (##eq? _struct-type4459444608_ '#f)
-                                 (_K4459944621_)
-                                 (_else4459744616_)))))
+                             (if (##eq? _struct-type4422344237_ '#f)
+                                 (_K4422844250_)
+                                 (_else4422644245_)))))
                       (if (##structure-instance-of?
-                           _struct-type4459444608_
+                           _struct-type4422344237_
                            'gxc#!struct-type::t)
-                          (let* ((_e4460144694_
-                                  (##vector-ref _struct-type4459444608_ '1))
-                                 (_e4460244699_
-                                  (##vector-ref _struct-type4459444608_ '2))
-                                 (_e4460344702_
-                                  (##vector-ref _struct-type4459444608_ '3))
-                                 (_e4460444707_
-                                  (##vector-ref _struct-type4459444608_ '4))
-                                 (_e4460544712_
-                                  (##vector-ref _struct-type4459444608_ '5))
-                                 (_e4460644715_
-                                  (##vector-ref _struct-type4459444608_ '6)))
-                            (let ((_struct-type-id44697_ _e4460144694_)
-                                  (_fields44705_ _e4460344702_)
-                                  (_xfields44710_ _e4460444707_)
-                                  (_plist44718_ _e4460644715_))
-                              (_K4460044691_
-                               _plist44718_
-                               _xfields44710_
-                               _fields44705_
-                               _struct-type-id44697_)))
-                          (_try-match4459644624_))))))))
-        (if (##structure-instance-of? _self4457444582_ 'gxc#!struct-getf::t)
-            (let* ((_e4457844723_ (##vector-ref _self4457444582_ '1))
-                   (_struct-t44726_ _e4457844723_)
-                   (_e4457944728_ (##vector-ref _self4457444582_ '2))
-                   (_off44731_ _e4457944728_)
-                   (_e4458044733_ (##vector-ref _self4457444582_ '3))
-                   (_unchecked?44736_ _e4458044733_))
-              (_K4457744720_ _unchecked?44736_ _off44731_ _struct-t44726_))
-            (_E4457644586_)))))
+                          (let* ((_e4423044323_
+                                  (##vector-ref _struct-type4422344237_ '1))
+                                 (_e4423144328_
+                                  (##vector-ref _struct-type4422344237_ '2))
+                                 (_e4423244331_
+                                  (##vector-ref _struct-type4422344237_ '3))
+                                 (_e4423344336_
+                                  (##vector-ref _struct-type4422344237_ '4))
+                                 (_e4423444341_
+                                  (##vector-ref _struct-type4422344237_ '5))
+                                 (_e4423544344_
+                                  (##vector-ref _struct-type4422344237_ '6)))
+                            (let ((_struct-type-id44326_ _e4423044323_)
+                                  (_fields44334_ _e4423244331_)
+                                  (_xfields44339_ _e4423344336_)
+                                  (_plist44347_ _e4423544344_))
+                              (_K4422944320_
+                               _plist44347_
+                               _xfields44339_
+                               _fields44334_
+                               _struct-type-id44326_)))
+                          (_try-match4422544253_))))))))
+        (if (##structure-instance-of? _self4420344211_ 'gxc#!struct-getf::t)
+            (let* ((_e4420744352_ (##vector-ref _self4420344211_ '1))
+                   (_struct-t44355_ _e4420744352_)
+                   (_e4420844357_ (##vector-ref _self4420344211_ '2))
+                   (_off44360_ _e4420844357_)
+                   (_e4420944362_ (##vector-ref _self4420344211_ '3))
+                   (_unchecked?44365_ _e4420944362_))
+              (_K4420644349_ _unchecked?44365_ _off44360_ _struct-t44355_))
+            (_E4420544215_)))))
   (bind-method!
    gxc#!struct-getf::t
    'optimize-call
    gxc#!struct-getf::optimize-call
    '#f)
   (define gxc#!struct-setf::optimize-call
-    (lambda (_self44265_ _stx44266_ _args44267_)
-      (let* ((_self4426844276_ _self44265_)
-             (_E4427044280_
-              (lambda () (error '"No clause matching" _self4426844276_)))
-             (_K4427144431_
-              (lambda (_unchecked?44283_ _off44284_ _struct-t44285_)
-                (let* ((_struct-type44287_
-                        (gxc#optimizer-resolve-type _struct-t44285_))
-                       (_struct-type4428844302_ _struct-type44287_)
-                       (_else4429144310_
+    (lambda (_self43894_ _stx43895_ _args43896_)
+      (let* ((_self4389743905_ _self43894_)
+             (_E4389943909_
+              (lambda () (error '"No clause matching" _self4389743905_)))
+             (_K4390044060_
+              (lambda (_unchecked?43912_ _off43913_ _struct-t43914_)
+                (let* ((_struct-type43916_
+                        (gxc#optimizer-resolve-type _struct-t43914_))
+                       (_struct-type4391743931_ _struct-type43916_)
+                       (_else4392043939_
                         (lambda ()
                           (gxc#raise-compile-error
                            '"Illegal struct predicate application; not a struct type"
-                           _stx44266_
-                           _struct-t44285_
-                           _struct-type44287_))))
-                  (let ((_K4429444402_
-                         (lambda (_plist44321_
-                                  _xfields44322_
-                                  _fields44323_
-                                  _struct-type-id44324_)
-                           (if _xfields44322_
-                               (let* ((___stx4545545456_ _args44267_)
-                                      (_g4432744341_
+                           _stx43895_
+                           _struct-t43914_
+                           _struct-type43916_))))
+                  (let ((_K4392344031_
+                         (lambda (_plist43950_
+                                  _xfields43951_
+                                  _fields43952_
+                                  _struct-type-id43953_)
+                           (if _xfields43951_
+                               (let* ((___stx4508445085_ _args43896_)
+                                      (_g4395643970_
                                        (lambda ()
                                          (gx#raise-syntax-error
                                           '#f
                                           '"Bad syntax"
-                                          ___stx4545545456_))))
-                                 (let ((___kont4545745458_
-                                        (lambda (_L44369_ _L44370_)
-                                          (let ((_expr44394_
-                                                 (gxc#compile-e _L44370_))
-                                                (_val44395_
-                                                 (gxc#compile-e _L44369_))
-                                                (_off44396_
-                                                 (fx+ _off44284_
-                                                      _xfields44322_
+                                          ___stx4508445085_))))
+                                 (let ((___kont4508645087_
+                                        (lambda (_L43998_ _L43999_)
+                                          (let ((_expr44023_
+                                                 (gxc#compile-e _L43999_))
+                                                (_val44024_
+                                                 (gxc#compile-e _L43998_))
+                                                (_off44025_
+                                                 (fx+ _off43913_
+                                                      _xfields43951_
                                                       '1))
-                                                (_op44397_
-                                                 (if _unchecked?44283_
+                                                (_op44026_
+                                                 (if _unchecked?43912_
                                                      '%#struct-unchecked-set!
-                                                     (if (if _plist44321_
+                                                     (if (if _plist43950_
                                                              (assgetq 'final:
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                              _plist44321_)
+                              _plist43950_)
                      '#f)
                  '%#struct-direct-set!
                  '%#struct-set!))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                             (gxc#xform-wrap-source
-                                             (cons _op44397_
+                                             (cons _op44026_
                                                    (cons (cons '%#ref
-                                                               (cons _struct-t44285_
+                                                               (cons _struct-t43914_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              '()))
-                 (cons (cons '%#quote (cons _off44396_ '()))
-                       (cons _expr44394_ (cons _val44395_ '())))))
+                 (cons (cons '%#quote (cons _off44025_ '()))
+                       (cons _expr44023_ (cons _val44024_ '())))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                             _stx44266_))))
-                                       (___kont4545945460_
+                                             _stx43895_))))
+                                       (___kont4508845089_
                                         (lambda ()
                                           (gxc#raise-compile-error
                                            '"Illegal struct mutator application"
-                                           _stx44266_))))
-                                   (if (gx#stx-pair? ___stx4545545456_)
-                                       (let ((_e4433144353_
-                                              (gx#stx-e ___stx4545545456_)))
-                                         (let ((_tl4433344358_
-                                                (##cdr _e4433144353_))
-                                               (_hd4433244356_
-                                                (##car _e4433144353_)))
-                                           (if (gx#stx-pair? _tl4433344358_)
-                                               (let ((_e4433444361_
+                                           _stx43895_))))
+                                   (if (gx#stx-pair? ___stx4508445085_)
+                                       (let ((_e4396043982_
+                                              (gx#stx-e ___stx4508445085_)))
+                                         (let ((_tl4396243987_
+                                                (##cdr _e4396043982_))
+                                               (_hd4396143985_
+                                                (##car _e4396043982_)))
+                                           (if (gx#stx-pair? _tl4396243987_)
+                                               (let ((_e4396343990_
                                                       (gx#stx-e
-                                                       _tl4433344358_)))
-                                                 (let ((_tl4433644366_
-                                                        (##cdr _e4433444361_))
-                                                       (_hd4433544364_
-                                                        (##car _e4433444361_)))
+                                                       _tl4396243987_)))
+                                                 (let ((_tl4396543995_
+                                                        (##cdr _e4396343990_))
+                                                       (_hd4396443993_
+                                                        (##car _e4396343990_)))
                                                    (if (gx#stx-null?
-                                                        _tl4433644366_)
-                                                       (___kont4545745458_
-                                                        _hd4433544364_
-                                                        _hd4433244356_)
-                                                       (___kont4545945460_))))
-                                               (___kont4545945460_))))
-                                       (___kont4545945460_))))
+                                                        _tl4396543995_)
+                                                       (___kont4508645087_
+                                                        _hd4396443993_
+                                                        _hd4396143985_)
+                                                       (___kont4508845089_))))
+                                               (___kont4508845089_))))
+                                       (___kont4508845089_))))
                                (begin
                                  (gxc#verbose
                                   '"struct-setf: incomplete struct "
-                                  _struct-type-id44324_)
-                                 (gxc#xform-call% _stx44266_)))))
-                        (_K4429344315_
-                         (lambda () (gxc#xform-call% _stx44266_))))
-                    (let ((_try-match4429044318_
+                                  _struct-type-id43953_)
+                                 (gxc#xform-call% _stx43895_)))))
+                        (_K4392243944_
+                         (lambda () (gxc#xform-call% _stx43895_))))
+                    (let ((_try-match4391943947_
                            (lambda ()
-                             (if (##eq? _struct-type4428844302_ '#f)
-                                 (_K4429344315_)
-                                 (_else4429144310_)))))
+                             (if (##eq? _struct-type4391743931_ '#f)
+                                 (_K4392243944_)
+                                 (_else4392043939_)))))
                       (if (##structure-instance-of?
-                           _struct-type4428844302_
+                           _struct-type4391743931_
                            'gxc#!struct-type::t)
-                          (let* ((_e4429544405_
-                                  (##vector-ref _struct-type4428844302_ '1))
-                                 (_e4429644410_
-                                  (##vector-ref _struct-type4428844302_ '2))
-                                 (_e4429744413_
-                                  (##vector-ref _struct-type4428844302_ '3))
-                                 (_e4429844418_
-                                  (##vector-ref _struct-type4428844302_ '4))
-                                 (_e4429944423_
-                                  (##vector-ref _struct-type4428844302_ '5))
-                                 (_e4430044426_
-                                  (##vector-ref _struct-type4428844302_ '6)))
-                            (let ((_struct-type-id44408_ _e4429544405_)
-                                  (_fields44416_ _e4429744413_)
-                                  (_xfields44421_ _e4429844418_)
-                                  (_plist44429_ _e4430044426_))
-                              (_K4429444402_
-                               _plist44429_
-                               _xfields44421_
-                               _fields44416_
-                               _struct-type-id44408_)))
-                          (_try-match4429044318_))))))))
-        (if (##structure-instance-of? _self4426844276_ 'gxc#!struct-setf::t)
-            (let* ((_e4427244434_ (##vector-ref _self4426844276_ '1))
-                   (_struct-t44437_ _e4427244434_)
-                   (_e4427344439_ (##vector-ref _self4426844276_ '2))
-                   (_off44442_ _e4427344439_)
-                   (_e4427444444_ (##vector-ref _self4426844276_ '3))
-                   (_unchecked?44447_ _e4427444444_))
-              (_K4427144431_ _unchecked?44447_ _off44442_ _struct-t44437_))
-            (_E4427044280_)))))
+                          (let* ((_e4392444034_
+                                  (##vector-ref _struct-type4391743931_ '1))
+                                 (_e4392544039_
+                                  (##vector-ref _struct-type4391743931_ '2))
+                                 (_e4392644042_
+                                  (##vector-ref _struct-type4391743931_ '3))
+                                 (_e4392744047_
+                                  (##vector-ref _struct-type4391743931_ '4))
+                                 (_e4392844052_
+                                  (##vector-ref _struct-type4391743931_ '5))
+                                 (_e4392944055_
+                                  (##vector-ref _struct-type4391743931_ '6)))
+                            (let ((_struct-type-id44037_ _e4392444034_)
+                                  (_fields44045_ _e4392644042_)
+                                  (_xfields44050_ _e4392744047_)
+                                  (_plist44058_ _e4392944055_))
+                              (_K4392344031_
+                               _plist44058_
+                               _xfields44050_
+                               _fields44045_
+                               _struct-type-id44037_)))
+                          (_try-match4391943947_))))))))
+        (if (##structure-instance-of? _self4389743905_ 'gxc#!struct-setf::t)
+            (let* ((_e4390144063_ (##vector-ref _self4389743905_ '1))
+                   (_struct-t44066_ _e4390144063_)
+                   (_e4390244068_ (##vector-ref _self4389743905_ '2))
+                   (_off44071_ _e4390244068_)
+                   (_e4390344073_ (##vector-ref _self4389743905_ '3))
+                   (_unchecked?44076_ _e4390344073_))
+              (_K4390044060_ _unchecked?44076_ _off44071_ _struct-t44066_))
+            (_E4389943909_)))))
   (bind-method!
    gxc#!struct-setf::t
    'optimize-call
    gxc#!struct-setf::optimize-call
    '#f)
   (define gxc#!lambda::optimize-call
-    (lambda (_self44099_ _stx44100_ _args44101_)
-      (let* ((_self4410244111_ _self44099_)
-             (_E4410444115_
-              (lambda () (error '"No clause matching" _self4410244111_)))
-             (_K4410544122_
-              (lambda (_inline44118_ _dispatch44119_ _arity44120_)
+    (lambda (_self43728_ _stx43729_ _args43730_)
+      (let* ((_self4373143740_ _self43728_)
+             (_E4373343744_
+              (lambda () (error '"No clause matching" _self4373143740_)))
+             (_K4373443751_
+              (lambda (_inline43747_ _dispatch43748_ _arity43749_)
                 (begin
-                  (if (gxc#!lambda-arity-match? _self44099_ _args44101_)
+                  (if (gxc#!lambda-arity-match? _self43728_ _args43730_)
                       '#!void
                       (gxc#raise-compile-error
                        '"Illegal lambda application; arity mismatch"
-                       _stx44100_
-                       _arity44120_))
-                  (if _inline44118_
+                       _stx43729_
+                       _arity43749_))
+                  (if _inline43747_
                       (begin
                         (gxc#verbose '"inline lambda")
                         (gxc#compile-e
                          (gxc#xform-wrap-source
-                          (_inline44118_ _stx44100_)
-                          _stx44100_)))
-                      (if _dispatch44119_
+                          (_inline43747_ _stx43729_)
+                          _stx43729_)))
+                      (if _dispatch43748_
                           (begin
                             (gxc#verbose
                              '"dispatch lambda => "
-                             _dispatch44119_)
+                             _dispatch43748_)
                             (gxc#compile-e
                              (gxc#xform-wrap-source
                               (cons '%#call
                                     (cons (cons '%#ref
-                                                (cons _dispatch44119_ '()))
-                                          _args44101_))
-                              _stx44100_)))
-                          (gxc#xform-call% _stx44100_)))))))
-        (if (##structure-instance-of? _self4410244111_ 'gxc#!lambda::t)
-            (let* ((_e4410644125_ (##vector-ref _self4410244111_ '1))
-                   (_e4410744128_ (##vector-ref _self4410244111_ '2))
-                   (_arity44131_ _e4410744128_)
-                   (_e4410844133_ (##vector-ref _self4410244111_ '3))
-                   (_dispatch44136_ _e4410844133_)
-                   (_e4410944138_ (##vector-ref _self4410244111_ '4))
-                   (_inline44141_ _e4410944138_))
-              (_K4410544122_ _inline44141_ _dispatch44136_ _arity44131_))
-            (_E4410444115_)))))
+                                                (cons _dispatch43748_ '()))
+                                          _args43730_))
+                              _stx43729_)))
+                          (gxc#xform-call% _stx43729_)))))))
+        (if (##structure-instance-of? _self4373143740_ 'gxc#!lambda::t)
+            (let* ((_e4373543754_ (##vector-ref _self4373143740_ '1))
+                   (_e4373643757_ (##vector-ref _self4373143740_ '2))
+                   (_arity43760_ _e4373643757_)
+                   (_e4373743762_ (##vector-ref _self4373143740_ '3))
+                   (_dispatch43765_ _e4373743762_)
+                   (_e4373843767_ (##vector-ref _self4373143740_ '4))
+                   (_inline43770_ _e4373843767_))
+              (_K4373443751_ _inline43770_ _dispatch43765_ _arity43760_))
+            (_E4373343744_)))))
   (bind-method! gxc#!lambda::t 'optimize-call gxc#!lambda::optimize-call '#f)
   (define gxc#!case-lambda::optimize-call
-    (lambda (_self43938_ _stx43939_ _args43940_)
-      (let* ((_self4394143948_ _self43938_)
-             (_E4394343952_
-              (lambda () (error '"No clause matching" _self4394143948_)))
-             (_K4394443966_
-              (lambda (_clauses43955_)
-                (let ((_$e43961_
-                       (find (lambda (_g4395643958_)
+    (lambda (_self43567_ _stx43568_ _args43569_)
+      (let* ((_self4357043577_ _self43567_)
+             (_E4357243581_
+              (lambda () (error '"No clause matching" _self4357043577_)))
+             (_K4357343595_
+              (lambda (_clauses43584_)
+                (let ((_$e43590_
+                       (find (lambda (_g4358543587_)
                                (gxc#!lambda-arity-match?
-                                _g4395643958_
-                                _args43940_))
-                             _clauses43955_)))
-                  (if _$e43961_
-                      ((lambda (_clause43964_)
+                                _g4358543587_
+                                _args43569_))
+                             _clauses43584_)))
+                  (if _$e43590_
+                      ((lambda (_clause43593_)
                          (call-method
-                          _clause43964_
+                          _clause43593_
                           'optimize-call
-                          _stx43939_
-                          _args43940_))
-                       _$e43961_)
+                          _stx43568_
+                          _args43569_))
+                       _$e43590_)
                       (gxc#raise-compile-error
                        '"Illegal case-lambda application; arity mismatch"
-                       _stx43939_
-                       (map gxc#!lambda-arity _clauses43955_)))))))
-        (if (##structure-instance-of? _self4394143948_ 'gxc#!case-lambda::t)
-            (let* ((_e4394543969_ (##vector-ref _self4394143948_ '1))
-                   (_e4394643972_ (##vector-ref _self4394143948_ '2))
-                   (_clauses43975_ _e4394643972_))
-              (_K4394443966_ _clauses43975_))
-            (_E4394343952_)))))
+                       _stx43568_
+                       (map gxc#!lambda-arity _clauses43584_)))))))
+        (if (##structure-instance-of? _self4357043577_ 'gxc#!case-lambda::t)
+            (let* ((_e4357443598_ (##vector-ref _self4357043577_ '1))
+                   (_e4357543601_ (##vector-ref _self4357043577_ '2))
+                   (_clauses43604_ _e4357543601_))
+              (_K4357343595_ _clauses43604_))
+            (_E4357243581_)))))
   (bind-method!
    gxc#!case-lambda::t
    'optimize-call
    gxc#!case-lambda::optimize-call
    '#f)
   (define gxc#!lambda-arity-match?
-    (lambda (_self43752_ _args43753_)
-      (let* ((_self4375443761_ _self43752_)
-             (_E4375643765_
-              (lambda () (error '"No clause matching" _self4375443761_)))
-             (_K4375743805_
-              (lambda (_arity43768_)
-                (let* ((_arity4376943778_ _arity43768_)
-                       (_E4377243782_
+    (lambda (_self43381_ _args43382_)
+      (let* ((_self4338343390_ _self43381_)
+             (_E4338543394_
+              (lambda () (error '"No clause matching" _self4338343390_)))
+             (_K4338643434_
+              (lambda (_arity43397_)
+                (let* ((_arity4339843407_ _arity43397_)
+                       (_E4340143411_
                         (lambda ()
-                          (error '"No clause matching" _arity4376943778_))))
-                  (let ((_K4377643802_
-                         (lambda () (fx= (length _args43753_) _arity43768_)))
-                        (_K4377343788_
-                         (lambda (_arity43786_)
-                           (fx>= (length _args43753_) _arity43786_))))
-                    (let ((_try-match4377143798_
+                          (error '"No clause matching" _arity4339843407_))))
+                  (let ((_K4340543431_
+                         (lambda () (fx= (length _args43382_) _arity43397_)))
+                        (_K4340243417_
+                         (lambda (_arity43415_)
+                           (fx>= (length _args43382_) _arity43415_))))
+                    (let ((_try-match4340043427_
                            (lambda ()
-                             (if (##pair? _arity4376943778_)
-                                 (let ((_tl4377543793_
-                                        (##cdr _arity4376943778_))
-                                       (_hd4377443791_
-                                        (##car _arity4376943778_)))
-                                   (if (##null? _tl4377543793_)
-                                       (let ((_arity43796_ _hd4377443791_))
-                                         (_K4377343788_ _arity43796_))
-                                       (_E4377243782_)))
-                                 (_E4377243782_)))))
-                      (if (fixnum? _arity4376943778_)
-                          (_K4377643802_)
-                          (_try-match4377143798_))))))))
-        (if (##structure-instance-of? _self4375443761_ 'gxc#!lambda::t)
-            (let* ((_e4375843808_ (##vector-ref _self4375443761_ '1))
-                   (_e4375943811_ (##vector-ref _self4375443761_ '2))
-                   (_arity43814_ _e4375943811_))
-              (_K4375743805_ _arity43814_))
-            (_E4375643765_)))))
+                             (if (##pair? _arity4339843407_)
+                                 (let ((_tl4340443422_
+                                        (##cdr _arity4339843407_))
+                                       (_hd4340343420_
+                                        (##car _arity4339843407_)))
+                                   (if (##null? _tl4340443422_)
+                                       (let ((_arity43425_ _hd4340343420_))
+                                         (_K4340243417_ _arity43425_))
+                                       (_E4340143411_)))
+                                 (_E4340143411_)))))
+                      (if (fixnum? _arity4339843407_)
+                          (_K4340543431_)
+                          (_try-match4340043427_))))))))
+        (if (##structure-instance-of? _self4338343390_ 'gxc#!lambda::t)
+            (let* ((_e4338743437_ (##vector-ref _self4338343390_ '1))
+                   (_e4338843440_ (##vector-ref _self4338343390_ '2))
+                   (_arity43443_ _e4338843440_))
+              (_K4338643434_ _arity43443_))
+            (_E4338543394_)))))
   (define gxc#!kw-lambda::optimize-call
-    (lambda (_self43637_ _stx43638_ _args43639_)
-      (let* ((_self4364043648_ _self43637_)
-             (_E4364243652_
-              (lambda () (error '"No clause matching" _self4364043648_)))
-             (_K4364343736_
-              (lambda (_dispatch43655_ _table43656_)
-                (let* ((_g4365743666_
-                        (gxc#optimizer-lookup-type _dispatch43655_))
-                       (_else4365943674_
+    (lambda (_self43266_ _stx43267_ _args43268_)
+      (let* ((_self4326943277_ _self43266_)
+             (_E4327143281_
+              (lambda () (error '"No clause matching" _self4326943277_)))
+             (_K4327243365_
+              (lambda (_dispatch43284_ _table43285_)
+                (let* ((_g4328643295_
+                        (gxc#optimizer-lookup-type _dispatch43284_))
+                       (_else4328843303_
                         (lambda ()
                           (begin
                             (gxc#verbose
                              '"unknown keyword dispatch lambda "
-                             _dispatch43655_)
-                            (gxc#xform-call% _stx43638_))))
-                       (_K4366143720_
-                        (lambda (_main43677_ _keys43678_)
-                          (let ((_g45620_
+                             _dispatch43284_)
+                            (gxc#xform-call% _stx43267_))))
+                       (_K4329043349_
+                        (lambda (_main43306_ _keys43307_)
+                          (let ((_g45249_
                                  (gxc#!kw-lambda-split-args
-                                  _stx43638_
-                                  _args43639_)))
+                                  _stx43267_
+                                  _args43268_)))
                             (begin
-                              (let ((_g45621_
-                                     (if (##values? _g45620_)
-                                         (##vector-length _g45620_)
+                              (let ((_g45250_
+                                     (if (##values? _g45249_)
+                                         (##vector-length _g45249_)
                                          1)))
-                                (if (not (##fx= _g45621_ 2))
+                                (if (not (##fx= _g45250_ 2))
                                     (error "Context expects 2 values"
-                                           _g45621_)))
-                              (let ((_pargs43680_ (##vector-ref _g45620_ 0))
-                                    (_kwargs43681_ (##vector-ref _g45620_ 1)))
+                                           _g45250_)))
+                              (let ((_pargs43309_ (##vector-ref _g45249_ 0))
+                                    (_kwargs43310_ (##vector-ref _g45249_ 1)))
                                 (begin
                                   (gxc#verbose
                                    '"dispatch kw-lambda => "
-                                   _main43677_)
-                                  (if _table43656_
-                                      (let ((_xargs43688_
-                                             (map (lambda (_key43683_)
-                                                    (let ((_$e43685_
-                                                           (assgetq _key43683_
+                                   _main43306_)
+                                  (if _table43285_
+                                      (let ((_xargs43317_
+                                             (map (lambda (_key43312_)
+                                                    (let ((_$e43314_
+                                                           (assgetq _key43312_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                            _kwargs43681_)))
-              (if _$e43685_ (values _$e43685_) '(%#ref absent-value))))
+                            _kwargs43310_)))
+              (if _$e43314_ (values _$e43314_) '(%#ref absent-value))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  _keys43678_)))
+                                                  _keys43307_)))
                                         (begin
                                           (for-each
-                                           (lambda (_kw43690_)
-                                             (if (memq (car _kw43690_)
-                                                       _keys43678_)
+                                           (lambda (_kw43319_)
+                                             (if (memq (car _kw43319_)
+                                                       _keys43307_)
                                                  '#!void
                                                  (gxc#raise-compile-error
                                                   '"Illegal keyword lambda application; unexpected keyword"
-                                                  _stx43638_
-                                                  _keys43678_
-                                                  _kw43690_)))
-                                           _kwargs43681_)
+                                                  _stx43267_
+                                                  _keys43307_
+                                                  _kw43319_)))
+                                           _kwargs43310_)
                                           (gxc#compile-e
                                            (gxc#xform-wrap-source
                                             (cons '%#call
                                                   (cons (cons '%#ref
-                                                              (cons _main43677_
+                                                              (cons _main43306_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '()))
                 (cons (cons '%#quote (cons '#f '()))
-                      (foldr1 cons _pargs43680_ _xargs43688_))))
+                      (foldr1 cons _pargs43309_ _xargs43317_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                            _stx43638_))))
-                                      (let* ((_kwt43692_
+                                            _stx43267_))))
+                                      (let* ((_kwt43321_
                                               (make-symbol (gensym '__kwt)))
-                                             (_kwvars43695_
-                                              (map (lambda (_g45622_)
+                                             (_kwvars43324_
+                                              (map (lambda (_g45251_)
                                                      (make-symbol
                                                       (gensym '__kw)))
-                                                   _kwargs43681_))
-                                             (_kwbind43700_
-                                              (map (lambda (_kw43697_
-                                                            _kwvar43698_)
-                                                     (cons (cons _kwvar43698_
+                                                   _kwargs43310_))
+                                             (_kwbind43329_
+                                              (map (lambda (_kw43326_
+                                                            _kwvar43327_)
+                                                     (cons (cons _kwvar43327_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                          '())
-                   (cons (cdr _kw43697_) '())))
+                   (cons (cdr _kw43326_) '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   _kwargs43681_
-                                                   _kwvars43695_))
-                                             (_kwset43705_
-                                              (map (lambda (_kw43702_
-                                                            _kwvar43703_)
+                                                   _kwargs43310_
+                                                   _kwvars43324_))
+                                             (_kwset43334_
+                                              (map (lambda (_kw43331_
+                                                            _kwvar43332_)
                                                      (cons '%#call
                                                            (cons '(%#ref hash-put!)
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (cons (cons '%#ref (cons _kwt43692_ '()))
-                               (cons (cons '%#quote (cons (car _kw43702_) '()))
+                         (cons (cons '%#ref (cons _kwt43321_ '()))
+                               (cons (cons '%#quote (cons (car _kw43331_) '()))
                                      (cons (cons '%#ref
-                                                 (cons _kwvar43703_ '()))
+                                                 (cons _kwvar43332_ '()))
                                            '()))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   _kwargs43681_
-                                                   _kwvars43695_))
-                                             (_xkwargs43710_
-                                              (map (lambda (_kw43707_
-                                                            _kwvar43708_)
-                                                     (cons (car _kw43707_)
+                                                   _kwargs43310_
+                                                   _kwvars43324_))
+                                             (_xkwargs43339_
+                                              (map (lambda (_kw43336_
+                                                            _kwvar43337_)
+                                                     (cons (car _kw43336_)
                                                            (cons '%#ref
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (cons _kwvar43708_ '()))))
+                         (cons _kwvar43337_ '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   _kwargs43681_
-                                                   _kwvars43695_))
-                                             (_xargs43717_
-                                              (map (lambda (_key43712_)
-                                                     (let ((_$e43714_
-                                                            (assgetq _key43712_
+                                                   _kwargs43310_
+                                                   _kwvars43324_))
+                                             (_xargs43346_
+                                              (map (lambda (_key43341_)
+                                                     (let ((_$e43343_
+                                                            (assgetq _key43341_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             _xkwargs43710_)))
-               (if _$e43714_ (values _$e43714_) '(%#ref absent-value))))
+                             _xkwargs43339_)))
+               (if _$e43343_ (values _$e43343_) '(%#ref absent-value))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   _keys43678_)))
+                                                   _keys43307_)))
                                         (gxc#compile-e
                                          (gxc#xform-wrap-source
                                           (cons '%#let-values
-                                                (cons _kwbind43700_
+                                                (cons _kwbind43329_
                                                       (cons (cons '%#let-values
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          (cons (cons (cons (cons _kwt43692_ '())
+                          (cons (cons (cons (cons _kwt43321_ '())
                                             (cons (gxc#xform-wrap-source
                                                    (cons '%#call
                                                          (cons '(%#ref make-hash-table-eq)
                                                                (cons '(%#quote size:)
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              (cons (cons '%#quote
-                                         (cons (length _kwargs43681_) '()))
+                                         (cons (length _kwargs43310_) '()))
                                    '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                   _stx43638_)
+                                                   _stx43267_)
                                                   '()))
                                       '())
                                 (cons (cons '%#begin
@@ -861,209 +864,209 @@
                                                     (cons (gxc#xform-wrap-source
                                                            (cons '%#call
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (cons (cons '%#ref (cons _main43677_ '()))
-                               (cons (cons '%#ref (cons _kwt43692_ '()))
-                                     (foldr1 cons _pargs43680_ _xargs43717_))))
-                   _stx43638_)
+                         (cons (cons '%#ref (cons _main43306_ '()))
+                               (cons (cons '%#ref (cons _kwt43321_ '()))
+                                     (foldr1 cons _pargs43309_ _xargs43346_))))
+                   _stx43267_)
                   '())
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    _kwset43705_))
+                                                    _kwset43334_))
                                       '())))
                     '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          _stx43638_)))))))))))
+                                          _stx43267_)))))))))))
                   (if (##structure-instance-of?
-                       _g4365743666_
+                       _g4328643295_
                        'gxc#!kw-lambda-primary::t)
-                      (let* ((_e4366243723_ (##vector-ref _g4365743666_ '1))
-                             (_e4366343726_ (##vector-ref _g4365743666_ '2))
-                             (_keys43729_ _e4366343726_)
-                             (_e4366443731_ (##vector-ref _g4365743666_ '3))
-                             (_main43734_ _e4366443731_))
-                        (_K4366143720_ _main43734_ _keys43729_))
-                      (_else4365943674_))))))
-        (if (##structure-instance-of? _self4364043648_ 'gxc#!kw-lambda::t)
-            (let* ((_e4364443739_ (##vector-ref _self4364043648_ '1))
-                   (_e4364543742_ (##vector-ref _self4364043648_ '2))
-                   (_table43745_ _e4364543742_)
-                   (_e4364643747_ (##vector-ref _self4364043648_ '3))
-                   (_dispatch43750_ _e4364643747_))
-              (_K4364343736_ _dispatch43750_ _table43745_))
-            (_E4364243652_)))))
+                      (let* ((_e4329143352_ (##vector-ref _g4328643295_ '1))
+                             (_e4329243355_ (##vector-ref _g4328643295_ '2))
+                             (_keys43358_ _e4329243355_)
+                             (_e4329343360_ (##vector-ref _g4328643295_ '3))
+                             (_main43363_ _e4329343360_))
+                        (_K4329043349_ _main43363_ _keys43358_))
+                      (_else4328843303_))))))
+        (if (##structure-instance-of? _self4326943277_ 'gxc#!kw-lambda::t)
+            (let* ((_e4327343368_ (##vector-ref _self4326943277_ '1))
+                   (_e4327443371_ (##vector-ref _self4326943277_ '2))
+                   (_table43374_ _e4327443371_)
+                   (_e4327543376_ (##vector-ref _self4326943277_ '3))
+                   (_dispatch43379_ _e4327543376_))
+              (_K4327243365_ _dispatch43379_ _table43374_))
+            (_E4327143281_)))))
   (bind-method!
    gxc#!kw-lambda::t
    'optimize-call
    gxc#!kw-lambda::optimize-call
    '#f)
   (define gxc#!kw-lambda-split-args
-    (lambda (_stx43250_ _args43251_)
-      (let _lp43253_ ((_rest43255_ _args43251_)
-                      (_pargs43256_ '())
-                      (_kwargs43257_ '()))
-        (let* ((___stx4550345504_ _rest43255_)
-               (_g4326343315_
+    (lambda (_stx42879_ _args42880_)
+      (let _lp42882_ ((_rest42884_ _args42880_)
+                      (_pargs42885_ '())
+                      (_kwargs42886_ '()))
+        (let* ((___stx4513245133_ _rest42884_)
+               (_g4289242944_
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax"
-                   ___stx4550345504_))))
-          (let ((___kont4550545506_
-                 (lambda (_L43494_ _L43495_)
-                   (_lp43253_
-                    _L43494_
-                    (cons _L43495_ _pargs43256_)
-                    _kwargs43257_)))
-                (___kont4550745508_
-                 (lambda (_L43440_)
-                   (values (foldl1 cons _L43440_ _pargs43256_)
-                           (reverse _kwargs43257_))))
-                (___kont4550945510_
-                 (lambda (_L43387_ _L43388_ _L43389_)
-                   (let ((_kw43406_ (gx#stx-e _L43389_)))
-                     (if (assq _kw43406_ _kwargs43257_)
+                   ___stx4513245133_))))
+          (let ((___kont4513445135_
+                 (lambda (_L43123_ _L43124_)
+                   (_lp42882_
+                    _L43123_
+                    (cons _L43124_ _pargs42885_)
+                    _kwargs42886_)))
+                (___kont4513645137_
+                 (lambda (_L43069_)
+                   (values (foldl1 cons _L43069_ _pargs42885_)
+                           (reverse _kwargs42886_))))
+                (___kont4513845139_
+                 (lambda (_L43016_ _L43017_ _L43018_)
+                   (let ((_kw43035_ (gx#stx-e _L43018_)))
+                     (if (assq _kw43035_ _kwargs42886_)
                          (gxc#raise-compile-error
                           '"Illegal keyword lambda application; duplicate keyword"
-                          _stx43250_
-                          _kw43406_)
-                         (_lp43253_
-                          _L43387_
-                          _pargs43256_
-                          (cons (cons _kw43406_ _L43388_) _kwargs43257_))))))
-                (___kont4551145512_
-                 (lambda (_L43335_ _L43336_)
-                   (_lp43253_
-                    _L43335_
-                    (cons _L43336_ _pargs43256_)
-                    _kwargs43257_)))
-                (___kont4551345514_
+                          _stx42879_
+                          _kw43035_)
+                         (_lp42882_
+                          _L43016_
+                          _pargs42885_
+                          (cons (cons _kw43035_ _L43017_) _kwargs42886_))))))
+                (___kont4514045141_
+                 (lambda (_L42964_ _L42965_)
+                   (_lp42882_
+                    _L42964_
+                    (cons _L42965_ _pargs42885_)
+                    _kwargs42886_)))
+                (___kont4514245143_
                  (lambda ()
-                   (values (reverse _pargs43256_) (reverse _kwargs43257_)))))
-            (let* ((_g4326243322_
+                   (values (reverse _pargs42885_) (reverse _kwargs42886_)))))
+            (let* ((_g4289142951_
                     (lambda ()
-                      (if (gx#stx-null? ___stx4550345504_)
-                          (___kont4551345514_)
-                          (_g4326343315_))))
-                   (___match4561045611_
-                    (lambda (_e4329443355_
-                             _hd4329543358_
-                             _tl4329643360_
-                             _e4329743363_
-                             _hd4329843366_
-                             _tl4329943368_
-                             _e4330043371_
-                             _hd4330143374_
-                             _tl4330243376_
-                             _e4330343379_
-                             _hd4330443382_
-                             _tl4330543384_)
-                      (let ((_L43387_ _tl4330543384_)
-                            (_L43388_ _hd4330443382_)
-                            (_L43389_ _hd4330143374_))
-                        (if (gx#stx-keyword? _L43389_)
-                            (___kont4550945510_ _L43387_ _L43388_ _L43389_)
-                            (___kont4551145512_
-                             _tl4329643360_
-                             _hd4329543358_))))))
-              (if (gx#stx-pair? ___stx4550345504_)
-                  (let ((_e4326743459_ (gx#stx-e ___stx4550345504_)))
-                    (let ((_tl4326943464_ (##cdr _e4326743459_))
-                          (_hd4326843462_ (##car _e4326743459_)))
-                      (if (gx#stx-pair? _hd4326843462_)
-                          (let ((_e4327043467_ (gx#stx-e _hd4326843462_)))
-                            (let ((_tl4327243472_ (##cdr _e4327043467_))
-                                  (_hd4327143470_ (##car _e4327043467_)))
-                              (if (gx#identifier? _hd4327143470_)
-                                  (if (gx#stx-eq? '%#quote _hd4327143470_)
-                                      (if (gx#stx-pair? _tl4327243472_)
-                                          (let ((_e4327343475_
-                                                 (gx#stx-e _tl4327243472_)))
-                                            (let ((_tl4327543480_
-                                                   (##cdr _e4327343475_))
-                                                  (_hd4327443478_
-                                                   (##car _e4327343475_)))
+                      (if (gx#stx-null? ___stx4513245133_)
+                          (___kont4514245143_)
+                          (_g4289242944_))))
+                   (___match4523945240_
+                    (lambda (_e4292342984_
+                             _hd4292442987_
+                             _tl4292542989_
+                             _e4292642992_
+                             _hd4292742995_
+                             _tl4292842997_
+                             _e4292943000_
+                             _hd4293043003_
+                             _tl4293143005_
+                             _e4293243008_
+                             _hd4293343011_
+                             _tl4293443013_)
+                      (let ((_L43016_ _tl4293443013_)
+                            (_L43017_ _hd4293343011_)
+                            (_L43018_ _hd4293043003_))
+                        (if (gx#stx-keyword? _L43018_)
+                            (___kont4513845139_ _L43016_ _L43017_ _L43018_)
+                            (___kont4514045141_
+                             _tl4292542989_
+                             _hd4292442987_))))))
+              (if (gx#stx-pair? ___stx4513245133_)
+                  (let ((_e4289643088_ (gx#stx-e ___stx4513245133_)))
+                    (let ((_tl4289843093_ (##cdr _e4289643088_))
+                          (_hd4289743091_ (##car _e4289643088_)))
+                      (if (gx#stx-pair? _hd4289743091_)
+                          (let ((_e4289943096_ (gx#stx-e _hd4289743091_)))
+                            (let ((_tl4290143101_ (##cdr _e4289943096_))
+                                  (_hd4290043099_ (##car _e4289943096_)))
+                              (if (gx#identifier? _hd4290043099_)
+                                  (if (gx#stx-eq? '%#quote _hd4290043099_)
+                                      (if (gx#stx-pair? _tl4290143101_)
+                                          (let ((_e4290243104_
+                                                 (gx#stx-e _tl4290143101_)))
+                                            (let ((_tl4290443109_
+                                                   (##cdr _e4290243104_))
+                                                  (_hd4290343107_
+                                                   (##car _e4290243104_)))
                                               (if (gx#stx-datum?
-                                                   _hd4327443478_)
-                                                  (let ((_e4327643483_
+                                                   _hd4290343107_)
+                                                  (let ((_e4290543112_
                                                          (gx#stx-e
-                                                          _hd4327443478_)))
-                                                    (if (equal? _e4327643483_
+                                                          _hd4290343107_)))
+                                                    (if (equal? _e4290543112_
                                                                 '#!key)
                                                         (if (gx#stx-null?
-                                                             _tl4327543480_)
+                                                             _tl4290443109_)
                                                             (if (gx#stx-pair?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _tl4326943464_)
-                        (let ((_e4327743486_ (gx#stx-e _tl4326943464_)))
-                          (let ((_tl4327943491_ (##cdr _e4327743486_))
-                                (_hd4327843489_ (##car _e4327743486_)))
-                            (___kont4550545506_
-                             _tl4327943491_
-                             _hd4327843489_)))
-                        (___kont4551145512_ _tl4326943464_ _hd4326843462_))
-                    (___kont4551145512_ _tl4326943464_ _hd4326843462_))
-                (if (equal? _e4327643483_ '#!rest)
-                    (if (gx#stx-null? _tl4327543480_)
-                        (___kont4550745508_ _tl4326943464_)
-                        (___kont4551145512_ _tl4326943464_ _hd4326843462_))
-                    (if (gx#stx-null? _tl4327543480_)
-                        (if (gx#stx-pair? _tl4326943464_)
-                            (let ((_e4330343379_ (gx#stx-e _tl4326943464_)))
-                              (let ((_tl4330543384_ (##cdr _e4330343379_))
-                                    (_hd4330443382_ (##car _e4330343379_)))
-                                (___match4561045611_
-                                 _e4326743459_
-                                 _hd4326843462_
-                                 _tl4326943464_
-                                 _e4327043467_
-                                 _hd4327143470_
-                                 _tl4327243472_
-                                 _e4327343475_
-                                 _hd4327443478_
-                                 _tl4327543480_
-                                 _e4330343379_
-                                 _hd4330443382_
-                                 _tl4330543384_)))
-                            (___kont4551145512_ _tl4326943464_ _hd4326843462_))
-                        (___kont4551145512_ _tl4326943464_ _hd4326843462_)))))
+                         _tl4289843093_)
+                        (let ((_e4290643115_ (gx#stx-e _tl4289843093_)))
+                          (let ((_tl4290843120_ (##cdr _e4290643115_))
+                                (_hd4290743118_ (##car _e4290643115_)))
+                            (___kont4513445135_
+                             _tl4290843120_
+                             _hd4290743118_)))
+                        (___kont4514045141_ _tl4289843093_ _hd4289743091_))
+                    (___kont4514045141_ _tl4289843093_ _hd4289743091_))
+                (if (equal? _e4290543112_ '#!rest)
+                    (if (gx#stx-null? _tl4290443109_)
+                        (___kont4513645137_ _tl4289843093_)
+                        (___kont4514045141_ _tl4289843093_ _hd4289743091_))
+                    (if (gx#stx-null? _tl4290443109_)
+                        (if (gx#stx-pair? _tl4289843093_)
+                            (let ((_e4293243008_ (gx#stx-e _tl4289843093_)))
+                              (let ((_tl4293443013_ (##cdr _e4293243008_))
+                                    (_hd4293343011_ (##car _e4293243008_)))
+                                (___match4523945240_
+                                 _e4289643088_
+                                 _hd4289743091_
+                                 _tl4289843093_
+                                 _e4289943096_
+                                 _hd4290043099_
+                                 _tl4290143101_
+                                 _e4290243104_
+                                 _hd4290343107_
+                                 _tl4290443109_
+                                 _e4293243008_
+                                 _hd4293343011_
+                                 _tl4293443013_)))
+                            (___kont4514045141_ _tl4289843093_ _hd4289743091_))
+                        (___kont4514045141_ _tl4289843093_ _hd4289743091_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (if (gx#stx-null?
-                                                       _tl4327543480_)
+                                                       _tl4290443109_)
                                                       (if (gx#stx-pair?
-                                                           _tl4326943464_)
-                                                          (let ((_e4330343379_
+                                                           _tl4289843093_)
+                                                          (let ((_e4293243008_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         (gx#stx-e _tl4326943464_)))
-                    (let ((_tl4330543384_ (##cdr _e4330343379_))
-                          (_hd4330443382_ (##car _e4330343379_)))
-                      (___match4561045611_
-                       _e4326743459_
-                       _hd4326843462_
-                       _tl4326943464_
-                       _e4327043467_
-                       _hd4327143470_
-                       _tl4327243472_
-                       _e4327343475_
-                       _hd4327443478_
-                       _tl4327543480_
-                       _e4330343379_
-                       _hd4330443382_
-                       _tl4330543384_)))
-                  (___kont4551145512_ _tl4326943464_ _hd4326843462_))
-              (___kont4551145512_ _tl4326943464_ _hd4326843462_)))))
+                         (gx#stx-e _tl4289843093_)))
+                    (let ((_tl4293443013_ (##cdr _e4293243008_))
+                          (_hd4293343011_ (##car _e4293243008_)))
+                      (___match4523945240_
+                       _e4289643088_
+                       _hd4289743091_
+                       _tl4289843093_
+                       _e4289943096_
+                       _hd4290043099_
+                       _tl4290143101_
+                       _e4290243104_
+                       _hd4290343107_
+                       _tl4290443109_
+                       _e4293243008_
+                       _hd4293343011_
+                       _tl4293443013_)))
+                  (___kont4514045141_ _tl4289843093_ _hd4289743091_))
+              (___kont4514045141_ _tl4289843093_ _hd4289743091_)))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                          (___kont4551145512_
-                                           _tl4326943464_
-                                           _hd4326843462_))
-                                      (___kont4551145512_
-                                       _tl4326943464_
-                                       _hd4326843462_))
-                                  (___kont4551145512_
-                                   _tl4326943464_
-                                   _hd4326843462_))))
-                          (___kont4551145512_ _tl4326943464_ _hd4326843462_))))
-                  (_g4326243322_))))))))
+                                          (___kont4514045141_
+                                           _tl4289843093_
+                                           _hd4289743091_))
+                                      (___kont4514045141_
+                                       _tl4289843093_
+                                       _hd4289743091_))
+                                  (___kont4514045141_
+                                   _tl4289843093_
+                                   _hd4289743091_))))
+                          (___kont4514045141_ _tl4289843093_ _hd4289743091_))))
+                  (_g4289142951_))))))))
   (define gxc#!kw-lambda-primary::optimize-call
-    (lambda (_self43246_ _stx43247_ _args43248_) (gxc#xform-call% _stx43247_)))
+    (lambda (_self42875_ _stx42876_ _args42877_) (gxc#xform-call% _stx42876_)))
   (bind-method!
    gxc#!kw-lambda-primary::t
    'optimize-call

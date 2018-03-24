@@ -540,41 +540,41 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (_E1800318092_))
                                               (if (gx#stx-vector? _e17995_)
-                                                  (let ((_g18475_
+                                                  (let ((_g18473_
                                                          (_recur17990_
                                                           (vector->list
                                                            (gx#stx-unwrap__0
                                                             _e17995_))
                                                           _is-e?17996_)))
                                                     (begin
-                                                      (let ((_g18476_
+                                                      (let ((_g18474_
                                                              (if (##values?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                          _g18475_)
-                         (##vector-length _g18475_)
+                          _g18473_)
+                         (##vector-length _g18473_)
                          1)))
-                (if (not (##fx= _g18476_ 2))
-                    (error "Context expects 2 values" _g18476_)))
-              (let ((_e18096_ (##vector-ref _g18475_ 0))
-                    (_vars18097_ (##vector-ref _g18475_ 1)))
+                (if (not (##fx= _g18474_ 2))
+                    (error "Context expects 2 values" _g18474_)))
+              (let ((_e18096_ (##vector-ref _g18473_ 0))
+                    (_vars18097_ (##vector-ref _g18473_ 1)))
                 (values (cons 'vector _e18096_) _vars18097_))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                   (if (gx#stx-box? _e17995_)
-                                                      (let ((_g18473_
+                                                      (let ((_g18475_
                                                              (_recur17990_
                                                               (unbox (gx#stx-unwrap__0
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                               _e17995_))
                       _is-e?17996_)))
                 (begin
-                  (let ((_g18474_
-                         (if (##values? _g18473_)
-                             (##vector-length _g18473_)
+                  (let ((_g18476_
+                         (if (##values? _g18475_)
+                             (##vector-length _g18475_)
                              1)))
-                    (if (not (##fx= _g18474_ 2))
-                        (error "Context expects 2 values" _g18474_)))
-                  (let ((_e18099_ (##vector-ref _g18473_ 0))
-                        (_vars18100_ (##vector-ref _g18473_ 1)))
+                    (if (not (##fx= _g18476_ 2))
+                        (error "Context expects 2 values" _g18476_)))
+                  (let ((_e18099_ (##vector-ref _g18475_ 0))
+                        (_vars18100_ (##vector-ref _g18475_ 1)))
                     (values (cons 'box _e18099_) _vars18100_))))
               (values (cons 'datum _e17995_) '()))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1269,20 +1269,16 @@
                                               (if (eq? 'var _$e17418_)
                                                   (cons _body17415_
                                                         _vars17400_)
-                                                  (if (if (eq? 'cons _$e17418_)
-                                                          '#t
-                                                          (eq? 'splice
-                                                               _$e17418_))
-                                                      (_recur17397_
-                                                       (cdr _body17415_)
-                                                       (_recur17397_
-                                                        (car _body17415_)
-                                                        _vars17400_))
-                                                      (if (if (eq? 'vector
+                                                  (if (let ((_$e17421_
+                                                             (eq? 'cons
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _$e17418_)
-                      '#t
-                      (eq? 'box _$e17418_))
+                          _$e17418_)))
+                (if _$e17421_ _$e17421_ (eq? 'splice _$e17418_)))
+              (_recur17397_
+               (cdr _body17415_)
+               (_recur17397_ (car _body17415_) _vars17400_))
+              (if (let ((_$e17424_ (eq? 'vector _$e17418_)))
+                    (if _$e17424_ _$e17424_ (eq? 'box _$e17418_)))
                   (_recur17397_ _body17415_ _vars17400_)
                   _vars17400_)))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -1377,36 +1373,36 @@
                                 (if (eq? _tag17323_ 'splice)
                                     (fx+ _depth17291_ '1)
                                     _depth17291_))
-                               (_g18485_
+                               (_g18481_
                                 (_recur17287_
                                  _hd17324_
                                  _vars17290_
                                  _hd-depth17327_)))
                           (begin
-                            (let ((_g18486_
-                                   (if (##values? _g18485_)
-                                       (##vector-length _g18485_)
+                            (let ((_g18482_
+                                   (if (##values? _g18481_)
+                                       (##vector-length _g18481_)
                                        1)))
-                              (if (not (##fx= _g18486_ 2))
-                                  (error "Context expects 2 values" _g18486_)))
-                            (let ((_hd17329_ (##vector-ref _g18485_ 0))
-                                  (_vars17330_ (##vector-ref _g18485_ 1)))
-                              (let ((_g18487_
+                              (if (not (##fx= _g18482_ 2))
+                                  (error "Context expects 2 values" _g18482_)))
+                            (let ((_hd17329_ (##vector-ref _g18481_ 0))
+                                  (_vars17330_ (##vector-ref _g18481_ 1)))
+                              (let ((_g18483_
                                      (_recur17287_
                                       _tl17325_
                                       _vars17330_
                                       _depth17291_)))
                                 (begin
-                                  (let ((_g18488_
-                                         (if (##values? _g18487_)
-                                             (##vector-length _g18487_)
+                                  (let ((_g18484_
+                                         (if (##values? _g18483_)
+                                             (##vector-length _g18483_)
                                              1)))
-                                    (if (not (##fx= _g18488_ 2))
+                                    (if (not (##fx= _g18484_ 2))
                                         (error "Context expects 2 values"
-                                               _g18488_)))
-                                  (let ((_tl17332_ (##vector-ref _g18487_ 0))
+                                               _g18484_)))
+                                  (let ((_tl17332_ (##vector-ref _g18483_ 0))
                                         (_vars17333_
-                                         (##vector-ref _g18487_ 1)))
+                                         (##vector-ref _g18483_ 1)))
                                     (let ()
                                       (values (cons _tag17323_
                                                     (cons _hd17329_ _tl17332_))
@@ -1443,47 +1439,47 @@
                               (if (gx#stx-null? _e17289_)
                                   (values '(null) _vars17290_)
                                   (if (gx#stx-vector? _e17289_)
-                                      (let ((_g18483_
+                                      (let ((_g18485_
                                              (_recur17287_
                                               (vector->list
                                                (gx#syntax-e _e17289_))
                                               _vars17290_
                                               _depth17291_)))
                                         (begin
-                                          (let ((_g18484_
-                                                 (if (##values? _g18483_)
-                                                     (##vector-length _g18483_)
+                                          (let ((_g18486_
+                                                 (if (##values? _g18485_)
+                                                     (##vector-length _g18485_)
                                                      1)))
-                                            (if (not (##fx= _g18484_ 2))
+                                            (if (not (##fx= _g18486_ 2))
                                                 (error "Context expects 2 values"
-                                                       _g18484_)))
+                                                       _g18486_)))
                                           (let ((_e17372_
-                                                 (##vector-ref _g18483_ 0))
+                                                 (##vector-ref _g18485_ 0))
                                                 (_vars17373_
-                                                 (##vector-ref _g18483_ 1)))
+                                                 (##vector-ref _g18485_ 1)))
                                             (values (cons 'vector _e17372_)
                                                     _vars17373_))))
                                       (if (gx#stx-box? _e17289_)
-                                          (let ((_g18481_
+                                          (let ((_g18487_
                                                  (_recur17287_
                                                   (unbox (gx#syntax-e
                                                           _e17289_))
                                                   _vars17290_
                                                   _depth17291_)))
                                             (begin
-                                              (let ((_g18482_
-                                                     (if (##values? _g18481_)
+                                              (let ((_g18488_
+                                                     (if (##values? _g18487_)
                                                          (##vector-length
-                                                          _g18481_)
+                                                          _g18487_)
                                                          1)))
-                                                (if (not (##fx= _g18482_ 2))
+                                                (if (not (##fx= _g18488_ 2))
                                                     (error "Context expects 2 values"
-                                                           _g18482_)))
+                                                           _g18488_)))
                                               (let ((_e17375_
-                                                     (##vector-ref _g18481_ 0))
+                                                     (##vector-ref _g18487_ 0))
                                                     (_vars17376_
                                                      (##vector-ref
-                                                      _g18481_
+                                                      _g18487_
                                                       1)))
                                                 (values (cons 'box _e17375_)
                                                         _vars17376_))))
