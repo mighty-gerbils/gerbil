@@ -8,6 +8,5 @@ package: scheme
   delay
   delay-force
   force
-  make-promise
-  promise?
-  )
+  (rename: r7rs-make-promise make-promise)
+  promise?)
