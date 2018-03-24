@@ -20,3 +20,13 @@ package: scheme
 ;; this simply cannot be implemented without Gambit kernel support
 ;; as we need a promise-force construct to force tail recursively
 (defsyntax-stub delay-force)
+
+;; R7RS spec:
+;; "The make-promise procedure returns a promise which,
+;;  when forced, will return obj . It is similar to delay, but
+;;  does not delay its argument: it is a procedure rather than
+;;  syntax. If obj is already a promise, it is returned."
+(def (r7rs-make-promise obj)
+  (if (promise? obj)
+    obj
+    (make-promise (lambda () obj))))
