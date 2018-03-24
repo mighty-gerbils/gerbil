@@ -228,6 +228,23 @@ package: scheme
 (def truncate-quotient quotient)
 (def truncate-remainder remainder)
 
+;; these accept start/end arguments
+(def* r7rs-string->list
+  ((str)
+   (string->list str))
+  ((str start)
+   (string->list* str start (string-length str)))
+  ((str start end)
+   (string->list* str start end)))
+
+(def* r7rs-vector->list
+  ((vec)
+   (vector->list vec))
+  ((vec start)
+   (vector->list* vec start (vector-length vec)))
+  ((vec start end)
+   (vector->list* vec start end)))
+
 ;; R7RS spec:
 ;; "Returns #t if port is still open and capable of performing
 ;;  input or output, respectively, and #f otherwise."

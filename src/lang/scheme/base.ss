@@ -194,7 +194,7 @@ package: scheme
   string-fill!
   string-for-each
   string-length
-  string->list
+  (rename: r7rs-string->list string->list)
   string-map
   string->number
   string-ref
@@ -227,7 +227,7 @@ package: scheme
   vector-fill!
   vector-for-each
   vector-length
-  vector->list
+  (rename: r7rs-vector->list vector->list)
   (rename: r7rs-vector-map vector-map)
   vector-ref
   vector-set!
