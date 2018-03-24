@@ -22,6 +22,9 @@ package: scheme
      (else
       str))))
 
+(def (r7rs-write-string str (port (current-output-port)) (start 0) (end (string-length str)))
+  (write-substring str start end port))
+
 (def (read-bytevector k (port (current-input-port)))
   (unless (and (fixnum? k) (fx> k 0))
     (error "Illegal argument; expected positive fixnum" k))

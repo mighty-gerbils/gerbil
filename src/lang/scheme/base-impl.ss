@@ -70,26 +70,46 @@ package: scheme
   ;; no really, we can't continue
   (##thread-end-with-uncaught-exception! exn))
 
-;; guard also switches exception handlers
+;; guard has rather insane semantics of jumping back when there is no else clause
 (defrules guard (else)
-  ((_ (var clause ... (else else-body ...)) body ...)
-   (identifier? #'var)
-   (with-exception-handler
-    (let (handler (current-exception-handler))
-      (lambda (var)
-        (with-exception-handler
-         handler
-         (lambda () (cond clause ... (else else-body ...))))))
+  ((_ (exn) body ...)
+   (identifier? #'exn)
+   (let () body ...))
+  ((_ (exn clause ... (else else-body ...)) body ...)
+   (identifier? #'exn)
+   (with-catch
+    (lambda (exn)
+      (cond clause ... (else else-body ...)))
     (lambda () body ...)))
-  ((_ (var clause ...) body ...)
-   (identifier? #'var)
-   (with-exception-handler
-    (let (handler (current-exception-handler))
-      (lambda (var)
-        (with-exception-handler
-         handler
-         (lambda () (cond clause ... (else (raise var)))))))
-    (lambda () body ...))))
+  ((_ (exn clause ...) body ...)
+   (identifier? #'exn)
+   (continuation-capture
+    (lambda (cont)
+      (with-exception-handler
+       (let (handler (current-exception-handler))
+         (lambda (exn)
+           (with-exception-handler
+            handler
+            (lambda () (~guard (exn cont) clause ...)))))
+       (lambda () body ...))))))
+
+(defrules ~guard (=>)
+  ((_ (exn cont))
+   (raise exn))
+  ((recur (exn cont) (test) rest ...)
+   (let (val test)
+     (if val
+       (continuation-return cont val)
+       (recur (exn cont) rest ...))))
+  ((recur (exn cont) (test => K) rest ...)
+   (let (val test)
+     (if val
+       (continuation-graft cont K val)
+       (recur (exn cont) rest ...))))
+  ((recur (exn cont) (test body ...) rest ...)
+   (if test
+     (continuation-graft cont (lambda () body ...))
+     (recur (exn cont) rest ...))))
 
 ;; Gerbil on Gambit is fundamentally case sensitivie, so there
 ;; is no concept of of case-insensitive symbols
@@ -117,8 +137,83 @@ package: scheme
   ((_ path ...)
    (begin (include path) ...)))
 
+;; assoc and member: these accept an optional comparator procedure per spec
+(def* r7rs-assoc
+  ((x lst)
+   (assoc x lst))
+  ((x lst cmpf)
+   (assoc3 x lst cmpf)))
 
+(def (assoc3 x lst cmpf)
+  (let lp ((rest lst))
+    (match rest
+      ([hd . rest]
+       (if (cmpf (car hd) x)
+         hd
+         (lp rest)))
+      (else #f))))
 
+(def* r7rs-member
+  ((x lst)
+   (member x lst))
+  ((x lst cmpf)
+   (member3 x lst cmpf)))
+
+(def (member3 x lst cmpf)
+  (let lp ((lst lst))
+    (match lst
+      ([hd . rest]
+       (if (cmpf hd x)
+         lst
+         (lp rest)))
+      (else #f))))
+
+;; map and for-each: these accept lists of different lengths
+(def* r7rs-map
+  ((f lst)
+   (map f lst))
+  ((f lst1 lst2)
+   (map2 f lst1 lst2))
+  ((f lst1 lst2 . rest)
+   (apply mapN f lst1 lst2 rest)))
+
+(def (map2 f lst1 lst2)
+  (let recur ((rest-x lst1) (rest-y lst2))
+    (match* (rest-x rest-y)
+      (([x . rest-x] [y . rest-y])
+       (cons (f x y) (recur rest-x rest-y)))
+      (else []))))
+
+(def (mapN f . lsts)
+  (let recur ((rest lsts))
+    (if (andmap pair? rest)
+      (cons (apply f (map car rest))
+            (recur (map cdr rest)))
+      [])))
+
+(def* r7rs-for-each
+  ((f lst)
+   (for-each f lst))
+  ((f lst1 lst2)
+   (for-each2 f lst1 lst2))
+  ((f lst1 lst2 . rest)
+   (apply for-eachN f lst1 lst2 rest)))
+
+(def (for-each2 f lst1 lst2)
+  (let lp ((rest-x lst1) (rest-y lst2))
+    (match* (rest-x rest-y)
+      (([x . rest-x] [y . rest-y])
+       (f x y)
+       (lp rest-x rest-y))
+      (else (void)))))
+
+(def (for-eachN f . lsts)
+  (let lp ((rest lsts))
+    (when (andmap pair? rest)
+      (apply f (map car rest))
+      (lp (map cdr rest)))))
+
+;; mathematical functions
 (def (floor/ n divisor)
   (if (and (<= 0 n) (<= 0 divisor))
     (values (quotient n divisor) (remainder n divisor))
@@ -132,6 +227,39 @@ package: scheme
 (def (truncate/ x y) (values (quotient x y) (remainder x y)))
 (def truncate-quotient quotient)
 (def truncate-remainder remainder)
+
+;; these accept optional range arguments
+(def* r7rs-string->list
+  ((str)
+   (string->list str))
+  ((str start)
+   (string->list* str start (string-length str)))
+  ((str start end)
+   (string->list* str start end)))
+
+(def* r7rs-vector->list
+  ((vec)
+   (vector->list vec))
+  ((vec start)
+   (vector->list* vec start (vector-length vec)))
+  ((vec start end)
+   (vector->list* vec start end)))
+
+(def* r7rs-string-fill!
+  ((str val)
+   (string-fill! str val))
+  ((str val start)
+   (string-fill!* str val start (string-length str)))
+  ((str val start end)
+   (string-fill!* str val start end)))
+
+(def* r7rs-vector-fill!
+  ((vec val)
+   (vector-fill! vec val))
+  ((vec val start)
+   (vector-fill!* vec val start (vector-length vec)))
+  ((vec val start end)
+   (vector-fill!* vec val start end)))
 
 ;; R7RS spec:
 ;; "Returns #t if port is still open and capable of performing

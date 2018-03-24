@@ -17,7 +17,7 @@ package: scheme
   and
   append
   apply
-  assoc
+  (rename: r7rs-assoc assoc)
   assq
   assv
   begin
@@ -92,7 +92,7 @@ package: scheme
   floor-quotient
   floor-remainder
   (rename: force-output flush-output-port)
-  for-each
+  (rename: r7rs-for-each for-each)
   gcd
   (rename: get-output-u8vector get-output-bytevector)
   get-output-string
@@ -130,9 +130,9 @@ package: scheme
   make-parameter
   make-string
   make-vector
-  map
+  (rename: r7rs-map map)
   max
-  member
+  (rename: r7rs-member member)
   memq
   memv
   min
@@ -191,10 +191,10 @@ package: scheme
   string-append
   (rename: r7rs-string-copy string-copy)
   string-copy!
-  string-fill!
+  (rename: r7rs-string-fill! string-fill!)
   string-for-each
   string-length
-  string->list
+  (rename: r7rs-string->list string->list)
   string-map
   string->number
   string-ref
@@ -224,10 +224,10 @@ package: scheme
   vector-append
   (rename: r7rs-vector-copy vector-copy)
   vector-copy!
-  vector-fill!
+  (rename: r7rs-vector-fill! vector-fill!)
   vector-for-each
   vector-length
-  vector->list
+  (rename: r7rs-vector->list vector->list)
   (rename: r7rs-vector-map vector-map)
   vector-ref
   vector-set!
@@ -236,7 +236,7 @@ package: scheme
   (rename: r7rs-with-exception-handler with-exception-handler)
   write-bytevector
   write-char
-  write-string
+  (rename: r7rs-write-string write-string)
   write-u8
   zero?
   )

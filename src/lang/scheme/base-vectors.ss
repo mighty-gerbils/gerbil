@@ -97,10 +97,37 @@ package: scheme
              (lp (fx1+ x)))
            res))))))
 
+(defrules defvector->list ()
+  ((_ id length-e ref-e)
+   (def (id vec start end)
+     (let (len (length-e vec))
+       (let ((start (fxmax start 0))
+             (end (fxmin end len)))
+         (let lp ((i (fx1- end)) (r []))
+           (if (fx>= i start)
+             (lp (fx1- i)
+                 (cons (ref-e vec i) r))
+             r)))))))
+
+(defrules defvector-fill! ()
+  ((_ id length-e set-e is?)
+   (def (id vec val start end)
+     (unless (is? val)
+       (error "Illegal argument" vec val))
+     (let (len (length-e vec))
+       (let ((start (fxmax start 0))
+             (end (fxmin end len)))
+         (let lp ((i start))
+           (when (fx< i end)
+             (set-e vec i val)
+             (lp (fx1+ i)))))))))
+
 (defvector-for-each vector-for-each vector-length ##vector-ref)
 (defvector-map r7rs-vector-map make-vector vector-length ##vector-ref ##vector-set!)
 (defvector-copy r7rs-vector-copy vector-copy subvector vector-length)
 (defvector-copy! vector-copy! subvector-move! vector-length)
+(defvector->list vector->list* vector-length ##vector-ref)
+(defvector-fill! vector-fill!* vector-length ##vector-set! true)
 
 ;; strings
 (defvector-for-each string-for-each string-length ##string-ref)
@@ -109,6 +136,8 @@ package: scheme
 (defvector-copy! string-copy! substring-move! string-length)
 (defvector->vector vector->string vector-length ##vector-ref make-string char? ##string-set!)
 (defvector->vector string->vector string-length ##string-ref make-vector true ##vector-set!)
+(defvector->list string->list* string-length ##string-ref)
+(defvector-fill! string-fill!* string-length ##string-set! char?)
 
 ;; byte vectors
 (defvector-copy bytevector-copy u8vector-copy subu8vector u8vector-length)
