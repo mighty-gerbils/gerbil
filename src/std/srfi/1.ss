@@ -77,12 +77,9 @@ package: std/srfi
 
 (def (map2 f lst1 lst2)
   (let recur ((rest1 lst1) (rest2 lst2))
-    (match rest1
-      ([x1 . rest1]
-       (match rest2
-         ([x2 . rest2]
-          (cons (f x1 x2) (recur rest1 rest2)))
-         (else [])))
+    (match* (rest1 rest2)
+      (([x1 . rest1] [x2 . rest2])
+       (cons (f x1 x2) (recur rest1 rest2)))
       (else []))))
 
 (def (mapN f . lsts)
@@ -101,13 +98,10 @@ package: std/srfi
 
 (def (for-each2 f lst1 lst2)
   (let lp ((rest1 lst1) (rest2 lst2))
-    (match rest1
-      ([x1 . rest1]
-       (match rest2
-         ([x2 . rest2]
-          (f x1 x2)
-          (lp rest1 rest2))
-         (else (void))))
+    (match* (rest1 rest2)
+      (([x1 . rest1] [x2 . rest2])
+       (f x1 x2)
+       (lp rest1 rest2))
       (else (void)))))
 
 (def (for-eachN f . lsts)

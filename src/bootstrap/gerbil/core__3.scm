@@ -1850,29 +1850,37 @@
                    (cons (gx#datum->syntax '#f 'syntax-error)
                          (cons '"Bad syntax; misplaced else" '()))))
                 (___kont3650436505_
-                 (lambda (_L4384_ _L4386_ _L4387_ _L4388_)
+                 (lambda (_L4390_ _L4392_ _L4393_)
                    (cons (gx#datum->syntax '#f 'let)
                          (cons (cons (gx#datum->syntax '#f '$e)
-                                     (cons _L4387_ '()))
+                                     (cons _L4392_ '()))
                                (cons (cons (gx#datum->syntax '#f 'if)
                                            (cons (gx#datum->syntax '#f '$e)
-                                                 (cons (cons _L4386_
+                                                 (cons (gx#datum->syntax
+                                                        '#f
+                                                        '$e)
+                                                       (cons (cons _L4393_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                           _L4390_)
+                     '()))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                     '())))))
+                (___kont3650636507_
+                 (lambda (_L4328_ _L4330_ _L4331_ _L4332_)
+                   (cons (gx#datum->syntax '#f 'let)
+                         (cons (cons (gx#datum->syntax '#f '$e)
+                                     (cons _L4331_ '()))
+                               (cons (cons (gx#datum->syntax '#f 'if)
+                                           (cons (gx#datum->syntax '#f '$e)
+                                                 (cons (cons _L4330_
                                                              (cons (gx#datum->syntax
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                             '#f
                             '$e)
                            '()))
-               (cons (cons _L4388_ _L4384_) '()))))
+               (cons (cons _L4332_ _L4328_) '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                      '())))))
-                (___kont3650636507_
-                 (lambda (_L4308_ _L4310_ _L4311_)
-                   (cons _L4311_
-                         (cons (cons _L4310_
-                                     (cons (gx#datum->syntax '#f '=>)
-                                           (cons (gx#datum->syntax '#f 'values)
-                                                 '())))
-                               _L4308_))))
                 (___kont3650836509_
                  (lambda (_L4237_ _L4239_ _L4240_ _L4241_)
                    (cons (gx#datum->syntax '#f 'if)
@@ -2005,29 +2013,197 @@
                                                                _tl40964490_)
                                                               (___kont3650236503_))))
                                                       (___kont3650236503_))
+                                                  (if (gx#stx-null?
+                                                       _tl40934484_)
+                                                      (___kont3650436505_
+                                                       _tl40904474_
+                                                       _hd40924481_
+                                                       _hd40824556_)
+                                                      (if (gx#stx-pair?
+                                                           _tl40934484_)
+                                                          (let ((_e41374308_
+;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                         (gx#syntax-e _tl40934484_)))
+                    (let ((_tl41394315_ (##cdr _e41374308_))
+                          (_hd41384312_ (##car _e41374308_)))
+                      (if (gx#identifier? _hd41384312_)
+                          (if (gx#free-identifier=?
+                               |gerbil/core$<sugar>$<sugar:1>[1]#_g41226_|
+                               _hd41384312_)
+                              (if (gx#stx-pair? _tl41394315_)
+                                  (let ((_e41404318_
+                                         (gx#syntax-e _tl41394315_)))
+                                    (let ((_tl41424325_ (##cdr _e41404318_))
+                                          (_hd41414322_ (##car _e41404318_)))
+                                      (if (gx#stx-null? _tl41424325_)
+                                          (___kont3650636507_
+                                           _tl40904474_
+                                           _hd41414322_
+                                           _hd40924481_
+                                           _hd40824556_)
+                                          (if (gx#stx-pair/null? _tl40934484_)
+                                              (let ((___splice3651036511_
+                                                     (gx#syntax-split-splice
+                                                      _tl40934484_
+                                                      '0)))
+                                                (let ((_tl41584210_
+                                                       (##vector-ref
+                                                        ___splice3651036511_
+                                                        '1))
+                                                      (_target41564207_
+                                                       (##vector-ref
+                                                        ___splice3651036511_
+                                                        '0)))
+                                                  (if (gx#stx-null?
+                                                       _tl41584210_)
+                                                      (___match3665436655_
+                                                       _e40814552_
+                                                       _hd40824556_
+                                                       _tl40834559_
+                                                       _e40884467_
+                                                       _hd40894471_
+                                                       _tl40904474_
+                                                       _e40914477_
+                                                       _hd40924481_
+                                                       _tl40934484_
+                                                       ___splice3651036511_
+                                                       _target41564207_
+                                                       _tl41584210_)
+                                                      (_g40794170_))))
+                                              (_g40794170_)))))
+                                  (if (gx#stx-pair/null? _tl40934484_)
+                                      (let ((___splice3651036511_
+                                             (gx#syntax-split-splice
+                                              _tl40934484_
+                                              '0)))
+                                        (let ((_tl41584210_
+                                               (##vector-ref
+                                                ___splice3651036511_
+                                                '1))
+                                              (_target41564207_
+                                               (##vector-ref
+                                                ___splice3651036511_
+                                                '0)))
+                                          (if (gx#stx-null? _tl41584210_)
+                                              (___match3665436655_
+                                               _e40814552_
+                                               _hd40824556_
+                                               _tl40834559_
+                                               _e40884467_
+                                               _hd40894471_
+                                               _tl40904474_
+                                               _e40914477_
+                                               _hd40924481_
+                                               _tl40934484_
+                                               ___splice3651036511_
+                                               _target41564207_
+                                               _tl41584210_)
+                                              (_g40794170_))))
+                                      (_g40794170_)))
+                              (if (gx#stx-pair/null? _tl40934484_)
+                                  (let ((___splice3651036511_
+                                         (gx#syntax-split-splice
+                                          _tl40934484_
+                                          '0)))
+                                    (let ((_tl41584210_
+                                           (##vector-ref
+                                            ___splice3651036511_
+                                            '1))
+                                          (_target41564207_
+                                           (##vector-ref
+                                            ___splice3651036511_
+                                            '0)))
+                                      (if (gx#stx-null? _tl41584210_)
+                                          (___match3665436655_
+                                           _e40814552_
+                                           _hd40824556_
+                                           _tl40834559_
+                                           _e40884467_
+                                           _hd40894471_
+                                           _tl40904474_
+                                           _e40914477_
+                                           _hd40924481_
+                                           _tl40934484_
+                                           ___splice3651036511_
+                                           _target41564207_
+                                           _tl41584210_)
+                                          (_g40794170_))))
+                                  (_g40794170_)))
+                          (if (gx#stx-pair/null? _tl40934484_)
+                              (let ((___splice3651036511_
+                                     (gx#syntax-split-splice _tl40934484_ '0)))
+                                (let ((_tl41584210_
+                                       (##vector-ref ___splice3651036511_ '1))
+                                      (_target41564207_
+                                       (##vector-ref ___splice3651036511_ '0)))
+                                  (if (gx#stx-null? _tl41584210_)
+                                      (___match3665436655_
+                                       _e40814552_
+                                       _hd40824556_
+                                       _tl40834559_
+                                       _e40884467_
+                                       _hd40894471_
+                                       _tl40904474_
+                                       _e40914477_
+                                       _hd40924481_
+                                       _tl40934484_
+                                       ___splice3651036511_
+                                       _target41564207_
+                                       _tl41584210_)
+                                      (_g40794170_))))
+                              (_g40794170_)))))
+                  (if (gx#stx-pair/null? _tl40934484_)
+                      (let ((___splice3651036511_
+                             (gx#syntax-split-splice _tl40934484_ '0)))
+                        (let ((_tl41584210_
+                               (##vector-ref ___splice3651036511_ '1))
+                              (_target41564207_
+                               (##vector-ref ___splice3651036511_ '0)))
+                          (if (gx#stx-null? _tl41584210_)
+                              (___match3665436655_
+                               _e40814552_
+                               _hd40824556_
+                               _tl40834559_
+                               _e40884467_
+                               _hd40894471_
+                               _tl40904474_
+                               _e40914477_
+                               _hd40924481_
+                               _tl40934484_
+                               ___splice3651036511_
+                               _target41564207_
+                               _tl41584210_)
+                              (_g40794170_))))
+                      (_g40794170_)))))
+;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                              (if (gx#stx-null? _tl40934484_)
+                                                  (___kont3650436505_
+                                                   _tl40904474_
+                                                   _hd40924481_
+                                                   _hd40824556_)
                                                   (if (gx#stx-pair?
                                                        _tl40934484_)
-                                                      (let ((_e41254364_
+                                                      (let ((_e41374308_
                                                              (gx#syntax-e
                                                               _tl40934484_)))
-                                                        (let ((_tl41274371_
-                                                               (##cdr _e41254364_))
-                                                              (_hd41264368_
-                                                               (##car _e41254364_)))
+                                                        (let ((_tl41394315_
+                                                               (##cdr _e41374308_))
+                                                              (_hd41384312_
+                                                               (##car _e41374308_)))
                                                           (if (gx#identifier?
-                                                               _hd41264368_)
+                                                               _hd41384312_)
                                                               (if (gx#free-identifier=?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           |gerbil/core$<sugar>$<sugar:1>[1]#_g41226_|
-                           _hd41264368_)
-                          (if (gx#stx-pair? _tl41274371_)
-                              (let ((_e41284374_ (gx#syntax-e _tl41274371_)))
-                                (let ((_tl41304381_ (##cdr _e41284374_))
-                                      (_hd41294378_ (##car _e41284374_)))
-                                  (if (gx#stx-null? _tl41304381_)
-                                      (___kont3650436505_
+                           |gerbil/core$<sugar>$<sugar:1>[1]#_g41225_|
+                           _hd41384312_)
+                          (if (gx#stx-pair? _tl41394315_)
+                              (let ((_e41404318_ (gx#syntax-e _tl41394315_)))
+                                (let ((_tl41424325_ (##cdr _e41404318_))
+                                      (_hd41414322_ (##car _e41404318_)))
+                                  (if (gx#stx-null? _tl41424325_)
+                                      (___kont3650636507_
                                        _tl40904474_
-                                       _hd41294378_
+                                       _hd41414322_
                                        _hd40924481_
                                        _hd40824556_)
                                       (if (gx#stx-pair/null? _tl40934484_)
@@ -2134,166 +2310,8 @@
                                    _tl41584210_)
                                   (_g40794170_))))
                           (_g40794170_)))))
-              (if (gx#stx-null? _tl40934484_)
-                  (___kont3650636507_ _tl40904474_ _hd40924481_ _hd40824556_)
-                  (if (gx#stx-pair/null? _tl40934484_)
-                      (let ((___splice3651036511_
-                             (gx#syntax-split-splice _tl40934484_ '0)))
-                        (let ((_tl41584210_
-                               (##vector-ref ___splice3651036511_ '1))
-                              (_target41564207_
-                               (##vector-ref ___splice3651036511_ '0)))
-                          (if (gx#stx-null? _tl41584210_)
-                              (___match3665436655_
-                               _e40814552_
-                               _hd40824556_
-                               _tl40834559_
-                               _e40884467_
-                               _hd40894471_
-                               _tl40904474_
-                               _e40914477_
-                               _hd40924481_
-                               _tl40934484_
-                               ___splice3651036511_
-                               _target41564207_
-                               _tl41584210_)
-                              (_g40794170_))))
-                      (_g40794170_)))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                              (if (gx#stx-pair? _tl40934484_)
-                                                  (let ((_e41254364_
-                                                         (gx#syntax-e
-                                                          _tl40934484_)))
-                                                    (let ((_tl41274371_
-                                                           (##cdr _e41254364_))
-                                                          (_hd41264368_
-                                                           (##car _e41254364_)))
-                                                      (if (gx#identifier?
-                                                           _hd41264368_)
-                                                          (if (gx#free-identifier=?
-                                                               |gerbil/core$<sugar>$<sugar:1>[1]#_g41225_|
-                                                               _hd41264368_)
-                                                              (if (gx#stx-pair?
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           _tl41274371_)
-                          (let ((_e41284374_ (gx#syntax-e _tl41274371_)))
-                            (let ((_tl41304381_ (##cdr _e41284374_))
-                                  (_hd41294378_ (##car _e41284374_)))
-                              (if (gx#stx-null? _tl41304381_)
-                                  (___kont3650436505_
-                                   _tl40904474_
-                                   _hd41294378_
-                                   _hd40924481_
-                                   _hd40824556_)
-                                  (if (gx#stx-pair/null? _tl40934484_)
-                                      (let ((___splice3651036511_
-                                             (gx#syntax-split-splice
-                                              _tl40934484_
-                                              '0)))
-                                        (let ((_tl41584210_
-                                               (##vector-ref
-                                                ___splice3651036511_
-                                                '1))
-                                              (_target41564207_
-                                               (##vector-ref
-                                                ___splice3651036511_
-                                                '0)))
-                                          (if (gx#stx-null? _tl41584210_)
-                                              (___match3665436655_
-                                               _e40814552_
-                                               _hd40824556_
-                                               _tl40834559_
-                                               _e40884467_
-                                               _hd40894471_
-                                               _tl40904474_
-                                               _e40914477_
-                                               _hd40924481_
-                                               _tl40934484_
-                                               ___splice3651036511_
-                                               _target41564207_
-                                               _tl41584210_)
-                                              (_g40794170_))))
-                                      (_g40794170_)))))
-                          (if (gx#stx-pair/null? _tl40934484_)
-                              (let ((___splice3651036511_
-                                     (gx#syntax-split-splice _tl40934484_ '0)))
-                                (let ((_tl41584210_
-                                       (##vector-ref ___splice3651036511_ '1))
-                                      (_target41564207_
-                                       (##vector-ref ___splice3651036511_ '0)))
-                                  (if (gx#stx-null? _tl41584210_)
-                                      (___match3665436655_
-                                       _e40814552_
-                                       _hd40824556_
-                                       _tl40834559_
-                                       _e40884467_
-                                       _hd40894471_
-                                       _tl40904474_
-                                       _e40914477_
-                                       _hd40924481_
-                                       _tl40934484_
-                                       ___splice3651036511_
-                                       _target41564207_
-                                       _tl41584210_)
-                                      (_g40794170_))))
-                              (_g40794170_)))
-                      (if (gx#stx-pair/null? _tl40934484_)
-                          (let ((___splice3651036511_
-                                 (gx#syntax-split-splice _tl40934484_ '0)))
-                            (let ((_tl41584210_
-                                   (##vector-ref ___splice3651036511_ '1))
-                                  (_target41564207_
-                                   (##vector-ref ___splice3651036511_ '0)))
-                              (if (gx#stx-null? _tl41584210_)
-                                  (___match3665436655_
-                                   _e40814552_
-                                   _hd40824556_
-                                   _tl40834559_
-                                   _e40884467_
-                                   _hd40894471_
-                                   _tl40904474_
-                                   _e40914477_
-                                   _hd40924481_
-                                   _tl40934484_
-                                   ___splice3651036511_
-                                   _target41564207_
-                                   _tl41584210_)
-                                  (_g40794170_))))
-                          (_g40794170_)))
-                  (if (gx#stx-pair/null? _tl40934484_)
-                      (let ((___splice3651036511_
-                             (gx#syntax-split-splice _tl40934484_ '0)))
-                        (let ((_tl41584210_
-                               (##vector-ref ___splice3651036511_ '1))
-                              (_target41564207_
-                               (##vector-ref ___splice3651036511_ '0)))
-                          (if (gx#stx-null? _tl41584210_)
-                              (___match3665436655_
-                               _e40814552_
-                               _hd40824556_
-                               _tl40834559_
-                               _e40884467_
-                               _hd40894471_
-                               _tl40904474_
-                               _e40914477_
-                               _hd40924481_
-                               _tl40934484_
-                               ___splice3651036511_
-                               _target41564207_
-                               _tl41584210_)
-                              (_g40794170_))))
-                      (_g40794170_)))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (if (gx#stx-null?
-                                                       _tl40934484_)
-                                                      (___kont3650636507_
-                                                       _tl40904474_
-                                                       _hd40924481_
-                                                       _hd40824556_)
-                                                      (if (gx#stx-pair/null?
-                                                           _tl40934484_)
-                                                          (let ((___splice3651036511_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+              (if (gx#stx-pair/null? _tl40934484_)
+                  (let ((___splice3651036511_
                          (gx#syntax-split-splice _tl40934484_ '0)))
                     (let ((_tl41584210_ (##vector-ref ___splice3651036511_ '1))
                           (_target41564207_

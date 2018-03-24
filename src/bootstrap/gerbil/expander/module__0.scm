@@ -2548,7 +2548,7 @@
                                                     _hd11885_
                                                     'gx#module-context::t)))
                                               (if _$e11887_
-                                                  (values _$e11887_)
+                                                  _$e11887_
                                                   (gx#raise-syntax-error
                                                    '#f
                                                    '"Unexpected import"
