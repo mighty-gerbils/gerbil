@@ -187,22 +187,23 @@ $ gxi
 - The `define-library` can appear at most once per library module and
   the library id must match the id of the enclosing module.
 
-- The following procedures from `(scheme char)` are not implemented:
-```
-char-foldcase string-foldcase
-```
+- The `char-foldcase` and `string-foldcase` procedures from `(scheme char)`
+  are not implemented.
 
 - The `delay-force` special from `(scheme lazy)` is not implemented.
 
 - The `#true` and `#false` datums are not recognized by the reader.
 
+- The new `#\escape` and `#\null` named character datums are not
+  recognized by the reader.
+
 - The reader doesn't accept shared structures by default, as cycles
   are not currently supported in syntax objects. You can enable it on
-  a per-port basis with a custom readtable, but be advised that the repl
-  will loop when given an cyclic structure as syntax input.
+  a per-port basis with a custom readtable, but be advised that the
+  repl will loop when given a cyclic structure as syntax input.
 
 - `equal?` is the default `equal?` from Gerbil/Gambit, which doesn't
-  do sharing check and may not terminate in infinite recursive
-  structures.  There is a separate implementation `equal-shared?` exported
-  by `(std misc shared)` that terminates in cyclic structures albeit at the
-  cost of performance degradation.
+  do sharing check and may not terminate in cyclic structures.  There
+  is a separate implementation `equal-shared?` exported by `(std misc
+  shared)` that terminates in cyclic structures albeit at the cost of
+  performance degradation.
