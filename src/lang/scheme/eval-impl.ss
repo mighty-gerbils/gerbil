@@ -7,13 +7,18 @@ package: scheme
         :gerbil/expander)
 (export r7rs-eval r7rs-environment)
 
+(def init!
+  (delay (_gx#load-expander!)))
+
 (def (r7rs-eval expr environment)
+  (force init!)
   (parameterize ((current-expander-context environment))
     (eval-syntax expr)))
 
 (def environments (make-hash-table))
 
 (def (make-environment imports)
+  (force init!)
   (let (ctx (make-top-context))
     (parameterize ((current-expander-context ctx))
       (eval-syntax '(import :scheme/r7rs))

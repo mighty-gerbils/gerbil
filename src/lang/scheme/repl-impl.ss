@@ -23,11 +23,11 @@ package: scheme
     (parameterize ((current-expander-context ctx))
       (eval-syntax ['import mod])))
 
+  (_gx#load-expander!)
   (import! r5rs-top ':scheme/r5rs)
   (import! r5rs-null ':scheme/r5rs-null)
   (import! interaction ':scheme/r7rs)
-  (import! interaction '(scheme base))
-  )
+  (import! interaction '(scheme base)))
 
 ;; this needs to be delayed because it calls eval/import from within a module loader
 ;; with a circular dependency [r5rs depends on repl]
