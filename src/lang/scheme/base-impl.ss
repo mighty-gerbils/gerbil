@@ -260,11 +260,3 @@ package: scheme
    (vector-fill!* vec val start (vector-length vec)))
   ((vec val start end)
    (vector-fill!* vec val start end)))
-
-;; R7RS spec:
-;; "Returns #t if port is still open and capable of performing
-;;  input or output, respectively, and #f otherwise."
-;;
-;; Not possible to implement without kernel support from Gambit
-(defstub input-port-open?)
-(defstub output-port-open?)

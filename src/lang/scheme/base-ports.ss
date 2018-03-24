@@ -69,6 +69,107 @@ package: scheme
 (def (textual-port? obj)
   (macro-character-port? obj))
 
+;; input-port-open? and output-port-open?
+(extern namespace: #f
+  macro-port-woptions
+  macro-port-roptions
+  macro-closed?
+  macro-device-port?
+  macro-raw-device-port?
+  macro-device-port-rdevice-condvar
+  macro-device-port-wdevice-condvar
+  macro-raw-device-port-rdevice-condvar
+  macro-raw-device-port-wdevice-condvar
+  macro-condvar-name)
+
+;; R7RS spec:
+;; "Returns #t if port is still open and capable of performing
+;;  input or output, respectively, and #f otherwise."
+(def (input-port-open? port)
+  (cond
+   ((not (input-port? port))
+    (error "Bad argument; expected input port" port))
+   ((macro-closed? (macro-port-roptions port))
+    #f)
+   ((macro-device-port? port)
+    (rdevice-open? (macro-condvar-name (macro-device-port-rdevice-condvar port))))
+   ((macro-raw-device-port? port)
+    (rdevice-open? (macro-condvar-name (macro-raw-device-port-rdevice-condvar port))))
+   (else #t)))
+
+(def (output-port-open? port)
+  (cond
+   ((not (output-port? port))
+    (error "Bad argument; expected input port" port))
+   ((macro-closed? (macro-port-woptions port))
+    #f)
+   ((macro-device-port? port)
+    (wdevice-open? (macro-condvar-name (macro-device-port-wdevice-condvar port))))
+   ((macro-raw-device-port? port)
+    (wdevice-open? (macro-condvar-name (macro-raw-device-port-wdevice-condvar port))))
+   (else #t)))
+
+(extern rdevice-open? wdevice-open?)
+(begin-foreign
+  (namespace ("scheme/base-ports#" rdevice-open? wdevice-open?))
+
+  (c-declare #<<END-C
+#ifndef ___STAGE_OPEN
+#define ___STAGE_OPEN 0
+#endif
+#ifndef ___FFI_HAVE_DEVICE
+#define ___FFI_HAVE_DEVICE
+typedef struct ___device_struct
+  {
+    void *vtbl;
+    int refcount;                  /* device structure is released when zero */
+    void *group;                   /* device group this device belongs to */
+    struct ___device_struct *prev; /* bidirectional list pointer to previous */
+    struct ___device_struct *next; /* bidirectional list pointer to next */
+    int direction;                 /* ___DIRECTION_RD and/or ___DIRECTION_WR */
+    int close_direction;           /* ___DIRECTION_RD and/or ___DIRECTION_WR */
+    int read_stage;                /* ___STAGE_OPEN ... ___STAGE_CLOSED */
+    int write_stage;               /* ___STAGE_OPEN ... ___STAGE_CLOSED */
+  } ___device;
+#endif
+
+static ___SCMOBJ ___rdevice_openp(___SCMOBJ dev)
+{
+ ___device *d = ___CAST(___device*,___FIELD(dev,___FOREIGN_PTR));
+ if (d->read_stage != ___STAGE_OPEN)
+ {
+  return ___FAL;
+ }
+ else
+ {
+  return ___TRU;
+ }
+}
+
+static ___SCMOBJ ___wdevice_openp(___SCMOBJ dev)
+{
+ ___device *d = ___CAST(___device*,___FIELD(dev,___FOREIGN_PTR));
+ if (d->write_stage != ___STAGE_OPEN)
+ {
+  return ___FAL;
+ }
+ else
+ {
+  return ___TRU;
+ }
+}
+END-C
+)
+
+  (define-macro (define-c-lambda id args ret #!optional (name #f))
+    (let ((name (or name (##symbol->string id))))
+      `(define ,id
+         (c-lambda ,args ,ret ,name))))
+
+  (define-c-lambda rdevice-open? (scheme-object) scheme-object
+    "___rdevice_openp")
+  (define-c-lambda wdevice-open? (scheme-object) scheme-object
+    "___wdevice_openp"))
 
 ;; R7RS spec:
 ;; "The call-with-port procedure calls proc with port as an
