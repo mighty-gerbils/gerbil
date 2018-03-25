@@ -23,6 +23,7 @@
 - [std/generic](#stdgeneric)
 - [std/getopt](#stdgetopt)
 - [std/iter](#stditer)
+- [std/lazy](#stdlazy)
 - [std/logger](#stdlogger)
 - [std/make](#stdmake)
 - [std/misc](#stdmisc)
@@ -504,6 +505,19 @@ Iterators.
   in-input-lines in-input-chars in-input-bytes
   iter-filter iter-map iter-filter-map
   yield
+```
+
+## std/lazy
+
+Primitives for iterative lazy algorithms.
+
+```
+(import :std/lazy)
+
+;; exports:
+
+  lazy delay eager lazy?
+  force
 ```
 
 ## std/logger
