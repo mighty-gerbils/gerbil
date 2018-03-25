@@ -14,6 +14,7 @@
     "scheme/eval-impl"
     "scheme/eval"
     "scheme/file"
+    "scheme/inexact-impl"
     "scheme/inexact"
     "scheme/lazy-impl"
     "scheme/lazy"

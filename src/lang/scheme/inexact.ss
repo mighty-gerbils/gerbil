@@ -3,6 +3,7 @@
 ;;; R7RS (scheme inexact) library
 package: scheme
 
+(import :scheme/inexact-impl)
 (export
   acos
   asin
@@ -11,7 +12,7 @@ package: scheme
   exp
   finite?
   infinite?
-  log
+  (rename: r7rs-log log)
   nan?
   sin
   sqrt

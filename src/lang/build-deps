@@ -37,7 +37,8 @@
   scheme/stubs)
  ("scheme/eval.ss" scheme/eval gerbil/core scheme/eval-impl)
  ("scheme/file.ss" scheme/file gerbil/core)
- ("scheme/inexact.ss" scheme/inexact gerbil/core)
+ ("scheme/inexact-impl.ss" scheme/inexact-impl gerbil/core)
+ ("scheme/inexact.ss" scheme/inexact gerbil/core scheme/inexact-impl)
  ("scheme/lazy-impl.ss" scheme/lazy-impl gerbil/core scheme/stubs std/lazy)
  ("scheme/lazy.ss" scheme/lazy gerbil/core scheme/lazy-impl)
  ("scheme/load-impl.ss"
