@@ -190,8 +190,6 @@ $ gxi
 - The `char-foldcase` and `string-foldcase` procedures from `(scheme char)`
   are not implemented.
 
-- The `delay-force` special from `(scheme lazy)` is not implemented.
-
 - The `#true` and `#false` datums are not recognized by the reader.
 
 - The new `#\escape` and `#\null` named character datums are not
