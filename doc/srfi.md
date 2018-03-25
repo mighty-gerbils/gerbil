@@ -30,6 +30,7 @@ The following SRFIs are supported by gerbil:
 | SRFI 41 | Streams | stdlib | `:std/srfi/41` |
 | SRFI 42 | Eager Comprehensions | stdlib | `:std/srfi/42` |
 | SRFI 43 | Vector Library | stdlib | `:std/srfi/43` |
+| SRFI 45 | Primitives for Expressing Iterative Lazy Algorithms | stdlib | `:std/lazy` |
 | SRFI 48 | Intermediate Format Strings | stdlib | `:std/format` |
 | SRFI 60 | Integers as Bits | runtime | `:gerbil/gambit/bits` |
 | SRFI 62 | S-expression comments | reader ||
