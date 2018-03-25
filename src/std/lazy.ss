@@ -18,7 +18,7 @@ package: std
 
 (defrules delay-eager ()
   ((_ expr)
-   (delay-lazy (@lazy eager expr))))
+   (delay-lazy (eager expr))))
 
 (defrules @lazy ()
   ((_ t expr)
@@ -34,15 +34,10 @@ package: std
     (@lazy resolved expr))))
 
 (def (force* obj)
-  (cond
-   ((lazy? obj)
-    (force-lazy obj))
-   ((promise? obj)
-    (let (res (force obj))
-      (if (lazy? res)
-        (force-lazy res)
-        res)))
-   (else obj)))
+  (let (res (force obj))
+    (if (lazy? res)
+      (force-lazy res)
+      res)))
 
 (def (force-lazy p)
   (declare (not safe))
