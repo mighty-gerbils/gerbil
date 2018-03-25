@@ -10,7 +10,7 @@ modules.
 - [R7RS in the REPL](#r7rs-in-the-repl)
 - [R7RS Library Modules](#r7rs-library-modules)
 - [Evaluating R7RS Expressions](#evaluating-r7rs-expressions)
-- [Implementation Restrictions](#implementation-restrictions)
+- [Implementation Notes](#implementation-notes)
 
 <!-- tocstop -->
 
@@ -182,7 +182,7 @@ $ gxi
 ...
 ```
 
-## Implementation Restrictions
+## Implementation Notes
 
 - The `define-library` can appear at most once per library module and
   the library id must match the id of the enclosing module.
