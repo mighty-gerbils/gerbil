@@ -25,7 +25,13 @@ package: std
    (make-lazy (cons 't expr))))
 
 (def (eager expr)
-  (@lazy eager expr))
+  (cond
+   ((lazy? expr)
+    expr)
+   ((promise? expr)
+    (@lazy eager expr))
+   (else
+    (@lazy resolved expr))))
 
 (def (force* obj)
   (cond
