@@ -3,7 +3,6 @@
 ;;; R7RS (scheme process-context) library -- implementation details
 package: scheme
 
-(import :scheme/stubs)
 (export #t)
 
 (def (get-environment-variable var)

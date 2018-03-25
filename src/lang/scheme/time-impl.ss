@@ -3,8 +3,7 @@
 ;;; R7RS (scheme time) library -- implementation details
 package: scheme
 
-(import :scheme/stubs
-        :gerbil/gambit/os)
+(import :gerbil/gambit/os)
 (export #t)
 
 (begin-foreign

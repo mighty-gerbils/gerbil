@@ -3,8 +3,7 @@
 ;;; R7RS (scheme write) library -- implementation details
 package: scheme
 
-(import :scheme/stubs
-        :gerbil/gambit/readtables
+(import :gerbil/gambit/readtables
         :gerbil/gambit/ports
         :std/sugar)
 (export #t)

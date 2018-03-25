@@ -14,8 +14,7 @@
   gerbil/gambit
   scheme/base-etc
   scheme/base-ports
-  scheme/base-vectors
-  scheme/stubs)
+  scheme/base-vectors)
  ("scheme/base.ss"
   scheme/base
   gerbil/core
@@ -30,52 +29,35 @@
  ("scheme/char.ss" scheme/char gerbil/core scheme/char-impl std/srfi/13)
  ("scheme/complex.ss" scheme/complex gerbil/core)
  ("scheme/cxr.ss" scheme/cxr gerbil/core)
- ("scheme/eval-impl.ss"
-  scheme/eval-impl
-  gerbil/core
-  gerbil/expander
-  scheme/stubs)
+ ("scheme/eval-impl.ss" scheme/eval-impl gerbil/core gerbil/expander)
  ("scheme/eval.ss" scheme/eval gerbil/core scheme/eval-impl)
  ("scheme/file.ss" scheme/file gerbil/core)
  ("scheme/inexact-impl.ss" scheme/inexact-impl gerbil/core)
  ("scheme/inexact.ss" scheme/inexact gerbil/core scheme/inexact-impl)
- ("scheme/lazy-impl.ss" scheme/lazy-impl gerbil/core scheme/stubs std/lazy)
+ ("scheme/lazy-impl.ss" scheme/lazy-impl gerbil/core std/lazy)
  ("scheme/lazy.ss" scheme/lazy gerbil/core scheme/lazy-impl)
  ("scheme/load-impl.ss"
   scheme/load-impl
   gerbil/core
   gerbil/expander
-  scheme/repl-impl
-  scheme/stubs)
+  scheme/repl-impl)
  ("scheme/load.ss" scheme/load gerbil/core scheme/load-impl)
- ("scheme/process-context-impl.ss"
-  scheme/process-context-impl
-  gerbil/core
-  scheme/stubs)
+ ("scheme/process-context-impl.ss" scheme/process-context-impl gerbil/core)
  ("scheme/process-context.ss"
   scheme/process-context
   gerbil/core
   gerbil/gambit/os
   scheme/process-context-impl)
  ("scheme/read.ss" scheme/read gerbil/core)
- ("scheme/repl-impl.ss"
-  scheme/repl-impl
-  gerbil/core
-  gerbil/expander
-  scheme/stubs)
+ ("scheme/repl-impl.ss" scheme/repl-impl gerbil/core gerbil/expander)
  ("scheme/repl.ss" scheme/repl gerbil/core scheme/repl-impl)
- ("scheme/time-impl.ss"
-  scheme/time-impl
-  gerbil/core
-  gerbil/gambit/os
-  scheme/stubs)
+ ("scheme/time-impl.ss" scheme/time-impl gerbil/core gerbil/gambit/os)
  ("scheme/time.ss" scheme/time gerbil/core scheme/time-impl)
  ("scheme/write-impl.ss"
   scheme/write-impl
   gerbil/core
   gerbil/gambit/ports
   gerbil/gambit/readtables
-  scheme/stubs
   std/sugar)
  ("scheme/write.ss" scheme/write gerbil/core scheme/write-impl)
  ("scheme/r5rs.ss" scheme/r5rs gerbil/core scheme/base scheme/eval scheme/repl)

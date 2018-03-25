@@ -3,8 +3,7 @@
 ;;; R7RS (scheme base) library -- implementation details
 package: scheme
 
-(import :scheme/stubs
-        :scheme/base-etc
+(import :scheme/base-etc
         :scheme/base-vectors
         :scheme/base-ports
         (phi: +1 :gerbil/expander :gerbil/gambit))

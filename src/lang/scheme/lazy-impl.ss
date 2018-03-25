@@ -3,8 +3,7 @@
 ;;; R7RS (scheme lazy) library -- implementation details
 package: scheme
 
-(import :scheme/stubs
-        :std/lazy)
+(import :std/lazy)
 (export #t force delay (rename: lazy delay-force))
 
 (def (r7rs-make-promise obj)

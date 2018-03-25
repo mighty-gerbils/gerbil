@@ -3,8 +3,7 @@
 ;;; R7RS (scheme load) library -- implementation details
 package: scheme
 
-(import :scheme/stubs
-        :scheme/repl-impl
+(import :scheme/repl-impl
         :gerbil/expander)
 (export #t)
 
