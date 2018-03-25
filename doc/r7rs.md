@@ -1,9 +1,8 @@
 # R7RS support in Gerbil
 
-Gerbil supports R7RS as a custom language for library modules with the
-`:scheme/r7rs` prelude.  As such you can write and import modules
-written in R7RS Scheme and mix them freely with other Gerbil
-modules.
+Gerbil supports R7RS as a custom language with the `:scheme/r7rs` prelude.
+As such you can write and import modules written in R7RS Scheme and mix them
+freely with other Gerbil modules.
 
 <!-- toc -->
 
@@ -27,23 +26,24 @@ R7RS Scheme in Gerbil v0.12-DEV on Gambit v4.8.8
 > _
 ```
 
-The top context uses r7rs scheme syntax and includes bindings from `(scheme base)`.
+The top context uses R7RS scheme syntax and includes bindings from `(scheme base)`.
 
-## R7RS Library Modules
+## R7RS Modules
 
 Writing (or porting) an R7RS module is simple: you just specify
-`:scheme/r7rs` as the prelude.  The prelude exports only the
-necessities to support library definitions: `define-library` and the
-associated symbols for library declarations.
+`:scheme/r7rs` as the prelude. The prelude exports only the
+necessities to support library definitions and imports.
 
 There can be only a single library defined within a module, and its
 name must match the module id constructed by the package and name of
 the file. This implementation restriction has to do with library
-module resolution: Gerbil supports only a single top module per
-library file and constructs the module before expanding the body.
-Gerbil supports nested modules, but they are true nested modules and
-thus inappropriate for nested R7RS library definitions as these are
-inherently top level.
+module resolution: Gerbil constructs a top module per file and
+resolves by interpreting the library name as a load-path relative
+path.
+
+Gerbil modules can also have nested modules, but nested libraries are
+unspecified by the R7RS report and so they are disallowed for R7RS
+modules.
 
 ### Example
 
