@@ -29,12 +29,20 @@ package: std
   (declare (not safe))
   (let (content (&lazy-e p))
     (case (##car content)
-      ((eager)
+      ((resolved)
        (##cdr content))
+      ((eager)
+       (let (val (force* (##cdr content)))
+         (if (eq? (##car content) 'eager) ; reentrance test
+           (begin
+             (##set-car! content 'resolved)
+             (##set-cdr! content val)
+             val)
+           (##cdr content))))
       ((lazy)
        (let* ((p* ((##cdr content)))
               (content (&lazy-e p)))
-         (unless (eq? (##car content) 'eager) ; reentrance test
+         (when (eq? (##car content) 'lazy) ; reentrance test
            (if (lazy? p*)
              (let (content* (&lazy-e p*))
                (##set-car! content (##car content*))
