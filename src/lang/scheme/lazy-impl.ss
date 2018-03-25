@@ -7,9 +7,7 @@ package: scheme
 (export #t force delay (rename: lazy delay-force))
 
 (def (r7rs-make-promise obj)
-  (if (r7rs-promise? obj)
-    obj
-    (std/lazy#make-lazy (cons 'resolved obj))))
+  (eager obj))
 
 (def (r7rs-promise? obj)
   (or (lazy? obj) (promise? obj)))
