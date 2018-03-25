@@ -23,6 +23,7 @@
     "iter"
     "test"
     "stxparam"
+    "lazy"
     ;; debugging
     (gxc: "debug/heap" ,@(include-gambit-sharp))
     "debug/memleak"

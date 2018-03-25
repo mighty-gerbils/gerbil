@@ -19,6 +19,7 @@
  ("scheme/base.ss"
   scheme/base
   gerbil/core
+  gerbil/gambit/exact
   gerbil/gambit/exceptions
   gerbil/gambit/ports
   scheme/base-impl
@@ -36,8 +37,9 @@
   scheme/stubs)
  ("scheme/eval.ss" scheme/eval gerbil/core scheme/eval-impl)
  ("scheme/file.ss" scheme/file gerbil/core)
- ("scheme/inexact.ss" scheme/inexact gerbil/core)
- ("scheme/lazy-impl.ss" scheme/lazy-impl gerbil/core scheme/stubs)
+ ("scheme/inexact-impl.ss" scheme/inexact-impl gerbil/core)
+ ("scheme/inexact.ss" scheme/inexact gerbil/core scheme/inexact-impl)
+ ("scheme/lazy-impl.ss" scheme/lazy-impl gerbil/core scheme/stubs std/lazy)
  ("scheme/lazy.ss" scheme/lazy gerbil/core scheme/lazy-impl)
  ("scheme/load-impl.ss"
   scheme/load-impl

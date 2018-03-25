@@ -5,8 +5,6 @@ package: scheme
 
 (import :scheme/lazy-impl)
 (export
-  delay
-  delay-force
-  force
+  force delay delay-force
   (rename: r7rs-make-promise make-promise)
-  promise?)
+  (rename: r7rs-promise? promise?))
