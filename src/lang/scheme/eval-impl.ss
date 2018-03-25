@@ -3,8 +3,7 @@
 ;;; R7RS (scheme eval) library -- implementation details
 package: scheme
 
-(import :scheme/stubs
-        :gerbil/expander)
+(import :gerbil/expander)
 (export r7rs-eval r7rs-environment)
 
 (def init!

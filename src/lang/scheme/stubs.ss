@@ -9,7 +9,7 @@ package: scheme
   ((_ id)
    (identifier? #'id)
    (defsyntax (id stx)
-     (raise-syntax-error #f "R7RS procedure NOT IMPLEMENTED" stx #'id))))
+     (raise-syntax-error #f "R7RS procedure NOT IMPLEMENTED" stx 'id))))
 
 (defrules defsyntax-stub ()
   ((_ id)

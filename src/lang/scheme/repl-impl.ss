@@ -3,8 +3,7 @@
 ;;; R7RS (scheme repl) library -- implementation details
 package: scheme
 
-(import :scheme/stubs
-        :gerbil/expander)
+(import :gerbil/expander)
 (export r7rs-interaction-environment
         r7rs-null-environment
         r7rs-scheme-report-environment)
