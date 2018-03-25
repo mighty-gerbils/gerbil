@@ -28,9 +28,15 @@ package: std
   (@lazy eager expr))
 
 (def (force* obj)
-  (if (lazy? obj)
-    (force-lazy obj)
-    (force obj)))
+  (cond
+   ((lazy? obj)
+    (force-lazy obj))
+   ((promise? obj)
+    (let (res (force obj))
+      (if (lazy? res)
+        (force-lazy res)
+        res)))
+   (else obj)))
 
 (def (force-lazy p)
   (declare (not safe))
