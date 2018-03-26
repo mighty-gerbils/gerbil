@@ -395,7 +395,8 @@ namespace: gxc
             (parameterize ((current-expander-context ctx)
                            (current-expander-phi 0)
                            (current-compile-lift lifts)
-                           (current-compile-marks (make-hash-table-eq)))
+                           (current-compile-marks (make-hash-table-eq))
+                           (current-compile-identifiers (make-bound-identifier-table)))
               (apply-generate-runtime code)))
            (runtime-code
             (if (null? (unbox lifts))
@@ -498,7 +499,8 @@ namespace: gxc
 (def (generate-runtime-phi stx)
   (let (lifts (box []))
     (parameterize ((current-compile-lift lifts)
-                   (current-compile-marks (make-hash-table-eq)))
+                   (current-compile-marks (make-hash-table-eq))
+                   (current-compile-identifiers (make-bound-identifier-table)))
       (let (code (apply-generate-runtime-phi stx))
         (if (null? (unbox lifts)) code
             ['begin (reverse (unbox lifts)) ... code])))))
