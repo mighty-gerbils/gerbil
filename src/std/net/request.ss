@@ -155,6 +155,8 @@ package: std/net
 (def url-rx
   (pregexp "(?:(https?)://)?([^/:]+)(:[0-9]+)?(/.*)?"))
 
+(def +tls-context+ (make-tls-context))
+
 (def (http-request method url user-headers body history redirect)
   ;; extra headers:
   ;;  Host: url host
@@ -194,7 +196,7 @@ package: std/net
             [server-address: host port-number: port eol-encoding: 'cr-lf])
            (tcp-client-options
             (if (equal? scheme "https")
-              (cons* tls-context: (make-tls-context) tcp-client-options)
+              (cons* tls-context: +tls-context+ tcp-client-options)
               tcp-client-options))
            (sock (open-tcp-client tcp-client-options))
            (req (make-request sock url history)))
