@@ -137,27 +137,31 @@
                        _thr695_
                        _tab700_)
                       _tab700_))))
-            (begin
-              (mutex-lock! gerbil/gambit/threads#*thread-locals-mutex*)
-              (let ((_$e702_ (hash-get
-                              gerbil/gambit/threads#*thread-locals*
-                              _thr695_)))
-                (if _$e702_
-                    ((lambda (_tab705_)
-                       (begin
-                         (mutex-unlock!
-                          gerbil/gambit/threads#*thread-locals-mutex*)
-                         _tab705_))
-                     _$e702_)
-                    (let ((_tab707_ (make-hash-table-eq)))
-                      (begin
-                        (hash-put!
-                         gerbil/gambit/threads#*thread-locals*
-                         _thr695_
-                         _tab707_)
-                        (mutex-unlock!
-                         gerbil/gambit/threads#*thread-locals-mutex*)
-                        _tab707_)))))))))
+            (if (eq? _thr695_ ##primordial-thread)
+                gerbil/gambit/threads#*primordial-thread-locals*
+                (begin
+                  (mutex-lock! gerbil/gambit/threads#*thread-locals-mutex*)
+                  (let ((_$e702_ (hash-get
+                                  gerbil/gambit/threads#*thread-locals*
+                                  _thr695_)))
+                    (if _$e702_
+                        ((lambda (_tab705_)
+                           (begin
+                             (mutex-unlock!
+                              gerbil/gambit/threads#*thread-locals-mutex*)
+                             _tab705_))
+                         _$e702_)
+                        (let ((_tab707_ (make-hash-table-eq)))
+                          (begin
+                            (hash-put!
+                             gerbil/gambit/threads#*thread-locals*
+                             _thr695_
+                             _tab707_)
+                            (mutex-unlock!
+                             gerbil/gambit/threads#*thread-locals-mutex*)
+                            _tab707_))))))))))
+  (define gerbil/gambit/threads#*primordial-thread-locals*
+    (make-hash-table-eq))
   (define gerbil/gambit/threads#*thread-locals*
     (make-hash-table-eq 'weak-keys: '#t))
   (define gerbil/gambit/threads#*thread-locals-mutex*
