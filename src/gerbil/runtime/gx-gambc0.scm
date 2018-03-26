@@ -1224,6 +1224,8 @@
     (fold* f (cons lst rest)))))
 
 (define (iota count #!optional (start 0) (step 1))
+  (unless (fixnum? count)
+    (error "Bad argument; expected fixnum" count))
   (let lp ((i 0) (x start) (r '()))
     (if (##fx< i count)
       (lp (##fx+ i 1) (+ x step) (cons x r))
