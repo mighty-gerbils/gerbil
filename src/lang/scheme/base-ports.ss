@@ -9,14 +9,14 @@ package: scheme
 (export #t)
 
 (def (r7rs-read-string k (port (current-input-port)))
-  (unless (and (fixnum? k) (fx> k 0))
+  (unless (and (fixnum? k) (##fx> k 0))
     (error "Illegal argument; expected positive fixnum" k))
   (let* ((str (make-string k))
          (rd (read-substring str 0 k port)))
     (cond
-     ((fxzero? rd)
+     ((##fxzero? rd)
       (eof-object))
-     ((fx< rd k)
+     ((##fx< rd k)
       (string-shrink! str rd)
       str)
      (else
@@ -26,24 +26,24 @@ package: scheme
   (write-substring str start end port))
 
 (def (read-bytevector k (port (current-input-port)))
-  (unless (and (fixnum? k) (fx> k 0))
+  (unless (and (fixnum? k) (##fx> k 0))
     (error "Illegal argument; expected positive fixnum" k))
   (let* ((bytes (make-u8vector k))
          (rd (read-subu8vector bytes 0 k port)))
     (cond
-     ((fxzero? rd)
+     ((##fxzero? rd)
       (eof-object))
-     ((fx< rd k)
+     ((##fx< rd k)
       (u8vector-shrink! bytes rd)
       bytes)
      (else
       bytes))))
 
 (def (read-bytevector! bytes (port (current-input-port)) (start 0) (end (u8vector-length bytes)))
-  (unless (and (fixnum? start) (fixnum? end) (fx< start end))
+  (unless (and (fixnum? start) (fixnum? end) (##fx< start end))
     (error "Illegal bytevector range; need at least one char" start end))
   (let (rd (read-subu8vector bytes start end port))
-    (if (fxzero? rd)
+    (if (##fxzero? rd)
       (eof-object)
       rd)))
 
@@ -203,8 +203,8 @@ END-C
   )
 
 (def (port-buffered-chars? port)
-  (or (fx< (macro-character-port-rlo port)
-           (macro-character-port-rhi port))
+  (or (##fx< (macro-character-port-rlo port)
+             (macro-character-port-rhi port))
       (macro-character-port-peek-eof? port)))
 
 (def (check-byte-port/lock! port proc)
@@ -219,7 +219,7 @@ END-C
   (check-byte-port/lock! port u8-ready?)
   (let ((byte-rlo (macro-byte-port-rlo port))
         (byte-rhi (macro-byte-port-rhi port)))
-    (if (fx< byte-rlo byte-rhi)
+    (if (##fx< byte-rlo byte-rhi)
       (begin
         (macro-port-mutex-unlock! port)
         #t)
@@ -237,7 +237,7 @@ END-C
   (let lp ()
     (let ((byte-rlo (macro-byte-port-rlo port))
           (byte-rhi (macro-byte-port-rhi port)))
-      (if (fx< byte-rlo byte-rhi)
+      (if (##fx< byte-rlo byte-rhi)
         (let (byte (u8vector-ref (macro-byte-port-rbuf port) byte-rlo))
           (macro-port-mutex-unlock! port)
           byte)
