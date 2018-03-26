@@ -9,6 +9,7 @@
         "misc/string-test"
         "misc/list-test"
         "misc/channel-test"
+        "misc/lru-test"
         "text/csv-test"
         "text/json-test"
         "text/utf8-test"
@@ -39,6 +40,7 @@
    string-test
    list-test
    channel-test
+   lru-test
    actor-xdr-test
    actor-rpc-test actor-rpc-stream-test
    httpd-test

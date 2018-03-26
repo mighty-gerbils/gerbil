@@ -30,6 +30,7 @@
   * [std/misc/channel](#stdmiscchannel)
   * [std/misc/completion](#stdmisccompletion)
   * [std/misc/list](#stdmisclist)
+  * [std/misc/lru](#stdmisclru)
   * [std/misc/ports](#stdmiscports)
   * [std/misc/pqueue](#stdmiscpqueue)
   * [std/misc/process](#stdmiscprocess)
@@ -595,6 +596,21 @@ List utilities.
   length>? length>n? length>=? length>=n?
   call-with-list-builder
   snoc append1
+```
+
+### std/misc/lru
+LRU cache.
+
+```
+(import :std/misc/lru)
+
+;; exports:
+
+  make-lru-cache lru-cache?
+  lru-cache-ref lru-cache-get lru-cache-put! lru-cache-remove!
+  lru-cache-size lru-cache-capacity
+  lru-cache-flush! lru-cache-walk lru-cache-fold lru-cache-foldr
+  lru-cache->list
 ```
 
 ### std/misc/ports
