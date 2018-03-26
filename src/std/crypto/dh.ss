@@ -28,6 +28,6 @@ package: std/crypto
   (let* ((len (DH_size dh))
          (secret (make-u8vector len))
          (count (DH_compute_key secret bn dh)))
-    (when (fx< count len)
+    (when (##fx< count len)
       (u8vector-shrink! secret count))
     secret))

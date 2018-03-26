@@ -45,7 +45,7 @@ package: std/db
 
 (def (fixnum-positive? obj)
   (and (fixnum? obj)
-       (fxpositive? obj)))
+       (##fxpositive? obj)))
 
 (def (value-bytes key)
   (cond

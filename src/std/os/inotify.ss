@@ -77,7 +77,7 @@ package: std/os
       (let (rd (fdread in buf))
         (cond
          (rd
-          (if (fxzero? rd)
+          (if (##fxzero? rd)
             (error "empty inotify read")
             (inotify-events buf rd)))
          ((##wait-for-io! (fd-io-in in) timeo)
@@ -86,13 +86,13 @@ package: std/os
 
 (def (inotify-events buf rd)
   (let lp ((off 0) (evts []))
-    (if (fx< off rd)
+    (if (##fx< off rd)
       (let ((wd (inotify_event_wd buf off))
             (mask (inotify_event_mask buf off))
             (cookie (inotify_event_cookie buf off))
             (name (inotify_event_name buf off))
             (sz (inotify_event_size buf off)))
-        (lp (fx+ off sz)
+        (lp (##fx+ off sz)
             (cons (make-inotify-event wd mask cookie name)
                   evts)))
       (reverse evts))))

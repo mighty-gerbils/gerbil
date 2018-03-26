@@ -24,7 +24,7 @@ package: std/db
 (def (sqlite-open file (flags (fxior SQLITE_OPEN_READWRITE SQLITE_OPEN_CREATE)))
   (let* ((ptr (make_sqlite3_ptr_ptr))
          (r (sqlite3_open ptr file flags)))
-    (if (fx= r SQLITE_OK)
+    (if (##fx= r SQLITE_OK)
       (make-sqlite-connection (sqlite3_ptr ptr))
       (raise-sqlite-error 'sqlite-open r))))
 
@@ -36,7 +36,7 @@ package: std/db
   (lambda (self sql)
     (let* ((ptr (make_sqlite3_stmt_ptr_ptr))
            (r (sqlite3_prepare ptr (connection-e self) sql)))
-      (if (fx= r SQLITE_OK)
+      (if (##fx= r SQLITE_OK)
         (make-sqlite-statement (sqlite3_stmt_ptr ptr))
         (raise-sqlite-error 'sqlite-prepare r)))))
 
@@ -138,7 +138,7 @@ package: std/db
     (with ((sqlite-statement stmt) self)
       (let (count (sqlite3_column_count stmt))
         (let lp ((k 0) (cols []))
-          (if (fx< k count)
+          (if (##fx< k count)
             (let (name (sqlite3_column_name stmt k))
-              (lp (fx1+ k) (cons name cols)))
+              (lp (##fx+ k 1) (cons name cols)))
             (reverse cols)))))))

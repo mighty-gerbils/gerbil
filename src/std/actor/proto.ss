@@ -74,8 +74,8 @@ package: std/actor
 
 (def (remote-hash r)
   (with ((remote _ uuid address) r)
-    (fxxor (uuid-hash uuid)
-           (equal?-hash address))))
+    (##fxxor (uuid-hash uuid)
+             (equal?-hash address))))
 
 ;;; rpc messages
 (defstruct !rpc ())

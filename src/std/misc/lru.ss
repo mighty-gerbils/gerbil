@@ -18,7 +18,7 @@ package: std/misc
 
 (defmethod {:init! lru-cache}
   (lambda (self cap)
-    (unless (and (fixnum? cap) (fx> cap 1))
+    (unless (and (fixnum? cap) (##fx> cap 1))
       (error "Bad argument; expected fixnum > 1" cap))
     (struct-instance-init! self (make-hash-table) #f #f 0 cap)))
 
@@ -72,18 +72,18 @@ package: std/misc
             (sz (&lru-cache-size lru)))
         (hash-put! ht key n)
         (cond
-         ((fx= sz 0)
+         ((##fx= sz 0)
           ;; empty cache
           (set! (&lru-cache-hd lru) n)
           (set! (&lru-cache-tl lru) n)
           (set! (&lru-cache-size lru) 1))
-         ((fx< sz (&lru-cache-cap lru))
+         ((##fx< sz (&lru-cache-cap lru))
           ;; we have space, add to front
           (let (hd (&lru-cache-hd lru))
             (set! (&node-prev hd) n)
             (set! (&node-next n) hd)
             (set! (&lru-cache-hd lru) n)
-            (set! (&lru-cache-size lru) (fx1+ sz))))
+            (set! (&lru-cache-size lru) (##fx+ sz 1))))
          (else
           ;; cache is full, drop tail node and add to front
           (let* ((hd (&lru-cache-hd lru))
@@ -101,7 +101,7 @@ package: std/misc
   (with ((lru-cache ht hd tl sz) lru)
     (alet (n (hash-get ht key))
       (hash-remove! ht key)
-      (set! (&lru-cache-size lru) (fx1- sz))
+      (set! (&lru-cache-size lru) (##fx- sz 1))
       (cond
        ((eq? n hd)
         (if (eq? n tl)
@@ -123,7 +123,7 @@ package: std/misc
       (void))))
 
 (def (lru-cache-flush! lru)
-  (when (fx> (lru-cache-size lru) 0)
+  (when (##fx> (lru-cache-size lru) 0)
     (struct-instance-init! lru (make-hash-table) #f #f 0)))
 
 (def (lru-cache-walk lru proc)

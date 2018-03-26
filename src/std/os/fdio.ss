@@ -36,11 +36,11 @@ package: std/os
 
 (def (file-direction flags)
   (cond
-   ((fx= (fxand flags O_RDWR) O_RDWR)
+   ((##fx= (##fxand flags O_RDWR) O_RDWR)
     'inout)
-   ((fx= (fxand flags O_RDONLY) O_RDONLY)
+   ((##fx= (##fxand flags O_RDONLY) O_RDONLY)
     'in)
-   ((fx= (fxand flags O_WRONLY) O_WRONLY)
+   ((##fx= (##fxand flags O_WRONLY) O_WRONLY)
     'out)
    (else
     (error "Unspecified file direction" flags))))

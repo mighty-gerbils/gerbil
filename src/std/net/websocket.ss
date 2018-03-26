@@ -47,7 +47,7 @@ package: std/net
                         params: params)))
     (try
      (let (status (request-status req))
-       (unless (fx= status 101)
+       (unless (##fx= status 101)
          (raise-io-error 'open-websocket-client
                          "Unexpected server response"
                          url status)))
@@ -246,23 +246,23 @@ package: std/net
     (let (len (u8vector-length buf))
       (let lp ()
         (let (rd (read-subu8vector buf 0 len port))
-          (when (fx= len rd)
+          (when (##fx= len rd)
             (lp))))))
 
   (def (skip-payload port plen)
     (let (len (u8vector-length buf))
       (let lp ((need plen))
         (cond
-         ((fxzero? need))
-         ((fx<= need len)
+         ((##fxzero? need))
+         ((##fx<= need len)
           (let (rd (read-subu8vector buf 0 need port))
-            (when (fx< rd need)
+            (when (##fx< rd need)
               (read-eof))))
          (else
           (let (rd (read-subu8vector buf 0 len port))
-            (if (fx< rd len)
+            (if (##fx< rd len)
               (read-eof)
-              (lp (fx- need len)))))))))
+              (lp (##fx- need len)))))))))
 
   ;; => (values fin opcode mask plen)
   (def (read-header port)
@@ -272,15 +272,15 @@ package: std/net
            (b1 (read-u8 port))
            (_ (when (eof-object? b1)
                 (read-eof))))
-      (values (fxand b0 #x80)
-              (fxand b0 #x0f)
-              (fxand b1 #x80)
-              (fxand b1 #x7f))))
+      (values (##fxand b0 #x80)
+              (##fxand b0 #x0f)
+              (##fxand b1 #x80)
+              (##fxand b1 #x7f))))
 
   (def (read-payload port plen)
     (let* ((data (make-u8vector plen))
            (rd (read-subu8vector data 0 plen port)))
-      (if (fx< rd plen)
+      (if (##fx< rd plen)
         (read-eof)
         data)))
 
@@ -291,14 +291,14 @@ package: std/net
            (b1 (read-u8 port))
            (_ (when (eof-object? b1)
                 (read-eof))))
-      (fxior (fxshift b0 8) b1)))
+      (##fxior (##fxarithmetic-shift b0 8) b1)))
 
   (def (read-u64 port)
     (let (rd (read-subu8vector buf 0 8 port))
-      (if (fx= rd 8)
+      (if (##fx= rd 8)
         (let lp ((k 0) (r 0))
-          (if (fx< k 8)
-            (lp (fx1+ k)
+          (if (##fx< k 8)
+            (lp (##fx+ k 1)
                 (bitwise-ior (arithmetic-shift r 8)
                              (##u8vector-ref buf k)))
             r))
@@ -324,7 +324,7 @@ package: std/net
                 ((127) (read-u64 port))
                 (else plen))))
         (cond
-         ((not (fxzero? mask))
+         ((not (##fxzero? mask))
           (warning "server sent masked frame; closing websocket connection")
           (websocket-close ws 1002)
           (skip-to-eof port))
@@ -336,20 +336,20 @@ package: std/net
          (else
           (case opcode
             ((#x0)                      ; continuation frame
-             (let (dlen (foldl fx+ plen (map u8vector-length frags)))
+             (let (dlen (foldl ##fx+ plen (map u8vector-length frags)))
                (cond
                 ((not type)
                  (warning "unexpected continuation frame from server; closing websocket connection")
                  (websocket-close ws 1002)
                  (skip-to-eof port))
-                ((fx> dlen max-message-size)
+                ((##fx> dlen max-message-size)
                  (warning "message length ~a exceeds max message size; closing websocket connection"
                           dlen)
                  (websocket-close ws 1009)
                  (skip-to-eof port))
-                ((fxzero? plen)         ; empty frame, skip
+                ((##fxzero? plen)       ; empty frame, skip
                  (lp type frags))
-                ((fxzero? fin)
+                ((##fxzero? fin)
                  (let (data (read-payload port plen))
                    (lp type (cons data frags))))
                 (else
@@ -358,14 +358,14 @@ package: std/net
                    (receive type message)
                    (lp #f []))))))
             ((#x1 #x2)                  ; text or binary frame
-             (let (xtype (if (fx= opcode #x1) 'text 'binary))
+             (let (xtype (if (##fx= opcode #x1) 'text 'binary))
                (cond
                 (type                   ; receiving cont frames
                  (warning "unexpected frame ~x from server; closing websocket connection"
                           opcode)
                  (websocket-close ws 1002)
                  (skip-to-eof port))
-                ((fxzero? fin)          ; first fragment
+                ((##fxzero? fin)        ; first fragment
                  (let (data (read-payload port plen))
                    (lp xtype [data])))
                 (else                   ; unfragmented msg
@@ -403,29 +403,29 @@ package: std/net
   (def mask-bytes (make-u8vector 4))
 
   (def (write-u16 plen port)
-    (write-u8 (fxand (fxshift plen -8) #xff) port)
-    (write-u8 (fxand plen #xff) port))
+    (write-u8 (##fxand (##fxarithmetic-shift plen -8) #xff) port)
+    (write-u8 (##fxand plen #xff) port))
 
   (def (write-payload mask data start end port)
     (let lp ((k start) (x 0))
-      (if (fx< k end)
+      (if (##fx< k end)
         (begin
           (##u8vector-set! buf x
-                           (fxxor (##u8vector-ref data k)
-                                  (##u8vector-ref mask (fxmodulo x 4))))
-          (lp (fx1+ k) (fx1+ x)))
+                           (##fxxor (##u8vector-ref data k)
+                                    (##u8vector-ref mask (##fxmodulo x 4))))
+          (lp (##fx+ k 1) (##fx+ x 1)))
         (write-subu8vector buf 0 x port))))
 
   (def (send-frame port fin opcode data start end)
-    (let* ((plen (fx- end start))
-           (fin (fxshift fin 7))
-           (b0 (fxior fin opcode))
-           (mask (fxshift 1 7))
-           (b1 (fxior mask (if (fx< plen 126) plen 126))))
+    (let* ((plen (##fx- end start))
+           (fin (##fxarithmetic-shift fin 7))
+           (b0 (##fxior fin opcode))
+           (mask (##fxarithmetic-shift 1 7))
+           (b1 (##fxior mask (if (##fx< plen 126) plen 126))))
       (random-bytes! mask-bytes)
       (write-u8 b0 port)
       (write-u8 b1 port)
-      (unless (fx< plen 126)
+      (unless (##fx< plen 126)
         (write-u16 plen port))
       (write-subu8vector mask-bytes 0 4 port)
       (write-payload mask-bytes data start end port)
@@ -434,10 +434,10 @@ package: std/net
   (def (send port opcode data)
     (let (end (u8vector-length data))
       (let lp ((start 0) (opcode opcode))
-        (let (have (fx- end start))
-          (if (fx< have 65536)
+        (let (have (##fx- end start))
+          (if (##fx< have 65536)
             (send-frame port 1 opcode data start end)
-            (let (xend (fx+ start 65535))
+            (let (xend (##fx+ start 65535))
               (send-frame port 0 opcode data start xend)
               (lp xend #x0)))))))
 
@@ -457,8 +457,8 @@ package: std/net
          (['close . how]
           (when (fixnum? how)
             (let (bytes (make-u8vector 2))
-              (##u8vector-set! bytes 0 (fxand (fxshift how -8) #xff))
-              (##u8vector-set! bytes 1 (fxand how #xff))
+              (##u8vector-set! bytes 0 (##fxand (##fxarithmetic-shift how -8) #xff))
+              (##u8vector-set! bytes 1 (##fxand how #xff))
               (send port #x8 bytes))))
          (bogus
           (warning "unexpected message ~a" bogus)

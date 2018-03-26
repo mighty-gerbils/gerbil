@@ -52,11 +52,11 @@ package: std/misc
                       (if (##fx> nx ny)
                           (begin
                             (##set-car! ry rx)
-                            (##set-car! rx (fx+ nx ny))
+                            (##set-car! rx (##fx+ nx ny))
                             #f)
                           (begin
                             (##set-car! rx ry)
-                            (##set-car! ry (fx+ ny nx))
+                            (##set-car! ry (##fx+ ny nx))
                             #f)))))))))
 
   (define (make-eq-table)

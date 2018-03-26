@@ -382,8 +382,8 @@ package: std
 
 (def (make-u8vector-port-evt port)
   (def (rbuf-check port)
-    (fx< (macro-byte-port-rlo port)
-         (macro-byte-port-rhi port)))
+    (##fx< (macro-byte-port-rlo port)
+           (macro-byte-port-rhi port)))
 
   (def (rbuf-fill port)
     (macro-byte-port-rbuf-fill port))
@@ -398,8 +398,8 @@ package: std
 
 (def (make-string-port-evt port)
   (def (rbuf-check port)
-    (fx< (macro-character-port-rlo port)
-         (macro-character-port-rhi port)))
+    (##fx< (macro-character-port-rlo port)
+           (macro-character-port-rhi port)))
 
   (def (rbuf-fill port)
     (macro-character-port-rbuf-fill port))
@@ -414,8 +414,8 @@ package: std
 
 (def (make-vector-port-evt port)
   (def (rbuf-check port)
-    (fx< (macro-vector-port-rlo port)
-         (macro-vector-port-rhi port)))
+    (##fx< (macro-vector-port-rlo port)
+           (macro-vector-port-rhi port)))
 
   (def (rbuf-fill port)
     (macro-vector-port-rbuf-fill port))
@@ -461,10 +461,10 @@ package: std
     (let* ((port (event-e evt))
            (mx (macro-port-mutex port)))
       (cond
-       ((or (fx< (macro-byte-port-rlo port)
-                 (macro-byte-port-rhi port))
-            (fx< (macro-character-port-rlo port)
-                 (macro-character-port-rhi port)))
+       ((or (##fx< (macro-byte-port-rlo port)
+                   (macro-byte-port-rhi port))
+            (##fx< (macro-character-port-rlo port)
+                   (macro-character-port-rhi port)))
         (mutex-unlock! mx)
         #t)
        ((fill! port)

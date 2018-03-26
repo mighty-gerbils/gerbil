@@ -86,10 +86,10 @@ package: std/net
           (if have-zeros
             (error "Malformed address" str)
             (let* ((count (length rest))
-                   (count (fx* (fx- 8 count) 2))
-                   (count (fx- count (length bytes)))
-                   (_ (when (fxnegative? count)
-                        (error "Malformed address; too manu bits" str)))
+                   (count (##fx* (##fx- 8 count) 2))
+                   (count (##fx- count (length bytes)))
+                   (_ (when (##fxnegative? count)
+                        (error "Malformed address; too many bits" str)))
                    (block (make-list count 0)))
               (loop rest
                     (foldl cons bytes block)
@@ -101,19 +101,19 @@ package: std/net
                 have-zeros))
          ((2)
           (loop rest
-                (cons* (fxior (fxshift (hex-e hex 0) 4) (hex-e hex 1))
+                (cons* (##fxior (##fxarithmetic-shift (hex-e hex 0) 4) (hex-e hex 1))
                        0 bytes)
                 have-zeros))
          ((3)
           (loop rest
-                (cons* (fxior (fxshift (hex-e hex 1) 4) (hex-e hex 2))
+                (cons* (##fxior (##fxarithmetic-shift (hex-e hex 1) 4) (hex-e hex 2))
                        (hex-e hex 0)
                        bytes)
                 have-zeros))
          ((4)
           (loop rest
-                (cons* (fxior (fxshift (hex-e hex 2) 4) (hex-e hex 3))
-                       (fxior (fxshift (hex-e hex 0) 4) (hex-e hex 1))
+                (cons* (##fxior (##fxarithmetic-shift (hex-e hex 2) 4) (hex-e hex 3))
+                       (##fxior (##fxarithmetic-shift (hex-e hex 0) 4) (hex-e hex 1))
                        bytes)
                 have-zeros))
          (else "Malformed address; block is too big" str hex)))
@@ -122,8 +122,8 @@ package: std/net
 
   (def (check bytes)
     (cond
-     ((fx= (u8vector-length bytes) 16) bytes)
-     ((fx< (u8vector-length bytes) 16)
+     ((##fx= (u8vector-length bytes) 16) bytes)
+     ((##fx< (u8vector-length bytes) 16)
       (error "Malformed address; not enough bits" str bytes))
      (else
       (error "malformed address; too many bits" str bytes))))
@@ -132,8 +132,8 @@ package: std/net
     (match hexes
       (["" "" . rest]
        (let* ((count (length rest))
-              (count (fx* (fx- 8 count) 2))
-              (_ (when (fxnegative? count)
+              (count (##fx* (##fx- 8 count) 2))
+              (_ (when (##fxnegative? count)
                    (error "Malformed address; too many bits" str)))
               (bytes (make-list count 0)))
            (loop rest bytes #t)))
@@ -171,10 +171,10 @@ package: std/net
   (let lp ((rest (u8vector->list ip6)) (hexes []))
     (match rest
       ([b0 b1 . rest]
-       (let ((b0h (fxand (fxshift b0 -4) #xf))
-             (b0l (fxand b0 #xf))
-             (b1h (fxand (fxshift b1 -4) #xf))
-             (b1l (fxand b1 #xf)))
+       (let ((b0h (##fxand (##fxarithmetic-shift b0 -4) #xf))
+             (b0l (##fxand b0 #xf))
+             (b1h (##fxand (##fxarithmetic-shift b1 -4) #xf))
+             (b1l (##fxand b1 #xf)))
          (match* (b0h b0l b1h b1l)
            ((0 0 0 0)
             (lp rest (cons "0" hexes)))
@@ -232,7 +232,7 @@ package: std/net
    ((string-rindex str #\:)
     => (lambda (ix)
          (values (substring str 0 ix)
-                 (substring str (fx1+ ix) (string-length str)))))
+                 (substring str (##fx+ ix 1) (string-length str)))))
    (else
     (E "Malformed address; no port separator" str))))
 
@@ -268,7 +268,7 @@ package: std/net
 
   (def (string->port port)
     (let (port (string->number port))
-      (if (and (fixnum? port) (fx<= 0 port 65535)) port
+      (if (and (fixnum? port) (##fx<= 0 port 65535)) port
           (error "Malformed address; bad port" str port))))
 
   (with ((values host port) (inet-address-split str))

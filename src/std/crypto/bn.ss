@@ -10,7 +10,7 @@ package: std/crypto
 (def (BN->bytes bn)
   (let* ((bytes (make-u8vector (BN_num_bytes bn)))
          (count (BN_bn2bin bn bytes)))
-    (if (fx< count (u8vector-length bytes))
+    (if (##fx< count (u8vector-length bytes))
       (u8vector-shrink! bytes count)
       bytes)))
 

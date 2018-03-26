@@ -383,17 +383,17 @@ package: std/net
   (def (request-id)
     (random-bytes! rbytes)
     (let lp ((k 0) (r 0))
-      (if (fx< k 7)
-        (lp (fx1+ k)
+      (if (##fx< k 7)
+        (lp (##fx+ k 1)
             (bitwise-ior (arithmetic-shift r 8) (##u8vector-ref rbytes k)))
         (modulo r rmax))))
 
   (def (message-tail args kws)
     (if (null? args)
-      (if (and kws (not (fxzero? (hash-length kws))))
+      (if (and kws (not (##fxzero? (hash-length kws))))
         [[] kws]
         [])
-      (if (and kws (not (fxzero? (hash-length kws))))
+      (if (and kws (not (##fxzero? (hash-length kws))))
         [args kws]
         [args])))
 

@@ -19,15 +19,15 @@ package: std/os
 (defrules check-os-error ()
   ((_ expr (prim arg ...))
    (let (r expr)
-     (if (not (fxnegative? r)) r
-         (raise-os-error (fx- r) prim arg ...)))))
+     (if (not (##fxnegative? r)) r
+         (raise-os-error (##fx- r) prim arg ...)))))
 
 (defrules do-retry-nonblock ()
   ((_ expr (prim arg ...) ERRNO ...)
    (let lp ()
      (let (r expr)
-       (if (not (fxnegative? r)) r
-           (let (errno (fx- r))
+       (if (not (##fxnegative? r)) r
+           (let (errno (##fx- r))
              (cond
               ((or (eq? errno ERRNO) ...)
                #f)

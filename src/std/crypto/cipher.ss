@@ -82,12 +82,12 @@ package: std/crypto
 
 (def (cipher-update! ctx out out-start in start end EVP-update)
   (let (r (EVP-update ctx out out-start in start end))
-    (if (not (fxnegative? r)) r
+    (if (not (##fxnegative? r)) r
         (raise-libcrypto-error ctx))))  ; racey with multiple threads
 
 (def (cipher-final! ctx out out-start EVP-final)
   (let (r (EVP-final ctx out out-start))
-    (if (not (fxnegative? r)) r
+    (if (not (##fxnegative? r)) r
         (raise-libcrypto-error ctx))))  ; racey with multiple threads
 
 ;; encrypt/decrypt streaming interface
@@ -120,12 +120,12 @@ package: std/crypto
       cipher-update!
       cipher-final!)
    (let* ((bufsz 1024)
-          (buf (make-u8vector (fx+ bufsz (cipher-block-size cipher))))
+          (buf (make-u8vector (##fx+ bufsz (cipher-block-size cipher))))
           (outp (open-output-u8vector)))
 
      (def (grow-buffer-if-needed ilen)
-       (let (max-olen (fx+ ilen (cipher-block-size cipher)))
-         (when (fx> max-olen (u8vector-length buf))
+       (let (max-olen (##fx+ ilen (cipher-block-size cipher)))
+         (when (##fx> max-olen (u8vector-length buf))
            (set! buf (make-u8vector max-olen)))))
 
      (cipher-init! cipher key iv)
@@ -144,14 +144,14 @@ package: std/crypto
       cipher-init!
       cipher-update!
       cipher-final!)
-   (let* ((len (fx- end start))
-          (buflen (fx+ len (fx* 2 (cipher-block-size cipher))))
+   (let* ((len (##fx- end start))
+          (buflen (##fx+ len (##fx* 2 (cipher-block-size cipher))))
           (buf (make-u8vector buflen)))
      (cipher-init! cipher key iv)
      (let* ((ulen (cipher-update! cipher buf 0 bytes start end))
             (flen (cipher-final! cipher buf ulen))
-            (olen (fx+ ulen flen)))
-       (when (fx< olen buflen)
+            (olen (##fx+ ulen flen)))
+       (when (##fx< olen buflen)
          (u8vector-shrink! buf olen))
        buf))))
 
@@ -176,7 +176,7 @@ package: std/crypto
   (encrypt-init! cipher key iv)
   (let* ((ulen (encrypt-update! cipher buf 0 bytes start end))
          (flen (encrypt-final! cipher buf ulen))
-         (olen (fx+ ulen flen)))
+         (olen (##fx+ ulen flen)))
     olen))
 
 (def (encrypt-port cipher key iv inp)
@@ -204,7 +204,7 @@ package: std/crypto
   (decrypt-init! cipher key iv)
   (let* ((ulen (decrypt-update! cipher buf 0 bytes start end))
          (flen (decrypt-final! cipher buf ulen))
-         (olen (fx+ ulen flen)))
+         (olen (##fx+ ulen flen)))
     olen))
 
 (def (decrypt-port cipher key iv inp)

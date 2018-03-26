@@ -60,7 +60,7 @@ package: std/misc
     (content-uuid str)))
 
 (def (u8vector->uuid u8v)
-  (if (fx= (u8vector-length u8v) uuid-length)
+  (if (##fx= (u8vector-length u8v) uuid-length)
     (make-uuid u8v #f)
     (error "Bad argument; invalid u8vector length" u8v)))
 

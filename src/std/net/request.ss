@@ -282,7 +282,7 @@ package: std/net
         (append-u8vectors (reverse chunks))
         (let* ((chunk (make-u8vector clen))
                (rd    (read-subu8vector chunk 0 clen port)))
-          (when (fx< rd clen)
+          (when (##fx< rd clen)
             (raise-io-error 'http-request-read-body
                             "error reading chunk; premature end of port"))
           (read-response-line port)     ; read chunk trailing CRLF
@@ -292,7 +292,7 @@ package: std/net
   (def (read/length port length)
     (let* ((data (make-u8vector length))
            (rd (read-subu8vector data 0 length port)))
-      (if (fx< rd length)
+      (if (##fx< rd length)
         (begin
           (u8vector-shrink! data rd)
           data)
@@ -304,9 +304,9 @@ package: std/net
              (buf (make-u8vector buflen))
              (rd  (read-subu8vector buf 0 buflen port)))
         (cond
-         ((fxzero? rd)
+         ((##fxzero? rd)
           (append-u8vectors (reverse chunks)))
-         ((fx< rd buflen)
+         ((##fx< rd buflen)
           (u8vector-shrink! buf rd)
           (append-u8vectors (reverse (cons buf chunks))))
          (else

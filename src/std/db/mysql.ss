@@ -50,14 +50,14 @@ package: std/db
 
 (def (raise-mysql-error where mysql (unknown-error "Unknown Error"))
   (let* ((errno (mysql_errno mysql))
-         (errmsg (if (fxzero? errno)
+         (errmsg (if (##fxzero? errno)
                    unknown-error
                    (mysql_error mysql))))
     (raise-sql-error where (format "MySQL error: ~a" errmsg) errno)))
 
 (def (raise-mysql-stmt-error where mystmt (unknown-error "Unknown Error"))
   (let* ((errno (mysql_stmt_errno mystmt))
-         (errmsg (if (fxzero? errno)
+         (errmsg (if (##fxzero? errno)
                    unknown-error
                    (mysql_stmt_error mystmt))))
     (raise-sql-error where (format "MySQL statement error: ~a" errmsg) errno)))
@@ -72,7 +72,7 @@ package: std/db
       (error "Error allocating and initializing MYSQL structure"))
     (let* (((values in out) (mysql-start-connection-thread!))
            (r (mysql-wait-result in (mysql_connect_begin out mysql host port user passwd db))))
-      (if (fxzero? r)
+      (if (##fxzero? r)
         (make-mysql-connection mysql in out)
         (begin
           (close-port in)
@@ -114,7 +114,7 @@ package: std/db
       (or (alet (r (do-retry-nonblock (__read_int (fd-e in) ptr)
                      (mysql-wait-result! in)
                      EAGAIN EWOULDBLOCK))
-            (if (fx< r sizeof_int)
+            (if (##fx< r sizeof_int)
               (error "incomplete read" in)
               (int_ptr_ref ptr)))
           (lp)))))
@@ -145,7 +145,7 @@ package: std/db
         (let* ((in (mysql-connection-in self))
                (out (mysql-connection-out self))
                (r (mysql-wait-result in (mysql_stmt_prepare_begin out mystmt sql))))
-          (if (fxzero? r)
+          (if (##fxzero? r)
             (make-mysql-statement mystmt in out)
             (begin
               (mysql_stmt_close mystmt)
@@ -159,15 +159,15 @@ package: std/db
   (lambda (self . args)
     (with ((mysql-statement mystmt) self)
       (let* ((count (mysql_stmt_param_count mystmt))
-             (_ (unless (fx= count (length args))
+             (_ (unless (##fx= count (length args))
                   (error "bind parameters don't match statement count" args count)))
              (bind (check-ptr (make_mysql_bind count))))
         (let lp ((rest args) (k 0) (ptrs []))
           (match rest
             ([arg . rest]
              (defrules loop ()
-               ((_) (lp rest (fx1+ k) ptrs))
-               ((_ ptr) (lp rest (fx1+ k) (cons ptr ptrs))))
+               ((_) (lp rest (##fx+ k 1) ptrs))
+               ((_ ptr) (lp rest (##fx+ k 1) (cons ptr ptrs))))
 
              (cond
               ((not arg)
@@ -189,7 +189,7 @@ package: std/db
                  (mysql_bind_set_double bind k ptr)
                  (loop ptr)))
               ((string? arg)
-               (let* ((len (fx1+ (string-utf8-length arg)))
+               (let* ((len (##fx+ (string-utf8-length arg) 1))
                       (ptr (check-ptr (make_blob_ptr len))))
                  (string_ptr_set ptr arg)
                  (mysql_bind_set_string bind k ptr len)
@@ -201,11 +201,11 @@ package: std/db
                  (mysql_bind_set_blob bind k ptr len)
                  (loop ptr)))
               ((date? arg)
-               (let* ((date (if (fxzero? (date-zone-offset arg))
+               (let* ((date (if (##fxzero? (date-zone-offset arg))
                               arg
                               (time-utc->date (date->time-utc arg))))
                       (ptr (check-ptr (make_time_ptr))))
-                 (mysql_time_set_second_part ptr (fx/ (date-nanosecond date) 1000))
+                 (mysql_time_set_second_part ptr (##fxquotient (date-nanosecond date) 1000))
                  (mysql_time_set_second ptr (date-second date))
                  (mysql_time_set_minute ptr (date-minute date))
                  (mysql_time_set_hour ptr (date-hour date))
@@ -218,7 +218,7 @@ package: std/db
                (error "cannot bind object; unknown conversion" arg))))
             (else
              (let (r (mysql_stmt_bind_param mystmt bind))
-               (unless (fxzero? r)
+               (unless (##fxzero? r)
                  (raise-mysql-stmt-error 'mysql-bind mystmt))
                (set! (mysql-statement-ptrs self) ptrs)))))))))
 
@@ -231,7 +231,7 @@ package: std/db
       (let* ((in (mysql-statement-in self))
              (out (mysql-statement-out self))
              (r (mysql-wait-result in (mysql_stmt_reset_begin out mystmt))))
-        (unless (fxzero? r)
+        (unless (##fxzero? r)
           (raise-mysql-stmt-error 'mysql-reset mystmt))))
     (set! (mysql-statement-res self) #f)
     (set! (mysql-statement-cols self) #f)
@@ -243,7 +243,7 @@ package: std/db
       (let* ((in (mysql-statement-in self))
              (out (mysql-statement-out self))
              (r (mysql-wait-result in (mysql_stmt_execute_begin out mystmt))))
-        (unless (fxzero? r)
+        (unless (##fxzero? r)
           (raise-mysql-stmt-error 'mysql-execute mystmt))))))
 
 (def column-types
@@ -274,11 +274,11 @@ package: std/db
           (raise-mysql-stmt-error 'mysql-query-start mystmt "No result set metadata"))
         (try
          (let (count (mysql_num_fields myres))
-           (when (fxzero? count)
+           (when (##fxzero? count)
              (raise-sql-error 'mysql-query-start "Query does not return any results"))
            (let (res (check-ptr (make_mysql_bind count)))
              (let lp ((k 0) (cols []) (ptrs (or (mysql-statement-ptrs self) [])))
-               (if (fx< k count)
+               (if (##fx< k count)
                  (let* ((myfield (mysql_fetch_field myres))
                         (mytype (mysql_field_type myfield))
                         (type (hash-get column-types mytype)))
@@ -287,7 +287,7 @@ package: std/db
                                       (mysql_field_name myfield) mytype))
                    (defrules loop ()
                      ((_ ptr ...)
-                      (lp (fx1+ k)
+                      (lp (##fx+ k 1)
                           (cons type cols)
                           (cons* ptr ... ptrs))))
                    (case type
@@ -330,7 +330,7 @@ package: std/db
                      (else
                       (error "Unexpected field type" type))))
                  (let (r (mysql_stmt_bind_result mystmt res))
-                   (unless (fxzero? r)
+                   (unless (##fxzero? r)
                      (raise-mysql-stmt-error 'mysql-query-start mystmt))
                    (set! (mysql-statement-res self) res)
                    (set! (mysql-statement-cols self) (reverse cols))
@@ -346,7 +346,7 @@ package: std/db
              (out (mysql-statement-out self))
              (r (mysql-wait-result in (mysql_stmt_fetch_begin out mystmt))))
         (cond
-         ((fxzero? r) #!void)
+         ((##fxzero? r) #!void)
          ((eq? r MYSQL_DATA_TRUNCATED) ; that's ok, blobs and strings
           #!void)
          ((eq? r MYSQL_NO_DATA) iter-end)
@@ -361,12 +361,12 @@ package: std/db
           ([type . rest]
            (defrules loop ()
              ((_ val)
-              (lp rest (fx1+ k) (cons val vals))))
+              (lp rest (##fx+ k 1) (cons val vals))))
 
            (defrules maybe-null ()
              ((_ expr)
               (let (nullp (mysql_bind_get_null res k))
-                (and (fxzero? nullp)
+                (and (##fxzero? nullp)
                      expr))))
 
            (case type
@@ -389,7 +389,7 @@ package: std/db
                          (ptr (check-ptr (make_blob_ptr len)))
                          (_ (mysql_bind_set_string bind 0 ptr len))
                          (r (mysql_stmt_fetch_column mystmt bind k 0)))
-                    (if (fxzero? r)
+                    (if (##fxzero? r)
                       (let (val (mysql_bind_get_string bind 0))
                         (loop val))
                       (raise-mysql-stmt-error 'mysql-query-fetch mystmt)))
@@ -401,7 +401,7 @@ package: std/db
                          (ptr (check-ptr (make_blob_ptr)))
                          (_ (mysql_bind_set_blob bind 0 ptr len))
                          (r (mysql_stmt_fetch_column mystmt bind k 0)))
-                    (if (fxzero? r)
+                    (if (##fxzero? r)
                       (let* ((bytes (make-u8vector len))
                              (_ (mysql_bind_get_blob bind 0 bytes)))
                         (loop bytes))
@@ -437,10 +437,10 @@ package: std/db
         (try
          (let (count (mysql_num_fields myres))
            (let lp ((k 0) (cols []))
-             (if (fx< k count)
+             (if (##fx< k count)
                (let* ((myfield (mysql_fetch_field myres))
                       (name (mysql_field_name myfield)))
-                 (lp (fx1+ k) (cons name cols)))
+                 (lp (##fx+ k 1) (cons name cols)))
                (reverse cols))))
          (finally
           (mysql_free_result myres)))))))
