@@ -34,7 +34,7 @@ package: std/net/socket
           (close ssock 'inout #f)
           (raise-timeout 'ssocket-connect "connection timeout" addr)))
       (let (errno (or rcon (socket-getsockopt sock SOL_SOCKET SO_ERROR)))
-        (if (fxzero? errno)
+        (if (##fxzero? errno)
           ssock
           (begin
             (close ssock 'inout #f)
@@ -87,10 +87,10 @@ package: std/net/socket
       (let lp ((count 0) (start start))
         (let (wait-out (!socket-wait-out ssock))
           (if wait-out
-            (if (fx< start end)
+            (if (##fx< start end)
               (let (r (socket-send sock buf start end))
                 (cond
-                 (r (lp (fx+ count r) (fx+ start r)))
+                 (r (lp (##fx+ count r) (##fx+ start r)))
                  ((wait-out ssock timeo)
                   (lp count start))
                  (else
@@ -117,7 +117,7 @@ package: std/net/socket
       (let lp ((count 0) (start start))
         (let (wait-in (!socket-wait-in ssock))
           (if wait-in
-            (if (fx>= start end)
+            (if (##fx>= start end)
               count
               (let (r (socket-recv sock buf start end))
                 (cond
@@ -125,10 +125,10 @@ package: std/net/socket
                   (if (wait-in ssock timeo)
                     (lp count start)
                     (raise-timeout 'ssocket-recv-all "receive timeout" ssock)))
-                 ((fxzero? r)
+                 ((##fxzero? r)
                   count)
                  (else
-                  (lp (fx+ count r) (fx+ start r))))))
+                  (lp (##fx+ count r) (##fx+ start r))))))
             (raise-io-error 'ssocket-recv-all "Socket is not open for input" ssock)))))))
 
 ;;; utilities

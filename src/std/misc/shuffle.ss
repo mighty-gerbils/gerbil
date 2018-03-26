@@ -16,9 +16,9 @@ package: std/misc
 
 (def (vector-shuffle! vec)
   (let (len (vector-length vec))
-    (do ((i 0 (fx1+ i)))
-        ((fx= i len) vec)
-      (let* ((j (fx+ i (random-integer (fx- len i))))
+    (do ((i 0 (##fx+ i 1)))
+        ((##fx= i len) vec)
+      (let* ((j (##fx+ i (random-integer (##fx- len i))))
              (iv (##vector-ref vec i)))
         (##vector-set! vec i (##vector-ref vec j))
         (##vector-set! vec j iv)))))

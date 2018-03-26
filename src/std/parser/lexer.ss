@@ -158,13 +158,13 @@ package: std/parser
             (let* ((end (char-stream-loc cs))
                    (E (lambda (xchars)
                         ;; return extra chars to the stream
-                        (let (count (fx- (length xchars) (length chars)))
+                        (let (count (##fx- (length xchars) (length chars)))
                           (let lp ((rest xchars) (k 0))
-                            (when (fx< k count)
+                            (when (##fx< k count)
                               (match rest
                                 ([char . rest]
                                  (char-stream-ungetc cs char)
-                                 (lp rest (fx1+ k)))))))
+                                 (lp rest (##fx+ k 1)))))))
                         ;; find first match and apply rule
                         (let lp ((rest-deltas deltas) (rest-Rs Rs))
                           (match rest-deltas

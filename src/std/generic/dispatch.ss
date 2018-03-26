@@ -188,7 +188,7 @@ package: std/generic
           (let (gtab (make-generic-table))
             (##vector-set! tabs arity gtab)
             (generic-bind-method! gtab signature method))))
-        (let ((new-tabs (make-vector (fx1+ arity) #f))
+        (let ((new-tabs (make-vector (##fx+ arity 1) #f))
               (gtab (make-generic-table)))
           (##subvector-move! tabs 0 (##vector-length tabs) new-tabs 0)
           (##vector-set! new-tabs arity gtab)

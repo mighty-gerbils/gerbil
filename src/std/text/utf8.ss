@@ -28,7 +28,7 @@ package: std/text
 
 (def (utf8-encode str start end)
   (let* ((slen (fx- end start))
-         (u8vlen (fx* slen 4))
+         (u8vlen (##fx* slen 4))
          (u8v (make-u8vector u8vlen))
          (count (utf8-encode! str u8v start end)))
     (##u8vector-shrink! u8v count)

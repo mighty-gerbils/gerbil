@@ -58,9 +58,9 @@ package: std/misc
 
 (def (try-copy-byte-port in out)
   (macro-port-mutex-lock! in)
-  (if (or (fx< (macro-character-port-rlo in)
-               (macro-character-port-rhi in))  ; has unread characters
-          (macro-character-port-peek-eof? in)) ; eof is coming
+  (if (or (##fx< (macro-character-port-rlo in)
+                 (macro-character-port-rhi in))  ; has unread characters
+          (macro-character-port-peek-eof? in))   ; eof is coming
     (copy-character-port/lock in out)
     (copy-byte-port/lock in out)))
 
@@ -72,7 +72,7 @@ package: std/misc
   (def (loop)
     (let ((rlo (macro-byte-port-rlo in))
           (rhi (macro-byte-port-rhi in)))
-      (if (fx< rlo rhi)
+      (if (##fx< rlo rhi)
         (let (rbuf (macro-byte-port-rbuf in))
           (try
            (when (eq? in out)
@@ -110,7 +110,7 @@ package: std/misc
     (let ((rlo (macro-character-port-rlo in))
           (rhi (macro-character-port-rhi in)))
       (cond
-       ((fx< rlo rhi)
+       ((##fx< rlo rhi)
         (let (rbuf (macro-character-port-rbuf in))
           (try
            (when (eq? in out)

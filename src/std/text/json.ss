@@ -167,9 +167,9 @@ package: std/text
     (def (put str)
       (let (len (string-length str))
         (let lp ((k 0))
-          (when (fx< k len)
+          (when (##fx< k len)
             (hash-put! ht (##string-ref str k) k)
-            (lp (fx1+ k))))))
+            (lp (##fx+ k 1))))))
     (put hexes)
     (put HEXES)
     ht))
@@ -190,13 +190,13 @@ package: std/text
 
   (def (read-escape-unicode port)
     (let lp ((n 0) (chars []))
-      (if (fx< n 4)
-        (lp (fx1+ n) (cons (read-char port) chars))
+      (if (##fx< n 4)
+        (lp (##fx+ n 1) (cons (read-char port) chars))
         (let lp ((rest chars) (val 0) (shift 0))
           (match rest
             ([char . rest]
-             (let (n (fxarithmetic-shift (hex-value char) shift))
-               (lp rest (bitwise-ior n val) (fx+ shift 4))))
+             (let (n (##fxarithmetic-shift (hex-value char) shift))
+               (lp rest (bitwise-ior n val) (##fx+ shift 4))))
             (else
              (integer->char val)))))))
 
@@ -289,7 +289,7 @@ package: std/text
     (when (eq? (string-ref str 0) #\.)
       (write-char #\0 port))
     (write-string str port)
-    (when (eq? (string-ref str (fx1- (string-length str))) #\.)
+    (when (eq? (string-ref str (##fx- (string-length str) 1)) #\.)
       (write-char #\0 port))))
 
 (def (write-json-list obj port)
@@ -308,19 +308,19 @@ package: std/text
 
 (def (write-json-vector obj port)
   (let (len (vector-length obj))
-    (if (fxpositive? len)
-      (let (last (fx1- len))
+    (if (##fxpositive? len)
+      (let (last (##fx- len 1))
         (begin
           (write-char #\[ port)
           (let lp ((n 0))
-            (if (fx= n last)
+            (if (##fx= n last)
               (begin
                 (write-json-object (##vector-ref obj n) port)
                 (write-char #\] port))
               (begin
                 (write-json-object (##vector-ref obj n) port)
                 (write-char #\, port)
-                (lp (fx1+ n)))))))
+                (lp (##fx+ n 1)))))))
       (write-string "[]" port))))
 
 (def (write-json-hash obj port)
@@ -364,21 +364,21 @@ package: std/text
 
   (def (safe-char? char)
     (let (n (char->integer char))
-      (and (fx>= n 32) (fx< n 127))))
+      (and (##fx>= n 32) (##fx< n 127))))
 
   (def (write-uchar char port)
     (let (int (char->integer char))
       (write-string "\\u" port)
       (let lp ((n 0) (mask #xf000) (shift -12))
-        (when (fx< n 4)
+        (when (##fx< n 4)
           (let (char (string-ref hexes (arithmetic-shift (bitwise-and int mask) shift)))
             (write-char char port)
-            (lp (fx1+ n) (arithmetic-shift mask -4) (fx+ shift 4)))))))
+            (lp (##fx+ n 1) (arithmetic-shift mask -4) (##fx+ shift 4)))))))
 
   (def (write-str obj port)
     (let (len (string-length obj))
       (let lp ((n 0))
-        (when (fx< n len)
+        (when (##fx< n len)
           (let (char (string-ref obj n))
             (cond
              ((assq char escape)
@@ -389,7 +389,7 @@ package: std/text
               (write-char char port))
              (else
               (write-uchar char port)))
-            (lp (fx1+ n)))))))
+            (lp (##fx+ n 1)))))))
 
   (write-char #\" port)
   (write-str obj port)

@@ -65,7 +65,7 @@
       (let lp ((current #f) (n 1))
         (let ((next (string-append basepath (number->string n))))
           (if (file-exists? next)
-            (lp next (fx1+ n))
+            (lp next (##fx+ n 1))
             current)))))
 
   (define (find-source-file npath)
@@ -215,14 +215,14 @@
               ((id . rest)
                (let ((flags
                       (if transparent? 0
-                          (fxior (if (hash-get printable id) 0 1)
-                                 (if (hash-get equality id)  0 4)))))
+                          (##fxior (if (hash-get printable id) 0 1)
+                                   (if (hash-get equality id)  0 4)))))
                  (cons* id flags #f (recur rest))))
               (else '()))))
          (opaque?
           (if (or transparent? (assq equal: rtd-plist))
             (if type-super
-              (fx= (fxand (##type-flags type-super) 1) 1)
+              (##fx= (##fxand (##type-flags type-super) 1) 1)
               #f)
             #t)))
     (##structure ##type-type
@@ -273,7 +273,7 @@
                   (or field-names (make-list fields ':))))
             (append super-fields field-names)))
          (_
-          (unless (fx= std-fields (length std-field-names))
+          (unless (##fx= std-fields (length std-field-names))
             (error "Bad field specification; length mismatch" id std-fields std-field-names)))
          (std-plist
           (cons (cons fields: std-field-names) plist))
@@ -290,36 +290,36 @@
         (##structure-instance-of? obj tid)))))
 
 (define (make-struct-field-accessor klass field)
-  (let ((off (fx1+ (struct-field-offset klass field))))
+  (let ((off (##fx+ (struct-field-offset klass field) 1)))
     (lambda (obj)
       (##structure-ref obj off klass #f))))
 
 (define (make-struct-field-mutator klass field)
-  (let ((off (fx1+ (struct-field-offset klass field))))
+  (let ((off (##fx+ (struct-field-offset klass field) 1)))
     (lambda (obj val)
       (##structure-set! obj val off klass #f))))
 
 (define (make-struct-field-unchecked-accessor klass field)
-  (let ((off (fx1+ (struct-field-offset klass field))))
+  (let ((off (##fx+ (struct-field-offset klass field) 1)))
     (lambda (obj)
       (##unchecked-structure-ref obj off klass #f))))
 
 (define (make-struct-field-unchecked-mutator klass field)
-  (let ((off (fx1+ (struct-field-offset klass field))))
+  (let ((off (##fx+ (struct-field-offset klass field) 1)))
     (lambda (obj val)
       (##unchecked-structure-set! obj val off klass #f))))
 
 (define (struct-field-offset klass field)
-  (fx+ field
-       (cond
-        ((##type-super klass) => type-descriptor-fields)
-        (else 0))))
+  (##fx+ field
+         (cond
+          ((##type-super klass) => type-descriptor-fields)
+          (else 0))))
 
 (define (struct-field-ref klass obj off)
-  (##structure-ref obj (fx1+ off) klass #f))
+  (##structure-ref obj (##fx+ off 1) klass #f))
 
 (define (struct-field-set! klass obj off val)
-  (##structure-set! obj val (fx1+ off) klass #f))
+  (##structure-set! obj val (##fx+ off 1) klass #f))
 
 (define (struct-subtype? klass xklass)
   (let ((klass-t (##type-id klass)))
@@ -358,7 +358,7 @@
            (begin
              (hash-put! ht slot off)
              (hash-put! ht (symbol->keyword slot) off)
-             (lp rest (fx1+ off) (cons slot r)))))
+             (lp rest (##fx+ off 1) (cons slot r)))))
         (else
          (K off r)))))
 
@@ -529,13 +529,13 @@
 (define (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
     (let ((off (class-slot-offset (object-type obj) slot)))
-      (##vector-ref obj (fx1+ off)))
+      (##vector-ref obj (##fx+ off 1)))
     (raise-type-error 'class-slot-ref klass obj)))
 
 (define (class-slot-set! klass obj slot val)
   (if (class-instance? klass obj)
     (let ((off (class-slot-offset (object-type obj) slot)))
-      (##vector-set! obj (fx1+ off) val))
+      (##vector-set! obj (##fx+ off 1) val))
     (raise-type-error 'class-slot-set! klass obj)))
 
 (define (class-subtype? klass xklass)
@@ -576,7 +576,7 @@
   (##structure-direct-instance-of? obj (##type-id klass)))
 
 (define (make-object klass k)
-  (let ((obj (##make-vector (fx1+ k) #f)))
+  (let ((obj (##make-vector (##fx+ k 1) #f)))
     (##vector-set! obj 0 klass)
     (##subtype-set! obj (macro-subtype-structure))
     obj))
@@ -587,7 +587,7 @@
      ((type-descriptor-ctor klass)
       => (lambda (kons-id)
            (&constructor-init! klass kons-id (make-object klass fields) args)))
-     ((fx= fields (length args))
+     ((##fx= fields (length args))
       (apply ##structure klass args))
      (else
       (error "Arguments don't match object size"
@@ -603,7 +603,7 @@
       (&class-instance-init! klass obj args)))))
 
 (define (struct-instance-init! obj . args)
-  (if (fx< (length args) (##vector-length obj))
+  (if (##fx< (length args) (##vector-length obj))
     (&struct-instance-init! obj args)
     (error "Too many arguments for struct" obj args)))
 
@@ -612,7 +612,7 @@
     (core-match rest
       ((hd . rest)
        (##vector-set! obj k hd)
-       (lp (fx1+ k) rest))
+       (lp (##fx+ k 1) rest))
       (else obj))))
 
 (define (class-instance-init! obj . args)
@@ -625,7 +625,7 @@
        (cond
         ((class-slot-offset klass key)
          => (lambda (off)
-              (##vector-set! obj (fx1+ off) val)
+              (##vector-set! obj (##fx+ off 1) val)
               (lp rest)))
         (else
          (error "No slot for keyword initializer" klass key))))
@@ -670,9 +670,9 @@
     (error "Not an object" obj)))
 
 (define (unchecked-field-ref obj off)
-  (##vector-ref obj (fx1+ off)))
+  (##vector-ref obj (##fx+ off 1)))
 (define (unchecked-field-set! obj off val)
-  (##vector-set! obj (fx1+ off) val))
+  (##vector-set! obj (##fx+ off 1) val))
 (define (unchecked-slot-ref obj slot)
   (unchecked-field-ref obj (class-slot-offset (object-type obj) slot)))
 (define (unchecked-slot-set! obj slot val)
@@ -688,10 +688,10 @@
      (,E ,obj ,slot)))
 
 (define (slot-ref obj slot #!optional (E &slot-error))
-  (&slot-e obj slot (lambda (off) (##vector-ref obj (fx1+ off))) E))
+  (&slot-e obj slot (lambda (off) (##vector-ref obj (##fx+ off 1))) E))
 
 (define (slot-set! obj slot val #!optional (E &slot-error))
-  (&slot-e obj slot (lambda (off) (##vector-set! obj (fx1+ off) val)) E))
+  (&slot-e obj slot (lambda (off) (##vector-set! obj (##fx+ off 1) val)) E))
 
 (define (&slot-error obj slot)
   (error "Cannot find slot" obj slot))
@@ -925,7 +925,7 @@
   (let ((lst (if (##values? obj)
                (##vector->list obj)
                (list obj))))
-    (if (fxzero? start) lst
+    (if (##fxzero? start) lst
         (list-tail lst start))))
 
 (define (subvector->list obj #!optional (start 0))
@@ -1029,8 +1029,8 @@
 
 (define (make-list k #!optional (val #f))
   (let lp ((n 0) (r '()))
-    (if (fx< n k)
-      (lp (fx1+ n) (cons val r))
+    (if (##fx< n k)
+      (lp (##fx+ n 1) (cons val r))
       r)))
 
 (define (cons* x y . rest)
@@ -1224,9 +1224,11 @@
     (fold* f (cons lst rest)))))
 
 (define (iota count #!optional (start 0) (step 1))
+  (unless (fixnum? count)
+    (error "Bad argument; expected fixnum" count))
   (let lp ((i 0) (x start) (r '()))
-    (if (fx< i count)
-      (lp (fx1+ i) (+ x step) (cons x r))
+    (if (##fx< i count)
+      (lp (##fx+ i 1) (+ x step) (cons x r))
       (reverse r))))
 
 (define (last-pair lst)
@@ -1383,17 +1385,17 @@
 (define (string-index str char #!optional (start 0))
   (let ((len (string-length str)))
     (let lp ((k start))
-      (and (fx< k len)
+      (and (##fx< k len)
            (if (eq? char (##string-ref str k)) k
-               (lp (fx1+ k)))))))
+               (lp (##fx+ k 1)))))))
 
 (define (string-rindex str char #!optional (start #f))
   (let* ((len (string-length str))
-         (start (or start (fx1- len))))
+         (start (or start (##fx- len 1))))
     (let lp ((k start))
-      (and (fx>= k 0)
+      (and (##fx>= k 0)
            (if (eq? char (##string-ref str k)) k
-               (lp (fx1- k)))))))
+               (lp (##fx- k 1)))))))
 
 (define (string-split str char)
   (let ((len (string-length str)))
@@ -1401,9 +1403,9 @@
       (cond
        ((string-index str char start)
         => (lambda (end)
-             (lp (fx1+ end) (cons (substring str start end) r))))
-       ((fx< start len)
-        (foldl cons (list (substring str start len)) r))
+             (lp (##fx+ end 1) (cons (##substring str start end) r))))
+       ((##fx< start len)
+        (foldl cons (list (##substring str start len)) r))
        (else
         (reverse r))))))
 
@@ -1414,10 +1416,10 @@
         ((hd . rest)
          (if (pair? rest)
            (lp rest
-               (fx+ (string-length hd)
-                    jlen len))
-           (fx+ (string-length hd)
-                len)))
+               (##fx+ (string-length hd)
+                      jlen len))
+           (##fx+ (string-length hd)
+                  len)))
         (else 0))))                     ; empty
 
   (let* ((join (if (char? join)
@@ -1433,8 +1435,8 @@
            (if (pair? rest)
              (begin
                (substring-move! hd 0 hdlen ostr k)
-               (substring-move! join 0 jlen ostr (fx+ k hdlen))
-               (lp rest (fx+ k hdlen jlen)))
+               (substring-move! join 0 jlen ostr (##fx+ k hdlen))
+               (lp rest (##fx+ k hdlen jlen)))
              (begin
                (substring-move! hd 0 hdlen ostr k)
                ostr))))
@@ -1444,15 +1446,15 @@
   (define (fold1 vec)
     (let* ((len (vector-length vec))
            (r (make-vector len)))
-      (do ((k 0 (fx1+ k)))
-          ((fx= k len) r)
+      (do ((k 0 (##fx+ k 1)))
+          ((##fx= k len) r)
         (##vector-set! r k (f (##vector-ref vec k))))))
 
   (define (fold* vecs)
     (let* ((len (apply min (map vector-length vecs)))
            (r (make-vector len)))
-      (do ((k 0 (fx1+ k)))
-          ((fx= k len) r)
+      (do ((k 0 (##fx+ k 1)))
+          ((##fx= k len) r)
         (##vector-set! r k
                        (apply f
                          (map (lambda (vec) (##vector-ref vec k))
@@ -1564,9 +1566,9 @@
     (cond
      ((string-index dir #\/ start)
       => (lambda (x)
-           (when (fx> x 0)
+           (when (##fx> x 0)
              (create1 (substring dir 0 x)))
-           (lp (fx1+ x))))
+           (lp (##fx+ x 1))))
      (else
       (create1 dir)
       (path-normalize dir)))))
@@ -1589,7 +1591,7 @@
            (core-match hd-rest
              ((val . rest)
               (when kwt
-                (let ((pos (fxmodulo (keyword-hash hd) (##vector-length kwt))))
+                (let ((pos (##fxmodulo (keyword-hash hd) (##vector-length kwt))))
                   (unless (eq? hd (##vector-ref kwt pos))
                     (error "Unexpected keyword argument" K hd))))
               (when (hash-key? keys hd)

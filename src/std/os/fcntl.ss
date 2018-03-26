@@ -38,7 +38,7 @@ package: std/os
 
 (def (fd-setfl raw xflags)
   (let* ((flags (fcntl raw F_GETFL))
-         (flags (fxior flags xflags)))
+         (flags (##fxior flags xflags)))
     (fcntl raw F_SETFL flags)))
 
 (def (fd-setfl! raw flags)
@@ -49,7 +49,7 @@ package: std/os
 
 (def (fd-setfd raw xflags)
   (let* ((flags (fcntl raw F_GETFD))
-         (flags (fxior flags xflags)))
+         (flags (##fxior flags xflags)))
     (fcntl raw F_SETFD flags)))
 
 (def (fd-setfd! raw flags)

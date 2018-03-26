@@ -33,9 +33,9 @@ package: std/misc
          ((&channel-eof ch)
           (mutex-unlock! mx)
           (raise-io-error 'channel-put "channel is closed" ch))
-         ((or (not limit) (fx< (queue-length q) limit))
+         ((or (not limit) (##fx< (queue-length q) limit))
           (enqueue! q val)
-          (when (fx= (queue-length q) 1)
+          (when (##fx= (queue-length q) 1)
             (condition-variable-broadcast! cv)) ; unblock readers
           (mutex-unlock! mx)
           #t)
@@ -51,9 +51,9 @@ package: std/misc
      ((&channel-eof ch)
       (mutex-unlock! mx)
       (raise-io-error 'channel-try-put "channel is closed" ch))
-     ((or (not limit) (fx< (queue-length q) limit))
+     ((or (not limit) (##fx< (queue-length q) limit))
       (enqueue! q val)
-      (when (fx= (queue-length q) 1)
+      (when (##fx= (queue-length q) 1)
         (condition-variable-broadcast! cv)) ; unblock readers
       (mutex-unlock! mx)
       #t)
@@ -90,7 +90,7 @@ package: std/misc
            (else default)))
          (else
           (let (next (dequeue! q))
-            (when (and limit (fx= (queue-length q) (fx1- limit)))
+            (when (and limit (##fx= (queue-length q) (##fx- limit 1)))
               (condition-variable-broadcast! cv)) ; unblock writers
             (mutex-unlock! mx)
             next)))))))
@@ -104,7 +104,7 @@ package: std/misc
       (if (&channel-eof ch) #!eof default))
      (else
       (let (next (dequeue! q))
-        (when (and limit (fx= (queue-length q) (fx1- limit)))
+        (when (and limit (##fx= (queue-length q) (##fx- limit 1)))
           (condition-variable-broadcast! cv)) ; unblock writers
         (mutex-unlock! mx)
         next)))))

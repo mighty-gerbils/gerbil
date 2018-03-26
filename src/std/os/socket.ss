@@ -301,7 +301,7 @@ package: std/os
 
 (def (socket-address-un path)
   (let (pathlen (string-utf8-length path))
-    (if (fx< pathlen UNIX_MAX_PATH)
+    (if (##fx< pathlen UNIX_MAX_PATH)
       (let (sa (make-socket-address-un))
         (sockaddr_un_path_set sa path)
         sa)
@@ -489,7 +489,7 @@ package: std/os
   (let (linger (check-ptr (make_linger)))
     (check-os-error (_getsockopt_linger sock level opt linger)
       (socket-getsockopt sock level opt))
-    (if (fxzero? (linger_onoff linger))
+    (if (##fxzero? (linger_onoff linger))
       #f
       (linger_linger linger))))
 

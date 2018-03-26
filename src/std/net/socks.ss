@@ -189,29 +189,29 @@ package: std/net
 
 ;; protocolo i/o
 (def (socks5-send-request sock cmd host port)
-  (let* ((porthi (fxand (fxarithmetic-shift port -8) #xff))
-         (portlo (fxand port #xff))
+  (let* ((porthi (##fxand (##fxarithmetic-shift port -8) #xff))
+         (portlo (##fxand port #xff))
          (out
           (cond
            ((string? host)
             (let* ((fqdn    (string->utf8 host))
                    (fqdnlen (##u8vector-length fqdn))
-                   (_ (when (fx> fqdnlen 255)
+                   (_ (when (##fx> fqdnlen 255)
                         (error "Domain name too long" host fqdnlen)))
-                   (len (fx+ 7 fqdnlen))
+                   (len (##fx+ 7 fqdnlen))
                    (out (##make-u8vector len 0)))
               (##u8vector-set! out 3 #x03) ; ATYP: DOMAINNAME
               (##u8vector-set! out 4 fqdnlen)
               (##subu8vector-move! fqdn 0 fqdnlen out 5)
-              (##u8vector-set! out (fx+ fqdnlen 5) porthi)
-              (##u8vector-set! out (fx+ fqdnlen 6) portlo)))
-           ((and (##u8vector? host) (fx= (##u8vector-length host) 4))
+              (##u8vector-set! out (##fx+ fqdnlen 5) porthi)
+              (##u8vector-set! out (##fx+ fqdnlen 6) portlo)))
+           ((and (##u8vector? host) (##fx= (##u8vector-length host) 4))
             (let (out (##make-u8vector 10 0))
               (##u8vector-set! out 3 #x01) ; ATYP: IPv4
               (##subu8vector-move! host 0 4 out 4)
               (##u8vector-set! out 8 porthi)
               (##u8vector-set! out 9 portlo)))
-           ((and (##u8vector? host) (fx= (##u8vector-length host) 16))
+           ((and (##u8vector? host) (##fx= (##u8vector-length host) 16))
             (let (out (##make-u8vector 22 0))
               (##u8vector-set! out 3 #x04) ; ATYP: IPv6
               (##subu8vector-move! host 0 4 out 16)
@@ -227,7 +227,7 @@ package: std/net
   (def (recv-port)
     (let* ((porthi (##read-u8 sock))
            (portlo (##read-u8 sock)))
-      (fxior (fxarithmetic-shift porthi 8) portlo)))
+      (##fxior (##fxarithmetic-shift porthi 8) portlo)))
 
   (def (recv-address atype rep)
     (case atype
@@ -260,8 +260,8 @@ package: std/net
                             "SOCKS5 error response" rep))))))
 
 (def (socks4-send-request sock cmd host port userid)
-  (let* ((porthi (fxand (fxarithmetic-shift port -8) #xff))
-         (portlo (fxand port #xff))
+  (let* ((porthi (##fxand (##fxarithmetic-shift port -8) #xff))
+         (portlo (##fxand port #xff))
          (userid (and userid (string->utf8 userid)))
          (userlen (if userid (##u8vector-length userid) 0))
          (out
@@ -269,12 +269,12 @@ package: std/net
            ((string? host)
             (let* ((fqdn    (string->utf8 host))
                    (fqdnlen (##u8vector-length fqdn))
-                   (len     (fx+ 8 userlen 1 fqdnlen 1))
+                   (len     (##fx+ 8 userlen 1 fqdnlen 1))
                    (out     (##make-u8vector len 0)))
               (##u8vector-set! out 7 #x01) ; SOCKS4a
-              (##subu8vector-move! fqdn 0 fqdnlen out (fx+ 9 userlen))))
-           ((and (##u8vector? host) (fx= (##u8vector-length host) 4))
-            (let* ((len (fx+ 8 userlen 1))
+              (##subu8vector-move! fqdn 0 fqdnlen out (##fx+ userlen 9))))
+           ((and (##u8vector? host) (##fx= (##u8vector-length host) 4))
+            (let* ((len (##fx+ userlen 9))
                    (out (##make-u8vector len 0)))
               (##subu8vector-move! host 0 4 out 4)))
            (else
@@ -299,8 +299,8 @@ package: std/net
         (raise-io-error 'socks4-recv-reply
                         "SOCKS4 request rejected" rep)))
     (cons (##subu8vector buf 4 8)
-          (fxior (fxarithmetic-shift (##u8vector-ref buf 2) 8)
-                 (##u8vector-ref buf 3)))))
+          (##fxior (##fxarithmetic-shift (##u8vector-ref buf 2) 8)
+                   (##u8vector-ref buf 3)))))
 
 (def (send-msg sock buf)
   (let (wr (write-u8vector buf sock))

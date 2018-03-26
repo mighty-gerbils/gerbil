@@ -29,7 +29,7 @@ package: std/db
 (defrules with-lmdb-error ()
   ((_ (lmdb-e args ...) cleanup ...)
    (let (res (lmdb-e args ...))
-     (unless (fxzero? res)
+     (unless (##fxzero? res)
        cleanup ...
        (raise-lmdb-error 'lmdb-e res)))))
 
@@ -210,7 +210,7 @@ package: std/db
            ((lmdb-db _ dbi) db))
       (let (res (mdb_get txn* dbi keyb val*))
         (cond
-         ((fxzero? res)
+         ((##fxzero? res)
           (value-data val*))
          ((eq? res MDB_NOTFOUND)
           #f)
@@ -269,7 +269,7 @@ package: std/db
         (error "lmdb-cursor-get: invalid cursor"))
       (let (res (mdb_cursor_get cursor* keyx val1* valx val2* op))
         (cond
-         ((fxzero? res)
+         ((##fxzero? res)
           (values (value-data* val1*) (value-data* val2*)))
          ((eq? res MDB_NOTFOUND)
           #f)

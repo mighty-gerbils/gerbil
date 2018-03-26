@@ -24,10 +24,10 @@ package: std/net
   (let ((vt (make-vector 256 #f))
         (len (string-length self-chars)))
     (let lp ((n 0))
-      (when (fx< n len)
+      (when (##fx< n len)
         (let (char (##string-ref self-chars n))
           (vector-set! vt (char->integer char) char)
-          (lp (fx1+ n)))))
+          (lp (##fx+ n 1)))))
     (for-each (match <>
                 ([char . sub] (vector-set! vt (char->integer char) sub)))
               sub-chars)
@@ -42,7 +42,7 @@ package: std/net
 
 ;; uri-encode: string => string
 (def (uri-encode str (vt uri-encoding))
-  (unless (and (vector? vt) (fx= (vector-length vt) 256))
+  (unless (and (vector? vt) (##fx= (vector-length vt) 256))
     (error "Bad encoding table" vt))
   (with-output-to-string []
     (lambda ()
@@ -78,15 +78,15 @@ package: std/net
   (let* ((utf8 (string->utf8 str))
          (len  (u8vector-length utf8)))
     (let lp ((n 0))
-      (when (fx< n len)
+      (when (##fx< n len)
         (let (byte (##u8vector-ref utf8 n))
           (cond
            ((##vector-ref encoding byte) => write-char)
            (else
             (write-char #\%)
-            (write-hex (fxand (fxarithmetic-shift byte -4) #xf))
-            (write-hex (fxand byte #xf))))
-          (lp (fx1+ n)))))))
+            (write-hex (##fxand (##fxarithmetic-shift byte -4) #xf))
+            (write-hex (##fxand byte #xf))))
+          (lp (##fx+ n 1)))))))
 
 ;; uri-decode: string => string
 (def hex-bytes
@@ -108,7 +108,7 @@ package: std/net
         (error "Malformed uri encoding" char)))))
 
   (when encoding
-    (unless (and (vector? encoding) (fx= (vector-length encoding) 256))
+    (unless (and (vector? encoding) (##fx= (vector-length encoding) 256))
       (error "Bad encoding table" encoding)))
 
   (let* ((utf8 (string->utf8 str))
@@ -118,25 +118,25 @@ package: std/net
      (with-output-to-u8vector []
        (lambda ()
          (let lp ((n 0))
-           (when (fx< n len)
+           (when (##fx< n len)
              (let (next (##u8vector-ref utf8 n))
                (cond
                 ((and encoding (##vector-ref encoding next))
                  => (lambda (char)
                       (write-char char)
-                      (lp (fx1+ n))))
+                      (lp (##fx+ n 1))))
                 ((eq? next pct)
-                 (let (n (fx1+ n))
-                   (if (fx< (fx1+ n) len)
+                 (let (n (##fx+ n 1))
+                   (if (##fx< (##fx+ n 1) len)
                      (let ((hi (##u8vector-ref utf8 n))
-                           (lo (##u8vector-ref utf8 (fx1+ n))))
-                       (write-u8 (fxior (fxarithmetic-shift (hex-byte hi) 4)
-                                        (hex-byte lo)))
-                       (lp (fx+ n 2)))
+                           (lo (##u8vector-ref utf8 (##fx+ n 1))))
+                       (write-u8 (##fxior (##fxarithmetic-shift (hex-byte hi) 4)
+                                          (hex-byte lo)))
+                       (lp (##fx+ n 2)))
                      (error "Malformed uri component"))))
                 (else
                  (write-u8 next)
-                 (lp (fx1+ n))))))))))))
+                 (lp (##fx+ n 1))))))))))))
 
 (def uri-space-decoding
   (make-uri-encoding-table "" '((#\+ . #\space))))

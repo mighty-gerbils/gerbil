@@ -20,25 +20,25 @@ package: std/net/socket
   (def maxevts 8192)
   (def evts (make-epoll-events maxevts))
 
-  (def poll-in (fxior EPOLLIN EPOLLHUP EPOLLERR))
-  (def poll-out (fxior EPOLLOUT EPOLLHUP EPOLLERR))
+  (def poll-in (##fxior EPOLLIN EPOLLHUP EPOLLERR))
+  (def poll-out (##fxior EPOLLOUT EPOLLHUP EPOLLERR))
 
   (def (do-epoll)
     (let (count (epoll-wait epoll evts maxevts))
-      (when (fxpositive? count)
+      (when (##fxpositive? count)
         (let lp ((k 0))
-          (when (fx< k count)
+          (when (##fx< k count)
             (let ((fd (epoll-event-fd evts k))
                   (ready (epoll-event-events evts k)))
               (with ((!socket-state _ io-in io-out)
                      (hash-ref fdtab fd))
-                (unless (fxzero? (fxand ready poll-in))
+                (unless (##fxzero? (##fxand ready poll-in))
                   (when io-in
                     (io-state-signal-ready! io-in 'ready)))
-                (unless (fxzero? (fxand ready poll-out))
+                (unless (##fxzero? (##fxand ready poll-out))
                   (when io-out
                     (io-state-signal-ready! io-out 'ready)))
-                (lp (fx1+ k)))))))))
+                (lp (##fx+ k 1)))))))))
 
   (def (add-socket sock)
     (let* ((self (current-thread))
@@ -67,11 +67,11 @@ package: std/net/socket
            (events EPOLLET)
            (events
             (if io-in
-              (fxior EPOLLIN events)
+              (##fxior EPOLLIN events)
               events))
            (events
             (if io-out
-              (fxior EPOLLOUT events)
+              (##fxior EPOLLOUT events)
               events)))
       (make-will ssock (cut close <> 'inout #f))
       (epoll-ctl-add epoll sock events)
@@ -92,7 +92,7 @@ package: std/net/socket
              (case dir
                ((in)
                 (if io-out
-                  (epoll-ctl-mod epoll sock (fxior EPOLLET EPOLLOUT))
+                  (epoll-ctl-mod epoll sock (##fxior EPOLLET EPOLLOUT))
                   (begin
                     (epoll-ctl-del epoll sock)
                     (hash-remove! fdtab (fd-e sock))))
@@ -103,7 +103,7 @@ package: std/net/socket
                   (close-port sock)))
                ((out)
                 (if io-in
-                  (epoll-ctl-mod epoll sock (fxior EPOLLET EPOLLIN))
+                  (epoll-ctl-mod epoll sock (##fxior EPOLLET EPOLLIN))
                   (begin
                     (epoll-ctl-del epoll sock)
                     (hash-remove! fdtab (fd-e sock))))

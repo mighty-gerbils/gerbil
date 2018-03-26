@@ -49,7 +49,7 @@ package: std/crypto
 (defrules with-libcrypto-error ()
   ((_ expr irritants ...)
    (let (res expr)
-     (when (fxzero? res)
+     (when (##fxzero? res)
        (apply raise-libcrypto-error '(irritants ...))))))
 
 (def (call-with-binary-input proc in . args)
@@ -101,7 +101,7 @@ package: std/crypto
         (need (if fill? 1 absent-obj)))
     (let lp ()
       (let (rd (##read-subu8vector buf 0 1024 in need))
-        (unless (fxzero? rd)
+        (unless (##fxzero? rd)
           (proc buf 0 rd)
           (lp))))))
 
@@ -110,7 +110,7 @@ package: std/crypto
         (need (if fill? 1 absent-obj)))
     (let lp ()
       (let (rd (##read-substring buf 0 512 in need))
-        (unless (fxzero? rd)
+        (unless (##fxzero? rd)
           (let (bytes (utf8-encode buf 0 rd))
             (proc bytes 0 (##u8vector-length bytes))
             (lp)))))))
@@ -136,5 +136,5 @@ package: std/crypto
 
 (def (random-bytes! bytes (start 0) (end (u8vector-length bytes)))
   (let (count (read-subu8vector bytes start end *urandom*))
-    (unless (eq? count (fx- end start))
+    (unless (eq? count (##fx- end start))
       (error "Could not read enough random bytes" count start end))))
