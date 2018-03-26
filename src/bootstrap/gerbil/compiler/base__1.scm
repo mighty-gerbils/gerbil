@@ -8,37 +8,31 @@
      '()))
   (define |gxc[1]#_g3433_|
     (gx#make-syntax-quote
-     'symbol-table::t
-     #f
-     (gx#current-expander-context)
-     '()))
-  (define |gxc[1]#_g3434_|
-    (gx#make-syntax-quote
      'make-symbol-table
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g3435_|
+  (define |gxc[1]#_g3434_|
     (gx#make-syntax-quote 'symbol-table? #f (gx#current-expander-context) '()))
-  (define |gxc[1]#_g3436_|
+  (define |gxc[1]#_g3435_|
     (gx#make-syntax-quote
      'symbol-table-gensyms
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g3437_|
+  (define |gxc[1]#_g3436_|
     (gx#make-syntax-quote
      'symbol-table-bindings
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g3438_|
+  (define |gxc[1]#_g3437_|
     (gx#make-syntax-quote
      'symbol-table-gensyms-set!
      #f
      (gx#current-expander-context)
      '()))
-  (define |gxc[1]#_g3439_|
+  (define |gxc[1]#_g3438_|
     (gx#make-syntax-quote
      'symbol-table-bindings-set!
      #f
@@ -260,13 +254,13 @@
        |gxc[1]#_g3432_|
        'expander-identifiers:
        (cons '#f
-             (cons |gxc[1]#_g3433_|
-                   (cons |gxc[1]#_g3434_|
-                         (cons |gxc[1]#_g3435_|
-                               (cons (cons |gxc[1]#_g3436_|
-                                           (cons |gxc[1]#_g3437_| '()))
-                                     (cons (cons |gxc[1]#_g3438_|
-                                                 (cons |gxc[1]#_g3439_| '()))
+             (cons |gxc[1]#_g3432_|
+                   (cons |gxc[1]#_g3433_|
+                         (cons |gxc[1]#_g3434_|
+                               (cons (cons |gxc[1]#_g3435_|
+                                           (cons |gxc[1]#_g3436_| '()))
+                                     (cons (cons |gxc[1]#_g3437_|
+                                                 (cons |gxc[1]#_g3438_| '()))
                                            '()))))))
        'type-exhibitor:
        (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-exhibitor|

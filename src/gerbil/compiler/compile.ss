@@ -22,6 +22,13 @@ namespace: gxc
   (make-parameter #f))
 (def current-compile-marks
   (make-parameter #f))
+(def current-compile-identifiers
+  (make-parameter #f))
+
+(def (make-bound-identifier-table)
+  (def (hash-e id)
+    (symbol-hash (stx-e id)))
+  (make-hash-table test: bound-identifier=? hash: hash-e))
 
 (def (compile-e stx . args)
   (ast-case stx ()
@@ -1080,6 +1087,7 @@ namespace: gxc
                                           #f
                                           ['gx#current-expander-context]
                                           ['quote []]]])
+      (hash-put! (current-compile-identifiers) stxq gid)
       gid))
 
   (def (generate-serialized stxq marks)
@@ -1091,6 +1099,7 @@ namespace: gxc
                                           #f
                                           ['gx#current-expander-context]
                                           ['list mark-refs ...]]])
+      (hash-put! (current-compile-identifiers) stxq gid)
       gid))
 
   (def (generate-mark mark)
@@ -1153,10 +1162,14 @@ namespace: gxc
   (ast-case stx ()
     ((_ stxq)
      (if (identifier? #'stxq)
-       (let (marks (syntax-quote-marks #'stxq))
-         (if (null? marks)
-           (generate-simple #'stxq)
-           (generate-serialized #'stxq marks)))
+       (cond
+        ((hash-get (current-compile-identifiers) #'stxq)
+         => values)
+        (else
+         (let (marks (syntax-quote-marks #'stxq))
+           (if (null? marks)
+             (generate-simple #'stxq)
+             (generate-serialized #'stxq marks)))))
        (raise-compile-error "Cannot quote non-identifier syntax" #'stxq)))))
 
 (def (generate-runtime-phi-define-runtime% stx)
