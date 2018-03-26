@@ -8,8 +8,6 @@
     (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41226_|
     (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
-  (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41227_|
-    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
   (begin
     (define |gerbil/core$<sugar>$<sugar:1>[:0:]#defrules|
       (lambda (_$stx1687_)
@@ -2194,7 +2192,7 @@
                                                                _hd41384312_)
                                                               (if (gx#free-identifier=?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           |gerbil/core$<sugar>$<sugar:1>[1]#_g41227_|
+                           |gerbil/core$<sugar>$<sugar:1>[1]#_g41226_|
                            _hd41384312_)
                           (if (gx#stx-pair? _tl41394315_)
                               (let ((_e41404318_ (gx#syntax-e _tl41394315_)))
@@ -2352,22 +2350,22 @@
                                 (let ((_hd45844621_ (##car _e45834617_))
                                       (_tl45854624_ (##cdr _e45834617_)))
                                   (if (gx#stx-pair/null? _tl45854624_)
-                                      (let ((_g41228_
+                                      (let ((_g41227_
                                              (gx#syntax-split-splice
                                               _tl45854624_
                                               '0)))
                                         (begin
-                                          (let ((_g41229_
-                                                 (if (##values? _g41228_)
-                                                     (##vector-length _g41228_)
+                                          (let ((_g41228_
+                                                 (if (##values? _g41227_)
+                                                     (##vector-length _g41227_)
                                                      1)))
-                                            (if (not (##fx= _g41229_ 2))
+                                            (if (not (##fx= _g41228_ 2))
                                                 (error "Context expects 2 values"
-                                                       _g41229_)))
+                                                       _g41228_)))
                                           (let ((_target45864627_
-                                                 (##vector-ref _g41228_ 0))
+                                                 (##vector-ref _g41227_ 0))
                                                 (_tl45884630_
-                                                 (##vector-ref _g41228_ 1)))
+                                                 (##vector-ref _g41227_ 1)))
                                             (if (gx#stx-null? _tl45884630_)
                                                 (letrec ((_loop45894633_
                                                           (lambda (_hd45874637_
@@ -2424,22 +2422,22 @@
                                 (let ((_hd47024739_ (##car _e47014735_))
                                       (_tl47034742_ (##cdr _e47014735_)))
                                   (if (gx#stx-pair/null? _tl47034742_)
-                                      (let ((_g41230_
+                                      (let ((_g41229_
                                              (gx#syntax-split-splice
                                               _tl47034742_
                                               '0)))
                                         (begin
-                                          (let ((_g41231_
-                                                 (if (##values? _g41230_)
-                                                     (##vector-length _g41230_)
+                                          (let ((_g41230_
+                                                 (if (##values? _g41229_)
+                                                     (##vector-length _g41229_)
                                                      1)))
-                                            (if (not (##fx= _g41231_ 2))
+                                            (if (not (##fx= _g41230_ 2))
                                                 (error "Context expects 2 values"
-                                                       _g41231_)))
+                                                       _g41230_)))
                                           (let ((_target47044745_
-                                                 (##vector-ref _g41230_ 0))
+                                                 (##vector-ref _g41229_ 0))
                                                 (_tl47064748_
-                                                 (##vector-ref _g41230_ 1)))
+                                                 (##vector-ref _g41229_ 1)))
                                             (if (gx#stx-null? _tl47064748_)
                                                 (letrec ((_loop47074751_
                                                           (lambda (_hd47054755_
@@ -2497,22 +2495,22 @@
                                 (let ((_hd48194856_ (##car _e48184852_))
                                       (_tl48204859_ (##cdr _e48184852_)))
                                   (if (gx#stx-pair/null? _tl48204859_)
-                                      (let ((_g41232_
+                                      (let ((_g41231_
                                              (gx#syntax-split-splice
                                               _tl48204859_
                                               '0)))
                                         (begin
-                                          (let ((_g41233_
-                                                 (if (##values? _g41232_)
-                                                     (##vector-length _g41232_)
+                                          (let ((_g41232_
+                                                 (if (##values? _g41231_)
+                                                     (##vector-length _g41231_)
                                                      1)))
-                                            (if (not (##fx= _g41233_ 2))
+                                            (if (not (##fx= _g41232_ 2))
                                                 (error "Context expects 2 values"
-                                                       _g41233_)))
+                                                       _g41232_)))
                                           (let ((_target48214862_
-                                                 (##vector-ref _g41232_ 0))
+                                                 (##vector-ref _g41231_ 0))
                                                 (_tl48234865_
-                                                 (##vector-ref _g41232_ 1)))
+                                                 (##vector-ref _g41231_ 1)))
                                             (if (gx#stx-null? _tl48234865_)
                                                 (letrec ((_loop48244868_
                                                           (lambda (_hd48224872_
