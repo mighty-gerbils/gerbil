@@ -145,25 +145,31 @@ package: gerbil/gambit
 
 (def (thread-local-table)
   (let (thr (current-thread))
-    (if (actor-thread? thr)
+    (cond
+     ((actor-thread? thr)
       (cond
        ((actor-thread-locals thr) => values)
        (else
         (let (tab (make-hash-table-eq))
           (actor-thread-locals-set! thr tab)
-          tab)))
-      (begin
-        (mutex-lock! *thread-locals-mutex*)
-        (cond
-         ((hash-get *thread-locals* thr)
-          => (lambda (tab)
-               (mutex-unlock! *thread-locals-mutex*)
-               tab))
-         (else
-          (let (tab (make-hash-table-eq))
-            (hash-put! *thread-locals* thr tab)
-            (mutex-unlock! *thread-locals-mutex*)
-            tab)))))))
+          tab))))
+     ((eq? thr ##primordial-thread)
+      *primordial-thread-locals*)
+     (else
+      (mutex-lock! *thread-locals-mutex*)
+      (cond
+       ((hash-get *thread-locals* thr)
+        => (lambda (tab)
+             (mutex-unlock! *thread-locals-mutex*)
+             tab))
+       (else
+        (let (tab (make-hash-table-eq))
+          (hash-put! *thread-locals* thr tab)
+          (mutex-unlock! *thread-locals-mutex*)
+          tab)))))))
+
+(def *primordial-thread-locals*
+  (make-hash-table-eq))
 
 (def *thread-locals*
   (make-hash-table-eq weak-keys: #t))
