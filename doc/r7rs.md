@@ -34,10 +34,10 @@ Writing (or porting) an R7RS module is simple: you just specify
 `:scheme/r7rs` as the prelude. The prelude exports only the
 necessities to support library definitions and imports.
 
-There can be only a single library defined within a module, and its
-name must match the module id constructed by the package and name of
-the file. This implementation restriction has to do with library
-module resolution: Gerbil constructs a top module per file and
+Note that there can be only a single library defined within a module,
+and its name must match the module id constructed by the package and
+name of the file. This implementation restriction has to do with
+library module resolution: Gerbil constructs a top module per file and
 resolves by interpreting the library name as a load-path relative
 path.
 
@@ -50,10 +50,10 @@ modules.
 With this in mind, we can reproduce the Life example from the R7RS report.
 First, let's define the `(example grid)` library:
 ```
-$ mkdir example
+$ cat > gerbil.pkg
+(prelude: :scheme/r7rs)
 
-$ cat > example/gerbil.pkg
-(prelude: :scheme/r7rs package: example)
+$ mkdir example
 
 $ cat > example/grid.ss
 (define-library (example grid)
