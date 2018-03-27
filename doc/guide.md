@@ -1460,7 +1460,7 @@ and rerunning the std library build script as described earlier in the guide.
 For example, here is a parse of the bing front page without scripts,
 style, and CDATA:
 ```
-> (import :std/net/request :std/xml)
+> (import :std/net/request :std/xml/libxml)
 > (def req (http-get "https://www.bing.com"))
 > (parse-html (request-text req) filter: '("script" "style" "CDATA"))
 => (*TOP* (html (@ (lang "el")
