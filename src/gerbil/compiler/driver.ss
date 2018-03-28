@@ -554,7 +554,7 @@ namespace: gxc
 (def (gsc-compile-file path phi?)
   (let* ((gsc-args
           (cond
-           ((and (not phi?) (current-compile-gsc-options))
+           ((current-compile-gsc-options)
             => (lambda (opts) [opts ... path]))
            (else [path])))
          (gsc-args
