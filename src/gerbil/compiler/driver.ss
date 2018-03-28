@@ -523,33 +523,42 @@ namespace: gxc
           ,@(if phi? '((inlining-limit 200)) '())))
       (pretty-print code)))
   (when (current-compile-invoke-gsc)
-    (gsc-compile-file path))
+    (gsc-compile-file path phi?))
   (unless (current-compile-keep-scm)
     (delete-file path)))
 
-(def (gsc-debug-options)
+(def (gsc-debug-options phi?)
+  (defrules not-phi ()
+    ((_ opts)
+     (if phi? [] opts)))
   (cond
    ((current-compile-debug)
     => (lambda (debug)
          (case debug
            ((env)
+            (not-phi ["-debug-environments"]))
+           ((env/phi)
             ["-debug-environments"])
            ((src)
+            (not-phi ["-debug-environments" "-debug-source"]))
+           ((src/phi)
             ["-debug-environments" "-debug-source"])
-           ((all #t)
+           ((all)
+            (not-phi ["-debug"]))
+           ((all/phi #t)
             ["-debug"])
            (else
             (raise-compile-error "unknown debug option" debug )))))
    (else [])))
 
-(def (gsc-compile-file path)
+(def (gsc-compile-file path phi?)
   (let* ((gsc-args
           (cond
-           ((current-compile-gsc-options)
+           ((and (not phi?) (current-compile-gsc-options))
             => (lambda (opts) [opts ... path]))
            (else [path])))
          (gsc-args
-          [(gsc-debug-options) ... gsc-args ...])
+          [(gsc-debug-options phi?) ... gsc-args ...])
          (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
          (proc (open-process [path: "gsc" arguments: gsc-args
                                     stdout-redirection: #f]))
