@@ -1253,10 +1253,7 @@
   (define gxc#gsc-compile-file
     (lambda (_path48063_ _phi?48064_)
       (let* ((_gsc-args48071_
-              (let ((_$e48066_
-                     (if (not _phi?48064_)
-                         (gxc#current-compile-gsc-options)
-                         '#f)))
+              (let ((_$e48066_ (gxc#current-compile-gsc-options)))
                 (if _$e48066_
                     ((lambda (_opts48069_)
                        (foldr1 cons (cons _path48063_ '()) _opts48069_))
