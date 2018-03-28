@@ -1,7 +1,7 @@
 ;; -*- Gerbil -*-
 (import :gerbil/compiler)
 
-(def gerbil-modules
+(def gerbil-modules-expander
   '("gerbil/expander/common.ss"
     "gerbil/expander/stx.ss"
     "gerbil/expander/core.ss"
@@ -10,8 +10,10 @@
     "gerbil/expander/compile.ss"
     "gerbil/expander/root.ss"
     "gerbil/expander/stxcase.ss"
-    "gerbil/expander.ss"
-    "gerbil/compiler/base.ss"
+    "gerbil/expander.ss"))
+
+(def gerbil-modules-compiler
+  '("gerbil/compiler/base.ss"
     "gerbil/compiler/compile.ss"
     "gerbil/compiler/optimize-base.ss"
     "gerbil/compiler/optimize-xform.ss"
@@ -55,19 +57,19 @@
                       debug: debug optimize: optimize? generate-ssxi: gen-ssxi? static: static?
                       gsc-options: ["-cc-options" "--param max-gcse-memory=300000000"]]))
 
-(def optimize-prelude #t) ; macros are now optimized, so this is enabled
-(def optimize-modules #t) ; runtime code, we want these optimizations
-
-(def debug-prelude #f)   ; almost exclusively macros and externs, not worth the bloat
-(def debug-modules 'src) ; full introspection
+(def debug-none #f)  ; no bloat
+(def debug-src 'src) ; full introspection
 
 (displayln "building gerbil in " gerbil-libdir)
-;; compile core prelude: don't clobber core.ssxi, generate static stubs
-(for-each (cut compile1 <> debug-prelude optimize-prelude #f #t)
+;; compile core prelude: don't clobber core.ssxi, no introspection
+(for-each (cut compile1 <> debug-none #t #f #t)
           gerbil-prelude-core)
-;; compile gambit prelude: we want debug and optimizations as there are runtime definitions
-(for-each (cut compile1 <> debug-modules optimize-modules #t #t)
+;; compile gambit prelude
+(for-each (cut compile1 <> debug-src #t #t #t)
           gerbil-prelude-runtime)
-;; compile expander/compiler: we want ssxis for that, but no static
-(for-each (cut compile1 <> debug-modules optimize-modules #t #f)
-          gerbil-modules)
+;; compile expander: no static
+(for-each (cut compile1 <> debug-src #t #t #f)
+          gerbil-modules-expander)
+;; compile compiler: no static, no introspection
+(for-each (cut compile1 <> debug-none #t #t #f)
+          gerbil-modules-compiler)
