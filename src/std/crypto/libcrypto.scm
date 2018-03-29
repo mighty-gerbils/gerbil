@@ -426,7 +426,7 @@ static int ffi_EVP_DecryptFinal (EVP_CIPHER_CTX *ctx, ___SCMOBJ out, int start)
 
 static HMAC_CTX *ffi_create_HMAC_CTX ()
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L ||  defined (LIBRESSL_VERSION_NUMBER)
   HMAC_CTX *ctx = (HMAC_CTX*)malloc (sizeof (HMAC_CTX));
 #else
   HMAC_CTX *ctx = HMAC_CTX_new ();
@@ -439,7 +439,7 @@ static HMAC_CTX *ffi_create_HMAC_CTX ()
 
 static ___SCMOBJ ffi_release_HMAC_CTX (void *ptr)
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L ||  defined (LIBRESSL_VERSION_NUMBER)
   HMAC_CTX_cleanup ((HMAC_CTX*) ptr);
   free (ptr);
 #else
@@ -493,7 +493,7 @@ static ___SCMOBJ ffi_DH_free (void *dh)
 
 static BIGNUM *ffi_DH_pub_key (DH *dh)
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#if OPENSSL_VERSION_NUMBER < 0x10100000L ||  defined (LIBRESSL_VERSION_NUMBER)
  return dh->pub_key;
 #else
  BIGNUM const *pub;
