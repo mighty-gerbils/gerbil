@@ -11,8 +11,8 @@ package: scheme
         :scheme/base-impl)
 
 (export
-  < <= = => > >= - / ... * +
-  _ (phi: +1 _)
+  _ ... =>
+  < <= = >= > - / * +
   abs
   and
   append
@@ -206,7 +206,7 @@ package: scheme
   symbol=?
   symbol?
   symbol->string
-  (phi: +1 syntax-error)
+  syntax-error
   (phi: +1 syntax-rules)
   textual-port?
   truncate
