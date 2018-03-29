@@ -6,9 +6,10 @@ package: scheme
 (import :scheme/base
         :scheme/eval
         :scheme/repl
-        :scheme/eval
-        )
+        :scheme/eval)
 (export
+  => _ ...
+  (phi: +1 syntax-rules)
   *
   +
   -
@@ -102,6 +103,7 @@ package: scheme
   display
   do
   dynamic-wind
+  else
   eof-object?
   eq?
   equal?
