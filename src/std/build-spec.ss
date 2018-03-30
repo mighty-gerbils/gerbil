@@ -4,7 +4,7 @@
 (def cppflags (env-cppflags))
 
 (def build-spec
-  `("build-config"
+  `((gxc: "build-config" dep: ("build-features.ss"))
     "format"
     "pregexp"
     "sort"
