@@ -259,13 +259,13 @@ package: std
 (def (build? spec settings depgraph)
   (match spec
     ((? string? modf)
-     (or (gxc-compile? modf settings)
+     (or (gxc-compile? modf #f settings)
          (library-deps-newer? modf settings depgraph #f)))
-    ([gxc: modf . gsc-opts]
-     (or (gxc-compile? modf settings)
+    ([gxc: modf . opts]
+     (or (gxc-compile? modf opts settings)
          (library-deps-newer? modf settings depgraph #f)))
-    ([gsc: modf . gsc-opts]
-     (gsc-compile? modf settings))
+    ([gsc: modf . opts]
+     (gsc-compile? modf opts settings))
     ([ssi: modf . deps]
      (compile-ssi? modf settings))
     ([exe: modf . opts]
@@ -310,10 +310,10 @@ package: std
   (match spec
     ((? string? modf)
      (gxc-compile modf #f settings))
-    ([gxc: modf . gsc-opts]
-     (gxc-compile modf gsc-opts settings))
-    ([gsc: modf . gsc-opts]
-     (gsc-compile modf gsc-opts settings))
+    ([gxc: modf . opts]
+     (gxc-compile modf opts settings))
+    ([gsc: modf . opts]
+     (gsc-compile modf opts settings))
     ([ssi: modf . deps]
      (compile-ssi modf deps settings))
     ([exe: modf . opts]
@@ -327,18 +327,30 @@ package: std
     (else
      (error "Bad buildspec" spec))))
 
-(def (gxc-compile? mod settings)
+(def (gxc-compile? mod opts settings)
   (def srcpath (source-path mod ".ss" settings))
   (def ssipath (library-path mod ".ssi" settings))
   (def statpath (and (pgetq static: settings)
                      (static-path mod settings)))
+  (def deps (and opts (pgetq dep: opts)))
+
   (or (not (file-exists? ssipath))
       (file-newer? srcpath ssipath)
       (and statpath
            (or (not (file-exists? statpath))
-               (file-newer? srcpath statpath)))))
+               (file-newer? srcpath statpath)))
+      (and deps (ormap (cut file-newer? <> ssipath) deps))))
 
-(def (gxc-compile mod gsc-opts settings (invoke-gsc? #t))
+(def (gsc-compile-opts opts)
+  (match opts
+    ([dep: _ . rest]
+     (and (pair? rest) rest))
+    (_
+     (and (pair? opts) opts))))
+
+(def (gxc-compile mod opts settings (invoke-gsc? #t))
+  (def gsc-opts
+    (gsc-compile-opts opts))
   (def gxc-opts
     [invoke-gsc: invoke-gsc?
      output-dir: (pgetq libdir: settings )
@@ -353,18 +365,19 @@ package: std
   (message "... compile " mod)
   (compile-file srcpath gxc-opts))
 
-(def (gsc-compile? mod settings)
+(def (gsc-compile? mod opts settings)
   (def srcpath (source-path mod ".scm" settings))
   (def libdir (pgetq libdir: settings))
   (def prefix (pgetq prefix: settings))
+  (def libdir-prefix
+    (if prefix (path-expand prefix libdir) libdir))
   (defvalues (libpath base)
     (cond
      ((string-rindex mod #\/)
       => (lambda (ix)
-           (values (path-expand (substring mod 0 ix)
-                                (if prefix (path-expand prefix libdir) libdir))
+           (values (path-expand (substring mod 0 ix) libdir-prefix)
                    (substring mod (fx1+ ix) (string-length mod)))))
-     (else (values (path-expand "std" libdir) mod))))
+     (else (values libdir-prefix mod))))
   (def cpath
     (let lp ((n 1) (cpath #f))
       (let (next (path-expand (string-append base ".o" (number->string n))
@@ -372,10 +385,16 @@ package: std
         (if (file-exists? next)
           (lp (fx1+ n) next)
           cpath))))
+  (def deps
+    (and opts (pgetq dep: opts)))
 
-  (or (not cpath) (file-newer? srcpath cpath)))
+  (or (not cpath)
+      (file-newer? srcpath cpath)
+      (and deps (ormap (cut file-newer? <> cpath) deps))))
 
-(def (gsc-compile mod gsc-opts settings)
+(def (gsc-compile mod opts settings)
+  (def gsc-opts
+    (or (gsc-compile-opts opts) []))
   (def srcpath (source-path mod ".scm" settings))
   (def libdir (pgetq libdir: settings))
   (def prefix (pgetq prefix: settings))
