@@ -195,14 +195,16 @@ package: std/net
      (utf8->string data))
     (#f #f)))
 
-(def (websocket-close ws (how 1000))
-  (with ((websocket _ _ writer _ q mx cv) ws)
+(def (websocket-close ws (how 1000) hard: (hard? #f))
+  (with ((websocket port _ writer _ q mx cv) ws)
     (mutex-lock! mx)
+    (when hard?
+      (with-catch void (cut close-port port)))
     (if (websocket-cs ws)
       (mutex-unlock! mx)
-      (begin
-        (thread-send writer (cons 'close how))
+      (let (how (if hard? 'abort how))
         (set! (websocket-cs ws) how)
+        (thread-send writer (cons 'close how))
         (condition-variable-broadcast! cv)
         (mutex-unlock! mx)))))
 
