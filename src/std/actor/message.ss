@@ -32,14 +32,13 @@ package: std/actor
 (defstruct proxy (handler))
 
 ;;; send primitives
-(def (send dest msg (check-dead? #f))
+(def (send dest msg (raise-dead? #f))
   (let lp ((dest dest))
     (cond
      ((thread? dest)
       (cond
-       ((not check-dead?)
-        (thread-send dest msg))
        ((thread-send/check dest msg))
+       ((not raise-dead?) #f)
        (else
         (raise (make-actor-error 'send "Cannot send message; dead thread" dest msg)))))
      ((proxy? dest)
