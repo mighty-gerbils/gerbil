@@ -527,7 +527,7 @@ namespace: gxc
   (unless (current-compile-keep-scm)
     (delete-file path)))
 
-(def (gsc-debug-options phi?)
+(def (gsc-debug-options (phi? #f))
   (defrules not-phi ()
     ((_ opts)
      (if phi? [] opts)))

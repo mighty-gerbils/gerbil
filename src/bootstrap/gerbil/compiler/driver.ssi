@@ -10,8 +10,8 @@ namespace: gxc
           (spec: (:gerbil/gambit/misc) (0 pretty-print 0 pretty-print))
           (spec:
            (:gerbil/gambit/ports)
-           (0 open-process 0 open-process)
-           (0 process-status 0 process-status))
+           (0 process-status 0 process-status)
+           (0 open-process 0 open-process))
           (spec:
            (:gerbil/gambit/os)
            (0 file-info-size 0 file-info-size)
@@ -75,7 +75,15 @@ namespace: gxc
                            (%#define-runtime
                             compile-scm-file
                             gxc#compile-scm-file)))
-         (%#define-runtime gsc-debug-options gxc#gsc-debug-options)
+         (%#begin (%#define-runtime
+                   gsc-debug-options__%
+                   gxc#gsc-debug-options__%)
+                  (%#begin (%#define-runtime
+                            gsc-debug-options__0
+                            gxc#gsc-debug-options__0)
+                           (%#define-runtime
+                            gsc-debug-options
+                            gxc#gsc-debug-options)))
          (%#define-runtime gsc-compile-file gxc#gsc-compile-file)
          (%#define-runtime compile-output-file gxc#compile-output-file)
          (%#define-runtime
