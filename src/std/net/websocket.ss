@@ -314,9 +314,23 @@ package: std/net
   (with ((websocket port _ writer _ q mx cv) ws)
     (def (receive type data)
       (mutex-lock! mx)
-      (enqueue! q (cons type data))
-      (condition-variable-broadcast! cv)
-      (mutex-unlock! mx))
+      (if (websocket-cs ws)
+        (begin
+          ;; the websocket has been closed; abort and close the input port.
+          ;; strictly speaking this is out of spec, as we are supposed to
+          ;; wait for a close from the server; however:
+          ;; - we are no longer interested in new messages.
+          ;; - buggy servers in the wild may take a long time to respond
+          ;;   to the close, if at all, while still sending us stuff that
+          ;;   fills the queue with no backpressure and keeps the socket
+          ;;   open.
+          ;; - so damn the torpedoes, just abort.
+          (mutex-unlock! mx)
+          (raise 'abort))
+        (begin
+          (enqueue! q (cons type data))
+          (condition-variable-broadcast! cv)
+          (mutex-unlock! mx))))
 
     (try
      (let lp ((type #f) (frags []))
@@ -393,11 +407,14 @@ package: std/net
              (websocket-close ws 1002)
              (skip-to-eof port)))))))
      (catch (e)
-       (if (eq? e 'eof)
-         (websocket-close ws 'eof)
-         (begin
-           (log-error "unhandled exception" e)
-           (websocket-close ws 'abort)))
+       (case e
+         ((eof)
+          (websocket-close ws 'eof))
+         ((abort)
+          (void))
+         (else
+          (log-error "unhandled exception" e)
+          (websocket-close ws 'abort)))
        (raise e))
      (finally
       (with-catch void (cut close-input-port port))))))
