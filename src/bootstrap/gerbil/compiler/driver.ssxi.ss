@@ -13,4 +13,7 @@ package: gerbil/compiler
    (@case-lambda (1 gxc#compile-static-exe__0) (2 gxc#compile-static-exe__%)))
   (declare-type
    gxc#compile-scm-file
-   (@case-lambda (2 gxc#compile-scm-file__0) (3 gxc#compile-scm-file__%))))
+   (@case-lambda (2 gxc#compile-scm-file__0) (3 gxc#compile-scm-file__%)))
+  (declare-type
+   gxc#gsc-debug-options
+   (@case-lambda (0 gxc#gsc-debug-options__0) (1 gxc#gsc-debug-options__%))))
