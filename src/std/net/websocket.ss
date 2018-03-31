@@ -280,11 +280,13 @@ package: std/net
               (##fxand b1 #x7f))))
 
   (def (read-payload port plen)
-    (let* ((data (make-u8vector plen))
-           (rd (read-subu8vector data 0 plen port)))
-      (if (##fx< rd plen)
-        (read-eof)
-        data)))
+    (if (##fxzero? plen)
+      '#u8()
+      (let* ((data (make-u8vector plen))
+             (rd (read-subu8vector data 0 plen port)))
+        (if (##fx< rd plen)
+          (read-eof)
+          data))))
 
   (def (read-u16 port)
     (let* ((b0 (read-u8 port))
@@ -349,11 +351,11 @@ package: std/net
                           dlen)
                  (websocket-close ws 1009)
                  (skip-to-eof port))
-                ((##fxzero? plen)       ; empty frame, skip
-                 (lp type frags))
                 ((##fxzero? fin)
-                 (let (data (read-payload port plen))
-                   (lp type (cons data frags))))
+                 (if (##fxzero? plen)
+                   (lp type frags)      ; empty frame, skip
+                   (let (data (read-payload port plen))
+                     (lp type (cons data frags)))))
                 (else
                  (let* ((data (read-payload port plen))
                         (message (append-u8vectors (reverse (cons data frags)))))
