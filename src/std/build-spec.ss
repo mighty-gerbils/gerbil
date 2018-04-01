@@ -27,7 +27,7 @@
     ;; debugging
     (gxc: "debug/heap" ,@(include-gambit-sharp))
     "debug/memleak"
-    "debug/threads"
+    (gxc: "debug/threads" ,@(include-gambit-sharp))
     ;; SRFI: This is my grandfather's axe; my father replaced the head
     ;;       and i have replaced the handle.
     "srfi/srfi-support"
