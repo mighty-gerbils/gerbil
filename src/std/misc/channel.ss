@@ -4,8 +4,8 @@
 package: std/misc
 
 (import :gerbil/gambit/threads
-        :gerbil/gambit/os
         :std/misc/queue
+        :std/misc/timeout
         :std/error)
 (export make-channel channel?
         channel-put channel-try-put channel-sync
@@ -119,12 +119,3 @@ package: std/misc
 
 (def (channel-closed? ch)
   (channel-eof ch))
-
-(def (make-timeout t)
-  (cond
-   ((not t) absent-obj)
-   ((time? t) t)
-   ((real? t)
-    (seconds->time (+ (##current-time-point) t)))
-   (else
-    (error "Bad argument; expected timeout or #f" t))))

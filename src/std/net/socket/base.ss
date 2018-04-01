@@ -4,7 +4,8 @@
 package: std/net/socket
 
 (import :gerbil/gambit/os
-        :std/actor/proto)
+        :std/actor/proto
+        :std/misc/timeout)
 (export #t)
 
 (def current-socket-server
@@ -42,10 +43,4 @@ package: std/net/socket
 
 ;; utility
 (def (abs-timeout timeo)
-  (cond
-   ((or (not timeo) (time? timeo))
-    timeo)
-   ((real? timeo)
-    (seconds->time (+ (##current-time-point) timeo)))
-   (else
-    (error "Bad timeout; expected real, time or #f" timeo))))
+  (make-timeout timeo #f))

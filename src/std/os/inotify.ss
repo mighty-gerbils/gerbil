@@ -6,7 +6,7 @@ package: std/os
 (require linux)
 (import :gerbil/gambit/threads
         (only-in :gerbil/gambit/ports close-port)
-        (only-in :gerbil/gambit/os time? seconds->time)
+        :std/misc/timeout
         :std/os/error
         :std/os/fd
         :std/os/fdio
@@ -64,14 +64,7 @@ package: std/os
 
 ;; => [inotify-event ...]
 (def (inotify in (timeo #f))
-  (let* ((timeo
-          (cond
-           ((not timeo) #t)
-           ((time? timeo) timeo)
-           ((real? timeo)
-            (seconds->time (+ (##current-time-point) timeo)))
-           (else
-            (error "Invalid timeout" timeo))))
+  (let* ((timeo (make-timeout timeo #t))
          (buf (get-buffer)))
     (let lp ()
       (let (rd (fdread in buf))
