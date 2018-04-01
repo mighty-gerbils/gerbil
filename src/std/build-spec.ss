@@ -155,6 +155,7 @@
     "crypto/dh"
     "crypto"
     ;; :std/misc
+    "misc/timeout"
     "misc/list"
     "misc/rtd"
     "misc/shuffle"

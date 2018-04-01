@@ -14,6 +14,7 @@ package: std/net
         :std/crypto/digest
         :std/crypto/etc
         :std/misc/queue
+        :std/misc/timeout
         :std/net/request
         :std/text/utf8
         :std/text/base64)
@@ -158,16 +159,7 @@ package: std/net
     (error "Bad argument; expected bytes or string" obj))))
 
 (def (websocket-recv ws (timeo #f) (raise? #t))
-  (let (timeo
-        (cond
-         ((not timeo)
-          absent-obj)
-         ((real? timeo)
-          (seconds->time (+ (##current-time-point) timeo)))
-         ((time? timeo)
-          timeo)
-         (else
-          (error "Bad argument; expected timeout" timeo))))
+  (let (timeo (make-timeout timeo))
     (with ((websocket _ _ _ _ q mx cv) ws)
       (let lp ()
         (mutex-lock! mx)
