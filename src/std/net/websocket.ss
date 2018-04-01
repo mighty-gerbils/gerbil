@@ -157,7 +157,7 @@ package: std/net
    (else
     (error "Bad argument; expected bytes or string" obj))))
 
-(def (websocket-recv ws (timeo #f) (raise-timeo? #t))
+(def (websocket-recv ws (timeo #f) (raise? #t))
   (let (timeo
         (cond
          ((not timeo)
@@ -179,34 +179,36 @@ package: std/net
          ((websocket-cs ws)
           => (lambda (how)
                (mutex-unlock! mx)
-               (raise-io-error 'websocket-recv "Websocket has been closed" ws how)))
+               (if raise?
+                 (raise-io-error 'websocket-recv "Websocket has been closed" ws how)
+                 #!eof)))
          ((mutex-unlock! mx cv timeo)
           (lp))
-         (raise-timeo?
+         (raise?
           (raise-timeout 'websocket-recv "timeout" ws))
-         (else
-          #f))))))
+         (else #f))))))
 
-(def (websocket-read ws (timeo #f) (raise-timeo? #t))
-  (match (websocket-recv ws timeo raise-timeo?)
+(def (websocket-read ws (timeo #f) (raise? #f))
+  (match (websocket-recv ws timeo raise?)
     ((values data 'binary)
      data)
     ((values data 'text)
      (utf8->string data))
-    (#f #f)))
+    (r r)))
 
 (def (websocket-close ws (how 1000) hard: (hard? #f))
-  (with ((websocket port _ writer _ q mx cv) ws)
-    (mutex-lock! mx)
+  (with ((websocket port _ writer cs q mx cv) ws)
     (when hard?
-      (with-catch void (cut close-port port)))
-    (if (websocket-cs ws)
-      (mutex-unlock! mx)
-      (let (how (if hard? 'abort how))
-        (set! (websocket-cs ws) how)
-        (thread-send writer (cons 'close how))
-        (condition-variable-broadcast! cv)
-        (mutex-unlock! mx)))))
+      (close-port port))
+    (unless cs
+      (mutex-lock! mx)
+      (if (websocket-cs ws)
+        (mutex-unlock! mx)
+        (let (how (if hard? 'abort how))
+          (set! (websocket-cs ws) how)
+          (thread-send writer (cons 'close how))
+          (condition-variable-broadcast! cv)
+          (mutex-unlock! mx))))))
 
 ;; Base Framing Protocol [rfc6455]
 ;;
@@ -414,8 +416,9 @@ package: std/net
           (void))
          (else
           (log-error "unhandled exception" e)
-          (websocket-close ws 'abort)))
-       (raise e))
+          (websocket-close ws 'abort)
+          (raise e)))
+       e)
      (finally
       (with-catch void (cut close-input-port port))))))
 
