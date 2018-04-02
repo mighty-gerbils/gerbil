@@ -6,6 +6,7 @@ package: scheme
 (import :scheme/base-etc
         :scheme/base-vectors
         :scheme/base-ports
+        :gerbil/gambit/continuations
         (phi: +1 :gerbil/expander :gerbil/gambit))
 (export #t
         (import: :scheme/base-etc)
