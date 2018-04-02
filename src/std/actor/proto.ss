@@ -271,7 +271,7 @@ package: std/actor
            (lp #'rest #'proto-id
                extend calls events streams structures
                parsing)
-           (raise-syntax-error #f "Bad syntax; duplicate id")))
+           (raise-syntax-error #f "Bad syntax; duplicate id" stx #'proto-id id)))
         ((extend: . rest)
          (lp #'rest id extend calls events streams structures
              extend:))
