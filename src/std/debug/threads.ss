@@ -51,13 +51,15 @@ package: std/debug
 (def (dump-all-threads/queue! (port (current-error-port)))
   (dump-all-threads! port (lambda (thread) (##fx> (thread-queue-length thread) 0))))
 
-(extern thread-queue-length)
-(begin-foreign
-  (namespace ("std/debug/threads#" thread-queue-length))
-  (define (thread-queue-length thread)
-    (cond
-     ((macro-thread-mailbox thread)
-      => (lambda (mb)
-           (let ((fifo (macro-mailbox-fifo mb)))
-             (length (cdr fifo)))))
-     (else 0))))
+(def (thread-queue-length thread)
+  (cond
+   ((macro-thread-mailbox thread)
+    => (lambda (mb)
+         (let (fifo (macro-mailbox-fifo mb))
+           (length (cdr fifo)))))
+   (else 0)))
+
+;; _gambit#
+(extern namespace: #f
+  macro-thread-mailbox
+  macro-mailbox-fifo)
