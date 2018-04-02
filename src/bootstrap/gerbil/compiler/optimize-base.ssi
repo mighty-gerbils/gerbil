@@ -170,6 +170,15 @@ namespace: gxc
                             optimizer-declare-type!
                             gxc#optimizer-declare-type!)))
          (%#begin (%#define-runtime
+                   optimizer-clear-type!__%
+                   gxc#optimizer-clear-type!__%)
+                  (%#begin (%#define-runtime
+                            optimizer-clear-type!__0
+                            gxc#optimizer-clear-type!__0)
+                           (%#define-runtime
+                            optimizer-clear-type!
+                            gxc#optimizer-clear-type!)))
+         (%#begin (%#define-runtime
                    optimizer-declare-method!__%
                    gxc#optimizer-declare-method!__%)
                   (%#begin (%#define-runtime

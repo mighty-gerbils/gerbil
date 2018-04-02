@@ -2,13 +2,47 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/expander
 
 (begin
+  (declare-type gx#core-compile-top-syntax (@lambda 1 #f))
+  (declare-type gx#core-expander::compile-top-syntax (@lambda 2 #f))
   (declare-method
    gx#core-expander::t
    compile-top-syntax
    gx#core-expander::compile-top-syntax
    #f)
-  (declare-type
-   gx#core-compile-top-let-values%
-   (@case-lambda
-    (1 gx#core-compile-top-let-values%__0)
-    (2 gx#core-compile-top-let-values%__%))))
+  (declare-type gx#core-compile-top-error (@lambda 1 #f))
+  (declare-type gx#core-compile-top-begin% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-begin-syntax% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-begin-foreign% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-begin-annotation% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-import% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-module% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-export% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-provide% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-extern% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-define-values% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-define-syntax% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-define-alias% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-define-runtime% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-declare% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-lambda% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-lambda-clause (@lambda 1 #f))
+  (declare-type gx#core-compile-top-case-lambda% (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-compile-top-let-values%__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-compile-top-let-values%__0 (@lambda 1 #f))
+      (declare-type
+       gx#core-compile-top-let-values%
+       (@case-lambda
+        (1 gx#core-compile-top-let-values%__0)
+        (2 gx#core-compile-top-let-values%__%)))))
+  (declare-type gx#core-compile-top-letrec-values% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-letrec*-values% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-quote% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-quote-syntax% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-call% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-if% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-ref% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-setq% (@lambda 1 #f))
+  (declare-type gx#core-compile-top-runtime-ref (@lambda 1 #f))
+  (declare-type gx#core-compile-top-runtime-bind (@lambda 1 #f)))

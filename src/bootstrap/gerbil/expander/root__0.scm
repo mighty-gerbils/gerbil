@@ -531,17 +531,22 @@
                                              (if (##null? _tl1636716412_)
                                                  (let ((_core-id16415_
                                                         _hd1636616410_))
-                                                   (_K1636316402_
+                                                   (##structure
+                                                    gx#rename-macro-expander::t
                                                     _core-id16415_))
                                                  (_E1635816373_)))
                                            (if (##null? _tl1636516407_)
                                                (let ((_proc16395_
                                                       _hd1636416405_))
-                                                 (_K1636016387_ _proc16395_))
+                                                 (##structure
+                                                  gx#macro-expander::t
+                                                  _proc16395_))
                                                (_E1635816373_)))
                                        (if (##null? _tl1636516407_)
                                            (let ((_proc16395_ _hd1636416405_))
-                                             (_K1636016387_ _proc16395_))
+                                             (##structure
+                                              gx#macro-expander::t
+                                              _proc16395_))
                                            (_E1635816373_))))
                                  (_try-match1635716381_))))))))))
              (if (##pair? _bind1633816345_)
