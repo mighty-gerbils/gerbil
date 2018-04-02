@@ -248,7 +248,7 @@ package: std/os
   (let* ((rname (and name (check-ptr (make_int_ptr))))
          (rctl (and ctl (check-ptr (make_int_ptr))))
          (rflags (make_int_ptr))
-         (r (socket-recvmsg* sock name rname ctl rctl flags rflags)))
+         (r (socket-recvmsg* sock name rname io ctl rctl flags rflags)))
     (and r (values r
                    (and rname (int_ptr_value rname))
                    (and rctl (int_ptr_value rctl))
