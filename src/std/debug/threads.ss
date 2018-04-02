@@ -49,7 +49,7 @@ package: std/debug
   (dump-thread-group!* (primordial-thread-group) port filter))
 
 (def (dump-all-threads/queue! (port (current-error-port)))
-  (dump-all-threads! port (lambda (thread) (##fx> (thread-queue-length thread) 0))))
+  (dump-all-threads! port (? (not thread-queue-empty?))))
 
 (def (thread-queue-length thread)
   (cond
@@ -58,6 +58,14 @@ package: std/debug
          (let (fifo (macro-mailbox-fifo mb))
            (length (cdr fifo)))))
    (else 0)))
+
+(def (thread-queue-empty? thread)
+  (cond
+   ((macro-thread-mailbox thread)
+    => (lambda (mb)
+         (let (fifo (macro-mailbox-fifo mb))
+           (null? (cdr fifo)))))
+   (else #t)))
 
 ;; _gambit#
 (extern namespace: #f
