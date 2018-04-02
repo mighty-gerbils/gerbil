@@ -1,4 +1,25 @@
 prelude: :gerbil/compiler/ssxi
 package: gerbil/compiler
 
-(begin)
+(begin
+  (declare-type gxc#apply-optimize-annotated (@lambda (1) #f))
+  (declare-type gxc#apply-generate-runtime-repr (@lambda (1) #f))
+  (declare-type gxc#apply-push-match-vars (@lambda (1) #f))
+  (declare-type gxc#optimize-annotation% (@lambda 1 #f))
+  (declare-type gxc#optimize-match (@lambda 1 #f))
+  (declare-type gxc#optimize-match-body (@lambda 4 #f))
+  (declare-type gxc#optimize-match-basic-blocks (@lambda 1 #f))
+  (declare-type gxc#optimize-match-lift-basic-blocks (@lambda 2 #f))
+  (declare-type gxc#optimize-match-fold-basic-blocks (@lambda 1 #f))
+  (declare-type gxc#optimize-match-block (@lambda 4 #f))
+  (declare-type gxc#optimize-match-prune-blocks (@lambda 2 #f))
+  (declare-type gxc#optimize-match-fuse-restart-blocks (@lambda 2 #f))
+  (declare-type gxc#optimize-match-assert-restart (@lambda 2 #f))
+  (declare-type gxc#optimize-syntax-case (@lambda 1 #f))
+  (declare-type gxc#optimize-syntax-case-body (@lambda 4 #f))
+  (declare-type gxc#optimize-syntax-case-clauses (@lambda 2 #f))
+  (declare-type gxc#optimize-syntax-case-closure (@lambda 3 #f))
+  (declare-type gxc#push-match-vars-let-values% (@lambda 3 #f))
+  (declare-type gxc#push-match-vars-if% (@lambda 3 #f))
+  (declare-type gxc#push-match-vars-call% (@lambda 3 #f))
+  (declare-type gxc#push-match-vars-stop (@lambda 3 #f)))

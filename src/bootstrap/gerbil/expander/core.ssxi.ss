@@ -105,15 +105,25 @@ package: gerbil/expander
    (@struct-type gx#local-context::t gx#phi-context::t 0 :init! ()))
   (declare-type gx#local-context? (@struct-pred gx#local-context::t))
   (declare-type gx#make-local-context (@struct-cons gx#local-context::t))
-  (declare-type
-   gx#phi-context:::init!
-   (@case-lambda (2 gx#phi-context:::init!__0) (3 gx#phi-context:::init!__%)))
+  (begin
+    (declare-type gx#phi-context:::init!__% (@lambda 3 #f))
+    (begin
+      (declare-type gx#phi-context:::init!__0 (@lambda 2 #f))
+      (declare-type
+       gx#phi-context:::init!
+       (@case-lambda
+        (2 gx#phi-context:::init!__0)
+        (3 gx#phi-context:::init!__%)))))
   (declare-method gx#phi-context::t :init! gx#phi-context:::init! #f)
-  (declare-type
-   gx#local-context:::init!
-   (@case-lambda
-    (1 gx#local-context:::init!__0)
-    (2 gx#local-context:::init!__%)))
+  (begin
+    (declare-type gx#local-context:::init!__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#local-context:::init!__0 (@lambda 1 #f))
+      (declare-type
+       gx#local-context:::init!
+       (@case-lambda
+        (1 gx#local-context:::init!__0)
+        (2 gx#local-context:::init!__%)))))
   (declare-method gx#local-context::t :init! gx#local-context:::init! #f)
   (declare-type gx#binding::t (@struct-type gx#binding::t #f 3 #f ()))
   (declare-type gx#binding? (@struct-pred gx#binding::t))
@@ -338,69 +348,121 @@ package: gerbil/expander
   (declare-type
    gx#syntax-error-phi-set!
    (@struct-setf gx#syntax-error::t 2 #f))
-  (declare-type
-   gx#eval-syntax
-   (@case-lambda (1 gx#eval-syntax__0) (2 gx#eval-syntax__%)))
-  (declare-type
-   gx#core-expand
-   (@case-lambda (1 gx#core-expand__0) (2 gx#core-expand__%)))
-  (declare-type
-   gx#core-expand*
-   (@case-lambda (1 gx#core-expand*__0) (2 gx#core-expand*__%)))
-  (declare-type
-   gx#core-expand-block
-   (@case-lambda
-    (2 gx#core-expand-block__0)
-    (3 gx#core-expand-block__1)
-    (4 gx#core-expand-block__%)))
-  (declare-type
-   gx#core-expand-include%
-   (@case-lambda
-    (1 gx#core-expand-include%__0)
-    (2 gx#core-expand-include%__%)))
-  (declare-type
-   gx#core-apply-expander
-   (@case-lambda (2 gx#core-apply-expander__0) (3 gx#core-apply-expander__%)))
+  (declare-type gx#raise-syntax-error (@lambda (3) #f))
+  (begin
+    (declare-type gx#eval-syntax__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#eval-syntax__0 (@lambda 1 #f))
+      (declare-type
+       gx#eval-syntax
+       (@case-lambda (1 gx#eval-syntax__0) (2 gx#eval-syntax__%)))))
+  (declare-type gx#eval-syntax* (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-expand__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-expand__0 (@lambda 1 #f))
+      (declare-type
+       gx#core-expand
+       (@case-lambda (1 gx#core-expand__0) (2 gx#core-expand__%)))))
+  (declare-type gx#core-expand-top (@lambda 1 #f))
+  (declare-type gx#core-expand-expression (@lambda 1 #f))
+  (declare-type gx#core-expand-expression+1 (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-expand*__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-expand*__0 (@lambda 1 #f))
+      (declare-type
+       gx#core-expand*
+       (@case-lambda (1 gx#core-expand*__0) (2 gx#core-expand*__%)))))
+  (declare-type gx#core-expand1 (@lambda 1 #f))
+  (declare-type gx#core-expand-head (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-expand-block__% (@lambda 4 #f))
+    (begin
+      (declare-type gx#core-expand-block__0 (@lambda 2 #f))
+      (declare-type gx#core-expand-block__1 (@lambda 3 #f))
+      (declare-type
+       gx#core-expand-block
+       (@case-lambda
+        (2 gx#core-expand-block__0)
+        (3 gx#core-expand-block__1)
+        (4 gx#core-expand-block__%)))))
+  (declare-type gx#core-expand-block* (@lambda 2 #f))
+  (declare-type gx#core-expand-cond-expand% (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-expand-include%__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-expand-include%__0 (@lambda 1 #f))
+      (declare-type
+       gx#core-expand-include%
+       (@case-lambda
+        (1 gx#core-expand-include%__0)
+        (2 gx#core-expand-include%__%)))))
+  (begin
+    (declare-type gx#core-apply-expander__% (@lambda 3 #f))
+    (begin
+      (declare-type gx#core-apply-expander__0 (@lambda 2 #f))
+      (declare-type
+       gx#core-apply-expander
+       (@case-lambda
+        (2 gx#core-apply-expander__0)
+        (3 gx#core-apply-expander__%)))))
+  (declare-type gx#expander::apply-macro-expander (@lambda 2 #f))
   (declare-method
    gx#expander::t
    apply-macro-expander
    gx#expander::apply-macro-expander
    #f)
+  (declare-type gx#macro-expander::apply-macro-expander (@lambda 2 #f))
   (declare-method
    gx#macro-expander::t
    apply-macro-expander
    gx#macro-expander::apply-macro-expander
    #f)
+  (declare-type gx#core-expander::apply-macro-expander (@lambda 2 #f))
   (declare-method
    gx#core-expander::t
    apply-macro-expander
    gx#core-expander::apply-macro-expander
    #f)
-  (declare-type
-   gx#top-special-form::apply-macro-expander
-   (@case-lambda
-    (2 gx#top-special-form::apply-macro-expander__0)
-    (3 gx#top-special-form::apply-macro-expander__%)))
+  (begin
+    (declare-type gx#top-special-form::apply-macro-expander__% (@lambda 3 #f))
+    (begin
+      (declare-type
+       gx#top-special-form::apply-macro-expander__0
+       (@lambda 2 #f))
+      (declare-type
+       gx#top-special-form::apply-macro-expander
+       (@case-lambda
+        (2 gx#top-special-form::apply-macro-expander__0)
+        (3 gx#top-special-form::apply-macro-expander__%)))))
   (declare-method
    gx#top-special-form::t
    apply-macro-expander
    gx#top-special-form::apply-macro-expander
    #f)
+  (declare-type gx#module-special-form::apply-macro-expander (@lambda 2 #f))
   (declare-method
    gx#module-special-form::t
    apply-macro-expander
    gx#module-special-form::apply-macro-expander
    #f)
+  (declare-type gx#rename-macro-expander::apply-macro-expander (@lambda 2 #f))
   (declare-method
    gx#rename-macro-expander::t
    apply-macro-expander
    gx#rename-macro-expander::apply-macro-expander
    #f)
-  (declare-type
-   gx#core-apply-user-expander
-   (@case-lambda
-    (2 gx#core-apply-user-expander__0)
-    (3 gx#core-apply-user-expander__%)))
+  (begin
+    (declare-type gx#core-apply-user-expander__% (@lambda 3 #f))
+    (begin
+      (declare-type gx#core-apply-user-expander__0 (@lambda 2 #f))
+      (declare-type
+       gx#core-apply-user-expander
+       (@case-lambda
+        (2 gx#core-apply-user-expander__0)
+        (3 gx#core-apply-user-expander__%)))))
+  (declare-type gx#core-apply-user-macro (@lambda 5 #f))
   (declare-type
    gx#user-expander::apply-macro-expander
    (@case-lambda
@@ -411,78 +473,177 @@ package: gerbil/expander
    apply-macro-expander
    gx#user-expander::apply-macro-expander
    #f)
-  (declare-type
-   gx#resolve-identifier
-   (@case-lambda
-    (1 gx#resolve-identifier__0)
-    (2 gx#resolve-identifier__1)
-    (3 gx#resolve-identifier__%)))
-  (declare-type
-   gx#bind-identifier!
-   (@case-lambda
-    (2 gx#bind-identifier!__0)
-    (3 gx#bind-identifier!__1)
-    (4 gx#bind-identifier!__2)
-    (5 gx#bind-identifier!__%)))
-  (declare-type
-   gx#core-resolve-identifier
-   (@case-lambda
-    (1 gx#core-resolve-identifier__0)
-    (2 gx#core-resolve-identifier__1)
-    (3 gx#core-resolve-identifier__%)))
-  (declare-type
-   gx#core-bind!
-   (@case-lambda
-    (2 gx#core-bind!__0)
-    (3 gx#core-bind!__1)
-    (4 gx#core-bind!__2)
-    (5 gx#core-bind!__%)))
-  (declare-type
-   gx#core-context-top
-   (@case-lambda
-    (0 gx#core-context-top__0)
-    (1 gx#core-context-top__1)
-    (2 gx#core-context-top__%)))
-  (declare-type
-   gx#core-context-root
-   (@case-lambda (0 gx#core-context-root__0) (1 gx#core-context-root__%)))
-  (declare-type
-   gx#core-context-rebind?
-   (@case-lambda
-    (0 gx#core-context-rebind?__0)
-    (1 gx#core-context-rebind?__%)
-    ((1) gx#core-context-rebind?__%)))
-  (declare-type
-   gx#core-context-namespace
-   (@case-lambda
-    (0 gx#core-context-namespace__0)
-    (1 gx#core-context-namespace__%)))
-  (declare-type
-   gx#expander-binding?
-   (@case-lambda (1 gx#expander-binding?__0) (2 gx#expander-binding?__%)))
-  (declare-type
-   gx#core-bound-identifier?
-   (@case-lambda
-    (1 gx#core-bound-identifier?__0)
-    (2 gx#core-bound-identifier?__%)))
-  (declare-type
-   gx#core-quote-syntax
-   (@case-lambda
-    (1 gx#core-quote-syntax__0)
-    (2 gx#core-quote-syntax__1)
-    (3 gx#core-quote-syntax__2)
-    (4 gx#core-quote-syntax__%)))
-  (declare-type
-   gx#core-resolve-path
-   (@case-lambda (1 gx#core-resolve-path__0) (2 gx#core-resolve-path__%)))
-  (declare-type
-   gx#core-deserialize-mark
-   (@case-lambda
-    (1 gx#core-deserialize-mark__0)
-    (2 gx#core-deserialize-mark__%)))
-  (declare-type
-   gx#syntax-local-e
-   (@case-lambda (1 gx#syntax-local-e__0) (2 gx#syntax-local-e__%)))
-  (declare-type
-   gx#syntax-local-value
-   (@case-lambda (1 gx#syntax-local-value__0) (2 gx#syntax-local-value__%))))
+  (begin
+    (declare-type gx#resolve-identifier__% (@lambda 3 #f))
+    (begin
+      (declare-type gx#resolve-identifier__0 (@lambda 1 #f))
+      (declare-type gx#resolve-identifier__1 (@lambda 2 #f))
+      (declare-type
+       gx#resolve-identifier
+       (@case-lambda
+        (1 gx#resolve-identifier__0)
+        (2 gx#resolve-identifier__1)
+        (3 gx#resolve-identifier__%)))))
+  (begin
+    (declare-type gx#bind-identifier!__% (@lambda 5 #f))
+    (begin
+      (declare-type gx#bind-identifier!__0 (@lambda 2 #f))
+      (declare-type gx#bind-identifier!__1 (@lambda 3 #f))
+      (declare-type gx#bind-identifier!__2 (@lambda 4 #f))
+      (declare-type
+       gx#bind-identifier!
+       (@case-lambda
+        (2 gx#bind-identifier!__0)
+        (3 gx#bind-identifier!__1)
+        (4 gx#bind-identifier!__2)
+        (5 gx#bind-identifier!__%)))))
+  (begin
+    (declare-type gx#core-resolve-identifier__% (@lambda 3 #f))
+    (begin
+      (declare-type gx#core-resolve-identifier__0 (@lambda 1 #f))
+      (declare-type gx#core-resolve-identifier__1 (@lambda 2 #f))
+      (declare-type
+       gx#core-resolve-identifier
+       (@case-lambda
+        (1 gx#core-resolve-identifier__0)
+        (2 gx#core-resolve-identifier__1)
+        (3 gx#core-resolve-identifier__%)))))
+  (declare-type gx#core-resolve-binding (@lambda 5 #f))
+  (begin
+    (declare-type gx#core-bind!__% (@lambda 5 #f))
+    (begin
+      (declare-type gx#core-bind!__0 (@lambda 2 #f))
+      (declare-type gx#core-bind!__1 (@lambda 3 #f))
+      (declare-type gx#core-bind!__2 (@lambda 4 #f))
+      (declare-type
+       gx#core-bind!
+       (@case-lambda
+        (2 gx#core-bind!__0)
+        (3 gx#core-bind!__1)
+        (4 gx#core-bind!__2)
+        (5 gx#core-bind!__%)))))
+  (declare-type gx#core-identifier-key (@lambda 1 #f))
+  (declare-type gx#core-context-shift (@lambda 2 #f))
+  (declare-type gx#core-context-get (@lambda 2 #f))
+  (declare-type gx#core-context-put! (@lambda 3 #f))
+  (declare-type gx#core-context-resolve (@lambda 2 #f))
+  (declare-type gx#core-context-bind! (@lambda 4 #f))
+  (begin
+    (declare-type gx#core-context-top__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-context-top__0 (@lambda 0 #f))
+      (declare-type gx#core-context-top__1 (@lambda 1 #f))
+      (declare-type
+       gx#core-context-top
+       (@case-lambda
+        (0 gx#core-context-top__0)
+        (1 gx#core-context-top__1)
+        (2 gx#core-context-top__%)))))
+  (begin
+    (declare-type gx#core-context-root__% (@lambda 1 #f))
+    (begin
+      (declare-type gx#core-context-root__0 (@lambda 0 #f))
+      (declare-type
+       gx#core-context-root
+       (@case-lambda
+        (0 gx#core-context-root__0)
+        (1 gx#core-context-root__%)))))
+  (begin
+    (declare-type gx#core-context-rebind?__% (@lambda (1) #f))
+    (begin
+      (declare-type gx#core-context-rebind?__0 (@lambda 0 #f))
+      (declare-type
+       gx#core-context-rebind?
+       (@case-lambda
+        (0 gx#core-context-rebind?__0)
+        (1 gx#core-context-rebind?__%)
+        ((1) gx#core-context-rebind?__%)))))
+  (begin
+    (declare-type gx#core-context-namespace__% (@lambda 1 #f))
+    (begin
+      (declare-type gx#core-context-namespace__0 (@lambda 0 #f))
+      (declare-type
+       gx#core-context-namespace
+       (@case-lambda
+        (0 gx#core-context-namespace__0)
+        (1 gx#core-context-namespace__%)))))
+  (begin
+    (declare-type gx#expander-binding?__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#expander-binding?__0 (@lambda 1 #f))
+      (declare-type
+       gx#expander-binding?
+       (@case-lambda
+        (1 gx#expander-binding?__0)
+        (2 gx#expander-binding?__%)))))
+  (declare-type gx#core-expander-binding? (@lambda 1 #f))
+  (declare-type gx#expression-form-binding? (@lambda 1 #f))
+  (declare-type gx#direct-special-form-binding? (@lambda 1 #f))
+  (declare-type gx#special-form-binding? (@lambda 1 #f))
+  (declare-type gx#feature-binding? (@lambda 1 #f))
+  (declare-type gx#private-feature-binding? (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-bound-identifier?__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-bound-identifier?__0 (@lambda 1 #f))
+      (declare-type
+       gx#core-bound-identifier?
+       (@case-lambda
+        (1 gx#core-bound-identifier?__0)
+        (2 gx#core-bound-identifier?__%)))))
+  (declare-type gx#core-identifier=? (@lambda 2 #f))
+  (declare-type gx#core-extern-symbol? (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-quote-syntax__% (@lambda 4 #f))
+    (begin
+      (declare-type gx#core-quote-syntax__0 (@lambda 1 #f))
+      (declare-type gx#core-quote-syntax__1 (@lambda 2 #f))
+      (declare-type gx#core-quote-syntax__2 (@lambda 3 #f))
+      (declare-type
+       gx#core-quote-syntax
+       (@case-lambda
+        (1 gx#core-quote-syntax__0)
+        (2 gx#core-quote-syntax__1)
+        (3 gx#core-quote-syntax__2)
+        (4 gx#core-quote-syntax__%)))))
+  (declare-type gx#core-cons (@lambda 2 #f))
+  (declare-type gx#core-list (@lambda (1) #f))
+  (declare-type gx#core-cons* (@lambda (1) #f))
+  (begin
+    (declare-type gx#core-resolve-path__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-resolve-path__0 (@lambda 1 #f))
+      (declare-type
+       gx#core-resolve-path
+       (@case-lambda
+        (1 gx#core-resolve-path__0)
+        (2 gx#core-resolve-path__%)))))
+  (begin
+    (declare-type gx#core-deserialize-mark__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-deserialize-mark__0 (@lambda 1 #f))
+      (declare-type
+       gx#core-deserialize-mark
+       (@case-lambda
+        (1 gx#core-deserialize-mark__0)
+        (2 gx#core-deserialize-mark__%)))))
+  (declare-type gx#syntax-local-rewrap (@lambda 1 #f))
+  (declare-type gx#syntax-local-unwrap (@lambda 1 #f))
+  (declare-type gx#syntax-local-introduce (@lambda 1 #f))
+  (begin
+    (declare-type gx#syntax-local-e__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#syntax-local-e__0 (@lambda 1 #f))
+      (declare-type
+       gx#syntax-local-e
+       (@case-lambda (1 gx#syntax-local-e__0) (2 gx#syntax-local-e__%)))))
+  (begin
+    (declare-type gx#syntax-local-value__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#syntax-local-value__0 (@lambda 1 #f))
+      (declare-type
+       gx#syntax-local-value
+       (@case-lambda
+        (1 gx#syntax-local-value__0)
+        (2 gx#syntax-local-value__%)))))
+  (declare-type gx#raise-syntax-ref-error (@lambda 1 #f)))

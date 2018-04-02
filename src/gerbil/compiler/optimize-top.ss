@@ -85,7 +85,9 @@ namespace: gxc
      (optimizer-declare-method! (identifier-symbol #'type-t)
                                 (stx-e #'method) (identifier-symbol #'impl)
                                 #f))
-    (_ (void))))
+
+    ((_ expr ...)
+     (for-each compile-e #'(expr ...)))))
 
 
 ;;; apply-basic-expression-type
@@ -153,18 +155,20 @@ namespace: gxc
           (andmap (cut runtime-identifier=? <> 'absent-value) #'(-absent-value ...))
           (andmap (cut free-identifier=? <> #'kwvar) #'(-xkwvar ...)))
      (make-!kw-lambda-primary 'kw-lambda-dispatch (map stx-e #'(key ...)) (identifier-symbol #'main)))
-    ;; TODO generic lambda type for call arity checking
-    (_ #f)))
+
+    ;; generic lambda -- track type for call arity checking
+    ((_ . form)
+     (make-!lambda 'lambda (lambda-form-arity #'form) #f))))
 
 (def (basic-expression-type-case-lambda% stx)
   (def (clause-e form)
-    (make-!lambda 'case-lambda-clause (lambda-form-arity form) (dispatch-lambda-form-delegate form)))
+    (make-!lambda 'case-lambda-clause (lambda-form-arity form)
+             (and (dispatch-lambda-form? form)
+                  (dispatch-lambda-form-delegate form))))
   (ast-case stx ()
     ((_ . clauses)
-     (andmap dispatch-lambda-form? #'clauses)
      (let (clauses (map clause-e #'clauses))
-       (make-!case-lambda 'case-lambda clauses)))
-    (_ #f)))
+       (make-!case-lambda 'case-lambda clauses)))))
 
 (def basic-expression-type-builtin (make-hash-table-eq))
 (defrules defbasic-expression-type-builtin ()

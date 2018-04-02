@@ -39,7 +39,7 @@ package: std/actor/rpc/proto
           (bio-force-output obuf)
           (bad-hello e)))))
      (else
-      (bad-hello)))))
+      (bad-hello e)))))
 
 (def (rpc-proto-connect-e ibuf obuf proto-t K)
   (def (connection-rejected)

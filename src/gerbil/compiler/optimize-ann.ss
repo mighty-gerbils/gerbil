@@ -913,6 +913,8 @@ namespace: gxc
       ((%#lambda (obj) body)
        (let* ((body (apply-expression-subst #'body #'obj target))
               (body (if negation (closure-e body) body)))
+         ;; we need to redeclare the type of the lambda, as it has lost the argument
+         (optimizer-declare-type! (identifier-symbol id) (make-!lambda 'lambda 0 #f) #t)
          (cons id ['%#lambda [] body]))))))
 
 ;;; apply-push-match-vars

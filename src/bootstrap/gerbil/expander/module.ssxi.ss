@@ -78,81 +78,177 @@ package: gerbil/expander
   (declare-type
    gx#export-set-exports-set!
    (@struct-setf gx#export-set::t 2 #f))
+  (declare-type gx#make-import-expander (@lambda (0) #f))
+  (declare-type gx#make-export-expander (@lambda (0) #f))
+  (declare-type gx#make-import-export-expander (@lambda (0) #f))
+  (declare-type gx#module-context:::init! (@lambda 5 #f))
   (declare-method gx#module-context::t :init! gx#module-context:::init! #f)
-  (declare-type
-   gx#prelude-context:::init!
-   (@case-lambda
-    (2 gx#prelude-context:::init!__0)
-    (3 gx#prelude-context:::init!__%)))
+  (begin
+    (declare-type gx#prelude-context:::init!__% (@lambda 3 #f))
+    (begin
+      (declare-type gx#prelude-context:::init!__0 (@lambda 2 #f))
+      (declare-type
+       gx#prelude-context:::init!
+       (@case-lambda
+        (2 gx#prelude-context:::init!__0)
+        (3 gx#prelude-context:::init!__%)))))
   (declare-method gx#prelude-context::t :init! gx#prelude-context:::init! #f)
+  (declare-type gx#import-export-expander-init! (@lambda 2 #f))
+  (declare-type gx#import-expander:::init! (@lambda 2 #f))
   (declare-method gx#import-expander::t :init! gx#import-expander:::init! #f)
+  (declare-type gx#export-expander:::init! (@lambda 2 #f))
   (declare-method gx#export-expander::t :init! gx#export-expander:::init! #f)
+  (declare-type gx#import-export-expander:::init! (@lambda 2 #f))
   (declare-method
    gx#import-export-expander::t
    :init!
    gx#import-export-expander:::init!
    #f)
+  (declare-type gx#import-expander::apply-import-expander (@lambda 2 #f))
   (declare-method
    gx#import-expander::t
    apply-import-expander
    gx#import-expander::apply-import-expander
    #f)
+  (declare-type gx#export-expander::apply-export-expander (@lambda 2 #f))
   (declare-method
    gx#export-expander::t
    apply-export-expander
    gx#export-expander::apply-export-expander
    #f)
-  (declare-type
-   gx#import-module
-   (@case-lambda
-    (1 gx#import-module__0)
-    (2 gx#import-module__1)
-    (3 gx#import-module__%)))
-  (declare-type
-   gx#core-context-prelude
-   (@case-lambda
-    (0 gx#core-context-prelude__0)
-    (1 gx#core-context-prelude__%)))
-  (declare-type
-   gx#core-import-module
-   (@case-lambda (1 gx#core-import-module__0) (2 gx#core-import-module__%)))
-  (declare-type
-   gx#core-resolve-module-path
-   (@case-lambda
-    (1 gx#core-resolve-module-path__0)
-    (2 gx#core-resolve-module-path__%)))
-  (declare-type
-   gx#core-library-package-plist
-   (@case-lambda
-    (1 gx#core-library-package-plist__0)
-    (2 gx#core-library-package-plist__%)))
-  (declare-type
-   gx#core-bind-import!
-   (@case-lambda
-    (1 gx#core-bind-import!__0)
-    (2 gx#core-bind-import!__1)
-    (3 gx#core-bind-import!__%)))
-  (declare-type
-   gx#core-bind-weak-import!
-   (@case-lambda
-    (1 gx#core-bind-weak-import!__0)
-    (2 gx#core-bind-weak-import!__%)))
-  (declare-type
-   gx#core-module-export->import
-   (@case-lambda
-    (1 gx#core-module-export->import__0)
-    (2 gx#core-module-export->import__1)
-    (3 gx#core-module-export->import__%)))
-  (declare-type
-   gx#core-expand-import%
-   (@case-lambda (1 gx#core-expand-import%__0) (2 gx#core-expand-import%__%)))
-  (declare-type
-   gx#core-expand-export%
-   (@case-lambda (1 gx#core-expand-export%__0) (2 gx#core-expand-export%__%)))
-  (declare-type
-   gx#core-bind-feature!
-   (@case-lambda
-    (1 gx#core-bind-feature!__0)
-    (2 gx#core-bind-feature!__1)
-    (3 gx#core-bind-feature!__2)
-    (4 gx#core-bind-feature!__%))))
+  (declare-type gx#module-source-path (@lambda 1 #f))
+  (begin
+    (declare-type gx#import-module__% (@lambda 3 #f))
+    (begin
+      (declare-type gx#import-module__0 (@lambda 1 #f))
+      (declare-type gx#import-module__1 (@lambda 2 #f))
+      (declare-type
+       gx#import-module
+       (@case-lambda
+        (1 gx#import-module__0)
+        (2 gx#import-module__1)
+        (3 gx#import-module__%)))))
+  (declare-type gx#eval-module (@lambda 1 #f))
+  (declare-type gx#core-eval-module (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-context-prelude__% (@lambda 1 #f))
+    (begin
+      (declare-type gx#core-context-prelude__0 (@lambda 0 #f))
+      (declare-type
+       gx#core-context-prelude
+       (@case-lambda
+        (0 gx#core-context-prelude__0)
+        (1 gx#core-context-prelude__%)))))
+  (declare-type gx#core-module->prelude-context (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-import-module__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-import-module__0 (@lambda 1 #f))
+      (declare-type
+       gx#core-import-module
+       (@case-lambda
+        (1 gx#core-import-module__0)
+        (2 gx#core-import-module__%)))))
+  (declare-type gx#core-read-module (@lambda 1 #f))
+  (declare-type gx#core-read-module/sexp (@lambda 1 #f))
+  (declare-type gx#core-read-module/lang (@lambda 1 #f))
+  (declare-type gx#core-read-module-package (@lambda 3 #f))
+  (declare-type gx#core-module-path->namespace (@lambda 1 #f))
+  (declare-type gx#core-module-path->id (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-resolve-module-path__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-resolve-module-path__0 (@lambda 1 #f))
+      (declare-type
+       gx#core-resolve-module-path
+       (@case-lambda
+        (1 gx#core-resolve-module-path__0)
+        (2 gx#core-resolve-module-path__%)))))
+  (declare-type gx#core-resolve-library-module-path (@lambda 1 #f))
+  (declare-type gx#core-library-package-path-prefix (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-library-package-plist__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-library-package-plist__0 (@lambda 1 #f))
+      (declare-type
+       gx#core-library-package-plist
+       (@case-lambda
+        (1 gx#core-library-package-plist__0)
+        (2 gx#core-library-package-plist__%)))))
+  (declare-type gx#core-library-package-cache (@lambda 0 #f))
+  (declare-type gx#core-library-module-path? (@lambda 1 #f))
+  (declare-type gx#core-special-module-path? (@lambda 2 #f))
+  (declare-type gx#core-bound-prelude? (@lambda 1 #f))
+  (declare-type gx#core-bound-module? (@lambda 1 #f))
+  (declare-type gx#core-bound-module-prelude? (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-bind-import!__% (@lambda 3 #f))
+    (begin
+      (declare-type gx#core-bind-import!__0 (@lambda 1 #f))
+      (declare-type gx#core-bind-import!__1 (@lambda 2 #f))
+      (declare-type
+       gx#core-bind-import!
+       (@case-lambda
+        (1 gx#core-bind-import!__0)
+        (2 gx#core-bind-import!__1)
+        (3 gx#core-bind-import!__%)))))
+  (begin
+    (declare-type gx#core-bind-weak-import!__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-bind-weak-import!__0 (@lambda 1 #f))
+      (declare-type
+       gx#core-bind-weak-import!
+       (@case-lambda
+        (1 gx#core-bind-weak-import!__0)
+        (2 gx#core-bind-weak-import!__%)))))
+  (declare-type gx#core-resolve-module-export (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-module-export->import__% (@lambda 3 #f))
+    (begin
+      (declare-type gx#core-module-export->import__0 (@lambda 1 #f))
+      (declare-type gx#core-module-export->import__1 (@lambda 2 #f))
+      (declare-type
+       gx#core-module-export->import
+       (@case-lambda
+        (1 gx#core-module-export->import__0)
+        (2 gx#core-module-export->import__1)
+        (3 gx#core-module-export->import__%)))))
+  (declare-type gx#core-expand-module% (@lambda 1 #f))
+  (declare-type gx#core-expand-module-begin (@lambda 2 #f))
+  (declare-type gx#core-expand-module-body (@lambda 1 #f))
+  (declare-type gx#core-expand-import/export (@lambda 5 #f))
+  (begin
+    (declare-type gx#core-expand-import%__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-expand-import%__0 (@lambda 1 #f))
+      (declare-type
+       gx#core-expand-import%
+       (@case-lambda
+        (1 gx#core-expand-import%__0)
+        (2 gx#core-expand-import%__%)))))
+  (declare-type gx#core-import-nested-module (@lambda 2 #f))
+  (declare-type gx#core-expand-import-source (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-expand-export%__% (@lambda 2 #f))
+    (begin
+      (declare-type gx#core-expand-export%__0 (@lambda 1 #f))
+      (declare-type
+       gx#core-expand-export%
+       (@case-lambda
+        (1 gx#core-expand-export%__0)
+        (2 gx#core-expand-export%__%)))))
+  (declare-type gx#core-expand-export-source (@lambda 1 #f))
+  (declare-type gx#core-expand-provide% (@lambda 1 #f))
+  (begin
+    (declare-type gx#core-bind-feature!__% (@lambda 4 #f))
+    (begin
+      (declare-type gx#core-bind-feature!__0 (@lambda 1 #f))
+      (declare-type gx#core-bind-feature!__1 (@lambda 2 #f))
+      (declare-type gx#core-bind-feature!__2 (@lambda 3 #f))
+      (declare-type
+       gx#core-bind-feature!
+       (@case-lambda
+        (1 gx#core-bind-feature!__0)
+        (2 gx#core-bind-feature!__1)
+        (3 gx#core-bind-feature!__2)
+        (4 gx#core-bind-feature!__%))))))

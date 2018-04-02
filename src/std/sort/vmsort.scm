@@ -59,8 +59,8 @@
 		      (let ((j (+ j 1)))
 			(if (< j end) (lp j (+ i 1))))))))
 
-    (cond ((<= end1 start1) (if (< start2 end2) (vblit v2 start2 start0)))
-	  ((<= end2 start2) (vblit v1 start1 start0))
+    (cond ((<= end1 start1) (if (< start2 end2) (vblit v2 start2 start0 end2)))
+	  ((<= end2 start2) (vblit v1 start1 start0 end1))
 
 	  ;; Invariants: I is next index of V to write; X = V1[J]; Y = V2[K].
 	  (else (let lp ((i start0)

@@ -424,7 +424,7 @@ package: std
     (macro-vector-port-rcondvar port))
 
   (def (poll evt)
-    (user-port-poll (event-e evt) rbuf-check rbuf-fill))
+    (user-port-poll (event-e evt) rbuf-check rbuf-fill condvar-e))
 
   (make-event port poll event-e))
 

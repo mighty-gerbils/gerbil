@@ -69,6 +69,13 @@ namespace: gxc
                (optimizer-info-type (current-compile-optimizer-info)))
              sym type))
 
+(def (optimizer-clear-type! sym (local? #f))
+  (verbose "clear-type " sym)
+  (hash-remove! (if local?
+                  (current-compile-local-type)
+                  (optimizer-info-type (current-compile-optimizer-info)))
+                sym))
+
 (def (optimizer-declare-method! type-t method sym (rebind? #f))
   (let (type (optimizer-resolve-type type-t))
     (cond
