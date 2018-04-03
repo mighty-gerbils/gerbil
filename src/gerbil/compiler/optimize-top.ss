@@ -31,6 +31,9 @@ namespace: gxc
   (%#begin-annotation basic-expression-type-begin-annotation%)
   (%#lambda                basic-expression-type-lambda%)
   (%#case-lambda           basic-expression-type-case-lambda%)
+  (%#let-values       basic-expression-type-let-values%)
+  (%#letrec-values    basic-expression-type-let-values%)
+  (%#letrec*-values   basic-expression-type-let-values%)
   (%#call             basic-expression-type-call%)
   (%#ref              basic-expression-type-ref%))
 
@@ -91,6 +94,9 @@ namespace: gxc
 
 
 ;;; apply-basic-expression-type
+(def current-compile-type-closure
+  (make-parameter #f))
+
 (def (basic-expression-type-begin% stx)
   (ast-case stx ()
     ((_ expr)
@@ -105,6 +111,11 @@ namespace: gxc
 (def (basic-expression-type-lambda% stx)
   (begin-annotation @match:prefix
     (ast-case stx (%#call %#ref %#quote)
+      ((_ . form)
+       (current-compile-type-closure)
+       ;; don't capture local dispatch references, just enough to arity check
+       (make-!lambda 'lambda (lambda-form-arity #'form) #f))
+
       ((_ args (%#call (%#ref -apply) (%#ref -make-struct-instance) (%#ref type-t) (%#ref xargs)))
        ;; defstruct constructor
        (and (identifier? #'args)
@@ -168,12 +179,19 @@ namespace: gxc
 (def (basic-expression-type-case-lambda% stx)
   (def (clause-e form)
     (make-!lambda 'case-lambda-clause (lambda-form-arity form)
-             (and (dispatch-lambda-form? form)
+             (and (not (current-compile-type-closure)) ; don't capture local dispatch
+                  (dispatch-lambda-form? form)
                   (dispatch-lambda-form-delegate form))))
   (ast-case stx ()
     ((_ . clauses)
      (let (clauses (map clause-e #'clauses))
        (make-!case-lambda 'case-lambda clauses)))))
+
+(def (basic-expression-type-let-values% stx)
+  (ast-case stx ()
+    ((_ bind body)
+     (parameterize ((current-compile-type-closure #t))
+       (compile-e #'body)))))
 
 (def basic-expression-type-builtin (make-hash-table-eq))
 (defrules defbasic-expression-type-builtin ()
