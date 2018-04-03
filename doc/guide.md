@@ -100,7 +100,7 @@ For those who prefer the classic long forms, `define` and `define-values`
 are also available as in standard Scheme.
 
 Procedures are defined with `lambda` and can have optional and keyword
-formal argumets:
+formal arguments:
 ```
 (def (a-simple-function a b)
   (+ a b))
@@ -185,7 +185,7 @@ Bindings can be mutated with `set!` as usual.
 
 `set!` also expands with s-expressions as the target
 of mutation.
-When the head of the s-expresion is a setf-macro it
+When the head of the s-expression is a setf-macro it
 is invoked to expand the syntax.
 If the head is a plain identifier, as is the case
 in the example below, to expands an `identifier-set!`
@@ -427,7 +427,7 @@ with `syntax-case` and `quote-syntax`.
 
 #### defrules
 Most macros are simple and medium syntax-rules macros, and thus
-Gerbil provides a short form for definint syntax-rules macros:
+Gerbil provides a short form for defining syntax-rules macros:
 ```
 (defrules macro-id (id ...)
  (head [guard] body) ...)
@@ -452,7 +452,7 @@ hygienically:
 ```
 
 #### defsyntax-for-match
-The match expanper is also macro capable; you can define a match
+The match expander is also macro capable; you can define a match
 macro with `defsyntax-for-match`, which has the following form:
 ```
 (defsyntax-for-match id match-macro [macro])
@@ -542,7 +542,7 @@ it-is-an-error
 ### Imports and Exports
 
 Identifiers are imported from a module with the `import` special
-form, which must appear at a top contenxt (either top-level
+form, which must appear at a top context (either top-level
 or module scope).
 It has the following syntax:
 ```
@@ -590,7 +590,7 @@ effect.
 
 ### File Modules
 
-Modules can be writen directly in files, without a surrounding
+Modules can be written directly in files, without a surrounding
 `module` form.
 For example, we can place our module `A` into a file A.ss
 ```
@@ -764,7 +764,7 @@ special expander indirection hooks by exporting macros with these names:
 
 Language extensibility does not stop there however: prelude modules can
 also specify a custom surface syntax, by providing a module reader.
-The custom reader is invoked by using a `#lang` declaration at the begining
+The custom reader is invoked by using a `#lang` declaration at the beginning
 of the module file:
 ```
 #lang prelude [package: pkg-id] [namespace: namespace-id]
@@ -791,7 +791,7 @@ You can do so by creating a `gerbil.pkg` file in the root of your library,
 which contains a property list.
 
 The `package:` property specifies the prefix package at the root of your
-hierarhcy. The package of individual modules will extend this prefix to
+hierarchy. The package of individual modules will extend this prefix to
 mirror the directory structure.
 
 The `prelude:` property specifies an implicit custom prelude for s-expression
@@ -1071,7 +1071,7 @@ programming.
 
 #### wait and select
 These are the low level primitives, which wait and multiplex on primitive selectors:
-- Threads, which signal when the thread therminates.
+- Threads, which signal when the thread terminates.
 - Pairs of a locked mutex with a condition variable, which signal when the condition signals after the mutex has been unlocked.
 - Naked i/o condvars, which are signaled by the runtime scheduler.
 
@@ -1087,7 +1087,7 @@ For example:
 ```
 (import :std/event)
 (def my-thread (spawn (lambda () (thread-sleep! 10))))
-> (wait my-thead 1)      ; or (select [my-thread] 1)
+> (wait my-thread 1)      ; or (select [my-thread] 1)
 => #f                    ; after a second elapses
 > (wait my-thread)       ; or (select [my-thread])
 => my-thread             ; after the thread completes its sleep
@@ -1107,8 +1107,8 @@ A valid argument for `sync` is any synchronizable object, automatically wrapped 
 
 An event is
 - the primitive events `never-evt` (bottom) and `always-evt` (top)
-- an event object, constructured with `make-event` or `wrap-evt`
-- an event-set object, constructred with `choice-evt`
+- an event object, constructed with `make-event` or `wrap-evt`
+- an event-set object, constructed with `choice-evt`
 - an event-handler object, constructed with `handle-evt`; it is an event tied with a continuation function which is tail invoked with the value of the event. Multiple continuations can be chained with `handle-evt` each receiving the values of the previous, starting with the value of the vent.
 
 `sync` accepts an arbitrary of events as arguments, and returns when exactly one of them is
@@ -1495,7 +1495,7 @@ The embedded http server is a new development in Gerbil-v0.12-DEV, and
 utilizes raw devices. It is significantly faster and offers a low
 level interface oriented towards API programming.
 
-#### Web programing with rack/fastcgi
+#### Web programming with rack/fastcgi
 
 This is the obligatory hello web example:
 ```
@@ -1565,7 +1565,7 @@ $ curl http://localhost:8080/hello
 hello world
 ```
 
-For more exampes of httpd handlers, see the [httpd tutorial](tutorial/httpd.md).
+For more examples of httpd handlers, see the [httpd tutorial](tutorial/httpd.md).
 
 ### Databases
 
