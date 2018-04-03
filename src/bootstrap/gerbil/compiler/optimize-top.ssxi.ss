@@ -12,6 +12,7 @@ package: gerbil/compiler
   (declare-type gxc#basic-expression-type-begin-annotation% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-lambda% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-case-lambda% (@lambda 1 #f))
+  (declare-type gxc#basic-expression-type-let-values% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-call% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-make-struct-type (@lambda 2 #f))
   (declare-type gxc#basic-expression-type-make-struct-predicate (@lambda 2 #f))

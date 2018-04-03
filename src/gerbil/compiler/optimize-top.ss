@@ -31,6 +31,9 @@ namespace: gxc
   (%#begin-annotation basic-expression-type-begin-annotation%)
   (%#lambda                basic-expression-type-lambda%)
   (%#case-lambda           basic-expression-type-case-lambda%)
+  (%#let-values       basic-expression-type-let-values%)
+  (%#letrec-values    basic-expression-type-let-values%)
+  (%#letrec*-values   basic-expression-type-let-values%)
   (%#call             basic-expression-type-call%)
   (%#ref              basic-expression-type-ref%))
 
@@ -91,6 +94,9 @@ namespace: gxc
 
 
 ;;; apply-basic-expression-type
+(def current-compile-type-closure
+  (make-parameter #f))
+
 (def (basic-expression-type-begin% stx)
   (ast-case stx ()
     ((_ expr)
@@ -103,72 +109,89 @@ namespace: gxc
      (compile-e #'expr))))
 
 (def (basic-expression-type-lambda% stx)
-  (ast-case stx (%#call %#ref %#quote)
-    ((_ args (%#call (%#ref -apply) (%#ref -make-instance) (%#ref type-t) (%#ref xargs)))
-     ;; defstruct constructor
-     (and (identifier? #'args)
-          (runtime-identifier=? #'-apply 'apply)
-          (runtime-identifier=? #'-make-instance 'make-struct-instance)
-          (free-identifier=? #'args #'xargs))
-     (let* ((type-t (identifier-symbol #'type-t))
-            (type (optimizer-resolve-type type-t)))
-       (and (!struct-type? type)
-            (make-!struct-cons type-t))))
-    ((_ (arg ...) (%#call (%#ref -make-struct-instance) (%#ref type-t) (%#ref xarg) ...))
-     ;; srfi/9 defrecord constructor
-     (and (identifier-list? #'(arg ...))
-          (runtime-identifier=? #'-make-struct-instance 'make-struct-instance)
-          (fx= (length #'(arg ...)) (length #'(xarg ...)))
-          (andmap free-identifier=?
-                  #'(arg ...)
-                  #'(xarg ...)))
-     (let* ((type-t (identifier-symbol #'type-t))
-            (type (optimizer-resolve-type type-t)))
-       (and (!struct-type? type)
-            (make-!struct-cons type-t))))
-    ((_ . form)
-     ;; delegate dispatch
-     (dispatch-lambda-form? #'form)
-     (make-!lambda 'lambda (lambda-form-arity #'form) (dispatch-lambda-form-delegate #'form)))
-    ((_ args (%#call (%#ref -apply) (%#ref -keyword-dispatch) (%#quote kwt)
-                     (%#ref dispatch) (%#ref -args)))
-     ;; kw-lambda
-     (and (identifier? #'args)
-          (runtime-identifier=? #'-apply 'apply)
-          (runtime-identifier=? #'-keyword-dispatch 'keyword-dispatch)
-          (free-identifier=? #'args #'-args))
-     (let* ((tab (stx-e #'kwt))
-            (keys (and tab (filter values (vector->list tab)))))
-       (make-!kw-lambda 'kw-lambda keys (identifier-symbol #'dispatch))))
-    ((_ (kwvar . args)
-        (%#call (%#ref -apply) (%#ref main) (%#ref -kwvar)
-                (%#call (%#ref -hash-ref) (%#ref -xkwvar) (%#quote key) (%#ref -absent-value))
-                ...
-                (%#ref -args)))
-     ;; kw-lambda dispatch
-     (and (identifier? #'kwvar)
-          (identifier? #'args)
-          (runtime-identifier=? #'-apply 'apply)
-          (free-identifier=? #'kwvar #'-kwvar)
-          (andmap stx-keyword? #'(key ...))
-          (andmap (cut runtime-identifier=? <> 'hash-ref) #'(-hash-ref ...))
-          (andmap (cut runtime-identifier=? <> 'absent-value) #'(-absent-value ...))
-          (andmap (cut free-identifier=? <> #'kwvar) #'(-xkwvar ...)))
-     (make-!kw-lambda-primary 'kw-lambda-dispatch (map stx-e #'(key ...)) (identifier-symbol #'main)))
+  (begin-annotation @match:prefix
+    (ast-case stx (%#call %#ref %#quote)
+      ((_ . form)
+       (current-compile-type-closure)
+       ;; don't capture local dispatch references, just enough to arity check
+       (make-!lambda 'lambda (lambda-form-arity #'form) #f))
 
-    ;; generic lambda -- track type for call arity checking
-    ((_ . form)
-     (make-!lambda 'lambda (lambda-form-arity #'form) #f))))
+      ((_ args (%#call (%#ref -apply) (%#ref -make-struct-instance) (%#ref type-t) (%#ref xargs)))
+       ;; defstruct constructor
+       (and (identifier? #'args)
+            (runtime-identifier=? #'-apply 'apply)
+            (runtime-identifier=? #'-make-struct-instance 'make-struct-instance)
+            (free-identifier=? #'args #'xargs))
+       (let* ((type-t (identifier-symbol #'type-t))
+              (type (optimizer-resolve-type type-t)))
+         (and (!struct-type? type)
+              (make-!struct-cons type-t))))
+
+      ((_ (arg ...) (%#call (%#ref -make-struct-instance) (%#ref type-t) (%#ref xarg) ...))
+       ;; srfi/9 defrecord constructor
+       (and (identifier-list? #'(arg ...))
+            (runtime-identifier=? #'-make-struct-instance 'make-struct-instance)
+            (fx= (length #'(arg ...)) (length #'(xarg ...)))
+            (andmap free-identifier=?
+                    #'(arg ...)
+                    #'(xarg ...)))
+       (let* ((type-t (identifier-symbol #'type-t))
+              (type (optimizer-resolve-type type-t)))
+         (and (!struct-type? type)
+              (make-!struct-cons type-t))))
+
+      ((_ args (%#call (%#ref -apply) (%#ref -keyword-dispatch) (%#quote kwt)
+                       (%#ref dispatch) (%#ref -args)))
+       ;; kw-lambda
+       (and (identifier? #'args)
+            (runtime-identifier=? #'-apply 'apply)
+            (runtime-identifier=? #'-keyword-dispatch 'keyword-dispatch)
+            (free-identifier=? #'args #'-args))
+       (let* ((tab (stx-e #'kwt))
+              (keys (and tab (filter values (vector->list tab)))))
+         (make-!kw-lambda 'kw-lambda keys (identifier-symbol #'dispatch))))
+
+      ((_ (kwvar . args)
+          (%#call (%#ref -apply) (%#ref main) (%#ref -kwvar)
+                  (%#call (%#ref -hash-ref) (%#ref -xkwvar) (%#quote key) (%#ref -absent-value))
+                  ...
+                  (%#ref -args)))
+       ;; kw-lambda dispatch
+       (and (identifier? #'kwvar)
+            (identifier? #'args)
+            (runtime-identifier=? #'-apply 'apply)
+            (free-identifier=? #'kwvar #'-kwvar)
+            (andmap stx-keyword? #'(key ...))
+            (andmap (cut runtime-identifier=? <> 'hash-ref) #'(-hash-ref ...))
+            (andmap (cut runtime-identifier=? <> 'absent-value) #'(-absent-value ...))
+            (andmap (cut free-identifier=? <> #'kwvar) #'(-xkwvar ...)))
+       (make-!kw-lambda-primary 'kw-lambda-dispatch (map stx-e #'(key ...)) (identifier-symbol #'main)))
+
+      ((_ . form)
+       ;; delegate dispatch
+       (dispatch-lambda-form? #'form)
+       (make-!lambda 'lambda (lambda-form-arity #'form) (dispatch-lambda-form-delegate #'form)))
+
+      ((_ . form)
+       ;; generic lambda -- track type for call arity checking
+       (make-!lambda 'lambda (lambda-form-arity #'form) #f)))))
 
 (def (basic-expression-type-case-lambda% stx)
   (def (clause-e form)
     (make-!lambda 'case-lambda-clause (lambda-form-arity form)
-             (and (dispatch-lambda-form? form)
+             (and (not (current-compile-type-closure)) ; don't capture local dispatch
+                  (dispatch-lambda-form? form)
                   (dispatch-lambda-form-delegate form))))
   (ast-case stx ()
     ((_ . clauses)
      (let (clauses (map clause-e #'clauses))
        (make-!case-lambda 'case-lambda clauses)))))
+
+(def (basic-expression-type-let-values% stx)
+  (ast-case stx ()
+    ((_ bind body)
+     (parameterize ((current-compile-type-closure #t))
+       (compile-e #'body)))))
 
 (def basic-expression-type-builtin (make-hash-table-eq))
 (defrules defbasic-expression-type-builtin ()
