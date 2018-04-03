@@ -25,6 +25,9 @@ namespace: gxc
           gxc#collect-type-let-values%)
          (%#define-runtime collect-type-call% gxc#collect-type-call%)
          (%#define-runtime
+          current-compile-type-closure
+          gxc#current-compile-type-closure)
+         (%#define-runtime
           basic-expression-type-begin%
           gxc#basic-expression-type-begin%)
          (%#define-runtime
@@ -36,6 +39,9 @@ namespace: gxc
          (%#define-runtime
           basic-expression-type-case-lambda%
           gxc#basic-expression-type-case-lambda%)
+         (%#define-runtime
+          basic-expression-type-let-values%
+          gxc#basic-expression-type-let-values%)
          (%#define-runtime
           basic-expression-type-builtin
           gxc#basic-expression-type-builtin)
