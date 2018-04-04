@@ -20,6 +20,11 @@ namespace: gx
        (make-runtime-struct-info
         runtime-identifier: (quote-syntax AST::t)))))
 
+   (defrules check-procedure ()
+     ((_ proc)
+      (unless (procedure? proc)
+        (error "Bad argument; expected procedure" proc))))
+
    (defsyntax (core-syntax-case stx)
      (def (generate tgt kws clauses)
        (def (generate-clause hd E)

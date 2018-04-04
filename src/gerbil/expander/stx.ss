@@ -8,6 +8,8 @@ namespace: gx
 (import "common")
 (export #t)
 
+(declare (not safe))
+
 (def &AST-e
   (make-struct-field-unchecked-accessor AST::t 0))
 (def &AST-source
@@ -271,9 +273,11 @@ namespace: gx
   (stx-map values stx))
 
 (def (stx-car stx)
+  (declare (safe))
   (car (syntax-e stx)))
 
 (def (stx-cdr stx)
+  (declare (safe))
   (cdr (syntax-e stx)))
 
 (def (stx-length stx)
@@ -290,6 +294,7 @@ namespace: gx
    (stx-for-each2 f xstx ystx)))
 
 (def (stx-for-each1 f stx)
+  (check-procedure f)
   (let lp ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
@@ -299,6 +304,7 @@ namespace: gx
       (else (f rest)))))
 
 (def (stx-for-each2 f xstx ystx)
+  (check-procedure f)
   (let lp ((xrest xstx) (yrest ystx))
     (match (syntax-e xrest)
       ([xhd . xrest]
@@ -319,6 +325,7 @@ namespace: gx
    (stx-map2 f xstx ystx)))
 
 (def (stx-map1 f stx)
+  (check-procedure f)
   (let recur ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
@@ -328,6 +335,7 @@ namespace: gx
       (else (f rest)))))
 
 (def (stx-map2 f xstx ystx)
+  (check-procedure f)
   (let recur ((xrest xstx) (yrest ystx))
     (match (syntax-e xrest)
       ([xhd . xrest]
@@ -342,6 +350,7 @@ namespace: gx
       (else []))))
 
 (def (stx-andmap f stx)
+  (check-procedure f)
   (let lp ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
@@ -351,6 +360,7 @@ namespace: gx
       (else (f rest)))))
 
 (def (stx-ormap f stx)
+  (check-procedure f)
   (let lp ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
@@ -360,6 +370,7 @@ namespace: gx
       (else (f rest)))))
 
 (def (stx-foldl f iv stx)
+  (check-procedure f)
   (let lp ((r iv) (rest stx))
     (match (syntax-e rest)
       ([hd . rest]
@@ -368,6 +379,7 @@ namespace: gx
       (else (f rest r)))))
 
 (def (stx-foldr f iv stx)
+  (check-procedure f)
   (let recur ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
@@ -407,6 +419,7 @@ namespace: gx
 
 ;; plists
 (def (stx-plist? stx (key? stx-keyword?))
+  (check-procedure key?)
   (let lp ((rest stx))
     (match (stx-e rest)
       ([hd . rest]
@@ -418,6 +431,7 @@ namespace: gx
       (else #f))))
 
 (def (stx-getq key stx (key=? stx-eq?))
+  (check-procedure key=?)
   (let lp ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
