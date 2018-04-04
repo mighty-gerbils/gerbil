@@ -572,16 +572,16 @@ namespace: gx
 (def (bound-identifier=? xid yid)
   (def (context e)
     (if (syntax-quote? e)
-      (syntax-quote-context e)
+      (&syntax-quote-context e)
       (current-expander-context)))
 
   (def (marks e)
     (cond
      ((symbol? e) [])
      ((identifier-wrap? e)
-      (identifier-wrap-marks e))
+      (&identifier-wrap-marks e))
      (else
-      (syntax-quote-marks e))))
+      (&syntax-quote-marks e))))
 
   (def (unwrap e)
     (if (symbol? e) e

@@ -17,15 +17,15 @@ namespace: gx
 (defstruct (identifier-wrap AST) (marks)
   id:    gx#identifier-wrap::t
   name:  syntax
-  final: #t)
+  final: #t unchecked: #t)
 (defstruct (syntax-wrap AST) (mark)
   id:    gx#syntax-wrap::t
   name:  syntax
-  final: #t)
+  final: #t unchecked: #t)
 (defstruct (syntax-quote AST) (context marks)
   id:    gx#syntax-quote::t
   name:  syntax
-  final: #t)
+  final: #t unchecked: #t)
 
 ;; primitive operations
 (def (identifier? stx)
@@ -94,9 +94,9 @@ namespace: gx
       (wrap-outer
        (if (syntax-quote? stx)
          (if quote?
-           (wrap-quote datum (syntax-quote-context stx) (syntax-quote-marks stx))
-           (wrap-datum datum (syntax-quote-marks stx)))
-         (wrap-datum datum (identifier-wrap-marks stx))))))
+           (wrap-quote datum (&syntax-quote-context stx) (&syntax-quote-marks stx))
+           (wrap-datum datum (&syntax-quote-marks stx)))
+         (wrap-datum datum (&identifier-wrap-marks stx))))))
    (else
     (error "Bad template syntax; expected identifier" stx))))
 
@@ -106,14 +106,14 @@ namespace: gx
     (cond
      ((syntax-wrap? e)
       (lp (&AST-e e)
-          (apply-mark (syntax-wrap-mark e) marks)
+          (apply-mark (&syntax-wrap-mark e) marks)
           (&AST-source e)))
      ((identifier-wrap? e)
       (if (null? marks) e
           (make-identifier-wrap
            (&AST-e e)
            (&AST-source e)
-           (foldl apply-mark (identifier-wrap-marks e) marks))))
+           (foldl apply-mark (&identifier-wrap-marks e) marks))))
      ((syntax-quote? e) e)
      ((AST? e)
       (lp (&AST-e e) marks (&AST-source e)))
@@ -141,7 +141,7 @@ namespace: gx
   (cond
    ((syntax-quote? stx) stx)
    ((and (syntax-wrap? stx)
-         (eq? mark (syntax-wrap-mark stx)))
+         (eq? mark (&syntax-wrap-mark stx)))
     (&AST-e stx))
    (else
     (make-syntax-wrap stx (stx-source stx) mark))))
@@ -239,13 +239,13 @@ namespace: gx
 (def (stx-identifier-marks stx)
   (let (stx (stx-unwrap stx))
     (if (identifier-wrap? stx)
-      (identifier-wrap-marks stx)
-      (syntax-quote-marks stx))))
+      (&identifier-wrap-marks stx)
+      (&syntax-quote-marks stx))))
 
 (def (stx-identifier-context stx)
   (let (stx (stx-unwrap stx))
     (and (identifier-quote? stx)
-         (syntax-quote-context stx))))
+         (&syntax-quote-context stx))))
 
 (def (identifier-list? stx)
   (match (stx-e stx)

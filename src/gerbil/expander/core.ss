@@ -484,14 +484,14 @@ namespace: gx
       (core-resolve-binding e phi phi ctx (reverse marks)))
      ((identifier-quote? e)
       (core-resolve-binding (&AST-e e) phi 0
-                            (syntax-quote-context e)
-                            (syntax-quote-marks e)))
+                            (&syntax-quote-context e)
+                            (&syntax-quote-marks e)))
      ((identifier-wrap? e)
       (core-resolve-binding (&AST-e e) phi phi ctx
-                            (foldl apply-mark (identifier-wrap-marks e)
+                            (foldl apply-mark (&identifier-wrap-marks e)
                                    marks)))
      ((syntax-wrap? e)
-      (lp (&AST-e e) (apply-mark (syntax-wrap-mark e) marks)))
+      (lp (&AST-e e) (apply-mark (&syntax-wrap-mark e) marks)))
      ((AST? e)
       (lp (&AST-e e) marks))
      (else
@@ -739,7 +739,7 @@ namespace: gx
    ((identifier? stx)
     (let (id (syntax-local-unwrap stx))
       (make-syntax-quote (stx-e id) (or (stx-source id) src)
-                         ctx (identifier-wrap-marks id))))
+                         ctx (&identifier-wrap-marks id))))
    ((stx-datum? stx)
     (stx-e stx))
    (else
