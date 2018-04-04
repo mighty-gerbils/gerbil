@@ -38,9 +38,11 @@ namespace: gx
        (symbol? (&AST-e stx))))
 
 (def (sealed-syntax? stx)
-  (or (syntax-quote? stx)
-      (and (AST? stx)
-           (sealed-syntax? (&AST-e stx)))))
+  (cond
+   ((syntax-quote? stx) #t)
+   ((syntax-wrap? stx)
+    (sealed-syntax? (&AST-e stx)))
+   (else #f)))
 
 (def (syntax-e stx)
   (let (stx (stx-unwrap stx))
