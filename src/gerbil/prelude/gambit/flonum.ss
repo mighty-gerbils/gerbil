@@ -5,7 +5,7 @@ package: gerbil/gambit
 
 (export #t)
 (extern namespace: #f
-  flabs flacos flasin flatan flatan flceiling flcos fldenominator
+  flabs flacos flasin flatan flceiling flcos
   fleven? flexp flexpt flfloor fllog flround flsin flsqrt fltan fltruncate
   flnumerator fldenominator
   )

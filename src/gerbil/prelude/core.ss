@@ -109,7 +109,7 @@ package: gerbil
     1+ 1- fx+ fx1+ fx- fx1- fx* fx/
     fixnum? nonnegative-fixnum?
     fxzero? fxpositive? fxnegative? fxodd? fxeven?
-    fixnum->char char->fixnum fixnum->flonum
+    fixnum->flonum
     fxmax fxmin fxabs fxnot fxand fxior fxxor fxand fxmodulo
     fxbit-set? fxarithmetic-shift fxshift
     fx< fx<= fx= fx>= fx>
@@ -148,7 +148,7 @@ package: gerbil
     symbol->keyword keyword->symbol
     substring-fill! substring-move! string-shrink!
     append-strings
-    string-map string-index string-rindex
+    string-index string-rindex
     string-split string-join string-empty? string-prefix?
     ;; MOP
     type-descriptor?
@@ -184,7 +184,6 @@ package: gerbil
     make-class-instance
     struct-instance-init!
     class-instance-init!
-    constructor-init!
     slot-ref slot-set!
     call-method
     bind-method!
@@ -202,7 +201,7 @@ package: gerbil
     with-unwind-protect
     current-exception-handler with-exception-handler
     with-catch
-    error raise raise-type-error
+    error raise
     exception? error-object? type-error?
     exception::t error::t
     error? error-trace error-message error-irritants
@@ -227,7 +226,7 @@ package: gerbil
     append-vectors subvector-move! vector-shrink!
     append-strings substring-move! string-shrink!
     ;; string I/O
-    write-substring
+    read-substring write-substring
     open-input-string open-output-string get-output-string
     call-with-input-string with-input-from-string
     call-with-output-string with-output-to-string
@@ -241,7 +240,7 @@ package: gerbil
     append-u8vectors
     object->u8vector u8vector->object
     ;; bytes I/O
-    write-subu8vector
+    read-subu8vector write-subu8vector
     open-input-u8vector open-output-u8vector get-output-u8vector
     call-with-input-u8vector with-input-from-u8vector
     call-with-output-u8vector with-output-to-u8vector
