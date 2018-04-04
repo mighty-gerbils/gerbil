@@ -6,6 +6,7 @@ namespace: gerbil/gambit/fixnum
          (%#extern
           (fxarithmetic-shift-left fxarithmetic-shift-left)
           (fxarithmetic-shift-right fxarithmetic-shift-right)
+          (fxarithmetic-shift-left fxarithmetic-shift-left)
           (fxbit-count fxbit-count)
           (fxfirst-bit-set fxfirst-bit-set)
           (fxif fxif)
@@ -19,4 +20,5 @@ namespace: gerbil/gambit/fixnum
           (fxwraparithmetic-shift fxwraparithmetic-shift)
           (fxwraparithmetic-shift-left fxwraparithmetic-shift-left)
           (fxwraplogical-shift-right fxwraplogical-shift-right)
-          (fxwrapquotient fxwrapquotient)))
+          (fxwrapquotient fxwrapquotient)
+          (fxabs fxabs)))

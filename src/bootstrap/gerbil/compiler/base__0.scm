@@ -36,12 +36,10 @@
     (make-struct-field-mutator gxc#symbol-table::t '1))
   (define gxc#symbol-table:::init!
     (lambda (_self876_)
-      (if (##fx< '2 (##vector-length _self876_))
-          (begin
-            (##vector-set! _self876_ '1 (make-hash-table-eq))
-            (##vector-set! _self876_ '2 (make-hash-table-eq)))
-          (error '"struct-instance-init!: too many arguments for struct"
-                 _self876_))))
+      (struct-instance-init!
+       _self876_
+       (make-table 'test: eq?)
+       (make-table 'test: eq?))))
   (bind-method! gxc#symbol-table::t ':init! gxc#symbol-table:::init! '#f)
   (define gxc#raise-compile-error
     (lambda (_message750_ _stx751_ . _details752_)
