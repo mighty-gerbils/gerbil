@@ -8,6 +8,11 @@ namespace: gx
 (import "common")
 (export #t)
 
+(def &AST-e
+  (make-struct-field-unchecked-accessor AST::t 0))
+(def &AST-source
+  (make-struct-field-unchecked-accessor AST::t 1))
+
 ;; ASTs -- syntactic context
 (defstruct (identifier-wrap AST) (marks)
   id:    gx#identifier-wrap::t
@@ -28,23 +33,23 @@ namespace: gx
 
 (def (identifier-quote? stx)
   (and (syntax-quote? stx)
-       (symbol? (AST-e stx))))
+       (symbol? (&AST-e stx))))
 
 (def (sealed-syntax? stx)
   (or (syntax-quote? stx)
       (and (AST? stx)
-           (sealed-syntax? (AST-e stx)))))
+           (sealed-syntax? (&AST-e stx)))))
 
 (def (syntax-e stx)
   (let (stx (stx-unwrap stx))
     (if (AST? stx)
-      (AST-e stx)
+      (&AST-e stx)
       stx)))
 
 (def (syntax->datum stx)
   (cond
    ((AST? stx)
-    (syntax->datum (AST-e stx)))
+    (syntax->datum (&AST-e stx)))
    ((pair? stx)
     (cons
      (syntax->datum (car stx))
@@ -100,18 +105,18 @@ namespace: gx
   (let lp ((e stx) (marks marks) (src (stx-source stx)))
     (cond
      ((syntax-wrap? e)
-      (lp (AST-e e)
+      (lp (&AST-e e)
           (apply-mark (syntax-wrap-mark e) marks)
-          (AST-source e)))
+          (&AST-source e)))
      ((identifier-wrap? e)
       (if (null? marks) e
           (make-identifier-wrap
-           (AST-e e)
-           (AST-source e)
+           (&AST-e e)
+           (&AST-source e)
            (foldl apply-mark (identifier-wrap-marks e) marks))))
      ((syntax-quote? e) e)
      ((AST? e)
-      (lp (AST-e e) marks (AST-source e)))
+      (lp (&AST-e e) marks (&AST-source e)))
      ((symbol? e)
       (make-identifier-wrap e src (reverse marks)))
      ((null? marks) e)
@@ -137,7 +142,7 @@ namespace: gx
    ((syntax-quote? stx) stx)
    ((and (syntax-wrap? stx)
          (eq? mark (syntax-wrap-mark stx)))
-    (AST-e stx))
+    (&AST-e stx))
    (else
     (make-syntax-wrap stx (stx-source stx) mark))))
 
@@ -152,12 +157,12 @@ namespace: gx
 ;; utilities
 (def (stx-e stx)
   (if (AST? stx)
-    (stx-e (AST-e stx))
+    (stx-e (&AST-e stx))
     stx))
 
 (def (stx-source stx)
   (and (AST? stx)
-       (AST-source stx)))
+       (&AST-source stx)))
 
 (def (stx-wrap-source stx src)
   (if (or (AST? stx) (not src)) stx
