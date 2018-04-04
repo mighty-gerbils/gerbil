@@ -156,9 +156,12 @@ namespace: gx
 
 ;; utilities
 (def (stx-e stx)
-  (if (AST? stx)
-    (stx-e (&AST-e stx))
-    stx))
+  (cond
+   ((syntax-wrap? stx)
+    (stx-e (&AST-e stx)))
+   ((AST? stx)
+    (&AST-e stx))
+   (else stx)))
 
 (def (stx-source stx)
   (and (AST? stx)
