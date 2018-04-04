@@ -351,9 +351,7 @@ package: gerbil
     core-expand-export-source))
 
 (import <runtime>
-        (phi: +1 <runtime> <expander-runtime>)
-        (phi: +2 <runtime> <expander-runtime>)
-        (phi: +3 <runtime> <expander-runtime>))
+        (phi: +1 <runtime> <expander-runtime>))
 
 (module <syntax-case>
   (export #t)
@@ -363,8 +361,7 @@ package: gerbil
   (define-syntax syntax-case
     macro-expand-syntax-case))
 
-(import (phi: +1 <syntax-case>)
-        (phi: +2 <syntax-case>))
+(import (phi: +1 <syntax-case>))
 
 (module <syntax-sugar>
   (export #t)
@@ -422,8 +419,7 @@ package: gerbil
             (syntax form)
             (stx-source src-stx)))))))
 
-(import (phi: +1 <syntax-sugar>)
-        (phi: +2 <syntax-sugar>))
+(import (phi: +1 <syntax-sugar>))
 
 (module <sugar>
   (export (import: <sugar:1> <sugar:2> <sugar:3>))
@@ -1537,7 +1533,7 @@ package: gerbil
 
   (import <sugar:3>))
 
-(import <sugar> (phi: +1 <sugar>) (phi: +2 <sugar>))
+(import <sugar> (phi: +1 <sugar>))
 
 (module <MOP>
   (export (import: <MOP:1> <MOP:2> <MOP:3>))
@@ -2132,7 +2128,7 @@ package: gerbil
 
   (import <MOP:3>))
 
-(import <MOP> (phi: +1 <MOP>) (phi: +2 <MOP>))
+(import <MOP> (phi: +1 <MOP>))
 
 (module <match>
   (export #t
@@ -2862,7 +2858,7 @@ package: gerbil
      (defsyntax-for-match id
        (syntax-rules . body)))))
 
-(import <match> (phi: +1 <match>) (phi: +2 <match>))
+(import <match> (phi: +1 <match>))
 
 (module <more-sugar>
   (export #t (phi: +1 #t))
@@ -2937,7 +2933,7 @@ package: gerbil
   ;; ...
   )
 
-(import <more-sugar> (phi: +1 <more-sugar>) (phi: +2 <more-sugar>))
+(import <more-sugar> (phi: +1 <more-sugar>))
 
 (module <more-syntax-sugar>
   (export #t)
@@ -2953,8 +2949,7 @@ package: gerbil
   ;; ...
   )
 
-(import (phi: +1 <more-syntax-sugar>)
-        (phi: +2 <more-syntax-sugar>))
+(import (phi: +1 <more-syntax-sugar>))
 
 (module <module-sugar>
   (export #t)

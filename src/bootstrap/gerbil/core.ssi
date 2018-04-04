@@ -726,11 +726,7 @@ namespace: gerbil/core
          (%#import
           (in: #f <runtime>)
           (phi: 1 (in: #f <runtime>))
-          (phi: 1 (in: #f <expander-runtime>))
-          (phi: 2 (in: #f <runtime>))
-          (phi: 2 (in: #f <expander-runtime>))
-          (phi: 3 (in: #f <runtime>))
-          (phi: 3 (in: #f <expander-runtime>)))
+          (phi: 1 (in: #f <expander-runtime>)))
          (%#module
           <syntax-case>
           (%#begin (%#export #t)
@@ -744,9 +740,7 @@ namespace: gerbil/core
                    (%#define-syntax
                     syntax-case
                     |gerbil/core$<syntax-case>[:0:]#syntax-case|)))
-         (%#import
-          (phi: 1 (in: #f <syntax-case>))
-          (phi: 2 (in: #f <syntax-case>)))
+         (%#import (phi: 1 (in: #f <syntax-case>)))
          (%#module
           <syntax-sugar>
           (%#begin (%#export #t)
@@ -768,9 +762,7 @@ namespace: gerbil/core
                    (%#define-syntax
                     syntax/loc
                     |gerbil/core$<syntax-sugar>[:0:]#syntax/loc|)))
-         (%#import
-          (phi: 1 (in: #f <syntax-sugar>))
-          (phi: 2 (in: #f <syntax-sugar>)))
+         (%#import (phi: 1 (in: #f <syntax-sugar>)))
          (%#module
           <sugar>
           (%#begin (%#export
@@ -923,10 +915,7 @@ namespace: gerbil/core
                               defconst
                               |gerbil/core$<sugar>$<sugar:3>[:0:]#defconst|)))
                    (%#import (in: #f <sugar:3>))))
-         (%#import
-          (in: #f <sugar>)
-          (phi: 1 (in: #f <sugar>))
-          (phi: 2 (in: #f <sugar>)))
+         (%#import (in: #f <sugar>) (phi: 1 (in: #f <sugar>)))
          (%#module
           <MOP>
           (%#begin (%#export
@@ -1376,10 +1365,7 @@ namespace: gerbil/core
                                macro-object::apply-macro-expander
                                |gerbil/core$<MOP>$<MOP:3>[1]#macro-object::apply-macro-expander|))))
                    (%#import (in: #f <MOP:3>))))
-         (%#import
-          (in: #f <MOP>)
-          (phi: 1 (in: #f <MOP>))
-          (phi: 2 (in: #f <MOP>)))
+         (%#import (in: #f <MOP>) (phi: 1 (in: #f <MOP>)))
          (%#module
           <match>
           (%#begin (%#export
@@ -1449,10 +1435,7 @@ namespace: gerbil/core
                    (%#define-syntax
                     defrules-for-match
                     |gerbil/core$<match>[:0:]#defrules-for-match|)))
-         (%#import
-          (in: #f <match>)
-          (phi: 1 (in: #f <match>))
-          (phi: 2 (in: #f <match>)))
+         (%#import (in: #f <match>) (phi: 1 (in: #f <match>)))
          (%#module
           <more-sugar>
           (%#begin (%#export #t (phi: 1 #t))
@@ -1508,10 +1491,7 @@ namespace: gerbil/core
                    (%#define-syntax
                     unwind-protect
                     |gerbil/core$<more-sugar>[:0:]#unwind-protect|)))
-         (%#import
-          (in: #f <more-sugar>)
-          (phi: 1 (in: #f <more-sugar>))
-          (phi: 2 (in: #f <more-sugar>)))
+         (%#import (in: #f <more-sugar>) (phi: 1 (in: #f <more-sugar>)))
          (%#module
           <more-syntax-sugar>
           (%#begin (%#export #t)
@@ -1529,9 +1509,7 @@ namespace: gerbil/core
                    (%#define-syntax
                     quasisyntax
                     |gerbil/core$<more-syntax-sugar>[:0:]#quasisyntax|)))
-         (%#import
-          (phi: 1 (in: #f <more-syntax-sugar>))
-          (phi: 2 (in: #f <more-syntax-sugar>)))
+         (%#import (phi: 1 (in: #f <more-syntax-sugar>)))
          (%#module
           <module-sugar>
           (%#begin (%#export #t)

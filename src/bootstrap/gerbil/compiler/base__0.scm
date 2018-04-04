@@ -24,8 +24,8 @@
      '(gensyms bindings)))
   (define gxc#symbol-table? (make-struct-predicate gxc#symbol-table::t))
   (define gxc#make-symbol-table
-    (lambda _$args878_
-      (apply make-struct-instance gxc#symbol-table::t _$args878_)))
+    (lambda _$args876_
+      (apply make-struct-instance gxc#symbol-table::t _$args876_)))
   (define gxc#symbol-table-gensyms
     (make-struct-field-accessor gxc#symbol-table::t '0))
   (define gxc#symbol-table-bindings
@@ -35,38 +35,38 @@
   (define gxc#symbol-table-bindings-set!
     (make-struct-field-mutator gxc#symbol-table::t '1))
   (define gxc#symbol-table:::init!
-    (lambda (_self876_)
+    (lambda (_self874_)
       (struct-instance-init!
-       _self876_
+       _self874_
        (make-table 'test: eq?)
        (make-table 'test: eq?))))
   (bind-method! gxc#symbol-table::t ':init! gxc#symbol-table:::init! '#f)
   (define gxc#raise-compile-error
-    (lambda (_message750_ _stx751_ . _details752_)
+    (lambda (_message748_ _stx749_ . _details750_)
       (apply gx#raise-syntax-error
              'compile
-             _message750_
-             _stx751_
-             _details752_)))
+             _message748_
+             _stx749_
+             _details750_)))
   (define gxc#verbose
-    (lambda _args748_
-      (if (gxc#current-compile-verbose) (apply displayln _args748_) '#!void)))
+    (lambda _args746_
+      (if (gxc#current-compile-verbose) (apply displayln _args746_) '#!void)))
   (define gxc#module-path-reserved-chars '":#<>&!?*;()[]{}|'`\"\\")
   (define gxc#module-id->path-string
-    (lambda (_id730_)
-      (let* ((_str732_ (if (symbol? _id730_) (symbol->string _id730_) _id730_))
-             (_len734_ (string-length _str732_))
-             (_res736_ (make-string _len734_)))
-        (let _lp739_ ((_i741_ '0))
-          (if (fx< _i741_ _len734_)
-              (let* ((_char743_ (string-ref _str732_ _i741_))
-                     (_xchar745_
+    (lambda (_id728_)
+      (let* ((_str730_ (if (symbol? _id728_) (symbol->string _id728_) _id728_))
+             (_len732_ (string-length _str730_))
+             (_res734_ (make-string _len732_)))
+        (let _lp737_ ((_i739_ '0))
+          (if (fx< _i739_ _len732_)
+              (let* ((_char741_ (string-ref _str730_ _i739_))
+                     (_xchar743_
                       (if (string-index
                            gxc#module-path-reserved-chars
-                           _char743_)
+                           _char741_)
                           '#\_
-                          _char743_)))
+                          _char741_)))
                 (begin
-                  (string-set! _res736_ _i741_ _xchar745_)
-                  (_lp739_ (fx+ _i741_ '1))))
-              _res736_))))))
+                  (string-set! _res734_ _i739_ _xchar743_)
+                  (_lp737_ (fx+ _i739_ '1))))
+              _res734_))))))

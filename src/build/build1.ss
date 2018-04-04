@@ -61,6 +61,9 @@
 (def debug-src 'src) ; full introspection
 
 (displayln "building gerbil in " gerbil-libdir)
+;; initialize optimizer and preload core.ssxi
+(gxc#optimizer-info-init!)
+(gx#import-module "gerbil/prelude/core.ssxi.ss" #t #t)
 ;; compile core prelude: don't clobber core.ssxi, no introspection
 (for-each (cut compile1 <> debug-none #t #f #t)
           gerbil-prelude-core)
