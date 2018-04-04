@@ -290,6 +290,8 @@ package: gerbil
  (make-vector 1 2)
  (map (2))
  (for-each (2))
+ (max (1))
+ (min (1))
  (eval 1 2)
  (current-input-port 0 1)
  (current-output-port 0 1)
@@ -318,6 +320,7 @@ package: gerbil
  box? box unbox
  last last-pair
  vector-copy
+ append-vectors
  dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
  plist->hash-table-eq plist->hash-table-eqv
  hash-keys
@@ -329,6 +332,7 @@ package: gerbil
  string->keyword keyword->string make-uninterned-keyword
  symbol->keyword keyword->symbol
  string-empty?
+ append-strings
  type-descriptor?
  struct-type?
  class-type?
@@ -350,6 +354,7 @@ package: gerbil
  u8vector-length
  u8vector->list list->u8vector
  u8vector-copy
+ append-u8vectors
  object->u8vector u8vector->object
  get-output-u8vector)
 
@@ -480,3 +485,664 @@ package: gerbil
  (open-input-u8vector 0 1)
  (open-output-u8vector 0 1)
  (load-module 1 2))
+
+;; extended runtime procedures -- :gerbil/gambit
+(declare-primitive/0
+ defer-user-interrupts
+ command-line
+ current-time
+ process-times
+ cpu-time
+ real-time
+ user-name
+ host-name
+ open-dummy
+ repl-input-port repl-output-port
+ console-port
+ default-random-source
+ random-real
+ make-random-source
+ system-version system-version-string
+ configure-command-string system-stamp
+
+ current-thread
+ thread-yield!
+ thread-mailbox-rewind
+ thread-mailbox-extract-and-rewind
+
+ current-processor)
+
+(declare-primitive/1
+ bitwise-not
+ bit-count
+ integer-length
+ first-bit-set
+ continuation?
+ continuation-capture
+ primordial-exception-handler
+ err-code->string
+
+ fxbit-count
+ fxfirst-bit-set
+ fxlength
+ fxabs
+ flabs flacos flasin  flceiling flcos
+ fleven? flexp flfloor fllog flround flsin flsqrt fltan fltruncate
+ flnumerator fldenominator
+
+ foreign? foreign-tags foreign-address
+ foreign-release! foreign-released?
+
+ object->serial-number
+ serial-number->object
+ string=?-hash
+ string-ci=?-hash
+ eq?-hash
+ eqv?-hash
+ equal?-hash
+
+ table?
+ table-length
+ table->list
+ table-copy
+
+ integer-sqrt
+ touch
+
+ will?
+ will-testator
+ will-execute!
+
+ create-fifo
+
+ time?
+ time->seconds
+ timeout->time
+ seconds->time
+
+ file-info?
+ file-info-type
+ file-info-device
+ file-info-inode
+ file-info-mode
+ file-info-number-of-links
+ file-info-owner
+ file-info-group
+ file-info-size
+ file-info-last-access-time
+ file-info-last-modification-time
+ file-info-last-change-time
+ file-info-attributes
+ file-info-creation-time
+
+ file-device
+ file-inode
+ file-mode
+ file-number-of-links
+ file-owner
+ file-group
+ file-size
+ file-last-access-time
+ file-last-modification-time
+ file-last-change-time
+ file-attributes
+ file-creation-time
+
+ group-info
+ group-info?
+ group-info-name
+ group-info-gid
+ group-info-members
+
+ user-info
+ user-info?
+ user-info-name
+ user-info-uid
+ user-info-gid
+ user-info-home
+ user-info-shell
+
+ host-info
+ host-info?
+ host-info-name
+ host-info-aliases
+ host-info-addresses
+
+ address-info?
+ address-info-family
+ address-info-socket-type
+ address-info-protocol
+ address-info-socket-info
+ service-info
+ service-info?
+ service-info-name
+ service-info-aliases
+ service-info-port-number
+ service-info-protocol
+ protocol-info
+ protocol-info?
+ protocol-info-name
+ protocol-info-aliases
+ protocol-info-number
+ network-info
+ network-info?
+ network-info-name
+ network-info-aliases
+ network-info-number
+
+ tcp-client-peer-socket-info
+ tcp-client-self-socket-info
+ tcp-client-local-socket-info
+ tcp-server-socket-info
+ socket-info?
+ socket-info-address socket-info-family socket-info-port-number
+
+ tty?
+ tty-history
+
+ port? close-port
+ input-port-line
+ input-port-column
+ output-port-line
+ output-port-column
+ output-port-width
+
+ input-port-readtable
+ output-port-readtable
+
+ open-file
+ open-tcp-client
+ open-tcp-server
+ open-udp
+ open-directory
+
+ udp-local-socket-info
+ udp-source-socket-info
+
+ tcp-service-unregister!
+
+ get-output-vector
+ get-output-string
+
+ object->string
+
+ open-process open-input-process open-output-process
+ process-pid process-status
+
+ input-port-char-position output-port-char-position
+ input-port-bytes-buffered
+ input-port-characters-buffered
+
+ open-event-queue
+
+ random-integer
+ random-u8vector random-f64vector
+ random-source?
+ random-source-state-ref
+ random-source-randomize!
+ random-source-make-integers
+ random-source-make-u8vectors
+
+ readtable-case-conversion?
+ readtable-keywords-allowed?
+ readtable-sharing-allowed?
+ readtable-eval-allowed?
+ readtable-write-cdr-read-macros?
+ readtable-write-extended-read-macros?
+ readtable-max-write-level
+ readtable-max-write-length
+ readtable-max-unescaped-char
+
+ gc-report-set!
+
+ thread?
+ thread-name
+ thread-specific
+ thread-base-priority
+ thread-priority-boost
+ thread-quantum
+ thread-start!
+ thread-sleep!
+ thread-terminate!
+
+ mutex?
+ mutex-name
+ mutex-specific
+ mutex-state
+
+ condition-variable?
+ condition-variable-name
+ condition-variable-specific
+ condition-variable-signal!
+ condition-variable-broadcast!
+
+ thread-group? thread-group-name
+ thread-group-specific
+ thread-group-parent
+ thread-group-resume! thread-group-suspend!
+ thread-group-terminate!
+ thread-group->thread-group-list
+ thread-group->thread-group-vector
+ thread-group->thread-list
+ thread-group->thread-vector
+
+ thread-state thread-state-uninitialized? thread-state-initialized?
+ thread-state-running? thread-state-running-processor
+ thread-state-waiting? thread-state-waiting-for thread-state-waiting-timeout
+ thread-state-normally-terminated?
+ thread-state-normally-terminated-result
+ thread-state-abnormally-terminated?
+ thread-state-abnormally-terminated-reason
+
+ thread-suspend! thread-resume!
+ thread-thread-group
+
+ processor? processor-id)
+
+(declare-primitive/2
+ arithmetic-shift
+ bit-set? any-bits-set? all-bits-set?
+ fxarithmetic-shift-right fxarithmetic-shift-left
+ fxwraparithmetic-shift fxwraparithmetic-shift-left
+ fxwraplogical-shift-right fxwrapquotient
+ fxquotient fxremainder
+ fxwrapquotient
+ flatan flexpt
+
+ table-search
+ table-for-each
+
+ integer-nth-root
+
+ make-will
+
+ create-link
+ create-symbolic-link
+
+ tty-history-set! tty-history-max-length-set!
+ tty-text-attributes-set! tty-mode-set! tty-type-set!
+
+ input-port-timeout-set!
+ output-port-timeout-set!
+ input-port-readtable-set!
+ output-port-readtable-set!
+
+ call-with-input-vector
+ call-with-output-vector
+ with-input-from-vector
+ with-output-to-vector
+
+ call-with-input-string
+ call-with-output-string
+ with-input-from-string
+ with-output-to-string
+
+ call-with-input-u8vector
+ call-with-output-u8vector
+ with-input-from-u8vector
+ with-output-to-u8vector
+
+ call-with-input-process call-with-output-process
+ with-input-from-process with-output-to-process
+
+ with-input-from-port with-output-to-port
+
+ random-source-state-set!
+
+ readtable-case-conversion?-set
+ readtable-keywords-allowed?-set
+ readtable-sharing-allowed?-set
+ readtable-eval-allowed?-set
+ readtable-write-cdr-read-macros?-set
+ readtable-write-extended-read-macros?-set
+ readtable-max-write-level-set
+ readtable-max-write-length-set
+ readtable-max-unescaped-char-set
+
+ thread-specific-set!
+ thread-base-priority-set!
+ thread-priority-boost-set!
+ thread-quantum-set!
+ thread-send
+
+ mutex-specific-set!
+ condition-variable-specific-set!
+ thread-group-specific-set!)
+
+(declare-primitive/3
+ bitwise-merge
+ extract-bit-field test-bit-field? clear-bit-field
+ fxif
+ random-source-pseudo-randomize!)
+
+(declare-primitive/4
+ replace-bit-field copy-bit-field)
+
+(declare-primitive*
+ (continuation-graft (2))
+ (continuation-return (1))
+ (display-exception 1 2)
+ (display-exception-in-context 2 3)
+ (display-procedure-environment 1 2)
+ (display-continuation-environment 1 2)
+ (display-continuation-dynamic-environment 1 2)
+ (display-continuation-backtrace 1 2 3 4 5 6 7)
+ (fxmax (1))
+ (fxmin (1))
+ (flmax (1))
+ (flmin (1))
+ (table-ref 2 3)
+ (table-set! 2 3)
+ (list->table (1))
+ (table-merge! 2 3)
+ (table-merge 2 3)
+ (pretty-print 1 2)
+ (pp 1 2)
+ (current-user-interrupt-handler 0 1)
+ (shell-command 1 2)
+ (file-info 1 2)
+ (force-output 0 1 2)
+ (read-u8 0 1)
+ (write-u8 1 2)
+ (input-port-byte-position 1 2 3)
+ (output-port-byte-position 1 2 3)
+ (tcp-service-register! 2 3)
+ (make-tls-context 0 1)
+ (udp-destination-set! 2 3)
+ (udp-read-subu8vector 3 4)
+ (udp-write-subu8vector 3 4)
+ (udp-read-u8vector 0 1)
+ (udp-write-u8vector 1 2)
+ (open-vector 0 1)
+ (open-input-vector 0 1)
+ (open-output-vector 0 1)
+ (open-vector-pipe 0 1 2)
+ (open-string 0 1)
+ (open-input-string 0 1)
+ (open-output-string 0 1)
+ (open-string-pipe 0 1 2)
+ (open-u8vector 0 1)
+ (open-input-u8vector 0 1)
+ (open-output-u8vector 0 1)
+ (open-u8vector-pipe 0 1 2)
+ (random-source-make-reals 1 2)
+ (random-source-make-f64vectors 1 2)
+ (current-readtable 0 1)
+ (make-thread 1 2 3)
+ (make-root-thread 1 2 3 4 5)
+ (thread-join! 1 2 3)
+ (thread-receive 0 1 2)
+ (thread-mailbox-next 0 1 2)
+ (make-mutex 0 1)
+ (mutex-lock! 1 2 3)
+ (mutex-unlock! 1 2 3)
+ (make-condition-variable 0 1)
+ (make-thread-group 0 1 2)
+ (thread-interrupt! 1 2)
+ (thread-init! 2 3 4))
+
+;; exceptions
+(declare-primitive/1
+ fixnum-overflow-exception?
+ fixnum-overflow-exception-procedure
+ fixnum-overflow-exception-arguments
+
+ initialized-thread-exception?
+ initialized-thread-exception-procedure
+ initialized-thread-exception-arguments
+ uninitialized-thread-exception?
+ uninitialized-thread-exception-procedure
+ uninitialized-thread-exception-arguments
+ inactive-thread-exception?
+ inactive-thread-exception-procedure
+ inactive-thread-exception-arguments
+
+ unterminated-process-exception?
+ unterminated-process-exception-procedure
+ unterminated-process-exception-arguments
+
+ nonempty-input-port-character-buffer-exception?
+ nonempty-input-port-character-buffer-exception-arguments
+ nonempty-input-port-character-buffer-exception-procedure
+
+ unbound-serial-number-exception?
+ unbound-serial-number-exception-procedure
+ unbound-serial-number-exception-arguments
+ unbound-table-key-exception?
+ unbound-table-key-exception-procedure
+ unbound-table-key-exception-arguments
+
+ mailbox-receive-timeout-exception?
+ mailbox-receive-timeout-exception-procedure
+ mailbox-receive-timeout-exception-arguments
+ heap-overflow-exception?
+ stack-overflow-exception?
+ os-exception?
+ os-exception-procedure
+ os-exception-arguments
+ os-exception-code
+ os-exception-message
+ no-such-file-or-directory-exception?
+ no-such-file-or-directory-exception-procedure
+ no-such-file-or-directory-exception-arguments
+ unbound-os-environment-variable-exception?
+ unbound-os-environment-variable-exception-procedure
+ unbound-os-environment-variable-exception-arguments
+ scheduler-exception?
+ scheduler-exception-reason
+ deadlock-exception?
+ abandoned-mutex-exception?
+ join-timeout-exception?
+ join-timeout-exception-procedure
+ join-timeout-exception-arguments
+ started-thread-exception?
+ started-thread-exception-procedure
+ started-thread-exception-arguments
+ terminated-thread-exception?
+ terminated-thread-exception-procedure
+ terminated-thread-exception-arguments
+ uncaught-exception?
+ uncaught-exception-procedure
+ uncaught-exception-arguments
+ uncaught-exception-reason
+ cfun-conversion-exception?
+ cfun-conversion-exception-procedure
+ cfun-conversion-exception-arguments
+ cfun-conversion-exception-code
+ cfun-conversion-exception-message
+ sfun-conversion-exception?
+ sfun-conversion-exception-procedure
+ sfun-conversion-exception-arguments
+ sfun-conversion-exception-code
+ sfun-conversion-exception-message
+ multiple-c-return-exception?
+ datum-parsing-exception?
+ datum-parsing-exception-kind
+ datum-parsing-exception-parameters
+ datum-parsing-exception-readenv
+ expression-parsing-exception?
+ expression-parsing-exception-kind
+ expression-parsing-exception-parameters
+ expression-parsing-exception-source
+ unbound-global-exception?
+ unbound-global-exception-variable
+ unbound-global-exception-code
+ unbound-global-exception-rte
+ type-exception?
+ type-exception-procedure
+ type-exception-arguments
+ type-exception-arg-num
+ type-exception-type-id
+ range-exception?
+ range-exception-procedure
+ range-exception-arguments
+ range-exception-arg-num
+ divide-by-zero-exception?
+ divide-by-zero-exception-procedure
+ divide-by-zero-exception-arguments
+ improper-length-list-exception?
+ improper-length-list-exception-procedure
+ improper-length-list-exception-arguments
+ improper-length-list-exception-arg-num
+ wrong-number-of-arguments-exception?
+ wrong-number-of-arguments-exception-procedure
+ wrong-number-of-arguments-exception-arguments
+ number-of-arguments-limit-exception?
+ number-of-arguments-limit-exception-procedure
+ number-of-arguments-limit-exception-arguments
+ nonprocedure-operator-exception?
+ nonprocedure-operator-exception-operator
+ nonprocedure-operator-exception-arguments
+ nonprocedure-operator-exception-code
+ nonprocedure-operator-exception-rte
+ unknown-keyword-argument-exception?
+ unknown-keyword-argument-exception-procedure
+ unknown-keyword-argument-exception-arguments
+ keyword-expected-exception?
+ keyword-expected-exception-procedure
+ keyword-expected-exception-arguments
+ error-exception?
+ error-exception-message
+ error-exception-parameters
+
+ invalid-hash-number-exception?
+ invalid-hash-number-exception-procedure
+ invalid-hash-number-exception-arguments)
+
+
+;; hvectors
+(declare-primitive*
+ (s8vector? 1)
+ (make-s8vector 1 2)
+ (s8vector-length 1)
+ (s8vector-ref 2)
+ (s8vector-set! 3)
+ (s8vector->list 1)
+ (list->s8vector 1)
+ (s8vector-fill! 1 2)
+ (subs8vector-fill! 3 4)
+ (append-s8vectors 1)
+ (subs8vector 3)
+ (s8vector-copy 1)
+ (subs8vector-move! 5)
+ (s8vector-shrink! 2)
+
+ (s16vector? 1)
+ (make-s16vector 1 2)
+ (s16vector-length 1)
+ (s16vector-ref 2)
+ (s16vector-set! 3)
+ (s16vector->list 1)
+ (list->s16vector 1)
+ (s16vector-fill! 1 2)
+ (subs16vector-fill! 3 4)
+ (append-s16vectors 1)
+ (subs16vector 3)
+ (s16vector-copy 1)
+ (subs16vector-move! 5)
+ (s16vector-shrink! 2)
+
+ (u16vector? 1)
+ (make-u16vector 1 2)
+ (u16vector-length 1)
+ (u16vector-ref 2)
+ (u16vector-set! 3)
+ (u16vector->list 1)
+ (list->u16vector 1)
+ (u16vector-fill! 1 2)
+ (subu16vector-fill! 3 4)
+ (append-u16vectors 1)
+ (subu16vector 3)
+ (u16vector-copy 1)
+ (subu16vector-move! 5)
+ (u16vector-shrink! 2)
+
+ (s32vector? 1)
+ (make-s32vector 1 2)
+ (s32vector-length 1)
+ (s32vector-ref 2)
+ (s32vector-set! 3)
+ (s32vector->list 1)
+ (list->s32vector 1)
+ (s32vector-fill! 1 2)
+ (subs32vector-fill! 3 4)
+ (append-s32vectors 1)
+ (subs32vector 3)
+ (s32vector-copy 1)
+ (subs32vector-move! 5)
+ (s32vector-shrink! 2)
+
+ (u32vector? 1)
+ (make-u32vector 1 2)
+ (u32vector-length 1)
+ (u32vector-ref 2)
+ (u32vector-set! 3)
+ (u32vector->list 1)
+ (list->u32vector 1)
+ (u32vector-fill! 1 2)
+ (subu32vector-fill! 3 4)
+ (append-u32vectors 1)
+ (subu32vector 3)
+ (u32vector-copy 1)
+ (subu32vector-move! 5)
+ (u32vector-shrink! 2)
+
+ (s64vector? 1)
+ (make-s64vector 1 2)
+ (s64vector-length 1)
+ (s64vector-ref 2)
+ (s64vector-set! 3)
+ (s64vector->list 1)
+ (list->s64vector 1)
+ (s64vector-fill! 1 2)
+ (subs64vector-fill! 3 4)
+ (append-s64vectors 1)
+ (subs64vector 3)
+ (s64vector-copy 1)
+ (subs64vector-move! 5)
+ (s64vector-shrink! 2)
+
+ (u64vector? 1)
+ (make-u64vector 1 2)
+ (u64vector-length 1)
+ (u64vector-ref 2)
+ (u64vector-set! 3)
+ (u64vector->list 1)
+ (list->u64vector 1)
+ (u64vector-fill! 1 2)
+ (subu64vector-fill! 3 4)
+ (append-u64vectors 1)
+ (subu64vector 3)
+ (u64vector-copy 1)
+ (subu64vector-move! 5)
+ (u64vector-shrink! 2)
+
+ (f32vector? 1)
+ (make-f32vector 1 2)
+ (f32vector-length 1)
+ (f32vector-ref 2)
+ (f32vector-set! 3)
+ (f32vector->list 1)
+ (list->f32vector 1)
+ (f32vector-fill! 1 2)
+ (subf32vector-fill! 3 4)
+ (append-f32vectors 1)
+ (subf32vector 3)
+ (f32vector-copy 1)
+ (subf32vector-move! 5)
+ (f32vector-shrink! 2)
+
+ (f64vector? 1)
+ (make-f64vector 1 2)
+ (f64vector-length 1)
+ (f64vector-ref 2)
+ (f64vector-set! 3)
+ (f64vector->list 1)
+ (list->f64vector 1)
+ (f64vector-fill! 1 2)
+ (subf64vector-fill! 3 4)
+ (append-f64vectors 1)
+ (subf64vector 3)
+ (f64vector-copy 1)
+ (subf64vector-move! 5)
+ (f64vector-shrink! 2))
