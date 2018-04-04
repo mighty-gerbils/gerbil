@@ -105,3 +105,14 @@ namespace: gxc
 (defrules @kw-lambda-dispatch ()
   ((_ keys main)
    (make-!kw-lambda-primary 'kw-lambda-dispatch 'keys 'main)))
+
+(defrules declare-primitive ()
+  ((_ prim arity)
+   (declare-type prim (@lambda arity)))
+  ((_ prim arity ...)
+   (declare-type prim (@case-lambda (arity #f) ...))))
+
+(defrules declare-primitive* ()
+  ((_ (prim arity ...) ...)
+   (begin
+     (declare-primitive prim arity ...) ...)))
