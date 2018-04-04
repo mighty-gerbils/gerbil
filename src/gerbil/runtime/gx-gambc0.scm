@@ -645,9 +645,9 @@
    (else
     (error "Missing constructor" klass kons-id))))
 
-(define (struct->list obj #!optional (start 0))
+(define (struct->list obj)
   (if (object? obj)
-    (subvector->list obj start)
+    (##vector->list obj)
     (error "Not an object" obj)))
 
 (define (class->list obj)
@@ -921,12 +921,10 @@
     (##vector-ref obj k)
     obj))
 
-(define (values->list obj #!optional (start 0))
-  (let ((lst (if (##values? obj)
-               (##vector->list obj)
-               (list obj))))
-    (if (##fxzero? start) lst
-        (list-tail lst start))))
+(define (values->list obj)
+  (if (##values? obj)
+    (##vector->list obj)
+    (list obj)))
 
 (define (subvector->list obj #!optional (start 0))
   (let ((lst (##vector->list obj)))
