@@ -23,6 +23,20 @@ namespace: gx
          (%#define-runtime
           module-import-weak?-set!
           gx#module-import-weak?-set!)
+         (%#define-runtime &module-import-source gx#&module-import-source)
+         (%#define-runtime &module-import-name gx#&module-import-name)
+         (%#define-runtime &module-import-phi gx#&module-import-phi)
+         (%#define-runtime &module-import-weak? gx#&module-import-weak?)
+         (%#define-runtime
+          &module-import-source-set!
+          gx#&module-import-source-set!)
+         (%#define-runtime
+          &module-import-name-set!
+          gx#&module-import-name-set!)
+         (%#define-runtime &module-import-phi-set! gx#&module-import-phi-set!)
+         (%#define-runtime
+          &module-import-weak?-set!
+          gx#&module-import-weak?-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref _gx#load-module)
                            (%#quote "gerbil/expander/module__1")))
@@ -44,6 +58,22 @@ namespace: gx
          (%#define-runtime
           module-export-weak?-set!
           gx#module-export-weak?-set!)
+         (%#define-runtime &module-export-context gx#&module-export-context)
+         (%#define-runtime &module-export-key gx#&module-export-key)
+         (%#define-runtime &module-export-phi gx#&module-export-phi)
+         (%#define-runtime &module-export-name gx#&module-export-name)
+         (%#define-runtime &module-export-weak? gx#&module-export-weak?)
+         (%#define-runtime
+          &module-export-context-set!
+          gx#&module-export-context-set!)
+         (%#define-runtime &module-export-key-set! gx#&module-export-key-set!)
+         (%#define-runtime &module-export-phi-set! gx#&module-export-phi-set!)
+         (%#define-runtime
+          &module-export-name-set!
+          gx#&module-export-name-set!)
+         (%#define-runtime
+          &module-export-weak?-set!
+          gx#&module-export-weak?-set!)
          (%#define-syntax module-export |gx[:0:]#module-export|)
          (%#define-runtime import-set::t gx#import-set::t)
          (%#define-runtime import-set? gx#import-set?)
@@ -54,6 +84,14 @@ namespace: gx
          (%#define-runtime import-set-source-set! gx#import-set-source-set!)
          (%#define-runtime import-set-phi-set! gx#import-set-phi-set!)
          (%#define-runtime import-set-imports-set! gx#import-set-imports-set!)
+         (%#define-runtime &import-set-source gx#&import-set-source)
+         (%#define-runtime &import-set-phi gx#&import-set-phi)
+         (%#define-runtime &import-set-imports gx#&import-set-imports)
+         (%#define-runtime &import-set-source-set! gx#&import-set-source-set!)
+         (%#define-runtime &import-set-phi-set! gx#&import-set-phi-set!)
+         (%#define-runtime
+          &import-set-imports-set!
+          gx#&import-set-imports-set!)
          (%#define-syntax import-set |gx[:0:]#import-set|)
          (%#define-runtime export-set::t gx#export-set::t)
          (%#define-runtime export-set? gx#export-set?)
@@ -64,6 +102,14 @@ namespace: gx
          (%#define-runtime export-set-source-set! gx#export-set-source-set!)
          (%#define-runtime export-set-phi-set! gx#export-set-phi-set!)
          (%#define-runtime export-set-exports-set! gx#export-set-exports-set!)
+         (%#define-runtime &export-set-source gx#&export-set-source)
+         (%#define-runtime &export-set-phi gx#&export-set-phi)
+         (%#define-runtime &export-set-exports gx#&export-set-exports)
+         (%#define-runtime &export-set-source-set! gx#&export-set-source-set!)
+         (%#define-runtime &export-set-phi-set! gx#&export-set-phi-set!)
+         (%#define-runtime
+          &export-set-exports-set!
+          gx#&export-set-exports-set!)
          (%#define-syntax export-set |gx[:0:]#export-set|)
          (%#define-runtime import-expander::t gx#import-expander::t)
          (%#define-runtime import-expander? gx#import-expander?)

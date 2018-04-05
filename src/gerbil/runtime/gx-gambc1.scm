@@ -14,21 +14,30 @@
   id:   gerbil#AST::t
   name: syntax)
 
+(define-macro (%make-AST e source)
+  `(##structure AST::t ,e ,source))
+
+(define-macro (%AST-e e)
+  `(##vector-ref ,e 1))
+
+(define-macro (%AST-source e)
+  `(##vector-ref ,e 2))
+
 (define (&AST e src-stx)
   (let ((src (&AST-source src-stx)))
     (if (or (AST? e) (not src)) e
-        (make-AST e src))))
+        (%make-AST e src))))
 
 (define (&AST-e stx)
   (if (AST? stx)
-    (AST-e stx)
+    (%AST-e stx)
     stx))
 
 (define (&AST-source stx)
   (let lp ((src stx))
     (cond
      ((AST? src)
-      (lp (AST-source src)))
+      (lp (%AST-source src)))
      ((##locat? src) src)
      (else #f))))
 
@@ -80,7 +89,7 @@
 (define (&AST->datum stx)
   (cond
    ((AST? stx)
-    (&AST->datum (AST-e stx)))
+    (&AST->datum (%AST-e stx)))
    ((pair? stx)
     (cons (&AST->datum (car stx))
           (&AST->datum (cdr stx))))
@@ -113,7 +122,7 @@
 
 (define (_gx#wrap-syntax re e)
   (if (eof-object? e) e
-      (make-AST e (##readenv->locat re))))
+      (%make-AST e (##readenv->locat re))))
 
 (define (_gx#unwrap-syntax re e)
   (&AST-e e))
@@ -137,6 +146,12 @@
 ;;  just enough to bootstrap :gerbil/expander
 (define-struct &context (t ns super table)
   id: _gx#&context::t)
+
+(define-macro (%&context-super ctx)
+  `(##vector-ref ,ctx 3))
+(define-macro (%&context-table ctx)
+  `(##vector-ref ,ctx 4))
+
 (define-struct &runtime (id)
   id: _gx#&runtime::t)
 (define-struct &syntax (e id)
@@ -186,18 +201,19 @@
   (make-parameter '()))
 
 (define (&core-resolve id #!optional (ctx (&current-context)))
-  (let ((id (&AST-e id)))
-    (let lp ((ctx ctx))
-      (cond
-       ((hash-get (&context-table ctx) id) => values)
-       ((&context-super ctx) => lp)
-       (else #f)))))
+  (and ctx
+       (let ((id (&AST-e id)))
+         (let lp ((ctx ctx))
+           (cond
+            ((table-ref (%&context-table ctx) id #f) => values)
+            ((%&context-super ctx) => lp)
+            (else #f))))))
 
 (define (&core-bound-id? id #!optional (is? true))
-  (and (&AST-id? id)
-       (cond
-        ((&core-resolve id) => is?)
-        (else #f))))
+  (declare (not safe))
+  (cond
+   ((&core-resolve id) => is?)
+   (else #f)))
 
 (define (&core-bind-runtime! id eid #!optional (ctx (&current-context)))
   (when eid
@@ -361,8 +377,8 @@
       (let-values (((id ns body) (_gx#read-module path)))
         (let ((ctx (make-&context-module id ns path)))
           (parameterize ((&current-path (cons path (&current-path))))
-            (_gx#eval (make-AST (cons 'begin-module% body)
-                                (##make-locat path 0))
+            (_gx#eval (%make-AST (cons 'begin-module% body)
+                                 (##make-locat path 0))
                       ctx #f)
             (hash-put! _gx#*modules* path ctx)
             ctx)))))))

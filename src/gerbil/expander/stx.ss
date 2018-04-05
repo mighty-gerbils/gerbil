@@ -8,19 +8,26 @@ namespace: gx
 (import "common")
 (export #t)
 
+(declare (not safe))
+
+(def &AST-e
+  (make-struct-field-unchecked-accessor AST::t 0))
+(def &AST-source
+  (make-struct-field-unchecked-accessor AST::t 1))
+
 ;; ASTs -- syntactic context
 (defstruct (identifier-wrap AST) (marks)
   id:    gx#identifier-wrap::t
   name:  syntax
-  final: #t)
+  final: #t unchecked: #t)
 (defstruct (syntax-wrap AST) (mark)
   id:    gx#syntax-wrap::t
   name:  syntax
-  final: #t)
+  final: #t unchecked: #t)
 (defstruct (syntax-quote AST) (context marks)
   id:    gx#syntax-quote::t
   name:  syntax
-  final: #t)
+  final: #t unchecked: #t)
 
 ;; primitive operations
 (def (identifier? stx)
@@ -28,23 +35,53 @@ namespace: gx
 
 (def (identifier-quote? stx)
   (and (syntax-quote? stx)
-       (symbol? (AST-e stx))))
+       (symbol? (&AST-e stx))))
 
 (def (sealed-syntax? stx)
-  (or (syntax-quote? stx)
-      (and (AST? stx)
-           (sealed-syntax? (AST-e stx)))))
+  (cond
+   ((syntax-quote? stx) #t)
+   ((syntax-wrap? stx)
+    (sealed-syntax? (&AST-e stx)))
+   (else #f)))
+
+(def (sealed-syntax-unwrap stx)
+  (cond
+   ((syntax-quote? stx) stx)
+   ((syntax-wrap? stx)
+    (sealed-syntax-unwrap (&AST-e stx)))
+   (else #f)))
 
 (def (syntax-e stx)
-  (let (stx (stx-unwrap stx))
-    (if (AST? stx)
-      (AST-e stx)
-      stx)))
+  (cond
+   ((syntax-wrap? stx)
+    (let lp ((e (&AST-e stx)) (marks [(&syntax-wrap-mark stx)]))
+      (cond
+       ((##structure? e)
+        (case (##type-id (##structure-type e))
+          ((gx#syntax-wrap::t)
+           (lp (&AST-e e) (apply-mark (&syntax-wrap-mark e) marks)))
+          ((gx#syntax-quote::t gx#identifier-wrap::t)
+           (&AST-e e))
+          ((gerbil#AST::t)
+           (lp (&AST-e e) marks))
+          (else e)))
+       ((null? marks) e)
+       ((pair? e)
+        (cons (stx-wrap (car e) marks)
+              (stx-wrap (cdr e) marks)))
+       ((vector? e)
+        (vector-map (cut stx-wrap <> marks) e))
+       ((box? e)
+        (box (stx-wrap (unbox e) marks)))
+       (else e))))
+   ((AST? stx)
+    (&AST-e stx))
+   (else stx)))
 
 (def (syntax->datum stx)
   (cond
    ((AST? stx)
-    (syntax->datum (AST-e stx)))
+    (syntax->datum (&AST-e stx)))
    ((pair? stx)
     (cons
      (syntax->datum (car stx))
@@ -89,9 +126,9 @@ namespace: gx
       (wrap-outer
        (if (syntax-quote? stx)
          (if quote?
-           (wrap-quote datum (syntax-quote-context stx) (syntax-quote-marks stx))
-           (wrap-datum datum (syntax-quote-marks stx)))
-         (wrap-datum datum (identifier-wrap-marks stx))))))
+           (wrap-quote datum (&syntax-quote-context stx) (&syntax-quote-marks stx))
+           (wrap-datum datum (&syntax-quote-marks stx)))
+         (wrap-datum datum (&identifier-wrap-marks stx))))))
    (else
     (error "Bad template syntax; expected identifier" stx))))
 
@@ -100,18 +137,18 @@ namespace: gx
   (let lp ((e stx) (marks marks) (src (stx-source stx)))
     (cond
      ((syntax-wrap? e)
-      (lp (AST-e e)
-          (apply-mark (syntax-wrap-mark e) marks)
-          (AST-source e)))
+      (lp (&AST-e e)
+          (apply-mark (&syntax-wrap-mark e) marks)
+          (&AST-source e)))
      ((identifier-wrap? e)
       (if (null? marks) e
           (make-identifier-wrap
-           (AST-e e)
-           (AST-source e)
-           (foldl apply-mark (identifier-wrap-marks e) marks))))
+           (&AST-e e)
+           (&AST-source e)
+           (foldl apply-mark (&identifier-wrap-marks e) marks))))
      ((syntax-quote? e) e)
      ((AST? e)
-      (lp (AST-e e) marks (AST-source e)))
+      (lp (&AST-e e) marks (&AST-source e)))
      ((symbol? e)
       (make-identifier-wrap e src (reverse marks)))
      ((null? marks) e)
@@ -136,8 +173,8 @@ namespace: gx
   (cond
    ((syntax-quote? stx) stx)
    ((and (syntax-wrap? stx)
-         (eq? mark (syntax-wrap-mark stx)))
-    (AST-e stx))
+         (eq? mark (&syntax-wrap-mark stx)))
+    (&AST-e stx))
    (else
     (make-syntax-wrap stx (stx-source stx) mark))))
 
@@ -151,13 +188,16 @@ namespace: gx
 
 ;; utilities
 (def (stx-e stx)
-  (if (AST? stx)
-    (stx-e (AST-e stx))
-    stx))
+  (cond
+   ((syntax-wrap? stx)
+    (stx-e (&AST-e stx)))
+   ((AST? stx)
+    (&AST-e stx))
+   (else stx)))
 
 (def (stx-source stx)
   (and (AST? stx)
-       (AST-source stx)))
+       (&AST-source stx)))
 
 (def (stx-wrap-source stx src)
   (if (or (AST? stx) (not src)) stx
@@ -234,13 +274,13 @@ namespace: gx
 (def (stx-identifier-marks stx)
   (let (stx (stx-unwrap stx))
     (if (identifier-wrap? stx)
-      (identifier-wrap-marks stx)
-      (syntax-quote-marks stx))))
+      (&identifier-wrap-marks stx)
+      (&syntax-quote-marks stx))))
 
 (def (stx-identifier-context stx)
   (let (stx (stx-unwrap stx))
     (and (identifier-quote? stx)
-         (syntax-quote-context stx))))
+         (&syntax-quote-context stx))))
 
 (def (identifier-list? stx)
   (match (stx-e stx)
@@ -263,9 +303,11 @@ namespace: gx
   (stx-map values stx))
 
 (def (stx-car stx)
+  (declare (safe))
   (car (syntax-e stx)))
 
 (def (stx-cdr stx)
+  (declare (safe))
   (cdr (syntax-e stx)))
 
 (def (stx-length stx)
@@ -282,6 +324,7 @@ namespace: gx
    (stx-for-each2 f xstx ystx)))
 
 (def (stx-for-each1 f stx)
+  (check-procedure f)
   (let lp ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
@@ -291,6 +334,7 @@ namespace: gx
       (else (f rest)))))
 
 (def (stx-for-each2 f xstx ystx)
+  (check-procedure f)
   (let lp ((xrest xstx) (yrest ystx))
     (match (syntax-e xrest)
       ([xhd . xrest]
@@ -311,6 +355,7 @@ namespace: gx
    (stx-map2 f xstx ystx)))
 
 (def (stx-map1 f stx)
+  (check-procedure f)
   (let recur ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
@@ -320,6 +365,7 @@ namespace: gx
       (else (f rest)))))
 
 (def (stx-map2 f xstx ystx)
+  (check-procedure f)
   (let recur ((xrest xstx) (yrest ystx))
     (match (syntax-e xrest)
       ([xhd . xrest]
@@ -334,6 +380,7 @@ namespace: gx
       (else []))))
 
 (def (stx-andmap f stx)
+  (check-procedure f)
   (let lp ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
@@ -343,6 +390,7 @@ namespace: gx
       (else (f rest)))))
 
 (def (stx-ormap f stx)
+  (check-procedure f)
   (let lp ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
@@ -352,6 +400,7 @@ namespace: gx
       (else (f rest)))))
 
 (def (stx-foldl f iv stx)
+  (check-procedure f)
   (let lp ((r iv) (rest stx))
     (match (syntax-e rest)
       ([hd . rest]
@@ -360,6 +409,7 @@ namespace: gx
       (else (f rest r)))))
 
 (def (stx-foldr f iv stx)
+  (check-procedure f)
   (let recur ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]
@@ -399,6 +449,7 @@ namespace: gx
 
 ;; plists
 (def (stx-plist? stx (key? stx-keyword?))
+  (check-procedure key?)
   (let lp ((rest stx))
     (match (stx-e rest)
       ([hd . rest]
@@ -410,6 +461,7 @@ namespace: gx
       (else #f))))
 
 (def (stx-getq key stx (key=? stx-eq?))
+  (check-procedure key=?)
   (let lp ((rest stx))
     (match (syntax-e rest)
       ([hd . rest]

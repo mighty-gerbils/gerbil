@@ -43,6 +43,14 @@ namespace: gx
          (%#define-runtime
           expander-context-table-set!
           gx#expander-context-table-set!)
+         (%#define-runtime &expander-context-id gx#&expander-context-id)
+         (%#define-runtime &expander-context-table gx#&expander-context-table)
+         (%#define-runtime
+          &expander-context-id-set!
+          gx#&expander-context-id-set!)
+         (%#define-runtime
+          &expander-context-table-set!
+          gx#&expander-context-table-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref _gx#load-module)
                            (%#quote "gerbil/expander/core__1")))
@@ -62,6 +70,12 @@ namespace: gx
          (%#define-runtime phi-context-super-set! gx#phi-context-super-set!)
          (%#define-runtime phi-context-up-set! gx#phi-context-up-set!)
          (%#define-runtime phi-context-down-set! gx#phi-context-down-set!)
+         (%#define-runtime &phi-context-super gx#&phi-context-super)
+         (%#define-runtime &phi-context-up gx#&phi-context-up)
+         (%#define-runtime &phi-context-down gx#&phi-context-down)
+         (%#define-runtime &phi-context-super-set! gx#&phi-context-super-set!)
+         (%#define-runtime &phi-context-up-set! gx#&phi-context-up-set!)
+         (%#define-runtime &phi-context-down-set! gx#&phi-context-down-set!)
          (%#define-syntax phi-context |gx[:0:]#phi-context|)
          (%#define-runtime top-context::t gx#top-context::t)
          (%#define-runtime top-context? gx#top-context?)
@@ -90,6 +104,26 @@ namespace: gx
          (%#define-runtime
           module-context-code-set!
           gx#module-context-code-set!)
+         (%#define-runtime &module-context-ns gx#&module-context-ns)
+         (%#define-runtime &module-context-path gx#&module-context-path)
+         (%#define-runtime &module-context-import gx#&module-context-import)
+         (%#define-runtime &module-context-export gx#&module-context-export)
+         (%#define-runtime &module-context-e gx#&module-context-e)
+         (%#define-runtime &module-context-code gx#&module-context-code)
+         (%#define-runtime &module-context-ns-set! gx#&module-context-ns-set!)
+         (%#define-runtime
+          &module-context-path-set!
+          gx#&module-context-path-set!)
+         (%#define-runtime
+          &module-context-import-set!
+          gx#&module-context-import-set!)
+         (%#define-runtime
+          &module-context-export-set!
+          gx#&module-context-export-set!)
+         (%#define-runtime &module-context-e-set! gx#&module-context-e-set!)
+         (%#define-runtime
+          &module-context-code-set!
+          gx#&module-context-code-set!)
          (%#define-syntax module-context |gx[:0:]#module-context|)
          (%#define-runtime prelude-context::t gx#prelude-context::t)
          (%#define-runtime prelude-context? gx#prelude-context?)
@@ -136,6 +170,12 @@ namespace: gx
          (%#define-runtime binding-id-set! gx#binding-id-set!)
          (%#define-runtime binding-key-set! gx#binding-key-set!)
          (%#define-runtime binding-phi-set! gx#binding-phi-set!)
+         (%#define-runtime &binding-id gx#&binding-id)
+         (%#define-runtime &binding-key gx#&binding-key)
+         (%#define-runtime &binding-phi gx#&binding-phi)
+         (%#define-runtime &binding-id-set! gx#&binding-id-set!)
+         (%#define-runtime &binding-key-set! gx#&binding-key-set!)
+         (%#define-runtime &binding-phi-set! gx#&binding-phi-set!)
          (%#define-syntax binding |gx[:0:]#binding|)
          (%#define-runtime runtime-binding::t gx#runtime-binding::t)
          (%#define-runtime runtime-binding? gx#runtime-binding?)
@@ -288,6 +328,20 @@ namespace: gx
          (%#define-runtime
           expander-mark-trace-set!
           gx#expander-mark-trace-set!)
+         (%#define-runtime &expander-mark-subst gx#&expander-mark-subst)
+         (%#define-runtime &expander-mark-context gx#&expander-mark-context)
+         (%#define-runtime &expander-mark-phi gx#&expander-mark-phi)
+         (%#define-runtime &expander-mark-trace gx#&expander-mark-trace)
+         (%#define-runtime
+          &expander-mark-subst-set!
+          gx#&expander-mark-subst-set!)
+         (%#define-runtime
+          &expander-mark-context-set!
+          gx#&expander-mark-context-set!)
+         (%#define-runtime &expander-mark-phi-set! gx#&expander-mark-phi-set!)
+         (%#define-runtime
+          &expander-mark-trace-set!
+          gx#&expander-mark-trace-set!)
          (%#define-syntax expander-mark |gx[:0:]#expander-mark|)
          (%#define-runtime syntax-error::t gx#syntax-error::t)
          (%#define-runtime syntax-error? gx#syntax-error?)

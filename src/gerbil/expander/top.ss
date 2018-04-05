@@ -194,26 +194,24 @@ namespace: gx
 ;;; definitions
 ;; (%#extern (id binding-id) ...)
 (def (core-expand-extern% stx)
+  (declare (not safe))
   (core-syntax-case stx ()
     ((_ . body)
      (stx-list? body)
-     (begin
-       (stx-for-each
-        (lambda (bind)
-          (core-syntax-case bind ()
-            ((id eid)
-             (and (identifier? id)
-                  (identifier? eid))
-             (core-bind-extern! id (stx-e eid)))))
-        body)
-       (core-quote-syntax
-        (core-cons '%#extern
-          (stx-map
-           (lambda (bind)
-             (core-syntax-case bind ()
-               ((id eid) [(core-quote-syntax id) (stx-e eid)])))
-           body))
-        (stx-source stx))))))
+     (let lp ((rest body) (r []))
+       (core-syntax-case rest ()
+         (((id eid) . rest)
+          (and (identifier? id)
+               (identifier? eid))
+          (let (eid (stx-e eid))
+            (core-bind-extern! id eid)
+            (lp rest (cons [(core-quote-syntax id) eid] r))))
+         (()
+          (core-quote-syntax
+           (core-cons '%#extern (reverse r))
+           (stx-source stx)))
+         (else
+          (raise-syntax-error #f "Bad syntax" stx (stx-car rest))))))))
 
 ;; (%#define-values hd expr)
 (def (core-expand-define-values% stx)
@@ -564,7 +562,7 @@ namespace: gx
       (or (eq? xe ye)
           (and (binding? xe)
                (binding? ye)
-               (eq? (binding-id xe) (binding-id ye)))))
+               (eq? (&binding-id xe) (&binding-id ye)))))
      ((or xe ye) #f)                    ; one bound
      (else                              ; none bound
       (stx-eq? xid yid)))))
@@ -572,16 +570,16 @@ namespace: gx
 (def (bound-identifier=? xid yid)
   (def (context e)
     (if (syntax-quote? e)
-      (syntax-quote-context e)
+      (&syntax-quote-context e)
       (current-expander-context)))
 
   (def (marks e)
     (cond
      ((symbol? e) [])
      ((identifier-wrap? e)
-      (identifier-wrap-marks e))
+      (&identifier-wrap-marks e))
      (else
-      (syntax-quote-marks e))))
+      (&syntax-quote-marks e))))
 
   (def (unwrap e)
     (if (symbol? e) e

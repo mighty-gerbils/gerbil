@@ -46,7 +46,7 @@ namespace: gx
             (let (id (syntax-local-unwrap body))
               (cond
                ((identifier-wrap? id)
-                (let (marks (identifier-wrap-marks id))
+                (let (marks (&identifier-wrap-marks id))
                   (if (null? marks)
                     (core-list 'datum->syntax #f (core-list 'quote body))
                     (core-list 'datum->syntax

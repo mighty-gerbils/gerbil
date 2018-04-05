@@ -26,6 +26,26 @@ package: gerbil/expander
    gx#module-import-weak?-set!
    (@struct-setf gx#module-import::t 3 #f))
   (declare-type
+   gx#&module-import-source
+   (@struct-getf gx#module-import::t 0 #t))
+  (declare-type gx#&module-import-name (@struct-getf gx#module-import::t 1 #t))
+  (declare-type gx#&module-import-phi (@struct-getf gx#module-import::t 2 #t))
+  (declare-type
+   gx#&module-import-weak?
+   (@struct-getf gx#module-import::t 3 #t))
+  (declare-type
+   gx#&module-import-source-set!
+   (@struct-setf gx#module-import::t 0 #t))
+  (declare-type
+   gx#&module-import-name-set!
+   (@struct-setf gx#module-import::t 1 #t))
+  (declare-type
+   gx#&module-import-phi-set!
+   (@struct-setf gx#module-import::t 2 #t))
+  (declare-type
+   gx#&module-import-weak?-set!
+   (@struct-setf gx#module-import::t 3 #t))
+  (declare-type
    gx#module-export::t
    (@struct-type gx#module-export::t #f 5 #f ((final: . #t))))
   (declare-type gx#module-export? (@struct-pred gx#module-export::t))
@@ -53,6 +73,30 @@ package: gerbil/expander
    gx#module-export-weak?-set!
    (@struct-setf gx#module-export::t 4 #f))
   (declare-type
+   gx#&module-export-context
+   (@struct-getf gx#module-export::t 0 #t))
+  (declare-type gx#&module-export-key (@struct-getf gx#module-export::t 1 #t))
+  (declare-type gx#&module-export-phi (@struct-getf gx#module-export::t 2 #t))
+  (declare-type gx#&module-export-name (@struct-getf gx#module-export::t 3 #t))
+  (declare-type
+   gx#&module-export-weak?
+   (@struct-getf gx#module-export::t 4 #t))
+  (declare-type
+   gx#&module-export-context-set!
+   (@struct-setf gx#module-export::t 0 #t))
+  (declare-type
+   gx#&module-export-key-set!
+   (@struct-setf gx#module-export::t 1 #t))
+  (declare-type
+   gx#&module-export-phi-set!
+   (@struct-setf gx#module-export::t 2 #t))
+  (declare-type
+   gx#&module-export-name-set!
+   (@struct-setf gx#module-export::t 3 #t))
+  (declare-type
+   gx#&module-export-weak?-set!
+   (@struct-setf gx#module-export::t 4 #t))
+  (declare-type
    gx#import-set::t
    (@struct-type gx#import-set::t #f 3 #f ((final: . #t))))
   (declare-type gx#import-set? (@struct-pred gx#import-set::t))
@@ -65,6 +109,16 @@ package: gerbil/expander
   (declare-type
    gx#import-set-imports-set!
    (@struct-setf gx#import-set::t 2 #f))
+  (declare-type gx#&import-set-source (@struct-getf gx#import-set::t 0 #t))
+  (declare-type gx#&import-set-phi (@struct-getf gx#import-set::t 1 #t))
+  (declare-type gx#&import-set-imports (@struct-getf gx#import-set::t 2 #t))
+  (declare-type
+   gx#&import-set-source-set!
+   (@struct-setf gx#import-set::t 0 #t))
+  (declare-type gx#&import-set-phi-set! (@struct-setf gx#import-set::t 1 #t))
+  (declare-type
+   gx#&import-set-imports-set!
+   (@struct-setf gx#import-set::t 2 #t))
   (declare-type
    gx#export-set::t
    (@struct-type gx#export-set::t #f 3 #f ((final: . #t))))
@@ -78,6 +132,16 @@ package: gerbil/expander
   (declare-type
    gx#export-set-exports-set!
    (@struct-setf gx#export-set::t 2 #f))
+  (declare-type gx#&export-set-source (@struct-getf gx#export-set::t 0 #t))
+  (declare-type gx#&export-set-phi (@struct-getf gx#export-set::t 1 #t))
+  (declare-type gx#&export-set-exports (@struct-getf gx#export-set::t 2 #t))
+  (declare-type
+   gx#&export-set-source-set!
+   (@struct-setf gx#export-set::t 0 #t))
+  (declare-type gx#&export-set-phi-set! (@struct-setf gx#export-set::t 1 #t))
+  (declare-type
+   gx#&export-set-exports-set!
+   (@struct-setf gx#export-set::t 2 #t))
   (declare-type gx#make-import-expander (@lambda (0) #f))
   (declare-type gx#make-export-expander (@lambda (0) #f))
   (declare-type gx#make-import-export-expander (@lambda (0) #f))

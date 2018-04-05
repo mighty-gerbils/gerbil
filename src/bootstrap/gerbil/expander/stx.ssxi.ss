@@ -2,6 +2,8 @@ prelude: :gerbil/compiler/ssxi
 package: gerbil/expander
 
 (begin
+  (declare-type gx#&AST-e (@struct-getf AST::t 0 #t))
+  (declare-type gx#&AST-source (@struct-getf AST::t 1 #t))
   (declare-type
    gx#identifier-wrap::t
    (@struct-type gx#identifier-wrap::t AST::t 1 #f ((final: . #t))))
@@ -14,12 +16,22 @@ package: gerbil/expander
    gx#identifier-wrap-marks-set!
    (@struct-setf gx#identifier-wrap::t 0 #f))
   (declare-type
+   gx#&identifier-wrap-marks
+   (@struct-getf gx#identifier-wrap::t 0 #t))
+  (declare-type
+   gx#&identifier-wrap-marks-set!
+   (@struct-setf gx#identifier-wrap::t 0 #t))
+  (declare-type
    gx#syntax-wrap::t
    (@struct-type gx#syntax-wrap::t AST::t 1 #f ((final: . #t))))
   (declare-type gx#syntax-wrap? (@struct-pred gx#syntax-wrap::t))
   (declare-type gx#make-syntax-wrap (@struct-cons gx#syntax-wrap::t))
   (declare-type gx#syntax-wrap-mark (@struct-getf gx#syntax-wrap::t 0 #f))
   (declare-type gx#syntax-wrap-mark-set! (@struct-setf gx#syntax-wrap::t 0 #f))
+  (declare-type gx#&syntax-wrap-mark (@struct-getf gx#syntax-wrap::t 0 #t))
+  (declare-type
+   gx#&syntax-wrap-mark-set!
+   (@struct-setf gx#syntax-wrap::t 0 #t))
   (declare-type
    gx#syntax-quote::t
    (@struct-type gx#syntax-quote::t AST::t 2 #f ((final: . #t))))
@@ -33,9 +45,20 @@ package: gerbil/expander
   (declare-type
    gx#syntax-quote-marks-set!
    (@struct-setf gx#syntax-quote::t 1 #f))
+  (declare-type
+   gx#&syntax-quote-context
+   (@struct-getf gx#syntax-quote::t 0 #t))
+  (declare-type gx#&syntax-quote-marks (@struct-getf gx#syntax-quote::t 1 #t))
+  (declare-type
+   gx#&syntax-quote-context-set!
+   (@struct-setf gx#syntax-quote::t 0 #t))
+  (declare-type
+   gx#&syntax-quote-marks-set!
+   (@struct-setf gx#syntax-quote::t 1 #t))
   (declare-type gx#identifier? (@lambda 1 #f))
   (declare-type gx#identifier-quote? (@lambda 1 #f))
   (declare-type gx#sealed-syntax? (@lambda 1 #f))
+  (declare-type gx#sealed-syntax-unwrap (@lambda 1 #f))
   (declare-type gx#syntax-e (@lambda 1 #f))
   (declare-type gx#syntax->datum (@lambda 1 #f))
   (begin
