@@ -197,23 +197,20 @@ namespace: gx
   (core-syntax-case stx ()
     ((_ . body)
      (stx-list? body)
-     (begin
-       (stx-for-each
-        (lambda (bind)
-          (core-syntax-case bind ()
-            ((id eid)
-             (and (identifier? id)
-                  (identifier? eid))
-             (core-bind-extern! id (stx-e eid)))))
-        body)
-       (core-quote-syntax
-        (core-cons '%#extern
-          (stx-map
-           (lambda (bind)
-             (core-syntax-case bind ()
-               ((id eid) [(core-quote-syntax id) (stx-e eid)])))
-           body))
-        (stx-source stx))))))
+     (let lp ((rest body) (r []))
+       (core-syntax-case rest ()
+         (((id eid) . rest)
+          (and (identifier? id)
+               (identifier? eid))
+          (let (eid (stx-e eid))
+            (core-bind-extern! id eid)
+            (lp rest (cons [(core-quote-syntax id) eid] r))))
+         (()
+          (core-quote-syntax
+           (core-cons '%#extern (reverse r))
+           (stx-source stx)))
+         (else
+          (raise-syntax-error #f "Bad syntax" stx (stx-car rest))))))))
 
 ;; (%#define-values hd expr)
 (def (core-expand-define-values% stx)
