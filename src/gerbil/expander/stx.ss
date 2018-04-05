@@ -44,6 +44,13 @@ namespace: gx
     (sealed-syntax? (&AST-e stx)))
    (else #f)))
 
+(def (sealed-syntax-unwrap stx)
+  (cond
+   ((syntax-quote? stx) stx)
+   ((syntax-wrap? stx)
+    (sealed-syntax-unwrap (&AST-e stx)))
+   (else #f)))
+
 (def (syntax-e stx)
   (cond
    ((syntax-wrap? stx)

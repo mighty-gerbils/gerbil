@@ -739,8 +739,7 @@ namespace: gx
                         (ctx (current-expander-context))
                         (marks (current-expander-marks)))
   (cond
-   ((sealed-syntax? stx)
-    (stx-unwrap stx))
+   ((sealed-syntax-unwrap stx) => values)
    ((identifier? stx)
     (let (id (syntax-local-unwrap stx))
       (make-syntax-quote (stx-e id) (or (stx-source id) src)
