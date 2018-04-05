@@ -194,6 +194,7 @@ namespace: gx
 ;;; definitions
 ;; (%#extern (id binding-id) ...)
 (def (core-expand-extern% stx)
+  (declare (not safe))
   (core-syntax-case stx ()
     ((_ . body)
      (stx-list? body)

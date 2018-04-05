@@ -506,6 +506,8 @@ namespace: gx
 ;;  original source: id
 ;;  macro introduced: [id . top-mark] => subst => eid
 (def (core-resolve-binding id phi src-phi ctx marks)
+  (declare (not safe))
+
   (def (resolve ctx src-phi key)
     (let lp ((ctx (core-context-shift ctx phi)) (dphi (fx- phi src-phi)))
       (cond
@@ -603,6 +605,8 @@ namespace: gx
 
 ;;; context ops
 (def (core-context-shift ctx phi)
+  (declare (not safe))
+
   (def (make-phi super)
     (make-phi-context (gensym 'phi) super))
 

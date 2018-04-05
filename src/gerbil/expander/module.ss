@@ -626,6 +626,8 @@ namespace: gx
     expand-special #f values)))
 
 (def (core-expand-import/export stx expanded? method current-phi expand1)
+  (declare (not safe))
+
   (def (K rest r)
     (core-syntax-case rest ()
       ((hd . rest)
@@ -662,6 +664,8 @@ namespace: gx
          (K body [])))))))
 
 (def (core-expand-import% stx (internal-expand? #f))
+  (declare (not safe))
+
   (def (expand1 hd K rest r)
     (cond
      ((core-bound-module? hd)
