@@ -10,17 +10,17 @@ namespace: gx
 
 (defstruct module-import (source name phi weak?)
   id: gx#module-import::t
-  final: #t)
+  final: #t unchecked: #t)
 (defstruct module-export (context key phi name weak?)
   id: gx#module-export::t
-  final: #t)
+  final: #t unchecked: #t)
 
 (defstruct import-set (source phi imports)
   id: gx#import-set::t
-  final: #t)
+  final: #t unchecked: #t)
 (defstruct export-set (source phi exports)
   id: gx#export-set::t
-  final: #t)
+  final: #t unchecked: #t)
 
 (defclass (import-expander user-expander) ()
   id: gx#import-expander::t
@@ -120,7 +120,7 @@ namespace: gx
     (cond
      ((or (module-context? e)
           (local-context? e))
-      (lp (phi-context-super e)))
+      (lp (&phi-context-super e)))
      ((prelude-context? e) e)
      (else #f))))
 
@@ -166,9 +166,9 @@ namespace: gx
                 (core-quote-syntax
                  (core-cons '%#begin body)
                  path ctx [])))
-          (set! (module-context-e ctx)
+          (set! (&module-context-e ctx)
             (delay (eval-syntax* body)))
-          (set! (module-context-code ctx)
+          (set! (&module-context-code ctx)
             body)
           (hash-put! (current-expander-module-registry) path ctx)
           (hash-put! (current-expander-module-registry) id ctx)
@@ -282,7 +282,7 @@ namespace: gx
              ((find (match <>
                       ((module-export _ _ 1 (eq? 'read-module-body)) #t)
                       (else #f))
-                    (module-context-export prelude))
+                    (&module-context-export prelude))
               => (lambda (xport)
                    (let (proc
                          (with-catch void
@@ -502,8 +502,8 @@ namespace: gx
   (with ((module-import source key phi weak?) in)
     (core-bind! key
       (let (e (core-resolve-module-export source))
-        (make-import-binding (binding-id e) key phi
-                             e (module-export-context source)
+        (make-import-binding (&binding-id e) key phi
+                             e (&module-export-context source)
                              (or force-weak? weak?)))
       core-context-rebind? phi ctx)))
 
@@ -540,7 +540,7 @@ namespace: gx
             (symbol->string mod-id))
            (path
             (if (module-context? super)
-              (let (path (module-context-path super))
+              (let (path (&module-context-path super))
                 (cond
                  ((or (pair? path) (null? path)) (cons bind-id path))
                  ((not path) bind-id)
@@ -559,9 +559,9 @@ namespace: gx
              (core-quote-syntax
               (core-cons '%#begin body)
               (stx-source stx))))
-       (set! (module-context-e ctx)
+       (set! (&module-context-e ctx)
          (delay (eval-syntax* body)))
-       (set! (module-context-code ctx)
+       (set! (&module-context-code ctx)
          body)
        (core-bind-syntax! id ctx)
        (core-quote-syntax
@@ -692,7 +692,7 @@ namespace: gx
       (K rest
          (cons (make-import-set ctx dphi
                  (map (cut core-module-export->import <> #f dphi)
-                      (module-context-export ctx)))
+                      (&module-context-export ctx)))
                r))))
 
   (def (import-spec? hd)
@@ -731,10 +731,10 @@ namespace: gx
          (for-each
            (lambda (out)
              (hash-put! exports
-                        (cons (module-export-phi out)
-                              (module-export-name out))
+                        (cons (&module-export-phi out)
+                              (&module-export-name out))
                         out))
-           (module-context-export src-ctx))
+           (&module-context-export src-ctx))
          (K rest
             (foldl
               (lambda (spec r)
@@ -775,23 +775,23 @@ namespace: gx
          (cond
           ((module-import? hd)
            (bind! hd)
-           (when (and (fxpositive? (module-import-phi hd))
-                      (fxzero? (module-export-phi (module-import-source hd))))
+           (when (and (fxpositive? (&module-import-phi hd))
+                      (fxzero? (&module-export-phi (&module-import-source hd))))
              (hash-put! deps
-                        (module-export-context (module-import-source hd))
+                        (&module-export-context (&module-import-source hd))
                         #t)))
           ((import-set? hd)
-           (for-each bind! (import-set-imports hd))
-           (when (fxpositive? (import-set-phi hd))
-             (hash-put! deps (import-set-source hd) #t)))
+           (for-each bind! (&import-set-imports hd))
+           (when (fxpositive? (&import-set-phi hd))
+             (hash-put! deps (&import-set-source hd) #t)))
           ((module-context? hd))
           (else
            (raise-syntax-error #f "Unexpected import" stx hd)))
          (lp rest (cons hd body)))
         (else
          (when (module-context? current-ctx)
-           (set! (module-context-import current-ctx)
-             (foldl cons (module-context-import current-ctx) body)))
+           (set! (&module-context-import current-ctx)
+             (foldl cons (&module-context-import current-ctx) body)))
          ;; eval expander deps
          (hash-for-each (lambda (ctx _) (eval-module ctx)) deps)
          body))))
@@ -837,7 +837,7 @@ namespace: gx
                     (phi (current-export-expander-phi))
                     (ctx (current-expander-context))
                     (name #f))
-    (let* ((key (binding-key bind))
+    (let* ((key (&binding-key bind))
            (export-key (if name (core-identifier-key name) key)))
       (make-module-export ctx key phi export-key
                           (or (extern-binding? bind)
@@ -849,7 +849,7 @@ namespace: gx
        (let* ((current-ctx (current-expander-context))
               (current-phi (current-export-expander-phi))
               (phi-ctx     (core-context-shift current-ctx current-phi))
-              (phi-bind    (hash->list (expander-context-table phi-ctx))))
+              (phi-bind    (hash->list (&expander-context-table phi-ctx))))
          (let lp ((bind-rest phi-bind) (set []))
            (match bind-rest
              ([[key . bind] . bind-rest]
@@ -932,7 +932,7 @@ namespace: gx
       (match in
         ((module-import out key phi)
          (if (and (fx= phi current-phi)
-                  (eq? src (module-export-context out)))
+                  (eq? src (&module-export-context out)))
            (cons (import->export in) r)
            r))
         ((import-set ctx phi imports)
@@ -944,7 +944,7 @@ namespace: gx
         (else r)))
 
     (cons (make-export-set src current-phi
-            (foldl fold-e [] (module-context-import current-ctx)))
+            (foldl fold-e [] (&module-context-import current-ctx)))
           r))
 
   (def (export! rbody)
@@ -955,12 +955,12 @@ namespace: gx
        ((module-export? out)
         (cons out r))
        ((export-set? out)
-        (foldl cons r (export-set-exports out)))
+        (foldl cons r (&export-set-exports out)))
        (else r)))
 
     (let (body (reverse rbody))
-      (set! (module-context-export current-ctx)
-        (foldl fold-e (module-context-export current-ctx) body))
+      (set! (&module-context-export current-ctx)
+        (foldl fold-e (&module-context-export current-ctx) body))
       body))
 
   (def (expanded-export? e)

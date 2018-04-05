@@ -564,7 +564,7 @@ namespace: gx
       (or (eq? xe ye)
           (and (binding? xe)
                (binding? ye)
-               (eq? (binding-id xe) (binding-id ye)))))
+               (eq? (&binding-id xe) (&binding-id ye)))))
      ((or xe ye) #f)                    ; one bound
      (else                              ; none bound
       (stx-eq? xid yid)))))

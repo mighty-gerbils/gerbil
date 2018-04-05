@@ -39,16 +39,19 @@ namespace: gx
 ;; expander context
 (defstruct expander-context (id table)
   id: gx#expander-context::t
-  constructor: :init!)
+  constructor: :init!
+  unchecked: #t)
 
 (defstruct (root-context expander-context) ()
   id: gx#root-context::t)
 (defstruct (phi-context  expander-context) (super up down)
-  id: gx#context-phi::t)
+  id: gx#context-phi::t
+  unchecked: #t)
 (defstruct (top-context phi-context) ()
   id: gx#top-context::t)
 (defstruct (module-context top-context) (ns path import export e code)
-  id: gx#module-context::t)
+  id: gx#module-context::t
+  unchecked: #t)
 (defstruct (prelude-context top-context) (path import e)
   id: gx#prelude-context::t)
 (defstruct (local-context phi-context) ()
@@ -64,7 +67,8 @@ namespace: gx
 
 ;; bindings
 (defstruct binding (id key phi)
-  id: gx#binding::t)
+  id: gx#binding::t
+  unchecked: #t)
 
 ;; runtime bindings
 (defstruct (runtime-binding binding) ()
@@ -128,7 +132,8 @@ namespace: gx
 (defstruct (user-expander macro-expander) (context phi)
   id: gx#macro-expander::t)
 (defstruct expander-mark (subst context phi trace)
-  id: gx#expander-mark::t)
+  id: gx#expander-mark::t
+  unchecked: #t)
 
 
 ;; syntax errors
@@ -199,7 +204,7 @@ namespace: gx
             ((or (not bind)
                  (not (core-expander-binding? bind)))
              (expand-e '%%app ['%%app . hd]))
-            ((eq? (binding-id bind) '%#begin)
+            ((eq? (&binding-id bind) '%#begin)
              (core-expand-block* hd illegal-expression))
             ((expression-form-binding? bind)
              (expand-e bind hd))
@@ -300,7 +305,7 @@ namespace: gx
            ((form . body)
             (let (bind (and (identifier? form) (resolve-identifier form)))
               (if (special-form-binding? bind)
-                (case (binding-id bind)
+                (case (&binding-id bind)
                   ((%#begin)
                    (expand-splice hd body rest r))
                   ((%#cond-expand)
@@ -518,8 +523,8 @@ namespace: gx
        (with ((expander-mark subst) hd)
          (or (let (key (and subst (hash-get subst id)))
                (and key (resolve ctx src-phi key)))
-             (lp (expander-mark-context hd)
-                 (expander-mark-phi hd)
+             (lp (&expander-mark-context hd)
+                 (&expander-mark-phi hd)
                  rest))))
       (else
        (resolve ctx src-phi id)))))
@@ -537,19 +542,19 @@ namespace: gx
                         (not (import-binding? val)))))
           (and (extern-binding? xval)
                (runtime-binding? val)
-               (eq? (binding-id val) (binding-id xval))))
+               (eq? (&binding-id val) (&binding-id xval))))
       val)
      ((and (import-binding? val)
            (or (import-binding-weak? val)
                (and (binding? xval)
-                    (eq? (binding-id val) (binding-id xval)))))
+                    (eq? (&binding-id val) (&binding-id xval)))))
       xval)
      ((and (import-binding? val)
            (binding? xval))
       ;; common case: be somewhat more friendly to the user at fault
       (raise-syntax-error #f "Bad binding; import conflict" key
-                          [(binding-id val) (expander-context-id (import-binding-context val))]
-                          [(binding-id xval)
+                          [(&binding-id val) (expander-context-id (import-binding-context val))]
+                          [(&binding-id xval)
                            (if (import-binding? xval)
                              (expander-context-id (import-binding-context xval))
                              xval)]))
@@ -568,7 +573,7 @@ namespace: gx
          (cond
           ((not subst)
            (let (subst (make-hash-table-eq))
-             (set! (expander-mark-subst mark) subst)
+             (set! (&expander-mark-subst mark) subst)
              (gensubst subst id)))
           ((hash-get subst id) => values)
           (else
@@ -603,19 +608,19 @@ namespace: gx
 
   (def (make-phi/up ctx super)
     (let (ctx+1 (make-phi super))
-      (set! (phi-context-up ctx) ctx+1)
-      (set! (phi-context-down ctx+1) ctx)
+      (set! (&phi-context-up ctx) ctx+1)
+      (set! (&phi-context-down ctx+1) ctx)
       ctx+1))
 
   (def (make-phi/down ctx super)
     (let (ctx-1 (make-phi super))
-      (set! (phi-context-up ctx-1) ctx)
-      (set! (phi-context-down ctx) ctx-1)
+      (set! (&phi-context-up ctx-1) ctx)
+      (set! (&phi-context-down ctx) ctx-1)
       ctx-1))
 
   (def (shift ctx delta make-delta-context phi K)
     (cond
-     ((phi-context-super ctx)
+     ((&phi-context-super ctx)
       => (lambda (super)
            (let* ((super (K super delta))
                   (ctx+d (make-delta-context ctx super)))
@@ -629,25 +634,25 @@ namespace: gx
      ((phi-context? ctx)
       (if (fxpositive? phi)
         (cond
-         ((phi-context-up ctx) => (cut K <> (fx1- phi)))
+         ((&phi-context-up ctx) => (cut K <> (fx1- phi)))
          (else
           (shift ctx +1 make-phi/up phi K)))
         (cond
-         ((phi-context-down ctx) => (cut K <> (fx1+ phi)))
+         ((&phi-context-down ctx) => (cut K <> (fx1+ phi)))
          (else
           (shift ctx -1 make-phi/down phi K)))))
      (else ctx))))
 
 (def (core-context-get ctx key)
-  (hash-get (expander-context-table ctx) key))
+  (hash-get (&expander-context-table ctx) key))
 (def (core-context-put! ctx key val)
-  (hash-put! (expander-context-table ctx) key val))
+  (hash-put! (&expander-context-table ctx) key val))
 
 (def (core-context-resolve ctx key)
   (let lp ((ctx ctx))
     (cond
      ((core-context-get ctx key) => values)
-     ((and (phi-context? ctx) (phi-context-super ctx)) => lp)
+     ((and (phi-context? ctx) (&phi-context-super ctx)) => lp)
      (else #f))))
 
 (def (core-context-bind! ctx key val rebind)
@@ -663,7 +668,7 @@ namespace: gx
     (cond
      ((stop? ctx) ctx)
      ((phi-context? ctx)
-      (lp (phi-context-super ctx)))
+      (lp (&phi-context-super ctx)))
      (else #f))))
 
 (def (core-context-root (ctx (current-expander-context)))
@@ -682,7 +687,7 @@ namespace: gx
    ((core-context-top ctx)
     => (lambda (ctx)
          (and (module-context? ctx)
-              (module-context-ns ctx))))
+              (&module-context-ns ctx))))
    (else #f)))
 
 ;;; etc
@@ -722,7 +727,7 @@ namespace: gx
 
   (let (bind (resolve-identifier x))
     (if (binding? bind)
-      (y=? (binding-id bind))
+      (y=? (&binding-id bind))
       (y=? (stx-e x)))))
 
 (def (core-extern-symbol? e)
