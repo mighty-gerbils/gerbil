@@ -4,6 +4,8 @@ namespace: gx
 
 (%#begin (%#import :gerbil/expander/common)
          (%#export #t)
+         (%#define-runtime &AST-e gx#&AST-e)
+         (%#define-runtime &AST-source gx#&AST-source)
          (%#define-runtime identifier-wrap::t gx#identifier-wrap::t)
          (%#define-runtime identifier-wrap? gx#identifier-wrap?)
          (%#define-runtime make-identifier-wrap gx#make-identifier-wrap)
@@ -11,6 +13,10 @@ namespace: gx
          (%#define-runtime
           identifier-wrap-marks-set!
           gx#identifier-wrap-marks-set!)
+         (%#define-runtime &identifier-wrap-marks gx#&identifier-wrap-marks)
+         (%#define-runtime
+          &identifier-wrap-marks-set!
+          gx#&identifier-wrap-marks-set!)
          (%#begin (%#begin-syntax
                    (%#call (%#ref _gx#load-module)
                            (%#quote "gerbil/expander/stx__1")))
@@ -20,6 +26,8 @@ namespace: gx
          (%#define-runtime make-syntax-wrap gx#make-syntax-wrap)
          (%#define-runtime syntax-wrap-mark gx#syntax-wrap-mark)
          (%#define-runtime syntax-wrap-mark-set! gx#syntax-wrap-mark-set!)
+         (%#define-runtime &syntax-wrap-mark gx#&syntax-wrap-mark)
+         (%#define-runtime &syntax-wrap-mark-set! gx#&syntax-wrap-mark-set!)
          (%#define-syntax syntax-wrap |gx[:0:]#syntax-wrap|)
          (%#define-runtime syntax-quote::t gx#syntax-quote::t)
          (%#define-runtime syntax-quote? gx#syntax-quote?)
@@ -30,10 +38,19 @@ namespace: gx
           syntax-quote-context-set!
           gx#syntax-quote-context-set!)
          (%#define-runtime syntax-quote-marks-set! gx#syntax-quote-marks-set!)
+         (%#define-runtime &syntax-quote-context gx#&syntax-quote-context)
+         (%#define-runtime &syntax-quote-marks gx#&syntax-quote-marks)
+         (%#define-runtime
+          &syntax-quote-context-set!
+          gx#&syntax-quote-context-set!)
+         (%#define-runtime
+          &syntax-quote-marks-set!
+          gx#&syntax-quote-marks-set!)
          (%#define-syntax syntax-quote |gx[:0:]#syntax-quote|)
          (%#define-runtime identifier? gx#identifier?)
          (%#define-runtime identifier-quote? gx#identifier-quote?)
          (%#define-runtime sealed-syntax? gx#sealed-syntax?)
+         (%#define-runtime sealed-syntax-unwrap gx#sealed-syntax-unwrap)
          (%#define-runtime syntax-e gx#syntax-e)
          (%#define-runtime syntax->datum gx#syntax->datum)
          (%#begin (%#define-runtime datum->syntax__% gx#datum->syntax__%)
