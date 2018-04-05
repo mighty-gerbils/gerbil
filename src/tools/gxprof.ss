@@ -59,9 +59,11 @@
 (def samples [])
 
 (def (profile-start!)
+  (##set-heartbeat-interval! (exact->inexact 1/1000))
   (##interrupt-vector-set! 2 profile-heartbeat!))
 
 (def (profile-end!)
+  (##set-heartbeat-interval! (exact->inexact 1/100))
   (##interrupt-vector-set! 2 ##thread-heartbeat!))
 
 (def (profile-heartbeat!)
