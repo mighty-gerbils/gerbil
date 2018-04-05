@@ -671,20 +671,27 @@ namespace: gx
       (import1 (import-module
                 (core-resolve-library-module-path hd))
                K rest r))
-     ((stx-string? hd)
-      (import1 (import-module
-                (core-resolve-module-path hd (stx-source stx)))
-               K rest r))
-     ((module-context? (stx-e hd))
-      (K rest (cons (stx-e hd) r)))
-     ((import-spec? hd)
-      (import-spec hd K rest r))
-     ((import-submodule? hd)
-      (import-submodule hd K rest r))
-     ((import-runtime? hd)
-      (import-runtime hd K rest r))
      (else
-      (raise-syntax-error #f "Bad syntax; illegal import" stx hd))))
+      (let (e (stx-e hd))
+        (cond
+         ((string? e)
+          (import1 (import-module
+                    (core-resolve-module-path hd (stx-source stx)))
+                   K rest r))
+         ((module-context? e)
+          (K rest (cons e r)))
+         ((pair? e)
+          (case (stx-e (car e))
+            ((spec:)
+             (import-spec hd K rest r))
+            ((in:)
+             (import-submodule hd K rest r))
+            ((runtime:)
+             (import-runtime hd K rest r))
+            (else
+             (raise-syntax-error #f "Bad syntax; illegal import" stx hd))))
+         (else
+          (raise-syntax-error #f "Bad syntax; illegal import" stx hd)))))))
 
   (def (import1 ctx K rest r)
     (let (dphi (fx- (current-import-expander-phi)
@@ -694,21 +701,6 @@ namespace: gx
                  (map (cut core-module-export->import <> #f dphi)
                       (&module-context-export ctx)))
                r))))
-
-  (def (import-spec? hd)
-    (core-syntax-case hd ()
-      ((spec: spath . specs) #t)
-      (else #f)))
-
-  (def (import-submodule? hd)
-    (core-syntax-case hd ()
-      ((in: top . sub) #t)
-      (else #f)))
-
-  (def (import-runtime? hd)
-    (core-syntax-case hd ()
-      ((runtime: top . spath) #t)
-      (else #f)))
 
   (def (import-submodule hd K rest r)
     (core-syntax-case hd ()
