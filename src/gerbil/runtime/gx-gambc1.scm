@@ -14,21 +14,30 @@
   id:   gerbil#AST::t
   name: syntax)
 
+(define-macro (%make-AST e source)
+  `(##structure AST::t ,e ,source))
+
+(define-macro (%AST-e e)
+  `(##vector-ref ,e 1))
+
+(define-macro (%AST-source e)
+  `(##vector-ref ,e 2))
+
 (define (&AST e src-stx)
   (let ((src (&AST-source src-stx)))
     (if (or (AST? e) (not src)) e
-        (make-AST e src))))
+        (%make-AST e src))))
 
 (define (&AST-e stx)
   (if (AST? stx)
-    (AST-e stx)
+    (%AST-e stx)
     stx))
 
 (define (&AST-source stx)
   (let lp ((src stx))
     (cond
      ((AST? src)
-      (lp (AST-source src)))
+      (lp (%AST-source src)))
      ((##locat? src) src)
      (else #f))))
 
@@ -80,7 +89,7 @@
 (define (&AST->datum stx)
   (cond
    ((AST? stx)
-    (&AST->datum (AST-e stx)))
+    (&AST->datum (%AST-e stx)))
    ((pair? stx)
     (cons (&AST->datum (car stx))
           (&AST->datum (cdr stx))))
@@ -113,7 +122,7 @@
 
 (define (_gx#wrap-syntax re e)
   (if (eof-object? e) e
-      (make-AST e (##readenv->locat re))))
+      (%make-AST e (##readenv->locat re))))
 
 (define (_gx#unwrap-syntax re e)
   (&AST-e e))
@@ -361,8 +370,8 @@
       (let-values (((id ns body) (_gx#read-module path)))
         (let ((ctx (make-&context-module id ns path)))
           (parameterize ((&current-path (cons path (&current-path))))
-            (_gx#eval (make-AST (cons 'begin-module% body)
-                                (##make-locat path 0))
+            (_gx#eval (%make-AST (cons 'begin-module% body)
+                                 (##make-locat path 0))
                       ctx #f)
             (hash-put! _gx#*modules* path ctx)
             ctx)))))))
