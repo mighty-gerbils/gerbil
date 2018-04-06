@@ -234,6 +234,10 @@ package: gerbil/expander
   (declare-type
    gx#syntax-binding-e-set!
    (@struct-setf gx#syntax-binding::t 0 #f))
+  (declare-type gx#&syntax-binding-e (@struct-getf gx#syntax-binding::t 0 #t))
+  (declare-type
+   gx#&syntax-binding-e-set!
+   (@struct-setf gx#syntax-binding::t 0 #t))
   (declare-type
    gx#import-binding::t
    (@struct-type gx#import-binding::t gx#binding::t 3 #f ((final: . #t))))
@@ -255,6 +259,22 @@ package: gerbil/expander
   (declare-type
    gx#import-binding-weak?-set!
    (@struct-setf gx#import-binding::t 2 #f))
+  (declare-type gx#&import-binding-e (@struct-getf gx#import-binding::t 0 #t))
+  (declare-type
+   gx#&import-binding-context
+   (@struct-getf gx#import-binding::t 1 #t))
+  (declare-type
+   gx#&import-binding-weak?
+   (@struct-getf gx#import-binding::t 2 #t))
+  (declare-type
+   gx#&import-binding-e-set!
+   (@struct-setf gx#import-binding::t 0 #t))
+  (declare-type
+   gx#&import-binding-context-set!
+   (@struct-setf gx#import-binding::t 1 #t))
+  (declare-type
+   gx#&import-binding-weak?-set!
+   (@struct-setf gx#import-binding::t 2 #t))
   (declare-type
    gx#alias-binding::t
    (@struct-type gx#alias-binding::t gx#binding::t 1 #f ((final: . #t))))
@@ -264,6 +284,10 @@ package: gerbil/expander
   (declare-type
    gx#alias-binding-e-set!
    (@struct-setf gx#alias-binding::t 0 #f))
+  (declare-type gx#&alias-binding-e (@struct-getf gx#alias-binding::t 0 #t))
+  (declare-type
+   gx#&alias-binding-e-set!
+   (@struct-setf gx#alias-binding::t 0 #t))
   (declare-type gx#expander::t (@struct-type gx#expander::t #f 1 #f ()))
   (declare-type gx#expander? (@struct-pred gx#expander::t))
   (declare-type gx#make-expander (@struct-cons gx#expander::t))

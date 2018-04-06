@@ -106,6 +106,7 @@ package: gerbil/expander
   (declare-type gx#stx-false? (@lambda 1 #f))
   (declare-type gx#stx-identifier (@lambda (1) #f))
   (declare-type gx#stx-identifier-marks (@lambda 1 #f))
+  (declare-type gx#stx-identifier-marks* (@lambda 1 #f))
   (declare-type gx#stx-identifier-context (@lambda 1 #f))
   (declare-type gx#identifier-list? (@lambda 1 #f))
   (begin

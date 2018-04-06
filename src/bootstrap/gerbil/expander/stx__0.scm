@@ -477,11 +477,15 @@
        (apply make-symbol (map gx#stx-e _args5957_))
        (gx#stx-source _template5956_))))
   (define gx#stx-identifier-marks
+    (lambda (_stx5954_)
+      (gx#stx-identifier-marks* (gx#stx-unwrap__0 _stx5954_))))
+  (define gx#stx-identifier-marks*
     (lambda (_stx5952_)
-      (let ((_stx5954_ (gx#stx-unwrap__0 _stx5952_)))
-        (if (##structure-direct-instance-of? _stx5954_ 'gx#identifier-wrap::t)
-            (##unchecked-structure-ref _stx5954_ '3 gx#identifier-wrap::t '#f)
-            (##unchecked-structure-ref _stx5954_ '4 gx#syntax-quote::t '#f)))))
+      (if (##structure-direct-instance-of? _stx5952_ 'gx#identifier-wrap::t)
+          (##unchecked-structure-ref _stx5952_ '3 gx#identifier-wrap::t '#f)
+          (if (##structure-direct-instance-of? _stx5952_ 'gx#syntax-quote::t)
+              (##unchecked-structure-ref _stx5952_ '4 gx#syntax-quote::t '#f)
+              (error '"Bad wrap; expected unwrapped identifier" _stx5952_)))))
   (define gx#stx-identifier-context
     (lambda (_stx5948_)
       (let ((_stx5950_ (gx#stx-unwrap__0 _stx5948_)))
