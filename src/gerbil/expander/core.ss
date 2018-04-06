@@ -401,6 +401,7 @@ namespace: gx
 
 ;;; expander application
 (def (core-apply-expander K stx (method 'apply-macro-expander))
+  (declare (not safe))
   (cond
    ((procedure? K)
     (cond

@@ -7,6 +7,7 @@ namespace: gx
 
 (export #t)
 (import "common" "stx" "core")
+(declare (not safe))
 
 (def (core-compile-top-syntax stx)
   (core-syntax-case stx ()
