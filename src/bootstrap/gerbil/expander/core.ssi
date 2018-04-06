@@ -206,6 +206,8 @@ namespace: gx
          (%#define-runtime make-syntax-binding gx#make-syntax-binding)
          (%#define-runtime syntax-binding-e gx#syntax-binding-e)
          (%#define-runtime syntax-binding-e-set! gx#syntax-binding-e-set!)
+         (%#define-runtime &syntax-binding-e gx#&syntax-binding-e)
+         (%#define-runtime &syntax-binding-e-set! gx#&syntax-binding-e-set!)
          (%#define-syntax syntax-binding |gx[:0:]#syntax-binding|)
          (%#define-runtime import-binding::t gx#import-binding::t)
          (%#define-runtime import-binding? gx#import-binding?)
@@ -220,12 +222,24 @@ namespace: gx
          (%#define-runtime
           import-binding-weak?-set!
           gx#import-binding-weak?-set!)
+         (%#define-runtime &import-binding-e gx#&import-binding-e)
+         (%#define-runtime &import-binding-context gx#&import-binding-context)
+         (%#define-runtime &import-binding-weak? gx#&import-binding-weak?)
+         (%#define-runtime &import-binding-e-set! gx#&import-binding-e-set!)
+         (%#define-runtime
+          &import-binding-context-set!
+          gx#&import-binding-context-set!)
+         (%#define-runtime
+          &import-binding-weak?-set!
+          gx#&import-binding-weak?-set!)
          (%#define-syntax import-binding |gx[:0:]#import-binding|)
          (%#define-runtime alias-binding::t gx#alias-binding::t)
          (%#define-runtime alias-binding? gx#alias-binding?)
          (%#define-runtime make-alias-binding gx#make-alias-binding)
          (%#define-runtime alias-binding-e gx#alias-binding-e)
          (%#define-runtime alias-binding-e-set! gx#alias-binding-e-set!)
+         (%#define-runtime &alias-binding-e gx#&alias-binding-e)
+         (%#define-runtime &alias-binding-e-set! gx#&alias-binding-e-set!)
          (%#define-syntax alias-binding |gx[:0:]#alias-binding|)
          (%#define-runtime expander::t gx#expander::t)
          (%#define-runtime expander? gx#expander?)

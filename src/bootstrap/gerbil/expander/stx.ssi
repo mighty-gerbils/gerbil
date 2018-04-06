@@ -91,6 +91,7 @@ namespace: gx
          (%#define-runtime stx-false? gx#stx-false?)
          (%#define-runtime stx-identifier gx#stx-identifier)
          (%#define-runtime stx-identifier-marks gx#stx-identifier-marks)
+         (%#define-runtime stx-identifier-marks* gx#stx-identifier-marks*)
          (%#define-runtime stx-identifier-context gx#stx-identifier-context)
          (%#define-runtime identifier-list? gx#identifier-list?)
          (%#begin (%#define-runtime genident__% gx#genident__%)
