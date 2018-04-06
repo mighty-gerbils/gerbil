@@ -85,13 +85,13 @@ namespace: gx
 ;; compile time bindings
 (defstruct (syntax-binding binding) (e)
   id: gx#syntax-binding::t
-  final: #t)
+  final: #t unchecked: #t)
 (defstruct (import-binding binding) (e context weak?)
   id: gx#import-binding::t
-  final: #t)
+  final: #t unchecked: #t)
 (defstruct (alias-binding binding) (e)
   id: gx#alias-binding::t
-  final: #t)
+  final: #t unchecked: #t)
 
 ;; expanders [syntax-binding-e]
 (defstruct expander (e)
@@ -184,11 +184,11 @@ namespace: gx
     (let (bind (if (binding? form) form (resolve-identifier form)))
       (cond
        ((core-expander-binding? bind)
-        (core-apply-expander (syntax-binding-e bind)
+        (core-apply-expander (&syntax-binding-e bind)
           (stx-wrap-source hd (stx-source stx))))
        ((syntax-binding? bind)
         (core-expand-expression
-         (core-apply-expander (syntax-binding-e bind)
+         (core-apply-expander (&syntax-binding-e bind)
            (stx-wrap-source hd (stx-source stx)))))
        (else
         (raise-syntax-error #f "Bad syntax; missing expander" stx form)))))
@@ -240,7 +240,7 @@ namespace: gx
       (cond
        ((runtime-binding? bind) stx)
        ((syntax-binding? bind)
-        (core-apply-expander (syntax-binding-e bind) stx))
+        (core-apply-expander (&syntax-binding-e bind) stx))
        ((not bind) stx)
        (else
         (raise-syntax-error #f "Bad syntax" stx)))))
@@ -464,9 +464,9 @@ namespace: gx
   (let lp ((bind (core-resolve-identifier stx phi ctx)))
     (cond
      ((import-binding? bind)
-      (lp (import-binding-e bind)))
+      (lp (&import-binding-e bind)))
      ((alias-binding? bind)
-      (lp (core-resolve-identifier (alias-binding-e bind) phi ctx)))
+      (lp (core-resolve-identifier (&alias-binding-e bind) phi ctx)))
      (else bind))))
 
 (def (bind-identifier! stx val
@@ -539,7 +539,7 @@ namespace: gx
     (cond
      ((or (rebind? ctx xval val)
           (and (import-binding? xval)
-               (or (import-binding-weak? xval)
+               (or (&import-binding-weak? xval)
                    (and (binding? val)
                         (not (import-binding? val)))))
           (and (extern-binding? xval)
@@ -547,7 +547,7 @@ namespace: gx
                (eq? (&binding-id val) (&binding-id xval))))
       val)
      ((and (import-binding? val)
-           (or (import-binding-weak? val)
+           (or (&import-binding-weak? val)
                (and (binding? xval)
                     (eq? (&binding-id val) (&binding-id xval)))))
       xval)
@@ -555,10 +555,10 @@ namespace: gx
            (binding? xval))
       ;; common case: be somewhat more friendly to the user at fault
       (raise-syntax-error #f "Bad binding; import conflict" key
-                          [(&binding-id val) (expander-context-id (import-binding-context val))]
+                          [(&binding-id val) (expander-context-id (&import-binding-context val))]
                           [(&binding-id xval)
                            (if (import-binding? xval)
-                             (expander-context-id (import-binding-context xval))
+                             (expander-context-id (&import-binding-context xval))
                              xval)]))
      (else
       (raise-syntax-error #f "Bad binding; rebind conflict" key val xval))))
@@ -697,7 +697,7 @@ namespace: gx
 ;;; etc
 (def (expander-binding? bind (is? expander?))
   (and (syntax-binding? bind)
-       (is? (syntax-binding-e bind))))
+       (is? (&syntax-binding-e bind))))
 
 (def (core-expander-binding? bind)
   (expander-binding? bind core-expander?))
@@ -800,7 +800,7 @@ namespace: gx
 (def (syntax-local-e stx (E raise-syntax-ref-error))
   (let (bind (resolve-identifier stx))
     (if (syntax-binding? bind)
-      (syntax-binding-e bind)
+      (&syntax-binding-e bind)
       (E stx))))
 
 (def (syntax-local-value stx (E raise-syntax-ref-error))

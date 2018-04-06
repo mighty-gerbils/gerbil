@@ -186,8 +186,8 @@ namespace: gx
             ([id . rest]
              (let (bind (resolve-identifier id 0 ctx))
                (if (and (syntax-binding? bind)
-                        (module-context? (syntax-binding-e bind)))
-                 (lp rest (syntax-binding-e bind))
+                        (module-context? (&syntax-binding-e bind)))
+                 (lp rest (&syntax-binding-e bind))
                  (error "Cannot import submodule; not bound as a module" rpath id bind))))
             (else ctx))))))
 
@@ -822,10 +822,10 @@ namespace: gx
            ((id . rest)
             (let (bind (resolve-identifier id 0 ctx))
               (unless (and (syntax-binding? bind)
-                           (module-context? (syntax-binding-e bind)))
+                           (module-context? (&syntax-binding-e bind)))
                 (raise-syntax-error #f "Bad syntax; not bound as module"
                                     where spath id))
-              (lp rest (syntax-binding-e bind))))
+              (lp rest (&syntax-binding-e bind))))
            (else ctx)))))))
 
 (def (core-expand-import-source hd)
