@@ -55,10 +55,12 @@ namespace: gx
               (in   (map core-module-export->import
                          (module-context-export ctx)))
               (e    (delay (eval-module ctx))))
-          (struct-instance-init! self id (make-hash-table-eq) super #f #f
+          (struct-instance-init! self id (make-hash-table-eq size: (length in))
+                                 super #f #f
                                  path in e)
           (for-each (cut core-bind-weak-import! <> self) in))
-        (struct-instance-init! self #f (make-hash-table-eq) super #f #f
+        (struct-instance-init! self #f (make-hash-table-eq)
+                               super #f #f
                                #f [] #f)))))
 
 (def (import-export-expander-init! self e)
