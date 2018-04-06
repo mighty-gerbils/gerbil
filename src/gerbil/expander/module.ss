@@ -501,6 +501,7 @@ namespace: gx
 (def (core-bind-import! in
                         (ctx (current-expander-context))
                         (force-weak? #f))
+  (declare (not safe))
   (with ((module-import source key phi weak?) in)
     (core-bind! key
       (let (e (core-resolve-module-export source))
@@ -831,6 +832,8 @@ namespace: gx
   (core-expand-import% ['import-internal% hd] #t))
 
 (def (core-expand-export% stx (internal-expand? #f))
+  (declare (not safe))
+
   (def (make-export bind
                     (phi (current-export-expander-phi))
                     (ctx (current-expander-context))
