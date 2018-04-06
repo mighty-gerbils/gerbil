@@ -483,6 +483,7 @@ namespace: gx
 (def (core-resolve-identifier stx
                               (phi (current-expander-phi))
                               (ctx (current-expander-context)))
+  (declare (not safe))
   (let lp ((e stx) (marks (current-expander-marks)))
     (cond
      ((symbol? e)
@@ -587,6 +588,7 @@ namespace: gx
                       update-binding))
 
 (def (core-identifier-key stx)
+  (declare (not safe))
   (cond
    ((symbol? stx)
     (match (current-expander-marks)
@@ -595,7 +597,7 @@ namespace: gx
    ((identifier? stx)
     (let* ((id (syntax-local-unwrap stx))
            (eid (stx-e id))
-           (marks (stx-identifier-marks id)))
+           (marks (stx-identifier-marks* id)))
       (match marks
         ([hd . _]
          (cons eid hd))

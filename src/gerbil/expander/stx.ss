@@ -272,10 +272,16 @@ namespace: gx
                  (stx-source template)))
 
 (def (stx-identifier-marks stx)
-  (let (stx (stx-unwrap stx))
-    (if (identifier-wrap? stx)
-      (&identifier-wrap-marks stx)
-      (&syntax-quote-marks stx))))
+  (stx-identifier-marks* (stx-unwrap stx)))
+
+(def (stx-identifier-marks* stx)
+  (cond
+   ((identifier-wrap? stx)
+    (&identifier-wrap-marks stx))
+   ((syntax-quote? stx)
+    (&syntax-quote-marks stx))
+   (else
+    (error "Bad wrap; expected unwrapped identifier" stx))))
 
 (def (stx-identifier-context stx)
   (let (stx (stx-unwrap stx))
