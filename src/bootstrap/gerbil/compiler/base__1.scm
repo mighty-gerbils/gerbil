@@ -1,39 +1,50 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |gxc[1]#_g4791_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'symbol-table::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g4792_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'make-symbol-table
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g4793_|
-    (gx#make-syntax-quote 'symbol-table? #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'symbol-table?
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gxc[1]#_g4794_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'symbol-table-gensyms
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g4795_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'symbol-table-bindings
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g4796_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'symbol-table-gensyms-set!
      #f
      (gx#current-expander-context)
      '()))
   (define |gxc[1]#_g4797_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'symbol-table-bindings-set!
      #f
      (gx#current-expander-context)

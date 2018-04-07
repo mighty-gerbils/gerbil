@@ -1,13 +1,28 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41220_|
-    (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'values
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41221_|
-    (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'values
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41224_|
-    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'else
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<sugar>$<sugar:1>[1]#_g41225_|
-    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t '=> #f (gx#current-expander-context) '()))
   (begin
     (define |gerbil/core$<sugar>$<sugar:1>[:0:]#defrules|
       (lambda (_$stx1684_)

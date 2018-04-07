@@ -1,7 +1,12 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |gerbil/core$<MOP>$<MOP:2>[1]#_g41349_|
-    (gx#make-syntax-quote '@method #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     '@method
+     #f
+     (gx#current-expander-context)
+     '()))
   (begin
     (define |gerbil/core$<MOP>$<MOP:2>[1]#runtime-type-info::t|
       (make-class-type
