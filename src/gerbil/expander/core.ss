@@ -602,6 +602,14 @@ namespace: gx
     (raise-syntax-error #f "Bad identifier" stx))))
 
 ;;; context ops
+(cond-expand
+  (gerbil-core
+   (defrules &phi-context? ()
+     ((_ ctx)
+      (fx> (##vector-length ctx) 3))))
+  (else
+   (def &phi-context? phi-context?)))
+
 (def (core-context-shift ctx phi)
   (def (make-phi super)
     (make-phi-context (gensym 'phi) super))
@@ -631,7 +639,7 @@ namespace: gx
   (let K ((ctx ctx) (phi phi))
     (cond
      ((fxzero? phi) ctx)
-     ((phi-context? ctx)
+     ((&phi-context? ctx)
       (if (fxpositive? phi)
         (cond
          ((&phi-context-up ctx) => (cut K <> (fx1- phi)))
@@ -652,7 +660,7 @@ namespace: gx
   (let lp ((ctx ctx))
     (cond
      ((core-context-get ctx key) => values)
-     ((and (phi-context? ctx) (&phi-context-super ctx)) => lp)
+     ((and (&phi-context? ctx) (&phi-context-super ctx)) => lp)
      (else #f))))
 
 (def (core-context-bind! ctx key val rebind)
@@ -674,7 +682,7 @@ namespace: gx
 (def (core-context-root (ctx (current-expander-context)))
   (let lp ((ctx ctx))
     (if (phi-context? ctx)
-      (lp (phi-context-super ctx))
+      (lp (&phi-context-super ctx))
       ctx)))
 
 (def (core-context-rebind? (ctx (current-expander-context)) . _)
