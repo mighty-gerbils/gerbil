@@ -198,22 +198,21 @@ namespace: gx
     (cond
      ((sealed-expression? hd) hd)
      ((stx-pair? hd)
-      (core-syntax-case hd ()
-        ((form . _)
-         (let (bind (and (identifier? form) (resolve-identifier form)))
-           (cond
-            ((or (not bind)
-                 (not (core-expander-binding? bind)))
-             (expand-e '%%app ['%%app . hd]))
-            ((eq? (&binding-id bind) '%#begin)
-             (core-expand-block* hd illegal-expression))
-            ((expression-form-binding? bind)
-             (expand-e bind hd))
-            ((direct-special-form-binding? bind)
-             (core-expand-expression
-              (expand-e bind hd)))
-            (else
-             (illegal-expression hd)))))))
+      (let* ((form (stx-car hd))
+             (bind (and (identifier? form) (resolve-identifier form))))
+        (cond
+         ((or (not bind)
+              (not (core-expander-binding? bind)))
+          (expand-e '%%app ['%%app . hd]))
+         ((eq? (&binding-id bind) '%#begin)
+          (core-expand-block* hd illegal-expression))
+         ((expression-form-binding? bind)
+          (expand-e bind hd))
+         ((direct-special-form-binding? bind)
+          (core-expand-expression
+           (expand-e bind hd)))
+         (else
+          (illegal-expression hd)))))
      ((core-bound-identifier? hd)
       (illegal-expression hd))
      ((identifier? hd)
