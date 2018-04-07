@@ -60,22 +60,27 @@
     (error "Cannot load module; not found" modpath))))
 
 (define (find-library-module modpath)
+  (declare (not safe))
+
+  (define (path-exists? path)
+    (not (fixnum? (##os-file-info path #f))))
+
   (define (find-compiled-file npath)
-    (let ((basepath (string-append npath ".o")))
+    (let ((basepath (##string-append npath ".o")))
       (let lp ((current #f) (n 1))
-        (let ((next (string-append basepath (number->string n))))
-          (if (file-exists? next)
+        (let ((next (##string-append basepath (##number->string n))))
+          (if (path-exists? next)
             (lp next (##fx+ n 1))
             current)))))
 
   (define (find-source-file npath)
-    (let ((spath (string-append npath ".scm")))
-      (and (file-exists? spath) spath)))
+    (let ((spath (##string-append npath ".scm")))
+      (and (path-exists? spath) spath)))
 
   (let lp ((rest (&current-module-libpath)))
     (core-match rest
       ((dir . rest)
-       (let ((npath (path-expand modpath dir)))
+       (let ((npath (path-expand modpath (path-expand dir))))
          (cond
           ((find-compiled-file npath) => path-normalize)
           ((find-source-file npath) => path-normalize)
@@ -87,8 +92,9 @@
     (time->seconds
      (file-info-last-modification-time
       (file-info file #t))))
-  (> (modification-time file1)
-     (modification-time file2)))
+
+  (##fl> (modification-time file1)
+         (modification-time file2)))
 
 ;; hook for loading compiled module phases
 ;; when this parameter is set, phase modules will be reloaded

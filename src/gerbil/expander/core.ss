@@ -7,6 +7,7 @@ namespace: gx
 
 (export #t)
 (import "common" "stx")
+(declare (not safe))
 
 ;;; expander environment
 (def current-expander-context
@@ -197,22 +198,21 @@ namespace: gx
     (cond
      ((sealed-expression? hd) hd)
      ((stx-pair? hd)
-      (core-syntax-case hd ()
-        ((form . _)
-         (let (bind (and (identifier? form) (resolve-identifier form)))
-           (cond
-            ((or (not bind)
-                 (not (core-expander-binding? bind)))
-             (expand-e '%%app ['%%app . hd]))
-            ((eq? (&binding-id bind) '%#begin)
-             (core-expand-block* hd illegal-expression))
-            ((expression-form-binding? bind)
-             (expand-e bind hd))
-            ((direct-special-form-binding? bind)
-             (core-expand-expression
-              (expand-e bind hd)))
-            (else
-             (illegal-expression hd)))))))
+      (let* ((form (stx-car hd))
+             (bind (and (identifier? form) (resolve-identifier form))))
+        (cond
+         ((or (not bind)
+              (not (core-expander-binding? bind)))
+          (expand-e '%%app ['%%app . hd]))
+         ((eq? (&binding-id bind) '%#begin)
+          (core-expand-block* hd illegal-expression))
+         ((expression-form-binding? bind)
+          (expand-e bind hd))
+         ((direct-special-form-binding? bind)
+          (core-expand-expression
+           (expand-e bind hd)))
+         (else
+          (illegal-expression hd)))))
      ((core-bound-identifier? hd)
       (illegal-expression hd))
      ((identifier? hd)
@@ -401,7 +401,6 @@ namespace: gx
 
 ;;; expander application
 (def (core-apply-expander K stx (method 'apply-macro-expander))
-  (declare (not safe))
   (cond
    ((procedure? K)
     (cond
@@ -484,7 +483,6 @@ namespace: gx
 (def (core-resolve-identifier stx
                               (phi (current-expander-phi))
                               (ctx (current-expander-context)))
-  (declare (not safe))
   (let lp ((e stx) (marks (current-expander-marks)))
     (cond
      ((symbol? e)
@@ -508,8 +506,6 @@ namespace: gx
 ;;  original source: id
 ;;  macro introduced: [id . top-mark] => subst => eid
 (def (core-resolve-binding id phi src-phi ctx marks)
-  (declare (not safe))
-
   (def (resolve ctx src-phi key)
     (let lp ((ctx (core-context-shift ctx phi)) (dphi (fx- phi src-phi)))
       (cond
@@ -589,7 +585,6 @@ namespace: gx
                       update-binding))
 
 (def (core-identifier-key stx)
-  (declare (not safe))
   (cond
    ((symbol? stx)
     (match (current-expander-marks)
@@ -607,9 +602,15 @@ namespace: gx
     (raise-syntax-error #f "Bad identifier" stx))))
 
 ;;; context ops
-(def (core-context-shift ctx phi)
-  (declare (not safe))
+(cond-expand
+  (gerbil-core
+   (defrules &phi-context? ()
+     ((_ ctx)
+      (fx> (##vector-length ctx) 3))))
+  (else
+   (def &phi-context? phi-context?)))
 
+(def (core-context-shift ctx phi)
   (def (make-phi super)
     (make-phi-context (gensym 'phi) super))
 
@@ -638,7 +639,7 @@ namespace: gx
   (let K ((ctx ctx) (phi phi))
     (cond
      ((fxzero? phi) ctx)
-     ((phi-context? ctx)
+     ((&phi-context? ctx)
       (if (fxpositive? phi)
         (cond
          ((&phi-context-up ctx) => (cut K <> (fx1- phi)))
@@ -659,7 +660,7 @@ namespace: gx
   (let lp ((ctx ctx))
     (cond
      ((core-context-get ctx key) => values)
-     ((and (phi-context? ctx) (&phi-context-super ctx)) => lp)
+     ((and (&phi-context? ctx) (&phi-context-super ctx)) => lp)
      (else #f))))
 
 (def (core-context-bind! ctx key val rebind)
@@ -681,7 +682,7 @@ namespace: gx
 (def (core-context-root (ctx (current-expander-context)))
   (let lp ((ctx ctx))
     (if (phi-context? ctx)
-      (lp (phi-context-super ctx))
+      (lp (&phi-context-super ctx))
       ctx)))
 
 (def (core-context-rebind? (ctx (current-expander-context)) . _)

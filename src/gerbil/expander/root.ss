@@ -7,6 +7,7 @@ namespace: gx
 
 (export #t)
 (import "common" "core" "top" "module" "compile")
+(declare (not safe))
 
 ;;; expanded core-syntax
 ;; top-form:

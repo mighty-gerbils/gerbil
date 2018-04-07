@@ -1,11 +1,26 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |gx[1]#_g5042_|
-    (gx#make-syntax-quote 'error::t #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'error::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gx[1]#_g5043_|
-    (gx#make-syntax-quote 'AST::t #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'AST::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gx[1]#_g5044_|
-    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'else
+     #f
+     (gx#current-expander-context)
+     '()))
   (begin
     (define |gx[:0:]#<error>|
       (|gerbil/core$<MOP>$<MOP:2>[1]#make-runtime-struct-info|

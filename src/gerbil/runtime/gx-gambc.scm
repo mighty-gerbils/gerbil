@@ -164,11 +164,14 @@
   (parameterize ((_gx#loading-scheme-source 'macro))
     (apply _gx#real-macro-descr args)))
 
+(define-macro (%make-AST e source)
+  `(##structure AST::t ,e ,source))
+
 (define (_gx#source->syntax src)
   (let recur ((e src))
     (cond
      ((##source? e)
-      (make-AST (recur (##source-code e)) (##source-locat e)))
+      (%make-AST (recur (##source-code e)) (##source-locat e)))
      ((pair? e)
       (cons (recur (##car e))
             (recur (##cdr e))))

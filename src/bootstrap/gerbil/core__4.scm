@@ -1,45 +1,88 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41262_|
-    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41263_|
-    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'else
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41264_|
-    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41300_|
-    (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'values
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41301_|
-    (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'values
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41302_|
-    (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'values
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41307_|
-    (gx#make-syntax-quote 'unquote #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'unquote
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41308_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'unquote-splicing
      #f
      (gx#current-expander-context)
      '()))
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41309_|
-    (gx#make-syntax-quote 'quasiquote #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'quasiquote
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41310_|
-    (gx#make-syntax-quote 'unquote #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'unquote
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41311_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'unquote-splicing
      #f
      (gx#current-expander-context)
      '()))
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41312_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'unquote-splicing
      #f
      (gx#current-expander-context)
      '()))
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41313_|
-    (gx#make-syntax-quote '<> #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t '<> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<sugar>$<sugar:2>[1]#_g41314_|
-    (gx#make-syntax-quote '<...> #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     '<...>
+     #f
+     (gx#current-expander-context)
+     '()))
   (begin
     (define |gerbil/core$<sugar>$<sugar:2>[:0:]#lambda|
       (lambda (_stx4923_)

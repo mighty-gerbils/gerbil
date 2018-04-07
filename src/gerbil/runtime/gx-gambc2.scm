@@ -8,6 +8,7 @@
   (block)
   (standard-bindings)
   (extended-bindings))
+(declare (not safe))
 
 ;; core [top] syntax -> gambit runtime compiler
 (define (&SRC e #!optional (src-stx #f))
@@ -25,11 +26,18 @@
         (if (##values? obj) (##vector->list obj) obj)
         k))))
 
+(define-macro (%&syntax-e obj)
+  `(##vector-ref ,obj 1))
+
 (define (_gx#compile stx)
   (core-ast-case stx ()
     ((form . _)
-     (&core-bound-id? form &core-form?)
-     ((&syntax-e (&core-resolve form)) stx))))
+     (cond
+      ((&core-resolve form)
+       => (lambda (bind)
+            ((%&syntax-e bind) stx)))
+      (else
+       (_gx#raise-syntax-error #f "Bad syntax" stx form))))))
 
 (define (_gx#compile-error stx #!optional (detail #f))
   (_gx#raise-syntax-error 'compile "Bad syntax; cannot compile" stx detail))
@@ -40,7 +48,7 @@
 (define (_gx#compile-begin% stx)
   (core-ast-case stx ()
     ((_ . body)
-     (&SRC (cons '##begin (map _gx#compile (&AST->list body))) stx))))
+     (&SRC (cons '##begin (map _gx#compile body)) stx))))
 
 (define (_gx#compile-begin-foreign% stx)
   (core-ast-case stx ()
@@ -50,12 +58,12 @@
 (define (_gx#compile-import% stx)
   (core-ast-case stx ()
     ((_ . body)
-     (&SRC `(_gx#eval-import (##quote ,(&AST->list body))) stx))))
+     (&SRC `(_gx#eval-import (##quote ,body)) stx))))
 
 (define (_gx#compile-begin-annotation% stx)
   (core-ast-case stx ()
-    ((_ . body)
-     (&SRC (cons '##begin (map _gx#compile (&AST->list body))) stx))))
+    ((_ ann expr)
+     (_gx#compile expr))))
 
 (define (_gx#compile-define-values% stx)
   (core-ast-case stx ()

@@ -1,53 +1,108 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |gerbil/core$<match>[1]#_g41365_|
-    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41366_|
-    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41367_|
-    (gx#make-syntax-quote 'quote #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'quote
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[1]#_g41368_|
-    (gx#make-syntax-quote 'quasiquote #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'quasiquote
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[1]#_g41369_|
-    (gx#make-syntax-quote 'apply #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'apply
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[1]#_g41370_|
-    (gx#make-syntax-quote '? #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t '? #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41371_|
-    (gx#make-syntax-quote 'and #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t 'and #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41372_|
-    (gx#make-syntax-quote 'or #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t 'or #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41373_|
-    (gx#make-syntax-quote 'not #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t 'not #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41374_|
-    (gx#make-syntax-quote 'cons #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'cons
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[1]#_g41375_|
-    (gx#make-syntax-quote 'cons* #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'cons*
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[1]#_g41376_|
-    (gx#make-syntax-quote '@list #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     '@list
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[1]#_g41377_|
-    (gx#make-syntax-quote 'box #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t 'box #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41378_|
-    (gx#make-syntax-quote 'values #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'values
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[1]#_g41379_|
-    (gx#make-syntax-quote 'vector #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'vector
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[1]#_g41388_|
-    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'else
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[1]#_g41393_|
-    (gx#make-syntax-quote 'else #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'else
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[1]#_g41394_|
-    (gx#make-syntax-quote '<> #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t '<> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41395_|
-    (gx#make-syntax-quote '<...> #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     '<...>
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gerbil/core$<match>[1]#_g41400_|
-    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41401_|
-    (gx#make-syntax-quote '=> #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t '=> #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41402_|
-    (gx#make-syntax-quote 'and #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t 'and #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41403_|
-    (gx#make-syntax-quote 'or #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t 'or #f (gx#current-expander-context) '()))
   (define |gerbil/core$<match>[1]#_g41404_|
-    (gx#make-syntax-quote 'not #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t 'not #f (gx#current-expander-context) '()))
   (begin
     (define |gerbil/core$<match>[1]#match-macro::t|
       (make-class-type

@@ -1079,14 +1079,17 @@ namespace: gxc
     (set! (box (current-compile-lift))
       (cons expr (unbox (current-compile-lift)))))
 
+  (def (generate-syntax-quote id marks)
+    ['##structure 'gx#syntax-quote::t
+                  ['quote id]
+                  #f
+                  '(gx#current-expander-context)
+                  marks])
+
   (def (generate-simple stxq)
     (let ((gid (generate-runtime-temporary #t))
           (qid (generate-runtime-identifier stxq)))
-      (add-lift! ['define gid
-                   ['gx#make-syntax-quote ['quote qid]
-                                          #f
-                                          ['gx#current-expander-context]
-                                          ['quote []]]])
+      (add-lift! ['define gid (generate-syntax-quote qid '(quote ()))])
       (hash-put! (current-compile-identifiers) stxq gid)
       gid))
 
@@ -1094,11 +1097,7 @@ namespace: gxc
     (let* ((mark-refs (map generate-mark marks))
            (gid (generate-runtime-temporary #t))
            (qid (generate-runtime-identifier stxq)))
-      (add-lift! ['define gid
-                   ['gx#make-syntax-quote ['quote qid]
-                                          #f
-                                          ['gx#current-expander-context]
-                                          ['list mark-refs ...]]])
+      (add-lift! ['define gid (generate-syntax-quote qid ['list mark-refs ...])])
       (hash-put! (current-compile-identifiers) stxq gid)
       gid))
 
@@ -1112,7 +1111,7 @@ namespace: gxc
              (ctx (core-context-top (expander-mark-context mark)))
              (ctx-ref
               (if (eq? ctx (current-expander-context))
-                ['gx#current-expander-context]
+                '(gx#current-expander-context)
                 ['gx#import-module ['quote (context-ref ctx)]])))
         (hash-put! (current-compile-marks) mark gid)
         (add-lift! ['define gid

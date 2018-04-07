@@ -2,16 +2,18 @@
 (begin
   (define |gerbil/gambit/exact[1]#_g583_|
     (gx#core-deserialize-mark
-     '(0 (ref . _ref522_) (_obj482_ . _%563_))
+     '(0 (_obj482_ . _%563_) (ref . _ref522_))
      (gx#import-module '(:gerbil/core <sugar> <sugar:3>))))
   (define |gerbil/gambit/exact[1]#_g584_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'syntax
      #f
      (gx#current-expander-context)
      (list |gerbil/gambit/exact[1]#_g583_|)))
   (define |gerbil/gambit/exact[1]#_g585_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'lambda
      #f
      (gx#current-expander-context)

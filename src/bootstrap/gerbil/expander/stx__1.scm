@@ -1,99 +1,129 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |gx[1]#_g6321_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'identifier-wrap::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6322_|
-    (gx#make-syntax-quote 'AST::t #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'AST::t
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gx[1]#_g6323_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'make-identifier-wrap
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6324_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'identifier-wrap?
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6325_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'identifier-wrap-marks
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6326_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'identifier-wrap-marks-set!
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6327_|
-    (gx#make-syntax-quote 'AST #f (gx#current-expander-context) '()))
+    (##structure gx#syntax-quote::t 'AST #f (gx#current-expander-context) '()))
   (define |gx[1]#_g6328_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'syntax-wrap::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6329_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'make-syntax-wrap
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6330_|
-    (gx#make-syntax-quote 'syntax-wrap? #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'syntax-wrap?
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gx[1]#_g6331_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'syntax-wrap-mark
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6332_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'syntax-wrap-mark-set!
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6333_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'syntax-quote::t
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6334_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'make-syntax-quote
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6335_|
-    (gx#make-syntax-quote 'syntax-quote? #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'syntax-quote?
+     #f
+     (gx#current-expander-context)
+     '()))
   (define |gx[1]#_g6336_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'syntax-quote-context
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6337_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'syntax-quote-marks
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6338_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'syntax-quote-context-set!
      #f
      (gx#current-expander-context)
      '()))
   (define |gx[1]#_g6339_|
-    (gx#make-syntax-quote
+    (##structure
+     gx#syntax-quote::t
      'syntax-quote-marks-set!
      #f
      (gx#current-expander-context)

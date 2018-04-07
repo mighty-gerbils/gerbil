@@ -1,7 +1,12 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
   (define |gerbil/core$<sugar>$<sugar:3>[1]#_g41323_|
-    (gx#make-syntax-quote 'quote #f (gx#current-expander-context) '()))
+    (##structure
+     gx#syntax-quote::t
+     'quote
+     #f
+     (gx#current-expander-context)
+     '()))
   (begin
     (define |gerbil/core$<sugar>$<sugar:3>[:0:]#defsyntax|
       (lambda (_$stx16533_)
