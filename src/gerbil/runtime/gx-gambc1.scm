@@ -8,6 +8,7 @@
   (block)
   (standard-bindings)
   (extended-bindings))
+(declare (not safe))
 
 ;;; gerbil ASTs
 (define-struct AST (e source)
@@ -17,6 +18,9 @@
 (define-macro (%make-AST e source)
   `(##structure AST::t ,e ,source))
 
+(define-macro (%AST? e)
+  `(##structure-instance-of? ,e 'gerbil#AST::t))
+
 (define-macro (%AST-e e)
   `(##vector-ref ,e 1))
 
@@ -25,18 +29,18 @@
 
 (define (&AST e src-stx)
   (let ((src (&AST-source src-stx)))
-    (if (or (AST? e) (not src)) e
+    (if (or (%AST? e) (not src)) e
         (%make-AST e src))))
 
 (define (&AST-e stx)
-  (if (AST? stx)
+  (if (%AST? stx)
     (%AST-e stx)
     stx))
 
 (define (&AST-source stx)
   (let lp ((src stx))
     (cond
-     ((AST? src)
+     ((%AST? src)
       (lp (%AST-source src)))
      ((##locat? src) src)
      (else #f))))
@@ -88,7 +92,7 @@
 
 (define (&AST->datum stx)
   (cond
-   ((AST? stx)
+   ((%AST? stx)
     (&AST->datum (%AST-e stx)))
    ((pair? stx)
     (cons (&AST->datum (car stx))
@@ -210,7 +214,6 @@
             (else #f))))))
 
 (define (&core-bound-id? id #!optional (is? true))
-  (declare (not safe))
   (cond
    ((&core-resolve id) => is?)
    (else #f)))
