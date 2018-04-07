@@ -7,6 +7,7 @@ namespace: gx
 
 (export #t)
 (import "common" "stx")
+(declare (not safe))
 
 ;;; expander environment
 (def current-expander-context
@@ -401,7 +402,6 @@ namespace: gx
 
 ;;; expander application
 (def (core-apply-expander K stx (method 'apply-macro-expander))
-  (declare (not safe))
   (cond
    ((procedure? K)
     (cond
@@ -484,7 +484,6 @@ namespace: gx
 (def (core-resolve-identifier stx
                               (phi (current-expander-phi))
                               (ctx (current-expander-context)))
-  (declare (not safe))
   (let lp ((e stx) (marks (current-expander-marks)))
     (cond
      ((symbol? e)
@@ -508,8 +507,6 @@ namespace: gx
 ;;  original source: id
 ;;  macro introduced: [id . top-mark] => subst => eid
 (def (core-resolve-binding id phi src-phi ctx marks)
-  (declare (not safe))
-
   (def (resolve ctx src-phi key)
     (let lp ((ctx (core-context-shift ctx phi)) (dphi (fx- phi src-phi)))
       (cond
@@ -589,7 +586,6 @@ namespace: gx
                       update-binding))
 
 (def (core-identifier-key stx)
-  (declare (not safe))
   (cond
    ((symbol? stx)
     (match (current-expander-marks)
@@ -608,8 +604,6 @@ namespace: gx
 
 ;;; context ops
 (def (core-context-shift ctx phi)
-  (declare (not safe))
-
   (def (make-phi super)
     (make-phi-context (gensym 'phi) super))
 

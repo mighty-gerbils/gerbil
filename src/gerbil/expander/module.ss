@@ -7,6 +7,7 @@ namespace: gx
 
 (export #t)
 (import "common" "stx" "core" "top")
+(declare (not safe))
 
 (defstruct module-import (source name phi weak?)
   id: gx#module-import::t
@@ -501,7 +502,6 @@ namespace: gx
 (def (core-bind-import! in
                         (ctx (current-expander-context))
                         (force-weak? #f))
-  (declare (not safe))
   (with ((module-import source key phi weak?) in)
     (core-bind! key
       (let (e (core-resolve-module-export source))
@@ -629,8 +629,6 @@ namespace: gx
     expand-special #f values)))
 
 (def (core-expand-import/export stx expanded? method current-phi expand1)
-  (declare (not safe))
-
   (def (K rest r)
     (core-syntax-case rest ()
       ((hd . rest)
@@ -667,8 +665,6 @@ namespace: gx
          (K body [])))))))
 
 (def (core-expand-import% stx (internal-expand? #f))
-  (declare (not safe))
-
   (def (expand1 hd K rest r)
     (cond
      ((core-bound-module? hd)
@@ -832,8 +828,6 @@ namespace: gx
   (core-expand-import% ['import-internal% hd] #t))
 
 (def (core-expand-export% stx (internal-expand? #f))
-  (declare (not safe))
-
   (def (make-export bind
                     (phi (current-export-expander-phi))
                     (ctx (current-expander-context))

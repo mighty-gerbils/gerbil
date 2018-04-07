@@ -7,6 +7,7 @@ namespace: gx
 
 (export #t)
 (import "common" "stx" "core")
+(declare (not safe))
 
 ;;; blocks
 ;; (%#begin <form> ...)
@@ -194,7 +195,6 @@ namespace: gx
 ;;; definitions
 ;; (%#extern (id binding-id) ...)
 (def (core-expand-extern% stx)
-  (declare (not safe))
   (core-syntax-case stx ()
     ((_ . body)
      (stx-list? body)
