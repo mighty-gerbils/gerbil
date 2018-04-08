@@ -197,7 +197,6 @@ namespace: gx
 (def (core-expand-extern% stx)
   (core-syntax-case stx ()
     ((_ . body)
-     (stx-list? body)
      (let lp ((rest body) (r []))
        (core-syntax-case rest ()
          (((id eid) . rest)
@@ -211,7 +210,7 @@ namespace: gx
            (core-cons '%#extern (reverse r))
            (stx-source stx)))
          (else
-          (raise-syntax-error #f "Bad syntax" stx (stx-car rest))))))))
+          (raise-syntax-error #f "Bad syntax" stx)))))))
 
 ;; (%#define-values hd expr)
 (def (core-expand-define-values% stx)
@@ -231,12 +230,12 @@ namespace: gx
   (core-syntax-case stx ()
     ((_ id binding-id)
      (and (identifier? id) (identifier? binding-id))
-     (begin
-       (core-bind-runtime-reference! id (stx-e binding-id))
+     (let (eid (stx-e binding-id))
+       (core-bind-runtime-reference! id eid)
        (core-quote-syntax
         [(core-quote-syntax '%#define-runtime)
          (core-quote-syntax id)
-         (core-quote-syntax binding-id)])))))
+         eid])))))
 
 ;; (%#define-syntax id expr)
 (def (core-expand-define-syntax% stx)
@@ -427,7 +426,7 @@ namespace: gx
 (def (core-expand-ref% stx)
   (core-syntax-case stx ()
     ((_ id)
-     (core-runtime-ref? id)
+     (identifier? id)
      (core-quote-syntax
       [(core-quote-syntax '%#ref) (core-quote-runtime-ref id stx)]
       (stx-source stx)))))
@@ -435,7 +434,7 @@ namespace: gx
 (def (core-expand-setq% stx)
   (core-syntax-case stx ()
     ((_ id expr)
-     (core-runtime-ref? id)
+     (identifier? id)
      (core-quote-syntax
       [(core-quote-syntax '%#set!)
        (core-quote-runtime-ref id stx)

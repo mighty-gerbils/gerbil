@@ -50,7 +50,7 @@ namespace: gx
 (def (core-compile-top-import% stx)
   (core-syntax-case stx ()
     ((_ . body)
-     (cons '%#import (syntax->list body)))))
+     (cons '%#import body))))
 
 (def (core-compile-top-module% stx)
   (core-syntax-case stx ()
@@ -62,22 +62,17 @@ namespace: gx
 (def (core-compile-top-export% stx)
   (core-syntax-case stx ()
     ((_ . body)
-     (cons '%#export (syntax->list body)))))
+     (cons '%#export body))))
 
 (def (core-compile-top-provide% stx)
   (core-syntax-case stx ()
     ((_ . body)
-     (cons '%#provide (stx-map core-quote-syntax body)))))
+     (cons '%#provide body))))
 
 (def (core-compile-top-extern% stx)
-  (def (generate hd)
-    (core-syntax-case hd ()
-      ((id eid)
-       [(core-quote-syntax id) (stx-e eid)])))
-
   (core-syntax-case stx ()
     ((_ . body)
-     (cons '%#extern (stx-map generate body)))))
+     (cons '%#extern body))))
 
 (def (core-compile-top-define-values% stx)
   (core-syntax-case stx ()
@@ -88,22 +83,20 @@ namespace: gx
 (def (core-compile-top-define-syntax% stx)
   (core-syntax-case stx ()
     ((_ hd expr)
-     ['%#define-syntax (core-quote-syntax hd)
+     ['%#define-syntax hd
                        (parameterize ((current-expander-phi
                                        (fx1+ (current-expander-phi))))
                          (core-compile-top-syntax expr))])))
 
 (def (core-compile-top-define-alias% stx)
   (core-syntax-case stx ()
-    ((_ hd alias-id)
-     ['%#define-alias (core-quote-syntax hd)
-                      (core-quote-syntax alias-id)])))
+    ((_ . body)
+     (cons '%#define-alias body))))
 
 (def (core-compile-top-define-runtime% stx)
   (core-syntax-case stx ()
-    ((_ id binding-id)
-     ['%#define-runtime (core-quote-syntax id)
-                        (core-quote-syntax binding-id)])))
+    ((_ . body)
+     (cons '%#define-runtime body))))
 
 (def (core-compile-top-declare% stx)
   (core-syntax-case stx ()

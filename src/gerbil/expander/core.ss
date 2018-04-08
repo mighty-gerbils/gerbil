@@ -514,7 +514,7 @@ namespace: gx
        ;; phi-displaced macro
        ((fxpositive? dphi)
         (lp (core-context-shift ctx -1) (fx1- dphi)))
-       ((fxnegative? dphi)
+       (else
         (lp (core-context-shift ctx +1) (fx1+ dphi))))))
 
   (let lp ((ctx ctx) (src-phi src-phi) (rest marks))
@@ -746,17 +746,17 @@ namespace: gx
                         (src #f)
                         (ctx (current-expander-context))
                         (marks (current-expander-marks)))
-  (cond
-   ((sealed-syntax-unwrap stx) => values)
-   ((identifier? stx)
-    (let (id (syntax-local-unwrap stx))
-      (make-syntax-quote (stx-e id) (or (stx-source id) src)
-                         ctx (&identifier-wrap-marks id))))
-   ((stx-datum? stx)
-    (stx-e stx))
-   (else
-    (make-syntax-quote stx (or (stx-source stx) src)
-                       ctx (reverse marks)))))
+  (if (##structure? stx)
+    (cond
+     ((sealed-syntax-unwrap stx) => values)
+     ((identifier? stx)
+      (let (id (stx-unwrap stx marks))
+        (make-syntax-quote (&AST-e id) (or (&AST-source id) src)
+                           ctx (&identifier-wrap-marks id))))
+     (else
+      (make-syntax-quote (stx-e stx) (or (stx-source stx) src)
+                         ctx (reverse marks))))
+    (make-syntax-quote stx src ctx (reverse marks))))
 
 (def (core-cons hd tl)
   (cons (core-quote-syntax hd) tl))
