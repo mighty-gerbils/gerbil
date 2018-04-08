@@ -10,20 +10,17 @@
     "gx-gambc1"
     "gx-gambc2"))
 
-(define (_gx#init #!key (load-rt #t) (load-gx #t) (in-place #f))
+(define (_gx#init)
   (let* ((home
-          (path-expand
-           (path-normalize
-            (cond
-             (in-place "../..")
-             ((getenv "GERBIL_HOME" #f) => values)
-             (else
-              (error "Cannot determine GERBIL_HOME"))))))
+          (path-normalize
+           (cond
+            ((getenv "GERBIL_HOME" #f) => values)
+            (else
+             (error "Cannot determine GERBIL_HOME")))))
          (libdir
           (path-expand "lib" home)))
     (set! _gx#gerbil-libdir libdir)
-    (if load-rt
-      (_gx#load-rt))
+    (_gx#load-rt)
     (let* ((loadpath
             (cond
              ((getenv "GERBIL_LOADPATH" #f)
@@ -40,8 +37,7 @@
       (&current-module-libpath (cons libdir loadpath)))
     (&current-module-registry (make-hash-table))
     (current-readtable _gx#*readtable*)
-    (if load-gx
-      (_gx#load-gx))))
+    (_gx#load-gx)))
 
 (define (_gx#load-rt)
   (for-each
