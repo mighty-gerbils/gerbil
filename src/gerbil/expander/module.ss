@@ -677,12 +677,6 @@ namespace: gx
      (else
       (let (e (stx-e hd))
         (cond
-         ((string? e)
-          (import1 (import-module
-                    (core-resolve-module-path hd (stx-source stx)))
-                   K rest r))
-         ((module-context? e)
-          (K rest (cons e r)))
          ((pair? e)
           (case (stx-e (car e))
             ((spec:)
@@ -693,6 +687,12 @@ namespace: gx
              (import-runtime hd K rest r))
             (else
              (raise-syntax-error #f "Bad syntax; illegal import" stx hd))))
+         ((string? e)
+          (import1 (import-module
+                    (core-resolve-module-path hd (stx-source stx)))
+                   K rest r))
+         ((module-context? e)
+          (K rest (cons e r)))
          (else
           (raise-syntax-error #f "Bad syntax; illegal import" stx hd)))))))
 
