@@ -18,12 +18,11 @@
 
 (define (_gx#load-runtime!)
   (let* ((home
-          (path-expand
-           (path-normalize
-            (cond
-             ((getenv "GERBIL_HOME" #f) => values)
-             (else
-              (error "Cannot determine GERBIL_HOME"))))))
+          (path-normalize
+           (cond
+            ((getenv "GERBIL_HOME" #f) => values)
+            (else
+             (error "Cannot determine GERBIL_HOME")))))
          (libdir
           (path-expand "lib" home)))
 

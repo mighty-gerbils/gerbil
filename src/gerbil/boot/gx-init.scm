@@ -3,33 +3,24 @@
 ;;; Gerbil-gambc runtime init
 (##namespace (""))
 
-(define _gx#gerbil-home
-  (make-parameter #f))
-(define _gx#gerbil-libdir
-  (make-parameter #f))
-(define _gx#gerbil-loadpath
-  (make-parameter #f))
+(define _gx#gerbil-libdir #f)
 
 (define _gx#*rtlibs*
   '("gx-gambc0"
     "gx-gambc1"
     "gx-gambc2"))
 
-(define (_gx#init #!key (load-rt #t) (load-gx #t) (in-place #f))
+(define (_gx#init)
   (let* ((home
-          (path-expand
-           (path-normalize
-            (cond
-             (in-place "../..")
-             ((getenv "GERBIL_HOME" #f) => values)
-             (else
-              (error "Cannot determine GERBIL_HOME"))))))
+          (path-normalize
+           (cond
+            ((getenv "GERBIL_HOME" #f) => values)
+            (else
+             (error "Cannot determine GERBIL_HOME")))))
          (libdir
           (path-expand "lib" home)))
-    (_gx#gerbil-home home)
-    (_gx#gerbil-libdir libdir)
-    (if load-rt
-      (_gx#load-rt))
+    (set! _gx#gerbil-libdir libdir)
+    (_gx#load-rt)
     (let* ((loadpath
             (cond
              ((getenv "GERBIL_LOADPATH" #f)
@@ -43,21 +34,19 @@
             (if (file-exists? userpath)
               (cons (path-normalize userpath) loadpath) ; exists, pin it
               (cons userpath loadpath)))) ; maybe later (interactive gxi)
-      (&current-module-libpath (cons libdir loadpath))
-      (_gx#gerbil-loadpath loadpath))
+      (&current-module-libpath (cons libdir loadpath)))
     (&current-module-registry (make-hash-table))
     (current-readtable _gx#*readtable*)
-    (if load-gx
-      (_gx#load-gx))))
+    (_gx#load-gx)))
 
 (define (_gx#load-rt)
   (for-each
-    (lambda (rt) (load (path-expand rt (_gx#gerbil-libdir))))
+    (lambda (rt) (load (path-expand rt _gx#gerbil-libdir)))
     _gx#*rtlibs*))
 
 (define (_gx#load-gx)
   (load-module "gerbil/expander__rt")
-  (load (path-expand "gx-gambc" (_gx#gerbil-libdir))))
+  (load (path-expand "gx-gambc" _gx#gerbil-libdir)))
 
 ;; exec module stub compatibility
 (define (_gx#load-expander!)
