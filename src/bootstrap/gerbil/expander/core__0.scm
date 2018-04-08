@@ -1833,11 +1833,9 @@
                                   (_lp7086_
                                    (gx#core-context-shift _ctx7088_ '-1)
                                    (fx- _dphi7089_ '1))
-                                  (if (fxnegative? _dphi7089_)
-                                      (_lp7086_
-                                       (gx#core-context-shift _ctx7088_ '1)
-                                       (fx+ _dphi7089_ '1))
-                                      '#!void)))))))))
+                                  (_lp7086_
+                                   (gx#core-context-shift _ctx7088_ '1)
+                                   (fx+ _dphi7089_ '1))))))))))
         (let _lp7016_ ((_ctx7018_ _ctx7011_)
                        (_src-phi7019_ _src-phi7010_)
                        (_rest7020_ _marks7012_))
@@ -2512,31 +2510,42 @@
   (begin
     (define gx#core-quote-syntax__%
       (lambda (_stx6555_ _src6556_ _ctx6557_ _marks6558_)
-        (let ((_$e6560_ (gx#sealed-syntax-unwrap _stx6555_)))
-          (if _$e6560_
-              (values _$e6560_)
-              (if (gx#identifier? _stx6555_)
-                  (let ((_id6563_ (gx#syntax-local-unwrap _stx6555_)))
-                    (##structure
-                     gx#syntax-quote::t
-                     (gx#stx-e _id6563_)
-                     (let ((_$e6565_ (gx#stx-source _id6563_)))
-                       (if _$e6565_ _$e6565_ _src6556_))
-                     _ctx6557_
-                     (##unchecked-structure-ref
-                      _id6563_
-                      '3
-                      gx#identifier-wrap::t
-                      '#f)))
-                  (if (gx#stx-datum? _stx6555_)
-                      (gx#stx-e _stx6555_)
+        (if (##structure? _stx6555_)
+            (let ((_$e6560_ (gx#sealed-syntax-unwrap _stx6555_)))
+              (if _$e6560_
+                  (values _$e6560_)
+                  (if (gx#identifier? _stx6555_)
+                      (let ((_id6563_
+                             (gx#stx-unwrap__% _stx6555_ _marks6558_)))
+                        (##structure
+                         gx#syntax-quote::t
+                         (##unchecked-structure-ref _id6563_ '1 AST::t '#f)
+                         (let ((_$e6565_
+                                (##unchecked-structure-ref
+                                 _id6563_
+                                 '2
+                                 AST::t
+                                 '#f)))
+                           (if _$e6565_ _$e6565_ _src6556_))
+                         _ctx6557_
+                         (##unchecked-structure-ref
+                          _id6563_
+                          '3
+                          gx#identifier-wrap::t
+                          '#f)))
                       (##structure
                        gx#syntax-quote::t
-                       _stx6555_
+                       (gx#stx-e _stx6555_)
                        (let ((_$e6568_ (gx#stx-source _stx6555_)))
                          (if _$e6568_ _$e6568_ _src6556_))
                        _ctx6557_
-                       (reverse _marks6558_))))))))
+                       (reverse _marks6558_)))))
+            (##structure
+             gx#syntax-quote::t
+             _stx6555_
+             _src6556_
+             _ctx6557_
+             (reverse _marks6558_)))))
     (begin
       (define gx#core-quote-syntax__0
         (lambda (_stx6574_)
