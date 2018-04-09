@@ -11,11 +11,23 @@
 (declare (not safe))
 
 ;; core [top] syntax -> gambit runtime compiler
+(define-macro (%AST? e)
+  `(##structure-instance-of? ,e 'gerbil#AST::t))
+
+(define-macro (%AST-e e)
+  `(##vector-ref ,e 1))
+
+(define-macro (%AST-source e)
+  `(##vector-ref ,e 2))
+
 (define (&SRC e #!optional (src-stx #f))
-  (if (##source? e) e
-      (##make-source (&AST-e e)
-                     (or (&AST-source e)
-                         (&AST-source src-stx)))))
+  (cond
+   ((or (pair? e) (symbol? e))
+    (##make-source e (&AST-source src-stx)))
+   ((%AST? e)
+    (##make-source (%AST-e e) (%AST-source e)))
+   (else
+    (error "BUG! Cannot sourcify object" e))))
 
 (define (_gx#check-values obj k)
   (let ((count (values-count obj)))
@@ -408,12 +420,12 @@
 (define (_gx#compile-ref% stx)
   (core-ast-case stx ()
     ((_ id)
-     (&SRC id))))
+     (&SRC id stx))))
 
 (define (_gx#compile-setq% stx)
   (core-ast-case stx ()
     ((_ id expr)
-     (&SRC `(##set! ,(&SRC id) ,(_gx#compile expr)) stx))))
+     (&SRC `(##set! ,(&SRC id stx) ,(_gx#compile expr)) stx))))
 
 (define (_gx#compile-if% stx)
   (core-ast-case stx ()
