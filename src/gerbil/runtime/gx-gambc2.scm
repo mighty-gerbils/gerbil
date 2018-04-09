@@ -23,11 +23,14 @@
 (define (&SRC e #!optional (src-stx #f))
   (cond
    ((or (pair? e) (symbol? e))
-    (##make-source e (&AST-source src-stx)))
+    (##make-source e (and (%AST? src-stx) (&locat (%AST-source src-stx)))))
    ((%AST? e)
-    (##make-source (%AST-e e) (%AST-source e)))
+    (##make-source (%AST-e e) (&locat (%AST-source e))))
    (else
     (error "BUG! Cannot sourcify object" e))))
+
+(define (&locat loc)
+  (and (##locat? loc) loc))
 
 (define (_gx#check-values obj k)
   (let ((count (values-count obj)))
