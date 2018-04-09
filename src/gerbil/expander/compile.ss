@@ -171,7 +171,7 @@ namespace: gx
 
 (def (core-compile-top-runtime-ref id)
   (cond
-   ((resolve-identifier id) => binding-id)
+   ((resolve-identifier id) => &binding-id)
    (else id)))
 
 (def (core-compile-top-runtime-bind hd)

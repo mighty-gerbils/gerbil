@@ -739,7 +739,7 @@
     (lambda (_id16070_)
       (let ((_$e16072_ (gx#resolve-identifier__0 _id16070_)))
         (if _$e16072_
-            (##structure-ref _$e16072_ '1 gx#binding::t '#f)
+            (##unchecked-structure-ref _$e16072_ '1 gx#binding::t '#f)
             _id16070_))))
   (define gx#core-compile-top-runtime-bind
     (lambda (_hd16068_)
