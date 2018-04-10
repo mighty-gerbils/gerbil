@@ -110,7 +110,7 @@ package: gerbil
     fixnum? nonnegative-fixnum?
     fxzero? fxpositive? fxnegative? fxodd? fxeven?
     fixnum->flonum
-    fxmax fxmin fxabs fxnot fxand fxior fxxor fxand fxmodulo
+    fxmax fxmin fxabs fxnot fxand fxior fxxor fxmodulo
     fxbit-set? fxarithmetic-shift fxshift
     fx< fx<= fx= fx>= fx>
     flonum?
@@ -146,7 +146,7 @@ package: gerbil
     string->bytes substring->bytes bytes->string
     string->keyword keyword->string make-uninterned-keyword
     symbol->keyword keyword->symbol
-    substring-fill! substring-move! string-shrink!
+    substring-fill!
     append-strings
     string-index string-rindex
     string-split string-join string-empty? string-prefix?
