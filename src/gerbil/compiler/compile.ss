@@ -24,6 +24,8 @@ namespace: gxc
   (make-parameter #f))
 (def current-compile-identifiers
   (make-parameter #f))
+(def current-compile-boolean-context
+  (make-parameter #f))
 
 (def (make-bound-identifier-table)
   (def (hash-e id)
@@ -727,8 +729,22 @@ namespace: gxc
 
 (def (generate-runtime-let-values% stx (compiled-body? #f))
   (def (generate-simple hd body)
-    (coalesce-let*
-     (generate-runtime-simple-let 'let hd body compiled-body?)))
+    (coalesce-boolean
+     (coalesce-let*
+      (generate-runtime-simple-let 'let hd body compiled-body?))))
+
+  (def (coalesce-boolean code)
+    (if (current-compile-boolean-context)
+      (ast-case code (let if)
+        ((let ((id expr1)) (if xid yid expr2))
+         (and (eq? #'id #'xid) (eq? #'id #'yid))
+         (ast-case #'expr2 (or)
+           ((or expr3 ...)
+            ['or #'expr1 #'(expr3 ...) ...])
+           (_
+            ['or #'expr1 #'expr2])))
+        (_ code))
+      code))
 
   (def (coalesce-let* code)
     (ast-case code (let let*)
@@ -959,9 +975,24 @@ namespace: gxc
          (_ (cons rator rands)))))))
 
 (def (generate-runtime-if% stx)
+  (def (simplify code)
+    (ast-case code (if quote)
+      ((if test expr (quote #f))
+       (ast-case #'expr (and)
+         ((and expr ...)
+          ['and #'test #'(expr ...) ...])
+         (_
+          ['and #'test #'expr])))
+      (_ code)))
+
   (ast-case stx ()
     ((_ test K E)
-     ['if (compile-e #'test) (compile-e #'K) (compile-e #'E)])))
+     (if (current-compile-boolean-context)
+       (simplify ['if (compile-e #'test) (compile-e #'K) (compile-e #'E)])
+       ['if (parameterize ((current-compile-boolean-context #t))
+              (compile-e #'test))
+         (compile-e #'K)
+         (compile-e #'E)]))))
 
 (def (generate-runtime-ref% stx)
   (ast-case stx ()
