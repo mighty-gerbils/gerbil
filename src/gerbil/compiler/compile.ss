@@ -518,14 +518,30 @@ namespace: gxc
   '(begin))
 
 (def (generate-runtime-begin% stx)
+  (def (simplify body)
+    (let lp ((rest body) (r []))
+      (match rest
+        ([hd . rest]
+         (match hd
+           (['begin . exprs]
+            (lp (foldr cons rest exprs) r))
+           (['quote _]
+            (if (null? rest)
+              (lp rest (cons hd r))
+              (lp rest r)))
+           ((? symbol?)
+            (if (null? rest)
+              (lp rest (cons hd r))
+              (lp rest r)))
+           (else
+            (lp rest (cons hd r)))))
+        (else
+         (reverse r)))))
+
   (ast-case stx ()
     ((_ . body)
-     (let* ((body (stx-map compile-e #'body))
-            (body (filter (lambda (stx)
-                            (ast-case stx (begin)
-                              ((begin) #f) ; filter empty begins
-                              (_ #t)))
-                          body)))
+     (let* ((body (map compile-e #'body))
+            (body (simplify body)))
        (if (fx= (length body) 1)
          (car body)
          ['begin body ...])))))
@@ -630,8 +646,16 @@ namespace: gxc
 (def (generate-runtime-lambda% stx)
   (ast-case stx ()
     ((_ hd body)
-     ['lambda (generate-runtime-lambda-head #'hd)
-       (compile-e #'body)])))
+     (generate-runtime-lambda-form #'hd #'body))))
+
+(def (generate-runtime-lambda-form hd body)
+  (let* ((hd (generate-runtime-lambda-head hd))
+         (body (compile-e body))
+         (body
+          (match body
+            (['begin . exprs] exprs)
+            (else [body]))))
+    ['lambda hd body ...]))
 
 (def (generate-runtime-lambda-head hd)
   (stx-map generate-runtime-binding-id* hd))
@@ -685,7 +709,7 @@ namespace: gxc
            (dispatch
             (if (dispatch-case? hd body)
               (dispatch-case-e hd body)
-              ['lambda (generate-runtime-lambda-head hd) (compile-e body)])))
+              (generate-runtime-lambda-form hd body))))
       [condition ['apply dispatch args]]))
 
   (ast-case stx ()
@@ -866,20 +890,25 @@ namespace: gxc
 
 (def (generate-runtime-simple-let? hd)
   (let lp ((rest hd))
-    (ast-case rest ()
-      ((((id) e) . rest)
-       (lp #'rest))
-      (() #t)
-      (_ #f))))
+    (match rest
+      ([[[_] _] . rest]
+       (lp rest))
+      ([] #t)
+      (else #f))))
 
 (def (generate-runtime-simple-let form hd body compiled-body?)
   (def (generate1 bind)
-    (ast-case bind ()
-      (((id) expr)
-       [(generate-runtime-binding-id* #'id) (compile-e #'expr)])))
-  [form (map generate1 hd)
-        (if compiled-body? body
-            (compile-e body))])
+    (with ([[id] expr] bind)
+      [(generate-runtime-binding-id* id) (compile-e expr)]))
+
+  (let* ((bind (map generate1 hd))
+         (body (if compiled-body? body
+                   (compile-e body)))
+         (body
+          (match body
+            (['begin . exprs] exprs)
+            (else [body]))))
+    [form bind body ...]))
 
 (def (generate-runtime-quote% stx)
   (def (generate1 datum)
