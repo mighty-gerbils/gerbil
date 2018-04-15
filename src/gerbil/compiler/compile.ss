@@ -735,26 +735,25 @@ namespace: gxc
 
   (def (coalesce-boolean code)
     (if (current-compile-boolean-context)
-      (ast-case code (let if)
-        ((let ((id expr1)) (if xid yid expr2))
-         (and (eq? #'id #'xid) (eq? #'id #'yid))
-         (ast-case #'expr2 (or)
-           ((or expr3 ...)
-            ['or #'expr1 #'(expr3 ...) ...])
-           (_
-            ['or #'expr1 #'expr2])))
-        (_ code))
+      (match code
+        (['let [[id expr1]] ['if (eq? id) (eq? id) expr2]]
+         (match expr2
+           (['or . exprs]
+            ['or expr1 . exprs])
+           (else
+            ['or expr1 expr2])))
+        (else code))
       code))
 
   (def (coalesce-let* code)
-    (ast-case code (let let*)
-      ((let ((id expr)) (let () body ...))
-       ['let [[#'id #'expr]] #'(body ...) ...])
-      ((let ((id expr)) (let ((id2 expr2)) body ...))
-       ['let* [[#'id #'expr] [#'id2 #'expr2]] #'(body ...) ...])
-      ((let ((id expr)) (let* (bind ...) body ...))
-       ['let* [[#'id #'expr] #'(bind ...) ...] #'(body ...) ...])
-      (_ code)))
+    (match code
+      (['let [[id expr]] ['let [] . body]]
+       ['let [[id expr]] . body])
+      (['let [[id1 expr1]] ['let [[id2 expr2]] . body]]
+       ['let* [[id1 expr1] [id2 expr2]] . body])
+      (['let [[id1 expr1]] ['let* bind . body]]
+       ['let* [[id1 expr1] . bind] . body])
+      (else code)))
 
   (def (generate-values hd body)
     (let lp ((rest hd) (bind []) (check []) (post []))
@@ -976,14 +975,14 @@ namespace: gxc
 
 (def (generate-runtime-if% stx)
   (def (simplify code)
-    (ast-case code (if quote)
-      ((if test expr (quote #f))
-       (ast-case #'expr (and)
-         ((and expr ...)
-          ['and #'test #'(expr ...) ...])
-         (_
-          ['and #'test #'expr])))
-      (_ code)))
+    (match code
+      (['if test expr ['quote #f]]
+       (match expr
+         (['and . exprs]
+          ['and test . exprs])
+         (else
+          ['and test expr])))
+      (else code)))
 
   (ast-case stx ()
     ((_ test K E)
