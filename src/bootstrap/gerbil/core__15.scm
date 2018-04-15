@@ -61,15 +61,12 @@
                        (cons _L33644_
                              (cons (cons (gx#datum->syntax '#f 'lambda)
                                          (cons _L33643_
-                                               (begin
-                                                 '#!void
-                                                 (foldr (lambda (_g3366633669_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _g3366733672_)
-                  (cons _g3366633669_ _g3366733672_))
-                '()
-                _L33641_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                               (foldr (lambda (_g3366633669_
+                                                               _g3366733672_)
+                                                        (cons _g3366633669_
+                                                              _g3366733672_))
+                                                      '()
+                                                      _L33641_)))
                                    '()))))))
           (let* ((___match4107341074_
                   (lambda (_e3355133581_
@@ -284,15 +281,12 @@
                        (cons _L33849_
                              (cons (cons (gx#datum->syntax '#f 'lambda)
                                          (cons _L33848_
-                                               (begin
-                                                 '#!void
-                                                 (foldr (lambda (_g3387133874_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _g3387233877_)
-                  (cons _g3387133874_ _g3387233877_))
-                '()
-                _L33846_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                               (foldr (lambda (_g3387133874_
+                                                               _g3387233877_)
+                                                        (cons _g3387133874_
+                                                              _g3387233877_))
+                                                      '()
+                                                      _L33846_)))
                                    '()))))))
           (let* ((___match4113141132_
                   (lambda (_e3375633786_
@@ -507,15 +501,12 @@
                        (cons _L34054_
                              (cons (cons (gx#datum->syntax '#f 'lambda)
                                          (cons _L34053_
-                                               (begin
-                                                 '#!void
-                                                 (foldr (lambda (_g3407634079_
-;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                         _g3407734082_)
-                  (cons _g3407634079_ _g3407734082_))
-                '()
-                _L34051_))))
-;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+                                               (foldr (lambda (_g3407634079_
+                                                               _g3407734082_)
+                                                        (cons _g3407634079_
+                                                              _g3407734082_))
+                                                      '()
+                                                      _L34051_)))
                                    '()))))))
           (let* ((___match4118941190_
                   (lambda (_e3396133991_
@@ -760,12 +751,10 @@
                  ((lambda (_L34214_)
                     (cons 'phi:
                           (cons '1
-                                (begin
-                                  '#!void
-                                  (foldr (lambda (_g3422934232_ _g3423034235_)
-                                           (cons _g3422934232_ _g3423034235_))
-                                         '()
-                                         _L34214_)))))
+                                (foldr (lambda (_g3422934232_ _g3423034235_)
+                                         (cons _g3422934232_ _g3423034235_))
+                                       '()
+                                       _L34214_))))
                   _body3416134210_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                          (_loop3415634190_
@@ -826,12 +815,10 @@
                  ((lambda (_L34313_)
                     (cons 'phi:
                           (cons '-1
-                                (begin
-                                  '#!void
-                                  (foldr (lambda (_g3432834331_ _g3432934334_)
-                                           (cons _g3432834331_ _g3432934334_))
-                                         '()
-                                         _L34313_)))))
+                                (foldr (lambda (_g3432834331_ _g3432934334_)
+                                         (cons _g3432834331_ _g3432934334_))
+                                       '()
+                                       _L34313_))))
                   _body3426034309_))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                          (_loop3425534289_
@@ -890,34 +877,29 @@
                        (let ((_id3436334422_ (reverse _id3436234409_)))
                          ((lambda (_L34426_ _L34428_)
                             (if (gx#identifier-list?
-                                 (begin
-                                   '#!void
-                                   (foldr (lambda (_g3444534448_ _g3444634451_)
-                                            (cons _g3444534448_ _g3444634451_))
-                                          '()
-                                          _L34426_)))
+                                 (foldr (lambda (_g3444534448_ _g3444634451_)
+                                          (cons _g3444534448_ _g3444634451_))
+                                        '()
+                                        _L34426_))
                                 (let* ((_keys34462_
                                         (gx#stx-map
                                          gx#core-identifier-key
-                                         (begin
-                                           '#!void
-                                           (foldr (lambda (_g3445334456_
-                                                           _g3445434459_)
-                                                    (cons _g3445334456_
-                                                          _g3445434459_))
-                                                  '()
-                                                  _L34426_))))
+                                         (foldr (lambda (_g3445334456_
+                                                         _g3445434459_)
+                                                  (cons _g3445334456_
+                                                        _g3445434459_))
+                                                '()
+                                                _L34426_)))
                                        (_keytab34473_
                                         (let ((_ht34465_ (make-hash-table)))
-                                          (begin
-                                            (for-each
-                                             (lambda (_g3446734469_)
-                                               (hash-put!
-                                                _ht34465_
-                                                _g3446734469_
-                                                '#t))
-                                             _keys34462_)
-                                            _ht34465_)))
+                                          (for-each
+                                           (lambda (_g3446734469_)
+                                             (hash-put!
+                                              _ht34465_
+                                              _g3446734469_
+                                              '#t))
+                                           _keys34462_)
+                                          _ht34465_))
                                        (_imports34476_
                                         (gx#core-expand-import-source
                                          _L34428_))
@@ -1007,34 +989,29 @@
                        (let ((_id3451734576_ (reverse _id3451634563_)))
                          ((lambda (_L34580_ _L34582_)
                             (if (gx#identifier-list?
-                                 (begin
-                                   '#!void
-                                   (foldr (lambda (_g3459934602_ _g3460034605_)
-                                            (cons _g3459934602_ _g3460034605_))
-                                          '()
-                                          _L34580_)))
+                                 (foldr (lambda (_g3459934602_ _g3460034605_)
+                                          (cons _g3459934602_ _g3460034605_))
+                                        '()
+                                        _L34580_))
                                 (let* ((_keys34616_
                                         (gx#stx-map
                                          gx#core-identifier-key
-                                         (begin
-                                           '#!void
-                                           (foldr (lambda (_g3460734610_
-                                                           _g3460834613_)
-                                                    (cons _g3460734610_
-                                                          _g3460834613_))
-                                                  '()
-                                                  _L34580_))))
+                                         (foldr (lambda (_g3460734610_
+                                                         _g3460834613_)
+                                                  (cons _g3460734610_
+                                                        _g3460834613_))
+                                                '()
+                                                _L34580_)))
                                        (_keytab34627_
                                         (let ((_ht34619_ (make-hash-table)))
-                                          (begin
-                                            (for-each
-                                             (lambda (_g3462134623_)
-                                               (hash-put!
-                                                _ht34619_
-                                                _g3462134623_
-                                                '#t))
-                                             _keys34616_)
-                                            _ht34619_)))
+                                          (for-each
+                                           (lambda (_g3462134623_)
+                                             (hash-put!
+                                              _ht34619_
+                                              _g3462134623_
+                                              '#t))
+                                           _keys34616_)
+                                          _ht34619_))
                                        (_imports34630_
                                         (gx#core-expand-import-source
                                          _L34582_))
@@ -1165,25 +1142,20 @@
                        (let ((_new-id3472434812_ (reverse _new-id3472234777_))
                              (_id3472534815_ (reverse _id3472334779_)))
                          ((lambda (_L34818_ _L34820_ _L34821_)
-                            (if (if (gx#identifier-list?
-                                     (begin
-                                       '#!void
-                                       (foldr (lambda (_g3483934842_
-                                                       _g3484034845_)
-                                                (cons _g3483934842_
-                                                      _g3484034845_))
-                                              '()
-                                              _L34820_)))
-                                    (gx#identifier-list?
-                                     (begin
-                                       '#!void
-                                       (foldr (lambda (_g3484734850_
-                                                       _g3484834853_)
-                                                (cons _g3484734850_
-                                                      _g3484834853_))
-                                              '()
-                                              _L34818_)))
-                                    '#f)
+                            (if (and (gx#identifier-list?
+                                      (foldr (lambda (_g3483934842_
+                                                      _g3484034845_)
+                                               (cons _g3483934842_
+                                                     _g3484034845_))
+                                             '()
+                                             _L34820_))
+                                     (gx#identifier-list?
+                                      (foldr (lambda (_g3484734850_
+                                                      _g3484834853_)
+                                               (cons _g3484734850_
+                                                     _g3484834853_))
+                                             '()
+                                             _L34818_)))
                                 (let* ((_keytab34856_ (make-hash-table))
                                        (_found34859_ (make-hash-table))
                                        (_g41440_
@@ -1194,22 +1166,18 @@
                                             (gx#core-identifier-key _id34862_)
                                             (gx#core-identifier-key
                                              _new-id34864_)))
-                                         (begin
-                                           '#!void
-                                           (foldr (lambda (_g3486534868_
-                                                           _g3486634871_)
-                                                    (cons _g3486534868_
-                                                          _g3486634871_))
-                                                  '()
-                                                  _L34820_))
-                                         (begin
-                                           '#!void
-                                           (foldr (lambda (_g3487334876_
-                                                           _g3487434879_)
-                                                    (cons _g3487334876_
-                                                          _g3487434879_))
-                                                  '()
-                                                  _L34818_))))
+                                         (foldr (lambda (_g3486534868_
+                                                         _g3486634871_)
+                                                  (cons _g3486534868_
+                                                        _g3486634871_))
+                                                '()
+                                                _L34820_)
+                                         (foldr (lambda (_g3487334876_
+                                                         _g3487434879_)
+                                                  (cons _g3487334876_
+                                                        _g3487434879_))
+                                                '()
+                                                _L34818_)))
                                        (_imports34884_
                                         (gx#core-expand-import-source
                                          _L34821_))
@@ -1225,12 +1193,11 @@
                        (_$e34897_ (hash-get _keytab34856_ _name34894_)))
                   (if _$e34897_
                       ((lambda (_rename34901_)
-                         (begin
-                           (hash-put! _found34859_ _name34894_ '#t)
-                           (cons (|gerbil/core$<module-sugar>[1]#module-import-rename|
-                                  _in34890_
-                                  _rename34901_)
-                                 _r34892_)))
+                         (hash-put! _found34859_ _name34894_ '#t)
+                         (cons (|gerbil/core$<module-sugar>[1]#module-import-rename|
+                                _in34890_
+                                _rename34901_)
+                               _r34892_))
                        _$e34897_)
                       (cons _in34890_ _r34892_)))
                 (if (gx#import-set? _in34890_)
@@ -1244,27 +1211,22 @@
                                         (foldl _fold-e34904_
                                                '()
                                                _imports34884_)))
-                                  (begin
-                                    (for-each
-                                     (lambda (_id34912_)
-                                       (if (hash-get
-                                            _found34859_
-                                            (gx#core-identifier-key _id34912_))
-                                           '#!void
-                                           (gx#raise-syntax-error
-                                            '#f
-                                            '"Bad syntax; identifier is not in the import set"
-                                            _stx34701_
-                                            _id34912_)))
-                                     (begin
-                                       '#!void
-                                       (foldr (lambda (_g3491434917_
-                                                       _g3491534920_)
-                                                (cons _g3491434917_
-                                                      _g3491534920_))
-                                              '()
-                                              _L34820_)))
-                                    (cons 'begin: _new-imports34907_)))
+                                  (for-each
+                                   (lambda (_id34912_)
+                                     (if (hash-get
+                                          _found34859_
+                                          (gx#core-identifier-key _id34912_))
+                                         '#!void
+                                         (gx#raise-syntax-error
+                                          '#f
+                                          '"Bad syntax; identifier is not in the import set"
+                                          _stx34701_
+                                          _id34912_)))
+                                   (foldr (lambda (_g3491434917_ _g3491534920_)
+                                            (cons _g3491434917_ _g3491534920_))
+                                          '()
+                                          _L34820_))
+                                  (cons 'begin: _new-imports34907_))
                                 (_g3470434737_ _g3470534741_)))
                           _new-id3472434812_
                           _id3472534815_
@@ -1395,34 +1357,29 @@
                        (let ((_id3505435113_ (reverse _id3505335100_)))
                          ((lambda (_L35117_ _L35119_)
                             (if (gx#identifier-list?
-                                 (begin
-                                   '#!void
-                                   (foldr (lambda (_g3513635139_ _g3513735142_)
-                                            (cons _g3513635139_ _g3513735142_))
-                                          '()
-                                          _L35117_)))
+                                 (foldr (lambda (_g3513635139_ _g3513735142_)
+                                          (cons _g3513635139_ _g3513735142_))
+                                        '()
+                                        _L35117_))
                                 (let* ((_keys35153_
                                         (gx#stx-map
                                          gx#core-identifier-key
-                                         (begin
-                                           '#!void
-                                           (foldr (lambda (_g3514435147_
-                                                           _g3514535150_)
-                                                    (cons _g3514435147_
-                                                          _g3514535150_))
-                                                  '()
-                                                  _L35117_))))
+                                         (foldr (lambda (_g3514435147_
+                                                         _g3514535150_)
+                                                  (cons _g3514435147_
+                                                        _g3514535150_))
+                                                '()
+                                                _L35117_)))
                                        (_keytab35164_
                                         (let ((_ht35156_ (make-hash-table)))
-                                          (begin
-                                            (for-each
-                                             (lambda (_g3515835160_)
-                                               (hash-put!
-                                                _ht35156_
-                                                _g3515835160_
-                                                '#t))
-                                             _keys35153_)
-                                            _ht35156_)))
+                                          (for-each
+                                           (lambda (_g3515835160_)
+                                             (hash-put!
+                                              _ht35156_
+                                              _g3515835160_
+                                              '#t))
+                                           _keys35153_)
+                                          _ht35156_))
                                        (_exports35167_
                                         (gx#core-expand-export-source
                                          _L35119_))
@@ -1540,25 +1497,20 @@
                        (let ((_new-id3521435302_ (reverse _new-id3521235267_))
                              (_id3521535305_ (reverse _id3521335269_)))
                          ((lambda (_L35308_ _L35310_ _L35311_)
-                            (if (if (gx#identifier-list?
-                                     (begin
-                                       '#!void
-                                       (foldr (lambda (_g3532935332_
-                                                       _g3533035335_)
-                                                (cons _g3532935332_
-                                                      _g3533035335_))
-                                              '()
-                                              _L35310_)))
-                                    (gx#identifier-list?
-                                     (begin
-                                       '#!void
-                                       (foldr (lambda (_g3533735340_
-                                                       _g3533835343_)
-                                                (cons _g3533735340_
-                                                      _g3533835343_))
-                                              '()
-                                              _L35308_)))
-                                    '#f)
+                            (if (and (gx#identifier-list?
+                                      (foldr (lambda (_g3532935332_
+                                                      _g3533035335_)
+                                               (cons _g3532935332_
+                                                     _g3533035335_))
+                                             '()
+                                             _L35310_))
+                                     (gx#identifier-list?
+                                      (foldr (lambda (_g3533735340_
+                                                      _g3533835343_)
+                                               (cons _g3533735340_
+                                                     _g3533835343_))
+                                             '()
+                                             _L35308_)))
                                 (let* ((_keytab35346_ (make-hash-table))
                                        (_found35349_ (make-hash-table))
                                        (_g41445_
@@ -1569,22 +1521,18 @@
                                             (gx#core-identifier-key _id35352_)
                                             (gx#core-identifier-key
                                              _new-id35354_)))
-                                         (begin
-                                           '#!void
-                                           (foldr (lambda (_g3535535358_
-                                                           _g3535635361_)
-                                                    (cons _g3535535358_
-                                                          _g3535635361_))
-                                                  '()
-                                                  _L35310_))
-                                         (begin
-                                           '#!void
-                                           (foldr (lambda (_g3536335366_
-                                                           _g3536435369_)
-                                                    (cons _g3536335366_
-                                                          _g3536435369_))
-                                                  '()
-                                                  _L35308_))))
+                                         (foldr (lambda (_g3535535358_
+                                                         _g3535635361_)
+                                                  (cons _g3535535358_
+                                                        _g3535635361_))
+                                                '()
+                                                _L35310_)
+                                         (foldr (lambda (_g3536335366_
+                                                         _g3536435369_)
+                                                  (cons _g3536335366_
+                                                        _g3536435369_))
+                                                '()
+                                                _L35308_)))
                                        (_exports35374_
                                         (gx#core-expand-export-source
                                          _L35311_))
@@ -1600,12 +1548,11 @@
                        (_$e35387_ (hash-get _keytab35346_ _name35384_)))
                   (if _$e35387_
                       ((lambda (_rename35391_)
-                         (begin
-                           (hash-put! _found35349_ _name35384_ '#t)
-                           (cons (|gerbil/core$<module-sugar>[1]#module-export-rename|
-                                  _out35380_
-                                  _rename35391_)
-                                 _r35382_)))
+                         (hash-put! _found35349_ _name35384_ '#t)
+                         (cons (|gerbil/core$<module-sugar>[1]#module-export-rename|
+                                _out35380_
+                                _rename35391_)
+                               _r35382_))
                        _$e35387_)
                       (cons _out35380_ _r35382_)))
                 (if (gx#export-set? _out35380_)
@@ -1619,27 +1566,22 @@
                                         (foldl _fold-e35394_
                                                '()
                                                _exports35374_)))
-                                  (begin
-                                    (for-each
-                                     (lambda (_id35402_)
-                                       (if (hash-get
-                                            _found35349_
-                                            (gx#core-identifier-key _id35402_))
-                                           '#!void
-                                           (gx#raise-syntax-error
-                                            '#f
-                                            '"Bad syntax; identifier is not in the export set"
-                                            _stx35191_
-                                            _id35402_)))
-                                     (begin
-                                       '#!void
-                                       (foldr (lambda (_g3540435407_
-                                                       _g3540535410_)
-                                                (cons _g3540435407_
-                                                      _g3540535410_))
-                                              '()
-                                              _L35310_)))
-                                    (cons 'begin: _new-exports35397_)))
+                                  (for-each
+                                   (lambda (_id35402_)
+                                     (if (hash-get
+                                          _found35349_
+                                          (gx#core-identifier-key _id35402_))
+                                         '#!void
+                                         (gx#raise-syntax-error
+                                          '#f
+                                          '"Bad syntax; identifier is not in the export set"
+                                          _stx35191_
+                                          _id35402_)))
+                                   (foldr (lambda (_g3540435407_ _g3540535410_)
+                                            (cons _g3540435407_ _g3540535410_))
+                                          '()
+                                          _L35310_))
+                                  (cons 'begin: _new-exports35397_))
                                 (_g3519435227_ _g3519535231_)))
                           _new-id3521435302_
                           _id3521535305_
@@ -1772,14 +1714,12 @@
                (let ((_id3554035589_ (reverse _id3553935576_)))
                  ((lambda (_L35593_)
                     (let _lp35609_ ((_rest35612_
-                                     (begin
-                                       '#!void
-                                       (foldr (lambda (_g3577235775_
-                                                       _g3577335778_)
-                                                (cons _g3577235775_
-                                                      _g3577335778_))
-                                              '()
-                                              _L35593_)))
+                                     (foldr (lambda (_g3577235775_
+                                                     _g3577335778_)
+                                              (cons _g3577235775_
+                                                    _g3577335778_))
+                                            '()
+                                            _L35593_))
                                     (_ids35614_ '()))
                       (let* ((___stx4119241193_ _rest35612_)
                              (_g3561735629_

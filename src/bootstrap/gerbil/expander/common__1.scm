@@ -460,10 +460,8 @@
                               (list _tgt1010_
                                     _hd1008_
                                     (let ((_e1286_ (gx#stx-e _hd1008_)))
-                                      (if (let ((_$e1289_ (keyword? _e1286_)))
-                                            (if _$e1289_
-                                                _$e1289_
-                                                (immediate? _e1286_)))
+                                      (if (or (keyword? _e1286_)
+                                              (immediate? _e1286_))
                                           (gx#datum->syntax '#f 'eq?)
                                           (if (number? _e1286_)
                                               (gx#datum->syntax '#f 'eqv?)
@@ -522,11 +520,10 @@
                                                       (lambda (_L979_)
                                                         (if (gx#stx-null?
                                                              _L825_)
-                                                            (if (if (gx#stx-list?
+                                                            (if (and (gx#stx-list?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                             _L979_)
-                            (not (gx#stx-null? _L979_))
-                            '#f)
+                              _L979_)
+                             (not (gx#stx-null? _L979_)))
                         (cons (cons _E744_
                                     (cons (gx#stx-wrap-source
                                            (cons (gx#datum->syntax '#f 'lambda)
@@ -726,14 +723,12 @@
                                               (cons (gx#datum->syntax
                                                      '#f
                                                      'let*)
-                                                    (cons (begin
-                                                            '#!void
-                                                            (foldr1 (lambda (_g719722_
+                                                    (cons (foldr1 (lambda (_g719722_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                     _g720725_)
-                              (cons _g719722_ _g720725_))
-                            '()
-                            _L672_))
+                                   _g720725_)
+                            (cons _g719722_ _g720725_))
+                          '()
+                          _L672_)
                   (cons (cons _L705_ '()) '()))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                         _g691702_))))
@@ -765,10 +760,9 @@
                                           (let ((_hd471509_ (##car _e470505_))
                                                 (_tl472512_ (##cdr _e470505_)))
                                             ((lambda (_L515_ _L517_ _L518_)
-                                               (if (if (gx#identifier-list?
-                                                        _L517_)
-                                                       (gx#stx-list? _L515_)
-                                                       '#f)
+                                               (if (and (gx#identifier-list?
+                                                         _L517_)
+                                                        (gx#stx-list? _L515_))
                                                    (let* ((_g536544_
                                                            (lambda (_g537540_)
                                                              (gx#raise-syntax-error

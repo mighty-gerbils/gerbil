@@ -24,19 +24,17 @@ package: gerbil/expander
    gx#syntax-pattern::apply-macro-expander
    #f)
   (declare-type gx#macro-expand-syntax (@lambda 1 #f))
-  (begin
-    (declare-type gx#macro-expand-syntax-case__% (@lambda 4 #f))
-    (begin
-      (declare-type gx#macro-expand-syntax-case__0 (@lambda 1 #f))
-      (declare-type gx#macro-expand-syntax-case__1 (@lambda 2 #f))
-      (declare-type gx#macro-expand-syntax-case__2 (@lambda 3 #f))
-      (declare-type
-       gx#macro-expand-syntax-case
-       (@case-lambda
-        (1 gx#macro-expand-syntax-case__0)
-        (2 gx#macro-expand-syntax-case__1)
-        (3 gx#macro-expand-syntax-case__2)
-        (4 gx#macro-expand-syntax-case__%)))))
+  (declare-type gx#macro-expand-syntax-case__% (@lambda 4 #f))
+  (declare-type gx#macro-expand-syntax-case__0 (@lambda 1 #f))
+  (declare-type gx#macro-expand-syntax-case__1 (@lambda 2 #f))
+  (declare-type gx#macro-expand-syntax-case__2 (@lambda 3 #f))
+  (declare-type
+   gx#macro-expand-syntax-case
+   (@case-lambda
+    (1 gx#macro-expand-syntax-case__0)
+    (2 gx#macro-expand-syntax-case__1)
+    (3 gx#macro-expand-syntax-case__2)
+    (4 gx#macro-expand-syntax-case__%)))
   (declare-type gx#syntax-local-pattern? (@lambda 1 #f))
   (declare-type gx#syntax-check-splice-targets (@lambda (1) #f))
   (declare-type gx#syntax-split-splice (@lambda 2 #f)))

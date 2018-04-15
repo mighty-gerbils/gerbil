@@ -176,20 +176,15 @@
                             _L17425_
                             _L17426_
                             _L17427_)
-                     (if (if (gx#identifier? _L17427_)
-                             (if (let ((_$e17453_ (gx#identifier? _L17425_)))
-                                   (if _$e17453_
-                                       _$e17453_
-                                       (gx#stx-false? _L17425_)))
-                                 (if (gx#identifier? _L17424_)
-                                     (gx#stx-plist?
-                                      _L17422_
-                                      (if _struct?17328_
-                                          _struct-opt?17334_
-                                          _class-opt?17335_))
-                                     '#f)
-                                 '#f)
-                             '#f)
+                     (if (and (gx#identifier? _L17427_)
+                              (or (gx#identifier? _L17425_)
+                                  (gx#stx-false? _L17425_))
+                              (gx#identifier? _L17424_)
+                              (gx#stx-plist?
+                               _L17422_
+                               (if _struct?17328_
+                                   _struct-opt?17334_
+                                   _class-opt?17335_)))
                          (let* ((_els17461_
                                  (let ((_$e17457_
                                         (gx#stx-getq
@@ -479,31 +474,21 @@
                                    (cons _L17752_
                                          (cons _L17808_
                                                (cons _L17780_
-                                                     (begin
-                                                       '#!void
-                                                       (foldr (lambda (_g1803818047_
+                                                     (foldr (lambda (_g1803818047_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                               _g1803918050_)
-                        (cons _g1803818047_ _g1803918050_))
-                      (begin
-                        '#!void
-                        (foldr (lambda (_g1804018053_ _g1804118056_)
-                                 (cons _g1804018053_ _g1804118056_))
-                               (begin
-                                 '#!void
-                                 (foldr (lambda (_g1804218059_ _g1804318062_)
-                                          (cons _g1804218059_ _g1804318062_))
-                                        (begin
-                                          '#!void
-                                          (foldr (lambda (_g1804418065_
-                                                          _g1804518068_)
-                                                   (cons _g1804418065_
-                                                         _g1804518068_))
-                                                 '()
-                                                 _L18018_))
-                                        _L18020_))
-                               _L17911_))
-                      _L17913_))))))))))
+                             _g1803918050_)
+                      (cons _g1803818047_ _g1803918050_))
+                    (foldr (lambda (_g1804018053_ _g1804118056_)
+                             (cons _g1804018053_ _g1804118056_))
+                           (foldr (lambda (_g1804218059_ _g1804318062_)
+                                    (cons _g1804218059_ _g1804318062_))
+                                  (foldr (lambda (_g1804418065_ _g1804518068_)
+                                           (cons _g1804418065_ _g1804518068_))
+                                         '()
+                                         _L18018_)
+                                  _L18020_)
+                           _L17911_)
+                    _L17913_)))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                       _def-usetf1794418012_
                       _def-ugetf1794518015_))))))
@@ -840,14 +825,12 @@
                       (cons (cons (gx#datum->syntax '#f 'quote)
                                   (cons _L17696_ '()))
                             (cons (cons (gx#datum->syntax '#f 'quote)
-                                        (cons (begin
-                                                '#!void
-                                                (foldr (lambda (_g1842918432_
-                                                                _g1843018435_)
-                                                         (cons _g1842918432_
-                                                               _g1843018435_))
-                                                       '()
-                                                       _L18408_))
+                                        (cons (foldr (lambda (_g1842918432_
+                                                              _g1843018435_)
+                                                       (cons _g1842918432_
+                                                             _g1843018435_))
+                                                     '()
+                                                     _L18408_)
                                               '()))
                                   '()))))))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -971,23 +954,19 @@
                         (cons (cons (gx#datum->syntax '#f 'quote)
                                     (cons _L17612_ '()))
                               (cons (cons (gx#datum->syntax '#f '@list)
-                                          (begin
-                                            '#!void
-                                            (foldr (lambda (_g1858618591_
-                                                            _g1858718594_)
-                                                     (cons _g1858618591_
-                                                           _g1858718594_))
-                                                   '()
-                                                   _L18564_)))
+                                          (foldr (lambda (_g1858618591_
+                                                          _g1858718594_)
+                                                   (cons _g1858618591_
+                                                         _g1858718594_))
+                                                 '()
+                                                 _L18564_))
                                     (cons (cons (gx#datum->syntax '#f 'quote)
-                                                (cons (begin
-                                                        '#!void
-                                                        (foldr (lambda (_g1858818597_
+                                                (cons (foldr (lambda (_g1858818597_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                                _g1858918600_)
-                         (cons _g1858818597_ _g1858918600_))
-                       '()
-                       _L18562_))
+                              _g1858918600_)
+                       (cons _g1858818597_ _g1858918600_))
+                     '()
+                     _L18562_)
               '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                           (cons (cons (gx#datum->syntax

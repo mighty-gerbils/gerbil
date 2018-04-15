@@ -27,15 +27,13 @@ package: gerbil/expander
   (declare-type gx#core-compile-top-lambda% (@lambda 1 #f))
   (declare-type gx#core-compile-top-lambda-clause (@lambda 1 #f))
   (declare-type gx#core-compile-top-case-lambda% (@lambda 1 #f))
-  (begin
-    (declare-type gx#core-compile-top-let-values%__% (@lambda 2 #f))
-    (begin
-      (declare-type gx#core-compile-top-let-values%__0 (@lambda 1 #f))
-      (declare-type
-       gx#core-compile-top-let-values%
-       (@case-lambda
-        (1 gx#core-compile-top-let-values%__0)
-        (2 gx#core-compile-top-let-values%__%)))))
+  (declare-type gx#core-compile-top-let-values%__% (@lambda 2 #f))
+  (declare-type gx#core-compile-top-let-values%__0 (@lambda 1 #f))
+  (declare-type
+   gx#core-compile-top-let-values%
+   (@case-lambda
+    (1 gx#core-compile-top-let-values%__0)
+    (2 gx#core-compile-top-let-values%__%)))
   (declare-type gx#core-compile-top-letrec-values% (@lambda 1 #f))
   (declare-type gx#core-compile-top-letrec*-values% (@lambda 1 #f))
   (declare-type gx#core-compile-top-quote% (@lambda 1 #f))

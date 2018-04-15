@@ -61,24 +61,20 @@ package: gerbil/expander
   (declare-type gx#sealed-syntax-unwrap (@lambda 1 #f))
   (declare-type gx#syntax-e (@lambda 1 #f))
   (declare-type gx#syntax->datum (@lambda 1 #f))
-  (begin
-    (declare-type gx#datum->syntax__% (@lambda 4 #f))
-    (begin
-      (declare-type gx#datum->syntax__0 (@lambda 2 #f))
-      (declare-type gx#datum->syntax__1 (@lambda 3 #f))
-      (declare-type
-       gx#datum->syntax
-       (@case-lambda
-        (2 gx#datum->syntax__0)
-        (3 gx#datum->syntax__1)
-        (4 gx#datum->syntax__%)))))
-  (begin
-    (declare-type gx#stx-unwrap__% (@lambda 2 #f))
-    (begin
-      (declare-type gx#stx-unwrap__0 (@lambda 1 #f))
-      (declare-type
-       gx#stx-unwrap
-       (@case-lambda (1 gx#stx-unwrap__0) (2 gx#stx-unwrap__%)))))
+  (declare-type gx#datum->syntax__% (@lambda 4 #f))
+  (declare-type gx#datum->syntax__0 (@lambda 2 #f))
+  (declare-type gx#datum->syntax__1 (@lambda 3 #f))
+  (declare-type
+   gx#datum->syntax
+   (@case-lambda
+    (2 gx#datum->syntax__0)
+    (3 gx#datum->syntax__1)
+    (4 gx#datum->syntax__%)))
+  (declare-type gx#stx-unwrap__% (@lambda 2 #f))
+  (declare-type gx#stx-unwrap__0 (@lambda 1 #f))
+  (declare-type
+   gx#stx-unwrap
+   (@case-lambda (1 gx#stx-unwrap__0) (2 gx#stx-unwrap__%)))
   (declare-type gx#stx-wrap (@lambda 2 #f))
   (declare-type gx#stx-rewrap (@lambda 2 #f))
   (declare-type gx#stx-apply-mark (@lambda 2 #f))
@@ -109,17 +105,12 @@ package: gerbil/expander
   (declare-type gx#stx-identifier-marks* (@lambda 1 #f))
   (declare-type gx#stx-identifier-context (@lambda 1 #f))
   (declare-type gx#identifier-list? (@lambda 1 #f))
-  (begin
-    (declare-type gx#genident__% (@lambda 2 #f))
-    (begin
-      (declare-type gx#genident__0 (@lambda 0 #f))
-      (declare-type gx#genident__1 (@lambda 1 #f))
-      (declare-type
-       gx#genident
-       (@case-lambda
-        (0 gx#genident__0)
-        (1 gx#genident__1)
-        (2 gx#genident__%)))))
+  (declare-type gx#genident__% (@lambda 2 #f))
+  (declare-type gx#genident__0 (@lambda 0 #f))
+  (declare-type gx#genident__1 (@lambda 1 #f))
+  (declare-type
+   gx#genident
+   (@case-lambda (0 gx#genident__0) (1 gx#genident__1) (2 gx#genident__%)))
   (declare-type gx#gentemps (@lambda 1 #f))
   (declare-type gx#syntax->list (@lambda 1 #f))
   (declare-type gx#stx-car (@lambda 1 #f))
@@ -142,17 +133,13 @@ package: gerbil/expander
   (declare-type gx#stx-last-pair (@lambda 1 #f))
   (declare-type gx#stx-list-tail (@lambda 2 #f))
   (declare-type gx#stx-list-ref (@lambda 2 #f))
-  (begin
-    (declare-type gx#stx-plist?__% (@lambda 2 #f))
-    (begin
-      (declare-type gx#stx-plist?__0 (@lambda 1 #f))
-      (declare-type
-       gx#stx-plist?
-       (@case-lambda (1 gx#stx-plist?__0) (2 gx#stx-plist?__%)))))
-  (begin
-    (declare-type gx#stx-getq__% (@lambda 3 #f))
-    (begin
-      (declare-type gx#stx-getq__0 (@lambda 2 #f))
-      (declare-type
-       gx#stx-getq
-       (@case-lambda (2 gx#stx-getq__0) (3 gx#stx-getq__%))))))
+  (declare-type gx#stx-plist?__% (@lambda 2 #f))
+  (declare-type gx#stx-plist?__0 (@lambda 1 #f))
+  (declare-type
+   gx#stx-plist?
+   (@case-lambda (1 gx#stx-plist?__0) (2 gx#stx-plist?__%)))
+  (declare-type gx#stx-getq__% (@lambda 3 #f))
+  (declare-type gx#stx-getq__0 (@lambda 2 #f))
+  (declare-type
+   gx#stx-getq
+   (@case-lambda (2 gx#stx-getq__0) (3 gx#stx-getq__%))))
