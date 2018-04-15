@@ -173,47 +173,39 @@ package: gerbil/compiler
    (@struct-setf gxc#!kw-lambda-primary::t 1 #f))
   (declare-type gxc#!struct-type:::init! (@lambda 7 #f))
   (declare-method gxc#!struct-type::t :init! gxc#!struct-type:::init! #f)
-  (begin
-    (declare-type gxc#!lambda:::init!__% (@lambda 6 struct-instance-init!))
-    (begin
-      (declare-type gxc#!lambda:::init!__0 (@lambda 4 #f))
-      (declare-type gxc#!lambda:::init!__1 (@lambda 5 #f))
-      (declare-type
-       gxc#!lambda:::init!
-       (@case-lambda
-        (4 gxc#!lambda:::init!__0)
-        (5 gxc#!lambda:::init!__1)
-        (6 gxc#!lambda:::init!__%)))))
+  (declare-type gxc#!lambda:::init!__% (@lambda 6 struct-instance-init!))
+  (declare-type gxc#!lambda:::init!__0 (@lambda 4 #f))
+  (declare-type gxc#!lambda:::init!__1 (@lambda 5 #f))
+  (declare-type
+   gxc#!lambda:::init!
+   (@case-lambda
+    (4 gxc#!lambda:::init!__0)
+    (5 gxc#!lambda:::init!__1)
+    (6 gxc#!lambda:::init!__%)))
   (declare-method gxc#!lambda::t :init! gxc#!lambda:::init! #f)
   (declare-type gxc#!struct-type-vtab (@lambda 1 #f))
   (declare-type gxc#!struct-type-lookup-method (@lambda 2 #f))
-  (begin
-    (declare-type gxc#optimizer-declare-type!__% (@lambda 3 #f))
-    (begin
-      (declare-type gxc#optimizer-declare-type!__0 (@lambda 2 #f))
-      (declare-type
-       gxc#optimizer-declare-type!
-       (@case-lambda
-        (2 gxc#optimizer-declare-type!__0)
-        (3 gxc#optimizer-declare-type!__%)))))
-  (begin
-    (declare-type gxc#optimizer-clear-type!__% (@lambda 2 #f))
-    (begin
-      (declare-type gxc#optimizer-clear-type!__0 (@lambda 1 #f))
-      (declare-type
-       gxc#optimizer-clear-type!
-       (@case-lambda
-        (1 gxc#optimizer-clear-type!__0)
-        (2 gxc#optimizer-clear-type!__%)))))
-  (begin
-    (declare-type gxc#optimizer-declare-method!__% (@lambda 4 #f))
-    (begin
-      (declare-type gxc#optimizer-declare-method!__0 (@lambda 3 #f))
-      (declare-type
-       gxc#optimizer-declare-method!
-       (@case-lambda
-        (3 gxc#optimizer-declare-method!__0)
-        (4 gxc#optimizer-declare-method!__%)))))
+  (declare-type gxc#optimizer-declare-type!__% (@lambda 3 #f))
+  (declare-type gxc#optimizer-declare-type!__0 (@lambda 2 #f))
+  (declare-type
+   gxc#optimizer-declare-type!
+   (@case-lambda
+    (2 gxc#optimizer-declare-type!__0)
+    (3 gxc#optimizer-declare-type!__%)))
+  (declare-type gxc#optimizer-clear-type!__% (@lambda 2 #f))
+  (declare-type gxc#optimizer-clear-type!__0 (@lambda 1 #f))
+  (declare-type
+   gxc#optimizer-clear-type!
+   (@case-lambda
+    (1 gxc#optimizer-clear-type!__0)
+    (2 gxc#optimizer-clear-type!__%)))
+  (declare-type gxc#optimizer-declare-method!__% (@lambda 4 #f))
+  (declare-type gxc#optimizer-declare-method!__0 (@lambda 3 #f))
+  (declare-type
+   gxc#optimizer-declare-method!
+   (@case-lambda
+    (3 gxc#optimizer-declare-method!__0)
+    (4 gxc#optimizer-declare-method!__%)))
   (declare-type gxc#optimizer-lookup-type (@lambda 1 #f))
   (declare-type gxc#optimizer-resolve-type (@lambda 1 #f))
   (declare-type gxc#optimizer-lookup-method (@lambda 2 #f))

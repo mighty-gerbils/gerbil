@@ -66,7 +66,6 @@
                            _char741_)
                           '#\_
                           _char741_)))
-                (begin
-                  (string-set! _res734_ _i739_ _xchar743_)
-                  (_lp737_ (fx+ _i739_ '1))))
+                (string-set! _res734_ _i739_ _xchar743_)
+                (_lp737_ (fx+ _i739_ '1)))
               _res734_))))))

@@ -33,26 +33,22 @@ package: gerbil/compiler
   (declare-type gxc#runtime-identifier=? (@lambda 2 #f))
   (declare-type gxc#generate-runtime-binding-id (@lambda 1 #f))
   (declare-type gxc#generate-runtime-binding-id* (@lambda 1 #f))
-  (begin
-    (declare-type gxc#generate-runtime-gensym-reference__% (@lambda 2 #f))
-    (begin
-      (declare-type gxc#generate-runtime-gensym-reference__0 (@lambda 1 #f))
-      (declare-type
-       gxc#generate-runtime-gensym-reference
-       (@case-lambda
-        (1 gxc#generate-runtime-gensym-reference__0)
-        (2 gxc#generate-runtime-gensym-reference__%)))))
+  (declare-type gxc#generate-runtime-gensym-reference__% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-gensym-reference__0 (@lambda 1 #f))
+  (declare-type
+   gxc#generate-runtime-gensym-reference
+   (@case-lambda
+    (1 gxc#generate-runtime-gensym-reference__0)
+    (2 gxc#generate-runtime-gensym-reference__%)))
   (declare-type gxc#generate-runtime-identifier (@lambda 1 #f))
   (declare-type gxc#generate-runtime-identifier-key (@lambda 1 #f))
-  (begin
-    (declare-type gxc#generate-runtime-temporary__% (@lambda 1 #f))
-    (begin
-      (declare-type gxc#generate-runtime-temporary__0 (@lambda 0 #f))
-      (declare-type
-       gxc#generate-runtime-temporary
-       (@case-lambda
-        (0 gxc#generate-runtime-temporary__0)
-        (1 gxc#generate-runtime-temporary__%)))))
+  (declare-type gxc#generate-runtime-temporary__% (@lambda 1 #f))
+  (declare-type gxc#generate-runtime-temporary__0 (@lambda 0 #f))
+  (declare-type
+   gxc#generate-runtime-temporary
+   (@case-lambda
+    (0 gxc#generate-runtime-temporary__0)
+    (1 gxc#generate-runtime-temporary__%)))
   (declare-type gxc#generate-runtime-empty (@lambda 1 #f))
   (declare-type gxc#generate-runtime-begin% (@lambda 1 #f))
   (declare-type gxc#generate-runtime-begin-foreign% (@lambda 1 #f))
@@ -64,27 +60,24 @@ package: gerbil/compiler
   (declare-type gxc#generate-runtime-values-ref (@lambda 3 #f))
   (declare-type gxc#generate-runtime-values->list (@lambda 2 #f))
   (declare-type gxc#generate-runtime-lambda% (@lambda 1 #f))
+  (declare-type gxc#generate-runtime-lambda-form (@lambda 2 #f))
   (declare-type gxc#generate-runtime-lambda-head (@lambda 1 #f))
   (declare-type gxc#generate-runtime-case-lambda% (@lambda 1 #f))
-  (begin
-    (declare-type gxc#generate-runtime-let-values%__% (@lambda 2 #f))
-    (begin
-      (declare-type gxc#generate-runtime-let-values%__0 (@lambda 1 #f))
-      (declare-type
-       gxc#generate-runtime-let-values%
-       (@case-lambda
-        (1 gxc#generate-runtime-let-values%__0)
-        (2 gxc#generate-runtime-let-values%__%)))))
+  (declare-type gxc#generate-runtime-let-values%__% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-let-values%__0 (@lambda 1 #f))
+  (declare-type
+   gxc#generate-runtime-let-values%
+   (@case-lambda
+    (1 gxc#generate-runtime-let-values%__0)
+    (2 gxc#generate-runtime-let-values%__%)))
   (declare-type gxc#generate-runtime-let-values-bind (@lambda 2 #f))
-  (begin
-    (declare-type gxc#generate-runtime-letrec-values%__% (@lambda 2 #f))
-    (begin
-      (declare-type gxc#generate-runtime-letrec-values%__0 (@lambda 1 #f))
-      (declare-type
-       gxc#generate-runtime-letrec-values%
-       (@case-lambda
-        (1 gxc#generate-runtime-letrec-values%__0)
-        (2 gxc#generate-runtime-letrec-values%__%)))))
+  (declare-type gxc#generate-runtime-letrec-values%__% (@lambda 2 #f))
+  (declare-type gxc#generate-runtime-letrec-values%__0 (@lambda 1 #f))
+  (declare-type
+   gxc#generate-runtime-letrec-values%
+   (@case-lambda
+    (1 gxc#generate-runtime-letrec-values%__0)
+    (2 gxc#generate-runtime-letrec-values%__%)))
   (declare-type gxc#generate-runtime-letrec*-values% (@lambda 1 #f))
   (declare-type gxc#generate-runtime-simple-let? (@lambda 1 #f))
   (declare-type gxc#generate-runtime-simple-let (@lambda 4 #f))

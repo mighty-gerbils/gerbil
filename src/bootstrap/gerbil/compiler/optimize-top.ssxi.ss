@@ -16,32 +16,28 @@ package: gerbil/compiler
   (declare-type gxc#basic-expression-type-call% (@lambda 1 #f))
   (declare-type gxc#basic-expression-type-make-struct-type (@lambda 2 #f))
   (declare-type gxc#basic-expression-type-make-struct-predicate (@lambda 2 #f))
-  (begin
-    (declare-type
-     gxc#basic-expression-type-make-struct-field-accessor__%
-     (@lambda 3 #f))
-    (begin
-      (declare-type
-       gxc#basic-expression-type-make-struct-field-accessor__0
-       (@lambda 2 #f))
-      (declare-type
-       gxc#basic-expression-type-make-struct-field-accessor
-       (@case-lambda
-        (2 gxc#basic-expression-type-make-struct-field-accessor__0)
-        (3 gxc#basic-expression-type-make-struct-field-accessor__%)))))
-  (begin
-    (declare-type
-     gxc#basic-expression-type-make-struct-field-mutator__%
-     (@lambda 3 #f))
-    (begin
-      (declare-type
-       gxc#basic-expression-type-make-struct-field-mutator__0
-       (@lambda 2 #f))
-      (declare-type
-       gxc#basic-expression-type-make-struct-field-mutator
-       (@case-lambda
-        (2 gxc#basic-expression-type-make-struct-field-mutator__0)
-        (3 gxc#basic-expression-type-make-struct-field-mutator__%)))))
+  (declare-type
+   gxc#basic-expression-type-make-struct-field-accessor__%
+   (@lambda 3 #f))
+  (declare-type
+   gxc#basic-expression-type-make-struct-field-accessor__0
+   (@lambda 2 #f))
+  (declare-type
+   gxc#basic-expression-type-make-struct-field-accessor
+   (@case-lambda
+    (2 gxc#basic-expression-type-make-struct-field-accessor__0)
+    (3 gxc#basic-expression-type-make-struct-field-accessor__%)))
+  (declare-type
+   gxc#basic-expression-type-make-struct-field-mutator__%
+   (@lambda 3 #f))
+  (declare-type
+   gxc#basic-expression-type-make-struct-field-mutator__0
+   (@lambda 2 #f))
+  (declare-type
+   gxc#basic-expression-type-make-struct-field-mutator
+   (@case-lambda
+    (2 gxc#basic-expression-type-make-struct-field-mutator__0)
+    (3 gxc#basic-expression-type-make-struct-field-mutator__%)))
   (declare-type
    gxc#basic-expression-type-make-struct-field-unchecked-accessor
    (@lambda 2 #f))
@@ -56,15 +52,13 @@ package: gerbil/compiler
   (declare-type gxc#case-lambda-expr? (@lambda 1 #f))
   (declare-type gxc#opt-lambda-expr? (@lambda 1 #f))
   (declare-type gxc#kw-lambda-expr? (@lambda 1 #f))
-  (begin
-    (declare-type gxc#lift-case-lambda-clauses__% (@lambda 4 #f))
-    (begin
-      (declare-type gxc#lift-case-lambda-clauses__0 (@lambda 3 #f))
-      (declare-type
-       gxc#lift-case-lambda-clauses
-       (@case-lambda
-        (3 gxc#lift-case-lambda-clauses__0)
-        (4 gxc#lift-case-lambda-clauses__%)))))
+  (declare-type gxc#lift-case-lambda-clauses__% (@lambda 4 #f))
+  (declare-type gxc#lift-case-lambda-clauses__0 (@lambda 3 #f))
+  (declare-type
+   gxc#lift-case-lambda-clauses
+   (@case-lambda
+    (3 gxc#lift-case-lambda-clauses__0)
+    (4 gxc#lift-case-lambda-clauses__%)))
   (declare-type gxc#lift-top-lambda-define-values% (@lambda 1 #f))
   (declare-type gxc#lift-top-lambda-let-values% (@lambda 1 #f))
   (declare-type gxc#lift-top-lambda-letrec-values% (@lambda 1 #f))

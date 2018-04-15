@@ -24,6 +24,8 @@ namespace: gxc
   (make-parameter #f))
 (def current-compile-identifiers
   (make-parameter #f))
+(def current-compile-boolean-context
+  (make-parameter #f))
 
 (def (make-bound-identifier-table)
   (def (hash-e id)
@@ -518,14 +520,30 @@ namespace: gxc
   '(begin))
 
 (def (generate-runtime-begin% stx)
+  (def (simplify body)
+    (let lp ((rest body) (r []))
+      (match rest
+        ([hd . rest]
+         (match hd
+           (['begin . exprs]
+            (lp (foldr cons rest exprs) r))
+           (['quote _]
+            (if (null? rest)
+              (lp rest (cons hd r))
+              (lp rest r)))
+           ((? symbol?)
+            (if (null? rest)
+              (lp rest (cons hd r))
+              (lp rest r)))
+           (else
+            (lp rest (cons hd r)))))
+        (else
+         (reverse r)))))
+
   (ast-case stx ()
     ((_ . body)
-     (let* ((body (stx-map compile-e #'body))
-            (body (filter (lambda (stx)
-                            (ast-case stx (begin)
-                              ((begin) #f) ; filter empty begins
-                              (_ #t)))
-                          body)))
+     (let* ((body (map compile-e #'body))
+            (body (simplify body)))
        (if (fx= (length body) 1)
          (car body)
          ['begin body ...])))))
@@ -630,8 +648,16 @@ namespace: gxc
 (def (generate-runtime-lambda% stx)
   (ast-case stx ()
     ((_ hd body)
-     ['lambda (generate-runtime-lambda-head #'hd)
-       (compile-e #'body)])))
+     (generate-runtime-lambda-form #'hd #'body))))
+
+(def (generate-runtime-lambda-form hd body)
+  (let* ((hd (generate-runtime-lambda-head hd))
+         (body (compile-e body))
+         (body
+          (match body
+            (['begin . exprs] exprs)
+            (else [body]))))
+    ['lambda hd body ...]))
 
 (def (generate-runtime-lambda-head hd)
   (stx-map generate-runtime-binding-id* hd))
@@ -685,7 +711,7 @@ namespace: gxc
            (dispatch
             (if (dispatch-case? hd body)
               (dispatch-case-e hd body)
-              ['lambda (generate-runtime-lambda-head hd) (compile-e body)])))
+              (generate-runtime-lambda-form hd body))))
       [condition ['apply dispatch args]]))
 
   (ast-case stx ()
@@ -703,18 +729,31 @@ namespace: gxc
 
 (def (generate-runtime-let-values% stx (compiled-body? #f))
   (def (generate-simple hd body)
-    (coalesce-let*
-     (generate-runtime-simple-let 'let hd body compiled-body?)))
+    (coalesce-boolean
+     (coalesce-let*
+      (generate-runtime-simple-let 'let hd body compiled-body?))))
+
+  (def (coalesce-boolean code)
+    (if (current-compile-boolean-context)
+      (match code
+        (['let [[id expr1]] ['if (eq? id) (eq? id) expr2]]
+         (match expr2
+           (['or . exprs]
+            ['or expr1 . exprs])
+           (else
+            ['or expr1 expr2])))
+        (else code))
+      code))
 
   (def (coalesce-let* code)
-    (ast-case code (let let*)
-      ((let ((id expr)) (let () body ...))
-       ['let [[#'id #'expr]] #'(body ...) ...])
-      ((let ((id expr)) (let ((id2 expr2)) body ...))
-       ['let* [[#'id #'expr] [#'id2 #'expr2]] #'(body ...) ...])
-      ((let ((id expr)) (let* (bind ...) body ...))
-       ['let* [[#'id #'expr] #'(bind ...) ...] #'(body ...) ...])
-      (_ code)))
+    (match code
+      (['let [[id expr]] ['let [] . body]]
+       ['let [[id expr]] . body])
+      (['let [[id1 expr1]] ['let [[id2 expr2]] . body]]
+       ['let* [[id1 expr1] [id2 expr2]] . body])
+      (['let [[id1 expr1]] ['let* bind . body]]
+       ['let* [[id1 expr1] . bind] . body])
+      (else code)))
 
   (def (generate-values hd body)
     (let lp ((rest hd) (bind []) (check []) (post []))
@@ -866,20 +905,25 @@ namespace: gxc
 
 (def (generate-runtime-simple-let? hd)
   (let lp ((rest hd))
-    (ast-case rest ()
-      ((((id) e) . rest)
-       (lp #'rest))
-      (() #t)
-      (_ #f))))
+    (match rest
+      ([[[_] _] . rest]
+       (lp rest))
+      ([] #t)
+      (else #f))))
 
 (def (generate-runtime-simple-let form hd body compiled-body?)
   (def (generate1 bind)
-    (ast-case bind ()
-      (((id) expr)
-       [(generate-runtime-binding-id* #'id) (compile-e #'expr)])))
-  [form (map generate1 hd)
-        (if compiled-body? body
-            (compile-e body))])
+    (with ([[id] expr] bind)
+      [(generate-runtime-binding-id* id) (compile-e expr)]))
+
+  (let* ((bind (map generate1 hd))
+         (body (if compiled-body? body
+                   (compile-e body)))
+         (body
+          (match body
+            (['begin . exprs] exprs)
+            (else [body]))))
+    [form bind body ...]))
 
 (def (generate-runtime-quote% stx)
   (def (generate1 datum)
@@ -930,9 +974,24 @@ namespace: gxc
          (_ (cons rator rands)))))))
 
 (def (generate-runtime-if% stx)
+  (def (simplify code)
+    (match code
+      (['if test expr ['quote #f]]
+       (match expr
+         (['and . exprs]
+          ['and test . exprs])
+         (else
+          ['and test expr])))
+      (else code)))
+
   (ast-case stx ()
     ((_ test K E)
-     ['if (compile-e #'test) (compile-e #'K) (compile-e #'E)])))
+     (if (current-compile-boolean-context)
+       (simplify ['if (compile-e #'test) (compile-e #'K) (compile-e #'E)])
+       ['if (parameterize ((current-compile-boolean-context #t))
+              (compile-e #'test))
+         (compile-e #'K)
+         (compile-e #'E)]))))
 
 (def (generate-runtime-ref% stx)
   (ast-case stx ()

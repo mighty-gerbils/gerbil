@@ -23,19 +23,18 @@
                      (lambda (_exn774_)
                        (##continuation-capture
                         (lambda (_cont776_)
-                          (begin
-                            (if gerbil/gambit/threads#unhandled-actor-exception-hook
-                                (with-catch
-                                 void
-                                 (lambda ()
-                                   (gerbil/gambit/threads#unhandled-actor-exception-hook
-                                    _cont776_
-                                    _exn774_)))
-                                '#!void)
-                            (##continuation-graft
-                             (##continuation-last _cont776_)
-                             ##primordial-exception-handler
-                             _exn774_)))))
+                          (if gerbil/gambit/threads#unhandled-actor-exception-hook
+                              (with-catch
+                               void
+                               (lambda ()
+                                 (gerbil/gambit/threads#unhandled-actor-exception-hook
+                                  _cont776_
+                                  _exn774_)))
+                              '#!void)
+                          (##continuation-graft
+                           (##continuation-last _cont776_)
+                           ##primordial-exception-handler
+                           _exn774_))))
                      _thunk771_)))))
         (if (procedure? _f757_)
             (let ((_thunk768_
@@ -54,20 +53,19 @@
                 _name759_
                 _tgroup769_)))
             (error '"Bad argument; expected procedure" _f757_)))))
-  (begin
-    (namespace
-     ("gerbil/gambit/threads#"
-      construct-actor-thread
-      actor-thread?
-      actor-thread-locals
-      actor-thread-locals-set!))
-    (define-type-of-thread
-     actor-thread
-     constructor:
-     construct-actor-thread
-     id:
-     gerbil#actor-thread::t
-     locals))
+  (namespace
+   ("gerbil/gambit/threads#"
+    construct-actor-thread
+    actor-thread?
+    actor-thread-locals
+    actor-thread-locals-set!))
+  (define-type-of-thread
+   actor-thread
+   constructor:
+   construct-actor-thread
+   id:
+   gerbil#actor-thread::t
+   locals)
   (define gerbil/gambit/threads#spawn-thread
     (let ((_opt-lambda733739_
            (lambda (_thunk735_ _name736_ _tgroup737_)
@@ -132,11 +130,10 @@
               (if _$e695_
                   (values _$e695_)
                   (let ((_tab698_ (make-hash-table-eq)))
-                    (begin
-                      (gerbil/gambit/threads#actor-thread-locals-set!
-                       _thr693_
-                       _tab698_)
-                      _tab698_))))
+                    (gerbil/gambit/threads#actor-thread-locals-set!
+                     _thr693_
+                     _tab698_)
+                    _tab698_)))
             (if (eq? _thr693_ ##primordial-thread)
                 gerbil/gambit/threads#*primordial-thread-locals*
                 (begin
@@ -146,20 +143,18 @@
                                   _thr693_)))
                     (if _$e700_
                         ((lambda (_tab703_)
-                           (begin
-                             (mutex-unlock!
-                              gerbil/gambit/threads#*thread-locals-mutex*)
-                             _tab703_))
+                           (mutex-unlock!
+                            gerbil/gambit/threads#*thread-locals-mutex*)
+                           _tab703_)
                          _$e700_)
                         (let ((_tab705_ (make-hash-table-eq)))
-                          (begin
-                            (hash-put!
-                             gerbil/gambit/threads#*thread-locals*
-                             _thr693_
-                             _tab705_)
-                            (mutex-unlock!
-                             gerbil/gambit/threads#*thread-locals-mutex*)
-                            _tab705_))))))))))
+                          (hash-put!
+                           gerbil/gambit/threads#*thread-locals*
+                           _thr693_
+                           _tab705_)
+                          (mutex-unlock!
+                           gerbil/gambit/threads#*thread-locals-mutex*)
+                          _tab705_)))))))))
   (define gerbil/gambit/threads#*primordial-thread-locals*
     (make-hash-table-eq))
   (define gerbil/gambit/threads#*thread-locals*
@@ -169,8 +164,7 @@
   (define gerbil/gambit/threads#unhandled-actor-exception-hook '#f)
   (define gerbil/gambit/threads#unhandled-actor-exception-hook-set!
     (lambda (_proc687_)
-      (if (let ((_$e689_ (not _proc687_)))
-            (if _$e689_ _$e689_ (procedure? _proc687_)))
+      (if (or (not _proc687_) (procedure? _proc687_))
           (set! gerbil/gambit/threads#unhandled-actor-exception-hook _proc687_)
           (error '"Bad argument; expected procedure or #f" _proc687_))))
   (define gerbil/gambit/threads#with-exception-stack-trace
@@ -181,12 +175,11 @@
                 (lambda (_exn673_)
                   (##continuation-capture
                    (lambda (_cont675_)
-                     (begin
-                       (gerbil/gambit/threads#dump-stack-trace!
-                        _cont675_
-                        _exn673_
-                        _error-port669_)
-                       (_E671_ _exn673_))))))
+                     (gerbil/gambit/threads#dump-stack-trace!
+                      _cont675_
+                      _exn673_
+                      _error-port669_)
+                     (_E671_ _exn673_)))))
               _thunk668_))))
       (lambda _g796_
         (let ((_g795_ (length _g796_)))
@@ -200,29 +193,28 @@
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/threads#with-exception-stack-trace
                   _g796_)))))))
-  (begin
-    (namespace ("gerbil/gambit/threads#" dump-stack-trace!))
-    (define (dump-stack-trace!
-             cont
-             exn
-             #!optional
-             (error-port (current-error-port)))
-      (let ((out (open-output-string)))
-        (display "*** Unhandled exception in " out)
-        (display (current-thread) out)
-        (newline out)
-        (display-exception exn out)
-        (display "Continuation backtrace: " out)
-        (newline out)
-        (##display-continuation-backtrace
-         cont
-         out
-         #f
-         #f
-         ##backtrace-default-max-head
-         ##backtrace-default-max-tail
-         0)
-        (##write-string (get-output-string out) error-port))))
+  (namespace ("gerbil/gambit/threads#" dump-stack-trace!))
+  (define (dump-stack-trace!
+           cont
+           exn
+           #!optional
+           (error-port (current-error-port)))
+    (let ((out (open-output-string)))
+      (display "*** Unhandled exception in " out)
+      (display (current-thread) out)
+      (newline out)
+      (display-exception exn out)
+      (display "Continuation backtrace: " out)
+      (newline out)
+      (##display-continuation-backtrace
+       cont
+       out
+       #f
+       #f
+       ##backtrace-default-max-head
+       ##backtrace-default-max-tail
+       0)
+      (##write-string (get-output-string out) error-port)))
   (define gerbil/gambit/threads#current-thread-group
     (lambda () (thread-thread-group (current-thread))))
   (define gerbil/gambit/threads#with-lock

@@ -6,12 +6,10 @@
         (if _$e581_ _$e581_ (##bignum? _obj579_)))))
   (define gerbil/gambit/exact#exact-integer-sqrt
     (lambda (_y569_)
-      (if (if ((lambda (_obj571_)
-                 (let ((_$e574_ (fixnum? _obj571_)))
-                   (if _$e574_ _$e574_ (##bignum? _obj571_))))
-               _y569_)
-              (not (negative? _y569_))
-              '#f)
+      (if (and ((lambda (_obj571_)
+                  (or (fixnum? _obj571_) (##bignum? _obj571_)))
+                _y569_)
+               (not (negative? _y569_)))
           (let ((_s-r577_ (##exact-int.sqrt _y569_)))
             (values (car _s-r577_) (cdr _s-r577_)))
           (error '"exact-integer-sqrt: Argument is not a nonnegative exact integer: "

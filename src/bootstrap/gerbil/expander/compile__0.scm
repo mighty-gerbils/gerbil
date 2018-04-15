@@ -466,64 +466,61 @@
                               (_E1643516444_)))))
                     (_E1643516444_)))))
         (_E1643416458_))))
-  (begin
-    (define gx#core-compile-top-let-values%__%
-      (lambda (_stx16367_ _form16368_)
-        (let* ((_e1636916382_ _stx16367_)
-               (_E1637116386_
-                (lambda ()
-                  (gx#raise-syntax-error '#f '"Bad syntax" _e1636916382_)))
-               (_E1637016418_
-                (lambda ()
-                  (if (gx#stx-pair? _e1636916382_)
-                      (let ((_e1637216390_ (gx#syntax-e _e1636916382_)))
-                        (let ((_hd1637316393_ (##car _e1637216390_))
-                              (_tl1637416395_ (##cdr _e1637216390_)))
-                          (if (gx#stx-pair? _tl1637416395_)
-                              (let ((_e1637516398_
-                                     (gx#syntax-e _tl1637416395_)))
-                                (let ((_hd1637616401_ (##car _e1637516398_))
-                                      (_tl1637716403_ (##cdr _e1637516398_)))
-                                  (let ((_hd16406_ _hd1637616401_))
-                                    (if (gx#stx-pair? _tl1637716403_)
-                                        (let ((_e1637816408_
-                                               (gx#syntax-e _tl1637716403_)))
-                                          (let ((_hd1637916411_
-                                                 (##car _e1637816408_))
-                                                (_tl1638016413_
-                                                 (##cdr _e1637816408_)))
-                                            (let ((_body16416_ _hd1637916411_))
-                                              (if (gx#stx-null? _tl1638016413_)
-                                                  (if '#t
-                                                      (cons _form16368_
-                                                            (cons (gx#stx-map1
+  (define gx#core-compile-top-let-values%__%
+    (lambda (_stx16367_ _form16368_)
+      (let* ((_e1636916382_ _stx16367_)
+             (_E1637116386_
+              (lambda ()
+                (gx#raise-syntax-error '#f '"Bad syntax" _e1636916382_)))
+             (_E1637016418_
+              (lambda ()
+                (if (gx#stx-pair? _e1636916382_)
+                    (let ((_e1637216390_ (gx#syntax-e _e1636916382_)))
+                      (let ((_hd1637316393_ (##car _e1637216390_))
+                            (_tl1637416395_ (##cdr _e1637216390_)))
+                        (if (gx#stx-pair? _tl1637416395_)
+                            (let ((_e1637516398_ (gx#syntax-e _tl1637416395_)))
+                              (let ((_hd1637616401_ (##car _e1637516398_))
+                                    (_tl1637716403_ (##cdr _e1637516398_)))
+                                (let ((_hd16406_ _hd1637616401_))
+                                  (if (gx#stx-pair? _tl1637716403_)
+                                      (let ((_e1637816408_
+                                             (gx#syntax-e _tl1637716403_)))
+                                        (let ((_hd1637916411_
+                                               (##car _e1637816408_))
+                                              (_tl1638016413_
+                                               (##cdr _e1637816408_)))
+                                          (let ((_body16416_ _hd1637916411_))
+                                            (if (gx#stx-null? _tl1638016413_)
+                                                (if '#t
+                                                    (cons _form16368_
+                                                          (cons (gx#stx-map1
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           gx#core-compile-top-lambda-clause
-                           _hd16406_)
-                          (cons (gx#core-compile-top-syntax _body16416_) '())))
-              (_E1637116386_))
+                         gx#core-compile-top-lambda-clause
+                         _hd16406_)
+                        (cons (gx#core-compile-top-syntax _body16416_) '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                  (_E1637116386_)))))
-                                        (_E1637116386_)))))
-                              (_E1637116386_))))
-                      (_E1637116386_)))))
-          (_E1637016418_))))
-    (begin
-      (define gx#core-compile-top-let-values%__0
-        (lambda (_stx16425_)
-          (let ((_form16427_ '%#let-values))
-            (gx#core-compile-top-let-values%__% _stx16425_ _form16427_))))
-      (define gx#core-compile-top-let-values%
-        (lambda _g17238_
-          (let ((_g17237_ (length _g17238_)))
-            (cond ((##fx= _g17237_ 1)
-                   (apply gx#core-compile-top-let-values%__0 _g17238_))
-                  ((##fx= _g17237_ 2)
-                   (apply gx#core-compile-top-let-values%__% _g17238_))
-                  (else
-                   (##raise-wrong-number-of-arguments-exception
-                    gx#core-compile-top-let-values%
-                    _g17238_))))))))
+                                                    (_E1637116386_))
+                                                (_E1637116386_)))))
+                                      (_E1637116386_)))))
+                            (_E1637116386_))))
+                    (_E1637116386_)))))
+        (_E1637016418_))))
+  (define gx#core-compile-top-let-values%__0
+    (lambda (_stx16425_)
+      (let ((_form16427_ '%#let-values))
+        (gx#core-compile-top-let-values%__% _stx16425_ _form16427_))))
+  (define gx#core-compile-top-let-values%
+    (lambda _g17238_
+      (let ((_g17237_ (length _g17238_)))
+        (cond ((##fx= _g17237_ 1)
+               (apply gx#core-compile-top-let-values%__0 _g17238_))
+              ((##fx= _g17237_ 2)
+               (apply gx#core-compile-top-let-values%__% _g17238_))
+              (else
+               (##raise-wrong-number-of-arguments-exception
+                gx#core-compile-top-let-values%
+                _g17238_))))))
   (define gx#core-compile-top-letrec-values%
     (lambda (_stx16364_)
       (gx#core-compile-top-let-values%__% _stx16364_ '%#letrec-values)))
