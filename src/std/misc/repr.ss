@@ -83,29 +83,34 @@ package: std/misc
                        prefix: "#u8(" separator: " " display-element: d suffix: ")"))
 
    ((hash-table? x) ;; hash-table: print as (hash ...)
-    (let (prefix
-          (let (testf (##vector-ref x 2))
-            (cond
-             ((or (not testf)
-                  (eq? testf eq?)
-                  (eq? testf ##eq?))
-              "(hash-eq ")
-             ((or (eq? testf eqv?)
-                  (eq? testf ##eqv?))
-              "(hash-eqv ")
-             (else
-              "(hash "))))
+    (let* ((prefix0
+            (let (testf (##vector-ref x 2))
+              (cond
+               ((or (not testf)
+                    (eq? testf eq?)
+                    (eq? testf ##eq?))
+                "(hash-eq")
+               ((or (eq? testf eqv?)
+                    (eq? testf ##eqv?))
+                "(hash-eqv")
+               (else
+                "(hash"))))
+           (prefix
+            (if (zero? (hash-length x)) prefix0 (string-append prefix0 " ")))
+           (kr
+            (lambda (k)
+              (if (or (simple? k) (symbol? k) (null? k))
+                (object->string k)
+                (string-append "," (r k))))))
       (display-separated
-       (sort (hash-map (lambda (k v) (cons (r k) v)) x) ;; sort keys by repr
+       (sort (hash-map (lambda (k v) (cons (kr k) v)) x) ;; sort keys by repr
              (lambda (krv1 krv2) (string<? (car krv1) (car krv2))))
        port prefix: prefix suffix: ")"
        display-element:
        (lambda (x _)
          (with ([kr . v] x)
            (d "(")
-           (if (eq? (string-ref kr 0) #\')
-             (d (substring kr 1 (string-length kr)))
-             (begin (d ",") (d kr)))
+           (d kr)
            (d " ") (p v)
            (d ")"))))))
 
