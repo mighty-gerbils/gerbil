@@ -198,7 +198,12 @@ package: std/text
              (let (n (##fxarithmetic-shift (hex-value char) shift))
                (lp rest (bitwise-ior n val) (##fx+ shift 4))))
             (else
-             (integer->char val)))))))
+             (if (and (##fx< val ##max-char)
+                      (or (##fx< val #xd800)
+                          (##fx< #xdfff val)))
+               (##integer->char val)
+               ;; invalid unicode point; use utf8 replacement instead of bombing
+               #\xfffd)))))))
 
   (def (hex-value char)
     (cond
