@@ -381,6 +381,9 @@ package: std/debug
 #define ___STILL_REFCOUNT_OFS 1
 #define ___STILL_BODY_OFS 6
 #define ___STILL_HAND_OFS ___STILL_BODY_OFS
+#ifndef ___BODY_OFS
+#define ___BODY_OFS 1
+#endif
 END-C
 )
 
