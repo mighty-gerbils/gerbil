@@ -5,6 +5,7 @@ package: std/misc
 
 (export
   plist->alist
+  alist->plist
   length=? length=n?
   length<? length<n? length<=? length<=n?
   length>? length>n? length>=? length>=n?
@@ -22,6 +23,14 @@ package: std/misc
       ([] [])
       (else (error "improper plist" plist)))))
 
+;; This function transform an association list ((k1 . v1) (k2 . v2) ...) into
+;; an association list (k1 v1 k2 v2 ...)
+(def (alist->plist alist)
+  (let loop ((p alist))
+    (match p
+      ([[k . v] . rest] (append [k v] (loop rest)))
+      ([] [])
+      (else (error "improper alist" alist)))))
 
 ;; Are the two lists of the same length. Note: diverges if either list is circular.
 (def (length=? x y) ;; Same as (= (length x) (length y))
