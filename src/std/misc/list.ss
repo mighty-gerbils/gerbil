@@ -25,7 +25,7 @@ package: std/misc
      (alist? rest))
     (v #f)))
 
-;; This function checks if the list is a proper association-list.
+;; This function checks if the list is a proper property-list.
 ;; ie it has the form [key1 val1 key2 val2]
 (def (plist? plist)
   (match plist
