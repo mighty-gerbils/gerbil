@@ -4,6 +4,8 @@
 package: std/misc
 
 (export
+  alist?
+  plist?
   plist->alist
   alist->plist
   length=? length=n?
@@ -13,6 +15,24 @@ package: std/misc
   snoc append1
   for-each!
   push!)
+
+;; This function checks if the list is a proper association-list.
+;; ie it has the form [[key1 . val1] [key2 . val2]]
+(def (alist? alist)
+  (match alist
+    ([] #t)
+    ([[sym . val] . rest]
+     (alist? rest))
+    (v #f)))
+
+;; This function checks if the list is a proper association-list.
+;; ie it has the form [key1 val1 key2 val2]
+(def (plist? plist)
+  (match plist
+    ([] #t)
+    ([key val . rest]
+     (plist? rest))
+    (v #f)))
 
 ;; This function transform a property list (k1 v1 k2 v2 ...) into
 ;; an association list ((k1 . v1) (k2 . v2) ...).
