@@ -19,6 +19,7 @@ package: std/text
 (import :gerbil/gambit/ports
         :gerbil/gambit/bits
         :std/error
+        :std/misc/list
         (only-in :std/srfi/1 reverse!))
 (export read-json write-json
         string->json-object json-object->string
@@ -271,6 +272,8 @@ package: std/text
     (write-json-string (symbol->string obj) port))
    ((keyword? obj)
     (write-json-string (keyword->string obj) port))
+   ((alist? obj)
+    (write-json-alist obj port))
    ((list? obj)
     (write-json-list obj port))
    ((vector? obj)
@@ -296,6 +299,34 @@ package: std/text
     (write-string str port)
     (when (eq? (string-ref str (##fx- (string-length str) 1)) #\.)
       (write-char #\0 port))))
+
+(def (write-json-alist obj port)
+  (def (string-e key)
+    (cond
+     ((string? key) key)
+     ((symbol? key)
+      (symbol->string key))
+     ((keyword? key)
+      (keyword->string key))
+     (else
+      (error "Illegal hash key; must be symbol, keyword or string" obj key))))
+
+  (write-char #\{ port)
+  (let lp ((alist obj))
+    (match alist
+      ([[key . val]]                  ; last one
+       (write (string-e key) port)
+       (write-char #\: port)
+       (write-json-object val port)
+       (write-char #\} port))
+      ([[key . val] . rest]
+       (write (string-e key) port)
+       (write-char #\: port)
+       (write-json-object val port)
+       (write-char #\, port)
+       (lp rest))
+      ([]                             ; empty
+       (write-char #\} port)))))
 
 (def (write-json-list obj port)
   (write-char #\[ port)
@@ -329,33 +360,8 @@ package: std/text
       (write-string "[]" port))))
 
 (def (write-json-hash obj port)
-  (def (string-e key)
-    (cond
-     ((string? key) key)
-     ((symbol? key)
-      (symbol->string key))
-     ((keyword? key)
-      (keyword->string key))
-     (else
-      (error "Illegal hash key; must be symbol, keyword or string" obj key))))
-
-  (write-char #\{ port)
   (let (lst (hash->list obj))
-    (let lp ((rest lst))
-      (match rest
-        ([[key . val]]                  ; last one
-         (write (string-e key) port)
-         (write-char #\: port)
-         (write-json-object val port)
-         (write-char #\} port))
-        ([[key . val] . rest]
-         (write (string-e key) port)
-         (write-char #\: port)
-         (write-json-object val port)
-         (write-char #\, port)
-         (lp rest))
-        ([]                             ; empty
-         (write-char #\} port))))))
+    (write-json-object lst port)))
 
 (def (write-json-string obj port)
   (def escape
