@@ -4,7 +4,10 @@
 package: std/misc
 
 (export
+  alist?
+  plist?
   plist->alist
+  alist->plist
   length=? length=n?
   length<? length<n? length<=? length<=n?
   length>? length>n? length>=? length>=n?
@@ -12,6 +15,24 @@ package: std/misc
   snoc append1
   for-each!
   push!)
+
+;; This function checks if the list is a proper association-list.
+;; ie it has the form [[key1 . val1] [key2 . val2]]
+(def (alist? alist)
+  (match alist
+    ([] #t)
+    ([[sym . val] . rest]
+     (alist? rest))
+    (v #f)))
+
+;; This function checks if the list is a proper property-list.
+;; ie it has the form [key1 val1 key2 val2]
+(def (plist? plist)
+  (match plist
+    ([] #t)
+    ([key val . rest]
+     (plist? rest))
+    (v #f)))
 
 ;; This function transform a property list (k1 v1 k2 v2 ...) into
 ;; an association list ((k1 . v1) (k2 . v2) ...).
@@ -22,6 +43,14 @@ package: std/misc
       ([] [])
       (else (error "improper plist" plist)))))
 
+;; This function transform an association list ((k1 . v1) (k2 . v2) ...) into
+;; an association list (k1 v1 k2 v2 ...)
+(def (alist->plist alist)
+  (let loop ((p alist))
+    (match p
+      ([[k . v] . rest] (append [k v] (loop rest)))
+      ([] [])
+      (else (error "improper alist" alist)))))
 
 ;; Are the two lists of the same length. Note: diverges if either list is circular.
 (def (length=? x y) ;; Same as (= (length x) (length y))
