@@ -19,7 +19,7 @@ package: std/text
 (import :gerbil/gambit/ports
         :gerbil/gambit/bits
         :std/error
-        :std/misc/list
+        (only-in :std/misc/list alist?)
         (only-in :std/srfi/1 reverse!))
 (export read-json write-json
         string->json-object json-object->string
