@@ -164,10 +164,9 @@ package: std/actor
 
 (def (!!stream-pipe start)
   (def (stream-start compl outp)
-    (let/cc break
-      (let (k (with-completion-error compl (start)))
-        (completion-post! compl (void))
-        (stream-handler k outp))))
+    (let (k (with-completion-error compl (start)))
+      (completion-post! compl (void))
+      (stream-handler k outp)))
 
   (def (stream-handler k outp)
     (let lp ((close? #f))
