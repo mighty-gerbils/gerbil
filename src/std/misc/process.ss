@@ -20,12 +20,14 @@ package: std/misc
 ;; The command is a list [path . arguments] to be processed by Gambit's open-process.
 ;; The coprocess: argument specifies how Gerbil interacts with the process;
 ;; it is a function that will be called with the Gambit process object as only argument;
-;; the result of that function will be returned as first value of run-process.
+;; the result of that function will be returned by run-process.
 ;; The default coprocess is the function std/misc/ports#read-all-as-string,
 ;; that will read the process's entire output as a string.
-;; The second and last value returned by run-process will be process exit status.
-;; If the check-status?: argument is true, then the process exit status will be checked,
-;; and an error will be raised if it isn't 0.
+;; If the check-status: argument is a procedure then when the process has
+;; completed it is called with the exit status and the list of arguments passed
+;; to gerbil/gambit/ports#open-process used to create the process. If it is
+;; true, then the process exit status will be checked, and an error will be
+;; raised if it isn't 0. If it is false, then the exit status is not checked.
 ;; Other arguments are passed through to gerbil/gambit/ports#open-process.
 ;; They have the same defaults as per gambit, except for the show-console: argument
 ;; that defaults to #f, the Gambit default.
@@ -35,7 +37,7 @@ package: std/misc
 (def (run-process
       command
       coprocess: (coprocess read-all-as-string)
-      check-status: (check-status check-process-success)
+      check-status: (check-status #t)
       environment: (environment #f)
       directory: (directory #f)
       stdin-redirection: (stdin-redirection #t)
@@ -57,7 +59,10 @@ package: std/misc
     (try
      (let* ((result (coprocess process))
             (status (process-status process)))
-       (check-status status settings) ;; NB: pass settings to help inform error messages.
+       (if check-status
+	   ((if (procedure? check-status)
+		check-status
+		check-process-success) status settings)) ;; NB: pass settings to help inform error messages.
        result)
      (finally
       ;; If anything goes wrong, close the pipes and wait for the subprocess to complete.
