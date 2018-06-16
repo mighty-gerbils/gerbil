@@ -99,6 +99,8 @@
         (linux
          `((gxc: "os/epoll" ,@(include-gambit-sharp))
            (gxc: "os/inotify" ,@(include-gambit-sharp))))
+        (bsd
+         `((gxc: "os/kqueue" ,@(include-gambit-sharp))))
         (else '()))
     ;; :std/net/bio
     "net/bio/input"
@@ -114,6 +116,8 @@
     ,@(cond-expand
         (linux
          '("net/socket/epoll-server"))
+        (bsd
+         '("net/socket/kqueue-server"))
         (else '()))
     "net/socket/server"
     "net/socket"
