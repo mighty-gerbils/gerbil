@@ -13,7 +13,9 @@ package: std/net/socket
 
 (cond-expand
   (linux
-   (import :std/net/socket/epoll-server)))
+   (import :std/net/socket/epoll-server))
+  (bsd
+   (import :std/net/socket/kqueue-server)))
 
 ;; start the socket server -- takes a server implementation, eg epoll-server
 (def (start-socket-server! (impl (default-server-impl)))
@@ -39,5 +41,6 @@ package: std/net/socket
 (def (default-server-impl)
   (cond-expand
     (linux epoll-socket-server)
+    (bsd kqueue-socket-server)
     (else
      (error "No socket server implementation for this sytem" (system-type)))))

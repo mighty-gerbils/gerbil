@@ -64,6 +64,7 @@
   * [std/os/socket](#stdossocket)
   * [std/os/epoll](#stdosepoll)
   * [std/os/inotify](#stdosinotify)
+  * [std/os/kqueue](#stdoskqueue)
 - [std/parser](#stdparser)
 - [std/pregexp](#stdpregexp)
 - [std/sort](#stdsort)
@@ -1339,6 +1340,72 @@ inotify for linux.
   IN_ISDIR
   IN_Q_OVERFLOW
   IN_UNMOUNT
+```
+
+### std/os/kqueue
+
+kqueue for BSD.
+
+```
+(require bsd)
+(import :std/os/kqueue)
+
+;; exports:
+    kqueue
+    make-kevents
+    kqueue-close
+    kqueue-wait
+    kqueue-kevent-add
+    kqueue-kevent-del
+    kevent-ident
+    kevent-filter
+    kevent-flags
+    kevent-fflags
+    kevent-data
+    kevent-udata
+    set-kevent-ident!
+    set-kevent-filter!
+    set-kevent-flags!
+    set-kevent-fflags!
+    set-kevent-data!
+    set-kevent-udata!
+    EV_ADD
+    EV_ENABLE
+    EV_DISABLE
+    EV_DISPATCH
+    EV_DELETE
+    EV_RECEIPT
+    EV_ONESHOT
+    EV_CLEAR
+    EV_EOF
+    EV_ERROR
+    EVFILT_READ
+    EVFILT_WRITE
+    EVFILT_VNODE
+    EVFILT_PROC
+    EVFILT_SIGNAL
+    EVFILT_TIMER
+    EVFILT_DEVICE
+    NOTE_DELETE
+    NOTE_WRITE
+    NOTE_EXTEND
+    NOTE_TRUNCATE
+    NOTE_LOWAT
+    NOTE_EOF
+    NOTE_DELETE
+    NOTE_WRITE
+    NOTE_EXTEND
+    NOTE_TRUNCATE
+    NOTE_ATTRIB
+    NOTE_LINK
+    NOTE_RENAME
+    NOTE_REVOKE
+    NOTE_EXIT
+    NOTE_FORK
+    NOTE_EXEC
+    NOTE_TRACK
+    NOTE_TRACKERR
+    NOTE_CHANGE
 ```
 
 ## std/parser
