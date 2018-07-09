@@ -12,6 +12,7 @@ package: std/srfi
   define-stream
   list->stream port->stream
   stream
+  stream?
   stream->list
   stream-append stream-concat
   stream-constant
@@ -25,6 +26,7 @@ package: std/srfi
   stream-let
   stream-map
   stream-match
+  stream-of
   stream-range
   stream-ref
   stream-reverse
