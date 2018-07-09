@@ -30,6 +30,10 @@
   (config-have-leveldb
    (import "db/leveldb-test")))
 
+(cond-expand
+  ((or linux bsd)
+   (import "net/socket/server-test")))
+
 (def tests
   [generic-runtime-test generic-macro-test
    iter-test
@@ -48,6 +52,11 @@
    (if config-enable-sqlite [sqlite-test] []) ...
    (if config-enable-lmdb [lmdb-test] []) ...
    (if config-enable-leveldb [leveldb-test] []) ...
+   (cond-expand
+     ((or linux bsd)
+      [socket-server-test])
+     (else []))
+   ...
    ])
 
 (apply run-tests! tests)
