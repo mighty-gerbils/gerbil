@@ -612,15 +612,15 @@ package: std
   (string-join (map (lambda (l) (pkg-config l "--cflags")) libs) " "))
 
 ;; tries pkg-config-libs with fallback to env-ldflags
-(def (ldflags lib ldflags)
+(def (ldflags lib flags)
   (try
    (pkg-config-libs lib)
    (catch (e)
-     ((env-ldflags) ldflags))))
+     ((env-ldflags) flags))))
 
 ;; tries pkg-confg-cflags with fallback to env-cppflags
-(def (cppflags lib cppflags)
+(def (cppflags lib flags)
   (try
    (pkg-config-cflags lib)
    (catch (e)
-     ((env-cppflags) cppflags))))
+     ((env-cppflags) flags))))
