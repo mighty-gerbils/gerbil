@@ -7,7 +7,8 @@ package: std
         :gerbil/expander
         :gerbil/gambit/misc
         :gerbil/gambit/ports
-        "sort")
+        "sort"
+        "sugar")
 (export make make-depgraph make-depgraph/spec
         shell-config
         env-cppflags
@@ -15,7 +16,9 @@ package: std
         include-gambit-sharp
         pkg-config
         pkg-config-libs
-        pkg-config-cflags)
+        pkg-config-cflags
+        ldflags
+        cppflags)
 
 ;; buildspec: [<build> ...]
 ;;  <build>:
@@ -592,7 +595,7 @@ package: std
 ;; args: [<arg> ...]
 ;;  <arg>: additionnal arguments to pass to pkg-config
 (def (pkg-config lib . args)
-  (apply shell-config "pkg-config" lib args))
+  (apply shell-config "pkg-config" "--silence-errors" lib args))
 
 ;; calls pkg-config in order to return `ld-options`.
 ;;
@@ -607,3 +610,17 @@ package: std
 ;;  <lib>: library to get cc-options for
 (def (pkg-config-cflags . libs)
   (string-join (map (lambda (l) (pkg-config l "--cflags")) libs) " "))
+
+;; tries pkg-config-libs with fallback to env-ldflags
+(def (ldflags lib flags)
+  (try
+   (pkg-config-libs lib)
+   (catch (e)
+     ((env-ldflags) flags))))
+
+;; tries pkg-confg-cflags with fallback to env-cppflags
+(def (cppflags lib flags)
+  (try
+   (pkg-config-cflags lib)
+   (catch (e)
+     ((env-cppflags) flags))))

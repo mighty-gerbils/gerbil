@@ -1,8 +1,4 @@
 ;; -*- Gerbil -*-
-
-(def ldflags (env-ldflags))
-(def cppflags (env-cppflags))
-
 (def build-spec
   `((gxc: "build-config" dep: ("build-features.ss"))
     "format"
@@ -62,15 +58,15 @@
     "text/json"
     ,@(if config-enable-libyaml
         `((gsc: "text/libyaml"
-                "-cc-options" ,(cppflags "")
-                "-ld-options" ,(ldflags "-lyaml"))
+                "-cc-options" ,(cppflags "libyaml" "")
+                "-ld-options" ,(ldflags "libyaml" "-lyaml"))
           (ssi: "text/libyaml")
           "text/yaml")
         '())
     ,@(if config-enable-zlib
         `((gsc: "text/_zlib"
-                "-cc-options" ,(cppflags "")
-                "-ld-options" ,(ldflags "-lz"))
+                "-cc-options" ,(cppflags "zlib" "")
+                "-ld-options" ,(ldflags "zlib" "-lz"))
           (ssi: "text/_zlib")
           "text/zlib")
         '())
@@ -146,8 +142,8 @@
     "xml"
     ;; :std/crypto
     (gsc: "crypto/libcrypto"
-          "-cc-options" ,(cppflags "")
-          "-ld-options" ,(ldflags "-lcrypto")
+          "-cc-options" ,(cppflags "libcrypto" "")
+          "-ld-options" ,(ldflags "libcrypto" "-lcrypto")
           ,@(include-gambit-sharp))
     (static-include: "crypto/libcrypto-rfc5114.c")
     (ssi: "crypto/libcrypto")
@@ -197,29 +193,29 @@
     "db/postgresql"
     ,@(if config-enable-sqlite
         `((gsc: "db/_sqlite"
-                "-cc-options" ,(cppflags "")
-                "-ld-options" ,(ldflags "-lsqlite3"))
+                "-cc-options" ,(cppflags "sqlite3" "")
+                "-ld-options" ,(ldflags "sqlite3" "-lsqlite3"))
           (ssi: "db/_sqlite")
           "db/sqlite")
         '())
     ,@(if config-enable-mysql
         `((gsc: "db/_mysql"
-                "-cc-options" ,(cppflags "")
-                "-ld-options" ,(ldflags "-lpthread -lmysqlclient"))
+                "-cc-options" ,(cppflags "mysqlclient" "")
+                "-ld-options" ,(ldflags "mysqlclient" "-lpthread -lmysqlclient"))
           (ssi: "db/_mysql")
           "db/mysql")
         '())
     ,@(if config-enable-lmdb
         `((gsc: "db/_lmdb"
-                "-cc-options" ,(cppflags "")
-                "-ld-options" ,(ldflags "-llmdb"))
+                "-cc-options" ,(cppflags "lmdb" "")
+                "-ld-options" ,(ldflags "lmdb" "-llmdb"))
           (ssi: "db/_lmdb")
           "db/lmdb")
         '())
     ,@(if config-enable-leveldb
         `((gsc: "db/_leveldb"
-                "-cc-options" ,(cppflags "")
-                "-ld-options" ,(ldflags "-lleveldb"))
+                "-cc-options" ,(cppflags "leveldb" "")
+                "-ld-options" ,(ldflags "leveldb" "-lleveldb"))
           (ssi: "db/_leveldb")
           "db/leveldb")
         '())
