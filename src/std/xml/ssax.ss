@@ -3,6 +3,8 @@
 ;;; SSAX parser inerface
 package: std/xml
 
+(import :std/srfi/13)
+
 (export read-xml)
 
 ;; ns is an assoc or a hash table of mapping uri (string) -> namespace (string)
@@ -26,7 +28,6 @@ package: std/xml
 (def ssax:warn void)
 
 (include "oleg/myenv-gerbil.scm")
-(include "oleg/srfi-13-local.scm")
 (include "oleg/char-encoding.scm")
 (include "oleg/define-opt.scm")
 (include "oleg/parser-errors-vanilla.scm")
