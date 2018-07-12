@@ -1,11 +1,13 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-13: string library
+;;;
+;;; This is (gerbilized) Olin's implementation, without the expensive argument checking
+;;; and optionals goop -- it uses gerbil opt-lambdas and ellides the checks altogether.
+;;;
 package: std/srfi
 
 (import :gerbil/gambit/bits
-        :std/srfi/srfi-support
-        :std/srfi/8
         :std/srfi/14)
 (export
   string-map string-map!
@@ -41,15 +43,15 @@ package: std/srfi
   string-null?
   string-join
   string-tokenize
-  string-replace
-  )
+  string-replace)
 
 (declare
-  (not safe)                  ; olin meticulously checks his arguments
-  (fixnum))                   ; and deals with indices exclusively
+  (not safe)
+  (fixnum))
 
-;; this is ASCII only; help yourself if you have the unicode expertise
-;; to correctly implement it, patches welcome)
+;;; baseline definitions
+;;; this is ASCII only; help yourself if you have the unicode expertise
+;;; to correctly implement it, patches welcome)
 (def a:int (char->integer #\a))
 (def z:int (char->integer #\z))
 (def A:int (char->integer #\A))
@@ -61,4 +63,5 @@ package: std/srfi
         (and (>= int A:int) (<= int Z:int)))))
 (def char-titlecase char-upcase)
 
+;;; Implementation
 (include "srfi-13.scm")
