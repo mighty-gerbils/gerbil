@@ -10,6 +10,7 @@ package: std/os
         :std/os/signal)
 (export signalfd signalfd?
         signalfd-reset!
+        signalfd-read
         signalfd-siginfo-signo
         signalfd-siginfo-errno
         signalfd-siginfo-code
@@ -30,7 +31,7 @@ package: std/os
 (def (signalfd sigset)
   (let (fd (check-os-error (_signalfd -1 sigset (##fxior SFD_NONBLOCK SFD_CLOEXEC))
              (signalfd sigset)))
-    fdopen fd 'input 'signalfd))
+    (fdopen fd 'in 'signalfd)))
 
 (def (signalfd? obj)
   (fd-type? obj 'signalfd))
