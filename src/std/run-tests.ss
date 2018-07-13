@@ -33,6 +33,8 @@
 (cond-expand
   ((or linux bsd)
    (import "net/socket/server-test")))
+  (linux
+   (import "os/signalfd-test")))
 
 (def tests
   [generic-runtime-test generic-macro-test
@@ -55,6 +57,10 @@
    (cond-expand
      ((or linux bsd)
       [socket-server-test])
+     (else []))
+   ...
+   (cond-expand
+     (linux [signalfd-test])
      (else []))
    ...
    ])
