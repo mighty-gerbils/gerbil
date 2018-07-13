@@ -69,6 +69,13 @@ package: std/os
            (##fx- (__errno))
            r))))
 
+  (define-macro (define-guard guard defn)
+    (if (eval `(cond-expand (,guard #t) (else #f)))
+      '(begin)
+      (begin
+        (eval `(define-cond-expand-feature ,guard))
+        defn)))
+
   (namespace ("std/os/signal#"
               SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGIOT SIGBUS
               SIGFPE SIGFPE SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM
@@ -132,9 +139,11 @@ package: std/os
 
   (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
 
-  (c-define-type sigset_t "sigset_t")
-  (c-define-type sigset_t*
-    (pointer sigset_t (sigset_t*) "ffi_free"))
+  (define-guard ffi-have-sigset
+    (c-define-type sigset_t "sigset_t"))
+  (define-guard ffi-have-sigset*
+    (c-define-type sigset_t*
+      (pointer "sigset_t" (sigset_t*) "ffi_free")))
 
   (define-c-lambda __sigprocmask (sigset_t* sigset_t*) int)
   (define-with-errno _sigprocmask __sigprocmask (how sigset old-sigset))
