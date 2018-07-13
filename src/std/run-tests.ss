@@ -30,6 +30,10 @@
   (config-have-leveldb
    (import "db/leveldb-test")))
 
+(cond-expand
+  (linux
+   (import "os/signalfd-test")))
+
 (def tests
   [generic-runtime-test generic-macro-test
    iter-test
@@ -48,6 +52,10 @@
    (if config-enable-sqlite [sqlite-test] []) ...
    (if config-enable-lmdb [lmdb-test] []) ...
    (if config-enable-leveldb [leveldb-test] []) ...
+   (cond-expand
+     (linux [signalfd-test])
+     (else []))
+   ...
    ])
 
 (apply run-tests! tests)
