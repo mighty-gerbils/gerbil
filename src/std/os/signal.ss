@@ -16,7 +16,6 @@ package: std/os
   kill
   sigprocmask
   make_sigset
-  make_sigset
   sigemptyset
   sigfillset
   sigaddset
