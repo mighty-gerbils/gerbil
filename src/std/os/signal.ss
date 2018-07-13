@@ -157,7 +157,8 @@ package: std/os
     (c-define-type sigset_t*
       (pointer "sigset_t" (sigset_t*) "ffi_free")))
 
-  (define-c-lambda __sigprocmask (sigset_t* sigset_t*) int)
+  (define-c-lambda __sigprocmask (int sigset_t* sigset_t*) int
+    "sigprocmask")
   (define-with-errno _sigprocmask __sigprocmask (how sigset old-sigset))
 
   (define-c-lambda make_sigset () sigset_t*
