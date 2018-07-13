@@ -214,13 +214,12 @@ namespace: gx
       (match (string-split (symbol->string sys-type) #\-)
         (["linux" . rest] (not (null? rest)))
         (else #f)))
-    (def (bsd-variant? sys-type)
-      (def bsd ["openbsd" "netbsd" "freebsd" "darwin"])
-      (def sys-prefix
-        (list->string
-         (filter char-alphabetic?
-                 (string->list (symbol->string sys-type)))))
-      (not (null? (member sys-prefix bsd))))
+    (def (sys-prefix sys-type)
+      (list->string
+	(filter char-alphabetic?
+		(string->list (symbol->string sys-type)))))
+    (def (bsd-variant? sys-prefix)
+      (member sys-prefix ["openbsd" "netbsd" "freebsd" "darwin"]))
     (core-bind-feature! 'gerbil #f 0 self)
     (core-bind-feature! (gerbil-system) #f 0 self)
     (match (system-type)
@@ -229,8 +228,11 @@ namespace: gx
        (core-bind-feature! sys-type #f 0 self)
        (when (linux-variant? sys-type)
          (core-bind-feature! 'linux #f 0 self))
-       (when (bsd-variant? sys-type)
-         (core-bind-feature! 'bsd #f 0 self)))
+       (let ((prefix (sys-prefix sys-type)))
+	 (when (bsd-variant? prefix)
+	   (core-bind-feature! 'bsd #f 0 self)
+	   (core-bind-feature!
+	     (string->symbol prefix) #f 0 self))))
       (else (void)))
     (when (gerbil-runtime-smp?)
       (core-bind-feature! 'gerbil-smp #f 0 self))))

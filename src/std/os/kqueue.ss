@@ -18,11 +18,14 @@ package: std/os
         EV_ADD EV_ENABLE EV_DISABLE EV_DISPATCH EV_DELETE
         EV_RECEIPT EV_ONESHOT EV_CLEAR EV_EOF EV_ERROR
         EVFILT_READ EVFILT_WRITE EVFILT_VNODE EVFILT_PROC
-        EVFILT_SIGNAL EVFILT_TIMER EVFILT_DEVICE
-        NOTE_DELETE NOTE_WRITE NOTE_EXTEND NOTE_TRUNCATE NOTE_LOWAT
-        NOTE_EOF NOTE_DELETE NOTE_WRITE NOTE_EXTEND NOTE_TRUNCATE
+        EVFILT_SIGNAL EVFILT_TIMER
+        NOTE_DELETE NOTE_WRITE NOTE_EXTEND NOTE_LOWAT
         NOTE_ATTRIB NOTE_LINK NOTE_RENAME NOTE_REVOKE NOTE_EXIT
-        NOTE_FORK NOTE_EXEC NOTE_TRACK NOTE_TRACKERR NOTE_CHANGE)
+        NOTE_FORK NOTE_EXEC NOTE_TRACK NOTE_TRACKERR)
+
+(cond-expand
+  ((not darwin)
+   (export EVILT_DEVICE NOTE_TRUNCATE NOTE_EOF NOTE_CHANGE)))
 
 (def (kqueue)
   (let (fd (check-os-error (_kqueue) (kqueue)))
@@ -85,11 +88,10 @@ package: std/os
   EV_ADD EV_ENABLE EV_DISABLE EV_DISPATCH
   EV_DELETE EV_RECEIPT EV_ONESHOT EV_CLEAR EV_EOF EV_ERROR
   EVFILT_READ EVFILT_WRITE EVFILT_VNODE EVFILT_PROC
-  EVFILT_SIGNAL EVFILT_TIMER EVFILT_DEVICE
-  NOTE_DELETE NOTE_WRITE NOTE_EXTEND NOTE_TRUNCATE NOTE_LOWAT
-  NOTE_EOF NOTE_DELETE NOTE_WRITE NOTE_EXTEND NOTE_TRUNCATE
+  EVFILT_SIGNAL EVFILT_TIMER
+  NOTE_DELETE NOTE_WRITE NOTE_EXTEND NOTE_LOWAT
   NOTE_ATTRIB NOTE_LINK NOTE_RENAME NOTE_REVOKE NOTE_EXIT
-  NOTE_FORK NOTE_EXEC NOTE_TRACK NOTE_TRACKERR NOTE_CHANGE
+  NOTE_FORK NOTE_EXEC NOTE_TRACK NOTE_TRACKERR
   _kqueue _kevent
   make_kevents
   kevent_ident kevent_ident_set
@@ -99,6 +101,16 @@ package: std/os
   kevent_data kevent_data_set
   kevent_udata kevent_udata_set
   ev_set)
+
+(cond-expand
+  ((not darwin)
+    (extern EVILT_DEVICE NOTE_TRUNCATE NOTE_EOF NOTE_CHANGE)))
+
+(cond-expand
+  (darwin
+    (begin-foreign
+      (define-cond-expand-feature bsd)
+      (define-cond-expand-feature darwin))))
 
 (begin-foreign
   (c-declare "#include <errno.h>")
@@ -132,7 +144,7 @@ package: std/os
               EVFILT_READ EVFILT_WRITE EVFILT_VNODE EVFILT_PROC
               EVFILT_SIGNAL EVFILT_TIMER EVFILT_DEVICE
               NOTE_DELETE NOTE_WRITE NOTE_EXTEND NOTE_TRUNCATE NOTE_LOWAT
-              NOTE_EOF NOTE_DELETE NOTE_WRITE NOTE_EXTEND NOTE_TRUNCATE
+              NOTE_EOF 
               NOTE_ATTRIB NOTE_LINK NOTE_RENAME NOTE_REVOKE NOTE_EXIT
               NOTE_FORK NOTE_EXEC NOTE_TRACK NOTE_TRACKERR NOTE_CHANGE
               kevent kevent* timespec timespec*
@@ -167,19 +179,24 @@ package: std/os
   (define-const EVFILT_PROC)
   (define-const EVFILT_SIGNAL)
   (define-const EVFILT_TIMER)
-  (define-const EVFILT_DEVICE)
+  (cond-expand
+    ((not darwin)
+     (define-const EVFILT_DEVICE))
+    (else))
 
   ;; Filter Flags
   (define-const NOTE_DELETE)
   (define-const NOTE_WRITE)
   (define-const NOTE_EXTEND)
-  (define-const NOTE_TRUNCATE)
+  (cond-expand
+    ((not darwin)
+     (define-const NOTE_TRUNCATE))
+    (else))
   (define-const NOTE_LOWAT)
-  (define-const NOTE_EOF)
-  (define-const NOTE_DELETE)
-  (define-const NOTE_WRITE)
-  (define-const NOTE_EXTEND)
-  (define-const NOTE_TRUNCATE)
+  (cond-expand
+    ((not darwin)
+     (define-const NOTE_EOF))
+    (else))
   (define-const NOTE_ATTRIB)
   (define-const NOTE_LINK)
   (define-const NOTE_RENAME)
@@ -189,7 +206,10 @@ package: std/os
   (define-const NOTE_EXEC)
   (define-const NOTE_TRACK)
   (define-const NOTE_TRACKERR)
-  (define-const NOTE_CHANGE)
+  (cond-expand
+    ((not darwin)
+     (define-const NOTE_CHANGE))
+    (else))
 
   (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
 
