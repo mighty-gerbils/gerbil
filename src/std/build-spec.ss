@@ -103,6 +103,7 @@
         (linux
          `((gxc: "os/signalfd" ,@(include-gambit-sharp))))
         (else '()))
+    "os/pid"
     ;; :std/net/bio
     "net/bio/input"
     "net/bio/output"
