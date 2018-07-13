@@ -98,6 +98,7 @@
         (bsd
          `((gxc: "os/kqueue" ,@(include-gambit-sharp))))
         (else '()))
+    "os/signal"
     ;; :std/net/bio
     "net/bio/input"
     "net/bio/output"
