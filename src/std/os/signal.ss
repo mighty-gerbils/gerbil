@@ -13,6 +13,7 @@ package: std/os
 
   SIG_BLOCK SIG_UNBLOCK SIG_SETMASK
 
+  kill
   sigprocmask
   make_sigset
   make_sigset
@@ -22,6 +23,10 @@ package: std/os
   sigdelset
   sigismember
 )
+
+(def (kill pid signo)
+  (check-os-error (_kill pid signo)
+    (kill pid signo)))
 
 (def (sigprocmask how sigset old-sigset)
   (check-os-error (_sigprocmask how sigset old-sigset)
@@ -36,6 +41,7 @@ package: std/os
 
   SIG_BLOCK SIG_UNBLOCK SIG_SETMASK
 
+  _kill
   _sigprocmask
   make_sigset
   sigemptyset
@@ -46,6 +52,7 @@ package: std/os
   )
 
 (begin-foreign
+  (c-declare "#include <sys/types.h>")
   (c-declare "#include <signal.h>")
   (c-declare "#include <errno.h>")
   (c-declare "#include <stdlib.h>")
@@ -92,6 +99,7 @@ package: std/os
               sigdelset
               sigismember
 
+              __kill _kill
               __sigprocmask _sigprocmask
               __errno))
 
@@ -138,6 +146,10 @@ package: std/os
   (define-const SIG_SETMASK)
 
   (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
+
+  (define-c-lambda __kill (int int) int
+    "kill")
+  (define-with-errno _kill __kill (pid signo))
 
   (define-guard ffi-have-sigset
     (c-define-type sigset_t "sigset_t"))
