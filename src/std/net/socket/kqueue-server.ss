@@ -55,8 +55,9 @@ package: std/net/sockets
             (and (fd-io-out sock)
                  (make-!io-state)))
            (wait-out
-            (lambda (ssock timeo)
-              (io-state-wait-io! io-out timeo 'output)))
+            (and io-out
+                 (lambda (ssock timeo)
+                   (io-state-wait-io! io-out timeo 'output))))
            (close
             (lambda (ssock dir shutdown)
               (!!socket-server.close self ssock dir shutdown)))
@@ -120,7 +121,8 @@ package: std/net/sockets
                   (set! (!socket-state-io-out state) #f)
                   (close-io-out! io-out sock))
                 (close-port sock))
-               (else "Bad direction" dir)))
+               (else
+                (error "Bad direction" dir))))
             (else (void)))))))
 
   (def (shutdown!)
