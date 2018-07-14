@@ -11,6 +11,7 @@ package: std/os
 (export signalfd signalfd?
         signalfd-reset!
         signalfd-read
+        make-signalfd-siginfo
         signalfd-siginfo-signo
         signalfd-siginfo-errno
         signalfd-siginfo-code
@@ -40,15 +41,17 @@ package: std/os
   (check-os-error (_signalfd (fd-e sfd) sigset 0)
     (signalfd-reset! sfd sigset)))
 
-(def (signalfd-read sfd)
+(def (signalfd-read sfd (buf (make-signalfd-siginfo)))
   (let lp ()
-    (let* ((buf (make-u8vector (size-of-signalfd-siginfo)))
-           (rd (fdread sfd buf)))
+    (let (rd (fdread sfd buf))
       (if rd
         buf
         (begin
           (##wait-for-io! (fd-io-in sfd) #t)
           (lp))))))
+
+(def (make-signalfd-siginfo)
+  (make-u8vector (size-of-signalfd-siginfo)))
 
 (extern
   SFD_NONBLOCK SFD_CLOEXEC
