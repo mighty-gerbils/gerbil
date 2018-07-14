@@ -46,7 +46,6 @@ package: std/srfi
   string-replace)
 
 (declare
-  (not safe)
   (fixnum))
 
 ;;; baseline definitions
