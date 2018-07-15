@@ -22,8 +22,13 @@
       (try
        (let lp ()
          (def len (ssocket-recv sock buf))
-         (ssocket-send sock buf 0 len)
-         (lp))
+         (if (= len 0)
+           (begin
+             (ssocket-close sock)
+             (values))
+           (begin
+             (ssocket-send sock buf 0 len)
+             (lp))))
        (catch (io-error? exn)
          (values))))
 
