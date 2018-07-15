@@ -46,18 +46,19 @@ package: std/os
          (spawn/name 'signal-handler signal-handler-wait self))))
 
    (def (signal-handler-wait sh)
-     (def buf (make-signalfd-siginfo))
-     (with ((signal-handler tab sfd sigset mx) sh)
-       (try
+     (try
+      (def buf (make-signalfd-siginfo))
+      (with ((signal-handler tab sfd sigset mx) sh)
         (let loop ()
           (signalfd-read sfd buf)
           (let (signo (signalfd-siginfo-signo buf))
             (let (handler (with-lock mx (cut vector-ref tab signo)))
               (when handler
                 (signal-handler-dispatch handler))))
-          (loop))
-        (catch (e)
-          (log-error "Error handling signals" e)))))
+          (loop)))
+      (catch (e)
+        (log-error "Error handling signals" e)
+        (raise e))))
 
    (def (signal-handler-dispatch handler)
      (try
