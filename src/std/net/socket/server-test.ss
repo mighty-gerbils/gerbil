@@ -35,7 +35,7 @@
     (def (run-echo-server address)
       (def sock (ssocket-listen address))
       (let lp ()
-        (spawn/group 'echo-server echo (ssocket-accept sock))
+        (spawn echo (ssocket-accept sock))
         (lp)))
 
     (def (start-echo-server! address)
