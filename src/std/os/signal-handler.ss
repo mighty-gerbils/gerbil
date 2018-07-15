@@ -43,7 +43,7 @@ package: std/os
               (mx (make-mutex 'signal-handler)))
          (struct-instance-init! self tab sfd sigset mx)
          (start-logger!)
-         (spawn signal-handler-wait self))))
+         (spawn/name 'signal-handler signal-handler-wait self))))
 
    (def (signal-handler-wait sh)
      (def buf (make-signalfd-siginfo))
