@@ -34,7 +34,8 @@
   ((or linux bsd)
    (import "net/socket/server-test")))
   (linux
-   (import "os/signalfd-test")))
+   (import "os/signalfd-test"
+           "os/signal-handler-test")))
 
 (def tests
   [generic-runtime-test generic-macro-test
@@ -60,7 +61,7 @@
      (else []))
    ...
    (cond-expand
-     (linux [signalfd-test])
+     (linux [signalfd-test signal-handler-test])
      (else []))
    ...
    ])
