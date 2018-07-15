@@ -32,7 +32,8 @@
 
 (cond-expand
   (linux
-   (import "os/signalfd-test")))
+   (import "os/signalfd-test"
+           "os/signal-handler-test")))
 
 (def tests
   [generic-runtime-test generic-macro-test
@@ -53,7 +54,7 @@
    (if config-enable-lmdb [lmdb-test] []) ...
    (if config-enable-leveldb [leveldb-test] []) ...
    (cond-expand
-     (linux [signalfd-test])
+     (linux [signalfd-test signal-handler-test])
      (else []))
    ...
    ])
