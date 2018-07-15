@@ -62,6 +62,10 @@
       (def sock (ssocket-connect server-address))
       (ssocket-send sock (string->bytes "Hello"))
       (check (receive-data sock) => "Hello")
+      (ssocket-send sock (string->bytes "Test"))
+      (check (receive-data sock) => "Test")
+      (ssocket-send sock (string->bytes "1.2.3.4.5"))
+      (check (receive-data sock) => "1.2.3.4.5")
       (ssocket-close sock))
 
     (test-case "test socket-server multiple connections"
