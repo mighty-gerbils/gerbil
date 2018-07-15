@@ -101,4 +101,10 @@ package: std/os
 
   (else
    (def (make-signal-handler)
+     (error "Signal handler not implemented in this system"))
+
+   (def (signal-handler-add! sh signo thunk)
+     (error "Signal handler not implemented in this system"))
+
+   (def (signal-handler-remove! sh signo)
      (error "Signal handler not implemented in this system"))))
