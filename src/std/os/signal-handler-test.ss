@@ -17,10 +17,21 @@
        (let (thread (current-thread))
          (lambda ()
            (thread-send thread SIGHUP))))
+      (add-signal-handler!
+       SIGUSR1
+       (let (thread (current-thread))
+         (lambda ()
+           (thread-send thread SIGUSR1))))
 
       (spawn
        (lambda ()
          (thread-sleep! 1)
+         (kill (getpid) SIGHUP)
+         (thread-sleep! 1)
+         (kill (getpid) SIGUSR1)
+         (thread-sleep! 1)
          (kill (getpid) SIGHUP)))
 
+      (check (thread-receive) => SIGHUP)
+      (check (thread-receive) => SIGUSR1)
       (check (thread-receive) => SIGHUP))))
