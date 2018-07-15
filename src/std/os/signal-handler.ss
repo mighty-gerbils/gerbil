@@ -13,28 +13,20 @@ package: std/os
   )
 (export add-signal-handler! remove-signal-handler!)
 
-(def current-signal-handler
-  (make-parameter #f))
+(def system-signal-handler
+  (delay (make-signal-handler)))
 
 (def (add-signal-handler! signo thunk)
   (unless (and (fx> signo 0) (fx<= signo SIGRTMAX))
     (error "Invalid signal" signo))
-  (let (han (get-signal-handler))
+  (let (han (force system-signal-handler))
     (signal-handler-add! han signo thunk)))
 
 (def (remove-signal-handler! signo)
   (unless (and (fx> signo 0) (fx<= signo SIGRTMAX))
     (error "Invalid signal" signo))
-  (let (han (get-signal-handler))
+  (let (han (force system-signal-handler))
     (signal-handler-remove! han signo)))
-
-(def (get-signal-handler)
-  (cond
-   ((current-signal-handler) => values)
-   (else
-    (let (han (make-signal-handler))
-      (current-signal-handler han)
-      han))))
 
 ;;; signal handler implementation
 (cond-expand
