@@ -2,7 +2,8 @@
 ;;; (C) vyzo at hackzen.org
 ;;; Socket server tests
 
-(import :gerbil/gambit/threads
+(import :gerbil/gambit
+        :gerbil/gambit/threads
         :std/misc/threads
         :std/net/socket
         :std/net/socket/base
@@ -27,9 +28,10 @@
              (ssocket-close sock)
              (values))
            (begin
-             (ssocket-send sock buf 0 len)
+             (ssocket-send-all sock buf 0 len)
              (lp))))
        (catch (io-error? exn)
+         (display-exception exn)
          (values))))
 
     (def (run-echo-server address)
@@ -48,10 +50,12 @@
       (let (tgroup (thread-thread-group server))
         (thread-group-kill! tgroup)))
 
-    (def (receive-data sock)
-      (def buf (make-u8vector 512))
-      (def len (ssocket-recv sock buf 0 (u8vector-length buf) 5))
-      (bytes->string (subu8vector buf 0 len)))
+    (def (send+recv sock txt)
+      (def len (string-length txt))
+      (def buf (make-u8vector len))
+      (ssocket-send-all sock (string->bytes txt))
+      (ssocket-recv-all sock buf 0 len 5)
+      (bytes->string buf))
 
     (define-values (socket-server echo-server)
       (start-echo-server! server-address))
@@ -60,21 +64,16 @@
 
     (test-case "test socket-server"
       (def sock (ssocket-connect server-address))
-      (ssocket-send sock (string->bytes "Hello"))
-      (check (receive-data sock) => "Hello")
-      (ssocket-send sock (string->bytes "Test"))
-      (check (receive-data sock) => "Test")
-      (ssocket-send sock (string->bytes "1.2.3.4.5"))
-      (check (receive-data sock) => "1.2.3.4.5")
+      (check (send+recv sock "Hello") => "Hello")
+      (check (send+recv sock "Test") => "Test")
+      (check (send+recv sock "1.2.3.4.5") => "1.2.3.4.5")
       (ssocket-close sock))
 
     (test-case "test socket-server multiple connections"
       (def conn-1 (ssocket-connect server-address))
       (def conn-2 (ssocket-connect server-address))
-      (ssocket-send conn-2 (string->bytes "BBB"))
-      (ssocket-send conn-1 (string->bytes "AAA"))
-      (check (receive-data conn-1) => "AAA")
-      (check (receive-data conn-2) => "BBB")
+      (check (send+recv conn-2 "BBB") => "BBB")
+      (check (send+recv conn-1 "AAA") => "AAA")
       (ssocket-close conn-1)
       (ssocket-close conn-2))
 
