@@ -10,7 +10,7 @@ package: std/os
         :std/os/fd
         :std/os/fcntl)
 (export kqueue kqueue-close
-        make-kevents kqueue-wait
+        make-kevents kqueue-poll
         kqueue-kevent-add kqueue-kevent-del
         kevent-ident kevent-filter kevent-flags
         kevent-fflags kevent-data kevent-udata
@@ -45,8 +45,8 @@ package: std/os
    (_kevent (fd-e kqueue) change-list nchanges event-list nevents timeout)
    (kevent kqueue change-list nchanges event-list nevents timeout)))
 
-(def (kqueue-wait kqueue events nevents)
-  (kevent kqueue #f 0 events nevents #f))
+(def (kqueue-poll kqueue events nevents)
+  (kevent kqueue #f 0 events nevents timeout-zero))
 
 (def (kqueue-kevent-add kqueue dev filter)
   (let (kevt (get-kevent-ptr))
@@ -87,6 +87,14 @@ package: std/os
 (def set-kevent-data! kevent_data_set)
 (def set-kevent-udata! kevent_udata_set)
 
+(def timeout-zero (make-timeout 0 0))
+
+(def (make-timeout seconds nanoseconds)
+  (let (timespec (check-ptr (make_timespec)))
+    (timespec_seconds_set timespec seconds)
+    (timespec_nanoseconds_set timespec nanoseconds)
+    timespec))
+
 (extern
   EV_ADD EV_ENABLE EV_DISABLE EV_DISPATCH
   EV_DELETE EV_RECEIPT EV_ONESHOT EV_CLEAR EV_EOF EV_ERROR
@@ -95,6 +103,7 @@ package: std/os
   NOTE_DELETE NOTE_WRITE NOTE_EXTEND NOTE_LOWAT
   NOTE_ATTRIB NOTE_LINK NOTE_RENAME NOTE_REVOKE NOTE_EXIT
   NOTE_FORK NOTE_EXEC NOTE_TRACK NOTE_TRACKERR
+  make_timespec timespec_seconds_set timespec_nanoseconds_set
   _kqueue _kevent
   make_kevents
   kevent_ident kevent_ident_set
@@ -151,6 +160,7 @@ package: std/os
               NOTE_ATTRIB NOTE_LINK NOTE_RENAME NOTE_REVOKE NOTE_EXIT
               NOTE_FORK NOTE_EXEC NOTE_TRACK NOTE_TRACKERR NOTE_CHANGE
               kevent kevent* timespec timespec*
+              make_timespec timespec_seconds_set timespec_nanoseconds_set
               __errno __kqueue __kevent
               _kqueue _kevent
               make_kevents
@@ -222,6 +232,13 @@ package: std/os
   (c-define-type timespec (struct "timespec"))
   (c-define-type timespec*
     (pointer timespec (timespec*) "ffi_free"))
+
+  (define-c-lambda make_timespec () timespec*
+    "___return ((struct timespec*)malloc(sizeof(struct timespec)));")
+  (define-c-lambda timespec_seconds_set (timespec* int) void
+    "___arg1->tv_sec = ___arg2; ___return ;")
+  (define-c-lambda timespec_nanoseconds_set (timespec* int) void
+    "___arg1->tv_nsec = ___arg2; ___return ;")
 
   (define-c-lambda __errno () int
     "___return (errno);")

@@ -1354,7 +1354,7 @@ kqueue for BSD.
     kqueue
     make-kevents
     kqueue-close
-    kqueue-wait
+    kqueue-poll
     kqueue-kevent-add
     kqueue-kevent-del
     kevent-ident
