@@ -1,7 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; synchronous sockets  -- kqueue server implementation
-package: std/net/sockets
+package: std/net/socket
 
 (require bsd)
 (import :gerbil/gambit/threads
@@ -24,7 +24,7 @@ package: std/net/sockets
   (def ev-out (##fxior EVFILT_WRITE EV_EOF EV_ERROR))
 
   (def (do-kevent)
-    (let (count (kqueue-wait kq evts maxevts))
+    (let (count (kqueue-poll kq evts maxevts))
       (when (##fxpositive? count)
         (let lp ((k 0))
           (when (##fx< k count)
