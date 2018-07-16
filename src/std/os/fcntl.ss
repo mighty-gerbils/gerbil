@@ -62,7 +62,8 @@ package: std/os
   (fd-setfd raw FD_CLOEXEC))
 
 (def (fd-set-nonblock/closeonexec raw)
-  (fd-setfd raw (##fxior O_NONBLOCK FD_CLOEXEC)))
+  (fd-setfl raw O_NONBLOCK)
+  (fd-setfd raw FD_CLOEXEC))
 
 ;;; FFI impl
 (begin-foreign
