@@ -7,15 +7,18 @@ package: std/os
 (import :gerbil/gambit/threads
         (only-in :gerbil/gambit/ports close-port)
         :std/os/error
-        :std/os/fd)
+        :std/os/fd
+        :std/os/fcntl)
 (export epoll-create epoll-ctl-add epoll-ctl-mod epoll-ctl-del epoll-wait
         make-epoll-events epoll-event-fd epoll-event-events
         EPOLLIN EPOLLOUT EPOLLERR EPOLLHUP EPOLLET EPOLLONESHOT)
 
 (def (epoll-create)
-  (let (fd (check-os-error (_epoll_create 1024)
-             (epoll-create)))
-    (fdopen fd 'in 'epoll)))
+  (let* ((fd (check-os-error (_epoll_create 1024)
+               (epoll-create)))
+         (raw (fdopen fd 'in 'epoll)))
+    (fd-set-nonblock/closeonexec raw)
+    raw))
 
 (def (epoll-ctl-add epoll dev events)
   (epoll-ctl epoll EPOLL_CTL_ADD dev events))

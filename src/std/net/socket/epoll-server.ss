@@ -25,7 +25,7 @@ package: std/net/socket
 
   (def (do-epoll)
     (let (count (epoll-wait epoll evts maxevts))
-      (when (##fxpositive? count)
+      (when (and count (##fxpositive? count))
         (let lp ((k 0))
           (when (##fx< k count)
             (let ((fd (epoll-event-fd evts k))
