@@ -31,7 +31,7 @@ package: std/os
 (def (kqueue)
   (let* ((fd (check-os-error (_kqueue) (kqueue)))
          (raw (fdopen fd 'in 'kqueue)))
-    (fd-set-nonblock/closeonexec raw)
+    (fd-set-closeonexec raw)
     raw))
 
 (def (kqueue-close kq)
