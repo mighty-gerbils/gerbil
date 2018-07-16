@@ -50,7 +50,7 @@
 
     (def (receive-data sock)
       (def buf (make-u8vector 512))
-      (def len (ssocket-recv sock buf))
+      (def len (ssocket-recv sock buf 0 (u8vector-length buf) 5))
       (bytes->string (subu8vector buf 0 len)))
 
     (define-values (socket-server echo-server)
