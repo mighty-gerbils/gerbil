@@ -25,7 +25,7 @@ package: std/net/sockets
 
   (def (do-kevent)
     (let (count (kqueue-wait kq evts maxevts))
-      (when (and count (##fxpositive? count))
+      (when (##fxpositive? count)
         (let lp ((k 0))
           (when (##fx< k count)
             (let ((fd (kevent-ident evts k))

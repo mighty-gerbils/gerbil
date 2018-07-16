@@ -17,7 +17,7 @@ package: std/os
   (let* ((fd (check-os-error (_epoll_create 1024)
                (epoll-create)))
          (raw (fdopen fd 'in 'epoll)))
-    (fd-set-nonblock/closeonexec raw)
+    (fd-set-closeonexec raw)
     raw))
 
 (def (epoll-ctl-add epoll dev events)
