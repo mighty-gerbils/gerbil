@@ -151,8 +151,7 @@ package: std/os
   (let* ((fd (check-os-error (_socket domain type proto)
                (socket domain type proto)))
          (raw (fdopen fd dir 'socket)))
-    (fd-set-nonblock raw)
-    (fd-set-closeonexec raw)
+    (fd-set-nonblock/closeonexec raw)
     raw))
 
 (def (socket domain type (proto 0))

@@ -20,10 +20,8 @@ package: std/os
          (ofd (pipe_ptr_ref ptr 1))
          (in (fdopen ifd 'in 'pipe))
          (out (fdopen ofd 'out 'pipe)))
-    (fd-set-nonblock in)
-    (fd-set-closeonexec in)
-    (fd-set-nonblock out)
-    (fd-set-closeonexec out)
+    (fd-set-nonblock/closeonexec in)
+    (fd-set-nonblock/closeonexec out)
     (values in out)))
 
 (begin-foreign

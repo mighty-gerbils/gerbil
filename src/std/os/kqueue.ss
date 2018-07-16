@@ -7,7 +7,8 @@ package: std/os
 (import :gerbil/gambit/threads
         (only-in :gerbil/gambit/ports close-port)
         :std/os/error
-        :std/os/fd)
+        :std/os/fd
+        :std/os/fcntl)
 (export kqueue kqueue-close
         make-kevents kqueue-wait
         kqueue-kevent-add kqueue-kevent-del
@@ -28,8 +29,10 @@ package: std/os
    (export EVILT_DEVICE NOTE_TRUNCATE NOTE_EOF NOTE_CHANGE)))
 
 (def (kqueue)
-  (let (fd (check-os-error (_kqueue) (kqueue)))
-    (fdopen fd 'in 'kqueue)))
+  (let* ((fd (check-os-error (_kqueue) (kqueue)))
+         (raw (fdopen fd 'in 'kqueue)))
+    (fd-set-nonblock/closeonexec raw)
+    raw))
 
 (def (kqueue-close kq)
   (close-port kq))
@@ -144,7 +147,7 @@ package: std/os
               EVFILT_READ EVFILT_WRITE EVFILT_VNODE EVFILT_PROC
               EVFILT_SIGNAL EVFILT_TIMER EVFILT_DEVICE
               NOTE_DELETE NOTE_WRITE NOTE_EXTEND NOTE_TRUNCATE NOTE_LOWAT
-              NOTE_EOF 
+              NOTE_EOF
               NOTE_ATTRIB NOTE_LINK NOTE_RENAME NOTE_REVOKE NOTE_EXIT
               NOTE_FORK NOTE_EXEC NOTE_TRACK NOTE_TRACKERR NOTE_CHANGE
               kevent kevent* timespec timespec*

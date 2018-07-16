@@ -30,8 +30,7 @@ package: std/os
      (let* ((fd (check-os-error (_open path flags mode)
                   (open path flags mode)))
             (raw (fdopen fd (file-direction flags) 'file)))
-       (fd-set-nonblock raw)
-       (fd-set-closeonexec raw)
+       (fd-set-nonblock/closeonexec raw)
        raw))))
 
 (def (file-direction flags)

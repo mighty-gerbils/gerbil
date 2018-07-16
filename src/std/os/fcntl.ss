@@ -61,6 +61,10 @@ package: std/os
 (def (fd-set-closeonexec raw)
   (fd-setfd raw FD_CLOEXEC))
 
+(def (fd-set-nonblock/closeonexec raw)
+  (fd-setfl raw O_NONBLOCK)
+  (fd-setfd raw FD_CLOEXEC))
+
 ;;; FFI impl
 (begin-foreign
   (c-declare "#include <errno.h>")
