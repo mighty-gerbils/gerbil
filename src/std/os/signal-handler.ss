@@ -9,21 +9,21 @@ package: std/os
         :std/sugar)
 (cond-expand
   (linux (import :std/os/signalfd))
-  ;; TODO bsd -- (import :std/os/kqueue)
-  )
+  (bsd (import :std/os/kqueue :std/os/error)))
+
 (export add-signal-handler! remove-signal-handler!)
 
 (def system-signal-handler
   (delay (make-signal-handler)))
 
 (def (add-signal-handler! signo thunk)
-  (unless (and (fx> signo 0) (fx<= signo SIGRTMAX))
+  (unless (and (fx> signo 0) (fx< signo SIGMAX))
     (error "Invalid signal" signo))
   (let (handler (force system-signal-handler))
     (signal-handler-add! handler signo thunk)))
 
 (def (remove-signal-handler! signo)
-  (unless (and (fx> signo 0) (fx<= signo SIGRTMAX))
+  (unless (and (fx> signo 0) (fx< signo SIGMAX))
     (error "Invalid signal" signo))
   (let (handler (force system-signal-handler))
     (signal-handler-remove! handler signo)))
@@ -36,7 +36,7 @@ package: std/os
 
    (defmethod {:init! signal-handler}
      (lambda (self)
-       (let* ((tab (make-vector (fx1+ SIGRTMAX) #f))
+       (let* ((tab (make-vector SIGMAX #f))
               (sigset (make_sigset))
               (_ (sigemptyset sigset))
               (sfd (signalfd sigset))
@@ -60,12 +60,6 @@ package: std/os
         (log-error "Error handling signals" e)
         (raise e))))
 
-   (def (signal-handler-dispatch handler)
-     (try
-      (handler)
-      (catch (e)
-        (log-error "error dispatching signal handler" e))))
-
    (def (signal-handler-add! sh signo thunk)
      (with ((signal-handler tab sfd sigset mx) sh)
        (with-lock mx
@@ -84,21 +78,72 @@ package: std/os
              (sigdelset sigset signo)
              (signalfd-reset! sfd sigset)
              (unblock-signal! signo))
-           (vector-set! tab signo #f)))))
+           (vector-set! tab signo #f))))))
 
-   (def (block-signal! signo)
-     (let (sigset (make_sigset))
-       (sigemptyset sigset)
-       (sigaddset sigset signo)
-       (sigprocmask SIG_BLOCK sigset #f)))
+  (bsd
 
-   (def (unblock-signal! signo)
-     (let (sigset (make_sigset))
-       (sigemptyset sigset)
-       (sigaddset sigset signo)
-       (sigprocmask SIG_UNBLOCK sigset #f))))
+    (defstruct signal-handler (tab kq mx)
+      final: #t constructor: :init!)
 
-  ;; TODO bsd -- kqueue implementation
+    (defmethod {:init! signal-handler}
+      (lambda (self)
+	(let* ((tab (make-vector SIGMAX #f))
+	       (kq (kqueue))
+	       (mx (make-mutex 'signal-handler)))
+		  (struct-instance-init! self tab kq mx)
+	  (start-logger!)
+	  (spawn/name 'signal-handler signal-handler-wait self))))
+
+    (def (signal-handler-wait sh)
+      (try
+	(defconst nevents 4)
+	(def events (make-kevents nevents))
+	(with ((signal-handler tab kq mx) sh)
+	  (let wait-loop ()
+	    (let (n (kqueue-wait kq events nevents))
+	      (when (##fxpositive? n)
+		(let event-loop ((i 0))
+		  (when (fx< i n)
+		    (when (fx= (kevent-filter events i) EVFILT_SIGNAL)
+		      (if (##fxzero? (##fxand (kevent-flags events i)
+					     EV_ERROR))
+			(let (event-handler
+			       (with-lock mx
+				 (cut vector-ref tab
+				      (kevent-ident events i))))
+			  (when event-handler
+			    (signal-handler-dispatch event-handler)))
+			(raise-os-error (kevent-data events i)
+					signal-handler-wait)))
+		    (event-loop (fx1+ i))))))
+	    (wait-loop)))
+	(catch (e)
+	       (log-error "Error handling signals" e)
+	       (raise e))))
+
+    (def (signal-handler-add! sh signo thunk)
+      (with ((signal-handler tab kq mx) sh)
+	(with-lock mx
+	  (lambda ()
+	    (let ((ev (make-kevents 1)))
+	      (set-kevent-filter! ev 0 EVFILT_SIGNAL)
+	      (set-kevent-ident! ev 0 signo)
+	      (set-kevent-flags! ev 0 EV_ADD)
+	      (vector-set! tab signo thunk)
+	      (kqueue-kevent kq ev 1 #f 0 #f)
+	      (block-signal! signo))))))
+
+    (def (signal-handler-remove! sh signo)
+      (with ((signal-handler tab kq mx) sh)
+	(with-lock mx
+	  (lambda ()
+	    (let ((ev (make-kevents 1)))
+	      (set-kevent-filter! ev 0 EVFILT_SIGNAL)
+	      (set-kevent-ident! ev 0 signo)
+	      (set-kevent-flags! ev 0 EV_DELETE)
+	      (unblock-signal! signo)
+	      (vector-set! tab signo #f)
+	      (kqueue-kevent kq ev 1 #f 0 #f)))))))
 
   (else
    (def (make-signal-handler)
@@ -109,3 +154,21 @@ package: std/os
 
    (def (signal-handler-remove! sh signo)
      (error "Signal handler not implemented in this system"))))
+
+(def (signal-handler-dispatch handler)
+  (try
+    (handler)
+    (catch (e)
+      (log-error "error dispatching signal handler" e))))
+
+(def (block-signal! signo)
+  (let (sigset (make_sigset))
+    (sigemptyset sigset)
+    (sigaddset sigset signo)
+    (sigprocmask SIG_BLOCK sigset #f)))
+
+(def (unblock-signal! signo)
+  (let (sigset (make_sigset))
+    (sigemptyset sigset)
+    (sigaddset sigset signo)
+    (sigprocmask SIG_UNBLOCK sigset #f)))
