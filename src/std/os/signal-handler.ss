@@ -104,17 +104,17 @@ package: std/os
 	      (when (##fxpositive? n)
 		(let event-loop ((i 0))
 		  (when (fx< i n)
-		    (when (fx= (kevent-filter events i) EVFILT_SIGNAL)
-		      (if (##fxzero? (##fxand (kevent-flags events i)
+		    (if (##fxzero? (##fxand (kevent-flags events i)
 					     EV_ERROR))
+		      (when (fx= (kevent-filter events i) EVFILT_SIGNAL)
 			(let (event-handler
 			       (with-lock mx
 				 (cut vector-ref tab
 				      (kevent-ident events i))))
 			  (when event-handler
-			    (signal-handler-dispatch event-handler)))
-			(raise-os-error (kevent-data events i)
-					signal-handler-wait)))
+			    (signal-handler-dispatch event-handler))))
+		      (raise-os-error (kevent-data events i)
+				      signal-handler-wait))
 		    (event-loop (fx1+ i))))))
 	    (wait-loop)))
 	(catch (e)
