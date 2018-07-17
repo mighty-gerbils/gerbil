@@ -33,12 +33,6 @@ package: std/os
   
   SIG_BLOCK SIG_UNBLOCK SIG_SETMASK)
 
-(cond-expand
-  (linux
-    (def SIGMAX (+ SIGRTMAX 1)))
-  (openbsd
-    (def SIGMAX 33)))
-
 (def (kill pid signo)
   (check-os-error (_kill pid signo)
     (kill pid signo)))
@@ -257,3 +251,9 @@ ___SCMOBJ ffi_free (void *ptr)
 #endif
 END-C
 ))
+
+(cond-expand
+  (linux
+    (def SIGMAX (+ SIGRTMAX 1)))
+  (openbsd
+    (def SIGMAX 33)))
