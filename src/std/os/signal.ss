@@ -5,21 +5,26 @@ package: std/os
 
 (import :std/os/error)
 
+(export SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGBUS SIGFPE
+	SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM SIGTERM
+	SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU SIGURG
+	SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGIO SIGSYS
+	SIGMAX
+	SIG_BLOCK SIG_UNBLOCK SIG_SETMASK)
+
 (cond-expand
   (linux
-    (export
-      SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGIOT SIGBUS
-      SIGFPE SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM
-      SIGTERM SIGSTKFLT SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU
-      SIGURG SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGPOLL SIGIO
-      SIGPWR SIGSYS SIGUNUSED
-      SIGRTMIN SIGRTMAX SIGMAX))
+    (export SIGIOT SIGSTKFLT SIGPOLL SIGPWR SIGUNUSED SIGRTMIN SIGRTMAX))
+  (bsd
+    (export SIGEMT SIGINFO)))
+
+(cond-expand
   (openbsd
-    (export
-      SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGEMT SIGFPE SIGKILL
-      SIGBUS SIGSEGV SIGSYS SIGPIPE SIGALRM SIGTERM SIGURG SIGSTOP SIGTSTP
-      SIGCONT SIGCHLD SIGTTIN SIGTTOU SIGIO SIGXCPU SIGXFSZ SIGVTALRM
-      SIGPROF SIGWINCH SIGINFO SIGUSR1 SIGUSR2 SIGTHR SIGMAX)))
+    (export SIGTHR))
+  (netbsd
+    (export SIGPWR SIGRTMIN SIGRTMAX))
+  (darwin
+    (export SIGPOLL SIGIOT)))
 
 (export
   kill
@@ -29,9 +34,7 @@ package: std/os
   sigfillset
   sigaddset
   sigdelset
-  sigismember
-  
-  SIG_BLOCK SIG_UNBLOCK SIG_SETMASK)
+  sigismember)
 
 (def (kill pid signo)
   (check-os-error (_kill pid signo)
@@ -41,24 +44,25 @@ package: std/os
   (check-os-error (_sigprocmask how sigset old-sigset)
     (sigprocmask how sigset old-sigset)))
 
+(extern SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGBUS SIGFPE
+	SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM SIGTERM
+	SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU SIGURG
+	SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGIO SIGSYS
+	SIG_BLOCK SIG_UNBLOCK SIG_SETMASK)
+
 (cond-expand
   (linux
-    (extern
-      SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGIOT SIGBUS
-      SIGFPE SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM
-      SIGTERM SIGSTKFLT SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU
-      SIGURG SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGPOLL SIGIO
-      SIGPWR SIGSYS SIGUNUSED
-      SIGRTMIN SIGRTMAX
-      SIG_BLOCK SIG_UNBLOCK SIG_SETMASK))
+    (extern SIGIOT SIGSTKFLT SIGPOLL SIGPWR SIGUNUSED SIGRTMIN SIGRTMAX))
+  (bsd
+    (extern SIGEMT SIGINFO NSIG)))
+
+(cond-expand
   (openbsd
-    (extern
-      SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGEMT SIGFPE SIGKILL
-      SIGBUS SIGSEGV SIGSYS SIGPIPE SIGALRM SIGTERM SIGURG SIGSTOP SIGTSTP
-      SIGCONT SIGCHLD SIGTTIN
-      SIGTTOU SIGIO SIGXCPU SIGXFSZ SIGVTALRM SIGPROF
-      SIGWINCH SIGINFO SIGUSR1 SIGUSR2 SIGTHR
-      SIG_BLOCK SIG_UNBLOCK SIG_SETMASK)))
+    (extern SIGTHR))
+  (netbsd
+    (extern SIGPWR SIGRTMIN SIGRTMAX))
+  (darwin
+    (extern SIGPOLL SIGIOT)))
 
 (extern
   _kill
@@ -74,10 +78,23 @@ package: std/os
   (linux
     (begin-foreign
       (define-cond-expand-feature linux)))
+  (bsd
+    (begin-foreign
+      (define-cond-expand-feature bsd))))
+
+(cond-expand
   (openbsd
     (begin-foreign
-      (define-cond-expand-feature bsd)
-      (define-cond-expand-feature openbsd))))
+      (define-cond-expand-feature openbsd)))
+  (netbsd
+    (begin-foreign
+      (define-cond-expand-feature netbsd)))
+  (freebsd
+    (begin-foreign
+      (define-cond-expand-feature freebsd)))
+  (darwin
+    (begin-foreign
+      (define-cond-expand-reature darwin))))
 
 (begin-foreign
   (c-declare "#include <sys/types.h>")
@@ -112,108 +129,109 @@ package: std/os
         defn)))
 
   (namespace ("std/os/signal#"
-	      ; Linux
-              SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGIOT SIGBUS
-              SIGFPE SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM
-              SIGTERM SIGSTKFLT SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU
-              SIGURG SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGPOLL SIGIO
-              SIGPWR SIGSYS SIGUNUSED
-              SIGRTMIN SIGRTMAX
-              SIG_BLOCK SIG_UNBLOCK SIG_SETMASK
+	      ; Common
+	      SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGBUS
+	      SIGFPE SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM
+	      SIGTERM SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU
+	      SIGURG SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGIO
+	      SIGSYS
 
-	      ; OpenBSD
-	      SIGEMT SIGFPE SIGTSTP SIGTTIN SIGTTOU SIGIO SIGINFO SIGTHR
+	      SIG_BLOCK SIG_UNBLOCK SIG_SETMASK
 
-              make_sigset
-              sigemptyset
-              sigfillset
-              sigaddset
-              sigdelset
-              sigismember
+	      ; Linux specific
+	      SIGSTKFLT SIGPOLL SIGPWR SIGUNUSED
 
-              __kill _kill
-              __sigprocmask _sigprocmask
-              __errno))
+	      ; Linux + Darwin specific
+	      SIGIOT
+
+	      ; Linux + NetBSD >=8.0 specific
+	      SIGRTMIN SIGRTMAX
+
+	      ; BSD common
+	      SIGEMT SIGINFO NSIG
+
+	      ; OpenBSD specific
+	      SIGTHR
+
+	      ; NetBSD specific
+	      SIGPWR
+
+	      ; Darwin specific
+	      SIGPOLL
+
+	      make_sigset
+	      sigemptyset
+	      sigfillset
+	      sigaddset
+	      sigdelset
+	      sigismember
+
+	      __kill _kill
+	      __sigprocmask _sigprocmask
+	      __errno))
 
   (define-c-lambda __errno () int
     "___return (errno);")
 
-(cond-expand
-  (linux
-    (define-const SIGHUP)
-    (define-const SIGINT)
-    (define-const SIGQUIT)
-    (define-const SIGILL)
-    (define-const SIGTRAP)
-    (define-const SIGABRT)
-    (define-const SIGIOT)
-    (define-const SIGBUS)
-    (define-const SIGFPE)
-    (define-const SIGKILL)
-    (define-const SIGUSR1)
-    (define-const SIGSEGV)
-    (define-const SIGUSR2)
-    (define-const SIGPIPE)
-    (define-const SIGALRM)
-    (define-const SIGTERM)
-    (define-const SIGSTKFLT)
-    (define-const SIGCHLD)
-    (define-const SIGCONT)
-    (define-const SIGSTOP)
-    (define-const SIGTSTP)
-    (define-const SIGTTIN)
-    (define-const SIGTTOU)
-    (define-const SIGURG)
-    (define-const SIGXCPU)
-    (define-const SIGXFSZ)
-    (define-const SIGVTALRM)
-    (define-const SIGPROF)
-    (define-const SIGWINCH)
-    (define-const SIGPOLL)
-    (define-const SIGIO)
-    (define-const SIGPWR)
-    (define-const SIGSYS)
-    (define-const SIGUNUSED)
-
-    (define-const SIGRTMIN)
-    (define-const SIGRTMAX))
-  (openbsd
-    (define-const SIGHUP)
-    (define-const SIGINT)
-    (define-const SIGQUIT)
-    (define-const SIGILL)
-    (define-const SIGTRAP)
-    (define-const SIGABRT)
-    (define-const SIGEMT)
-    (define-const SIGFPE)
-    (define-const SIGKILL)
-    (define-const SIGBUS)
-    (define-const SIGSEGV)
-    (define-const SIGSYS)
-    (define-const SIGPIPE)
-    (define-const SIGALRM)
-    (define-const SIGTERM)
-    (define-const SIGURG)
-    (define-const SIGSTOP)
-    (define-const SIGTSTP)
-    (define-const SIGCONT)
-    (define-const SIGCHLD)
-    (define-const SIGTTIN)
-    (define-const SIGTTOU)
-    (define-const SIGIO)
-    (define-const SIGXCPU)
-    (define-const SIGXFSZ)
-    (define-const SIGVTALRM)
-    (define-const SIGPROF)
-    (define-const SIGWINCH)
-    (define-const SIGINFO)
-    (define-const SIGUSR1)
-    (define-const SIGUSR2)
-    (define-const SIGTHR))) 
+  (define-const SIGHUP)
+  (define-const SIGINT)
+  (define-const SIGQUIT)
+  (define-const SIGILL)
+  (define-const SIGTRAP)
+  (define-const SIGABRT)
+  (define-const SIGBUS)
+  (define-const SIGFPE)
+  (define-const SIGKILL)
+  (define-const SIGUSR1)
+  (define-const SIGSEGV)
+  (define-const SIGUSR2)
+  (define-const SIGPIPE)
+  (define-const SIGALRM)
+  (define-const SIGTERM)
+  (define-const SIGCHLD)
+  (define-const SIGCONT)
+  (define-const SIGSTOP)
+  (define-const SIGTSTP)
+  (define-const SIGTTIN)
+  (define-const SIGTTOU)
+  (define-const SIGURG)
+  (define-const SIGXCPU)
+  (define-const SIGXFSZ)
+  (define-const SIGVTALRM)
+  (define-const SIGPROF)
+  (define-const SIGWINCH)
+  (define-const SIGIO)
+  (define-const SIGSYS)
 
   (define-const SIG_BLOCK)
   (define-const SIG_UNBLOCK)
   (define-const SIG_SETMASK)
+
+  (cond-expand
+    (linux
+      (define-const SIGIOT)
+      (define-const SIGSTKFLT)
+      (define-const SIGPOLL)
+      (define-const SIGPWR)
+      (define-const SIGUNUSED)
+      (define-const SIGRTMIN)
+      (define-const SIGRTMAX))
+    (bsd
+      (define-const SIGEMT)
+      (define-const SIGINFO)
+      (define-const NSIG))) 
+
+  (cond-expand
+    (openbsd
+      (define-const SIGTHR))
+    (netbsd
+      (define-const SIGPWR)
+      (define-const SIGRTMIN)
+      (define-const SIGRTMAX))
+    (freebsd)
+    (darwin
+      (define-const SIGPOLL))
+    (linux))
 
   (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
 
@@ -252,8 +270,9 @@ ___SCMOBJ ffi_free (void *ptr)
 END-C
 ))
 
-(cond-expand
-  (linux
-    (def SIGMAX (+ SIGRTMAX 1)))
-  (openbsd
-    (def SIGMAX 33)))
+(def SIGMAX
+  (cond-expand
+    (linux
+      (+ SIGRTMAX 1))
+    (bsd
+      NSIG)))
