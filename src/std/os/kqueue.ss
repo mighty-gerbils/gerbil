@@ -11,7 +11,7 @@ package: std/os
         :std/os/fcntl)
 (export kqueue kqueue-close
         make-kevents kqueue-poll
-        kqueue-kevent-add kqueue-kevent-del
+        kqueue-kevent-add kqueue-kevent-del kqueue-kevent-disable
         kevent-ident kevent-filter kevent-flags
         kevent-fflags kevent-data kevent-udata
         set-kevent-ident! set-kevent-filter! set-kevent-flags!
@@ -41,25 +41,38 @@ package: std/os
   (check-ptr (make_kevents size)))
 
 (def (kevent kqueue change-list nchanges event-list nevents timeout)
-  (check-os-error
+  (do-retry-nonblock
    (_kevent (fd-e kqueue) change-list nchanges event-list nevents timeout)
    (kevent kqueue change-list nchanges event-list nevents timeout)))
 
 (def (kqueue-poll kqueue events nevents)
   (kevent kqueue #f 0 events nevents timeout-zero))
 
-(def (kqueue-kevent-add kqueue dev filter)
+(def (kqueue-kevent-add kqueue dev filter (additional-flags 0) (filter-flags 0) (data 0))
   (let (kevt (get-kevent-ptr))
     (kevent_ident_set kevt 0 (if (fd? dev) (fd-e dev) dev))
-    (kevent_flags_set kevt 0 EV_ADD)
+    (kevent_flags_set kevt 0 (##fxior EV_ADD additional-flags))
     (kevent_filter_set kevt 0 filter)
+    (kevent_fflags_set kevt 0 filter-flags)
+    (kevent_data_set kevt 0 data)
     (kevent kqueue kevt 1 #f 0 #f)))
 
 (def (kqueue-kevent-del kqueue dev filter)
   (let (kevt (get-kevent-ptr))
-    (kevent_ident_set kevt 0 (fd-e dev))
+    (kevent_ident_set kevt 0 (if (fd? dev) (fd-e dev) dev))
     (kevent_flags_set kevt 0 EV_DELETE)
     (kevent_filter_set kevt 0 filter)
+    (kevent_fflags_set kevt 0 0)
+    (kevent_data_set kevt 0 0)
+    (kevent kqueue kevt 1 #f 0 #f)))
+
+(def (kqueue-kevent-disable kqueue dev filter)
+  (let (kevt (get-kevent-ptr))
+    (kevent_ident_set kevt 0 (if (fd? dev) (fd-e dev) dev))
+    (kevent_flags_set kevt 0 EV_DISABLE)
+    (kevent_filter_set kevt 0 filter)
+    (kevent_fflags_set kevt 0 0)
+    (kevent_data_set kevt 0 0)
     (kevent kqueue kevt 1 #f 0 #f)))
 
 (def kevent-ptr-key
