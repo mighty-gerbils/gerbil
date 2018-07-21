@@ -63,7 +63,7 @@ package: std/os
 
 (def (kqueue-kevent-del kqueue dev filter)
   (let (kevt (get-kevent-ptr))
-    (kevent_ident_set kevt 0 (fd-e dev))
+    (kevent_ident_set kevt 0 (if (fd? dev) (fd-e dev) dev))
     (kevent_flags_set kevt 0 EV_DELETE)
     (kevent_filter_set kevt 0 filter)
     (kevent kqueue kevt 1 #f 0 #f)))
