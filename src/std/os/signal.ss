@@ -24,7 +24,7 @@ package: std/os
   (netbsd
     (export SIGPWR SIGRTMIN SIGRTMAX))
   (darwin
-    (export SIGPOLL SIGIOT)))
+    (export SIGIOT)))
 
 (export
   kill
@@ -94,7 +94,7 @@ package: std/os
       (define-cond-expand-feature freebsd)))
   (darwin
     (begin-foreign
-      (define-cond-expand-reature darwin))))
+      (define-cond-expand-feature darwin))))
 
 (begin-foreign
   (c-declare "#include <sys/types.h>")
@@ -155,9 +155,6 @@ package: std/os
 
 	      ; NetBSD specific
 	      SIGPWR
-
-	      ; Darwin specific
-	      SIGPOLL
 
 	      make_sigset
 	      sigemptyset
@@ -229,8 +226,7 @@ package: std/os
       (define-const SIGRTMIN)
       (define-const SIGRTMAX))
     (freebsd)
-    (darwin
-      (define-const SIGPOLL))
+    (darwin)
     (linux))
 
   (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
