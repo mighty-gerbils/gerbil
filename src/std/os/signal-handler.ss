@@ -78,7 +78,7 @@ package: std/os
              (sigdelset sigset signo)
              (signalfd-reset! sfd sigset)
              (unblock-signal! signo))
-           (vector-set! tab signo #f))))))
+           (vector-set! tab signo #f)))))
 
    (def (block-signal! signo)
      (let (sigset (make_sigset))
@@ -86,11 +86,11 @@ package: std/os
        (sigaddset sigset signo)
        (sigprocmask SIG_BLOCK sigset #f)))
 
-    (def (unblock-signal! signo)
-      (let (sigset (make_sigset))
-	(sigemptyset sigset)
-	(sigaddset sigset signo)
-	(sigprocmask SIG_UNBLOCK sigset #f)))
+   (def (unblock-signal! signo)
+     (let (sigset (make_sigset))
+       (sigemptyset sigset)
+       (sigaddset sigset signo)
+       (sigprocmask SIG_UNBLOCK sigset #f))))
 
   (bsd
 
