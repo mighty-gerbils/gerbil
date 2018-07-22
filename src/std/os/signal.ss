@@ -22,7 +22,7 @@ package: std/os
   (openbsd
     (export SIGTHR))
   (netbsd
-    (export SIGPWR SIGRTMIN SIGRTMAX))
+    (export SIGPWR #;SIGRTMIN #;SIGRTMAX))
   (darwin
     (export SIGIOT)))
 
@@ -60,7 +60,7 @@ package: std/os
   (openbsd
     (extern SIGTHR))
   (netbsd
-    (extern SIGPWR SIGRTMIN SIGRTMAX))
+    (extern SIGPWR #;SIGRTMIN #;SIGRTMAX))
   (darwin
     (extern SIGPOLL SIGIOT)))
 
@@ -134,27 +134,10 @@ package: std/os
 	      SIGFPE SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM
 	      SIGTERM SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU
 	      SIGURG SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGIO
-	      SIGSYS
+	      SIGSYS SIGSTKFLT SIGPOLL SIGPWR SIGUNUSED SIGIOT SIGRTMIN
+	      SIGRTMAX SIGEMT SIGINFO NSIG SIGTHR SIGPWR
 
 	      SIG_BLOCK SIG_UNBLOCK SIG_SETMASK
-
-	      ; Linux specific
-	      SIGSTKFLT SIGPOLL SIGPWR SIGUNUSED
-
-	      ; Linux + Darwin specific
-	      SIGIOT
-
-	      ; Linux + NetBSD >=8.0 specific
-	      SIGRTMIN SIGRTMAX
-
-	      ; BSD common
-	      SIGEMT SIGINFO NSIG
-
-	      ; OpenBSD specific
-	      SIGTHR
-
-	      ; NetBSD specific
-	      SIGPWR
 
 	      make_sigset
 	      sigemptyset
@@ -223,8 +206,8 @@ package: std/os
       (define-const SIGTHR))
     (netbsd
       (define-const SIGPWR)
-      (define-const SIGRTMIN)
-      (define-const SIGRTMAX))
+      #;(define-const SIGRTMIN)
+      #;(define-const SIGRTMAX))
     (freebsd)
     (darwin)
     (linux))
