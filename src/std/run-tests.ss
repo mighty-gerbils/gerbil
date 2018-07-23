@@ -33,6 +33,8 @@
 (cond-expand
   ((or linux bsd)
    (import "net/socket/server-test")))
+
+(cond-expand
   (linux
    (import "os/signalfd-test"
            "os/signal-handler-test")))
