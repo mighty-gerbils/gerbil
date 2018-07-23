@@ -63,11 +63,25 @@ package: std/net/socket
            (ssock
             (make-!socket sock wait-in wait-out close))
            (state
-            (make-!socket-state sock io-in io-out)))
+            (make-!socket-state sock io-in io-out))
+           (nchanges 0))
       (when io-in
-        (kqueue-kevent-add kq sock EVFILT_READ EV_CLEAR NOTE_LOWAT 1))
+        (kevent-set! evts nchanges
+         ident: (fd-e sock)
+         filter: EVFILT_READ
+         flags: (##fxior EV_ADD EV_CLEAR)
+         filter-flags: NOTE_LOWAT
+         data: 1)
+        (set! nchanges (1+ nchanges)))
       (when io-out
-        (kqueue-kevent-add kq sock EVFILT_WRITE EV_CLEAR NOTE_LOWAT 1))
+        (kevent-set! evts nchanges
+         ident: (fd-e sock)
+         filter: EVFILT_WRITE
+         flags: (##fxior EV_ADD EV_CLEAR)
+         filter-flags: NOTE_LOWAT
+         data: 1)
+        (set! nchanges (1+ nchanges)))
+      (kevent kq evts nchanges #f 0 #f)
       (make-will ssock (cut close <> 'inout #f))
       (hash-put! fdtab fd state)
       ssock))
@@ -107,8 +121,15 @@ package: std/net/socket
                 (unless io-in
                   (close-port sock)))
                ((inout)
-                (kqueue-kevent-del kq sock EVFILT_READ)
-                (kqueue-kevent-del kq sock EVFILT_WRITE)
+                (kevent-set! evts 0
+                 ident: (fd-e sock)
+                 filter: EVFILT_READ
+                 flags: EV_DELETE)
+                (kevent-set! evts 1
+                 ident: (fd-e sock)
+                 filter: EVFILT_WRITE
+                 flags: EV_DELETE)
+                (kevent kq evts 2 #f 0 #f)
                 (hash-remove! fdtab (fd-e sock))
                 (when io-in
                   (set! (!socket-wait-in ssock) #f)
