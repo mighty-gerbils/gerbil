@@ -163,6 +163,13 @@ package: std/os
       `(define ,symbol
          ((c-lambda () int ,ref)))))
 
+  (define-macro (define-guard guard defn)
+    (if (eval `(cond-expand (,guard #t) (else #f)))
+      '(begin)
+      (begin
+        (eval `(define-cond-expand-feature ,guard))
+        defn)))
+
   (define-macro (define-with-errno symbol ffi-symbol args)
     `(define (,symbol ,@args)
        (declare (not interrupts-enabled))
@@ -250,9 +257,12 @@ package: std/os
   (c-define-type kevent (struct "kevent"))
   (c-define-type kevent*
     (pointer kevent (kevent*) "ffi_free"))
-  (c-define-type timespec (struct "timespec"))
-  (c-define-type timespec*
-    (pointer timespec (timespec*) "ffi_free"))
+
+  (define-guard ffi-have-timespec
+    (c-define-type timespec (struct "timespec")))
+  (define-guard ffi-have-timespec*
+    (c-define-type timespec*
+      (pointer timespec (timespec*) "ffi_free")))
 
   (define-c-lambda make_timespec () timespec*
     "___return ((struct timespec*)malloc(sizeof(struct timespec)));")
