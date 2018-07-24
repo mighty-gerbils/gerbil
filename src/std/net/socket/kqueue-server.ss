@@ -32,13 +32,12 @@ package: std/net/socket
                   (ready (kevent-flags evts k)))
               (with ((!socket-state _ io-in io-out)
                      (hash-ref fdtab fd))
-                (cond
-                 ((##fxpositive? (##fxand ready ev-in))
+                (unless (##fxzero? (##fxand ready ev-in))
                   (when io-in
                     (io-state-signal-ready! io-in 'ready)))
-                 ((##fxpositive? (##fxand ready ev-out))
+                (unless (##fxzero? (##fxand ready ev-out))
                   (when io-out
-                    (io-state-signal-ready! io-out 'ready))))
+                    (io-state-signal-ready! io-out 'ready)))
                 (lp (##fx+ k 1)))))))))
 
   (def (add-socket sock)
@@ -64,14 +63,12 @@ package: std/net/socket
            (ssock
             (make-!socket sock wait-in wait-out close))
            (state
-            (make-!socket-state sock io-in io-out))
-           (filter 0))
+            (make-!socket-state sock io-in io-out)))
       (when io-in
-        (set! filter (##fxior filter EVFILT_READ)))
+        (kqueue-kevent-add kq sock EVFILT_READ EV_CLEAR NOTE_LOWAT 1))
       (when io-out
-        (set! filter (##fxior filter EVFILT_WRITE)))
+        (kqueue-kevent-add kq sock EVFILT_WRITE EV_CLEAR NOTE_LOWAT 1))
       (make-will ssock (cut close <> 'inout #f))
-      (kqueue-kevent-add kq sock filter)
       (hash-put! fdtab fd state)
       ssock))
 
@@ -89,9 +86,9 @@ package: std/net/socket
              (case dir
                ((in)
                 (if io-out
-                  (kqueue-kevent-add kq sock EVFILT_WRITE)
+                  (kqueue-kevent-disable kq sock EVFILT_READ)
                   (begin
-                    #;(kqueue-kevent-del kq sock)
+                    (kqueue-kevent-del kq sock EVFILT_READ)
                     (hash-remove! fdtab (fd-e sock))))
                 (set! (!socket-wait-in ssock) #f)
                 (set! (!socket-state-io-in state) #f)
@@ -100,9 +97,9 @@ package: std/net/socket
                   (close-port sock)))
                ((out)
                 (if io-in
-                  (kqueue-kevent-add kq sock EVFILT_READ)
+                  (kqueue-kevent-disable kq sock EVFILT_WRITE)
                   (begin
-                    #;(kqueue-kevent-del kq sock)
+                    (kqueue-kevent-del kq sock EVFILT_WRITE)
                     (hash-remove! fdtab (fd-e sock))))
                 (set! (!socket-wait-out ssock) #f)
                 (set! (!socket-state-io-out state) #f)
@@ -110,7 +107,8 @@ package: std/net/socket
                 (unless io-in
                   (close-port sock)))
                ((inout)
-                #;(kqueue-kevent-del kq sock)
+                (kqueue-kevent-del kq sock EVFILT_READ)
+                (kqueue-kevent-del kq sock EVFILT_WRITE)
                 (hash-remove! fdtab (fd-e sock))
                 (when io-in
                   (set! (!socket-wait-in ssock) #f)

@@ -31,6 +31,10 @@
    (import "db/leveldb-test")))
 
 (cond-expand
+  ((or linux bsd)
+   (import "net/socket/server-test")))
+
+(cond-expand
   (linux
    (import "os/signalfd-test"
            "os/signal-handler-test"))
@@ -55,6 +59,11 @@
    (if config-enable-sqlite [sqlite-test] []) ...
    (if config-enable-lmdb [lmdb-test] []) ...
    (if config-enable-leveldb [leveldb-test] []) ...
+   (cond-expand
+     ((or linux bsd)
+      [socket-server-test])
+     (else []))
+   ...
    (cond-expand
      (linux [signalfd-test signal-handler-test])
      (bsd [signal-handler-test])
