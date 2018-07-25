@@ -1352,11 +1352,15 @@ kqueue for BSD.
 
 ;; exports:
     kqueue
-    make-kevents
     kqueue-close
+    make-kevents
+    kevent-set!
+    kevent
     kqueue-poll
     kqueue-kevent-add
     kqueue-kevent-del
+    kqueue-kevent-disable
+    make-timespec
     kevent-ident
     kevent-filter
     kevent-flags
