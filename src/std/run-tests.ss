@@ -70,6 +70,6 @@
 (apply run-tests! tests)
 (test-report-summary!)
 
-#;(case (test-result)
+(case (test-result)
   ((OK) (exit 0))
   (else (exit 1)))
