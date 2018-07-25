@@ -11,9 +11,9 @@ package: std/os
 	:std/os/fd
 	:std/os/fcntl)
 
-(export kqueue kqueue-close
-	make-kevents kqueue-poll kqueue-wait
-	kqueue-kevent-add kqueue-kevent-del
+(export kqueue kqueue-close kevent
+	make-kevents kqueue-poll
+	kqueue-kevent-add kqueue-kevent-del kqueue-kevent-disable
 	kevent-ident kevent-filter kevent-flags
 	kevent-fflags kevent-data kevent-udata
 	set-kevent-ident! set-kevent-filter! set-kevent-flags!
@@ -57,9 +57,9 @@ package: std/os
 (def (make-kevents size)
   (check-ptr (make_kevents size)))
 
-(def (kevent kqueue change-list nchanges event-list nevents timeout)
+(def (kevent kqueue change-list nchanges event-list nevents (timeout timeout-zero))
   (do-retry-nonblock
-   (_kevent (fd-e kqueue) change-list nchanges event-list nevents timeout)
+   (_kevent (fd-e kqueue) change-list nchanges event-list nevents timeout-zero)
    (kevent kqueue change-list nchanges event-list nevents timeout)))
 
 (def (kqueue-poll kqueue events nevents)
