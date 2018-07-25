@@ -10,8 +10,10 @@ package: std/os
         :std/os/fd
         :std/os/fcntl)
 (export kqueue kqueue-close
-        make-kevents kqueue-poll
+        make-kevents kevent-set!
+        kevent kqueue-poll
         kqueue-kevent-add kqueue-kevent-del kqueue-kevent-disable
+        make-timespec
         kevent-ident kevent-filter kevent-flags
         kevent-fflags kevent-data kevent-udata
         set-kevent-ident! set-kevent-filter! set-kevent-flags!
@@ -40,39 +42,44 @@ package: std/os
 (def (make-kevents size)
   (check-ptr (make_kevents size)))
 
+(def (kevent-set! kevts ix
+      ident: ident     filter:       filter
+      flags: (flags 0) filter-flags: (filter-flags 0)
+      data:  (data 0)  user-data:    (user-data #f))
+  (ev_set kevts ix ident filter flags filter-flags data user-data))
+
 (def (kevent kqueue change-list nchanges event-list nevents timeout)
   (do-retry-nonblock
    (_kevent (fd-e kqueue) change-list nchanges event-list nevents timeout)
    (kevent kqueue change-list nchanges event-list nevents timeout)))
 
 (def (kqueue-poll kqueue events nevents)
-  (kevent kqueue #f 0 events nevents timeout-zero))
+  (kevent kqueue #f 0 events nevents timespec-zero))
 
 (def (kqueue-kevent-add kqueue dev filter (additional-flags 0) (filter-flags 0) (data 0))
   (let (kevt (get-kevent-ptr))
-    (kevent_ident_set kevt 0 (if (fd? dev) (fd-e dev) dev))
-    (kevent_flags_set kevt 0 (##fxior EV_ADD additional-flags))
-    (kevent_filter_set kevt 0 filter)
-    (kevent_fflags_set kevt 0 filter-flags)
-    (kevent_data_set kevt 0 data)
+    (kevent-set! kevt 0
+     ident: (if (fd? dev) (fd-e dev) dev)
+     flags: (##fxior EV_ADD additional-flags)
+     filter: filter
+     filter-flags: filter-flags
+     data: data)
     (kevent kqueue kevt 1 #f 0 #f)))
 
 (def (kqueue-kevent-del kqueue dev filter)
   (let (kevt (get-kevent-ptr))
-    (kevent_ident_set kevt 0 (if (fd? dev) (fd-e dev) dev))
-    (kevent_flags_set kevt 0 EV_DELETE)
-    (kevent_filter_set kevt 0 filter)
-    (kevent_fflags_set kevt 0 0)
-    (kevent_data_set kevt 0 0)
+    (kevent-set! kevt 0
+     ident: (if (fd? dev) (fd-e dev) dev)
+     flags: EV_DELETE
+     filter: filter)
     (kevent kqueue kevt 1 #f 0 #f)))
 
 (def (kqueue-kevent-disable kqueue dev filter)
   (let (kevt (get-kevent-ptr))
-    (kevent_ident_set kevt 0 (if (fd? dev) (fd-e dev) dev))
-    (kevent_flags_set kevt 0 EV_DISABLE)
-    (kevent_filter_set kevt 0 filter)
-    (kevent_fflags_set kevt 0 0)
-    (kevent_data_set kevt 0 0)
+    (kevent-set! kevt 0
+     ident: (if (fd? dev) (fd-e dev) dev)
+     flags: EV_DISABLE
+     filter: filter)
     (kevent kqueue kevt 1 #f 0 #f)))
 
 (def kevent-ptr-key
@@ -87,6 +94,14 @@ package: std/os
       (thread-local-set! kevent-ptr-key kevent-ptr)
       kevent-ptr))))
 
+(def timespec-zero (make-timespec 0 0))
+
+(def (make-timespec seconds nanoseconds)
+  (let (timespec (check-ptr (make_timespec)))
+    (timespec_seconds_set timespec seconds)
+    (timespec_nanoseconds_set timespec nanoseconds)
+    timespec))
+
 (def kevent-ident kevent_ident)
 (def kevent-filter kevent_filter)
 (def kevent-flags kevent_flags)
@@ -100,14 +115,6 @@ package: std/os
 (def set-kevent-fflags! kevent_fflags_set)
 (def set-kevent-data! kevent_data_set)
 (def set-kevent-udata! kevent_udata_set)
-
-(def timeout-zero (make-timeout 0 0))
-
-(def (make-timeout seconds nanoseconds)
-  (let (timespec (check-ptr (make_timespec)))
-    (timespec_seconds_set timespec seconds)
-    (timespec_nanoseconds_set timespec nanoseconds)
-    timespec))
 
 (extern
   EV_ADD EV_ENABLE EV_DISABLE EV_DISPATCH
@@ -155,6 +162,13 @@ package: std/os
            (ref (##string-append "___return (" str ");")))
       `(define ,symbol
          ((c-lambda () int ,ref)))))
+
+  (define-macro (define-guard guard defn)
+    (if (eval `(cond-expand (,guard #t) (else #f)))
+      '(begin)
+      (begin
+        (eval `(define-cond-expand-feature ,guard))
+        defn)))
 
   (define-macro (define-with-errno symbol ffi-symbol args)
     `(define (,symbol ,@args)
@@ -243,9 +257,12 @@ package: std/os
   (c-define-type kevent (struct "kevent"))
   (c-define-type kevent*
     (pointer kevent (kevent*) "ffi_free"))
-  (c-define-type timespec (struct "timespec"))
-  (c-define-type timespec*
-    (pointer timespec (timespec*) "ffi_free"))
+
+  (define-guard ffi-have-timespec
+    (c-define-type timespec (struct "timespec")))
+  (define-guard ffi-have-timespec*
+    (c-define-type timespec*
+      (pointer timespec (timespec*) "ffi_free")))
 
   (define-c-lambda make_timespec () timespec*
     "___return ((struct timespec*)malloc(sizeof(struct timespec)));")
