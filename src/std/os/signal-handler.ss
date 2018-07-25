@@ -9,7 +9,7 @@ package: std/os
         :std/sugar)
 (cond-expand
   (linux (import :std/os/signalfd))
-  (bsd (import :std/os/kqueue :std/os/error)))
+  (bsd (import :std/os/kqueue :std/os/error :std/os/fd)))
 
 (export add-signal-handler! remove-signal-handler!)
 
@@ -113,7 +113,8 @@ package: std/os
 	(def events (make-kevents nevents))
 	(with ((signal-handler handlers default-handlers kq mx) sh)
 	  (let wait-loop ()
-	    (let (n (kqueue-wait kq events nevents))
+	    (##wait-for-io! (fd-io-in kq) #t)
+	    (let (n (kqueue-poll kq events nevents))
 	      (when (##fxpositive? n)
 		(let event-loop ((i 0))
 		  (when (fx< i n)
