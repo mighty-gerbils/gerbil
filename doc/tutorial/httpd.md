@@ -122,10 +122,8 @@ interface.
 
 (def (write-text-headers res headers)
   (http-response-begin res 200 '(("Content-Type" . "text/plain")))
-  (for-each (match <>
-              ([key . val]
-               (http-response-chunk res (string-append key ": " val "\n"))))
-            headers)
+  (for ([key . val] headers)
+    (http-response-chunk res (string-append key ": " val "\n")))
   (http-response-end res))
 
 ```
