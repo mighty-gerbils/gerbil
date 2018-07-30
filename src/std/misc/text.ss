@@ -3,12 +3,14 @@
 ;;; textual template related utilities
 package: std/misc
 
-(import
-  (for-syntax
-   (only-in :gerbil/expander core-resolve-path)
-   :std/misc/ports))
-(export #t)
+;; this hack is needed because the stdlib dep generating script tries to re-import
+;; the expander from source, hence killing the current expansion... duh.
+(module gxdeps
+  (export #t)
+  (extern namespace: gx core-resolve-path))
 
+(import (for-syntax gxdeps :std/misc/ports))
+(export include-text)
 
 ;; compile-time include a file as text (a string)
 (defsyntax (include-text stx)
