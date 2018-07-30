@@ -172,6 +172,7 @@
     (gxc:  "misc/threads" ,@(include-gambit-sharp))
     "misc/process"
     (gxc:  "misc/shared" "-e" "(include \"~~lib/_gambit#.scm\")")
+    "misc/text"
     ;; :std/actor
     (gxc: "actor/message" ,@(include-gambit-sharp))
     (gxc: "actor/xdr"  ,@(include-gambit-sharp))

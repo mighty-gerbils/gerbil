@@ -3,8 +3,6 @@
 ;;; some standard sugar
 package: std
 
-(import
-  (for-syntax (only-in :gerbil/expander core-resolve-path)))
 (export #t)
 
 (defrules catch ())
@@ -183,16 +181,3 @@ package: std
                                 #'(hash-ref ht 'sym))))
                             #'(var-ref id))))))))
                body ...)))))))
-
-;; compile-time include a file as text (a string)
-(defsyntax (include-text stx)
-  (def (read-as-string port)
-    (let (str (read-line port #f))
-      (if (string? str) str "")))
-
-  (syntax-case stx ()
-    ((_ path)
-     (stx-string? #'path)
-     (let (path (core-resolve-path #'path (stx-source stx)))
-       (with-syntax ((txt (call-with-input-file path read-as-string)))
-         #'(quote txt))))))
