@@ -3,8 +3,9 @@
 ;;; textual template related utilities
 package: std/misc
 
-;; this hack is needed because the stdlib dep generating script tries to re-import
-;; the expander from source, hence killing the current expansion... duh.
+;; this hack is needed because we can't just for-syntax import :gerbil/expander here.
+;; the stdlib dep generating script tries to reimport the expander from source,
+;; hence killing its expansion context and failing... duh.
 (module gxdeps
   (export #t)
   (extern namespace: gx core-resolve-path))
