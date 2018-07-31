@@ -99,6 +99,7 @@ namespace: gxc
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin ".scm")))
+    (create-directory* (path-directory output-scm))
     (compile-stub output-scm output-bin)
     (unless (current-compile-keep-scm)
       (delete-file output-scm))))
