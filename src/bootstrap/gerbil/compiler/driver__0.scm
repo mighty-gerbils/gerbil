@@ -189,6 +189,7 @@
         (let* ((_output-bin50173_
                 (gxc#compile-exe-output-file _ctx50167_ _opts50168_))
                (_output-scm50175_ (string-append _output-bin50173_ '".scm")))
+          (create-directory* (path-directory _output-scm50175_))
           (_compile-stub50171_ _output-scm50175_ _output-bin50173_)
           (if (gxc#current-compile-keep-scm)
               '#!void
