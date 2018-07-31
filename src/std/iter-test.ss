@@ -48,6 +48,11 @@
       (check-output (test-for-6) "0\n1\n2\n"))
 
     (test-case "test folding macros"
+      (def (test-for/collect-0)
+        (for/collect ((x '(1 2 3)))
+          (* x 2)))
+      (check (test-for/collect-0) => '(2 4 6))
+
       (def (test-for/collect-1)
         (for/collect ((x '(1 2 3))
                       (y '#(a b c d)))

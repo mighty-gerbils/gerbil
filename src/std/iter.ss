@@ -270,11 +270,11 @@ package: std
         ((iter-e (for-binding-expr bind))
          (bind-e (for-binding-bind bind))
          ((body ...) body))
-      #'(let* ((iterable iter-e)
-               (iter-do
-                (lambda (val)
-                  (with ((bind-e val))
-                    body ...))))
+      #'(let ((iterable iter-e)
+              (iter-do
+               (lambda (val)
+                 (with ((bind-e val))
+                   body ...))))
           (cond
            ;; speculatively inline list iteration
            ((pair? iterable)
@@ -332,6 +332,40 @@ package: std
 
 (defsyntax (for/collect stx)
   (def (generate-for bindings body)
+    (if (fx= (length bindings) 1)
+      (generate-for1 (car bindings) body)
+      (generate-for* bindings body)))
+
+  (def (generate-for1 bind body)
+    (with-syntax
+        ((iter-e (for-binding-expr bind))
+         (bind-e (for-binding-bind bind))
+         ((body ...) body))
+      #'(let ((iterable iter-e)
+              (iter-do
+               (lambda (val)
+                 (with ((bind-e val))
+                   body ...))))
+          (cond
+           ;; speculatively inline list iteration
+           ((pair? iterable)
+            (map iter-do iterable))
+           ((null? iterable) [])
+           (else
+            ;; full iteration protocol
+            (let (it (:iter iterable))
+              (iter-start! it)
+              (let lp ((rval []))
+                (let (val (iter-value it))
+                  (if (eq? iter-end val)
+                    (begin
+                      (iter-fini! it)
+                      (reverse rval))
+                    (let (xval (iter-do val))
+                      (iter-next! it)
+                      (lp (cons xval rval))))))))))))
+
+  (def (generate-for* bindings body)
     (with-syntax
         ((value  (genident 'value))
          (rvalue (genident 'rvalue))
