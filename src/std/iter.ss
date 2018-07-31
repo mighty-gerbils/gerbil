@@ -405,6 +405,42 @@ package: std
       (else #f)))
 
   (def (generate-for fold-bind bindings body)
+    (if (fx= (length bindings) 1)
+      (generate-for1 fold-bind (car bindings) body)
+      (generate-for* fold-bind bindings body)))
+
+  (def (generate-for1 fold-bind bind body)
+    (with-syntax
+        ((iter-e (for-binding-expr bind))
+         (bind-e (for-binding-bind bind))
+         ((fold-iv fold-e) fold-bind)
+         ((body ...) body))
+      #'(let ((iterable iter-e)
+              (iter-do
+               (lambda (val fold-iv)
+                 (with ((bind-e val))
+                   body ...)))
+              (fold-iv fold-e))
+          (cond
+           ;; speculatively inline list iteration
+           ((pair? iterable)
+            (foldl iter-do fold-iv iterable))
+           ((null? iterable) fold-iv)
+           (else
+            ;; full iteration protocol
+            (let (it (:iter iterable))
+              (iter-start! it)
+              (let lp ((rval fold-iv))
+                (let (val (iter-value it))
+                  (if (eq? iter-end val)
+                    (begin
+                      (iter-fini! it)
+                      rval)
+                    (let (xval (iter-do val rval))
+                      (iter-next! it)
+                      (lp xval)))))))))))
+
+  (def (generate-for* fold-bind bindings body)
     (with-syntax
         ((value  (genident 'value))
          ((loop-id loop-e)
