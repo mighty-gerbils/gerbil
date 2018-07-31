@@ -261,6 +261,39 @@ package: std
 
 (defsyntax (for stx)
   (def (generate-for bindings body)
+    (if (fx= (length bindings) 1)
+      (generate-for1 (car bindings) body)
+      (generate-for* bindings body)))
+
+  (def (generate-for1 bind body)
+    (with-syntax
+        ((iter-e (for-binding-expr bind))
+         (bind-e (for-binding-bind bind))
+         ((body ...) body))
+      #'(let ((iterable iter-e)
+              (iter-do
+               (lambda (val)
+                 (with ((bind-e val))
+                   body ...))))
+          (cond
+           ;; speculatively inline list iteration
+           ((pair? iterable)
+            (for-each iter-do iterable))
+           ((null? iterable))
+           (else
+            ;; full iteration protocol
+            (let (it (:iter iterable))
+              (iter-start! it)
+              (let lp ()
+                (let (val (iter-value it))
+                  (unless (eq? iter-end val)
+                    (iter-do val)
+                    (iter-next! it)
+                    (lp))))
+              (iter-fini! it)
+              (void)))))))
+
+  (def (generate-for* bindings body)
     (with-syntax
         (((iter-id ...)
           (gentemps bindings))
@@ -277,9 +310,9 @@ package: std
             (let ((bind-id (iter-value iter-id)) ...)
               (unless (or (eq? iter-end bind-id) ...)
                 (with ((bind-e bind-id) ...)
-                  body ...
-                  (iter-next! iter-id) ...
-                  (lp)))))
+                  body ...)
+                (iter-next! iter-id) ...
+                (lp))))
           (iter-fini! iter-id) ...
           (void))))
 
@@ -299,6 +332,40 @@ package: std
 
 (defsyntax (for/collect stx)
   (def (generate-for bindings body)
+    (if (fx= (length bindings) 1)
+      (generate-for1 (car bindings) body)
+      (generate-for* bindings body)))
+
+  (def (generate-for1 bind body)
+    (with-syntax
+        ((iter-e (for-binding-expr bind))
+         (bind-e (for-binding-bind bind))
+         ((body ...) body))
+      #'(let ((iterable iter-e)
+              (iter-do
+               (lambda (val)
+                 (with ((bind-e val))
+                   body ...))))
+          (cond
+           ;; speculatively inline list iteration
+           ((pair? iterable)
+            (map iter-do iterable))
+           ((null? iterable) [])
+           (else
+            ;; full iteration protocol
+            (let (it (:iter iterable))
+              (iter-start! it)
+              (let lp ((rval []))
+                (let (val (iter-value it))
+                  (if (eq? iter-end val)
+                    (begin
+                      (iter-fini! it)
+                      (reverse rval))
+                    (let (xval (iter-do val))
+                      (iter-next! it)
+                      (lp (cons xval rval))))))))))))
+
+  (def (generate-for* bindings body)
     (with-syntax
         ((value  (genident 'value))
          (rvalue (genident 'rvalue))
@@ -338,6 +405,42 @@ package: std
       (else #f)))
 
   (def (generate-for fold-bind bindings body)
+    (if (fx= (length bindings) 1)
+      (generate-for1 fold-bind (car bindings) body)
+      (generate-for* fold-bind bindings body)))
+
+  (def (generate-for1 fold-bind bind body)
+    (with-syntax
+        ((iter-e (for-binding-expr bind))
+         (bind-e (for-binding-bind bind))
+         ((fold-iv fold-e) fold-bind)
+         ((body ...) body))
+      #'(let ((iterable iter-e)
+              (iter-do
+               (lambda (val fold-iv)
+                 (with ((bind-e val))
+                   body ...)))
+              (fold-iv fold-e))
+          (cond
+           ;; speculatively inline list iteration
+           ((pair? iterable)
+            (foldl iter-do fold-iv iterable))
+           ((null? iterable) fold-iv)
+           (else
+            ;; full iteration protocol
+            (let (it (:iter iterable))
+              (iter-start! it)
+              (let lp ((rval fold-iv))
+                (let (val (iter-value it))
+                  (if (eq? iter-end val)
+                    (begin
+                      (iter-fini! it)
+                      rval)
+                    (let (xval (iter-do val rval))
+                      (iter-next! it)
+                      (lp xval)))))))))))
+
+  (def (generate-for* fold-bind bindings body)
     (with-syntax
         ((value  (genident 'value))
          ((loop-id loop-e)

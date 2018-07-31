@@ -48,6 +48,11 @@
       (check-output (test-for-6) "0\n1\n2\n"))
 
     (test-case "test folding macros"
+      (def (test-for/collect-0)
+        (for/collect ((x '(1 2 3)))
+          (* x 2)))
+      (check (test-for/collect-0) => '(2 4 6))
+
       (def (test-for/collect-1)
         (for/collect ((x '(1 2 3))
                       (y '#(a b c d)))
@@ -64,10 +69,15 @@
         (for/collect (x (my-generator 3)) x))
       (check (test-for/collect-3) => '(0 1 2))
 
-      (def (test-for/fold)
+      (def (test-for/fold-1)
+        (for/fold (r []) ((x '(1 2 3)))
+          (cons x r)))
+      (check (test-for/fold-1) => '(3 2 1))
+
+      (def (test-for/fold-2)
         (for/fold (r []) ((x '(1 2 3)) (y '#(a b c d)))
           (cons* x y r)))
-      (check (test-for/fold) => '(3 c 2 b 1 a)))
+      (check (test-for/fold-2) => '(3 c 2 b 1 a)))
 
     (test-case "test iter xforms"
       (def (test-xform-when)
