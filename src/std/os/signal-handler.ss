@@ -1,4 +1,4 @@
-;; -*- Gerbil -*-
+;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; OS signal handler interface
 package: std/os
