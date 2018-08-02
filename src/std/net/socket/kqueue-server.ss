@@ -81,7 +81,7 @@ package: std/net/socket
          filter-flags: NOTE_LOWAT
          data: 1)
         (set! nchanges (1+ nchanges)))
-      (kevent kq evts nchanges #f 0 #f)
+      (kevent kq evts nchanges #f 0)
       (make-will ssock (cut close <> 'inout #f))
       (hash-put! fdtab fd state)
       ssock))
@@ -129,7 +129,7 @@ package: std/net/socket
                  ident: (fd-e sock)
                  filter: EVFILT_WRITE
                  flags: EV_DELETE)
-                (kevent kq evts 2 #f 0 #f)
+                (kevent kq evts 2 #f 0)
                 (hash-remove! fdtab (fd-e sock))
                 (when io-in
                   (set! (!socket-wait-in ssock) #f)
@@ -155,6 +155,6 @@ package: std/net/socket
         (close-port sock)))
     ;; release refs to raw devices
     (set! fdtab #f)
-    (set! kqueue #f))
+    (set! kq #f))
 
   (server-loop (fd-io-in kq) do-kevent add-socket close-socket shutdown!))
