@@ -34,6 +34,12 @@
   ((or linux bsd)
    (import "net/socket/server-test")))
 
+(cond-expand
+  (linux
+   (import "os/signalfd-test")))
+
+(import "os/signal-handler-test")
+
 (def tests
   [generic-runtime-test generic-macro-test
    iter-test
@@ -52,11 +58,12 @@
    (if config-enable-sqlite [sqlite-test] []) ...
    (if config-enable-lmdb [lmdb-test] []) ...
    (if config-enable-leveldb [leveldb-test] []) ...
+   socket-server-test
    (cond-expand
-     ((or linux bsd)
-      [socket-server-test])
+     (linux [signalfd-test])
      (else []))
    ...
+   signal-handler-test
    ])
 
 (apply run-tests! tests)

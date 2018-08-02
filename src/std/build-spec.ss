@@ -98,6 +98,13 @@
         (bsd
          `((gxc: "os/kqueue" ,@(include-gambit-sharp))))
         (else '()))
+    "os/signal"
+    ,@(cond-expand
+        (linux
+         `((gxc: "os/signalfd" ,@(include-gambit-sharp))))
+        (else '()))
+    "os/signal-handler"
+    "os/pid"
     ;; :std/net/bio
     "net/bio/input"
     "net/bio/output"
