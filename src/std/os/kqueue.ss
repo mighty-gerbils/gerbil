@@ -4,31 +4,47 @@
 package: std/os
 
 (require bsd)
+
 (import :gerbil/gambit/threads
         (only-in :gerbil/gambit/ports close-port)
         :std/os/error
         :std/os/fd
         :std/os/fcntl)
+
 (export kqueue kqueue-close
         make-kevents kevent-set!
         kevent kqueue-poll
         kqueue-kevent-add kqueue-kevent-del kqueue-kevent-disable
-        make-timespec
         kevent-ident kevent-filter kevent-flags
         kevent-fflags kevent-data kevent-udata
         set-kevent-ident! set-kevent-filter! set-kevent-flags!
         set-kevent-fflags! set-kevent-data! set-kevent-udata!
-        EV_ADD EV_ENABLE EV_DISABLE EV_DISPATCH EV_DELETE
-        EV_RECEIPT EV_ONESHOT EV_CLEAR EV_EOF EV_ERROR
-        EVFILT_READ EVFILT_WRITE EVFILT_VNODE EVFILT_PROC
-        EVFILT_SIGNAL EVFILT_TIMER
-        NOTE_DELETE NOTE_WRITE NOTE_EXTEND NOTE_LOWAT
-        NOTE_ATTRIB NOTE_LINK NOTE_RENAME NOTE_REVOKE NOTE_EXIT
-        NOTE_FORK NOTE_EXEC NOTE_TRACK NOTE_TRACKERR)
+
+        EV_ADD EV_ENABLE EV_DISABLE EV_DELETE EV_ONESHOT
+        EV_CLEAR EV_EOF EV_ERROR EVFILT_READ EVFILT_WRITE EVFILT_VNODE
+        EVFILT_PROC EVFILT_SIGNAL EVFILT_TIMER NOTE_WRITE NOTE_DELETE
+        NOTE_EXTEND NOTE_ATTRIB NOTE_LINK NOTE_RENAME NOTE_REVOKE
+        NOTE_LOWAT NOTE_EXIT NOTE_FORK NOTE_EXEC)
 
 (cond-expand
-  ((not darwin)
-   (export EVILT_DEVICE NOTE_TRUNCATE NOTE_EOF NOTE_CHANGE)))
+  (openbsd
+    (export EV_DISPATCH EV_RECEIPT EVFILT_DEVICE NOTE_TRUNCATE NOTE_TRACK
+            NOTE_TRACKERR NOTE_CHANGE))
+  (netbsd
+    (export #;EV_DISPATCH #;EV_RECEIPT EVFILT_AIO #;EVFILT_FS NOTE_TRACK
+            NOTE_TRACKERR))
+  (freebsd
+    (export EV_DISPATCH EV_RECEIPT EVFILT_AIO EVFILT_PROCDESC EVFILT_USER
+            NOTE_CLOSE NOTE_CLOSE_WRITE NOTE_OPEN NOTE_READ NOTE_TRACK
+            NOTE_SECONDS NOTE_MSECONDS NOTE_USECONDS NOTE_NSECONDS
+            NOTE_FFNOP NOTE_FFAND NOTE_FFOR NOTE_FFCOPY
+            NOTE_FFCTRLMASK NOTE_FFLAGSMASK))
+  (darwin
+    (export EV_OOBAND EV_RECEIPT EVFILT_EXCEPT EVFILT_AIO EVFILT_MACHPORT
+            NOTE_OOB NOTE_FUNLOCK NOTE_EXITSTATUS
+            NOTE_SIGNAL NOTE_REAP NOTE_SECONDS NOTE_USECONDS
+            NOTE_NSECONDS NOTE_MACHTIME NOTE_ABSOLUTE NOTE_CRITICAL
+            NOTE_BACKGROUND NOTE_LEEWAY)))
 
 (def (kqueue)
   (let* ((fd (check-os-error (_kqueue) (kqueue)))
@@ -48,13 +64,13 @@ package: std/os
       data:  (data 0)  user-data:    (user-data #f))
   (ev_set kevts ix ident filter flags filter-flags data user-data))
 
-(def (kevent kqueue change-list nchanges event-list nevents timeout)
+(def (kevent kqueue change-list nchanges event-list nevents)
   (do-retry-nonblock
-   (_kevent (fd-e kqueue) change-list nchanges event-list nevents timeout)
-   (kevent kqueue change-list nchanges event-list nevents timeout)))
+   (_kevent (fd-e kqueue) change-list nchanges event-list nevents timespec-zero)
+   (kevent kqueue change-list nchanges event-list nevents)))
 
 (def (kqueue-poll kqueue events nevents)
-  (kevent kqueue #f 0 events nevents timespec-zero))
+  (kevent kqueue #f 0 events nevents))
 
 (def (kqueue-kevent-add kqueue dev filter (additional-flags 0) (filter-flags 0) (data 0))
   (let (kevt (get-kevent-ptr))
@@ -64,7 +80,7 @@ package: std/os
      filter: filter
      filter-flags: filter-flags
      data: data)
-    (kevent kqueue kevt 1 #f 0 #f)))
+    (kevent kqueue kevt 1 #f 0)))
 
 (def (kqueue-kevent-del kqueue dev filter)
   (let (kevt (get-kevent-ptr))
@@ -72,7 +88,7 @@ package: std/os
      ident: (if (fd? dev) (fd-e dev) dev)
      flags: EV_DELETE
      filter: filter)
-    (kevent kqueue kevt 1 #f 0 #f)))
+    (kevent kqueue kevt 1 #f 0)))
 
 (def (kqueue-kevent-disable kqueue dev filter)
   (let (kevt (get-kevent-ptr))
@@ -80,7 +96,7 @@ package: std/os
      ident: (if (fd? dev) (fd-e dev) dev)
      flags: EV_DISABLE
      filter: filter)
-    (kevent kqueue kevt 1 #f 0 #f)))
+    (kevent kqueue kevt 1 #f 0)))
 
 (def kevent-ptr-key
   'std/os/kqueue#kevent-ptr)
@@ -117,13 +133,12 @@ package: std/os
 (def set-kevent-udata! kevent_udata_set)
 
 (extern
-  EV_ADD EV_ENABLE EV_DISABLE EV_DISPATCH
-  EV_DELETE EV_RECEIPT EV_ONESHOT EV_CLEAR EV_EOF EV_ERROR
-  EVFILT_READ EVFILT_WRITE EVFILT_VNODE EVFILT_PROC
-  EVFILT_SIGNAL EVFILT_TIMER
-  NOTE_DELETE NOTE_WRITE NOTE_EXTEND NOTE_LOWAT
-  NOTE_ATTRIB NOTE_LINK NOTE_RENAME NOTE_REVOKE NOTE_EXIT
-  NOTE_FORK NOTE_EXEC NOTE_TRACK NOTE_TRACKERR
+  EV_ADD EV_ENABLE EV_DISABLE EV_DELETE EV_ONESHOT
+  EV_CLEAR EV_EOF EV_ERROR EVFILT_READ EVFILT_WRITE EVFILT_VNODE
+  EVFILT_PROC EVFILT_SIGNAL EVFILT_TIMER NOTE_WRITE NOTE_DELETE
+  NOTE_EXTEND NOTE_ATTRIB NOTE_LINK NOTE_RENAME NOTE_REVOKE
+  NOTE_EXIT NOTE_FORK NOTE_EXEC NOTE_LOWAT
+
   make_timespec timespec_seconds_set timespec_nanoseconds_set
   _kqueue _kevent
   make_kevents
@@ -136,14 +151,38 @@ package: std/os
   ev_set)
 
 (cond-expand
-  ((not darwin)
-    (extern EVILT_DEVICE NOTE_TRUNCATE NOTE_EOF NOTE_CHANGE)))
+  (openbsd
+   (extern EV_DISPATCH EV_RECEIPT EVFILT_DEVICE NOTE_TRUNCATE NOTE_TRACK
+	   NOTE_TRACKERR NOTE_CHANGE))
+  (netbsd
+   (extern #;EV_DISPATCH #;EV_RECEIPT EVFILT_AIO #;EVFILT_FS NOTE_TRACK
+	   NOTE_TRACKERR))
+  (freebsd
+   (extern EV_DISPATCH EV_RECEIPT EVFILT_AIO EVFILT_PROCDESC EVFILT_USER
+	   NOTE_CLOSE NOTE_CLOSE_WRITE NOTE_OPEN NOTE_READ NOTE_TRACK
+	   NOTE_SECONDS NOTE_MSECONDS NOTE_USECONDS NOTE_NSECONDS
+	   NOTE_FFNOP NOTE_FFAND NOTE_FFOR NOTE_FFCOPY
+	   NOTE_FFCTRLMASK NOTE_FFLAGSMASK))
+  (darwin
+   (extern EV_OOBAND EV_RECEIPT EVFILT_EXCEPT EVFILT_AIO EVFILT_MACHPORT
+	   NOTE_OOB NOTE_FUNLOCK NOTE_EXITSTATUS
+	   NOTE_SIGNAL NOTE_REAP NOTE_SECONDS NOTE_USECONDS
+	   NOTE_NSECONDS NOTE_MACHTIME NOTE_ABSOLUTE NOTE_CRITICAL
+	   NOTE_BACKGROUND NOTE_LEEWAY)))
 
 (cond-expand
+  (openbsd
+   (begin-foreign
+     (define-cond-expand-feature openbsd)))
+  (netbsd
+   (begin-foreign
+     (define-cond-expand-feature netbsd)))
+  (freebsd
+   (begin-foreign
+     (define-cond-expand-feature freebsd)))
   (darwin
-    (begin-foreign
-      (define-cond-expand-feature bsd)
-      (define-cond-expand-feature darwin))))
+   (begin-foreign
+     (define-cond-expand-feature darwin))))
 
 (begin-foreign
   (c-declare "#include <errno.h>")
@@ -179,14 +218,26 @@ package: std/os
            r))))
 
   (namespace ("std/os/kqueue#"
-              EV_ADD EV_ENABLE EV_DISABLE EV_DISPATCH
-              EV_DELETE EV_RECEIPT EV_ONESHOT EV_CLEAR EV_EOF EV_ERROR
-              EVFILT_READ EVFILT_WRITE EVFILT_VNODE EVFILT_PROC
-              EVFILT_SIGNAL EVFILT_TIMER EVFILT_DEVICE
-              NOTE_DELETE NOTE_WRITE NOTE_EXTEND NOTE_TRUNCATE NOTE_LOWAT
-              NOTE_EOF
-              NOTE_ATTRIB NOTE_LINK NOTE_RENAME NOTE_REVOKE NOTE_EXIT
-              NOTE_FORK NOTE_EXEC NOTE_TRACK NOTE_TRACKERR NOTE_CHANGE
+              EV_ADD EV_ENABLE EV_DISABLE EV_DELETE EV_RECEIPT EV_ONESHOT
+              EV_CLEAR EV_EOF EV_ERROR EVFILT_READ EVFILT_WRITE
+              EVFILT_VNODE EVFILT_PROC EVFILT_SIGNAL EVFILT_TIMER
+              NOTE_WRITE NOTE_DELETE NOTE_EXTEND NOTE_ATTRIB NOTE_LINK
+              NOTE_RENAME NOTE_REVOKE NOTE_EXIT NOTE_FORK NOTE_EXEC
+
+              EV_DISPATCH EVFILT_DEVICE NOTE_TRUNCATE NOTE_TRACK
+              NOTE_TRACKERR NOTE_CHANGE EVFILT_AIO EVFILT_FS
+
+              EVFILT_PROCDESC EVFILT_USER NOTE_CLOSE
+              NOTE_CLOSE_WRITE NOTE_OPEN NOTE_READ 
+              NOTE_SECONDS NOTE_MSECONDS NOTE_USECONDS NOTE_NSECONDS
+              NOTE_FFNOP NOTE_FFAND NOTE_FFOR NOTE_FFCOPY
+              NOTE_FFCTRLMASK NOTE_FFLAGSMASK
+
+              EV_OOBAND EVFILT_EXCEPT EVFILT_MACHPORT NOTE_LOWAT
+              NOTE_OOB NOTE_FUNLOCK NOTE_EXITSTATUS NOTE_SIGNAL
+              NOTE_REAP NOTE_MACHTIME NOTE_ABSOLUTE NOTE_CRITICAL
+              NOTE_BACKGROUND NOTE_LEEWAY
+
               kevent kevent* timespec timespec*
               make_timespec timespec_seconds_set timespec_nanoseconds_set
               __errno __kqueue __kevent
@@ -201,43 +252,54 @@ package: std/os
               ev_set
               ))
 
-  ;; Filters
+  ;; Flags
   (define-const EV_ADD)
   (define-const EV_ENABLE)
   (define-const EV_DISABLE)
-  (define-const EV_DISPATCH)
   (define-const EV_DELETE)
-  (define-const EV_RECEIPT)
   (define-const EV_ONESHOT)
   (define-const EV_CLEAR)
   (define-const EV_EOF)
   (define-const EV_ERROR)
 
-  ;; Flags
+  (cond-expand
+    ((or openbsd freebsd)
+     (define-const EV_RECEIPT)
+     (define-const EV_DISPATCH))
+    (netbsd
+     #;(define-const EV_RECEIPT)
+     #;(define-const EV_DISPATCH))
+    (darwin
+     (define-const EV_RECEIPT)
+     (define-const EV_OOBAND)))
+
+  ;; Filters
   (define-const EVFILT_READ)
   (define-const EVFILT_WRITE)
   (define-const EVFILT_VNODE)
   (define-const EVFILT_PROC)
   (define-const EVFILT_SIGNAL)
   (define-const EVFILT_TIMER)
+
   (cond-expand
-    ((not darwin)
+    (openbsd
      (define-const EVFILT_DEVICE))
-    (else))
+    (netbsd
+     (define-const EVFILT_AIO)
+     #;(define-const EVFILT_FS))
+    (freebsd
+     (define-const EVFILT_AIO)
+     (define-const EVFILT_PROCDESC)
+     (define-const EVFILT_USER))
+    (darwin
+     (define-const EVFILT_EXCEPT)
+     (define-const EVFILT_AIO)
+     (define-const EVFILT_MACHPORT)))
 
   ;; Filter Flags
-  (define-const NOTE_DELETE)
   (define-const NOTE_WRITE)
+  (define-const NOTE_DELETE)
   (define-const NOTE_EXTEND)
-  (cond-expand
-    ((not darwin)
-     (define-const NOTE_TRUNCATE))
-    (else))
-  (define-const NOTE_LOWAT)
-  (cond-expand
-    ((not darwin)
-     (define-const NOTE_EOF))
-    (else))
   (define-const NOTE_ATTRIB)
   (define-const NOTE_LINK)
   (define-const NOTE_RENAME)
@@ -245,12 +307,47 @@ package: std/os
   (define-const NOTE_EXIT)
   (define-const NOTE_FORK)
   (define-const NOTE_EXEC)
-  (define-const NOTE_TRACK)
-  (define-const NOTE_TRACKERR)
+  (define-const NOTE_LOWAT)
+
   (cond-expand
-    ((not darwin)
+    (openbsd
+     (define-const NOTE_TRUNCATE)
+     (define-const NOTE_TRACK)
+     (define-const NOTE_TRACKERR)
      (define-const NOTE_CHANGE))
-    (else))
+    (netbsd
+     (define-const NOTE_TRACK)
+     (define-const NOTE_TRACKERR))
+    (freebsd
+     (define-const NOTE_CLOSE)
+     (define-const NOTE_CLOSE_WRITE)
+     (define-const NOTE_OPEN)
+     (define-const NOTE_READ)
+     (define-const NOTE_TRACK)
+     (define-const NOTE_SECONDS)
+     (define-const NOTE_MSECONDS)
+     (define-const NOTE_USECONDS)
+     (define-const NOTE_NSECONDS)
+     (define-const NOTE_FFNOP)
+     (define-const NOTE_FFAND)
+     (define-const NOTE_FFOR)
+     (define-const NOTE_FFCOPY)
+     (define-const NOTE_FFCTRLMASK)
+     (define-const NOTE_FFLAGSMASK))
+    (darwin
+     (define-const NOTE_OOB)
+     (define-const NOTE_FUNLOCK)
+     (define-const NOTE_EXITSTATUS)
+     (define-const NOTE_SIGNAL)
+     (define-const NOTE_REAP)
+     (define-const NOTE_SECONDS)
+     (define-const NOTE_USECONDS)
+     (define-const NOTE_NSECONDS)
+     (define-const NOTE_MACHTIME)
+     (define-const NOTE_ABSOLUTE)
+     (define-const NOTE_CRITICAL)
+     (define-const NOTE_BACKGROUND)
+     (define-const NOTE_LEEWAY)))
 
   (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
 
