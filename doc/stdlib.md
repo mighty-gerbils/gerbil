@@ -65,6 +65,10 @@
   * [std/os/epoll](#stdosepoll)
   * [std/os/inotify](#stdosinotify)
   * [std/os/kqueue](#stdoskqueue)
+  * [std/os/signal](#stdossignal)
+  * [std/os/signalfd](#stdossignalfd)
+  * [std/os/signal-handler](#stdossignal-handler)
+  * [std/os/pid](#stdospid)
 - [std/parser](#stdparser)
 - [std/pregexp](#stdpregexp)
 - [std/sort](#stdsort)
@@ -1410,6 +1414,71 @@ kqueue for BSD.
     NOTE_TRACK
     NOTE_TRACKERR
     NOTE_CHANGE
+```
+
+### std/os/signal
+
+OS signals
+
+```
+(import :std/os/signal-handler)
+
+;; exports:
+ kill sigprocmask
+ make_sigset sigemptyset sigfillset sigaddset sigdelset sigismember
+ SIGHUP ... ; OS-specific signals
+```
+
+### std/os/signalfd
+
+signalfd syscall for linux; used by `:std/os/signal-handler`
+
+```
+(import :std/os/signalfd)
+
+;; exports:
+  signalfd signalfd?
+  signalfd-reset!
+  signalfd-read
+  make-signalfd-siginfo
+  signalfd-siginfo-signo
+  signalfd-siginfo-errno
+  signalfd-siginfo-code
+  signalfd-siginfo-pid
+  signalfd-siginfo-uid
+  signalfd-siginfo-fd
+  signalfd-siginfo-tid
+  signalfd-siginfo-band
+  signalfd-siginfo-overrun
+  signalfd-siginfo-trapno
+  signalfd-siginfo-status
+  signalfd-siginfo-int
+  signalfd-siginfo-ptr
+  signalfd-siginfo-utime
+  signalfd-siginfo-stime
+  signalfd-siginfo-addr
+```
+
+### std/os/signal-handler
+
+High-level signal handler interface
+
+```
+(import :std/os/signal-handler)
+
+;; exports:
+  add-signal-handler! remove-signal-handler!
+```
+
+### std/os/pid
+
+OS pid interface
+
+```
+(import :std/os/pid)
+
+;; exports:
+  getpid getppid
 ```
 
 ## std/parser
