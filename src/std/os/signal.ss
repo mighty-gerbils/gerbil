@@ -4,16 +4,30 @@
 package: std/os
 
 (import :std/os/error)
+
 (export
-  SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGIOT SIGBUS
-  SIGFPE SIGFPE SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM
-  SIGTERM SIGSTKFLT SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU
-  SIGURG SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGPOLL SIGIO
-  SIGPWR SIGSYS SIGUNUSED
-  SIGRTMIN SIGRTMAX
+  SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGBUS SIGFPE
+  SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM SIGTERM
+  SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU SIGURG
+  SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGIO SIGSYS
+  SIGMAX
+  SIG_BLOCK SIG_UNBLOCK SIG_SETMASK)
 
-  SIG_BLOCK SIG_UNBLOCK SIG_SETMASK
+(cond-expand
+  (linux
+   (export SIGIOT SIGSTKFLT SIGPOLL SIGPWR SIGUNUSED SIGRTMIN SIGRTMAX))
+  (bsd
+   (export SIGEMT SIGINFO)))
 
+(cond-expand
+  (openbsd
+   (export SIGTHR))
+  (netbsd
+   (export SIGPWR #;SIGRTMIN #;SIGRTMAX))
+  (darwin
+   (export SIGIOT)))
+
+(export
   kill
   sigprocmask
   make_sigset
@@ -21,26 +35,37 @@ package: std/os
   sigfillset
   sigaddset
   sigdelset
-  sigismember
-)
+  sigismember)
 
 (def (kill pid signo)
   (check-os-error (_kill pid signo)
-    (kill pid signo)))
+		  (kill pid signo)))
 
 (def (sigprocmask how sigset old-sigset)
   (check-os-error (_sigprocmask how sigset old-sigset)
-    (sigprocmask how sigset old-sigset)))
+		  (sigprocmask how sigset old-sigset)))
+
+(extern SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGBUS SIGFPE
+  SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM SIGTERM
+  SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU SIGURG
+  SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGIO SIGSYS
+  SIG_BLOCK SIG_UNBLOCK SIG_SETMASK)
+
+(cond-expand
+  (linux
+   (extern SIGIOT SIGSTKFLT SIGPOLL SIGPWR SIGUNUSED SIGRTMIN SIGRTMAX))
+  (bsd
+   (extern SIGEMT SIGINFO NSIG)))
+
+(cond-expand
+  (openbsd
+   (extern SIGTHR))
+  (netbsd
+   (extern SIGPWR #;SIGRTMIN #;SIGRTMAX))
+  (darwin
+   (extern SIGPOLL SIGIOT)))
 
 (extern
-  SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGIOT SIGBUS
-  SIGFPE SIGFPE SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM
-  SIGTERM SIGSTKFLT SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU
-  SIGURG SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGPOLL SIGIO
-  SIGPWR SIGSYS SIGUNUSED
-  SIGRTMIN SIGRTMAX
-  SIG_BLOCK SIG_UNBLOCK SIG_SETMASK
-
   _kill
   _sigprocmask
   make_sigset
@@ -48,8 +73,29 @@ package: std/os
   sigfillset
   sigaddset
   sigdelset
-  sigismember
-  )
+  sigismember)
+
+(cond-expand
+  (linux
+   (begin-foreign
+     (define-cond-expand-feature linux)))
+  (bsd
+   (begin-foreign
+     (define-cond-expand-feature bsd))))
+
+(cond-expand
+  (openbsd
+   (begin-foreign
+     (define-cond-expand-feature openbsd)))
+  (netbsd
+   (begin-foreign
+     (define-cond-expand-feature netbsd)))
+  (freebsd
+   (begin-foreign
+     (define-cond-expand-feature freebsd)))
+  (darwin
+   (begin-foreign
+     (define-cond-expand-feature darwin))))
 
 (begin-foreign
   (c-declare "#include <sys/types.h>")
@@ -84,12 +130,13 @@ package: std/os
         defn)))
 
   (namespace ("std/os/signal#"
-              SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGIOT SIGBUS
-              SIGFPE SIGFPE SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM
-              SIGTERM SIGSTKFLT SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU
-              SIGURG SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGPOLL SIGIO
-              SIGPWR SIGSYS SIGUNUSED
-              SIGRTMIN SIGRTMAX
+              SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGBUS
+              SIGFPE SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM
+              SIGTERM SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU
+              SIGURG SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGIO
+              SIGSYS SIGSTKFLT SIGPOLL SIGPWR SIGUNUSED SIGIOT SIGRTMIN
+              SIGRTMAX SIGEMT SIGINFO NSIG SIGTHR SIGPWR
+
               SIG_BLOCK SIG_UNBLOCK SIG_SETMASK
 
               make_sigset
@@ -112,7 +159,6 @@ package: std/os
   (define-const SIGILL)
   (define-const SIGTRAP)
   (define-const SIGABRT)
-  (define-const SIGIOT)
   (define-const SIGBUS)
   (define-const SIGFPE)
   (define-const SIGKILL)
@@ -122,7 +168,6 @@ package: std/os
   (define-const SIGPIPE)
   (define-const SIGALRM)
   (define-const SIGTERM)
-  (define-const SIGSTKFLT)
   (define-const SIGCHLD)
   (define-const SIGCONT)
   (define-const SIGSTOP)
@@ -135,18 +180,37 @@ package: std/os
   (define-const SIGVTALRM)
   (define-const SIGPROF)
   (define-const SIGWINCH)
-  (define-const SIGPOLL)
   (define-const SIGIO)
-  (define-const SIGPWR)
   (define-const SIGSYS)
-  (define-const SIGUNUSED)
-
-  (define-const SIGRTMIN)
-  (define-const SIGRTMAX)
 
   (define-const SIG_BLOCK)
   (define-const SIG_UNBLOCK)
   (define-const SIG_SETMASK)
+
+  (cond-expand
+    (linux
+     (define-const SIGIOT)
+     (define-const SIGSTKFLT)
+     (define-const SIGPOLL)
+     (define-const SIGPWR)
+     (define-const SIGUNUSED)
+     (define-const SIGRTMIN)
+     (define-const SIGRTMAX))
+    (bsd
+     (define-const SIGEMT)
+     (define-const SIGINFO)
+     (define-const NSIG))) 
+
+  (cond-expand
+    (openbsd
+     (define-const SIGTHR))
+    (netbsd
+     (define-const SIGPWR)
+     #;(define-const SIGRTMIN)
+     #;(define-const SIGRTMAX))
+    (freebsd)
+    (darwin)
+    (linux))
 
   (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
 
@@ -158,7 +222,7 @@ package: std/os
     (c-define-type sigset_t "sigset_t"))
   (define-guard ffi-have-sigset*
     (c-define-type sigset_t*
-      (pointer "sigset_t" (sigset_t*) "ffi_free")))
+		   (pointer "sigset_t" (sigset_t*) "ffi_free")))
 
   (define-c-lambda __sigprocmask (int sigset_t* sigset_t*) int
     "sigprocmask")
@@ -173,7 +237,7 @@ package: std/os
   (define-c-lambda sigdelset (sigset_t* int) int)
   (define-c-lambda sigismember (sigset_t* int) int)
 
-    (c-declare #<<END-C
+  (c-declare #<<END-C
 #ifndef ___HAVE_FFI_FREE
 #define ___HAVE_FFI_FREE
 ___SCMOBJ ffi_free (void *ptr)
@@ -184,3 +248,10 @@ ___SCMOBJ ffi_free (void *ptr)
 #endif
 END-C
 ))
+
+(def SIGMAX
+  (cond-expand
+    (linux
+     (+ SIGRTMAX 1))
+    (bsd
+     NSIG)))
