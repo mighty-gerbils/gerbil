@@ -230,7 +230,7 @@ package: std/net
   (pregexp "([0-9]{3})\\s+(.*)"))
 
 (def header-line-rx
-  (pregexp "([^:]+):\\s+(.*)"))
+  (pregexp "([^:]+):\\s*(.*)?"))
 
 (def (http-request-read-response! req)
   (let* ((port (request-port req))
