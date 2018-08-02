@@ -39,11 +39,11 @@ package: std/os
 
 (def (kill pid signo)
   (check-os-error (_kill pid signo)
-		  (kill pid signo)))
+    (kill pid signo)))
 
 (def (sigprocmask how sigset old-sigset)
   (check-os-error (_sigprocmask how sigset old-sigset)
-		  (sigprocmask how sigset old-sigset)))
+    (sigprocmask how sigset old-sigset)))
 
 (extern SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGBUS SIGFPE
   SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM SIGTERM
@@ -222,7 +222,7 @@ package: std/os
     (c-define-type sigset_t "sigset_t"))
   (define-guard ffi-have-sigset*
     (c-define-type sigset_t*
-		   (pointer "sigset_t" (sigset_t*) "ffi_free")))
+      (pointer "sigset_t" (sigset_t*) "ffi_free")))
 
   (define-c-lambda __sigprocmask (int sigset_t* sigset_t*) int
     "sigprocmask")

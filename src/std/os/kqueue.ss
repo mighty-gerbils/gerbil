@@ -77,27 +77,27 @@ package: std/os
 			(filter-flags 0) (data 0))
   (let (kevt (get-kevent-ptr))
     (kevent-set! kevt 0
-		 ident: (if (fd? dev) (fd-e dev) dev)
-		 flags: (##fxior EV_ADD additional-flags)
-		 filter: filter
-		 filter-flags: filter-flags
-		 data: data)
+     ident: (if (fd? dev) (fd-e dev) dev)
+     flags: (##fxior EV_ADD additional-flags)
+     filter: filter
+     filter-flags: filter-flags
+     data: data)
     (kevent kqueue kevt 1 #f 0)))
 
 (def (kqueue-kevent-del kqueue dev filter)
   (let (kevt (get-kevent-ptr))
     (kevent-set! kevt 0
-		 ident: (if (fd? dev) (fd-e dev) dev)
-		 flags: EV_DELETE
-		 filter: filter)
+     ident: (if (fd? dev) (fd-e dev) dev)
+     flags: EV_DELETE
+     filter: filter)
     (kevent kqueue kevt 1 #f 0)))
 
 (def (kqueue-kevent-disable kqueue dev filter)
   (let (kevt (get-kevent-ptr))
     (kevent-set! kevt 0
-		 ident: (if (fd? dev) (fd-e dev) dev)
-		 flags: EV_DISABLE
-		 filter: filter)
+     ident: (if (fd? dev) (fd-e dev) dev)
+     flags: EV_DISABLE
+     filter: filter)
     (kevent kqueue kevt 1 #f 0)))
 
 (def kevent-ptr-key
@@ -355,13 +355,13 @@ package: std/os
 
   (c-define-type kevent (struct "kevent"))
   (c-define-type kevent*
-		 (pointer kevent (kevent*) "ffi_free"))
+    (pointer kevent (kevent*) "ffi_free"))
 
   (define-guard ffi-have-timespec
     (c-define-type timespec (struct "timespec")))
   (define-guard ffi-have-timespec*
     (c-define-type timespec*
-		   (pointer timespec (timespec*) "ffi_free")))
+      (pointer timespec (timespec*) "ffi_free")))
 
   (define-c-lambda make_timespec () timespec*
     "___return ((struct timespec*)malloc(sizeof(struct timespec)));")
@@ -423,8 +423,8 @@ package: std/os
 #define __HAVE_FFI_FREE
 ___SCMOBJ ffi_free (void *ptr)
 {
-  free(ptr);
-  return ___FIX (___NO_ERR);
+ free(ptr);
+ return ___FIX (___NO_ERR);
 }
 #endif
 END-C
