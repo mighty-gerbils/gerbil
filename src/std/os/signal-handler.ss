@@ -124,8 +124,8 @@ package: std/os
                     (when (fx= (kevent-filter events i) EVFILT_SIGNAL)
                       (let (event-handler
                             (with-lock mx
-			      (cut vector-ref handlers
-				   (kevent-ident events i))))
+                              (cut vector-ref handlers
+                                   (kevent-ident events i))))
                         (when event-handler
                           (signal-handler-dispatch event-handler))))
                     (raise-os-error (kevent-data events i)
@@ -139,20 +139,20 @@ package: std/os
    (def (signal-handler-add! sh signo thunk)
      (with ((signal-handler handlers default-handlers kq mx) sh)
        (with-lock mx
-	 (lambda ()
-	   (let ((ev (make-kevents 1)))
-	     (vector-set! handlers signo thunk)
-	     (kqueue-kevent-add kq signo EVFILT_SIGNAL)
-	     (ignore-signal! sh signo))))))
+         (lambda ()
+           (let ((ev (make-kevents 1)))
+             (vector-set! handlers signo thunk)
+             (kqueue-kevent-add kq signo EVFILT_SIGNAL)
+             (ignore-signal! sh signo))))))
 
    (def (signal-handler-remove! sh signo)
      (with ((signal-handler handlers default-handlers kq mx) sh)
        (with-lock mx
-	 (lambda ()
-	   (let ((ev (make-kevents 1)))
-	     (restore-signal! sh signo)
-	     (kqueue-kevent-del kq signo EVFILT_SIGNAL)
-	     (vector-set! handlers signo #f))))))
+         (lambda ()
+           (let ((ev (make-kevents 1)))
+             (restore-signal! sh signo)
+             (kqueue-kevent-del kq signo EVFILT_SIGNAL)
+             (vector-set! handlers signo #f))))))
 
    (extern set-signal! signal-null-handler SIG_IGN)
 

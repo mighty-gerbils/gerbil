@@ -29,22 +29,22 @@ package: std/os
 (cond-expand
   (openbsd
    (export EV_DISPATCH EV_RECEIPT EVFILT_DEVICE NOTE_TRUNCATE NOTE_TRACK
-	   NOTE_TRACKERR NOTE_CHANGE))
+           NOTE_TRACKERR NOTE_CHANGE))
   (netbsd
    (export #;EV_DISPATCH #;EV_RECEIPT EVFILT_AIO #;EVFILT_FS NOTE_TRACK
-				      NOTE_TRACKERR))
+                                      NOTE_TRACKERR))
   (freebsd
    (export EV_DISPATCH EV_RECEIPT EVFILT_AIO EVFILT_PROCDESC EVFILT_USER
-	   NOTE_CLOSE NOTE_CLOSE_WRITE NOTE_OPEN NOTE_READ NOTE_TRACK
-	   NOTE_SECONDS NOTE_MSECONDS NOTE_USECONDS NOTE_NSECONDS
-	   NOTE_FFNOP NOTE_FFAND NOTE_FFOR NOTE_FFCOPY
-	   NOTE_FFCTRLMASK NOTE_FFLAGSMASK))
+           NOTE_CLOSE NOTE_CLOSE_WRITE NOTE_OPEN NOTE_READ NOTE_TRACK
+           NOTE_SECONDS NOTE_MSECONDS NOTE_USECONDS NOTE_NSECONDS
+           NOTE_FFNOP NOTE_FFAND NOTE_FFOR NOTE_FFCOPY
+           NOTE_FFCTRLMASK NOTE_FFLAGSMASK))
   (darwin
    (export EV_OOBAND EV_RECEIPT EVFILT_EXCEPT EVFILT_AIO EVFILT_MACHPORT
-	   NOTE_OOB NOTE_FUNLOCK NOTE_EXITSTATUS
-	   NOTE_SIGNAL NOTE_REAP NOTE_SECONDS NOTE_USECONDS
-	   NOTE_NSECONDS NOTE_MACHTIME NOTE_ABSOLUTE NOTE_CRITICAL
-	   NOTE_BACKGROUND NOTE_LEEWAY)))
+           NOTE_OOB NOTE_FUNLOCK NOTE_EXITSTATUS
+           NOTE_SIGNAL NOTE_REAP NOTE_SECONDS NOTE_USECONDS
+           NOTE_NSECONDS NOTE_MACHTIME NOTE_ABSOLUTE NOTE_CRITICAL
+           NOTE_BACKGROUND NOTE_LEEWAY)))
 
 (def (kqueue)
   (let* ((fd (check-os-error (_kqueue) (kqueue)))
@@ -59,22 +59,21 @@ package: std/os
   (check-ptr (make_kevents size)))
 
 (def (kevent-set! kevts ix
-		  ident: ident     filter:       filter
-		  flags: (flags 0) filter-flags: (filter-flags 0)
-		  data:  (data 0)  user-data:    (user-data #f))
+                  ident: ident     filter:       filter
+                  flags: (flags 0) filter-flags: (filter-flags 0)
+                  data:  (data 0)  user-data:    (user-data #f))
   (ev_set kevts ix ident filter flags filter-flags data user-data))
 
 (def (kevent kqueue change-list nchanges event-list nevents)
   (do-retry-nonblock
    (_kevent (fd-e kqueue) change-list nchanges event-list nevents
-	    timespec-zero)
+            timespec-zero)
    (kevent kqueue change-list nchanges event-list nevents)))
 
 (def (kqueue-poll kqueue events nevents)
   (kevent kqueue #f 0 events nevents))
 
-(def (kqueue-kevent-add kqueue dev filter (additional-flags 0)
-			(filter-flags 0) (data 0))
+(def (kqueue-kevent-add kqueue dev filter (additional-flags 0) (filter-flags 0) (data 0))
   (let (kevt (get-kevent-ptr))
     (kevent-set! kevt 0
      ident: (if (fd? dev) (fd-e dev) dev)
