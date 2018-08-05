@@ -12,7 +12,6 @@ package: std/net/socket
         :std/net/socket/basic-server
         :std/os/fd
         :std/os/kqueue
-        :std/os/error
         :std/iter)
 
 (export kqueue-socket-server)
@@ -28,20 +27,18 @@ package: std/net/socket
   (def nchanges 0)
 
   (def (do-kevent)
-    (let (count (kevent kq #f 0 evts maxevts))
+    (let (count (kevent kq evts nchanges evts maxevts))
       (when (##fxpositive? count)
         (let lp ((k 0))
           (when (##fx< k count)
-            (if (##fxzero? (##fxand EV_ERROR (kevent-flags evts k)))
-              (with ((!socket-state _ io-in io-out)
-                     (hash-ref fdtab (kevent-ident evts k)))
-                (let ((filter (kevent-filter evts k)))
-                  (cond
-                    ((and io-in (##fx= filter EVFILT_READ))
-                     (io-state-signal-ready! io-in 'ready))
-                    ((and io-out (##fx= filter EVFILT_WRITE))
-                     (io-state-signal-ready! io-out 'ready)))))
-              (raise-os-error (kevent-data evts k) do-kevent))
+            (with ((!socket-state _ io-in io-out)
+                   (hash-ref fdtab (kevent-ident evts k)))
+              (let ((filter (kevent-filter evts k)))
+                (cond
+                  ((and io-in (##fx= filter EVFILT_READ))
+                   (io-state-signal-ready! io-in 'ready))
+                  ((and io-out (##fx= filter EVFILT_WRITE))
+                   (io-state-signal-ready! io-out 'ready)))))
             (lp (fx1+ k)))))))
 
   (def (event-set! ident filter flags filter-flags data)
