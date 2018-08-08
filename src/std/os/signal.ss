@@ -15,7 +15,7 @@ package: std/os
 
 (cond-expand
   (linux
-   (export SIGIOT SIGSTKFLT SIGPOLL SIGPWR SIGUNUSED SIGRTMIN SIGRTMAX))
+   (export SIGIOT SIGSTKFLT SIGPOLL SIGPWR SIGRTMIN SIGRTMAX))
   (bsd
    (export SIGEMT SIGINFO)))
 
@@ -53,7 +53,7 @@ package: std/os
 
 (cond-expand
   (linux
-   (extern SIGIOT SIGSTKFLT SIGPOLL SIGPWR SIGUNUSED SIGRTMIN SIGRTMAX))
+   (extern SIGIOT SIGSTKFLT SIGPOLL SIGPWR SIGRTMIN SIGRTMAX))
   (bsd
    (extern SIGEMT SIGINFO NSIG)))
 
@@ -134,7 +134,7 @@ package: std/os
               SIGFPE SIGKILL SIGUSR1 SIGSEGV SIGUSR2 SIGPIPE SIGALRM
               SIGTERM SIGCHLD SIGCONT SIGSTOP SIGTSTP SIGTTIN SIGTTOU
               SIGURG SIGXCPU SIGXFSZ SIGVTALRM SIGPROF SIGWINCH SIGIO
-              SIGSYS SIGSTKFLT SIGPOLL SIGPWR SIGUNUSED SIGIOT SIGRTMIN
+              SIGSYS SIGSTKFLT SIGPOLL SIGPWR SIGIOT SIGRTMIN
               SIGRTMAX SIGEMT SIGINFO NSIG SIGTHR SIGPWR
 
               SIG_BLOCK SIG_UNBLOCK SIG_SETMASK
@@ -193,13 +193,12 @@ package: std/os
      (define-const SIGSTKFLT)
      (define-const SIGPOLL)
      (define-const SIGPWR)
-     (define-const SIGUNUSED)
      (define-const SIGRTMIN)
      (define-const SIGRTMAX))
     (bsd
      (define-const SIGEMT)
      (define-const SIGINFO)
-     (define-const NSIG))) 
+     (define-const NSIG)))
 
   (cond-expand
     (openbsd
