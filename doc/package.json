@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/khepin/gerbil-docs.git"
+    "url": "git+https://github.com/vyzo/gerbil.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/khepin/gerbil-docs/issues"
+    "url": "https://github.com/vyzo/gerbil/issues"
   },
-  "homepage": "https://github.com/khepin/gerbil-docs#readme",
+  "homepage": "https://github.com/vyzo/gerbil#readme",
   "dependencies": {
     "vuepress": "^0.14.2"
   }
