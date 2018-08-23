@@ -41,10 +41,12 @@ actionLink: /guide/
     <div class="feature">
         <h2>It speaks with a LISP</h2>
         <p>
-            <pre class="language-lisp">
-(with-a 'lisp
-    (speak))
-            </pre>
+            <div class="language-scheme extra-class">
+                <pre class="language-scheme">
+<code><span class="token punctuation">(</span><span class="token function">with-a</span> <span class="token string">'lisp</span>
+    <span class="token punctuation">(</span>speak<span class="token punctuation">)</span><span class="token punctuation">)</span></code>
+                </pre>
+            </div>
         </p>
     </div>
 </div>
