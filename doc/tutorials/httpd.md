@@ -1,19 +1,5 @@
 # Web programming with the Gerbil http server
 
-<!-- toc -->
-
-- [Preliminaries](#preliminaries)
-- [A Simple Web Server](#a-simple-web-server)
-  * [The main function](#the-main-function)
-  * [Request Handlers](#request-handlers)
-    + [The `/` handler](#the--handler)
-    + [The `/echo` handler](#the-echo-handler)
-    + [The `/headers` handler](#the-headers-handler)
-    + [The default handler](#the-default-handler)
-  * [Examples](#examples)
-
-<!-- tocstop -->
-
 ## Preliminaries
 
 In this tutorial we illustrate web programming with the embedded Gerbil http server.
@@ -22,7 +8,7 @@ This tutorial requires a very recent version of Gambit that supports raw devices
 
 The source code for the tutorial  is available at [$GERBIL_HOME/src/tutorial/httpd](../../src/tutorial/httpd).
 You can build the source code using the build script:
-```
+```bash
 $ cd $GERBIL_HOME/src/tutorial/httpd
 $ ./build.ss
 
@@ -156,7 +142,7 @@ print an informative message:
 ### Examples
 
 Here are some example interactions with the server using curl:
-```
+```bash
 $ ./simpled &
 
 $ curl http://localhost:8080/

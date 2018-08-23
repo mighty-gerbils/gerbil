@@ -1,49 +1,124 @@
-# An Introduction to Gerbil
+# Guide
+
 This is a quick introductory guide to Gerbil for seasoned schemers;
 it assumes familiarity with scheme and exposure to a couple of
 different implementations.
 
 In the following `$` is the shell prompt and `>` the gxi
 interpreter prompt.
+## Installation
 
-## Contents
+### Source Code
+The source code for Gerbil is hosted on [Github](https://github.com/vyzo/gerbil),
+with the latest release available in [releases](https://github.com/vyzo/gerbil/releases).
 
-<!-- toc -->
+For the latest Gerbil, you can clone the repository:
+```bash
+$ git clone https://github.com/vyzo/gerbil.git
+```
 
-- [Hello world](#hello-world)
-- [Core Gerbil](#core-gerbil)
-  * [Primitive forms](#primitive-forms)
-  * [Structs and Classes](#structs-and-classes)
-  * [Pattern Matching](#pattern-matching)
-  * [Macros](#macros)
-- [Modules and Libraries](#modules-and-libraries)
-  * [Top Modules](#top-modules)
-  * [Imports and Exports](#imports-and-exports)
-  * [File Modules](#file-modules)
-  * [Library Modules](#library-modules)
-  * [Executable Modules](#executable-modules)
-  * [Prelude Modules and Custom Languages](#prelude-modules-and-custom-languages)
-  * [Implicit Package Declations](#implicit-package-declations)
-- [Standard Library](#standard-library)
-  * [Optional Libraries](#optional-libraries)
-  * [Additional Syntactic Sugar](#additional-syntactic-sugar)
-  * [Generics](#generics)
-  * [Iteration](#iteration)
-  * [Coroutines](#coroutines)
-  * [Event Programming](#event-programming)
-  * [Actors](#actors)
-  * [HTTP requests](#http-requests)
-  * [JSON](#json)
-  * [XML](#xml)
-  * [Web Applications](#web-applications)
-  * [Databases](#databases)
+### Dependencies
 
-<!-- tocstop -->
+The latest Gerbil release (v0.12) requires Gambit v4.8.9.
+
+The core system has no dependencies outside Gambit, but the standard
+library has several mostly optional dependencies. The only hard dependency
+is `libcrypto` from OpenSSL; important parts of the standard library
+require it.
+
+All the other dependencies are soft.
+Most library modules with foreign dependencies are not built by default,
+with the exception of `zlib` and `sqlite`. These are ubiquitous, stable
+and generally useful enough to warrant being present by default;
+you can still disable them if you want for a minimal installation.
+
+In ubuntu, you can install the dependencies for a default installation with:
+```bash
+$ sudo apt-get install openssl libssl-dev sqlite3 libsqlite3-dev
+```
+
+The optional libraries can be enabled or disabled at build-time
+by editing `$GERBIL_HOME/src/std/build-features.ss`.
+You can also enable features later, by editing `build-features.ss` and
+running `./build.sh stdlib` in `$GERBIL_HOME/src/`.
+
+
+### Build Instructions
+After unpacking a release or checking out the source code from Github, let
+`$GERBIL_HOME` be the top directory of Gerbil.
+
+Then:
+```bash
+$ cd $GERBIL_HOME/src
+$ ./build.sh
+```
+
+If you are building in MacOSX and want to use the homebrew OpenSSL,
+then you need to specify appropriate `CPPFLAGS` and `LDFLAGS`.
+For instance:
+```bash
+$ LDFLAGS=-L/usr/local/opt/openssl/lib \
+  CPPFLAGS=-I/usr/local/opt/openssl/include \
+  ./build.sh
+```
+
+## Skip the Install, Get Started on Docker
+
+The latest Gerbil images are available via Dockerhub:
+
+```bash
+docker pull -it gerbil/scheme:latest
+
+To get to the repl:
+
+docker run -it gerbil/scheme:latest /root/gerbil/bin/gxi
+```
+
+Building Gerbil/Gambit via Dockerfile
+
+Dockerfile:
+
+```docker
+from ubuntu:latest
+
+MAINTAINER gerbil@cons.io
+
+RUN apt update -y
+RUN apt install -y libsqlite3-dev build-essential git autoconf libblas3 wget sudo lsb-release tmux tzdata libsnappy1v5  libleveldb1v5 zsh zlib1g-dev libssl-dev x11-xserver-utils pkg-config libffi-dev libffi6 gfortran libblas-dev liblapack-dev
+
+RUN cd /root && git clone https://github.com/gambit/gambit
+RUN cd /root && git clone https://github.com/vyzo/gerbil
+
+RUN cd /root/gambit && ./configure --prefix=/usr/local/gam
+
+bit --enable-single-host --enable-c-opt --enable-gcc-opts --enable-multiple-versions --enable-openssl --enable-default-runtime-options=f8,-8,t8 --enable-poll
+RUN cd /root/gambit && make -j4
+RUN cd /root/gambit && make install
+
+RUN find /usr/local/gambit/ -ls
+ENV PATH "/usr/local/gambit/v4.8.9/bin:$PATH"
+RUN cd /root/gerbil/src && ./build.sh stage0
+RUN cd /root/gerbil/src && ./build.sh stage1
+RUN cd /root/gerbil/src && ./build.sh stdlib
+RUN cd /root/gerbil/src && ./build.sh lang
+RUN cd /root/gerbil/src && ./build.sh tools
+RUN cd /root/gerbil/src && ./build.sh tags
+
+CMD /root/gerbil/bin/gxi
+```
+
+## Using Gerbil
+The Gerbil interpreter is `$GERBIL_HOME/bin/gxi`, and the compiler is
+`$GERBIL_HOME/bin/gxc`.
+
+If you want an interactive Gerbil shell just execute the interpreter
+directly by running `gxi`.
+
 
 ## Hello world
 Add `$GERBIL_HOME/bin` to your path and invoke the interpreter
 for the obligatory "hello world":
-```
+```bash
 $ export PATH=$PATH:$GERBIL_HOME/bin
 $ gxi
 > (displayln "hello world")
@@ -51,7 +126,7 @@ hello world
 ```
 
 The "hello world" script:
-```
+```bash
 $ cat > hello.ss <<EOF
 #!/usr/bin/env gxi
 
@@ -64,7 +139,7 @@ hello world
 ```
 
 The "hello world" executable:
-```
+```bash
 $ cat > hello.ss <<EOF
 package: example
 
@@ -78,12 +153,11 @@ hello world
 ```
 
 And if you want a statically linked hello with no runtime dependencies to the Gerbil environment:
-```
+```bash
 $ gxc -static -exe -o hello hello.ss
 $ ./hello
 hello world
 ```
-
 ## Core Gerbil
 ### Primitive forms
 The standard Scheme primitive forms and macros are all supported.
@@ -593,7 +667,7 @@ effect.
 Modules can be written directly in files, without a surrounding
 `module` form.
 For example, we can place our module `A` into a file A.ss
-```
+```bash
 $ cat > A.ss <<EOF
 (export with-display-exception)
 (extern (display-exception display-exception))
@@ -610,7 +684,7 @@ You can be explicit about the namespace the module uses by
 having a `namespace: id` declaration at the top of the module.
 
 You can compile file modules with `gxc`:
-```
+```bash
 $ gxc -d . A.ss
 $ gxi
 > (import "A")  ; compiled form takes precedence
@@ -652,7 +726,7 @@ For this, we designate `example` as the library package,
 and then give the module a more appropriate name.
 Here, we call it `util` with the expectation that the library
 and module will grow further:
-```
+```bash
 $ mkdir example
 $ cat > example/util.ss <<EOF
 package: example
@@ -667,7 +741,7 @@ EOF
 You can now compile the library module by invoking `gxc` and import it as
 `:example/util`:
 
-```
+```bash
 $ gxc example/util.ss
 $ gxi
 > (import :example/util)
@@ -676,7 +750,7 @@ $ gxi
 By default, the compiler will place compiled modules in `~/.gerbil/lib`.
 If you want a separate directory structure for your library, you can
 specify a different directory with the `-d` option:
-```
+```bash
 $ gxc -d your-library-path example/util.ss
 ```
 
@@ -694,7 +768,7 @@ to work.
 
 For example, suppose we have a module example/hello.ss that we
 want to compile as an executable module:
-```
+```bash
 $ cat > example/hello.ss <<EOF
 package: example
 (export main)
@@ -708,7 +782,7 @@ runtime and module dependencies.
 
 You can compile it to an executable with `gxc` with the
 following command:
-```
+```bash
 $ gxc -exe -o hello example/hello.ss
 $ ./hello
 hello world
@@ -717,7 +791,7 @@ hello world
 You can also compile the executable with static linkage, which links
 parts of the gerbil runtime and all dependent modules statically and
 allows the executable to work without a local gerbil environment:
-```
+```bash
 $ gxc -static -exe -o hello example/hello.ss
 $ ./hello
 hello world
@@ -780,12 +854,12 @@ by the prelude.
 
 Custom languages are a big topic and this only touches the surface;
 they  are further explored in the
-[Custom Language tutorial](tutorial/lang.md).
+[Custom Language tutorial](/tutorials/languages.md).
 
-### Implicit Package Declations
+### Implicit Package Declarations
 
 As of `Gerbil-v0.12-DEV-845-g39f54e4`, you can elide the `package:` and
-`prelude:` declations in your module and have them automatically deduced
+`prelude:` declarations in your module and have them automatically deduced
 from the file system layout of your library/package.
 You can do so by creating a `gerbil.pkg` file in the root of your library,
 which contains a property list.
@@ -1565,7 +1639,7 @@ $ curl http://localhost:8080/hello
 hello world
 ```
 
-For more examples of httpd handlers, see the [httpd tutorial](tutorial/httpd.md).
+For more examples of httpd handlers, see the [httpd tutorial](tutorials/http).
 
 ### Databases
 
@@ -1678,4 +1752,4 @@ def => this is the value of def
 (leveldb-close db)
 ```
 
-The LMDB library is covered in in the [Key-Value Store Server tutorial](tutorial/kvstore.md).
+The LMDB library is covered in in the [Key-Value Store Server tutorial](/tutorials/kvstore.md).

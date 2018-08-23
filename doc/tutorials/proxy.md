@@ -13,24 +13,6 @@ This package provides high level network programming facilities for synchronous 
 i/o, and can transparently use a custom socket server for scheduling i/o with native
 host primitives like `epoll` on Linux.
 
-<!-- toc -->
-
-- [Preliminaries](#preliminaries)
-- [A Transparent TCP Proxy](#a-transparent-tcp-proxy)
-  * [The main function](#the-main-function)
-  * [The server main loop](#the-server-main-loop)
-  * [Connection proxying](#connection-proxying)
-  * [Using the proxy](#using-the-proxy)
-- [A SOCKS4 Proxy](#a-socks4-proxy)
-  * [The main function](#the-main-function-1)
-  * [The server main loop](#the-server-main-loop-1)
-  * [The proxy function](#the-proxy-function)
-  * [Connection establishment and binding](#connection-establishment-and-binding)
-  * [Proxy I/O](#proxy-io)
-  * [Using the proxy](#using-the-proxy-1)
-
-<!-- tocstop -->
-
 ## Preliminaries
 
 This tutorial requires a very recent version of Gambit that supports raw devices ([gambit#272](https://github.com/gambit/gambit/pull/272)).
@@ -40,7 +22,7 @@ The build script, `build.ss`, by default will build dynamkic executables for loc
 also is a rule `build.ss static` to build static executables you can deploy on servers.
 
 For the examples we'll build dynamic executables, as they are much faster to compile:
-```
+```bash
 $ cd $GERBIL_HOME/src/tutorial/proxy
 $ ./build.ss
 ... compile tcp-proxy
@@ -160,12 +142,12 @@ mode.
 Here we'll run the proxy locally bound at port 9999, and will proxy to google's http servers.
 
 So we can run our proxy like this:
-```
+```bash
 $ ./tcp-proxy :9999 www.google.com:80
 ```
 
 And in another shell we can proxy a connection through telnet:
-```
+```bash
 $ telnet localhost 9999
 Connected to localhost.
 Escape character is '^]'.
@@ -363,12 +345,12 @@ through the socket server:
 Here we'll run the proxy locally bound at port 1080, acting as a standard proxy.
 
 So we can run our proxy like this:
-```
+```bash
 $ ./socks-proxy :1080
 ```
 
 And in another shell we can proxy an HTTP request using curl:
-```
+```bash
 $ curl --socks4 127.0.0.1 http://www.google.com
 <HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
 <TITLE>302 Moved</TITLE></HEAD><BODY>

@@ -2,30 +2,12 @@
 
 Here we explore language extensibility in Gerbil by definition of custom preludes.
 
-<!-- toc -->
-
-- [Preliminaries](#preliminaries)
-- [Custom Languages in the REPL](#custom-languages-in-the-repl)
-- [Custom Module Expansion](#custom-module-expansion)
-  * [Custom References and Procedure Application](#custom-references-and-procedure-application)
-  * [Custom Body Expansion](#custom-body-expansion)
-  * [Custom Readers](#custom-readers)
-- [Arbitrary Surface Syntax](#arbitrary-surface-syntax)
-  * [Some Scuby Code](#some-scuby-code)
-  * [The Grammar](#the-grammar)
-    + [The Parser Specification Grammar](#the-parser-specification-grammar)
-    + [The Scuby Parser](#the-scuby-parser)
-    + [The Scuby Lexer](#the-scuby-lexer)
-  * [The Scuby Prelude](#the-scuby-prelude)
-
-<!-- tocstop -->
-
 ## Preliminaries
 
 The source code for all the examples is avilable at [$GERBIL_HOME/src/tutorial/lang](../../src/tutorial/lang).
 You should visit that directory and compile the tutorial custom preludes so that you can try out
 the examples in the interpreter:
-```
+```bash
 $ cd $GERBIL_HOME/src/tutorial/lang
 $ ./build.ss
 ... compile dot-app
@@ -46,7 +28,7 @@ language, and your repl will obtain initial bindings by importing the
 custom prelude.
 
 For instance, to use our dot-app language in the repl:
-```
+```bash
 $ gxi --lang :tutorial/lang/dot-app
 > _
 ```
@@ -146,7 +128,7 @@ The macros also need a couple of helper functions, defined for syntax:
 
 For a contrived example, consider the code in [example/my-app.ss](../../src/tutorial/lang/example/my-app.ss):
 
-```
+```bash
 $ cat example/my-app.ss
 prelude: :tutorial/lang/dot-app
 
@@ -168,7 +150,7 @@ prelude: :tutorial/lang/dot-app
 ```
 
 We can see the result in the interpreter:
-```
+```bash
 $ gxi
 > (import "example/my-app")
 > (def a (make-A 1))
@@ -207,7 +189,7 @@ does is plaster an `(export #t)` and expand up the chain through the root `%%beg
 
 The [example](../../src/tutorial/lang/example/my-auto-export.ss) is a module
 with a single definition `greet` and no export directive in sight:
-```
+```bash
 $ cat example/my-auto-export.ss
 prelude: :tutorial/lang/auto-export
 
@@ -218,7 +200,7 @@ prelude: :tutorial/lang/auto-export
 ```
 
 We can verify that `greet` is indeed exported in the interpreter:
-```
+```bash
 $ gxi
 > (import "example/my-auto-export")
 > (greet "world")
@@ -250,7 +232,7 @@ to read s-expressions, so this language is identical to Gerbil core. However, it
 used as a `#lang` prelude, in contrast to the gerbil core prelude.
 
 The [example](../../src/tutorial/lang/example/my-sexp.ss) demonstrates just that:
-```
+```bash
 $ cat example/my-sexp.ss
 #lang :tutorial/lang/sexp
 (export #t)

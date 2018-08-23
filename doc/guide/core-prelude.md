@@ -4,29 +4,6 @@ The Gerbil core prelude (`:gerbil/core`) implements the core Gerbil language.
 This is the language you get in the interpreter and the default language for
 file modules, unless you specify an alternate prelude with the `prelude:` directive.
 
-<!-- toc -->
-
-- [Core Expander Syntax](#core-expander-syntax)
-  * [Top Forms](#top-forms)
-  * [Expressions](#expressions)
-  * [Expander Hooks](#expander-hooks)
-  * [Reserved Syntactic Tokens](#reserved-syntactic-tokens)
-- [Prelude Macros](#prelude-macros)
-  * [Definition Forms](#definition-forms)
-  * [Binding Forms](#binding-forms)
-  * [Common Syntactic Sugar](#common-syntactic-sugar)
-  * [MOP Macros](#mop-macros)
-  * [Pattern Matching](#pattern-matching)
-  * [Macros for Syntax](#macros-for-syntax)
-  * [Module Sugar](#module-sugar)
-- [Runtime Symbol Bindings](#runtime-symbol-bindings)
-  * [Runtime [phi=0] Bindings](#runtime-phi0-bindings)
-  * [Syntax [phi=1] Bindings](#syntax-phi1-bindings)
-  * [More Gambit Symbols](#more-gambit-symbols)
-- [Index of Macros](#index-of-macros)
-
-<!-- tocstop -->
-
 ## Core Expander Syntax
 
 These syntactic forms come from the root context, which is the parent context
