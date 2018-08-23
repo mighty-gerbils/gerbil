@@ -1,6 +1,0 @@
-- [x] Add links to edit pages in repo
-- [ ] Figure out syntax highlighting
-- [x] Move the docs from the repo
-- [x] Move the docs from the Wiki
-- [ ] Stdlib doc goes to API Ref
-- [x] Move Wiki docs over
