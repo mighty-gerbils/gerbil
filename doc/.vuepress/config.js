@@ -6,7 +6,7 @@ module.exports = {
           { text: 'Home', link: '/' },
           { text: 'Guide', link: '/guide/' },
           { text: 'Tutorials', link: '/tutorials/' },
-          { text: 'StdLib', link: '/api/' },
+          { text: 'StdLib', link: '/stdlib/' },
         ],
         sidebarDepth: 2,
         sidebar: {
@@ -17,7 +17,7 @@ module.exports = {
               children: ['', 'intro', 'shell', 'package-manager', 'ffi', 'build', 'profiler', 'srfi', 'core-prelude', 'r7rs', 'bootstrap', 'nix']
             }
           ],
-          '/api/': [
+          '/stdlib/': [
             {
               collapsable: false,
               title: 'Gerbil API Reference',
