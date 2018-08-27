@@ -6,7 +6,7 @@ Building complex libraries and executables by invoking gxc quickly gets tedious.
 
 For illustration purposes, we'll make a hello world library module and an executable that uses it.
 
-```bash
+```
 $ cat gerbil.pkg
 (package: example)
 
@@ -26,7 +26,7 @@ $ cat hello.ss
 ## The build script
 
 This is a full fledged build script that can handle building our library and executable. It also supports dependency tracking for compiling in the correct order and incremental compilation that only compiles when relevant source modules are newer than compiled artifacts.
-```bash
+```
 $ cat build.ss
 #!/usr/bin/env gxi
 
@@ -65,7 +65,7 @@ $ cat build.ss
 
 To build our project:
 
-```bash
+```
 $ chmod +x build.ss
 $ ./build.ss deps
 $ ./build.ss
@@ -86,7 +86,7 @@ Perhaps the simplest way to deal with the bloat issue is to have a separate step
 
 The following build script breaks the build action into two steps, one for building library modules and another for building the executables:
 
-```bash
+```
 #!/usr/bin/env gxi
 
 (import :std/make)
@@ -150,7 +150,7 @@ There is a standard build script definition macro in :std/build-script, which ge
 
 Using the template would reduce the example build script to this:
 
-```bash
+```
 $ cat build.ss
 #!/usr/bin/gxi
 (import :std/build-script)
