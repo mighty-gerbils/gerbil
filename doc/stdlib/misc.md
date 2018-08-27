@@ -136,7 +136,7 @@ Sourceable Representation of Gerbil entities
   display-separated print-representation print-unrepresentable-object representable
 ```
 
-`print-representatoin` is a function (also available with the short-hand name `pr`)
+`print-representation` is a function (also available with the short-hand name `pr`)
 that takes an object, optionally a port and a table of options, and
 displays on that port source-code representation of the object
 that can be evaluated back into an equivalent object.
@@ -171,8 +171,8 @@ and displays each element of the list with the given prefix, suffix, separator a
 `print-unrepresentable-object` is a helper function to use as fallback
 for objects that can't otherwise be displayed.
 
-`representable` is an abstract mixin class that defines a method for `:pr`,
-that calls `print-unrepresentable-object`.
+`representable` is an abstract mixin class that defines a method for `:pr`. By default,
+if a class does not provide its own implementation, that method will call `print-unrepresentable-object`.
 
 
 ## std/misc/rtd

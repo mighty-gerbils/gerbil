@@ -57,7 +57,7 @@ Same as [fprintf](#fprintf) but with the output port defaulted to `(current-outp
 
 :::tip usage
 ```
-(printf fmt . args)
+(eprintf fmt . args)
   fmt   := string
   args  := mixed values
 

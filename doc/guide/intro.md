@@ -1532,7 +1532,7 @@ $ curl http://localhost:8080/hello
 hello world
 ```
 
-For more examples of httpd handlers, see the [httpd tutorial](tutorials/http).
+For more examples of httpd handlers, see the [httpd tutorial](/tutorials/httpd.md).
 
 ### Databases
 
