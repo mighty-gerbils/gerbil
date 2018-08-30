@@ -4,21 +4,6 @@ In this tutorial we develop a key-value store daemon that uses LMDB to
 store compressed json objects associated with user keys. The daemon uses
 actor RPC to communicate with its clients.
 
-<!-- toc -->
-
-- [Preliminaries](#preliminaries)
-- [The RPC Protocol](#the-rpc-protocol)
-- [The Server](#the-server)
-  * [The main function](#the-main-function)
-  * [The server main loop](#the-server-main-loop)
-  * [Auxiliary Functions](#auxiliary-functions)
-- [A Command-Line Client](#a-command-line-client)
-  * [The main function](#the-main-function-1)
-  * [Command Implementation](#command-implementation)
-- [Example Interaction](#example-interaction)
-
-<!-- tocstop -->
-
 ## Preliminaries
 
 This tutorial requires [LMDB](https://en.wikipedia.org/wiki/Lightning_Memory-Mapped_Database).
@@ -26,7 +11,7 @@ You need to first install it, and then build the LMDB bindings in stdlib, as the
 not built by default.
 
 So, after installing LMDB, build the LMDB bindings:
-```
+```bash
 $ cd $GERBIL_HOME/src
 $ sed -i 's/lmdb #f/lmdb #t/' std/build-features.ss
 $ ./build_stdlib.sh
@@ -34,7 +19,7 @@ $ ./build_stdlib.sh
 ```
 
 You also need to generate an RPC cookie if you haven't already done so:
-```
+```bash
 $ if [ ! -e $HOME/.gerbil/cookie ]; then
   gxi -e '(begin (import :std/actor) (rpc-generate-cookie!))'
 fi
@@ -42,7 +27,7 @@ fi
 
 The source code for the tutorial is available at [$GERBIL_HOME/src/tutorial/kvstore](../../src/tutorial/kvstore).
 You can now build the kvstore tutorial so that you can use the programs:
-```
+```bash
 $ cd $GERBIL_HOME/src/tutorial/kvstore
 $ ./build.ss
 ... compile proto
@@ -372,13 +357,13 @@ proceeds to call the server with RPC:
 ## Example Interaction
 
 First let's start the server using `/tmp/kvstore.db` for the database:
-```
+```bash
 $ ./kvstored /tmp/kvstore.db
 ```
 
 Then we can interact with the server using the client in another shell.
 First, let's put an object in the store:
-```
+```bash
 $ cat > /tmp/foo.json
 {
  "head": "I am a walrus~",
@@ -390,25 +375,25 @@ $ ./kvstorec put foo /tmp/foo.json
 ```
 
 We can then retrieve our object:
-```
+```bash
 $ ./kvstorec get foo
 {"body": {"value": "and this is my body"}, "head": "I am a walrus~"}
 ```
 
 We can then delete our object:
-```
+```bash
 $ ./kvstorec remove foo
 ```
 
 If we try to retrieve the object again, we get a `false`:
-```
+```bash
 $ ./kvstorec get foo
 false
 ```
 
 If we want an error if the object does not exist instead of a default `false`
 response, we can use the `ref` command:
-```
+```bash
 $ ./kvstorec ref foo
 remote error: No object associated with key
 $ echo $?

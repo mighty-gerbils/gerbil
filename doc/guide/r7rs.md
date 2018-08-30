@@ -1,17 +1,12 @@
+---
+sidebarDepth: 1
+---
+
 # R7RS support in Gerbil
 
 Gerbil supports R7RS as a custom language with the `:scheme/r7rs` prelude.
 As such you can write and import modules written in R7RS Scheme and mix them
 freely with other Gerbil modules.
-
-<!-- toc -->
-
-- [R7RS in the REPL](#r7rs-in-the-repl)
-- [R7RS Library Modules](#r7rs-library-modules)
-- [Evaluating R7RS Expressions](#evaluating-r7rs-expressions)
-- [Implementation Notes](#implementation-notes)
-
-<!-- tocstop -->
 
 ## R7RS in the REPL
 
@@ -20,7 +15,7 @@ In pure Gerbil, you can also evaluate R7RS expression by using the
 
 You can also start the Gerbil interpreter in an r7rs repl, by passing
 the option `--lang r7rs`.
-```
+```bash
 $ gxi --lang r7rs
 R7RS Scheme in Gerbil v0.12-DEV on Gambit v4.8.8
 > _
@@ -49,7 +44,7 @@ modules.
 
 With this in mind, we can reproduce the Life example from the R7RS report.
 First, let's define the `(example grid)` library:
-```
+```bash
 $ cat > gerbil.pkg
 (prelude: :scheme/r7rs)
 
@@ -88,7 +83,7 @@ $ cat > example/grid.ss
 ```
 
 And then we define the `(example life)` library:
-```
+```bash
 $ cat > example/life.ss
 (define-library (example life)
   (export life)
@@ -139,7 +134,7 @@ $ gxc example/grid.ss example/life.ss
 ```
 
 And then we can run a little game of Life in the interpreter:
-```
+```bash
 $ gxi
 > (import (only-in :example/life life)
         (rename-in (prefix-in :example/grid grid-)

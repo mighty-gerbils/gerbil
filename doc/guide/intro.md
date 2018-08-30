@@ -1,4 +1,5 @@
 # An Introduction to Gerbil
+
 This is a quick introductory guide to Gerbil for seasoned schemers;
 it assumes familiarity with scheme and exposure to a couple of
 different implementations.
@@ -6,39 +7,13 @@ different implementations.
 In the following `$` is the shell prompt and `>` the gxi
 interpreter prompt.
 
-## Contents
+## Using Gerbil
+The Gerbil interpreter is `$GERBIL_HOME/bin/gxi`, and the compiler is
+`$GERBIL_HOME/bin/gxc`.
 
-<!-- toc -->
+If you want an interactive Gerbil shell just execute the interpreter
+directly by running `gxi`.
 
-- [Hello world](#hello-world)
-- [Core Gerbil](#core-gerbil)
-  * [Primitive forms](#primitive-forms)
-  * [Structs and Classes](#structs-and-classes)
-  * [Pattern Matching](#pattern-matching)
-  * [Macros](#macros)
-- [Modules and Libraries](#modules-and-libraries)
-  * [Top Modules](#top-modules)
-  * [Imports and Exports](#imports-and-exports)
-  * [File Modules](#file-modules)
-  * [Library Modules](#library-modules)
-  * [Executable Modules](#executable-modules)
-  * [Prelude Modules and Custom Languages](#prelude-modules-and-custom-languages)
-  * [Implicit Package Declarations](#implicit-package-declarations)
-- [Standard Library](#standard-library)
-  * [Optional Libraries](#optional-libraries)
-  * [Additional Syntactic Sugar](#additional-syntactic-sugar)
-  * [Generics](#generics)
-  * [Iteration](#iteration)
-  * [Coroutines](#coroutines)
-  * [Event Programming](#event-programming)
-  * [Actors](#actors)
-  * [HTTP requests](#http-requests)
-  * [JSON](#json)
-  * [XML](#xml)
-  * [Web Applications](#web-applications)
-  * [Databases](#databases)
-
-<!-- tocstop -->
 
 ## Hello world
 Add `$GERBIL_HOME/bin` to your path and invoke the interpreter
@@ -83,13 +58,12 @@ $ gxc -static -exe -o hello hello.ss
 $ ./hello
 hello world
 ```
-
 ## Core Gerbil
 ### Primitive forms
 The standard Scheme primitive forms and macros are all supported.
 
 Runtime bindings are defined with the short forms `def` and `defvalues`:
-```
+```scheme
 (def (say-hello who)
   (displayln "hello " who))
 
@@ -101,7 +75,7 @@ are also available as in standard Scheme.
 
 Procedures are defined with `lambda` and can have optional and keyword
 formal arguments:
-```
+```scheme
 (def (a-simple-function a b)
   (+ a b))
 > (a-simple-function 1 2)
@@ -121,7 +95,7 @@ formal arguments:
 ```
 
 Multiple arity lambdas can be declared with case-lambda:
-```
+```scheme
 (def my-case-lambda
   (case-lambda
     ((a b) (+ a b))
@@ -135,7 +109,7 @@ Multiple arity lambdas can be declared with case-lambda:
 
 Let bindings can have a short form for single arguments,
 as well as multiple value bindings mixed in:
-```
+```scheme
 > ((let (x 1) (lambda (y) (+ x 1))) 1)
 => 2
 > (let ((values a b) (values 1 2)) (+ a b))
@@ -149,7 +123,7 @@ as well as multiple value bindings mixed in:
 Note that the `_` identifier is reserved for bindings to
 mean the null binding; that is the expression value
 is ignored and no lexical binding is generated:
-```
+```scheme
 (def (a-function x . _) ; accepts 1 or more ignored args
  (+ x 1))
 > (a-function 1 2)
@@ -158,7 +132,7 @@ is ignored and no lexical binding is generated:
 
 Apart from cons and list, pairs and lists can also be can be
 constructed with short-hand syntax using square brackets:
-```
+```scheme
 ; cons a pair
 > [1 . 2]
 => (1 . 2)
@@ -169,14 +143,14 @@ constructed with short-hand syntax using square brackets:
 
 The short-hand syntax also supports list splicing using
 using the ellipsis `...`:
-```
+```scheme
 ; splice nested list
 > [1 2 [3 4 5] ... 6]
 => (1 2 3 4 5 6)
 ```
 
 Bindings can be mutated with `set!` as usual.
-```
+```scheme
 > (def a #f)
 > (set! a 'a)
 > a
@@ -190,7 +164,7 @@ is invoked to expand the syntax.
 If the head is a plain identifier, as is the case
 in the example below, to expands an `identifier-set!`
 invocation.
-```
+```scheme
 > (def a-pair (cons 'a 'b))
 > (set! (car a-pair) 'c)
 > (car a-pair)
@@ -214,7 +188,7 @@ while classes are slot-based types with multiple inheritance.
 #### Structs
 
 Structs are defined with `defstruct`:
-```
+```scheme
 (defstruct point (x y))
 (defstruct (point-3d point) (z))
 > (make-point-3d 1 2 3)
@@ -226,7 +200,7 @@ a runtime type descriptor, accessors and mutators, expansion time
 struct info and a match expander.
 
 So:
-```
+```scheme
 > (def my-point (make-point-3d 1 2 3))
 > (point-x my-point)
 => 1
@@ -244,7 +218,7 @@ So:
 Classes are defined with defclass with slot accessed fields and support multiple
 inheritance.
 For example:
-```
+```scheme
 (defclass A (a))
 (defclass B (b))
 (defclass (C A B) (c))
@@ -273,7 +247,7 @@ type. Methods are defined with `defmethod` and invoked with curly brace `{}`
 s-expressions.
 
 For instance:
-```
+```scheme
 (import :std/format)
 (defmethod {print point}
   (lambda (self)
@@ -292,7 +266,7 @@ For instance:
 
 If you want to dispatch to the next method in the hierarchy, then you can use
 the `@next-method` macro that is locally bound inside your method definition:
-```
+```scheme
 (defmethod {identify point}
   (lambda (self)
     (displayln 'point)))
@@ -315,7 +289,7 @@ slots in the class.
 A custom constructor can be defined by specifying a constructor property
 designating a method at struct or class definition.
 For example:
-```
+```scheme
 (defstruct (point-3d point) (z)
   constructor: :init!)
 (defmethod {:init! point-3d}
@@ -336,7 +310,7 @@ In contrast, classes can freely mixin structs, as long as the
 mixins contain a compatible base struct.
 
 For example, the following constructs a diamond hierarchy with a base struct:
-```
+```scheme
 (defstruct A (x))
 (defclass (B A) ())
 (defclass (C A) ())
@@ -371,7 +345,7 @@ In addition, the square brackets destructure lists symmetrically
 to their construction.
 
 For example:
-```
+```scheme
 (def (my-destructurer obj)
  (match obj
    ([a . b]
@@ -393,12 +367,11 @@ a 2d point (1 2)
 > (my-destructurer (make-point-3d 1 2))
 a 3d-point (2 0 0)
 => 'point-3d
-
 ```
 
 #### Destructuring Binds
 Gerbil's `match` provides a shorthand syntax for match lambdas:
-```
+```scheme
 (def car+cdr (match <> ([a . b] (values a b))))
 > (car+cdr [1 2 3])
 => values 1 '(2 3)
@@ -408,7 +381,7 @@ It is also common to destructure-bind an object, thus a common
 destructuring-bind form `with` is provided. The form can
 bind a single object with short-hand notation or multiple
 objects with a let-style head:
-```
+```scheme
 (def (car+cdr obj)
   (with ([a . b] obj)
     (values a b)))
@@ -428,7 +401,7 @@ with `syntax-case` and `quote-syntax`.
 #### defrules
 Most macros are simple and medium syntax-rules macros, and thus
 Gerbil provides a short form for defining syntax-rules macros:
-```
+```scheme
 (defrules macro-id (id ...)
  (head [guard] body) ...)
 ; equivalent:
@@ -441,7 +414,7 @@ Gerbil provides a short form for defining syntax-rules macros:
 More complicated macros are defined `defsyntax` and `syntax-case`
 directly. Here is an example that introduces an identifier
 hygienically:
-```
+```scheme
 (defsyntax (with-magic stx)
   (syntax-case stx ()
    ((macro expr body ...)
@@ -454,7 +427,7 @@ hygienically:
 #### defsyntax-for-match
 The match expander is also macro capable; you can define a match
 macro with `defsyntax-for-match`, which has the following form:
-```
+```scheme
 (defsyntax-for-match id match-macro [macro])
 ```
 Both macros are procedures at phi+1, with the `match-macro` invoked when
@@ -463,7 +436,7 @@ procedure application.
 
 For example, the following defines a match macro for constructing and
 destructuring  pairs tagged with `'foo`:
-```
+```scheme
 (defsyntax-for-match foo
   (syntax-rules ()
     ((_ pat) (cons 'foo pat)))
@@ -478,19 +451,18 @@ destructuring  pairs tagged with `'foo`:
 > (def my-bar (cons 'bar 2))
 > (match my-bar ((foo x) x) (else 'not-a-foo))
 => not-a-foo
-
 ```
 
 #### begin-syntax
 If you need to shift the phase of the expander to evaluate support code
 for macros, you can do so with `begin-syntax`:
-```
+```scheme
 (begin-syntax form ...)
 ```
 
 For example, the following macro uses a utility function in the fender,
 which is defined at phi=+1:
-```
+```scheme
 (begin-syntax
   (def (identifier-or-keyword? stx)
     (or (identifier? stx)
@@ -526,7 +498,7 @@ They can also be nested in another module.
 ### Top Modules
 Here is an example of a simple top module, which provides
 a function that uses`display-exception` from the runtime as extern:
-```
+```scheme
 (module A
   (export with-display-exception)
   (extern (display-exception display-exception))
@@ -545,7 +517,7 @@ Identifiers are imported from a module with the `import` special
 form, which must appear at a top context (either top-level
 or module scope).
 It has the following syntax:
-```
+```scheme
 (import <import-spec> ...)
 import-spec:
  <module-path>
@@ -554,14 +526,13 @@ module-path:
  identifier            ; top or module scope module
  :identifier           ; identifier with ':' prefix, library module
  "path-to-module-file" ; file module, .ss extension optional
-
 ```
 
 As we can see, import allows macros to manipulate the import set
 of some import source (a module or another expansion).
 They can be defined with `defsyntax-for-import`
 An example macro is `only-in`, provided by the prelude:
-```
+```scheme
 (import (only-in :std/text/json read-json))
 ```
 Here we import form `:std/text/json` only the `read-json` procedure.
@@ -569,7 +540,7 @@ Here we import form `:std/text/json` only the `read-json` procedure.
 Modules define the set of exported identifiers with the `export`
 special form, which must appear at module scope.
 It has the following syntax:
-```
+```scheme
 (export <export-sec> ...)
 export-spec:
  #t                                       ; export all defined identifiers
@@ -581,7 +552,7 @@ export-spec:
 Similarly to `import`, `export` also supports macros, which can
 be defined with `defsyntax-for-export`.
 An usual export macro is `except-out`, provided by the prelude:
-```
+```scheme
 (export (except-out #t display-exception))
 ```
 This form exports all defined symbols, except display-exception.
@@ -621,7 +592,7 @@ $ gxi
 Library modules are imported with the `:library-module-path` form.
 For example, to use the `json` module from the Gerbil std library
 you need the following import statement:
-```
+```scheme
 (import :std/text/json)
 ```
 
@@ -780,7 +751,7 @@ by the prelude.
 
 Custom languages are a big topic and this only touches the surface;
 they  are further explored in the
-[Custom Language tutorial](tutorial/lang.md).
+[Custom Language tutorial](/tutorials/languages.md).
 
 ### Implicit Package Declarations
 
@@ -828,7 +799,7 @@ library modules by running `$GERBIL_HOME/src/build.sh stdlib`.
 The `:std/sugar` library provides, among other macros, a `try` syntactic
 form for handling exceptions in imperative style.
 For example:
-```
+```scheme
 > (try (error "my error")
    (catch (e) (display-exception e (current-error-port)))
    (finally (displayln "finally!")))
@@ -837,7 +808,7 @@ finally!
 ```
 
 The general syntax is
-```
+```scheme
 (try body ...
  [catch-clause] ...
  [finally-clause])
@@ -857,7 +828,7 @@ Gerbil supports generic multi-method dispatch, with the requisite
 runtime support and macros provided by `:std/generic`.
 For example, the following defines a generic method `my-add` that
 dispatches on numbers and strings:
-```
+```scheme
 (import :std/generic)
 (defgeneric my-add
   (lambda args #f))
@@ -873,7 +844,7 @@ matching methods. Next, we defined the two methods, operating
 on numbers and strings. We can use the generic method as a procedure:
 
 
-```
+```scheme
 > (my-add 1 2)
 => 3
 > (my-add "a" "b")
@@ -882,7 +853,7 @@ on numbers and strings. We can use the generic method as a procedure:
 
 We can similarly define methods for user-defined types as well.
 Here we define an implementation for instances of a struct `A`:
-```
+```scheme
 > (my-add (make-A 1) (make-A 2))
 => #f
 
@@ -897,7 +868,7 @@ Here we define an implementation for instances of a struct `A`:
 Inside the body of every method implementation, `@next-method` is bound
 to a procedure which dispatches to the next matching method.
 For example:
-```
+```scheme
 (defmethod (my-add (a <fixnum>) (b <fixnum>))
   (displayln "add fixnums")
   (@next-method a b))
@@ -905,7 +876,7 @@ For example:
 Normally in the procedure body we would add with `fx+`, but for
 the shake of the example we display a message and let the generic
 number method to add.
-```
+```scheme
 > (my-add 1 2)
 add fixnums
 => 3
@@ -926,7 +897,7 @@ the body as long as none of the iterators have signalled end
 of iteration.
 
 For example:
-```
+```scheme
 (import :std/iter)
 
 > (for (x '(1 2 3))
@@ -945,7 +916,7 @@ For example:
 All patterns supported by the `match` macro can be matched in lieu
 of plain variable bindings.
 For instance:
-```
+```scheme
 > (for ([key . val] '((a . 1) (b . 2) (c . 3)))
     (displayln key " " val))
 a 1
@@ -959,7 +930,7 @@ and ranges.
 
 Simple filters can be specified with the `when` and `unless` keyword in
 the binding for:
-```
+```scheme
 > (for ([x . y] '((a . 0) (b . 1) (c . 2)) when (> y 0)) (displayln x))
 b
 c
@@ -969,7 +940,7 @@ a
 
 The variant `for*` performs multi-dimensional iteration, equivalent
 to nested fors:
-```
+```scheme
 > (for* ((x (in-range 2)) (y (in-range 2)))
    (displayln x y))
 00
@@ -979,7 +950,7 @@ to nested fors:
 ```
 
 The values of an iteration can be collected in a list with `for/collect`:
-```
+```scheme
 > (for/collect ((x (in-naturals))
                 (y '#(a b c d)))
     (cons x y))
@@ -989,7 +960,7 @@ The values of an iteration can be collected in a list with `for/collect`:
 Finally, the values of an iteration can be folded to produce a value;
 in this example we construct a reversed list out of an iterator
 with a folding `cons`:
-```
+```scheme
 > (for/fold (r []) (x (in-range 1 5))
     (cons x r))
 => (5 4 3 2 1)
@@ -1005,7 +976,7 @@ iterating lists, hashes, input-ports, ranges etc.
 The easiest way to implement an iterator is through a coroutine
 procedure. The procedure is coexecuted with the iteration loop,
 and produces values for the loop with `yield`:
-```
+```scheme
 (def (my-generator n)
  (lambda ()
    (let lp ((k 0))
@@ -1022,7 +993,7 @@ and produces values for the loop with `yield`:
 
 We can now use this generator to produce an iterator for a user-defined
 struct:
-```
+```scheme
 (defstruct A (x))
 (defmethod {:iter A}
   (lambda (self)
@@ -1045,7 +1016,7 @@ all further calls to `continue` will return the final result or
 deliver an exception.
 
 For example:
-```
+```scheme
 (import :std/coroutine)
 (def (my-coroutine)
   (yield 1)
@@ -1078,20 +1049,19 @@ These are the low level primitives, which wait and multiplex on primitive select
 `wait` blocks the current thread until a selector is signalled, while `select` blocks on
 multiple selectors concurrently, using a thread for each selector. Both procedures accept
 an optional timeout and return the selector that was signalled or `#f` in the case of timeout.
-```
+```scheme
 (def (wait selector (timeout #f)) ...)
 (def (select list-of-selectors (timeout #f)) ...)
 ```
 
 For example:
-```
+```scheme
 (import :std/event)
 (def my-thread (spawn (lambda () (thread-sleep! 10))))
 > (wait my-thread 1)      ; or (select [my-thread] 1)
 => #f                    ; after a second elapses
 > (wait my-thread)       ; or (select [my-thread])
 => my-thread             ; after the thread completes its sleep
-
 ```
 
 #### sync
@@ -1117,7 +1087,7 @@ and other events have usually the synchronizer as value.
 
 
 For example:
-```
+```scheme
 (def my-thread (spawn (lambda () (thread-sleep! 10))))
 > (sync 1 my-thread)
 => #f ; after a second elapses
@@ -1127,7 +1097,7 @@ For example:
 ```
 
 A more complicated example which utilizes handle-evt for loops:
-```
+```scheme
 (def my-thread (spawn (lambda () (thread-sleep! 10) 'done)))
 > (let lp ((n 0))
     (sync (handle-evt 1
@@ -1150,7 +1120,7 @@ event driven programming. `!` syncs a single event while `!*` syncs
 multiple events.
 
 For example:
-```
+```scheme
 ;; sync on my-thread
 (! my-thread (displayln "my thread exited"))
 
@@ -1172,12 +1142,11 @@ communication.
 Gerbil's actors are threads, either in the current or a remote processes
 and communicate exchanging messages. Messages can be arbitrary objects,
 but usually actors communicate with structured messages:
-```
+```scheme
 (defstruct message (e source dest options))
 (def (send dest value) ...)                       ; send raw message
 (def (send-message dest value (options #f)) ...)  ; send structured message
 (def (send-message/timeout dest value timeo) ...)
-
 ```
 Actors process messages and events with two main macros, `<<` and `<-`.
 They both synchronize on the thread's mailbox and pattern match incoming messages;
@@ -1189,7 +1158,7 @@ Within the pattern body, the `->` can be used as shorthand syntax to send messag
 to `@source`.
 
 For example, a simple echo actor:
-```
+```scheme
 (import :std/actor)
 (def (my-echo)
  (let lp ()
@@ -1213,7 +1182,7 @@ call (instances of `!call`) or a value for a previous call (`!value` or `!error`
 Protocols are defined with `defproto`, which defines structures and macros
 for using the protocol interfaces, together with marshalling support.
 For example, let's define an echo protocol:
-```
+```scheme
 (defproto echo
   id: echo
   call: (hello what))
@@ -1232,7 +1201,7 @@ For example, let's define an echo protocol:
 
 In the example, we define a protocol `echo` with a single call `hello`.
 The macro defines the structures and macros for using the interface:
-```
+```scheme
 (defstruct echo.hello (what))
 (defsyntax-for-match !echo.hello ...)
 (defrules !!echo.hello ...
@@ -1254,7 +1223,7 @@ with the `!!error` macro.
 The syntax for `!!value` and `!!error` is similar: the take
 an optional destination (which defaults to `@source`), a value
 or error message and the continuation token:
-```
+```scheme
 (!!value [@source] val token)
 (!!error [@source] msg token)
 ```
@@ -1267,7 +1236,7 @@ A stream is like a call, but it returns multiple values using
 
 For example, the following server generates a stream of numbers as
 specified by the argument:
-```
+```scheme
 (defproto simple-stream
   stream: (count N))
 
@@ -1299,7 +1268,7 @@ macro which constructs a vector pipe and pipes the yielded values
 through it in a background thread.
 
 Here is an example that uses a pipe:
-```
+```scheme
 > (let ((values inp close) (!!pipe (!!simple-stream.count my-stream 5)))
     (for (x inp)
       (displayln x)))
@@ -1313,7 +1282,7 @@ Here is an example that uses a pipe:
 The pipe may be convenient, but it forgoes end-to-end back pressure
 and synchronization with `!!sync`. Here is the same example again,
 but with explicit processing of messages through the actor mailbox:
-```
+```scheme
 (let (k (!!simple-stream.count my-stream 5))
   (let lp ()
     (<- ((!yield x (eq? k))
@@ -1337,7 +1306,7 @@ with `start-rpc-server!` which accepts an optional server address
 to bind and a wire protocol implementation with a keyword.
 
 In one shell:
-```
+```scheme
 (def (my-echo rpcd)
   (rpc-register rpcd 'echo echo::proto)
   (let lp ()
@@ -1353,7 +1322,7 @@ The echo actor binds itself under the id `echo` using the
 echo protocol `echo::proto` for marshalling and unmarshalling.
 
 In a different shell, we can connect to our echo with a `remote` handle:
-```
+```scheme
 (def clientd (start-rpc-server!))
 (def echod (rpc-connect clientd 'echo "127.0.0.1:9999" echo::proto))
 > (!!echo.hello echod 'hello)
@@ -1363,7 +1332,7 @@ In a different shell, we can connect to our echo with a `remote` handle:
 If your actors are well-known (application scoped), then you can globally bind
 a protocol to the name with `bind-protocol!` and you don't need to specify
 the protocol in `rpc-register` and `rpc-connect`:
-```
+```scheme
 (bind-protocol! 'echo echo::proto)
 (def clientd ...)
 (def echod (rpc-connect clientd 'echo "127.0.0.1:9999"))
@@ -1375,7 +1344,7 @@ you should use authentication and optionally encryption.
 
 For authentication, you can generate a shared cookie with `rpc-generate-cookie!`
 and start your rpc-server using the `rpc-cookie-proto`:
-```
+```scheme
 $ mkdir ~/.gerbil
 > (rpc-generate-cookie!)
 ; generates a cookie in ~/.gerbil/cookie
@@ -1400,7 +1369,7 @@ AES/HMAC (it encrypts and then MACs).
 Gerbil provides a simple interface for making http(s) requests,
 inspired by python's requests library.
 Here is an example for how to use the library:
-```
+```scheme
 > (import :std/net/request)
 > (def req (http-get "freegeoip.net/json/8.8.8.8"))
 > (request-status req)
@@ -1425,7 +1394,7 @@ Here is an example for how to use the library:
 
 Gerbil has library support for JSON with the `:std/text/json` library.
 The library provides the following procedures:
-```
+```scheme
 (def (read-json (port (current-input-port)) ...)
 (def (string->json-object str) ...)
 (def (write-json obj (port (current-output-port))) ...)
@@ -1459,7 +1428,7 @@ and rerunning the std library build script as described earlier in the guide.
 
 For example, here is a parse of the bing front page without scripts,
 style, and CDATA:
-```
+```scheme
 > (import :std/net/request :std/xml/libxml)
 > (def req (http-get "https://www.bing.com"))
 > (parse-html (request-text req) filter: '("script" "style" "CDATA"))
@@ -1498,12 +1467,11 @@ level interface oriented towards API programming.
 #### Web programming with rack/fastcgi
 
 This is the obligatory hello web example:
-```
+```scheme
 (import :std/web/rack)
 (def (respond env data)
   (values 200 '((Content-Type . "text/plain")) "hello world\n"))
 (start-rack-fastcgi-server! "127.0.0.1:9000" respond)
-
 ```
 
 The fastcgi web handler is started with `start-rack-fastcgi-server!` from
@@ -1517,7 +1485,7 @@ The handler returns 3 values: the status code for the response, the
 
 Here is a more complex example that prints all request variables to
 the response:
-```
+```scheme
 (def (respond env data)
   (values 200 '((Content . "text/html")) (print-headers env)))
 
@@ -1532,7 +1500,7 @@ the response:
 #### Web programming with the embedded httpd
 
 Here is the hello world example using the embedded httpd:
-```
+```scheme
 (import :std/net/httpd)
 
 ;; start the httpd
@@ -1548,7 +1516,6 @@ Here is the hello world example using the embedded httpd:
 
 ;; register the handler
 > (http-register-handler httpd "/hello" hello-handler)
-
 ```
 
 Here, we start an httpd server, which is a background thread serving
@@ -1565,7 +1532,7 @@ $ curl http://localhost:8080/hello
 hello world
 ```
 
-For more examples of httpd handlers, see the [httpd tutorial](tutorial/httpd.md).
+For more examples of httpd handlers, see the [httpd tutorial](/tutorials/httpd.md).
 
 ### Databases
 
@@ -1585,18 +1552,18 @@ installation in `$GERBIL_HOME/src/std/build-features.ss`.
 
 Here is an example of using the dbi interface with SQLite.
 First, the necessary imports and a connection to an in-memory database:
-```
+```scheme
 > (import :std/db/dbi :std/db/sqlite)
 > (def db (sql-connect sqlite-open ":memory:"))
 ```
 
 Then we create a simple table with `sql-eval`, which evaluates an SQL statement:
-```
+```scheme
 > (sql-eval db "CREATE TABLE Users (FirstName VARCHAR, LastName VARCHAR, Secret VARCHAR)")
 ```
 
 Let's insert some data in our table, using a prepared statements:
-```
+```scheme
 > (def insert (sql-prepare db "INSERT INTO Users (FirstName, LastName, Secret) VALUES (?, ?, ?)"))
 > (sql-txn-begin db)
 > (sql-bind insert "John" "Smith" "very secret")
@@ -1608,14 +1575,14 @@ Let's insert some data in our table, using a prepared statements:
 ```
 
 And finally a query:
-```
+```scheme
 > (def users (sql-prepare db "SELECT FirstName, LastName FROM Users"))
 > (sql-query users)
 => (#("John" "Smith") #("Marc" "Thompson"))
 ```
 
 We can also iterate on the results of a query:
-```
+```scheme
 > (import :std/iter)
 > (for (#(FirstName LastName) (in-sql-query users))
     (displayln "First name: " FirstName " Last name: " LastName))
@@ -1624,7 +1591,7 @@ First name: Marc Last name: Thompson
 ```
 
 And we are done, we can close our database connection:
-```
+```scheme
 > (sql-close db)
 ```
 
@@ -1636,7 +1603,7 @@ The libraries are not built by default, as they have foreign dependencies, so yo
 enable them for your installation in `$GERBIL_HOME/src/std/build-features.ss`.
 
 For example, here we use the LevelDB library for some simple operations:
-```
+```scheme
 > (import :std/db/leveldb
           :std/sugar)
 > (def db (leveldb-open "/tmp/leveldb-test.db"))
@@ -1678,4 +1645,4 @@ def => this is the value of def
 (leveldb-close db)
 ```
 
-The LMDB library is covered in in the [Key-Value Store Server tutorial](tutorial/kvstore.md).
+The LMDB library is covered in in the [Key-Value Store Server tutorial](/tutorials/kvstore.md).

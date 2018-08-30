@@ -1,0 +1,23 @@
+{
+  "name": "gerbil-docs",
+  "version": "1.0.0",
+  "description": "--- home: true tagline: Gerbil is a meta-dialect of Scheme with post-modern features actionText: Get Started → actionLink: /guide/ # footer: XYZ Licensed | Copyright © 2018-present Zyx ---",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vuepress build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vyzo/gerbil.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vyzo/gerbil/issues"
+  },
+  "homepage": "https://github.com/vyzo/gerbil#readme",
+  "dependencies": {
+    "vuepress": "^0.14.2"
+  }
+}
