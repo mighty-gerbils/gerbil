@@ -88,15 +88,15 @@ For "hello, world" see the [Guide](doc/guide.md#hello-world).
 
 The [documentation](doc) is a work in progress, but there are some resources
 that should get you started:
-- The [Introduction to Gerbil](doc/guide/intro.md) is an introductory guide
+- The [Introduction to Gerbil](https://cons.io/guide/intro.html) is an introductory guide
   for seasoned Schemers.
-- The [Getting Started](doc/guide/getting-started.md) page covers the very basics
+- The [Getting Started](https://cons.io/guide/getting-started.html) page covers the very basics
   of setting up your Gerbil installation and writing your first code.
-- The [Gerbil Tutorial](doc/tutorials/readme.md) provides a few hands-on guides
+- The [Gerbil Tutorial](https://cons.io/tutorials/) provides a few hands-on guides
   on Gerbil programming.
-- The [Gerbil Core Prelude](doc/guide/core-prelude.md) documents the core
+- The [Gerbil Core Prelude](https://cons.io/guide/core-prelude.html) documents the core
   language prelude.
-- The [Gerbil Standard Library](doc/stdlib) is the documentation for the
+- The [Gerbil Standard Library](https://cons.io/stdlib/) is the documentation for the
   Gerbil standard library.
 
 The documentation is rendered online at [cons.io](https://cons.io).
