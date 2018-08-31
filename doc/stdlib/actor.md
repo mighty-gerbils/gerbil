@@ -1,4 +1,4 @@
-# Actor
+# Actors
 
 ::: tip usage
 (import :std/actor)

@@ -1,4 +1,4 @@
-# Generic
+# Generics
 
 ::: tip usage
 (import :std/generic)
