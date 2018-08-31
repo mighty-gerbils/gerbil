@@ -14,7 +14,7 @@ module.exports = {
             {
               collapsable: false,
               title: 'Guide',
-                children: ['', 'intro', 'getting-started', 'shell', 'package-manager', 'ffi', 'build', 'profiler', 'bootstrap', 'nix', 'r7rs', 'srfi', 'core-prelude']
+              children: ['', 'intro', 'getting-started', 'shell', 'package-manager', 'ffi', 'build', 'profiler', 'bootstrap', 'nix', 'r7rs', 'srfi', 'core-prelude']
             }
           ],
           '/stdlib/': [
