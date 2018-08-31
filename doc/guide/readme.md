@@ -58,11 +58,11 @@ $ LDFLAGS=-L/usr/local/opt/openssl/lib \
 ## Skip the Install, Get Started on Docker
 
 The latest Gerbil images are available via Dockerhub:
-
 ```bash
 docker pull -it gerbil/scheme:latest
+```
 
 To get to the repl:
-
+```bash
 docker run -it gerbil/scheme:latest /root/gerbil/bin/gxi
 ```
