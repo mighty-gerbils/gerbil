@@ -14,13 +14,13 @@ module.exports = {
             {
               collapsable: false,
               title: 'Guide',
-              children: ['', 'intro', 'shell', 'package-manager', 'ffi', 'build', 'profiler', 'srfi', 'core-prelude', 'r7rs', 'bootstrap', 'nix']
+              children: ['', 'intro', 'getting-started', 'shell', 'package-manager', 'ffi', 'build', 'profiler', 'bootstrap', 'nix', 'r7rs', 'srfi', 'core-prelude']
             }
           ],
           '/stdlib/': [
             {
               collapsable: false,
-              title: 'Gerbil API Reference',
+              title: 'Gerbil Standard Library Reference',
               children: ['', 'actor', 'coroutine', 'crypto', 'db', 'debug', 'errors', 'events', 'format', 'generic', 'getopt', 'iterators',
               'lazy', 'logger', 'make', 'misc', 'net', 'os', 'parser', 'regexp', 'sort', 'srfi', 'stxparam', 'sugar', 'test', 'text',
               'web', 'xml']

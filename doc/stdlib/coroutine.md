@@ -1,4 +1,4 @@
-# Coroutine
+# Coroutines
 
 ::: tip usage
 (import :std/coroutine)

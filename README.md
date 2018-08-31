@@ -82,24 +82,27 @@ The Gerbil interpreter is `$GERBIL_HOME/bin/gxi`, and the compiler is
 If you want an interactive Gerbil shell just execute the interpreter
 directly by running `gxi`.
 
-For "hello, world" see the [Guide](doc/guide.md#hello-world).
+For "hello, world" see the [Guide](https://cons.io/guide/intro.html#hello-world).
 
 # Documentation
 
-The [documentation](doc) is a work in progress, but there are some resources
+The [documentation](https://cons.io) is a work in progress, but there are some resources
 that should get you started:
-- The [Introduction to Gerbil](doc/guide.md) is an introductory guide for seasoned Schemers.
-- The [Gerbil wiki](https://github.com/vyzo/gerbil/wiki/Gerbil-Scheme) at Github
-  contains a small but growing collection of pages that can help you
-  get started with Gerbil programming.
-- The [Getting Started](https://github.com/vyzo/gerbil/wiki/Getting-Started-with-Gerbil-development)
-  wiki page in particular covers the very basics for setting up your Gerbil installation
-  and writing your first code.
-- The [Gerbil Tutorial](doc/tutorial.md) provides a few hands-on guides on Gerbil programming.
-- The [Gerbil Core Prelude](doc/core-prelude.md) documents the core
+- The [Introduction to Gerbil](https://cons.io/guide/intro.html) is an introductory guide
+  for seasoned Schemers.
+- The [Getting Started](https://cons.io/guide/getting-started.html) page covers the very basics
+  of setting up your Gerbil installation and writing your first code.
+- The [Gerbil Tutorial](https://cons.io/tutorials/) provides a few hands-on guides
+  on Gerbil programming.
+- The [Gerbil Core Prelude](https://cons.io/guide/core-prelude.html) documents the core
   language prelude.
-- The [Gerbil Standard Library Overview](doc/stdlib.md) provides an overview of the Gerbil
-  stdlib.
+- The [Gerbil Standard Library](https://cons.io/stdlib/) is the documentation for the
+  Gerbil standard library.
+
+The documentation is automatically rendered online at [cons.io](https://cons.io).
+You can render it locally by running `doc/build.sh`, which will leave
+the html output in `doc/.vuepress/dist`; the script uses vuepress and
+requires npm to be installed.
 
 Probably the best way to dive into Gerbil is by reading the sources,
 as all the main language features are exercised in one way or another
