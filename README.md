@@ -82,11 +82,11 @@ The Gerbil interpreter is `$GERBIL_HOME/bin/gxi`, and the compiler is
 If you want an interactive Gerbil shell just execute the interpreter
 directly by running `gxi`.
 
-For "hello, world" see the [Guide](doc/guide.md#hello-world).
+For "hello, world" see the [Guide](https://cons.io/guide/intro.html#hello-world).
 
 # Documentation
 
-The [documentation](doc) is a work in progress, but there are some resources
+The [documentation](https://cons.io) is a work in progress, but there are some resources
 that should get you started:
 - The [Introduction to Gerbil](https://cons.io/guide/intro.html) is an introductory guide
   for seasoned Schemers.
@@ -99,7 +99,7 @@ that should get you started:
 - The [Gerbil Standard Library](https://cons.io/stdlib/) is the documentation for the
   Gerbil standard library.
 
-The documentation is rendered online at [cons.io](https://cons.io).
+The documentation is automatically rendered online at [cons.io](https://cons.io).
 You can render it locally by running `doc/build.sh`, which will leave
 the html output in `doc/.vuepress/dist`; the script uses vuepress and
 requires npm to be installed.
