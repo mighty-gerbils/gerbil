@@ -1,4 +1,4 @@
-# Miscellaneous Network related Libraries
+# Network related Libraries
 
 ## std/net/address
 Internet addresses as host-port pairs.
