@@ -8,6 +8,8 @@ The `:std/getopt` library provides facilities for command line argument parsing.
 
 ## Argument Parsing
 
+### getopt
+
 ::: tip usage
 ```
 (getopt <specifier> ...)
@@ -26,10 +28,10 @@ cmd-specifier:
 
 ```
 :::
-
 `getopt` creates a command line parser, which can be used to parse arguments
 with `getopt-parse`.
 
+### getopt-parse
 
 ::: tip usage
 ```
@@ -43,12 +45,22 @@ according to the parser specification. If it is parsing a specification with
 subcommands, it returns two values, the command id and a hash table with the
 parsed options. Otherwise it just returns the hash table with the parsed options.
 
+### getopt-error?
 
 ::: tip usage
 ```
 (getopt-error? obj)
 => boolean
+```
+:::
 
+If parsing fails, then a `getopt-error` is raised, which can be guarded with
+`getopt-error?`.
+
+### getopt-display-help
+
+::: tip usage
+```
 (getopt-display-help <tip> program-name [port = (current-output-port)])
 
 
@@ -61,8 +73,7 @@ tip:
 ```
 :::
 
-If parsing fails, then a `getopt-error` is raised, which can be guarded with
-`getopt-error?`. The procedure `getopt-display-help` can be used to display
+The procedure `getopt-display-help` can be used to display
 a help message for a getopt error according to the argument specification.
 The procedure `getopt-display-help-topic` can be used to display a help page
 for a subcommand.
