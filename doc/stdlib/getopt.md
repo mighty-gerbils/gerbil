@@ -6,7 +6,7 @@ The `:std/getopt` library provides facilities for command line argument parsing.
 (import :std/getopt)
 :::
 
-## Argument Parsing
+## Interface
 
 ### getopt
 

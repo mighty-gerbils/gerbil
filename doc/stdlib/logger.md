@@ -1,4 +1,4 @@
-# Logging facilities
+# Logging
 
 The `:std/logger` library provides basic logging facilities.
 
