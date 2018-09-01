@@ -1,12 +1,13 @@
 # Format
 
+The `:std/format` library implements string formatting as specified
+in [SRFI 48](https://srfi.schemers.org/srfi-48/srfi-48.html).
+
 ::: tip usage
 (import :std/format)
 :::
 
 ## format
-
-This implements string formatting as specified in [SRFI 48](https://srfi.schemers.org/srfi-48/srfi-48.html)
 
 ::: tip usage
 ```
@@ -17,6 +18,8 @@ This implements string formatting as specified in [SRFI 48](https://srfi.schemer
 <= string
 ```
 :::
+
+Formats the arguments to a string using the supplied format specifier.
 
 ::: warning Differences with SRFI 48
 - lower-case synonyms for all format specifiers (~a and ~A are equivalent)
