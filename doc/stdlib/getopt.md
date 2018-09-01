@@ -14,8 +14,8 @@ The `:std/getopt` library provides facilities for command line argument parsing.
 => <parser>
 
 specifier:
- (command id [help: text] cmd-specifier)
- cmd-specifier ...
+ (command id [help: text] <cmd-specifier>)
+ <cmd-specifier> ...
 
 cmd-specifier:
  (flag id short [long])
@@ -32,8 +32,8 @@ with `getopt-parse`.
 
 ::: tip usage
 ```
-(getopt-parse <parser> <args>)
-=> (values cmd options)
+(getopt-parse <parser> args)
+=> (values cmd-id options)
    options
 ```
 :::
