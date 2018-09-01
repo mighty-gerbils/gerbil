@@ -49,7 +49,7 @@ parsed options. Otherwise it just returns the hash table with the parsed options
 (getopt-error? obj)
 => boolean
 
-(getopt-display-help <tip> program-name [port = (current-error-port)])
+(getopt-display-help <tip> program-name [port = (current-output-port)])
 
 
 tip:
@@ -57,7 +57,7 @@ tip:
  <parser>
  <command>
 
-(getopt-display-help-topic <parser> topic program-name [port = (current-error-port)])
+(getopt-display-help-topic <parser> topic program-name [port = (current-output-port)])
 ```
 :::
 
