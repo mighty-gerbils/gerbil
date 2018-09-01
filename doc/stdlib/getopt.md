@@ -22,6 +22,7 @@ cmd-specifier:
  (option id short [long] [help: text] [value: proc] [default: value])
  (argument id [help: text] [value: proc])
  (optional-argument id [help: text] [value: proc] [default: value])
+ (rest-arguments id [help: text] [value: proc])
 
 ```
 :::
