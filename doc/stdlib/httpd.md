@@ -6,6 +6,10 @@ use to server web applications and apis from your program.
 See the [tutorial](/tutorials/httpd.md) for a simple example program which uses
 the server.
 
+::: tip usage
+(import :std/net/httpd)
+:::
+
 ## Server Interface
 
 ### current-http-server
