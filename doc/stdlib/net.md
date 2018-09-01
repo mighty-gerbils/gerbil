@@ -1,6 +1,4 @@
-# Net
-
-Networking-related libraries.
+# Miscellaneous Network related Libraries
 
 ## std/net/address
 Internet addresses as host-port pairs.
@@ -67,57 +65,6 @@ over raw devices and things.
 
 ```
 
-## std/net/httpd
-Embedded HTTP server.
-
-```
-(import :std/net/httpd)
-
-;; exports:
-
-  current-http-server
-  start-http-server!
-  stop-http-server!
-  http-register-handler
-  make-default-http-mux
-  make-recursive-http-mux
-  http-request?
-  http-request-method http-request-url http-request-path http-request-params
-  http-request-proto http-request-client http-request-headers
-  http-request-body
-  http-request-timeout-set!
-  http-response?
-  http-response-write
-  http-response-begin http-response-chunk http-response-end
-  http-response-file
-  http-response-force-output
-  http-response-timeout-set!
-  set-httpd-request-timeout!
-  set-httpd-response-timeout!
-  set-httpd-max-request-headers!
-  set-httpd-max-token-length!
-  set-httpd-max-request-body-length!
-```
-
-## std/net/request
-HTTP requests library.
-
-```
-(import :std/net/request)
-
-;; exports:
-
-  http-get http-head http-post http-put http-delete http-options
-  request? request-url request-status request-status-text
-  request-headers
-  request-encoding request-encoding-set!
-  request-content
-  request-text
-  request-json
-  request-cookies
-  request-close
-  request-port
-```
 
 ## std/net/repl
 

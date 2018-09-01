@@ -1,6 +1,4 @@
-# Misc
-
-Miscellaneous libraries.
+# Miscellaneous libraries.
 
 ## std/misc/channel
 

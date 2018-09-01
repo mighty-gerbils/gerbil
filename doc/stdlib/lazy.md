@@ -1,4 +1,4 @@
-# Lazy
+# Primitives for Lazy Evaluation
 
 ::: tip usage
 (import :std/lazy)

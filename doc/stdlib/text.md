@@ -1,6 +1,4 @@
-# std/text
-
-Text encoding and decoding libraries.
+# Text Encoding and Decoding libraries.
 
 ## std/text/base64
 Base64 encoding and decoding.

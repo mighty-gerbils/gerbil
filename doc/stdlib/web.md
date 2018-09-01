@@ -1,4 +1,4 @@
-# Web
+# Miscellaneous Web related Libraries
 
 ::: tip usage
 (import :std/web)

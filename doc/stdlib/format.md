@@ -1,4 +1,4 @@
-# Format
+# Formatting
 
 The `:std/format` library implements string formatting as specified
 in [SRFI 48](https://srfi.schemers.org/srfi-48/srfi-48.html).

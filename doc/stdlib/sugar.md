@@ -1,4 +1,4 @@
-## Sugar
+## Common Syntactic Sugar
 
 ::: tip usage
 (import :std/sugar)

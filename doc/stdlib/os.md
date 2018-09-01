@@ -1,4 +1,4 @@
-# OS
+# Operating System Interface
 
 Libraries for programming with raw OS devices.
 

@@ -1,4 +1,4 @@
-# Parser
+# Language Parsers
 
 ::: tip usage
 (import :std/parser)
