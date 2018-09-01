@@ -17,10 +17,17 @@ module.exports = {
               children: ['', 'intro', 'getting-started', 'shell', 'package-manager', 'ffi', 'build', 'profiler', 'bootstrap', 'nix', 'r7rs', 'srfi', 'core-prelude']
             }
           ],
+          '/tutorials/': [
+             {
+               collapsable: false,
+               title: 'Tutorials',
+               children: ['', 'languages', 'kvstore', 'proxy', 'httpd']
+             }
+          ],
           '/stdlib/': [
             {
               collapsable: false,
-              title: 'Gerbil Standard Library Reference',
+              title: 'Standard Library Reference',
               children: ['', 'actor', 'coroutine', 'crypto', 'db', 'debug', 'errors', 'events', 'format', 'generic', 'getopt', 'iterators',
               'lazy', 'logger', 'make', 'misc', 'net', 'os', 'parser', 'regexp', 'sort', 'srfi', 'stxparam', 'sugar', 'test', 'text',
               'web', 'xml']
