@@ -25,7 +25,7 @@ $ if [ ! -e $HOME/.gerbil/cookie ]; then
 fi
 ```
 
-The source code for the tutorial is available at [$GERBIL_HOME/src/tutorial/kvstore](../../src/tutorial/kvstore).
+The source code for the tutorial is available at [$GERBIL_HOME/src/tutorial/kvstore](https://github.com/vyzo/gerbil/tree/master/src/tutorial/kvstore).
 You can now build the kvstore tutorial so that you can use the programs:
 ```bash
 $ cd $GERBIL_HOME/src/tutorial/kvstore
@@ -46,8 +46,8 @@ here dynamic executables as they are much faster to compile.
 ## The RPC Protocol
 
 The protocol for communicating with the daemon is defined in
-[proto.ss](../../src/tutorial/kvstore/proto.ss):
-```
+[proto.ss](https://github.com/vyzo/gerbil/blob/master/src/tutorial/kvstore/proto.ss):
+```scheme
 ;; A protocol for key-value stores
 ;; (get key)      -- retrieve object associated with key, or #f if not found
 ;; (ref key)      -- like get, but result in an exception if not foound
@@ -68,7 +68,7 @@ The `defproto` macro defines structs and macros for utilizing the protocol in yo
 programs.
 
 The expansion of the protocol definition looks like this:
-```
+```scheme
 (begin
   (defsyntax kvstore ...)
 
@@ -127,12 +127,12 @@ marshalling and unmarshalling the messages.
 
 ## The Server
 
-The server is defined in [kvstored.ss](../../src/tutorial/kvstore/kvstored.ss).
+The server is defined in [kvstored.ss](https://github.com/vyzo/gerbil/blob/master/src/tutorial/kvstore/kvstored.ss).
 
 ### The main function
 
 The `main` function is the entry of the program:
-```
+```scheme
 (def (main . args)
   (def gopt
     (getopt (option 'listen "-l" "--listen"
@@ -163,7 +163,7 @@ failed to start (perhaps because the default port is in use).
 
 The main loop of the server first registers with the rpc server and then loops
 responding to messages using the `<-` reaction macro:
-```
+```scheme
 (def (run rpcd env)
   (def db (lmdb-open-db env "kvstore"))
   (def nil '#(nil))
@@ -225,7 +225,7 @@ responding to messages using the `<-` reaction macro:
 
 The main loop uses 3 auxiliary functions to implement the low level details of interacting
 with the key-value store:
-```
+```scheme
 (def (run rpcd env)
   ...
 
@@ -267,12 +267,12 @@ with the key-value store:
 
 ## A Command-Line Client
 
-There is a command-line client for our daemon, defined in [kvstorec.ss](../../src/tutorial/kvstore/kvstorec.ss).
+There is a command-line client for our daemon, defined in [kvstorec.ss](https://github.com/vyzo/gerbil/blob/master/src/tutorial/kvstore/kvstorec.ss).
 
 ### The main function
 
 The `main` function is the entry of the program:
-```
+```scheme
 (def (main . args)
   (def getcmd
     (command 'get help: "get the json object associated with key or false if none is"
@@ -327,7 +327,7 @@ calls in the protocol.
 The implementation of the four commands is very simple: each constructs a remote
 handle for the server, using the `kvstore-connect` auxiliary funciton, and then
 proceeds to call the server with RPC:
-```
+```scheme
 (def (kvstore-connect opt)
   (let (rpcd (start-rpc-server! proto: (rpc-cookie-proto)))
     (rpc-connect rpcd 'kvstore (hash-get opt 'server))))
