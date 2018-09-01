@@ -29,7 +29,7 @@ module.exports = {
               collapsable: false,
               title: 'Standard Library Reference',
               children: ['', 'actor', 'coroutine', 'crypto', 'db', 'debug', 'errors', 'events', 'format', 'generic', 'getopt', 'httpd', 'iterators',
-                'lazy', 'logger', 'make', 'misc', 'net', 'os', 'parser', 'regexp', 'sockets', 'sort', 'srfi', 'stxparam', 'sugar',  'test', 'text',
+                'lazy', 'logger', 'make', 'misc', 'net', 'os', 'parser', 'regexp', 'requests', 'sockets', 'sort', 'srfi', 'stxparam', 'sugar',  'test', 'text',
                 'web', 'xml']
             }
           ]
