@@ -28,9 +28,7 @@ module.exports = {
             {
               collapsable: false,
               title: 'Standard Library Reference',
-              children: ['', 'actor', 'coroutine', 'crypto', 'db', 'debug', 'errors', 'events', 'format', 'generic', 'getopt', 'httpd', 'iterators',
-                'lazy', 'logger', 'make', 'misc', 'net', 'os', 'parser', 'regexp', 'requests', 'sockets', 'sort', 'srfi', 'stxparam', 'sugar',  'test', 'text',
-                'web', 'xml']
+              children:  ['', 'sugar', 'format', 'sort', 'regexp', 'getopt', 'generic', 'iterators', 'coroutine', 'events', 'actor', 'db', 'requests', 'httpd', 'web', 'xml', 'sockets', 'os', 'crypto',  'debug', 'errors', 'logger', 'misc', 'text', 'net', 'parser', 'lazy', 'stxparam', 'srfi', 'test', 'make']
             }
           ]
         },
