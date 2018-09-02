@@ -1,4 +1,4 @@
-## Common Syntactic Sugar
+# Common Syntactic Sugar
 
 The `:std/sugar` library provides common syntactic sugar and is used
 throughout the standard library. Note that this module has no runtime

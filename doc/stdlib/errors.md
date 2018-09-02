@@ -14,7 +14,7 @@
 
 Empty base class for library-defined exceptions.
 
-## <error>
+## &lt;error&gt;
 
 ::: tip usage
 ```
