@@ -44,6 +44,7 @@ with `getopt-parse`.
 according to the parser specification. If it is parsing a specification with
 subcommands, it returns two values, the command id and a hash table with the
 parsed options. Otherwise it just returns the hash table with the parsed options.
+An exception is raised if parsing the arguments fails.
 
 ### getopt-error?
 
@@ -68,15 +69,43 @@ tip:
  <getopt-error>
  <parser>
  <command>
-
-(getopt-display-help-topic <parser> topic program-name [port = (current-output-port)])
 ```
 :::
 
 The procedure `getopt-display-help` can be used to display
 a help message for a getopt error according to the argument specification.
+
+### getopt-display-help-topic
+::: tip usage
+```
+(getopt-display-help-topic <parser> topic program-name [port = (current-output-port)])
+```
+:::
+
 The procedure `getopt-display-help-topic` can be used to display a help page
 for a subcommand.
+
+### getopt?
+
+::: tip usage
+```
+(getopt? obj)
+=> boolean
+```
+:::
+
+Returns true if the object is a getopt parser
+
+### getopt-object?
+
+::: tip usage
+```
+(getopt-object? obj)
+=> boolean
+```
+:::
+
+Returns true if the object is a getopt command or command specifier.
 
 ## Example
 
