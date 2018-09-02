@@ -6,7 +6,7 @@ module.exports = {
           { text: 'Home', link: '/' },
           { text: 'Guide', link: '/guide/' },
           { text: 'Tutorials', link: '/tutorials/' },
-          { text: 'StdLib', link: '/stdlib/' },
+          { text: 'Reference', link: '/reference/' },
         ],
         sidebarDepth: 2,
         sidebar: {
@@ -24,10 +24,10 @@ module.exports = {
                children: ['', 'languages', 'kvstore', 'proxy', 'httpd']
              }
           ],
-          '/stdlib/': [
+          '/reference/': [
             {
               collapsable: false,
-              title: 'Standard Library Reference',
+              title: 'Gerbil Reference',
               children:  ['', 'sugar', 'errors', 'getopt', 'format', 'logger', 'sort', 'regexp', 'generic', 'iterators', 'coroutine', 'events', 'actor', 'requests', 'httpd', 'web', 'db', 'kvstore', 'sockets', 'os', 'crypto',  'debug', 'misc', 'net', 'text', 'xml', 'parser', 'lazy', 'stxparam', 'srfi', 'test', 'make']
             }
           ]
