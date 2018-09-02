@@ -1,4 +1,4 @@
-# Building Projects with Make
+# Build Tool
 
 ::: tip usage
 (import :std/make)
