@@ -31,8 +31,8 @@ actionLink: /guide/
         <h2>Modern Scheme Implementation</h2>
         <ul>
             <li>Supports current R*RS standards and common SRFIs</li>
-            <li>Multiresolution Macro System (The Macro is the Compiler</li>
-            <li>Fully exposes itself to the programmer (Compiler level operators are available to user programs)</li>
+            <li>State of the Art Macro and Module System</li>
+            <li>Fully exposes itself to the programmer</li>
             <li>Integrated FFI</li>
         </ul>
         <p>
