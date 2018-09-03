@@ -5,6 +5,15 @@ addition to all core Scheme and Gambit primitives.
 
 ## MOP
 
+### make-object
+::: tip usage
+```
+(make-object ...)
+```
+:::
+
+Please document me!
+
 ### object?
 ::: tip usage
 ```
@@ -18,15 +27,6 @@ Please document me!
 ::: tip usage
 ```
 (object-type ...)
-```
-:::
-
-Please document me!
-
-### make-object
-::: tip usage
-```
-(make-object ...)
 ```
 :::
 
