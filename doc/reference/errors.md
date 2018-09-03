@@ -6,21 +6,17 @@
 
 ## exception
 
-::: tip usage
 ```
 (defsyntax exception)
 ```
-:::
 
 Empty base class for library-defined exceptions.
 
 ## &lt;error&gt;
 
-::: tip usage
 ```
 (defsyntax <error>)
 ```
-:::
 
 Base class for commonly structured error objects.
 
@@ -31,11 +27,9 @@ It is a struct type with 3 fields:
 
 ## io-error
 
-::: tip usage
 ```
 (defstruct (io-error <error>) ())
 ```
-:::
 
 Errors raised by the standard library because of I/O conditions.
 
@@ -51,11 +45,9 @@ Raises an `io-error`.
 
 ## timeout-error
 
-::: tip usage
 ```
 (defstruct (timeout-error <error>) ())
 ```
-:::
 
 Errors raised by the standard library because of timeouts.
 
