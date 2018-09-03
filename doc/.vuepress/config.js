@@ -14,7 +14,7 @@ module.exports = {
             {
               collapsable: false,
               title: 'Guide',
-              children: ['', 'intro', 'getting-started', 'shell', 'package-manager', 'ffi', 'build', 'profiler', 'bootstrap', 'nix', 'r7rs', 'srfi', 'core-prelude']
+              children: ['', 'intro', 'getting-started', 'shell', 'package-manager', 'ffi', 'build', 'profiler', 'bootstrap', 'nix', 'r7rs', 'srfi']
             }
           ],
           '/tutorials/': [
@@ -28,7 +28,7 @@ module.exports = {
             {
               collapsable: false,
               title: 'Gerbil Reference',
-              children:  ['', 'sugar', 'errors', 'getopt', 'format', 'logger', 'sort', 'regexp', 'generic', 'iterators', 'coroutine', 'events', 'actor', 'requests', 'httpd', 'web', 'db', 'kvstore', 'sockets', 'net', 'os', 'crypto', 'misc', 'text', 'xml', 'parser', 'lazy', 'stxparam', 'srfi', 'test', 'debug', 'make']
+              children:  ['', 'core-prelude', 'core-builtin', 'stdlib', 'sugar', 'errors', 'getopt', 'format', 'logger', 'sort', 'regexp', 'generic', 'iterators', 'coroutine', 'events', 'actor', 'requests', 'httpd', 'web', 'db', 'kvstore', 'sockets', 'net', 'os', 'crypto', 'misc', 'text', 'xml', 'parser', 'lazy', 'stxparam', 'srfi', 'test', 'debug', 'make']
             }
           ]
         },
