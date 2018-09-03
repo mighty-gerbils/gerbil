@@ -874,7 +874,7 @@ which allows for easy reuse in custom languages.
 This includes the `<runtime>` prelude module, which is composed by the `<r5rs-runtime>` and
 `<host-runtime>` modules.
 
-#### `<r5rs-runtime>`
+#### &lt;r5rs-runtime&gt;
 
 Defines the following symbols as externs:
 ```
@@ -955,7 +955,7 @@ Defines the following symbols as externs:
     load
 ```
 
-#### `<host-runtime>`
+#### &lt;host-runtime&gt;
 
 Defines the following symbols as externs:
 ```
@@ -1129,7 +1129,7 @@ Also defines the following aliases:
 The bindings include `<runtime>` and `<expander-runtime>`, which contains symbols
 defined by the expander.
 
-#### `<expander-runtime>`
+#### &lt;expander-runtime&gt;
 
 Defines the following symbols as extern:
 ```
@@ -1218,7 +1218,7 @@ the core prelude, you need to import the extended symbols with
 
 The package module aggregates and re-exports the following modules.
 
-#### `:gerbil/gambit/bits`
+#### :gerbil/gambit/bits
 Symbols related to bit manipulation.
 
 ```
@@ -1230,7 +1230,7 @@ Symbols related to bit manipulation.
   replace-bit-field copy-bit-field
 ```
 
-#### `:gerbil/gambit/bytes`
+#### :gerbil/gambit/bytes
 Aliases u8vector to bytes names, `@bytes` macro.
 
 ```
@@ -1268,7 +1268,7 @@ Aliases u8vector to bytes names, `@bytes` macro.
   read-bytes
 ```
 
-#### `:gerbil/gambit/continuations`
+#### :gerbil/gambit/continuations
 Symbols related to continuation management.
 
 ```
@@ -1280,7 +1280,7 @@ Symbols related to continuation management.
 
 ```
 
-#### `:gerbil/gambit/exceptions`
+#### :gerbil/gambit/exceptions
 Symbols reated to gambit exceptions.
 
 ```
@@ -1416,7 +1416,7 @@ Symbols reated to gambit exceptions.
   invalid-hash-number-exception-arguments
 ```
 
-#### `:gerbil/gambit/fixnum`
+#### :gerbil/gambit/fixnum
 Symbols related to fixnum arithmetic.
 
 ```
@@ -1428,7 +1428,7 @@ Symbols related to fixnum arithmetic.
   fxwraplogical-shift-right fxwrapquotient
 ```
 
-#### `:gerbil/gambit/flonum`
+#### :gerbil/gambit/flonum
 Symbols related to flonum arithmetic.
 
 ```
@@ -1437,7 +1437,7 @@ Symbols related to flonum arithmetic.
   flnumerator fldenominator
 ```
 
-#### `:gerbil/gambit/foreign`
+#### :gerbil/gambit/foreign
 Symbols related to foreign objects.
 
 ```
@@ -1445,7 +1445,7 @@ Symbols related to foreign objects.
   foreign-release! foreign-released?
 ```
 
-#### `:gerbil/gambit/hash`
+#### :gerbil/gambit/hash
 Symbols related to hash-tables and hashing.
 
 ```
@@ -1470,7 +1470,7 @@ Symbols related to hash-tables and hashing.
   table-merge
 ```
 
-#### `:gerbil/gambit/hvectors`
+#### :gerbil/gambit/hvectors
 Symbols related to homogeneous numeric vectors.
 
 ```
@@ -1637,7 +1637,7 @@ Symbols related to homogeneous numeric vectors.
 
 ```
 
-#### `:gerbil/gambit/misc`
+#### :gerbil/gambit/misc
 Miscellaneous symbols.
 
 ```
@@ -1650,7 +1650,7 @@ Miscellaneous symbols.
   will-testator
   will-execute!
 ```
-#### `:gerbil/gambit/os`
+#### :gerbil/gambit/os
 OS-related symbols, including time.
 
 ```
@@ -1748,7 +1748,7 @@ OS-related symbols, including time.
   tty-text-attributes-set! tty-mode-set! tty-type-set!
 
 ```
-#### `:gerbil/gambit/ports`
+#### :gerbil/gambit/ports
 Symbols related to i/o ports, with a couple of Gerbil specific primitives.
 
 ```
@@ -1847,7 +1847,7 @@ Symbols related to i/o ports, with a couple of Gerbil specific primitives.
 
 ```
 
-#### `:gerbil/gambit/random`
+#### :gerbil/gambit/random
 Symbols related to pseudorandom number generation and initialization of default-random-source.
 
 ```
@@ -1863,7 +1863,7 @@ Symbols related to pseudorandom number generation and initialization of default-
   random-bytes random-source-make-bytes
 ```
 
-#### `:gerbil/gambit/readtables`
+#### :gerbil/gambit/readtables
 Readtable-related symbols.
 
 ```
@@ -1890,7 +1890,7 @@ Readtable-related symbols.
 
 ```
 
-#### `:gerbil/gambit/system`
+#### :gerbil/gambit/system
 Symbols related to the Gambit system.
 
 ```
@@ -1899,7 +1899,7 @@ Symbols related to the Gambit system.
   gc-report-set!
 ```
 
-#### `:gerbil/gambit/threads`
+#### :gerbil/gambit/threads
 
 Symbols related to thread programming; spawn and with-lock primitives.
 
