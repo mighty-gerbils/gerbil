@@ -1,1 +1,1 @@
-# Gerbil Runtime Builtins
+# Runtime Builtins

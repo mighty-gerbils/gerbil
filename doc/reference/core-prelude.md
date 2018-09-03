@@ -1,4 +1,4 @@
-# The Gerbil Core Prelude
+# The Core Prelude
 
 The Gerbil core prelude (`:gerbil/core`) implements the core Gerbil language.
 This is the language you get in the interpreter and the default language for
