@@ -1537,6 +1537,98 @@ Please document me!
 
 Please document me!
 
+## Syntax Objects
+
+### AST::t
+::: tip usage
+```
+(AST::t ...)
+```
+:::
+
+Please document me!
+
+### AST?
+::: tip usage
+```
+(AST? ...)
+```
+:::
+
+Please document me!
+
+### AST-e
+::: tip usage
+```
+(AST-e ...)
+```
+:::
+
+Please document me!
+
+### AST-source
+::: tip usage
+```
+(AST-source ...)
+```
+:::
+
+Please document me!
+
+### make-AST
+::: tip usage
+```
+(make-AST ...)
+```
+:::
+
+Please document me!
+
+### read-syntax
+::: tip usage
+```
+(read-syntax ...)
+```
+:::
+
+Please document me!
+
+### read-syntax-from-file
+::: tip usage
+```
+(read-syntax-from-file ...)
+```
+:::
+
+Please document me!
+
+### source-location?
+::: tip usage
+```
+(source-location? ...)
+```
+:::
+
+Please document me!
+
+### source-location-path?
+::: tip usage
+```
+(source-location-path? ...)
+```
+:::
+
+Please document me!
+
+### source-location-path
+::: tip usage
+```
+(source-location-path ...)
+```
+:::
+
+Please document me!
+
 ## System Information
 
 ### gerbil-system-version-string
