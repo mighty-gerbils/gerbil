@@ -904,46 +904,10 @@ Please document me!
 
 Please document me!
 
-### foldl1
-::: tip usage
-```
-(foldl1 ...)
-```
-:::
-
-Please document me!
-
-### foldl2
-::: tip usage
-```
-(foldl2 ...)
-```
-:::
-
-Please document me!
-
 ### foldl
 ::: tip usage
 ```
 (foldl ...)
-```
-:::
-
-Please document me!
-
-### foldr1
-::: tip usage
-```
-(foldr1 ...)
-```
-:::
-
-Please document me!
-
-### foldr2
-::: tip usage
-```
-(foldr2 ...)
 ```
 :::
 
@@ -958,46 +922,10 @@ Please document me!
 
 Please document me!
 
-### andmap1
-::: tip usage
-```
-(andmap1 ...)
-```
-:::
-
-Please document me!
-
-### andmap2
-::: tip usage
-```
-(andmap2 ...)
-```
-:::
-
-Please document me!
-
 ### andmap
 ::: tip usage
 ```
 (andmap ...)
-```
-:::
-
-Please document me!
-
-### ormap1
-::: tip usage
-```
-(ormap1 ...)
-```
-:::
-
-Please document me!
-
-### ormap2
-::: tip usage
-```
-(ormap2 ...)
 ```
 :::
 
@@ -1016,24 +944,6 @@ Please document me!
 ::: tip usage
 ```
 (filter ...)
-```
-:::
-
-Please document me!
-
-### filter-map1
-::: tip usage
-```
-(filter-map1 ...)
-```
-:::
-
-Please document me!
-
-### filter-map2
-::: tip usage
-```
-(filter-map2 ...)
 ```
 :::
 
