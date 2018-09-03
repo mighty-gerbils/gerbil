@@ -28,7 +28,7 @@ module.exports = {
             {
               collapsable: false,
               title: 'Gerbil Reference',
-              children:  ['', 'sugar', 'errors', 'getopt', 'format', 'logger', 'sort', 'regexp', 'generic', 'iterators', 'coroutine', 'events', 'actor', 'requests', 'httpd', 'web', 'db', 'kvstore', 'sockets', 'os', 'crypto',  'debug', 'misc', 'net', 'text', 'xml', 'parser', 'lazy', 'stxparam', 'srfi', 'test', 'make']
+              children:  ['', 'sugar', 'errors', 'getopt', 'format', 'logger', 'sort', 'regexp', 'generic', 'iterators', 'coroutine', 'events', 'actor', 'requests', 'httpd', 'web', 'db', 'kvstore', 'sockets', 'net', 'os', 'crypto', 'misc', 'text', 'xml', 'parser', 'lazy', 'stxparam', 'srfi', 'test', 'debug', 'make']
             }
           ]
         },
