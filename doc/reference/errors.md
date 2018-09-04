@@ -1,5 +1,7 @@
 # Exception Base Classes
 
+The `:std/error` library provides base classes for exceptions and errors.
+
 ::: tip usage
 (import :std/error)
 :::
