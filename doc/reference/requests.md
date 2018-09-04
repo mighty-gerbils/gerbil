@@ -6,19 +6,178 @@ The `:std/net/request` library provides an HTTP client interface.
 (import :std/net/request)
 :::
 
-```
-(import :std/net/request)
+## Request API
 
-;; exports:
-
-  http-get http-head http-post http-put http-delete http-options
-  request? request-url request-status request-status-text
-  request-headers
-  request-encoding request-encoding-set!
-  request-content
-  request-text
-  request-json
-  request-cookies
-  request-close
-  request-port
+### http-get
+::: tip usage
 ```
+(http-get ...)
+```
+:::
+
+Please document me!
+
+### http-head
+::: tip usage
+```
+(http-head ...)
+```
+:::
+
+Please document me!
+
+### http-post
+::: tip usage
+```
+(http-post ...)
+```
+:::
+
+Please document me!
+
+### http-put
+::: tip usage
+```
+(http-put ...)
+```
+:::
+
+Please document me!
+
+### http-delete
+::: tip usage
+```
+(http-delete ...)
+```
+:::
+
+Please document me!
+
+### http-options
+::: tip usage
+```
+(http-options ...)
+```
+:::
+
+Please document me!
+
+
+## Request Objects
+
+### request?
+::: tip usage
+```
+(request? ...)
+```
+:::
+
+Please document me!
+
+### request-url
+::: tip usage
+```
+(request-url ...)
+```
+:::
+
+Please document me!
+
+### request-status
+::: tip usage
+```
+(request-status ...)
+```
+:::
+
+Please document me!
+
+### request-status-text
+::: tip usage
+```
+(request-status-text ...)
+```
+:::
+
+Please document me!
+
+### request-headers
+::: tip usage
+```
+(request-headers ...)
+```
+:::
+
+Please document me!
+
+### request-encoding
+::: tip usage
+```
+(request-encoding ...)
+```
+:::
+
+Please document me!
+
+### request-encoding-set!
+::: tip usage
+```
+(request-encoding-set! ...)
+```
+:::
+
+Please document me!
+
+### request-content
+::: tip usage
+```
+(request-content ...)
+```
+:::
+
+Please document me!
+
+### request-text
+::: tip usage
+```
+(request-text ...)
+```
+:::
+
+Please document me!
+
+### request-json
+::: tip usage
+```
+(request-json ...)
+```
+:::
+
+Please document me!
+
+### request-cookies
+::: tip usage
+```
+(request-cookies ...)
+```
+:::
+
+Please document me!
+
+### request-close
+::: tip usage
+```
+(request-close ...)
+```
+:::
+
+Please document me!
+
+### request-port
+::: tip usage
+```
+(request-port ...)
+```
+:::
+
+Please document me!
