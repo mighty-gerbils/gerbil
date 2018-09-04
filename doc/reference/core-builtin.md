@@ -1666,3 +1666,138 @@ Please document me!
 :::
 
 Please document me!
+
+
+## Thread Primitives
+
+The following primitives are defined in the `:gerbil/gambit/threads` prelude module.
+
+::: tip usage
+(import :gerbil/gambit/threads)
+:::
+
+### spawn
+::: tip usage
+```
+(spawn ...)
+```
+:::
+
+Please document me!
+
+### spawn/name
+::: tip usage
+```
+(spawn/name ...)
+```
+:::
+
+Please document me!
+
+### spawn/group
+::: tip usage
+```
+(spawn/group ...)
+```
+:::
+
+Please document me!
+
+### spawn-actor
+::: tip usage
+```
+(spawn-actor ...)
+```
+:::
+
+Please document me!
+
+### spawn-thread
+::: tip usage
+```
+(spawn-thread ...)
+```
+:::
+
+Please document me!
+
+### thread-local-ref
+::: tip usage
+```
+(thread-local-ref ...)
+```
+:::
+
+Please document me!
+
+### thread-local-get
+::: tip usage
+```
+(thread-local-get ...)
+```
+:::
+
+Please document me!
+
+### thread-local-set!
+::: tip usage
+```
+(thread-local-set! ...)
+```
+:::
+
+Please document me!
+
+### thread-local-clear!
+::: tip usage
+```
+(thread-local-clear! ...)
+```
+:::
+
+Please document me!
+
+### thread-local-table
+::: tip usage
+```
+(thread-local-table ...)
+```
+:::
+
+Please document me!
+
+### unhandled-actor-exception-hook-set!
+::: tip usage
+```
+(unhandled-actor-exception-hook-set! ...)
+```
+:::
+
+Please document me!
+
+### current-thread-group
+::: tip usage
+```
+(current-thread-group ...)
+```
+:::
+
+Please document me!
+
+### with-exception-stack-trace
+::: tip usage
+```
+(with-exception-stack-trace ...)
+```
+:::
+
+Please document me!
+
+### with-lock
+::: tip usage
+```
+(with-lock ...)
+```
+:::
+
+Please document me!
