@@ -1,15 +1,52 @@
 # Coroutines
 
+Thread-based coroutines.
+
 ::: tip usage
 (import :std/coroutine)
 :::
 
-Library for thread-based coroutines.
-
+## coroutine
+::: tip usage
 ```
-(import :std/coroutine)
-
-;; exports:
-
-  coroutine coroutine? continue yield coroutine-stop!
+(coroutine ...)
 ```
+:::
+
+Please document me!
+
+## coroutine?
+::: tip usage
+```
+(coroutine? ...)
+```
+:::
+
+Please document me!
+
+## continue
+::: tip usage
+```
+(continue ...)
+```
+:::
+
+Please document me!
+
+## yield
+::: tip usage
+```
+(yield ...)
+```
+:::
+
+Please document me!
+
+## coroutine-stop!
+::: tip usage
+```
+(coroutine-stop! ...)
+```
+:::
+
+Please document me!
