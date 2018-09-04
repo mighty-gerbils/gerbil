@@ -1,12 +1,18 @@
 # Coroutines
 
-Thread-based coroutines.
+The `:std/coroutine` library provides support for thread-based coroutines.
 
 ::: tip usage
 (import :std/coroutine)
 :::
 
-## coroutine
+## Overview
+
+Please write me!
+
+## Interface
+
+### coroutine
 ::: tip usage
 ```
 (coroutine ...)
@@ -15,7 +21,7 @@ Thread-based coroutines.
 
 Please document me!
 
-## coroutine?
+### coroutine?
 ::: tip usage
 ```
 (coroutine? ...)
@@ -24,7 +30,7 @@ Please document me!
 
 Please document me!
 
-## continue
+### continue
 ::: tip usage
 ```
 (continue ...)
@@ -33,7 +39,7 @@ Please document me!
 
 Please document me!
 
-## yield
+### yield
 ::: tip usage
 ```
 (yield ...)
@@ -42,7 +48,7 @@ Please document me!
 
 Please document me!
 
-## coroutine-stop!
+### coroutine-stop!
 ::: tip usage
 ```
 (coroutine-stop! ...)
@@ -50,3 +56,7 @@ Please document me!
 :::
 
 Please document me!
+
+## Example
+
+Please write me!

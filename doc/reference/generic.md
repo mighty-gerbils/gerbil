@@ -1,11 +1,14 @@
 # Generics
 
-Generic methods.
+The `:std/generic` library provides support for generic methods.
 
 ::: tip usage
 (import :std/generic)
 :::
 
+## Overview
+
+Please write me!
 
 ## Macros
 
@@ -565,3 +568,8 @@ Please document me!
 ```
 
 Please document me!
+
+
+## Example
+
+Please write me!
