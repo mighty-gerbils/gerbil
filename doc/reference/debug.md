@@ -1,52 +1,190 @@
 # Debugging
 
-
-
-## std/debug/heap
-
-Heap debugging utilities
-
-```
+## Heap debugging utilities
+::: tip usage
 (import :std/debug/heap)
+:::
 
-;; exports:
-
-  memory-usage
-  heap-type-stats
-  dump-heap-stats!
-  walk-heap!
-  count-still
-  still-objects
-  still-objects/refcount
+### memory-usage
+::: tip usage
 ```
-
-## std/debug/memleak
-
-Memory leak debugging utilities
-
+(memory-usage ...)
 ```
+:::
+
+Please document me!
+
+### heap-type-stats
+::: tip usage
+```
+(heap-type-stats ...)
+```
+:::
+
+Please document me!
+
+### dump-heap-stats!
+::: tip usage
+```
+(dump-heap-stats! ...)
+```
+:::
+
+Please document me!
+
+### walk-heap!
+::: tip usage
+```
+(walk-heap! ...)
+```
+:::
+
+Please document me!
+
+### count-still
+::: tip usage
+```
+(count-still ...)
+```
+:::
+
+Please document me!
+
+### still-objects
+::: tip usage
+```
+(still-objects ...)
+```
+:::
+
+Please document me!
+
+### still-objects/refcount
+::: tip usage
+```
+(still-objects/refcount ...)
+```
+:::
+
+Please document me!
+
+
+## Memory leak debugging utilities
+::: tip usage
 (import :std/debug/memleak)
+:::
 
-;; exports:
-
-  heap-summary heap-summary-delta
-  dump-heap-summary!
-  watch-heap!
-
+### heap-summary
+::: tip usage
 ```
-
-## std/debug/threads
-
-Thread debugging utilities
-
+(heap-summary ...)
 ```
+:::
+
+Please document me!
+
+### heap-summary-delta
+::: tip usage
+```
+(heap-summary-delta ...)
+```
+:::
+
+Please document me!
+
+### dump-heap-summary!
+::: tip usage
+```
+(dump-heap-summary! ...)
+```
+:::
+
+Please document me!
+
+### watch-heap!
+::: tip usage
+```
+(watch-heap! ...)
+```
+:::
+
+Please document me!
+
+
+
+## Thread debugging utilities
+::: tip usage
 (import :std/debug/threads)
+:::
 
-;; exports:
-
-  dump-thread-stack-trace!
-  dump-thread!
-  dump-thread-group!
-  dump-thread-group!*
-  dump-all-threads!
+### dump-all-threads!
+::: tip usage
 ```
+(dump-all-threads! ...)
+```
+:::
+
+Please document me!
+
+### dump-all-threads/queue!
+::: tip usage
+```
+(dump-all-threads/queue! ...)
+```
+:::
+
+Please document me!
+
+### dump-thread-group!
+::: tip usage
+```
+(dump-thread-group! ...)
+```
+:::
+
+Please document me!
+
+### dump-thread-group!*
+::: tip usage
+```
+(dump-thread-group!* ...)
+```
+:::
+
+Please document me!
+
+### dump-thread!
+::: tip usage
+```
+(dump-thread! ...)
+```
+:::
+
+Please document me!
+
+### dump-thread-stack-trace!
+::: tip usage
+```
+(dump-thread-stack-trace! ...)
+```
+:::
+
+Please document me!
+
+### thread-queue-length
+::: tip usage
+```
+(thread-queue-length ...)
+```
+:::
+
+Please document me!
+
+### thread-queue-empty?
+::: tip usage
+```
+(thread-queue-empty? ...)
+```
+:::
+
+Please document me!
