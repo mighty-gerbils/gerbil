@@ -18,6 +18,7 @@ package: std/net
         :std/crypto/etc
         :std/text/json)
 (export
+  ;; TODO: this exports more than it needs to; restrict interface further.
   (except-out #t
               wamp-client wamp-reader
               session-details
