@@ -94,10 +94,8 @@ that should get you started:
   of setting up your Gerbil installation and writing your first code.
 - The [Gerbil Tutorial](https://cons.io/tutorials/) provides a few hands-on guides
   on Gerbil programming.
-- The [Gerbil Core Prelude](https://cons.io/guide/core-prelude.html) documents the core
-  language prelude.
-- The [Gerbil Standard Library](https://cons.io/stdlib/) is the documentation for the
-  Gerbil standard library.
+- The [Gerbil Reference](https://cons.io/reference/) is the reference documentation for the
+  Gerbil runtime and standard library.
 
 The documentation is automatically rendered online at [cons.io](https://cons.io).
 You can render it locally by running `doc/build.sh`, which will leave

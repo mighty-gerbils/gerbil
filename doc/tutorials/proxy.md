@@ -17,7 +17,7 @@ host primitives like `epoll` on Linux.
 
 This tutorial requires a very recent version of Gambit that supports raw devices ([gambit#272](https://github.com/gambit/gambit/pull/272)).
 
-The source code for the tutorial  is available at [$GERBIL_HOME/src/tutorial/proxy](../../src/tutorial/proxy).
+The source code for the tutorial is available at [$GERBIL_HOME/src/tutorial/proxy](https://github.com/vyzo/gerbil/tree/master/src/tutorial/proxy).
 The build script, `build.ss`, by default will build dynamkic executables for local use; there
 also is a rule `build.ss static` to build static executables you can deploy on servers.
 
@@ -36,14 +36,14 @@ the two proxy executables.
 
 ## A Transparent TCP Proxy
 
-The [transparent proxy](../../src/tutorial/proxy/tcp-proxy.ss) listens to a local port and
+The [transparent proxy](https://github.com/vyzo/gerbil/blob/master/src/tutorial/proxy/tcp-proxy.ss) listens to a local port and
 proxies all incoming connections to a specified remote server.
 
 ### The main function
 
 The main function of the proxy simply parses the arguments to the program using the
 `:std/getopt` library, and dispatches to `run` which is the server main loop:
-```
+```scheme
 (def (main . args)
   (def gopt
     (getopt (argument 'local help: "local address to bind")
@@ -61,7 +61,7 @@ The main function of the proxy simply parses the arguments to the program using 
 
 The main loop of the server creates a listening socket and accepts incoming connections.
 For each connection, it logs it and spawns a thread to proxy it:
-```
+```scheme
 (def (run local remote)
   (let* ((laddr (socket-address local))
          (raddr (socket-address remote))
@@ -89,7 +89,7 @@ threads piping data between the two ends. The programming should look familiar t
 anyone with experience with network programming with the socket API in nonblocking
 mode.
 
-```
+```scheme
 (def (proxy clisock raddr)
   (try
    (let* ((srvsock (socket (socket-address-family raddr) SOCK_STREAM))
@@ -173,7 +173,7 @@ Connection closed by foreign host.
 
 ## A SOCKS4 Proxy
 
-The [socks proxy](../../src/tutorial/proxy/socks-proxy.ss) listens to a local port and
+The [socks proxy](https://github.com/vyzo/gerbil/blob/master/src/tutorial/proxy/socks-proxy.ss) listens to a local port and
 proxies connections using the SOCKS4 protocol. The implementation uses synchronous I/O
 with the `:std/net/socket` package, which hides the nonblocking nature of the `:std/os/socket`
 interface and can utilize custom i/o schedulers with a socket server (eg epoll in Linux).
@@ -183,7 +183,7 @@ interface and can utilize custom i/o schedulers with a socket server (eg epoll i
 The function is very similar to the one in tcp-proxy, with the difference that it accepts
 a single argument -- the local address to bind:
 
-```
+```scheme
 (def (main . args)
   (def gopt
     (getopt (argument 'address help: "local address to bind")))
@@ -200,7 +200,7 @@ a single argument -- the local address to bind:
 
 The server main loop creates a listening socket to the specified
 address and then loops accepting connections to proxy:
-```
+```scheme
 (def (run address)
   (let* ((sa (socket-address address))
          (ssock (ssocket-listen sa)))
@@ -216,7 +216,7 @@ address and then loops accepting connections to proxy:
 ### The proxy function
 
 This procedure performs a handshake, establishes proxying according to the request:
-```
+```scheme
 (def (proxy clisock)
   (try
    (let (srvsock (proxy-handshake clisock))
@@ -228,7 +228,7 @@ This procedure performs a handshake, establishes proxying according to the reque
 
 The `proxy-handshake` function contains the details of the protocol implementation,
 ignoring supplied userids (it's anonymous proxy):
-```
+```scheme
 (def (proxy-handshake clisock)
   (try
    (let* ((hdr (make-u8vector 1024))
@@ -261,7 +261,7 @@ ignoring supplied userids (it's anonymous proxy):
 
 New connections are established with `proxy-connect`, while socket binding
 is preformed with `proxy-bind`:
-```
+```scheme
 (def (proxy-connect clisock addr)
   (let (srvsock (ssocket-connect addr))
     (try
@@ -321,7 +321,7 @@ is preformed with `proxy-bind`:
 The actual function of the proxy is perfomed with the `proxy-io` procedure, very similar
 to how the equinamed procedure in tcp-proxy. The difference is that it uses multiplexed I/O
 through the socket server:
-```
+```scheme
 (def (proxy-io isock osock)
   (def buf (make-u8vector 4096))
   (try

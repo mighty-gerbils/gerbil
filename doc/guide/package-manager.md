@@ -3,6 +3,7 @@
 Gerbil comes with a command line package manager, gxpkg, which allows you to install and manage packages distributed through github.
 Synopsis
 
+::: tip usage
 ```
 gxpkg install pkg ...
 gxpkg update pkg ...
@@ -13,8 +14,9 @@ gxpkg build pkg ...
 gxpkg list
 gxpkg retag
 ```
+:::
 
-Gerbil Packages
+## Gerbil Packages
 
 Any github repo can serve a Gerbil package, provided that it:
 
@@ -31,7 +33,8 @@ Any github repo can serve a Gerbil package, provided that it:
 You can use `:std/build-script` to get a template script definition from the package build-spec.
 
 See gerbil-utils for an example package.
-Examples
+
+## Examples
 
 To install fare's gerbil-utils package:
 
@@ -57,7 +60,7 @@ To rebuild all packages:
 
 `gxpkg build all`
 
-A Word of Caution
+## A Word of Caution
 
 The build script is currently not sandboxed; it runs with user priveleges and it is an arbitrary script. We originally planned to address this by creating a restricted sandbox language for package build scripts. But you can only go so far in a language that thrives in compile-time evaluation; remember, it's macros all the way!
 

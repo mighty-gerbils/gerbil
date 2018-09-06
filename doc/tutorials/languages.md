@@ -4,7 +4,7 @@ Here we explore language extensibility in Gerbil by definition of custom prelude
 
 ## Preliminaries
 
-The source code for all the examples is avilable at [$GERBIL_HOME/src/tutorial/lang](../../src/tutorial/lang).
+The source code for all the examples is avilable at [$GERBIL_HOME/src/tutorial/lang](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang).
 You should visit that directory and compile the tutorial custom preludes so that you can try out
 the examples in the interpreter:
 ```bash
@@ -63,7 +63,7 @@ For chained dotted references we want to invoke the dotted parts as methods:
 
 The [dot-app](../../src/tutorial/lang/dot-app.ss) prelude accomplishes this by redefining
 the `%%app` and `%%ref` expander hooks:
-```
+```scheme
 (defsyntax (my-%%app stx)
   (syntax-case stx ()
     ((_ rator . rands)
@@ -104,7 +104,7 @@ the root `%%app` and `%%ref` and causing an expansion loop.
 The module exports them renamed, together with all the exports of the core prelude
 to define a language that is just like core Gerbil but with special semantics for
 the dot in identifiers:
-```
+```scheme
 (import :gerbil/core) ;; so that we can re-export, prelude imports are weak
 (export (import: :gerbil/core)
         (rename: my-%%app %%app)
@@ -113,7 +113,7 @@ the dot in identifiers:
 ```
 
 The macros also need a couple of helper functions, defined for syntax:
-```
+```scheme
 (begin-syntax
   (def (dotted-identifier? stx)
     (and (identifier? stx)
@@ -128,7 +128,7 @@ The macros also need a couple of helper functions, defined for syntax:
 
 For a contrived example, consider the code in [example/my-app.ss](../../src/tutorial/lang/example/my-app.ss):
 
-```bash
+```scheme
 $ cat example/my-app.ss
 prelude: :tutorial/lang/dot-app
 
@@ -150,7 +150,7 @@ prelude: :tutorial/lang/dot-app
 ```
 
 We can see the result in the interpreter:
-```bash
+```
 $ gxi
 > (import "example/my-app")
 > (def a (make-A 1))
@@ -172,7 +172,7 @@ The premise is very simple: we want a language that automatically exports all bi
 similar to how Schemes without modules work.
 The [auto-export](../../src/tutorial/lang/auto-export.ss) prelude accomplishes this by
 redefining the `%%begin-module` expander:
-```
+```scheme
 (import :gerbil/core) ;; so that we can re-export
 (export (import: :gerbil/core)
         (rename: my-%%begin-module %%begin-module))
@@ -189,7 +189,7 @@ does is plaster an `(export #t)` and expand up the chain through the root `%%beg
 
 The [example](../../src/tutorial/lang/example/my-auto-export.ss) is a module
 with a single definition `greet` and no export directive in sight:
-```bash
+```scheme
 $ cat example/my-auto-export.ss
 prelude: :tutorial/lang/auto-export
 
@@ -200,7 +200,7 @@ prelude: :tutorial/lang/auto-export
 ```
 
 We can verify that `greet` is indeed exported in the interpreter:
-```bash
+```
 $ gxi
 > (import "example/my-auto-export")
 > (greet "world")
@@ -214,7 +214,7 @@ readers and `#lang` preludes.
 
 The [sexp](../../src/tutorial/lang/sexp.ss) prelude is a minimal module with a custom
 reader:
-```
+```scheme
 (import :gerbil/core) ;; so that we can re-export
 (export (import: :gerbil/core)
         (phi: +1 read-module-body))
@@ -232,7 +232,7 @@ to read s-expressions, so this language is identical to Gerbil core. However, it
 used as a `#lang` prelude, in contrast to the gerbil core prelude.
 
 The [example](../../src/tutorial/lang/example/my-sexp.ss) demonstrates just that:
-```bash
+```
 $ cat example/my-sexp.ss
 #lang :tutorial/lang/sexp
 (export #t)
@@ -428,7 +428,7 @@ null                            -> (NULL '())                    ; '()
 The [scuby](../../src/tutorial/lang/scuby.ss) prelude defines a custom module reader
 which parses scuby syntax and
 produces an AST. The reader is straightforward:
-```
+```scheme
 (import :gerbil/core
         (phi: +1
               :std/sugar

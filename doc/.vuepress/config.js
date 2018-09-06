@@ -6,7 +6,7 @@ module.exports = {
           { text: 'Home', link: '/' },
           { text: 'Guide', link: '/guide/' },
           { text: 'Tutorials', link: '/tutorials/' },
-          { text: 'StdLib', link: '/stdlib/' },
+          { text: 'Reference', link: '/reference/' },
         ],
         sidebarDepth: 2,
         sidebar: {
@@ -14,16 +14,21 @@ module.exports = {
             {
               collapsable: false,
               title: 'Guide',
-              children: ['', 'intro', 'getting-started', 'shell', 'package-manager', 'ffi', 'build', 'profiler', 'bootstrap', 'nix', 'r7rs', 'srfi', 'core-prelude']
+              children: ['', 'intro', 'getting-started', 'emacs', 'shell', 'env-vars', 'package-manager', 'ffi', 'build', 'profiler', 'bootstrap', 'nix', 'r7rs', 'srfi']
             }
           ],
-          '/stdlib/': [
+          '/tutorials/': [
+             {
+               collapsable: false,
+               title: 'Tutorials',
+               children: ['', 'languages', 'kvstore', 'proxy', 'httpd']
+             }
+          ],
+          '/reference/': [
             {
               collapsable: false,
-              title: 'Gerbil Standard Library Reference',
-              children: ['', 'actor', 'coroutine', 'crypto', 'db', 'debug', 'errors', 'events', 'format', 'generic', 'getopt', 'iterators',
-              'lazy', 'logger', 'make', 'misc', 'net', 'os', 'parser', 'regexp', 'sort', 'srfi', 'stxparam', 'sugar', 'test', 'text',
-              'web', 'xml']
+              title: 'Gerbil Reference',
+              children:  ['', 'core-prelude', 'core-builtin', 'core-expander', 'stdlib', 'sugar', 'errors', 'getopt', 'format', 'logger', 'sort', 'regexp', 'generic', 'iterators', 'coroutine', 'events', 'actor', 'requests', 'httpd', 'web', 'db', 'kvstore', 'sockets', 'net', 'os', 'crypto', 'text', 'xml', 'parser', 'misc', 'lazy', 'stxparam', 'srfi', 'test', 'debug', 'make']
             }
           ]
         },

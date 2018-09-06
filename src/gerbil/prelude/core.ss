@@ -314,6 +314,7 @@ package: gerbil
     current-module-reader-args
     local-context? top-context? module-context? prelude-context?
     expander-context-id  module-context-ns
+    module-context-import module-context-export module-context-code
     make-local-context
     eval-syntax core-expand core-expand-head core-expand-expression+1
     import-module eval-module

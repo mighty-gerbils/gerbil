@@ -6,7 +6,7 @@ In this tutorial we illustrate web programming with the embedded Gerbil http ser
 
 This tutorial requires a very recent version of Gambit that supports raw devices ([gambit#272](https://github.com/gambit/gambit/pull/272)).
 
-The source code for the tutorial  is available at [$GERBIL_HOME/src/tutorial/httpd](../../src/tutorial/httpd).
+The source code for the tutorial  is available at [$GERBIL_HOME/src/tutorial/httpd](https://github.com/vyzo/gerbil/tree/master/src/tutorial/httpd).
 You can build the source code using the build script:
 ```bash
 $ cd $GERBIL_HOME/src/tutorial/httpd
@@ -18,7 +18,7 @@ This builds a single binary, simpled, in the tutorial directory.
 
 ## A Simple Web Server
 
-The [server](../../src/tutorial/httpd/simpled.ss) binds by default in localhost:8080
+The [server](https://github.com/vyzo/gerbil/blob/master/src/tutorial/httpd/simpled.ss) binds by default in localhost:8080
 and handles 3 request URLs:
 - `/` which greets the requestor
 - `/echo` which echoes back the body of the request
@@ -31,7 +31,7 @@ The server `main` function uses getopt to parse arguments and then
 calls the `run` function. It starts an http server using the default
 handler multiplexer, and registers handlers using `http-register-handler`
 for the various paths we want to handle:
-```
+```scheme
 (def (main . args)
   (def gopt
     (getopt (option 'address "-a" "--address"
@@ -64,7 +64,7 @@ Request handlers are dispatched in a new thread.
 #### The `/` handler
 
 The root handler simply prints a hello message:
-```
+```scheme
 (def (root-handler req res)
   (http-response-write res 200 '(("Content-Type" . "text/plain"))
     (string-append "hello, " (inet-address->string (http-request-client req)) "\n")))
@@ -73,7 +73,7 @@ The root handler simply prints a hello message:
 #### The `/echo` handler
 
 The echo handler echoes back the body of the request:
-```
+```scheme
 (def (echo-handler req res)
   (let* ((content-type
           (assget "Content-Type" (http-request-headers req)))
@@ -92,7 +92,7 @@ either in plain text or in json if requested so with a `?json`
 parameter. The plain text handler uses the chunked response
 interface.
 
-```
+```scheme
 (def (headers-handler req res)
   (let (headers (http-request-headers req))
     (if (equal? (http-request-params req) "json")
@@ -120,7 +120,7 @@ The self handler responds by printing the server source code.
 The handler uses the `http-response-file` procedure, which sends
 a file as an http response using fast raw device i/o.
 
-```
+```scheme
 (def (self-handler req res)
   (http-response-file res '(("Content-Type" . "text/plain")) "simpled.ss"))
 ```
@@ -133,7 +133,7 @@ simply responds with a 404.
 
 Here, we registered a slightly friendlier handler that uses the force to
 print an informative message:
-```
+```scheme
 (def (default-handler req res)
   (http-response-write res 404 '(("Content-Type" . "text/plain"))
     "these aren't the droids you are looking for.\n"))
