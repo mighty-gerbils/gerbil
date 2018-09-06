@@ -150,7 +150,7 @@ package: std/misc
 ;; Short hand for the print-representation function
 ;; : <- Any (Optional Port) (Optional Table)
 
-(def pr (values print-representation))
+(defalias pr print-representation)
 
 ;; Print a representation, then print a newline
 ;; : <- Any (Optional Port) (Optional Table)

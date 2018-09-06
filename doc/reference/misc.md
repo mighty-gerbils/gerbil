@@ -749,7 +749,7 @@ new methods on `:pr`, as in:
 ### pr
 ::: tip usage
 ```
-(pr ...)
+(defalias pr print-representation)
 ```
 :::
 
