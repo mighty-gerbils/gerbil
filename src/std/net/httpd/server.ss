@@ -94,7 +94,8 @@ package: std/net/httpd
 
   (try
    (for-each monitor acceptors)
-   (loop)
+   (parameterize ((current-http-server (current-thread)))
+     (loop))
    (catch (e)
      (log-error "unhandled exception" e)
      (raise e))
