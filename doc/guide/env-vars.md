@@ -5,7 +5,6 @@ and toolchain:
 - `GERBIL_HOME`
 - `GERBIL_PATH`
 - `GERBIL_LOADPATH`
-- `GERBIL_CACHE`
 
 ## GERBIL_HOME
 
@@ -41,10 +40,3 @@ This is colon separated a list of directories to be appended to the
 runtime load path.  You can use this for loading site specific
 libraries. By default it's unset, which is equivalent to an empty
 value.
-
-
-## GERBIL_CACHE
-
-This is a directory that can be used by the compiler to cache intermediate
-files during compilation of executables. If it's not set, it defaults to
-`~/.cache/gerbil`.
