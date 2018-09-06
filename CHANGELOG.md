@@ -1,3 +1,72 @@
+### 9-6-2018: Gerbil-v0.13
+
+The focus on performance, fixes, and documentation.
+
+- New documentation website: https://cons.io
+- prelude
+  - core:
+    - optimize case macro to do index-based binary search dispatch
+    - defconst macro
+  - gerbil/gambit/threads: thread-local variables
+- runtime
+  - the destroy method binding for ports was moved to :std/misc/ports
+- compiler
+  - full program optimization for static executables
+  - deterministic names for lifted opt-lambdas
+  - no longer needs GERBIL_CACHE to compile executables
+  - inline cons*, specialize 2 argument foldings (foldl, foldr, andmap, ormap, filter-map)
+  - inline values-count, values-ref, values->list
+  - compile time check values count where possible
+  - optimize keyword lambda dispatch
+  - sanitize core file names [#33]
+  - fix recursion bug in optimizer introduced symbol resolution
+  - fix handling of optimizer introduced symbols; if it's a naked symbol, it was introduced
+  - optimize match expansion; match tree fusion and common structural check elimination
+  - optimize syntax-case expansion
+  - optimize code for phi>0
+  - don't compile debug symbols in phi in env/src debug levels; use env/phi and src/phi instead
+  - arity checking for all direct calls to procedures of known arity
+- expander
+  - tuning and performance optimizations: 2x gxi startup time improvement
+  - #lang reader has a default read-module-body for sexp syntax
+- stdlib
+  - std/actor: send never queues messages for dead or uninitialized threads
+  - std/iter: speculatively inline list iteration in for macros
+  - std/make:
+    - static-include: build directive
+    - pkg-config helpers
+  - std/misc
+    - [new] std/misc/lru: LRU caches
+    - [new] std/misc/lazy: R7RS/SRFI-45 iterative lazy algorithm primives
+    - [new] std/misc/text: include-text macro
+  - std/net
+    - std/net/httpd:
+      - http-response-file for serving files
+      - http-response-chunk accepts range arguments
+    - std/net/websocket: hard close websockets
+    - std/net/socket: support kqueue server in BSDs
+  - std/text/utf8: string-utf8-length accepts substring range
+  - std/os
+    - std/os/fdio: add open system call
+    - std/os/socket: system undefined constants have a value of #f
+    - std/os/fcntl: more linux specific constants
+    - [new] std/os/kqueue: kqueue support for BSDs
+  - std/srfi/1: tune for dispatch perfomance
+- r7rs compliance
+  - read-string, write-string
+  - member, assoc, map, for-each
+  - case else =>
+  - guard
+  - string/vector->list string/vector-fill!
+  - fix eval in executables; implicitly load expander as needed
+  - implement input-port-open? and output-port-open?
+  - r7rs cond-expand, understands library features
+  - fix make-promise
+  - implement delay-force using :std/misc/lazy
+- tools
+  - gxprof samples at 1kHz
+
+
 ### 2-27-2018: Gerbil-v0.12
 
 The 1500 commit monster has landed!
