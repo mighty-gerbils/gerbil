@@ -70,7 +70,7 @@ M-x compile-current-buffer
 ```
 
 These functions import, reload, and compile the source module visited by
-the current buffer respectively. They link syntax errors back to ths source
+the current buffer respectively. They link syntax errors back to the source
 by popping the offending buffer at the point of offense.
 
 ```

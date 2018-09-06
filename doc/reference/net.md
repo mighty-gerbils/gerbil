@@ -40,7 +40,7 @@ REPL> (std/net/repl#taint! [tgroup])
 
 Taints a thread-group, redirecting its repl ports to the repl server ports.
 This is necessary to visit threads in the debugger.
-Returns the thread-groupspecific state.
+Returns the thread-group specific state.
 
 ### untaint!
 ::: tip usage

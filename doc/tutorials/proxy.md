@@ -17,7 +17,7 @@ host primitives like `epoll` on Linux.
 
 This tutorial requires a very recent version of Gambit that supports raw devices ([gambit#272](https://github.com/gambit/gambit/pull/272)).
 
-The source code for the tutorial  is available at [$GERBIL_HOME/src/tutorial/proxy](https://github.com/vyzo/gerbil/tree/master/src/tutorial/proxy).
+The source code for the tutorial is available at [$GERBIL_HOME/src/tutorial/proxy](https://github.com/vyzo/gerbil/tree/master/src/tutorial/proxy).
 The build script, `build.ss`, by default will build dynamkic executables for local use; there
 also is a rule `build.ss static` to build static executables you can deploy on servers.
 
