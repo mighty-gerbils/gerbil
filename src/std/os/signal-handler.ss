@@ -174,12 +174,13 @@ package: std/os
      (namespace ("std/os/signal-handler#"
                  SIG_IGN
                  set-signal!))
-     
+
      (define SIG_IGN
        ((c-lambda () (pointer "void") "___return((void *)SIG_IGN);")))
 
      (define set-signal!
-       (c-lambda (int (pointer "void")) (pointer "void") "signal"))))
+       (c-lambda (int (pointer "void")) (pointer "void")
+            "___return((void*)signal(___arg1, (void (*)(int))(___arg2)));"))))
 
   (else
    (def (make-signal-handler)
