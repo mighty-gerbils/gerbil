@@ -1144,227 +1144,279 @@ Same as `plist->hash-table`, but using `eqv?` as the test function for the table
 ### make-list
 ::: tip usage
 ```
-(make-list ...)
+(make-list len [val = #f])
+=> list
 ```
 :::
 
-Please document me!
+Creates a `len` element list, with value `val`.
 
 ### cons*
 ::: tip usage
 ```
-(cons* ...)
+(cons* x y ... tail)
+=> (cons x (cons y ... (cons ... tail)))
 ```
 :::
 
-Please document me!
+Conses `x`, `y`, ... to `tail`.
 
 ### foldl
 ::: tip usage
 ```
-(foldl ...)
+(foldl f iv . lsts)
+  f    := procedure
+  iv   := any
+  lsts := lists
+=> any
 ```
 :::
 
-Please document me!
+Left fold.
 
 ### foldr
 ::: tip usage
 ```
-(foldr ...)
+(foldr f iv . lsts)
+  f    := procedure
+  iv   := any
+  lsts := lists
+=> any
 ```
 :::
 
-Please document me!
+Right fold.
 
 ### andmap
 ::: tip usage
 ```
-(andmap ...)
+(andmap f . lsts)
+  f    := procedure
+  lsts := lists
+=> boolean
 ```
 :::
 
-Please document me!
+Boolean and fold.
 
 ### ormap
 ::: tip usage
 ```
-(ormap ...)
+(ormap f . lsts)
+  f    := procedure
+  lsts := lists
+=> any
 ```
 :::
 
-Please document me!
+Boolean or fold.
 
 ### filter
 ::: tip usage
 ```
-(filter ...)
+(filter f lst)
+  f   := procedure
+  lst := list
+=> list
 ```
 :::
 
-Please document me!
+Returns a new list including only elements `x` for which `(f x)` is true.
 
 ### filter-map
 ::: tip usage
 ```
-(filter-map ...)
+(filter-map f . lsts)
+  f     := procedure
+  lsts := lists
+=> list
 ```
 :::
 
-Please document me!
+Filter and map; returns a new list including the true results of `(f x y ...)`,
+where `x`, `y`, ... are the elements of each list in `lsts`.
 
 ### iota
 ::: tip usage
 ```
-(iota ...)
+(iota count [start = 0] [step = 1])
+  count := fixnum; elements in the list
+  start,step := number
+=> list
 ```
 :::
 
-Please document me!
+Returns a list of `count` elements, iteratating from `start` and adding `step` on
+each iteration.
 
 ### last-pair
 ::: tip usage
 ```
-(last-pair ...)
+(last-pair obj)
+  obj := pair or
+=> pair
 ```
 :::
 
-Please document me!
+Returns the last pair in the tail of `obj`; ie the tail pair of a (possibly improper) list.
 
 ### last
 ::: tip usage
 ```
-(last ...)
+(last obj)
+  obj := pair
+=> (car (last-pair obj))
 ```
 :::
 
-Please document me!
+Returns the car of the last pair of `obj`.
 
 ### assgetq
 ::: tip usage
 ```
-(assgetq ...)
+(assgetq key alist [default = #f])
+  key   := any
+  alist := associative list
+=> any
 ```
 :::
 
-Please document me!
+Returns the value associated with `key` in `alist`, using `eq?` for
+the key comparison.  If the key is not found, then if `default` is a
+procedure it is applied on the `key`. Otherwise returns `default`.
 
 ### assgetv
 ::: tip usage
 ```
-(assgetv ...)
+(assgetv key alist [default = #f])
+  key   := any
+  alist := associative list
+=> any
 ```
 :::
 
-Please document me!
+Like `assgetq`, but uses `eqv?` for the key comparison.
 
 ### assget
 ::: tip usage
 ```
-(assget ...)
+(assget key alist [default = #f])
+  key   := any
+  alist := associative list
+=> any
 ```
 :::
 
-Please document me!
-
-### assget*
-::: tip usage
-```
-(assget* ...)
-```
-:::
-
-Please document me!
+Like `assgetq`, but uses `equal?` for the key comparison.
 
 ### pgetq
 ::: tip usage
 ```
-(pgetq ...)
+(pgetq key plist [default = #f])
+  key   := any
+  plist := property list
+=> any
 ```
 :::
 
-Please document me!
+Like `assgetq`, but for plists.
 
 ### pgetv
 ::: tip usage
 ```
-(pgetv ...)
+(pgetv key plist [default = #f])
+  key   := any
+  plist := property list
+=> any
 ```
 :::
 
-Please document me!
+Like `assgetv`, but for plists.
 
 ### pget
 ::: tip usage
 ```
-(pget ...)
+(pget key plist [default = #f])
+  key   := any
+  plist := property list
+=> any
 ```
 :::
 
-Please document me!
-
-### pget*
-::: tip usage
-```
-(pget* ...)
-```
-:::
-
-Please document me!
+Like `assget`, but for plists.
 
 ### find
 ::: tip usage
 ```
-(find ...)
+(find pred lst)
+  pred := procedure
+  lst  := list
+=> any
 ```
 :::
 
-Please document me!
+Returns the first element in `lst` that satisfies `pred`.
 
 ### memf
 ::: tip usage
 ```
-(memf ...)
+(memf pred lst)
+  pred := procedure
+  lst  := list
+=> pair or #f
 ```
 :::
 
-Please document me!
+Generalization of `member`; returns the first pair in `lst` whose `car`
+satisfies `pred`.
 
 ### remove
 ::: tip usage
 ```
-(remove ...)
+(remove el lst [=? = equal?])
+  el  := any
+  lst := list
+=> list
 ```
 :::
 
-Please document me!
+Returns `lst` removing the first element `x` that satisfies `(=? el x)`.
 
 ### remv
 ::: tip usage
 ```
-(remv ...)
+(remv el lst)
+  el  := any
+  lst := list
+=> list
 ```
 :::
 
-Please document me!
+Apply `remove` using `eqv?` as the comparator.
 
 ### remq
 ::: tip usage
 ```
-(remq ...)
+(remq el lst)
+  el  := any
+  lst := list
+=> list
 ```
 :::
 
-Please document me!
+Apply `remove` using `eq?` as the comparator.
 
 ### remf
 ::: tip usage
 ```
-(remf ...)
+(remf pred lst)
+  pred := procedure
+  lst  := list
+=> list
 ```
 :::
 
-Please document me!
+Like `remove`, but removes the first element `x` that satisfies `(pred x)`
 
 ## Numerics
 
