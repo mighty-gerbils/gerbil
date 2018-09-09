@@ -1423,56 +1423,67 @@ Like `remove`, but removes the first element `x` that satisfies `(pred x)`
 ### 1+
 ::: tip usage
 ```
-(1+ ...)
+(1+ num)
+  num := number
+=> number
 ```
 :::
 
-Please document me!
+Increment by 1.
 
 ### 1-
 ::: tip usage
 ```
-(1- ...)
+(1- num)
+  num := number
+=> number
 ```
 :::
 
-Please document me!
+Decrement by 1.
 
 ### fx1+
 ::: tip usage
 ```
-(fx1+ ...)
+(fx1+ num)
+  num := fixnum
+=> fixnum
 ```
 :::
 
-Please document me!
+Increment a fixnum by 1.
 
 ### fx1-
 ::: tip usage
 ```
-(fx1- ...)
+(fx1- num)
+  num := fixnum
+=> fixnum
 ```
 :::
 
-Please document me!
+Decrement a fixnum by 1.
 
 ### fxshift
 ::: tip usage
 ```
-(fxshift ...)
+(fxshift num shift)
+=> fixnum
 ```
 :::
 
-Please document me!
+Shift a fixnum arithmetically; same as `fxarithmetic-shift`.
 
 ### fx/
 ::: tip usage
 ```
-(fx/ ...)
+(fx/ x y)
+  x, y := fixnum
+=> fixnum
 ```
 :::
 
-Please document me!
+Perform fixnum division; same as `fxquotient`.
 
 ### nonnegative-fixnum?
 ::: tip usage
@@ -1486,133 +1497,183 @@ Returns true if the object is a non-negative fixnum.
 
 ## Symbols
 
-### interned-symbol?
-::: tip usage
-```
-(interned-symbol? ...)
-```
-:::
-
-Please document me!
-
 ### make-symbol
 ::: tip usage
 ```
-(make-symbol ...)
+(make-symbol . templates)
+=> symbol
+
+template:
+ string
+ symbol
+ keyword
+ number
 ```
 :::
 
-Please document me!
+Creates a symbol concatenating the arguments.
+
+### interned-symbol?
+::: tip usage
+```
+(interned-symbol? obj)
+=> boolean
+```
+:::
+
+Returns true if the object is an intermed symbol.
+
 
 ### interned-keyword?
 ::: tip usage
 ```
-(interned-keyword? ...)
+(interned-keyword? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is an intermed keyword.
 
 ### symbol-&gt;keyword
 ::: tip usage
 ```
-(symbol->keyword ...)
+(symbol->keyword sym)
+  sym := symbol
+=> keyword
 ```
 :::
 
-Please document me!
+Converts a symbol to a keyword.
 
 ### keyword-&gt;symbol
 ::: tip usage
 ```
-(keyword->symbol ...)
+(keyword->symbol kw)
+  kw := keyword
+=> symbol
 ```
 :::
 
-Please document me!
+Converts a keyword to a symbol
 
 ## Strings
 
 ### bytes-&gt;string
 ::: tip usage
 ```
-(bytes->string ...)
+(bytes->string bstr [encoding = 'UTF-8])
+  bstr := u8vector
+=> string
 ```
 :::
 
-Please document me!
+Decodes a byte vector to a string.
+
+Note: if you are decoding UTF-8, then you should consider using `string->utf8`
+from `:std/text/utf8` which is considerably faster.
 
 ### string-&gt;bytes
 ::: tip usage
 ```
-(string->bytes ...)
+(string->bytes str [encoding = 'UTF-8])
+  str := string
+=> u8vector
 ```
 :::
 
-Please document me!
+Encodes a string to a bytevector.
+
+Note: if you are encoding UTF-8, then you should consider using `utf8->string`
+from `:std/text/utf8` which is considerably faster.
+
 
 ### substring-&gt;bytes
 ::: tip usage
 ```
-(substring->bytes ...)
+(substring->bytes str start end [encoding = 'UTF-8])
+  str := string
+  start, end := fixnum
+=> u8vector
 ```
 :::
 
-Please document me!
+Encodes a substring to a vector.
+
+Note: if you are encoding UTF-8, then you should consider using `utf8-encode`
+from `:std/text/utf8` which is considerably faster.
+
 
 ### string-empty?
 ::: tip usage
 ```
-(string-empty? ...)
+(string-empty? str)
+  str := string
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if `str` is the empty string.
 
 ### string-prefix?
 ::: tip usage
 ```
-(string-prefix? ...)
+(string-prefix? str prefix)
+  str, prefix := string
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if `prefix` is a prefix of `string`.
 
 ### string-index
 ::: tip usage
 ```
-(string-index ...)
+(string-index str char [start = 0])
+  str   := string
+  char  := character
+  start := fixnum
+=> fixnum or #f
 ```
 :::
 
-Please document me!
+Returns the index of the first occurence of `char` in `str`.
 
 ### string-rindex
 ::: tip usage
 ```
-(string-rindex ...)
+(string-rindex str char [start = #f])
+  str   := string
+  char  := character
+  start := fixnum or #f
+=> fixnum or #f
+
 ```
 :::
 
-Please document me!
+Returns the index of the first occurence from the right of `char` in `str`.
 
 ### string-split
 ::: tip usage
 ```
-(string-split ...)
+(string-split str char)
+  str  := string
+  char := character; separator
+=> list
 ```
 :::
 
-Please document me!
+Splits `str` into substrings using `char` as the separator.
 
 ### string-join
 ::: tip usage
 ```
-(string-join ...)
+(string-join strs char)
+  str  := list of strings
+  char := character; separator
 ```
 :::
 
-Please document me!
+Joins `strs` into a string, using `char` as the separator.
 
 ## Control Flow
 
