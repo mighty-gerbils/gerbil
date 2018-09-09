@@ -5,455 +5,637 @@ addition to all core Scheme and Gambit primitives.
 
 ## MOP
 
+See the [Guide](/guide/intro.md#structs-and-classes)
+for an introduction to Gerbil's object system.
+These procedures provide the meta-object protocol.
+
 ### make-object
 ::: tip usage
 ```
-(make-object ...)
+(make-object class fields)
+  class := type-descriptor; the class of the constructed object
+  fields := the number of fields in the object
+=> object
 ```
 :::
 
-Please document me!
+Creates an object with class `class` and `fields` fields.
 
 ### object?
 ::: tip usage
 ```
-(object? ...)
+(object? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if `obj` is an object instance.
 
 ### object-type
 ::: tip usage
 ```
-(object-type ...)
+(object-type obj)
+  obj := object
+=> type
 ```
 :::
 
-Please document me!
+Returns the class of an object; `obj` _must_ be an object instance.
 
 ### type-descriptor?
 ::: tip usage
 ```
-(type-descriptor? ...)
+(type-descriptor? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if `obj` is a runtime type descriptor.
 
 ### struct-type?
 ::: tip usage
 ```
-(struct-type? ...)
+(struct-type? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if `obj` is a struct type descriptor.
 
 ### class-type?
 ::: tip usage
 ```
-(class-type? ...)
+(class-type? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if `obj` is a class type descriptor.
 
 ### struct-subtype?
 ::: tip usage
 ```
-(struct-subtype? ...)
+(struct-subtype? a b)
+  a, b := type-descriptor
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if `b` is a struct subtype of `a`; `a` and `b` _must_ be type descriptors.
 
-### struct-instance?
-::: tip usage
-```
-(struct-instance? ...)
-```
-:::
-
-Please document me!
-
-### direct-struct-instance?
-::: tip usage
-```
-(direct-struct-instance? ...)
-```
-:::
-
-Please document me!
+This procedures checks the inheritance chain of `b`; `b` is a struct subtype
+of `a` if it is included in `b`'s inheritance chain.
 
 ### class-subtype?
 ::: tip usage
 ```
-(class-subtype? ...)
+(class-subtype? a b)
+  a, b := type-descriptor
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if `b` is a class subtype of `a`; `a` and `b` _must_ be type descriptors.
+
+This procedures checks the linearized mixin list of `b`; `b` is a class subtype
+of `a` if it is included in `b`'s mixins.
+
+### struct-instance?
+::: tip usage
+```
+(struct-instance? klass obj)
+  klass := type-descriptor
+=> boolean
+```
+:::
+
+Returns true if `obj` is a struct instance of `klass`.
+
+This procedures checks the inheritance chain of `obj`'s type; `obj` is a struct
+instance of `klass` if it is an object and its type is includes `klass` in its
+inheritance chain.
+
+### direct-struct-instance?
+::: tip usage
+```
+(direct-struct-instance? klass obj)
+  klass := type-descriptor
+=> boolean
+```
+:::
+
+Returns true if `obj` is an immediate instance of `klass`.
 
 ### class-instance?
 ::: tip usage
 ```
-(class-instance? ...)
+(class-instance? klass obj)
+  klass := type-descriptor
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if `obj` is a class instance of `klass`.
+
+This procedures checks the linearized mixin list of `obj`'s type; `obj` is a class
+instance of `klass` if it is an object and its type is includes `klass` in its
+mixin list.
 
 ### direct-class-instance?
 ::: tip usage
 ```
-(direct-class-instance? ...)
+(direct-class-instance? klass obj)
+  klass := type-descriptor
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if `obj` is an immediate instance of `klass`.
+
+Note: this procedure is the same as `direct-struct-instance?`.
+The two procedures exist with different names for historical reasons, and should
+be aliased to a single `direct-instance?` procedure in the near future.
 
 ### make-struct-type
 ::: tip usage
 ```
-(make-struct-type ...)
+(make-struct-type id super fields name plist ctor [field-names = #f])
+  id     := symbol; the type id
+  super  := type-descriptor or #f; the struct type to inherit from
+  fields := fixnum; number of (new) fields in the type
+  name   := symbol; the (displayed) type name
+  plist  := alist; type properties
+  ctor   := symbol or #f; id of constructor method
+  field-names := list of symbols or #f; (displayed) field names
+=> type-descriptor
+
+plist elements:
+ (transparent: . boolean) ; controls whether the object is transparent
+                            in equality and printing
+ (final: . boolean)       ; controls whether the class if final
+ (print: field ...)       ; printable field names
+ (equal: field ...)       ; equality comparable field names
 ```
 :::
 
-Please document me!
+Creates a new struct type descriptor.
 
 ### make-struct-predicate
 ::: tip usage
 ```
-(make-struct-predicate ...)
+(make-struct-predicate klass)
+  klass := type-descriptor
+=> procedure
 ```
 :::
 
-Please document me!
+Creates a struct instance predicate for instances of `klass`.
 
 ### make-struct-field-accessor
 ::: tip usage
 ```
-(make-struct-field-accessor ...)
+(make-struct-field-accessor klass field)
+  klass := type-descriptor
+  field := fixnum
+=> procedure
 ```
 :::
 
-Please document me!
+Creates a `klass` instance accessor for field `field` (relative to super).
 
 ### make-struct-field-mutator
 ::: tip usage
 ```
-(make-struct-field-mutator ...)
+(make-struct-field-mutator klass field)
+  klass := type-descriptor
+  field := fixnum
+=> procedure
 ```
 :::
 
-Please document me!
+Creates a `klass` instance mutator for field `field` (relative to super).
 
 ### make-struct-field-unchecked-accessor
 ::: tip usage
 ```
-(make-struct-field-unchecked-accessor ...)
+(make-struct-field-unchecked-accessor klass field)
+  klass := type-descriptor
+  field := fixnum
+=> procedure
+
 ```
 :::
 
-Please document me!
+Like `make-struct-field-accessor`, but the accesor is unchecked.
 
 ### make-struct-field-unchecked-mutator
 ::: tip usage
 ```
-(make-struct-field-unchecked-mutator ...)
+(make-struct-field-unchecked-mutator klass field)
+  klass := type-descriptor
+  field := fixnum
+=> procedure
 ```
 :::
 
-Please document me!
-
-### struct-field-offset
-::: tip usage
-```
-(struct-field-offset ...)
-```
-:::
-
-Please document me!
-
-### struct-field-ref
-::: tip usage
-```
-(struct-field-ref ...)
-```
-:::
-
-Please document me!
-
-### struct-field-set!
-::: tip usage
-```
-(struct-field-set! ...)
-```
-:::
-
-Please document me!
-
-### unchecked-field-ref
-::: tip usage
-```
-(unchecked-field-ref ...)
-```
-:::
-
-Please document me!
-
-### unchecked-field-set!
-::: tip usage
-```
-(unchecked-field-set! ...)
-```
-:::
-
-Please document me!
+Like `make-struct-field-mutator`, but the mutator is unchecked.
 
 ### make-struct-instance
 ::: tip usage
 ```
-(make-struct-instance ...)
+(make-struct-instance klass . args)
+  klass := type-descriptor
+=> object
 ```
 :::
 
-Please document me!
+Creates a new instance of `klass`. If there is a constructor method,
+it will be invoked with `args` on a freshly allocated object.
+Otherwise, the object is initialized with `args`, which must have the
+same length as the struct has fields.
 
 ### struct-instance-init!
 ::: tip usage
 ```
-(struct-instance-init! ...)
+(struct-instance-init! obj . args)
 ```
 :::
 
-Please document me!
+Initializes `obj` by setting its fields to `args` from left to right.
+If there are more fields than arguments, then they are left uninitialized.
+It is an error if there are more arguments than fields in the object.
+
+### struct-field-offset
+::: tip usage
+```
+(struct-field-offset klass field)
+  klass := type-descriptor
+  field := fixnum
+=> fixnum
+```
+:::
+
+Returns the absolute field offset for `klass`'s field `field`.
+
+### struct-field-ref
+::: tip usage
+```
+(struct-field-ref klass obj off)
+  klass := type-descriptor
+  obj := instance of klass
+  off := fixnum; absolute field offset
+=> any
+```
+:::
+
+Accesses `obj`'s field with absolute offset `off`;
+`obj` is checked to be an instance of `klass`.
+
+### struct-field-set!
+::: tip usage
+```
+(struct-field-set! klass obj off val)
+(struct-field-ref klass obj off)
+  klass := type-descriptor
+  obj := instance of klass
+  off := fixnum; absolute field offset
+  val := any
+```
+:::
+
+Mutates `obj`'s field with absolute offset `off` to `val`;
+`obj` is checked to be an instance of `klass`.
+
+### unchecked-field-ref
+::: tip usage
+```
+(unchecked-field-ref obj off)
+  obj := instance of klass
+  off := fixnum; absolute field offset
+=> any
+```
+:::
+
+Accesses `obj`'s field with absolute offset `off`; there is no type check.
+
+### unchecked-field-set!
+::: tip usage
+```
+(unchecked-field-set! obj off val)
+```
+:::
+
+Mutates `obj`'s field with absolute offset `off` to `val`; there is no type check.
 
 ### struct-&gt;list
 ::: tip usage
 ```
-(struct->list ...)
+(struct->list obj)
+=> list
 ```
 :::
 
-Please document me!
+Converts an object to a list, which conses its type and to its fields.
 
 ### make-class-type
 ::: tip usage
 ```
-(make-class-type ...)
+(make-class-type id super slots name plist ctor)
+  id     := symbol; the type id
+  super  := list of type-descriptors or #f; super types
+  slots  := list of symbols; class slot names
+  plist  := alist; type properties
+  ctor   := symbol or #f; id of constructor method
+=> type-descriptor
+
+plist elements:
+ (transparent: . boolean) ; controls whether the object is transparent
+                            in equality and printing
+ (final: . boolean)       ; controls whether the class if final
+ (print: slot ...)        ; printable slots
+ (equal: slot ...)        ; equality comparable slots
 ```
 :::
 
-Please document me!
+Creates a new class type descriptor.
+
 
 ### make-class-predicate
 ::: tip usage
 ```
-(make-class-predicate ...)
+(make-class-predicate klass)
+  klass := type-descriptor
+=> procedure
 ```
 :::
 
-Please document me!
+Creates a class instance predicate for instances of `klass`.
 
 ### make-class-slot-accessor
 ::: tip usage
 ```
-(make-class-slot-accessor ...)
+(make-class-slot-accessor klass slot)
+  klass := type-descriptor
+  slot  := symbol
+=> procedure
 ```
 :::
 
-Please document me!
+Creates a slot accessor for `slot`.
 
 ### make-class-slot-mutator
 ::: tip usage
 ```
-(make-class-slot-mutator ...)
+(make-class-slot-mutator klass slot)
+  klass := type-descriptor
+  slot  := symbol
+=> procedure
 ```
 :::
 
-Please document me!
+Creates a slot mutator for `slot`.
 
 ### make-class-slot-unchecked-accessor
 ::: tip usage
 ```
-(make-class-slot-unchecked-accessor ...)
+(make-class-slot-unchecked-accessor klass slot)
+  klass := type-descriptor
+  slot  := symbol
+=> procedure
 ```
 :::
 
-Please document me!
+Like `make-class-slot-accessor`, but creates an unchecked accesor.
+
 
 ### make-class-slot-unchecked-mutator
 ::: tip usage
 ```
-(make-class-slot-unchecked-mutator ...)
+(make-class-slot-unchecked-mutator klass slot)
+  klass := type-descriptor
+  slot  := symbol
+=> procedure
 ```
 :::
 
-Please document me!
-
-### class-slot-offset
-::: tip usage
-```
-(class-slot-offset ...)
-```
-:::
-
-Please document me!
-
-### class-slot-ref
-::: tip usage
-```
-(class-slot-ref ...)
-```
-:::
-
-Please document me!
-
-### class-slot-set!
-::: tip usage
-```
-(class-slot-set! ...)
-```
-:::
-
-Please document me!
+Like `make-class-slot-mutator`, but creates an unchecked mutator.
 
 ### make-class-instance
 ::: tip usage
 ```
-(make-class-instance ...)
+(make-class-instance klass . args)
+  klass := type-descriptor
+=> object
 ```
 :::
 
-Please document me!
+Creates a new instance of `klass`. If there is a constructor method,
+it will be invoked with `args` on a freshly allocated object.
+Otherwise, the object is initialized with `args`, which must be a plist
+of slot keywords/symbols and values.
 
 ### class-instance-init!
 ::: tip usage
 ```
-(class-instance-init! ...)
+(class-instance-init! obj . args)
 ```
 :::
 
-Please document me!
+Initializes `obj`, using `args` as a plist of slot keywords/symbols and values.
+For every slot and value in the plist, the corresponding object slot is set to
+the value.
 
-### class-&gt;list
+
+### class-slot-offset
 ::: tip usage
 ```
-(class->list ...)
+(class-slot-offset klass slot)
+  klass := type-descriptor
+  slot  := symbol or keyword
+=> fixnum
 ```
 :::
 
-Please document me!
+Returns the absolute field offset for `slot` in instances of `klass`.
+
+### class-slot-ref
+::: tip usage
+```
+(class-slot-ref klass obj slot)
+  klass := type-descriptor
+  obj   := instance of klass
+  slot  := symbol or keyword
+=> any
+```
+:::
+
+Checks that `obj` is a class instance of `klass` and returns the value in slot `slot`
+
+### class-slot-set!
+::: tip usage
+```
+(class-slot-set! klass obj slot val)
+  klass := type-descriptor
+  obj   := instance of klass
+  slot  := symbol or keyword
+  val   := any
+```
+:::
+
+Checks that `obj` is a class instance of `klass` and sets the value in the slot `slot`
+to `val`.
 
 ### slot-ref
 ::: tip usage
 ```
-(slot-ref ...)
+(slot-ref obj slot [E = slot-error])
+  obj  := object
+  slot := symbol or keyword
+  E    := procedure;
 ```
 :::
 
-Please document me!
+Returns the value associated with slot `slot` in `obj`.
+If the object has no such slot, then `E` is invoked in tail position as `(E obj slot)`.
+By default, this raises an error.
 
 ### slot-set!
 ::: tip usage
 ```
-(slot-set! ...)
+(slot-set! obj slot val [E = slot-error])
+  obj  := object
+  slot := symbol or keyword
+  val  := any
+  E    := procedure;
 ```
 :::
 
-Please document me!
+Sets the value associated with slot `slot` in `obj` to `val`.
+If the object has no such slot, then `E` is invoked in tail position as `(E obj slot)`.
+By default, this raises an error.
 
 ### unchecked-slot-ref
 ::: tip usage
 ```
-(unchecked-slot-ref ...)
+(unchecked-slot-ref obj slot)
+  obj  := object
+  slot := symbol or keyword
+=> any
 ```
 :::
 
-Please document me!
+Returns the value associated with slot `slot` in `obj`, without any checks.
 
 ### unchecked-slot-set!
 ::: tip usage
 ```
-(unchecked-slot-set! ...)
+(unchecked-slot-set! obj slot val)
+  obj  := object
+  slot := symbol or keyword
+  val  := any
 ```
 :::
 
-Please document me!
+Sets the value associated with slot `slot` in `obj` to `val`, without any checks.
+
+### class-&gt;list
+::: tip usage
+```
+(class->list obj)
+```
+:::
+
+Converts an object to a list, which conses its type and to a plist of slot keywords
+and values.
 
 ### bind-method!
 ::: tip usage
 ```
-(bind-method! ...)
+(bind-method! klass id proc [rebind? = #t])
+  klass   := type-descriptor or builtin record descriptor
+  id      := symbol; method id
+  proc    := procedure; method implementation
+  rebind? := boolean; allow method rebinding?
 ```
 :::
 
-Please document me!
+Binds `proc` as the method with `id` in class `klass`.
 
 ### call-method
 ::: tip usage
 ```
-(call-method ...)
+(call-method obj id . args)
+=> any
 ```
 :::
 
-Please document me!
+Applies the method with `id` in `obj` to `args`, with the object itself
+as the first argument. Raises an error if the object has no such method bound.
 
 ### find-method
 ::: tip usage
 ```
-(find-method ...)
+(find-method klass id)
+  klass := type-descriptor or builtin record descriptor
+  id    := symbol; method id
+=> procedure or #f
 ```
 :::
 
-Please document me!
-
-### next-method
-::: tip usage
-```
-(next-method ...)
-```
-:::
-
-Please document me!
+Looks up the method with `id` in klass `class`. Returns the procedure
+implementing the method or `#f` if the method is not bound in the class
+hierarchy.
 
 ### call-next-method
 ::: tip usage
 ```
-(call-next-method ...)
+(call-next-method klass obj id . args)
+  klass := type-descriptor or builting record descriptor
+  obj   := object
+  id    := symbol; method id
+=> any
 ```
 :::
 
-Please document me!
+Invokes the next method in `obj`'s hierarchy, following `klass`.
+
+### next-method
+::: tip usage
+```
+(next-method klass obj id)
+  klass := type-descriptor or builting record descriptor
+  obj   := object
+  id    := symbol; method id
+=> procedure or #f
+```
+:::
+
+Returns the next method in `obj`'s hierarchy, following `klass`.
 
 ### method-ref
 ::: tip usage
 ```
-(method-ref ...)
+(method-ref obj id)
+  obj := object
+  id  := symbol; method id
+=> procedure or #f
 ```
 :::
 
-Please document me!
-
-### direct-method-ref
-::: tip usage
-```
-(direct-method-ref ...)
-```
-:::
-
-Please document me!
+Looks up the method with `id` in `obj`'s hierarchy.
 
 ### bound-method-ref
 ::: tip usage
 ```
-(bound-method-ref ...)
+(bound-method-ref obj id)
+  obj := object
+  id  := symbol; method id
+=> procedure or #f
 ```
 :::
 
-Please document me!
+Looks up the method with `id` in `obj`'s hierarchy and returns
+a procedure which applies the method currying the object.
 
 ### checked-method-ref
 ::: tip usage
@@ -462,7 +644,7 @@ Please document me!
 ```
 :::
 
-Please document me!
+Like `method-ref`, but raises an error if the method is not found.
 
 ### checked-bound-method-ref
 ::: tip usage
@@ -471,7 +653,20 @@ Please document me!
 ```
 :::
 
-Please document me!
+Like `bound-method-ref`, but raises an error if the method is not found.
+
+### direct-method-ref
+::: tip usage
+```
+(direct-method-ref klass id)
+  klass := type-descriptor
+  id    := symbol; method id
+=> procedure or #f
+```
+:::
+
+Returns the binding of method with `id` in class `klass`.
+
 
 
 ## Special Objects
