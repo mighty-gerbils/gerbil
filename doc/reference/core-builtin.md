@@ -810,274 +810,334 @@ Returns true if the object is an immediate value.
 ### make-hash-table
 ::: tip usage
 ```
-(make-hash-table ...)
+(make-hash-table . options)
+
+options:
+    size: size
+    init: init
+    weak-keys: weak-keys?
+    weak-values: weak-values?
+    test: test
+    hash: hash
+    min-load: min-load
+    max-load: max-load
 ```
 :::
 
-Please document me!
+Creates a hash table.
 
 ### make-hash-table-eq
 ::: tip usage
 ```
-(make-hash-table-eq ...)
+(make-hash-table-eq . options)
+=> (make-hash-table test: eq? options ...)
 ```
 :::
 
-Please document me!
+Creates a hash table using `eq?` as the test function
 
 ### make-hash-table-eqv
 ::: tip usage
 ```
-(make-hash-table-eqv ...)
+(make-hash-table-eqv . options)
+=> (make-hash-table test: eqv? options ...)
 ```
 :::
 
-Please document me!
+Creates a hash table using `eqv?` as the test function
 
 ### hash?
 ::: tip usage
 ```
-(hash? ...)
+(hash? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is a hash table.
 
 ### hash-table?
 ::: tip usage
 ```
-(hash-table? ...)
+(hash-table? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Same as `hash?`.
 
 ### hash-length
 ::: tip usage
 ```
-(hash-length ...)
+(hash-length hash)
+  hash := hash table
+=> fixnum
 ```
 :::
 
-Please document me!
+Returns the number of entries in the `hash`.
 
 ### hash-ref
 ::: tip usage
 ```
-(hash-ref ...)
+(hash-ref hash key [default])
+  hash := hash table
+  key  := any
+=> any
 ```
 :::
 
-Please document me!
+Returns the value bound to `key`, defaulting to `default` if no value was
+bound. If the default is absent, then if an `init` parameter was specified
+in the table constructor it is returned instead. If no `init` parameter was
+specified, then an error is raised.
 
 ### hash-get
 ::: tip usage
 ```
-(hash-get ...)
+(hash-get hash key)
+=> (hash-ref hash key #f)
 ```
 :::
 
-Please document me!
+Returns the value bound to `key` or `#f` if no value was bound.
 
 ### hash-put!
 ::: tip usage
 ```
-(hash-put! ...)
+(hash-put! hash key val)
+  hash := hash table
+  key  := any
+  val  := val
 ```
 :::
 
-Please document me!
+Binds `key` to `val` in `hash`.
 
 ### hash-update!
 ::: tip usage
 ```
-(hash-update! ...)
+(hash-update! hash key update [default = #!void])
+  hash := hash table
+  key  := any
+  update: = procedure of one argument
 ```
 :::
 
-Please document me!
+Updates `hash`'s binding for `key` to the result of
+`(update (hash-ref hash key default))`
 
 ### hash-remove!
 ::: tip usage
 ```
-(hash-remove! ...)
+(hash-remove! hash key)
+  hash := hash table
+  key  := any
 ```
 :::
 
-Please document me!
+Removes `hash`'s binding for `key`.
 
 ### hash-key?
 ::: tip usage
 ```
-(hash-key? ...)
+(hash-key? hash key)
+  hash := hash table
+  key  := any
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if `hash` has a binding for `key`.
 
 ### hash-for-each
 ::: tip usage
 ```
-(hash-for-each ...)
+(hash-for-each proc hash)
+  proc := procedure of two arguments
+  hash := hash table
 ```
 :::
 
-Please document me!
+Applies `proc` to all key/value bindings in `hash`.
 
 ### hash-map
 ::: tip usage
 ```
-(hash-map ...)
+(hash-map proc hash)
+  proc := procedure of two arguments
+  hash := hash table
+=> list
 ```
 :::
 
-Please document me!
+Maps the bindings of `hash` to a list, applying `proc`.
 
 ### hash-fold
 ::: tip usage
 ```
-(hash-fold ...)
+(hash-fold proc iv hash)
+  proc := procedure of three arguments
+  iv   := any; initial value
+  hash := hash table
 ```
 :::
 
-Please document me!
+Fold the bindings of `hash`, applying `proc` with initial value `iv`.
 
 ### hash-find
 ::: tip usage
 ```
-(hash-find ...)
+(hash-find proc hash)
+  proc := procedure of two arguments
+  hash := hash table
+=> any
 ```
 :::
 
-Please document me!
+Returns the first true value returned when applying `proc` to the bindings
+of `hash` or `#f`.
 
 ### hash-keys
 ::: tip usage
 ```
-(hash-keys ...)
+(hash-keys hash)
+  hash := hash table
+=> list
 ```
 :::
 
-Please document me!
+Returns the list of keys for all bindings in `hash`
 
 ### hash-values
 ::: tip usage
 ```
-(hash-values ...)
+(hash-values hash)
+  hash := hash table
+=> list
 ```
 :::
 
-Please document me!
+Returns the list of values for all bindings in `hash`.
 
 ### hash-copy
 ::: tip usage
 ```
-(hash-copy ...)
+(hash-copy hash)
+  hash := hash table
+=> hash table
 ```
 :::
 
-Please document me!
-
-### hash-copy!
-::: tip usage
-```
-(hash-copy! ...)
-```
-:::
-
-Please document me!
+Copies `hash` into a new hash table
 
 ### hash-merge
 ::: tip usage
 ```
-(hash-merge ...)
+(hash-merge hash . more)
+  hash := hash table
+  more := list of hash tables
+=> hash table
 ```
 :::
 
-Please document me!
+Creates a new hash table, merging `more` hash tables into `hash`.
 
 ### hash-merge!
 ::: tip usage
 ```
-(hash-merge! ...)
+(hash-merge! hash . more)
+  hash := hash table
+  more := list of hash tables
+=> hash table
 ```
 :::
 
-Please document me!
+Merges `more` hash tables into `hash`.
 
 ### hash-&gt;list
 ::: tip usage
 ```
-(hash->list ...)
+(hash->list hash)
+  hash := hash table
+=> list
 ```
 :::
 
-Please document me!
+Returns the bindings of `hash` as an alist.
 
 ### list-&gt;hash-table
 ::: tip usage
 ```
-(list->hash-table ...)
+(list->hash-table lst . options)
+  lst := alist; table bindings
+=> hash table
 ```
 :::
 
-Please document me!
+Creates a hash table from an alist.
 
 ### list-&gt;hash-table-eq
 ::: tip usage
 ```
-(list->hash-table-eq ...)
+(list->hash-table-eq lst . options)
+  lst := alist; table bindings
 ```
 :::
 
-Please document me!
+Same as `list->hash-table`, but using `eq?` as the test function for the table.
 
 ### list-&gt;hash-table-eqv
 ::: tip usage
 ```
-(list->hash-table-eqv ...)
+(list->hash-table-eqv lst . options)
+  lst := alist; table bindings
 ```
 :::
 
-Please document me!
-
+Same as `list->hash-table`, but using `eqv?` as the test function for the table.
 
 ### hash-&gt;plist
 ::: tip usage
 ```
-(hash->plist ...)
+(hash->plist hash)
+  hash := hash table
+=> list
 ```
 :::
 
-Please document me!
+Returns the bindings of `hash` as a plist.
 
 ### plist-&gt;hash-table
 ::: tip usage
 ```
-(plist->hash-table ...)
+(plist->hash-table lst)
+  lst := plist; table bindings
+=> hash table
 ```
 :::
 
-Please document me!
+Creates a hash table from a plist.
 
 ### plist-&gt;hash-table-eq
 ::: tip usage
 ```
-(plist->hash-table-eq ...)
+(plist->hash-table-eq lst)
+  lst := plist; table bindings
 ```
 :::
 
-Please document me!
+Same as `plist->hash-table`, but using `eq?` as the test function for the table.
 
 ### plist-&gt;hash-table-eqv
 ::: tip usage
 ```
-(plist->hash-table-eqv ...)
+(plist->hash-table-eqv lst)
+  lst := plist; table bindings
 ```
 :::
 
-Please document me!
-
+Same as `plist->hash-table`, but using `eqv?` as the test function for the table.
 
 ## Lists
 
