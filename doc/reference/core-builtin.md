@@ -672,139 +672,137 @@ Returns the binding of method with `id` in class `klass`.
 ## Special Objects
 
 ### absent-obj
-::: tip usage
 ```
-(absent-obj ...)
+(def absent-obj)
 ```
-:::
 
-Please document me!
+Special object used by Gambit primitives to signal absent optional values.
 
 ### absent-value
-::: tip usage
 ```
-(absent-value ...)
+(def absent-value)
 ```
-:::
 
-Please document me!
+Special object used to denote missing hash values.
 
 ### true
 ::: tip usage
 ```
-(true ...)
+(true . args)
+=> #t
 ```
 :::
 
-Please document me!
+Returns `#t`, ignoring its arguments.
 
 ### true?
 ::: tip usage
 ```
-(true? ...)
+(true? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is `#t`.
 
 ### false
 ::: tip usage
 ```
-(false ...)
+(false . args)
+=> #f
 ```
 :::
 
-Please document me!
+Returns `#f`, ignoring its arguments.
 
 ### void
 ::: tip usage
 ```
-(void ...)
+(void . args)
+=> #!void
 ```
 :::
 
-Please document me!
+Returns `#!void`, ignoring its arguments
 
 ### void?
 ::: tip usage
 ```
-(void? ...)
+(void? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is `#!void`.
 
 ### eof-object
 ::: tip usage
 ```
-(eof-object ...)
+(eof-object . args)
 ```
 :::
 
-Please document me!
+Returns the eof object, ignoring its arguments.
 
 ### identity
 ::: tip usage
 ```
-(identity ...)
+(identity x)
+=> x
 ```
 :::
 
-Please document me!
+The identity function.
 
 ### dssl-object?
 ::: tip usage
 ```
-(dssl-object? ...)
+(dssl-object? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is a DSSL syntactic token.
 
 ### dssl-key-object?
 ::: tip usage
 ```
-(dssl-key-object? ...)
+(dssl-key-object? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is `#!key`.
 
 ### dssl-rest-object?
 ::: tip usage
 ```
-(dssl-rest-object? ...)
+(dssl-rest-object? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is `#!rest`.
 
 ### dssl-optional-object?
 ::: tip usage
 ```
-(dssl-optional-object? ...)
+(dssl-optional-object? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is `#!optional`.
 
 ### immediate?
 ::: tip usage
 ```
-(immediate? ...)
+(immediate? obj)
+=> boolean
 ```
 :::
 
-Please document me!
-
-### nonnegative-fixnum?
-::: tip usage
-```
-(nonnegative-fixnum? ...)
-```
-:::
-
-Please document me!
+Returns true if the object is an immediate value.
 
 
 ## Hash Tables
@@ -831,33 +829,6 @@ Please document me!
 ::: tip usage
 ```
 (make-hash-table-eqv ...)
-```
-:::
-
-Please document me!
-
-### list-&gt;hash-table
-::: tip usage
-```
-(list->hash-table ...)
-```
-:::
-
-Please document me!
-
-### list-&gt;hash-table-eq
-::: tip usage
-```
-(list->hash-table-eq ...)
-```
-:::
-
-Please document me!
-
-### list-&gt;hash-table-eqv
-::: tip usage
-```
-(list->hash-table-eqv ...)
 ```
 :::
 
@@ -930,51 +901,6 @@ Please document me!
 ::: tip usage
 ```
 (hash-remove! ...)
-```
-:::
-
-Please document me!
-
-### hash-&gt;list
-::: tip usage
-```
-(hash->list ...)
-```
-:::
-
-Please document me!
-
-### hash-&gt;plist
-::: tip usage
-```
-(hash->plist ...)
-```
-:::
-
-Please document me!
-
-### plist-&gt;hash-table
-::: tip usage
-```
-(plist->hash-table ...)
-```
-:::
-
-Please document me!
-
-### plist-&gt;hash-table-eq
-::: tip usage
-```
-(plist->hash-table-eq ...)
-```
-:::
-
-Please document me!
-
-### plist-&gt;hash-table-eqv
-::: tip usage
-```
-(plist->hash-table-eqv ...)
 ```
 :::
 
@@ -1078,6 +1004,80 @@ Please document me!
 :::
 
 Please document me!
+
+### hash-&gt;list
+::: tip usage
+```
+(hash->list ...)
+```
+:::
+
+Please document me!
+
+### list-&gt;hash-table
+::: tip usage
+```
+(list->hash-table ...)
+```
+:::
+
+Please document me!
+
+### list-&gt;hash-table-eq
+::: tip usage
+```
+(list->hash-table-eq ...)
+```
+:::
+
+Please document me!
+
+### list-&gt;hash-table-eqv
+::: tip usage
+```
+(list->hash-table-eqv ...)
+```
+:::
+
+Please document me!
+
+
+### hash-&gt;plist
+::: tip usage
+```
+(hash->plist ...)
+```
+:::
+
+Please document me!
+
+### plist-&gt;hash-table
+::: tip usage
+```
+(plist->hash-table ...)
+```
+:::
+
+Please document me!
+
+### plist-&gt;hash-table-eq
+::: tip usage
+```
+(plist->hash-table-eq ...)
+```
+:::
+
+Please document me!
+
+### plist-&gt;hash-table-eqv
+::: tip usage
+```
+(plist->hash-table-eqv ...)
+```
+:::
+
+Please document me!
+
 
 ## Lists
 
@@ -1361,6 +1361,16 @@ Please document me!
 :::
 
 Please document me!
+
+### nonnegative-fixnum?
+::: tip usage
+```
+(nonnegative-fixnum? obj)
+=> boolean
+```
+:::
+
+Returns true if the object is a non-negative fixnum.
 
 ## Symbols
 
