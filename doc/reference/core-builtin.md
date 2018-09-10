@@ -1680,370 +1680,414 @@ Joins `strs` into a string, using `char` as the separator.
 ### make-promise
 ::: tip usage
 ```
-(make-promise ...)
+(make-promise thunk)
+=> promise
 ```
 :::
 
-Please document me!
+Creates a promise.
 
 ### promise?
 ::: tip usage
 ```
-(promise? ...)
+(promise? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is a promise.
 
 ### call-with-parameters
 ::: tip usage
 ```
-(call-with-parameters ...)
+(call-with-parameters thunk . parameterization)
+  thunk := procedure
+=> any
+
+parameterization:
+ parameter value ...
 ```
 :::
 
-Please document me!
-
-### call-with-escape
-::: tip usage
-```
-(call-with-escape ...)
-```
-:::
-
-Please document me!
+Calls `thunk` with parameterization.
 
 ### with-catch
 ::: tip usage
 ```
-(with-catch ...)
+(with-catch handler thunk)
+  handler, thunk := procedure
+=> any
 ```
 :::
 
-Please document me!
+Calls `thunk` with `handler` as the exception catcher.
 
 ### with-unwind-protect
 ::: tip usage
 ```
-(with-unwind-protect ...)
+(with-unwind-protect thunk fini)
+  thunk, fini := procedure
+=> any
 ```
 :::
 
-Please document me!
+Calls `thunk`, invoking `fini` when execution exits the dynamic extent
+of `thunk`.
 
-## Exceptions
-
-### exception-type::t
-::: tip usage
-```
-(exception-type::t ...)
-```
-:::
-
-Please document me!
+## Exception Objects
 
 ### exception::t
-::: tip usage
 ```
-(exception::t ...)
+(def exception::t)
 ```
-:::
 
-Please document me!
+Base class for all Gerbil-derived exception types. It's an empty struct type
+that extends the Gambit builtin exception record type.
 
+See also [Exception Base Classes](errors.md).
 ### error::t
 ::: tip usage
 ```
-(error::t ...)
+(def error::t)
 ```
 :::
 
-Please document me!
+Base class for all Gerbil-derived errors. It's a struct type that extends
+`exception::t` and has 3 fields: message, irritants, and trace.
+
+See also [Exception Base Classes](errors.md).
 
 ### exception?
 ::: tip usage
 ```
-(exception? ...)
+(exception? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is an exception object. This includes
+the builtin Gambit exceptions.
 
 ### error?
 ::: tip usage
 ```
-(error? ...)
+(error? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is an instance of `error::t`.
 
 ### error-object?
 ::: tip usage
 ```
-(error-object? ...)
+(error-object? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is an exception object raised by the builtin `error`
+procedure. Note that this is separate from instances of `error::t`; nomenclature.
 
 ### error-message
 ::: tip usage
 ```
-(error-message ...)
+(error-message obj)
+=> string
 ```
 :::
 
-Please document me!
+Returns the message associated with an error instance. If the object is not
+an error instance, it returns the result of `(display-exception obj)`.
 
 ### error-irritants
 ::: tip usage
 ```
-(error-irritants ...)
+(error-irritants obj)
+=> list or #f
 ```
 :::
 
-Please document me!
+Returns the irritants associated with an error instance. If the object is
+not an error instance, it returns `#f`.
 
 ### error-trace
 ::: tip usage
 ```
-(error-trace ...)
+(error-trace obj)
+=> any
 ```
 :::
 
-Please document me!
+Returns the trace associated with an error instance. If the object is not
+an error instance, it returns `#f`.
 
 ## Miscellaneous Procedures
 
 ### values-count
 ::: tip usage
 ```
-(values-count ...)
+(values-count obj)
+=> fixnum
 ```
 :::
 
-Please document me!
+Counts the values in the object. If the object is not multiple `values`,
+it is considered a single value.
 
 ### values-ref
 ::: tip usage
 ```
-(values-ref ...)
+(values-ref obj n)
+  n := fixnum
+=> any
 ```
 :::
 
-Please document me!
+Returns the `n`th value in the object. If the object is not multiple `values`,
+it returns the object itself.
 
 ### values-&gt;list
 ::: tip usage
 ```
-(values->list ...)
+(values->list obj)
+=> list
 ```
 :::
 
-Please document me!
+Converts multiple `values` to a list. If the object is not multiple `values`,
+it returns a list containing the object.
 
 ### subvector-&gt;list
 ::: tip usage
 ```
-(subvector->list ...)
+(subvector->list obj [start = 0])
+=> list
 ```
 :::
 
-Please document me!
+Coverts a vector-like object to a list, starting from field `start`.
 
 ### vector-map
 ::: tip usage
 ```
-(vector-map ...)
+(vector-map f . vectors)
+  f := procedure
+  vectors := list of vectors
+=> any
 ```
 :::
 
-Please document me!
+Map for vectors.
 
 ### displayln
 ::: tip usage
 ```
-(displayln ...)
+(displayln . args)
 ```
 :::
 
-Please document me!
+Displays the arguments, followd by a newline.
 
 ### display*
 ::: tip usage
 ```
-(display* ...)
+(display* . args)
 ```
 :::
 
-Please document me!
+Displays the arguments.
 
 ### file-newer?
 ::: tip usage
 ```
-(file-newer? ...)
+(file-newer? a b)
+  a, b := string
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if file `a` is newer than `b`. Both files must exist.
 
 ### create-directory*
 ::: tip usage
 ```
-(create-directory* ...)
+(create-directory* path [perms = #o755])
+  path  := string
+  perms := fixnum
 ```
 :::
 
-Please document me!
+Creates a directory and its parents if they don't exist, like `mkdir -p`.
 
 ### keyword-dispatch
 ::: tip usage
 ```
-(keyword-dispatch ...)
+(keyword-dispatch kwt proc . args)
+=> any
 ```
 :::
 
-Please document me!
+Dispatches a keyword lambda. You shouldn't invoke this directly.
 
 ### load-module
 ::: tip usage
 ```
-(load-module ...)
+(load-module modpath [reload = #f])
+  modpath := string
+  reload  := boolean
+=> string
 ```
 :::
 
-Please document me!
+Loads a module from the file system. If the module is already loaded, then it's
+only reloaded if `reload` is specified. Returns the path of the loaded module.
 
 ## Syntax Objects
 
 ### AST::t
-::: tip usage
 ```
-(AST::t ...)
+(def AST::t)
 ```
-:::
 
-Please document me!
-
-### AST?
-::: tip usage
-```
-(AST? ...)
-```
-:::
-
-Please document me!
-
-### AST-e
-::: tip usage
-```
-(AST-e ...)
-```
-:::
-
-Please document me!
-
-### AST-source
-::: tip usage
-```
-(AST-source ...)
-```
-:::
-
-Please document me!
+Base class for syntax objects. It is a struct type with two fields,
+content and location.
 
 ### make-AST
 ::: tip usage
 ```
-(make-AST ...)
+(make-AST e src)
+  e   := any
+  src := location or #f
+=> syntax-object
 ```
 :::
 
-Please document me!
+Creates a new syntax object.
+
+### AST?
+::: tip usage
+```
+(AST? obj)
+=> boolean
+```
+:::
+
+Returns true if the object is a syntax object.
+
+### AST-e
+::: tip usage
+```
+(AST-e ast)
+  ast := syntax object
+=> any
+```
+:::
+
+Returns the content of a syntax object.
+
+### AST-source
+::: tip usage
+```
+(AST-source ast)
+  ast := syntax object
+=> location or #f
+```
+:::
+
+Returns the source location of a syntax object
 
 ### read-syntax
 ::: tip usage
 ```
-(read-syntax ...)
+(read-syntax [port = (current-input-port)])
+=> syntax object or eof
 ```
 :::
 
-Please document me!
+Reads the next syntax object from `port`.
 
 ### read-syntax-from-file
 ::: tip usage
 ```
-(read-syntax-from-file ...)
+(read-syntax-from-file path)
+  path := string
+=> list of syntax objects
 ```
 :::
 
-Please document me!
+Reads the contents of a file as syntax objects.
 
 ### source-location?
 ::: tip usage
 ```
-(source-location? ...)
+(source-location? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is a source location.
 
 ### source-location-path?
 ::: tip usage
 ```
-(source-location-path? ...)
+(source-location-path? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is a source location with a file path.
 
 ### source-location-path
 ::: tip usage
 ```
-(source-location-path ...)
+(source-location-path loc)
+  loc := source location with a path
+=> string
 ```
 :::
 
-Please document me!
+Returns the source location path.
 
 ## System Information
 
 ### gerbil-system-version-string
 ::: tip usage
 ```
-(gerbil-system-version-string ...)
+(gerbil-system-version-string)
+=> string
 ```
 :::
 
-Please document me!
+The full Gerbil system version.
 
 ### gerbil-system
 ::: tip usage
 ```
-(gerbil-system ...)
+(gerbil-system)
+=> symbol
 ```
 :::
 
-Please document me!
+Symbolic name of the gerbil system; this is defined as a `cond-expand` feature by the
+expander.
 
 ### gerbil-runtime-smp?
 ::: tip usage
 ```
-(gerbil-runtime-smp? ...)
+(gerbil-runtime-smp?)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the SMP scheduler is detected at runtime.
 
 ### gerbil-greeting
-::: tip usage
 ```
-(gerbil-greeting ...)
+(def gerbil-greeting)
 ```
-:::
 
-Please document me!
+The greeting displayed by the interpreter at interactive load; a string.
 
 
 ## Thread Primitives
@@ -2057,125 +2101,184 @@ The following primitives are defined in the `:gerbil/gambit/threads` prelude mod
 ### spawn
 ::: tip usage
 ```
-(spawn ...)
+(spawn f . args)
+  f := procedure
+=> actor thread
 ```
 :::
 
-Please document me!
+Spawns an actor thread, invoking `(f . args)`.
+
+Differences of actor threads and plain Gambit threads:
+- actor threads have an abortive exception handler that unwinds the stack
+  on exceptional exits thus ensuring that unwind finalizers are run.
+- actor threads have an extra field for efficient access to thread locals.
 
 ### spawn/name
 ::: tip usage
 ```
-(spawn/name ...)
+(spawn/name name f . args)
+  name := any
+  f     := procedure
+=> actor thread
 ```
 :::
 
-Please document me!
+Like `spawn`, but the thread is named.
 
 ### spawn/group
 ::: tip usage
 ```
-(spawn/group ...)
+(spawn/group name f . args)
+  name := any
+  f     := procedure
+=> actor thread
 ```
 :::
 
-Please document me!
+Like `spawn`, but the thread is in a new thread group with name `name`.
 
 ### spawn-actor
 ::: tip usage
 ```
-(spawn-actor ...)
+(spawn-actor f args name tgroup)
+  f      := procedure
+  args   := list; procedure arguments
+  name   := any
+  tgroup := thread-group
+=> actor thread
 ```
 :::
 
-Please document me!
+Spanws an actor thread.
 
 ### spawn-thread
 ::: tip usage
 ```
-(spawn-thread ...)
+(spawn-thread thunk [name] [tgroup])
+  thunk := procedure
+  name   := any
+  tgroup := thread-group
+=> thread
 ```
 :::
 
-Please document me!
+Spawns a plain thread
+
+### actor-thread?
+::: tip usage
+```
+(actor-thread? obj)
+=> boolean
+```
+:::
+
+Returns true if the object is an actor thread.
 
 ### thread-local-ref
 ::: tip usage
 ```
-(thread-local-ref ...)
+(thread-local-ref key [default])
+  key, default := any
+=> any
 ```
 :::
 
-Please document me!
+Retrieves the thread local value associated with key.
 
 ### thread-local-get
 ::: tip usage
 ```
-(thread-local-get ...)
+(thread-local-get key)
+  key := any
+=> any
 ```
 :::
 
-Please document me!
+Retrieves the thread local value associated with key, defaulting to `#f`.
 
 ### thread-local-set!
 ::: tip usage
 ```
-(thread-local-set! ...)
+(thread-local-set! key val)
+  key, val := any
 ```
 :::
 
-Please document me!
+Sets the thread local value associated with key.
 
 ### thread-local-clear!
 ::: tip usage
 ```
-(thread-local-clear! ...)
+(thread-local-clear! key)
+  key := any
 ```
 :::
 
-Please document me!
+Clears the thread local value associated with key.
 
 ### thread-local-table
 ::: tip usage
 ```
-(thread-local-table ...)
+(thread-local-table)
+=> hash table
 ```
 :::
 
-Please document me!
+Return the table of thread local values, creating it if it doesn't exist.
 
-### unhandled-actor-exception-hook-set!
-::: tip usage
-```
-(unhandled-actor-exception-hook-set! ...)
-```
-:::
-
-Please document me!
 
 ### current-thread-group
 ::: tip usage
 ```
-(current-thread-group ...)
+(current-thread-group)
+=> thread-group
 ```
 :::
 
-Please document me!
-
-### with-exception-stack-trace
-::: tip usage
-```
-(with-exception-stack-trace ...)
-```
-:::
-
-Please document me!
+Returns the thread-group of the current thread.
 
 ### with-lock
 ::: tip usage
 ```
-(with-lock ...)
+(with-lock mx thunk)
+  mx    := mutex
+  thunk := procedure
+=> any
 ```
 :::
 
-Please document me!
+Evalutes `thunk` in a dynamic extent where `mx` is locked.
+
+### unhandled-actor-exception-hook-set!
+::: tip usage
+```
+(unhandled-actor-exception-hook-set! proc)
+  proc := procedure
+```
+:::
+
+Hooks the actor exception handler to invoke `(proc continuation exxception)` on uncaught
+exceptions occuring in actor threads.
+
+### dump-stack-trace!
+::: tip usage
+```
+(dump-stack-trace! cont exn [port = (current-error-port)])
+
+```
+:::
+
+Dumps a stack trace from an exception handler hook.
+
+
+### with-exception-stack-trace
+::: tip usage
+```
+(with-exception-stack-trace thunk [port = (current-error-port)])
+  thunk := procedure
+=> any
+```
+:::
+
+Evaluate `thunk`, with a handler that dumps a stack trace on uncaught exceptions.
