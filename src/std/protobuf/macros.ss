@@ -293,7 +293,7 @@ package: std/protobuf
                   (case key
                     cases ...
                     (else
-                     (bio-skip-input-unknown tag buf)))
+                     (bio-input-skip-unknown tag buf)))
                   (lp))))
             read-fini ...))))
 

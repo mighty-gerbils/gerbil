@@ -3,7 +3,9 @@
 ;;; Protobuf I/O
 package: std/protobuf
 
-(import :std/net/bio
+(import :gerbil/gambit/bits
+        :std/net/bio
+        :std/text/utf8
         )
 (export #t)
 
@@ -12,12 +14,13 @@ package: std/protobuf
 
 ;;; marshalling
 (def (marshal obj bio-write-e)
-  XXX
-  )
+  (let (buf (open-serializer-output-buffer))
+    (bio-write-e obj buf)
+    (chunked-output-u8vector buf)))
 
 (def (unmarshal bytes bio-read-e)
-  XXX
-  )
+  (let (buf (open-input-buffer bytes))
+    (bio-read-e buf)))
 
 ;;; port i/o interface
 (def (read-delimited bio-read-e (port (current-input-port)))
@@ -33,22 +36,62 @@ package: std/protobuf
 
 ;; field encoding
 (def (bio-read-field buf)
-  XXX
-  )
+  (let (field (bio-read-varint buf))
+    (values
+      (arithmetic-shift field -3)
+      (byte->tag (bitwise-and field #b111)))))
 
 (def (bio-write-field x tag buf)
-  XXX
-  )
+  (bio-write-varint (bitwise-ior (arithmetic-shift x 3) (tag->byte tag)) buf))
+
+(def (byte->tag x)
+  (case x
+    ((0) 'VARINT)
+    ((1) 'FIXED64)
+    ((2) 'VARLEN)
+    ((5) 'FIXED32)
+    (else
+     (error "Unknown type tag" x))))
+
+(def (tag->byte x)
+  (case x
+    ((VARINT)  0)
+    ((FIXED64) 1)
+    ((VARLEN)  2)
+    ((FIXED32) 5)
+    (else
+     (error "Unknown type tag" x))))
+
 
 ;; unknown field skipping
-(def (bio-skip-input-unknown tag buf)
-  XXX
-  )
+(def (bio-input-skip-unknown tag buf)
+  (case tag
+    ((VARINT)
+     (bio-input-skip-varint buf))
+    ((FIXED64)
+     (bio-input-skip 8 buf))
+    ((VARLEN)
+     (bio-input-skip (bio-read-varint buf) buf))
+    ((FIXED32)
+     (bio-input-skip 4 buf))
+    (else
+     (error "Unknown type tag" tag))))
+
+(def (bio-input-skip-varint buf)
+  (let lp ()
+    (let (byte (bio-read-u8 buf))
+      (unless (##fxzero? (##fxand byte #x80))
+        (lp)))))
 
 ;; packed encoding
 (def (bio-read-packed bio-read-e buf)
-  XXX
-  )
+  ;; TODO: use subbuffers when they get implemented
+  (let* ((bytes (bio-read-delimited-bytes buf))
+         (buf (open-input-buffer bytes)))
+    (let lp ((r []))
+      (if (eof-object? (bio-peek-u8 buf))
+        (reverse r)
+        (lp (cons (bio-read-e buf) r))))))
 
 (def (bio-write-packed xs bio-write-e buf)
   (let (tmpbuf (open-serializer-output-buffer))
@@ -59,8 +102,20 @@ package: std/protobuf
 
 ;; map encoding
 (def (bio-read-key-value-pair bio-read-key-e bio-read-value-e buf)
-  XXX
-  )
+  ;; TODO: use subbuffers when they get implemented
+  (let* ((bytes (bio-read-delimited-bytes buf))
+         (buf (open-input-buffer bytes)))
+    (let lp ((key #f) (value #f))
+      (if (eof-object? (bio-peek-u8 buf))
+        (cons key value)
+        (let ((values key tag) (bio-read-field buf))
+          (case key
+            ((1)
+             (lp (bio-read-key-e buf) value))
+            ((2)
+             (lp key (bio-read-value-e buf)))
+            (else
+             (lp key value))))))))
 
 (def (bio-write-key-value-pair k v ktag bio-write-key-e vtag bio-write-value-e buf)
   (let* ((tmpbuf (open-serializer-output-buffer))
@@ -80,28 +135,38 @@ package: std/protobuf
 
 ;; length delimited objects
 (def (bio-read-delimited bio-read-e buf)
-  XXX
-  )
+  ;; TODO: use subbuffers when they get implemented
+  (let* ((len (bio-read-varint buf))
+         (bytes (make-u8vector len))
+         (_ (bio-read-bytes bytes buf))
+         (buf (open-input-buffer bytes)))
+    (bio-read-e buf)))
 
 (def (bio-write-delimited x bio-write-e buf)
-  XXX
-  )
+  (let (tmpbuf (open-serializer-output-buffer))
+    (bio-write-e x tmpbuf)
+    (bio-write-varint (chunked-output-length tmpbuf) buf)
+    (for-each (cut bio-write-bytes <> buf)
+              (chunked-output-chunks tmpbuf))))
 
 (def (bio-read-delimited-string buf)
-  XXX
-  )
+  ;; TODO: use bio-input-utf8-decode when it gets streaming support
+  (utf8->string (bio-read-delimited-bytes buf)))
 
 (def (bio-write-delimited-string x buf)
-  XXX
-  )
+  (let (len (string-utf8-length x))
+    (bio-write-varint len buf)
+    (bio-write-string x buf)))
 
 (def (bio-read-delimited-bytes buf)
-  XXX
-  )
+  (let* ((len (bio-read-varint buf))
+         (bytes (make-u8vector len)))
+    (bio-read-bytes bytes buf)
+    bytes))
 
 (def (bio-write-delimited-bytes x buf)
-  XXX
-  )
+  (bio-write-varint (u8vector-length x) buf)
+  (bio-write-bytes x buf))
 
 ;; booleans
 (def (bio-read-boolean buf)
@@ -111,13 +176,36 @@ package: std/protobuf
   (bio-write-varint (if x 1 0) buf))
 
 ;; varints
+(def 2^63 (expt 2 63))
+(def 2^64 (expt 2 64))
+
 (def (bio-read-varint buf)
-  XXX
-  )
+  (def (complement r)
+    (if (< r 2^63)
+      r
+      (- r 2^64)))
+
+  (let lp ((shift 0) (r 0))
+    (let* ((bits (bio-read-u8 buf))
+           (limb (##fxand bits #x7f))
+           (r (bitwise-ior (arithmetic-shift limb shift) r)))
+      (if (##fxzero? (##fxand bits #x80))
+        (complement r)
+        (lp (##fx+ shift 7) r)))))
 
 (def (bio-write-varint x buf)
-  XXX
-  )
+  (def (complement r)
+    (if (< r 0)
+      (+ 2^64 r)
+      r))
+
+  (let lp ((bits (complement x)))
+    (if (< bits 128)
+      (bio-write-u8 bits buf)
+      (let* ((limb (bitwise-and bits #x7f))
+             (obits (##fxior limb #x80)))
+        (bio-write-u8 obits buf)
+        (lp (arithmetic-shift bits -7))))))
 
 ;; the protobuf number zoo
 (def (bio-read-varint-zigzag buf)
