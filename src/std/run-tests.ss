@@ -16,7 +16,8 @@
         "actor/xdr-test"
         "actor-test"
         "net/httpd-test"
-        "net/sasl-test")
+        "net/sasl-test"
+        "protobuf/protobuf-test")
 
 (cond-expand
   (config-have-sqlite
@@ -55,6 +56,7 @@
    actor-rpc-test actor-rpc-stream-test
    httpd-test
    sasl-test
+   protobuf-test
    (if config-enable-sqlite [sqlite-test] []) ...
    (if config-enable-lmdb [lmdb-test] []) ...
    (if config-enable-leveldb [leveldb-test] []) ...

@@ -4,6 +4,7 @@
 package: std/protobuf
 
 (import :std/protobuf/io
+        :std/net/bio
         :std/error)
 (export #t)
 
@@ -184,7 +185,7 @@ package: std/protobuf
             name: id
             constructor: :init!
             unchecked: #t
-            plist: '((final: . #t)))
+            plist: '((final: . #t) (transparent: . #t)))
           (defsyntax id
             (make-message-type-info
              runtime-identifier: (quote-syntax id::t)
@@ -200,7 +201,7 @@ package: std/protobuf
               #f #f
               (quote id)
               (quote :init!)
-              (quote ((final: . #t)))
+              (quote ((final: . #t) (transparent: . #t)))
               (quote (field-id ...)))
              name: (quote id)
              tag: (quote VARLEN)
@@ -257,12 +258,12 @@ package: std/protobuf
                   #'(begin
                       (def (subfield-getf obj)
                         (match (field-getf obj)
-                          ((values kw val)
+                          ([kw . val]
                            (and (eq? kw subfield-kw) val))
                           (else #f)))
                       ...
                       (def (subfield-setf obj val)
-                        (field-setf obj (values subfield-kw val)))
+                        (field-setf obj (cons subfield-kw val)))
                       ...)
                   defs)))
            (lp rest defs)))
@@ -272,7 +273,7 @@ package: std/protobuf
   (def (make-bio-read id fields)
     (with-syntax ((bio-read (stx-identifier id "bio-read-" id))
                   (bio-read! (stx-identifier id "bio-read-" id "!"))
-                  (id::t (stx-identifier id "::t"))
+                  (id::t (stx-identifier id id "::t"))
                   (field-count (length fields))
                   ((cases ...)
                    (make-read-cases id fields))
@@ -395,7 +396,7 @@ package: std/protobuf
                                 ((bio-read-e _) (type-io-methods type))
                                 (do-read (make-read-e type #'bio-read-e)))
                    (cons #'((key)
-                            (setf obj (values kw do-read)))
+                            (setf obj (cons kw do-read)))
                          r))))
              r rest))
           (else
@@ -504,7 +505,7 @@ package: std/protobuf
              #'(cond
                 ((getf obj)
                  => (match <>
-                      ((values kw val)
+                      ([kw . val]
                        (case kw
                          cases ...
                          (else

@@ -6,6 +6,7 @@ package: std/protobuf
 (import :gerbil/gambit/bits
         :std/net/bio
         :std/text/utf8
+        :std/error
         )
 (export #t)
 
@@ -80,6 +81,8 @@ package: std/protobuf
 (def (bio-input-skip-varint buf)
   (let lp ()
     (let (byte (bio-read-u8 buf))
+      (when (eof-object? byte)
+        (raise-io-error 'bio-input-skip-varint "Premature end of input" buf))
       (unless (##fxzero? (##fxand byte #x80))
         (lp)))))
 
@@ -108,13 +111,14 @@ package: std/protobuf
     (let lp ((key #f) (value #f))
       (if (eof-object? (bio-peek-u8 buf))
         (cons key value)
-        (let ((values key tag) (bio-read-field buf))
-          (case key
+        (let ((values field tag) (bio-read-field buf))
+          (case field
             ((1)
              (lp (bio-read-key-e buf) value))
             ((2)
              (lp key (bio-read-value-e buf)))
             (else
+             (bio-input-skip-unknown tag buf)
              (lp key value))))))))
 
 (def (bio-write-key-value-pair k v ktag bio-write-key-e vtag bio-write-value-e buf)
@@ -122,11 +126,7 @@ package: std/protobuf
          (tmpbuf-write
           (lambda (field tag val bio-write-e)
             (bio-write-field field tag tmpbuf)
-            (case tag
-              ((VARLEN)
-               (bio-write-delimited-bytes (marshal val bio-write-e) tmpbuf))
-              (else
-               (bio-write-e val tmpbuf))))))
+            (bio-write-e val tmpbuf))))
     (tmpbuf-write 1 ktag k bio-write-key-e)
     (tmpbuf-write 2 vtag v bio-write-value-e)
     (bio-write-varint (chunked-output-length tmpbuf) buf)
@@ -187,6 +187,8 @@ package: std/protobuf
 
   (let lp ((shift 0) (r 0))
     (let* ((bits (bio-read-u8 buf))
+           (_ (when (eof-object? bits)
+                (raise-io-error 'bio-read-varint "Premature end of input" buf)))
            (limb (##fxand bits #x7f))
            (r (bitwise-ior (arithmetic-shift limb shift) r)))
       (if (##fxzero? (##fxand bits #x80))
