@@ -94,6 +94,7 @@ EOF <- $$
 
 [\ \t\n]+                       -> $
 //[^\n]*\n                      -> $
+/[*]([^*]|([*][^/]))*[*]/       -> $
 true                            -> (Boolean #t)
 false                           -> (Boolean #f)
 [a-zA-Z][a-zA-Z0-9_.]*          -> (Ident (string->symbol @@))
