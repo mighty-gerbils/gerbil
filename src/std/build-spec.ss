@@ -184,6 +184,8 @@
     ;; :std/protobuf
     "protobuf/io"
     "protobuf/macros"
+    "protobuf/proto-grammar"
+    "protobuf/proto"
     ;; :std/actor
     (gxc: "actor/message" ,@(include-gambit-sharp))
     (gxc: "actor/xdr"  ,@(include-gambit-sharp))

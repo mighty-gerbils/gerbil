@@ -6,7 +6,7 @@ package: std/protobuf
 (import :std/protobuf/io
         :std/net/bio
         :std/error)
-(export #t)
+(export #t (for-syntax #t))
 
 (begin-syntax
   (defclass type (name tag io-methods))
@@ -14,6 +14,7 @@ package: std/protobuf
   (defclass (enum-type type) ())
   (defclass (message-type type) ())
   (defclass (message-type-info message-type extended-struct-info) ())
+  (defclass package (id types))
 
   (def (syntax-local-type id)
     (let (t (syntax-local-value id false))
@@ -552,3 +553,10 @@ package: std/protobuf
 (defscalar-type float    FIXED32 bio-read-float bio-write-float)
 (defscalar-type string   VARLEN  bio-read-delimited-string bio-write-delimited-string)
 (defscalar-type bytes    VARLEN  bio-read-delimited-bytes bio-write-delimited-bytes)
+
+(defrules defpackage ()
+  ((_ id type-id ...)
+   (defsyntax id
+     (make-package id: 'id types: [(quote-syntax type-id) ...]))))
+
+(defrules protobuf-in ())
