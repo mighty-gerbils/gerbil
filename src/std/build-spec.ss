@@ -54,6 +54,7 @@
     "text/hex"
     (gsc: "text/base64")
     (ssi: "text/base64")
+    "text/base58"
     "text/csv"
     "text/json"
     ,@(if config-enable-libyaml
