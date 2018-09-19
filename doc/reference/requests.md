@@ -59,7 +59,7 @@ key/value pairs to add as HTTP query params to the request.
 ```
 :::
 
-Like `http-head` procedure but instead executes HTTP HEAD method to given `url`.
+Like `http-get` procedure but instead executes HTTP HEAD method to given `url`.
 
 ### http-post
 ::: tip usage
