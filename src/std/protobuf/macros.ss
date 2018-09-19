@@ -168,7 +168,6 @@ package: std/protobuf
     (with-syntax* ((id::t (stx-identifier id id "::t"))
                    (id? (stx-identifier id id "?"))
                    (make-id (stx-identifier id "make-" id))
-                   (id:::init! (stx-identifier id id ":::init!"))
                    ((field-id ...)
                     (map cadr fields))
                    ((getf ...)
@@ -228,7 +227,8 @@ package: std/protobuf
         [] fields))
     (with-syntax ((id id)
                   ((arg ...) (constructor-args fields))
-                  ((field ...) (map cadr fields)))
+                  ((field ...) (map cadr fields))
+                  (:init! (stx-identifier id ':init!)))
       #'(defmethod {:init! id}
           (lambda (self arg ...)
             (struct-instance-init! self field ...)))))
