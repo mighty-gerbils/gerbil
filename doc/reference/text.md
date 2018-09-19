@@ -78,6 +78,53 @@ Please document me!
 Please document me!
 
 
+
+## Base58
+The `:std/text/base58` library provides encoding and decoding to base58.
+
+::: tip usage
+(import :std/text/base58)
+:::
+
+### base58-encode
+::: tip usage
+```
+(base58-encode bytes [alphabet = base58-btc-alphabet])
+  bytes := u8vector
+  alphabet := encoding alphabet
+=> string
+```
+:::
+
+Base58 encodes a u8vector, using the given alphabet.
+
+### base58-decode
+::: tip usage
+```
+(base58-decode str [alphabet = base58-btc-alphabet])
+  str := string; base58 encoded
+  alphabet := decoding alphabet
+=> u8vetor
+```
+:::
+
+Base58 decodes a string, using the given alphabet
+
+### base58-btc-alphabet
+```
+(def base58-btc-alphabet)
+```
+
+The base58 encoding alphabet used by Bitcoin.
+
+### base58-flickr-alphabet
+::: tip usage
+(def base58-flickr-alphabet)
+:::
+
+The base58 encoding alphabet used by Flickr.
+
+
 ## CSV
 
 CSV parser and unparser.
