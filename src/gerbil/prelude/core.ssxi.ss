@@ -667,7 +667,7 @@ package: gerbil
  object->string
 
  open-process open-input-process open-output-process
- process-pid process-status
+ process-pid
 
  input-port-char-position output-port-char-position
  input-port-bytes-buffered
@@ -865,6 +865,7 @@ package: gerbil
  (open-input-u8vector 0 1)
  (open-output-u8vector 0 1)
  (open-u8vector-pipe 0 1 2)
+ (process-status 1 2 3)
  (random-source-make-reals 1 2)
  (random-source-make-f64vectors 1 2)
  (current-readtable 0 1)
