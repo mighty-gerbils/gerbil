@@ -9,8 +9,6 @@ The `:std/net/request` library provides an HTTP client interface.
 The main HTTP client interface uses `request` structure to return results of
 HTTP requests. See API documentation for details on making requests.
 
-::: tip usage
-
 NOTE: in order to make HTTPS connections the Gambit scheme Gerbil is using must
 be configured with `--enable-openssl` flag.
 
