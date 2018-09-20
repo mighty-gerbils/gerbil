@@ -385,6 +385,43 @@ Please document me!
 
 Please document me!
 
+### bio-read-char
+::: tip usage
+```
+(bio-read-char ...)
+```
+:::
+
+Please document me!
+
+### bio-read-substring
+::: tip usage
+```
+(bio-read-substring ...)
+```
+:::
+
+Please document me!
+
+### bio-read-string
+::: tip usage
+```
+(bio-read-string ...)
+```
+:::
+
+Please document me!
+
+### bio-read-line
+::: tip usage
+```
+(bio-read-line ...)
+```
+:::
+
+Please document me!
+
+
 ### bio-input-utf8-decode
 ::: tip usage
 ```
