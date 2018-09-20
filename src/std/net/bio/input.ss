@@ -91,18 +91,24 @@ package: std/net/bio
      (else
       (bio-input-read bytes start end buf)))))
 
-(def (bio-read-subu8vector* bytes start end buf)
+(def (bio-read-subu8vector* bytes start end buf (need 0))
   (let* ((rlo  (&input-buffer-rlo buf))
          (rhi  (&input-buffer-rhi buf))
          (have (##fx- rhi rlo))
          (want (##fx- end start))
+         (need (##fxmin want need))
          (copy (##fxmin want have)))
     (when (##fx> copy 0)
       (let (rlo+copy (##fx+ rlo copy))
         (##subu8vector-move! (&input-buffer-e buf) rlo rlo+copy bytes start)
         (set! (&input-buffer-rlo buf)
           rlo+copy)))
-    copy))
+    (if (##fx>= copy need)
+      copy
+      (let (rd (bio-input-fill! buf 1))
+        (if (##fx> rd 0)
+          (bio-read-subu8vector* bytes (##fx+ start copy) end buf (##fx- need copy))
+          copy)))))
 
 (def (bio-read-subu8vector-unbuffered bytes start end buf)
   (let* ((need (##fx- end start))
