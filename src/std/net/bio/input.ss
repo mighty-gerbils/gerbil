@@ -306,7 +306,9 @@ package: std/net/bio
       (let (char (bio-read-char buf))
         (cond
          ((eof-object? char)
-          (list->string (reverse! chars)))
+          (if (null? chars)
+            (eof-object)
+            (list->string (reverse! chars))))
          ((eq? char sep)
           (list->string (reverse! (if include-sep? (cons sep chars) chars))))
          (else
