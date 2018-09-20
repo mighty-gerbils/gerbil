@@ -6,7 +6,8 @@ package: std/net/bio
 
 (import :gerbil/gambit/bits
         :std/text/utf8
-        :std/error)
+        :std/error
+        (only-in :std/srfi/1 reverse!))
 (export (except-out #t 2^15 2^16 2^31 2^32))
 
 (declare (not safe))
@@ -217,6 +218,100 @@ package: std/net/bio
     (if (##fx> u16 2^15)
       (##fx- u16 2^16)
       u16)))
+
+(def (bio-read-char buf)
+  (def (fill+recur! need)
+    (let (rd (bio-input-fill! buf need))
+      (if (##fxzero? rd)
+        (raise-io-error 'bio-read-char "Incomplete character" buf)
+        (bio-read-char buf))))
+
+  (def (get-byte i)
+    (##u8vector-ref (&input-buffer-e buf) i))
+
+  (let ((rlo (&input-buffer-rlo buf))
+        (rhi (&input-buffer-rhi buf)))
+    (if (##fx< rlo rhi)
+      (let (byte (get-byte rlo))
+        (cond
+         ((##fx<= byte #x7f)
+          (set! (&input-buffer-rlo buf)
+            (##fx+ rlo 1))
+          (##integer->char byte))
+         ((##fx<= byte #xdf)
+          (let (rlo+1 (##fx+ rlo 1))
+            (if (##fx< rlo+1 rhi)
+              (let (byte2 (get-byte rlo+1))
+                (set! (&input-buffer-rlo buf)
+                  (##fx+ rlo 2))
+                (##integer->char
+                 (##fxior (##fxarithmetic-shift-left (##fxand byte #x1f) 6)
+                          (##fxand byte2 #x3f))))
+              (fill+recur! 2))))
+         ((##fx<= byte #xef)
+          (let (rlo+2 (##fx+ rlo 2))
+            (if (##fx< rlo+2 rhi)
+              (let ((byte2 (get-byte (##fx+ rlo 1)))
+                    (byte3 (get-byte rlo+2)))
+                (set! (&input-buffer-rlo buf)
+                  (##fx+ rlo 3))
+                (##integer->char
+                 (##fxior (##fxarithmetic-shift-left (##fxand byte #x0f) 12)
+                          (##fxarithmetic-shift-left (##fxand byte2 #x3f) 6)
+                          (##fxand byte3 #x3f))))
+              (fill+recur! 3))))
+         ((##fx<= byte #xf4)
+          (let (rlo+3 (##fx+ rlo 3))
+            (if (##fx< rlo+3 rhi)
+              (let ((byte2 (get-byte (##fx+ rlo 1)))
+                    (byte3 (get-byte (##fx+ rlo 2)))
+                    (byte4 (get-byte rlo+3)))
+                (set! (&input-buffer-rlo buf)
+                  (##integer->char
+                   (##fxior (##fxarithmetic-shift-left (##fxand byte #x07) 18)
+                            (##fxarithmetic-shift-left (##fxand byte2 #x3f) 12)
+                            (##fxarithmetic-shift-left (##fxand byte3 #x3f) 6)
+                            (##fxand byte4 #x3f)))))
+              (fill+recur! 4))))
+         (else
+          ;; invalid character, issue UTF-8 replacement character
+          (set! (&input-buffer-rlo buf)
+            (##fx+ rlo 1))
+          #\xfffd)))
+      (let (rd (bio-input-fill! buf 1))
+        (if (##fxzero? rd)
+          (eof-object)
+          (bio-read-char buf))))))
+
+(def (bio-read-substring str start end buf)
+  (let lp ((i start) (count 0))
+    (if (##fx< i end)
+      (let (char (bio-read-char str))
+        (if (eof-object? char)
+          count
+          (begin
+            (##string-set! str i char)
+            (lp (##fx+ start 1) (##fx+ count 1)))))
+      count)))
+
+(def (bio-read-string str start end buf)
+  (let* ((len (string-length str))
+         (rd (bio-read-substring str 0 len buf)))
+    (unless (##fx= rd len)
+      (raise-io-error 'bio-read-string "premature end of input" buf rd len))))
+
+(def (bio-read-line buf (sep #\newline) (include-sep? #f) (maxchars #f))
+  (let lp ((chars []) (count 0))
+    (if (or (not maxchars) (##fx< count maxchars))
+      (let (char (bio-read-char buf))
+        (cond
+         ((eof-object? char)
+          (list->string (reverse! chars)))
+         ((eq? char sep)
+          (list->string (reverse! (if include-sep? (cons sep chars) chars))))
+         (else
+          (lp (cons char chars) (##fx+ count 1)))))
+      (list->string (reverse! chars)))))
 
 (def (bio-input-utf8-decode count buf)
   (let* ((rlo (&input-buffer-rlo buf))

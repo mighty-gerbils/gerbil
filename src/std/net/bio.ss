@@ -21,6 +21,10 @@ package: std/net
   bio-read-s32
   bio-read-u16
   bio-read-s16
+  bio-read-char
+  bio-read-substring
+  bio-read-string
+  bio-read-line
   bio-input-utf8-decode
   bio-input-skip
   bio-input-count
