@@ -8,6 +8,8 @@
         :std/protobuf/macros)
 (export protobuf-test)
 
+(extern (this-source-file this-source-file))
+
 (def (check-marshal-unmarshal obj bio-read-e bio-write-e)
   (check (unmarshal (marshal obj bio-write-e) bio-read-e)
          => obj))
@@ -78,5 +80,10 @@
 
       (check-marshal-unmarshal (B c: (hash ("a" (A a: "a" b: 1)) ("b" (A a: "b" b: 2))))
                                bio-read-B bio-write-B))
+
+    (test-case "test parser"
+      (check (gx#import-module (path-expand "potpourri-test.proto"
+                                            (path-directory (this-source-file))))
+             ? gx#module-context?))
 
     ))
