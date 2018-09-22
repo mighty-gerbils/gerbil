@@ -34,6 +34,8 @@ OptionNameTail <- '.' (Ident $1)
 
 TopDefinition <- Message
               |  Enum
+              |  Extend
+              |  Service
 
 Message <- 'message' (Ident $1) '{' (MessageBody $2)* '}'
         => ['message $1 $2 ...]
@@ -44,6 +46,8 @@ MessageBody <- MessageField
             |  Enum
             |  Option
             |  Message
+            |  Extensions
+            |  Reserved
 
 MessageField <- (MessageFieldLabel $1)? (Ident $2) (Ident $3) '=' (Int $4) (FieldOptions $5)? ';'
              => ['field $1 $2 $3 $4 $5]
@@ -70,6 +74,34 @@ OneOfField <- (Ident $1) (Ident $2) '=' (Constant $3) ';'
 Map <- 'map' '<' (Ident $1) ',' (Ident $2) '>' (Ident $3) '=' (Int $4) (FieldOptions $5)? ';'
     => ['map $1 $2 $3 $4 $5]
 
+Extensions <- 'extensions' (Ranges $1) ';'
+           => ['extensions $1 ...]
+
+Ranges <- (Range $1) (MoreRanges $2)*
+       => (cons $1 $2)
+
+MoreRanges <- ',' (Range $1)
+           => $1
+
+Range <- (Int $1) 'to' (RangeLimit $2)
+      => (cons $1 $2)
+      | Int
+
+RangeLimit <- Int
+           |  'max'
+
+Reserved <- 'reserved' (ReservedBody $1) ';'
+         => ['reserved $1 ...]
+
+ReservedBody <- Ranges
+             | FieldNames
+
+FieldNames <- (String $1) (MoreFieldNames $2)*
+           => (cons $1 $2)
+
+MoreFieldNames <- ',' (String $1)
+               => $1
+
 Enum <- 'enum' (Ident $1) '{' (EnumBody $2)* '}'
      => ['enum $1 $2 ...]
 
@@ -78,6 +110,28 @@ EnumBody <- Option
 
 EnumField <- (Ident $1) '=' (Int $2) (FieldOptions $3)? ';'
           => ['field $1 $2 $3]
+
+Extend <- 'extend' (Ident $1) '{' (ExtendBody $2)* '}'
+       => ['extend $1 $2 ...]
+
+ExtendBody <- MessageField
+
+Service <- 'service' (Ident $1) '{' (ServiceBody $2)* '}'
+        => ['service $1 $2 ...]
+
+ServiceBody <- Option
+            |  Rpc
+            |  Stream
+
+Rpc <- 'rpc' (Ident $1) '(' (StreamLit $2)? (Ident $3) ')'
+             'returns' '(' (StreamLit $4)? (Ident $5) ')'
+             ';'
+    => ['rpc $1 [$2 $3] [$4 $5]]
+
+StreamLit <- 'stream'
+
+Stream <- 'stream' (Ident $1) '(' (Ident $2) ',' (Ident $3) ')' ';'
+       => ['stream $1 $2 $3]
 
 Constant <- String
          |  Int

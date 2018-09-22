@@ -71,7 +71,7 @@ package: std/protobuf
     (let lp ((rest body) (nested []) (fields []) (subst []))
       (match rest
         ([hd . rest]
-         (syntax-case hd (message enum field)
+         (syntax-case hd (message enum field map oneof)
            ((enum enum-id . enum-body)
             (with-syntax ((new-enum-id (stx-identifier #'enum-id id "." #'enum-id)))
               (let (new-enum
@@ -284,7 +284,13 @@ package: std/protobuf
 (defrules repeated ())
 (defrules oneof ())
 (defrules map ())
+(defrules extensions ())
+(defrules reserved ())
 (defrules enum ())
+(defrules extend ())
+(defrules service ())
+(defrules rpc ())
+(defrules stream ())
 
 (begin-syntax
   (def (read-module-body port)
