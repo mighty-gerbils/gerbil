@@ -87,6 +87,17 @@ This will expand to roughly the following code:
 ...
 ```
 
+## Implementation Notes
+
+- Fields are serialized in declaration order.
+- Unknown fields are ignored in deserialization.
+- The parser does not accept empty statements from stray semicolons.
+  That's more of a metalinguistic statement than a bug though, it would be easy to modify the
+  parser to accept them.
+- `service`, `extend`, and `option` declarations are parsed but ignored by the expander.
+- `group` declarations are not accepted by the parser; I don't understand how groups work,
+  as they are not really documented other than being deprecated.
+
 ## I/O Procedures
 
 The `:std/protobuf/io` library provides low level I/O procedures using the
@@ -428,18 +439,3 @@ Please document me!
 :::
 
 Please document me!
-
-
-
-
-
-## Implementation Notes
-
-- Fields are serialized in declaration order.
-- Unknown fields are ignored in deserialization.
-- The parser does not accept empty statements from stray semicolons.
-  That's more of a metalinguistic statement than a bug though, it would be easy to modify the
-  parser to accept them.
-- `service`, `extend`, and `option` declarations are parsed but ignored by the expander.
-- `group` declarations are not accepted by the parser; I don't understand how groups work,
-  as they are not really documented other than being deprecated.
