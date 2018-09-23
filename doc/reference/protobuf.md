@@ -62,7 +62,7 @@ This will expand to roughly the following code:
   ...)
 
 (defstruct Request.Foo (val)
-  final: #t constructor: :init!)
+  final: #t transparent: #t constructor: :init!)
 
 (defmethod {:init! Request.Foo}
   (lambda (self val: (val #f))
@@ -79,7 +79,7 @@ This will expand to roughly the following code:
 ...
 
 (defstruct Request (type foo bar)
-  final: #t constructor: :init!)
+  final: #t transparent: #t constructor: :init!)
 
 (defmethod {:init! Request}
   (lambda (self type: type foo: (foo #f) bar: (bar #f))
@@ -157,7 +157,7 @@ Reads the varint-delimited binary representation of an object from a port.
 ```
 :::
 
-Write sthe varint-delimited binary representation of an object to a bio
+Writes the varint-delimited binary representation of an object to a bio
 output buffer.
 
 ### bio-read-delimited
@@ -173,269 +173,326 @@ input buffer.
 ### bio-write-delimited-string
 ::: tip usage
 ```
-(bio-write-delimited-string ...)
+(bio-write-delimited-string str buf)
+  str := string
+  buf := bio output buffer
 ```
 :::
 
-Please document me!
+Writes the varint-delimited binary representation of a string (UTF8).
 
 ### bio-read-delimited-string
 ::: tip usage
 ```
-(bio-read-delimited-string ...)
+(bio-read-delimited-string buf)
+  buf := bio input buffer
+=> string
 ```
 :::
 
-Please document me!
+Reads the varint-delimited binary representation of a string.
 
 ### bio-write-delimited-bytes
 ::: tip usage
 ```
-(bio-write-delimited-bytes ...)
+(bio-write-delimited-bytes bytes buf)
+  bytes := u8vector
+  buf   := bio output buffer
 ```
 :::
 
-Please document me!
+Writes varint delimited bytes.
 
 ### bio-read-delimited-bytes
 ::: tip usage
 ```
-(bio-read-delimited-bytes ...)
+(bio-read-delimited-bytes buf)
+  buf := bio input buffer
+=> u8vector
 ```
 :::
 
-Please document me!
+Reads varint delimited bytes
 
 ### bio-write-varint
 ::: tip usage
 ```
-(bio-write-varint ...)
+(bio-write-varint int buf)
+  int := integer
+  buf := bio output buffer
 ```
 :::
 
-Please document me!
+Writes an integer in varint representation.
 
 ### bio-read-varint
 ::: tip usage
 ```
-(bio-read-varint ...)
+(bio-read-varint buf)
+  buf := bio input buffer
+=> integer
 ```
 :::
 
-Please document me!
+Reads an integer in varint representation.
 
 ### bio-write-varint-zigzag
 ::: tip usage
 ```
-(bio-write-varint-zigzag ...)
+(bio-write-varint-zigzag int buf)
+  int := integer
+  buf := bio output buffer
 ```
 :::
 
-Please document me!
+Writes an integer in varint representation using zigzag encoding.
 
 ### bio-read-varint-zigzag
 ::: tip usage
 ```
-(bio-read-varint-zigzag ...)
+(bio-read-varint-zigzag buf)
+  buf := bio input buffer
+=> integer
 ```
 :::
 
-Please document me!
+Reads an integer in varint representation using zigzag encoding.
 
 ### bio-write-uint32
 ::: tip usage
 ```
-(bio-write-uint32 ...)
+(bio-write-uint32 int buf)
+  int := integer
+  buf := bio output buffer
 ```
 :::
 
-Please document me!
+Writes a fixed 32-bit unsigned integer in little endian.
 
 ### bio-read-uint32
 ::: tip usage
 ```
-(bio-read-uint32 ...)
+(bio-read-uint32 buf)
+  buf := bio input buffer
+=> integer
 ```
 :::
 
-Please document me!
+Reads a fixed 32-bit unsigned integer in little endian.
 
 ### bio-write-sint32
 ::: tip usage
 ```
-(bio-write-sint32 ...)
+(bio-write-sint32 int buf)
+  int := integer
+  buf := bio output buffer
 ```
 :::
 
-Please document me!
+Writes a fixed 32-bit signed integer in little endian.
 
 ### bio-read-sint32
 ::: tip usage
 ```
-(bio-read-sint32 ...)
+(bio-read-sint32 buf)
+  buf := bio input buffer
+=> integer
 ```
 :::
 
-Please document me!
+Reads a fixed 32-bit signed integer in little endian.
 
 ### bio-write-uint64
 ::: tip usage
 ```
-(bio-write-uint64 ...)
+(bio-write-uint64 int buf)
+  int := integer
+  buf := bio output buffer
 ```
 :::
 
-Please document me!
+Writes a fixed 64-bit unsigned integer in little endian.
 
 ### bio-read-uint64
 ::: tip usage
 ```
-(bio-read-uint64 ...)
+(bio-read-uint64 buf)
+  buf := bio input buffer
+=> integer
 ```
 :::
 
-Please document me!
+Reads a fixed 64-bit unsigned integer in little endian.
 
 ### bio-write-sint64
 ::: tip usage
 ```
-(bio-write-sint64 ...)
+(bio-write-sint64 int buf)
+  int := integer
+  buf := bio output buffer
 ```
 :::
 
-Please document me!
+Writes a fixed 64-bit signed integer in little endian.
 
 ### bio-read-sint64
 ::: tip usage
 ```
-(bio-read-sint64 ...)
+(bio-read-sint64 buf)
+  buf := bio input buffer
+=> integer
 ```
 :::
 
-Please document me!
+Reads a fixed 64-bit signed integer in little endian.
 
 ### bio-write-float
 ::: tip usage
 ```
-(bio-write-float ...)
+(bio-write-float float buf)
+  float := flonum
+  buf   := bio output buffer
 ```
 :::
 
-Please document me!
+Writes a number in 32-bit floating point representation.
 
 ### bio-read-float
 ::: tip usage
 ```
-(bio-read-float ...)
+(bio-read-float buf)
+  buf := bio input buffer
+=> flonum
 ```
 :::
 
-Please document me!
+Reads a number in 32-bit floating point representation.
 
 ### bio-write-double
 ::: tip usage
 ```
-(bio-write-double ...)
+(bio-write-double float buf)
+  float := flonum
+  buf   := bio output buffer
 ```
 :::
 
-Please document me!
+Writes a number in 32-bit floating point representation.
 
 ### bio-read-double
 ::: tip usage
 ```
-(bio-read-double ...)
+(bio-read-double buf)
+  buf := bio input buffer
+=> flonum
 ```
 :::
 
-Please document me!
+Reads a number in 32-bit floating point representation.
 
 ### bio-write-boolean
 ::: tip usage
 ```
-(bio-write-boolean ...)
+(bio-write-boolean bool buf)
+  bool := boolean
+  buf  := bio output buffer
 ```
 :::
 
-Please document me!
+Writes a boolean value as a the varint 0 or 1.
 
 ### bio-read-boolean
 ::: tip usage
 ```
-(bio-read-boolean ...)
+(bio-read-boolean buf)
+  buf := bio input buffer
+=> boolean
 ```
 :::
 
-Please document me!
+Reads a boolean value as the varint 0 or 1.
 
 ### bio-write-packed
 ::: tip usage
 ```
-(bio-write-packed ...)
+(bio-write-packed lst bio-write-e buf)
+  lst         := list
+  bio-write-e := procedure; serializer
+  buf         := bio output buffer
 ```
 :::
 
-Please document me!
+Writes a list in packed encoding.
 
 ### bio-read-packed
 ::: tip usage
 ```
-(bio-read-packed ...)
+(bio-read-packed bio-read-e buf)
+  bio-read-e := procedure
+  buf        := bio input buffer
+=> list
 ```
 :::
 
-Please document me!
+Reads a list in packed encoding.
 
 ### bio-write-field
 ::: tip usage
 ```
-(bio-write-field ...)
+(bio-write-field field tag buf)
+  field := fixnum; field number
+  tag   := symbol; VARINT, VARLEN, FIXED32, or FIXED64
+  buf   := bio output buffer
+
 ```
 :::
 
-Please document me!
+Writes a field tag.
 
 ### bio-read-field
 ::: tip usage
 ```
-(bio-read-field ...)
+(bio-read-field buf)
+  buf := bio input buffer
+=> (values tag field)
 ```
 :::
 
-Please document me!
+Reads a field tag.
 
 ### bio-write-key-value-pair
 ::: tip usage
 ```
-(bio-write-key-value-pair ...)
+(bio-write-key-value-pair k v ktag bio-write-key-e vtag bio-write-value-e buf)
 ```
 :::
 
-Please document me!
+Writes a key-value pair.
 
 ### bio-read-key-value-pair
 ::: tip usage
 ```
-(bio-read-key-value-pair ...)
+(bio-read-key-value-pair bio-read-key-e bio-read-value-e buf)
+=> pair
 ```
 :::
 
-Please document me!
+Reads a key-value pair
 
 ### bio-input-skip-unknown
 ::: tip usage
 ```
-(bio-input-skip-unknown ...)
+(bio-input-skip-unknown tag buf)
 ```
 :::
 
-Please document me!
+Skips input bytes as specified by the tag.
 
 ### bio-input-skip-varint
 ::: tip usage
 ```
-(bio-input-skip-varint ...)
+(bio-input-skip-varint buf)
 ```
 :::
 
-Please document me!
+Skips a varint.
