@@ -529,7 +529,9 @@ Please document me!
 
 ## The Grammar Prelude
 ::: tip usage
-prelude: :std/parser/grammar
+```
+#lang :std/parser/grammar
+```
 :::
 
 Please document me!
