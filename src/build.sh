@@ -72,7 +72,7 @@ stage0 () {
 
   ## gerbil bootstrap
   feedback_mid "preparing bootstrap"
-  rsync -auv bootstrap/gerbil "${target_lib}"
+  cp -R bootstrap/gerbil "${target_lib}"
   find "${target_lib}" -name \*.scm > .build.stage0
 
   feedback_mid "compiling gerbil core"
