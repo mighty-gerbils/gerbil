@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 set -eu
 
 #===============================================================================
@@ -33,8 +33,10 @@ die() {
 ## bootstrap
 target_setup () {
   local target="${1}"
-  rm -rf "${target:?}/"{bin,lib}  # warning: `:?` necessary for safety
-  mkdir -p "${target}/"{bin,lib}
+  rm -rf "${target:?}/bin"  # warning: `:?` necessary for safety
+  rm -rf "${target:?}/lib"  # warning: `:?` necessary for safety
+  mkdir -p "${target}/bin"
+  mkdir -p "${target}/lib"
 }
 
 compile_runtime () {
@@ -119,8 +121,9 @@ stage1 () {
         "${target_lib_static}"
 
   feedback_mid "compiling gerbil core"
-  export GERBIL_HOME="${GERBIL_STAGE0}" # required by gxi-script
-  export GERBIL_TARGET="${GERBIL_BASE}" # required by build1.ss
+  GERBIL_HOME="${GERBIL_STAGE0}" # required by gxi-script
+  GERBIL_TARGET="${GERBIL_BASE}" # required by build1.ss
+  export GERBIL_HOME GERBIL_TARGET
   "${GERBIL_STAGE0}/bin/gxi-script" "${GERBIL_BUILD}/build1.ss" || die
 
   ## finalize build
@@ -146,29 +149,33 @@ build_layout () {
 ## commands
 build_tools () {
   feedback_low "Building gerbil tools"
-  export PATH="${GERBIL_BASE}/bin:${PATH}"
-  export GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
+  PATH="${GERBIL_BASE}/bin:${PATH}"
+  GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
+  export PATH GERBIL_HOME
   (cd tools && ./build.ss deps && ./build.ss)
 }
 
 build_stdlib () {
   feedback_low "Building gerbil stdlib"
-  export PATH="${GERBIL_BASE}/bin:${PATH}"
-  export GERBIL_HOME="${GERBIL_BASE}" #required by gxi-build-script and build.ss
+  PATH="${GERBIL_BASE}/bin:${PATH}"
+  GERBIL_HOME="${GERBIL_BASE}" #required by gxi-build-script and build.ss
+  export PATH GERBIL_HOME
   (cd std && ./build-deps-gen.ss  && ./build.ss)
 }
 
 build_lang () {
   feedback_low "Building gerbil languages"
-  export PATH="${GERBIL_BASE}/bin:${PATH}"
-  export GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
+  PATH="${GERBIL_BASE}/bin:${PATH}"
+  GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
+  export PATH GERBIL_HOME
   (cd lang && ./build.ss)
 }
 
 build_tags () {
   feedback_low "Build gerbil tags"
-  export PATH="${GERBIL_BASE}/bin:${PATH}"
-  export GERBIL_HOME="${GERBIL_BASE}" #required by gxtags
+  PATH="${GERBIL_BASE}/bin:${PATH}"
+  GERBIL_HOME="${GERBIL_BASE}" #required by gxtags
+  export PATH GERBIL_HOME
   gxtags gerbil std lang
 }
 
@@ -185,7 +192,7 @@ build_gerbil() {
 }
 
 ## handling command line
-if [ -z "${1+x}" ]; then
+if [ "$#" -eq 0 ]; then
   build_gerbil
 else
   case "$1" in
