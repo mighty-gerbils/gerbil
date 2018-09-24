@@ -33,8 +33,10 @@ die() {
 ## bootstrap
 target_setup () {
   local target="${1}"
-  rm -rf "${target:?}/"{bin,lib}  # warning: `:?` necessary for safety
-  mkdir -p "${target}/"{bin,lib}
+  rm -rf "${target:?}/bin"  # warning: `:?` necessary for safety
+  rm -rf "${target:?}/lib"  # warning: `:?` necessary for safety
+  mkdir -p "${target}/bin"
+  mkdir -p "${target}/lib"
 }
 
 compile_runtime () {
