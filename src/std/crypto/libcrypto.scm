@@ -428,12 +428,12 @@ static HMAC_CTX *ffi_create_HMAC_CTX ()
 {
 #if OPENSSL_VERSION_NUMBER < 0x10100000L ||  defined (LIBRESSL_VERSION_NUMBER)
   HMAC_CTX *ctx = (HMAC_CTX*)malloc (sizeof (HMAC_CTX));
-#else
-  HMAC_CTX *ctx = HMAC_CTX_new ();
-#endif
   if (ctx) {
     HMAC_CTX_init (ctx);
   }
+#else
+  HMAC_CTX *ctx = HMAC_CTX_new ();
+#endif
   return ctx;
 }
 
