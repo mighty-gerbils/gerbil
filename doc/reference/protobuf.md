@@ -258,10 +258,10 @@ Writes an integer in varint representation using zigzag encoding.
 
 Reads an integer in varint representation using zigzag encoding.
 
-### bio-write-uint32
+### bio-write-fixed32
 ::: tip usage
 ```
-(bio-write-uint32 int buf)
+(bio-write-fixed32 int buf)
   int := integer
   buf := bio output buffer
 ```
@@ -269,10 +269,10 @@ Reads an integer in varint representation using zigzag encoding.
 
 Writes a fixed 32-bit unsigned integer in little endian.
 
-### bio-read-uint32
+### bio-read-fixed32
 ::: tip usage
 ```
-(bio-read-uint32 buf)
+(bio-read-fixed32 buf)
   buf := bio input buffer
 => integer
 ```
@@ -280,10 +280,10 @@ Writes a fixed 32-bit unsigned integer in little endian.
 
 Reads a fixed 32-bit unsigned integer in little endian.
 
-### bio-write-sint32
+### bio-write-sfixed32
 ::: tip usage
 ```
-(bio-write-sint32 int buf)
+(bio-write-sfixed32 int buf)
   int := integer
   buf := bio output buffer
 ```
@@ -291,10 +291,10 @@ Reads a fixed 32-bit unsigned integer in little endian.
 
 Writes a fixed 32-bit signed integer in little endian.
 
-### bio-read-sint32
+### bio-read-sfixed32
 ::: tip usage
 ```
-(bio-read-sint32 buf)
+(bio-read-sfixed32 buf)
   buf := bio input buffer
 => integer
 ```
@@ -302,10 +302,10 @@ Writes a fixed 32-bit signed integer in little endian.
 
 Reads a fixed 32-bit signed integer in little endian.
 
-### bio-write-uint64
+### bio-write-fixed64
 ::: tip usage
 ```
-(bio-write-uint64 int buf)
+(bio-write-fixed64 int buf)
   int := integer
   buf := bio output buffer
 ```
@@ -313,10 +313,10 @@ Reads a fixed 32-bit signed integer in little endian.
 
 Writes a fixed 64-bit unsigned integer in little endian.
 
-### bio-read-uint64
+### bio-read-fixed64
 ::: tip usage
 ```
-(bio-read-uint64 buf)
+(bio-read-fixed64 buf)
   buf := bio input buffer
 => integer
 ```
@@ -324,10 +324,10 @@ Writes a fixed 64-bit unsigned integer in little endian.
 
 Reads a fixed 64-bit unsigned integer in little endian.
 
-### bio-write-sint64
+### bio-write-sfixed64
 ::: tip usage
 ```
-(bio-write-sint64 int buf)
+(bio-write-sfixed64 int buf)
   int := integer
   buf := bio output buffer
 ```
@@ -335,10 +335,10 @@ Reads a fixed 64-bit unsigned integer in little endian.
 
 Writes a fixed 64-bit signed integer in little endian.
 
-### bio-read-sint64
+### bio-read-sfixed64
 ::: tip usage
 ```
-(bio-read-sint64 buf)
+(bio-read-sfixed64 buf)
   buf := bio input buffer
 => integer
 ```

@@ -57,11 +57,24 @@
       (defmessage Test5
         repeated: (e 5 Test1))
 
+      (defmessage Test6
+        optional: (a 1 sint32)
+        optional: (b 2 sint64)
+        optional: (c 3 fixed32)
+        optional: (d 4 sfixed32)
+        optional: (e 5 fixed64)
+        optional: (f 6 sfixed64)
+        optional: (g 7 float)
+        optional: (h 8 double))
+
       (check-marshal-unmarshal (Test1 a: 150) bio-read-Test1 bio-write-Test1)
       (check-marshal-unmarshal (Test2 b: "testing") bio-read-Test2 bio-write-Test2)
       (check-marshal-unmarshal (Test3 c: (Test1 a: 150)) bio-read-Test3 bio-write-Test3)
       (check-marshal-unmarshal (Test4 d: [3 270 86942]) bio-read-Test4 bio-write-Test4)
-      (check-marshal-unmarshal (Test5 e: [(Test1 a: 150) (Test1 a: 300)]) bio-read-Test5 bio-write-Test5))
+      (check-marshal-unmarshal (Test5 e: [(Test1 a: 150) (Test1 a: 300)]) bio-read-Test5 bio-write-Test5)
+      (check-marshal-unmarshal (Test6 a: -3 b: -5 c: 10 d: -20 e: 100 f: -100 g: 3.5 h: 7.0)
+                               bio-read-Test6 bio-write-Test6)
+      )
 
     (test-case "test oneof"
       (defmessage A

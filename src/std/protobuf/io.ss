@@ -175,7 +175,9 @@ package: std/protobuf
 (def (bio-write-boolean x buf)
   (bio-write-varint (if x 1 0) buf))
 
-;; varints
+;; the protobuf number zoo
+(def 2^31 (expt 2 31))
+(def 2^32 (expt 2 32))
 (def 2^63 (expt 2 63))
 (def 2^64 (expt 2 64))
 
@@ -209,59 +211,143 @@ package: std/protobuf
         (bio-write-u8 obits buf)
         (lp (arithmetic-shift bits -7))))))
 
-;; the protobuf number zoo
 (def (bio-read-varint-zigzag buf)
-  XXX
-  )
+  (let (y (bio-read-varint buf))
+    (if (even? y)
+      (quotient y 2)
+      (- (quotient (1+ y) 2)))))
 
 (def (bio-write-varint-zigzag x buf)
-  XXX
-  )
+  (let (y (if (negative? x)
+            (- (+ (* x 2) 1))
+            (* x 2)))
+    (bio-write-varint y buf)))
 
-(def (bio-read-uint32 buf)
-  XXX
-  )
+(def (bio-read-fixed-uint n buf)
+  (let lp ((i 0) (bits 0))
+    (if (##fx< i n)
+      (let (byte (bio-read-u8 buf))
+        (when (eof-object? byte)
+          (raise-io-error 'bio-read-sfixed32 "Premature end of input" buf))
+        (lp (##fx+ i 1)
+            (bitwise-ior bits (arithmetic-shift byte (##fx* 8 i)))))
+      bits)))
 
-(def (bio-write-uint32 x buf)
-  XXX
-  )
+(def (bio-write-fixed-uint x n buf)
+  (let lp ((i 0) (bits x))
+    (when (##fx< i n)
+      (bio-write-u8 (bitwise-and bits #xff) buf)
+      (lp (##fx+ i 1) (arithmetic-shift bits -8)))))
 
-(def (bio-read-sint32 buf)
-  XXX
-  )
+(def (bio-read-fixed32 buf)
+  (bio-read-fixed-uint 4 buf))
 
-(def (bio-write-sint32 x buf)
-  XXX
-  )
+(def (bio-write-fixed32 x buf)
+  (bio-write-fixed-uint x 4 buf))
 
-(def (bio-read-uint64 buf)
-  XXX
-  )
+(def (bio-read-sfixed32 buf)
+  (let (y (bio-read-fixed-uint 4 buf))
+    (if (< y 2^31)
+      y
+      (- y 2^32))))
 
-(def (bio-write-uint64 x buf)
-  XXX
-  )
+(def (bio-write-sfixed32 x buf)
+  (let (y (if (< x 0)
+            (+ 2^32 x)
+            x))
+    (bio-write-fixed-uint y 4 buf)))
 
-(def (bio-read-sint64 buf)
-  XXX
-  )
+(def (bio-read-fixed64 buf)
+  (bio-read-fixed-uint 8 buf))
 
-(def (bio-write-sint64 x buf)
-  XXX
-  )
+(def (bio-write-fixed64 x buf)
+  (bio-write-fixed-uint x 8 buf))
+
+(def (bio-read-sfixed64 buf)
+  (let (y (bio-read-fixed-uint 8 buf))
+    (if (< y 2^63)
+      y
+      (- y 2^64))))
+
+(def (bio-write-sfixed64 x buf)
+  (let (y (if (< x 0)
+            (+ 2^64 x)
+            x))
+    (bio-write-fixed-uint y 8 buf)))
 
 (def (bio-read-float buf)
-  XXX
-  )
+  (bio-read-float-bytes 4 bytes->float buf))
 
 (def (bio-write-float x buf)
-  XXX
-  )
+  (bio-write-float-bytes x 4 float->bytes! buf))
 
 (def (bio-read-double buf)
-  XXX
-  )
+  (bio-read-float-bytes 8 bytes->double buf))
 
 (def (bio-write-double x buf)
-  XXX
-  )
+  (bio-write-float-bytes x 8 double->bytes! buf))
+
+(def (bio-read-float-bytes n bytes->flonum buf)
+  (let (bytes (make-u8vector n))
+    (bio-read-bytes bytes buf)
+    (bytes->flonum bytes)))
+
+(def (bio-write-float-bytes x n flonum->bytes! buf)
+  (let (bytes (make-u8vector n))
+    (flonum->bytes! x bytes)
+    (bio-write-bytes bytes buf)))
+
+(extern
+  bytes->float float->bytes!
+  bytes->double double->bytes!)
+
+(begin-foreign
+  (c-declare #<<END-C
+#ifndef ___HAVE_FFI_U8VECTOR
+#define ___HAVE_FFI_U8VECTOR
+#define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
+#define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
+#endif
+
+static float ffi_read_float_bytes (___SCMOBJ bytes)
+{
+ return *(float*)(U8_DATA (bytes));
+}
+
+static void ffi_write_float_bytes (float val, ___SCMOBJ bytes)
+{
+ *(float*)(U8_DATA (bytes)) = val;
+}
+
+static double ffi_read_double_bytes (___SCMOBJ bytes)
+{
+ return *(double*)(U8_DATA (bytes));
+}
+
+static void ffi_write_double_bytes (double val, ___SCMOBJ bytes)
+{
+ *(double*)(U8_DATA (bytes)) = val;
+}
+END-C
+)
+
+(namespace ("std/protobuf/io#"
+             bytes->float
+             float->bytes!
+             bytes->double
+             double->bytes!))
+
+(define-macro (define-c-lambda id args ret #!optional (name #f))
+  (let ((name (or name (##symbol->string id))))
+    `(define ,id
+       (c-lambda ,args ,ret ,name))))
+
+(define-c-lambda bytes->float (scheme-object) float
+  "ffi_read_float_bytes")
+(define-c-lambda float->bytes! (float scheme-object) void
+  "ffi_write_float_bytes")
+(define-c-lambda bytes->double (scheme-object) double
+  "ffi_read_double_bytes")
+(define-c-lambda double->bytes! (double scheme-object) void
+  "ffi_write_double_bytes")
+)
