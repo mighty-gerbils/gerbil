@@ -1,0 +1,42 @@
+#lang :std/protobuf/proto
+
+package potpourri;
+
+message A {
+  optional int32 a = 1;
+  optional string b = 2;
+  reserved 4, 10 to 20;
+  reserved "c";
+  extensions 20 to 100;
+}
+
+message B {
+  enum T {
+    FOO = 1;
+    BAR = 2;
+  }
+
+  message C {
+    optional string x = 1;
+    optional A y = 2;
+  }
+
+  required T t = 1;
+  oneof stuff {
+    string foo = 2;
+    A bar = 3;
+  }
+
+  map<string, A> aMap = 4;
+
+  optional C c = 5;
+}
+
+
+service C {
+  rpc DoStuff (A) returns (B);
+}
+
+extend A {
+  optional string blah = 20;
+}
