@@ -1,0 +1,7 @@
+#lang :std/protobuf/proto
+
+import "potpourri-test.proto";
+
+message D {
+  optional potpourri.A a = 1;
+}

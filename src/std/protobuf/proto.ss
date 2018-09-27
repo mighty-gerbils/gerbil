@@ -250,7 +250,27 @@ package: std/protobuf
            (defmessage id . expanded-body))))))
 
   (def (expand-import expr)
-    (raise-syntax-error #f "XXX Implement me: import" expr))
+    (syntax-case expr (public weak)
+      ((_ #f path)
+       (with-syntax ((path (expand-import-path #'path)))
+         (syntax/loc expr
+           (import (protobuf-in path)))))
+      ((_ public path)
+       (with-syntax* ((path (expand-import-path #'path))
+                      (do-import
+                       (syntax/loc expr
+                         (import path)))
+                      (do-export
+                       (syntax/loc expr
+                         (export (import: path)))))
+         (syntax/loc expr
+           (begin do-import do-export))))))
+
+  (def (expand-import-path stx-path)
+    (let (path (stx-e stx-path))
+      (if (eq? (string-ref path 0) #\:) ; library path
+        (datum->syntax stx-path (string->symbol path) stx-path)
+        stx-path)))
 
   (def (expand-pkg pkg defs)
     (def (->id defn)

@@ -1,5 +1,7 @@
 #lang :std/protobuf/proto
 
+package potpourri;
+
 message A {
   optional int32 a = 1;
   optional string b = 2;

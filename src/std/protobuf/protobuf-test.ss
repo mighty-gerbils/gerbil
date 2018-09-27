@@ -99,4 +99,9 @@
                                             (path-directory (this-source-file))))
              ? gx#module-context?))
 
+    (test-case "test import"
+      (check (gx#import-module (path-expand "potpourri-test2.proto"
+                                            (path-directory (this-source-file))))
+             ? gx#module-context?))
+
     ))

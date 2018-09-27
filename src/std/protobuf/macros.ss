@@ -559,4 +559,44 @@ package: std/protobuf
    (defsyntax id
      (make-package id: 'id types: [(quote-syntax type-id) ...]))))
 
-(defrules protobuf-in ())
+(defsyntax-for-import (protobuf-in stx)
+  (def (expand-pkgs path imports)
+    (let lp ((rest imports) (r []))
+      (match rest
+        ([in . rest]
+         (cond
+          ((module-import? in)
+           (if (pkg-import? in)
+             (lp rest (cons (expand-pkg-import path in) r))
+             (lp rest r)))
+          ((import-set? in)
+           (lp (foldl cons rest (import-set-imports in)) r))
+          (else
+           (lp rest r))))
+        (else
+         (reverse r)))))
+
+  (def (pkg-import? in)
+    (let* ((out (module-import-source in))
+           (bind (core-resolve-module-export out)))
+      (and (syntax-binding? bind)
+           (let (e (syntax-binding-e bind))
+             (and (expander? e)
+                  (package? (expander-e e)))))))
+
+  (def (expand-pkg-import path in)
+    (let* ((out (module-import-source in))
+           (bind (core-resolve-module-export out))
+           (pkg (expander-e (syntax-binding-e bind))))
+      (with-syntax ((path path)
+                    (prefix (make-symbol (package-id pkg) "."))
+                    ((type ...) (package-types pkg)))
+        #'(prefix-in (only-in path type ...) prefix))))
+
+  (syntax-case stx ()
+    ((_ path)
+     (let* ((imports (core-expand-import-source #'path))
+            (pkgs (expand-pkgs #'path imports)))
+       (if (null? pkgs)
+         #'path
+         (cons 'begin: pkgs))))))
