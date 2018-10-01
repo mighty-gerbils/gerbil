@@ -6,6 +6,8 @@ package: std/misc
 (import :gerbil/gambit/threads
         :std/misc/queue
         :std/misc/timeout
+        :std/generic
+        :std/iter
         :std/error)
 (export make-channel channel?
         channel-put channel-try-put channel-sync
@@ -117,5 +119,29 @@ package: std/misc
       (condition-variable-broadcast! (channel-cv ch))
       (mutex-unlock! mx))))
 
+(defmethod {destroy channel}
+  channel-close)
+
 (def (channel-closed? ch)
   (channel-eof ch))
+
+(defmethod (:iter (ch channel))
+  (iter-channel ch))
+
+(def (iter-channel ch)
+  (def (value-e it)
+    (with ((iterator [ch . val]) it)
+      (cond
+       ((iter-nil? val)
+        (let (val (channel-get ch))
+          (set! (cdr (iterator-e it)) val)
+          (value-e it)))
+       ((eof-object? val)
+        iter-end)
+       (else val))))
+
+  (def (next-e it)
+    (set! (cdr (iterator-e it))
+      iter-nil))
+
+  (make-iterator (cons ch iter-nil) void value-e next-e void))
