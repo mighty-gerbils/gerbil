@@ -57,12 +57,20 @@ $ LDFLAGS=-L/usr/local/opt/openssl/lib \
 
 ## Skip the Install, Get Started on Docker
 
-The latest Gerbil images are available via Dockerhub:
+The latest Gerbil images are available via Dockerhub
+
+Ubuntu based version:
 ```bash
-docker pull -it gerbil/scheme:latest
+docker pull -it gerbil/scheme:ubuntu
+```
+CentOS based version:
+```bash
+docker pull -it gerbil/scheme:centos
 ```
 
 To get to the repl:
 ```bash
-docker run -it gerbil/scheme:latest /root/gerbil/bin/gxi
+docker run -it gerbil/scheme:ubuntu /root/gerbil/bin/gxi
 ```
+
+Or you can build your own container, using this [Dockerfile](https://github.com/vyzo/gerbil/blob/master/Dockerfile)
