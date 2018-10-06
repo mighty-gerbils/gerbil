@@ -27,9 +27,9 @@ Customizing the Interactive Shell
 
 Whenever gxi is run interactively, after loading and initializing the runtime and expander, it loads the library interactive initialization file $GERBIL_HOME/lib/init.ss (source: init.ss) which greets the user, imports the :gerbil/gambit prelude module and provides the interactive development forms documented above.
 
-After loading the library initialization file, gxi checks for a user specific interactive initialization file. If the file ~/.gerbil/init.ss exists, then it is loaded in the top (interaction) environment. This allows you to customize your interactive Gerbil shell.
+After loading the library initialization file, gxi checks for a user specific interactive initialization file. If the file `~/.gerbil/init.ss` exists, then it is loaded in the top (interaction) environment. This allows you to customize your interactive Gerbil shell.
 
-Here is a small example ~/.gerbil/init.ss that provides useful functionality:
+Here is a small example `~/.gerbil/init.ss` that provides useful functionality:
 
 ```
 ;;; -*- Gerbil -*-
