@@ -3,7 +3,7 @@
 The natural home for Gerbil development is Emacs, the ultimate parenthesis manipulation machine.
 
 ## Setting Up
-Gerbil comes with a custom editing mode, which extends scheme-mode with font-lock and indentation for Gerbil code: [gerbil.el](/vyzo/gerbil/blob/master/etc/gerbil.el).
+Gerbil comes with a custom editing mode, which extends scheme-mode with font-lock and indentation for Gerbil code: [gerbil.el](https://github.com/vyzo/gerbil/blob/master/etc/gerbil.el).
 See below for additional functionality provided by gerbil-mode.
 
 You can add it to your autoload path (eg by linking in `$HOME/.emacs.d`) and adding this to your `.emacs`:
@@ -12,7 +12,7 @@ You can add it to your autoload path (eg by linking in `$HOME/.emacs.d`) and add
 ```
 
 You should further utilize Gambit's inferior mode, as it offers debugger integration with sources on emacs.
-It lives in [$GAMBIT_HOME/share/emacs/site-lisp/gambit.el](/gambit/gambit/blob/master/misc/gambit.el).
+It lives in [$GAMBIT_HOME/share/emacs/site-lisp/gambit.el](https://github.com/gambit/gambit/blob/master/misc/gambit.el).
 
 You can add it to your autoload path and then add this to your `.emacs`:
 ```
