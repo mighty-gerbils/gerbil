@@ -177,7 +177,7 @@ package: std/db
   (start-logger!)
   (DEBUG "STARTUP")
   (try
-   (send! ['StartupMessage ["user" . user] (if db [["db" . db]] []) ...])
+   (send! ['StartupMessage ["user" . user] (if db [["database" . db]] []) ...])
    (recv!
     (['AuthenticationRequest what . rest]
      (DEBUG "AUTHENTICATION REQUEST " what)
