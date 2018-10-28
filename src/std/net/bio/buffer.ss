@@ -22,6 +22,75 @@ package: std/net/bio
 (def (fixed-buffer-read bytes start end buf)
   0)
 
+;; input subbuffers
+(defstruct (delimited-input-buffer input-buffer) (buf limit)
+  unchecked: #t)
+
+(def (open-delimited-input-buffer buf limit)
+  (let* ((rlo (&input-buffer-rlo buf))
+         (rhi (&input-buffer-rhi buf))
+         (have (fx- rhi rlo)))
+    (if (fx> have limit)
+      (begin
+        (set! rhi (fx+ rlo have))
+        (set! limit 0))
+      (begin
+        (set! limit (fx- limit have))))
+    (set! (&input-buffer-rlo buf)
+      rhi)
+    (make-delimited-input-buffer
+     (&input-buffer-e buf)
+     rlo rhi
+     delimited-buffer-fill!
+     delimited-buffer-read
+     buf limit)))
+
+(def (delimited-buffer-fill! buf need)
+  (let* ((limit (&delimited-input-buffer-limit buf))
+         (have (fx- (&input-buffer-rhi buf) (&input-buffer-rlo buf)))
+         (need (fxmin need (fx+ have limit))))
+    (cond
+     ((fx= limit 0) 0)
+     (else
+      (let (xbuf (&delimited-input-buffer-buf buf))
+        (set! (&input-buffer-rlo xbuf)
+          (&input-buffer-rlo buf))
+        (set! (&input-buffer-rhi xbuf)
+          (&input-buffer-rhi buf))
+        (let (rd (bio-input-fill! xbuf need))
+          (cond
+           ((fx= rd 0) 0)
+           ((fx<= rd limit)
+            (set! (&input-buffer-rlo buf)
+              (&input-buffer-rlo xbuf))
+            (set! (&input-buffer-rhi buf)
+              (&input-buffer-rhi xbuf))
+            (set! (&delimited-input-buffer-limit buf)
+              (fx- limit rd))
+            (set! (&input-buffer-rlo xbuf)
+              (&input-buffer-rhi buf))
+            rd)
+           (else
+            (set! (&input-buffer-rlo buf)
+              (&input-buffer-rlo xbuf))
+            (set! (&input-buffer-rlo buf)
+              (fx+ (&input-buffer-rlo buf) have limit))
+            (set! (&delimited-input-buffer-limit buf)
+              0)
+            (set! (&input-buffer-rlo xbuf)
+              (&input-buffer-rhi buf))
+            limit))))))))
+
+(def (delimited-buffer-read bytes start end buf)
+  (let* ((limit (&delimited-input-buffer-limit buf))
+         (want (fx- end start))
+         (need (fxmin want limit))
+         (end (fx+ start need))
+         (rd (bio-input-read bytes start end (&delimited-input-buffer-buf buf))))
+    (set! (&delimited-input-buffer-limit buf)
+      (fx- limit rd))
+    rd))
+
 ;; fixed output buffers
 (def (open-fixed-output-buffer size)
   (make-fixed-output-buffer (make-u8vector size) 0 size))
