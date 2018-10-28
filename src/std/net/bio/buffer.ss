@@ -32,7 +32,7 @@ package: std/net/bio
          (have (fx- rhi rlo)))
     (if (fx> have limit)
       (begin
-        (set! rhi (fx+ rlo have))
+        (set! rhi (fx+ rlo limit))
         (set! limit 0))
       (begin
         (set! limit (fx- limit have))))
