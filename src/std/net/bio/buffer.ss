@@ -73,7 +73,7 @@ package: std/net/bio
            (else
             (set! (&input-buffer-rlo buf)
               (&input-buffer-rlo xbuf))
-            (set! (&input-buffer-rlo buf)
+            (set! (&input-buffer-rhi buf)
               (fx+ (&input-buffer-rlo buf) have limit))
             (set! (&delimited-input-buffer-limit buf)
               0)
