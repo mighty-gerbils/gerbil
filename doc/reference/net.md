@@ -584,6 +584,24 @@ Please document me!
 
 Please document me!
 
+### open-delimited-input-buffer
+::: tip usage
+```
+(open-delimited-input-buffer ...)
+```
+:::
+
+Please document me!
+
+### delimited-input-buffer?
+::: tip usage
+```
+(delimited-input-buffer? ...)
+```
+:::
+
+Please document me!
+
 ### open-fixed-output-buffer
 ::: tip usage
 ```

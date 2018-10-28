@@ -88,9 +88,8 @@ package: std/protobuf
 
 ;; packed encoding
 (def (bio-read-packed bio-read-e buf)
-  ;; TODO: use subbuffers when they get implemented
-  (let* ((bytes (bio-read-delimited-bytes buf))
-         (buf (open-input-buffer bytes)))
+  (let* ((len (bio-read-varint buf))
+         (buf (open-delimited-input-buffer buf len)))
     (let lp ((r []))
       (if (eof-object? (bio-peek-u8 buf))
         (reverse r)
@@ -105,9 +104,8 @@ package: std/protobuf
 
 ;; map encoding
 (def (bio-read-key-value-pair bio-read-key-e bio-read-value-e buf)
-  ;; TODO: use subbuffers when they get implemented
-  (let* ((bytes (bio-read-delimited-bytes buf))
-         (buf (open-input-buffer bytes)))
+  (let* ((len (bio-read-varint buf))
+         (buf (open-delimited-input-buffer buf len)))
     (let lp ((key #f) (value #f))
       (if (eof-object? (bio-peek-u8 buf))
         (cons key value)
@@ -135,11 +133,8 @@ package: std/protobuf
 
 ;; length delimited objects
 (def (bio-read-delimited bio-read-e buf)
-  ;; TODO: use subbuffers when they get implemented
   (let* ((len (bio-read-varint buf))
-         (bytes (make-u8vector len))
-         (_ (bio-read-bytes bytes buf))
-         (buf (open-input-buffer bytes)))
+         (buf (open-delimited-input-buffer buf len)))
     (bio-read-e buf)))
 
 (def (bio-write-delimited x bio-write-e buf)

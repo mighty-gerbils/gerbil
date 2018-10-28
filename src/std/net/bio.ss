@@ -45,6 +45,8 @@ package: std/net
   bio-force-output
   ;; buffers
   open-input-buffer
+  open-delimited-input-buffer
+  delimited-input-buffer?
   open-fixed-output-buffer
   make-fixed-output-buffer
   open-chunked-output-buffer
