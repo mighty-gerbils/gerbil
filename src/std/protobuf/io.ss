@@ -4,14 +4,11 @@
 package: std/protobuf
 
 (import :gerbil/gambit/bits
+        :gerbil/gambit/ports
         :std/net/bio
         :std/text/utf8
-        :std/error
-        )
+        :std/error)
 (export #t)
-
-(defrules XXX ()
-  (_ (error "XXX Implement me!")))
 
 ;;; marshalling
 (def (marshal obj bio-write-e)
@@ -25,13 +22,41 @@ package: std/protobuf
 
 ;;; port i/o interface
 (def (read-delimited bio-read-e (port (current-input-port)))
-  XXX
-  )
+  (let* ((len (read-varuint port))
+         (bytes (make-u8vector len))
+         (rd (read-subu8vector bytes 0 len port))
+         (_ (unless (fx= rd len)
+              (raise-io-error 'read-delimited "Premature end of input" port rd)))
+         (buf (open-input-buffer bytes)))
+    (bio-read-e buf)))
 
 (def (write-delimited x bio-write-e (port (current-output-port)))
-  XXX
-  )
+  (let (buf (open-serializer-output-buffer))
+    (bio-write-e x buf)
+    (let (len (chunked-output-length buf))
+      (write-varuint len port)
+      (for-each (lambda (bytes) (write-subu8vector bytes 0 (u8vector-length bytes) port))
+                (chunked-output-chunks buf)))))
 
+(def (read-varuint port)
+  (let lp ((shift 0) (r 0))
+    (let* ((bits (read-u8 port))
+           (_ (when (eof-object? bits)
+                (raise-io-error 'read-varuint "Premature end of input" port)))
+           (limb (##fxand bits #x7f))
+           (r (bitwise-ior (arithmetic-shift limb shift) r)))
+      (if (##fxzero? (##fxand bits #x80))
+        r
+        (lp (##fx+ shift 7) r)))))
+
+(def (write-varuint x port)
+  (let lp ((bits x))
+    (if (< bits 128)
+      (write-u8 bits port)
+      (let* ((limb (bitwise-and bits #x7f))
+             (obits (##fxior limb #x80)))
+        (write-u8 obits port)
+        (lp (arithmetic-shift bits -7))))))
 
 ;;; BIO interface
 
@@ -145,8 +170,18 @@ package: std/protobuf
               (chunked-output-chunks tmpbuf))))
 
 (def (bio-read-delimited-string buf)
-  ;; TODO: use bio-input-utf8-decode when it gets streaming support
-  (utf8->string (bio-read-delimited-bytes buf)))
+  (declare (not safe))
+  (let* ((len (bio-read-varint buf))
+         (buf (open-delimited-input-buffer buf len))
+         (str (make-string len)))
+    (let lp ((i 0))
+      (if (eof-object? (bio-peek-u8 buf))
+        (begin
+          (string-shrink! str i)
+          str)
+        (let (char (bio-read-char buf))
+          (string-set! str i char)
+          (lp (fx1+ i)))))))
 
 (def (bio-write-delimited-string x buf)
   (let (len (string-utf8-length x))
