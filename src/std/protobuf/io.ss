@@ -145,8 +145,18 @@ package: std/protobuf
               (chunked-output-chunks tmpbuf))))
 
 (def (bio-read-delimited-string buf)
-  ;; TODO: use bio-input-utf8-decode when it gets streaming support
-  (utf8->string (bio-read-delimited-bytes buf)))
+  (declare (not safe))
+  (let* ((len (bio-read-varint buf))
+         (buf (open-delimited-input-buffer buf len))
+         (str (make-string len)))
+    (let lp ((i 0))
+      (if (eof-object? (bio-peek-u8 buf))
+        (begin
+          (string-shrink! str i)
+          str)
+        (let (char (bio-read-char buf))
+          (string-set! str i char)
+          (lp (fx1+ i)))))))
 
 (def (bio-write-delimited-string x buf)
   (let (len (string-utf8-length x))
