@@ -2,6 +2,7 @@
 (begin
   (define gxc#compile-timestamp
     (lambda () (inexact->exact (floor (time->seconds (current-time))))))
+  (define gxc#gerbil-gsc (lambda () (getenv '"GERBIL_GSC" '"gsc")))
   (define gxc#compile-file__%
     (lambda (_srcpath50241_ _opts50242_)
       (if (string? _srcpath50241_)
@@ -49,14 +50,14 @@
       (let ((_opts50260_ '()))
         (gxc#compile-file__% _srcpath50258_ _opts50260_))))
   (define gxc#compile-file
-    (lambda _g50281_
-      (let ((_g50280_ (length _g50281_)))
-        (cond ((##fx= _g50280_ 1) (apply gxc#compile-file__0 _g50281_))
-              ((##fx= _g50280_ 2) (apply gxc#compile-file__% _g50281_))
+    (lambda _g50282_
+      (let ((_g50281_ (length _g50282_)))
+        (cond ((##fx= _g50281_ 1) (apply gxc#compile-file__0 _g50282_))
+              ((##fx= _g50281_ 2) (apply gxc#compile-file__% _g50282_))
               (else
                (##raise-wrong-number-of-arguments-exception
                 gxc#compile-file
-                _g50281_))))))
+                _g50282_))))))
   (define gxc#compile-exe-stub__%
     (lambda (_srcpath50227_ _opts50228_)
       (gxc#do-compile-exe
@@ -68,14 +69,14 @@
       (let ((_opts50235_ '()))
         (gxc#compile-exe-stub__% _srcpath50233_ _opts50235_))))
   (define gxc#compile-exe-stub
-    (lambda _g50283_
-      (let ((_g50282_ (length _g50283_)))
-        (cond ((##fx= _g50282_ 1) (apply gxc#compile-exe-stub__0 _g50283_))
-              ((##fx= _g50282_ 2) (apply gxc#compile-exe-stub__% _g50283_))
+    (lambda _g50284_
+      (let ((_g50283_ (length _g50284_)))
+        (cond ((##fx= _g50283_ 1) (apply gxc#compile-exe-stub__0 _g50284_))
+              ((##fx= _g50283_ 2) (apply gxc#compile-exe-stub__% _g50284_))
               (else
                (##raise-wrong-number-of-arguments-exception
                 gxc#compile-exe-stub
-                _g50283_))))))
+                _g50284_))))))
   (define gxc#compile-static-exe__%
     (lambda (_srcpath50213_ _opts50214_)
       (gxc#do-compile-exe
@@ -87,14 +88,14 @@
       (let ((_opts50221_ '()))
         (gxc#compile-static-exe__% _srcpath50219_ _opts50221_))))
   (define gxc#compile-static-exe
-    (lambda _g50285_
-      (let ((_g50284_ (length _g50285_)))
-        (cond ((##fx= _g50284_ 1) (apply gxc#compile-static-exe__0 _g50285_))
-              ((##fx= _g50284_ 2) (apply gxc#compile-static-exe__% _g50285_))
+    (lambda _g50286_
+      (let ((_g50285_ (length _g50286_)))
+        (cond ((##fx= _g50285_ 1) (apply gxc#compile-static-exe__0 _g50286_))
+              ((##fx= _g50285_ 2) (apply gxc#compile-static-exe__% _g50286_))
               (else
                (##raise-wrong-number-of-arguments-exception
                 gxc#compile-static-exe
-                _g50285_))))))
+                _g50286_))))))
   (define gxc#do-compile-exe
     (lambda (_srcpath50201_ _opts50202_ _compile-e50203_)
       (if (string? _srcpath50201_)
@@ -170,7 +171,7 @@
                           (let* ((_proc50187_
                                   (open-process
                                    (cons 'path:
-                                         (cons '"gsc"
+                                         (cons (gxc#gerbil-gsc)
                                                (cons 'arguments:
                                                      (cons _gsc-args50183_
                                                            (cons 'stdout-redirection:
@@ -381,7 +382,7 @@
                           (let* ((_proc50079_
                                   (open-process
                                    (cons 'path:
-                                         (cons '"gsc"
+                                         (cons (gxc#gerbil-gsc)
                                                (cons 'arguments:
                                                      (cons _gsc-args50075_
                                                            (cons 'stdout-redirection:
@@ -800,9 +801,9 @@
        gx#current-expander-marks
        '()
        gxc#current-compile-symbol-table
-       (let ((__obj50278 (make-object gxc#symbol-table::t '2)))
-         (gxc#symbol-table:::init! __obj50278)
-         __obj50278)
+       (let ((__obj50279 (make-object gxc#symbol-table::t '2)))
+         (gxc#symbol-table:::init! __obj50279)
+         __obj50279)
        gxc#current-compile-runtime-sections
        (make-table 'test: eq?)
        gxc#current-compile-runtime-names
@@ -1061,14 +1062,14 @@
                                         (_E4965649671_))))
                                 (_E4965649671_))))
                         (_E4965649671_))))))
-        (let ((_g50286_ (gxc#generate-meta-code _ctx49645_)))
+        (let ((_g50287_ (gxc#generate-meta-code _ctx49645_)))
           (begin
-            (let ((_g50287_
-                   (if (##values? _g50286_) (##vector-length _g50286_) 1)))
-              (if (not (##fx= _g50287_ 2))
-                  (error "Context expects 2 values" _g50287_)))
-            (let ((_ssi-code49650_ (##vector-ref _g50286_ 0))
-                  (_phi-code49651_ (##vector-ref _g50286_ 1)))
+            (let ((_g50288_
+                   (if (##values? _g50287_) (##vector-length _g50287_) 1)))
+              (if (not (##fx= _g50288_ 2))
+                  (error "Context expects 2 values" _g50288_)))
+            (let ((_ssi-code49650_ (##vector-ref _g50287_ 0))
+                  (_phi-code49651_ (##vector-ref _g50287_ 1)))
               (begin
                 (_compile-ssi49647_ _ssi-code49650_)
                 (for-each _compile-phi49648_ _phi-code49651_))))))))
@@ -1099,9 +1100,9 @@
   (define gxc#generate-meta-code
     (lambda (_ctx49621_)
       (let* ((_state49623_
-              (let ((__obj50279 (make-object gxc#meta-state::t '4)))
-                (gxc#meta-state:::init! __obj50279 _ctx49621_)
-                __obj50279))
+              (let ((__obj50280 (make-object gxc#meta-state::t '4)))
+                (gxc#meta-state:::init! __obj50280 _ctx49621_)
+                __obj50280))
              (_ssi-code49625_
               (gxc#apply-generate-meta
                (##structure-ref _ctx49621_ '11 gx#module-context::t '#f)
@@ -1158,14 +1159,14 @@
       (let ((_phi?49604_ '#f))
         (gxc#compile-scm-file__% _path49601_ _code49602_ _phi?49604_))))
   (define gxc#compile-scm-file
-    (lambda _g50289_
-      (let ((_g50288_ (length _g50289_)))
-        (cond ((##fx= _g50288_ 2) (apply gxc#compile-scm-file__0 _g50289_))
-              ((##fx= _g50288_ 3) (apply gxc#compile-scm-file__% _g50289_))
+    (lambda _g50290_
+      (let ((_g50289_ (length _g50290_)))
+        (cond ((##fx= _g50289_ 2) (apply gxc#compile-scm-file__0 _g50290_))
+              ((##fx= _g50289_ 3) (apply gxc#compile-scm-file__% _g50290_))
               (else
                (##raise-wrong-number-of-arguments-exception
                 gxc#compile-scm-file
-                _g50289_))))))
+                _g50290_))))))
   (define gxc#gsc-debug-options__%
     (lambda (_phi?49500_)
       (let ((_$e49573_ (gxc#current-compile-debug)))
@@ -1198,14 +1199,14 @@
     (lambda ()
       (let ((_phi?49588_ '#f)) (gxc#gsc-debug-options__% _phi?49588_))))
   (define gxc#gsc-debug-options
-    (lambda _g50291_
-      (let ((_g50290_ (length _g50291_)))
-        (cond ((##fx= _g50290_ 0) (apply gxc#gsc-debug-options__0 _g50291_))
-              ((##fx= _g50290_ 1) (apply gxc#gsc-debug-options__% _g50291_))
+    (lambda _g50292_
+      (let ((_g50291_ (length _g50292_)))
+        (cond ((##fx= _g50291_ 0) (apply gxc#gsc-debug-options__0 _g50292_))
+              ((##fx= _g50291_ 1) (apply gxc#gsc-debug-options__% _g50292_))
               (else
                (##raise-wrong-number-of-arguments-exception
                 gxc#gsc-debug-options
-                _g50291_))))))
+                _g50292_))))))
   (define gxc#gsc-compile-file
     (lambda (_path49481_ _phi?49482_)
       (let* ((_gsc-args49489_
@@ -1219,12 +1220,12 @@
               (foldr1 cons
                       _gsc-args49489_
                       (gxc#gsc-debug-options__% _phi?49482_)))
-             (_g50292_
+             (_g50293_
               (gxc#verbose '"invoke gsc " (cons 'gsc _gsc-args49491_)))
              (_proc49494_
               (open-process
                (cons 'path:
-                     (cons '"gsc"
+                     (cons (gxc#gerbil-gsc)
                            (cons 'arguments:
                                  (cons _gsc-args49491_
                                        (cons 'stdout-redirection:

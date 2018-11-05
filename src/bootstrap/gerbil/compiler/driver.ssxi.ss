@@ -3,6 +3,7 @@ package: gerbil/compiler
 
 (begin
   (declare-type gxc#compile-timestamp (@lambda 0 #f))
+  (declare-type gxc#gerbil-gsc (@lambda 0 #f))
   (declare-type gxc#compile-file__% (@lambda 2 #f))
   (declare-type gxc#compile-file__0 (@lambda 1 #f))
   (declare-type
