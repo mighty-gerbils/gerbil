@@ -411,7 +411,7 @@ package: std
 
   (create-directory* libpath)
   (message "... compile foreign " mod)
-  (let* ((proc (open-process [path: "gsc"
+  (let* ((proc (open-process [path: (gerbil-gsc)
                               arguments: ["-o" libpath gsc-opts ... srcpath]
                               stdout-redirection: #f]))
          (status (process-status proc)))
@@ -423,6 +423,9 @@ package: std
       (when (file-exists? statpath)
         (delete-file statpath))
       (copy-file srcpath statpath))))
+
+(def (gerbil-gsc)
+  (getenv "GERBIL_GSC" "gsc"))
 
 (def (compile-ssi? mod settings)
   (def srcpath (source-path mod ".ssi" settings))
@@ -446,7 +449,7 @@ package: std
       (for-each (lambda (dep) (pretty-print `(load-module ,dep)))
                 deps)
       (pretty-print `(load-module ,(if prefix (string-append prefix "/" mod) mod)))))
-  (let* ((proc (open-process [path: "gsc"
+  (let* ((proc (open-process [path: (gerbil-gsc)
                                     arguments: [rtpath]
                                     stdout-redirection: #f]))
          (status (process-status proc)))

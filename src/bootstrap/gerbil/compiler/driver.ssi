@@ -10,19 +10,20 @@ namespace: gxc
           (spec: (:gerbil/gambit/misc) (0 pretty-print 0 pretty-print))
           (spec:
            (:gerbil/gambit/ports)
-           (0 process-status 0 process-status)
-           (0 open-process 0 open-process))
+           (0 open-process 0 open-process)
+           (0 process-status 0 process-status))
           (spec:
            (:gerbil/gambit/os)
-           (0 file-info-size 0 file-info-size)
-           (0 current-time 0 current-time)
            (0 file-info 0 file-info)
-           (0 time->seconds 0 time->seconds)))
+           (0 current-time 0 current-time)
+           (0 time->seconds 0 time->seconds)
+           (0 file-info-size 0 file-info-size)))
          (%#export
           (spec: 0 compile-file compile-file)
           (spec: 0 compile-exe-stub compile-exe-stub)
           (spec: 0 compile-static-exe compile-static-exe))
          (%#define-runtime compile-timestamp gxc#compile-timestamp)
+         (%#define-runtime gerbil-gsc gxc#gerbil-gsc)
          (%#begin (%#define-runtime compile-file__% gxc#compile-file__%)
                   (%#begin (%#define-runtime
                             compile-file__0
