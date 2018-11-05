@@ -40,3 +40,11 @@ This is colon separated a list of directories to be appended to the
 runtime load path.  You can use this for loading site specific
 libraries. By default it's unset, which is equivalent to an empty
 value.
+
+
+## GERBIL_GSC
+
+This is the program name or path to the `gsc` compiler executable; defaults to `gsc`.
+
+This variable is used by `Gerbil v0.14-DEV-73-g7a2a91c1` and later; earlier versions
+hardcode `gsc` as the compiler program name.
