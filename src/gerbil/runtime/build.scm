@@ -20,7 +20,7 @@
 (define (compile modf)
   (displayln "... compile " modf)
   (let ((proc (open-process
-               `(path: "gsc"
+               `(path: ,(getenv "GERBIL_GSC" "gsc")
                        arguments: ("-o" ,*libdir*
                                    "-cc-options" "--param max-gcse-memory=300000000"
                                    ,@(if (runtime-smp?)

@@ -19,6 +19,9 @@ namespace: gxc
 (def (compile-timestamp)
   (inexact->exact (floor (time->seconds (current-time)))))
 
+(def (gerbil-gsc)
+  (getenv "GERBIL_GSC" "gsc"))
+
 (def (compile-file srcpath (opts []))
   (unless (string? srcpath)
     (raise-compile-error "Invalid module source path" srcpath))
@@ -90,7 +93,7 @@ namespace: gxc
       (with-output-to-file output-scm (cut generate-stub init-stub))
       (when (current-compile-invoke-gsc)
         (verbose "invoke gsc " (cons 'gsc gsc-args))
-        (let* ((proc (open-process [path: "gsc" arguments: gsc-args
+        (let* ((proc (open-process [path: (gerbil-gsc) arguments: gsc-args
                                           stdout-redirection: #f]))
                (status (process-status proc)))
           (unless (zero? status)
@@ -201,7 +204,7 @@ namespace: gxc
         (cut generate-stub [gx-gambc0 gx-gambc-init deps ... bin-scm]))
       (when (current-compile-invoke-gsc)
         (verbose "invoke gsc " (cons 'gsc gsc-args))
-        (let* ((proc (open-process [path: "gsc" arguments: gsc-args
+        (let* ((proc (open-process [path: (gerbil-gsc) arguments: gsc-args
                                       stdout-redirection: #f]))
                (status (process-status proc)))
           (unless (zero? status)
@@ -561,7 +564,7 @@ namespace: gxc
          (gsc-args
           [(gsc-debug-options phi?) ... gsc-args ...])
          (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
-         (proc (open-process [path: "gsc" arguments: gsc-args
+         (proc (open-process [path: (gerbil-gsc) arguments: gsc-args
                                     stdout-redirection: #f]))
          (status (process-status proc)))
     (unless (zero? status)
