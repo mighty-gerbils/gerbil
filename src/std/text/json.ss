@@ -367,9 +367,12 @@ package: std/text
       (#\return . #\r)
       (#\tab . #\t)))
 
-  (def (safe-char? char)
+  (def (printable-char? char)
     (let (n (char->integer char))
-      (and (##fx>= n 32) (##fx< n 127))))
+      (cond
+       ((##fx< n 32) #f)                ; unprintable ascii
+       ((##fx= n 127) #f)               ; ascii DEL
+       (else #t))))
 
   (def (write-uchar char port)
     (let (int (char->integer char))
@@ -390,7 +393,7 @@ package: std/text
               => (lambda (esc)
                    (write-char #\\ port)
                    (write-char (cdr esc) port)))
-             ((safe-char? char)
+             ((printable-char? char)
               (write-char char port))
              (else
               (write-uchar char port)))
