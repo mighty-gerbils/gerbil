@@ -471,21 +471,34 @@ YAML parsing and dumping; requires libyaml.
 ### yaml-load
 ::: tip usage
 ```
-(yaml-load ...)
+(yaml-load filename)
+  filename := string
+=> any
 ```
 :::
 
-Please document me!
+Loads a YAML file.
+
+### yaml-load-string
+::: tip usage
+```
+(yaml-load-string str)
+  str := string
+=> any
+```
+:::
+
+Parses a YAML string.
 
 ### yaml-dump
 ::: tip usage
 ```
-(yaml-dump ...)
+(yaml-dump filename . args)
+  filename := string
 ```
 :::
 
-Please document me!
-
+Dumps the arguments to a YAML file.
 
 
 ## Zlib
