@@ -19,10 +19,13 @@ package: std/text
     open_yaml_input_file
     open_yaml_output_file
     close_yaml_file
+    yaml_strdup
+    yaml_strfree
     make_yaml_parser
     yaml_parser_initialize
     yaml_parser_delete
     yaml_parser_set_input_file
+    yaml_parser_set_input_string
     yaml_parser_parse
     yaml_parser_error
     make_yaml_emitter
