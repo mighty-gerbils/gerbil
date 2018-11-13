@@ -9,7 +9,7 @@ package: std/text
         :std/pregexp
         :std/text/utf8
         :std/text/libyaml)
-(export yaml-load yaml-dump)
+(export yaml-load yaml-load-string yaml-dump)
 
 (def (yaml-load fname)
   (cond
@@ -20,10 +20,25 @@ package: std/text
    (else
     (error "Cannot open yaml input file" fname))))
 
+(def (yaml-load-string str)
+  (cond
+   ((yaml_strdup str)
+    => (lambda (xstr)
+         (try (yaml-parse-string xstr)
+              (finally (yaml_strfree xstr)))))
+   (else
+    (error "Failed to allocate memory for string" str))))
+
 (def (yaml-parse-file file)
+  (yaml-parse-input file yaml_parser_set_input_file))
+
+(def (yaml-parse-string str)
+  (yaml-parse-input str yaml_parser_set_input_string))
+
+(def (yaml-parse-input file parser-set-input!)
   (let* ((parser (make_yaml_parser))
          (_      (yaml_parser_initialize parser))
-         (_      (yaml_parser_set_input_file parser file))
+         (_      (parser-set-input! parser file))
          (event  (make_yaml_event)))
     (try (yaml-parse parser event)
       (finally (yaml_parser_delete parser)))))

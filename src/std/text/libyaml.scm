@@ -62,6 +62,7 @@ END-C
 (c-declare #<<END-C
 static FILE* ffi_yaml_open_input_file (const char *path);
 static FILE* ffi_yaml_open_output_file (const char *path);
+static void ffi_yaml_parser_set_input_string (yaml_parser_t*, void *str);
 static ___SCMOBJ ffi_yaml_release_event (void *ptr);
 static ___SCMOBJ ffi_yaml_release_parser (void *ptr);
 static ___SCMOBJ ffi_yaml_release_emitter (void *ptr);
@@ -85,6 +86,7 @@ END-C
 (c-define-type yaml_emitter_t "yaml_emitter_t")
 (c-define-type yaml_emitter_t*
   (pointer yaml_emitter_t (yaml_emitter_t*) "ffi_yaml_release_emitter"))
+(c-define-type yaml_str_t (pointer void))
 
 (define-c-lambda open_yaml_input_file (UTF-8-string) FILE*
   "ffi_yaml_open_input_file")
@@ -92,6 +94,11 @@ END-C
   "ffi_yaml_open_output_file")
 (define-c-lambda close_yaml_file (FILE*) void
   "fclose")
+
+(define-c-lambda yaml_strdup (UTF-8-string) yaml_str_t
+  "___return (strdup (___arg1));")
+(define-c-lambda yaml_strfree (yaml_str_t) void
+  "free (___arg1); ___return;")
 
 (define-c-lambda make_yaml_parser () yaml_parser_t*
   "ffi_yaml_make_parser")
@@ -101,6 +108,8 @@ END-C
   "yaml_parser_delete")
 (define-c-lambda yaml_parser_set_input_file (yaml_parser_t* FILE*) void
   "yaml_parser_set_input_file")
+(define-c-lambda yaml_parser_set_input_string (yaml_parser_t* yaml_str_t) void
+  "ffi_yaml_parser_set_input_string")
 (define-c-lambda yaml_parser_parse (yaml_parser_t* yaml_event_t*) int
   "yaml_parser_parse")
 (define-c-lambda yaml_parser_error (yaml_parser_t*) int
@@ -162,6 +171,11 @@ static FILE* ffi_yaml_open_input_file (const char *path)
 static FILE* ffi_yaml_open_output_file (const char *path)
 {
  return fopen (path, "wb");
+}
+
+static void ffi_yaml_parser_set_input_string (yaml_parser_t *parser, void *str)
+{
+ yaml_parser_set_input_string (parser, (char*)str, strlen ((char*)str));
 }
 
 static yaml_parser_t *ffi_yaml_make_parser ()
