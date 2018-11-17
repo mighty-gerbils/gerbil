@@ -119,7 +119,7 @@ package: std/net
           ((#\xfd)                      ; DO
            (when (char=? c #\x06)       ; timing mark
              (let (client (repl-state-client state))
-               (write-string "\xff\xfb\x06" client)
+               (write-u8vector '#u8(#xff #xfb #x06) client)
                (force-output client)))
            (loop 'input))
           ((#\xff)                      ; IAC
