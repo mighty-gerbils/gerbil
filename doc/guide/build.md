@@ -152,7 +152,7 @@ Using the template would reduce the example build script to this:
 
 ```
 $ cat build.ss
-#!/usr/bin/gxi
+#!/usr/bin/env gxi
 (import :std/build-script)
 (defbuild-script
   '("util"
