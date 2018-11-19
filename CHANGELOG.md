@@ -1,3 +1,23 @@
+### 11-19-2018: Gerbil-v0.14
+
+Protobufs and misc improvements and fixes; tag for Gambit v4.9.1.
+
+- system
+  - remove dependency of scripts from bash
+  - GERBIL_GSC environment variable for gsc executable path
+  - Dockerfile
+  - some progress in the documentation project
+- stdlib
+  - [new] std/protobuf: Protobuf package, with custom language for direct imports.
+  - [new] std/text/base58: base58 encoding and decoding
+  - [feat] std/net/bio: more bio input methods, input subbuffers
+  - [feat] std/misc/channel: iterators for channels
+  - [feat] std/text/yaml: yaml-load-string for parsing YAML strings
+  - [fix] std/text/json: fix encoding of unicode characters
+  - [fix] std/crypto/libcrypto: fix OpenSSL-v1.1 support
+  - [fix] std/db/postgresql: fix database name parameter in driver
+
+
 ### 9-6-2018: Gerbil-v0.13
 
 The focus on performance, fixes, and documentation.
@@ -51,6 +71,10 @@ The focus on performance, fixes, and documentation.
     - std/os/socket: system undefined constants have a value of #f
     - std/os/fcntl: more linux specific constants
     - [new] std/os/kqueue: kqueue support for BSDs
+    - [new] signal handling:
+      - std/os/signal: kill and signal definitions
+      - std/os/signalfd [linux]
+      - std/os/signal-handler: signal handler interface
   - std/srfi/1: tune for dispatch perfomance
 - r7rs compliance
   - read-string, write-string

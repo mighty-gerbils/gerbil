@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 if [ ! -f $HOME/gambit/bin/gsi ]; then
-  wget http://www.iro.umontreal.ca/~gambit/download/gambit/v4.9/source/gambit-v4_9_0.tgz
-  tar xzvf gambit-v4_9_0.tgz
-  pushd gambit-v4_9_0
+  wget http://www.iro.umontreal.ca/~gambit/download/gambit/v4.9/source/gambit-v4_9_1.tgz
+  tar xzvf gambit-v4_9_1.tgz
+  pushd gambit-v4_9_1
   ./configure --prefix=$HOME/gambit --enable-single-host
   make
   make install
