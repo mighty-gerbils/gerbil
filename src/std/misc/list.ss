@@ -14,7 +14,9 @@ package: std/misc
   call-with-list-builder with-list-builder
   snoc append1
   for-each!
-  push!)
+  push!
+  flatten
+  flatten1)
 
 ;; This function checks if the list is a proper association-list.
 ;; ie it has the form [[key1 . val1] [key2 . val2]]
@@ -163,3 +165,27 @@ package: std/misc
 ;; TODO: use setq-macro, look at the set! defn in prelude/core.ss
 (defrules push! ()
   ((_ element list) (set! list (cons element list))))
+
+;; Removes all nested layers of a proper list.
+;; [1 [2]]   -> [1 2]
+;; [1 [[2]]] -> [1 2]
+(def (flatten list-of-lists)
+  (foldr (lambda (v acc)
+	   (cond
+	    ((null? v) acc)
+	    ((pair? v) (append (flatten v) acc))
+	    (else (cons v acc))))
+	 []
+	 list-of-lists))
+
+;; Removes one layer of a nested proper list.
+;; [1 [2]]   -> [1 2]
+;; [1 [[2]]] -> [1 [2]]
+(def (flatten1 list-of-lists)
+  (foldr (lambda (v acc)
+	   (cond
+	    ((null? v) acc)
+	    ((pair? v) (append v acc))
+	    (else (cons v acc))))
+	 []
+	 list-of-lists))
