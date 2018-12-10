@@ -343,6 +343,32 @@ Please document me!
 
 Please document me!
 
+### flatten1
+::: tip usage
+```
+> (flatten1 [1 [2]])
+=> (1 2)
+
+> (flatten1 [1 [2] [[3]]])
+=> (1 2 (3))
+```
+:::
+
+Removes one layer of a nested proper list.
+
+### flatten
+::: tip usage
+```
+> (flatten [1 [2]])
+=> (1 2)
+
+> (flatten [1 [2] [[3]]])
+=> (1 2 3)
+```
+:::
+
+Removes all nested layers of a proper list.
+
 
 
 ## LRU caches
@@ -1396,3 +1422,47 @@ Please document me!
 :::
 
 Please document me!
+
+
+
+## Functional utilities
+::: tip usage
+(import :std/misc/func)
+:::
+Collection of mixed purpose higher-order functions.
+
+### always
+::: tip usage
+```
+> (def fn (always 5))
+> (list (fn) (fn))
+=> (5 5)
+
+> (def fn (always (lambda () "hi")))
+> (fn)
+=> "hi"
+
+> (def fn (always random-integer 10)
+> (list (fn) (fn))
+=> (4 3)
+```
+:::
+
+Creates a lambda which returns the same value or calls always the
+same function with the same arguments.
+
+### repeat
+::: tip usage
+```
+> (repeat 2 5)
+=> (2 2 2 2 2)
+
+> (repeat (lambda () 10) 2)
+=> (10 10)
+
+> (repeat random-integer 3 10)
+=> (8 3 5)
+```
+:::
+
+Repeat value or call function N times and return the result as list.
