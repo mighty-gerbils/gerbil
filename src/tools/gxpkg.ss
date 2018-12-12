@@ -15,9 +15,11 @@
 ;;;   list
 ;;;   retag
 ;;; Packages:
-;;;   github.com/user/package -- github based packages
-;;;   all                     -- action applies to all packages where sensible to do so
-;;;   TODO gitlab, bitbucket etc
+;;;   github.com/user/package    -- github based packages
+;;;   gitlab.com/user/package    -- gitlab based packages
+;;;   bitbucket.org/user/package -- bitbucket based packages
+;;;   all                        -- action applies to all packages where sensible to do so
+;;; TODO: add private repos support
 
 (import :std/getopt
         :std/sugar
@@ -176,11 +178,13 @@
       +pkg-root-dir+)))
 
 (def (pkg-install pkg)
-  (def (github-clone-url pkg)
+  (def (git-clone-url pkg)
     (string-append "https://" pkg ".git"))
   (cond
-   ((string-prefix? pkg "github.com/")
-    (pkg-install-git pkg (github-clone-url pkg)))
+   ((or (string-prefix? pkg "github.com/")
+        (string-prefix? pkg "gitlab.com/")
+        (string-prefix? pkg "bitbucket.org/"))
+    (pkg-install-git pkg (git-clone-url pkg)))
    (else
     (error "Unknown package provider" pkg))))
 
