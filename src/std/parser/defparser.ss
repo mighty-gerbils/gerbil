@@ -87,12 +87,12 @@ package: std/parser
             (identifier? #'bind-id)
             (not (underscore? #'bind-id)))
        (unless (rule-id? #'xrule rule-ids)
-         (raise-syntax-error #f "Bad syntax; reference to unknwon rule" stx rule #'xrule)))
+         (raise-syntax-error #f "Bad syntax; reference to unknown rule" stx rule #'xrule)))
       ($$ (void))
       (xrule
        (identifier? #'xrule)
        (unless (rule-id? #'xrule rule-ids)
-         (raise-syntax-error #f "Bad syntax; reference to unknwon rule" stx rule #'xrule)))
+         (raise-syntax-error #f "Bad syntax; reference to unknown rule" stx rule #'xrule)))
       (_ (raise-syntax-error #f "Bad syntax; illegal production" stx rule prod))))
 
   (def (parse-rule-body body rule rule-ids)
