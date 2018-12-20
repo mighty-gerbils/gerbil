@@ -23,6 +23,7 @@ package: std/generic
 (defprimitive-type <complex> (cpxnum number))
 (defprimitive-type <vector> (vector))
 (defprimitive-type <pair> (pair))
+(defprimitive-type <list> (list))
 (defprimitive-type <string> (string))
 (defprimitive-type <symbol> (symbol))
 (defprimitive-type <keyword> (keyword))
