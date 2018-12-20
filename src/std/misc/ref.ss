@@ -5,7 +5,7 @@
 (import :gerbil/gambit
         :std/generic)
 
-(export ref ~)
+(export ref ~ :ref)
 
 (def* ref
   ((obj x) (:ref obj x))
