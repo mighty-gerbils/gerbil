@@ -132,7 +132,7 @@ package: gerbil
     make-hash-table make-hash-table-eq make-hash-table-eqv
     hash-table?
     hash->list hash->plist
-    list->hash-table list->hash-table-eq list->hash-table-eqv
+    list->hash-table list->hash-table-eq list->hash-table-eqv list-set!
     plist->hash-table plist->hash-table-eq plist->hash-table-eqv
     hash-length hash-ref hash-get hash-put! hash-remove! hash-update! hash-key?
     hash-find hash-for-each hash-map hash-fold
