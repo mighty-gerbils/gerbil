@@ -14,6 +14,7 @@
     "generic/macros"
     (gxc: "generic/builtin" ,@(include-gambit-sharp))
     "generic"
+    "ref"
     (gxc: "event" ,@(include-gambit-sharp))
     "coroutine"
     "iter"
