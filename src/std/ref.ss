@@ -16,7 +16,7 @@
   ((_ obj x) (:ref obj x))
   ((recur obj x rest ...) (recur (:ref obj x) rest ...)))
 
-(defgeneric :ref (lambda args #f))
+(defgeneric :ref)
 
 (defmethod (:ref (lst <pair>) (n <fixnum>))
   (list-ref lst n))
@@ -45,11 +45,14 @@
 (defmethod (:ref (str <string>) (n <fixnum>))
   (string-ref str n))
 
+(defmethod (:ref (vctr <vector>) (n <fixnum>))
+  (vector-ref vctr n))
+
 (defrules ref-set! ()
   ((_ obj x val) (:set! obj x val))
   ((recur obj x y rest ...) (recur (:set! obj x y) rest ...)))
 
-(defgeneric :set! (lambda args #f))
+(defgeneric :set!)
 
 (defmethod (:set! (lst <pair>) (n <fixnum>) (val <t>))
   (list-set! lst n val))
@@ -77,3 +80,7 @@
 
 (defmethod (:set! (str <string>) (n <fixnum>) (val <char>))
   (string-set! str n val))
+
+(defmethod (:set! (vctr <vector>) (n <fixnum>) (val <t>))
+  (vector-set! vctr n val))
+
