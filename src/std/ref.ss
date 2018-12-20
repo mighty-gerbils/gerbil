@@ -2,6 +2,8 @@
 ;;; (C) vyzo at hackzen.org, proksi at disroot.org
 ;;; generic ref
 
+package: std
+
 (import :gerbil/gambit
         :std/generic)
 
@@ -9,14 +11,18 @@
         ref-set! ~-set! :set!)
 
 (defalias ~ ref)
-
 (defalias ~-set! ref-set!)
 
 (defrules ref ()
   ((_ obj x) (:ref obj x))
   ((recur obj x rest ...) (recur (:ref obj x) rest ...)))
 
+(defrules ref-set! ()
+  ((_ obj x val) (:set! obj x val))
+  ((recur obj x y rest ...) (recur (:set! obj x y) rest ...)))
+
 (defgeneric :ref)
+(defgeneric :set!)
 
 (defmethod (:ref (lst <pair>) (n <fixnum>))
   (list-ref lst n))
@@ -48,11 +54,8 @@
 (defmethod (:ref (vctr <vector>) (n <fixnum>))
   (vector-ref vctr n))
 
-(defrules ref-set! ()
-  ((_ obj x val) (:set! obj x val))
-  ((recur obj x y rest ...) (recur (:set! obj x y) rest ...)))
-
-(defgeneric :set!)
+(defmethod (:ref (obj <object>) (slot <symbol>))
+  (slot-ref obj slot))
 
 (defmethod (:set! (lst <pair>) (n <fixnum>) (val <t>))
   (list-set! lst n val))
@@ -84,3 +87,5 @@
 (defmethod (:set! (vctr <vector>) (n <fixnum>) (val <t>))
   (vector-set! vctr n val))
 
+(defmethod (:set! (obj <object>) (slot <symbol>) (val <t>))
+  (slot-set! obj slot val))
