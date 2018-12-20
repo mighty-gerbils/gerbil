@@ -20,14 +20,14 @@ If multiple args provided, `(ref obj n1 n2 ... n)` expands to `(ref ... (ref (re
 ::: tip usage
 ```
 (ref-set! obj n val)
-(ref-set! obj n1 val1 n2 val2 ... n val)
+(ref-set! obj n1 n2 ... n val)
 (set! (ref obj n ...) val)
 ```
 :::
 Puts element val at the position n in obj.
 If obj is hash, associates val with key n.
-If multiple args provided, `(ref-set! obj n1 val1 n2 val2 ... n val)` expands to
-`(ref-set! ... (ref-set! (ref-set! obj n1 val1) n2 val2) ... n val)`.
+If multiple args provided, `(ref-set! obj n1 n2 ... nk val)` expands to
+`(ref-set! (ref ... (ref obj n1) n2) ... nk-1) nk val)`.
 
 Also, ref-set! can be used with set! mutator as well.
 
@@ -44,7 +44,7 @@ Same as `ref`.
 ::: tip usage
 ```
 (~-set! obj n val)
-(~-set! obj n1 val1 n2 val2 ... n val)
+(~-set! obj n1 n2 ... n val)
 (set! (~ obj n ...) val)
 ```
 :::
