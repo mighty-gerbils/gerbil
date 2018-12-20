@@ -19,7 +19,7 @@ package: std
 
 (defrules ref-set! ()
   ((_ obj x val) (:set! obj x val))
-  ((recur obj x y rest ...) (recur (:ref obj x y) rest ...)))
+  ((recur obj x y rest ...) (recur (:ref obj x) y rest ...)))
 
 (defgeneric :ref)
 (defgeneric :set!)
