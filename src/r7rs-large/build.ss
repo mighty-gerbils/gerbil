@@ -4,4 +4,5 @@
 
 (defbuild-script
   '("scheme/list"
-    "scheme/vector"))
+    "scheme/vector"
+    "scheme/sort"))
