@@ -3,4 +3,5 @@
 (import :std/build-script)
 
 (defbuild-script
-  '("scheme/list"))
+  '("scheme/list"
+    "scheme/vector"))
