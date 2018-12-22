@@ -12,4 +12,5 @@
     "scheme/charset"
     "scheme/ilist"
     "scheme/rlist"
+    "scheme/ideque"
     "scheme/generator"))
