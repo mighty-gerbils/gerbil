@@ -38,6 +38,7 @@ The following SRFIs are supported by gerbil:
 | SRFI 87  | => in case clauses                                     | core prelude |                           |
 | SRFI 88  | Keyword Objects                                        | runtime      |                           |
 | SRFI 95  | Sorting and Merging                                    | stdlib       | `:std/srfi/95`            |
+| SRFI 101 | Purely Functional Random-Access Pairs and Lists        | stdlib       | `:std/srfi/101`           |
 | SRFI 111 | Boxes                                                  | runtime      |                           |
 | SRFI 113 | Sets and bags                                          | stdlib       | `:std/srfi/113`           |
 | SRFI 116 | Immutable List Library                                 | stdlib       | `:std/srfi/116`           |
