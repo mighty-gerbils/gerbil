@@ -44,6 +44,7 @@ The following SRFIs are supported by gerbil:
 | SRFI 116 | Immutable List Library                                 | stdlib       | `:std/srfi/116`           |
 | SRFI 117 | Queues based on lists                                  | stdlib       | `:std/srfi/117`           |
 | SRFI 121 | Generators                                             | stdlib       | `:std/srfi/121`           |
+| SRFI 124 | Ephemerons                                             | stdlib       | `:std/srfi/124`           |
 | SRFI 125 | Intermediate hash tables                               | stdlib       | `:std/srfi/125`           |
 | SRFI 127 | Lazy Sequences                                         | stdlib       | `:std/srfi/127`           |
 | SRFI 128 | Comparators (reduced)                                  | stdlib       | `:std/srfi/128`           |
