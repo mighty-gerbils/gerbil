@@ -14,4 +14,5 @@
     "scheme/rlist"
     "scheme/ideque"
     "scheme/text"
-    "scheme/generator"))
+    "scheme/generator"
+    "scheme/lseq"))
