@@ -938,6 +938,16 @@ Updates `hash`'s binding for `key` to the result of
 
 Removes `hash`'s binding for `key`.
 
+### hash-clear!
+::: tip usage
+```
+(hash-clear! hash)
+  hash := hash table
+```
+:::
+
+Clears the hash table.
+
 ### hash-key?
 ::: tip usage
 ```

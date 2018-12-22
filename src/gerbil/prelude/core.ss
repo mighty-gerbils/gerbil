@@ -140,6 +140,7 @@ package: gerbil
     hash-keys hash-values
     hash-copy hash-copy!
     hash-merge hash-merge!
+    hash-clear!
     eq?-hash eqv?-hash equal?-hash
     uninterned-symbol? interned-symbol?
     gensym make-symbol make-uninterned-symbol symbol-hash
