@@ -16,4 +16,5 @@
     "scheme/text"
     "scheme/generator"
     "scheme/lseq"
-    "scheme/stream"))
+    "scheme/stream"
+    "scheme/box"))
