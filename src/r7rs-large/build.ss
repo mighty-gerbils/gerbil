@@ -10,4 +10,5 @@
     "scheme/hash-table"
     "scheme/set"
     "scheme/charset"
-    "scheme/ilist"))
+    "scheme/ilist"
+    "scheme/rlist"))
