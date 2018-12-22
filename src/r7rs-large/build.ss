@@ -5,4 +5,6 @@
 (defbuild-script
   '("scheme/list"
     "scheme/vector"
-    "scheme/sort"))
+    "scheme/sort"
+    "scheme/comparator"
+    "scheme/hash-table"))
