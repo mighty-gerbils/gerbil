@@ -9,4 +9,5 @@
     "scheme/comparator"
     "scheme/hash-table"
     "scheme/set"
-    "scheme/charset"))
+    "scheme/charset"
+    "scheme/ilist"))
