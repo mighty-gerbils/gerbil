@@ -7,4 +7,5 @@
     "scheme/vector"
     "scheme/sort"
     "scheme/comparator"
-    "scheme/hash-table"))
+    "scheme/hash-table"
+    "scheme/charset"))
