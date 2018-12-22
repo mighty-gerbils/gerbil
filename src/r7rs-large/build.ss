@@ -11,4 +11,5 @@
     "scheme/set"
     "scheme/charset"
     "scheme/ilist"
-    "scheme/rlist"))
+    "scheme/rlist"
+    "scheme/generator"))
