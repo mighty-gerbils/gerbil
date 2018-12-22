@@ -18,4 +18,5 @@
     "scheme/lseq"
     "scheme/stream"
     "scheme/box"
-    "scheme/list-queue"))
+    "scheme/list-queue"
+    "scheme/ephemeron"))
