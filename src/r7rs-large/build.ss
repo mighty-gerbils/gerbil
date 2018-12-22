@@ -13,4 +13,5 @@
     "scheme/ilist"
     "scheme/rlist"
     "scheme/ideque"
+    "scheme/text"
     "scheme/generator"))
