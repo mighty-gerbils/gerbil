@@ -17,4 +17,5 @@
     "scheme/generator"
     "scheme/lseq"
     "scheme/stream"
-    "scheme/box"))
+    "scheme/box"
+    "scheme/list-queue"))
