@@ -48,3 +48,4 @@ The following SRFIs are supported by gerbil:
 | SRFI 132 | Sort Libraries                                         | stdlib       | `:std/srfi/132`           |
 | SRFI 133 | Vector Library (R7RS-compatible)                       | stdlib       | `:std/srfi/133`           |
 | SRFI 134 | Immutable Deques                                       | stdlib       | `:std/srfi/134`           |
+| SRFI 135 | Immutable Texts                                        | stdlib       | `:std/srfi/135`           |
