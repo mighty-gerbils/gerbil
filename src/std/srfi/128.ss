@@ -15,6 +15,9 @@ package: std/srfi
   comparator-type-test-predicate comparator-equality-predicate comparator-ordering-predicate comparator-hash-function comparator-test-type comparator-check-type comparator-hash
   =? <? >? <=? >=?
   comparator-if<=>
+
+  ;; non-standard: the generic implementing the default comparator order
+  :less
   )
 
 (defstruct comparator (testf eqf orderf hashf)
