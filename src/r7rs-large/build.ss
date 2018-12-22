@@ -15,4 +15,5 @@
     "scheme/ideque"
     "scheme/text"
     "scheme/generator"
-    "scheme/lseq"))
+    "scheme/lseq"
+    "scheme/stream"))
