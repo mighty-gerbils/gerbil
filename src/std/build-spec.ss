@@ -39,6 +39,7 @@
     "srfi/43"
     "srfi/78"
     "srfi/95"
+    "srfi/113"
     "srfi/125"
     "srfi/128"
     "srfi/132"
