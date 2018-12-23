@@ -442,6 +442,7 @@ package: gerbil
  (hash-copy! (1))
  (hash-merge (1))
  (hash-merge! (1))
+ (hash-clear! 1 2)
  (gensym 0 1)
  (string->bytes 1 2)
  (substring->bytes 3 4)

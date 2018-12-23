@@ -1031,13 +1031,10 @@
   (foldl (lambda (tab r) (table-merge! r tab))
          hd rest))
 
-(define (hash-clear! ht)
+(define (hash-clear! ht #!optional (size 0))
   (let ((gcht (##vector-ref ht 5)))
     (if (not (fixnum? gcht))
-      (##vector-set! ht 5
-                     (##gc-hash-table-allocate 0
-                                               (##vector-ref ht 1)
-                                               (##vector-ref ht 4))))))
+      (##vector-set! ht 5 size))))
 
 (define (make-list k #!optional (val #f))
   (let lp ((n 0) (r '()))
