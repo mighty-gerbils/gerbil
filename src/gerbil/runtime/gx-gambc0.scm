@@ -1031,7 +1031,7 @@
   (foldl (lambda (tab r) (table-merge! r tab))
          hd rest))
 
-(define (hash-clear! ht #!optional (size 10))
+(define (hash-clear! ht #!optional (size 0))
   (let ((gcht (##vector-ref ht 5)))
     (if (not (fixnum? gcht))
       (##vector-set! ht 5 size))))
