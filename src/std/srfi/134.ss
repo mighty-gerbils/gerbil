@@ -4,6 +4,7 @@
 package: std/srfi
 
 (import :std/srfi/1
+        :std/srfi/8
         :std/srfi/9
         :std/srfi/121)
 (export ideque ideque-tabulate ideque-unfold ideque-unfold-right

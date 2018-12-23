@@ -3,6 +3,7 @@
 ;;; SRFI-133: R7RS-compatible vector library
 package: std/srfi
 
+(import :std/srfi/8)
 ;; Constructors
 (export vector-unfold vector-unfold-right vector-copy vector-reverse-copy
         vector-append vector-concatenate vector-append-subvectors)

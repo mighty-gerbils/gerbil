@@ -83,7 +83,7 @@
 ;;; Utilities
 
 ;;; SRFI 8, too trivial to put in the dependencies list.
-(define-syntax receive
+#;(define-syntax receive
   (syntax-rules ()
     ((receive ?formals ?producer ?body1 ?body2 ...)
      (call-with-values (lambda () ?producer)
