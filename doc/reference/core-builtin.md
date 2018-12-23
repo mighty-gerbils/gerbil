@@ -941,8 +941,9 @@ Removes `hash`'s binding for `key`.
 ### hash-clear!
 ::: tip usage
 ```
-(hash-clear! hash)
+(hash-clear! hash [size = 10])
   hash := hash table
+  size := fixnum; the new initial size for the hash table
 ```
 :::
 
