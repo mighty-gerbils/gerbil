@@ -3,6 +3,7 @@
 ;;; SRFI-43: vector library
 package: std/srfi
 
+(import :std/srfi/8)
 (export
   ;; * Constructors
   make-vector vector

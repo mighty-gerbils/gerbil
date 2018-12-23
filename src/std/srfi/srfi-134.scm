@@ -39,7 +39,7 @@
 ;; Requires srfi-1, srfi-9, srfi-121.
 
 ;; some compatibility stuff
-(define-syntax receive
+#;(define-syntax receive
   (syntax-rules ()
     ((_ binds mv-expr body ...)
      (let-values ((binds mv-expr)) body ...))))
