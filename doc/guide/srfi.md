@@ -38,4 +38,17 @@ The following SRFIs are supported by gerbil:
 | SRFI 87  | => in case clauses                                     | core prelude |                           |
 | SRFI 88  | Keyword Objects                                        | runtime      |                           |
 | SRFI 95  | Sorting and Merging                                    | stdlib       | `:std/srfi/95`            |
+| SRFI 101 | Purely Functional Random-Access Pairs and Lists        | stdlib       | `:std/srfi/101`           |
 | SRFI 111 | Boxes                                                  | runtime      |                           |
+| SRFI 113 | Sets and bags                                          | stdlib       | `:std/srfi/113`           |
+| SRFI 116 | Immutable List Library                                 | stdlib       | `:std/srfi/116`           |
+| SRFI 117 | Queues based on lists                                  | stdlib       | `:std/srfi/117`           |
+| SRFI 121 | Generators                                             | stdlib       | `:std/srfi/121`           |
+| SRFI 124 | Ephemerons                                             | stdlib       | `:std/srfi/124`           |
+| SRFI 125 | Intermediate hash tables                               | stdlib       | `:std/srfi/125`           |
+| SRFI 127 | Lazy Sequences                                         | stdlib       | `:std/srfi/127`           |
+| SRFI 128 | Comparators (reduced)                                  | stdlib       | `:std/srfi/128`           |
+| SRFI 132 | Sort Libraries                                         | stdlib       | `:std/srfi/132`           |
+| SRFI 133 | Vector Library (R7RS-compatible)                       | stdlib       | `:std/srfi/133`           |
+| SRFI 134 | Immutable Deques                                       | stdlib       | `:std/srfi/134`           |
+| SRFI 135 | Immutable Texts                                        | stdlib       | `:std/srfi/135`           |

@@ -11,19 +11,19 @@ package: std/text
 
 (declare (not safe))
 
-(def (string->utf8 str)
+(def (string->utf8 str (start 0) (end (string-length str)))
   (if (string? str)
-    (utf8-encode str 0 (##string-length str))
-    (error "Bad argument; expcted string" str)))
+    (utf8-encode str start end)
+    (error "Bad argument; expected string" str)))
 
 (def (string-utf8-length str (start 0) (end (string-length str)))
   (if (string? str)
     (utf8-encode-length str start end)
     (error "Bad argument; expected string" str)))
 
-(def (utf8->string u8v)
+(def (utf8->string u8v (start 0) (end (u8vector-length u8v)))
   (if (u8vector? u8v)
-    (utf8-decode u8v 0 (##u8vector-length u8v))
+    (utf8-decode u8v start end)
     (error "Bad argument; expected u8vector" u8v)))
 
 (def (utf8-encode str start end)
