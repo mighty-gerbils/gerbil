@@ -171,6 +171,14 @@ build_lang () {
   (cd lang && ./build.ss)
 }
 
+build_r7rs_large() {
+  feedback_low "Building R7RS large"
+  PATH="${GERBIL_BASE}/bin:${PATH}"
+  GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
+  export PATH GERBIL_HOME
+  (cd r7rs-large && ./build.ss)
+}
+
 build_tags () {
   feedback_low "Build gerbil tags"
   PATH="${GERBIL_BASE}/bin:${PATH}"
@@ -183,12 +191,13 @@ build_tags () {
 ## main
 build_gerbil() {
   feedback_low "Building Gerbil"
-  stage0       || die
-  stage1 final || die
-  build_stdlib || die
-  build_lang   || die
-  build_tools  || die
-  build_tags   || die
+  stage0           || die
+  stage1 final     || die
+  build_stdlib     || die
+  build_lang       || die
+  build_r7rs_large || die
+  build_tools      || die
+  build_tags       || die
 }
 
 ## handling command line
@@ -201,6 +210,9 @@ else
          ;;
        "lang")
          build_lang || die
+         ;;
+       "r7rs-large")
+         build_r7rs_large || die
          ;;
        "tools")
          build_tools || die
