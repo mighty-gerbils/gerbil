@@ -1,7 +1,6 @@
 # The Gerbil Package Manager
 
-Gerbil comes with a command line package manager, gxpkg, which allows you to install and manage packages distributed through github.
-Synopsis
+Gerbil comes with a command line package manager, gxpkg, which allows you to install and manage packages distributed through github, gitlab, or bitbucket.
 
 ::: tip usage
 ```
@@ -18,7 +17,7 @@ gxpkg retag
 
 ## Gerbil Packages
 
-Any github repo can serve a Gerbil package, provided that it:
+Any supported public provider git repo can serve a Gerbil package, provided that it:
 
 - has a gerbil.pkg file; plist should nominally contain package: and depend:.
     - package: `<symbol>` should declare your common package prefix, and will apply to all your sources recursively.
