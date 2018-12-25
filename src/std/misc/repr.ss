@@ -55,7 +55,7 @@ package: std/misc
   (def (r y) (repr y options))
   (def (d y) (display y port))
   (def (w y) (write y port))
-  (def (simple? x) (or (number? x) (boolean? x) (string? x) (char? x) (void? x) (eof-object? x)))
+  (def (simple? x) (or (number? x) (boolean? x) (string? x) (char? x) (void? x) (keyword? x) (eof-object? x)))
 
   (cond
    ;; Simplest case: just write it.
