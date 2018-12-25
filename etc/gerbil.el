@@ -87,6 +87,7 @@
 
 (defvar gerbil-compile-optimize t)
 (defvar gerbil-build-directory nil)
+(defvar gerbil-compiler-name "gxc")
 
 (defun gerbil-compile-current-buffer ()
   (interactive)
@@ -98,9 +99,11 @@
       (insert cmd-text))
     (message cmd-text)
     (setq gerbil-build-directory nil)
-    (let ((proc (if gerbil-compile-optimize
-                    (start-process "gxc" buf "gxc" "-O" fname)
-                  (start-process "gxc" buf "gxc" fname))))
+    (let ((proc
+           (apply 'start-process gerbil-compiler-name buf
+                  gerbil-compiler-name
+                  (append (if gerbil-compile-optimize '("-O") '())
+                          (list fname)))))
       (set-process-sentinel proc 'gerbil-compile-sentinel)
       (display-buffer buf))))
 
