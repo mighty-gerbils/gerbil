@@ -361,6 +361,9 @@
              (lp rest (cdr exprs)
                  (cons `(,id #!void) bind)
                  (cons `(,id (values->list ,(car exprs))) post))))
+          ((not (&AST-e hd))
+           (lp rest (cdr exprs) bind
+               (cons `(#f ,(car exprs)) post)))
           ((list? hd)
            (let* ((len (length hd))
                   (tmp (&SRC (gensym))))
