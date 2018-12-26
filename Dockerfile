@@ -9,13 +9,11 @@ RUN git config --global url.https://github.com/.insteadOf git://github.com/
 RUN cd /root && git clone https://github.com/gambit/gambit
 RUN cd /root && git clone https://github.com/vyzo/gerbil
 
-RUN cd /root/gambit && ./configure --prefix=/usr/local/gambit --enable-single-host --enable-c-opt --enable-gcc-opts --enable-multiple-versions --enable-openssl --enable-default-runtime-options=f8,-8,t8 --enable-poll
-RUN cd /root/gambit && make bootstrap
-RUN cd /root/gambit && make bootclean
+RUN cd /root/gambit && ./configure --prefix=/usr/local/gambit --enable-single-host --enable-openssl --enable-default-runtime-options=f8,-8,t8 --enable-poll
 RUN cd /root/gambit && make -j4
 RUN cd /root/gambit && make install
 
-ENV PATH "/usr/local/gambit/current/bin:$PATH"
+ENV PATH "/usr/local/gambit/bin:$PATH"
 RUN cd /root/gerbil/src && ./build.sh stage0
 RUN cd /root/gerbil/src && ./build.sh stage1
 RUN sed -i -e 's/mysql #f/mysql #t/g' /root/gerbil/src/std/build-features.ss
