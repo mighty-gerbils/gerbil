@@ -1376,6 +1376,8 @@ package: gerbil
         ((recur (hd e) . body)
          (let-head? #'hd)
          #'(recur ((hd e)) . body))
+        ((_ ((e)) body ...)     ; fast path for alet* test expressions
+         #'(and e (let () body ...)))
         ((_ (bind ...) body ...)
          (stx-andmap let-bind? #'(bind ...))
          (with-syntax* ((((hd e) ...)
