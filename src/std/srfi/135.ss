@@ -3,11 +3,10 @@
 ;;; SRFI-135: Immutable Texts
 package: std/srfi
 
-(import :std/srfi/9
-        (only-in :std/srfi/13 string-downcase string-upcase string-titlecase)
-        :std/text/utf8
-        :std/srfi/srfi-135/etc
-        :std/srfi/srfi-135/kernel8)
+(import :std/srfi/srfi-135/kernel8
+        :std/srfi/srfi-135/macros
+        :std/srfi/srfi-135/text
+        :std/srfi/srfi-135/binary)
 (export
   ;; Predicates
 
@@ -88,5 +87,3 @@ package: std/srfi
 
   textual-replicate     textual-split
   )
-
-(include "srfi-135/135.body.scm")

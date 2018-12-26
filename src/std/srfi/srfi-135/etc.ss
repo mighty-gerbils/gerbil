@@ -62,3 +62,24 @@ package: std/srfi/srfi-135
 (defalias bytevector-u8-ref u8vector-ref)
 (defalias bytevector-u8-set! u8vector-set!)
 (defalias make-bytevector make-u8vector)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; The following procedures are not part of R7RS (small).
+;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (last-pair x)
+  (if (and (pair? x) (pair? (cdr x)))
+      (last-pair (cdr x))
+      x))
+
+;;; Returns first n elements of the list x.
+
+(define (list-take x n)
+  (let loop ((n n)
+             (x x)
+             (y '()))
+    (if (= n 0)
+        (reverse y)
+        (loop (- n 1) (cdr x) (cons (car x) y)))))

@@ -53,6 +53,9 @@
     "srfi/134"
     "srfi/srfi-135/etc"
     "srfi/srfi-135/kernel8"
+    "srfi/srfi-135/macros"
+    "srfi/srfi-135/text"
+    "srfi/srfi-135/binary"
     "srfi/135"
     ;; :std/parser
     "parser/rlang"
