@@ -1,6 +1,6 @@
 (declare (block) (standard-bindings) (extended-bindings) (inlining-limit 200))
 (begin
-  (define |gerbil/core$<syntax-sugar>[1]#_g41211_|
+  (define |gerbil/core$<syntax-sugar>[1]#_g41573_|
     (##structure
      gx#syntax-quote::t
      'values
@@ -24,22 +24,22 @@
                                 (let ((_hd401438_ (##car _e400434_))
                                       (_tl402441_ (##cdr _e400434_)))
                                   (if (gx#stx-pair/null? _tl402441_)
-                                      (let ((_g41207_
+                                      (let ((_g41569_
                                              (gx#syntax-split-splice
                                               _tl402441_
                                               '0)))
                                         (begin
-                                          (let ((_g41208_
-                                                 (if (##values? _g41207_)
-                                                     (##vector-length _g41207_)
+                                          (let ((_g41570_
+                                                 (if (##values? _g41569_)
+                                                     (##vector-length _g41569_)
                                                      1)))
-                                            (if (not (##fx= _g41208_ 2))
+                                            (if (not (##fx= _g41570_ 2))
                                                 (error "Context expects 2 values"
-                                                       _g41208_)))
+                                                       _g41570_)))
                                           (let ((_target403444_
-                                                 (##vector-ref _g41207_ 0))
+                                                 (##vector-ref _g41569_ 0))
                                                 (_tl405447_
-                                                 (##vector-ref _g41207_ 1)))
+                                                 (##vector-ref _g41569_ 1)))
                                             (if (gx#stx-null? _tl405447_)
                                                 (letrec ((_loop406450_
                                                           (lambda (_hd404454_
@@ -58,15 +58,15 @@
                                  (let* ((_body640_
                                          (gx#stx-map
                                           (lambda (_clause497_)
-                                            (let* ((___stx3578635787_
+                                            (let* ((___stx3608236083_
                                                     _clause497_)
                                                    (_g501528_
                                                     (lambda ()
                                                       (gx#raise-syntax-error
                                                        '#f
                                                        '"Bad syntax"
-                                                       ___stx3578635787_))))
-                                              (let ((___kont3578935790_
+                                                       ___stx3608236083_))))
+                                              (let ((___kont3608536086_
                                                      (lambda (_L613_ _L615_)
                                                        (cons _L615_
                                                              (cons (cons (gx#datum->syntax
@@ -76,7 +76,7 @@
                                  (cons _L613_ '()))
                            '()))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-                                                    (___kont3579135792_
+                                                    (___kont3608736088_
                                                      (lambda (_L565_
                                                               _L567_
                                                               _L568_)
@@ -88,10 +88,10 @@
                                  '()))))))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                 (if (gx#stx-pair?
-                                                     ___stx3578635787_)
+                                                     ___stx3608236083_)
                                                     (let ((_e505593_
                                                            (gx#syntax-e
-                                                            ___stx3578635787_)))
+                                                            ___stx3608236083_)))
                                                       (let ((_tl507600_
                                                              (##cdr _e505593_))
                                                             (_hd506597_
@@ -104,13 +104,13 @@
                       (let ((_tl510610_ (##cdr _e508603_))
                             (_hd509607_ (##car _e508603_)))
                         (if (gx#stx-null? _tl510610_)
-                            (___kont3578935790_ _hd509607_ _hd506597_)
+                            (___kont3608536086_ _hd509607_ _hd506597_)
                             (if (gx#stx-pair? _tl510610_)
                                 (let ((_e520555_ (gx#syntax-e _tl510610_)))
                                   (let ((_tl522562_ (##cdr _e520555_))
                                         (_hd521559_ (##car _e520555_)))
                                     (if (gx#stx-null? _tl522562_)
-                                        (___kont3579135792_
+                                        (___kont3608736088_
                                          _hd521559_
                                          _hd509607_
                                          _hd506597_)
@@ -132,29 +132,29 @@
                                         (_g642719_
                                          (lambda (_g644664_)
                                            (if (gx#stx-pair/null? _g644664_)
-                                               (let ((_g41209_
+                                               (let ((_g41571_
                                                       (gx#syntax-split-splice
                                                        _g644664_
                                                        '0)))
                                                  (begin
-                                                   (let ((_g41210_
+                                                   (let ((_g41572_
                                                           (if (##values?
-                                                               _g41209_)
+                                                               _g41571_)
                                                               (##vector-length
-                                                               _g41209_)
+                                                               _g41571_)
                                                               1)))
-                                                     (if (not (##fx= _g41210_
+                                                     (if (not (##fx= _g41572_
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                              2))
-                 (error "Context expects 2 values" _g41210_)))
+                 (error "Context expects 2 values" _g41572_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                    (let ((_target646667_
                                                           (##vector-ref
-                                                           _g41209_
+                                                           _g41571_
                                                            0))
                                                          (_tl648670_
                                                           (##vector-ref
-                                                           _g41209_
+                                                           _g41571_
                                                            1)))
                                                      (if (gx#stx-null?
                                                           _tl648670_)
@@ -210,14 +210,14 @@
           (_g392723_ _stx390_))))
     (define |gerbil/core$<syntax-sugar>[:0:]#with-syntax|
       (lambda (_stx729_)
-        (let* ((___stx3583035831_ _stx729_)
+        (let* ((___stx3612636127_ _stx729_)
                (_g734819_
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax"
-                   ___stx3583035831_))))
-          (let ((___kont3583335834_
+                   ___stx3612636127_))))
+          (let ((___kont3612936130_
                  (lambda (_L1159_)
                    (cons (gx#datum->syntax '#f 'let-values)
                          (cons '()
@@ -225,7 +225,7 @@
                                         (cons _g11751178_ _g11761181_))
                                       '()
                                       _L1159_)))))
-                (___kont3583735838_
+                (___kont3613336134_
                  (lambda (_L1067_ _L1069_ _L1070_)
                    (cons (gx#datum->syntax '#f 'syntax-case)
                          (cons _L1069_
@@ -243,7 +243,7 @@
                '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            '()))))))
-                (___kont3584135842_
+                (___kont3613736138_
                  (lambda (_L930_ _L932_ _L933_)
                    (cons (gx#datum->syntax '#f 'syntax-case)
                          (cons (cons (gx#datum->syntax '#f 'list)
@@ -271,14 +271,14 @@
                '()))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                            '())))))))
-            (let* ((___match3593135932_
+            (let* ((___match3622736228_
                     (lambda (_e782826_
                              _hd783830_
                              _tl784833_
                              _e785836_
                              _hd786840_
                              _tl787843_
-                             ___splice3584335844_
+                             ___splice3613936140_
                              _target788846_
                              _tl790849_)
                       (letrec ((_loop791852_
@@ -320,17 +320,17 @@
                                       (let ((_pat798897_ (reverse _pat796861_))
                                             (_e797894_ (reverse _e795859_)))
                                         (if (gx#stx-pair/null? _tl787843_)
-                                            (let ((___splice3584535846_
+                                            (let ((___splice3614136142_
                                                    (gx#syntax-split-splice
                                                     _tl787843_
                                                     '0)))
                                               (let ((_tl807903_
                                                      (##vector-ref
-                                                      ___splice3584535846_
+                                                      ___splice3614136142_
                                                       '1))
                                                     (_target805900_
                                                      (##vector-ref
-                                                      ___splice3584535846_
+                                                      ___splice3614136142_
                                                       '0)))
                                                 (if (gx#stx-null? _tl807903_)
                                                     (letrec ((_loop808906_
@@ -345,7 +345,7 @@
                                  _lp-tl811923_
                                  (cons _lp-hd810920_ _body812913_))))
                             (let ((_body813926_ (reverse _body812913_)))
-                              (___kont3584135842_
+                              (___kont3613736138_
                                _body813926_
                                _e797894_
                                _pat798897_))))))
@@ -354,7 +354,7 @@
                                                     (_g734819_))))
                                             (_g734819_)))))))
                         (_loop791852_ _target788846_ '() '()))))
-                   (___match3591135912_
+                   (___match3620736208_
                     (lambda (_e755987_
                              _hd756991_
                              _tl757994_
@@ -370,7 +370,7 @@
                              _e7671027_
                              _hd7681031_
                              _tl7691034_
-                             ___splice3583935840_
+                             ___splice3613536136_
                              _target7701037_
                              _tl7721040_)
                       (letrec ((_loop7731043_
@@ -388,19 +388,19 @@
                                                  _body7771050_))))
                                       (let ((_body7781063_
                                              (reverse _body7771050_)))
-                                        (___kont3583735838_
+                                        (___kont3613336134_
                                          _body7781063_
                                          _hd7681031_
                                          _hd7651021_))))))
                         (_loop7731043_ _target7701037_ '()))))
-                   (___match3586935870_
+                   (___match3616536166_
                     (lambda (_e7371109_
                              _hd7381113_
                              _tl7391116_
                              _e7401119_
                              _hd7411123_
                              _tl7421126_
-                             ___splice3583535836_
+                             ___splice3613136132_
                              _target7431129_
                              _tl7451132_)
                       (letrec ((_loop7461135_
@@ -418,10 +418,10 @@
                                                  _body7501142_))))
                                       (let ((_body7511155_
                                              (reverse _body7501142_)))
-                                        (___kont3583335834_ _body7511155_))))))
+                                        (___kont3612936130_ _body7511155_))))))
                         (_loop7461135_ _target7431129_ '())))))
-              (if (gx#stx-pair? ___stx3583035831_)
-                  (let ((_e7371109_ (gx#syntax-e ___stx3583035831_)))
+              (if (gx#stx-pair? ___stx3612636127_)
+                  (let ((_e7371109_ (gx#syntax-e ___stx3612636127_)))
                     (let ((_tl7391116_ (##cdr _e7371109_))
                           (_hd7381113_ (##car _e7371109_)))
                       (if (gx#stx-pair? _tl7391116_)
@@ -430,79 +430,79 @@
                                   (_hd7411123_ (##car _e7401119_)))
                               (if (gx#stx-null? _hd7411123_)
                                   (if (gx#stx-pair/null? _tl7421126_)
-                                      (let ((___splice3583535836_
+                                      (let ((___splice3613136132_
                                              (gx#syntax-split-splice
                                               _tl7421126_
                                               '0)))
                                         (let ((_tl7451132_
                                                (##vector-ref
-                                                ___splice3583535836_
+                                                ___splice3613136132_
                                                 '1))
                                               (_target7431129_
                                                (##vector-ref
-                                                ___splice3583535836_
+                                                ___splice3613136132_
                                                 '0)))
                                           (if (gx#stx-null? _tl7451132_)
-                                              (___match3586935870_
+                                              (___match3616536166_
                                                _e7371109_
                                                _hd7381113_
                                                _tl7391116_
                                                _e7401119_
                                                _hd7411123_
                                                _tl7421126_
-                                               ___splice3583535836_
+                                               ___splice3613136132_
                                                _target7431129_
                                                _tl7451132_)
                                               (if (gx#stx-pair/null?
                                                    _hd7411123_)
-                                                  (let ((___splice3584335844_
+                                                  (let ((___splice3613936140_
                                                          (gx#syntax-split-splice
                                                           _hd7411123_
                                                           '0)))
                                                     (let ((_tl790849_
                                                            (##vector-ref
-                                                            ___splice3584335844_
+                                                            ___splice3613936140_
                                                             '1))
                                                           (_target788846_
                                                            (##vector-ref
-                                                            ___splice3584335844_
+                                                            ___splice3613936140_
                                                             '0)))
                                                       (if (gx#stx-null?
                                                            _tl790849_)
-                                                          (___match3593135932_
+                                                          (___match3622736228_
                                                            _e7371109_
                                                            _hd7381113_
                                                            _tl7391116_
                                                            _e7401119_
                                                            _hd7411123_
                                                            _tl7421126_
-                                                           ___splice3584335844_
+                                                           ___splice3613936140_
                                                            _target788846_
                                                            _tl790849_)
                                                           (_g734819_))))
                                                   (_g734819_)))))
                                       (if (gx#stx-pair/null? _hd7411123_)
-                                          (let ((___splice3584335844_
+                                          (let ((___splice3613936140_
                                                  (gx#syntax-split-splice
                                                   _hd7411123_
                                                   '0)))
                                             (let ((_tl790849_
                                                    (##vector-ref
-                                                    ___splice3584335844_
+                                                    ___splice3613936140_
                                                     '1))
                                                   (_target788846_
                                                    (##vector-ref
-                                                    ___splice3584335844_
+                                                    ___splice3613936140_
                                                     '0)))
                                               (if (gx#stx-null? _tl790849_)
-                                                  (___match3593135932_
+                                                  (___match3622736228_
                                                    _e7371109_
                                                    _hd7381113_
                                                    _tl7391116_
                                                    _e7401119_
                                                    _hd7411123_
                                                    _tl7421126_
-                                                   ___splice3584335844_
+                                                   ___splice3613936140_
                                                    _target788846_
                                                    _tl790849_)
                                                   (_g734819_))))
@@ -535,14 +535,14 @@
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                            _tl7631014_)
                           (if (gx#stx-pair/null? _tl7421126_)
-                              (let ((___splice3583935840_
+                              (let ((___splice3613536136_
                                      (gx#syntax-split-splice _tl7421126_ '0)))
                                 (let ((_tl7721040_
-                                       (##vector-ref ___splice3583935840_ '1))
+                                       (##vector-ref ___splice3613536136_ '1))
                                       (_target7701037_
-                                       (##vector-ref ___splice3583935840_ '0)))
+                                       (##vector-ref ___splice3613536136_ '0)))
                                   (if (gx#stx-null? _tl7721040_)
-                                      (___match3591135912_
+                                      (___match3620736208_
                                        _e7371109_
                                        _hd7381113_
                                        _tl7391116_
@@ -558,116 +558,116 @@
                                        _e7671027_
                                        _hd7681031_
                                        _tl7691034_
-                                       ___splice3583935840_
+                                       ___splice3613536136_
                                        _target7701037_
                                        _tl7721040_)
                                       (if (gx#stx-pair/null? _hd7411123_)
-                                          (let ((___splice3584335844_
+                                          (let ((___splice3613936140_
                                                  (gx#syntax-split-splice
                                                   _hd7411123_
                                                   '0)))
                                             (let ((_tl790849_
                                                    (##vector-ref
-                                                    ___splice3584335844_
+                                                    ___splice3613936140_
                                                     '1))
                                                   (_target788846_
                                                    (##vector-ref
-                                                    ___splice3584335844_
+                                                    ___splice3613936140_
                                                     '0)))
                                               (if (gx#stx-null? _tl790849_)
-                                                  (___match3593135932_
+                                                  (___match3622736228_
                                                    _e7371109_
                                                    _hd7381113_
                                                    _tl7391116_
                                                    _e7401119_
                                                    _hd7411123_
                                                    _tl7421126_
-                                                   ___splice3584335844_
+                                                   ___splice3613936140_
                                                    _target788846_
                                                    _tl790849_)
                                                   (_g734819_))))
                                           (_g734819_)))))
                               (if (gx#stx-pair/null? _hd7411123_)
-                                  (let ((___splice3584335844_
+                                  (let ((___splice3613936140_
                                          (gx#syntax-split-splice
                                           _hd7411123_
                                           '0)))
                                     (let ((_tl790849_
                                            (##vector-ref
-                                            ___splice3584335844_
+                                            ___splice3613936140_
                                             '1))
                                           (_target788846_
                                            (##vector-ref
-                                            ___splice3584335844_
+                                            ___splice3613936140_
                                             '0)))
                                       (if (gx#stx-null? _tl790849_)
-                                          (___match3593135932_
+                                          (___match3622736228_
                                            _e7371109_
                                            _hd7381113_
                                            _tl7391116_
                                            _e7401119_
                                            _hd7411123_
                                            _tl7421126_
-                                           ___splice3584335844_
+                                           ___splice3613936140_
                                            _target788846_
                                            _tl790849_)
                                           (_g734819_))))
                                   (_g734819_)))
                           (if (gx#stx-pair/null? _hd7411123_)
-                              (let ((___splice3584335844_
+                              (let ((___splice3613936140_
                                      (gx#syntax-split-splice _hd7411123_ '0)))
                                 (let ((_tl790849_
-                                       (##vector-ref ___splice3584335844_ '1))
+                                       (##vector-ref ___splice3613936140_ '1))
                                       (_target788846_
-                                       (##vector-ref ___splice3584335844_ '0)))
+                                       (##vector-ref ___splice3613936140_ '0)))
                                   (if (gx#stx-null? _tl790849_)
-                                      (___match3593135932_
+                                      (___match3622736228_
                                        _e7371109_
                                        _hd7381113_
                                        _tl7391116_
                                        _e7401119_
                                        _hd7411123_
                                        _tl7421126_
-                                       ___splice3584335844_
+                                       ___splice3613936140_
                                        _target788846_
                                        _tl790849_)
                                       (_g734819_))))
                               (_g734819_)))
                       (if (gx#stx-pair/null? _hd7411123_)
-                          (let ((___splice3584335844_
+                          (let ((___splice3613936140_
                                  (gx#syntax-split-splice _hd7411123_ '0)))
                             (let ((_tl790849_
-                                   (##vector-ref ___splice3584335844_ '1))
+                                   (##vector-ref ___splice3613936140_ '1))
                                   (_target788846_
-                                   (##vector-ref ___splice3584335844_ '0)))
+                                   (##vector-ref ___splice3613936140_ '0)))
                               (if (gx#stx-null? _tl790849_)
-                                  (___match3593135932_
+                                  (___match3622736228_
                                    _e7371109_
                                    _hd7381113_
                                    _tl7391116_
                                    _e7401119_
                                    _hd7411123_
                                    _tl7421126_
-                                   ___splice3584335844_
+                                   ___splice3613936140_
                                    _target788846_
                                    _tl790849_)
                                   (_g734819_))))
                           (_g734819_)))))
               (if (gx#stx-pair/null? _hd7411123_)
-                  (let ((___splice3584335844_
+                  (let ((___splice3613936140_
                          (gx#syntax-split-splice _hd7411123_ '0)))
-                    (let ((_tl790849_ (##vector-ref ___splice3584335844_ '1))
+                    (let ((_tl790849_ (##vector-ref ___splice3613936140_ '1))
                           (_target788846_
-                           (##vector-ref ___splice3584335844_ '0)))
+                           (##vector-ref ___splice3613936140_ '0)))
                       (if (gx#stx-null? _tl790849_)
-                          (___match3593135932_
+                          (___match3622736228_
                            _e7371109_
                            _hd7381113_
                            _tl7391116_
                            _e7401119_
                            _hd7411123_
                            _tl7421126_
-                           ___splice3584335844_
+                           ___splice3613936140_
                            _target788846_
                            _tl790849_)
                           (_g734819_))))
@@ -675,54 +675,54 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                               (if (gx#stx-pair/null?
                                                    _hd7411123_)
-                                                  (let ((___splice3584335844_
+                                                  (let ((___splice3613936140_
                                                          (gx#syntax-split-splice
                                                           _hd7411123_
                                                           '0)))
                                                     (let ((_tl790849_
                                                            (##vector-ref
-                                                            ___splice3584335844_
+                                                            ___splice3613936140_
                                                             '1))
                                                           (_target788846_
                                                            (##vector-ref
-                                                            ___splice3584335844_
+                                                            ___splice3613936140_
                                                             '0)))
                                                       (if (gx#stx-null?
                                                            _tl790849_)
-                                                          (___match3593135932_
+                                                          (___match3622736228_
                                                            _e7371109_
                                                            _hd7381113_
                                                            _tl7391116_
                                                            _e7401119_
                                                            _hd7411123_
                                                            _tl7421126_
-                                                           ___splice3584335844_
+                                                           ___splice3613936140_
                                                            _target788846_
                                                            _tl790849_)
                                                           (_g734819_))))
                                                   (_g734819_)))))
                                       (if (gx#stx-pair/null? _hd7411123_)
-                                          (let ((___splice3584335844_
+                                          (let ((___splice3613936140_
                                                  (gx#syntax-split-splice
                                                   _hd7411123_
                                                   '0)))
                                             (let ((_tl790849_
                                                    (##vector-ref
-                                                    ___splice3584335844_
+                                                    ___splice3613936140_
                                                     '1))
                                                   (_target788846_
                                                    (##vector-ref
-                                                    ___splice3584335844_
+                                                    ___splice3613936140_
                                                     '0)))
                                               (if (gx#stx-null? _tl790849_)
-                                                  (___match3593135932_
+                                                  (___match3622736228_
                                                    _e7371109_
                                                    _hd7381113_
                                                    _tl7391116_
                                                    _e7401119_
                                                    _hd7411123_
                                                    _tl7421126_
-                                                   ___splice3584335844_
+                                                   ___splice3613936140_
                                                    _target788846_
                                                    _tl790849_)
                                                   (_g734819_))))
@@ -731,14 +731,14 @@
                   (_g734819_)))))))
     (define |gerbil/core$<syntax-sugar>[:0:]#with-syntax*|
       (lambda (_stx1192_)
-        (let* ((___stx3593435935_ _stx1192_)
+        (let* ((___stx3623036231_ _stx1192_)
                (_g11971274_
                 (lambda ()
                   (gx#raise-syntax-error
                    '#f
                    '"Bad syntax"
-                   ___stx3593435935_))))
-          (let ((___kont3593735938_
+                   ___stx3623036231_))))
+          (let ((___kont3623336234_
                  (lambda (_L1570_)
                    (cons (gx#datum->syntax '#f 'let-values)
                          (cons '()
@@ -746,7 +746,7 @@
                                         (cons _g15861589_ _g15871592_))
                                       '()
                                       _L1570_)))))
-                (___kont3594135942_
+                (___kont3623736238_
                  (lambda (_L1472_ _L1474_ _L1475_ _L1476_ _L1477_)
                    (cons (gx#datum->syntax '#f 'let-values)
                          (cons (cons (cons _L1476_ (cons _L1475_ '())) '())
@@ -760,7 +760,7 @@
                 _L1472_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                      '())))))
-                (___kont3594535946_
+                (___kont3624136242_
                  (lambda (_L1341_ _L1343_ _L1344_ _L1345_)
                    (cons (gx#datum->syntax '#f 'with-syntax)
                          (cons (cons _L1344_ '())
@@ -774,7 +774,7 @@
                 _L1341_)))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                      '()))))))
-            (let* ((___match3604736048_
+            (let* ((___match3634336344_
                     (lambda (_e12511281_
                              _hd12521285_
                              _tl12531288_
@@ -784,7 +784,7 @@
                              _e12571301_
                              _hd12581305_
                              _tl12591308_
-                             ___splice3594735948_
+                             ___splice3624336244_
                              _target12601311_
                              _tl12621314_)
                       (letrec ((_loop12631317_
@@ -802,13 +802,13 @@
                                                  _body12671324_))))
                                       (let ((_body12681337_
                                              (reverse _body12671324_)))
-                                        (___kont3594535946_
+                                        (___kont3624136242_
                                          _body12681337_
                                          _tl12591308_
                                          _hd12581305_
                                          _hd12521285_))))))
                         (_loop12631317_ _target12601311_ '()))))
-                   (___match3602136022_
+                   (___match3631736318_
                     (lambda (_e12201382_
                              _hd12211386_
                              _tl12221389_
@@ -827,7 +827,7 @@
                              _e12351432_
                              _hd12361436_
                              _tl12371439_
-                             ___splice3594335944_
+                             ___splice3623936240_
                              _target12381442_
                              _tl12401445_)
                       (letrec ((_loop12411448_
@@ -845,21 +845,21 @@
                                                  _body12451455_))))
                                       (let ((_body12461468_
                                              (reverse _body12451455_)))
-                                        (___kont3594135942_
+                                        (___kont3623736238_
                                          _body12461468_
                                          _tl12281409_
                                          _hd12361436_
                                          _tl12341429_
                                          _hd12211386_))))))
                         (_loop12411448_ _target12381442_ '()))))
-                   (___match3597135972_
+                   (___match3626736268_
                     (lambda (_e12001520_
                              _hd12011524_
                              _tl12021527_
                              _e12031530_
                              _hd12041534_
                              _tl12051537_
-                             ___splice3593935940_
+                             ___splice3623536236_
                              _target12061540_
                              _tl12081543_)
                       (letrec ((_loop12091546_
@@ -877,11 +877,11 @@
                                                  _body12131553_))))
                                       (let ((_body12141566_
                                              (reverse _body12131553_)))
-                                        (___kont3593735938_
+                                        (___kont3623336234_
                                          _body12141566_))))))
                         (_loop12091546_ _target12061540_ '())))))
-              (if (gx#stx-pair? ___stx3593435935_)
-                  (let ((_e12001520_ (gx#syntax-e ___stx3593435935_)))
+              (if (gx#stx-pair? ___stx3623036231_)
+                  (let ((_e12001520_ (gx#syntax-e ___stx3623036231_)))
                     (let ((_tl12021527_ (##cdr _e12001520_))
                           (_hd12011524_ (##car _e12001520_)))
                       (if (gx#stx-pair? _tl12021527_)
@@ -890,27 +890,27 @@
                                   (_hd12041534_ (##car _e12031530_)))
                               (if (gx#stx-null? _hd12041534_)
                                   (if (gx#stx-pair/null? _tl12051537_)
-                                      (let ((___splice3593935940_
+                                      (let ((___splice3623536236_
                                              (gx#syntax-split-splice
                                               _tl12051537_
                                               '0)))
                                         (let ((_tl12081543_
                                                (##vector-ref
-                                                ___splice3593935940_
+                                                ___splice3623536236_
                                                 '1))
                                               (_target12061540_
                                                (##vector-ref
-                                                ___splice3593935940_
+                                                ___splice3623536236_
                                                 '0)))
                                           (if (gx#stx-null? _tl12081543_)
-                                              (___match3597135972_
+                                              (___match3626736268_
                                                _e12001520_
                                                _hd12011524_
                                                _tl12021527_
                                                _e12031530_
                                                _hd12041534_
                                                _tl12051537_
-                                               ___splice3593935940_
+                                               ___splice3623536236_
                                                _target12061540_
                                                _tl12081543_)
                                               (_g11971274_))))
@@ -943,7 +943,7 @@
                                                                _hd12331426_)
                                                               (if (gx#free-identifier=?
 ;;<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-                           |gerbil/core$<syntax-sugar>[1]#_g41211_|
+                           |gerbil/core$<syntax-sugar>[1]#_g41573_|
                            _hd12331426_)
                           (if (gx#stx-pair? _tl12311419_)
                               (let ((_e12351432_ (gx#syntax-e _tl12311419_)))
@@ -951,20 +951,20 @@
                                       (_hd12361436_ (##car _e12351432_)))
                                   (if (gx#stx-null? _tl12371439_)
                                       (if (gx#stx-pair/null? _tl12051537_)
-                                          (let ((___splice3594335944_
+                                          (let ((___splice3623936240_
                                                  (gx#syntax-split-splice
                                                   _tl12051537_
                                                   '0)))
                                             (let ((_tl12401445_
                                                    (##vector-ref
-                                                    ___splice3594335944_
+                                                    ___splice3623936240_
                                                     '1))
                                                   (_target12381442_
                                                    (##vector-ref
-                                                    ___splice3594335944_
+                                                    ___splice3623936240_
                                                     '0)))
                                               (if (gx#stx-null? _tl12401445_)
-                                                  (___match3602136022_
+                                                  (___match3631736318_
                                                    _e12001520_
                                                    _hd12011524_
                                                    _tl12021527_
@@ -983,26 +983,26 @@
                                                    _e12351432_
                                                    _hd12361436_
                                                    _tl12371439_
-                                                   ___splice3594335944_
+                                                   ___splice3623936240_
                                                    _target12381442_
                                                    _tl12401445_)
                                                   (_g11971274_))))
                                           (_g11971274_))
                                       (if (gx#stx-pair/null? _tl12051537_)
-                                          (let ((___splice3594735948_
+                                          (let ((___splice3624336244_
                                                  (gx#syntax-split-splice
                                                   _tl12051537_
                                                   '0)))
                                             (let ((_tl12621314_
                                                    (##vector-ref
-                                                    ___splice3594735948_
+                                                    ___splice3624336244_
                                                     '1))
                                                   (_target12601311_
                                                    (##vector-ref
-                                                    ___splice3594735948_
+                                                    ___splice3624336244_
                                                     '0)))
                                               (if (gx#stx-null? _tl12621314_)
-                                                  (___match3604736048_
+                                                  (___match3634336344_
                                                    _e12001520_
                                                    _hd12011524_
                                                    _tl12021527_
@@ -1012,26 +1012,26 @@
                                                    _e12261402_
                                                    _hd12271406_
                                                    _tl12281409_
-                                                   ___splice3594735948_
+                                                   ___splice3624336244_
                                                    _target12601311_
                                                    _tl12621314_)
                                                   (_g11971274_))))
                                           (_g11971274_)))))
                               (if (gx#stx-pair/null? _tl12051537_)
-                                  (let ((___splice3594735948_
+                                  (let ((___splice3624336244_
                                          (gx#syntax-split-splice
                                           _tl12051537_
                                           '0)))
                                     (let ((_tl12621314_
                                            (##vector-ref
-                                            ___splice3594735948_
+                                            ___splice3624336244_
                                             '1))
                                           (_target12601311_
                                            (##vector-ref
-                                            ___splice3594735948_
+                                            ___splice3624336244_
                                             '0)))
                                       (if (gx#stx-null? _tl12621314_)
-                                          (___match3604736048_
+                                          (___match3634336344_
                                            _e12001520_
                                            _hd12011524_
                                            _tl12021527_
@@ -1041,20 +1041,20 @@
                                            _e12261402_
                                            _hd12271406_
                                            _tl12281409_
-                                           ___splice3594735948_
+                                           ___splice3624336244_
                                            _target12601311_
                                            _tl12621314_)
                                           (_g11971274_))))
                                   (_g11971274_)))
                           (if (gx#stx-pair/null? _tl12051537_)
-                              (let ((___splice3594735948_
+                              (let ((___splice3624336244_
                                      (gx#syntax-split-splice _tl12051537_ '0)))
                                 (let ((_tl12621314_
-                                       (##vector-ref ___splice3594735948_ '1))
+                                       (##vector-ref ___splice3624336244_ '1))
                                       (_target12601311_
-                                       (##vector-ref ___splice3594735948_ '0)))
+                                       (##vector-ref ___splice3624336244_ '0)))
                                   (if (gx#stx-null? _tl12621314_)
-                                      (___match3604736048_
+                                      (___match3634336344_
                                        _e12001520_
                                        _hd12011524_
                                        _tl12021527_
@@ -1064,20 +1064,20 @@
                                        _e12261402_
                                        _hd12271406_
                                        _tl12281409_
-                                       ___splice3594735948_
+                                       ___splice3624336244_
                                        _target12601311_
                                        _tl12621314_)
                                       (_g11971274_))))
                               (_g11971274_)))
                       (if (gx#stx-pair/null? _tl12051537_)
-                          (let ((___splice3594735948_
+                          (let ((___splice3624336244_
                                  (gx#syntax-split-splice _tl12051537_ '0)))
                             (let ((_tl12621314_
-                                   (##vector-ref ___splice3594735948_ '1))
+                                   (##vector-ref ___splice3624336244_ '1))
                                   (_target12601311_
-                                   (##vector-ref ___splice3594735948_ '0)))
+                                   (##vector-ref ___splice3624336244_ '0)))
                               (if (gx#stx-null? _tl12621314_)
-                                  (___match3604736048_
+                                  (___match3634336344_
                                    _e12001520_
                                    _hd12011524_
                                    _tl12021527_
@@ -1087,19 +1087,19 @@
                                    _e12261402_
                                    _hd12271406_
                                    _tl12281409_
-                                   ___splice3594735948_
+                                   ___splice3624336244_
                                    _target12601311_
                                    _tl12621314_)
                                   (_g11971274_))))
                           (_g11971274_)))))
               (if (gx#stx-pair/null? _tl12051537_)
-                  (let ((___splice3594735948_
+                  (let ((___splice3624336244_
                          (gx#syntax-split-splice _tl12051537_ '0)))
-                    (let ((_tl12621314_ (##vector-ref ___splice3594735948_ '1))
+                    (let ((_tl12621314_ (##vector-ref ___splice3624336244_ '1))
                           (_target12601311_
-                           (##vector-ref ___splice3594735948_ '0)))
+                           (##vector-ref ___splice3624336244_ '0)))
                       (if (gx#stx-null? _tl12621314_)
-                          (___match3604736048_
+                          (___match3634336344_
                            _e12001520_
                            _hd12011524_
                            _tl12021527_
@@ -1109,7 +1109,7 @@
                            _e12261402_
                            _hd12271406_
                            _tl12281409_
-                           ___splice3594735948_
+                           ___splice3624336244_
                            _target12601311_
                            _tl12621314_)
                           (_g11971274_))))
@@ -1117,21 +1117,21 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                               (if (gx#stx-pair/null?
                                                    _tl12051537_)
-                                                  (let ((___splice3594735948_
+                                                  (let ((___splice3624336244_
                                                          (gx#syntax-split-splice
                                                           _tl12051537_
                                                           '0)))
                                                     (let ((_tl12621314_
                                                            (##vector-ref
-                                                            ___splice3594735948_
+                                                            ___splice3624336244_
                                                             '1))
                                                           (_target12601311_
                                                            (##vector-ref
-                                                            ___splice3594735948_
+                                                            ___splice3624336244_
                                                             '0)))
                                                       (if (gx#stx-null?
                                                            _tl12621314_)
-                                                          (___match3604736048_
+                                                          (___match3634336344_
                                                            _e12001520_
                                                            _hd12011524_
                                                            _tl12021527_
@@ -1141,7 +1141,7 @@
                                                            _e12261402_
                                                            _hd12271406_
                                                            _tl12281409_
-                                                           ___splice3594735948_
+                                                           ___splice3624336244_
                                                            _target12601311_
                                                            _tl12621314_)
                                                           (_g11971274_))))
