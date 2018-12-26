@@ -51,6 +51,8 @@
     "srfi/132"
     "srfi/133"
     "srfi/134"
+    "srfi/srfi-135/etc"
+    "srfi/srfi-135/kernel8"
     "srfi/135"
     ;; :std/parser
     "parser/rlang"

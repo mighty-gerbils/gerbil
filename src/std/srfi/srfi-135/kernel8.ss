@@ -1,0 +1,9 @@
+;;; -*- Gerbil -*-
+;;; (c) vyzo at hackzen.org
+;;; SRFI-135: Immutable Texts
+package: std/srfi/srfi-135
+
+(import :std/srfi/9
+        :std/srfi/srfi-135/etc)
+(export #t)
+(include "kernel8.body.scm")
