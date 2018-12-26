@@ -14,16 +14,10 @@ RUN cd /root/gambit && make -j4
 RUN cd /root/gambit && make install
 
 ENV PATH "/usr/local/gambit/bin:$PATH"
-RUN cd /root/gerbil/src && ./build.sh stage0
-RUN cd /root/gerbil/src && ./build.sh stage1
 RUN sed -i -e 's/mysql #f/mysql #t/g' /root/gerbil/src/std/build-features.ss
 RUN sed -i -e 's/yaml #f/yaml #t/g' /root/gerbil/src/std/build-features.ss
 RUN sed -i -e 's/leveldb #f/leveldb #t/g' /root/gerbil/src/std/build-features.ss
 RUN sed -i -e 's/lmdb #f/lmdb #t/g' /root/gerbil/src/std/build-features.ss
-RUN cd /root/gerbil/src && ./build.sh stdlib
-RUN cd /root/gerbil/src && ./build.sh lang
-RUN cd /root/gerbil/src && ./build.sh r7rs-large
-RUN cd /root/gerbil/src && ./build.sh tools
-RUN cd /root/gerbil/src && ./build.sh tags
+RUN cd /root/gerbil/src && ./build.sh
 
 CMD /root/gerbil/bin/gxi
