@@ -157,6 +157,120 @@ Please document me!
 Please document me!
 
 
+## Deques
+::: tip usage
+(import :std/misc/deque)
+:::
+
+### deque
+::: tip usage
+```
+(deque ...)
+```
+:::
+
+Please document me!
+
+### make-deque
+::: tip usage
+```
+(make-deque ...)
+```
+:::
+
+Please document me!
+
+### deque?
+::: tip usage
+```
+(deque? ...)
+```
+:::
+
+Please document me!
+
+### deque-length
+::: tip usage
+```
+(deque-length ...)
+```
+:::
+
+Please document me!
+
+### deque-empty?
+::: tip usage
+```
+(deque-empty? ...)
+```
+:::
+
+Please document me!
+
+### push-front!
+::: tip usage
+```
+(push-front! ...)
+```
+:::
+
+Please document me!
+
+### pop-front!
+::: tip usage
+```
+(pop-front! ...)
+```
+:::
+
+Please document me!
+
+### peek-front
+::: tip usage
+```
+(peek-front ...)
+```
+:::
+
+Please document me!
+
+### push-back!
+::: tip usage
+```
+(push-back! ...)
+```
+:::
+
+Please document me!
+
+### pop-back!
+::: tip usage
+```
+(pop-back! ...)
+```
+:::
+
+Please document me!
+
+### peek-back
+::: tip usage
+```
+(peek-back ...)
+```
+:::
+
+Please document me!
+
+### deque-&gt;list
+::: tip usage
+```
+(deque->list ...)
+```
+:::
+
+Please document me!
+
+
 
 ## List utilities
 ::: tip usage
@@ -555,11 +669,17 @@ be used in `with-destroy` forms and other primitives that use the destroy
 idiom.
 
 
-
 ## Priority Queues
 ::: tip usage
 (import :std/misc/pqueue)
 :::
+
+### pqueue
+```
+(defsyntax pqueue ...)
+```
+
+Priority queue type, for user-defined generics.
 
 ### make-pqueue
 ::: tip usage
@@ -658,10 +778,17 @@ Please document me!
 Please document me!
 
 
-## Deques
+## Simple Queues
 ::: tip usage
 (import :std/misc/queue)
 :::
+
+### queue
+```
+(defsyntax queue ...)
+```
+
+Queue type, for user-defined generics.
 
 ### make-queue
 ::: tip usage
@@ -743,7 +870,6 @@ Please document me!
 :::
 
 Please document me!
-
 
 
 ## Sourceable Representation
