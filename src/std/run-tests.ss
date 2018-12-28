@@ -12,6 +12,7 @@
         "misc/lru-test"
 	    "misc/func-test"
         "misc/queue-test"
+        "misc/deque-test"
         "text/csv-test"
         "text/json-test"
         "text/utf8-test"
@@ -56,6 +57,7 @@
    lru-test
    func-test
    queue-test
+   deque-test
    actor-xdr-test
    actor-rpc-test actor-rpc-stream-test
    httpd-test
