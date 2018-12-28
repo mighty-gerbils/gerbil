@@ -13,6 +13,7 @@
 	    "misc/func-test"
         "misc/queue-test"
         "misc/deque-test"
+        "misc/pqueue-test"
         "text/csv-test"
         "text/json-test"
         "text/utf8-test"
@@ -58,6 +59,7 @@
    func-test
    queue-test
    deque-test
+   pqueue-test
    actor-xdr-test
    actor-rpc-test actor-rpc-stream-test
    httpd-test
