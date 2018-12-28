@@ -163,113 +163,137 @@ Please document me!
 :::
 
 ### deque
-::: tip usage
 ```
-(deque ...)
+(defsyntax deque ...)
 ```
-:::
 
-Please document me!
+Deque type for user-defined generics.
 
 ### make-deque
 ::: tip usage
 ```
-(make-deque ...)
+(make-deque)
+=> <deque>
 ```
 :::
 
-Please document me!
+Creates a new deque.
 
 ### deque?
 ::: tip usage
 ```
-(deque? ...)
+(deque? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is a deque.
 
 ### deque-length
 ::: tip usage
 ```
-(deque-length ...)
+(deque-length dq)
+  dq := deque
+=> integer
 ```
 :::
 
-Please document me!
+Returns the size of the deque.
 
 ### deque-empty?
 ::: tip usage
 ```
-(deque-empty? ...)
+(deque-empty? dq)
+  dq := deque
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the deque is empty.
 
 ### push-front!
 ::: tip usage
 ```
-(push-front! ...)
+(push-front! dq v)
+  dq := deque
 ```
 :::
 
-Please document me!
+Enqueues (pushes) the value `v` to the front of the queue.
 
 ### pop-front!
 ::: tip usage
 ```
-(pop-front! ...)
+(pop-front! dq [default])
+  dq := deque
+=> any
 ```
 :::
 
-Please document me!
+Pops the front of the queue and a returns the value.
+If the deque is empty and a default value is supplied, then it is returned.
+Otherwise an error is raised.
 
 ### peek-front
 ::: tip usage
 ```
-(peek-front ...)
+(peek-front dq [default])
+  dq := deque
+=> any
 ```
 :::
 
-Please document me!
+Peeks the front of the queue and a returns the value without popping it
+If the deque is empty and a default value is supplied, then it is returned.
+Otherwise an error is raised.
 
 ### push-back!
 ::: tip usage
 ```
-(push-back! ...)
+(push-back! dq v)
 ```
 :::
 
-Please document me!
+Enqueues (pushes) the value `v` to the back of the queue.
 
 ### pop-back!
 ::: tip usage
 ```
-(pop-back! ...)
+(pop-back! dq [default])
+  dq := deque
+=> any
 ```
 :::
 
-Please document me!
+Pops the back of the queue and a returns the value.
+If the deque is empty and a default value is supplied, then it is returned.
+Otherwise an error is raised.
+
 
 ### peek-back
 ::: tip usage
 ```
-(peek-back ...)
+(peek-back dq [default])
+  dq := deque
+=> any
 ```
 :::
 
-Please document me!
+Peeks the back of the queue and a returns the value without popping it
+If the deque is empty and a default value is supplied, then it is returned.
+Otherwise an error is raised.
+
 
 ### deque-&gt;list
 ::: tip usage
 ```
-(deque->list ...)
+(deque->list dq)
+  dq := deque
+=> list
 ```
 :::
 
-Please document me!
-
+Returns a list of the value contained in the deque, in order.
 
 
 ## List utilities
@@ -684,65 +708,85 @@ Priority queue type, for user-defined generics.
 ### make-pqueue
 ::: tip usage
 ```
-(make-pqueue ...)
+(make-pqueue prio [cmp = <])
+  prio := lambda (any) => any; element priority function
+  cmp  := priority comparison function
+=> pqueue
 ```
 :::
 
-Please document me!
+Creates a new priority queue.
 
 ### pqueue?
 ::: tip usage
 ```
-(pqueue? ...)
+(pqueue? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is a priority queue.
 
 ### pqueue-empty?
 ::: tip usage
 ```
-(pqueue-empty? ...)
+(pqueue-empty? pq)
+  pq := pqueue
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the priority queue is empty.
 
 ### pqueue-size
 ::: tip usage
 ```
-(pqueue-size ...)
+(pqueue-size pq)
+  pq := pqueue
+=> integer
+
 ```
 :::
 
-Please document me!
+Returns the size of the priority queue.
 
 ### pqueue-peek
 ::: tip usage
 ```
-(pqueue-peek ...)
+(pqueue-peek pq [default])
+  pq := pqueue
+=> any
 ```
 :::
 
-Please document me!
+Peeks the next value in the queue, without popping it.
+If the queue is empty and a default value is supplied, then it is returned.
+Otherwise an error is raised.
+
 
 ### pqueue-pop!
 ::: tip usage
 ```
-(pqueue-pop! ...)
+(pqueue-pop! pq [default])
+  pq := pqueue
+=> any
 ```
 :::
 
-Please document me!
+Peeks the next value in the queue, and returns it.
+If the queue is empty and a default value is supplied, then it is returned.
+Otherwise an error is raised.
+
 
 ### pqueue-push!
 ::: tip usage
 ```
-(pqueue-push! ...)
+(pqueue-push! pq v)
+  pq := pqueue
 ```
 :::
 
-Please document me!
+Pushes the value `v` in the queue.
 
 
 
@@ -793,83 +837,110 @@ Queue type, for user-defined generics.
 ### make-queue
 ::: tip usage
 ```
-(make-queue ...)
+(make-queue)
+=> <queue>
 ```
 :::
 
-Please document me!
+Creates a new queue.
 
 ### queue?
 ::: tip usage
 ```
-(queue? ...)
+(queue? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is a queue.
 
 ### queue-length
 ::: tip usage
 ```
-(queue-length ...)
+(queue-length q)
+  q := queue
+=> integer
 ```
 :::
 
-Please document me!
+Returns the size of the queue.
 
 ### queue-empty?
 ::: tip usage
 ```
-(queue-empty? ...)
+(queue-empty? q)
+  q := queue
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the queue is empty.
 
 ### non-empty-queue?
 ::: tip usage
 ```
-(non-empty-queue? ...)
+(non-empty-queue? q)
 ```
 :::
 
-Please document me!
+Returns true if the queue is not empty.
 
 ### enqueue!
 ::: tip usage
 ```
-(enqueue! ...)
+(enqueue! q v)
+  q := queue
 ```
 :::
 
-Please document me!
+Enqueues (pushes) the value `v` to the end of the queue.
 
 ### enqueue-front!
 ::: tip usage
 ```
-(enqueue-front! ...)
+(enqueue-front! q v)
+  q := queue
 ```
 :::
 
-Please document me!
+Enqueues the value `v` at the front of the queue.
 
 ### dequeue!
 ::: tip usage
 ```
-(dequeue! ...)
+(dequeue! q [default])
+  q := queue
+=> any
 ```
 :::
 
-Please document me!
+Pops the end of the queue and a returns the value.
+If the queue is empty and a default value is supplied, then it is returned.
+Otherwise an error is raised.
+
+### queue-peek
+::: tip usage
+```
+(queue-peek q [default])
+  q := queue
+=> any
+```
+:::
+
+Peeks the end of the queue and a returns the value without popping it from the queue.
+If the queue is empty and a default value is supplied, then it is returned.
+Otherwise an error is raised.
+
 
 ### queue-&gt;list
 ::: tip usage
 ```
-(queue->list ...)
+(queue->list q)
+=> list
 ```
 :::
 
-Please document me!
+Returns a list of the value contained in the queue, in order.
 
 
 ## Sourceable Representation
