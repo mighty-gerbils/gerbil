@@ -3,7 +3,7 @@
 ;;; imperative queues
 package: std/misc
 
-(export make-queue queue? queue-length
+(export queue make-queue queue? queue-length
         queue-empty? non-empty-queue?
         enqueue! enqueue-front! dequeue!
         queue->list)
@@ -51,7 +51,7 @@ package: std/misc
         (set! (&queue-length q)
           (fx1+ length))))))
 
-(def (dequeue! q)
+(def (dequeue! q (default absent-obj))
   (with ((queue front back length) q)
     (cond
      ((eq? front back)
@@ -68,8 +68,9 @@ package: std/misc
         (set! (&queue-length q)
           (fx1- length))
         v))
-     (else
-      (error "cannot dequeue; empty queue" q)))))
+     ((eq? default absent-obj)
+      (error "cannot dequeue; empty queue" q))
+     (else default))))
 
 (def (queue->list q)
   (foldr cons [] (queue-front q)))

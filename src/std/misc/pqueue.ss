@@ -3,7 +3,7 @@
 ;;; heap based priority queues
 package: std/misc
 
-(export make-pqueue pqueue? pqueue-empty? pqueue-size
+(export pqueue make-pqueue pqueue? pqueue-empty? pqueue-size
         pqueue-peek pqueue-pop! pqueue-push!)
 
 (defstruct pqueue (e cmp prio)
@@ -32,10 +32,12 @@ package: std/misc
       (error "empty pqueue")
       (heap-top e))))
 
-(def (pqueue-pop! pq)
+(def (pqueue-pop! pq (default absent-obj))
   (with ((pqueue e cmp) pq)
     (if (##fxzero? (heap-size e))
-      (error "empty pqueue")
+      (if (eq? default absent-obj)
+        (error "Cannot pop; empty pqueue")
+        default)
       (let (obj (heap-top e))
         (heap-pop! e cmp)
         obj))))

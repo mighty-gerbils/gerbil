@@ -190,6 +190,7 @@
     "misc/repr"
     "misc/queue"
     "misc/pqueue"
+    "misc/deque"
     "misc/lru"
     "misc/string"
     "misc/sync"
