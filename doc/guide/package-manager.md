@@ -59,6 +59,11 @@ To rebuild all packages:
 
 `gxpkg build all`
 
+## Known Gerbil Packages
+
+We maintain a list of known Gerbil packages in the [Gerbil Package Directory](https://github.com/vyzo/gerbil-directory).
+Feel free to open a PR in that repo to list your own packages!
+
 ## A Word of Caution
 
 The build script is currently not sandboxed; it runs with user priveleges and it is an arbitrary script. We originally planned to address this by creating a restricted sandbox language for package build scripts. But you can only go so far in a language that thrives in compile-time evaluation; remember, it's macros all the way!
