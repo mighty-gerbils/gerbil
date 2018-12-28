@@ -65,9 +65,10 @@ package: std/misc
       (set! (&deque-length dq)
         (1+ len)))))
 
-(def (pop-front! dq)
+(def (pop-front! dq (default absent-obj))
   (with ((deque front back len) dq)
-    (if front
+    (cond
+     (front
       (let (next (&node-next front))
         (set! (&deque-front dq) next)
         (if next
@@ -75,12 +76,15 @@ package: std/misc
           (set! (&deque-back dq) #f))
         (set! (&deque-length dq)
           (1- len))
-        (&node-e front))
-      (error "Cannot pop; empty deque" dq))))
+        (&node-e front)))
+     ((eq? default absent-obj)
+      (error "Cannot pop; empty deque" dq))
+     (else default))))
 
-(def (pop-back! dq)
+(def (pop-back! dq (default absent-obj))
   (with ((deque front back len) dq)
-    (if back
+    (cond
+     (back
       (let (prev (&node-prev back))
         (set! (&deque-back dq) prev)
         (if prev
@@ -88,20 +92,28 @@ package: std/misc
           (set! (&deque-front dq) #f))
         (set! (&deque-length dq)
           (1- len))
-        (&node-e back))
-      (error "Cannot pop; empty deque" dq))))
+        (&node-e back)))
+     ((eq? default absent-obj)
+      (error "Cannot pop; empty deque" dq))
+     (else default))))
 
-(def (peek-front dq)
+(def (peek-front dq (default absent-obj))
   (with ((deque front) dq)
-    (if front
-      (&node-e front)
-      (error "Cannot peek; empty deque"))))
+    (cond
+     (front
+      (&node-e front))
+     ((eq? default absent-obj)
+      (error "Cannot peek; empty deque"))
+     (else default))))
 
-(def (peek-back dq)
+(def (peek-back dq (default absent-obj))
   (with ((deque _ back) dq)
-    (if back
-      (&node-e back)
-      (error "Cannot peek; empty deque"))))
+    (cond
+     (back
+      (&node-e back))
+     ((eq? default absent-obj)
+      (error "Cannot peek; empty deque"))
+     (else default))))
 
 (def (deque->list dq)
   (with ((deque _ back) dq)
