@@ -5,7 +5,7 @@ package: std/misc
 
 (export queue make-queue queue? queue-length
         queue-empty? non-empty-queue?
-        enqueue! enqueue-front! dequeue!
+        enqueue! enqueue-front! dequeue! queue-peek
         queue->list)
 (declare (not safe))
 
@@ -70,6 +70,15 @@ package: std/misc
         v))
      ((eq? default absent-obj)
       (error "cannot dequeue; empty queue" q))
+     (else default))))
+
+(def (queue-peek q (default absent-obj))
+  (with ((queue front) q)
+    (cond
+     ((pair? front)
+      (car front))
+     ((eq? default absent-obj)
+      (error "cannot peek; empty queue" q))
      (else default))))
 
 (def (queue->list q)
