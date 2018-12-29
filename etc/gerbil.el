@@ -454,6 +454,7 @@
     map))
 
 (defvar gerbil-program-name "gxi")
+(defvar gerbil-mode-hook nil)
 
 ;;;###autoload
 (define-derived-mode gerbil-mode scheme-mode
@@ -464,8 +465,8 @@
   (setq scheme-program-name gerbil-program-name)
   (setq comment-start ";;")
   (scheme-mode-variables)
-  (gerbil-init))
-
+  (gerbil-init)
+  (run-hooks 'gerbil-mode-hook))
 
 ;;;###autoload
 (progn
