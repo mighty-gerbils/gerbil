@@ -25,7 +25,10 @@
         :std/sugar
         :std/iter
         :std/sort
+        :std/pregexp
+        :std/net/request
         :std/misc/process
+        (only-in :std/srfi/13 string-trim)
         :gerbil/gambit/os
         :gerbil/gambit/exceptions)
 (export main
@@ -67,6 +70,9 @@
     (command 'list help: "list installed packages"))
   (def retag-cmd
     (command 'retag help: "retag installed packages"))
+  (def search-cmd
+    (command 'search help: "search the package directory"
+             (rest-arguments 'keywords help: "keywords to search for")))
   (def help-cmd
     (command 'help help: "display help; help <command> for command help"
              (optional-argument 'command value: string->symbol)))
@@ -80,6 +86,7 @@
             clean-cmd
             list-cmd
             retag-cmd
+            search-cmd
             help-cmd))
 
   (try
@@ -104,6 +111,8 @@
           (list-pkgs))
          ((retag)
           (retag-pkgs))
+         ((search)
+          (search-pkgs .keywords))
          ((help)
           (getopt-display-help-topic gopt .?command "gxkpg")))))
    (catch (getopt-error? exn)
@@ -166,6 +175,9 @@
 
 (def (retag-pkgs)
   (pkg-retag))
+
+(def (search-pkgs keywords)
+  (pkg-search keywords))
 
 ;;; action implementation -- script api
 (def +pkg-root-dir+
@@ -410,6 +422,52 @@
     (displayln "... tagging packages")
     (run-process ["gxtags" dirs ...]
                  directory: root)))
+
+;; package directory search
+(def (pkg-search keywords)
+  (def (search alst)
+    (let lp ((rest alst) (r []))
+      (match rest
+        ([(and hd [pkg . desc]) . rest]
+         (if (andmap (lambda (kw)
+                      (let (rx (pregexp (string-append "(?i:" kw ")")))
+                        (or (pregexp-match rx pkg) (pregexp-match rx desc))))
+                    keywords)
+           (lp rest (cons hd r))
+           (lp rest r)))
+        (else
+         (reverse r)))))
+
+  (def (display-pkgs alst)
+    (for ([pkg . desc] alst)
+      (displayln pkg ": " desc)))
+
+  (let (alst (pkg-directory-list))
+    (if (null? keywords)
+      (display-pkgs alst)
+      (let (matches (search alst))
+        (display-pkgs matches)))))
+
+(def +pkg-directory+
+  "https://raw.githubusercontent.com/vyzo/gerbil-directory/master/README.md")
+
+(def (pkg-directory-list)
+  (let* ((txt (request-text (http-get +pkg-directory+)))
+         (lines (string-split txt #\newline)))
+    (let lp ((rest lines))
+      (match rest
+        ([hd . rest]
+         (if (equal? hd "<!-- begin-pkg -->")
+           (let lp2 ((rest (cddr rest)) (pkgs []))
+             (match rest
+               ([hd . rest]
+                (if (equal? hd "<!-- end-pkg -->")
+                  pkgs
+                  (match (string-split hd #\|)
+                    ([_ pkg-link pkg-desc . _]
+                     (with ([_ pkg] (pregexp-match "\\[([^]]+)\\]" pkg-link))
+                       (lp2 rest (cons (cons pkg (string-trim pkg-desc)) pkgs)))))))))
+           (lp rest)))))))
 
 ;;; internal
 (def +pkg-plist+

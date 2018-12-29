@@ -12,6 +12,7 @@ gxpkg unlink pkg ...
 gxpkg build pkg ...
 gxpkg list
 gxpkg retag
+gxpkg search keyword ...
 ```
 :::
 
@@ -58,6 +59,10 @@ To rebuild a package and its transitive dependencies:
 To rebuild all packages:
 
 `gxpkg build all`
+
+To search for packages created by vyzo using the package directory:
+
+`gxpkg search vyzo`
 
 ## Known Gerbil Packages
 
