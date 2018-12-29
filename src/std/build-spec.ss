@@ -49,6 +49,7 @@
     "srfi/124"
     "srfi/125"
     "srfi/127"
+    "srfi/127-iter"
     "srfi/128"
     "srfi/132"
     "srfi/133"
