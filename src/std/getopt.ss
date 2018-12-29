@@ -284,7 +284,7 @@ package: std
 
 (def (display-help-command obj program port)
   (with ((!command key help opts args) obj)
-    (fprintf port "Usage: ~a [option ...] ~a~a"
+    (fprintf port "Usage: ~a ~a~a"
              program key
              (if (null? opts) "" " [command-option ...]"))
     (display-args args port)
