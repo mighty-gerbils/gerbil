@@ -5,6 +5,7 @@ package: std/srfi
 
 (import :std/srfi/9)
 (export
+  stream-type
   stream-lazy stream-eager stream-delay stream-force
   stream-null stream-pair? stream-null?
   stream-cons stream-car stream-cdr

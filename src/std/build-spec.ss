@@ -35,6 +35,7 @@
     (gxc: "srfi/13" "-cc-options" "--param max-gcse-memory=300000000")
     "srfi/19"
     "srfi/41"
+    "srfi/41-iter"
     (gxc: "srfi/42" "-cc-options" "--param max-gcse-memory=300000000")
     "srfi/43"
     "srfi/78"
