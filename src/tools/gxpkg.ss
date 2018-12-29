@@ -466,7 +466,7 @@
                   (match (string-split hd #\|)
                     ([_ pkg-link pkg-desc . _]
                      (with ([_ pkg] (pregexp-match "\\[([^]]+)\\]" pkg-link))
-                       (lp2 rest (cons (cons (string-trim pkg) (string-trim pkg-desc)) pkgs)))))))))
+                       (lp2 rest (cons (cons pkg (string-trim pkg-desc)) pkgs)))))))))
            (lp rest)))))))
 
 ;;; internal
