@@ -28,7 +28,7 @@
         :std/pregexp
         :std/net/request
         :std/misc/process
-        :std/srfi/13
+        (only-in :std/srfi/13 string-trim)
         :gerbil/gambit/os
         :gerbil/gambit/exceptions)
 (export main
