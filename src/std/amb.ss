@@ -5,7 +5,8 @@ package: std
 
 (import :gerbil/gambit/random
         :std/misc/shuffle)
-(export begin-amb amb amb-find one-of amb-collect all-of amb-assert required)
+(export begin-amb amb amb-find one-of amb-collect all-of amb-assert required
+        amb-do amb-do-find amb-do-collect)
 
 (def (amb-exhausted)
   (error "AMB tree exhausted"))

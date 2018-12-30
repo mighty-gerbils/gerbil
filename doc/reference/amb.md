@@ -8,16 +8,6 @@ AMB is the ambiguous special form for non-deterministic computation.
 
 ## Special Forms
 
-### begin-amb
-::: tip usage
-```
-(begin-amb body ...)
-```
-:::
-
-Evaluates body in a fresh amb scope; you only need to use this if you intend to use amb
-concurrently in multi-threaded programs.
-
 ### amb
 ::: tip usage
 ```
@@ -83,6 +73,49 @@ Evaluates `expr`, failing if it is `#f`.
 :::
 
 Same as `(amb-assert expr)`
+
+### begin-amb
+::: tip usage
+```
+(begin-amb body ...)
+```
+:::
+
+Evaluates body in a fresh amb scope; you only need to use this if you intend to use amb
+concurrently in multi-threaded programs.
+
+### amb-do
+::: tip usage
+```
+(amb-do thunks)
+  thunks := list of thunk
+=> any
+```
+:::
+
+Procedural form of `amb`
+
+### amb-do-find
+::: tip usage
+```
+(amb-do-find thunk [failure])
+  thunk, failure := thunk
+=> any
+```
+:::
+
+Procedural form of `amb-find`
+
+### amb-do-collect
+::: tip usage
+```
+(amb-do-collect thunk)
+=> list
+```
+:::
+
+Procedural form of `amb-collect`
+
 
 ## Example
 
