@@ -1392,6 +1392,7 @@ package: gerbil
                       body ...)))))))
 
     (defrules alet* ()
+      ((_ ()) #t)
       ((_ () body ...)
        (let () body ...))
       ((recur (hd . rest) body ...)
