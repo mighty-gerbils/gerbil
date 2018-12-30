@@ -5,6 +5,7 @@
         "build-config"
         "generic-test"
         "iter-test"
+        "amb-test"
         "event-test"
         "misc/string-test"
         "misc/list-test"
@@ -46,8 +47,10 @@
 (import "os/signal-handler-test")
 
 (def tests
-  [generic-runtime-test generic-macro-test
+  [generic-runtime-test
+   generic-macro-test
    iter-test
+   amb-test
    event-test
    csv-test
    json-test
@@ -61,7 +64,8 @@
    deque-test
    pqueue-test
    actor-xdr-test
-   actor-rpc-test actor-rpc-stream-test
+   actor-rpc-test
+   actor-rpc-stream-test
    httpd-test
    sasl-test
    protobuf-test
