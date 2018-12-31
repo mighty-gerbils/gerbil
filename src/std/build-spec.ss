@@ -195,6 +195,7 @@
     "misc/queue"
     "misc/pqueue"
     "misc/deque"
+    "misc/rbtree"
     "misc/lru"
     "misc/string"
     "misc/sync"
