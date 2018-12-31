@@ -100,6 +100,17 @@ Returns true if `b` is a class subtype of `a`; `a` and `b` _must_ be type descri
 This procedures checks the linearized mixin list of `b`; `b` is a class subtype
 of `a` if it is included in `b`'s mixins.
 
+### direct-instance?
+::: tip usage
+```
+(direct-instance? klass obj)
+  klass := type-descriptor
+=> boolean
+```
+:::
+
+Returns true if `obj` is an immediate instance of `klass`.
+
 ### struct-instance?
 ::: tip usage
 ```
@@ -124,7 +135,7 @@ inheritance chain.
 ```
 :::
 
-Returns true if `obj` is an immediate instance of `klass`.
+Same as `(direct-instance? klass obj)`.
 
 ### class-instance?
 ::: tip usage
@@ -150,11 +161,7 @@ mixin list.
 ```
 :::
 
-Returns true if `obj` is an immediate instance of `klass`.
-
-Note: this procedure is the same as `direct-struct-instance?`.
-The two procedures exist with different names for historical reasons, and should
-be aliased to a single `direct-instance?` procedure in the near future.
+Same as `(direct-instance? klass obj)`.
 
 ### make-struct-type
 ::: tip usage
