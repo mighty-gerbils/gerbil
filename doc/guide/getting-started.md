@@ -26,7 +26,7 @@ If you intend to build static applications for servers, then you should use the 
 configuration:
 ```
 ./configure --prefix=/usr/local/gambit \
-             --enable-single-host --enable-c-opt --enable-gcc-opts \
+             --enable-single-host \
              --enable-multiple-versions \
              --enable-openssl \
              --enable-default-runtime-options=f8,-8,t8 \
