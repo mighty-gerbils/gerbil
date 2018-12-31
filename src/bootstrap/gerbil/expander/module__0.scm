@@ -214,19 +214,21 @@
   (define gx#current-module-reader-args (make-parameter '#f))
   (define gx#module-context:::init!
     (lambda (_self15916_ _id15917_ _super15918_ _ns15919_ _path15920_)
-      (struct-instance-init!
-       _self15916_
-       _id15917_
-       (make-table 'test: eq?)
-       _super15918_
-       '#f
-       '#f
-       _ns15919_
-       _path15920_
-       '()
-       '()
-       '#f
-       '#f)))
+      (if (##fx< '11 (##vector-length _self15916_))
+          (begin
+            (##vector-set! _self15916_ '1 _id15917_)
+            (##vector-set! _self15916_ '2 (make-table 'test: eq?))
+            (##vector-set! _self15916_ '3 _super15918_)
+            (##vector-set! _self15916_ '4 '#f)
+            (##vector-set! _self15916_ '5 '#f)
+            (##vector-set! _self15916_ '6 _ns15919_)
+            (##vector-set! _self15916_ '7 _path15920_)
+            (##vector-set! _self15916_ '8 '())
+            (##vector-set! _self15916_ '9 '())
+            (##vector-set! _self15916_ '10 '#f)
+            (##vector-set! _self15916_ '11 '#f))
+          (error '"struct-instance-init!: too many arguments for struct"
+                 _self15916_))))
   (bind-method! gx#module-context::t ':init! gx#module-context:::init! '#f)
   (define gx#prelude-context:::init!__%
     (lambda (_self15760_ _ctx15761_ _root15762_)
@@ -252,30 +254,37 @@
                          '#f)))
                   (_e15776_
                    (##make-promise (lambda () (gx#eval-module _ctx15761_)))))
-              (struct-instance-init!
-               _self15760_
-               _id15773_
-               (make-table 'test: eq? 'size: (length _in15775_))
-               _super15770_
-               '#f
-               '#f
-               _path15774_
-               _in15775_
-               _e15776_)
+              (if (##fx< '8 (##vector-length _self15760_))
+                  (begin
+                    (##vector-set! _self15760_ '1 _id15773_)
+                    (##vector-set!
+                     _self15760_
+                     '2
+                     (make-table 'test: eq? 'size: (length _in15775_)))
+                    (##vector-set! _self15760_ '3 _super15770_)
+                    (##vector-set! _self15760_ '4 '#f)
+                    (##vector-set! _self15760_ '5 '#f)
+                    (##vector-set! _self15760_ '6 _path15774_)
+                    (##vector-set! _self15760_ '7 _in15775_)
+                    (##vector-set! _self15760_ '8 _e15776_))
+                  (error '"struct-instance-init!: too many arguments for struct"
+                         _self15760_))
               (for-each
                (lambda (_g1577715779_)
                  (gx#core-bind-weak-import!__% _g1577715779_ _self15760_))
                _in15775_))
-            (struct-instance-init!
-             _self15760_
-             '#f
-             (make-table 'test: eq?)
-             _super15770_
-             '#f
-             '#f
-             '#f
-             '()
-             '#f)))))
+            (if (##fx< '8 (##vector-length _self15760_))
+                (begin
+                  (##vector-set! _self15760_ '1 '#f)
+                  (##vector-set! _self15760_ '2 (make-table 'test: eq?))
+                  (##vector-set! _self15760_ '3 _super15770_)
+                  (##vector-set! _self15760_ '4 '#f)
+                  (##vector-set! _self15760_ '5 '#f)
+                  (##vector-set! _self15760_ '6 '#f)
+                  (##vector-set! _self15760_ '7 '())
+                  (##vector-set! _self15760_ '8 '#f))
+                (error '"struct-instance-init!: too many arguments for struct"
+                       _self15760_))))))
   (define gx#prelude-context:::init!__0
     (lambda (_self15785_ _ctx15786_)
       (let ((_root15788_ '#f))
@@ -294,11 +303,13 @@
   (bind-method! gx#prelude-context::t ':init! gx#prelude-context:::init! '#f)
   (define gx#import-export-expander-init!
     (lambda (_self15634_ _e15635_)
-      (struct-instance-init!
-       _self15634_
-       _e15635_
-       (gx#current-expander-context)
-       (fx- (gx#current-expander-phi) '1))))
+      (if (##fx< '3 (##vector-length _self15634_))
+          (begin
+            (##vector-set! _self15634_ '1 _e15635_)
+            (##vector-set! _self15634_ '2 (gx#current-expander-context))
+            (##vector-set! _self15634_ '3 (fx- (gx#current-expander-phi) '1)))
+          (error '"struct-instance-init!: too many arguments for struct"
+                 _self15634_))))
   (define gx#import-expander:::init! gx#import-export-expander-init!)
   (bind-method! gx#import-expander::t ':init! gx#import-expander:::init! '#f)
   (define gx#export-expander:::init! gx#import-export-expander-init!)

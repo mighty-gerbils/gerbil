@@ -266,7 +266,12 @@
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
   (define gx#root-context:::init!__%
     (lambda (_self18224_ _bind?18225_)
-      (struct-instance-init! _self18224_ 'root (make-table 'test: eq?))
+      (if (##fx< '2 (##vector-length _self18224_))
+          (begin
+            (##vector-set! _self18224_ '1 'root)
+            (##vector-set! _self18224_ '2 (make-table 'test: eq?)))
+          (error '"struct-instance-init!: too many arguments for struct"
+                 _self18224_))
       (if _bind?18225_
           (begin
             (call-method _self18224_ 'bind-core-syntax-expanders!)
@@ -300,13 +305,15 @@
                                 (make-object gx#root-context::t '2)))
                            (gx#root-context:::init!__0 __obj18268)
                            __obj18268)))))))
-        (struct-instance-init!
-         _self18080_
-         'top
-         (make-table 'test: eq?)
-         _super18089_
-         '#f
-         '#f))))
+        (if (##fx< '5 (##vector-length _self18080_))
+            (begin
+              (##vector-set! _self18080_ '1 'top)
+              (##vector-set! _self18080_ '2 (make-table 'test: eq?))
+              (##vector-set! _self18080_ '3 _super18089_)
+              (##vector-set! _self18080_ '4 '#f)
+              (##vector-set! _self18080_ '5 '#f))
+            (error '"struct-instance-init!: too many arguments for struct"
+                   _self18080_)))))
   (define gx#top-context:::init!__0
     (lambda (_self18094_)
       (let ((_super18096_ '#f))

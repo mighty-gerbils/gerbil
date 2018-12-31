@@ -36,10 +36,12 @@
     (make-struct-field-mutator gxc#symbol-table::t '1))
   (define gxc#symbol-table:::init!
     (lambda (_self874_)
-      (struct-instance-init!
-       _self874_
-       (make-table 'test: eq?)
-       (make-table 'test: eq?))))
+      (if (##fx< '2 (##vector-length _self874_))
+          (begin
+            (##vector-set! _self874_ '1 (make-table 'test: eq?))
+            (##vector-set! _self874_ '2 (make-table 'test: eq?)))
+          (error '"struct-instance-init!: too many arguments for struct"
+                 _self874_))))
   (bind-method! gxc#symbol-table::t ':init! gxc#symbol-table:::init! '#f)
   (define gxc#raise-compile-error
     (lambda (_message748_ _stx749_ . _details750_)

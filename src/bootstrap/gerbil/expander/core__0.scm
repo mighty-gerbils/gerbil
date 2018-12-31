@@ -206,11 +206,13 @@
       (apply make-struct-instance gx#local-context::t _$args9279_)))
   (define gx#phi-context:::init!__%
     (lambda (_self9263_ _id9264_ _super9265_)
-      (struct-instance-init!
-       _self9263_
-       _id9264_
-       (make-table 'test: eq?)
-       _super9265_)))
+      (if (##fx< '3 (##vector-length _self9263_))
+          (begin
+            (##vector-set! _self9263_ '1 _id9264_)
+            (##vector-set! _self9263_ '2 (make-table 'test: eq?))
+            (##vector-set! _self9263_ '3 _super9265_))
+          (error '"struct-instance-init!: too many arguments for struct"
+                 _self9263_))))
   (define gx#phi-context:::init!__0
     (lambda (_self9270_ _id9271_)
       (let ((_super9273_ (gx#current-expander-context)))
@@ -227,11 +229,13 @@
   (bind-method! gx#phi-context::t ':init! gx#phi-context:::init! '#f)
   (define gx#local-context:::init!__%
     (lambda (_self9127_ _super9128_)
-      (struct-instance-init!
-       _self9127_
-       (gensym 'L)
-       (make-table 'test: eq?)
-       _super9128_)))
+      (if (##fx< '3 (##vector-length _self9127_))
+          (begin
+            (##vector-set! _self9127_ '1 (gensym 'L))
+            (##vector-set! _self9127_ '2 (make-table 'test: eq?))
+            (##vector-set! _self9127_ '3 _super9128_))
+          (error '"struct-instance-init!: too many arguments for struct"
+                 _self9127_))))
   (define gx#local-context:::init!__0
     (lambda (_self9133_)
       (let ((_super9135_ (gx#current-expander-context)))

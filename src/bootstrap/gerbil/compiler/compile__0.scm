@@ -7540,13 +7540,18 @@
     (make-struct-field-mutator gxc#meta-state::t '3))
   (define gxc#meta-state:::init!
     (lambda (_self6226_ _ctx6227_)
-      (struct-instance-init!
-       _self6226_
-       (gxc#module-id->path-string
-        (##structure-ref _ctx6227_ '1 gx#expander-context::t '#f))
-       '1
-       (make-table 'test: eq?)
-       '())))
+      (if (##fx< '4 (##vector-length _self6226_))
+          (begin
+            (##vector-set!
+             _self6226_
+             '1
+             (gxc#module-id->path-string
+              (##structure-ref _ctx6227_ '1 gx#expander-context::t '#f)))
+            (##vector-set! _self6226_ '2 '1)
+            (##vector-set! _self6226_ '3 (make-table 'test: eq?))
+            (##vector-set! _self6226_ '4 '()))
+          (error '"struct-instance-init!: too many arguments for struct"
+                 _self6226_))))
   (bind-method! gxc#meta-state::t ':init! gxc#meta-state:::init! '#f)
   (define gxc#meta-state-block::t
     (make-struct-type
