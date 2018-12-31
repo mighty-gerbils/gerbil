@@ -943,6 +943,258 @@ Otherwise an error is raised.
 Returns a list of the value contained in the queue, in order.
 
 
+## Red-Black Trees
+
+::: tip usage
+(import :std/misc/rbtree)
+:::
+
+### rbtree
+::: tip usage
+```
+(defsyntax rbtree)
+```
+:::
+
+Red-Black tree (rbtree) type.
+
+### rbtree?
+::: tip usage
+```
+(rbtree? obj)
+=> boolean
+```
+:::
+
+Returns true if the object is an rbtree.
+
+### make-rbtree
+::: tip usage
+```
+(make-rbtree cmp)
+  cmp := lambda (a b); comparison procedure
+=> <rbtree>
+```
+:::
+
+Creates a new rbtree.
+
+The comparison procedure accepts two keys, a and b, and performs ternary comparison:
+- if a < b, then it must return a negative number
+- if a = b, then it must return 0
+- if a > b, then it must returna positive number
+
+### rbtree-ref
+::: tip usage
+```
+(rbtree-ref rbt key [default])
+  rbt := rbtree
+=> any
+```
+:::
+
+Returns the value associated with `key` in the rbtree, or the default if no association
+is present; if the default value is omitted then an error is raised.
+
+### rbtree-get
+::: tip usage
+```
+(rbtree-get rbt key)
+  rbt := rbtree
+=> any
+```
+:::
+
+Same as `(rbtree-ref rbt key #f)`.
+
+### rbtree-put!
+::: tip usage
+```
+(rbtree-put! rbt key value)
+ rbt := rbtree
+```
+:::
+
+Destructively updates the rbtree, associating `key` with `value`.
+
+### rbtree-put
+::: tip usage
+```
+(rbtree-put rbt key value)
+  rbt := rbtree
+=> rbtree
+```
+:::
+
+Functionally updates the rbtree, associating `key` with `value`.
+
+### rbtree-update!
+::: tip usage
+```
+(rbtree-update! rbt k update default)
+  rbt := rbtree
+  update := lambda (x y); update function
+```
+:::
+
+Destructively updates the rbtree.
+
+### rbtree-update
+::: tip usage
+```
+(rbtree-update rbt k update default)
+=> rbtree
+```
+:::
+
+Functionally updates the rbtree.
+
+### rbtree-remove!
+::: tip usage
+```
+(rbtree-remove! rbt key)
+  rbt := rbtree
+```
+:::
+
+Destructively updates the rbtree, removing the association of `key`.
+
+### rbtree-remove
+::: tip usage
+```
+(rbtree-remove rbt key)
+  rbt := rbtree
+=> rbtree
+```
+:::
+
+Functionally updates the rbtree, removing the association of `key`.
+
+### rbtree-empty?
+::: tip usage
+```
+(rbtree-empty? rbt)
+  rbt := rbtree
+=> boolean
+```
+:::
+
+Returns true if the rbtree is an empty.
+
+### rbtree-copy
+::: tip usage
+```
+(rbtree-copy rbt)
+  rbt := rbtree
+=> rbtree
+```
+:::
+
+Returns a copy of the rbtree.
+
+### rbtree-for-each
+::: tip usage
+```
+(rbtree-for-each proc rbt)
+  proc := lambda (key value)
+  rbt  := rbtree
+```
+:::
+
+Evaluates `(proc key val)` for every association `key -> value` in the rbtree, in ascending order.
+
+### rbtree-for-eachr
+::: tip usage
+```
+(rbtree-for-eachr proc rbt)
+  proc := lambda (key value)
+  rbt  := rbtree
+```
+:::
+
+Evaluates `(proc key val)` for every association `key -> value` in the rbtree, in descending order.
+
+### rbtree-fold
+::: tip usage
+```
+(rbtree-fold proc seed rbt)
+  proc := lambda (key value seed)
+  rbt := rbtree
+=> any
+```
+:::
+
+Folds the rbtree in ascending order.
+
+### rbtree-foldr
+::: tip usage
+```
+(rbtree-foldr proc seed rbt)
+  proc := lambda (key value seed)
+  rbt := rbtree
+=> any
+```
+:::
+
+Folds the rbtree in descending order.
+
+### rbtree-&gt;list
+::: tip usage
+```
+(rbtree->list rbt)
+  rbt := rbtree
+=> list
+```
+:::
+
+Returns a list with all the associations in the rbtree, in ascending order.
+
+### rbtree-&gt;listr
+::: tip usage
+```
+(rbtree->listr rbt)
+  rbt := rbtree
+=> list
+```
+:::
+
+Returns a list with all the associations in the rbtree, in descending order.
+
+### list-&gt;rbtree
+::: tip usage
+```
+(list->rbtree cmp lst)
+  cmp := lambda (x y); comparison function
+  lst := alist
+=> rbtree
+```
+:::
+
+Creates a new rbtree from an associative list.
+
+### string-cmp
+::: tip usage
+```
+(string-cmp a b)
+  a, b := string
+=> fixnum
+```
+:::
+
+Comparison function for lexicographic string ordering.
+
+### symbol-cmp
+::: tip usage
+```
+(symbol-cmp a b)
+  a, b := symbol
+=> fixnum
+```
+:::
+
+Comparison function for lexicographic symbol ordering.
+
+
 ## Sourceable Representation
 ::: tip usage
 (import :std/misc/repr)

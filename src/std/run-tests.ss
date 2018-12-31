@@ -15,6 +15,7 @@
         "misc/queue-test"
         "misc/deque-test"
         "misc/pqueue-test"
+        "misc/rbtree-test"
         "text/csv-test"
         "text/json-test"
         "text/utf8-test"
@@ -63,6 +64,7 @@
    queue-test
    deque-test
    pqueue-test
+   rbtree-test
    actor-xdr-test
    actor-rpc-test
    actor-rpc-stream-test
