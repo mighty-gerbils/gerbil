@@ -16,7 +16,9 @@ package: std/misc
         rbtree-for-each
         rbtree-fold
         rbtree->list
-        list->rbtree)
+        list->rbtree
+        string-cmp
+        symbol-cmp)
 
 ;; rbtree structure
 (defstruct rbtree (root cmp)
@@ -107,6 +109,23 @@ package: std/misc
         ([k . v] (rbtree-put! t k v)))
       lst)
     t))
+
+;; common comparison functions
+(def (string-cmp a b)
+  (let* ((len-a (string-length a))
+         (len-b (string-length b))
+         (len (##fxmin len-a len-b)))
+    (let lp ((i 0))
+      (if (##fx< i len)
+        (let ((ca (##string-ref a i))
+              (cb (##string-ref b i)))
+          (if (eq? ca cb)
+            (lp (##fx+ i 1))
+            (##fx- (##char->integer ca) (##char->integer cb))))
+        (##fx- len-a len-b)))))
+
+(def (symbol-cmp a b)
+  (string-cmp (symbol->string a) (symbol->string b)))
 
 ;;; tree implementation
 

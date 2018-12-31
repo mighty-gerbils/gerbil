@@ -1132,10 +1132,33 @@ Returns a list with all the associations in the rbtree, in descending order.
 (list->rbtree cmp lst)
   cmp := lambda (x y); comparison function
   lst := alist
+=> rbtree
 ```
 :::
 
 Creates a new rbtree from an associative list.
+
+### string-cmp
+::: tip usage
+```
+(string-cmp a b)
+  a, b := string
+=> fixnum
+```
+:::
+
+Comparison function for lexicographic string ordering.
+
+### symbol-cmp
+::: tip usage
+```
+(symbol-cmp a b)
+  a, b := symbol
+=> fixnum
+```
+:::
+
+Comparison function for lexicographic symbol ordering.
 
 
 ## Sourceable Representation
