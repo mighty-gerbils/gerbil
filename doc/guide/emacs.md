@@ -2,7 +2,7 @@
 
 The natural home for Gerbil development is Emacs, the ultimate parenthesis manipulation machine.
 
-## Setting Up
+## Standard Emacs Setup
 Gerbil comes with a custom editing mode, which extends scheme-mode with font-lock and indentation for Gerbil code: [gerbil.el](https://github.com/vyzo/gerbil/blob/master/etc/gerbil.el).
 See below for additional functionality provided by gerbil-mode.
 
@@ -28,6 +28,10 @@ You can then make `gxi` your scheme program by setting `scheme-program-name`:
 ```
 
 And you can now run Gerbil with `M-x run-scheme`.
+
+## Treadmill: An Alternative
+
+[Treadmill](https://github.com/thunknyc/emacs-treadmill) is a new package for writing and evaluating Gerbil code in Emacs. Treadmill emphasizes modularity and an ability to connect to any running Gerbil program through an instance of the standard Gerbil [network REPL](https://cons.io/reference/net.html#network-repl).
 
 ## TAGS
 
