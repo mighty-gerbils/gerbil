@@ -14,8 +14,11 @@ package: std/misc
         rbtree-empty?
         rbtree-copy
         rbtree-for-each
+        rbtree-for-eachr
         rbtree-fold
+        rbtree-foldr
         rbtree->list
+        rbtree->listr
         list->rbtree
         string-cmp
         symbol-cmp)
@@ -89,6 +92,17 @@ package: std/misc
         ((Empty)
          (void))))))
 
+(def (rbtree-for-eachr proc t)
+  (with ((rbtree root) t)
+    (let loop ((root root))
+      (match root
+        ((Tree _ left right key value)
+         (loop right)
+         (proc key value)
+         (loop left))
+        ((Empty)
+         (void))))))
+
 (def (rbtree-fold proc iv t)
   (let (r iv)
     (rbtree-for-each
@@ -97,7 +111,20 @@ package: std/misc
      t)
     r))
 
+(def (rbtree-foldr proc iv t)
+  (let (r iv)
+    (rbtree-for-eachr
+     (lambda (k v)
+       (set! r (proc k v r)))
+     t)
+    r))
+
 (def (rbtree->list t)
+  (rbtree-foldr
+   (lambda (k v r) (cons (cons k v) r))
+   [] t))
+
+(def (rbtree->listr t)
   (rbtree-fold
    (lambda (k v r) (cons (cons k v) r))
    [] t))

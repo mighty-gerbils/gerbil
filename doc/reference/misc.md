@@ -1103,6 +1103,17 @@ Returns a copy of the rbtree.
 
 Evaluates `(proc key val)` for every association `key -> value` in the rbtree, in ascending order.
 
+### rbtree-for-eachr
+::: tip usage
+```
+(rbtree-for-eachr proc rbt)
+  proc := lambda (key value)
+  rbt  := rbtree
+```
+:::
+
+Evaluates `(proc key val)` for every association `key -> value` in the rbtree, in descending order.
+
 ### rbtree-fold
 ::: tip usage
 ```
@@ -1113,12 +1124,35 @@ Evaluates `(proc key val)` for every association `key -> value` in the rbtree, i
 ```
 :::
 
-Folds the rbtree in order.
+Folds the rbtree in ascending order.
+
+### rbtree-foldr
+::: tip usage
+```
+(rbtree-foldr proc seed rbt)
+  proc := lambda (key value seed)
+  rbt := rbtree
+=> any
+```
+:::
+
+Folds the rbtree in descending order.
 
 ### rbtree-&gt;list
 ::: tip usage
 ```
 (rbtree->list rbt)
+  rbt := rbtree
+=> list
+```
+:::
+
+Returns a list with all the associations in the rbtree, in ascending order.
+
+### rbtree-&gt;listr
+::: tip usage
+```
+(rbtree->listr rbt)
   rbt := rbtree
 => list
 ```
