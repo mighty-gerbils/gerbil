@@ -559,11 +559,14 @@
 (define object-type
   ##structure-type)
 
+(define (direct-instance? klass obj)
+  (##structure-direct-instance-of? obj (##type-id klass)))
+
 (define (struct-instance? klass obj)
   (##structure-instance-of? obj (##type-id klass)))
 
-(define (direct-struct-instance? klass obj)
-  (##structure-direct-instance-of? obj (##type-id klass)))
+(define direct-struct-instance?
+  direct-instance?)
 
 (define (class-instance? klass obj)
   (and (object? obj)
@@ -578,8 +581,8 @@
                                 mixin)))
                    (else #f)))))))
 
-(define (direct-class-instance? klass obj)
-  (##structure-direct-instance-of? obj (##type-id klass)))
+(define direct-class-instance?
+  direct-instance?)
 
 (define (make-object klass k)
   (let ((obj (##make-vector (##fx+ k 1) #f)))

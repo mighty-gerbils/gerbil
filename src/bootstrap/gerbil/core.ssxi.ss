@@ -4,7 +4,7 @@
 prelude: :gerbil/compiler/ssxi
 package: gerbil
 
-;; gx-gambc0: struct-instance? and direct-struct-instance? [pattern matcher]
+;; gx-gambc0: struct-instance? and direct-instance? [pattern matcher]
 (declare-type*
  (struct-instance?
   (@lambda 2 inline:
@@ -13,13 +13,17 @@ package: gerbil
          (%#call (%#ref ##structure-instance-of?)
                  obj
                  (%#call (%#ref ##type-id) klass))))))
- (direct-struct-instance?
+ (direct-instance?
   (@lambda 2 inline:
       (ast-rules (%#call)
         ((%#call _ klass obj)
          (%#call (%#ref ##structure-direct-instance-of?)
                  obj
-                 (%#call (%#ref ##type-id) klass)))))))
+                 (%#call (%#ref ##type-id) klass))))))
+ (direct-struct-instance?
+  (@lambda 2 direct-instance?))
+ (direct-class-instance?
+  (@lambda 2 direct-instance?)))
 
 ;; gx-gambc0: struct-instance-init! [custom struct constructors]
 (declare-type*
@@ -383,7 +387,6 @@ package: gerbil
  unchecked-field-ref
  unchecked-slot-ref
  struct-instance? class-instance?
- direct-struct-instance? direct-class-instance?
  method-ref direct-method-ref bound-method-ref
  checked-method-ref checked-bound-method-ref
  find-method
@@ -455,7 +458,6 @@ package: gerbil
  (make-class-type 6)
  (make-struct-instance (1))
  (make-class-instance (1))
- (struct-instance-init! (1))
  (class-instance-init! (1))
  (slot-ref 2 3)
  (slot-set! 3 4)

@@ -26,10 +26,12 @@
     (make-struct-field-mutator gxc#optimizer-info::t '1))
   (define gxc#optimizer-info:::init!
     (lambda (_self16070_)
-      (struct-instance-init!
-       _self16070_
-       (make-table 'test: eq?)
-       (make-table 'test: eq?))))
+      (if (##fx< '2 (##vector-length _self16070_))
+          (begin
+            (##vector-set! _self16070_ '1 (make-table 'test: eq?))
+            (##vector-set! _self16070_ '2 (make-table 'test: eq?)))
+          (error '"struct-instance-init!: too many arguments for struct"
+                 _self16070_))))
   (bind-method! gxc#optimizer-info::t ':init! gxc#optimizer-info:::init! '#f)
   (define gxc#!type::t
     (make-struct-type 'gxc#!type::t '#f '1 '!type '() '#f '(id)))
@@ -256,15 +258,17 @@
              _xfields15908_
              _ctor15909_
              _plist15910_)
-      (struct-instance-init!
-       _self15904_
-       _id15905_
-       _super15906_
-       _fields15907_
-       _xfields15908_
-       _ctor15909_
-       _plist15910_
-       '#f)))
+      (if (##fx< '7 (##vector-length _self15904_))
+          (begin
+            (##vector-set! _self15904_ '1 _id15905_)
+            (##vector-set! _self15904_ '2 _super15906_)
+            (##vector-set! _self15904_ '3 _fields15907_)
+            (##vector-set! _self15904_ '4 _xfields15908_)
+            (##vector-set! _self15904_ '5 _ctor15909_)
+            (##vector-set! _self15904_ '6 _plist15910_)
+            (##vector-set! _self15904_ '7 '#f))
+          (error '"struct-instance-init!: too many arguments for struct"
+                 _self15904_))))
   (bind-method! gxc#!struct-type::t ':init! gxc#!struct-type:::init! '#f)
   (define gxc#!lambda:::init!__%
     (lambda (_self15748_
@@ -273,39 +277,61 @@
              _dispatch15751_
              _inline15752_
              _typedecl15753_)
-      (struct-instance-init!
-       _self15748_
-       _id15749_
-       _arity15750_
-       _dispatch15751_
-       _inline15752_
-       _typedecl15753_)))
+      (if (##fx< '5 (##vector-length _self15748_))
+          (begin
+            (##vector-set! _self15748_ '1 _id15749_)
+            (##vector-set! _self15748_ '2 _arity15750_)
+            (##vector-set! _self15748_ '3 _dispatch15751_)
+            (##vector-set! _self15748_ '4 _inline15752_)
+            (##vector-set! _self15748_ '5 _typedecl15753_))
+          (error '"struct-instance-init!: too many arguments for struct"
+                 _self15748_))))
   (define gxc#!lambda:::init!__0
     (lambda (_self15758_ _id15759_ _arity15760_ _dispatch15761_)
       (let* ((_inline15763_ '#f) (_typedecl15765_ '#f))
-        (struct-instance-init!
-         _self15758_
-         _id15759_
-         _arity15760_
-         _dispatch15761_
-         _inline15763_
-         _typedecl15765_))))
+        (if (##fx< '5 (##vector-length _self15758_))
+            (begin
+              (##vector-set! _self15758_ '1 _id15759_)
+              (##vector-set! _self15758_ '2 _arity15760_)
+              (##vector-set! _self15758_ '3 _dispatch15761_)
+              (##vector-set! _self15758_ '4 _inline15763_)
+              (##vector-set! _self15758_ '5 _typedecl15765_))
+            (error '"struct-instance-init!: too many arguments for struct"
+                   _self15758_)))))
   (define gxc#!lambda:::init!__1
     (lambda (_self15767_ _id15768_ _arity15769_ _dispatch15770_ _inline15771_)
       (let ((_typedecl15773_ '#f))
-        (struct-instance-init!
-         _self15767_
-         _id15768_
-         _arity15769_
-         _dispatch15770_
-         _inline15771_
-         _typedecl15773_))))
+        (if (##fx< '5 (##vector-length _self15767_))
+            (begin
+              (##vector-set! _self15767_ '1 _id15768_)
+              (##vector-set! _self15767_ '2 _arity15769_)
+              (##vector-set! _self15767_ '3 _dispatch15770_)
+              (##vector-set! _self15767_ '4 _inline15771_)
+              (##vector-set! _self15767_ '5 _typedecl15773_))
+            (error '"struct-instance-init!: too many arguments for struct"
+                   _self15767_)))))
   (define gxc#!lambda:::init!
     (lambda _g16075_
       (let ((_g16074_ (length _g16075_)))
         (cond ((##fx= _g16074_ 4) (apply gxc#!lambda:::init!__0 _g16075_))
               ((##fx= _g16074_ 5) (apply gxc#!lambda:::init!__1 _g16075_))
-              ((##fx= _g16074_ 6) (apply struct-instance-init! _g16075_))
+              ((##fx= _g16074_ 6)
+               (apply (lambda (_self15775_
+                               _id15776_
+                               _arity15777_
+                               _dispatch15778_
+                               _inline15779_
+                               _typedecl15780_)
+                        (if (##fx< '5 (##vector-length _self15775_))
+                            (begin
+                              (##vector-set! _self15775_ '1 _id15776_)
+                              (##vector-set! _self15775_ '2 _arity15777_)
+                              (##vector-set! _self15775_ '3 _dispatch15778_)
+                              (##vector-set! _self15775_ '4 _inline15779_)
+                              (##vector-set! _self15775_ '5 _typedecl15780_))
+                            (error '"struct-instance-init!: too many arguments for struct"
+                                   _self15775_)))
+                      _g16075_))
               (else
                (##raise-wrong-number-of-arguments-exception
                 gxc#!lambda:::init!

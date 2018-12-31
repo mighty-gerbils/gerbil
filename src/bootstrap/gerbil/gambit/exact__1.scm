@@ -2,7 +2,7 @@
 (begin
   (define |gerbil/gambit/exact[1]#_g583_|
     (gx#core-deserialize-mark
-     '(0 (_obj482_ . _%563_) (ref . _ref522_))
+     '(0 (ref . _ref522_) (_obj482_ . _%563_))
      (gx#import-module '(:gerbil/core <sugar> <sugar:3>))))
   (define |gerbil/gambit/exact[1]#_g584_|
     (##structure
