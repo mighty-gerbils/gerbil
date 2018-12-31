@@ -2341,7 +2341,9 @@
     (lambda (_bind6638_)
       (letrec ((_direct-special-form?6640_
                 (lambda (_obj6642_)
-                  (direct-struct-instance? gx#special-form::t _obj6642_))))
+                  (##structure-direct-instance-of?
+                   _obj6642_
+                   (##type-id gx#special-form::t)))))
         (gx#expander-binding?__% _bind6638_ _direct-special-form?6640_))))
   (define gx#special-form-binding?
     (lambda (_bind6636_)

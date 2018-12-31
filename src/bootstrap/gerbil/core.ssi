@@ -420,6 +420,7 @@ namespace: gerbil/core
                     (object-type object-type)
                     (struct-instance? struct-instance?)
                     (class-instance? class-instance?)
+                    (direct-instance? direct-instance?)
                     (direct-struct-instance? direct-struct-instance?)
                     (direct-class-instance? direct-class-instance?)
                     (make-object make-object)
