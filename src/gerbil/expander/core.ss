@@ -709,7 +709,7 @@ namespace: gx
   (expander-binding? bind expression-form?))
 (def (direct-special-form-binding? bind)
   (def (direct-special-form? obj)
-    (direct-struct-instance? special-form::t obj))
+    (direct-instance? special-form::t obj))
   (expander-binding? bind direct-special-form?))
 
 (def (special-form-binding? bind)

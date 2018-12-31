@@ -179,7 +179,7 @@ package: gerbil
     unchecked-slot-set!
     object? object-type
     struct-instance? class-instance?
-    direct-struct-instance? direct-class-instance?
+    direct-instance? direct-struct-instance? direct-class-instance?
     make-object
     struct->list class->list
     make-struct-instance
@@ -2594,7 +2594,7 @@ package: gerbil
                                          (runtime-type-identifier info))
                                         (type-instance?
                                          (if final?
-                                           #'direct-struct-instance?
+                                           #'direct-instance?
                                            #'struct-instance?)))
                             #'(type-instance? type::t target)))))
           (syntax-case body ()
@@ -2660,7 +2660,7 @@ package: gerbil
                         (runtime-type-identifier info))
                        (type-instance?
                         (if final?
-                          #'direct-class-instance?
+                          #'direct-instance?
                           #'class-instance?)))
           ['if #'(type-instance? type::t target)
                ['let #'(($klass (object-type target)))
