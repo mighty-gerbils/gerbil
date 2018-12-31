@@ -458,7 +458,6 @@ package: gerbil
  (make-class-type 6)
  (make-struct-instance (1))
  (make-class-instance (1))
- (struct-instance-init! (1))
  (class-instance-init! (1))
  (slot-ref 2 3)
  (slot-set! 3 4)
