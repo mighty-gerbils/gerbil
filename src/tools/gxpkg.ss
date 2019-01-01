@@ -462,7 +462,7 @@
              (match rest
                ([hd . rest]
                 (if (equal? hd "<!-- end-pkg -->")
-                  pkgs
+                  (reverse pkgs)
                   (match (string-split hd #\|)
                     ([_ pkg-link pkg-desc . _]
                      (with ([_ pkg] (pregexp-match "\\[([^]]+)\\]" pkg-link))
