@@ -21,7 +21,8 @@ package: std/misc
         rbtree->listr
         list->rbtree
         string-cmp
-        symbol-cmp)
+        symbol-cmp
+        symbol-hash-cmp)
 
 ;; rbtree structure
 (defstruct rbtree (root cmp)
@@ -152,7 +153,19 @@ package: std/misc
         (##fx- len-a len-b)))))
 
 (def (symbol-cmp a b)
-  (string-cmp (symbol->string a) (symbol->string b)))
+  (if (eq? a b)
+    0
+    (string-cmp (symbol->string a) (symbol->string b))))
+
+(def (symbol-hash-cmp a b)
+  (if (eq? a b)
+    0
+    (let* ((ha (symbol-hash a))
+           (hb (symbol-hash b))
+           (ha-hb (##fx- ha hb)))
+      (if (##fxzero? ha-hb)
+        (string-cmp (symbol->string a) (symbol->string b))
+        ha-hb))))
 
 ;;; tree implementation
 
