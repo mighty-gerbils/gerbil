@@ -1194,6 +1194,18 @@ Comparison function for lexicographic string ordering.
 
 Comparison function for lexicographic symbol ordering.
 
+### symbol-hash-cmp
+::: tip usage
+```
+(symbol-hash-cmp a b)
+  a, b := symbol
+=> fixnum
+```
+:::
+
+Comparison function for symbol ordering based on their hashes;
+ties are broken by lexicographic ordering.
+
 
 ## Sourceable Representation
 ::: tip usage
