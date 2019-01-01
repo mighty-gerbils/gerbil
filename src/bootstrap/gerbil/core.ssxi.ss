@@ -268,13 +268,11 @@ package: gerbil
  eq? eqv? equal?
  cons set-car! set-cdr!
  list-tail list-ref
- memq memv member
- assq assv assoc
+ memq memv
+ assq assv
  quotient remainder modulo
  string-ref
- string-fill!
  vector-ref
- vector-fill!
  call-with-values
  call-with-input-file
  call-with-output-file
@@ -285,6 +283,7 @@ package: gerbil
  string-set!
  substring
  vector-set!
+ list-set!
  dynamic-wind)
 
 (declare-primitive*
@@ -292,8 +291,12 @@ package: gerbil
  (string->number 1 2)
  (make-string 1 2)
  (make-vector 1 2)
+ (string-fill! 2 3 4)
+ (vector-fill! 2 3 4)
  (map (2))
  (for-each (2))
+ (member 2 3)
+ (assoc 2 3)
  (max (1))
  (min (1))
  (eval 1 2)
@@ -400,7 +403,6 @@ package: gerbil
  call-with-input-string with-input-from-string
  call-with-output-string with-output-to-string
  u8vector-ref
- u8vector-fill!
  u8vector-shrink!
  call-with-input-u8vector with-input-from-u8vector
  call-with-output-u8vector with-output-to-u8vector)
@@ -439,6 +441,8 @@ package: gerbil
  (pget 2 3)
  (subvector->list 1 2)
  (vector-map (2))
+ (string-map (2))
+ (u8vector-fill! 2 3 4)
  (plist->hash-table 1 2)
  (hash-update! 3 4)
  (hash-copy (1))
@@ -1023,7 +1027,7 @@ package: gerbil
  (s8vector-set! 3)
  (s8vector->list 1)
  (list->s8vector 1)
- (s8vector-fill! 1 2)
+ (s8vector-fill! 1 2 3 4)
  (subs8vector-fill! 3 4)
  (append-s8vectors 1)
  (subs8vector 3)
@@ -1038,7 +1042,7 @@ package: gerbil
  (s16vector-set! 3)
  (s16vector->list 1)
  (list->s16vector 1)
- (s16vector-fill! 1 2)
+ (s16vector-fill! 1 2 3 4)
  (subs16vector-fill! 3 4)
  (append-s16vectors 1)
  (subs16vector 3)
@@ -1053,7 +1057,7 @@ package: gerbil
  (u16vector-set! 3)
  (u16vector->list 1)
  (list->u16vector 1)
- (u16vector-fill! 1 2)
+ (u16vector-fill! 1 2 3 4)
  (subu16vector-fill! 3 4)
  (append-u16vectors 1)
  (subu16vector 3)
@@ -1068,7 +1072,7 @@ package: gerbil
  (s32vector-set! 3)
  (s32vector->list 1)
  (list->s32vector 1)
- (s32vector-fill! 1 2)
+ (s32vector-fill! 1 2 3 4)
  (subs32vector-fill! 3 4)
  (append-s32vectors 1)
  (subs32vector 3)
@@ -1083,7 +1087,7 @@ package: gerbil
  (u32vector-set! 3)
  (u32vector->list 1)
  (list->u32vector 1)
- (u32vector-fill! 1 2)
+ (u32vector-fill! 1 2 3 4)
  (subu32vector-fill! 3 4)
  (append-u32vectors 1)
  (subu32vector 3)
@@ -1098,7 +1102,7 @@ package: gerbil
  (s64vector-set! 3)
  (s64vector->list 1)
  (list->s64vector 1)
- (s64vector-fill! 1 2)
+ (s64vector-fill! 1 2 3 4)
  (subs64vector-fill! 3 4)
  (append-s64vectors 1)
  (subs64vector 3)
@@ -1113,7 +1117,7 @@ package: gerbil
  (u64vector-set! 3)
  (u64vector->list 1)
  (list->u64vector 1)
- (u64vector-fill! 1 2)
+ (u64vector-fill! 1 2 3 4)
  (subu64vector-fill! 3 4)
  (append-u64vectors 1)
  (subu64vector 3)
@@ -1128,7 +1132,7 @@ package: gerbil
  (f32vector-set! 3)
  (f32vector->list 1)
  (list->f32vector 1)
- (f32vector-fill! 1 2)
+ (f32vector-fill! 1 2 3 4)
  (subf32vector-fill! 3 4)
  (append-f32vectors 1)
  (subf32vector 3)
@@ -1143,7 +1147,7 @@ package: gerbil
  (f64vector-set! 3)
  (f64vector->list 1)
  (list->f64vector 1)
- (f64vector-fill! 1 2)
+ (f64vector-fill! 1 2 3 4)
  (subf64vector-fill! 3 4)
  (append-f64vectors 1)
  (subf64vector 3)
