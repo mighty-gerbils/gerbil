@@ -257,7 +257,7 @@ package: gerbil
     ;; keyword argument dispatch
     keyword-dispatch
     ;; gerbil specifics
-    gerbil-version-string gerbil-system-version-string
+    gerbil-version-string gerbil-system-version-string system-version
     ;; system type information
     gerbil-system system-type
     ;; voodoo doll
