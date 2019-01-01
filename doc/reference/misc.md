@@ -943,7 +943,7 @@ Otherwise an error is raised.
 Returns a list of the value contained in the queue, in order.
 
 
-## Red-Black Trees
+## Red Black Trees
 
 ::: tip usage
 (import :std/misc/rbtree)
@@ -956,7 +956,7 @@ Returns a list of the value contained in the queue, in order.
 ```
 :::
 
-Red-Black tree (rbtree) type.
+Red Black tree (rbtree) type.
 
 ### rbtree?
 ::: tip usage
@@ -1193,6 +1193,18 @@ Comparison function for lexicographic string ordering.
 :::
 
 Comparison function for lexicographic symbol ordering.
+
+### symbol-hash-cmp
+::: tip usage
+```
+(symbol-hash-cmp a b)
+  a, b := symbol
+=> fixnum
+```
+:::
+
+Comparison function for symbol ordering based on their hashes;
+ties are broken by lexicographic ordering.
 
 
 ## Sourceable Representation
