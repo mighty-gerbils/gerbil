@@ -943,7 +943,7 @@ Otherwise an error is raised.
 Returns a list of the value contained in the queue, in order.
 
 
-## Red-Black Trees
+## Red Black Trees
 
 ::: tip usage
 (import :std/misc/rbtree)
@@ -956,7 +956,7 @@ Returns a list of the value contained in the queue, in order.
 ```
 :::
 
-Red-Black tree (rbtree) type.
+Red Black tree (rbtree) type.
 
 ### rbtree?
 ::: tip usage
