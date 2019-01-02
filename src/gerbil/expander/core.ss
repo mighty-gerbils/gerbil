@@ -37,6 +37,9 @@ namespace: gx
 (def current-expander-module-library-package-cache
   (make-parameter #f))
 
+(def current-expander-allow-rebind?
+  (make-parameter #f))
+
 ;; expander context
 (defstruct expander-context (id table)
   id: gx#expander-context::t
@@ -689,9 +692,10 @@ namespace: gx
       ctx)))
 
 (def (core-context-rebind? (ctx (current-expander-context)) . _)
-  (and (top-context? ctx)
-       (not (module-context? ctx))
-       (not (prelude-context? ctx))))
+  (or (current-expander-allow-rebind?)
+      (and (top-context? ctx)
+           (not (module-context? ctx))
+           (not (prelude-context? ctx)))))
 
 (def (core-context-namespace (ctx (current-expander-context)))
   (cond
