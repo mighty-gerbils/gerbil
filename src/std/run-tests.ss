@@ -4,6 +4,7 @@
 (import :std/test
         "build-config"
         "generic-test"
+        "coroutine-test"
         "iter-test"
         "amb-test"
         "event-test"
@@ -50,6 +51,7 @@
 (def tests
   [generic-runtime-test
    generic-macro-test
+   coroutine-test
    iter-test
    amb-test
    event-test

@@ -1028,8 +1028,6 @@ For example:
 => 3
 > (continue cort)
 => 'end ; coroutine end
-> (continue cort)
-=> error: coroutine has ended
 ```
 
 ### Event Programming
