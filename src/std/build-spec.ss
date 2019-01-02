@@ -1,6 +1,7 @@
 ;; -*- Gerbil -*-
 (def build-spec
   `((gxc: "build-config" dep: ("build-features.ss"))
+    "interactive"
     "format"
     "pregexp"
     "sort"
