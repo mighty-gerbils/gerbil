@@ -1,6 +1,6 @@
 # Coroutines
 
-The `:std/coroutine` library provides support for thread-based coroutines.
+The `:std/coroutine` library provides support for continuation-based coroutines.
 
 ::: tip usage
 (import :std/coroutine)
