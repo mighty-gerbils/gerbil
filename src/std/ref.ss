@@ -36,11 +36,20 @@ package: std
 (defmethod (:ref (vctr <u16vector>) (n <fixnum>))
   (u16vector-ref vctr n))
 
+(defmethod (:ref (vctr <s16vector>) (n <fixnum>))
+  (s16vector-ref vctr n))
+
 (defmethod (:ref (vctr <u32vector>) (n <fixnum>))
   (u32vector-ref vctr n))
 
+(defmethod (:ref (vctr <s32vector>) (n <fixnum>))
+  (s32vector-ref vctr n))
+
 (defmethod (:ref (vctr <u64vector>) (n <fixnum>))
   (u64vector-ref vctr n))
+
+(defmethod (:ref (vctr <s64vector>) (n <fixnum>))
+  (s64vector-ref vctr n))
 
 (defmethod (:ref (vctr <f32vector>) (n <fixnum>))
   (f32vector-ref vctr n))
@@ -66,19 +75,31 @@ package: std
 (defmethod (:set! (vctr <u8vector>) (n <fixnum>) (val <fixnum>))
   (u8vector-set! vctr n val))
 
+(defmethod (:set! (vctr <s8vector>) (n <fixnum>) (val <fixnum>))
+  (s8vector-set! vctr n val))
+
 (defmethod (:set! (vctr <u16vector>) (n <fixnum>) (val <fixnum>))
   (u16vector-set! vctr n val))
 
-(defmethod (:set! (vctr <u32vector>) (n <fixnum>) (val <fixnum>))
+(defmethod (:set! (vctr <s16vector>) (n <fixnum>) (val <fixnum>))
+  (s16vector-set! vctr n val))
+
+(defmethod (:set! (vctr <u32vector>) (n <fixnum>) (val <integer>))
   (u32vector-set! vctr n val))
 
-(defmethod (:set! (vctr <u64vector>) (n <fixnum>) (val <fixnum>))
+(defmethod (:set! (vctr <s32vector>) (n <fixnum>) (val <integer>))
+  (s32vector-set! vctr n val))
+
+(defmethod (:set! (vctr <u64vector>) (n <fixnum>) (val <integer>))
   (u64vector-set! vctr n val))
 
-(defmethod (:set! (vctr <f32vector>) (n <fixnum>) (val <real>))
+(defmethod (:set! (vctr <s64vector>) (n <fixnum>) (val <integer>))
+  (s64vector-set! vctr n val))
+
+(defmethod (:set! (vctr <f32vector>) (n <fixnum>) (val <flonum>))
   (f32vector-set! vctr n val))
 
-(defmethod (:set! (vctr <f64vector>) (n <fixnum>) (val <real>))
+(defmethod (:set! (vctr <f64vector>) (n <fixnum>) (val <flonum>))
   (f64vector-set! vctr n val))
 
 (defmethod (:set! (str <string>) (n <fixnum>) (val <char>))
