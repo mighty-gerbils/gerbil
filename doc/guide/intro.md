@@ -1007,13 +1007,9 @@ struct:
 
 ### Coroutines
 
-The `:std/coroutine` library provides support for coroutines, running
-in a separate thread and yielding results with `yield`. The user creates
-the coroutine with `coroutine`, and receives results with `continue` which
-blocks the current thread and passes control to the coroutine until
-it yields a value or exits. After the coroutine procedure finishes,
-all further calls to `continue` will return the final result or
-deliver an exception.
+The `:std/coroutine` library provides support for coroutines yielding results with `yield`.
+The user creates the coroutine with `coroutine`, and receives results with `continue` which
+passes control to the coroutine until it yields a value or ends.
 
 For example:
 ```scheme
@@ -1021,7 +1017,8 @@ For example:
 (def (my-coroutine)
   (yield 1)
   (yield 2)
-  (yield 3))
+  (yield 3)
+  'end)
 (def cort (coroutine my-coroutine))
 > (continue cort)
 => 1
@@ -1030,9 +1027,9 @@ For example:
 > (continue cort)
 => 3
 > (continue cort)
-=> #!void ; coroutine ended
+=> 'end ; coroutine end
 > (continue cort)
-=> #!void ; all
+=> error: coroutine has ended
 ```
 
 ### Event Programming
