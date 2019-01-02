@@ -16,7 +16,7 @@ package: std
                           'run #f))
          (thread (make-thread
                   (cut coroutine-start! cort proc args)
-                  (or (##procedure-name proc) 'coroutine))))
+                  'coroutine)))
     (set! (thread-specific thread) cort)
     (thread-start! thread)))
 
