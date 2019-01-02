@@ -15,6 +15,7 @@ package: std
   for for* for/collect for/fold
   in-range in-naturals in-hash-keys in-hash-values
   in-input-lines in-input-chars in-input-bytes
+  in-coroutine in-cothread
   iter-filter iter-map iter-filter-map
   yield
   )
@@ -113,6 +114,32 @@ package: std
   (let (cort (coroutine (lambda () (proc) iter-end)))
     (make-iterator (cons cort iter-nil) void value-e next-e)))
 
+(def (iter-cothread proc)
+  (def (start-e iter)
+    (with ((iterator proc) iter)
+      (let (cort (cothread (lambda () (proc) iter-end)))
+        (set! (iterator-e iter)
+          [cort . iter-nil]))))
+  (def (value-e iter)
+    (with ((iterator [cort . val]) iter)
+      (if (iter-nil? val)
+        (let (val (continue cort))
+          (set! (cdr (iterator-e iter)) val)
+          val)
+        val)))
+  (def (next-e iter)
+    (set! (cdr (iterator-e iter))
+      iter-nil))
+  (def (fini-e iter)
+    (match (iterator-e iter)
+      ([cort . _]
+       (cothread-stop! cort iter-end)
+       (set! (iterator-e iter) #f))
+      (else (void))))
+  (let (iter (make-iterator proc start-e value-e next-e fini-e))
+    (make-will iter fini-e)
+    iter))
+
 (def (iter-input-port port (read-e read))
   (def (value-e iter)
     (with ((iterator [port . val]) iter)
@@ -169,6 +196,12 @@ package: std
 
 (def (in-input-bytes obj)
   (iter-input-port obj read-u8))
+
+(def (in-coroutine proc . args)
+  (iter-coroutine (if (null? args) proc (cut apply proc args))))
+
+(def (in-cothread proc . args)
+  (iter-cothread (if (null? args) proc (cut apply proc args))))
 
 (def (iter-start! iter)
   ((iterator-start iter) iter))
