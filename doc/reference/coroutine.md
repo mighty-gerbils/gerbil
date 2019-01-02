@@ -1,6 +1,15 @@
 # Coroutines
 
-The `:std/coroutine` library provides support for continuation-based coroutines.
+The `:std/coroutine` library provides support for continuation-based and thread-based coroutines.
+
+Continuation-based coroutines are created with `coroutine`, while thread-based coroutines are
+created with `cothread`. Both types of coroutine are resumed with `continue` and yield results
+with `yield`.
+
+Continuation-based coroutines are more lightweight, but by virtue of implementation they cannot
+use `yield` inside finalizer blocks.
+Thread-based coroutines are more heavyweight, but don't suffer from this problem as they have
+a delimited dynamic scope.
 
 ::: tip usage
 (import :std/coroutine)
@@ -18,7 +27,7 @@ The `:std/coroutine` library provides support for continuation-based coroutines.
 :::
 
 Creates a new coroutine that evaluates proc with arguments `(proc arg ...)`.
-The coroutine is initially a suspended continuation, which can be resumed
+The coroutine is initially a suspended continuation, and can be resumed
 with `continue`.
 
 ### coroutine?
@@ -31,16 +40,40 @@ with `continue`.
 
 Returns true if the object is a coroutine.
 
+### cothread
+::: tip usage
+```
+(cothread proc arg ...)
+  proc := procedure
+=> <cothread>
+```
+:::
+
+Creates a new cothread that evaluates proc with arguments `(proc arg ...)`.
+The thread is initially suspended, and can be resumed with `continue`.
+
+### cothread?
+::: tip usage
+```
+(cothread? obj)
+=> boolean
+```
+:::
+
+Returns true if the object is a cothread.
+
+
 ### continue
 ::: tip usage
 ```
-(continue cort arg ...)
-  cort := coroutine
+(continue co arg ...)
+  co := coroutine or cothread
 => any
 ```
 :::
 
-Resumes the coroutine continuation, with the arguments becoming the values of the last yield.
+Resumes the coroutine or cothread, with the arguments becoming the values of the last yield.
+If the continuable was in initial suspended state, then it is resumed and the arguments are ignored.
 
 ### yield
 ::: tip usage
@@ -49,7 +82,17 @@ Resumes the coroutine continuation, with the arguments becoming the values of th
 ```
 :::
 
-Continues execution of the main routine, with the arguments becoming the values of the last continue.
+Continues execution of the main routine or thread, with the arguments becoming the values of the last continue.
+
+### cothread-stop!
+::: tip usage
+```
+(cothread-stop! co)
+  co := cothread
+```
+:::
+
+Stops the execution of a cothread.
 
 ## Example
 
