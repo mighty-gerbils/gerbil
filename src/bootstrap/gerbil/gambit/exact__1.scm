@@ -7,13 +7,6 @@
   (define |gerbil/gambit/exact[1]#_g584_|
     (##structure
      gx#syntax-quote::t
-     'syntax
-     #f
-     (gx#current-expander-context)
-     (list |gerbil/gambit/exact[1]#_g583_|)))
-  (define |gerbil/gambit/exact[1]#_g585_|
-    (##structure
-     gx#syntax-quote::t
      'lambda
      #f
      (gx#current-expander-context)
@@ -27,13 +20,7 @@
               (lambda (_g491509_)
                 ((lambda (_L512_)
                    (if (gx#identifier? _L512_)
-                       (cons (gx#datum->syntax
-                              |gerbil/gambit/exact[1]#_g584_|
-                              'syntax
-                              '#f
-                              '#f)
-                             (cons (gx#datum->syntax '#f 'exact-integer?__impl)
-                                   '()))
+                       (gx#datum->syntax '#f 'exact-integer?__impl)
                        (_g490505_ _g491509_)))
                  _g491509_)))
              (_g488565_
@@ -49,7 +36,7 @@
                                 (if (gx#stx-null? _tl498548_)
                                     ((lambda (_L551_)
                                        (cons (cons (gx#datum->syntax
-                                                    |gerbil/gambit/exact[1]#_g585_|
+                                                    |gerbil/gambit/exact[1]#_g584_|
                                                     'lambda
                                                     '#f
                                                     '#f)
