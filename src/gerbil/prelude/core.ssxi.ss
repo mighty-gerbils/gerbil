@@ -775,19 +775,13 @@ package: gerbil
  output-port-readtable-set!
 
  call-with-input-vector
- call-with-output-vector
  with-input-from-vector
- with-output-to-vector
 
  call-with-input-string
- call-with-output-string
  with-input-from-string
- with-output-to-string
-
  call-with-input-u8vector
- call-with-output-u8vector
  with-input-from-u8vector
- with-output-to-u8vector
+
 
  call-with-input-process call-with-output-process
  with-input-from-process with-output-to-process
@@ -851,6 +845,13 @@ package: gerbil
  (force-output 0 1 2)
  (read-u8 0 1)
  (write-u8 1 2)
+ (call-with-output-vector 1 2)
+ (with-output-to-vector 1 2)
+ (call-with-output-string 1 2)
+ (with-output-to-string 1 2)
+ (call-with-output-u8vector 1 2)
+ (with-output-to-u8vector 1 2)
+
  (input-port-byte-position 1 2 3)
  (output-port-byte-position 1 2 3)
  (tcp-service-register! 2 3)
