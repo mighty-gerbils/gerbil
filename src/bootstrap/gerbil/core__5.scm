@@ -480,9 +480,7 @@
                            (cons (cons (gx#datum->syntax '#f 'syntax)
                                        (cons (gx#datum->syntax '#f 'ref) '()))
                                  '()))
-                     (cons (cons (gx#datum->syntax '#f 'syntax)
-                                 (cons _L17391_ '()))
-                           '())))
+                     (cons _L17391_ '())))
 ;;>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
                                                  '())))))
                    (gx#stx-source _stx17203_))))))

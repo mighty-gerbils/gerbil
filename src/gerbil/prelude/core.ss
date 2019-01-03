@@ -1534,7 +1534,7 @@ package: gerbil
                             (defrules id ()
                               ((_ xarg ...)
                                ((lambda (arg ...) body ...) xarg ...))
-                              (ref (identifier? #'ref) #'impl))))
+                              (ref (identifier? #'ref) impl))))
                         (defimpl
                           (syntax/loc stx
                             (def (impl arg ...) body ...))))
