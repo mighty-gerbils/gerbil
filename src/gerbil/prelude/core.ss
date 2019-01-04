@@ -126,7 +126,7 @@ package: gerbil
     remove remq remv remf
     pgetq pgetv pget
     subvector subvector->list subvector-fill!
-    vector-map vector-copy vector-append
+    vector-map vector-for-each vector-copy vector-append
     true true? false void void? eof-object identity
     dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
     values-count values->list
@@ -145,6 +145,7 @@ package: gerbil
     uninterned-symbol? interned-symbol?
     gensym make-symbol make-uninterned-symbol symbol-hash
     keyword? uninterned-keyword? interned-keyword? keyword-hash
+    string-map string-for-each
     string->bytes substring->bytes bytes->string
     string->keyword keyword->string make-uninterned-keyword
     symbol->keyword keyword->symbol
