@@ -18,7 +18,7 @@ package: std/misc
 (def uuid-length 16)
 
 (defstruct uuid (bytes str)
-  final: #t)
+  final: #t equal: (bytes))
 
 (def (uuid=? a b)
   (equal? (uuid-bytes a) (uuid-bytes b)))
