@@ -93,68 +93,164 @@ Please document me!
 (import :std/misc/completion)
 :::
 
-### make-completion
+### completion
 ::: tip usage
 ```
-(make-completion ...)
+(defsyntax completion ...)
 ```
 :::
 
-Please document me!
+Completion type for user-defined generics.
+
+### make-completion
+::: tip usage
+```
+(make-completion)
+=> <completion>
+```
+:::
+
+Creates a new asynchronous completion.
 
 ### completion?
 ::: tip usage
 ```
-(completion? ...)
+(completion? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is a completion.
 
 ### completion-ready?
 ::: tip usage
 ```
-(completion-ready? ...)
+(completion-ready? c)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the completion is ready.
 
 ### completion-wait!
 ::: tip usage
 ```
-(completion-wait! ...)
+(completion-wait! c)
+  c := competion
+=> any
 ```
 :::
 
-Please document me!
+Waits on the completion until it has been posted with `completion-post!` or an error
+has been signaled with `completion-error!`. If the completion was posted, the posted
+value is returned. If an error was signalled, then it is raised as an exception.
 
 ### completion-post!
 ::: tip usage
 ```
-(completion-post! ...)
+(completion-post! c val)
+  c := completion
 ```
 :::
 
-Please document me!
+Posts the completion with value `val`.
 
 ### completion-error!
 ::: tip usage
 ```
-(completion-error! ...)
+(completion-error! c exn)
+  exn := completion
 ```
 :::
 
-Please document me!
+Signals an error in the completion.
 
 ### with-completion-error
 ::: tip usage
 ```
-(with-completion-error ...)
+(with-completion-error c body ...)
+  c := completion
 ```
 :::
 
-Please document me!
+Evaluates `body ...` with an exception handler that signals an error in the completion.
+
+
+## Thread Barriers
+::: tip usage
+(import :std/misc/barrier)
+:::
+
+### barrier
+::: tip usage
+```
+(defsyntax barrier ...)
+```
+:::
+
+Barrier type for user-defined generics.
+
+### make-barrier
+::: tip usage
+```
+(make-barrier limit)
+  limit := fixnum
+=> <barrier>
+```
+:::
+
+Create a barrier, awaiting for `limit` threads.
+
+### barrier?
+::: tip usage
+```
+(barrier? obj)
+=> boolean
+```
+:::
+
+Returns true if the object is a barrier.
+
+### barrier-wait!
+::: tip usage
+```
+(barrier-wait! b)
+  b := barrier
+```
+:::
+
+Waits on a thread barrier until it has been posted `limit` times with `barrier-post!`
+or an error has been signaled with `barrier-error!`.
+
+### barrier-post!
+::: tip usage
+```
+(barrier-post! b)
+  b := barrier
+```
+:::
+
+Posts the barrier.
+
+### barrier-error!
+::: tip usage
+```
+(barrier-error! b exn)
+```
+:::
+
+Signals an error on the barrier.
+
+
+### with-barrier-error
+::: tip usage
+```
+(with-barrier-error b body ...)
+  b := barrier
+```
+:::
+
+Evaluates `body ...` with an exception handler that signals an error in the barrier.
 
 
 ## Deques
