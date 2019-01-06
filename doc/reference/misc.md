@@ -610,123 +610,166 @@ Removes all nested layers of a proper list.
 (import :std/misc/lru)
 :::
 
-### make-lru-cache
+### lru-cache
 ::: tip usage
 ```
-(make-lru-cache ...)
+(defsyntax lru-cache ...)
 ```
 :::
 
-Please document me!
+LRU cache type for user-defined generics.
+
+
+### make-lru-cache
+::: tip usage
+```
+(make-lru-cache cap)
+  cap := fixnum; LRU cache capacity
+=> <lru-cache>
+```
+:::
+
+Creates a new LRU cache with capacity `cap`, which must be > 1.
 
 ### lru-cache?
 ::: tip usage
 ```
-(lru-cache? ...)
+(lru-cache? obj)
+=> boolean
 ```
 :::
 
-Please document me!
+Returns true if the object is an LRU cache.
 
 ### lru-cache-ref
 ::: tip usage
 ```
-(lru-cache-ref ...)
+(lru-cache-ref lru key [default])
+  lru := lru-cache
 ```
 :::
 
-Please document me!
+Returns the association of `key` in the LRU cache, and promotes the node to the head of the
+LRU queue. If there is no association, then default is returned. If the default is omitted,
+then an error is raised.
 
 ### lru-cache-get
 ::: tip usage
 ```
-(lru-cache-get ...)
+(lru-cache-get lru key)
+  lru := lru-cache
 ```
 :::
 
-Please document me!
+Same as `(lru-cache-ref lru key #f)`.
 
 ### lru-cache-put!
 ::: tip usage
 ```
-(lru-cache-put! ...)
+(lru-cache-put! lru key val)
+  lru := lru-cache
 ```
 :::
 
-Please document me!
+Puts an association of `key` to `val` into the LRU cache.
+If the cache is full, then the tail of the LRU queue (ie the value least recently used)
+is dropped from the cache.
 
 ### lru-cache-remove!
 ::: tip usage
 ```
-(lru-cache-remove! ...)
+(lru-cache-remove! lru key)
+  lru := lru-cache
 ```
 :::
 
-Please document me!
+Removes the association of `key` from the LRU cache.
 
 ### lru-cache-size
 ::: tip usage
 ```
-(lru-cache-size ...)
+(lru-cache-size lru)
+  lru := lru-cache
+=> fixnum
 ```
 :::
 
-Please document me!
+Returns the current size of the LRU cache.
 
 ### lru-cache-capacity
 ::: tip usage
 ```
-(lru-cache-capacity ...)
+(lru-cache-capacity lru)
+  lru := lru-cache
+=> fixnum
 ```
 :::
 
-Please document me!
+Returns the capacity of the LRU cache.
 
 ### lru-cache-flush!
 ::: tip usage
 ```
-(lru-cache-flush! ...)
+(lru-cache-flush! lru)
+  lru := lru-cache
 ```
 :::
 
-Please document me!
+Clears the LRU cache.
+
+### lru-cache-for-each
+::: tip usage
+```
+(lru-cache-for-each proc lru)
+  proc := lambda (key value)
+  lru  := lru-cache
+```
+:::
+
+Applies `(proc key val)` for every key-value association in the LRU cache,
+in most recently used order.
+
 
 ### lru-cache-walk
 ::: tip usage
 ```
-(lru-cache-walk ...)
+(lru-cache-walk lru proc)
 ```
 :::
 
-Please document me!
+Same as `(lru-cache-for-each proc lru)`.
 
 ### lru-cache-fold
 ::: tip usage
 ```
-(lru-cache-fold ...)
+(lru-cache-fold proc iv lru)
+  proc := lambda (key value r)
+  lru  := lru-cache
 ```
 :::
 
-Please document me!
+Folds the LRU cache in Most Recently Used order.
 
 ### lru-cache-foldr
 ::: tip usage
 ```
-(lru-cache-foldr ...)
+(lru-cache-foldr proc iv lru)
+  proc := lambda (key value r)
+  lru  := lru-cache
 ```
 :::
 
-Please document me!
+Folds the LRU cache in Least Recently Used order.
 
 ### lru-cache-&gt;list
 ::: tip usage
 ```
-(lru-cache->list ...)
+(lru-cache->list lru)
+=> alist
 ```
 :::
 
-Please document me!
-
+Returns an alist of key-value associations in the cache.
 
 
 ## Port utilities
