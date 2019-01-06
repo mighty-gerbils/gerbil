@@ -8,7 +8,8 @@ package: std/misc
 (export make-barrier barrier?
         barrier-wait!
         barrier-post!
-        barrier-error!)
+        barrier-error!
+        with-barrier-error)
 
 (defstruct barrier (mx cv count limit exn)
   constructor: :init! final: #t unchecked: #t)
@@ -56,3 +57,11 @@ package: std/misc
       (set! (&barrier-exn b) exn))
     (condition-variable-broadcast! cv)
     (mutex-unlock! mx)))
+
+(defrules with-barrier-error ()
+  ((_ b expr rest ...)
+   (try
+    expr rest ...
+    (catch (e)
+      (barrier-error! b e)
+      (raise e)))))

@@ -224,6 +224,17 @@ Posts the barrier.
 Signals an error on the barrier.
 
 
+### with-barrier-error
+::: tip usage
+```
+(with-barrier-error b body ...)
+  b := barrier
+```
+:::
+
+Evaluates `body ...` with an exception handler that signals an error in the barrier.
+
+
 ## Deques
 ::: tip usage
 (import :std/misc/deque)
