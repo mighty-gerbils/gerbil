@@ -10,7 +10,7 @@ package: std/misc
         (only-in :std/crypto/etc random-bytes!)
         (only-in :gerbil/gambit/hash equal?-hash))
 
-(export UUID uuid-length uuid::t make-uuid
+(export UUID uuid-length uuid::t make-uuid uuid
         uuid? uuid=? uuid-hash
         uuid->u8vector u8vector->uuid uuid->string string->uuid
         random-uuid)
