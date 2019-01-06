@@ -14,7 +14,7 @@ package: std/misc
         with-completion-error)
 
 (defstruct completion (mx cv ready? val exn)
-  final: #t
+  final: #t unchecked: #t
   constructor: :init!)
 
 (defmethod {:init! completion}
@@ -27,37 +27,38 @@ package: std/misc
   (with ((completion mx cv) compl)
     (let lp ()
       (mutex-lock! mx)
-      (if (completion-ready? compl)
+      (if (&completion-ready? compl)
         (begin
           (mutex-unlock! mx)
           (cond
-           ((completion-exn compl)
+           ((&completion-exn compl)
             => raise)
            (else
-            (completion-val compl))))
+            (&completion-val compl))))
         (begin
           (mutex-unlock! mx cv)
           (lp))))))
 
-(def (do-completion-post! compl val set-e)
-  (with ((completion mx cv) compl)
-    (mutex-lock! mx)
-    (if (completion-ready? compl)
-      (begin
-        (mutex-unlock! mx)
-        (error "Completion has already been posted" compl))
-      (begin
-        (set-e compl val)
-        (set! (completion-ready? compl) #t)
-        (mutex-unlock! mx)
-        (condition-variable-broadcast! cv)
-        (void)))))
+(defrules do-completion-post! ()
+  ((_ compl val set-e)
+   (with ((completion mx cv) compl)
+     (mutex-lock! mx)
+     (if (&completion-ready? compl)
+       (begin
+         (mutex-unlock! mx)
+         (error "Completion has already been posted" compl))
+       (begin
+         (set-e compl val)
+         (set! (&completion-ready? compl) #t)
+         (mutex-unlock! mx)
+         (condition-variable-broadcast! cv)
+         (void))))))
 
 (def (completion-post! compl val)
-  (do-completion-post! compl val completion-val-set!))
+  (do-completion-post! compl val &completion-val-set!))
 
 (def (completion-error! compl exn)
-  (do-completion-post! compl exn completion-exn-set!))
+  (do-completion-post! compl exn &completion-exn-set!))
 
 (defrules with-completion-error ()
   ((_ compl expr rest ...)
