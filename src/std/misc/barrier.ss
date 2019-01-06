@@ -5,7 +5,7 @@ package: std/misc
 
 (import :gerbil/gambit/threads
         :std/sugar)
-(export make-barrier barrier?
+(export make-barrier barrier? barrier
         barrier-wait!
         barrier-post!
         barrier-error!

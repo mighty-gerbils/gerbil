@@ -93,6 +93,15 @@ Please document me!
 (import :std/misc/completion)
 :::
 
+### completion
+::: tip usage
+```
+(defsyntax completion ...)
+```
+:::
+
+Completion type for user-defined generics.
+
 ### make-completion
 ::: tip usage
 ```
@@ -171,6 +180,15 @@ Evaluates `body ...` with an exception handler that signals an error in the comp
 ::: tip usage
 (import :std/misc/barrier)
 :::
+
+### barrier
+::: tip usage
+```
+(defsyntax barrier ...)
+```
+:::
+
+Barrier type for user-defined generics.
 
 ### make-barrier
 ::: tip usage

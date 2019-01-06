@@ -7,6 +7,7 @@ package: std/misc
         :std/sugar)
 (export make-completion
         completion?
+        completion
         completion-ready?
         completion-wait!
         completion-post!
