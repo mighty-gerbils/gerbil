@@ -4,10 +4,11 @@
 package: std/misc
 
 (import :std/misc/list)
-(export make-lru-cache lru-cache?
+(export make-lru-cache lru-cache? lru-cache
         lru-cache-ref lru-cache-get lru-cache-put! lru-cache-remove!
         lru-cache-size (rename: lru-cache-cap lru-cache-capacity)
-        lru-cache-flush! lru-cache-walk lru-cache-fold lru-cache-foldr lru-cache->list)
+        lru-cache-flush! lru-cache-for-each lru-cache-walk
+        lru-cache-fold lru-cache-foldr lru-cache->list)
 
 (defstruct lru-cache (ht hd tl size cap)
   constructor: :init!
@@ -22,13 +23,15 @@ package: std/misc
       (error "Bad argument; expected fixnum > 1" cap))
     (struct-instance-init! self (make-hash-table) #f #f 0 cap)))
 
-(def (lru-cache-ref lru key default)
+(def (lru-cache-ref lru key (default absent-obj))
   (with ((lru-cache ht) lru)
     (cond
      ((hash-get ht key)
       => (lambda (n)
            (lru-cache-touch! lru n)
            (&node-val n)))
+     ((eq? default absent-obj)
+      (error "No value associated with key" lru key))
      (else default))))
 
 (def (lru-cache-touch! lru n)
@@ -126,11 +129,14 @@ package: std/misc
   (when (##fx> (lru-cache-size lru) 0)
     (struct-instance-init! lru (make-hash-table) #f #f 0)))
 
-(def (lru-cache-walk lru proc)
+(def (lru-cache-for-each proc lru)
   (let lp ((n (lru-cache-hd lru)))
     (when n
       (proc (&node-key n) (&node-val n))
       (lp (&node-next n)))))
+
+(def (lru-cache-walk lru proc)
+  (lru-cache-for-each proc lru))
 
 (def (lru-cache-fold proc iv lru)
   (let lp ((n (lru-cache-hd lru)) (r iv))
