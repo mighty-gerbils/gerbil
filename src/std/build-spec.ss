@@ -201,6 +201,7 @@
     "misc/string"
     "misc/sync"
     "misc/completion"
+    "misc/barrier"
     "misc/channel"
     (gxc:  "misc/ports" ,@(include-gambit-sharp))
     (gxc:  "misc/threads" ,@(include-gambit-sharp))
