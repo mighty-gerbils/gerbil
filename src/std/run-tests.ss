@@ -18,6 +18,7 @@
         "misc/pqueue-test"
         "misc/rbtree-test"
         "misc/barrier-test"
+        "misc/completion-test"
         "text/csv-test"
         "text/json-test"
         "text/utf8-test"
@@ -69,6 +70,7 @@
    pqueue-test
    rbtree-test
    barrier-test
+   completion-test
    actor-xdr-test
    actor-rpc-test
    actor-rpc-stream-test
