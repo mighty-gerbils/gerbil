@@ -10,23 +10,20 @@ package: std
         )
 (export
   (struct-out iterator)
-  :iter iter-end iter-end? iter-nil iter-nil?
-  iter-start! iter-value iter-next!
+  iter :iter iter-end iter-end?
   for for* for/collect for/fold
-  in-range in-naturals in-hash-keys in-hash-values
-  in-input-lines in-input-chars in-input-bytes
+  in-range in-naturals in-hash in-hash-keys in-hash-values
+  in-input-port in-input-lines in-input-chars in-input-bytes
   in-coroutine in-cothread
-  iter-filter iter-map iter-filter-map
   yield
   )
 
-(defstruct iterator (e start value next fini)
-  constructor: :init!
-  final: #t)
+(defstruct iterator (e next fini)
+  constructor: :init! unchecked: #t final: #t)
 
 (defmethod {:init! iterator}
-  (lambda (self e start value next (fini void))
-    (struct-instance-init! self e start value next fini)))
+  (lambda (self e next (fini void))
+    (struct-instance-init! self e next fini)))
 
 (defstruct :iter-end ())
 (def iter-end
@@ -34,19 +31,17 @@ package: std
 (def (iter-end? obj)
   (eq? iter-end obj))
 
-(defstruct :iter-nil ())
-(def iter-nil
-  (make-:iter-nil))
-(def (iter-nil? obj)
-  (eq? iter-nil obj))
+(def (iter obj)
+  (if (iterator? obj) obj
+      (:iter obj)))
 
 (defgeneric :iter)
-(defmethod (:iter (iter iterator))
-  iter)
+(defmethod (:iter (it iterator))
+  it)
 (defmethod (:iter (obj <pair>))
   (iter-list obj))
 (defmethod (:iter (obj <null>))
-  (iter-list obj))
+  (iter-null))
 (defmethod (:iter (obj <vector>))
   (iter-vector obj))
 (defmethod (:iter (obj <string>))
@@ -62,131 +57,110 @@ package: std
 (defmethod (:iter (obj <object>))
   {:iter obj})
 
+(def (iter-null)
+  (def (next it)
+    iter-end)
+  (make-iterator (void) next))
+
 (def (iter-list lst)
-  (def (value-e iter)
-    (with ((iterator e) iter)
+  (def (next it)
+    (with ((iterator e) it)
       (match e
-        ([hd . rest] hd)
+        ([hd . rest]
+         (set! (&iterator-e it) rest)
+         hd)
         (else iter-end))))
-  (def (next-e iter)
-    (set! (iterator-e iter)
-      (cdr (iterator-e iter))))
-  (make-iterator lst void value-e next-e))
+  (make-iterator lst next))
 
-(def (iter-vector vec (length-e vector-length) (ref-e vector-ref))
-  (def (value-e iter)
-    (with ((iterator [vec . index]) iter)
-      (if (##fx< index (length-e vec))
-        (ref-e vec index)
-        iter-end)))
-  (def (next-e iter)
-    (with ((iterator e) iter)
-      (set! (cdr e)
-        (##fx+ (cdr e) 1))))
-  (make-iterator (cons vec 0) void value-e next-e))
+(def (iter-vector vec (length-e ##vector-length) (ref-e ##vector-ref))
+  (def (next it)
+    (with ((iterator e) it)
+      (with ([vec . index] e)
+        (if (##fx< index (length-e vec))
+          (let (v (ref-e vec index))
+            (set! (cdr e) (##fx+ index 1))
+            v)
+          iter-end))))
+  (make-iterator (cons vec 0) next))
 
-(def (iter-string obj)
-  (iter-vector obj string-length string-ref))
+(def (iter-string str)
+  (iter-vector str ##string-length ##string-ref))
 
-(def (iter-hash-table obj)
-  (def (value-e iter)
-    (with ((iterator lst) iter)
-      (match lst
-        ([[key . value] . rest]
-         (values key value))
-        (else iter-end))))
-  (def (next-e iter)
-    (set! (iterator-e iter)
-      (cdr (iterator-e iter))))
-  (make-iterator (hash->list obj) void value-e next-e))
+(def (iter-hash-table ht)
+  (def (iterate)
+    (hash-for-each yield ht))
+  (iter-coroutine iterate))
 
 (def (iter-coroutine proc)
-  (def (value-e iter)
-    (with ((iterator [cort . val]) iter)
-      (if (iter-nil? val)
-        (let (val (continue cort))
-          (set! (cdr (iterator-e iter)) val)
-          val)
-        val)))
-  (def (next-e iter)
-    (set! (cdr (iterator-e iter))
-      iter-nil))
+  (def (next it)
+    (with ((iterator cort) it)
+      (continue cort)))
   (let (cort (coroutine (lambda () (proc) iter-end)))
-    (make-iterator (cons cort iter-nil) void value-e next-e)))
+    (make-iterator cort next)))
 
 (def (iter-cothread proc)
-  (def (start-e iter)
-    (with ((iterator proc) iter)
-      (let (cort (cothread (lambda () (proc) iter-end)))
-        (set! (iterator-e iter)
-          [cort . iter-nil]))))
-  (def (value-e iter)
-    (with ((iterator [cort . val]) iter)
-      (if (iter-nil? val)
-        (let (val (continue cort))
-          (set! (cdr (iterator-e iter)) val)
-          val)
-        val)))
-  (def (next-e iter)
-    (set! (cdr (iterator-e iter))
-      iter-nil))
-  (def (fini-e iter)
-    (match (iterator-e iter)
-      ([cort . _]
-       (cothread-stop! cort iter-end)
-       (set! (iterator-e iter) #f))
-      (else (void))))
-  (let (iter (make-iterator proc start-e value-e next-e fini-e))
-    (make-will iter fini-e)
-    iter))
+  (def (next it)
+    (with ((iterator cothr) it)
+      (continue cothr)))
+  (def (fini it)
+    (let (cothr (&iterator-e it))
+      (when cothr
+        (cothread-stop! cothr)
+        (set! (&iterator-e it) #f))))
+  (let* ((cothr (cothread proc))
+         (it (make-iterator cothr next fini)))
+    (make-will it fini)
+    it))
 
 (def (iter-input-port port (read-e read))
-  (def (value-e iter)
-    (with ((iterator [port . val]) iter)
-      (if (iter-nil? val)
-        (let* ((e (read-e port))
-               (val
-                (if (eof-object? e)
-                  iter-end
-                  e)))
-          (set! (cdr (iterator-e iter)) val)
-          val)
-        val)))
-  (def (next-e iter)
-    (set! (cdr (iterator-e iter))
-      iter-nil))
-  (make-iterator [port . iter-nil] void value-e next-e))
+  (def (next it)
+    (with ((iterator port) it)
+      (let (val (read-e port))
+        (if (eof-object? val)
+          iter-end
+          val))))
+  (make-iterator port next))
 
 (def (iter-in-range start count step)
-  (def (value-e iter)
-    (with ((iterator [value . count]) iter)
-      (if (positive? count)
-        value
-        iter-end)))
-  (def (next-e iter)
-    (with ((iterator e) iter)
-      (set! (car e)
-        (+ (car e) step))
-      (set! (cdr e)
-        (1- (cdr e)))))
-  (make-iterator (cons start count) void value-e next-e))
+  (def (next it)
+    (with ((iterator e) it)
+      (with ([value . limit] e)
+        (if (##fx> limit 0)
+          (let (value+step (+ value step))
+            (set! (car e) value+step)
+            (set! (cdr e) (##fx- limit 1))
+            value)
+          iter-end))))
+  (make-iterator (cons start count) next))
 
 (def* in-range
   ((count) (iter-in-range 0 count 1))
-  ((start count) (iter-in-range start count 1))
-  ((start count step) (iter-in-range start count step)))
+  ((count start) (iter-in-range start count 1))
+  ((count start step) (iter-in-range start count step)))
 
 (def (in-naturals (start 1) (step 1))
-  (def (next-e iter)
-    (set! (iterator-e iter)
-      (+ (iterator-e iter) step)))
-  (make-iterator start void iterator-e next-e))
+  (def (next it)
+    (with ((iterator value) it)
+      (let (value+step (+ value step))
+        (set! (&iterator-e it) value+step)
+        value)))
+  (make-iterator start next))
+
+(def (in-hash ht)
+  (iter-hash-table ht))
 
 (def (in-hash-keys ht)
-  (iter-list (hash-keys ht)))
+  (def (iterate)
+    (hash-for-each (lambda (k v) (yield k)) ht))
+  (iter-coroutine iterate))
 
 (def (in-hash-values ht)
-  (iter-list (hash-values ht)))
+  (def (iterate)
+    (hash-for-each (lambda (k v) (yield v)) ht))
+  (iter-coroutine iterate))
+
+(def (in-input-port obj)
+  (iter-input-port obj))
 
 (def (in-input-lines obj)
   (iter-input-port obj read-line))
@@ -203,62 +177,18 @@ package: std
 (def (in-cothread proc . args)
   (iter-cothread (if (null? args) proc (cut apply proc args))))
 
-(def (iter-start! iter)
-  ((iterator-start iter) iter))
+(def (iter-next! it)
+  ((&iterator-next it) it))
 
-(def (iter-value iter)
-  ((iterator-value iter) iter))
+(def (iter-fini! it)
+  ((&iterator-fini it) it))
 
-(def (iter-next! iter)
-  ((iterator-next iter) iter))
-
-(def (iter-fini! iter)
-  ((iterator-fini iter) iter))
-
-(def (iter-xform iter value-e)
-  (def (start-e iter)
-    (with ((iterator xiter) iter)
-      (iter-start! xiter)))
-  (def (next-e iter)
-    (with ((iterator xiter) iter)
-      (iter-next! xiter)))
-  (def (fini-e iter)
-    (with ((iterator xiter) iter)
-      (iter-fini! xiter)))
-  (make-iterator (:iter iter) start-e value-e next-e fini-e))
-
-(def (iter-filter pred iter)
-  (def (value-e iter)
-    (with ((iterator xiter) iter)
-      (let lp ((val (iter-value xiter)))
-        (cond
-         ((iter-end? val) iter-end)
-         ((pred val) val)
-         (else
-          (iter-next! xiter)
-          (lp (iter-value xiter)))))))
-  (iter-xform iter value-e))
-
-(def (iter-map mapf iter)
-  (def (value-e iter)
-    (with ((iterator xiter) iter)
-      (let (val (iter-value xiter))
-        (if (iter-end? val)
-          iter-end
-          (mapf val)))))
-  (iter-xform iter value-e))
-
-(def (iter-filter-map mapf iter)
-  (def (value-e iter)
-    (with ((iterator xiter) iter)
-      (let lp ((val (iter-value xiter)))
-        (cond
-         ((iter-end? val) iter-end)
-         ((mapf val) => values)
-         (else
-          (iter-next! xiter)
-          (lp (iter-value xiter)))))))
-  (iter-xform iter value-e))
+(def (iter-filter pred it)
+  (def (iterate)
+    (for (val it)
+      (when (pred val)
+        (yield val))))
+  (iter-coroutine iterate))
 
 (begin-syntax
   (def (for-binding? bind)
@@ -303,20 +233,18 @@ package: std
            ((null? iterable))
            (else
             ;; full iteration protocol
-            (let (it (:iter iterable))
-              (iter-start! it)
+            (let (it (iter iterable))
               (let lp ()
-                (let (val (iter-value it))
+                (let (val (iter-next! it))
                   (unless (eq? iter-end val)
                     (iter-do val)
-                    (iter-next! it)
                     (lp))))
               (iter-fini! it)
               (void)))))))
 
   (def (generate-for* bindings body)
     (with-syntax
-        (((iter-id ...)
+        (((it ...)
           (gentemps bindings))
          ((iter-e ...)
           (stx-map for-binding-expr bindings))
@@ -325,16 +253,14 @@ package: std
          ((bind-e ...)
           (stx-map for-binding-bind bindings))
          ((body ...) body))
-      #'(let ((iter-id (:iter iter-e)) ...)
-          (iter-start! iter-id) ...
+      #'(let ((it (iter iter-e)) ...)
           (let lp ()
-            (let ((bind-id (iter-value iter-id)) ...)
+            (let ((bind-id (iter-next! it)) ...)
               (unless (or (eq? iter-end bind-id) ...)
                 (with ((bind-e bind-id) ...)
                   body ...)
-                (iter-next! iter-id) ...
                 (lp))))
-          (iter-fini! iter-id) ...
+          (iter-fini! it) ...
           (void))))
 
   (syntax-case stx ()
@@ -374,23 +300,21 @@ package: std
            ((null? iterable) [])
            (else
             ;; full iteration protocol
-            (let (it (:iter iterable))
-              (iter-start! it)
+            (let (it (iter iterable))
               (let lp ((rval []))
-                (let (val (iter-value it))
+                (let (val (iter-next! it))
                   (if (eq? iter-end val)
                     (begin
                       (iter-fini! it)
                       (reverse rval))
                     (let (xval (iter-do val))
-                      (iter-next! it)
                       (lp (cons xval rval))))))))))))
 
   (def (generate-for* bindings body)
     (with-syntax
         ((value  (genident 'value))
          (rvalue (genident 'rvalue))
-         ((iter-id ...)
+         ((it ...)
           (gentemps bindings))
          ((iter-e ...)
           (stx-map for-binding-expr bindings))
@@ -399,16 +323,14 @@ package: std
          ((bind-e ...)
           (stx-map for-binding-bind bindings))
          ((body ...) body))
-      #'(let ((iter-id (:iter iter-e)) ...)
-          (iter-start! iter-id) ...
+      #'(let ((it (iter iter-e)) ...)
           (let lp ((rvalue []))
-            (let ((bind-id (iter-value iter-id)) ...)
+            (let ((bind-id (iter-next! it)) ...)
               (if (or (eq? iter-end bind-id) ...)
-                (begin (iter-fini! iter-id) ...
+                (begin (iter-fini! it) ...
                        (reverse rvalue))
                 (with ((bind-e bind-id) ...)
                   (let (value (let () body ...))
-                    (iter-next! iter-id) ...
                     (lp (cons value rvalue))))))))))
 
   (syntax-case stx ()
@@ -449,16 +371,14 @@ package: std
            ((null? iterable) fold-iv)
            (else
             ;; full iteration protocol
-            (let (it (:iter iterable))
-              (iter-start! it)
+            (let (it (iter iterable))
               (let lp ((rval fold-iv))
-                (let (val (iter-value it))
+                (let (val (iter-next! it))
                   (if (eq? iter-end val)
                     (begin
                       (iter-fini! it)
                       rval)
                     (let (xval (iter-do val rval))
-                      (iter-next! it)
                       (lp xval)))))))))))
 
   (def (generate-for* fold-bind bindings body)
@@ -466,7 +386,7 @@ package: std
         ((value  (genident 'value))
          ((loop-id loop-e)
           fold-bind)
-         ((iter-id ...)
+         ((it ...)
           (gentemps bindings))
          ((iter-e ...)
           (stx-map for-binding-expr bindings))
@@ -475,16 +395,14 @@ package: std
          ((bind-e ...)
           (stx-map for-binding-bind bindings))
          ((body ...) body))
-      #'(let ((iter-id (:iter iter-e)) ...)
-          (iter-start! iter-id) ...
+      #'(let ((it (iter iter-e)) ...)
           (let lp ((loop-id loop-e))
-            (let ((bind-id (iter-value iter-id)) ...)
+            (let ((bind-id (iter-next! it)) ...)
               (if (or (eq? iter-end bind-id) ...)
-                (begin (iter-fini! iter-id) ...
+                (begin (iter-fini! it) ...
                        loop-id)
                 (with ((bind-e bind-id) ...)
                   (let (value (let () body ...))
-                    (iter-next! iter-id) ...
                     (lp value)))))))))
 
   (syntax-case stx ()

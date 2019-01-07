@@ -129,19 +129,10 @@ package: std/misc
   (iter-channel ch))
 
 (def (iter-channel ch)
-  (def (value-e it)
-    (with ((iterator [ch . val]) it)
-      (cond
-       ((iter-nil? val)
-        (let (val (channel-get ch))
-          (set! (cdr (iterator-e it)) val)
-          (value-e it)))
-       ((eof-object? val)
-        iter-end)
-       (else val))))
-
-  (def (next-e it)
-    (set! (cdr (iterator-e it))
-      iter-nil))
-
-  (make-iterator (cons ch iter-nil) void value-e next-e void))
+  (def (next it)
+    (with ((iterator ch) it)
+      (let (val (channel-get ch))
+        (if (eof-object? val)
+          iter-end
+          val))))
+  (make-iterator ch next))
