@@ -291,24 +291,17 @@ Yields one or more values from a coroutine procedure associated with an iterator
 This is the `yield` defined in `:std/coroutine`.
 
 
-## Example
+## Examples
 
-Here is a definition of the list iterator using coroutines:
+Here is the definition for an iterator that produces a constant value,
+using the iterator protocol:
 ```
-(def (my-iter-list lst)
-  (let lp ((rest lst))
-    (match rest
-      ([hd . rest]
-       (yield hd)
-       (lp rest))
-      (else (void)))))
-
-(def (my-in-list lst)
-  (in-coroutine my-iter-list lst))
-
+(def (iter-const val)
+  (make-iterator val iterator-e))
 ```
 
-Here is the definition of the list iterator using the iterator protocol:
+
+Here is a definition of the list iterator using the iterator protocol:
 ```
 (def (iter-list lst)
   (def (next it)
@@ -321,6 +314,18 @@ Here is the definition of the list iterator using the iterator protocol:
   (make-iterator lst next))
 ```
 
-Note that this is just an example to illustrate the iterator protocol;
-you don't need to provide an iterator for lists as `iter` will
-construct one for you.
+Here is a definition of the list iterator using coroutines:
+```
+(def (iter-list lst)
+  (def (iterate lst)
+    (let lp ((rest lst))
+      (match rest
+        ([hd . rest]
+         (yield hd)
+         (lp rest))
+        (else (void)))))
+  (in-coroutine iterate lst))
+```
+
+Note that this is just an example for illustration purposes;
+you don't need to provide an iterator for lists as `iter` will construct one for you.
