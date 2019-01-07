@@ -93,7 +93,7 @@ the generic `:iter` is applied to the object.
 
 Generic iterator constructor. The library defines the method for
 basic types: lists, vectors, strings, hash-tables, ports, and
-procedures which are iterated as coroutinesl objects without any
+procedures which are iterated as coroutines; objects without any
 method binding dispatch to the `:iter` method.
 
 ### in-range
@@ -268,7 +268,7 @@ Returns true if the object is the end of iteration object.
 ```
 :::
 
-Advances the iterator and return the current value.
+Advances the iterator and returns the current value.
 
 ### iter-fini!
 ::: tip usage
