@@ -10,7 +10,7 @@ package: std
         )
 (export
   (struct-out iterator)
-  iter :iter iter-end iter-end?
+  iter :iter iter-end iter-end? iter-next! iter-fini!
   for for* for/collect for/fold
   in-range in-naturals in-hash in-hash-keys in-hash-values
   in-input-port in-input-lines in-input-chars in-input-bytes
