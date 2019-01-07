@@ -3,12 +3,15 @@
 ;;; LRU cache
 package: std/misc
 
-(import :std/misc/list)
+(import :std/misc/list
+        :std/generic
+        :std/iter)
 (export make-lru-cache lru-cache? lru-cache
         lru-cache-ref lru-cache-get lru-cache-put! lru-cache-remove!
         lru-cache-size (rename: lru-cache-cap lru-cache-capacity)
         lru-cache-flush! lru-cache-for-each lru-cache-walk
-        lru-cache-fold lru-cache-foldr lru-cache->list)
+        lru-cache-fold lru-cache-foldr lru-cache->list
+        in-lru-cache in-lru-cache-keys in-lru-cache-values)
 
 (defstruct lru-cache (ht hd tl size cap)
   constructor: :init!
@@ -152,3 +155,22 @@ package: std/misc
 
 (def (lru-cache->list lru)
   (lru-cache-foldr (lambda (k v r) (cons (cons k v) r)) [] lru))
+
+;;; iterators
+(defmethod (:iter (lru lru-cache))
+  (in-lru-cache lru))
+
+(def (in-lru-cache lru)
+  (def (iterate)
+    (lru-cache-for-each yield lru))
+  (in-coroutine iterate))
+
+(def (in-lru-cache-keys lru)
+  (def (iterate)
+    (lru-cache-for-each (lambda (k v) (yield k))  lru))
+  (in-coroutine iterate))
+
+(def (in-lru-cache-values lru)
+  (def (iterate)
+    (lru-cache-for-each (lambda (k v) (yield v))  lru))
+  (in-coroutine iterate))

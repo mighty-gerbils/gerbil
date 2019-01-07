@@ -771,6 +771,39 @@ Folds the LRU cache in Least Recently Used order.
 
 Returns an alist of key-value associations in the cache.
 
+### in-lru-cache
+::: tip usage
+```
+(in-lru-cache lru)
+  lru := lru-cache
+=> iterator
+```
+:::
+
+Creates an iterator over the LRU cache.
+
+### in-lru-cache-keys
+::: tip usage
+```
+(in-lru-cache-keys lru)
+  lru := lru-cache
+=> iterator
+```
+:::
+
+Creates an iterator over the LRU cache keys.
+
+### in-lru-cache-values
+::: tip usage
+```
+(in-lru-cache-values lru)
+  lru := lru-cache
+=> iterator
+```
+:::
+
+Creates an iterator over the LRU cache values.
+
 
 ## Port utilities
 ::: tip usage
