@@ -771,6 +771,39 @@ Folds the LRU cache in Least Recently Used order.
 
 Returns an alist of key-value associations in the cache.
 
+### in-lru-cache
+::: tip usage
+```
+(in-lru-cache lru)
+  lru := lru-cache
+=> iterator
+```
+:::
+
+Creates an iterator over the LRU cache.
+
+### in-lru-cache-keys
+::: tip usage
+```
+(in-lru-cache-keys lru)
+  lru := lru-cache
+=> iterator
+```
+:::
+
+Creates an iterator over the LRU cache keys.
+
+### in-lru-cache-values
+::: tip usage
+```
+(in-lru-cache-values lru)
+  lru := lru-cache
+=> iterator
+```
+:::
+
+Creates an iterator over the LRU cache values.
+
 
 ## Port utilities
 ::: tip usage
@@ -1310,6 +1343,39 @@ Returns a list with all the associations in the rbtree, in descending order.
 :::
 
 Creates a new rbtree from an associative list.
+
+### in-rbtree
+::: tip usage
+```
+(in-rbtree rbt)
+  rbt := rbtree
+=> iterator
+```
+:::
+
+Creates an iterator over the rbtree.
+
+### in-rbtree-keys
+::: tip usage
+```
+(in-rbtree-keys rbt)
+  rbt := rbtree
+=> iterator
+```
+:::
+
+Creates an iterator over the rbtree keys.
+
+### in-rbtree-values
+::: tip usage
+```
+(in-rbtree-values rbt)
+  rbt := rbtree
+=> iterator
+```
+:::
+
+Creates an iterator over the rbtree values.
 
 ### string-cmp
 ::: tip usage

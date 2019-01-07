@@ -6,6 +6,8 @@
 ;;; implementation; delete is based on CLR...
 package: std/misc
 
+(import :std/generic
+        :std/iter)
 (export rbtree rbtree? make-rbtree
         rbtree-ref rbtree-get
         rbtree-put! rbtree-put
@@ -22,7 +24,10 @@ package: std/misc
         list->rbtree
         string-cmp
         symbol-cmp
-        symbol-hash-cmp)
+        symbol-hash-cmp
+        in-rbtree
+        in-rbtree-keys
+        in-rbtree-values)
 
 ;; rbtree structure
 (defstruct rbtree (root cmp)
@@ -138,7 +143,26 @@ package: std/misc
       lst)
     t))
 
-;; common comparison functions
+;;; iterators
+(defmethod (:iter (rbt rbtree))
+  (in-rbtree rbt))
+
+(def (in-rbtree rbt)
+  (def (iterate)
+    (rbtree-for-each yield rbt))
+  (in-coroutine iterate))
+
+(def (in-rbtree-keys rbt)
+  (def (iterate)
+    (rbtree-for-each (lambda (k v) (yield k)) rbt))
+  (in-coroutine iterate))
+
+(def (in-rbtree-values rbt)
+  (def (iterate)
+    (rbtree-for-each (lambda (k v) (yield v)) rbt))
+  (in-coroutine iterate))
+
+;;; common comparison functions
 (def (string-cmp a b)
   (let* ((len-a (string-length a))
          (len-b (string-length b))
@@ -166,6 +190,7 @@ package: std/misc
       (if (##fxzero? ha-hb)
         (string-cmp (symbol->string a) (symbol->string b))
         ha-hb))))
+
 
 ;;; tree implementation
 
