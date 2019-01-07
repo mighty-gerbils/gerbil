@@ -159,8 +159,8 @@ package: std
     (hash-for-each (lambda (k v) (yield v)) ht))
   (iter-coroutine iterate))
 
-(def (in-input-port obj)
-  (iter-input-port obj))
+(def (in-input-port obj (read-e read))
+  (iter-input-port obj read-e))
 
 (def (in-input-lines obj)
   (iter-input-port obj read-line))
