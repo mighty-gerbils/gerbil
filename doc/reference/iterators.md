@@ -20,14 +20,15 @@ bind := (<pattern> <iterator-expr>)
         (<pattern> <iterator-expr> unless <filter-expr>)
 
 pattern       := match pattern
-iterator-expr := expression producing an iterator
+iterator-expr := expression producing an iterable object
 filter-expr   := boolean filter expression, with pattern bindings visible
 ```
 :::
 
-`for` iterates one or more iterators in parallel, matching the values
+`for` iterates one or more iterable objects in parallel, matching the values
 produced to the binding pattern, and evaluates the body for each value.
-The iteration completes as soon as one of the iterators complete.
+For each iterable object an iterator is constructed using `(iter ...)`;
+the iteration completes as soon as one of the iterators completes.
 
 ### for*
 ::: tip usage
@@ -36,7 +37,7 @@ The iteration completes as soon as one of the iterators complete.
 ```
 :::
 
-`for*` iterates one or more iterators sequentially.
+`for*` iterates one or more iterables sequentially.
 
 ### for/collect
 ::: tip usage
@@ -59,8 +60,8 @@ iv-bind := (<id> <expr>)
 ```
 :::
 
-`for/fold` folds one or more iterators in parallel. The seed of the
-fold is bound to `<id>`, with initial value `<iv>`, is updated as the
+`for/fold` folds one or more iterables in parallel. The seed of the
+fold is bound to `id`, with initial value `expr`, and is updated as the
 value of the `body` for each iteration. The result of the fold is the
 result of the final iteration.
 
@@ -74,8 +75,9 @@ result of the final iteration.
 ```
 :::
 
-This is the fundamental constructor. If the object is already an iterator then it is returned; otherwise
-the generic `:iter` is applied to the object.
+This is the fundamental iterator constructor for iterable objects.
+If the object is already an iterator then it is returned; otherwise
+the generic `:iter` is applied.
 
 
 ### :iter
@@ -94,7 +96,7 @@ the generic `:iter` is applied to the object.
 Generic iterator constructor. The library defines the method for
 basic types: lists, vectors, strings, hash-tables, ports, and
 procedures which are iterated as coroutines; objects without any
-method binding dispatch to the `:iter` method.
+method binding dispatch to the `:iter` object method.
 
 ### in-range
 ::: tip usage
@@ -151,7 +153,7 @@ Creates an iterator that yields the keys for each association in the hash table.
 ```
 :::
 
-Please document me!
+Creates an iterator that yields the values for each association in the hash table.
 
 ### in-input-port
 ::: tip usage
@@ -163,7 +165,7 @@ Please document me!
 :::
 
 Creates an iterator that yields the values read with `read` from the `port`.
-The unary version is the same as `(:iter <port>).
+The unary version is the same as `(:iter port)`.
 
 ### in-input-lines
 ::: tip usage
@@ -234,13 +236,13 @@ fini := lambda (iterator)
 ```
 
 This is the type of iterator objects:
-- The element `e` is the value associated with the iterator
+- The element `e` is the state associated with the iterator
 - The procedure `next` advances the iterator and returns the current value; `iter-end` signals the end of the iteration.
 - The procedure `fini` finalizes the iterator. It is invoked at the end of the iteration by the `for` family of macros.
 
 Note that the finilizer is _not_ automatically invoked if the iteration fails with an exception.
 If the iterator has hard state associated (eg a thread or some other expensive resource), then a
-will should be attached to the iterator.
+will should be attached to it.
 
 ### iter-end
 ```
