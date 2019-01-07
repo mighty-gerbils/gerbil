@@ -142,30 +142,25 @@ package: std/db
   (in-sql-query stmt))
 
 (def (in-sql-query stmt)
-  (if (statement-e stmt)
-    (make-iterator stmt sql-query-start sql-query-row sql-query-fetch sql-query-fini)
-    (error "Invalid operation; statement finalized" stmt)))
+  (def (next it)
+    (with ((iterator stmt) it)
+      (let (r {query-fetch stmt})
+        (if (iter-end? r)
+          iter-end
+          {query-row stmt}))))
 
-(def (sql-query-start iter)
-  {query-start (iterator-e iter)}
-  (sql-query-fetch iter))
-
-(def (sql-query-row iter)
-  (with ((iterator stmt) iter)
-    (if (iter-end? stmt) iter-end
-        {query-row stmt})))
-
-(def (sql-query-fetch iter)
-  (with ((iterator stmt) iter)
-    (let (next {query-fetch stmt})
-      (when (iter-end? next)
+  (def (fini it)
+    (with ((iterator stmt) it)
+      (when stmt
         {query-fini stmt}
-        (set! (iterator-e iter) next)))))
+        (set! (iterator-e it) #f))))
 
-(def (sql-query-fini iter)
-  (with ((iterator stmt) iter)
-    (unless (iter-end? stmt)
-      {query-fini stmt})))
+  (if (statement-e stmt)
+    (let (it (make-iterator stmt next fini))
+      (make-will it fini)
+      {query-start stmt}
+      it)
+    (error "Invalid operation; statement finalized" stmt)))
 
 ;;; metadata
 (def (sql-columns stmt)

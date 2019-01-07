@@ -50,7 +50,7 @@ package: std/db
       (let* ((params (sqlite3_bind_parameter_count stmt))
              (_ (unless (= params (length args))
                   (error "bind parameters do not match statement count" args params))))
-        (for ((arg args) (param (in-range 1 params)))
+        (for ((arg args) (param (in-range params 1)))
           (cond
            ((not arg)
             (sqlite3_bind_null stmt param))

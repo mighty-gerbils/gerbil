@@ -1,233 +1,331 @@
 # Iterators
 
+The `:std/iter` library provides iterator support; see the [Guide](../guide/intro.md#iteration)
+for an introduction.
+
 ::: tip usage
 (import :std/iter)
 :::
-
-## Overview
-
-Please write me!
 
 ## Macros
 
 ### for
 ::: tip usage
 ```
-(for ...)
+(for <bind> body ...)
+(for (<bind> ...) body ...)
+
+bind := (<pattern> <iterator-expr>)
+        (<pattern> <iterator-expr> when <filter-expr>)
+        (<pattern> <iterator-expr> unless <filter-expr>)
+
+pattern       := match pattern
+iterator-expr := expression producing an iterator
+filter-expr   := boolean filter expression, with pattern bindings visible
 ```
 :::
 
-Please document me!
+`for` iterates one or more iterators in parallel, matching the values
+produced to the binding pattern, and evaluates the body for each value.
+The iteration completes as soon as one of the iterators complete.
 
 ### for*
 ::: tip usage
 ```
-(for* ...)
+(for* (<bind> ...) body ...)
 ```
 :::
 
-Please document me!
+`for*` iterates one or more iterators sequentially.
 
 ### for/collect
 ::: tip usage
 ```
-(for/collect ...)
+(for/collect <bind> body ...)
+(for/collect (<bind> ...) body ...)
 ```
 :::
 
-Please document me!
+`for/collect` iterates in parallel and collects the values of `body`
+for each iteration into a list.
 
 ### for/fold
 ::: tip usage
 ```
-(for/fold ...)
+(for/fold <iv-bind> <bind> body ...)
+(for/fold <iv-bind> (<bind> ...) body ...)
+
+iv-bind := (<id> <expr>)
+```
+:::
+
+`for/fold` folds one or more iterators in parallel. The seed of the
+fold is bound to `<id>`, with initial value `<iv>`, is updated as the
+value of the `body` for each iteration. The result of the fold is the
+result of the final iteration.
+
+## Iterator Constructors
+
+### iter
+::: tip usage
+```
+(iter obj)
+=> <iterator>
+```
+:::
+
+This is the fundamental constructor. If the object is already an iterator then it is returned; otherwise
+the generic `:iter` is applied to the object.
+
+
+### :iter
+::: tip usage
+```
+(:iter obj)
+=> iterator
+
+(defmethod (:iter (obj type))
+  ...)
+=> iterator
+
+```
+:::
+
+Generic iterator constructor. The library defines the method for
+basic types: lists, vectors, strings, hash-tables, ports, and
+procedures which are iterated as coroutines; objects without any
+method binding dispatch to the `:iter` method.
+
+### in-range
+::: tip usage
+```
+(in-range count [start = 0] [step = 1])
+  count := fixnum
+  start, step := number
+=> iterator
+```
+:::
+
+Creates an iterator that yields `count` values starting from `start`
+and incrementing by `step`.
+
+### in-naturals
+::: tip usage
+```
+(in-naturals [start = 1] [step = 1])
+  start, step := number
+=> iterator
+```
+:::
+
+Creates an infinite iterator that iterates over the naturals starting
+from `start` and incrementing by `step`.
+
+### in-hash
+::: tip usage
+```
+(in-hash ht)
+  ht : hash-table
+=> iterator
+```
+:::
+
+Creates an iterator that yields the key/value pairs (as two values) for each association
+in the hash table. This is the same as `(:iter <hash-table>)`.
+
+### in-hash-keys
+::: tip usage
+```
+(in-hash-keys ht)
+  ht : hash-table
+=> iterator
+```
+:::
+
+Creates an iterator that yields the keys for each association in the hash table.
+
+### in-hash-values
+::: tip usage
+```
+(in-hash-values ht)
 ```
 :::
 
 Please document me!
+
+### in-input-port
+::: tip usage
+```
+(in-input-port port [read])
+  port := input-port
+=> iterator
+```
+:::
+
+Creates an iterator that yields the values read with `read` from the `port`.
+The unary version is the same as `(:iter <port>).
+
+### in-input-lines
+::: tip usage
+```
+(in-input-lines port)
+  port := input-port
+=> iterator
+```
+:::
+
+Same as `(in-input-port port read-line)`.
+
+### in-input-chars
+::: tip usage
+```
+(in-input-chars port)
+  port := input-port
+=> iterator
+```
+:::
+
+Same as `(in-input-port port read-char)`.
+
+### in-input-bytes
+::: tip usage
+```
+(in-input-bytes port)
+  port := input-port
+=> iterator
+```
+:::
+
+Same as `(in-input-port port read-u8)`.
+
+### in-coroutine
+::: tip usage
+```
+(in-coroutine proc arg ...)
+  proc := coroutine procedure
+=> iterator
+```
+:::
+
+Creates an iterator that applies `(proc arg ...)` in a coroutine.
+The unary version is the same as `(:iter <procedure>)`.
+
+### in-cothread
+::: tip usage
+```
+(in-cothread proc arg ...)
+  proc := coroutine procedure
+=> iterator
+```
+:::
+
+Creates an iterator that applies `(proc arg ...)` in a cothread.
 
 
 ## Iterator Protocol
 
 ### iterator
 ```
-(defstruct iterator (e start value next fini))
+(defstruct iterator (e next fini))
+
+e    := iterator value
+next := lambda (iterator)
+fini := lambda (iterator)
 ```
 
-Please document me!
+This is the type of iterator objects:
+- The element `e` is the value associated with the iterator
+- The procedure `next` advances the iterator and returns the current value; `iter-end` signals the end of the iteration.
+- The procedure `fini` finalizes the iterator. It is invoked at the end of the iteration by the `for` family of macros.
 
-### :iter
-::: tip usage
-```
-(:iter ...)
-```
-:::
-
-Please document me!
+Note that the finilizer is _not_ automatically invoked if the iteration fails with an exception.
+If the iterator has hard state associated (eg a thread or some other expensive resource), then a
+will should be attached to the iterator.
 
 ### iter-end
 ```
 (def iter-end ...)
 ```
 
-Please document me!
+Special object signalling the end of iteration.
 
 ### iter-end?
 ::: tip usage
 ```
-(iter-end? ...)
+(iter-end? obj)
+=> boolean
 ```
 :::
 
-Please document me!
-
-### iter-nil
-```
-(def iter-nil ...)
-```
-
-Please document me!
-
-### iter-nil?
-::: tip usage
-```
-(iter-nil? ...)
-```
-:::
-
-Please document me!
-
-### iter-start!
-::: tip usage
-```
-(iter-start! ...)
-```
-:::
-
-Please document me!
-
-### iter-value
-::: tip usage
-```
-(iter-value ...)
-```
-:::
-
-Please document me!
+Returns true if the object is the end of iteration object.
 
 ### iter-next!
 ::: tip usage
 ```
-(iter-next! ...)
+(iter-next! it)
+  it := iterator
+=> any
 ```
 :::
 
-Please document me!
+Advances the iterator and returns the current value.
+
+### iter-fini!
+::: tip usage
+```
+(iter-fini! it)
+  it := iterator
+```
+:::
+
+Finalizes the iterator.
 
 ### yield
 ::: tip usage
 ```
-(yield ...)
+(yield val ...)
 ```
 :::
 
-Please document me!
+Yields one or more values from a coroutine procedure associated with an iterator.
+This is the `yield` defined in `:std/coroutine`.
 
 
-## Iterator Constructors
+## Examples
 
-### in-range
-::: tip usage
+Here is the definition for an iterator that produces a constant value,
+using the iterator protocol:
 ```
-(in-range ...)
+(def (iter-const val)
+  (make-iterator val iterator-e))
 ```
-:::
 
-Please document me!
 
-### in-naturals
-::: tip usage
+Here is a definition of the list iterator using the iterator protocol:
 ```
-(in-naturals ...)
+(def (iter-list lst)
+  (def (next it)
+    (with ((iterator e) it)
+      (match e
+        ([hd . rest]
+         (set! (iterator-e it) rest)
+         hd)
+        (else iter-end))))
+  (make-iterator lst next))
 ```
-:::
 
-Please document me!
-
-### in-hash-keys
-::: tip usage
+Here is a definition of the list iterator using coroutines:
 ```
-(in-hash-keys ...)
+(def (iter-list lst)
+  (def (iterate lst)
+    (let lp ((rest lst))
+      (match rest
+        ([hd . rest]
+         (yield hd)
+         (lp rest))
+        (else (void)))))
+  (in-coroutine iterate lst))
 ```
-:::
 
-Please document me!
-
-### in-hash-values
-::: tip usage
-```
-(in-hash-values ...)
-```
-:::
-
-Please document me!
-
-### in-input-lines
-::: tip usage
-```
-(in-input-lines ...)
-```
-:::
-
-Please document me!
-
-### in-input-chars
-::: tip usage
-```
-(in-input-chars ...)
-```
-:::
-
-Please document me!
-
-### in-input-bytes
-::: tip usage
-```
-(in-input-bytes ...)
-```
-:::
-
-Please document me!
-
-
-### iter-filter
-::: tip usage
-```
-(iter-filter ...)
-```
-:::
-
-Please document me!
-
-### iter-map
-::: tip usage
-```
-(iter-map ...)
-```
-:::
-
-Please document me!
-
-### iter-filter-map
-::: tip usage
-```
-(iter-filter-map ...)
-```
-:::
-
-Please document me!
-
-
-## Example
-
-Please write me!
+Note that this is just an example for illustration purposes;
+you don't need to provide an iterator for lists as `iter` will construct one for you.
