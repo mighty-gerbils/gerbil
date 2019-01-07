@@ -1311,6 +1311,39 @@ Returns a list with all the associations in the rbtree, in descending order.
 
 Creates a new rbtree from an associative list.
 
+### in-rbtree
+::: tip usage
+```
+(in-rbtree rbt)
+  rbt := rbtree
+=> iterator
+```
+:::
+
+Creates an iterator over the rbtree.
+
+### in-rbtree-keys
+::: tip usage
+```
+(in-rbtree-keys rbt)
+  rbt := rbtree
+=> iterator
+```
+:::
+
+Creates an iterator over the rbtree keys.
+
+### in-rbtree-values
+::: tip usage
+```
+(in-rbtree-values rbt)
+  rbt := rbtree
+=> iterator
+```
+:::
+
+Creates an iterator over the rbtree values.
+
 ### string-cmp
 ::: tip usage
 ```
