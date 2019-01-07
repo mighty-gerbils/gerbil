@@ -58,9 +58,7 @@ package: std
   {:iter obj})
 
 (def (iter-null)
-  (def (next it)
-    iter-end)
-  (make-iterator (void) next))
+  (make-iterator iter-end iterator-e))
 
 (def (iter-list lst)
   (def (next it)
