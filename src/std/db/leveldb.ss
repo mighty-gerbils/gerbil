@@ -263,70 +263,86 @@ package: std/db
   final: #t)
 
 (def (in-leveldb db (start #f) (limit #f))
-   (make-iterator (make-leveldb-iter-state (leveldb-iterator db) iter-nil
-                                           (and start (value-bytes start))
-                                           (and limit (value-bytes limit)))
-                  leveldb-iter-start
-                  leveldb-iter-key-value
-                  leveldb-iter-next
-                  leveldb-iter-fini))
+  (iter-leveldb
+   (make-leveldb-iter-state (leveldb-iterator db) iter-nil
+                            (and start (value-bytes start))
+                            (and limit (value-bytes limit)))
+   leveldb-iter-key-value))
 
 (def (in-leveldb-keys db (start #f) (limit #f))
-   (make-iterator (make-leveldb-iter-state (leveldb-iterator db) iter-nil
-                                           (and start (value-bytes start))
-                                           (and limit (value-bytes limit)))
-                  leveldb-iter-start
-                  leveldb-iter-key
-                  leveldb-iter-next
-                  leveldb-iter-fini))
+  (iter-leveldb
+   (make-leveldb-iter-state (leveldb-iterator db) iter-nil
+                            (and start (value-bytes start))
+                            (and limit (value-bytes limit)))
+   leveldb-iter-key))
 
-(def (leveldb-iter-start iter)
-  (with ((iterator state) iter)
-    (with ((leveldb-iter-state itor nil start limit) state)
-      (if start
-        (leveldb-iterator-seek itor start)
-        (leveldb-iterator-seek-first itor))
-      (set! (leveldb-iter-state-value state)
-        (if (leveldb-iterator-valid? itor)
-          (if (and start (equal? start limit))
-            iter-end
-            iter-nil)
-          iter-end)))))
+(def (iter-leveldb state value-e)
+  (def (next it)
+    (with ((iterator state) it)
+      (let (r (value-e state))
+        (unless (iter-end? r)
+          (leveldb-iter-next state))
+        r)))
 
-(def (leveldb-iter-key-value iter)
-  (with ((iterator state) iter)
-    (with ((leveldb-iter-state itor value) state)
-      (if (iter-nil? value)
-        (let* ((key (leveldb-iterator-key itor))
-               (val (leveldb-iterator-value itor))
-               (value (values key val)))
-          (set! (leveldb-iter-state-value state) value)
-          value)
-        value))))
+  (def (fini it)
+    (with ((iterator state) it)
+      (when state
+        (leveldb-iter-fini state)
+        (set! (iterator-e it) #f))))
 
-(def (leveldb-iter-key iter)
-  (with ((iterator state) iter)
-    (with ((leveldb-iter-state itor value) state)
-      (if (iter-nil? value)
-        (let (value (leveldb-iterator-key itor))
-          (set! (leveldb-iter-state-value state) value)
-          value)
-        value))))
+  (let (it (make-iterator state next fini))
+    (make-will it fini)
+    (leveldb-iter-start state)
+    it))
 
-(def (leveldb-iter-next iter)
-  (with ((iterator state) iter)
-    (with ((leveldb-iter-state itor _ start limit) state)
-      (leveldb-iterator-next itor)
-      (set! (leveldb-iter-state-value state)
-        (if (leveldb-iterator-valid? itor)
-          (if (and limit (equal? (leveldb-iterator-key itor) limit))
-            iter-end
-            iter-nil)
-          iter-end)))))
+(def (leveldb-iter-start state)
+  (with ((leveldb-iter-state itor nil start limit) state)
+    (if start
+      (leveldb-iterator-seek itor start)
+      (leveldb-iterator-seek-first itor))
+    (set! (leveldb-iter-state-value state)
+      (if (leveldb-iterator-valid? itor)
+        (if (and start (equal? start limit))
+          iter-end
+          iter-nil)
+        iter-end))))
 
-(def (leveldb-iter-fini iter)
-  (with ((iterator (leveldb-iter-state itor)) iter)
+(def (leveldb-iter-key-value state)
+  (with ((leveldb-iter-state itor value) state)
+    (if (iter-nil? value)
+      (let* ((key (leveldb-iterator-key itor))
+             (val (leveldb-iterator-value itor))
+             (value (values key val)))
+        (set! (leveldb-iter-state-value state) value)
+        value)
+      value)))
+
+(def (leveldb-iter-key state)
+  (with ((leveldb-iter-state itor value) state)
+    (if (iter-nil? value)
+      (let (value (leveldb-iterator-key itor))
+        (set! (leveldb-iter-state-value state) value)
+        value)
+      value)))
+
+(def (leveldb-iter-next state)
+  (with ((leveldb-iter-state itor _ start limit) state)
+    (leveldb-iterator-next itor)
+    (set! (leveldb-iter-state-value state)
+      (if (leveldb-iterator-valid? itor)
+        (if (and limit (equal? (leveldb-iterator-key itor) limit))
+          iter-end
+          iter-nil)
+        iter-end))))
+
+(def (leveldb-iter-fini state)
+  (with ((leveldb-iter-state itor) state)
     (leveldb-iterator-close itor)))
+
+(def iter-nil '#&nil)
+
+(def (iter-nil? o)
+  (eq? iter-nil o))
 
 ;; Misc Operations
 (def (leveldb-compact-range ldb start-key end-key)
