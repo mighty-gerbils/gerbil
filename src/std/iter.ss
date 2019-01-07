@@ -105,7 +105,7 @@ package: std
       (when cothr
         (cothread-stop! cothr)
         (set! (&iterator-e it) #f))))
-  (let* ((cothr (cothread proc))
+  (let* ((cothr (cothread (lambda () (proc) iter-end)))
          (it (make-iterator cothr next fini)))
     (make-will it fini)
     it))
