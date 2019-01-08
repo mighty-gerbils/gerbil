@@ -6,6 +6,7 @@ package: std/os
 (require linux)
 (import :gerbil/gambit/threads
         (only-in :gerbil/gambit/ports close-port)
+        :std/foreign
         :std/os/error
         :std/os/fd
         :std/os/fcntl)
@@ -64,29 +65,15 @@ package: std/os
       (thread-local-set! evtptr-key evtptr)
       evtptr))))
 
-(extern
-  EPOLLIN EPOLLOUT EPOLLERR EPOLLHUP EPOLLET EPOLLONESHOT
-  EPOLL_CTL_ADD EPOLL_CTL_MOD EPOLL_CTL_DEL
-  _epoll_create _epoll_ctl _epoll_wait
-  make_epoll_evt
-  epoll_evt_fd epoll_evt_fd_set
-  epoll_evt_events epoll_evt_events_set)
+(begin-ffi (EPOLLIN EPOLLOUT EPOLLERR EPOLLHUP EPOLLET EPOLLONESHOT
+            EPOLL_CTL_ADD EPOLL_CTL_MOD EPOLL_CTL_DEL
+            _epoll_create _epoll_ctl _epoll_wait
+            make_epoll_evt
+            epoll_evt_fd epoll_evt_fd_set
+            epoll_evt_events epoll_evt_events_set)
 
-(begin-foreign
   (c-declare "#include <errno.h>")
   (c-declare "#include <sys/epoll.h>")
-  (c-declare "#include <stdlib.h>")
-
-  (define-macro (define-c-lambda id args ret #!optional (name #f))
-    (let ((name (or name (##symbol->string id))))
-      `(define ,id
-         (c-lambda ,args ,ret ,name))))
-
-  (define-macro (define-const symbol)
-    (let* ((str (##symbol->string symbol))
-           (ref (##string-append "___return (" str ");")))
-      `(define ,symbol
-         ((c-lambda () int ,ref)))))
 
   (define-macro (define-with-errno symbol ffi-symbol args)
     `(define (,symbol ,@args)
@@ -96,16 +83,11 @@ package: std/os
            (##fx- (__errno))
            r))))
 
+  ;; private
   (namespace ("std/os/epoll#"
-              EPOLL_CTL_ADD EPOLL_CTL_MOD EPOLL_CTL_DEL
-              EPOLLIN EPOLLOUT EPOLLERR EPOLLHUP EPOLLET EPOLLONESHOT
               epoll_event epoll_event*
               __errno __epoll_create __epoll_ctl __epoll_wait
-              _epoll_create _epoll_ctl _epoll_wait
-              make_epoll_evt
-              epoll_evt_fd epoll_evt_fd_set
-              epoll_evt_events epoll_evt_events_set
-              ))
+              _epoll_create _epoll_ctl _epoll_wait))
 
   (define-const EPOLL_CTL_ADD)
   (define-const EPOLL_CTL_MOD)
@@ -117,9 +99,7 @@ package: std/os
   (define-const EPOLLET)
   (define-const EPOLLONESHOT)
 
-  (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
-
-  (c-define-type epoll_event (struct "epoll_event"))
+    (c-define-type epoll_event (struct "epoll_event"))
   (c-define-type epoll_event*
     (pointer epoll_event (epoll_event*) "ffi_free"))
 
@@ -148,16 +128,4 @@ package: std/os
   (define-c-lambda epoll_evt_events (epoll_event* int) int
     "___return (___arg1[___arg2].events);")
   (define-c-lambda epoll_evt_events_set (epoll_event* int int) void
-    "___arg1[___arg2].events = ___arg3; ___return;")
-
-  (c-declare #<<END-C
-#ifndef ___HAVE_FFI_FREE
-#define ___HAVE_FFI_FREE
-___SCMOBJ ffi_free (void *ptr)
-{
- free (ptr);
- return ___FIX (___NO_ERR);
-}
-#endif
-END-C
-))
+    "___arg1[___arg2].events = ___arg3; ___return;"))

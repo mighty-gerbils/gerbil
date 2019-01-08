@@ -4,7 +4,8 @@
 package: std/os
 
 (require linux)
-(import :std/os/error
+(import :std/foreign
+        :std/os/error
         :std/os/fd
         :std/os/fdio
         :std/os/signal)
@@ -53,57 +54,28 @@ package: std/os
 (def (make-signalfd-siginfo)
   (make-u8vector (size-of-signalfd-siginfo)))
 
-(extern
-  SFD_NONBLOCK SFD_CLOEXEC
-  size-of-signalfd-siginfo
-  signalfd-siginfo-signo
-  signalfd-siginfo-errno
-  signalfd-siginfo-code
-  signalfd-siginfo-pid
-  signalfd-siginfo-uid
-  signalfd-siginfo-fd
-  signalfd-siginfo-tid
-  signalfd-siginfo-band
-  signalfd-siginfo-overrun
-  signalfd-siginfo-trapno
-  signalfd-siginfo-status
-  signalfd-siginfo-int
-  signalfd-siginfo-ptr
-  signalfd-siginfo-utime
-  signalfd-siginfo-stime
-  signalfd-siginfo-addr
-  _signalfd)
-(begin-foreign
+(begin-ffi (SFD_NONBLOCK SFD_CLOEXEC
+            size-of-signalfd-siginfo
+            signalfd-siginfo-signo
+            signalfd-siginfo-errno
+            signalfd-siginfo-code
+            signalfd-siginfo-pid
+            signalfd-siginfo-uid
+            signalfd-siginfo-fd
+            signalfd-siginfo-tid
+            signalfd-siginfo-band
+            signalfd-siginfo-overrun
+            signalfd-siginfo-trapno
+            signalfd-siginfo-status
+            signalfd-siginfo-int
+            signalfd-siginfo-ptr
+            signalfd-siginfo-utime
+            signalfd-siginfo-stime
+            signalfd-siginfo-addr
+            _signalfd)
   (c-declare "#include <signal.h>")
   (c-declare "#include <sys/signalfd.h>")
   (c-declare "#include <errno.h>")
-  (c-declare "#include <stdlib.h>")
-  (c-declare #<<END-C
-#ifndef ___HAVE_FFI_U8VECTOR
-#define ___HAVE_FFI_U8VECTOR
-#define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
-#define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
-#endif
-END-C
-)
-
-  (define-macro (define-c-lambda id args ret #!optional (name #f))
-    (let ((name (or name (##symbol->string id))))
-      `(define ,id
-         (c-lambda ,args ,ret ,name))))
-
-  (define-macro (define-const symbol)
-    (let* ((str (##symbol->string symbol))
-           (ref (##string-append "___return (" str ");")))
-      `(define ,symbol
-         ((c-lambda () int ,ref)))))
-
-  (define-macro (define-guard guard defn)
-    (if (eval `(cond-expand (,guard #t) (else #f)))
-      '(begin)
-      (begin
-        (eval `(define-cond-expand-feature ,guard))
-        defn)))
 
   (define-macro (define-with-errno symbol ffi-symbol args)
     `(define (,symbol ,@args)
@@ -113,26 +85,8 @@ END-C
            (##fx- (__errno))
            r))))
 
-  (namespace ("std/os/signalfd#"
-              SFD_NONBLOCK SFD_CLOEXEC
-              size-of-signalfd-siginfo
-              signalfd-siginfo-signo
-              signalfd-siginfo-errno
-              signalfd-siginfo-code
-              signalfd-siginfo-pid
-              signalfd-siginfo-uid
-              signalfd-siginfo-fd
-              signalfd-siginfo-tid
-              signalfd-siginfo-band
-              signalfd-siginfo-overrun
-              signalfd-siginfo-trapno
-              signalfd-siginfo-status
-              signalfd-siginfo-int
-              signalfd-siginfo-ptr
-              signalfd-siginfo-utime
-              signalfd-siginfo-stime
-              signalfd-siginfo-addr
-              _signalfd __signalfd __errno))
+  ;; private
+  (namespace ("std/os/signalfd#" __signalfd __errno))
 
   (define-c-lambda __errno () int
     "___return (errno);")
@@ -184,5 +138,4 @@ END-C
   (define-c-lambda signalfd-siginfo-stime (scheme-object) unsigned-int64
     "___return (((struct signalfd_siginfo*)U8_DATA (___arg1))->ssi_stime);")
   (define-c-lambda signalfd-siginfo-addr (scheme-object) unsigned-int64
-    "___return (((struct signalfd_siginfo*)U8_DATA (___arg1))->ssi_addr);")
-  )
+    "___return (((struct signalfd_siginfo*)U8_DATA (___arg1))->ssi_addr);"))

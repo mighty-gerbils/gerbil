@@ -3,27 +3,10 @@
 ;;; OS fcntl interface
 package: std/os
 
-(import :std/os/error
+(import :std/foreign
+        :std/os/error
         :std/os/fd)
 (export #t)
-
-;; FFI
-(extern
-  F_DUPFD F_GETFD F_SETFD F_GETFL F_SETFL
-  FD_CLOEXEC
-  O_CREAT O_EXCL O_NOCTTY O_TRUNC
-  O_APPEND O_NONBLOCK O_SYNC
-  O_ACCMODE
-  O_RDONLY O_RDWR O_WRONLY
-
-  O_CLOEXEC O_DIRECT O_DSYNC
-  O_NOATIME
-  O_NOFOLLOW O_TMPFILE
-
-  ;; F_SETLK F_SETLK F_SETLKW
-  ;; F_RDLCK F_UNLCK F_WRLCK
-  _fcntl0 _fcntl1
-  )
 
 (def* fcntl
   ((raw cmd)
@@ -66,53 +49,36 @@ package: std/os
   (fd-setfd raw FD_CLOEXEC))
 
 ;;; FFI impl
-(begin-foreign
+(begin-ffi (F_DUPFD F_GETFD F_SETFD F_GETFL F_SETFL
+            FD_CLOEXEC
+            O_CREAT O_EXCL O_NOCTTY O_TRUNC
+            O_APPEND O_NONBLOCK O_SYNC
+            O_ACCMODE
+            O_RDONLY O_RDWR O_WRONLY
+
+            O_CLOEXEC O_DIRECT O_DSYNC
+            O_NOATIME
+            O_NOFOLLOW O_TMPFILE
+
+            ;; F_SETLK F_SETLK F_SETLKW
+            ;; F_RDLCK F_UNLCK F_WRLCK
+            _fcntl0 _fcntl1
+            )
   (c-declare "#include <errno.h>")
   (c-declare "#include <unistd.h>")
   (c-declare "#include <sys/types.h>")
   (c-declare "#include <sys/stat.h>")
   (c-declare "#include <fcntl.h>")
 
-  (define-macro (define-c-lambda id args ret #!optional (name #f))
-    (let ((name (or name (##symbol->string id))))
-      `(define ,id
-         (c-lambda ,args ,ret ,name))))
+  (namespace ("std/os/fcntl#" __fcntl0 __fcntl1 __errno))
 
-  (define-macro (define-const symbol)
-    (let* ((str (##symbol->string symbol))
-           (ref (##string-append "___return (" str ");")))
-      `(define ,symbol
-         ((c-lambda () int ,ref)))))
-
-  (define-macro (define-const* symbol)
-    (let* ((str (##symbol->string symbol))
-           (code (##string-append
-                  "#ifdef " str "\n"
-                  "___return (___FIX (" str "));\n"
-                  "#else \n"
-                  "___return (___FAL);\n"
-                  "#endif")))
-      `(define ,symbol
-         ((c-lambda () scheme-object ,code)))))
-
-  (namespace ("std/os/fcntl#"
-              F_DUPFD F_GETFD F_SETFD F_GETFL F_SETFL
-              FD_CLOEXEC
-              ;; F_GETLK F_SETLK F_SETLKW
-              ;; F_RDLCK F_UNLCK F_WRLCK
-              O_CREAT O_EXCL O_NOCTTY O_TRUNC
-              O_APPEND O_NONBLOCK O_SYNC
-              O_ACCMODE
-              O_RDONLY O_RDWR O_WRONLY
-
-              ;; linux (otherwise #f)
-              O_CLOEXEC O_DIRECT O_DSYNC
-              O_EXCL O_NOATIME O_NOCTTY
-              O_NOFOLLOW O_TMPFILE
-
-              __fcntl0 __fcntl1 __errno
-              _fcntl0 _fcntl1
-              ))
+  (define-macro (define-with-errno symbol ffi-symbol args)
+    `(define (,symbol ,@args)
+       (declare (not interrupts-enabled))
+       (let ((r (,ffi-symbol ,@args)))
+         (if (##fx< r 0)
+           (##fx- (__errno))
+           r))))
 
   ;; POSIX commands
   (define-const F_DUPFD)
@@ -159,16 +125,5 @@ package: std/os
   (define-c-lambda __errno () int
     "___return (errno);")
 
-  (define (_fcntl0 fd cmd)
-    (declare (not interrupts-enabled))
-    (let ((r (__fcntl0 fd cmd)))
-      (if (##eq? r -1)
-        (##fx- (__errno))
-        r)))
-
-  (define (_fcntl1 fd cmd arg)
-    (declare (not interrupts-enabled))
-    (let ((r (__fcntl1 fd cmd arg)))
-      (if (##eq? r -1)
-        (##fx- (__errno))
-        r))))
+  (define-with-errno _fcntl0 __fcntl0 (fd cmd))
+  (define-with-errno _fcntl1 __fcntl1 (fd cmd arg)))

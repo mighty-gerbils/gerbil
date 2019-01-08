@@ -5,6 +5,7 @@ package: std/actor
 
 (import :gerbil/gambit/bits
         :gerbil/gambit/os
+        :std/foreign
         :std/error
         :std/net/bio
         (only-in :std/srfi/1 reverse!))
@@ -534,16 +535,8 @@ package: std/actor
         (lp (##fx+ i 1))))))
 
 ;; flonum marshalling
-(extern xdr-float->bytes! xdr-bytes->float)
-
-(begin-foreign
+(begin-ffi (xdr-float->bytes! xdr-bytes->float)
   (c-declare #<<END-C
-#ifndef ___HAVE_FFI_U8VECTOR
-#define ___HAVE_FFI_U8VECTOR
-#define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
-#define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
-#endif
-
 static double ffi_xdr_read_float_bytes (___SCMOBJ bytes)
 {
  return *(double*)(U8_DATA (bytes));
@@ -557,16 +550,10 @@ static int ffi_xdr_write_float_bytes (double val, ___SCMOBJ bytes)
 END-C
 )
 
-  (define-macro (define-c-lambda id args ret #!optional (name #f))
-    (let ((name (or name (##symbol->string id))))
-      `(define ,id
-         (c-lambda ,args ,ret ,name))))
-
   (define-c-lambda std/actor/xdr#xdr-float->bytes!
     (double scheme-object) int
     "ffi_xdr_write_float_bytes")
 
   (define-c-lambda std/actor/xdr#xdr-bytes->float
     (scheme-object) double
-    "ffi_xdr_read_float_bytes")
-)
+    "ffi_xdr_read_float_bytes"))

@@ -3,7 +3,8 @@
 ;;; OS File Descriptor I/O
 package: std/os
 
-(import :std/os/fd
+(import :std/foreign
+        :std/os/fd
         :std/os/fcntl
         :std/os/error)
 (export #t)
@@ -44,26 +45,13 @@ package: std/os
    (else
     (error "Unspecified file direction" flags))))
 
-(extern _read _write _open)
-
 ;;; FFI impl
-(begin-foreign
+(begin-ffi (_read _write _open)
   (c-declare "#include <unistd.h>")
   (c-declare "#include <errno.h>")
   (c-declare "#include <sys/types.h>")
   (c-declare "#include <sys/stat.h>")
   (c-declare "#include <fcntl.h>")
-
-  (define-macro (define-c-lambda id args ret #!optional (name #f))
-    (let ((name (or name (##symbol->string id))))
-      `(define ,id
-         (c-lambda ,args ,ret ,name))))
-
-  (define-macro (define-const symbol)
-    (let* ((str (##symbol->string symbol))
-           (ref (##string-append "___return (" str ");")))
-      `(define ,symbol
-         ((c-lambda () int ,ref)))))
 
   (define-macro (define-with-errno symbol ffi-symbol args)
     `(define (,symbol ,@args)
@@ -73,9 +61,8 @@ package: std/os
            (##fx- (__errno))
            r))))
 
-  (namespace ("std/os/fdio#"
-              __read _read __write _write _open __open
-              __errno))
+  ;; private
+  (namespace ("std/os/fdio#" __read __write __open __errno))
 
   (define-c-lambda __errno () int
     "___return (errno);")
@@ -95,12 +82,6 @@ package: std/os
   (define-with-errno _open __open (path flags mode))
 
   (c-declare #<<END-C
-#ifndef ___HAVE_FFI_U8VECTOR
-#define ___HAVE_FFI_U8VECTOR
-#define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
-#define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
-#endif
-
 int ffi_fdio_read (int fd, ___SCMOBJ bytes, int start, int end)
 {
  return read (fd, U8_DATA (bytes) + start, end - start);

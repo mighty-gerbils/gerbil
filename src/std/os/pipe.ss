@@ -3,15 +3,14 @@
 ;;; OS pipes
 package: std/os
 
-(import :std/os/error
+(import :std/foreign
+        :std/os/error
         :std/os/fd
         :std/os/fcntl)
 (export #t)
 
 ;; FFI
-(extern
-  _pipe
-  make_pipe_ptr pipe_ptr_ref)
+
 
 (def (pipe)
   (let* ((ptr (make_pipe_ptr))
@@ -24,15 +23,9 @@ package: std/os
     (fd-set-nonblock/closeonexec out)
     (values in out)))
 
-(begin-foreign
+(begin-ffi (_pipe make_pipe_ptr pipe_ptr_ref)
   (c-declare "#include <errno.h>")
   (c-declare "#include <unistd.h>")
-  (c-declare "#include <stdlib.h>")
-
-  (define-macro (define-c-lambda id args ret #!optional (name #f))
-    (let ((name (or name (##symbol->string id))))
-      `(define ,id
-         (c-lambda ,args ,ret ,name))))
 
   (define-macro (define-with-errno symbol ffi-symbol args)
     `(define (,symbol ,@args)
@@ -42,11 +35,7 @@ package: std/os
            (##fx- (__errno))
            r))))
 
-  (namespace ("std/os/pipe#"
-              _pipe __pipe __errno
-              pipe* make_pipe_ptr pipe_ptr_ref))
-
-  (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
+  (namespace ("std/os/pipe#" __pipe __errno pipe*))
 
   (c-define-type pipe*
     (pointer int (pipe*) "ffi_free"))
@@ -61,16 +50,4 @@ package: std/os
   (define-c-lambda make_pipe_ptr () pipe*
     "___return ((int*)malloc (2 * sizeof (int)));")
   (define-c-lambda pipe_ptr_ref (pipe* int) int
-    "___return (___arg1[___arg2]);")
-
-    (c-declare #<<END-C
-#ifndef ___HAVE_FFI_FREE
-#define ___HAVE_FFI_FREE
-___SCMOBJ ffi_free (void *ptr)
-{
- free (ptr);
- return ___FIX (___NO_ERR);
-}
-#endif
-END-C
-))
+    "___return (___arg1[___arg2]);"))

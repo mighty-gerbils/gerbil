@@ -229,6 +229,7 @@
                 while
                 let-hash
                 for for* for/collect
+                begin-ffi
                 )
               'scheme-indent-function 1)
   (gerbil-put '(syntax-case ast-case core-syntax-case core-ast-case
@@ -275,7 +276,7 @@
                        "error" "raise"
                        "let/cc" "let/esc"
                        "unwind-protect"
-                       "begin-foreign"
+                       "begin-foreign" "begin-ffi"
                        "cut"
                        "with" "with*"
                        "match" "match*"
