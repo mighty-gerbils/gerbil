@@ -407,7 +407,8 @@ package: std
       => (lambda (ix)
            (path-expand (substring mod 0 ix)
                         (if prefix (path-expand prefix libdir) libdir))))
-     (else (path-expand "std" libdir))))
+     (prefix (path-expand prefix libdir))
+     (else libdir)))
 
   (create-directory* libpath)
   (message "... compile foreign " mod)
