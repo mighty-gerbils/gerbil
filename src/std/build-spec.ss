@@ -2,6 +2,7 @@
 (def build-spec
   `((gxc: "build-config" dep: ("build-features.ss"))
     "interactive"
+    "foreign"
     "format"
     "pregexp"
     "sort"
