@@ -5,6 +5,7 @@ package: std/protobuf
 
 (import :gerbil/gambit/bits
         :gerbil/gambit/ports
+        :std/foreign
         :std/net/bio
         :std/text/utf8
         :std/error)
@@ -327,18 +328,8 @@ package: std/protobuf
     (flonum->bytes! x bytes)
     (bio-write-bytes bytes buf)))
 
-(extern
-  bytes->float float->bytes!
-  bytes->double double->bytes!)
-
-(begin-foreign
+(begin-ffi (bytes->float float->bytes! bytes->double double->bytes!)
   (c-declare #<<END-C
-#ifndef ___HAVE_FFI_U8VECTOR
-#define ___HAVE_FFI_U8VECTOR
-#define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
-#define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
-#endif
-
 static float ffi_read_float_bytes (___SCMOBJ bytes)
 {
  return *(float*)(U8_DATA (bytes));
@@ -361,17 +352,6 @@ static void ffi_write_double_bytes (double val, ___SCMOBJ bytes)
 END-C
 )
 
-(namespace ("std/protobuf/io#"
-             bytes->float
-             float->bytes!
-             bytes->double
-             double->bytes!))
-
-(define-macro (define-c-lambda id args ret #!optional (name #f))
-  (let ((name (or name (##symbol->string id))))
-    `(define ,id
-       (c-lambda ,args ,ret ,name))))
-
 (define-c-lambda bytes->float (scheme-object) float
   "ffi_read_float_bytes")
 (define-c-lambda float->bytes! (float scheme-object) void
@@ -379,5 +359,4 @@ END-C
 (define-c-lambda bytes->double (scheme-object) double
   "ffi_read_double_bytes")
 (define-c-lambda double->bytes! (double scheme-object) void
-  "ffi_write_double_bytes")
-)
+  "ffi_write_double_bytes"))

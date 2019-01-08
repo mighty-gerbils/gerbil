@@ -4,6 +4,7 @@
 package: std/net/httpd
 
 (import :gerbil/gambit/os
+        :std/foreign
         :std/net/socket
         :std/net/bio
         :std/text/utf8
@@ -246,14 +247,8 @@ package: std/net/httpd
         (for-each (cut http-response-chunk res <>) chunks)
         (http-response-end res)))))
 
-(extern http-date)
-(begin-foreign
-  (namespace ("std/net/httpd/handler#" http-date))
-  (define-macro (define-c-lambda id args ret #!optional (name #f))
-    (let ((name (or name (##symbol->string id))))
-      `(define ,id
-         (c-lambda ,args ,ret ,name))))
 
+(begin-ffi (http-date)
   (c-declare #<<END-C
 #include <time.h>
 #include <string.h>

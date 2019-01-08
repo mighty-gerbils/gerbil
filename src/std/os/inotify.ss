@@ -6,6 +6,7 @@ package: std/os
 (require linux)
 (import :gerbil/gambit/threads
         (only-in :gerbil/gambit/ports close-port)
+        :std/foreign
         :std/misc/timeout
         :std/os/error
         :std/os/fd
@@ -102,51 +103,46 @@ package: std/os
       (thread-local-set! buffer-key buf)
       buf))))
 
-(extern
-  _inotify_init _inotify_add_watch _inotify_rm_watch
-  inotify_event_wd
-  inotify_event_mask
-  inotify_event_cookie
-  inotify_event_name
-  inotify_event_size
-  IN_ACCESS
-  IN_ATTRIB
-  IN_CLOSE_WRITE
-  IN_CLOSE_NOWRITE
-  IN_CREATE
-  IN_DELETE
-  IN_DELETE_SELF
-  IN_MODIFY
-  IN_MOVE_SELF
-  IN_MOVED_FROM
-  IN_MOVED_TO
-  IN_OPEN
-  IN_ALL_EVENTS
-  IN_MOVE
-  IN_CLOSE
-  IN_DONT_FOLLOW
-  IN_EXCL_UNLINK
-  IN_MASK_ADD
-  IN_ONESHOT
-  IN_ONLYDIR
-  IN_IGNORED
-  IN_ISDIR
-  IN_Q_OVERFLOW
-  IN_UNMOUNT)
+
 
 ;;; FFI impl
-(begin-foreign
+(begin-ffi (_inotify_init
+            _inotify_add_watch _inotify_rm_watch
+            inotify_event_wd
+            inotify_event_mask
+            inotify_event_cookie
+            inotify_event_name
+            inotify_event_size
+            IN_ACCESS
+            IN_ATTRIB
+            IN_CLOSE_WRITE
+            IN_CLOSE_NOWRITE
+            IN_CREATE
+            IN_DELETE
+            IN_DELETE_SELF
+            IN_MODIFY
+            IN_MOVE_SELF
+            IN_MOVED_FROM
+            IN_MOVED_TO
+            IN_OPEN
+            IN_ALL_EVENTS
+            IN_MOVE
+            IN_CLOSE
+            IN_DONT_FOLLOW
+            IN_EXCL_UNLINK
+            IN_MASK_ADD
+            IN_ONESHOT
+            IN_ONLYDIR
+            IN_IGNORED
+            IN_ISDIR
+            IN_Q_OVERFLOW
+            IN_UNMOUNT)
   (c-declare "#include <sys/inotify.h>")
   (c-declare "#include <errno.h>")
 
-  (define-macro (define-c-lambda id args ret #!optional (name #f))
-    (let ((name (or name (##symbol->string id))))
-      `(define ,id
-         (c-lambda ,args ,ret ,name))))
-
   (define-macro (define-const-uint32 symbol)
-    (let* ((str (##symbol->string symbol))
-           (ref (##string-append "___return (" str ");")))
+    (let* ((str (symbol->string symbol))
+           (ref (string-append "___return (" str ");")))
       `(define ,symbol
          ((c-lambda () unsigned-int32 ,ref)))))
 
@@ -160,39 +156,9 @@ package: std/os
 
   (namespace ("std/os/inotify#"
               __errno
-              _inotify_init __inotify_init
-              _inotify_add_watch __inotify_add_watch
-              _inotify_rm_watch __inotify_rm_watch
-              inotify_event_wd
-              inotify_event_mask
-              inotify_event_cookie
-              inotify_event_name
-              inotify_event_size
-              IN_ACCESS
-              IN_ATTRIB
-              IN_CLOSE_WRITE
-              IN_CLOSE_NOWRITE
-              IN_CREATE
-              IN_DELETE
-              IN_DELETE_SELF
-              IN_MODIFY
-              IN_MOVE_SELF
-              IN_MOVED_FROM
-              IN_MOVED_TO
-              IN_OPEN
-              IN_ALL_EVENTS
-              IN_MOVE
-              IN_CLOSE
-              IN_DONT_FOLLOW
-              IN_EXCL_UNLINK
-              IN_MASK_ADD
-              IN_ONESHOT
-              IN_ONLYDIR
-              IN_IGNORED
-              IN_ISDIR
-              IN_Q_OVERFLOW
-              IN_UNMOUNT
-              ))
+               __inotify_init
+               __inotify_add_watch
+               __inotify_rm_watch))
 
   (define-const-uint32 IN_ACCESS)
   (define-const-uint32 IN_ATTRIB)
@@ -251,12 +217,6 @@ package: std/os
     "ffi_inotify_event_size")
 
   (c-declare #<<END-C
-#ifndef ___HAVE_FFI_U8VECTOR
-#define ___HAVE_FFI_U8VECTOR
-#define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
-#define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
-#endif
-
 int ffi_inotify_event_wd (___SCMOBJ buf, int off)
 {
  return ((struct inotify_event*)(U8_DATA (buf) + off))->wd;

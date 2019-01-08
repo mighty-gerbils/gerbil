@@ -3,7 +3,8 @@
 ;;; OS signal primitives
 package: std/os
 
-(import :std/os/error)
+(import :std/foreign
+        :std/os/error)
 
 (export
   SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGBUS SIGFPE
@@ -65,16 +66,6 @@ package: std/os
   (darwin
    (extern SIGPOLL SIGIOT)))
 
-(extern
-  _kill
-  _sigprocmask
-  make_sigset
-  sigemptyset
-  sigfillset
-  sigaddset
-  sigdelset
-  sigismember)
-
 (cond-expand
   (linux
    (begin-foreign
@@ -97,22 +88,17 @@ package: std/os
    (begin-foreign
      (define-cond-expand-feature darwin))))
 
-(begin-foreign
+(begin-ffi (_kill
+            _sigprocmask
+            make_sigset
+            sigemptyset
+            sigfillset
+            sigaddset
+            sigdelset
+            sigismember)
   (c-declare "#include <sys/types.h>")
   (c-declare "#include <signal.h>")
   (c-declare "#include <errno.h>")
-  (c-declare "#include <stdlib.h>")
-
-  (define-macro (define-c-lambda id args ret #!optional (name #f))
-    (let ((name (or name (##symbol->string id))))
-      `(define ,id
-         (c-lambda ,args ,ret ,name))))
-
-  (define-macro (define-const symbol)
-    (let* ((str (##symbol->string symbol))
-           (ref (##string-append "___return (" str ");")))
-      `(define ,symbol
-         ((c-lambda () int ,ref)))))
 
   (define-macro (define-with-errno symbol ffi-symbol args)
     `(define (,symbol ,@args)
@@ -121,13 +107,6 @@ package: std/os
          (if (##fx< r 0)
            (##fx- (__errno))
            r))))
-
-  (define-macro (define-guard guard defn)
-    (if (eval `(cond-expand (,guard #t) (else #f)))
-      '(begin)
-      (begin
-        (eval `(define-cond-expand-feature ,guard))
-        defn)))
 
   (namespace ("std/os/signal#"
               SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGBUS
@@ -139,15 +118,8 @@ package: std/os
 
               SIG_BLOCK SIG_UNBLOCK SIG_SETMASK
 
-              make_sigset
-              sigemptyset
-              sigfillset
-              sigaddset
-              sigdelset
-              sigismember
-
-              __kill _kill
-              __sigprocmask _sigprocmask
+              __kill
+              __sigprocmask
               __errno))
 
   (define-c-lambda __errno () int
@@ -211,8 +183,6 @@ package: std/os
     (darwin)
     (linux))
 
-  (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
-
   (define-c-lambda __kill (int int) int
     "kill")
   (define-with-errno _kill __kill (pid signo))
@@ -234,19 +204,7 @@ package: std/os
   (define-c-lambda sigfillset (sigset_t*) int)
   (define-c-lambda sigaddset (sigset_t* int) int)
   (define-c-lambda sigdelset (sigset_t* int) int)
-  (define-c-lambda sigismember (sigset_t* int) int)
-
-  (c-declare #<<END-C
-#ifndef ___HAVE_FFI_FREE
-#define ___HAVE_FFI_FREE
-___SCMOBJ ffi_free (void *ptr)
-{
- free (ptr);
- return ___FIX (___NO_ERR);
-}
-#endif
-END-C
-))
+  (define-c-lambda sigismember (sigset_t* int) int))
 
 (def SIGMAX
   (cond-expand
