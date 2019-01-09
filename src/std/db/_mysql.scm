@@ -285,14 +285,14 @@ END-C
 (define-c-lambda mysql_bind_get_time_year (MYSQL_BIND* int) unsigned-int
   "ffi_mysql_bind_get_time_year")
 
-(define-c-lambda __mysql_start_connection_thread (int int) int
+(define-c-lambda __start_mysql_connection_thread (int int) int
   "ffi_mysql_start_connection_thread")
 (define-c-lambda __read_int (int int*) int
   "ffi_mysql_read_int")
 (define-c-lambda __close (int) void
   "ffi_mysql_close")
 
-(define-c-lambda make_my_bool_ptr () my_bool*
+(define-c-lambda make_bool_ptr () my_bool*
   "ffi_mysql_make_my_bool_ptr")
 (define-c-lambda make_int_ptr () int*
   "ffi_mysql_make_int_ptr")

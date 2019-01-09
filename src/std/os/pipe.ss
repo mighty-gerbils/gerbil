@@ -7,21 +7,36 @@ package: std/os
         :std/os/error
         :std/os/fd
         :std/os/fcntl)
-(export #t)
+(export pipe)
 
-;; FFI
-
-
-(def (pipe)
-  (let* ((ptr (make_pipe_ptr))
+(def (pipe (direction 'inout) (closeonexec #t))
+  (unless (memq direction '(in out inout none))
+    (error "Invalid argument; direction must be one of in, out, inout, none"))
+  (let* ((ptr (check-ptr (make_pipe_ptr)))
          (_ (check-os-error (_pipe ptr) (pipe)))
          (ifd (pipe_ptr_ref ptr 0))
          (ofd (pipe_ptr_ref ptr 1))
-         (in (fdopen ifd 'in 'pipe))
-         (out (fdopen ofd 'out 'pipe)))
-    (fd-set-nonblock/closeonexec in)
-    (fd-set-nonblock/closeonexec out)
-    (values in out)))
+         (set-nonblock
+          (if closeonexec
+            fd-set-nonblock/closeonexec
+            fd-set-nonblock)))
+    (case direction
+      ((in)
+       (let (iraw (fdopen ifd 'in 'pipe))
+         (set-nonblock iraw)
+         (values iraw ofd)))
+      ((out)
+       (let (oraw (fdopen ofd 'out 'pipe))
+         (set-nonblock oraw)
+         (values ifd oraw)))
+      ((inout)
+       (let ((iraw (fdopen ifd 'in 'pipe))
+             (oraw (fdopen ofd 'out 'pipe)))
+         (set-nonblock iraw)
+         (set-nonblock oraw)
+         (values iraw oraw)))
+      ((none)
+       (values ifd ofd)))))
 
 (begin-ffi (_pipe make_pipe_ptr pipe_ptr_ref)
   (c-declare "#include <errno.h>")
@@ -35,7 +50,7 @@ package: std/os
            (##fx- (__errno))
            r))))
 
-  (namespace ("std/os/pipe#" __pipe __errno pipe*))
+  (namespace ("std/os/pipe#" __pipe __errno))
 
   (c-define-type pipe*
     (pointer int (pipe*) "ffi_free"))
