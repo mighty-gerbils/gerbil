@@ -9,5 +9,5 @@ package: scheme
   display
   write
   write-shared
-  (rename: write write-simple)
+  write-simple
   )
