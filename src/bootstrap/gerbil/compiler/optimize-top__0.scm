@@ -7950,7 +7950,7 @@
                 (lambda (_id21090_)
                   (if (uninterned-symbol? _id21090_)
                       (let ((_str21092_ (symbol->string _id21090_)))
-                        (if (string-prefix? _str21092_ '"opt-lambda")
+                        (if (string-prefix? '"opt-lambda" _str21092_)
                             '"%"
                             _id21090_))
                       _id21090_)))
@@ -7958,7 +7958,7 @@
                 (lambda (_id21085_ _name21086_)
                   (if (uninterned-symbol? _id21085_)
                       (let ((_str21088_ (symbol->string _id21085_)))
-                        (if (string-prefix? _str21088_ '"kw-lambda")
+                        (if (string-prefix? '"kw-lambda" _str21088_)
                             _name21086_
                             _id21085_))
                       _id21085_))))

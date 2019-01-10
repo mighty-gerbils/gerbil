@@ -404,7 +404,7 @@ namespace: gxc
   (def (opt-lambda-dispatch-name id)
     (if (uninterned-symbol? id)
       (let (str (symbol->string id))
-        (if (string-prefix? str "opt-lambda")
+        (if (string-prefix? "opt-lambda" str)
           "%"
           id))
       id))
@@ -412,7 +412,7 @@ namespace: gxc
   (def (kw-lambda-dispatch-name id name)
     (if (uninterned-symbol? id)
       (let (str (symbol->string id))
-        (if (string-prefix? str "kw-lambda")
+        (if (string-prefix? "kw-lambda" str)
           name
           id))
       id))

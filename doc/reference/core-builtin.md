@@ -1635,8 +1635,8 @@ Returns true if `str` is the empty string.
 ### string-prefix?
 ::: tip usage
 ```
-(string-prefix? str prefix)
-  str, prefix := string
+(string-prefix? prefix str)
+  prefix, str := string
 => boolean
 ```
 :::

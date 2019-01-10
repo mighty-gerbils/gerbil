@@ -428,7 +428,7 @@ namespace: gx
          (cond
           ((core-library-package-path-prefix dir)
            => (lambda (prefix)
-                (if (string-prefix? spath prefix)
+                (if (string-prefix? prefix spath)
                   (let ((ssi (substring ssi (string-length prefix) (string-length ssi)))
                         (src (substring src (string-length prefix) (string-length src))))
                     (resolve ssi src))

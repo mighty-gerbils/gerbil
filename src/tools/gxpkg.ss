@@ -193,9 +193,9 @@
   (def (git-clone-url pkg)
     (string-append "https://" pkg ".git"))
   (cond
-   ((or (string-prefix? pkg "github.com/")
-        (string-prefix? pkg "gitlab.com/")
-        (string-prefix? pkg "bitbucket.org/"))
+   ((or (string-prefix? "github.com/" pkg)
+        (string-prefix? "gitlab.com/" pkg)
+        (string-prefix? "bitbucket.org/" pkg))
     (pkg-install-git pkg (git-clone-url pkg)))
    (else
     (error "Unknown package provider" pkg))))
@@ -241,7 +241,9 @@
   (cond
    ((equal? pkg "all")
     (fold-pkgs (pkg-list) pkg-update))
-   ((string-prefix? pkg "github.com/")
+   ((or (string-prefix? "github.com/" pkg)
+        (string-prefix? "gitlab.com/" pkg)
+        (string-prefix? "bitbucket.org/" pkg))
     (pkg-update-git pkg))
    (else
     (error "Unknown package provider" pkg))))
@@ -325,9 +327,9 @@
       (when (file-exists? moddir)
         (for-each
           (lambda (file)
-            (when (or (string-prefix? file mod-dot)
-                      (string-prefix? file mod-us)
-                      (string-prefix? file mod-nested))
+            (when (or (string-prefix? mod-dot file)
+                      (string-prefix? mod-us file)
+                      (string-prefix? mod-nested file))
               (let (path (path-expand file moddir))
                 (delete-file path))))
           (directory-files moddir))))
@@ -340,7 +342,7 @@
         (for-each
           (lambda (file)
             (when (or (equal? file mod-self)
-                      (string-prefix? file mod-nested))
+                      (string-prefix? mod-nested file))
               (let (path (path-expand file static-libdir))
                 (delete-file path))))
           (directory-files static-libdir)))))
