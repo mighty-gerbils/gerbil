@@ -149,7 +149,7 @@ package: std/protobuf
            yid
            (let ((str (symbol->string (stx-e id)))
                  (pre (string-append (symbol->string (stx-e xid)) ".")))
-             (if (string-prefix? str pre)
+             (if (string-prefix? pre str)
                (stx-identifier id yid "." (substring str (string-length pre) (string-length str)))
                (lp rest)))))
         (else id))))

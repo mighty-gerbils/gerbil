@@ -56,7 +56,7 @@ package: std/net
                  (fail "Invalid server message; missing iteration count" msg))))
          (nonce (scram-context-nonce ctx)))
     (unless (and (fx> (string-length r) (string-length nonce))
-                 (string-prefix? r nonce))
+                 (string-prefix? nonce r))
       (fail "Invalid server nonce" r nonce))
     (set! (scram-context-sfm ctx) sfm)
     (set! (scram-context-r ctx) r)

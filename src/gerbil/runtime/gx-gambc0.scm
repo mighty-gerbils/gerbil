@@ -1384,7 +1384,7 @@
 (define (string-empty? str)
   (##fxzero? (string-length str)))
 
-(define (string-prefix? str prefix)
+(define (string-prefix? prefix str)
   (let ((str-len (string-length str))
         (prefix-len (string-length prefix)))
     (and (##fx<= prefix-len str-len)
