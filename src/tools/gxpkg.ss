@@ -241,7 +241,9 @@
   (cond
    ((equal? pkg "all")
     (fold-pkgs (pkg-list) pkg-update))
-   ((string-prefix? "github.com/" pkg)
+   ((or (string-prefix? "github.com/" pkg)
+        (string-prefix? "gitlab.com/" pkg)
+        (string-prefix? "bitbucket.org/" pkg))
     (pkg-update-git pkg))
    (else
     (error "Unknown package provider" pkg))))
