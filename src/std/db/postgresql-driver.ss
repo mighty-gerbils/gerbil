@@ -164,12 +164,12 @@ package: std/db
       (send! ['SASLInitialResponse "SCRAM-SHA-256" msg])
       (recv!
        (['AuthenticationRequest 'AuthenticationSASLContinue msg]
-        (scram-server-first-message! ctx msg)
+        (scram-client-first-server-message! ctx msg)
         (let (msg (scram-client-final-message ctx))
           (send! ['SASLResponse msg])
           (recv!
            (['AuthenticationRequest 'AuthenticationSASLFinal msg]
-            (scram-server-final-message! ctx msg)
+            (scram-client-final-server-message! ctx msg)
             (recv!
              (['AuthenticationRequest 'AuthenticationOk]
               (start-driver! sock))))))))))

@@ -13,9 +13,9 @@ package: std/net
         scram-sha-1-begin
         scram-sha-256-begin
         scram-client-first-message
-        scram-server-first-message!
+        scram-client-first-server-message!
         scram-client-final-message
-        scram-server-final-message!)
+        scram-client-final-server-message!)
 
 ;; SCRAM RFC 5802
 (defstruct scram-context (h hmac user pass nonce cfm sfm r s i p v)
@@ -44,7 +44,7 @@ package: std/net
     (set! (scram-context-nonce ctx) nonce)
     (first-message cfm)))
 
-(def (scram-server-first-message! ctx sfm)
+(def (scram-client-first-server-message! ctx sfm)
   (let* ((msg (scram-parse-message sfm))
          (r (or (assget "r" msg)
                 (fail "Invalid server message; missing nonce" msg)))
@@ -84,7 +84,7 @@ package: std/net
       (set! (scram-context-v ctx) v)
       (final-message csm p))))
 
-(def (scram-server-final-message! ctx smsg)
+(def (scram-client-final-server-message! ctx smsg)
   (let* (msg (scram-parse-message smsg))
     (cond
      ((assget "e" msg)

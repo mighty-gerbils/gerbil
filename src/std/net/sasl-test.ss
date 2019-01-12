@@ -12,9 +12,9 @@
     (def (check-scram-method scram-begin user pass r cfm sfm csm ssm)
       (def ctx (scram-begin user pass))
       (check (scram-client-first-message ctx r) => cfm)
-      (check (scram-server-first-message! ctx sfm) ? void?)
+      (check (scram-client-first-server-message! ctx sfm) ? void?)
       (check (scram-client-final-message ctx) => csm)
-      (check (scram-server-final-message! ctx ssm) ? void?))
+      (check (scram-client-final-server-message! ctx ssm) ? void?))
 
     (test-case "test SCRAM-SHA-1"
       ;; RFC 5802 test vector

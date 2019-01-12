@@ -717,10 +717,10 @@ Please document me!
 
 Please document me!
 
-### scram-server-first-message!
+### scram-client-first-server-message!
 ::: tip usage
 ```
-(scram-server-first-message! ...)
+(scram-client-first-server-message! ...)
 ```
 :::
 
@@ -735,10 +735,10 @@ Please document me!
 
 Please document me!
 
-### scram-server-final-message!
+### scram-client-final-server-message!
 ::: tip usage
 ```
-(scram-server-final-message! ...)
+(scram-client-final-server-message! ...)
 ```
 :::
 
