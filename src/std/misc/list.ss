@@ -16,7 +16,8 @@ package: std/misc
   for-each!
   push!
   flatten
-  flatten1)
+  flatten1
+  when-list-or-empty)
 
 ;; This function checks if the list is a proper association-list.
 ;; ie it has the form [[key1 . val1] [key2 . val2]]
@@ -189,3 +190,11 @@ package: std/misc
 	    (else (cons v acc))))
 	 []
 	 list-of-lists))
+
+;; Macro which evaluates the body only if the passed value is
+;; a non-empty list, otherwise an empty list is returned.
+(defrules when-list-or-empty ()
+  ((_ list body body* ...)
+   (if (null? list)
+     []
+     body body* ...)))

@@ -603,6 +603,15 @@ Removes one layer of a nested proper list.
 
 Removes all nested layers of a proper list.
 
+### when-list-or-empty
+::: tip usage
+```
+(when-list-or-empty list body ...)
+```
+
+Macro which evaluates the body only if the passed value is
+a non-empty list, otherwise an empty list is returned.
+
 
 
 ## LRU caches
