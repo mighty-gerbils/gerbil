@@ -9,9 +9,11 @@ package: std/misc
   string-trim-suffix
   string-split-eol
   string-trim-eol
+  string-subst
   +cr+ +lf+ +crlf+)
 
 (import
+  (only-in :gerbil/gambit/ports write-substring write-string)
   :std/srfi/13)
 
 
@@ -77,3 +79,96 @@ package: std/misc
     ((_ eol fallback) (let ((trimmed (string-trim-suffix eol string)))
                         (if (eq? trimmed string) fallback (values trimmed eol)))))
   (try +crlf+ (try +lf+ (try +cr+ (values string "")))))
+
+
+;; string-subst helper which handles the case that the argument 'old' is an empty string.
+;;   new    non-empty
+;;   count  non-zero, number of replacements (-1 means no limit)
+(def (subst-helper-empty-old str new count)
+  (declare (fixnum))
+  (def len-str (string-length str))
+  (if (= count 1)
+    (string-append new str)         ; add 'new' and leave procedure
+    (call-with-output-string
+     (lambda (port)
+       (write-string new port)      ; 'count' > 1, add 'new' before the first character
+       (let ((stop (1- len-str))
+             (count (if (or (negative? count) (> count len-str))
+		      (1+ len-str)  ; the maximal number of replacements is len + 1
+		      count)))
+	 (let loop ((i 0)
+		    (matches 1))    ; 1 because 'new' was already added once
+	   (cond
+	    ((= matches count)
+	     (write-string new port)
+	     (write-substring str i len-str port))
+	    ((= i stop)
+	     (unless (zero? i) (write-string new port))
+	     (write-char (string-ref str i) port)
+	     (write-string new port))
+	    (else
+	     (unless (zero? i) (write-string new port))
+	     (write-char (string-ref str i) port)
+	     (loop (1+ i) (1+ matches))))))))))
+
+
+;; string-subst helper which handles the case that the argument 'old' is a non-empty string.
+;;   str    non-empty
+;;   old    non-empty
+;;   new    can be empty
+;;   count  non-zero, number of replacements (-1 means no limit)
+(def (subst-helper-nonempty-old str old new count)
+  (declare (fixnum))
+  (def len-str (string-length str))
+  (def size-old (1- (string-length old)))
+  (def size-str (1- (string-length str)))
+  (call-with-output-string
+   (lambda (port)
+     (let loop ((i 0)       ; position in str
+		(matches 0)
+		(last 0)    ; position after last match in str
+		(j 0))      ; position in old
+       (cond
+	((= matches count)  ; stop, limit reached
+	 (write-substring str i len-str port))
+	((= i size-str)     ; stop, end of str
+	 (if (and (eq? (string-ref str i) (string-ref old j))
+                  (= j size-old))
+	   (write-string new port)
+	   (write-substring str last len-str port)))
+	(else
+	 (if (eq? (string-ref str i) (string-ref old j))
+           (if (= j size-old)                        ; match of old in str
+	     (begin
+	       (write-string new port)
+	       (loop (1+ i) (1+ matches) (1+ i) 0))
+	     (loop (1+ i) matches last (1+ j)))      ; char equal, not yet a match
+	   (begin
+	     (write-substring str last (1+ i) port)  ; no match, continue search
+	     (loop (1+ i) matches (1+ i) 0)))))))))
+
+
+;; In str replace the string old with string new.
+;; The procedure accepts only a fixnum or #f for count.
+;;   count > 0   limit replacements
+;;   count #f    no limit
+;;   count <= 0  return input
+;;
+;; Example:
+;;  (string-subst "abc" "b" "_") => "a_c"
+;;  (string-subst "abc" "" "_")  => "_a_b_c_"
+(def (string-subst str old new count: (count #f))
+  (declare (fixnum))
+  (unless (or (not count) (fixnum? count))
+    (error "Illegal argument; count must be a fixnum or #f, got:" count))
+  (def old-empty? (string-empty? old))
+  (def new-empty? (string-empty? new))
+  (def str-empty? (string-empty? str))
+  (if (or (and old-empty? new-empty?)
+	  (and count (<= count 0)))
+    str
+    (let (count (if (number? count) count -1)) ; convert #f to -1
+      (cond
+       (old-empty? (subst-helper-empty-old str new count))
+       (str-empty? str)
+       (else       (subst-helper-nonempty-old str old new count))))))
