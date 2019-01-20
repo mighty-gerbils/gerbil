@@ -12,7 +12,7 @@
         "misc/list-test"
         "misc/channel-test"
         "misc/lru-test"
-	    "misc/func-test"
+        "misc/func-test"
         "misc/queue-test"
         "misc/deque-test"
         "misc/pqueue-test"

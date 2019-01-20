@@ -105,4 +105,7 @@
       (check-equal? (flatten1 '(1 (2) (3) ((4)))) '(1 2 3 (4)))
       (check-equal? (flatten1 '((1) ((2)) 3)) '(1 (2) 3))
       (check-equal? (flatten1 '(1 2 ())) '(1 2))
-      (check-equal? (flatten1 '(1 2 (()))) '(1 2 ())))))
+      (check-equal? (flatten1 '(1 2 (()))) '(1 2 ())))
+    (test-case "test when-list-or-empty"
+      (check-equal? (when-list-or-empty [1] "a") "a")
+      (check-equal? (when-list-or-empty [] "a") []))))
