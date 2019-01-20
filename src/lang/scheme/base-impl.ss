@@ -303,27 +303,34 @@ package: scheme
 (def truncate-remainder remainder)
 
 ;; these accept optional range arguments
-(def* r7rs-string->list
-  ((str)
-   (string->list str))
-  ((str start)
-   (string->list* str start (string-length str)))
-  ((str start end)
-   (string->list* str start end)))
-
-(def* r7rs-vector->list
-  ((vec)
-   (vector->list vec))
-  ((vec start)
-   (vector->list* vec start (vector-length vec)))
-  ((vec start end)
-   (vector->list* vec start end)))
-
 (cond-expand
   (,(> (system-version) 409001)
+   (defalias r7rs-string-copy string-copy)
+   (defalias r7rs-string-fill! string-fill!)
+   (defalias r7rs-string->list string->list)
+   (defalias r7rs-vector-copy vector-copy)
+   (defalias r7rs-vector-fill! vector-fill!)
+   (defalias r7rs-vector-map vector-map)
+   (defalias r7rs-vector->list vector->list)
    (defalias r7rs-string-fill! string-fill!)
    (defalias r7rs-vector-fill! vector-fill!))
   (else
+   (def* r7rs-string->list
+     ((str)
+      (string->list str))
+     ((str start)
+      (string->list* str start (string-length str)))
+     ((str start end)
+      (string->list* str start end)))
+
+   (def* r7rs-vector->list
+     ((vec)
+      (vector->list vec))
+     ((vec start)
+      (vector->list* vec start (vector-length vec)))
+     ((vec start end)
+      (vector->list* vec start end)))
+
    (def* r7rs-string-fill!
      ((str val)
       (string-fill! str val))

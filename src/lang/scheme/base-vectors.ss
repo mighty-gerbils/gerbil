@@ -125,43 +125,21 @@ package: scheme
              (lp (##fx+ i 1)))))))))
 
 (cond-expand
-  (,(> (system-version) 409001)
-   (extern namespace: #f
-     vector-for-each
-     vector-map))
+  (,(> (system-version) 409001))
   (else
    (defvector-for-each vector-for-each vector-length ##vector-ref)
-   (defvector-map r7rs-vector-map make-vector vector-length ##vector-ref ##vector-set!)))
-
-(defvector-copy r7rs-vector-copy vector-copy subvector vector-length)
-(defvector-copy! vector-copy! subvector-move! vector-length)
-(defvector->list vector->list* vector-length ##vector-ref)
-
-(cond-expand
-  (,(> (system-version) 409001))
-  (else
-   (defvector-fill! vector-fill!* vector-length ##vector-set! true)))
-
-;; strings
-(cond-expand
-  (,(> (system-version) 409001)
-   (extern namespace: #f
-     string-for-each
-     string-map))
-  (else
+   (defvector-map r7rs-vector-map make-vector vector-length ##vector-ref ##vector-set!)
+   (defvector-copy r7rs-vector-copy vector-copy subvector vector-length)
+   (defvector-copy! vector-copy! subvector-move! vector-length)
+   (defvector->list vector->list* vector-length ##vector-ref)
+   (defvector-fill! vector-fill!* vector-length ##vector-set! true)
    (defvector-for-each string-for-each string-length ##string-ref)
-   (defvector-map string-map make-string string-length ##string-ref ##string-set!)))
-
-(defvector-copy r7rs-string-copy string-copy substring string-length)
-(defvector-copy! string-copy! substring-move! string-length)
-(defvector->vector vector->string vector-length ##vector-ref make-string char? ##string-set!)
-(defvector->vector string->vector string-length ##string-ref make-vector true ##vector-set!)
-(defvector->list string->list* string-length ##string-ref)
-(cond-expand
-  (,(> (system-version) 409001))
-  (else
-   (defvector-fill! string-fill!* string-length ##string-set! char?)))
-
-;; byte vectors
-(defvector-copy bytevector-copy u8vector-copy subu8vector u8vector-length)
-(defvector-copy! bytevector-copy! subu8vector-move! u8vector-length)
+   (defvector-map string-map make-string string-length ##string-ref ##string-set!)
+   (defvector-copy r7rs-string-copy string-copy substring string-length)
+   (defvector-copy! string-copy! substring-move! string-length)
+   (defvector->vector vector->string vector-length ##vector-ref make-string char? ##string-set!)
+   (defvector->vector string->vector string-length ##string-ref make-vector true ##vector-set!)
+   (defvector->list string->list* string-length ##string-ref)
+   (defvector-fill! string-fill!* string-length ##string-set! char?)
+   (defvector-copy bytevector-copy u8vector-copy subu8vector u8vector-length)
+   (defvector-copy! bytevector-copy! subu8vector-move! u8vector-length)))
