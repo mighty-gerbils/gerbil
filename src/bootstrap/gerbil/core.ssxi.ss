@@ -247,11 +247,10 @@ package: gerbil
  char-upcase char-downcase
  string?
  string-length
- string->list list->string
- string-copy
+ list->string
  vector?
  vector-length
- vector->list list->vector
+ list->vector
  procedure?
  force
  call-with-current-continuation
@@ -326,7 +325,6 @@ package: gerbil
  flnan? flinfinite? flfinite? flinteger?
  box? box unbox
  last last-pair
- vector-copy
  append-vectors
  dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
  plist->hash-table-eq plist->hash-table-eqv
@@ -360,7 +358,6 @@ package: gerbil
  u8vector?
  u8vector-length
  u8vector->list list->u8vector
- u8vector-copy
  append-u8vectors
  object->u8vector u8vector->object
  get-output-u8vector)
@@ -440,11 +437,19 @@ package: gerbil
  (pgetv 2 3)
  (pget 2 3)
  (subvector->list 1 2)
+ (vector->list 1 2 3)
  (vector-map (2))
  (vector-for-each (2))
+ (vector-copy 1 2 3)
+ (vector-copy! 3 4 5)
+ (string->list 1 2 3)
  (string-map (2))
  (string-for-each (2))
+ (string-copy 1 2 3)
+ (string-copy! 3 4 5)
  (u8vector-fill! 2 3 4)
+ (u8vector-copy 1 2 3)
+ (u8vector-copy! 3 4 5)
  (plist->hash-table 1 2)
  (hash-update! 3 4)
  (hash-copy (1))
@@ -1034,7 +1039,8 @@ package: gerbil
  (subs8vector-fill! 3 4)
  (append-s8vectors 1)
  (subs8vector 3)
- (s8vector-copy 1)
+ (s8vector-copy 1 2 3)
+ (s8vector-copy! 3 4 5)
  (subs8vector-move! 5)
  (s8vector-shrink! 2)
 
@@ -1049,7 +1055,8 @@ package: gerbil
  (subs16vector-fill! 3 4)
  (append-s16vectors 1)
  (subs16vector 3)
- (s16vector-copy 1)
+ (s16vector-copy 1 2 3)
+ (s16vector-copy! 3 4 5)
  (subs16vector-move! 5)
  (s16vector-shrink! 2)
 
@@ -1064,7 +1071,8 @@ package: gerbil
  (subu16vector-fill! 3 4)
  (append-u16vectors 1)
  (subu16vector 3)
- (u16vector-copy 1)
+ (u16vector-copy 1 2 3)
+ (u16vector-copy! 3 4 5)
  (subu16vector-move! 5)
  (u16vector-shrink! 2)
 
@@ -1079,7 +1087,8 @@ package: gerbil
  (subs32vector-fill! 3 4)
  (append-s32vectors 1)
  (subs32vector 3)
- (s32vector-copy 1)
+ (s32vector-copy 1 2 3)
+ (s32vector-copy! 3 4 5)
  (subs32vector-move! 5)
  (s32vector-shrink! 2)
 
@@ -1094,7 +1103,8 @@ package: gerbil
  (subu32vector-fill! 3 4)
  (append-u32vectors 1)
  (subu32vector 3)
- (u32vector-copy 1)
+ (u32vector-copy 1 2 3)
+ (u32vector-copy! 3 4 5)
  (subu32vector-move! 5)
  (u32vector-shrink! 2)
 
@@ -1109,7 +1119,8 @@ package: gerbil
  (subs64vector-fill! 3 4)
  (append-s64vectors 1)
  (subs64vector 3)
- (s64vector-copy 1)
+ (s64vector-copy 1 2 3)
+ (s64vector-copy! 3 4 5)
  (subs64vector-move! 5)
  (s64vector-shrink! 2)
 
@@ -1124,7 +1135,8 @@ package: gerbil
  (subu64vector-fill! 3 4)
  (append-u64vectors 1)
  (subu64vector 3)
- (u64vector-copy 1)
+ (u64vector-copy 1 2 3)
+ (u64vector-copy! 3 4 5)
  (subu64vector-move! 5)
  (u64vector-shrink! 2)
 
@@ -1139,7 +1151,8 @@ package: gerbil
  (subf32vector-fill! 3 4)
  (append-f32vectors 1)
  (subf32vector 3)
- (f32vector-copy 1)
+ (f32vector-copy 1 2 3)
+ (f32vector-copy! 3 4 5)
  (subf32vector-move! 5)
  (f32vector-shrink! 2)
 
@@ -1154,6 +1167,7 @@ package: gerbil
  (subf64vector-fill! 3 4)
  (append-f64vectors 1)
  (subf64vector 3)
- (f64vector-copy 1)
+ (f64vector-copy 1 2 3)
+ (f64vector-copy! 3 4 5)
  (subf64vector-move! 5)
  (f64vector-shrink! 2))
