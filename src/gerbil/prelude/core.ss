@@ -149,6 +149,7 @@ package: gerbil
     string-map string-for-each
     string-copy! substring-fill!
     string->bytes substring->bytes bytes->string
+    string->vector vector->string
     append-strings
     string-index string-rindex
     string-split string-join string-empty? string-prefix?
