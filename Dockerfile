@@ -2,7 +2,7 @@ from ubuntu:latest
 
 MAINTAINER gerbil@cons.io
 
-ENV GAMBIT_VERSION v4.9.1
+ENV GAMBIT_VERSION v4.9.2
 RUN apt update -y
 RUN apt install -y libsqlite3-dev build-essential git autoconf libsnappy1v5 libleveldb1v5 zlib1g-dev libssl-dev pkg-config  libyaml-dev libmysqlclient-dev liblmdb-dev libleveldb-dev rsync texinfo
 
