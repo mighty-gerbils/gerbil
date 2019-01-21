@@ -56,6 +56,19 @@ $ LDFLAGS=-L/usr/local/opt/openssl/lib \
   ./build.sh
 ```
 
+## Installation on Macos
+Both Gambit and Gerbil are available via homebrew.
+```
+$ brew install gerbil-scheme
+```
+
+To get around some brew specific paths, set the following in your environment
+Most likely you'll want to add them to your `~/.bashrc`, `~/.zsh
+```
+$ export PATH=/usr/local/opt/gambit-scheme/current/bin:$PATH
+$ export GERBIL_HOME=/usr/local/opt/gerbil-scheme/libexec
+```
+
 ## Skip the Install, Get Started on Docker
 
 The latest Gerbil images are available via Dockerhub
