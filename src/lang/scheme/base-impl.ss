@@ -311,9 +311,7 @@ package: scheme
    (defalias r7rs-vector-copy vector-copy)
    (defalias r7rs-vector-fill! vector-fill!)
    (defalias r7rs-vector-map vector-map)
-   (defalias r7rs-vector->list vector->list)
-   (defalias r7rs-string-fill! string-fill!)
-   (defalias r7rs-vector-fill! vector-fill!))
+   (defalias r7rs-vector->list vector->list))
   (else
    (def* r7rs-string->list
      ((str)
