@@ -247,11 +247,10 @@ package: gerbil
  char-upcase char-downcase
  string?
  string-length
- string->list list->string
- string-copy
+ list->string
  vector?
  vector-length
- vector->list list->vector
+ list->vector
  procedure?
  force
  call-with-current-continuation
@@ -268,13 +267,11 @@ package: gerbil
  eq? eqv? equal?
  cons set-car! set-cdr!
  list-tail list-ref
- memq memv member
- assq assv assoc
+ memq memv
+ assq assv
  quotient remainder modulo
  string-ref
- string-fill!
  vector-ref
- vector-fill!
  call-with-values
  call-with-input-file
  call-with-output-file
@@ -285,6 +282,7 @@ package: gerbil
  string-set!
  substring
  vector-set!
+ list-set!
  dynamic-wind)
 
 (declare-primitive*
@@ -292,8 +290,12 @@ package: gerbil
  (string->number 1 2)
  (make-string 1 2)
  (make-vector 1 2)
+ (string-fill! 2 3 4)
+ (vector-fill! 2 3 4)
  (map (2))
  (for-each (2))
+ (member 2 3)
+ (assoc 2 3)
  (max (1))
  (min (1))
  (eval 1 2)
@@ -323,7 +325,6 @@ package: gerbil
  flnan? flinfinite? flfinite? flinteger?
  box? box unbox
  last last-pair
- vector-copy
  append-vectors
  dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
  plist->hash-table-eq plist->hash-table-eqv
@@ -357,7 +358,6 @@ package: gerbil
  u8vector?
  u8vector-length
  u8vector->list list->u8vector
- u8vector-copy
  append-u8vectors
  object->u8vector u8vector->object
  get-output-u8vector)
@@ -400,7 +400,6 @@ package: gerbil
  call-with-input-string with-input-from-string
  call-with-output-string with-output-to-string
  u8vector-ref
- u8vector-fill!
  u8vector-shrink!
  call-with-input-u8vector with-input-from-u8vector
  call-with-output-u8vector with-output-to-u8vector)
@@ -438,7 +437,21 @@ package: gerbil
  (pgetv 2 3)
  (pget 2 3)
  (subvector->list 1 2)
+ (vector->list 1 2 3)
+ (vector->string 1 2 3)
  (vector-map (2))
+ (vector-for-each (2))
+ (vector-copy 1 2 3)
+ (vector-copy! 3 4 5)
+ (string->list 1 2 3)
+ (string->vector 1 2 3)
+ (string-map (2))
+ (string-for-each (2))
+ (string-copy 1 2 3)
+ (string-copy! 3 4 5)
+ (u8vector-fill! 2 3 4)
+ (u8vector-copy 1 2 3)
+ (u8vector-copy! 3 4 5)
  (plist->hash-table 1 2)
  (hash-update! 3 4)
  (hash-copy (1))
@@ -771,19 +784,13 @@ package: gerbil
  output-port-readtable-set!
 
  call-with-input-vector
- call-with-output-vector
  with-input-from-vector
- with-output-to-vector
 
  call-with-input-string
- call-with-output-string
  with-input-from-string
- with-output-to-string
-
  call-with-input-u8vector
- call-with-output-u8vector
  with-input-from-u8vector
- with-output-to-u8vector
+
 
  call-with-input-process call-with-output-process
  with-input-from-process with-output-to-process
@@ -847,6 +854,13 @@ package: gerbil
  (force-output 0 1 2)
  (read-u8 0 1)
  (write-u8 1 2)
+ (call-with-output-vector 1 2)
+ (with-output-to-vector 1 2)
+ (call-with-output-string 1 2)
+ (with-output-to-string 1 2)
+ (call-with-output-u8vector 1 2)
+ (with-output-to-u8vector 1 2)
+
  (input-port-byte-position 1 2 3)
  (output-port-byte-position 1 2 3)
  (tcp-service-register! 2 3)
@@ -1023,11 +1037,12 @@ package: gerbil
  (s8vector-set! 3)
  (s8vector->list 1)
  (list->s8vector 1)
- (s8vector-fill! 1 2)
+ (s8vector-fill! 1 2 3 4)
  (subs8vector-fill! 3 4)
  (append-s8vectors 1)
  (subs8vector 3)
- (s8vector-copy 1)
+ (s8vector-copy 1 2 3)
+ (s8vector-copy! 3 4 5)
  (subs8vector-move! 5)
  (s8vector-shrink! 2)
 
@@ -1038,11 +1053,12 @@ package: gerbil
  (s16vector-set! 3)
  (s16vector->list 1)
  (list->s16vector 1)
- (s16vector-fill! 1 2)
+ (s16vector-fill! 1 2 3 4)
  (subs16vector-fill! 3 4)
  (append-s16vectors 1)
  (subs16vector 3)
- (s16vector-copy 1)
+ (s16vector-copy 1 2 3)
+ (s16vector-copy! 3 4 5)
  (subs16vector-move! 5)
  (s16vector-shrink! 2)
 
@@ -1053,11 +1069,12 @@ package: gerbil
  (u16vector-set! 3)
  (u16vector->list 1)
  (list->u16vector 1)
- (u16vector-fill! 1 2)
+ (u16vector-fill! 1 2 3 4)
  (subu16vector-fill! 3 4)
  (append-u16vectors 1)
  (subu16vector 3)
- (u16vector-copy 1)
+ (u16vector-copy 1 2 3)
+ (u16vector-copy! 3 4 5)
  (subu16vector-move! 5)
  (u16vector-shrink! 2)
 
@@ -1068,11 +1085,12 @@ package: gerbil
  (s32vector-set! 3)
  (s32vector->list 1)
  (list->s32vector 1)
- (s32vector-fill! 1 2)
+ (s32vector-fill! 1 2 3 4)
  (subs32vector-fill! 3 4)
  (append-s32vectors 1)
  (subs32vector 3)
- (s32vector-copy 1)
+ (s32vector-copy 1 2 3)
+ (s32vector-copy! 3 4 5)
  (subs32vector-move! 5)
  (s32vector-shrink! 2)
 
@@ -1083,11 +1101,12 @@ package: gerbil
  (u32vector-set! 3)
  (u32vector->list 1)
  (list->u32vector 1)
- (u32vector-fill! 1 2)
+ (u32vector-fill! 1 2 3 4)
  (subu32vector-fill! 3 4)
  (append-u32vectors 1)
  (subu32vector 3)
- (u32vector-copy 1)
+ (u32vector-copy 1 2 3)
+ (u32vector-copy! 3 4 5)
  (subu32vector-move! 5)
  (u32vector-shrink! 2)
 
@@ -1098,11 +1117,12 @@ package: gerbil
  (s64vector-set! 3)
  (s64vector->list 1)
  (list->s64vector 1)
- (s64vector-fill! 1 2)
+ (s64vector-fill! 1 2 3 4)
  (subs64vector-fill! 3 4)
  (append-s64vectors 1)
  (subs64vector 3)
- (s64vector-copy 1)
+ (s64vector-copy 1 2 3)
+ (s64vector-copy! 3 4 5)
  (subs64vector-move! 5)
  (s64vector-shrink! 2)
 
@@ -1113,11 +1133,12 @@ package: gerbil
  (u64vector-set! 3)
  (u64vector->list 1)
  (list->u64vector 1)
- (u64vector-fill! 1 2)
+ (u64vector-fill! 1 2 3 4)
  (subu64vector-fill! 3 4)
  (append-u64vectors 1)
  (subu64vector 3)
- (u64vector-copy 1)
+ (u64vector-copy 1 2 3)
+ (u64vector-copy! 3 4 5)
  (subu64vector-move! 5)
  (u64vector-shrink! 2)
 
@@ -1128,11 +1149,12 @@ package: gerbil
  (f32vector-set! 3)
  (f32vector->list 1)
  (list->f32vector 1)
- (f32vector-fill! 1 2)
+ (f32vector-fill! 1 2 3 4)
  (subf32vector-fill! 3 4)
  (append-f32vectors 1)
  (subf32vector 3)
- (f32vector-copy 1)
+ (f32vector-copy 1 2 3)
+ (f32vector-copy! 3 4 5)
  (subf32vector-move! 5)
  (f32vector-shrink! 2)
 
@@ -1143,10 +1165,11 @@ package: gerbil
  (f64vector-set! 3)
  (f64vector->list 1)
  (list->f64vector 1)
- (f64vector-fill! 1 2)
+ (f64vector-fill! 1 2 3 4)
  (subf64vector-fill! 3 4)
  (append-f64vectors 1)
  (subf64vector 3)
- (f64vector-copy 1)
+ (f64vector-copy 1 2 3)
+ (f64vector-copy! 3 4 5)
  (subf64vector-move! 5)
  (f64vector-shrink! 2))

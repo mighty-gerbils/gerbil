@@ -196,11 +196,10 @@ $ gxi
   a per-port basis with a custom readtable, but be advised that the
   repl will loop when given a cyclic structure as syntax input.
 
-- `equal?` is the default `equal?` from Gerbil/Gambit, which doesn't
-  do sharing check and may not terminate in cyclic structures.  There
-  is a separate implementation `equal-shared?` exported by `(std misc
-  shared)` that terminates in cyclic structures albeit at the cost of
-  performance degradation.
+- `equal?` is the default `equal?` from Gerbil/Gambit. Prior to Gambit-v4.9.2
+  this doesn't   do sharing check and may not terminate in cyclic structures.
+  There is a separate implementation `equal-shared?` exported by `(std misc
+  shared)` that terminates in cyclic structures.
 
 - ephemerons, in the `scheme/ephemeron` library, have a trivial implementation
   without garbage collector support.

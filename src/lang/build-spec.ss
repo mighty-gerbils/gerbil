@@ -1,6 +1,6 @@
 ;; -*- Gerbil -*-
 (def build-spec
-  '("scheme/stubs"
+  `("scheme/stubs"
     "scheme/base-etc"
     "scheme/base-vectors"
     (gxc: "scheme/base-ports" "-e" "(include \"~~lib/_gambit#.scm\")")
@@ -25,7 +25,9 @@
     "scheme/read"
     "scheme/repl-impl"
     "scheme/repl"
-    "scheme/time-impl"
+    ,@(cond-expand
+        (,(> (system-version) 409001) '())
+        (else '("scheme/time-impl")))
     "scheme/time"
     "scheme/write-impl"
     "scheme/write"

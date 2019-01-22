@@ -126,7 +126,8 @@ package: gerbil
     remove remq remv remf
     pgetq pgetv pget
     subvector subvector->list subvector-fill!
-    vector-map vector-copy vector-append
+    vector-copy!
+    vector-map vector-for-each vector-copy vector-append
     true true? false void void? eof-object identity
     dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
     values-count values->list
@@ -145,13 +146,15 @@ package: gerbil
     uninterned-symbol? interned-symbol?
     gensym make-symbol make-uninterned-symbol symbol-hash
     keyword? uninterned-keyword? interned-keyword? keyword-hash
+    string-map string-for-each
+    string-copy! substring-fill!
     string->bytes substring->bytes bytes->string
-    string->keyword keyword->string make-uninterned-keyword
-    symbol->keyword keyword->symbol
-    substring-fill!
+    string->vector vector->string
     append-strings
     string-index string-rindex
     string-split string-join string-empty? string-prefix?
+    string->keyword keyword->string make-uninterned-keyword
+    symbol->keyword keyword->symbol
     ;; MOP
     type-descriptor?
     struct-type?
@@ -237,7 +240,7 @@ package: gerbil
     make-u8vector u8vector-length u8vector-ref u8vector-set!
     u8vector->list list->u8vector
     u8vector-fill! u8vector-shrink!
-    u8vector-copy u8vector-append
+    u8vector-copy u8vector-copy! u8vector-append
     subu8vector subu8vector-fill! subu8vector-move!
     append-u8vectors
     object->u8vector u8vector->object

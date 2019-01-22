@@ -8,11 +8,22 @@ package: scheme
         :std/sugar)
 (export #t)
 
-(def (write-shared obj (port (current-output-port)))
-  (let (rt (output-port-readtable port))
-    (try
-     (set! (output-port-readtable port)
-       (readtable-sharing-allowed?-set rt #t))
-     (write obj port)
-     (finally
-      (set! (output-port-readtable port) rt)))))
+(cond-expand
+  (,(> (system-version) 409001)
+   (extern namespace: #f
+     write-simple write-shared))
+  (else
+   (defrules do-write ()
+     ((_ obj port sharing?)
+      (let (rt (output-port-readtable port))
+        (try
+         (set! (output-port-readtable port)
+           (readtable-sharing-allowed?-set rt sharing?))
+         (write obj port)
+         (finally
+          (set! (output-port-readtable port) rt))))))
+
+   (def (write-simple obj (port (current-output-port)))
+     (do-write obj port #f))
+   (def (write-shared obj (port (current-output-port)))
+     (do-write obj port #t))))

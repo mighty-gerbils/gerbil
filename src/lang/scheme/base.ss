@@ -27,8 +27,8 @@ package: scheme
   (rename: u8vector bytevector)
   (rename: u8vector? bytevector?)
   (rename: u8vector-append bytevector-append)
-  bytevector-copy
-  bytevector-copy!
+  (rename: u8vector-copy bytevector-copy)
+  (rename: u8vector-copy! bytevector-copy!)
   (rename: u8vector-length bytevector-length)
   (rename: u8vector-ref bytevector-u8-ref)
   (rename: u8vector-set! bytevector-u8-set!)

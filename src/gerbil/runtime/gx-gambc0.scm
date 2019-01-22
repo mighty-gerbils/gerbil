@@ -10,6 +10,14 @@
   (extended-bindings))
 
 ;;;
+;;; Conditional evaluation
+;;;
+(define-macro (eval-when expr form)
+  (if (eval expr)
+    form
+    '(begin)))
+
+;;;
 ;;; Host Runtime
 ;;;
 
@@ -1454,27 +1462,28 @@
                ostr))))
         (else "")))))                   ; empty
 
-(define (vector-map f vec . rest)
-  (define (fold1 vec)
-    (let* ((len (vector-length vec))
-           (r (make-vector len)))
-      (do ((k 0 (##fx+ k 1)))
-          ((##fx= k len) r)
-        (##vector-set! r k (f (##vector-ref vec k))))))
+(eval-when (< (system-version) 409002)
+  (define (vector-map f vec . rest)
+    (define (fold1 vec)
+      (let* ((len (vector-length vec))
+             (r (make-vector len)))
+        (do ((k 0 (##fx+ k 1)))
+            ((##fx= k len) r)
+          (##vector-set! r k (f (##vector-ref vec k))))))
 
-  (define (fold* vecs)
-    (let* ((len (apply min (map vector-length vecs)))
-           (r (make-vector len)))
-      (do ((k 0 (##fx+ k 1)))
-          ((##fx= k len) r)
-        (##vector-set! r k
-                       (apply f
-                         (map (lambda (vec) (##vector-ref vec k))
-                              vecs))))))
+    (define (fold* vecs)
+      (let* ((len (apply min (map vector-length vecs)))
+             (r (make-vector len)))
+        (do ((k 0 (##fx+ k 1)))
+            ((##fx= k len) r)
+          (##vector-set! r k
+                         (apply f
+                           (map (lambda (vec) (##vector-ref vec k))
+                                vecs))))))
 
-  (if (null? rest)
-    (fold1 vec)
-    (fold* (cons vec rest))))
+    (if (null? rest)
+      (fold1 vec)
+      (fold* (cons vec rest)))))
 
 (define (displayln . args)
   (let lp ((rest args))
