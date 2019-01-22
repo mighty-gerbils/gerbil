@@ -47,7 +47,7 @@ $ cd $GERBIL_HOME/src
 $ ./build.sh
 ```
 
-If you are building in MacOSX and want to use the homebrew OpenSSL,
+If you are building in MacOS and want to use the homebrew OpenSSL,
 then you need to specify appropriate `CPPFLAGS` and `LDFLAGS`.
 For instance:
 ```bash
@@ -56,7 +56,7 @@ $ LDFLAGS=-L/usr/local/opt/openssl/lib \
   ./build.sh
 ```
 
-## Installation on Macos
+## Installation on MacOS
 Both Gambit and Gerbil are available via homebrew.
 ```
 $ brew install gerbil-scheme
