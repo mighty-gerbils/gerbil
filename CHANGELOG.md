@@ -1,3 +1,78 @@
+### 1-25-2019: Gerbil-v0.15
+
+R7RS Red edition and many new libraries, improvements and bug fixes.
+
+Details:
+- r7rs
+  - #165 - R7RS Red Edition libraries
+  - #201 - Use r7rs-compliant builtins in Gambit v4.9.2
+- stdlib
+  - [new] std/ref
+    - #164, #209 - new generic accessor and mutators, ref and ~
+  - [new] std/misc/func
+    - #157 - new utility procedures always and repeat
+  - [new] std/misc/deque
+    - #183 - double ended queues
+  - [new] std/srfi/{41,121,127}-iter
+    - #189 - iterators for common SRFI sequences
+  - [new] std/amb
+    - #192 - the AMB operator
+  - [new] std/misc/rbtree
+    - #197, #203, #218 - Red Black trees
+  - std/coroutine
+    - #204 [outdated]
+    - #205 lightweight coroutines using continuations
+    - #207 cothreads as heavy weight thread-based coroutines
+  - [new] std/interactive
+    - #208 - modularize interactive utilities used by interactive/init
+  - [new] std/misc/barrier
+    - #214 - thread barriers
+  - std/iter
+    - #218 - simplify iterator protocol
+- gxpkg
+  - #158 - add support for gitlab and bitbucket
+  - #187, #199 - search command to search the gerbil package directory
+- bug fixes and improvements
+  - #156 - doc: fix example shebang
+  - #157 - std/misc/list: new utility procedures flatten, flatten1
+  - #162 - std/parser: fix typos in parser
+  - #166 - std/srfi/1: fix typo in srfi/1 delete-duplicates!
+  - #167 - std/srfi: tidy up usages of receive in std/srfi
+  - #168 - runtime: better implementation for hash-clear!
+  - #169 - doc: updates for gxpkg documentation
+  - #170 - gxi: fix expansion of inline expressions in letrec*
+  - #172 - std/misc/repr: keywords are recognized to have simple repr
+  - #173 - gerbil.el: make gxc path a variable
+  - #174 - std/srfi/135: break into submodules, dockercloud build was OOMing
+  - #176, #181, #182 - Dockerfile improvements
+  - #177, #178, #193 - make alet* expansion fully srfi compliant
+  - #184 - std/misc: documentation and tests for queues and friends
+  - #186 - the Gerbil package directory
+  - #188 - gerbi.el: add mode hook
+  - #190 - std/getopt: fix a small nit in command help display
+  - #191 - doc: typo fix
+  - #194, #222 - doc: links to srfi reference documentation
+  - #195 - core: unify direct-struct-instance? and direct-class-instance to direct-instance?
+  - #196 - doc: misc updates
+  - #198 - the Gerbil Treadmill!
+  - #200 - core: Support compile-time eval in cond-expand clauses
+  - #206 - expander: add parameter to control rebinding
+  - #210 - prelude: fix expansion of definline references
+  - #212 - std/net/repl: explicitly set the interrupt handler
+  - #213 - std/misc/uuid: equal? for uuids
+  - #215 - std/misc/lru: normalized lru cache interface
+  - #217 - doc: some fixes for iterator documentation
+  - #218 - std/misc/{rbtree,lru}: iterators
+  - #219 - std/make: fix gsc compilation prefix
+  - #220 - std/foreign: begin-ffi macro
+  - #221 - std/os/pipe: enhance interface, counter bitrot in mysql driver
+  - #223 - runtime: normalize string-prefix? argument order to match srfi/13
+  - #224 - std/net/sasl: better naming for client api procedures
+  - #225 - std/misc/list: a new helper macro
+  - #227 - HomeBrew!
+
+Notice the new detailed Changelog format referencing all PRs in the release.
+
 ### 11-19-2018: Gerbil-v0.14
 
 Protobufs and misc improvements and fixes; tag for Gambit v4.9.1.
