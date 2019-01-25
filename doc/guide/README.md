@@ -11,8 +11,8 @@ $ git clone https://github.com/vyzo/gerbil.git
 
 ## Dependencies
 
-The latest Gerbil release (v0.14) requires Gambit v4.9.0;
-the latest Gambit is recommended nonetheless (v4.9.1).
+The latest Gerbil release (v0.15) requires Gambit v4.9.0;
+the latest Gambit is recommended nonetheless (v4.9.2).
 
 The core system has no dependencies outside Gambit, but the standard
 library has several mostly optional dependencies. The only hard dependency
@@ -47,7 +47,7 @@ $ cd $GERBIL_HOME/src
 $ ./build.sh
 ```
 
-If you are building in MacOSX and want to use the homebrew OpenSSL,
+If you are building in MacOS and want to use the homebrew OpenSSL,
 then you need to specify appropriate `CPPFLAGS` and `LDFLAGS`.
 For instance:
 ```bash
@@ -56,7 +56,7 @@ $ LDFLAGS=-L/usr/local/opt/openssl/lib \
   ./build.sh
 ```
 
-## Installation on Macos
+## Installation on MacOS
 Both Gambit and Gerbil are available via homebrew.
 ```
 $ brew install gerbil-scheme
