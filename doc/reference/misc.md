@@ -1777,6 +1777,25 @@ Please document me!
 
 Please document me!
 
+### string-subst
+::: tip usage
+```
+(string-subst str old new [count: count = #f])
+  str   := string
+  old   := string
+  new   := string
+  count := fixnum
+=> string
+```
+:::
+
+In str replace the string old with string new.
+The procedure accepts only a fixnum or #f for count.
+
+* `count > 0` limit replacements
+* `count #f` no limit
+* `count <= 0` return input
+
 
 
 ## Synchronized Data Structures.
