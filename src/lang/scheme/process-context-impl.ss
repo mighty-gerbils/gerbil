@@ -60,5 +60,10 @@ END-C
 (def (r7rs-exit (normally? #t))
   (exit (if normally? 0 1)))
 
-(def (emergency-exit (normally? #t))
-  (_exit (if normally? 0 1)))
+(cond-expand
+  (,(> (system-version) 409002)
+   (extern namespace: #f
+     emergency-exit))
+  (else
+   (def (emergency-exit (normally? #t))
+     (_exit (if normally? 0 1)))))

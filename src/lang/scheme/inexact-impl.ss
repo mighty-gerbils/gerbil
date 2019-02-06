@@ -5,7 +5,11 @@ package: scheme
 
 (export #t)
 
-(def* r7rs-log
-  ((x) (log x))
-  ((x y)
-   (/ (log x) (log y))))
+(cond-expand
+  (,(> (system-version) 409002)
+   (defalias r7rs-log log))
+  (else
+   (def* r7rs-log
+     ((x) (log x))
+     ((x y)
+      (/ (log x) (log y))))))
