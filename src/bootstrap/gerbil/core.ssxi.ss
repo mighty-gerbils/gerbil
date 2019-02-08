@@ -180,11 +180,6 @@ package: gerbil
  (call-with-escape (@lambda 1 call-with-current-continuation))
  (with-catch (@lambda 2 with-exception-catcher)))
 
-;; gx-gambc0: promises
-(declare-type*
- (promise? (@lambda 1 ##promise?))
- (make-promise (@lambda 1 ##make-promise)))
-
 ;; gx-gambc1: AST type for optimizing the expander
 (declare-type*
  (AST::t (@struct-type gerbil#AST::t #f 2))
@@ -360,7 +355,9 @@ package: gerbil
  u8vector->list list->u8vector
  append-u8vectors
  object->u8vector u8vector->object
- get-output-u8vector)
+ get-output-u8vector
+ promise?
+ make-promise)
 
 (declare-primitive/2
  fxmodulo
