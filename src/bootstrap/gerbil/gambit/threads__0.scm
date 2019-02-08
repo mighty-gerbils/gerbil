@@ -1,58 +1,58 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gerbil/gambit/threads#spawn
-    (lambda (_f788_ . _args789_)
-      (gerbil/gambit/threads#spawn-actor _f788_ _args789_ '#!void '#f)))
+    (lambda (_f686_ . _args687_)
+      (gerbil/gambit/threads#spawn-actor _f686_ _args687_ '#!void '#f)))
   (define gerbil/gambit/threads#spawn/name
-    (lambda (_name784_ _f785_ . _args786_)
-      (gerbil/gambit/threads#spawn-actor _f785_ _args786_ _name784_ '#f)))
+    (lambda (_name682_ _f683_ . _args684_)
+      (gerbil/gambit/threads#spawn-actor _f683_ _args684_ _name682_ '#f)))
   (define gerbil/gambit/threads#spawn/group
-    (lambda (_name778_ _f779_ . _args780_)
-      (let ((_tgroup782_ (make-thread-group _name778_)))
+    (lambda (_name676_ _f677_ . _args678_)
+      (let ((_tgroup680_ (make-thread-group _name676_)))
         (gerbil/gambit/threads#spawn-actor
-         _f779_
-         _args780_
-         _name778_
-         _tgroup782_))))
+         _f677_
+         _args678_
+         _name676_
+         _tgroup680_))))
   (define gerbil/gambit/threads#spawn-actor
-    (lambda (_f756_ _args757_ _name758_ _tgroup759_)
-      (letrec ((_thread-main761_
-                (lambda (_thunk770_)
+    (lambda (_f654_ _args655_ _name656_ _tgroup657_)
+      (letrec ((_thread-main659_
+                (lambda (_thunk668_)
                   (lambda ()
                     (with-exception-handler
-                     (lambda (_exn773_)
+                     (lambda (_exn671_)
                        (##continuation-capture
-                        (lambda (_cont775_)
+                        (lambda (_cont673_)
                           (if gerbil/gambit/threads#unhandled-actor-exception-hook
                               (with-catch
                                void
                                (lambda ()
                                  (gerbil/gambit/threads#unhandled-actor-exception-hook
-                                  _cont775_
-                                  _exn773_)))
+                                  _cont673_
+                                  _exn671_)))
                               '#!void)
                           (##continuation-graft
-                           (##continuation-last _cont775_)
+                           (##continuation-last _cont673_)
                            ##primordial-exception-handler
-                           _exn773_))))
-                     _thunk770_)))))
-        (if (procedure? _f756_)
-            (let ((_thunk767_
-                   (if (null? _args757_)
-                       _f756_
-                       (lambda () (apply _f756_ _args757_))))
-                  (_tgroup768_
-                   (let ((_$e764_ _tgroup759_))
-                     (if _$e764_
-                         _$e764_
+                           _exn671_))))
+                     _thunk668_)))))
+        (if (procedure? _f654_)
+            (let ((_thunk665_
+                   (if (null? _args655_)
+                       _f654_
+                       (lambda () (apply _f654_ _args655_))))
+                  (_tgroup666_
+                   (let ((_$e662_ _tgroup657_))
+                     (if _$e662_
+                         _$e662_
                          (gerbil/gambit/threads#current-thread-group)))))
               (thread-start!
                (thread-init!
                 (gerbil/gambit/threads#construct-actor-thread '#f)
-                (_thread-main761_ _thunk767_)
-                _name758_
-                _tgroup768_)))
-            (error '"Bad argument; expected procedure" _f756_)))))
+                (_thread-main659_ _thunk665_)
+                _name656_
+                _tgroup666_)))
+            (error '"Bad argument; expected procedure" _f654_)))))
   (namespace
    ("gerbil/gambit/threads#"
     construct-actor-thread
@@ -67,94 +67,94 @@
    gerbil#actor-thread::t
    locals)
   (define gerbil/gambit/threads#spawn-thread
-    (let ((_opt-lambda732738_
-           (lambda (_thunk734_ _name735_ _tgroup736_)
-             (thread-start! (make-thread _thunk734_ _name735_ _tgroup736_)))))
-      (lambda _g791_
-        (let ((_g790_ (length _g791_)))
-          (cond ((##fx= _g790_ 1)
-                 (apply (lambda (_thunk741_)
-                          (let* ((_name743_ absent-obj)
-                                 (_tgroup745_ absent-obj))
-                            (_opt-lambda732738_
-                             _thunk741_
-                             _name743_
-                             _tgroup745_)))
-                        _g791_))
-                ((##fx= _g790_ 2)
-                 (apply (lambda (_thunk747_ _name748_)
-                          (let ((_tgroup750_ absent-obj))
-                            (_opt-lambda732738_
-                             _thunk747_
-                             _name748_
-                             _tgroup750_)))
-                        _g791_))
-                ((##fx= _g790_ 3) (apply _opt-lambda732738_ _g791_))
+    (let ((_opt-lambda630636_
+           (lambda (_thunk632_ _name633_ _tgroup634_)
+             (thread-start! (make-thread _thunk632_ _name633_ _tgroup634_)))))
+      (lambda _g689_
+        (let ((_g688_ (length _g689_)))
+          (cond ((##fx= _g688_ 1)
+                 (apply (lambda (_thunk639_)
+                          (let* ((_name641_ absent-obj)
+                                 (_tgroup643_ absent-obj))
+                            (_opt-lambda630636_
+                             _thunk639_
+                             _name641_
+                             _tgroup643_)))
+                        _g689_))
+                ((##fx= _g688_ 2)
+                 (apply (lambda (_thunk645_ _name646_)
+                          (let ((_tgroup648_ absent-obj))
+                            (_opt-lambda630636_
+                             _thunk645_
+                             _name646_
+                             _tgroup648_)))
+                        _g689_))
+                ((##fx= _g688_ 3) (apply _opt-lambda630636_ _g689_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/threads#spawn-thread
-                  _g791_)))))))
+                  _g689_)))))))
   (define gerbil/gambit/threads#thread-local-ref
-    (let ((_opt-lambda716723_
-           (lambda (_key718_ _default719_)
-             (let ((_tab721_ (gerbil/gambit/threads#thread-local-table)))
-               (hash-ref _tab721_ _key718_ _default719_)))))
-      (lambda _g793_
-        (let ((_g792_ (length _g793_)))
-          (cond ((##fx= _g792_ 1)
-                 (apply (lambda (_key726_)
-                          (let ((_default728_ absent-obj))
-                            (_opt-lambda716723_ _key726_ _default728_)))
-                        _g793_))
-                ((##fx= _g792_ 2) (apply _opt-lambda716723_ _g793_))
+    (let ((_opt-lambda614621_
+           (lambda (_key616_ _default617_)
+             (let ((_tab619_ (gerbil/gambit/threads#thread-local-table)))
+               (hash-ref _tab619_ _key616_ _default617_)))))
+      (lambda _g691_
+        (let ((_g690_ (length _g691_)))
+          (cond ((##fx= _g690_ 1)
+                 (apply (lambda (_key624_)
+                          (let ((_default626_ absent-obj))
+                            (_opt-lambda614621_ _key624_ _default626_)))
+                        _g691_))
+                ((##fx= _g690_ 2) (apply _opt-lambda614621_ _g691_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/threads#thread-local-ref
-                  _g793_)))))))
+                  _g691_)))))))
   (define gerbil/gambit/threads#thread-local-get
-    (lambda (_key715_) (gerbil/gambit/threads#thread-local-ref _key715_ '#f)))
+    (lambda (_key613_) (gerbil/gambit/threads#thread-local-ref _key613_ '#f)))
   (define gerbil/gambit/threads#thread-local-set!
-    (lambda (_key710_ _value711_)
-      (let ((_tab713_ (gerbil/gambit/threads#thread-local-table)))
-        (hash-put! _tab713_ _key710_ _value711_))))
+    (lambda (_key608_ _value609_)
+      (let ((_tab611_ (gerbil/gambit/threads#thread-local-table)))
+        (hash-put! _tab611_ _key608_ _value609_))))
   (define gerbil/gambit/threads#thread-local-clear!
-    (lambda (_key706_)
-      (let ((_tab708_ (gerbil/gambit/threads#thread-local-table)))
-        (hash-remove! _tab708_ _key706_))))
+    (lambda (_key604_)
+      (let ((_tab606_ (gerbil/gambit/threads#thread-local-table)))
+        (hash-remove! _tab606_ _key604_))))
   (define gerbil/gambit/threads#thread-local-table
     (lambda ()
-      (let ((_thr692_ (current-thread)))
-        (if (gerbil/gambit/threads#actor-thread? _thr692_)
-            (let ((_$e694_ (gerbil/gambit/threads#actor-thread-locals
-                            _thr692_)))
-              (if _$e694_
-                  (values _$e694_)
-                  (let ((_tab697_ (make-hash-table-eq)))
+      (let ((_thr590_ (current-thread)))
+        (if (gerbil/gambit/threads#actor-thread? _thr590_)
+            (let ((_$e592_ (gerbil/gambit/threads#actor-thread-locals
+                            _thr590_)))
+              (if _$e592_
+                  (values _$e592_)
+                  (let ((_tab595_ (make-hash-table-eq)))
                     (gerbil/gambit/threads#actor-thread-locals-set!
-                     _thr692_
-                     _tab697_)
-                    _tab697_)))
-            (if (eq? _thr692_ ##primordial-thread)
+                     _thr590_
+                     _tab595_)
+                    _tab595_)))
+            (if (eq? _thr590_ ##primordial-thread)
                 gerbil/gambit/threads#*primordial-thread-locals*
                 (begin
                   (mutex-lock! gerbil/gambit/threads#*thread-locals-mutex*)
-                  (let ((_$e699_ (hash-get
+                  (let ((_$e597_ (hash-get
                                   gerbil/gambit/threads#*thread-locals*
-                                  _thr692_)))
-                    (if _$e699_
-                        ((lambda (_tab702_)
+                                  _thr590_)))
+                    (if _$e597_
+                        ((lambda (_tab600_)
                            (mutex-unlock!
                             gerbil/gambit/threads#*thread-locals-mutex*)
-                           _tab702_)
-                         _$e699_)
-                        (let ((_tab704_ (make-hash-table-eq)))
+                           _tab600_)
+                         _$e597_)
+                        (let ((_tab602_ (make-hash-table-eq)))
                           (hash-put!
                            gerbil/gambit/threads#*thread-locals*
-                           _thr692_
-                           _tab704_)
+                           _thr590_
+                           _tab602_)
                           (mutex-unlock!
                            gerbil/gambit/threads#*thread-locals-mutex*)
-                          _tab704_)))))))))
+                          _tab602_)))))))))
   (define gerbil/gambit/threads#*primordial-thread-locals*
     (make-hash-table-eq))
   (define gerbil/gambit/threads#*thread-locals*
@@ -163,36 +163,36 @@
     (make-mutex 'thread-locals))
   (define gerbil/gambit/threads#unhandled-actor-exception-hook '#f)
   (define gerbil/gambit/threads#unhandled-actor-exception-hook-set!
-    (lambda (_proc686_)
-      (if (or (not _proc686_) (procedure? _proc686_))
-          (set! gerbil/gambit/threads#unhandled-actor-exception-hook _proc686_)
-          (error '"Bad argument; expected procedure or #f" _proc686_))))
+    (lambda (_proc584_)
+      (if (or (not _proc584_) (procedure? _proc584_))
+          (set! gerbil/gambit/threads#unhandled-actor-exception-hook _proc584_)
+          (error '"Bad argument; expected procedure or #f" _proc584_))))
   (define gerbil/gambit/threads#with-exception-stack-trace
-    (let ((_opt-lambda665676_
-           (lambda (_thunk667_ _error-port668_)
+    (let ((_opt-lambda563574_
+           (lambda (_thunk565_ _error-port566_)
              (with-exception-handler
-              (let ((_E670_ (current-exception-handler)))
-                (lambda (_exn672_)
+              (let ((_E568_ (current-exception-handler)))
+                (lambda (_exn570_)
                   (##continuation-capture
-                   (lambda (_cont674_)
+                   (lambda (_cont572_)
                      (gerbil/gambit/threads#dump-stack-trace!
-                      _cont674_
-                      _exn672_
-                      _error-port668_)
-                     (_E670_ _exn672_)))))
-              _thunk667_))))
-      (lambda _g795_
-        (let ((_g794_ (length _g795_)))
-          (cond ((##fx= _g794_ 1)
-                 (apply (lambda (_thunk679_)
-                          (let ((_error-port681_ (current-error-port)))
-                            (_opt-lambda665676_ _thunk679_ _error-port681_)))
-                        _g795_))
-                ((##fx= _g794_ 2) (apply _opt-lambda665676_ _g795_))
+                      _cont572_
+                      _exn570_
+                      _error-port566_)
+                     (_E568_ _exn570_)))))
+              _thunk565_))))
+      (lambda _g693_
+        (let ((_g692_ (length _g693_)))
+          (cond ((##fx= _g692_ 1)
+                 (apply (lambda (_thunk577_)
+                          (let ((_error-port579_ (current-error-port)))
+                            (_opt-lambda563574_ _thunk577_ _error-port579_)))
+                        _g693_))
+                ((##fx= _g692_ 2) (apply _opt-lambda563574_ _g693_))
                 (else
                  (##raise-wrong-number-of-arguments-exception
                   gerbil/gambit/threads#with-exception-stack-trace
-                  _g795_)))))))
+                  _g693_)))))))
   (namespace ("gerbil/gambit/threads#" dump-stack-trace!))
   (define (dump-stack-trace!
            cont
@@ -218,8 +218,8 @@
   (define gerbil/gambit/threads#current-thread-group
     (lambda () (thread-thread-group (current-thread))))
   (define gerbil/gambit/threads#with-lock
-    (lambda (_mx660_ _proc661_)
+    (lambda (_mx558_ _proc559_)
       (dynamic-wind
-       (lambda () (mutex-lock! _mx660_))
-       _proc661_
-       (lambda () (mutex-unlock! _mx660_))))))
+       (lambda () (mutex-lock! _mx558_))
+       _proc559_
+       (lambda () (mutex-unlock! _mx558_))))))

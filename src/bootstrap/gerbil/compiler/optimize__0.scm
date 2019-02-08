@@ -241,7 +241,7 @@
         (let ((_stx49007_ (gxc#apply-optimize-annotated _stx49005_)))
           (gxc#apply-optimize-call _stx49007_)))))
   (define gxc#&generate-ssxi
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl49000_ (make-table 'test: eq?)))
          (hash-copy! _tbl49000_ (force gxc#&generate-runtime-empty))

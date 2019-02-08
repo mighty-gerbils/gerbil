@@ -12,9 +12,9 @@
 ;;;
 ;;; Conditional evaluation
 ;;;
-(define-macro (eval-when expr form)
+(define-macro (eval-when expr . forms)
   (if (eval expr)
-    form
+    `(begin ,@forms)
     '(begin)))
 
 ;;;
@@ -1498,11 +1498,16 @@
   (for-each display args))
 
 ;; control
-(define make-promise
-  ##make-promise)
+(eval-when (< (system-version) 409003)
+  (define make-promise
+    ##make-promise)
 
-(define promise?
-  ##promise?)
+  (define promise?
+    ##promise?))
+
+(eval-when (>= (system-version) 409003)
+  (define (make-promise thunk)
+    (##make-delay-promise thunk)))
 
 (define (call-with-parameters thunk . rest)
   (core-match rest
