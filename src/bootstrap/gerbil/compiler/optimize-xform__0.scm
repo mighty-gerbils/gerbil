@@ -1,7 +1,7 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gxc#&identity-expression
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl18216_ (make-table 'test: eq?)))
          (table-set! _tbl18216_ '%#begin-annotation gxc#xform-identity)
@@ -26,7 +26,7 @@
          (table-set! _tbl18216_ '%#struct-unchecked-set! gxc#xform-identity)
          _tbl18216_))))
   (define gxc#&identity-special-form
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl18212_ (make-table 'test: eq?)))
          (table-set! _tbl18212_ '%#begin gxc#xform-identity)
@@ -43,14 +43,14 @@
          (table-set! _tbl18212_ '%#declare gxc#xform-identity)
          _tbl18212_))))
   (define gxc#&identity
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl18208_ (make-table 'test: eq?)))
          (hash-copy! _tbl18208_ (force gxc#&identity-special-form))
          (hash-copy! _tbl18208_ (force gxc#&identity-expression))
          _tbl18208_))))
   (define gxc#&basic-xform-expression
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl18204_ (make-table 'test: eq?)))
          (table-set!
@@ -78,7 +78,7 @@
          (table-set! _tbl18204_ '%#struct-unchecked-set! gxc#xform-operands)
          _tbl18204_))))
   (define gxc#&basic-xform
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl18200_ (make-table 'test: eq?)))
          (hash-copy! _tbl18200_ (force gxc#&basic-xform-expression))
@@ -90,7 +90,7 @@
          (table-set! _tbl18200_ '%#define-syntax gxc#xform-define-syntax%)
          _tbl18200_))))
   (define gxc#&collect-mutators
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl18196_ (make-table 'test: eq?)))
          (hash-copy! _tbl18196_ (force gxc#&void))
@@ -130,7 +130,7 @@
        gxc#current-compile-methods
        (force gxc#&collect-mutators))))
   (define gxc#&expression-subst
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl18186_ (make-table 'test: eq?)))
          (hash-copy! _tbl18186_ (force gxc#&basic-xform-expression))
@@ -145,7 +145,7 @@
        gxc#current-compile-methods
        (force gxc#&expression-subst))))
   (define gxc#&expression-subst*
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl18176_ (make-table 'test: eq?)))
          (hash-copy! _tbl18176_ (force gxc#&expression-subst))
@@ -159,7 +159,7 @@
        gxc#current-compile-methods
        (force gxc#&expression-subst*))))
   (define gxc#&find-expression
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl18166_ (make-table 'test: eq?)))
          (hash-copy! _tbl18166_ (force gxc#&false-expression))
@@ -183,7 +183,7 @@
          (table-set! _tbl18166_ '%#struct-unchecked-set! gxc#find-body%)
          _tbl18166_))))
   (define gxc#&find-var-refs
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl18162_ (make-table 'test: eq?)))
          (hash-copy! _tbl18162_ (force gxc#&find-expression))
@@ -197,7 +197,7 @@
        gxc#current-compile-methods
        (force gxc#&find-var-refs))))
   (define gxc#&collect-runtime-refs
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl18152_ (make-table 'test: eq?)))
          (hash-copy! _tbl18152_ (force gxc#&collect-expression-refs))

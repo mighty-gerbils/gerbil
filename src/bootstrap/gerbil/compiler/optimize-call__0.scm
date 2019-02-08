@@ -1,7 +1,7 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gxc#&optimize-call
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl46352_ (make-table 'test: eq?)))
          (hash-copy! _tbl46352_ (force gxc#&basic-xform))

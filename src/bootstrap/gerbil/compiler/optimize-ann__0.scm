@@ -2,7 +2,7 @@
 (begin
   (declare (inlining-limit 200))
   (define gxc#&optmize-annotated
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl41014_ (make-table 'test: eq?)))
          (hash-copy! _tbl41014_ (force gxc#&basic-xform))
@@ -15,7 +15,7 @@
        gxc#current-compile-methods
        (force gxc#&optmize-annotated))))
   (define gxc#&generate-runtime-repr
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl41004_ (make-table 'test: eq?)))
          (hash-copy! _tbl41004_ (force gxc#&generate-runtime))
@@ -28,7 +28,7 @@
        gxc#current-compile-methods
        (force gxc#&generate-runtime-repr))))
   (define gxc#&push-match-vars
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl40994_ (make-table 'test: eq?)))
          (table-set! _tbl40994_ '%#lambda gxc#xform-lambda%)

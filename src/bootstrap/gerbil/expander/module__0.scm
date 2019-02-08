@@ -253,7 +253,7 @@
                          gx#module-context::t
                          '#f)))
                   (_e15809_
-                   (##make-promise (lambda () (gx#eval-module _ctx15794_)))))
+                   (make-promise (lambda () (gx#eval-module _ctx15794_)))))
               (if (##fx< '8 (##vector-length _self15793_))
                   (begin
                     (##vector-set! _self15793_ '1 _id15806_)
@@ -512,7 +512,7 @@
                                     '())))
                              (##unchecked-structure-set!
                               _ctx14948_
-                              (##make-promise
+                              (make-promise
                                (lambda () (gx#eval-syntax* _body14952_)))
                               '10
                               gx#module-context::t
@@ -1601,7 +1601,7 @@
                                                  (gx#stx-source _stx13970_))))
                                           (##unchecked-structure-set!
                                            _ctx14011_
-                                           (##make-promise
+                                           (make-promise
                                             (lambda ()
                                               (gx#eval-syntax* _body14015_)))
                                            '10

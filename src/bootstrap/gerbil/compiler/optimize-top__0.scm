@@ -1,7 +1,7 @@
 (declare (block) (standard-bindings) (extended-bindings))
 (begin
   (define gxc#&collect-type-info
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl27298_ (make-table 'test: eq?)))
          (hash-copy! _tbl27298_ (force gxc#&void))
@@ -32,7 +32,7 @@
        gxc#current-compile-methods
        (force gxc#&collect-type-info))))
   (define gxc#&basic-expression-type
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl27288_ (make-table 'test: eq?)))
          (hash-copy! _tbl27288_ (force gxc#&false))
@@ -68,7 +68,7 @@
        gxc#current-compile-methods
        (force gxc#&basic-expression-type))))
   (define gxc#&lift-top-lambdas
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl27278_ (make-table 'test: eq?)))
          (hash-copy! _tbl27278_ (force gxc#&basic-xform))

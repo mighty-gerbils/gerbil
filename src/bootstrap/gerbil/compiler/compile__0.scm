@@ -41,7 +41,7 @@
                     (_g1438314393_ _g1438414396_)))))
         (_g1438214421_ _stx14380_))))
   (define gxc#&void-expression
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14377_ (make-table 'test: eq?)))
          (table-set! _tbl14377_ '%#begin-annotation void)
@@ -66,7 +66,7 @@
          (table-set! _tbl14377_ '%#struct-unchecked-set! void)
          _tbl14377_))))
   (define gxc#&void-special-form
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14373_ (make-table 'test: eq?)))
          (table-set! _tbl14373_ '%#begin void)
@@ -83,14 +83,14 @@
          (table-set! _tbl14373_ '%#declare void)
          _tbl14373_))))
   (define gxc#&void
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14369_ (make-table 'test: eq?)))
          (hash-copy! _tbl14369_ (force gxc#&void-special-form))
          (hash-copy! _tbl14369_ (force gxc#&void-expression))
          _tbl14369_))))
   (define gxc#&false-expression
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14365_ (make-table 'test: eq?)))
          (table-set! _tbl14365_ '%#begin-annotation false)
@@ -115,7 +115,7 @@
          (table-set! _tbl14365_ '%#struct-unchecked-set! false)
          _tbl14365_))))
   (define gxc#&false-special-form
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14361_ (make-table 'test: eq?)))
          (table-set! _tbl14361_ '%#begin false)
@@ -132,14 +132,14 @@
          (table-set! _tbl14361_ '%#declare false)
          _tbl14361_))))
   (define gxc#&false
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14357_ (make-table 'test: eq?)))
          (hash-copy! _tbl14357_ (force gxc#&false-special-form))
          (hash-copy! _tbl14357_ (force gxc#&false-expression))
          _tbl14357_))))
   (define gxc#&collect-bindings
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14353_ (make-table 'test: eq?)))
          (hash-copy! _tbl14353_ (force gxc#&void-expression))
@@ -163,7 +163,7 @@
        gxc#current-compile-methods
        (force gxc#&collect-bindings))))
   (define gxc#&lift-modules
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14343_ (make-table 'test: eq?)))
          (hash-copy! _tbl14343_ (force gxc#&void))
@@ -177,7 +177,7 @@
        gxc#current-compile-methods
        (force gxc#&lift-modules))))
   (define gxc#&find-runtime-code
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14333_ (make-table 'test: eq?)))
          (table-set! _tbl14333_ '%#begin gxc#find-runtime-begin%)
@@ -219,7 +219,7 @@
        gxc#current-compile-methods
        (force gxc#&find-runtime-code))))
   (define gxc#&find-lambda-expression
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14323_ (make-table 'test: eq?)))
          (hash-copy! _tbl14323_ (force gxc#&false))
@@ -250,7 +250,7 @@
        gxc#current-compile-methods
        (force gxc#&find-lambda-expression))))
   (define gxc#&count-values
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14313_ (make-table 'test: eq?)))
          (hash-copy! _tbl14313_ (force gxc#&false-expression))
@@ -275,7 +275,7 @@
        gxc#current-compile-methods
        (force gxc#&count-values))))
   (define gxc#&generate-runtime-empty
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14303_ (make-table 'test: eq?)))
          (table-set! _tbl14303_ '%#begin gxc#generate-runtime-empty)
@@ -326,7 +326,7 @@
           gxc#generate-runtime-empty)
          _tbl14303_))))
   (define gxc#&generate-loader
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14299_ (make-table 'test: eq?)))
          (hash-copy! _tbl14299_ (force gxc#&generate-runtime-empty))
@@ -340,7 +340,7 @@
        gxc#current-compile-methods
        (force gxc#&generate-loader))))
   (define gxc#&generate-runtime
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14289_ (make-table 'test: eq?)))
          (hash-copy! _tbl14289_ (force gxc#&generate-runtime-empty))
@@ -418,7 +418,7 @@
        gxc#current-compile-methods
        (force gxc#&generate-runtime))))
   (define gxc#&generate-runtime-phi
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14279_ (make-table 'test: eq?)))
          (hash-copy! _tbl14279_ (force gxc#&generate-runtime))
@@ -434,7 +434,7 @@
        gxc#current-compile-methods
        (force gxc#&generate-runtime-phi))))
   (define gxc#&collect-expression-refs
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14269_ (make-table 'test: eq?)))
          (table-set! _tbl14269_ '%#begin gxc#collect-begin%)
@@ -472,7 +472,7 @@
        gxc#current-compile-methods
        (force gxc#&collect-expression-refs))))
   (define gxc#&generate-meta
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14259_ (make-table 'test: eq?)))
          (hash-copy! _tbl14259_ (force gxc#&void-expression))
@@ -508,7 +508,7 @@
        gxc#current-compile-methods
        (force gxc#&generate-meta))))
   (define gxc#&generate-meta-phi
-    (##make-promise
+    (make-promise
      (lambda ()
        (let ((_tbl14249_ (make-table 'test: eq?)))
          (table-set! _tbl14249_ '%#begin gxc#generate-meta-begin%)
