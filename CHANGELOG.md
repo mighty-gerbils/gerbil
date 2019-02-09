@@ -1,3 +1,11 @@
+### 2-9-2019: Gerbil-v0.15.1
+
+Patch release to support Gambit v4.9.3
+
+Details:
+- #231 - Updates for Gambit v4.9.3
+- #226 - std/misc/string: new string-subst procedure
+
 ### 1-25-2019: Gerbil-v0.15
 
 R7RS Red edition and many new libraries, improvements and bug fixes.
