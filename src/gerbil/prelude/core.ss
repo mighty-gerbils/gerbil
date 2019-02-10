@@ -1405,8 +1405,12 @@ package: gerbil
     (defalias and-let* alet*)
 
     ;; [] ML-style list constructor
-    (defrules @list ()
+    (defrules @list (quote quasiquote)
       ((_) '())
+      ((_ quote tl)
+       (quote tl))
+      ((_ quasiquote tl)
+       (quasiquote tl))
       ((_ :: tl) tl)
       ((_ xs dots)
        (ellipsis? #'dots)
