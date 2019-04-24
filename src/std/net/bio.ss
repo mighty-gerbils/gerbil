@@ -6,7 +6,8 @@ package: std/net
 
 (import :std/net/bio/input
         :std/net/bio/output
-        :std/net/bio/buffer)
+        :std/net/bio/buffer
+        :std/net/bio/file)
 (export
   ;; input
   input-buffer?
@@ -54,4 +55,13 @@ package: std/net
   chunked-output-buffer?
   chunked-output-chunks
   chunked-output-u8vector
-  chunked-output-length)
+  chunked-output-length
+  ;; file buffers
+  open-file-input-buffer
+  open-fd-input-buffer
+  file-input-buffer?
+  close-file-input-buffer
+  open-file-output-buffer
+  open-fd-output-buffer
+  file-output-buffer?
+  close-file-output-buffer)
