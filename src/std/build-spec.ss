@@ -135,6 +135,7 @@
     "net/bio/input"
     "net/bio/output"
     "net/bio/buffer"
+    "net/bio/file"
     "net/bio"
     ;; :std/net/socket
     "net/socket/base"
