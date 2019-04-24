@@ -1,9 +1,21 @@
 #!/bin/sh
 set -eu
 
+
 if [ -z "${GERBIL_HOME:-}" ]; then
-    GERBIL_HOME=$(dirname $(cd ${0%/*} && echo $PWD))
+    SCRIPT=$(readlink --canonicalize "$0")
+    GERBIL_HOME=$(dirname "${SCRIPT%/*}")
     export GERBIL_HOME
+fi
+
+
+if [ $# -gt 0 ]; then
+    case $1 in
+        --home)
+            echo -n $GERBIL_HOME;
+            exit 0;
+            ;;
+    esac
 fi
 
 if [ $# -gt 0 ]; then
