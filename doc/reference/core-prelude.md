@@ -864,6 +864,24 @@ Import and export expander; rename a set by applying a prefix.
 
 Export expander; export all identifiers related with structs `struct-id ...`
 
+#### group-in
+```
+(import (group-in prefix mod ...))
+mod := id
+    |  (id mod ...)
+```
+
+Imports a group of common prefix library modules.
+
+Examples:
+```
+(import (group-in :std/misc (queue rbtree)))
+= (import :std/misc/queue :std/misc/rbtree)
+
+(import (group-in :std (misc queue rbtree) (net bio)))
+= (import :std/misc/queue :std/misc/rbtree :std/net/bio)
+```
+
 ## Runtime Symbol Bindings
 
 The runtime bindings exported by the prelude are all externs collected in nested modules,
@@ -2058,3 +2076,4 @@ Symbols related to thread programming; spawn and with-lock primitives.
     + [rename-in rename-out](#rename-in-rename-out)
     + [prefix-in prefix-out](#prefix-in-prefix-out)
     + [struct-out](#struct-out)
+    + [group-in](#group-in)
