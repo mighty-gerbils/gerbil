@@ -22,7 +22,7 @@ package: std/net/socket
 
 ;;; input buffers
 (defstruct (ssocket-input-buffer input-buffer) (sock timeo)
-  unchecked: #t)
+  final: #t unchecked: #t)
 
 (def (open-ssocket-input-buffer ssock (size default-buffer-size))
   (make-ssocket-input-buffer (make-u8vector size) 0 0
@@ -69,8 +69,7 @@ package: std/net/socket
 
 ;;; output buffers
 (defstruct (ssocket-output-buffer output-buffer) (sock timeo)
-  final: #t
-  unchecked: #t)
+  final: #t unchecked: #t)
 
 (def (open-ssocket-output-buffer ssock (size default-buffer-size))
   (make-ssocket-output-buffer (make-u8vector size) 0 size
