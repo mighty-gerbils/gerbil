@@ -30,7 +30,9 @@
    ((&file-input-buffer-fd buf)
     => (lambda (fd)
          (close-port fd)
-         (set! (&file-input-buffer-fd buf) #f)))))
+         (set! (&file-input-buffer-fd buf) #f)
+         (set! (&input-buffer-fill buf) (lambda _ 0))
+         (set! (&input-buffer-read buf) (lambda _ 0))))))
 
 (def (file-input-fill! buf need)
   (let ((bytes (&input-buffer-e buf))
@@ -100,7 +102,9 @@
    ((&file-output-buffer-fd buf)
     => (lambda (fd)
          (close-port fd)
-         (set! (&file-output-buffer-fd buf) #f)))))
+         (set! (&file-output-buffer-fd buf) #f)
+         (set! (&output-buffer-drain buf) (lambda _ (error "device is closed" fd)))
+         (set! (&output-buffer-write buf) (lambda _ (error "device is closed" fd)))))))
 
 (def (file-output-drain! buf need)
   (file-output-write (&output-buffer-e buf) 0 (&output-buffer-wlo buf) buf)
