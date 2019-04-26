@@ -881,7 +881,7 @@ Examples:
 (import (group-in :std (misc queue rbtree) (net bio)))
 = (import :std/misc/queue :std/misc/rbtree :std/net/bio)
 
-(import (group-in :std sugar (srfi |1| |113| |133|)))
+(import (group-in :std sugar (srfi 1 113 133)))
 = (import :std/sugar :std/srfi/1 :std/srfi/113 :std/srfi/133)
 ```
 
