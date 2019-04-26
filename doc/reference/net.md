@@ -674,6 +674,78 @@ Please document me!
 
 Please document me!
 
+### open-file-input-buffer
+::: tip usage
+```
+(open-file-input-buffer ...)
+```
+:::
+
+Please document me!
+
+### open-fd-input-buffer
+::: tip usage
+```
+(open-fd-input-buffer ...)
+```
+:::
+
+Please document me!
+
+### file-input-buffer?
+::: tip usage
+```
+(file-input-buffer? ...)
+```
+:::
+
+Please document me!
+
+### close-file-input-buffer
+::: tip usage
+```
+(close-file-input-buffer ...)
+```
+:::
+
+Please document me!
+
+### open-file-output-buffer
+::: tip usage
+```
+(open-file-output-buffer ...)
+```
+:::
+
+Please document me!
+
+### open-fd-output-buffer
+::: tip usage
+```
+(open-fd-output-buffer ...)
+```
+:::
+
+Please document me!
+
+### file-output-buffer?
+::: tip usage
+```
+(file-output-buffer? ...)
+```
+:::
+
+Please document me!
+
+### close-file-output-buffer
+::: tip usage
+```
+(close-file-output-buffer ...)
+```
+:::
+
+Please document me!
+
 
 ## SASL authentication
 

@@ -391,7 +391,6 @@ package: gerbil
  with-unwind-protect
  with-exception-handler
  with-exception-catcher
- setenv
  copy-file rename-file
  file-newer?
  call-with-input-string with-input-from-string
@@ -480,6 +479,7 @@ package: gerbil
  (current-exception-handler 0 1)
  (exit 0 1)
  (getenv 1 2)
+ (setenv 1 2)
  (current-directory 0 1)
  (directory-files 0 1)
  (file-exists? 1 2)

@@ -1405,8 +1405,12 @@ package: gerbil
     (defalias and-let* alet*)
 
     ;; [] ML-style list constructor
-    (defrules @list ()
+    (defrules @list (quote quasiquote)
       ((_) '())
+      ((_ quote tl)
+       (quote tl))
+      ((_ quasiquote tl)
+       (quasiquote tl))
       ((_ :: tl) tl)
       ((_ xs dots)
        (ellipsis? #'dots)
@@ -3139,6 +3143,29 @@ package: gerbil
                   (else
                    (cons in r))))))
          (cons begin: (foldl fold-e [] imports))))))
+
+  (defsyntax-for-import (group-in stx)
+    (def (flatten list-of-lists)
+      (foldr (lambda (v acc)
+	           (cond
+	            ((null? v) acc)
+	            ((pair? v) (append (flatten v) acc))
+	            (else (cons v acc))))
+	         []
+	         list-of-lists))
+
+    (def (expand-path top mod)
+      (syntax-case mod ()
+        ((nested mod ...)
+         (map (lambda (mod) (stx-identifier top top "/" mod))
+              (flatten (map (cut expand-path #'nested <>) #'(mod ...)))))
+        (id
+         (or (identifier? #'id) (stx-fixnum? #'id))
+         (stx-identifier top top "/" #'id))))
+
+    (syntax-case stx ()
+      ((_ top mod ...)
+       (cons begin: (flatten (map (cut expand-path #'top <>) #'(mod ...)))))))
 
   (defsyntax-for-export (except-out stx)
     (syntax-case stx ()

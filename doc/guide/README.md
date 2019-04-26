@@ -75,11 +75,11 @@ The latest Gerbil images are available via Dockerhub
 
 Ubuntu based version:
 ```bash
-docker pull -it gerbil/scheme:ubuntu
+docker pull gerbil/scheme:ubuntu
 ```
 CentOS based version:
 ```bash
-docker pull -it gerbil/scheme:centos
+docker pull gerbil/scheme:centos
 ```
 
 To get to the repl:
