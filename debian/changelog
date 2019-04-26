@@ -1,4 +1,53 @@
-gerbil (0.15.2-1ppa2) xenial; urgency=medium
+gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110ubuntu1~1.gbp1f5a2f) UNRELEASED; urgency=medium
+
+  ** SNAPSHOT build @1f5a2fc3e03cca8239f2916c0dc160963358e883 **
+
+  [ vyzo ]
+  * Start development for version v0.16-DEV
+  * prelude: handle . quotes and quasiquotes in @list
+  * bootstrap update
+
+  [ Phillip Wood ]
+  * prelude: fix setenv airity
+
+  [ ober ]
+  * remove invalid arguments to docker pull
+
+  [ Xiao-Yong Jin ]
+  * Update use of ##make-readenv for changes in gambit
+
+  [ vyzo ]
+  * std/net/bio/file: file raw device buffers
+  * doc: stubs for file buffers
+
+  [ Drew Crampsie ]
+  * Add the README.debian.org, where all the magic takes place.
+
+  [ vyzo ]
+  * std/net/bio/file: set sentinel methods for closed file buffers
+  * std/net/socket/buffer: mark input buffer as final
+  * prelude/core: group-in import macro
+  * doc: document group-in
+
+  [ Zzull ]
+  * Remove the fontlock directive for paren-face
+
+  [ dwdv ]
+  * doc: fix and clarify srfi declaration in group-in
+
+  [ vyzo ]
+  * core/prelude: allow numbers in group-in components
+
+  [ Drew Crampsie ]
+  * add configure.org and configure.sh
+  * Move README.debian.org into debian/
+  * A more POSIX friendly way of finding GERBIL_HOME
+
+  [ vyzo ]
+
+ -- Drew Crampsie <me@drewc.ca>  Fri, 26 Apr 2019 13:13:48 -0700
+
+gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110) unstable; urgency=medium
 
 	  *  Initial release 
 

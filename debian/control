@@ -1,4 +1,4 @@
-Source: gerbil
+Source: gerbil-snapshot
 Section: devel
 Priority: optional
 Maintainer: Drew Crampsie <me@drewc.ca> 
@@ -6,7 +6,7 @@ Build-Depends: debhelper, texinfo, libssl-dev, gambc, zlib1g-dev, libsqlite3-dev
 Standards-Version: 4.0.1
 Homepage: https://github.com/vyzo/gerbil
 
-Package: gerbil
+Package: gerbil-snapshot
 Architecture: any
 Depends: gambc (>= 4.9.0)
 Description: Gerbil is an opinionated dialect of Scheme designed for Systems
