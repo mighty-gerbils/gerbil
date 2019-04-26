@@ -102,7 +102,7 @@ _DEB_BRANCH=debian
 _GERBIL_VERSION=v0.15.1
 _NEW_GERBIL_VERSION=v0.15.2
 cd ~/src/apt && git clone --no-checkout -o upstream git@github.com:drewc/gerbil.git
-cd ~/src/apt/gerbil && git checkout -b $_DEB_BRANCH $_GERBIL_VERSION
+cd ~/src/apt/gerbil && git checkout -b $_DEB_BRANCH $_GERBIL_VERSION\
 cd ~/src/apt/gerbil && mkdir debian
 cd ~/src/apt/gerbil && mkdir debian/source
 
@@ -133,7 +133,6 @@ cd ~/src/apt/gerbil && rm -rf  ../gerbil-build-area ; rm -rf autom4te.cache/
 
 cd ~/src/apt/gerbil && mkdir ../gerbil-build-area
 
-
 sudo apt-get install -y libssl-dev gambc zlib1g-dev libyaml-dev libxml2-dev libmysqlclient-dev libmysqlclient-dev
 
 cd ~/src/apt/gerbil/ && gbp buildpackage --git-ignore-new \
@@ -158,6 +157,93 @@ cd ~/src/apt/gerbil && git checkout -b xenial
 
 
 #+END_SRC
+* ~gerbil-snapshot~: Obey your master (branch).
+
+Gerbil is always under development, and new things get added all the time.
+~gerbil-snapshot~ seems like a good approach. 
+
+First things first, update the source repo.
+
+#+begin_src shell
+_DEB_BRANCH=debian
+cd ~/src/apt && git clone --no-checkout -o upstream git@github.com:drewc/gerbil.git
+cd ~/src/apt/gerbil && git remote add vyzo git@github.com:vyzo/gerbil.git \
+ && git checkout master && git pull vyzo master && git push upstream master
+ 
+cd ~/src/apt/gerbil && git checkout $_DEB_BRANCH && git pull vyzo master
+
+# Tag our version. Configure.sh uses this.
+
+cd ~/src/apt/gerbil && git tag v0.16.0-1snapshot-DEV-20-g8c99110 
+
+# Now tangle configure.org, and run configure.sh
+
+tangle() {
+    emacs --batch -l org --eval "(org-babel-tangle-file \"$1\")"
+}
+
+cd ~/src/apt/gerbil && tangle configure.org && ./configure.sh
+
+# commit the new config
+
+cd ~/src/apt/gerbil/ && git add Makefile.in configure configure.ac configure.sh configure.org
+cd ~/src/apt/gerbil/ && git commit -m "add configure.org and configure.sh"
+
+# Move the README.debian.org
+
+cd ~/src/apt/gerbil && git rm -f README.debian.org && git add debian/README.debian.org 
+cd ~/src/apt/gerbil && git commit -m "Move README.debian.org into debian/"
+
+# tangle the new README.debian.org
+
+cd ~/src/apt/gerbil/debian && tangle README.debian.org
+
+git add src/gerbil/gxi 
+git commit -m "A more POSIX friendly way of finding GERBIL_HOME"
+
+TAG_VERSION="v0.16.0-1snapshot-DEV-20-g8c99110"
+
+# Change the version in ./configure
+sed -r "s/(AC_INIT[(]Gerbil,).*(,me@drewc.ca,gerbil-).*[)]/\1${TAG_VERSION}\2${TAG_VERSION})/" configure.ac
+
+autoconf
+
+git add configure.ac configure && git commit -m "Change version in ./configure" 
+
+# Now git tag it, so the build process knows what version.
+
+git tag ${TAG_VERSION}
+
+# Cleaning up
+cd ~/src/apt/gerbil && rm -rf  ../gerbil-build-area ; rm -rf autom4te.cache/ ; rm gx-init-exe.diff 
+#+end_src
+
+
+Now that we have that, we can try a snapshot build. This create a new entry for debian/changelog
+
+#+begin_src shell
+gbp dch --snapshot --debian-branch=debian
+
+# make it me, so signing works
+
+sed -r -i 's/-- vyzo <user@localhost>/-- Drew Crampsie <me@drewc.ca>/' debian/changelog 
+
+# Add the ./debian
+cd ~/src/apt/gerbil/ && git add debian/*
+cd ~/src/apt/gerbil/ && git commit -m "Import debian/"
+
+#+end_src
+
+
+So, let's try and build! The build process requires the .git for version tags.
+#+begin_src shell
+cd ~/src/apt/gerbil/ && gbp buildpackage --git-prebuild='cp -a $GBP_GIT_DIR/.git $GBP_BUILD_DIR' --git-ignore-new \
+  --git-export-dir=../gerbil-build-area --git-upstream-tree=SLOPPY --git-force-create \
+  --git-pristine-tar-commit --git-debian-branch=debian
+
+#+end_src
+
+
 * The debian/ directory
   
   The debian/ directory is where all of debian's package development tools look
@@ -171,8 +257,8 @@ cd ~/src/apt/gerbil && git checkout -b xenial
    --[[https://www.debian.org/doc/manuals/maint-guide/dreq.en.html][Debian New Maintainers' Guide]]
 
 
-   #+BEGIN_SRC conf :tangle "./debian/control"
-Source: gerbil
+   #+BEGIN_SRC conf :tangle "./control"
+Source: gerbil-snapshot
 Section: devel
 Priority: optional
 Maintainer: Drew Crampsie <me@drewc.ca> 
@@ -180,7 +266,7 @@ Build-Depends: debhelper, texinfo, libssl-dev, gambc, zlib1g-dev, libsqlite3-dev
 Standards-Version: 4.0.1
 Homepage: https://github.com/vyzo/gerbil
 
-Package: gerbil
+Package: gerbil-snapshot
 Architecture: any
 Depends: gambc (>= 4.9.0)
 Description: Gerbil is an opinionated dialect of Scheme designed for Systems
@@ -199,7 +285,7 @@ Description: Gerbil is an opinionated dialect of Scheme designed for Systems
    :END:
 
 
-   #+BEGIN_SRC text :tangle "./debian/copyright"
+   #+BEGIN_SRC text :tangle "./copyright"
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: Gerbil
 Upstream-Contact: Dimitris Vyzovitis <vyzo -at- hackzen.org>
@@ -276,11 +362,24 @@ License: Unlicence
 
    #+END_SRC
 ** compat 
-   #+BEGIN_SRC text :tangle "./debian/compat"
+   #+BEGIN_SRC text :tangle "./compat"
 10
    #+END_SRC
 ** changelog
-   #+BEGIN_SRC change-log :tangle "./debian/changelog"
+
+We've got two. gerbil and gerbil-snapshot. 
+ 
+*** gerbil-snapshot
+   #+BEGIN_SRC change-log :tangle "./changelog"
+gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110) unstable; urgency=medium
+
+	  *  Initial release 
+
+ --  Drew Crampsie <me@drewc.ca>  Thu, 11 Apr 2019 22:42:42 -0700
+
+   #+END_SRC
+*** COMMENT gerbil 
+   #+BEGIN_SRC change-log :tangle "./changelog"
 gerbil (0.15.2-1ppa2) xenial; urgency=medium
 
 	  *  Initial release 
@@ -290,7 +389,7 @@ gerbil (0.15.2-1ppa2) xenial; urgency=medium
    #+END_SRC
 ** rules 
 
-   #+BEGIN_SRC makefile-gmake :shebang "#!/usr/bin/make -f" :tangle "./debian/rules"
+   #+BEGIN_SRC makefile-gmake :shebang "#!/usr/bin/make -f" :tangle "./rules"
 
 # Verbosity
 #export DH_VERBOSE = 1
@@ -322,281 +421,9 @@ override_dh_auto_configure:
    desired format for the source package (check dpkg-source(1) for an exhaustive
    list).
 
-   #+BEGIN_SRC text :tangle "./debian/source/format"
+   #+BEGIN_SRC text :tangle "./source/format"
 3.0 (quilt)
    #+END_SRC
-
-
-
-* Standard ./configure and make; make install
-  :PROPERTIES:
-  :CUSTOM_ID: configure_and_make
-  :END:
-
-Right now, ~gerbil~ does not have the ~./configure; make; make install~ that
-normal folks use. But, it seems that ~debuild~ and the like really enjoy that
-sort of thing. So here we go.
-
-** configure.ac
-
-In order to have our ~./configure~, we simply do the following.
-
-#+BEGIN_SRC shell
-cd ~/src/gerbil/ && autoconf
-#+END_SRC
-
-Here are the file components.
-
-#+NAME: configure.ac
- #+BEGIN_SRC autoconf
-# Configure template for Gerbil system.
-
-# Copyright (c) 2019 by drewc <me@drewc.ca>, All Rights Reserved.
-
-# Process this file with autoconf to produce a configure script.
-
-AC_INIT(Gerbil,v0.15.1,me@drewc.ca,gerbil-v0_15_1)
-PACKAGE_SHORTNAME="gerbil"
-
-AC_SUBST(PACKAGE_SHORTNAME)
-AC_SUBST(PACKAGE_NAME)
-AC_SUBST(PACKAGE_VERSION)
-AC_SUBST(PACKAGE_STRING)
-AC_SUBST(PACKAGE_BUGREPORT)
-AC_SUBST(PACKAGE_TARNAME)
-
-AC_COPYRIGHT([[Copyright (c) 2019 by drewc <me@drewc.ca>, All Rights Reserved.]])
-
- #+END_SRC
-
-*** --enable-[zlib, lmdb, leveldb, mysql, ...]
-
-In ~src/std/build-features.ss~, the building of libraries is toggled. 
-
-"If a software package has optional compile-time features, the user can give
-configure command line options to specify whether to compile them. The options
-have one of these forms:
-  
-   --enable-feature[=arg]
-   --disable-feature" --[[https://www.gnu.org/software/autoconf/manual/autoconf.html#Package-Options][autoconf manual]]
-
-~— Macro: AC_ARG_ENABLE (feature, help-string, [action-if-given], [action-if-not-given])~
-#+NAME: configure-libs
-#+BEGIN_SRC autoconf
-# Libxml
-AC_ARG_ENABLE(libxml,
-AC_HELP_STRING([--enable-libxml],
-[build std/xml libraries - requires libxml2 (default is NO)]),
-ENABLE_LIBXML=$enableval,
-ENABLE_LIBXML=no)
-
-if test "$ENABLE_LIBXML" = yes; then
-sed -i -e 's|enable libxml #f|enable libxml #t|g' src/std/build-features.ss || true
-LIBS="$LIBS -lxml2"
-else
-sed -i -e 's|enable libxml #t|enable libxml #f|g' src/std/build-features.ss || true
-fi
-
-# Libyaml
-AC_ARG_ENABLE(libyaml,
-AC_HELP_STRING([--enable-libyaml],
-[build std/text/yaml libraries - requires libyaml (default is NO)]),
-ENABLE_LIBYAML=$enableval,
-ENABLE_LIBYAML=no)
-
-if test "$ENABLE_LIBYAML" = yes; then
-sed -i -e 's|enable libyaml #f|enable libyaml #t|g' src/std/build-features.ss || true
-LIBS="$LIBS -lyaml"
-else
-sed -i -e 's|enable libyaml #t|enable libyaml #f|g' src/std/build-features.ss || true
-fi
-
-# Zlib
-AC_ARG_ENABLE(zlib,
-AC_HELP_STRING([--disable-zlib],
-[build std/text/zlib libraries - requires zlib (default is --enable-zlib]),
-ENABLE_ZLIB=$enableval,
-ENABLE_ZLIB=yes)
-
-if test "$ENABLE_ZLIB" = yes; then
-sed -i -e 's|enable zlib #f|enable zlib #t|g' src/std/build-features.ss || true
-LIBS="$LIBS -lz"
-else
-sed -i -e 's|enable zlib #t|enable zlib #f|g' src/std/build-features.ss || true
-fi
-
-# Sqlite
-AC_ARG_ENABLE(sqlite,
-AC_HELP_STRING([--disable-sqlite],
-[build std/xml libraries - requires sqlite3 (default is --enable-sqlite)]),
-ENABLE_SQLITE=$enableval,
-ENABLE_SQLITE=yes)
-if test "$ENABLE_SQLITE" = yes; then
-sed -i -e 's|enable sqlite #f|enable sqlite #t|g' src/std/build-features.ss || true
-else
-sed -i -e 's|enable sqlite #t|enable sqlite #f|g' src/std/build-features.ss || true
-fi
-
-# Mysql
-AC_ARG_ENABLE(mysql,
-AC_HELP_STRING([--enable-mysql],
-[build std/xml libraries - requires mysql (default is NO)]),
-ENABLE_MYSQL=$enableval,
-ENABLE_MYSQL=no)
-
-if test "$ENABLE_MYSQL" = yes; then
-sed -i -e 's|enable mysql #f|enable mysql #t|g' src/std/build-features.ss || true
-else
-sed -i -e 's|enable mysql #t|enable mysql #f|g' src/std/build-features.ss || true
-fi
-
-# Lmdb
-AC_ARG_ENABLE(lmdb,
-AC_HELP_STRING([--enable-lmdb],
-[build std/xml libraries - requires lmdb2 (default is NO)]),
-ENABLE_LMDB=$enableval,
-ENABLE_LMDB=no)
-
-if test "$ENABLE_LMDB" = yes; then
-sed -i -e 's|enable lmdb #f|enable lmdb #t|g' src/std/build-features.ss || true
-LIBS="$LIBS -llmdb" 
-else
-sed -i -e 's|enable lmdb #t|enable lmdb #f|g' src/std/build-features.ss || true
-fi
-
-# Leveldb
-AC_ARG_ENABLE(leveldb,
-AC_HELP_STRING([--enable-leveldb],
-[build std/xml libraries - requires leveldb2 (default is NO)]),
-ENABLE_LEVELDB=$enableval,
-ENABLE_LEVELDB=no)
-
-if test "$ENABLE_LEVELDB" = yes; then
-sed -i -e 's|enable leveldb #f|enable leveldb #t|g' src/std/build-features.ss || true
-LIBS="$LIBS -lleveldb"
-else
-sed -i -e 's|enable leveldb #t|enable leveldb #f|g' src/std/build-features.ss || true
-fi
-
-#+END_SRC
-
-*** /file/ configure.ac
-
-#+BEGIN_SRC autoconf :noweb yes :tangle configure.ac
-<<configure.ac>>
-
-<<configure-libs>>
-
-AC_OUTPUT(Makefile) 
-#+END_SRC
-
-
-** Makefile.in
-
-We want a Makefile. The way this has worked over the last half-century or so is
-that we write scripts on scripts on scripts. This is no exception.
-
-
-*** /file/ Makefile.in
-
-#+BEGIN_SRC makefile :noweb yes :tangle Makefile.in
-
-# Copyright (c) 2019 by drewc <me@drewc.ca> , All Rights Reserved.
-
-PACKAGE_SHORTNAME = @PACKAGE_SHORTNAME@
-PACKAGE_NAME = @PACKAGE_NAME@
-PACKAGE_VERSION = @PACKAGE_VERSION@
-PACKAGE_STRING = @PACKAGE_STRING@
-PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
-PACKAGE_TARNAME = @PACKAGE_TARNAME@
-
-prefix = @prefix@
-exec_prefix = @exec_prefix@
-includedir = @includedir@
-libdir = @libdir@
-bindir = @bindir@
-docdir = @docdir@
-infodir = @infodir@
-emacsdir = @emacsdir@
-libexecdir = @libexecdir@
-datarootdir = @datarootdir@
-datadir = @datadir@
-htmldir = @htmldir@
-dvidir = @dvidir@
-pdfdir = @pdfdir@
-psdir = @psdir@
-localedir = @localedir@
-mandir = @mandir@
-
-LIBS = @LIBS@
-
-gerbil_home = "${DESTDIR}/${prefix}/lib/${PACKAGE_SHORTNAME}"
-gerbil_bin = "${gerbil_home}/bin"
-gerbil_lib = "${gerbil_home}/lib"
-gerbil_bin_linkdir = "${DESTDIR}/${prefix}/bin"
-
-
-gerbil:
-	cd src && LDFLAGS="$(LIBS)" ./build.sh
-
-stdlib:
-	cd src && LDFLAGS="$(LIBS)" ./build.sh stdlib
-
-lang:
-	cd src && LDFLAGS="$(LIBS)" ./build.sh lang
-
-
-r7rs-large:
-	cd src && LDFLAGS="$(LIBS)" ./build.sh r7rs-large
-
-tools:
-	cd src && LDFLAGS="$(LIBS)" ./build.sh tools
-
-stage0:
-	cd src && .LDFLAGS="$(LIBS)" /build.sh stage0
-
-stage1:
-	cd src && .LDFLAGS="$(LIBS)" /build.sh stage1
-
-layout:
-	cd src && .LDFLAGS="$(LIBS)" /build.sh layout
-
-tags:
-	cd src && .LDFLAGS="$(LIBS)" /build.sh tags
-
-install:
-# Symlinks
-	mkdir -p ${gerbil_bin} ;
-	mkdir -p ${gerbil_lib} ;
-	cp -a bin/* ${gerbil_bin} ;
-	cp -a lib/* ${gerbil_lib} ;
-	@for i in `find ${gerbil_bin} -type f` ; do \
-	  _name=`basename $$i`;\
-    _link="${gerbil_bin_linkdir}/$$_name" ; \
-	  mkdir -p "${gerbil_bin_linkdir}"; \
-	  if test -f $$_link ; then rm "$$_link" ; fi ;\
-    echo "Linking $$_link to $$i"; \
-	  ln -sr $$i "$$_link" ; \
-	done ;
-
-
-uninstall:
-# Symlinks
-	@for i in `find ${gerbil_bin} -type f` ; do \
-	  _name=`basename $$i`;\
-	  _link="${gerbil_bin_linkdir}/$$_name" ; \
-	  if test -L $$_link && test $$(dirname `readlink $$_link`) = ${gerbil_bin}; then \
-	     echo removing "$$_link" ; rm "$$_link" ; elif test -f "$$_link" ; then echo $$_link is not a link to $$i. Not removing. ; fi ; \
-	done ;
-
-	rm -rf ${gerbil_home};
-
-test: 
-	echo $(LIBS) ;
-
-#+END_SRC
-
-
 
 
 * ~$GERBIL_HOME~ and gxi 
@@ -624,8 +451,33 @@ So, if we have ~gxi~ know where the gerbil lives, we can use that script elsewhe
 #+begin_src shell
 
 if [ -z "${GERBIL_HOME:-}" ]; then
-    SCRIPT=$(readlink --canonicalize "$0")
-    GERBIL_HOME=$(dirname "${SCRIPT%/*}")
+
+    # First, try whereis. We are looking for $GERBIL_HOME/lib/std, our stdlib
+    for gh in $(whereis -b gerbil |cut -d: -f2); do
+        if [ -d $gh/lib/std ]; then
+            GERBIL_HOME="$gh" ; break ;
+        fi;
+    done
+
+    # if that did not work, find out where we are and try that.
+    if [ -z "${GERBIL_HOME:-}" ]; then
+        GERBIL_BIN_LOCATION="$0"
+
+        # Check if we're a symlink
+        GERBIL_LINK=$(readlink $GERBIL_BIN_LOCATION || true)
+        while true
+        do
+            # If not, "../" is our home
+            if [ -z "$GERBIL_LINK" ]; then
+                GERBIL_HOME=$(dirname $(cd ${GERBIL_BIN_LOCATION%/*} && echo $PWD))
+                break;
+            else
+                # if we're a link, go down the chain.
+                GERBIL_BIN_LOCATION=$GERBIL_LINK
+                GERBIL_LINK=$(readlink "$GERBIL_LINK" || true);
+            fi
+        done
+    fi
     export GERBIL_HOME
 fi
 
@@ -654,7 +506,7 @@ fi
 Beyond finding and using ~GERBIL_HOME~, the script does other things, like
 launch our interactive repl.
 
-#+begin_src shell :tangle src/gerbil/gxi :shebang #!/bin/sh :noweb yes
+#+begin_src shell :tangle "../src/gerbil/gxi" :shebang #!/bin/sh :noweb yes
 set -eu
 
 <<export-GERBIL_HOME>>
@@ -842,7 +694,6 @@ And finally, commit it as part of the Github Apt Repository!
 #+begin_src shell
 cd ~/src/apt-repo && git add -A && git commit -m "Add gerbil built under xenial" && git push
 #+end_src
-
 
 * Emacs and SLIME
   :PROPERTIES:
