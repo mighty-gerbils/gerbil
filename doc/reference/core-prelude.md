@@ -875,11 +875,14 @@ Imports a group of common prefix library modules.
 
 Examples:
 ```
-(import (group-in :std/misc (queue rbtree)))
+(import (group-in :std/misc queue rbtree))
 = (import :std/misc/queue :std/misc/rbtree)
 
 (import (group-in :std (misc queue rbtree) (net bio)))
 = (import :std/misc/queue :std/misc/rbtree :std/net/bio)
+
+(import (group-in :std sugar (srfi |1| |113| |133|)))
+= (import :std/sugar :std/srfi/1 :std/srfi/113 :std/srfi/133)
 ```
 
 ## Runtime Symbol Bindings
