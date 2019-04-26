@@ -3160,7 +3160,7 @@ package: gerbil
          (map (lambda (mod) (stx-identifier top top "/" mod))
               (flatten (map (cut expand-path #'nested <>) #'(mod ...)))))
         (id
-         (identifier? #'id)
+         (or (identifier? #'id) (stx-fixnum? #'id))
          (stx-identifier top top "/" #'id))))
 
     (syntax-case stx ()
