@@ -1,6 +1,4 @@
-gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110ubuntu1~1.gbp1f5a2f) UNRELEASED; urgency=medium
-
-  ** SNAPSHOT build @1f5a2fc3e03cca8239f2916c0dc160963358e883 **
+gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110ubuntu1) xenial; urgency=medium
 
   [ vyzo ]
   * Start development for version v0.16-DEV
@@ -45,7 +43,10 @@ gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110ubuntu1~1.gbp1f5a2f) UNRELEASED
 
   [ vyzo ]
 
- -- Drew Crampsie <me@drewc.ca>  Fri, 26 Apr 2019 13:13:48 -0700
+  [ Drew Crampsie ]
+  * Make a gerbil-snapshot for debian/
+
+ -- Drew Crampsie <me@drewc.ca>  Fri, 26 Apr 2019 14:58:58 -0700
 
 gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110) unstable; urgency=medium
 
