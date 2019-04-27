@@ -4,16 +4,14 @@ Gerbil. I use it for production servers. With VM's, often, Ubuntu is the way. A
 package is the way to go, with an apt repository so it's automagically
 distributed. Thus, here we go.
 
+This file is tangled to produce some files. 
+
 * Usage 
 
 This is the entire point, and everything that follows, in fact, leads to this
 point.
 
 This is a brand new Google Cloud box, running ~Ubuntu 16.0.4 LTS minimal.
-
-#+begin_src shell
-sudo apt-get install apt-transport-https
-#+end_src
 
 #+begin_src shell
 DREWC_APT_REPO="https://raw.githubusercontent.com/drewc/apt-repo/master"
@@ -27,6 +25,8 @@ echo "deb-src $DREWC_APT_REPO xenial main" | sudo tee -a $DREWC_SOURCES
 # Add the GPG public key 
 curl $DREWC_APT_REPO/gpg.key | sudo apt-key add -
 
+sudo apt-get install apt-transport-https
+
 # And Update
 sudo apt-get update
 #+end_src
@@ -34,7 +34,7 @@ sudo apt-get update
 This is what we've been waiting for!
 
 #+begin_src shell
-sudo apt-get install gerbil
+sudo apt-get install gerbil # or gerbil-snapshot
 #+end_src
 
 To test, we'll attempt to install swank.
@@ -198,21 +198,9 @@ cd ~/src/apt/gerbil && git commit -m "Move README.debian.org into debian/"
 
 cd ~/src/apt/gerbil/debian && tangle README.debian.org
 
+# This is still new
 git add src/gerbil/gxi 
 git commit -m "A more POSIX friendly way of finding GERBIL_HOME"
-
-TAG_VERSION="v0.16.0-1snapshot-DEV-20-g8c99110"
-
-# Change the version in ./configure
-sed -r "s/(AC_INIT[(]Gerbil,).*(,me@drewc.ca,gerbil-).*[)]/\1${TAG_VERSION}\2${TAG_VERSION})/" configure.ac
-
-autoconf
-
-git add configure.ac configure && git commit -m "Change version in ./configure" 
-
-# Now git tag it, so the build process knows what version.
-
-git tag ${TAG_VERSION}
 
 # Cleaning up
 cd ~/src/apt/gerbil && rm -rf  ../gerbil-build-area ; rm -rf autom4te.cache/ ; rm gx-init-exe.diff 
@@ -230,24 +218,91 @@ sed -r -i 's/-- vyzo <user@localhost>/-- Drew Crampsie <me@drewc.ca>/' debian/ch
 
 # Add the ./debian
 cd ~/src/apt/gerbil/ && git add debian/*
-cd ~/src/apt/gerbil/ && git commit -m "Import debian/"
+cd ~/src/apt/gerbil/ && git commit -m "Make a gerbil-snapshot for debian/"
 
 #+end_src
 
 
 So, let's try and build! The build process requires the .git for version tags.
+
 #+begin_src shell
-cd ~/src/apt/gerbil/ && gbp buildpackage --git-prebuild='cp -a $GBP_GIT_DIR/.git $GBP_BUILD_DIR' --git-ignore-new \
+cd ~/src/apt/gerbil/ && gbp buildpackage  --git-ignore-new \
   --git-export-dir=../gerbil-build-area --git-upstream-tree=SLOPPY --git-force-create \
   --git-pristine-tar-commit --git-debian-branch=debian
 
 #+end_src
 
+When that finally builds, we can change the name of the release in the changelog.
+
+#+begin_src shell
+gbp dch --release
+#+end_src
+
+Edit the changelog to make sure. Then commit the new changelog.
+
+#+begin_src shell
+git add debian/changlog && git commit -m "Make a proper release changlog"
+#+end_src
+
+Build a source package.
+
+
+#+BEGIN_SRC shell 
+cd ~/src/apt/gerbil && ln ../gerbil-build-area/*.orig.tar.gz ../ ; debuild -S -sa
+#+END_SRC
+
+It works! Add it to the apt repository.
+
+#+begin_src shell 
+cd ~/src/apt && reprepro -b ~/src/apt-repo include xenial \
+   gerbil-snapshot_0.16.0-1snapshot-DEV-20-g8c99110ubuntu1_source.changes
+
+cd ~/src/apt-repo && git add -A \
+  && git commit -m "Add gerbil-snapshot_0.16.0-1snapshot-DEV-20-g8c99110ubuntu1 source package" && git push
+#+end_src
+ 
+Now build the binary [[#build_on_other_box][on another box]]. 
+
+#+begin_src shell
+# after adding the sources.list and updating
+
+apt-get source gerbil-snapshot
+sudo apt-get build-dep --yes gerbil-snapshot
+scp -r /home/user/.ssh /home/user/.gnupg user@34.83.85.242:/home/user
+cd gerbil-snapshot-0.16.0-1snapshot-DEV-20/
+debuild -b
+#+end_src
+
+#+begin_src shell
+# Before or During build 
+
+mkdir ~/src/ ; cd ~/src/ && git clone git@github.com:drewc/apt-repo.git && cd - 
+
+git config --global user.email me@drewc.ca
+git config --global user.name "Drew Crampsie"
+
+cd /tmp/
+wget https://launchpadlibrarian.net/409523835/reprepro_5.3.0-1_amd64.deb
+sudo dpkg -i reprepro_5.3.0-1_amd64.deb
+sudo apt-get install -fy
+cd -
+#+end_src
+
+#+begin_src shell
+# After Build
+
+cd ../ 
+reprepro -b ~/src/apt-repo include xenial \
+  gerbil-snapshot_0.16.0-1snapshot-DEV-20-g8c99110ubuntu1_amd64.changes 
+cd ~/src/apt-repo && git add -A && \
+  git commit -m "Add gerbil-snapshot for 0.16.0-1snapshot-DEV-20 built under xenial" && git push
+
+#+end_src
 
 * The debian/ directory
   
   The debian/ directory is where all of debian's package development tools look
-  for files.
+  for files. This part is tangled in order to produce the new debian.
 
 ** control
 
@@ -367,26 +422,9 @@ License: Unlicence
    #+END_SRC
 ** changelog
 
-We've got two. gerbil and gerbil-snapshot. 
+We've got two. gerbil and gerbil-snapshot. They are usually generated
+automagically.
  
-*** gerbil-snapshot
-   #+BEGIN_SRC change-log :tangle "./changelog"
-gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110) unstable; urgency=medium
-
-	  *  Initial release 
-
- --  Drew Crampsie <me@drewc.ca>  Thu, 11 Apr 2019 22:42:42 -0700
-
-   #+END_SRC
-*** COMMENT gerbil 
-   #+BEGIN_SRC change-log :tangle "./changelog"
-gerbil (0.15.2-1ppa2) xenial; urgency=medium
-
-	  *  Initial release 
-
- --  Drew Crampsie <me@drewc.ca>  Thu, 11 Apr 2019 22:42:42 -0700
-
-   #+END_SRC
 ** rules 
 
    #+BEGIN_SRC makefile-gmake :shebang "#!/usr/bin/make -f" :tangle "./rules"
@@ -601,7 +639,7 @@ cd ~/src/apt/gerbil/ && git checkout debian
 
 
 #+BEGIN_SRC shell 
-cd ~/src/apt/gerbil && ln ../gerbil-build-area/gerbil_0.15.2.orig.tar.gz ../ ; debuild -S -sa
+cd ~/src/apt/gerbil && ln ../gerbil-build-area/*.orig.tar.gz ../ ; debuild -S -sa
 #+END_SRC
 
 Now we have a source.changes and other mumbo-jumbo. Time to add it to our apt repo
@@ -610,13 +648,16 @@ Now we have a source.changes and other mumbo-jumbo. Time to add it to our apt re
 #+begin_src shell
 mkdir ~/src/ ; cd ~/src/ && git clone git@github.com:drewc/apt-repo.git
 #+end_src
+
 #+begin_src shell 
 cd ~/src/apt && reprepro -b ~/src/apt-repo include xenial gerbil_0.15.2-1ppa2_source.changes
 cd ~/src/apt-repo && git add -A \
   && git commit -m "Add gerbil_0.15.2-1ppa2 source package" && git push
 #+end_src
-
 *** Build the binary .deb
+    :PROPERTIES:
+    :CUSTOM_ID: build_on_other_box
+    :END:
 
 On a brand new box, we'll try to build and install the new package.
 
