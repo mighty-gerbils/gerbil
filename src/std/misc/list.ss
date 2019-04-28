@@ -17,6 +17,7 @@ package: std/misc
   push!
   flatten
   flatten1
+  rassoc
   when-list-or-empty)
 
 ;; This function checks if the list is a proper association-list.
@@ -190,6 +191,20 @@ package: std/misc
 	    (else (cons v acc))))
 	 []
 	 list-of-lists))
+
+;; Returns the first pair in alist whose cdr satisfies cmpf, or #f otherwise.
+;; Analog to assoc, but checks cdr instead of car.
+;; (rassoc 2 '((a . 1) (b . 2) (c . 3)))      => (b . 2)
+;; (rassoc "a" '((1 . "a") (2 . "b")))        => #f
+;; (rassoc "a" '((1 . "a") (2 . "b")) equal?) => (1 . "a")
+(def (rassoc x alist (cmpf eqv?))
+  (let loop ((lst alist))
+    (match lst
+      ([(? pair? head) . tail]
+       (if (cmpf x (cdr head))
+         head
+         (loop tail)))
+      (else #f))))
 
 ;; Macro which evaluates the body only if the passed value is
 ;; a non-empty list, otherwise an empty list is returned.

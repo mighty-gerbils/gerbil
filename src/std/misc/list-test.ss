@@ -106,6 +106,16 @@
       (check-equal? (flatten1 '((1) ((2)) 3)) '(1 (2) 3))
       (check-equal? (flatten1 '(1 2 ())) '(1 2))
       (check-equal? (flatten1 '(1 2 (()))) '(1 2 ())))
+    (test-case "test rassoc"
+      (check-equal? (rassoc 2 '((a . 1) (b . 2) (c . 3))) '(b . 2))
+      (check-equal? (rassoc "a" '((1 . "a") (2 . "b"))) #f)
+      (check-equal? (rassoc "a" '((1 . "a") (2 . "b")) equal?) '(1 . "a"))
+      (check-equal? (rassoc 2 '(1 2 3)) #f)
+      (check-equal? (rassoc 2 '()) #f)
+      (check-equal? (rassoc 3 '((a . 1) (b . 2))) #f)
+      (check-equal? (rassoc 2 '((a . 1) 2 (b . 2))) #f)
+      (check-equal? (rassoc 2 '((a . 1) '() (b . 2))) #f)
+      (check-equal? (rassoc '() '((a . 1) (b . 2))) #f))
     (test-case "test when-list-or-empty"
       (check-equal? (when-list-or-empty [1] "a") "a")
       (check-equal? (when-list-or-empty [] "a") []))))
