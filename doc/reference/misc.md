@@ -603,6 +603,31 @@ Removes one layer of a nested proper list.
 
 Removes all nested layers of a proper list.
 
+### rassoc
+``` scheme
+(rassoc elem alist [cmp = eqv?])
+
+  elem  := element to search for in alist
+  alist := association lists
+  cmp   := comparison predicate, optional
+```
+
+Rassoc is similar to assoc, but instead of comparing *elem* with the first
+element of each pair in *alist* the optional predicate *cmp* (which defaults to
+`eqv?`) will compare with the pair's second element.
+
+Returns the first pair in *alist* whose cdr satisfies the predicate *cmp*, or `#f`
+otherwise.
+
+::: tip Examples:
+``` scheme
+(rassoc 2 '((a . 1) (b . 2) (c . 3)))      => (b . 2)
+(rassoc "a" '((1 . "a") (2 . "b")))        => #f (eqv? is used by default)
+(rassoc "a" '((1 . "a") (2 . "b")) equal?) => (1 . "a")
+(rassoc 2 '(1 2 3))                        => #f (not an alist)
+```
+:::
+
 ### when-list-or-empty
 ::: tip usage
 ```
