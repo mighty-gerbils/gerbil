@@ -210,6 +210,6 @@ package: std/misc
 ;; a non-empty list, otherwise an empty list is returned.
 (defrules when-list-or-empty ()
   ((_ list body body* ...)
-   (if (null? list)
+   (if (not (pair? list))
      []
-     body body* ...)))
+     (begin body body* ...))))
