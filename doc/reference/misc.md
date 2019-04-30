@@ -393,251 +393,535 @@ Returns a list of the value contained in the deque, in order.
 
 
 ## List utilities
-::: tip usage
+::: tip Module
 (import :std/misc/list)
 :::
 
 ### alist?
-::: tip usage
+``` scheme
+(alist? alist) -> boolean
+
+  alist := association list
 ```
-(alist? ...)
+
+Checks whether *alist* is a proper association list and returns a truth value
+(`#t` or `#f`). *alist* needs to be finite, circular lists are not supported.
+
+A proper association list is a list of pairs and may be of the following forms:
+- `((key1 . value1) ...)`
+- `((key1 value1) ...)`
+
+::: tip Examples:
+``` scheme
+> (alist? '((a . 1) (b . 2) (c . 3)))
+#t
+
+> (alist? [["one" #\1] ["two" #\2] ["three" #\3]])
+#t
+
+> (alist? '((a . 1) ("two" #\2) (1 2 3 4)))
+#t    ; (1 2 3 4) is equivalent to (1 . (2 3 4))
+
+> (alist? '(a 1 b 2 c 3))
+#f    ; input is a plist, see plist? function
+
+> (alist? '())
+#t    ; edge-case, just like (list? '()) => #t
 ```
 :::
-
-Please document me!
 
 ### plist?
-::: tip usage
+``` scheme
+(plist? plist) -> boolean
+
+  plist := property list
 ```
-(plist? ...)
+
+Checks whether *plist* is a proper property list and returns a truth value (`#t`
+or `#f`). *plist* needs to be finite, circular lists are not supported.
+
+A proper property list is a list of alternating keys and values of the following
+form: `((key1 value1 key2 value2 ...))`
+
+::: tip Examples:
+``` scheme
+> (plist? '(a 1 b 2 c 3 d 4))
+#t
+
+> (plist? ["uno" [1 2 3] "dos" [4 5 6] "tres" [7 8 9]])
+#t
+
+> (plist? '((a . 1) (b . 2)))
+#t    ; key1 = (a . 1), value1 = (b . 2)
+
+> (plist? '((a . 1) (b . 2) (c . 3)))
+#f    ; key2 = (c . 3), but missing value2
+
+> (plist? [])
+#t    ; edge-case, just like (list? []) => #t
+
 ```
 :::
-
-Please document me!
 
 ### plist-&gt;alist
-::: tip usage
+``` scheme
+(plist->alist plist) -> alist | error
+
+  plist := property list
 ```
-(plist->alist ...)
+
+Transforms a property list `(k1 v1 k2 v2 ...)` into an association list `((k1 . v1)
+(k2 . v2)...)`. *plist* needs to be finite, circular lists are not supported.
+Furthermore, an error is signaled when *plist* is a improper property list.
+
+::: tip Examples:
+``` scheme
+> (plist->alist [10 "cat" 11 "dog" 12 "bird"])
+((10 . "cat") (11 . "dog") (12 . "bird"))
+
+> (plist->alist ["semicolon" #\; "comma" #\, "dot"])
+error    ; key "dot" has no associated property value
+
+> (plist->alist [])
+()
+
 ```
 :::
-
-Please document me!
 
 ### alist-&gt;plist
-::: tip usage
+``` scheme
+(alist->plist alist) -> plist | error
+
+  alist := association list
 ```
-(alist->plist ...)
+
+Transforms an association list `((k1 . v1) (k2 . v2) ...)` into a property list
+`(k1 v1 k2 v2 ...)`. *alist* needs to be finite, circular lists are not supported.
+Furthermore, an error is signaled when *alist* is an improper association list.
+
+::: tip Examples:
+``` scheme
+> (alist->plist [[1 . 10] [2 . 20] [3 . 30]])
+(1 10 2 20 3 30)
+
+> (alist->plist [["fire" #\f] ["water" #\w] ["earth" #\e]])
+("fire" (#\f) "water" (#\w) "earth" (#\e))
+
+> (alist->plist '((1 2 3) (4 5 6) (7 8 9)))
+(1 (2 3) 4 (5 6) 7 (8 9))
+
+> (alist->plist '((a) (b) (c)))
+(a () b () c ())
+
+> (alist->plist [])
+()
+
 ```
 :::
 
-Please document me!
+### length=?, length&lt;? ... length&gt;=?
+``` scheme
+(length=?  lst1 lst2) -> boolean
+(length<?  lst1 lst2) -> boolean
+(length<=? lst1 lst2) -> boolean
+(length>?  lst1 lst2) -> boolean
+(length>=? lst1 lst2) -> boolean
 
-### length=?
-::: tip usage
+  lst1, lst2 := lists to compare
 ```
-(length=? ...)
-```
-:::
 
-Please document me!
+Compares the list lengths of both *lst1* and *lst2*, and returns a truth value
+(`#t` or `#f`).
 
-### length=n?
-::: tip usage
-```
-(length=n? ...)
-```
-:::
+| function           | less efficient variant       |
+| -------------------|------------------------------|
+| `(length=?  x y)`  | `(=  (length x) (length y))` |
+| `(length<?  x y)`  | `(<  (length x) (length y))` |
+| `(length<=? x y)`  | `(<= (length x) (length y))` |
+| `(length>?  x y)`  | `(>  (length x) (length y))` |
+| `(length>=? x y)`  | `(>= (length x) (length y))` |
 
-Please document me!
+These functions are potentially more efficient because they only need to compare
+the lists up until the point where they start to differ from one another. They
+will short-circuit once they encounter a difference instead of calculating both
+lengths up-front.
 
-### length&lt;?
-::: tip usage
-```
-(length<? ...)
-```
-:::
+Also, either of these two lists is allowed to be circular, but not both.
 
-Please document me!
+::: tip Examples:
+``` scheme
+> (import :std/srfi/1)
+> (def small (iota 10))   ; => (0 1 ... 9)
+> (def large (iota 100))  ; => (0 1 ... 99)
 
-### length&lt;n?
-::: tip usage
-```
-(length<n? ...)
-```
-:::
+> (length=? small large)
+#f    ; comparison stops as soon as small runs out of elements
 
-Please document me!
+> (length<? large (circular-list 1 2 3))
+#t    ; circular list never runs out of elements
 
-### length&lt;=?
-::: tip usage
-```
-(length<=? ...)
-```
-:::
-
-Please document me!
-
-### length&lt;=n?
-::: tip usage
-```
-(length<=n? ...)
+> (length>=? (circular-list 0 1) [])
+#t
 ```
 :::
 
-Please document me!
+### length=n?, length&lt;n? ... length&gt;=n?
+``` scheme
+(length=n?  lst n) -> boolean | error
+(length<n?  lst n) -> boolean | error
+(length<=n? lst n) -> boolean | error
+(length>n?  lst n) -> boolean | error
+(length>=n? lst n) -> boolean | error
 
-### length&gt;?
-::: tip usage
+  lst := list to compare
+  n   := number
 ```
-(length>? ...)
+
+Checks how the length of *lst* compares to *n* and returns a truth value result
+(`#t` or `#f`). Signals an error when n isn't a valid number.
+
+| function            | less efficient variant |
+| --------------------|------------------------|
+| `(length=n?  x n)`  | `(=  (length x) n)`    |
+| `(length<n?  x n)`  | `(<  (length x) n)`    |
+| `(length<=n? x n)`  | `(<= (length x) n)`    |
+| `(length>n?  x n)`  | `(>  (length x) n)`    |
+| `(length>=n? x n)`  | `(>= (length x) n)`    |
+
+These functions are potentially more efficient because they only need to check
+the list for up to n elements instead of calculating *lst*'s length up-front.
+
+Also, *lst* is allowed to be circular.
+
+::: tip Examples:
+``` scheme
+> (length=n? [#\a #\b #\c] 3)
+#t
+
+> (import :std/srfi/1)
+> (length>=n? (circular-list 0 1) 5)
+#t
+
+> (length<n? (circular-list 1 2 3) 10000)
+#f    ; circular list never runs out of elements
 ```
 :::
-
-Please document me!
-
-### length&gt;n?
-::: tip usage
-```
-(length>n? ...)
-```
-:::
-
-Please document me!
-
-### length&gt;=?
-::: tip usage
-```
-(length>=? ...)
-```
-:::
-
-Please document me!
-
-### length&gt;=n?
-::: tip usage
-```
-(length>=n? ...)
-```
-:::
-
-Please document me!
 
 ### call-with-list-builder
-::: tip usage
+``` scheme
+(call-with-list-builder proc) -> list
+
+  proc := procedure that takes two proc identifiers as input
 ```
-(call-with-list-builder ...)
+
+Takes a procedure or lambda *proc* which itself takes two procedures that can have
+any name but are called *put!* and *peek* here:
+
+- *put!* will append its input element onto an internal list (and thus modifies
+  it) on each invocation.
+- *peek* retrieves the elements collected so far, or [] if *put!* is never called.
+
+Finally, `call-with-list-builder` returns the constructed list.
+
+::: tip Examples:
+``` scheme
+> (import :std/iter)
+> (call-with-list-builder
+    (lambda (put! peek)
+      (for (x (in-range 5 5))
+        (displayln (peek))
+        (put! (random-integer (1+ x))))))
+()           ; no prior put!
+(5)
+(5 6)
+(5 6 2)
+(5 6 2 8)    ; fifth explicit peek call
+(5 6 2 8 6)  ; peek is called implicitly at the end
 ```
 :::
-
-Please document me!
 
 ### with-list-builder
-::: tip usage
+``` scheme
+(with-list-builder (put! [peek]) body ...) -> list
+
+  put! := function identifier that modifies internal list
+  peek := optional function identifier that retrieves internal list
 ```
-(with-list-builder ...)
+
+Syntax sugar for the `call-with-list-builder` procedure, so *put!* and *peek* can
+be used without wrapping them in a lambda first. `with-list-builder` returns the
+internal list at the end.
+
+::: tip Examples:
+``` scheme
+> (import :std/iter)
+> (with-list-builder (put!)
+    (for (n (in-range 100 1))
+      (let ((mod3 (zero? (modulo n 3)))
+            (mod5 (zero? (modulo n 5))))
+        (put! (cond ((and mod3 mod5) "fizzbuzz")
+                    (mod3 "fizz")
+                    (mod5 "buzz")
+                    (else n))))))
+(1 2 "fizz" 4 "buzz" "fizz" ... 97 98 "fizz" "buzz")
 ```
 :::
-
-Please document me!
 
 ### snoc
-::: tip usage
+``` scheme
+(snoc elem lst) -> list | error
+
+  elem := element to append to lst
+  lst  := proper list
 ```
-(snoc ...)
+
+`snoc` is similar to `cons`, but appends *elem* at the end of *lst* instead of
+putting it at the front.
+
+Difference to `cons`: `snoc` will signal an error when *lst* is not a proper
+list. `cons`, in contrast, constructs a pair out of these two input values.
+
+::: tip Examples:
+``` scheme
+> (cons 4 [1 2 3])
+(4 1 2 3)
+
+> (snoc 4 [1 2 3])
+(1 2 3 4)
+
+> (cons 1 2)
+(1 . 2)
+
+> (snoc 1 2)
+error    ; expects a list as second argument
+
+> (snoc '(a b c) '())
+((a b c))
 ```
 :::
-
-Please document me!
 
 ### append1
-::: tip usage
+``` scheme
+(append1 lst elem) -> list | error
+
+  lst  := proper list
+  elem := element to append to lst
 ```
-(append1 ...)
+
+`append1` is similar to `append`, but is constructing a proper list whereas the
+latter returns an improper list when appending a non-list *elem* to *lst*.
+`append` also joins two or more input lists while `append1` simply adds the
+second list as-is.
+
+Signals an error when *lst* is not a list.
+
+::: tip Examples:
+``` scheme
+> (append [1 2 3] 4)
+(1 2 3 . 4)
+
+> (append1 [1 2 3] 4)
+(1 2 3 4)
+
+> (append [1 2 3] [4 5 6])
+(1 2 3 4 5 6)
+
+> (append1 [1 2 3] [4 5 6])
+(1 2 3 (4 5 6))
+
+> (append1 "raise" "error")
+error    ; expects a list as first argument
 ```
 :::
-
-Please document me!
 
 ### for-each!
-::: tip usage
+``` scheme
+(for-each! lst proc) -> void
+
+  lst  := proper or even improper list
+  proc := procedure called for side-effects
 ```
-(for-each! ...)
+
+`for-each!` is similar to `for-each`, but the arguments *lst* and *proc* are
+swapped which allows better nesting. Another slight difference: `for-each!` even
+accepts improper lists.
+
+::: tip Examples:
+``` scheme
+> (def exprs [[2 + 0] [2 - 0] [0 * 2] [2 / 0] [0 / 2]])
+
+> (for-each (match <>
+              ([x (eq? /) (? zero? y)]
+               (displayln "div by zero!"))
+              ([x op y]
+               (displayln (op x y))))
+            exprs)
+
+> (for-each! exprs
+    (match <>
+      ([x (eq? /) (? zero? y)]
+       (displayln "div by zero!"))
+      ([x op y]
+       (displayln (op x y)))))
+
+;; both print:
+2
+2
+0
+div by zero!
+0
+
+> (for-each displayln '(1 2 . 3))
+error    ; list expected
+
+> (for-each! '(1 2 . 3) displayln)
+1
+2        ; dotted list ending not included
 ```
 :::
-
-Please document me!
 
 ### push!
-::: tip usage
+``` scheme
+(push! elem lst) -> unspecified | error
+
+  elem := element to cons onto lst
+  lst  := list
 ```
-(push! ...)
+
+Macro that conses *elem* onto *lst* and `set!`s *lst* accordingly. *lst* needs
+to be bound beforehand or it signals an error. It's unspecified what `push!`
+returns otherwise.
+
+::: tip Examples:
+``` scheme
+> (def lst [])
+> (push! 10 lst)
+> (push! 20 lst)
+> (push! 30 lst)
+> lst
+(30 20 10)
+
+> (def pair [#\b . #\a])
+> (push! #\c pair)
+> pair
+(#\c #\b . #\a)
+
+> (push! 1 [2 3])
+error    ; uses set! internally, requires valid binding
 ```
 :::
-
-Please document me!
-
-### flatten1
-::: tip usage
-```
-> (flatten1 [1 [2]])
-=> (1 2)
-
-> (flatten1 [1 [2] [[3]]])
-=> (1 2 (3))
-```
-:::
-
-Removes one layer of a nested proper list.
 
 ### flatten
-::: tip usage
-```
-> (flatten [1 [2]])
-=> (1 2)
+``` scheme
+(flatten lst) -> list
 
-> (flatten [1 [2] [[3]]])
-=> (1 2 3)
+  lst := proper nested list-of-lists
+```
+
+Removes all layers of nesting from *lst*, which is expected to be a proper
+list-of-lists (or tree structure). It will ignore any empty lists it encounters
+while traversing, not adding them to the returned flattened list.
+
+::: tip Examples:
+```scheme
+> (flatten [1 [2 3] [[4 5]]])
+(1 2 3 4 5)
+
+(flatten [1 [] [2 [3 [] 4] 5]])
+(1 2 3 4 5)  ; ignores empty sublists
+
+> (flatten '((a . 1) (b . 2) (c . 3)))
+(a b c)      ; expects proper non-dotted list-of-lists
 ```
 :::
 
-Removes all nested layers of a proper list.
+### flatten1
+``` scheme
+(flatten1 lst) -> list | error
+
+  lst := proper nested list of lists
+```
+
+`flatten1` is a special variant of `flatten` which will not flatten the whole
+nested list-of-lists (or tree structure), but instead removes only a single layer of
+nesting from *lst*.
+
+Note: *lst* is expected to be a list of proper lists, association lists will
+signal an error.
+
+::: tip Examples:
+``` scheme
+> (flatten1 [1 [2 3] [[4 5]]])
+(1 2 3 (4 5))
+
+> (flatten1 [1 [] [2 [3 [] 4] 5]])
+(1 2 (3 () 4) 5)
+
+> (import :std/srfi/1)
+> (map (cut iota <>) [1 2 3 4]
+((0) (0 1) (0 1 2) (0 1 2 3))
+> (flatten (map (cut iota <>) [1 2 3 4]))
+(0 0 1 0 1 2 0 1 2 3)
+
+> (flatten1 '((a . 1) (b . 2) (c . 3)))
+error    ; expects proper non-dotted list-of-lists
+```
+:::
 
 ### rassoc
 ``` scheme
-(rassoc elem alist [cmp = eqv?])
+(rassoc elem alist [pred = eqv?]) -> pair | #f
 
   elem  := element to search for in alist
-  alist := association lists
-  cmp   := comparison predicate, optional
+  alist := association list
+  pred  := comparison predicate, optional
 ```
 
-Rassoc is similar to assoc, but instead of comparing *elem* with the first
-element of each pair in *alist* the optional predicate *cmp* (which defaults to
+`rassoc` is similar to `assoc`, but instead of comparing *elem* with the first
+element of each pair in *alist* the optional predicate *pred* (which defaults to
 `eqv?`) will compare with the pair's second element.
 
-Returns the first pair in *alist* whose cdr satisfies the predicate *cmp*, or `#f`
+Returns the first pair in *alist* whose `cdr` satisfies the predicate *pred*, or `#f`
 otherwise.
 
 ::: tip Examples:
 ``` scheme
-(rassoc 2 '((a . 1) (b . 2) (c . 3)))      => (b . 2)
-(rassoc "a" '((1 . "a") (2 . "b")))        => #f (eqv? is used by default)
-(rassoc "a" '((1 . "a") (2 . "b")) equal?) => (1 . "a")
-(rassoc 2 '(1 2 3))                        => #f (not an alist)
+> (rassoc 2 '((a . 1) (b . 2) (c . 2) (d . 1)))
+(b . 2)
+
+> (rassoc "a" '((1 . "a") (2 . "b")))
+#f       ; eqv? is used by default
+
+> (rassoc "a" '((1 . "a") (2 . "b")) string=?)
+(1 . "a")
+
+> (rassoc '(5 6) '((a 1 2) (b 3 4) (c 5 6)) equal?)
+(c 5 6)  ; equivalent to '(c . (5 6))
 ```
 :::
 
 ### when-list-or-empty
-::: tip usage
+``` scheme
+(when-list-or-empty lst body ...) -> body ... | []
+
+  lst := value or list on which expansion depends
 ```
-(when-list-or-empty list body ...)
+
+Macro which expands to *body* expressions only if *lst* is a non-empty list,
+otherwise an empty list is returned.
+
+::: tip Examples:
+``` scheme
+> (let (nums [1 2 3])
+    (when-list-or-empty nums
+      (cdr nums)))
+(2 3)
+
+> (when-list-or-empty []
+    (cons "never" "expanded"))
+()
 ```
-
-Macro which evaluates the body only if the passed value is
-a non-empty list, otherwise an empty list is returned.
-
-
+:::
 
 ## LRU caches
 ::: tip usage
