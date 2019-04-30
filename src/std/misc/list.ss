@@ -212,4 +212,4 @@ package: std/misc
   ((_ list body body* ...)
    (if (not (pair? list))
      []
-     body body* ...)))
+     (begin body body* ...))))
