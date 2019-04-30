@@ -2537,37 +2537,57 @@ Please document me!
 Collection of mixed purpose higher-order functions.
 
 ### always
-::: tip usage
+``` scheme
+(always val)            -> lambda
+(always proc [arg ...]) -> lambda
+
+  val     := value that should always be returned
+  proc    := procedure that should always be called
+  arg ... := optional arguments that will be passed to proc
 ```
+
+Creates a lambda which returns the same *val* or calls always the
+same *proc* with the same optional *args*.
+
+::: tip Examples:
+``` scheme
 > (def fn (always 5))
-> (list (fn) (fn))
-=> (5 5)
+> (list (fn) (fn) (fn)))
+(5 5 5)
 
 > (def fn (always (lambda () "hi")))
 > (fn)
-=> "hi"
+"hi"
 
 > (def fn (always random-integer 10)
-> (list (fn) (fn))
-=> (4 3)
+> (list (fn) (fn) (fn))
+(4 3 8)
 ```
 :::
-
-Creates a lambda which returns the same value or calls always the
-same function with the same arguments.
 
 ### repeat
-::: tip usage
-```
-> (repeat 2 5)
-=> (2 2 2 2 2)
+``` scheme
+(repeat val n)            -> list
+(repeat proc n [arg ...]) -> list
 
-> (repeat (lambda () 10) 2)
-=> (10 10)
+  val     := value that should be repeated
+  proc    := proc that should be called n times
+  n       := exact number, repetitions
+  arg ... := optional arguments that will be passed to proc
+```
+
+Repeat *val* or call *proc* with the optional *args* *n* times and return the
+result as list. *n* is expected to be an exact number.
+
+::: tip Examples:
+``` scheme
+> (repeat 2 5)
+(2 2 2 2 2)
+
+> (repeat (lambda () 10) 3)
+(10 10 10)
 
 > (repeat random-integer 3 10)
-=> (8 3 5)
+(8 3 5)
 ```
 :::
-
-Repeat value or call function N times and return the result as list.
