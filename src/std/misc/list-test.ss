@@ -117,5 +117,6 @@
       (check-equal? (rassoc 2 '((a . 1) '() (b . 2))) '(b . 2))
       (check-equal? (rassoc '() '((a . 1) (b . 2))) #f))
     (test-case "test when-list-or-empty"
+      (check-equal? (when-list-or-empty 1 "a") [])
       (check-equal? (when-list-or-empty [1] "a") "a")
       (check-equal? (when-list-or-empty [] "a") []))))
