@@ -1,8 +1,10 @@
 # Miscellaneous
 
 ## Buffered channels.
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/channel)
+```
 :::
 
 ### make-channel
@@ -89,8 +91,10 @@ Please document me!
 
 
 ## Asynchronous Completions
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/completion)
+```
 :::
 
 ### completion
@@ -177,8 +181,10 @@ Evaluates `body ...` with an exception handler that signals an error in the comp
 
 
 ## Thread Barriers
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/barrier)
+```
 :::
 
 ### barrier
@@ -254,8 +260,10 @@ Evaluates `body ...` with an exception handler that signals an error in the barr
 
 
 ## Deques
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/deque)
+```
 :::
 
 ### deque
@@ -393,8 +401,10 @@ Returns a list of the value contained in the deque, in order.
 
 
 ## List utilities
-::: tip Module
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/list)
+```
 :::
 
 ### alist?
@@ -924,8 +934,10 @@ otherwise an empty list is returned.
 :::
 
 ## LRU caches
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/lru)
+```
 :::
 
 ### lru-cache
@@ -1124,8 +1136,10 @@ Creates an iterator over the LRU cache values.
 
 
 ## Port utilities
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/ports)
+```
 :::
 
 ### copy-port
@@ -1184,8 +1198,10 @@ idiom.
 
 
 ## Priority Queues
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/pqueue)
+```
 :::
 
 ### pqueue
@@ -1281,8 +1297,10 @@ Pushes the value `v` in the queue.
 
 
 ## Proces Utilities
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/process)
+```
 :::
 
 ### Overview
@@ -1313,8 +1331,10 @@ Please document me!
 
 
 ## Simple Queues
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/queue)
+```
 :::
 
 ### queue
@@ -1434,9 +1454,10 @@ Returns a list of the value contained in the queue, in order.
 
 
 ## Red Black Trees
-
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/rbtree)
+```
 :::
 
 ### rbtree
@@ -1731,8 +1752,10 @@ ties are broken by lexicographic ordering.
 
 
 ## Sourceable Representation
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/repr)
+```
 :::
 
 ### print-representation
@@ -1842,8 +1865,10 @@ and displays each element of the list with the given prefix, suffix, separator a
 
 
 ## Type Descriptor Utilities.
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/rtd)
+```
 :::
 
 ### object-type
@@ -1957,8 +1982,10 @@ Please document me!
 
 
 ## Shared-structure Equality.
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/shared)
+```
 :::
 
 ### equal-shared?
@@ -1973,8 +2000,10 @@ Please document me!
 
 
 ## Shuffling
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/shuffle)
+```
 :::
 
 ### shuffle
@@ -2007,8 +2036,10 @@ Please document me!
 
 
 ## String utilities
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/string)
+```
 :::
 
 ### string-split-prefix
@@ -2108,8 +2139,10 @@ The procedure accepts only a fixnum or #f for count.
 
 
 ## Synchronized Data Structures.
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/sync)
+```
 :::
 
 ### make-sync-hash
@@ -2187,8 +2220,10 @@ Please document me!
 
 
 ## Text Utilities
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/text)
+```
 :::
 
 ### include-text
@@ -2203,8 +2238,10 @@ Please document me!
 
 
 ## Thread utilities
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/threads)
+```
 :::
 
 ### primordial-thread-group
@@ -2300,8 +2337,10 @@ Please document me!
 
 
 ## Timeouts
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/timeout)
+```
 :::
 
 ### make-timeout
@@ -2314,8 +2353,10 @@ Please document me!
 Please document me!
 
 ## UUIDs
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/uuid)
+```
 :::
 
 ### UUID
@@ -2429,9 +2470,12 @@ Please document me!
 
 
 ## Functional utilities
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/func)
+```
 :::
+
 Collection of mixed purpose higher-order functions.
 
 ### always
