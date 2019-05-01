@@ -544,7 +544,7 @@ Compares the list lengths of both *lst1* and *lst2*, and returns a truth value
 (`#t` or `#f`).
 
 | function           | less efficient variant       |
-| -------------------|------------------------------|
+|:-------------------|:-----------------------------|
 | `(length=?  x y)`  | `(=  (length x) (length y))` |
 | `(length<?  x y)`  | `(<  (length x) (length y))` |
 | `(length<=? x y)`  | `(<= (length x) (length y))` |
@@ -591,7 +591,7 @@ Checks how the length of *lst* compares to *n* and returns a truth value result
 (`#t` or `#f`). Signals an error when n isn't a valid number.
 
 | function            | less efficient variant |
-| --------------------|------------------------|
+|:--------------------|:-----------------------|
 | `(length=n?  x n)`  | `(=  (length x) n)`    |
 | `(length<n?  x n)`  | `(<  (length x) n)`    |
 | `(length<=n? x n)`  | `(<= (length x) n)`    |
@@ -629,7 +629,7 @@ any name but are called *put!* and *peek* here:
 
 - *put!* will append its input element onto an internal list (and thus modifies
   it) on each invocation.
-- *peek* retrieves the elements collected so far, or [] if *put!* is never called.
+- *peek* retrieves the elements collected so far, or `[]` if *put!* is never called.
 
 Finally, `call-with-list-builder` returns the constructed list.
 
