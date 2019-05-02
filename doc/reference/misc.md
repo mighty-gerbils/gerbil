@@ -1,5 +1,32 @@
 # Miscellaneous
 
+<!--
+Documentation template:
+
+## submodule
+::: tip To use the bindings from this module:
+``` scheme
+(import :std/...)
+```
+:::
+
+### function
+``` scheme
+(function param ...) -> ret1 | ret2 | ...
+
+  param := param description ...
+```
+
+Function description; *param* highlighted; inline `code`
+
+::: tip Examples:
+``` scheme
+> (function  ...)
+ret
+```
+:::
+-->
+
 ## Buffered channels.
 ::: tip To use the bindings from this module:
 ``` scheme
