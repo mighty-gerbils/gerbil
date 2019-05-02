@@ -49,10 +49,10 @@ package: std/misc
     (make-uuid hash #f)))
 
 (def uuid-re
-  (pregexp "[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}"))
+  (pregexp "[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"))
 
 (def uuid-re-capture
-  (pregexp "([0-9a-z]{8})-([0-9a-z]){4}-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})"))
+  (pregexp "([0-9a-fA-F]{8})-([0-9a-fA-F]{4})-([0-9a-fA-F]{4})-([0-9a-fA-F]{4})-([0-9a-fA-F]{12})"))
 
 (def (text->uuid str)
   (if (pregexp-match uuid-re str)
