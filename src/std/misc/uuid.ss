@@ -52,7 +52,7 @@ package: std/misc
   (pregexp "[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}"))
 
 (def uuid-re-capture
-  (pregexp "([0-9a-z]{8})-([0-9a-z]){4}-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})"))
+  (pregexp "([0-9a-z]{8})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{4})-([0-9a-z]{12})"))
 
 (def (text->uuid str)
   (if (pregexp-match uuid-re str)
