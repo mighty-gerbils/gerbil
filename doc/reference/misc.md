@@ -1,8 +1,37 @@
 # Miscellaneous
 
+<!--
+Documentation template:
+
+## submodule
+::: tip To use the bindings from this module:
+``` scheme
+(import :std/...)
+```
+:::
+
+### function
+``` scheme
+(function param ...) -> ret1 | ret2 | ...
+
+  param := param description ...
+```
+
+Function description; *param* highlighted; inline `code`
+
+::: tip Examples:
+``` scheme
+> (function  ...)
+ret
+```
+:::
+-->
+
 ## Buffered channels.
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/channel)
+```
 :::
 
 ### make-channel
@@ -89,8 +118,10 @@ Please document me!
 
 
 ## Asynchronous Completions
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/completion)
+```
 :::
 
 ### completion
@@ -177,8 +208,10 @@ Evaluates `body ...` with an exception handler that signals an error in the comp
 
 
 ## Thread Barriers
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/barrier)
+```
 :::
 
 ### barrier
@@ -254,8 +287,10 @@ Evaluates `body ...` with an exception handler that signals an error in the barr
 
 
 ## Deques
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/deque)
+```
 :::
 
 ### deque
@@ -393,8 +428,10 @@ Returns a list of the value contained in the deque, in order.
 
 
 ## List utilities
-::: tip Module
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/list)
+```
 :::
 
 ### alist?
@@ -534,7 +571,7 @@ Compares the list lengths of both *lst1* and *lst2*, and returns a truth value
 (`#t` or `#f`).
 
 | function           | less efficient variant       |
-| -------------------|------------------------------|
+|:-------------------|:-----------------------------|
 | `(length=?  x y)`  | `(=  (length x) (length y))` |
 | `(length<?  x y)`  | `(<  (length x) (length y))` |
 | `(length<=? x y)`  | `(<= (length x) (length y))` |
@@ -581,7 +618,7 @@ Checks how the length of *lst* compares to *n* and returns a truth value result
 (`#t` or `#f`). Signals an error when n isn't a valid number.
 
 | function            | less efficient variant |
-| --------------------|------------------------|
+|:--------------------|:-----------------------|
 | `(length=n?  x n)`  | `(=  (length x) n)`    |
 | `(length<n?  x n)`  | `(<  (length x) n)`    |
 | `(length<=n? x n)`  | `(<= (length x) n)`    |
@@ -619,7 +656,7 @@ any name but are called *put!* and *peek* here:
 
 - *put!* will append its input element onto an internal list (and thus modifies
   it) on each invocation.
-- *peek* retrieves the elements collected so far, or [] if *put!* is never called.
+- *peek* retrieves the elements collected so far, or `[]` if *put!* is never called.
 
 Finally, `call-with-list-builder` returns the constructed list.
 
@@ -924,8 +961,10 @@ otherwise an empty list is returned.
 :::
 
 ## LRU caches
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/lru)
+```
 :::
 
 ### lru-cache
@@ -1124,8 +1163,10 @@ Creates an iterator over the LRU cache values.
 
 
 ## Port utilities
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/ports)
+```
 :::
 
 ### copy-port
@@ -1184,8 +1225,10 @@ idiom.
 
 
 ## Priority Queues
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/pqueue)
+```
 :::
 
 ### pqueue
@@ -1281,8 +1324,10 @@ Pushes the value `v` in the queue.
 
 
 ## Proces Utilities
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/process)
+```
 :::
 
 ### Overview
@@ -1313,8 +1358,10 @@ Please document me!
 
 
 ## Simple Queues
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/queue)
+```
 :::
 
 ### queue
@@ -1434,9 +1481,10 @@ Returns a list of the value contained in the queue, in order.
 
 
 ## Red Black Trees
-
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/rbtree)
+```
 :::
 
 ### rbtree
@@ -1731,8 +1779,10 @@ ties are broken by lexicographic ordering.
 
 
 ## Sourceable Representation
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/repr)
+```
 :::
 
 ### print-representation
@@ -1842,8 +1892,10 @@ and displays each element of the list with the given prefix, suffix, separator a
 
 
 ## Type Descriptor Utilities.
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/rtd)
+```
 :::
 
 ### object-type
@@ -1957,8 +2009,10 @@ Please document me!
 
 
 ## Shared-structure Equality.
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/shared)
+```
 :::
 
 ### equal-shared?
@@ -1973,143 +2027,300 @@ Please document me!
 
 
 ## Shuffling
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/shuffle)
+```
 :::
 
 ### shuffle
-::: tip usage
+``` scheme
+(shuffle lst) -> list
+
+  lst := proper list to shuffle
 ```
-(shuffle ...)
+
+Creates a pseudo-random permutation of the values in *lst* and returns a new
+list. *lst* will not be modified during this.
+
+Implementation detail: *lst* is converted to a random-access vector first, which
+is then shuffled via `vector-shuffle!`, and finally converted back to a proper
+list.
+
+::: tip Examples:
+``` scheme
+> (def lst [1 2 3 4 5])
+
+> (shuffle lst)
+(2 1 3 5 4)
+
+> (shuffle lst)
+(3 4 2 1 5)
+
+> lst
+(1 2 3 4 5)    ; lst is unaffected by the shuffling
 ```
 :::
-
-Please document me!
 
 ### vector-shuffle
-::: tip usage
+``` scheme
+(vector-shuffle vec) -> vector
+
+  vec := vector to shuffle
 ```
-(vector-shuffle ...)
+
+Creates a pseudo-random permutation of the values in *vec* and returns a new
+vector. *vec* will not be modified during this.
+
+Implementation detail: *vec* is copied first, and it is this very copy that is
+then shuffled via `vector-shuffle!`.
+
+::: tip Examples:
+``` scheme
+> (def vec #(1 2 3 4 5))
+
+> (vector-shuffle vec)
+#(2 1 5 4 3)
+
+> (vector-shuffle vec)
+#(4 2 5 1 3)
+
+> vec
+#(1 2 3 4 5)    ; vec is unaffected by the shuffling
 ```
 :::
-
-Please document me!
 
 ### vector-shuffle!
-::: tip usage
+``` scheme
+(vector-shuffle! vec) -> vector
+
+  vec := vector to shuffle
 ```
-(vector-shuffle! ...)
+
+Creates a pseudo-random permutation of the values in *vec*, but does so
+in-place, which means that *vec* will be modified directly instead of allocating
+a new vector.
+
+Implementation detail: The shuffling is performed according to Sattolo's
+algorithm, a Fisher-Yates shuffle variant.
+
+::: tip Examples:
+``` scheme
+> (def vec #(1 2 3 4 5))
+
+> (vector-shuffle! vec)
+#(3 4 1 5 2)
+
+> (vector-shuffle! vec)
+#(3 1 5 4 2)
+
+> vec
+#(3 1 5 4 2)
 ```
 :::
-
-Please document me!
-
 
 
 ## String utilities
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/string)
+```
+:::
+
+### string-trim-prefix
+``` scheme
+(string-trim-prefix pfix str) -> string
+
+  pfix := string prefix to trim
+  str  := string to search in for pfix
+```
+
+If *str* starts with the given string prefix *pfix*, then `string-trim-prefix`
+returns the rest of *str* without *pfix*. If *pfix* isn't a valid prefix of
+*str* return the entire string *str* instead.
+
+::: tip Examples:
+``` scheme
+> (string-trim-prefix "date:" "date:2019-05-01")
+"2019-05-01"
+
+> (string-trim-prefix "$" "100")
+"100"
+
+> (map (cut string-trim-prefix ":std/misc/" <>)
+       [":std/misc/string" ":std/misc/ports" ":std/misc/list"])
+("string" "ports" "list")
+```
+:::
+
+### string-trim-suffix
+``` scheme
+(string-trim-suffix sfix str) -> string
+
+  sfix := string suffix to trim
+  str  := string to search in for sfix
+```
+
+Analog to `string-trim-prefix`, but returns the beginning of *str* without the
+string ending *sfix* instead.
+
+::: tip Examples:
+``` scheme
+> (string-trim-suffix ".ss" "strings.ss")
+"strings"
+
+> (map (cut string-trim-suffix ".txt" <>)
+       ["README.txt" "LICENSE.txt" "CREDITS.txt"])
+("README" "LICENSE" "CREDITS")
+```
+:::
+
+### string-trim-eol
+``` scheme
+(string-trim-eol str) -> string
+
+  str := string to trim
+```
+
+Trims any single end-of-line marker `CR`, `LF` or `CRLF` at the end of *str*.
+
+Note: `string-trim-eol` removes only one end-of-line marker. Use
+`(string-trim-right str (char-set #\return #\newline))` to remove all of them.
+
+::: tip Examples:
+``` scheme
+> (string-trim-eol "foo\r")
+"foo"      ; equivalent to (string-trim-suffix +cr+ "foo\r")
+
+> (string-trim-eol "foo\n\n")
+"foo\n"    ; only a single end-of-line marker is removed
+```
 :::
 
 ### string-split-prefix
-::: tip usage
+``` scheme
+(string-split-prefix pfix str) -> (values string string)
+
+  pfix := string prefix to split after
+  str  := string to search in for pfix
 ```
-(string-split-prefix ...)
+
+Split *str* based on given string prefix *pfix*, returning both the string part
+after the prefix as well as the prefix itself, or both the whole string and `""`
+when *pfix* isn't found in *str*.
+
+`string-split-prefix` is similar to `string-trim-prefix`, but also returns the
+prefix as a second value.
+
+::: tip Examples:
+``` scheme
+> (string-split-prefix "123" "123abcdef")
+"abcdef"    ; suffix/rest
+"123"       ; prefix
+
+> (string-split-prefix "123" "no-numbers-here")
+"no-numbers-here"
+""
+
+> (import :std/srfi/13)
+> (for-each (lambda (brw)
+              (let-values (((name year) (string-split-prefix (string-take brw 4) brw)))
+                (displayln "initial release of " name " was " year)))
+            ["2002firefox" "2003safari" "2008chrome" "2015edge"])
+initial release of firefox was 2002
+initial release of safari was 2003
+initial release of chrome was 2008
+initial release of edge was 2015
 ```
 :::
-
-Please document me!
-
-### string-trim-prefix
-::: tip usage
-```
-(string-trim-prefix ...)
-```
-:::
-
-Please document me!
 
 ### string-split-suffix
-::: tip usage
+``` scheme
+(string-split-suffix sfix str) -> (values string string)
+
+  sfix := string suffix to split before
+  str  := string to search in for sfix
 ```
-(string-split-suffix ...)
+
+Analog to `string-split-prefix`, but splits *str* based on a given string suffix
+*sfix* instead.
+
+`string-split-suffix` is similar to `string-trim-suffix`, but also returns the
+suffix as a second value.
+
+::: tip Examples:
+``` scheme
+> (string-split-suffix ".scm" "secret.scm")
+"secret"    ; prefix/rest
+".scm"      ; suffix
+
+> (string-split-suffix ".scm" "secret.lisp")
+"secret.lisp"
+""
 ```
 :::
-
-Please document me!
-
-### string-trim-suffix
-::: tip usage
-```
-(string-trim-suffix ...)
-```
-:::
-
-Please document me!
 
 ### string-split-eol
-::: tip usage
+``` scheme
+(string-split-eol str) -> string
+
+  str := string to split
 ```
-(string-split-eol ...)
+
+Analog to `string-trim-eol`, but splits one single end-of-line marker off of
+*str*, which is then also returned as a second value.
+
+::: tip Examples:
+``` scheme
+> (equal? +lf+ (values-ref (string-split-eol "foo\n") 1))
+#t
 ```
 :::
-
-Please document me!
-
-### string-trim-eol
-::: tip usage
-```
-(string-trim-eol ...)
-```
-:::
-
-Please document me!
-
-### +cr+
-```
-(def +cr+)
-```
-
-Please document me!
-
-### +lf+
-```
-(def +lf+)
-```
-
-Please document me!
-
-### +crlf+
-```
-(def +crlf+)
-```
-
-Please document me!
 
 ### string-subst
-::: tip usage
+``` scheme
+(string-subst str old new [count: count = #f]) -> string | error
+
+  str   := string to perform changes on, won't be modified
+  old   := string, what to remove
+  new   := string, what to insert instead
+  count := number of substitutions, optional keyword param
 ```
-(string-subst str old new [count: count = #f])
-  str   := string
-  old   := string
-  new   := string
-  count := fixnum
-=> string
+
+Substitutes/replaces string *old* with string *new* inside of *str*. *str*
+itself will not be modified. The procedure expects *count* to be a valid number
+(a fixnum to be precise) or `#f`, indicating the number of substitutions to
+perform, otherwise an error is signaled.
+
+- `count #f`: no limit, the default
+- `count > 0`: limit replacements
+- `count <= 0`: return input
+
+::: tip Examples:
+``` scheme
+> (string-subst "aabbaaaaabb" "aa" "cc")
+"ccbbccccabb"    ; single a remains, only replacing pairs
+
+> (string-subst "subst;some;of;these;semicolons" ";" "#" count: 2)
+"subst#some#of;these;semicolons"
 ```
 :::
 
-In str replace the string old with string new.
-The procedure accepts only a fixnum or #f for count.
+### line ending variables
+``` scheme
+(define +cr+   "\r")
+(define +lf+   "\n")
+(define +crlf+ "\r\n")
+```
 
-* `count > 0` limit replacements
-* `count #f` no limit
-* `count <= 0` return input
-
+Global line ending definitions for easier usage.
 
 
 ## Synchronized Data Structures.
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/sync)
+```
 :::
 
 ### make-sync-hash
@@ -2187,8 +2398,10 @@ Please document me!
 
 
 ## Text Utilities
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/text)
+```
 :::
 
 ### include-text
@@ -2203,8 +2416,10 @@ Please document me!
 
 
 ## Thread utilities
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/threads)
+```
 :::
 
 ### primordial-thread-group
@@ -2300,172 +2515,343 @@ Please document me!
 
 
 ## Timeouts
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/timeout)
+```
 :::
 
 ### make-timeout
-::: tip usage
+``` scheme
+(make-timeout t [def = absent-obj]) -> time object | def | error
+
+  t   := real number in seconds | time object | #f (false value)
+  def := default value returned in case t is #f
 ```
-(make-timeout ...)
+
+Creates a time object representing a time point relative to the current time.
+These time objects are used as timeout input parameters for synchronization
+primitives in modules such as `:gerbil/gambit/threads` or `:std/misc/channel`:
+
+- `(thread-sleep! timeout)`
+- `(thread-join! thread [timeout [timeout-val]])`
+- `(mutex-lock! mutex [timeout [thread]])`
+- `(mutex-unlock! mutex [condition-variable [timeout]])`
+- `(channel-put channel value [time-object])`
+- `(channel-get channel [time-object [default]])`
+
+`make-timeout` expects *t* to be exact or inexact real number in seconds; a time
+point object satisfying `time?`, in which case it returns *t* itself; or `#f`,
+which is often the case for gerbil's internal usage of `make-timeout`, returning
+the optional default parameter *def* instead.
+
+Signals an error when *t* is something other than a real number, a time object or `#f`.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads)
+> (thread-sleep! (make-timeout 10))
+  ; no output, but will take ten seconds to complete
 ```
 :::
-
-Please document me!
 
 ## UUIDs
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/uuid)
+```
 :::
+
+Bindings to generate, recognize, and convert from and to *universally unique
+identifiers* (UUID) for identification purposes.
+
+Example UUID: `dae92f43-4a98-fde7-f559-c2b4c2665138`.
 
 ### UUID
-::: tip usage
+``` scheme
+(UUID uuid) -> uuid | error
+(UUID str)  -> uuid | error
+(UUID vec)  -> uuid | error
+(UUID sym)  -> uuid | error
+
+  uuid := uuid object, will be returned
+  str  := string representation to convert from
+  vec  := u8vector representation to convert from
+  sym  := symbolic representation to convert from
 ```
-(UUID ...)
+
+Creates a new uuid object from various input objects. It accepts the following inputs:
+
+- an already constructed object, which will then be simply returned,
+- a string,
+- an u8vector of 16 elements,
+- and finally, a symbol that's first converted to a string and processed further.
+
+`UUID` signals an error when any of these inputs are invalid UUID representations.
+
+::: tip Examples:
+``` scheme
+> (def ustr (uuid->string (random-uuid)))
+> (uuid=? (UUID ustr)
+          (UUID (string->symbol ustr)))
+#t
 ```
 :::
-
-Please document me!
 
 ### uuid-length
-::: tip usage
+``` scheme
+(def uuid-length 16)
 ```
-(uuid-length ...)
-```
-:::
 
-Please document me!
-
-### uuid::t
-::: tip usage
-```
-(uuid::t ...)
-```
-:::
-
-Please document me!
+Variable that holds the number of octets that are making up the UUID.
 
 ### make-uuid
-::: tip usage
+``` scheme
+(make-uuid vec str) -> uuid
+
+  vec := uuid object u8vector representation
+  str := uuid object string representation
 ```
-(make-uuid ...)
+
+Creates a new uuid object from *vec*, a u8vector representation, and *str*, a
+string-representation. If *str* is specified as `#f`, then the string
+representation will be generated on demand by procedures like `uuid->string`.
+
+::: tip Examples:
+``` scheme
+;; possible random-uuid implementation:
+> (import (only-in :std/crypto/etc random-bytes!))
+> (def (random-uuid)
+    (let (bytes (make-u8vector uuid-length))
+      (random-bytes! bytes)
+      (make-uuid bytes #f)))
+
+> (uuid->string (random-uuid))
+"e26a747f-2a17-aad1-2cdf-504a25e98d02"
 ```
 :::
-
-Please document me!
 
 ### uuid?
-::: tip usage
+``` scheme
+(uuid? uuid) -> boolean
+
+  uuid := uuid object to check
 ```
-(uuid? ...)
+
+Checks whether *uuid* is an actual uuid object.
+
+::: tip Examples:
+``` scheme
+> (uuid? "337649b0-ec36-6c80-5d06-53f5586e6322")
+#f
+
+> (uuid? (string->uuid "337649b0-ec36-6c80-5d06-53f5586e6322"))
+#t
 ```
 :::
-
-Please document me!
 
 ### uuid=?
-::: tip usage
+``` scheme
+(uuid=? u1 u2) -> boolean
+
+  u1, u2 := uuid object to compare
 ```
-(uuid=? ...)
+
+Compares the uuid objects *u1* and *u2* and checks whether these two are equal.
+Two uuid objects are equal when their byte representations are `equal?`.
+
+::: tip Examples:
+``` scheme
+> (uuid=? (string->uuid "98ac7df1-204a-7932-dfdf-f466f9c9acff")
+          (string->uuid "a8a695fd-7d0e-bd55-46a8-5a5951500b4b"))
+#f
+
+> (def u1 (u8vector->uuid #u8(227 124 73 208 223 79 147 3 57 65 100 56 99 245 171 80)))
+> (def u2 (string->uuid "e37c49d0-df4f-9303-3941-643863f5ab50"))
+> (uuid=? u1 u2)
+#t
 ```
 :::
-
-Please document me!
 
 ### uuid-hash
-::: tip usage
+``` scheme
+(uuid-hash uuid) -> fixnum
+
+  uuid := uuid object to hash
 ```
-(uuid-hash ...)
+
+Returns the hash number of *uuid*, which is a small exact integer (fixnum). Two
+uuid objects have the same hash value when their byte representations are
+`equal?`.
+
+::: tip Examples:
+``` scheme
+> (uuid-hash (random-uuid))
+318443048
+
+> (def u1 (u8vector->uuid #u8(227 124 73 208 223 79 147 3 57 65 100 56 99 245 171 80)))
+> (def u2 (string->uuid "e37c49d0-df4f-9303-3941-643863f5ab50"))
+> (= (uuid-hash u1) (uuid-hash u2))
+#t
 ```
 :::
-
-Please document me!
 
 ### uuid-&gt;u8vector
-::: tip usage
+``` scheme
+(uuid->u8vector uuid) -> u8vector
+
+  uuid := uuid object to convert
 ```
-(uuid->u8vector ...)
+
+Converts *uuid* to its byte vector representation of length `uuid-length`.
+
+::: tip Examples:
+``` scheme
+> (uuid->u8vector (random-uuid))
+#u8(70 222 137 224 229 154 122 182 255 30 187 147 111 209 17 29)
 ```
 :::
-
-Please document me!
 
 ### u8vector-&gt;uuid
-::: tip usage
+``` scheme
+(u8vector->uuid vec) -> uuid | error
+
+  vec := u8vector to convert
 ```
-(u8vector->uuid ...)
+
+Converts *vec*, a u8vector representing a UUID, to an actual uuid object.
+Signals an error when *vec*'s length doesn't match `uuid-length`, which is
+predefined to be 16.
+
+::: tip Examples:
+``` scheme
+> (def vec #u8(159 202 105 225 118 206 224 215 234 228 189 63 150 185 213 53))
+> (u8vector-length vec)
+16
+
+> (uuid->string (u8vector->uuid vec))
+"9fca69e1-76ce-e0d7-eae4-bd3f96b9d535"
 ```
 :::
-
-Please document me!
 
 ### uuid-&gt;string
-::: tip usage
+``` scheme
+(uuid->string uuid) -> string
+
+  uuid := uuid object to convert
 ```
-(uuid->string ...)
+
+Converts *uuid* to its easier to read string representation.
+
+::: tip Examples:
+``` scheme
+> (uuid->string (random-uuid))
+"c6bc8cd8-88c9-64fb-bddb-2bed2c663ed7"
+
+> (uuid->string (string->uuid "ce2c3a97-504c-0926-dddd-0d2571b9a683"))
+"ce2c3a97-504c-0926-dddd-0d2571b9a683"
 ```
 :::
-
-Please document me!
 
 ### string-&gt;uuid
-::: tip usage
+``` scheme
+(string->uuid str) -> uuid | error
+
+  str := string representing a UUID to convert
 ```
-(string->uuid ...)
+
+Converts *str*, a hex string representing a UUID, to an actual uuid object.
+Signals an error when *str* is malformed.
+
+::: tip Examples:
+``` scheme
+> (string->uuid "39fc54b8-6c00-9ec7-638f-4bb2b83abb0a")
+#<uuid #386>
+
+> (uuid->string (string->uuid "ce2c3a97-504c-0926-dddd-0d2571b9a683"))
+"ce2c3a97-504c-0926-dddd-0d2571b9a683"
 ```
 :::
-
-Please document me!
 
 ### random-uuid
-::: tip usage
+``` scheme
+(random-uuid) -> uuid
 ```
-(random-uuid ...)
+
+Generates a new pseudo-random UUID.
+
+::: tip Examples:
+``` scheme
+> (uuid->string (random-uuid))
+"eb362448-93bb-f69f-9a90-e5eec79bc0a2"
+
+> (uuid->string (random-uuid))
+"78a9cf92-d3c0-eb38-cd16-6a18251ef3f6"
 ```
 :::
-
-Please document me!
-
 
 
 ## Functional utilities
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/misc/func)
+```
 :::
+
 Collection of mixed purpose higher-order functions.
 
 ### always
-::: tip usage
+``` scheme
+(always val)            -> lambda
+(always proc [arg ...]) -> lambda
+
+  val     := value that should always be returned
+  proc    := procedure that should always be called
+  arg ... := optional arguments that will be passed to proc
 ```
+
+Creates a lambda which returns the same *val* or calls always the
+same *proc* with the same optional *args*.
+
+::: tip Examples:
+``` scheme
 > (def fn (always 5))
-> (list (fn) (fn))
-=> (5 5)
+> (list (fn) (fn) (fn)))
+(5 5 5)
 
 > (def fn (always (lambda () "hi")))
 > (fn)
-=> "hi"
+"hi"
 
 > (def fn (always random-integer 10)
-> (list (fn) (fn))
-=> (4 3)
+> (list (fn) (fn) (fn))
+(4 3 8)
 ```
 :::
-
-Creates a lambda which returns the same value or calls always the
-same function with the same arguments.
 
 ### repeat
-::: tip usage
-```
-> (repeat 2 5)
-=> (2 2 2 2 2)
+``` scheme
+(repeat val n)            -> list
+(repeat proc n [arg ...]) -> list
 
-> (repeat (lambda () 10) 2)
-=> (10 10)
+  val     := value that should be repeated
+  proc    := proc that should be called n times
+  n       := exact number, repetitions
+  arg ... := optional arguments that will be passed to proc
+```
+
+Repeat *val* or call *proc* with the optional *args* *n* times and return the
+result as list. *n* is expected to be an exact number.
+
+::: tip Examples:
+``` scheme
+> (repeat 2 5)
+(2 2 2 2 2)
+
+> (repeat (lambda () 10) 3)
+(10 10 10)
 
 > (repeat random-integer 3 10)
-=> (8 3 5)
+(8 3 5)
 ```
 :::
-
-Repeat value or call function N times and return the result as list.
