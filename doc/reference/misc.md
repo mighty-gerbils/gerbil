@@ -1212,58 +1212,202 @@ Creates an iterator over the LRU cache values.
 :::
 
 ### copy-port
-::: tip usage
+``` scheme
+(copy-port in out) -> void | error
+
+  in  := input port to read from
+  out := output port to write to
 ```
-(copy-port ...)
+
+Copy all data from port *in* to port *out*. Signals an error when *in* and *out*
+aren't satisfying `input-port?` and `output-port?`, respectively.
+
+::: tip Examples:
+``` scheme
+> (def nums (string-join (map number->string [1 2 3 4 5]) "\n" 'suffix))
+> (call-with-output-file "~/testing/nums.txt"
+    (lambda (out)
+      (call-with-input-string nums
+        (lambda (in) (copy-port in out)))))
+
+$ cat ~/testing/nums.txt    ; unix-like command-line
+1
+2
+3
+4
+5
+
+> (copy-port (current-input-port) (current-output-port))
+hello,
+hello,       ; duplicates what you type at the REPL
+everyone!
+everyone!    ; quit with Ctrl-D
 ```
 :::
-
-Please document me!
 
 ### read-all-as-string
-::: tip usage
+``` scheme
+(read-all-as-string in) -> string | error
+
+  in := input port to read from
 ```
-(read-all-as-string ...)
+
+Reads all the contents of port *in*, returning a single string including all
+newline characters. Signals an error when *in* can't be read.
+
+::: tip Examples:
+``` scheme
+> (import :std/srfi/13)
+> (with-input-from-file "~/dev/gerbil/CHANGELOG.md"
+    (lambda ()
+      (string-take (read-all-as-string (current-input-port)) 80)))
+"### 2-9-2019: Gerbil-v0.15.1\n\nPatch release to support Gambit v4.9.3\n\nDetails:\n-"
 ```
 :::
-
-Please document me!
-
-### read-file-string
-::: tip usage
-```
-(read-file-string ...)
-```
-:::
-
-Please document me!
 
 ### read-all-as-lines
-::: tip usage
+``` scheme
+(read-all-as-lines in
+                   [separator: separator = #\newline]
+                   [include-separator?: include-separator? = #f]) -> list | error
+
+  in                 := input port to read from
+  separator          := character to consider line ending
+  include-separator? := truth value, whether to include separator char in line results
 ```
-(read-all-as-lines ...)
+
+Reads all the contents of port *in* as a list of strings. The optional separator
+related keyword parameters specify what is considered a line ending and whether
+to include these separator characters in the line strings. Signals an error when
+*in* can't be read.
+
+::: tip Examples:
+``` scheme
+> (import :std/srfi/1)
+> (take (call-with-input-file "~/dev/gerbil/README.md" read-all-as-lines) 4)
+("# Gerbil Scheme"
+ ""
+ "Gerbil is an opinionated dialect of Scheme designed for Systems Programming,"
+ "with a state of the art macro and module system on top of the Gambit runtime.")
+
+> (with-input-from-string "aa:bb:cc:dd::ff"
+    (lambda () (read-all-as-lines (current-input-port) separator: #\:)))
+("aa" "bb" "cc" "dd" "" "ff")
 ```
 :::
 
-Please document me!
+### read-file-string
+``` scheme
+(read-file-string path) -> string | error
+
+  path := path to file to read contents from
+```
+
+Reads contents of the file at *path*, returning a single string including all
+newline characters. Signals an error when *path* can't be read.
+
+Note: There is another optional *settings* keyword parameter not shown above,
+but it's not terribly interesting for this file reading procedure. Check section
+`17.7.1 Filesystem devices` of the Gambit Manual if you want to know more.
+
+::: tip Examples:
+``` scheme
+$ cat ~/testing/nums.txt    ; unix-like command-line
+1
+2
+3
+4
+5
+
+(map string->number
+     (string-split (read-file-string "~/testing/nums.txt") #\newline))
+(1 2 3 4 5)
+```
+:::
 
 ### read-file-lines
-::: tip usage
+``` scheme
+(read-file-lines path) -> list | error
+
+  path := path to file to read contents from
 ```
-(read-file-lines ...)
+
+Reads all lines of the file at *path* as a list of strings. Signals an error
+when *path* can't be read.
+
+Note: There is another optional *settings* keyword parameter not shown above,
+but it's not terribly interesting for this file reading procedure. Check section
+`17.7.1 Filesystem devices` of the Gambit Manual if you want to know more.
+
+::: tip Examples:
+``` scheme
+$ cat ~/testing/nums.txt    ; unix-like command-line
+1
+2
+3
+4
+5
+
+> (read-file-lines "~/testing/nums.txt")
+("1" "2" "3" "4" "5")
+
+;; Advent of code 2018, problem 01a: Sum a file of around 1000 exact integer values.
+$ head -n5 ~/dev/aoc18/01/input.txt
++12
+-13
++17
++17
+-10
+
+> (apply + (map string->number (read-file-lines "~/dev/aoc18/01/input.txt")))
+508
 ```
 :::
 
-Please document me!
-
 ### Port Destructor
-```
+``` scheme
 (defmethod {destroy <port>} close-port)
 ```
 
-The module also defines a `destroy` method for ports, so that they can
-be used in `with-destroy` forms and other primitives that use the destroy
-idiom.
+The module also defines a `destroy` method for ports, so that they can be used
+in `with-destroy` forms and other primitives that use the destroy idiom,
+ensuring that ports will be closed even if an error is signaled
+somewhere within the body.
+
+::: tip Examples:
+``` scheme
+> (define (for-each-dir-entry dir proc)
+    (let ((dir-port (open-directory dir)))
+      (let loop ()
+        (let ((file (read dir-port)))
+          (if (eof-object? file)
+              (close-port dir-port)
+              (begin
+                (proc file)
+                (loop)))))))
+
+;; could also be written like this utilizing with-destroy:
+> (import :std/sugar)
+> (define (for-each-dir-entry dir proc)
+    (let ((dir-port (open-directory dir)))
+      (with-destroy dir-port
+        ;; dir-port will be closed upon exiting this scope
+        (let loop ((file (read dir-port)))
+          (unless (eof-object? file)
+            (proc file)
+            (loop (read dir-port)))))))
+
+> (for-each-dir-entry "/home/username" displayln)
+dev
+downloads
+videos
+documents
+desktop
+pictures
+music
+testing
+```
+:::
 
 
 ## Priority Queues
