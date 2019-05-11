@@ -1671,14 +1671,14 @@ Equivalent to `(not (queue-empty? q))`.
 
 ### enqueue!
 ``` scheme
-(enqueue! q elem) -> queue
+(enqueue! q elem) -> unspecified
 
   q    := queue to push onto
   elem := element to append to q
 ```
 
-Enqueues (pushes) *elem* to the end of *q* and returns the modified *q*
-afterwards.
+Enqueues (pushes) *elem* to the end of *q*. Similar to `set!`, it's unspecified
+what `enqueue!` returns afterwards.
 
 This operation is faster than simply appending to the end of regular list,
 because the queue needn't be walked first.
@@ -1705,14 +1705,14 @@ because the queue needn't be walked first.
 
 ### enqueue-front!
 ``` scheme
-(enqueue-front! q elem) -> queue
+(enqueue-front! q elem) -> unspecified
 
-  q := queue tp push onto
+  q := queue to push onto
   elem := element to enqueue to q
 ```
 
 `enqueue-front!` is similar to `enqueue!`, but pushes *elem* to the front of *q*
-instead of the end. Also, returns the modified *q*.
+instead of the end. It's unspecified what will be returned.
 
 ::: tip Examples:
 ``` scheme
