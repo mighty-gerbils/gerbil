@@ -402,7 +402,7 @@ The common iteration macro and its inverted form.
 => (letrec ((id expr)) id)
 
 (rec (values id ...) expr)
-=> (leterc ((values id ...) expr) (values id ...))
+=> (letrec ((values id ...) expr) (values id ...))
 
 (rec (id . args) body ...)
 => (letrec (id (lambda args body ...)) id)
