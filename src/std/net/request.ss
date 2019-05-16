@@ -109,6 +109,7 @@ package: std/net
     (http-request 'HEAD url headers #f [] redirect)))
 
 (def (http-post url
+                redirect: (redirect #t)
                 headers:  (headers #f)
                 cookies:  (cookies #f)
                 params:   (params #f)
@@ -125,7 +126,7 @@ package: std/net
           (values
             (make-http/1.1-headers headers cookies)
             data)))
-    (http-request 'POST url headers data [] #f)))
+    (http-request 'POST url headers data [] redirect)))
 
 (def (http-put url
                headers:  (headers #f)
