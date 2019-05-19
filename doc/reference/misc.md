@@ -960,6 +960,48 @@ otherwise an empty list is returned.
 ```
 :::
 
+### slice
+``` scheme
+(slice lst start [limit = #f]) -> list
+  lst   := proper list
+  start := start index
+  limit := number of items to take from lst
+```
+
+Returns a list from `lst`, starting from the left at `start`,
+containing `limit` elements.
+
+::: tip Examples:
+``` scheme
+> (slice [1 2 3 4] 2)
+(3 4)
+
+> (slice [1 2 3 4] 2 1)
+(3)
+```
+:::
+
+### slice-right
+``` scheme
+(slice-right lst start [limit = #f]) -> list
+  lst   := proper list
+  start := start index from the right of lst
+  limit := number of items to take from lst
+```
+
+Returns a list from `lst`, starting from the right at `start`,
+containing `limit` elements.
+
+::: tip Examples:
+``` scheme
+> (slice-right [1 2 3 4] 2)
+(1 2)
+
+> (slice-right [1 2 3 4] 2 1)
+(2)
+```
+:::
+
 ## LRU caches
 ::: tip To use the bindings from this module:
 ``` scheme

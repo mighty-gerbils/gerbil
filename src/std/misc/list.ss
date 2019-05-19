@@ -18,7 +18,10 @@ package: std/misc
   flatten
   flatten1
   rassoc
-  when-list-or-empty)
+  when-list-or-empty
+  slice slice-right)
+
+(import (only-in :std/srfi/1 drop drop-right take take-right))
 
 ;; This function checks if the list is a proper association-list.
 ;; ie it has the form [[key1 . val1] [key2 . val2]]
@@ -213,3 +216,21 @@ package: std/misc
    (if (not (pair? list))
      []
      (begin body body* ...))))
+
+;; Returns a list from lst, starting from the left at start,
+;; containing limit elements.
+;; (slice [1 2 3 4] 2)   => (3 4)
+;; (slice [1 2 3 4] 2 1) => (3)
+(def (slice lst start (limit #f))
+  (if limit
+    (take (drop lst start) limit)
+    (drop lst start)))
+
+;; Returns a list from lst, starting from the right at start,
+;; containing limit elements.
+;; (slice-right [1 2 3 4] 2)   => (1 2)
+;; (slice-right [1 2 3 4] 2 1) => (2)
+(def (slice-right lst start (limit #f))
+  (if limit
+    (take-right (drop-right lst start) limit)
+    (drop-right lst start)))
