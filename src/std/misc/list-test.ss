@@ -119,4 +119,12 @@
     (test-case "test when-list-or-empty"
       (check-equal? (when-list-or-empty 1 "a") [])
       (check-equal? (when-list-or-empty [1] "a") "a")
-      (check-equal? (when-list-or-empty [] "a") []))))
+      (check-equal? (when-list-or-empty [] "a") []))
+    (test-case "test slice"
+      (check-equal? (slice [1 2 3 4] 2) [3 4])
+      (check-equal? (slice [1 2 3 4] 2 1) [3])
+      (check-equal? (slice [1 2 3 4] 0) [1 2 3 4]))
+    (test-case "test slice-right"
+      (check-equal? (slice-right [1 2 3 4] 2) [1 2])
+      (check-equal? (slice-right [1 2 3 4] 2 1) [2])
+      (check-equal? (slice-right [1 2 3 4] 0) [1 2 3 4]))))
