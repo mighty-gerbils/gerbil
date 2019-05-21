@@ -3935,15 +3935,19 @@ Please document me!
 :::
 
 ### equal-shared?
-::: tip usage
+``` scheme
+(equal-shared? a b) -> boolean
+
+  a, b := structures to check
 ```
-(equal-shared? ...)
-```
+
+Checks whether *a* and *b*, two potentially recursive, cyclic or otherwise
+infinite shared structures, e.g. trees or graphs, are equal.
+
+::: warning Deprecation note:
+Gambit 4.9.1 (released 2018-11-16) added similar support for handling shared
+structures with `equal?`, superseding `equal-shared?`.
 :::
-
-Please document me!
-
-
 
 ## Shuffling
 ::: tip To use the bindings from this module:
