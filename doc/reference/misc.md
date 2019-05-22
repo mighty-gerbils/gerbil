@@ -3982,113 +3982,238 @@ default). Displays each element of *lst* with the given *prefix*, *suffix*,
 :::
 
 ### object-type
-::: tip usage
+``` scheme
+(object-type obj) -> type | error
+
+  obj := object instance
 ```
-(object-type ...)
+
+Safe variant of `runtime#object-type`. Returns the class of an object; *obj*
+must be an object instance or an error is signaled.
+
+::: tip Examples:
+``` scheme
+> (defstruct point (x y))
+> (object-type (make-point 640 480))
+#<type #4 point>
+> (eq? point::t #4)
+#t
+> (object-type 12)
+error    ; not segfaulting like runtime#object-type
 ```
 :::
-
-Please document me!
 
 ### type?
-::: tip usage
+``` scheme
+(type? typ) -> boolean
+
+  typ := type object to check
 ```
-(type? ...)
+
+Returns `#t` if *obj* is a type descriptor, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (defstruct point (x y))
+> (type? point::t)
+#t
+> (type? (object-type (make-point -100 100)))
+#t
+> (type? (make-point 0 0))
+#f
 ```
 :::
-
-Please document me!
 
 ### type-id
-::: tip usage
+``` scheme
+(type-id typ) -> type id | error
+
+  typ := type object to inspect
 ```
-(type-id ...)
+
+Returns the id of the type object *typ*. Will signal an error if *typ* isn't a
+type object.
+
+::: tip Examples:
+``` scheme
+> (defstruct a ())
+> (defclass  b ())
+> (type-id a::t)
+#:a::t45
+> (type-id b::t)
+#:b::t49
+> (type-id (object-type (make-b)))
+#:b::t49
 ```
 :::
-
-Please document me!
 
 ### type-name
-::: tip usage
+``` scheme
+(type-name typ) -> type name | error
+
+  typ := type object to inspect
 ```
-(type-name ...)
+
+Returns the name of the type object *typ*. Will signal an error if *typ* isn't a
+type object.
+
+::: tip Examples:
+``` scheme
+> (defstruct vec3i (x y z))
+> (type-name (object-type (make-vec3i 30 0 15)))
+vec3i
 ```
 :::
-
-Please document me!
 
 ### type-super
-::: tip usage
+``` scheme
+(type-super typ) -> super class | error
+
+  typ := type object to inspect
 ```
-(type-super ...)
+
+Returns the super class of the type object *typ*. Will signal an error if *typ*
+isn't a type object.
+
+::: tip Examples:
+``` scheme
+> (defstruct A (x y))
+> (defstruct (B A) (z))
+> (struct-subtype? A::t B::t)
+#t
+> (type-super B::t)
+#<type #5 A>
+> (type-super A::t)
+#f
 ```
 :::
-
-Please document me!
-
-### type-descriptor?
-::: tip usage
-```
-(type-descriptor? ...)
-```
-:::
-
-Please document me!
 
 ### type-descriptor-mixin
-::: tip usage
+``` scheme
+(type-descriptor-mixin typ) -> list | error
+
+  typ := type descriptor to inspect
 ```
-(type-descriptor-mixin ...)
+
+Safe variant of `runtime#type-descriptor-mixin`. Returns the mixins in the type
+as a list. *typ* must be a type descriptor or an error is signaled.
+
+::: tip Examples:
+``` scheme
+> (defclass A (x))
+> (defclass (B A) (y))
+> (defclass (C A) (z))
+> (defclass (D B C) ())
+> (type-descriptor-mixin D::t)
+(#<type #8 B> #<type #9 C> #<type #10 A>)
+> (type-descriptor-mixin B::t)
+(#<type #10 A>)
+> (type-descriptor-mixin A::t)
+()
 ```
 :::
-
-Please document me!
 
 ### type-descriptor-fields
-::: tip usage
+``` scheme
+(type-descriptor-fields typ) -> fixnum | error
+
+  typ := type descriptor to inspect
 ```
-(type-descriptor-fields ...)
+
+Safe variant of `runtime#type-descriptor-fields`. Returns the number of fields
+in the type as a fixnum. *typ* must be a type descriptor or an error is
+signaled.
+
+::: tip Examples:
+``` scheme
+> (defstruct color (r g b a))
+> (type-descriptor-fields color::t)
+4
 ```
 :::
-
-Please document me!
 
 ### type-descriptor-plist
-::: tip usage
+``` scheme
+(type-descriptor-plist typ) -> alist | error
+
+  typ := type descriptor to inspect
 ```
-(type-descriptor-plist ...)
+
+Safe variant of `runtime#type-descriptor-plist`. Returns the type properties of
+the type as an alist. *typ* must be a type descriptor or an error is signaled.
+
+::: tip Examples:
+``` scheme
+> (defstruct vec4d (x y z w) final: #t)
+> (type-descriptor-plist vec4d::t)
+((fields: x y z w) (final: . #t))
 ```
 :::
-
-Please document me!
 
 ### type-descriptor-ctor
-::: tip usage
+``` scheme
+(type-descriptor-ctor typ) -> symbol | error
+
+  typ := type descriptor to inspect
 ```
-(type-descriptor-ctor ...)
+
+Safe variant of `runtime#type-descriptor-ctor`. Returns the constructor id in
+the type as a symbol. *typ* must be a type descriptor or an error is signaled.
+
+::: tip Examples:
+``` scheme
+> (defclass A (x) constructor: :init!)
+> (defmethod {:init! A}
+    (lambda (self x)
+      (set! (A-x self) (* x 2))))
+> (type-descriptor-ctor A::t)
+:init!
 ```
 :::
-
-Please document me!
 
 ### type-descriptor-slots
-::: tip usage
+``` scheme
+(type-descriptor-slots typ) -> hash-table | error
+
+  typ := type descriptor to inspect
 ```
-(type-descriptor-slots ...)
+
+Safe variant of `runtime#type-descriptor-slots`. Returns the slots in the type
+as a hash-table. *typ* must be a type descriptor or an error is signaled.
+
+::: tip Examples:
+``` scheme
+> (defclass color (r g b a))
+> (type-descriptor-slots color::t)
+#<table #6>
+> (hash->list #6)
+((r . 0) (g . 1) (b . 2) (a: . 3) (g: . 1) (b: . 2) (r: . 0) (a . 3))
 ```
 :::
-
-Please document me!
 
 ### type-descriptor-methods
-::: tip usage
+``` scheme
+(type-descriptor-methods typ) -> hash-table | error
+
+  typ := type descriptor to inspect
 ```
-(type-descriptor-methods ...)
+
+Safe variant of `runtime#type-descriptor-methods`. Returns the methods
+associated with the type as a hash-table. *typ* must be a type descriptor or an
+error is signaled.
+
+::: tip Examples:
+``` scheme
+> (defclass A (x) constructor: :init!)
+> (defmethod {:init! A}
+    (lambda (self x)
+      (set! (A-x self) (* x 2))))
+> (type-descriptor-methods A::t)
+#<table #11>
+> (hash->list #11)
+((:init! . #<procedure #12 A:::init!>))
 ```
 :::
-
-Please document me!
-
 
 
 ## Shared-structure Equality.
