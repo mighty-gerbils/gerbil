@@ -1708,6 +1708,7 @@ otherwise an empty list is returned.
 ### slice
 ``` scheme
 (slice lst start [limit = #f]) -> list
+
   lst   := proper list
   start := start index
   limit := number of items to take from lst
@@ -1729,6 +1730,7 @@ containing `limit` elements.
 ### slice-right
 ``` scheme
 (slice-right lst start [limit = #f]) -> list
+
   lst   := proper list
   start := start index from the right of lst
   limit := number of items to take from lst
