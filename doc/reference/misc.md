@@ -27,7 +27,7 @@ ret
 :::
 -->
 
-## Buffered channels.
+## Buffered channels
 ::: tip To use the bindings from this module:
 ``` scheme
 (import :std/misc/channel)
@@ -45,7 +45,7 @@ Creates a new buffered channel, a synchronization construct useful for sending
 and receiving data between producers and consumers, implicitly locking when
 reading from or writing to the channel. Chaining multiple channels, one after
 another, allows building computation pipelines with ease. *n* specifies how many
-element the channel buffer is allowed to hold before blocking, with `#f` never
+elements the channel buffer is allowed to hold before blocking, with `#f` never
 blocking at all.
 
 :: tip Examples:
@@ -269,8 +269,8 @@ EMPTY
 ``` scheme
 (channel-try-get ch [default = #f]) -> any | default | #!eof
 
-  ch := channel to read from
-  default := optional, value to return when read failed
+  ch      := channel to read from
+  default := optional, value to return when channel empty
 ```
 
 Similar to `channel-get`, but doesn't block when the channel's buffer is empty,
@@ -304,7 +304,8 @@ EMPTY
 
 The module defines a generic dispatch overload for buffered channels, allowing
 them to be iterated just like lists or hashes. Iterating *ch* will yield values,
-and block if necessary, until the channel is closed and fully consumed.
+and block if necessary, until the channel is closed and its elements fully
+consumed.
 
 ::: tip Examples:
 ``` scheme
@@ -531,7 +532,7 @@ done
 ```
 
 Signals to *c* that the current thread's computation is complete. All other
-waiting threads will be notified and receive the result *val*.
+waiting threads will be notified and receive *val* as the result.
 
 Calling `completion-post!` on an already completed *c* will raise an error.
 
@@ -568,8 +569,6 @@ done
 ```
 :::
 
-succeeds
-
 ### completion-error!
 ``` scheme
 (completion-error! c obj) -> void | error
@@ -604,8 +603,8 @@ This object was raised: failure
 
 Wraps *body ...* with an exception handler that notifies *c* via
 `completion-error!` if any type of error is raised within the body expressions.
-Furthermore, errors will be propagated upwards and need to be handled,
-terminating the thread otherwise.
+Furthermore, errors will propagate upwards and need to be handled, terminating
+the thread otherwise.
 
 ::: tip Examples:
 ``` scheme
@@ -721,7 +720,7 @@ Returns `#t` if *b* is a barrier, `#f` otherwise.
 
 Waits on *b* until it has been posted *n* times (as specified on barrier
 creation) with `barrier-post!` or an error has been signaled with
-`barrier-error!`. Errors will be propagated upwards and need to be handled.
+`barrier-error!`. Errors will propagate upwards and need to be handled.
 
 ::: tip Examples:
 ``` scheme
@@ -808,8 +807,8 @@ This object was raised: failure
 
 Wraps *body ...* with an exception handler that notifies *b* via
 `barrier-error!` if any type of error is raised within the body expressions.
-Furthermore, errors will be propagated upwards and need to be handled,
-terminating the thread otherwise.
+Furthermore, errors will propagate upwards and need to be handled, terminating
+the thread otherwise.
 
 ::: tip Examples:
 ``` scheme
@@ -905,10 +904,10 @@ Returns `#t` if *dq* is a deque, `#f` otherwise.
 ``` scheme
 (deque-length dq) -> fixnum
 
-  dq := deque, count elements
+  dq := deque to inspect
 ```
 
-Returns the number of elements in queued in *dq*.
+Returns the number of elements *dq* holds.
 
 Similar to retrieving the length of a vector, this operations is `O(1)`, since
 deques always keep track of their length.
@@ -995,7 +994,8 @@ instead of the front.
 ``` scheme
 (pop-front! dq [default = absent-obj]) -> any | default | error
 
-  dq := deque to pop from
+  dq      := deque to pop from
+  default := optional element returned when dq is empty
 ```
 
 Pops the front of *dq* and returns that value. If *dq* is empty and a default
@@ -1021,7 +1021,8 @@ value is supplied, then *default* is returned. Otherwise an error is raised.
 ``` scheme
 (pop-back! dq [default = absent-obj]) -> any | default | error
 
-  dq := deque to pop from
+  dq      := deque to pop from
+  default := optional element returned when dq is empty
 ```
 
 `pop-back!` is similar to `pop-front!`, but pops the back of *dq* instead and
@@ -1148,7 +1149,7 @@ Returns a new list of the elements queued in *dq*, in order.
 
 ### deque
 ``` scheme
-(defsyntax deque ...)
+(defsyntax deque)
 ```
 
 Deque type for user-defined generics and destructuring.
@@ -1182,7 +1183,7 @@ length: 3
 ``` scheme
 (alist? alist) -> boolean
 
-  alist := association list
+  alist := association list to check
 ```
 
 Checks whether *alist* is a proper association list and returns a truth value
@@ -1215,7 +1216,7 @@ A proper association list is a list of pairs and may be of the following forms:
 ``` scheme
 (plist? plist) -> boolean
 
-  plist := property list
+  plist := property list to check
 ```
 
 Checks whether *plist* is a proper property list and returns a truth value (`#t`
@@ -1248,7 +1249,7 @@ form: `((key1 value1 key2 value2 ...))`
 ``` scheme
 (plist->alist plist) -> alist | error
 
-  plist := property list
+  plist := property list to transform
 ```
 
 Transforms a property list `(k1 v1 k2 v2 ...)` into an association list `((k1 . v1)
@@ -1273,7 +1274,7 @@ error    ; key "dot" has no associated property value
 ``` scheme
 (alist->plist alist) -> plist | error
 
-  alist := association list
+  alist := association list to transform
 ```
 
 Transforms an association list `((k1 . v1) (k2 . v2) ...)` into a property list
@@ -1370,7 +1371,7 @@ Checks how the length of *lst* compares to *n* and returns a truth value result
 | `(length>=n? x n)`  | `(>= (length x) n)`    |
 
 These functions are potentially more efficient because they only need to check
-the list for up to n elements instead of calculating *lst*'s length up-front.
+the list for up to *n* elements instead of calculating *lst*'s length up-front.
 
 Also, *lst* is allowed to be circular.
 
@@ -1459,7 +1460,7 @@ internal list at the end.
 `snoc` is similar to `cons`, but appends *elem* at the end of *lst* instead of
 putting it at the front.
 
-Difference to `cons`: `snoc` will signal an error when *lst* is not a proper
+Different from `cons`: `snoc` will signal an error when *lst* is not a proper
 list. `cons`, in contrast, constructs a pair out of these two input values.
 
 ::: tip Examples:
@@ -1608,7 +1609,7 @@ while traversing, not adding them to the returned flattened list.
 > (flatten [1 [2 3] [[4 5]]])
 (1 2 3 4 5)
 
-(flatten [1 [] [2 [3 [] 4] 5]])
+> (flatten [1 [] [2 [3 [] 4] 5]])
 (1 2 3 4 5)  ; ignores empty sublists
 
 > (flatten '((a . 1) (b . 2) (c . 3)))
@@ -1620,7 +1621,7 @@ while traversing, not adding them to the returned flattened list.
 ``` scheme
 (flatten1 lst) -> list | error
 
-  lst := proper nested list of lists
+  lst := proper nested list-of-lists
 ```
 
 `flatten1` is a special variant of `flatten` which will not flatten the whole
@@ -1763,7 +1764,7 @@ containing `limit` elements.
 Creates a new empty Least Recently Used (LRU) cache, a cache replacement data
 structure, which tracks element usage and drops seldom used ones when full to
 make room for new elements. *cap* is the capacity, i.e., the number of elements
-the cache can hold before purging older entries. *cap* must be at least 1,
+the cache can hold before purging older entries. *cap* needs to be at least 1,
 otherwise an error is signaled.
 
 ::: tip Examples:
@@ -1988,8 +1989,9 @@ remains unchanged.
   lru  := lru-cache
 ```
 
-Applies `(proc key val)` for every key-value association in *lru*, in most
-recently used order. Isn't returning anything, executed for its side effects.
+Applies `(proc key val)` for every key-value association in *lru*, in Most
+Recently Used (MRU) order. Isn't returning anything, executed for its side
+effects.
 
 ::: tip Examples:
 ``` scheme
@@ -2111,7 +2113,7 @@ Creates an iterator over *lru*, yielding key-value values in Most Recently Used
     (lru-cache-put! lru 1 #\a)
     (lru-cache-put! lru 2 #\b)
     (lru-cache-put! lru 3 #\c)
-    (for ((values k v) (in-lru-cache lru))    ; or short: (for (x lru) ...)
+    (for ((values k v) (in-lru-cache lru))    ; or short: (for ((values k v) lru) ...)
       (displayln k " -> " v)))
 3 -> c
 2 -> b
@@ -2130,6 +2132,7 @@ Creates an iterator over *lru*, yielding keys in Most Recently Used (MRU) order.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/iter)
 > (let (lru (make-lru-cache 3))
     (lru-cache-put! lru 1 #\a)
     (lru-cache-put! lru 2 #\b)
@@ -2153,6 +2156,7 @@ Creates an iterator over *lru*, yielding values in Most Recently Used (MRU) orde
 
 ::: tip Examples:
 ``` scheme
+> (import :std/iter)
 > (let (lru (make-lru-cache 3))
     (lru-cache-put! lru 1 #\a)
     (lru-cache-put! lru 2 #\b)
@@ -2255,7 +2259,7 @@ newline characters. Signals an error when *in* can't be read.
 
   in                 := input port to read from
   separator          := character to consider line ending
-  include-separator? := truth value, whether to include separator char in line results
+  include-separator? := truth value, whether to include separator char in results
 ```
 
 Reads all the contents of port *in* as a list of strings. The optional separator
@@ -2353,8 +2357,8 @@ $ head -n5 ~/dev/aoc18/01/input.txt
 
 The module also defines a `destroy` method for ports, so that they can be used
 in `with-destroy` forms and other primitives that use the destroy idiom,
-ensuring that ports will be closed even if an error is signaled
-somewhere within the body.
+ensuring that ports will be closed even if an error is signaled somewhere within
+the body.
 
 ::: tip Examples:
 ``` scheme
@@ -2420,11 +2424,10 @@ when pushing, popping and peeking elements.
 - *capacity* is the number of elements the pqueue can hold before it needs to
   resize itself.
 
+::: tip Examples:
 For example, let's assume we always want to retrieve the longest string
 currently within our queue. This could be achieved with `string-length` as our
 priority function and ordering these lengths via `>`:
-
-::: tip Examples:
 ``` scheme
 > (def pq (make-pqueue string-length >))
 > (pqueue-push! pq "shortest")
@@ -2468,7 +2471,7 @@ Returns `#t` if *pq* is a priority queue, `#f` otherwise.
 ``` scheme
 (pqueue-size pq) -> fixnum
 
-  pq := priority queue, count elements
+  pq := priority queue to inspect
 ```
 
 Returns the number of elements queued in *pq*.
@@ -2488,7 +2491,7 @@ This operation is `O(1)`, since priority queues always keep track of their size.
 ``` scheme
 (pqueue-empty? pq) -> boolean
 
-  pq := priority queue to check whether empty
+  pq := priority queue to check
 ```
 
 Returns `#t` if *pq* has no elements queued, `#f` otherwise.
@@ -2516,7 +2519,7 @@ Returns `#t` if *pq* has no elements queued, `#f` otherwise.
   elem := element to push to pq
 ```
 
-Enqueues *elem* in *pq*, the insert position depends on the priority and
+Enqueues *elem* in *pq*. The insert position depends on the priority and
 comparison functions specified in `make-pqueue`. Similar to `set!`, it's
 unspecified what `pqueue-push!` returns afterwards.
 
@@ -2809,7 +2812,7 @@ Returns `#t` if *q* is a queue, `#f` otherwise.
 ``` scheme
 (queue-length q) -> fixnum
 
-  q := queue, count elements
+  q := queue to check
 ```
 
 Returns the number of elements enqueued in *q*.
@@ -2835,7 +2838,7 @@ queues always keep track of their length.
 ``` scheme
 (queue-empty? q) -> boolean
 
-  q := queue to check whether empty
+  q := queue to check
 ```
 
 Returns `#t` if *q* has no elements enqueued, `#f` otherwise.
@@ -2857,7 +2860,7 @@ Returns `#t` if *q* has no elements enqueued, `#f` otherwise.
 ``` scheme
 (non-empty-queue? q) -> boolean
 
-  q := queue to check whether non-empty
+  q := queue to check
 ```
 
 Returns `#t` if *q* is not empty, i.e., it has at least one element enqueued.
@@ -2887,8 +2890,8 @@ Equivalent to `(not (queue-empty? q))`.
 Enqueues (pushes) *elem* to the end of *q*. Similar to `set!`, it's unspecified
 what `enqueue!` returns afterwards.
 
-This operation is faster than simply appending to the end of regular list,
-because the queue needn't be walked first.
+This operation is faster than simply appending to the end of a regular list,
+because queues needn't be walked first.
 
 ::: tip Examples:
 ``` scheme
@@ -2914,7 +2917,7 @@ because the queue needn't be walked first.
 ``` scheme
 (enqueue-front! q elem) -> unspecified
 
-  q := queue to push onto
+  q    := queue to push onto
   elem := element to enqueue to q
 ```
 
@@ -3016,7 +3019,7 @@ Returns a new list of the elements queued in *q*, in order.
 
 ### queue
 ```
-(defsyntax queue ...)
+(defsyntax queue)
 ```
 
 Queue type, for user-defined generics and destructuring.
@@ -3051,7 +3054,8 @@ and holds 3 items
 ```
 
 Creates a new red-black tree, a self-balancing binary search tree variant,
-similar to an AVL tree.
+similar to an AVL tree. Also usable as an sorted hash-table alternative for
+small datasets.
 
 The comparison procedure *cmp* is expected to accept two keys, *a* and *b*, and
 perform a ternary comparison:
@@ -3059,7 +3063,8 @@ perform a ternary comparison:
 - If `(= a b)`, then it must return 0.
 - If `(> a b)`, then it must return a positive number.
 
-Examples of comparison procedures: `-`, `string-cmp` or `symbol-cmp`.
+Examples of comparison procedures: `-`, `string-cmp` or `symbol-cmp`. The latter
+two are defined in this module.
 
 ::: tip Examples:
 ``` scheme
@@ -3136,7 +3141,7 @@ Returns `#t` if *rbt* is empty, `#f` otherwise.
   key, val := key-value association to add to rbt
 ```
 
-Destructively updates *rbt* by inserting the key-value association *key* `->`
+Destructively updates *rbt* by inserting the key-value association *key* to
 *val*. Similar to `set!`, it's unspecified what `rbtree-put!` returns.
 
 ::: tip Examples:
@@ -3240,7 +3245,7 @@ instead, returning a new rbtree without modifying *rbt*.
 ```
 
 Destructively updates *rbt* by removing the value associated with *key*. *rbt*
-stays unmodified if *key* isn't present.  Similar to `set!`, it's unspecified
+stays unmodified if *key* isn't present. Similar to `set!`, it's unspecified
 what `rbtree-update!` returns.
 
 ::: tip Examples:
@@ -3291,7 +3296,7 @@ tree.
 ```
 
 Returns the value associated with *key* in *rbt*, or *default* if no association
-is present; if the default value is omitted then an error is raised.
+is present; if the *default* value is omitted then an error is raised.
 
 ::: tip Examples:
 ``` scheme
@@ -3507,7 +3512,7 @@ order.
 ```
 
 Creates a new rbtree from *lst*, an associative list. `make-rbtree` describes
-show *cmp* should look.
+how *cmp* is expected to look like.
 
 ::: tip Examples:
 ``` scheme
@@ -3844,8 +3849,8 @@ use.
 ```
 
 `representable` is an abstract mixin class that defines a method for `:pr`. By
-default, if a class does not provide its own implementation, that method will
-call `print-unrepresentable-object`.
+default, if a class does not provide its own implementation, then
+`print-unrepresentable-object` will be called.
 
 ::: tip Examples:
 ``` scheme
@@ -3884,7 +3889,7 @@ call `print-unrepresentable-object`.
 `print-unrepresentable-object` is a helper function to use as a fallback for
 objects that can't otherwise be displayed. Prints a general-purpose escape of
 *obj*, using the `#id` syntax and appends a string hint as obtained from the
-write function.
+`write` function.
 
 Note: *options* aren't doing anything as of now, but are reserved for future
 use.
@@ -4010,7 +4015,7 @@ error    ; not segfaulting like runtime#object-type
   typ := type object to check
 ```
 
-Returns `#t` if *obj* is a type descriptor, `#f` otherwise.
+Returns `#t` if *obj* is a type object, `#f` otherwise.
 
 ::: tip Examples:
 ``` scheme
@@ -4095,7 +4100,7 @@ isn't a type object.
   typ := type descriptor to inspect
 ```
 
-Safe variant of `runtime#type-descriptor-mixin`. Returns the mixins in the type
+Safe variant of `runtime#type-descriptor-mixin`. Returns the mixins of the type
 as a list. *typ* must be a type descriptor or an error is signaled.
 
 ::: tip Examples:
@@ -4121,7 +4126,7 @@ as a list. *typ* must be a type descriptor or an error is signaled.
 ```
 
 Safe variant of `runtime#type-descriptor-fields`. Returns the number of fields
-in the type as a fixnum. *typ* must be a type descriptor or an error is
+of the type as a fixnum. *typ* must be a type descriptor or an error is
 signaled.
 
 ::: tip Examples:
@@ -4157,7 +4162,7 @@ the type as an alist. *typ* must be a type descriptor or an error is signaled.
   typ := type descriptor to inspect
 ```
 
-Safe variant of `runtime#type-descriptor-ctor`. Returns the constructor id in
+Safe variant of `runtime#type-descriptor-ctor`. Returns the constructor ID of
 the type as a symbol. *typ* must be a type descriptor or an error is signaled.
 
 ::: tip Examples:
@@ -4178,7 +4183,7 @@ the type as a symbol. *typ* must be a type descriptor or an error is signaled.
   typ := type descriptor to inspect
 ```
 
-Safe variant of `runtime#type-descriptor-slots`. Returns the slots in the type
+Safe variant of `runtime#type-descriptor-slots`. Returns the slots of the type
 as a hash-table. *typ* must be a type descriptor or an error is signaled.
 
 ::: tip Examples:
@@ -4349,7 +4354,7 @@ algorithm, a Fisher-Yates shuffle variant.
 
 If *str* starts with the given string prefix *pfix*, then `string-trim-prefix`
 returns the rest of *str* without *pfix*. If *pfix* isn't a valid prefix of
-*str* return the entire string *str* instead.
+*str*, return the entire string *str* instead.
 
 ::: tip Examples:
 ``` scheme
@@ -4374,7 +4379,7 @@ returns the rest of *str* without *pfix*. If *pfix* isn't a valid prefix of
 ```
 
 Analog to `string-trim-prefix`, but returns the beginning of *str* without the
-string ending *sfix* instead.
+string ending *sfix*.
 
 ::: tip Examples:
 ``` scheme
@@ -4419,7 +4424,7 @@ Note: `string-trim-eol` removes only one end-of-line marker. Use
 
 Split *str* based on given string prefix *pfix*, returning both the string part
 after the prefix as well as the prefix itself, or both the whole string and `""`
-when *pfix* isn't found in *str*.
+in case *pfix* isn't found in *str*.
 
 `string-split-prefix` is similar to `string-trim-prefix`, but also returns the
 prefix as a second value.
@@ -4525,7 +4530,7 @@ perform, otherwise an error is signaled.
 (define +crlf+ "\r\n")
 ```
 
-Global line ending definitions for easier usage.
+Global line ending convenience definitions.
 
 
 ## Synchronized Data Structures.
@@ -4580,6 +4585,7 @@ Synced variant of `hash?` and `hash-table?`.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/sugar)
 > (sync-hash? (make-sync-hash (hash)))
 #t
 
@@ -4597,13 +4603,14 @@ Synced variant of `hash?` and `hash-table?`.
   default := non-optional default value when key not present
 ```
 
-Returns the value bound to *key* in *sht*, defaulting to *default* if no value
-was bound.
+Returns the value bound to *key* in *sht*, defaulting to *default* if no such
+value was bound.
 
 Synced variant of `hash-ref`.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/sugar)
 > (def sht (make-sync-hash (hash (एक 1) (दस 10) (सौ 100))))
 > (sync-hash-ref sht 'दस 0)
 10
@@ -4628,6 +4635,7 @@ Synced variant of `hash-get`.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/sugar)
 > (def sht (make-sync-hash (hash (一 1) (十 10) (百 100))))
 > (sync-hash-get sht '十)
 10
@@ -4652,6 +4660,7 @@ Synced variant of `hash-put!`.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/sugar)
 > (make-sync-hash (hash))
 #<sync-hash #77>
 > (sync-hash-put! #77 #\a [1 2 3])
@@ -4676,6 +4685,7 @@ Synced variant of `hash-remove!`.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/sugar)
 > (let (sht (make-sync-hash (hash (a 10) (b 20) (c 30) (d 40))))
     (sync-hash-remove! sht 'b)
     (sync-hash-remove! sht 'e)    ; nothing happens
@@ -4725,6 +4735,7 @@ is returning.
 
 ::: tip Examples:
 ``` scheme
+> (import :std/sugar)
 > (def sht (make-sync-hash (hash (A0 160) (B1 177) (C2 194) (D3 211) (E4 228))))
 > (sync-hash-do sht
     (lambda (ht)
