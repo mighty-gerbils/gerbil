@@ -48,7 +48,7 @@ another, allows building computation pipelines with ease. *n* specifies how many
 elements the channel buffer is allowed to hold before blocking, with `#f` never
 blocking at all.
 
-:: tip Examples:
+::: tip Examples:
 ``` scheme
 > (import :std/iter :gerbil/gambit/threads)
 > (def (consume ch)
