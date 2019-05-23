@@ -4241,7 +4241,7 @@ Checks whether *a* and *b*, two potentially recursive, cyclic or otherwise
 infinite shared structures, e.g. trees or graphs, are equal.
 
 ::: warning Deprecation note:
-Gambit 4.9.1 (released 2018-11-16) added similar support for handling shared
+Gambit 4.9.3 (released 2019-02-05) added similar support for handling shared
 structures with `equal?`, superseding `equal-shared?`.
 :::
 
