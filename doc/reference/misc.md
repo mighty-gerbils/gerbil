@@ -27,7 +27,7 @@ ret
 :::
 -->
 
-## Buffered channels.
+## Buffered channels
 ::: tip To use the bindings from this module:
 ``` scheme
 (import :std/misc/channel)
@@ -35,86 +35,371 @@ ret
 :::
 
 ### make-channel
-::: tip usage
+``` scheme
+(make-channel [n = #f]) -> channel
+
+  n := optional fixnum, number of values channel buffer can hold
 ```
-(make-channel ...)
+
+Creates a new buffered channel, a synchronization construct useful for sending
+and receiving data between producers and consumers, implicitly locking when
+reading from or writing to the channel. Chaining multiple channels, one after
+another, allows building computation pipelines with ease. *n* specifies how many
+elements the channel buffer is allowed to hold before blocking, with `#f` never
+blocking at all.
+
+::: tip Examples:
+``` scheme
+> (import :std/iter :gerbil/gambit/threads)
+> (def (consume ch)
+    (let (val (channel-get ch))
+      (unless (eof-object? val)
+        (with ([src . num] val)
+          (displayln "received " num " from " src)
+          (consume ch)))))
+> (def (produce ch count)
+    (for (i (in-range count))
+      (channel-put ch (cons (current-thread)
+                            (+ 10 (random-integer 90))))))
+> (let* ((ch (make-channel 2))
+         (consumer (spawn consume ch))
+         (producers (for/collect (i (in-range 3))
+                      (spawn produce ch 3))))
+    (for-each thread-join! producers)
+    (channel-close ch)
+    (thread-join! consumer))
+received 36 from #<thread #4>
+received 73 from #<thread #4>
+received 69 from #<thread #4>
+received 73 from #<thread #5>
+received 52 from #<thread #5>
+received 59 from #<thread #5>
+received 69 from #<thread #6>
+received 53 from #<thread #6>
+received 81 from #<thread #6>
 ```
 :::
-
-Please document me!
 
 ### channel?
-::: tip usage
+``` scheme
+(channel? ch) -> boolean
+
+  ch := channel to check
 ```
-(channel? ...)
+
+Returns `#t` if *ch* is a channel, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (channel? (make-channel))
+#t
+
+> (make-channel 3)
+#<channel #26>
+> (channel-close #26)
+> (channel? #26)
+#t
 ```
 :::
-
-Please document me!
 
 ### channel-put
-::: tip usage
+``` scheme
+(channel-put ch val [timeout = #f]) -> boolean | error
+
+  ch      := channel to write to
+  val     := value to write into ch
+  timeout := optional, how long to wait when channel is full
 ```
-(channel-put ...)
+
+Writes *val* to *ch* and returns a truth value indicating whether the send was
+successful or not. `channel-put` blocks when the channel's buffer is full,
+waiting indefinitely for an available slot or until the optional *timeout*,
+declared in seconds or as a relative time object, is reached. Sending data to an
+already closed channel will signal an error.
+
+::: tip Examples:
+``` scheme
+> (def ch (make-channel 3))
+> (channel-put ch 'a)
+#t
+> (channel-put ch 'b)
+#t
+> (channel-put ch 'c)
+#t
+> (channel-put ch 'd 2)    ; buffer full, gives up after 2 seconds
+#f
+> (import :gerbil/gambit/threads)
+> (spawn-thread (lambda () (thread-sleep! 2) (channel-get ch)))
+#<thread #29>
+> (channel-put ch 'e)      ; blocks until other thread retrieves value
+#t
+> (channel-put ch 'e)      ; blocks indefinitely, no other threads retrieve values
+*** ERROR IN ##thread-deadlock-action! -- Deadlock detected
 ```
 :::
-
-Please document me!
 
 ### channel-try-put
-::: tip usage
+``` scheme
+(channel-try-put ch val) -> boolean | error
+
+  ch  := channel to write to
+  val := value to write into ch
 ```
-(channel-try-put ...)
+
+Similar to `channel-put`, but doesn't block when the channel's buffer is full,
+simply indicating success or failure via a truth value. Sending data to an
+already closed channel will signal an error.
+
+::: tip Examples:
+``` scheme
+> (def ch (make-channel 3))
+> (channel-try-put ch 'a)
+#t
+> (channel-try-put ch 'b)
+#t
+> (channel-try-put ch 'c)
+#t
+> (channel-try-put ch 'd)    ; buffer full, doesn't block, gives up right away
+#f
+
+> (close-channel ch)
+> (channel-try-put ch 'e)    ; channel already closed, no longer valid to right to it
+error
 ```
 :::
-
-Please document me!
 
 ### channel-sync
-::: tip usage
+``` scheme
+(channel-sync ch val ...) -> void | error
+
+  ch      := channel to write to
+  val ... := values to send to ch
 ```
-(channel-sync ...)
+
+Forcefully writes *val ...* to *ch*, ignoring the channel's buffer limit. Useful
+for sending special values that indicate a bi-directional out-of-band
+communication request between consumers and producers without blocking. Sending
+data to an already closed channel will signal an error.
+
+::: tip Examples:
+``` scheme
+> (import :std/iter :gerbil/gambit/threads)
+> (def (consume ch)
+    (let loop ((i 0))
+      (match (channel-get ch)
+        ((eq? #!eof)
+         (displayln "we're done here"))
+        ((cons (quote more?) (? thread? thread))
+         (displayln "received: sync request")
+         (thread-send thread (if (< i 10) 'yes 'no))
+         (loop i))
+        ((? number? num)
+         (displayln "received: " num)
+         (loop (1+ i))))))
+> (def (produce ch)
+    (let loop ()
+      (if (channel-try-put ch (random-integer 100))
+        (loop)
+        (begin            ; if buffer full, ask consumer whether to produce more
+          (channel-sync ch (cons 'more? (current-thread)))
+          (match (thread-receive)
+            ('yes (loop))
+            ('no  (channel-close ch)))))))
+> (let* ((ch (make-channel 4))
+         (producer (spawn produce ch))
+         (consumer (spawn consume ch)))
+    (for-each thread-join! [producer consumer]))
+received: 28
+received: 67
+received: 79
+received: 67
+received: sync request    ; out-of-band answer via thread-send: 'yes
+received: 21
+received: 43
+received: 71
+received: 54
+received: sync request    ; answer: 'yes
+received: 29
+received: 19              ; consumer processed 10 items, target reached
+received: 61
+received: 88
+received: sync request    ; answer: no; producer closes channel, consumer shuts down
+we're done here
 ```
 :::
-
-Please document me!
 
 ### channel-get
-::: tip usage
+``` scheme
+(channel-get ch [timeout = #f] [default = #f]) -> any | default | #!eof
+
+  ch      := channel to read from
+  timeout := optional, how long to wait when channel is empty
+  default := optional, value to return when timeout reached
 ```
-(channel-get ...)
+
+Reads a value from *ch* and returns it, or *default* if a *timeout* was set and
+reached, declared in seconds or as a relative time object. `channel-get` blocks
+when the channel's buffer is empty, waiting indefinitely for more data or until
+the optional *timeout* is reached. Reading data from an already closed channel
+is allowed, but will always return `#!eof`.
+
+::: tip Examples:
+``` scheme
+> (def ch (make-channel 3))
+> (for-each (cut channel-try-put ch <>) (iota 10))
+> (channel-get ch)
+0
+> (channel-get ch 2)           ; returns right away
+1
+> (channel-get ch 2 'EMPTY)
+2
+> (channel-get ch 2)           ; channel can only hold three values, waits two seconds
+#f
+> (channel-get ch 2 'EMPTY)
+EMPTY
+> (channel-close ch)
+> (channel-get ch)
+#!eof
+> (channel-get ch 2 'EMPTY)    ; closed channel always returns #!eof
+#!eof
 ```
 :::
-
-Please document me!
 
 ### channel-try-get
-::: tip usage
+``` scheme
+(channel-try-get ch [default = #f]) -> any | default | #!eof
+
+  ch      := channel to read from
+  default := optional, value to return when channel empty
 ```
-(channel-try-get ...)
+
+Similar to `channel-get`, but doesn't block when the channel's buffer is empty,
+simply returning *default* in that case. Reading data from an already closed
+channel is allowed, but will always return `#!eof`.
+
+::: tip Examples:
+``` scheme
+> (def ch (make-channel 3))
+> (for-each (cut channel-try-put ch <>) (string->list "abcdef"))
+> (channel-try-get ch)
+#\a
+> (channel-try-get ch)
+#\b
+> (channel-try-get ch 'EMPTY)
+#\c
+> (channel-try-get ch 'EMPTY)    ; returns right away, no blocking occurs
+EMPTY
+> (channel-close ch)
+> (channel-try-get ch 'EMPTY)
+#!eof
 ```
 :::
 
-Please document me!
+### Channel Iterator
+``` scheme
+(defmethod (:iter (ch channel)) (iter-channel ch)) -> iterator
+
+  ch := channel to iterate over
+```
+
+The module defines a generic dispatch overload for buffered channels, allowing
+them to be iterated just like lists or hashes. Iterating *ch* will yield values,
+and block if necessary, until the channel is closed and its elements fully
+consumed.
+
+::: tip Examples:
+``` scheme
+> (import :std/iter :gerbil/gambit/threads)
+> (def (consume ch)
+    (for/fold (sum 0) (x ch)
+      (+ x sum)))
+> (def (produce ch count)
+    (for (i (in-range count))
+      (channel-put ch (random-integer 100))))
+> (let* ((ch (make-channel))
+         (consumer (spawn consume ch))
+         (producers (for/collect (i (in-range 10))
+                      (spawn produce ch 100))))
+    (for-each thread-join! producers)
+    (channel-close ch)
+    (thread-join! consumer))
+49644
+```
+:::
 
 ### channel-close
-::: tip usage
+``` scheme
+(channel-close ch) -> void
+
+  ch := channel to close
 ```
-(channel-close ...)
+
+Closes a buffered channel, forbidding write access. Consumers are still allowed
+to retrieve values from such a closed channel, but once empty, it will simply
+return `#!eof`.
+
+Note: Only senders should close channels. Furthermore, it's not an error to
+close a channel multiple times.
+
+::: tip Examples:
+``` scheme
+> (def ch (make-channel))
+> (channel-put ch 1)
+#t
+> (channel-close ch)
+> (channel-get ch)      ; reading from a closed channel is allowed
+1
+> (channel-get ch)
+#!eof
+> (channel-put ch 2)    ; writing to a closed channel signals an error
+error
 ```
 :::
-
-Please document me!
 
 ### channel-closed?
-::: tip usage
+``` scheme
+(channel-closed? ch) -> boolean
+
+  ch := channel to check
 ```
-(channel-closed? ...)
+
+Returns `#t` if *ch* is closed, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (def ch (make-channel))
+> (channel-closed? ch)
+#f
+> (channel-close ch)
+> (channel-closed? ch)
+#t
 ```
 :::
 
-Please document me!
+### Channel Destructor
+``` scheme
+(defmethod {destroy <port>} channel-close)
+```
 
+The module also defines a `destroy` method for channels, so that they can be
+used in `with-destroy` forms and other primitives that use the destroy idiom,
+ensuring that channels will be closed even if an error is signaled somewhere
+within the body.
+
+::: tip Examples:
+``` scheme
+> (def ch (make-channel))
+> (channel-put ch 10)
+#t
+> (channel-closed? ch)
+#f
+> (with-destroy ch
+    (channel-get ch))
+10
+> (channel-closed? ch)
+#t
+```
+:::
 
 
 ## Asynchronous Completions
@@ -124,87 +409,239 @@ Please document me!
 ```
 :::
 
-### completion
-::: tip usage
-```
-(defsyntax completion ...)
-```
-:::
-
-Completion type for user-defined generics.
-
 ### make-completion
-::: tip usage
+``` scheme
+(make-completion) -> completion
 ```
-(make-completion)
-=> <completion>
+
+Creates a new asynchronous completion, a synchronization construct which blocks
+until a thread signals that its task either succeeded or failed via
+`completion-post!` or `completion-error!`, respectively, notifying all waiting
+threads about the result.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads :std/iter :std/sugar)
+> (def (task i c)
+    (displayln i ": waiting")
+    (try (displayln i ": " (completion-wait! c))
+      (catch (ex) (displayln i ": " ex))
+      (finally (displayln i ": exiting"))))
+> (let* ((c (make-completion))
+         (threads (for/collect (i (in-range 3))
+                    (spawn task i c))))
+    (spawn-thread
+      (lambda ()
+        (displayln "error in computation, notifying all")
+        (completion-error! c 'did-not-finish)))
+    (for-each thread-join! threads))
+0: waiting
+1: waiting
+2: waiting
+error in computation, notifying all
+0: did-not-finish
+0: exiting
+1: did-not-finish
+1: exiting
+2: did-not-finish
+2: exiting
 ```
 :::
-
-Creates a new asynchronous completion.
 
 ### completion?
-::: tip usage
+``` scheme
+(completion? c) -> boolean
+
+  c := completion to check
 ```
-(completion? obj)
-=> boolean
+
+Returns `#t` if *c* is a completion, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (completion? (make-completion))
+#t
+
+> (import :gerbil/gambit/threads)
+> (completion? (make-condition-variable))
+#f
 ```
 :::
-
-Returns true if the object is a completion.
 
 ### completion-ready?
-::: tip usage
+``` scheme
+(completion-ready? c) -> boolean
+
+  c := completion to check
 ```
-(completion-ready? c)
-=> boolean
+
+Returns `#t` if the completion is ready, `#f` otherwise. This operation is
+non-blocking.
+
+::: tip Examples:
+``` scheme
+> (def c (make-completion))
+> (completion-ready? c)
+#f
+> (completion-post! c 'DONE)
+> (completion-ready? c)
+#t
 ```
 :::
-
-Returns true if the completion is ready.
 
 ### completion-wait!
-::: tip usage
-```
-(completion-wait! c)
-  c := competion
-=> any
-```
-:::
+``` scheme
+(completion-wait! c) -> any | error
 
-Waits on the completion until it has been posted with `completion-post!` or an error
-has been signaled with `completion-error!`. If the completion was posted, the posted
+  c := completion to wait on
+```
+
+Waits on *c* until it has been posted with `completion-post!` or an error has
+been signaled with `completion-error!`. If the completion was posted, the posted
 value is returned. If an error was signalled, then it is raised as an exception.
 
-### completion-post!
-::: tip usage
-```
-(completion-post! c val)
-  c := completion
+::: tip Examples:
+``` scheme
+> (def c (make-completion))
+> (spawn completion-wait! c)
+#<thread #3>
+> (spawn completion-wait! c)
+#<thread #4>
+> (spawn completion-wait! c)
+#<thread #5>
+> (completion-post! c 'done)    ; all waiting threads will be notified
+> (map thread-dead? [#3 #4 #5])
+(#t #t #t)
+> (completion-wait! c)          ; already completed, not waiting
+done
+
+> (def c (make-completion))
+> (spawn completion-error! c 'failure)
+#<thread #8>
+> (completion-wait! c)
+*** ERROR IN (console)@1986.1 -- This object was raised: failure
 ```
 :::
 
-Posts the completion with value `val`.
+### completion-post!
+``` scheme
+(completion-post! c val) ->  void | error
+
+  c   := completion to post
+  val := result value
+```
+
+Signals to *c* that the current thread's computation is complete. All other
+waiting threads will be notified and receive *val* as the result.
+
+Calling `completion-post!` on an already completed *c* will raise an error.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads :std/iter)
+> (def (task i c)
+    (displayln i ": waiting")
+    (displayln i ": " (completion-wait! c)))
+> (let* ((c (make-completion))
+         (threads (for/collect (i (in-range 3))
+                    (spawn task i c))))
+    (thread-sleep! 1)
+    (displayln "main: done")
+    (completion-post! c 'ok)
+    (for-each thread-join! threads))
+0: waiting
+1: waiting
+2: waiting
+main: done
+0: ok
+1: ok
+2: ok
+
+;; Completions are expected to be posted once. The following would
+;; be a race condition, either succeeding fine or raising an error:
+> (let (c (make-completion))
+    (spawn completion-post! c 'done)    ; silently fails in case of error
+    (completion-post! c 'done)
+    (completion-wait! c))
+;; either of these:
+*** ERROR IN (console)@2019.5 -- Completion has already been posted #<completion #26>
+done
+```
+:::
 
 ### completion-error!
-::: tip usage
+``` scheme
+(completion-error! c obj) -> void | error
+
+  c   := completion to notify
+  obj := exception object to raise
 ```
-(completion-error! c exn)
-  exn := completion
+
+Signals an error to *c*, with *obj* being the exception argument that's raised,
+notifying all waiting threads that a problem occurred.
+
+Calling `completion-error!` on an already completed *c* will raise an error.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads :std/sugar)
+> (let (c (make-completion))
+    (spawn completion-error! c 'failure)
+    (try (completion-wait! c)    ; failure is raised in all waiting threads
+      (catch (ex) (display-exception ex (current-error-port)))))
+This object was raised: failure
 ```
 :::
-
-Signals an error in the completion.
 
 ### with-completion-error
-::: tip usage
+``` scheme
+(with-completion-error c body ...) -> any | error
+
+  c        := completion to notify when error occurs
+  body ... := expressions to evaluate
 ```
-(with-completion-error c body ...)
-  c := completion
+
+Wraps *body ...* with an exception handler that notifies *c* via
+`completion-error!` if any type of error is raised within the body expressions.
+Furthermore, errors will propagate upwards and need to be handled, terminating
+the thread otherwise.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads :std/sugar)
+> (def (task c)
+    (with-completion-error c
+      (displayln (/ 7 0))    ; call completion-error! and silently terminate thread
+      (completion-post! c)))
+> (let (c (make-completion))
+    (spawn task c)
+    (try
+      (completion-wait! c)
+      (displayln "All done!")
+      (catch (ex) (display-exception ex (current-error-port)))))
+Divide by zero
+(/ 7 0)
 ```
 :::
 
-Evaluates `body ...` with an exception handler that signals an error in the completion.
+### completion
+``` scheme
+(defsyntax completion)
+```
+
+Completion type for user-defined generics and destructuring.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads)
+> (def c (make-completion))
+> (completion-post! c 'done)
+> (with ((completion mut cond-var ready? val ex) c)
+    (with-lock mut
+      (cut displayln "value: " (if ready? val "not ready"))))
+value: done
+```
+:::
 
 
 ## Thread Barriers
@@ -214,76 +651,199 @@ Evaluates `body ...` with an exception handler that signals an error in the comp
 ```
 :::
 
-### barrier
-::: tip usage
-```
-(defsyntax barrier ...)
-```
-:::
-
-Barrier type for user-defined generics.
-
 ### make-barrier
-::: tip usage
+``` scheme
+(make-barrier n) -> barrier | error
+
+  n := thread wait limit, fixnum
 ```
-(make-barrier limit)
-  limit := fixnum
-=> <barrier>
+
+Creates a thread barrier, a synchronization construct that blocks up to *n*
+threads before it allows them to proceed. *n* needs to be a non-negative fixnum,
+otherwise an error is signaled.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads :std/iter)
+> (def (thread-task b)
+    (thread-sleep! (+ 2 (random-integer 3)))
+    (displayln (current-thread) " completed its task. Waiting for others.")
+    (barrier-post! b)
+    (barrier-wait! b)
+    (displayln (current-thread) " runs again."))
+
+> (let* ((b (make-barrier 3))
+         (threads (for/collect (i (in-range 5))
+                    (spawn thread-task b))))
+    (for-each thread-join! threads)
+    (displayln "All threads are done."))
+#<thread #1> completed its task. Waiting for others.
+#<thread #2> completed its task. Waiting for others.
+#<thread #3> completed its task. Waiting for others.
+#<thread #1> runs again.    ; barrier limit reached, notifying waiting threads
+#<thread #2> runs again.
+#<thread #3> runs again.
+#<thread #4> completed its task. Waiting for others.
+#<thread #4> runs again.    ; limit already reached, no need to wait
+#<thread #5> completed its task. Waiting for others.
+#<thread #5> runs again.
+All threads are done.
 ```
 :::
-
-Create a barrier, awaiting for `limit` threads.
 
 ### barrier?
-::: tip usage
+``` scheme
+(barrier? b) -> boolean
+
+  b := barrier to check
 ```
-(barrier? obj)
-=> boolean
+
+Returns `#t` if *b* is a barrier, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (barrier? (make-barrier 3))
+#t
+
+(import :gerbil/gambit/threads)
+> (barrier? (make-mutex 'barrier))
+#f
 ```
 :::
-
-Returns true if the object is a barrier.
 
 ### barrier-wait!
-::: tip usage
+``` scheme
+(barrier-wait! b) -> void | error
+
+  b := barrier to wait on
 ```
-(barrier-wait! b)
-  b := barrier
+
+Waits on *b* until it has been posted *n* times (as specified on barrier
+creation) with `barrier-post!` or an error has been signaled with
+`barrier-error!`. Errors will propagate upwards and need to be handled.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads :std/iter :std/format)
+> (def (log msg)
+    (printf "~a@~a: ~a\n" (current-thread) (time->seconds (current-time)) msg))
+> (def (task b)
+    (log "working")
+    (thread-sleep! (random-integer 5))
+    (barrier-post! b)
+    (log "waiting for other threads")
+    (barrier-wait! b)
+    (log "done"))
+> (let (b (make-barrier 3))
+    (for-each thread-join! (for/collect (i (in-range 3)) (spawn task b)))
+    (barrier-wait! b)     ; barrier thread limit already reached, not waiting
+    (barrier-error! b 'failure)
+    (barrier-wait! b))    ; unhandled exception, terminates primordial thread
+#<thread #1>@1558088315.312991:  working
+#<thread #2>@1558088315.3137062: working
+#<thread #3>@1558088315.3143606: working
+#<thread #3>@1558088317.3152056: waiting for other threads
+#<thread #1>@1558088318.313868:  waiting for other threads
+#<thread #3>@1558088319.3144877: done
+#<thread #1>@1558088319.314984:  done
+#<thread #2>@1558088319.3154783: waiting for other threads
+#<thread #2>@1558088319.3161075: done
+*** ERROR IN (console)@1593.5 -- This object was raised: failure
 ```
 :::
-
-Waits on a thread barrier until it has been posted `limit` times with `barrier-post!`
-or an error has been signaled with `barrier-error!`.
 
 ### barrier-post!
-::: tip usage
+``` scheme
+(barrier-post! b) -> void
+
+  b := barrier to signal to
 ```
-(barrier-post! b)
-  b := barrier
+
+Signals *b* that the current thread's computation is complete. All other waiting
+threads will be notified once *b*'s post limit (as specified on barrier creation)
+is reached.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads)
+> (let* ((b (make-barrier 2))
+         (t1 (spawn barrier-post! b))
+         (t2 (spawn barrier-post! b)))
+    (barrier-wait! b)    ; signaled twice, good to go
+    'OK)
+OK
 ```
 :::
-
-Posts the barrier.
 
 ### barrier-error!
-::: tip usage
+``` scheme
+(barrier-error! b obj) -> void
+
+  b   := barrier to signal error on
+  obj := exception object to raise
 ```
-(barrier-error! b exn)
+
+Signals an error to *b*, with *obj* being the exception argument that's raised,
+notifying all waiting threads that a problem occurred.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads :std/sugar)
+> (let* ((b (make-barrier 3))
+         (t (spawn barrier-error! b 'failure)))
+    (try (barrier-wait! b)    ; failure is raised in all waiting threads
+      (catch (ex) (display-exception ex (current-error-port)))))
+This object was raised: failure
 ```
 :::
-
-Signals an error on the barrier.
-
 
 ### with-barrier-error
-::: tip usage
+``` scheme
+(with-barrier-error b body ...) -> any | error
+
+  b        := barrier to notify when error occurs
+  body ... := expressions to evaluate
 ```
-(with-barrier-error b body ...)
-  b := barrier
+
+Wraps *body ...* with an exception handler that notifies *b* via
+`barrier-error!` if any type of error is raised within the body expressions.
+Furthermore, errors will propagate upwards and need to be handled, terminating
+the thread otherwise.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads :std/sugar)
+> (def (task b)
+    (with-barrier-error b
+      (displayln (/ 7 0))    ; call barrier-error! and silently terminate thread
+      (barrier-post! b)))
+> (let* ((b (make-barrier 2))
+         (t (spawn task b)))
+    (try
+      (barrier-wait! b)
+      (displayln "All done!")
+      (catch (ex) (display-exception ex (current-error-port)))))
+Divide by zero
+(/ 7 0)
 ```
 :::
 
-Evaluates `body ...` with an exception handler that signals an error in the barrier.
+### barrier
+``` scheme
+(defsyntax barrier)
+```
+
+Barrier type for user-defined generics and destructuring.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads)
+> (with ((barrier mut cond-var count limit ex) (make-barrier 3))
+    (with-lock mut
+      (cut displayln "limit: " count "/" limit)))
+limit: 0/3
+```
+:::
 
 
 ## Deques
@@ -293,138 +853,323 @@ Evaluates `body ...` with an exception handler that signals an error in the barr
 ```
 :::
 
-### deque
-```
-(defsyntax deque ...)
-```
-
-Deque type for user-defined generics.
-
 ### make-deque
-::: tip usage
+``` scheme
+(make-deque) -> deque
 ```
-(make-deque)
-=> <deque>
+
+Creates a new empty deque, a double-ended queue, which allows adding and
+removing elements on both ends without walking the whole data structure first.
+
+::: tip Examples:
+``` scheme
+> (import :std/test)
+> (let (dq (make-deque))
+    (check (deque-empty? dq) => #t)
+    (push-front! dq 10)
+    (push-front! dq 20)
+    (push-back!  dq 30)
+    (check (deque-length dq) => 3)
+    (deque->list dq))
+... check (deque-empty? dq) is equal? to #t
+... check (deque-length dq) is equal? to 3
+(20 10 30)
 ```
 :::
-
-Creates a new deque.
 
 ### deque?
-::: tip usage
+``` scheme
+(deque? dq) -> boolean
+
+  dq := deque to check
 ```
-(deque? obj)
-=> boolean
+
+Returns `#t` if *dq* is a deque, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (let (dq (make-deque))
+    (push-front! dq (make-deque))
+    (and (deque? dq)
+         (deque? (peek-front dq))
+         (deque? (make-deque))))
+#t
+
+> (deque? (list 1 2 3))
+#f
 ```
 :::
-
-Returns true if the object is a deque.
 
 ### deque-length
-::: tip usage
+``` scheme
+(deque-length dq) -> fixnum
+
+  dq := deque to inspect
 ```
-(deque-length dq)
-  dq := deque
-=> integer
+
+Returns the number of elements *dq* holds.
+
+Similar to retrieving the length of a vector, this operations is `O(1)`, since
+deques always keep track of their length.
+
+::: tip Examples:
+``` scheme
+> (let (dq (make-deque))
+    (for-each (cut push-back! dq <>) '(A B C D E F))
+    (deque-length dq))
+6
+
+> (deque-length (make-deque))
+0
 ```
 :::
-
-Returns the size of the deque.
 
 ### deque-empty?
-::: tip usage
+``` scheme
+(deque-empty? dq) -> boolean
+
+  dq := deque to check whether empty
 ```
-(deque-empty? dq)
-  dq := deque
-=> boolean
+
+Returns `#t` if *dq* has no elements queued, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (deque-empty? (make-deque))
+#t
+
+> (let (dq (make-deque))
+    (push-back! dq (make-deque))
+    (and (deque-empty? (peek-front dq))
+         (deque-empty? dq)))
+#f
 ```
 :::
-
-Returns true if the deque is empty.
 
 ### push-front!
-::: tip usage
+``` scheme
+(push-front! dq elem) -> unspecified
+
+  dq   := deque to push onto
+  elem := element to push to dq
 ```
-(push-front! dq v)
-  dq := deque
+
+Enqueues (pushes) *elem* to the front of the *dq*. Similar to `set!`, it's
+unspecified what `push-front!` returns afterwards.
+
+::: tip Examples:
+``` scheme
+> (let (dq (make-deque))
+    (push-front! dq 30)
+    (push-front! dq 20)
+    (push-front! dq 10)
+    (deque->list dq))
+(10 20 30)
 ```
 :::
-
-Enqueues (pushes) the value `v` to the front of the queue.
-
-### pop-front!
-::: tip usage
-```
-(pop-front! dq [default])
-  dq := deque
-=> any
-```
-:::
-
-Pops the front of the queue and a returns the value.
-If the deque is empty and a default value is supplied, then it is returned.
-Otherwise an error is raised.
-
-### peek-front
-::: tip usage
-```
-(peek-front dq [default])
-  dq := deque
-=> any
-```
-:::
-
-Peeks the front of the queue and a returns the value without popping it
-If the deque is empty and a default value is supplied, then it is returned.
-Otherwise an error is raised.
 
 ### push-back!
-::: tip usage
+``` scheme
+(push-back! dq elem) -> unspecified
+
+  dq   := deque to push onto
+  elem := element to push to dq
 ```
-(push-back! dq v)
+
+`push-back!` is similar to `push-front!`, but pushes *elem* to the back of *dq*
+instead of the front.
+
+::: tip Examples:
+``` scheme
+> (let (dq (make-deque))
+    (push-back! dq #\a)
+    (push-back! dq #\b)
+    (push-back! dq #\c)
+    (list->string (deque->list dq)))
+"abc"
 ```
 :::
 
-Enqueues (pushes) the value `v` to the back of the queue.
+### pop-front!
+``` scheme
+(pop-front! dq [default = absent-obj]) -> any | default | error
+
+  dq      := deque to pop from
+  default := optional element returned when dq is empty
+```
+
+Pops the front of *dq* and returns that value. If *dq* is empty and a default
+value is supplied, then *default* is returned. Otherwise an error is raised.
+
+::: tip Examples:
+``` scheme
+> (let (dq (make-deque))
+    (for-each (cut push-back! dq <>) [1 2 3])
+    (displayln (pop-front! dq 0))
+    (displayln (pop-front! dq 0))
+    (displayln (pop-front! dq 0))
+    ;; would signal error without default value:
+    (displayln (pop-front! dq 0)))
+1
+2
+3
+0
+```
+:::
 
 ### pop-back!
-::: tip usage
+``` scheme
+(pop-back! dq [default = absent-obj]) -> any | default | error
+
+  dq      := deque to pop from
+  default := optional element returned when dq is empty
 ```
-(pop-back! dq [default])
-  dq := deque
-=> any
+
+`pop-back!` is similar to `pop-front!`, but pops the back of *dq* instead and
+returns that value. If *dq* is empty and a default value is supplied, then
+*default* is returned. Otherwise an error is raised.
+
+::: tip Examples:
+``` scheme
+> (import (group-in :std iter sugar))
+> (let (dq (make-deque))
+    (for ((x "ABCDEF") (y (in-naturals)))
+      (push-front! dq (cons x y)))
+    (until (deque-empty? dq)
+      (displayln (pop-back! dq))))
+(A . 1)
+(B . 2)
+(C . 3)
+(D . 4)
+(E . 5)
+(F . 6)
 ```
 :::
 
-Pops the back of the queue and a returns the value.
-If the deque is empty and a default value is supplied, then it is returned.
-Otherwise an error is raised.
+### peek-front
+``` scheme
+(peek-front dq [default = absent-obj]) -> any | default | error
 
+  dq      := deque to peek front
+  default := optional element returned when dq is empty
+```
+
+Returns the front value of *dq* without popping it from the deque like
+`pop-front!` does. If *dq* is empty and a default value is supplied, then
+*default* is returned. Otherwise an error is raised.
+
+::: tip Examples:
+``` scheme
+> (let (dq (make-deque))
+    (push-back! dq 10)
+    (push-back! dq 20)
+    (push-back! dq 30)
+    (peek-front dq))
+10
+
+> (import :std/sugar :std/misc/func)
+> (let (dq (make-deque))
+    (for-each (cut push-front! dq <>)
+              (repeat random-integer 10 10))
+    (displayln (deque->list dq))
+    (while (odd? (peek-front dq 0))
+      (pop-front! dq))
+    (deque->list dq))
+(3 5 5 1 0 4 5 8 6 1)
+(0 4 5 8 6 1)
+```
+:::
 
 ### peek-back
-::: tip usage
+``` scheme
+(peek-back dq [default = absent-obj]) -> any | default | error
+
+  dq      := deque to peek back
+  default := optional element returned when dq is empty
 ```
-(peek-back dq [default])
-  dq := deque
-=> any
+
+Returns the back value of *dq* without popping it from the deque like
+`pop-back!` does. If *dq* is empty and a default value is supplied, then
+*default* is returned. Otherwise an error is raised.
+
+::: tip Examples:
+``` scheme
+> (let (dq (make-deque))
+    (push-back! dq 'A)
+    (push-back! dq 'B)
+    (push-back! dq 'C)
+    (displayln (peek-back dq))
+    (pop-front! dq)
+    (displayln (peek-back dq))
+    (pop-back! dq)
+    (displayln (peek-back dq)))
+C
+C
+B
+
+> (def dq (make-deque))
+> (push-back! dq "xyz")
+#<deque #15>    ; unspecified, don't depend on this
+> (peek-back dq 'EMPTY)
+"xyz"
+> (pop-front! dq)
+"xyz"
+> (peek-back dq 'EMPTY)
+EMPTY
+> (peek-back dq)
+error
 ```
 :::
-
-Peeks the back of the queue and a returns the value without popping it
-If the deque is empty and a default value is supplied, then it is returned.
-Otherwise an error is raised.
-
 
 ### deque-&gt;list
-::: tip usage
+``` scheme
+(deque->list dq) -> list
+
+  dq := deque to transform into list
 ```
-(deque->list dq)
-  dq := deque
-=> list
+
+Returns a new list of the elements queued in *dq*, in order.
+
+::: tip Examples:
+``` scheme
+> (let (dq (make-deque))
+    (push-back! dq #\a)
+    (push-back! dq 100)
+    (push-back! dq "other")
+    (deque->list dq))
+(#\a 100 "other")
+
+> (import :std/srfi/1)
+> (let (dq (make-deque))
+    (for-each (cut push-front! dq <>) (iota 100))
+    (drop (deque->list dq) 90))
+(9 8 7 6 5 4 3 2 1 0)
 ```
 :::
 
-Returns a list of the value contained in the deque, in order.
+### deque
+``` scheme
+(defsyntax deque)
+```
+
+Deque type for user-defined generics and destructuring.
+
+::: tip Examples:
+``` scheme
+> (let (dq (make-deque))
+    (push-back! dq "first")
+    (push-back! dq "second")
+    (push-back! dq "third")
+    (match dq
+      ((deque front back length)
+       (displayln "front:  " front)
+       (displayln "back:   " back)
+       (displayln "length: " length))))
+front:  #<node #17>
+back:   #<node #18>
+length: 3
+```
+:::
 
 
 ## List utilities
@@ -438,7 +1183,7 @@ Returns a list of the value contained in the deque, in order.
 ``` scheme
 (alist? alist) -> boolean
 
-  alist := association list
+  alist := association list to check
 ```
 
 Checks whether *alist* is a proper association list and returns a truth value
@@ -471,7 +1216,7 @@ A proper association list is a list of pairs and may be of the following forms:
 ``` scheme
 (plist? plist) -> boolean
 
-  plist := property list
+  plist := property list to check
 ```
 
 Checks whether *plist* is a proper property list and returns a truth value (`#t`
@@ -504,7 +1249,7 @@ form: `((key1 value1 key2 value2 ...))`
 ``` scheme
 (plist->alist plist) -> alist | error
 
-  plist := property list
+  plist := property list to transform
 ```
 
 Transforms a property list `(k1 v1 k2 v2 ...)` into an association list `((k1 . v1)
@@ -529,7 +1274,7 @@ error    ; key "dot" has no associated property value
 ``` scheme
 (alist->plist alist) -> plist | error
 
-  alist := association list
+  alist := association list to transform
 ```
 
 Transforms an association list `((k1 . v1) (k2 . v2) ...)` into a property list
@@ -626,7 +1371,7 @@ Checks how the length of *lst* compares to *n* and returns a truth value result
 | `(length>=n? x n)`  | `(>= (length x) n)`    |
 
 These functions are potentially more efficient because they only need to check
-the list for up to n elements instead of calculating *lst*'s length up-front.
+the list for up to *n* elements instead of calculating *lst*'s length up-front.
 
 Also, *lst* is allowed to be circular.
 
@@ -715,7 +1460,7 @@ internal list at the end.
 `snoc` is similar to `cons`, but appends *elem* at the end of *lst* instead of
 putting it at the front.
 
-Difference to `cons`: `snoc` will signal an error when *lst* is not a proper
+Different from `cons`: `snoc` will signal an error when *lst* is not a proper
 list. `cons`, in contrast, constructs a pair out of these two input values.
 
 ::: tip Examples:
@@ -864,7 +1609,7 @@ while traversing, not adding them to the returned flattened list.
 > (flatten [1 [2 3] [[4 5]]])
 (1 2 3 4 5)
 
-(flatten [1 [] [2 [3 [] 4] 5]])
+> (flatten [1 [] [2 [3 [] 4] 5]])
 (1 2 3 4 5)  ; ignores empty sublists
 
 > (flatten '((a . 1) (b . 2) (c . 3)))
@@ -876,7 +1621,7 @@ while traversing, not adding them to the returned flattened list.
 ``` scheme
 (flatten1 lst) -> list | error
 
-  lst := proper nested list of lists
+  lst := proper nested list-of-lists
 ```
 
 `flatten1` is a special variant of `flatten` which will not flatten the whole
@@ -963,6 +1708,7 @@ otherwise an empty list is returned.
 ### slice
 ``` scheme
 (slice lst start [limit = #f]) -> list
+
   lst   := proper list
   start := start index
   limit := number of items to take from lst
@@ -984,6 +1730,7 @@ containing `limit` elements.
 ### slice-right
 ``` scheme
 (slice-right lst start [limit = #f]) -> list
+
   lst   := proper list
   start := start index from the right of lst
   limit := number of items to take from lst
@@ -1009,199 +1756,440 @@ containing `limit` elements.
 ```
 :::
 
-### lru-cache
-::: tip usage
-```
-(defsyntax lru-cache ...)
-```
-:::
-
-LRU cache type for user-defined generics.
-
-
 ### make-lru-cache
-::: tip usage
+``` scheme
+(make-lru-cache cap) -> lru-cache | error
+
+  cap := max capacity of cache, fixnum
 ```
-(make-lru-cache cap)
-  cap := fixnum; LRU cache capacity
-=> <lru-cache>
+
+Creates a new empty Least Recently Used (LRU) cache, a cache replacement data
+structure, which tracks element usage and drops seldom used ones when full to
+make room for new elements. *cap* is the capacity, i.e., the number of elements
+the cache can hold before purging older entries. *cap* needs to be at least 1,
+otherwise an error is signaled.
+
+::: tip Examples:
+``` scheme
+> (def lru (make-lru-cache 3))
+> (lru-cache-put! lru 'a "heavy-load-01")
+> (lru-cache-put! lru 'b "heavy-load-02")
+> (lru-cache-put! lru 'c "heavy-load-03")
+> (lru-cache-put! lru 'd "heavy-load-04")
+> (lru-cache-put! lru 'e "heavy-load-05")
+> (lru-cache-size lru)
+3                  ; cache full, older entries are eviced first:
+> (lru-cache->list lru)
+((e . "heavy-load-05") (d . "heavy-load-04") (c . "heavy-load-03"))
+> (lru-cache-get lru 'c)
+"heavy-load-03"    ; cache hit, bring to front:
+> (lru-cache->list lru)
+((c . "heavy-load-03") (e . "heavy-load-05") (d . "heavy-load-04"))
+
+> (import :std/iter)
+> (for ((values key load) lru)
+    (displayln "key: " key ", load: " load))
+key: c, load: heavy-load-03
+key: e, load: heavy-load-05
+key: d, load: heavy-load-04
 ```
 :::
-
-Creates a new LRU cache with capacity `cap`, which must be > 1.
 
 ### lru-cache?
-::: tip usage
+``` scheme
+(lru-cache? lru) -> boolean
+
+  lru := lru-cache to check
 ```
-(lru-cache? obj)
-=> boolean
+
+Returns `#t` if *lru* is an LRU cache, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (lru-cache? (make-lru-cache 25))
+#t
 ```
 :::
 
-Returns true if the object is an LRU cache.
+### lru-cache-size
+``` scheme
+(lru-cache-size lru) -> fixnum
+
+  lru := lru-cache to check
+```
+
+Returns the current size (i.e., the number of elements the LRU cache holds, not
+the capacity) of *lru*.
+
+::: tip Examples:
+``` scheme
+> (let (lru (make-lru-cache 3))
+    (lru-cache-put! lru 1 #x01)
+    (lru-cache-put! lru 2 #x02)
+    (lru-cache-size lru))
+2
+
+> (lru-cache-size (make-lru-cache 1000))
+0
+```
+:::
+
+### lru-cache-capacity
+``` scheme
+(lru-cache-capacity lru) -> fixnum
+
+  lru := lru-cache to check
+```
+
+Returns the maximum number of elements *lru* can hold.
+
+::: tip Examples:
+``` scheme
+> (let (lru (make-lru-cache 3))
+    (lru-cache-put! lru 1 #x01)
+    (lru-cache-put! lru 2 #x02)
+    (lru-cache-capacity lru))
+3
+
+> (lru-cache-capacity (make-lru-cache 1000))
+1000
+```
+:::
+
+### lru-cache-put!
+``` scheme
+(lru-cache-put! lru key val) -> void
+
+  lru      := lru-cache
+  key, val := key-value association to insert into lru
+```
+
+Puts an association of *key* to *val* into *lru*, in the queue head position to
+be precise. If the cache is full, then the tail of the LRU queue (i.e., the
+value least recently used) is dropped from the cache.
+
+::: tip Examples:
+``` scheme
+> (defstruct resource (raw-data))
+> (make-lru-cache 3)
+#<lru-cache #35>
+> (lru-cache-put! #35 1 (make-resource 'HUGE))
+> (lru-cache-put! #35 2 (make-resource 'SMALL))
+> (lru-cache-put! #35 3 (make-resource 'LARGE))
+> (lru-cache->list #35)
+((3 . #<resource #36>) (2 . #<resource #37>) (1 . #<resource #38>))
+> (lru-cache-put! #35 4 'non-resource)    ; cache is full, evict old element
+> (lru-cache->list #35)
+((4 . non-resource) (3 . #<resource #36>) (2 . #<resource #37>))
+> (resource-raw-data #38)
+HUGE
+```
+:::
+
+### lru-cache-remove!
+``` scheme
+(lru-cache-remove! lru key) -> void
+
+  lru := lru-cache to remove from
+  key := key to look up
+```
+
+Removes the association of *key* from *lru*, making room for a new element in
+the lru cache.
+
+::: tip Examples:
+``` scheme
+> (make-lru-cache 3)
+#<lru-cache #39>
+> (lru-cache-put! #39 1 "this")
+> (lru-cache-put! #39 1 "that")    ; same key, simply updated
+> (lru-cache->list #39)
+((1 . "that"))
+> (lru-cache-remove! #39 1)
+> (lru-cache->list #39)
+()
+```
+:::
 
 ### lru-cache-ref
-::: tip usage
+``` scheme
+(lru-cache-ref lru key [default = absent-obj]) -> any | default | error
+
+  lru     := lru-cache to access
+  key     := key to look up
+  default := optional element returned when key can't be found
 ```
-(lru-cache-ref lru key [default])
-  lru := lru-cache
+
+Returns the association of *key* in *lru*, and promotes the node to the head of
+the LRU queue. If there is no association, then *default* is returned. If the
+default is omitted, then an error is raised.
+
+::: tip Examples:
+``` scheme
+> (let (lru (make-lru-cache 3))
+    (lru-cache-put! lru 'a "file-a")
+    (lru-cache-put! lru 'b "file-b")
+    (lru-cache-put! lru 'c "file-c")
+    (displayln (lru-cache->list lru))
+    (displayln (lru-cache-ref lru 'b 'NONE))
+    (displayln (lru-cache->list lru))
+    (lru-cache-ref lru 'd 'NONE))
+((c . file-c) (b . file-b) (a . file-a))
+file-b
+((b . file-b) (c . file-c) (a . file-a))
+NONE
 ```
 :::
-
-Returns the association of `key` in the LRU cache, and promotes the node to the head of the
-LRU queue. If there is no association, then default is returned. If the default is omitted,
-then an error is raised.
 
 ### lru-cache-get
-::: tip usage
+``` scheme
+(lru-cache-ref lru key) -> any | #f
+
+  lru := lru-cache to access
+  key := key to look up
 ```
-(lru-cache-get lru key)
-  lru := lru-cache
-```
-:::
 
 Same as `(lru-cache-ref lru key #f)`.
 
-### lru-cache-put!
-::: tip usage
-```
-(lru-cache-put! lru key val)
-  lru := lru-cache
-```
-:::
-
-Puts an association of `key` to `val` into the LRU cache.
-If the cache is full, then the tail of the LRU queue (ie the value least recently used)
-is dropped from the cache.
-
-### lru-cache-remove!
-::: tip usage
-```
-(lru-cache-remove! lru key)
-  lru := lru-cache
+::: tip Examples:
+``` scheme
+> (lru-cache-get (make-lru-cache 3) 'not-in-here)
+#f
 ```
 :::
-
-Removes the association of `key` from the LRU cache.
-
-### lru-cache-size
-::: tip usage
-```
-(lru-cache-size lru)
-  lru := lru-cache
-=> fixnum
-```
-:::
-
-Returns the current size of the LRU cache.
-
-### lru-cache-capacity
-::: tip usage
-```
-(lru-cache-capacity lru)
-  lru := lru-cache
-=> fixnum
-```
-:::
-
-Returns the capacity of the LRU cache.
 
 ### lru-cache-flush!
-::: tip usage
+``` scheme
+(lru-cache-flush! lru) -> lru-cache
+
+  lru := lru-cache to clear
 ```
-(lru-cache-flush! lru)
-  lru := lru-cache
+
+Removes all elements from *lru* and returns the empty LRU cache. The capacity
+remains unchanged.
+
+::: tip Examples:
+``` scheme
+> (let (lru (make-lru-cache 100))
+    (lru-cache-put! lru "first"  '1st)
+    (lru-cache-put! lru "second" '2nd)
+    (lru-cache-put! lru "third"  '3rd)
+    (displayln (lru-cache-size lru) " " (lru-cache-capacity lru))
+    (displayln (lru-cache-flush! lru))
+    (displayln (lru-cache-size lru) " " (lru-cache-capacity lru)))
+3 100
+#<lru-cache #12>
+0 100
 ```
 :::
-
-Clears the LRU cache.
 
 ### lru-cache-for-each
-::: tip usage
-```
-(lru-cache-for-each proc lru)
-  proc := lambda (key value)
+``` scheme
+(lru-cache-for-each proc lru) -> void
+
+  proc := procedure to be called for each key-value pair in lru
   lru  := lru-cache
 ```
+
+Applies `(proc key val)` for every key-value association in *lru*, in Most
+Recently Used (MRU) order. Isn't returning anything, executed for its side
+effects.
+
+::: tip Examples:
+``` scheme
+> (make-lru-cache 3)
+#<lru-cache #43>
+> (for-each (lambda (x) (lru-cache-put! #43 x (* x x))) [1 2 3 4 5])
+> (lru-cache-for-each (lambda (k v) (displayln k " " v)) #43)
+5 25
+4 16
+3 9
+```
 :::
-
-Applies `(proc key val)` for every key-value association in the LRU cache,
-in most recently used order.
-
 
 ### lru-cache-walk
-::: tip usage
+``` scheme
+(lru-cache-walk proc lru) -> void
+
+  proc := procedure to be called for each key-value pair in lru
+  lru  := lru cache
 ```
-(lru-cache-walk lru proc)
-```
-:::
 
 Same as `(lru-cache-for-each proc lru)`.
 
 ### lru-cache-fold
-::: tip usage
-```
-(lru-cache-fold proc iv lru)
-  proc := lambda (key value r)
+``` scheme
+(lru-cache-fold proc init lru) -> any
+
+  proc := procedure to be called for each key-value pair in lru
+  init := initial value
   lru  := lru-cache
 ```
-:::
 
-Folds the LRU cache in Most Recently Used order.
+Folds *lru* in Most Recently Used (MRU) order.
+
+*proc*'s signature is expected to look like this: `(proc key val
+prev-intermediate) -> next-intermediate)`. `lru-cache-fold` returns the last
+*next-intermediate* value produced by *proc*. Furthermore, *prev-intermediate*
+will be set to *init* at the beginning.
+
+::: tip Examples:
+``` scheme
+> (let (lru (make-lru-cache 3))
+    (lru-cache-put! lru 'a "creatures")
+    (lru-cache-put! lru 'b "fluffy")
+    (lru-cache-put! lru 'c "are")
+    (lru-cache-fold (lambda (k v i) (string-append i " " v))
+                    "gerbils" lru))
+"gerbils are fluffy creatures"
+```
+:::
 
 ### lru-cache-foldr
-::: tip usage
-```
-(lru-cache-foldr proc iv lru)
-  proc := lambda (key value r)
+``` scheme
+(lru-cache-foldr proc init lru) -> any
+
+  proc := procedure to be called for each key-value pair in lru
+  init := initial value
   lru  := lru-cache
 ```
-:::
 
-Folds the LRU cache in Least Recently Used order.
+Where `lru-cache-fold` folds in Most Recently Used (MRU) order,
+`lru-cache-foldr` folds *lru* in Least Recently Used (LRU) order.
+
+::: tip Examples:
+``` scheme
+> (let (lru (make-lru-cache 5))
+    (lru-cache-put! lru 'a (iota 5))
+    (lru-cache-put! lru 'b (iota 4))
+    (lru-cache-put! lru 'c (iota 3))
+    (lru-cache-fold (lambda (k v i) (cons v i)) [] lru))
+((0 1 2 3 4) (0 1 2 3) (0 1 2))
+```
+:::
 
 ### lru-cache-&gt;list
-::: tip usage
+``` scheme
+(lru-cache->list lru) -> alist
+
+  lru := lru-cache
 ```
-(lru-cache->list lru)
-=> alist
+
+Returns an alist of key-value associations in *lru*, in Most Recently Used (MRU)
+order.
+
+::: tip Examples:
+``` scheme
+> (import :std/srfi/14)
+> (make-lru-cache 10)
+#<lru-cache #47>
+> (for-each (cut lru-cache-put! #47 <> <>) (iota 10) (char-set->list char-set:letter))
+> (lru-cache->list #47)
+((9 . #\J)
+ (8 . #\I)
+ (7 . #\H)
+ (6 . #\G)
+ (5 . #\F)
+ (4 . #\E)
+ (3 . #\D)
+ (2 . #\C)
+ (1 . #\B)
+ (0 . #\A))
 ```
 :::
-
-Returns an alist of key-value associations in the cache.
 
 ### in-lru-cache
-::: tip usage
+``` scheme
+(in-lru-cache lru) -> iterator
+
+  lru := lru-cache to iterate over
 ```
-(in-lru-cache lru)
-  lru := lru-cache
-=> iterator
+
+Creates an iterator over *lru*, yielding key-value values in Most Recently Used
+(MRU) order.
+
+::: tip Examples:
+``` scheme
+> (import :std/iter)
+> (let (lru (make-lru-cache 3))
+    (lru-cache-put! lru 1 #\a)
+    (lru-cache-put! lru 2 #\b)
+    (lru-cache-put! lru 3 #\c)
+    (for ((values k v) (in-lru-cache lru))    ; or short: (for ((values k v) lru) ...)
+      (displayln k " -> " v)))
+3 -> c
+2 -> b
+1 -> a
 ```
 :::
-
-Creates an iterator over the LRU cache.
 
 ### in-lru-cache-keys
-::: tip usage
+``` scheme
+(in-lru-cache-keys lru) -> iterator
+
+  lru := lru-cache to iterate over
 ```
-(in-lru-cache-keys lru)
-  lru := lru-cache
-=> iterator
+
+Creates an iterator over *lru*, yielding keys in Most Recently Used (MRU) order.
+
+::: tip Examples:
+``` scheme
+> (import :std/iter)
+> (let (lru (make-lru-cache 3))
+    (lru-cache-put! lru 1 #\a)
+    (lru-cache-put! lru 2 #\b)
+    (lru-cache-put! lru 3 #\c)
+    (for (x (in-lru-cache-keys lru))
+      (displayln x)))
+3
+2
+1
 ```
 :::
-
-Creates an iterator over the LRU cache keys.
 
 ### in-lru-cache-values
-::: tip usage
+``` scheme
+(in-lru-cache-values lru) -> iterator
+
+  lru := lru-cache to iterate over
 ```
-(in-lru-cache-values lru)
-  lru := lru-cache
-=> iterator
+
+Creates an iterator over *lru*, yielding values in Most Recently Used (MRU) order.
+
+::: tip Examples:
+``` scheme
+> (import :std/iter)
+> (let (lru (make-lru-cache 3))
+    (lru-cache-put! lru 1 #\a)
+    (lru-cache-put! lru 2 #\b)
+    (lru-cache-put! lru 3 #\c)
+    (for (x (in-lru-cache-values lru))
+      (displayln x)))
+c
+b
+a
 ```
 :::
 
-Creates an iterator over the LRU cache values.
+### lru-cache
+``` scheme
+(defsyntax lru-cache)
+```
+
+LRU cache type for user-defined generics and destructuring.
+
+::: tip Examples:
+``` scheme
+;; possible lru-cache iterator implementation:
+(defmethod (:iter (lru lru-cache))
+  (in-lru-cache lru))
+
+(def (in-lru-cache lru)
+  (def (iterate)
+    (lru-cache-for-each yield lru))
+  (in-coroutine iterate))
+```
+:::
 
 
 ## Port utilities
@@ -1212,58 +2200,202 @@ Creates an iterator over the LRU cache values.
 :::
 
 ### copy-port
-::: tip usage
+``` scheme
+(copy-port in out) -> void | error
+
+  in  := input port to read from
+  out := output port to write to
 ```
-(copy-port ...)
+
+Copy all data from port *in* to port *out*. Signals an error when *in* and *out*
+aren't satisfying `input-port?` and `output-port?`, respectively.
+
+::: tip Examples:
+``` scheme
+> (def nums (string-join (map number->string [1 2 3 4 5]) "\n" 'suffix))
+> (call-with-output-file "~/testing/nums.txt"
+    (lambda (out)
+      (call-with-input-string nums
+        (lambda (in) (copy-port in out)))))
+
+$ cat ~/testing/nums.txt    ; unix-like command-line
+1
+2
+3
+4
+5
+
+> (copy-port (current-input-port) (current-output-port))
+hello,
+hello,       ; duplicates what you type at the REPL
+everyone!
+everyone!    ; quit with Ctrl-D
 ```
 :::
-
-Please document me!
 
 ### read-all-as-string
-::: tip usage
+``` scheme
+(read-all-as-string in) -> string | error
+
+  in := input port to read from
 ```
-(read-all-as-string ...)
+
+Reads all the contents of port *in*, returning a single string including all
+newline characters. Signals an error when *in* can't be read.
+
+::: tip Examples:
+``` scheme
+> (import :std/srfi/13)
+> (with-input-from-file "~/dev/gerbil/CHANGELOG.md"
+    (lambda ()
+      (string-take (read-all-as-string (current-input-port)) 80)))
+"### 2-9-2019: Gerbil-v0.15.1\n\nPatch release to support Gambit v4.9.3\n\nDetails:\n-"
 ```
 :::
-
-Please document me!
-
-### read-file-string
-::: tip usage
-```
-(read-file-string ...)
-```
-:::
-
-Please document me!
 
 ### read-all-as-lines
-::: tip usage
+``` scheme
+(read-all-as-lines in
+                   [separator: separator = #\newline]
+                   [include-separator?: include-separator? = #f]) -> list | error
+
+  in                 := input port to read from
+  separator          := character to consider line ending
+  include-separator? := truth value, whether to include separator char in results
 ```
-(read-all-as-lines ...)
+
+Reads all the contents of port *in* as a list of strings. The optional separator
+related keyword parameters specify what is considered a line ending and whether
+to include these separator characters in the line strings. Signals an error when
+*in* can't be read.
+
+::: tip Examples:
+``` scheme
+> (import :std/srfi/1)
+> (take (call-with-input-file "~/dev/gerbil/README.md" read-all-as-lines) 4)
+("# Gerbil Scheme"
+ ""
+ "Gerbil is an opinionated dialect of Scheme designed for Systems Programming,"
+ "with a state of the art macro and module system on top of the Gambit runtime.")
+
+> (with-input-from-string "aa:bb:cc:dd::ff"
+    (lambda () (read-all-as-lines (current-input-port) separator: #\:)))
+("aa" "bb" "cc" "dd" "" "ff")
 ```
 :::
 
-Please document me!
+### read-file-string
+``` scheme
+(read-file-string path) -> string | error
+
+  path := path to file to read contents from
+```
+
+Reads contents of the file at *path*, returning a single string including all
+newline characters. Signals an error when *path* can't be read.
+
+Note: There is another optional *settings* keyword parameter not shown above,
+but it's not terribly interesting for this file reading procedure. Check section
+`17.7.1 Filesystem devices` of the Gambit Manual if you want to know more.
+
+::: tip Examples:
+``` scheme
+$ cat ~/testing/nums.txt    ; unix-like command-line
+1
+2
+3
+4
+5
+
+(map string->number
+     (string-split (read-file-string "~/testing/nums.txt") #\newline))
+(1 2 3 4 5)
+```
+:::
 
 ### read-file-lines
-::: tip usage
+``` scheme
+(read-file-lines path) -> list | error
+
+  path := path to file to read contents from
 ```
-(read-file-lines ...)
+
+Reads all lines of the file at *path* as a list of strings. Signals an error
+when *path* can't be read.
+
+Note: There is another optional *settings* keyword parameter not shown above,
+but it's not terribly interesting for this file reading procedure. Check section
+`17.7.1 Filesystem devices` of the Gambit Manual if you want to know more.
+
+::: tip Examples:
+``` scheme
+$ cat ~/testing/nums.txt    ; unix-like command-line
+1
+2
+3
+4
+5
+
+> (read-file-lines "~/testing/nums.txt")
+("1" "2" "3" "4" "5")
+
+;; Advent of code 2018, problem 01a: Sum a file of around 1000 exact integer values.
+$ head -n5 ~/dev/aoc18/01/input.txt
++12
+-13
++17
++17
+-10
+
+> (apply + (map string->number (read-file-lines "~/dev/aoc18/01/input.txt")))
+508
 ```
 :::
 
-Please document me!
-
 ### Port Destructor
-```
+``` scheme
 (defmethod {destroy <port>} close-port)
 ```
 
-The module also defines a `destroy` method for ports, so that they can
-be used in `with-destroy` forms and other primitives that use the destroy
-idiom.
+The module also defines a `destroy` method for ports, so that they can be used
+in `with-destroy` forms and other primitives that use the destroy idiom,
+ensuring that ports will be closed even if an error is signaled somewhere within
+the body.
+
+::: tip Examples:
+``` scheme
+> (define (for-each-dir-entry dir proc)
+    (let ((dir-port (open-directory dir)))
+      (let loop ()
+        (let ((file (read dir-port)))
+          (if (eof-object? file)
+              (close-port dir-port)
+              (begin
+                (proc file)
+                (loop)))))))
+
+;; could also be written like this utilizing with-destroy:
+> (import :std/sugar)
+> (define (for-each-dir-entry dir proc)
+    (let ((dir-port (open-directory dir)))
+      (with-destroy dir-port
+        ;; dir-port will be closed upon exiting this scope
+        (let loop ((file (read dir-port)))
+          (unless (eof-object? file)
+            (proc file)
+            (loop (read dir-port)))))))
+
+> (for-each-dir-entry "/home/username" displayln)
+dev
+downloads
+videos
+documents
+desktop
+pictures
+music
+testing
+```
+:::
 
 
 ## Priority Queues
@@ -1273,130 +2405,354 @@ idiom.
 ```
 :::
 
-### pqueue
-```
-(defsyntax pqueue ...)
-```
-
-Priority queue type, for user-defined generics.
-
 ### make-pqueue
-::: tip usage
+``` scheme
+(make-pqueue prio [cmp = <] [capacity = 15]) -> pqueue
+
+  prio     := function returning priority of elements
+  cmp      := optional heap comparison function, min-heap by default
+  capacity := optional initial size
 ```
-(make-pqueue prio [cmp = <])
-  prio := lambda (any) => any; element priority function
-  cmp  := priority comparison function
-=> pqueue
+
+Creates a new empty priority queue, a data structure similar to a simple queue,
+but extended to take the associated priority value of an element into account
+when pushing, popping and peeking elements.
+
+- *prio* is a function returning the real priority of an element. It is utilized
+  to determine the insert position whenever some element is about to be pushed
+  onto the priority queue.
+- *cmp*, a comparison function, is used to order the elements based on their
+  priority, defaulting to `<`.
+- *capacity* is the number of elements the pqueue can hold before it needs to
+  resize itself.
+
+::: tip Examples:
+For example, let's assume we always want to retrieve the longest string
+currently within our queue. This could be achieved with `string-length` as our
+priority function and ordering these lengths via `>`:
+``` scheme
+> (def pq (make-pqueue string-length >))
+> (pqueue-push! pq "shortest")
+> (pqueue-push! pq "very, very, long")
+> (pqueue-push! pq "medium length")
+> (pqueue-peek pq)
+"very, very, long"
+> (pqueue-pop! pq)
+"very, very, long"
+> (pqueue-peek pq)
+"medium length"
 ```
 :::
-
-Creates a new priority queue.
 
 ### pqueue?
-::: tip usage
+``` scheme
+(pqueue? pq) -> boolean
+
+  pq := priority queue to check
 ```
-(pqueue? obj)
-=> boolean
+
+Returns `#t` if *pq* is a priority queue, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (let (pq (make-pqueue identity))
+    (when (pqueue? pq)
+      (pqueue-push! pq 1000)
+      (pqueue-push! pq 100)
+      (pqueue-push! pq 10)
+      (pqueue-peek pq)))
+10
+
+> (import :std/misc/queue)
+> (pqueue? (make-queue))
+#f
 ```
 :::
-
-Returns true if the object is a priority queue.
-
-### pqueue-empty?
-::: tip usage
-```
-(pqueue-empty? pq)
-  pq := pqueue
-=> boolean
-```
-:::
-
-Returns true if the priority queue is empty.
 
 ### pqueue-size
-::: tip usage
+``` scheme
+(pqueue-size pq) -> fixnum
+
+  pq := priority queue to inspect
 ```
-(pqueue-size pq)
-  pq := pqueue
-=> integer
 
-```
-:::
+Returns the number of elements queued in *pq*.
 
-Returns the size of the priority queue.
+This operation is `O(1)`, since priority queues always keep track of their size.
 
-### pqueue-peek
-::: tip usage
-```
-(pqueue-peek pq [default])
-  pq := pqueue
-=> any
-```
-:::
-
-Peeks the next value in the queue, without popping it.
-If the queue is empty and a default value is supplied, then it is returned.
-Otherwise an error is raised.
-
-
-### pqueue-pop!
-::: tip usage
-```
-(pqueue-pop! pq [default])
-  pq := pqueue
-=> any
+::: tip Examples:
+``` scheme
+> (let (pq (make-pqueue char->integer))
+    (string-for-each (cut pqueue-push! pq <>) "ABCDEF")
+    (pqueue-size pq))
+6
 ```
 :::
 
-Peeks the next value in the queue, and returns it.
-If the queue is empty and a default value is supplied, then it is returned.
-Otherwise an error is raised.
+### pqueue-empty?
+``` scheme
+(pqueue-empty? pq) -> boolean
 
+  pq := priority queue to check
+```
+
+Returns `#t` if *pq* has no elements queued, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (pqueue-empty? (make-pqueue identity < 1000))
+#t
+
+> (make-pqueue identity)
+#<pqueue #21>
+> (pqueue-push! #21 1)
+> (pqueue-push! #21 3)
+> (pqueue-push! #21 5)
+> (pqueue-empty? #21)
+#f
+```
+:::
 
 ### pqueue-push!
-::: tip usage
+``` scheme
+(pqueue-push! pq elem) -> unspecified
+
+  pq   := priority queue to push onto
+  elem := element to push to pq
 ```
-(pqueue-push! pq v)
-  pq := pqueue
+
+Enqueues *elem* in *pq*. The insert position depends on the priority and
+comparison functions specified in `make-pqueue`. Similar to `set!`, it's
+unspecified what `pqueue-push!` returns afterwards.
+
+::: tip Examples:
+``` scheme
+> (defstruct city (name population))
+> (def cities [(make-city "Salto" 104028)
+               (make-city "Санкт-Петербург" 4879566)
+               (make-city "Qaqortoq" 3089)
+               (make-city "አዲስ ፡ አበባ" 3352000)
+               (make-city "Jayapura" 315872)
+               (make-city "香港" 7448900)])
+> (let (pq (make-pqueue city-population))
+    (for-each (cut pqueue-push! pq <>) cities)
+    (city-name (pqueue-peek pq)))
+"Qaqortoq"
 ```
 :::
 
-Pushes the value `v` in the queue.
+### pqueue-pop!
+``` scheme
+(pqueue-pop! pq [default = absent-obj]) -> any | default | error
+
+  pq      := priority queue to pop from
+  default := optional element returned when pq is empty
+```
+
+Pops the next value in *pq* and returns it. Which element gets popped depends on
+the priority and comparison function specified in `make-pqueue`. If *pq* is
+empty and a default value is supplied, then *default* is returned. Otherwise an
+error is raised.
+
+::: tip Examples:
+``` scheme
+> (import :std/sugar)
+> (let (pq (make-pqueue values))
+    (for-each (cut pqueue-push! pq <>) [10 1 20 2 30 3])
+    (until (pqueue-empty? pq)
+      (displayln (pqueue-pop! pq)))
+    ;; would signal error without default value:
+    (pqueue-pop! pq 100))
+1
+2
+3
+10
+20
+30
+100
+```
+:::
+
+### pqueue-peek
+``` scheme
+(pqueue-peek pq) -> any | error
+
+  pq := priority queue to peek
+```
+
+Returns the next value in *pq* without popping it from the priority queue like
+`pqueue-pop!` does. An error is raised when *pq* is empty.
+
+::: tip Examples:
+``` scheme
+> (import :std/srfi/1)
+> (def pq (make-pqueue length))
+> (pqueue-push! pq (iota (random-integer 10)))
+> (pqueue-peek pq)
+(0 1 2 3 4 5 6 7)
+> (pqueue-push! pq [13 21 34 55])
+> (pqueue-peek pq)
+(13 21 34 55)
+```
+:::
+
+### pqueue
+```
+(defsyntax pqueue)
+```
+
+Priority queue type for user-defined generics and destructuring.
+
+::: tip Examples:
+``` scheme
+> (let (pq (make-pqueue string-length >))
+    (pqueue-push! pq "Mimas")
+    (pqueue-push! pq "Enceladus")
+    (pqueue-push! pq "Tethys")
+    (with ((pqueue internal-heap) pq)
+      (with ((vector size . vals) internal-heap)
+        (displayln "size: " size "\nvals: " vals))))
+size: 3
+vals: ((9 . Enceladus) (5 . Mimas) (6 . Tethys) 0 0 0 0 0 0 0 0 0 0 0 0)
+```
+:::
 
 
-
-## Proces Utilities
+## Process Utilities
 ::: tip To use the bindings from this module:
 ``` scheme
 (import :std/misc/process)
 ```
 :::
 
-### Overview
-
-These utilities synchronously spawn a subprocess,
-spawn a coprocess function in a thread to interact with the process
-(default: `std/misc/ports#read-all-as-string`),
-check the status of the process upon termination,
-and return the result of that coprocess if successful.
-
 ### run-process
-::: tip usage
+``` scheme
+(run-process cmd
+             [coprocess: coprocess = read-all-as-string]
+             [check-status: check-status = #t]
+             [environment: environment = #f]
+             [directory: directory = #f]
+             [stdin-redirection: stdin-redirection = #t]
+             [stdout-redirection: stdout-redirection = #t]
+             [stderr-redirection: stderr-redirection = #f]
+             [pseudo-terminal: pseudo-terminal = #f]
+             [show-console: show-console = #f]) -> any | error
+
+  cmd                := list of strings, [path . arguments]
+  coprocess          := procedure interacting with process
+  check-status       := procedure or truth value
+  environment        := list of strings, ["VAR=VALUE" ...]
+  directory          := dir, working directory
+  stdin-redirection  := boolean, standard input redirection
+  stdout-redirection := boolean, standard output redirection
+  stderr-redirection := boolean, standard error redirection
+  pseudo-terminal    := boolean, terminal or pipes (UNIX)
+  show-console       := boolean, show or hide console (Windows)
 ```
-(run-process ...)
+
+Synchronously runs *cmd* in a subprocess, where *cmd* is expected to be a list
+consisting of a path to an executable on the filesystem and its arguments.
+
+The following keyword settings are available:
+
+- *coprocess*: A procedure that specifies how to interact with the process,
+  which it receives as an argument, and what should be returned from
+  `run-process`. Defaults to reading the whole output as a string via
+  `std/misc/ports#read-all-as-string`.
+- *check-status*: Declares how to handle the exit status of the process upon
+  termination. If a procedure is provided, then it will be called with the
+  process' exit status and a list of process creation arguments. If
+  *check-status* is `#t`, the default, then the exit status is checked and an
+  error is raised in case it differs from `0`. Lastly, the exit status is simply
+  ignored, when *check-status* is `#f`.
+- *environment*: Indicates the set of environment variable bindings that the
+  process receives. Each element of the list is a string of the form
+  `VAR=VALUE`, where *VAR* is the name of the variable and *VALUE* is its
+  binding. When *environment* is `#f`, which is the default, the process inherits
+  the environment variable bindings of the Scheme program.
+- *directory*: Sets the working directory of the process. When it's `#f`, the
+  default, then the process uses the value of `(current-directory)`.
+- *stdin-redirection*: Indicates how the standard input of the process is
+  redirected. The default `#t` will redirect the standard input from the
+  process-port (i.e. what is written to the process-port will be available on
+  the standard input). `#f` will leave the standard input as-is, which typically
+  results in input coming from the console.
+- *stdout-redirection*: Indicates how the standard output of the process is
+  redirected. The default `#t` will redirect the standard output to the
+  process-port (i.e. all output to standard output can be read from the
+  process-port). `#f` will leave the standard output as-is, which typically
+  results in the output going to the console.
+- *stderr-redirection*: Indicates how the standard error of the process is
+  redirected. `#t` will redirect the standard error to the process-port (i.e.
+  all output to standard error can be read from the process-port). The default
+  `#f` will leave the standard error as-is, which typically results in error
+  messages being output to the console.
+- *pseudo-terminal*: Applies to *UNIX*. It indicates what type of device will be
+  bound to the process’ standard input and standard output. `#t` will use a
+  pseudo-terminal device (this is a device that behaves like a tty device even
+  though there is no real terminal or user directly involved). The default `#f`
+  will use a pair of pipes. The difference is important for programs which
+  behave differently when they are used interactively, for example shells.
+- *show-console*: Applies to *Microsoft Windows*. It controls whether the
+  process’ console window will be hidden or visible. The default value of this
+  setting is `#f` (i.e. hide the console window).
+
+More information can be found in section `17.7.2 Process devices` of the Gambit
+manual.
+
+::: tip Examples:
+``` scheme
+> (run-process ["date" "--utc"] coprocess: read-line)
+"Tue 21 May 2019 12:22:20 PM UTC"
+
+> (run-process ["/usr/bin/ls"])
+"desktop\ndev\ndocuments\ndownloads\nmusic\nnotes\npictures\nvideos\n"
+
+> (import :std/misc/ports)
+> (run-process ["ls" "-l"] coprocess: read-all-as-lines)
+("drwxr-xr-x.  2 user user  4096 Mar 26 13:26 desktop"
+ "drwxr-xr-x.  8 user user  4096 May 13 14:28 dev"
+ "drwxr-xr-x. 12 user user 12288 May 19 17:26 documents"
+ "drwxr-xr-x.  2 user user  4096 May 20 10:13 downloads"
+ "drwxrwxr-x.  8 user user  4096 May  1 15:13 music"
+ "drwxr-xr-x.  2 user user  4096 May 21 10:53 notes"
+ "drwxr-xr-x.  9 user user  4096 Apr 30 19:08 pictures"
+ "drwxrwxr-x.  3 user user 12288 May 21 09:41 videos")
+
+
+> (def (word-count path)
+    (run-process ["wc" path]
+                 coprocess: (lambda (process)
+                              (with ([l w c] (filter number? (read-all process)))
+                                (displayln "lines: " l "\nwords: " w "\nchars: " c)))))
+> (word-count "/home/user/dev/scheme/nums.txt")
+lines: 5
+words: 5
+chars: 10
 ```
 :::
-
-Please document me!
 
 ### run-process/batch
-::: tip usage
+``` scheme
+(run-process/batch cmd) -> void
+
+  cmd := list of strings, [path . arguments]
 ```
-(run-process/batch ...)
+
+Runs a batch process with *stdin* closed, and both *stdout* and *stderr* on the
+current console. Same as `(run-process cmd coprocess: close-output-port
+stdout-redirection: #f)`.
+
+::: tip Examples:
+``` scheme
+> (def files ["file1.txt" "file2.txt" "file3.txt"])
+> (for-each (lambda (file) (run-process/batch ["touch" file])) files)
+> (run-process/batch (append ["zip" "big.zip"] files))
+adding: file1.txt (stored 0%)
+adding: file2.txt (stored 0%)
+adding: file3.txt (stored 0%)
 ```
 :::
-
-Please document me!
 
 
 ## Simple Queues
@@ -1406,418 +2762,946 @@ Please document me!
 ```
 :::
 
-### queue
-```
-(defsyntax queue ...)
-```
-
-Queue type, for user-defined generics.
-
 ### make-queue
-::: tip usage
+``` scheme
+(make-queue) -> queue
 ```
-(make-queue)
-=> <queue>
+
+Creates a new empty queue, a First-In-First-Out (FIFO) data structure similar to
+a list. Compared to an ordinary lists, queues allow appending elements without
+having to walk all to the end first.
+
+::: tip Examples:
+``` scheme
+> (import :std/test)
+> (let (q (make-queue))
+    (check (queue-empty? q) => #t)
+    (enqueue! q 1)
+    (enqueue! q 2)
+    (enqueue! q 3)
+    (check (queue-length q) => 3)
+    (queue->list q))
+... check (queue-empty? q) is equal? to #t
+... check (queue-length q) is equal? to 3
+(1 2 3)
 ```
 :::
-
-Creates a new queue.
 
 ### queue?
-::: tip usage
+``` scheme
+(queue? q) -> boolean
+
+  q := queue to check
 ```
-(queue? obj)
-=> boolean
+
+Returns `#t` if *q* is a queue, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (let (q (make-queue))
+    (enqueue! q (make-queue))
+    (and (queue? q)
+         (queue? (queue-peek q))
+         (queue? (make-queue))))
+#t
+
+> (queue? (list 1 2 3))
+#f
 ```
 :::
-
-Returns true if the object is a queue.
 
 ### queue-length
-::: tip usage
+``` scheme
+(queue-length q) -> fixnum
+
+  q := queue to check
 ```
-(queue-length q)
-  q := queue
-=> integer
+
+Returns the number of elements enqueued in *q*.
+
+Similar to retrieving the length of a vector, this operation is `O(1)`, since
+queues always keep track of their length.
+
+::: tip Examples:
+``` scheme
+> (let (q (make-queue))
+    (enqueue! q #\a)
+    (enqueue! q #\b)
+    (enqueue! q #\c)
+    (queue-length q))
+3
+
+> (queue-length (make-queue))
+0
 ```
 :::
-
-Returns the size of the queue.
 
 ### queue-empty?
-::: tip usage
+``` scheme
+(queue-empty? q) -> boolean
+
+  q := queue to check
 ```
-(queue-empty? q)
-  q := queue
-=> boolean
+
+Returns `#t` if *q* has no elements enqueued, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (queue-empty? (make-queue))
+#t
+
+> (let (q (make-queue))
+    (enqueue! q (make-queue))
+    (and (queue-empty? (queue-peek q))
+         (queue-empty? q)))
+#f
 ```
 :::
-
-Returns true if the queue is empty.
 
 ### non-empty-queue?
-::: tip usage
+``` scheme
+(non-empty-queue? q) -> boolean
+
+  q := queue to check
 ```
-(non-empty-queue? q)
+
+Returns `#t` if *q* is not empty, i.e., it has at least one element enqueued.
+
+Equivalent to `(not (queue-empty? q))`.
+
+::: tip Examples:
+``` scheme
+> (non-empty-queue? (make-queue))
+#f
+
+> (let (q (make-queue))
+    (enqueue! q [])
+    (non-empty-queue? q))
+#t
 ```
 :::
-
-Returns true if the queue is not empty.
 
 ### enqueue!
-::: tip usage
+``` scheme
+(enqueue! q elem) -> unspecified
+
+  q    := queue to push onto
+  elem := element to append to q
 ```
-(enqueue! q v)
-  q := queue
+
+Enqueues (pushes) *elem* to the end of *q*. Similar to `set!`, it's unspecified
+what `enqueue!` returns afterwards.
+
+This operation is faster than simply appending to the end of a regular list,
+because queues needn't be walked first.
+
+::: tip Examples:
+``` scheme
+> (let (q (make-queue))
+    (enqueue! q 10)
+    (enqueue! q 20)
+    (enqueue! q 30)
+    (queue->list q))
+(10 20 30)
+
+> (import :std/srfi/1 :std/test)
+> (let ((q (make-queue))
+        (lst (iota 10)))
+    (for-each (cut enqueue! q <>) lst)
+    (check-equal? (queue-length q) (length lst))
+    (check-equal? (queue->list q) lst))
+... check (queue-length q) is equal? to 10
+... check (queue->list q) is equal? to (0 1 2 3 4 5 6 7 8 9)
 ```
 :::
-
-Enqueues (pushes) the value `v` to the end of the queue.
 
 ### enqueue-front!
-::: tip usage
+``` scheme
+(enqueue-front! q elem) -> unspecified
+
+  q    := queue to push onto
+  elem := element to enqueue to q
 ```
-(enqueue-front! q v)
-  q := queue
+
+`enqueue-front!` is similar to `enqueue!`, but pushes *elem* to the front of *q*
+instead of the end. It's unspecified what will be returned.
+
+::: tip Examples:
+``` scheme
+> (let (q (make-queue))
+    (enqueue-front! q 10)
+    (enqueue-front! q 20)
+    (enqueue-front! q 30)
+    (queue->list q))
+(30 20 10)
 ```
 :::
-
-Enqueues the value `v` at the front of the queue.
 
 ### dequeue!
-::: tip usage
+``` scheme
+(dequeue! q [default = absent-obj]) -> any | default | error
+
+  q       := queue to pop from
+  default := optional element returned when q is empty
 ```
-(dequeue! q [default])
-  q := queue
-=> any
+
+Pops the front of *q* and returns that value. If *q* is empty and a default
+value is supplied, then *default* is returned. Otherwise an error is raised.
+
+::: tip Examples:
+``` scheme
+> (let (q (make-queue))
+    (for-each (cut enqueue! q <>) [1 2 3])
+    (displayln (dequeue! q))
+    (displayln (dequeue! q))
+    (displayln (queue->list q))
+    (displayln (dequeue! q 100))
+    ;; would signal error without default value:
+    (displayln (dequeue! q 100)))
+1
+2
+(3)
+3
+100
 ```
 :::
-
-Pops the end of the queue and a returns the value.
-If the queue is empty and a default value is supplied, then it is returned.
-Otherwise an error is raised.
 
 ### queue-peek
-::: tip usage
+``` scheme
+(queue-peek q [default = absent-obj]) -> any | default | error
+
+  q       := queue to peek front
+  default := optional element returned when q is empty
 ```
-(queue-peek q [default])
-  q := queue
-=> any
+
+Returns the front value of *q* without popping it from the queue like `dequeue!`
+does. If *q* is empty and a default value is supplied, then *default* is
+returned. Otherwise an error is raised.
+
+::: tip Examples:
+``` scheme
+> (def q (make-queue))
+> (enqueue! q #\a)
+#<queue #8>
+> (enqueue! q #\b)
+#<queue #8>
+> (queue-peek q)
+#\a
+> (dequeue! q)
+#\a
+> (queue-peek q)
+#\b
+> (dequeue! q)
+#\b
+> (queue-peek q 10)
+10
+> (queue-peek q)
+error
 ```
 :::
-
-Peeks the end of the queue and a returns the value without popping it from the queue.
-If the queue is empty and a default value is supplied, then it is returned.
-Otherwise an error is raised.
-
 
 ### queue-&gt;list
-::: tip usage
+``` scheme
+(queue->list q) -> list
+
+  q := queue to transform into list
 ```
-(queue->list q)
-=> list
+
+Returns a new list of the elements queued in *q*, in order.
+
+::: tip Examples:
+``` scheme
+> (import :std/srfi/1)
+> (let (q (make-queue))
+    (for-each (cut enqueue! q <>) (iota 100))
+    (take (queue->list q) 5))
+(0 1 2 3 4)
 ```
 :::
 
-Returns a list of the value contained in the queue, in order.
+### queue
+```
+(defsyntax queue)
+```
+
+Queue type, for user-defined generics and destructuring.
+
+::: tip Examples:
+``` scheme
+> (let (q (make-queue))
+    (enqueue! q 1)
+    (enqueue! q 'b)
+    (enqueue! q #\c)
+    (with ((queue elems back length) q)
+      (displayln "elements: " elems ", back: " back "\nand holds " length " items")))
+elements: (1 b c), back: (c)
+and holds 3 items
+```
+:::
 
 
-## Red Black Trees
+## Red-Black Trees
 ::: tip To use the bindings from this module:
 ``` scheme
 (import :std/misc/rbtree)
 ```
 :::
 
-### rbtree
-::: tip usage
+### make-rbtree
+``` scheme
+(make-rbtree cmp [root = +empty+]) -> rbtree
+
+  cmp  := comparison procedure
+  root := optional tree root element
 ```
-(defsyntax rbtree)
+
+Creates a new red-black tree, a self-balancing binary search tree variant,
+similar to an AVL tree. Also usable as an sorted hash-table alternative for
+small datasets.
+
+The comparison procedure *cmp* is expected to accept two keys, *a* and *b*, and
+perform a ternary comparison:
+- If `(< a b)`, then it must return a negative number.
+- If `(= a b)`, then it must return 0.
+- If `(> a b)`, then it must return a positive number.
+
+Examples of comparison procedures: `-`, `string-cmp` or `symbol-cmp`. The latter
+two are defined in this module.
+
+::: tip Examples:
+``` scheme
+> (def rbt1 (make-rbtree -))
+> (def rbt2 (list->rbtree string-cmp [["one" . 1] ["two" . 2] ["three" . 3]]))
+
+> (rbtree-put! rbt1 1 "one")
+> (rbtree-put! rbt1 2 "two")
+> (rbtree-put! rbt1 3 "four")
+> (rbtree-put! rbt1 4 "four")
+> (rbtree-update! rbt1 3 (lambda (x) (when (string=? x "four") "three")))
+> (rbtree-remove! rbt1 4)
+> (rbtree->list rbt1)
+((1 . "one") (2 . "two") (3 . "three"))
+> (rbtree->list rbt2)
+(("one" . 1) ("three" . 3) ("two" . 2))
+
+> (import :std/iter)
+> (for* ((key (in-rbtree-keys rbt2)) (val (in-rbtree-values rbt1)))
+    (unless (string=? key val)
+      (displayln key " " val)))
+one two
+one three
+three one
+three two
+two one
+two three
 ```
 :::
-
-Red Black tree (rbtree) type.
 
 ### rbtree?
-::: tip usage
-```
-(rbtree? obj)
-=> boolean
-```
-:::
+``` scheme
+(rbtree? rbt) -> boolean
 
-Returns true if the object is an rbtree.
-
-### make-rbtree
-::: tip usage
+  rbt := rbtree to check
 ```
-(make-rbtree cmp)
-  cmp := lambda (a b); comparison procedure
-=> <rbtree>
+
+Returns `#t` if *rbt* is an rbtree, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (rbtree? (make-rbtree string-cmp))
+#t
 ```
 :::
 
-Creates a new rbtree.
+### rbtree-empty?
+``` scheme
+(rbtree-empty? rbt) -> boolean
 
-The comparison procedure accepts two keys, a and b, and performs ternary comparison:
-- if a < b, then it must return a negative number
-- if a = b, then it must return 0
-- if a > b, then it must returna positive number
+  rbt := rbtree to check
+```
+
+Returns `#t` if *rbt* is empty, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (rbtree-empty? (make-rbtree -))
+#t
+
+> (make-rbtree -)
+#<rbtree #62>
+> (rbtree-put! #62 0 'NULL)
+> (rbtree-empty? #62)
+#f
+```
+:::
+
+### rbtree-put!
+``` scheme
+(rbtree-put! rbt key val) -> unspecified
+
+  rbt := rbtree to update
+  key, val := key-value association to add to rbt
+```
+
+Destructively updates *rbt* by inserting the key-value association *key* to
+*val*. Similar to `set!`, it's unspecified what `rbtree-put!` returns.
+
+::: tip Examples:
+``` scheme
+> (let (rbt (make-rbtree -))
+    (rbtree-put! rbt 3 'a)
+    (displayln (rbtree->list rbt))
+    (rbtree-put! rbt 2 'b)
+    (displayln (rbtree->list rbt))
+    (rbtree-put! rbt 4 'c)
+    (displayln (rbtree->list rbt))
+    (rbtree-put! rbt 1 'd)
+    (displayln (rbtree->list rbt)))
+((3 . a))
+((2 . b) (3 . a))
+((2 . b) (3 . a) (4 . c))
+((1 . d) (2 . b) (3 . a) (4 . c))
+```
+:::
+
+### rbtree-put
+``` scheme
+(rbtree-put rbt key val) -> rbtree
+
+  rbt := rbtree to update
+  key, val := key-value association to add to rbt
+```
+
+`rbtree-put` is similar to `rbtree-put!`, but functionally updates *rbt* instead,
+returning a new rbtree without modifying *rbt*.
+
+::: tip Examples:
+``` scheme
+> (let (rbt (make-rbtree -))
+    (displayln (rbtree->list (rbtree-put rbt 1 'a)))
+    (displayln "empty? " (rbtree-empty? rbt)))
+((1 . a))
+empty? #t
+```
+:::
+
+### rbtree-update!
+``` scheme
+(rbtree-update! rbt key proc [default = void]) -> unspecified
+
+  rbt     := rbtree to update
+  key     := key to look up
+  proc    := update procedure, receives previous value
+  default := optional default value when key not present
+```
+
+Destructively updates *rbt* by modifying the value associated with *key*. Looks
+up *key* in *rbt* and passes the associated value (or *default*, if *key* isn't
+present) to *proc*, an updating procedure. Similar to `set!`, it's unspecified
+what `rbtree-update!` returns.
+
+::: tip Examples:
+``` scheme
+> (def rbt (make-rbtree string-cmp))
+> (rbtree-update! rbt "one" 1+ 0)    ; would signal error without default value
+> (rbtree->list rbt)
+(("one" . 1))
+> (rbtree-put! rbt "two" 2)
+> (rbtree-update! rbt "two" 1+)
+> (rbtree-update! rbt "one" (cut * 2 <>))
+> (rbtree->list rbt)
+(("one" . 2) ("two" . 3))
+```
+:::
+
+### rbtree-update
+``` scheme
+(rbtree-update rbt key proc [default = void]) -> rbtree
+
+  rbt     := rbtree to update
+  key     := key to look up
+  proc    := update procedure, receives previous value
+  default := optional default value when key not present
+```
+
+`rbtree-update` is similar to `rbtree-update!`, but functionally updates *rbt*
+instead, returning a new rbtree without modifying *rbt*.
+
+::: tip Examples:
+``` scheme
+> (def rbt (make-rbtree symbol-cmp))
+> (rbtree-put! rbt 'a 16)
+> (rbtree->list (rbtree-update rbt 'a sqrt))
+((a . 4))
+> (rbtree->list rbt)
+((a . 16))
+```
+:::
+
+### rbtree-remove!
+``` scheme
+(rbtree-remove! rbt key) -> unspecified
+
+  rbt := rbtree to update
+  key := key to look up
+```
+
+Destructively updates *rbt* by removing the value associated with *key*. *rbt*
+stays unmodified if *key* isn't present. Similar to `set!`, it's unspecified
+what `rbtree-update!` returns.
+
+::: tip Examples:
+``` scheme
+> (def rbt (make-rbtree symbol-cmp))
+> (rbtree-put! rbt 'a 3)
+> (rbtree-put! rbt 'b 2)
+> (rbtree-put! rbt 'c 1)
+> (rbtree-remove! rbt 'b)
+> (rbtree-remove! rbt 'd)    ; nothing happens
+> (rbtree->list rbt)
+((a . 3) (c . 1))
+```
+:::
+
+### rbtree-remove
+``` scheme
+(rbtree-remove rbt key) -> rbtree
+
+  rbt := rbtree to update
+  key := key to look up
+```
+
+`rbtree-remove` is similar to `rbtree-update!`, but functionally updates *rbt*
+instead, returning a new rbtree without modifying *rbt*. If *key* isn't present,
+then `rbtree-remove` simply returns *rbt* instead of allocating a new identical
+tree.
+
+::: tip Examples:
+``` scheme
+> (let (rbt (make-rbtree -))
+    (rbtree-put! rbt 1 "gambit")
+    (rbtree-put! (rbtree-remove rbt 2) 1 "gerbil")    ; rbtree-remove returns rbt
+    (displayln (rbtree->list rbt))
+    (rbtree->list (rbtree-remove rbt 1)))
+((1 . "gerbil"))
+()
+```
+:::
 
 ### rbtree-ref
-::: tip usage
+``` scheme
+(rbtree-ref rbt key [default = absent-obj]) -> any | default | error
+
+  rbt     := rbtree to search in
+  key     := key to look up in rbt
+  default := optional default value when key not present
 ```
-(rbtree-ref rbt key [default])
-  rbt := rbtree
-=> any
+
+Returns the value associated with *key* in *rbt*, or *default* if no association
+is present; if the *default* value is omitted then an error is raised.
+
+::: tip Examples:
+``` scheme
+> (def rbt (make-rbtree -))
+> (rbtree-put! rbt 1 'a)
+> (rbtree-put! rbt 2 'b)
+> (rbtree-put! rbt 3 'c)
+> (rbtree->list rbt)
+((1 . a) (2 . b) (3 . c))
+> (rbtree-ref rbt 2 'NONE)
+b
+> (rbtree-ref rbt 4 'NONE)    ; would signal error without default value
+NONE
 ```
 :::
-
-Returns the value associated with `key` in the rbtree, or the default if no association
-is present; if the default value is omitted then an error is raised.
 
 ### rbtree-get
-::: tip usage
+``` scheme
+(rbtree-get rbt key) -> any | #f
+
+  rbt := rbtree to search in
+  key := key to loop up in rbt
 ```
-(rbtree-get rbt key)
-  rbt := rbtree
-=> any
-```
-:::
 
 Same as `(rbtree-ref rbt key #f)`.
 
-### rbtree-put!
-::: tip usage
-```
-(rbtree-put! rbt key value)
- rbt := rbtree
-```
-:::
-
-Destructively updates the rbtree, associating `key` with `value`.
-
-### rbtree-put
-::: tip usage
-```
-(rbtree-put rbt key value)
-  rbt := rbtree
-=> rbtree
+::: tip Examples:
+``` scheme
+> (make-rbtree symbol-cmp)
+#<rbtree #54>
+> (rbtree-put! #54 'C   "single C")
+> (rbtree-put! #54 'BB  "double B")
+> (rbtree-put! #54 'AAA "triple A")
+> (rbtree-get  #54 'BB)
+"double B"
+> (rbtree-get  #54 'D)
+#f
 ```
 :::
-
-Functionally updates the rbtree, associating `key` with `value`.
-
-### rbtree-update!
-::: tip usage
-```
-(rbtree-update! rbt k update default)
-  rbt := rbtree
-  update := lambda (x y); update function
-```
-:::
-
-Destructively updates the rbtree.
-
-### rbtree-update
-::: tip usage
-```
-(rbtree-update rbt k update default)
-=> rbtree
-```
-:::
-
-Functionally updates the rbtree.
-
-### rbtree-remove!
-::: tip usage
-```
-(rbtree-remove! rbt key)
-  rbt := rbtree
-```
-:::
-
-Destructively updates the rbtree, removing the association of `key`.
-
-### rbtree-remove
-::: tip usage
-```
-(rbtree-remove rbt key)
-  rbt := rbtree
-=> rbtree
-```
-:::
-
-Functionally updates the rbtree, removing the association of `key`.
-
-### rbtree-empty?
-::: tip usage
-```
-(rbtree-empty? rbt)
-  rbt := rbtree
-=> boolean
-```
-:::
-
-Returns true if the rbtree is an empty.
 
 ### rbtree-copy
-::: tip usage
+``` scheme
+(rbtree-copy rbt) -> rbtree
+
+  rbt := rbtree to copy
 ```
-(rbtree-copy rbt)
-  rbt := rbtree
-=> rbtree
+
+Returns a copy of *rbt*.
+
+::: tip Examples:
+``` scheme
+> (rbtree->list (rbtree-copy (make-rbtree string-cmp)))
+()
+
+> (def rbt (make-rbtree string-cmp))
+> (rbtree-put! rbt "op" sqrt)
+> (rbtree-put! (rbtree-copy rbt) "op" +)    ; not overwriting rbt
+> (rbtree->list rbt)
+("op" . #<procedure #63 sqrt>)
 ```
 :::
-
-Returns a copy of the rbtree.
 
 ### rbtree-for-each
-::: tip usage
+``` scheme
+(rbtree-for-each proc rbt) -> void
+
+  proc := procedure to be called for each key-value association in rbt
+  rbt  := rbtree to iterate over
 ```
-(rbtree-for-each proc rbt)
-  proc := lambda (key value)
-  rbt  := rbtree
+
+Evaluates `(proc key val)` for every key-value association in *rbt*, in
+ascending order. Isn't returning anything, executed for its side effects.
+
+::: tip Examples:
+``` scheme
+> (import :std/iter)
+> (make-rbtree -)
+#<rbtree #66>
+> (for ((key [1 2 3 4 5]) (val ["I" "II" "III" "IV" "V"]))
+    (rbtree-put! #66 key val))
+> (rbtree-for-each (cut displayln <> " -> " <>) #66)
+1 -> I
+2 -> II
+3 -> III
+4 -> IV
+5 -> V
 ```
 :::
-
-Evaluates `(proc key val)` for every association `key -> value` in the rbtree, in ascending order.
 
 ### rbtree-for-eachr
-::: tip usage
+``` scheme
+(rbtree-for-eachr proc rbt) -> void
+
+  proc := procedure to be called for each key-value association in rbt
+  rbt  := rbtree to iterate over
 ```
-(rbtree-for-eachr proc rbt)
-  proc := lambda (key value)
-  rbt  := rbtree
+
+`rbtree-for-eachr` is similar to `rbtree-for-each`, but evaluates `(proc key
+val)` in descending (reversed) order.
+
+::: tip Examples:
+``` scheme
+> (import :std/iter)
+> (make-rbtree -)
+#<rbtree #66>
+> (for ((key [1 2 3 4 5]) (val ["I" "II" "III" "IV" "V"]))
+    (rbtree-put! #66 key val))
+> (rbtree-for-eachr (cut displayln <> " -> " <>) #66)
+5 -> V
+4 -> IV
+3 -> III
+2 -> II
+1 -> I
 ```
 :::
-
-Evaluates `(proc key val)` for every association `key -> value` in the rbtree, in descending order.
 
 ### rbtree-fold
-::: tip usage
+``` scheme
+(rbtree-fold proc init rbt) -> any
+
+  proc := procedure to be called for each key-value association in rbt
+  init := initial value
+  rbt  := rbtree to iterate over
 ```
-(rbtree-fold proc seed rbt)
-  proc := lambda (key value seed)
-  rbt := rbtree
-=> any
+
+Folds *rbt* in ascending order.
+
+*proc*'s signature is expected to look like this: `(proc key val
+prev-intermediate) -> next-intermediate)`. `rbtree-fold` returns the last
+*next-intermediate* value produced by *proc*. Furthermore, *prev-intermediate*
+will be set to *init* at the beginning.
+
+::: tip Examples:
+``` scheme
+> (let (rbt (make-rbtree -))
+    (for-each (cut rbtree-put! rbt <> <>) [1 2 3] ["short" "longest" "medium"])
+    (rbtree-fold (lambda (k v i)
+                   (cond ((> (string-length v) (string-length i)) v)
+                         (else i)))
+                 "tiny" rbt))
+"longest"
 ```
 :::
-
-Folds the rbtree in ascending order.
 
 ### rbtree-foldr
-::: tip usage
+``` scheme
+(rbtree-foldr proc init rbt) -> any
+
+  proc := procedure to be called for each key-value association in rbt
+  init := initial value
+  rbt  := rbtree to iterate over
 ```
-(rbtree-foldr proc seed rbt)
-  proc := lambda (key value seed)
-  rbt := rbtree
-=> any
+
+Where `rbtree-fold` folds in ascending order, `rbtree-foldr` folds *rbt* in
+descending (reverse) order.
+
+::: tip Examples:
+``` scheme
+> (def rbt (make-rbtree -))
+> (rbtree-put! rbt 3 (iota 3))
+> (rbtree-put! rbt 4 (iota 4))
+> (rbtree-put! rbt 5 (iota 5))
+> (rbtree-fold (lambda (k v i) (cons v i)) [] rbt)
+((0 1 2 3 4) (0 1 2 3) (0 1 2))
+> (rbtree-foldr (lambda (k v i) (cons v i)) [] rbt)
+((0 1 2) (0 1 2 3) (0 1 2 3 4))
 ```
 :::
-
-Folds the rbtree in descending order.
 
 ### rbtree-&gt;list
-::: tip usage
-```
-(rbtree->list rbt)
+``` scheme
+(rbtree->list rbt) -> alist
+
   rbt := rbtree
-=> list
+```
+
+Returns an alist of key-value associations in *rbt*, in ascending order.
+
+::: tip Examples:
+``` scheme
+> (list->rbtree - [[3 . "drei"] [1 . "eins"] [2 . "zwei"] [4 . "vier"]])
+#<rbtree #71>
+> (rbtree->list #71)
+((1 . "eins") (2 . "zwei") (3 . "drei") (4 . "vier"))
 ```
 :::
-
-Returns a list with all the associations in the rbtree, in ascending order.
 
 ### rbtree-&gt;listr
-::: tip usage
-```
-(rbtree->listr rbt)
+``` scheme
+(rbtree->listr rbt) -> alist
+
   rbt := rbtree
-=> list
+```
+
+Returns an alist of key-value associations in *rbt*, in descending (reverse)
+order.
+
+::: tip Examples:
+``` scheme
+> (list->rbtree - [[3 . "drei"] [1 . "eins"] [2 . "zwei"] [4 . "vier"]])
+#<rbtree #71>
+> (rbtree->listr #71)
+((4 . "vier") (3 . "drei") (2 . "zwei") (1 . "eins"))
 ```
 :::
-
-Returns a list with all the associations in the rbtree, in descending order.
 
 ### list-&gt;rbtree
-::: tip usage
+``` scheme
+(list->rbtree cmp lst) -> rbtree
+
+  cmp := comparison procedure
+  lst := alist of key-value associations
 ```
-(list->rbtree cmp lst)
-  cmp := lambda (x y); comparison function
-  lst := alist
-=> rbtree
+
+Creates a new rbtree from *lst*, an associative list. `make-rbtree` describes
+how *cmp* is expected to look like.
+
+::: tip Examples:
+``` scheme
+> (rbtree->list (list->rbtree symbol-cmp '((n . 3) (c . 2) (f . 1))))
+((c . 2) (f . 1) (n . 3))
+
+> (rbtree-empty? (rbtree-remove (list->rbtree - [[0 . #\x]]) 0))
+#t
 ```
 :::
-
-Creates a new rbtree from an associative list.
 
 ### in-rbtree
-::: tip usage
+``` scheme
+(in-rbtree rbt) -> iterator
+
+  rbt := rbtree to iterate over
 ```
-(in-rbtree rbt)
-  rbt := rbtree
-=> iterator
+
+Creates an iterator over *rbt*, yielding key-value values in ascending order.
+
+::: tip Examples:
+``` scheme
+> (import :std/iter)
+> (def rbt (list->rbtree - '((1 . a) (2 . b) (3 . c))))
+
+> (for/collect ((values k v) (in-rbtree rbt))
+    (cons k v))
+((1 . a) (2 . b) (3 . c))    ; equivalent to (rbtree->list rbt)
+
+> (for ((values k v) rbt)    ; generic :iter overload for rbtree
+    (displayln k " -> " v))
+1 -> a
+2 -> b
+3 -> c
 ```
 :::
-
-Creates an iterator over the rbtree.
 
 ### in-rbtree-keys
-::: tip usage
+``` scheme
+(in-rbtree-keys rbt) -> iterator
+
+  rbt := rbtree to iterate over
 ```
-(in-rbtree-keys rbt)
-  rbt := rbtree
-=> iterator
+
+Creates an iterator over *rbt*, yielding keys in ascending order.
+
+::: tip Examples:
+``` scheme
+> (import :std/iter)
+> (def rbt1 (list->rbtree - [[1 . #\a] [2 . #\b] [3 . #\c] [4 . #\d] [5 . #\e]]))
+> (def rbt2 (list->rbtree - [[5 . #\a] [4 . #\b] [3 . #\c] [2 . #\d] [1 . #\e]]))
+> (for* ((x (in-rbtree-keys rbt1)) (y (in-rbtree-keys rbt2)))
+    (when (> x y)    ; for* is testing all combinations
+      (displayln (cons x y))))
+(2 . 1)
+(3 . 1)
+(3 . 2)
+(4 . 1)
+(4 . 2)
+(4 . 3)
+(5 . 1)
+(5 . 2)
+(5 . 3)
+(5 . 4)
 ```
 :::
-
-Creates an iterator over the rbtree keys.
 
 ### in-rbtree-values
-::: tip usage
+``` scheme
+(in-rbtree-values rbt) -> iterator
+
+  rbt := rbtree to iterate over
 ```
-(in-rbtree-values rbt)
-  rbt := rbtree
-=> iterator
+
+Creates an iterator over *rbt*, yielding values in ascending order.
+
+::: tip Examples:
+``` scheme
+> (import :std/iter)
+> (def rbt (list->rbtree symbol-cmp '((a . (1)) (b . (2 3)) (c . (4 5 6)))))
+
+> (for/fold (i []) (lst (in-rbtree-values rbt))
+    (append lst i))
+(4 5 6 2 3 1)
+
+> (import :std/misc/list)
+> (for (lst (in-rbtree-values rbt))
+    (when (length>=n? lst 3)
+      (displayln lst)))
+(4 5 6)
 ```
 :::
 
-Creates an iterator over the rbtree values.
+### rbtree
+``` scheme
+(defsyntax rbtree)
+```
+
+Red-black tree (rbtree) type, for user-defined generics and destructuring.
+
+::: tip Examples:
+``` scheme
+;; Possible rbtree iterator implementation:
+> (defmethod (:iter (rbt rbtree))
+    (in-rbtree rbt))
+
+> (def (in-rbtree rbt)
+    (def (iterate)
+      (rbtree-for-each yield rbt))
+    (in-coroutine iterate))
+```
+:::
 
 ### string-cmp
-::: tip usage
+``` scheme
+(string-cmp a b) -> fixnum
+
+  a, b := strings to compare
 ```
-(string-cmp a b)
-  a, b := string
-=> fixnum
-```
-:::
 
 Comparison function for lexicographic string ordering.
 
-### symbol-cmp
-::: tip usage
-```
-(symbol-cmp a b)
-  a, b := symbol
-=> fixnum
+::: tip Examples:
+``` scheme
+> (string-cmp "gambit" "gerbil")
+-4
+
+> (string-cmp "aaa" "aaa")
+0
+
+> (string-cmp "aac" "aaa")
+2
+
+> (string-cmp "aa" "aaaa")
+-2
+
+> (string-cmp "aaa" "")
+3
+
+> (string-cmp "a" "cb")
+-2
 ```
 :::
+
+### symbol-cmp
+``` scheme
+(symbol-cmp a b) -> fixnum
+
+  a, b := symbols to compare
+```
 
 Comparison function for lexicographic symbol ordering.
 
-### symbol-hash-cmp
-::: tip usage
-```
-(symbol-hash-cmp a b)
-  a, b := symbol
-=> fixnum
+::: tip Examples:
+``` scheme
+> (symbol-cmp 'gerbil 'gambit)
+4
+
+> (symbol-cmp 'D 'B)
+2
+
+> (symbol-cmp 'func (string->symbol "func"))
+0
 ```
 :::
 
-Comparison function for symbol ordering based on their hashes;
-ties are broken by lexicographic ordering.
+### symbol-hash-cmp
+``` scheme
+(symbol-hash-cmp a b) -> fixnum
+
+  a, b := symbols to compare
+```
+
+Comparison function for symbol ordering based on their hashes; ties are broken
+by lexicographic ordering.
+
+::: tip Examples:
+``` scheme
+> (symbol-hash-cmp 'gerbil 'gambit)
+-173422207
+
+> (displayln (symbol-hash 'a) " vs. " (symbol-hash 'b))
+67905836 vs. 118238693
+> (symbol-hash-cmp 'a 'b)
+-50332857
+```
+:::
 
 
 ## Sourceable Representation
@@ -1828,72 +3712,203 @@ ties are broken by lexicographic ordering.
 :::
 
 ### print-representation
-::: tip usage
+``` scheme
+(print-representation obj
+                      [port = (current-output-port)]
+                      [options = (current-representation-options)]) -> void
+
+  obj     := object to print
+  port    := optional output port
+  options := hash-table, representation options
 ```
-(print-representation obj [port = (current-output-port)] [options = (current-representation-options)])
+
+Prints an evaluable source-code representation of *obj* to *port*, which
+defaults to `(current-output-port)`. That very representation can later be read
+back into an equivalent object.
+
+The behaviour of `print-representation` can be specialized for new classes of
+objects by defining new overloads on the `:pr` method, see `representable`.
+
+Note: *options* aren't doing anything as of now, but are reserved for future
+use.
+
+::: tip Examples:
+``` scheme
+> (import :std/sugar)
+> (def lst (list 1 2 3))
+> (def vec (vector 1 2 3))
+> (def ht  (hash (a 1) (b 2) (c 3)))
+> (def fn  string-append)
+
+> (displayln lst)
+(1 2 3)
+> (print-representation lst)
+[1 2 3]           ; without newline, use prn for that
+
+> (displayln vec)
+#(1 2 3)
+> (print-representation vec)
+(vector 1 2 3)
+
+> (displayln ht)
+#<table #631>
+> (print-representation ht)
+(hash (a 1) (b 2) (c 3))
+
+> (displayln fn)
+#<procedure #632 string-append>
+> (print-representation fn)
+string-append
+
+> (call-with-output-string (cut print-representation vec <>))
+"(vector 1 2 3)"
+> (repr vec)      ; better use repr, which prints to string by default:
+"(vector 1 2 3)"
+
+> (with-output-to-file "hash.rep" (cut print-representation ht))
+$ cat hash.rep    ; unix-like command-line
+(hash (a 1) (b 2) (c 3))%
+
+> (with-input-from-file "hash.rep"
+    (lambda () (print-representation (eval (read)))))
+(hash (a 1) (b 2) (c 3))
 ```
 :::
-
-`print-representation` is a function (also available with the short-hand name `pr`)
-that takes an object, optionally a port and a table of options, and
-displays on that port source-code representation of the object
-that can be evaluated back into an equivalent object.
-
-Behavior of `print-representation` can be specialized for new classes of objects by defining
-new methods on `:pr`, as in:
-
-```
-(defmethod {:pr my-class}
-  (lambda (self port options)
-    ...))
-```
 
 ### pr
-::: tip usage
-```
+``` scheme
 (defalias pr print-representation)
 ```
-:::
 
-Same as `print-representation`.
+Short for `print-representation`.
+
+::: tip Examples:
+``` scheme
+> (pr #(11 22 33))
+(vector 11 22 33)                 ; without a newline
+> (pr '((1 . x) (2 . y) (3 . z)))
+[[1 'x ...] [2 'y ...] [3 'z ...]]
+> (defstruct gerbil (name age greeting))
+> (pr (make-gerbil "Cinnamon" 6 "Morning, everyone!"))
+(begin0 #634 "#<gerbil #634>")    ; unrepresentable by default
+```
+:::
 
 ### prn
-::: tip usage
+``` scheme
+(prn obj [port = (current-output-port)]
+         [options = (current-representation-options)]) -> void
+
+  obj     := object to print
+  port    := optional output port
+  options := hash-table, representation options
 ```
-(prn ...)
+
+`prn` does the same as `pr` or `print-representation`, but also follows with a
+newline.
+
+Note: *options* aren't doing anything as of now, but are reserved for future
+use.
+
+::: tip Examples:
+``` scheme
+> (import :std/sugar)
+> (prn (hash-eqv (1 "I") (5 "V") (10 "X") (50 "L")))
+(hash-eqv (1 "I") (10 "X") (5 "V") (50 "L"))    ; proper newline at the end
+> (prn [1 2 [3 4 [5 6 7] 8] 9])
+[1 2 [3 4 [5 6 7] 8] 9]
 ```
 :::
-
-`prn` does the same as `pr` then follows with a newline.
 
 ### repr
-::: tip usage
+``` scheme
+(repr obj [options = (current-representation-options)]) -> string
+
+  obj     := object to print
+  options := hash-table, representation options
 ```
-(repr obj [options = (current-representation-options)])
+
+`repr` is similar to `print-representation`, but does not take a port as an
+argument and instead returns the representation as a string.
+
+Note: *options* aren't doing anything as of now, but are reserved for future
+use.
+
+::: tip Examples:
+``` scheme
+> (defstruct node (data next prev))
+> (repr (make-node #f #f #f))
+"(begin0 #635 \"#<node #635>\")"
+> (repr (node-data (make-node #(1 2 3) #f #f)))
+"(vector 1 2 3)"
 ```
 :::
-
-`repr` does not take a port as argument and instead
-returns the representation as a string.
 
 ### representable
 ```
 (defclass representable ())
+(defmethod {:pr representable} print-unrepresentable-object)
 ```
 
-`representable` is an abstract mixin class that defines a method for `:pr`. By default,
-if a class does not provide its own implementation, that method will call `print-unrepresentable-object`.
+`representable` is an abstract mixin class that defines a method for `:pr`. By
+default, if a class does not provide its own implementation, then
+`print-unrepresentable-object` will be called.
 
-### print-unrepresentable-object
-::: tip usage
-```
-(print-unrepresentable-object obj [port = (current-output-port)] [options = (current-representation-options)])
+::: tip Examples:
+``` scheme
+> (defstruct point (x y))
+> (def p (make-point 10 20))
+> (displayln p)
+#<point #4>
+> (prn p)
+(begin0 #4 "#<point #4>")    ; print-unrepresentable-object
+
+> (defmethod {:pr point}
+    (lambda (self port options)
+      (for-each (cut display <> port)
+                ["(point " (point-x self) " " (point-y self) ")"])))
+> (prn p)
+(point 10 20)
+
+> (let ((p1 (make-point 10 20))
+        (p2 (eval (with-input-from-string (repr p) read))))
+    (and (= (point-x p1) (point-x p2))
+         (= (point-y p1) (point-y p2))))
+#t
 ```
 :::
 
-`print-unrepresentable-object` is a helper function to use as fallback
-for objects that can't otherwise be displayed.
+### print-unrepresentable-object
+``` scheme
+(print-unrepresentable-object obj
+                              [port = (current-output-port)]
+                              [options = (current-representation-options)]) -> void
+  obj := object to print
+  port := optional output port
+  options := hash-table, representation options
+```
 
+`print-unrepresentable-object` is a helper function to use as a fallback for
+objects that can't otherwise be displayed. Prints a general-purpose escape of
+*obj*, using the `#id` syntax and appends a string hint as obtained from the
+`write` function.
+
+Note: *options* aren't doing anything as of now, but are reserved for future
+use.
+
+::: tip Examples:
+``` scheme
+> (import :std/misc/queue)
+> (def q (make-queue))
+> (enqueue! q 100)
+> (prn q)
+(begin0 #9 "#<queue #9>")    ; calls print-unrepresentable-object
+> (print-unrepresentable-object q)
+(begin0 #9 "#<queue #9>")
+```
+:::
+
+<!-- Uncommenting for now till impl lands
 ### default-representation-options
 ```
 (def default-representation-options)
@@ -1902,35 +3917,68 @@ for objects that can't otherwise be displayed.
 `default-representation-options` is the default table of options.
 No options are currently defined, and the default table is currently empty.
 In the future, options may be defined for pretty-printing, etc.
+-->
 
-
+<!-- Uncommenting for now till impl lands
 ### current-representation-options
-::: tip usage
+``` scheme
+(current-representation-options [TODO]) -> TODO
+
+  make-parameter := TODO
 ```
-(current-representation-options [options])
-```
-:::
 
 `current-representation-options` is a parameter returning the current options,
 and initially returns the `default-representation-options`.
 
+::: tip Examples:
+``` scheme
+TODO
+```
+:::
+-->
 
 ### display-separated
-::: tip usage
-```
-(display-separated lst [port = (current-output-port)]
+``` scheme
+(display-separated lst
+                   [port = (current-output-port)]
                    [prefix: prefix = ""]
                    [separator: separator = " "]
                    [suffix: suffix = ""]
-                   [display-element: disp = display])
+                   [display-element: display-element = display]) -> void
+
+  lst             := list of objects to print
+  port            := optional output port
+  prefix          := string prefix
+  separator       := string separator
+  suffix          := string suffix
+  display-element := function that does the actual printing
+```
+
+`display-separated` is a helper function that takes *lst*, a list of objects to
+print, an optional output *port*, and as keywords a *prefix* string (empty by
+default), a *suffix* string (empty by default), a *separator* string (defaulting
+to a single space `" "`), and a *display-element* function (`display` by
+default). Displays each element of *lst* with the given *prefix*, *suffix*,
+*separator* and *display-element* function.
+
+::: tip Examples:
+``` scheme
+> (import :std/sugar)
+> (def ht (hash (a 1) (b 2) (c 3)))
+> (display-separated (hash-values ht) (current-output-port)
+                     prefix: "(list\n  "
+                     suffix: ")"
+                     separator: "\n  ")
+(list
+  3
+  2
+  1)
+
+;; this module already supports printing list:
+> (prn (hash-values ht))
+[3 2 1]
 ```
 :::
-
-`display-separated` is a helper function that takes a list of objects, an optional port,
-and as keywords a `prefix:` string (empty by default), a `suffix:` string (empty by default),
-a `separator` string (defaulting to a single space `" "`), and
-a `display-element:` function (the function `display` by default),
-and displays each element of the list with the given prefix, suffix, separator and display function.
 
 
 ## Type Descriptor Utilities.
@@ -1941,113 +3989,238 @@ and displays each element of the list with the given prefix, suffix, separator a
 :::
 
 ### object-type
-::: tip usage
+``` scheme
+(object-type obj) -> type | error
+
+  obj := object instance
 ```
-(object-type ...)
+
+Safe variant of `runtime#object-type`. Returns the class of an object; *obj*
+must be an object instance or an error is signaled.
+
+::: tip Examples:
+``` scheme
+> (defstruct point (x y))
+> (object-type (make-point 640 480))
+#<type #4 point>
+> (eq? point::t #4)
+#t
+> (object-type 12)
+error    ; not segfaulting like runtime#object-type
 ```
 :::
-
-Please document me!
 
 ### type?
-::: tip usage
+``` scheme
+(type? typ) -> boolean
+
+  typ := type object to check
 ```
-(type? ...)
+
+Returns `#t` if *obj* is a type object, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (defstruct point (x y))
+> (type? point::t)
+#t
+> (type? (object-type (make-point -100 100)))
+#t
+> (type? (make-point 0 0))
+#f
 ```
 :::
-
-Please document me!
 
 ### type-id
-::: tip usage
+``` scheme
+(type-id typ) -> type id | error
+
+  typ := type object to inspect
 ```
-(type-id ...)
+
+Returns the id of the type object *typ*. Will signal an error if *typ* isn't a
+type object.
+
+::: tip Examples:
+``` scheme
+> (defstruct a ())
+> (defclass  b ())
+> (type-id a::t)
+#:a::t45
+> (type-id b::t)
+#:b::t49
+> (type-id (object-type (make-b)))
+#:b::t49
 ```
 :::
-
-Please document me!
 
 ### type-name
-::: tip usage
+``` scheme
+(type-name typ) -> type name | error
+
+  typ := type object to inspect
 ```
-(type-name ...)
+
+Returns the name of the type object *typ*. Will signal an error if *typ* isn't a
+type object.
+
+::: tip Examples:
+``` scheme
+> (defstruct vec3i (x y z))
+> (type-name (object-type (make-vec3i 30 0 15)))
+vec3i
 ```
 :::
-
-Please document me!
 
 ### type-super
-::: tip usage
+``` scheme
+(type-super typ) -> super class | error
+
+  typ := type object to inspect
 ```
-(type-super ...)
+
+Returns the super class of the type object *typ*. Will signal an error if *typ*
+isn't a type object.
+
+::: tip Examples:
+``` scheme
+> (defstruct A (x y))
+> (defstruct (B A) (z))
+> (struct-subtype? A::t B::t)
+#t
+> (type-super B::t)
+#<type #5 A>
+> (type-super A::t)
+#f
 ```
 :::
-
-Please document me!
-
-### type-descriptor?
-::: tip usage
-```
-(type-descriptor? ...)
-```
-:::
-
-Please document me!
 
 ### type-descriptor-mixin
-::: tip usage
+``` scheme
+(type-descriptor-mixin typ) -> list | error
+
+  typ := type descriptor to inspect
 ```
-(type-descriptor-mixin ...)
+
+Safe variant of `runtime#type-descriptor-mixin`. Returns the mixins of the type
+as a list. *typ* must be a type descriptor or an error is signaled.
+
+::: tip Examples:
+``` scheme
+> (defclass A (x))
+> (defclass (B A) (y))
+> (defclass (C A) (z))
+> (defclass (D B C) ())
+> (type-descriptor-mixin D::t)
+(#<type #8 B> #<type #9 C> #<type #10 A>)
+> (type-descriptor-mixin B::t)
+(#<type #10 A>)
+> (type-descriptor-mixin A::t)
+()
 ```
 :::
-
-Please document me!
 
 ### type-descriptor-fields
-::: tip usage
+``` scheme
+(type-descriptor-fields typ) -> fixnum | error
+
+  typ := type descriptor to inspect
 ```
-(type-descriptor-fields ...)
+
+Safe variant of `runtime#type-descriptor-fields`. Returns the number of fields
+of the type as a fixnum. *typ* must be a type descriptor or an error is
+signaled.
+
+::: tip Examples:
+``` scheme
+> (defstruct color (r g b a))
+> (type-descriptor-fields color::t)
+4
 ```
 :::
-
-Please document me!
 
 ### type-descriptor-plist
-::: tip usage
+``` scheme
+(type-descriptor-plist typ) -> alist | error
+
+  typ := type descriptor to inspect
 ```
-(type-descriptor-plist ...)
+
+Safe variant of `runtime#type-descriptor-plist`. Returns the type properties of
+the type as an alist. *typ* must be a type descriptor or an error is signaled.
+
+::: tip Examples:
+``` scheme
+> (defstruct vec4d (x y z w) final: #t)
+> (type-descriptor-plist vec4d::t)
+((fields: x y z w) (final: . #t))
 ```
 :::
-
-Please document me!
 
 ### type-descriptor-ctor
-::: tip usage
+``` scheme
+(type-descriptor-ctor typ) -> symbol | error
+
+  typ := type descriptor to inspect
 ```
-(type-descriptor-ctor ...)
+
+Safe variant of `runtime#type-descriptor-ctor`. Returns the constructor ID of
+the type as a symbol. *typ* must be a type descriptor or an error is signaled.
+
+::: tip Examples:
+``` scheme
+> (defclass A (x) constructor: :init!)
+> (defmethod {:init! A}
+    (lambda (self x)
+      (set! (A-x self) (* x 2))))
+> (type-descriptor-ctor A::t)
+:init!
 ```
 :::
-
-Please document me!
 
 ### type-descriptor-slots
-::: tip usage
+``` scheme
+(type-descriptor-slots typ) -> hash-table | error
+
+  typ := type descriptor to inspect
 ```
-(type-descriptor-slots ...)
+
+Safe variant of `runtime#type-descriptor-slots`. Returns the slots of the type
+as a hash-table. *typ* must be a type descriptor or an error is signaled.
+
+::: tip Examples:
+``` scheme
+> (defclass color (r g b a))
+> (type-descriptor-slots color::t)
+#<table #6>
+> (hash->list #6)
+((r . 0) (g . 1) (b . 2) (a: . 3) (g: . 1) (b: . 2) (r: . 0) (a . 3))
 ```
 :::
-
-Please document me!
 
 ### type-descriptor-methods
-::: tip usage
+``` scheme
+(type-descriptor-methods typ) -> hash-table | error
+
+  typ := type descriptor to inspect
 ```
-(type-descriptor-methods ...)
+
+Safe variant of `runtime#type-descriptor-methods`. Returns the methods
+associated with the type as a hash-table. *typ* must be a type descriptor or an
+error is signaled.
+
+::: tip Examples:
+``` scheme
+> (defclass A (x) constructor: :init!)
+> (defmethod {:init! A}
+    (lambda (self x)
+      (set! (A-x self) (* x 2))))
+> (type-descriptor-methods A::t)
+#<table #11>
+> (hash->list #11)
+((:init! . #<procedure #12 A:::init!>))
 ```
 :::
-
-Please document me!
-
 
 
 ## Shared-structure Equality.
@@ -2058,15 +4231,19 @@ Please document me!
 :::
 
 ### equal-shared?
-::: tip usage
+``` scheme
+(equal-shared? a b) -> boolean
+
+  a, b := structures to check
 ```
-(equal-shared? ...)
-```
+
+Checks whether *a* and *b*, two potentially recursive, cyclic or otherwise
+infinite shared structures, e.g. trees or graphs, are equal.
+
+::: warning Deprecation note:
+Gambit 4.9.3 (released 2019-02-05) added similar support for handling shared
+structures with `equal?`, superseding `equal-shared?`.
 :::
-
-Please document me!
-
-
 
 ## Shuffling
 ::: tip To use the bindings from this module:
@@ -2179,7 +4356,7 @@ algorithm, a Fisher-Yates shuffle variant.
 
 If *str* starts with the given string prefix *pfix*, then `string-trim-prefix`
 returns the rest of *str* without *pfix*. If *pfix* isn't a valid prefix of
-*str* return the entire string *str* instead.
+*str*, return the entire string *str* instead.
 
 ::: tip Examples:
 ``` scheme
@@ -2204,7 +4381,7 @@ returns the rest of *str* without *pfix*. If *pfix* isn't a valid prefix of
 ```
 
 Analog to `string-trim-prefix`, but returns the beginning of *str* without the
-string ending *sfix* instead.
+string ending *sfix*.
 
 ::: tip Examples:
 ``` scheme
@@ -2249,7 +4426,7 @@ Note: `string-trim-eol` removes only one end-of-line marker. Use
 
 Split *str* based on given string prefix *pfix*, returning both the string part
 after the prefix as well as the prefix itself, or both the whole string and `""`
-when *pfix* isn't found in *str*.
+in case *pfix* isn't found in *str*.
 
 `string-split-prefix` is similar to `string-trim-prefix`, but also returns the
 prefix as a second value.
@@ -2355,7 +4532,7 @@ perform, otherwise an error is signaled.
 (define +crlf+ "\r\n")
 ```
 
-Global line ending definitions for easier usage.
+Global line ending convenience definitions.
 
 
 ## Synchronized Data Structures.
@@ -2366,77 +4543,215 @@ Global line ending definitions for easier usage.
 :::
 
 ### make-sync-hash
-::: tip usage
+``` scheme
+(make-sync-hash ht) -> sync-hash
+
+  ht := regular non-synced hash-table
 ```
-(make-sync-hash ...)
+
+Wraps *ht*, a regular hash-table, and returns a synced variant that supports
+thread-safe table operations by implicitly locking.
+
+Note: It's discouraged to modify the unwrapped, non-thread-safe *ht* after this
+point.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads :std/iter :std/srfi/1)
+> (def (increment! sht)
+    (for (x (in-range 1000))
+      (sync-hash-do sht (cut hash-update! <> x 1+ 0))))
+
+> (def sht (make-sync-hash (make-hash-table-eqv)))
+> (def threads (for/collect (n (in-range 16))
+                 (spawn-thread (cut increment! sht))))
+> (for-each thread-join! threads)
+> (sync-hash-do sht
+    (lambda (ht)
+      (every (cut = 16 <>)
+             (hash-values ht))))
+#t
 ```
 :::
-
-Please document me!
 
 ### sync-hash?
-::: tip usage
+``` scheme
+(sync-hash? sht) -> boolean
+
+  sht := sync-hash to check
 ```
-(sync-hash? ...)
+
+Returns `#t` if *sht* is a sync-hash, `#f` otherwise.
+
+Synced variant of `hash?` and `hash-table?`.
+
+::: tip Examples:
+``` scheme
+> (import :std/sugar)
+> (sync-hash? (make-sync-hash (hash)))
+#t
+
+> (sync-hash? (make-hash-table))
+#f
 ```
 :::
-
-Please document me!
-
-### sync-hash-get
-::: tip usage
-```
-(sync-hash-get ...)
-```
-:::
-
-Please document me!
 
 ### sync-hash-ref
-::: tip usage
+``` scheme
+(sync-hash-ref sht key default) -> any | default
+
+  sht     := sync-hash to check
+  key     := key to loop up in sht
+  default := non-optional default value when key not present
 ```
-(sync-hash-ref ...)
+
+Returns the value bound to *key* in *sht*, defaulting to *default* if no such
+value was bound.
+
+Synced variant of `hash-ref`.
+
+::: tip Examples:
+``` scheme
+> (import :std/sugar)
+> (def sht (make-sync-hash (hash (एक 1) (दस 10) (सौ 100))))
+> (sync-hash-ref sht 'दस 0)
+10
+> (sync-hash-ref sht 'सहस्र 0)
+0
+> (sync-hash-ref sht 10 'NONE)
+NONE
 ```
 :::
 
-Please document me!
+### sync-hash-get
+``` scheme
+(sync-hash-get sht key) -> any | #f
 
-### sync-hash-key?
-::: tip usage
+  sht := sync-hash to check
+  key := key to loop up in sht
 ```
-(sync-hash-key? ...)
+
+Same as `(sync-hash-ref sht key #f)`.
+
+Synced variant of `hash-get`.
+
+::: tip Examples:
+``` scheme
+> (import :std/sugar)
+> (def sht (make-sync-hash (hash (一 1) (十 10) (百 100))))
+> (sync-hash-get sht '十)
+10
+> (sync-hash-get sht '千)
+#f
+> (sync-hash-get sht 10)
+#f
 ```
 :::
-
-Please document me!
 
 ### sync-hash-put!
-::: tip usage
+``` scheme
+(sync-hash-put! sht key val) -> unspecified
+
+  sht      := sync-hash to modify
+  key, val := key-value pair to add to sht
 ```
-(sync-hash-put! ...)
+
+Binds *key* to *val* in *sht*.
+
+Synced variant of `hash-put!`.
+
+::: tip Examples:
+``` scheme
+> (import :std/sugar)
+> (make-sync-hash (hash))
+#<sync-hash #77>
+> (sync-hash-put! #77 #\a [1 2 3])
+> (sync-hash-put! #77 'a  [4 5 6])
+> (sync-hash-put! #77 "a" [7 8 9])
+> (sync-hash-do #77 (cut hash-values <>))
+((1 2 3) (4 5 6) (7 8 9))
 ```
 :::
-
-Please document me!
 
 ### sync-hash-remove!
-::: tip usage
+``` scheme
+(sync-hash-remove! sht key) -> void
+
+  sht := sync-hash to modify
+  key := key to look up in sht
 ```
-(sync-hash-remove! ...)
+
+Removes *sht*'s binding for *key*.
+
+Synced variant of `hash-remove!`.
+
+::: tip Examples:
+``` scheme
+> (import :std/sugar)
+> (let (sht (make-sync-hash (hash (a 10) (b 20) (c 30) (d 40))))
+    (sync-hash-remove! sht 'b)
+    (sync-hash-remove! sht 'e)    ; nothing happens
+    (sync-hash-do sht
+      (lambda (ht) (hash-for-each (cut displayln <> " -> " <>) ht))))
+a -> 10
+d -> 40
+c -> 30
 ```
 :::
 
-Please document me!
+### sync-hash-key?
+``` scheme
+(sync-hash-key? sht key) -> boolean
+
+  sht := sync-hash to check
+  key := key to look up in sht
+```
+
+Returns `#t` if *sht* has a binding for key, `#f` otherwise.
+
+Synced variant of `hash-key?`.
+
+::: tip Examples:
+``` scheme
+> (def sht (make-sync-hash (list->hash-table [[1 . #\a] [2 . #\b] [3 . #\c]])))
+> (sync-hash-key? sht 1)
+#t
+> (sync-hash-key? sht 3)
+#t
+> (sync-hash-key? sht 4)
+#f
+```
+:::
 
 ### sync-hash-do
-::: tip usage
+``` scheme
+(sync-hash-do sht proc) -> any
+
+  sht  := sync-hash to iterate or modify
+  proc := procedure handling internal hash-table
 ```
-(sync-hash-do ...)
+
+Allows thread-safe access to the unwrapped regular hash-table of *sht* by
+passing it to *proc* within an implicitly locked scope. Returns whatever *proc*
+is returning.
+
+::: tip Examples:
+``` scheme
+> (import :std/sugar)
+> (def sht (make-sync-hash (hash (A0 160) (B1 177) (C2 194) (D3 211) (E4 228))))
+> (sync-hash-do sht
+    (lambda (ht)
+      (hash-fold (lambda (k v i) (+ v i)) 0 ht)))
+970
+> (sync-hash-do sht (cut hash-put! <> 'C2 0))
+> (sync-hash-get sht 'C2)
+0
+> (sync-hash-do sht hash->list)
+((A0 . 160) (B1 . 177) (D3 . 211) (E4 . 228) (C2 . 0))
+> (sync-hash-do sht (lambda (ht) (apply max (hash-values ht))))
+228
 ```
 :::
-
-Please document me!
-
 
 
 ## Text Utilities
@@ -2447,14 +4762,33 @@ Please document me!
 :::
 
 ### include-text
-::: tip usage
+``` scheme
+(include-text path) -> string
+
+  path := path to file to include, string
 ```
-(include-text ...)
+
+Macro that expands to file contents of *path* at compile-time.
+
+::: tip Examples:
+``` scheme
+> (def vert-shader-src (include-text "/home/user/dev/opengl/minimal.vert"))
+
+;; instead of here strings:
+> (def vert-shader-src #<<EOF
+#version 420 core
+
+void main(void)
+{
+    gl_Position = gl_Vertex;
+}
+EOF
+)
+
+> vert-shader-src    ; same string in both cases
+"#version 420 core\n\nvoid main(void)\n{\n    gl_Position = gl_Vertex;\n}"
 ```
 :::
-
-Please document me!
-
 
 
 ## Thread utilities
@@ -2465,95 +4799,293 @@ Please document me!
 :::
 
 ### primordial-thread-group
-::: tip usage
+``` scheme
+(primordial-thread-group) -> thread-group
 ```
-(primordial-thread-group ...)
+
+Similar to `current-thread-group`, but always returns the primordial (main)
+thread's group instead.
+
+::: tip Examples:
+``` scheme
+;; same in main thread
+> (current-thread-group)
+#<thread-group #87 primordial>
+> (primordial-thread-group)
+#<thread-group #87 primordial>
+
+;; differs in other groups
+> (import :gerbil/gambit/threads)
+> (def (task)
+    (displayln (current-thread-group))
+    (displayln (primordial-thread-group)))
+> (thread-join! (spawn/group 'new-group task))
+#<thread-group #181 new-group>
+#<thread-group #87 primordial>
 ```
 :::
-
-Please document me!
 
 ### thread-group-&gt;thread-list*
-::: tip usage
+``` scheme
+(thread-group->thread-list* tg) -> list
+
+  tg := thread-group to transform
 ```
-(thread-group->thread-list* ...)
+
+Similar to `thread-group->thread-list`, but also collects the threads in all
+subgroups of *tg*. Returns a flat list of threads.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads)
+> (let* ((g1 (make-thread-group 'G1))
+         (g2 (make-thread-group 'G2 g1))
+         (g3 (make-thread-group 'G3 g2))
+         (t1 (make-thread (cut 1) 'T1 g1))
+         (t2 (make-thread (cut 2) 'T2 g1))
+         (t3 (make-thread (cut 3) 'T3 g2))
+         (t4 (make-thread (cut 4) 'T4 g3)))
+    (displayln (thread-group->thread-list  g1))
+    (displayln (thread-group->thread-list  g2))
+    (displayln (thread-group->thread-list  g3))
+    (displayln (thread-group->thread-list* g1)))
+(#<thread #214 T1> #<thread #215 T2>)
+(#<thread #216 T3>)
+(#<thread #217 T4>)
+(#<thread #217 T4> #<thread #216 T3> #<thread #214 T1> #<thread #215 T2>)
 ```
 :::
-
-Please document me!
 
 ### all-threads
-::: tip usage
+``` scheme
+(all-threads) -> (list thread ...)
 ```
-(all-threads ...)
+
+Same as `(thread-group->thread-list* (primordial-thread-group))`. Walks all
+thread-groups recursively and collects threads in a flat list.
+
+::: tip Examples:
+``` scheme
+> (all-threads)
+(#<thread #205 th1>
+ #<thread #202 th5>
+ #<thread #203 th4>
+ #<thread #204 th3>
+ #<thread #201 th2>    ; th2, ..., th5 in subgroups
+ #<thread #1 primordial>)
+
+;; non-recursive, only threads in specified top group:
+> (import :gerbil/gambit/threads)
+> (thread-group->thread-list (current-thread-group))
+(#<thread #1 primordial> #<thread #205 th1>)
 ```
 :::
-
-Please document me!
 
 ### thread-dead?
-::: tip usage
+``` scheme
+(thread-dead? th) -> boolean
+
+  th := thread to check
 ```
-(thread-dead? ...)
+
+Returns `#t` if *th* is terminated, i.e., no longer able to run, `#f` otherwise.
+
+::: tip Examples:
+``` scheme
+> (let (th (spawn thread-sleep! 2))
+    (displayln (thread-dead? th))
+    (thread-join! th)
+    (displayln (thread-dead? th)))
+#f
+#t
+
+> (thread-dead? (current-thread))
+#f
 ```
 :::
-
-Please document me!
 
 ### thread-group-kill!
-::: tip usage
+``` scheme
+(thread-group-kill! tg) -> void | error
+
+  tg := thread-group to kill
 ```
-(thread-group-kill! ...)
+
+Kills all threads and subgroups in *tg*. In addition, it detaches the thread
+group from its parent, making it unreachable from the primordial thread-group
+structure and eligible for garbage collection. Signals an error when *tg*
+contains the current thread.
+
+Note: A thread group that has been killed should not be used again to spawn
+threads in it.
+
+::: tip Examples:
+``` scheme
+> (def (fib n)
+    (cond ((< n 2) n)
+          (else (+ (fib (- n 1))
+                   (fib (- n 2))))))
+> (let (g (make-thread-group 'new-group))
+    (spawn-thread (cut fib 10) 'fib10 g)
+    (spawn-thread (cut fib 30) 'fib30 g)
+    (spawn-thread (cut fib 50) 'fib50 g)
+    (spawn-thread (cut fib 70) 'fib70 g)
+    (thread-sleep! 1)
+    (displayln (all-threads))
+    (thread-group-kill! g)
+    (displayln (all-threads)))
+;; thread fib10 already terminated:
+(#<thread #231 fib70> #<thread #232 fib50> #<thread #233 fib30> #<thread #1 primordial>)
+(#<thread #1 primordial>)
+
+> (thread-group-kill! (current-thread-group))
+error
 ```
 :::
-
-Please document me!
 
 ### thread-raise!
-::: tip usage
+``` scheme
+(thread-raise! th obj) -> void | error
+
+  th  := thread to signal error in
+  obj := exception object to raise
 ```
-(thread-raise! ...)
+
+Interrupts *th*, which can be the primordial thread, and raises *obj*,
+terminating that very thread if not handled properly.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads)
+> (spawn thread-sleep! 10)
+#<thread #238>
+> (thread-dead? #238)
+#f
+> (thread-raise! #238 'failure)    ; #<thread #238> silently terminates
+> (thread-dead? #238)
+#t
+
+> (thread-raise! (current-thread) 'failure)
+*** ERROR IN (console)@1819.1 -- This object was raised: failure
 ```
 :::
-
-Please document me!
 
 ### thread-abort!
-::: tip usage
+``` scheme
+(thread-abort! th) -> void | error
+
+  th := thread to abort
 ```
-(thread-abort! ...)
+
+Same as `(thread-raise! th +thread-abort+)`. *+thread-abort+* is an
+internal exception object that has predefined support for type checking via
+`thread-abort?` and a `display-exception` method overload.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads :std/sugar)
+> (def (task)
+    (try
+      (let loop ()
+        (displayln "working")
+        (thread-sleep! 0.2)
+        (loop))
+      (catch (thread-abort? ex)
+        (display-exception ex (current-error-port)))))
+> (let (t (spawn task))
+    (thread-sleep! 1)
+    (thread-abort! t)
+    (thread-join! t))
+working
+working
+working
+working
+working
+thread aborted
 ```
 :::
-
-Please document me!
 
 ### thread-abort?
-::: tip usage
+``` scheme
+(thread-abort? ex) -> boolean
+
+  ex := exception to check
 ```
-(thread-abort? ...)
+
+Returns `#t` if *ex* is a thread-abort exception type, `#f` otherwise,
+essentially checking whether the current thread was interrupted via
+`thread-abort!`.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads :std/sugar)
+> (try
+    (thread-abort! (current-thread))
+    (catch (thread-abort? ex)
+      (display-exception ex (current-error-port))))
+thread aborted    ; predefined exception message for thread-abort objects
 ```
 :::
-
-Please document me!
 
 ### thread-async!
-::: tip usage
+``` scheme
+(thread-async! th proc) -> any | void
+
+  th   := thread to interrupt
+  proc := thunk, procedure to execute
 ```
-(thread-async! ...)
+
+Interrupts *th*, which can be the primordial thread, and executes *proc*.
+Returns the result of *proc*, if *th* is the current thread, `void` otherwise.
+
+::: tip Examples:
+``` scheme
+> (import :gerbil/gambit/threads)
+> (def (task)
+    (let loop ((i 0))
+      (thread-sleep! 0.25)
+      (when (<= i 5)
+        (displayln "regular work: " i)
+        (loop (1+ i)))))
+> (let (th (spawn task))
+    (thread-sleep! 1)
+    (thread-async! th (cut displayln "async work: " (current-thread)))
+    (thread-join! th))
+regular work: 0
+regular work: 1
+regular work: 2
+async work: #<thread #60>    ; non-primordial thread
+regular work: 3
+regular work: 4
+regular work: 5
 ```
 :::
-
-Please document me!
 
 ### on-all-processors
-::: tip usage
+``` scheme
+(on-all-processors proc) -> (list thread ...)
+
+  proc := thunk, procedure to execute on all CPU cores
 ```
-(on-all-processors ...)
+
+Executes *proc* multiple times, once on each available processing unit (CPU
+core), and returns a list containing the created threads.
+
+Note: Runtime support for multiple OS threads needs to be enabled in Gambit (see
+the installation instructions), otherwise only a single core is used.
+
+::: tip Examples:
+``` scheme
+;; check processor support:
+> (##current-vm-processor-count)
+2
+
+> (import :gerbil/gambit/threads)
+> (let (threads (on-all-processors (lambda () 'OK)))
+    (map thread-join! threads))
+(OK OK)
 ```
 :::
-
-Please document me!
-
 
 
 ## Timeouts
