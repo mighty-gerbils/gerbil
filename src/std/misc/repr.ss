@@ -80,7 +80,7 @@ package: std/misc
 
    ((u8vector? x) ;; u8vector: print as #u8(...), knowing that elements are all bytes.
     (display-separated (u8vector->list x) port
-                       prefix: "#u8(" separator: " " display-element: d suffix: ")"))
+                       prefix: "#u8(" separator: " " suffix: ")"))
 
    ((hash-table? x) ;; hash-table: print as (hash ...)
     (let* ((prefix0
