@@ -19,9 +19,10 @@ package: std/misc
   flatten1
   rassoc
   when-list-or-empty
-  slice slice-right)
+  slice slice-right
+  slice! slice-right!)
 
-(import (only-in :std/srfi/1 drop drop-right take take-right))
+(import (only-in :std/srfi/1 drop drop-right take take-right reverse!))
 
 ;; This function checks if the list is a proper association-list.
 ;; ie it has the form [[key1 . val1] [key2 . val2]]
@@ -234,3 +235,61 @@ package: std/misc
   (if limit
     (take-right (drop-right lst start) limit)
     (drop-right lst start)))
+
+;; Macro to cut out a sublist of lst by mutation.
+;; Starting from the left at start, containing limit elements.
+;; (def lst [1 2 3 4])
+;; (slice! lst 2)
+;; => (3 4)
+;;
+;; lst
+;; => (1 2)
+(defrules slice! ()
+  ((m lst start)
+   (m lst start #f))
+  ((m lst start limit)
+   ;; prevent list mutation in case nothing has to be done here
+   (if (and limit (< limit 1))
+     []
+     (let loop ((newlist []) ; will override the existing list
+		(sublist []) ; return value accumulator
+                (list lst)
+		(i 0)
+		(taken 0))
+       (if (or (null? list)
+               (and limit (= limit taken)))
+         (begin
+           (set! lst (reverse! newlist))
+           (reverse! sublist))
+         (if (< i start)
+           (loop (cons (car list) newlist) sublist (cdr list) (1+ i) taken)
+           (loop newlist (cons (car list) sublist) (cdr list) (1+ i) (1+ taken))))))))
+
+;; Macro to cut out a sublist of lst by mutation.
+;; Starting from the right at start, containing limit elements.
+;; (def lst [1 2 3 4])
+;; (slice-right! lst 2)
+;; => (1 2)
+;;
+;; lst
+;; => (3 4)
+(defrules slice-right! ()
+  ((m lst start)
+   (m lst start #f))
+  ((m lst start limit)
+   ;; prevent list mutation in case nothing has to be done here
+   (if (and limit (< limit 1))
+     []
+     (let loop ((newlist []) ; will override the existing list
+		(sublist []) ; return value accumulator
+		(list (reverse! lst))
+		(i 0)
+		(taken 0))
+       (if (or (null? list)
+               (and limit (= limit taken)))
+         (begin
+           (set! lst newlist)
+           sublist)
+         (if (< i start)
+           (loop (cons (car list) newlist) sublist (cdr list) (1+ i) taken)
+           (loop newlist (cons (car list) sublist) (cdr list) (1+ i) (1+ taken))))))))
