@@ -1749,6 +1749,46 @@ containing `limit` elements.
 ```
 :::
 
+### slice!
+``` scheme
+(slice! lst start [limit = #f]) -> list
+
+  lst   := proper list
+  start := start index
+  limit := number of items to take from lst
+```
+
+Returns a sublist by potentially updating the input list `lst`.
+Starting from the left at `start`, containing `limit` elements.
+
+::: tip Examples:
+``` scheme
+> (def lst [1 2 3 4 5])
+> (slice! lst 2 2)
+(3 4)
+```
+:::
+
+### slice-right!
+``` scheme
+(slice-right! lst start [limit = #f]) -> list
+
+  lst   := proper list
+  start := start index from the right of lst
+  limit := number of items to take from lst
+```
+
+Returns a sublist by potentially updating the input list `lst`.
+Starting from the right at `start`, containing `limit` elements.
+
+::: tip Examples:
+``` scheme
+> (def lst [1 2 3 4 5])
+> (slice-right! lst 2 2)
+(2 3)
+```
+:::
+
 ## LRU caches
 ::: tip To use the bindings from this module:
 ``` scheme
