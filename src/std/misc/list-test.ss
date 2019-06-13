@@ -143,4 +143,7 @@
       (check-equal? (slice-right! [1 2 3 4] 2 1) [2])
       (check-equal? (slice-right! [1 2 3 4] 0) [1 2 3 4])
       (check-equal? (slice-right! [1 2 3 4] 1 0) [])
-      (check-equal? (slice-right! [1 2 3 4] 3) [1]))))
+      (check-equal? (slice-right! [1 2 3 4] 3) [1]))
+    (test-case "test butlast"
+      (check-equal? (butlast [1 2 3]) [1 2])
+      (check-equal? (butlast []) []))))

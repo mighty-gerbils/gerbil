@@ -1789,6 +1789,26 @@ Starting from the right at `start`, containing `limit` elements.
 ```
 :::
 
+### butlast
+``` scheme
+(butlast lst) -> list
+
+  lst   := proper list
+```
+
+`butlast` returns a copy of the proper list `lst`, except the last element.
+When `lst` is empty, `lst` is returned as it is.
+
+::: tip Examples:
+``` scheme
+> (butlast [1 2 3])
+(1 2)
+
+> (butlast [])
+()
+```
+:::
+
 ## LRU caches
 ::: tip To use the bindings from this module:
 ``` scheme

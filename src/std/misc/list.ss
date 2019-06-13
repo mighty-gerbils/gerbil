@@ -20,7 +20,8 @@ package: std/misc
   rassoc
   when-list-or-empty
   slice slice-right
-  slice! slice-right!)
+  slice! slice-right!
+  butlast)
 
 (import (only-in :std/srfi/1 drop drop-right drop-right! take take-right take!))
 
@@ -255,3 +256,12 @@ package: std/misc
   (if limit
     (take-right (drop-right! lst start) limit)
     (drop-right! lst start)))
+
+;; butlast returns a copy of the proper list lst, except the last element.
+;; When lst is empty, lst is returned as it is.
+;; (butlast [1 2 3]) => (1 2)
+;; (butlast [])      => ()
+(def (butlast lst)
+  (if (pair? lst)
+    (take lst (1- (length lst)))
+    lst))
