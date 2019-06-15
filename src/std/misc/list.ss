@@ -21,9 +21,10 @@ package: std/misc
   when-list-or-empty
   slice slice-right
   slice! slice-right!
-  butlast)
+  butlast
+  split)
 
-(import (only-in :std/srfi/1 drop drop-right drop-right! take take-right take!))
+(import (only-in :std/srfi/1 drop drop-right drop-right! take take-right take! reverse!))
 
 ;; This function checks if the list is a proper association-list.
 ;; ie it has the form [[key1 . val1] [key2 . val2]]
@@ -265,3 +266,22 @@ package: std/misc
   (if (pair? lst)
     (take lst (1- (length lst)))
     lst))
+
+;; split the list lst into a list-of-lists using the unary procedure proc.
+;; (split '(1 2 "hi" 3 4) string?)                 => ((1 2) (3 4))
+;; (split '(1 2 a 3 4) (lambda (x) (equal? x 'a))) => ((1 2) (3 4))
+;; (split '(1 2 a 3 4) (cut equal? <> 'a))         => ((1 2) (3 4))
+;; (split [] number?)                              => ()
+(def (split lst proc)
+  (def (new-acc acc cur)
+    (if (pair? cur) (cons* (reverse! cur) acc) cur))
+  (let loop ((cur []) (acc []) (lst lst))
+    (cond
+     ((pair? lst)
+      (if (proc (car lst))
+	(loop [] (new-acc acc cur) (cdr lst))
+	(loop (cons (car lst) cur) acc (cdr lst))))
+     (else
+      (if (pair? cur)
+	(snoc (reverse! cur) acc)
+	acc)))))
