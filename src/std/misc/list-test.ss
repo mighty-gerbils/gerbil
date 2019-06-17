@@ -146,4 +146,8 @@
       (check-equal? (slice-right! [1 2 3 4] 3) [1]))
     (test-case "test butlast"
       (check-equal? (butlast [1 2 3]) [1 2])
-      (check-equal? (butlast []) []))))
+      (check-equal? (butlast []) []))
+    (test-case "test split"
+      (check-equal? (split '(1 2 a 3 4) (cut equal? <> 'a)) [[1 2] [3 4]])
+      (check-equal? (split '(1 2 "hi" ()) string?) [[1 2] [[]]])
+      (check-equal? (split [] number?) []))))

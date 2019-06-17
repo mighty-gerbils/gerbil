@@ -1809,6 +1809,31 @@ When `lst` is empty, `lst` is returned as it is.
 ```
 :::
 
+### split
+``` scheme
+(split lst proc) -> list
+
+  lst  := proper list
+  proc := unary procedure
+```
+split the list `lst` into a list-of-lists using the unary procedure `proc`.
+
+::: tip Examples:
+``` scheme
+(split '(1 2 "hi" 3 4) string?)
+> ((1 2) (3 4))
+
+(split '(1 2 a 3 4) (lambda (x) (equal? x 'a)))
+> ((1 2) (3 4))
+
+(split '(1 2 a 3 4) (cut equal? <> 'a))
+> ((1 2) (3 4))
+
+(split [] number?)
+> ()
+```
+:::
+
 ## LRU caches
 ::: tip To use the bindings from this module:
 ``` scheme
