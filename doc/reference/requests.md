@@ -1,34 +1,35 @@
 # HTTP requests
-
 The `:std/net/request` library provides an HTTP client interface.
 
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/net/request)
+```
 :::
 
 The main HTTP client interface uses `request` structure to return results of
 HTTP requests. See API documentation for details on making requests.
 
-NOTE: in order to make HTTPS connections the Gambit scheme Gerbil is using must
-be configured with `--enable-openssl` flag.
+NOTE: in order to make HTTPS connections the underlying Gambit Scheme
+implementation Gerbil is using  must be configured with `--enable-openssl` flag.
 
 ## Request API
 
 ### http-get
-::: tip usage
-```
-(http-get url (redirect: #t) (headers: #f) (cookies: #f) (params: #f))
-  url := a string to tell which URL the HTTP client should connect to
-  redirect := boolean flag to tell if client should follow HTTP redirects
-  headers := alist of extra HTTP headers to set in request
-  cookies := alist of cookie name/value pairs to set in request
-  params := alist of query param name/value pairs set in request
-=> <request>
-```
-:::
 
-The `http-get` procedure executes HTTP GET request to given `url` and returns an `request` object as
-result. Request object can be further queried about the HTTP request results.
+``` scheme
+(http-get url [redirect: #t] [headers: #f] [cookies: #f] [params: #f]) -> request | error
+
+  url      := a string to tell which URL the HTTP client should connect to
+  redirect := boolean telling if client should follow HTTP redirects
+  headers  := alist of extra HTTP headers to set in request
+  cookies  := alist of cookie name/value pairs to set in request
+  params   := alist of query param name/value pairs set in request
+```
+
+The `http-get` procedure executes HTTP GET request to given *url* and returns an
+HTTP `request` object as result. Request object can be further queried about the
+HTTP request results. Procedure signals an error if *url* is not valid HTTP URL.
 
 The procedure takes optional parameters to specialize the request:
 The `redirect` parameter can be used to tell the client if it should follow
@@ -44,77 +45,86 @@ The `cookies` parameter takes an association list of cookie name and value pairs
 those on the HTTP request. The `params` parameter takes association list of
 key/value pairs to add as HTTP query params to the request.
 
-### http-head
-::: tip usage
-```
-(http-head url (redirect: #t) (headers: #f) (cookies: #f) (params: #f))
-  url := a string to tell which URL the HTTP client should connect to
-  redirect := boolean flag to tell if client should follow HTTP redirects
-  headers := alist of extra HTTP headers to set in request
-  cookies := alist of cookie name/value pairs to set in request
-  params := alist of query param name/value pairs set in request
-=> <request>
+::: tip Examples
+``` scheme
+> (http-get "https://cons.io/")
+#<request #11>
+> (request-status #11)
+200
+
+> (http-get "http://cons.io/" redirect: #f)
+#<request #13>
+> (request-status #13)
+301
+
+> (http-get "https://secure.example.com" headers: '(("Authorization" . "Basic QWxhZGRpbjpPcGVuU2VzYW1l")))
 ```
 :::
 
-Like `http-get` procedure but instead executes HTTP HEAD method to given `url`.
+
+### http-head
+
+``` scheme
+(http-head url [redirect: #t] [headers: #f] [cookies: #f] [params: #f]) -> request | error
+
+  url      := a string to tell which URL the HTTP client should connect to
+  redirect := boolean telling if client should follow HTTP redirects
+  headers  := alist of extra HTTP headers to set in request
+  cookies  := alist of cookie name/value pairs to set in request
+  params   := alist of query param name/value pairs set in request
+```
+
+Like the `http-get` procedure but instead executes HTTP HEAD method on given
+`url`.
 
 ### http-post
-::: tip usage
-```
-(http-post url (headers #f) (cookies #f) (params #f) (data #f))
-  url := a string to tell which URL the HTTP client should connect to
+``` scheme
+(http-post url [headers: #f] [cookies: #f] [params: #f] [data #f]) -> request | error
+
+  url     := a string to tell which URL the HTTP client should connect to
   headers := alist of extra HTTP headers to set in request
   cookies := alist of cookie name/value pairs to set in request
-  params := alist of query param name/value pairs set in request
-  data := request data given as octet vector or string
-=> <request>
+  params  := alist of query param name/value pairs set in request
+  data    := request data given as octet vector or string
 ```
-:::
 
 Like the `http-get` procedure but instead executes HTTP POST method on given
 `url`.
 
 ### http-put
-::: tip usage
-```
-(http-put url (headers #f) (cookies #f) (params #f) (data #f))
-  url := a string to tell which URL the HTTP client should connect to
+``` scheme
+(http-put url [headers: #f] [cookies: #f] [params: #f] [data: #f]) -> request | error
+
+  url     := a string to tell which URL the HTTP client should connect to
   headers := alist of extra HTTP headers to set in request
   cookies := alist of cookie name/value pairs to set in request
-  params := alist of query param name/value pairs set in request
-  data := request data given as octet vector or string
-=> <request>
+  params  := alist of query param name/value pairs set in request
+  data    := request data given as octet vector or string
 ```
-:::
 
 Like the `http-post` procedure but instead executes HTTP PUT method on `url`.
 
 ### http-delete
-::: tip usage
-```
-(http-delete url (headers #f) (cookies #f) (params #f))
-  url := a string to tell which URL the HTTP client should connect to
+``` scheme
+(http-delete url [headers: #f] [cookies: #f] [params: #f]) -> request | error
+
+  url     := a string to tell which URL the HTTP client should connect to
   headers := alist of extra HTTP headers to set in request
   cookies := alist of cookie name/value pairs to set in request
-  params := alist of query param name/value pairs set in request
-=> <request>
+  params  := alist of query param name/value pairs set in request
 ```
-:::
 
 Like `http-get` procedure but instead executes HTTP DELETE method on `url`.
 
 ### http-options
-::: tip usage
-```
-(http-options url (headers #f) (cookies #f) (params #f))
-  url := a string to tell which URL the HTTP client should connect to
+``` scheme
+(http-options url [headers: #f] [cookies: #f] [params: #f]) -> request | error
+
+  url     := a string to tell which URL the HTTP client should connect to
   headers := alist of extra HTTP headers to set in request
   cookies := alist of cookie name/value pairs to set in request
-  params := alist of query param name/value pairs set in request
-=> <request>
+  params  := alist of query param name/value pairs set in request
 ```
-:::
 
 Like `http-get` procedure but instead executes HTTP OPTIONS method on the `url`.
 
@@ -122,137 +132,113 @@ Like `http-get` procedure but instead executes HTTP OPTIONS method on the `url`.
 ## Request Objects
 
 ### request?
-::: tip usage
+``` scheme
+(request? req) -> boolean
+  req := any object
 ```
-(request? x)
-=> boolean
-```
-:::
-
-The predicate procedure `request?` returns #t if given parameter `x` is a
-`request` object.
+Returns #t if *req* is an HTTP request object, #f otherwise.
 
 ### request-url
-::: tip usage
+``` scheme
+(request-url req) -> string
+  req := an HTTP request object
 ```
-(request-url req)
-=> string
-```
-:::
-
-The `request-url` procedure returns the URL as a string from `request` object.
+Returns the URL as a string from given *req* object.
 
 ### request-status
-::: tip usage
+``` scheme
+(request-status req) -> int
+  req := an HTTP request object
 ```
-(request-status req)
-=> int
-```
-:::
 
-The `request-status` returns the HTTP status code as integer from the `request`
-object given as procedure parameter.
+Returns the HTTP status code as integer value from given *req* object.
 
 ### request-status-text
-::: tip usage
+``` scheme
+(request-status-text req) -> string
+  req := an HTTP request object
 ```
-(request-status-text req)
-=> string
-```
-:::
 
-Procedure returns the HTTP status text if any from given `request` object.
+Returns the HTTP status as a text from given *req* object.
 
 ### request-headers
-::: tip usage
+``` scheme
+(request-headers req) -> alist
+  req := an HTTP request object
 ```
-(request-headers req)
-=> <alist>
-```
-:::
 
-Procedure returns association list of header name/value pairs from given
-`request` parameter.
+Returns an association list of header name/value pairs from given *req* object.
 
 ### request-encoding
-::: tip usage
+``` scheme
+(request-encoding req) -> encoding | #f
+  req := an HTTP request object
 ```
-(request-encoding req)
-=> <encoding>|#f
-```
-:::
 
-Procedure returns the encoding from given `request` parameter. If no encoding is
-set the procedure will return #f.
+Returns the encoding from given *req* parameter as an string. If
+no encoding is set the procedure will return #f.
 
 ### request-encoding-set!
-::: tip usage
+``` scheme
+(request-encoding-set! req enc) -> void
+  req := an HTTP request object
+  enc := symbol naming used encoding or #f
 ```
-(request-encoding-set! req enc)
-=> <undefined>
-```
-:::
 
-Procedure sets the request `req` encoding to `enc`.
+Sets the HTTP request object *req*'s encoding to value of *enc*. If set to #f,
+no conversion is done when accessing requests contents.
+NOTE: the value of *enc* is not validated at all so any bogus value is accepted
+which will cause code to break later on.
 
 ### request-content
-::: tip usage
+``` scheme
+(request-content req) -> u8vector
+  req := an HTTP request object
 ```
-(request-content req)
-```
-:::
 
-
+Returns the contents of HTTP request from given HTTP request
+object *req* as an unsigned byte vector.
 
 ### request-text
-::: tip usage
+``` scheme
+(request-text req) -> string
+  req := an HTTP request object
 ```
-(request-text req)
-=> string
-```
-:::
 
-Procedure returns the contents of request `req` as a string.
+Returns the contents of given HTTP request object *req* as an string.
 
 ### request-json
-::: tip usage
+``` scheme
+(request-json req) -> object | error
+  req := an HTTP request object
 ```
-(request-json req)
-=>
-```
-:::
 
-Procedure returns the request contents of `req` as a JSON object. Causes error
+Returns the request contents of *req* as an JSON object. Signals an error
 if request contents isn't valid JSON data.
 
 ### request-cookies
-::: tip usage
+``` scheme
+(request-cookies req) -> list
+  req := an HTTP request object
 ```
-(request-cookies req)
-=> list
-```
-:::
 
-Procedure returns the cookies set in given request object. Cookies are given as
-list of strings.
+Returns the HTTP cookies set in given *req* HTTP request
+object. Cookies are given as an list of strings.
 
 ### request-close
-::: tip usage
+``` scheme
+(request-close req) -> void | #f
+  req := an HTTP request object
 ```
-(request-close req)
-=> <undefined>
-```
-:::
 
-Procedure closes the input/output port of given request object.
+Closes the input/output port of given *req* object. If the port has
+already been closed the procedure returns #f.
 
 ### request-port
-::: tip usage
+``` scheme
+(request-port req) -> port | #f
+  req := an HTTP request object
 ```
-(request-port req)
-=><input/output port>|#f
-```
-:::
 
-Procedure returns the input/output port to be used to access the request
-data. If requests port is already closed this will return #f.
+Returns the Input/Output port to be used to access the request
+data in *req*. If requests port is already closed, the procedure will return #f.
