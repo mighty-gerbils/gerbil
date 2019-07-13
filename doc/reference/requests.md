@@ -187,6 +187,7 @@ no encoding is set the procedure will return #f.
 
 Sets the HTTP request object *req*'s encoding to value of *enc*. If set to #f,
 no conversion is done when accessing requests contents.
+
 NOTE: the value of *enc* is not validated at all so any bogus value is accepted
 which will cause code to break later on.
 
@@ -209,12 +210,32 @@ Returns the contents of given HTTP request object *req* as an string.
 
 ### request-json
 ``` scheme
-(request-json req) -> object | error
+(request-json req) -> json | error
   req := an HTTP request object
 ```
 
 Returns the request contents of *req* as an JSON object. Signals an error
 if request contents isn't valid JSON data.
+
+::: tip Examples
+``` scheme
+> (import :std/net/request)
+> (import :std/text/json)
+> (http-get "https://jsonplaceholder.typicode.com/todos/1")
+#<request #8>
+> (json-object->string (request-json #8))
+"{\"completed\":false,\"userId\":1,\"title\":\"delectus aut autem\",\"id\":1}"
+```
+
+``` scheme
+> (import :std/net/request)
+> (import :std/text/json)
+> (request-json (http-get "https://www.google.com/"))
+*** ERROR IN (console)@10.1 -- read-json: [io-error] Invalid JSON token
+--- irritants: #<input-port #11 (string)> <
+1>
+```
+:::
 
 ### request-cookies
 ``` scheme
