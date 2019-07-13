@@ -2255,9 +2255,7 @@ newline characters. Signals an error when *in* can't be read.
 
 ### read-all-as-lines
 ``` scheme
-(read-all-as-lines in
-                   [separator: separator = #\newline]
-                   [include-separator?: include-separator? = #f]) -> list | error
+(read-all-as-lines in [separator: #\newline] [include-separator?: #f]) -> list | error
 
   in                 := input port to read from
   separator          := character to consider line ending
@@ -2628,15 +2626,15 @@ vals: ((9 . Enceladus) (5 . Mimas) (6 . Tethys) 0 0 0 0 0 0 0 0 0 0 0 0)
 ### run-process
 ``` scheme
 (run-process cmd
-             [coprocess: coprocess = read-all-as-string]
-             [check-status: check-status = #t]
-             [environment: environment = #f]
-             [directory: directory = #f]
-             [stdin-redirection: stdin-redirection = #t]
-             [stdout-redirection: stdout-redirection = #t]
-             [stderr-redirection: stderr-redirection = #f]
-             [pseudo-terminal: pseudo-terminal = #f]
-             [show-console: show-console = #f]) -> any | error
+             [coprocess: read-all-as-string]
+             [check-status: #t]
+             [environment: #f]
+             [directory: #f]
+             [stdin-redirection: #t]
+             [stdout-redirection: #t]
+             [stderr-redirection: #f]
+             [pseudo-terminal: #f]
+             [show-console: #f]) -> any | error
 
   cmd                := list of strings, [path . arguments]
   coprocess          := procedure interacting with process
@@ -3941,10 +3939,10 @@ TODO
 ``` scheme
 (display-separated lst
                    [port = (current-output-port)]
-                   [prefix: prefix = ""]
-                   [separator: separator = " "]
-                   [suffix: suffix = ""]
-                   [display-element: display-element = display]) -> void
+                   [prefix: ""]
+                   [separator: " "]
+                   [suffix: ""]
+                   [display-element: display]) -> void
 
   lst             := list of objects to print
   port            := optional output port
@@ -4498,7 +4496,7 @@ Analog to `string-trim-eol`, but splits one single end-of-line marker off of
 
 ### string-subst
 ``` scheme
-(string-subst str old new [count: count = #f]) -> string | error
+(string-subst str old new [count: #f]) -> string | error
 
   str   := string to perform changes on, won't be modified
   old   := string, what to remove
