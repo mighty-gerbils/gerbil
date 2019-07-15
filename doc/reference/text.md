@@ -211,6 +211,15 @@ an error on malformed CSV entries.
   port := input port
 ```
 
+::: tip Examples
+``` scheme
+> (let ((csv-data "id;city;population\n01;Foobar;1200000\n02;Barville;250001\n03;Baz;21\n"))
+    (read-csv-lines (open-input-string csv-data)))
+(("id;city;population") ("01;Foobar;1200000") ("02;Barville;250001")("03;Baz;21"))
+
+```
+:::
+
 Read lines from *port* in CSV format, using the current syntax parameters.  Return
 a list of list of strings, one entry for each line, that contains one entry for
 each field.  Entries are read as strings; it is up to you to interpret the
