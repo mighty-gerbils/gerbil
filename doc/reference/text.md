@@ -199,7 +199,7 @@ The parsing and unparsing functions are `read-csv-line`, `read-csv-lines`, `read
   port := input port
 ```
 
-Read one line from PORT in CSV format, using the current syntax parameters.
+Read one line from *port* in CSV format, using the current syntax parameters.
 Return a list of strings, one for each field in the line.  Entries are read as
 strings; it is up to you to interpret the strings as whatever you want. Signals
 an error on malformed CSV entries.
