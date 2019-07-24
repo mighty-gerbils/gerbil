@@ -1,306 +1,415 @@
 # XML
 
-::: tip usage
+The module provides XML parsing and generation procedures. To use these the
+Gerbil needs to be compiled with libxml support.
+
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/xml)
+```
 :::
 
 ## Overview
 
-Please write me!
+This is module adds utilities to work with XML. Gerbil Scheme parses uses SXML
+to represent the XML data. The source code uses Oleg's Scheme XML package, cherry-picked ported to Gerbil.
+See more detailed info about SXML can be found at [http://okmij.org/ftp/Scheme/xml.html].
+
+Compiling Gerbil with [LibXML](http://www.xmlsoft.org/) provides C-based XML
+parser methods *parse-xml* and *parse-html*.
 
 ## Parsing
 
 ### read-xml
-::: tip usage
+``` scheme
+(read-xml source [namespaces: ()]) -> sxml | error
+
+  source     := port | string | u8vector
+  namespaces := alist or hash-table mapping urls to namespace prefixes
 ```
-(read-xml ...)
+
+Reads and parses XML from *source* and returns SXML result. *namespaces* is
+optional alist or a hash table of mapping uri (string) -> namespace (string)
+same interface as ```parse-xml``` so that implementations can be swapped.  Signals an
+error on invalid *source* value.
+
+::: tip Examples
+``` scheme
+> (import :std/xml)
+> (read-xml "<foo><element id=\"1\">foobar</element><element id=\"2\">barbaz</element></foo>")
+(*TOP* (foo (element (@ (id "1")) "foobar") (element (@ (id "2")) "barbaz")))
 ```
 :::
-
-Please document me!
 
 ### parse-xml [libxml]
-::: tip usage
+``` scheme
+(parse-xml source [url: "none.xml"] [encoding: (encoding "UTF-8")] [options: (options parse-xml-default-options)] [namespaces: (ns [])]) -> sxml | error
+
+  source     := string | u8vector | port
+  url        := string for base URL
+  encoding   := string | #f; strings are always UTF-8 encoded for parsing.
+  options    := fixnum (ior of libxml parser options)
+  namespaces := alist or hash-table mapping urls to namespace prefixes
 ```
-(parse-xml ...)
+
+ Parses XML data from *source* into SXML + CDATA unless collapsed with XML_PARSE_NOCDATA.
+
+ namespace's document defined prefixes are ignored; the *url* is used as the
+ canonical prefix if it is not in the *namespaces* mapping. Signals an error on
+ invalid *source*.
+
+::: tip Examples
+``` scheme
+> (import :std/net/request)
+> (import :std/xml)
+> (parse-xml (request-text (http-get "https://www.w3schools.com/xml/note.xml")))
+(*TOP* (note (to "Tove") (from "Jani") (heading "Reminder") (body "Don't forget me this weekend!")))
 ```
 :::
-
-Please document me!
 
 ### parse-html [libxml]
-::: tip usage
-```
-(parse-html ...)
-```
-:::
+``` scheme
+(parse-html source [url: "none.xml"] [encoding: (encoding "UTF-8")] [options: (options parse-xml-default-options)] [filter: (filter-els [])]) -> sxml | error
 
-Please document me!
+  source   := string | u8vector | port
+  url      := string for base URL
+  encoding := string | #f; strings are always UTF-8 encoded for parsing.
+  options  := fixnum (ior of libxml parser options)
+  filter   := list of strings
+```
 
+Parses HTML data from given *source* into SXML + CDATA.
+*source*, *encoding*, *url*, *options* as above
+*filter*: list of strings, elements to be removed from the tree
+Signals an error on invalid *source*.
 
 ## SXML Queries
 
 ### sxpath
-::: tip usage
-```
-(sxpath ...)
-```
-:::
+``` scheme
+(sxpath path) -> sxml
 
-Please document me!
+  path := list
+```
+
+ Evaluate an abbreviated SXPath
+```
+	sxpath:: AbbrPath -> Converter, or
+	sxpath:: AbbrPath -> Node|Nodeset -> Nodeset
+```
+
+ AbbrPath is a list. It is translated to the full SXPath according
+ to the following rewriting rules:
+``` scheme
+ (sxpath '()) -> (node-join)
+ (sxpath '(path-component ...)) ->
+		(node-join (sxpath1 path-component) (sxpath '(...)))
+ (sxpath1 '//) -> (node-or
+		     (node-self (node-typeof? '*any*))
+		      (node-closure (node-typeof? '*any*)))
+ (sxpath1 '(equal? x)) -> (select-kids (node-equal? x))
+ (sxpath1 '(eq? x))    -> (select-kids (node-eq? x))
+ (sxpath1 ?symbol)     -> (select-kids (node-typeof? ?symbol)
+ (sxpath1 procedure)   -> procedure
+ (sxpath1 '(?symbol ...)) -> (sxpath1 '((?symbol) ...))
+ (sxpath1 '(path reducer ...)) ->
+		(node-reduce (sxpath path) (sxpathr reducer) ...)
+ (sxpathr number)      -> (node-pos number)
+ (sxpathr path-filter) -> (filter (sxpath path-filter))
+```
+
 
 ### sxml-select
-::: tip usage
-```
-(sxml-select ...)
-```
-:::
+``` scheme
+(sxml-select n predf [mapf = values]) -> sxml
 
-Please document me!
+  n     := sxml nodes
+  predf := predicate function
+  mapf  := transform function
+```
+
+Collects all children from node *n* that satisfy a predicate *predf*; optionally
+transforms result with mapping function *mapf* once a node satisfies a
+predicate, its children are not traversed.
 
 ### sxml-attributes
-::: tip usage
-```
-(sxml-attributes ...)
-```
-:::
+``` scheme
+(sxml-attributes n) -> list | #f
 
-Please document me!
+  n := sxml node
+```
+
+Returns the attributes of given node *n* or #f if node does have any attributes.
 
 ### sxml-e
-::: tip usage
-```
-(sxml-e ...)
-```
-:::
+``` scheme
+(sxml-e n) -> symbol | #f
 
-Please document me!
+  n := sxml node
+```
+
+Returns the element type of node *n* or #f if no type is found.
 
 ### sxml-find
-::: tip usage
-```
-(sxml-find ...)
-```
-:::
+``` scheme
+(sxml-find n predf [mapf = values]) -> sxml
 
-Please document me!
+  n     := sxml nodes
+  predf := predicate function
+  mapf  := transform function
+```
+
+Find the first child that satisfies a predicate *predf*, using depth-first search.
+Predicate *predf* is a lambda which takes an node as parameter and returns an
+boolean.
+If optional *mapf* is given the results satisfying *predf* are transformed with
+it.
 
 ### sxml-select*
-::: tip usage
-```
-(sxml-select* ...)
-```
-:::
+``` scheme
+(sxml-select* n predf [mapf = values]) -> sxml
 
-Please document me!
+  n     := sxml nodes
+  predf := predicate function
+  mapf  := transform function
+```
+
+Select from immediate children of node *n* using predicate function
+*predf*. Results satisfying *predf* are transformed if given optional mapping
+function *mapf*.
 
 ### sxml-attribute-e
-::: tip usage
-```
-(sxml-attribute-e ...)
-```
-:::
+``` scheme
+(sxml-attribute-e n key) -> any | #f
 
-Please document me!
+  n   := sxml node
+  key := string; node key
+```
+
+Retuns the node *n* attribute value for given *key* or #f if value is not found.
 
 ### sxml-attribute-getq
-::: tip usage
-```
-(sxml-attribute-getq ...)
-```
-:::
+``` scheme
+(sxml-attribute-getq key attrs) -> any
 
-Please document me!
+  key   := string; node key
+  attrs := alist?
+```
+
+attribute list => value
 
 ### sxml-class?
-::: tip usage
-```
-(sxml-class? ...)
-```
-:::
+``` scheme
+(sxml-class? klass) -> lambda
 
-Please document me!
+  klass := string; node class to match
+```
+
+returns dom class
 
 ### sxml-find*
-::: tip usage
-```
-(sxml-find* ...)
-```
-:::
+``` scheme
+(sxml-find* n pred [mapf = values]) -> sxml | #f
 
-Please document me!
+  n    := sxml node
+  pred := predicate fn
+  mapf := transform fn
+```
+
+find in immediate children
 
 ### sxml-e?
-::: tip usage
-```
-(sxml-e? ...)
-```
-:::
+``` scheme
+(sxml-e? el) -> lambda
 
-Please document me!
+  el := sxml element
+```
+
+returns element type
 
 ### sxml-id?
-::: tip usage
-```
-(sxml-id? ...)
-```
-:::
+``` scheme
+(sxml-id? id) -> lambda
 
-Please document me!
+  id := sxml node id value
+```
+
+returns dom id
 
 ### sxml-children
-::: tip usage
-```
-(sxml-children ...)
-```
-:::
+``` scheme
+(sxml-children n) -> list
 
-Please document me!
+  n := sxml node
+```
+
+returns nodes children as a list
 
 ### sxml-find/context
-::: tip usage
-```
-(sxml-find/context ...)
-```
-:::
+``` scheme
+(sxml-find/context n predf [mapf values]) -> sxml
 
-Please document me!
+  n     := sxml node
+  predf := predicate fn to match
+  mapf  := transform fn to apply to matches
+```
 
+find with context
 
 ## Printing
 
 
 ### write-xml
-::: tip usage
-```
-(write-xml ...)
-```
-:::
+``` scheme
+(write-xml sxml [port = (current-output-port)]) -> void
 
-Please document me!
+  sxml := SXML nodes
+  port := output port
+```
+
+Writes given *sxml* data as XML into output *port*. Signals an error on invalid *port*.
 
 ### write-html
-::: tip usage
-```
-(write-html ...)
-```
-:::
+``` scheme
+(write-html sxml [port = (current-output-port)]) -> void
 
-Please document me!
+  sxml := SXML nodes
+  port := output port
+```
+
+Writes given *sxml* data as HTML to output *port*. Signals an error on invalid *port*.
 
 ### print-sxml-&gt;html
-::: tip usage
-```
-(print-sxml->html ...)
-```
-:::
+``` scheme
+(print-sxml->html sxml [port = (current-output-port)]) -> void
 
-Please document me!
+  sxml := SXML nodes
+  port := output port
+```
+Write given *sxml* into *port* after converting it to HTML. Indents the result
+to multiple lines.
 
 ### print-sxml-&gt;html*
-::: tip usage
-```
-(print-sxml->html* ...)
-```
-:::
+``` scheme
+(print-sxml->html* sxml [port = (current-output-port)]) -> void
 
-Please document me!
+  sxml := SXML nodes
+  port := output port
+```
+Same as ```print-sxml->html``` but skips formatting the result.
 
 ### print-sxml-&gt;html-fast
-::: tip usage
-```
-(print-sxml->html-fast ...)
-```
-:::
+``` scheme
+(print-sxml->html-fast sxml [port = (current-output-port)]) -> void
 
-Please document me!
+  sxml := SXML nodes
+  port := output port
+```
+
+Same as ```print-sxml->html``` but skips formatting the result.
 
 ### print-sxml-&gt;xhtml
-::: tip usage
-```
-(print-sxml->xhtml ...)
-```
-:::
+``` scheme
+(print-sxml->xhtml sxml [port = (current-output-port)]) -> void
 
-Please document me!
+  sxml := SXML nodes
+  port := output port
+```
+
+Write given *sxml* into *port* after converting it to XHTML. Indents the result
+to multiple lines.
 
 ### print-sxml-&gt;xhtml*
-::: tip usage
-```
-(print-sxml->xhtml* ...)
-```
-:::
+``` scheme
+(print-sxml->xhtml* sxml [port = (current-output-port)]) -> void
 
-Please document me!
+  sxml := SXML nodes
+  port := output port
+```
+
+Same as ```print-sxml->xhtml``` but skips formatting the result.
 
 ### print-sxml-&gt;xhtml-fast
-::: tip usage
-```
-(print-sxml->xhtml-fast ...)
-```
-:::
+``` scheme
+(print-sxml->xhtml-fast sxml [port = (current-output-port)]) -> void
 
-Please document me!
+  sxml := SXML nodes
+  port := output port
+```
+
+Same as ```print-sxml->xhtml``` but skips formatting the result.
 
 ### print-sxml-&gt;xml
-::: tip usage
-```
-(print-sxml->xml ...)
-```
-:::
+``` scheme
+(print-sxml->xml sxml [port = (current-output-port)]) -> void
 
-Please document me!
+  sxml := SXML nodes
+  port := output port
+```
+
+Write given *sxml* into *port* after converting it to XML. Indents the result
+to multiple lines.
 
 ### print-sxml-&gt;xml*
-::: tip usage
-```
-(print-sxml->xml* ...)
-```
-:::
+``` scheme
+(print-sxml->xml* sxml [port = (current-output-port)]) -> void
 
-Please document me!
+  sxml := SXML nodes
+  port := output port
+```
+
+Same as ```print-sxml->xml``` but skips formatting the result.
 
 ### print-sxml-&gt;xml-fast
-::: tip usage
-```
-(print-sxml->xml-fast ...)
-```
-:::
+``` scheme
+(print-sxml->xml-fast sxml [port = (current-output-port)]) -> void
 
-Please document me!
+  sxml := SXML nodes
+  port := output port
+```
+
+Same as ```print-sxml->xml``` but skips formatting the result.
 
 ### pretty-print-sxml-&gt;xml-file
-::: tip usage
-```
-(pretty-print-sxml->xml-file ...)
-```
-:::
+``` scheme
+(pretty-print-sxml->xml-file item outpath [noblanks]) -> void
 
-Please document me!
+  sxml := SXML nodes
+  port := output port
+```
+Serializes SXML data from *sxml* into XML and writes the result to a *port*.
+
+This depends on external ```xmllint``` program being in PATH.
 
 ### pretty-print-sxml-&gt;xhtml-file
-::: tip usage
-```
-(pretty-print-sxml->xhtml-file ...)
-```
-:::
+``` scheme
+(pretty-print-sxml->xhtml-file sxml [port = (current-output-port)]) -> void
 
-Please document me!
+  sxml := SXML nodes
+  port := output port
+```
+Serializes SXML data from *sxml* into XHTML and writes the result to a *port*.
+
+This depends on external ```xmllint``` program being in PATH.
+
 
 ### sxml-&gt;html-string-fragment
-::: tip usage
-```
-(sxml->html-string-fragment ...)
-```
-:::
+``` scheme
+(sxml->html-string-fragment item [maybe-level] [quote-char = #\"]) -> string
 
-Please document me!
+  item        := SXML nodes
+  maybe-level := #f | fixnum; how much to indent the result or skip indent if #f
+  quote-char  := quote character to use
+```
+
+Serializes the given SXML nodes in *item* into HTML string and returns it as a
+string. If *maybe-level* is given the result is indented.
 
 ### sxml-&gt;xhtml-string
-::: tip usage
-```
-(sxml->xhtml-string ...)
-```
-:::
+``` scheme
+(sxml->xhtml-string item [maybe-level] [quote-char = #\"]) -> string
 
-Please document me!
+  item        := SXML nodes
+  maybe-level := #f | fixnum; how much to indent the result or skip indent if #f
+  quote-char  := quote character to use
+```
