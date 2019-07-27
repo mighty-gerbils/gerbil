@@ -36,7 +36,7 @@ The toolchain uses `$GERBIL_PATH` as default artifact output directory:
 
 ## GERBIL_LOADPATH
 
-This is colon separated a list of directories to be appended to the
+This is a colon separated list of directories to be appended to the
 runtime load path.  You can use this for loading site specific
 libraries. By default it's unset, which is equivalent to an empty
 value.

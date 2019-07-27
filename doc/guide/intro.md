@@ -130,7 +130,7 @@ is ignored and no lexical binding is generated:
 => 2
 ```
 
-Apart from cons and list, pairs and lists can also be can be
+Apart from cons and list, pairs and lists can also be
 constructed with short-hand syntax using square brackets:
 ```scheme
 ; cons a pair
@@ -162,7 +162,7 @@ of mutation.
 When the head of the s-expression is a setf-macro it
 is invoked to expand the syntax.
 If the head is a plain identifier, as is the case
-in the example below, to expands an `identifier-set!`
+in the example below, it expands to an `identifier-set!`
 invocation.
 ```scheme
 > (def a-pair (cons 'a 'b))
@@ -215,7 +215,7 @@ So:
 ```
 
 #### Classes
-Classes are defined with defclass with slot accessed fields and support multiple
+Classes are defined with `defclass` with slot accessed fields and support multiple
 inheritance.
 For example:
 ```scheme
@@ -296,7 +296,7 @@ For example:
   (lambda (self x y (z 0))
     (set! (point-x self) x)
     (set! (point-y self) y)
-    (set! (point-z self) z)))
+    (set! (point-3d-z self) z)))
 > (def my-point (make-point-3d 1 2))
 > (point-3d-z my-point)
 => 0
@@ -497,7 +497,7 @@ They can also be nested in another module.
 
 ### Top Modules
 Here is an example of a simple top module, which provides
-a function that uses`display-exception` from the runtime as extern:
+a function that uses `display-exception` from the runtime as extern:
 ```scheme
 (module A
   (export with-display-exception)
@@ -528,14 +528,14 @@ module-path:
  "path-to-module-file" ; file module, .ss extension optional
 ```
 
-As we can see, import allows macros to manipulate the import set
+As we can see, `import` allows macros to manipulate the import set
 of some import source (a module or another expansion).
 They can be defined with `defsyntax-for-import`
 An example macro is `only-in`, provided by the prelude:
 ```scheme
 (import (only-in :std/text/json read-json))
 ```
-Here we import form `:std/text/json` only the `read-json` procedure.
+Here we import from `:std/text/json` only the `read-json` procedure.
 
 Modules define the set of exported identifiers with the `export`
 special form, which must appear at module scope.
@@ -551,7 +551,7 @@ export-spec:
 ```
 Similarly to `import`, `export` also supports macros, which can
 be defined with `defsyntax-for-export`.
-An usual export macro is `except-out`, provided by the prelude:
+A common export macro is `except-out`, provided by the prelude:
 ```scheme
 (export (except-out #t display-exception))
 ```
@@ -589,7 +589,7 @@ $ gxi
 
 ### Library Modules
 
-Library modules are imported with the `:library-module-path` form.
+Library modules are imported with the `:library/module/path` form.
 For example, to use the `json` module from the Gerbil std library
 you need the following import statement:
 ```scheme
@@ -1041,9 +1041,9 @@ These are the low level primitives, which wait and multiplex on primitive select
 - Pairs of a locked mutex with a condition variable, which signal when the condition signals after the mutex has been unlocked.
 - Naked i/o condvars, which are signaled by the runtime scheduler.
 
-`wait` blocks the current thread until a selector is signalled, while `select` blocks on
-multiple selectors concurrently, using a thread for each selector. Both procedures accept
-an optional timeout and return the selector that was signalled or `#f` in the case of timeout.
+`wait` blocks the current thread until the specified selector signals, while `select` blocks until
+one of the specified selectors signals, using a thread for each selector. Both procedures accept
+an optional timeout and return the selector that had signalled or `#f` in the case of timeout.
 ```scheme
 (def (wait selector (timeout #f)) ...)
 (def (select list-of-selectors (timeout #f)) ...)
@@ -1051,12 +1051,13 @@ an optional timeout and return the selector that was signalled or `#f` in the ca
 
 For example:
 ```scheme
-(import :std/event)
-(def my-thread (spawn (lambda () (thread-sleep! 10))))
-> (wait my-thread 1)      ; or (select [my-thread] 1)
-=> #f                    ; after a second elapses
-> (wait my-thread)       ; or (select [my-thread])
-=> my-thread             ; after the thread completes its sleep
+> (import :std/event)
+> (def (sleeping-thread t)
+    (spawn (lambda () (thread-sleep! t) 'done)))
+> (wait (sleeping-thread 5) 1)  ; or (select [(sleeping-thread 5)] 1)
+=> #f                           ; after a second elapses
+> (wait (sleeping-thread 5))    ; or (select [(sleeping-thread 5)])
+=> #<thread #7>                 ; after the thread completes its sleep
 ```
 
 #### sync
@@ -1074,37 +1075,40 @@ An event is
 - the primitive events `never-evt` (bottom) and `always-evt` (top)
 - an event object, constructed with `make-event` or `wrap-evt`
 - an event-set object, constructed with `choice-evt`
-- an event-handler object, constructed with `handle-evt`; it is an event tied with a continuation function which is tail invoked with the value of the event. Multiple continuations can be chained with `handle-evt` each receiving the values of the previous, starting with the value of the vent.
+- an event-handler object, constructed with `handle-evt`; it is an event tied with a continuation function which is tail invoked with the value of the event. Multiple continuations can be chained with `handle-evt` each receiving the values of the previous, starting with the value of the event.
 
-`sync` accepts an arbitrary of events as arguments, and returns when exactly one of them is
+`sync` accepts an arbitrary number of events as arguments, and returns when exactly one of them is
 ready. The value of sync is the value of the event: by default, timeouts have a value of #f
 and other events have usually the synchronizer as value.
 
 
 For example:
 ```scheme
-(def my-thread (spawn (lambda () (thread-sleep! 10))))
-> (sync 1 my-thread)
+> (import :std/event)
+> (def (sleeping-thread t)
+    (spawn (lambda () (thread-sleep! t) 'done)))
+> (sync 1 (sleeping-thread 5))
 => #f ; after a second elapses
-> (sync my-thread)
-=> my-thread ; after the thread completes its sleep
+> (sync (sleeping-thread 5))
+=> #<thread #7> ; after the thread completes its sleep
 
 ```
 
 A more complicated example which utilizes handle-evt for loops:
 ```scheme
-(def my-thread (spawn (lambda () (thread-sleep! 10) 'done)))
-> (let lp ((n 0))
+> (import :std/event)
+> (def (sleeping-thread t)
+    (spawn (lambda () (thread-sleep! t) 'done)))
+> (let lp ((n 0)
+           (my-thread (sleeping-thread 5)))
     (sync (handle-evt 1
-            (lambda (_) (displayln "timeout " n) (lp (fx1+ n))))
+            (lambda (_) (displayln "timeout " n) (lp (fx1+ n) my-thread)))
           (handle-evt my-thread
             (lambda (thr) (thread-join! thr)))))
 timeout 0
 timeout 1
 timeout 2
 timeout 3
-timeout 4
-timeout 5
 => 'done
 ```
 
@@ -1116,12 +1120,13 @@ multiple events.
 
 For example:
 ```scheme
-;; sync on my-thread
-(! my-thread (displayln "my thread exited"))
+;; sync on a single thread
+(! (sleeping-thread 10) (displayln "my thread exited"))
 
 ;; rewrite the previous example loop:
-(let lp ((n 0))
-  (!* (1 (displayln "timeout " n) (lp (fx1+ n)))
+(let lp ((n 0)
+         (my-thread (sleeping-thread 5)))
+  (!* (1 (displayln "timeout " n) (lp (fx1+ n) my-thread))
       (my-thread
        (thread-join! my-thread))))
 ```
@@ -1134,7 +1139,7 @@ communication.
 
 #### Messages
 
-Gerbil's actors are threads, either in the current or a remote processes
+Gerbil's actors are threads, either in the current or remote processes
 and communicate exchanging messages. Messages can be arbitrary objects,
 but usually actors communicate with structured messages:
 ```scheme
@@ -1202,12 +1207,11 @@ The macro defines the structures and macros for using the interface:
 (defrules !!echo.hello ...
 ```
 
-The invocation `(!!echo.hello echo 'hello)` constructs a !call with
-value an instance of echo.hello and a gensymed continuation id.
-It then sends a message with the !call to the `echo` actor and
-waits for a `!value` or `!error` message matching the continuation.
-If it receive a `!value` it returns it, and if it receives an `!error`
-it signals an error.
+The invocation `(!!echo.hello echo 'hello)` constructs a `!call` protocol
+message with an instance of `echo.hello` and a gensymed continuation id.
+It then sends the message to the `echo` actor and waits for a `!value`
+or `!error` message matching the continuation. If it receives a `!value` it
+returns it, and if it receives an `!error` it signals an error.
 
 In the actor, the `(!echo.hello what k)` matches a `!call` with
 the value matching `(echo.hello what)` and the continuation token
@@ -1531,7 +1535,7 @@ For more examples of httpd handlers, see the [httpd tutorial](/tutorials/httpd.m
 
 ### Databases
 
-Gerbil include support for SQL databases (SQLite, PostgreSQL, MySQL)
+Gerbil includes support for SQL databases (SQLite, PostgreSQL, MySQL)
 and key-value stores (LevelDB, LMDB) with the `:std/db` package.
 
 #### SQL Databases
@@ -1557,7 +1561,7 @@ Then we create a simple table with `sql-eval`, which evaluates an SQL statement:
 > (sql-eval db "CREATE TABLE Users (FirstName VARCHAR, LastName VARCHAR, Secret VARCHAR)")
 ```
 
-Let's insert some data in our table, using a prepared statements:
+Let's insert some data in our table, using prepared statements:
 ```scheme
 > (def insert (sql-prepare db "INSERT INTO Users (FirstName, LastName, Secret) VALUES (?, ?, ?)"))
 > (sql-txn-begin db)

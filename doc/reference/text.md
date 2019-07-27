@@ -25,14 +25,14 @@ outputting padding on encoding, as well as requiring padding on decoding.
 Basically the requirement for padding on base64encoded was motivated by the
 scarce nature of computing resources in the 1980:s. Today there's a move toward
 not requiring the padding, as reflected for instance in Ecmascript 5's spec to
-produce the padding on encode but not to require it on decode.  For some more
-references see: Description of JS5 btoa() at
-https://en.wikipedia.org/wiki/Base64#HTML
-http://stackoverflow.com/questions/4080988/why-does-base64-encoding-requires-padding-if-the-input-length-is-not-divisible-b
-http://stackoverflow.com/questions/4322507/why-padding-is-used-in-base64-encoding
-http://stackoverflow.com/questions/4492426/remove-trailing-when-base64-encoding
-https://code.google.com/p/go/issues/detail?id=4237
+produce the padding on encode but not to require it on decode.
 
+For some more references see:
+- [Description of JS5 btoa()](https://en.wikipedia.org/wiki/Base64#HTML)
+- [Why does base64 encoding require padding if the input length is not divisible by 3?](http://stackoverflow.com/questions/4080988/why-does-base64-encoding-requires-padding-if-the-input-length-is-not-divisible-b)
+- [Why padding is used in Base64 encoding?](http://stackoverflow.com/questions/4322507/why-padding-is-used-in-base64-encoding)
+- [Remove trailing “=” when base64 encoding](http://stackoverflow.com/questions/4492426/remove-trailing-when-base64-encoding)
+- [URLEncoding padding is optional](https://github.com/golang/go/issues/4237)
 
 
 ::: tip To use the bindings from this module:

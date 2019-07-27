@@ -5,7 +5,7 @@ This is a quick guide to help you with your first FFI steps with Gerbil.
 The first thing to note is that FFI in Gerbil is actually delegated to Gambit, where the mechanism to interface with C is known as the C-interface.
 See the [Gambit manual](https://www.iro.umontreal.ca/~gambit/doc/gambit.html#C_002dinterface) for more information.
 
-The primary mechanism for delegating code directly go gambit is the `begin-foreign` special form:
+The primary mechanism for delegating code directly to gambit is the `begin-foreign` special form:
 ```
 (begin-foreign body ...)
 ```
@@ -40,7 +40,7 @@ EOF
 
 File modules take their name from the including file, so this module is named libc-version in the myuser package and as a result uses `myuser/libc-version#` as the namespace prefix.
 
-To feed code straight to the Gambit compiler from Gerbil we use the begin-foreign special form. We namespace the identifier with the package and module to adhere to the canonical namespace of the module.
+To feed code straight to the Gambit compiler from Gerbil we use the `begin-foreign` special form. We namespace the identifier with the package and module to adhere to the canonical namespace of the module.
 
 We compile the module.
 
