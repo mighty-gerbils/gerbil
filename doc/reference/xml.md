@@ -1,7 +1,7 @@
 # XML
 
-The module provides XML parsing and generation procedures. To use these the
-Gerbil needs to be compiled with libxml support.
+The module provides XML parsing and generation procedures. It also has optional
+dependency on LibXML for XML/HTML parsing. See details below.
 
 ::: tip To use the bindings from this module:
 ``` scheme
@@ -11,12 +11,12 @@ Gerbil needs to be compiled with libxml support.
 
 ## Overview
 
-This is module adds utilities to work with XML. Gerbil Scheme parses uses SXML
-to represent the XML data. The source code uses Oleg's Scheme XML package, cherry-picked ported to Gerbil.
+This module adds utilities to work with XML. Gerbil Scheme uses SXML
+to represent the XML data. This module is mostly ported from Oleg's XML package.
 See more detailed info about SXML can be found at [http://okmij.org/ftp/Scheme/xml.html].
 
 Compiling Gerbil with [LibXML](http://www.xmlsoft.org/) provides C-based XML
-parser methods *parse-xml* and *parse-html*.
+parser procedures *parse-xml* and *parse-html* including their options.
 
 ## Parsing
 
@@ -58,6 +58,39 @@ error on invalid *source* value.
  canonical prefix if it is not in the *namespaces* mapping. Signals an error on
  invalid *source*.
 
+ *options* is fixnum denoting XML parsing options. Available options are:
+::: tip Options values
+```
+XML_PARSE_RECOVER
+XML_PARSE_NOENT
+XML_PARSE_DTDLOAD
+XML_PARSE_DTDATTR
+XML_PARSE_DTDVALID
+XML_PARSE_NOERROR
+XML_PARSE_NOWARNING
+XML_PARSE_PEDANTIC
+XML_PARSE_NOBLANKS
+XML_PARSE_XINCLUDE
+XML_PARSE_NONET
+XML_PARSE_NODICT
+XML_PARSE_NSCLEAN
+XML_PARSE_NOCDATA
+XML_PARSE_NOXINCNODE
+XML_PARSE_COMPACT
+XML_PARSE_HUGE
+```
+:::
+
+Details of above flags can be found at LibXML [reference documentation](http://www.xmlsoft.org/html/libxml-parser.html#xmlParserOption).
+
+There's also default options set as *parse-xml-default-options* variable which currently is set
+to:
+``` scheme
+(fxior XML_PARSE_NOENT
+       XML_PARSE_NONET
+       XML_PARSE_NOBLANKS)
+```
+
 ::: tip Examples
 ``` scheme
 > (import :std/net/request)
@@ -82,6 +115,34 @@ Parses HTML data from given *source* into SXML + CDATA.
 *source*, *encoding*, *url*, *options* as above
 *filter*: list of strings, elements to be removed from the tree
 Signals an error on invalid *source*.
+
+Available *options* values are:
+::: tip Options values
+```
+HTML_PARSE_RECOVER
+HTML_PARSE_NODEFDTD
+HTML_PARSE_NOERROR
+HTML_PARSE_NOWARNING
+HTML_PARSE_PEDANTIC
+HTML_PARSE_NOBLANKS
+HTML_PARSE_NONET
+HTML_PARSE_NOIMPLIED
+HTML_PARSE_COMPACT
+HTML_PARSE_IGNORE_ENC
+```
+:::
+
+Details of above flags can be found at LibXML [reference documentation](http://www.xmlsoft.org/html/libxml-HTMLparser.html#htmlParserOption).
+
+There's also default options set as *parse-html-default-options* variable which currently is set
+to:
+``` scheme
+(fxior HTML_PARSE_RECOVER
+       HTML_PARSE_NOERROR
+       HTML_PARSE_NOWARNING
+       HTML_PARSE_NONET
+       HTML_PARSE_NOBLANKS)
+```
 
 ## SXML Queries
 
