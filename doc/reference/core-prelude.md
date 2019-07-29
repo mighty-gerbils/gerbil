@@ -195,7 +195,7 @@ Special expander indirection hooks; explained elsewhere in the documentation.
 ### Reserved Syntactic Tokens
 The following widely used syntactic tokens are defined as reserved expanders:
 ```
-_ ... else => unqute unquote-splicing unsyntax unsyntax-splicing
+_ ... else => unquote unquote-splicing unsyntax unsyntax-splicing
 ```
 
 
