@@ -180,7 +180,7 @@ $ gxi
 
 ## Implementation Notes
 
-- The `define-library` can appear at most once per library module and
+- The `define-library` form can appear at most once per library module and
   the library id must match the id of the enclosing module.
 
 - The `char-foldcase` and `string-foldcase` procedures from `(scheme char)`

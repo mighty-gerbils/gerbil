@@ -7,7 +7,7 @@ To invoke:
 gxprof :your/module arg ...
 ```
 
-This will run the main function in :your/module with the given arguments. The function is run to completion, at which point the profiler writes the captured continuation samples in gxprof.out in the current directory.
+This will run the main function in `:your/module` with the given arguments. The function is run to completion, at which point the profiler writes the captured continuation samples in gxprof.out in the current directory.
 
 The contents of the file is a list of lists that contain the names of the continuation creator for each frame in the captured continuations. You can process the samples to extract detailed profiling statistics.
 
