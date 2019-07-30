@@ -728,7 +728,7 @@ Returns true if the object *obj* is an immediate value.
 
 ### make-hash-table
 ``` scheme
-(make-hash-table . options) -> hash
+(make-hash-table . options) -> hash table
 
 options:
     size: size
@@ -745,7 +745,7 @@ Creates a hash table.
 
 ### make-hash-table-eq
 ``` scheme
-(make-hash-table-eq . options) -> hash
+(make-hash-table-eq . options) -> hash table
 ```
 
 Creates a hash table using `eq?` as the test function so this is equivalent to
@@ -753,7 +753,7 @@ Creates a hash table using `eq?` as the test function so this is equivalent to
 
 ### make-hash-table-eqv
 ``` scheme
-(make-hash-table-eqv . options) -> hash
+(make-hash-table-eqv . options) -> hash table
 ```
 
 Creates a hash table using `eqv?` as the test function so this is equivalent to `(make-hash-table test: eqv? options ...)`.
