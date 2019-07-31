@@ -151,12 +151,12 @@ Same as `(direct-instance? klass obj)`.
 ``` scheme
 (make-struct-type id super fields name plist ctor [field-names = #f]) -> type-descriptor
 
-  id     := symbol; the type id
-  super  := type-descriptor or #f; the struct type to inherit from
-  fields := fixnum; number of (new) fields in the type
-  name   := symbol; the (displayed) type name
-  plist  := alist; type properties
-  ctor   := symbol or #f; id of constructor method
+  id          := symbol; the type id
+  super       := type-descriptor or #f; the struct type to inherit from
+  fields      := fixnum; number of (new) fields in the type
+  name        := symbol; the (displayed) type name
+  plist       := alist; type properties
+  ctor        := symbol or #f; id of constructor method
   field-names := list of symbols or #f; (displayed) field names
 
 plist elements:
@@ -208,7 +208,7 @@ Creates a *klass* instance mutator for field *field* (relative to super).
   field := fixnum
 ```
 
-Like `make-struct-field-accessor`, but the accesor is unchecked.
+Like `make-struct-field-accessor`, but the accessor is unchecked.
 
 ### make-struct-field-unchecked-mutator
 ``` scheme
@@ -272,8 +272,6 @@ Accesses *obj*'s field with absolute offset *off*;
 ### struct-field-set!
 ``` scheme
 (struct-field-set! klass obj off val) -> void
-
-(struct-field-ref klass obj off) -> any
 
   klass := type-descriptor
   obj := instance of klass
@@ -368,7 +366,7 @@ Creates a slot mutator for *slot*.
   slot  := symbol
 ```
 
-Like `make-class-slot-accessor`, but creates an unchecked accesor.
+Like `make-class-slot-accessor`, but creates an unchecked accessor.
 
 
 ### make-class-slot-unchecked-mutator
@@ -532,7 +530,7 @@ as the first argument. Raises an error if the object has no such method bound.
 ```
 
 Looks up the method with *id* in klass *class*. Returns the procedure
-implementing the method or *#f* if the method is not bound in the class
+implementing the method or `#f` if the method is not bound in the class
 hierarchy.
 
 ### call-next-method
@@ -903,7 +901,7 @@ Fold the bindings of *hash*, applying *proc* with initial *iv*.
 ```
 
 Returns the first true value returned when applying *proc* to the bindings
-of *hash* or *#f*.
+of *hash* or `#f`.
 
 ### hash-keys
 ``` scheme
@@ -1272,7 +1270,7 @@ Like `remove`, but removes the first element `x` that satisfies `(pred x)`
   num := number
 ```
 
-Increment *number* by 1.
+Increment *num* by 1.
 
 ### 1-
 ``` scheme
@@ -1281,7 +1279,7 @@ Increment *number* by 1.
   num := number
 ```
 
-Decrement *number* by 1.
+Decrement *num* by 1.
 
 ### fx1+
 ```
@@ -1351,7 +1349,7 @@ Creates a symbol concatenating the arguments.
   obj := any object
 ```
 
-Returns true if the object *obj* is an intermed symbol.
+Returns true if the object *obj* is an interned symbol.
 
 
 ### interned-keyword?
@@ -1361,7 +1359,7 @@ Returns true if the object *obj* is an intermed symbol.
   obj := any object
 ```
 
-Returns true if the object *obj* is an intermed keyword.
+Returns true if the object *obj* is an interned keyword.
 
 ### symbol-&gt;keyword
 ``` scheme
@@ -1663,8 +1661,8 @@ Coverts a vector-like object *obj* to a list, starting from field *start*.
   vectors := list of vectors
 ```
 
-Map for vectors. Traverses vector *vectors* and applies procedure *f* to each
-element and returns the result.
+Map for vectors. Traverses vector(s) *vectors* and applies procedure *f* to
+elements of each vector, stopping after shortest vector runs out of elements.
 
 ### displayln
 ``` scheme
