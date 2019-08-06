@@ -97,5 +97,6 @@ package: gerbil/gambit
   ;; tty stuff
   tty?
   tty-history tty-history-set! tty-history-max-length-set!
-  tty-text-attributes-set! tty-mode-set! tty-type-set!
+  tty-text-attributes-set! tty-mode-reset tty-mode-set!
+  tty-type-set!
   )
