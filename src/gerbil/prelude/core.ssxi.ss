@@ -776,7 +776,6 @@ package: gerbil
  tty-text-attributes-set! tty-mode-reset tty-mode-set!
  tty-type-set!
 
-
  input-port-timeout-set!
  output-port-timeout-set!
  input-port-readtable-set!
