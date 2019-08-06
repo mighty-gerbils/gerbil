@@ -1769,7 +1769,6 @@ OS-related symbols, including time.
   tty-text-attributes-set! tty-mode-reset tty-mode-set!
   tty-type-set!
 
-
 ```
 #### :gerbil/gambit/ports
 Symbols related to i/o ports, with a couple of Gerbil specific primitives.
