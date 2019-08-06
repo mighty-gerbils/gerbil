@@ -1766,7 +1766,9 @@ OS-related symbols, including time.
 
   tty?
   tty-history tty-history-set! tty-history-max-length-set!
-  tty-text-attributes-set! tty-mode-set! tty-type-set!
+  tty-text-attributes-set! tty-mode-reset tty-mode-set!
+  tty-type-set!
+
 
 ```
 #### :gerbil/gambit/ports

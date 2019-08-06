@@ -773,7 +773,9 @@ package: gerbil
  create-symbolic-link
 
  tty-history-set! tty-history-max-length-set!
- tty-text-attributes-set! tty-mode-set! tty-type-set!
+ tty-text-attributes-set! tty-mode-reset tty-mode-set!
+ tty-type-set!
+
 
  input-port-timeout-set!
  output-port-timeout-set!
