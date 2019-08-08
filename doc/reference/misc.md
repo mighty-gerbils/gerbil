@@ -402,6 +402,52 @@ within the body.
 :::
 
 
+## Bytes
+::: tip To use the bindings from this module:
+``` scheme
+(import :std/misc/bytes)
+```
+:::
+
+### bytevector-swap!
+``` scheme
+(bytevector-swap! v i j) -> void
+
+  v := u8vector
+  i := integer element position
+  j := integer element position
+```
+
+Swaps elements *i* and *j* in `bytevector` (`u8vector`) *v*.
+
+::: tip Examples:
+``` scheme
+> (def u (u8vector 1 2))
+> (bytevector-swap! u 0 1)
+> u
+#u8(2 1)
+```
+:::
+
+### bytevector-reverse!
+``` scheme
+(bytevector-reverse! v) -> void
+
+  v := u8vector
+```
+
+Reverses the elements of `bytevector` (`u8vector`) *v*.
+
+::: tip Examples:
+``` scheme
+> (def u (u8vector 1 2 3 4 5))
+> (bytevector-reverse! u)
+> u
+#u8(5 4 3 2 1)
+```
+:::
+
+
 ## Asynchronous Completions
 ::: tip To use the bindings from this module:
 ``` scheme
