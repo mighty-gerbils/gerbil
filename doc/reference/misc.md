@@ -409,43 +409,57 @@ within the body.
 ```
 :::
 
-### bytevector-swap!
+### u8vector-swap!
 ``` scheme
-(bytevector-swap! v i j) -> void
+(u8vector-swap! v i j) -> void
 
   v := u8vector
   i := integer element position
   j := integer element position
 ```
 
-Swaps elements *i* and *j* in `bytevector` (`u8vector`) *v*.
+Swaps elements *i* and *j* of `u8vector` *v*.
 
 ::: tip Examples:
 ``` scheme
 > (def u (u8vector 1 2))
-> (bytevector-swap! u 0 1)
+> (u8vector-swap! u 0 1)
 > u
 #u8(2 1)
 ```
 :::
 
-### bytevector-reverse!
+### u8vector-reverse!
 ``` scheme
-(bytevector-reverse! v) -> void
+(u8vector-reverse! v) -> void
 
   v := u8vector
 ```
 
-Reverses the elements of `bytevector` (`u8vector`) *v*.
+Reverses the elements of `u8vector` *v*.
 
 ::: tip Examples:
 ``` scheme
 > (def u (u8vector 1 2 3 4 5))
-> (bytevector-reverse! u)
+> (u8vector-reverse! u)
 > u
 #u8(5 4 3 2 1)
 ```
 :::
+
+### bytevector-swap!
+``` scheme
+(define-alias bytevector-swap! u8vector-swap!)
+```
+
+Alias for `u8vector-swap!`.
+
+### bytevector-reverse!
+``` scheme
+(define-alias bytevector-reverse! u8vector-reverse!)
+```
+
+Alias for `u8vector-reverse!`.
 
 
 ## Asynchronous Completions
