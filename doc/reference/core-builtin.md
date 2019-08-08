@@ -832,7 +832,7 @@ Updates *hash*'s binding for *key* to the result of
 `(update (hash-ref hash key default))`
 
 ### hash-remove!
-``` schem
+``` scheme
 (hash-remove! hash key) -> void
 
   hash := hash table
@@ -1407,7 +1407,7 @@ from `:std/text/utf8` which is considerably faster.
 
 
 ### substring-&gt;bytes
-``` schem
+``` scheme
 (substring->bytes str start end [encoding = 'UTF-8]) -> u8vector
 
   str := string
