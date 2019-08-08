@@ -211,6 +211,7 @@
     (gxc:  "misc/shared" "-e" "(include \"~~lib/_gambit#.scm\")")
     "misc/text"
     "misc/func"
+    "misc/bytes"
     ;; :std/protobuf
     "protobuf/io"
     "protobuf/macros"
