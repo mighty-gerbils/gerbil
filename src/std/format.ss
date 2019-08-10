@@ -11,7 +11,9 @@ package: std
            with-output-to-string
            force-output)
   (only-in :gerbil/gambit/misc
-           pretty-print))
+           pretty-print)
+  (only-in :gerbil/gambit/bits
+           integer-length))
 
 (def (format fmt . args)
   (unless (string? fmt)
@@ -141,7 +143,9 @@ package: std
 
 (defdispatch-e (#\x #\X)
   (lambda (arg)
-    (display (number->string arg 16))))
+    (let ((str (number->string arg 16))
+          (nbytes (ceiling (/ (integer-length arg) 8))))
+      (display (pad-string str (* 2 nbytes) #\0)))))
 
 (defdispatch-e (#\y #\Y)
   pretty-print)
@@ -297,8 +301,8 @@ package: std
 (def (chars->number chars)
   (string->number (apply string chars)))
 
-(def (pad-string str width)
+(def (pad-string str width (char #\space))
   (let (len (string-length str))
     (if (##fx< len width)
-      (string-append (make-string (##fx- width len) #\space) str)
+      (string-append (make-string (##fx- width len) char) str)
       str)))
