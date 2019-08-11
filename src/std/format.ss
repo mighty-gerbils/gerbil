@@ -146,7 +146,7 @@ package: std
     (let ((str (number->string arg 16))
           (nbytes (ceiling (/ (integer-length arg) 8))))
       (if (zero? nbytes)
-          (display (pad-string str (* 2 (+ 1 nbytes)) #\0))
+          (display "00")
           (display (pad-string str (* 2 nbytes) #\0))))))
 
 (defdispatch-e (#\y #\Y)
