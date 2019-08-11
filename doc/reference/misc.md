@@ -429,6 +429,13 @@ Swaps elements *i* and *j* of `u8vector` *v*.
 ```
 :::
 
+### bytevector-swap!
+``` scheme
+(define-alias bytevector-swap! u8vector-swap!)
+```
+
+Alias for `u8vector-swap!`.
+
 ### u8vector-reverse!
 ``` scheme
 (u8vector-reverse! v) -> void
@@ -447,19 +454,59 @@ Reverses the elements of `u8vector` *v*.
 ```
 :::
 
-### bytevector-swap!
-``` scheme
-(define-alias bytevector-swap! u8vector-swap!)
-```
-
-Alias for `u8vector-swap!`.
-
 ### bytevector-reverse!
 ``` scheme
 (define-alias bytevector-reverse! u8vector-reverse!)
 ```
 
 Alias for `u8vector-reverse!`.
+
+### u8vector->bytestring
+``` scheme
+(u8vector->bytestring v) -> bytestring
+
+  v := u8vector
+```
+
+Constructs a string of bytes in hexadecimal from `u8vector` *v*.
+
+Each byte is formatted as two uppercase hex characters using `std/format`
+and separated using `#\space` as a delimiter.
+
+::: tip Examples:
+``` scheme
+> (u8vector->bytestring (u8vector 255 127 11 1 0))
+"FF 7F 0B 01 00"
+> (displayln (u8vector->bytestring (u8vector 255 127 11 1 0)))
+FF 7F 0B 01 00
+```
+:::
+
+### bytestring->u8vector
+``` scheme
+(bytestring->u8vector bs) -> u8vector
+
+  bs := bytestring
+```
+
+Constructs a `u8vector` from bytestring *bs*.
+
+This function expects a string of bytes delimited by `#\space`. Each
+byte consists of two hexadecimal characters.
+
+Note that the behaviour of this function is different from `string->bytes`, 
+which assumes an encoding.
+
+::: tip Examples:
+``` scheme
+> (bytestring->u8vector "FF AB 00")                
+#u8(255 171 0)
+> (u8vector->bytestring (bytestring->u8vector "FF AB 00"))
+"FF AB 00"
+> (string->bytes "FF AB 00")                      
+#u8(70 70 32 65 66 32 48 48)
+```
+:::
 
 
 ## Asynchronous Completions

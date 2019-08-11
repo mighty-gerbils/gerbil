@@ -145,7 +145,9 @@ package: std
   (lambda (arg)
     (let ((str (number->string arg 16))
           (nbytes (ceiling (/ (integer-length arg) 8))))
-      (display (pad-string str (* 2 nbytes) #\0)))))
+      (if (zero? nbytes)
+          (display "00")
+          (display (pad-string str (* 2 nbytes) #\0))))))
 
 (defdispatch-e (#\y #\Y)
   pretty-print)
