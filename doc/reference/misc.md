@@ -463,15 +463,16 @@ Alias for `u8vector-reverse!`.
 
 ### u8vector->bytestring
 ``` scheme
-(u8vector->bytestring v) -> bytestring
+(u8vector->bytestring v (delim " ")) -> bytestring
 
   v := u8vector
+  delim := string
 ```
 
 Constructs a string of bytes in hexadecimal from `u8vector` *v*.
 
 Each byte is formatted as two uppercase hex characters using `std/format`
-and separated using `#\space` as a delimiter.
+and separated using `" "` as a delimiter.
 
 ::: tip Examples:
 ``` scheme
@@ -479,6 +480,8 @@ and separated using `#\space` as a delimiter.
 "FF 7F 0B 01 00"
 > (displayln (u8vector->bytestring (u8vector 255 127 11 1 0)))
 FF 7F 0B 01 00
+> (u8vector->bytestring (u8vector 1 2 3) "")
+"010203"
 ```
 :::
 
@@ -507,6 +510,46 @@ which assumes an encoding.
 #u8(70 70 32 65 66 32 48 48)
 ```
 :::
+
+### u8vector->uint
+``` scheme
+(u8vector->uint v (guard #t)) -> uint | void
+
+  v := u8vector
+  guard := boolean
+```
+
+Computes the `uint` representation of `u8vector` *v* for vector length up to 8.
+
+If *guard* is `#t` raises an exception on vectors of length greater than 8.
+
+If *guard* is `#f`, computation on longer vectors is allowed to proceed.
+
+::: tip Examples:
+``` scheme
+> (u8vector->uint #u8(0 1))
+1
+> (u8vector->uint (make-u8vector 2 #xFF))
+65535
+> (u8vector->uint (make-u8vector 8 #xFF))
+18446744073709551615
+> (equal? (- (expt 2 64) 1) (u8vector->uint (make-u8vector 8 #xFF)))
+#t
+> (u8vector->uint (make-u8vector 10 #xFF))
+*** ERROR IN (console)@7.1 -- Disable guard to compute on u8vectors of length > 8. #u8(255 255 255 255 255 255 255 255 255 255)
+> (u8vector->uint (make-u8vector 10 #xFF) #f)
+1208925819614629174706175
+> (equal? (- (expt 2 80) 1) (u8vector->uint (make-u8vector 10 #xFF) #f))
+#t
+```
+:::
+
+### bytevector->uint
+``` scheme
+(define-alias bytevector->uint u8vector->uint)
+```
+
+Alias for `u8vector->uint`.
 
 
 ## Asynchronous Completions
