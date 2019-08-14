@@ -195,7 +195,7 @@ Special expander indirection hooks; explained elsewhere in the documentation.
 ### Reserved Syntactic Tokens
 The following widely used syntactic tokens are defined as reserved expanders:
 ```
-_ ... else => unqute unquote-splicing unsyntax unsyntax-splicing
+_ ... else => unquote unquote-splicing unsyntax unsyntax-splicing
 ```
 
 
@@ -402,7 +402,7 @@ The common iteration macro and its inverted form.
 => (letrec ((id expr)) id)
 
 (rec (values id ...) expr)
-=> (leterc ((values id ...) expr) (values id ...))
+=> (letrec ((values id ...) expr) (values id ...))
 
 (rec (id . args) body ...)
 => (letrec (id (lambda args body ...)) id)
@@ -1766,7 +1766,8 @@ OS-related symbols, including time.
 
   tty?
   tty-history tty-history-set! tty-history-max-length-set!
-  tty-text-attributes-set! tty-mode-set! tty-type-set!
+  tty-text-attributes-set! tty-mode-reset tty-mode-set!
+  tty-type-set!
 
 ```
 #### :gerbil/gambit/ports

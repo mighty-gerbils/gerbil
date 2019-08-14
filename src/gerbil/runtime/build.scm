@@ -36,7 +36,7 @@
   (let* ((gx-version-path "gx-version.scm")
          (git-version
           (and (file-exists? "../../../.git")
-               (let* ((proc (open-process '(path: "git" arguments: ("describe" "--tags")
+               (let* ((proc (open-process '(path: "git" arguments: ("describe" "--tags" "--always")
                                                   show-console: #f)))
                       (version (read-line proc)))
                  (and (zero? (process-status proc))

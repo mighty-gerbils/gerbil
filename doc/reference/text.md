@@ -1,126 +1,170 @@
 # Text Encoding and Decoding
 
+This module provides utilities to encode and decode text in various methods.
+
 ## Base64
-::: tip usage
+
+These provide text conversions according to RFC XXX.
+
+### Base64 coding support notes
+
+
+#### Support for urlsafe coding
+In this mode, #\- instead of #\+ and #\_ is used instead of #\/. For this coding
+to work, the padding should be turned off during encoding (so there's no #\=:s
+in the output).  Also known as the "Base64 with URL and Filename Safe Alphabet"
+aka base64url of RFC 4648.
+
+#### Support for presence and absence of end padding
+Supports both the older encoding with padding, and the unpadded form that's
+slightly smaller, that is gaining popularity in decoders currently, currently
+implemented in decoders such as that of Ecmascript 5 and the apache-commons Java
+library. We imitate this functionality, while offering the option of not
+outputting padding on encoding, as well as requiring padding on decoding.
+
+Basically the requirement for padding on base64encoded was motivated by the
+scarce nature of computing resources in the 1980:s. Today there's a move toward
+not requiring the padding, as reflected for instance in Ecmascript 5's spec to
+produce the padding on encode but not to require it on decode.
+
+For some more references see:
+- [Description of JS5 btoa()](https://en.wikipedia.org/wiki/Base64#HTML)
+- [Why does base64 encoding require padding if the input length is not divisible by 3?](http://stackoverflow.com/questions/4080988/why-does-base64-encoding-requires-padding-if-the-input-length-is-not-divisible-b)
+- [Why padding is used in Base64 encoding?](http://stackoverflow.com/questions/4322507/why-padding-is-used-in-base64-encoding)
+- [Remove trailing “=” when base64 encoding](http://stackoverflow.com/questions/4492426/remove-trailing-when-base64-encoding)
+- [URLEncoding padding is optional](https://github.com/golang/go/issues/4237)
+
+
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/text/base64)
-:::
-
-### base64-encode
-::: tip usage
-```
-(base64-encode ...)
 ```
 :::
-
-Please document me!
-
-### base64-encode-subu8vector
-::: tip usage
-```
-(base64-encode-subu8vector ...)
-```
-:::
-
-Please document me!
-
-### u8vector-&gt;base64-string
-::: tip usage
-```
-(u8vector->base64-string ...)
-```
-:::
-
-Please document me!
-
-### subu8vector-&gt;base64-string
-::: tip usage
-```
-(subu8vector->base64-string ...)
-```
-:::
-
-Please document me!
-
-### base64-decode
-::: tip usage
-```
-(base64-decode ...)
-```
-:::
-
-Please document me!
-
-### base64-decode-substring
-::: tip usage
-```
-(base64-decode-substring ...)
-```
-:::
-
-Please document me!
-
-### base64-substring-&gt;u8vector
-::: tip usage
-```
-(base64-substring->u8vector ...)
-```
-:::
-
-Please document me!
 
 ### base64-string-&gt;u8vector
-::: tip usage
+``` scheme
+(base64-string->u8vector str [nopadding-ok?: #t] [urlsafe?: #f]) -> u8vector
+
+  str           := string to convert
+  nopadding-ok? := boolean to disable padding
+  urlsafe?      := boolean to enable urlsafe coding
 ```
-(base64-string->u8vector ...)
+
+Returns newly allocated u8vector with Base64 encoded contents of *str*. Optional keyword arguments
+control how the conversion is done. If *nopadding-ok?* is #t (default) the value
+is converted. If *urlsafe?* is #t, the result is URL encoded as specified in RFC XXX
+...
+
+### base64-substring-&gt;u8vector
+``` scheme
+(base64-substring->u8vector str start end [nopadding-ok?: #t] [urlsafe?: #f]) ->
+u8vector
+
+  str           := string of base64 data
+  start         := exact integer starting index
+  end           := exact integer ending index
+  nopadding-ok? := boolean to disable padding
+  urlsafe?      := boolean to enable urlsafe coding
 ```
-:::
 
-Please document me!
+Returns newly allocated u8vector containing base64 encoded value of *str* from
+*start* to *end* like `base64-string->u8vector`.
 
+### u8vector-&gt;base64-string
+``` scheme
+(u8vector->base64-string u8vect [width: 0] [padding?: #t] [urlsafe?: #f]) -> string
 
+  u8vect   := u8vector to convert
+  width    := exact integer for padding width
+  padding? := boolean to enable padding
+  urlsafe? := boolean to enable urlsafe coding
+```
+
+Returns newly allocated base64 string with bytes of *u8vect* in left-to-right order to base64 encoded string.
+
+### subu8vector-&gt;base64-string
+``` scheme
+(subu8vector->base64-string u8vect start end [width: 0] [padding?: #t] [urlsafe?: #f]) -> string
+
+  u8vect   := u8vector to encode data from
+  start    := exact integer starting index
+  end      := exact integer end index
+  width    := exact integer for padding width
+  padding? := boolean to enable padding
+  urlsafe? := boolean to enable urlsafe coding
+```
+
+Returns newly allocated string with bytes of *u8vect* base64 encoded in
+left-to-right order from *start* to *end*.
+
+### base64-decode
+``` scheme
+(base64-decode str [nopadding-ok?: #t] [urlsafe: #f]) -> u8vector
+```
+
+This is an alias for `base64-string->u8vector`. See its definition for details.
+
+### base64-decode-substring
+``` scheme
+(base64-decode-substring str start end [nopaddind-ok?: #t] [urlsafe: #f]) -> u8vector
+```
+
+This is an alias for `base64-substring->u8vector`. See its definition for details.
+
+### base64-encode
+``` scheme
+(base64-encode u8vect [width: 0] [padding: #t] [urlsafe: #f]) -> string
+```
+
+This is an alias for `u8vector->base64-string`. See its definition for details.
+
+### base64-encode-subu8vector
+``` scheme
+(base64-encode-subu8vector u8vect start end [width: 0] [padding?: #t] [urlsafe?: #f]) -> string
+```
+
+This is an alias for `subu8vector->base64-string`. See its definition for details.
 
 ## Base58
 The `:std/text/base58` library provides encoding and decoding to base58.
 
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/text/base58)
+```
 :::
 
 ### base58-encode
-::: tip usage
+``` scheme
+(base58-encode bytes [alphabet = base58-btc-alphabet]) -> string
+
+  bytes    := u8vector
+  alphabet := optional encoding alphabet
 ```
-(base58-encode bytes [alphabet = base58-btc-alphabet])
-  bytes := u8vector
-  alphabet := encoding alphabet
-=> string
-```
-:::
 
 Base58 encodes a u8vector, using the given alphabet.
 
 ### base58-decode
-::: tip usage
-```
-(base58-decode str [alphabet = base58-btc-alphabet])
+``` scheme
+(base58-decode str [alphabet = base58-btc-alphabet]) -> u8vector | error
+
   str := string; base58 encoded
   alphabet := decoding alphabet
-=> u8vetor
 ```
-:::
 
-Base58 decodes a string, using the given alphabet
+Base58 decodes a string, using the given *alphabet*. Signals a error on invalid characters.
 
 ### base58-btc-alphabet
-```
+``` scheme
 (def base58-btc-alphabet)
 ```
 
 The base58 encoding alphabet used by Bitcoin.
 
 ### base58-flickr-alphabet
-::: tip usage
+``` scheme
 (def base58-flickr-alphabet)
-:::
+```
 
 The base58 encoding alphabet used by Flickr.
 
@@ -129,374 +173,456 @@ The base58 encoding alphabet used by Flickr.
 
 CSV parser and unparser.
 
-::: tip usage
+::: tip To use the bindings from this module:
+```scheme
 (import :std/text/csv)
+```
 :::
+
 
 ### Overview
 It is configurable through parameters to fit whichever CSV options your files use,
-defaulting to the "standard" from the creativyst specification.
-Parameters for RFC4180 are just a call-with- function call around.
+defaulting to the "standard" from the [creativyst
+specification](http://www.creativyst.com/Doc/Articles/CSV/CSV01.htm). Parameters for [RFC4180](https://tools.ietf.org/html/rfc4180) are just a call-with- function call around.
 
-The parameters are: `csv-separator` `csv-quote` `csv-unquoted-quotequote?` `csv-loose-quote?`
-`csv-eol` `csv-line-endings` `csv-skip-whitespace?` `csv-allow-binary?`
+The parameters are: `csv-separator`, `csv-quote`, `csv-unquoted-quotequote?`,
+`csv-loose-quote?`, `csv-eol`, `csv-line-endings`, `csv-skip-whitespace?`, `csv-allow-binary?`
 
-Functions to locally set the parameters to known values are `call-with-creativyst-csv-syntax` `call-with-rfc4180-csv-syntax` `call-with-strict-rfc4180-csv-syntax`
+Functions to locally set the parameters to known values are `call-with-creativyst-csv-syntax`, `call-with-rfc4180-csv-syntax`, `call-with-strict-rfc4180-csv-syntax`
 
-The parsing and unparsing functions are `read-csv-line` `read-csv-lines` `read-csv-file` `write-csv-line` `write-csv-lines`.
+The parsing and unparsing functions are `read-csv-line`, `read-csv-lines`, `read-csv-file`, `write-csv-line`, `write-csv-lines`.
 
 ### read-csv-line
-::: tip usage
-```
-(read-csv-line ...)
-```
-:::
+``` scheme
+(read-csv-line port) -> list | error
 
-Please document me!
+  port := input port
+```
+
+Read one line from *port* in CSV format, using the current syntax parameters.
+Return a list of strings, one for each field in the line.  Entries are read as
+strings; it is up to you to interpret the strings as whatever you want. Signals
+an error on malformed CSV entries.
 
 ### read-csv-lines
-::: tip usage
+``` scheme
+(read-csv-lines port) -> list | error
+
+  port := input port
 ```
-(read-csv-lines ...)
+
+::: tip Examples
+``` scheme
+> (let ((csv-data "id;city;population\n01;Foobar;1200000\n02;Barville;250001\n03;Baz;21\n"))
+    (read-csv-lines (open-input-string csv-data)))
+(("id;city;population") ("01;Foobar;1200000") ("02;Barville;250001")("03;Baz;21"))
+
 ```
 :::
 
-Please document me!
+Read lines from *port* in CSV format, using the current syntax parameters.  Return
+a list of list of strings, one entry for each line, that contains one entry for
+each field.  Entries are read as strings; it is up to you to interpret the
+strings as whatever you want. Signals an error malformed CSV entries.
 
 ### read-csv-file
-::: tip usage
-```
-(read-csv-file ...)
-```
-:::
+``` scheme
+(read-csv-file path [settings]) -> list | error
 
-Please document me!
+  path := file path to csv file as string
+  settings := optional settings configuring csv parsing
+```
+
+Open the file designated by the *path*, using the provided *settings* if any,
+and call `read-csv-lines` on it.
 
 ### write-csv-line
-::: tip usage
-```
-(write-csv-line ...)
-```
-:::
+``` scheme
+(write-csv-line fields port) -> void
 
-Please document me!
+  fields := list of strings
+  port   := output port
+```
+
+Format one line of *fields* to *port* in CSV format, using the current syntax parameters.
 
 ### write-csv-lines
-::: tip usage
-```
-(write-csv-lines ...)
-```
-:::
+``` scheme
+(write-csv-lines lines port) -> void
 
-Please document me!
+  lines := list of strings
+  port  := output port
+```
+
+Given a list of *lines*, each of them a list of fields, and a PORT,
+format those lines as CSV according to the current syntax parameters.
 
 ### call-with-creativyst-csv-syntax
-::: tip usage
-```
-(call-with-creativyst-csv-syntax ...)
-```
-:::
+``` scheme
+(call-with-creativyst-csv-syntax thunk) -> any
 
-Please document me!
+  thunk := procedure without parameters
+```
+
+Sets CSV parsing to match rules by creativyst and calls procedure *thunk*
+returning its value.
 
 ### call-with-rfc4180-csv-syntax
-::: tip usage
-```
-(call-with-rfc4180-csv-syntax ...)
-```
-:::
+``` scheme
+(call-with-rfc4180-csv-syntax thunk) -> any
 
-Please document me!
+  thunk := procedure without parameters
+```
+
+Sets CSV parsing to match rules by RFC4180 and calls procedure *thunk*
+returning its value.
 
 ### call-with-strict-rfc4180-csv-syntax
-::: tip usage
-```
-(call-with-strict-rfc4180-csv-syntax ...)
-```
-:::
+``` scheme
+(call-with-strict-rfc4180-csv-syntax thunk) -> any
 
-Please document me!
+  thunk := procedure without parameters
+```
+
+Sets CSV parsing to match rules by strict RFC4180 and calls procedure *thunk*
+returning its value.
 
 ### csv-separator
-::: tip usage
+``` scheme
+csv-separator
 ```
-(csv-separator ...)
-```
-:::
 
-Please document me!
+Separator used between CSV fields, defaults to `,`.
 
 ### csv-quote
-::: tip usage
+``` scheme
+csv-quote
 ```
-(csv-quote ...)
-```
-:::
 
-Please document me!
+Delimiter of string data; pascal-like quoted as double itself in a
+string. Defaults to `"`.
 
 ### csv-unquoted-quotequote?
-::: tip usage
+``` scheme
+csv-unquoted-quotequote?
 ```
-(csv-unquoted-quotequote? ...)
-```
-:::
-
-Please document me!
+Boolean to control does a pair of quotes represent a quote outside of quotes?
+M$, RFC says #f, csv.3tcl says #t. Defaults to #f.
 
 ### csv-loose-quote?
-::: tip usage
+``` scheme
+csv-loose-quote?
 ```
-(csv-loose-quote? ...)
-```
-:::
 
-Please document me!
+Boolean to control can quotes appear anywhere in a field? Defaults to #f.
 
 ### csv-eol
-::: tip usage
+``` scheme
+csv-eol
 ```
-(csv-eol ...)
-```
-:::
 
-Please document me!
+Line ending when exporting CSV. Defaults to `[+crlf+ +lf+]`.
 
 ### csv-line-endings
-::: tip usage
+``` scheme
+csv-line-endings
 ```
-(csv-line-endings ...)
-```
-:::
 
-Please document me!
+Acceptable line endings when importing CSV. Defaults to `[+cr+ +lf+ +crlf+]`.
 
 ### csv-skip-whitespace?
-::: tip usage
+``` scheme
+csv-skip-whitespace?
 ```
-(csv-skip-whitespace? ...)
-```
-:::
 
-Please document me!
+Boolean controls shall we skip unquoted whitespace around separators? Defaults
+to #t.
 
 ### csv-allow-binary?
-::: tip usage
+``` scheme
+csv-allow-binary?
 ```
-(csv-allow-binary? ...)
-```
-:::
 
-Please document me!
-
+Boolean to control do we accept non-ascii data? Defaults to #t.
 
 ## Hex
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/text/hex)
+```
 :::
 
 ### hex-encode
-::: tip usage
-```
-(hex-encode ...)
-```
-:::
+``` scheme
+(hex-encode bytes [start = 0] [end = #f]) -> string
 
-Please document me!
+  bytes := u8vector to convert
+  start := exact integer as start index
+  end   := exact integer as end index | #f
+```
+
+Returns newly allocated string containing hex encoded characters from given
+*bytes*.
+Optional *start* gives starting index to start the encoding, *end* gives ending
+index. Giving #f in *end* means reading to the end of byte vector.
 
 ### hexlify
-```
+``` scheme
 (defialias hexlify hex-encode)
 ```
 
-Please document me!
+Short for `hex-encode`.
 
 ### hex-decode
-::: tip usage
-```
-(hex-decode ...)
-```
-:::
+``` scheme
+(hex-decode str) -> u8vector | error
 
-Please document me!
+  str := string to decode
+```
+
+Returns newly allocated u8vector with contents set to hex decoded *str*.
 
 ### unhexlify
-```
+``` scheme
 (defalias unhexlify hex-decode)
 ```
 
-Please document me!
+Short for `hex-decode`.
 
 ### hex
-::: tip usage
+``` scheme
+(hex u4) -> character | error
 ```
-(hex ...)
+
+Returns hex character for give *u4* integer value. Signals an error if integer
+value can't be converted to hex.
+
+::: tip Examples
+``` scheme
+> (hex 15)
+#\f
+> (hex 1)
+#\1
+> (hex 99)
+*** ERROR IN (console)@20.1 -- (Argument 2) Out of range
+(string-ref "0123456789abcdef" 99)
+1>
 ```
 :::
-
-Please document me!
 
 ### unhex
-::: tip usage
+``` scheme
+(unhex char) -> exact integer | error
 ```
-(unhex ...)
+
+Returns hex value for given *char*. Signals an error if *char* isn't valid hex
+character.
+
+::: tip Examples
+``` scheme
+> (unhex #\f)
+15
+> (unhex #\3)
+3
+> (unhex #\i)
+*** ERROR IN (console)@12.1 -- Unbound table key
+(table-ref '#<table #4> #\i)
+1>
 ```
 :::
-
-Please document me!
 
 ### unhex*
-::: tip usage
+``` scheme
+(unhex* char) -> character | #f
 ```
-(unhex* ...)
+
+Returns hex value for given *char*. Returns #f if *char* isn't valid hex
+character.
+
+::: tip Examples
+``` scheme
+> (unhex* #\f)
+15
+> (unhex* #\3)
+3
+> (unhex* #\i)
+#f
+>
 ```
 :::
 
-Please document me!
-
-
 ## JSON
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/text/json)
+```
 :::
 
 ### read-json
-::: tip usage
-```
-(read-json ...)
-```
-:::
+``` scheme
+(read-json [port = (current-input-port)]) -> json | error
 
-Please document me!
+  port := input-port to read JSON data
+```
+
+Returns JSON object from given *port*. Signals an error if fails to parse JSON.
 
 ### write-json
-::: tip usage
-```
-(write-json ...)
-```
-:::
+``` scheme
+(write-json obj [port = (current-output-port)]) -> void | error
 
-Please document me!
+  obj := JSON object
+```
+
+Writes JSON object *obj* optionally given *port*. Defaults to using
+current-ouput-port. Signals an error on failed write.
 
 ### string-&gt;json-object
-::: tip usage
-```
-(string->json-object ...)
-```
-:::
+``` scheme
+(string->json-object str) -> json | error
 
-Please document me!
+  str := a string of JSON data
+```
+
+Parses given *str* and returns JSON object or signals an error fails to parse.
 
 ### json-object-&gt;string
-::: tip usage
-```
-(json-object->string ...)
-```
-:::
+``` scheme
+(json-object->string obj) -> string | error
 
-Please document me!
+  obj := JSON object
+```
+
+Returns newly allocated string with JSON object as a string. Signals an error if
+fails to parse JSON.
 
 ### json-symbolic-keys
-::: tip usage
+``` scheme
+json-symbolic-keys
 ```
-(json-symbolic-keys ...)
-```
-:::
 
-Please document me!
-
-
+Boolean to control should decoded hashes have symbols as keys? Defaults to #t.
 
 ## UTF8
 Faster UTF8 encoding and decoding.
 
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/text/utf8)
+```
 :::
 
 ### string-&gt;utf8
-::: tip usage
-```
-(string->utf8 ...)
-```
-:::
+``` scheme
+(string->utf8 str [start = 0] [end = (string-length str)]) -> u8vector | error
 
-Please document me!
+  str   := string of UTF-8 data
+  start := exact integer for starting index
+  end   := exact integer for end index
+```
+
+Returns newly allocated u8vector with UTF-8 data from *str* converted to
+bytes. Optional *start* and *end* limit the operation to substring of *str*.
 
 ### utf8-&gt;string
-::: tip usage
-```
-(utf8->string ...)
-```
-:::
+``` scheme
+(utf8->string u8v [start = 0] [end = (u8vector-length str)]) -> string | error
 
-Please document me!
+  u8v   := u8vector of data to convert
+  start := exact integer for starting index
+  end   := exact integer for ending index
+```
+
+Returns newly allocated string with UTF-8 contents from *u8v*. Optional *start*
+and *end* parameters limit the operation to sub-vector of given indexes. The
+parsing will signal error on decoding issues.
 
 ### utf8-encode
-::: tip usage
-```
-(utf8-encode ...)
-```
-:::
+``` scheme
+(utf8-encode str start end) -> u8vector
 
-Please document me!
+  str   := UTF-8 encoded string
+  start := exact integer for starting index
+  end   := exact integer for ending index
+```
+
+Returns newly allocated u8vector with byte data of UTF-8 string *str*. Optional
+*start* and *end*.
 
 ### utf8-decode
-::: tip usage
-```
-(utf8-decode ...)
-```
-:::
+``` scheme
+(utf8-decode u8v start end) -> string | error
 
-Please document me!
+  u8v   := u8vector of input data
+  start := exact integer for starting index
+  end   := exact integer for ending index
+```
+
+Decodes the bytes in byte vector *u8v* from *start* index until *end* index and
+returns the results as a string. Will signal an error if fails to parse UTF-8 bytes.
 
 ### string-utf8-length
-::: tip usage
+``` scheme
+(string-utf8-length str [start = 0] [end = (string-length str)]) -> integer | error
 ```
-(string-utf8-length ...)
+
+Returns the byte length of given UTF-8 string *str*. Optional *start* and *end*
+indexes limit the operation on substring. Signals an error if *str* isn't
+string.
+
+::: tip Examples
+``` scheme
+> (import :std/format)
+> (import :std/text/utf8)
+
+> (let ((s  "uber")
+        (us "über"))
+    (printf "s length: ~a\n" (string-length s))
+    (printf "u length: ~a\n" (string-length us))
+    (newline)
+    (printf "s utf8-length: ~a\n" (string-utf8-length s))
+    (printf "u utf8-length: ~a\n" (string-utf8-length us)))
+s length: 4
+u length: 5
+
+s utf8-length: 4
+u utf8-length: 7
+
 ```
 :::
-
-Please document me!
-
 
 
 ## YAML
-YAML parsing and dumping; requires libyaml.
+YAML parsing and dumping; this module requires that Gerbil scheme is compiled
+against libyaml.
 
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/text/yaml)
+```
 :::
 
 ### yaml-load
-::: tip usage
-```
-(yaml-load filename)
+``` scheme
+(yaml-load filename) -> any | error
   filename := string
-=> any
 ```
-:::
 
-Loads a YAML file.
+Loads a YAML data from given *filename*. Signals an error if fails to parse YAML.
 
 ### yaml-load-string
-::: tip usage
+``` scheme
+(yaml-load-string str) -> any | error
+  str := string of YAML data
 ```
-(yaml-load-string str)
-  str := string
-=> any
-```
-:::
 
-Parses a YAML string.
+Parses a YAML data from *str*. Signals an error if fails to parse YAML.
 
 ### yaml-dump
-::: tip usage
-```
+``` scheme
 (yaml-dump filename . args)
   filename := string
 ```
-:::
 
 Dumps the arguments to a YAML file.
 
@@ -504,34 +630,45 @@ Dumps the arguments to a YAML file.
 ## Zlib
 Compression and decompression with zlib.
 
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/text/zlib)
+```
 :::
 
 
 ### compress
-::: tip usage
-```
-(compress ...)
-```
-:::
+``` scheme
+(compress data [level = 6]) -> u8vector | string | port | error
 
-Please document me!
+  data  := u8vector, string or input-port
+  level := optional integer value, from 0 to 9
+```
+
+Compresses given *data* using zlib. The return value varies by given *data*'s
+ type. If given u8vector the return value is newly allocated u8vector with
+ contents of data compressed. Signals a error on wrong type of *data*.
+
+The optional *level* parameter sets the compression level used. Value of 1 gives
+best speed, 9 gives best compression, 0 gives no compression at all (the input
+data is simply copied a block at a time).
 
 ### compress-gz
-::: tip usage
-```
-(compress-gz ...)
-```
-:::
+``` scheme
+(compress-gz data [level = 6]) -> u8vector | string | input-port | error
 
-Please document me!
+  data  := u8vector, string, or input-port
+  level := optional integer value, from 0 to 9
+```
+
+Compresses data given in *data* as `compress` procudere but in addition gzip
+encodes it. Signals a error on wrong type of *data*.
 
 ### uncompress
-::: tip usage
-```
-(uncompress ...)
-```
-:::
+``` scheme
+(uncompress data) -> u8vector | error
 
-Please document me!
+  data := u8vector or input-port
+```
+
+Returns uncompressed bytes from *data*. Signals a error on wrong type of *data*.

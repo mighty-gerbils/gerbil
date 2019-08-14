@@ -19,6 +19,7 @@
         "misc/rbtree-test"
         "misc/barrier-test"
         "misc/completion-test"
+        "misc/bytes-test"
         "text/csv-test"
         "text/json-test"
         "text/utf8-test"
@@ -71,6 +72,7 @@
    rbtree-test
    barrier-test
    completion-test
+   bytes-test
    actor-xdr-test
    actor-rpc-test
    actor-rpc-stream-test

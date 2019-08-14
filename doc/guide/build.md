@@ -1,6 +1,6 @@
 # The Standard Library Build Tool
 
-Building complex libraries and executables by invoking gxc quickly gets tedious. When you reach that point of complexity when you need a build tool, you can use the std/make library module which provides a modest build tool that can handle reasonably complex project building.
+Building complex libraries and executables by invoking gxc quickly gets tedious. When you reach that point of complexity and you need a build tool, you can use the `:std/make` library module which provides a modest build tool that can handle reasonably complex project building.
 
 ## The project source code
 
@@ -105,9 +105,9 @@ After the initial dependency graph generation, we can build during development b
 
 ## Building static executables
 
-Static executables are simply to build:
+Static executables are simple to build:
 
-- the executable are specified with the static-exe: build spec in place of exe:.
+- the executables are specified with the static-exe: build spec in place of exe:.
 - the make invocation needs static: #t to be specified so that static compilation artifacts are built for modules.
 
 However, there is a nuance: you usually don't want to build static executables with debug introspection as this will blow the executable size significantly.

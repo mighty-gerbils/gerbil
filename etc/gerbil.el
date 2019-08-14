@@ -33,7 +33,7 @@
         (string-len (length string)))
     (comint-check-source string)
     (comint-send-string (scheme-proc) string)
-    (gerbil-message (subseq string 0 (string-match "\n" string)))))
+    (gerbil-message (seq-subseq string 0 (string-match "\n" string)))))
 
 ;; -------
 

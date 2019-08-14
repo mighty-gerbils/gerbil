@@ -17,7 +17,14 @@ package: std/misc
   push!
   flatten
   flatten1
-  when-list-or-empty)
+  rassoc
+  when-list-or-empty
+  slice slice-right
+  slice! slice-right!
+  butlast
+  split)
+
+(import (only-in :std/srfi/1 drop drop-right drop-right! take take-right take! reverse!))
 
 ;; This function checks if the list is a proper association-list.
 ;; ie it has the form [[key1 . val1] [key2 . val2]]
@@ -191,10 +198,90 @@ package: std/misc
 	 []
 	 list-of-lists))
 
+;; Returns the first pair in alist whose cdr satisfies cmpf, or #f otherwise.
+;; Analog to assoc, but checks cdr instead of car.
+;; (rassoc 2 '((a . 1) (b . 2) (c . 3)))      => (b . 2)
+;; (rassoc "a" '((1 . "a") (2 . "b")))        => #f
+;; (rassoc "a" '((1 . "a") (2 . "b")) equal?) => (1 . "a")
+(def (rassoc x alist (cmpf eqv?))
+  (let loop ((lst alist))
+    (match lst
+      ([(? pair? head) . tail]
+       (if (cmpf x (cdr head))
+         head
+         (loop tail)))
+      (else #f))))
+
 ;; Macro which evaluates the body only if the passed value is
 ;; a non-empty list, otherwise an empty list is returned.
 (defrules when-list-or-empty ()
   ((_ list body body* ...)
-   (if (null? list)
+   (if (not (pair? list))
      []
-     body body* ...)))
+     (begin body body* ...))))
+
+;; Returns a list from lst, starting from the left at start,
+;; containing limit elements.
+;; (slice [1 2 3 4] 2)   => (3 4)
+;; (slice [1 2 3 4] 2 1) => (3)
+(def (slice lst start (limit #f))
+  (if limit
+    (take (drop lst start) limit)
+    (drop lst start)))
+
+;; Returns a list from lst, starting from the right at start,
+;; containing limit elements.
+;; (slice-right [1 2 3 4] 2)   => (1 2)
+;; (slice-right [1 2 3 4] 2 1) => (2)
+(def (slice-right lst start (limit #f))
+  (if limit
+    (take-right (drop-right lst start) limit)
+    (drop-right lst start)))
+
+;; Returns a sublist by potentially updating the input list lst.
+;; Starting from the left at start, containing limit elements.
+;; (def lst [1 2 3 4 5])
+;; (slice! lst 2 2)
+;; => (3 4)
+(def (slice! lst start (limit #f))
+  (if limit
+    (take! (drop lst start) limit)
+    (drop lst start)))
+
+;; Returns a sublist by potentially updating the input list lst.
+;; Starting from the right at start, containing limit elements.
+;; (def lst [1 2 3 4 5])
+;; (slice-right! lst 2 2)
+;; => (2 3)
+(def (slice-right! lst start (limit #f))
+  (if limit
+    (take-right (drop-right! lst start) limit)
+    (drop-right! lst start)))
+
+;; butlast returns a copy of the proper list lst, except the last element.
+;; When lst is empty, lst is returned as it is.
+;; (butlast [1 2 3]) => (1 2)
+;; (butlast [])      => ()
+(def (butlast lst)
+  (if (pair? lst)
+    (take lst (1- (length lst)))
+    lst))
+
+;; split the list lst into a list-of-lists using the unary procedure proc.
+;; (split '(1 2 "hi" 3 4) string?)                 => ((1 2) (3 4))
+;; (split '(1 2 a 3 4) (lambda (x) (equal? x 'a))) => ((1 2) (3 4))
+;; (split '(1 2 a 3 4) (cut equal? <> 'a))         => ((1 2) (3 4))
+;; (split [] number?)                              => ()
+(def (split lst proc)
+  (def (new-acc acc cur)
+    (if (pair? cur) (cons* (reverse! cur) acc) cur))
+  (let loop ((cur []) (acc []) (lst lst))
+    (cond
+     ((pair? lst)
+      (if (proc (car lst))
+	(loop [] (new-acc acc cur) (cdr lst))
+	(loop (cons (car lst) cur) acc (cdr lst))))
+     (else
+      (if (pair? cur)
+	(snoc (reverse! cur) acc)
+	acc)))))
