@@ -1,3 +1,126 @@
+gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110ubuntu2~1.gbp4f4109) UNRELEASED; urgency=medium
+
+  ** SNAPSHOT build @4f4109c12922826332d817cc92663c7d4b104de2 **
+
+  [ Xiao-Yong Jin ]
+  * simplify shell scripts
+
+  [ Drew Crampsie ]
+  * Update debian/README.debian.org to coincide with the snapshot release.
+
+  [ dwdv ]
+  * std/misc/list: add rassoc function and tests
+  * doc: document rassoc function in std/misc/list
+  * fix: change expected rassoc test result
+  * doc: overhaul std/misc/list documentation, adding example code
+  * fix: when-list-or-empty documentation and name doesn't match impl
+  * fix: wrap else clause body in begin
+  * doc: overhaul std/misc import declarations
+  * doc: overhaul std/misc/shuffle documentation
+  * doc: overhaul std/misc/func
+  * doc: fix table alignment and small inline-code in std/misc/list
+  * doc: overhaul std/misc/timeout documentation
+  * doc: overhaul std/misc/string documentation
+  * doc: add documentation template to std/misc markdown file
+  * doc: overhaul std/misc/uuid documentation
+  * fix: std/misc/uuid#string->uuid fails because of faulty re-capture
+  * confine re-capure in std/misc/uuid to hex values
+
+  [ Pavel R ]
+  * Typo fix
+
+  [ ober ]
+  * fix typos.
+  * add redirect to http-post
+
+  [ Thibaut Brandscheid ]
+  * misc: add slice procedure
+
+  [ dwdv ]
+  * doc: overhaul std/misc/ports documentation
+  * doc: overhaul std/misc/queue documentation
+  * doc: change queue's return value when adding elements to unspecified
+  * doc: overhaul std/misc/deque documentation
+  * doc: overhaul std/misc/pqueue documentation
+  * doc: overhaul std/misc/lru-cache documentation
+  * doc: overhaul std/misc/rbtree documentation
+  * doc: overhaul std/misc/sync (sync-hash) documentation
+  * doc: overhaul std/misc/barrier documentation
+  * doc: overhaul std/misc/completion documentation
+  * doc: overhaul std/misc/threads documentation
+  * doc: overhaul std/misc/channels documentation
+  * doc: overhaul std/misc/process documentation
+  * doc: overhaul std/misc/text documentation
+  * doc: overhaul std/misc/shared documentation
+  * doc: overhaul std/misc/repr documentation
+  * doc: overhaul std/misc/rtd documentation
+  * doc: fix spelling, formatting, clarify desc in misc reference docs
+  * doc: fix slice function signature param desc spacing
+  * doc: fix gambit release version for shared equality support
+  * doc: fix malformatted markdown example tip, missing colon
+  * fix: error when trying to print u8vector representation
+
+  [ Thibaut Brandscheid ]
+  * misc: add slice! macro
+  * misc: butlast
+  * misc/list: split
+
+  [ DEADB17 ]
+  * Update MacOS homebrew $PATH instructions
+
+  [ dwdv ]
+  * doc: shorten function keyword syntax in misc.md
+
+  [ Timo Myyrä ]
+  * update std/net/request to match new document template
+  * add few json examples
+
+  [ Ury Marshak ]
+  * do not break when git cannot find any tags
+
+  [ Timo Myyrä ]
+  * update to use new doc template
+  * fix param reference in document
+  * provide simple csv example
+  * use seq-subseq in gerbil-send-string function
+  * use new documentation template in web.md
+  * initial xml.md documentation template updates
+
+  [ amirouche ]
+  * typofix
+
+  [ Timo Myyrä ]
+  * clarify use of LibXML in xml.md
+  * mechanical changes to update builtin to use new doc template
+
+  [ patternspandemic ]
+  * Some guide/reference doc cleanup.
+
+  [ Timo Myyrä ]
+  * few "-> hash to -> hash table" clarifications
+  * documentation fixes as requested by @dwdv
+
+  [ Leah Neukirchen ]
+  * Support $GERBIL_GSC in build0.scm
+
+  [ ober ]
+  * Add tty-mode-reset
+  * fix extra white space
+  * remove extra line
+
+  [ Marc-André Bélanger ]
+  * New std/misc/bytes module.
+  * Add bytes module documentation.
+  * Modified documentation to reflect function aliases.
+  * Fixed typos in core builtins documentation.
+  * Hex (~x,~X) formatter now pads with #\0.
+  * Calculate proper number of bytes in hex formatter for null bytes.
+  * Add bytestring functions to std/misc/bytes.
+  * Don't compute anything for null byte hex formatting, display "00".
+  * Fix newline at end of file.
+
+ --  <ecm@laxmi>  Wed, 14 Aug 2019 02:23:52 +0000
+
 gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110ubuntu1) xenial; urgency=medium
 
   [ vyzo ]
