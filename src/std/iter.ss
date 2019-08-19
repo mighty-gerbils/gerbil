@@ -129,7 +129,9 @@ package: std
             (set! (cdr e) (##fx- limit 1))
             value)
           iter-end))))
-  (make-iterator (cons start count) next))
+  (if (andmap integer? [start count step])
+    (make-iterator (cons start count) next)
+    (error "Parameters start, count and step must be integers." [start count step])))
 
 (def* in-range
   ((count) (iter-in-range 0 count 1))

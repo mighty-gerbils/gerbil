@@ -3,7 +3,9 @@
 ;;; :std/iter unit-tests
 
 (import :std/test
-        :std/iter)
+        :std/iter
+        (only-in :std/sugar hash)
+        (only-in :gerbil/core error-object? with-catch))
 (export iter-test)
 
 (def (my-generator n)
@@ -45,7 +47,15 @@
       (def (test-for-6)
         (for (x (my-generator 3))
           (displayln x)))
-      (check-output (test-for-6) "0\n1\n2\n"))
+      (check-output (test-for-6) "0\n1\n2\n")
+
+      (def (test-for-7)
+        (for (x (in-range (hash (a 1) (b 2) (c 3))))
+          (displayln x)))
+      (check-equal? (with-catch
+                     (lambda (e) (error-object? e))
+                     test-for-7)
+        #t))
 
     (test-case "test folding macros"
       (def (test-for/collect-0)
