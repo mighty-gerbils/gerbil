@@ -53,7 +53,7 @@
         (for (x (in-range (hash (a 1) (b 2) (c 3))))
           (displayln x)))
       (check-equal? (with-catch
-                     (lambda (e) (error-object? e))
+                     error-object?
                      test-for-7)
         #t))
 
