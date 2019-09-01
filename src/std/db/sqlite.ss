@@ -50,7 +50,7 @@ package: std/db
       (let* ((params (sqlite3_bind_parameter_count stmt))
              (_ (unless (= params (length args))
                   (error "bind parameters do not match statement count" args params))))
-        (for ((arg args) (param (in-range params 1)))
+        (for ((arg args) (param (in-iota params 1)))
           (cond
            ((not arg)
             (sqlite3_bind_null stmt param))
@@ -127,7 +127,7 @@ package: std/db
           ((1) (column-e 0))
           (else
            (list->vector
-            (for/collect (x (in-range count))
+            (for/collect (x (in-iota count))
               (column-e x)))))))))
 
 (defmethod {query-fini sqlite-statement}
