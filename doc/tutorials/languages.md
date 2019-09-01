@@ -460,7 +460,7 @@ And putting altogether, we can import our small corpus of [scuby code](../../src
 $ gxi
 > (import "example/my-scuby")
 > (import :std/iter)
-> (for (x (in-range 1 10)) (displayln (fibo x)))
+> (for (x (in-iota 10 1)) (displayln (fibo x)))
 1
 1
 2
@@ -472,7 +472,7 @@ $ gxi
 34
 55
 > (def my-counter (make-counter 1))
-> (for (x (in-range 10)) (displayln (my-counter)))
+> (for (x (in-iota 10)) (displayln (my-counter)))
 1
 2
 3

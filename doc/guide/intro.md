@@ -954,16 +954,16 @@ The values of an iteration can be collected in a list with `for/collect`:
 > (for/collect ((x (in-naturals))
                 (y '#(a b c d)))
     (cons x y))
-=> ((1 . a) (2 . b) (3 . c) (4 . d))
+=> ((0 . a) (1 . b) (2 . c) (3 . d))
 ```
 
 Finally, the values of an iteration can be folded to produce a value;
 in this example we construct a reversed list out of an iterator
 with a folding `cons`:
 ```scheme
-> (for/fold (r []) (x (in-range 1 5))
+> (for/fold (r []) (x (in-range 2 7))
     (cons x r))
-=> (5 4 3 2 1)
+=> (6 5 4 3 2)
 ```
 
 #### Iteration Protocol

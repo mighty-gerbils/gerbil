@@ -98,10 +98,10 @@ basic types: lists, vectors, strings, hash-tables, ports, and
 procedures which are iterated as coroutines; objects without any
 method binding dispatch to the `:iter` object method.
 
-### in-range
+### in-iota
 ::: tip usage
 ```
-(in-range count [start = 0] [step = 1])
+(in-iota count [start = 0] [step = 1])
   count := fixnum
   start, step := number
 => iterator
@@ -111,10 +111,35 @@ method binding dispatch to the `:iter` object method.
 Creates an iterator that yields `count` values starting from `start`
 and incrementing by `step`.
 
+### in-range
+::: tip usage
+```
+(in-range end)
+  end := real
+=> iterator
+
+(in-range start end [step = 1])
+  start, end, step := real
+=> iterator
+```
+:::
+
+Creates an iterator that starts with a current value of `start` (default `0`),
+stops when the current value is greater or equal to `end`,
+increments the current value by `step` at each iteration (default `1`),
+returns at each iteration the current value before incrementation.
+
+The current semantics (described above, valid since v0.16)
+is compatible with the `in-range` of Racket.
+Note however that the semantics of `in-range` changed twice:
+In v0.15.1, it was like `in-iota` above.
+Before v0.15, it was like `in-iota` except that `start` came before `count`
+when 2 or 3 parameters were used.
+
 ### in-naturals
 ::: tip usage
 ```
-(in-naturals [start = 1] [step = 1])
+(in-naturals [start = 0] [step = 1])
   start, step := number
 => iterator
 ```
@@ -122,6 +147,14 @@ and incrementing by `step`.
 
 Creates an infinite iterator that iterates over the naturals starting
 from `start` and incrementing by `step`.
+
+Note however that the semantics of `in-naturals` changed:
+since v0.16, it starts from 0 by default,
+which is compatible with the `in-naturals` from Racket;
+before v0.16, it was starting from 1 by default.
+A furthermore discrepancy with Racket is that Racket only accepts non-negative exact integers for start,
+and doesn't accept an optional step, always using 1,
+whereas Gerbil accepts any number for start and step.
 
 ### in-hash
 ::: tip usage
@@ -241,7 +274,7 @@ This is the type of iterator objects:
 - The procedure `fini` finalizes the iterator. It is invoked at the end of the iteration by the `for` family of macros.
 
 Note that the finilizer is _not_ automatically invoked if the iteration fails with an exception.
-If the iterator has hard state associated (eg a thread or some other expensive resource), then a
+If the iterator has hard state associated (e.g. a thread or some other expensive resource), then a
 will should be attached to it.
 
 ### iter-end
