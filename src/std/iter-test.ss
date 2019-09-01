@@ -29,20 +29,35 @@
           (displayln x " " y)))
       (check-output (test-for-2) "1 a\n2 b\n3 c\n")
 
-      (def (test-for-3)
+      (def (test-for-3-in-iota)
+        (for (x (in-iota 3))
+          (displayln x)))
+      (check-output (test-for-3-in-iota) "0\n1\n2\n")
+
+      (def (test-for-3-in-range)
         (for (x (in-range 3))
           (displayln x)))
-      (check-output (test-for-3) "0\n1\n2\n")
+      (check-output (test-for-3-in-range) "0\n1\n2\n")
 
-      (def (test-for-4)
-        (for (x (in-range 3 3))
+      (def (test-for-4-in-iota)
+        (for (x (in-iota 4 3))
           (displayln x)))
-      (check-output (test-for-4) "3\n4\n5\n")
+      (check-output (test-for-4-in-iota) "3\n4\n5\n6\n")
 
-      (def (test-for-5)
-        (for (x (in-range 3 3 2))
+      (def (test-for-4-in-range)
+        (for (x (in-range 4 7))
           (displayln x)))
-      (check-output (test-for-5) "3\n5\n7\n")
+      (check-output (test-for-4-in-range) "4\n5\n6\n")
+
+      (def (test-for-5-in-iota)
+        (for (x (in-iota 3 5 2))
+          (displayln x)))
+      (check-output (test-for-5-in-iota) "5\n7\n9\n")
+
+      (def (test-for-5-in-range)
+        (for (x (in-range 5 10 2))
+          (displayln x)))
+      (check-output (test-for-5-in-range) "5\n7\n9\n")
 
       (def (test-for-6)
         (for (x (my-generator 3))

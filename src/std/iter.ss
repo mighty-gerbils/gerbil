@@ -12,7 +12,7 @@ package: std
   (struct-out iterator)
   iter :iter iter-end iter-end? iter-next! iter-fini!
   for for* for/collect for/fold
-  in-range in-naturals in-hash in-hash-keys in-hash-values
+  in-iota in-range in-naturals in-hash in-hash-keys in-hash-values
   in-input-port in-input-lines in-input-chars in-input-bytes
   in-coroutine in-cothread
   yield
@@ -119,25 +119,43 @@ package: std
           val))))
   (make-iterator port next))
 
-(def (iter-in-range start count step)
+(def (iter-in-iota start count step)
   (def (next it)
     (with ((iterator e) it)
       (with ([value . limit] e)
         (if (##fx> limit 0)
-          (let (value+step (+ value step))
-            (set! (car e) value+step)
+          (begin
+            (set! (car e) (+ value step))
             (set! (cdr e) (##fx- limit 1))
             value)
           iter-end))))
-  (if (and (number? start) (integer? count) (number? step))
+  (if (and (number? start) (fixnum? count) (number? step))
     (make-iterator (cons start count) next)
-    (error "Parameters are of wrong type (count:number start:integer step:number)."
+    (error "Parameters are of wrong type (count:fixnum start:number step:number)."
       [count start step])))
 
+(def* in-iota
+  ((count) (iter-in-iota 0 count 1))
+  ((count start) (iter-in-iota start count 1))
+  ((count start step) (iter-in-iota start count step)))
+
+(def (iter-in-range start end step)
+  (def (next it)
+    (with ((iterator e) it)
+      (if (< e end)
+        (begin
+          (set! (&iterator-e it) (+ e step))
+          e)
+        iter-end)))
+  (if (and (real? start) (real? end) (real? step))
+    (make-iterator start next)
+    (error "Parameters are of wrong type (start:real end:real step:real)."
+      [start end step])))
+
 (def* in-range
-  ((count) (iter-in-range 0 count 1))
-  ((count start) (iter-in-range start count 1))
-  ((count start step) (iter-in-range start count step)))
+  ((end) (iter-in-range 0 end 1))
+  ((start end) (iter-in-range start end 1))
+  ((start end step) (iter-in-range start end step)))
 
 (def (in-naturals (start 1) (step 1))
   (def (next it)
