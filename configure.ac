@@ -9,7 +9,7 @@
 
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT(Gerbil,v0.16.0-1snapshot-DEV-20-g8c99110,me@drewc.ca,gerbil-v0.16.0-1snapshot-DEV-20-g8c99110)
+AC_INIT(Gerbil,v0.16.0-1snapshot-DEV-20-cd16549,me@drewc.ca,gerbil-v0.16.0-1snapshot-DEV-20-cd16549)
 PACKAGE_SHORTNAME="gerbil"
 
 AC_SUBST(PACKAGE_SHORTNAME)
