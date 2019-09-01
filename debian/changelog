@@ -1,6 +1,6 @@
-gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110ubuntu2~1.gbp4f4109) UNRELEASED; urgency=medium
+gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110ubuntu2~2.gbp81aa4a) UNRELEASED; urgency=medium
 
-  ** SNAPSHOT build @4f4109c12922826332d817cc92663c7d4b104de2 **
+  ** SNAPSHOT build @81aa4a3bf8b756d6e2bf0968192efc4d69bdbcc9 **
 
   [ Xiao-Yong Jin ]
   * simplify shell scripts
@@ -118,8 +118,24 @@ gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110ubuntu2~1.gbp4f4109) UNRELEASED
   * Add bytestring functions to std/misc/bytes.
   * Don't compute anything for null byte hex formatting, display "00".
   * Fix newline at end of file.
+  * New u8vector->uint function, delimiter param to u8vector->bytestring.
 
- --  <ecm@laxmi>  Wed, 14 Aug 2019 02:23:52 +0000
+  [ Drew Crampsie ]
+  * Make a gerbil-snapshot for debian/
+
+  [ Marc-André Bélanger ]
+  * Raise an error when in-range arguments are not integers.
+  * In-range type check now uses number? for start and step params.
+  * Refactor unnecessary closure from test-for-7 test.
+
+  [ ober ]
+  * correct documentation to work with docker ci
+
+  [ Drew Crampsie ]
+  * add configure.org and configure.sh
+  * A more POSIX friendly way of finding GERBIL_HOME
+
+ --  <ecm@laxmi>  Sun, 01 Sep 2019 23:12:40 +0000
 
 gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110ubuntu1) xenial; urgency=medium
 

@@ -11,7 +11,7 @@ This file is tangled to produce some files.
 This is the entire point, and everything that follows, in fact, leads to this
 point.
 
-This is a brand new Google Cloud box, running ~Ubuntu 16.0.4 LTS minimal.
+This is a brand new Google Cloud box, running ~Ubuntu 16.0.4 LTS minimal~.
 
 #+begin_src shell
 DREWC_APT_REPO="https://raw.githubusercontent.com/drewc/apt-repo/master"
@@ -157,6 +157,7 @@ cd ~/src/apt/gerbil && git checkout -b xenial
 
 
 #+END_SRC
+
 * ~gerbil-snapshot~: Obey your master (branch).
 
 Gerbil is always under development, and new things get added all the time.
@@ -174,7 +175,7 @@ cd ~/src/apt/gerbil && git checkout $_DEB_BRANCH && git pull vyzo master
 
 # Tag our version. Configure.sh uses this.
 
-cd ~/src/apt/gerbil && git tag v0.16.0-1snapshot-DEV-20-g8c99110 
+cd ~/src/apt/gerbil && git tag v0.16.0-1snapshot-DEV-20-cd16549
 
 # Now tangle configure.org, and run configure.sh
 
@@ -189,10 +190,10 @@ cd ~/src/apt/gerbil && tangle configure.org && ./configure.sh
 cd ~/src/apt/gerbil/ && git add Makefile.in configure configure.ac configure.sh configure.org
 cd ~/src/apt/gerbil/ && git commit -m "add configure.org and configure.sh"
 
-# Move the README.debian.org
+# DONE: Move the README.debian.org
 
-cd ~/src/apt/gerbil && git rm -f README.debian.org && git add debian/README.debian.org 
-cd ~/src/apt/gerbil && git commit -m "Move README.debian.org into debian/"
+# cd ~/src/apt/gerbil && git rm -f README.debian.org && git add debian/README.debian.org 
+# cd ~/src/apt/gerbil && git commit -m "Move README.debian.org into debian/"
 
 # tangle the new README.debian.org
 
@@ -272,6 +273,8 @@ scp -r /home/user/.ssh /home/user/.gnupg user@34.83.85.242:/home/user
 cd gerbil-snapshot-0.16.0-1snapshot-DEV-20/
 debuild -b
 #+end_src
+** Reprepro 
+
 
 #+begin_src shell
 # Before or During build 
@@ -287,7 +290,6 @@ sudo dpkg -i reprepro_5.3.0-1_amd64.deb
 sudo apt-get install -fy
 cd -
 #+end_src
-
 #+begin_src shell
 # After Build
 
@@ -623,6 +625,8 @@ index 7e23c34..3a141b5 100644
 
 * The Github Apt Repository
 
+* Archive: reprepro 
+
 We've [[#starting_point][built a debian package]], and marked it for Xenial. We have an apt
 repository git repository. Errr... [[https://blog.packagecloud.io/eng/2017/03/23/create-debian-repository-reprepro/][reprepro]].
 
@@ -643,7 +647,6 @@ cd ~/src/apt/gerbil && ln ../gerbil-build-area/*.orig.tar.gz ../ ; debuild -S -s
 #+END_SRC
 
 Now we have a source.changes and other mumbo-jumbo. Time to add it to our apt repo
-
 
 #+begin_src shell
 mkdir ~/src/ ; cd ~/src/ && git clone git@github.com:drewc/apt-repo.git
