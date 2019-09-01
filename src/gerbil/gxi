@@ -1,5 +1,6 @@
 #!/bin/sh
-set -e
+set -eu
+
 
 if [ -z "${GERBIL_HOME:-}" ]; then
 
@@ -61,7 +62,7 @@ if [ $# -gt 0 ]; then
 fi
 
 if [ $# -eq 0 ]; then
-    exec gsi $GSIOPTIONS "$GERBIL_HOME/lib/gxi-init" "$GERBIL_HOME/lib/gxi-interactive" -
+    exec gsi ${GSIOPTIONS:-} $GERBIL_HOME/lib/gxi-init $GERBIL_HOME/lib/gxi-interactive -
 else
-    exec gsi $GSIOPTIONS "$GERBIL_HOME/lib/gxi-init" "$@"
+    exec gsi ${GSIOPTIONS:-} $GERBIL_HOME/lib/gxi-init "$@"
 fi
