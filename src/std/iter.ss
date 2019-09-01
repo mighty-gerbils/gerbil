@@ -157,7 +157,7 @@ package: std
   ((start end) (iter-in-range start end 1))
   ((start end step) (iter-in-range start end step)))
 
-(def (in-naturals (start 1) (step 1))
+(def (in-naturals (start 0) (step 1))
   (def (next it)
     (with ((iterator value) it)
       (let (value+step (+ value step))

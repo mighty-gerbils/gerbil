@@ -84,11 +84,17 @@
           (cons x y)))
       (check (test-for/collect-1) => '((1 . a) (2 . b) (3 . c)))
 
-      (def (test-for/collect-2)
+      (def (test-for/collect-2-0)
+        (for/collect ((x (in-naturals))
+                      (y '#(a b c d)))
+          (cons x y)))
+      (check (test-for/collect-2-0) => '((0 . a) (1 . b) (2 . c) (3 . d)))
+
+      (def (test-for/collect-2-1)
         (for/collect ((x (in-naturals 1))
                       (y '#(a b c d)))
           (cons x y)))
-      (check (test-for/collect-2) => '((1 . a) (2 . b) (3 . c) (4 . d)))
+      (check (test-for/collect-2-1) => '((1 . a) (2 . b) (3 . c) (4 . d)))
 
       (def (test-for/collect-3)
         (for/collect (x (my-generator 3)) x))
