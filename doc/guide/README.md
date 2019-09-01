@@ -75,16 +75,12 @@ The latest Gerbil images are available via Dockerhub
 
 Ubuntu based version:
 ```bash
-docker pull gerbil/scheme:ubuntu
-```
-CentOS based version:
-```bash
-docker pull gerbil/scheme:centos
+docker pull gerbil/scheme
 ```
 
 To get to the repl:
 ```bash
-docker run -it gerbil/scheme:ubuntu /root/gerbil/bin/gxi
+docker run -it gerbil/scheme /root/gerbil/bin/gxi
 ```
 
 Or you can build your own container, using this [Dockerfile](https://github.com/vyzo/gerbil/blob/master/Dockerfile)
