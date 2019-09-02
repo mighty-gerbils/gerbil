@@ -36,7 +36,7 @@
       (check-serialize 'c)
       (check-serialize '(a . b))
       (check-serialize '(a b c))
-      (for (x (in-range 10))
+      (for (x (in-iota 10))
         (let* ((base (expt 10 x))
                (int (+ base (random-integer base))))
           (check-serialize x)

@@ -5,7 +5,7 @@
 package: std/misc
 
 (import (only-in :std/format format)
-        (only-in :std/iter for in-range)
+        (only-in :std/iter for in-iota)
         (only-in :std/srfi/13 string-concatenate string-upcase))
 (export #t)
 
@@ -40,7 +40,7 @@ package: std/misc
   (let* ((lst (string-split bs #\space))
          (len (length lst))
          (u (make-u8vector len)))
-    (for (x (in-range len))
+    (for (x (in-iota len))
       (u8vector-set! u x (string->number (list-ref lst x) 16)))
     u))
 
