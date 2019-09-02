@@ -1,6 +1,4 @@
-gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110ubuntu2~2.gbp81aa4a) UNRELEASED; urgency=medium
-
-  ** SNAPSHOT build @81aa4a3bf8b756d6e2bf0968192efc4d69bdbcc9 **
+gerbil-snapshot (0.16.0-2snapshot-DEV-20-cd16549) unstable; urgency=medium
 
   [ Xiao-Yong Jin ]
   * simplify shell scripts
@@ -134,8 +132,15 @@ gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110ubuntu2~2.gbp81aa4a) UNRELEASED
   [ Drew Crampsie ]
   * add configure.org and configure.sh
   * A more POSIX friendly way of finding GERBIL_HOME
+  * Make a gerbil-snapshot for debian/
 
- --  <ecm@laxmi>  Sun, 01 Sep 2019 23:12:40 +0000
+  [  ]
+  * UNRELEASED
+
+  [  ]
+  * UNRELEASED
+
+ --  Drew Crampsie <me@drewc.ca>  Mon, 02 Sep 2019 22:42:42 -0700
 
 gerbil-snapshot (0.16.0-1snapshot-DEV-20-g8c99110ubuntu1) xenial; urgency=medium
 

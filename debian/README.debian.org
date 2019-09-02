@@ -211,7 +211,7 @@ cd ~/src/apt/gerbil && rm -rf  ../gerbil-build-area ; rm -rf autom4te.cache/ ; r
 Now that we have that, we can try a snapshot build. This create a new entry for debian/changelog
 
 #+begin_src shell
-gbp dch --snapshot --debian-branch=debian
+gbp dch --snapshot --debian-branch=debian --new-version=0.16.0-1snapshot-DEV-20-cd16549
 
 # make it me, so signing works
 
