@@ -22,6 +22,7 @@
     "iter"
     "test"
     "stxparam"
+    "stxutil"
     "lazy"
     "amb"
     ;; debugging
