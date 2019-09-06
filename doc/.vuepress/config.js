@@ -28,7 +28,7 @@ module.exports = {
             {
               collapsable: false,
               title: 'Gerbil Reference',
-              children:  ['', 'core-prelude', 'core-builtin', 'core-expander', 'stdlib', 'sugar', 'errors', 'getopt', 'format', 'logger', 'sort', 'regexp', 'generic', 'ref', 'iterators', 'coroutine', 'events', 'actor', 'requests', 'httpd', 'web', 'db', 'kvstore', 'sockets', 'net', 'protobuf', 'os', 'crypto', 'text', 'xml', 'parser', 'misc', 'lazy', 'amb', 'stxparam', 'foreign', 'srfi', 'test', 'debug', 'make']
+              children:  ['', 'core-prelude', 'core-builtin', 'core-expander', 'stdlib', 'sugar', 'errors', 'getopt', 'format', 'logger', 'sort', 'regexp', 'generic', 'ref', 'iterators', 'coroutine', 'events', 'actor', 'requests', 'httpd', 'web', 'db', 'kvstore', 'sockets', 'net', 'protobuf', 'os', 'crypto', 'text', 'xml', 'parser', 'misc', 'lazy', 'amb', 'stxparam', 'stxutil', 'foreign', 'srfi', 'test', 'debug', 'make']
             }
           ]
         },
