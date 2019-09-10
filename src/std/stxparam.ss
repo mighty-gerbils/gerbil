@@ -31,25 +31,29 @@ package: std
    (defsyntax id
      (make-syntax-parameter key: (gensym 'id) default: default))))
 
+;; TODO: generalize to accept functions as parameters.
 (defsyntax (defsyntax-parameter* stx)
-  (def (defparam macro param (errmsg "Bad syntax"))
-    `(begin
-       (defsyntax-parameter ,param #f)
-       (defsyntax (,macro stx)
-         (if (identifier? stx)
-           (cond
-            ((syntax-parameter-value (quote-syntax ,param))
-             => values)
-            (else
-             (raise-syntax-error #f ,errmsg stx)))
-           (raise-syntax-error #f "Bad syntax" stx)))))
+  (def (defparam macro param errmsg)
+    (with-syntax ((macro macro)
+                  (param param)
+                  (errmsg errmsg))
+      #'(begin
+          (defsyntax-parameter param #f)
+          (defsyntax (macro stx)
+            (if (identifier? stx)
+              (cond
+               ((syntax-parameter-value (quote-syntax param))
+                => values)
+               (else
+                (raise-syntax-error #f errmsg stx)))
+              (raise-syntax-error #f "Bad syntax" stx))))))
 
   (syntax-case stx ()
     ((_ macro param)
-     (andmap identifier? [#'macro #'param])
-     (defparam #'macro #'param))
+     (identifier-list? #'(macro param))
+     (defparam #'macro #'param #'"Bad syntax"))
     ((_ macro param errmsg)
-     (andmap identifier? [#'macro #'param])
+     (identifier-list? #'(macro param))
      (defparam #'macro #'param #'errmsg))))
 
 (defsyntax (syntax-parameterize stx)
