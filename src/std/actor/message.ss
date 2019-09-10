@@ -64,24 +64,13 @@ package: std/actor
         (##thread-send thread msg)
         #f))))
 
-(defrules defparam ()
-  ((_ macro param)
-   (begin
-     (defsyntax-parameter param #f)
-     (defsyntax (macro stx)
-       (if (identifier? stx)
-         (cond
-          ((syntax-parameter-value (quote-syntax param))
-           => values)
-          (else
-           (raise-syntax-error #f "Bad syntax; not in reaction context" stx)))
-         (raise-syntax-error #f "Bad syntax" stx))))))
-
-(defparam @message @@message)
-(defparam @value @@value)
-(defparam @source @@source)
-(defparam @dest @@dest)
-(defparam @options @@options)
+(begin-syntax
+  (def errmsg "Bad syntax; not in reaction context"))
+(defsyntax-parameter* @message @@message errmsg)
+(defsyntax-parameter* @value @@value errmsg)
+(defsyntax-parameter* @source @@source errmsg)
+(defsyntax-parameter* @dest @@dest errmsg)
+(defsyntax-parameter* @options @@options errmsg)
 
 (defrules -> ()
   ((_ msg)

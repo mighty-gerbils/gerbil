@@ -31,6 +31,27 @@ package: std
    (defsyntax id
      (make-syntax-parameter key: (gensym 'id) default: default))))
 
+(defsyntax (defsyntax-parameter* stx)
+  (def (defparam macro param (errmsg "Bad syntax"))
+    `(begin
+       (defsyntax-parameter ,param #f)
+       (defsyntax (,macro stx)
+         (if (identifier? stx)
+           (cond
+            ((syntax-parameter-value (quote-syntax ,param))
+             => values)
+            (else
+             (raise-syntax-error #f ,errmsg stx)))
+           (raise-syntax-error #f "Bad syntax" stx)))))
+
+  (syntax-case stx ()
+    ((_ macro param)
+     (andmap identifier? [#'macro #'param])
+     (defparam #'macro #'param))
+    ((_ macro param errmsg)
+     (andmap identifier? [#'macro #'param])
+     (defparam #'macro #'param #'errmsg))))
+
 (defsyntax (syntax-parameterize stx)
   (def (parameter-key param-id)
     (let (param (syntax-local-value param-id))
