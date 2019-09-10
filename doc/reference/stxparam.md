@@ -46,14 +46,6 @@ and [std/actor/message.ss](https://github.com/vyzo/gerbil/blob/master/src/std/ac
 
 :::
 
-### defsyntax-parameter*
-::: tip usage
-```
-
-```
-:::
-
-
 ### syntax-parameterize
 ::: tip usage
 ```
