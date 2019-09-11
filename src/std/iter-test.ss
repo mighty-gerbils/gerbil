@@ -59,17 +59,22 @@
           (displayln x)))
       (check-output (test-for-5-in-range) "5\n7\n9\n")
 
-      (def (test-for-6)
-        (for (x (my-generator 3))
+      (def (test-for-6-in-range)
+        (for (x (in-range 7 4 -1))
           (displayln x)))
-      (check-output (test-for-6) "0\n1\n2\n")
+      (check-output (test-for-6-in-range) "7\n6\n5\n")
 
       (def (test-for-7)
+        (for (x (my-generator 3))
+          (displayln x)))
+      (check-output (test-for-7) "0\n1\n2\n")
+
+      (def (test-for-8)
         (for (x (in-range (hash (a 1) (b 2) (c 3))))
           (displayln x)))
       (check-equal? (with-catch
                      error-object?
-                     test-for-7)
+                     test-for-8)
         #t))
 
     (test-case "test folding macros"
@@ -99,6 +104,14 @@
       (def (test-for/collect-3)
         (for/collect (x (my-generator 3)) x))
       (check (test-for/collect-3) => '(0 1 2))
+
+      (def (test-for/collect-4)
+        (for/collect (x (in-range 3 5 -1)) x))
+      (check (test-for/collect-4) => '())
+
+      (def (test-for/collect-5)
+        (for/collect (x (in-range 5 3)) x))
+      (check (test-for/collect-5) => '())
 
       (def (test-for/fold-1)
         (for/fold (r []) ((x '(1 2 3)))

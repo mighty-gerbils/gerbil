@@ -140,17 +140,18 @@ package: std
   ((count start step) (iter-in-iota start count step)))
 
 (def (iter-in-range start end step)
+  (unless (and (real? start) (real? end) (real? step))
+    (error "Parameters are of wrong type (start:real end:real step:real)."
+      [start end step]))
+  (def cmp (if (##negative? step) ##> ##<))
   (def (next it)
     (with ((iterator e) it)
-      (if (< e end)
+      (if (cmp e end)
         (begin
-          (set! (&iterator-e it) (+ e step))
+          (set! (&iterator-e it) (##+ e step))
           e)
         iter-end)))
-  (if (and (real? start) (real? end) (real? step))
-    (make-iterator start next)
-    (error "Parameters are of wrong type (start:real end:real step:real)."
-      [start end step])))
+  (make-iterator start next))
 
 (def* in-range
   ((end) (iter-in-range 0 end 1))
