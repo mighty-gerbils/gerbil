@@ -143,12 +143,12 @@ package: std
   (unless (and (real? start) (real? end) (real? step))
     (error "Parameters are of wrong type (start:real end:real step:real)."
       [start end step]))
-  (def cmp (if (##negative? step) ##> ##<))
+  (def cmp (if (negative? step) > <))
   (def (next it)
     (with ((iterator e) it)
       (if (cmp e end)
         (begin
-          (set! (&iterator-e it) (##+ e step))
+          (set! (&iterator-e it) (+ e step))
           e)
         iter-end)))
   (make-iterator start next))
