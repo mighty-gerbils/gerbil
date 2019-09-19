@@ -139,7 +139,7 @@ package: std
   ((count start) (iter-in-iota start count 1))
   ((count start step) (iter-in-iota start count step)))
 
-(def (iter-in-range start end (step 1) (cmp <))
+(def (iter-in-range start end step cmp)
   (def (next it)
     (with ((iterator e) it)
       (if (cmp e end)
@@ -150,11 +150,11 @@ package: std
   (make-iterator start next))
 
 (def* in-range
-  ((end) (iter-in-range 0 end))
+  ((end) (iter-in-range 0 end 1 <))
   ((start end)
    (if (> start end)
      (iter-in-range start end -1 >)
-     (iter-in-range start end)))
+     (iter-in-range start end  1 <)))
   ((start end step)
    (if (negative? step)
      (iter-in-range start end step >)
