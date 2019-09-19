@@ -59,18 +59,20 @@
           (displayln x)))
       (check-output (test-for-5-in-range) "5\n7\n9\n")
 
-      (def (test-for-6)
-        (for (x (my-generator 3))
+      (def (test-for-6-in-range-by-neg)
+        (for (x (in-range 7 4 -1))
           (displayln x)))
-      (check-output (test-for-6) "0\n1\n2\n")
+      (check-output (test-for-6-in-range-by-neg) "7\n6\n5\n")
 
       (def (test-for-7)
+        (for (x (my-generator 3))
+          (displayln x)))
+      (check-output (test-for-7) "0\n1\n2\n")
+
+      (def (test-for-8-not-real)
         (for (x (in-range (hash (a 1) (b 2) (c 3))))
           (displayln x)))
-      (check-equal? (with-catch
-                     error-object?
-                     test-for-7)
-        #t))
+      (check-equal? (with-catch exception? test-for-8-not-real) #t))
 
     (test-case "test folding macros"
       (def (test-for/collect-0)
@@ -99,6 +101,22 @@
       (def (test-for/collect-3)
         (for/collect (x (my-generator 3)) x))
       (check (test-for/collect-3) => '(0 1 2))
+
+      (def (test-for/collect-4-up-by-neg)
+        (for/collect (x (in-range 3 5 -1)) x))
+      (check (test-for/collect-4-up-by-neg) => '())
+
+      (def (test-for/collect-4-down-by-pos)
+        (for/collect (x (in-range 5 3 1)) x))
+      (check (test-for/collect-4-down-by-pos) => '())
+
+      (def (test-for/collect-5-down-inference-neg)
+        (for/collect (x (in-range 5 3)) x))
+      (check (test-for/collect-5-down-inference-neg) => '(5 4))
+
+      (def (test-for/collect-6-same-start-end)
+        (for/collect (x (in-range 5 5)) x))
+      (check (test-for/collect-6-same-start-end) => '())
 
       (def (test-for/fold-1)
         (for/fold (r []) ((x '(1 2 3)))

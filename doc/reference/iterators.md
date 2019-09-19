@@ -125,7 +125,8 @@ and incrementing by `step`.
 :::
 
 Creates an iterator that starts with a current value of `start` (default `0`),
-stops when the current value is greater or equal to `end`,
+stops when the current value is greater or equal to `end`
+(smaller or equal to `end` in case `step` is negative),
 increments the current value by `step` at each iteration (default `1`),
 returns at each iteration the current value before incrementation.
 
