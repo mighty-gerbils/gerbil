@@ -68,9 +68,21 @@ package: scheme
    (begin (include path) ...)))
 
 (defsyntax (define-library stx)
+  (def (identifier-or-number? stx)
+    (or (identifier? stx) (stx-number? stx)))
+
+  (def (to-string x)
+    (cond
+     ((symbol? x)
+      (symbol->string x))
+     ((number? x)
+      (number->string x))
+     (else
+      (raise-syntax-error #f "Bad library path component" stx x))))
+
   (def (library-module-id ids )
     (let* ((spath (map stx-e ids))
-           (spath (map symbol->string spath))
+           (spath (map to-string spath))
            (spath (string-join spath #\/)))
       (string->symbol spath)))
 
@@ -102,7 +114,7 @@ package: scheme
 
   (syntax-case stx ()
     ((_ (id ids ...) decl ...)
-     (identifier-list? #'(id ids ...))
+     (andmap identifier-or-number? #'(id ids ...))
      (let (ctx (current-expander-context))
        (cond
         ((module-context? ctx)
