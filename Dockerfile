@@ -23,4 +23,6 @@ RUN sed -i -e 's/leveldb #f/leveldb #t/g' /root/gerbil/src/std/build-features.ss
 RUN sed -i -e 's/lmdb #f/lmdb #t/g' /root/gerbil/src/std/build-features.ss
 RUN cd /root/gerbil/src && ./build.sh
 
-CMD /root/gerbil/bin/gxi
+ENV PATH "/root/gerbil/bin:$PATH"
+
+CMD ["gxi"]
