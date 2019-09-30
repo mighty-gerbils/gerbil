@@ -131,7 +131,7 @@ package: std/parser
            (reverse prods))))))
 
   (def (generate-prod-id base part)
-    (format-id base "~a::~a" (stx-e base) part))
+    (format-id base "~a::~a" base part))
 
   (def (wrap-source xstx where)
     (stx-wrap-source xstx (or (stx-source where) (stx-source stx))))
