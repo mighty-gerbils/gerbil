@@ -6,7 +6,8 @@ package: std/protobuf
 (import :std/protobuf/macros
         (for-syntax :std/parser/base
                     :std/sugar
-                    :std/protobuf/proto-grammar))
+                    :std/protobuf/proto-grammar
+                    :std/stxutil))
 (export (except-out #t begin-module%%)
         (rename: begin-module%% %%begin-module)
         (import: :std/protobuf/macros)
@@ -269,7 +270,7 @@ package: std/protobuf
   (def (expand-import-path stx-path)
     (let (path (stx-e stx-path))
       (if (eq? (string-ref path 0) #\:) ; library path
-        (datum->syntax stx-path (string->symbol path) stx-path)
+        (format-id stx-path "~a" path)
         stx-path)))
 
   (def (expand-pkg pkg defs)
