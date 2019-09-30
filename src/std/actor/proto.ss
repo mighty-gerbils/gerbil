@@ -14,7 +14,8 @@ package: std/actor
         :std/misc/uuid
         :std/misc/completion
         :std/actor/message
-        :std/actor/xdr)
+        :std/actor/xdr
+        (for-syntax :std/stxutil))
 (export
   rpc-io-error? raise-rpc-io-error
   (struct-out actor-error remote-error rpc-error)
@@ -353,11 +354,11 @@ package: std/actor
 
   (def (generate-make-proto-info proto-id id extend calls events streams)
     (def (type-id id)
-      (stx-identifier proto-id proto-id "." id))
+      (format-id proto-id "~a.~a" proto-id id))
 
     (with-syntax* ((proto-id proto-id)
                    (id id)
-                   (proto::proto (stx-identifier #'proto-id #'proto-id "::proto"))
+                   (proto::proto (format-id #'proto-id "~a::proto" #'proto-id))
                    ((extend-id ...) extend)
                    ((call-id ...) (map type-id (map stx-car calls)))
                    ((event-id ...) (map type-id (map stx-car events)))
@@ -373,7 +374,7 @@ package: std/actor
   (def (generate-make-proto-registry proto-id id extend)
     (with-syntax*
         ((id id)
-         (proto::proto          (stx-identifier proto-id proto-id "::proto"))
+         (proto::proto          (format-id proto-id "~a::proto" proto-id))
          ((values extend-infos) (map syntax-local-value extend))
          ((extend::proto ...)   (map protocol-info-runtime-identifier extend-infos))
          (make-proto
@@ -396,17 +397,17 @@ package: std/actor
     (with-syntax*
         ((id id)
          ((call-id arg ...) call-spec)
-         (kall-id        (stx-identifier #'call-id proto-id "." #'call-id))
-         (kall-rt-id     (stx-identifier #'call-id #'id "." #'call-id "::t"))
-         (make-kall      (stx-identifier #'call-id "make-" #'kall-id))
-         (kall::t        (stx-identifier #'call-id #'kall-id "::t"))
-         (kall?          (stx-identifier #'call-id #'kall-id "?"))
-         (kall::xdr      (stx-identifier #'call-id #'kall-id "::xdr"))
-         (kall-xdr-read  (stx-identifier #'call-id "xdr-" #'kall-id "-read"))
-         (kall-xdr-write (stx-identifier #'call-id "xdr-" #'kall-id "-write"))
-         (!kall          (stx-identifier #'call-id "!" #'kall-id))
-         (!!kall         (stx-identifier #'call-id "!!" #'kall-id))
-         (proto::proto   (stx-identifier proto-id proto-id "::proto"))
+         (kall-id        (format-id #'call-id "~a.~a" proto-id #'call-id))
+         (kall-rt-id     (format-id #'call-id "~a.~a::t" #'id #'call-id))
+         (make-kall      (format-id #'call-id "make-~a" #'kall-id))
+         (kall::t        (format-id #'call-id "~a::t" #'kall-id))
+         (kall?          (format-id #'call-id "~a?" #'kall-id))
+         (kall::xdr      (format-id #'call-id "~a::xdr" #'kall-id))
+         (kall-xdr-read  (format-id #'call-id "xdr-~a-read" #'kall-id))
+         (kall-xdr-write (format-id #'call-id "xdr-~a-write" #'kall-id))
+         (!kall          (format-id #'call-id "!~a" #'kall-id))
+         (!!kall         (format-id #'call-id "!!~a" #'kall-id))
+         (proto::proto   (format-id proto-id "~a::proto" proto-id))
          (defn-kall
            #'(defstruct kall-id (arg ...) id: kall-rt-id final: #t))
          (defn-!kall
@@ -442,17 +443,17 @@ package: std/actor
     (with-syntax*
         ((id id)
          ((event-id arg ...) event-spec)
-         (kall-id        (stx-identifier #'event-id proto-id "." #'event-id))
-         (kall-rt-id     (stx-identifier #'event-id #'id "." #'event-id "::t"))
-         (make-kall      (stx-identifier #'event-id "make-" #'kall-id))
-         (kall::t        (stx-identifier #'event-id #'kall-id "::t"))
-         (kall?          (stx-identifier #'event-id #'kall-id "?"))
-         (kall::xdr      (stx-identifier #'event-id #'kall-id "::xdr"))
-         (kall-xdr-read  (stx-identifier #'event-id "xdr-" #'kall-id "-read"))
-         (kall-xdr-write (stx-identifier #'event-id "xdr-" #'kall-id "-write"))
-         (!kall          (stx-identifier #'event-id "!" #'kall-id))
-         (!!kall         (stx-identifier #'event-id "!!" #'kall-id))
-         (proto::proto   (stx-identifier proto-id proto-id "::proto"))
+         (kall-id        (format-id #'event-id "~a.~a" proto-id #'event-id))
+         (kall-rt-id     (format-id #'event-id "~a.~a::t" #'id #'event-id))
+         (make-kall      (format-id #'event-id "make-~a" #'kall-id))
+         (kall::t        (format-id #'event-id "~a::t" #'kall-id))
+         (kall?          (format-id #'event-id "~a?" #'kall-id))
+         (kall::xdr      (format-id #'event-id "~a::xdr" #'kall-id))
+         (kall-xdr-read  (format-id #'event-id "xdr-~a-read" #'kall-id))
+         (kall-xdr-write (format-id #'event-id "xdr-~a-write" #'kall-id))
+         (!kall          (format-id #'event-id "!~a" #'kall-id))
+         (!!kall         (format-id #'event-id "!!~a" #'kall-id))
+         (proto::proto   (format-id proto-id "~a::proto" proto-id))
          (defn-kall
            #'(defstruct kall-id (arg ...) id: kall-rt-id final: #t))
          (defn-!kall
@@ -486,17 +487,17 @@ package: std/actor
     (with-syntax*
         ((id id)
          ((call-id arg ...) stream-spec)
-         (kall-id        (stx-identifier #'call-id proto-id "." #'call-id))
-         (kall-rt-id     (stx-identifier #'call-id #'id "." #'call-id "::t"))
-         (make-kall      (stx-identifier #'call-id "make-" #'kall-id))
-         (kall::t        (stx-identifier #'call-id #'kall-id "::t"))
-         (kall?          (stx-identifier #'call-id #'kall-id "?"))
-         (kall::xdr      (stx-identifier #'call-id #'kall-id "::xdr"))
-         (kall-xdr-read  (stx-identifier #'call-id "xdr-" #'kall-id "-read"))
-         (kall-xdr-write (stx-identifier #'call-id "xdr-" #'kall-id "-write"))
-         (!kall          (stx-identifier #'call-id "!" #'kall-id))
-         (!!kall         (stx-identifier #'call-id "!!" #'kall-id))
-         (proto::proto   (stx-identifier proto-id proto-id "::proto"))
+         (kall-id        (format-id #'call-id "~a.~a" proto-id #'call-id))
+         (kall-rt-id     (format-id #'call-id "~a.~a::t" #'id #'call-id))
+         (make-kall      (format-id #'call-id "make-~a" #'kall-id))
+         (kall::t        (format-id #'call-id "~a::t" #'kall-id))
+         (kall?          (format-id #'call-id "~a?" #'kall-id))
+         (kall::xdr      (format-id #'call-id "~a::xdr" #'kall-id))
+         (kall-xdr-read  (format-id #'call-id "xdr-~a-read" #'kall-id))
+         (kall-xdr-write (format-id #'call-id "xdr-~a-write" #'kall-id))
+         (!kall          (format-id #'call-id "!~a" #'kall-id))
+         (!!kall         (format-id #'call-id "!!~a" #'kall-id))
+         (proto::proto   (format-id proto-id "~a::proto" proto-id))
          (defn-kall
            #'(defstruct kall-id (arg ...) id: kall-rt-id final: #t))
          (defn-!kall
@@ -533,7 +534,7 @@ package: std/actor
       ((struct-id struct-xdr-read structu-xdr-write)
        (with-syntax* (((values info) (syntax-local-value #'struct-id))
                       (struct::t     (runtime-type-identifier info))
-                      (proto::proto  (stx-identifier proto-id proto-id "::proto")))
+                      (proto::proto  (format-id proto-id "~a::proto" proto-id)))
          #'(hash-put! (!protocol-types proto::proto)
                       (##type-id struct::t)
                       (make-XDR struct-xdr-read struct-xdr-write))))
@@ -541,7 +542,7 @@ package: std/actor
        (with-syntax*
            (((values info) (syntax-local-value #'struct-id))
             (struct::t     (runtime-type-identifier info))
-            (proto::proto  (stx-identifier proto-id proto-id "::proto")))
+            (proto::proto  (format-id proto-id "~a::proto" proto-id)))
          #'(begin
              (hash-put! (!protocol-types proto::proto)
                         (##type-id struct::t)
@@ -558,10 +559,10 @@ package: std/actor
     (if (module-context? (current-expander-context))
       (cond
        ((module-context-ns (current-expander-context))
-        => (lambda (ns) (stx-identifier proto-id ns "#" proto-id)))
+        => (lambda (ns) (format-id proto-id "~a#~a" ns proto-id)))
        (else
         (let (mid (expander-context-id (current-expander-context)))
-          (stx-identifier proto-id mid "#" proto-id))))
+          (format-id proto-id "~a#~a" mid proto-id))))
       (genident proto-id)))
 
   (syntax-case stx ()
@@ -597,8 +598,8 @@ package: std/actor
         ([id . rest]
          (lp rest
              (cons* ['struct-out id]
-                    (stx-identifier id "!" id)
-                    (stx-identifier id "!!" id)
+                    (format-id id "!~a" id)
+                    (format-id id "!!~a" id)
                     mids)))
         (else mids))))
 
