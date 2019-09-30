@@ -3,6 +3,8 @@
 ;;; some standard sugar
 package: std
 
+(import (for-syntax :std/stxutil))
+
 (export #t)
 
 (defrules catch ())
@@ -85,7 +87,7 @@ package: std
           (syntax-local-type-info? #'type))
      (with-syntax* (((values klass) (syntax-local-value #'type))
                     (type::t (runtime-type-identifier klass))
-                    (method-impl (stx-identifier #'method #'type "::" #'method)))
+                    (method-impl (format-id #'method "~a::~a" #'type #'method)))
        #'(begin
            (defmethod {method type} body ...)
            (bind-method! type::t 'alias method-impl) ...)))))

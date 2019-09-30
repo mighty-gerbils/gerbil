@@ -4,7 +4,8 @@
 package: std/crypto
 
 (import :std/crypto/libcrypto
-        :std/crypto/etc)
+        :std/crypto/etc
+        (for-syntax :std/stxutil))
 
 (export make-digest digest? digest-update! digest-update* digest-final!
         digest-size digest-name digest-copy)
@@ -68,10 +69,10 @@ package: std/crypto
   (syntax-case stx ()
     ((_ name)
      (with-syntax
-         ((digest-md-t (stx-identifier #'name "digest::" #'name))
-          (digest-md (stx-identifier #'name "EVP_" #'name))
-          (make-digest-t (stx-identifier #'name "make-" #'name "-digest"))
-          (digest-t? (stx-identifier #'name #'name "-digest?")))
+         ((digest-md-t   (format-id #'name "digest::~a" #'name))
+          (digest-md     (format-id #'name "EVP_~a" #'name))
+          (make-digest-t (format-id #'name "make-~a-digest" #'name))
+          (digest-t?     (format-id #'name "~a-digest?" #'name)))
        #'(begin
            (def digest-md-t (digest-md))
            (def (make-digest-t)
