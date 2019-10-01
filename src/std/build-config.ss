@@ -2,7 +2,7 @@
 ;;; Gerbil stdlib build configuration
 package: std
 
-(import (for-syntax :std/stxutil))
+(import (for-syntax "stxutil"))
 
 ;; feature macro
 (defsyntax (enable stx)
