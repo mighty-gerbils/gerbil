@@ -136,7 +136,7 @@ package: std/generic
        (raise-syntax-error #f "Bad syntax; expected method identifier"
                            stx #'generic-id))
       ((not (generic-info? (syntax-local-value #'generic-id false)))
-       (raise-syntax-error #f "Bad syntax; exected generic method identifier"
+       (raise-syntax-error #f "Bad syntax; expected generic method identifier"
                            stx #'generic-id))
       ((not (identifier-list? #'(arg-id ...)))
        (let (bad-id (find (? (not identifier?)) #'(arg-id ...)))
