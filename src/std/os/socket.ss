@@ -10,7 +10,8 @@ package: std/os
         :std/net/address
         :std/text/utf8
         :std/sugar
-        (only-in :gerbil/gambit/ports close-port))
+        (only-in :gerbil/gambit/ports close-port)
+        (for-syntax :std/stxutil))
 
 (export socket
         server-socket
@@ -521,12 +522,12 @@ package: std/os
 
 (defsyntax (@sockopt-getf stx)
   (syntax-case stx ()
-    ((_ id) (identifier? #'id) (stx-identifier #'id "socket-getsockopt-" #'id))
+    ((_ id) (identifier? #'id) (format-id #'id "socket-getsockopt-~a" #'id))
     ((_ #f) #f)))
 
 (defsyntax (@sockopt-setf stx)
   (syntax-case stx ()
-    ((_ id) (identifier? #'id) (stx-identifier #'id "socket-setsockopt-" #'id))
+    ((_ id) (identifier? #'id) (format-id #'id "socket-setsockopt-~a" #'id))
     ((_ #f) #f)))
 
 ;; this list is invariably incomplete, new ones get added all the time

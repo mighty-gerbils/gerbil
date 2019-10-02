@@ -5,7 +5,8 @@ package: std/protobuf
 
 (import :std/protobuf/io
         :std/net/bio
-        :std/error)
+        :std/error
+        (for-syntax :std/stxutil))
 (export #t (for-syntax #t))
 
 (begin-syntax
@@ -65,8 +66,8 @@ package: std/protobuf
           (andmap stx-fixnum? #'(val ...)))
      (with-syntax* ((_ (check-duplicate-identifiers #'(key ...) stx))
                     (_ (check-duplicate-keys! (map stx-e #'(val ...)) stx))
-                    (bio-read (stx-identifier #'id "bio-read-" #'id))
-                    (bio-write (stx-identifier #'id "bio-write-" #'id))
+                    (bio-read  (format-id #'id "bio-read-~a" #'id))
+                    (bio-write (format-id #'id "bio-write-~a" #'id))
                     (defbio-read
                       (make-bio-read #'bio-read #'(key ...) #'(val ...)))
                     (defbio-write
@@ -165,19 +166,19 @@ package: std/protobuf
         (() (reverse fields)))))
 
   (def (make-struct-def id fields)
-    (with-syntax* ((id::t (stx-identifier id id "::t"))
-                   (id? (stx-identifier id id "?"))
-                   (make-id (stx-identifier id "make-" id))
+    (with-syntax* ((id::t   (format-id id "~a::t" id))
+                   (id?     (format-id id "~a?" id))
+                   (make-id (format-id id "make-~a" id))
                    ((field-id ...)
                     (map cadr fields))
                    ((getf ...)
-                    (map (cut stx-identifier id id "-" <>)
+                    (map (cut format-id id "~a-~a" id <>)
                          #'(field-id ...)))
                    ((setf ...)
-                    (map (cut stx-identifier id id "-" <> "-set!")
+                    (map (cut format-id id "~a-~a-set!" id <>)
                          #'(field-id ...)))
-                   (bio-read (stx-identifier id "bio-read-" id))
-                   (bio-write (stx-identifier id "bio-write-" id))
+                   (bio-read  (format-id id "bio-read-~a" id))
+                   (bio-write (format-id id "bio-write-~a" id))
                    (id id))
       #'(begin
           (defstruct-type id::t #f make-id id?
@@ -244,15 +245,15 @@ package: std/protobuf
                            (cddr field))
                           ((values subfield-ids)
                            (map car subfields))
-                          (field-getf (stx-identifier id id "-" field-id))
-                          (field-setf (stx-identifier id id "-" field-id "-set!"))
+                          (field-getf (format-id id "~a-~a" id field-id))
+                          (field-setf (format-id id "~a-~a-set!" id field-id))
                           ((subfield-kw ...)
                            (map keyword-e subfield-ids))
                           ((subfield-getf ...)
-                           (map (cut stx-identifier id id "-" <>)
+                           (map (cut format-id id "~a-~a" id <>)
                                 subfield-ids))
                           ((subfield-setf ...)
-                           (map (cut stx-identifier id id "-" <> "-set!")
+                           (map (cut format-id id "~a-~a-set!" id <>)
                                 subfield-ids)))
              (lp rest
                  (cons
@@ -272,9 +273,9 @@ package: std/protobuf
          (cons 'begin (reverse defs))))))
 
   (def (make-bio-read id fields)
-    (with-syntax ((bio-read (stx-identifier id "bio-read-" id))
-                  (bio-read! (stx-identifier id "bio-read-" id "!"))
-                  (id::t (stx-identifier id id "::t"))
+    (with-syntax ((bio-read  (format-id id "bio-read-~a" id))
+                  (bio-read! (format-id id "bio-read-~a!" id))
+                  (id::t     (format-id id "~a::t" id))
                   (field-count (length fields))
                   ((cases ...)
                    (make-read-cases id fields))
@@ -305,7 +306,7 @@ package: std/protobuf
 
   (def (fold-read-init id field r)
     (with ([specifier field-id . rest] field)
-      (with-syntax ((setf (stx-identifier id "&" id "-" field-id "-set!")))
+      (with-syntax ((setf (format-id id "&~a-~a-set!" id field-id)))
         (case specifier
           ((repeated: packed:)
            (cons #'(setf obj [])
@@ -318,8 +319,8 @@ package: std/protobuf
 
   (def (fold-read-fini id field r)
     (with ([specifier field-id . rest] field)
-      (with-syntax ((getf (stx-identifier id "&" id "-" field-id))
-                    (setf (stx-identifier id "&" id "-" field-id "-set!")))
+      (with-syntax ((getf (format-id id "&~a-~a" id field-id))
+                    (setf (format-id id "&~a-~a-set!" id field-id)))
         (case specifier
           ((repeated: packed:)
            (cons #'(setf obj (reverse (getf obj)))
@@ -345,8 +346,8 @@ package: std/protobuf
           #'(bio-read-delimited bio-read-e buf))))
 
     (with ([specifier field-id . rest] field)
-      (with-syntax ((getf (stx-identifier id "&" id "-" field-id))
-                    (setf (stx-identifier id "&" id "-" field-id "-set!")))
+      (with-syntax ((getf (format-id id "&~a-~a" id field-id))
+                    (setf (format-id id "&~a-~a-set!" id field-id)))
         (case specifier
           ((required: optional:)
            (with ([key type] rest)
@@ -404,11 +405,11 @@ package: std/protobuf
            (error "Unexpected specifier" specifier field))))))
 
   (def (make-bio-write id fields)
-    (with-syntax ((bio-write (stx-identifier id "bio-write-" id))
+    (with-syntax ((bio-write (format-id id "bio-write-~a" id))
                   ((write-field ...)
                    (map (cut make-bio-write-field id <>)
                         fields))
-                  (id? (stx-identifier id id "?"))
+                  (id? (format-id id "~a?" id))
                   (error-message
                    (string-append "Expected instance of " (symbol->string (stx-e id)))))
       #'(def (bio-write obj buf)
@@ -425,7 +426,7 @@ package: std/protobuf
           #'(bio-write-delimited val bio-write-e buf))))
 
     (with ([specifier field-id . rest] field)
-      (with-syntax ((getf (stx-identifier id "&" id "-" field-id)))
+      (with-syntax ((getf (format-id id "&~a-~a" id field-id)))
         (case specifier
           ((required:)
            (with ([key type] rest)
