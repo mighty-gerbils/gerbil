@@ -71,16 +71,21 @@ $ export GERBIL_HOME=/usr/local/opt/gerbil-scheme/libexec
 
 ## Skip the Install, Get Started on Docker
 
-The latest Gerbil images are available via Dockerhub
+The latest Gerbil images are available via [Docker Hub](https://hub.docker.com/u/gerbil)
 
 Ubuntu based version:
 ```bash
 docker pull gerbil/scheme
 ```
 
-To get to the repl:
+To get to the REPL:
 ```bash
-docker run -it gerbil/scheme /root/gerbil/bin/gxi
+docker run -it gerbil/scheme
 ```
 
-Or you can build your own container, using this [Dockerfile](https://github.com/vyzo/gerbil/blob/master/Dockerfile)
+To get a bash shell where you can compile programs:
+```bash
+docker run -it gerbil/scheme bash
+```
+
+Or you can build your own container using the [Dockerfile](https://github.com/vyzo/gerbil/blob/master/Dockerfile)
