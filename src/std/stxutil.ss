@@ -4,7 +4,7 @@
 package: std
 
 (import <expander-runtime>
-        "format")
+        :std/format)
 (export #t)
 
 ;; format an identifier; see also stx-identifier

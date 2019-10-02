@@ -3,7 +3,7 @@
 ;;; some standard sugar
 package: std
 
-(import (for-syntax "stxutil"))
+(import (for-syntax :std/stxutil))
 
 (export #t)
 
