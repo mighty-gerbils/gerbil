@@ -188,10 +188,10 @@ build_tags () {
 }
 
 build_doc () {
-    feedback_low "Build gerbil docs"
-    GERBIL_HOME="${GERBIL_BASE}" #required by gxtags
-    export GERBIL_HOME
-    (cd "${GERBIL_HOME}/doc" && npm install && node_modules/vuepress/bin/vuepress.js dev)
+  feedback_low "Build gerbil docs"
+  GERBIL_HOME="${GERBIL_BASE}" #required by gxtags
+  export GERBIL_HOME
+  (cd "${GERBIL_HOME}/doc" && npm install && node_modules/vuepress/bin/vuepress.js dev)
 }
 
 #===============================================================================
