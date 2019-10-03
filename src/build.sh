@@ -187,6 +187,13 @@ build_tags () {
   gxtags gerbil std lang
 }
 
+build_doc () {
+  feedback_low "Build gerbil docs"
+  GERBIL_HOME="${GERBIL_BASE}" #required by gxtags
+  export GERBIL_HOME
+  (cd "${GERBIL_HOME}/doc" && npm install && node_modules/vuepress/bin/vuepress.js dev)
+}
+
 #===============================================================================
 ## main
 build_gerbil() {
@@ -228,6 +235,9 @@ else
          ;;
        "tags")
          build_tags || die
+         ;;
+       "doc")
+         build_doc || die
          ;;
        *)
          feedback_err "Unknown command."
