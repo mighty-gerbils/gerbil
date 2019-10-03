@@ -3,6 +3,8 @@
 ;;; SRFI-13: charset library
 package: std/srfi
 
+(import (for-syntax :std/stxutil))
+
 (export define-record-type)
 
 (defsyntax (define-record-type stx)
@@ -35,10 +37,10 @@ package: std/srfi
   (def (module-type-id type-t)
     (cond
      ((module-context-ns (current-expander-context))
-      => (lambda (ns) (stx-identifier type-t ns "#" type-t)))
+      => (lambda (ns) (format-id type-t "~a#~a" ns type-t)))
      (else
       (let (mid (expander-context-id (current-expander-context)))
-        (stx-identifier type-t mid "#" type-t)))))
+        (format-id type-t "~a#~a" mid type-t)))))
 
   (def (generate-type type-id fields)
     (with-syntax ((klass type-id)

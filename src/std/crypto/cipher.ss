@@ -6,7 +6,8 @@ package: std/crypto
 (import :gerbil/gambit/ports
         :std/text/utf8
         :std/crypto/libcrypto
-        :std/crypto/etc)
+        :std/crypto/etc
+        (for-syntax :std/stxutil))
 
 (export
   cipher make-cipher cipher? cipher-type cipher-ctx cipher-context
@@ -221,35 +222,35 @@ package: std/crypto
           ((evp-cipher
             (cond
              (len
-              (stx-identifier name "EVP_" name "_" len "_" mode))
+              (format-id name "EVP_~a_~a_~a" name len mode))
              (mode
-              (stx-identifier name "EVP_" name "_" mode))
+              (format-id name "EVP_~a_~a" name mode))
              (else
-              (stx-identifier name "EVP_" name))))
+              (format-id name "EVP_~a" name))))
            (cipher-t
             (cond
              (len
-              (stx-identifier name "cipher::" name "-" len "-" mode))
+              (format-id name "cipher::~a-~a-~a" name len mode))
              (mode
-              (stx-identifier name "cipher::" name "-" mode))
+              (format-id name "cipher::~a-~a" name mode))
              (else
-              (stx-identifier name "cipher::" name))))
+              (format-id name "cipher::~a" name))))
            (make-cipher-t
             (cond
              (len
-              (stx-identifier name "make-" name "-" len "-" mode "-cipher"))
+              (format-id name "make-~a-~a-~a-cipher" name len mode))
              (mode
-              (stx-identifier name "make-" name "-" mode "-cipher"))
+              (format-id name "make-~a-~a-cipher" name mode))
              (else
-              (stx-identifier name "make-" name "-cipher"))))
+              (format-id name "make-~a-cipher" name))))
            (cipher-t?
             (cond
              (len
-              (stx-identifier name name "-" len "-" mode "-cipher?"))
+              (format-id name "~a-~a-~a-cipher?" name len mode))
              (mode
-              (stx-identifier name name "-" mode "-cipher?"))
+              (format-id name "~a-~a-cipher?" name mode))
              (else
-              (stx-identifier name name "-cipher?")))))
+              (format-id name "~a-cipher?" name)))))
         #'(begin
             (def cipher-t (evp-cipher))
             (def (make-cipher-t)

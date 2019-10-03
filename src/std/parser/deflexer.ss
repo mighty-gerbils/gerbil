@@ -3,7 +3,7 @@
 ;;; std parser lexer generator
 package: std/parser
 
-(import (phi: +1 :std/parser/base :std/parser/rx-parser)
+(import (phi: +1 :std/parser/base :std/parser/rx-parser :std/stxutil)
         :std/parser/base
         :std/parser/rlang
         :std/parser/lexer)
@@ -74,8 +74,8 @@ package: std/parser
          (with-syntax* (((defn ...) defs)
                         ((lang ...) langs)
                         ((action ...) actions)
-                        (lexer::L (stx-identifier #'id #'id "::L" ))
-                        (lexer::R (stx-identifier #'id #'id "::R"))
+                        (lexer::L (format-id #'id "~a::L" #'id))
+                        (lexer::R (format-id #'id "~a::R" #'id))
                         (def::L (stx-wrap-source
                                  #'(def lexer::L [lang ...])
                                  (stx-source stx)))

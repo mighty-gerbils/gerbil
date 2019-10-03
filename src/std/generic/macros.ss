@@ -4,6 +4,7 @@
 package: std/generic
 
 (import :std/generic/dispatch
+        (for-syntax :std/stxutil)
         (rename-in <MOP> (defmethod defmethod~)))
 (export #t (phi: +1 #t))
 
@@ -17,11 +18,11 @@ package: std/generic
   (def (generate-generic id default)
     (with-syntax* ((id id)
                    (default default)
-                   (dispatch-table-id (stx-identifier #'id #'id "::t"))
+                   (dispatch-table-id (format-id #'id "~a::t" #'id))
                    (dispatch-table
                     #'(def dispatch-table-id
                         (make-generic 'id default)))
-                   (procedure-id (stx-identifier #'id #'id "::apply"))
+                   (procedure-id (format-id #'id "~a::apply" #'id))
                    (procedure
                     (syntax/loc stx
                       (def (procedure-id . args)
@@ -56,7 +57,7 @@ package: std/generic
 (defsyntax (defbuiltin-type stx)
   (syntax-case stx ()
     ((_ id type-expr)
-     (with-syntax ((klass::t (stx-identifier #'id #'id "::t")))
+     (with-syntax ((klass::t (format-id #'id "~a::t" #'id)))
        #'(begin
            (def klass::t type-expr)
            (defsyntax id

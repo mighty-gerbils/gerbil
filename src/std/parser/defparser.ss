@@ -5,7 +5,8 @@ package: std/parser
 
 (import :std/parser/base
         :std/parser/rlang
-        :std/parser/lexer)
+        :std/parser/lexer
+        (for-syntax :std/stxutil))
 
 (export #t)
 
@@ -130,7 +131,7 @@ package: std/parser
            (reverse prods))))))
 
   (def (generate-prod-id base part)
-    (datum->syntax base (make-symbol (stx-e base) "::" part)))
+    (format-id base "~a::~a" base part))
 
   (def (wrap-source xstx where)
     (stx-wrap-source xstx (or (stx-source where) (stx-source stx))))

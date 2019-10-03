@@ -6,7 +6,8 @@ package: std/protobuf
 (import :std/protobuf/macros
         (for-syntax :std/parser/base
                     :std/sugar
-                    :std/protobuf/proto-grammar))
+                    :std/protobuf/proto-grammar
+                    :std/stxutil))
 (export (except-out #t begin-module%%)
         (rename: begin-module%% %%begin-module)
         (import: :std/protobuf/macros)
@@ -73,7 +74,7 @@ package: std/protobuf
         ([hd . rest]
          (syntax-case hd (message enum field map oneof)
            ((enum enum-id . enum-body)
-            (with-syntax ((new-enum-id (stx-identifier #'enum-id id "." #'enum-id)))
+            (with-syntax ((new-enum-id (format-id #'enum-id "~a.~a" id #'enum-id)))
               (let (new-enum
                     (syntax/loc hd
                       (enum new-enum-id . enum-body)))
@@ -83,7 +84,7 @@ package: std/protobuf
                     (cons (cons #'enum-id #'new-enum-id)
                           subst)))))
            ((message message-id . message-body)
-            (with-syntax ((new-message-id (stx-identifier #'message-id id "." #'message-id)))
+            (with-syntax ((new-message-id (format-id #'message-id "~a.~a" id #'message-id)))
               (let (new-message
                     (syntax/loc hd
                       (message new-message-id . message-body)))
@@ -150,7 +151,7 @@ package: std/protobuf
            (let ((str (symbol->string (stx-e id)))
                  (pre (string-append (symbol->string (stx-e xid)) ".")))
              (if (string-prefix? pre str)
-               (stx-identifier id yid "." (substring str (string-length pre) (string-length str)))
+               (format-id id "~a.~a" yid (substring str (string-length pre) (string-length str)))
                (lp rest)))))
         (else id))))
 
@@ -269,7 +270,7 @@ package: std/protobuf
   (def (expand-import-path stx-path)
     (let (path (stx-e stx-path))
       (if (eq? (string-ref path 0) #\:) ; library path
-        (datum->syntax stx-path (string->symbol path) stx-path)
+        (format-id stx-path "~a" path)
         stx-path)))
 
   (def (expand-pkg pkg defs)
