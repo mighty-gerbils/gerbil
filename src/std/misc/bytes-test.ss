@@ -29,12 +29,18 @@
 (def u4 (u8vector #xFF #xFF))
 (def u5 (make-u8vector 10 #xFF))
 
+(def u6 (u8vector 0 1 2 3))
+(def u6-reversed (u8vector 3 2 1 0))
+(def u6-reverse (lambda () (bytevector-reverse u6)))
+
 (def bytes-test
   (test-suite "test :std/misc/bytes"
     (test-case "test bytevector-swap!"
       (check-equal? (u0-swap) u0-swapped))
     (test-case "test bytevector-reverse!"
       (check-equal? (u1-reverse) u1-reversed))
+    (test-case "test bytevector-reverse"
+      (check-equal? (u6-reverse) u6-reversed))
     (test-case "test u8vector->bytestring"
       (check-equal? (u8vector->bytestring u2) u2-bytestring)
       (check-equal? (u8vector->bytestring u3 "") u3-bytestring))

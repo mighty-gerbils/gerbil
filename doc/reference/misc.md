@@ -443,7 +443,7 @@ Alias for `u8vector-swap!`.
   v := u8vector
 ```
 
-Reverses the elements of `u8vector` *v*.
+Reverses the elements of `u8vector` *v* in-place. Mutates the vector.
 
 ::: tip Examples:
 ``` scheme
@@ -460,6 +460,30 @@ Reverses the elements of `u8vector` *v*.
 ```
 
 Alias for `u8vector-reverse!`.
+
+### u8vector-reverse
+``` scheme
+(u8vector-reverse v) -> u8vector
+
+  v := u8vector
+```
+
+Reverses the elements of `u8vector` *v*. Produces a new `u8vector`.
+
+::: tip Examples:
+``` scheme
+> (def u (u8vector 1 2 3 4 5))
+> (u8vector-reverse u)
+#u8(5 4 3 2 1)
+```
+:::
+
+### bytevector-reverse
+``` scheme
+(define-alias bytevector-reverse u8vector-reverse)
+```
+
+Alias for `u8vector-reverse`.
 
 ### u8vector->bytestring
 ``` scheme

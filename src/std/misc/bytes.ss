@@ -11,6 +11,7 @@ package: std/misc
 
 (define-alias bytevector-swap! u8vector-swap!)
 (define-alias bytevector-reverse! u8vector-reverse!)
+(define-alias bytevector-reverse u8vector-reverse)
 (define-alias bytevector->uint u8vector->uint)
 
 (def (u8vector-swap! v j k)
@@ -25,6 +26,13 @@ package: std/misc
          (right-index (- len 1) (- right-index 1)))
         ((<= right-index left-index))
       (u8vector-swap! v left-index right-index))))
+
+(def (u8vector-reverse v)
+  (let* ((l (u8vector-length v))
+        (u (make-u8vector l)))
+    (for (x (in-range (- l 1) -1))
+      (u8vector-set! u (- l 1 x) (u8vector-ref v x)))
+    u))
 
 (def (u8vector->bytestring u (delim " "))
   (let ((max (- (u8vector-length u) 1)))
