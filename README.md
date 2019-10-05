@@ -73,6 +73,8 @@ For questions and support, you can come say hi in `#gerbil-scheme` on irc at fre
 
 # License and Copyright
 
+## Source Code
+
 The source code is distributed with the Gambit license; that means
 that Gerbil on Gambit is dual licensed under LGPLv2.1 and Apache 2.0.
 
@@ -86,6 +88,27 @@ like this:
 Gerbil is Free Software, distributed under the GNU LGPLv2.1 or later
 and the Apache 2.0 license.
 ```
+
+## Logo
+
+The Gerbil Scheme logo is © 2019 Brad Christensen. The logo, its
+variations, and derivatives found within the official Gerbil Scheme
+code repository are provided under a royalty-free non-exclusive
+license for use by any person or entity wanting to use them solely
+in the context of the Gerbil Scheme programming language, including
+for commercial use, and grants them the rights to copy, distribute,
+display, and create derivative works so long as those derivatives
+are made available under this same license.
+
+Creators of derivatives are encouraged to offer them for inclusion
+to the official code or associated Gerbil Scheme repository, where
+upon acceptance they will be easier to find and use (for example
+in documentation and acticles) by the community at large.
+Furthermore, a derivative's terms of use will be made available
+by the statements here.
+
+This license in no way guarantees the availability of the logo, or
+any of its variations or derivitives in the future.
 
 # Epilogue
 

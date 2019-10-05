@@ -18,6 +18,9 @@
   },
   "homepage": "https://github.com/vyzo/gerbil#readme",
   "dependencies": {
-    "vuepress": "^0.14.2"
+    "vuepress": "^1.1.0"
+  },
+  "devDependencies": {
+    "vue-svg-loader": "^0.12.0"
   }
 }

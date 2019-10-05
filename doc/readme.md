@@ -1,5 +1,6 @@
 ---
 home: true
+heroImage: /img/gerbil-detailed-consio_OPT.svg
 tagline: Gerbil is a meta-dialect of Scheme with post-modern features
 actionText: Get Started →
 actionLink: /guide/
