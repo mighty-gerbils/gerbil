@@ -16,7 +16,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
-   sodipodi:docname="gerbil-flat-colored.svg"
+   sodipodi:docname="gerbil-flat-colored_INK.svg"
    inkscape:export-filename="/home/pattern/Documents/gerbil-some-gradient.png"
    inkscape:export-xdpi="48"
    inkscape:export-ydpi="48"
@@ -96,6 +96,13 @@
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
         <dc:title></dc:title>
+        <cc:license
+           rdf:resource="https://github.com/vyzo/gerbil#logo" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>Brad Christensen</dc:title>
+          </cc:Agent>
+        </dc:creator>
       </cc:Work>
     </rdf:RDF>
   </metadata>
