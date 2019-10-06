@@ -705,13 +705,13 @@ Short-form destructuring bind macros.
 
 (? pred => K)
 => (lambda (obj)
-     (and (? pred obj)
-          (K obj)))
-
-(? pred :: K)
-=> (lambda (obj)
      (alet (val (? pred obj))
        (K val)))
+
+(? pred :: proc)
+=> (lambda (obj)
+     (and (? pred obj)
+          (proc obj)))
 
 (? pred :: proc => K)
 => (lambda (obj)
