@@ -411,30 +411,37 @@ namespace: gx
          (ssi (if (string-empty? ext)
                 (string-append spath ".ssi")
                 (string-append (path-strip-extension spath) ".ssi")))
-         (src (if (string-empty? ext)
-                (string-append spath ".ss")
-                spath)))
+         (srcs (if (string-empty? ext)
+                 (map (lambda (ext) (string-append spath ext))
+                      '(".ss" ".sld" ".scm"))
+                 [spath])))
     (let lp ((rest (current-expander-module-library-path)))
       (match rest
         ([dir . rest]
-         (def (resolve ssi src)
+         (def (resolve ssi srcs)
            (let (compiled-path (path-expand ssi dir))
              (if (file-exists? compiled-path)
                (path-normalize compiled-path)
-               (let (src-path (path-expand src dir))
-                 (if (file-exists? src-path)
-                   (path-normalize src-path)
-                   (lp rest))))))
+               (let lpr ((rest-src srcs))
+                 (match rest-src
+                   ([src . rest-src]
+                    (let (src-path (path-expand src dir))
+                      (if (file-exists? src-path)
+                        (path-normalize src-path)
+                        (lpr rest-src))))
+                   (else
+                    (lp rest)))))))
          (cond
           ((core-library-package-path-prefix dir)
            => (lambda (prefix)
                 (if (string-prefix? prefix spath)
                   (let ((ssi (substring ssi (string-length prefix) (string-length ssi)))
-                        (src (substring src (string-length prefix) (string-length src))))
-                    (resolve ssi src))
+                        (srcs (map (lambda (src) (substring src (string-length prefix) (string-length src)))
+                                   srcs)))
+                    (resolve ssi srcs))
                   (lp rest))))
           (else
-           (resolve ssi src))))
+           (resolve ssi srcs))))
         ([] (raise-syntax-error #f "Cannot find library module" libpath))))))
 
 (def (core-library-package-path-prefix dir)
