@@ -181,3 +181,9 @@ package: std
                                 #'(hash-ref ht 'sym))))
                             #'(var-ref id))))))))
                body ...)))))))
+
+(defsyntax (awhen stx)
+  (syntax-case stx ()
+    ((_ (id test) body ...)
+     #'(let (id test)
+         (when id body ...)))))
