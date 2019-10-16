@@ -146,3 +146,13 @@ are resolved with the following rules:
 - `.x  -> (hash-ref hash 'x)` ; strong accessor
 - `.?x -> (hash-get hash 'x)` ; weak accessor
 - `..x -> (%%ref .x)`         ; escape
+
+## awhen
+
+::: tip usage
+```
+(awhen (id test) body ...)
+```
+:::
+
+Anaphoric `when`. Evaluates and binds *test* to *id*. Evaluates *body ...* if *test* is not `#f`.

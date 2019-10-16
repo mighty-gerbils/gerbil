@@ -181,3 +181,8 @@ package: std
                                 #'(hash-ref ht 'sym))))
                             #'(var-ref id))))))))
                body ...)))))))
+
+(defrules awhen ()
+  ((_ (id test) body ...)
+   (let (id test)
+     (when id body ...))))
