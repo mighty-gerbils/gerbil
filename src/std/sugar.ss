@@ -182,8 +182,7 @@ package: std
                             #'(var-ref id))))))))
                body ...)))))))
 
-(defsyntax (awhen stx)
-  (syntax-case stx ()
-    ((_ (id test) body ...)
-     #'(let (id test)
-         (when id body ...)))))
+(defrules awhen ()
+  ((_ (id test) body ...)
+   (let (id test)
+     (when id body ...))))
