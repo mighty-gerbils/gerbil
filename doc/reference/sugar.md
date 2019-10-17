@@ -4,14 +4,14 @@ The `:std/sugar` library provides common syntactic sugar and is used
 throughout the standard library. Note that this module has no runtime
 footprint, it only defines macros.
 
-::: tip usage
+::: tip To use the bindings from this module:
+```scheme
 (import :std/sugar)
+```
 :::
 
 ## try
-
-::: tip usage
-```
+```scheme
 (try
   body ...
   [<catch-clause> ...]
@@ -26,36 +26,26 @@ catch-clause:
 finally-clause:
   (finally expr ...)
 ```
-:::
 
 Evaluates body with an exception catcher and an unwind finalizer.
 
 ## with-destroy
-
-::: tip usage
-```
+```scheme
 (with-destroy obj body ...)
 ```
-:::
 
 Evaluates body with an unwind finalizer that invokes `{destroy obj}`.
 
-
 ## defmethod/alias
-
-::: tip usage
-```
+```scheme
 (defmethod/alias {method (alias ...) type}
   body ...)
 ```
-:::
 
 Defines a method with one or more binding aliases
 
 ## using
-
-::: tip usage
-```
+```scheme
 (using obj <method-spec> ...)
 => (begin (using-method obj <method-spec>) ...)
 
@@ -63,80 +53,58 @@ Defines a method with one or more binding aliases
 (using-method obj (local-id method-id))
 
 ```
-:::
 
 Defines local procedures for methods of an object.
 This is very useful for avoiding method dispatch if methods of an object are
 used multiple times within the lexical scope.
 
 ## while
-
-::: tip usage
-```
+```scheme
 (while test body ...)
 ```
-:::
 
 Evaluates body in a loop while the test expression evaluates to true.
 
 ## until
-
-::: tip usage
-```
+```scheme
 (until test body ...)
 ```
-:::
 
 Evaluates body in a loop until the test expression evaluates to true.
 
 ## assert!
-
-::: tip usage
-```
+```scheme
 (assert! expr [message])
 ```
-:::
 
 Raises an error when the expression evaluates to true.
 
 ## hash
-
-::: tip usage
-```
+```scheme
 (hash (key val) ...)
 ```
-:::
 
 Construct a hash table; the keys are quasiquoted while the values are evaluated.
 
 
 ## hash-eq
-
-::: tip usage
-```
+```scheme
 (hash-eq (key val) ...)
 ```
-:::
 
 Like `hash`, but constructs hash-eq table.
 
 ## hash-eqv
-
-::: tip usage
-```
+```scheme
 (hash-eqv (key val) ...)
 ```
-:::
 
 Like `hash`, but constructs hash-eqv table.
 
 ## let-hash
-
-::: tip usage
-```
+```scheme
 (let-hash hash body ...)
 ```
-:::
 
 Evaluates the body within a scope where identifier references starting with a `.`
 resolve as hash references.
@@ -148,11 +116,8 @@ are resolved with the following rules:
 - `..x -> (%%ref .x)`         ; escape
 
 ## awhen
-
-::: tip usage
-```
+```scheme
 (awhen (id test) body ...)
 ```
-:::
 
 Anaphoric `when`. Evaluates and binds *test* to *id*. Evaluates *body ...* if *test* is not `#f`.
