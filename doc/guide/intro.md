@@ -516,7 +516,7 @@ it-is-an-error
 Identifiers are imported from a module with the `import` special
 form, which must appear at a top context (either top-level
 or module scope).
-It has the following syntax:
+It has roughly the following syntax (for full details see the reference):
 ```scheme
 (import <import-spec> ...)
 import-spec:
@@ -525,6 +525,8 @@ import-spec:
 module-path:
  identifier            ; top or module scope module
  :identifier           ; identifier with ':' prefix, library module
+ ./identifier          ; identifier with './' prefix, library relative module
+ ../identifier         ; identifier with '../' prefix, library relative module
  "path-to-module-file" ; file module, .ss extension optional
 ```
 
@@ -772,6 +774,22 @@ If the gerbil.pkg file is empty, then it is treated as an empty
 property list.  This allows you to simply touch a gerbil.pkg at the
 root of your source hierarchy when you don't need a custom prelude and
 use a directory structure that mimics your logical package structure.
+
+### Library Relative Module Paths
+
+As of `Gerbil v0.16-DEV-196-g41214a5`, you can use the dot notation to
+import library modules using a relative path within a library.  Within
+a library module `:A/B/C/D`, an import of `./E` will resolve to
+`:A/B/C/E`, while an import of `../E` will resolve to `:A/B/E`.
+Upwards traversals can be nested, so `../../E` will resolve to `:A/E`.
+Downwards traversals are also possible, so `../../E/G` wiil resolve to
+`:A/E/G`.
+
+Note that this is merely a syntactic convenience for `import` that
+allows you to refer to relative modules with a short module path and
+still load a library module. Relative module paths are meaningless
+outside the context of a library module.
+
 
 ## Standard Library
 
