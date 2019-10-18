@@ -35,20 +35,25 @@ Not implemented yet.
 (import import-spec ...)
 
 <import-spec>:
- (phi: dphi import-spec ...)  ; import at differential phase; phi: +1 imports for syntax
- (begin: import-spec ...)     ; group together import specs
- (runtime: module-path)       ; import a module as runtime dependency (no bindings)
+ (phi: dphi import-spec ...)                   ; import at differential phase; phi: +1 imports for syntax
+ (begin: import-spec ...)                      ; group together import specs
+ (runtime: module-path)                        ; import a module as runtime dependency (no bindings)
  (spec: module-path phi name src-phi src-name) ; fully specified import
- (macro macro-arg ....)       ; expand import expander `macro` with `macro-arg ...`
- module-path                  ; import a module
+ (macro macro-arg ....)                        ; expand import expander `macro` with `macro-arg ...`
+ module-path                                   ; import a module
 
 <module-path>:
- string                       ; string module path, relative to the source
- bound-identifier             ; module bound in the current context
- library-path                 ; library module path
+ string                                        ; source module path, relative to the current source
+ bound-identifier                              ; module bound in the current context
+ library-path                                  ; library module path
+ relative-library-path                         ; relative library module path
 
 <library-path>:
- ':' symbol ['/' symbol]+     ; library module path, with `/` as file system separator
+ ':' symbol ['/' symbol]*                      ; library module path, with `/` as file system separator
+
+<relative-library-path>:
+ './' symbol ['/' symbol]*                     ; library module path relative to the current library module
+ '../' ['../']* symbol ['/' symbol]*           ; relative library module path with package traversal
 ```
 
 Imports bindings to the current syntactic context. Must appear at top or module context.

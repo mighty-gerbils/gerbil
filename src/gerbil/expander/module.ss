@@ -444,6 +444,39 @@ namespace: gx
            (resolve ssi srcs))))
         ([] (raise-syntax-error #f "Cannot find library module" libpath))))))
 
+(def (core-resolve-library-relative-module-path modpath)
+  (def (resolve path base)
+    (cond
+     ((string-rindex base #\/)
+      => (lambda (idx)
+           (core-resolve-library-module-path
+            (string->symbol
+             (string-append ":" (substring base 0 idx) "/" path)))))
+     (else
+      (core-resolve-library-module-path
+       (string->symbol
+        (string-append ":" path))))))
+
+  (let ((spath (symbol->string (stx-e modpath)))
+        (mod (core-context-top (current-expander-context) module-context?)))
+    (unless mod
+      (raise-syntax-error #f "Cannot resolve relative module path; not in module context" modpath))
+    (let (mpath (symbol->string (expander-context-id mod)))
+      (let lp ((spath spath) (mpath mpath))
+        (cond
+         ((string-prefix? "../" spath)
+          (cond
+           ((string-rindex mpath #\/)
+            => (lambda (idx)
+                 (lp (substring spath 3 (string-length spath))
+                     (substring mpath 0 idx))))
+           (else
+            (raise-syntax-error #f "Cannot resolve relative module path; illegal traversal" modpath))))
+         ((string-prefix? "./" spath)
+          (lp (substring spath 2 (string-length spath)) mpath))
+         (else
+          (resolve spath mpath)))))))
+
 (def (core-library-package-path-prefix dir)
   (cond
    ((pgetq package: (core-library-package-plist dir))
@@ -482,6 +515,9 @@ namespace: gx
 
 (def (core-library-module-path? stx)
   (core-special-module-path? stx #\:))
+
+(def (core-library-relative-module-path? stx)
+  (core-special-module-path? stx #\.))
 
 (def (core-special-module-path? stx char)
   (and (identifier? stx)
@@ -680,6 +716,10 @@ namespace: gx
      ((core-library-module-path? hd)
       (import1 (import-module
                 (core-resolve-library-module-path hd))
+               K rest r))
+     ((core-library-relative-module-path? hd)
+      (import1 (import-module
+                (core-resolve-library-relative-module-path hd))
                K rest r))
      (else
       (let (e (stx-e hd))
@@ -906,6 +946,9 @@ namespace: gx
                    ((core-library-module-path? hd)
                     (import-module
                      (core-resolve-library-module-path hd)))
+                   ((core-library-relative-module-path? hd)
+                    (import-module
+                     (core-resolve-library-relative-module-path hd)))
                    ((stx-string? hd)
                     (import-module
                      (core-resolve-module-path hd (stx-source stx))))
