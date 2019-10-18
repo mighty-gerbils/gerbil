@@ -273,7 +273,7 @@ package: gerbil
   (define-alias cdr-set! set-cdr!)
   (define-alias box-set! set-box!)
   (define-alias call/cc         call-with-current-continuation)
-  (define-alias call/esc        call-with-escape)
+  (define-alias call/esc        call-with-current-continuation)
   (define-alias call/values     call-with-values)
   (define-alias call/parameters call-with-parameters)
   ;;(define-alias call/prompt     call-with-prompt)
@@ -2327,7 +2327,7 @@ package: gerbil
       (parse1 stx))
 
     (def (match-pattern? stx)
-      (call/esc
+      (call/cc
        (lambda (E)
          (with-exception-handler
           (let (E! (current-exception-handler))
