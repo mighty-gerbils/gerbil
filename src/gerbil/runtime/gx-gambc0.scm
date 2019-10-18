@@ -10,14 +10,6 @@
   (extended-bindings))
 
 ;;;
-;;; Conditional evaluation
-;;;
-(define-macro (eval-when expr . forms)
-  (if (eval expr)
-    `(begin ,@forms)
-    '(begin)))
-
-;;;
 ;;; Host Runtime
 ;;;
 
@@ -1509,16 +1501,25 @@
   (define (make-promise thunk)
     (##make-delay-promise thunk)))
 
-(define (call-with-parameters thunk . rest)
-  (core-match rest
-    ((param val . rest)
-     (##parameterize param val
-                     (if (null? rest) thunk
-                         (lambda () (apply call-with-parameters thunk rest)))))
-    (() (thunk))))
+;; TODO: change this to version check when gambit v4.9.4 is released
+(eval-if-bound ##parameterize1
+  (define (call-with-parameters thunk . rest)
+    (core-match rest
+      ((param val . rest)
+       (##parameterize1 param val
+                       (if (null? rest) thunk
+                           (lambda () (apply call-with-parameters thunk rest)))))
+      (() (thunk))))
+  (define (call-with-parameters thunk . rest)
+    (core-match rest
+      ((param val . rest)
+       (##parameterize param val
+                       (if (null? rest) thunk
+                           (lambda () (apply call-with-parameters thunk rest)))))
+      (() (thunk)))))
 
 (define (call-with-escape K)
-  (call/cc K))
+  (call-with-current-continuation K))
 
 (define with-catch
   with-exception-catcher)

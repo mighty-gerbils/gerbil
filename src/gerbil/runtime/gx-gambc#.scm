@@ -4,6 +4,25 @@
 (##namespace (""))
 (include "~~lib/_gambit#.scm")
 
+;; conditional evaluation
+(define-macro (eval-when expr . forms)
+  (if (eval expr)
+    `(begin ,@forms)
+    '(begin)))
+
+(define-macro (eval-if test then else)
+  (if (eval test)
+    `(begin ,then)
+    `(begin ,else)))
+
+(define-macro (eval-if-bound symbol then else)
+  (let ((bound?
+         (with-exception-catcher
+          (lambda (e) #f)
+          (lambda () (procedure? (eval symbol))))))
+    (if bound? then else)))
+
+;; when and unless
 (define-macro (when condition . body)
   `(if ,condition (begin ,@body) #!void))
 (define-macro (unless condition . body)
