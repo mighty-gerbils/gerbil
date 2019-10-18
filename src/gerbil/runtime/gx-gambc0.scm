@@ -1519,7 +1519,7 @@
       (() (thunk)))))
 
 (define (call-with-escape K)
-  (call/cc K))
+  (call-with-current-continuation K))
 
 (define with-catch
   with-exception-catcher)
