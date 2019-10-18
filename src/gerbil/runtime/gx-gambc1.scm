@@ -103,17 +103,8 @@
     (box (&AST->datum (unbox stx))))
    (else stx)))
 
-(define-macro (eval-if test then else)
-  (if (eval test)
-    `(begin ,then)
-    `(begin ,else)))
-
-;; TODO: change to the following when gambit releases 4.9.4
-;(eval-if (> (system-version) 409003)
-(eval-if (call/cc (lambda (c)
-                    (with-exception-handler
-                      (lambda (_) (c #f))
-                      (lambda () (procedure? ##convert-case)))))
+;; TODO: change to version check when gambit releases 4.9.4
+(eval-if-bound ##convert-case
   (define (get-readenv port)
     (##make-readenv port
                     (current-readtable)
@@ -126,6 +117,7 @@
                     _gx#wrap-syntax
                     _gx#unwrap-syntax
                     #f #f)))
+
 (define (read-syntax #!optional (in (current-input-port)))
   (let ((e (##read-datum-or-eof (get-readenv in))))
     (if (eof-object? (&AST-e e))
