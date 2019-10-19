@@ -74,4 +74,4 @@ package: std/srfi
     (fxior (fxarithmetic-shift-left (fxreverse width zn) start)
            (fxand (fxnot (fxarithmetic-shift-left mask start)) n))))
 
-(include "143/carries.scm")
+(include "srfi-143/carries.scm")
