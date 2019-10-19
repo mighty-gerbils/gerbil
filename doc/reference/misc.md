@@ -4782,6 +4782,34 @@ perform, otherwise an error is signaled.
 ```
 :::
 
+### string-whitespace?
+``` scheme
+(string-whitespace? str) -> boolean
+
+  str := string to check for whitespace characters
+```
+
+Returns true when the string *s* consists only of whitespace characters.
+
+| character string | name            |
+|:-----------------|:----------------|
+| ` `              | space           |
+| `\n`             | line feed       |
+| `\t`             | horizontal tab  |
+| `\r`             | carriage return |
+| `\f`             | form feed       |
+| `\v`             | vertical tab    |
+
+::: tip Examples:
+``` scheme
+> (string-whitespace? "")
+#t
+
+> (string-whitespace? "\n \t")
+#t
+```
+:::
+
 ### line ending variables
 ``` scheme
 (define +cr+   "\r")
