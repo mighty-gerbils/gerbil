@@ -67,6 +67,12 @@
     "srfi/143"
     "srfi/145"
     "srfi/151"
+    "srfi/146"
+    "srfi/146/vector-edit"
+    "srfi/146/hamt-misc"
+    "srfi/146/hamt"
+    "srfi/146/hamt-map"
+    "srfi/146/hash"
     ;; :std/parser
     "parser/rlang"
     "parser/base"

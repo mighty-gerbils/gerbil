@@ -54,4 +54,5 @@ The following SRFIs are supported by gerbil:
 | [SRFI 135](https://srfi.schemers.org/srfi-135/srfi-135.html) | Immutable Texts                                        | stdlib       | `:std/srfi/135`           |
 | [SRFI 143](https://srfi.schemers.org/srfi-143/srfi-143.html) | Fixunums                                               | stdlib       | `:std/srfi/143`           |
 | [SRFI 145](https://srfi.schemers.org/srfi-145/srfi-145.html) | Assumptions                                            | stdlib       | `:std/srfi/145`           |
+| [SRFI 146](https://srfi.schemers.org/srfi-146/srfi-146.html) | Mappings                                               | stdlib       | `:std/srfi/146`,`:std/srfi/146/hash` |
 | [SRFI 151](https://srfi.schemers.org/srfi-151/srfi-151.html) | Bitwise Operations                                          | stdlib       | `:std/srfi/151`           |
