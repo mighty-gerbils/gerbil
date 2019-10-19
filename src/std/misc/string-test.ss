@@ -52,4 +52,10 @@
      (check-equal? (string-subst "abc"   "b"  "_" count: 2)  "a_c")
      (check-equal? (string-subst "abbcb" "b"  "_" count: 2)  "a__cb")
      (check-equal? (string-subst "abbcb" "b"  "_" count: 3)  "a__c_")
-     (check-equal? (string-subst "abbcb" "bb" "_" count: #f) "a_cb"))))
+     (check-equal? (string-subst "abbcb" "bb" "_" count: #f) "a_cb"))
+    (test-case "string-whitespace?"
+      (check-equal? (string-whitespace? "") #t)
+      (check-equal? (string-whitespace? " ") #t)
+      (check-equal? (string-whitespace? " \n") #t)
+      (check-equal? (string-whitespace? " \n\t\r\f\v") #t)
+      (check-equal? (string-whitespace? " a") #f))))

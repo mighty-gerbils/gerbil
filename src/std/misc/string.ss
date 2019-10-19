@@ -10,12 +10,12 @@ package: std/misc
   string-split-eol
   string-trim-eol
   string-subst
+  string-whitespace?
   +cr+ +lf+ +crlf+)
 
 (import
   (only-in :gerbil/gambit/ports write-substring write-string)
   :std/srfi/13)
-
 
 ;; If the string starts with given prefix, return the end of the string after the prefix.
 ;; Otherwise, return the entire string. NB: Only remove the prefix once.
@@ -172,3 +172,17 @@ package: std/misc
        (old-empty? (subst-helper-empty-old str new count))
        (str-empty? str)
        (else       (subst-helper-nonempty-old str old new count))))))
+
+;; Returns true when the string s consists only of whitespace characters.
+;;
+;;   " "   space
+;;   "\n"  line feed
+;;   "\t"  horizontal tab
+;;   "\r"  carriage return
+;;   "\f"  form feed
+;;   "\v"  vertical tab
+;;
+;; Example:
+;;  (string-whitespace? " \n\r \t") => #t
+(def (string-whitespace? s)
+  (string-every char-whitespace? s))
