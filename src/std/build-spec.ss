@@ -66,6 +66,7 @@
     "srfi/135"
     "srfi/143"
     "srfi/145"
+    "srfi/151"
     ;; :std/parser
     "parser/rlang"
     "parser/base"
