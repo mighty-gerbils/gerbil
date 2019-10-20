@@ -87,18 +87,20 @@ package: std/misc
 ;;       optimize me!
 (def (bytestring->u8vector bs (delim #\space))
   (declare (fixnum) (not safe))
-  (let* ((lst (string-split bs delim))
-         (v (make-u8vector (length lst))))
-    (let lp ((rest lst) (i 0))
-      (match rest
-        ([x . rest]
-         (unless (= (string-length x) 2)
-           (error "Invalid bytestring component" x))
-         (let ((hi (unhex (string-ref x 0)))
-               (lo (unhex (string-ref x 1))))
-           (u8vector-set! v i (fxior (fxarithmetic-shift hi 4) lo))
-           (lp rest (1+ i))))
-        (else v)))))
+  (if delim
+    (let* ((lst (string-split bs delim))
+           (v (make-u8vector (length lst))))
+      (let lp ((rest lst) (i 0))
+        (match rest
+          ([x . rest]
+           (unless (= (string-length x) 2)
+             (error "Invalid bytestring component" x))
+           (let ((hi (unhex (string-ref x 0)))
+                 (lo (unhex (string-ref x 1))))
+             (u8vector-set! v i (fxior (fxarithmetic-shift hi 4) lo))
+             (lp rest (1+ i))))
+          (else v))))
+    (hex-decode bs)))
 
 (def (u8vector->uint v (endianness 'big))
   (unless (u8vector? v)
