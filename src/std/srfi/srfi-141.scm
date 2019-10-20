@@ -42,8 +42,6 @@
 
 ;;; exact-integer?
 #;(define (exact-integer? x) (and (integer? x) (exact? x)))
-(define (exact-integer? x)
-  (##exact-integer? x))
 
 ;;;; Integer Division
 

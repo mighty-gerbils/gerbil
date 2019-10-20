@@ -3,7 +3,8 @@
 ;;; SRFI-143: Fixnums
 package: std/srfi
 
-(import :gerbil/gambit/fixnum)
+(import :gerbil/gambit/fixnum
+        :gerbil/gambit/exact)
 (export fx-width fx-greatest fx-least
         fixnum? fx=? fx<? fx>? fx<=? fx>=?
         fxzero? fxpositive? fxnegative?
@@ -32,9 +33,6 @@ package: std/srfi
 
 (def (fxsqrt x)
   (##integer-sqrt x))
-
-(def (exact-integer? x)
-  (##exact-integer? x))
 
 (def (fxcopy-bit index to bool)
   (if bool

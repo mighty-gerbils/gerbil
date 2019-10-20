@@ -3,7 +3,8 @@
 ;;; SRFI-141: Integer Division
 package: std/srfi
 
-(import ./8)
+(import :gerbil/gambit/exact
+        ./8)
 (export ceiling/ ceiling-quotient ceiling-remainder
         floor/ floor-quotient floor-remainder
         truncate/ truncate-quotient truncate-remainder

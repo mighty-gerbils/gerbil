@@ -3,7 +3,8 @@
 ;;; SRFI-132: Sorting Library
 package: std/srfi
 
-(import :gerbil/gambit/random)
+(import :gerbil/gambit/random
+        :gerbil/gambit/exact)
 (export list-sorted?               vector-sorted?
         list-sort                  vector-sort
         list-stable-sort           vector-stable-sort
@@ -34,9 +35,6 @@ package: std/srfi
       (when (fx< i end)
         (vector-set! v i val)
         (lp (fx1+ i))))))
-
-(def (exact-integer? x)
-  (and (exact? x) (integer? x)))
 
 (include "srfi-132/delndups.scm")     ; list-delete-neighbor-dups etc
 (include "srfi-132/lmsort.scm")       ; list-merge, list-merge!
