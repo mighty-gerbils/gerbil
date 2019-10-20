@@ -56,7 +56,8 @@
         ([k v . rest]
          (rbtree-put! rbtree k v)
          (lp rest))
-        ([] rbtree)))))
+        ([]
+         (%make-mapping comparator rbtree))))))
 
 (define (mapping-unfold stop? mapper successor seed comparator)
   (assume (procedure? stop?))
