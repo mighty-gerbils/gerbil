@@ -17,7 +17,7 @@
 
 
 ;; generator
-(define (generator . args)
+#;(define (generator . args)
   (lambda () (if (null? args)
                (eof-object)
                (let ((next (car args)))
@@ -36,13 +36,13 @@
 
 
 ;; make-iota-generator
-(define make-iota-generator
+#;(define make-iota-generator
   (case-lambda ((count) (make-iota-generator count 0 1))
                ((count start) (make-iota-generator count start 1))
                ((count start step) (make-iota count start step))))
 
 ;; make-iota
-(define (make-iota count start step)
+#;(define (make-iota count start step)
   (lambda ()
     (cond
       ((<= count 0)
@@ -55,7 +55,7 @@
 
 
 ;; make-range-generator
-(define make-range-generator
+#;(define make-range-generator
   (case-lambda ((start end) (make-range-generator start end 1))
                ((start) (make-infinite-range-generator start))
                ((start end step)
@@ -66,7 +66,7 @@
                               v)
                              (eof-object))))))
 
-(define (make-infinite-range-generator start)
+#;(define (make-infinite-range-generator start)
   (lambda ()
     (let ((result start))
      (set! start (+ start 1))
@@ -75,7 +75,7 @@
 
 
 ;; make-coroutine-generator
-(define (make-coroutine-generator proc)
+#;(define (make-coroutine-generator proc)
   (define return #f)
   (define resume #f)
   (define yield (lambda (v) (call/cc (lambda (r) (set! resume r) (return v)))))
@@ -88,7 +88,7 @@
 
 
 ;; list->generator
-(define (list->generator lst)
+#;(define (list->generator lst)
   (lambda () (if (null? lst)
                (eof-object)
                (let ((next (car lst)))
@@ -97,7 +97,7 @@
 
 
 ;; vector->generator
-(define vector->generator
+#;(define vector->generator
   (case-lambda ((vec) (vector->generator vec 0 (vector-length vec)))
                ((vec start) (vector->generator vec start (vector-length vec)))
                ((vec start end)
@@ -109,7 +109,7 @@
 
 
 ;; reverse-vector->generator
-(define reverse-vector->generator
+#;(define reverse-vector->generator
   (case-lambda ((vec) (reverse-vector->generator vec 0 (vector-length vec)))
                ((vec start) (reverse-vector->generator vec start (vector-length vec)))
                ((vec start end)
@@ -121,7 +121,7 @@
 
 
 ;; string->generator
-(define string->generator
+#;(define string->generator
   (case-lambda ((str) (string->generator str 0 (string-length str)))
                ((str start) (string->generator str start (string-length str)))
                ((str start end)
@@ -133,7 +133,7 @@
 
 
 ;; bytevector->generator
-(define bytevector->generator
+#;(define bytevector->generator
   (case-lambda ((str) (bytevector->generator str 0 (u8vector-length str)))
                ((str start) (bytevector->generator str start (u8vector-length str)))
                ((str start end)
@@ -146,12 +146,12 @@
 
 ;; make-for-each-generator
 ;FIXME: seems to fail test
-(define (make-for-each-generator for-each obj)
+#;(define (make-for-each-generator for-each obj)
   (make-coroutine-generator (lambda (yield) (for-each yield obj))))
 
 
 ;; make-unfold-generator
-(define (make-unfold-generator stop? mapper successor seed)
+#;(define (make-unfold-generator stop? mapper successor seed)
   (make-coroutine-generator (lambda (yield)
                               (let loop ((s seed))
                                (if (stop? s)
@@ -161,7 +161,7 @@
 
 
 ;; gcons*
-(define (gcons* . args)
+#;(define (gcons* . args)
   (lambda () (if (null? args)
                (eof-object)
                (if (= (length args) 1)
@@ -172,7 +172,7 @@
 
 
 ;; gappend
-(define (gappend . args)
+#;(define (gappend . args)
   (lambda () (if (null? args)
                (eof-object)
                (let loop ((v ((car args))))
@@ -263,7 +263,7 @@
          (if (any eof-object? items) (eof-object) (apply proc items)))))))
 
 ;; gcombine
-(define (gcombine proc seed . gens)
+#;(define (gcombine proc seed . gens)
   (lambda ()
     (define items (map (lambda (x) (x)) gens))
     (if (any eof-object? items)
@@ -274,7 +274,7 @@
        value))))
 
 ;; gfilter
-(define (gfilter pred gen)
+#;(define (gfilter pred gen)
   (lambda () (let loop ()
               (let ((next (gen)))
                (if (or (eof-object? next)
@@ -298,13 +298,13 @@
 
 
 ;; gremove
-(define (gremove pred gen)
+#;(define (gremove pred gen)
   (gfilter (lambda (v) (not (pred v))) gen))
 
 
 
 ;; gtake
-(define gtake
+#;(define gtake
   (case-lambda ((gen k) (gtake gen k (eof-object)))
                ((gen k padding)
                 (make-coroutine-generator (lambda (yield)
@@ -319,14 +319,14 @@
 
 
 ;; gdrop
-(define (gdrop gen k)
+#;(define (gdrop gen k)
   (lambda () (do () ((<= k 0)) (set! k (- k 1)) (gen))
     (gen)))
 
 
 
 ;; gdrop-while
-(define (gdrop-while pred gen)
+#;(define (gdrop-while pred gen)
   (define found #f)
   (lambda ()
     (let loop ()
@@ -337,7 +337,7 @@
 
 
 ;; gtake-while
-(define (gtake-while pred gen)
+#;(define (gtake-while pred gen)
   (lambda () (let ((next (gen)))
               (if (eof-object? next)
                 next
@@ -349,7 +349,7 @@
 
 
 ;; gdelete
-(define gdelete
+#;(define gdelete
   (case-lambda ((item gen) (gdelete item gen equal?))
                ((item gen ==)
                 (lambda () (let loop ((v (gen)))
@@ -361,7 +361,7 @@
 
 
 ;; gdelete-neighbor-dups
-(define gdelete-neighbor-dups
+#;(define gdelete-neighbor-dups
   (case-lambda ((gen)
                 (gdelete-neighbor-dups gen equal?))
                ((gen ==)
@@ -383,7 +383,7 @@
 
 
 ;; gindex
-(define (gindex value-gen index-gen)
+#;(define (gindex value-gen index-gen)
   (let ((done? #f) (count 0))
    (lambda ()
      (if done?
@@ -402,7 +402,7 @@
 
 
 ;; gselect
-(define (gselect value-gen truth-gen)
+#;(define (gselect value-gen truth-gen)
   (let ((done? #f))
    (lambda ()
      (if done?
@@ -416,27 +416,27 @@
           (else (loop (value-gen) (truth-gen)))))))))
 
 ;; generator->list
-(define generator->list
+#;(define generator->list
   (case-lambda ((gen n)
 		(generator->list (gtake gen n)))
                ((gen)
 		(reverse (generator->reverse-list gen)))))
 
 ;; generator->reverse-list
-(define generator->reverse-list
+#;(define generator->reverse-list
   (case-lambda ((gen n)
 		(generator->reverse-list (gtake gen n)))
                ((gen)
 		(generator-fold cons '() gen))))
 
 ;; generator->vector
-(define generator->vector
+#;(define generator->vector
   (case-lambda ((gen) (list->vector (generator->list gen)))
                ((gen n) (list->vector (generator->list gen n)))))
 
 
 ;; generator->vector!
-(define (generator->vector! vector at gen)
+#;(define (generator->vector! vector at gen)
   (let loop ((value (gen)) (count 0) (at at))
    (cond
      ((eof-object? value) count)
@@ -447,7 +447,7 @@
 
 
 ;; generator->string
-(define generator->string
+#;(define generator->string
   (case-lambda ((gen) (list->string (generator->list gen)))
                ((gen n) (list->string (generator->list gen n)))))
 
@@ -455,7 +455,7 @@
 
 
 ;; generator-fold
-(define (generator-fold f seed . gs)
+#;(define (generator-fold f seed . gs)
   (define (inner-fold seed)
     (let ((vs (map (lambda (g) (g)) gs)))
      (if (any eof-object? vs)
@@ -466,7 +466,7 @@
 
 
 ;; generator-for-each
-(define (generator-for-each f . gs)
+#;(define (generator-for-each f . gs)
   (let loop ()
    (let ((vs (map (lambda (g) (g)) gs)))
     (if (any eof-object? vs)
@@ -484,7 +484,7 @@
 
 
 ;; generator-find
-(define (generator-find pred g)
+#;(define (generator-find pred g)
   (let loop ((v (g)))
    ; A literal interpretation might say it only terminates on #eof if (pred #eof) but I think this makes more sense...
    (if (or (pred v) (eof-object? v))
@@ -493,12 +493,12 @@
 
 
 ;; generator-count
-(define (generator-count pred g)
+#;(define (generator-count pred g)
   (generator-fold (lambda (v n) (if (pred v) (+ 1 n) n)) 0 g))
 
 
 ;; generator-any
-(define (generator-any pred g)
+#;(define (generator-any pred g)
   (let loop ((v (g)))
    (if (eof-object? v)
      #f
@@ -508,7 +508,7 @@
 
 
 ;; generator-every
-(define (generator-every pred g)
+#;(define (generator-every pred g)
   (let loop ((v (g)))
    (if (eof-object? v)
      #t
@@ -519,7 +519,7 @@
 
 
 ;; generator-unfold
-(define (generator-unfold g unfold . args)
+#;(define (generator-unfold g unfold . args)
   (apply unfold eof-object? (lambda (x) x) (lambda (x) (g)) (g) args))
 
 

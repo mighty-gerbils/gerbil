@@ -3,6 +3,7 @@
 ;;; SRFI-158: Generators
 package: std/srfi
 
+(import ./121)
 (export generator circular-generator make-iota-generator make-range-generator
         make-coroutine-generator list->generator vector->generator
         reverse-vector->generator string->generator
