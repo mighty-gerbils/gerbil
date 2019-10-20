@@ -53,6 +53,7 @@ The following SRFIs are supported by gerbil:
 | [SRFI 133](https://srfi.schemers.org/srfi-133/srfi-133.html) | Vector Library (R7RS-compatible)                       | stdlib       | `:std/srfi/133`           |
 | [SRFI 134](https://srfi.schemers.org/srfi-134/srfi-134.html) | Immutable Deques                                       | stdlib       | `:std/srfi/134`           |
 | [SRFI 135](https://srfi.schemers.org/srfi-135/srfi-135.html) | Immutable Texts                                        | stdlib       | `:std/srfi/135`           |
+| [SRFI 141](https://srfi.schemers.org/srfi-141/srfi-141.html) | Integer Division                                       | stdlib       | `:std/srfi/141`           |
 | [SRFI 143](https://srfi.schemers.org/srfi-143/srfi-143.html) | Fixnums                                                | stdlib       | `:std/srfi/143`           |
 | [SRFI 145](https://srfi.schemers.org/srfi-145/srfi-145.html) | Assumptions                                            | stdlib       | `:std/srfi/145`           |
 | [SRFI 146](https://srfi.schemers.org/srfi-146/srfi-146.html) | Mappings                                               | stdlib       | `:std/srfi/146`,`:std/srfi/146/hash` |

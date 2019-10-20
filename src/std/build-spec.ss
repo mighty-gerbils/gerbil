@@ -64,6 +64,7 @@
     "srfi/srfi-135/text"
     "srfi/srfi-135/binary"
     "srfi/135"
+    "srfi/141"
     "srfi/143"
     "srfi/145"
     "srfi/151"
