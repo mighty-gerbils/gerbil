@@ -31,7 +31,7 @@
 
 (def u6 (u8vector 0 1 2 3))
 (def u6-reversed (u8vector 3 2 1 0))
-(def u6-reverse (lambda () (bytevector-reverse u6)))
+(def u6-reverse (lambda () (u8vector-reverse u6)))
 
 (def bytes-test
   (test-suite "test :std/misc/bytes"
@@ -43,10 +43,9 @@
       (check-equal? (u6-reverse) u6-reversed))
     (test-case "test u8vector->bytestring"
       (check-equal? (u8vector->bytestring u2) u2-bytestring)
-      (check-equal? (u8vector->bytestring u3 "") u3-bytestring))
+      (check-equal? (u8vector->bytestring u3 #f) u3-bytestring))
     (test-case "test bytestring->u8vector"
       (check-equal? (bytestring->u8vector bs0) bs0-u8vector))
     (test-case "test u8vector->uint"
       (check-equal? (u8vector->uint u4) (- (expt 2 16) 1))
-      (check-equal? (try (u8vector->uint u5) (catch (e) #f)) #f)
-      (check-equal? (u8vector->uint u5 #f) (- (expt 2 80) 1)))))
+      (check-equal? (u8vector->uint u5) (- (expt 2 80) 1)))))
