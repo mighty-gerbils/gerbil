@@ -74,6 +74,8 @@
     "srfi/146/hamt-map"
     "srfi/146/hash"
     "srfi/115"
+    "srfi/158"
+    "srfi/158-iter"
     ;; :std/parser
     "parser/rlang"
     "parser/base"

@@ -57,3 +57,4 @@ The following SRFIs are supported by gerbil:
 | [SRFI 145](https://srfi.schemers.org/srfi-145/srfi-145.html) | Assumptions                                            | stdlib       | `:std/srfi/145`           |
 | [SRFI 146](https://srfi.schemers.org/srfi-146/srfi-146.html) | Mappings                                               | stdlib       | `:std/srfi/146`,`:std/srfi/146/hash` |
 | [SRFI 151](https://srfi.schemers.org/srfi-151/srfi-151.html) | Bitwise Operations                                     | stdlib       | `:std/srfi/151`           |
+| [SRFI 158](https://srfi.schemers.org/srfi-158/srfi-158.html) | Generators and Accumulators                            | stdlib       | `:std/srfi/158`           |
