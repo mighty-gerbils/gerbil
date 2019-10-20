@@ -41,6 +41,7 @@ The following SRFIs are supported by gerbil:
 | [SRFI 101](https://srfi.schemers.org/srfi-101/srfi-101.html) | Purely Functional Random-Access Pairs and Lists        | stdlib       | `:std/srfi/101`           |
 | [SRFI 111](https://srfi.schemers.org/srfi-111/srfi-111.html) | Boxes                                                  | runtime      |                           |
 | [SRFI 113](https://srfi.schemers.org/srfi-113/srfi-113.html) | Sets and bags                                          | stdlib       | `:std/srfi/113`           |
+| [SRFI 115](https://srfi.schemers.org/srfi-115/srfi-115.html) | Scheme Regular Expressions                             | stdlib       | `:std/srfi/115`           |
 | [SRFI 116](https://srfi.schemers.org/srfi-116/srfi-116.html) | Immutable List Library                                 | stdlib       | `:std/srfi/116`           |
 | [SRFI 117](https://srfi.schemers.org/srfi-117/srfi-117.html) | Queues based on lists                                  | stdlib       | `:std/srfi/117`           |
 | [SRFI 121](https://srfi.schemers.org/srfi-121/srfi-121.html) | Generators                                             | stdlib       | `:std/srfi/121`           |
@@ -55,4 +56,4 @@ The following SRFIs are supported by gerbil:
 | [SRFI 143](https://srfi.schemers.org/srfi-143/srfi-143.html) | Fixnums                                                | stdlib       | `:std/srfi/143`           |
 | [SRFI 145](https://srfi.schemers.org/srfi-145/srfi-145.html) | Assumptions                                            | stdlib       | `:std/srfi/145`           |
 | [SRFI 146](https://srfi.schemers.org/srfi-146/srfi-146.html) | Mappings                                               | stdlib       | `:std/srfi/146`,`:std/srfi/146/hash` |
-| [SRFI 151](https://srfi.schemers.org/srfi-151/srfi-151.html) | Bitwise Operations                                          | stdlib       | `:std/srfi/151`           |
+| [SRFI 151](https://srfi.schemers.org/srfi-151/srfi-151.html) | Bitwise Operations                                     | stdlib       | `:std/srfi/151`           |
