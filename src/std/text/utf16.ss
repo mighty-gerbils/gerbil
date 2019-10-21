@@ -25,11 +25,11 @@ package: std/text
 
 (def (utf16-encode str u16-set! BOM?)
   (if BOM?
-    (let (bytes (make-u8vector (fx* 4 (string-length str))))
-      (utf16-encode! str bytes 0 u16-set!))
     (let (bytes (make-u8vector (fx+ (fx* 4 (string-length str)) 2)))
       (u16-set! bytes 0 #xfeff)
-      (utf16-encode! str bytes 2 u16-set!))))
+      (utf16-encode! str bytes 2 u16-set!))
+    (let (bytes (make-u8vector (fx* 4 (string-length str))))
+      (utf16-encode! str bytes 0 u16-set!))))
 
 (def (utf16-encode! str bytes j u16-set!)
   (def end (string-length str))
