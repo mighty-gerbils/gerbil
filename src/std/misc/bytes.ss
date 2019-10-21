@@ -22,6 +22,8 @@ package: std/misc
 
   u8vector-uint-ref bytevector-uint-ref
   u8vector-uint-set! bytevector-uint-set!
+  u8vector-sint-ref bytevector-sint-ref
+  u8vector-sint-set! bytevector-sint-set!
 
   u8vector->uint-list bytevector->uint-list
   u8vector->sint-list bytevector->sint-list
@@ -239,7 +241,7 @@ package: std/misc
   (declare (not safe))
   (let (k+size-1 (fx1- (fx+ k size)))
     (let lp ((i k+size-1) (uint uint))
-      (when (and (fx>= i k) (> uint 0))
+      (when (fx>= i k)
         (let (u8 (bitwise-and uint #xff))
           (u8vector-set! v i u8)
           (lp (fx1- i) (arithmetic-shift uint -8)))))))
@@ -248,7 +250,7 @@ package: std/misc
   (declare (not safe))
   (let (k+size (fx+ k size))
     (let lp ((i k) (uint uint))
-      (when (and (fx< i k+size) (> uint 0))
+      (when (fx< i k+size)
         (let (u8 (bitwise-and uint #xff))
           (u8vector-set! v i u8)
           (lp (fx1+ i) (arithmetic-shift uint -8)))))))
@@ -676,12 +678,12 @@ END-C
     "*(int64_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
 
   (define-c-lambda &u8vector-float-ref/native (scheme-object int) float
-    "float res = *(u_int64_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+    "float res = *(float*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
   (define-c-lambda &u8vector-float-set!/native (scheme-object int float) void
     "*(float*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
 
   (define-c-lambda &u8vector-double-ref/native (scheme-object int) double
-    "double res = *(u_int64_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+    "double res = *(double*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
   (define-c-lambda &u8vector-double-set!/native (scheme-object int double) void
     "*(double*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
   )

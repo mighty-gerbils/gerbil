@@ -35,6 +35,79 @@
 
 (def bytes-test
   (test-suite "test :std/misc/bytes"
+    (test-case "test primitive operations"
+      (let (u (make-u8vector 1))
+        (u8vector-s8-set! u 0 100)
+        (check u => #u8(100))
+        (check (u8vector-s8-ref u 0) => 100)
+        (u8vector-s8-set! u 0 -100)
+        (check u => #u8(156))
+        (check (u8vector-s8-ref u 0) => -100))
+
+      (let (u (make-u8vector 4))
+        (u8vector-uint-set! u 0 #xffff0000 big 4)
+        (check u => #u8(#xff #xff 0 0))
+        (check (u8vector-uint-ref u 0 big 4) => #xffff0000)
+        (u8vector-uint-set! u 0 #xffff0000 little 4)
+        (check u => #u8(0 0 #xff #xff))
+        (check (u8vector-uint-ref u 0 little 4) => #xffff0000))
+
+      (let (u (make-u8vector 4))
+        (u8vector-sint-set! u 0 1000 big 4)
+        (check u => #u8(0 0 #x03 #xe8))
+        (check (u8vector-sint-ref u 0 big 4) => 1000)
+        (u8vector-sint-set! u 0 1000 little 4)
+        (check u => #u8(#xe8 #x03 0 0))
+        (check (u8vector-sint-ref u 0 little 4) => 1000)
+
+        (u8vector-sint-set! u 0 -1000 big 4)
+        (check u => #u8(#xff #xff #xfc #x18))
+        (check (u8vector-sint-ref u 0 big 4) => -1000)
+        (u8vector-sint-set! u 0 -1000 little 4)
+        (check u => #u8(#x18 #xfc #xff #xff))
+        (check (u8vector-sint-ref u 0 little 4) => -1000))
+
+      (let (u (make-u8vector 2))
+        (u8vector-u16-set! u 0 100 native)
+        (check (u8vector-u16-ref u 0 native) => 100)
+        (u8vector-s16-set! u 0 100 native)
+        (check (u8vector-s16-ref u 0 native) => 100)
+        (u8vector-s16-set! u 0 -100 native)
+        (check (u8vector-s16-ref u 0 native) => -100))
+
+      (let (u (make-u8vector 4))
+        (u8vector-u32-set! u 0 100 native)
+        (check (u8vector-u32-ref u 0 native) => 100)
+        (u8vector-s32-set! u 0 100 native)
+        (check (u8vector-s32-ref u 0 native) => 100)
+        (u8vector-s32-set! u 0 -100 native)
+        (check (u8vector-s32-ref u 0 native) => -100))
+
+      (let (u (make-u8vector 8))
+        (u8vector-u64-set! u 0 100 native)
+        (check (u8vector-u64-ref u 0 native) => 100)
+        (u8vector-s64-set! u 0 100 native)
+        (check (u8vector-s64-ref u 0 native) => 100)
+        (u8vector-s64-set! u 0 -100 native)
+        (check (u8vector-s64-ref u 0 native) => -100))
+
+      (let (u (make-u8vector 4))
+        (u8vector-float-set! u 0 4.0 big)
+        (check-eqv? (u8vector-float-ref u 0 big) 4.0)
+        (u8vector-float-set! u 0 4.0 little)
+        (check-eqv? (u8vector-float-ref u 0 little) 4.0)
+        (u8vector-float-set! u 0 4.0 native)
+        (check-eqv? (u8vector-float-ref u 0 native) 4.0))
+
+      (let (u (make-u8vector 8))
+        (u8vector-double-set! u 0 4.2 big)
+        (check-eqv? (u8vector-double-ref u 0 big) 4.2)
+        (u8vector-double-set! u 0 4.2 little)
+        (check-eqv? (u8vector-double-ref u 0 little) 4.2)
+        (u8vector-double-set! u 0 4.2 native)
+        (check-eqv? (u8vector-double-ref u 0 native) 4.2))
+      )
+
     (test-case "test bytevector-swap!"
       (check-equal? (u0-swap) u0-swapped))
     (test-case "test bytevector-reverse!"
