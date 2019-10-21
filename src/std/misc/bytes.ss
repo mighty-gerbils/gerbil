@@ -58,6 +58,15 @@ package: std/misc
   u8vector-s64-set! bytevector-s64-set!
   u8vector-s64-native-set! bytevector-s64-native-set!
 
+  u8vector-float-ref bytevector-ieee-single-ref
+  u8vector-float-set! bytevector-ieee-single-set!
+  u8vector-float-native-ref bytevector-ieee-single-native-ref
+  u8vector-float-native-set! bytevector-ieee-single-native-set!
+  u8vector-double-ref bytevector-ieee-double-ref
+  u8vector-double-set! bytevector-ieee-double-set!
+  u8vector-double-native-ref bytevector-ieee-double-native-ref
+  u8vector-double-native-set! bytevector-ieee-double-native-set!
+
   ;; Utilities
   u8vector-swap! bytevector-swap!
   u8vector-reverse bytevector-reverse
@@ -92,6 +101,13 @@ package: std/misc
   &u8vector-u64-set!/native
   &u8vector-s64-ref/native
   &u8vector-s64-set!/native
+
+  &u8vector-float-ref/native
+  &u8vector-float-set!/native
+  &u8vector-double-ref/native
+  &u8vector-double-set!/native
+
+  &u8vector-swap!
   )
 
 ;;; Endianness
@@ -386,6 +402,69 @@ package: std/misc
   (u64 8 &u8vector-uint-ref &u8vector-uint-set!)
   (s64 8 &u8vector-sint-ref &u8vector-sint-set!))
 
+(defalias bytevector-ieee-single-ref u8vector-float-ref)
+(defalias bytevector-ieee-single-set! u8vector-float-set!)
+(defalias bytevector-ieee-single-native-ref u8vector-float-native-ref)
+(defalias bytevector-ieee-single-native-set! u8vector-float-native-set!)
+(defalias bytevector-ieee-double-ref u8vector-double-ref)
+(defalias bytevector-ieee-double-set! u8vector-double-set!)
+(defalias bytevector-ieee-double-native-ref u8vector-double-native-ref)
+(defalias bytevector-ieee-double-native-set! u8vector-double-native-set!)
+
+(defrules do-float-ref ()
+  ((_ v k endianness size native-ref)
+   (if (or (eq? endianness native-endianness)
+           (eq? endianness native))
+     (native-ref v k)
+     (let (v* (make-u8vector size))
+       (declare (fixnum) (not safe))
+       (do ((i (1- (+ k size)) (1- i))
+            (j 0 (1+ j)))
+           ((= j size))
+         (u8vector-set! v* j (u8vector-ref v i)))
+       (native-ref v* 0)))))
+
+(defrules do-float-set! ()
+  ((_ v k x endianness size native-set!)
+   (if (or (eq? endianness native-endianness)
+           (eq? endianness native))
+     (native-set! v k x)
+     (begin
+       (native-set! v k x)
+       (&u8vector-reverse! v k size)))))
+
+(def (u8vector-float-ref v k endianness)
+  (check-int-ref v k 4)
+  (do-float-ref v k endianness 4 &u8vector-float-ref/native))
+
+(def (u8vector-float-set! v k x endianness)
+  (check-int-ref v k 4)
+  (do-float-set! v k x endianness 4 &u8vector-float-set!/native))
+
+(def (u8vector-float-native-ref v k)
+  (check-int-ref v k 4)
+  (&u8vector-float-ref/native v k))
+
+(def (u8vector-float-native-set! v k x)
+  (check-int-ref v k 4)
+  (&u8vector-float-set!/native v k x))
+
+(def (u8vector-double-ref v k endianness)
+  (check-int-ref v k 8)
+  (do-float-ref v k endianness 8 &u8vector-double-ref/native))
+
+(def (u8vector-double-set! v k x endianness)
+  (check-int-ref v k 8)
+  (do-float-set! v k x endianness 8 &u8vector-double-set!/native))
+
+(def (u8vector-double-native-ref v k)
+  (check-int-ref v k 8)
+  (&u8vector-double-ref/native v k))
+
+(def (u8vector-double-native-set! v k x)
+  (check-int-ref v k 8)
+  (&u8vector-double-set!/native v k x))
+
 ;;; Utilities
 
 (defalias bytevector-swap! u8vector-swap!)
@@ -414,15 +493,16 @@ package: std/misc
     (u8vector-set! v k j-val)))
 
 (def (u8vector-reverse! v)
-  (declare (fixnum) (not safe))
   (unless (u8vector? v)
     (error "Expected u8vector" v))
-  (let* ((len (u8vector-length v))
-         (len-1 (1- len)))
-    (do ((left-index 0 (+ left-index 1))
-         (right-index len-1 (- right-index 1)))
-        ((<= right-index left-index))
-      (&u8vector-swap! v left-index right-index))))
+  (&u8vector-reverse! v 0 (u8vector-length v)))
+
+(def (&u8vector-reverse! v k size)
+  (declare (fixnum) (not safe))
+  (do ((left-index k (1+ left-index))
+       (right-index (1- (+ k size)) (1- right-index)))
+      ((<= right-index left-index))
+    (&u8vector-swap! v left-index right-index)))
 
 (def (u8vector-reverse v)
   (declare (fixnum) (not safe))
@@ -548,7 +628,11 @@ package: std/misc
             &u8vector-u64-set!/native
             &u8vector-s64-ref/native
             &u8vector-s64-set!/native
-            )
+            &u8vector-float-ref/native
+            &u8vector-float-set!/native
+            &u8vector-double-ref/native
+            &u8vector-double-set!/native)
+
   (define native-endianness
     (if ((c-lambda () scheme-object
               #<<END-C
@@ -591,4 +675,13 @@ END-C
   (define-c-lambda &u8vector-s64-set!/native (scheme-object int int64) void
     "*(int64_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
 
+  (define-c-lambda &u8vector-float-ref/native (scheme-object int) float
+    "float res = *(u_int64_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+  (define-c-lambda &u8vector-float-set!/native (scheme-object int float) void
+    "*(float*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
+
+  (define-c-lambda &u8vector-double-ref/native (scheme-object int) double
+    "double res = *(u_int64_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+  (define-c-lambda &u8vector-double-set!/native (scheme-object int double) void
+    "*(double*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
   )
