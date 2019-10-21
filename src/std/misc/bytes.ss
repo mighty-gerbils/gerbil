@@ -648,8 +648,6 @@ END-C
       'little
       'big))
 
-  (c-declare "")
-
   (define-c-lambda &u8vector-u16-ref/native (scheme-object int) unsigned-int16
     "u_int16_t res = *(u_int16_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
   (define-c-lambda &u8vector-u16-set!/native (scheme-object int unsigned-int16) void
