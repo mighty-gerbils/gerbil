@@ -66,6 +66,32 @@ package: std/misc
   bytestring->u8vector bytestring->bytevector
   u8vector->uint bytevector->uint
   uint->u8vector uint->bytevector
+
+  ;; uhchecked operations
+  &u8vector-s8-ref
+  &u8vector-s8-set!
+
+  &u8vector-uint-ref/be
+  &u8vector-uint-ref/le
+  &u8vector-uint-set!/be
+  &u8vector-uint-set!/le
+  &u8vector-sint-ref/be
+  &u8vector-sint-ref/le
+  &u8vector-sint-set!/be
+  &u8vector-sint-set!/le
+
+  &u8vector-u16-ref/native
+  &u8vector-u16-set!/native
+  &u8vector-s16-ref/native
+  &u8vector-s16-set!/native
+  &u8vector-u32-ref/native
+  &u8vector-u32-set!/native
+  &u8vector-s32-ref/native
+  &u8vector-s32-set!/native
+  &u8vector-u64-ref/native
+  &u8vector-u64-set!/native
+  &u8vector-s64-ref/native
+  &u8vector-s64-set!/native
   )
 
 ;;; Endianness
@@ -95,20 +121,6 @@ package: std/misc
 (defalias bytevector->sint-list u8vector->sint-list)
 (defalias uint-list->bytevector uint-list->u8vector)
 (defalias sint-list->bytevector sint-list->u8vector)
-
-(def (u8vector-s8-ref v i)
-  (let (u8 (u8vector-ref v i))
-    (if (##fx> u8 127)
-      (##fx- u8 256)
-      u8)))
-
-(def (u8vector-s8-set! v i s8)
-  (unless (fixnum? s8)
-    (error "expected fixnum" s8))
-  (let (u8 (if (##fx< s8 0)
-             (##fx+ s8 256)
-             s8))
-    (u8vector-set! v i u8)))
 
 (defrules check-int-ref ()
   ((_ v k size)
@@ -150,6 +162,30 @@ package: std/misc
        ((native) do-native)
        (else
         (error "Bad endianness" endianness))))))
+
+(def (u8vector-s8-ref v i)
+  (check-int-ref v i 1)
+  (&u8vector-s8-ref v i))
+
+(def (&u8vector-s8-ref v i)
+  (declare (not safe))
+  (let (u8 (u8vector-ref v i))
+    (if (fx> u8 127)
+      (fx- u8 256)
+      u8)))
+
+(def (u8vector-s8-set! v i s8)
+  (check-int-ref v i 1)
+  (unless (fixnum? s8)
+    (error "expected fixnum" s8))
+  (&u8vector-s8-set! v i s8))
+
+(def (&u8vector-s8-set! v i s8)
+  (declare (not safe))
+  (let (u8 (if (fx< s8 0)
+             (fx+ s8 256)
+             s8))
+    (u8vector-set! v i u8)))
 
 (def (u8vector-uint-ref v k endianness size)
   (check-int-ref v k size)
