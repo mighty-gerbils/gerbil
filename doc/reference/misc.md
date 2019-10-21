@@ -2008,6 +2008,26 @@ split the list `lst` into a list-of-lists using the unary procedure `proc`.
 ```
 :::
 
+### group
+``` scheme
+(group lst [test = equal?]) -> list
+
+  lst  := proper list
+  test := optional, binary predicate
+```
+group consecutive elements of the list `lst` into a list-of-lists.
+
+::: tip Examples:
+``` scheme
+(group [1 2 2 3 1 1])
+> ((1) (2 2) (3) (1 1))
+
+(import :std/sort)
+(group (sort [1 2 2 3 1 1] <) eqv?)
+> ((1 1 1) (2 2) (3))
+```
+:::
+
 ## LRU caches
 ::: tip To use the bindings from this module:
 ``` scheme

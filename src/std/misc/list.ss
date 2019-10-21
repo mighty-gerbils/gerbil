@@ -22,7 +22,8 @@ package: std/misc
   slice slice-right
   slice! slice-right!
   butlast
-  split)
+  split
+  group)
 
 (import (only-in :std/srfi/1 drop drop-right drop-right! take take-right take! reverse!))
 
@@ -285,3 +286,21 @@ package: std/misc
       (if (pair? cur)
 	(snoc (reverse! cur) acc)
 	acc)))))
+
+;; group consecutive elements of the list lst into a list-of-lists.
+;;
+;; Example:
+;;  (group [1 2 2 3 1 1]) => ((1) (2 2) (3) (1 1))
+(def (group lst (test equal?))
+  (def (helper)
+    (let loop ((rest lst) (buf []) (acc []))
+      (match rest
+	([it . rest]
+	 (if (or (null? buf) (test it (car buf)))
+	   (loop rest (cons it buf) acc)
+	   (loop rest [it] (cons buf acc))))
+	(else (reverse! (cons buf acc))))))
+  (match lst
+    ([] lst)
+    ([a] [[a]])
+    (_ (helper))))
