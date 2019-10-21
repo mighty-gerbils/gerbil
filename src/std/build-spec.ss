@@ -92,6 +92,7 @@
     ;; :std/text
     "text/utf8"
     "text/utf16"
+    "text/utf32"
     "text/hex"
     (gsc: "text/base64")
     (ssi: "text/base64")
