@@ -414,12 +414,12 @@ This library provides primitives for operating on u8vectors as well as some util
 
 ### endianness
 ```scheme
-(endianess big|little|native) -> endianess symbol
+(endianness big|little|native) -> endianness symbol
 
 (def big 'big)
 (def little 'little)
 (def native 'native)
-(def native-endianess ...)
+(def native-endianness ...)
 ```
 
 Specifies the endianness for integer and floating point operations on u8vectors.
@@ -454,7 +454,7 @@ Sets the signed byte in *v* at position *i* from the value *n*, encoding to 2's 
 
   v          := u8vector
   i          := integer; offset index in v
-  endianness := endianness symbol; the endianness of the byte represent of the integer
+  endianness := endianness symbol; the endianness of the binary representation of the integer
   size       := integer; the size of the integer in bytes
 
 ```
@@ -468,7 +468,7 @@ Retrieves an unsigned integer from its binary representation from *v*, starting 
   v          := u8vector
   i          := integer; offset index in v
   n          := exact nonnegative integer; the value to set
-  endianness := endianness symbol; the endianness of the byte represent of the integer
+  endianness := endianness symbol; the endianness of the binary representation of the integer
   size       := integer; the size of the integer in bytes
 
 ```
@@ -481,7 +481,7 @@ Encodes the unsigned integer *n* in its binary representation in *v*, starting a
 
   v          := u8vector
   i          := integer; offset index in v
-  endianness := endianness symbol; the endianness of the binary represent of the integer
+  endianness := endianness symbol; the endianness of the binary representation of the integer
   size       := integer; the size of the integer in bytes
 
 ```
@@ -495,7 +495,7 @@ Retrieves a signed integer from its binary representation from *v*, starting at 
   v          := u8vector
   i          := integer; offset index in v
   n          := exact integer; the value to set
-  endianness := endianness symbol; the endianness of the binary represent of the integer
+  endianness := endianness symbol; the endianness of the binary representation of the integer
   size       := integer; the size of the integer in bytes
 
 ```
@@ -507,7 +507,7 @@ Encodes the signed integer *n* in its binary representation in *v*, starting at 
 (u8vector->uint-list v endianness size) -> list of exact nonnegative integers
 
   v          := u8vector
-  endianness := endianness symbol; the endianness of the binary representat of ecah integer
+  endianness := endianness symbol; the endianness of the binary representation of each integer
   size       := integer; the size of each integer in bytes
 ```
 
@@ -518,7 +518,7 @@ Decodes a u8vector *v* into a list of exact nonnegative integers.
 (uint-list->u8vector lst endianness size) -> u8vcetor
 
   lst        := list of exact nonnegative integers
-  endianness := endianness symbol; the endianness of the binary representat of ecah integer
+  endianness := endianness symbol; the endianness of the binary representation of each integer
   size       := integer; the size of each integer in bytes
 ```
 
@@ -529,7 +529,7 @@ Encodes a list of unsigned integers to a u8vector.
 (u8vector->sint-list v endianness size) -> list of exact integers
 
   v          := u8vector
-  endianness := endianness symbol; the endianness of the binary representat of ecah integer
+  endianness := endianness symbol; the endianness of the binary representation of each integer
   size       := integer; the size of each integer in bytes
 ```
 
@@ -537,10 +537,10 @@ Decodes a u8vector *v* into a list of exact integers.
 
 ### sint-list->u8vector
 ``` scheme
-(uint-list->u8vector lst endianness size) -> u8vcetor
+(uint-list->u8vector lst endianness size) -> u8vector
 
   lst        := list of exact integers
-  endianness := endianness symbol; the endianness of the binary representat of ecah integer
+  endianness := endianness symbol; the endianness of the binary representation of each integer
   size       := integer; the size of each integer in bytes
 ```
 
@@ -564,7 +564,7 @@ Encodes a list of signed integers to a u8vector.
 (u8vector-u32-native-set! v i n) -> unspecified
 
 (u8vector-s32-ref v i endianness) -> s32
-(u8vector-s32-native-ref v i) -> s3
+(u8vector-s32-native-ref v i) -> s32
 (u8vector-s32-ref-set! v i n endianness) -> unspecified
 (u8vector-s32-native-set! v i n) -> unspecified
 
@@ -663,7 +663,7 @@ Reverses the elements of `u8vector` *v*. Produces a new `u8vector`.
 
 Constructs a string of bytes in hexadecimal from `u8vector` *v*.
 
-Each byte is formatted as two uppercase hex characters using `std/format`
+Each byte is formatted as two uppercase hex characters
 and separated using the specified delimiter character; the delimiter can
 be `#f` to specify simple concatenation.
 
@@ -688,11 +688,8 @@ FF 7F 0B 01 00
 
 Constructs a `u8vector` from bytestring *bs*.
 
-This function expects a string of bytes delimited by `#\space`. Each
-byte consists of two hexadecimal characters.
-
-Note that the behaviour of this function is different from `string->bytes`,
-which assumes an encoding.
+This function expects a string of bytes delimited by *delim*, which can be `#f` to indicate
+no delimiter. Each byte consists of two hexadecimal characters.
 
 ::: tip Examples:
 ``` scheme
@@ -707,13 +704,23 @@ which assumes an encoding.
 
 ### u8vector->uint
 ``` scheme
-(u8vector->uint v (endianess big)) -> uint | void
+(u8vector->uint v (endianness big)) -> uint
 
   v := u8vector
   endianness := endianness symbol
 ```
 
-Computes the `uint` representation of `u8vector` *v* for vector length up to 8.
+Decodes a u8vector as an unsigned integer.
+
+### uint->u8vector
+``` scheme
+(uint->u8vector n (endianness big)) -> u8vector
+
+  n := exact nonnegative integer
+  endianness := endianness symbol
+```
+
+Encodes an unsigned integer to its binary representation.
 
 ::: tip Examples:
 ``` scheme
@@ -835,7 +842,7 @@ The following low level unsafe operations are also exported.
 (&u8vector-double-ref/native v i) -> flonum
 (&u8vector-double-set!/native v i x) -> unspecified
 
-(&u8vector-swap! v i j)
+(&u8vector-swap! v i j) -> unspecified
 ```
 
 ## Asynchronous Completions
