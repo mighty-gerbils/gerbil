@@ -522,7 +522,7 @@ Decodes a u8vector *v* into a list of exact nonnegative integers.
   size       := integer; the size of each integer in bytes
 ```
 
-Encodes a list of unsigend integers to a u8vector.
+Encodes a list of unsigned integers to a u8vector.
 
 ### u8vector->sint-list
 ``` scheme
@@ -544,7 +544,7 @@ Decodes a u8vector *v* into a list of exact integers.
   size       := integer; the size of each integer in bytes
 ```
 
-Encodes a list of sigend integers to a u8vector.
+Encodes a list of signed integers to a u8vector.
 
 ### Operations on Machine-size Integers
 ``` scheme
