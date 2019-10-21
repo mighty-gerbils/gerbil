@@ -10,7 +10,7 @@
 
 (export utf16-test)
 (def utf16-test
-  (test-suite "test :std/text/utf8"
+  (test-suite "test :std/text/utf16"
 
     (def (check-encode-decode str)
       (let (p (string->utf16 str))

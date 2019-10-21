@@ -71,9 +71,9 @@ package: std/text
 (def (utf16-decode bytes u16-ref BOM?)
   (def len (u8vector-length bytes))
   (unless (fxeven? len)
-    (raise-io-error 'utf8-decode "Cannot decode UTF16; odd length u8vector" bytes))
+    (raise-io-error 'utf16-decode "Cannot decode UTF-16; odd length u8vector" bytes))
   (if BOM?
-    ;; try to read the BOM? to determine endianness
+    ;; try to read the BOM to determine endianness
     (if (fx>= len 2)
       (let ((b0 (u8vector-ref bytes 0))
             (b1 (u8vector-ref bytes 1)))
