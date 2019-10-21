@@ -23,6 +23,7 @@
         "text/csv-test"
         "text/json-test"
         "text/utf8-test"
+        "text/utf16-test"
         "actor/xdr-test"
         "actor-test"
         "net/httpd-test"
@@ -61,6 +62,7 @@
    csv-test
    json-test
    utf8-test
+   utf16-test
    string-test
    list-test
    channel-test
