@@ -790,6 +790,19 @@ allows you to refer to relative modules with a short module path and
 still load a library module. Relative module paths are meaningless
 outside the context of a library module.
 
+### Core Gerbil Variants
+
+As of `Gerbil v0.16-DEV-259-g13646d64` gerbil comes with a custom language
+prelude, `:gerbil/polydactyl`, that treats square brackets as plain parentheses
+-- instead of the reader expanding them to `@list` forms.
+The language is otherwise the same as `:gerbil/core`.
+
+To use it, add the following lang declaration to your module:
+```
+#lang :gerbil/polydactyl
+
+;; ... code ...
+```
 
 ## Standard Library
 
