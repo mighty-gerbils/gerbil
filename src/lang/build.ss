@@ -1,10 +1,11 @@
-#!/usr/bin/env gxi
+#!/usr/bin/env gxi-build-script
 ;; -*- Gerbil -*-
 
 (import :std/build-script)
 
 (defbuild-script
-  `("scheme/stubs"
+  `(;; standard scheme
+    "scheme/stubs"
     "scheme/base-etc"
     "scheme/base-vectors"
     (gxc: "scheme/base-ports" "-e" "(include \"~~lib/_gambit#.scm\")")
@@ -38,4 +39,9 @@
     "scheme/r5rs"
     "scheme/r5rs-null"
     "scheme/r7rs"
+    ;; gerbil variants
+    (gxc: "gerbil/polydactyl" "-e" "(include \"~~lib/_gambit#.scm\")")
     ))
+
+;; necessary because gxi-build-script doesn't autoinvoke main
+(main)
