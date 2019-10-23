@@ -25,6 +25,7 @@ package: std/misc
         string-cmp
         symbol-cmp
         symbol-hash-cmp
+        rbtree-cmp
         in-rbtree
         in-rbtree-keys
         in-rbtree-values)

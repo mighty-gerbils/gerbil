@@ -41,6 +41,7 @@ The following SRFIs are supported by gerbil:
 | [SRFI 101](https://srfi.schemers.org/srfi-101/srfi-101.html) | Purely Functional Random-Access Pairs and Lists        | stdlib       | `:std/srfi/101`           |
 | [SRFI 111](https://srfi.schemers.org/srfi-111/srfi-111.html) | Boxes                                                  | runtime      |                           |
 | [SRFI 113](https://srfi.schemers.org/srfi-113/srfi-113.html) | Sets and bags                                          | stdlib       | `:std/srfi/113`           |
+| [SRFI 115](https://srfi.schemers.org/srfi-115/srfi-115.html) | Scheme Regular Expressions                             | stdlib       | `:std/srfi/115`           |
 | [SRFI 116](https://srfi.schemers.org/srfi-116/srfi-116.html) | Immutable List Library                                 | stdlib       | `:std/srfi/116`           |
 | [SRFI 117](https://srfi.schemers.org/srfi-117/srfi-117.html) | Queues based on lists                                  | stdlib       | `:std/srfi/117`           |
 | [SRFI 121](https://srfi.schemers.org/srfi-121/srfi-121.html) | Generators                                             | stdlib       | `:std/srfi/121`           |
@@ -48,7 +49,17 @@ The following SRFIs are supported by gerbil:
 | [SRFI 125](https://srfi.schemers.org/srfi-125/srfi-125.html) | Intermediate hash tables                               | stdlib       | `:std/srfi/125`           |
 | [SRFI 127](https://srfi.schemers.org/srfi-127/srfi-127.html) | Lazy Sequences                                         | stdlib       | `:std/srfi/127`           |
 | [SRFI 128](https://srfi.schemers.org/srfi-128/srfi-128.html) | Comparators (reduced)                                  | stdlib       | `:std/srfi/128`           |
+| [SRFI 130](https://srfi.schemers.org/srfi-130/srfi-130.html) | Cursor-based string library                            | stdlib       | `:std/srfi/130`           |
 | [SRFI 132](https://srfi.schemers.org/srfi-132/srfi-132.html) | Sort Libraries                                         | stdlib       | `:std/srfi/132`           |
 | [SRFI 133](https://srfi.schemers.org/srfi-133/srfi-133.html) | Vector Library (R7RS-compatible)                       | stdlib       | `:std/srfi/133`           |
 | [SRFI 134](https://srfi.schemers.org/srfi-134/srfi-134.html) | Immutable Deques                                       | stdlib       | `:std/srfi/134`           |
 | [SRFI 135](https://srfi.schemers.org/srfi-135/srfi-135.html) | Immutable Texts                                        | stdlib       | `:std/srfi/135`           |
+| [SRFI 141](https://srfi.schemers.org/srfi-141/srfi-141.html) | Integer Division                                       | stdlib       | `:std/srfi/141`           |
+| [SRFI 143](https://srfi.schemers.org/srfi-143/srfi-143.html) | Fixnums                                                | stdlib       | `:std/srfi/143`           |
+| [SRFI 144](https://srfi.schemers.org/srfi-144/srfi-144.html) | Flonums                                                | stdlib       | `:std/srfi/144`           |
+| [SRFI 145](https://srfi.schemers.org/srfi-145/srfi-145.html) | Assumptions                                            | stdlib       | `:std/srfi/145`           |
+| [SRFI 146](https://srfi.schemers.org/srfi-146/srfi-146.html) | Mappings                                               | stdlib       | `:std/srfi/146{/hash}`    |
+| [SRFI 151](https://srfi.schemers.org/srfi-151/srfi-151.html) | Bitwise Operations                                     | stdlib       | `:std/srfi/151`           |
+| [SRFI 158](https://srfi.schemers.org/srfi-158/srfi-158.html) | Generators and Accumulators                            | stdlib       | `:std/srfi/158`           |
+| [SRFI 159](https://srfi.schemers.org/srfi-159/srfi-159.html) | Combinator Formatting                                  | stdlib       | `:std/srfi/159`           |
+| [SRFI 160](https://srfi.schemers.org/srfi-160/srfi-160.html) | Homogeneous Numeric Vector Libraries                   | stdlib       | `:std/srfi/160/{base,u8,s8,u16,s16,u32,s32,u64,s64,f32,f64,c64,c128}` |

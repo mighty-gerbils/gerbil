@@ -7,7 +7,7 @@ sidebarDepth: 1
 Gerbil supports R7RS as a custom language with the `:scheme/r7rs` prelude.
 As such you can write and import modules written in R7RS Scheme and mix them
 freely with other Gerbil modules. Gerbil also supports all the libraries from
-R7RS-large, Red Edition.
+R7RS-large, Red and Tangerine Edition.
 
 ## R7RS in the REPL
 

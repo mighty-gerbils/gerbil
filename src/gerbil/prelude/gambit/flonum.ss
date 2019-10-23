@@ -6,6 +6,6 @@ package: gerbil/gambit
 (export #t)
 (extern namespace: #f
   flabs flacos flasin flatan flceiling flcos
-  fleven? flexp flexpt flfloor fllog flround flsin flsqrt fltan fltruncate
+  flodd? fleven? flexp flexpt flfloor fllog flround flsin flsqrt fltan fltruncate
   flnumerator fldenominator
   )

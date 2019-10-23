@@ -3,11 +3,9 @@
 ;;; SRFI-135: Immutable Texts
 package: std/srfi/srfi-135
 
-(import (only-in :std/srfi/13 string-downcase string-upcase string-titlecase))
+(import :gerbil/gambit/exact
+        (only-in :std/srfi/13 string-downcase string-upcase string-titlecase))
 (export #t)
-
-(def (exact-integer? o)
-  (and (exact? o) (integer? o)))
 
 (def (string-copy! s i x)
   (substring-move! s i x 0 (string-length x)))

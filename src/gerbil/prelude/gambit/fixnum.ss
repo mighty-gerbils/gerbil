@@ -11,5 +11,5 @@ package: gerbil/gambit
   fxwrap* fxwrap+ fxwrap-
   fxwrapabs fxwraparithmetic-shift fxwraparithmetic-shift-left
   fxwraplogical-shift-right fxwrapquotient
-  fxabs
+  fxabs fxsquare
   )
