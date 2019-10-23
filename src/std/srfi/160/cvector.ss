@@ -138,6 +138,6 @@ package: std/srfi/160
 
 (defmethod {:write c128vector}
   (lambda (self port)
-    (let (lst (c64vector->list self))
+    (let (lst (c128vector->list self))
       (write "#c128" port)
       (write lst port))))
