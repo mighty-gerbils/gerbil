@@ -49,6 +49,7 @@ The following SRFIs are supported by gerbil:
 | [SRFI 125](https://srfi.schemers.org/srfi-125/srfi-125.html) | Intermediate hash tables                               | stdlib       | `:std/srfi/125`           |
 | [SRFI 127](https://srfi.schemers.org/srfi-127/srfi-127.html) | Lazy Sequences                                         | stdlib       | `:std/srfi/127`           |
 | [SRFI 128](https://srfi.schemers.org/srfi-128/srfi-128.html) | Comparators (reduced)                                  | stdlib       | `:std/srfi/128`           |
+| [SRFI 130](https://srfi.schemers.org/srfi-130/srfi-130.html) | Cursor-based string library                            | stdlib       | `:std/srfi/130`           |
 | [SRFI 132](https://srfi.schemers.org/srfi-132/srfi-132.html) | Sort Libraries                                         | stdlib       | `:std/srfi/132`           |
 | [SRFI 133](https://srfi.schemers.org/srfi-133/srfi-133.html) | Vector Library (R7RS-compatible)                       | stdlib       | `:std/srfi/133`           |
 | [SRFI 134](https://srfi.schemers.org/srfi-134/srfi-134.html) | Immutable Deques                                       | stdlib       | `:std/srfi/134`           |
