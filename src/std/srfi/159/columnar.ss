@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SRFI-159: columanr formatting
-package: std/srfi/159
 
 (import :gerbil/gambit/exact
         ../srfi-support

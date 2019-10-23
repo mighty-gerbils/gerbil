@@ -1,7 +1,6 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
 ;;;; List utilities
-package: std/misc
 
 (export
   alist?

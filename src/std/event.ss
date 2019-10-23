@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; event-driven programming with conditions
-package: std
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/os

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; asynchronous completion tokens
-package: std/misc
 
 (import :gerbil/gambit/threads
         :std/sugar)

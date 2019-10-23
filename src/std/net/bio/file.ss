@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; file raw device buffers
-package: std/net/bio
 
 (import :gerbil/gambit/ports
         :std/net/bio/input

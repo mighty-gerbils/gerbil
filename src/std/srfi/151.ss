@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-151: Bitwise Operations
-package: std/srfi
 
 (import :gerbil/gambit/bits)
 (export bitwise-not bitwise-and bitwise-ior bitwise-xor bitwise-eqv

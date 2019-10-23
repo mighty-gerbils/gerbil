@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; miscellaneous port utilities
-package: std/misc
 
 (import :gerbil/gambit/ports
         :std/sugar)

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Protobuf macros
-package: std/protobuf
 
 (import :std/protobuf/io
         :std/net/bio

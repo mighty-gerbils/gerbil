@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; OS kqueue interface [bsd]
-package: std/os
 
 (require bsd)
 

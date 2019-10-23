@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; std parser base types
-package: std/parser
 
 (import :std/error)
 (export #t)

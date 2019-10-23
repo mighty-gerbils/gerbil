@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; std parser lexer generator
-package: std/parser
 
 (import (phi: +1 :std/parser/base :std/parser/rx-parser :std/stxutil)
         :std/parser/base

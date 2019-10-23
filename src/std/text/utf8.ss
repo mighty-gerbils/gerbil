@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; string<->utf8 conversion without intermediate ports
-package: std/text
 
 (import :gerbil/gambit/bits
         :std/error)

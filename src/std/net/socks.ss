@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; SOCKS 4/5 support
-package: std/net
 
 (import (only-in :gerbil/gambit/ports
                  open-tcp-client read-u8vector write-u8vector

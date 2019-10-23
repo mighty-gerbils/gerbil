@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; SSAX parser inerface
-package: std/xml
 
 (import :std/srfi/13)
 

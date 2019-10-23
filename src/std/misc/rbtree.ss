@@ -4,7 +4,6 @@
 ;;; Based on Ivan Raikov's chicken implementation which is in turn based on
 ;;; the SML/NJ library implementation, which is in turn based on Chris Okasaki's
 ;;; implementation; delete is based on CLR...
-package: std/misc
 
 (import :std/generic
         :std/iter)

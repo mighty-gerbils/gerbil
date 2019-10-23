@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme process-context) library -- implementation details
-package: scheme
-
 (export #t)
 
 (def (get-environment-variable var)

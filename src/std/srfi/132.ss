@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-132: Sorting Library
-package: std/srfi
 
 (import :gerbil/gambit/random
         :gerbil/gambit/exact)

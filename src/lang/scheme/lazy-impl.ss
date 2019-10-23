@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme lazy) library -- implementation details
-package: scheme
-
 (import :std/lazy)
 (export #t force delay (rename: lazy delay-force))
 

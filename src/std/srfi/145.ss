@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-145: Assumptions
-package: std/srfi
 
 (export assume)
 

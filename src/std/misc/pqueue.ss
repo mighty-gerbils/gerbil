@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; heap based priority queues
-package: std/misc
 
 (export pqueue make-pqueue pqueue? pqueue-empty? pqueue-size
         pqueue-peek pqueue-pop! pqueue-push!)

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; coroutines and cothreads
-package: std
 
 (import :gerbil/gambit/threads
         :std/sugar)

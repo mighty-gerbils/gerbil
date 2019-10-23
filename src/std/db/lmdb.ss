@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; LMDB wraper interface
-package: std/db
 
 (import :gerbil/gambit/threads
         :std/error

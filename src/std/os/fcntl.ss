@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; OS fcntl interface
-package: std/os
 
 (import :std/foreign
         :std/os/error

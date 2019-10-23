@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; yaml support
-package: std/text
 
 (import :std/sugar
         :std/error

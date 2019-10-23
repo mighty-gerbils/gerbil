@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; httpd file response handler
-package: std/net/httpd
 
 (import :gerbil/gambit/ports
         :std/net/httpd/handler

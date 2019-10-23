@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; embedded HTTP/1.1 server; path multiplexer
-package: std/net/httpd
 
 (import :std/misc/sync)
 (export #t)

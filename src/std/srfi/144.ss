@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-144: Flonums
-package: std/srfi
 
 (import :gerbil/gambit/flonum
         :gerbil/gambit/exact)

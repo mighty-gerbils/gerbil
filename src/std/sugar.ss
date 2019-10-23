@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; some standard sugar
-package: std
 
 (export #t)
 

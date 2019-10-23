@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; URI support; rfc3986
-package: std/net
 
 (import (only-in :gerbil/gambit/ports
                  with-output-to-string

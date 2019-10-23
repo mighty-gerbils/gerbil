@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-133: R7RS-compatible vector library
-package: std/srfi
 
 (import :std/srfi/8)
 ;; Constructors

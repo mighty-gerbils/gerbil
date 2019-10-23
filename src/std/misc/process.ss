@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org, fare at tunes.org
 ;;; miscellaneous process utilities
-package: std/misc
 
 (export
   run-process

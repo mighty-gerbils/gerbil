@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; synchronous sockets -- bio buffers
-package: std/net/socket
 
 (import :gerbil/gambit/os
         :std/net/socket/base

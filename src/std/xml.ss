@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; XML interface
-package: std
 
 (import :std/build-config
         :std/xml/ssax

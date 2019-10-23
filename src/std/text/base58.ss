@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; base58 encoding and decoding
-package: std/text
 
 (import :gerbil/gambit/bits
         :gerbil/gambit/fixnum

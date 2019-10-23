@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; std parser grammar reader
-package: std/parser
 
 (import <expander-runtime>
         <syntax-case>

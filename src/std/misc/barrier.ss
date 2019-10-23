@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; thread barriers
-package: std/misc
 
 (import :gerbil/gambit/threads
         :std/sugar)

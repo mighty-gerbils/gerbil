@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; synchronous sockets -- base
-package: std/net/socket
 
 (import :gerbil/gambit/os
         :std/actor/proto

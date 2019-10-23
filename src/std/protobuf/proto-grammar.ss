@@ -1,4 +1,4 @@
-#lang :std/parser/grammar package: std/protobuf
+#lang :std/parser/grammar
 
 %%parser parse-protobuf lexer: lex-protobuf
 

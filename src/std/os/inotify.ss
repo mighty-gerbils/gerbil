@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; OS inotify interface [linux]
-package: std/os
 
 (require linux)
 (import :gerbil/gambit/threads

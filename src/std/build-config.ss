@@ -1,6 +1,5 @@
 ;;; -*- Gerbil -*-
 ;;; Gerbil stdlib build configuration
-package: std
 
 ;; feature macro
 (defsyntax (enable stx)

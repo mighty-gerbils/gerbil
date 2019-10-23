@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Generics: macros
-package: std/generic
 
 (import :std/generic/dispatch
         (for-syntax :std/stxutil)

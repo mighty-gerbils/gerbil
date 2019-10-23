@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; format and friends
-package: std
 
 (export format printf fprintf eprintf)
 (import

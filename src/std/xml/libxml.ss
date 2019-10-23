@@ -2,7 +2,6 @@
 ;;; (C) vyzo at hackzen.org
 ;;; libxml parser interface
 ;;;
-package: std/xml
 
 (export parse-xml parse-html
         parse-xml-default-options parse-html-default-options

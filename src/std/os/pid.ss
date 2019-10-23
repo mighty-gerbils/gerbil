@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; OS pid
-package: std/os
 
 (import :std/foreign)
 (export getpid getppid)

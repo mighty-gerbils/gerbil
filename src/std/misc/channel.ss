@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; buffered channels
-package: std/misc
 
 (import :gerbil/gambit/threads
         :std/misc/queue

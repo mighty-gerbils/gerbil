@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; textual template related utilities
-package: std/misc
 
 (import (for-syntax :std/misc/ports))
 (export include-text)

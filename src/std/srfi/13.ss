@@ -5,7 +5,6 @@
 ;;; This is (gerbilized) Olin's implementation, without the expensive argument checking
 ;;; and optionals goop -- it uses gerbil opt-lambdas and ellides the checks altogether.
 ;;;
-package: std/srfi
 
 (import :gerbil/gambit/bits
         :std/srfi/14)

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-19: time data types and procedures
-package: std/srfi
 
 (import :std/srfi/srfi-support
         :std/srfi/8

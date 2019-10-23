@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; LRU cache
-package: std/misc
 
 (import :std/misc/list
         :std/generic

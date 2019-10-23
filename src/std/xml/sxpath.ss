@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; SXPath interface
-package: std/xml
 
 (export sxpath)
 

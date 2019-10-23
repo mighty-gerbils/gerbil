@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS stub macros for missing features
-package: scheme
-
 (export #t)
 
 (defrules defstub ()

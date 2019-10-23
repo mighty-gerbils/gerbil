@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; std parser grammar prelude
-package: std/parser
 
 (import :gerbil/core
         :std/parser/rlang

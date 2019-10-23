@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor rpc base
-package: std/actor/rpc
 
 (import :gerbil/gambit/threads
         :std/misc/uuid

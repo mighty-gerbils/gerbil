@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme cxr) library
-package: scheme
-
 (export
   caaaar
   caaadr

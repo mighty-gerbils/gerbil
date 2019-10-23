@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; SASL authentication mechanisms
-package: std/net
 
 (import :std/crypto
         :std/text/base64

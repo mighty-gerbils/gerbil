@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor rpc
-package: std/actor/rpc
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/exceptions

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Simple 1NF SXML node manipulation interface
-package: std/xml
 
 (export #t)
 

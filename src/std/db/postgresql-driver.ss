@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; PostgreSQL driver
-package: std/db
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports

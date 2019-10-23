@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; support for library build scripts
-package: std
 
 (import :gerbil/compiler
         :gerbil/expander

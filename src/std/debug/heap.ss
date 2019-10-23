@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; heap debugging utilities
-package: std/debug
 
 (import :gerbil/gambit/hvectors
         :std/generic

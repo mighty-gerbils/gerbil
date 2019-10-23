@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; synchronous sockets  -- epoll server implementation
-package: std/net/socket
 
 (require linux)
 (import :gerbil/gambit/threads

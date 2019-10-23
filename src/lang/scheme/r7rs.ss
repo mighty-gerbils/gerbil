@@ -1,10 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS prelude
-package: scheme
-
 (import
-  (only-in :scheme/base begin cond-expand include include-ci and or not))
+  (only-in ./base begin cond-expand include include-ci and or not))
 (export
   (rename: r7rs-import import)
   (rename: r7rs-export export)

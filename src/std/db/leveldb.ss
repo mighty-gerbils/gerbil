@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; LevelDB wrapper interface
-package: std/db
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/misc

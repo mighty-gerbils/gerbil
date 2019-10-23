@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; std parser location-tracking streams
-package: std/parser
 
 (import :std/parser/base
         :gerbil/gambit/ports)

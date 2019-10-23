@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; WAMP client
-package: std/net
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports

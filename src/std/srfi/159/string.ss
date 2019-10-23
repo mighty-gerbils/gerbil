@@ -5,7 +5,6 @@
 ;;; Copyright (c) 2012-2015 Alex Shinn.  All rights reserved.
 ;;; BSD-style license: http://synthcode.com/license.txt
 
-package: std/srfi/159
 
 (import ../14
         ../130)

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Sorting -- using Olin Shivers' withdrawn srfi-32 impl
-package: std
 
 (declare (fixnum) (not safe))
 

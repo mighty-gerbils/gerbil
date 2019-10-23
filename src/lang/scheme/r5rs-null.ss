@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS r5rs-null environment imports
-package: scheme
-
-(import :scheme/r5rs)
+(import ./r5rs)
 (export
   begin define lambda if let let* letrec set! quote
   and or case cond do delay

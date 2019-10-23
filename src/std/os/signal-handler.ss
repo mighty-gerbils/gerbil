@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; OS signal handler interface
-package: std/os
 
 (import :gerbil/gambit/threads
         :std/os/signal

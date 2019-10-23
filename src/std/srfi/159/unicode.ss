@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SRFI-159: unicode
-package: std/srfi/159
 
 (import ../151
         ./base)

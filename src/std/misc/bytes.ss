@@ -2,7 +2,6 @@
 ;;; (C) vyzo at hackzen.org
 ;;;     belmarca
 ;;; miscellaneous bytes utilities
-package: std/misc
 
 (import (for-syntax :std/stxutil)
         :gerbil/gambit/exact

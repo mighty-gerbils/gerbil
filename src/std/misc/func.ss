@@ -1,7 +1,6 @@
 ;; -*- Gerbil -*-
 ;;; © t.brandscheid@gmail.com
 ;;;; Utility procedures
-package: std/misc
 
 (export
   repeat

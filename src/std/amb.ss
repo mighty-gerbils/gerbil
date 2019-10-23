@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; AMB: the ambiguous operator
 ;;; Based on Ken Lovett's chicken implementation
-package: std
 
 (import :gerbil/gambit/random
         :std/misc/shuffle)

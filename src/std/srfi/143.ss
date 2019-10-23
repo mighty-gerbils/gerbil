@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-143: Fixnums
-package: std/srfi
 
 (import :gerbil/gambit/fixnum
         :gerbil/gambit/exact)

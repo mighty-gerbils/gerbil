@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor protocols
-package: std/actor
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports

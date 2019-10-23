@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; sxml-to-xml printer
-package: std/xml
 
 (import :std/xml/sxml-to-xml)
 (export write-xml write-html

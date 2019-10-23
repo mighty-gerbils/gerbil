@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-121: Generator library
-package: std/srfi
 
 (export
   generator make-iota-generator make-range-generator

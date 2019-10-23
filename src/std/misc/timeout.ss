@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; timeouts
-package: std/misc
 
 (import :gerbil/gambit/os)
 (export #t)

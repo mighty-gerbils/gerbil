@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; synchronous sockets  -- kqueue server implementation
-package: std/net/socket
 
 (require bsd)
 (import :gerbil/gambit/threads

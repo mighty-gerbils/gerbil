@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme file) library
-package: scheme
-
 (export
   call-with-input-file
   call-with-output-file

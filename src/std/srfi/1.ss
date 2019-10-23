@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-1: list library
-package: std/srfi
 
 (import :std/srfi/srfi-support
         :std/srfi/8)

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; zlib interface
-package: std/text
 
 (import :gerbil/gambit/ports
         :std/sugar

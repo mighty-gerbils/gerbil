@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; OS File Descriptors
-package: std/os
 
 (import :gerbil/gambit/ports)
 (export fdopen

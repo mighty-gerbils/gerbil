@@ -2,7 +2,6 @@
 ;;; (C) vyzo at hackzen.org
 ;;; extensible binary i/o buffers with port compatible interface
 ;;; Warning: Low level unsafe interface; let their be Dragons.
-package: std/net
 
 (import :std/net/bio/input
         :std/net/bio/output

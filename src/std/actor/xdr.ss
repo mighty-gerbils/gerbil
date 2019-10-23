@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor rpc wire data representation
-package: std/actor
 
 (import :gerbil/gambit/bits
         :gerbil/gambit/os

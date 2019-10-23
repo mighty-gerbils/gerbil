@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme time) library
-package: scheme
-
 (cond-expand
   (,(> (system-version) 409001)
    ;; Gambit v4.9.2 runtime builtins

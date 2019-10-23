@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SRFI-130: Cursor-based string library
-package: std/srfi
 
 (import :gerbil/gambit/fixnum
         (only-in ./1 last-pair)

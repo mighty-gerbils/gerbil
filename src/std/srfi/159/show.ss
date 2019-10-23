@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SRFI-159: show stuffs
-package: std/srfi/159
 
 (import ../13
         ./string
