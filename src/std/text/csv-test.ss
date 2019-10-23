@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) fare at tunes.org
 ;;; :std/text/csv unit test
-package: std/text
 
 (export csv-test)
 

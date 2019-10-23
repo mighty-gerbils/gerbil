@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; equality for shared structures
-package: std/misc
 
 ;; TODO equal-shared?-hash
 (export equal-shared?)

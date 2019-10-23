@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-146: A. Gleckler's HAMT
-package: std/srfi/146
 
 (import (only-in :std/srfi/1 fold)
         :std/srfi/9

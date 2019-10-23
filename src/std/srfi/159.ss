@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SRFI-159: Combinator Formatting
-package: std/srfi
 
 (import ./159/base
         ./159/show

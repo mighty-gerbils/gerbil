@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; Gerbil error objects
-package: std
 
 (export #t)
 

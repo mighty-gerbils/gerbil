@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Rack-style web servers with fastcgi connections
-package: std/web
 
 (import :gerbil/gambit
         :std/web/fastcgi

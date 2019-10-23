@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; memory leak debugging utilities
-package: std/debug
 
 (import :gerbil/gambit/ports
         :gerbil/gambit/threads

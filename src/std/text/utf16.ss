@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; string<->utf16 conversion
-package: std/text
 
 (import :gerbil/gambit/fixnum
         :gerbil/gambit/bits

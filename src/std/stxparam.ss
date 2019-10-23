@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; syntax parameters
-package: std
 
 (export #t (for-syntax #t))
 

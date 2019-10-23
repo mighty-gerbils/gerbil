@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; std libcrypto interface
-package: std
 
 (import (only-in :std/crypto/etc random-bytes random-bytes! libcrypto-error?)
         :std/crypto/digest

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; miscellaneous thread utilities
-package: std/misc
 
 (import :gerbil/gambit/threads
         :std/sugar)

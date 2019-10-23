@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; imperative queues
-package: std/misc
 
 (export queue make-queue queue? queue-length
         queue-empty? non-empty-queue?

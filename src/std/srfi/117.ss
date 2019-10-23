@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-117: List Queues
-package: std/srfi
 
 (import :std/srfi/9)
 (export

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-134: Immutable Deques
-package: std/srfi
 
 (import :std/srfi/1
         :std/srfi/8

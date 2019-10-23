@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; Generic database connection pool
-package: std/db
 
 (import :gerbil/gambit/threads
         :std/sugar

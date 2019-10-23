@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; interactive development utilities
-package: std
 
 (import (for-syntax (only-in :gerbil/gambit/misc pretty-print)))
 (export #t (for-syntax #t))

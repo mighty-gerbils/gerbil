@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-101: Purely Functional Random-Access Pairs and Lists
-package: std/srfi
 
 (import :gerbil/gambit/bits
         :std/srfi/1)

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; OS errors
-package: std/os
 
 (import :std/foreign)
 (export raise-os-error

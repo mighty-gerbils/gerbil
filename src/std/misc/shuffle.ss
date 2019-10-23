@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; shuffling
-package: std/misc
 
 (export shuffle vector-shuffle vector-shuffle!)
 (import (only-in :gerbil/gambit/random random-integer))

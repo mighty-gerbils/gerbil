@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; OS socket interface
-package: std/os
 
 (import :std/os/_socket
         :std/os/error

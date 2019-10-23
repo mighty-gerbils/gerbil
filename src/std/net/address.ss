@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; network addresses
-package: std/net
 
 (import :gerbil/gambit/os
         :std/pregexp

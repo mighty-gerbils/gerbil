@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Iterators for SRFI-121 generators
-package: std/srfi
 
 (import :std/iter
         :std/srfi/121)

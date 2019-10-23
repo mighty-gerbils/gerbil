@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Protobuf language prelude
-package: std/protobuf
 
 (import :std/protobuf/macros
         (for-syntax :std/parser/base

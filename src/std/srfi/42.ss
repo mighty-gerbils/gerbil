@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-42: Eager Comprehensions
-package: std/srfi
 
 (export
   do-ec

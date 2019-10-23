@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-146: Hash Mappings
-package: std/srfi/146
 
 (import :std/srfi/1
 	    :std/srfi/8

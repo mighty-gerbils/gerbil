@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; safe type descriptor accessors
-package: std/misc
 
 (export (rename: checked-object-type object-type)
         type? type-id type-name type-super

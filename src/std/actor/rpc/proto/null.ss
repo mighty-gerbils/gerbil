@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor rpc null protocol
-package: std/actor/rpc/proto
 
 (import :std/net/bio
         :std/actor/proto

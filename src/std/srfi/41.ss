@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-41: streams library
-package: std/srfi
 
 (import :std/srfi/9)
 (export

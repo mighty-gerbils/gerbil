@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; double ended queues
-package: std/misc
 
 (export deque make-deque deque? deque-length
         deque-empty?

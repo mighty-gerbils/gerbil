@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-116: Immutable list library
-package: std/srfi
 
 (import :std/srfi/9)
 (export iq

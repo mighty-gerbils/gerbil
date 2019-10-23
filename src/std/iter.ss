@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; Iterations and comprehensions
-package: std
 
 (import :gerbil/gambit/ports
         :gerbil/gambit/misc

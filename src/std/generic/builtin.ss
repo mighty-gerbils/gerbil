@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Generics: builtin types
-package: std/generic
 
 (import :std/generic/macros)
 (export #t)

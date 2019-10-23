@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; std parser api
-package: std
 
 (import :std/parser/rlang
         :std/parser/base

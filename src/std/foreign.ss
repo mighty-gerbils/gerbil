@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; FFI macros
-package: std
 
 (export begin-ffi)
 

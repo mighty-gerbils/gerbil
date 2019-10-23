@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; network repl
-package: std/net
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports

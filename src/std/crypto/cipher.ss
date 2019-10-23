@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto ciphers
-package: std/crypto
 
 (import :gerbil/gambit/ports
         :std/text/utf8

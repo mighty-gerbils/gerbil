@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Unit testing support
-package: std
 
 (import :gerbil/gambit
         :std/error

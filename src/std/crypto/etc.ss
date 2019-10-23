@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto etc
-package: std/crypto
 
 (export libcrypto-error? raise-libcrypto-error with-libcrypto-error
         call-with-binary-input

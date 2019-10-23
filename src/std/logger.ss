@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; Logging support
-package: std
 
 (import :gerbil/gambit/ports
         :gerbil/gambit/threads

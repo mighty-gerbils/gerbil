@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;;; CSV support, ported from Common Lisp's fare-csv
 ;;; (C) fare at tunes.org
-package: std/text
 ;;
 ;; CSV is intrinsically an underspecified lossy format,
 ;; and even popular PC applications lose heavily

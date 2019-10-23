@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-124: Ephemerons; trivial implementation.
-package: std/srfi
 
 (export ephemeron? make-ephemeron ephemeron-broken? ephemeron-key ephemeron-datum reference-barrier)
 

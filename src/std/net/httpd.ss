@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; embedded HTTP/1.1 server
-package: std/net
 
 (import :std/net/httpd/mux
         :std/net/httpd/handler

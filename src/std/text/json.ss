@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; json library
-package: std/text
 
 ;;; JSON - scheme correspondence:
 ;;; JSON encoding: the following objects can be converted to json:

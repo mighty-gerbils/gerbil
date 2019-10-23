@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; OS File Descriptor I/O
-package: std/os
 
 (import :std/foreign
         :std/os/fd

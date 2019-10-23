@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; hex encoding
-package: std/text
 
 (export hex-encode hexlify hex-decode unhexlify hex unhex unhex*)
 (import :gerbil/gambit/fixnum)

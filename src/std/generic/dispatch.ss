@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Generic dispatch
-package: std/generic
 
 (import :gerbil/gambit/threads)
 (export type-of linear-type-of type-linearize-class

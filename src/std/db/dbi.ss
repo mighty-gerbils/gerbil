@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; Generic SQL database interface
-package: std/db
 
 (import (only-in :gerbil/gambit/misc make-will)
         :std/sugar

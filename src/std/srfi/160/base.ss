@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; SRFI-160: Homogeneous Numeric Vector Libraries
-package: std/srfi/160
 
 (import :gerbil/gambit/hvectors
         :gerbil/gambit/exact

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; srfi implementation support libraries (mostly for Olin's code)
-package: std/srfi
 
 (export #t)
 

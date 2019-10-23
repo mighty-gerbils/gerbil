@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Iterators for SRFI-127 lazy sequences
-package: std/srfi
 
 (import :std/iter
         :std/srfi/127)

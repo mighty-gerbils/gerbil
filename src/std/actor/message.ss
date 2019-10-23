@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor message primitives and macros
-package: std/actor
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/os

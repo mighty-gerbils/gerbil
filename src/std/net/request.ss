@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; HTTP requests for humans; py requests-like http client interface
-package: std/net
 
 (import :gerbil/gambit/ports
         :std/sugar

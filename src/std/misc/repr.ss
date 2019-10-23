@@ -1,7 +1,6 @@
 ;; -*- Gerbil -*-
 ;;; © fare@tunes.org
 ;;;; Sourceable Representation of Gerbil entities
-package: std/misc
 
 (export
   default-representation-options current-representation-options

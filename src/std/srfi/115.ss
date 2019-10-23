@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-115: Regular Expressions; this is Alex Shinn's implementation from chibi
-package: std/srfi
 
 (import :std/srfi/1
         :std/srfi/9

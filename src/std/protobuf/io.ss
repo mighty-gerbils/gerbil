@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Protobuf I/O
-package: std/protobuf
 
 (import :gerbil/gambit/bits
         :gerbil/gambit/ports

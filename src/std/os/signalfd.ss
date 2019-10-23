@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; Linux signalfd for signal handling
-package: std/os
 
 (require linux)
 (import :std/foreign

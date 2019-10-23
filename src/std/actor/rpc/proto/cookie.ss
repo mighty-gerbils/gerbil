@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor rpc cookie authen protocol
-package: std/actor/rpc/proto
 
 (import :std/net/bio
         :std/crypto/etc

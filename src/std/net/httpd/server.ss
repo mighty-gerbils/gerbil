@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; embedded HTTP/1.1 server
-package: std/net/httpd
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/exceptions

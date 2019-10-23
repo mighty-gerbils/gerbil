@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; MySQL dbi interface
-package: std/db
 
 (import :std/db/dbi
         :std/db/_mysql

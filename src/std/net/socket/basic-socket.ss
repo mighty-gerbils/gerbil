@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; synchronous sockets -- basic unmanaged sockets
-package: std/net/socket
 
 (import :gerbil/gambit/misc
         :gerbil/gambit/os

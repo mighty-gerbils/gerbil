@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto bignum utils
-package: std/crypto
 
 (import :std/crypto/libcrypto
         :std/crypto/etc)

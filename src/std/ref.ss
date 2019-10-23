@@ -2,7 +2,6 @@
 ;;; (C) vyzo at hackzen.org, proksi at disroot.org
 ;;; generic ref
 
-package: std
 
 (import :gerbil/gambit
         :std/generic)

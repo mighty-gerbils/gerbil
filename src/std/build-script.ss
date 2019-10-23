@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; package build script template
-package: std
 
 (import :std/make
         :gerbil/gambit/misc)

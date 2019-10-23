@@ -1,5 +1,4 @@
 ;; -*- Gerbil -*-
-package: std/misc
 ;;;; String utilities
 
 (export

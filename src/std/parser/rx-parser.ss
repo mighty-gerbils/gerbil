@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; std parser for lexeme regular expressions
-package: std/parser
 
 (import :std/parser/base
         :std/parser/rlang

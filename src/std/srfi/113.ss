@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-113: Sets and Bags
-package: std/srfi
 
 (import :std/srfi/9
         :std/srfi/125

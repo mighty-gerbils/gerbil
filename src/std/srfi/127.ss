@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-127: Lazy sequences
-package: std/srfi
 
 (export
   generator->lseq lseq? lseq=?

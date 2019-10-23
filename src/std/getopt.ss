@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; Command-line option and command argument parsing
-package: std
 
 (import :std/error
         :std/format)

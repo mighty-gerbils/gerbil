@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; thread debugging utilities
-package: std/debug
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/continuations

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; std parser lexer and lexer generator
-package: std/parser
 
 (import :std/parser/base
         :std/parser/stream

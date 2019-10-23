@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-125: Hash Table Library
-package: std/srfi
 
 (import :gerbil/gambit/hash
         :std/srfi/128)

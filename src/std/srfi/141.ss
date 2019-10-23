@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-141: Integer Division
-package: std/srfi
 
 (import :gerbil/gambit/exact
         ./8)

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; synchronous data structures
-package: std/misc
 
 (import :gerbil/gambit/threads)
 (export make-sync-hash sync-hash?

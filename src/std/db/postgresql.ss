@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; PostgreSQL dbi interface
-package: std/db
 
 (import :std/db/dbi
         :std/db/postgresql-driver

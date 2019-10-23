@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; websocket client
-package: std/net
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports

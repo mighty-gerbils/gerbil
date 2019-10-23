@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; UUID utilities
-package: std/misc
 
 (import :std/pregexp
         :std/text/hex

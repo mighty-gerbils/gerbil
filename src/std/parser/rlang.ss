@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; std parser regular language parsing with derivatives
-package: std/parser
 
 (export
   @nul @nul? @eps @eps?

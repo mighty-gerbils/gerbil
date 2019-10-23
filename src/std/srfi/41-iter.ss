@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Iterators for SRFI-41 streams
-package: std/srfi
 
 (import :std/generic
         :std/iter

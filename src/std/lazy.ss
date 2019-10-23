@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Lazy evaluation
-package: std
 
 (export
   (rename: delay-lazy lazy)

@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo
 ;;; actor rpc connections
-package: std/actor/rpc
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/os

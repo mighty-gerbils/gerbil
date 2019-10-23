@@ -1,7 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-13: charset library
-package: std/srfi
 (import :gerbil/gambit/bits
         :std/srfi/srfi-support
         :std/srfi/8
