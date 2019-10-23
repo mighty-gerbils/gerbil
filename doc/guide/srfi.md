@@ -57,6 +57,7 @@ The following SRFIs are supported by gerbil:
 | [SRFI 143](https://srfi.schemers.org/srfi-143/srfi-143.html) | Fixnums                                                | stdlib       | `:std/srfi/143`           |
 | [SRFI 144](https://srfi.schemers.org/srfi-144/srfi-144.html) | Fixnums                                                | stdlib       | `:std/srfi/144`           |
 | [SRFI 145](https://srfi.schemers.org/srfi-145/srfi-145.html) | Assumptions                                            | stdlib       | `:std/srfi/145`           |
-| [SRFI 146](https://srfi.schemers.org/srfi-146/srfi-146.html) | Mappings                                               | stdlib       | `:std/srfi/146`,`:std/srfi/146/hash` |
+| [SRFI 146](https://srfi.schemers.org/srfi-146/srfi-146.html) | Mappings                                               | stdlib       | `:std/srfi/146{/hash}`    |
 | [SRFI 151](https://srfi.schemers.org/srfi-151/srfi-151.html) | Bitwise Operations                                     | stdlib       | `:std/srfi/151`           |
 | [SRFI 158](https://srfi.schemers.org/srfi-158/srfi-158.html) | Generators and Accumulators                            | stdlib       | `:std/srfi/158`           |
+| [SRFI 160](https://srfi.schemers.org/srfi-160/srfi-160.html) | Homogeneous Numeric Vector Libraries                   | stdlib       | `:std/srfi/160/{base,u8,s8,u16,s16,u32,s32,u64,s64,f32,f64,c64,c128}` |
