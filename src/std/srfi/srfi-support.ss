@@ -51,7 +51,7 @@ package: std/srfi
    (identifier? #'rest)
    (let ((rest args)) body1 ...))
   ((_ args () body1 ...)
-   (if (null? args) (begin body1 ...)
+   (if (null? args) (let () body1 ...)
        (error "Too many optional arguments." args))))
 
 (defrules let-optionals* ()
