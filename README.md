@@ -84,10 +84,15 @@ bothered and polluted everything with more than a (C) vyzo, would read
 like this:
 
 ```
-© 2007-2018 Dimitris Vyzovitis <vyzo -at- hackzen.org>
+© 2007-2019 Dimitris Vyzovitis and contributors
 Gerbil is Free Software, distributed under the GNU LGPLv2.1 or later
 and the Apache 2.0 license.
 ```
+
+The implementations of srfi 115 and srfi 159 come from Chibi, as these
+are the only available reference implementations. As such, they are
+© Alex Shinn and distributed under a BSD-style license.
+
 
 ## Logo
 
