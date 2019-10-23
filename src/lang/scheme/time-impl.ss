@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme time) library -- implementation details
-package: scheme
-
 (import :gerbil/gambit/os)
 (export #t)
 

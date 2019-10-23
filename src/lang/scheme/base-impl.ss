@@ -1,17 +1,15 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme base) library -- implementation details
-package: scheme
-
-(import :scheme/base-etc
-        :scheme/base-vectors
-        :scheme/base-ports
+(import ./base-etc
+        ./base-vectors
+        ./base-ports
         :gerbil/gambit/continuations
         (phi: +1 :gerbil/expander :gerbil/gambit))
 (export #t
-        (import: :scheme/base-etc)
-        (import: :scheme/base-vectors)
-        (import: :scheme/base-ports))
+        (import: ./base-etc)
+        (import: ./base-vectors)
+        (import: ./base-ports))
 
 ;; macros
 ;; R7RS spec:

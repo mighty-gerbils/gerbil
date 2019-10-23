@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme inexact) library
-package: scheme
-
-(import :scheme/inexact-impl)
+(import ./inexact-impl)
 (export
   acos
   asin

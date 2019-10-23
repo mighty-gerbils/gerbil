@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme base) library -- implementation details
-package: scheme
-
 (export #t)
 
 ;; vectors

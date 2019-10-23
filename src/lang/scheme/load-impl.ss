@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme load) library -- implementation details
-package: scheme
-
-(import :scheme/repl-impl
+(import ./repl-impl
         :gerbil/expander)
 (export #t)
 

@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme write) library
-package: scheme
-
-(import :scheme/write-impl)
+(import ./write-impl)
 
 (export
   display

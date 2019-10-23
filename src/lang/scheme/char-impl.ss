@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme char) library -- implementation details
-package: scheme
-
-(import :scheme/stubs)
+(import ./stubs)
 (export #t)
 
 (def char::zero (char->integer #\0))

@@ -1,6 +1,5 @@
 (import :std/test
-        ;;:lang/scheme/base-impl)
-        "base-impl")
+        ./base-impl)
 (export r7rs-impl-test)
 
 (def r7rs-impl-test

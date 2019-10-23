@@ -1,9 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme char) library
-package: scheme
-
-(import :scheme/char-impl
+(import ./char-impl
         (only-in :std/srfi/13 string-downcase string-upcase))
 
 (export

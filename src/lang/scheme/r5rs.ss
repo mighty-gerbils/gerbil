@@ -1,12 +1,10 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme r5rs) library
-package: scheme
-
-(import :scheme/base
-        :scheme/eval
-        :scheme/repl
-        :scheme/eval)
+(import ./base
+        ./eval
+        ./repl
+        ./eval)
 (export
   => _ ...
   (phi: +1 syntax-rules)

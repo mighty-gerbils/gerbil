@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme repl) library -- implementation details
-package: scheme
-
 (import :gerbil/expander)
 (export r7rs-interaction-environment
         r7rs-null-environment

@@ -1,8 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; R7RS (scheme inexact) library implementation details
-package: scheme
-
 (export #t)
 
 (cond-expand
