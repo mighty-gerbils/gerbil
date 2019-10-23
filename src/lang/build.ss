@@ -1,17 +1,41 @@
 #!/usr/bin/env gxi
 ;; -*- Gerbil -*-
 
-(import :std/make)
+(import :std/build-script)
 
-(include "build-spec.ss")
-
-(let ((depgraph (call-with-input-file "build-deps" read))
-      (srcdir (path-normalize (path-directory (this-source-file))))
-      (libdir (path-expand "lib" (getenv "GERBIL_HOME"))))
-  (make srcdir: srcdir
-        libdir: libdir
-        optimize: #t
-        static: #t
-        debug: 'env
-        depgraph: depgraph
-        build-spec))
+(defbuild-script
+  `("scheme/stubs"
+    "scheme/base-etc"
+    "scheme/base-vectors"
+    (gxc: "scheme/base-ports" "-e" "(include \"~~lib/_gambit#.scm\")")
+    "scheme/base-impl"
+    "scheme/base"
+    "scheme/case-lambda"
+    "scheme/char-impl"
+    "scheme/char"
+    "scheme/complex"
+    "scheme/cxr"
+    "scheme/eval-impl"
+    "scheme/eval"
+    "scheme/file"
+    "scheme/inexact-impl"
+    "scheme/inexact"
+    "scheme/lazy-impl"
+    "scheme/lazy"
+    "scheme/load-impl"
+    "scheme/load"
+    "scheme/process-context-impl"
+    "scheme/process-context"
+    "scheme/read"
+    "scheme/repl-impl"
+    "scheme/repl"
+    ,@(cond-expand
+        (,(> (system-version) 409001) '())
+        (else '("scheme/time-impl")))
+    "scheme/time"
+    "scheme/write-impl"
+    "scheme/write"
+    "scheme/r5rs"
+    "scheme/r5rs-null"
+    "scheme/r7rs"
+    ))
