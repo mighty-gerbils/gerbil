@@ -634,6 +634,8 @@
             &u8vector-double-ref/native
             &u8vector-double-set!/native)
 
+  (c-declare "#include <stdint.h>")
+
   (define native-endianness
     (if ((c-lambda () scheme-object
               #<<END-C
@@ -648,27 +650,27 @@ END-C
       'big))
 
   (define-c-lambda &u8vector-u16-ref/native (scheme-object int) unsigned-int16
-    "u_int16_t res = *(u_int16_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+    "uint16_t res = *(uint16_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
   (define-c-lambda &u8vector-u16-set!/native (scheme-object int unsigned-int16) void
-    "*(u_int16_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
+    "*(uint16_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
   (define-c-lambda &u8vector-s16-ref/native (scheme-object int) int16
     "int16_t res = *(int16_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
   (define-c-lambda &u8vector-s16-set!/native (scheme-object int int16) void
     "*(int16_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
 
   (define-c-lambda &u8vector-u32-ref/native (scheme-object int) unsigned-int32
-    "u_int32_t res = *(u_int32_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+    "uint32_t res = *(uint32_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
   (define-c-lambda &u8vector-u32-set!/native (scheme-object int unsigned-int32) void
-    "*(u_int32_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
+    "*(uint32_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
   (define-c-lambda &u8vector-s32-ref/native (scheme-object int) int32
     "int32_t res = *(int32_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
   (define-c-lambda &u8vector-s32-set!/native (scheme-object int int32) void
     "*(int32_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
 
   (define-c-lambda &u8vector-u64-ref/native (scheme-object int) unsigned-int64
-    "u_int64_t res = *(u_int64_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
+    "uint64_t res = *(uint64_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
   (define-c-lambda &u8vector-u64-set!/native (scheme-object int unsigned-int64) void
-    "*(u_int64_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
+    "*(uint64_t*)(U8_DATA(___arg1) + ___arg2) = ___arg3; ___return;")
   (define-c-lambda &u8vector-s64-ref/native (scheme-object int) int64
     "int64_t res = *(int64_t*)(U8_DATA(___arg1) + ___arg2); ___return(res);")
   (define-c-lambda &u8vector-s64-set!/native (scheme-object int int64) void
