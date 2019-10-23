@@ -657,7 +657,7 @@ Reverses the elements of `u8vector` *v*. Produces a new `u8vector`.
 ``` scheme
 (u8vector->bytestring v (delim #\space)) -> bytestring
 
-  v := u8vector
+  v     := u8vector
   delim := char
 ```
 
@@ -682,7 +682,7 @@ FF 7F 0B 01 00
 ``` scheme
 (bytestring->u8vector bs (delim #\space)) -> u8vector
 
-  bs := bytestring
+  bs    := bytestring
   delim := char
 ```
 
@@ -706,7 +706,7 @@ no delimiter. Each byte consists of two hexadecimal characters.
 ``` scheme
 (u8vector->uint v (endianness big)) -> uint
 
-  v := u8vector
+  v          := u8vector
   endianness := endianness symbol
 ```
 
@@ -716,7 +716,7 @@ Decodes a u8vector as an unsigned integer.
 ``` scheme
 (uint->u8vector n (endianness big)) -> u8vector
 
-  n := exact nonnegative integer
+  n          := exact nonnegative integer
   endianness := endianness symbol
 ```
 
