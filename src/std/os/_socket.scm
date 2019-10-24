@@ -786,7 +786,7 @@ int ffi_socket_setsockopt_mreq (int fd, int level, int opt, ___SCMOBJ maddr, ___
 
 int ffi_socket_setsockopt_mreq_src (int fd, int level, int opt, ___SCMOBJ maddr, ___SCMOBJ iaddr, ___SCMOBJ saddr)
 {
-#ifndef __OpenBSD__
+#if !defined(__OpenBSD__) && !defined(__NetBSD__)
  struct ip_mreq_source mreq;
  socklen_t olen = sizeof (struct ip_mreq_source);
  memcpy (&mreq.imr_multiaddr, U8_DATA (maddr), sizeof (struct in_addr));
