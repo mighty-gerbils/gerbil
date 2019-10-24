@@ -4,7 +4,7 @@ This module provides utilities to encode and decode text in various methods.
 
 ## Base64
 
-These provide text conversions according to RFC XXX.
+These provide text conversions according to [RFC 4648](https://tools.ietf.org/html/rfc4648).
 
 ### Base64 coding support notes
 

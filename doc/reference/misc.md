@@ -404,7 +404,7 @@ within the body.
 
 ## Bytes
 
-This library provides primitives for operating on u8vectors as well as some utility functions
+This library provides primitives for operating on u8vectors as well as some utility functions.
 
 ::: tip To use the bindings from this module:
 ``` scheme
@@ -424,7 +424,7 @@ This library provides primitives for operating on u8vectors as well as some util
 
 Specifies the endianness for integer and floating point operations on u8vectors.
 
-The supported endianness can be  `big`, `little`, or `native`; `native-endianness` is bound
+The supported endianness can be `big`, `little`, or `native`; `native-endianness` is bound
 at runtime to the native architecture endianness.
 
 ### u8vector-s8-ref
