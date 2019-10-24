@@ -210,4 +210,5 @@
     (linux
      (+ SIGRTMAX 1))
     (bsd
-     NSIG)))
+     NSIG)
+    (else #f)))
