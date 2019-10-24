@@ -169,7 +169,8 @@
     (bsd
      (define-const SIGEMT)
      (define-const SIGINFO)
-     (define-const NSIG)))
+     (define-const NSIG))
+    (else ))
 
   (cond-expand
     (openbsd
@@ -180,7 +181,8 @@
      #;(define-const SIGRTMAX))
     (freebsd)
     (darwin)
-    (linux))
+    (linux)
+    (else))
 
   (define-c-lambda __kill (int int) int
     "kill")
