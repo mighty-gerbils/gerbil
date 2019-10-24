@@ -194,16 +194,21 @@
             (cond
              ((or (equal? path filepath) (not path))
               (let* ((line (source-location-line loc))
-                     (anchor (vector-ref lines (fx1- line)))
-                     (offset (vector-ref offsets (fx1- line))))
-                (write-string anchor tmp)
-                (write-char #\x7f tmp)
-                (display name tmp)
-                (write-char #\x01 tmp)
-                (display line tmp)
-                (write-char #\, tmp)
-                (display offset tmp)
-                (newline tmp)))
+                     (line-1 (fx1- line)))
+                ;; see issue #286 for this check
+                (if (fx<= 0 line-1 (fx1- (vector-length lines)))
+                  (let ((anchor (vector-ref lines line-1))
+                        (offset (vector-ref offsets line-1)))
+                    (write-string anchor tmp)
+                    (write-char #\x7f tmp)
+                    (display name tmp)
+                    (write-char #\x01 tmp)
+                    (display line tmp)
+                    (write-char #\, tmp)
+                    (display offset tmp)
+                    (newline tmp))
+                  (displayln "*** WARNING: tag location out of range: "
+                             name "@" line-1 " (" (vector-length lines) ")"))))
              (else
               (set! out-of-file-tags
                 (cons tag out-of-file-tags)))))))
