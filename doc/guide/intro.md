@@ -782,7 +782,7 @@ import library modules using a relative path within a library.  Within
 a library module `:A/B/C/D`, an import of `./E` will resolve to
 `:A/B/C/E`, while an import of `../E` will resolve to `:A/B/E`.
 Upwards traversals can be nested, so `../../E` will resolve to `:A/E`.
-Downwards traversals are also possible, so `../../E/G` wiil resolve to
+Downwards traversals are also possible, so `../../E/G` will resolve to
 `:A/E/G`.
 
 Note that this is merely a syntactic convenience for `import` that

@@ -104,7 +104,7 @@ Include the contents of path, wrapped with a `begin`.
  [(else body ...)])
 
 <feature>:
- (and feaure ...)             ; boolean and of `feature ...`
+ (and feature ...)             ; boolean and of `feature ...`
  (or feature ...)             ; boolean or of `feature ...`
  (not feature)                ; negation of feature
  id                           ; satisfied if `id` is bound as an identifier
@@ -582,7 +582,7 @@ Canonical class type definition macro.
 
 Defines a method `method-id` for type `type`, which must be
 a class or struct type.
-The `:std/generic` library extends the form for generic metho
+The `:std/generic` library extends the form for generic method
 
 #### @method
 ```
@@ -904,7 +904,7 @@ This includes the `<runtime>` prelude module, which is composed by the `<r5rs-ru
 
 Defines the following symbols as externs:
 ```
-    ;; 6.1 equivalnce
+    ;; 6.1 equivalence
     eq? eqv? equal?
     ;; 6.2 numbers
     number? complex? real? rational? integer?
@@ -1307,7 +1307,7 @@ Symbols related to continuation management.
 ```
 
 #### :gerbil/gambit/exceptions
-Symbols reated to gambit exceptions.
+Symbols related to gambit exceptions.
 
 ```
   display-exception

@@ -14,7 +14,7 @@ I usually configure Gambit for development with the following incantation:
              --enable-shared \
              --enable-openssl \
              --enable-default-runtime-options=f8,-8,t8 \
-             --enable-poll # For Linux and BSD; don't use this on MacOS
+             --enable-poll # For Linux and BSD; don't use this on macOS
 ```
 
 With this configuration, you need to add `$GAMBIT_PREFIX/current/bin` to your `PATH` and `$GAMBIT_PREFIX/current/lib` to your `LD_LIBRARY_PATH`.

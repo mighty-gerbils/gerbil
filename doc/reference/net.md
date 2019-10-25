@@ -51,7 +51,7 @@ REPL> (std/net/repl#untaint! [tgroup [state]])
 ```
 :::
 
-Untaints a thread-group, restoring its spcific state.
+Untaints a thread-group, restoring its specific state.
 
 ### Loading the Expander
 

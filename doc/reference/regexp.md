@@ -52,7 +52,7 @@ substrings.
 :::
 
 Match a string against a regular expression and return a list of index pairs
-where matches have occured.
+where matches have occurred.
 
 ## pregexp-split
 
@@ -95,7 +95,7 @@ Replace the portion of a string matched by regular expression with another strin
 ```
 :::
 
-Like `pregexp-replace` but replaces all occurences of hte pattern
+Like `pregexp-replace` but replaces all occurrences of the pattern
 
 ## pregexp-quote
 

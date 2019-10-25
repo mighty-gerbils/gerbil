@@ -537,7 +537,7 @@ hierarchy.
 ``` scheme
 (call-next-method klass obj id . args) -> any
 
-  klass := type-descriptor or builting record descriptor
+  klass := type-descriptor or builtin record descriptor
   obj   := object
   id    := symbol; method id
 ```
@@ -548,7 +548,7 @@ Invokes the next method in *obj*'s hierarchy, following *klass*.
 ``` scheme
 (next-method klass obj id) -> procedure | #f
 
-  klass := type-descriptor or builting record descriptor
+  klass := type-descriptor or builtin record descriptor
   obj   := object
   id    := symbol; method id
 ```
@@ -1117,7 +1117,7 @@ where `x`, `y`, ... are the elements of each list in *lsts*.
   start,step := number
 ```
 
-Returns a list of *count* elements, iteratating from *start* and adding *step* on
+Returns a list of *count* elements, iterating from *start* and adding *step* on
 each iteration.
 
 ### last-pair
@@ -1447,7 +1447,7 @@ Returns true if *prefix* is a prefix of *string*.
   start := fixnum
 ```
 
-Returns the index of the first occurence of *char* in *str*.
+Returns the index of the first occurrence of *char* in *str*.
 
 ### string-rindex
 ``` scheme
@@ -1458,7 +1458,7 @@ Returns the index of the first occurence of *char* in *str*.
   start := fixnum or #f
 ```
 
-Returns the index of the first occurence from the right of *char* in *str*.
+Returns the index of the first occurrence from the right of *char* in *str*.
 
 ### string-split
 ``` scheme
@@ -1901,7 +1901,7 @@ Like `spawn`, but the thread is in a new thread group with name *name*.
   tgroup := thread-group
 ```
 
-Spanws an actor thread.
+Spawns an actor thread.
 
 ### spawn-thread
 ``` scheme
@@ -1982,7 +1982,7 @@ Returns the thread-group of the current thread.
   thunk := procedure
 ```
 
-Evalutes *thunk* in a dynamic extent where *mx* is locked.
+Evaluates *thunk* in a dynamic extent where *mx* is locked.
 
 ### unhandled-actor-exception-hook-set!
 ``` scheme
@@ -1991,8 +1991,8 @@ Evalutes *thunk* in a dynamic extent where *mx* is locked.
   proc := procedure
 ```
 
-Hooks the actor exception handler to invoke `(proc continuation exxception)` on uncaught
-exceptions occuring in actor threads.
+Hooks the actor exception handler to invoke `(proc continuation exception)` on uncaught
+exceptions occurring in actor threads.
 
 ### dump-stack-trace!
 ``` scheme

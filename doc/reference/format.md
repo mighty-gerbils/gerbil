@@ -34,7 +34,7 @@ Formats the arguments to a string using the supplied format specifier.
 :::tip usage
 ```
 (fprintf port fmt . args)
-  port  := ouput-port
+  port  := output-port
   fmt   := string
   args  := mixed values
 ```

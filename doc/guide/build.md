@@ -88,7 +88,7 @@ $ cat build.ss
              optimize: #t            ; enable optimizations
              debug: 'src             ; enable debugger introspection
              static: #f              ; don't generate static compilation artifacts
-             depgraph: depgraph      ; use the depency graph
+             depgraph: depgraph      ; use the dependency graph
              prefix: "example"       ; this matches your package prefix
              build-spec)))))         ; the actual build specification
 ```
@@ -101,7 +101,7 @@ $ ./build.ss deps
 $ ./build.ss
 ```
 
-After the initial dependency graph generation, we can build during development by reusing the dependency graph and simply invoking ./build.ss. You only need to generate a new depency graph if your import sets change.
+After the initial dependency graph generation, we can build during development by reusing the dependency graph and simply invoking ./build.ss. You only need to generate a new dependency graph if your import sets change.
 
 ## Building static executables
 
