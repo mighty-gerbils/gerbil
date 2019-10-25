@@ -25,7 +25,7 @@
     (utf8-decode u8v start end)
     (error "Bad argument; expected u8vector" u8v)))
 
-(def (utf8-encode str start end)
+(def (utf8-encode str (start 0) (end (string-length str)))
   (let* ((slen (fx- end start))
          (u8vlen (##fx* slen 4))
          (u8v (make-u8vector u8vlen))
@@ -76,7 +76,7 @@
           (lp (##fx+ i 1) (##fx+ j 4)))))
       j)))
 
-(def (utf8-decode u8v start end)
+(def (utf8-decode u8v (start 0) (end (u8vector-length u8v)))
   (let* ((u8vlen (fx- end start))
          (str (make-string u8vlen))
          (slen (utf8-decode! u8v str start end)))
