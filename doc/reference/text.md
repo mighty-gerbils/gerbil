@@ -106,7 +106,7 @@ This is an alias for `base64-string->u8vector`. See its definition for details.
 
 ### base64-decode-substring
 ``` scheme
-(base64-decode-substring str start end [nopaddind-ok?: #t] [urlsafe: #f]) -> u8vector
+(base64-decode-substring str start end [nopadding-ok?: #t] [urlsafe: #f]) -> u8vector
 ```
 
 This is an alias for `base64-substring->u8vector`. See its definition for details.
@@ -475,7 +475,7 @@ Returns JSON object from given *port*. Signals an error if fails to parse JSON.
 ```
 
 Writes JSON object *obj* optionally given *port*. Defaults to using
-current-ouput-port. Signals an error on failed write.
+current-output-port. Signals an error on failed write.
 
 ### string-&gt;json-object
 ``` scheme
@@ -725,7 +725,7 @@ data is simply copied a block at a time).
   level := optional integer value, from 0 to 9
 ```
 
-Compresses data given in *data* as `compress` procudere but in addition gzip
+Compresses data given in *data* as `compress` procedure but in addition gzip
 encodes it. Signals a error on wrong type of *data*.
 
 ### uncompress

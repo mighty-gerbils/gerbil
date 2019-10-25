@@ -27,7 +27,7 @@ Any supported public provider git repo can serve a Gerbil package, provided that
     - the meta action should return an sexpr list of all the actions supported by the script.
     - the spec action should return an sexpr list containing the `:std/make` build specs used to build the package; the package manager uses that to clean.
     - the deps action should build the dependency graph for the package.
-    - the compile action should make the package, assuming the dependecy graph has been built.
+    - the compile action should make the package, assuming the dependency graph has been built.
     - the script should also have a default action that does deps and compile, in order to support installation by git clone and M-x gerbil-build for development.
 
 You can use `:std/build-script` to get a template script definition from the package build-spec.
@@ -71,7 +71,7 @@ Feel free to open a PR in that repo to list your own packages!
 
 ## A Word of Caution
 
-The build script is currently not sandboxed; it runs with user priveleges and it is an arbitrary script. We originally planned to address this by creating a restricted sandbox language for package build scripts. But you can only go so far in a language that thrives in compile-time evaluation; remember, it's macros all the way!
+The build script is currently not sandboxed; it runs with user privileges and it is an arbitrary script. We originally planned to address this by creating a restricted sandbox language for package build scripts. But you can only go so far in a language that thrives in compile-time evaluation; remember, it's macros all the way!
 
 You can quickly vet a package by inspecting the gerbil.pkg manifest and the build script itself. If it uses the standard script template or just invokes make with a build-spec, then it should be a reasonably behaved package. Of course, who knows what surprises could be lurking in a macro deep in the sources, so where to stop?
 

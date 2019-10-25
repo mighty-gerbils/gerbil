@@ -16,14 +16,14 @@ Reloads the module given by the module path and then imports the freshly reloade
 (enter! module-path)
 ```
 
-Starts a repl using the sytnactic context of a given module, which is first evaluated.
+Starts a repl using the syntactic context of a given module, which is first evaluated.
 
 ```
 (@expand form)
 (@expand1 form)
 ```
 
-These two macros perfom macro expansion, pretty print the result, and return the quoted expanded syntax for inspection. The difference lies in the function used to perform the expansion. `@expand` uses core-expand* which expands until the outer form is a core macro. `@expand1` uses core-expand1 which performs a single step expansion.
+These two macros perform macro expansion, pretty print the result, and return the quoted expanded syntax for inspection. The difference lies in the function used to perform the expansion. `@expand` uses core-expand* which expands until the outer form is a core macro. `@expand1` uses core-expand1 which performs a single step expansion.
 
 ## Customizing the Interactive Shell
 

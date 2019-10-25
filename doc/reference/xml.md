@@ -247,7 +247,7 @@ function *mapf*.
   key := string; node key
 ```
 
-Retuns the node *n* attribute value for given *key* or #f if value is not found.
+Returns the node *n* attribute value for given *key* or #f if value is not found.
 
 ### sxml-attribute-getq
 ``` scheme

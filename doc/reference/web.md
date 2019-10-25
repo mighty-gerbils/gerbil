@@ -19,7 +19,7 @@ as it's a lot faster.
   address := string; address and port to listen
   handler := lambda
 ```
-starts rack server listening on *address* and uses *handler* to process requets.
+starts rack server listening on *address* and uses *handler* to process requests.
 
 *address* is a listening address and port given as a string, for example "127.0.0.1:8000".
 
@@ -78,7 +78,7 @@ starts rack server listening on *address* and uses *handler* to process requets.
 (start-fastcgi-server! address respond) -> server | error
 
   address := string; address and port to listen
-  respond := function to hander requests
+  respond := function to handle requests
 ```
 
 start multi-threaded server listening on *address*. Dispatches requests to *respond* procedure.

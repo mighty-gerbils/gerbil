@@ -25,7 +25,7 @@ with the exception of `zlib` and `sqlite`. These are ubiquitous, stable
 and generally useful enough to warrant being present by default;
 you can still disable them if you want for a minimal installation.
 
-In ubuntu, you can install the dependencies for a default installation with:
+In Ubuntu, you can install the dependencies for a default installation with:
 
 ```bash
 $ sudo apt-get install openssl libssl-dev sqlite3 libsqlite3-dev
@@ -47,7 +47,7 @@ $ cd $GERBIL_HOME/src
 $ ./build.sh
 ```
 
-If you are building in MacOS and want to use the homebrew OpenSSL,
+If you are building in macOS and want to use the homebrew OpenSSL,
 then you need to specify appropriate `CPPFLAGS` and `LDFLAGS`.
 For instance:
 ```bash
@@ -56,7 +56,7 @@ $ LDFLAGS=-L/usr/local/opt/openssl/lib \
   ./build.sh
 ```
 
-## Installation on MacOS
+## Installation on macOS
 Both Gambit and Gerbil are available via homebrew.
 ```
 $ brew install gerbil-scheme

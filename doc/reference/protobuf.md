@@ -117,7 +117,7 @@ protobuf wire format.
 ```
 :::
 
-Marshals an object to its binary representatio, using `bio-write-e` as
+Marshals an object to its binary representation, using `bio-write-e` as
 the serializer procedure.
 
 ### unmarshal
