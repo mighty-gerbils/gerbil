@@ -60,14 +60,14 @@ is converted. If *urlsafe?* is #t, the result is URL encoded as specified in RFC
 (base64-substring->u8vector str start end [nopadding-ok?: #t] [urlsafe?: #f]) ->
 u8vector
 
-  str           := string of base64 data
+  str           := string of Base64 data
   start         := exact integer starting index
   end           := exact integer ending index
   nopadding-ok? := boolean to disable padding
   urlsafe?      := boolean to enable urlsafe coding
 ```
 
-Returns a newly allocated u8vector containing base64 encoded value of *str* from
+Returns a newly allocated u8vector containing Base64 encoded value of *str* from
 *start* to *end* like `base64-string->u8vector`.
 
 ### u8vector-&gt;base64-string
@@ -80,7 +80,7 @@ Returns a newly allocated u8vector containing base64 encoded value of *str* from
   urlsafe? := boolean to enable urlsafe coding
 ```
 
-Returns a newly allocated base64 string with bytes of *u8vect* in left-to-right order to base64 encoded string.
+Returns a newly allocated Base64 string with bytes of *u8vect* in left-to-right order to Base64 encoded string.
 
 ### subu8vector-&gt;base64-string
 ``` scheme
@@ -94,7 +94,7 @@ Returns a newly allocated base64 string with bytes of *u8vect* in left-to-right 
   urlsafe? := boolean to enable urlsafe coding
 ```
 
-Returns a newly allocated string with bytes of *u8vect* base64 encoded in
+Returns a newly allocated string with bytes of *u8vect* Base64 encoded in
 left-to-right order from *start* to *end*.
 
 ### base64-decode
