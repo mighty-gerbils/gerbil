@@ -546,8 +546,7 @@ parsing will signal error on decoding issues.
   end   := exact integer for ending index
 ```
 
-Returns a newly allocated u8vector with byte data of UTF-8 string *str*. Optional
-*start* and *end*.
+Returns a newly allocated u8vector with byte data of UTF-8 string *str*.
 
 ### utf8-decode
 ``` scheme
