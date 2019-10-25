@@ -241,8 +241,10 @@
             (lp (fx1+ i) offs))))))))
 
 (def (source-location-line locat)
-  (let (filepos (##position->filepos (##locat-position locat)))
-    (fx1+ (##filepos-line filepos))))
+  (if (##locat? locat)
+    (let (filepos (##position->filepos (##locat-position locat)))
+      (fx1+ (##filepos-line filepos)))
+    1))
 
 (def (try-import-module filename)
   (try
