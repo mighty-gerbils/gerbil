@@ -534,8 +534,10 @@ bytes. Optional *start* and *end* limit the operation to substring of *str*.
 ```
 
 Returns a newly allocated string with UTF-8 contents from *u8v*. Optional *start*
-and *end* parameters limit the operation to sub-vector of given indexes. The
-parsing will signal error on decoding issues.
+and *end* parameters limit the operation to the sub-vector of given indexes.
+The replacement character U+FFFD is used to replace an unknown,
+unrecognized or unrepresentable character. An error is raised upon
+reading an incomplete character.
 
 ### utf8-encode
 ``` scheme
@@ -546,8 +548,7 @@ parsing will signal error on decoding issues.
   end   := exact integer for ending index
 ```
 
-Returns a newly allocated u8vector with byte data of UTF-8 string *str*. Optional
-*start* and *end*.
+Returns a newly allocated u8vector with byte data of UTF-8 string *str*.
 
 ### utf8-decode
 ``` scheme
