@@ -4,7 +4,7 @@ This module provides utilities to encode and decode text in various methods.
 
 ## Base64
 
-These provide text conversions according to RFC XXX.
+These provide text conversions according to [RFC 4648](https://tools.ietf.org/html/rfc4648).
 
 ### Base64 coding support notes
 
@@ -50,9 +50,9 @@ For some more references see:
   urlsafe?      := boolean to enable urlsafe coding
 ```
 
-Returns newly allocated u8vector with Base64 encoded contents of *str*. Optional keyword arguments
+Returns a newly allocated u8vector with Base64 encoded contents of *str*. Optional keyword arguments
 control how the conversion is done. If *nopadding-ok?* is #t (default) the value
-is converted. If *urlsafe?* is #t, the result is URL encoded as specified in RFC XXX
+is converted. If *urlsafe?* is #t, the result is URL encoded as specified in RFC 4648.
 ...
 
 ### base64-substring-&gt;u8vector
@@ -60,14 +60,14 @@ is converted. If *urlsafe?* is #t, the result is URL encoded as specified in RFC
 (base64-substring->u8vector str start end [nopadding-ok?: #t] [urlsafe?: #f]) ->
 u8vector
 
-  str           := string of base64 data
+  str           := string of Base64 data
   start         := exact integer starting index
   end           := exact integer ending index
   nopadding-ok? := boolean to disable padding
   urlsafe?      := boolean to enable urlsafe coding
 ```
 
-Returns newly allocated u8vector containing base64 encoded value of *str* from
+Returns a newly allocated u8vector containing Base64 encoded value of *str* from
 *start* to *end* like `base64-string->u8vector`.
 
 ### u8vector-&gt;base64-string
@@ -80,7 +80,7 @@ Returns newly allocated u8vector containing base64 encoded value of *str* from
   urlsafe? := boolean to enable urlsafe coding
 ```
 
-Returns newly allocated base64 string with bytes of *u8vect* in left-to-right order to base64 encoded string.
+Returns a newly allocated Base64 string with bytes of *u8vect* in left-to-right order to Base64 encoded string.
 
 ### subu8vector-&gt;base64-string
 ``` scheme
@@ -94,7 +94,7 @@ Returns newly allocated base64 string with bytes of *u8vect* in left-to-right or
   urlsafe? := boolean to enable urlsafe coding
 ```
 
-Returns newly allocated string with bytes of *u8vect* base64 encoded in
+Returns a newly allocated string with bytes of *u8vect* Base64 encoded in
 left-to-right order from *start* to *end*.
 
 ### base64-decode
@@ -361,7 +361,7 @@ Boolean to control do we accept non-ascii data? Defaults to #t.
   end   := exact integer as end index | #f
 ```
 
-Returns newly allocated string containing hex encoded characters from given
+Returns a newly allocated string containing hex encoded characters from given
 *bytes*.
 Optional *start* gives starting index to start the encoding, *end* gives ending
 index. Giving #f in *end* means reading to the end of byte vector.
@@ -380,7 +380,7 @@ Short for `hex-encode`.
   str := string to decode
 ```
 
-Returns newly allocated u8vector with contents set to hex decoded *str*.
+Returns a newly allocated u8vector with contents set to hex decoded *str*.
 
 ### unhexlify
 ``` scheme
@@ -493,7 +493,7 @@ Parses given *str* and returns JSON object or signals an error fails to parse.
   obj := JSON object
 ```
 
-Returns newly allocated string with JSON object as a string. Signals an error if
+Returns a newly allocated string with JSON object as a string. Signals an error if
 fails to parse JSON.
 
 ### json-symbolic-keys
@@ -521,7 +521,7 @@ Faster UTF-8 encoding and decoding.
   end   := exact integer for end index
 ```
 
-Returns newly allocated u8vector with UTF-8 data from *str* converted to
+Returns a newly allocated u8vector with UTF-8 data from *str* converted to
 bytes. Optional *start* and *end* limit the operation to substring of *str*.
 
 ### utf8-&gt;string
@@ -533,7 +533,7 @@ bytes. Optional *start* and *end* limit the operation to substring of *str*.
   end   := exact integer for ending index
 ```
 
-Returns newly allocated string with UTF-8 contents from *u8v*. Optional *start*
+Returns a newly allocated string with UTF-8 contents from *u8v*. Optional *start*
 and *end* parameters limit the operation to sub-vector of given indexes. The
 parsing will signal error on decoding issues.
 
@@ -546,7 +546,7 @@ parsing will signal error on decoding issues.
   end   := exact integer for ending index
 ```
 
-Returns newly allocated u8vector with byte data of UTF-8 string *str*. Optional
+Returns a newly allocated u8vector with byte data of UTF-8 string *str*. Optional
 *start* and *end*.
 
 ### utf8-decode
@@ -609,7 +609,7 @@ UTF-16 encoding and decoding.
   BOM?       := boolean; specifies whether to include a BOM or not
 ```
 
-Returns newly allocated u8vector with UTF-16 data from *str* converted to
+Returns a newly allocated u8vector with UTF-16 data from *str* converted to
 bytes.
 
 ### utf16-&gt;string
@@ -621,7 +621,7 @@ bytes.
   endianness-mandatory? := boolean; if #f then try to read a BOM to determine endianness; if #t then the specified endianness is used.
 ```
 
-Returns newly allocated string with UTF-16 contents from *u8v*.
+Returns a newly allocated string with UTF-16 contents from *u8v*.
 
 ## UTF-32
 UTF-32 encoding and decoding.
@@ -641,7 +641,7 @@ UTF-32 encoding and decoding.
   BOM?       := boolean; specifies whether to include a BOM or not
 ```
 
-Returns newly allocated u8vector with UTF-32 data from *str* converted to
+Returns a newly allocated u8vector with UTF-32 data from *str* converted to
 bytes.
 
 ### utf32-&gt;string
@@ -653,7 +653,7 @@ bytes.
   endianness-mandatory? := boolean; if #f then try to read a BOM to determine endianness; if #t then the specified endianness is used.
 ```
 
-Returns newly allocated string with UTF-32 contents from *u8v*.
+Returns a newly allocated string with UTF-32 contents from *u8v*.
 
 ## YAML
 YAML parsing and dumping; this module requires that Gerbil scheme is compiled
