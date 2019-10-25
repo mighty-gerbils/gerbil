@@ -52,7 +52,7 @@ For some more references see:
 
 Returns a newly allocated u8vector with Base64 encoded contents of *str*. Optional keyword arguments
 control how the conversion is done. If *nopadding-ok?* is #t (default) the value
-is converted. If *urlsafe?* is #t, the result is URL encoded as specified in RFC XXX
+is converted. If *urlsafe?* is #t, the result is URL encoded as specified in RFC 4648.
 ...
 
 ### base64-substring-&gt;u8vector
