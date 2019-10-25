@@ -50,7 +50,7 @@ The protocol for communicating with the daemon is defined in
 ```scheme
 ;; A protocol for key-value stores
 ;; (get key)      -- retrieve object associated with key, or #f if not found
-;; (ref key)      -- like get, but result in an exception if not foound
+;; (ref key)      -- like get, but result is an exception if not found
 ;; (put! key val) -- put an object for a key to the store
 ;; (remove! key)  -- remove a key
 (defproto kvstore
@@ -119,7 +119,7 @@ generated code for the other methods is similar.
 So the macro defines a protocol structure, `kvstore::proto` that
 contains the necessary information for the external data
 representation of the various structures in the protocol.
-Then for each method call `x` in the protocol, it defines a strcuture
+Then for each method call `x` in the protocol, it defines a structure
 for the message `kvstore.x`, a match macro `!kvstore.x` for destructuring
 and constructing call messages, and a call macro `!!kvstore.x` for
 making synchronous calls.  Then it proceeds to generate code for
@@ -325,7 +325,7 @@ calls in the protocol.
 ### Command Implementation
 
 The implementation of the four commands is very simple: each constructs a remote
-handle for the server, using the `kvstore-connect` auxiliary funciton, and then
+handle for the server, using the `kvstore-connect` auxiliary function, and then
 proceeds to call the server with RPC:
 ```scheme
 (def (kvstore-connect opt)

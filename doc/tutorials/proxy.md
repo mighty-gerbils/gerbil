@@ -18,7 +18,7 @@ host primitives like `epoll` on Linux.
 This tutorial requires a very recent version of Gambit that supports raw devices ([gambit#272](https://github.com/gambit/gambit/pull/272)).
 
 The source code for the tutorial is available at [$GERBIL_HOME/src/tutorial/proxy](https://github.com/vyzo/gerbil/tree/master/src/tutorial/proxy).
-The build script, `build.ss`, by default will build dynamkic executables for local use; there
+The build script, `build.ss`, by default will build dynamic executables for local use; there
 also is a rule `build.ss static` to build static executables you can deploy on servers.
 
 For the examples we'll build dynamic executables, as they are much faster to compile:
@@ -84,7 +84,7 @@ For each connection, it logs it and spawns a thread to proxy it:
 ### Connection proxying
 
 The procedure `proxy` takes a client socket and proxies it to the remote address.
-First it opens and connects a socket to the remote server, and then spanws two
+First it opens and connects a socket to the remote server, and then spawns two
 threads piping data between the two ends. The programming should look familiar to
 anyone with experience with network programming with the socket API in nonblocking
 mode.
@@ -139,7 +139,7 @@ mode.
 
 ### Using the proxy
 
-Here we'll run the proxy locally bound at port 9999, and will proxy to google's http servers.
+Here we'll run the proxy locally bound at port 9999, and will proxy to Google's http servers.
 
 So we can run our proxy like this:
 ```bash
@@ -248,10 +248,10 @@ ignoring supplied userids (it's anonymous proxy):
               (proxy-bind clisock))
              (else
               (proxy-handshake-reject clisock (cons dstip dstport))
-              (error "Uknown command" cd)))
+              (error "Unknown command" cd)))
            (begin
              (proxy-handshake-reject clisock (cons dstip dstport))
-             (error "Uknown protocol version" vn))))))
+             (error "Unknown protocol version" vn))))))
    (catch (e)
      (ssocket-close clisock)
      (raise e))))
@@ -260,7 +260,7 @@ ignoring supplied userids (it's anonymous proxy):
 ### Connection establishment and binding
 
 New connections are established with `proxy-connect`, while socket binding
-is preformed with `proxy-bind`:
+is performed with `proxy-bind`:
 ```scheme
 (def (proxy-connect clisock addr)
   (let (srvsock (ssocket-connect addr))
@@ -318,7 +318,7 @@ is preformed with `proxy-bind`:
 
 ### Proxy I/O
 
-The actual function of the proxy is perfomed with the `proxy-io` procedure, very similar
+The actual function of the proxy is performed with the `proxy-io` procedure, very similar
 to how the equinamed procedure in tcp-proxy. The difference is that it uses multiplexed I/O
 through the socket server:
 ```scheme

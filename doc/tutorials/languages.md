@@ -4,7 +4,7 @@ Here we explore language extensibility in Gerbil by definition of custom prelude
 
 ## Preliminaries
 
-The source code for all the examples is avilable at [$GERBIL_HOME/src/tutorial/lang](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang).
+The source code for all the examples is available at [$GERBIL_HOME/src/tutorial/lang](https://github.com/vyzo/gerbil/tree/master/src/tutorial/lang).
 You should visit that directory and compile the tutorial custom preludes so that you can try out
 the examples in the interpreter:
 ```bash
@@ -252,7 +252,7 @@ We have so far illustrated the basics of custom module expansion and have built 
 our machinery up to the `#lang` form for custom language preludes.
 Here, we put this machinery to use with a language that has an adhoc surface syntax.
 
-Let's call our language `scuby`, because it takes the ruby approach in delinating basic
+Let's call our language `scuby`, because it takes the ruby approach in delineating basic
 blocks using `end` tokens. The language itself is a toy, but it's complex enough
 to benefit from a proper parser and a lexer.
 
@@ -271,7 +271,7 @@ with `if`. Our datums can be booleans, null, integers, and strings.
 
 There is some scuby code in the [example module](../../src/tutorial/lang/example/my-scuby.ss).
 
-For instance, here is a function that computes the nth fibonacci number:
+For instance, here is a function that computes the nth Fibonacci number:
 ```
 def (fibo n)
   def (fibo-r x y k)
