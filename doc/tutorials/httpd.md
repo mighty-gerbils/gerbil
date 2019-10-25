@@ -128,7 +128,7 @@ a file as an http response using fast raw device i/o.
 #### The default handler
 
 The default handler is invoked when there is no matching handler.
-If no deault handler is registered with the multiplexer, then the server
+If no default handler is registered with the multiplexer, then the server
 simply responds with a 404.
 
 Here, we registered a slightly friendlier handler that uses the force to
