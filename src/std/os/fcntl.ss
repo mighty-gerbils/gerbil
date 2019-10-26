@@ -9,11 +9,13 @@
 
 (def* fcntl
   ((raw cmd)
-   (check-os-error (_fcntl0 (fd-e raw) cmd)
-     (fcntl raw cmd)))
+   (let (fd (if (fd? raw) (fd-e raw) raw))
+     (check-os-error (_fcntl0 fd cmd)
+       (fcntl raw cmd))))
   ((raw cmd arg)
-   (check-os-error (_fcntl1 (fd-e raw) cmd arg)
-     (fcntl raw cmd arg))))
+   (let (fd (if (fd? raw) (fd-e raw) raw))
+     (check-os-error (_fcntl1 fd cmd arg)
+       (fcntl raw cmd arg)))))
 
 (def (fd-getfl raw)
   (fcntl raw F_GETFL))
