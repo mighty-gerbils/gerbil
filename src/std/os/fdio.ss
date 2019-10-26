@@ -9,14 +9,16 @@
 (export #t)
 
 (def (fdread raw bytes (start 0) (end (u8vector-length bytes)))
-  (do-retry-nonblock (_read (fd-e raw) bytes start end)
-    (fdread raw bytes start end)
-    EAGAIN EWOULDBLOCK))
+  (let (fd (if (fd? raw) (fd-e raw) raw))
+    (do-retry-nonblock (_read fd bytes start end)
+      (fdread raw bytes start end)
+      EAGAIN EWOULDBLOCK)))
 
 (def (fdwrite raw bytes (start 0) (end (u8vector-length bytes)))
-  (do-retry-nonblock (_write (fd-e raw) bytes start end)
-    (fdwrite raw bytes start end)
-    EAGAIN EWOULDBLOCK))
+  (let (fd (if (fd? raw) (fd-e raw) raw))
+    (do-retry-nonblock (_write fd bytes start end)
+      (fdwrite raw bytes start end)
+      EAGAIN EWOULDBLOCK)))
 
 (def (open path flags (mode 0))
   (cond-expand
