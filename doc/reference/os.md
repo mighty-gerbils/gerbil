@@ -285,6 +285,9 @@ F_DUPFD
 FD_CLOEXEC
 ```
 
+## Advisory File Locking
+
+Please document me!
 
 ## Pipes
 ::: tip usage
