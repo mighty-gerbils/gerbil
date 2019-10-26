@@ -7,7 +7,7 @@
                     :std/format))
 (export include-text
         include-template template
-        quasistring)
+        include-quasistring quasistring)
 
 ;; compile-time include a file as text (a string)
 (defsyntax (include-text stx)
@@ -146,6 +146,14 @@
      (stx-string? #'s)
      (with-syntax ((ps (parse #'s #'ctx)))
        #'ps))))
+
+(defsyntax (include-quasistring stx)
+  (syntax-case stx ()
+    ((macro path)
+     (stx-string? #'path)
+     (let (path (gx#core-resolve-path #'path (stx-source stx)))
+       (with-syntax ((tmp (call-with-input-file path read-all-as-string)))
+         #'(quasistring tmp macro))))))
 
 ;;; Example
 
