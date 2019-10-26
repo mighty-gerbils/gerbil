@@ -86,6 +86,7 @@
     "srfi/159/columnar"
     "srfi/159/unicode"
     "srfi/159/color"
+    "srfi/159/pretty"
     "srfi/159"
     "srfi/160/cvector"
     "srfi/160/base"

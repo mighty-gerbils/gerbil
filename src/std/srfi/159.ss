@@ -6,9 +6,14 @@
         ./159/show
         ./159/columnar
         ./159/unicode
-        ./159/color)
-(export (import: ./159/base
-                 ./159/show
-                 ./159/columnar
-                 ./159/unicode
-                 ./159/color))
+        ./159/color
+        ./159/pretty)
+(export
+  (except-out (import: ./159/base
+                       ./159/show
+                       ./159/columnar
+                       ./159/unicode
+                       ./159/color
+                       ./159/pretty)
+              written-shared
+              pretty-shared))
