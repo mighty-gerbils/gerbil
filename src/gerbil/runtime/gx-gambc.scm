@@ -35,6 +35,7 @@
   (string->symbol (getenv "GERBIL_LANG" "gerbil")))
 
 (define (_gx#load-gxi #!optional (hook-expander? #t))
+  (define +readtable+ _gx#*readtable*)
   (_gx#init-gx!)
   (let* ((core (gx#import-module ':gerbil/core))
          (pre  (gx#make-prelude-context core)))
@@ -44,6 +45,9 @@
       (case lang
         ((gerbil)
          (gx#eval-syntax '(import :gerbil/core)))
+        ((polydactyl)
+         (gx#eval-syntax '(import :gerbil/polydactyl))
+         (set! +readtable+ (gx#eval-syntax '|gerbil/polydactyl[1]#*readtable*|)))
         ((r7rs)
          (gx#eval-syntax '(import :scheme/r7rs :scheme/base)))
         (else
@@ -61,7 +65,7 @@
     (set! ##main-readtable _gx#*readtable*)
     (for-each
       (lambda (port)
-        (input-port-readtable-set! port _gx#*readtable*))
+        (input-port-readtable-set! port +readtable+))
       (list ##stdin-port ##console-port))
     (for-each
       (lambda (port)
@@ -80,7 +84,7 @@
         (gx#eval-syntax `(include ,init-file)))))
 
   (case (gerbil-lang)
-    ((gerbil)
+    ((gerbil polydactyl)
      (load-init "init.ss"))
     ((r7rs)
      (load-init "r7rs-init.ss"))))
