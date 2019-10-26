@@ -150,7 +150,7 @@
     (gxc: "os/fd" ,@(include-gambit-sharp))
     (gxc: "os/fdio" ,@(include-gambit-sharp))
     (gxc: "os/fcntl" ,@(include-gambit-sharp))
-    "os/flock"
+    (gxc: "os/flock" ,@(include-gambit-sharp))
     (gxc: "os/pipe" ,@(include-gambit-sharp))
     ,(cond-expand
        (linux
