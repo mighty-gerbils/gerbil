@@ -161,8 +161,8 @@
 ;; template with plist as argument
 (defquasiparser template**
   (lambda (sym)
-    (with-syntax ((pid (datum->syntax #f (format-id sym "~a:" sym))))
-      #'(pget (quote (stx-e pid)) pl)))
+    (with-syntax ((kw (symbol->keyword sym)))
+      #'(pget kw pl)))
   (lambda (ops)
     (with-syntax (((ops ...) ops))
       #'(lambda (pl) (string-append ops ...))))
