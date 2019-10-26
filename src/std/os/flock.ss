@@ -13,6 +13,7 @@
         :gerbil/gambit/random
         :gerbil/gambit/threads)
 (export flock flock/block
+        open-input-file/lock
         open-output-file/lock
         LOCK_SH LOCK_EX LOCK_UN)
 
@@ -22,7 +23,8 @@
               raw))
         (op (fxior op LOCK_NB)))
     (do-retry-nonblock (_flock fd op)
-      (flock raw op))))
+      (flock raw op)
+      EAGAIN EWOULDBLOCK)))
 
 ;; This blocks the current thread until the lock operation is successful.
 ;; Blocking is implemented with polling -- alternative would be to use an os thread
@@ -46,10 +48,18 @@
           (raise-timeout 'flock "Deadline for flock operation exceeded" raw-or-fd op)))
       (lp))))
 
-;; This opens a file output port with a lock
-(def (open-output-file/lock path op (timeout #f)
+(def (open-input-file/lock path (timeout #f)
+                           op: (op LOCK_SH)
+                           flags: (flags O_RDONLY))
+  (open-file/lock path op timeout 'in flags 0))
+
+(def (open-output-file/lock path (timeout #f)
+                            op: (op LOCK_EX)
                             flags: (flags (fxior O_WRONLY O_CREAT))
                             mode: (mode S_IRWXU))
+  (open-file/lock path op timeout 'out flags  mode))
+
+(def (open-file/lock path op timeout dir flags mode)
   (let* ((flags
           (cond-expand
             (linux (fxior flags O_NONBLOCK O_CLOEXEC))
@@ -64,7 +74,7 @@
      (catch (e)
        (_close fd)
        (raise e)))
-    (fdopen-port fd 'out path)))
+    (fdopen-port fd dir path)))
 
 (begin-ffi (_flock LOCK_SH LOCK_EX LOCK_UN LOCK_NB)
   (c-declare "#include <errno.h>")
