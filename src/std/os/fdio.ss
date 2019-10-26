@@ -45,12 +45,29 @@
     (error "Unspecified file direction" flags))))
 
 ;;; FFI impl
-(begin-ffi (_read _write _open)
+(begin-ffi (_read _write _open
+            S_IRWXU S_IWUSR S_IRUSR S_IXUSR
+            S_IRWXG S_IRGRP S_IWGRP S_IXGRP
+            S_IRWXO S_IROTH S_IWOTH S_IXOTH)
+
   (c-declare "#include <unistd.h>")
   (c-declare "#include <errno.h>")
   (c-declare "#include <sys/types.h>")
   (c-declare "#include <sys/stat.h>")
   (c-declare "#include <fcntl.h>")
+
+  (define-const S_IRWXU)
+  (define-const S_IRUSR)
+  (define-const S_IWUSR)
+  (define-const S_IXUSR)
+  (define-const S_IRWXG)
+  (define-const S_IRGRP)
+  (define-const S_IWGRP)
+  (define-const S_IXGRP)
+  (define-const S_IRWXO)
+  (define-const S_IROTH)
+  (define-const S_IWOTH)
+  (define-const S_IXOTH)
 
   (define-macro (define-with-errno symbol ffi-symbol args)
     `(define (,symbol ,@args)
