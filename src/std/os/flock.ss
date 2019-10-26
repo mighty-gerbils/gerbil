@@ -15,6 +15,8 @@
 (export flock flock/block
         open-input-file/lock
         open-output-file/lock
+        open-file/lock
+        open/lock
         LOCK_SH LOCK_EX LOCK_UN)
 
 (def (flock raw op)
@@ -51,15 +53,22 @@
 (def (open-input-file/lock path (timeout #f)
                            op: (op LOCK_SH)
                            flags: (flags O_RDONLY))
-  (open-file/lock path op timeout 'in flags 0))
+  (open-file/lock path op timeout direction: 'in flags: flags mode: 0))
 
 (def (open-output-file/lock path (timeout #f)
                             op: (op LOCK_EX)
                             flags: (flags (fxior O_WRONLY O_CREAT))
                             mode: (mode S_IRWXU))
-  (open-file/lock path op timeout 'out flags  mode))
+  (open-file/lock path op timeout direction: 'out flags: flags mode: mode))
 
-(def (open-file/lock path op timeout dir flags mode)
+(def (open-file/lock path op (timeout #f)
+                     direction: dir
+                     flags: flags
+                     mode: mode)
+  (let (fd (open/lock path op timeout flags: flags mode: mode))
+    (fdopen-port fd dir path)))
+
+(def (open/lock path op (timeout #f) flags: flags mode: mode)
   (let* ((flags
           (cond-expand
             (linux (fxior flags O_NONBLOCK O_CLOEXEC))
@@ -74,7 +83,7 @@
      (catch (e)
        (_close fd)
        (raise e)))
-    (fdopen-port fd dir path)))
+    fd))
 
 (begin-ffi (_flock LOCK_SH LOCK_EX LOCK_UN LOCK_NB)
   (c-declare "#include <errno.h>")
