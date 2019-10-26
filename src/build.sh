@@ -167,7 +167,8 @@ build_lang () {
   feedback_low "Building gerbil languages"
   PATH="${GERBIL_BASE}/bin:${PATH}"
   GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
-  export PATH GERBIL_HOME
+  GERBIL_PATH="${GERBIL_HOME}" #required to build in the right place
+  export PATH GERBIL_HOME GERBIL_PATH
   (cd lang && ./build.ss)
 }
 
@@ -175,7 +176,8 @@ build_r7rs_large() {
   feedback_low "Building R7RS large"
   PATH="${GERBIL_BASE}/bin:${PATH}"
   GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
-  export PATH GERBIL_HOME
+  GERBIL_PATH="${GERBIL_HOME}" #required to build in the right place
+  export PATH GERBIL_HOME GERBIL_PATH
   (cd r7rs-large && ./build.ss)
 }
 
