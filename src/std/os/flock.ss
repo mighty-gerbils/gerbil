@@ -23,9 +23,7 @@
   macro-port-close macro-port-close-set!)
 
 (def (flock raw op)
-  (let ((fd (if (fd? raw)
-              (fd-e raw)
-              raw))
+  (let ((fd (if (fd? raw) (fd-e raw) raw))
         (op (fxior op LOCK_NB)))
     (do-retry-nonblock (_flock fd op)
       (flock raw op)
