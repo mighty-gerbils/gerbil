@@ -7,8 +7,11 @@
                     :std/format
                     :std/stxutil))
 (export include-text
-        template include-template include-template-alist
-        quasistring include-quasistring)
+        template include-template
+        template* include-template*
+        template** include-template**
+        quasistring include-quasistring
+        quasistring* include-quasistring*)
 
 ;; compile-time include a file as text (a string)
 (defsyntax (include-text stx)
@@ -37,6 +40,10 @@
     (parameterize ((current-expander-phi (1+ (current-expander-phi))))
       (let (stx (datum->syntax ctx stx))
         (eval-syntax stx #t))))
+
+  (def ht (datum->syntax #f 'ht)) ;; hash table placeholder
+  (def al (datum->syntax #f 'al)) ;; alist placeholder
+  (def pl (datum->syntax #f 'pl)) ;; plist placeholder
 
   (def (parse-quasistring stx ctx rt-symbol-proc output-proc (expansion-time-eval #f))
     ;; rt-symbol-proc wraps sexp if sexp is a run time symbol
@@ -83,77 +90,38 @@
         (lp port (read-char port) ops (string-append str (list->string [c]))))))
     (lp)))
 
-;; a template is a lambda with a hash-table as argument
-;; the hash table's keys must be the symbols used in run-time
-;; template variables, e.g. #{name} -> (table-ref hash-table 'name)
-(defsyntax (template stx)
-  (def ht (datum->syntax #f 'ht))
-
-  (def (stx-ref ht stx)
-    (with-syntax ((stx (syntax->datum stx)))
-      #'(table-ref ht (quote stx))))
-
-  (def (rt-symbol-proc sexp)
-    (stx-ref ht sexp))
-
-  (def (output-proc ops)
-    (with-syntax (((ops ...) ops))
-      #'(lambda (ht) (string-append ops ...))))
-
+(defsyntax (defquasiparser stx)
   (syntax-case stx ()
-    ((macro s)
-     (stx-string? #'s)
-     (with-syntax ((ps (parse-quasistring #'s #'macro rt-symbol-proc output-proc #t)))
-       #'ps))
-    ((macro s ctx)
-     (stx-string? #'s)
-     (with-syntax ((ps (parse-quasistring #'s #'ctx rt-symbol-proc output-proc #t)))
-       #'ps))))
-
-(defsyntax (template-alist stx)
-  (def al (datum->syntax #f 'al))
-
-  (def (stx-assoc al stx)
-    (with-syntax ((stx (syntax->datum stx)))
-      #'(cdr (assoc (quote stx) al))))
-
-  (def (rt-symbol-proc sexp)
-    (stx-assoc al sexp))
-
-  (def (output-proc ops)
-    (with-syntax (((ops ...) ops))
-      #'(lambda (al) (string-append ops ...))))
-
-  (syntax-case stx ()
-    ((macro s)
-     (stx-string? #'s)
-     (with-syntax ((ps (parse-quasistring #'s #'macro rt-symbol-proc output-proc #t)))
-       #'ps))
-    ((macro s ctx)
-     (stx-string? #'s)
-     (with-syntax ((ps (parse-quasistring #'s #'ctx rt-symbol-proc output-proc #t)))
-       #'ps))))
-
-(defsyntax (quasistring stx)
-  (def (rt-symbol-proc sexp)
-    sexp)
-
-  (def (output-proc ops)
-    (with-syntax (((ops ...) ops))
-      #'(string-append ops ...)))
-
-  (syntax-case stx ()
-    ((macro s)
-     (stx-string? #'s)
-     (with-syntax ((ps (parse-quasistring #'s #'macro rt-symbol-proc output-proc)))
-       #'ps))
-    ((macro s ctx)
-     (stx-string? #'s)
-     (with-syntax ((ps (parse-quasistring #'s #'ctx rt-symbol-proc output-proc)))
-       #'ps))))
+    ((macro id rt-symbol-proc output-proc expand-time-eval)
+     (with-syntax ((id #'id)
+                   (rt-symbol-proc #'rt-symbol-proc)
+                   (output-proc #'output-proc)
+                   (expand-time-eval #'expand-time-eval))
+       #'(defsyntax (id stx*)
+           (syntax-case stx* ()
+             ((macro s)
+              (stx-string? (syntax s))
+              (with-syntax ((ps (parse-quasistring
+                                 (syntax s)
+                                 (syntax macro)
+                                 rt-symbol-proc
+                                 output-proc
+                                 expand-time-eval)))
+                (syntax ps)))
+             ((macro s ctx)
+              (stx-string? (syntax s))
+              (with-syntax ((ps (parse-quasistring
+                                 (syntax s)
+                                 (syntax ctx)
+                                 rt-symbol-proc
+                                 output-proc
+                                 expand-time-eval)))
+                (syntax ps)))))))))
 
 (defsyntax (defincludes stx)
-  (def (include-proc id) (with-syntax ((id* (datum->syntax #f id)) (proc (format-id id "include-~a" id)))
+  (def (include-proc id ctx)
+    (with-syntax* ((id* (datum->syntax #f id))
+                   (proc (format-id #'id* "include-~a" #'id*)))
       #'(defsyntax (proc stx)
           (syntax-case stx ()
             ((macro path)
@@ -163,11 +131,59 @@
                  (syntax (id* tmp macro)))))))))
   
   (syntax-case stx ()
-    ((_ id ...)
+    ((macro id ...) 
      (stx-andmap identifier? #'(id ...))
-     (with-syntax (((procs ...) (map include-proc #'(id ...))))
+     (with-syntax (((procs ...) (map (cut include-proc <> #'macro) #'(id ...))))
        #'(begin procs ...)))))
 
+;; a template is a lambda with a hash-table as argument
+;; the hash table's keys must be the symbols used in run-time
+;; template variables, e.g. #{name} -> (table-ref hash-table 'name)
+(defquasiparser template
+  (lambda (sym)
+    (with-syntax ((sym (syntax->datum sym)))
+      #'(table-ref ht (quote sym))))
+  (lambda (ops)
+    (with-syntax (((ops ...) ops))
+      #'(lambda (ht) (string-append ops ...))))
+  #t)
+
+;; template with alist as argument
+(defquasiparser template*
+  (lambda (sym)
+    (with-syntax ((sym (syntax->datum sym)))
+      #'(cdr (assoc (quote sym) al))))
+  (lambda (ops)
+    (with-syntax (((ops ...) ops))
+      #'(lambda (al) (string-append ops ...))))
+  #t)
+
+;; template with plist as argument
+(defquasiparser template**
+  (lambda (sym)
+    (with-syntax ((pid (datum->syntax #f (format-id sym "~a:" sym))))
+      #'(pget (quote (stx-e pid)) pl)))
+  (lambda (ops)
+    (with-syntax (((ops ...) ops))
+      #'(lambda (pl) (string-append ops ...))))
+  #t)
+
+;; only allow run time template variables
+(defquasiparser quasistring
+  (lambda (sym) sym)
+  (lambda (ops)
+    (with-syntax (((ops ...) ops))
+      #'(string-append ops ...)))
+  #f)
+
+;; allow run and expand time template variables
+(defquasiparser quasistring*
+  (lambda (sym) sym)
+  (lambda (ops)
+    (with-syntax (((ops ...) ops))
+      #'(string-append ops ...)))
+  #t)
+
 (defincludes
-  quasistring
-  template template-alist)
+  quasistring quasistring*
+  template template* template**)
