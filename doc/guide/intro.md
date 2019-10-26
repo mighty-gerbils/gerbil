@@ -797,11 +797,16 @@ prelude, `:gerbil/polydactyl`, that treats square brackets as plain parentheses
 -- instead of the reader expanding them to `@list` forms.
 The language is otherwise the same as `:gerbil/core`.
 
-To use it, add the following lang declaration to your module:
+To use it in a module, add the following lang declaration to the top of your file:
 ```
 #lang :gerbil/polydactyl
 
 ;; ... code ...
+```
+
+To use it in the interpreter, start gxi by specifying `polydactyl` as the language:
+```
+$ gxi --lang polydactyl
 ```
 
 ## Standard Library
