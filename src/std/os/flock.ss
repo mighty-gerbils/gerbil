@@ -19,6 +19,9 @@
         open/lock
         LOCK_SH LOCK_EX LOCK_UN)
 
+(extern namespace: #f
+  macro-port-close macro-port-close-set!)
+
 (def (flock raw op)
   (let ((fd (if (fd? raw)
               (fd-e raw)
@@ -65,8 +68,14 @@
                      direction: dir
                      flags: flags
                      mode: mode)
-  (let (fd (open/lock path op timeout flags: flags mode: mode))
-    (fdopen-port fd dir path)))
+  (let* ((fd (open/lock path op timeout flags: flags mode: mode))
+         (port (fdopen-port fd dir path))
+         (close-it (macro-port-close port)))
+    (def (close port . args)
+      (flock fd LOCK_UN)
+      (apply close-it port args))
+    (macro-port-close-set! port close)
+    port))
 
 (def (open/lock path op (timeout #f) flags: flags mode: mode)
   (let* ((flags
