@@ -98,6 +98,7 @@
     "srfi/159/columnar"
     (gxc: "srfi/159/unicode" (extra-inputs: ("srfi/159/unicode.scm")))
     (gxc: "srfi/159/color" (extra-inputs: ("srfi/159/color.scm")))
+    (gxc: "srfi/159/pretty" (extra-inputs: ("srfi/159/pretty.scm")))
     "srfi/159"
     "srfi/160/cvector"
     "srfi/160/base"
