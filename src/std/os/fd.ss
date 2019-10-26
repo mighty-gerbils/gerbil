@@ -3,7 +3,7 @@
 ;;; OS File Descriptors
 
 (import :gerbil/gambit/ports)
-(export fdopen
+(export fdopen fdopen-port
         fd-e fd-io-in fd-io-out
         fd? fd-type? fd-type)
 
@@ -30,15 +30,21 @@
          (##raise-os-exception #f device open-raw-device direction id fd)
          (##make-raw-device-port direction device id [id fd] fd))))))
 
+(def (direction dir)
+  (case dir
+    ((in)    (macro-direction-in))
+    ((out)   (macro-direction-out))
+    ((inout) (macro-direction-inout))
+    (else
+     (error "Bad direction; must be in, out, or inout" dir))))
+
 (def (fdopen fd dir t)
-  (let (dirx
-        (case dir
-          ((in)(macro-direction-in))
-          ((out) (macro-direction-out))
-          ((inout) (macro-direction-inout))
-          (else
-           (error "Bad direction; must be in, out, or inout" dir))))
+  (let (dirx (direction dir))
     (open-raw-device dirx t fd)))
+
+(def (fdopen-port fd dir name)
+  (let (dirx (direction dir))
+    (##open-predefined dirx name fd)))
 
 (def (fd-e raw)
   (values (macro-raw-device-port-specific raw)))

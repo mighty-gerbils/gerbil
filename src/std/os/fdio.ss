@@ -9,14 +9,16 @@
 (export #t)
 
 (def (fdread raw bytes (start 0) (end (u8vector-length bytes)))
-  (do-retry-nonblock (_read (fd-e raw) bytes start end)
-    (fdread raw bytes start end)
-    EAGAIN EWOULDBLOCK))
+  (let (fd (if (fd? raw) (fd-e raw) raw))
+    (do-retry-nonblock (_read fd bytes start end)
+      (fdread raw bytes start end)
+      EAGAIN EWOULDBLOCK)))
 
 (def (fdwrite raw bytes (start 0) (end (u8vector-length bytes)))
-  (do-retry-nonblock (_write (fd-e raw) bytes start end)
-    (fdwrite raw bytes start end)
-    EAGAIN EWOULDBLOCK))
+  (let (fd (if (fd? raw) (fd-e raw) raw))
+    (do-retry-nonblock (_write fd bytes start end)
+      (fdwrite raw bytes start end)
+      EAGAIN EWOULDBLOCK)))
 
 (def (open path flags (mode 0))
   (cond-expand
@@ -45,12 +47,29 @@
     (error "Unspecified file direction" flags))))
 
 ;;; FFI impl
-(begin-ffi (_read _write _open)
+(begin-ffi (_read _write _open _close
+            S_IRWXU S_IWUSR S_IRUSR S_IXUSR
+            S_IRWXG S_IRGRP S_IWGRP S_IXGRP
+            S_IRWXO S_IROTH S_IWOTH S_IXOTH)
+
   (c-declare "#include <unistd.h>")
   (c-declare "#include <errno.h>")
   (c-declare "#include <sys/types.h>")
   (c-declare "#include <sys/stat.h>")
   (c-declare "#include <fcntl.h>")
+
+  (define-const S_IRWXU)
+  (define-const S_IRUSR)
+  (define-const S_IWUSR)
+  (define-const S_IXUSR)
+  (define-const S_IRWXG)
+  (define-const S_IRGRP)
+  (define-const S_IWGRP)
+  (define-const S_IXGRP)
+  (define-const S_IRWXO)
+  (define-const S_IROTH)
+  (define-const S_IWOTH)
+  (define-const S_IXOTH)
 
   (define-macro (define-with-errno symbol ffi-symbol args)
     `(define (,symbol ,@args)
@@ -61,7 +80,7 @@
            r))))
 
   ;; private
-  (namespace ("std/os/fdio#" __read __write __open __errno))
+  (namespace ("std/os/fdio#" __read __write __open __close __errno))
 
   (define-c-lambda __errno () int
     "___return (errno);")
@@ -75,10 +94,13 @@
     "ffi_fdio_write")
   (define-c-lambda __open (UTF-8-string int int) int
     "open")
+  (define-c-lambda __close (int) int
+    "close")
 
   (define-with-errno _read __read (fd bytes start end))
   (define-with-errno _write __write (fd bytes start end))
   (define-with-errno _open __open (path flags mode))
+  (define-with-errno _close __close (fd))
 
   (c-declare #<<END-C
 int ffi_fdio_read (int fd, ___SCMOBJ bytes, int start, int end)
