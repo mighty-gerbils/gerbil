@@ -111,8 +111,7 @@
   (set! (&output-buffer-wlo buf) 0))
 
 (def (file-output-write bytes start end buf)
-  (let ((fd (&file-output-buffer-fd buf))
-        (bytes (&output-buffer-e buf)))
+  (let (fd (&file-output-buffer-fd buf))
     (let lp ((count 0) (start start))
       (if (##fx< start end)
         (let (r (fdwrite fd bytes start end))
