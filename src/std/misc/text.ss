@@ -5,7 +5,8 @@
 (import :std/format
         (for-syntax :std/misc/ports
                     :std/format
-                    :std/stxutil))
+                    :std/stxutil
+                    :std/sugar))
 (export include-text
         template include-template
         template* include-template*
@@ -142,7 +143,7 @@
 (defquasiparser template
   (lambda (sym)
     (with-syntax ((sym (syntax->datum sym)))
-      #'(table-ref ht (quote sym))))
+      #'(hash-ref ht (quote sym))))
   (lambda (ops)
     (with-syntax (((ops ...) ops))
       #'(lambda (ht) (string-append ops ...))))

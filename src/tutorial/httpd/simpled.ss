@@ -3,7 +3,14 @@
 ;;; Simple web server
 (import :std/net/httpd
         :std/net/address
+        :std/net/request
         :std/text/json
+        :std/misc/text
+        ;; imports for templates
+        (for-syntax :std/misc/text
+                    :std/xml
+                    :std/iter
+                    :gerbil/gambit/os)
         :std/sugar
         :std/iter
         :std/getopt
@@ -16,12 +23,13 @@
     (http-register-handler httpd "/echo" echo-handler)
     (http-register-handler httpd "/headers" headers-handler)
     (http-register-handler httpd "/self" self-handler)
+    (http-register-handler httpd "/template" template-handler)
     (thread-join! httpd)))
 
 ;; /
 (def (root-handler req res)
   (http-response-write res 200 '(("Content-Type" . "text/plain"))
-    (string-append "hello, " (inet-address->string (http-request-client req)) "\n")))
+                       (string-append "hello, " (inet-address->string (http-request-client req)) "\n")))
 
 ;; /echo
 (def (echo-handler req res)
@@ -32,7 +40,7 @@
             [["Content-Type" . content-type]]
             [])))
     (http-response-write res 200 headers
-      (http-request-body req))))
+                         (http-request-body req))))
 
 ;; /headers[?json]
 (def (headers-handler req res)
@@ -46,7 +54,7 @@
         (json-object->string
          (list->hash-table headers)))
     (http-response-write res 200 '(("Content-Type" . "application/json"))
-      content)))
+                         content)))
 
 (def (write-text-headers res headers)
   (http-response-begin res 200 '(("Content-Type" . "text/plain")))
@@ -59,10 +67,26 @@
 (def (self-handler req res)
   (http-response-file res '(("Content-Type" . "text/plain")) "simpled.ss"))
 
+;; json utility function
+;; /template
+(def (template-handler req res)
+  (def (json-ref key)
+    (let* ((json (read-json (open-input-u8vector (http-request-body req))))
+           (ref (hash-ref json key)))
+      (if ref
+        ref
+        (string-append "Key " key " not found."))))
+
+  (let (t (include-template** "template.html"))
+    (http-response-write res 200 '(("Content-Type" . "text/html"))
+                         (t [title: "Title" h1-contents: "Yo!"]))))
+
+
+
 ;; default
 (def (default-handler req res)
   (http-response-write res 404 '(("Content-Type" . "text/plain"))
-    "these aren't the droids you are looking for.\n"))
+                       "these aren't the droids you are looking for.\n"))
 
 (def (main . args)
   (def gopt
