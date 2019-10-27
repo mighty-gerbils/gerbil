@@ -5,7 +5,8 @@
 (import :std/foreign
         :std/os/fd
         :std/os/fcntl
-        :std/os/error)
+        :std/os/error
+        :gerbil/gambit/ports)
 (export #t)
 
 (def (fdread raw bytes (start 0) (end (u8vector-length bytes)))
@@ -34,6 +35,12 @@
             (raw (fdopen fd (file-direction flags) 'file)))
        (fd-set-nonblock/closeonexec raw)
        raw))))
+
+(def (close raw)
+  (if (fd? raw)
+    (close-port raw)
+    (do-retry-nonblock (_close raw)
+      (close raw))))
 
 (def (file-direction flags)
   (cond
