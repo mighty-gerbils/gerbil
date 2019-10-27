@@ -29,7 +29,7 @@
   (cond
    ((&file-input-buffer-fd buf)
     => (lambda (fd)
-         (close-port fd)
+         (close fd)
          (set! (&file-input-buffer-fd buf) #f)
          (set! (&input-buffer-fill buf) (lambda _ 0))
          (set! (&input-buffer-read buf) (lambda _ 0))))))
@@ -63,7 +63,8 @@
                     count)
                   (##fx+ count rd)))
               (begin
-                (##wait-for-io! (fd-io-in fd) #t)
+                (when (fd? fd)
+                  (##wait-for-io! (fd-io-in fd) #t))
                 (lp rhi want count)))))))))
 
 (def (file-input-read bytes start end buf)
@@ -74,7 +75,8 @@
         (let (r (fdread fd bytes start end))
           (cond
            ((not r)
-            (##wait-for-io! (fd-io-in fd) #t)
+            (when (fd? fd)
+              (##wait-for-io! (fd-io-in fd) #t))
             (lp count start))
            ((##fxzero? r)
             count)
@@ -101,7 +103,7 @@
   (cond
    ((&file-output-buffer-fd buf)
     => (lambda (fd)
-         (close-port fd)
+         (close fd)
          (set! (&file-output-buffer-fd buf) #f)
          (set! (&output-buffer-drain buf) (lambda _ (error "device is closed" fd)))
          (set! (&output-buffer-write buf) (lambda _ (error "device is closed" fd)))))))
@@ -118,6 +120,7 @@
           (if r
             (lp (##fx+ count r) (##fx+ start r))
             (begin
-              (##wait-for-io! (fd-io-out fd) #t)
+              (when (fd? fd)
+                (##wait-for-io! (fd-io-out fd) #t))
               (lp count start))))
         count))))
