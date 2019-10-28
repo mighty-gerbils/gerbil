@@ -150,7 +150,13 @@
     (test-case "test split"
       (check-equal? (split '(1 2 a 3 4) (cut equal? <> 'a)) [[1 2] [3 4]])
       (check-equal? (split '(1 2 "hi" ()) string?) [[1 2] [[]]])
-      (check-equal? (split [] number?) []))
+      (check-equal? (split [] number?) [])
+      (check-equal? (split [1] number?) [[] []])
+      (check-equal? (split [1 2 0 3 4 0 5 6] zero?) [[1 2] [3 4] [5 6]])
+      (check-equal? (split [1 2 0 3 4 0 5 6] zero? 1) [[1 2] [3 4 0 5 6]])
+      (check-equal? (split [1 2 0 3 4 0 5 6] zero? 2) [[1 2] [3 4] [5 6]])
+      ;; limit = 10 to tests the match else clause
+      (check-equal? (split [1 2 0 3 4 0 5 6] zero? 10) [[1 2] [3 4] [5 6]]))
     (test-case "test group"
       (check-equal? (group [1 2 2 3 1]) [[1] [2 2] [3] [1]])
       (check-equal? (group []) [])
