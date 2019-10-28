@@ -54,7 +54,7 @@
        (cut apply fun args)
        profile-end!)
    (finally
-    (call-with-output-file "gxprof.out" (cut write samples <>)))))
+    (call-with-output-file "gxprof.out" (cut write-samples samples <>)))))
 
 (def samples [])
 
@@ -75,7 +75,23 @@
 (def (continuation->sample cont)
   (let lp ((cont (##continuation-next-frame cont #t)) (bt []))
     (if cont
-      (let (trace (##procedure-name (##continuation-creator cont)))
+      (let (trace (##continuation-creator cont))
         (lp (##continuation-next-frame cont #t)
             (cons trace bt)))
       (reverse bt))))
+
+(def (write-samples samples port)
+  (def traces (make-hash-table-eq))
+
+  (def (trace->name trace)
+    (cond
+     ((hash-get traces trace) => values)
+     (else
+      (let (name (##procedure-name trace))
+        (hash-put! traces trace name)
+        name))))
+
+  (let (samples/names
+        (map (lambda (bt) (map trace->name bt))
+             samples))
+    (write samples/names port)))
