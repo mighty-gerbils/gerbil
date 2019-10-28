@@ -137,7 +137,6 @@
             IN_Q_OVERFLOW
             IN_UNMOUNT)
   (c-declare "#include <sys/inotify.h>")
-  (c-declare "#include <errno.h>")
 
   (define-macro (define-const-uint32 symbol)
     (let* ((str (symbol->string symbol))
@@ -145,16 +144,7 @@
       `(define ,symbol
          ((c-lambda () unsigned-int32 ,ref)))))
 
-  (define-macro (define-with-errno symbol ffi-symbol args)
-    `(define (,symbol ,@args)
-       (declare (not interrupts-enabled))
-       (let ((r (,ffi-symbol ,@args)))
-         (if (##fx< r 0)
-           (##fx- (__errno))
-           r))))
-
   (namespace ("std/os/inotify#"
-              __errno
                __inotify_init
                __inotify_add_watch
                __inotify_rm_watch))
@@ -183,9 +173,6 @@
   (define-const-uint32 IN_ISDIR)
   (define-const-uint32 IN_Q_OVERFLOW)
   (define-const-uint32 IN_UNMOUNT)
-
-  (define-c-lambda __errno () int
-    "___return (errno);")
 
   (define-c-lambda __inotify_init () int
     "___return (inotify_init1 (IN_NONBLOCK|IN_CLOEXEC));")

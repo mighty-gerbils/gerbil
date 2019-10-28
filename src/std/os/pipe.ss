@@ -38,24 +38,12 @@
        (values ifd ofd)))))
 
 (begin-ffi (_pipe make_pipe_ptr pipe_ptr_ref)
-  (c-declare "#include <errno.h>")
   (c-declare "#include <unistd.h>")
 
-  (define-macro (define-with-errno symbol ffi-symbol args)
-    `(define (,symbol ,@args)
-       (declare (not interrupts-enabled))
-       (let ((r (,ffi-symbol ,@args)))
-         (if (##fx< r 0)
-           (##fx- (__errno))
-           r))))
-
-  (namespace ("std/os/pipe#" __pipe __errno))
+  (namespace ("std/os/pipe#" __pipe))
 
   (c-define-type pipe*
     (pointer int (pipe*) "ffi_free"))
-
-  (define-c-lambda __errno () int
-    "___return (errno);")
 
   (define-c-lambda __pipe (pipe*) int
     "pipe")

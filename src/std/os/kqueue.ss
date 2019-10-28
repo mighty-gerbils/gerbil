@@ -185,7 +185,6 @@
      (define-cond-expand-feature darwin))))
 
 (begin-foreign
-  (c-declare "#include <errno.h>")
   (c-declare "#include <stdlib.h>")
   (c-declare "#include <sys/types.h>")
   (c-declare "#include <sys/event.h>")
@@ -208,14 +207,6 @@
       (begin
         (eval `(define-cond-expand-feature ,guard))
         defn)))
-
-  (define-macro (define-with-errno symbol ffi-symbol args)
-    `(define (,symbol ,@args)
-       (declare (not interrupts-enabled))
-       (let ((r (,ffi-symbol ,@args)))
-         (if (##fx< r 0)
-           (##fx- (__errno))
-           r))))
 
   (namespace ("std/os/kqueue#"
               EV_ADD EV_ENABLE EV_DISABLE EV_DELETE EV_RECEIPT EV_ONESHOT
@@ -240,7 +231,7 @@
 
               kevent kevent* timespec timespec*
               make_timespec timespec_seconds_set timespec_nanoseconds_set
-              __errno __kqueue __kevent
+              __kqueue __kevent
               _kqueue _kevent
               make_kevents
               kevent_ident kevent_ident_set
@@ -367,9 +358,6 @@
     "___arg1->tv_sec = ___arg2; ___return ;")
   (define-c-lambda timespec_nanoseconds_set (timespec* int) void
     "___arg1->tv_nsec = ___arg2; ___return ;")
-
-  (define-c-lambda __errno () int
-    "___return (errno);")
 
   (define-c-lambda __kqueue () int
     "kqueue")

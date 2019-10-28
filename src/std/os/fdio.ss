@@ -60,7 +60,6 @@
             S_IRWXO S_IROTH S_IWOTH S_IXOTH)
 
   (c-declare "#include <unistd.h>")
-  (c-declare "#include <errno.h>")
   (c-declare "#include <sys/types.h>")
   (c-declare "#include <sys/stat.h>")
   (c-declare "#include <fcntl.h>")
@@ -78,19 +77,8 @@
   (define-const S_IWOTH)
   (define-const S_IXOTH)
 
-  (define-macro (define-with-errno symbol ffi-symbol args)
-    `(define (,symbol ,@args)
-       (declare (not interrupts-enabled))
-       (let ((r (,ffi-symbol ,@args)))
-         (if (##fx< r 0)
-           (##fx- (__errno))
-           r))))
-
   ;; private
-  (namespace ("std/os/fdio#" __read __write __open __close __errno))
-
-  (define-c-lambda __errno () int
-    "___return (errno);")
+  (namespace ("std/os/fdio#" __read __write __open __close))
 
   (c-declare "static int ffi_fdio_read (int fd, ___SCMOBJ bytes, int start, int end);")
   (c-declare "static int ffi_fdio_write (int fd, ___SCMOBJ bytes, int start, int end);")

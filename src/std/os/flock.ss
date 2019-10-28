@@ -96,7 +96,6 @@
     fd))
 
 (begin-ffi (_flock LOCK_SH LOCK_EX LOCK_UN LOCK_NB)
-  (c-declare "#include <errno.h>")
   (c-declare "#include <sys/file.h>")
 
   (define-const LOCK_SH)
@@ -104,19 +103,9 @@
   (define-const LOCK_UN)
   (define-const LOCK_NB)
 
-  (define-macro (define-with-errno symbol ffi-symbol args)
-    `(define (,symbol ,@args)
-       (declare (not interrupts-enabled))
-       (let ((r (,ffi-symbol ,@args)))
-         (if (##fx< r 0)
-           (##fx- (__errno))
-           r))))
-
   ;; private
-  (namespace ("std/os/flock#" __flock __errno))
+  (namespace ("std/os/flock#" __flock))
 
-  (define-c-lambda __errno () int
-    "___return (errno);")
   (define-c-lambda __flock (int int) int
     "flock")
 
