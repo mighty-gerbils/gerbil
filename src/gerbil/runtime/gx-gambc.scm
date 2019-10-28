@@ -37,6 +37,8 @@
 (define (_gx#load-gxi #!optional (hook-expander? #t))
   (define +readtable+ _gx#*readtable*)
   (_gx#init-gx!)
+  ;; do this here so that import failures can report friendly error messages
+  (set! ##display-exception-hook _gx#display-exception)
   (let* ((core (gx#import-module ':gerbil/core))
          (pre  (gx#make-prelude-context core)))
     (gx#current-expander-module-prelude pre)
@@ -57,7 +59,6 @@
     (gx#current-expander-compile _gx#compile-top-source)
     ;; hook the expander
     (set! ##expand-source _gx#expand-source)
-    (set! ##display-exception-hook _gx#display-exception)
     (unless _gx#real-macro-descr
       (set! _gx#real-macro-descr ##macro-descr))
     (set! ##macro-descr _gx#macro-descr)
