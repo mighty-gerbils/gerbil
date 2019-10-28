@@ -214,7 +214,7 @@
        (declare (not interrupts-enabled))
        (let ((r (,ffi-symbol ,@args)))
          (if (##fx< r 0)
-           (##fx- (__errno))
+           (##fx- (##c-code "___RESULT = ___FIX (errno);"))
            r))))
 
   (namespace ("std/os/kqueue#"
@@ -240,7 +240,7 @@
 
               kevent kevent* timespec timespec*
               make_timespec timespec_seconds_set timespec_nanoseconds_set
-              __errno __kqueue __kevent
+              __kqueue __kevent
               _kqueue _kevent
               make_kevents
               kevent_ident kevent_ident_set
@@ -367,9 +367,6 @@
     "___arg1->tv_sec = ___arg2; ___return ;")
   (define-c-lambda timespec_nanoseconds_set (timespec* int) void
     "___arg1->tv_nsec = ___arg2; ___return ;")
-
-  (define-c-lambda __errno () int
-    "___return (errno);")
 
   (define-c-lambda __kqueue () int
     "kqueue")

@@ -83,14 +83,11 @@
        (declare (not interrupts-enabled))
        (let ((r (,ffi-symbol ,@args)))
          (if (##fx< r 0)
-           (##fx- (__errno))
+           (##fx- (##c-code "___RESULT = ___FIX (errno);"))
            r))))
 
   ;; private
-  (namespace ("std/os/fdio#" __read __write __open __close __errno))
-
-  (define-c-lambda __errno () int
-    "___return (errno);")
+  (namespace ("std/os/fdio#" __read __write __open __close))
 
   (c-declare "static int ffi_fdio_read (int fd, ___SCMOBJ bytes, int start, int end);")
   (c-declare "static int ffi_fdio_write (int fd, ___SCMOBJ bytes, int start, int end);")

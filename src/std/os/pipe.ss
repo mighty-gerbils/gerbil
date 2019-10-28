@@ -46,16 +46,13 @@
        (declare (not interrupts-enabled))
        (let ((r (,ffi-symbol ,@args)))
          (if (##fx< r 0)
-           (##fx- (__errno))
+           (##fx- (##c-code "___RESULT = ___FIX (errno);"))
            r))))
 
-  (namespace ("std/os/pipe#" __pipe __errno))
+  (namespace ("std/os/pipe#" __pipe))
 
   (c-define-type pipe*
     (pointer int (pipe*) "ffi_free"))
-
-  (define-c-lambda __errno () int
-    "___return (errno);")
 
   (define-c-lambda __pipe (pipe*) int
     "pipe")

@@ -274,15 +274,12 @@ END-C
 (c-define-type linger*
   (pointer linger (linger*) "ffi_free"))
 
-(define-c-lambda __errno () int
-  "___return (errno);")
-
 (define-macro (define-with-errno symbol ffi-symbol args)
   `(define (,symbol ,@args)
      (declare (not interrupts-enabled))
      (let ((r (,ffi-symbol ,@args)))
        (if (##fx< r 0)
-         (##fx- (__errno))
+         (##fx- (##c-code "___RESULT = ___FIX (errno);"))
          r))))
 
 (define-c-lambda __socket (int int int) int

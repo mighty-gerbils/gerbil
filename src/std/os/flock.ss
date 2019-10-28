@@ -109,14 +109,12 @@
        (declare (not interrupts-enabled))
        (let ((r (,ffi-symbol ,@args)))
          (if (##fx< r 0)
-           (##fx- (__errno))
+           (##fx- (##c-code "___RESULT = ___FIX (errno);"))
            r))))
 
   ;; private
-  (namespace ("std/os/flock#" __flock __errno))
+  (namespace ("std/os/flock#" __flock))
 
-  (define-c-lambda __errno () int
-    "___return (errno);")
   (define-c-lambda __flock (int int) int
     "flock")
 

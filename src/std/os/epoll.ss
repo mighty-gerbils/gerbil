@@ -79,13 +79,13 @@
        (declare (not interrupts-enabled))
        (let ((r (,ffi-symbol ,@args)))
          (if (##fx< r 0)
-           (##fx- (__errno))
+           (##fx- (##c-code "___RESULT = ___FIX (errno);"))
            r))))
 
   ;; private
   (namespace ("std/os/epoll#"
               epoll_event epoll_event*
-              __errno __epoll_create __epoll_ctl __epoll_wait
+              __epoll_create __epoll_ctl __epoll_wait
               _epoll_create _epoll_ctl _epoll_wait))
 
   (define-const EPOLL_CTL_ADD)
@@ -98,12 +98,9 @@
   (define-const EPOLLET)
   (define-const EPOLLONESHOT)
 
-    (c-define-type epoll_event (struct "epoll_event"))
+  (c-define-type epoll_event (struct "epoll_event"))
   (c-define-type epoll_event*
     (pointer epoll_event (epoll_event*) "ffi_free"))
-
-  (define-c-lambda __errno () int
-    "___return (errno);")
 
   (define-c-lambda __epoll_create (int) int
     "epoll_create")

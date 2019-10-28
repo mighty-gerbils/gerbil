@@ -104,7 +104,7 @@
        (declare (not interrupts-enabled))
        (let ((r (,ffi-symbol ,@args)))
          (if (##fx< r 0)
-           (##fx- (__errno))
+           (##fx- (##c-code "___RESULT = ___FIX (errno);"))
            r))))
 
   (namespace ("std/os/signal#"
@@ -118,11 +118,7 @@
               SIG_BLOCK SIG_UNBLOCK SIG_SETMASK
 
               __kill
-              __sigprocmask
-              __errno))
-
-  (define-c-lambda __errno () int
-    "___return (errno);")
+              __sigprocmask))
 
   (define-const SIGHUP)
   (define-const SIGINT)

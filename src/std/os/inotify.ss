@@ -150,11 +150,10 @@
        (declare (not interrupts-enabled))
        (let ((r (,ffi-symbol ,@args)))
          (if (##fx< r 0)
-           (##fx- (__errno))
+           (##fx- (##c-code "___RESULT = ___FIX (errno);"))
            r))))
 
   (namespace ("std/os/inotify#"
-              __errno
                __inotify_init
                __inotify_add_watch
                __inotify_rm_watch))
@@ -183,9 +182,6 @@
   (define-const-uint32 IN_ISDIR)
   (define-const-uint32 IN_Q_OVERFLOW)
   (define-const-uint32 IN_UNMOUNT)
-
-  (define-c-lambda __errno () int
-    "___return (errno);")
 
   (define-c-lambda __inotify_init () int
     "___return (inotify_init1 (IN_NONBLOCK|IN_CLOEXEC));")

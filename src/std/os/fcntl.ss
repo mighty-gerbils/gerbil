@@ -71,14 +71,14 @@
   (c-declare "#include <sys/stat.h>")
   (c-declare "#include <fcntl.h>")
 
-  (namespace ("std/os/fcntl#" __fcntl0 __fcntl1 __errno))
+  (namespace ("std/os/fcntl#" __fcntl0 __fcntl1))
 
   (define-macro (define-with-errno symbol ffi-symbol args)
     `(define (,symbol ,@args)
        (declare (not interrupts-enabled))
        (let ((r (,ffi-symbol ,@args)))
          (if (##fx< r 0)
-           (##fx- (__errno))
+           (##fx- (##c-code "___RESULT = ___FIX (errno);"))
            r))))
 
   ;; POSIX commands
@@ -123,8 +123,6 @@
 
   (define-c-lambda __fcntl0 (int int) int "fcntl")
   (define-c-lambda __fcntl1 (int int int) int "fcntl")
-  (define-c-lambda __errno () int
-    "___return (errno);")
 
   (define-with-errno _fcntl0 __fcntl0 (fd cmd))
   (define-with-errno _fcntl1 __fcntl1 (fd cmd arg)))
