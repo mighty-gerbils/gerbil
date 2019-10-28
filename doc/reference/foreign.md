@@ -26,6 +26,7 @@ The following prelude macros are available within the body:
 (define-const id)
 (define-const* id)
 (define-guard guard defn)
+(define-with-errno id ffi-id args)
 ```
 
 The following declarations are included before the body:

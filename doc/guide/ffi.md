@@ -86,6 +86,8 @@ It also defines some common utility macros:
 - `(define-const id)` which expands to a definition that evals the constant in C.
 - `(define-const* id)` which conditionally defines the constant to a value of `#f` if it is undefined in the C preprocessor.
 - `(define-guard defn)` which conditionally expands a definition with an accompanied cond-expand feature.
+- `(define-with-errno id ffi-id args)` which expands to a definition of `(id args ...)` which calls `(ffi-id args ...)` and returns the negated errno if the reuslt is negative.
+  This is useful for wrapping C/POSIX ffi functions that report errors using `errno`.
 
 In addition, it provides a few other preprocessor macros and a definition of `ffi_free`, a function suitable as a release function for ffi types.
 
