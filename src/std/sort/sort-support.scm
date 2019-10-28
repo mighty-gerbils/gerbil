@@ -25,7 +25,7 @@
 (define-syntax receive
   (syntax-rules ()
     ((receive vars mv-exp body ...)
-     (call-with-values (lambda () mv-exp) (lambda vars body ...)))))
+     (let-values ((vars mv-exp)) body ...))))
 
 ;;; (let-vector-start+end (start end) proc vector arg-list
 ;;;   body ...)

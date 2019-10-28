@@ -13,8 +13,8 @@
      (let ((var exp)) (mlet (rest ...) body ...)))
 
     ((mlet ((vars exp) rest ...) body ...)
-     (call-with-values (lambda () exp)
-       (lambda vars (mlet (rest ...) body ...))))
+     (let-values ((vars exp))
+       (mlet (rest ...) body ...)))
 
     ((mlet () body ...) (begin body ...))))
 
