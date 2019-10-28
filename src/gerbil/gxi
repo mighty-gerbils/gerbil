@@ -8,6 +8,18 @@ fi
 
 if [ $# -gt 0 ]; then
     case $1 in
+        -h)
+            echo "gxi [-v|-h] | [-:<runtime-options>] [[-] [-e expr>] [file]] ..."
+            exit 0
+            ;;
+        -v)
+            exec gsi "$GERBIL_HOME/lib/gxi-init" -e '(displayln gerbil-greeting)'
+            ;;
+     esac
+fi
+
+if [ $# -gt 0 ]; then
+    case $1 in
         -:*)
             GSIOPTIONS=$1
             shift
