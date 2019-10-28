@@ -6,7 +6,7 @@
 (def (print-usage!)
   (displayln "gxc [options...] <file> ...")
   (displayln "Options: ")
-  (displayln " -h,-help                    display this usage summary and exit")
+  (displayln " -h,-help,--help             display this usage summary and exit")
   (displayln " -d <dir>                    set compiler output directory; defaults to $GERBIL_HOME/lib")
   (displayln " -exe                        compile an executable")
   (displayln " -o <file>                   set executable output file")
@@ -63,7 +63,7 @@
     (match rest
       ([arg . rest]
        (case arg
-         (("-h" "-help")
+         (("-h" "-help" "--help")
           (print-usage!)
           (exit 0))
          (("-d")
