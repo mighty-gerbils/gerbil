@@ -268,23 +268,23 @@
     lst))
 
 ;; split the list lst into a list-of-lists using the unary procedure proc.
-;; (split '(1 2 "hi" 3 4) string?)                 => ((1 2) (3 4))
-;; (split '(1 2 a 3 4) (lambda (x) (equal? x 'a))) => ((1 2) (3 4))
-;; (split '(1 2 a 3 4) (cut equal? <> 'a))         => ((1 2) (3 4))
-;; (split [] number?)                              => ()
-(def (split lst proc)
-  (def (new-acc acc cur)
-    (if (pair? cur) (cons* (reverse! cur) acc) cur))
-  (let loop ((cur []) (acc []) (lst lst))
-    (cond
-     ((pair? lst)
-      (if (proc (car lst))
-	(loop [] (new-acc acc cur) (cdr lst))
-	(loop (cons (car lst) cur) acc (cdr lst))))
-     (else
-      (if (pair? cur)
-	(snoc (reverse! cur) acc)
-	acc)))))
+;; If limit is set, split the list only limit times.
+;;
+;; Examples:
+;;  (split '(1 2 "hi" 3 4) string?)                 => ((1 2) (3 4))
+;;  (split [1 2 0 3 4 0 5 6] zero? 1)               => ((1 2) (3 4 0 5 6))
+;;  (split [] number?)                              => ()
+(def (split lst proc (limit #f))
+  (declare (fixnum))
+  (if (pair? lst)
+    (let loop ((xs lst) (acc []) (buf []) (n (if (fixnum? limit) limit -1)))
+      (match* ((zero? n) xs)
+	((#f [v . xs]) (if (proc v)
+			 (loop xs (cons (reverse! buf) acc) [] (1- n))
+			 (loop xs acc (cons v buf) n)))
+	((#t [v . xs]) (reverse! (cons (cons v xs) acc)))
+	(else (foldl cons [(reverse! buf)] acc))))
+    []))
 
 ;; group consecutive elements of the list lst into a list-of-lists.
 ;;
