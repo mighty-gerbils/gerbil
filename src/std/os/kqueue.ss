@@ -185,7 +185,6 @@
      (define-cond-expand-feature darwin))))
 
 (begin-foreign
-  (c-declare "#include <errno.h>")
   (c-declare "#include <stdlib.h>")
   (c-declare "#include <sys/types.h>")
   (c-declare "#include <sys/event.h>")
@@ -208,14 +207,6 @@
       (begin
         (eval `(define-cond-expand-feature ,guard))
         defn)))
-
-  (define-macro (define-with-errno symbol ffi-symbol args)
-    `(define (,symbol ,@args)
-       (declare (not interrupts-enabled))
-       (let ((r (,ffi-symbol ,@args)))
-         (if (##fx< r 0)
-           (##fx- (##c-code "___RESULT = ___FIX (errno);"))
-           r))))
 
   (namespace ("std/os/kqueue#"
               EV_ADD EV_ENABLE EV_DISABLE EV_DELETE EV_RECEIPT EV_ONESHOT

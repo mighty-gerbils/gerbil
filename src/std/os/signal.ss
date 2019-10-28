@@ -97,15 +97,6 @@
             sigismember)
   (c-declare "#include <sys/types.h>")
   (c-declare "#include <signal.h>")
-  (c-declare "#include <errno.h>")
-
-  (define-macro (define-with-errno symbol ffi-symbol args)
-    `(define (,symbol ,@args)
-       (declare (not interrupts-enabled))
-       (let ((r (,ffi-symbol ,@args)))
-         (if (##fx< r 0)
-           (##fx- (##c-code "___RESULT = ___FIX (errno);"))
-           r))))
 
   (namespace ("std/os/signal#"
               SIGHUP SIGINT SIGQUIT SIGILL SIGTRAP SIGABRT SIGBUS

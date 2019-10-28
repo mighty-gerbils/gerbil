@@ -71,16 +71,7 @@
             epoll_evt_fd epoll_evt_fd_set
             epoll_evt_events epoll_evt_events_set)
 
-  (c-declare "#include <errno.h>")
   (c-declare "#include <sys/epoll.h>")
-
-  (define-macro (define-with-errno symbol ffi-symbol args)
-    `(define (,symbol ,@args)
-       (declare (not interrupts-enabled))
-       (let ((r (,ffi-symbol ,@args)))
-         (if (##fx< r 0)
-           (##fx- (##c-code "___RESULT = ___FIX (errno);"))
-           r))))
 
   ;; private
   (namespace ("std/os/epoll#"

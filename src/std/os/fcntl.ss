@@ -65,21 +65,12 @@
             ;; F_RDLCK F_UNLCK F_WRLCK
             _fcntl0 _fcntl1
             )
-  (c-declare "#include <errno.h>")
   (c-declare "#include <unistd.h>")
   (c-declare "#include <sys/types.h>")
   (c-declare "#include <sys/stat.h>")
   (c-declare "#include <fcntl.h>")
 
   (namespace ("std/os/fcntl#" __fcntl0 __fcntl1))
-
-  (define-macro (define-with-errno symbol ffi-symbol args)
-    `(define (,symbol ,@args)
-       (declare (not interrupts-enabled))
-       (let ((r (,ffi-symbol ,@args)))
-         (if (##fx< r 0)
-           (##fx- (##c-code "___RESULT = ___FIX (errno);"))
-           r))))
 
   ;; POSIX commands
   (define-const F_DUPFD)
