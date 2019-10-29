@@ -175,7 +175,6 @@ namespace: gxc
                       #f])
     (_ '(begin))))
 
-
 (defmethod {typedecl !alias}
   (lambda (self)
     (with ((!alias alias-id) self)
@@ -205,6 +204,31 @@ namespace: gxc
   (lambda (self)
     (with ((!struct-setf struct-t off unchecked?) self)
       ['@struct-setf struct-t off unchecked?])))
+
+(defmethod {typedecl !class-type}
+  (lambda (self)
+    (with ((!class-type type-id super mixin slots xslots ctor plist) self)
+      ['@class-type type-id super mixin slots xslots ctor plist])))
+
+(defmethod {typedecl !class-pred}
+  (lambda (self)
+    (with ((!class-pred class-t) self)
+      ['@class-pred class-t])))
+
+(defmethod {typedecl !class-cons}
+  (lambda (self)
+    (with ((!class-cons class-t) self)
+      ['@class-cons class-t])))
+
+(defmethod {typedecl !class-getf}
+  (lambda (self)
+    (with ((!class-getf class-t slot unchecked?) self)
+      ['@class-getf class-t slot unchecked?])))
+
+(defmethod {typedecl !class-setf}
+  (lambda (self)
+    (with ((!class-setf class-t slot unchecked?) self)
+      ['@class-setf class-t slot unchecked?])))
 
 (defmethod {typedecl !lambda}
   (lambda (self)

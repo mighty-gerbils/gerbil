@@ -29,11 +29,17 @@ namespace: gxc
 (defstruct (!alias !type) ())
 (defstruct (!struct-type !type) (super fields xfields ctor plist methods)
   constructor: :init!)
+(defstruct (!class-type !type) (super mixin slots xslots ctor plist methods)
+  constructor: :init!)
 (defstruct (!procedure !type) ())
 (defstruct (!struct-pred !procedure) ())
 (defstruct (!struct-cons !procedure) ())
 (defstruct (!struct-getf !procedure) (off unchecked?))
 (defstruct (!struct-setf !procedure) (off unchecked?))
+(defstruct (!class-pred !procedure) ())
+(defstruct (!class-cons !procedure) ())
+(defstruct (!class-getf !procedure) (slot unchecked?))
+(defstruct (!class-setf !procedure) (slot unchecked?))
 (defstruct (!lambda !procedure) (arity dispatch inline inline-typedecl)
   constructor: :init!)
 (defstruct (!case-lambda !procedure) (clauses))
@@ -43,6 +49,10 @@ namespace: gxc
 (defmethod {:init! !struct-type}
   (lambda (self id super fields xfields ctor plist)
     (struct-instance-init! self id super fields xfields ctor plist #f)))
+
+(defmethod {:init! !class-type}
+  (lambda (self id super mixin slots xslots ctor plist)
+    (struct-instance-init! self id super mixin slots xslots ctor plist #f)))
 
 (defmethod {:init! !lambda}
   (lambda (self id arity dispatch (inline #f) (typedecl #f))
@@ -56,9 +66,47 @@ namespace: gxc
       (set! (!struct-type-methods type) vtab)
       vtab))))
 
+(def (!class-type-vtab type)
+  (cond
+   ((!class-type-methods type) => values)
+   (else
+    (let (vtab (make-hash-table-eq))
+      (set! (!class-type-methods type) vtab)
+      vtab))))
+
+(def (!type-vtab type)
+  (cond
+   ((!struct-type? type)
+    (!struct-type-vtab type))
+   ((!class-type? type)
+    (!class-type-vtab type))
+   (else #f)))
+
 (def (!struct-type-lookup-method type method)
   (alet (vtab (!struct-type-methods type))
     (hash-get vtab method)))
+
+(def (!class-type-lookup-method type method)
+  (alet (vtab (!class-type-methods type))
+    (hash-get vtab method)))
+
+(def (!type-lookup-method type method)
+  (cond
+   ((!struct-type? type)
+    (!struct-type-lookup-method type method))
+   ((!class-type? type)
+    (!class-type-lookup-method type method))
+   (else #f)))
+
+(def (!class-type-complete? type)
+  (and (!class-type-slots type)
+       (let (super (!class-type-super type))
+         (cond
+          ((not super) #t)
+          ((optimizer-lookup-type super)
+           => (lambda (super-t)
+                (and (!struct-type-xfields super-t) #t)))
+          (else #f)))))
 
 (def (optimizer-declare-type! sym type (local? #f))
   (unless (!type? type)
@@ -79,18 +127,18 @@ namespace: gxc
 (def (optimizer-declare-method! type-t method sym (rebind? #f))
   (let (type (optimizer-resolve-type type-t))
     (cond
-     ((!struct-type? type)
-      (let (vtab (!struct-type-vtab type))
-        (cond
-        (rebind? ; we don't track rebindable methods, so it shouldn't be there
-         (if (hash-key? vtab method)
-           (verbose "declare-method: [warning] skip rebind on existing method" type-t " " method)
-           (verbose "declare-method: skip rebind method " type-t " " method)))
-        ((hash-key? vtab method)
-         (error "declare-method: duplicate method declaration"))
-        (else
-         (verbose "declare-method " type-t " " method " => " sym)
-         (hash-put! vtab method sym)))))
+     ((!type-vtab type)
+      => (lambda (vtab)
+           (cond
+            ((hash-key? vtab method)
+             (if rebind?
+               (begin
+                 (verbose "declare-method: rebind existing method" type-t " " method)
+                 (hash-put! vtab method sym))
+               (error "declare-method: duplicate method declaration")))
+            (else
+             (verbose "declare-method " type-t " " method " => " sym)
+             (hash-put! vtab method sym)))))
      ((not type)
       (verbose "declare-method: unknown type "  type-t))
      (else
@@ -109,11 +157,7 @@ namespace: gxc
       type)))
 
 (def (optimizer-lookup-method type-t method)
-  (let (type (optimizer-resolve-type type-t))
-    (cond
-     ((!struct-type? type)
-      (!struct-type-lookup-method type method))
-     (else #f))))
+  (!type-lookup-method (optimizer-resolve-type type-t) method))
 
 (def (identifier-symbol stx)
   (if (syntax-quote? stx)

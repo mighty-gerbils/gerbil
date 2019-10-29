@@ -61,6 +61,10 @@ namespace: gxc
              (cond
               ((and ctor xfields (!struct-type-lookup-method struct-type ctor))
                => (lambda (kons) ; known constructor, inline make-object and dispatch
+                    ;; Note the interplay with sealed classes and method specialization.
+                    ;; This will dispatch to the unspecialized constructor method, but
+                    ;; that's something we can live with for structs as there is no slot
+                    ;; resolution overhead.
                     (let ($obj (make-symbol (gensym '__obj)))
                       (xform-wrap-source
                        ['%#let-values [[[$obj]
@@ -155,6 +159,76 @@ namespace: gxc
           (else
            (raise-compile-error "Illegal struct predicate application; not a struct type"
                                 stx struct-t struct-type)))))))
+
+(defmethod {optimize-call !class-pred}
+  (lambda (self stx args)
+    (with ((!class-pred class-t) self)
+      (let (class-type (optimizer-resolve-type class-t))
+        (match class-type
+          ((!class-type class-type-id _ _ _ _ _ plist)
+           (ast-case args ()
+             ((expr)
+              (let ((expr (compile-e #'expr))
+                    (final? (and plist (assgetq final: plist))))
+                (if final?
+                  (xform-wrap-source
+                   ['%#struct-direct-instance? ['%#quote class-type-id] expr]
+                   stx)
+                  (xform-wrap-source
+                   ['%#call ['%#ref 'class-instance?] ['%#ref class-t] expr]
+                   stx))))
+             (_ (raise-compile-error "Illegal class predicate application" stx))))
+          (#f (xform-call% stx))
+          (else
+           (raise-compile-error "illegal class predicate application; not a class type"
+                                stx class-t class-type)))))))
+
+(defmethod {optimize-call !class-cons}
+  (lambda (self stx args)
+    (with ((!class-cons class-t) self)
+      (let (class-type (optimizer-resolve-type class-t))
+        (match class-type
+          ((? !class-type?)
+           (let (args (map compile-e args))
+             ;; this could be optimized further to do direct dispatch/initialization
+             ;; for complete classes; note however the interplay with sealed classes
+             ;; and method specialization. For now we simply dispatch directly to
+             ;; make-class-instance, and sealed classes will dispatch to the specialized
+             ;; constructor.
+             (xform-wrap-source
+              ['%#call ['%#ref 'make-class-instance] ['%#ref class-t] args ...]
+              stx)))
+          (#f
+           (verbose "cannot inline class constructor; class struct type " class-t)
+           (xform-call% stx))
+          (else
+           (raise-compile-error "Illegal class constructor application; not a struct type"
+                                stx class-t class-type)))))))
+
+(defmethod {optimize-call !class-getf}
+  (lambda (self stx args)
+    (with ((!class-getf class-t slot unchecked?) self)
+      (ast-case args ()
+        ((expr)
+         (let (expr (compile-e #'expr))
+           ;; this could be optimized for final complete classes to do direct structure references
+           (xform-wrap-source
+            ['%#call ['%#ref (if unchecked? 'slot-ref 'unchecked-slot-ref)] expr ['%#quote slot]]
+            stx)))
+        (_ (raise-compile-error "Illegal class accessor application" stx))))))
+
+(defmethod {optimize-call !class-setf}
+  (lambda (self stx args)
+    (with ((!class-setf class-t slot unchecked?) self)
+      (ast-case args ()
+        ((expr val)
+         (let ((expr (compile-e #'expr))
+               (val (compile-e #'val)))
+           ;; this could be optimized for final complete classes to do direct structure mutation
+           (xform-wrap-source
+            ['%#call ['%#ref (if unchecked? 'unchecked-slot-set! 'slot-set!)] expr ['%#quote slot] val]
+            stx)))
+        (_ (raise-compile-error "Illegal class mutator application" stx))))))
 
 (defmethod {optimize-call !lambda}
   (lambda (self stx args)
