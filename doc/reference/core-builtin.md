@@ -604,7 +604,28 @@ Like `bound-method-ref`, but raises an error if the method is not found.
 
 Returns the binding of method with `id` in class `klass`.
 
+### seal-class!
+```scheme
+(seal-class! klass) -> unspecified
 
+  klass := type-descriptor
+```
+
+Seals a class, which must be _final_. Sealing a class specializes and coalesces
+all methods in the hierarchy to the class' method table.
+
+### bind-specializer!
+```scheme
+(bind-specializer! method specializer) -> unspecified
+
+  method      := procedure implementing a method
+  specializer := procedure of one argument that returns the specialized method
+```
+
+Binds a specializer procedure associated with a method. When a class
+is sealed, the specializer is invoked with the concrete class to
+generate a version of the method that is specialized for the concrete
+class.
 
 ## Special Objects
 

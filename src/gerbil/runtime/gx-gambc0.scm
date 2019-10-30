@@ -260,6 +260,11 @@
 (define (type-descriptor-methods-set! klass ht)
   (##vector-set! klass 11 ht))
 
+(define (type-descriptor-sealed? klass)
+  (##fxbit-set? 20 (##type-flags klass)))
+(define (type-descriptor-seal! klass)
+  (##vector-set! klass 3 (##fxior (##fxarithmetic-shift 1 20) (##type-flags klass))))
+
 (define (make-struct-type id super fields name plist ctor #!optional (field-names #f))
   (when (and super (not (struct-type? super)))
     (error "Illegal super type; not a struct-type" super))
@@ -387,7 +392,10 @@
        (super-struct
         (cond
          ((struct-subtype? super-struct klass)
-          klass)
+          (let lp ((klass klass))
+            (if (struct-type? klass)
+              klass
+              (lp (##type-super klass)))))
          ((struct-subtype? klass super-struct)
           super-struct)
          (else
@@ -713,7 +721,7 @@
     (error "Cannot find method" obj id))))
 
 ;; Methods
-(define builtin-type-methods
+(define &builtin-type-methods
   (make-table test: eq?))
 
 (define (method-ref obj id)
@@ -750,6 +758,8 @@
   (cond
    ((direct-method-ref klass id)
     => values)
+   ((type-descriptor-sealed? klass)
+    #f)
    ((type-descriptor-mixin klass)
     => (lambda (mixin)
          (mixin-find-method mixin id)))
@@ -799,7 +809,7 @@
 
 (define (builtin-method-ref klass id)
   (cond
-   ((hash-get builtin-type-methods (##type-id klass))
+   ((hash-get &builtin-type-methods (##type-id klass))
     => (lambda (mtab)
          (hash-get mtab id)))
    (else #f)))
@@ -824,14 +834,79 @@
    ((##type? klass)
     (let ((ht
            (cond
-            ((hash-get builtin-type-methods (##type-id klass)) => values)
+            ((hash-get &builtin-type-methods (##type-id klass)) => values)
             (else
              (let ((ht (make-hash-table-eq)))
-               (hash-put! builtin-type-methods (##type-id klass) ht)
+               (hash-put! &builtin-type-methods (##type-id klass) ht)
                ht)))))
       (bind! ht)))
    (else
     (error "Bad class; expected type-descriptor" klass))))
+
+(define &method-specializers
+  (make-table test: eq?))
+
+(define (bind-specializer! proc specializer)
+  (hash-put! &method-specializers proc specializer))
+
+(define (seal-class! klass)
+  (define (collect-methods! mtab)
+    (define (merge! tab)
+      (hash-for-each (lambda (id proc) (hash-put! mtab id proc))
+                     tab))
+
+    (define (collect-direct-methods! klass)
+      (cond
+       ((type-descriptor-methods klass) => merge!)))
+
+    (cond
+     ((type-descriptor-mixin klass)
+      => (lambda (mixin)
+           (let recur ((rest mixin))
+             (core-match rest
+               ((klass . rest)
+                (recur rest)
+                (cond
+                 ((type-descriptor? klass)
+                  (collect-direct-methods! klass))
+                 ((and (##type? klass) (hash-get &builtin-type-methods (##type-id klass)))
+                  => merge!)))
+               (else (void))))))
+     (else
+      (let recur ((klass (##type-super klass)))
+        (cond
+         ((type-descriptor? klass)
+          (recur (##type-super klass))
+          (collect-direct-methods! klass))
+         ((##type? klass)
+          (recur (##type-super klass))
+          (cond
+           ((hash-get &builtin-type-methods (##type-id klass))
+            => merge!)))))))
+    (collect-direct-methods! klass))
+
+  (when (type-descriptor? klass)
+    (unless (type-descriptor-sealed? klass)
+      (unless (assgetq final: (type-descriptor-plist klass))
+        (error "Cannot seal non-final class" klass))
+      (let ((vtab (make-hash-table-eq))
+            (mtab (make-hash-table-eq)))
+        (collect-methods! mtab)
+        (hash-for-each
+         (lambda (id proc)
+           (cond
+            ((hash-get &method-specializers proc)
+             => (lambda (specializer)
+                  (let ((proc (specializer klass))
+                        (gid (make-symbol (##type-id klass) "::[" id "]")))
+                    ;; give the proecure a name and make it accesible to the debugger
+                    (eval `(define ,gid (quote ,proc)))
+                    (hash-put! vtab id proc))))
+            (else
+             (hash-put! vtab id proc))))
+         mtab)
+        (type-descriptor-methods-set! klass vtab)
+        (type-descriptor-seal! klass)))))
 
 (define (next-method subklass obj id)
   (let ((klass (object-type obj))

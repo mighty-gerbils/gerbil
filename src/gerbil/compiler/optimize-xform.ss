@@ -101,6 +101,12 @@ namespace: gxc
   (%#struct-unchecked-ref    collect-operands)
   (%#struct-unchecked-set!   collect-operands))
 
+(defcompile-method apply-collect-methods (&collect-methods &void)
+  (%#begin        collect-begin%)
+  (%#begin-syntax collect-begin-syntax%)
+  (%#module       collect-module%)
+  (%#call         collect-methods-call%))
+
 (defcompile-method apply-expression-subst (&expression-subst &basic-xform-expression)
   (%#begin xform-begin%)
   (%#ref   expression-subst-ref%)
@@ -261,6 +267,17 @@ namespace: gxc
        (verbose "collect mutator " sym)
        (hash-put! (current-compile-mutators) sym #t) ; just set for now
        (compile-e #'expr)))))
+
+;;; apply-collect-methods
+(def (collect-methods-call% stx)
+  (ast-case stx (%#ref %#quote)
+    ((_ (%#ref -bind-method) (%#ref type-t) (%#quote method) (%#ref impl) (%#quote rebind?))
+     (runtime-identifier=? #'-bind-method 'bind-method!)
+     (optimizer-top-level-method! (identifier-symbol #'impl)))
+    ((_ (%#ref -bind-method!) (%#ref type-t) (%#quote method) (%#ref impl))
+     (runtime-identifier=? #'-bind-method 'bind-method!)
+     (optimizer-top-level-method! (identifier-symbol #'impl)))
+    (_ (void))))
 
 ;;; apply-subst-refs
 (def (expression-subst-ref% stx id new-id)

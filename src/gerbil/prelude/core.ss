@@ -191,7 +191,8 @@ package: gerbil
     class-instance-init!
     slot-ref slot-set!
     call-method
-    bind-method!
+    bind-method! bind-specializer!
+    seal-class!
     method-ref direct-method-ref bound-method-ref
     checked-method-ref checked-bound-method-ref
     find-method

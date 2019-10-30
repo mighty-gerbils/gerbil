@@ -86,6 +86,32 @@ namespace: gxc
   ((_ type off)
    (make-!struct-setf 'type off #f)))
 
+;; class types
+(defrules @class-type ()
+  ((_ type-id super mixin slots xslots ctor plist)
+   (make-!class-type 'type-id 'super 'mixin 'slots 'xslots 'ctor 'plist)))
+
+(defrules @class-pred ()
+  ((_ type)
+   (make-!class-pred 'type)))
+
+(defrules @class-cons ()
+  ((_ type)
+   (make-!class-cons 'type)))
+
+(defrules @class-getf ()
+  ((_ type slot unchecked?)
+   (make-!class-getf 'type 'slot unchecked?))
+  ((_ type slot)
+   (make-!class-getf 'type 'slot #f)))
+
+(defrules @class-setf ()
+  ((_ type slot unchecked?)
+   (make-!class-setf 'type 'slot unchecked?))
+  ((_ type slot)
+   (make-!class-setf 'type 'slot #f)))
+
+;; lambdas
 (defrules @lambda ()
   ((_ arity inline: inline-rules)
    (make-!lambda 'lambda 'arity #f inline-rules 'inline-rules))
