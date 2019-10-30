@@ -116,7 +116,9 @@ namespace: gxc
 ;;; source transforms
 (def (optimize-source stx)
   (apply-collect-mutators stx)
-  (let (stx (apply-lift-top-lambdas stx))
+  (apply-collect-methods stx)
+  (let* ((stx (apply-generate-method-specializers stx))
+         (stx (apply-lift-top-lambdas stx)))
     (apply-collect-type-info stx)
     (let (stx (apply-optimize-annotated stx))
       (apply-optimize-call stx))))

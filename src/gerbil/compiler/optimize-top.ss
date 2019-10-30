@@ -43,6 +43,34 @@ namespace: gxc
   (%#letrec-values  lift-top-lambda-letrec-values%)
   (%#letrec*-values lift-top-lambda-letrec-values%))
 
+(defcompile-method apply-generate-method-specializers (&generate-method-specializers &identity)
+  (%#begin         xform-begin%)
+  (%#begin-syntax  xform-begin-syntax%)
+  (%#module        xform-module%)
+  (%#define-values generate-method-specializers-define-values%))
+
+(defcompile-method apply-collect-object-refs (&collect-object-refs &void)
+  (%#begin                   collect-begin%)
+  (%#begin-annotation        collect-begin-annotation%)
+  (%#lambda                       collect-body-lambda%)
+  (%#case-lambda                  collect-body-case-lambda%)
+  (%#let-values              collect-body-let-values%)
+  (%#letrec-values           collect-body-let-values%)
+  (%#letrec-values*          collect-body-let-values%)
+  (%#call                    collect-object-refs-call%)
+  (%#if                      collect-operands)
+  (%#set!                    collect-body-setq%)
+  (%#struct-ref              collect-operands)
+  (%#struct-set!             collect-operands)
+  (%#struct-direct-ref       collect-operands)
+  (%#struct-direct-set!      collect-operands)
+  (%#struct-unchecked-ref    collect-operands)
+  (%#struct-unchecked-set!   collect-operands))
+
+(defcompile-method apply-subst-object-refs (&subst-object-refs &basic-xform-expression)
+  (%#begin xform-begin%)
+  (%#call  subst-object-refs-call%))
+
 ;;; apply-collect-type-info
 (def (collect-type-define-values% stx)
   (ast-case stx ()
@@ -924,3 +952,395 @@ namespace: gxc
               (opt-lambda-expr? #'expr)
               (kw-lambda-expr? #'expr))))
     (_ #f)))
+
+;;; apply-generate-method-specializers
+
+(def (generate-method-specializers-define-values% stx)
+  (def (generate-method-bind $t id $id)
+    (let ($tmp (make-symbol (gensym '__tmp)))
+      [[$id]
+       ['%#call ['%#ref 'make-promise]
+                ['%#lambda []
+                      ['%#let-values [[[$tmp]
+                                       ['%#call ['%#ref 'direct-method-ref]
+                                                ['%#ref $t]
+                                                ['%#quote id]]]]
+                                     ['%#if ['%#ref $tmp]
+                                            ['%#ref $tmp]
+                                            ['%#call ['%#ref 'error]
+                                                     ['%#quote "Missing method"]
+                                                     ['%#quote id]]]]]]]))
+
+  (def (generate-slot-bind $t id $id)
+    (let ($tmp (make-symbol (gensym '__tmp)))
+      [[$id]
+       ['%#let-values [[[$tmp]
+                        ['%#call ['%#ref 'class-slot-offset]
+                                 ['%#ref $t]
+                                 ['%#quote id]]]]
+                      ['%#if ['%#ref $tmp]
+                             ['%#call ['%#ref '##fx+] ['%#ref $tmp] ['%#quote 1]]
+                             ['%#call ['%#ref 'error]
+                                      ['%#quote "Unknown slot"]
+                                      ['%#quote id]]]]]))
+
+  (def (generate-specializer-impl $t methods-bind slots-bind specializer-impl)
+    (xform-wrap-source
+     ['%#lambda [$t]
+           ['%#let-values [methods-bind ... slots-bind ...]
+                          specializer-impl]]
+     stx))
+
+  (def (generate-specializer-def id specializer-id specializer-impl)
+    (xform-wrap-source
+     ['%#begin stx
+               (xform-wrap-source
+                ['%#define-values [specializer-id] specializer-impl]
+                stx)
+               (xform-wrap-source
+                ['%#call ['%#ref 'bind-specializer!] ['%#ref id] ['%#ref specializer-id]]
+                stx)]
+     stx))
+
+  (ast-case stx ()
+    ((_ (id) expr)
+     (optimizer-top-level-method? (identifier-symbol #'id))
+     (cond
+      ((lambda-expr? #'expr)
+       (ast-case #'expr ()
+         ((_ (self . args) . body)
+          (let ((method-calls (make-hash-table-eq))
+                (slot-refs (make-hash-table-eq)))
+            (for-each (cut apply-collect-object-refs <> #'self method-calls slot-refs) #'body)
+            (if (and (fxzero? (hash-length method-calls))
+                     (fxzero? (hash-length slot-refs)))
+              ;; nothing to specialize, no slot-refs or method calls
+              stx
+              ;; emit specializer
+              (let* ((specializer-id (make-symbol (stx-e #'id) "::specialize"))
+                     (specializer-id (core-quote-syntax specializer-id (stx-source stx)))
+                     (_ (core-bind-runtime! specializer-id))
+                     ($t (make-symbol (gensym '__t)))
+                     (methods (hash-keys method-calls))
+                     ($methods (map (lambda (id) (make-symbol "__" (gensym id))) methods))
+                     (_ (for-each (cut hash-put! method-calls <> <>) methods $methods))
+                     (methods-bind (map (cut generate-method-bind $t <> <>) methods $methods))
+                     (slots (hash-keys slot-refs))
+                     ($slots (map (lambda (id) (make-symbol "__" (gensym id))) slots))
+                     (_ (for-each (cut hash-put! slot-refs <> <>) slots $slots))
+                     (slots-bind (map (cut generate-slot-bind $t <> <>) slots $slots))
+                     (specializer-body
+                      (map (cut apply-subst-object-refs <> #'self method-calls slot-refs) #'body))
+                     (specializer-impl
+                      (generate-specializer-impl $t methods-bind slots-bind
+                        (xform-wrap-source
+                         ['%#lambda #'(self . args) . specializer-body]
+                         stx))))
+                (verbose "generate method specializer " (stx-e #'id) " => " (stx-e specializer-id))
+                (generate-specializer-def #'id specializer-id specializer-impl)))))
+         ;; no self discriminant, nothing to specialize
+         (_ stx)))
+
+      ((case-lambda-expr? #'expr)
+       (ast-case #'expr ()
+         ((_ clause ...)
+          (let ((method-calls (make-hash-table-eq))
+                (slot-refs (make-hash-table-eq)))
+            (for-each
+              (lambda (clause)
+                (ast-case clause ()
+                  (((self . args) . body)
+                   (for-each (cut apply-collect-object-refs <> #'self method-calls slot-refs) #'body))
+                  (_ (void))))
+              #'(clause ...))
+            (if (and (fxzero? (hash-length method-calls))
+                     (fxzero? (hash-length slot-refs)))
+              ;; nothing to specialize, no slot-refs or method calls
+              stx
+              ;; emit specializer
+              (let* ((specializer-id (make-symbol (stx-e #'id) "::specialize"))
+                     (specializer-id (core-quote-syntax specializer-id (stx-source stx)))
+                     (_ (core-bind-runtime! specializer-id))
+                     ($t (make-symbol (gensym '__t)))
+                     (methods (hash-keys method-calls))
+                     ($methods (map (lambda (id) (make-symbol "__" (gensym id))) methods))
+                     (_ (for-each (cut hash-put! method-calls <> <>) methods $methods))
+                     (methods-bind (map (cut generate-method-bind $t <> <>) methods $methods))
+                     (slots (hash-keys slot-refs))
+                     ($slots (map (lambda (id) (make-symbol "__" (gensym id))) slots))
+                     (_ (for-each (cut hash-put! slot-refs <> <>) slots $slots))
+                     (slots-bind (map (cut generate-slot-bind $t <> <>) slots $slots))
+                     (specializer-clauses
+                      (map
+                        (lambda (clause)
+                          (ast-case clause ()
+                            (((self . args) . body)
+                             (let (body (map (cut apply-subst-object-refs <> #'self method-calls slot-refs) #'body))
+                               [#'(self . args) . body]))
+                            (_ clause)))
+                        #'(clause ...)))
+                     (specializer-impl
+                      (generate-specializer-impl $t methods-bind slots-bind
+                        (xform-wrap-source
+                         ['%#case-lambda specializer-clauses ...]
+                         stx))))
+                (verbose "generate method specializer " (stx-e #'id) " => " (stx-e specializer-id))
+                (generate-specializer-def #'id specializer-id specializer-impl)))))))
+
+      ((opt-lambda-expr? #'expr)
+       (ast-case #'expr ()
+         ((_ (((xid) lambda-expr)) case-lambda-expr)
+          (let ((method-calls (make-hash-table-eq))
+                (slot-refs (make-hash-table-eq)))
+            (ast-case #'lambda-expr ()
+              ((_ (self . args) . body)
+               (for-each (cut apply-collect-object-refs <> #'self method-calls slot-refs) #'body)))
+            (ast-case #'case-lambda-expr ()
+              ((_ clause ...)
+               (for-each
+                 (lambda (clause)
+                   (ast-case clause ()
+                     (((self . args) . body)
+                      (for-each (cut apply-collect-object-refs <> #'self method-calls slot-refs) #'body))))
+                 #'(clause ...))))
+            (if (and (fxzero? (hash-length method-calls))
+                     (fxzero? (hash-length slot-refs)))
+              ;; nothing to specialize, no slot-refs or method calls
+              stx
+              ;; emit specializer
+              (let* ((specializer-id (make-symbol (stx-e #'id) "::specialize"))
+                     (specializer-id (core-quote-syntax specializer-id (stx-source stx)))
+                     (_ (core-bind-runtime! specializer-id))
+                     ($t (make-symbol (gensym '__t)))
+                     (methods (hash-keys method-calls))
+                     ($methods (map (lambda (id) (make-symbol "__" (gensym id))) methods))
+                     (_ (for-each (cut hash-put! method-calls <> <>) methods $methods))
+                     (methods-bind (map (cut generate-method-bind $t <> <>) methods $methods))
+                     (slots (hash-keys slot-refs))
+                     ($slots (map (lambda (id) (make-symbol "__" (gensym id))) slots))
+                     (_ (for-each (cut hash-put! slot-refs <> <>) slots $slots))
+                     (slots-bind (map (cut generate-slot-bind $t <> <>) slots $slots))
+                     (specializer-lambda-expr
+                      (ast-case #'lambda-expr ()
+                        ((_ (self . args) . body)
+                         (let (body (map (cut apply-subst-object-refs <> #'self method-calls slot-refs) #'body))
+                           (xform-wrap-source
+                            ['%#lambda #'(self . args) . body]
+                            #'lambda-expr)))))
+                     (specializer-case-lambda-expr
+                      (ast-case #'case-lambda-expr ()
+                        ((_ clause ...)
+                         (let (clauses
+                               (map
+                                 (lambda (clause)
+                                   (ast-case clause ()
+                                     (((self . args) . body)
+                                      (let (body (map (cut apply-subst-object-refs <> #'self method-calls slot-refs) #'body))
+                                        [#'(self . args) . body]))
+                                     (_ clause)))
+                                 #'(clause ...)))
+                           (xform-wrap-source
+                            ['%#case-lambda clauses ...]
+                            #'case-lambda-expr)))))
+                     (specializer-impl
+                      (generate-specializer-impl $t methods-bind slots-bind
+                      (xform-wrap-source
+                       ['%#let-values [[[#'xid] specializer-lambda-expr]]
+                                     specializer-case-lambda-expr]
+                       stx))))
+                (verbose "generate method specializer " (stx-e #'id) " => " (stx-e specializer-id))
+                (generate-specializer-def #'id specializer-id specializer-impl)))))))
+
+      ((kw-lambda-expr? #'expr)
+       (ast-case #'expr (%#let-values)
+         ((%#let-values (((get-kws)
+                          (%#let-values (((kw-lambda-main) kw-lambda-main-expr))
+                                        get-kws-expr)))
+                        kw-dispatch)
+          (ast-case #'get-kws-expr (%#lambda %#call %#ref)
+            ((%#lambda _ (%#call (%#ref -apply) (%#ref -kw-lambda-main) (%#ref -kw-table) kw-ref ... args))
+             (let* ((kw-count (length #'(kw-ref ...)))
+                    (self-index (fx1+ kw-count))
+                    (method-calls (make-hash-table-eq))
+                    (slot-refs (make-hash-table-eq)))
+               (cond
+                ((lambda-expr? #'kw-lambda-main-expr)
+                 (ast-case #'kw-lambda-main-expr ()
+                   ((_ hd . body)
+                    (let (self (list-ref #'hd self-index))
+                      (for-each (cut apply-collect-object-refs <> self method-calls slot-refs) #'body)
+                      (if (and (fxzero? (hash-length method-calls))
+                               (fxzero? (hash-length slot-refs)))
+                        ;; nothing to specialize, no slot-refs or method calls
+                        stx
+                        ;; emit specializer
+                        (let* ((specializer-id (make-symbol (stx-e #'id) "::specialize"))
+                               (specializer-id (core-quote-syntax specializer-id (stx-source stx)))
+                               (_ (core-bind-runtime! specializer-id))
+                               ($t (make-symbol (gensym '__t)))
+                               (methods (hash-keys method-calls))
+                               ($methods (map (lambda (id) (make-symbol "__" (gensym id))) methods))
+                               (_ (for-each (cut hash-put! method-calls <> <>) methods $methods))
+                               (methods-bind (map (cut generate-method-bind $t <> <>) methods $methods))
+                               (slots (hash-keys slot-refs))
+                               ($slots (map (lambda (id) (make-symbol "__" (gensym id))) slots))
+                               (_ (for-each (cut hash-put! slot-refs <> <>) slots $slots))
+                               (slots-bind (map (cut generate-slot-bind $t <> <>) slots $slots))
+                               (specializer-body
+                                (map (cut apply-subst-object-refs <> self method-calls slot-refs) #'body))
+                               (specializer-impl
+                                (generate-specializer-impl $t methods-bind slots-bind
+                                  (xform-wrap-source
+                                   ['%#let-values [[[#'get-kws]
+                                                    ['%#let-values [[[#'kw-lambda-main]
+                                                                     (xform-wrap-source
+                                                                      ['%#lambda #'hd . specializer-body]
+                                                                      #'kw-lambda-main-expr)]]
+                                                                   #'get-kws-expr]]]
+                                                  #'kw-dispatch]
+                                   stx))))
+                          (verbose "generate method specializer " (stx-e #'id) " => " (stx-e specializer-id))
+                          (generate-specializer-def #'id specializer-id specializer-impl)))))))
+
+                ((opt-lambda-expr? #'kw-lambda-main-expr)
+                 (ast-case #'kw-lambda-main-expr ()
+                   ((_ (((xid) lambda-expr)) case-lambda-expr)
+                    (begin
+                      (ast-case #'lambda-expr ()
+                        ((_ hd . body)
+                         (let (self (list-ref #'hd self-index))
+                           (for-each (cut apply-collect-object-refs <> self method-calls slot-refs) #'body))))
+                      (ast-case #'case-lambda-expr ()
+                        ((_ clause ...)
+                         (for-each
+                           (lambda (clause)
+                             (ast-case clause ()
+                               ((hd . body)
+                                (let (self (list-ref #'hd self-index))
+                                  (for-each (cut apply-collect-object-refs <> self method-calls slot-refs) #'body)))))
+                           #'(clause ...))))
+                      (if (and (fxzero? (hash-length method-calls))
+                               (fxzero? (hash-length slot-refs)))
+                        ;; nothing to specialize, no slot-refs or method calls
+                        stx
+                        ;; emit specializer
+                        (let* ((specializer-id (make-symbol (stx-e #'id) "::specialize"))
+                               (specializer-id (core-quote-syntax specializer-id (stx-source stx)))
+                               (_ (core-bind-runtime! specializer-id))
+                               ($t (make-symbol (gensym '__t)))
+                               (methods (hash-keys method-calls))
+                               ($methods (map (lambda (id) (make-symbol "__" (gensym id))) methods))
+                               (_ (for-each (cut hash-put! method-calls <> <>) methods $methods))
+                               (methods-bind (map (cut generate-method-bind $t <> <>) methods $methods))
+                               (slots (hash-keys slot-refs))
+                               ($slots (map (lambda (id) (make-symbol "__" (gensym id))) slots))
+                               (_ (for-each (cut hash-put! slot-refs <> <>) slots $slots))
+                               (slots-bind (map (cut generate-slot-bind $t <> <>) slots $slots))
+                               (specializer-lambda-expr
+                                (ast-case #'lambda-expr ()
+                                  ((_ hd . body)
+                                   (let* ((self (list-ref #'hd self-index))
+                                          (body (map (cut apply-subst-object-refs <> self method-calls slot-refs) #'body)))
+                                     (xform-wrap-source
+                                      ['%#lambda #'hd . body]
+                                      #'lambda-expr)))))
+                               (specializer-case-lambda-expr
+                                (ast-case #'case-lambda-expr ()
+                                  ((_ clause ...)
+                                   (let (clauses
+                                         (map
+                                           (lambda (clause)
+                                             (ast-case clause ()
+                                               ((hd . body)
+                                                (let* ((self (list-ref #'hd self-index))
+                                                       (body (map (cut apply-subst-object-refs <> self method-calls slot-refs) #'body)))
+                                                  [#'hd . body]))))
+                                           #'(clause ...)))
+                                     (xform-wrap-source
+                                      ['%#case-lambda clauses ...]
+                                      #'case-lambda-expr)))))
+                               (specializer-impl
+                                (generate-specializer-impl $t methods-bind slots-bind
+                                  (xform-wrap-source
+                                   ['%#let-values [[[#'get-kws]
+                                                    ['%#let-values [[[#'kw-lambda-main]
+                                                                     (xform-wrap-source
+                                                                      ['%#let-values [[[#'xid] specializer-lambda-expr]]
+                                                                                     specializer-case-lambda-expr]
+                                                                      stx)]]
+                                                                   #'get-kws-expr]]]
+                                                  #'kw-dispatch]
+                                   stx))))
+                          (verbose "generate method specializer " (stx-e #'id) " => " (stx-e specializer-id))
+                          (generate-specializer-def #'id specializer-id specializer-impl)))))))
+
+                (else stx))))))))
+
+      (else stx)))
+    (_ stx)))
+
+(def (collect-object-refs-call% stx self methods slots)
+  (ast-case stx (%#ref %#quote)
+    ((_ (%#ref -call-method) (%#ref -self) (%#quote method) args ...)
+     (and (runtime-identifier=? #'-call-method 'call-method)
+          (free-identifier=? #'-self self))
+     (begin
+       (hash-put! methods (stx-e #'method) #t)
+       (for-each (cut compile-e <> self methods slots) #'(args ...))))
+    ((_ (%#ref -apply) (%#ref -call-method) (%#ref -self) (%#quote method) args ...)
+     (and (runtime-identifier=? #'-apply 'apply)
+          (runtime-identifier=? #'-call-method 'call-method)
+          (free-identifier=? #'-self self))
+     (begin
+       (hash-put! methods (stx-e #'method) #t)
+       (for-each (cut compile-e <> self methods slots) #'(args ...))))
+    ((_ (%#ref -slot-ref) (%#ref -self) (%#quote slot))
+     (and (runtime-identifier=? #'-slot-ref 'slot-ref)
+          (free-identifier=? #'-self self))
+     (hash-put! slots (stx-e #'slot) #t))
+    ((_ (%#ref -slot-set!) (%#ref -self) (%#quote slot) expr)
+     (and (runtime-identifier=? #'-slot-set! 'slot-set!)
+          (free-identifier=? #'-self self))
+     (begin
+       (hash-put! slots (stx-e #'slot) #t)
+       (compile-e #'expr self methods slots)))
+    (_ (collect-operands stx self methods slots))))
+
+(def (subst-object-refs-call% stx self methods slots)
+  (ast-case stx (%#ref %#quote)
+    ((_ (%#ref -call-method) (%#ref -self) (%#quote method) args ...)
+     (and (runtime-identifier=? #'-call-method 'call-method)
+          (free-identifier=? #'-self self))
+     (let (($method (hash-ref methods (stx-e #'method)))
+           (args (map (cut compile-e <> self methods slots) #'(args ...))))
+       (xform-wrap-source
+        ['%#call ['%#call ['%#ref 'force] ['%#ref $method]]
+                 ['%#ref self] args ...]
+        stx)))
+    ((_ (%#ref -apply) (%#ref -call-method) (%#ref -self) (%#quote method) args ...)
+     (and (runtime-identifier=? #'-apply 'apply)
+          (runtime-identifier=? #'-call-method 'call-method)
+          (free-identifier=? #'-self self))
+     (let (($method (hash-ref methods (stx-e #'method)))
+           (args (map (cut compile-e <> self methods slots) #'(args ...))))
+       (xform-wrap-source
+        ['%#call ['%#ref 'apply]
+                 ['%#call ['%#ref 'force] ['%#ref $method]]
+                 ['%#ref self] args ...]
+        stx)))
+    ((_ (%#ref -slot-ref) (%#ref -self) (%#quote slot))
+     (and (runtime-identifier=? #'-slot-ref 'slot-ref)
+          (free-identifier=? #'-self self))
+     (let ($field (hash-ref slots (stx-e #'slot)))
+       (xform-wrap-source
+        ['%#call ['%#ref '##vector-ref] ['%#ref self] ['%#ref $field]]
+        stx)))
+    ((_ (%#ref -slot-set!) (%#ref -self) (%#quote slot) expr)
+     (and (runtime-identifier=? #'-slot-set! 'slot-set!)
+          (free-identifier=? #'-self self))
+     (let (($field (hash-ref slots (stx-e #'slot)))
+           (expr (compile-e #'expr self methods slots)))
+       (xform-wrap-source
+        ['%#call ['%#ref '##vector-set!] ['%#ref self] ['%#ref $field] expr]
+        stx)))
+    (_ (xform-operands stx self methods slots))))

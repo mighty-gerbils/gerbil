@@ -17,12 +17,12 @@ namespace: gxc
 (def current-compile-local-type
   (make-parameter #f))
 
-(defstruct optimizer-info (type ssxi)
+(defstruct optimizer-info (type ssxi methods)
   constructor: :init!)
 
 (defmethod {:init! optimizer-info}
   (lambda (self)
-    (struct-instance-init! self (make-hash-table-eq) (make-hash-table-eq))))
+    (struct-instance-init! self (make-hash-table-eq) (make-hash-table-eq) (make-hash-table-eq))))
 
 ;;; optimizer-info: types
 (defstruct !type (id))
@@ -158,6 +158,13 @@ namespace: gxc
 
 (def (optimizer-lookup-method type-t method)
   (!type-lookup-method (optimizer-resolve-type type-t) method))
+
+(def (optimizer-top-level-method! sym)
+  (verbose "top-level method: " sym)
+  (hash-put! (optimizer-info-methods (current-compile-optimizer-info)) sym #t))
+
+(def (optimizer-top-level-method? sym)
+  (hash-get (optimizer-info-methods (current-compile-optimizer-info)) sym))
 
 (def (identifier-symbol stx)
   (if (syntax-quote? stx)
