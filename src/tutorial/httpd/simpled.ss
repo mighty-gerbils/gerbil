@@ -29,7 +29,7 @@
 ;; /
 (def (root-handler req res)
   (http-response-write res 200 '(("Content-Type" . "text/plain"))
-                       (string-append "hello, " (inet-address->string (http-request-client req)) "\n")))
+    (string-append "hello, " (inet-address->string (http-request-client req)) "\n")))
 
 ;; /echo
 (def (echo-handler req res)
@@ -40,7 +40,7 @@
             [["Content-Type" . content-type]]
             [])))
     (http-response-write res 200 headers
-                         (http-request-body req))))
+      (http-request-body req))))
 
 ;; /headers[?json]
 (def (headers-handler req res)
@@ -54,7 +54,7 @@
         (json-object->string
          (list->hash-table headers)))
     (http-response-write res 200 '(("Content-Type" . "application/json"))
-                         content)))
+      content)))
 
 (def (write-text-headers res headers)
   (http-response-begin res 200 '(("Content-Type" . "text/plain")))
@@ -78,14 +78,14 @@
 
   (let (t (include-template** "templates/template.html"))
     (http-response-write res 200 '(("Content-Type" . "text/html"))
-                         (t [title: "Title" h1: "Hey!"]))))
+      (t [title: "Title" h1: "Hey!"]))))
 
 
 
 ;; default
 (def (default-handler req res)
   (http-response-write res 404 '(("Content-Type" . "text/plain"))
-                       "these aren't the droids you are looking for.\n"))
+    "these aren't the droids you are looking for.\n"))
 
 (def (main . args)
   (def gopt
