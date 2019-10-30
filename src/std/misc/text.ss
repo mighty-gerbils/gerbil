@@ -8,11 +8,11 @@
                     :std/stxutil
                     :std/sugar))
 (export include-text
-        template include-template
-        template* include-template*
-        template** include-template**
-        quasistring include-quasistring
-        quasistring* include-quasistring*)
+        template/hash  include-template/hash
+        template/alist include-template/alist
+        template/plist include-template/plist
+        quasistring    include-quasistring
+        quasistring*   include-quasistring*)
 
 ;; compile-time include a file as text (a string)
 (defsyntax (include-text stx)
@@ -136,7 +136,7 @@
 ;; a template is a lambda with a hash-table as argument
 ;; the hash table's keys must be the symbols used in run-time
 ;; template variables, e.g. #{name} -> (table-ref hash-table 'name)
-(defquasiparser template
+(defquasiparser template/hash
   (lambda (sym)
     (with-syntax ((sym (syntax->datum sym)))
       #'(hash-get ht (quote sym))))
@@ -146,7 +146,7 @@
   #t)
 
 ;; template with alist as argument
-(defquasiparser template*
+(defquasiparser template/alist
   (lambda (sym)
     (with-syntax ((sym (syntax->datum sym)))
       #'(cdr (assoc (quote sym) al))))
@@ -156,7 +156,7 @@
   #t)
 
 ;; template with plist as argument
-(defquasiparser template**
+(defquasiparser template/plist
   (lambda (sym)
     (with-syntax ((kw (symbol->keyword sym)))
       #'(pget kw pl)))
@@ -183,4 +183,4 @@
 
 (defincludes
   quasistring quasistring*
-  template template* template**)
+  template/hash template/alist template/plist)
