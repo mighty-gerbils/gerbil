@@ -22,16 +22,16 @@
       (let (res ((lambda (name) (quasistring "Hello, #{name}!")) "world"))
         (check-equal? run-time-result res)))
     (test-case "Test include-quasistring."
-      (def rt-res ((lambda (name) (include-quasistring "_templates/run-time.txt")) "world"))
+      (def rt-res ((lambda (name) (include-quasistring "_test/run-time.txt")) "world"))
       (check-equal? rt-res "Hello, world!\n")) ;; include-text preserves the \n
     ;; quasistring*
     (test-case "Test quasistring*."
       (let (res ((lambda (name) (quasistring* "Hello, #{name}!")) "world"))
         (check-equal? run-time-result res)))
     (test-case "Test include-quasistring*."
-      (def rt-res ((lambda (name) (include-quasistring* "_templates/run-time.txt")) "world"))
+      (def rt-res ((lambda (name) (include-quasistring* "_test/run-time.txt")) "world"))
       (check-equal? rt-res "Hello, world!\n")
-      (def et-res ((lambda (name) (include-quasistring* "_templates/expansion-time.txt")) "world"))
+      (def et-res ((lambda (name) (include-quasistring* "_test/expansion-time.txt")) "world"))
       (check-equal? et-res "FF 00 FF\n"))
     ;; template
     (test-case "Test template."
@@ -39,7 +39,7 @@
              (res (t (hash (name "world")))))
         (check-equal? res "Hello, world!\nFF 00 FF")))
     (test-case "Test include-template."
-      (let* ((t (include-template "_templates/mixed.txt"))
+      (let* ((t (include-template "_test/mixed.txt"))
              (res (t (hash (name "world")))))
         (check-equal? res "Hello, world!\nFF 00 FF\n")))
     ;; template*
@@ -48,7 +48,7 @@
              (res (t '((name . "world")))))
         (check-equal? res "Hello, world!\nFF 00 FF")))
     (test-case "Test include-template*."
-      (let* ((t (include-template* "_templates/mixed.txt"))
+      (let* ((t (include-template* "_test/mixed.txt"))
              (res (t '((name . "world")))))
         (check-equal? res "Hello, world!\nFF 00 FF\n")))
     ;; template**
@@ -57,6 +57,6 @@
              (res (t [name: "world"])))
         (check-equal? res "Hello, world!\nFF 00 FF")))
     (test-case "Test include-template**."
-      (let* ((t (include-template** "_templates/mixed.txt"))
+      (let* ((t (include-template** "_test/mixed.txt"))
              (res (t [name: "world"])))
         (check-equal? res "Hello, world!\nFF 00 FF\n")))))

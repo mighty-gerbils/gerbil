@@ -63,8 +63,8 @@
                   (c+2  (read-char port)))
               (if (eq? c+2 #\})
                 (if (symbol? sexp)
-                  (lp port (read-char port) (append ops [str (rt-symbol-proc sexp)]) "")
-                  (lp port (read-char port) (append ops [str sexp]) ""))
+                  (lp port (read-char port) (cons* (rt-symbol-proc sexp) str ops) "")
+                  (lp port (read-char port) (cons* sexp str ops) ""))
                 (error qs-err-missing-close c+2))))
            ((eq? c+1 #\#) ;; expansion time template variables
             (if expansion-time-eval
@@ -85,7 +85,7 @@
               (lp port (read-char port) ops (string-append str (list->string [c c+1]))))))))
        ((eq? c #!eof)
         (close-input-port port)
-        (with-syntax (((ops ...) (datum->syntax ctx (map-format (append ops [str])))))
+        (with-syntax (((ops ...) (datum->syntax ctx (map-format (reverse (cons* str ops))))))
           (output-proc #'(ops ...))))
        (else
         (lp port (read-char port) ops (string-append str (list->string [c]))))))
@@ -93,31 +93,27 @@
 
 (defsyntax (defquasiparser stx)
   (syntax-case stx ()
-    ((macro id rt-symbol-proc output-proc expand-time-eval)
-     (with-syntax ((id #'id)
-                   (rt-symbol-proc #'rt-symbol-proc)
-                   (output-proc #'output-proc)
-                   (expand-time-eval #'expand-time-eval))
-       #'(defsyntax (id stx*)
-           (syntax-case stx* ()
-             ((macro s)
-              (stx-string? (syntax s))
-              (with-syntax ((ps (parse-quasistring
-                                 (syntax s)
-                                 (syntax macro)
-                                 rt-symbol-proc
-                                 output-proc
-                                 expand-time-eval)))
-                (syntax ps)))
-             ((macro s ctx)
-              (stx-string? (syntax s))
-              (with-syntax ((ps (parse-quasistring
-                                 (syntax s)
-                                 (syntax ctx)
-                                 rt-symbol-proc
-                                 output-proc
-                                 expand-time-eval)))
-                (syntax ps)))))))))
+    ((_ id rt-symbol-proc output-proc expand-time-eval)
+     #'(defsyntax (id stx*)
+         (syntax-case stx* ()
+           ((macro s)
+            (stx-string? (syntax s))
+            (with-syntax ((ps (parse-quasistring
+                               (syntax s)
+                               (syntax macro)
+                               rt-symbol-proc
+                               output-proc
+                               expand-time-eval)))
+              (syntax ps)))
+           ((macro s ctx)
+            (stx-string? (syntax s))
+            (with-syntax ((ps (parse-quasistring
+                               (syntax s)
+                               (syntax ctx)
+                               rt-symbol-proc
+                               output-proc
+                               expand-time-eval)))
+              (syntax ps))))))))
 
 (defsyntax (defincludes stx)
   (def (include-proc id ctx)
@@ -143,7 +139,7 @@
 (defquasiparser template
   (lambda (sym)
     (with-syntax ((sym (syntax->datum sym)))
-      #'(hash-ref ht (quote sym))))
+      #'(hash-get ht (quote sym))))
   (lambda (ops)
     (with-syntax (((ops ...) ops))
       #'(lambda (ht) (string-append ops ...))))
