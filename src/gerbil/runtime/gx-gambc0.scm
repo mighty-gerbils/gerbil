@@ -387,7 +387,10 @@
        (super-struct
         (cond
          ((struct-subtype? super-struct klass)
-          klass)
+          (let lp ((klass klass))
+            (if (struct-type? klass)
+              klass
+              (lp (##type-super klass)))))
          ((struct-subtype? klass super-struct)
           super-struct)
          (else
