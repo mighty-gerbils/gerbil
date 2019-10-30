@@ -6,6 +6,7 @@
 
 (import :gerbil/gambit/threads
         (only-in :gerbil/gambit/ports close-port)
+        :std/foreign
         :std/os/error
         :std/os/fd
         :std/os/fcntl)
@@ -132,44 +133,6 @@
 (def set-kevent-data! kevent_data_set)
 (def set-kevent-udata! kevent_udata_set)
 
-(extern
-  EV_ADD EV_ENABLE EV_DISABLE EV_DELETE EV_ONESHOT
-  EV_CLEAR EV_EOF EV_ERROR EVFILT_READ EVFILT_WRITE EVFILT_VNODE
-  EVFILT_PROC EVFILT_SIGNAL EVFILT_TIMER NOTE_WRITE NOTE_DELETE
-  NOTE_EXTEND NOTE_ATTRIB NOTE_LINK NOTE_RENAME NOTE_REVOKE
-  NOTE_EXIT NOTE_FORK NOTE_EXEC NOTE_LOWAT
-
-  make_timespec timespec_seconds_set timespec_nanoseconds_set
-  _kqueue _kevent
-  make_kevents
-  kevent_ident kevent_ident_set
-  kevent_filter kevent_filter_set
-  kevent_flags kevent_flags_set
-  kevent_fflags kevent_fflags_set
-  kevent_data kevent_data_set
-  kevent_udata kevent_udata_set
-  ev_set)
-
-(cond-expand
-  (openbsd
-   (extern EV_DISPATCH EV_RECEIPT EVFILT_DEVICE NOTE_TRUNCATE NOTE_TRACK
-     NOTE_TRACKERR NOTE_CHANGE))
-  (netbsd
-   (extern #;EV_DISPATCH #;EV_RECEIPT EVFILT_AIO #;EVFILT_FS NOTE_TRACK
-     NOTE_TRACKERR))
-  (freebsd
-   (extern EV_DISPATCH EV_RECEIPT EVFILT_AIO EVFILT_PROCDESC EVFILT_USER
-     NOTE_CLOSE NOTE_CLOSE_WRITE NOTE_OPEN NOTE_READ NOTE_TRACK
-     NOTE_SECONDS NOTE_MSECONDS NOTE_USECONDS NOTE_NSECONDS
-     NOTE_FFNOP NOTE_FFAND NOTE_FFOR NOTE_FFCOPY
-     NOTE_FFCTRLMASK NOTE_FFLAGSMASK))
-  (darwin
-   (extern EV_OOBAND EV_RECEIPT #;EVFILT_EXCEPT EVFILT_AIO EVFILT_MACHPORT
-     #;NOTE_OOB #;NOTE_FUNLOCK NOTE_EXITSTATUS
-     NOTE_SIGNAL NOTE_REAP NOTE_SECONDS NOTE_USECONDS
-     NOTE_NSECONDS #;NOTE_MACHTIME NOTE_ABSOLUTE NOTE_CRITICAL
-     NOTE_BACKGROUND NOTE_LEEWAY)))
-
 (cond-expand
   (openbsd
    (begin-foreign
@@ -184,64 +147,41 @@
    (begin-foreign
      (define-cond-expand-feature darwin))))
 
-(begin-foreign
-  (c-declare "#include <stdlib.h>")
+(begin-ffi
+  (EVFILT_AIO EVFILT_DEVICE EVFILT_EXCEPT EVFILT_FS EVFILT_MACHPORT
+   EVFILT_PROC EVFILT_PROCDESC EVFILT_READ EVFILT_SIGNAL EVFILT_TIMER
+   EVFILT_USER EVFILT_VNODE EVFILT_WRITE
+
+   EV_ADD EV_CLEAR EV_DELETE EV_DISABLE EV_DISPATCH EV_ENABLE EV_EOF
+   EV_ERROR EV_ONESHOT EV_OOBAND EV_RECEIPT
+
+   NOTE_ABSOLUTE NOTE_ATTRIB NOTE_BACKGROUND NOTE_CHANGE NOTE_CLOSE
+   NOTE_CLOSE_WRITE NOTE_CRITICAL NOTE_DELETE NOTE_EXEC NOTE_EXIT
+   NOTE_EXITSTATUS NOTE_EXTEND NOTE_FFAND NOTE_FFCOPY NOTE_FFCTRLMASK
+   NOTE_FFLAGSMASK NOTE_FFNOP NOTE_FFOR NOTE_FORK NOTE_FUNLOCK NOTE_LEEWAY
+   NOTE_LINK NOTE_LOWAT NOTE_MACHTIME NOTE_MSECONDS NOTE_NSECONDS NOTE_OOB
+   NOTE_OPEN NOTE_READ NOTE_REAP NOTE_RENAME NOTE_REVOKE NOTE_SECONDS
+   NOTE_SIGNAL NOTE_TRACK NOTE_TRACKERR NOTE_TRUNCATE NOTE_USECONDS
+   NOTE_WRITE
+
+   kevent* timespec timespec*
+   make_timespec timespec_seconds_set timespec_nanoseconds_set
+   _kqueue _kevent
+   __kqueue __kevent
+   make_kevents
+   kevent_ident kevent_ident_set
+   kevent_filter kevent_filter_set
+   kevent_flags kevent_flags_set
+   kevent_fflags kevent_fflags_set
+   kevent_data kevent_data_set
+   kevent_udata kevent_udata_set
+   ev_set)
+
   (c-declare "#include <sys/types.h>")
   (c-declare "#include <sys/event.h>")
   (c-declare "#include <sys/time.h>")
 
-  (define-macro (define-c-lambda id args ret #!optional (name #f))
-    (let ((name (or name (##symbol->string id))))
-      `(define ,id
-         (c-lambda ,args ,ret ,name))))
-
-  (define-macro (define-const symbol)
-    (let* ((str (##symbol->string symbol))
-           (ref (##string-append "___return (" str ");")))
-      `(define ,symbol
-         ((c-lambda () int ,ref)))))
-
-  (define-macro (define-guard guard defn)
-    (if (eval `(cond-expand (,guard #t) (else #f)))
-      '(begin)
-      (begin
-        (eval `(define-cond-expand-feature ,guard))
-        defn)))
-
-  (namespace ("std/os/kqueue#"
-              EV_ADD EV_ENABLE EV_DISABLE EV_DELETE EV_RECEIPT EV_ONESHOT
-              EV_CLEAR EV_EOF EV_ERROR EVFILT_READ EVFILT_WRITE
-              EVFILT_VNODE EVFILT_PROC EVFILT_SIGNAL EVFILT_TIMER
-              NOTE_WRITE NOTE_DELETE NOTE_EXTEND NOTE_ATTRIB NOTE_LINK
-              NOTE_RENAME NOTE_REVOKE NOTE_EXIT NOTE_FORK NOTE_EXEC
-
-              EV_DISPATCH EVFILT_DEVICE NOTE_TRUNCATE NOTE_TRACK
-              NOTE_TRACKERR NOTE_CHANGE EVFILT_AIO EVFILT_FS
-
-              EVFILT_PROCDESC EVFILT_USER NOTE_CLOSE
-              NOTE_CLOSE_WRITE NOTE_OPEN NOTE_READ
-              NOTE_SECONDS NOTE_MSECONDS NOTE_USECONDS NOTE_NSECONDS
-              NOTE_FFNOP NOTE_FFAND NOTE_FFOR NOTE_FFCOPY
-              NOTE_FFCTRLMASK NOTE_FFLAGSMASK
-
-              EV_OOBAND #;EVFILT_EXCEPT EVFILT_MACHPORT NOTE_LOWAT
-              #;NOTE_OOB #;NOTE_FUNLOCK NOTE_EXITSTATUS NOTE_SIGNAL
-              NOTE_REAP #;NOTE_MACHTIME NOTE_ABSOLUTE NOTE_CRITICAL
-              NOTE_BACKGROUND NOTE_LEEWAY
-
-              kevent kevent* timespec timespec*
-              make_timespec timespec_seconds_set timespec_nanoseconds_set
-              __kqueue __kevent
-              _kqueue _kevent
-              make_kevents
-              kevent_ident kevent_ident_set
-              kevent_filter kevent_filter_set
-              kevent_flags kevent_flags_set
-              kevent_fflags kevent_fflags_set
-              kevent_data kevent_data_set
-              kevent_udata kevent_udata_set
-              ev_set
-              ))
+  (namespace ("std/os/kqueue#" kevent))
 
   ;; Flags
   (define-const EV_ADD)
@@ -340,8 +280,6 @@
      (define-const NOTE_BACKGROUND)
      (define-const NOTE_LEEWAY)))
 
-  (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
-
   (c-define-type kevent (struct "kevent"))
   (c-define-type kevent*
     (pointer kevent (kevent*) "ffi_free"))
@@ -402,16 +340,4 @@
 
   (define-c-lambda ev_set
     (kevent* int unsigned-int short unsigned-short unsigned-int int64 (pointer void)) void
-    "EV_SET(&___arg1[___arg2], ___arg3, ___arg4, ___arg5, ___arg6, ___arg7, ___arg8); ___return;")
-
-  (c-declare #<<END-C
-#ifndef __HAVE_FFI_FREE
-#define __HAVE_FFI_FREE
-___SCMOBJ ffi_free (void *ptr)
-{
- free(ptr);
- return ___FIX (___NO_ERR);
-}
-#endif
-END-C
-))
+    "EV_SET(&___arg1[___arg2], ___arg3, ___arg4, ___arg5, ___arg6, ___arg7, ___arg8); ___return;"))
