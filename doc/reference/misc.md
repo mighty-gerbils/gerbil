@@ -5099,6 +5099,26 @@ Returns true when the string *s* consists only of whitespace characters.
 ```
 :::
 
+### random-string
+``` scheme
+(random-string [len = 10]) -> string | error
+
+  len := optional, length of the output string
+```
+
+`random-string` returns a string consisting of regex word-boundary
+characters (`[a-zA-Z0-9_]`). Throws an error if `len` is not a fixnum.
+
+::: tip Examples:
+``` scheme
+> (random-string)
+"5CfMyYd2Ob"
+
+> (random-string 0)
+""
+```
+:::
+
 ### line ending variables
 ``` scheme
 (define +cr+   "\r")

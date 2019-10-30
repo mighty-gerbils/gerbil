@@ -10,10 +10,12 @@
   string-trim-eol
   string-subst
   string-whitespace?
+  random-string
   +cr+ +lf+ +crlf+)
 
 (import
   (only-in :gerbil/gambit/ports write-substring write-string)
+  (only-in :gerbil/gambit/random random-integer)
   :std/srfi/13)
 
 ;; If the string starts with given prefix, return the end of the string after the prefix.
@@ -185,3 +187,31 @@
 ;;  (string-whitespace? " \n\r \t") => #t
 (def (string-whitespace? s)
   (string-every char-whitespace? s))
+
+
+(def (random-word-char)
+  (declare (not safe) (fixnum))
+  (def n (random-integer 63))
+  (integer->char
+   (+ n (cond
+	 ((< n 10) 48) ; 0-9
+	 ((< n 36) 55) ; A-Z
+	 ((< n 62) 61) ; a-z
+	 (else 33))))) ; _
+
+
+;; random-string returns a string consisting of regex word-boundary
+;; characters [a-zA-Z0-9_]. Throws an error if len is not a fixnum.
+;;
+;; Example:
+;;  (random-string) => "5CfMyYd2Ob"
+(def (random-string (len 10))
+  (declare (not safe) (fixnum))
+  (unless (fixnum? len) (error "len must be a fixnum"))
+  (if (> len 0)
+    (let (str (make-string len))
+      (do ((i 0 (1+ i)))
+	  ((= i len))
+	(string-set! str i (random-word-char)))
+      str)
+    ""))
