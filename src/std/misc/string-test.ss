@@ -1,7 +1,9 @@
 (export string-test)
 
 (import
-  :std/misc/string :std/srfi/13 :std/test :gerbil/gambit/exceptions)
+  :std/misc/string :std/srfi/13
+  :std/test :gerbil/gambit/exceptions
+  :std/pregexp)
 
 (def (error-with-message? message)
   (lambda (e)
@@ -58,4 +60,9 @@
       (check-equal? (string-whitespace? " ") #t)
       (check-equal? (string-whitespace? " \n") #t)
       (check-equal? (string-whitespace? " \n\t\r\f\v") #t)
-      (check-equal? (string-whitespace? " a") #f))))
+      (check-equal? (string-whitespace? " a") #f))
+    (test-case "random-string"
+      (check-eq? (and (pregexp-match "^\\w+$" (random-string 100)) #t) #t)
+      (check-equal? (random-string 0) "")
+      (check-equal? (random-string -1) "")
+      (check-equal? (string-length (random-string 5)) 5))))
