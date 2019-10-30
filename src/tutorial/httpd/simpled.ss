@@ -80,8 +80,6 @@
     (http-response-write res 200 '(("Content-Type" . "text/html"))
       (t [title: "Title" h1: "Hey!"]))))
 
-
-
 ;; default
 (def (default-handler req res)
   (http-response-write res 404 '(("Content-Type" . "text/plain"))
