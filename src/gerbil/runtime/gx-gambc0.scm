@@ -833,6 +833,12 @@
    (else
     (error "Bad class; expected type-descriptor" klass))))
 
+(define &method-specializers
+  (make-table test: eq?))
+
+(define (bind-specializer! proc specializer)
+  (hash-put! &method-specializers proc specializer))
+
 (define (next-method subklass obj id)
   (let ((klass (object-type obj))
         (type-id (##type-id subklass)))
