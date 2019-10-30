@@ -67,7 +67,6 @@
 (def (self-handler req res)
   (http-response-file res '(("Content-Type" . "text/plain")) "simpled.ss"))
 
-;; json utility function
 ;; /template
 (def (template-handler req res)
   (def (json-ref key)
@@ -77,9 +76,9 @@
         ref
         (string-append "Key " key " not found."))))
 
-  (let (t (include-template** "template.html"))
+  (let (t (include-template** "templates/template.html"))
     (http-response-write res 200 '(("Content-Type" . "text/html"))
-                         (t [title: "Title" h1-contents: "Yo!"]))))
+                         (t [title: "Title" h1: "Hey!"]))))
 
 
 
