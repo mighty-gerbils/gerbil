@@ -24,6 +24,7 @@ and handles 3 request URLs:
 - `/echo` which echoes back the body of the request
 - `/headers[?json]` which echoes back the headers of the request
 - `/self` which prints the source code of the program
+- `/template` which renders the *template.html* template
 
 ### The main function
 
@@ -51,6 +52,7 @@ for the various paths we want to handle:
     (http-register-handler httpd "/echo" echo-handler)
     (http-register-handler httpd "/headers" headers-handler)
     (http-register-handler httpd "/self" self-handler)
+    (http-register-handler httpd "/template" template-handler)
     (thread-join! httpd)))
 ```
 
@@ -125,6 +127,57 @@ a file as an http response using fast raw device i/o.
   (http-response-file res '(("Content-Type" . "text/plain")) "simpled.ss"))
 ```
 
+#### The `/template` handler
+
+The macros from `std/misc/text` can be used to generate HTML ressponses.
+This handler includes the *template.html* template, which takes a `plist`
+as argument. See `std/misc/text` for details on the macros.
+
+```scheme
+(def (template-handler req res)
+  (def (json-ref key)
+    (let* ((json (read-json (open-input-u8vector (http-request-body req))))
+           (ref (hash-ref json key)))
+      (if ref
+        ref
+        (string-append "Key " key " not found."))))
+
+  (let (t (include-template** "template.html"))
+    (http-response-write res 200 '(("Content-Type" . "text/html"))
+                         (t [title: "Title" h1-contents: "Hey!"]))))
+```
+
+Here is *template.html*:
+
+```html
+<html>
+    <head>
+        <title>#{title}</title>
+    </head>
+    <body>
+        <h1>#{h1}</h1>
+
+        <!-- sub-template -->
+        ##{(include-text "templates/subtemplate.html")}
+
+        <h3>Your message is: #{(json-ref 'message)}</h3>
+    </body>
+</html>
+```
+
+And here is *subtemplate.html*:
+
+```html
+<div>
+    <h2>This is a subtemplate.</h2>
+    <div>
+        ##{(sxml->html-string-fragment
+        (cons 'ul (for/fold (l []) (i (in-range 10))
+        (append l [['li i]]))))}
+    </div>
+</div>
+```
+
 #### The default handler
 
 The default handler is invoked when there is no matching handler.
@@ -166,4 +219,26 @@ Content-Length: 45
 Content-Type: text/plain
 
 these aren't the droids you are looking for.
+
+$ curl -d '{"message": "Hello, world!"}' -H "Content-Type: application/json" -X POST http://localhost:8080/template
+
+<html>
+    <head>
+        <title>Title</title>
+    </head>
+    <body>
+        <h1>Hey!</h1>
+
+        <!-- sub-template -->
+        <div>
+    <h2>This is a subtemplate.</h2>
+    <div>
+        <ul><li>0</li><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li></ul>
+    </div>
+</div>
+
+
+        <h3>Your message is: Hello, world!</h3>
+    </body>
+</html>
 ```
