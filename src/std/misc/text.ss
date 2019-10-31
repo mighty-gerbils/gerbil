@@ -64,8 +64,8 @@
               (if (eq? c+2 #\})
                 (if (symbol? sexp)
                   (lp port (read-char port) (cons* (rt-symbol-proc sexp) str ops) "")
-                  (lp port (read-char port) (cons* sexp str ops) ""))
-                (error qs-err-missing-close c+2))))
+                  (lp port (read-char port) (cons* (datum->syntax ctx sexp) str ops) ""))
+                (lp port (read-char port) ops (string-append str (list->string [c c+1 c+2]))))))
            ((eq? c+1 #\#) ;; expansion time template variables
             (if expansion-time-eval
               (let (c+2 (read-char port))
@@ -80,9 +80,11 @@
                              (new-port (open-input-string tmp)))
                         (close-input-port port)
                         (lp new-port (read-char new-port) ops str))
-                      (error qs-err-missing-close c+3)))
+                      (lp port (read-char port) ops (string-append str (list->string [c c+1 c+2 c+3])))))
                   (lp port (read-char port) ops (string-append str (list->string [c c+1 c+2])))))
-              (lp port (read-char port) ops (string-append str (list->string [c c+1]))))))))
+              (lp port (read-char port) ops (string-append str (list->string [c c+1])))))
+           (else
+            (lp port (read-char port) ops (string-append str (list->string [c c+1])))))))
        ((eq? c #!eof)
         (close-input-port port)
         (with-syntax (((ops ...) (datum->syntax ctx (map-format (reverse (cons* str ops))))))
@@ -97,23 +99,41 @@
      #'(defsyntax (id stx*)
          (syntax-case stx* ()
            ((macro s)
-            (stx-string? (syntax s))
-            (with-syntax ((ps (parse-quasistring
-                               (syntax s)
-                               (syntax macro)
-                               rt-symbol-proc
-                               output-proc
-                               expand-time-eval)))
-              (syntax ps)))
+            (if (stx-string? (syntax s))
+              (with-syntax ((ps (parse-quasistring
+                                 (syntax s)
+                                 (syntax macro)
+                                 rt-symbol-proc
+                                 output-proc
+                                 expand-time-eval)))
+                (syntax ps))
+              ;; if not a string, eval the sexp
+              (with-syntax* ((s* (eval** (syntax s) (syntax macro)))
+                             (ps (parse-quasistring
+                                  (syntax s*)
+                                  (syntax macro)
+                                  rt-symbol-proc
+                                  output-proc
+                                  expand-time-eval)))
+                (syntax ps))))
            ((macro s ctx)
-            (stx-string? (syntax s))
-            (with-syntax ((ps (parse-quasistring
-                               (syntax s)
-                               (syntax ctx)
-                               rt-symbol-proc
-                               output-proc
-                               expand-time-eval)))
-              (syntax ps))))))))
+            (if (stx-string? (syntax s))
+              (with-syntax ((ps (parse-quasistring
+                                 (syntax s)
+                                 (syntax ctx)
+                                 rt-symbol-proc
+                                 output-proc
+                                 expand-time-eval)))
+                (syntax ps))
+              ;; if not a string, eval the sexp
+              (with-syntax* ((s* (eval** (syntax s) (syntax ctx)))
+                             (ps (parse-quasistring
+                                  (syntax s*)
+                                  (syntax ctx)
+                                  rt-symbol-proc
+                                  output-proc
+                                  expand-time-eval)))
+                (syntax ps)))))))))
 
 (defsyntax (defincludes stx)
   (def (include-proc id ctx)
