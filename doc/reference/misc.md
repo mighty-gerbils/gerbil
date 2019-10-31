@@ -5364,6 +5364,240 @@ EOF
 ```
 :::
 
+### quasistring
+``` scheme
+(quasistring str) -> string
+
+  str := template string containing run-time template variables only
+```
+
+Macro that parses the template string *str* for run-time template variables.
+These are denoted by `#{}`. They can contain either symbols, which are captured
+in the lexical scope, or s-expressions. Returns a `string-append` containing
+the parsed string with template variables inserted in the proper order for
+run-time evaluation.
+
+Each run-time variable is passed to `format` for conversion to a `string`.
+
+::: tip Examples:
+``` scheme
+> (let (name "world") (quasistring "Hello, #{name}!"))
+"Hello, world!"
+> (def (qs name: name) (quasistring "Hello, #{name}!"))
+> (displayln (qs name: "world"))
+Hello, world!
+> (pp qs)
+(lambda #0=#:args4967 (apply keyword-dispatch #(name:) #:kw-lambda4564 #0#))
+> (pp (lambda (name) (quasistring "Hello, #{name}!")))
+(lambda (#0=#:name71)
+  (string-append "Hello, " (std/format#format "~a" #0#) "!"))
+> (pp (quasistring "Current UNIX time: #{(time->seconds (current-time))}"))
+"Current UNIX time: 1572452220.8500578"
+> (def (now) (quasistring "Current UNIX time: #{(time->seconds (current-time))}"))
+> (pp now)
+(lambda ()
+  (string-append
+   "Current UNIX time: "
+   (std/format#format "~a" (time->seconds (current-time)))
+   ""))
+> (now)
+"Current UNIX time: 1572452333.9675934"
+```
+:::
+
+### quasistring*
+``` scheme
+(quasistring str) -> string
+
+  str := template string containing run-time and/or expansion-time template variables
+```
+
+Macro with the same behaviour as `quasistring` but also accepts expansion-time
+template variables, denoted with `##{}`. Expansion-time template variables
+are captured in at the top-level context (i.e. not in a `let` form).
+
+Imports used inside expansion-time template variables need to be
+imported `for-syntax`.
+
+::: tip Examples:
+``` scheme
+> (def (qs name) (quasistring* "Hello, #{name}!"))
+> (qs "world")
+"Hello, world!"
+> (def compiled-qs (let (name "world") (quasistring* "Hello, ##{name}!")))
+*** ERROR IN ##main -- Unbound variable: #:name77
+> (def name "world")
+> (def compiled-qs (quasistring* "Hello, ##{name}!"))
+> compiled-qs
+"Hello, world!"
+> (pp compiled-qs)
+"Hello, world!"
+> (string? compiled-qs)
+#t
+> (def (qs name) (quasistring* "Hello, #{name}!\nCurrent UNIX time: ##{(time->seconds (current-time))}"))
+> (displayln (qs "world"))
+Hello, world!
+Current UNIX time: 1572452685.6643195
+> (pp qs)     
+(lambda (#0=#:name80)
+  (string-append
+   "Hello, "
+   (std/format#format "~a" #0#)
+   "!\nCurrent UNIX time: 1572452685.6643195"))
+```
+:::
+
+### template/hash
+``` scheme
+(template/hash str) -> lambda (ht) -> string
+
+  str := template string containing run-time and/or expansion-time template variables
+  ht  := hash table with keys corresponding to symbols in run-time template variables
+```
+
+Macro which parses the quasistring *str* for run-time and expansion-time
+template variables. Expands into a `lambda` which accepts a hash table *ht*
+as argument, whose keys are the run-time (`#{}`) template variable containing
+a symbol. Expansion-time template variables (`##{}`) are captured at the
+top-level context (i.e. not in a `let` form).
+
+Imports used inside expansion-time template variables need to be
+imported `for-syntax`.
+
+::: tip Examples:
+``` scheme
+> (import :std/sugar)
+> (def t (template/hash "Hello, #{name}!"))
+> (pp t)
+(lambda (#0=#:ht44)
+  (string-append "Hello, " (std/format#format "~a" (hash-get #0# 'name)) "!"))
+> (t (hash (name "world")))
+"Hello, world!"
+```
+:::
+
+### template/alist
+``` scheme
+(template/alist str) -> lambda (al) -> string
+
+  str := template string containing run-time and/or expansion-time template variables
+  al  := alist with keys corresponding to symbols in run-time template variables
+```
+
+Behaves as `template/hash` except it expands into a `lambda` which accepts an association list *al* as argument. The alist's keys are the run-time (`#{}`) template variable containing a symbol. 
+
+::: tip Examples:
+``` scheme
+> (def t (template/alist "Hello, #{name}!"))
+> (displayln (t '((name . "world"))))
+Hello, world!
+```
+:::
+
+### template/plist
+``` scheme
+(template/plist str) -> lambda (pl) -> string
+
+  str := template string containing run-time and/or expansion-time template variables
+  pl  := plist with properties corresponding to symbols in run-time template variables
+```
+
+Behaves as `template/hash` except it expands into a `lambda` which accepts
+a property list *pl* as argument. The plist's properties are the run-time
+(`#{}`) template variable containing a symbol. 
+
+::: tip Examples:
+``` scheme
+> (def t (template/plist "Hello, #{name}!"))
+> (displayln (t [name: "world"]))
+Hello, world!
+```
+:::
+
+### include-quasistring
+``` scheme
+(include-quasistring path) -> string
+
+  path := path to the template file to include
+```
+
+Macro that parses the `quasistring` in template file at *path* using `include-text`.
+
+::: tip Examples:
+``` scheme
+> (let (name "world") (include-quasistring "std/misc/_test/run-time.txt"))
+"Hello, world!\n"
+```
+:::
+
+### include-quasistring*
+``` scheme
+(include-quasistring* path) -> string
+
+  path := path to the template file to include
+```
+
+Macro that parses the `quasistring*` in template file at *path* using `include-text`.
+
+::: tip Examples:
+``` scheme
+> (import (for-syntax :std/misc/bytes))
+> (let (name "world") (include-quasistring* "std/misc/_test/mixed.txt"))
+"Hello, world!\nFF 00 FF\n"
+```
+:::
+
+### include-template/hash
+``` scheme
+(include-template/hash path) -> string
+
+  path := path to the template file to include
+```
+
+Macro that parses the `template/hash` in template file at *path* using `include-text`.
+
+::: tip Examples:
+``` scheme
+> (import :std/sugar)
+> (def t (include-template/hash "std/misc/_test/mixed.txt"))
+> (t (hash (name "world")))
+"Hello, world!\nFF 00 FF\n"
+```
+:::
+
+### include-template/alist
+``` scheme
+(include-template/alist path) -> string
+
+  path := path to the template file to include
+```
+
+Macro that parses the `template/alist` in template file at *path* using `include-text`.
+
+::: tip Examples:
+``` scheme
+> (def t (include-template/alist "std/misc/_test/mixed.txt"))
+> (t '((name . "world")))
+"Hello, world!\nFF 00 FF\n"
+```
+:::
+
+### include-template/plist
+``` scheme
+(include-template/plist path) -> string
+
+  path := path to the template file to include
+```
+
+Macro that parses the `template/plist` in template file at *path* using `include-text`.
+
+::: tip Examples:
+``` scheme
+> (def t (include-template/plist "std/misc/_test/mixed.txt"))
+> (t [name: "world"])
+"Hello, world!\nFF 00 FF\n"
+```
+:::
 
 ## Thread utilities
 ::: tip To use the bindings from this module:
