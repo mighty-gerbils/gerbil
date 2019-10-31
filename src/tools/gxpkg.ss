@@ -180,11 +180,23 @@
   (pkg-search keywords))
 
 ;;; action implementation -- script api
+(def +root-dir+
+  (getenv "GERBIL_PATH" "~/.gerbil"))
 (def +pkg-root-dir+
-  (path-expand "pkg" (getenv "GERBIL_PATH" "~/.gerbil")))
+  (path-expand "pkg" +root-dir+))
+(def +pkg-lib-dir+
+  (path-expand "lib" +root-dir+))
+(def +pkg-bin-dir+
+  (path-expand "bin" +root-dir+))
 
 (def pkg-root-dir
-  (let (once (delay (create-directory* +pkg-root-dir+)))
+  (let (once
+        (delay
+          (begin
+            (create-directory* +root-dir+)
+            (create-directory  +pkg-root-dir+)
+            (create-directory  +pkg-lib-dir+)
+            (create-directory  +pkg-bin-dir+))))
     (lambda ()
       (force once)
       +pkg-root-dir+)))
