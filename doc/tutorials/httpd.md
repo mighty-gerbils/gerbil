@@ -130,8 +130,10 @@ a file as an http response using fast raw device i/o.
 #### The `/template` handler
 
 The macros from `std/misc/text` can be used to generate HTML ressponses.
-This handler includes the *template.html* template, which takes a `plist`
-as argument. See `std/misc/text` for details on the macros.
+This handler includes the *template.html* template, which is parsed with
+`quasistring*` as it contains expansion-time template variables.
+
+See `std/misc/text` for details on the macros.
 
 ```scheme
 (def (template-handler req res)
@@ -142,9 +144,12 @@ as argument. See `std/misc/text` for details on the macros.
         ref
         (string-append "Key " key " not found."))))
 
-  (let (t (include-template** "template.html"))
-    (http-response-write res 200 '(("Content-Type" . "text/html"))
-                         (t [title: "Title" h1-contents: "Hey!"]))))
+  ;; title and h1 are run-time template variables
+  (def (t title h1)
+    (include-quasistring* "templates/template.html"))
+
+  (http-response-write res 200 '(("Content-Type" . "text/html"))
+    (t "Title" "Hey!")))
 ```
 
 Here is *template.html*:

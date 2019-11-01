@@ -3,7 +3,6 @@
 ;;; Simple web server
 (import :std/net/httpd
         :std/net/address
-        :std/net/request
         :std/text/json
         :std/misc/text
         ;; imports for templates
@@ -76,9 +75,12 @@
         ref
         (string-append "Key " key " not found."))))
 
-  (let (t (include-template** "templates/template.html"))
-    (http-response-write res 200 '(("Content-Type" . "text/html"))
-      (t [title: "Title" h1: "Hey!"]))))
+  ;; title and h1 are run-time template variables
+  (def (t title h1)
+    (include-quasistring* "templates/template.html"))
+
+  (http-response-write res 200 '(("Content-Type" . "text/html"))
+    (t "Title" "Hey!")))
 
 ;; default
 (def (default-handler req res)
