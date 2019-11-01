@@ -555,6 +555,7 @@
 (define (class-subtype? klass xklass)
   (let ((klass-t (##type-id klass)))
     (cond
+     ((eq? klass-t (##type-id xklass)))
      ((type-descriptor-mixin xklass)
       => (lambda (mixin)
            (and (find (lambda (xklass) (eq? klass-t (##type-id xklass)))
