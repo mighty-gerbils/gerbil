@@ -8,9 +8,6 @@
                     :std/stxutil
                     :std/sugar))
 (export include-text
-        template/hash  include-template/hash
-        template/alist include-template/alist
-        template/plist include-template/plist
         quasistring    include-quasistring
         quasistring*   include-quasistring*)
 
@@ -41,10 +38,6 @@
     (parameterize ((current-expander-phi (1+ (current-expander-phi))))
       (let (stx (datum->syntax ctx stx))
         (eval-syntax stx #t))))
-
-  (def ht (datum->syntax #f 'ht)) ;; hash table placeholder
-  (def al (datum->syntax #f 'al)) ;; alist placeholder
-  (def pl (datum->syntax #f 'pl)) ;; plist placeholder
 
   (def (parse-quasistring stx ctx rt-symbol-proc output-proc (expansion-time-eval #f))
     ;; rt-symbol-proc wraps sexp if sexp is a run time symbol
@@ -153,38 +146,6 @@
      (with-syntax (((procs ...) (map (cut include-proc <> #'macro) #'(id ...))))
        #'(begin procs ...)))))
 
-;; a template is a lambda with a hash-table as argument
-;; the hash table's keys must be the symbols used in run-time
-;; template variables, e.g. #{name} -> (table-ref hash-table 'name)
-(defquasiparser template/hash
-  (lambda (sym)
-    (with-syntax ((sym (syntax->datum sym)))
-      #'(hash-get ht (quote sym))))
-  (lambda (ops)
-    (with-syntax (((ops ...) ops))
-      #'(lambda (ht) (string-append ops ...))))
-  #t)
-
-;; template with alist as argument
-(defquasiparser template/alist
-  (lambda (sym)
-    (with-syntax ((sym (syntax->datum sym)))
-      #'(cdr (assoc (quote sym) al))))
-  (lambda (ops)
-    (with-syntax (((ops ...) ops))
-      #'(lambda (al) (string-append ops ...))))
-  #t)
-
-;; template with plist as argument
-(defquasiparser template/plist
-  (lambda (sym)
-    (with-syntax ((kw (symbol->keyword sym)))
-      #'(pget kw pl)))
-  (lambda (ops)
-    (with-syntax (((ops ...) ops))
-      #'(lambda (pl) (string-append ops ...))))
-  #t)
-
 ;; only allow run time template variables
 (defquasiparser quasistring
   (lambda (sym) sym)
@@ -201,6 +162,4 @@
       #'(string-append ops ...)))
   #t)
 
-(defincludes
-  quasistring quasistring*
-  template/hash template/alist template/plist)
+(defincludes quasistring quasistring*)

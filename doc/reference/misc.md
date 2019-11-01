@@ -5447,73 +5447,6 @@ Current UNIX time: 1572452685.6643195
 ```
 :::
 
-### template/hash
-``` scheme
-(template/hash str) -> lambda (ht) -> string
-
-  str := template string containing run-time and/or expansion-time template variables
-  ht  := hash table with keys corresponding to symbols in run-time template variables
-```
-
-Macro which parses the quasistring *str* for run-time and expansion-time
-template variables. Expands into a `lambda` which accepts a hash table *ht*
-as argument, whose keys are the run-time (`#{}`) template variable containing
-a symbol. Expansion-time template variables (`##{}`) are captured at the
-top-level context (i.e. not in a `let` form).
-
-Imports used inside expansion-time template variables need to be
-imported `for-syntax`.
-
-::: tip Examples:
-``` scheme
-> (import :std/sugar)
-> (def t (template/hash "Hello, #{name}!"))
-> (pp t)
-(lambda (#0=#:ht44)
-  (string-append "Hello, " (std/format#format "~a" (hash-get #0# 'name)) "!"))
-> (t (hash (name "world")))
-"Hello, world!"
-```
-:::
-
-### template/alist
-``` scheme
-(template/alist str) -> lambda (al) -> string
-
-  str := template string containing run-time and/or expansion-time template variables
-  al  := alist with keys corresponding to symbols in run-time template variables
-```
-
-Behaves as `template/hash` except it expands into a `lambda` which accepts an association list *al* as argument. The alist's keys are the run-time (`#{}`) template variable containing a symbol. 
-
-::: tip Examples:
-``` scheme
-> (def t (template/alist "Hello, #{name}!"))
-> (displayln (t '((name . "world"))))
-Hello, world!
-```
-:::
-
-### template/plist
-``` scheme
-(template/plist str) -> lambda (pl) -> string
-
-  str := template string containing run-time and/or expansion-time template variables
-  pl  := plist with properties corresponding to symbols in run-time template variables
-```
-
-Behaves as `template/hash` except it expands into a `lambda` which accepts
-a property list *pl* as argument. The plist's properties are the run-time
-(`#{}`) template variable containing a symbol. 
-
-::: tip Examples:
-``` scheme
-> (def t (template/plist "Hello, #{name}!"))
-> (displayln (t [name: "world"]))
-Hello, world!
-```
-:::
-
 ### include-quasistring
 ``` scheme
 (include-quasistring path) -> string
@@ -5543,58 +5476,6 @@ Macro that parses the `quasistring*` in template file at *path* using `include-t
 ``` scheme
 > (import (for-syntax :std/misc/bytes))
 > (let (name "world") (include-quasistring* "std/misc/_test/mixed.txt"))
-"Hello, world!\nFF 00 FF\n"
-```
-:::
-
-### include-template/hash
-``` scheme
-(include-template/hash path) -> string
-
-  path := path to the template file to include
-```
-
-Macro that parses the `template/hash` in template file at *path* using `include-text`.
-
-::: tip Examples:
-``` scheme
-> (import :std/sugar)
-> (def t (include-template/hash "std/misc/_test/mixed.txt"))
-> (t (hash (name "world")))
-"Hello, world!\nFF 00 FF\n"
-```
-:::
-
-### include-template/alist
-``` scheme
-(include-template/alist path) -> string
-
-  path := path to the template file to include
-```
-
-Macro that parses the `template/alist` in template file at *path* using `include-text`.
-
-::: tip Examples:
-``` scheme
-> (def t (include-template/alist "std/misc/_test/mixed.txt"))
-> (t '((name . "world")))
-"Hello, world!\nFF 00 FF\n"
-```
-:::
-
-### include-template/plist
-``` scheme
-(include-template/plist path) -> string
-
-  path := path to the template file to include
-```
-
-Macro that parses the `template/plist` in template file at *path* using `include-text`.
-
-::: tip Examples:
-``` scheme
-> (def t (include-template/plist "std/misc/_test/mixed.txt"))
-> (t [name: "world"])
 "Hello, world!\nFF 00 FF\n"
 ```
 :::
