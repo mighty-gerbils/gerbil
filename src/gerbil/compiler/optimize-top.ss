@@ -1331,6 +1331,16 @@ namespace: gxc
      (begin
        (hash-put! slots (stx-e #'slot) #t)
        (compile-e #'expr self methods slots)))
+    ((_ (%#ref getf) (%#ref -self))
+     (and (!class-getf? (optimizer-resolve-type (identifier-symbol #'getf)))
+          (free-identifier=? #'-self self))
+     (hash-put! slots (!class-getf-slot (optimizer-resolve-type (identifier-symbol #'getf))) #t))
+    ((_ (%#ref setf) (%#ref -self) expr)
+     (and (!class-setf? (optimizer-resolve-type (identifier-symbol #'setf)))
+          (free-identifier=? #'-self self))
+     (begin
+       (hash-put! slots (!class-setf-slot (optimizer-resolve-type (identifier-symbol #'setf))) #t)
+       (compile-e #'expr self methods slots)))
     (_ (collect-operands stx self methods slots))))
 
 (def (subst-object-refs-call% stx self methods slots)
@@ -1369,6 +1379,23 @@ namespace: gxc
           (free-identifier=? #'-self self))
      (let (($field (hash-ref slots (stx-e #'slot)))
            (expr (compile-e #'expr self methods slots)))
+       (xform-wrap-source
+        ['%#call ['%#ref '##vector-set!] ['%#ref self] ['%#ref $field] expr]
+        stx)))
+    ((_ (%#ref getf) (%#ref -self))
+     (and (!class-getf? (optimizer-resolve-type (identifier-symbol #'getf)))
+          (free-identifier=? #'-self self))
+     (let* ((slot (!class-getf-slot (optimizer-resolve-type (identifier-symbol #'getf))))
+            ($field (hash-ref slots slot)))
+       (xform-wrap-source
+        ['%#call ['%#ref '##vector-ref] ['%#ref self] ['%#ref $field]]
+        stx)))
+    ((_ (%#ref setf) (%#ref -self) expr)
+     (and (!class-setf? (optimizer-resolve-type (identifier-symbol #'setf)))
+          (free-identifier=? #'-self self))
+     (let* ((slot (!class-setf-slot (optimizer-resolve-type (identifier-symbol #'getf))))
+            ($field (hash-ref slots slot))
+            (expr (compile-e #'expr self methods slots)))
        (xform-wrap-source
         ['%#call ['%#ref '##vector-set!] ['%#ref self] ['%#ref $field] expr]
         stx)))
