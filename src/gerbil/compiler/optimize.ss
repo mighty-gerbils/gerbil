@@ -117,8 +117,11 @@ namespace: gxc
 (def (optimize-source stx)
   (apply-collect-mutators stx)
   (apply-collect-methods stx)
+  ;; collect top-level types to aid specializer generation
+  (apply-collect-top-level-type-info stx)
   (let* ((stx (apply-generate-method-specializers stx))
          (stx (apply-lift-top-lambdas stx)))
+    ;; full type collection to aid further optimizations
     (apply-collect-type-info stx)
     (let (stx (apply-optimize-annotated stx))
       (apply-optimize-call stx))))

@@ -11,6 +11,15 @@ namespace: gxc
         "optimize-xform")
 (export #t)
 
+(defcompile-method apply-collect-top-level-type-info (&collect-top-level-type-info &void)
+  (%#begin            collect-begin%)
+  (%#begin-syntax     collect-begin-syntax%)
+  (%#module           collect-module%)
+  (%#define-values    collect-top-level-type-define-values%))
+
+(defcompile-method apply-basic-expression-top-level-type (&basic-expression-top-level-type &false)
+  (%#call             basic-expression-type-call%))
+
 (defcompile-method apply-collect-type-info (&collect-type-info &void)
   (%#begin            collect-begin%)
   (%#begin-syntax     collect-begin-syntax%)
@@ -71,16 +80,32 @@ namespace: gxc
   (%#begin xform-begin%)
   (%#call  subst-object-refs-call%))
 
+;;; apply-collect-top-level-type-infp
+(def (collect-top-level-type-define-values% stx)
+  (ast-case stx ()
+    ((_ (id) expr)
+     (identifier? #'id)
+     (let (sym (identifier-symbol #'id))
+       (if (hash-get (current-compile-mutators) sym)
+           (verbose "skipping type inference for mutable binding " sym)
+           (alet (type (apply-basic-expression-top-level-type #'expr))
+             (optimizer-declare-type! sym type)))))
+    (_ (void))))
+
 ;;; apply-collect-type-info
 (def (collect-type-define-values% stx)
   (ast-case stx ()
     ((_ (id) expr)
      (identifier? #'id)
      (let (sym (identifier-symbol #'id))
-       (if (hash-get (current-compile-mutators) sym)
-           (verbose "skipping type declaration for mutable binding " sym)
-           (alet (type (apply-basic-expression-type #'expr))
-             (optimizer-declare-type! sym type)))
+       (cond
+        ((hash-get (current-compile-mutators) sym)
+         (verbose "skipping type inference for mutable binding " sym))
+        ((optimizer-lookup-type sym) ; already have a type from top level type collection
+         (verbose "skipping type inference for already declared type " sym))
+        (else
+         (alet (type (apply-basic-expression-type #'expr))
+           (optimizer-declare-type! sym type))))
        (compile-e #'expr)))
     ((_ hd expr)
      (compile-e #'expr))))
