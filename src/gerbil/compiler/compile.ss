@@ -629,12 +629,16 @@ namespace: gxc
             ['error errmsg count]]])))))
 
 (def (generate-runtime-values-count var)
-  ['if ['##values? var] ['##vector-length var] 1])
+  ['let []
+    '(declare (not safe))
+    ['if ['##values? var] ['##vector-length var] 1]])
 
 (def (generate-runtime-values-ref var i rest)
-  (if (and (fx= i 0) (not (stx-pair? rest)))
-    ['if ['##values? var] ['##vector-ref var 0] var]
-    ['##vector-ref var i]))
+  ['let []
+    '(declare (not safe))
+    (if (and (fx= i 0) (not (stx-pair? rest)))
+      ['if ['##values? var] ['##vector-ref var 0] var]
+      ['##vector-ref var i])])
 
 (def (generate-runtime-values->list var i)
   (cond
