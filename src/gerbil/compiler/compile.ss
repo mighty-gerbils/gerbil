@@ -1011,8 +1011,26 @@ namespace: gxc
 
 (def (generate-runtime-struct-direct-instancep% stx)
   (ast-case stx ()
-    ((_ type-id expr)
-     ['##structure-direct-instance-of? (compile-e #'expr) (compile-e #'type-id)])))
+    ((_ type-id obj)
+     ;; see gambit#422
+     (let lp ((rest [#'type-id #'obj])
+              (bind [])
+              (args []))
+       (match rest
+         ([e . rest]
+          (ast-case e (%#quote %#ref)
+            ((%#ref _)
+             (lp rest bind (cons (compile-e e) args)))
+            ((%#quote _)
+             (lp rest bind (cons (compile-e e) args)))
+            (_
+             (let (tmp (make-symbol (gensym '__tmp)))
+               (lp rest (cons [tmp (compile-e e)] bind) (cons tmp args))))))
+         (else
+          ['let [bind ...]
+            '(declare (not safe))
+            ;; (##structure-direct-instance-of? obj type-id)
+            ['##structure-direct-instance-of? args ...]]))))))
 
 (def (generate-runtime-struct-ref% stx)
   (ast-case stx ()
@@ -1051,34 +1069,48 @@ namespace: gxc
 (def (generate-runtime-struct-unchecked-ref% stx)
   (ast-case stx ()
     ((_ type off obj)
-     (cond-expand
-       (,(<= (system-version) 409003)
-        ;; see gambit#422
-        ['##c-code "___RESULT = ___VECTORREF (___ARG1, ___ARG2);"
-                   (compile-e #'obj)
-                   (compile-e #'off)])
-       (else
-        ['##unchecked-structure-ref (compile-e #'obj)  ; obj
-                                    (compile-e #'off)  ; off (incl type)
-                                    (compile-e #'type) ; type
-                                    '(quote #f)])))))  ; where
+     ;; see gambit#422
+     (let lp ((rest [#'type #'off #'obj])
+              (bind [])
+              (args []))
+       (match rest
+         ([e . rest]
+          (ast-case e (%#quote %#ref)
+            ((%#ref _)
+             (lp rest bind (cons (compile-e e) args)))
+            ((%#quote _)
+             (lp rest bind (cons (compile-e e) args)))
+            (_
+             (let (tmp (make-symbol (gensym '__tmp)))
+               (lp rest (cons [tmp (compile-e e)] bind) (cons tmp args))))))
+         (else
+          ['let [bind ...]
+            '(declare (not safe))
+            ;; (##unchecked-structure-ref obj off type where)
+            ['##unchecked-structure-ref args ... '(quote #f)]]))))))
 
 (def (generate-runtime-struct-unchecked-setq% stx)
   (ast-case stx ()
     ((_ type off obj val)
-     (cond-expand
-       (,(<= (system-version) 409003)
-        ;; see gambit#422
-        ['##c-code "___VECTORSET (___ARG1, ___ARG2, ___ARG3); ___RESULT = ___VOID;"
-                   (compile-e #'obj)
-                   (compile-e #'off)
-                   (compile-e #'val)])
-       (else
-        ['##unchecked-structure-set! (compile-e #'obj)  ; obj
-                                     (compile-e #'val)  ; val
-                                     (compile-e #'off)  ; off (incl type)
-                                     (compile-e #'type) ; type
-                                     '(quote #f)])))))  ; where
+     ;; see gambit#422
+     (let lp ((rest [#'type #'val #'off #'obj])
+              (bind [])
+              (args []))
+       (match rest
+         ([e . rest]
+          (ast-case e (%#quote %#ref)
+            ((%#ref _)
+             (lp rest bind (cons (compile-e e) args)))
+            ((%#quote _)
+             (lp rest bind (cons (compile-e e) args)))
+            (_
+             (let (tmp (make-symbol (gensym '__tmp)))
+               (lp rest (cons [tmp (compile-e e)] bind) (cons tmp args))))))
+         (else
+          ['let [bind ...]
+            '(declare (not safe))
+            ;; (##unchecked-structure-set! obj off val type where)
+            ['##unchecked-structure-set! args ... '(quote #f)]]))))))
 
 ;;; loader
 (def (generate-runtime-loader-import% stx)
