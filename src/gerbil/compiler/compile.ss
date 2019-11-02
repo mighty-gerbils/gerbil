@@ -972,22 +972,52 @@ namespace: gxc
      ['quote (generate1 (stx-e #'datum))])))
 
 (def (generate-runtime-call% stx)
+  (def (compile-call rator rands)
+    (let ((rator (compile-e rator))
+          (rands (map compile-e rands)))
+      (ast-case rator (letrec lambda)
+        ;; decompile let loops -- Gambit optimizes them
+        ((letrec ((id (lambda (arg ...) body ...))) ret)
+         (eq? #'id #'ret)
+         (if (fx= (length rands) (length #'(arg ...)))
+           (let* ((id #'id)
+                  (args #'(arg ...))
+                  (body #'(body ...))
+                  (init (map list args rands)))
+             ['let id init body ...])
+           (raise-compile-error "Illegal loop application; arity mismatch" stx)))
+        (_ (cons rator rands)))))
+
   (ast-case stx ()
     ((_ rator . rands)
-     (let ((rator (compile-e #'rator))
-           (rands (map compile-e #'rands)))
-       (ast-case rator (letrec lambda)
-         ;; decompile let loops -- Gambit optimizes them
-         ((letrec ((id (lambda (arg ...) body ...))) ret)
-          (eq? #'id #'ret)
-          (if (fx= (length rands) (length #'(arg ...)))
-            (let* ((id #'id)
-                   (args #'(arg ...))
-                   (body #'(body ...))
-                   (init (map list args rands)))
-              ['let id init body ...])
-            (raise-compile-error "Illegal loop application; arity mismatch" stx)))
-         (_ (cons rator rands)))))))
+     ;; see gambit#422
+     (cond-expand
+       (gambit-inline-unsafe-primitives
+        (compile-call #'rator #'rands))
+       (else
+        (ast-case #'rator (%#ref)
+          ((%#ref _)
+           (let (f (compile-e #'rator))
+             (if (string-prefix? "##" (symbol->string f))
+               (let lp ((rest (reverse #'rands))
+                        (bind [])
+                        (args []))
+                 (match rest
+                   ([e . rest]
+                    (ast-case e (%#quote %#ref)
+                      ((%#ref _)
+                       (lp rest bind (cons (compile-e e) args)))
+                      ((%#quote _)
+                       (lp rest bind (cons (compile-e e) args)))
+                      (_
+                       (let (tmp (make-symbol (gensym '__tmp)))
+                         (lp rest (cons [tmp (compile-e e)] bind) (cons tmp args))))))
+                   (else
+                    ['let [bind ...]
+                      '(declare (not safe))
+                      (cons f args)])))
+               (compile-call #'rator #'rands))))
+             (_ (compile-call #'rator #'rands))))))))
 
 (def (generate-runtime-if% stx)
   (def (simplify code)
