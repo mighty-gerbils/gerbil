@@ -1097,7 +1097,7 @@ namespace: gxc
   (ast-case stx ()
     ((_ type off obj val)
      ;; see gambit#422
-     (let lp ((rest [#'type #'val #'off #'obj])
+     (let lp ((rest [#'type #'off #'val #'obj])
               (bind [])
               (args []))
        (match rest
@@ -1113,7 +1113,7 @@ namespace: gxc
          (else
           ['let [bind ...]
             '(declare (not safe))
-            ;; (##unchecked-structure-set! obj off val type where)
+            ;; (##unchecked-structure-set! obj val off type where)
             ['##unchecked-structure-set! args ... '(quote #f)]]))))))
 
 ;;; loader
