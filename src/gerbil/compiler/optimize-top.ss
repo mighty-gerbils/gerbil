@@ -1153,7 +1153,7 @@ namespace: gxc
                  (lambda (struct-type-check1 struct-type-check2)
                    (let (specializer-body
                          (map
-                           (cut apply-subst-object-refs <> #'self
+                           (cut apply-subst-object-refs <> #'self $t
                                 method-calls slot-refs class-type-check struct-type-check1 struct-type-check2)
                            #'body))
                      (xform-wrap-source
@@ -1199,7 +1199,7 @@ namespace: gxc
                                (((self . args) . body)
                                 (let (body
                                       (map
-                                        (cut apply-subst-object-refs <> #'self
+                                        (cut apply-subst-object-refs <> #'self $t
                                              method-calls slot-refs class-type-check struct-type-check1 struct-type-check2)
                                         #'body))
                                   [#'(self . args) . body]))
@@ -1249,7 +1249,7 @@ namespace: gxc
                    (ast-case #'lambda-expr ()
                      ((_ (self . args) . body)
                       (let (body (map
-                                   (cut apply-subst-object-refs <> #'self
+                                   (cut apply-subst-object-refs <> #'self $t
                                         method-calls slot-refs class-type-check struct-type-check1 struct-type-check2)
                                    #'body))
                         (xform-wrap-source
@@ -1265,7 +1265,7 @@ namespace: gxc
                                 (ast-case clause ()
                                   (((self . args) . body)
                                    (let (body (map
-                                                (cut apply-subst-object-refs <> #'self
+                                                (cut apply-subst-object-refs <> #'self $t
                                                      method-calls slot-refs class-type-check struct-type-check1 struct-type-check2)
                                                 #'body))
                                      [#'(self . args) . body]))
@@ -1328,7 +1328,7 @@ namespace: gxc
                            (lambda (struct-type-check1 struct-type-check2)
                              (let (specializer-body
                                    (map
-                                     (cut apply-subst-object-refs <> self
+                                     (cut apply-subst-object-refs <> self $t
                                           method-calls slot-refs class-type-check struct-type-check1 struct-type-check2)
                                      #'body))
                                (xform-wrap-source
@@ -1384,7 +1384,7 @@ namespace: gxc
                                ((_ hd . body)
                                 (let* ((self (list-ref #'hd self-index))
                                        (body (map
-                                               (cut apply-subst-object-refs <> self
+                                               (cut apply-subst-object-refs <> self $t
                                                     method-calls slot-refs class-type-check struct-type-check1 struct-type-check2)
                                                #'body)))
                                   (xform-wrap-source
@@ -1401,7 +1401,7 @@ namespace: gxc
                                             ((hd . body)
                                              (let* ((self (list-ref #'hd self-index))
                                                     (body (map
-                                                            (cut apply-subst-object-refs <> self
+                                                            (cut apply-subst-object-refs <> self $t
                                                                  method-calls slot-refs class-type-check struct-type-check1 struct-type-check2)
                                                             #'body)))
                                                [#'hd . body]))))
@@ -1527,7 +1527,7 @@ namespace: gxc
        (compile-e #'expr self methods slots class-check struct-check struct-assert)))
     (_ (collect-operands stx self methods slots class-check struct-check struct-assert)))))
 
-(def (subst-object-refs-call% stx self methods slots class-check struct-check struct-assert)
+(def (subst-object-refs-call% stx self $t methods slots class-check struct-check struct-assert)
   (def (force-e what)
     ['%#call ['%#ref 'force] ['%#ref what]])
 
@@ -1537,7 +1537,7 @@ namespace: gxc
      (and (runtime-identifier=? #'-call-method 'call-method)
           (free-identifier=? #'-self self))
      (let (($method (hash-ref methods (stx-e #'method)))
-           (args (map (cut compile-e <> self methods slots class-check struct-check struct-assert)
+           (args (map (cut compile-e <> self $t methods slots class-check struct-check struct-assert)
                       #'(args ...))))
        (xform-wrap-source
         ['%#call (force-e $method) ['%#ref self] args ...]
@@ -1547,7 +1547,7 @@ namespace: gxc
           (runtime-identifier=? #'-call-method 'call-method)
           (free-identifier=? #'-self self))
      (let (($method (hash-ref methods (stx-e #'method)))
-           (args (map (cut compile-e <> self methods slots class-check struct-check struct-assert)
+           (args (map (cut compile-e <> self $t methods slots class-check struct-check struct-assert)
                       #'(args ...))))
        (xform-wrap-source
         ['%#call ['%#ref 'apply] (force-e $method) ['%#ref self] args ...]
@@ -1558,16 +1558,16 @@ namespace: gxc
           (free-identifier=? #'-self self))
      (let ($field (hash-ref slots (stx-e #'slot)))
        (xform-wrap-source
-        ['%#call ['%#ref '##vector-ref] ['%#ref self] ['%#ref $field]]
+        ['%#struct-unchecked-ref ['%#ref $t] ['%#ref $field] ['%#ref self]]
         stx)))
     ((_ (%#ref -slot-set!) (%#ref -self) (%#quote slot) expr)
      (and (or (runtime-identifier=? #'-slot-set! 'slot-set!)
               (runtime-identifier=? #'-slot-set! 'unchecked-slot-set!))
           (free-identifier=? #'-self self))
      (let (($field (hash-ref slots (stx-e #'slot)))
-           (expr (compile-e #'expr self methods slots class-check struct-check struct-assert)))
+           (expr (compile-e #'expr self $t methods slots class-check struct-check struct-assert)))
        (xform-wrap-source
-        ['%#call ['%#ref '##vector-set!] ['%#ref self] ['%#ref $field] expr]
+        ['%#struct-unchecked-set! ['%#ref $t] ['%#ref $field] ['%#ref self] expr]
         stx)))
     ((_ (%#ref getf) (%#ref -self))
      (and (free-identifier=? #'-self self)
@@ -1575,16 +1575,16 @@ namespace: gxc
      (let* ((slot (!class-getf-slot (optimizer-resolve-type (identifier-symbol #'getf))))
             ($field (hash-ref slots slot)))
        (xform-wrap-source
-        ['%#call ['%#ref '##vector-ref] ['%#ref self] ['%#ref $field]]
+        ['%#struct-unchecked-ref ['%#ref $t] ['%#ref $field] ['%#ref self]]
         stx)))
     ((_ (%#ref setf) (%#ref -self) expr)
      (and (free-identifier=? #'-self self)
           (!class-setf? (optimizer-resolve-type (identifier-symbol #'setf))))
      (let* ((slot (!class-setf-slot (optimizer-resolve-type (identifier-symbol #'getf))))
             ($field (hash-ref slots slot))
-            (expr (compile-e #'expr self methods slots class-check struct-check struct-assert)))
+            (expr (compile-e #'expr self $t methods slots class-check struct-check struct-assert)))
        (xform-wrap-source
-        ['%#call ['%#ref '##vector-set!] ['%#ref self] ['%#ref $field] expr]
+        ['%#struct-unchecked-set! ['%#ref $t] ['%#ref $field] ['%#ref self] expr]
         stx)))
     ((_ (%#ref is?) (%#ref -self))
      (and (free-identifier=? #'-self self)
@@ -1640,7 +1640,7 @@ namespace: gxc
       (else #f))
      (let* ((setf (optimizer-resolve-type (identifier-symbol #'setf)))
             (t (!type-id setf))
-            (expr (compile-e #'expr self methods slots class-check struct-check struct-assert)))
+            (expr (compile-e #'expr self $t methods slots class-check struct-check struct-assert)))
        (cond
         ((!struct-setf-unchecked? setf)
          ['%#call #'(%#ref setf) #'(%#ref -self) expr])
@@ -1660,4 +1660,4 @@ namespace: gxc
                                 ['%#ref self]]])))
         (else
          ['%#call #'(%#ref setf) #'(%#ref -self) expr]))))
-    (_ (xform-operands stx self methods slots class-check struct-check struct-assert)))))
+    (_ (xform-operands stx self $t methods slots class-check struct-check struct-assert)))))
