@@ -1051,19 +1051,34 @@ namespace: gxc
 (def (generate-runtime-struct-unchecked-ref% stx)
   (ast-case stx ()
     ((_ type off obj)
-     ['##unchecked-structure-ref (compile-e #'obj)  ; obj
-                                 (compile-e #'off)  ; off (incl type)
-                                 (compile-e #'type) ; type
-                                 '(quote #f)])))    ; where
+     (cond-expand
+       (,(<= (system-version) 409003)
+        ;; see gambit#422
+        ['##c-code "___RESULT = ___VECTORREF (___ARG1, ___ARG2);"
+                   (compile-e #'obj)
+                   (compile-e #'off)])
+       (else
+        ['##unchecked-structure-ref (compile-e #'obj)  ; obj
+                                    (compile-e #'off)  ; off (incl type)
+                                    (compile-e #'type) ; type
+                                    '(quote #f)])))))  ; where
 
 (def (generate-runtime-struct-unchecked-setq% stx)
   (ast-case stx ()
     ((_ type off obj val)
-     ['##unchecked-structure-set! (compile-e #'obj)  ; obj
-                                  (compile-e #'val)  ; val
-                                  (compile-e #'off)  ; off (incl type)
-                                  (compile-e #'type) ; type
-                                  '(quote #f)])))    ; where
+     (cond-expand
+       (,(<= (system-version) 409003)
+        ;; see gambit#422
+        ['##c-code "___VECTORSET (___ARG1, ___ARG2, ___ARG3); ___RESULT = ___VOID;"
+                   (compile-e #'obj)
+                   (compile-e #'off)
+                   (compile-e #'val)])
+       (else
+        ['##unchecked-structure-set! (compile-e #'obj)  ; obj
+                                     (compile-e #'val)  ; val
+                                     (compile-e #'off)  ; off (incl type)
+                                     (compile-e #'type) ; type
+                                     '(quote #f)])))))  ; where
 
 ;;; loader
 (def (generate-runtime-loader-import% stx)
