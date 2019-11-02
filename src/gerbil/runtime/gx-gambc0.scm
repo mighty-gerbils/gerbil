@@ -313,11 +313,13 @@
 (define (make-struct-field-unchecked-accessor klass field)
   (let ((off (##fx+ (struct-field-offset klass field) 1)))
     (lambda (obj)
+      (declare (not safe))
       (##unchecked-structure-ref obj off klass #f))))
 
 (define (make-struct-field-unchecked-mutator klass field)
   (let ((off (##fx+ (struct-field-offset klass field) 1)))
     (lambda (obj val)
+      (declare (not safe))
       (##unchecked-structure-set! obj val off klass #f))))
 
 (define (struct-field-offset klass field)
@@ -543,13 +545,15 @@
 (define (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
     (let ((off (class-slot-offset (object-type obj) slot)))
-      (##vector-ref obj (##fx+ off 1)))
+      (declare (not safe))
+      (##unchecked-structure-ref obj (##fx+ off 1) klass #f))
     (raise-type-error 'class-slot-ref klass obj)))
 
 (define (class-slot-set! klass obj slot val)
   (if (class-instance? klass obj)
     (let ((off (class-slot-offset (object-type obj) slot)))
-      (##vector-set! obj (##fx+ off 1) val))
+      (declare (not safe))
+      (##unchecked-structure-set! obj val (##fx+ off 1) klass #f))
     (raise-type-error 'class-slot-set! klass obj)))
 
 (define (class-subtype? klass xklass)
@@ -594,6 +598,7 @@
   direct-instance?)
 
 (define (make-object klass k)
+  (declare (not safe))
   (let ((obj (##make-vector (##fx+ k 1) #f)))
     (##vector-set! obj 0 klass)
     (##subtype-set! obj (macro-subtype-structure))
@@ -621,11 +626,13 @@
       (&class-instance-init! klass obj args)))))
 
 (define (struct-instance-init! obj . args)
+  (declare (not safe))
   (if (##fx< (length args) (##vector-length obj))
     (&struct-instance-init! obj args)
     (error "Too many arguments for struct" obj args)))
 
 (define (&struct-instance-init! obj args)
+  (declare (not safe))
   (let lp ((k 1) (rest args))
     (core-match rest
       ((hd . rest)
@@ -637,6 +644,7 @@
   (&class-instance-init! (object-type obj) obj args))
 
 (define (&class-instance-init! klass obj args)
+  (declare (not safe))
   (let lp ((rest args))
     (core-match rest
       ((key val . rest)
@@ -688,8 +696,10 @@
     (error "Not an object" obj)))
 
 (define (unchecked-field-ref obj off)
+  (declare (not safe))
   (##vector-ref obj (##fx+ off 1)))
 (define (unchecked-field-set! obj off val)
+  (declare (not safe))
   (##vector-set! obj (##fx+ off 1) val))
 (define (unchecked-slot-ref obj slot)
   (unchecked-field-ref obj (class-slot-offset (object-type obj) slot)))
@@ -706,9 +716,11 @@
      (,E ,obj ,slot)))
 
 (define (slot-ref obj slot #!optional (E &slot-error))
+  (declare (not safe))
   (&slot-e obj slot (lambda (off) (##vector-ref obj (##fx+ off 1))) E))
 
 (define (slot-set! obj slot val #!optional (E &slot-error))
+  (declare (not safe))
   (&slot-e obj slot (lambda (off) (##vector-set! obj (##fx+ off 1) val)) E))
 
 (define (&slot-error obj slot)
@@ -997,16 +1009,19 @@
        (not (fxnegative? obj))))
 
 (define (values-count obj)
+  (declare (not safe))
   (if (##values? obj)
     (##vector-length obj)
     1))
 
 (define (values-ref obj k)
+  (declare (not safe))
   (if (##values? obj)
     (##vector-ref obj k)
     obj))
 
 (define (values->list obj)
+  (declare (not safe))
   (if (##values? obj)
     (##vector->list obj)
     (list obj)))
