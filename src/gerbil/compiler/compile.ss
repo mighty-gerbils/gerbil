@@ -629,16 +629,28 @@ namespace: gxc
             ['error errmsg count]]])))))
 
 (def (generate-runtime-values-count var)
-  ['let []
-    '(declare (not safe))
-    ['if ['##values? var] ['##vector-length var] 1]])
+  ;; see gambit#422
+  (cond-expand
+    (gambit-inline-unsafe-primitives
+     ['if ['##values? var] ['##vector-length var] 1])
+    (else
+     ['let []
+       '(declare (not safe))
+       ['if ['##values? var] ['##vector-length var] 1]])))
 
 (def (generate-runtime-values-ref var i rest)
-  ['let []
-    '(declare (not safe))
-    (if (and (fx= i 0) (not (stx-pair? rest)))
-      ['if ['##values? var] ['##vector-ref var 0] var]
-      ['##vector-ref var i])])
+  ;; see gambit#422
+  (cond-expand
+    (gambit-inline-unsafe-primitives
+     (if (and (fx= i 0) (not (stx-pair? rest)))
+       ['if ['##values? var] ['##vector-ref var 0] var]
+       ['##vector-ref var i]))
+    (else
+     ['let []
+       '(declare (not safe))
+       (if (and (fx= i 0) (not (stx-pair? rest)))
+         ['if ['##values? var] ['##vector-ref var 0] var]
+         ['##vector-ref var i])])))
 
 (def (generate-runtime-values->list var i)
   (cond
@@ -1017,24 +1029,28 @@ namespace: gxc
   (ast-case stx ()
     ((_ type-id obj)
      ;; see gambit#422
-     (let lp ((rest [#'type-id #'obj])
-              (bind [])
-              (args []))
-       (match rest
-         ([e . rest]
-          (ast-case e (%#quote %#ref)
-            ((%#ref _)
-             (lp rest bind (cons (compile-e e) args)))
-            ((%#quote _)
-             (lp rest bind (cons (compile-e e) args)))
-            (_
-             (let (tmp (make-symbol (gensym '__tmp)))
-               (lp rest (cons [tmp (compile-e e)] bind) (cons tmp args))))))
-         (else
-          ['let [bind ...]
-            '(declare (not safe))
-            ;; (##structure-direct-instance-of? obj type-id)
-            ['##structure-direct-instance-of? args ...]]))))))
+     (cond-expand
+       (gambit-inline-unsafe-primitives
+        ['##structure-direct-instance-of? (compile-e #'expr) (compile-e #'type-id)])
+       (else
+        (let lp ((rest [#'type-id #'obj])
+                 (bind [])
+                 (args []))
+          (match rest
+            ([e . rest]
+             (ast-case e (%#quote %#ref)
+               ((%#ref _)
+                (lp rest bind (cons (compile-e e) args)))
+               ((%#quote _)
+                (lp rest bind (cons (compile-e e) args)))
+               (_
+                (let (tmp (make-symbol (gensym '__tmp)))
+                  (lp rest (cons [tmp (compile-e e)] bind) (cons tmp args))))))
+            (else
+             ['let [bind ...]
+               '(declare (not safe))
+               ;; (##structure-direct-instance-of? obj type-id)
+               ['##structure-direct-instance-of? args ...]]))))))))
 
 (def (generate-runtime-struct-ref% stx)
   (ast-case stx ()
@@ -1074,47 +1090,62 @@ namespace: gxc
   (ast-case stx ()
     ((_ type off obj)
      ;; see gambit#422
-     (let lp ((rest [#'type #'off #'obj])
-              (bind [])
-              (args []))
-       (match rest
-         ([e . rest]
-          (ast-case e (%#quote %#ref)
-            ((%#ref _)
-             (lp rest bind (cons (compile-e e) args)))
-            ((%#quote _)
-             (lp rest bind (cons (compile-e e) args)))
-            (_
-             (let (tmp (make-symbol (gensym '__tmp)))
-               (lp rest (cons [tmp (compile-e e)] bind) (cons tmp args))))))
-         (else
-          ['let [bind ...]
-            '(declare (not safe))
-            ;; (##unchecked-structure-ref obj off type where)
-            ['##unchecked-structure-ref args ... '(quote #f)]]))))))
+     (cond-expand
+       (gambit-inline-unsafe-primitives
+        ['##unchecked-structure-ref (compile-e #'obj)
+                                    (compile-e #'off)
+                                    (compile-e #'type)
+                                    '(quote #f)])
+       (else
+        (let lp ((rest [#'type #'off #'obj])
+                 (bind [])
+                 (args []))
+          (match rest
+            ([e . rest]
+             (ast-case e (%#quote %#ref)
+               ((%#ref _)
+                (lp rest bind (cons (compile-e e) args)))
+               ((%#quote _)
+                (lp rest bind (cons (compile-e e) args)))
+               (_
+                (let (tmp (make-symbol (gensym '__tmp)))
+                  (lp rest (cons [tmp (compile-e e)] bind) (cons tmp args))))))
+            (else
+             ['let [bind ...]
+               '(declare (not safe))
+               ;; (##unchecked-structure-ref obj off type where)
+               ['##unchecked-structure-ref args ... '(quote #f)]]))))))))
 
 (def (generate-runtime-struct-unchecked-setq% stx)
   (ast-case stx ()
     ((_ type off obj val)
      ;; see gambit#422
-     (let lp ((rest [#'type #'off #'val #'obj])
-              (bind [])
-              (args []))
-       (match rest
-         ([e . rest]
-          (ast-case e (%#quote %#ref)
-            ((%#ref _)
-             (lp rest bind (cons (compile-e e) args)))
-            ((%#quote _)
-             (lp rest bind (cons (compile-e e) args)))
-            (_
-             (let (tmp (make-symbol (gensym '__tmp)))
-               (lp rest (cons [tmp (compile-e e)] bind) (cons tmp args))))))
-         (else
-          ['let [bind ...]
-            '(declare (not safe))
-            ;; (##unchecked-structure-set! obj val off type where)
-            ['##unchecked-structure-set! args ... '(quote #f)]]))))))
+     (cond-expand
+       (gambit-inline-unsafe-primitives
+        ['##unchecked-structure-set! (compile-e #'obj)
+                                     (compile-e #'val)
+                                     (compile-e #'off)
+                                     (compile-e #'type)
+                                     '(quote #f)])
+       (else
+        (let lp ((rest [#'type #'off #'val #'obj])
+                 (bind [])
+                 (args []))
+          (match rest
+            ([e . rest]
+             (ast-case e (%#quote %#ref)
+               ((%#ref _)
+                (lp rest bind (cons (compile-e e) args)))
+               ((%#quote _)
+                (lp rest bind (cons (compile-e e) args)))
+               (_
+                (let (tmp (make-symbol (gensym '__tmp)))
+                  (lp rest (cons [tmp (compile-e e)] bind) (cons tmp args))))))
+            (else
+             ['let [bind ...]
+               '(declare (not safe))
+               ;; (##unchecked-structure-set! obj val off type where)
+               ['##unchecked-structure-set! args ... '(quote #f)]]))))))))
 
 ;;; loader
 (def (generate-runtime-loader-import% stx)
