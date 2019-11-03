@@ -50,13 +50,41 @@ Defines a method with one or more binding aliases
 => (begin (using-method obj <method-spec>) ...)
 
 (using-method obj method-id)
-(using-method obj (local-id method-id))
-
+(using-method obj (method-id method-name))
+=> (def method-id (checked-bound-method-ref o 'method-name))
 ```
 
-Defines local procedures for methods of an object.
+Defines local procedures for bound methods of an object.
 This is very useful for avoiding method dispatch if methods of an object are
 used multiple times within the lexical scope.
+
+## with-methods with-class-methods with-class-method
+```
+(with-methods obj <method-spec> ...)
+=> (begin
+     (def klass (object-type obj))
+     (with-class-methods klass <method-spec> ...))
+
+(with-class-methods klass <method-spec> ...)
+=> (begin
+     (with-class-method klass <method-spec>) ...)
+
+(with-class-method klass <method-spec>)
+=> (def method-id (or (find-method klass 'method-name) (error ...))) ...)
+
+method-spec:
+  method-name             ; method-id is the identifier to resolve and bind
+  (method-id method-name) ; method-id is the identifier to bind, resolving method-name
+```
+
+Defines local procedures for methods of an object (class).
+This is very useful to avoid method dispatch _and_ implicit allocation from method application
+if the methods of an object (class) are used multiple times within the lexical scope.
+
+The difference from `using` is that methods are not _bound_ to an object, and you thus have
+to pass the receiver as first argument to the method.
+The advantage over `using` is that there is no implicit allocation for collecting arguments to
+apply the bound closure of the method.
 
 ## while
 ```scheme
