@@ -394,6 +394,48 @@ Here is an example that demonstrates the performance effect of class sealing:
     no major faults
 ```
 
+The effect is even more pronounced in compiled code:
+```
+$ cat classes-test.ss
+(import ./classes :std/sugar)
+(export main)
+
+(def (do-it o n)
+  (declare (not safe))
+  (with-methods o mul-c)
+  (let lp ((i 0))
+    (when (fx< i n)
+      (mul-c o 1 2)
+      (lp (fx1+ i)))))
+
+(extern namespace: #f time)
+
+(def (main n)
+  (let ((n (string->number n))
+        (o (E a: 1 b: 2 c: 3)))
+    (##gc)
+    (time (do-it o n))
+    (seal-class! E::t)
+    (time (do-it o n))))
+
+$ gxc -static -O -exe -o clasess-test classes-test.ss
+$ ./clasess-test 10000000
+(time (tmp/classes-test#do-it _o392_ _n391_))
+    5.247534 secs real time
+    5.247435 secs cpu time (5.242744 user, 0.004691 system)
+    595 collections accounting for 0.032878 secs real time (0.032766 user, 0.000176 system)
+    2880000032 bytes allocated
+    1133 minor faults
+    no major faults
+(time (tmp/classes-test#do-it _o392_ _n391_))
+    0.142742 secs real time
+    0.142741 secs cpu time (0.142741 user, 0.000000 system)
+    no collections
+    32 bytes allocated
+    1 minor fault
+    no major faults
+```
+
 ### Pattern Matching
 
 Gerbil uses pattern matching extensively, so a suitable match
