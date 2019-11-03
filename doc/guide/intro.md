@@ -373,29 +373,29 @@ Here is an example that demonstrates the performance effect of class sealing:
     (* (@ self c) {add-a self x} {add-b self y})))
 
 > (def foo (E a: 1 b: 2 c: 3))
-> (def (do-it n) (using foo mul-c) (for (_ (in-range n)) (mul-c 1 2)))
-> (time (do-it 1000000))
-(time (do-it (##quote 1000000)))
-    2.583341 secs real time
-    2.583298 secs cpu time (2.581448 user, 0.001850 system)
-    204 collections accounting for 0.300717 secs real time (0.299816 user, 0.000881 system)
-    1184023792 bytes allocated
-    751 minor faults
+> (def (do-it o n) (with-methods foo mul-c) (for (_ (in-range n)) (mul-c o 1 2)))
+> (time (do-it foo 1000000))
+(time (do-it foo (##quote 1000000)))
+    0.949492 secs real time
+    0.949490 secs cpu time (0.947454 user, 0.002036 system)
+    105 collections accounting for 0.157004 secs real time (0.156961 user, 0.000026 system)
+    704018864 bytes allocated
+    950 minor faults
     no major faults
 > (seal-class! E::t)
 #<type #9 E>
-> (time (do-it 1000000))
-(time (do-it (##quote 1000000)))
-    0.855172 secs real time
-    0.855154 secs cpu time (0.855154 user, 0.000000 system)
-    153 collections accounting for 0.229256 secs real time (0.229229 user, 0.000000 system)
-    896003632 bytes allocated
-    no minor faults
+> (time (do-it foo 1000000))
+(time (do-it foo (##quote 1000000)))
+    0.513751 secs real time
+    0.513751 secs cpu time (0.513751 user, 0.000000 system)
+    104 collections accounting for 0.163506 secs real time (0.163501 user, 0.000000 system)
+    704018768 bytes allocated
+    2 minor faults
     no major faults
 ```
 
 The effect is even more pronounced in compiled code:
-```
+```scheme
 $ cat classes-test.ss
 (import ./classes :std/sugar)
 (export main)
@@ -421,15 +421,15 @@ $ cat classes-test.ss
 $ gxc -static -O -exe -o clasess-test classes-test.ss
 $ ./clasess-test 10000000
 (time (tmp/classes-test#do-it _o392_ _n391_))
-    5.247534 secs real time
-    5.247435 secs cpu time (5.242744 user, 0.004691 system)
-    595 collections accounting for 0.032878 secs real time (0.032766 user, 0.000176 system)
-    2880000032 bytes allocated
-    1133 minor faults
+    3.357118 secs real time
+    3.357061 secs cpu time (3.357061 user, 0.000000 system)
+    no collections
+    32 bytes allocated
+    no minor faults
     no major faults
 (time (tmp/classes-test#do-it _o392_ _n391_))
-    0.142742 secs real time
-    0.142741 secs cpu time (0.142741 user, 0.000000 system)
+    0.123717 secs real time
+    0.123716 secs cpu time (0.123716 user, 0.000000 system)
     no collections
     32 bytes allocated
     1 minor fault
