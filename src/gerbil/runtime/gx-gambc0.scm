@@ -7,7 +7,8 @@
 (declare
   (block)
   (standard-bindings)
-  (extended-bindings))
+  (extended-bindings)
+  (not safe))
 
 ;;;
 ;;; Host Runtime
@@ -60,8 +61,6 @@
     (error "Cannot load module; not found" modpath))))
 
 (define (find-library-module modpath)
-  (declare (not safe))
-
   (define (path-exists? path)
     (not (fixnum? (##os-file-info path #f))))
 
@@ -152,7 +151,6 @@
 ;; 11                       type-descriptor-methods
 ;;
 (define (type-descriptor? klass)
-  (declare (not safe))
   (and (##type? klass)
        (eq? (##vector-length klass) 12)))
 
@@ -247,32 +245,23 @@
   (make-type-descriptor id name super mixin fields plist ctor slots #f))
 
 (define (type-descriptor-mixin klass)
-  (declare (not safe))
   (##vector-ref klass 6))
 (define (type-descriptor-fields klass)
-  (declare (not safe))
   (##vector-ref klass 7))
 (define (type-descriptor-plist klass)
-  (declare (not safe))
   (##vector-ref klass 8))
 (define (type-descriptor-ctor klass)
-  (declare (not safe))
   (##vector-ref klass 9))
 (define (type-descriptor-slots klass)
-  (declare (not safe))
   (##vector-ref klass 10))
 (define (type-descriptor-methods klass)
-  (declare (not safe))
   (##vector-ref klass 11))
 (define (type-descriptor-methods-set! klass ht)
-  (declare (not safe))
   (##vector-set! klass 11 ht))
 
 (define (type-descriptor-sealed? klass)
-  (declare (not safe))
   (##fxbit-set? 20 (##type-flags klass)))
 (define (type-descriptor-seal! klass)
-  (declare (not safe))
   (##vector-set! klass 3 (##fxior (##fxarithmetic-shift 1 20) (##type-flags klass))))
 
 (define (make-struct-type id super fields name plist ctor #!optional (field-names #f))
@@ -311,42 +300,35 @@
         (##structure-instance-of? obj tid)))))
 
 (define (make-struct-field-accessor klass field)
-  (declare (not safe))
   (let ((off (##fx+ (struct-field-offset klass field) 1)))
     (lambda (obj)
       (##structure-ref obj off klass #f))))
 
 (define (make-struct-field-mutator klass field)
-  (declare (not safe))
   (let ((off (##fx+ (struct-field-offset klass field) 1)))
     (lambda (obj val)
       (##structure-set! obj val off klass #f))))
 
 (define (make-struct-field-unchecked-accessor klass field)
-  (declare (not safe))
   (let ((off (##fx+ (struct-field-offset klass field) 1)))
     (lambda (obj)
       (##unchecked-structure-ref obj off klass #f))))
 
 (define (make-struct-field-unchecked-mutator klass field)
-  (declare (not safe))
   (let ((off (##fx+ (struct-field-offset klass field) 1)))
     (lambda (obj val)
       (##unchecked-structure-set! obj val off klass #f))))
 
 (define (struct-field-offset klass field)
-  (declare (not safe))
   (##fx+ field
          (cond
           ((##type-super klass) => type-descriptor-fields)
           (else 0))))
 
 (define (struct-field-ref klass obj off)
-  (declare (not safe))
   (##structure-ref obj (##fx+ off 1) klass #f))
 
 (define (struct-field-set! klass obj off val)
-  (declare (not safe))
   (##structure-set! obj val (##fx+ off 1) klass #f))
 
 (define (struct-subtype? klass xklass)
@@ -558,21 +540,18 @@
    (else #f)))
 
 (define (class-slot-ref klass obj slot)
-  (declare (not safe))
   (if (class-instance? klass obj)
     (let ((off (class-slot-offset (object-type obj) slot)))
       (##unchecked-structure-ref obj (##fx+ off 1) klass #f))
     (raise-type-error 'class-slot-ref klass obj)))
 
 (define (class-slot-set! klass obj slot val)
-  (declare (not safe))
   (if (class-instance? klass obj)
     (let ((off (class-slot-offset (object-type obj) slot)))
       (##unchecked-structure-set! obj val (##fx+ off 1) klass #f))
     (raise-type-error 'class-slot-set! klass obj)))
 
 (define (class-subtype? klass xklass)
-  (declare (not safe))
   (let ((klass-t (##type-id klass)))
     (cond
      ((eq? klass-t (##type-id xklass)))
@@ -589,18 +568,15 @@
   ##structure-type)
 
 (define (direct-instance? klass obj)
-  (declare (not safe))
   (##structure-direct-instance-of? obj (##type-id klass)))
 
 (define (struct-instance? klass obj)
-  (declare (not safe))
   (##structure-instance-of? obj (##type-id klass)))
 
 (define direct-struct-instance?
   direct-instance?)
 
 (define (class-instance? klass obj)
-  (declare (not safe))
   (and (object? obj)
        (let ((klass-id (##type-id klass))
              (type (object-type obj)))
@@ -617,14 +593,12 @@
   direct-instance?)
 
 (define (make-object klass k)
-  (declare (not safe))
   (let ((obj (##make-vector (##fx+ k 1) #f)))
     (##vector-set! obj 0 klass)
     (##subtype-set! obj (macro-subtype-structure))
     obj))
 
 (define (make-struct-instance klass . args)
-  (declare (not safe))
   (let ((fields (type-descriptor-fields klass)))
     (cond
      ((type-descriptor-ctor klass)
@@ -646,13 +620,11 @@
       (&class-instance-init! klass obj args)))))
 
 (define (struct-instance-init! obj . args)
-  (declare (not safe))
   (if (##fx< (length args) (##vector-length obj))
     (&struct-instance-init! obj args)
     (error "Too many arguments for struct" obj args)))
 
 (define (&struct-instance-init! obj args)
-  (declare (not safe))
   (let lp ((k 1) (rest args))
     (core-match rest
       ((hd . rest)
@@ -664,7 +636,6 @@
   (&class-instance-init! (object-type obj) obj args))
 
 (define (&class-instance-init! klass obj args)
-  (declare (not safe))
   (let lp ((rest args))
     (core-match rest
       ((key val . rest)
@@ -716,10 +687,8 @@
     (error "Not an object" obj)))
 
 (define (unchecked-field-ref obj off)
-  (declare (not safe))
   (##vector-ref obj (##fx+ off 1)))
 (define (unchecked-field-set! obj off val)
-  (declare (not safe))
   (##vector-set! obj (##fx+ off 1) val))
 (define (unchecked-slot-ref obj slot)
   (unchecked-field-ref obj (class-slot-offset (object-type obj) slot)))
@@ -736,11 +705,9 @@
      (,E ,obj ,slot)))
 
 (define (slot-ref obj slot #!optional (E &slot-error))
-  (declare (not safe))
   (&slot-e obj slot (lambda (off) (##vector-ref obj (##fx+ off 1))) E))
 
 (define (slot-set! obj slot val #!optional (E &slot-error))
-  (declare (not safe))
   (&slot-e obj slot (lambda (off) (##vector-set! obj (##fx+ off 1) val)) E))
 
 (define (&slot-error obj slot)
@@ -779,7 +746,6 @@
       (apply method obj args))))
 
 (define (find-method klass id)
-  (declare (not safe))
   (cond
    ((type-descriptor? klass)
     (&find-method klass id))
@@ -789,7 +755,6 @@
    (else #f)))
 
 (define (&find-method klass id)
-  (declare (not safe))
   (cond
    ((direct-method-ref klass id)
     => values)
@@ -802,7 +767,6 @@
     (struct-find-method (##type-super klass) id))))
 
 (define (struct-find-method klass id)
-  (declare (not safe))
   (cond
    ((type-descriptor? klass)
     (or (direct-method-ref klass id)
@@ -826,7 +790,6 @@
       (else #f))))
 
 (define (builtin-find-method klass id)
-  (declare (not safe))
   (and (##type? klass)
        (or (builtin-method-ref klass id)
            (builtin-find-method (##type-super klass) id))))
@@ -845,7 +808,6 @@
    (else #f)))
 
 (define (builtin-method-ref klass id)
-  (declare (not safe))
   (cond
    ((hash-get &builtin-type-methods (##type-id klass))
     => (lambda (mtab)
@@ -853,7 +815,6 @@
    (else #f)))
 
 (define (bind-method! klass id proc #!optional (rebind? #t))
-  (declare (not safe))
   (define (bind! ht)
     (if (and (not rebind?) (hash-get ht id))
       (error "Method already bound" klass id)
@@ -889,7 +850,6 @@
   (hash-put! &method-specializers proc specializer))
 
 (define (seal-class! klass)
-  (declare (not safe))
   (define (collect-methods! mtab)
     (define (merge! tab)
       (hash-for-each (lambda (id proc) (hash-put! mtab id proc))
@@ -949,7 +909,6 @@
         (type-descriptor-seal! klass)))))
 
 (define (next-method subklass obj id)
-  (declare (not safe))
   (let ((klass (object-type obj))
         (type-id (##type-id subklass)))
     (cond
@@ -1029,7 +988,6 @@
   (eq? obj #!optional))
 
 (define (immediate? obj)
-  (declare (not safe))
   (let ((t (##type obj)))
     (##fxzero? (##fxand t #b1))))
 
@@ -1038,19 +996,16 @@
        (not (fxnegative? obj))))
 
 (define (values-count obj)
-  (declare (not safe))
   (if (##values? obj)
     (##vector-length obj)
     1))
 
 (define (values-ref obj k)
-  (declare (not safe))
   (if (##values? obj)
     (##vector-ref obj k)
     obj))
 
 (define (values->list obj)
-  (declare (not safe))
   (if (##values? obj)
     (##vector->list obj)
     (list obj)))
@@ -1155,13 +1110,11 @@
          hd rest))
 
 (define (hash-clear! ht #!optional (size 0))
-  (declare (not safe))
   (let ((gcht (##vector-ref ht 5)))
     (if (not (fixnum? gcht))
       (##vector-set! ht 5 size))))
 
 (define (make-list k #!optional (val #f))
-  (declare (not safe))
   (let lp ((n 0) (r '()))
     (if (##fx< n k)
       (lp (##fx+ n 1) (cons val r))
@@ -1358,7 +1311,6 @@
     (fold* f (cons lst rest)))))
 
 (define (iota count #!optional (start 0) (step 1))
-  (declare (not safe))
   (unless (fixnum? count)
     (error "Bad argument; expected fixnum" count))
   (unless (number? start)
@@ -1514,7 +1466,6 @@
 (define (string-prefix? prefix str)
   (let ((str-len (string-length str))
         (prefix-len (string-length prefix)))
-    (declare (not safe))
     (and (##fx<= prefix-len str-len)
          (let lp ((i 0))
            (if (##fx< i prefix-len)
@@ -1524,7 +1475,6 @@
 
 (define (string-index str char #!optional (start 0))
   (let ((len (string-length str)))
-    (declare (not safe))
     (let lp ((k start))
       (and (##fx< k len)
            (if (eq? char (##string-ref str k)) k
@@ -1533,7 +1483,6 @@
 (define (string-rindex str char #!optional (start #f))
   (let* ((len (string-length str))
          (start (or start (##fx- len 1))))
-    (declare (not safe))
     (let lp ((k start))
       (and (##fx>= k 0)
            (if (eq? char (##string-ref str k)) k
@@ -1541,7 +1490,6 @@
 
 (define (string-split str char)
   (let ((len (string-length str)))
-    (declare (not safe))
     (let lp ((start 0) (r '()))
       (cond
        ((string-index str char start)
@@ -1590,7 +1538,6 @@
     (define (fold1 vec)
       (let* ((len (vector-length vec))
              (r (make-vector len)))
-        (declare (not safe))
         (do ((k 0 (##fx+ k 1)))
             ((##fx= k len) r)
           (##vector-set! r k (f (##vector-ref vec k))))))
@@ -1598,7 +1545,6 @@
     (define (fold* vecs)
       (let* ((len (apply min (map vector-length vecs)))
              (r (make-vector len)))
-        (declare (not safe))
         (do ((k 0 (##fx+ k 1)))
             ((##fx= k len) r)
           (##vector-set! r k
@@ -1683,33 +1629,27 @@
 
 ;; some minimal integration with gambit exception
 (define (exception? obj)
-  (declare (not safe))
   (##structure-instance-of? obj (##type-id exception-type::t)))
 
 (define (error? obj)
-  (declare (not safe))
   (##structure-instance-of? obj (##type-id error::t)))
 
 (define (error-object? obj)
   (error-exception? obj))
 
 (define (type-error? obj)
-  (declare (not safe))
   (##structure-instance-of? obj (##type-id (macro-type-type-exception))))
 
 (define (error-message obj)
-  (declare (not safe))
   (if (error? obj)
     (##vector-ref obj 1)
     (with-output-to-string '() (lambda () (display-exception obj)))))
 
 (define (error-irritants obj)
-  (declare (not safe))
   (and (error? obj)
        (##vector-ref obj 2)))
 
 (define (error-trace obj)
-  (declare (not safe))
   (and (error? obj)
        (##vector-ref obj 3)))
 
