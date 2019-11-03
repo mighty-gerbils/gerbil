@@ -101,6 +101,29 @@
    (and (identifier? #'method) (identifier? #'method-id))
    (def method (checked-bound-method-ref obj 'method-id))))
 
+
+(defrules with-methods ()
+  ((_ o method ...)
+   (begin
+     (def $klass (object-type o))
+     (with-class-methods $klass method ...))))
+
+(defrules with-class-methods ()
+  ((_ klass method ...)
+   (begin (with-class-method klass method) ...)))
+
+(defrules with-class-method ()
+  ((_ klass (method method-id))
+   (and (identifier? #'method) (identifier? #'method-id))
+   (def method
+     (cond
+      ((find-method klass 'method-id))
+      (else
+       (error "Missing method" klass 'method-id)))))
+  ((recur klass method)
+   (identifier? #'method)
+   (recur klass (method method))))
+
 (defrules assert! ()
   ((_ expr)
    (unless expr
