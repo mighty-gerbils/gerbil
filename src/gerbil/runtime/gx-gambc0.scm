@@ -7,7 +7,8 @@
 (declare
   (block)
   (standard-bindings)
-  (extended-bindings))
+  (extended-bindings)
+  (not safe))
 
 ;;;
 ;;; Host Runtime
@@ -60,8 +61,6 @@
     (error "Cannot load module; not found" modpath))))
 
 (define (find-library-module modpath)
-  (declare (not safe))
-
   (define (path-exists? path)
     (not (fixnum? (##os-file-info path #f))))
 
@@ -543,18 +542,19 @@
 (define (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
     (let ((off (class-slot-offset (object-type obj) slot)))
-      (##vector-ref obj (##fx+ off 1)))
+      (##unchecked-structure-ref obj (##fx+ off 1) klass #f))
     (raise-type-error 'class-slot-ref klass obj)))
 
 (define (class-slot-set! klass obj slot val)
   (if (class-instance? klass obj)
     (let ((off (class-slot-offset (object-type obj) slot)))
-      (##vector-set! obj (##fx+ off 1) val))
+      (##unchecked-structure-set! obj val (##fx+ off 1) klass #f))
     (raise-type-error 'class-slot-set! klass obj)))
 
 (define (class-subtype? klass xklass)
   (let ((klass-t (##type-id klass)))
     (cond
+     ((eq? klass-t (##type-id xklass)))
      ((type-descriptor-mixin xklass)
       => (lambda (mixin)
            (and (find (lambda (xklass) (eq? klass-t (##type-id xklass)))
@@ -1313,6 +1313,10 @@
 (define (iota count #!optional (start 0) (step 1))
   (unless (fixnum? count)
     (error "Bad argument; expected fixnum" count))
+  (unless (number? start)
+    (error "Bad argument; expected number" start))
+  (unless (number? step)
+    (error "Bad argument; expected number" step))
   (let lp ((i 0) (x start) (r '()))
     (if (##fx< i count)
       (lp (##fx+ i 1) (+ x step) (cons x r))

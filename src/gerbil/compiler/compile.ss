@@ -420,6 +420,44 @@ namespace: gxc
          (compile-e (module-context-code ctx) modules))))))
 
 ;;; runtime code generation
+(defrules with-primitive-bind+args ()
+  ((_ (bind args init) body ...)
+   (let lp ((rest init)
+            (bind [])
+            (args []))
+     (match rest
+       ([e . rest]
+        (ast-case e (%#quote %#ref)
+          ((%#ref _)
+           (lp rest bind (cons (compile-e e) args)))
+          ((%#quote _)
+           (lp rest bind (cons (compile-e e) args)))
+          (_
+           (let (tmp (make-symbol (gensym '__tmp)))
+             (lp rest (cons [tmp (compile-e e)] bind) (cons tmp args))))))
+       (else body ...)))))
+
+(def (current-compile-decls-unsafe?)
+  (alet (decls (current-compile-decls))
+    (let lp ((rest decls))
+      (match rest
+        ([decl . decls]
+         (cond
+          ((equal? decl '(not safe)) #t)
+          ((equal? decl '(safe)) #f)
+          (else (lp decls))))
+        (else #f)))))
+
+(defrules with-inline-unsafe-primitives ()
+  ((_ generate-inline generate)
+   (cond-expand
+     (gambit-inline-unsafe-primitives
+      generate-inline)
+     (else
+      (if (current-compile-decls-unsafe?)
+        generate-inline
+        generate)))))
+
 (def (add-module-binding! id syntax?)
   (let ((eid (binding-id (resolve-identifier id)))
         (ht (symbol-table-bindings (current-compile-symbol-table))))
@@ -559,13 +597,17 @@ namespace: gxc
      (identifier? #'ann) ; optimizer annotation mark
      (compile-e #'expr))
     ((_ ann expr)
-     ['begin ['declare (map syntax->datum #'ann) ...]
-             (compile-e #'expr)])))
+     (let (decls (map syntax->datum #'ann))
+       (parameterize ((current-compile-decls (foldr cons (current-compile-decls) decls)))
+         ['begin ['declare decls ...]
+                 (compile-e #'expr)])))))
 
 (def (generate-runtime-declare% stx)
   (ast-case stx ()
     ((_ . decls)
-     ['declare (map syntax->datum #'decls) ...])))
+     (let (decls (map syntax->datum #'decls))
+       (current-compile-decls (foldr cons (current-compile-decls) decls))
+       ['declare decls ...]))))
 
 (def (generate-runtime-define-values% stx)
   (ast-case stx ()
@@ -629,12 +671,26 @@ namespace: gxc
             ['error errmsg count]]])))))
 
 (def (generate-runtime-values-count var)
-  ['if ['##values? var] ['##vector-length var] 1])
+  (def (generate-inline)
+    ['if ['##values? var] ['##vector-length var] 1])
+
+  ;; see gambit#422
+  (with-inline-unsafe-primitives (generate-inline)
+    ['let []
+         '(declare (not safe))
+         (generate-inline)]))
 
 (def (generate-runtime-values-ref var i rest)
-  (if (and (fx= i 0) (not (stx-pair? rest)))
-    ['if ['##values? var] ['##vector-ref var 0] var]
-    ['##vector-ref var i]))
+  (def (generate-inline)
+    (if (and (fx= i 0) (not (stx-pair? rest)))
+      ['if ['##values? var] ['##vector-ref var 0] var]
+      ['##vector-ref var i]))
+
+  ;; see gambit#422
+  (with-inline-unsafe-primitives (generate-inline)
+    ['let []
+      '(declare (not safe))
+      (generate-inline)]))
 
 (def (generate-runtime-values->list var i)
   (cond
@@ -956,22 +1012,36 @@ namespace: gxc
      ['quote (generate1 (stx-e #'datum))])))
 
 (def (generate-runtime-call% stx)
+  (def (compile-call rator rands)
+    (let ((rator (compile-e rator))
+          (rands (map compile-e rands)))
+      (ast-case rator (letrec lambda)
+        ;; decompile let loops -- Gambit optimizes them
+        ((letrec ((id (lambda (arg ...) body ...))) ret)
+         (eq? #'id #'ret)
+         (if (fx= (length rands) (length #'(arg ...)))
+           (let* ((id #'id)
+                  (args #'(arg ...))
+                  (body #'(body ...))
+                  (init (map list args rands)))
+             ['let id init body ...])
+           (raise-compile-error "Illegal loop application; arity mismatch" stx)))
+        (_ (cons rator rands)))))
+
   (ast-case stx ()
     ((_ rator . rands)
-     (let ((rator (compile-e #'rator))
-           (rands (map compile-e #'rands)))
-       (ast-case rator (letrec lambda)
-         ;; decompile let loops -- Gambit optimizes them
-         ((letrec ((id (lambda (arg ...) body ...))) ret)
-          (eq? #'id #'ret)
-          (if (fx= (length rands) (length #'(arg ...)))
-            (let* ((id #'id)
-                   (args #'(arg ...))
-                   (body #'(body ...))
-                   (init (map list args rands)))
-              ['let id init body ...])
-            (raise-compile-error "Illegal loop application; arity mismatch" stx)))
-         (_ (cons rator rands)))))))
+     ;; see gambit#422
+     (with-inline-unsafe-primitives (compile-call #'rator #'rands)
+       (ast-case #'rator (%#ref)
+         ((%#ref _)
+          (let (f (compile-e #'rator))
+            (if (string-prefix? "##" (symbol->string f))
+              (with-primitive-bind+args (bind args (reverse #'rands))
+                ['let [bind ...]
+                  '(declare (not safe))
+                  (cons f args)])
+              (compile-call #'rator #'rands))))
+         (_ (compile-call #'rator #'rands)))))))
 
 (def (generate-runtime-if% stx)
   (def (simplify code)
@@ -1006,64 +1076,120 @@ namespace: gxc
 
 (def (generate-runtime-struct-instancep% stx)
   (ast-case stx ()
-    ((_ type-id expr)
-     ['##structure-instance-of? (compile-e #'expr) (compile-e #'type-id)])))
+    ((_ type-id obj)
+     ;; see gambit#422
+     (with-inline-unsafe-primitives
+         ['##structure-instance-of? (compile-e #'obj) (compile-e #'type-id)]
+       (with-primitive-bind+args (bind args [#'type-id #'obj])
+         ['let [bind ...]
+           '(declare (not safe))
+           ;; (##structure-instance-of? obj type-id)
+           ['##structure-instance-of? args ...]])))))
 
 (def (generate-runtime-struct-direct-instancep% stx)
   (ast-case stx ()
-    ((_ type-id expr)
-     ['##structure-direct-instance-of? (compile-e #'expr) (compile-e #'type-id)])))
+    ((_ type-id obj)
+     ;; see gambit#422
+     (with-inline-unsafe-primitives
+         ['##structure-direct-instance-of? (compile-e #'obj) (compile-e #'type-id)]
+       (with-primitive-bind+args (bind args [#'type-id #'obj])
+         ['let [bind ...]
+           '(declare (not safe))
+           ;; (##structure-direct-instance-of? obj type-id)
+           ['##structure-direct-instance-of? args ...]])))))
 
 (def (generate-runtime-struct-ref% stx)
   (ast-case stx ()
     ((_ type off obj)
-     ['##structure-ref (compile-e #'obj)  ; obj
-                       (compile-e #'off)  ; off (incl type)
-                       (compile-e #'type) ; type
-                       '(quote #f)])))    ; where
+     ;; see gambit#422
+     (with-inline-unsafe-primitives
+         ['##structure-ref (compile-e #'obj)
+                           (compile-e #'off)
+                           (compile-e #'type)
+                           '(quote #f)]
+       (with-primitive-bind+args (bind args [#'type #'off #'obj])
+         ['let [bind ...]
+           '(declare (not safe))
+           ;; (##structure-ref obj off type where)
+           ['##structure-ref args ... '(quote #f)]])))))
 
 (def (generate-runtime-struct-setq% stx)
   (ast-case stx ()
     ((_ type off obj val)
-     ['##structure-set! (compile-e #'obj)  ; obj
-                        (compile-e #'val)  ; val
-                        (compile-e #'off)  ; off (incl type)
-                        (compile-e #'type) ; type
-                        '(quote #f)])))    ; where
+     ;; see gambit#422
+     (with-inline-unsafe-primitives
+         ['##structure-set! (compile-e #'obj)
+                            (compile-e #'val)
+                            (compile-e #'off)
+                            (compile-e #'type)
+                            '(quote #f)]
+       (with-primitive-bind+args (bind args [#'type #'off #'val #'obj])
+         ['let [bind ...]
+           '(declare (not safe))
+           ;; (##structure-set! obj val off type where)
+           ['##structure-set! args ... '(quote #f)]])))))
 
 (def (generate-runtime-struct-direct-ref% stx)
   (ast-case stx ()
     ((_ type off obj)
-     ['##direct-structure-ref (compile-e #'obj)  ; obj
-                              (compile-e #'off)  ; off (incl type)
-                              (compile-e #'type) ; type
-                              '(quote #f)])))    ; where
+     ;; see gambit#422
+     (with-inline-unsafe-primitives
+         ['##direct-structure-ref (compile-e #'obj)
+                                  (compile-e #'off)
+                                  (compile-e #'type)
+                                  '(quote #f)]
+       (with-primitive-bind+args (bind args [#'type #'off #'obj])
+         ['let [bind ...]
+           '(declare (not safe))
+           ;; (##direct-structure-ref obj off type where)
+           ['##direct-structure-ref args ... '(quote #f)]])))))
 
 (def (generate-runtime-struct-direct-setq% stx)
   (ast-case stx ()
     ((_ type off obj val)
-     ['##direct-structure-set! (compile-e #'obj)  ; obj
-                               (compile-e #'val)  ; val
-                               (compile-e #'off)  ; off (incl type)
-                               (compile-e #'type) ; type
-                               '(quote #f)])))    ; where
+     ;; see gambit#422
+     (with-inline-unsafe-primitives
+         ['##direct-structure-set! (compile-e #'obj)
+                                   (compile-e #'val)
+                                   (compile-e #'off)
+                                   (compile-e #'type)
+                                   '(quote #f)]
+       (with-primitive-bind+args (bind args [#'type #'off #'val #'obj])
+         ['let [bind ...]
+           '(declare (not safe))
+           ;; (##direct-structure-set! obj val off type where)
+           ['##direct-structure-set! args ... '(quote #f)]])))))
 
 (def (generate-runtime-struct-unchecked-ref% stx)
   (ast-case stx ()
     ((_ type off obj)
-     ['##unchecked-structure-ref (compile-e #'obj)  ; obj
-                                 (compile-e #'off)  ; off (incl type)
-                                 (compile-e #'type) ; type
-                                 '(quote #f)])))    ; where
+     ;; see gambit#422
+     (with-inline-unsafe-primitives
+         ['##unchecked-structure-ref (compile-e #'obj)
+                                     (compile-e #'off)
+                                     (compile-e #'type)
+                                     '(quote #f)]
+       (with-primitive-bind+args (bind args [#'type #'off #'obj])
+         ['let [bind ...]
+           '(declare (not safe))
+           ;; (##unchecked-structure-ref obj off type where)
+           ['##unchecked-structure-ref args ... '(quote #f)]])))))
 
 (def (generate-runtime-struct-unchecked-setq% stx)
   (ast-case stx ()
     ((_ type off obj val)
-     ['##unchecked-structure-set! (compile-e #'obj)  ; obj
-                                  (compile-e #'val)  ; val
-                                  (compile-e #'off)  ; off (incl type)
-                                  (compile-e #'type) ; type
-                                  '(quote #f)])))    ; where
+     ;; see gambit#422
+     (with-inline-unsafe-primitives
+         ['##unchecked-structure-set! (compile-e #'obj)
+                                      (compile-e #'val)
+                                      (compile-e #'off)
+                                      (compile-e #'type)
+                                      '(quote #f)]
+       (with-primitive-bind+args (bind args [#'type #'off #'val #'obj])
+         ['let [bind ...]
+           '(declare (not safe))
+           ;; (##unchecked-structure-set! obj val off type where)
+           ['##unchecked-structure-set! args ... '(quote #f)]])))))
 
 ;;; loader
 (def (generate-runtime-loader-import% stx)

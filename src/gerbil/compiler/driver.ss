@@ -432,7 +432,12 @@ namespace: gxc
         (compile-scm-file (compile-output-file ctx 'rt ".scm") loader-code))))
 
   (let (all-modules (cons ctx (lift-nested-modules ctx)))
-    (for-each compile1 all-modules)))
+    (for-each
+      (lambda (ctx)
+        ;; declarations are module scoped and are not inherited by nested modules
+        (parameterize ((current-compile-decls []))
+          (compile1 ctx)))
+      all-modules)))
 
 (def (compile-meta-code ctx)
   (def (compile-ssi code)
