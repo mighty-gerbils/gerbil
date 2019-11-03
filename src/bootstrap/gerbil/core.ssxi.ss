@@ -51,6 +51,25 @@ package: gerbil
              #'(%#let-values ((($self) self))
                   (%#call recur (%#ref $self) arg ...)))))))))
 
+;; gx-gambc0: call-method
+(declare-type*
+ (call-method
+  (@lambda (2) inline:
+      (lambda (ast)
+        (ast-case ast (%#call %#ref)
+          ((%#call _ (%#ref self) method arg ...)
+           (with-syntax (($method (make-symbol (gensym '__method))))
+             #'(%#let-values ((($method) (%#call (%#ref method-ref) (%#ref self) method)))
+                             (%#if (%#ref $method)
+                                   (%#call (%#ref $method) (%#ref self) arg ...)
+                                   (%#call (%#ref error) (%#quote "Missing method")
+                                           (%#ref self) method)))))
+          ((%#call recur self method arg ...)
+           (with-syntax (($self (make-symbol (gensym '__self))))
+             #'(%#let-values ((($self) self))
+                             (%#call recur (%#ref $self) method arg ...)))))))))
+
+
 ;; gx-gambc0: simple runtime functions that should be inlined
 (declare-type*
  (true (@lambda (0) inline:
@@ -470,7 +489,6 @@ package: gerbil
  (class-instance-init! (1))
  (slot-ref 2 3)
  (slot-set! 3 4)
- (call-method (2))
  (bind-method! 3 4)
  (call-next-method (3))
  (current-error-port 0 1)
