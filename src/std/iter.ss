@@ -229,7 +229,19 @@
 
   (def (for-binding-bind binding)
     (syntax-case binding ()
-      ((bind bind-e . _) #'bind))))
+      ((bind bind-e . _) #'bind)))
+
+  (def (for-iota-args iter-e)
+    (syntax-case iter-e ()
+      ((_ n) #'(n 0 1))
+      ((_ n start) #'(n start 1))
+      ((_ n start step) #'(n start step))))
+
+  (def (for-range-args iter-e)
+      (syntax-case iter-e ()
+        ((_ end) #'(0 end 1))
+        ((_ start end) #'(start end (if (> $start $end) -1 1)))
+        ((_ start end step) #'(start end step)))))
 
 (defsyntax (for stx)
   (def (generate-for bindings body)
@@ -238,30 +250,69 @@
       (generate-for* bindings body)))
 
   (def (generate-for1 bind body)
-    (with-syntax
-        ((iter-e (for-binding-expr bind))
-         (bind-e (for-binding-bind bind))
-         ((body ...) body))
-      #'(let ((iterable iter-e)
-              (iter-do
-               (lambda (val)
-                 (with ((bind-e val))
-                   body ...))))
-          (cond
-           ;; speculatively inline list iteration
-           ((pair? iterable)
-            (for-each iter-do iterable))
-           ((null? iterable))
-           (else
-            ;; full iteration protocol
-            (let (it (iter iterable))
-              (let lp ()
-                (let (val (iter-next! it))
-                  (unless (eq? iter-end val)
-                    (iter-do val)
-                    (lp))))
-              (iter-fini! it)
-              (void)))))))
+    (let ((iter-e (for-binding-expr bind))
+          (bind-e (for-binding-bind bind)))
+      (syntax-case iter-e (in-iota in-range)
+        ((in-iota . _)
+         (generate-for1-iota iter-e bind-e body))
+        ((in-range . _)
+         (generate-for1-range iter-e bind-e body))
+        (_
+         (with-syntax
+             ((iter-e iter-e)
+              (bind-e bind-e)
+              ((body ...) body))
+           #'(let ((iterable iter-e)
+                   (iter-do
+                    (lambda (val)
+                      (with ((bind-e val))
+                        body ...))))
+               (cond
+                ;; speculatively inline list iteration
+                ((pair? iterable)
+                 (for-each iter-do iterable))
+                ((null? iterable))
+                (else
+                 ;; full iteration protocol
+                 (let (it (iter iterable))
+                   (let lp ()
+                     (let (val (iter-next! it))
+                       (unless (eq? iter-end val)
+                         (iter-do val)
+                         (lp))))
+                   (iter-fini! it)
+                   (void))))))))))
+
+  (def (generate-for1-iota iter-e bind-e body)
+    (with-syntax (((count start step) (for-iota-args iter-e))
+                  (bind-e bind-e)
+                  ((body ...) body))
+      #'(let ((iter-do (lambda (n) (with ((bind-e n)) body ...)))
+              ($count count)
+              ($start start)
+              ($step step))
+          (let lp ((i 0) (val $start))
+            (when (fx< i $count)
+              (iter-do val)
+              (lp (fx1+ i) (+ val $step)))))))
+
+  (def (generate-for1-range iter-e bind-e body)
+    (with-syntax (((start end step) (for-range-args iter-e))
+                  (bind-e bind-e)
+                  ((body ...) body))
+      #'(let* ((iter-do (lambda (n) (with ((bind-e n)) body ...)))
+               ($start start)
+               ($end end)
+               ($step step))
+          (if (negative? $step)
+            (let lp ((val $start))
+              (when (> val $end)
+                (iter-do val)
+                (lp (+ val $step))))
+            (let lp ((val $start))
+              (when (< val $end)
+                (iter-do val)
+                (lp (+ val $step))))))))
 
   (def (generate-for* bindings body)
     (with-syntax
@@ -305,31 +356,74 @@
       (generate-for* bindings body)))
 
   (def (generate-for1 bind body)
-    (with-syntax
-        ((iter-e (for-binding-expr bind))
-         (bind-e (for-binding-bind bind))
-         ((body ...) body))
-      #'(let ((iterable iter-e)
-              (iter-do
-               (lambda (val)
-                 (with ((bind-e val))
-                   body ...))))
-          (cond
-           ;; speculatively inline list iteration
-           ((pair? iterable)
-            (map iter-do iterable))
-           ((null? iterable) [])
-           (else
-            ;; full iteration protocol
-            (let (it (iter iterable))
-              (let lp ((rval []))
-                (let (val (iter-next! it))
-                  (if (eq? iter-end val)
-                    (begin
-                      (iter-fini! it)
-                      (reverse rval))
-                    (let (xval (iter-do val))
-                      (lp (cons xval rval))))))))))))
+    (let ((iter-e (for-binding-expr bind))
+          (bind-e (for-binding-bind bind)))
+      (syntax-case iter-e (in-iota in-range)
+        ((in-iota . _)
+         (generate-for1-iota iter-e bind-e body))
+        ((in-range . _)
+         (generate-for1-range iter-e bind-e body))
+        (_
+         (with-syntax
+             ((iter-e iter-e)
+              (bind-e bind-e)
+              ((body ...) body))
+           #'(let ((iterable iter-e)
+                   (iter-do
+                    (lambda (val)
+                      (with ((bind-e val))
+                        body ...))))
+               (cond
+                ;; speculatively inline list iteration
+                ((pair? iterable)
+                 (map iter-do iterable))
+                ((null? iterable) [])
+                (else
+                 ;; full iteration protocol
+                 (let (it (iter iterable))
+                   (let lp ((rval []))
+                     (let (val (iter-next! it))
+                       (if (eq? iter-end val)
+                         (begin
+                           (iter-fini! it)
+                           (reverse rval))
+                         (let (xval (iter-do val))
+                           (lp (cons xval rval)))))))))))))))
+
+  (def (generate-for1-iota iter-e bind-e body)
+    (with-syntax (((count start step) (for-iota-args iter-e))
+                  (bind-e bind-e)
+                  ((body ...) body))
+      #'(let ((iter-do (lambda (n) (with ((bind-e n)) body ...)))
+              ($count count)
+              ($start start)
+              ($step step))
+          (let lp ((i 0) (val $start) (r []))
+            (if (fx< i $count)
+              (lp (fx1+ i)
+                  (+ val $step)
+                  (cons (iter-do val) r))
+              (reverse r))))))
+
+  (def (generate-for1-range iter-e bind-e body)
+    (with-syntax (((start end step) (for-range-args iter-e))
+                  (bind-e bind-e)
+                  ((body ...) body))
+      #'(let* ((iter-do (lambda (n) (with ((bind-e n)) body ...)))
+               ($start start)
+               ($end end)
+               ($step step))
+          (if (negative? $step)
+            (let lp ((val $start) (r []))
+              (if (> val $end)
+                (lp (+ val $step)
+                    (cons (iter-do val) r))
+                (reverse r)))
+            (let lp ((val $start) (r []))
+              (if (< val $end)
+                (lp (+ val $step)
+                    (cons (iter-do val) r))
+                (reverse r)))))))
 
   (def (generate-for* bindings body)
     (with-syntax
@@ -374,33 +468,78 @@
       (generate-for* fold-bind bindings body)))
 
   (def (generate-for1 fold-bind bind body)
-    (with-syntax
-        ((iter-e (for-binding-expr bind))
-         (bind-e (for-binding-bind bind))
-         ((fold-iv fold-e) fold-bind)
-         ((body ...) body))
-      #'(let ((iterable iter-e)
-              (iter-do
-               (lambda (val fold-iv)
-                 (with ((bind-e val))
-                   body ...)))
-              (fold-iv fold-e))
-          (cond
-           ;; speculatively inline list iteration
-           ((pair? iterable)
-            (foldl iter-do fold-iv iterable))
-           ((null? iterable) fold-iv)
-           (else
-            ;; full iteration protocol
-            (let (it (iter iterable))
-              (let lp ((rval fold-iv))
-                (let (val (iter-next! it))
-                  (if (eq? iter-end val)
-                    (begin
-                      (iter-fini! it)
-                      rval)
-                    (let (xval (iter-do val rval))
-                      (lp xval)))))))))))
+    (let ((iter-e (for-binding-expr bind))
+          (bind-e (for-binding-bind bind)))
+      (syntax-case iter-e (in-iota in-range)
+        ((in-iota . _)
+         (generate-for1-iota iter-e bind-e fold-bind body))
+        ((in-range . _)
+         (generate-for1-range iter-e bind-e fold-bind body))
+        (_
+         (with-syntax
+             ((iter-e iter-e)
+              (bind-e bind-e)
+              ((fold-iv fold-e) fold-bind)
+              ((body ...) body))
+           #'(let ((iterable iter-e)
+                   (iter-do
+                    (lambda (val fold-iv)
+                      (with ((bind-e val))
+                        body ...)))
+                   (fold-iv fold-e))
+               (cond
+                ;; speculatively inline list iteration
+                ((pair? iterable)
+                 (foldl iter-do fold-iv iterable))
+                ((null? iterable) fold-iv)
+                (else
+                 ;; full iteration protocol
+                 (let (it (iter iterable))
+                   (let lp ((rval fold-e))
+                     (let (val (iter-next! it))
+                       (if (eq? iter-end val)
+                         (begin
+                           (iter-fini! it)
+                           rval)
+                         (let (xval (iter-do val rval))
+                           (lp xval))))))))))))))
+
+  (def (generate-for1-iota iter-e bind-e fold-bind body)
+    (with-syntax (((count start step) (for-iota-args iter-e))
+                  (bind-e bind-e)
+                  ((fold-iv fold-e) fold-bind)
+                  ((body ...) body))
+      #'(let ((iter-do (lambda (n fold-iv) (with ((bind-e n)) body ...)))
+              ($count count)
+              ($start start)
+              ($step step))
+          (let lp ((i 0) (val $start) (r fold-e))
+            (if (fx< i $count)
+              (lp (fx1+ i)
+                  (+ val $step)
+                  (iter-do val r))
+              r)))))
+
+  (def (generate-for1-range iter-e bind-e fold-bind body)
+    (with-syntax (((start end step) (for-range-args iter-e))
+                  (bind-e bind-e)
+                  ((fold-iv fold-e) fold-bind)
+                  ((body ...) body))
+      #'(let* ((iter-do (lambda (n fold-iv) (with ((bind-e n)) body ...)))
+               ($start start)
+               ($end end)
+               ($step step))
+          (if (negative? $step)
+            (let lp ((val $start) (r fold-e))
+              (if (> val $end)
+                (lp (+ val $step)
+                    (iter-do val r))
+                r))
+            (let lp ((val $start) (r fold-e))
+              (if (< val $end)
+                (lp (+ val $step)
+                    (iter-do val r))
+                r))))))
 
   (def (generate-for* fold-bind bindings body)
     (with-syntax
