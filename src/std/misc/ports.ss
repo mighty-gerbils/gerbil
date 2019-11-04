@@ -8,7 +8,9 @@
         read-all-as-string
         read-file-string
         read-all-as-lines
-        read-file-lines)
+        read-file-lines
+        read-all-as-u8vector
+        read-file-u8vector)
 
 ;; _gambit#.scm
 (extern namespace: #f
@@ -175,3 +177,17 @@
 ;; Read the contents of a file into a list of lines
 (def (read-file-lines file settings: (settings '()))
   (call-with-input-file (cons* path: file settings) read-all-as-lines))
+
+(def (read-all-as-u8vector port (bufsize 8192))
+  (let lp ((buf (make-u8vector bufsize))
+           (u8s []))
+    (let (len (read-subu8vector buf 0 bufsize port))
+      (if (= len bufsize)
+        (lp (make-u8vector bufsize) (cons buf u8s))
+        (begin
+          (u8vector-shrink! buf len)
+          (append-u8vectors (reverse (cons buf u8s))))))))
+
+(def (read-file-u8vector file settings: (settings '()) bufsize: (bufsize 8192))
+  (call-with-input-file (cons* path: file settings)
+    (cut read-all-as-u8vector <> bufsize)))

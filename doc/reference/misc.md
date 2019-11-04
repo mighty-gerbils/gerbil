@@ -2898,6 +2898,48 @@ $ head -n5 ~/dev/aoc18/01/input.txt
 ```
 :::
 
+### read-all-as-u8vector
+``` scheme
+(read-all-as-u8vector in (bufsize 8192)) -> u8vector | error
+
+  in      := input port to read from
+  bufsize := buffer size, defaults to 8192 bytes
+```
+
+Reads all the contents of port *in*, returning a single u8vector. Signals
+an error when *in* can't be read.
+
+::: tip Examples:
+``` scheme
+> (def u8 (call-with-input-file "/path/to/file" read-all-as-u8vector))
+> (u8vector-length u8)
+98526
+```
+:::
+
+### read-file-u8vector
+``` scheme
+(read-file-u8vector path settings: [] bufsize: 8192) -> u8vector | error
+
+  path     := path to file to read contents from
+  settings := port settings, defaults to the empty list
+  bufsize  := buffer size, defaults to 8192 bytes
+```
+
+Reads contents of the file at *path*, returning a single u8vector. Signals
+an error when *path* can't be read.
+
+Check section `17.7.1 Filesystem devices` of the Gambit Manual if you want
+to know more about the *settings* parameter.
+
+::: tip Examples:
+``` scheme
+> (def u8 (read-file-u8vector "/path/to/file" bufsize: 1024))
+> (u8vector-length u8)
+98526
+```
+:::
+
 ### Port Destructor
 ``` scheme
 (defmethod {destroy <port>} close-port)
