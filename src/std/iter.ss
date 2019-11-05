@@ -238,10 +238,16 @@
       ((_ n start step) #'(n start step))))
 
   (def (for-range-args iter-e)
-      (syntax-case iter-e ()
-        ((_ end) #'(0 end 1))
-        ((_ start end) #'(start end (if (> $start $end) -1 1)))
-        ((_ start end step) #'(start end step)))))
+    (syntax-case iter-e ()
+      ((_ end) #'(0 end 1))
+      ((_ start end) #'(start end (if (> $start $end) -1 1)))
+      ((_ start end step) #'(start end step))))
+
+  (def (for-naturals-args iter-e)
+    (syntax-case iter-e ()
+      ((_) #'(0 1))
+      ((_ start) #'(start 1))
+      ((_ start step) #'(start step)))))
 
 (defsyntax (for stx)
   (def (generate-for bindings body)
@@ -252,11 +258,13 @@
   (def (generate-for1 bind body)
     (let ((iter-e (for-binding-expr bind))
           (bind-e (for-binding-bind bind)))
-      (syntax-case iter-e (in-iota in-range)
+      (syntax-case iter-e (in-iota in-range in-naturals)
         ((in-iota . _)
          (generate-for1-iota iter-e bind-e body))
         ((in-range . _)
          (generate-for1-range iter-e bind-e body))
+        ((in-naturals . _)
+         (generate-for1-naturals iter-e bind-e body))
         (_
          (with-syntax
              ((iter-e iter-e)
@@ -313,6 +321,17 @@
               (when (< val $end)
                 (iter-do val)
                 (lp (+ val $step))))))))
+
+  (def (generate-for1-naturals iter-e bind-e body)
+    (with-syntax (((start step) (for-naturals-args iter-e))
+                  (bind-e bind-e)
+                  ((body ...) body))
+      #'(let ((iter-do (lambda (n) (with ((bind-e n)) body ...)))
+              ($start start)
+              ($step step))
+          (let lp ((val $start))
+            (iter-do val)
+            (lp (+ val $step))))))
 
   (def (generate-for* bindings body)
     (with-syntax
