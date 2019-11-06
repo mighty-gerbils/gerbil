@@ -667,7 +667,12 @@ namespace: gxc
       (if (and (not (stx-list? hd)) (fx= len 0))
         #!void
         ['let [[count (generate-runtime-values-count vals)]]
-          ['if ['not [cmp count len]]
+          ['if ['not
+                (with-inline-unsafe-primitives
+                    [cmp count len]
+                  ['let []
+                    '(declare (not safe))
+                    [cmp count len]])]
             ['error errmsg count]]])))))
 
 (def (generate-runtime-values-count var)
@@ -695,11 +700,23 @@ namespace: gxc
 (def (generate-runtime-values->list var i)
   (cond
    ((fx= i 0)
-    ['if ['##values? var] ['##vector->list var] ['list var]])
+    (with-inline-unsafe-primitives
+        ['if ['##values? var] ['##vector->list var] ['list var]]
+      ['let []
+        '(declare (not safe))
+        ['if ['##values? var] ['##vector->list var] ['list var]]]))
    ((fx= i 1)
-    ['if ['##values? var] ['##cdr ['##vector->list var]] '(quote ())])
+    (with-inline-unsafe-primitives
+        ['if ['##values? var] ['##cdr ['##vector->list var]] '(quote ())]
+      ['let []
+        '(declare (not safe))
+        ['if ['##values? var] ['##cdr ['##vector->list var]] '(quote ())]]))
    (else
-    ['list-tail ['##vector->list var] i])))
+    (with-inline-unsafe-primitives
+        ['##list-tail ['##vector->list var] i]
+      ['let []
+        '(declare (not safe))
+        ['##list-tail ['##vector->list var] i]]))))
 
 (def (generate-runtime-lambda% stx)
   (ast-case stx ()
@@ -760,9 +777,17 @@ namespace: gxc
            (condition
             (cond
              ((stx-list? hd)
-              ['##fx= arglen len])
+              (with-inline-unsafe-primitives
+                  ['##fx= arglen len]
+                ['let []
+                  '(declare (not safe))
+                  ['##fx= arglen len]]))
              ((> len 0)
-              ['##fx>= arglen len])
+              (with-inline-unsafe-primitives
+                  ['##fx>= arglen len]
+                ['let []
+                  '(declare (not safe))
+                  ['##fx>= arglen len]]))
              (else #t)))
            (dispatch
             (if (dispatch-case? hd body)
@@ -777,7 +802,12 @@ namespace: gxc
            (name (or (hash-get (current-compile-runtime-names) stx)
                      '(quote case-lambda-dispatch))))
        ['lambda args
-         ['let [[arglen ['length args]]]
+         ['let [[arglen
+                 (with-inline-unsafe-primitives
+                     ['##length args]
+                   ['let []
+                     '(declare (not safe))
+                     ['##length args]])]]
            ['cond
             (map (cut generate1 args arglen <> <>) #'(hd ...) #'(body ...)) ...
             ['else
