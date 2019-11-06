@@ -760,9 +760,17 @@ namespace: gxc
            (condition
             (cond
              ((stx-list? hd)
-              ['##fx= arglen len])
+              (with-inline-unsafe-primitives
+                  ['##fx= arglen len]
+                ['let []
+                  '(declare (not safe))
+                  ['##fx= arglen len]]))
              ((> len 0)
-              ['##fx>= arglen len])
+              (with-inline-unsafe-primitives
+                  ['##fx>= arglen len]
+                ['let []
+                  '(declare (not safe))
+                  ['##fx>= arglen len]]))
              (else #t)))
            (dispatch
             (if (dispatch-case? hd body)
