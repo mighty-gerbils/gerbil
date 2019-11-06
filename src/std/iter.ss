@@ -115,7 +115,7 @@
 (def (iter-input-port port (read-e read))
   (declare (not safe))
   (def (next it)
-    (let (port (&iterator-e port))
+    (let (port (&iterator-e it))
       (let (val (read-e port))
         (if (eof-object? val)
           iter-end
