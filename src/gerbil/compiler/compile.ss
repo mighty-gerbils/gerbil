@@ -785,7 +785,12 @@ namespace: gxc
            (name (or (hash-get (current-compile-runtime-names) stx)
                      '(quote case-lambda-dispatch))))
        ['lambda args
-         ['let [[arglen ['length args]]]
+         ['let [[arglen
+                 (with-inline-unsafe-primitives
+                     ['##length args]
+                   ['let []
+                     '(declare (not safe))
+                     ['##length args]])]]
            ['cond
             (map (cut generate1 args arglen <> <>) #'(hd ...) #'(body ...)) ...
             ['else
