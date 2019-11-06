@@ -6065,3 +6065,64 @@ result as list. *n* is expected to be an exact number.
 (8 3 5)
 ```
 :::
+
+### compose1
+```scheme
+(compose1 f1 f ...) -> procedure
+
+  f1, f ... := procedures
+```
+
+Composes a sequence of unary functions; per the mathematical function composition
+the value flows right-to-left.
+
+### rcompose1
+```scheme
+(rcompose1 f1 f ...) -> procedure
+
+  f1, f ... := procedures
+```
+
+Like `compose1`, but the value flows left-to-right.
+
+### compose
+```scheme
+(compose f1 f ...) -> procedure
+
+  f1, f ... := procedures
+```
+
+Like `compose1`, but the composed function accepts multiple arguments.
+
+Note: If you are composing unary functions, use `compose1`, as it avoids allocation
+from capturing arguments for apply.
+
+### rcompose
+```scheme
+(rcompose f1 f ...) -> procedure
+
+  f1, f ... := procedures
+```
+
+Like `compose`, but the values flow left-to-right.
+
+### compose/values
+```scheme
+(compose/values f1 f ...) -> procedure
+
+  f1, f ... := procedures
+```
+
+Like `compose`, but the composed function accepts multiple arguments and all functions
+can return multiple values, which are then applied as arguments to the next function in
+the sequence.
+
+
+### rcompose/values
+```scheme
+(rcompose/values f1 f ...) -> procedure
+
+  f1, f ... := procedures
+```
+
+Like `compose/values`, but the values flow left-to-right.
