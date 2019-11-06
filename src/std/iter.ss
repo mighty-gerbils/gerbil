@@ -61,7 +61,7 @@
 
 (def (iter-list lst)
   (def (next it)
-    (with ((iterator e) it)
+    (let (e (&iterator-e it))
       (match e
         ([hd . rest]
          (set! (&iterator-e it) rest)
@@ -69,19 +69,22 @@
         (else iter-end))))
   (make-iterator lst next))
 
-(def (iter-vector vec (length-e ##vector-length) (ref-e ##vector-ref))
-  (def (next it)
-    (with ((iterator e) it)
-      (with ([vec . index] e)
-        (if (##fx< index (length-e vec))
-          (let (v (ref-e vec index))
-            (set! (cdr e) (##fx+ index 1))
-            v)
-          iter-end))))
-  (make-iterator (cons vec 0) next))
+(defrules defiter-vector ()
+  ((_ iter-vector length-e ref-e)
+   (def (iter-vector vec)
+     (declare (not safe))
+     (def (next it)
+       (let (e (&iterator-e it))
+         (with ([vec . index] e)
+           (if (fx< index (length-e vec))
+             (let (v (ref-e vec index))
+               (set! (cdr e) (fx1+ index))
+               v)
+             iter-end))))
+     (make-iterator (cons vec 0) next))))
 
-(def (iter-string str)
-  (iter-vector str ##string-length ##string-ref))
+(defiter-vector iter-vector ##vector-length ##vector-ref)
+(defiter-vector iter-string ##string-length ##string-ref)
 
 (def (iter-hash-table ht)
   (def (iterate)
@@ -90,14 +93,14 @@
 
 (def (iter-coroutine proc)
   (def (next it)
-    (with ((iterator cort) it)
+    (let (cort (&iterator-e it))
       (continue cort)))
   (let (cort (coroutine (lambda () (proc) iter-end)))
     (make-iterator cort next)))
 
 (def (iter-cothread proc)
   (def (next it)
-    (with ((iterator cothr) it)
+    (let (cothr (&iterator-e it))
       (continue cothr)))
   (def (fini it)
     (let (cothr (&iterator-e it))
@@ -110,8 +113,9 @@
     it))
 
 (def (iter-input-port port (read-e read))
+  (declare (not safe))
   (def (next it)
-    (with ((iterator port) it)
+    (let (port (&iterator-e port))
       (let (val (read-e port))
         (if (eof-object? val)
           iter-end
@@ -119,19 +123,20 @@
   (make-iterator port next))
 
 (def (iter-in-iota start count step)
+  (declare (not safe))
   (def (next it)
-    (with ((iterator e) it)
+    (let (e (&iterator-e it))
       (with ([value . limit] e)
-        (if (##fx> limit 0)
+        (if (fx> limit 0)
           (begin
             (set! (car e) (+ value step))
-            (set! (cdr e) (##fx- limit 1))
+            (set! (cdr e) (fx1- limit))
             value)
           iter-end))))
-  (if (and (number? start) (fixnum? count) (number? step))
-    (make-iterator (cons start count) next)
+  (unless (and (number? start) (fixnum? count) (number? step))
     (error "Parameters are of wrong type (count:fixnum start:number step:number)."
-      [count start step])))
+      count start step))
+  (make-iterator (cons start count) next))
 
 (def* in-iota
   ((count) (iter-in-iota 0 count 1))
@@ -139,13 +144,16 @@
   ((count start step) (iter-in-iota start count step)))
 
 (def (iter-in-range start end step cmp)
+  (declare (not safe))
   (def (next it)
-    (with ((iterator e) it)
+    (let (e (&iterator-e it))
       (if (cmp e end)
         (begin
           (set! (&iterator-e it) (+ e step))
           e)
         iter-end)))
+  (unless (and (real? start) (real? end) (real? step))
+    (error "Parameters are of wrong type; expected real numbers" start end step))
   (make-iterator start next))
 
 (def* in-range
@@ -161,7 +169,7 @@
 
 (def (in-naturals (start 0) (step 1))
   (def (next it)
-    (with ((iterator value) it)
+    (let (value (&iterator-e it))
       (let (value+step (+ value step))
         (set! (&iterator-e it) value+step)
         value)))
@@ -199,9 +207,11 @@
   (iter-cothread (if (null? args) proc (cut apply proc args))))
 
 (def (iter-next! it)
+  (declare (not safe))
   ((&iterator-next it) it))
 
 (def (iter-fini! it)
+  (declare (not safe))
   ((&iterator-fini it) it))
 
 (def (iter-filter pred it)
@@ -282,9 +292,11 @@
                 ((null? iterable))
                 (else
                  ;; full iteration protocol
-                 (let (it (iter iterable))
+                 (let* ((it (iter iterable))
+                        (next! (&iterator-next it)))
+                   (declare (not safe))
                    (let lp ()
-                     (let (val (iter-next! it))
+                     (let (val (next! it))
                        (unless (eq? iter-end val)
                          (iter-do val)
                          (lp))))
@@ -337,6 +349,8 @@
     (with-syntax
         (((it ...)
           (gentemps bindings))
+         ((next! ...)
+          (gentemps bindings))
          ((iter-e ...)
           (stx-map for-binding-expr bindings))
          ((bind-id ...)
@@ -344,12 +358,17 @@
          ((bind-e ...)
           (stx-map for-binding-bind bindings))
          ((body ...) body))
-      #'(let ((it (iter iter-e)) ...)
+      #'(let* ((it (iter iter-e)) ...
+               (next! (&iterator-next it)) ...
+               (iter-do
+                (lambda (bind-id ...)
+                  (with ((bind-e bind-id) ...)
+                    body ...))))
+          (declare (not safe))
           (let lp ()
-            (let ((bind-id (iter-next! it)) ...)
+            (let ((bind-id (next! it)) ...)
               (unless (or (eq? iter-end bind-id) ...)
-                (with ((bind-e bind-id) ...)
-                  body ...)
+                (iter-do bind-id ...)
                 (lp))))
           (iter-fini! it) ...
           (void))))
@@ -399,9 +418,11 @@
                 ((null? iterable) [])
                 (else
                  ;; full iteration protocol
-                 (let (it (iter iterable))
+                 (let* ((it (iter iterable))
+                        (next! (&iterator-next it)))
+                   (declare (not safe))
                    (let lp ((rval []))
-                     (let (val (iter-next! it))
+                     (let (val (next! it))
                        (if (eq? iter-end val)
                          (begin
                            (iter-fini! it)
@@ -450,6 +471,8 @@
          (rvalue (genident 'rvalue))
          ((it ...)
           (gentemps bindings))
+         ((next! ...)
+          (gentemps bindings))
          ((iter-e ...)
           (stx-map for-binding-expr bindings))
          ((bind-id ...)
@@ -457,15 +480,20 @@
          ((bind-e ...)
           (stx-map for-binding-bind bindings))
          ((body ...) body))
-      #'(let ((it (iter iter-e)) ...)
+      #'(let* ((it (iter iter-e)) ...
+               (next! (&iterator-next it)) ...
+               (iter-do
+                (lambda (bind-id ...)
+                  (with ((bind-e bind-id) ...)
+                    body ...))))
+          (declare (not safe))
           (let lp ((rvalue []))
-            (let ((bind-id (iter-next! it)) ...)
+            (let ((bind-id (next! it)) ...)
               (if (or (eq? iter-end bind-id) ...)
                 (begin (iter-fini! it) ...
                        (reverse rvalue))
-                (with ((bind-e bind-id) ...)
-                  (let (value (let () body ...))
-                    (lp (cons value rvalue))))))))))
+                (let (value (iter-do bind-id ...))
+                  (lp (cons value rvalue)))))))))
 
   (syntax-case stx ()
     ((_ bind body ...)
@@ -513,9 +541,11 @@
                 ((null? iterable) fold-iv)
                 (else
                  ;; full iteration protocol
-                 (let (it (iter iterable))
+                 (let* ((it (iter iterable))
+                        (next! (&iterator-next it)))
+                   (declare (not safe))
                    (let lp ((rval fold-e))
-                     (let (val (iter-next! it))
+                     (let (val (next! it))
                        (if (eq? iter-end val)
                          (begin
                            (iter-fini! it)
@@ -567,6 +597,8 @@
           fold-bind)
          ((it ...)
           (gentemps bindings))
+         ((next! ...)
+          (gentemps bindings))
          ((iter-e ...)
           (stx-map for-binding-expr bindings))
          ((bind-id ...)
@@ -574,15 +606,20 @@
          ((bind-e ...)
           (stx-map for-binding-bind bindings))
          ((body ...) body))
-      #'(let ((it (iter iter-e)) ...)
+      #'(let* ((it (iter iter-e)) ...
+               (next! (&iterator-next it)) ...
+               (iter-do
+                (lambda (loop-id bind-id ...)
+                  (with ((bind-e bind-id) ...)
+                    body ...))))
+          (declare (not safe))
           (let lp ((loop-id loop-e))
-            (let ((bind-id (iter-next! it)) ...)
+            (let ((bind-id (next! it)) ...)
               (if (or (eq? iter-end bind-id) ...)
                 (begin (iter-fini! it) ...
                        loop-id)
-                (with ((bind-e bind-id) ...)
-                  (let (value (let () body ...))
-                    (lp value)))))))))
+                (let (value (iter-do loop-id bind-id ...))
+                  (lp value))))))))
 
   (syntax-case stx ()
     ((_ fold-bind bind body ...)
