@@ -194,9 +194,9 @@
         (delay
           (begin
             (create-directory* +root-dir+)
-            (create-directory  +pkg-root-dir+)
-            (create-directory  +pkg-lib-dir+)
-            (create-directory  +pkg-bin-dir+))))
+            (create-directory* +pkg-root-dir+)
+            (create-directory* +pkg-lib-dir+)
+            (create-directory* +pkg-bin-dir+))))
     (lambda ()
       (force once)
       +pkg-root-dir+)))
