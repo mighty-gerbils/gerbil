@@ -5,6 +5,7 @@
 (import :gerbil/gambit/os
         :std/foreign
         :std/net/socket
+        :std/net/socket/buffer
         :std/net/bio
         :std/text/utf8
         :std/logger
@@ -39,8 +40,8 @@
   final: #t)
 
 (def (http-request-handler get-handler sock addr)
-  (def ibuf (open-ssocket-input-buffer sock input-buffer-size))
-  (def obuf (open-ssocket-output-buffer sock output-buffer-size))
+  (def ibuf (get-input-buffer sock))
+  (def obuf (get-output-buffer sock))
 
   (def (loop)
     (let ((req (make-http-request ibuf addr #f #f #f #f #f #f #!void))
@@ -125,7 +126,9 @@
        (raise e))
      e)
    (finally
-    (ssocket-close sock))))
+    (ssocket-close sock)
+    (put-input-buffer! ibuf)
+    (put-output-buffer! obuf))))
 
 ;;; handler interface
 ;; request
@@ -617,3 +620,52 @@ END-C
            (503 "Service Unavailable")
            (504 "Gateway Timeout")
            (505 "HTTP Version Not Supported")))
+
+;;; buffer management
+(cond-expand
+  (gerbil-smp
+   ;; TODO: avoid buffer allocations with smp too; needs a mutex however
+   (defrules get-input-buffer ()
+     ((_ sock)
+      (open-ssocket-input-buffer sock input-buffer-size)))
+   (defrules put-input-buffer! ()
+     ((_ buf) (void)))
+   (defrules get-output-buffer ()
+     ((_ sock)
+      (open-ssocket-output-buffer sock output-buffer-size)))
+   (defrules put-output-buffer! ()
+     ((_ buf) (void))))
+
+  (else
+   (def +input-buffers+ [])
+   (def +output-buffers+ [])
+
+   (def (get-input-buffer sock)
+     (declare (not interrupts-enabled))
+     (match +input-buffers+
+       ([buf . rest]
+        (set! +input-buffers+ rest)
+        (ssocket-input-buffer-reset! buf sock)
+        buf)
+       (else
+        (open-ssocket-input-buffer sock input-buffer-size))))
+
+   (def (put-input-buffer! buf)
+     (declare (not interrupts-enabled))
+     (ssocket-input-buffer-release! buf)
+     (set! +input-buffers+ (cons buf +input-buffers+)))
+
+   (def (get-output-buffer sock)
+     (declare (not interrupts-enabled))
+     (match +output-buffers+
+       ([buf . rest]
+        (set! +output-buffers+ rest)
+        (ssocket-output-buffer-reset! buf sock)
+        buf)
+       (else
+        (open-ssocket-output-buffer sock output-buffer-size))))
+
+   (def (put-output-buffer! buf)
+     (declare (not interrupts-enabled))
+     (ssocket-output-buffer-release! buf)
+     (set! +output-buffers+ (cons buf +output-buffers+)))))
