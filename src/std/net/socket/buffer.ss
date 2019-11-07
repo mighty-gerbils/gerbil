@@ -13,7 +13,11 @@
         ssocket-input-buffer-timeout-set!
         open-ssocket-output-buffer
         ssocket-output-buffer?
-        ssocket-output-buffer-timeout-set!)
+        ssocket-output-buffer-timeout-set!
+        ssocket-input-buffer-reset!
+        ssocket-input-buffer-release!
+        ssocket-output-buffer-reset!
+        ssocket-output-buffer-release!)
 
 (declare (not safe))
 
@@ -89,3 +93,22 @@
 (def (ssocket-output-buffer-timeout-set! buf timeo)
   (let (timeo (abs-timeout timeo))
     (set! (ssocket-output-buffer-timeo buf) timeo)))
+
+;; reset and release
+(def (ssocket-input-buffer-reset! buf sock)
+  (set! (&input-buffer-rlo buf) 0)
+  (set! (&input-buffer-rhi buf) 0)
+  (set! (&ssocket-input-buffer-sock buf) sock)
+  (set! (&ssocket-input-buffer-timeo buf) #f))
+
+(def (ssocket-input-buffer-release! buf)
+  (set! (&ssocket-input-buffer-sock buf) #f))
+
+(def (ssocket-output-buffer-reset! buf sock)
+  (set! (&output-buffer-wlo buf) 0)
+  (set! (&output-buffer-whi buf) (u8vector-length (&output-buffer-e buf)))
+  (set! (&ssocket-output-buffer-sock buf) sock)
+  (set! (&ssocket-output-buffer-timeo buf) #f))
+
+(def (ssocket-output-buffer-release! buf)
+  (set! (&ssocket-output-buffer-sock buf) #f))
