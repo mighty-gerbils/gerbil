@@ -1332,37 +1332,29 @@
 (define (last lst)
   (car (last-pair lst)))
 
-(define (assgetq key lst #!optional (default #f))
-  (assget* key lst default assq))
+(define-macro (define-assget assget assf)
+  `(define (,assget key lst #!optional (default #f))
+     (cond
+      ((and (pair? lst) (,assf key lst)) => cdr)
+      ((procedure? default)
+       (default key))
+      (else default))))
 
-(define (assgetv key lst #!optional (default #f))
-  (assget* key lst default assv))
+(define-assget assgetq assq)
+(define-assget assgetv assv)
+(define-assget assget assoc)
 
-(define (assget key lst #!optional (default #f))
-  (assget* key lst default assoc))
+(define-macro (define-pget pget getf)
+  `(define (,pget key lst #!optional (default #f))
+     (cond
+      ((and (pair? lst) (,getf key lst)) => cadr)
+      ((procedure? default)
+       (default key))
+      (else default))))
 
-(define (assget* key lst default assf)
-  (cond
-   ((and (pair? lst) (assf key lst)) => cdr)
-   ((procedure? default)
-    (default key))
-   (else default)))
-
-(define (pgetq key lst #!optional (default #f))
-  (pget* key lst default memq))
-
-(define (pgetv key lst #!optional (default #f))
-  (pget* key lst default memv))
-
-(define (pget key lst #!optional (default #f))
-  (pget* key lst default member))
-
-(define (pget* key lst default getf)
-  (cond
-   ((getf key lst) => cadr)
-   ((procedure? default)
-    (default key))
-   (else default)))
+(define-pget pgetq memq)
+(define-pget pgetv memv)
+(define-pget pget member)
 
 (define (find pred lst)
   (cond
@@ -1376,26 +1368,26 @@
        (if (proc hd) rest (lp tl)))
       (else #f))))
 
-(define (remove el lst #!optional (p? equal?))
-  (let lp ((rest lst) (r '()))
-    (core-match rest
-      ((hd . rest)
-       (if (p? el hd)
-         (foldl cons rest r)
-         (lp rest (cons hd r))))
-      (else lst))))
+(define-macro (define-remove remove cmp)
+  `(define (,remove el lst)
+    (let lp ((rest lst) (r '()))
+      (core-match rest
+        ((hd . rest)
+         (if (,cmp el hd)
+           (foldl1 cons rest r)
+           (lp rest (cons hd r))))
+        (else lst)))))
 
-(define (remv el lst)
-  (remove el lst eqv?))
-(define (remq el lst)
-  (remove el lst eq?))
+(define-remove remove equal?)
+(define-remove remv eqv?)
+(define-remove remq eq?)
 
 (define (remf proc lst)
   (let lp ((rest lst) (r '()))
     (core-match rest
       ((hd . rest)
        (if (proc hd)
-         (foldl cons rest r)
+         (foldl1 cons rest r)
          (lp rest (cons hd r))))
       (else lst))))
 
