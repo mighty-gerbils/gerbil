@@ -384,7 +384,7 @@ package: gerbil
  fxarithmetic-shift
  set-box!
  memf find
- remq remv remf
+ remove remq remv remf
  hash-key?
  hash-map
  string-shrink!
@@ -447,7 +447,6 @@ package: gerbil
  (assgetq 2 3)
  (assgetv 2 3)
  (assget 2 3)
- (remove 2 3)
  (pgetq 2 3)
  (pgetv 2 3)
  (pget 2 3)
