@@ -10,6 +10,7 @@ namespace: gxc
         "optimize-base"
         "optimize-xform"
         "optimize-top"
+        "optimize-spec"
         "optimize-ann"
         "optimize-call"
         (only-in :gerbil/gambit/exceptions display-exception))
