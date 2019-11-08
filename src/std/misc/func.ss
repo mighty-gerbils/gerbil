@@ -3,7 +3,12 @@
 ;;; © vyzo
 ;;; Utility procedures
 
-(export #t)
+(export
+  repeat always
+  compose1 compose compose/values
+  @compose1 @compose @compose/values
+  rcompose1 rcompose rcompose/values
+  @rcompose1 @rcompose @rcompose/values)
 
 ;; Repeat value or call function N times and return the result as list.
 ;; (repeat 2 5)                  -> (2 2 2 2 2)  ; repeat the value 2
@@ -99,3 +104,76 @@
      (call-with-values (lambda () (apply f1 args)) f2)))
   ((f1 f2 . rest)
    (rcompose/values f1 (apply rcompose/values f2 rest))))
+
+;;; macro versions of function composition
+(defrules @compose1 ()
+  ((_) identity)
+  ((_ f) f)
+  ((_ f1 f2 rest ...)
+   (lambda (x) (@compose1~ x f1 f2 rest ...))))
+
+(defrules @compose1~ ()
+  ((_ x f) (f x))
+  ((recur x f rest ...)
+   (f (recur x rest ...))))
+
+(defrules @rcompose1 ()
+  ((_) identity)
+  ((_ f) f)
+  ((_ f1 f2 rest ...)
+   (lambda (x)
+     (@rcompose1~ (f1 x) f2 rest ...))))
+
+(defrules @rcompose1~ ()
+  ((_ f) f)
+  ((recur f ... fn)
+   (fn (recur f ...))))
+
+(defrules @compose ()
+  ((_) identity)
+  ((_ f) f)
+  ((_ f1 f2 rest ...)
+   (lambda args
+     (@compose~ args f1 f2 rest ...))))
+
+(defrules @compose~ ()
+  ((_ args f) (apply f args))
+  ((recur args f rest ...)
+   (f (recur args rest ...))))
+
+(defrules @rcompose ()
+  ((_) identity)
+  ((_ f) f)
+  ((_ f1 f2 rest ...)
+   (lambda args
+     (@rcompose~ (apply f1 args) f2 rest ...))))
+
+(defrules @rcompose~ ()
+  ((_ f) f)
+  ((recur f ... fn)
+   (fn (recur f ...))))
+
+(defrules @compose/values ()
+  ((_) values)
+  ((_ f) f)
+  ((_ f1 f2 rest ...)
+   (lambda args
+     (@compose/values~ args f1 f2 rest ...))))
+
+(defrules @compose/values~ ()
+  ((_ args f)
+   (apply f args))
+  ((recur args f rest ...)
+   (call-with-values (lambda () (recur args rest ...)) f)))
+
+(defrules @rcompose/values ()
+  ((_) values)
+  ((_ f) f)
+  ((_ f1 f2 rest ...)
+   (lambda args
+     (@rcompose/values~ (apply f1 args) f2 rest ...))))
+
+(defrules @rcompose/values~ ()
+  ((_ f) f)
+  ((recur f ... fn)
+   (call-with-values (lambda () (recur f ...)) fn)))
