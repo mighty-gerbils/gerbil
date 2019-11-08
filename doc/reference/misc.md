@@ -6126,3 +6126,16 @@ the sequence.
 ```
 
 Like `compose/values`, but the values flow left-to-right.
+
+### Functional composition macros
+```scheme
+(@compose1 f1 f ...)
+(@compose f1 f ...)
+(@compose/values f1 f ...)
+(@rcompose1 f1 f ...)
+(@rcompose f1 f ...)
+(@rcompose/values f1 f ...)
+```
+
+These are macro versions of the functional composition operators; they generate
+significantly more efficient code and allow the optimizer to see through the composition.
