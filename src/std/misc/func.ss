@@ -53,7 +53,8 @@
   ((f1 f2)
    (lambda (x) (f1 (f2 x))))
   ((f1 f2 . rest)
-   (compose1 f1 (apply compose1 f2 rest))))
+   ;; this results in more efficient code when there are non-local exits
+   (apply rcompose1 (reverse [f1 f2 . rest]))))
 
 ;; like compose1, but with the values flowing left-to-right
 (def* rcompose1
@@ -74,7 +75,8 @@
   ((f1 f2)
    (lambda args (f1 (apply f2 args))))
   ((f1 f2 . rest)
-   (compose f1 (apply compose f2 rest))))
+   ;; this results in more efficient code when there are non-local exits
+   (apply rcompose (reverse [f1 f2 . rest]))))
 
 ;; like compose, but with the values flowing left-to-right
 (def* rcompose
@@ -93,7 +95,8 @@
    (lambda args
      (call-with-values (lambda () (apply f2 args)) f1)))
   ((f1 f2 . rest)
-   (compose/values f1 (apply compose/values f2 rest))))
+   ;; this results in more efficient code when there are non-local exits
+   (apply rcompose/values (reverse [f1 f2 . rest]))))
 
 ;; like compose/values, but with arguments flowing left-to-right
 (def* rcompose/values
