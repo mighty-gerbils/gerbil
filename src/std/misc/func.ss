@@ -43,6 +43,7 @@
 ;; composes a sequence of unary functions; per the mathematical function composition
 ;; the value flows right to left.
 (def* compose1
+  (() identity)
   ((f) f)
   ((f1 f2)
    (lambda (x) (f1 (f2 x))))
@@ -51,17 +52,19 @@
 
 ;; like compose1, but with the values flowing left-to-right
 (def* rcompose1
+  (() identity)
   ((f) f)
   ((f1 f2)
    (lambda (x) (f2 (f1 x))))
   ((f1 f2 . rest)
    (rcompose1 f1 (apply rcompose1 f2 rest))))
 
-;; composes a squence of function right-to-left, where the first function accepts
+;; composes a sequence of functions right-to-left, where the first function accepts
 ;; an arbitrary number of arguments and each successive function returns a single value.
 ;; Note: if you are composing unary functions use compose1 as it avoids allocation for
 ;; capturing and the arguments and applying.
 (def* compose
+  (() identity)
   ((f) f)
   ((f1 f2)
    (lambda args (f1 (apply f2 args))))
@@ -70,6 +73,7 @@
 
 ;; like compose, but with the values flowing left-to-right
 (def* rcompose
+  (() identity)
   ((f) f)
   ((f1 f2)
    (lambda args (f2 (apply f1 args))))
@@ -78,6 +82,7 @@
 
 ;; like compose, but multiple value returns are turned into arguments for the next function
 (def* compose/values
+  (() values)
   ((f) f)
   ((f1 f2)
    (lambda args
@@ -87,6 +92,7 @@
 
 ;; like compose/values, but with arguments flowing left-to-right
 (def* rcompose/values
+  (() values)
   ((f) f)
   ((f1 f2)
    (lambda args
