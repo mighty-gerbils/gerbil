@@ -18,6 +18,7 @@
     "gerbil/compiler/optimize-base.ss"
     "gerbil/compiler/optimize-xform.ss"
     "gerbil/compiler/optimize-top.ss"
+    "gerbil/compiler/optimize-spec.ss"
     "gerbil/compiler/optimize-ann.ss"
     "gerbil/compiler/optimize-call.ss"
     "gerbil/compiler/optimize.ss"
