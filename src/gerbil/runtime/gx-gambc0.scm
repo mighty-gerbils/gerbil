@@ -1344,17 +1344,20 @@
 (define-assget assgetv assv)
 (define-assget assget assoc)
 
-(define-macro (define-pget pget getf)
+(define-macro (define-pget pget cmp)
   `(define (,pget key lst #!optional (default #f))
-     (cond
-      ((and (pair? lst) (,getf key lst)) => cadr)
-      ((procedure? default)
-       (default key))
-      (else default))))
+     (let lp ((rest lst))
+       (core-match rest
+         ((k v . rest)
+          (if (,cmp k key) v (lp rest)))
+         (else
+          (if (procedure? default)
+            (default key)
+            default))))))
 
-(define-pget pgetq memq)
-(define-pget pgetv memv)
-(define-pget pget member)
+(define-pget pgetq eq?)
+(define-pget pgetv eqv?)
+(define-pget pget equal?)
 
 (define (find pred lst)
   (cond
