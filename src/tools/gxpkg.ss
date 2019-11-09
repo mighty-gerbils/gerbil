@@ -186,6 +186,8 @@
   (path-expand "pkg" +root-dir+))
 (def +pkg-lib-dir+
   (path-expand "lib" +root-dir+))
+(def +pkg-lib-static-dir+
+  (path-expand "static" +pkg-lib-dir+))
 (def +pkg-bin-dir+
   (path-expand "bin" +root-dir+))
 
@@ -196,6 +198,7 @@
             (create-directory* +root-dir+)
             (create-directory* +pkg-root-dir+)
             (create-directory* +pkg-lib-dir+)
+            (create-directory* +pkg-lib-static-dir+)
             (create-directory* +pkg-bin-dir+))))
     (lambda ()
       (force once)
