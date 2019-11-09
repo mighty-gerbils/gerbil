@@ -35,9 +35,9 @@
 (declare (not safe))
 
 (defstruct http-request (buf client method url path params proto headers data)
-  final: #t)
+  final: #t unchecked: #t)
 (defstruct http-response (buf output close?)
-  final: #t)
+  final: #t unchecked: #t)
 
 (def (http-request-handler get-handler sock addr)
   (def ibuf (get-input-buffer sock))
@@ -56,19 +56,19 @@
        (read-request! req)
        (catch (timeout-error? e)
          (log-error "request error" e)
-         (set! (http-response-close? res) #t)
+         (set! (&http-response-close? res) #t)
          (http-response-write res 408 [] #f)
          (raise 'abort))
        (catch (io-error? e)
          (log-error "request error" e)
-         (set! (http-response-close? res) #t)
+         (set! (&http-response-close? res) #t)
          (http-response-write res 400 [] #f)
          (raise 'abort)))
 
-      (let* ((method  (http-request-method req))
-             (path    (http-request-path req))
-             (proto   (http-request-proto req))
-             (headers (http-request-headers req))
+      (let* ((method  (&http-request-method req))
+             (path    (&http-request-path req))
+             (proto   (&http-request-proto req))
+             (headers (&http-request-headers req))
              (host    (assget "Host" headers))
              (close?
               (case proto
@@ -79,7 +79,7 @@
                 (else #t))))
 
         (when close?
-          (set! (http-response-close? res) #t))
+          (set! (&http-response-close? res) #t))
 
         (cond
          ((not (member proto '("HTTP/1.1" "HTTP/1.0")))
@@ -97,13 +97,13 @@
                   (handler req res)
                   (catch (io-error? e)
                     (log-error "request i/o error" e)
-                    (unless (http-response-output res)
-                      (set! (http-response-close? res) #t)
+                    (unless (&http-response-output res)
+                      (set! (&http-response-close? res) #t)
                       (http-response-write res 500 [] #f))
                     (raise 'abort))
                   (catch (e)
                     (log-error "request handler error" e)
-                    (if (http-response-output res)
+                    (if (&http-response-output res)
                       ;; if there was output from the handler, the connection
                       ;; is unusable; abort
                       (raise 'abort)
@@ -138,7 +138,7 @@
       (case method
         ((POST PUT)
          (let (data (read-request-body ibuf headers))
-           (set! (http-request-data req)
+           (set! (&http-request-data req)
              data)
            data))
         (else
@@ -157,7 +157,7 @@
   (with ((http-response obuf output close?) res)
     (when output
       (error "duplicate response" res))
-    (set! (http-response-output res) 'END)
+    (set! (&http-response-output res) 'END)
     (let* ((len
             (cond
              ((u8vector? body)
@@ -191,7 +191,7 @@
   (with ((http-response obuf output close?) res)
     (when output
       (error "duplicate response" res))
-    (set! (http-response-output res) 'CHUNK)
+    (set! (&http-response-output res) 'CHUNK)
     (let* ((headers (cons '("Transfer-Encoding" . "chunked") headers))
            (headers (if close?
                       (cons '("Connection" . "close") headers)
@@ -214,7 +214,7 @@
   (with ((http-response obuf output) res)
     (unless (eq? output 'CHUNK)
       (error "illegal response; not writing chunks" res output))
-    (set! (http-response-output res) 'END)
+    (set! (&http-response-output res) 'END)
     (write-last-chunk obuf)
     (bio-force-output obuf)))
 
@@ -229,9 +229,9 @@
 
 ;;; server internal
 (def (http-request-skip-body req)
-  (when (void? (http-request-data req))
-    (set! (http-request-data req) #f)
-    (skip-request-body (http-request-buf req) (http-request-headers req))))
+  (when (void? (&http-request-data req))
+    (set! (&http-request-data req) #f)
+    (skip-request-body (&http-request-buf req) (&http-request-headers req))))
 
 (def (http-response-trace res req)
   (with ((http-request _ _ method url _ _ proto headers) req)
@@ -301,23 +301,23 @@ END-C
   (and fixnum? fxpositive?))
 
 (def (read-request! req)
-  (let* ((ibuf (http-request-buf req))
+  (let* ((ibuf (&http-request-buf req))
          ((values method url proto)
           (read-request-line ibuf))
          ((values path params)
           (split-request-url url))
          (headers (read-request-headers ibuf)))
-    (set! (http-request-method req)
+    (set! (&http-request-method req)
       method)
-    (set! (http-request-url req)
+    (set! (&http-request-url req)
       url)
-    (set! (http-request-path req)
+    (set! (&http-request-path req)
       path)
-    (set! (http-request-params req)
+    (set! (&http-request-params req)
       params)
-    (set! (http-request-proto req)
+    (set! (&http-request-proto req)
       proto)
-    (set! (http-request-headers req)
+    (set! (&http-request-headers req)
       headers)))
 
 (def split-request-url-rx
