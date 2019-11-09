@@ -1663,16 +1663,16 @@
      (else
       (create-directory path))))
 
-  (let lp ((start 0))
-    (cond
-     ((string-index dir #\/ start)
-      => (lambda (x)
-           (when (##fx> x 0)
-             (create1 (substring dir 0 x)))
-           (lp (##fx+ x 1))))
-     (else
-      (create1 dir)
-      (path-normalize dir)))))
+  (unless (file-exists? dir)
+    (let lp ((start 0))
+      (cond
+       ((string-index dir #\/ start)
+        => (lambda (x)
+             (when (##fx> x 0)
+               (create1 (substring dir 0 x)))
+             (lp (##fx+ x 1))))
+       (else
+        (create1 dir))))))
 
 ;; kwt: #f or a vector as a perfect hash-table for expected keywords
 (define (keyword-dispatch kwt K . all-args)

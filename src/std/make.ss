@@ -55,6 +55,10 @@
          (buildset (if depgraph
                      (expand-build-deps buildset buildspec depgraph)
                      buildset)))
+    (create-directory* bindir)
+    (create-directory* libdir)
+    (when static
+      (create-directory* (path-expand "static" libdir)))
     (for-each (cut build <> settings) buildset)))
 
 (def (message . rest)
