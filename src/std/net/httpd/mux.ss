@@ -36,7 +36,7 @@
 
 (defmethod {get-handler recursive-http-mux}
   (lambda (self host path)
-    (sync-hash-do (default-http-mux-t self)
+    (sync-hash-do (&default-http-mux-t self)
       (lambda (ht)
         (let lp ((path path))
           (cond
@@ -44,7 +44,7 @@
            ((string-rindex path #\/)
             => (lambda (ix) (lp (substring path 0 ix))))
            (else
-            (default-http-mux-default self))))))))
+            (&default-http-mux-default self))))))))
 
 ;; static mux -- paths are resolved in a static hash table, which elides the need for a mutex
 (defstruct static-http-mux (t default)
