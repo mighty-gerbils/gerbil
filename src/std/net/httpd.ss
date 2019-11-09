@@ -11,6 +11,9 @@
         current-http-server
         make-default-http-mux
         make-recursive-http-mux
+        make-static-http-mux
+        make-recursive-static-http-mux
+        make-custom-http-mux
         http-register-handler
         http-request?
         http-request-method http-request-url http-request-path http-request-params
