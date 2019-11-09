@@ -35,9 +35,9 @@
 (declare (not safe))
 
 (defstruct http-request (buf client method url path params proto headers data)
-  final: #t)
+  final: #t unchecked: #t)
 (defstruct http-response (buf output close?)
-  final: #t)
+  final: #t unchecked: #t)
 
 (def (http-request-handler get-handler sock addr)
   (def ibuf (get-input-buffer sock))
@@ -56,30 +56,30 @@
        (read-request! req)
        (catch (timeout-error? e)
          (log-error "request error" e)
-         (set! (http-response-close? res) #t)
+         (set! (&http-response-close? res) #t)
          (http-response-write res 408 [] #f)
          (raise 'abort))
        (catch (io-error? e)
          (log-error "request error" e)
-         (set! (http-response-close? res) #t)
+         (set! (&http-response-close? res) #t)
          (http-response-write res 400 [] #f)
          (raise 'abort)))
 
-      (let* ((method  (http-request-method req))
-             (path    (http-request-path req))
-             (proto   (http-request-proto req))
-             (headers (http-request-headers req))
-             (host    (assget "Host" headers))
+      (let* ((method  (&http-request-method req))
+             (path    (&http-request-path req))
+             (proto   (&http-request-proto req))
+             (headers (&http-request-headers req))
+             (host    (header-e "Host" headers))
              (close?
               (case proto
                 (("HTTP/1.1")
-                 (equal? (assget "Connection" headers) "close"))
+                 (equal? (header-e "Connection" headers) "close"))
                 (("HTTP/1.0")
-                 (not (equal? (assget "Connection" headers) "Keep-Alive")))
+                 (not (equal? (header-e "Connection" headers) "Keep-Alive")))
                 (else #t))))
 
         (when close?
-          (set! (http-response-close? res) #t))
+          (set! (&http-response-close? res) #t))
 
         (cond
          ((not (member proto '("HTTP/1.1" "HTTP/1.0")))
@@ -97,13 +97,13 @@
                   (handler req res)
                   (catch (io-error? e)
                     (log-error "request i/o error" e)
-                    (unless (http-response-output res)
-                      (set! (http-response-close? res) #t)
+                    (unless (&http-response-output res)
+                      (set! (&http-response-close? res) #t)
                       (http-response-write res 500 [] #f))
                     (raise 'abort))
                   (catch (e)
                     (log-error "request handler error" e)
-                    (if (http-response-output res)
+                    (if (&http-response-output res)
                       ;; if there was output from the handler, the connection
                       ;; is unusable; abort
                       (raise 'abort)
@@ -138,7 +138,7 @@
       (case method
         ((POST PUT)
          (let (data (read-request-body ibuf headers))
-           (set! (http-request-data req)
+           (set! (&http-request-data req)
              data)
            data))
         (else
@@ -157,7 +157,7 @@
   (with ((http-response obuf output close?) res)
     (when output
       (error "duplicate response" res))
-    (set! (http-response-output res) 'END)
+    (set! (&http-response-output res) 'END)
     (let* ((len
             (cond
              ((u8vector? body)
@@ -191,7 +191,7 @@
   (with ((http-response obuf output close?) res)
     (when output
       (error "duplicate response" res))
-    (set! (http-response-output res) 'CHUNK)
+    (set! (&http-response-output res) 'CHUNK)
     (let* ((headers (cons '("Transfer-Encoding" . "chunked") headers))
            (headers (if close?
                       (cons '("Connection" . "close") headers)
@@ -214,7 +214,7 @@
   (with ((http-response obuf output) res)
     (unless (eq? output 'CHUNK)
       (error "illegal response; not writing chunks" res output))
-    (set! (http-response-output res) 'END)
+    (set! (&http-response-output res) 'END)
     (write-last-chunk obuf)
     (bio-force-output obuf)))
 
@@ -228,10 +228,19 @@
       timeo)))
 
 ;;; server internal
+(def (header-e key lst)
+  (let lp ((rest lst))
+    (match rest
+      ([hd . rest]
+       (if (##string-equal? key (car hd))
+         (cdr hd)
+         (lp rest)))
+      (else #f))))
+
 (def (http-request-skip-body req)
-  (when (void? (http-request-data req))
-    (set! (http-request-data req) #f)
-    (skip-request-body (http-request-buf req) (http-request-headers req))))
+  (when (void? (&http-request-data req))
+    (set! (&http-request-data req) #f)
+    (skip-request-body (&http-request-buf req) (&http-request-headers req))))
 
 (def (http-response-trace res req)
   (with ((http-request _ _ method url _ _ proto headers) req)
@@ -301,23 +310,23 @@ END-C
   (and fixnum? fxpositive?))
 
 (def (read-request! req)
-  (let* ((ibuf (http-request-buf req))
+  (let* ((ibuf (&http-request-buf req))
          ((values method url proto)
           (read-request-line ibuf))
          ((values path params)
           (split-request-url url))
          (headers (read-request-headers ibuf)))
-    (set! (http-request-method req)
+    (set! (&http-request-method req)
       method)
-    (set! (http-request-url req)
+    (set! (&http-request-url req)
       url)
-    (set! (http-request-path req)
+    (set! (&http-request-path req)
       path)
-    (set! (http-request-params req)
+    (set! (&http-request-params req)
       params)
-    (set! (http-request-proto req)
+    (set! (&http-request-proto req)
       proto)
-    (set! (http-request-headers req)
+    (set! (&http-request-headers req)
       headers)))
 
 (def split-request-url-rx
@@ -341,11 +350,9 @@ END-C
 (def (read-request-line ibuf)
   (let* ((_ (read-skip* ibuf CR LF))
          (method (read-token ibuf SPC))
-         (_ (read-skip ibuf SPC))
          (url (read-token ibuf SPC))
-         (_ (read-skip ibuf SPC))
          (proto (read-token ibuf CR))
-         (_ (read-skip ibuf CR LF))
+         (_ (read-skip ibuf LF))
          (method
           (or (hash-get +http-request-methods+ method)
               method)))
@@ -369,10 +376,9 @@ END-C
 (def (read-header ibuf)
   (let* ((key (read-token ibuf COL))
          (_ (header-titlecase! key))
-         (_ (read-skip ibuf COL))
          (_ (read-skip* ibuf SPC))
          (val (read-token ibuf CR))
-         (_ (read-skip ibuf CR LF)))
+         (_ (read-skip ibuf LF)))
     (cons key val)))
 
 (def (header-titlecase! str)
@@ -389,14 +395,14 @@ END-C
 
 (def (read-token ibuf sep)
   (let lp ((chars []) (count 0))
-    (let (next (bio-peek-u8 ibuf))
+    (let (next (bio-read-u8 ibuf))
       (cond
        ((eof-object? next)
         (raise 'eof))
        ((eq? next sep)
         (token-chars->string chars count))
        ((fx< count max-token-length)
-        (let (char (integer->char (bio-read-u8 ibuf)))
+        (let (char (integer->char next))
           (lp (cons char chars) (fx1+ count))))
        (else
         (raise-io-error 'http-read-request "Maximum token length exceeded" count))))))
@@ -437,7 +443,7 @@ END-C
 (def (read-request-body ibuf headers)
   (def (read-simple-body)
     (cond
-     ((assget "Content-Length" headers)
+     ((header-e "Content-Length" headers)
       => (lambda (len)
            (let* ((len (string->number len))
                   (_ (unless (fx<= len max-request-body-length)
@@ -448,7 +454,7 @@ END-C
      (else #f)))
 
   (cond
-   ((assget "Transfer-Encoding" headers)
+   ((header-e "Transfer-Encoding" headers)
     => (lambda (tenc)
          (if (not (equal? "identity" tenc))
            (read-request-chunks ibuf)
@@ -459,7 +465,7 @@ END-C
 (def (read-request-chunks ibuf)
   (let lp ((chunks []) (count 0))
     (let* ((next (read-token ibuf CR))
-           (_ (read-skip ibuf CR LF))
+           (_ (read-skip ibuf LF))
            (len (string->number next 16)))
       (if (fx> len 0)
         (let (count (fx+ count len))
@@ -473,14 +479,14 @@ END-C
 
 (def (skip-request-body ibuf headers)
   (def (skip-simple-body)
-    (alet (clen (assget "Content-Length" headers))
+    (alet (clen (header-e "Content-Length" headers))
       (let (len (string->number clen))
         (if (fixnum? len)
           (bio-input-skip len ibuf)
           (raise-io-error 'http-request-skip-body "Illegal body length" clen)))))
 
   (cond
-   ((assget "Transfer-Encoding" headers)
+   ((header-e "Transfer-Encoding" headers)
     => (lambda (tenc)
          (if (not (equal? "identity" tenc))
            (skip-request-chunks ibuf)
@@ -490,7 +496,7 @@ END-C
 
 (def (skip-request-chunks ibuf)
   (let* ((next (read-token ibuf CR))
-         (_ (read-skip ibuf CR LF))
+         (_ (read-skip ibuf LF))
          (len (string->number next 16)))
     (when (fx> len 0)
       (bio-input-skip len ibuf)
