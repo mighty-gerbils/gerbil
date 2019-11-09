@@ -9,9 +9,10 @@ package: misc/http-perf
 (export main)
 
 (def (run-server address count)
-  (let (httpd (start-http-server! address))
-    (http-register-handler httpd "/" (if count (profile-handler httpd count) hello-handler))
-    (http-register-handler httpd "/self" self-handler)
+  (let* ((mux (make-static-http-mux
+               (hash ("/" (if count (profile-handler count) hello-handler))
+                     ("/self" self-handler))))
+         (httpd (start-http-server! mux: mux address)))
     (thread-join! httpd)))
 
 (def (hello-handler req res)
@@ -20,13 +21,13 @@ package: misc/http-perf
 (def (self-handler req res)
   (http-response-file res '(("Content-Type" . "text/plain")) "hellod.ss"))
 
-(def (profile-handler httpd count)
+(def (profile-handler count)
   (let (n 0)
     (def (handler req res)
       (hello-handler req res)
       (set! n (fx1+ n))
       (unless (fx< n count)
-        (spawn-thread (cut stop-http-server! httpd) (void) (primordial-thread-group))))
+        (spawn-thread (cut stop-http-server! (current-http-server)) (void) (primordial-thread-group))))
     handler))
 
 (def (main . args)

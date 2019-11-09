@@ -54,13 +54,15 @@
 
 ;;; implementation
 (def (http-server socks sas mux)
-  (using mux get-handler put-handler!)
+  (with-methods mux get-handler put-handler!)
 
   (def acceptors
-    (map (lambda (sock sa)
-           (spawn/name 'http-server-accept
-                       http-server-accept get-handler sock (socket-address-family sa)))
-         socks sas))
+    (parameterize ((current-http-server (current-thread)))
+      (map
+        (lambda (sock sa)
+          (spawn/name 'http-server-accept
+                      http-server-accept (cut get-handler mux <> <>) sock (socket-address-family sa)))
+           socks sas)))
 
   (def (shutdown!)
     (for-each ssocket-close socks))
@@ -73,8 +75,11 @@
 
   (def (loop)
     (<- ((!httpd.register host path handler k)
-         (put-handler! host path handler)
-         (!!value (void) k)
+         (try
+          (put-handler! mux host path handler)
+          (!!value (void) k)
+          (catch (e)
+            (!!error e k)))
          (loop))
         ((!httpd.shutdown)
          (void))
