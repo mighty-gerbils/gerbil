@@ -73,8 +73,11 @@
 
   (def (loop)
     (<- ((!httpd.register host path handler k)
-         (put-handler! host path handler)
-         (!!value (void) k)
+         (try
+          (put-handler! host path handler)
+          (!!value (void) k)
+          (catch (e)
+            (!!error e k)))
          (loop))
         ((!httpd.shutdown)
          (void))
