@@ -69,13 +69,13 @@
              (path    (&http-request-path req))
              (proto   (&http-request-proto req))
              (headers (&http-request-headers req))
-             (host    (assget "Host" headers))
+             (host    (header-e "Host" headers))
              (close?
               (case proto
                 (("HTTP/1.1")
-                 (equal? (assget "Connection" headers) "close"))
+                 (equal? (header-e "Connection" headers) "close"))
                 (("HTTP/1.0")
-                 (not (equal? (assget "Connection" headers) "Keep-Alive")))
+                 (not (equal? (header-e "Connection" headers) "Keep-Alive")))
                 (else #t))))
 
         (when close?
@@ -228,6 +228,15 @@
       timeo)))
 
 ;;; server internal
+(def (header-e key lst)
+  (let lp ((rest lst))
+    (match rest
+      ([hd . rest]
+       (if (##string-equal? key (car hd))
+         (cdr hd)
+         (lp rest)))
+      (else #f))))
+
 (def (http-request-skip-body req)
   (when (void? (&http-request-data req))
     (set! (&http-request-data req) #f)
@@ -434,7 +443,7 @@ END-C
 (def (read-request-body ibuf headers)
   (def (read-simple-body)
     (cond
-     ((assget "Content-Length" headers)
+     ((header-e "Content-Length" headers)
       => (lambda (len)
            (let* ((len (string->number len))
                   (_ (unless (fx<= len max-request-body-length)
@@ -445,7 +454,7 @@ END-C
      (else #f)))
 
   (cond
-   ((assget "Transfer-Encoding" headers)
+   ((header-e "Transfer-Encoding" headers)
     => (lambda (tenc)
          (if (not (equal? "identity" tenc))
            (read-request-chunks ibuf)
@@ -470,14 +479,14 @@ END-C
 
 (def (skip-request-body ibuf headers)
   (def (skip-simple-body)
-    (alet (clen (assget "Content-Length" headers))
+    (alet (clen (header-e "Content-Length" headers))
       (let (len (string->number clen))
         (if (fixnum? len)
           (bio-input-skip len ibuf)
           (raise-io-error 'http-request-skip-body "Illegal body length" clen)))))
 
   (cond
-   ((assget "Transfer-Encoding" headers)
+   ((header-e "Transfer-Encoding" headers)
     => (lambda (tenc)
          (if (not (equal? "identity" tenc))
            (skip-request-chunks ibuf)
