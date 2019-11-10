@@ -385,36 +385,42 @@ END-C
   (let (len (string-length str))
     (let lp ((i 0) (upcase? #t))
       (if (fx< i len)
-        (let (char (string-ref str i))
-          (if (char-alphabetic? char)
-            (let (char (if upcase? (char-upcase char) (char-downcase char)))
-              (string-set! str i char)
-              (lp (fx1+ i) #f))
-            (lp (fx1+ i) #t)))
+        (let* ((char (string-ref str i))
+               (int (char->integer char)))
+          (cond
+           ((fx<= 97 int 122)           ; a-z
+            (when upcase?
+              (let (char (integer->char (fx- int 32)))
+                (string-set! str i char)))
+            (lp (fx1+ i) #f))
+           ((fx<= 65 int 90)            ; A-Z
+            (unless upcase?
+              (let (char (integer->char (fx+ int 32)))
+                (string-set! str i char)))
+            (lp (fx1+ i) #f))
+           (else
+            (lp (fx1+ i) #t))))
         str))))
 
 (def (read-token ibuf sep)
-  (let lp ((chars []) (count 0))
+  (def tbuf (get-token-buffer))
+  (let lp ((count 0))
     (let (next (bio-read-u8 ibuf))
       (cond
        ((eof-object? next)
+        (put-token-buffer! tbuf)
         (raise 'eof))
        ((eq? next sep)
-        (token-chars->string chars count))
+        (let (token (##substring tbuf 0 count))
+          (put-token-buffer! tbuf)
+          token))
        ((fx< count max-token-length)
         (let (char (integer->char next))
-          (lp (cons char chars) (fx1+ count))))
+          (string-set! tbuf count char)
+          (lp (fx1+ count))))
        (else
+        (put-token-buffer! tbuf)
         (raise-io-error 'http-read-request "Maximum token length exceeded" count))))))
-
-(def (token-chars->string chars count)
-  (let (str (make-string count))
-    (let lp ((i count) (rest chars))
-      (if (fx> i 0)
-        (let (i (fx1- i))
-          (string-set! str i (car rest))
-          (lp i (cdr rest)))
-        str))))
 
 (def* read-skip
   ((ibuf c)
@@ -630,21 +636,62 @@ END-C
 ;;; buffer management
 (cond-expand
   (gerbil-smp
-   ;; TODO: avoid buffer allocations with smp too; needs a mutex however
-   (defrules get-input-buffer ()
-     ((_ sock)
-      (open-ssocket-input-buffer sock input-buffer-size)))
-   (defrules put-input-buffer! ()
-     ((_ buf) (void)))
-   (defrules get-output-buffer ()
-     ((_ sock)
-      (open-ssocket-output-buffer sock output-buffer-size)))
-   (defrules put-output-buffer! ()
-     ((_ buf) (void))))
+   (import :gerbil/gambit/threads)
+   (def +input-buffers+ [])
+   (def +input-buffers-mx+
+     (make-mutex 'httpd-input-buffer))
+
+   (def +output-buffers+ [])
+   (def +output-buffers-mx+
+     (make-mutex 'httpd-output-buffer))
+
+   (def +token-buffers+ [])
+   (def +token-buffers-mx+
+     (make-mutex 'httpd-token-buffer))
+
+   (defrules defgetbuf ()
+     ((_ (id . args) buffers mx reset! alloc)
+      (def (id . args)
+        (declare (not interrupts-enabled))
+        (mutex-lock! mx)
+        (match buffers
+          ([buf . rest]
+           (set! buffers rest)
+           (mutex-unlock! mx)
+           (reset! buf . args)
+           buf)
+          (else
+           (mutex-unlock! mx)
+           alloc)))))
+
+   (defrules defputbuf ()
+     ((_ id buffers mx release!)
+      (def (id buf)
+        (declare (not interrupts-enabled))
+        (release! buf)
+        (mutex-lock! mx)
+        (set! buffers (cons buf buffers))
+        (mutex-unlock! mx))))
+
+   (defgetbuf (get-input-buffer sock) +input-buffers+ +input-buffers-mx+
+     ssocket-input-buffer-reset! (open-ssocket-input-buffer sock input-buffer-size))
+   (defputbuf put-input-buffer! +input-buffers+ +input-buffers-mx+
+     ssocket-input-buffer-release!)
+
+   (defgetbuf (get-output-buffer sock) +output-buffers+ +output-buffers-mx+
+     ssocket-output-buffer-reset! (open-ssocket-output-buffer sock output-buffer-size))
+   (defputbuf put-output-buffer! +output-buffers+ +output-buffers-mx+
+     ssocket-output-buffer-release!)
+
+   (defgetbuf (get-token-buffer) +token-buffers+ +token-buffers-mx+
+     void (make-string max-token-length))
+   (defputbuf put-token-buffer! +token-buffers+ +token-buffers-mx+
+     void))
 
   (else
    (def +input-buffers+ [])
    (def +output-buffers+ [])
+   (def +token-buffers+ [])
 
    (def (get-input-buffer sock)
      (declare (not interrupts-enabled))
@@ -674,4 +721,18 @@ END-C
    (def (put-output-buffer! buf)
      (declare (not interrupts-enabled))
      (ssocket-output-buffer-release! buf)
-     (set! +output-buffers+ (cons buf +output-buffers+)))))
+     (set! +output-buffers+ (cons buf +output-buffers+)))
+
+   (def (get-token-buffer)
+     (declare (not interrupts-enabled))
+     (match +token-buffers+
+       ([buf . rest]
+        (set! +token-buffers+ rest)
+        buf)
+       (else
+        (make-string max-token-length))))
+
+   (def (put-token-buffer! buf)
+     (declare (not interrupts-enabled))
+     (set! +token-buffers+ (cons buf +token-buffers+)))
+  ))
