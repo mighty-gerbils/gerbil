@@ -385,12 +385,21 @@ END-C
   (let (len (string-length str))
     (let lp ((i 0) (upcase? #t))
       (if (fx< i len)
-        (let (char (string-ref str i))
-          (if (char-alphabetic? char)
-            (let (char (if upcase? (char-upcase char) (char-downcase char)))
-              (string-set! str i char)
-              (lp (fx1+ i) #f))
-            (lp (fx1+ i) #t)))
+        (let* ((char (string-ref str i))
+               (int (char->integer char)))
+          (cond
+           ((fx<= 97 int 122)           ; a-z
+            (when upcase?
+              (let (char (integer->char (fx- int 32)))
+                (string-set! str i char)))
+            (lp (fx1+ i) #f))
+           ((fx<= 65 int 90)            ; A-Z
+            (unless upcase?
+              (let (char (integer->char (fx+ int 32)))
+                (string-set! str i char)))
+            (lp (fx1+ i) #f))
+           (else
+            (lp (fx1+ i) #t))))
         str))))
 
 (def (read-token ibuf sep)
