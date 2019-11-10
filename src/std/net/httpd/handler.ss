@@ -403,27 +403,24 @@ END-C
         str))))
 
 (def (read-token ibuf sep)
-  (let lp ((chars []) (count 0))
+  (def tbuf (get-token-buffer))
+  (let lp ((count 0))
     (let (next (bio-read-u8 ibuf))
       (cond
        ((eof-object? next)
+        (put-token-buffer! tbuf)
         (raise 'eof))
        ((eq? next sep)
-        (token-chars->string chars count))
+        (let (token (##substring tbuf 0 count))
+          (put-token-buffer! tbuf)
+          token))
        ((fx< count max-token-length)
         (let (char (integer->char next))
-          (lp (cons char chars) (fx1+ count))))
+          (string-set! tbuf count char)
+          (lp (fx1+ count))))
        (else
+        (put-token-buffer! tbuf)
         (raise-io-error 'http-read-request "Maximum token length exceeded" count))))))
-
-(def (token-chars->string chars count)
-  (let (str (make-string count))
-    (let lp ((i count) (rest chars))
-      (if (fx> i 0)
-        (let (i (fx1- i))
-          (string-set! str i (car rest))
-          (lp i (cdr rest)))
-        str))))
 
 (def* read-skip
   ((ibuf c)
@@ -683,4 +680,20 @@ END-C
    (def (put-output-buffer! buf)
      (declare (not interrupts-enabled))
      (ssocket-output-buffer-release! buf)
-     (set! +output-buffers+ (cons buf +output-buffers+)))))
+     (set! +output-buffers+ (cons buf +output-buffers+)))
+
+   (def +token-buffers+ [])
+
+   (def (get-token-buffer)
+     (declare (not interrupts-enabled))
+     (match +token-buffers+
+       ([buf . rest]
+        (set! +token-buffers+ rest)
+        buf)
+       (else
+        (make-string max-token-length))))
+
+   (def (put-token-buffer! buf)
+     (declare (not interrupts-enabled))
+     (set! +token-buffers+ (cons buf +token-buffers+)))
+  ))
