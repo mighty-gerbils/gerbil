@@ -636,21 +636,62 @@ END-C
 ;;; buffer management
 (cond-expand
   (gerbil-smp
-   ;; TODO: avoid buffer allocations with smp too; needs a mutex however
-   (defrules get-input-buffer ()
-     ((_ sock)
-      (open-ssocket-input-buffer sock input-buffer-size)))
-   (defrules put-input-buffer! ()
-     ((_ buf) (void)))
-   (defrules get-output-buffer ()
-     ((_ sock)
-      (open-ssocket-output-buffer sock output-buffer-size)))
-   (defrules put-output-buffer! ()
-     ((_ buf) (void))))
+   (import :gerbil/gambit/threads)
+   (def +input-buffers+ [])
+   (def +input-buffers-mx+
+     (make-mutex 'httpd-input-buffer))
+
+   (def +output-buffers+ [])
+   (def +output-buffers-mx+
+     (make-mutex 'httpd-output-buffer))
+
+   (def +token-buffers+ [])
+   (def +token-buffers-mx+
+     (make-mutex 'httpd-token-buffer))
+
+   (defrules defgetbuf ()
+     ((_ (id . args) buffers mx reset! alloc)
+      (def (id . args)
+        (declare (not interrupts-enabled))
+        (mutex-lock! mx)
+        (match buffers
+          ([buf . rest]
+           (set! buffers rest)
+           (mutex-unlock! mx)
+           (reset! buf . args)
+           buf)
+          (else
+           (mutex-unlock! mx)
+           alloc)))))
+
+   (defrules defputbuf ()
+     ((_ id buffers mx release!)
+      (def (id buf)
+        (declare (not interrupts-enabled))
+        (release! buf)
+        (mutex-lock! mx)
+        (set! buffers (cons buf buffers))
+        (mutex-unlock! mx))))
+
+   (defgetbuf (get-input-buffer sock) +input-buffers+ +input-buffers-mx+
+     ssocket-input-buffer-reset! (open-ssocket-input-buffer sock input-buffer-size))
+   (defputbuf put-input-buffer! +input-buffers+ +input-buffers-mx+
+     ssocket-input-buffer-release!)
+
+   (defgetbuf (get-output-buffer sock) +output-buffers+ +output-buffers-mx+
+     ssocket-output-buffer-reset! (open-ssocket-output-buffer sock output-buffer-size))
+   (defputbuf put-output-buffer! +output-buffers+ +output-buffers-mx+
+     ssocket-output-buffer-release!)
+
+   (defgetbuf (get-token-buffer) +token-buffers+ +token-buffers-mx+
+     void (make-string max-token-length))
+   (defputbuf put-token-buffer! +token-buffers+ +token-buffers-mx+
+     void))
 
   (else
    (def +input-buffers+ [])
    (def +output-buffers+ [])
+   (def +token-buffers+ [])
 
    (def (get-input-buffer sock)
      (declare (not interrupts-enabled))
@@ -681,8 +722,6 @@ END-C
      (declare (not interrupts-enabled))
      (ssocket-output-buffer-release! buf)
      (set! +output-buffers+ (cons buf +output-buffers+)))
-
-   (def +token-buffers+ [])
 
    (def (get-token-buffer)
      (declare (not interrupts-enabled))
