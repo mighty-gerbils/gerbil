@@ -1,5 +1,58 @@
-;;; (C) vyzo@hackzen.org
-;;; gerbil editing mode
+;;; gerbil.el --- Gerbil mode  -*- lexical-binding: t; -*-
+;;
+;; Copyright (c) 2007-2019 Dimitris Vyzovitis & Contributors
+;;
+;; Author: Dimitris Vyzovitis <vyzo@hackzen.org>
+;; URL: https://github.com/vyzo/gerbil
+;; Version: 1.0
+;; Keywords: gerbil major-mode
+;;
+;; This file is not part of GNU Emacs.
+;;
+;; This program is free software: you can redistribute it and/or modify it
+;; under the terms of the GNU Lesser General Public License as published by
+;; the Free Software Foundation, either version 2.1 of the License, or (at
+;; your option) any later version; and the Apache License, Version 2.0 (the
+;; "License"), as published by the Apache Sofware Fundation (ASF).
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU Lesser General Public License
+;; and the Apache License along with this program. If not, see
+;; <https://www.gnu.org/licenses/> and
+;; <https://www.apache.org/licenses/LICENSE-2.0>.
+;;
+;; Unless required by applicable law or agreed to in writing, software
+;; distributed under the License is distributed on an "AS IS" BASIS,
+;; WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+;; See the License for the specific language governing permissions and
+;; limitations under the License.
+
+;;; Commentary:
+;;
+;; This package provides a Gerbil major mode for Emacs. It extends
+;; scheme-mode with font-lock, indentation, runs gxi on an inferior scheme
+;; shell, and defines the following keybindings:
+;;
+;; * Compile the current buffer: `C-c C-f'
+;;
+;; * Import the current buffer: `C-c C-i'
+;;
+;; * Reload the current buffer: `C-c C-r'
+;;
+;; * Build the current project: `C-c C-b'
+;;
+;; * Send and evaluate the selected region to gxi: `C-c C-e'
+;;
+;; * Send the selected region to gxi: `C-c C-c'
+;;
+;; * Restart Scheme: `C-x 9' (also works in gxi)
+
+;;; Code:
+
 (require 'scheme)
 (require 'cmuscheme)
 
@@ -473,3 +526,5 @@
 
 
 (provide 'gerbil)
+
+;;; gerbil.el ends here
