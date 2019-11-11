@@ -62,4 +62,4 @@ The following SRFIs are supported by gerbil:
 | [SRFI 151](https://srfi.schemers.org/srfi-151/srfi-151.html) | Bitwise Operations                                     | stdlib       | `:std/srfi/151`           |
 | [SRFI 158](https://srfi.schemers.org/srfi-158/srfi-158.html) | Generators and Accumulators                            | stdlib       | `:std/srfi/158`           |
 | [SRFI 159](https://srfi.schemers.org/srfi-159/srfi-159.html) | Combinator Formatting                                  | stdlib       | `:std/srfi/159`           |
-| [SRFI 160](https://srfi.schemers.org/srfi-160/srfi-160.html) | Homogeneous Numeric Vector Libraries                   | stdlib       | `:std/srfi/160/{base,u8,s8,u16,s16,u32,s32,u64,s64,f32,f64,c64,c128}` |
+| [SRFI 160](https://srfi.schemers.org/srfi-160/srfi-160.html) | Homogeneous Numeric Vector Libraries                   | stdlib       | `:std/srfi/160/{lib}` for `base`, `u8`, `s8`, `u16`, `s16`, `u32`, `s32`, `u64`, `s64`, `f32`, `f64`, `c64`, `c128` |
