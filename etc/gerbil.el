@@ -74,10 +74,6 @@
   "Send a string to the inferior Scheme process."
   (gerbil-send-string str))
 
-(defun scheme-compile-region (start end)
-  (interactive)
-  (gerbil-compile-current-buffer))
-
 (defun gerbil-message (string)
   (message (concat "Gerbil-info : SENT=" string " ...")))
 
