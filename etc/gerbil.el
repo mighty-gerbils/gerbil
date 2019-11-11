@@ -1,4 +1,4 @@
-;;; gerbil.el --- Gerbil mode  -*- lexical-binding: t; -*-
+;;; gerbil.el --- Gerbil mode -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2007-2019 Dimitris Vyzovitis & Contributors
 ;;
