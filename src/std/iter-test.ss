@@ -135,4 +135,69 @@
 
       (def (test-xform-unless)
         (for/collect (x (in-range 5) unless (odd? x)) x))
-      (check (test-xform-unless) => '(0 2 4)))))
+      (check (test-xform-unless) => '(0 2 4)))
+
+    (test-case "test iter filters"
+      (def (test-filter-when1)
+        (for/collect ((x (in-range 5)) when (odd? x))
+          x))
+      (check (test-filter-when1) => '(1 3))
+
+      (def (test-filter-when2)
+        (for/collect ((x (in-range 5)) (y '(a b c d e)) when (odd? x))
+          (cons x y)))
+      (check (test-filter-when2) => '((1 . b) (3 . d)))
+
+      (def (test-filter-when3)
+        (for/fold (r []) ((x (in-range 5)) when (odd? x))
+          (cons x r)))
+      (check (test-filter-when3) => '(3 1))
+
+      (def (test-filter-when4)
+        (for/fold (r []) ((x (in-range 5)) (y '(a b c d e)) when (odd? x))
+          (cons (cons x y) r)))
+      (check (test-filter-when4) => '((3 . d) (1 . b)))
+
+      (def (test-for-when5)
+        (for ((x (in-range 5)) when (odd? x))
+          (displayln x)))
+      (check-output (test-for-when5) "1\n3\n")
+
+      (def (test-for-when6)
+        (for ((x (in-range 5))
+              (y '(a b c d e))
+              when (odd? x))
+          (displayln x " " y)))
+      (check-output (test-for-when6) "1 b\n3 d\n")
+
+      (def (test-filter-unless1)
+        (for/collect ((x (in-range 5)) unless (odd? x))
+          x))
+      (check (test-filter-unless1) => '(0 2 4))
+
+      (def (test-filter-unless2)
+        (for/collect ((x (in-range 5)) (y '(a b c d e)) unless (odd? x))
+          (cons x y)))
+      (check (test-filter-unless2) => '((0 . a) (2 . c) (4 . e)))
+
+      (def (test-filter-unless3)
+        (for/fold (r []) ((x (in-range 5)) unless (odd? x))
+          (cons x r)))
+      (check (test-filter-unless3) => '(4 2 0))
+
+      (def (test-filter-unless4)
+        (for/fold (r []) ((x (in-range 5)) (y '(a b c d e)) unless (odd? x))
+          (cons (cons x y) r)))
+      (check (test-filter-unless4) => '((4 . e) (2 . c) (0 . a)))
+
+      (def (test-for-unless5)
+        (for ((x (in-range 5)) unless (odd? x))
+          (displayln x)))
+      (check-output (test-for-unless5) "0\n2\n4\n")
+
+      (def (test-for-unless6)
+        (for ((x (in-range 5))
+              (y '(a b c d e))
+              unless (odd? x))
+          (displayln x " " y)))
+      (check-output (test-for-unless6) "0 a\n2 c\n4 e\n"))))
