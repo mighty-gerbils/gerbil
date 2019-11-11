@@ -33,8 +33,8 @@ the iteration completes as soon as one of the iterators completes.
 ### for*
 ```scheme
 (for* (<bind> ...) body ...)
-(for* (<bind> ... when <filter-expr>) body ...)
-(for* (<bind> ... unless <filter-expr>) body ...)
+(for* (<bind> when <filter-expr> ...) body ...)
+(for* (<bind> unless <filter-expr> ...) body ...)
 ```
 
 `for*` iterates one or more iterables sequentially.
