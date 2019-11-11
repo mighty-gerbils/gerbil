@@ -198,7 +198,7 @@
         (with-current-buffer buf
           (goto-char (point-max))
           (when (re-search-backward gerbil-compile-mark-rx nil t)
-            (let (limit (point))
+            (let ((limit (point)))
               (goto-char (point-max))
               (when (re-search-backward gerbil-error-locat-rx limit t)
                 (let* ((loc (gerbil-extract-locat (buffer-substring (point) (point-max))))
