@@ -1,4 +1,4 @@
-;;; gerbil.el --- Gerbil mode  -*- lexical-binding: t; -*-
+;;; gerbil.el --- Gerbil mode -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2007-2019 Dimitris Vyzovitis & Contributors
 ;;
@@ -74,16 +74,11 @@
   "Send a string to the inferior Scheme process."
   (gerbil-send-string str))
 
-(defun scheme-compile-region (start end)
-  (interactive)
-  (gerbil-compile-current-buffer))
-
 (defun gerbil-message (string)
   (message (concat "Gerbil-info : SENT=" string " ...")))
 
 (defun gerbil-send-string (string)
-  (let ((string (concat string "\n"))
-        (string-len (length string)))
+  (let ((string (concat string "\n")))
     (comint-check-source string)
     (comint-send-string (scheme-proc) string)
     (gerbil-message (seq-subseq string 0 (string-match "\n" string)))))
@@ -203,7 +198,7 @@
         (with-current-buffer buf
           (goto-char (point-max))
           (when (re-search-backward gerbil-compile-mark-rx nil t)
-            (let (limit (point))
+            (let ((limit (point)))
               (goto-char (point-max))
               (when (re-search-backward gerbil-error-locat-rx limit t)
                 (let* ((loc (gerbil-extract-locat (buffer-substring (point) (point-max))))
@@ -211,7 +206,8 @@
                                   (concat gerbil-build-directory (car loc))
                                 (car loc))))
                   (find-file fname)
-                  (goto-line (cadr loc))
+                  (goto-char (point-min))
+                  (forward-line (1- (cadr loc)))
                   (forward-char (- (caddr loc) 1))
                   (mark-sexp)))))))
        (t
