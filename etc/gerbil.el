@@ -110,7 +110,7 @@
   (message "Happy Happy Joy Joy")
   nil)
 
-;; this is globally bound to C-x 9 below
+;; this is bound to C-x 9 below
 
 ;; -------
 
@@ -491,7 +491,8 @@
   (when window-system
     (gerbil-pretty-lambdas)))
 
-(global-set-key (kbd "C-x 9") 'restart-scheme)
+(define-key scheme-mode-map (kbd "C-x 9") 'restart-scheme)
+(define-key inferior-scheme-mode-map (kbd "C-x 9") 'restart-scheme)
 
 (defvar gerbil-mode-map
   (let ((map (make-sparse-keymap)))
