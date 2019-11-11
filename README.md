@@ -70,6 +70,7 @@ Depending on your inclinations, there are several starting points:
   the [compiler sources](src/gerbil/compiler).
 
 For questions and support, you can come say hi in `#gerbil-scheme` on irc at freenode.net.
+You can also find us on gitter in [#gerbil-scheme](https://gitter.im/gerbil-scheme/community).
 
 # License and Copyright
 
