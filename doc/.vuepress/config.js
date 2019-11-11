@@ -7,6 +7,7 @@ module.exports = {
       { text: 'Guide', link: '/guide/' },
       { text: 'Tutorials', link: '/tutorials/' },
       { text: 'Reference', link: '/reference/' },
+      { text: 'Gitter', link: 'https://gitter.im/gerbil-scheme/community' }
     ],
     sidebarDepth: 2,
     sidebar: {
