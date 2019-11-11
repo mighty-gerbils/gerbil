@@ -78,8 +78,7 @@
   (message (concat "Gerbil-info : SENT=" string " ...")))
 
 (defun gerbil-send-string (string)
-  (let ((string (concat string "\n"))
-        (string-len (length string)))
+  (let ((string (concat string "\n")))
     (comint-check-source string)
     (comint-send-string (scheme-proc) string)
     (gerbil-message (seq-subseq string 0 (string-match "\n" string)))))
