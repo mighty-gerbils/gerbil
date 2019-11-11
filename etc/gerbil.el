@@ -206,7 +206,8 @@
                                   (concat gerbil-build-directory (car loc))
                                 (car loc))))
                   (find-file fname)
-                  (goto-line (cadr loc))
+                  (goto-char (point-min))
+                  (forward-line (1- (cadr loc)))
                   (forward-char (- (caddr loc) 1))
                   (mark-sexp)))))))
        (t
