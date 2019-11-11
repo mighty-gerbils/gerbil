@@ -3,17 +3,18 @@
 The `:std/iter` library provides iterator support; see the [Guide](../guide/intro.md#iteration)
 for an introduction.
 
-::: tip usage
+::: tip To use bindings from this module:
 (import :std/iter)
 :::
 
 ## Macros
 
 ### for
-::: tip usage
-```
+```scheme
 (for <bind> body ...)
 (for (<bind> ...) body ...)
+(for (<bind> ... when <filter-expr>) body ...)
+(for (<bind> ... unless <filter-expr>) body ...)
 
 bind := (<pattern> <iterator-expr>)
         (<pattern> <iterator-expr> when <filter-expr>)
@@ -23,7 +24,6 @@ pattern       := match pattern
 iterator-expr := expression producing an iterable object
 filter-expr   := boolean filter expression, with pattern bindings visible
 ```
-:::
 
 `for` iterates one or more iterable objects in parallel, matching the values
 produced to the binding pattern, and evaluates the body for each value.
@@ -31,34 +31,34 @@ For each iterable object an iterator is constructed using `(iter ...)`;
 the iteration completes as soon as one of the iterators completes.
 
 ### for*
-::: tip usage
-```
+```scheme
 (for* (<bind> ...) body ...)
+(for* (<bind> when <filter-expr> ...) body ...)
+(for* (<bind> unless <filter-expr> ...) body ...)
 ```
-:::
 
 `for*` iterates one or more iterables sequentially.
 
 ### for/collect
-::: tip usage
-```
+```scheme
 (for/collect <bind> body ...)
 (for/collect (<bind> ...) body ...)
+(for/collect (<bind> ... when <filter-expr>) body ...)
+(for/collect (<bind> ... unless <filter-expr>) body ...)
 ```
-:::
 
 `for/collect` iterates in parallel and collects the values of `body`
 for each iteration into a list.
 
 ### for/fold
-::: tip usage
-```
+```scheme
 (for/fold <iv-bind> <bind> body ...)
 (for/fold <iv-bind> (<bind> ...) body ...)
+(for/fold <iv-bind> (<bind> ... when <filter-expr>) body ...)
+(for/fold <iv-bind> (<bind> ... unless <filter-expr>) body ...)
 
 iv-bind := (<id> <expr>)
 ```
-:::
 
 `for/fold` folds one or more iterables in parallel. The seed of the
 fold is bound to `id`, with initial value `expr`, and is updated as the
@@ -68,12 +68,9 @@ result of the final iteration.
 ## Iterator Constructors
 
 ### iter
-::: tip usage
+```scheme
+(iter obj) -> iterator
 ```
-(iter obj)
-=> <iterator>
-```
-:::
 
 This is the fundamental iterator constructor for iterable objects.
 If the object is already an iterator then it is returned; otherwise
@@ -81,17 +78,13 @@ the generic `:iter` is applied.
 
 
 ### :iter
-::: tip usage
-```
-(:iter obj)
-=> iterator
+```scheme
+(:iter obj) -> iterator
 
 (defmethod (:iter (obj type))
-  ...)
-=> iterator
+  ...) -> iterator
 
 ```
-:::
 
 Generic iterator constructor. The library defines the method for
 basic types: lists, vectors, strings, hash-tables, ports, and
@@ -99,30 +92,26 @@ procedures which are iterated as coroutines; objects without any
 method binding dispatch to the `:iter` object method.
 
 ### in-iota
-::: tip usage
-```
-(in-iota count [start = 0] [step = 1])
+```scheme
+(in-iota count [start = 0] [step = 1]) -> iterator
+
   count := fixnum
   start, step := number
-=> iterator
 ```
-:::
 
 Creates an iterator that yields `count` values starting from `start`
 and incrementing by `step`.
 
 ### in-range
-::: tip usage
-```
-(in-range end)
-  end := real
-=> iterator
+```scheme
+(in-range end) -> iterator
 
-(in-range start end [step = 1])
+  end := real
+
+(in-range start end [step = 1]) -> iterator
+
   start, end, step := real
-=> iterator
 ```
-:::
 
 Creates an iterator that starts with a current value of `start` (default `0`),
 stops when the current value is greater or equal to `end`
@@ -138,13 +127,11 @@ Before v0.15, it was like `in-iota` except that `start` came before `count`
 when 2 or 3 parameters were used.
 
 ### in-naturals
-::: tip usage
-```
-(in-naturals [start = 0] [step = 1])
+```scheme
+(in-naturals [start = 0] [step = 1]) -> iterator
+
   start, step := number
-=> iterator
 ```
-:::
 
 Creates an infinite iterator that iterates over the naturals starting
 from `start` and incrementing by `step`.
@@ -158,102 +145,84 @@ and doesn't accept an optional step, always using 1,
 whereas Gerbil accepts any number for start and step.
 
 ### in-hash
-::: tip usage
-```
-(in-hash ht)
+```scheme
+(in-hash ht) -> iterator
+
   ht : hash-table
-=> iterator
 ```
-:::
 
 Creates an iterator that yields the key/value pairs (as two values) for each association
 in the hash table. This is the same as `(:iter <hash-table>)`.
 
 ### in-hash-keys
-::: tip usage
-```
-(in-hash-keys ht)
+```scheme
+(in-hash-keys ht) -> iterator
+
   ht : hash-table
-=> iterator
 ```
-:::
 
 Creates an iterator that yields the keys for each association in the hash table.
 
 ### in-hash-values
-::: tip usage
+```scheme
+(in-hash-values ht) -> iterator
 ```
-(in-hash-values ht)
-```
-:::
 
 Creates an iterator that yields the values for each association in the hash table.
 
 ### in-input-port
-::: tip usage
 ```
-(in-input-port port [read])
+(in-input-port port [read]) -> iterator
+
   port := input-port
-=> iterator
 ```
-:::
 
 Creates an iterator that yields the values read with `read` from the `port`.
 The unary version is the same as `(:iter port)`.
 
 ### in-input-lines
-::: tip usage
 ```
-(in-input-lines port)
+(in-input-lines port) -> iterator
+
   port := input-port
-=> iterator
 ```
-:::
 
 Same as `(in-input-port port read-line)`.
 
 ### in-input-chars
-::: tip usage
-```
-(in-input-chars port)
+```scheme
+(in-input-chars port) -> iterator
+
   port := input-port
-=> iterator
 ```
-:::
 
 Same as `(in-input-port port read-char)`.
 
 ### in-input-bytes
-::: tip usage
-```
-(in-input-bytes port)
+```scheme
+(in-input-bytes port) -> iterator
+
   port := input-port
-=> iterator
 ```
-:::
 
 Same as `(in-input-port port read-u8)`.
 
 ### in-coroutine
-::: tip usage
-```
-(in-coroutine proc arg ...)
+```scheme
+(in-coroutine proc arg ...) -> iterator
+
   proc := coroutine procedure
-=> iterator
 ```
-:::
 
 Creates an iterator that applies `(proc arg ...)` in a coroutine.
 The unary version is the same as `(:iter <procedure>)`.
 
 ### in-cothread
-::: tip usage
-```
-(in-cothread proc arg ...)
+```scheme
+(in-cothread proc arg ...) -> iterator
+
   proc := coroutine procedure
-=> iterator
 ```
-:::
 
 Creates an iterator that applies `(proc arg ...)` in a cothread.
 
@@ -261,7 +230,7 @@ Creates an iterator that applies `(proc arg ...)` in a cothread.
 ## Iterator Protocol
 
 ### iterator
-```
+```scheme
 (defstruct iterator (e next fini))
 
 e    := iterator value
@@ -279,49 +248,41 @@ If the iterator has hard state associated (e.g. a thread or some other expensive
 will should be attached to it.
 
 ### iter-end
-```
+```scheme
 (def iter-end ...)
 ```
 
 Special object signalling the end of iteration.
 
 ### iter-end?
-::: tip usage
+```scheme
+(iter-end? obj) -> boolean
 ```
-(iter-end? obj)
-=> boolean
-```
-:::
 
 Returns true if the object is the end of iteration object.
 
 ### iter-next!
-::: tip usage
-```
-(iter-next! it)
+```scheme
+(iter-next! it) -> any
+
   it := iterator
-=> any
 ```
-:::
 
 Advances the iterator and returns the current value.
 
 ### iter-fini!
-::: tip usage
-```
-(iter-fini! it)
+```scheme
+(iter-fini! it) -> unspecified
+
   it := iterator
 ```
-:::
 
 Finalizes the iterator.
 
 ### yield
-::: tip usage
+``` scheme
+(yield val ...) -> unspecified
 ```
-(yield val ...)
-```
-:::
 
 Yields one or more values from a coroutine procedure associated with an iterator.
 This is the `yield` defined in `:std/coroutine`.
@@ -331,14 +292,14 @@ This is the `yield` defined in `:std/coroutine`.
 
 Here is the definition for an iterator that produces a constant value,
 using the iterator protocol:
-```
+```scheme
 (def (iter-const val)
   (make-iterator val iterator-e))
 ```
 
 
 Here is a definition of the list iterator using the iterator protocol:
-```
+```scheme
 (def (iter-list lst)
   (def (next it)
     (with ((iterator e) it)
@@ -351,7 +312,7 @@ Here is a definition of the list iterator using the iterator protocol:
 ```
 
 Here is a definition of the list iterator using coroutines:
-```
+```scheme
 (def (iter-list lst)
   (def (iterate lst)
     (let lp ((rest lst))
