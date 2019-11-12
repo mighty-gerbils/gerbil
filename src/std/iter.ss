@@ -220,6 +220,9 @@
   (declare (not safe))
   ((&iterator-fini it) it))
 
+(defrules @iter-fini! ()
+  ((_ it) ((&iterator-fini it) it)))
+
 (def (iter-filter pred it)
   (def (iterate)
     (for (val it)
@@ -313,7 +316,7 @@
                        (unless (eq? iter-end val)
                          (iter-do val)
                          (lp))))
-                   (iter-fini! it)
+                   (@iter-fini! it)
                    (void))))))))))
 
   (def (generate-for1-iota iter-e bind-e filter body)
@@ -420,7 +423,7 @@
               (unless (or (eq? iter-end bind-id) ...)
                 (iter-do bind-id ...)
                 (lp))))
-          (iter-fini! it) ...
+          (@iter-fini! it) ...
           (void))))
 
   (syntax-case stx (when unless)
@@ -488,7 +491,7 @@
                        (let (val (next! it))
                          (if (eq? iter-end val)
                            (begin
-                             (iter-fini! it)
+                             (@iter-fini! it)
                              (reverse rval))
                            (if (iter-test val)
                              (let (xval (iter-do val))
@@ -513,7 +516,7 @@
                        (let (val (next! it))
                          (if (eq? iter-end val)
                            (begin
-                             (iter-fini! it)
+                             (@iter-fini! it)
                              (reverse rval))
                            (let (xval (iter-do val))
                              (lp (cons xval rval))))))))))))))))
@@ -621,7 +624,7 @@
               (let lp ((rvalue []))
                 (let ((bind-id (next! it)) ...)
                   (if (or (eq? iter-end bind-id) ...)
-                    (begin (iter-fini! it) ...
+                    (begin (@iter-fini! it) ...
                            (reverse rvalue))
                     (if (iter-test bind-id ...)
                       (let (value (iter-do bind-id ...))
@@ -637,7 +640,7 @@
             (let lp ((rvalue []))
               (let ((bind-id (next! it)) ...)
                 (if (or (eq? iter-end bind-id) ...)
-                  (begin (iter-fini! it) ...
+                  (begin (@iter-fini! it) ...
                          (reverse rvalue))
                   (let (value (iter-do bind-id ...))
                     (lp (cons value rvalue))))))))))
@@ -701,7 +704,7 @@
                        (let (val (next! it))
                          (if (eq? iter-end val)
                            (begin
-                             (iter-fini! it)
+                             (@iter-fini! it)
                              rval)
                            (if (iter-test val rval)
                              (let (xval (iter-do val rval))
@@ -727,7 +730,7 @@
                        (let (val (next! it))
                          (if (eq? iter-end val)
                            (begin
-                             (iter-fini! it)
+                             (@iter-fini! it)
                              rval)
                            (let (xval (iter-do val rval))
                              (lp xval)))))))))))))))
@@ -838,7 +841,7 @@
               (let lp ((loop-id loop-e))
                 (let ((bind-id (next! it)) ...)
                   (if (or (eq? iter-end bind-id) ...)
-                    (begin (iter-fini! it) ...
+                    (begin (@iter-fini! it) ...
                            loop-id)
                     (if (iter-test loop-id bind-id ...)
                       (let (value (iter-do loop-id bind-id ...))
@@ -854,7 +857,7 @@
             (let lp ((loop-id loop-e))
               (let ((bind-id (next! it)) ...)
                 (if (or (eq? iter-end bind-id) ...)
-                  (begin (iter-fini! it) ...
+                  (begin (@iter-fini! it) ...
                          loop-id)
                   (let (value (iter-do loop-id bind-id ...))
                     (lp value)))))))))
