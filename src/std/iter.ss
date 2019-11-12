@@ -21,7 +21,7 @@
   constructor: :init! unchecked: #t final: #t)
 
 (defmethod {:init! iterator}
-  (lambda (self e next (fini void))
+  (lambda (self e next (fini #f))
     (struct-instance-init! self e next fini)))
 
 (defstruct :iter-end ())
@@ -218,10 +218,12 @@
 
 (def (iter-fini! it)
   (declare (not safe))
-  ((&iterator-fini it) it))
+  (@iter-fini! it))
 
 (defrules @iter-fini! ()
-  ((_ it) ((&iterator-fini it) it)))
+  ((_ it)
+   (cond
+    ((&iterator-fini it) => (cut <> it)))))
 
 (def (iter-filter pred it)
   (def (iterate)
