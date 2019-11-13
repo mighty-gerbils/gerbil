@@ -23,7 +23,15 @@ Starts a repl using the syntactic context of a given module, which is first eval
 (@expand1 form)
 ```
 
-These two macros perform macro expansion, pretty print the result, and return the quoted expanded syntax for inspection. The difference lies in the function used to perform the expansion. `@expand` uses core-expand* which expands until the outer form is a core macro. `@expand1` uses core-expand1 which performs a single step expansion.
+These two macros perform macro expansion, pretty print the result, and return the expanded syntax for inspection. The difference lies in the function used to perform the expansion. `@expand` uses core-expand* which expands until the outer form is a core macro. `@expand1` uses core-expand1 which performs a single step expansion.
+
+
+```
+(macro-expand quoted-form)
+(macro-expand1 quoted-form)
+```
+
+Procedural forms of `@expand` and `@expand1`.
 
 ## Customizing the Interactive Shell
 
