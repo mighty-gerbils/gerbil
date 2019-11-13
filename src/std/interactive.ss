@@ -2,7 +2,7 @@
 ;;; © vyzo
 ;;; interactive development utilities
 
-(import (for-syntax (only-in :gerbil/gambit/misc pretty-print)))
+(import (only-in :gerbil/gambit/misc pretty-print))
 (export #t (for-syntax #t))
 
 ;; Module reloading
@@ -46,19 +46,21 @@
 
 ;; Macro expansion
 ;; These two macros expand a form, pretty print the expansion, and
-;; return a quoted syntax of the expansion for debugging purposes.
+;; return the result of the expansion for debugging purposes.
 ;; @expand uses core-expand* while @expand1 performs a single step
 ;; expansion with core-expand1
-(defsyntax (@expand stx)
-  (syntax-case stx ()
-    ((_ expr)
-     (with-syntax ((expr* (gx#core-expand* #'expr)))
-       (pretty-print (syntax->datum #'expr*))
-       #'(quote-syntax expr*)))))
+(defrules @expand ()
+  ((_ expr) (macro-expand 'expr)))
 
-(defsyntax (@expand1 stx)
-  (syntax-case stx ()
-    ((_ expr)
-     (with-syntax ((expr* (gx#core-expand1 #'expr)))
-       (pretty-print (syntax->datum #'expr*))
-       #'(quote-syntax expr*)))))
+(defrules @expand1 ()
+  ((_ expr) (macro-expand1 'expr)))
+
+(def (macro-expand expr)
+  (let (expr* (gx#core-expand* expr))
+    (pretty-print (gx#syntax->datum expr*))
+    expr*))
+
+(def (macro-expand1 expr)
+  (let (expr* (gx#core-expand1 expr))
+    (pretty-print (gx#syntax->datum expr*))
+    expr*))
