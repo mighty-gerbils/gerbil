@@ -55,12 +55,10 @@
 (defrules @expand1 ()
   ((_ expr) (macro-expand1 'expr)))
 
-(def (macro-expand expr)
-  (let (expr* (gx#core-expand* expr))
+(def (macro-expand expr (expand-e gx#core-expand*))
+  (let (expr* (expand-e expr))
     (pretty-print (gx#syntax->datum expr*))
     expr*))
 
 (def (macro-expand1 expr)
-  (let (expr* (gx#core-expand1 expr))
-    (pretty-print (gx#syntax->datum expr*))
-    expr*))
+  (macro-expand expr gx#core-expand1))
