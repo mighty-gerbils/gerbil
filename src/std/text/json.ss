@@ -17,11 +17,13 @@
 ;;;  Scheme lists
 (import :gerbil/gambit/ports
         :gerbil/gambit/bits
+        :gerbil/gambit/exact
         :std/error
         (only-in :std/srfi/1 reverse!))
 (export read-json write-json
         string->json-object json-object->string
         json-symbolic-keys)
+(declare (not safe))
 
 (def (read-json (port (current-input-port)))
   (read-json-object port #f))
@@ -256,7 +258,7 @@
   (cond
    ((number? obj)
     (cond
-     ((and (exact? obj) (integer? obj))
+     ((exact-integer? obj)
       (write-string (number->string obj) port))
      ((inexact? obj)
       (write-json-inexact obj port))
