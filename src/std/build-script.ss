@@ -46,9 +46,11 @@
                             (["spec"]
                              (pretty-print build-spec))
                             (["deps"]
-                             (cons-load-path @srcdir)
-                             (let (build-deps (make-depgraph/spec @build-spec))
-                               (call-with-output-file "build-deps" (cut write build-deps <>))))
+                             (with-cons-load-path
+                              (lambda ()
+                                (let (build-deps (make-depgraph/spec @build-spec))
+                                  (call-with-output-file "build-deps" (cut write build-deps <>))))
+                              @srcdir))
                             (["compile"]
                              (let (depgraph (call-with-input-file "build-deps" read))
                                (make srcdir: @srcdir
