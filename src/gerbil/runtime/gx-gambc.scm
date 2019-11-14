@@ -128,14 +128,31 @@
   (apply cons-expander-load-path paths))
 
 (define (cons-library-load-path . paths)
-  (let* ((current (&current-module-libpath))
-         (paths (map path-normalize paths)))
+  (let ((current (&current-module-libpath))
+        (paths (map path-normalize paths)))
     (&current-module-libpath (append paths current))))
 
 (define (cons-expander-load-path . paths)
-  (let* ((current (gx#current-expander-module-library-path))
-         (paths (map path-normalize paths)))
+  (let ((current (gx#current-expander-module-library-path))
+        (paths (map path-normalize paths)))
     (gx#current-expander-module-library-path (append paths current))))
+
+(define (with-cons-load-path thunk . paths)
+  (apply with-cons-library-load-path
+    (lambda () (apply with-cons-expander-load-path thunk paths))
+    paths))
+
+(define (with-cons-library-load-path thunk . paths)
+  (let ((current (&current-module-libpath))
+        (paths (map path-normalize paths)))
+    (parameterize ((&current-module-libpath (append paths current)))
+      (thunk))))
+
+(define (with-cons-expander-load-path thunk . paths)
+  (let ((current (gx#current-expander-module-library-path))
+        (paths (map path-normalize paths)))
+    (parameterize ((gx#current-expander-module-library-path (append paths current)))
+      (thunk))))
 
 ;; stuffs
 (define (_gx#expand-source src)
