@@ -37,8 +37,9 @@
        prefix: (prefix #f)
        force:  (force? #f)
        optimize: (optimize #f)
-       debug:  (debug? #f)
+       debug:  (debug #f)
        static: (static #f)
+       static-debug: (static-debug #f)
        verbose: (verbose #f)
        depgraph: (depgraph #f))
   (let* ((gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
@@ -47,8 +48,9 @@
          (bindir (or bindir (path-expand "bin" gerbil-path)))
          (settings  [srcdir: srcdir libdir: libdir bindir: bindir
                      prefix: prefix force: force?
-                     optimize: optimize debug: debug?
-                     static: static verbose: verbose])
+                     optimize: optimize debug: debug
+                     static: static static-debug: static-debug
+                     verbose: verbose])
          (buildset (if (not force?)
                      (filter (cut build? <> settings depgraph) buildspec)
                      buildspec))
@@ -505,7 +507,7 @@
     [invoke-gsc: #t
      output-file: binpath
      verbose: (pgetq verbose: settings)
-     debug: (pgetq debug: settings)
+     debug: (pgetq static-debug: settings)
      (if gsc-opts [gsc-options: gsc-opts] []) ...])
   (gxc-compile mod gsc-opts [static: #t settings ...] #f)
   (message "... compile static exe " mod " -> " (path-strip-directory binpath))
