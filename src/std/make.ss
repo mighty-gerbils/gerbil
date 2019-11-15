@@ -481,7 +481,7 @@
      output-file: binpath
      verbose: (pgetq verbose: settings)])
   (gxc-compile mod gsc-opts settings)
-  (message "... compile exe " mod " -> " (path-strip-directory binpath))
+  (message "... compile exe " mod " -> " binpath)
   (compile-exe-stub srcpath gxc-opts))
 
 (def (compile-exe-gsc-opts opts)
@@ -510,7 +510,7 @@
      debug: (pgetq static-debug: settings)
      (if gsc-opts [gsc-options: gsc-opts] []) ...])
   (gxc-compile mod gsc-opts [static: #t settings ...] #f)
-  (message "... compile static exe " mod " -> " (path-strip-directory binpath))
+  (message "... compile static exe " mod " -> " binpath)
   (gxc#compile-static-exe srcpath gxc-opts))
 
 (def (copy-static? file settings)
