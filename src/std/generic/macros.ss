@@ -24,8 +24,11 @@
                    (procedure-id (format-id #'id "~a::apply" #'id))
                    (procedure
                     (syntax/loc stx
-                      (def (procedure-id . args)
-                        (apply generic-dispatch dispatch-table-id args))))
+                      (def* procedure-id
+                        ((arg1) (generic-dispatch1 dispatch-table-id arg1))
+                        ((arg1 arg2) (generic-dispatch2 dispatch-table-id arg1 arg2))
+                        ((arg1 arg2 arg3) (generic-dispatch3 dispatch-table-id arg1 arg2 arg3))
+                        (args (apply generic-dispatch dispatch-table-id args)))))
                    (meta
                     #'(defsyntax id
                         (make-generic-info
