@@ -5,7 +5,8 @@
 (import :gerbil/gambit/threads)
 (export type-of linear-type-of type-linearize-class
         make-generic generic? generic-id generic-dispatch
-        generic-bind! generic-dispatch generic-dispatch-next)
+        generic-bind! generic-dispatch generic-dispatch-next
+        generic-dispatch1 generic-dispatch2 generic-dispatch3)
 
 (declare (not safe))
 
@@ -274,21 +275,52 @@
 
 (def (generic-dispatch-method gtab args default)
   (cond
-   ((generic-dispatch-cache-lookup (&generic-table-cache gtab) args)
-    => values)
+   ((generic-dispatch-cache-lookup (&generic-table-cache gtab) args))
    (else
-    (let* ((methods (&generic-table-methods gtab))
-           (method (or (generic-dispatch-find-method methods args) default)))
-      (when method
-        (let (mx (&generic-table-mx gtab))
-          (mutex-lock! mx)
-          ;; we only cache if there was no concurrent redefinition
-          (when (eq? methods (&generic-table-methods gtab))
-            ;; don't try to cache if a concurrent cache miss already did so
-            (unless (generic-dispatch-cache-lookup (&generic-table-cache gtab) args)
-              (generic-dispatch-cache! gtab args method)))
-          (mutex-unlock! mx)))
-      method))))
+    (generic-dispatch-method-ref gtab args default))))
+
+(def (generic-dispatch-method-ref gtab args default)
+  (let* ((methods (&generic-table-methods gtab))
+         (method (or (generic-dispatch-find-method methods args) default)))
+    (when method
+      (let (mx (&generic-table-mx gtab))
+        (mutex-lock! mx)
+        ;; we only cache if there was no concurrent redefinition
+        (when (eq? methods (&generic-table-methods gtab))
+          ;; don't try to cache if a concurrent cache miss already did so
+          (unless (generic-dispatch-cache-lookup (&generic-table-cache gtab) args)
+            (generic-dispatch-cache! gtab args method)))
+        (mutex-unlock! mx)))
+    method))
+
+(defrules defdispatch* ()
+  ((_ dispatch-e method-e cache-lookup-e arity arg ...)
+   (begin
+     (def (dispatch-e gen arg ...)
+       (let (tabs (&generic-tabs gen))
+         (cond
+          ((and (##fx< arity (##vector-length tabs))
+                (##vector-ref tabs arity))
+           => (lambda (gtab)
+                (cond
+                 ((method-e gtab (&generic-default gen) arg ...)
+                  => (lambda (method)
+                       (method arg ...)))
+                 (else
+                  (error "No method matching arguments" (generic-id gen) [arg ...])))))
+          ((&generic-default gen)
+           => (lambda (method) (method arg ...)))
+          (else
+           (error "No method matching arguments" (generic-id gen) [arg ...])))))
+     (def (method-e gtab default arg ...)
+       (cond
+        ((cache-lookup-e (&generic-table-cache gtab) arg ...))
+        (else
+         (generic-dispatch-method-ref gtab [arg ...] default)))))))
+
+(defdispatch* generic-dispatch1 generic-dispatch-method1 generic-dispatch-cache-lookup1 1 arg1)
+(defdispatch* generic-dispatch2 generic-dispatch-method2 generic-dispatch-cache-lookup2 2 arg1 arg2)
+(defdispatch* generic-dispatch3 generic-dispatch-method3 generic-dispatch-cache-lookup3 3 arg1 arg2 arg3)
 
 (def (generic-dispatch-find-method methods args)
   (let (arg-types (map linear-type-of args))
@@ -352,7 +384,7 @@
     (match rest
       ([arg . rest]
        (let* ((tid (type-of arg))
-              (hash (##fxxor hash (##fxarithmetic-shift (##symbol-hash tid) shift))))
+              (hash (cache-hash-e hash shift tid)))
          (match (lookup hash (##fx+ shift 1) rest)
            ([xtid . xrest]
             (and (##eq? tid xtid)
@@ -365,6 +397,48 @@
 
   (let (proc (lookup 0 0 args))
     (and (##procedure? proc) proc)))
+
+(defrules cache-hash-e ()
+  ((_ mix shift tid)
+   (##fxxor mix (##fxarithmetic-shift (##symbol-hash tid) shift))))
+
+(defrules cache-hash-ref ()
+  ((_ obj tid)
+   (match obj
+     ([xtid . rest]
+      (and (eq? tid xtid) rest))
+     (else #f))))
+
+(def (cache-hash1 cache mix shift arg)
+  (let* ((tid (type-of arg))
+         (hash (cache-hash-e mix shift tid))
+         (len (##vector-length cache))
+         (ix (##fxmodulo hash len))
+         (obj (##vector-ref cache ix)))
+    (cache-hash-ref obj tid)))
+
+(def (cache-hash2 cache mix shift arg1 arg2)
+  (let* ((tid (type-of arg1))
+         (hash (cache-hash-e mix shift tid))
+         (obj (cache-hash1 cache hash (fx1+ shift) arg2)))
+    (cache-hash-ref obj tid)))
+
+(def (cache-hash3 cache mix shift arg1 arg2 arg3)
+  (let* ((tid (type-of arg1))
+         (hash (cache-hash-e mix shift tid))
+         (obj (cache-hash2 cache hash (fx1+ shift) arg2 arg3)))
+    (cache-hash-ref obj tid)))
+
+(defrules deflookup* ()
+  ((_ lookup-e hash-e arg ...)
+   (def (lookup-e cache arg ...)
+     (declare (not interrupts-enabled))
+     (let (method (hash-e cache 0 0 arg ...))
+       (and (##procedure? method) method)))))
+
+(deflookup* generic-dispatch-cache-lookup1 cache-hash1 arg1)
+(deflookup* generic-dispatch-cache-lookup2 cache-hash2 arg1 arg2)
+(deflookup* generic-dispatch-cache-lookup3 cache-hash3 arg1 arg2 arg3)
 
 ;; cache the result of method dispatch
 (def (generic-dispatch-cache! gtab args method)
