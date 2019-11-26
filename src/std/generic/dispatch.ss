@@ -410,6 +410,7 @@
      (else #f))))
 
 (def (cache-hash1 cache mix shift arg)
+  (declare (not interrupts-enabled))
   (let* ((tid (type-of arg))
          (hash (cache-hash-e mix shift tid))
          (len (##vector-length cache))
@@ -418,12 +419,14 @@
     (cache-hash-ref obj tid)))
 
 (def (cache-hash2 cache mix shift arg1 arg2)
+  (declare (not interrupts-enabled))
   (let* ((tid (type-of arg1))
          (hash (cache-hash-e mix shift tid))
          (obj (cache-hash1 cache hash (fx1+ shift) arg2)))
     (cache-hash-ref obj tid)))
 
 (def (cache-hash3 cache mix shift arg1 arg2 arg3)
+  (declare (not interrupts-enabled))
   (let* ((tid (type-of arg1))
          (hash (cache-hash-e mix shift tid))
          (obj (cache-hash2 cache hash (fx1+ shift) arg2 arg3)))
