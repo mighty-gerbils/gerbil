@@ -28,6 +28,7 @@
                         ((arg1) (generic-dispatch1 dispatch-table-id arg1))
                         ((arg1 arg2) (generic-dispatch2 dispatch-table-id arg1 arg2))
                         ((arg1 arg2 arg3) (generic-dispatch3 dispatch-table-id arg1 arg2 arg3))
+                        ((arg1 arg2 arg3 arg4) (generic-dispatch4 dispatch-table-id arg1 arg2 arg3 arg4))
                         (args (apply generic-dispatch dispatch-table-id args)))))
                    (meta
                     #'(defsyntax id

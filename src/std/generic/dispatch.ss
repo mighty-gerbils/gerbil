@@ -6,7 +6,7 @@
 (export type-of linear-type-of type-linearize-class
         make-generic generic? generic-id generic-dispatch
         generic-bind! generic-dispatch generic-dispatch-next
-        generic-dispatch1 generic-dispatch2 generic-dispatch3)
+        generic-dispatch1 generic-dispatch2 generic-dispatch3 generic-dispatch4)
 
 (declare (not safe))
 
@@ -321,6 +321,7 @@
 (defdispatch* generic-dispatch1 generic-dispatch-method1 generic-dispatch-cache-lookup1 1 arg1)
 (defdispatch* generic-dispatch2 generic-dispatch-method2 generic-dispatch-cache-lookup2 2 arg1 arg2)
 (defdispatch* generic-dispatch3 generic-dispatch-method3 generic-dispatch-cache-lookup3 3 arg1 arg2 arg3)
+(defdispatch* generic-dispatch4 generic-dispatch-method4 generic-dispatch-cache-lookup4 4 arg1 arg2 arg3 arg4)
 
 (def (generic-dispatch-find-method methods args)
   (let (arg-types (map linear-type-of args))
@@ -410,6 +411,7 @@
      (else #f))))
 
 (def (cache-hash1 cache mix shift arg)
+  (declare (not interrupts-enabled))
   (let* ((tid (type-of arg))
          (hash (cache-hash-e mix shift tid))
          (len (##vector-length cache))
@@ -417,17 +419,18 @@
          (obj (##vector-ref cache ix)))
     (cache-hash-ref obj tid)))
 
-(def (cache-hash2 cache mix shift arg1 arg2)
-  (let* ((tid (type-of arg1))
-         (hash (cache-hash-e mix shift tid))
-         (obj (cache-hash1 cache hash (fx1+ shift) arg2)))
-    (cache-hash-ref obj tid)))
+(defrules defcache-hash* ()
+  ((_ cache-hash cache-hash-next arg1 arg ...)
+   (def (cache-hash cache mix shift arg1 arg ...)
+     (declare (not interrupts-enabled))
+     (let* ((tid (type-of arg1))
+            (hash (cache-hash-e mix shift tid))
+            (obj (cache-hash-next cache hash (fx1+ shift) arg ...)))
+       (cache-hash-ref obj tid)))))
 
-(def (cache-hash3 cache mix shift arg1 arg2 arg3)
-  (let* ((tid (type-of arg1))
-         (hash (cache-hash-e mix shift tid))
-         (obj (cache-hash2 cache hash (fx1+ shift) arg2 arg3)))
-    (cache-hash-ref obj tid)))
+(defcache-hash* cache-hash2 cache-hash1 arg1 arg2)
+(defcache-hash* cache-hash3 cache-hash2 arg1 arg2 arg3)
+(defcache-hash* cache-hash4 cache-hash3 arg1 arg2 arg3 arg4)
 
 (defrules deflookup* ()
   ((_ lookup-e hash-e arg ...)
@@ -439,6 +442,7 @@
 (deflookup* generic-dispatch-cache-lookup1 cache-hash1 arg1)
 (deflookup* generic-dispatch-cache-lookup2 cache-hash2 arg1 arg2)
 (deflookup* generic-dispatch-cache-lookup3 cache-hash3 arg1 arg2 arg3)
+(deflookup* generic-dispatch-cache-lookup4 cache-hash4 arg1 arg2 arg3 arg4)
 
 ;; cache the result of method dispatch
 (def (generic-dispatch-cache! gtab args method)
