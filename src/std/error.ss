@@ -22,11 +22,10 @@
       (displayln (error-message self))
       (let (irritants (error-irritants self))
         (unless (null? irritants)
-          (display "--- irritants: ")
+          (displayln "--- irritants: ")
           (for-each
-            (lambda (obj) (display* obj " "))
-            irritants)
-          (newline))))))
+            (lambda (obj) (displayln "--- " obj))
+            irritants))))))
 
 (defstruct (io-error <error>) ())
 (defstruct (timeout-error <error>) ())
