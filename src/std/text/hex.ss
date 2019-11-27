@@ -3,12 +3,18 @@
 ;;; hex encoding
 
 (export hex-encode hexlify hex-decode unhexlify hex unhex unhex*)
-(import :gerbil/gambit/fixnum)
+(import :gerbil/gambit/fixnum
+        :std/contract)
 
 (def hexes "0123456789abcdef")
-(def (hex-encode bytes (start 0) (end #f))
+
+(def/c (hex-encode bytes (start 0) (end #f))
+  (@contract (u8vector? bytes)
+             (and (fixnum? start) (fx<= 0 start (fx1- (u8vector-length bytes))))
+             (or (not end) (and (fixnum? end) (fx<= start end (u8vector-length bytes)))))
+  (declare (not safe))
   (let* ((end (or end (u8vector-length bytes)))
-         (len (fx- end start))
+         (len (##fx- end start))
          (str (make-string (##fx* 2 len))))
     (let lp ((n 0))
       (if (##fx< n len)
@@ -42,10 +48,11 @@
 (def (unhex* char)
   (hash-get unhexes char))
 
-(def (hex-decode str)
+(def/c (hex-decode str)
+  (@contract (string? str)
+             (fxeven? (string-length str)))
+  (declare (not safe))
   (let (len (string-length str))
-    (unless (##fxeven? len)
-      (error "Expected string of even length" str))
     (let* ((blen (##fxquotient len 2))
            (bytes (make-u8vector blen)))
       (let lp ((n 0))
