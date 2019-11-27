@@ -28,8 +28,7 @@
          (raise-contract-violation 'where "Contract violation" 'assertion))
        ...))))
 
-;; defines a procedure with an attached contract
-(defsyntax (def/c stx)
+(begin-syntax
   (def (symbol-e id)
     (make-symbol (stx-e id) ":"))
   (def (procedure-args hd)
@@ -60,7 +59,10 @@
          (with-syntax ((xid (symbol-e #'tail)))
            (reverse (cons* #'tail ':: #'(quote xid) r))))
         (()
-         (reverse r)))))
+         (reverse r))))))
+
+;; defines a procedure with an attached contract
+(defsyntax (def/c stx)
   (syntax-case stx (@contract)
     ((_ (id . args) (@contract assertion ...) body ...)
      (with-syntax ((xargs (procedure-args #'args)))
@@ -68,3 +70,13 @@
          (def (id . args)
            (@contract (id . xargs) assertion ...)
            body ...))))))
+
+;; defines a case-lambda procedure with attached contracts
+(defsyntax (def*/c stx)
+  (syntax-case stx (@contract)
+    ((_ id (hd (@contract assertion ...) body ...) ...)
+     (with-syntax (((xargs ...) (map procedure-args #'(hd ...))))
+       (syntax/loc stx
+         (def* id
+           (hd (@contract (id . xargs) assertion ...) body ...)
+           ...))))))
