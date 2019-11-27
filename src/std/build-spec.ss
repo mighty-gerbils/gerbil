@@ -10,6 +10,7 @@
     "make"
     "build-script"
     "error"
+    "contract"
     "getopt"
     "logger"
     (gxc: "generic/dispatch" ,@(include-gambit-sharp))
