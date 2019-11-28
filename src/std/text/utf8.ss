@@ -13,21 +13,21 @@
 
 (def/c (string->utf8 str (start 0) (end (string-length str)))
   (@contract (string? str)
-             (and (fixnum? start) (fx<= 0 start (fx1- (string-length str))))
-             (and (fixnum? end) (fx<= start end (string-length str))))
+             (and (fixnum? start) (fixnum? end)
+                  (fx<= 0 start end (string-length str))))
   (utf8-encode str start end))
 
 (def/c (string-utf8-length str (start 0) (end (string-length str)))
   (@contract (string? str)
-             (and (fixnum? start) (fx<= 0 start (fx1- (string-length str))))
-             (and (fixnum? end) (fx<= start end (string-length str))))
+             (and (fixnum? start) (fixnum? end)
+                  (fx<= 0 start end (string-length str))))
   (utf8-encode-length str start end))
 
 (def/c (utf8->string u8v (start 0) (end (u8vector-length u8v)))
   (@contract (u8vector? u8v)
-             (and (fixnum? start) (fx<= 0 start (fx1- (u8vector-length u8v))))
-             (and (fixnum? end) (fx<= start end (u8vector-length u8v))))
-      (utf8-decode u8v start end))
+             (and (fixnum? start) (fixnum? end)
+                  (fx<= 0 start end (u8vector-length u8v))))
+  (utf8-decode u8v start end))
 
 (def (utf8-encode str start end)
   (let* ((slen (fx- end start))

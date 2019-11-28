@@ -202,11 +202,8 @@
                         callee))
           (else index)))
   (begin-annotation @runtime-check
-    (begin
-      (unless (fixnum? index)
-        (error "expected integer" callee index))
-      (unless (fx<= 0 index (fx1- (vector-length vec)))
-        (error "index out of range" callee vec index))))
+    (unless (and (fixnum? index) (fx<= 0 index (fx1- (vector-length vec))))
+      (error "index out of range" callee vec index)))
   index)
 
 ;;; (CHECK-INDICES <vector>
@@ -263,11 +260,8 @@
           (else
            (values start end))))
   (begin-annotation @runtime-check
-    (begin
-      (unless (and (fixnum? start) (fx<= 0 start (fx1- (vector-length vec))))
-        (error "bad start index" callee vec start))
-      (unless (and (fixnum? end) (fx<= start end (vector-length vec)))
-        (error "bad end index" callee vec end))))
+    (unless (and (fixnum? start) (fixnum? end) (fx<= 0 start end (vector-length vec)))
+      (error "bad end index" callee vec end)))
   (values start end))
 
 

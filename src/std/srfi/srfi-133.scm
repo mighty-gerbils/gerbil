@@ -258,11 +258,8 @@
           (else
            (values start end))))
   (begin-annotation @runtime-check
-    (begin
-      (unless (and (fixnum? start) (fx<= 0 start (fx1- (vector-length vec))))
-        (error "Bad start index" callee vec start))
-      (unless (and (fixnum? end) (fx<= start end (vector-length vec)))
-        (error "Bad end index" callee vec end))))
+    (unless (and (fixnum? start) (fixnum? end) (fx<= 0 start end (vector-length vec)))
+      (error "Bad end index" callee vec end)))
   (values start end))
 
 

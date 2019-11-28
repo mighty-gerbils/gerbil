@@ -8,13 +8,11 @@
 
 (def hexes "0123456789abcdef")
 
-(def/c (hex-encode bytes (start 0) (end #f))
+(def/c (hex-encode bytes (start 0) (end (u8vector-length bytes)))
   (@contract (u8vector? bytes)
-             (and (fixnum? start) (fx<= 0 start (fx1- (u8vector-length bytes))))
-             (or (not end) (and (fixnum? end) (fx<= start end (u8vector-length bytes)))))
+             (and (fixnum? start) (fixnum? end) (fx<= 0 start end (u8vector-length bytes))))
   (declare (not safe))
-  (let* ((end (or end (u8vector-length bytes)))
-         (len (##fx- end start))
+  (let* ((len (##fx- end start))
          (str (make-string (##fx* 2 len))))
     (let lp ((n 0))
       (if (##fx< n len)
