@@ -30,7 +30,7 @@
 
 (begin-syntax
   (def (symbol-e id)
-    (make-symbol (stx-e id) ":"))
+    (symbol->keyword (stx-e id)))
   (def (procedure-args hd)
     (let lp ((rest hd) (r []))
       (syntax-case rest ()

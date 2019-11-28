@@ -24,7 +24,7 @@
         (unless (null? irritants)
           (displayln "--- irritants: ")
           (for-each
-            (lambda (obj) (displayln "--- " obj))
+            (lambda (obj) (display "--- ") (write obj) (newline))
             irritants))))))
 
 (defstruct (io-error <error>) ())
