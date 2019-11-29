@@ -52,43 +52,6 @@
       ;;    If no cleanup function is provided, a c function is created <struct-name>_ffi_free
       ;;    this function frees the struct pointer as well as any string members if
       ;;    they were set.
-      ;;
-      ;; Usage:
-      ;; for a c struct X with members a of type t1 and b of type t2
-      ;; (define-c-struct X) =>
-      ;;
-      ;; -- Types created
-      ;; - X for struct
-      ;; - X* for the pointer to the struct. this is the struct to which the configurable
-      ;;      release function is provided
-      ;; - X-shallow-ptr* similar to X*, default release function ffi_free is associated
-      ;;      (only created if char-string is one of the members)
-      ;; - X-borrowed-ptr* similat to X* but no release function
-      ;;
-      ;; -- Lambdas created
-      ;; - X-ptr? predicate for the struct types (uses foreign-tags)
-      ;; - malloc-X calls malloc for the struct and returns a pointer to it
-      ;; - ptr->X get the value of X from its pointer
-      ;; - (malloc-X-array N) calls malloc for N * sizeof X and returns a pointer to it, the
-      ;;      returned pointer is of type X-shallow-ptr* if strings are present o/w X*
-      ;; - (X-array-ref ptr i) returns a pointer with offset i starting at ptr, the returned
-      ;;      pointer is of type X-borrowed-ptr*
-      ;; - (X-array-set! ptr i val-ptr) sets the value of the pointer at offset i from ptr to
-      ;;      be val-ptr
-      ;;
-      ;;
-      ;; (define-c-struct X ((a . t1) (b . t2))) =>
-      ;; In addition to the types and lambdas defined above, following additional lambdas are provided:
-      ;;
-      ;; - X-a-set!, X-b-set! setter for member variables.
-      ;;   Special compatibility for string types is provided,
-      ;;   if a string is passed as the value, then we strdup the string and set that to the
-      ;;   argument. If the struct member is already pointing to another string, then that
-      ;;   string is freed and the member will now point to a new string.
-      ;;   The cleanup of such strings are handled by the generated <struct>_ffi_free, if
-      ;;   a custom release function is provided, care should be taken while freeing.
-      ;;
-      ;;- X-a X-b accessor functions for struct members
       (define-macro (define-c-struct struct #!optional (members '()) release-function)
         (let* ((struct-str (symbol->string struct))
                (struct-ptr (string->symbol (string-append struct-str "*")))
