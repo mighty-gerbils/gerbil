@@ -2,6 +2,7 @@
 ;; -*- Gerbil -*-
 
 (import :std/test
+	:std/foreign-test
         "build-config"
         "generic-test"
         "coroutine-test"
@@ -81,6 +82,7 @@
    httpd-test
    sasl-test
    protobuf-test
+   foreign-test
    (if config-enable-sqlite [sqlite-test] []) ...
    (if config-enable-lmdb [lmdb-test] []) ...
    (if config-enable-leveldb [leveldb-test] []) ...

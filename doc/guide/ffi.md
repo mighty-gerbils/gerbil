@@ -100,3 +100,77 @@ Using `begin-ffi` the code would be written as following:
 ```
 
 If you want to find more about Gerbil FFI programming, the std lib sources for the [os package](https://github.com/vyzo/gerbil/tree/master/src/std/os) are a good starting point.
+
+## Interfacing with c structs
+
+In order to make interfacing with c structs a bit easier, some macros are provided to be used
+inside the begin-ffi block.   
+
+Consider a c struct X with members a of type t1 and b of type t2.    
+In order to interface with such a struct, following methods are available inside the begin-ffi macro.
+
+### `(define-c-struct X)`
+
+*types created*
+- X for struct
+- X* for the pointer to the struct. this is the struct to which the configurable release 
+  function is provided. If no release function is provided and struct contains string 
+  members, then a c method (`<struct-name>_ffi_free`) is generated for the struct, which 
+  performs the cleanup of strings as well as the pointers. If there are no string members,
+  we fallback to the default ffi_free.
+- X-shallow-ptr* similar to X*, default release function ffi_free is associated 
+  (this is only created if char-string is one of the members)
+- X-borrowed-ptr* similat to X* but no release function
+   
+*lambdas created*
+- `X-ptr?` predicate for the struct types (uses foreign-tags)
+- `malloc-X` calls malloc for the struct and returns a pointer to it
+- `ptr->X` get the value of X from its pointer
+- `(malloc-X-array N)` calls malloc for N * sizeof X and returns a pointer to it, the
+      returned pointer is of type X-shallow-ptr* if strings are present otherwise it is X*
+- `(X-array-ref ptr i)` returns a pointer with offset i starting at ptr, the returned
+      pointer is of type X-borrowed-ptr*
+- `(X-array-set! ptr i val-ptr)` sets the value of the pointer at offset i from ptr to
+      be val-ptr
+   
+   
+###  `(define-c-struct X ((a . t1) (b . t2)))`
+
+In addition to the types and lambdas defined above, following additional lambdas are provided:
+
+*lambdas created*
+- `X-a-set!`, `X-b-set!` setters for member variables.    
+   Special compatibility for string types is provided,    
+   If a string is passed as the value, then we strdup the string and set that to the argument.
+   If the struct member is already pointing to another string, then that
+     string is freed and the member will now point to a new string.
+   The cleanup of such strings are handled by the generated `<struct-name>_ffi_free`, if
+     a custom release function is provided, care should be taken while freeing.
+   
+- `X-a`, `X-b` accessor functions for struct members
+
+In order to export the created lamdas, simply include (struct X a b) in the begin-ffi:
+`(begin-ffi (... (struct X a b) ...) ...)`
+
+### Sample usage:
+
+```
+(begin-ffi ((struct abc a b))
+  (c-declare "
+struct abc {
+    char* a;
+    char* b;
+    char* c;
+};
+")
+  
+
+  (define-c-struct abc ((a . char-string) (b . char-string))))
+  
+(def obj (malloc-abc))
+			 
+(abc-a-set! obj "hello")
+(abc-b-set! obj "scheme")
+
+(abc-a obj) ;; => hello
+```

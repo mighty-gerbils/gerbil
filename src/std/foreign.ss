@@ -1,6 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; FFI macros
+(import (for-syntax :std/stxutil))
 
 (export begin-ffi)
 
@@ -43,10 +44,136 @@
            (let ((r (,ffi-symbol ,@args)))
              (if (##fx< r 0)
                (##fx- (##c-code "___RESULT = ___FIX (errno);"))
-               r))))))
+               r))))
+      ;; Definitions:
+      ;; struct => is the name of the struct
+      ;; members => is a pair of member name and type
+      ;; release-function => this is the cleanup function called by the gc.
+      ;;    If no cleanup function is provided, a c function is created <struct-name>_ffi_free
+      ;;    this function frees the struct pointer as well as any string members if
+      ;;    they were set.
+      (define-macro (define-c-struct struct #!optional (members '()) release-function)
+        (let* ((struct-str (symbol->string struct))
+               (struct-ptr (string->symbol (string-append struct-str "*")))
+               (shallow-ptr (string->symbol (string-append struct-str "-shallow-ptr*")))
+               (borrowed-ptr (string->symbol (string-append struct-str "-borrowed-ptr*")))
+               (string-types '(char-string nonull-char-string UTF-8-string
+                                           nonnull-UTF-8-string UTF-16-string
+                                           nonnull-UTF16-string))
+               (string-compat-required? (let loop ((m members))
+                                          (cond
+                                           ((null? m) #f)
+                                           ((member (cdr (car m)) string-types) #t)
+                                           (else (loop (cdr m))))))
+               (string-setter-body (lambda (member-name)
+                                     (let ((m (string-append "___arg1->" member-name)))
+                                       (string-append
+                                        "if(" m " == NULL)" "\n"
+                                        m "= strdup(___arg2);" "\n"
+                                        "else if (strcmp(" m ", ___arg2) != 0) {" "\n"
+                                        "free(" m ");" "\n"
+                                        m "= strdup(___arg2);" "\n"
+                                        "}" "\n"
+                                        "___return;" "\n"))))
+               (default-free-body (and string-compat-required?
+                                       (string-append
+                                        "___SCMOBJ " struct-str "_ffi_free (void *ptr) {" "\n"
+                                        "struct " struct-str " *obj = (struct " struct-str "*) ptr;" "\n"
+                                        (apply string-append
+                                          (map (lambda (m)
+                                                 (cond 
+                                                  ((memq (cdr m) string-types)
+                                                   (let ((mem-name (symbol->string (car m))))
+                                                     (string-append "if(obj->" mem-name ") " 
+                                                                    "free(obj->" mem-name ");" "\n")))
+                                                  (else "")))
+                                               members))
+                                        "free(obj);" "\n"
+                                        "return ___FIX (___NO_ERR);" "\n"
+                                        "}"
+                                        )))
+               (release-function (or release-function
+                                     (if string-compat-required?
+                                       (string-append struct-str "_ffi_free")
+                                       "ffi_free")))
+               (string-compat-types (if string-compat-required?
+                                      `((c-declare ,default-free-body)
+                                        (c-define-type ,shallow-ptr
+						       (pointer ,struct (,struct-ptr) "ffi_free")))
+				      '())))
+          `(begin (c-define-type ,struct (struct ,struct-str))
+                  (c-define-type ,struct-ptr
+                                 (pointer ,struct (,struct-ptr) ,release-function))
+                  (c-define-type ,borrowed-ptr (pointer ,struct (,struct-ptr)))
+
+		  ,@string-compat-types
+
+
+		  (define ,(string->symbol (string-append struct-str "-ptr?"))
+                    (lambda (obj)
+                      (and (foreign? obj)
+                         (equal? (foreign-tags obj) (quote (,struct-ptr))))))
+
+                  ;; getter and setters
+                  ,@(apply append
+		      (map (lambda (m)
+			     (let* ((member-name (symbol->string (car m)))
+				    (member-type (cdr m))
+				    (getter-name (string-append struct-str "-" member-name))
+				    (setter-body (cond
+						  ((member member-type string-types)
+						   (string-setter-body member-name))
+						  (else
+						   (string-append
+						    "___arg1->" member-name " = ___arg2;" "\n"
+						    "___return;" "\n")))))
+			       `((define ,(string->symbol getter-name)
+				   (c-lambda (,struct-ptr) ,member-type
+					,(string-append
+					  "___return(___arg1->" member-name ");")))
+
+				 (define ,(string->symbol (string-append getter-name "-set!"))
+				   (c-lambda (,struct-ptr ,member-type) void
+					,setter-body)))))
+			   members))
+
+                  ;; malloc
+                  (define ,(string->symbol (string-append "malloc-" struct-str))
+                    (c-lambda () ,struct-ptr
+                         ,(string-append
+                           "struct " struct-str "* var = malloc(sizeof(struct " struct-str "));" "\n"
+                          "if (var == NULL)" "\n"
+                          "    ___return (NULL);" "\n"
+			  "memset(var, 0, sizeof(struct " struct-str "));"
+                          "___return(var);")))
+
+                  (define ,(string->symbol (string-append "ptr->" struct-str))
+                    (c-lambda (,struct-ptr) ,struct
+                         "___return(*___arg1);"))
+
+                  ;; malloc array
+                  (define ,(string->symbol (string-append "malloc-" struct-str "-array"))
+                    (c-lambda (unsigned-int32) ,(if string-compat-required? shallow-ptr struct-ptr)
+                         ,(string-append
+                           "struct " struct-str " *arr_var=malloc(___arg1*sizeof(struct " struct-str "));" "\n"
+                           "if (arr_var == NULL)" "\n"
+                           "    ___return (NULL);" "\n"
+			   "memset(arr_var, 0, ___arg1*sizeof(struct " struct-str "));" "\n"
+                           "___return(arr_var);")))
+
+                  ;; ref array
+                  (define ,(string->symbol (string-append struct-str "-array-ref"))
+                    (c-lambda (,struct-ptr unsigned-int32) ,borrowed-ptr
+                         "___return (___arg1 + ___arg2);"))
+
+                  ;; set! array
+                  (define ,(string->symbol (string-append struct-str "-array-set!"))
+                    (c-lambda (,struct-ptr unsigned-int32 ,struct-ptr) void
+                         "*(___arg1 + ___arg2) = *___arg3; ___return;")))))))
 
   (def (prelude-c-decls)
     '((c-declare "#include <stdlib.h>")
+      (c-declare "#include <string.h>")
       (c-declare "#include <errno.h>")
       (c-declare "static ___SCMOBJ ffi_free (void *ptr);")
       (c-declare #<<END-C
@@ -73,22 +200,49 @@ END-C
 )
       ))
 
+  (def (make-struct-ids name fields)
+    (append (list (format-id name "malloc-~a" name)
+                  (format-id name "malloc-~a-array" name)
+                  (format-id name "~a-array-ref" name)
+                  (format-id name "~a-array-set!" name)
+                  (format-id name "ptr->~a" name)
+                  (format-id name "~a-ptr?" name))
+            (apply append
+             (map (lambda (field) (list (format-id name "~a-~a" name field)
+                                   (format-id name "~a-~a-set!" name field)))
+                  fields))))
+
+  (def (parse-externs exts)
+    (let lp ((rest exts)
+             (ids []))
+      (syntax-case rest (struct)
+        ((id . rest)
+         (identifier? #'id)
+         (lp #'rest (cons #'id ids)))
+
+        (((struct name fields ...) . rest)
+         (lp (syntax rest)
+             (foldl cons ids (make-struct-ids #'name
+                                              #'(fields ...)))))
+
+        (() ids))))
+
   (syntax-case stx ()
-    ((_ (id ...) body ...)
-     (identifier-list? #'(id ...))
-     (if (module-context? (current-expander-context))
-       (let (ns (or (module-context-ns (current-expander-context))
-                    (expander-context-id (current-expander-context))))
-         (with-syntax (((nsdef ...) (namespace-def ns #'(id ...)))
-                       ((macros ...) (prelude-macros))
-                       ((c-decls ...) (prelude-c-decls))
-                       ((c-defs ...) (prelude-c-defs)))
-           #'(begin
-               (extern id ...)
-               (begin-foreign
-                 macros ...
-                 c-decls ...
-                 nsdef ...
-                 body ...
-                 c-defs ...))))
-       (raise-syntax-error #f "Illegal expansion context; not in module context" stx)))))
+    ((_ (exts ...) body ...)
+     (with-syntax (((id ...) (parse-externs (syntax (exts ...)))))
+       (if (module-context? (current-expander-context))
+         (let (ns (or (module-context-ns (current-expander-context))
+                      (expander-context-id (current-expander-context))))
+           (with-syntax (((nsdef ...) (namespace-def ns #'(id ...)))
+                         ((macros ...) (prelude-macros))
+                         ((c-decls ...) (prelude-c-decls))
+                         ((c-defs ...) (prelude-c-defs)))
+             #'(begin
+                 (extern id ...)
+                 (begin-foreign
+                   macros ...
+                   c-decls ...
+                   nsdef ...
+                   body ...
+                   c-defs ...))))
+         (raise-syntax-error #f "Illegal expansion context; not in module context" stx))))))
