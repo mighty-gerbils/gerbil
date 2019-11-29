@@ -3,6 +3,8 @@
   `((gxc: "build-config" dep: ("build-features.ss"))
     "interactive"
     "foreign"
+    ;; tests for :std/foreign
+    "foreign-test"
     "format"
     "pregexp"
     "sort"
