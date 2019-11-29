@@ -118,12 +118,12 @@
                                         "struct " struct-str " *obj = (struct " struct-str "*) ptr;" "\n"
                                         (apply string-append
                                           (map (lambda (m)
-                                                 (case (cdr m)
-                                                   ((char-string)
-                                                    (let ((mem-name (symbol->string (car m))))
-                                                      (string-append "if(obj->" mem-name ") " 
-                                                                     "free(obj->" mem-name ");" "\n")))
-                                                                           (else "")))
+                                                 (cond 
+                                                  ((memq (cdr m) string-types)
+                                                   (let ((mem-name (symbol->string (car m))))
+                                                     (string-append "if(obj->" mem-name ") " 
+                                                                    "free(obj->" mem-name ");" "\n")))
+                                                  (else "")))
                                                members))
                                         "free(obj);" "\n"
                                         "return ___FIX (___NO_ERR);" "\n"
@@ -136,51 +136,52 @@
                (string-compat-types (if string-compat-required?
                                       `((c-declare ,default-free-body)
                                         (c-define-type ,shallow-ptr
-                                              (pointer ,struct (,struct-ptr) "ffi_free"))))))
-          `(begin
-             ,@(append `((c-define-type ,struct (struct ,struct-str))
-                         (c-define-type ,struct-ptr
-                                        (pointer ,struct (,struct-ptr) ,release-function))
-                         (c-define-type ,borrowed-ptr (pointer ,struct (,struct-ptr))))
-                       string-compat-types)
+						       (pointer ,struct (,struct-ptr) "ffi_free")))
+				      '())))
+          `(begin (c-define-type ,struct (struct ,struct-str))
+                  (c-define-type ,struct-ptr
+                                 (pointer ,struct (,struct-ptr) ,release-function))
+                  (c-define-type ,borrowed-ptr (pointer ,struct (,struct-ptr)))
+
+		  ,@string-compat-types
 
 
-                  (define ,(string->symbol (string-append struct-str "-ptr?"))
+		  (define ,(string->symbol (string-append struct-str "-ptr?"))
                     (lambda (obj)
                       (and (foreign? obj)
                          (equal? (foreign-tags obj) (quote (,struct-ptr))))))
 
                   ;; getter and setters
                   ,@(apply append
-                     (map (lambda (m)
-                            (let* ((member-name (symbol->string (car m)))
-                                   (member-type (cdr m))
-                                   (getter-name (string-append struct-str "-" member-name))
-                                   (setter-body (cond
-                                                 ((member member-type string-types)
-                                                  (string-setter-body member-name))
-                                                 (else
-                                                  (string-append
-                                                   "___arg1->" member-name " = ___arg2;" "\n"
-                                                   "___return;" "\n")))))
-                              `((define ,(string->symbol getter-name)
-                                  (c-lambda (,struct-ptr) ,member-type
-                                       ,(string-append
-                                         "___return(___arg1->" member-name ");")))
+		      (map (lambda (m)
+			     (let* ((member-name (symbol->string (car m)))
+				    (member-type (cdr m))
+				    (getter-name (string-append struct-str "-" member-name))
+				    (setter-body (cond
+						  ((member member-type string-types)
+						   (string-setter-body member-name))
+						  (else
+						   (string-append
+						    "___arg1->" member-name " = ___arg2;" "\n"
+						    "___return;" "\n")))))
+			       `((define ,(string->symbol getter-name)
+				   (c-lambda (,struct-ptr) ,member-type
+					,(string-append
+					  "___return(___arg1->" member-name ");")))
 
-                                (define ,(string->symbol (string-append getter-name "-set!"))
-                                  (c-lambda (,struct-ptr ,member-type) void
-                                            ,setter-body)))))
-                          members))
+				 (define ,(string->symbol (string-append getter-name "-set!"))
+				   (c-lambda (,struct-ptr ,member-type) void
+					,setter-body)))))
+			   members))
 
                   ;; malloc
                   (define ,(string->symbol (string-append "malloc-" struct-str))
                     (c-lambda () ,struct-ptr
                          ,(string-append
                            "struct " struct-str "* var = malloc(sizeof(struct " struct-str "));" "\n"
-                           "memset(var, 0, sizeof(struct " struct-str "));"
                           "if (var == NULL)" "\n"
                           "    ___return (NULL);" "\n"
+			  "memset(var, 0, sizeof(struct " struct-str "));"
                           "___return(var);")))
 
                   (define ,(string->symbol (string-append "ptr->" struct-str))
@@ -192,9 +193,9 @@
                     (c-lambda (unsigned-int32) ,(if string-compat-required? shallow-ptr struct-ptr)
                          ,(string-append
                            "struct " struct-str " *arr_var=malloc(___arg1*sizeof(struct " struct-str "));" "\n"
-                           "memset(arr_var, 0, ___arg1*sizeof(struct " struct-str "));" "\n"
                            "if (arr_var == NULL)" "\n"
                            "    ___return (NULL);" "\n"
+			   "memset(arr_var, 0, ___arg1*sizeof(struct " struct-str "));" "\n"
                            "___return(arr_var);")))
 
                   ;; ref array
@@ -248,22 +249,24 @@ END-C
                                    (format-id name "~a-~a-set!" name field)))
                   fields))))
 
+  (def (parse-externs exts)
+    (let lp ((rest exts)
+             (ids []))
+      (syntax-case rest (struct)
+        ((id . rest)
+         (identifier? #'id)
+         (lp #'rest (cons #'id ids)))
+
+        (((struct name fields ...) . rest)
+         (lp (syntax rest)
+             (foldl cons ids (make-struct-ids #'name
+                                              #'(fields ...)))))
+
+        (() ids))))
+
   (syntax-case stx ()
     ((_ (exts ...) body ...)
-     (with-syntax (((id ...)
-                    (let lp ((rest #'(exts ...))
-                             (ids []))
-                      (syntax-case rest (struct)
-                        ((id . rest)
-                         (identifier? #'id)
-                         (lp #'rest (cons #'id ids)))
-
-                        (((struct name fields ...) . rest)
-                         (lp (syntax rest)
-                             (foldl cons ids (make-struct-ids #'name
-                                                              #'(fields ...)))))
-
-                        (() ids)))))
+     (with-syntax (((id ...) (parse-externs (syntax (exts ...)))))
        (if (module-context? (current-expander-context))
          (let (ns (or (module-context-ns (current-expander-context))
                       (expander-context-id (current-expander-context))))
