@@ -141,7 +141,7 @@
                   (define ,(string->symbol (string-append "malloc-" struct-str))
                     (c-lambda () ,struct-ptr
                          ,(string-append
-                           "struct " struct-str "* var = malloc(sizeof(struct " struct-str "));" "\n"
+                           "struct " struct-str "* var = (struct " struct-str " *) malloc(sizeof(struct " struct-str "));" "\n"
                           "if (var == NULL)" "\n"
                           "    ___return (NULL);" "\n"
 			  "memset(var, 0, sizeof(struct " struct-str "));"
@@ -155,7 +155,7 @@
                   (define ,(string->symbol (string-append "malloc-" struct-str "-array"))
                     (c-lambda (unsigned-int32) ,(if string-compat-required? shallow-ptr struct-ptr)
                          ,(string-append
-                           "struct " struct-str " *arr_var=malloc(___arg1*sizeof(struct " struct-str "));" "\n"
+                           "struct " struct-str " *arr_var=(struct " struct-str " *) malloc(___arg1*sizeof(struct " struct-str "));" "\n"
                            "if (arr_var == NULL)" "\n"
                            "    ___return (NULL);" "\n"
 			   "memset(arr_var, 0, ___arg1*sizeof(struct " struct-str "));" "\n"
