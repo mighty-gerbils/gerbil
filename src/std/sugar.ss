@@ -2,7 +2,26 @@
 ;;; (C) vyzo
 ;;; some standard sugar
 
-(export #t)
+(export
+  catch
+  finally
+  try
+  with-destroy
+  defmethod/alias
+  using
+  using-method
+  with-methods
+  with-class-methods
+  with-class-method
+  assert!
+  while
+  until
+  hash
+  hash-eq
+  hash-eqv
+  let-hash
+  awhen
+  chain)
 
 (defrules catch ())
 (defrules finally ())
@@ -208,3 +227,81 @@
   ((_ (id test) body ...)
    (let (id test)
      (when id body ...))))
+
+;; chain rewrites passed expressions by passing the previous expression
+;; into the position of the <> diamond symbol. In case a previous expression
+;; should be used in a sub-expression, or multiple times, the expression can be
+;; prefixed with a variable (supports destructuring).
+;;
+;; When the first expression is a <> or ([pattern] <> expression),
+;; chain will return a unary lambda.
+;;
+;; Example:
+;;  (chain [1 2 3]
+;;         ([_ . rest] (map number->string rest))
+;;         (v (string-join v ", "))
+;;         (string-append <> " :)"))
+;; => "2, 3 :)"
+(defrules chain (<>)
+  ((_ <> (fn arg arg* ...) ...)
+   (lambda (v)
+     (~chain-aux ((fn arg arg* ...) ...) v)))
+
+  ((_ ((var . vars) <> exp) (fn arg arg* ...) ...)
+   (lambda (v)
+     (with (((var . vars) v))
+       (~chain-aux ((fn arg arg* ...) ...) exp))))
+
+  ((_ exp (fn arg arg* ...) ...)
+   (~chain-aux ((fn arg arg* ...) ...) exp)))
+
+;; ~chain-aux is an auxiliary macro which takes a list of expressions
+;; and the initial chain value. It then loops over the expression list
+;; and transforms one expression after the other.
+(defrules ~chain-aux (<>)
+  ((_ () acc)
+   acc)
+
+  ((_ ((var ()) . more) acc)
+   (syntax-error "Body expression cannot be empty"))
+
+  ;; variable
+  ((_ ((var (body1 body2 . body*)) . more) acc)
+   (~chain-aux more
+	       (~chain-aux-variable (var acc) (body1 body2 . body*))))
+
+  ((_ ((var (body1 body2 . body*) body-error ...) . more) acc)
+   (syntax-error "More than one body expression in chain-variable context"))
+
+  ;; diamond
+  ((_ ((fn . args) . more) acc)
+   (~chain-aux more
+	       (~chain-aux-diamond (fn . args) () acc))))
+
+;; ~chain-aux-variable is an auxiliary macro that transforms
+;; the passed expression into a with-expression.
+(defrules ~chain-aux-variable ()
+  ((_ (() (fn . args)) body)
+   (syntax-error "The variable must be non-empty"))
+
+  ((_ (var previous) body)
+   (with ((var previous)) body)))
+
+;; ~chain-aux-diamond is an auxiliary macro that replaces the <> symbol
+;; with the previous expressions. There must be only one <> diamond in a row
+;; and it must be in the top-level expression.
+(defrules ~chain-aux-diamond (<>)
+  ((_ () acc)
+   acc)
+
+  ((_ () acc previous)
+   (syntax-error "No diamond operator in expression"))
+
+  ((_ (<> . more) (acc ...))
+   (syntax-error "More than one diamond operator in expression"))
+
+  ((_ (<> . more) (acc ...) previous)
+   (~chain-aux-diamond more (acc ... previous)))
+
+  ((_ (v . more) (acc ...) . previous) ; previous is not set after <> was replaced
+   (~chain-aux-diamond more (acc ... v) . previous)))

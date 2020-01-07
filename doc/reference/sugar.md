@@ -149,3 +149,53 @@ are resolved with the following rules:
 ```
 
 Anaphoric `when`. Evaluates and binds *test* to *id*. Evaluates *body ...* if *test* is not `#f`.
+
+## chain
+``` scheme
+(chain expr (expression) ...)
+
+<expression>:
+  (proc arg* ...)             ; must contain exactly one <> symbol
+  (var (proc arg1 arg* ...))  ; var supports destructuring
+
+(chain <> (expression) ...)
+=> (lambda (var) (chain var (expression) ...))
+
+(chain (pattern <> expr) (expression) ...)
+=>  (lambda (var) (with ((pattern var)) (chain expr (expression) ...)))
+```
+
+`chain` rewrites passed expressions by passing the previous expression
+into the position of the `<>` diamond symbol. In case a previous expression
+should be used in a sub-expression, or multiple times, the expression can be
+prefixed with a variable (supports destructuring).
+
+When the first expression is a `<>` or `([pattern] <> expr)`,
+chain will return a unary lambda.
+
+::: tip Examples:
+``` scheme
+> (chain "stressed"
+         (string->list <>)
+         (reverse <>)
+         (list->string <>)
+         (string-append "then have some " <>))
+"then have some desserts"
+
+
+(chain (random-integer 10)
+       (num (if (> num 5) num 0)))
+7
+
+
+> (def foobar
+    (chain <>
+      ([_ . rest] (map number->string rest))
+      (string-join <> ", ")
+      (string-append <> " :)")))
+
+
+> (foobar [0 1 2])
+"1, 2 :)"
+```
+:::
