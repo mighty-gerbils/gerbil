@@ -2257,19 +2257,18 @@ When `lst` is empty, `lst` is returned as it is.
 (split lst proc [limit = #f]) -> list
 
   lst   := proper list
-  proc  := unary procedure
+  stop  := value or unary procedure
   limit := optional, split the list only limit times
 ```
-
-split the list `lst` into a list-of-lists using the unary procedure `proc`.
-If limit is set, split the list only `limit` times.
+split the list `lst` into a list-of-lists using the value or
+unary procedure `stop`. If limit is set, split the list only limit times.
 
 ::: tip Examples:
 ``` scheme
 (split '(1 2 "hi" 3 4) string?)
 > ((1 2) (3 4))
 
-(split [1 2 0 3 4 0 5 6] zero? 1)
+(split [1 2 0 3 4 0 5 6] 0 1)
 > ((1 2) (3 4 0 5 6))
 
 (split [] number?)

@@ -267,24 +267,25 @@
     (take lst (1- (length lst)))
     lst))
 
-;; split the list lst into a list-of-lists using the unary procedure proc.
-;; If limit is set, split the list only limit times.
+;; split the list lst into a list-of-lists using the value or
+;; unary procedure stop. If limit is set, split the list only limit times.
 ;;
 ;; Examples:
-;;  (split '(1 2 "hi" 3 4) string?)                 => ((1 2) (3 4))
-;;  (split [1 2 0 3 4 0 5 6] zero? 1)               => ((1 2) (3 4 0 5 6))
-;;  (split [] number?)                              => ()
-(def (split lst proc (limit #f))
+;;  (split '(1 2 "hi" 3 4) string?)    => ((1 2) (3 4))
+;;  (split '(1 2 "hi") string?)        => ((1 2))
+;;  (split [1 2 0 3 4 0 5 6] 0 1)      => ((1 2) (3 4 0 5 6))
+;;  (split [] number?)                 => ()
+(def (split lst stop (limit #f))
   (declare (fixnum))
-  (if (pair? lst)
-    (let loop ((xs lst) (acc []) (buf []) (n (if (fixnum? limit) limit -1)))
-      (match* ((zero? n) xs)
-	((#f [v . xs]) (if (proc v)
-			 (loop xs (cons (reverse! buf) acc) [] (1- n))
-			 (loop xs acc (cons v buf) n)))
-	((#t [v . xs]) (reverse! (cons (cons v xs) acc)))
-	(else (foldl cons [(reverse! buf)] acc))))
-    []))
+  (def test (if (procedure? stop) stop (cut equal? <> stop)))
+  (let loop ((xs lst) (buf []) (n (if (fixnum? limit) limit -1)))
+    (match* ((zero? n) xs)
+      ((#f [])       (if (pair? buf) [(reverse! buf)] []))
+      ((#f [v . xs]) (if (test v)
+                       (cons (reverse! buf) (loop xs [] (1- n)))
+                       (loop xs (cons v buf) n)))
+      ((#t rest)     (if (zero? limit) lst
+                       (if (pair? rest) [rest] []))))))
 
 ;; group consecutive elements of the list lst into a list-of-lists.
 ;;
