@@ -7,6 +7,7 @@
         "generic-test"
         "coroutine-test"
         "iter-test"
+        "sugar-test"
         "amb-test"
         "event-test"
         "misc/string-test"
@@ -58,6 +59,7 @@
    generic-macro-test
    coroutine-test
    iter-test
+   sugar-test
    amb-test
    event-test
    csv-test
