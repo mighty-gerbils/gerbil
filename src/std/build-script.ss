@@ -61,7 +61,10 @@
                                      prefix: @prefix
                                      @build-spec)))
                             ([]
-                             (unless (file-exists? "build-deps")
+                             (unless (and (file-exists? "build-deps")
+                                          (file-newer? "build-deps" +this-source-file+)
+                                          (andmap (lambda (f) (file-newer? "build-deps" f))
+                                                  (buildspec-depfiles @build-spec)))
                                (displayln "... make deps")
                                (main "deps"))
                              (displayln "... compile")
