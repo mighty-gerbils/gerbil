@@ -128,21 +128,23 @@
     (http-request 'POST url headers data [] redirect)))
 
 (def (http-put url
+               redirect: (redirect #t)
                headers:  (headers #f)
                cookies:  (cookies #f)
                params:   (params #f)
                data:     (data #f))
   (let ((url (url-target-e url params))
         (headers (make-http/1.1-headers headers cookies)))
-    (http-request 'PUT url headers data [] #f)))
+    (http-request 'PUT url headers data [] redirect)))
 
 (def (http-delete url
+                  redirect: (redirect #t)
                   headers:  (headers #f)
                   cookies:  (cookies #f)
                   params:   (params #f))
   (let ((url (url-target-e url params))
         (headers (make-http/1.1-headers headers cookies)))
-    (http-request 'DELETE url headers #f [] #f)))
+    (http-request 'DELETE url headers #f [] redirect)))
 
 (def (http-options url
                    headers:  (headers #f)
