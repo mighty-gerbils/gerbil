@@ -9,6 +9,7 @@
         "sort"
         "sugar")
 (export make make-depgraph make-depgraph/spec
+        buildspec-depfiles
         shell-config
         env-cppflags
         env-ldflags
@@ -173,6 +174,7 @@
         (sort-deps bset)
         (lp (append bset new) new)))))
 
+;; make-depgraph : (listof file) -> depgraph
 (def (make-depgraph files)
   (def (symbol<? a b)
     (string<? (symbol->string a) (symbol->string b)))
@@ -204,7 +206,13 @@
            [file (expander-context-id mod) (sort (hash-keys ht) symbol<?) ...])))))
   (map depgraph files))
 
+;; make-depgraph/spec : buildspec -> depgraph
 (def (make-depgraph/spec spec)
+  (make-depgraph (buildspec-depfiles spec)))
+
+;; buildspec-depfiles : buildspec -> (listof file)
+;; Produces the list of files with deps relevant for making a depgraph
+(def (buildspec-depfiles spec)
   (def (file-e mod ext)
     (if (string-empty? (path-extension mod))
       (string-append mod ext)
@@ -225,9 +233,11 @@
          ([ssi: mod . opts]
           (lp rest (cons (file-e mod ".ssi") files)))
          (else
+          ; otherwise it's static-include: or copy:, no deps,
+          ; not relevant for making a depgraph
           (lp rest files))))
       (else
-       (make-depgraph (reverse files))))))
+       (reverse files)))))
 
 (def (shell-config cmd . args)
   (let* ((proc (open-input-process [path: cmd arguments: args]))

@@ -1710,7 +1710,7 @@ Displays the arguments *args*.
   a, b := string
 ```
 
-Returns true if file *a* is newer than *b*. Both files must exist.
+Returns true if file *a* is newer than *b* by modification-time. Both files must exist.
 
 ### create-directory*
 ``` scheme
