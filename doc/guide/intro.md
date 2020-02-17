@@ -628,7 +628,7 @@ module-path:
  :identifier           ; identifier with ':' prefix, library module
  ./identifier          ; identifier with './' prefix, library relative module
  ../identifier         ; identifier with '../' prefix, library relative module
- "path-to-module-file" ; file module, .ss extension optional
+ "path-to-module-file" ; file module, .ss/.scm extension optional
 ```
 
 As we can see, `import` allows macros to manipulate the import set
