@@ -26,11 +26,11 @@ If you intend to build static applications for servers, then you should use the 
 configuration:
 ```
 ./configure --prefix=/usr/local/gambit \
-             --enable-single-host \
-             --enable-multiple-versions \
-             --enable-openssl \
-             --enable-default-runtime-options=f8,-8,t8 \
-             --enable-poll
+            --enable-single-host \
+            --enable-multiple-versions \
+            --enable-openssl \
+            --enable-default-runtime-options=f8,-8,t8 \
+            --enable-poll
 
 ```
 This removes `--enable-shared`, which will build gambit without shared libraries and thus result in static linkage of Gambit in executables.
