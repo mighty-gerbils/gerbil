@@ -105,7 +105,6 @@ Now let's compile it. By default, gxc will place compiler artefacts in `~/.gerbi
 You can change this with the `-d` option, but then you'll have to add your libdir to `GERBIL_LOADPATH`.
 
 ```
-
 $ gxc mylib.ss
 ```
 
