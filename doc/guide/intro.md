@@ -34,7 +34,7 @@ $ cat > hello.ss <<EOF
   (displayln "hello world"))
 EOF
 $ chmod +x hello.ss
-$./hello.ss
+$ ./hello.ss
 hello world
 ```
 
