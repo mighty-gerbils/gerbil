@@ -12,7 +12,9 @@
   (only-in :gerbil/gambit/misc
            pretty-print)
   (only-in :gerbil/gambit/bits
-           integer-length))
+           integer-length)
+  (only-in :std/misc/repr
+           print-representation))
 
 (def (format fmt . args)
   (unless (string? fmt)
@@ -41,6 +43,7 @@
 ;;   lower-case synonyms for all format specifiers
 ;;   ~u/~U for unicode hex char print (for #\uXXXX)
 ;;   ~f/~F means "float" and does non-exp fp (C-style %f more or less)
+;;   ~r/~R means "repr" and works with `:std/misc/repr` and the `:pr` method
 ;;   ~w{spec} does generic fixed width
 ;; not implemented: ~& ~H wtfs
 ;; TODO: ~g/~e for C-style %g/%e
@@ -150,6 +153,9 @@
 
 (defdispatch-e (#\y #\Y)
   pretty-print)
+
+(defdispatch-e (#\r #\R)
+  print-representation)
 
 (defdispatch-q (#\% #\n)
   (newline))
