@@ -9,7 +9,7 @@
 
 (import
   :gerbil/gambit/hash :gerbil/gambit/ports
-  :std/format :std/misc/list :std/misc/rtd :std/sort)
+  :std/misc/list :std/misc/rtd :std/sort)
 
 ;; Default options for printing an evaluable representation. Keep it empty for now.
 ;; Note: we don't actually use options yet, but
@@ -124,7 +124,9 @@
            (and (type-descriptor? t) (assgetq transparent: (type-descriptor-plist t)))))
     (display-separated
      (cdr (if (struct-type? (object-type x)) (struct->list x) (class->list x))) port
-     prefix: (format "(~a " (type-name (object-type x))) suffix: ")" display-element: p))
+     prefix: (string-append "(" (symbol->string (type-name (object-type x))) " ")
+     suffix: ")"
+     display-element: p))
 
    (else
     (print-unrepresentable-object x port options))))
