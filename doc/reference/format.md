@@ -25,6 +25,7 @@ Formats the arguments to a string using the supplied format specifier.
 - lower-case synonyms for all format specifiers (~a and ~A are equivalent)
 - ~u/~U for unicode hex char print (for #\uXXXX)
 - ~f/~F means "float" and does non-exp fp (C-style %f more or less)
+- ~r/~R means "repr" and works with `:std/misc/repr` and the `:pr` method
 - ~w{spec} does generic fixed width
 - not implemented: ~& ~H wtfs
 :::
