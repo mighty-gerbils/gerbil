@@ -6,17 +6,23 @@ The interactive shell that you get when you run gxi is a larger environment than
 
 These macros are only available in the interactive shell.
 
+### reload
+
 ```
 (reload module-path ...)
 ```
 
 Reloads the module given by the module path and then imports the freshly reloaded module. The module path is the same as you would use in a import form; a string will reload a source loaded module while a library module path will reload a compiled module as applicable in the load path. Top defined modules are ignored.
 
+### enter!
+
 ```
 (enter! module-path)
 ```
 
 Starts a repl using the syntactic context of a given module, which is first evaluated.
+
+### @expand and @expand1
 
 ```
 (@expand form)
@@ -25,6 +31,7 @@ Starts a repl using the syntactic context of a given module, which is first eval
 
 These two macros perform macro expansion, pretty print the result, and return the expanded syntax for inspection. The difference lies in the function used to perform the expansion. `@expand` uses core-expand* which expands until the outer form is a core macro. `@expand1` uses core-expand1 which performs a single step expansion.
 
+### macro-expand and macro-expand1
 
 ```
 (macro-expand quoted-form)
