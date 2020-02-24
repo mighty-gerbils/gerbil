@@ -324,7 +324,7 @@ Please document me!
 Please document me!
 
 ### stx-source
-::: tip usage
+
 ```
 (stx-source stx) -> locat | #f
   stx := syntax
@@ -336,7 +336,7 @@ Returns the source location of a syntax object AST `stx`.
 The `locat` structure includes the container and filepos, accessed by `##locat-container` and `##locat-filepos`. The filepos has line and column information, accessed with `##filepos-line` and `##filepos-col`.
 
 ### stx-wrap-source
-::: tip usage
+
 ```
 (stx-wrap-source stx src) -> syntax
   stx := any
