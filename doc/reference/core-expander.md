@@ -324,22 +324,29 @@ Please document me!
 Please document me!
 
 ### stx-source
-::: tip usage
+
 ```
-(stx-source ...)
+(stx-source stx) -> locat | #f
+  stx := syntax
 ```
 :::
 
-Please document me!
+Returns the source location of a syntax object AST `stx`.
+
+The `locat` structure includes the container and filepos, accessed by `##locat-container` and `##locat-filepos`. The filepos has line and column information, accessed with `##filepos-line` and `##filepos-col`.
 
 ### stx-wrap-source
-::: tip usage
+
 ```
-(stx-wrap-source ...)
+(stx-wrap-source stx src) -> syntax
+  stx := any
+  src := locat
 ```
 :::
 
-Please document me!
+Produces a new syntax object with source location `src` if `stx` is not wrapped as an AST already, otherwise returns `stx` unchanged.
+
+The `locat` structure can be constructed with `(##make-locat container filepos)`, where a filepos can be constructed with `(##make-filepos line col off)`.
 
 ### stx-car
 ::: tip usage
