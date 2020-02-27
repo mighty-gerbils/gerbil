@@ -30,17 +30,17 @@
       list
       (port (current-output-port))
       prefix: (prefix "")
+      separate-prefix?: (separate? #f)
       separator: (separator " ")
       suffix: (suffix "")
       display-element: (display-element display))
   (display prefix port)
-  (def first? #t)
   (for-each! ;; NB: also works on improper lists.
    list
    (lambda (elem)
-     (if first?
-       (set! first? #f)
-       (display separator port))
+     (if separate?
+       (display separator port)
+       (set! separate? #t))
      (display-element elem port)))
   (display suffix port))
 
@@ -65,7 +65,7 @@
     (d "'") (w x))
 
    ((pair? x) ;; pair: print as [ ... ].
-    (display-separated x port prefix: "[" separator: " " display-element: p)
+    (display-separated x port prefix: "[" display-element: p)
     (let ((end (cdr (last-pair x))))
       (cond
        ((null? end) (void))
@@ -75,14 +75,14 @@
 
    ((vector? x) ;; vector: print as (vector ...).
     (display-separated (vector->list x) port
-                       prefix: "(vector " separator: " " display-element: p suffix: ")"))
+                       prefix: "(vector" separate-prefix?: #t display-element: p suffix: ")"))
 
    ((u8vector? x) ;; u8vector: print as #u8(...), knowing that elements are all bytes.
     (display-separated (u8vector->list x) port
-                       prefix: "#u8(" separator: " " suffix: ")"))
+                       prefix: "#u8(" suffix: ")"))
 
    ((hash-table? x) ;; hash-table: print as (hash ...)
-    (let* ((prefix0
+    (let* ((prefix
             (let (testf (##vector-ref x 2))
               (cond
                ((or (not testf)
@@ -94,8 +94,6 @@
                 "(hash-eqv")
                (else
                 "(hash"))))
-           (prefix
-            (if (zero? (hash-length x)) prefix0 (string-append prefix0 " ")))
            (kr
             (lambda (k)
               (if (or (simple? k) (symbol? k) (null? k))
@@ -104,7 +102,7 @@
       (display-separated
        (sort (hash-map (lambda (k v) (cons (kr k) v)) x) ;; sort keys by repr
              (lambda (krv1 krv2) (string<? (car krv1) (car krv2))))
-       port prefix: prefix suffix: ")"
+       port prefix: prefix separate-prefix?: #t suffix: ")"
        display-element:
        (lambda (x _)
          (with ([kr . v] x)
@@ -124,9 +122,14 @@
            (and (type-descriptor? t) (assgetq transparent: (type-descriptor-plist t)))))
     (display-separated
      (cdr (if (struct-type? (object-type x)) (struct->list x) (class->list x))) port
-     prefix: (string-append "(" (symbol->string (type-name (object-type x))) " ")
+     prefix: (string-append "(" (symbol->string (type-name (object-type x))))
+     separate-prefix?: #t
      suffix: ")"
      display-element: p))
+
+   ((##values? x)
+    (let ((vs (call-with-values (lambda () x) list)))
+      (display-separated vs prefix: "(values" separate-prefix?: #t suffix: ")" display-element: p)))
 
    (else
     (print-unrepresentable-object x port options))))
