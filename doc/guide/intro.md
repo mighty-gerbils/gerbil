@@ -4,7 +4,7 @@ This is a quick introductory guide to Gerbil for seasoned schemers;
 it assumes familiarity with scheme and exposure to a couple of
 different implementations.
 
-In the following `$` is the shell prompt and `>` the gxi
+In the following, `$` is the shell prompt and `>` the gxi
 interpreter prompt.
 
 ## Using Gerbil

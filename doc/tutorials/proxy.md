@@ -4,13 +4,13 @@ In this tutorial we illustrate network programming facilities in Gerbil, by writ
 a couple of network proxies.
 
 The first one is a transparent TCP proxy, written using low level socket programming
-with the `:std/os/socket` package. This packages utilizes raw devices and opens sockets
+with the `:std/os/socket` package. This package utilizes raw devices and opens sockets
 through FFI, thus providing access to the full POSIX socket programming API with a
 nonblocking interface.
 
 The second one is an anonymous SOCKS4 proxy, written using the `:std/net/socket` package.
 This package provides high level network programming facilities for synchronous socket
-i/o, and can transparently use a custom socket server for scheduling i/o with native
+I/O, and can transparently use a custom socket server for scheduling I/O with native
 host primitives like `epoll` on Linux.
 
 ## Preliminaries
@@ -18,8 +18,8 @@ host primitives like `epoll` on Linux.
 This tutorial requires a very recent version of Gambit that supports raw devices ([gambit#272](https://github.com/gambit/gambit/pull/272)).
 
 The source code for the tutorial is available at [$GERBIL_HOME/src/tutorial/proxy](https://github.com/vyzo/gerbil/tree/master/src/tutorial/proxy).
-The build script, `build.ss`, by default will build dynamic executables for local use; there
-also is a rule `build.ss static` to build static executables you can deploy on servers.
+The build script, `build.ss`, will by default build dynamic executables for local use; there
+is also a rule `build.ss static` to build static executables you can deploy on servers.
 
 For the examples we'll build dynamic executables, as they are much faster to compile:
 ```bash
@@ -176,7 +176,7 @@ Connection closed by foreign host.
 The [socks proxy](https://github.com/vyzo/gerbil/blob/master/src/tutorial/proxy/socks-proxy.ss) listens to a local port and
 proxies connections using the SOCKS4 protocol. The implementation uses synchronous I/O
 with the `:std/net/socket` package, which hides the nonblocking nature of the `:std/os/socket`
-interface and can utilize custom i/o schedulers with a socket server (eg epoll in Linux).
+interface and can utilize custom I/O schedulers with a socket server (e.g. epoll on Linux).
 
 ### The main function
 
@@ -215,7 +215,7 @@ address and then loops accepting connections to proxy:
 
 ### The proxy function
 
-This procedure performs a handshake, establishes proxying according to the request:
+This procedure performs a handshake, establishing proxying according to the request:
 ```scheme
 (def (proxy clisock)
   (try
@@ -227,7 +227,7 @@ This procedure performs a handshake, establishes proxying according to the reque
 ```
 
 The `proxy-handshake` function contains the details of the protocol implementation,
-ignoring supplied userids (it's anonymous proxy):
+ignoring supplied userids (it's an anonymous proxy):
 ```scheme
 (def (proxy-handshake clisock)
   (try
@@ -318,8 +318,8 @@ is performed with `proxy-bind`:
 
 ### Proxy I/O
 
-The actual function of the proxy is performed with the `proxy-io` procedure, very similar
-to how the equinamed procedure in tcp-proxy. The difference is that it uses multiplexed I/O
+The actual proxy functionality is perfomed by the `proxy-io` procedure, very similar
+to the homonymous procedure in tcp-proxy. The difference is that it uses multiplexed I/O
 through the socket server:
 ```scheme
 (def (proxy-io isock osock)
@@ -344,7 +344,7 @@ through the socket server:
 
 Here we'll run the proxy locally bound at port 1080, acting as a standard proxy.
 
-So we can run our proxy like this:
+We can run it like this:
 ```bash
 $ ./socks-proxy :1080
 ```

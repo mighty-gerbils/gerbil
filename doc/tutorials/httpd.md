@@ -14,15 +14,15 @@ $ ./build.ss
 
 ```
 
-This builds a single binary, simpled, in the tutorial directory.
+This builds a single binary, `simpled`, in the tutorial directory.
 
 ## A Simple Web Server
 
-The [server](https://github.com/vyzo/gerbil/blob/master/src/tutorial/httpd/simpled.ss) binds by default in localhost:8080
+The [server](https://github.com/vyzo/gerbil/blob/master/src/tutorial/httpd/simpled.ss) binds by default to localhost:8080
 and handles 3 request URLs:
 - `/` which greets the requestor
 - `/echo` which echoes back the body of the request
-- `/headers[?json]` which echoes back the headers of the request
+- `/headers[?json]` which echoes back the request headers
 - `/self` which prints the source code of the program
 
 ### The main function
@@ -118,7 +118,7 @@ interface.
 
 The self handler responds by printing the server source code.
 The handler uses the `http-response-file` procedure, which sends
-a file as an http response using fast raw device i/o.
+a file as an http response using fast raw device I/O.
 
 ```scheme
 (def (self-handler req res)
