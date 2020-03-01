@@ -270,7 +270,7 @@
    (~chain-aux more
 	       (~chain-aux-variable (var acc) (body1 body2 . body*))))
 
-  ((_ ((var (body1 body2 . body*) body-error ...) . more) acc)
+  ((_ ((var (body1 body2 . body*) (body-error ...) ...) . more) acc)
    (syntax-error "More than one body expression in chain-variable context"))
 
   ;; diamond

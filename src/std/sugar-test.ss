@@ -48,4 +48,5 @@
              (xs (map number->string xs))
              (string-join <> ", "))
       (iota 3))
-     "2"))))
+     "2")
+    (check-equal? (chain [0 1] (map (lambda (v) (1+ v)) <>)) [1 2]))))
