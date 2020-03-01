@@ -1,6 +1,6 @@
 # Custom Languages in Gerbil
 
-Here we explore language extensibility in Gerbil by definition of custom preludes.
+Here we explore language extensibility in Gerbil by defining custom preludes.
 
 ## Preliminaries
 
@@ -455,7 +455,7 @@ produces an AST. The reader is straightforward:
 
 #### Example
 
-And putting altogether, we can import our small corpus of [scuby code](../../src/tutorial/lang/example/my-scuby.ss):
+And putting it all together, we can import our small corpus of [scuby code](../../src/tutorial/lang/example/my-scuby.ss):
 ```
 $ gxi
 > (import "example/my-scuby")
