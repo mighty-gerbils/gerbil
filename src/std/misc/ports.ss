@@ -3,14 +3,17 @@
 ;;; miscellaneous port utilities
 
 (import :gerbil/gambit/ports
-        :std/sugar)
+        :std/sugar
+        (only-in :std/srfi/13 string-suffix?))
 (export copy-port
         read-all-as-string
         read-file-string
         read-all-as-lines
         read-file-lines
         read-all-as-u8vector
-        read-file-u8vector)
+        read-file-u8vector
+        write-file-string
+        write-file-lines)
 
 ;; _gambit#.scm
 (extern namespace: #f
@@ -191,3 +194,41 @@
 (def (read-file-u8vector file settings: (settings '()) bufsize: (bufsize 8192))
   (call-with-input-file (cons* path: file settings)
     (cut read-all-as-u8vector <> bufsize)))
+
+;; Write string to file using the 'display' procedure.
+;;   file             the file to be written to
+;;   string           the string to write
+;;   settings:        Gambit path-settings (default [])
+;;   newline-ending:  append newline if last character is not a newline (default #t)
+;;
+;; Example:
+;;  (write-file-string "/tmp/foo.txt" "Hello, world!" settings: [append: #t])
+(def (write-file-string
+      file
+      string
+      settings: (settings [])
+      newline-ending: (newline-ending #t))
+  (call-with-output-file (cons* path: file settings)
+    (lambda (port)
+      (display string port)
+      (when (and newline-ending
+                 (not (string-empty? string))
+                 (not (string-suffix? "\n" string)))
+        (newline port)))))
+
+;; Write every entry of the list as newline separated line to file
+;; using the 'display' procedure.
+;;   file             the file to be written to
+;;   list             list of strings to write
+;;   settings:        Gambit path-settings (default [])
+;;   newline-ending:  append newline if last character is not a newline (default #t)
+;;
+;; Example:
+;;  (write-file-lines "/tmp/foo.txt" ["foo" "bar"])
+(def (write-file-lines
+      file
+      list
+      settings: (settings [])
+      newline-ending: (newline-ending #t))
+  (def string (string-join list "\n"))
+  (write-file-string file string settings: settings newline-ending: newline-ending))
