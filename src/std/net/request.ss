@@ -339,8 +339,8 @@
             (utf8->string (list->u8vector (reverse r))))
            (else
             (lp (cons* next cr r))))))
-        (else
-         (lp (cons next r)))))))
+       (else
+        (lp (cons next r)))))))
 
 (def (request-close req)
   (alet (port (request-port req))
