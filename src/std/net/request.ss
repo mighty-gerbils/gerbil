@@ -3,15 +3,15 @@
 ;;; HTTP requests for humans; py requests-like http client interface
 
 (import :gerbil/gambit/ports
-        :std/sugar
-        :std/format
-        :std/pregexp
         :std/error
+        :std/format
         :std/net/uri
+        :std/pregexp
+        :std/srfi/13
+        :std/sugar
         :std/text/json
-        :std/text/zlib
         :std/text/utf8
-        :std/srfi/13)
+        :std/text/zlib)
 (export
   http-get http-head http-post http-put http-delete http-options
   request? request-url request-status request-status-text
