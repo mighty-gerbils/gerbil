@@ -2939,6 +2939,62 @@ to know more about the *settings* parameter.
 ```
 :::
 
+### write-file-string
+``` scheme
+(write-file-string file string settings: [] newline-ending: #t) -> void | error
+
+  file           := the file to be written to
+  string         := the string to write
+  settings       := Gambit path-settings (default [])
+  newline-ending := append newline if last character is not a newline (default #t)
+```
+
+Write string to file using the `display` procedure. Check section
+[17.7.1 Filesystem devices](http://www.iro.umontreal.ca/~gambit/doc/gambit.html#Filesystem-devices)
+of the Gambit Manual if you want to know more about the `settings` parameter.
+
+::: tip Examples:
+``` scheme
+;; write "Hello, world!\n" to /tmp/foo.txt (may overwrite an existing file)
+(write-file-string "/tmp/foo.txt" "Hello, world!")  ; \n is appended automatically
+
+;; by using a path-setting we can append a string to an existing file
+(write-file-string "/tmp/foo.txt" "hi" settings: [append: #t])
+
+;; the file content is now: "Hello, world!\nhi\n"
+
+;; let's append another string without auto-enforcement of a newline ending
+(write-file-string "/tmp/foo.txt" "ho" settings: [append: #t] newline-ending: #f)
+
+;; the final file content is: "Hello, world!\nhi\nho"  ; no trail newline character
+```
+:::
+
+### write-file-lines
+``` scheme
+(write-file-lines file list settings: [] newline-ending: #t) -> void | error
+
+  file           := the file to be written to
+  list           := list of strings to write
+  settings       := Gambit path-settings (default [])
+  newline-ending := append newline if last character is not a newline (default #t)
+```
+
+Write every entry of the list as newline separated line to file using
+the `display`procedure. Check section
+[17.7.1 Filesystem devices](http://www.iro.umontreal.ca/~gambit/doc/gambit.html#Filesystem-devices)
+of the Gambit Manual if you want to know more about the `settings` parameter.
+
+::: tip Examples:
+``` scheme
+(write-file-lines "/tmp/foo.txt" ["foo" "bar"])
+
+$ cat /tmp/foo.txt    ; unix-like command-line
+foo
+bar
+```
+:::
+
 ### Port Destructor
 ``` scheme
 (defmethod {destroy <port>} close-port)
