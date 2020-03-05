@@ -18,13 +18,14 @@ implementation Gerbil is using  must be configured with `--enable-openssl` flag.
 ### http-get
 
 ``` scheme
-(http-get url [redirect: #t] [headers: #f] [cookies: #f] [params: #f]) -> request | error
+(http-get url [redirect: #t] [headers: #f] [cookies: #f] [params: #f] [auth: #f]) -> request | error
 
   url      := a string to tell which URL the HTTP client should connect to
   redirect := boolean telling if client should follow HTTP redirects
   headers  := alist of extra HTTP headers to set in request
   cookies  := alist of cookie name/value pairs to set in request
   params   := alist of query param name/value pairs set in request
+  auth     := a list with a keyword head, like [basic: user password]
 ```
 
 The `http-get` procedure executes HTTP GET request to given *url* and returns an
@@ -65,13 +66,14 @@ key/value pairs to add as HTTP query params to the request.
 ### http-head
 
 ``` scheme
-(http-head url [redirect: #t] [headers: #f] [cookies: #f] [params: #f]) -> request | error
+(http-head url [redirect: #t] [headers: #f] [cookies: #f] [params: #f] [auth: #f]) -> request | error
 
   url      := a string to tell which URL the HTTP client should connect to
   redirect := boolean telling if client should follow HTTP redirects
   headers  := alist of extra HTTP headers to set in request
   cookies  := alist of cookie name/value pairs to set in request
   params   := alist of query param name/value pairs set in request
+  auth     := a list with a keyword head, like [basic: user password]
 ```
 
 Like the `http-get` procedure but instead executes HTTP HEAD method on given
@@ -79,13 +81,14 @@ Like the `http-get` procedure but instead executes HTTP HEAD method on given
 
 ### http-post
 ``` scheme
-(http-post url [headers: #f] [cookies: #f] [params: #f] [data #f]) -> request | error
+(http-post url [headers: #f] [cookies: #f] [params: #f] [data: #f] [auth: #f]) -> request | error
 
   url     := a string to tell which URL the HTTP client should connect to
   headers := alist of extra HTTP headers to set in request
   cookies := alist of cookie name/value pairs to set in request
   params  := alist of query param name/value pairs set in request
   data    := request data given as octet vector or string
+  auth    := a list with a keyword head, like [basic: user password]
 ```
 
 Like the `http-get` procedure but instead executes HTTP POST method on given
@@ -93,37 +96,40 @@ Like the `http-get` procedure but instead executes HTTP POST method on given
 
 ### http-put
 ``` scheme
-(http-put url [headers: #f] [cookies: #f] [params: #f] [data: #f]) -> request | error
+(http-put url [headers: #f] [cookies: #f] [params: #f] [data: #f] [auth: #f]) -> request | error
 
   url     := a string to tell which URL the HTTP client should connect to
   headers := alist of extra HTTP headers to set in request
   cookies := alist of cookie name/value pairs to set in request
   params  := alist of query param name/value pairs set in request
   data    := request data given as octet vector or string
+  auth    := a list with a keyword head, like [basic: user password]
 ```
 
 Like the `http-post` procedure but instead executes HTTP PUT method on `url`.
 
 ### http-delete
 ``` scheme
-(http-delete url [headers: #f] [cookies: #f] [params: #f]) -> request | error
+(http-delete url [headers: #f] [cookies: #f] [params: #f] [auth: #f]) -> request | error
 
   url     := a string to tell which URL the HTTP client should connect to
   headers := alist of extra HTTP headers to set in request
   cookies := alist of cookie name/value pairs to set in request
   params  := alist of query param name/value pairs set in request
+  auth    := a list with a keyword head, like [basic: user password]
 ```
 
 Like `http-get` procedure but instead executes HTTP DELETE method on `url`.
 
 ### http-options
 ``` scheme
-(http-options url [headers: #f] [cookies: #f] [params: #f]) -> request | error
+(http-options url [headers: #f] [cookies: #f] [params: #f] [auth: #f]) -> request | error
 
   url     := a string to tell which URL the HTTP client should connect to
   headers := alist of extra HTTP headers to set in request
   cookies := alist of cookie name/value pairs to set in request
   params  := alist of query param name/value pairs set in request
+  auth    := a list with a keyword head, like [basic: user password]
 ```
 
 Like `http-get` procedure but instead executes HTTP OPTIONS method on the `url`.

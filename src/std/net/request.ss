@@ -9,6 +9,7 @@
         :std/pregexp
         :std/srfi/13
         :std/sugar
+        :std/text/base64
         :std/text/json
         :std/text/utf8
         :std/text/zlib)
@@ -45,16 +46,31 @@
    (else
     (error "bad header key" str))))
 
-(def (make-http/1.1-headers headers cookies)
+(def (make-http/1.1-headers headers cookies auth)
   (http-headers-cons! headers
-    (http-headers-cons http/1.1-base-headers
-      (http-headers-cookies (or cookies [])))))
+    (chain http/1.1-base-headers
+      (http-headers-cons <> (http-headers-cookies (or cookies [])))
+      (http-headers-cons <> (http-headers-auth auth)))))
 
 (def http/1.1-base-headers
   '(("User-Agent" . "Mozilla/5.0 (compatible; gerbil/1.0)")
     ("Connection" . "close")
     ("Accept" . "*/*")
     ("Accept-Encoding" . "gzip, deflate, identity")))
+
+(def (http-headers-auth auth)
+  (def (basic-auth-header user password)
+    (let ((credentials (u8vector->base64-string
+                        (with-output-to-u8vector
+                         (lambda ()
+                           (display user)
+                           (display ":")
+                           (display password))))))
+      (cons "Authorization" (string-append "Basic " credentials))))
+  (match auth
+    ([basic: user password] [(basic-auth-header user password)])
+    (#f                     [])
+    (_                      (error "unknown auth value" auth))))
 
 (def (http-headers-cookies cookies)
   (def (fold-e cookie str)
@@ -93,18 +109,20 @@
                redirect: (redirect #t)
                headers:  (headers #f)
                cookies:  (cookies #f)
-               params:   (params #f))
+               params:   (params #f)
+               auth:     (auth #f))
   (let ((url (url-target-e url params))
-        (headers (make-http/1.1-headers headers cookies)))
+        (headers (make-http/1.1-headers headers cookies auth)))
     (http-request 'GET url headers #f [] redirect)))
 
 (def (http-head url
                 redirect: (redirect #t)
                 headers:  (headers #f)
                 cookies:  (cookies #f)
-                params:   (params #f))
+                params:   (params #f)
+                auth:     (auth #f))
   (let ((url (url-target-e url params))
-        (headers (make-http/1.1-headers headers cookies)))
+        (headers (make-http/1.1-headers headers cookies auth)))
     (http-request 'HEAD url headers #f [] redirect)))
 
 (def (http-post url
@@ -112,18 +130,18 @@
                 headers:  (headers #f)
                 cookies:  (cookies #f)
                 params:   (params #f)
-                data:     (data #f))
-
+                data:     (data #f)
+                auth:     (auth #f))
   (let ((values headers data)
         (if params
           (let (form-data (form-url-encode params #t))
             (values
               (http-headers-cons
                '(("Content-Type" . "application/x-www-form-urlencoded"))
-               (make-http/1.1-headers headers cookies))
+               (make-http/1.1-headers headers cookies auth))
               form-data))
           (values
-            (make-http/1.1-headers headers cookies)
+            (make-http/1.1-headers headers cookies auth)
             data)))
     (http-request 'POST url headers data [] redirect)))
 
@@ -132,26 +150,29 @@
                headers:  (headers #f)
                cookies:  (cookies #f)
                params:   (params #f)
-               data:     (data #f))
+               data:     (data #f)
+               auth:     (auth #f))
   (let ((url (url-target-e url params))
-        (headers (make-http/1.1-headers headers cookies)))
+        (headers (make-http/1.1-headers headers cookies auth)))
     (http-request 'PUT url headers data [] redirect)))
 
 (def (http-delete url
                   redirect: (redirect #t)
                   headers:  (headers #f)
                   cookies:  (cookies #f)
-                  params:   (params #f))
+                  params:   (params #f)
+                  auth:     (auth #f))
   (let ((url (url-target-e url params))
-        (headers (make-http/1.1-headers headers cookies)))
+        (headers (make-http/1.1-headers headers cookies auth)))
     (http-request 'DELETE url headers #f [] redirect)))
 
 (def (http-options url
                    headers:  (headers #f)
                    cookies:  (cookies #f)
-                   params:   (params #f))
+                   params:   (params #f)
+                   auth:     (auth #f))
   (let ((url (url-target-e url params))
-        (headers (make-http/1.1-headers headers cookies)))
+        (headers (make-http/1.1-headers headers cookies auth)))
     (http-request 'HEAD url headers #f [] #f)))
 
 (def url-rx
