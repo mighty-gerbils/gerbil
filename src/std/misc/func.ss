@@ -8,7 +8,8 @@
   compose1 compose compose/values
   @compose1 @compose @compose/values
   rcompose1 rcompose rcompose/values
-  @rcompose1 @rcompose @rcompose/values)
+  @rcompose1 @rcompose @rcompose/values
+  pred-limit)
 
 ;; Repeat value or call function N times and return the result as list.
 ;; (repeat 2 5)                  -> (2 2 2 2 2)  ; repeat the value 2
@@ -180,3 +181,20 @@
   ((_ f) f)
   ((recur f ... fn)
    (call-with-values (lambda () (recur f ...)) fn)))
+
+;; pred-limit returns a predicate which returns a truthy value only limit times.
+;;
+;; Example:
+;;  (filter (pred-limit even? 2) [1 2 3 4 5 6]) => (2 4)
+(def (pred-limit pred limit)
+  (def (test v)
+    (declare (fixnum))
+    (if (> limit 0)
+      (let (v (pred v))
+        (when v
+          (set! limit (1- limit)))
+        v)
+      #f))
+  ;; TODO when contracts merge
+  ;; (@contract (pred-limit pred limit) (or (not limit) (fixnum? limit)))
+  (if (> limit 0) test pred))

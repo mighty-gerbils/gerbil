@@ -49,4 +49,7 @@
       (check ((@rcompose * 1+) 1 2) => 3)
       (check ((@rcompose * 1+ 1-) 1 2) => 2)
       (check ((@rcompose/values (cut values 1 2) *)) => 2)
-      (check ((@rcompose/values (cut values 1 2) * 1+)) => 3))))
+      (check ((@rcompose/values (cut values 1 2) * 1+)) => 3))
+    (test-case "test pred-limit"
+      (check (filter (pred-limit even? 2) (iota 6 1)) => [2 4])
+      (check (filter (pred-limit even? -1) (iota 6 1)) => []))))
