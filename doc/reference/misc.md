@@ -6194,3 +6194,20 @@ Like `compose/values`, but the values flow left-to-right.
 
 These are macro versions of the functional composition operators; they generate
 significantly more efficient code and allow the optimizer to see through the composition.
+
+### pred-limit
+``` scheme
+(pred-limit pred limit) -> procedure
+
+  pred  := predicate
+  limit := number of times pred is allowed to return a truthy value
+```
+
+`pred-limit` returns a predicate which returns a truthy value only `limit` times.
+
+::: tip Examples:
+``` scheme
+> (filter (pred-limit even? 2) [1 2 3 4 5 6])
+(2 4)
+```
+:::
