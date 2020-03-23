@@ -6203,11 +6203,25 @@ significantly more efficient code and allow the optimizer to see through the com
   limit := number of times pred is allowed to return a truthy value
 ```
 
-`pred-limit` returns a predicate which returns a truthy value only `limit` times.
+`pred-limit` returns a predicate which returns a truthy value only `limit` times,
+if `limit` is not false.
+
 
 ::: tip Examples:
 ``` scheme
-> (filter (pred-limit even? 2) [1 2 3 4 5 6])
+> (filter (pred-limit even? 1) [1 2 3 4 5 6])
+(2)
+
+(def (myfilter pred list (limit #f))
+  (filter (pred-limit pred limit) list))
+
+> (myfilter even? [1 2 3 4 5 6])
+(2 4 6)
+
+> (myfilter even? [1 2 3 4 5 6] 2)
 (2 4)
+
+> (myfilter even? [1 2 3 4 5 6] 0)
+()
 ```
 :::
