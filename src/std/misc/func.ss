@@ -196,5 +196,5 @@
         v)
       #f))
   ;; TODO when contracts merge
-  ;; (@contract (pred-limit pred limit) (or (not limit) (fixnum? limit)))
-  (if (> limit 0) test pred))
+  ;; (@contract (pred-limit pred limit) (fixnum? limit))
+  (if (> limit 0) test (lambda (_) #f)))
