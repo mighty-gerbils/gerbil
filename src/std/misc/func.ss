@@ -182,10 +182,12 @@
   ((recur f ... fn)
    (call-with-values (lambda () (recur f ...)) fn)))
 
-;; pred-limit returns a predicate which returns a truthy value only limit times.
+;; pred-limit returns a predicate which returns a truthy value only
+;; limit times, if limit is not false.
 ;;
 ;; Example:
-;;  (filter (pred-limit even? 2) [1 2 3 4 5 6]) => (2 4)
+;;  (filter (pred-limit even? 2)  [1 2 3 4 5 6]) => (2 4)
+;;  (filter (pred-limit even? #f) [1 2 3 4 5 6]) => (2 4 6)
 (def (pred-limit pred limit)
   (def (test v)
     (declare (fixnum))
@@ -196,5 +198,7 @@
         v)
       #f))
   ;; TODO when contracts merge
-  ;; (@contract (pred-limit pred limit) (fixnum? limit))
-  (if (> limit 0) test (lambda (_) #f)))
+  ;; (@contract (pred-limit pred limit) (or (not limit) (fixnum? limit)))
+  (if limit
+    (if (> limit 0) test (lambda (_) #f))
+    pred))
