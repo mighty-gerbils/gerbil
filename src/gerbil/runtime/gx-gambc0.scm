@@ -61,20 +61,17 @@
     (error "Cannot load module; not found" modpath))))
 
 (define (find-library-module modpath)
-  (define (path-exists? path)
-    (not (fixnum? (##os-file-info path #f))))
-
   (define (find-compiled-file npath)
     (let ((basepath (##string-append npath ".o")))
       (let lp ((current #f) (n 1))
         (let ((next (##string-append basepath (##number->string n))))
-          (if (path-exists? next)
+          (if (##file-exists? next)
             (lp next (##fx+ n 1))
             current)))))
 
   (define (find-source-file npath)
     (let ((spath (##string-append npath ".scm")))
-      (and (path-exists? spath) spath)))
+      (and (##file-exists? spath) spath)))
 
   (let lp ((rest (&current-module-libpath)))
     (core-match rest
