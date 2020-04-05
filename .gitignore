@@ -8,6 +8,7 @@ lib
 *.o?
 *.so
 
+src/TAGS
 src/std/build-deps
 src/gerbil/runtime/gx-version.scm
 .build*
