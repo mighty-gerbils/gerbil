@@ -345,7 +345,7 @@ package: gerbil
  hash-keys
  hash-values
  eq?-hash eqv?-hash equal?-hash
- uninterned-symbol? interned-symbol?
+ uninterned-symbol? interned-symbol? string->uninterned-symbol
  symbol-hash
  keyword? uninterned-keyword? interned-keyword? keyword-hash
  string->keyword keyword->string make-uninterned-keyword

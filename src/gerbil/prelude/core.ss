@@ -143,7 +143,7 @@ package: gerbil
     hash-merge hash-merge!
     hash-clear!
     eq?-hash eqv?-hash equal?-hash
-    uninterned-symbol? interned-symbol?
+    uninterned-symbol? interned-symbol? string->uninterned-symbol
     gensym make-symbol make-uninterned-symbol symbol-hash
     keyword? uninterned-keyword? interned-keyword? keyword-hash
     string-map string-for-each
