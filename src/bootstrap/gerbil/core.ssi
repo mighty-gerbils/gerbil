@@ -366,6 +366,7 @@ namespace: gerbil/core
                     (equal?-hash equal?-hash)
                     (uninterned-symbol? uninterned-symbol?)
                     (interned-symbol? interned-symbol?)
+                    (string->uninterned-symbol string->uninterned-symbol)
                     (gensym gensym)
                     (make-symbol make-symbol)
                     (make-uninterned-symbol make-uninterned-symbol)

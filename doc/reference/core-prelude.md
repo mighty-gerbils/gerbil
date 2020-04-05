@@ -1020,7 +1020,7 @@ Defines the following symbols as externs:
     hash-keys hash-values
     hash-copy hash-copy!
     hash-merge hash-merge!
-    uninterned-symbol? interned-symbol?
+    uninterned-symbol? interned-symbol? string->uninterned-symbol
     gensym make-symbol make-uninterned-symbol symbol-hash
     keyword? uninterned-keyword? interned-keyword? keyword-hash
     string->bytes bytes->string
