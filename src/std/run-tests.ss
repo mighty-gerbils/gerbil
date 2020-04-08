@@ -2,7 +2,7 @@
 ;; -*- Gerbil -*-
 
 (import :std/test
-	:std/foreign-test
+        :std/foreign-test
         "build-config"
         "generic-test"
         "coroutine-test"
@@ -26,6 +26,7 @@
         "text/json-test"
         "text/utf8-test"
         "text/utf16-test"
+        "text/yaml-test"
         "actor/xdr-test"
         "actor-test"
         "net/httpd-test"
@@ -66,6 +67,7 @@
    json-test
    utf8-test
    utf16-test
+   (if config-enable-libyaml [yaml-test] []) ...
    string-test
    list-test
    channel-test
@@ -93,8 +95,7 @@
      (linux [signalfd-test])
      (else []))
    ...
-   signal-handler-test
-   ])
+   signal-handler-test])
 
 (apply run-tests! tests)
 (test-report-summary!)

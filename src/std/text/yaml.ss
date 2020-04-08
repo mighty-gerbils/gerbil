@@ -8,7 +8,10 @@
         :std/pregexp
         :std/text/utf8
         :std/text/libyaml)
-(export yaml-load yaml-load-string yaml-dump)
+(export yaml-key-format yaml-load yaml-load-string yaml-dump)
+
+(def yaml-key-format
+  (make-parameter values))
 
 (def (yaml-load fname)
   (cond
@@ -139,6 +142,11 @@
           (reverse seq)
           (lp (cons next seq))))))
 
+  (def (format-map-key key)
+    (if (string? key)
+      ((yaml-key-format) key)
+      key))
+
   (def (read-mapping tag)
     (let (ht (make-hash-table))
       (let lp ()
@@ -146,7 +154,7 @@
           (if (eq? key end-token)
             ht
             (let (value (read-node))
-              (hash-put! ht key value)
+              (hash-put! ht (format-map-key key) value)
               (lp)))))))
 
   (def (parse-scalar data tag)
