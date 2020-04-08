@@ -26,7 +26,6 @@
         "text/json-test"
         "text/utf8-test"
         "text/utf16-test"
-        "text/yaml-test"
         "actor/xdr-test"
         "actor-test"
         "net/httpd-test"
@@ -44,6 +43,10 @@
 (cond-expand
   (config-have-leveldb
    (import "db/leveldb-test")))
+
+(cond-expand
+  (config-have-libyaml
+   (import "text/yaml-test")))
 
 (cond-expand
   ((or linux bsd)
