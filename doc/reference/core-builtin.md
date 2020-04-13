@@ -959,7 +959,7 @@ Copies *hash* into a new hash table
   more := list of hash tables
 ```
 
-Creates a new hash table, merging *more* hash tables into *hash*. Entries in *hash* take precedence over entries in *more*.
+Creates a new hash table, merging *more* hash tables into *hash*. Entries in hash tables on the left take precedence over entries on the right.
 
 ```
 > (define t1 (list->hash-table '((a . 1) (b . 2) (c . 3))))
@@ -977,7 +977,7 @@ Creates a new hash table, merging *more* hash tables into *hash*. Entries in *ha
 ```
 :::
 
-Merges *more* hash tables into *hash*. Entries in *hash* take precedence over entries in *more*.
+Merges *more* hash tables into *hash*. Entries in hash tables on the left take precedence over entries on the right.
 
 ```
 > (define t1 (list->hash-table '((a . 1) (b . 2) (c . 3))))
