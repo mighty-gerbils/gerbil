@@ -959,7 +959,14 @@ Copies *hash* into a new hash table
   more := list of hash tables
 ```
 
-Creates a new hash table, merging *more* hash tables into *hash*.
+Creates a new hash table, merging *more* hash tables into *hash*. Entries in *hash* take precedence over entries in *more*.
+
+```
+> (define t1 (list->hash-table '((a . 1) (b . 2) (c . 3))))
+> (define t2 (list->hash-table '((a . 4) (b . 5) (z . 6))))
+> (hash->list (hash-merge t1 t2))
+((a . 1) (z . 6) (b . 2) (c . 3))
+```
 
 ### hash-merge!
 ``` scheme
@@ -970,7 +977,14 @@ Creates a new hash table, merging *more* hash tables into *hash*.
 ```
 :::
 
-Merges *more* hash tables into *hash*.
+Merges *more* hash tables into *hash*. Entries in *hash* take precedence over entries in *more*.
+
+```
+> (define t1 (list->hash-table '((a . 1) (b . 2) (c . 3))))
+> (define t2 (list->hash-table '((a . 4) (b . 5) (z . 6))))
+> (begin (hash-merge! t1 t2) (hash->list t1))
+((a . 1) (z . 6) (b . 2) (c . 3))
+```
 
 ### hash-&gt;list
 ``` scheme
