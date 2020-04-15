@@ -3,6 +3,7 @@
 ;;; some standard sugar
 
 (export
+  defrule
   catch
   finally
   try
@@ -22,6 +23,10 @@
   let-hash
   awhen
   chain)
+
+(defrules defrule ()
+  ((_ (name args ...) body ...)
+   (defrules name () ((_ args ...) body ...))))
 
 (defrules catch ())
 (defrules finally ())
