@@ -10,6 +10,14 @@ footprint, it only defines macros.
 ```
 :::
 
+## defrule
+```scheme
+(defrule (name <pattern> ...) [<condition>] <expansion>)
+```
+
+For the simplest macros that fit with a single expansion rule,
+`defrule` provides a short-hand compared to writing a `defrules` with a single rewrite rule.
+
 ## try
 ```scheme
 (try
