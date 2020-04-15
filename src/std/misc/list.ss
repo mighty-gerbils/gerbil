@@ -22,9 +22,10 @@
   slice! slice-right!
   butlast
   split
-  group)
+  group
+  every-consecutive?)
 
-(import (only-in :std/srfi/1 drop drop-right drop-right! take take-right take! reverse!))
+(import (only-in "../srfi/1" drop drop-right drop-right! take take-right take! reverse!))
 
 ;; This function checks if the list is a proper association-list.
 ;; ie it has the form [[key1 . val1] [key2 . val2]]
@@ -304,3 +305,14 @@
     ([] lst)
     ([a] [[a]])
     (_ (helper))))
+
+;; Returns a boolean that is true if any two consecutive terms in the list satisfy the predicate.
+;; In particular, if the predicate is a partial order predicate (respectively a strict partial
+;; order predicate), then the list is totally ordered (respectively strictly totally ordered)
+;; according to the predicate.
+;; (every-consecutive? < [1 2 3 4 5])
+;; => #t
+(def (every-consecutive? f l)
+  (or (null? l)
+      (let loop ((x (car l)) (r (cdr l)))
+        (match r ([] #t) ([y . rr] (and (f x y) (loop y rr)))))))

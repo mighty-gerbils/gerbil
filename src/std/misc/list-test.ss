@@ -167,4 +167,10 @@
       (check-equal? (group []) [])
       (check-equal? (group [1]) [[1]])
       (check-equal? (group [1 []]) [[1] [[]]])
-      (check-equal? (group ["aa" "aa" "b"]) [["aa" "aa"] ["b"]]))))
+      (check-equal? (group ["aa" "aa" "b"]) [["aa" "aa"] ["b"]]))
+    (test-case "test every-consecutive?"
+      (check-equal? (every-consecutive? < [1 2 3 4 5]) #t)
+      (check-equal? (every-consecutive? < [1 2 5 4 3]) #f)
+      (check-equal? (every-consecutive? (lambda (x y) (not (= x y))) [1 2 3 4 5]) #t)
+      (check-equal? (every-consecutive? error [1]) #t)
+      (check-equal? (every-consecutive? error []) #t))))

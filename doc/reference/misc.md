@@ -1615,6 +1615,185 @@ length: 3
 :::
 
 
+## Hash-table utilities
+::: tip To use the bindings from this module:
+``` scheme
+(import :std/misc/hash)
+```
+:::
+
+### hash-ensure-ref
+``` scheme
+(hash-ensure-ref table key default) -> value
+```
+
+Checks whether the given *key* is present in the *table*.
+If it is, return the associated value.
+If it is not, call the *default* thunk,
+associate its return value to the key in the table,
+and then return the value.
+
+### invert-hash
+``` scheme
+(invert-hash hash to: (to (hash))) -> hash-1
+```
+
+Returns the inverse of a *hash* table:
+a hash-table *hash-1* whose keys are the values of those of *hash*,
+each mapped to one value that is a key that *hash* associates to the value.
+If the key is unique, it will be used; if it isn't, any single of those keys may be used.
+
+If an existing hash-table is passed as a *to* argument, it will be used as hash-table populated
+with those inverse keys, instead of a new equal-hash-table.
+This feature can notably be used to provide a hash-table with different equality predicate,
+or a weak hash-table, or one that is already populated for other reasons.
+
+### invert-hash/fold
+``` scheme
+(invert-hash/fold hash to: (to (hash)) nil: (nil '()) cons: (cons cons)) -> hash-1
+```
+
+Returns the inverse of a *hash* table:
+a hash-table *hash-1* whose keys are the values of those of *hash*,
+each mapped to a value that is fold of all keys that *hash* associates to the value.
+By default, the fold consists in consing those keys into a list, in an unspecified order.
+It could instead create a hash-table of those keys, or a sorted list or tree of them, etc.
+
+If an existing hash-table is passed as a *to* argument, it will be used as hash-table populated
+with those inverse keys, instead of a new equal-hash-table.
+This feature can notably be used to provide a hash-table with different equality predicate,
+or a weak hash-table, or one that is already populated for other reasons.
+
+### invert-hash<-vector
+``` scheme
+(invert-hash<-vector vector to: (to (hash))) -> hash
+```
+
+Returns the inverse of a *vector*:
+a hash-table *hash* whose keys are the values of those of *vector*,
+each mapped to one value that is an index that *vector* associates to the value.
+If the index is unique, it will be used; if it isn't, any single of those indexes may be used.
+
+If an existing hash-table is passed as a *to* argument, it will be used as hash-table populated
+with those inverse keys, instead of a new equal-hash-table.
+This feature can notably be used to provide a hash-table with different equality predicate,
+or a weak hash-table, or one that is already populated for other reasons.
+
+### invert-hash<-vector/fold
+``` scheme
+(invert-hash/fold vector to: (to (hash)) nil: (nil '()) cons: (cons cons)) -> hash-1
+```
+
+Returns the inverse of a *vector*:
+a hash-table *hash* whose keys are the values of those of *vector*,
+each mapped to one value that is fold of all indexes that *vector* associates to the value.
+By default, the fold consists in consing those keys into a list, in an unspecified order.
+It could instead create a hash-table of those keys, or a sorted list or tree of them, etc.
+
+If an existing hash-table is passed as a *to* argument, it will be used as hash-table populated
+with those inverse indexes, instead of a new equal-hash-table.
+This feature can notably be used to provide a hash-table with different equality predicate,
+or a weak hash-table, or one that is already populated for other reasons.
+
+### hash-restrict-keys
+``` scheme
+(hash-restrict-keys hash key-list) -> hash-1
+```
+
+Returns a new hash-table *hash-1* that has a subset of the keys in *hash*,
+associated to the same values as in *hash*.
+The key restriction is specified as a list *key-list* of acceptable keys;
+if the key in the list is present, the key-value pair is copied to the new table;
+if it is not present, it is ignored.
+
+### hash-value-map
+``` scheme
+(hash-value-map hash fun) -> hash-1
+```
+Return a new hash-table that has the same keys as the original *hash*,
+but whose values have been transformed by calling the function *fun*.
+
+### hash-filter
+```scheme
+(hash-filter hash pred (to (hash))) -> hash-1
+```
+Return a new hash-table that has a subset of the key-value pairs in the original *hash*,
+those for which the predicate *pred* returns true when called with the key and value as its two arguments.
+
+If the *to* argument is provided, it is used instead of a new hash-table,
+which allows to pre-populate it, use a different equality predicate than `equal?`,
+or to specify weakness.
+
+### hash-remove
+```scheme
+(hash-remove hash fun (to (hash))) -> hash-1
+```
+Return a new hash-table that has a subset of the key-value pairs in the original *hash*,
+those for which the predicate *pred* returns false when called with the key and value as its two arguments.
+
+If the *to* argument is provided, it is used instead of a new hash-table,
+which allows to pre-populate it, use a different equality predicate than `equal?`,
+or to specify weakness.
+
+### hash-remove-value
+```scheme
+(hash-remove-value from val (to (hash))) -> hash-1
+```
+Return a new hash-table that has a subset of the key-value pairs in the original *hash*,
+those for which the value is different (not `equal?`) to the given argument *val*.
+
+If the *to* argument is provided, it is used instead of a new hash-table,
+which allows to pre-populate it, to specify weakness, or
+to use a different equality predicate than `equal?`
+(beware though that comparison is still with `equal?` ---
+for a different one, use `hash-remove` instead with a suitable predicate).
+
+### hash-ensure-removed!
+``` scheme
+(hash-ensure-removed! hash key) -> hash
+```
+Remove from the *hash* any entry with the given *key*, and return two values:
+(a) the value that was removed, if any, or `#f` if none was found, and
+(b) a boolean that tells if there was a value.
+
+### hash-ensure-modify
+``` scheme
+(hash-ensure-modify! hash key default function) -> value
+```
+Modify entry for *key* in *hash*.
+If no entry exists yet, call the provided thunk to compute a *default* value.
+Return the new value, after modification.
+
+### hash-empty?
+``` scheme
+(hash-empty? hash) -> bool
+```
+Return true if *hash* is empty.
+
+### hash-merge/override
+``` scheme
+(hash-merge/override hash ...) -> hash
+```
+Similar to `hash-merge`, creates a new hash-table with the contents of all the arguments provided,
+but in case a same key is present in multiple arguments, choose the value in the rightmost argument
+(instead of the leftmost as with `hash-merge`).
+
+### hash-merge/override!
+``` scheme
+(hash-merge/override! hash hash1 ...) -> hash
+```
+Similar to `hash-merge!`, modifies the first *hash* table by updating it with the contents
+of all the other arguments provided; however, as with `hash-merge/override`,
+in case a same key is present in multiple arguments, choose the value in the rightmost argument
+(instead of the leftmost as with `hash-merge`).
+
+### hash->list/sort
+``` scheme
+(hash->list/sort hash pred) -> list
+```
+Similar to `table->list`, this function returns a list of the key-value pairs in the *hash* table,
+but also sorts this list by keys according to the predicate.
+
 ## List utilities
 ::: tip To use the bindings from this module:
 ``` scheme
@@ -2293,6 +2472,25 @@ group consecutive elements of the list `lst` into a list-of-lists.
 (import :std/sort)
 (group (sort [1 2 2 3 1 1] <) eqv?)
 > ((1 1 1) (2 2) (3))
+```
+:::
+
+### every-consecutive?
+``` scheme
+(every-consecutive? pred lst)
+```
+returns a boolean that is true if any two consecutive terms in the list satisfy the predicate.
+In particular, if the predicate is a partial order predicate (respectively a strict partial
+order predicate), then the list is totally ordered (respectively strictly totally ordered)
+according to the predicate.
+
+::: tip Examples:
+``` scheme
+(every-consecutive? <= [1 2 2 3 10 100])
+> #t
+
+(every-consecutive? < [5 1 8 9])
+> #f
 ```
 :::
 
@@ -6225,3 +6423,206 @@ if `limit` is not false.
 ()
 ```
 :::
+
+## Extended Real Number Line
+The (affine) extended real number line, where real numbers are enriched
+with positive and negative infinity, compactifying their order.
+Positive infinity is represented by boolean `#f` while
+negative infinity is represented by boolean `#t`.
+Common arithmetic operations are provided, partially defined,
+and raising an error in unsupported cases such as adding opposite infinites or dividing by zero.
+
+::: tip To use the bindings from this module:
+``` scheme
+(import :std/misc/xreal)
+```
+:::
+### xreal?
+``` scheme
+(xreal? obj) -> boolean
+```
+
+`xreal?` returns a boolean that is true if the object represents either a real or a boolean,
+where booleans `#f` and `#t` respectively represent positive and negative infinity.
+
+### xreal<
+``` scheme
+(xreal< <x1> ... <xn>) -> boolean
+```
+
+`xreal<` returns a boolean that is true if the list of its extended real arguments
+is strictly increasing.
+
+### xreal</list
+``` scheme
+(xreal</list <l>) -> boolean
+```
+
+`xreal<` returns a boolean that is true if its argument, a list of extended real numbers,
+is strictly increasing.
+
+### xreal<=
+``` scheme
+(xreal<= <x1> ... <xn>) -> boolean
+```
+
+`xreal<=` returns a boolean that is true if the list of its extended real arguments
+is non-decreasing.
+
+### xreal<=/list
+``` scheme
+(xreal<=/list <l>) -> boolean
+```
+
+`xreal<=/list` returns a boolean that is true if its argument, a list of extended real numbers,
+is non-decreasing.
+
+### xreal-min
+``` scheme
+(xreal-min <x1> ... <xn>) -> xreal
+```
+
+`xreal-min` returns the lower bound of the set of its extended real arguments.
+In particular, it returns `#f` (representing the positive infinity) if provided zero arguments,
+and is the identity function when given a single argument.
+
+### xreal-min/list
+``` scheme
+(xreal-min/list <l>) -> xreal
+```
+
+`xreal-min/list` returns the lower bound of the list of extended real arguments passed as its arguments.
+In particular, it returns `#f` (representing the positive infinity) if provided an empty list.
+
+### xreal-min!
+``` scheme
+(xreal-min! <var> <x> ...) -> void
+```
+
+`xreal-min!` side-effects a variable to change it to the `xreal-min`
+of the previous value and the provided arguments.
+
+### xreal-min/map
+``` scheme
+(xreal-min/map <f> <l> [<base>]) -> xreal
+```
+
+Given a list `<l>` or any thing you can iterate on, and a function `<f>`,
+`xreal-min/map` returns the lower bound of the images by `<f>` of the items in `<l>`,
+and of a `<base>` xreal, by default `#f` (representing the positive infinity).
+
+### xreal-max
+``` scheme
+(xreal-max <x1> ... <xn>) -> xreal
+```
+
+`xreal-max` returns the upper bound of the set of its extended real arguments.
+In particular, it returns `#f` (representing the posinegative infinity) if provided zero arguments,
+and is the identity function when given a single argument.
+
+### xreal-max/list
+``` scheme
+(xreal-max/list <l>) -> xreal
+```
+
+`xreal-max/list` returns the lower bound of the list of extended real arguments passed as its arguments.
+In particular, it returns `#t` (representing the negative infinity) if provided an empty list.
+
+### xreal-max!
+``` scheme
+(xreal-max! <var> <x> ...) -> void
+```
+
+`xreal-max!` side-effects a variable to change it to the `xreal-max`
+of the previous value and the provided arguments.
+
+### xreal-max/map
+``` scheme
+(xreal-max/map <f> <l> [<base>]) -> xreal
+```
+
+Given a list `<l>` or any thing you can iterate on, and a function `<f>`,
+`xreal-max/map` returns the upper bound of the images by `<f>` of the items in `<l>`,
+and of a `<base>` xreal, by default `#t` (representing the negative infinity).
+
+### xreal+
+``` scheme
+(xreal+ <x1> ... <xn>) -> xreal
+```
+
+Compute the sum of the extended real arguments.
+An error is raised if trying to add positive and negative infinities.
+
+### xreal+/list
+``` scheme
+(xreal+/list <l>) -> xreal
+```
+
+Compute the sum of the elements of a list of extended real arguments.
+An error is raised if trying to add positive and negative infinities.
+
+### xreal+!
+``` scheme
+(xreal+! <v> <x1> ... <xn>) -> xreal
+```
+Update a variable to contain the sum of its previous value and other arguments.
+An error is raised if trying to add positive and negative infinities.
+
+### xreal-
+``` scheme
+(xreal- <x1> <x2> ... <xn>) -> xreal
+```
+
+Given a single argument, compute its opposite.
+Given more than one argument, subtract (the sum of) all the subsequent arguments from the first.
+Given no argument, return 0.
+An error is raised if trying to subtract opposite infinities.
+
+### xreal-!
+``` scheme
+(xreal-! <v> <x1> ... <xn>) -> xreal
+```
+Update a variable to subtract from it the sum of the other arguments,
+or, if no other argument is provided, to be the opposite of what its previous value.
+An error is raised if trying to subtract opposite infinities.
+
+### xreal*
+``` scheme
+(xreal* <x1> ... <xn>) -> xreal
+```
+
+Compute the product of the extended real arguments.
+An error is raised if trying to multiply zero and infinity.
+
+### xreal*/list
+``` scheme
+(xreal*/list <l>) -> xreal
+```
+
+Compute the product of a list of extended real arguments.
+An error is raised if trying to multiply zero and infinity.
+
+### xreal*!
+``` scheme
+(xreal*! <v> <x1> ... <xn>) -> xreal
+```
+Update a variable to contain the product of its previous value and other arguments.
+An error is raised if trying to multiply zero and infinity.
+
+### xreal-
+``` scheme
+(xreal- <x1> <x2> ... <xn>) -> xreal
+```
+
+Given a single argument, compute its inverse.
+Given more than one argument, divide it by (the product of) all the subsequent arguments.
+Given no argument, return 1.
+An error is raised if trying to divide by 0.
+
+### xreal/!
+``` scheme
+(xreal/! <v> <x1> ... <xn>) -> xreal
+```
+Update a variable to divide it by the product of the other arguments,
+or, if no other argument is provided, to be the inverse of its previous value.
+An error is raised if trying to divide by 0.
