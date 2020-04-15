@@ -95,10 +95,9 @@
          (() ; no clauses, just a begin
           (cons 'begin (reverse body))))))))
 
-(defrules with-destroy ()
-  ((_ obj body ...)
-   (let ($obj obj)
-     (try body ... (finally {destroy $obj})))))
+(defrule (with-destroy obj body ...)
+  (let ($obj obj)
+    (try body ... (finally {destroy $obj}))))
 
 (defsyntax (defmethod/alias stx)
   (syntax-case stx (@method)
@@ -113,9 +112,8 @@
            (defmethod {method type} body ...)
            (bind-method! type::t 'alias method-impl) ...)))))
 
-(defrules using ()
-  ((_ obj method ...)
-   (begin (using-method obj method) ...)))
+(defrule (using obj method ...)
+  (begin (using-method obj method) ...))
 
 (defrules using-method ()
   ((_ obj method)
@@ -126,15 +124,13 @@
    (def method (checked-bound-method-ref obj 'method-id))))
 
 
-(defrules with-methods ()
-  ((_ o method ...)
-   (begin
-     (def $klass (object-type o))
-     (with-class-methods $klass method ...))))
+(defrule (with-methods o method ...)
+  (begin
+    (def $klass (object-type o))
+    (with-class-methods $klass method ...)))
 
-(defrules with-class-methods ()
-  ((_ klass method ...)
-   (begin (with-class-method klass method) ...)))
+(defrule (with-class-methods klass method ...)
+  (begin (with-class-method klass method) ...))
 
 (defrules with-class-method ()
   ((_ klass (method method-id))
@@ -156,31 +152,26 @@
    (unless expr
      (error "Assertion failed" message 'expr))))
 
-(defrules while ()
-  ((_ test body ...)
-   (let lp ()
-     (when test
-       body ...
-       (lp)))))
+(defrule (while test body ...)
+  (let lp ()
+    (when test
+      body ...
+      (lp))))
 
-(defrules until ()
-  ((_ test body ...)
-   (let lp ()
-     (unless test
-       body ...
-       (lp)))))
+(defrule (until test body ...)
+  (let lp ()
+    (unless test
+      body ...
+      (lp))))
 
-(defrules hash ()
-  ((_ (key val) ...)
-   (~hash-table make-hash-table (key val) ...)))
+(defrule (hash (key val) ...)
+  (~hash-table make-hash-table (key val) ...))
 
-(defrules hash-eq ()
-  ((_ (key val) ...)
-   (~hash-table make-hash-table-eq (key val) ...)))
+(defrule (hash-eq (key val) ...)
+  (~hash-table make-hash-table-eq (key val) ...))
 
-(defrules hash-eqv ()
-  ((_ (key val) ...)
-   (~hash-table make-hash-table-eqv (key val) ...)))
+(defrule (hash-eqv (key val) ...)
+  (~hash-table make-hash-table-eqv (key val) ...))
 
 (defsyntax (~hash-table stx)
   (syntax-case stx ()
@@ -228,10 +219,9 @@
                             #'(var-ref id))))))))
                body ...)))))))
 
-(defrules awhen ()
-  ((_ (id test) body ...)
-   (let (id test)
-     (when id body ...))))
+(defrule (awhen (id test) body ...)
+  (let (id test)
+    (when id body ...)))
 
 ;; chain rewrites passed expressions by passing the previous expression
 ;; into the position of the <> diamond symbol. In case a previous expression
