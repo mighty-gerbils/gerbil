@@ -1,4 +1,4 @@
-#!/usr/bin/env gxi
+#!/usr/bin/env gxi-build-script
 ;; -*- Gerbil -*-
 
 (import "make" "build-config")
@@ -9,11 +9,6 @@
       (srcdir (path-normalize (path-directory (this-source-file))))
       (libdir (path-expand "lib" (getenv "GERBIL_HOME"))))
   (add-load-path (path-normalize (path-expand ".." srcdir)))
-  (make srcdir: srcdir
-        libdir: libdir
-        optimize: #t
-        static: #t
-        debug: 'src
-        depgraph: depgraph
-        prefix: "std"
-        build-spec))
+  (make build-spec
+    srcdir: srcdir libdir: libdir optimize: #t
+    static: #t debug: 'src depgraph: depgraph prefix: "std"))

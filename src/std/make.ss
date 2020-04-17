@@ -2,14 +2,31 @@
 ;;; (C) vyzo at hackzen.org
 ;;; support for library build scripts
 
+;;; For bootstrap purposes, we minimize dependencies from make.ss to :std modules.
+;;; Indeed, those modules we depend on have to be imported specially by path with
+;;; "relative/file/path" string syntax instead of :std/module/path symbol syntax,
+;;; and must transitively do so themselves, too. These transitive dependencies
+;;; also may not involve FFI as make.ss is evaluated by the interpreter
+;;; while bootstrapping the :std library.
+
 (import :gerbil/compiler
         :gerbil/expander
         :gerbil/gambit/misc
+        :gerbil/gambit/os
         :gerbil/gambit/ports
+        "srfi/1"
+        ;;"srfi/43"
+        "misc/list"
+        "misc/hash"
+        "misc/queue"
+        "misc/xreal"
         "sort"
         "sugar")
+
+(extern namespace: #f with-cons-load-path)
+
 (export make make-depgraph make-depgraph/spec
-        buildspec-depfiles
+        build-settings buildspec-depfiles
         shell-config
         env-cppflags
         env-ldflags
@@ -25,219 +42,283 @@
 ;;    <module> ; module path string without extension
 ;;   (gxc: <module> gsc-opt ...)
 ;;   (gsc: <module> gsc-opt ...)
-;;   (ssi: <module>)
+;;   (ssi: <module> [gsc: (gsc-opt ...)] [static-include: file])
+;; TODO: provide an object-oriented way to extend the spec language,
+;; with methods spec-dependencies, spec-inputs, spec-outputs, spec-build
+;; and a macro so you can define all the methods coherently in one form,
+;; rather than manually keeping the forms in synch.
+
+(def (spec-type spec)
+  (match spec
+    ((? string? _) gxc:)
+    ([(? keyword? type) . _] type)
+    (else (error "Bad buildspec" spec))))
+
+(def (spec-file spec settings)
+  (match spec
+    ((? string? modf) (source-path modf ".ss" settings))
+    ([gxc: modf . opts] (source-path modf ".ss" settings))
+    ([gsc: modf . opts] (source-path modf ".scm" settings))
+    ([ssi: modf . deps] (source-path modf ".ssi" settings))
+    ([exe: modf . opts] (source-path modf ".ss" settings))
+    ([static-exe: modf . opts] (source-path modf ".ss" settings))
+    ([static-include: file] (static-file-path file settings))
+    ([copy: file] file)
+    (else
+     (error "Bad buildspec" spec))))
+
+(def (spec-inputs spec settings)
+  [(spec-file spec settings) (spec-dependencies spec settings) ...])
+
+(def (spec-dependencies spec settings)
+  (match spec
+    ([gxc: _ . opts] (pgetq dep: opts []))
+    ([gsc: _ . opts] (pgetq dep: opts []))
+    ([ssi: _ . submodules] (append-map (cut spec-inputs <> settings) submodules))
+    (_ [])))
+
+(def (spec-outputs spec settings)
+  (match spec
+    ((? string? modf) (gxc-outputs modf #f settings))
+    ([gxc: modf . opts] (gxc-outputs modf opts settings))
+    ([gsc: modf . opts] [(gsc-c-path modf settings)])
+    ([ssi: modf . submodules] [(library-path modf ".ssi" settings)
+                               (append-map (cut spec-outputs <> settings) submodules) ...])
+    ([exe: modf . opts] [(library-path modf ".ssi" settings)
+                         (binary-path modf opts settings)])
+    ([static-exe: modf . opts] [(binary-path modf opts settings)
+                                (static-path modf settings)])
+    ([static-include: file] [(static-file-path file settings)])
+    ([copy: file] [(library-path file #f settings)])
+    (else (error "Bad buildspec" spec))))
+
+;;; Display and/or debugging utilities
+(def (message . lst) (apply displayln lst) (force-output))
+(def (writeln x) (write x) (newline) (force-output))
+
+;;; A cache to minimize filesystem access AND to avoid inconsistencies
+;;; due to race-conditions while querying the filesystem.
+
+(def cache (make-parameter #f))
+(def (cache-put! key value)
+  (def c (cache))
+  (when c (hash-put! c key value))
+  value)
+(def (cache-remove! key)
+  (def c (cache))
+  (when c (hash-remove! c key)))
+
+;; Consult the cache entry for the key if present;
+;; if not present, compute it by calling the thunk,
+;; and set the cache entry accordingly, if the cache is defined.
+;; return the values from the cache and/or the thunk computation.
+(def (call-with-cache key (thunk false))
+  (def c (cache))
+  (if c (hash-ensure-ref c key thunk) (thunk)))
+(defrule (with-cache key body ...) (call-with-cache key (lambda () body ...)))
+(def (call-with-fresh-cache thunk) (parameterize ((cache (hash))) (thunk)))
+(defrule (with-fresh-cache body ...) (call-with-fresh-cache (lambda () body ...)))
+
+(def (modification-time file)
+  (let/cc return
+    (def info (with-catch (lambda (_) (return #f)) (lambda () (file-info file #t))))
+    (time->seconds (file-info-last-modification-time info))))
+(def (modification-time/cache file)
+  (with-cache ['modification-time file] (modification-time file)))
+
+(def (library-file library)
+  (def string (symbol->string library))
+  (def module (cond ((string-rindex string #\$) => (lambda (ix) (substring string 0 ix))) (else string)))
+  (def symbol (make-symbol ":" module))
+  (core-resolve-library-module-path symbol))
+(def (library-timestamp library)
+  (def x (modification-time/cache (library-file library)))
+  (unless x (error 'missing-library library))
+  x)
+
+(def (symbol<? a b)
+  (string<? (symbol->string a) (symbol->string b)))
+(def (vector-for-each f v)
+  (def l (vector-length v))
+  (let loop ((i 0)) (when (< i l) (begin (f i (vector-ref v i)) (loop (+ 1 i))))))
+(def (vector-ensure-ref v i f)
+  (or (vector-ref v i) (let ((x (f))) (vector-set! v i x) x)))
+
+;;; Settings:
 ;; srcdir: input source top directory; MUST BE SPECIFIED
 ;;         (path-directory (this-source-file)) in build scripts will do
 ;; libdir: output directory, defaults to $GERBIL_HOME/lib
 ;; prefix:  string, a package prefix to add to module names
 ;; force?:  boolean, indicating force build even if compiled modules are newer
-(def (make buildspec
-       srcdir: (srcdir #f)
-       libdir: (libdir #f)
-       bindir: (bindir #f)
-       prefix: (prefix #f)
-       force:  (force? #f)
-       optimize: (optimize #f)
-       debug:  (debug #f)
-       static: (static #f)
-       static-debug: (static-debug #f)
-       verbose: (verbose #f)
-       depgraph: (depgraph #f))
-  (let* ((gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
-         (srcdir (or srcdir (error "srcdir must be specified")))
-         (libdir (or libdir (path-expand "lib" gerbil-path)))
-         (bindir (or bindir (path-expand "bin" gerbil-path)))
-         (settings  [srcdir: srcdir libdir: libdir bindir: bindir
-                     prefix: prefix force: force?
-                     optimize: optimize debug: debug
-                     static: static static-debug: static-debug
-                     verbose: verbose])
-         (buildset (if (not force?)
-                     (filter (cut build? <> settings depgraph) buildspec)
-                     buildspec))
-         (buildset (if depgraph
-                     (expand-build-deps buildset buildspec depgraph)
-                     buildset)))
-    (create-directory* bindir)
-    (create-directory* libdir)
-    (when static
-      (create-directory* (path-expand "static" libdir)))
-    (for-each (cut build <> settings) buildset)))
+(def (build-settings . settings)
+  (defvalues (_ s) (apply make-settings #f settings))
+  s)
 
-(def (message . rest)
-  (apply displayln rest)
-  (force-output))
+(def (make-settings buildspec
+      srcdir: (srcdir_ #f) libdir: (libdir_ #f) bindir: (bindir_ #f)
+      prefix: (prefix #f) force: (force? #f)
+      optimize: (optimize #f) debug: (debug #f)
+      static: (static #f) static-debug: (static-debug #f)
+      verbose: (verbose #f)
+      depgraph: (depgraph #f)) ;; if depgraph is true, compute a depgraph, otherwise build in order
+  (def gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
+  (def srcdir (or srcdir_ (error "srcdir must be specified")))
+  (def libdir (or libdir_ (path-expand "lib" gerbil-path)))
+  (def bindir (or bindir_ (path-expand "bin" gerbil-path)))
+  (values buildspec
+          [srcdir: srcdir libdir: libdir bindir: bindir prefix: prefix force: force?
+                   optimize: optimize debug: debug static: static static-debug: static-debug
+                   verbose: verbose depgraph: depgraph]))
 
-(def (expand-build-deps buildset buildspec depgraph)
-  (def module-ids (make-hash-table))
-  (def module-deps (make-hash-table-eq))
-  (def module-rdeps (make-hash-table-eq))
+(def (make . args)
+  (defvalues (buildspec settings) (apply make-settings args))
+  (with-cons-load-path (lambda () (%make buildspec settings)) (pgetq srcdir: settings)))
 
-  (def (add-deps! dep)
-    (let* ((name (path-strip-extension (car dep)))
-           (id   (cadr dep))
-           (deps (cddr dep)))
-      (hash-put! module-ids name id)
-      (hash-put! module-deps id deps)
-      (for-each (cut add-rdep! <> id) deps)))
+(def (%make buildspec settings)
+  (def verbose (pgetq verbose: settings))
+  (when verbose (writeln settings))
 
-  (def (add-rdep! id rdep)
-      (hash-update! module-rdeps id (cut cons rdep <>) []))
+  (def spec% (list->vector (normalize-buildspec buildspec))) ; specs, indexed for random access
+  (def nspec (vector-length spec%)) ; how many build specs we have
+  (def id% (make-vector nspec)) ; to be filled: mapping spec numbers to dependency id
+  (def deps% (make-vector nspec)) ; to be filled: mapping spec number to dependencies (list of symbol)
 
-  (def (expand-rdeps bset bset-new)
-    (let (mods (filter-map module-spec-name bset-new))
-      (let lp ((rest mods) (new []))
-        (match rest
-          ([hd . rest]
-           (cond
-            ((hash-get module-ids hd)
-             => (lambda (id)
-                  (cond
-                   ((hash-get module-rdeps id)
-                    => (lambda (rdeps)
-                         (expand-rdeps-e bset rdeps lp rest new)))
-                   (else
-                    (lp rest new)))))
-            (else
-             (lp rest new))))
-          (else new)))))
+  (vector-for-each
+   (lambda (i spec)
+     (defvalues (id deps) (if (pgetq depgraph: settings)
+                            (file-dependencies (spec-file spec settings))
+                            (values i (if (< 0 i) [(- i 1)] [])))) ; force serial dependencies
+     (when (and (real? verbose) (<= 6 verbose)) (writeln [i spec id deps]))
+     (vector-set! id% i id)
+     (vector-set! deps% i deps))
+   spec%)
+  (def index% (invert-hash<-vector id%))
 
-  (def (expand-rdeps-e bset rdeps K rest-k new)
-    (let lp ((rest rdeps) (new new))
-      (match rest
-        ([hd . rest]
-         (cond
-          ((or (find (cut module-spec-id? <> hd) bset)
-               (find (cut module-spec-id? <> hd) new))
-           (lp rest new))
-          ((find (cut module-spec-id? <> hd) buildspec)
-           => (lambda (spec)
-                (lp rest (cons spec new))))
-          (else
-           (lp rest new))))
+  (def timestamp% (hash)) ;; timestamp for each build spec by id and/or out-of-build dependency by symbol
+  (def (compute-timestamp target)
+    (def spec (vector-ref spec% target))
+    (def deps (vector-ref deps% target))
+    (def inputs (spec-inputs spec settings))
+    (def outputs (spec-outputs spec settings))
+    (build-timestamp index% timestamp% deps inputs outputs verbose))
+  (def (update-timestamp target)
+    (def spec (vector-ref spec% target))
+    (def outputs (spec-outputs spec settings))
+    (for-each (lambda (x) (cache-remove! ['modification-time x])) outputs)
+    (def out-timestamp (xreal-max/map modification-time/cache outputs))
+    (unless out-timestamp (error "Build failed to generate expected outputs" spec outputs))
+    (hash-put! timestamp% target out-timestamp))
+
+  (create-directory* (pgetq bindir: settings))
+  (create-directory* (pgetq libdir: settings))
+  (when (pgetq static: settings) (create-directory* (path-expand "static" (pgetq libdir: settings))))
+
+  (def blocked-by% (make-vector nspec #f)) ;; #f or hash of numbers of specs blocked by the current one
+  (def blocking% (make-vector nspec #f)) ;; #f or hash of numbers of specs blocking the current one
+  (def ready (make-queue)) ;; TODO: should we use a pqueue to try to preserve original order?
+
+  ((cut vector-for-each <> deps%)
+   (lambda (i deps)
+     ((cut for-each <> deps)
+       (lambda (d)
+         (let ((j (hash-get index% d)))
+           (if j (begin (hash-put! (vector-ensure-ref blocked-by% i make-hash-table) j #t)
+                        (hash-put! (vector-ensure-ref blocking% j make-hash-table) i #t))
+               (hash-ensure-ref timestamp% d (cut library-timestamp d))))))))
+  ((cut vector-for-each <> spec%)
+   (lambda (i _) (unless (vector-ref blocked-by% i) (enqueue! ready i))))
+
+  (def (mark-built target)
+    (hash-for-each
+     (lambda (unblocked _)
+       (def blocked-by (vector-ref blocked-by% unblocked))
+       (hash-remove! blocked-by target)
+       (when (hash-empty? blocked-by)
+         (enqueue! ready unblocked)))
+     (or (vector-ref blocking% target) (hash))))
+
+  (def force? (pgetq force: settings))
+  (with-fresh-cache
+   (until (queue-empty? ready)
+     (let ()
+       (def target (dequeue! ready #f))
+       (def spec (vector-ref spec% target))
+       (cond
+        ((and (not force?) (hash-ensure-ref timestamp% target (cut compute-timestamp target)))
+         (when verbose (writeln [Up-to-date: target])))
         (else
-         (K rest-k new)))))
+         (build spec settings)
+         (update-timestamp target)))
+       (mark-built target))))
 
-  (def (module-spec-name spec)
-    (match spec
-      ((? string? modf) modf)
-      ([gxc: modf . gsc-opts] modf)
-      ([ssi: modf . deps] modf)
-      ([exe: modf . opts] modf)
-      ([static-exe: modf . opts] modf)
-      (else #f)))
+  ;; Check that we didn't hit some circular dependency
+  (vector-for-each
+   (lambda (target blocked-by)
+     (when (and blocked-by (not (hash-empty? blocked-by)))
+       (write [Target: target blocked-by: (hash->list/sort blocked-by symbol<?) ...])
+       (message "Build didn't complete due to circular dependency")))
+   blocked-by%))
 
-  (def (module-spec-id spec)
-    (cond
-     ((module-spec-name spec) => (cut hash-get module-ids <>))
-     (else #f)))
-
-  (def (module-spec-id? spec id)
-    (eq? (module-spec-id spec) id))
-
-  (def (module-spec<? a b)
-    (alet* ((id-a (module-spec-id a))
-            (id-b (module-spec-id b)))
-      (module-dep<? id-a id-b)))
-
-  (def (module-dep<? id-a id-b)
-    (cond
-     ((hash-get module-deps id-b)
-      => (lambda (deps-b)
-           (or (memq id-a deps-b)
-               (ormap (cut module-dep<? id-a <>) deps-b))))
-     (else #f)))
-
-  (def (sort-spec<? a b seen)
-    (and (not (member a seen))
-         (module-spec<? a b)))
-
-  (def (sort-deps bset)
-    (let lp ((rest bset) (r []))
-      (match rest
-        ([hd . rest]
-         (cond
-          ((member hd r)
-           (lp rest r))
-          ((find (cut sort-spec<? <> hd r) rest)
-           => (lambda (dep)
-                (lp (cons* dep hd rest) r)))
-          (else
-           (lp rest (cons hd r)))))
-        (else
-         (reverse r)))))
-
-  (for-each add-deps! depgraph)
-  (let lp ((bset buildset) (bset-new buildset))
-    (let (new (expand-rdeps bset bset-new))
-      (if (null? new)
-        (sort-deps bset)
-        (lp (append bset new) new)))))
+;; file-dependencies : file -> dependencies
+(def (file-dependencies file)
+  (def mod (import-module file))
+  (def ht  (make-hash-table-eq))
+  (def pre (core-context-prelude mod))
+  (def q (make-queue))
+  (for-each (cut enqueue! q <>) (cons pre (module-context-import mod)))
+  (until (queue-empty? q)
+    (let ((hd (dequeue! q #f)))
+      (cond
+       ((module-context? hd)
+        (hash-put! ht (expander-context-id hd) #t))
+       ((prelude-context? hd)
+        (alet (id (expander-context-id hd)) ; maybe it's root!
+          (hash-put! ht id #t)))
+       ((module-import? hd)
+        (enqueue! q (module-import-source hd)))
+       ((module-export? hd)
+        (enqueue! q (module-export-context hd)))
+       ((import-set? hd)
+        (enqueue! q (import-set-source hd)))
+       (else
+        (error "Unexpected module import" hd)))))
+  (values (expander-context-id mod) (sort (hash-keys ht) symbol<?)))
 
 ;; make-depgraph : (listof file) -> depgraph
-(def (make-depgraph files)
-  (def (symbol<? a b)
-    (string<? (symbol->string a) (symbol->string b)))
+(def make-depgraph true)
 
-  (def (depgraph file)
-    (let* ((mod (import-module file))
-           (ht  (make-hash-table-eq))
-           (pre (core-context-prelude mod)))
-      (let lp ((rest (cons pre (module-context-import mod))))
-        (match rest
-          ([hd . rest]
-           (cond
-            ((module-context? hd)
-             (hash-put! ht (expander-context-id hd) #t)
-             (lp rest))
-            ((prelude-context? hd)
-             (alet (id (expander-context-id hd)) ; maybe it's root!
-               (hash-put! ht id #t))
-             (lp rest))
-            ((module-import? hd)
-             (lp (cons (module-import-source hd) rest)))
-            ((module-export? hd)
-             (lp (cons (module-export-context hd) rest)))
-            ((import-set? hd)
-             (lp (cons (import-set-source hd) rest)))
-            (else
-             (error "Unexpected module import" hd))))
-          (else
-           [file (expander-context-id mod) (sort (hash-keys ht) symbol<?) ...])))))
-  (map depgraph files))
+;; make-depgraph : buildspec -> depgraph
+(def make-depgraph/spec true)
 
-;; make-depgraph/spec : buildspec -> depgraph
-(def (make-depgraph/spec spec)
-  (make-depgraph (buildspec-depfiles spec)))
+;; Normalize-buildspec : buildspec -> buildspec
+;; Groups the gsc: and static-include: and copy: specs inside the immediately following ssi:
+(def (normalize-buildspec buildspec)
+
+  (def submodules '())
+  (def (get-submodules)
+    (begin0 (reverse submodules) (set! submodules '())))
+  (def (no-submodules spec)
+    (unless (null? submodules)
+      (error "incompatible sequence of build specifications" (reverse (cons spec submodules)))))
+  (def (push-submodule spec)
+    (set! submodules (cons spec submodules)))
+
+  (with-list-builder (c)
+    (for-each (lambda (spec)
+                (case (spec-type spec)
+                  ((gxc: exe: static-exe:) (no-submodules spec) (c spec))
+                  ((gsc: static-include: copy:) (push-submodule spec))
+                  ((ssi:) (c (append spec (get-submodules))))
+                  (else (error "Unrecognized spec type" spec))))
+              buildspec)
+    (no-submodules #!eof)))
 
 ;; buildspec-depfiles : buildspec -> (listof file)
 ;; Produces the list of files with deps relevant for making a depgraph
-(def (buildspec-depfiles spec)
-  (def (file-e mod ext)
-    (if (string-empty? (path-extension mod))
-      (string-append mod ext)
-      mod))
-
-  (let lp ((rest spec) (files []))
-    (match rest
-      ([hd . rest]
-       (match hd
-         ((? string?)
-          (lp rest (cons (file-e hd ".ss") files)))
-         ([gxc: mod . opts]
-          (lp rest (cons (file-e mod ".ss") files)))
-         ([exe: mod . opts]
-          (lp rest (cons (file-e mod ".ss") files)))
-         ([static-exe: mod . opts]
-          (lp rest (cons (file-e mod ".ss") files)))
-         ([ssi: mod . opts]
-          (lp rest (cons (file-e mod ".ssi") files)))
-         (else
-          ; otherwise it's static-include: or copy:, no deps,
-          ; not relevant for making a depgraph
-          (lp rest files))))
-      (else
-       (reverse files)))))
+(def (buildspec-depfiles spec settings)
+  (map (lambda (spec) (spec-file spec settings))
+       (filter (lambda (spec) (member (spec-type spec) '(gxc: exe: static-exe: ssi:)))
+               spec)))
 
 (def (shell-config cmd . args)
   (let* ((proc (open-input-process [path: cmd arguments: args]))
@@ -274,55 +355,26 @@
    (else
     '("-e" "(include \"~~lib/_gambit#.scm\")"))))
 
-(def (build? spec settings depgraph)
-  (match spec
-    ((? string? modf)
-     (or (gxc-compile? modf #f settings)
-         (library-deps-newer? modf settings depgraph #f)))
-    ([gxc: modf . opts]
-     (or (gxc-compile? modf opts settings)
-         (library-deps-newer? modf settings depgraph #f)))
-    ([gsc: modf . opts]
-     (gsc-compile? modf opts settings))
-    ([ssi: modf . deps]
-     (compile-ssi? modf settings))
-    ([exe: modf . opts]
-     (or (compile-exe? modf opts settings)
-         (library-deps-newer? modf settings depgraph opts)))
-    ([static-exe: modf . opts]
-     (or (compile-static-exe? modf opts settings)
-         (library-deps-newer? modf settings depgraph opts)))
-    ([static-include: file]
-     (copy-static? file settings))
-    ([copy: file]
-     (copy-compiled? file settings))
-    (else
-     (error "Bad buildspec" spec))))
-
-(def (library-deps-newer? mod settings depgraph binopts)
-  (and depgraph
-       (let* ((target (if binopts
-                        (binary-path mod binopts settings)
-                        (library-path mod ".ssi" settings)))
-              (file (if (string-empty? (path-extension mod))
-                      (string-append mod ".ss")
-                      mod))
-              (deps (assoc file depgraph)))
-         (and deps
-              (let lp ((rest (cddr deps)))
-                (match rest
-                  ([dep . rest]
-                   (with-catch
-                    (lambda (exn)
-                      (if (syntax-error? exn)
-                        (lp rest) ; it's ok if it can't be found, it might be in the tree
-                        (raise exn)))
-                    (lambda ()
-                      (let* ((libdep (make-symbol ":" dep))
-                             (libpath (core-resolve-library-module-path libdep)))
-                        (or (file-newer? libpath target)
-                            (lp rest))))))
-                  (else #f)))))))
+(def (build-timestamp index% timestamp% deps inputs outputs verbose)
+  ;; We assume the timestamp% table is pre-populated for external libraries,
+  ;; and updated for internal libraries after they are built.
+  (def (get-timestamp dep) (hash-get timestamp% (hash-ref index% dep dep)))
+  (def dep-timestamps (map get-timestamp deps))
+  (def in-timestamps (map modification-time/cache inputs))
+  (def out-timestamps (map modification-time/cache outputs))
+  (def dep-max (xreal-max/list dep-timestamps))
+  (def in-max (xreal-max dep-max (xreal-max/list in-timestamps)))
+  (def out-min (xreal-min/list out-timestamps))
+  (def out-max (xreal-max/list out-timestamps))
+  (when (and (real? verbose) (<= 6 verbose))
+    (writeln [build-timestamp:
+              [in-max: in-max]
+              [out-min: out-min]
+              [out-max: out-max]
+              [deps: (map list dep-timestamps deps)]
+              [ins: (map list in-timestamps inputs)]
+              [outs: (map list outputs out-timestamps)]]))
+  (and in-max (xreal<= in-max out-min) out-max))
 
 (def (build spec settings)
   (match spec
@@ -332,8 +384,9 @@
      (gxc-compile modf opts settings))
     ([gsc: modf . opts]
      (gsc-compile modf opts settings))
-    ([ssi: modf . deps]
-     (compile-ssi modf deps settings))
+    ([ssi: modf . submodules]
+     (for-each (cut build <> settings) submodules)
+     (compile-ssi modf '() settings))
     ([exe: modf . opts]
      (compile-exe modf opts settings))
     ([static-exe: modf . opts]
@@ -345,19 +398,13 @@
     (else
      (error "Bad buildspec" spec))))
 
-(def (gxc-compile? mod opts settings)
-  (def srcpath (source-path mod ".ss" settings))
-  (def ssipath (library-path mod ".ssi" settings))
-  (def statpath (and (pgetq static: settings)
-                     (static-path mod settings)))
-  (def deps (and opts (pgetq dep: opts)))
+(def (gxc-outputs mod opts settings)
+  [(library-path mod ".ssi" settings)
+   (when (pgetq static: settings) [(static-path mod settings)]) ...])
 
-  (or (not (file-exists? ssipath))
-      (file-newer? srcpath ssipath)
-      (and statpath
-           (or (not (file-exists? statpath))
-               (file-newer? srcpath statpath)))
-      (and deps (ormap (cut file-newer? <> ssipath) deps))))
+(def (gxc-compile-inputs mod opts settings)
+  [(source-path mod ".ss" settings)
+   (when opts (pgetq dep: opts)) ...])
 
 (def (gsc-compile-opts opts)
   (match opts
@@ -371,7 +418,7 @@
     (gsc-compile-opts opts))
   (def gxc-opts
     [invoke-gsc: invoke-gsc?
-     output-dir: (pgetq libdir: settings )
+     output-dir: (pgetq libdir: settings)
      optimize: (pgetq optimize: settings)
      debug: (pgetq debug: settings)
      generate-ssxi: #t
@@ -383,48 +430,37 @@
   (message "... compile " mod)
   (compile-file srcpath gxc-opts))
 
-(def (gsc-compile? mod opts settings)
-  (def srcpath (source-path mod ".scm" settings))
+(def (libdir-prefix settings)
   (def libdir (pgetq libdir: settings))
   (def prefix (pgetq prefix: settings))
-  (def libdir-prefix
-    (if prefix (path-expand prefix libdir) libdir))
-  (defvalues (libpath base)
-    (cond
-     ((string-rindex mod #\/)
-      => (lambda (ix)
-           (values (path-expand (substring mod 0 ix) libdir-prefix)
-                   (substring mod (fx1+ ix) (string-length mod)))))
-     (else (values libdir-prefix mod))))
-  (def cpath
-    (let lp ((n 1) (cpath #f))
-      (let (next (path-expand (string-append base ".o" (number->string n))
-                              libpath))
-        (if (file-exists? next)
-          (lp (fx1+ n) next)
-          cpath))))
-  (def deps
-    (and opts (pgetq dep: opts)))
+  (if prefix (path-expand prefix libdir) libdir))
 
-  (or (not cpath)
-      (file-newer? srcpath cpath)
-      (and deps (ormap (cut file-newer? <> cpath) deps))))
+(def (gsc-libpath mod settings)
+  (def prefix (libdir-prefix settings))
+  (cond
+   ((string-rindex mod #\/) => (lambda (ix) (path-expand (substring mod 0 ix) prefix)))
+   (else prefix)))
+
+(def (gsc-base mod)
+  (cond
+   ((string-rindex mod #\/)
+    => (lambda (ix) (substring mod (fx1+ ix) (string-length mod))))
+   (else mod)))
+
+(def (gsc-c-path mod settings)
+  (def libpath (gsc-libpath mod settings))
+  (def base (gsc-base mod))
+  (let lp ((n 1) (cpath #f))
+    (let (next (path-expand (string-append base ".o" (number->string n))
+                            libpath))
+      (if (file-exists? next)
+        (lp (fx1+ n) next)
+        cpath))))
 
 (def (gsc-compile mod opts settings)
-  (def gsc-opts
-    (or (gsc-compile-opts opts) []))
+  (def gsc-opts (or (gsc-compile-opts opts) []))
   (def srcpath (source-path mod ".scm" settings))
-  (def libdir (pgetq libdir: settings))
-  (def prefix (pgetq prefix: settings))
-  (def libpath
-    (cond
-     ((string-rindex mod #\/)
-      => (lambda (ix)
-           (path-expand (substring mod 0 ix)
-                        (if prefix (path-expand prefix libdir) libdir))))
-     (prefix (path-expand prefix libdir))
-     (else libdir)))
-
+  (def libpath (gsc-libpath mod settings))
   (create-directory* libpath)
   (message "... compile foreign " mod)
   (let* ((proc (open-process [path: (gerbil-gsc)
@@ -442,11 +478,6 @@
 
 (def (gerbil-gsc)
   (getenv "GERBIL_GSC" "gsc"))
-
-(def (compile-ssi? mod settings)
-  (def srcpath (source-path mod ".ssi" settings))
-  (def libpath (library-path mod ".ssi" settings))
-  (or (not (file-exists? libpath)) (file-newer? srcpath libpath)))
 
 (def (compile-ssi mod deps settings)
   (def srcpath (source-path mod ".ssi" settings))
@@ -473,15 +504,6 @@
       (error "Compilation error; gsc exited with nonzero status" status))
     (delete-file rtpath)))
 
-(def (compile-exe? mod opts settings)
-  (def srcpath (source-path mod ".ss" settings))
-  (def ssipath (library-path mod ".ssi" settings))
-  (def binpath (binary-path mod opts settings))
-  (or (not (file-exists? ssipath))
-      (file-newer? srcpath ssipath)
-      (not (file-exists? binpath))
-      (file-newer? srcpath binpath)))
-
 (def (compile-exe mod opts settings)
   (def srcpath (source-path mod ".ss" settings))
   (def binpath (binary-path mod opts settings))
@@ -500,15 +522,6 @@
      (compile-exe-gsc-opts rest))
     (else opts)))
 
-(def (compile-static-exe? mod opts settings)
-  (def srcpath (source-path mod ".ss" settings))
-  (def binpath (binary-path mod opts settings))
-  (def statpath (static-path mod settings))
-  (or (not (file-exists? statpath))
-      (file-newer? srcpath statpath)
-      (not (file-exists? binpath))
-      (file-newer? srcpath binpath)))
-
 (def (compile-static-exe mod opts settings)
   (def srcpath (source-path mod ".ss" settings))
   (def binpath (binary-path mod opts settings))
@@ -523,12 +536,6 @@
   (message "... compile static exe " mod " -> " binpath)
   (gxc#compile-static-exe srcpath gxc-opts))
 
-(def (copy-static? file settings)
-  (def spath (static-file-path file settings))
-  (and (pgetq static: settings)
-       (or (not (file-exists? spath))
-           (file-newer? file spath))))
-
 (def (copy-static file settings)
   (def spath (static-file-path file settings))
 
@@ -536,11 +543,6 @@
   (when (file-exists? spath)
     (delete-file spath))
   (copy-file file spath))
-
-(def (copy-compiled? file settings)
-  (def srcpath (source-path file #f settings))
-  (def libpath (library-path file #f settings))
-  (or (not (file-exists? libpath)) (file-newer? srcpath libpath)))
 
 (def (copy-compiled file settings)
   (def srcpath (source-path file #f settings))
@@ -643,3 +645,4 @@
    (pkg-config-cflags lib)
    (catch (e)
      ((env-cppflags) flags))))
+
