@@ -2,9 +2,8 @@
 ;;; (C) vyzo at hackzen.org
 ;;; package build script template
 
-(import :std/make
+(import :std/make :std/misc/list
         :gerbil/gambit/misc)
-(extern namespace: #f cons-load-path)
 (export defbuild-script)
 
 (defsyntax (defbuild-script stx)
@@ -39,6 +38,8 @@
                     (defmain
                       (syntax/loc stx
                         (def (main . args)
+                          (def settings (build-settings srcdir: @srcdir prefix: @prefix ;; verbose: 9
+                                                        optimize: #t static: #t debug: 'src))
                           (match args
                             (["meta"]
                              (write '("spec" "deps" "compile"))
@@ -46,25 +47,19 @@
                             (["spec"]
                              (pretty-print build-spec))
                             (["deps"]
+                             (let (build-deps (make-depgraph/spec @build-spec))
+                               (call-with-output-file "build-deps" (cut write build-deps <>))))
+                            (["compile"]
                              (with-cons-load-path
                               (lambda ()
-                                (let (build-deps (make-depgraph/spec @build-spec))
-                                  (call-with-output-file "build-deps" (cut write build-deps <>))))
+                                (let (depgraph (call-with-input-file "build-deps" read))
+                                  (apply make @build-spec (psetq depgraph: settings depgraph))))
                               @srcdir))
-                            (["compile"]
-                             (let (depgraph (call-with-input-file "build-deps" read))
-                               (make srcdir: @srcdir
-                                     depgraph: depgraph
-                                     optimize: #t
-                                     static: #t
-                                     debug: 'src
-                                     prefix: @prefix
-                                     @build-spec)))
                             ([]
                              (unless (and (file-exists? "build-deps")
                                           (file-newer? "build-deps" +this-source-file+)
                                           (andmap (lambda (f) (file-newer? "build-deps" f))
-                                                  (buildspec-depfiles @build-spec)))
+                                                  (buildspec-depfiles @build-spec settings)))
                                (displayln "... make deps")
                                (main "deps"))
                              (displayln "... compile")
