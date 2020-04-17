@@ -23,9 +23,14 @@
   butlast
   split
   group
-  every-consecutive?)
+  every-consecutive?
+  psetq psetv pset
+  psetq! psetv! pset! pgetq-set! pgetv-set! pget-set!
+  premq premv prem
+  )
 
-(import (only-in "../srfi/1" drop drop-right drop-right! take take-right take! reverse!))
+(import (only-in "../srfi/1" drop drop-right drop-right! take take-right take! reverse!)
+        "../sugar")
 
 ;; This function checks if the list is a proper association-list.
 ;; ie it has the form [[key1 . val1] [key2 . val2]]
@@ -316,3 +321,51 @@
   (or (null? l)
       (let loop ((x (car l)) (r (cdr l)))
         (match r ([] #t) ([y . rr] (and (f x y) (loop y rr)))))))
+
+;; The plist functions below are patterned after pgetq and friends from gerbil/runtime/gx-gambc0.scm
+(defrule (define-pset pset cmp)
+  (def (pset key lst val)
+     (let lp ((rest lst) (rhd []))
+       (match rest
+         ([k v . rest]
+          (if (cmp k key)
+            (foldl cons (cons* key val rest) rhd)
+            (lp rest (cons* v k rhd))))
+         (else
+          (cons* key val lst))))))
+
+(define-pset psetq eq?)
+(define-pset psetv eqv?)
+(define-pset pset equal?)
+
+(defrule (define-pset! pset! cmp)
+  (def (pset! key lst val)
+    (when (null? lst) (error "Cannot destructively modify an empty plist" pset! key lst val))
+    (let lp ((rest lst))
+      (match rest
+        ([k v . more]
+         (if (cmp k key) (set-car! (cdr rest) val) (lp more)))
+        (else
+         (match lst
+           ([k v . rest]
+            (set-car! lst key)
+            (set-cdr! lst (cons* val k v rest)))))))))
+
+(define-pset! psetq! eq?) (def pgetq-set! psetq!)
+(define-pset! psetv! eqv?) (def pgetv-set! psetv!)
+(define-pset! pset! equal?) (def pget-set! pset!)
+
+(defrule (define-prem prem cmp)
+  (def (prem key lst)
+     (let lp ((rest lst) (rhd []))
+       (match rest
+         ([k v . rest]
+          (if (cmp k key)
+            (foldl cons rest rhd)
+            (lp rest (cons* v k rhd))))
+         (else
+          lst)))))
+
+(define-prem premq eq?)
+(define-prem premv eqv?)
+(define-prem prem equal?)
