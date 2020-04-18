@@ -316,7 +316,7 @@
                 (error "Cannot build unknown package" pkg)))
            (build.ss (pkg-build-script pkg)))
       (displayln "... build " pkg)
-      (run-process [build.ss "deps"]
+      #;(run-process [build.ss "deps"] ;; TODO: Should we delete this, or keep it, or what?
                    directory: path
                    coprocess: void
                    stdout-redirection: #f)

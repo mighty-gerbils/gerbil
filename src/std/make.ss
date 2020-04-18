@@ -11,22 +11,25 @@
 
 (import :gerbil/compiler
         :gerbil/expander
+        :gerbil/gambit/exceptions
         :gerbil/gambit/misc
         :gerbil/gambit/os
         :gerbil/gambit/ports
         "srfi/1"
-        ;;"srfi/43"
+        ;;"srfi/43" ; vector-for-each, vector-map, but we reimplement them
         "misc/list"
         "misc/hash"
+        "misc/pqueue"
         "misc/queue"
         "misc/xreal"
         "sort"
         "sugar")
 
-(extern namespace: #f with-cons-load-path)
+(extern namespace: #f with-cons-load-path load-path display-exception)
+(export #t);;; DEBUG
 
-(export make make-depgraph make-depgraph/spec
-        build-settings buildspec-depfiles
+(export make
+        make-depgraph make-depgraph/spec ;; empty shims for backward compatibility only
         shell-config
         env-cppflags
         env-ldflags
@@ -37,16 +40,78 @@
         ldflags
         cppflags)
 
-;; buildspec: [<build> ...]
-;;  <build>:
-;;    <module> ; module path string without extension
-;;   (gxc: <module> gsc-opt ...)
-;;   (gsc: <module> gsc-opt ...)
-;;   (ssi: <module> [gsc: (gsc-opt ...)] [static-include: file])
+;;; Functions that should be better moved some library...
+(defrule (when/list cond list) (if cond list []))
+(def (listify x) (when/list (pair? x) x))
+(defrule (ignore-errors form ...) (with-catch (lambda (_) #f) (lambda () form ...)))
+(def (symbol<? a b) (string<? (symbol->string a) (symbol->string b)))
+
+(def (path-default-extension path ext)
+  (if (and ext (string-empty? (path-extension path)))
+    (string-append path ext)
+    path))
+(def (path-force-extension path ext)
+  (if ext
+    (string-append (path-strip-extension path) ext)
+    path))
+(def (prefix/ prefix path)
+  (if prefix
+    (string-append prefix "/" path)
+    path))
+
+(def (message . lst) (apply displayln lst) (force-output))
+(def (writeln x) (write x) (newline) (force-output))
+
+;;; Functions partially reimplemented from std/srfi/1, std/srfi/43
+;;(def (append-map f l) (match l ([] '()) ([hd . tl] (append (f hd) (append-map f tl))))) ; srfi/1
+(def (vector-for-each f v)
+  (def l (vector-length v))
+  (let loop ((i 0)) (when (< i l) (begin (f i (vector-ref v i)) (loop (+ 1 i))))))
+(def (vector-ensure-ref v i f)
+  (or (vector-ref v i) (let ((x (f))) (vector-set! v i x) x)))
+(def (vector-map f v)
+  (def w (make-vector (vector-length v)))
+  (vector-for-each (lambda (i x) (vector-set! w i (f x))) v)
+  w)
+
+
+;;; Settings: see details in doc/reference/make.md
+
+(defstruct settings
+  (srcdir libdir bindir prefix force optimize debug static static-debug verbose build-deps
+   libdir-prefix)
+  transparent: #t constructor: :init!)
+
+(defmethod {:init! settings}
+  (lambda (self
+      srcdir: (srcdir_ #f) libdir: (libdir_ #f) bindir: (bindir_ #f)
+      prefix: (prefix #f) force: (force? #f)
+      optimize: (optimize #f) debug: (debug #f)
+      static: (static #f) static-debug: (static-debug #f)
+      verbose: (verbose #f) build-deps: (build-deps_ #f)
+      depgraph: (_ #f)) ;; ignored, for backward compatibility only
+    (def gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
+    (def srcdir (or srcdir_ (error "srcdir must be specified")))
+    (def libdir (or libdir_ (path-expand "lib" gerbil-path)))
+    (def bindir (or bindir_ (path-expand "bin" gerbil-path)))
+    (def libdir-prefix (if prefix (path-expand prefix libdir) libdir))
+    (def build-deps (path-expand (or build-deps_ "build-deps") libdir-prefix))
+    (struct-instance-init!
+      self
+      srcdir libdir bindir prefix force? optimize debug static static-debug verbose build-deps
+      libdir-prefix)))
+
+(def (settings-verbose>=? settings level)
+  (def verbose (settings-verbose settings))
+  (and (real? level) (real? verbose) (>= verbose level)))
+
+
+;;; build-spec: see details in doc/reference/make.md
 ;; TODO: provide an object-oriented way to extend the spec language,
 ;; with methods spec-dependencies, spec-inputs, spec-outputs, spec-build
 ;; and a macro so you can define all the methods coherently in one form,
 ;; rather than manually keeping the forms in synch.
+;; Learn from the successes and failures of ASDF, Bazel, Dune, Cmake, etc.
 
 (def (spec-type spec)
   (match spec
@@ -72,8 +137,8 @@
 
 (def (spec-dependencies spec settings)
   (match spec
-    ([gxc: _ . opts] (pgetq dep: opts []))
-    ([gsc: _ . opts] (pgetq dep: opts []))
+    ([gxc: _ . opts] (xxc-compile-dep opts))
+    ([gsc: _ . opts] (xxc-compile-dep opts))
     ([ssi: _ . submodules] (append-map (cut spec-inputs <> settings) submodules))
     (_ [])))
 
@@ -92,13 +157,8 @@
     ([copy: file] [(library-path file #f settings)])
     (else (error "Bad buildspec" spec))))
 
-;;; Display and/or debugging utilities
-(def (message . lst) (apply displayln lst) (force-output))
-(def (writeln x) (write x) (newline) (force-output))
-
 ;;; A cache to minimize filesystem access AND to avoid inconsistencies
 ;;; due to race-conditions while querying the filesystem.
-
 (def cache (make-parameter #f))
 (def (cache-put! key value)
   (def c (cache))
@@ -126,174 +186,242 @@
 (def (modification-time/cache file)
   (with-cache ['modification-time file] (modification-time file)))
 
+(def (module-strip-nesting module)
+  (def name (symbol->string module))
+  (cond ((string-rindex name #\$) => (lambda (ix) (string->symbol (substring name 0 ix))))
+        (else module)))
+(def (library-symbol module)
+  (make-symbol ":" (module-strip-nesting module)))
 (def (library-file library)
-  (def string (symbol->string library))
-  (def module (cond ((string-rindex string #\$) => (lambda (ix) (substring string 0 ix))) (else string)))
-  (def symbol (make-symbol ":" module))
-  (core-resolve-library-module-path symbol))
+  (with-catch
+   (lambda (e) (writeln [context: 'library-file
+                    library: library symbol: (library-symbol library)
+                    load-path: (values->list (load-path))
+                    error: (with-output-to-string (lambda () (display-exception e)))])
+      (raise e))
+   (lambda () (core-resolve-library-module-path (library-symbol library)))))
 (def (library-timestamp library)
   (def x (modification-time/cache (library-file library)))
   (unless x (error 'missing-library library))
   x)
 
-(def (symbol<? a b)
-  (string<? (symbol->string a) (symbol->string b)))
-(def (vector-for-each f v)
-  (def l (vector-length v))
-  (let loop ((i 0)) (when (< i l) (begin (f i (vector-ref v i)) (loop (+ 1 i))))))
-(def (vector-ensure-ref v i f)
-  (or (vector-ref v i) (let ((x (f))) (vector-set! v i x) x)))
-
-;;; Settings:
-;; srcdir: input source top directory; MUST BE SPECIFIED
-;;         (path-directory (this-source-file)) in build scripts will do
-;; libdir: output directory, defaults to $GERBIL_HOME/lib
-;; prefix:  string, a package prefix to add to module names
-;; force?:  boolean, indicating force build even if compiled modules are newer
-(def (build-settings . settings)
-  (defvalues (_ s) (apply make-settings #f settings))
-  s)
-
-(def (make-settings buildspec
-      srcdir: (srcdir_ #f) libdir: (libdir_ #f) bindir: (bindir_ #f)
-      prefix: (prefix #f) force: (force? #f)
-      optimize: (optimize #f) debug: (debug #f)
-      static: (static #f) static-debug: (static-debug #f)
-      verbose: (verbose #f)
-      depgraph: (depgraph #f)) ;; if depgraph is true, compute a depgraph, otherwise build in order
-  (def gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
-  (def srcdir (or srcdir_ (error "srcdir must be specified")))
-  (def libdir (or libdir_ (path-expand "lib" gerbil-path)))
-  (def bindir (or bindir_ (path-expand "bin" gerbil-path)))
-  (values buildspec
-          [srcdir: srcdir libdir: libdir bindir: bindir prefix: prefix force: force?
-                   optimize: optimize debug: debug static: static static-debug: static-debug
-                   verbose: verbose depgraph: depgraph]))
-
 (def (make . args)
-  (defvalues (buildspec settings) (apply make-settings args))
-  (with-cons-load-path (lambda () (%make buildspec settings)) (pgetq srcdir: settings)))
+  ;; 0. Compute settings, setup a surrounding cache, change directory
+  (defvalues (positionals keywords) (separate-keyword-arguments args #t))
+  (def buildspec (match positionals ([x] x) (_ (error "invalid arguments" make positionals))))
+  (def settings (apply make-settings keywords))
+  (parameterize ((current-directory (settings-srcdir settings)))
+    (with-fresh-cache
+     (%make buildspec settings))))
 
 (def (%make buildspec settings)
-  (def verbose (pgetq verbose: settings))
-  (when verbose (writeln settings))
+  ;; 1. Extract settings
+  (def force? (settings-force settings))
+  (def build-deps-file (settings-build-deps settings))
+  (def verbose (settings-verbose settings))
+  (def (verbose>=? n) (settings-verbose>=? settings n))
+  (when (verbose>=? 3) (writeln [Step: 1 [settings: settings]]))
 
-  (def spec% (list->vector (normalize-buildspec buildspec))) ; specs, indexed for random access
-  (def nspec (vector-length spec%)) ; how many build specs we have
-  (def id% (make-vector nspec)) ; to be filled: mapping spec numbers to dependency id
-  (def deps% (make-vector nspec)) ; to be filled: mapping spec number to dependencies (list of symbol)
+  ;; 2. Instantiate the data model that represents the build
+  (def spec@ (list->vector (normalize-buildspec buildspec))) ; specs, indexed by target for random access
+  (def nspec (vector-length spec@)) ; total number of targets
+  (def (specvec) (make-vector nspec #f)) ; vector indexed by target number
+  (def file@ (vector-map (cut spec-file <> settings) spec@)) ; file by target number
+  (def file-index% (invert-hash<-vector file@)) ; target number by file
+  (def id@ (specvec)) ; dependency id by target number
+  (def id-index% (hash)) ; target number by dependency id
+  (def deps@ (specvec)) ; list of dependencies (as symbols) by target number
+  (def build-list []) ; actual build order by target number
+  (def timestamp% (hash)) ; timestamp by dependency id
+  (def blocked-by@ (specvec)) ;; #f or hash of numbers of specs blocked by the numbered target
+  (def blocking@ (specvec)) ;; #f or hash of numbers of specs blocking the numbered target
+  (def ready (make-pqueue identity <)) ;; targets that are ready to build, prioritized by order in user
 
-  (vector-for-each
-   (lambda (i spec)
-     (defvalues (id deps) (if (pgetq depgraph: settings)
-                            (file-dependencies (spec-file spec settings))
-                            (values i (if (< 0 i) [(- i 1)] [])))) ; force serial dependencies
-     (when (and (real? verbose) (<= 6 verbose)) (writeln [i spec id deps]))
-     (vector-set! id% i id)
-     (vector-set! deps% i deps))
-   spec%)
-  (def index% (invert-hash<-vector id%))
+  ;; Get timestamp for each dependency by id symbol.
+  ;; We assume the timestamps are updated in dependency order,
+  ;; so a target's timestamp will be up-to-date by the time it's queried.
+  (def (dependency-timestamp dep)
+    (ignore-errors (hash-ensure-ref timestamp% dep (cut library-timestamp dep))))
 
-  (def timestamp% (hash)) ;; timestamp for each build spec by id and/or out-of-build dependency by symbol
+  (when (verbose>=? 7) (writeln [Step: 2 [spec@: spec@] [file@: file@]]))
+
+  ;; 3. Reinstate those cached dependencies from previous build that are still up-to-date:
+  ;; the build-deps-file contains a list in dependency order of (id spec inputs outputs deps) entries,
+  ;; where id is a symbol, inputs and outputs are non-empty lists of (file timestamp) entries,
+  ;; and deps is a list of (symbol timestamp) entries.
+  (def previous@ (with-catch (lambda (_) []) (lambda () (call-with-input-file build-deps-file read))))
+  (def previous-out-of-date% (hash))
+  (def (previous-file-up-to-date? file timestamp)
+    (equal? (modification-time/cache file) timestamp))
+  (def (previous-dependency-up-to-date? dep timestamp)
+    (equal? timestamp (dependency-timestamp dep)))
+  (def (previous-entry-up-to-date? inputs outputs deps)
+    (and (andmap (cut apply previous-file-up-to-date? <>) (append inputs outputs))
+         (andmap (cut apply previous-dependency-up-to-date? <>) deps)))
+  ((cut for-each <> previous@)
+   (match <>
+     ([id spec inputs outputs deps]
+      (when (verbose>=? 7)
+        (writeln [|Inspecting previous library|: id spec: spec
+                  inputs: inputs outputs: outputs deps: deps]))
+      (let* ((file (caar inputs))
+             (target (hash-get file-index% file)))
+        (if (and target
+                 (equal? spec (vector-ref spec@ target))
+                 (andmap (lambda (dep) (not (hash-get previous-out-of-date% (car dep)))) deps)
+                 (previous-entry-up-to-date? inputs outputs deps))
+          (begin (vector-set! id@ target id)
+                 (hash-put! id-index% id target)
+                 (vector-set! deps@ target (map car deps))
+                 (hash-put! timestamp% id (xreal-max/map car outputs))
+                 ;; Import the compiled module to avoid having to import the interpreted version later.
+                 (when (verbose>=? 5)
+                   (writeln [|Re-using previous library|: id spec: spec
+                             inputs: inputs outputs: outputs deps: deps]))
+                 (import-module (library-file id)))
+          (hash-put! previous-out-of-date% id #t))))))
+  (when (verbose>=? 3) (writeln [Step: 3 [timestamp%: (hash->list/sort timestamp% symbol<?)]]))
+
+  ;; 4. Compute dependencies for entries that are out of date, or at least not cached
+  ;; NB: We assume this will catch any circular dependency and error out.
+  ((cut vector-for-each <> spec@)
+   (lambda (target spec)
+     (when (verbose>=? 7) (writeln ["Step 4, inspecting" target spec]))
+     (unless (vector-ref id@ target)
+       (let-values (((id deps) (file-dependencies (spec-file spec settings) settings)))
+         (when (verbose>=? 6) (writeln [target spec id deps]))
+         (vector-set! id@ target id)
+         (hash-put! id-index% id target)
+         (vector-set! deps@ target deps)))))
+  (when (verbose>=? 3) (writeln [Step: 4]))
+
+  ;; 5. Create output directories
+  (create-directory* (settings-bindir settings))
+  (create-directory* (settings-libdir settings))
+  (when (settings-static settings) (create-directory* (path-expand "static" (settings-libdir settings))))
+  (when (verbose>=? 8) (writeln [Step: 5]))
+
+  ;; 6. Initialize the blocked and blocking tables and the build queue
+  ((cut vector-for-each <> deps@)
+   (lambda (target deps)
+     ((cut for-each <> deps)
+       (lambda (dep)
+         (let ((other-target (hash-get id-index% dep)))
+           (if other-target
+             (begin (hash-put! (vector-ensure-ref blocked-by@ target make-hash-table) other-target #t)
+                    (hash-put! (vector-ensure-ref blocking@ other-target make-hash-table) target #t))
+             (dependency-timestamp dep))))))) ; NB: this populates the timestamp% table as a side-effect
+  ((cut vector-for-each <> spec@)
+   (lambda (target _) (unless (vector-ref blocked-by@ target) (pqueue-push! ready target))))
+  (when (verbose>=? 3) (writeln [Step: 6]))
+
+  ;; 7. Now, build stuff in order, thanks to a priority queue of jobs that are ready,
+  ;; and update timestamps as we go.
   (def (compute-timestamp target)
-    (def spec (vector-ref spec% target))
-    (def deps (vector-ref deps% target))
+    (def spec (vector-ref spec@ target))
+    (def deps (vector-ref deps@ target))
     (def inputs (spec-inputs spec settings))
     (def outputs (spec-outputs spec settings))
-    (build-timestamp index% timestamp% deps inputs outputs verbose))
+    (def dep-timestamps (map dependency-timestamp deps))
+    (def in-timestamps (map modification-time/cache inputs))
+    (def out-timestamps (map modification-time/cache outputs))
+    (def dep-max (xreal-max/list dep-timestamps))
+    (def in-max (xreal-max dep-max (xreal-max/list in-timestamps)))
+    (def out-min (xreal-min/list out-timestamps))
+    (def out-max (xreal-max/list out-timestamps))
+    (when (verbose>=? 6)
+      (writeln [compute-timestamp:
+                [target: target] [spec: spec]
+                [in-max: in-max] [out-min: out-min] [out-max: out-max]
+                [deps: (map list dep-timestamps deps)]
+                [ins: (map list in-timestamps inputs)]
+                [outs: (map list outputs out-timestamps)]]))
+    (and in-max (xreal<= in-max out-min) out-max))
   (def (update-timestamp target)
-    (def spec (vector-ref spec% target))
+    (def spec (vector-ref spec@ target))
     (def outputs (spec-outputs spec settings))
     (for-each (lambda (x) (cache-remove! ['modification-time x])) outputs)
     (def out-timestamp (xreal-max/map modification-time/cache outputs))
     (unless out-timestamp (error "Build failed to generate expected outputs" spec outputs))
-    (hash-put! timestamp% target out-timestamp))
-
-  (create-directory* (pgetq bindir: settings))
-  (create-directory* (pgetq libdir: settings))
-  (when (pgetq static: settings) (create-directory* (path-expand "static" (pgetq libdir: settings))))
-
-  (def blocked-by% (make-vector nspec #f)) ;; #f or hash of numbers of specs blocked by the current one
-  (def blocking% (make-vector nspec #f)) ;; #f or hash of numbers of specs blocking the current one
-  (def ready (make-queue)) ;; TODO: should we use a pqueue to try to preserve original order?
-
-  ((cut vector-for-each <> deps%)
-   (lambda (i deps)
-     ((cut for-each <> deps)
-       (lambda (d)
-         (let ((j (hash-get index% d)))
-           (if j (begin (hash-put! (vector-ensure-ref blocked-by% i make-hash-table) j #t)
-                        (hash-put! (vector-ensure-ref blocking% j make-hash-table) i #t))
-               (hash-ensure-ref timestamp% d (cut library-timestamp d))))))))
-  ((cut vector-for-each <> spec%)
-   (lambda (i _) (unless (vector-ref blocked-by% i) (enqueue! ready i))))
-
+    (hash-put! timestamp% (vector-ref id@ target) out-timestamp))
   (def (mark-built target)
+    (push! target build-list)
     (hash-for-each
      (lambda (unblocked _)
-       (def blocked-by (vector-ref blocked-by% unblocked))
+       (def blocked-by (vector-ref blocked-by@ unblocked))
        (hash-remove! blocked-by target)
        (when (hash-empty? blocked-by)
-         (enqueue! ready unblocked)))
-     (or (vector-ref blocking% target) (hash))))
+         (pqueue-push! ready unblocked)))
+     (or (vector-ref blocking@ target) (hash))))
 
-  (def force? (pgetq force: settings))
-  (with-fresh-cache
-   (until (queue-empty? ready)
-     (let ()
-       (def target (dequeue! ready #f))
-       (def spec (vector-ref spec% target))
-       (cond
-        ((and (not force?) (hash-ensure-ref timestamp% target (cut compute-timestamp target)))
-         (when verbose (writeln [Up-to-date: target])))
-        (else
-         (build spec settings)
-         (update-timestamp target)))
-       (mark-built target))))
+  ;; TODO: parallelize this worker loop, in the style of CL's POIU, or better.
+  (until (pqueue-empty? ready)
+    (let* ((target (pqueue-pop! ready #f))
+           (spec (vector-ref spec@ target)))
+      (cond
+       ((and (not force?) (hash-ensure-ref timestamp% target (cut compute-timestamp target)))
+        (when verbose (writeln [Up-to-date: target spec])))
+       (else
+        (build spec settings)
+        (update-timestamp target)))
+      (mark-built target)))
+  (when (verbose>=? 3) (writeln [Step: 7]))
 
-  ;; Check that we didn't hit some circular dependency
-  (vector-for-each
+  ;; 8. Check that we didn't hit some circular dependency. Should already be caught in step 4.
+  ((cut vector-for-each <> blocked-by@)
    (lambda (target blocked-by)
      (when (and blocked-by (not (hash-empty? blocked-by)))
-       (write [Target: target blocked-by: (hash->list/sort blocked-by symbol<?) ...])
-       (message "Build didn't complete due to circular dependency")))
-   blocked-by%))
+       (writeln [|Build didn't complete due to circular dependency in|: (vector-ref spec@ target)]))))
+  (when (verbose>=? 7) (writeln [Step: 8]))
+
+  ;; 9. Last but not least, update the cache.
+  (def (file+timestamp file) [file (modification-time/cache file)])
+  (def (dep+timestamp dep) [dep (dependency-timestamp dep)])
+  (def build-deps
+    ((cut map <> (reverse build-list))
+     (lambda (target)
+       (def id (vector-ref id@ target))
+       (def spec (vector-ref spec@ target))
+       (def inputs (spec-inputs spec settings))
+       (def outputs (spec-outputs spec settings))
+       (def deps (vector-ref deps@ target))
+       [id spec (map file+timestamp inputs) (map file+timestamp outputs) (map dep+timestamp deps)])))
+  (create-directory* (path-directory build-deps-file))
+  (call-with-output-file build-deps-file (cut write build-deps <>))
+  (when verbose (message "All done.")))
 
 ;; file-dependencies : file -> dependencies
-(def (file-dependencies file)
-  (def mod (import-module file))
-  (def ht  (make-hash-table-eq))
+(def (file-dependencies file settings)
+  (def mod (with-cons-load-path (cut import-module file) (settings-srcdir settings)))
+  (def ht (make-hash-table-eq))
   (def pre (core-context-prelude mod))
   (def q (make-queue))
+  (def mod-id (expander-context-id mod))
+  (def (consider x)
+    (alet (id (expander-context-id x)) ; maybe it's root!
+      (let (id0 (module-strip-nesting id))
+        (unless (eq? id0 mod-id)
+          (hash-put! ht id0 #t)))))
+
+  ;; TODO: somehow start iteration from all nested modules of the file, not just the main one!
   (for-each (cut enqueue! q <>) (cons pre (module-context-import mod)))
   (until (queue-empty? q)
     (let ((hd (dequeue! q #f)))
       (cond
-       ((module-context? hd)
-        (hash-put! ht (expander-context-id hd) #t))
-       ((prelude-context? hd)
-        (alet (id (expander-context-id hd)) ; maybe it's root!
-          (hash-put! ht id #t)))
-       ((module-import? hd)
-        (enqueue! q (module-import-source hd)))
-       ((module-export? hd)
-        (enqueue! q (module-export-context hd)))
-       ((import-set? hd)
-        (enqueue! q (import-set-source hd)))
-       (else
-        (error "Unexpected module import" hd)))))
-  (values (expander-context-id mod) (sort (hash-keys ht) symbol<?)))
+       ((module-context? hd)  (consider hd))
+       ((prelude-context? hd) (consider hd))
+       ((module-import? hd)   (enqueue! q (module-import-source hd)))
+       ((module-export? hd)   (enqueue! q (module-export-context hd)))
+       ((import-set? hd)      (enqueue! q (import-set-source hd)))
+       (else (error "Unexpected module import" hd)))))
+  (values mod-id (sort (hash-keys ht) symbol<?)))
 
-;; make-depgraph : (listof file) -> depgraph
-(def make-depgraph true)
-
-;; make-depgraph : buildspec -> depgraph
-(def make-depgraph/spec true)
+(def make-depgraph true) ;; Don't use, for backward compatibility only, during transition
+(def make-depgraph/spec true) ;; ^ idem
 
 ;; Normalize-buildspec : buildspec -> buildspec
 ;; Groups the gsc: and static-include: and copy: specs inside the immediately following ssi:
 (def (normalize-buildspec buildspec)
-
   (def submodules '())
   (def (get-submodules)
     (begin0 (reverse submodules) (set! submodules '())))
@@ -302,23 +430,15 @@
       (error "incompatible sequence of build specifications" (reverse (cons spec submodules)))))
   (def (push-submodule spec)
     (set! submodules (cons spec submodules)))
-
   (with-list-builder (c)
-    (for-each (lambda (spec)
-                (case (spec-type spec)
-                  ((gxc: exe: static-exe:) (no-submodules spec) (c spec))
-                  ((gsc: static-include: copy:) (push-submodule spec))
-                  ((ssi:) (c (append spec (get-submodules))))
-                  (else (error "Unrecognized spec type" spec))))
-              buildspec)
+    ((cut for-each <> buildspec)
+     (lambda (spec)
+       (case (spec-type spec)
+         ((gxc: exe: static-exe:) (no-submodules spec) (c spec))
+         ((gsc: static-include: copy:) (push-submodule spec))
+         ((ssi:) (c (append spec (get-submodules))))
+         (else (error "Unrecognized spec type" spec)))))
     (no-submodules #!eof)))
-
-;; buildspec-depfiles : buildspec -> (listof file)
-;; Produces the list of files with deps relevant for making a depgraph
-(def (buildspec-depfiles spec settings)
-  (map (lambda (spec) (spec-file spec settings))
-       (filter (lambda (spec) (member (spec-type spec) '(gxc: exe: static-exe: ssi:)))
-               spec)))
 
 (def (shell-config cmd . args)
   (let* ((proc (open-input-process [path: cmd arguments: args]))
@@ -355,27 +475,6 @@
    (else
     '("-e" "(include \"~~lib/_gambit#.scm\")"))))
 
-(def (build-timestamp index% timestamp% deps inputs outputs verbose)
-  ;; We assume the timestamp% table is pre-populated for external libraries,
-  ;; and updated for internal libraries after they are built.
-  (def (get-timestamp dep) (hash-get timestamp% (hash-ref index% dep dep)))
-  (def dep-timestamps (map get-timestamp deps))
-  (def in-timestamps (map modification-time/cache inputs))
-  (def out-timestamps (map modification-time/cache outputs))
-  (def dep-max (xreal-max/list dep-timestamps))
-  (def in-max (xreal-max dep-max (xreal-max/list in-timestamps)))
-  (def out-min (xreal-min/list out-timestamps))
-  (def out-max (xreal-max/list out-timestamps))
-  (when (and (real? verbose) (<= 6 verbose))
-    (writeln [build-timestamp:
-              [in-max: in-max]
-              [out-min: out-min]
-              [out-max: out-max]
-              [deps: (map list dep-timestamps deps)]
-              [ins: (map list in-timestamps inputs)]
-              [outs: (map list outputs out-timestamps)]]))
-  (and in-max (xreal<= in-max out-min) out-max))
-
 (def (build spec settings)
   (match spec
     ((? string? modf)
@@ -400,46 +499,38 @@
 
 (def (gxc-outputs mod opts settings)
   [(library-path mod ".ssi" settings)
-   (when (pgetq static: settings) [(static-path mod settings)]) ...])
+   (when/list (settings-static settings) [(static-path mod settings)]) ...])
 
-(def (gxc-compile-inputs mod opts settings)
-  [(source-path mod ".ss" settings)
-   (when opts (pgetq dep: opts)) ...])
+(def (xxc-compile-dep opts)
+  (match opts
+    ([dep: dep . _] dep)
+    (_ [])))
 
 (def (gsc-compile-opts opts)
   (match opts
-    ([dep: _ . rest]
-     (and (pair? rest) rest))
-    (_
-     (and (pair? opts) opts))))
+    ([dep: _ . rest] (listify rest))
+    (_ (listify opts))))
 
 (def (gxc-compile mod opts settings (invoke-gsc? #t))
-  (def gsc-opts
-    (gsc-compile-opts opts))
+  (def gsc-opts (gsc-compile-opts opts))
   (def gxc-opts
     [invoke-gsc: invoke-gsc?
-     output-dir: (pgetq libdir: settings)
-     optimize: (pgetq optimize: settings)
-     debug: (pgetq debug: settings)
+     output-dir: (settings-libdir settings)
+     optimize: (settings-optimize settings)
+     debug: (settings-debug settings)
      generate-ssxi: #t
-     static: (pgetq static: settings)
-     verbose: (pgetq verbose: settings)
-     (if gsc-opts [gsc-options: gsc-opts] []) ...])
+     static: (settings-static settings)
+     verbose: (settings-verbose>=? settings 9)
+     (when/list gsc-opts [gsc-options: gsc-opts]) ...])
   (def srcpath (source-path mod ".ss" settings))
-
   (message "... compile " mod)
   (compile-file srcpath gxc-opts))
 
-(def (libdir-prefix settings)
-  (def libdir (pgetq libdir: settings))
-  (def prefix (pgetq prefix: settings))
-  (if prefix (path-expand prefix libdir) libdir))
-
 (def (gsc-libpath mod settings)
-  (def prefix (libdir-prefix settings))
+  (def libdir-prefix (settings-libdir-prefix settings))
   (cond
-   ((string-rindex mod #\/) => (lambda (ix) (path-expand (substring mod 0 ix) prefix)))
-   (else prefix)))
+   ((string-rindex mod #\/) => (lambda (ix) (path-expand (substring mod 0 ix) libdir-prefix)))
+   (else libdir-prefix)))
 
 (def (gsc-base mod)
   (cond
@@ -458,7 +549,7 @@
         cpath))))
 
 (def (gsc-compile mod opts settings)
-  (def gsc-opts (or (gsc-compile-opts opts) []))
+  (def gsc-opts (gsc-compile-opts opts))
   (def srcpath (source-path mod ".scm" settings))
   (def libpath (gsc-libpath mod settings))
   (create-directory* libpath)
@@ -469,7 +560,7 @@
          (status (process-status proc)))
     (unless (zero? status)
       (error "Compilation error; gsc exited with nonzero status" status)))
-  (when (pgetq static: settings)
+  (when (settings-static settings)
     ;; just copy to libdir/static/ with properly mangled module name
     (let (statpath (static-path mod settings))
       (when (file-exists? statpath)
@@ -483,8 +574,7 @@
   (def srcpath (source-path mod ".ssi" settings))
   (def libpath (library-path mod ".ssi" settings))
   (def rtpath  (library-path mod "__rt.scm" settings))
-  (def prefix  (pgetq prefix: settings))
-
+  (def prefix  (settings-prefix settings))
   (message "... copy ssi " mod)
   (create-directory* (path-directory libpath))
   (when (file-exists? libpath)
@@ -493,9 +583,8 @@
   (message "... compile loader " mod)
   (with-output-to-file rtpath
     (lambda ()
-      (for-each (lambda (dep) (pretty-print `(load-module ,dep)))
-                deps)
-      (pretty-print `(load-module ,(if prefix (string-append prefix "/" mod) mod)))))
+      (for-each (lambda (dep) (pretty-print `(load-module ,dep))) deps)
+      (pretty-print `(load-module ,(prefix/ prefix mod)))))
   (let* ((proc (open-process [path: (gerbil-gsc)
                                     arguments: [rtpath]
                                     stdout-redirection: #f]))
@@ -511,7 +600,8 @@
   (def gxc-opts
     [invoke-gsc: #t
      output-file: binpath
-     verbose: (pgetq verbose: settings)])
+     verbose: (settings-verbose>=? settings 9)
+     ])
   (gxc-compile mod gsc-opts settings)
   (message "... compile exe " mod " -> " binpath)
   (compile-exe-stub srcpath gxc-opts))
@@ -529,16 +619,15 @@
   (def gxc-opts
     [invoke-gsc: #t
      output-file: binpath
-     verbose: (pgetq verbose: settings)
-     debug: (pgetq static-debug: settings)
-     (if gsc-opts [gsc-options: gsc-opts] []) ...])
+     verbose: (settings-verbose>=? settings 9)
+     debug: (settings-static-debug settings)
+     (when/list gsc-opts [gsc-options: gsc-opts]) ...])
   (gxc-compile mod gsc-opts [static: #t settings ...] #f)
   (message "... compile static exe " mod " -> " binpath)
   (gxc#compile-static-exe srcpath gxc-opts))
 
 (def (copy-static file settings)
   (def spath (static-file-path file settings))
-
   (message "... copy static include " file)
   (when (file-exists? spath)
     (delete-file spath))
@@ -547,37 +636,19 @@
 (def (copy-compiled file settings)
   (def srcpath (source-path file #f settings))
   (def libpath (library-path file #f settings))
-
   (message "... copy std/" file)
   (when (file-exists? libpath)
     (delete-file libpath))
   (copy-file srcpath libpath))
 
 (def (source-path mod ext settings)
-  (let ((path
-         (if (and ext (string-empty? (path-extension mod)))
-           (string-append mod ext)
-           mod))
-        (srcdir (pgetq srcdir: settings)))
-    (path-expand path srcdir)))
+  (path-expand (path-default-extension mod ext) (settings-srcdir settings)))
 
 (def (library-path mod ext settings)
-  (let* ((path
-          (if ext
-            (if (string-empty? (path-extension mod))
-              (string-append mod ext)
-              (string-append (path-strip-extension mod) ext))
-            mod))
-         (libdir (pgetq libdir: settings))
-         (builddir
-          (cond
-           ((pgetq prefix: settings)
-            => (cut path-expand <> libdir))
-           (else libdir))))
-    (path-expand path builddir)))
+  (path-expand (path-default-extension mod ext) (settings-libdir-prefix settings)))
 
 (def (binary-path mod opts settings)
-  (let* ((bindir (pgetq bindir: settings))
+  (let* ((bindir (settings-bindir settings))
          (_ (unless bindir (error "bindir must be specified")))
          (bin
           (cond
@@ -592,22 +663,15 @@
     (path-expand bin bindir)))
 
 (def (static-path mod settings)
-  (let* ((libdir (pgetq libdir: settings))
+  (let* ((libdir (settings-libdir settings))
          (staticdir (path-expand "static" libdir))
-         (mod
-          (cond
-           ((pgetq prefix: settings) => (cut string-append <> "/" mod))
-           (else mod)))
+         (mod (prefix/ (settings-prefix settings) mod))
          (base (string-join (string-split mod #\/) "__"))
-         (base
-          (if (string-empty? (path-extension base))
-            base
-            (path-strip-extension base)))
-         (scm (string-append base ".scm")))
+         (scm (path-force-extension base ".scm")))
     (path-expand scm staticdir)))
 
 (def (static-file-path file settings)
-  (let* ((libdir (pgetq libdir: settings))
+  (let* ((libdir (settings-libdir settings))
          (staticdir (path-expand "static" libdir))
          (filename (path-strip-directory file)))
     (path-expand filename staticdir)))
@@ -645,4 +709,3 @@
    (pkg-config-cflags lib)
    (catch (e)
      ((env-cppflags) flags))))
-

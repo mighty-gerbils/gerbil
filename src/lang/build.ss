@@ -41,7 +41,10 @@
     "scheme/r7rs"
     ;; gerbil variants
     (gxc: "gerbil/polydactyl" "-e" "(include \"~~lib/_gambit#.scm\")")
-    ))
+    )
+  libdir: (path-expand "lib" (getenv "GERBIL_HOME"))
+  build-deps: "build-deps__lang"
+  optimize: #t static: #t debug: 'src)
 
 ;; necessary because gxi-build-script doesn't autoinvoke main
 (main)

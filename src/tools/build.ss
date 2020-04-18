@@ -17,17 +17,13 @@
 
 (def (main . args)
   (match args
-    (["deps"]
-     (let (build-deps (make-depgraph/spec build-spec))
-       (call-with-output-file "build-deps" (cut write build-deps <>))))
-    ([]
-     (let (depgraph (call-with-input-file "build-deps" read))
-       (make srcdir: srcdir
-             libdir: libdir
-             bindir: bindir
-             optimize: #t
-             debug: #f
-             static: #t
-             depgraph: depgraph
-             prefix: "gerbil/tools"
-             build-spec)))))
+    (["deps"] (void))
+    ([] (make srcdir: srcdir
+              libdir: libdir
+              bindir: bindir
+              optimize: #t
+              debug: #f
+              static: #t
+              prefix: "gerbil/tools"
+              build-deps: "build-deps__tools"
+              build-spec))))
