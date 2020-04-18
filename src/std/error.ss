@@ -26,7 +26,8 @@
           (for-each
             (lambda (obj) (display* obj " "))
             irritants)
-          (newline))))))
+          (newline)))))
+  rebind: #t)
 
 (defstruct (io-error <error>) ())
 (defstruct (timeout-error <error>) ())

@@ -1,1 +1,0 @@
-(("proto.ss" tutorial/kvstore/proto gerbil/core std/actor) ("kvstored.ss" tutorial/kvstore/kvstored gerbil/core gerbil/gambit std/actor std/db/lmdb std/getopt std/logger std/sugar std/text/json std/text/zlib tutorial/kvstore/proto) ("kvstorec.ss" tutorial/kvstore/kvstorec gerbil/core gerbil/gambit std/actor std/getopt std/sugar std/text/json tutorial/kvstore/proto))

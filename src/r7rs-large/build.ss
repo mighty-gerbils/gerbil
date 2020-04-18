@@ -44,4 +44,7 @@
     "scheme/vector/c64"
     "scheme/vector/c128"
     "scheme/show"
-    ))
+    )
+  libdir: (path-expand "lib" (getenv "GERBIL_HOME"))
+  build-deps: "build-deps__r7rs-large"
+  optimize: #t static: #t debug: 'src)

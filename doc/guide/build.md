@@ -74,23 +74,15 @@ $ cat build.ss
 ;; the main function of the script
 (def (main . args)
   (match args
-    ;; this action computes the dependency graph for the project
-    (["deps"]
-     (cons-load-path srcdir)
-     (let (build-deps (make-depgraph/spec build-spec))
-       (call-with-output-file "build-deps" (cut write build-deps <>))))
-
     ;; this is the default action, builds the project using the depgraph produced by deps
     ([]
-     (let (depgraph (call-with-input-file "build-deps" read))
-       (make srcdir: srcdir          ; source anchor
-             bindir: srcdir          ; where to place executables; default is GERBIL_PATH/bin
-             optimize: #t            ; enable optimizations
-             debug: 'src             ; enable debugger introspection
-             static: #f              ; don't generate static compilation artifacts
-             depgraph: depgraph      ; use the dependency graph
-             prefix: "example"       ; this matches your package prefix
-             build-spec)))))         ; the actual build specification
+     (make srcdir: srcdir          ; source anchor
+           bindir: srcdir          ; where to place executables; default is GERBIL_PATH/bin
+           optimize: #t            ; enable optimizations
+           debug: 'src             ; enable debugger introspection
+           static: #f              ; don't generate static compilation artifacts
+           prefix: "example"       ; this matches your package prefix
+           build-spec))))          ; the actual build specification
 ```
 
 To build our project:
@@ -138,37 +130,27 @@ The following build script breaks the build action into two steps, one for build
 ;; the main function of the script
 (def (main . args)
   (match args
-    ;; this action computes the dependency graph for the project
-    (["deps"]
-     (cons-load-path srcdir)
-     (let (build-deps (make-depgraph/spec deps-build-spec))
-       (call-with-output-file "build-deps" (cut write build-deps <>))))
-
     (["lib"]
      ;; this action builds the library modules -- with static compilation artifacts
-     (let (depgraph (call-with-input-file "build-deps" read))
-       (make srcdir: srcdir
-             bindir: srcdir
-             optimize: #t
-             debug: 'src             ; enable debugger introspection for library modules
-             static: #t              ; generate static compilation artifacts; required!
-             depgraph: depgraph
-             prefix: "example"
-             lib-build-spec)))
+     (make srcdir: srcdir
+           bindir: srcdir
+           optimize: #t
+           debug: 'src             ; enable debugger introspection for library modules
+           static: #t              ; generate static compilation artifacts; required!
+           prefix: "example"
+           lib-build-spec))
 
     (["bin"]
      ;; this action builds the static executables -- no debug introspection
-     (let (depgraph (call-with-input-file "build-deps" read))
-       (make srcdir: srcdir
-             bindir: srcdir
-             optimize: #t
-             debug: #f               ; no debug bloat for executables
-             static: #t              ; generate static compilation artifacts; required!
-             depgraph: depgraph
-             prefix: "example"
-             bin-build-spec)))
+     (make srcdir: srcdir
+           bindir: srcdir
+           optimize: #t
+           debug: #f               ; no debug bloat for executables
+           static: #t              ; generate static compilation artifacts; required!
+           prefix: "example"
+           bin-build-spec))
 
-    ;; this is the default action, builds the project using the depgraph produced by deps
+    ;; this is the default action, builds libraries and executables
     ([]
      (main "lib")
      (main "bin"))))

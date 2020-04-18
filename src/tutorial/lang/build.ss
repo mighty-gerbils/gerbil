@@ -16,16 +16,10 @@
 
 (def (main . args)
   (match args
-    (["deps"]
-     (let (build-deps (make-depgraph/spec build-spec))
-       (call-with-output-file "build-deps" (cut write build-deps <>))))
-    ([]
-     (let (depgraph (call-with-input-file "build-deps" read))
-       (make srcdir: srcdir
-             bindir: srcdir
-             optimize: #t
-             debug: 'env
-             static: #t
-             depgraph: depgraph
-             prefix: "tutorial/lang"
-             build-spec)))))
+    ([] (make srcdir: srcdir
+              bindir: srcdir
+              optimize: #t
+              debug: 'env
+              static: #t
+              prefix: "tutorial/lang"
+              build-spec))))

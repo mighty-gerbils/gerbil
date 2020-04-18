@@ -27,6 +27,7 @@
   psetq psetv pset
   psetq! psetv! pset! pgetq-set! pgetv-set! pget-set!
   premq premv prem
+  separate-keyword-arguments
   )
 
 (import (only-in "../srfi/1" drop drop-right drop-right! take take-right take! reverse!)
@@ -369,3 +370,13 @@
 (define-prem premq eq?)
 (define-prem premv eqv?)
 (define-prem prem equal?)
+
+;; TODO: make sure this faithfully matches keyword-dispatch in gerbil/runtime/gx-gambc0.scm
+(def (separate-keyword-arguments args (positionals-only? #f))
+  (let lp ((rest args) (positionals []) (keywords []))
+    (match rest
+      ([#!rest . r] (values (foldl cons (if positionals-only? r rest) positionals) (reverse keywords)))
+      ([#!key k . r] (lp r (if positionals-only? (cons k positionals) (cons* k '#!key rest)) keywords))
+      ([(? keyword? k) v . r] (lp r positionals (cons* v k keywords)))
+      ([a . r] (lp r (cons a positionals) keywords))
+      ([] (values (reverse positionals) (reverse keywords))))))
