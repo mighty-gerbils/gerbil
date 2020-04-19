@@ -151,12 +151,11 @@ the following keyword arguments, that may configure how your project is built.
     If any value but `#f`, some extra messages may be printed.
     If it is a number, even more messages may be printed (try up to 8 or 9).
 
-  - `build-deps:` specifies the path to a file under *libdir*/*prefix*
+  - `build-deps:` specifies the path to a file, by default under *srcdir*,
     that will store a cache of which files were built at what time from what dependencies,
     which can somewhat accelerate the build.
-    If your prefix is shared between many projects (and in particular if you don't use a prefix),
-    then you should provide a reasonably unique name here,
-    or dependency caching performance may suffer.
+    If you have multiple projects in the same directory, they need to specify
+    distinct `build-deps:` arguments to avoid clashes, or projects will overwrite each other's cache.
 
   - `depgraph:` is an obsolete argument, only present for backward compatibility.
     You should delete it as well as any call to `make-depgraph` or `make-depgraph/spec`.

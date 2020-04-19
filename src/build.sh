@@ -1,5 +1,6 @@
 #!/bin/sh
 set -eu
+cd $(dirname "$0") # Change to this directory
 
 #===============================================================================
 # Assuming this script is run with: `cd $GERBIL_BASE/src && ./build.sh`
@@ -106,6 +107,8 @@ stage1 () {
   ## preparing target directory
   feedback_mid "preparing ${GERBIL_BASE}"
   target_setup "${GERBIL_BASE}"
+  touch "${GERBIL_BASE}/bin/.keep"
+  touch "${GERBIL_BASE}/lib/.keep"
 
   ## gerbil runtime
   feedback_mid "compiling runtime"
@@ -134,6 +137,8 @@ stage1 () {
   if [ -n "${final}" ]; then
     feedback_low "Cleaning up bootstrap"
     rm -rf "${GERBIL_STAGE0}"
+    mkdir "${GERBIL_STAGE0}"
+    touch "${GERBIL_STAGE0}/.keep"
   fi
 }
 
@@ -152,7 +157,7 @@ build_tools () {
   PATH="${GERBIL_BASE}/bin:${PATH}"
   GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
   export PATH GERBIL_HOME
-  (cd tools && ./build.ss deps && ./build.ss)
+  (cd tools && ./build.ss)
 }
 
 build_stdlib () {
@@ -160,7 +165,7 @@ build_stdlib () {
   PATH="${GERBIL_BASE}/bin:${PATH}"
   GERBIL_HOME="${GERBIL_BASE}" #required by gxi-build-script and build.ss
   export PATH GERBIL_HOME
-  (cd std && ./build-deps-gen.ss  && ./build.ss)
+  (cd std && ./build.ss)
 }
 
 build_lang () {

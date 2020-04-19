@@ -1,0 +1,28 @@
+(gerbil-build-deps-v2:
+ (gerbil/tools/gxprof (exe: "gxprof") (gerbil/core gerbil/expander std/sugar))
+ (gerbil/tools/gxtags
+  (exe: "gxtags")
+  (gerbil/compiler/base
+   gerbil/core
+   gerbil/expander
+   gerbil/gambit
+   std/getopt
+   std/misc/ports
+   std/sort
+   std/srfi/1
+   std/sugar
+   std/text/utf8))
+ (gerbil/tools/gxpkg
+  (exe: "gxpkg")
+  (gerbil/core
+   gerbil/gambit/exceptions
+   gerbil/gambit/os
+   std/getopt
+   std/iter
+   std/misc/process
+   std/net/request
+   std/pregexp
+   std/sort
+   std/srfi/13
+   std/sugar)))
+

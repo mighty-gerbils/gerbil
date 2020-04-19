@@ -1,6 +1,6 @@
 # The Standard Library Build Tool
 
-Building complex libraries and executables by invoking gxc quickly gets tedious. When you reach that point of complexity and you need a build tool, you can use the `:std/make` library module which provides a modest build tool that can handle reasonably complex project building.
+Building complex libraries and executables by invoking `gxc` quickly gets tedious. When you reach that point of complexity and you need a build tool, you can use the [`:std/make` library module](../reference/make.md) which provides a modest build tool that can handle reasonably complex project building.
 
 ## The project source code
 
@@ -31,7 +31,7 @@ You can do this by importing `:std/build-script` and using the `defbuild-script`
 The macro defines a main function suitable for building packages either directly or through gpxkg.
 The syntax is
 ```
-(defbuild-script build-spec)
+(defbuild-script build-spec . settings)
 ```
 
 Using this, the build script for our project is the following:
@@ -42,7 +42,8 @@ $ cat build.ss
 (import :std/build-script)
 (defbuild-script
   '("util"
-    (exe: "hello")))
+    (exe: "hello"))
+  optimize: #t debug: 'src)
 ```
 
 And we can build by invoking the script:
@@ -74,7 +75,7 @@ $ cat build.ss
 ;; the main function of the script
 (def (main . args)
   (match args
-    ;; this is the default action, builds the project using the depgraph produced by deps
+    ;; this is the default (and, here, only) action, which builds the project
     ([]
      (make srcdir: srcdir          ; source anchor
            bindir: srcdir          ; where to place executables; default is GERBIL_PATH/bin
@@ -89,7 +90,6 @@ To build our project:
 
 ```
 $ chmod +x build.ss
-$ ./build.ss deps
 $ ./build.ss
 ```
 
@@ -120,9 +120,6 @@ The following build script breaks the build action into two steps, one for build
 (def bin-build-spec
   '((static-exe: "hello")))
 
-(def deps-build-spec
-  (append lib-build-spec bin-build-spec))
-
 ;; the source directory anchor
 (def srcdir
   (path-normalize (path-directory (this-source-file))))
@@ -138,6 +135,7 @@ The following build script breaks the build action into two steps, one for build
            debug: 'src             ; enable debugger introspection for library modules
            static: #t              ; generate static compilation artifacts; required!
            prefix: "example"
+           ;; build-deps: "build-deps" ; this value is the default
            lib-build-spec))
 
     (["bin"]
@@ -148,6 +146,7 @@ The following build script breaks the build action into two steps, one for build
            debug: #f               ; no debug bloat for executables
            static: #t              ; generate static compilation artifacts; required!
            prefix: "example"
+           build-deps: "build-deps-bin" ; importantly, pick a file that differs from above
            bin-build-spec))
 
     ;; this is the default action, builds libraries and executables
@@ -155,3 +154,10 @@ The following build script breaks the build action into two steps, one for build
      (main "lib")
      (main "bin"))))
 ```
+
+Note that the `build-deps:` file is a cache that stores your project dependencies.
+In large project, an up-to-date cache can save many seconds in build times.
+When multiple projects share a same directory, they must be made to use separate
+`build-deps:` file, or the caches will clash and be ineffective.
+All but one of the projects must explicitly specify the `build-deps:` argument
+to point to its own distinct file.

@@ -24,9 +24,8 @@
   split
   group
   every-consecutive?
-  psetq psetv pset
-  psetq! psetv! pset! pgetq-set! pgetv-set! pget-set!
-  premq premv prem
+  psetq psetv pset psetq! psetv! pset! pgetq-set! pgetv-set! pget-set!
+  premq premv prem premq! premv! prem!
   separate-keyword-arguments
   )
 
@@ -323,9 +322,9 @@
       (let loop ((x (car l)) (r (cdr l)))
         (match r ([] #t) ([y . rr] (and (f x y) (loop y rr)))))))
 
-;; The plist functions below are patterned after pgetq and friends from gerbil/runtime/gx-gambc0.scm
+;; The plist definitions below are patterned after pgetq and friends from gerbil/runtime/gx-gambc0.scm
 (defrule (define-pset pset cmp)
-  (def (pset key lst val)
+  (def (pset lst key val)
      (let lp ((rest lst) (rhd []))
        (match rest
          ([k v . rest]
@@ -339,44 +338,66 @@
 (define-pset psetv eqv?)
 (define-pset pset equal?)
 
+;; Note how the current implementation ensures that the cons cell whose car
+;; holds the value for a given key will never change, though there is
+;; currently no pgetq-cell function to get to it.
+;; Also, we privilege recently added keys by pushing them to the front of the
+;; plist rather than to its end.
 (defrule (define-pset! pset! cmp)
-  (def (pset! key lst val)
-    (when (null? lst) (error "Cannot destructively modify an empty plist" pset! key lst val))
-    (let lp ((rest lst))
-      (match rest
-        ([k v . more]
-         (if (cmp k key) (set-car! (cdr rest) val) (lp more)))
-        (else
-         (match lst
-           ([k v . rest]
-            (set-car! lst key)
-            (set-cdr! lst (cons* val k v rest)))))))))
+  (def (pset! lst key val)
+    (unless (pair? lst) (error "Cannot destructively modify an empty plist" pset! lst key val))
+    (let lp ((l lst))
+      (match l
+        ([k v . r] (if (cmp k key) (set-car! (cdr l) val) (lp r)))
+        ([] (match lst ([k1 . v1r] (set-car! lst key) (set-cdr! lst (cons* val k1 v1r)))))
+        (_ (error "Invalid plist" pset! lst key val))))))
 
-(define-pset! psetq! eq?) (def pgetq-set! psetq!)
-(define-pset! psetv! eqv?) (def pgetv-set! psetv!)
-(define-pset! pset! equal?) (def pget-set! pset!)
+(define-pset! psetq! eq?)
+(def pgetq-set! (case-lambda ((k l v) (psetq! l k v)) ((k l d v) (psetq! l k v))))
+(define-pset! psetv! eqv?)
+(def pgetv-set! (case-lambda ((k l v) (psetv! l k v)) ((k l d v) (psetv! l k v))))
+(define-pset! pset! equal?)
+(def pget-set! (case-lambda ((k l v) (pset! l k v)) ((k l d v) (pset! l k v))))
 
 (defrule (define-prem prem cmp)
   (def (prem key lst)
-     (let lp ((rest lst) (rhd []))
-       (match rest
-         ([k v . rest]
-          (if (cmp k key)
-            (foldl cons rest rhd)
-            (lp rest (cons* v k rhd))))
-         (else
-          lst)))))
+    (let lp ((tl lst) (rhd []))
+      (match tl
+        ([k v . r] (if (cmp k key) (foldl cons r rhd) (lp r (cons* v k rhd))))
+        ([] lst)
+        (_ (error "Invalid plist" 'prem key lst))))))
 
 (define-prem premq eq?)
 (define-prem premv eqv?)
 (define-prem prem equal?)
+
+(defrule (define-prem! prem! cmp)
+  (def (prem! key lst)
+    (def (invalid) (error "Invalid plist" prem! key lst))
+    (let lp ((p lst) (prev #f))
+      (match p
+        ([k1 _ . r]
+         (if (cmp key k1)
+           (if prev
+             (set-cdr! prev r)
+             (match r
+               ([k2 . v2r] (set-car! p k2) (set-cdr! p v2r))
+               ([] (error "Cannot remove last key from plist" prem! key lst))
+               (_ (invalid))))
+           (lp r (cdr p))))
+        ([] (void)) ; key not found: NOP
+        (_ (invalid))))))
+
+(define-prem! premq! eq?)
+(define-prem! premv! eqv?)
+(define-prem! prem! equal?)
 
 ;; TODO: make sure this faithfully matches keyword-dispatch in gerbil/runtime/gx-gambc0.scm
 (def (separate-keyword-arguments args (positionals-only? #f))
   (let lp ((rest args) (positionals []) (keywords []))
     (match rest
       ([#!rest . r] (values (foldl cons (if positionals-only? r rest) positionals) (reverse keywords)))
-      ([#!key k . r] (lp r (if positionals-only? (cons k positionals) (cons* k '#!key rest)) keywords))
+      ([#!key k . r] (lp r (if positionals-only? (cons k positionals) (cons* k '#!key positionals)) keywords))
       ([(? keyword? k) v . r] (lp r positionals (cons* v k keywords)))
       ([a . r] (lp r (cons a positionals) keywords))
       ([] (values (reverse positionals) (reverse keywords))))))
