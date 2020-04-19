@@ -6,8 +6,8 @@
         :gerbil/gambit/misc)
 (export defbuild-script)
 
-(def (read-package-prefix)
-  (let (plist (call-with-input-file "gerbil.pkg" read))
+(def (read-package-prefix srcdir)
+  (let (plist (call-with-input-file (path-expand "gerbil.pkg" srcdir) read))
     (cond
      ((eof-object? plist) #f)
      ((pgetq package: plist) => symbol->string)
@@ -15,8 +15,7 @@
 
 (def (build-main args build-spec keys that-file)
   (def srcdir (path-normalize (path-directory that-file)))
-  (current-directory srcdir)
-  (def prefix (read-package-prefix))
+  (def prefix (read-package-prefix srcdir))
   (def (build) (apply make build-spec srcdir: srcdir prefix: prefix keys))
   (match args
     (["meta"] (write '("spec" "compile")) (newline))

@@ -25,5 +25,4 @@
               debug: #f
               static: #t
               prefix: "gerbil/tools"
-              build-deps: "build-deps__tools"
               build-spec))))

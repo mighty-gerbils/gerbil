@@ -26,7 +26,6 @@
         "sugar")
 
 (extern namespace: #f with-cons-load-path load-path display-exception)
-(export #t);;; DEBUG
 
 (export make
         make-depgraph make-depgraph/spec ;; empty shims for backward compatibility only
@@ -59,8 +58,9 @@
     (string-append prefix "/" path)
     path))
 
-(def (message . lst) (apply displayln lst) (force-output))
-(def (writeln x) (write x) (newline) (force-output))
+(def (force-outputs) (force-output (current-error-port)) (force-output))
+(def (message . lst) (apply displayln lst) (force-outputs))
+(def (writeln x) (write x) (newline) (force-outputs))
 
 ;;; Functions partially reimplemented from std/srfi/1, std/srfi/43
 ;;(def (append-map f l) (match l ([] '()) ([hd . tl] (append (f hd) (append-map f tl))))) ; srfi/1
@@ -95,7 +95,7 @@
     (def libdir (or libdir_ (path-expand "lib" gerbil-path)))
     (def bindir (or bindir_ (path-expand "bin" gerbil-path)))
     (def libdir-prefix (if prefix (path-expand prefix libdir) libdir))
-    (def build-deps (path-expand (or build-deps_ "build-deps") libdir-prefix))
+    (def build-deps (path-expand (or build-deps_ "build-deps") srcdir))
     (struct-instance-init!
       self
       srcdir libdir bindir prefix force? optimize debug static static-debug verbose build-deps
@@ -194,16 +194,29 @@
   (make-symbol ":" (module-strip-nesting module)))
 (def (library-file library)
   (with-catch
-   (lambda (e) (writeln [context: 'library-file
-                    library: library symbol: (library-symbol library)
-                    load-path: (values->list (load-path))
-                    error: (with-output-to-string (lambda () (display-exception e)))])
-      (raise e))
+   (lambda (e) (raise [context: 'library-file
+                  library: library symbol: (library-symbol library)
+                  load-path: (values->list (load-path))
+                  error-message: (with-output-to-string (lambda () (display-exception e)))
+                  error: e]))
    (lambda () (core-resolve-library-module-path (library-symbol library)))))
 (def (library-timestamp library)
   (def x (modification-time/cache (library-file library)))
   (unless x (error 'missing-library library))
   x)
+
+;;; The build-deps-file contains a list in dependency order of (id spec deps) entries,
+;;; where id is a symbol, inputs are non-empty lists of strings denoting files in srcdir,
+;;; and deps is a list of symbols denoting module dependencies outside srcdir.
+(def build-deps-tag gerbil-build-deps-v2:)
+(def (read-build-deps file)
+  (match (with-catch void (cut call-with-input-file file read))
+    ([(? (cut equal? <> build-deps-tag)) . s] s)
+    (_ [])))
+(def (write-build-deps file build-deps)
+  (create-directory* (path-directory file))
+  (call-with-output-file file
+    (lambda (port) (pretty-print [build-deps-tag . build-deps] port) (newline port))))
 
 (def (make . args)
   ;; 0. Compute settings, setup a surrounding cache, change directory
@@ -211,23 +224,22 @@
   (def buildspec (match positionals ([x] x) (_ (error "invalid arguments" make positionals))))
   (def settings (apply make-settings keywords))
   (parameterize ((current-directory (settings-srcdir settings)))
-    (with-fresh-cache
-     (%make buildspec settings))))
+    (with-fresh-cache (%make buildspec settings))))
 
 (def (%make buildspec settings)
-  ;; 1. Extract settings
+
+  ;;; 0. (Continued) Extract settings
   (def force? (settings-force settings))
   (def build-deps-file (settings-build-deps settings))
   (def verbose (settings-verbose settings))
   (def (verbose>=? n) (settings-verbose>=? settings n))
-  (when (verbose>=? 3) (writeln [Step: 1 [settings: settings]]))
+  (when (verbose>=? 3) (writeln [Step: 0 settings: settings]))
 
-  ;; 2. Instantiate the data model that represents the build
+  ;;; 1. Instantiate the data model that represents the build
   (def spec@ (list->vector (normalize-buildspec buildspec))) ; specs, indexed by target for random access
   (def nspec (vector-length spec@)) ; total number of targets
   (def (specvec) (make-vector nspec #f)) ; vector indexed by target number
-  (def file@ (vector-map (cut spec-file <> settings) spec@)) ; file by target number
-  (def file-index% (invert-hash<-vector file@)) ; target number by file
+  (def spec-index% (invert-hash<-vector spec@)) ; target number by spec
   (def id@ (specvec)) ; dependency id by target number
   (def id-index% (hash)) ; target number by dependency id
   (def deps@ (specvec)) ; list of dependencies (as symbols) by target number
@@ -236,72 +248,58 @@
   (def blocked-by@ (specvec)) ;; #f or hash of numbers of specs blocked by the numbered target
   (def blocking@ (specvec)) ;; #f or hash of numbers of specs blocking the numbered target
   (def ready (make-pqueue identity <)) ;; targets that are ready to build, prioritized by order in user
+  (when (verbose>=? 3) (writeln [Step: 1 spec@: spec@]))
 
-  ;; Get timestamp for each dependency by id symbol.
-  ;; We assume the timestamps are updated in dependency order,
-  ;; so a target's timestamp will be up-to-date by the time it's queried.
-  (def (dependency-timestamp dep)
+  ;;; 2. Reinstate those cached dependencies from previous build that are still up-to-date:
+
+  (def (dependency-timestamp dep) ;; Get timestamp for each dependency by id symbol.
+    ;; We must be careful to only call that for modules outside the current project
     (ignore-errors (hash-ensure-ref timestamp% dep (cut library-timestamp dep))))
 
-  (when (verbose>=? 7) (writeln [Step: 2 [spec@: spec@] [file@: file@]]))
+  (alet ((build-deps-timestamp (modification-time/cache build-deps-file))
+         (previous@ (read-build-deps build-deps-file)))
+    (def previous-out-of-date% (hash))
+    (def (previous-file-up-to-date? file)
+      (xreal<= (modification-time/cache file) build-deps-timestamp))
+    (def (previous-dependency-up-to-date? dep)
+      (or (hash-get spec-index% dep) ;; NB: we depend on the previous build-deps being topologically sorted
+          (and (not (hash-get previous-out-of-date% dep))
+               (xreal<= (dependency-timestamp dep) build-deps-timestamp))))
+    (def (previous-entry-up-to-date? spec deps)
+      (and (andmap previous-file-up-to-date? (spec-inputs spec settings))
+           (andmap previous-dependency-up-to-date? deps)))
+    (def (consider-previous id spec deps)
+      (when (verbose>=? 7) (writeln [previous: id spec: spec deps: deps]))
+      (def target (hash-get spec-index% spec))
+      (if (and target (previous-entry-up-to-date? spec deps))
+        (begin (vector-set! id@ target id)
+               (hash-put! id-index% id target)
+               (vector-set! deps@ target deps))
+        (hash-put! previous-out-of-date% id #t)))
+    (for-each (cut apply consider-previous <>) previous@))
+  (when (verbose>=? 3)
+    (writeln [Step: 2 previous-up-to-date: (hash->list/sort id-index% symbol<?)]))
 
-  ;; 3. Reinstate those cached dependencies from previous build that are still up-to-date:
-  ;; the build-deps-file contains a list in dependency order of (id spec inputs outputs deps) entries,
-  ;; where id is a symbol, inputs and outputs are non-empty lists of (file timestamp) entries,
-  ;; and deps is a list of (symbol timestamp) entries.
-  (def previous@ (with-catch (lambda (_) []) (lambda () (call-with-input-file build-deps-file read))))
-  (def previous-out-of-date% (hash))
-  (def (previous-file-up-to-date? file timestamp)
-    (equal? (modification-time/cache file) timestamp))
-  (def (previous-dependency-up-to-date? dep timestamp)
-    (equal? timestamp (dependency-timestamp dep)))
-  (def (previous-entry-up-to-date? inputs outputs deps)
-    (and (andmap (cut apply previous-file-up-to-date? <>) (append inputs outputs))
-         (andmap (cut apply previous-dependency-up-to-date? <>) deps)))
-  ((cut for-each <> previous@)
-   (match <>
-     ([id spec inputs outputs deps]
-      (when (verbose>=? 7)
-        (writeln [|Inspecting previous library|: id spec: spec
-                  inputs: inputs outputs: outputs deps: deps]))
-      (let* ((file (caar inputs))
-             (target (hash-get file-index% file)))
-        (if (and target
-                 (equal? spec (vector-ref spec@ target))
-                 (andmap (lambda (dep) (not (hash-get previous-out-of-date% (car dep)))) deps)
-                 (previous-entry-up-to-date? inputs outputs deps))
-          (begin (vector-set! id@ target id)
-                 (hash-put! id-index% id target)
-                 (vector-set! deps@ target (map car deps))
-                 (hash-put! timestamp% id (xreal-max/map car outputs))
-                 ;; Import the compiled module to avoid having to import the interpreted version later.
-                 (when (verbose>=? 5)
-                   (writeln [|Re-using previous library|: id spec: spec
-                             inputs: inputs outputs: outputs deps: deps]))
-                 (import-module (library-file id)))
-          (hash-put! previous-out-of-date% id #t))))))
-  (when (verbose>=? 3) (writeln [Step: 3 [timestamp%: (hash->list/sort timestamp% symbol<?)]]))
-
-  ;; 4. Compute dependencies for entries that are out of date, or at least not cached
+  ;; 3. Compute dependencies for entries that are out of date, or at least not cached
   ;; NB: We assume this will catch any circular dependency and error out.
   ((cut vector-for-each <> spec@)
    (lambda (target spec)
-     (when (verbose>=? 7) (writeln ["Step 4, inspecting" target spec]))
-     (unless (vector-ref id@ target)
+     (when (verbose>=? 7) (writeln [Step: 3.0 target: target spec]))
+     (unless (vector-ref id@ target) ; skip if already done as up-to-date from previous build-deps
        (let-values (((id deps) (file-dependencies (spec-file spec settings) settings)))
-         (when (verbose>=? 6) (writeln [target spec id deps]))
+         (when (verbose>=? 7) (writeln [target spec id deps]))
          (vector-set! id@ target id)
          (hash-put! id-index% id target)
          (vector-set! deps@ target deps)))))
-  (when (verbose>=? 3) (writeln [Step: 4]))
+  (when (verbose>=? 3) (writeln [Step: 3 deps: (apply map list (map vector->list [id@ spec@ deps@]))]))
 
-  ;; 5. Create output directories
+  ;; 4. Create output directories
   (create-directory* (settings-bindir settings))
   (create-directory* (settings-libdir settings))
   (when (settings-static settings) (create-directory* (path-expand "static" (settings-libdir settings))))
-  (when (verbose>=? 8) (writeln [Step: 5]))
+  (when (verbose>=? 3) (writeln [Step: 4]))
 
-  ;; 6. Initialize the blocked and blocking tables and the build queue
+  ;; 5. Initialize the blocked and blocking tables and the build queue
   ((cut vector-for-each <> deps@)
    (lambda (target deps)
      ((cut for-each <> deps)
@@ -313,9 +311,9 @@
              (dependency-timestamp dep))))))) ; NB: this populates the timestamp% table as a side-effect
   ((cut vector-for-each <> spec@)
    (lambda (target _) (unless (vector-ref blocked-by@ target) (pqueue-push! ready target))))
-  (when (verbose>=? 3) (writeln [Step: 6]))
+  (when (verbose>=? 3) (writeln [Step: 5 first-target: (vector-ref spec@ (pqueue-peek ready))]))
 
-  ;; 7. Now, build stuff in order, thanks to a priority queue of jobs that are ready,
+  ;; 6. Now, build stuff in order, thanks to a priority queue of jobs that are ready,
   ;; and update timestamps as we go.
   (def (compute-timestamp target)
     (def spec (vector-ref spec@ target))
@@ -340,7 +338,7 @@
   (def (update-timestamp target)
     (def spec (vector-ref spec@ target))
     (def outputs (spec-outputs spec settings))
-    (for-each (lambda (x) (cache-remove! ['modification-time x])) outputs)
+    (for-each (lambda (x) (cache-remove! ['modification-time x])) outputs) ; clear stale pre-build timestamps
     (def out-timestamp (xreal-max/map modification-time/cache outputs))
     (unless out-timestamp (error "Build failed to generate expected outputs" spec outputs))
     (hash-put! timestamp% (vector-ref id@ target) out-timestamp))
@@ -360,51 +358,40 @@
            (spec (vector-ref spec@ target)))
       (cond
        ((and (not force?) (hash-ensure-ref timestamp% target (cut compute-timestamp target)))
-        (when verbose (writeln [Up-to-date: target spec])))
+        => (lambda (timestamp) (when (verbose>=? 5) (writeln [Up-to-date: target spec timestamp]))))
        (else
         (build spec settings)
         (update-timestamp target)))
       (mark-built target)))
-  (when (verbose>=? 3) (writeln [Step: 7]))
+  (when (verbose>=? 3) (writeln [Step: 6]))
 
-  ;; 8. Check that we didn't hit some circular dependency. Should already be caught in step 4.
+  ;; 7. Check that we didn't hit some circular dependency. Should already be caught in step 3 above.
   ((cut vector-for-each <> blocked-by@)
    (lambda (target blocked-by)
      (when (and blocked-by (not (hash-empty? blocked-by)))
        (writeln [|Build didn't complete due to circular dependency in|: (vector-ref spec@ target)]))))
-  (when (verbose>=? 7) (writeln [Step: 8]))
+  (when (verbose>=? 3) (writeln [Step: 7]))
 
-  ;; 9. Last but not least, update the cache.
-  (def (file+timestamp file) [file (modification-time/cache file)])
-  (def (dep+timestamp dep) [dep (dependency-timestamp dep)])
-  (def build-deps
-    ((cut map <> (reverse build-list))
-     (lambda (target)
-       (def id (vector-ref id@ target))
-       (def spec (vector-ref spec@ target))
-       (def inputs (spec-inputs spec settings))
-       (def outputs (spec-outputs spec settings))
-       (def deps (vector-ref deps@ target))
-       [id spec (map file+timestamp inputs) (map file+timestamp outputs) (map dep+timestamp deps)])))
-  (create-directory* (path-directory build-deps-file))
-  (call-with-output-file build-deps-file (cut write build-deps <>))
-  (when verbose (message "All done.")))
+  ;; 8. Update the build-deps cache, topologically sorted.
+  (write-build-deps ; NB: we could move this right after step 3, but then we'd need to
+   build-deps-file  ; separate the topological sort algorithm from the build itself
+   (map (lambda (target) (map (cut vector-ref <> target) [id@ spec@ deps@])) (reverse build-list)))
+  (when (verbose>=? 3) (writeln [Step: 8 "All done."])))
 
 ;; file-dependencies : file -> dependencies
 (def (file-dependencies file settings)
-  (def mod (with-cons-load-path (cut import-module file) (settings-srcdir settings)))
-  (def ht (make-hash-table-eq))
-  (def pre (core-context-prelude mod))
-  (def q (make-queue))
-  (def mod-id (expander-context-id mod))
-  (def (consider x)
-    (alet (id (expander-context-id x)) ; maybe it's root!
-      (let (id0 (module-strip-nesting id))
-        (unless (eq? id0 mod-id)
-          (hash-put! ht id0 #t)))))
-
-  ;; TODO: somehow start iteration from all nested modules of the file, not just the main one!
-  (for-each (cut enqueue! q <>) (cons pre (module-context-import mod)))
+  (def ht (make-hash-table-eq)) ; dependencies found so far, so we only find them once
+  (def q (make-queue)) ; queue of objects to unwrap to find the dependencies
+  (def mod ; load the source file with srcdir in the load-path for dependencies, extract the module
+    (with-cons-load-path (cut import-module file) (settings-srcdir settings)))
+  (def mod-id (expander-context-id mod)) ; id of the module we're interested in
+  (def (consider m)
+    (alet (id (expander-context-id m)) ; maybe it's root (#f), then stop.
+      (let (module-id (module-strip-nesting id))
+        (if (eq? module-id mod-id)
+          (for-each (cut enqueue! q <>) (cons (core-context-prelude m) (module-context-import m)))
+          (hash-put! ht module-id #t)))))
+  (consider mod) ; start from the current module
   (until (queue-empty? q)
     (let ((hd (dequeue! q #f)))
       (cond
@@ -645,7 +632,7 @@
   (path-expand (path-default-extension mod ext) (settings-srcdir settings)))
 
 (def (library-path mod ext settings)
-  (path-expand (path-default-extension mod ext) (settings-libdir-prefix settings)))
+  (path-expand (path-force-extension mod ext) (settings-libdir-prefix settings)))
 
 (def (binary-path mod opts settings)
   (let* ((bindir (settings-bindir settings))
