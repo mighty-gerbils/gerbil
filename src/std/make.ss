@@ -2,30 +2,25 @@
 ;;; (C) vyzo at hackzen.org
 ;;; support for library build scripts
 
-;;; For bootstrap purposes, we minimize dependencies from make.ss to :std modules.
-;;; Indeed, those modules we depend on have to be imported specially by path with
-;;; "relative/file/path" string syntax instead of :std/module/path symbol syntax,
-;;; and must transitively do so themselves, too. These transitive dependencies
-;;; also may not involve FFI as make.ss is evaluated by the interpreter
-;;; while bootstrapping the :std library.
-
 (import :gerbil/compiler
         :gerbil/expander
         :gerbil/gambit/exceptions
         :gerbil/gambit/misc
         :gerbil/gambit/os
         :gerbil/gambit/ports
-        "srfi/1"
-        ;;"srfi/43" ; vector-for-each, vector-map, but we reimplement them
-        "misc/list"
-        "misc/hash"
-        "misc/pqueue"
-        "misc/queue"
-        "misc/xreal"
-        "sort"
-        "sugar")
+        ./srfi/1
+        ;;./srfi/43 ; vector-for-each, vector-map, but we reimplement them because of bug #465
+        ./misc/hash
+        ./misc/list
+        ./misc/number
+        ./misc/path
+        ./misc/pqueue
+        ./misc/queue
+        ./misc/symbol
+        ./sort
+        ./sugar)
 
-(extern namespace: #f with-cons-load-path load-path display-exception)
+(extern namespace: #f with-cons-load-path load-path)
 
 (export make
         make-depgraph make-depgraph/spec ;; empty shims for backward compatibility only
@@ -40,30 +35,15 @@
         cppflags)
 
 ;;; Functions that should be better moved some library...
-(defrule (when/list cond list) (if cond list []))
-(def (listify x) (when/list (pair? x) x))
-(defrule (ignore-errors form ...) (with-catch (lambda (_) #f) (lambda () form ...)))
-(def (symbol<? a b) (string<? (symbol->string a) (symbol->string b)))
+(defrule (when/list cond list) (if cond list [])) ;; move to std/misc/list ?
+(def (listify x) (when/list (pair? x) x)) ;; move to std/misc/list ?
+(def (force-outputs) (force-output (current-error-port)) (force-output)) ;; move to std/misc/ports ?
+(def (message . lst) (apply displayln lst) (force-outputs)) ;; move to std/misc/ports ?
+(def (writeln x) (write x) (newline) (force-outputs)) ;; move to std/misc/ports ?
+(def (prefix/ prefix path) (if prefix (string-append prefix "/" path) path)) ;; move to std/misc/path ?
 
-(def (path-default-extension path ext)
-  (if (and ext (string-empty? (path-extension path)))
-    (string-append path ext)
-    path))
-(def (path-force-extension path ext)
-  (if ext
-    (string-append (path-strip-extension path) ext)
-    path))
-(def (prefix/ prefix path)
-  (if prefix
-    (string-append prefix "/" path)
-    path))
 
-(def (force-outputs) (force-output (current-error-port)) (force-output))
-(def (message . lst) (apply displayln lst) (force-outputs))
-(def (writeln x) (write x) (newline) (force-outputs))
-
-;;; Functions partially reimplemented from std/srfi/1, std/srfi/43
-;;(def (append-map f l) (match l ([] '()) ([hd . tl] (append (f hd) (append-map f tl))))) ; srfi/1
+;;; Functions partially reimplemented from std/srfi/43. See bug #465
 (def (vector-for-each f v)
   (def l (vector-length v))
   (let loop ((i 0)) (when (< i l) (begin (f i (vector-ref v i)) (loop (+ 1 i))))))
@@ -76,7 +56,6 @@
 
 
 ;;; Settings: see details in doc/reference/make.md
-
 (defstruct settings
   (srcdir libdir bindir prefix force optimize debug static static-debug verbose build-deps
    libdir-prefix)
@@ -86,8 +65,8 @@
   (lambda (self
       srcdir: (srcdir_ #f) libdir: (libdir_ #f) bindir: (bindir_ #f)
       prefix: (prefix #f) force: (force? #f)
-      optimize: (optimize #f) debug: (debug #f)
-      static: (static #f) static-debug: (static-debug #f)
+      optimize: (optimize #t) debug: (debug 'env)
+      static: (static #t) static-debug: (static-debug #f)
       verbose: (verbose #f) build-deps: (build-deps_ #f)
       depgraph: (_ #f)) ;; ignored, for backward compatibility only
     (def gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
@@ -185,6 +164,8 @@
     (time->seconds (file-info-last-modification-time info))))
 (def (modification-time/cache file)
   (with-cache ['modification-time file] (modification-time file)))
+(def (file-timestamp file)
+  (or (modification-time/cache file) +inf.0))
 
 (def (module-strip-nesting module)
   (def name (symbol->string module))
@@ -197,12 +178,12 @@
    (lambda (e) (raise [context: 'library-file
                   library: library symbol: (library-symbol library)
                   load-path: (values->list (load-path))
-                  error-message: (with-output-to-string (lambda () (display-exception e)))
+                  error-message: (error-message e)
                   error: e]))
    (lambda () (core-resolve-library-module-path (library-symbol library)))))
 (def (library-timestamp library)
-  (def x (modification-time/cache (library-file library)))
-  (unless x (error 'missing-library library))
+  (def x (file-timestamp (library-file library)))
+  (unless (< x +inf.0) (error 'missing-library library))
   x)
 
 ;;; The build-deps-file contains a list in dependency order of (id spec deps) entries,
@@ -254,22 +235,23 @@
 
   (def (dependency-timestamp dep) ;; Get timestamp for each dependency by id symbol.
     ;; We must be careful to only call that for modules outside the current project
-    (ignore-errors (hash-ensure-ref timestamp% dep (cut library-timestamp dep))))
+    (with-catch (lambda (_) +inf.0)
+                (lambda () (hash-ensure-ref timestamp% dep (cut library-timestamp dep)))))
 
   (alet ((build-deps-timestamp (modification-time/cache build-deps-file))
          (previous@ (read-build-deps build-deps-file)))
     (def previous-out-of-date% (hash))
     (def (previous-file-up-to-date? file)
-      (xreal<= (modification-time/cache file) build-deps-timestamp))
+      (<= (file-timestamp file) build-deps-timestamp))
     (def (previous-dependency-up-to-date? dep)
       (or (hash-get spec-index% dep) ;; NB: we depend on the previous build-deps being topologically sorted
           (and (not (hash-get previous-out-of-date% dep))
-               (xreal<= (dependency-timestamp dep) build-deps-timestamp))))
+               (<= (dependency-timestamp dep) build-deps-timestamp))))
     (def (previous-entry-up-to-date? spec deps)
       (and (andmap previous-file-up-to-date? (spec-inputs spec settings))
            (andmap previous-dependency-up-to-date? deps)))
     (def (consider-previous id spec deps)
-      (when (verbose>=? 7) (writeln [previous: id spec: spec deps: deps]))
+      (when (verbose>=? 7) (writeln [previous: id spec: spec deps: deps target: (hash-get spec-index% spec) up-to-date?: (and (hash-get spec-index% spec) (previous-entry-up-to-date? spec deps))]))
       (def target (hash-get spec-index% spec))
       (if (and target (previous-entry-up-to-date? spec deps))
         (begin (vector-set! id@ target id)
@@ -321,12 +303,12 @@
     (def inputs (spec-inputs spec settings))
     (def outputs (spec-outputs spec settings))
     (def dep-timestamps (map dependency-timestamp deps))
-    (def in-timestamps (map modification-time/cache inputs))
-    (def out-timestamps (map modification-time/cache outputs))
-    (def dep-max (xreal-max/list dep-timestamps))
-    (def in-max (xreal-max dep-max (xreal-max/list in-timestamps)))
-    (def out-min (xreal-min/list out-timestamps))
-    (def out-max (xreal-max/list out-timestamps))
+    (def in-timestamps (map file-timestamp inputs))
+    (def out-timestamps (map file-timestamp outputs))
+    (def dep-max (xmax/list dep-timestamps))
+    (def in-max (xmax dep-max (xmax/list in-timestamps)))
+    (def out-min (xmin/list out-timestamps))
+    (def out-max (xmax/list out-timestamps))
     (when (verbose>=? 6)
       (writeln [compute-timestamp:
                 [target: target] [spec: spec]
@@ -334,12 +316,12 @@
                 [deps: (map list dep-timestamps deps)]
                 [ins: (map list in-timestamps inputs)]
                 [outs: (map list outputs out-timestamps)]]))
-    (and in-max (xreal<= in-max out-min) out-max))
+    (if (<= in-max out-min) out-max +inf.0))
   (def (update-timestamp target)
     (def spec (vector-ref spec@ target))
     (def outputs (spec-outputs spec settings))
     (for-each (lambda (x) (cache-remove! ['modification-time x])) outputs) ; clear stale pre-build timestamps
-    (def out-timestamp (xreal-max/map modification-time/cache outputs))
+    (def out-timestamp (xmax/map file-timestamp outputs))
     (unless out-timestamp (error "Build failed to generate expected outputs" spec outputs))
     (hash-put! timestamp% (vector-ref id@ target) out-timestamp))
   (def (mark-built target)
@@ -357,8 +339,9 @@
     (let* ((target (pqueue-pop! ready #f))
            (spec (vector-ref spec@ target)))
       (cond
-       ((and (not force?) (hash-ensure-ref timestamp% target (cut compute-timestamp target)))
-        => (lambda (timestamp) (when (verbose>=? 5) (writeln [Up-to-date: target spec timestamp]))))
+       ((and (not force?)
+             (< (hash-ensure-ref timestamp% target (cut compute-timestamp target)) +inf.0))
+        (when (verbose>=? 5) (writeln [Up-to-date: target spec (hash-get timestamp% target)])))
        (else
         (build spec settings)
         (update-timestamp target)))
@@ -389,7 +372,9 @@
     (alet (id (expander-context-id m)) ; maybe it's root (#f), then stop.
       (let (module-id (module-strip-nesting id))
         (if (eq? module-id mod-id)
-          (for-each (cut enqueue! q <>) (cons (core-context-prelude m) (module-context-import m)))
+          (for-each (cut enqueue! q <>)
+                    (cons (core-context-prelude m)
+                          (module-context-import m)))
           (hash-put! ht module-id #t)))))
   (consider mod) ; start from the current module
   (until (queue-empty? q)

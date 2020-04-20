@@ -256,8 +256,10 @@
     "misc/text"
     "misc/func"
     "misc/bytes"
-    "misc/xreal"
+    "misc/number"
     "misc/hash"
+    "misc/path"
+    "misc/symbol"
     ;; :std/protobuf
     "protobuf/io"
     "protobuf/macros"
