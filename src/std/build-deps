@@ -706,8 +706,10 @@
  (std/text/utf32
   "text/utf32"
   (gerbil/core gerbil/gambit/fixnum std/error std/misc/bytes))
- (std/misc/xreal "misc/xreal" (gerbil/core std/misc/list std/srfi/1 std/sugar))
+ (std/misc/number "misc/number" (gerbil/core std/srfi/1 std/sugar))
  (std/misc/hash "misc/hash" (gerbil/core gerbil/gambit/hash std/sort))
+ (std/misc/path "misc/path" (gerbil/core))
+ (std/misc/symbol "misc/symbol" (gerbil/core))
  (std/make
   "make"
   (gerbil/compiler
@@ -719,9 +721,11 @@
    gerbil/gambit/ports
    std/misc/hash
    std/misc/list
+   std/misc/number
+   std/misc/path
    std/misc/pqueue
    std/misc/queue
-   std/misc/xreal
+   std/misc/symbol
    std/sort
    std/srfi/1
    std/sugar))

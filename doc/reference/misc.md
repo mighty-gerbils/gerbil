@@ -6502,202 +6502,88 @@ if `limit` is not false.
 ## Extended Real Number Line
 The (affine) extended real number line, where real numbers are enriched
 with positive and negative infinity, compactifying their order.
-Positive infinity is represented by boolean `#f` while
-negative infinity is represented by boolean `#t`.
-Common arithmetic operations are provided, partially defined,
-and raising an error in unsupported cases such as adding opposite infinites or dividing by zero.
+Positive infinity is represented by IEEE number `+inf.0` while
+negative infinity is represented by IEEE number `-inf.0`,
+so that common operations like `<` `<=` `+` `*`, etc., already work.
+However, a few operations are provided in a library so that `max` and `min` functions
+work better with infinities. Notably:
+
+  * `(xmin)` will return `+inf.0` where `(min)` throws an error,
+    and similarly `(xmax)` will return `-inf.0` where `(max)` throws an error.
+  * `(xmax -inf.0 (+ 1 (expt 2 54)))` will return the exact integer `18014398509481985`,
+    where `(max -inf.0 (+ 1 (expt 2 54)))` returns the rounded `1.8014398509481984e16`.
+    More generally, `xmin` and `xmax` preserve the type of the argument they return.
 
 ::: tip To use the bindings from this module:
 ``` scheme
-(import :std/misc/xreal)
+(import :std/misc/number)
 ```
 :::
-### xreal?
+
+### xmin
 ``` scheme
-(xreal? obj) -> boolean
+(xmin <x1> ... <xn>) -> real
 ```
 
-`xreal?` returns a boolean that is true if the object represents either a real or a boolean,
-where booleans `#f` and `#t` respectively represent positive and negative infinity.
-
-### xreal<
-``` scheme
-(xreal< <x1> ... <xn>) -> boolean
-```
-
-`xreal<` returns a boolean that is true if the list of its extended real arguments
-is strictly increasing.
-
-### xreal</list
-``` scheme
-(xreal</list <l>) -> boolean
-```
-
-`xreal<` returns a boolean that is true if its argument, a list of extended real numbers,
-is strictly increasing.
-
-### xreal<=
-``` scheme
-(xreal<= <x1> ... <xn>) -> boolean
-```
-
-`xreal<=` returns a boolean that is true if the list of its extended real arguments
-is non-decreasing.
-
-### xreal<=/list
-``` scheme
-(xreal<=/list <l>) -> boolean
-```
-
-`xreal<=/list` returns a boolean that is true if its argument, a list of extended real numbers,
-is non-decreasing.
-
-### xreal-min
-``` scheme
-(xreal-min <x1> ... <xn>) -> xreal
-```
-
-`xreal-min` returns the lower bound of the set of its extended real arguments.
-In particular, it returns `#f` (representing the positive infinity) if provided zero arguments,
+`xmin` returns the lower bound of the set of its extended real arguments.
+In particular, it returns `+inf.0` (the positive infinity) if provided zero arguments,
 and is the identity function when given a single argument.
 
-### xreal-min/list
+### xmin/list
 ``` scheme
-(xreal-min/list <l>) -> xreal
+(xmin/list <l>) -> real
 ```
 
-`xreal-min/list` returns the lower bound of the list of extended real arguments passed as its arguments.
-In particular, it returns `#f` (representing the positive infinity) if provided an empty list.
+`xmin/list` returns the lower bound of the list of extended real arguments passed as its arguments.
+In particular, it returns `+inf.0` (the positive infinity) if provided an empty list.
 
-### xreal-min!
+### xmin!
 ``` scheme
-(xreal-min! <var> <x> ...) -> void
+(xmin! <var> <x> ...) -> void
 ```
 
-`xreal-min!` side-effects a variable to change it to the `xreal-min`
+`xmin!` side-effects a variable to change it to the `xmin`
 of the previous value and the provided arguments.
 
-### xreal-min/map
+### xmin/map
 ``` scheme
-(xreal-min/map <f> <l> [<base>]) -> xreal
+(xmin/map <f> <l> [<base>]) -> real
 ```
 
 Given a list `<l>` or any thing you can iterate on, and a function `<f>`,
-`xreal-min/map` returns the lower bound of the images by `<f>` of the items in `<l>`,
-and of a `<base>` xreal, by default `#f` (representing the positive infinity).
+`xmin/map` returns the lower bound of the images by `<f>` of the items in `<l>`,
+and of a `<base>` real, by default `+inf.0` (the positive infinity).
 
-### xreal-max
+### xmax
 ``` scheme
-(xreal-max <x1> ... <xn>) -> xreal
+(xmax <x1> ... <xn>) -> real
 ```
 
-`xreal-max` returns the upper bound of the set of its extended real arguments.
-In particular, it returns `#f` (representing the posinegative infinity) if provided zero arguments,
+`xmax` returns the upper bound of the set of its extended real arguments.
+In particular, it returns `-inf.0` (the negative infinity) if provided zero arguments,
 and is the identity function when given a single argument.
 
-### xreal-max/list
+### xmax/list
 ``` scheme
-(xreal-max/list <l>) -> xreal
+(xmax/list <l>) -> real
 ```
 
-`xreal-max/list` returns the lower bound of the list of extended real arguments passed as its arguments.
-In particular, it returns `#t` (representing the negative infinity) if provided an empty list.
+`xmax/list` returns the lower bound of the list of extended real arguments passed as its arguments.
+In particular, it returns `-inf.0` (the negative infinity) if provided an empty list.
 
-### xreal-max!
+### xmax!
 ``` scheme
-(xreal-max! <var> <x> ...) -> void
+(xmax! <var> <x> ...) -> void
 ```
 
-`xreal-max!` side-effects a variable to change it to the `xreal-max`
+`xmax!` side-effects a variable to change it to the `xmax`
 of the previous value and the provided arguments.
 
-### xreal-max/map
+### xmax/map
 ``` scheme
-(xreal-max/map <f> <l> [<base>]) -> xreal
+(xmax/map <f> <l> [<base>]) -> real
 ```
 
 Given a list `<l>` or any thing you can iterate on, and a function `<f>`,
-`xreal-max/map` returns the upper bound of the images by `<f>` of the items in `<l>`,
-and of a `<base>` xreal, by default `#t` (representing the negative infinity).
-
-### xreal+
-``` scheme
-(xreal+ <x1> ... <xn>) -> xreal
-```
-
-Compute the sum of the extended real arguments.
-An error is raised if trying to add positive and negative infinities.
-
-### xreal+/list
-``` scheme
-(xreal+/list <l>) -> xreal
-```
-
-Compute the sum of the elements of a list of extended real arguments.
-An error is raised if trying to add positive and negative infinities.
-
-### xreal+!
-``` scheme
-(xreal+! <v> <x1> ... <xn>) -> xreal
-```
-Update a variable to contain the sum of its previous value and other arguments.
-An error is raised if trying to add positive and negative infinities.
-
-### xreal-
-``` scheme
-(xreal- <x1> <x2> ... <xn>) -> xreal
-```
-
-Given a single argument, compute its opposite.
-Given more than one argument, subtract (the sum of) all the subsequent arguments from the first.
-Given no argument, return 0.
-An error is raised if trying to subtract opposite infinities.
-
-### xreal-!
-``` scheme
-(xreal-! <v> <x1> ... <xn>) -> xreal
-```
-Update a variable to subtract from it the sum of the other arguments,
-or, if no other argument is provided, to be the opposite of what its previous value.
-An error is raised if trying to subtract opposite infinities.
-
-### xreal*
-``` scheme
-(xreal* <x1> ... <xn>) -> xreal
-```
-
-Compute the product of the extended real arguments.
-An error is raised if trying to multiply zero and infinity.
-
-### xreal*/list
-``` scheme
-(xreal*/list <l>) -> xreal
-```
-
-Compute the product of a list of extended real arguments.
-An error is raised if trying to multiply zero and infinity.
-
-### xreal*!
-``` scheme
-(xreal*! <v> <x1> ... <xn>) -> xreal
-```
-Update a variable to contain the product of its previous value and other arguments.
-An error is raised if trying to multiply zero and infinity.
-
-### xreal-
-``` scheme
-(xreal- <x1> <x2> ... <xn>) -> xreal
-```
-
-Given a single argument, compute its inverse.
-Given more than one argument, divide it by (the product of) all the subsequent arguments.
-Given no argument, return 1.
-An error is raised if trying to divide by 0.
-
-### xreal/!
-``` scheme
-(xreal/! <v> <x1> ... <xn>) -> xreal
-```
-Update a variable to divide it by the product of the other arguments,
-or, if no other argument is provided, to be the inverse of its previous value.
-An error is raised if trying to divide by 0.
+`xmax/map` returns the upper bound of the images by `<f>` of the items in `<l>`,
+and of a `<base>` xreal, by default `-inf.0` (the negative infinity).

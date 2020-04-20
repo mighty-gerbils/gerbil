@@ -23,7 +23,7 @@
 
 (import
   :gerbil/gambit/hash
-  "../sort")
+  ../sort)
 
 (def (hash-empty? h)
   (zero? (hash-length h)))

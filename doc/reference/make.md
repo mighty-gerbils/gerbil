@@ -14,7 +14,8 @@ typically starting with `#!/usr/bin/env gxi` that defines a function `main`
 that will build the project when called with an empty list.
 The libraries documented below are meant to be used in such a script,
 to do most of the work in building your project.
-Note that if you're using low-level Gambit functions or FFI, you may want to use
+Note that if your project has syntax dependencies on low-level Gambit code
+in `gambit/lib/_gambit#.scm`, you may want to use
 `#!/usr/bin/env gxi-build-script` at which point you also need to
 explicitly call `(main)` in your script.
 
@@ -113,15 +114,20 @@ the following keyword arguments, that may configure how your project is built.
     will be compiled into a module `legs/foo/bar` that you can import with `(import :legs/foo/bar)`
     and that will be installed under your *libdir* as a bunch of files starting with the prefix
     `legs/foo/bar`. The default, `#f`, means that no prefix will be prepended.
+    However, this argument is also prohibited when using the `defbuild-script` macro,
+    since the macro extracts the prefix from the `gerbil.pkg`
+    to automatically extract this directory from the current `./build.ss` file containing it
+    and pass it to `make` (and you cannot override it).
 
   - `libdir:` specifies the directory under which compiled library files will be installed.
-    If left unspecified, the default `#f` designates that
-    the content of your `GERBIL_PATH` environment variable be used if it is defined,
+    If left unspecified, the default `#f` designates
+    the shell value of `$GERBIL_PATH/lib` if the according environment variable is defined,
     or else your `~/.gerbil/lib/` directory.
 
   - `bindir:` specifies the directory under which compiled executable files will be installed.
-    If left unspecified, the default `#f` designates that
-    your `~/.gerbil/bin/` directory shall be used.
+    If left unspecified, the default `#f` designates
+    the shell value of `$GERBIL_PATH/bin/` if the according environment variable is defined,
+    or else your `~/.gerbil/bin/` directory.
 
   - `force:` specifies a boolean that if true forces the recompilation
     of every target in the current build. If for some reason a subtle change
@@ -134,16 +140,28 @@ the following keyword arguments, that may configure how your project is built.
 
   - `optimize:` specifies a boolean that if true tells Gerbil to optimize the code some more,
     which should result in faster code, at the cost of compilation taking more time.
+    The default is `#t`.
 
-  - `debug:` specifies one of `#f`, `src` or `env`, and controls how much debugging information
-    Gerbil will include in the compiled file.
-    TODO: further document that.
+  - `debug:` specifies one of `#f`, `env` or `src`, and controls how much debugging information
+    Gerbil will include in the compiled file. The default is `env`.
+    With `#f` Gerbil drops all debug information;
+    with `env` it keeps a lot of information about the variables;
+    with `src` it additionally keeps around the expanded source code in the compiled output.
+    Each level makes debugging easier at the cost of larger output, and larger compilation time.
+    In production, you probably want `#f` or maybe `env` if operators can sometimes debug there;
+    for development, you probably want `src` for libraries you don't compile often,
+    and `env` for code you compile over and over.
+    Be sure to properly quote the symbol when passing it as argument to a function, as in
+    `(make build-spec debug: 'src)`.
 
-  - `static:` specifies a boolean.
-    TODO: further document that.
+  - `static:` specifies a boolean that if true tells Gerbil to compile objects for inclusion
+    in a static binary in addition to shared objects that can be dynamically loaded at the REPL.
+    If you know you'll never generate a static binary from your project you can set it to `#f`,
+    but if your project includes a static binary, or is a library that might be used
+    in a static binary, you should leave it at the default `#t`, or explicitly set it to `#t`.
 
-  - `static-debug:` specifies a boolean.
-    TODO: further document that.
+  - `static-debug:` specifies the same thing as `debug:` but for the statically linked objects
+    that will be used to build static executables. The default is `#f`.
 
   - `verbose:` specifies a boolean or a real number.
     The default `#f` should print a minimal amount of information,

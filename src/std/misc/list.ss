@@ -29,8 +29,8 @@
   separate-keyword-arguments
   )
 
-(import (only-in "../srfi/1" drop drop-right drop-right! take take-right take! reverse!)
-        "../sugar")
+(import (only-in ../srfi/1 drop drop-right drop-right! take take-right take! reverse!)
+        ../sugar)
 
 ;; This function checks if the list is a proper association-list.
 ;; ie it has the form [[key1 . val1] [key2 . val2]]

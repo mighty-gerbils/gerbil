@@ -22,7 +22,7 @@
         "misc/barrier-test"
         "misc/completion-test"
         "misc/bytes-test"
-        "misc/xreal-test"
+        "misc/number-test"
         "misc/hash-test"
         "text/csv-test"
         "text/json-test"
@@ -85,7 +85,7 @@
    barrier-test
    completion-test
    bytes-test
-   xreal-test
+   number-test
    hash-test
    actor-xdr-test
    actor-rpc-test

@@ -2,7 +2,7 @@
 ;;; (c) vyzo at hackzen.org
 ;;; SRFI-1: list library
 
-(import "srfi-support" "8")
+(import ./srfi-support ./8)
 (export
   ;; gambit runtime
   cons list
