@@ -64,7 +64,7 @@
 (defmethod {:init! settings}
   (lambda (self
       srcdir: (srcdir_ #f) libdir: (libdir_ #f) bindir: (bindir_ #f)
-      prefix: (prefix #f) force: (force? #f)
+      prefix: (prefix_ #f) force: (force? #f)
       optimize: (optimize #t) debug: (debug 'env)
       static: (static #t) static-debug: (static-debug #f)
       verbose: (verbose #f) build-deps: (build-deps_ #f)
@@ -73,6 +73,7 @@
     (def srcdir (or srcdir_ (error "srcdir must be specified")))
     (def libdir (or libdir_ (path-expand "lib" gerbil-path)))
     (def bindir (or bindir_ (path-expand "bin" gerbil-path)))
+    (def prefix (or prefix_ (read-package-prefix srcdir)))
     (def libdir-prefix (if prefix (path-expand prefix libdir) libdir))
     (def build-deps (path-expand (or build-deps_ "build-deps") srcdir))
     (struct-instance-init!
@@ -84,6 +85,9 @@
   (def verbose (settings-verbose settings))
   (and (real? level) (real? verbose) (>= verbose level)))
 
+(def (read-package-prefix srcdir)
+  (let (plist (with-catch false (lambda () (call-with-input-file (path-expand "gerbil.pkg" srcdir) read))))
+    (alet (pkg (pgetq package: plist)) (and (symbol? pkg) (symbol->string pkg)))))
 
 ;;; build-spec: see details in doc/reference/make.md
 ;; TODO: provide an object-oriented way to extend the spec language,

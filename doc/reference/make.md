@@ -113,11 +113,9 @@ the following keyword arguments, that may configure how your project is built.
     within your *libdir*. Thus, a prefix of `legs` means that a file `"foo/bar.ss"`
     will be compiled into a module `legs/foo/bar` that you can import with `(import :legs/foo/bar)`
     and that will be installed under your *libdir* as a bunch of files starting with the prefix
-    `legs/foo/bar`. The default, `#f`, means that no prefix will be prepended.
-    However, this argument is also prohibited when using the `defbuild-script` macro,
-    since the macro extracts the prefix from the `gerbil.pkg`
-    to automatically extract this directory from the current `./build.ss` file containing it
-    and pass it to `make` (and you cannot override it).
+    `legs/foo/bar`. The default, `#f`, means that a prefix will be extracted from the the `package:`
+    value in the `gerbil.pkg` file in the `srcdir`, if it is defined and a symbol,
+    and otherwise no prefix at all (all module names must then be fully-qualified).
 
   - `libdir:` specifies the directory under which compiled library files will be installed.
     If left unspecified, the default `#f` designates
@@ -172,13 +170,15 @@ the following keyword arguments, that may configure how your project is built.
   - `build-deps:` specifies the path to a file, by default under *srcdir*,
     that will store a cache of which files were built at what time from what dependencies,
     which can somewhat accelerate the build.
-    If you have multiple projects in the same directory, they need to specify
-    distinct `build-deps:` arguments to avoid clashes, or projects will overwrite each other's cache.
+    If you have multiple projects in the same directory,
+    i.e. invocations of `defbuild-script` or `make` with different `build-spec` arguments,
+    then you need to have these invocations specify distinct `build-deps:` arguments
+    to avoid clashes; otherwise projects will overwrite each other's cache.
 
   - `depgraph:` is an obsolete argument, only present for backward compatibility.
     You should delete it as well as any call to `make-depgraph` or `make-depgraph/spec`.
     All matters regarding dependency caching is now managed internally inside `make`
-    based on the `build-deps` argument above.
+    based on the `build-deps` argument above. This will be removed after release 0.16.
 
 
 ## Interface
