@@ -18,8 +18,4 @@
   (match args
     ([] (make srcdir: srcdir
               bindir: srcdir
-              optimize: #t
-              debug: 'env
-              static: #t
-              prefix: "tutorial/lang"
               build-spec))))

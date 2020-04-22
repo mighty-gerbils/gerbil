@@ -179,16 +179,15 @@
   (make-symbol ":" (module-strip-nesting module)))
 (def (library-file library)
   (with-catch
-   (lambda (e) (raise [context: 'library-file
-                  library: library symbol: (library-symbol library)
-                  load-path: (values->list (load-path))
-                  error-message: (error-message e)
-                  error: e]))
+   (lambda (e) (error "missing library"
+            context: 'library-file
+            library: library symbol: (library-symbol library)
+            load-path: (values->list (load-path))
+            error-message: (error-message e)
+            error: e))
    (lambda () (core-resolve-library-module-path (library-symbol library)))))
 (def (library-timestamp library)
-  (def x (file-timestamp (library-file library)))
-  (unless (< x +inf.0) (error 'missing-library library))
-  x)
+  (file-timestamp (library-file library)))
 
 ;;; The build-deps-file contains a list in dependency order of (id spec deps) entries,
 ;;; where id is a symbol, inputs are non-empty lists of strings denoting files in srcdir,

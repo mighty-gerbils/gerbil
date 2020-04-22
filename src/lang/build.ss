@@ -43,7 +43,7 @@
     (gxc: "gerbil/polydactyl" "-e" "(include \"~~lib/_gambit#.scm\")")
     )
   libdir: (path-expand "lib" (getenv "GERBIL_HOME"))
-  optimize: #t static: #t debug: 'src)
+  debug: 'src)
 
 ;; necessary because gxi-build-script doesn't autoinvoke main
 (main)

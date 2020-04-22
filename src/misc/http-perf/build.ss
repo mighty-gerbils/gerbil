@@ -21,15 +21,8 @@
     (["static"]
      (make srcdir: srcdir
            bindir: srcdir
-           optimize: #t
-           static: #t
-           prefix: "misc/http-perf"
            build-spec-static))
     ([]
      (make srcdir: srcdir
            bindir: srcdir
-           optimize: #t
-           debug: 'env
-           static: #t
-           prefix: "misc/http-perf"
            build-spec))))
