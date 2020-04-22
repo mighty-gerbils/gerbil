@@ -23,12 +23,11 @@ Any supported public provider git repo can serve a Gerbil package, provided that
 - has a gerbil.pkg file; plist should nominally contain package: and depend:.
     - package: `<symbol>` should declare your common package prefix, and will apply to all your sources recursively.
     - depend: `<list>` should list all package dependencies.
-- has a build.ss script that implements the meta, spec, deps, and compile actions.
+- has a build.ss script that implements the meta, spec, and compile actions.
     - the meta action should return an sexpr list of all the actions supported by the script.
     - the spec action should return an sexpr list containing the `:std/make` build specs used to build the package; the package manager uses that to clean.
-    - the deps action should build the dependency graph for the package.
     - the compile action should make the package, assuming the dependency graph has been built.
-    - the script should also have a default action that does deps and compile, in order to support installation by git clone and M-x gerbil-build for development.
+    - the script should also have a default action that does compile, in order to support installation by git clone and M-x gerbil-build for development.
 
 You can use `:std/build-script` to get a template script definition from the package build-spec.
 
