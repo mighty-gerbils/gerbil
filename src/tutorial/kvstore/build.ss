@@ -25,15 +25,8 @@
     (["static"]
      (make srcdir: srcdir
            bindir: srcdir
-           optimize: #t
-           static: #t
-           prefix: "tutorial/kvstore"
            build-spec-static))
     ([]
      (make srcdir: srcdir
            bindir: srcdir
-           optimize: #t
-           debug: 'env
-           static: #t
-           prefix: "tutorial/kvstore"
            build-spec))))

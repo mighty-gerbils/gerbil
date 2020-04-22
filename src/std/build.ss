@@ -6,6 +6,5 @@
 (add-load-path srcdir)
 
 ;; The indirection below allows the build-std to do its imports in a module context, transitively
-(import :gerbil/expander)
-(import-module ':std/build-std #t #t)
+(gx#import-module ':std/build-std #t #t)
 ((eval 'std/build-std#build) srcdir libdir)

@@ -46,4 +46,4 @@
     "scheme/show"
     )
   libdir: (path-expand "lib" (getenv "GERBIL_HOME"))
-  optimize: #t static: #t debug: 'src)
+  debug: 'src)
