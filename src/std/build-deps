@@ -133,7 +133,12 @@
  (std/misc/rtd "misc/rtd" (gerbil/core))
  (std/misc/shuffle "misc/shuffle" (gerbil/core gerbil/gambit/random))
  (std/event
-  (gxc: "event" "-e" "(include \"~~lib/_gambit#.scm\")")
+  (gxc:
+   "event"
+   "-:terminal-settings=u,stdio-settings=u"
+   "-verbose"
+   "-e"
+   "(include \"~~lib/_gambit#.scm\")")
   (gerbil/core
    gerbil/gambit/exceptions
    gerbil/gambit/os
@@ -740,6 +745,7 @@
    std/misc/symbol
    std/sort
    std/srfi/1
+   std/srfi/19
    std/sugar))
  (std/build-script "build-script" (gerbil/core gerbil/gambit/misc std/make))
  (std/protobuf/io

@@ -206,13 +206,13 @@ build_doc () {
 ## main
 build_gerbil() {
   feedback_low "Building Gerbil"
-  stage0           || die
-  stage1 final     || die
-  build_stdlib     || die
-  build_lang       || die
-  build_r7rs_large || die
-  build_tools      || die
-  build_tags       || die
+  date -u +"%Y-%m-%dT%H:%M:%SZ stage0" ;         stage0           || die
+  date -u +"%Y-%m-%dT%H:%M:%SZ stage1 final" ;   stage1 final     || die
+  date -u +"%Y-%m-%dT%H:%M:%SZ stdlib" ;         build_stdlib     || die
+  date -u +"%Y-%m-%dT%H:%M:%SZ lang" ;           build_lang       || die
+  date -u +"%Y-%m-%dT%H:%M:%SZ r7rs_large" ;     build_r7rs_large || die
+  date -u +"%Y-%m-%dT%H:%M:%SZ tools" ;          build_tools      || die
+  date -u +"%Y-%m-%dT%H:%M:%SZ tags" ;           build_tags       || die
 }
 
 ## handling command line

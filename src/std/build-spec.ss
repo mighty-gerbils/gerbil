@@ -19,7 +19,7 @@
     (gxc: "generic/builtin" ,@(include-gambit-sharp))
     "generic"
     "ref"
-    (gxc: "event" ,@(include-gambit-sharp))
+    (gxc: "event" "-:terminal-settings=u,stdio-settings=u" "-verbose" ,@(include-gambit-sharp))
     "coroutine"
     "iter"
     "test"

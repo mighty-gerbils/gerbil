@@ -11,7 +11,8 @@
         :gerbil/gambit/os
         :gerbil/gambit/ports
         ./srfi/1
-        ;;./srfi/43 ; vector-for-each, but we reimplement them because of bug #465
+        ./srfi/19 ;; to print timestamps, for debugging purposes.
+        ;;./srfi/43 ; vector-for-each, but we reimplement it because of bug #465
         ./misc/hash
         ./misc/list
         ./misc/number
@@ -557,24 +558,27 @@ TODO:
     '("-e" "(include \"~~lib/_gambit#.scm\")"))))
 
 (def (build spec settings)
+  (def (d)
+    (when (settings-verbose>=? settings 4)
+      (display (date->string (time-utc->date (current-time 'time-utc)) "[~Y-~m-~dT~H:~M:~SZ] "))))
   (match spec
     ((? string? modf)
-     (gxc-compile modf #f settings #t))
+     (d) (gxc-compile modf #f settings #t))
     ([gxc: modf . opts]
-     (gxc-compile modf opts settings #t))
+     (d) (gxc-compile modf opts settings #t))
     ([gsc: modf . opts]
-     (gsc-compile modf opts settings))
+     (d) (gsc-compile modf opts settings))
     ([ssi: modf . submodules]
      (for-each (cut build <> settings) submodules)
-     (compile-ssi modf '() settings))
+     (d) (compile-ssi modf '() settings))
     ([exe: modf . opts]
-     (compile-exe modf opts settings))
+     (d) (compile-exe modf opts settings))
     ([static-exe: modf . opts]
-     (compile-static-exe modf opts settings))
+     (d) (compile-static-exe modf opts settings))
     ([static-include: file]
-     (copy-static file settings))
+     (d) (copy-static file settings))
     ([copy: file]
-     (copy-compiled file settings))
+     (d) (copy-compiled file settings))
     (else
      (error "Bad buildspec" spec))))
 
@@ -602,7 +606,7 @@ TODO:
             debug: (settings-debug settings)
             generate-ssxi: #t
             static: (settings-static settings)
-            verbose: (settings-verbose>=? settings 9)
+            verbose: (or (settings-verbose>=? settings 9) (equal? mod "event"))
             (when/list gsc-opts [gsc-options: gsc-opts]) ...]))
       (compile-file srcpath gxc-opts))
     (let* ((arguments
