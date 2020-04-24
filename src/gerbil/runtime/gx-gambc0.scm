@@ -7,8 +7,7 @@
 (declare
   (block)
   (standard-bindings)
-  (extended-bindings)
-  (not safe))
+  (extended-bindings))
 
 ;;;
 ;;; Host Runtime
@@ -32,7 +31,7 @@
   ;; maybe one day marc will provide a primitive/principled way to figure that out, but
   ;; until that day comes we really need to know in order to have the right cond-expand
   ;; branch when we include _gambit# or gx-gambc# (which includes _gambit#)
-  (not (##vector-ref (thread-thread-group ##primordial-thread) 3)))
+  (not (%%vector-ref (thread-thread-group ##primordial-thread) 3)))
 
 (cond-expand
   (enable-smp
@@ -62,15 +61,15 @@
 
 (define (find-library-module modpath)
   (define (find-compiled-file npath)
-    (let ((basepath (##string-append npath ".o")))
+    (let ((basepath (%%string-append npath ".o")))
       (let lp ((current #f) (n 1))
-        (let ((next (##string-append basepath (##number->string n))))
+        (let ((next (%%string-append basepath (##number->string n))))
           (if (##file-exists? next)
-            (lp next (##fx+ n 1))
+            (lp next (%%fx+ n 1))
             current)))))
 
   (define (find-source-file npath)
-    (let ((spath (##string-append npath ".scm")))
+    (let ((spath (%%string-append npath ".scm")))
       (and (##file-exists? spath) spath)))
 
   (let lp ((rest (&current-module-libpath)))
@@ -89,7 +88,7 @@
      (file-info-last-modification-time
       (file-info file #t))))
 
-  (##fl> (modification-time file1)
+  (%%fl> (modification-time file1)
          (modification-time file2)))
 
 ;; hook for loading compiled module phases
@@ -148,8 +147,8 @@
 ;; 11                       type-descriptor-methods
 ;;
 (define (type-descriptor? klass)
-  (and (##type? klass)
-       (eq? (##vector-length klass) 12)))
+  (and (%%type? klass)
+       (eq? (%%vector-length klass) 12)))
 
 (define (struct-type? klass)
   (and (type-descriptor? klass)
@@ -217,17 +216,17 @@
               ((id . rest)
                (let ((flags
                       (if transparent? 0
-                          (##fxior (if (hash-get printable id) 0 1)
+                          (%%fxior (if (hash-get printable id) 0 1)
                                    (if (hash-get equality id)  0 4)))))
                  (cons* id flags #f (recur rest))))
               (else '()))))
          (opaque?
           (if (or transparent? (assq equal: rtd-plist))
             (if type-super
-              (##fx= (##fxand (##type-flags type-super) 1) 1)
+              (%%fx= (%%fxand (%%type-flags type-super) 1) 1)
               #f)
             #t)))
-    (##structure ##type-type
+    (%%structure ##type-type
                  type-id type-name
                  (+ 24 (if opaque? 1 0))
                  type-super
@@ -242,24 +241,24 @@
   (make-type-descriptor id name super mixin fields plist ctor slots #f))
 
 (define (type-descriptor-mixin klass)
-  (##vector-ref klass 6))
+  (%%vector-ref klass 6))
 (define (type-descriptor-fields klass)
-  (##vector-ref klass 7))
+  (%%vector-ref klass 7))
 (define (type-descriptor-plist klass)
-  (##vector-ref klass 8))
+  (%%vector-ref klass 8))
 (define (type-descriptor-ctor klass)
-  (##vector-ref klass 9))
+  (%%vector-ref klass 9))
 (define (type-descriptor-slots klass)
-  (##vector-ref klass 10))
+  (%%vector-ref klass 10))
 (define (type-descriptor-methods klass)
-  (##vector-ref klass 11))
+  (%%vector-ref klass 11))
 (define (type-descriptor-methods-set! klass ht)
-  (##vector-set! klass 11 ht))
+  (%%vector-set! klass 11 ht))
 
 (define (type-descriptor-sealed? klass)
-  (##fxbit-set? 20 (##type-flags klass)))
+  (%%fxbit-set? 20 (%%type-flags klass)))
 (define (type-descriptor-seal! klass)
-  (##vector-set! klass 3 (##fxior (##fxarithmetic-shift 1 20) (##type-flags klass))))
+  (%%vector-set! klass 3 (%%fxior (%%fxarithmetic-shift 1 20) (%%type-flags klass))))
 
 (define (make-struct-type id super fields name plist ctor #!optional (field-names #f))
   (when (and super (not (struct-type? super)))
@@ -280,7 +279,7 @@
                   (or field-names (make-list fields ':))))
             (append super-fields field-names)))
          (_
-          (unless (##fx= std-fields (length std-field-names))
+          (unless (%%fx= std-fields (length std-field-names))
             (error "Bad field specification; length mismatch" id std-fields std-field-names)))
          (std-plist
           (cons (cons fields: std-field-names) plist))
@@ -289,55 +288,55 @@
     (make-struct-type-descriptor id name super std-fields std-plist ctor)))
 
 (define (make-struct-predicate klass)
-  (let ((tid (##type-id klass)))
+  (let ((tid (%%type-id klass)))
     (if (assgetq final: (type-descriptor-plist klass))
       (lambda (obj)
-        (##structure-direct-instance-of? obj tid))
+        (%%structure-direct-instance-of? obj tid))
       (lambda (obj)
-        (##structure-instance-of? obj tid)))))
+        (%%structure-instance-of? obj tid)))))
 
 (define (make-struct-field-accessor klass field)
-  (let ((off (##fx+ (struct-field-offset klass field) 1)))
+  (let ((off (%%fx+ (struct-field-offset klass field) 1)))
     (lambda (obj)
       (##structure-ref obj off klass #f))))
 
 (define (make-struct-field-mutator klass field)
-  (let ((off (##fx+ (struct-field-offset klass field) 1)))
+  (let ((off (%%fx+ (struct-field-offset klass field) 1)))
     (lambda (obj val)
       (##structure-set! obj val off klass #f))))
 
 (define (make-struct-field-unchecked-accessor klass field)
-  (let ((off (##fx+ (struct-field-offset klass field) 1)))
+  (let ((off (%%fx+ (struct-field-offset klass field) 1)))
     (lambda (obj)
-      (##unchecked-structure-ref obj off klass #f))))
+      (%%unchecked-structure-ref obj off klass #f))))
 
 (define (make-struct-field-unchecked-mutator klass field)
-  (let ((off (##fx+ (struct-field-offset klass field) 1)))
+  (let ((off (%%fx+ (struct-field-offset klass field) 1)))
     (lambda (obj val)
-      (##unchecked-structure-set! obj val off klass #f))))
+      (%%unchecked-structure-set! obj val off klass #f))))
 
 (define (struct-field-offset klass field)
-  (##fx+ field
+  (%%fx+ field
          (cond
-          ((##type-super klass) => type-descriptor-fields)
+          ((%%type-super klass) => type-descriptor-fields)
           (else 0))))
 
 (define (struct-field-ref klass obj off)
-  (##structure-ref obj (##fx+ off 1) klass #f))
+  (##structure-ref obj (%%fx+ off 1) klass #f))
 
 (define (struct-field-set! klass obj off val)
-  (##structure-set! obj val (##fx+ off 1) klass #f))
+  (##structure-set! obj val (%%fx+ off 1) klass #f))
 
 (define (struct-subtype? klass xklass)
-  (let ((klass-t (##type-id klass)))
+  (let ((klass-t (%%type-id klass)))
     (let lp ((next xklass))
       (cond
        ((not next)
         #f)
-       ((eq? klass-t (##type-id next))
+       ((eq? klass-t (%%type-id next))
         #t)
        (else
-        (lp (##type-super next)))))))
+        (lp (%%type-super next)))))))
 
 (define (make-class-type id super slots name plist ctor)
   (define (class-slots klass)
@@ -365,7 +364,7 @@
            (begin
              (hash-put! ht slot off)
              (hash-put! ht (symbol->keyword slot) off)
-             (lp rest (##fx+ off 1) (cons slot r)))))
+             (lp rest (%%fx+ off 1) (cons slot r)))))
         (else
          (K off r)))))
 
@@ -391,14 +390,14 @@
           (let lp ((klass klass))
             (if (struct-type? klass)
               klass
-              (lp (##type-super klass)))))
+              (lp (%%type-super klass)))))
          ((struct-subtype? klass super-struct)
           super-struct)
          (else
           (error "Bad mixin: incompatible struct bases" klass super-struct))))
        ((struct-type? klass) klass)
        ((class-type? klass)
-        (let lp ((next (##type-super klass)))
+        (let lp ((next (%%type-super klass)))
           (cond
            ((not next)
             #f)
@@ -425,7 +424,7 @@
               ((not next)
                (lp rest mixin))
               ((struct-type? next)
-               (lp2 (##type-super next) (cons next mixin)))
+               (lp2 (%%type-super next) (cons next mixin)))
               (else
                (lp rest mixin))))
            (lp rest (cons hd mixin))))
@@ -539,22 +538,22 @@
 (define (class-slot-ref klass obj slot)
   (if (class-instance? klass obj)
     (let ((off (class-slot-offset (object-type obj) slot)))
-      (##unchecked-structure-ref obj (##fx+ off 1) klass #f))
+      (%%unchecked-structure-ref obj (%%fx+ off 1) klass #f))
     (raise-type-error 'class-slot-ref klass obj)))
 
 (define (class-slot-set! klass obj slot val)
   (if (class-instance? klass obj)
     (let ((off (class-slot-offset (object-type obj) slot)))
-      (##unchecked-structure-set! obj val (##fx+ off 1) klass #f))
+      (%%unchecked-structure-set! obj val (%%fx+ off 1) klass #f))
     (raise-type-error 'class-slot-set! klass obj)))
 
 (define (class-subtype? klass xklass)
-  (let ((klass-t (##type-id klass)))
+  (let ((klass-t (%%type-id klass)))
     (cond
-     ((eq? klass-t (##type-id xklass)))
+     ((eq? klass-t (%%type-id xklass)))
      ((type-descriptor-mixin xklass)
       => (lambda (mixin)
-           (and (find (lambda (xklass) (eq? klass-t (##type-id xklass)))
+           (and (find (lambda (xklass) (eq? klass-t (%%type-id xklass)))
                       mixin)
                 #t)))
      (else #f))))
@@ -565,24 +564,24 @@
   ##structure-type)
 
 (define (direct-instance? klass obj)
-  (##structure-direct-instance-of? obj (##type-id klass)))
+  (%%structure-direct-instance-of? obj (%%type-id klass)))
 
 (define (struct-instance? klass obj)
-  (##structure-instance-of? obj (##type-id klass)))
+  (%%structure-instance-of? obj (%%type-id klass)))
 
 (define direct-struct-instance?
   direct-instance?)
 
 (define (class-instance? klass obj)
   (and (object? obj)
-       (let ((klass-id (##type-id klass))
+       (let ((klass-id (%%type-id klass))
              (type (object-type obj)))
          (and (type-descriptor? type)
-              (or (eq? (##type-id type) klass-id)
+              (or (eq? (%%type-id type) klass-id)
                   (cond
                    ((type-descriptor-mixin type)
                     => (lambda (mixin)
-                         (ormap (lambda (type) (eq? (##type-id type) klass-id))
+                         (ormap (lambda (type) (eq? (%%type-id type) klass-id))
                                 mixin)))
                    (else #f)))))))
 
@@ -590,9 +589,9 @@
   direct-instance?)
 
 (define (make-object klass k)
-  (let ((obj (##make-vector (##fx+ k 1) #f)))
-    (##vector-set! obj 0 klass)
-    (##subtype-set! obj (macro-subtype-structure))
+  (let ((obj (%%make-vector (%%fx+ k 1) #f)))
+    (%%vector-set! obj 0 klass)
+    (%%subtype-set! obj (macro-subtype-structure))
     obj))
 
 (define (make-struct-instance klass . args)
@@ -601,7 +600,7 @@
      ((type-descriptor-ctor klass)
       => (lambda (kons-id)
            (&constructor-init! klass kons-id (make-object klass fields) args)))
-     ((##fx= fields (length args))
+     ((%%fx= fields (length args))
       (apply ##structure klass args))
      (else
       (error "Arguments don't match object size"
@@ -617,7 +616,7 @@
       (&class-instance-init! klass obj args)))))
 
 (define (struct-instance-init! obj . args)
-  (if (##fx< (length args) (##vector-length obj))
+  (if (%%fx< (length args) (%%vector-length obj))
     (&struct-instance-init! obj args)
     (error "Too many arguments for struct" obj args)))
 
@@ -625,8 +624,8 @@
   (let lp ((k 1) (rest args))
     (core-match rest
       ((hd . rest)
-       (##vector-set! obj k hd)
-       (lp (##fx+ k 1) rest))
+       (%%vector-set! obj k hd)
+       (lp (%%fx+ k 1) rest))
       (else obj))))
 
 (define (class-instance-init! obj . args)
@@ -639,7 +638,7 @@
        (cond
         ((class-slot-offset klass key)
          => (lambda (off)
-              (##vector-set! obj (##fx+ off 1) val)
+              (%%vector-set! obj (%%fx+ off 1) val)
               (lp rest)))
         (else
          (error "No slot for keyword initializer" klass key))))
@@ -661,7 +660,7 @@
 
 (define (struct->list obj)
   (if (object? obj)
-    (##vector->list obj)
+    (%%vector->list obj)
     (error "Not an object" obj)))
 
 (define (class->list obj)
@@ -684,9 +683,9 @@
     (error "Not an object" obj)))
 
 (define (unchecked-field-ref obj off)
-  (##vector-ref obj (##fx+ off 1)))
+  (%%vector-ref obj (%%fx+ off 1)))
 (define (unchecked-field-set! obj off val)
-  (##vector-set! obj (##fx+ off 1) val))
+  (%%vector-set! obj (%%fx+ off 1) val))
 (define (unchecked-slot-ref obj slot)
   (unchecked-field-ref obj (class-slot-offset (object-type obj) slot)))
 (define (unchecked-slot-set! obj slot val)
@@ -702,10 +701,10 @@
      (,E ,obj ,slot)))
 
 (define (slot-ref obj slot #!optional (E &slot-error))
-  (&slot-e obj slot (lambda (off) (##vector-ref obj (##fx+ off 1))) E))
+  (&slot-e obj slot (lambda (off) (%%vector-ref obj (%%fx+ off 1))) E))
 
 (define (slot-set! obj slot val #!optional (E &slot-error))
-  (&slot-e obj slot (lambda (off) (##vector-set! obj (##fx+ off 1) val)) E))
+  (&slot-e obj slot (lambda (off) (%%vector-set! obj (%%fx+ off 1) val)) E))
 
 (define (&slot-error obj slot)
   (error "Cannot find slot" obj slot))
@@ -746,9 +745,9 @@
   (cond
    ((type-descriptor? klass)
     (&find-method klass id))
-   ((##type? klass)
+   ((%%type? klass)
     (or (builtin-method-ref klass id)
-        (builtin-find-method (##type-super klass) id)))
+        (builtin-find-method (%%type-super klass) id)))
    (else #f)))
 
 (define (&find-method klass id)
@@ -761,16 +760,16 @@
     => (lambda (mixin)
          (mixin-find-method mixin id)))
    (else
-    (struct-find-method (##type-super klass) id))))
+    (struct-find-method (%%type-super klass) id))))
 
 (define (struct-find-method klass id)
   (cond
    ((type-descriptor? klass)
     (or (direct-method-ref klass id)
-        (struct-find-method (##type-super klass) id)))
-   ((##type? klass)
+        (struct-find-method (%%type-super klass) id)))
+   ((%%type? klass)
     (or (builtin-method-ref klass id)
-        (builtin-find-method (##type-super klass) id)))
+        (builtin-find-method (%%type-super klass) id)))
    (else #f)))
 
 (define (class-find-method klass id)
@@ -787,9 +786,9 @@
       (else #f))))
 
 (define (builtin-find-method klass id)
-  (and (##type? klass)
+  (and (%%type? klass)
        (or (builtin-method-ref klass id)
-           (builtin-find-method (##type-super klass) id))))
+           (builtin-find-method (%%type-super klass) id))))
 
 (define (direct-method-ref klass id)
   (cond
@@ -806,7 +805,7 @@
 
 (define (builtin-method-ref klass id)
   (cond
-   ((hash-get &builtin-type-methods (##type-id klass))
+   ((hash-get &builtin-type-methods (%%type-id klass))
     => (lambda (mtab)
          (hash-get mtab id)))
    (else #f)))
@@ -828,13 +827,13 @@
         (let ((ht (make-hash-table-eq)))
           (type-descriptor-methods-set! klass ht)
           (bind! ht)))))
-   ((##type? klass)
+   ((%%type? klass)
     (let ((ht
            (cond
-            ((hash-get &builtin-type-methods (##type-id klass)) => values)
+            ((hash-get &builtin-type-methods (%%type-id klass)) => values)
             (else
              (let ((ht (make-hash-table-eq)))
-               (hash-put! &builtin-type-methods (##type-id klass) ht)
+               (hash-put! &builtin-type-methods (%%type-id klass) ht)
                ht)))))
       (bind! ht)))
    (else
@@ -866,19 +865,19 @@
                 (cond
                  ((type-descriptor? klass)
                   (collect-direct-methods! klass))
-                 ((and (##type? klass) (hash-get &builtin-type-methods (##type-id klass)))
+                 ((and (%%type? klass) (hash-get &builtin-type-methods (%%type-id klass)))
                   => merge!)))
                (else (void))))))
      (else
-      (let recur ((klass (##type-super klass)))
+      (let recur ((klass (%%type-super klass)))
         (cond
          ((type-descriptor? klass)
-          (recur (##type-super klass))
+          (recur (%%type-super klass))
           (collect-direct-methods! klass))
-         ((##type? klass)
-          (recur (##type-super klass))
+         ((%%type? klass)
+          (recur (%%type-super klass))
           (cond
-           ((hash-get &builtin-type-methods (##type-id klass))
+           ((hash-get &builtin-type-methods (%%type-id klass))
             => merge!)))))))
     (collect-direct-methods! klass))
 
@@ -895,7 +894,7 @@
             ((hash-get &method-specializers proc)
              => (lambda (specializer)
                   (let ((proc (specializer klass))
-                        (gid (make-symbol (##type-id klass) "::[" id "]")))
+                        (gid (make-symbol (%%type-id klass) "::[" id "]")))
                     ;; give the proecure a name and make it accesible to the debugger
                     (eval `(define ,gid (quote ,proc)))
                     (hash-put! vtab id proc))))
@@ -907,7 +906,7 @@
 
 (define (next-method subklass obj id)
   (let ((klass (object-type obj))
-        (type-id (##type-id subklass)))
+        (type-id (%%type-id subklass)))
     (cond
      ((type-descriptor? klass)
       (cond
@@ -916,24 +915,24 @@
              (let lp ((rest (cons klass mixin)))
                (core-match rest
                  ((klass . rest)
-                  (if (eq? type-id (##type-id klass))
+                  (if (eq? type-id (%%type-id klass))
                     (mixin-find-method rest id)
                     (lp rest)))
                  (else #f)))))
        (else
         (let lp ((klass klass))
           (cond
-           ((eq? type-id (##type-id klass))
-            (struct-find-method (##type-super klass) id))
-           ((##type-super klass)
+           ((eq? type-id (%%type-id klass))
+            (struct-find-method (%%type-super klass) id))
+           ((%%type-super klass)
             => lp)
            (else #f))))))
-     ((##type? klass)
+     ((%%type? klass)
       (let lp ((klass klass))
         (cond
-         ((eq? type-id (##type-id klass))
-          (builtin-find-method (##type-super klass) id))
-         ((##type-super klass)
+         ((eq? type-id (%%type-id klass))
+          (builtin-find-method (%%type-super klass) id))
+         ((%%type-super klass)
           => lp)
          (else #f))))
      (else #f))))
@@ -985,30 +984,30 @@
   (eq? obj #!optional))
 
 (define (immediate? obj)
-  (let ((t (##type obj)))
-    (##fxzero? (##fxand t #b1))))
+  (let ((t (%%type obj)))
+    (%%fxzero? (%%fxand t #b1))))
 
 (define (nonnegative-fixnum? obj)
   (and (fixnum? obj)
        (not (fxnegative? obj))))
 
 (define (values-count obj)
-  (if (##values? obj)
-    (##vector-length obj)
+  (if (%%values? obj)
+    (%%vector-length obj)
     1))
 
 (define (values-ref obj k)
-  (if (##values? obj)
-    (##vector-ref obj k)
+  (if (%%values? obj)
+    (%%vector-ref obj k)
     obj))
 
 (define (values->list obj)
-  (if (##values? obj)
-    (##vector->list obj)
+  (if (%%values? obj)
+    (%%vector->list obj)
     (list obj)))
 
 (define (subvector->list obj #!optional (start 0))
-  (let ((lst (##vector->list obj)))
+  (let ((lst (%%vector->list obj)))
     (list-tail lst start)))
 
 (define make-hash-table make-table)
@@ -1107,20 +1106,20 @@
          hd rest))
 
 (define (hash-clear! ht #!optional (size 0))
-  (let ((gcht (##vector-ref ht 5)))
+  (let ((gcht (%%vector-ref ht 5)))
     (if (not (fixnum? gcht))
-      (##vector-set! ht 5 size))))
+      (%%vector-set! ht 5 size))))
 
 (define (make-list k #!optional (val #f))
   (let lp ((n 0) (r '()))
-    (if (##fx< n k)
-      (lp (##fx+ n 1) (cons val r))
+    (if (%%fx< n k)
+      (lp (%%fx+ n 1) (cons val r))
       r)))
 
 (define (cons* x y . rest)
   (define (recur x rest)
     (if (pair? rest)
-      (cons x (recur (##car rest) (##cdr rest)))
+      (cons x (recur (%%car rest) (%%cdr rest)))
       x))
   (cons x (recur y rest)))
 
@@ -1315,8 +1314,8 @@
   (unless (number? step)
     (error "Bad argument; expected number" step))
   (let lp ((i 0) (x start) (r '()))
-    (if (##fx< i count)
-      (lp (##fx+ i 1) (+ x step) (cons x r))
+    (if (%%fx< i count)
+      (lp (%%fx+ i 1) (+ x step) (cons x r))
       (reverse r))))
 
 (define (last-pair lst)
@@ -1453,32 +1452,32 @@
     (get-output-u8vector out)))
 
 (define (string-empty? str)
-  (##fxzero? (string-length str)))
+  (%%fxzero? (string-length str)))
 
 (define (string-prefix? prefix str)
   (let ((str-len (string-length str))
         (prefix-len (string-length prefix)))
-    (and (##fx<= prefix-len str-len)
+    (and (%%fx<= prefix-len str-len)
          (let lp ((i 0))
-           (if (##fx< i prefix-len)
-             (and (eq? (##string-ref str i) (##string-ref prefix i))
-                  (lp (##fx+ i 1)))
+           (if (%%fx< i prefix-len)
+             (and (eq? (%%string-ref str i) (%%string-ref prefix i))
+                  (lp (%%fx+ i 1)))
              #t)))))
 
 (define (string-index str char #!optional (start 0))
   (let ((len (string-length str)))
     (let lp ((k start))
-      (and (##fx< k len)
-           (if (eq? char (##string-ref str k)) k
-               (lp (##fx+ k 1)))))))
+      (and (%%fx< k len)
+           (if (eq? char (%%string-ref str k)) k
+               (lp (%%fx+ k 1)))))))
 
 (define (string-rindex str char #!optional (start #f))
   (let* ((len (string-length str))
-         (start (or start (##fx- len 1))))
+         (start (or start (%%fx- len 1))))
     (let lp ((k start))
-      (and (##fx>= k 0)
-           (if (eq? char (##string-ref str k)) k
-               (lp (##fx- k 1)))))))
+      (and (%%fx>= k 0)
+           (if (eq? char (%%string-ref str k)) k
+               (lp (%%fx- k 1)))))))
 
 (define (string-split str char)
   (let ((len (string-length str)))
@@ -1486,9 +1485,9 @@
       (cond
        ((string-index str char start)
         => (lambda (end)
-             (lp (##fx+ end 1) (cons (##substring str start end) r))))
-       ((##fx< start len)
-        (foldl cons (list (##substring str start len)) r))
+             (lp (%%fx+ end 1) (cons (%%substring str start end) r))))
+       ((%%fx< start len)
+        (foldl cons (list (%%substring str start len)) r))
        (else
         (reverse r))))))
 
@@ -1499,9 +1498,9 @@
         ((hd . rest)
          (if (pair? rest)
            (lp rest
-               (##fx+ (string-length hd)
+               (%%fx+ (string-length hd)
                       jlen len))
-           (##fx+ (string-length hd)
+           (%%fx+ (string-length hd)
                   len)))
         (else 0))))                     ; empty
 
@@ -1518,8 +1517,8 @@
            (if (pair? rest)
              (begin
                (substring-move! hd 0 hdlen ostr k)
-               (substring-move! join 0 jlen ostr (##fx+ k hdlen))
-               (lp rest (##fx+ k hdlen jlen)))
+               (substring-move! join 0 jlen ostr (%%fx+ k hdlen))
+               (lp rest (%%fx+ k hdlen jlen)))
              (begin
                (substring-move! hd 0 hdlen ostr k)
                ostr))))
@@ -1530,18 +1529,18 @@
     (define (fold1 vec)
       (let* ((len (vector-length vec))
              (r (make-vector len)))
-        (do ((k 0 (##fx+ k 1)))
-            ((##fx= k len) r)
-          (##vector-set! r k (f (##vector-ref vec k))))))
+        (do ((k 0 (%%fx+ k 1)))
+            ((%%fx= k len) r)
+          (%%vector-set! r k (f (%%vector-ref vec k))))))
 
     (define (fold* vecs)
       (let* ((len (apply min (map vector-length vecs)))
              (r (make-vector len)))
-        (do ((k 0 (##fx+ k 1)))
-            ((##fx= k len) r)
-          (##vector-set! r k
+        (do ((k 0 (%%fx+ k 1)))
+            ((%%fx= k len) r)
+          (%%vector-set! r k
                          (apply f
-                           (map (lambda (vec) (##vector-ref vec k))
+                           (map (lambda (vec) (%%vector-ref vec k))
                                 vecs))))))
 
     (if (null? rest)
@@ -1609,7 +1608,7 @@
 (define exception-type::t (macro-type-exception))
 
 (define (type-descriptor-super-set! type super)
-  (##vector-set! type 4 super))
+  (%%vector-set! type 4 super))
 
 (define exception::t
   (let ((t (make-struct-type 'gerbil#exception::t #f 0 'exception '() #f)))
@@ -1621,29 +1620,29 @@
 
 ;; some minimal integration with gambit exception
 (define (exception? obj)
-  (##structure-instance-of? obj (##type-id exception-type::t)))
+  (%%structure-instance-of? obj (%%type-id exception-type::t)))
 
 (define (error? obj)
-  (##structure-instance-of? obj (##type-id error::t)))
+  (%%structure-instance-of? obj (%%type-id error::t)))
 
 (define (error-object? obj)
   (error-exception? obj))
 
 (define (type-error? obj)
-  (##structure-instance-of? obj (##type-id (macro-type-type-exception))))
+  (%%structure-instance-of? obj (%%type-id (macro-type-type-exception))))
 
 (define (error-message obj)
   (if (error? obj)
-    (##vector-ref obj 1)
+    (%%vector-ref obj 1)
     (with-output-to-string '() (lambda () (display-exception obj)))))
 
 (define (error-irritants obj)
   (and (error? obj)
-       (##vector-ref obj 2)))
+       (%%vector-ref obj 2)))
 
 (define (error-trace obj)
   (and (error? obj)
-       (##vector-ref obj 3)))
+       (%%vector-ref obj 3)))
 
 (define (datum-parsing-exception-filepos e)
   (macro-readenv-filepos (datum-parsing-exception-readenv e)))
@@ -1665,9 +1664,9 @@
       (cond
        ((string-index dir #\/ start)
         => (lambda (x)
-             (when (##fx> x 0)
+             (when (%%fx> x 0)
                (create1 (substring dir 0 x)))
-             (lp (##fx+ x 1))))
+             (lp (%%fx+ x 1))))
        (else
         (create1 dir))))))
 
@@ -1689,8 +1688,8 @@
            (core-match hd-rest
              ((val . rest)
               (when kwt
-                (let ((pos (##fxmodulo (keyword-hash hd) (##vector-length kwt))))
-                  (unless (eq? hd (##vector-ref kwt pos))
+                (let ((pos (%%fxmodulo (keyword-hash hd) (%%vector-length kwt))))
+                  (unless (eq? hd (%%vector-ref kwt pos))
                     (error "Unexpected keyword argument" K hd))))
               (when (hash-key? keys hd)
                 (error "Duplicate keyword argument" K hd))
@@ -1701,24 +1700,24 @@
              ((val . rest)
               (if args
                 (begin
-                  (##set-cdr! tail hd-rest)
+                  (%%set-cdr! tail hd-rest)
                   (lp rest args hd-rest))
                 (lp rest hd-rest hd-rest)))))
           ((eq? hd #!rest)              ; end keyword processing
            (if args
              (begin
-               (##set-cdr! tail hd-rest)
-               (##apply K (cons keys args)))
-             (##apply K (cons keys hd-rest))))
+               (%%set-cdr! tail hd-rest)
+               (%%apply K (cons keys args)))
+             (%%apply K (cons keys hd-rest))))
           (else                         ; plain argument
            (if args
              (begin
-               (##set-cdr! tail rest)
+               (%%set-cdr! tail rest)
                (lp hd-rest args rest))
              (lp hd-rest rest rest)))))
         (else
          (if args
            (begin
-             (##set-cdr! tail '())
-             (##apply K (cons keys args)))
+             (%%set-cdr! tail '())
+             (%%apply K (cons keys args)))
            (K keys)))))))

@@ -1132,7 +1132,8 @@ namespace: gxc
   (ast-case stx ()
     ((_ type off obj)
      ;; see gambit#422
-     (with-inline-unsafe-primitives
+     ;; unfortunately this ends up being unsafe
+     #;(with-inline-unsafe-primitives
          ['##structure-ref (compile-e #'obj)
                            (compile-e #'off)
                            (compile-e #'type)
@@ -1141,13 +1142,19 @@ namespace: gxc
          ['let [bind ...]
            '(declare (not safe))
            ;; (##structure-ref obj off type where)
-           ['##structure-ref args ... '(quote #f)]])))))
+           ['##structure-ref args ... '(quote #f)]]))
+     ['##structure-ref (compile-e #'obj)
+                       (compile-e #'off)
+                       (compile-e #'type)
+                       '(quote #f)]
+     )))
 
 (def (generate-runtime-struct-setq% stx)
   (ast-case stx ()
     ((_ type off obj val)
      ;; see gambit#422
-     (with-inline-unsafe-primitives
+     ;; unfortunately this ends up being unsafe
+     #;(with-inline-unsafe-primitives
          ['##structure-set! (compile-e #'obj)
                             (compile-e #'val)
                             (compile-e #'off)
@@ -1157,13 +1164,20 @@ namespace: gxc
          ['let [bind ...]
            '(declare (not safe))
            ;; (##structure-set! obj val off type where)
-           ['##structure-set! args ... '(quote #f)]])))))
+           ['##structure-set! args ... '(quote #f)]]))
+     ['##structure-set! (compile-e #'obj)
+                        (compile-e #'val)
+                        (compile-e #'off)
+                        (compile-e #'type)
+                        '(quote #f)]
+     )))
 
 (def (generate-runtime-struct-direct-ref% stx)
   (ast-case stx ()
     ((_ type off obj)
      ;; see gambit#422
-     (with-inline-unsafe-primitives
+     ;; unfortunately this ends up being unsafe
+     #;(with-inline-unsafe-primitives
          ['##direct-structure-ref (compile-e #'obj)
                                   (compile-e #'off)
                                   (compile-e #'type)
@@ -1172,13 +1186,19 @@ namespace: gxc
          ['let [bind ...]
            '(declare (not safe))
            ;; (##direct-structure-ref obj off type where)
-           ['##direct-structure-ref args ... '(quote #f)]])))))
+           ['##direct-structure-ref args ... '(quote #f)]]))
+     ['##direct-structure-ref (compile-e #'obj)
+                              (compile-e #'off)
+                              (compile-e #'type)
+                              '(quote #f)]
+     )))
 
 (def (generate-runtime-struct-direct-setq% stx)
   (ast-case stx ()
     ((_ type off obj val)
      ;; see gambit#422
-     (with-inline-unsafe-primitives
+     ;; unfortunately this ends up being unsafe
+     #;(with-inline-unsafe-primitives
          ['##direct-structure-set! (compile-e #'obj)
                                    (compile-e #'val)
                                    (compile-e #'off)
@@ -1188,7 +1208,13 @@ namespace: gxc
          ['let [bind ...]
            '(declare (not safe))
            ;; (##direct-structure-set! obj val off type where)
-           ['##direct-structure-set! args ... '(quote #f)]])))))
+           ['##direct-structure-set! args ... '(quote #f)]]))
+     ['##direct-structure-set! (compile-e #'obj)
+                               (compile-e #'val)
+                               (compile-e #'off)
+                               (compile-e #'type)
+                               '(quote #f)]
+     )))
 
 (def (generate-runtime-struct-unchecked-ref% stx)
   (ast-case stx ()
