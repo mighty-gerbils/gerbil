@@ -588,7 +588,9 @@
     (else opts)))
 
 (def (compile-static-exe mod opts settings)
+  (when (settings-verbose settings) (writeln ['compile-static-exe mod opts settings]))
   (def srcpath (source-path mod ".ss" settings))
+  (when (settings-verbose settings) (writeln ['compile-static-exe-2 srcpath]))
   (def binpath (binary-path mod opts settings))
   (def gsc-opts (compile-exe-gsc-opts opts))
   (def gxc-opts
@@ -597,7 +599,9 @@
      verbose: (settings-verbose>=? settings 9)
      debug: (settings-static-debug settings)
      (when/list gsc-opts [gsc-options: gsc-opts]) ...])
-  (gxc-compile mod gsc-opts [static: #t settings ...] #f)
+  (def settings2 (##structure-copy settings))
+  (set! (settings-static settings2) #t)
+  (gxc-compile mod gsc-opts settings2 #f)
   (message "... compile static exe " mod " -> " binpath)
   (gxc#compile-static-exe srcpath gxc-opts))
 
