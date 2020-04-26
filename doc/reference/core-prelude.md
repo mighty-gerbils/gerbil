@@ -1054,6 +1054,7 @@ Defines the following symbols as externs:
     struct-instance? class-instance?
     direct-struct-instance? direct-class-instance?
     make-object
+    struct-copy
     struct->list class->list
     make-struct-instance make-direct-struct-instance
     make-class-instance make-direct-class-instance

@@ -359,8 +359,8 @@
   (when (verbose>=? 3) (writeln [Step: 7]))
 
   ;; 8. Update the build-deps cache, topologically sorted.
-  (write-build-deps ; NB: we could move this right after step 3, but then we'd need to
-   build-deps-file  ; separate the topological sort algorithm from the build itself
+  (write-build-deps ; TODO: move this right after step 3. This requires separating the topological
+   build-deps-file  ; sort algorithm from the build itself (and while at it, parallelize it)
    (map (lambda (target) (map (cut vector-ref <> target) [id@ spec@ deps@])) (reverse build-list)))
   (when (verbose>=? 3) (writeln [Step: 8 "All done."])))
 
@@ -587,10 +587,13 @@
      (compile-exe-gsc-opts rest))
     (else opts)))
 
+(def (make-settings-static settings)
+  (def s (struct-copy settings))
+  (set! (settings-static s) #t)
+  s)
+
 (def (compile-static-exe mod opts settings)
-  (when (settings-verbose settings) (writeln ['compile-static-exe mod opts settings]))
   (def srcpath (source-path mod ".ss" settings))
-  (when (settings-verbose settings) (writeln ['compile-static-exe-2 srcpath]))
   (def binpath (binary-path mod opts settings))
   (def gsc-opts (compile-exe-gsc-opts opts))
   (def gxc-opts
@@ -599,9 +602,7 @@
      verbose: (settings-verbose>=? settings 9)
      debug: (settings-static-debug settings)
      (when/list gsc-opts [gsc-options: gsc-opts]) ...])
-  (def settings2 (##structure-copy settings))
-  (set! (settings-static settings2) #t)
-  (gxc-compile mod gsc-opts settings2 #f)
+  (gxc-compile mod gsc-opts (make-settings-static settings) #f)
   (message "... compile static exe " mod " -> " binpath)
   (gxc#compile-static-exe srcpath gxc-opts))
 
