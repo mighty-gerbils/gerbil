@@ -128,7 +128,7 @@
       (and (fx= len lenb)
            (let lp ((i 0))
              (if (fx< i len)
-               (and (eq (ref a i) (ref a b))
+               (and (eq (ref a i) (ref b i))
                     (lp (fx1+ i)))
                #t)))))
   (def (orderf a b)
