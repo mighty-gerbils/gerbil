@@ -23,8 +23,15 @@
 ;;  * The exception handling presumes user code to be written in a very specific style using exception
 ;;    handlers, that I think there are purer alternatives of. If development and use of this SRFI is
 ;;    to be pursued, those would be things to address.
-;;
-
+;;  * [Gerbil] Track any bug-fix compared to the upstream implementation from
+;;    https://github.com/scheme-requests-for-implementation/srfi-19/blob/master/srfi-19.scm
+;;    and keep track of which latest version this was compared to.
+;;  * [Gerbil] Export the non-srfi-19 but useful functions in another gerbil module.
+;;    std/srfi/19 would only export the standard functions, but std/srfi/19-all or such would
+;;    also export these supplementary internals.
+;;  * [Gerbil] Have better printers for time structures than through transparent: #t
+;;  * [Gerbil] Institute a better way to keep the leap second database up-to-date,
+;;    first in the Gerbil source, second in a long-running process.
 
 ;; This document and translations of it may be copied and furnished to others,
 ;; and derivative works that comment on or otherwise explain it or assist in its
@@ -173,7 +180,8 @@
 ;; A table of leap seconds
 ;; See ftp://maia.usno.navy.mil/ser7/tai-utc.dat
 ;; and update as necessary.
-;; this procedures reads the file in the abover
+;; [fare: that site is currently off-line. See IANA's tz database instead. Or the upstream SRFI-19 git.]
+;; This procedure reads the file in the above
 ;; format and creates the leap second table
 ;; it also calls the almost standard, but not R5 procedures read-line
 ;; & open-input-string
@@ -201,7 +209,7 @@
 ;; Each entry is ( utc seconds since epoch . # seconds to add for tai )
 ;; Note they go higher to lower, and end in 1972 (previous one is in 1968 before the Unix epoch).
 (define tm:leap-second-table
-  '((1483228800 . 37)
+  '((1483228800 . 37)  ;; 2017-01-01 (still the latest one as of early 2020)
     (1435708800 . 36)
     (1341100800 . 35)
     (1230768000 . 34)
@@ -227,8 +235,9 @@
     (157766400 . 14)
     (126230400 . 13)
     (94694400 . 12)
-    (78796800 . 11)
-    (63072000 . 10)))
+    (78796800 . 11)    ;; 1972-07-01, first leap second just before that date
+    (63072000 . 10)))  ;; 1972-01-01, start of TAI being 1-second offset at UTC+10s.
+;; NB: TAI is defined with affine increments from 1960-01-01 to 1971-12-31, and not defined before then.
 
 
 (define (read-leap-second-table filename)
@@ -258,9 +267,9 @@
 
 ;;; the time structure; creates the accessors, too.
 ;;; wf: changed to match srfi documentation. uses mzscheme structures & inspectors
-;;; vyzo: change to use gerbil defstruct
-;;; fare: added checking in make-time
-(defstruct time (type nanosecond second))
+;;; vyzo: changed to use gerbil defstruct
+;;; fare: added checking in make-time, made the struct's transparent
+(defstruct time (type nanosecond second) transparent: #t)
 
 ;; Safer variant of make-time
 (define (make-time% type nanosecond second)
@@ -529,7 +538,7 @@
 ;; -- these depend on time-monotonic having the same definition as time-tai!
 (define (time-monotonic->time-utc time-in)
   (if (not (eq? (time-type time-in) time-monotonic))
-      (tm:time-error 'time-monotoinc->time-utc 'incompatible-time-types time-in))
+      (tm:time-error 'time-monotonic->time-utc 'incompatible-time-types time-in))
   (let ((ntime (copy-time time-in)))
     (time-type-set! ntime time-tai)
     (tm:time-tai->time-utc! ntime ntime 'time-monotonic->time-utc)))
@@ -587,9 +596,9 @@
 
 ;; -- date structures
 
-;; vyzo: defstruct for gerbil, with equality defined
+;; vyzo: defstruct for gerbil, with equality defined. fare: actually, transparent.
 (defstruct date (nanosecond second minute hour day month year zone-offset)
-  equal: #t)
+  transparent: #t)
 
 (defalias tm:set-date-nanosecond! date-nanosecond-set!)
 (defalias tm:set-date-second! date-second-set!)
