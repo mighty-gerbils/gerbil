@@ -944,6 +944,19 @@
    (else
     (error "Cannot find next method" obj id))))
 
+;; custom writers
+(define (write-style we)
+  (macro-writeenv-style we))
+
+(define (write-object we obj)
+  (cond
+   ((method-ref obj ':wr)
+    => (lambda (method) (method obj we)))
+   (else
+    (##default-wr we obj))))
+
+(##wr-set! write-object)
+
 ;;; etc
 ;; use gambit type for this
 (define (raise-type-error where type obj)
