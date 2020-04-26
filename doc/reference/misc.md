@@ -2456,6 +2456,42 @@ unary procedure `stop`. If limit is set, split the list only limit times.
 ```
 :::
 
+### take-until
+### take-until!
+``` scheme
+(take-until pred lst) -> list
+
+  pred := predicate
+  lst  := proper or circular list
+```
+
+`take-until` returns a list with all elements before `pred` returns `#t`.
+`take-until!` is the linear-update variant of `take-until`.
+
+::: tip Examples:
+``` scheme
+> (take-until number? ['a "hi" 1 'c])
+(a "hi")
+```
+:::
+
+### drop-until
+``` scheme
+(drop-until pred lst) -> list
+
+  pred := predicate
+  lst  := proper or circular list
+```
+
+`drop-until` returns a list with all elements from the point on `pred` returns `#t`.
+
+::: tip Examples:
+``` scheme
+> (drop-until number? ['a [] "hi" 1 'c])
+(1 c)
+```
+:::
+
 ### group
 ``` scheme
 (group lst [test = equal?]) -> list
