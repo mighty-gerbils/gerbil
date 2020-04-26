@@ -9,6 +9,8 @@
   (_gx#load-gxi)
   ;; hook ##begin -- gambit wraps it around -e and scripts
   (gx#eval-syntax '(define-alias ##begin begin))
+  ;; hook gambit's ##wr to use gerbil objects' :wr method
+  (##wr-set! _gx#wr)
   ;; hook gxi-script line to run as script
   (set! ##language-specs
     (append ##language-specs

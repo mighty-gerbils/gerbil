@@ -118,6 +118,18 @@
    ##repl))
 
 
+;; Replace Gambit's ##wr with our own to allow for custom printers.
+;; See Gambit's lib/_io.scm.
+(define (_gx#wr we obj)
+  (let ((wr (find-method (object-type obj) ':wr)))
+    (if wr
+      (case (macro-writeenv-style we)
+        ((mark) #f)
+        (else
+         (wr obj we)))
+      (##default-wr we obj))))
+
+
 ;;; MOP
 ;;
 ;; Gerbil rtd:
