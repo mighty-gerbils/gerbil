@@ -588,7 +588,7 @@
     (else opts)))
 
 (def (make-settings-static settings)
-  (def s (##structure-copy settings))
+  (def s (struct-copy settings))
   (set! (settings-static s) #t)
   s)
 

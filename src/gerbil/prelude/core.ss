@@ -184,6 +184,7 @@ package: gerbil
     struct-instance? class-instance?
     direct-instance? direct-struct-instance? direct-class-instance?
     make-object
+    struct-copy
     struct->list class->list
     make-struct-instance
     make-class-instance

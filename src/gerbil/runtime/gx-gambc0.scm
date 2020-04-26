@@ -658,6 +658,11 @@
    (else
     (error "Missing constructor" klass kons-id))))
 
+(define (struct-copy struct)
+  (unless (##structure? struct)
+    (error "Not a structure" 'struct-copy struct))
+  (##structure-copy struct))
+
 (define (struct->list obj)
   (if (object? obj)
     (%%vector->list obj)
