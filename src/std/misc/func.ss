@@ -9,7 +9,7 @@
   @compose1 @compose @compose/values
   rcompose1 rcompose rcompose/values
   @rcompose1 @rcompose @rcompose/values
-  pred-limit)
+  pred-limit pred-after-sequence)
 
 ;; Repeat value or call function N times and return the result as list.
 ;; (repeat 2 5)                  -> (2 2 2 2 2)  ; repeat the value 2
@@ -202,3 +202,31 @@
   (if limit
     (if (> limit 0) test (lambda (_) #f))
     pred))
+
+;; pred-after-sequence returns a predicate which returns #t after a
+;; matching sequence. True is returned limit times, if limit is not #f.
+;;
+;; Example:
+;;  (filter (pred-after-sequence [1 2]) [1 2 'a 1 2 'b]) => (a b)
+(def (pred-after-sequence list (limit #f))
+  (declare (not safe) (fixnum))
+  ;; TODO when contracts merge
+  ;; (@contract (pred-sequence list limit) (or (not limit) (fixnum? limit)))
+  (unless (fixnum? limit) (set! limit -1))
+  (def is-after #f)
+  (def seq list)
+  (def (check v)
+    (when (and (or (equal? (car seq) v)
+                   (begin (set! seq list) #f)) ; reset
+               (set! seq (cdr seq))
+               (null? seq))
+      (set! is-after #t) ; return #t on next call
+      (set! seq list)    ; reset
+      (when (> limit 0) (set! limit (1- limit)))))
+  (if (pair? list)
+    (lambda (v)
+      (match* (is-after limit)
+        ((#t _) (set! is-after #f) #t)   ; success
+        ((_ 0)                     #f)   ; limit reached
+        (else   (check v)          #f))) ; always false
+    (lambda (_) #f)))

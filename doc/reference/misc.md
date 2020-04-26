@@ -6499,6 +6499,29 @@ if `limit` is not false.
 ```
 :::
 
+### pred-after-sequence
+``` scheme
+(pred-after-sequence lst [limit = #f]) -> procedure
+
+  lst   := proper or circular list
+  limit := optional, return #t only limit times
+```
+
+`pred-after-sequence` returns a predicate which returns `#t` after a
+matching sequence. `#t` is returned `limit` times, if `limit` is not `#f`.
+
+::: tip Examples:
+``` scheme
+> (find (pred-after-sequence [1 2]) [0 1 2 'a 'b])
+a
+
+> (let (fn (pred-after-sequence [1]))
+    (fn 0)  ; #f
+    (fn 1)  ; #f
+    (fn 2)) ; #t
+```
+:::
+
 ## Extended Real Number Line
 The (affine) extended real number line, where real numbers are enriched
 with positive and negative infinity, compactifying their order.

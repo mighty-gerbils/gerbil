@@ -53,4 +53,14 @@
     (test-case "test pred-limit"
       (check (filter (pred-limit even? 2) (iota 6 1))  => [2 4])
       (check (filter (pred-limit even? 0) (iota 6 1))  => [])
-      (check (filter (pred-limit even? #f) (iota 6 1)) => [2 4 6]))))
+      (check (filter (pred-limit even? #f) (iota 6 1)) => [2 4 6]))
+    (test-case "test pred-after-sequence"
+      (let (fn (pred-after-sequence [1 2]))
+        (check (fn 1)  => #f)
+        (check (fn 2)  => #f)
+        (check (fn 'a) => #t))
+      (let (fn (pred-after-sequence []))
+        (check (fn 1)  => #f)
+        (check (fn 2)  => #f))
+      (check (filter (pred-after-sequence [1 2]) [1 2 'a 1 2 'b]) => '(a b))
+      (check (filter (pred-after-sequence [2] 1) [1 2 'a 1 2 'b]) => '(a)))))
