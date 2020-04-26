@@ -198,6 +198,8 @@ package: gerbil
     find-method
     next-method call-next-method
     struct-subtype? class-subtype?
+    ;; write-env style
+    write-style
     ;; control
     current-error-port
     make-promise promise?
