@@ -22,6 +22,7 @@
   slice! slice-right!
   butlast
   split
+  take-until take-until! drop-until
   group
   every-consecutive?
   psetq psetv pset psetq! psetv! pset! pgetq-set! pgetv-set! pget-set!
@@ -29,7 +30,9 @@
   separate-keyword-arguments
   )
 
-(import (only-in ../srfi/1 drop drop-right drop-right! take take-right take! reverse!)
+(import (only-in ../srfi/1
+                 drop drop-right drop-right! take take-right take! reverse!
+                 take-while take-while! drop-while)
         ../sugar)
 
 ;; This function checks if the list is a proper association-list.
@@ -292,6 +295,19 @@
                        (loop xs (cons v buf) n)))
       ((#t rest)     (if (zero? limit) lst
                        (if (pair? rest) [rest] []))))))
+
+;; take-until returns a list with all elements before pred returns #t.
+;;
+;; Example:
+;;  (take-until number? ['a [] "hi" 1 'c]) => (a () "hi")
+(def (take-until  pred list) (take-while  (? (not pred)) list))
+(def (take-until! pred list) (take-while! (? (not pred)) list))
+
+;; drop-until returns a list with all elements from the point on pred returns #t.
+;;
+;; Example:
+;;  (drop-until number? ['a [] "hi" 1 'c]) => (1 c)
+(def (drop-until pred list) (drop-while (? (not pred)) list))
 
 ;; group consecutive elements of the list lst into a list-of-lists.
 ;;
