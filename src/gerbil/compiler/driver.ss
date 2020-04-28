@@ -11,7 +11,7 @@ namespace: gxc
         (only-in :gerbil/gambit/misc
                  pretty-print)
         (only-in :gerbil/gambit/ports
-                 open-process process-status)
+                 close-port open-process process-status)
         (only-in :gerbil/gambit/os
                  current-time time->seconds file-info file-info-size))
 (export compile-file compile-exe-stub compile-static-exe)
@@ -96,6 +96,7 @@ namespace: gxc
         (let* ((proc (open-process [path: (gerbil-gsc) arguments: gsc-args
                                           stdout-redirection: #f]))
                (status (process-status proc)))
+          (close-port proc)
           (unless (zero? status)
             (raise-compile-error "Compilation error; gsc exit with nonzero status"
                                  output-scm output-bin status))))))
@@ -207,6 +208,7 @@ namespace: gxc
         (let* ((proc (open-process [path: (gerbil-gsc) arguments: gsc-args
                                       stdout-redirection: #f]))
                (status (process-status proc)))
+          (close-port proc)
           (unless (zero? status)
             (raise-compile-error "Compilation error; gsc exit with nonzero status"
                                  output-scm output-bin status))))))
@@ -572,6 +574,7 @@ namespace: gxc
          (proc (open-process [path: (gerbil-gsc) arguments: gsc-args
                                     stdout-redirection: #f]))
          (status (process-status proc)))
+    (close-port proc)
     (unless (zero? status)
       (raise-compile-error "Compilation error; gsc exit with nonzero status"
                            path status))))
