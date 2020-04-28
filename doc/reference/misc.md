@@ -3548,6 +3548,24 @@ Returns the next value in *pq* without popping it from the priority queue like
 ```
 :::
 
+### pqueue-contents
+``` scheme
+(pqueue-contents pq) -> list
+
+  pq := priority queue of which to extract the contents
+```
+
+Returns the contents of the priority queue as a list, without modifying the priority queue.
+
+::: tip Examples:
+``` scheme
+> (def pq (make-pqueue identity))
+> (for-each (cut pqueue-push! pq <>) [8 2 3 4 1 9 7])
+> (pqueue-contents pq)
+(1 2 3 8 4 9 7)
+```
+:::
+
 ### pqueue
 ```
 (defsyntax pqueue)

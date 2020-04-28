@@ -17,7 +17,7 @@
   flatten
   flatten1
   rassoc
-  when-list-or-empty
+  when/list when-list-or-empty listify keyword-when
   slice slice-right
   slice! slice-right!
   butlast
@@ -180,8 +180,7 @@
 
 ;; Analog to CL:PUSH, hence the argument order.
 ;; TODO: use setq-macro, look at the set! defn in prelude/core.ss
-(defrules push! ()
-  ((_ element list) (set! list (cons element list))))
+(defrule (push! element list) (set! list (cons element list)))
 
 ;; Removes all nested layers of a proper list.
 ;; [1 [2]]   -> [1 2]
@@ -221,13 +220,23 @@
          (loop tail)))
       (else #f))))
 
-;; Macro which evaluates the body only if the passed value is
+
+;; Variant of when that returns an empty list [] rather than (void) when then condition is false,
+;; making it suitable for use when appending lists, or splicing with `,@ or [...].
+(defrule (when/list cond list) (if cond list '()))
+
+;; Macro that evaluates the body only if the passed value is
 ;; a non-empty list, otherwise an empty list is returned.
-(defrules when-list-or-empty ()
-  ((_ list body body* ...)
-   (if (not (pair? list))
-     []
-     (begin body body* ...))))
+(defrule (when-list-or-empty list body body+ ...)
+  (when/list (pair? list) (begin body body+ ...)))
+
+;; Returns its argument if it is a list (empty or not), or else empty.
+(def (listify x) (when/list (pair? x) x))
+
+;; Returns a list of the keyword and the value when the condition holds.
+;; By default, the value is the same thing as the condition.
+(def (keyword-when keyword condition (value condition))
+  (when/list condition [keyword value]))
 
 ;; Returns a list from lst, starting from the left at start,
 ;; containing limit elements.
@@ -417,3 +426,4 @@
       ([(? keyword? k) v . r] (lp r positionals (cons* v k keywords)))
       ([a . r] (lp r (cons a positionals) keywords))
       ([] (values (reverse positionals) (reverse keywords))))))
+

@@ -233,6 +233,7 @@
     "crypto/dh"
     "crypto"
     ;; :std/misc
+    "misc/concurrent-plan"
     "misc/timeout"
     "misc/list"
     "misc/rtd"
