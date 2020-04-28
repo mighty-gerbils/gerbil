@@ -3,7 +3,7 @@
 ;;; heap based priority queues
 
 (export pqueue make-pqueue pqueue? pqueue-empty? pqueue-size
-        pqueue-peek pqueue-pop! pqueue-push!)
+        pqueue-peek pqueue-pop! pqueue-push! pqueue-contents)
 
 (defstruct pqueue (e cmp prio)
   constructor: :init!
@@ -25,10 +25,12 @@
   (with ((pqueue e) pq)
     (heap-size e)))
 
-(def (pqueue-peek pq)
-  (with ((pqueue e) pq)
+(def (pqueue-peek pq (default absent-obj))
+  (with ((pqueue e cmp prio) pq)
     (if (##fxzero? (heap-size e))
-      (error "empty pqueue")
+      (if (eq? default absent-obj)
+        (error "empty pqueue")
+        default)
       (heap-top e))))
 
 (def (pqueue-pop! pq (default absent-obj))
@@ -46,6 +48,11 @@
     (let (e* (heap-push! e cmp (prio obj) obj))
       (unless (eq? e e*)    ; avoid store if same vector (most likely)
         (set! (pqueue-e pq) e*)))))
+
+(def (pqueue-contents pq)
+  (def e (pqueue-e pq))
+  (let loop ((i (vector-ref e 0)) (a []))
+    (if (zero? i) a (loop (- i 1) (cons (cdr (vector-ref e i)) a)))))
 
 ;; heap operations
 ;; the heap is stored in a resizable vector, with the heap size in the first element

@@ -169,7 +169,7 @@
  (std/test
   "test"
   (gerbil/core gerbil/gambit std/error std/format std/misc/list std/sugar))
- (std/stxutil "stxutil" (gerbil/core std/format))
+ (std/stxutil "stxutil" (gerbil/core std/format std/sugar))
  (std/foreign "foreign" (gerbil/core std/stxutil))
  (std/foreign-test "foreign-test" (gerbil/core std/foreign std/test))
  (std/generic/macros
@@ -659,6 +659,15 @@
  (std/misc/ports
   (gxc: "misc/ports" "-e" "(include \"~~lib/_gambit#.scm\")")
   (gerbil/core gerbil/gambit/ports std/srfi/13 std/sugar))
+ (std/misc/concurrent-plan
+  "misc/concurrent-plan"
+  (gerbil/core
+   gerbil/gambit/ports
+   gerbil/gambit/threads
+   std/misc/ports
+   std/misc/pqueue
+   std/srfi/13
+   std/sugar))
  (std/misc/threads
   (gxc: "misc/threads" "-e" "(include \"~~lib/_gambit#.scm\")")
   (gerbil/core gerbil/gambit/threads std/sugar))
@@ -715,10 +724,13 @@
   (gerbil/compiler
    gerbil/core
    gerbil/expander
+   gerbil/gambit/bits
    gerbil/gambit/exceptions
    gerbil/gambit/misc
    gerbil/gambit/os
    gerbil/gambit/ports
+   gerbil/gambit/threads
+   std/misc/concurrent-plan
    std/misc/hash
    std/misc/list
    std/misc/number

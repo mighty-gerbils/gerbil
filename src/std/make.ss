@@ -1,9 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; support for library build scripts
+;;; build-spec: see documentation in doc/reference/make.md
+
 
 (import :gerbil/compiler
         :gerbil/expander
+        :gerbil/gambit/bits
         :gerbil/gambit/exceptions
         :gerbil/gambit/misc
         :gerbil/gambit/os
@@ -17,6 +20,7 @@
         ./misc/pqueue
         ./misc/queue
         ./misc/symbol
+        ./misc/concurrent-plan
         ./sort
         ./sugar)
 
@@ -34,9 +38,36 @@
         ldflags
         cppflags)
 
+(import :gerbil/gambit/threads)
+
+#|
+TODO:
+
+  * Divide the building of a spec into multiple actions, some foreground
+    (using Gerbil's non-thread-safe compiler), some background (spawning gsc),
+    each having inputs and outputs, backgroundability, and a perform method.
+    The inputs can have changed from the cache if the dependencies were out of date.
+    The outputs can change compare to the cache if the action was out of date.
+
+  * Provide a DSL to extend the spec language, each rule being defining one
+    or multiple actions, each with inputs and outputs, its backgroundability,
+    is perform method.
+
+  * Learn from the successes and failures of ASDF, Bazel, Dune, Cmake, etc.
+
+  * Should it be that, as in ASDF, there are in-memory actions?
+    Should they be, as in ASDF, exactly those without outputs?
+    Maybe, if we want to build session state, but they are not strictly needed to build Gerbil,
+    since all actions we are considering have outputs.
+    Unless we introduce intermediate steps (as in ASDF's prepare-op).
+
+  * Could they be exactly the non-backgroundable ones?
+    No, because we can't fork the current image state, so for the sake of not having to rebuild
+    that state (if expensive, naturally, or artificially, just because I (fare) don't know how
+    to do it so far), we might want to keep such actions in the foreground.
+;; |#
+
 ;;; Functions that should be better moved some library...
-(defrule (when/list cond list) (if cond list [])) ;; move to std/misc/list ?
-(def (listify x) (when/list (pair? x) x)) ;; move to std/misc/list ?
 (def (force-outputs) (force-output (current-error-port)) (force-output)) ;; move to std/misc/ports ?
 (def (message . lst) (apply displayln lst) (force-outputs)) ;; move to std/misc/ports ?
 (def (writeln x) (write x) (newline) (force-outputs)) ;; move to std/misc/ports ?
@@ -53,12 +84,14 @@
   (def w (make-vector (vector-length v)))
   (vector-for-each (lambda (i x) (vector-set! w i (f x))) v)
   w)
-
+(def (vector-clear! v (val #f))
+  (let loop ((i (vector-length v)))
+    (unless (zero? i) (let ((j (- i 1))) (vector-set! v j val) (loop j)))))
 
 ;;; Settings: see details in doc/reference/make.md
 (defstruct settings
   (srcdir libdir bindir prefix force optimize debug static static-debug verbose build-deps
-   libdir-prefix)
+   libdir-prefix parallelize)
   transparent: #t constructor: :init!)
 
 (defmethod {:init! settings}
@@ -68,6 +101,7 @@
       optimize: (optimize #t) debug: (debug 'env)
       static: (static #t) static-debug: (static-debug #f)
       verbose: (verbose #f) build-deps: (build-deps_ #f)
+      parallelize: (parallelize_ #f)
       depgraph: (_ #f)) ;; ignored, for backward compatibility only
     (def gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
     (def srcdir (or srcdir_ (error "srcdir must be specified")))
@@ -76,10 +110,11 @@
     (def prefix (or prefix_ (read-package-prefix srcdir)))
     (def libdir-prefix (if prefix (path-expand prefix libdir) libdir))
     (def build-deps (path-expand (or build-deps_ "build-deps") srcdir))
+    (def parallelize (if (eq? parallelize_ #t) (get-ncpu) parallelize_))
     (struct-instance-init!
       self
       srcdir libdir bindir prefix force? optimize debug static static-debug verbose build-deps
-      libdir-prefix)))
+      libdir-prefix parallelize)))
 
 (def (settings-verbose>=? settings level)
   (def verbose (settings-verbose settings))
@@ -89,13 +124,8 @@
   (let (plist (with-catch false (lambda () (call-with-input-file (path-expand "gerbil.pkg" srcdir) read))))
     (alet (pkg (pgetq package: plist)) (and (symbol? pkg) (symbol->string pkg)))))
 
-;;; build-spec: see details in doc/reference/make.md
-;; TODO: provide an object-oriented way to extend the spec language,
-;; with methods spec-dependencies, spec-inputs, spec-outputs, spec-build
-;; and a macro so you can define all the methods coherently in one form,
-;; rather than manually keeping the forms in synch.
-;; Learn from the successes and failures of ASDF, Bazel, Dune, Cmake, etc.
 
+;;; Build item spec
 (def (spec-type spec)
   (match spec
     ((? string? _) gxc:)
@@ -139,6 +169,11 @@
     ([static-include: file] [(static-file-path file settings)])
     ([copy: file] [(library-path file #f settings)])
     (else (error "Bad buildspec" spec))))
+
+(def (spec-backgroundable? spec)
+  (case (spec-type spec)
+    ((gxc: gsc:) #t)
+    (else #f)))
 
 ;;; A cache to minimize filesystem access AND to avoid inconsistencies
 ;;; due to race-conditions while querying the filesystem.
@@ -231,7 +266,9 @@
   (def timestamp% (hash)) ; timestamp by dependency id
   (def blocked-by@ (specvec)) ;; #f or hash of numbers of specs blocked by the numbered target
   (def blocking@ (specvec)) ;; #f or hash of numbers of specs blocking the numbered target
-  (def ready (make-pqueue identity <)) ;; targets that are ready to build, prioritized by order in user
+  ;; Actions are prioritized by order in user build-spec
+  (def ready-fg (make-pqueue identity <)) ;; foreground-only targets that are ready to build
+  (def ready-bg (make-pqueue identity >)) ;; backgroundable targets that are ready to build (negative)
   (when (verbose>=? 3) (writeln [Step: 1 spec@: spec@]))
 
   ;;; 2. Reinstate those cached dependencies from previous build that are still up-to-date:
@@ -247,7 +284,7 @@
     (def (previous-file-up-to-date? file)
       (<= (file-timestamp file) build-deps-timestamp))
     (def (previous-dependency-up-to-date? dep)
-      (or (hash-get spec-index% dep) ;; NB: we depend on the previous build-deps being topologically sorted
+      (or (hash-get id-index% dep) ;; NB: we depend on the previous build-deps being topologically sorted
           (and (not (hash-get previous-out-of-date% dep))
                (<= (dependency-timestamp dep) build-deps-timestamp))))
     (def (previous-entry-up-to-date? spec deps)
@@ -265,7 +302,7 @@
   (when (verbose>=? 3)
     (writeln [Step: 2 previous-up-to-date: (hash->list/sort id-index% symbol<?)]))
 
-  ;; 3. Compute dependencies for entries that are out of date, or at least not cached
+  ;; 3. Compute dependencies for entries that are out-of-date, or at least not cached
   ;; NB: We assume this will catch any circular dependency and error out.
   ((cut vector-for-each <> spec@)
    (lambda (target spec)
@@ -278,28 +315,50 @@
          (vector-set! deps@ target deps)))))
   (when (verbose>=? 3) (writeln [Step: 3 deps: (apply map list (map vector->list [id@ spec@ deps@]))]))
 
-  ;; 4. Create output directories
-  (create-directory* (settings-bindir settings))
-  (create-directory* (settings-libdir settings))
-  (when (settings-static settings) (create-directory* (path-expand "static" (settings-libdir settings))))
-  (when (verbose>=? 3) (writeln [Step: 4]))
+  ;; 4. Update the build-deps cache, topologically sorted.
+  (def (initialize-walk) ;; 4. Initialize a walk on the dependencies
+    (vector-clear! blocked-by@)
+    (vector-clear! blocking@)
+    (assert! (pqueue-empty? ready-fg))
+    (assert! (pqueue-empty? ready-bg))
+    (set! build-list '())
 
-  ;; 5. Initialize the blocked and blocking tables and the build queue
-  ((cut vector-for-each <> deps@)
-   (lambda (target deps)
-     ((cut for-each <> deps)
-       (lambda (dep)
-         (let ((other-target (hash-get id-index% dep)))
-           (if other-target
-             (begin (hash-put! (vector-ensure-ref blocked-by@ target make-hash-table) other-target #t)
-                    (hash-put! (vector-ensure-ref blocking@ other-target make-hash-table) target #t))
-             (dependency-timestamp dep))))))) ; NB: this populates the timestamp% table as a side-effect
-  ((cut vector-for-each <> spec@)
-   (lambda (target _) (unless (vector-ref blocked-by@ target) (pqueue-push! ready target))))
-  (when (verbose>=? 3) (writeln [Step: 5 first-target: (vector-ref spec@ (pqueue-peek ready))]))
+    ((cut vector-for-each <> deps@)
+     (lambda (target deps)
+       ((cut for-each <> deps)
+        (lambda (dep)
+          (let ((other-target (hash-get id-index% dep)))
+            (when other-target
+              (hash-put! (vector-ensure-ref blocked-by@ target make-hash-table) other-target #t)
+              (hash-put! (vector-ensure-ref blocking@ other-target make-hash-table) target #t)))))))
+    ((cut vector-for-each <> spec@)
+     (lambda (target _) (unless (vector-ref blocked-by@ target) (pqueue-push! ready-fg target)))))
 
-  ;; 6. Now, build stuff in order, thanks to a priority queue of jobs that are ready,
-  ;; and update timestamps as we go.
+  (def (mark-built target . _)
+    (push! target build-list)
+    (alet (blocking (vector-ref blocking@ target))
+      ((cut hash-for-each <> blocking)
+       (lambda (unblocked _)
+         (def blocked-by (vector-ref blocked-by@ unblocked))
+         (hash-remove! blocked-by target)
+         (when (hash-empty? blocked-by)
+           (pqueue-push! ready-fg unblocked))))))
+
+  (initialize-walk)
+  (perform-plan/threads
+   ready-fg ready-bg
+   perform: void
+   announce: void
+   on-success: mark-built on-failure: (cut error "impossibru" <> <>)
+   deterministic-order: #t max-workers: 1)
+  (write-build-deps
+   build-deps-file
+   (map (lambda (target) (map (cut vector-ref <> target) [id@ spec@ deps@])) (reverse build-list)))
+  (unless (= (length build-list) nspec)
+    (error "Circular dependency in build"))
+  (when (verbose>=? 3) (writeln [Step: 4 build-deps: build-deps-file]))
+
+  ;; 5. Now, actually build that stuff in order, and update timestamps as we go.
   (def (compute-timestamp target)
     (def spec (vector-ref spec@ target))
     (def deps (vector-ref deps@ target))
@@ -318,51 +377,68 @@
                 [in-max: in-max] [out-min: out-min] [out-max: out-max]
                 [deps: (map list dep-timestamps deps)]
                 [ins: (map list in-timestamps inputs)]
-                [outs: (map list outputs out-timestamps)]]))
+                [outs: (map list outputs out-timestamps)]
+                [result: (if (<= in-max out-min) out-max +inf.0)]]))
     (if (<= in-max out-min) out-max +inf.0))
-  (def (update-timestamp target)
+  (def (compute-new-timestamp target)
     (def spec (vector-ref spec@ target))
     (def outputs (spec-outputs spec settings))
     (for-each (lambda (x) (cache-remove! ['modification-time x])) outputs) ; clear stale pre-build timestamps
     (def out-timestamp (xmax/map file-timestamp outputs))
     (unless out-timestamp (error "Build failed to generate expected outputs" spec outputs))
-    (hash-put! timestamp% (vector-ref id@ target) out-timestamp))
-  (def (mark-built target)
-    (push! target build-list)
-    (hash-for-each
-     (lambda (unblocked _)
-       (def blocked-by (vector-ref blocked-by@ unblocked))
-       (hash-remove! blocked-by target)
-       (when (hash-empty? blocked-by)
-         (pqueue-push! ready unblocked)))
-     (or (vector-ref blocking@ target) (hash))))
-
-  ;; TODO: parallelize this worker loop, in the style of CL's POIU, or better.
-  (until (pqueue-empty? ready)
-    (let* ((target (pqueue-pop! ready #f))
-           (spec (vector-ref spec@ target)))
-      (cond
-       ((and (not force?)
-             (< (hash-ensure-ref timestamp% target (cut compute-timestamp target)) +inf.0))
-        (when (verbose>=? 5) (writeln [Up-to-date: target spec (hash-get timestamp% target)])))
-       (else
-        (build spec settings)
-        (update-timestamp target)))
+    out-timestamp)
+  (def (target<-item item) (if (<= 0 item) item (bitwise-not item)))
+  (def (perform target)
+    (if (<= 0 target) (fg-perform target) (bg-perform target)))
+  (def (fg-perform target)
+    (def spec (vector-ref spec@ target))
+    (def id (vector-ref id@ target))
+    (cond
+     ((and (not force?)
+           (< (hash-ensure-ref timestamp% id (cut compute-timestamp target)) +inf.0))
+      (when (verbose>=? 5) (writeln [Up-to-date: target spec (hash-ref timestamp% id)]))
+      (hash-ref timestamp% id))
+     ((spec-backgroundable? spec)
+      (pqueue-push! ready-bg (bitwise-not target))
+      +inf.0)
+     (else
+      (build-target target))))
+  (def (build-target target)
+    (build (vector-ref spec@ target) settings)
+    (compute-new-timestamp target))
+  (def (bg-perform target)
+    (build-target (bitwise-not target)))
+  (def (on-success item timestamp)
+    (def target (target<-item item))
+    (def spec (vector-ref spec@ target))
+    (def id (vector-ref id@ target))
+    (when (equal? (spec-backgroundable? spec) (> 0 item))
+      (when (verbose>=? 7) (writeln [on-success: item target id spec timestamp]))
+      (unless (< timestamp +inf.0) (error "Infinite timestamp" item target id spec))
+      (hash-put! timestamp% id timestamp)
       (mark-built target)))
-  (when (verbose>=? 3) (writeln [Step: 6]))
+  (def (on-failure item exception)
+    (error "Failure to build" (vector-ref spec@ (target<-item item)) (error-message exception)))
 
-  ;; 7. Check that we didn't hit some circular dependency. Should already be caught in step 3 above.
-  ((cut vector-for-each <> blocked-by@)
-   (lambda (target blocked-by)
-     (when (and blocked-by (not (hash-empty? blocked-by)))
-       (writeln [|Build didn't complete due to circular dependency in|: (vector-ref spec@ target)]))))
-  (when (verbose>=? 3) (writeln [Step: 7]))
+  (create-directory* (settings-bindir settings))
+  (create-directory* (settings-libdir settings))
+  (when (settings-static settings)
+    (create-directory* (path-expand "static" (settings-libdir settings))))
 
-  ;; 8. Update the build-deps cache, topologically sorted.
-  (write-build-deps ; TODO: move this right after step 3. This requires separating the topological
-   build-deps-file  ; sort algorithm from the build itself (and while at it, parallelize it)
-   (map (lambda (target) (map (cut vector-ref <> target) [id@ spec@ deps@])) (reverse build-list)))
-  (when (verbose>=? 3) (writeln [Step: 8 "All done."])))
+  (initialize-walk)
+  (when (verbose>=? 6) (writeln [Step: 5. queue: (sort (pqueue-contents ready-fg) <)]))
+
+  (perform-plan/threads
+   ready-fg ready-bg
+   perform: perform on-success: on-success on-failure: on-failure
+   announce: (if (verbose>=? 8)
+               (lambda (item)
+                 (def target (target<-item item))
+                 (writeln [announcing: item (vector-ref spec@ target)]))
+               void)
+   deterministic-order: #f max-workers: (or (settings-parallelize settings) 1))
+
+  (when (verbose>=? 3) (writeln [Step: 5 "All built"])))
 
 ;; file-dependencies : file -> dependencies
 (def (file-dependencies file settings)
@@ -453,9 +529,9 @@
 (def (build spec settings)
   (match spec
     ((? string? modf)
-     (gxc-compile modf #f settings))
+     (gxc-compile modf #f settings #t))
     ([gxc: modf . opts]
-     (gxc-compile modf opts settings))
+     (gxc-compile modf opts settings #t))
     ([gsc: modf . opts]
      (gsc-compile modf opts settings))
     ([ssi: modf . submodules]
@@ -486,20 +562,39 @@
     ([dep: _ . rest] (listify rest))
     (_ (listify opts))))
 
+;; TODO: split that (and more?) into many action. See :gerbil/compiler/driver
 (def (gxc-compile mod opts settings (invoke-gsc? #t))
-  (def gsc-opts (gsc-compile-opts opts))
-  (def gxc-opts
-    [invoke-gsc: invoke-gsc?
-     output-dir: (settings-libdir settings)
-     optimize: (settings-optimize settings)
-     debug: (settings-debug settings)
-     generate-ssxi: #t
-     static: (settings-static settings)
-     verbose: (settings-verbose>=? settings 9)
-     (when/list gsc-opts [gsc-options: gsc-opts]) ...])
-  (def srcpath (source-path mod ".ss" settings))
   (message "... compile " mod)
-  (compile-file srcpath gxc-opts))
+  (def gsc-opts (gsc-compile-opts opts))
+  (def srcpath (source-path mod ".ss" settings))
+  (if (settings-parallelize settings)
+    (let* ((arguments
+            ["-d" (settings-libdir settings)
+             (when/list (not invoke-gsc?) ["-s" "-S"]) ...
+             (when/list (settings-optimize settings) ["-O"]) ...
+             (when/list (settings-debug settings) ["-g"]) ...
+             (when/list (settings-static settings) ["-static"]) ...
+             (when/list (settings-verbose>=? settings 9) ["-v"]) ...
+             (when/list gsc-opts (append-map (lambda (x) ["-gsc-flag" x]) gsc-opts)) ...
+             srcpath])
+           (__ (when (settings-verbose>=? settings 7) (writeln [invoking: (gerbil-gxc) arguments ...])))
+           (proc (open-process [path: (gerbil-gxc)
+                                arguments: arguments
+                                stdout-redirection: #f]))
+           (status (process-status proc)))
+      (unless (zero? status)
+        (error "Compilation error; gxc exited with nonzero status" status)))
+    (let ((gxc-opts
+           [invoke-gsc: invoke-gsc?
+            keep-scm: (not invoke-gsc?)
+            output-dir: (settings-libdir settings)
+            optimize: (settings-optimize settings)
+            debug: (settings-debug settings)
+            generate-ssxi: #t
+            static: (settings-static settings)
+            verbose: (settings-verbose>=? settings 9)
+            (when/list gsc-opts [gsc-options: gsc-opts]) ...]))
+      (compile-file srcpath gxc-opts))))
 
 (def (gsc-libpath mod settings)
   (def libdir-prefix (settings-libdir-prefix settings))
@@ -544,6 +639,8 @@
 
 (def (gerbil-gsc)
   (getenv "GERBIL_GSC" "gsc"))
+(def (gerbil-gxc)
+  (getenv "GERBIL_GXC" "gxc"))
 
 (def (compile-ssi mod deps settings)
   (def srcpath (source-path mod ".ssi" settings))
@@ -575,8 +672,7 @@
   (def gxc-opts
     [invoke-gsc: #t
      output-file: binpath
-     verbose: (settings-verbose>=? settings 9)
-     ])
+     verbose: (settings-verbose>=? settings 9)])
   (gxc-compile mod gsc-opts settings)
   (message "... compile exe " mod " -> " binpath)
   (compile-exe-stub srcpath gxc-opts))
@@ -602,7 +698,7 @@
      verbose: (settings-verbose>=? settings 9)
      debug: (settings-static-debug settings)
      (when/list gsc-opts [gsc-options: gsc-opts]) ...])
-  (gxc-compile mod gsc-opts (make-settings-static settings) #f)
+  (gxc-compile mod gsc-opts (make-settings-static settings))
   (message "... compile static exe " mod " -> " binpath)
   (gxc#compile-static-exe srcpath gxc-opts))
 
