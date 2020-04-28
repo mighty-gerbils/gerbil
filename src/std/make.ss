@@ -582,6 +582,7 @@ TODO:
                                 arguments: arguments
                                 stdout-redirection: #f]))
            (status (process-status proc)))
+      (close-port proc)
       (unless (zero? status)
         (error "Compilation error; gxc exited with nonzero status" status)))
     (let ((gxc-opts
@@ -628,6 +629,7 @@ TODO:
                               arguments: ["-o" libpath gsc-opts ... srcpath]
                               stdout-redirection: #f]))
          (status (process-status proc)))
+    (close-port proc)
     (unless (zero? status)
       (error "Compilation error; gsc exited with nonzero status" status)))
   (when (settings-static settings)
@@ -661,6 +663,7 @@ TODO:
                                     arguments: [rtpath]
                                     stdout-redirection: #f]))
          (status (process-status proc)))
+    (close-port proc)
     (unless (zero? status)
       (error "Compilation error; gsc exited with nonzero status" status))
     (delete-file rtpath)))

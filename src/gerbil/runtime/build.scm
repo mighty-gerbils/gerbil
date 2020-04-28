@@ -29,6 +29,7 @@
                                    "-e" "(include \"gx-gambc#.scm\")"
                                    ,(string-append modf ".scm"))
                        stdout-redirection: #f))))
+    (close-port proc)
     (if (not (zero? (process-status proc)))
       (error "Compilation error; gsc exit with nonzero status" modf))))
 
@@ -39,6 +40,7 @@
                (let* ((proc (open-process '(path: "git" arguments: ("describe" "--tags" "--always")
                                                   show-console: #f)))
                       (version (read-line proc)))
+                 (close-port proc)
                  (and (zero? (process-status proc))
                       (string? version) ;; (not (eof-object? version))
                       version))))
