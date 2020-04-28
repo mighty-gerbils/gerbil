@@ -6535,23 +6535,24 @@ if `limit` is not false.
 ```
 :::
 
-### pred-after-sequence
+### pred-sequence
 ``` scheme
-(pred-after-sequence lst [limit = #f]) -> procedure
+(pred-sequence lst [limit = #f]) -> procedure
 
   lst   := proper or circular list
   limit := optional, return #t only limit times
 ```
-
-`pred-after-sequence` returns a predicate which returns `#t` after a
-matching sequence. `#t` is returned `limit` times, if `limit` is not `#f`.
+`pred-sequence` returns a predicate which returns `#t` on the last element
+of a matching sequence. The list elements are compared using `equal?`.
+`#t` is returned `limit` times, if `limit` is not `#f`.
 
 ::: tip Examples:
 ``` scheme
-> (find (pred-after-sequence [1 2]) [0 1 2 'a 'b])
-a
+> (import (only-in :std/srfi/13 string-count))
+> (string-count "ab_ab" (pred-sequence [#\a #\b]))
+2
 
-> (let (fn (pred-after-sequence [1]))
+> (let (fn (pred-sequence [1 2]))
     (fn 0)  ; #f
     (fn 1)  ; #f
     (fn 2)) ; #t
