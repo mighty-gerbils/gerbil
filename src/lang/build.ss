@@ -39,11 +39,11 @@
     "scheme/r5rs"
     "scheme/r5rs-null"
     "scheme/r7rs"
-    ;; gerbil variants
-    (gxc: "gerbil/polydactyl" "-e" "(include \"~~lib/_gambit#.scm\")")
+    ;; Gerbil variants. Polydactyl needs foreground due to using _gambit# at phi 1.
+    (gxc: "gerbil/polydactyl" (foreground: #t) "-e" "(include \"~~lib/_gambit#.scm\")")
     )
   libdir: (path-expand "lib" (getenv "GERBIL_HOME"))
   debug: 'src)
 
-;; necessary because gxi-build-script doesn't autoinvoke main
+;; necessary because gxi-build-script doesn't auto-invoke main
 (main)

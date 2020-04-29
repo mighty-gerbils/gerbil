@@ -6,12 +6,4 @@
 
 (include "build-spec.ss")
 
-(def (gerbil-build-nproc)
-  (cond
-   ((getenv "GERBIL_BUILD_NPROC" #f)
-    => (lambda (x) (with-catch false (lambda () (def n (string->number x)) (if (< 0 n) n #f)))))
-   (else #t)))
-
-(def (build srcdir libdir)
-  (make build-spec srcdir: srcdir libdir: libdir debug: 'src
-        parallelize: (gerbil-build-nproc)))
+(def (build . args) (apply make build-spec args))
