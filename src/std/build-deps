@@ -1,6 +1,6 @@
 (gerbil-build-deps-v2:
  (std/build-config
-  (gxc: "build-config" dep: ("build-features.ss"))
+  (gxc: "build-config" (extra-inputs: ("build-features.ss")))
   (gerbil/core))
  (std/interactive "interactive" (gerbil/core gerbil/gambit/misc))
  (std/pregexp "pregexp" (gerbil/core))
@@ -169,7 +169,7 @@
  (std/test
   "test"
   (gerbil/core gerbil/gambit std/error std/format std/misc/list std/sugar))
- (std/stxutil "stxutil" (gerbil/core std/format std/sugar))
+ (std/stxutil "stxutil" (gerbil/core std/format))
  (std/foreign "foreign" (gerbil/core std/stxutil))
  (std/foreign-test "foreign-test" (gerbil/core std/foreign std/test))
  (std/generic/macros

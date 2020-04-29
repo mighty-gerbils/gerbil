@@ -46,16 +46,26 @@ Each target specification can be:
     The `".ss"` extension is automatically added if no extension is specified.
     Dependencies will be automatically detected.
 
-  - A list of the form `(gxc: file dep: (extra-file ...) opts ...)` or just `(gxc: file opts ...)`,
-    where (a) the file is a string as above, (b) the optional `dep:` option allows to specify
-    extra dependencies that may not be automatically detected, such as files included by
-    an `(include ...)` form, and (c) the remainder of the options are passed to `gsc`
-    while compiling the file.
+  - A list of the form `(gxc: file (plist ...) opts ...)` or just `(gxc: file opts ...)`,
+    where (a) the file is a string as above, (b) the optional plist allows to specify
+    extra build options, and (c) the remainder of the options are passed to `gsc`
+    while compiling the file. The only supported extra build options so far are:
+    (1) `extra-inputs:` followed by a list of extra inputs, e.g. files that are `include`'d
+    or otherwise `read` at build-time, and (2) `foreground:` followed by a boolean
+    (default `#f`, so only useful value `#t`) that forces the Gerbil compilation to happen
+    in the foreground, e.g. because it requires side-effects to the Gerbil compiler
+    not available when invoking `gxc` but already done before calling `make`,
+    such as having loaded `~~lib/_gambc#.scm` at syntax-expansion time.
 
-  - A list of the form `(gsc: file dep: (extra-file ...) opts ...)` or just `(gsc: file opts ...)`,
-    with arguments as for `gxc`, except the file is a raw Gambit Scheme file
-    and won't be compiled by Gerbil Scheme file.
-    This is useful for FFI and other low-level interactions with the Gambit runtime.
+  - A list of the form `(gsc: file (plist ...) opts ...)` or just `(gsc: file opts ...)`,
+    which is similar to `gxc:`, except the file is a raw Gambit Scheme file directly compiled with `gsc`
+    and rather a Gerbil Scheme file first compiled to Gambit files by `gxc`.
+    As for `gxc:` above, (a) the file is a string as above, (b) the optional plist allows to specify
+    extra build options, and (c) the remainder of the options are passed to `gsc`
+    while compiling the file. The only supported extra build option so far is:
+    `extra-inputs:` followed by a list of extra inputs, e.g. files that are `include`'d
+    or otherwise `read` at build-time.
+    Such a target is useful for FFI and other low-level interactions with the Gambit runtime.
     To integrate the Gambit Scheme definitions from that file into Gerbil Scheme,
     there must be a subsequent `ssi:` target, before any other Gerbil-invoking target is specified
     (any target but one starting with the `gsc:` or `static-include:` keyword).
@@ -174,6 +184,19 @@ the following keyword arguments, that may configure how your project is built.
     i.e. invocations of `defbuild-script` or `make` with different `build-spec` arguments,
     then you need to have these invocations specify distinct `build-deps:` arguments
     to avoid clashes; otherwise projects will overwrite each other's cache.
+
+  - `parallelize:` specifies the number of multiprocessor cores that Gerbil will attempt
+    to use while compiling code. If it's a number _n_ no less than 2, then
+    Gerbil will spawn as many as _n_ subprocesses to compile. If it's `0` or less,
+    then Gerbil will not spawn processes to compile files from Gerbil `.ss`
+    to Gambit `.scm` but compile them in the current image.
+    It will still spawn processes for Gambit compilation as such.
+    If it's `1`, then Gerbil will spawn a subprocess for the Gerbil compilation steps
+    as well as for the Gambit compilation step, but only one process at a time.
+    If it's `#f`, then no parallelism is used, same as `0`.
+    If it's `#t` (the default), then the maximum number of CPUs is used,
+    as detected from the Operating System, or overridden by the value of the environment variable
+    `GERBIL_BUILD_CORES`, if defined and an integer.
 
   - `depgraph:` is an obsolete argument, only present for backward compatibility.
     You should delete it as well as any call to `make-depgraph` or `make-depgraph/spec`.
