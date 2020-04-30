@@ -2,36 +2,17 @@
 
 (##namespace (""))
 
+(load "build-lib.scm")
+
 (define *gx-modules*
-  '("gx-gambc"
-    "gx-gambc0"
-    "gx-gambc1"
-    "gx-gambc2"))
-
-(define *libdir* #f)
-
-(define (displayln . args)
-  (for-each display args)
-  (newline))
+  (map (lambda (modf) (string-append modf ".scm"))
+       '("gx-gambc"
+         "gx-gambc0"
+         "gx-gambc1"
+         "gx-gambc2")))
 
 (define (runtime-smp?)
   (not (##vector-ref (thread-thread-group ##primordial-thread) 3)))
-
-(define (compile modf)
-  (displayln "... compile " modf)
-  (let ((proc (open-process
-               `(path: ,(getenv "GERBIL_GSC" "gsc")
-                       arguments: ("-o" ,*libdir*
-                                   "-cc-options" "--param max-gcse-memory=300000000"
-                                   ,@(if (runtime-smp?)
-                                       '("-e" "(define-cond-expand-feature|enable-smp|)")
-                                       '())
-                                   "-e" "(include \"gx-gambc#.scm\")"
-                                   ,(string-append modf ".scm"))
-                       stdout-redirection: #f))))
-    (close-port proc)
-    (if (not (zero? (process-status proc)))
-      (error "Compilation error; gsc exit with nonzero status" modf))))
 
 (define (update-gx-version)
   (let* ((gx-version-path "gx-version.scm")
@@ -39,9 +20,10 @@
           (and (file-exists? "../../../.git")
                (let* ((proc (open-process '(path: "git" arguments: ("describe" "--tags" "--always")
                                                   show-console: #f)))
-                      (version (read-line proc)))
+                      (version (read-line proc))
+                      (status (process-status proc)))
                  (close-port proc)
-                 (and (zero? (process-status proc))
+                 (and (zero? status)
                       (string? version) ;; (not (eof-object? version))
                       version))))
          (gx-version-text
@@ -58,6 +40,13 @@
 
 (define (main libdir)
   (displayln "building gerbil/runtime in " libdir)
-  (set! *libdir* libdir)
   (update-gx-version)
-  (for-each compile *gx-modules*))
+  (parallel-build
+   *gx-modules*
+   (compiler `("-o" ,libdir
+               "-cc-options" "--param max-gcse-memory=300000000"
+               ,@(if (runtime-smp?)
+                   '("-e" "(define-cond-expand-feature|enable-smp|)")
+                   '())
+               "-e" "(include \"gx-gambc#.scm\")"))
+   false))

@@ -1,6 +1,8 @@
 ;; -*- Gerbil -*-
 (import :gerbil/compiler)
 
+;;(include "../gerbil/runtime/build-lib.scm") ;; Do everything serially for now.
+
 (def gerbil-modules-expander
   '("gerbil/expander/common.ss"
     "gerbil/expander/stx.ss"
@@ -58,6 +60,12 @@
                       debug: debug optimize: optimize? generate-ssxi: gen-ssxi? static: static?
                       gsc-options: ["-cc-options" "--param max-gcse-memory=300000000"]]))
 
+(def (compile-group group . options) ;; TODO: parallelize this?
+  ;; TODO: parallelize, but with the correct dependencies -- instead of "false",
+  ;; the on-success function will queue those modules whose dependencies are done.
+  ;;(parallel-build group (lambda (x) (apply compile1 x options)) false)
+  (for-each (lambda (x) (apply compile1 x options)) group))
+
 (def debug-none #f)  ; no bloat
 (def debug-src 'src) ; full introspection -- sadly, it adds bloat and increases load time
 
@@ -66,14 +74,10 @@
 (gxc#optimizer-info-init!)
 (gx#import-module "gerbil/prelude/core.ssxi.ss" #t #t)
 ;; compile expander first so that prelude macros have expander visibility; no static
-(for-each (cut compile1 <> debug-none #t #t #f)
-          gerbil-modules-expander)
+(compile-group gerbil-modules-expander debug-none #t #t #f)
 ;; compile core prelude; don't clobber core.ssxi
-(for-each (cut compile1 <> debug-none #t #f #t)
-          gerbil-prelude-core)
+(compile-group gerbil-prelude-core debug-none #t #f #t)
 ;; compile gambit prelude
-(for-each (cut compile1 <> debug-none #t #t #t)
-          gerbil-prelude-gambit)
+(compile-group gerbil-prelude-gambit debug-none #t #t #t)
 ;; compile compiler; no static
-(for-each (cut compile1 <> debug-none #t #t #f)
-          gerbil-modules-compiler)
+(compile-group gerbil-modules-compiler debug-none #t #t #f)
