@@ -46,14 +46,14 @@ You can load the tags table with `M-x visit-tags-table` and selecting the tags f
 If you want it to be a permanent part of your editing experience, you can add
 `$GERBIL_HOME/src` to your tags table list by adding this to your .emacs:
 ```
-(add-to-list 'tags-table-list "~/gerbil/src/TAGS")
+(visit-tags-table "~/gerbil/src/TAGS")
 ```
 
 The Gerbil package manager also generates a TAGS table for all installed packages;
 by default this lives in `~/.gerbil/pkg/TAGS`. You can add this to your emacs tags
 table list with
 ```
-(add-to-list 'tags-table-list "~/.gerbil/pkg/TAGS")
+(visit-tags-table "~/.gerbil/pkg/TAGS")
 ```
 
 You should also generate tags for your own code by using `gxtags`. The invocation
@@ -69,8 +69,8 @@ interactive functions useful for Gerbil development:
 
 ```
 M-x gerbil-import-current-buffer
-M-x reload-current-buffer
-M-x compile-current-buffer
+M-x gerbil-reload-current-buffer
+M-x gerbil-compile-current-buffer
 ```
 
 These functions import, reload, and compile the source module visited by
