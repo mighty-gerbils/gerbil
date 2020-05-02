@@ -46,14 +46,14 @@ You can load the tags table with `M-x visit-tags-table` and selecting the tags f
 If you want it to be a permanent part of your editing experience, you can add
 `$GERBIL_HOME/src` to your tags table list by adding this to your .emacs:
 ```
-(add-to-list 'tags-table-list "~/gerbil/src/TAGS")
+(visit-tags-table "~/gerbil/src/TAGS")
 ```
 
 The Gerbil package manager also generates a TAGS table for all installed packages;
 by default this lives in `~/.gerbil/pkg/TAGS`. You can add this to your emacs tags
 table list with
 ```
-(add-to-list 'tags-table-list "~/.gerbil/pkg/TAGS")
+(visit-tags-table "~/.gerbil/pkg/TAGS")
 ```
 
 You should also generate tags for your own code by using `gxtags`. The invocation
@@ -69,8 +69,8 @@ interactive functions useful for Gerbil development:
 
 ```
 M-x gerbil-import-current-buffer
-M-x reload-current-buffer
-M-x compile-current-buffer
+M-x gerbil-reload-current-buffer
+M-x gerbil-compile-current-buffer
 ```
 
 These functions import, reload, and compile the source module visited by
@@ -89,3 +89,69 @@ build.ss script discovered by walking up the directory hierarchy.
 There is preliminary support for SLIME using ecraven's [r7rs-swank](https://github.com/ecraven/r7rs-swank).
 
 See drewc's [guide](https://gist.github.com/drewc/5f260537b7914a2b999c8a539fb48098) for how to set it up.
+
+## Use-Package Example Configuration
+
+Example [use-package](https://github.com/jwiegley/use-package) definition to get you
+hacking in no time. All you have to do is to set the environment variables
+`GERBIL_HOME` and `GAMBIT_HOME` and copy the code snippet below into your Emacs config.
+
+``` elisp
+(use-package gerbil
+  :when (getenv "GERBIL_HOME")
+  :ensure nil
+  :defer t
+  :mode (("\\.ss\\'"  . gerbil-mode)
+         ("\\.pkg\\'" . gerbil-mode))
+  :bind (:map comint-mode-map
+              (("C-S-n" . comint-next-input)
+               ("C-S-p" . comint-previous-input)
+               ("C-l"   . clear-comint-buffer)))
+  :init
+  (setf gambit (getenv "GAMBIT_HOME"))
+  (setf gerbil (getenv "GERBIL_HOME"))
+  (autoload 'gerbil-mode
+    (concat gerbil "/etc/gerbil.el") "Gerbil editing mode." t)
+  :hook
+  ((gerbil-mode . linum-mode)
+   (inferior-scheme-mode-hook . gambit-inferior-mode))
+  :config
+  (require 'gambit
+           (concat gambit
+             (if (equal "nixos" (system-name))
+               "/share/emacs/site-lisp/gambit.el"
+               "/misc/gambit.el")))
+  (setf scheme-program-name (concat gerbil "/bin/gxi"))
+
+  (let ((tags (locate-dominating-file default-directory "TAGS")))
+    (when tags (visit-tags-table tags)))
+  (visit-tags-table (concat gerbil "/src/TAGS"))
+
+  (when (require 'smartparens nil 'nil-on-error)
+    (sp-pair "'" nil :actions :rem)
+    (sp-pair "`" nil :actions :rem))
+
+  (defun clear-comint-buffer ()
+    (interactive)
+    (with-current-buffer "*scheme*"
+      (let ((comint-buffer-maximum-size 0))
+        (comint-truncate-buffer)))))
+```
+
+To start open a Gerbil file or run `M-x gerbil-mode`, then launch a REPL with `run-scheme`.
+
+`gerbil-mode` - functions worth mentioning:
+```
+C-c C-c  send region to REPL (scheme-send-region)
+C-c C-l  load file into REPL (scheme-load-file)
+```
+
+`inferior-scheme-mode` - functions worth mentioning:
+```
+C-l      clear the comint buffer   (clear-comint-buffer)
+C-c _    close extra pop-up buffer (gambit-kill-last-popup)
+C-S-p    previous item in history  (comint-previous-input)
+C-S-n    next item in history      (comint-next-input)
+```
+
+For more information read `C-h f gerbil-mode`.
