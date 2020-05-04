@@ -11,6 +11,13 @@ enable_mysql='#f'
 enable_lmdb='#f'
 enable_leveldb='#f'
 
+feature_exists() {
+  case " $FEATURES " in
+    *" $1 "*) return 0;;
+  esac
+  return 1
+}
+
 write_build_features() {
   (
     for feature in $FEATURES; do
@@ -24,10 +31,18 @@ while [ $# -gt 0 ]; do
   case "$1" in
     --enable-*)
       feature="${1#--enable-}"
+      if ! feature_exists "$feature"; then
+        printf 'configure.sh: unknown feature "%s".\n' "$feature" >&2
+        exit 1
+      fi
       eval "enable_$feature='#t'"
       ;;
     --disable-*)
       feature="${1#--disable-}"
+      if ! feature_exists "$feature"; then
+        printf 'configure.sh: unknown feature "%s".\n' "$feature" >&2
+        exit 1
+      fi
       eval "enable_$feature='#f'"
       ;;
     *)
