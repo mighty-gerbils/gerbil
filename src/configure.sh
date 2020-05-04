@@ -2,7 +2,7 @@
 set -eu
 
 readonly FEATURES='libxml libyaml zlib sqlite mysql lmdb leveldb'
-readonly OPTIONS='gsc prefix'
+readonly OPTIONS='gambit prefix'
 
 enable_libxml='#f'
 enable_libyaml='#f'
@@ -12,7 +12,7 @@ enable_mysql='#f'
 enable_lmdb='#f'
 enable_leveldb='#f'
 
-with_gsc='gsc'
+with_gambit=''
 with_prefix='/usr/local'
 
 has_word() {
