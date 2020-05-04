@@ -2,7 +2,7 @@
 set -eu
 
 readonly FEATURES='libxml libyaml zlib sqlite mysql lmdb leveldb'
-readonly OPTIONS='gsc'
+readonly OPTIONS='gsc prefix'
 
 enable_libxml='#f'
 enable_libyaml='#f'
@@ -13,6 +13,7 @@ enable_lmdb='#f'
 enable_leveldb='#f'
 
 with_gsc='gsc'
+with_prefix='/usr/local'
 
 has_word() {
   case " $1 " in
@@ -44,11 +45,20 @@ set_option() {
 parse_args() {
   while [ $# -gt 0 ]; do
     case "$1" in
-      --enable-*)  set_feature_enable "${1#--enable-}"  '#t';;
       --disable-*) set_feature_enable "${1#--disable-}" '#f';;
+      --enable-*)  set_feature_enable "${1#--enable-}"  '#t';;
+      --prefix=*)  set_option "prefix" "${1#--prefix=}";;
+      --prefix)
+        set_option "prefix" "$2"
+        shift
+        ;;
       --with-*=*)
         arg="${1#--with-}"
         set_option "${arg%=*}" "${arg#*=}"
+        ;;
+      --with-*)
+        set_option "${1#--with-}" "$2"
+        shift
         ;;
       *)
         printf 'configure.sh: unknown argument "%s".\n' "$1" >&2
