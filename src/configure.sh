@@ -41,6 +41,24 @@ set_option() {
   eval "with_$option='$value'"
 }
 
+parse_args() {
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --enable-*)  set_feature_enable "${1#--enable-}"  '#t';;
+      --disable-*) set_feature_enable "${1#--disable-}" '#f';;
+      --with-*=*)
+        arg="${1#--with-}"
+        set_option "${arg%=*}" "${arg#*=}"
+        ;;
+      *)
+        printf 'configure.sh: unknown argument "%s".\n' "$1" >&2
+        exit 1
+        ;;
+    esac
+    shift
+  done
+}
+
 write_build_features() {
   (
     for feature in $FEATURES; do
@@ -50,20 +68,9 @@ write_build_features() {
   ) >std/build-features.ss
 }
 
-while [ $# -gt 0 ]; do
-  case "$1" in
-    --enable-*)  set_feature_enable "${1#--enable-}"  '#t';;
-    --disable-*) set_feature_enable "${1#--disable-}" '#f';;
-    --with-*=*)
-      arg="${1#--with-}"
-      set_option "${arg%=*}" "${arg#*=}"
-      ;;
-    *)
-      printf 'configure.sh: unknown argument "%s".\n' "$1" >&2
-      exit 1
-      ;;
-  esac
-  shift
-done
+configure() {
+  parse_args "$@"
+  write_build_features
+}
 
-write_build_features
+configure "$@"
