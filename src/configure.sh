@@ -14,9 +14,9 @@ enable_leveldb='#f'
 
 with_gsc='gsc'
 
-feature_exists() {
-  case " $FEATURES " in
-    *" $1 "*) return 0;;
+has_word() {
+  case " $1 " in
+    *" $2 "*) return 0;;
   esac
   return 1
 }
@@ -24,24 +24,17 @@ feature_exists() {
 set_feature_enable() {
   feature="$1"
   enable="$2"
-  if ! feature_exists "$feature"; then
+  if ! has_word "$FEATURES" "$feature"; then
     printf 'configure.sh: unknown feature "%s".\n' "$feature" >&2
     exit 1
   fi
   eval "enable_$feature='$enable'"
 }
 
-option_exists() {
-  case " $OPTIONS " in
-    *" $1 "*) return 0;;
-  esac
-  return 1
-}
-
 set_option() {
   option="$1"
   value="$2"
-  if ! option_exists "$option"; then
+  if ! has_word "$OPTIONS" "$option"; then
     printf 'configure.sh: unknown option "%s".\n' "$option" >&2
     exit 1
   fi
