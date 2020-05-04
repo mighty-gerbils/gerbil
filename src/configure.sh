@@ -18,6 +18,16 @@ feature_exists() {
   return 1
 }
 
+set_feature_enable() {
+  feature="$1"
+  enable="$2"
+  if ! feature_exists "$feature"; then
+    printf 'configure.sh: unknown feature "%s".\n' "$feature" >&2
+    exit 1
+  fi
+  eval "enable_$feature='$enable'"
+}
+
 write_build_features() {
   (
     for feature in $FEATURES; do
@@ -29,22 +39,8 @@ write_build_features() {
 
 while [ $# -gt 0 ]; do
   case "$1" in
-    --enable-*)
-      feature="${1#--enable-}"
-      if ! feature_exists "$feature"; then
-        printf 'configure.sh: unknown feature "%s".\n' "$feature" >&2
-        exit 1
-      fi
-      eval "enable_$feature='#t'"
-      ;;
-    --disable-*)
-      feature="${1#--disable-}"
-      if ! feature_exists "$feature"; then
-        printf 'configure.sh: unknown feature "%s".\n' "$feature" >&2
-        exit 1
-      fi
-      eval "enable_$feature='#f'"
-      ;;
+    --enable-*)  set_feature_enable "${1#--enable-}"  '#t';;
+    --disable-*) set_feature_enable "${1#--disable-}" '#f';;
     *)
       printf 'configure.sh: unknown argument "%s".\n' "$1" >&2
       exit 1
