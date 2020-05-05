@@ -89,6 +89,7 @@ write_build_features() {
     done
     printf '(def config-gambit-gsi "%s")\n' "$gsi"
     printf '(def config-gambit-gsc "%s")\n' "$gsc"
+    printf '(def config-prefix "%s")\n' "$with_prefix"
   ) >std/build-features.ss
 }
 
