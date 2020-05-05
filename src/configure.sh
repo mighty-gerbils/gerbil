@@ -17,6 +17,23 @@ with_prefix='/usr/local'
 
 readonly TEMPLATE_FILES='gerbil/gxi gerbil/gxi-build-script'
 
+feedback_err() {
+  (1>&2 echo "*** ERROR; ${1}")
+}
+
+feedback_low() {
+  echo "[*] ${1}"
+}
+
+feedback_mid() {
+  echo ">>> ${1}"
+}
+
+die() {
+  feedback_err "configure failed"
+  exit 1
+}
+
 has_word() {
   case " $1 " in
     *" $2 "*) return 0;;
@@ -28,8 +45,8 @@ set_feature_enable() {
   feature="$1"
   enable="$2"
   if ! has_word "$FEATURES" "$feature"; then
-    printf 'configure.sh: unknown feature "%s".\n' "$feature" >&2
-    exit 1
+    feedback_err "Unknown feature \"$feature\"."
+    die
   fi
   eval "enable_$feature='$enable'"
 }
@@ -38,8 +55,8 @@ set_option() {
   option="$1"
   value="$2"
   if ! has_word "$OPTIONS" "$option"; then
-    printf 'configure.sh: unknown option "%s".\n' "$option" >&2
-    exit 1
+    feedback_err "Unknown option \"$option\"."
+    die
   fi
   eval "with_$option='$value'"
 }
@@ -63,8 +80,8 @@ parse_args() {
         shift
         ;;
       *)
-        printf 'configure.sh: unknown argument "%s".\n' "$1" >&2
-        exit 1
+        feedback_err "Unknown argument \"$1\"."
+        die
         ;;
     esac
     shift
@@ -82,6 +99,7 @@ find_paths() {
 }
 
 write_build_features() {
+  feedback_mid "writing std/build-features.ss"
   (
     for feature in $FEATURES; do
       eval "enable=\"\$enable_$feature\""
@@ -95,6 +113,7 @@ write_build_features() {
 
 write_file() {
   filename="$1"
+  feedback_mid "writing $filename"
   # cp for permissions
   cp "$filename.in" "$filename"
   sed -e "
