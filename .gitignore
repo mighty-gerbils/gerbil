@@ -10,6 +10,7 @@ lib
 
 src/TAGS
 src/std/build-features.ss
+src/gerbil/gxc
 src/gerbil/gxi
 src/gerbil/gxi-build-script
 src/gerbil/runtime/gx-version.scm

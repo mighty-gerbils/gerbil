@@ -1,4 +1,4 @@
-#!/usr/bin/env gxi
+#!@@prefix@@/bin/gxi
 ;; -*- Gerbil -*-
 
 (import :gerbil/compiler)

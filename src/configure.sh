@@ -15,7 +15,7 @@ enable_leveldb='#f'
 with_gambit=''
 with_prefix='/usr/local'
 
-readonly TEMPLATE_FILES='gerbil/gxi gerbil/gxi-build-script'
+readonly TEMPLATE_FILES='gerbil/gxc gerbil/gxi gerbil/gxi-build-script'
 
 feedback_err() {
   (1>&2 echo "*** ERROR; ${1}")
