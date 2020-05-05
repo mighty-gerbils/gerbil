@@ -98,12 +98,16 @@ write_file() {
 " "${filename}.in" >"$filename"
 }
 
-configure() {
-  parse_args "$@"
-  write_build_features
+write_files() {
   for file in $TEMPLATE_FILES; do
     write_file "$file"
   done
+}
+
+configure() {
+  parse_args "$@"
+  write_build_features
+  write_files
 }
 
 configure "$@"
