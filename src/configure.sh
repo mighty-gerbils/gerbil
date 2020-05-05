@@ -71,19 +71,7 @@ parse_args() {
   done
 }
 
-write_build_features() {
-  (
-    for feature in $FEATURES; do
-      eval "enable=\"\$enable_$feature\""
-      printf '(enable %s %s)\n' "$feature" "$enable"
-    done
-  ) >std/build-features.ss
-}
-
-write_file() {
-  filename="$1"
-  # cp for permissions
-  cp "$filename.in" "$filename"
+find_paths() {
   if [ -z "$with_gambit" ]; then
     gsi=gsi
     gsc=gsc
@@ -91,6 +79,23 @@ write_file() {
     gsi="$gambit/bin/gsi"
     gsc="$gambit/bin/gsc"
   fi
+}
+
+write_build_features() {
+  (
+    for feature in $FEATURES; do
+      eval "enable=\"\$enable_$feature\""
+      printf '(enable %s %s)\n' "$feature" "$enable"
+    done
+    printf '(def config-gambit-gsi "%s")\n' "$gsi"
+    printf '(def config-gambit-gsc "%s")\n' "$gsc"
+  ) >std/build-features.ss
+}
+
+write_file() {
+  filename="$1"
+  # cp for permissions
+  cp "$filename.in" "$filename"
   sed -e "
     s,@@gsi@@,$gsi,g
     s,@@gsc@@,$gsc,g
@@ -106,6 +111,7 @@ write_files() {
 
 configure() {
   parse_args "$@"
+  find_paths
   write_build_features
   write_files
 }
