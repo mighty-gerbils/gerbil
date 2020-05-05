@@ -1,10 +1,8 @@
 #!/bin/sh
 set -e
 
-if [ -z "$GERBIL_HOME" ]; then
-    GERBIL_HOME=$(dirname $(cd ${0%/*} && echo $PWD))
-    export GERBIL_HOME
-fi
+: ${GERBIL_HOME:=@@with_prefix@@}
+export GERBIL_HOME
 
 if [ $# -gt 0 ]; then
     case $1 in
@@ -13,7 +11,7 @@ if [ $# -gt 0 ]; then
             exit 0
             ;;
         -v)
-            exec gsi "$GERBIL_HOME/lib/gxi-init" -e '(displayln gerbil-greeting)'
+            exec @@gsi@@ "$GERBIL_HOME/lib/gxi-init" -e '(displayln gerbil-greeting)'
             ;;
      esac
 fi
@@ -37,7 +35,7 @@ if [ $# -gt 0 ]; then
 fi
 
 if [ $# -eq 0 ]; then
-    exec gsi $GSIOPTIONS "$GERBIL_HOME/lib/gxi-init" "$GERBIL_HOME/lib/gxi-interactive" -
+    exec @@gsi@@ $GSIOPTIONS "$GERBIL_HOME/lib/gxi-init" "$GERBIL_HOME/lib/gxi-interactive" -
 else
-    exec gsi $GSIOPTIONS "$GERBIL_HOME/lib/gxi-init" "$@"
+    exec @@gsi@@ $GSIOPTIONS "$GERBIL_HOME/lib/gxi-init" "$@"
 fi

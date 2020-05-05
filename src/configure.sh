@@ -78,9 +78,26 @@ write_build_features() {
   ) >std/build-features.ss
 }
 
+write_file() {
+  filename="$1"
+  if [ -z "$with_gambit" ]; then
+    gsi=gsi
+    gsc=gsc
+  else
+    gsi="$gambit/bin/gsi"
+    gsc="$gambit/bin/gsc"
+  fi
+  sed -e "
+    s,@@gsi@@,$gsi,g
+    s,@@gsc@@,$gsc,g
+    s,@@with_prefix@@,$with_prefix,g
+" "${filename}.in" >"$filename"
+}
+
 configure() {
   parse_args "$@"
   write_build_features
+  write_file gerbil/gxi
 }
 
 configure "$@"
