@@ -15,6 +15,8 @@ enable_leveldb='#f'
 with_gambit=''
 with_prefix='/usr/local'
 
+readonly TEMPLATE_FILES='gerbil/gxi gerbil/gxi-build-script'
+
 has_word() {
   case " $1 " in
     *" $2 "*) return 0;;
@@ -80,6 +82,8 @@ write_build_features() {
 
 write_file() {
   filename="$1"
+  # cp for permissions
+  cp "$filename.in" "$filename"
   if [ -z "$with_gambit" ]; then
     gsi=gsi
     gsc=gsc
@@ -97,7 +101,9 @@ write_file() {
 configure() {
   parse_args "$@"
   write_build_features
-  write_file gerbil/gxi
+  for file in $TEMPLATE_FILES; do
+    write_file "$file"
+  done
 }
 
 configure "$@"
