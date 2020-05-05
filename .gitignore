@@ -11,6 +11,7 @@ lib
 src/TAGS
 src/std/build-features.ss
 src/gerbil/gxi
+src/gerbil/gxi-build-script
 src/gerbil/runtime/gx-version.scm
 .build*
 doc/node_modules

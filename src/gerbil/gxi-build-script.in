@@ -1,0 +1,20 @@
+#!/bin/sh
+set -e
+
+: ${GERBIL_HOME:=@@with_prefix@@}
+export GERBIL_HOME
+
+if [ $# -gt 0 ]; then
+    case $1 in
+        -:*)
+            GSIOPTIONS=$1
+            shift
+            ;;
+    esac
+fi
+
+if [ $# -eq 0 ]; then
+    exec @@gsi@@ $GSIOPTIONS -e '(include "~~lib/_gambit#.scm")' "$GERBIL_HOME/lib/gxi-init" "$GERBIL_HOME/lib/gxi-interactive" -
+else
+    exec @@gsi@@ $GSIOPTIONS -e '(include "~~lib/_gambit#.scm")' "$GERBIL_HOME/lib/gxi-init" "$@"
+fi
