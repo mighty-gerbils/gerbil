@@ -1,0 +1,58 @@
+#!/usr/bin/env gsi-script
+
+(define features
+  '((libxml  . #f)
+    (libyaml . #f)
+    (zlib    . #t)
+    (sqlite  . #t)
+    (mysql   . #f)
+    (lmdb    . #f)
+    (leveldb . #f)))
+
+(define (die . message-bits)
+  (parameterize ((current-output-port (current-error-port)))
+    (display "*** ERROR; ")
+    (for-each display message-bits)
+    (newline))
+  (exit 1))
+
+(define (enable-feature! feature value)
+  (let ((cell (assq (string->symbol feature) features)))
+    (if (not cell)
+      (die "Unknown feature: " feature))
+    (set-cdr! cell value)))
+
+(define (prefix s prefix)
+  (let ((prefix-length (string-length prefix))
+        (s-length      (string-length s)))
+    (if (and (<= prefix-length (string-length s))
+             (string=? prefix (substring s 0 prefix-length)))
+      (substring s prefix-length s-length)
+      #f)))
+
+(define (parse-args args)
+  (let loop ((args args))
+    (cond
+     ((null? args)                     #f)
+     ((prefix (car args) "--enable-")  => (lambda (feature)
+                                            (enable-feature! feature #t)
+                                            (loop (cdr args))))
+     ((prefix (car args) "--disable-") => (lambda (feature)
+                                            (enable-feature! feature #f)
+                                            (loop (cdr args))))
+     (else                            (die "Unknown option: " (car args))))))
+
+(define (write-build-features)
+  (with-output-to-file "std/build-features.ss"
+    (lambda ()
+      (for-each (lambda (feature-cell)
+                  (write `(enable ,(car feature-cell) ,(cdr feature-cell)))
+                  (newline))
+                features))))
+
+(define (main . args)
+  (with-exception-handler
+    die
+    (lambda ()
+      (parse-args args)
+      (write-build-features))))
