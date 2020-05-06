@@ -24,6 +24,7 @@
         "misc/bytes-test"
         "misc/number-test"
         "misc/hash-test"
+        "text/hex-test"
         "text/csv-test"
         "text/json-test"
         "text/utf8-test"
@@ -68,6 +69,7 @@
    sugar-test
    amb-test
    event-test
+   hex-test
    csv-test
    json-test
    utf8-test
