@@ -42,6 +42,12 @@
 #|
 TODO:
 
+  * Allow static-include: and gsc: without a ssi:, just a gxc:
+    and don't nest, just add a dependency.
+
+  * Allow for extra-dependency: to a list of other targets (as identified by spec-file ?)
+    in the plist of gxc:, etc.
+
   * Divide the building of a spec into multiple actions, some foreground
     (using Gerbil's non-thread-safe compiler), some background (spawning gsc),
     each having inputs and outputs, backgroundability, and a perform method.
@@ -405,6 +411,8 @@ TODO:
     (for-each (lambda (x) (cache-remove! ['modification-time x])) outputs) ; clear stale pre-build timestamps
     (def out-timestamp (xmax/map file-timestamp outputs))
     (unless (< out-timestamp +inf.0)
+      (when verbose
+        (writeln [compute-timestamp-failed: spec (map (lambda (x) [x (file-timestamp x)]) outputs)]))
       (error "Build failed to generate expected outputs" spec outputs))
     out-timestamp)
   (def (target<-item item) (if (<= 0 item) item (bitwise-not item)))
@@ -625,7 +633,8 @@ TODO:
     => (lambda (ix) (substring mod (fx1+ ix) (string-length mod))))
    (else mod)))
 
-(def (gsc-c-path mod settings)
+(def (gsc-c-path modf settings)
+  (def mod (path-strip-extension modf))
   (def libpath (gsc-libpath mod settings))
   (def base (gsc-base mod))
   (let lp ((n 1) (cpath #f))
