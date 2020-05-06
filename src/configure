@@ -33,14 +33,18 @@
 (define (parse-args args)
   (let loop ((args args))
     (cond
-     ((null? args)                     #f)
-     ((prefix (car args) "--enable-")  => (lambda (feature)
-                                            (enable-feature! feature #t)
-                                            (loop (cdr args))))
-     ((prefix (car args) "--disable-") => (lambda (feature)
-                                            (enable-feature! feature #f)
-                                            (loop (cdr args))))
-     (else                            (die "Unknown option: " (car args))))))
+     ((null? args)
+      #f)
+     ((prefix (car args) "--enable-") =>
+      (lambda (feature)
+        (enable-feature! feature #t)
+        (loop (cdr args))))
+     ((prefix (car args) "--disable-") =>
+      (lambda (feature)
+        (enable-feature! feature #f)
+        (loop (cdr args))))
+     (else
+      (die "Unknown option: " (car args))))))
 
 (define (write-build-features)
   (with-output-to-file "std/build-features.ss"
