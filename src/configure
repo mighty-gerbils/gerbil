@@ -51,8 +51,5 @@
                 features))))
 
 (define (main . args)
-  (with-exception-handler
-    die
-    (lambda ()
-      (parse-args args)
-      (write-build-features))))
+  (parse-args args)
+  (write-build-features))
