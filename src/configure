@@ -68,9 +68,11 @@
        features))
 
 (define (shebang-patches)
-  (if install-prefix
-    (list (make-patch (string-append "#!" install-prefix "/bin/gxi\n") "#!" '("gxi")))
-    (list (make-patch "#!/usr/bin/env gxi\n" "#!" '("gxi")))))
+  (define replacement
+    (if install-prefix
+      (string-append "#!" install-prefix "/bin/gxi\n")
+      "#!/usr/bin/env gxi\n"))
+  (list (make-patch replacement "#!" '("gxi"))))
 
 (define (patches)
   (append
