@@ -73,8 +73,9 @@
     (list (make-patch "#!/usr/bin/env gxi\n" "#!" '("gxi")))))
 
 (define (patches)
-  (feature-patches)
-  (shebang-patches))
+  (append
+    (feature-patches)
+    (shebang-patches)))
 
 (define (parse-args args)
   (define (match-prefix s prefix)
