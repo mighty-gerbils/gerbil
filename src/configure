@@ -96,16 +96,19 @@
       (lambda ()
         (display new-content)))))
 
+(define (feature-patches)
+  (map (lambda (feature)
+         (define patch-prefix
+           (string-append "(enable " (symbol->string (car feature)) " "))
+         (define replacement
+           (string-append patch-prefix (object->string (cdr feature)) ")\n"))
+         (list replacement patch-prefix))
+       features))
+
 (define (main . args)
   (parse-args args)
   (let ((patches (append '(("#!/tmp/bin/gxi\n" "#!" "gxi"))
-                         (map (lambda (feature)
-                                (define patch-prefix
-                                  (string-append "(enable " (symbol->string (car feature)) " "))
-                                (define replacement
-                                  (string-append patch-prefix (object->string (cdr feature)) ")\n"))
-                                (list replacement patch-prefix))
-                              features))))
+                         (feature-patches))))
     (for-each (lambda (filename)
                 (patch-file filename patches))
               files-to-patch)))
