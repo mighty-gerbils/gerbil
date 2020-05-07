@@ -65,9 +65,9 @@
 (define (patch-file filename patches)
   (define (patch-line line)
     (fold (lambda (patch line)
-            (let* ((prefix      (car patch))
-                   (prefix-len  (string-length prefix))
-                   (replacement (cdr patch)))
+            (let* ((replacement (car patch))
+                   (prefix      (cadr patch))
+                   (prefix-len  (string-length prefix)))
               (if (and (<= prefix-len (string-length line))
                        (string=? prefix (substring line 0 prefix-len)))
                 replacement
@@ -88,4 +88,4 @@
 (define (main . args)
   (parse-args args)
   (write-build-features)
-  (patch-file "gerbil/gxc" '(("#!" . "#!/tmp/bin/gzi\n"))))
+  (patch-file "gerbil/gxc" '(("#!/tmp/bin/gxi\n" "#!"))))
