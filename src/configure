@@ -97,6 +97,9 @@
       (lambda (new-value)
         (set! install-prefix new-value)
         (loop (cdr args))))
+     ((string=? (car args) "--prefix")
+      (set! install-prefix (cadr args))
+      (loop (cddr args)))
      (else
       (die "Unknown option: " (car args))))))
 
