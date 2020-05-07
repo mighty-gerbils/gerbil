@@ -128,7 +128,7 @@
       (lambda (new-value)
         (set! gambit-prefix new-value)
         (loop (cdr args))))
-     ((match-prefix (car args) "--with-gambit")
+     ((string=? (car args) "--with-gambit")
       (set! gambit-prefix (cadr args))
       (loop (cddr args)))
      (else
