@@ -13,6 +13,11 @@
   '("gerbil/gxc"
     "std/build-features.ss"))
 
+(define (string-starts-with? s prefix)
+  (let* ((prefix-len (string-length prefix)))
+    (and (<= prefix-len (string-length s))
+         (string=? prefix (substring s 0 prefix-len)))))
+
 (define-record-type :patch
   (make-patch replacement prefix substrings)
   patch?
@@ -21,10 +26,7 @@
   (substrings  patch-substrings))
 
 (define (patch-prefix-matches-line? patch line)
-  (let* ((prefix     (patch-prefix patch))
-         (prefix-len (string-length prefix)))
-    (and (<= prefix-len (string-length line))
-         (string=? prefix (substring line 0 prefix-len)))))
+  (string-starts-with? line (patch-prefix patch)))
 
 (define (patch-substrings-match-line? patch line)
   (fold (lambda (substring answer)
