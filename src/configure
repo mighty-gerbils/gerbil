@@ -54,6 +54,38 @@
                   (newline))
                 features))))
 
+(define (for-each-line proc)
+  (let loop ()
+    (let ((line (read-line (current-input-port) #\newline #t)))
+      (if (not (eof-object? line))
+        (begin
+         (proc line)
+         (loop))))))
+
+(define (patch-file filename patches)
+  (define (patch-line line)
+    (fold (lambda (patch line)
+            (let* ((prefix      (car patch))
+                   (prefix-len  (string-length prefix))
+                   (replacement (cdr patch)))
+              (if (and (<= prefix-len (string-length line))
+                       (string=? prefix (substring line 0 prefix-len)))
+                replacement
+                line)))
+          line
+          patches))
+  (let ((new-content (with-input-from-file filename
+                       (lambda ()
+                         (with-output-to-string
+                           (lambda ()
+                             (for-each-line
+                               (lambda (line)
+                                 (display (patch-line line))))))))))
+    (with-output-to-file filename
+      (lambda ()
+        (display new-content)))))
+
 (define (main . args)
   (parse-args args)
-  (write-build-features))
+  (write-build-features)
+  (patch-file "gerbil/gxc" '(("#!" . "#!/tmp/bin/gzi\n"))))
