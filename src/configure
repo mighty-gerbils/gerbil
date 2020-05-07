@@ -96,16 +96,11 @@
   (parse-args args)
   (let ((patches (append '(("#!/tmp/bin/gxi\n" "#!" "gxi"))
                          (map (lambda (feature)
-                                (list (string-append "(enable "
-                                                     (symbol->string (car feature))
-                                                     " "
-                                                     (if (cdr feature)
-                                                       "#t"
-                                                       "#f")
-                                                     ")\n")
-                                      (string-append "(enable "
-                                                     (symbol->string (car feature))
-                                                     " ")))
+                                (define patch-prefix
+                                  (string-append "(enable " (symbol->string (car feature)) " "))
+                                (define replacement
+                                  (string-append patch-prefix (object->string (cdr feature)) ")\n"))
+                                (list replacement patch-prefix))
                               features))))
     (patch-file "std/build-features.ss" patches)
     (patch-file "gerbil/gxc" patches)))
