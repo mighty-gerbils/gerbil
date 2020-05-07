@@ -46,14 +46,6 @@
      (else
       (die "Unknown option: " (car args))))))
 
-(define (write-build-features)
-  (with-output-to-file "std/build-features.ss"
-    (lambda ()
-      (for-each (lambda (feature-cell)
-                  (write `(enable ,(car feature-cell) ,(cdr feature-cell)))
-                  (newline))
-                features))))
-
 (define (for-each-line proc)
   (let loop ()
     (let ((line (read-line (current-input-port) #\newline #t)))
