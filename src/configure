@@ -97,11 +97,9 @@
 (define (patch-file filename patches)
   (define (patch-line line)
     (fold (lambda (patch line)
-            (let* ((prefix          (patch-prefix patch))
-                   (more-substrings (patch-additional-substrings patch)))
-              (if (patch-matches-line? patch line)
-                (patch-replacement patch)
-                line)))
+            (if (patch-matches-line? patch line)
+              (patch-replacement patch)
+              line))
           line
           patches))
   (let ((new-content (with-input-from-file filename
