@@ -30,6 +30,11 @@
        (else
         (loop (+ 1 i)))))))
 
+(define (feedback-mid . message-bits)
+  (display ">>> ")
+  (for-each display message-bits)
+  (newline))
+
 (define-record-type :patch
   (make-patch replacement prefix substrings)
   patch?
@@ -139,8 +144,23 @@
       (lambda ()
         (display new-content)))))
 
+(define (display-config)
+  (newline)
+  (feedback-mid "Install Location: " (or install-prefix "(none)"))
+  (feedback-mid "Enabled features:")
+  (for-each (lambda (feature)
+              (if (cdr feature)
+                (feedback-mid (string-append "  " (symbol->string (car feature))))))
+            features)
+  (feedback-mid "Disabled features:")
+  (for-each (lambda (feature)
+              (if (not (cdr feature))
+                (feedback-mid (string-append "  " (symbol->string (car feature))))))
+            features))
+
 (define (main . args)
   (parse-args args)
+  (display-config)
   (let ((patches (patches)))
     (for-each (lambda (filename)
                 (patch-file filename patches))
