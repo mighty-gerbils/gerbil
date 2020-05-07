@@ -20,15 +20,18 @@
   (prefix                patch-prefix)
   (additional-substrings patch-additional-substrings))
 
-(define (patch-matches-line? patch line)
+(define (patch-prefix-matches-line? patch line)
   (let* ((prefix     (patch-prefix patch))
          (prefix-len (string-length prefix)))
     (and (<= prefix-len (string-length line))
-         (string=? prefix (substring line 0 prefix-len))
-         (fold (lambda (substring answer)
-                 (and answer (string-contains? line substring)))
-               #t
-               (patch-additional-substrings patch)))))
+         (string=? prefix (substring line 0 prefix-len)))))
+
+(define (patch-matches-line? patch line)
+  (and (patch-prefix-matches-line? patch line)
+       (fold (lambda (substring answer)
+               (and answer (string-contains? line substring)))
+             #t
+             (patch-additional-substrings patch))))
 
 (define (patch-apply patch line)
   (if (patch-matches-line? patch line)
