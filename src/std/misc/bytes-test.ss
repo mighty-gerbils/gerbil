@@ -6,7 +6,7 @@
 (import :std/test
         (only-in :std/sugar try catch)
         :gerbil/gambit/exceptions
-        :std/misc/bytes)
+        :std/misc/bytes :std/srfi/13)
 (export bytes-test)
 
 (def u0 (u8vector 1 2 3))
@@ -16,15 +16,6 @@
 (def u1 (u8vector 1 2 3 4 5))
 (def u1-reversed (u8vector 5 4 3 2 1))
 (def u1-reverse (lambda () (begin (bytevector-reverse! u1) u1)))
-
-(def u2 (u8vector 255 127 11 1 0))
-(def u2-bytestring "FF 7F 0B 01 00")
-
-(def u3 (u8vector 1 2 3))
-(def u3-bytestring "010203")
-
-(def bs0 "AB CD 00 12")
-(def bs0-u8vector (u8vector #xAB #xCD #x00 #x12))
 
 (def u4 (u8vector #xFF #xFF))
 (def u5 (make-u8vector 10 #xFF))
@@ -114,11 +105,17 @@
       (check-equal? (u1-reverse) u1-reversed))
     (test-case "test bytevector-reverse"
       (check-equal? (u6-reverse) u6-reversed))
-    (test-case "test u8vector->bytestring"
-      (check-equal? (u8vector->bytestring u2) u2-bytestring)
-      (check-equal? (u8vector->bytestring u3 #f) u3-bytestring))
-    (test-case "test bytestring->u8vector"
-      (check-equal? (bytestring->u8vector bs0) bs0-u8vector))
+    (test-case "test u8vector->bytestring, bytestring->u8vector"
+      (for-each (match <>
+                  ([vec hex delim]
+                   (check-equal? vec (bytestring->u8vector hex delim))
+                   (check-equal? (string-upcase hex) (u8vector->bytestring vec delim))))
+                [[#u8(255 127 11 1 0) "FF 7F 0B 01 00" #\space]
+                 [#u8(1 2 3) "010203" #f]
+                 [#u8(#xAB #xCD #x00 #x12) "AB CD 00 12" #\space]
+                 [#u8(#xDE #xAD #xBE #xEF #xCA #xFE) "De:ad:Be:ef:cA:FE" #\:]
+                 [#u8() "" #f]
+                 [#u8() "" #\:]]))
     (test-case "test u8vector->uint"
       (check-equal? (u8vector->uint u4) (- (expt 2 16) 1))
       (check-equal? (u8vector->uint u5) (- (expt 2 80) 1)))))
