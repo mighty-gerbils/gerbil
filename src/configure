@@ -14,11 +14,11 @@
     "std/build-features.ss"))
 
 (define-record-type :patch
-  (make-patch replacement prefix additional-substrings)
+  (make-patch replacement prefix substrings)
   patch?
-  (replacement           patch-replacement)
-  (prefix                patch-prefix)
-  (additional-substrings patch-additional-substrings))
+  (replacement patch-replacement)
+  (prefix      patch-prefix)
+  (substrings  patch-substrings))
 
 (define (patch-prefix-matches-line? patch line)
   (let* ((prefix     (patch-prefix patch))
@@ -31,7 +31,7 @@
        (fold (lambda (substring answer)
                (and answer (string-contains? line substring)))
              #t
-             (patch-additional-substrings patch))))
+             (patch-substrings patch))))
 
 (define (patch-apply patch line)
   (if (patch-matches-line? patch line)
