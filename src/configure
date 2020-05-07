@@ -20,6 +20,16 @@
     (and (<= prefix-len (string-length s))
          (string=? prefix (substring s 0 prefix-len)))))
 
+(define (string-contains? s find)
+  (let ((find-len (string-length find)))
+    (let loop ((i 0))
+      (cond
+       ((< (string-length s) (+ i find-len))
+        #f)
+       ((string=? find (substring s i (+ i find-len))))
+       (else
+        (loop (+ 1 i)))))))
+
 (define-record-type :patch
   (make-patch replacement prefix substrings)
   patch?
@@ -114,15 +124,6 @@
          (proc line)
          (loop))))))
 
-(define (string-contains? s find)
-  (let ((find-len (string-length find)))
-    (let loop ((i 0))
-      (cond
-       ((< (string-length s) (+ i find-len))
-        #f)
-       ((string=? find (substring s i (+ i find-len))))
-       (else
-        (loop (+ 1 i)))))))
 
 (define (patch-file filename patches)
   (define (apply-patches line)
