@@ -65,21 +65,20 @@
          (make-patch replacement prefix '()))
        features))
 
-(define (prefix s prefix)
-  (if (string-starts-with? s prefix)
-      (substring s (string-length prefix) (string-length s))
-      #f))
-
 (define (parse-args args)
+  (define (match-prefix s prefix)
+    (if (string-starts-with? s prefix)
+        (substring s (string-length prefix) (string-length s))
+        #f))
   (let loop ((args args))
     (cond
      ((null? args)
       #f)
-     ((prefix (car args) "--enable-") =>
+     ((match-prefix (car args) "--enable-") =>
       (lambda (feature)
         (enable-feature! feature #t)
         (loop (cdr args))))
-     ((prefix (car args) "--disable-") =>
+     ((match-prefix (car args) "--disable-") =>
       (lambda (feature)
         (enable-feature! feature #f)
         (loop (cdr args))))
