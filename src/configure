@@ -10,6 +10,7 @@
     (leveldb . #f)))
 
 (define install-prefix #f)
+(define gambit-prefix #f)
 
 (define files-to-patch
   '("gerbil/gxc"
@@ -123,6 +124,13 @@
      ((string=? (car args) "--prefix")
       (set! install-prefix (cadr args))
       (loop (cddr args)))
+     ((match-prefix (car args) "--with-gambit=") =>
+      (lambda (new-value)
+        (set! gambit-prefix new-value)
+        (loop (cdr args))))
+     ((match-prefix (car args) "--with-gambit")
+      (set! gambit-prefix (cadr args))
+      (loop (cddr args)))
      (else
       (die "Unknown option: " (car args))))))
 
@@ -152,7 +160,8 @@
 
 (define (display-config)
   (newline)
-  (feedback-mid "Install Location: " (or install-prefix "(none)"))
+  (feedback-mid "Install location: " (or install-prefix "(none)"))
+  (feedback-mid "Gambit location:  " (or gambit-prefix "(in path)"))
   (feedback-mid "Enabled features:")
   (for-each (lambda (feature)
               (if (cdr feature)
