@@ -8,9 +8,9 @@
         :std/actor/xdr
         :std/net/bio
         :std/iter)
-(export actor-xdr-test)
+(export xdr-test)
 
-(def actor-xdr-test
+(def xdr-test
   (test-suite "test :std/actor/xdr"
 
     (def (check-serialize obj (obj-e values))

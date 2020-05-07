@@ -1,112 +1,72 @@
 #!/usr/bin/env gxi
 ;; -*- Gerbil -*-
 
-(import :std/test
+(import :gerbil/expander
+        :std/test
         :std/foreign-test
-        "build-config"
-        "generic-test"
-        "coroutine-test"
-        "iter-test"
-        "sugar-test"
-        "amb-test"
-        "event-test"
-        "misc/string-test"
-        "misc/list-test"
-        "misc/channel-test"
-        "misc/lru-test"
-        "misc/func-test"
-        "misc/queue-test"
-        "misc/deque-test"
-        "misc/pqueue-test"
-        "misc/rbtree-test"
-        "misc/barrier-test"
-        "misc/completion-test"
-        "misc/bytes-test"
-        "misc/number-test"
-        "misc/hash-test"
-        "text/hex-test"
-        "text/csv-test"
-        "text/json-test"
-        "text/utf8-test"
-        "text/utf16-test"
-        "actor/xdr-test"
-        "actor-test"
-        "net/httpd-test"
-        "net/sasl-test"
-        "protobuf/protobuf-test")
+        :std/sugar
+        "build-config")
 
-(cond-expand
-  (config-have-sqlite
-   (import "db/sqlite-test")))
+(def this-dir (path-normalize (path-directory (this-source-file))))
+(add-load-path (path-directory this-dir))
 
-(cond-expand
-  (config-have-lmdb
-   (import "db/lmdb-test")))
+(def (->symbol . args) (string->symbol (apply string-append args)))
 
-(cond-expand
-  (config-have-leveldb
-   (import "db/leveldb-test")))
+(def tests [])
+(def (register-test path)
+  (when (string? path)
+    (let ()
+      (def mod (->symbol ":std/" path))
+      (import-module mod #t #t)
+      (def test (eval (->symbol "std/" path "#" (path-strip-directory path))))
+      (set! tests (cons test tests)))))
+(defrule (cond-test cond path)
+  (cond-expand (cond path) (else #f)))
+(for-each register-test
+  ["actor-test"
+   "actor/xdr-test"
+   "amb-test"
+   "coroutine-test"
+   "event-test"
+   ;;"foreign-test" ;; requires compiling the test
+   "generic-test"
+   "iter-test"
+   "misc/barrier-test"
+   "misc/bytes-test"
+   "misc/channel-test"
+   "misc/completion-test"
+   "misc/deque-test"
+   "misc/func-test"
+   "misc/hash-test"
+   "misc/list-test"
+   "misc/lru-test"
+   "misc/number-test"
+   "misc/pqueue-test"
+   "misc/queue-test"
+   "misc/rbtree-test"
+   "misc/string-test"
+   "net/httpd-test"
+   "net/sasl-test"
+   (cond-test linux "os/signalfd-test") ;; FIXME: if run after os/signal-handler-test, blocks forever
+   "os/signal-handler-test"
+   "protobuf/protobuf-test"
+   "sugar-test"
+   "text/csv-test"
+   "text/json-test"
+   "text/utf16-test"
+   "text/utf32-test"
+   "text/utf8-test"
+   ;;"web/fastcgi-test" ;; requires a running webserver
+   ;;"web/rack-test" ;; requires a running webserver
+   (cond-test config-have-leveldb "db/leveldb-test")
+   (cond-test config-have-libyaml "text/yaml-test")
+   (cond-test config-have-lmdb "db/lmdb-test")
+   ;;(cond-test config-have-mysql "db/mysql-test") ;; requires a running server
+   ;;(cond-test config-have-postgresql "db/postgresql-test") ;; requires a running server
+   (cond-test config-have-sqlite "db/sqlite-test")
+   (cond-test (or linux bsd) "net/socket/server-test")])
 
-(cond-expand
-  (config-have-libyaml
-   (import "text/yaml-test")))
-
-(cond-expand
-  ((or linux bsd)
-   (import "net/socket/server-test")))
-
-(cond-expand
-  (linux
-   (import "os/signalfd-test")))
-
-(import "os/signal-handler-test")
-
-(def tests
-  [generic-runtime-test
-   generic-macro-test
-   coroutine-test
-   iter-test
-   sugar-test
-   amb-test
-   event-test
-   hex-test
-   csv-test
-   json-test
-   utf8-test
-   utf16-test
-   (if config-enable-libyaml [yaml-test] []) ...
-   string-test
-   list-test
-   channel-test
-   lru-test
-   func-test
-   queue-test
-   deque-test
-   pqueue-test
-   rbtree-test
-   barrier-test
-   completion-test
-   bytes-test
-   number-test
-   hash-test
-   actor-xdr-test
-   actor-rpc-test
-   actor-rpc-stream-test
-   httpd-test
-   sasl-test
-   protobuf-test
-   foreign-test
-   (if config-enable-sqlite [sqlite-test] []) ...
-   (if config-enable-lmdb [lmdb-test] []) ...
-   (if config-enable-leveldb [leveldb-test] []) ...
-   socket-server-test
-   (cond-expand
-     (linux [signalfd-test])
-     (else []))
-   ...
-   signal-handler-test])
-
-(apply run-tests! tests)
+(apply run-tests! (reverse tests))
 (test-report-summary!)
 
 (case (test-result)
