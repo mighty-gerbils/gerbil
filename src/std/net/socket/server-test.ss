@@ -11,9 +11,9 @@
         :std/error
         :std/sugar
         :std/test)
-(export socket-server-test)
+(export server-test)
 
-(def socket-server-test
+(def server-test
   (test-suite "test :std/net/socket"
 
     (def server-address "localhost:4242")
