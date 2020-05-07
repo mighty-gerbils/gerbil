@@ -35,6 +35,11 @@
   (for-each display message-bits)
   (newline))
 
+(define (feedback-low . message-bits)
+  (display "[*] ")
+  (for-each display message-bits)
+  (newline))
+
 (define-record-type :patch
   (make-patch replacement prefix substrings)
   patch?
@@ -133,6 +138,7 @@
 (define (patch-file filename patches)
   (define (apply-patches line)
     (fold patch-apply line patches))
+  (feedback-low "Patching " filename)
   (let ((new-content (with-input-from-file filename
                        (lambda ()
                          (with-output-to-string
