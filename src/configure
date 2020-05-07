@@ -9,6 +9,10 @@
     (lmdb    . #f)
     (leveldb . #f)))
 
+(define files-to-patch
+  '("gerbil/gxc"
+    "std/build-features.ss"))
+
 (define (die . message-bits)
   (parameterize ((current-output-port (current-error-port)))
     (display "*** ERROR; ")
@@ -102,5 +106,6 @@
                                   (string-append patch-prefix (object->string (cdr feature)) ")\n"))
                                 (list replacement patch-prefix))
                               features))))
-    (patch-file "std/build-features.ss" patches)
-    (patch-file "gerbil/gxc" patches)))
+    (for-each (lambda (filename)
+                (patch-file filename patches))
+              files-to-patch)))
