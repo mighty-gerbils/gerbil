@@ -28,7 +28,11 @@ namespace: gxc
   (getenv "GERBIL_GSC" "gsc"))
 
 (def gsc-runtime-args
-  ["-:f8,-8,t8"]) ;; force Gambit to use UTF-8
+  [;; force Gambit to use UTF-8:
+   (cond-expand
+     (,(##unbound? (##global-var-ref (##make-global-var '##get-io-settings)))
+      "-:f8,-8,t8") ;; before v4.9.3-1081-g0680901f
+     (else "-:i8,t8"))]) ;; after
 
 (def (compile-file srcpath (opts []))
   (unless (string? srcpath)
