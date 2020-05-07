@@ -9,6 +9,8 @@
     (lmdb    . #f)
     (leveldb . #f)))
 
+(define install-prefix #f)
+
 (define files-to-patch
   '("gerbil/gxc"
     "std/build-features.ss"))
@@ -65,6 +67,15 @@
          (make-patch replacement prefix '()))
        features))
 
+(define (shebang-patches)
+  (if install-prefix
+    (list (make-patch (string-append "#!" install-prefix "/bin/gxi\n") "#!" '("gxi")))
+    (list (make-patch "#!/usr/bin/env gxi\n" "#!" '("gxi")))))
+
+(define (patches)
+  (feature-patches)
+  (shebang-patches))
+
 (define (parse-args args)
   (define (match-prefix s prefix)
     (if (string-starts-with? s prefix)
@@ -81,6 +92,10 @@
      ((match-prefix (car args) "--disable-") =>
       (lambda (feature)
         (enable-feature! feature #f)
+        (loop (cdr args))))
+     ((match-prefix (car args) "--prefix=") =>
+      (lambda (new-value)
+        (set! install-prefix new-value)
         (loop (cdr args))))
      (else
       (die "Unknown option: " (car args))))))
@@ -119,8 +134,7 @@
 
 (define (main . args)
   (parse-args args)
-  (let ((patches (append (list (make-patch "#!/tmp/bin/gxi\n" "#!" '("gxi")))
-                         (feature-patches))))
+  (let ((patches (patches)))
     (for-each (lambda (filename)
                 (patch-file filename patches))
               files-to-patch)))
