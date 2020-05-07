@@ -76,8 +76,9 @@
   bytestring->u8vector bytestring->bytevector
   u8vector->uint bytevector->uint
   uint->u8vector uint->bytevector
+  u8vector-init! bytevector-init!
 
-  ;; uhchecked operations
+  ;; unchecked operations
   &u8vector-s8-ref
   &u8vector-s8-set!
 
@@ -524,35 +525,31 @@
   (unless (or (not delim) (char? delim))
     (error "Expected character or #f" delim))
   (let* ((len (u8vector-length v))
-         (s (make-string (+ (* 2 len) (if delim (1- len) 0)))))
+         (s (make-string (+ len len (if (and (< 0 len) delim) (1- len) 0)))))
     (let lp ((i 0) (j 0))
       (when (< i len)
         (let (next (u8vector-ref v i))
+          (when (and (< 0 i) delim)
+            (string-set! s (- j 1) delim))
           (string-set! s j (char-upcase (hex (fxarithmetic-shift next -4))))
           (string-set! s (+ j 1) (char-upcase (hex (fxand next #x0f))))
-          (when delim
-            (string-set! s (+ j 2) delim))
           (lp (1+ i) (+ j 2 (if delim 1 0))))))
     s))
 
-;; TODO: this could be a lot more efficient if we were operating directly on the string
-;;       instead of splitting it.
-;;       optimize me!
 (def (bytestring->u8vector bs (delim #\space))
   (declare (fixnum) (not safe))
   (if delim
-    (let* ((lst (string-split bs delim))
-           (v (make-u8vector (length lst))))
-      (let lp ((rest lst) (i 0))
-        (match rest
-          ([x . rest]
-           (unless (= (string-length x) 2)
-             (error "Invalid bytestring component" x))
-           (let ((hi (unhex (string-ref x 0)))
-                 (lo (unhex (string-ref x 1))))
-             (u8vector-set! v i (fxior (fxarithmetic-shift hi 4) lo))
-             (lp rest (1+ i))))
-          (else v))))
+    (let ()
+      (def (invalid) (error "Invalid bytestring" bs delim))
+      (def blen (string-length bs))
+      (when (and (< 0 blen) (not (zero? (modulo (1+ blen) 3))))
+        (invalid))
+      (def (parse-byte i)
+        (def offset (* i 3))
+        (when (and (< 0 offset) (not (eq? delim (string-ref bs (1- offset)))))
+          (invalid))
+        (hex-decode-byte bs offset))
+      (u8vector-init! (quotient (1+ blen) 3) parse-byte))
     (hex-decode bs)))
 
 (def (u8vector->uint v (endianness big))
@@ -614,6 +611,18 @@
           (lp (arithmetic-shift uint -8)
               (fx1+ i)))
         res))))
+
+(def (u8vector-init! len fun)
+  (declare (fixnum) (not safe))
+  (def s (make-u8vector len))
+  (let lp ((i 0))
+    (when (< i len)
+      (u8vector-set! s i (fun i))
+      (lp (1+ i))))
+  s)
+
+(defalias bytevector-init! u8vector-init!)
+
 
 ;;; FFI
 (begin-ffi (native-endianness

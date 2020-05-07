@@ -15,14 +15,14 @@
 (def tests [])
 (def (register-test path)
   (when (string? path)
-    (let ()
-      (def mod (->symbol ":std/" path))
+    (let* ((name (path-strip-extension path))
+           (mod (->symbol ":std/" name))
+           (sym (->symbol "std/" name "#" (path-strip-directory name))))
       (import-module mod #t #t)
-      (def test (eval (->symbol "std/" path "#" (path-strip-directory path))))
-      (set! tests (cons test tests)))))
+      (set! tests (cons (eval sym) tests)))))
 (defrule (cond-test cond path)
   (cond-expand (cond path) (else #f)))
-(for-each register-test
+(def all-tests
   ["actor-test"
    "actor/xdr-test"
    "amb-test"
@@ -66,9 +66,8 @@
    (cond-test config-have-sqlite "db/sqlite-test")
    (cond-test (or linux bsd) "net/socket/server-test")])
 
-(apply run-tests! (reverse tests))
-(test-report-summary!)
-
-(case (test-result)
-  ((OK) (exit 0))
-  (else (exit 1)))
+(def (main . args)
+  (for-each register-test (if (null? args) all-tests args))
+  (apply run-tests! (reverse tests))
+  (test-report-summary!)
+  (exit (case (test-result) ((OK) 0) (else 1))))

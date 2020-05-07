@@ -2,7 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; hex encoding
 
-(export hex-encode hexlify hex-decode unhexlify hex unhex unhex*)
+(export hex-encode hexlify hex-decode hex-decode-byte hex-decode-nibble unhexlify hex unhex unhex*)
 (import :gerbil/gambit/fixnum)
 
 (def hexes "0123456789abcdef")
