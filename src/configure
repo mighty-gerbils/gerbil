@@ -20,6 +20,16 @@
   (prefix                patch-prefix)
   (additional-substrings patch-additional-substrings))
 
+(define (patch-matches-line? patch line)
+  (let* ((prefix     (patch-prefix patch))
+         (prefix-len (string-length prefix)))
+    (and (<= prefix-len (string-length line))
+         (string=? prefix (substring line 0 prefix-len))
+         (fold (lambda (substring answer)
+                 (and answer (string-contains? line substring)))
+               #t
+               (patch-additional-substrings patch)))))
+
 (define (die . message-bits)
   (parameterize ((current-output-port (current-error-port)))
     (display "*** ERROR; ")
@@ -88,14 +98,8 @@
   (define (patch-line line)
     (fold (lambda (patch line)
             (let* ((prefix          (patch-prefix patch))
-                   (prefix-len      (string-length prefix))
                    (more-substrings (patch-additional-substrings patch)))
-              (if (and (<= prefix-len (string-length line))
-                       (string=? prefix (substring line 0 prefix-len))
-                       (fold (lambda (substring answer)
-                               (and answer (string-contains? line substring)))
-                             #t
-                             more-substrings))
+              (if (patch-matches-line? patch line)
                 (patch-replacement patch)
                 line)))
           line
