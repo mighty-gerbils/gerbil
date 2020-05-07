@@ -66,12 +66,9 @@
        features))
 
 (define (prefix s prefix)
-  (let ((prefix-length (string-length prefix))
-        (s-length      (string-length s)))
-    (if (and (<= prefix-length (string-length s))
-             (string=? prefix (substring s 0 prefix-length)))
-      (substring s prefix-length s-length)
-      #f)))
+  (if (string-starts-with? s prefix)
+      (substring s (string-length prefix) (string-length s))
+      #f))
 
 (define (parse-args args)
   (let loop ((args args))
