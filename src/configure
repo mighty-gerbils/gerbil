@@ -14,6 +14,8 @@
 
 (define files-to-patch
   '("gerbil/gxc"
+    "gerbil/gxi"
+    "gerbil/gxi-build-script"
     "std/build-features.ss"))
 
 (define (string-starts-with? s prefix)
@@ -95,10 +97,20 @@
       "#!/usr/bin/env gxi\n"))
   (list (make-patch replacement "#!" '("gxi"))))
 
+(define (shell-patches)
+  (define (bin-path prefix prog)
+    (if prefix
+      (string-append prefix "/bin/" prog)
+      prog))
+  (list (make-patch (string-append "GERBIL_GSI=\"" (bin-path gambit-prefix "gsi") "\"\n")
+                    "GERBIL_GSI="
+                    '())))
+
 (define (patches)
   (append
     (feature-patches)
-    (shebang-patches)))
+    (shebang-patches)
+    (shell-patches)))
 
 (define (parse-args args)
   (define (match-prefix s prefix)

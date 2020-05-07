@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
+GERBIL_GSI="gsi"
+
 if [ -z "$GERBIL_HOME" ]; then
     GERBIL_HOME=$(dirname $(cd ${0%/*} && echo $PWD))
     export GERBIL_HOME
@@ -16,7 +18,7 @@ if [ $# -gt 0 ]; then
 fi
 
 if [ $# -eq 0 ]; then
-    exec gsi $GSIOPTIONS -e '(include "~~lib/_gambit#.scm")' "$GERBIL_HOME/lib/gxi-init" "$GERBIL_HOME/lib/gxi-interactive" -
+    exec "$GERBIL_GSI" $GSIOPTIONS -e '(include "~~lib/_gambit#.scm")' "$GERBIL_HOME/lib/gxi-init" "$GERBIL_HOME/lib/gxi-interactive" -
 else
-    exec gsi $GSIOPTIONS -e '(include "~~lib/_gambit#.scm")' "$GERBIL_HOME/lib/gxi-init" "$@"
+    exec "$GERBIL_GSI" $GSIOPTIONS -e '(include "~~lib/_gambit#.scm")' "$GERBIL_HOME/lib/gxi-init" "$@"
 fi
