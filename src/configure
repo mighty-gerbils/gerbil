@@ -13,7 +13,8 @@
 (define gambit-prefix #f)
 
 (define files-to-patch
-  '("gerbil/gxc"
+  '("gerbil/boot/gx-init-exe.scm"
+    "gerbil/gxc"
     "gerbil/gxi"
     "gerbil/gxi-build-script"
     "std/build-features.ss"))
@@ -110,7 +111,12 @@
   (append
     (feature-patches)
     (shebang-patches)
-    (shell-patches)))
+    (shell-patches)
+    (list (make-patch (string-append "(define __gx#default-home "
+                                     (object->string install-prefix)
+                                     ")\n")
+                      "(define __gx#default-home "
+                      '()))))
 
 (define (parse-args args)
   (define (match-prefix s prefix)
