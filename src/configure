@@ -13,7 +13,8 @@
 (define gambit-prefix #f)
 
 (define files-to-patch
-  '("gerbil/boot/gx-init-exe.scm"
+  '("gerbil/boot/gx-init.scm"
+    "gerbil/boot/gx-init-exe.scm"
     "gerbil/gxc"
     "gerbil/gxi"
     "gerbil/gxi-build-script"
