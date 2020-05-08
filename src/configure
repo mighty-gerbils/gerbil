@@ -13,7 +13,8 @@
 (define gambit-prefix #f)
 
 (define files-to-patch
-  '("gerbil/boot/gx-init.scm"
+  '("gerbil/compiler/driver.ss"
+    "gerbil/boot/gx-init.scm"
     "gerbil/boot/gx-init-exe.scm"
     "gerbil/gxc"
     "gerbil/gxi"
@@ -108,16 +109,27 @@
                     "GERBIL_GSI="
                     '())))
 
+(define (gambit-gsc-path)
+  (if gambit-prefix
+    (string-append gambit-prefix "/bin/gsc")
+    "gsc"))
+
 (define (patches)
+  (define (patch-define name value)
+    (list
+     (make-patch (string-append "(define " name " " (object->string value) ")\n")
+                 (string-append "(define " name " ")
+                 '())
+     (make-patch (string-append "(def " name " " (object->string value) ")\n")
+                 (string-append "(def " name " ")
+                 '())))
   (append
     (feature-patches)
     (shebang-patches)
     (shell-patches)
-    (list (make-patch (string-append "(define __gx#default-home "
-                                     (object->string install-prefix)
-                                     ")\n")
-                      "(define __gx#default-home "
-                      '()))))
+    (patch-define "__gx#default-home" install-prefix)
+    (patch-define "default-home" install-prefix)
+    (patch-define "default-gambit-gsc" (gambit-gsc-path))))
 
 (define (parse-args args)
   (define (match-prefix s prefix)
