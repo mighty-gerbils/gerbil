@@ -115,8 +115,7 @@ TODO:
       libdir-prefix parallelize)))
 
 (def (gerbil-build-cores)
-  (or (with-catch false (lambda () (string->number (getenv "GERBIL_BUILD_CORES"))))
-      (get-ncpu) 0))
+  (with-catch (lambda (_) (##cpu-count)) (lambda () (string->number (getenv "GERBIL_BUILD_CORES")))))
 
 (def (settings-verbose>=? settings level)
   (def verbose (settings-verbose settings))
