@@ -45,7 +45,7 @@
       fg-queue bg-queue
       perform: perform
       announce: announce on-success: on-success on-failure: on-failure
-      deterministic-order: deterministic-order max-workers: (max-workers (##cpu-count)))
+      deterministic-order: deterministic-order max-workers: (max-workers (max (##cpu-count) 1)))
   (defrule (postprocess item form) (with-catch (cut on-failure item <>) (lambda () (on-success item form))))
   (def foreground-thread (current-thread))
   (def (fg-perform item) (announce item) (postprocess item (perform item)))
