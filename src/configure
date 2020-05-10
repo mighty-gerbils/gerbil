@@ -127,8 +127,8 @@
     (feature-patches)
     (shebang-patches)
     (shell-patches)
-    (patch-define "__gx#default-home" install-prefix)
-    (patch-define "default-home" install-prefix)
+    (patch-define "__gx#default-gerbil-home" install-prefix)
+    (patch-define "default-gerbil-home" install-prefix)
     (patch-define "default-gambit-gsc" (gambit-gsc-path))))
 
 (define (parse-args args)

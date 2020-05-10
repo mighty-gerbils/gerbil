@@ -7,7 +7,7 @@
   (standard-bindings)
   (extended-bindings))
 
-(define __gx#default-home #f)
+(define __gx#default-gerbil-home #f)
 (define __gx#libdir #f)
 (define __gx#load-mdoule #f)
 (define __gx#expander-loaded #f)
@@ -21,7 +21,7 @@
   (let* ((home
           (path-normalize
            (cond
-            ((getenv "GERBIL_HOME" __gx#default-home) => values)
+            ((getenv "GERBIL_HOME" __gx#default-gerbil-home) => values)
             (else
              (error "Cannot determine GERBIL_HOME")))))
          (libdir

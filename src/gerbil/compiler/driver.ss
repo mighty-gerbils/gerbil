@@ -16,7 +16,7 @@ namespace: gxc
                  current-time time->seconds file-info file-info-size))
 (export compile-file compile-exe-stub compile-static-exe)
 
-(def default-home #f)
+(def default-gerbil-home #f)
 (def default-gambit-gsc "gsc")
 
 (def (compile-timestamp)
@@ -91,7 +91,7 @@ namespace: gxc
       (write `(_gx#start! ,mod-rt (quote ,mod-main))) (newline)))
 
   (def (compile-stub output-scm output-bin)
-    (let* ((init-stub  (path-expand "lib/gx-init-exe.scm" (getenv "GERBIL_HOME" default-home)))
+    (let* ((init-stub  (path-expand "lib/gx-init-exe.scm" (getenv "GERBIL_HOME" default-gerbil-home)))
            (gsc-args ["-exe" "-o" output-bin output-scm]))
       (with-output-to-file output-scm (cut generate-stub init-stub))
       (when (current-compile-invoke-gsc)
@@ -186,7 +186,7 @@ namespace: gxc
       (cons* "-cc-options" cppflags gsc-opts))))
 
   (def (compile-stub output-scm output-bin)
-    (let* ((gerbil-home (getenv "GERBIL_HOME" default-home))
+    (let* ((gerbil-home (getenv "GERBIL_HOME" default-gerbil-home))
            (gx-gambc0 (path-expand "lib/static/gx-gambc0.scm" gerbil-home))
            (gx-gambc-init (path-expand "lib/gx-init-static-exe.scm" gerbil-home))
            (gx-gambc-macros (path-expand "lib/static/gx-gambc#.scm" gerbil-home))
