@@ -1,3 +1,5 @@
+(define default-gambit-gsc "gsc")
+
 (define (false . _) #f)
 
 (define (displayln . args)
@@ -19,7 +21,7 @@
     (displayln "... compile " modf)
     (let* ((proc
             (open-process
-             (list path: (getenv "GERBIL_GSC" "gsc")
+             (list path: (getenv "GERBIL_GSC" default-gambit-gsc)
                    arguments: `(,@options ,modf)
                    stdout-redirection: #f)))
            (status (process-status proc)))
