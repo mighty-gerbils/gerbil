@@ -16,6 +16,7 @@
   '("gerbil/compiler/driver.ss"
     "gerbil/boot/gx-init.scm"
     "gerbil/boot/gx-init-exe.scm"
+    "gerbil/boot/gxi-init.scm"
     "gerbil/gxc"
     "gerbil/gxi"
     "gerbil/gxi-build-script"
