@@ -22,7 +22,8 @@
     "gerbil/gxi-build-script"
     "gerbil/runtime/build-lib.scm"
     "gerbil/runtime/gx-gambc.scm"
-    "std/build-features.ss"))
+    "std/build-features.ss"
+    "std/make.ss"))
 
 (define (string-starts-with? s prefix)
   (let* ((prefix-len (string-length prefix)))
@@ -117,6 +118,11 @@
     (string-append gambit-prefix "/bin/gsc")
     "gsc"))
 
+(define (gerbil-gxc-path)
+  (if install-prefix
+    (string-append install-prefix "/bin/gxc")
+    "gxc"))
+
 (define (patches)
   (define (patch-define name value)
     (list
@@ -132,7 +138,8 @@
     (shell-patches)
     (patch-define "__gx#default-gerbil-home" install-prefix)
     (patch-define "default-gerbil-home" install-prefix)
-    (patch-define "default-gambit-gsc" (gambit-gsc-path))))
+    (patch-define "default-gambit-gsc" (gambit-gsc-path))
+    (patch-define "default-gerbil-gxc" (gerbil-gxc-path))))
 
 (define (parse-args args)
   (define (match-prefix s prefix)
