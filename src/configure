@@ -21,6 +21,7 @@
     "gerbil/gxi"
     "gerbil/gxi-build-script"
     "gerbil/runtime/build-lib.scm"
+    "gerbil/runtime/gx-gambc.scm"
     "std/build-features.ss"))
 
 (define (string-starts-with? s prefix)

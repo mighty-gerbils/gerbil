@@ -9,6 +9,8 @@
   (standard-bindings)
   (extended-bindings))
 
+(define __gx#default-gerbil-home #f)
+
 (define _gx#loading-scheme-source
   (make-parameter #f))
 
@@ -77,7 +79,7 @@
 (define (_gx#gxi-init-interactive! cmdline)
   (define (load-init init.ss)
     ;; load gerbil interactive init
-    (let ((init-file (path-expand (string-append "lib/" init.ss) (getenv "GERBIL_HOME"))))
+    (let ((init-file (path-expand (string-append "lib/" init.ss) (getenv "GERBIL_HOME" __gx#default-gerbil-home))))
       (gx#eval-syntax `(include ,init-file)))
     ;; if it exists, load user's ~/.gerbil/init.ss
     (let ((init-file (string-append "~/.gerbil/" init.ss)))
