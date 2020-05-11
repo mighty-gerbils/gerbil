@@ -38,6 +38,7 @@
     "gerbil/gxi-build-script"
     "gerbil/runtime/build-lib.scm"
     "gerbil/runtime/gx-gambc.scm"
+    "install"
     "std/build-features.ss"
     "std/make.ss"))
 
