@@ -51,10 +51,8 @@
    (stx-string? #'desc)
    (make-test-suite desc (lambda () body body-rest ...))))
 
-(defrules test-case ()
-  ((_ desc body body-rest ...)
-   (stx-string? #'desc)
-   (run-test-case! desc (lambda () body body-rest ...))))
+(defrule (test-case desc body body-rest ...)
+   (run-test-case! desc (lambda () body body-rest ...)))
 
 (defrules check (=> ?)
   ((_ expr => value)
@@ -64,52 +62,44 @@
   ((_ eqf expr value)
    (checkf eqf expr value)))
 
-(defrules print-check-e ()
-  ((_ expr eqv value)
-   (verbose "... check ~a is ~a to ~s~n" 'expr 'eqv value)))
+(defrule (print-check-e expr eqv value)
+  (verbose "... check ~a is ~a to ~s~n" 'expr 'eqv value))
 
-(defrules checkf ()
-  ((_ eqf expr value)
-   (let (val value)
-     (print-check-e expr eqf val)
-     (test-check-e '(check eqf expr value) eqf (lambda () expr) val
-                   (location expr)))))
+(defrule (checkf eqf expr value)
+  (let (val value)
+    (print-check-e expr eqf val)
+    (test-check-e '(check eqf expr value) eqf (lambda () expr) val
+                  (location expr))))
 
-(defrules check-eq? ()
-  ((_ expr value)
-   (checkf eq? expr value)))
+(defrule (check-eq? expr value)
+  (checkf eq? expr value))
 
-(defrules check-not-eq? ()
-  ((_ expr value)
-   (checkf not-eq? expr value)))
+(defrule (check-not-eq? expr value)
+  (checkf not-eq? expr value))
 
 (def (not-eq? x y)
   (not (eq? x y)))
 
-(defrules check-eqv? ()
-  ((_ expr value)
-   (checkf eqv? expr value)))
+(defrule (check-eqv? expr value)
+  (checkf eqv? expr value))
 
-(defrules check-not-eqv? ()
-  ((_ expr value)
-   (checkf not-eqv? expr value)))
+(defrule (check-not-eqv? expr value)
+  (checkf not-eqv? expr value))
 
 (def (not-eqv? x y)
   (not (eqv? x y)))
 
-(defrules check-equal? ()
-  ((_ expr value)
-   (let (val value)
-     (print-check-e expr equal? val)
-     (test-check-e '(check equal? expr value) equal-values? (lambda () expr) val
-                   (location expr)))))
+(defrule (check-equal? expr value)
+  (let (val value)
+    (print-check-e expr equal? val)
+    (test-check-e '(check equal? expr value) equal-values? (lambda () expr) val
+                  (location expr))))
 
-(defrules check-not-equal? ()
-  ((_ expr value)
-   (let (val value)
-     (print-check-e expr equal? value)
-     (test-check-e '(check not-equal? expr value) not-equal-values? (lambda () expr) val
-                   (location expr)))))
+(defrule (check-not-equal? expr value)
+  (let (val value)
+    (print-check-e expr equal? value)
+    (test-check-e '(check not-equal? expr value) not-equal-values? (lambda () expr) val
+                  (location expr))))
 
 (def (equal-values? obj-a obj-b)
   (if (##values? obj-a)
@@ -121,26 +111,23 @@
 (def (not-equal-values? x y)
   (not (equal-values? x y)))
 
-(defrules check-output ()
-  ((_ expr value)
-   (let (val value)
-     (verbose "... check ~a outputs ~s~n" 'expr val)
-     (test-check-output '(check-output expr value) (lambda () expr) value
-                        (location expr)))))
+(defrule (check-output expr value)
+  (let (val value)
+    (verbose "... check ~a outputs ~s~n" 'expr val)
+    (test-check-output '(check-output expr value) (lambda () expr) value
+                       (location expr))))
 
-(defrules check-predicate ()
-  ((_ expr pred)
-   (begin
-     (verbose "... check ~a is ~a~n" 'expr 'pred)
-     (test-check-predicate '(check-predicate expr pred)  (lambda () expr) pred
-                           (location expr)))))
+(defrule (check-predicate expr pred)
+  (begin
+    (verbose "... check ~a is ~a~n" 'expr 'pred)
+    (test-check-predicate '(check-predicate expr pred) (lambda () expr) pred
+                          (location expr))))
 
-(defrules check-exception ()
-  ((_ expr exn-pred)
-   (begin
-     (verbose "... check ~a raises ~a~n" 'expr 'exn-pred)
-     (test-check-exception '(check-exception expr exn-pred) (lambda () expr) exn-pred
-                           (location expr)))))
+(defrule (check-exception expr exn-pred)
+  (begin
+    (verbose "... check ~a raises ~a~n" 'expr 'exn-pred)
+    (test-check-exception '(check-exception expr exn-pred) (lambda () expr) exn-pred
+                          (location expr))))
 
 (defsyntax (location stx)
   (syntax-case stx ()
