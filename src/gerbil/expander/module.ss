@@ -42,6 +42,11 @@ namespace: gx
 (def current-module-reader-args
   (make-parameter #f))
 
+(def source-file-settings '(char-encoding: UTF-8 eol-encoding: lf))
+
+(def (call-with-input-source-file path fun)
+  (call-with-input-file [path: path . source-file-settings] fun))
+
 (defmethod {:init! module-context}
   (lambda (self id super ns path)
     (struct-instance-init! self id (make-hash-table-eq) super #f #f
@@ -346,7 +351,7 @@ namespace: gx
       (read-lang inp)
       (raise-syntax-error #f "Illegal module syntax" path)))
 
-  (call-with-input-file path read-e))
+  (call-with-input-source-file path read-e))
 
 (def (core-read-module-package path pre ns)
   (def (string-e e)
@@ -493,7 +498,7 @@ namespace: gx
       (let* ((gerbil.pkg (path-expand "gerbil.pkg" dir))
              (plist
               (if (or exists? (file-exists? gerbil.pkg))
-                (let (e (call-with-input-file gerbil.pkg read))
+                (let (e (call-with-input-source-file gerbil.pkg read))
                   (cond
                    ((eof-object? e) [])
                    ((list? e) e)

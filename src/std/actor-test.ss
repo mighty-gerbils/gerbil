@@ -6,8 +6,7 @@
         :std/test
         :std/event
         :std/actor)
-(export actor-rpc-test
-        actor-rpc-stream-test)
+(export actor-test)
 
 (defproto hello
   call: (hello a)
@@ -253,3 +252,8 @@
 
       (stop-rpc-server! remoted)
       (stop-rpc-server! locald))))
+
+(def actor-test
+  (test-suite "test :std/actor RPC"
+    (run-test-suite! actor-rpc-test)
+    (run-test-suite! actor-rpc-stream-test)))

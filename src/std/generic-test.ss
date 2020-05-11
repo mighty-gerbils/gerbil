@@ -4,9 +4,9 @@
 
 (import :std/test
         :std/generic)
-(export generic-runtime-test generic-macro-test)
+(export generic-test)
 
-(def generic-runtime-test
+(def generic-test
   (test-suite "test :std/generic support"
     (def my-generic (make-generic 'my-generic (lambda args #f)))
     (test-case "test default dispatch"
@@ -36,11 +36,9 @@
                     (type-linearize-class A::t)]
                    (lambda (a b) ['A+ (A-x a) (A-x b)]))
     (test-case "test user type dispatch"
-      (check (generic-dispatch my-generic (make-A 1) (make-A 2)) => '(A+ 1 2)))))
+      (check (generic-dispatch my-generic (make-A 1) (make-A 2)) => '(A+ 1 2)))
 
-
-(def generic-macro-test
-  (test-suite "test :std/generic macros"
+    ;; Test cases for macro support
     (defgeneric my-add
       (lambda args #f))
 
@@ -63,7 +61,6 @@
       (check (my-add 1 2) => '(fixnum+ 1 2))
       (check (my-add 1.0 2.0) => '(number+ 1.0 2.0)))
 
-    (defstruct A (x))
     (defmethod (my-add (a A) (b A))
       ['A+ (A-x a) (A-x b)])
 

@@ -3,6 +3,7 @@
 ;;;; List utilities
 
 (export
+  unique unique!
   alist?
   plist?
   plist->alist
@@ -32,8 +33,12 @@
 
 (import (only-in ../srfi/1
                  drop drop-right drop-right! take take-right take! reverse!
-                 take-while take-while! drop-while)
+                 take-while take-while! drop-while
+                 delete-duplicates delete-duplicates!)
         ../sugar)
+
+(defalias unique delete-duplicates)
+(defalias unique! delete-duplicates!)
 
 ;; This function checks if the list is a proper association-list.
 ;; ie it has the form [[key1 . val1] [key2 . val2]]

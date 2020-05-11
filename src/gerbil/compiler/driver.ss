@@ -22,8 +22,20 @@ namespace: gxc
 (def (compile-timestamp)
   (inexact->exact (floor (time->seconds (current-time)))))
 
+(def scheme-file-settings '(permissions: #o644 char-encoding: UTF-8 eol-encoding: lf))
+
+(def (with-output-to-scheme-file path fun)
+  (with-output-to-file [path: path . scheme-file-settings] fun))
+
 (def (gerbil-gsc)
   (getenv "GERBIL_GSC" default-gambit-gsc))
+
+(def gsc-runtime-args
+  [;; force Gambit to use UTF-8:
+   (cond-expand
+     (,(##unbound? (##global-var-ref (##make-global-var '##get-io-settings)))
+      "-:f8,-8,t8") ;; before v4.9.3-1081-g0680901f
+     (else "-:i8,t8"))]) ;; after
 
 (def (compile-file srcpath (opts []))
   (unless (string? srcpath)
@@ -92,8 +104,8 @@ namespace: gxc
 
   (def (compile-stub output-scm output-bin)
     (let* ((init-stub  (path-expand "lib/gx-init-exe.scm" (getenv "GERBIL_HOME" default-gerbil-home)))
-           (gsc-args ["-exe" "-o" output-bin output-scm]))
-      (with-output-to-file output-scm (cut generate-stub init-stub))
+           (gsc-args [gsc-runtime-args ... "-exe" "-o" output-bin output-scm]))
+      (with-output-to-scheme-file output-scm (cut generate-stub init-stub))
       (when (current-compile-invoke-gsc)
         (verbose "invoke gsc " (cons 'gsc gsc-args))
         (let* ((proc (open-process [path: (gerbil-gsc) arguments: gsc-args
@@ -201,10 +213,10 @@ namespace: gxc
                             ["-e" "(define-cond-expand-feature|enable-smp|)"
                              "-e" include-gx-gambc-macros]
                             ["-e" include-gx-gambc-macros]))
-           (gsc-args ["-exe" "-o" output-bin
+           (gsc-args [gsc-runtime-args ... "-exe" "-o" output-bin
                       (gsc-debug-options) ... gsc-opts ... gsc-gx-macros ...
                       output-scm]))
-      (with-output-to-file output-scm
+      (with-output-to-scheme-file output-scm
         (cut generate-stub [gx-gambc0 gx-gambc-init deps ... bin-scm]))
       (when (current-compile-invoke-gsc)
         (verbose "invoke gsc " (cons 'gsc gsc-args))
@@ -393,8 +405,7 @@ namespace: gxc
        ((current-compile-static)
         ;; just touch empty runtime code file in static
         (let (path (compile-static-output-file ctx))
-          (with-output-to-file [path: path permissions: #o644]
-            void))))
+          (with-output-to-scheme-file path void))))
 
       (generate-loader-code ctx code rt)))
 
@@ -461,7 +472,7 @@ namespace: gxc
              (else #f)))
            (rt (hash-get (current-compile-runtime-sections) ctx)))
       (verbose "compile " path)
-      (with-output-to-file [path: path permissions: #o644]
+      (with-output-to-scheme-file path
         (lambda ()
           (displayln "prelude:" " " prelude)
           (when pkg (displayln "package:" " " pkg))
@@ -497,7 +508,7 @@ namespace: gxc
            (else #f))))
 
     (verbose "compile " path)
-    (with-output-to-file [path: path permissions: #o644]
+    (with-output-to-scheme-file path
       (lambda ()
         (displayln "prelude: :gerbil/compiler/ssxi")
         (when pkg (displayln "package: " pkg))
@@ -527,7 +538,7 @@ namespace: gxc
 ;;; utilities
 (def (compile-scm-file path code (phi? #f))
   (verbose "compile " path)
-  (with-output-to-file [path: path permissions: #o644]
+  (with-output-to-scheme-file path
     (lambda ()
       (pretty-print
        `(declare
@@ -572,7 +583,7 @@ namespace: gxc
             => (lambda (opts) [opts ... path]))
            (else [path])))
          (gsc-args
-          [(gsc-debug-options phi?) ... gsc-args ...])
+          [gsc-runtime-args ... (gsc-debug-options phi?) ... gsc-args ...])
          (_ (verbose "invoke gsc " (cons 'gsc gsc-args)))
          (proc (open-process [path: (gerbil-gsc) arguments: gsc-args
                                     stdout-redirection: #f]))

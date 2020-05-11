@@ -2273,6 +2273,27 @@ error    ; expects proper non-dotted list-of-lists
 ```
 :::
 
+### unique
+### unique!
+``` scheme
+(unique lst [test = equal?]) -> list
+
+  lst  := proper list
+  test := test procedure which takes two arguments, defaults to equal?
+```
+Alias for `delete-duplicates` and `delete-duplicates!` ([SRFI 1](https://srfi.schemers.org/srfi-1/srfi-1.html#delete-duplicates)).
+
+::: tip Examples:
+``` scheme
+> (unique [1 2 3 2])
+(1 2 3)
+
+> (let (lst [1 2])
+    (unique [lst lst] ev?))
+((1 2))
+```
+:::
+
 ### rassoc
 ``` scheme
 (rassoc elem alist [pred = eqv?]) -> pair | #f

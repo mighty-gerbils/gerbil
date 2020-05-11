@@ -7,16 +7,6 @@
   ;;(for-syntax ../stxutil) ../stxutil
   )
 
-(def (get-ncpu)
-  (cond-expand
-    (linux
-     (length (filter (cut string-prefix? "processor\t:" <>) (read-file-lines "/proc/cpuinfo"))))
-    (bsd ;; reported to work on darwin freebsd netbsd openbsd.
-     (string->number (call-with-input-process [path: "sysctl" arguments: ["-n" "hw.ncpu"]] read-line)))
-    (windows
-     (alet (s (getenv "NUMBER_OF_PROCESSORS" #f)) (string->number s)))
-    (else #f)))
-
 ;; This parameter is purely for checking whether indeed concurrency was used.
 ;; A more useful statistics would measure the total CPU time burned,
 ;; compared to the wall-clock time elapsed, and/or (for small enough runs)
@@ -55,7 +45,7 @@
       fg-queue bg-queue
       perform: perform
       announce: announce on-success: on-success on-failure: on-failure
-      deterministic-order: deterministic-order max-workers: (max-workers (or (get-ncpu) 1)))
+      deterministic-order: deterministic-order max-workers: (max-workers (max (##cpu-count) 1)))
   (defrule (postprocess item form) (with-catch (cut on-failure item <>) (lambda () (on-success item form))))
   (def foreground-thread (current-thread))
   (def (fg-perform item) (announce item) (postprocess item (perform item)))
