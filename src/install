@@ -1,6 +1,6 @@
 #!/usr/bin/env gsi
 
-(define default-gerbil-home "/tmp/foo")
+(define default-gerbil-home #f)
 
 (define (die . message-bits)
   (parameterize ((current-output-port (current-error-port)))
