@@ -9,7 +9,7 @@
 
 (define __gx#default-gerbil-home #f)
 (define __gx#libdir #f)
-(define __gx#load-mdoule #f)
+(define __gx#load-module #f)
 (define __gx#expander-loaded #f)
 (define __gx#rtlibs
   '("gx-gambc0"
