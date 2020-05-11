@@ -9,6 +9,22 @@
     (lmdb    . #f)
     (leveldb . #f)))
 
+(define (display-help)
+  (display "Options:\n") 
+  (display "  --prefix=HOME      Set default GERBIL_HOME (environment variable still overrides)\n")
+  (display "  --with-gambit=DIR  Set default location of Gambit\n")
+  (newline)
+  (display "Feature options:\n")
+  (for-each (lambda (feature)
+              (display "  --")
+              (if (not (cdr feature))
+                (display "enable-")
+                (display "disable-"))
+              (display (car feature))
+              (display " ")
+              (newline))
+            features))
+
 (define install-prefix #f)
 (define gambit-prefix #f)
 
@@ -158,6 +174,9 @@
       (lambda (feature)
         (enable-feature! feature #f)
         (loop (cdr args))))
+     ((string=? (car args) "--help")
+      (display-help)
+      (exit 0))
      ((match-prefix (car args) "--prefix=") =>
       (lambda (new-value)
         (set! install-prefix new-value)

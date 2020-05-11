@@ -31,10 +31,10 @@ In Ubuntu, you can install the dependencies for a default installation with:
 $ sudo apt-get install openssl libssl-dev sqlite3 libsqlite3-dev
 ```
 
-The optional libraries can be enabled or disabled at build-time
-by editing `$GERBIL_HOME/src/std/build-features.ss`.
-You can also enable features later, by editing `build-features.ss` and
-running `./build.sh stdlib` in `$GERBIL_HOME/src/`.
+The optional libraries can be enabled or disabled by passing arguments
+to the configure script (see below).  You can also enable features
+later, by reconfiguring and running `./build.sh stdlib` in
+`$GERBIL_HOME/src/`.
 
 
 ## Build Instructions
@@ -44,8 +44,23 @@ After unpacking a release or checking out the source code from Github, let
 Then:
 ```bash
 $ cd $GERBIL_HOME/src
+$ ./configure
 $ ./build.sh
 ```
+
+Running `./configure` can be skipped to make a build with the default features
+enabled and where runtime dependencies are found using the path and
+environment variables.
+
+Passing `--prefix=/installed/gerbil/home` to `./configure` will allow Gerbil
+to find its installation directory even when `GERBIL_HOME` is not set.
+Passing `--with-gambit=/gambit/home` will allow Gerbil to find Gambit even
+when `GAMBIT_GSC` is unset; this is especially nice if GhostScript is in the
+path, since both Gambit and GhostScript have a program named `gsc`.
+
+Various features can be enabled or disabled by passing `--enable-FEATURE` or
+`--disable-FEATURE` to `./configure`.  Use `./configure --help` to see which
+features are available.
 
 If you are building in macOS and want to use the homebrew OpenSSL,
 then you need to specify appropriate `CPPFLAGS` and `LDFLAGS`.
