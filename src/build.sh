@@ -164,7 +164,8 @@ build_stdlib () {
   feedback_low "Building gerbil stdlib"
   PATH="${GERBIL_BASE}/bin:${PATH}"
   GERBIL_HOME="${GERBIL_BASE}" #required by gxi-build-script and build.ss
-  export PATH GERBIL_HOME
+  GERBIL_GXC=gxc
+  export PATH GERBIL_HOME GERBIL_GXC
   (cd std && ./build.ss)
 }
 
