@@ -3,6 +3,7 @@
 ;;; Gerbil-gambc runtime init
 (##namespace (""))
 
+(define __gx#default-gerbil-home #f)
 (define _gx#gerbil-libdir #f)
 
 (define _gx#*rtlibs*
@@ -14,7 +15,7 @@
   (let* ((home
           (path-normalize
            (cond
-            ((getenv "GERBIL_HOME" #f) => values)
+            ((getenv "GERBIL_HOME" __gx#default-gerbil-home) => values)
             (else
              (error "Cannot determine GERBIL_HOME")))))
          (libdir

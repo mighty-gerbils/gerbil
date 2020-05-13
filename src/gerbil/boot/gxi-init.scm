@@ -2,7 +2,9 @@
 ;;; (C) vyzo at hackzen.org
 ;;; Gerbil interpreter init
 
-(let* ((home (getenv "GERBIL_HOME"))
+(define __gx#default-gerbil-home #f)
+
+(let* ((home (getenv "GERBIL_HOME" __gx#default-gerbil-home))
        (libdir (path-expand "lib" home)))
   (load (path-expand "gx-init.scm" libdir))
   (_gx#init)

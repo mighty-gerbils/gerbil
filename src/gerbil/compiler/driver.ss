@@ -16,6 +16,9 @@ namespace: gxc
                  current-time time->seconds file-info file-info-size))
 (export compile-file compile-exe-stub compile-static-exe)
 
+(def default-gerbil-home #f)
+(def default-gambit-gsc "gsc")
+
 (def (compile-timestamp)
   (inexact->exact (floor (time->seconds (current-time)))))
 
@@ -25,7 +28,7 @@ namespace: gxc
   (with-output-to-file [path: path . scheme-file-settings] fun))
 
 (def (gerbil-gsc)
-  (getenv "GERBIL_GSC" "gsc"))
+  (getenv "GERBIL_GSC" default-gambit-gsc))
 
 (def gsc-runtime-args
   [;; force Gambit to use UTF-8:
@@ -100,7 +103,7 @@ namespace: gxc
       (write `(_gx#start! ,mod-rt (quote ,mod-main))) (newline)))
 
   (def (compile-stub output-scm output-bin)
-    (let* ((init-stub  (path-expand "lib/gx-init-exe.scm" (getenv "GERBIL_HOME")))
+    (let* ((init-stub  (path-expand "lib/gx-init-exe.scm" (getenv "GERBIL_HOME" default-gerbil-home)))
            (gsc-args [gsc-runtime-args ... "-exe" "-o" output-bin output-scm]))
       (with-output-to-scheme-file output-scm (cut generate-stub init-stub))
       (when (current-compile-invoke-gsc)
@@ -195,7 +198,7 @@ namespace: gxc
       (cons* "-cc-options" cppflags gsc-opts))))
 
   (def (compile-stub output-scm output-bin)
-    (let* ((gerbil-home (getenv "GERBIL_HOME"))
+    (let* ((gerbil-home (getenv "GERBIL_HOME" default-gerbil-home))
            (gx-gambc0 (path-expand "lib/static/gx-gambc0.scm" gerbil-home))
            (gx-gambc-init (path-expand "lib/gx-init-static-exe.scm" gerbil-home))
            (gx-gambc-macros (path-expand "lib/static/gx-gambc#.scm" gerbil-home))
@@ -570,7 +573,7 @@ namespace: gxc
            ((all/phi #t)
             ["-debug"])
            (else
-            (raise-compile-error "unknown debug option" debug )))))
+            (raise-compile-error "unknown debug option" debug)))))
    (else [])))
 
 (def (gsc-compile-file path phi?)

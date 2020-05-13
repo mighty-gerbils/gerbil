@@ -39,6 +39,9 @@
 
 (import :gerbil/gambit/threads)
 
+(def default-gambit-gsc "gsc")
+(def default-gerbil-gxc "gxc")
+
 #|
 TODO:
 
@@ -664,9 +667,9 @@ TODO:
       (copy-file srcpath statpath))))
 
 (def (gerbil-gsc)
-  (getenv "GERBIL_GSC" "gsc"))
+  (getenv "GERBIL_GSC" default-gambit-gsc))
 (def (gerbil-gxc)
-  (getenv "GERBIL_GXC" "gxc"))
+  (getenv "GERBIL_GXC" default-gerbil-gxc))
 
 (def (compile-ssi mod deps settings)
   (def srcpath (source-path mod ".ssi" settings))

@@ -7,8 +7,9 @@
   (standard-bindings)
   (extended-bindings))
 
+(define __gx#default-gerbil-home #f)
 (define __gx#libdir #f)
-(define __gx#load-mdoule #f)
+(define __gx#load-module #f)
 (define __gx#expander-loaded #f)
 (define __gx#rtlibs
   '("gx-gambc0"
@@ -20,7 +21,7 @@
   (let* ((home
           (path-normalize
            (cond
-            ((getenv "GERBIL_HOME" #f) => values)
+            ((getenv "GERBIL_HOME" __gx#default-gerbil-home) => values)
             (else
              (error "Cannot determine GERBIL_HOME")))))
          (libdir
