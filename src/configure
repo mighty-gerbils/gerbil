@@ -33,7 +33,6 @@
     "gerbil/boot/gx-init.scm"
     "gerbil/boot/gx-init-exe.scm"
     "gerbil/boot/gxi-init.scm"
-    "gerbil/gxc"
     "gerbil/gxi"
     "gerbil/gxi-build-script"
     "gerbil/runtime/build-lib.scm"
@@ -114,13 +113,6 @@
          (make-patch replacement prefix '()))
        features))
 
-(define (shebang-patches)
-  (define replacement
-    (if install-prefix
-      (string-append "#!" install-prefix "/bin/gxi\n")
-      "#!/usr/bin/env gxi\n"))
-  (list (make-patch replacement "#!" '("gxi"))))
-
 (define (shell-patches)
   (define (bin-path prefix prog)
     (if prefix
@@ -151,7 +143,6 @@
                  '())))
   (append
     (feature-patches)
-    (shebang-patches)
     (shell-patches)
     (patch-define "__gx#default-gerbil-home" install-prefix)
     (patch-define "default-gerbil-home" install-prefix)
