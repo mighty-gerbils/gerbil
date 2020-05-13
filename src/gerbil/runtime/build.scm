@@ -18,14 +18,17 @@
   (let* ((gx-version-path "gx-version.scm")
          (git-version
           (and (file-exists? "../../../.git")
-               (let* ((proc (open-process '(path: "git" arguments: ("describe" "--tags" "--always")
-                                                  show-console: #f)))
-                      (version (read-line proc))
-                      (status (process-status proc)))
-                 (close-port proc)
-                 (and (zero? status)
-                      (string? version) ;; (not (eof-object? version))
-                      version))))
+               (with-exception-catcher
+                (lambda (e) #f)
+                (lambda ()
+                  (let* ((proc (open-process '(path: "git" arguments: ("describe" "--tags" "--always")
+                                                     show-console: #f)))
+                         (version (read-line proc))
+                         (status (process-status proc)))
+                    (close-port proc)
+                    (and (zero? status)
+                         (string? version) ;; (not (eof-object? version))
+                         version))))))
          (gx-version-text
           (and git-version
                (string-append "(define (gerbil-version-string) \"" git-version "\")\n")))
