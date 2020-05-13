@@ -25,6 +25,19 @@
         (delete-file to))
       (copy-file from to))))
 
+(define (patch-gxc-shebang)
+  (let* ((filename    (string-append default-gerbil-home "/bin/gxc"))
+         (new-content (with-input-from-file filename
+                        (lambda ()
+                          (with-output-to-string
+                            (lambda ()
+                              (read-line)
+                              (display (string-append "#!" default-gerbil-home "/bin/gxi\n"))
+                              (display (read-line (current-input-port) #f))))))))
+    (with-output-to-file filename
+      (lambda ()
+        (display new-content)))))
+
 (define (main)
   (if (not default-gerbil-home)
     (die "This gerbil build was not configured with a prefix, so there's nothing to do."))
@@ -37,4 +50,5 @@
   (create-directory-if-necessary (string-append default-gerbil-home "/share/emacs/site-lisp/gerbil"))
   (install "../etc/gerbil.el" (string-append default-gerbil-home "/share/emacs/site-lisp/gerbil/gerbil.el"))
   (create-directory-if-necessary (string-append default-gerbil-home "/share/gerbil"))
-  (install "TAGS" (string-append default-gerbil-home "/share/gerbil/TAGS")))
+  (install "TAGS" (string-append default-gerbil-home "/share/gerbil/TAGS"))
+  (patch-gxc-shebang))
