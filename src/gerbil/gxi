@@ -4,7 +4,7 @@ set -e
 GERBIL_GSI="gsi"
 
 if [ -z "$GERBIL_HOME" ]; then
-    GERBIL_HOME=$(dirname $(cd ${0%/*} && echo $PWD))
+    GERBIL_HOME=$(dirname "$(dirname "$(realpath "$0")")")
     export GERBIL_HOME
 fi
 
