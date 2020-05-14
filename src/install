@@ -1,4 +1,5 @@
 #!/usr/bin/env gsi
+;; -*- Scheme -*-
 
 (define default-gerbil-home #f)
 
