@@ -123,8 +123,8 @@
                  "GERBIL_GSI="
                  '())
     ,@(if install-prefix
-        (list (make-patch (string-append "GERBIL_HOME=\"" install-prefix "\"\n")
-                          "GERBIL_HOME="
+        (list (make-patch (string-append "    GERBIL_HOME=\"" install-prefix "\"\n")
+                          "    GERBIL_HOME="
                           '()))
         '())))
 
