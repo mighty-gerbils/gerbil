@@ -1684,7 +1684,9 @@ particular databases.
 
 Note that not all drivers are built by default, as some are FFI
 drivers (SQLite, MySQL), so you will need to enable them for your
-installation in `$GERBIL_HOME/src/std/build-features.ss`.
+installation in `$GERBIL_HOME/src/std/build-features.ss`,
+by editing it or using e.g. the `--enable-mysql` option to `./configure`,
+before you build Gerbil.
 
 Here is an example of using the dbi interface with SQLite.
 First, the necessary imports and a connection to an in-memory database:
@@ -1736,7 +1738,9 @@ And we are done, we can close our database connection:
 The `:std/db/leveldb` library provides support for [LevelDB](https://en.wikipedia.org/wiki/LevelDB),
 while the `:std/db/lmdb` library provides support for [LMDB](https://en.wikipedia.org/wiki/LMDB).
 The libraries are not built by default, as they have foreign dependencies, so you need to
-enable them for your installation in `$GERBIL_HOME/src/std/build-features.ss`.
+enable them for your installation in `$GERBIL_HOME/src/std/build-features.ss`,
+by editing it or using e.g. the `--enable-leveldb` and `--enable-lmdb` options to `./configure`,
+before you build Gerbil.
 
 For example, here we use the LevelDB library for some simple operations:
 ```scheme
