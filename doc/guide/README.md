@@ -41,7 +41,7 @@ later, by reconfiguring and running `./build.sh stdlib` in
 After unpacking a release or checking out the source code from Github, let
 `$GERBIL_HOME` be the top directory of Gerbil.
 
-If you are using the default configuration, can build Gerbil simply with:
+If you are using the default configuration, you can build Gerbil simply with:
 ```bash
 $GERBIL_HOME/src/build.sh
 ```
@@ -65,7 +65,7 @@ Passing `--prefix=/installed/gerbil/home` to `./configure`
 will allow Gerbil to find its installation directory
 even when `GERBIL_HOME` is not set and `gxi` or `gxc` are symlinks.
 Passing `--with-gambit=/gambit/home` will allow Gerbil to find Gambit even
-when `GERBIL_GSC` is unset; this is especially nice if GhostScript is in the
+when `GERBIL_GSC` is unset; this is especially useful if GhostScript is in the
 path, since both Gambit and GhostScript have a program named `gsc`.
 
 Various features can be enabled or disabled by passing `--enable-FEATURE` or
