@@ -41,28 +41,40 @@ later, by reconfiguring and running `./build.sh stdlib` in
 After unpacking a release or checking out the source code from Github, let
 `$GERBIL_HOME` be the top directory of Gerbil.
 
-Then:
+If you are using the default configuration, you can build Gerbil simply with:
 ```bash
-$ cd $GERBIL_HOME/src
-$ ./configure
-$ ./build.sh
+$GERBIL_HOME/src/build.sh
 ```
 
-Running `./configure` can be skipped to make a build with the default features
-enabled and where runtime dependencies are found using the path and
-environment variables.
+On the other hand, if you need to override some configuration defaults,
+you will have to use the following (with your own set of configuration options):
+```bash
+$ cd $GERBIL_HOME/src
+$ ./configure --prefix=/path/to/which/to/install/gerbil --gambit=/path/to/installed/gambit \
+  --enable-feature1 --enable-feature2 --disable-feature3 --disable-feature4 --enable-feature5
+$ ./build.sh
+$ ./install
+```
 
-Passing `--prefix=/installed/gerbil/home` to `./configure` will allow Gerbil
-to find its installation directory even when `GERBIL_HOME` is not set.
+Running `./configure` and `./install` can be skipped
+to make a build with the default features enabled and
+where runtime dependencies are found using the path and environment variables.
+The `./install` step is necessary if and only if you specify a `--prefix` option.
+
+Passing `--prefix=/installed/gerbil/home` to `./configure`
+will allow Gerbil to find its installation directory
+even when `GERBIL_HOME` is not set and `gxi` or `gxc` are symlinks.
 Passing `--with-gambit=/gambit/home` will allow Gerbil to find Gambit even
-when `GAMBIT_GSC` is unset; this is especially nice if GhostScript is in the
+when `GERBIL_GSC` is unset; this is especially useful if GhostScript is in the
 path, since both Gambit and GhostScript have a program named `gsc`.
 
 Various features can be enabled or disabled by passing `--enable-FEATURE` or
 `--disable-FEATURE` to `./configure`.  Use `./configure --help` to see which
-features are available.
+features are available. It will show the flags that modify the default; thus
+it will offer `--enable-leveldb` because `leveldb` is *not* enabled by default;
+and it will offer `--disable-zlib` because `zlib` *is* enabled by default.
 
-If you are building in macOS and want to use the homebrew OpenSSL,
+If you are building on macOS and want to use the homebrew OpenSSL,
 then you need to specify appropriate `CPPFLAGS` and `LDFLAGS`.
 For instance:
 ```bash
@@ -78,7 +90,7 @@ $ brew install gerbil-scheme
 ```
 
 To get around some brew specific paths, set the following in your environment.
-Most likely you'll want to add them to your `~/.bashrc`, `~/.zsh`
+Most likely you'll want to add them to your `~/.bashrc`, `~/.zshenv` or `~/.profile`:
 ```
 $ export PATH=/usr/local/opt/gambit-scheme/current/bin:/usr/local/opt/gerbil-scheme/libexec/bin:$PATH
 $ export GERBIL_HOME=/usr/local/opt/gerbil-scheme/libexec
@@ -104,3 +116,11 @@ docker run -it gerbil/scheme bash
 ```
 
 Or you can build your own container using the [Dockerfile](https://github.com/vyzo/gerbil/blob/master/Dockerfile)
+
+## Using Nix and/or Docker
+
+You can install Gerbil using Nix. See [nix.md](nix.md) for more details.
+
+There are also Docker containers based on Nix, with some gerbil libraries also installed,
+at `fahree/gerbil-nix` (`root` only) and `fahree/gerbil-utils` (user `user` working in `/home`).
+See the `scripts` directory of [Gerbil Clan](https://github.com/fare/gerbil-utils) for details.
