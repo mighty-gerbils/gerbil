@@ -33,7 +33,7 @@
                           (with-output-to-string
                             (lambda ()
                               (read-line)
-                              (display (string-append "#!" default-gerbil-home "/bin/gxi\n"))
+                              (display (string-append "#!/usr/bin/env " default-gerbil-home "/bin/gxi\n"))
                               (display (read-line (current-input-port) #f))))))))
     (with-output-to-file filename
       (lambda ()
