@@ -50,7 +50,7 @@ On the other hand, if you need to override some configuration defaults,
 you will have to use the following (with your own set of configuration options):
 ```bash
 $ cd $GERBIL_HOME/src
-$ ./configure --prefix=/path/to/which/to/install/gerbil --gambit=/path/to/installed/gambit \
+$ ./configure --prefix=/path/to/which/to/install/gerbil --with-gambit=/path/to/installed/gambit \
   --enable-feature1 --enable-feature2 --disable-feature3 --disable-feature4 --enable-feature5
 $ ./build.sh
 $ ./install
