@@ -28,7 +28,7 @@
 
 ;; gxi is a shell script, and gxc is a gxi script. As of 2020, that's an issue:
 ;; Linux has dealt well with #!-interpreted #!-interpreters for many years, but
-;; BSD variants aren't there yet (the newer macOS Catalina from May 2020 is said
+;; BSD variants aren't there yet (the newer macOS Catalina from October 2019 is said
 ;; to support it, but the still common macOS Mojave doesn't; other BSDs may vary).
 ;; #!/usr/bin/env gxi or #!/usr/bin/env /path/to/gxi works well as a portable shim
 ;; where the presence of /usr/bin/env is guaranteed by POSIX... but not available

@@ -35,7 +35,7 @@ namespace: gxc
    (cond-expand
      (,(##unbound? (##global-var-ref (##make-global-var '##get-io-settings)))
       "-:f8,-8,t8") ;; before v4.9.3-1081-g0680901f
-     (else "-:i8,t8"))]) ;; after
+     (else "-:i8,f8,-8,t8"))]) ;; works after v4.9.3-1101-g1f1ce436 - in between, you lose.
 
 (def (compile-file srcpath (opts []))
   (unless (string? srcpath)
