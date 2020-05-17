@@ -9,7 +9,6 @@ lib
 *.so
 
 src/TAGS
-src/gerbil/runtime/gx-version.scm
 .build*
 doc/node_modules
 doc/.vuepress/dist
