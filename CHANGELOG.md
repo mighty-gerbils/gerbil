@@ -1,3 +1,206 @@
+### 5-17-2020: Gerbil-v0.16
+
+Highlights:
+- R7RS Tangerine, Polydactyl Gerbil, Class Sealing and more.
+- Overhauled std/make library and parallelized builds.
+- Configure and install scripts.
+- Overhauled documentation, with a beautiful new logo!
+- A new Gitter chat room at https://gitter.im/gerbil-scheme/community
+
+Incompatibilities:
+- std/iter:`in-range` has been renamed to `in-iota`, with a new `in-range` compatible with Racket
+
+Pull Requests:
+- #505 - [fix] updated Gambit UTF8 options
+- #504 - [fix] more twiddling with #! interpreter lines
+- #503 - [doc] minor doc fix: Option name is --with-gambit
+- #502 - [fix] more fixes to configure and install scripts
+- #501 - [fix] don't use realpath, non-standard on BSD
+- #500 - [doc] update Getting Started wrt configuration
+- #499 - [fix] more build tweaks
+- #498 - [fix] fix build issue when git is not present
+- #497 - [fix] patch gxc's shebang at install, rather than configure, time
+- #496 - [new] std/test: allow computed name in test-case
+- #495 - [fix] handle architectures on which ##cpu-count is 0
+- #494 - [fix] use ##cpu-count instead of reinventing it badly
+- #492 - [new] std/misc/list: alias delete-duplicates to unique
+- #491 - [new] Configure script
+- #489 - [fix] tweaks
+- #488 - [fix] refactor run-tests
+- #487 - [fix] tweaks
+- #486 - [fix] force UTF8 in source files
+- #484 - [new] parallelize stage0
+- #482 - [doc] emacs example config
+- #481 - [new] parallelize the build of stdlib, to a point
+- #480 - [fix] change pred-after-sequence to pred-sequence
+- #479 - [new] std/misc/list: take-until take-until! drop-until
+- #477 - [new] pred-after-sequence
+- #476 - [fix] small fixes
+- #475 - [fix] fix vector comparator
+- #474 - [new] custom writers
+- #472 - [fix] fix safety issues with structs
+- #471 - [fix] make
+- #469 - [docker] use the gerbil/gambit layer broken out
+- #464 - [fix] improve docs for hash-merge
+- #463 - [fix] make improvements
+- #462 - [fix] conditionally import libyaml to fix tests
+- #461 - [new] add yaml-key-format parameter
+- #460 - [fix] string >uninterned symbol
+- #458 - [fix] use ##file-exists? instead of ##os-file-info
+- #456 - [fix] :std/misc/func expand pred-limit to accept #f as limit parameter too
+- #455 - [fix] fix :std/misc/func pred-limit to return always #f when limit is < 1
+- #454 - [new] misc/func: pred-limit
+- #451 - [new] net/request: add auth: parameter supporting basic auth
+- #450 - [new] misc/ports: write-file-string & write-file-lines
+- #449 - [fix] fix :std/sugar chain macro
+- #448 - [doc] minor doc copy edit
+- #447 - [fix] improve repr for values, separate-prefix?
+- #446 - [doc] document stx-source and stx-wrap-source
+- #443 - [doc] add subsections for Interactive Development Macros
+- #442 - [new] add ~r format specifier for repr
+- #440 - [fix] dix srfi-115 regexp-replace
+- #432 - [fix] check for out-of-date build-deps
+- #431 - [fix] srfi-159: fix incorrect "col" calculation with ANSI escape codes
+- #430 - [fix] add redirect support for put and delete
+- #426 - [fix] improve split from :std/misc/list
+- #424 - [new] std/sugar - chain macro
+- #420 - [fix] add typecast for malloc to work with c++ compilers
+- #418 - [new] add define-c-struct macro for ffi with c structs
+- #416 - [fix] some more generic tuning
+- #415 - [fix] generic dispatch: unroll apply for generic methods of up to 3 arguments
+- #411 - [fix] make: print full binary path when compiling executables
+- #410 - [fix] build system improvements
+- #409 - [fix] json: go fast please!
+- #408 - [fix] avoid internal expansion in @expand and @expand1
+- #407 - [fix] some iterator optimizations
+- #406 - [doc] gitter links
+- #405 - [new] iterator comprehension filters
+- #404 - [doc] unmess srfi table from 160 long line
+- #403 - [gerbil.el] gerbil.el - Lexical-binding fixes and improvements
+- #402 - [gerbil.el] add package header and replace global keybinding in Gerbil.el
+- #401 - [fix] some more httpd bumming
+- #400 - [fix] some more httpd bumming
+- #399 - [new] static mux for httpd
+- #398 - [fix] create target directories in make
+- #397 - [fix] gxpkg: create GERBIL_PATH/lib/static if it doesn't exist
+- #395 - [fix] improve the pget* family of functions
+- #394 - [fix] improvements for functional composition
+- #393 - [fix] compiler: refactor specializer generation out of optimize-top
+- #392 - [fix] fix gxpkg: Use create-directory* to allow for existing dirs.
+- #391 - [fix] some httpd optimizations
+- #390 - [fix] some runtime optimizations
+- #389 - [fix] fix iter-input-port bug
+- #388 - [fix] optimize case-lambda dispatch and values check/list conversion
+- #387 - [fix] tune iterators
+- #386 - [new] function composition operators
+- #385 - [fix] optimize expansion for in-naturals for loops
+- #384 - [fix] optimize for loop expansion for in-iota and in-range loops
+- #383 - [new] add read-all-as-u8vector and read-file-u8vector to std/misc/ports
+- #382 - [fix] optimize call-method
+- #381 - [doc] more documentation for sealed class performance
+- #380 - [new] better sugar for local method binding
+- #379 - [fix] improve specializers
+- #377 - [new] add random-string to misc/string
+- #376 - [fix] gxpkg: create the GERBIL_PATH hierarchy if the directories don't exist
+- #375 - [new] Class sealing
+- #374 - [fix] std/os/kqueue uses begin-ffi
+- #371 - [fix] runtime: hook the display exception hook before trying to import any modules
+- #370 - [new] add -h and -v options to gxi, understand --help in gxc
+- #369 - [fix] clean up code duplication related to define-with-errno
+- #368 - [new] misc/list: add 'limit' argument to split procedure
+- #367 - [fix] don't use call-with-values in sort
+- #366 - [fix] make gxprof work again
+- #365 - [new] more file descriptor io support
+- #364 - [fix] std/net/bio/file: fix bug in file-output-write
+- #363 - [fix] fix issues with building languages and r7rs-large
+- #362 - [new] allow read/write on raw file descriptors
+- #361 - [fix] std/os/flock: close needs to be idempotent
+- #359 - [fix] unlock ports created with lock on close-port
+- #358 - [new] Advisory File Locking
+- #357 - [new] polydactyl as a first class language in gxi
+- #356 - [doc] fix assorted typos
+- #355 - [doc] update documentation for utf8 encoding and decoding procedures
+- #354 - [doc] fix various typos
+- #353 - [fix] gxtags: correctly handle non-locat positions
+- #351 - [doc] pr-338 review
+- #349 - [fix] a couple of bug fixes
+- #348 - [fix] skip multicast sourcing socket on NetBSD
+- #347 - [fix] use C99 stdint types
+- #346 - [new] polydactyl gerbil
+- #344 - [fix] code cleanup: use a gerbil.pkg for stdlib and lang
+- #340 - [new] misc/list: group
+- #339 - [fix] std/net/bio/file: add missing package declaration
+- #338 - [new] R7RS large Tangerine Edition
+- #337 - [new] misc/string: string-whitespace?
+- #336 - [fix] fix incompatibilities with gambit head
+- #335 - [doc] normalize std/sugar documentation to new format
+- #334 - [new] relative library module import paths
+- #332 - [new] add awhen to std/sugar.
+- #331 - [new] support .sld and .scm as valid module extensions in the expander
+- #330 - [new] compiler: use .scmx extension for executable stubs
+- #329 - [fix] fix predicate constructor expansion with continuation functions
+- #328 - [doc] fix documentation for predicate constructor macro `?`
+- #327 - [new] add non-destructive u8vector-reverse to std/misc/bytes
+- #326 - [fix] build documentation from build.sh script
+- #325 - [doc] add Gerbil Logo Vector Art
+- #324 - [fix] prelude: fix bug in match
+- #323 - [doc] update Docker section in guide
+- #322 - [fix] refactor stdlib to use format-id instead of stx-identifier
+- #321 - [docker] set GERBIL_HOME in Docker
+- #320 - [fix] fix misspelled word in error message.
+- #317 - [docker] put Gerbil binaries in PATH in the Docker container
+- #310 - [fix] fix issue in r7rs prelude
+- #304 - [fix] in-range not handling negative stepping
+- #303 - [new] defsyntax-parameter* macro
+- #302 - [new] standard syntax utilities
+- #301 - [new] rename in-range to in-iota, make in-range and in-naturals Racket-compatible
+- #299 - [doc] correct documentation to work with docker ci
+- #297 - [fix] raise an error when in-range arguments are not integers.
+- #294 - [new] new u8vector->uint function, delimiter param to u8vector->bytestring
+- #293 - [new] add bytestring functions to std/misc/bytes
+- #292 - [fix] hex (~x,~X) formatter now pads with #\0
+- #290 - [doc] fixed typos in core builtins documentation
+- #289 - [new] std/misc/bytes module
+- #288 - [fix] add tty mode reset
+- #287 - [fix] support $GERBIL_GSC in build0.scm
+- #285 - [doc] mechanical changes to update builtin to use new doc template
+- #284 - [doc] some guide / reference Cleanup
+- #283 - [doc] typofix
+- #282 - [doc] doc overhaul for xml.md
+- #281 - [doc] update web.md to use new doc template
+- #280 - [gerbil.el] use seq-subseq in gerbil-send-string function
+- #277 - [doc] update std/text to use new doc template
+- #276 - [fix] do not break when git cannot find any tags
+- #275 - [doc] shorten function keyword syntax in misc.md
+- #274 - [doc] update std/net/request to match new document template
+- #271 - [doc] update MacOS homebrew $PATH instructions
+- #270 - [new] split
+- #269 - [new] butlast
+- #268 - [new] add slice! macro
+- #262 - [fix] error when trying to print u8vector representation
+- #261 - [doc] more std/misc reference overhauling
+- #260 - [new] add slice procedure
+- #259 - [new] add redirect to http-post
+- #258 - [doc] fix typos.
+- #256 - [doc] typo fix
+- #255 - [doc] a few smaller additions to std/misc documentation
+- #254 - [fix] fix std/misc/uuid#string->uuid and confine regex to hex vals
+- #253 - [doc] overhaul std/misc/list documentation, adding example code
+- #252 - [doc] when-list-or-empty documentation and name doesn't match impl
+- #251 - [new] add rassoc function to std/misc/list
+- #249 - [fix] simplify shell scripts
+- #248 - [fix] allow numbers in group-in components
+- #247 - [doc] fix and clarify srfi declaration in group-in
+- #246 - [new] group-in import expander
+- #245 - [fix] some buffer trivia
+- #243 - [new] file raw device buffers
+- #241 - [gerbil.el] - quote paren-face in gerbil.el
+- #239 - [fix] update for ##make-readenv signature changes in Gambit head
+- #237 - [docker] remove invalid arguments to docker pull
+- #235 - [fix] fix setenv arity in core prelude
+- #234 - [fix] hanlde quote tails in `@list`
+
+
 ### 2-9-2019: Gerbil-v0.15.1
 
 Patch release to support Gambit v4.9.3
