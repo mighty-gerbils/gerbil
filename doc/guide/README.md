@@ -89,13 +89,6 @@ Both Gambit and Gerbil are available via homebrew.
 $ brew install gerbil-scheme
 ```
 
-To get around some brew specific paths, set the following in your environment.
-Most likely you'll want to add them to your `~/.bashrc`, `~/.zshenv` or `~/.profile`:
-```
-$ export PATH=/usr/local/opt/gambit-scheme/current/bin:/usr/local/opt/gerbil-scheme/libexec/bin:$PATH
-$ export GERBIL_HOME=/usr/local/opt/gerbil-scheme/libexec
-```
-
 ## Skip the Install, Get Started on Docker
 
 The latest Gerbil images are available via [Docker Hub](https://hub.docker.com/u/gerbil)
