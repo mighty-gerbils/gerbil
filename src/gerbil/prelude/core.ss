@@ -875,6 +875,9 @@ package: gerbil
                dispatch)))))
 
     (defrules def ()
+      ((_ ((head . rest) . args) body ...)
+       (def (head . rest)
+         (lambda args body ...)))
       ((_ (id . args) body ...)
        (identifier? #'id)
        (define-values (id)

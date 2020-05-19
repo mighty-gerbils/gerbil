@@ -227,12 +227,16 @@ to facilitate expansion.
 => (define-values (id)
      (lambda args body ...))
 
+(def ((head . rest) . args) body ...)
+=> (def (head . rest)
+     (lambda args body ...))
+
 (def id expr)
 => (define-values (id) expr)
 ```
 
-Subtle difference with `define`: the former defines lambdas with the core Scheme
-`lambda%` form, while `def` uses the extended `lambda` form.
+Compared with `define`, which defines lambdas with the core Scheme `lambda%` form,
+`def` uses the extended `lambda` form, and supports curried definitions.
 
 #### def*
 ```
