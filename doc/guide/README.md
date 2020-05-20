@@ -11,8 +11,8 @@ $ git clone https://github.com/vyzo/gerbil.git
 
 ## Dependencies
 
-The latest Gerbil release (v0.16) requires Gambit v4.9.0;
-the latest Gambit is recommended nonetheless (v4.9.3).
+The latest Gerbil release (v0.16) requires the latest Gambit release, v4.9.3.
+Older versions of Gambit, starting with v4.9.1 may also work, but we haven't tested.
 
 The core system has no dependencies outside Gambit, but the standard
 library has several mostly optional dependencies. The only hard dependency
