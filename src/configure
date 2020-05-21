@@ -47,6 +47,12 @@
     (and (<= prefix-len (string-length s))
          (string=? prefix (substring s 0 prefix-len)))))
 
+(define (string-ends-with? s suffix)
+  (let* ((suffix-len (string-length suffix))
+         (s-len (string-length s)))
+    (and (<= suffix-len s-len)
+         (string=? suffix (substring s (- s-len suffix-len) s-len)))))
+
 (define (string-contains? s find)
   (let ((find-len (string-length find)))
     (let loop ((i 0))
@@ -56,6 +62,21 @@
        ((string=? find (substring s i (+ i find-len))))
        (else
         (loop (+ 1 i)))))))
+
+(define (path-join base . args)
+  (fold (lambda (part path)
+          (let ((starts (string-starts-with? part "/"))
+                (ends (string-ends-with? path "/")))
+            (cond
+             ((and starts ends) (string-append path (substring part 1)))
+             ((or starts ends) (string-append path part))
+             (else (string-append path "/" part)))))
+        base args))
+
+(define (trim-suffix s suffix)
+  (if (string-ends-with? s suffix)
+      (substring s 0 (- (string-length s) (string-length suffix)))
+      s))
 
 (define (feedback-mid . message-bits)
   (display ">>> ")
@@ -117,7 +138,7 @@
 (define (shell-patches)
   (define (bin-path prefix prog)
     (if prefix
-      (string-append prefix "/bin/" prog)
+      (path-join prefix "bin" prog)
       prog))
   `(,(make-patch (string-append "GERBIL_GSI=\"" (bin-path gambit-prefix "gsi") "\"\n")
                  "GERBIL_GSI="
@@ -130,12 +151,12 @@
 
 (define (gambit-gsc-path)
   (if gambit-prefix
-    (string-append gambit-prefix "/bin/gsc")
+    (path-join gambit-prefix "/bin/gsc")
     "gsc"))
 
 (define (gerbil-gxc-path)
   (if install-prefix
-    (string-append install-prefix "/bin/gxc")
+    (path-join install-prefix "/bin/gxc")
     "gxc"))
 
 (define (patches)
@@ -177,10 +198,10 @@
       (exit 0))
      ((match-prefix (car args) "--prefix=") =>
       (lambda (new-value)
-        (set! install-prefix new-value)
+        (set! install-prefix (trim-suffix new-value "/"))
         (loop (cdr args))))
      ((string=? (car args) "--prefix")
-      (set! install-prefix (cadr args))
+      (set! install-prefix (trim-suffix (cadr args) "/"))
       (loop (cddr args)))
      ((match-prefix (car args) "--with-gambit=") =>
       (lambda (new-value)
