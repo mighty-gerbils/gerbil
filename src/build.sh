@@ -40,6 +40,11 @@ target_setup () {
   mkdir -p "${target}/lib"
 }
 
+compile_gxi () {
+  feedback_low "Compiling gxi shim"
+  (cd gerbil && gcc -O2 -o gxi gxi.c)
+}
+
 compile_runtime () {
   local target_lib="${1}"
   (cd gerbil/runtime && ./build.scm "${target_lib}")
@@ -53,7 +58,6 @@ finalize_build () {
         "${target_lib}"
   cp -v gerbil/gxi \
         gerbil/gxc \
-        gerbil/gxi-build-script \
         "${target_bin}"
   (cd "${target_bin}" && ln -s gxi gxi-script)
 }
@@ -124,10 +128,10 @@ stage1 () {
         "${target_lib_static}"
 
   feedback_mid "compiling gerbil core"
-  GERBIL_HOME="${GERBIL_STAGE0}" # required by gxi-script
+  GERBIL_HOME="${GERBIL_STAGE0}" # required by gxi
   GERBIL_TARGET="${GERBIL_BASE}" # required by build1.ss
   export GERBIL_HOME GERBIL_TARGET
-  "${GERBIL_STAGE0}/bin/gxi-script" "${GERBIL_BUILD}/build1.ss" || die
+  "${GERBIL_STAGE0}/bin/gxi" "${GERBIL_BUILD}/build1.ss" || die
 
   ## finalize build
   feedback_mid "finalizing build ${final:+${final_string}}"
@@ -163,7 +167,7 @@ build_tools () {
 build_stdlib () {
   feedback_low "Building gerbil stdlib"
   PATH="${GERBIL_BASE}/bin:${PATH}"
-  GERBIL_HOME="${GERBIL_BASE}" #required by gxi-build-script and build.ss
+  GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
   GERBIL_GXC=gxc
   export PATH GERBIL_HOME GERBIL_GXC
   (cd std && ./build.ss)
@@ -206,6 +210,7 @@ build_doc () {
 ## main
 build_gerbil() {
   feedback_low "Building Gerbil"
+  compile_gxi      || die
   stage0           || die
   stage1 final     || die
   build_stdlib     || die
@@ -237,6 +242,9 @@ else
          ;;
        "stage1")
          stage1 "${2:-}" || die
+         ;;
+       "gxi")
+         compile_gxi || die
          ;;
        "layout")
          build_layout || die

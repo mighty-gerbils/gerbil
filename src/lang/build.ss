@@ -1,7 +1,8 @@
-#!/usr/bin/env gxi-build-script
+#!/usr/bin/env gxi
 ;; -*- Gerbil -*-
 
-(import :std/build-script)
+(import :std/build-script
+        :std/gambit-sharp)
 
 (defbuild-script
   `(;; standard scheme
@@ -44,6 +45,3 @@
     )
   libdir: (path-expand "lib" (getenv "GERBIL_HOME"))
   debug: 'src)
-
-;; necessary because gxi-build-script doesn't auto-invoke main
-(main)

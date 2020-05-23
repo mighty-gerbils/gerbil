@@ -34,8 +34,7 @@
     "gerbil/boot/gx-init.scm"
     "gerbil/boot/gx-init-exe.scm"
     "gerbil/boot/gxi-init.scm"
-    "gerbil/gxi"
-    "gerbil/gxi-build-script"
+    "gerbil/gxi.c"
     "gerbil/runtime/build-lib.scm"
     "gerbil/runtime/gx-gambc.scm"
     "install"
@@ -135,24 +134,25 @@
          (make-patch replacement prefix '()))
        features))
 
-(define (shell-patches)
-  (define (bin-path prefix prog)
-    (if prefix
-      (path-join prefix "bin" prog)
-      prog))
-  `(,(make-patch (string-append "GERBIL_GSI=\"" (bin-path gambit-prefix "gsi") "\"\n")
-                 "GERBIL_GSI="
-                 '())
-    ,@(if install-prefix
-        (list (make-patch (string-append "    GERBIL_HOME=\"" install-prefix "\"\n")
-                          "    GERBIL_HOME="
-                          '()))
-        '())))
+(define (shim-patches)
+  `(,(make-patch
+      (string-append "static char *default_gerbil_home = \"" install-prefix "\";\n")
+      "static char *default_gerbil_home"
+      '())
+    ,(make-patch
+      (string-append "static char *default_gerbil_gsi  = \"" (gambit-gsi-path) "\";\n")
+      "static char *default_gerbil_gsi"
+      '())))
 
 (define (gambit-gsc-path)
   (if gambit-prefix
     (path-join gambit-prefix "/bin/gsc")
     "gsc"))
+
+(define (gambit-gsi-path)
+  (if gambit-prefix
+    (path-join gambit-prefix "/bin/gsi")
+    "gsi"))
 
 (define (gerbil-gxc-path)
   (if install-prefix
@@ -170,7 +170,7 @@
                  '())))
   (append
     (feature-patches)
-    (shell-patches)
+    (shim-patches)
     (patch-define "__gx#default-gerbil-home" install-prefix)
     (patch-define "default-gerbil-home" install-prefix)
     (patch-define "default-gambit-gsc" (gambit-gsc-path))
