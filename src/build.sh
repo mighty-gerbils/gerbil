@@ -40,6 +40,11 @@ target_setup () {
   mkdir -p "${target}/lib"
 }
 
+compile_gxi () {
+  feedback_low "Compiling gxi shim"
+  (cd gerbil && gcc -O2 -o gxi gxi.c)
+}
+
 compile_runtime () {
   local target_lib="${1}"
   (cd gerbil/runtime && ./build.scm "${target_lib}")
@@ -206,6 +211,7 @@ build_doc () {
 ## main
 build_gerbil() {
   feedback_low "Building Gerbil"
+  compile_gxi      || die
   stage0           || die
   stage1 final     || die
   build_stdlib     || die
