@@ -2,7 +2,7 @@
 ;; -*- Gerbil -*-
 
 (import :std/build-script
-        (for-syntax :std/gambit-sharp))
+        :std/gambit-sharp)
 
 (defbuild-script
   `(;; standard scheme
