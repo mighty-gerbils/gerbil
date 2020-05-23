@@ -135,10 +135,13 @@
        features))
 
 (define (shim-patches)
-  `(,(make-patch
-      (string-append "static char *default_gerbil_home = \"" install-prefix "\";\n")
-      "static char *default_gerbil_home"
-      '())
+  `(,@(if install-prefix
+        (list
+         (make-patch
+          (string-append "static char *default_gerbil_home = \"" install-prefix "\";\n")
+          "static char *default_gerbil_home"
+          '()))
+        '())
     ,(make-patch
       (string-append "static char *default_gerbil_gsi  = \"" (gambit-gsi-path) "\";\n")
       "static char *default_gerbil_gsi"
