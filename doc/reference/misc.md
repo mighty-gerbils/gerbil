@@ -6598,6 +6598,42 @@ of a matching sequence. The list elements are compared using `equal?`.
 ```
 :::
 
+### pred-and
+``` scheme
+(pred-and pred) -> procedure
+
+  pred  := predicate
+```
+`pred-and` returns `#t` when every `pred` invocation returned a truethy value.
+
+::: tip Examples:
+``` scheme
+> (let (fn (pred-and number?))
+    (fn 10)
+    (fn 20))
+#t
+```
+:::
+
+### pred-or
+``` scheme
+(pred-or pred) -> procedure
+
+  pred  := predicate
+```
+
+`pred-or` returns `#t` when any `pred` invocation returned a truethy value.
+
+::: tip Examples:
+``` scheme
+> (let (fn (pred-or number?))
+    (fn 'a)
+    (fn 20)
+    (fn "b"))
+#t
+```
+:::
+
 ## Extended Real Number Line
 The (affine) extended real number line, where real numbers are enriched
 with positive and negative infinity, compactifying their order.

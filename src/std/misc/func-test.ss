@@ -62,4 +62,10 @@
         (check (fn 1)  => #f)
         (check (fn 2)  => #f))
       (check (filter (pred-sequence [1 2]) [1 2 'a 1 2]) => '(2 2))
-      (check (filter (pred-sequence [2] 1) [1 2 1 2]) => '(2)))))
+      (check (filter (pred-sequence [2] 1) [1 2 1 2]) => '(2)))
+    (test-case "test pred-and"
+     (check (let (fn (pred-and number?)) (fn 10) (fn 20)) => #t)
+     (check (let (fn (pred-and number?)) (fn 'a) (fn 10)) => #f))
+    (test-case "test pred-or"
+     (check (let (fn (pred-or number?)) (fn 'a) (fn 20)) => #t)
+     (check (let (fn (pred-or number?)) (fn 'a) (fn 'b)) => #f))))

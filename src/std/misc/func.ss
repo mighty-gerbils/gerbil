@@ -9,7 +9,7 @@
   @compose1 @compose @compose/values
   rcompose1 rcompose rcompose/values
   @rcompose1 @rcompose @rcompose/values
-  pred-limit pred-sequence)
+  pred-limit pred-sequence pred-and pred-or)
 
 ;; Repeat value or call function N times and return the result as list.
 ;; (repeat 2 5)                  -> (2 2 2 2 2)  ; repeat the value 2
@@ -227,3 +227,19 @@
   (if (pair? list)
     (lambda (v) (if (zero? limit) #f (check v)))
     (lambda (_) #f)))
+
+;; pred-and returns true when every pred invocation returned a truethy value.
+(def (pred-and pred)
+  (def res #t)
+  (lambda (v)
+    (if res
+      (begin (set! res (pred v)) res)
+      #f)))
+
+;; pred-or returns true when any pred invocation returned a truethy value.
+(def (pred-or pred)
+  (def res #f)
+  (lambda (v)
+    (if res
+      #t
+      (begin (set! res (pred v)) res))))
