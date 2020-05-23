@@ -26,19 +26,6 @@
         (delete-file to))
       (copy-file from to))))
 
-;; gxi is a shell script, and gxc is a gxi script. As of 2020, that's an issue:
-;; Linux has dealt well with #!-interpreted #!-interpreters for many years, but
-;; BSD variants aren't there yet (the newer macOS Catalina from October 2019 is said
-;; to support it, but the still common macOS Mojave doesn't; other BSDs may vary).
-;; #!/usr/bin/env gxi or #!/usr/bin/env /path/to/gxi works well as a portable shim
-;; where the presence of /usr/bin/env is guaranteed by POSIX... but not available
-;; within a Nix build environment. The right thing in Nix is usually to fully expand
-;; the path to env, but this breaks the 127-character limit that many Linux kernels
-;; have on #! lines, including on the Gitlab CI Docker runners.
-;; Our workaround is to rely on the recursive #! on Linux but use /usr/bin/env on BSD.
-(define shebang-prefix
-  (if (eq? (caddr (system-type)) 'linux-gnu) "#!" "#!/usr/bin/env "))
-
 (define (patch-gxc-shebang)
   (let* ((filename    (string-append default-gerbil-home "/bin/gxc"))
          (new-content (with-input-from-file filename
@@ -46,7 +33,7 @@
                           (with-output-to-string
                             (lambda ()
                               (read-line)
-                              (display (string-append shebang-prefix default-gerbil-home "/bin/gxi\n"))
+                              (display (string-append "#!" default-gerbil-home "/bin/gxi\n"))
                               (display (read-line (current-input-port) #f))))))))
     (with-output-to-file filename
       (lambda ()
