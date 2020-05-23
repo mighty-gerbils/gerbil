@@ -1,6 +1,7 @@
 ;; -*- Gerbil -*-
 (def build-spec
   `((gxc: "build-config" (extra-inputs: ("build-features.ss")))
+    "gambit-sharp"
     "interactive"
     "foreign"
     ;; tests for :std/foreign

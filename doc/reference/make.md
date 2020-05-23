@@ -15,9 +15,8 @@ that will build the project when called with an empty list.
 The libraries documented below are meant to be used in such a script,
 to do most of the work in building your project.
 Note that if your project has syntax dependencies on low-level Gambit code
-in `gambit/lib/_gambit#.scm`, you may want to use
-`#!/usr/bin/env gxi-build-script` at which point you also need to
-explicitly call `(main)` in your script.
+in `gambit/lib/_gambit#.scm`, you should import for syntax `:std/gambit-sharp`
+in your build script.
 
 The `:std/make` library exports a function `make` that will build your project,
 compiling files in automatically-detected dependency order.
