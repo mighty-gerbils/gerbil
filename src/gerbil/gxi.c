@@ -8,8 +8,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-extern char **environ;
-
 // these may be patched by configure/install
 static char *default_gerbil_home = NULL;
 static char *default_gerbil_gsi  = "gsi";
@@ -17,7 +15,7 @@ static char *default_gerbil_gsi  = "gsi";
 static const char *usage = "Usage: %s [-v|-h] | [-:<runtime-options>] [--lang <language>] [[-] [-e <expr>] [file]] ...\n";
 
 void exec_gxi(char *gsi, char *gerbil_home, char *gerbil_lang, char *runtime_opts, int argc, char **argv);
-char **gxi_envp(char *gerbil_home, char *gerbil_lang);
+void gxi_setenv(char *gerbil_home, char *gerbil_lang);
 char **gxi_argv(char *gerbil_home, char *runtime_opts, int argc, char **argv);
 char **gxi_argv_script(char *gerbil_home, char *runtime_opts, int argc, char **argv);
 char **gxi_argv_interactive(char *gerbil_home, char *runtime_opts);
@@ -80,68 +78,17 @@ void exec_gxi(char *gsi,
               char *gerbil_lang,
               char *runtime_opts,
               int argc, char **argv) {
-  char **gsi_envp = gxi_envp(gerbil_home, gerbil_lang);
   char **gsi_argv = gxi_argv(gerbil_home, runtime_opts, argc, argv);
-  // in glibc we have execvpe, but that's not specified by POSIX
-  // so we just munch the environ pointer to pass the new environment and be portable
-  environ = gsi_envp;
+  gxi_setenv(gerbil_home, gerbil_lang);
   execvp(gsi, gsi_argv);
   perror("execvpe");
 }
 
-char **gxi_envp(char *gerbil_home, char *gerbil_lang) {
-  // find environment length, excluding GERBIL_HOME and GERBIL_LANG
-  int envlen = 0;
-  for (char **p = environ; *p; p++) {
-    if (!strstr(*p, "GERBIL_HOME") && !strstr(*p, "GERBIL_LANG")) {
-      envlen++;
-    }
-  }
-
-  // create the environment pointer
-  // account for GERBIL_HOME and GERBIL_LANG (if specified) in the new environment
+void gxi_setenv(char *gerbil_home, char *gerbil_lang) {
+  setenv("GERBIL_HOME", gerbil_home, 1);
   if (gerbil_lang) {
-    envlen += 2;
-  } else {
-    envlen++;
+    setenv("GERBIL_LANG", gerbil_lang, 1);
   }
-  char **envp = malloc((envlen + 1) * sizeof(char*));
-  if (!envp) {
-    perror("malloc");
-    exit(3);
-  }
-  envp[envlen] = NULL;
-
-  int envix = 0;
-
-  // set GERBIL_HOME
-  char *gerbil_home_envp = malloc(strlen("GERBIL_HOME=") + strlen(gerbil_home) + 1);
-  if (!gerbil_home_envp) {
-    perror("malloc");
-    exit(3);
-  }
-  sprintf(gerbil_home_envp, "GERBIL_HOME=%s", gerbil_home);
-  envp[envix++] = gerbil_home_envp;
-
-  // set GERBIL_LANG
-  if (gerbil_lang) {
-    char *gerbil_lang_envp = malloc(strlen("GERBIL_LANG=") + strlen(gerbil_home) + 1);
-    if (!gerbil_home_envp) {
-      perror("malloc");
-      exit(3);
-    }
-    sprintf(gerbil_lang_envp, "GERBIL_LANG=%s", gerbil_lang);
-    envp[envix++] = gerbil_lang_envp;
-  }
-
-  // copy the rest of the environment
-  for (char **p = environ; *p; p++) {
-    if (!strstr(*p, "GERBIL_HOME") && !strstr(*p, "GERBIL_LANG")) {
-      envp[envix++] = *p;
-    }
-  }
-
-  return envp;
 }
 
 char **gxi_argv(char *gerbil_home, char *runtime_opts, int argc, char **argv) {
