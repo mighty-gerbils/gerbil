@@ -128,10 +128,10 @@ stage1 () {
         "${target_lib_static}"
 
   feedback_mid "compiling gerbil core"
-  GERBIL_HOME="${GERBIL_STAGE0}" # required by gxi-script
+  GERBIL_HOME="${GERBIL_STAGE0}" # required by gxi
   GERBIL_TARGET="${GERBIL_BASE}" # required by build1.ss
   export GERBIL_HOME GERBIL_TARGET
-  "${GERBIL_STAGE0}/bin/gxi-script" "${GERBIL_BUILD}/build1.ss" || die
+  "${GERBIL_STAGE0}/bin/gxi" "${GERBIL_BUILD}/build1.ss" || die
 
   ## finalize build
   feedback_mid "finalizing build ${final:+${final_string}}"
@@ -242,6 +242,9 @@ else
          ;;
        "stage1")
          stage1 "${2:-}" || die
+         ;;
+       "gxi")
+         compile_gxi || die
          ;;
        "layout")
          build_layout || die

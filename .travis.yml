@@ -9,6 +9,7 @@ script:
   - echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
   - export GERBIL_HOME=${TRAVIS_BUILD_DIR}
   - cd src
+  - ./build.sh gxi
   - ./build.sh stage0
   - ./build.sh stage1 final
   - ./build.sh stdlib
