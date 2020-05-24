@@ -894,6 +894,15 @@ Examples:
 = (import :std/sugar :std/srfi/1 :std/srfi/113 :std/srfi/133)
 ```
 
+### Special Evaluation Forms
+
+#### eval-when-compile
+```
+(eval-when-compile expr)
+```
+
+Evaluates `expr` when expanding in compiler context.
+
 ## Runtime Symbol Bindings
 
 The runtime bindings exported by the prelude are all externs collected in nested modules,
@@ -2091,3 +2100,5 @@ Symbols related to thread programming; spawn and with-lock primitives.
     + [prefix-in prefix-out](#prefix-in-prefix-out)
     + [struct-out](#struct-out)
     + [group-in](#group-in)
+  * [Special Evaluation Forms](#special-evaluation-forms)
+    + [eval-when-compile](#eval-when-compile)

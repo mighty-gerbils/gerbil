@@ -2,14 +2,14 @@
 ;; -*- Gerbil -*-
 
 (import :std/build-script
-        :std/gambit-sharp)
+        :std/make)
 
 (defbuild-script
   `(;; standard scheme
     "scheme/stubs"
     "scheme/base-etc"
     "scheme/base-vectors"
-    (gxc: "scheme/base-ports" "-e" "(include \"~~lib/_gambit#.scm\")")
+    (gxc: "scheme/base-ports" ,@(include-gambit-sharp))
     "scheme/base-impl"
     "scheme/base"
     "scheme/case-lambda"
@@ -41,7 +41,7 @@
     "scheme/r5rs-null"
     "scheme/r7rs"
     ;; Gerbil variants. Polydactyl needs foreground due to using _gambit# at phi 1.
-    (gxc: "gerbil/polydactyl" (foreground: #t) "-e" "(include \"~~lib/_gambit#.scm\")")
+    (gxc: "gerbil/polydactyl" ,@(include-gambit-sharp))
     )
   libdir: (path-expand "lib" (getenv "GERBIL_HOME"))
   debug: 'src)

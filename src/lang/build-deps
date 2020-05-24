@@ -58,10 +58,6 @@
  (scheme/r5rs-null "scheme/r5rs-null" (gerbil/core scheme/r5rs))
  (scheme/r7rs "scheme/r7rs" (gerbil/core scheme/base))
  (gerbil/polydactyl
-  (gxc:
-   "gerbil/polydactyl"
-   (foreground: #t)
-   "-e"
-   "(include \"~~lib/_gambit#.scm\")")
-  (gerbil/core gerbil/gambit/readtables)))
+  (gxc: "gerbil/polydactyl" "-e" "(include \"~~lib/_gambit#.scm\")")
+  (gerbil/core gerbil/gambit/readtables std/gambit-sharp)))
 
