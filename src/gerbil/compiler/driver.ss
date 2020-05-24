@@ -63,7 +63,8 @@ namespace: gxc
                    (current-compile-debug debug)
                    (current-compile-generate-ssxi gen-ssxi)
                    (current-compile-static static)
-                   (current-compile-timestamp (compile-timestamp)))
+                   (current-compile-timestamp (compile-timestamp))
+                   (current-expander-compiling? #t))
       (verbose "compile " srcpath)
       (compile-top-module (import-module srcpath)))))
 
@@ -89,7 +90,8 @@ namespace: gxc
                    (current-compile-gsc-options gsc-options)
                    (current-compile-keep-scm keep-scm?)
                    (current-compile-verbose verbosity)
-                   (current-compile-timestamp (compile-timestamp)))
+                   (current-compile-timestamp (compile-timestamp))
+                   (current-expander-compiling? #t))
       (verbose "compile exe " srcpath)
       (compile-e (import-module srcpath) opts))))
 

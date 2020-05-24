@@ -252,7 +252,8 @@ TODO:
   (defvalues (positionals keywords) (separate-keyword-arguments args #t))
   (def buildspec (match positionals ([x] x) (_ (error "invalid arguments" make positionals))))
   (def settings (apply make-settings keywords))
-  (parameterize ((current-directory (settings-srcdir settings)))
+  (parameterize ((current-directory (settings-srcdir settings))
+                 (current-expander-compiling? #t))
     (with-fresh-cache (%make buildspec settings))))
 
 (def (%make buildspec settings)

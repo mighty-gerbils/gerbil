@@ -40,6 +40,9 @@ namespace: gx
 (def current-expander-allow-rebind?
   (make-parameter #f))
 
+(def current-expander-compiling?
+  (make-parameter #f))
+
 ;; expander context
 (defstruct expander-context (id table)
   id: gx#expander-context::t
