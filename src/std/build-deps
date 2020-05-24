@@ -2,6 +2,7 @@
  (std/build-config
   (gxc: "build-config" (extra-inputs: ("build-features.ss")))
   (gerbil/core))
+ (std/gambit-sharp "gambit-sharp" (gerbil/core))
  (std/interactive "interactive" (gerbil/core gerbil/gambit/misc))
  (std/pregexp "pregexp" (gerbil/core))
  (std/sort "sort" (gerbil/core))
