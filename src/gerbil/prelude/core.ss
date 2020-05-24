@@ -6,8 +6,8 @@ package: gerbil
 
 (export #t
         (import: <runtime> <sugar> <MOP> <match> <more-sugar>
-                 <module-sugar>)
-        (phi: +1 (import: <runtime> <sugar> <MOP> <match> <more-sugar>
+                 <module-sugar> <special>)
+        (phi: +1 (import: <runtime> <sugar> <MOP> <match> <more-sugar> <special>
                           <expander-runtime> <syntax-case> <syntax-sugar>
                           <more-syntax-sugar>)))
 
@@ -319,6 +319,7 @@ package: gerbil
     current-expander-marks
     current-expander-path
     current-expander-phi
+    current-expander-compiling?
     current-module-reader-path
     current-module-reader-args
     local-context? top-context? module-context? prelude-context?
@@ -3280,3 +3281,16 @@ package: gerbil
   )
 
 (import <module-sugar>)
+
+(module <special>
+  (export #t)
+
+  (defsyntax (eval-when-compile stx)
+    (syntax-case stx ()
+      ((_ expr)
+       (begin
+         (when (current-expander-compiling?)
+           (eval-syntax #'expr))
+         #'(void))))))
+
+(import <special>)
