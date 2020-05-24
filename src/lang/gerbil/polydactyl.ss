@@ -13,7 +13,7 @@
   (extern namespace: #f macro-readtable-brace-keyword-set!))
 
 (import (for-syntax _gambit))
-(eval-when-compile (import :std/gambit-sharp))
+(eval-when-compile (import (for-syntax :std/gambit-sharp)))
 
 (begin-syntax
   (def *readtable*
