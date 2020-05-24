@@ -15,6 +15,7 @@
   (define gx#current-expander-module-library-package-cache
     (make-parameter '#f))
   (define gx#current-expander-allow-rebind? (make-parameter '#f))
+  (define gx#current-expander-compiling? (make-parameter '#f))
   (define gx#expander-context::t
     (make-struct-type
      'gx#expander-context::t
