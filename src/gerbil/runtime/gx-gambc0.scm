@@ -1385,7 +1385,7 @@
        (if (proc hd) rest (lp tl)))
       (else #f))))
 
-(define-macro (define-remove remove cmp)
+(define-macro (define-remove1 remove cmp)
   `(define (,remove el lst)
     (let lp ((rest lst) (r '()))
       (core-match rest
@@ -1395,9 +1395,9 @@
            (lp rest (cons hd r))))
         (else lst)))))
 
-(define-remove remove equal?)
-(define-remove remv eqv?)
-(define-remove remq eq?)
+(define-remove1 remove1 equal?)
+(define-remove1 remv eqv?)
+(define-remove1 remq eq?)
 
 (define (remf proc lst)
   (let lp ((rest lst) (r '()))

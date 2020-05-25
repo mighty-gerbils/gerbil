@@ -123,7 +123,7 @@ package: gerbil
     foldl foldr andmap ormap filter filter-map iota last last-pair
     memf assgetq assgetv assget find
     list-set list-set!
-    remove remq remv remf
+    remove1 remq remv remf
     pgetq pgetv pget
     subvector subvector->list subvector-fill!
     vector-copy!
