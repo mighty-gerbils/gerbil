@@ -207,4 +207,10 @@
       (check-equal? (values->list (separate-keyword-arguments
                                    '(x a: 1 y #!key b: 2 c: 3 z #!rest t d: 4) #f))
                     '((x y #!key b: 2 z #!rest t d: 4) (a: 1 c: 3))))
+    (test-case "test duplicates"
+      (check (duplicates []) => [])
+      (check (duplicates ['a 'b]) => [])
+      (check (duplicates ['a 1 'a 2]) => ['(a . 2)])
+      (check (duplicates ['a 'b 'a 'a] eq?) => ['(a . 3)])
+      (check (duplicates '((a . 10) (b . 10)) key: cdr) => ['(10 . 2)]))
     ))
