@@ -222,7 +222,7 @@
         ((!rpc.unmonitor remote)
          (let (address (remote-address remote))
            (alet (thread (hash-get conns address))
-             (hash-update! monitors thread (cut remove [src . remote] <>) []))))
+             (hash-update! monitors thread (cut remove1 [src . remote] <>) []))))
         ((!rpc.shutdown)
          (raise 'shutdown))
         (else

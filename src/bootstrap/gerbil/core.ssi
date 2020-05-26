@@ -303,7 +303,7 @@ namespace: gerbil/core
                     (find find)
                     (list-set list-set)
                     (list-set! list-set!)
-                    (remove remove)
+                    (remove1 remove1)
                     (remq remq)
                     (remv remv)
                     (remf remf)

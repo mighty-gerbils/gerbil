@@ -1256,15 +1256,15 @@ Returns the first element in *lst* that satisfies *pred*.
 Generalization of *member*; returns the first pair in *lst* whose *car*
 satisfies *pred*.
 
-### remove
+### remove1
 ``` scheme
-(remove el lst [=? = equal?]) -> list
+(remove1 el lst) -> list
 
   el  := any
   lst := list
 ```
 
-Returns *lst* removing the first element *x* that satisfies `(=? el x)`.
+Returns *lst* removing the first element *x* that satisfies `(equal? el x)`.
 
 ### remv
 ``` scheme
@@ -1274,7 +1274,7 @@ Returns *lst* removing the first element *x* that satisfies `(=? el x)`.
   lst := list
 ```
 
-Apply `remove` using `eqv?` as the comparator.
+Apply `remove1` using `eqv?` as the comparator.
 
 ### remq
 ``` scheme
@@ -1284,7 +1284,7 @@ Apply `remove` using `eqv?` as the comparator.
   lst := list
 ```
 
-Apply `remove` using `eq?` as the comparator.
+Apply `remove1` using `eq?` as the comparator.
 
 ### remf
 ``` scheme
@@ -1294,7 +1294,7 @@ Apply `remove` using `eq?` as the comparator.
   lst  := list
 ```
 
-Like `remove`, but removes the first element `x` that satisfies `(pred x)`
+Like `remove1`, but removes the first element `x` that satisfies `(pred x)`
 
 ## Numerics
 

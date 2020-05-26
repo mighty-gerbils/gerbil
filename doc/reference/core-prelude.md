@@ -1016,7 +1016,7 @@ Defines the following symbols as externs:
     make-list cons*
     foldl foldr andmap ormap filter filter-map iota last last-pair
     memf assgetq find
-    remove remq remv remf
+    remove1 remq remv remf
     pgetq pgetv pget
     subvector subvector->list subvector-fill!
     vector-map vector-copy vector-append

@@ -242,7 +242,7 @@
 
   (def (remove-actor-subscription! topic thread)
     (alet (topics (hash-get actor-subscriptions thread))
-      (let (topics (remove topic topics))
+      (let (topics (remove1 topic topics))
         (if (null? topics)
           (hash-remove! actor-subscriptions thread)
           (hash-put! actor-subscriptions thread topics)))
