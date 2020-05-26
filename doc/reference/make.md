@@ -197,11 +197,6 @@ the following keyword arguments, that may configure how your project is built.
     as detected from the Operating System, or overridden by the value of the environment variable
     `GERBIL_BUILD_CORES`, if defined and an integer.
 
-  - `depgraph:` is an obsolete argument, only present for backward compatibility.
-    You should delete it as well as any call to `make-depgraph` or `make-depgraph/spec`.
-    All matters regarding dependency caching is now managed internally inside `make`
-    based on the `build-deps` argument above. This will be removed after release 0.16.
-
 
 ## Interface
 
