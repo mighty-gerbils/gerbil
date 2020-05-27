@@ -26,7 +26,6 @@
 (extern namespace: #f with-cons-load-path load-path)
 
 (export make
-        make-depgraph make-depgraph/spec ;; empty shims for backward compatibility only
         shell-config
         env-cppflags
         env-ldflags
@@ -102,8 +101,7 @@ TODO:
       optimize: (optimize #t) debug: (debug 'env)
       static: (static #t) static-debug: (static-debug #f)
       verbose: (verbose #f) build-deps: (build-deps_ #f)
-      parallelize: (parallelize_ #t)
-      depgraph: (_ #f)) ;; ignored, for backward compatibility only
+      parallelize: (parallelize_ #t))
     (def gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
     (def srcdir (or srcdir_ (error "srcdir must be specified")))
     (def libdir (or libdir_ (path-expand "lib" gerbil-path)))
@@ -497,9 +495,6 @@ TODO:
        ((import-set? hd)      (enqueue! q (import-set-source hd)))
        (else (error "Unexpected module import" hd)))))
   (values mod-id (sort (hash-keys ht) symbol<?)))
-
-(def make-depgraph true) ;; Don't use, for backward compatibility only, during transition
-(def make-depgraph/spec true) ;; ^ idem
 
 ;; Normalize-buildspec : buildspec -> buildspec
 ;; Groups the gsc: and static-include: and copy: specs inside the immediately following ssi:
