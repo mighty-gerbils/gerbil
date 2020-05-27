@@ -3,7 +3,7 @@
 ;;;; List utilities
 
 (export
-  unique unique!
+  unique unique! duplicates
   alist?
   plist?
   plist->alist
@@ -39,6 +39,23 @@
 
 (defalias unique delete-duplicates)
 (defalias unique! delete-duplicates!)
+
+;; duplicates returns a cons cells (item . count) for every element
+;; that occurs more than once in the list. If key: is not false
+;; the unary procedure is applied to every element before comparison.
+;;
+;; Example:
+;;  (duplicates ['a 1 'a]) => ((a . 2))
+(def (duplicates list (test equal?) key: (key #f))
+  (if (pair? list)
+    (let (ht (make-hash-table test: test))
+      (if key
+        (for-each (lambda (v) (hash-update! ht (key v) 1+ 0)) list)
+        (for-each (cut hash-update! ht <> 1+ 0) list))
+      (hash-fold
+       (lambda (a b acc) (if (> b 1) (cons [a . b] acc) acc))
+       [] ht))
+    []))
 
 ;; This function checks if the list is a proper association-list.
 ;; ie it has the form [[key1 . val1] [key2 . val2]]

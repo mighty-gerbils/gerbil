@@ -2294,6 +2294,31 @@ Alias for `delete-duplicates` and `delete-duplicates!` ([SRFI 1](https://srfi.sc
 ```
 :::
 
+### duplicates
+``` scheme
+(duplicates lst [test = equal?] [key: #f]) -> list
+
+  lst  := proper list
+  test := test procedure which takes two arguments, defaults to equal?
+  key  := optional unary procedure to get the to compare item out of a list element
+```
+`duplicates` returns a cons cells `(item . count)` for every element
+that occurs more than once in `lst`. If `key:` is not `#f`
+the unary procedure is applied to every element before comparison.
+
+::: tip Examples:
+``` scheme
+> (duplicates ['a 1 'a])
+((a . 2))
+
+> (duplicates [1 2 3])
+()
+
+> (duplicates '((a . 10) (b . 10)) key: cdr)
+((10 . 2))
+```
+:::
+
 ### rassoc
 ``` scheme
 (rassoc elem alist [pred = eqv?]) -> pair | #f
