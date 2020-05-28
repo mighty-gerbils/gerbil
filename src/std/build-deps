@@ -15,36 +15,83 @@
  (std/stxparam "stxparam" (gerbil/core))
  (std/lazy "lazy" (gerbil/core))
  (std/srfi/srfi-support "srfi/srfi-support" (gerbil/core))
- (std/srfi/8 "srfi/8" (gerbil/core))
- (std/srfi/1 "srfi/1" (gerbil/core std/srfi/8 std/srfi/srfi-support))
+ (std/srfi/8 (gxc: "srfi/8") (gerbil/core))
+ (std/srfi/1
+  (gxc: "srfi/1" (extra-inputs: ("srfi-1.scm")))
+  (gerbil/core std/srfi/8 std/srfi/srfi-support))
  (std/srfi/19
-  "srfi/19"
+  (gxc: "srfi/19" (extra-inputs: ("srfi-19.scm")))
   (gerbil/core gerbil/gambit/exact std/srfi/8 std/srfi/srfi-support))
  (std/srfi/42
   (gxc: "srfi/42" "-cc-options" "--param max-gcse-memory=300000000")
   (gerbil/core))
- (std/srfi/43 "srfi/43" (gerbil/core std/srfi/8))
- (std/srfi/78 "srfi/78" (gerbil/core std/srfi/42))
- (std/srfi/95 "srfi/95" (gerbil/core))
- (std/srfi/101 "srfi/101" (gerbil/core gerbil/gambit/bits std/srfi/1))
- (std/srfi/121 "srfi/121" (gerbil/core))
+ (std/srfi/43
+  (gxc: "srfi/43" (extra-inputs: ("srfi-43.scm")))
+  (gerbil/core std/srfi/8))
+ (std/srfi/78
+  (gxc: "srfi/78" (extra-inputs: ("srfi-78.scm")))
+  (gerbil/core std/srfi/42))
+ (std/srfi/95 (gxc: "srfi/95" (extra-inputs: ("srfi-95.scm"))) (gerbil/core))
+ (std/srfi/101
+  (gxc: "srfi/101" (extra-inputs: ("srfi-101.scm")))
+  (gerbil/core gerbil/gambit/bits std/srfi/1))
+ (std/srfi/121
+  (gxc: "srfi/121" (extra-inputs: ("srfi-121.scm")))
+  (gerbil/core))
  (std/srfi/124 "srfi/124" (gerbil/core))
- (std/srfi/127 "srfi/127" (gerbil/core))
+ (std/srfi/127
+  (gxc: "srfi/127" (extra-inputs: ("srfi-127.scm")))
+  (gerbil/core))
  (std/srfi/132
-  "srfi/132"
+  (gxc:
+   "srfi/132"
+   (extra-inputs:
+    ("srfi-132/delndups.scm"
+     "srfi-132/lmsort.scm"
+     "srfi-132/sortp.scm"
+     "srfi-132/vector-util.scm"
+     "srfi-132/vhsort.scm"
+     "srfi-132/visort.scm"
+     "srfi-132/vmsort.scm"
+     "srfi-132/vqsort2.scm"
+     "srfi-132/vqsort3.scm"
+     "srfi-132/sort.scm"
+     "srfi-132/select.scm")))
   (gerbil/core gerbil/gambit/exact gerbil/gambit/random))
- (std/srfi/133 "srfi/133" (gerbil/core std/srfi/8))
- (std/srfi/141 "srfi/141" (gerbil/core gerbil/gambit/exact std/srfi/8))
+ (std/srfi/133
+  (gxc: "srfi/133" (extra-inputs: ("srfi-133.scm")))
+  (gerbil/core std/srfi/8))
+ (std/srfi/141
+  (gxc: "srfi/141" (extra-inputs: ("srfi-141.scm")))
+  (gerbil/core gerbil/gambit/exact std/srfi/8))
  (std/srfi/143
-  "srfi/143"
+  (gxc: "srfi/143" (extra-inputs: ("srfi-143/carries.scm")))
   (gerbil/core gerbil/gambit/exact gerbil/gambit/fixnum))
  (std/srfi/144
-  "srfi/144"
+  (gxc:
+   "srfi/144"
+   (extra-inputs:
+    ("srfi-144/144.constants.scm"
+     "srfi-144/144.body0.scm"
+     "srfi-144/144.body.scm"
+     "srfi-144/144.special.scm")))
   (gerbil/core gerbil/gambit/exact gerbil/gambit/flonum))
  (std/srfi/145 "srfi/145" (gerbil/core))
- (std/srfi/151 "srfi/151" (gerbil/core gerbil/gambit/bits))
- (std/srfi/146/vector-edit "srfi/146/vector-edit" (gerbil/core))
- (std/srfi/158 "srfi/158" (gerbil/core std/srfi/121))
+ (std/srfi/151
+  (gxc:
+   "srfi/151"
+   (extra-inputs:
+    ("srfi-151/bitwise-core.scm"
+     "srfi-151/bitwise-33.scm"
+     "srfi-151/bitwise-60.scm"
+     "srfi-151/bitwise-other.scm")))
+  (gerbil/core gerbil/gambit/bits))
+ (std/srfi/146/vector-edit
+  (gxc: "srfi/146/vector-edit" (extra-inputs: ("srfi/146/vector-edit.scm")))
+  (gerbil/core))
+ (std/srfi/158
+  (gxc: "srfi/158" (extra-inputs: ("srfi-158.scm")))
+  (gerbil/core std/srfi/121))
  (std/srfi/160/cvector
   "srfi/160/cvector"
   (gerbil/core gerbil/gambit/exact gerbil/gambit/hvectors))
@@ -206,41 +253,55 @@
   "srfi/14"
   (gerbil/core gerbil/gambit/bits std/srfi/8 std/srfi/9 std/srfi/srfi-support))
  (std/srfi/13
-  (gxc: "srfi/13" "-cc-options" "--param max-gcse-memory=300000000")
+  (gxc:
+   "srfi/13"
+   (extra-inputs: ("srfi-13.scm"))
+   "-cc-options"
+   "--param max-gcse-memory=300000000")
   (gerbil/core gerbil/gambit/bits std/srfi/14))
- (std/srfi/41 "srfi/41" (gerbil/core std/srfi/9))
+ (std/srfi/41
+  (gxc: "srfi/41" (extra-inputs: ("srfi-41.scm")))
+  (gerbil/core std/srfi/9))
  (std/srfi/41-iter
   "srfi/41-iter"
   (gerbil/core std/generic std/iter std/srfi/41))
- (std/srfi/116 "srfi/116" (gerbil/core std/srfi/9))
- (std/srfi/117 "srfi/117" (gerbil/core std/srfi/9))
+ (std/srfi/116
+  (gxc:
+   "srfi/116"
+   (extra-inputs: ("srfi-116/ilists-base.scm" "srfi-116/ilists-impl.scm")))
+  (gerbil/core std/srfi/9))
+ (std/srfi/117
+  (gxc: "srfi/117" (extra-inputs: ("srfi-117.scm")))
+  (gerbil/core std/srfi/9))
  (std/srfi/121-iter "srfi/121-iter" (gerbil/core std/iter std/srfi/121))
  (std/srfi/127-iter "srfi/127-iter" (gerbil/core std/iter std/srfi/127))
  (std/srfi/128
   "srfi/128"
   (gerbil/core gerbil/gambit/bits gerbil/gambit/hash std/generic))
  (std/srfi/125 "srfi/125" (gerbil/core gerbil/gambit/hash std/srfi/128))
- (std/srfi/113 "srfi/113" (gerbil/core std/srfi/125 std/srfi/128 std/srfi/9))
+ (std/srfi/113
+  (gxc: "srfi/113" (extra-inputs: ("srfi-113.scm")))
+  (gerbil/core std/srfi/125 std/srfi/128 std/srfi/9))
  (std/srfi/130
-  "srfi/130"
+  (gxc: "srfi/130" (extra-inputs: ("srfi-130.scm")))
   (gerbil/core gerbil/gambit/fixnum std/srfi/1 std/srfi/13))
  (std/srfi/134
-  "srfi/134"
+  (gxc: "srfi/134" (extra-inputs: ("srfi-134.scm")))
   (gerbil/core std/srfi/1 std/srfi/121 std/srfi/8 std/srfi/9))
  (std/srfi/srfi-135/etc
   "srfi/srfi-135/etc"
   (gerbil/core gerbil/gambit/exact std/srfi/13))
  (std/srfi/srfi-135/kernel8
-  "srfi/srfi-135/kernel8"
+  (gxc: "srfi/srfi-135/kernel8" (extra-inputs: ("srfi/srfi-135/kernel8.scm")))
   (gerbil/core gerbil/gambit/exact std/srfi/9 std/srfi/srfi-135/etc))
  (std/srfi/srfi-135/macros
-  "srfi/srfi-135/macros"
+  (gxc: "srfi/srfi-135/macros" (extra-inputs: ("srfi/srfi-135/macros.scm")))
   (gerbil/core
    gerbil/gambit/exact
    std/srfi/srfi-135/etc
    std/srfi/srfi-135/kernel8))
  (std/srfi/srfi-135/text
-  "srfi/srfi-135/text"
+  (gxc: "srfi/srfi-135/text" (extra-inputs: ("srfi/srfi-135/text.scm")))
   (gerbil/core
    gerbil/gambit/exact
    std/srfi/13
@@ -248,7 +309,7 @@
    std/srfi/srfi-135/kernel8
    std/srfi/srfi-135/macros))
  (std/srfi/srfi-135/binary
-  "srfi/srfi-135/binary"
+  (gxc: "srfi/srfi-135/binary" (extra-inputs: ("srfi/srfi-135/binary.scm")))
   (gerbil/core
    gerbil/gambit/exact
    std/srfi/srfi-135/etc
@@ -264,10 +325,10 @@
    std/srfi/srfi-135/macros
    std/srfi/srfi-135/text))
  (std/srfi/146/hamt-misc
-  "srfi/146/hamt-misc"
+  (gxc: "srfi/146/hamt-misc" (extra-inputs: ("srfi/146/hamt-misc.scm")))
   (gerbil/core std/srfi/125 std/srfi/128))
  (std/srfi/146/hamt
-  "srfi/146/hamt"
+  (gxc: "srfi/146/hamt" (extra-inputs: ("srfi/146/hamt.scm")))
   (gerbil/core
    std/srfi/1
    std/srfi/143
@@ -276,10 +337,10 @@
    std/srfi/151
    std/srfi/9))
  (std/srfi/146/hamt-map
-  "srfi/146/hamt-map"
+  (gxc: "srfi/146/hamt-map" (extra-inputs: ("srfi/146/hamt-map.scm")))
   (gerbil/core std/srfi/1 std/srfi/146/hamt std/srfi/146/hamt-misc std/srfi/9))
  (std/srfi/146/hash
-  "srfi/146/hash"
+  (gxc: "srfi/146/hash" (extra-inputs: ("srfi/146/hash.scm")))
   (gerbil/core
    std/srfi/1
    std/srfi/121
@@ -289,13 +350,19 @@
    std/srfi/8
    std/srfi/9))
  (std/srfi/115
-  "srfi/115"
+  (gxc:
+   "srfi/115"
+   (extra-inputs: ("srfi-115/charsets.scm" "srfi-115/regexp.scm")))
   (gerbil/core std/srfi/1 std/srfi/125 std/srfi/14 std/srfi/151 std/srfi/9))
  (std/srfi/158-iter "srfi/158-iter" (gerbil/core std/srfi/121-iter))
- (std/srfi/159/environment "srfi/159/environment" (gerbil/core std/srfi/9))
+ (std/srfi/159/environment
+  (gxc: "srfi/159/environment" (extra-inputs: ("srfi/159/environment.scm")))
+  (gerbil/core std/srfi/9))
  (std/srfi/159/string "srfi/159/string" (gerbil/core std/srfi/130 std/srfi/14))
  (std/srfi/159/base
-  "srfi/159/base"
+  (gxc:
+   "srfi/159/base"
+   (extra-inputs: ("srfi/159/base.scm" "srfi/159/write.scm")))
   (gerbil/core
    gerbil/gambit/exact
    std/srfi/1
@@ -306,10 +373,10 @@
    std/srfi/9
    std/srfi/srfi-support))
  (std/srfi/159/show
-  "srfi/159/show"
+  (gxc: "srfi/159/show" (extra-inputs: ("srfi/159/show.scm")))
   (gerbil/core std/srfi/13 std/srfi/159/base std/srfi/159/string))
  (std/srfi/159/columnar
-  "srfi/159/columnar"
+  (gxc: "srfi/159/columnar" (extra-inputs: ("srfi/159/columnar.scm")))
   (gerbil/core
    gerbil/gambit/exact
    std/srfi/1
@@ -320,10 +387,10 @@
    std/srfi/9
    std/srfi/srfi-support))
  (std/srfi/159/unicode
-  "srfi/159/unicode"
+  (gxc: "srfi/159/unicode" (extra-inputs: ("srfi/159/unicode.scm")))
   (gerbil/core std/srfi/151 std/srfi/159/base))
  (std/srfi/159/color
-  "srfi/159/color"
+  (gxc: "srfi/159/color" (extra-inputs: ("srfi/159/color.scm")))
   (gerbil/core std/srfi/13 std/srfi/159/base))
  (std/srfi/159
   "srfi/159"
@@ -618,7 +685,7 @@
  (std/misc/deque "misc/deque" (gerbil/core))
  (std/misc/rbtree "misc/rbtree" (gerbil/core std/generic std/iter))
  (std/srfi/146
-  "srfi/146"
+  (gxc: "srfi/146" (extra-inputs: ("srfi-146.scm")))
   (gerbil/core
    std/iter
    std/misc/rbtree

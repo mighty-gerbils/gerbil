@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
-;;; SRFI-13: charset library
+;;; SRFI-9: Defining record types
 
 (import (for-syntax :std/stxutil))
 

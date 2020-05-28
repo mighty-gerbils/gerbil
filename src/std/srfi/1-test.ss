@@ -4,7 +4,6 @@
         :std/srfi/1)
 
 (def (compare x y) (= (inexact->exact (truncate x)) y))
-(##trace compare)
 
 (def 1-test
   (test-suite "test :std/srfi/1"

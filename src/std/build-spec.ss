@@ -35,60 +35,66 @@
     ;; SRFI: This is my grandfather's axe; my father replaced the head
     ;;       and i have replaced the handle.
     "srfi/srfi-support"
-    "srfi/1"
-    "srfi/8"
+    (gxc: "srfi/1" (extra-inputs: ("srfi-1.scm")))
+    (gxc: "srfi/8")
     "srfi/9"
     "srfi/14"
-    (gxc: "srfi/13" "-cc-options" "--param max-gcse-memory=300000000")
-    "srfi/19"
-    "srfi/41"
+    (gxc: "srfi/13" (extra-inputs: ("srfi-13.scm")) "-cc-options" "--param max-gcse-memory=300000000")
+    (gxc: "srfi/19" (extra-inputs: ("srfi-19.scm")))
+    (gxc: "srfi/41" (extra-inputs: ("srfi-41.scm")))
     "srfi/41-iter"
     (gxc: "srfi/42" "-cc-options" "--param max-gcse-memory=300000000")
-    "srfi/43"
-    "srfi/78"
-    "srfi/95"
-    "srfi/101"
-    "srfi/113"
-    "srfi/116"
-    "srfi/117"
-    "srfi/121"
+    (gxc: "srfi/43" (extra-inputs: ("srfi-43.scm")))
+    (gxc: "srfi/78" (extra-inputs: ("srfi-78.scm")))
+    (gxc: "srfi/95" (extra-inputs: ("srfi-95.scm")))
+    (gxc: "srfi/101" (extra-inputs: ("srfi-101.scm")))
+    (gxc: "srfi/113" (extra-inputs: ("srfi-113.scm")))
+    (gxc: "srfi/116" (extra-inputs: ("srfi-116/ilists-base.scm" "srfi-116/ilists-impl.scm")))
+    (gxc: "srfi/117" (extra-inputs: ("srfi-117.scm")))
+    (gxc: "srfi/121" (extra-inputs: ("srfi-121.scm")))
     "srfi/121-iter"
     "srfi/124"
     "srfi/125"
-    "srfi/127"
+    (gxc: "srfi/127" (extra-inputs: ("srfi-127.scm")))
     "srfi/127-iter"
     "srfi/128"
-    "srfi/130"
-    "srfi/132"
-    "srfi/133"
-    "srfi/134"
+    (gxc: "srfi/130" (extra-inputs: ("srfi-130.scm")))
+    (gxc: "srfi/132"
+          (extra-inputs: ("srfi-132/delndups.scm" "srfi-132/lmsort.scm" "srfi-132/sortp.scm"
+                          "srfi-132/vector-util.scm" "srfi-132/vhsort.scm" "srfi-132/visort.scm"
+                          "srfi-132/vmsort.scm" "srfi-132/vqsort2.scm" "srfi-132/vqsort3.scm"
+                          "srfi-132/sort.scm" "srfi-132/select.scm")))
+    (gxc: "srfi/133" (extra-inputs: ("srfi-133.scm")))
+    (gxc: "srfi/134" (extra-inputs: ("srfi-134.scm")))
     "srfi/srfi-135/etc"
-    "srfi/srfi-135/kernel8"
-    "srfi/srfi-135/macros"
-    "srfi/srfi-135/text"
-    "srfi/srfi-135/binary"
+    (gxc: "srfi/srfi-135/binary" (extra-inputs: ("srfi/srfi-135/binary.scm")))
+    (gxc: "srfi/srfi-135/kernel8" (extra-inputs: ("srfi/srfi-135/kernel8.scm")))
+    (gxc: "srfi/srfi-135/macros" (extra-inputs: ("srfi/srfi-135/macros.scm")))
+    (gxc: "srfi/srfi-135/text" (extra-inputs: ("srfi/srfi-135/text.scm")))
     "srfi/135"
-    "srfi/141"
-    "srfi/143"
-    "srfi/144"
+    (gxc: "srfi/141" (extra-inputs: ("srfi-141.scm")))
+    (gxc: "srfi/143" (extra-inputs: ("srfi-143/carries.scm")))
+    (gxc: "srfi/144" (extra-inputs: ("srfi-144/144.constants.scm" "srfi-144/144.body0.scm"
+                                     "srfi-144/144.body.scm" "srfi-144/144.special.scm")))
     "srfi/145"
-    "srfi/151"
-    "srfi/146"
-    "srfi/146/vector-edit"
-    "srfi/146/hamt-misc"
-    "srfi/146/hamt"
-    "srfi/146/hamt-map"
-    "srfi/146/hash"
-    "srfi/115"
-    "srfi/158"
+    (gxc: "srfi/151" (extra-inputs: ("srfi-151/bitwise-core.scm" "srfi-151/bitwise-33.scm"
+                                     "srfi-151/bitwise-60.scm" "srfi-151/bitwise-other.scm")))
+    (gxc: "srfi/146" (extra-inputs: ("srfi-146.scm")))
+    (gxc: "srfi/146/vector-edit" (extra-inputs: ("srfi/146/vector-edit.scm")))
+    (gxc: "srfi/146/hamt-misc" (extra-inputs: ("srfi/146/hamt-misc.scm")))
+    (gxc: "srfi/146/hamt" (extra-inputs: ("srfi/146/hamt.scm")))
+    (gxc: "srfi/146/hamt-map" (extra-inputs: ("srfi/146/hamt-map.scm")))
+    (gxc: "srfi/146/hash" (extra-inputs: ("srfi/146/hash.scm")))
+    (gxc: "srfi/115" (extra-inputs: ("srfi-115/charsets.scm" "srfi-115/regexp.scm")))
+    (gxc: "srfi/158" (extra-inputs: ("srfi-158.scm")))
     "srfi/158-iter"
-    "srfi/159/environment"
+    (gxc: "srfi/159/environment" (extra-inputs: ("srfi/159/environment.scm")))
     "srfi/159/string"
-    "srfi/159/base"
-    "srfi/159/show"
-    "srfi/159/columnar"
-    "srfi/159/unicode"
-    "srfi/159/color"
+    (gxc: "srfi/159/base" (extra-inputs: ("srfi/159/base.scm" "srfi/159/write.scm")))
+    (gxc: "srfi/159/show" (extra-inputs: ("srfi/159/show.scm")))
+    (gxc: "srfi/159/columnar" (extra-inputs: ("srfi/159/columnar.scm")))
+    (gxc: "srfi/159/unicode" (extra-inputs: ("srfi/159/unicode.scm")))
+    (gxc: "srfi/159/color" (extra-inputs: ("srfi/159/color.scm")))
     "srfi/159"
     "srfi/160/cvector"
     "srfi/160/base"
