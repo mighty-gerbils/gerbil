@@ -1434,7 +1434,11 @@
 ;;;   FILTER in this source code share longest common tails between args
 ;;;   and results to get structure sharing in the lset procedures.
 
+;; Note how we use Gambit's member for srfi-1-member, and it uses the = predicate with the
+;; opposite order of arguments than the reference SRFI-1 implementation.
 (define (%lset2<= = lis1 lis2) (every (lambda (x) (srfi-1-member x lis2 =)) lis1))
+
+(define (flip proc) (lambda (x y) (proc y x)))
 
 (define (lset<= = . lists)
   (check-arg procedure? = lset<=)
@@ -1443,7 +1447,7 @@
 	(or (not (pair? rest))
 	    (let ((s2 (car rest))  (rest (cdr rest)))
 	      (and (or (eq? s2 s1)	; Fast path
-		       (%lset2<= = s1 s2)) ; Real test
+		       (%lset2<= (flip =) s1 s2)) ; Real test
 		   (lp s2 rest)))))))
 
 (define (lset= = . lists)
@@ -1454,7 +1458,8 @@
 	    (let ((s2   (car rest))
 		  (rest (cdr rest)))
 	      (and (or (eq? s1 s2)	; Fast path
-		       (and (%lset2<= = s1 s2) (%lset2<= = s2 s1))) ; Real test
+		       (and (%lset2<= (flip =) s1 s2) ; Real test
+                            (%lset2<= = s2 s1)))
 		   (lp s2 rest)))))))
 
 
