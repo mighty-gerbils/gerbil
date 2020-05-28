@@ -207,3 +207,35 @@ chain will return a unary lambda.
 "1, 2 :)"
 ```
 :::
+
+## is
+``` scheme
+(is [proc] v-or-pred [test: equal?]) -> procedure
+(is v [test: equal?])                -> procedure
+
+  proc      := optional unary procedure returning one value
+  v-or-pred := if the first argument is a proc, the second one can be a predicate
+  test      := optional test procedure, defaults to equal?
+```
+
+`is` converts a given value into a predicate testing for the presence of the
+given value. Optionally a transforming procedure can prefix the value, which
+can in this case also be a procedure. This allows to 'get' a value out of a
+compound data structure before comparison (first map, then test).
+For `numbers`, `char` and `string` specialized procedures are used automatically
+if passed to the macro as value and not as variable. Alternatively, the
+`test:` keyword can be used to supply a test, the default is `equal?`.
+
+::: tip Examples:
+``` scheme
+> ((is "a") "a")
+#t
+
+> (def alist '((a . 2) (b . 5) (c . 6)))
+> (find (is cdr 5) alist)
+(b . 5)
+
+> (filter (is file-type 'regular) (directory-files))
+("Documents" "Pictures" "Videos" "Music")
+```
+:::
