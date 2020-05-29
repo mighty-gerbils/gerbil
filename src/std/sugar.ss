@@ -22,7 +22,8 @@
   hash-eqv
   let-hash
   awhen
-  chain)
+  chain
+  is)
 
 (defrules defrule ()
   ((_ (name args ...) body ...)
@@ -300,3 +301,58 @@
 
   ((_ (v . more) (acc ...) . previous) ; previous is not set after <> was replaced
    (~chain-aux-diamond more (acc ... v) . previous)))
+
+;; is converts a given value into a predicate testing for the presence of the
+;; given value. Optionally a transforming procedure can prefix the value, which
+;; can in this case also be a procedure. This allows to 'get' a value out of a
+;; compound data structure before comparison (first map, then test).
+;; For numbers, char and string specialized procedures are used automatically
+;; if passed to the macro as value and not as variable. Alternatively, the
+;; test: keyword can be used to supply a test, the default is equal?.
+;;
+;; Example:
+;;  (find (is cdr 5) '((a . 2) (b . 5) (c . 6)))
+;; => (b . 5)
+;;
+;;  (filter (is file-type 'regular) (directory-files))
+;; => ("Documents" "Pictures" "Videos" "Music")
+(defrules is ()
+  ((_ proc n)
+   (stx-number? #'n)
+   (~is-helper proc number? = n))
+  ((_ proc c)
+   (stx-char? #'c)
+   (lambda (v) (eqv? c (proc v))))
+  ((_ proc s)
+   (stx-string? #'s)
+   (~is-helper proc string? string=? s))
+  ((_ proc other)
+   (if (procedure? other)
+     (lambda (v) (other (proc v)))
+     (lambda (v) (equal? other (proc v)))))
+  ((_ proc other test: test)
+   (if (procedure? other)
+     (lambda (v) (other (proc v)))
+     (lambda (v) (test other (proc v)))))
+  ((_ n)
+   (stx-number? #'n)
+   (~is-helper number? = n))
+  ((_ c)
+   (stx-char? #'c)
+   (lambda (v) (eqv? c v)))
+  ((_ s)
+   (stx-string? #'s)
+   (~is-helper string? string=? s))
+  ((_ v1)
+   (lambda (v2) (equal? v1 v2)))
+  ((_ v1 test: test)
+   (lambda (v2) (test v1 v2))))
+
+(defrules ~is-helper ()
+  ((_ proc type-test value-test arg)
+   (chain <>
+    (proc <>)
+    (v (and (type-test v) (value-test arg v)))))
+  ((_ type-test value-test arg)
+   (chain <>
+    (v (and (type-test v) (value-test arg v))))))
