@@ -291,6 +291,8 @@ namespace: gerbil/core
                     (foldr foldr)
                     (andmap andmap)
                     (ormap ormap)
+                    (everymap everymap)
+                    (anymap anymap)
                     (filter filter)
                     (filter-map filter-map)
                     (iota iota)

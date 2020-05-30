@@ -387,6 +387,7 @@ package: gerbil
  remove1 remq remv remf
  hash-key?
  hash-map
+ anymap everymap
  string-shrink!
  vector-shrink!
  string-split string-join
