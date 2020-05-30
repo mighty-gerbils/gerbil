@@ -9,7 +9,9 @@
   @compose1 @compose @compose/values
   rcompose1 rcompose rcompose/values
   @rcompose1 @rcompose @rcompose/values
-  pred-limit pred-sequence pred-and pred-or)
+  every-of any-of
+  pred-limit pred-sequence pred-and pred-or pred-every-of pred-any-of
+  )
 
 ;; Repeat value or call function N times and return the result as list.
 ;; (repeat 2 5)                  -> (2 2 2 2 2)  ; repeat the value 2
@@ -182,6 +184,24 @@
   ((recur f ... fn)
    (call-with-values (lambda () (recur f ...)) fn)))
 
+;; every-of returns true if all predicates match. If preds contains a
+;; non-predicate, it is transformed into one using equal? as test if not
+;; overridden by the test: keyword.
+;;
+;; Example:
+;;  (every-of [number? fixnum?] 2) => #t
+(def (every-of preds v test: (test equal?))
+  (andmap (lambda (p) ((if (procedure? p) p (cut test p <>)) v)) preds))
+
+;; any-of returns true if one predicate matches. If preds contains a
+;; non-predicate, it is transformed into one using equal? as test if not
+;; overridden by the test: keyword.
+;;
+;; Example:
+;;  (any-of ['a number? "b"] 2) => #t
+(def (any-of preds v test: (test equal?))
+  (ormap (lambda (p) ((if (procedure? p) p (cut test p <>)) v)) preds))
+
 ;; pred-limit returns a predicate which returns a truthy value only
 ;; limit times, if limit is not false.
 ;;
@@ -243,3 +263,27 @@
     (if res
       #t
       (begin (set! res (pred v)) res))))
+
+;; pred-every-of returns a predicate which returns true if all predicates match.
+;; If preds contains a non-predicate, it is transformed into one using equal?
+;; as test if not overridden by the test: keyword.
+;;
+;; Example:
+;;  ((pred-every-of [number? fixnum?]) 2) => #t
+(def (pred-every-of preds test: (test equal?))
+  (if (pair? preds)
+    (let (preds (map (lambda (p) (if (procedure? p) p (cut test p <>))) preds))
+      (lambda (v) (andmap (cut <> v) preds)))
+    true))
+
+;; pred-any-of returns a predicate which returns true if one predicate matches.
+;; If preds contains a non-predicate, it is transformed into one using equal?
+;; as test if not overridden by the test: keyword.
+;;
+;; Example:
+;;  ((pred-any-of ['a number? "b"]) 2) => #t
+(def (pred-any-of preds test: (test equal?))
+  (if (pair? preds)
+    (let (preds (map (lambda (p) (if (procedure? p) p (cut test p <>))) preds))
+      (lambda (v) (ormap (cut <> v) preds)))
+    false))

@@ -68,4 +68,21 @@
      (check (let (fn (pred-and number?)) (fn 'a) (fn 10)) => #f))
     (test-case "test pred-or"
      (check (let (fn (pred-or number?)) (fn 'a) (fn 20)) => #t)
-     (check (let (fn (pred-or number?)) (fn 'a) (fn 'b)) => #f))))
+     (check (let (fn (pred-or number?)) (fn 'a) (fn 'b)) => #f))
+    (test-case "test every-of"
+      (check (every-of [] 1)                    => #t)
+      (check (every-of [number? fixnum?] 1)     => #t)
+      (check (every-of ["a" string?] "a")       => #t)
+      (check (every-of [1 number? 9] 1 test: =) => #f))
+    (test-case "test any-of"
+      (check (any-of [] 1)                      => #f)
+      (check (any-of [number? symbol?] 'a)      => #t)
+      (check (any-of ['a 'b 'c] 'b)             => #t)
+      (check (any-of ['a 'b] 'z test: eq?)      => #f))
+    (test-case "test pred-every-of"
+      (check ((pred-every-of []) 1) => #t)
+      (check ((pred-every-of [string? "a"] test: string=?) "a") => #t))
+    (test-case "test pred-any-of"
+      (check ((pred-any-of []) 1) => #f)
+      (check ((pred-any-of ['a 'b] test: eq?) 'b) => #t))
+    ))
