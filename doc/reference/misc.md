@@ -2651,6 +2651,54 @@ the variable (or struct field) with the result of it.
 ```
 :::
 
+### every-of
+``` scheme
+(every-of v . preds) -> boolean
+
+  v     := value to compare with predicates
+  preds := list of predicates or values
+```
+
+`every-of` returns `#t` if all predicates match. If `preds` contains a
+non-predicate, it is transformed into one using `equal?` as test.
+
+::: tip Examples:
+``` scheme
+> (every-of 2 number? fixnum?)
+#t
+
+> (every-of 1)
+#t
+
+> (every-of 10 number? 10)
+#t
+```
+:::
+
+### any-of
+``` scheme
+(any-of v . preds) -> boolean
+
+  v     := value to compare with predicates
+  preds := list of predicates or values
+```
+
+`any-of` returns `#t` if one predicate matches. If `preds` contains a
+non-predicate, it is transformed into one using `equal?` as test.
+
+::: tip Examples:
+``` scheme
+> (any-of 'a number? symbol?)
+#t
+
+> (any-of 1)
+#f
+
+> (any-of 'b 'a 'b)
+#t
+```
+:::
+
 ## LRU caches
 ::: tip To use the bindings from this module:
 ``` scheme

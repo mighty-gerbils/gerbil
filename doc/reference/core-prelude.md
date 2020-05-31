@@ -1014,7 +1014,7 @@ Defines the following symbols as externs:
     flmax flmin
     box? box unbox set-box!
     make-list cons*
-    foldl foldr andmap ormap everymap anymap filter filter-map iota last last-pair
+    foldl foldr andmap ormap filter filter-map iota last last-pair
     memf assgetq find
     remove1 remq remv remf
     pgetq pgetv pget

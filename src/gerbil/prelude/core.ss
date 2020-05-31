@@ -120,7 +120,7 @@ package: gerbil
     flmax flmin
     box? box unbox set-box!
     make-list cons*
-    foldl foldr andmap ormap everymap anymap filter filter-map iota last last-pair
+    foldl foldr andmap ormap filter filter-map iota last last-pair
     memf assgetq assgetv assget find
     list-set list-set!
     remove1 remq remv remf

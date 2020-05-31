@@ -213,4 +213,14 @@
       (check (duplicates ['a 1 'a 2]) => ['(a . 2)])
       (check (duplicates ['a 'b 'a 'a] eq?) => ['(a . 3)])
       (check (duplicates '((a . 10) (b . 10)) key: cdr) => ['(10 . 2)]))
+    (test-case "test every-of"
+      (check (every-of 1)                 => #t)
+      (check (every-of 1 number? fixnum?) => #t)
+      (check (every-of "a" string? "a")   => #t)
+      (check (every-of 1 number? 9 1)     => #f))
+    (test-case "test any-of"
+      (check (any-of 1)                   => #f)
+      (check (any-of 'a number? symbol?)  => #t)
+      (check (any-of 'b 'a 'b 'c)         => #t)
+      (check (any-of 'z 'a 'b)            => #f))
     ))

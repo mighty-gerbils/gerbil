@@ -1121,58 +1121,6 @@ Boolean and fold.
   lsts := lists
 ```
 
-### everymap
-``` scheme
-(everymap preds v [test: equal?]) -> boolean
-
-  preds := list of predicates or values
-  v     := value to compare with predicates
-  test  := optional, if preds contains a value, test is used for comparison
-```
-
-`everymap` returns `#t` if all predicates match. If `preds` contains a
-non-predicate, it is transformed into one using `equal?` as test if not
-overridden by the `test:` keyword.
-
-::: tip Examples:
-``` scheme
-> (everymap [number? fixnum?] 2)
-#t
-
-> (everymap [] 1)
-#f
-
-> (everymap [number? 10] 10 test: =)
-#t
-```
-:::
-
-### anymap
-``` scheme
-(anymap preds v [test: equal?]) -> boolean
-
-  preds := list of predicates or values
-  v     := value to compare with predicates
-  test  := optional, if preds contains a value, test is used for comparison
-```
-
-`anymap` returns `#t` if one predicate matches. If `preds` contains a
-non-predicate, it is transformed into one using `equal?` as test if not
-overridden by the `test:` keyword.
-
-::: tip Examples:
-``` scheme
-> (anymap [number? symbol?] 'a)
-#t
-
-> (anymap [] 1)
-#f
-
-> (anymap ['a 'b] 'b test: eq?)
-#t
-```
-:::
-
 Boolean or fold.
 
 ### filter

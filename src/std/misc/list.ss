@@ -29,11 +29,12 @@
   psetq psetv pset psetq! psetv! pset! pgetq-set! pgetv-set! pget-set!
   premq premv prem premq! premv! prem!
   separate-keyword-arguments
+  every-of any-of
   )
 
 (import (only-in ../srfi/1
                  drop drop-right drop-right! take take-right take! reverse!
-                 take-while take-while! drop-while
+                 take-while take-while! drop-while every any
                  delete-duplicates delete-duplicates!)
         ../sugar)
 
@@ -449,3 +450,18 @@
       ([a . r] (lp r (cons a positionals) keywords))
       ([] (values (reverse positionals) (reverse keywords))))))
 
+;; every-of returns true if all predicates match. If preds contains a
+;; non-predicate, it is transformed into one using equal? as test.
+;;
+;; Example:
+;;  (every-of 2 number? fixnum?) => #t
+(def (every-of v . preds)
+  (every (cut <> v) (map (lambda (p) (if (procedure? p) p (is p))) preds)))
+
+;; any-of returns true if one predicate matches. If preds contains a
+;; non-predicate, it is transformed into one using equal? as test.
+;;
+;; Example:
+;;  (any-of 2 'a number? "b") => #t
+(def (any-of v . preds)
+  (any (cut <> v) (map (lambda (p) (if (procedure? p) p (is p))) preds)))

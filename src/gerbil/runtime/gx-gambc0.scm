@@ -1273,40 +1273,6 @@
    (else
     (fold* f (cons lst rest)))))
 
-;; everymap returns true if all predicates match. If preds contains a
-;; non-predicate, it is transformed into one using equal? as test if not
-;; overridden by the test: keyword.
-;;
-;; Example:
-;;  (everymap [number? fixnum?] 2) => #t
-(define (everymap preds v #!key (test equal?))
-  (unless (list? preds)
-    (error "Bad argument; expected a list of predicates or values, got:" preds))
-  (if (pair? preds)
-    (let lp ((acc #t)
-             (rest (map (lambda (p) (if (procedure? p) p (lambda (v) (test v p)))) preds)))
-      (if (and acc (pair? rest))
-        (lp ((car rest) v) (cdr rest))
-        acc))
-    #f))
-
-;; anymap returns true if one predicate matches. If preds contains a
-;; non-predicate, it is transformed into one using equal? as test if not
-;; overridden by the test: keyword.
-;;
-;; Example:
-;;  (anymap ['a number? "b"] 2) => #t
-(define (anymap preds v #!key (test equal?))
-  (unless (list? preds)
-    (error "Bad argument; expected a list of predicates or values, got:" preds))
-  (if (pair? preds)
-    (let lp ((acc #f)
-             (rest (map (lambda (p) (if (procedure? p) p (lambda (v) (test v p)))) preds)))
-      (if (and (not acc) (pair? rest))
-        (lp ((car rest) v) (cdr rest))
-        acc))
-    #f))
-
 (define (filter f lst)
   (let recur ((lst lst))
     (core-match lst
