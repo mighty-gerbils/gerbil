@@ -1,4 +1,4 @@
-;;; gerbil.el --- Gerbil mode -*- lexical-binding: t; -*-
+;;; gerbil-mode.el --- Gerbil mode -*- lexical-binding: t; -*-
 ;;
 ;; Copyright (c) 2007-2019 Dimitris Vyzovitis & Contributors
 ;;
@@ -510,6 +510,7 @@
   (kill-all-local-variables)
   (use-local-map gerbil-mode-map)
   (setq mode-name "Gerbil")
+  (setq major-mode 'gerbil-mode)
   (setq scheme-program-name gerbil-program-name)
   (setq comment-start ";;")
   (scheme-mode-variables)
@@ -522,6 +523,6 @@
   (modify-coding-system-alist 'file "\\.ss\\'"  'utf-8))
 
 
-(provide 'gerbil)
+(provide 'gerbil-mode)
 
-;;; gerbil.el ends here
+;;; gerbil-mode.el ends here
