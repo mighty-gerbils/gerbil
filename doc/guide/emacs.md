@@ -3,12 +3,12 @@
 The natural home for Gerbil development is Emacs, the ultimate parenthesis manipulation machine.
 
 ## Standard Emacs Setup
-Gerbil comes with a custom editing mode, which extends scheme-mode with font-lock and indentation for Gerbil code: [gerbil.el](https://github.com/vyzo/gerbil/blob/master/etc/gerbil.el).
+Gerbil comes with a custom editing mode, which extends scheme-mode with font-lock and indentation for Gerbil code: [gerbil-mode.el](https://github.com/vyzo/gerbil/blob/master/etc/gerbil-mode.el).
 See below for additional functionality provided by gerbil-mode.
 
 You can add it to your autoload path (eg by linking in `$HOME/.emacs.d`) and adding this to your `.emacs`:
 ```
-(autoload 'gerbil-mode "gerbil" "Gerbil editing mode." t)
+(autoload 'gerbil-mode "gerbil-mode" "Gerbil editing mode." t)
 ```
 
 You should further utilize Gambit's inferior mode, as it offers debugger integration with sources on emacs.
@@ -28,6 +28,8 @@ You can then make `gxi` your scheme program by setting `scheme-program-name`:
 ```
 
 And you can now run Gerbil with `M-x run-scheme`.
+
+N.B. Up to v0.16 the editing mode file was gerbil.el. After `v0.16-48-g46f10016`, gerbil mode has been migrated to gerbil-mode.el; see [#510](https://github.com/vyzo/gerbil/issues/510) for migrating.
 
 ## Treadmill: An Alternative
 
@@ -97,7 +99,7 @@ hacking in no time. All you have to do is to set the environment variables
 `GERBIL_HOME` and `GAMBIT_HOME` and copy the code snippet below into your Emacs config.
 
 ``` elisp
-(use-package gerbil
+(use-package gerbil-mode
   :when (getenv "GERBIL_HOME")
   :ensure nil
   :defer t
@@ -111,7 +113,7 @@ hacking in no time. All you have to do is to set the environment variables
   (setf gambit (getenv "GAMBIT_HOME"))
   (setf gerbil (getenv "GERBIL_HOME"))
   (autoload 'gerbil-mode
-    (concat gerbil "/etc/gerbil.el") "Gerbil editing mode." t)
+    (concat gerbil "/etc/gerbil-mode.el") "Gerbil editing mode." t)
   :hook
   ((gerbil-mode . linum-mode)
    (inferior-scheme-mode-hook . gambit-inferior-mode))

@@ -49,7 +49,7 @@
   (create-directory-if-necessary (string-append default-gerbil-home "/share/emacs"))
   (create-directory-if-necessary (string-append default-gerbil-home "/share/emacs/site-lisp"))
   (create-directory-if-necessary (string-append default-gerbil-home "/share/emacs/site-lisp/gerbil"))
-  (install "../etc/gerbil.el" (string-append default-gerbil-home "/share/emacs/site-lisp/gerbil/gerbil.el"))
+  (install "../etc/gerbil-mode.el" (string-append default-gerbil-home "/share/emacs/site-lisp/gerbil/gerbil-mode.el"))
   (create-directory-if-necessary (string-append default-gerbil-home "/share/gerbil"))
   (install "TAGS" (string-append default-gerbil-home "/share/gerbil/TAGS"))
   (patch-gxc-shebang))
