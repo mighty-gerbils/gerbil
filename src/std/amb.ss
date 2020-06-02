@@ -8,7 +8,8 @@
         :std/error
         :std/misc/shuffle)
 (export begin-amb begin-amb-random amb amb-find one-of amb-collect all-of amb-assert required
-        amb-do amb-do-find amb-do-collect)
+        amb-do amb-do-find amb-do-collect
+        amb-exhausted?)
 
 (defstruct (amb-completion <error>) ())
 
@@ -20,6 +21,9 @@
    ((amb-end) => (cut <>))
    (else
     (raise +amb-exhausted+))))
+
+(def (amb-exhausted? e)
+  (eq? e +amb-exhausted+))
 
 (def amb-fail
   (make-parameter amb-exhausted))
@@ -87,10 +91,15 @@
            (fail)))))))
 
 (def (amb-do-find thunk (failure amb-exhausted))
-  (let/cc return
-    (let (fail (lambda () (return (failure))))
-      (parameterize ((amb-fail fail))
-        (thunk)))))
+  (let (end (amb-end))
+    (let/cc return
+      (amb-end
+       (lambda ()
+         (amb-end end)
+         (return (failure))))
+      (let (result (thunk))
+        (amb-end end)
+        (return result)))))
 
 (def (amb-do-collect thunk)
   (let (end (amb-end))
