@@ -264,7 +264,7 @@
                 let-values letrec-values letrec*-values
                 module
                 syntax-parameterize
-                rec alet alet*
+                rec alet alet* awhen
                 let-syntax letrec-syntax
                 parameterize parameterize*
                 error raise-syntax-error raise-type-error
@@ -273,12 +273,14 @@
                 with with*
                 let/cc let/esc
                 lambda%
+                chain
                 identifier-rules
                 letrec*
                 while
                 let-hash
                 for for* for/collect
                 begin-ffi
+                test-suite test-case
                 )
               'scheme-indent-function 1)
   (gerbil-put '(syntax-case ast-case core-syntax-case core-ast-case
@@ -334,15 +336,22 @@
                        "type-of"
                        "spawn" "spawn*" "spawn/name" "spawn/group"
                        ;; sugar
-                       "try" "finally" "catch"
-                       "while" "until" "using"
-                       "hash" "hash-eq" "hash-eqv" "let-hash"
+                       "try" "finally" "catch" "with-destroy"
+                       "while" "until" "using" "defmethod/alias"
+                       "with-methods" "with-class-methods" "with-class-method"
+                       "hash" "hash-eq" "hash-eqv" "let-hash" "assert!" "awhen"
+                       "chain" "is"
                        ;; coroutines
                        "continue" "yield" "coroutine"
                        ;; iterators
                        "for" "for*" "for/collect" "for/fold"
                        ;; actor messaging
                        "<-" "<<" "->"
+                       ;; test
+                       "run-tests!" "test-suite" "test-case"
+                       "check" "checkf" "check-eq?" "check-not-eq?" "check-eqv?"
+                       "check-not-eqv?" "check-equal?" "check-not-equal?"
+                       "check-output" "check-predicate" "check-exception"
                        )
                      t)
      "\\>")

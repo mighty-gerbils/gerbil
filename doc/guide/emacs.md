@@ -108,7 +108,9 @@ hacking in no time. All you have to do is to set the environment variables
   :bind (:map comint-mode-map
               (("C-S-n" . comint-next-input)
                ("C-S-p" . comint-previous-input)
-               ("C-l"   . clear-comint-buffer)))
+               ("C-S-l" . clear-comint-buffer))
+              :map gerbil-mode-map
+              (("C-S-l" . clear-comint-buffer)))
   :init
   (setf gambit (getenv "GAMBIT_HOME"))
   (setf gerbil (getenv "GERBIL_HOME"))
@@ -120,16 +122,16 @@ hacking in no time. All you have to do is to set the environment variables
   :config
   (require 'gambit
            (concat gambit
-             (if (equal "nixos" (system-name))
-               "/share/emacs/site-lisp/gambit.el"
-               "/misc/gambit.el")))
+                   (if (equal "nixos" (system-name))
+                     "/share/emacs/site-lisp/gambit.el"
+                     "/misc/gambit.el")))
   (setf scheme-program-name (concat gerbil "/bin/gxi"))
 
   (let ((tags (locate-dominating-file default-directory "TAGS")))
     (when tags (visit-tags-table tags)))
   (visit-tags-table (concat gerbil "/src/TAGS"))
 
-  (when (require 'smartparens nil 'nil-on-error)
+  (when (package-installed-p 'smartparens)
     (sp-pair "'" nil :actions :rem)
     (sp-pair "`" nil :actions :rem))
 
@@ -138,19 +140,35 @@ hacking in no time. All you have to do is to set the environment variables
     (with-current-buffer "*scheme*"
       (let ((comint-buffer-maximum-size 0))
         (comint-truncate-buffer)))))
+
+(defun gerbil-setup-buffers ()
+  "Change current buffer mode to gerbil-mode and start a REPL"
+  (interactive)
+  (gerbil-mode)
+  (split-window-right)
+  (shrink-window-horizontally 2)
+  (let ((buf (buffer-name)))
+    (other-window 1)
+    (run-scheme "gxi")
+    (switch-to-buffer-other-window "*scheme*" nil)
+    (switch-to-buffer buf)))
+
+(global-set-key (kbd "C-c C-g") 'gerbil-setup-buffers)
 ```
 
-To start open a Gerbil file or run `M-x gerbil-mode`, then launch a REPL with `run-scheme`.
+To start open a Gerbil file or type `C-c C-g`. Alternatively run `M-x gerbil-mode` (to launch a REPL `run-scheme`).
 
 `gerbil-mode` - functions worth mentioning:
 ```
-C-c C-c  send region to REPL (scheme-send-region)
-C-c C-l  load file into REPL (scheme-load-file)
+C-x C-e  send sexp behind cursor to the REPL (scheme-send-last-sexp)
+C-c C-c  send region to REPL                 (scheme-send-region)
+C-c C-l  load file into REPL                 (scheme-load-file)
+C-S-l    clear the comint buffer             (clear-comint-buffer)
 ```
 
 `inferior-scheme-mode` - functions worth mentioning:
 ```
-C-l      clear the comint buffer   (clear-comint-buffer)
+C-S-l    clear the comint buffer   (clear-comint-buffer)
 C-c _    close extra pop-up buffer (gambit-kill-last-popup)
 C-S-p    previous item in history  (comint-previous-input)
 C-S-n    next item in history      (comint-next-input)

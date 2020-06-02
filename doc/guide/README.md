@@ -25,10 +25,10 @@ with the exception of `zlib` and `sqlite`. These are ubiquitous, stable
 and generally useful enough to warrant being present by default;
 you can still disable them if you want for a minimal installation.
 
-In Ubuntu, you can install the dependencies for a default installation with:
+In Ubuntu 20.04, you can install the dependencies for a default installation with:
 
 ```bash
-$ sudo apt-get install openssl libssl-dev sqlite3 libsqlite3-dev
+$ sudo apt install libssl-dev zlib1g-dev libsqlite3-dev
 ```
 
 The optional libraries can be enabled or disabled by passing arguments
