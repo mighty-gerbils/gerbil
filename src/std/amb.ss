@@ -16,10 +16,16 @@
   (make-amb-completion "amb exhausted" [] 'amb))
 
 (def (amb-exhausted)
-  (raise +amb-exhausted+))
+  (cond
+   ((amb-end) => (cut <>))
+   (else
+    (raise +amb-exhausted+))))
 
 (def amb-fail
   (make-parameter amb-exhausted))
+
+(def amb-end
+  (make-parameter #f))
 
 (def amb-results
   (make-parameter []))
@@ -30,12 +36,14 @@
 (defrules begin-amb ()
   ((_ e es ...)
    (parameterize ((amb-fail amb-exhausted)
+                  (amb-end #f)
                   (amb-results []))
      e es ...)))
 
 (defrules begin-amb-random ()
   ((_ e es ...)
    (parameterize ((amb-fail amb-exhausted)
+                  (amb-end #f)
                   (amb-results [])
                   (amb-strategy shuffle))
      e es ...)))
@@ -85,13 +93,14 @@
         (thunk)))))
 
 (def (amb-do-collect thunk)
-  (try
-   (let (next (thunk))
-     (amb-results (cons next (amb-results)))
-     ((amb-fail)))
-   (catch (e)
-     (if (eq? e +amb-exhausted+)
-       (let (result (amb-results))
-         (amb-results [])
-         (reverse result))
-       (raise e)))))
+  (let (end (amb-end))
+    (let/cc return
+      (amb-end
+       (lambda ()
+         (let (result (amb-results))
+           (amb-results [])
+           (amb-end end)
+           (return (reverse result)))))
+      (let (next (thunk))
+        (amb-results (cons next (amb-results)))
+        ((amb-fail))))))
