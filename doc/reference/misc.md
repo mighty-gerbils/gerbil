@@ -6568,6 +6568,58 @@ Like `compose/values`, but the values flow left-to-right.
 These are macro versions of the functional composition operators; they generate
 significantly more efficient code and allow the optimizer to see through the composition.
 
+### every-of
+``` scheme
+(every-of preds v [test: equal?]) -> boolean
+
+  preds := list of predicates or values
+  v     := value to compare with predicates
+  test  := optional, if preds contains a value, test is used for comparison
+```
+
+`every-of` returns `#t` if all predicates match. If `preds` contains a
+non-predicate, it is transformed into one using `equal?` as test if not
+overridden by the `test:` keyword.
+
+::: tip Examples:
+``` scheme
+> (every-of [number? fixnum?] 2)
+#t
+
+> (every-of [] 1)
+#t
+
+> (every-of [number? 10] 10 test: =)
+#t
+```
+:::
+
+### any-of
+``` scheme
+(any-of preds v [test: equal?]) -> boolean
+
+  preds := list of predicates or values
+  v     := value to compare with predicates
+  test  := optional, if preds contains a value, test is used for comparison
+```
+
+`any-of` returns `#t` if one predicate matches. If `preds` contains a
+non-predicate, it is transformed into one using `equal?` as test if not
+overridden by the `test:` keyword.
+
+::: tip Examples:
+``` scheme
+> (any-of [number? symbol?] 'a)
+#t
+
+> (any-of [] 1)
+#f
+
+> (any-of ['a 'b] 'b test: eq?)
+#t
+```
+:::
+
 ### pred-limit
 ``` scheme
 (pred-limit pred limit) -> procedure
@@ -6658,6 +6710,49 @@ of a matching sequence. The list elements are compared using `equal?`.
 #t
 ```
 :::
+
+### pred-every-of
+``` scheme
+(pred-every-of preds [test: equal?]) -> procedure
+
+  preds := list of predicates or values
+  test  := optional, if preds contains a value, test is used for comparison
+```
+`pred-every-of` returns a predicate which returns `#t` if all predicates match.
+If preds contains a non-predicate, it is transformed into one using `equal?`
+as test if not overridden by the `test:` keyword.
+
+::: tip Examples:
+``` scheme
+> (filter (pred-every-of [number? fixnum?]) [1 'a 2.0 "b" 30])
+(1 30)
+```
+:::
+
+### pred-any-of
+``` scheme
+(pred-any-of preds [test: equal?]) -> procedure
+
+  preds := list of predicates or values
+  test  := optional, if preds contains a value, test is used for comparison
+```
+`pred-any-of` returns a predicate which returns `#t` if one predicate matches.
+If preds contains a non-predicate, it is transformed into one using `equal?`
+as test if not overridden by the `test:` keyword.
+
+::: tip Examples:
+``` scheme
+> (filter (pred-any-of [number? fixnum? "b"]) [1 'a 2.0 "b" 30])
+(1 2. "b" 30)
+
+> (import :std/sugar)
+> (def files (directory-files))
+
+> (filter (is path-extension (pred-any-of [".jpg" ".jpeg" ".png"])) files)
+("xkcd_lisp.jpg" "logo.png")
+```
+:::
+
 
 ## Extended Real Number Line
 The (affine) extended real number line, where real numbers are enriched

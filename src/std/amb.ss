@@ -1,22 +1,33 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; AMB: the ambiguous operator
-;;; Based on Ken Lovett's chicken implementation
+;;; Orignally based on Ken Lovett's chicken implementation, but has mutated since then.
 
 (import :gerbil/gambit/random
+        :std/sugar
+        :std/error
         :std/misc/shuffle)
 (export begin-amb amb amb-find one-of amb-collect all-of amb-assert required
         amb-do amb-do-find amb-do-collect)
 
+(defstruct (amb-completion <error>) ())
+
+(def +amb-exhausted+
+  (make-amb-completion "amb exhausted" [] 'amb))
+
 (def (amb-exhausted)
-  (error "AMB tree exhausted"))
+  (raise +amb-exhausted+))
 
 (def amb-fail
   (make-parameter amb-exhausted))
 
+(def amb-results
+  (make-parameter []))
+
 (defrules begin-amb ()
   ((_ e es ...)
-   (parameterize ((amb-fail amb-exhausted))
+   (parameterize ((amb-fail amb-exhausted)
+                  (amb-results []))
      e es ...)))
 
 (defrules amb ()
@@ -64,18 +75,13 @@
         (thunk)))))
 
 (def (amb-do-collect thunk)
-  (let (fail #f)
-    (dynamic-wind
-        (lambda ()
-          (set! fail (amb-fail)))
-        (lambda ()
-          (let/cc return
-            (let* ((root [#f])
-                   (hd root))
-              (amb-fail (lambda () (return (cdr root))))
-              (let (tl [(thunk)])
-                (set! (cdr hd) tl)
-                (set! hd tl))
-              ((amb-fail)))))
-        (lambda ()
-          (amb-fail fail)))))
+  (try
+   (let (next (thunk))
+     (amb-results (cons next (amb-results)))
+     ((amb-fail)))
+   (catch (e)
+     (if (eq? e +amb-exhausted+)
+       (let (result (amb-results))
+         (amb-results [])
+         (reverse result))
+       (raise e)))))

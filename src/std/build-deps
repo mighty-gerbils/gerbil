@@ -141,7 +141,12 @@
    gerbil/gambit/threads
    std/misc/shuffle
    std/sugar))
- (std/amb "amb" (gerbil/core gerbil/gambit/random std/misc/shuffle))
+ (std/amb "amb"
+          (gerbil/core
+           gerbil/gambit/random
+           std/error
+           std/misc/shuffle
+           std/sugar))
  (std/misc/repr
   "misc/repr"
   (gerbil/core
