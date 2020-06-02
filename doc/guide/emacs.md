@@ -29,7 +29,7 @@ You can then make `gxi` your scheme program by setting `scheme-program-name`:
 
 And you can now run Gerbil with `M-x run-scheme`.
 
-N.B. Up to v0.16 the editing mode file was gerbil.el. Starting with `v0.16-1-g36a31050`, gerbil mode has been migrated to gerbil-mode.el; see [#510](https://github.com/vyzo/gerbil/issues/510) for migrating.
+N.B. Up to v0.16 the editing mode file was gerbil.el. After `v0.16-48-g46f10016`, gerbil mode has been migrated to gerbil-mode.el; see [#510](https://github.com/vyzo/gerbil/issues/510) for migrating.
 
 ## Treadmill: An Alternative
 
