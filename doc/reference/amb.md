@@ -104,6 +104,13 @@ Procedural form of `amb-find`
 Procedural form of `amb-collect`
 
 
+### amb-exhausted?
+```
+(amb-exhausted? e) -> boolean
+```
+
+Predicate that returns true if *e* is an exception raised because the amb search was exhausted.
+
 ## Example
 
 Here is the well known dwelling house puzzle:
