@@ -16,12 +16,24 @@ AMB is the ambiguous special form for non-deterministic computation.
 Evaluates body in a fresh amb scope; you should always wrap the beginning of ambiguous computation
 in a `begin-amb` form to avoid side-effects leaking between amb executions.
 
+### begin-amb-random
+```
+(begin-amb-random body ...)
+```
+
+Like `begin-amb`, but the search strategy for generating amb values is randomized.
+
 ### amb
 ```
 (amb expr ...)
 ```
 
 The ambiguous operator; may evaluate and return the value of any expression operand.
+
+The order with which the values are generated depends on the search strategy.
+After `v0.16-56-g6fb422de` by default it is deterministic, unless the computation is within
+a `begin-amb-random` scope, in which case it is randomized.
+Prior to `v0.16-56-g6fb422de` the search strategy was always randomized.
 
 ### amb-find
 ```
