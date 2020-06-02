@@ -7,7 +7,7 @@
         :std/sugar
         :std/error
         :std/misc/shuffle)
-(export begin-amb amb amb-find one-of amb-collect all-of amb-assert required
+(export begin-amb begin-amb-random amb amb-find one-of amb-collect all-of amb-assert required
         amb-do amb-do-find amb-do-collect)
 
 (defstruct (amb-completion <error>) ())
@@ -24,10 +24,20 @@
 (def amb-results
   (make-parameter []))
 
+(def amb-strategy
+  (make-parameter identity))
+
 (defrules begin-amb ()
   ((_ e es ...)
    (parameterize ((amb-fail amb-exhausted)
                   (amb-results []))
+     e es ...)))
+
+(defrules begin-amb-random ()
+  ((_ e es ...)
+   (parameterize ((amb-fail amb-exhausted)
+                  (amb-results [])
+                  (amb-strategy shuffle))
      e es ...)))
 
 (defrules amb ()
@@ -59,7 +69,7 @@
 (def (amb-do thunks)
   (let (fail (amb-fail))
     (let/cc return
-      (let loop ((rest (shuffle thunks)))
+      (let loop ((rest ((amb-strategy) thunks)))
         (match rest
           ([thunk . rest]
            (amb-fail (lambda () (loop rest)))
