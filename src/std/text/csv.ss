@@ -31,7 +31,8 @@
   csv-eol csv-line-endings csv-skip-whitespace?
   csv-allow-binary?
   call-with-creativyst-csv-syntax call-with-rfc4180-csv-syntax call-with-strict-rfc4180-csv-syntax
-  read-csv-line read-csv-lines read-csv-file write-csv-line write-csv-lines)
+  read-csv-line read-csv-lines read-csv-file write-csv-line write-csv-lines write-csv-file
+  )
 
 (import
   :std/error :std/misc/list :std/misc/string :std/srfi/1 :std/srfi/13 :std/sugar)
@@ -300,6 +301,12 @@
 ;; format those lines as CSV according to the current syntax parameters.
 (def (write-csv-lines lines port)
   (for-each (cut write-csv-line <> port) lines))
+
+;; Writes list of LINES to the designated PATH using write-csv-lines
+;; and the provided settings.
+(def (write-csv-file path lines . settings)
+  (call-with-output-file (cons* path: path settings)
+    (cut write-csv-lines lines <>)))
 
 ;; Format one line of FIELDS to PORT in CSV format,
 ;; using the current syntax parameters.
