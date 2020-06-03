@@ -257,6 +257,29 @@ Format one line of *fields* to *port* in CSV format, using the current syntax pa
 Given a list of *lines*, each of them a list of fields, and a PORT,
 format those lines as CSV according to the current syntax parameters.
 
+### write-csv-file
+``` scheme
+(write-csv-file path lines . settings) -> void
+
+  lines    := list of strings
+  path     := output path
+  settings := optional path settings
+```
+Writes `lines` to the designated `path` using `write-csv-lines`
+and the provided `settings`. Check section
+[17.7.1 Filesystem devices](http://www.iro.umontreal.ca/~gambit/doc/gambit.html#Filesystem-devices)
+of the Gambit Manual if you want to know more about the `settings` parameter.
+
+::: tip Examples:
+``` scheme
+> (write-csv-file "/tmp/foo.csv" [["hello" "world"] ["a" "b"]])
+;; hello,world\na,b
+
+> (write-csv-file "/tmp/foo.csv" [["and" "more"]] append: #t)
+;; hello,world\na,b\nand,more
+```
+:::
+
 ### call-with-creativyst-csv-syntax
 ``` scheme
 (call-with-creativyst-csv-syntax thunk) -> any
