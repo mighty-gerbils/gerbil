@@ -19,8 +19,7 @@
         :gerbil/gambit/bits
         :gerbil/gambit/exact
         :std/error
-        :std/text/hex
-        (only-in :std/srfi/1 reverse!))
+        :std/text/hex)
 (export read-json write-json
         string->json-object json-object->string
         json-symbolic-keys json-list-wrapper)
@@ -140,11 +139,14 @@
 
 (def (read-json-list port)
   (read-char port)
-  (let lp ((els []))
-    (let (next (read-json-list-next port))
-      (if (eof-object? next)
-        ((json-list-wrapper) (reverse! els))
-        (lp (cons next els))))))
+  (let (root [#f])
+    (let lp ((tl root))
+      (let (next (read-json-list-next port))
+        (if (eof-object? next)
+          ((json-list-wrapper) (cdr root))
+          (let (tl* [next])
+            (set! (cdr tl) tl*)
+            (lp tl*)))))))
 
 (def (read-json-list-next port)
   (skip-whitespace port)
@@ -199,39 +201,48 @@
 
   (def (hex-value char)
     (cond
-     ((unhex* char) => values)
+     ((unhex* char))
      (else
       (raise-invalid-token port char))))
 
   (read-char port)
-  (let lp ((chars []))
-    (let (char (read-char port))
-      (case char
-        ((#\")
-         (list->string (reverse! chars)))
-        ((#\\)
-         (lp (cons (read-escape-char port) chars)))
-        (else
-         (if (eof-object? char)
-           (raise-invalid-token port char)
-           (lp (cons char chars))))))))
+  (let (root [#f])
+    (let lp ((tl root))
+      (let (char (read-char port))
+        (case char
+          ((#\")
+           (list->string (cdr root)))
+          ((#\\)
+           (let* ((char (read-escape-char port))
+                  (tl* [char]))
+             (set! (cdr tl) tl*)
+             (lp tl*)))
+          (else
+           (if (eof-object? char)
+             (raise-invalid-token port char)
+             (let (tl* [char])
+               (set! (cdr tl) tl*)
+               (lp tl*)))))))))
 
 (def (read-json-number port)
   ;; descend parsing terminals: #\] #\} #\, whitespace
   ;; read until a terminal is encountered and let string->number
   ;; parse it liberally
   (def (parse chars)
-    (let (str (list->string (reverse! chars)))
+    (let (str (list->string chars))
       (or (string->number str)
           (raise-invalid-token port str))))
 
-  (let lp ((chars [(read-char port)]))
-    (let (char (peek-char port))
-      (if (or (eof-object? char)
-              (memq char '(#\] #\} #\,))
-              (char-whitespace? char))
-        (parse chars)
-        (lp (cons (read-char port) chars))))))
+  (let (chars [(read-char port)])
+    (let lp ((tl chars))
+      (let (char (peek-char port))
+        (if (or (eof-object? char)
+                (memq char '(#\] #\} #\,))
+                (char-whitespace? char))
+          (parse chars)
+          (let (tl* [(read-char port)])
+            (set! (cdr tl) tl*)
+            (lp tl*)))))))
 
 (def (read-json-true port)
   (skip-chars '(#\t #\r #\u #\e) port)
