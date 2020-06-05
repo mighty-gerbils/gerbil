@@ -524,7 +524,37 @@ fails to parse JSON.
 json-symbolic-keys
 ```
 
-Boolean to control should decoded hashes have symbols as keys? Defaults to #t.
+Boolean parameter to control should decoded hashes have symbols as keys? Defaults to #t.
+#f means that keys will be strings.
+
+::: tip Examples
+``` scheme
+> (hash->list (string->json-object "{\"a\":1}"))
+((a . 1))
+
+> (parameterize ((json-symbolic-keys #f))
+    (hash->list (string->json-object "{\"a\":1}")))
+(("a" . 1))
+```
+
+### json-list-wrapper
+``` scheme
+json-list-wrapper
+```
+
+Parameter to control how JSON lists should be transformed.
+Defaults to `identity`, which means keep them as lists.
+If bound to `list->vector` then JSON lists will be parsed as vectors.
+
+::: tip Examples
+``` scheme
+> (string->json-object "[\"a\",1]")
+("a" 1)
+
+> (parameterize ((json-list-wrapper list->vector))
+    (string->json-object "[\"a\",1]"))
+#("a" 1)
+```
 
 ## UTF-8
 Faster UTF-8 encoding and decoding.

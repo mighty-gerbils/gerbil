@@ -41,5 +41,6 @@
       (check-encode-decode [1 2 3 [4 5] ["six" "seven"]])
       (check-encode-decode (hash-eq (a 1) (b 2) (c (hash-eq (d 3) (e 4) (f 5)))))
       (parameterize ((json-symbolic-keys #f))
-        (check-encode-decode (hash ("a" 1) ("b" 2) ("c" (hash ("d" 3) ("e" 4) ("f" 5)))))))
+        (check-encode-decode (hash ("a" 1) ("b" 2) ("c" (hash ("d" 3) ("e" 4) ("f" 5))))))
+      (check-encode-decode [1 2 #f #t 3]))
     ))

@@ -19,10 +19,11 @@
         :gerbil/gambit/bits
         :gerbil/gambit/exact
         :std/error
+        :std/text/hex
         (only-in :std/srfi/1 reverse!))
 (export read-json write-json
         string->json-object json-object->string
-        json-symbolic-keys)
+        json-symbolic-keys json-list-wrapper)
 (declare (not safe))
 
 (def (read-json (port (current-input-port)))
@@ -42,6 +43,10 @@
 ;; should decoded hashes have symbols as keys?
 (def json-symbolic-keys
   (make-parameter #t))
+
+;; What should lists be decoded to? identity means a list, list->vector means a vector.
+(def json-list-wrapper
+  (make-parameter identity))
 
 ;;; implementation
 (def (raise-invalid-token port char)
@@ -137,9 +142,9 @@
   (read-char port)
   (let lp ((els []))
     (let (next (read-json-list-next port))
-      (if next
-        (lp (cons next els))
-        (reverse! els)))))
+      (if (eof-object? next)
+        ((json-list-wrapper) (reverse! els))
+        (lp (cons next els))))))
 
 (def (read-json-list-next port)
   (skip-whitespace port)
@@ -147,7 +152,7 @@
     (case char
       ((#\])
        (read-char port)
-       #f)
+       #!eof)
       (else
        (let (obj (read-json-object port))
          (skip-whitespace port)
@@ -160,20 +165,6 @@
               obj)
              (else
               (raise-invalid-token port char)))))))))
-
-(def hexes "0123456789abcdef")
-(def HEXES "0123456789ABCDEF")
-(def hextab
-  (let (ht (make-hash-table-eq))
-    (def (put str)
-      (let (len (string-length str))
-        (let lp ((k 0))
-          (when (##fx< k len)
-            (hash-put! ht (##string-ref str k) k)
-            (lp (##fx+ k 1))))))
-    (put hexes)
-    (put HEXES)
-    ht))
 
 (def (read-json-string port)
   (def (read-escape-char port)
@@ -208,7 +199,7 @@
 
   (def (hex-value char)
     (cond
-     ((hash-get hextab char) => values)
+     ((unhex* char) => values)
      (else
       (raise-invalid-token port char))))
 
@@ -380,7 +371,7 @@
       (write-string "\\u" port)
       (let lp ((n 0) (mask #xf000) (shift -12))
         (when (##fx< n 4)
-          (let (char (string-ref hexes (arithmetic-shift (bitwise-and int mask) shift)))
+          (let (char (hex (arithmetic-shift (bitwise-and int mask) shift)))
             (write-char char port)
             (lp (##fx+ n 1) (arithmetic-shift mask -4) (##fx+ shift 4)))))))
 
