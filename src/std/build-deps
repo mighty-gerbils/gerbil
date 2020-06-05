@@ -124,7 +124,8 @@
    gerbil/gambit/exact
    gerbil/gambit/ports
    std/error
-   std/srfi/1))
+   std/srfi/1
+   std/text/hex))
  (std/text/_zlib
   (ssi: "text/_zlib" (gsc: "text/_zlib" "-cc-options" "" "-ld-options" "-lz"))
   (gerbil/core))
