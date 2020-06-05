@@ -158,6 +158,24 @@
 (def (length>=? x y) (length<=? y x))
 (def (length>=n? x n) (not (length<n? x n)))
 
+(defrules with-list-builder ()
+  ((_ (c) body1 body+ ...) (with-list-builder (c _) body1 body+ ...))
+  ((_ (poke peek) body1 body+ ...)
+   (let ((head (cons #f '()))) ;; use a traditional implementation of queue as cons of tail and head
+     (set-car! head head)
+     (defrules poke ()
+       ((_ val) (let ((old-tail (car head))
+                      (new-tail (cons val '())))
+                  (set-cdr! old-tail new-tail)
+                  (set-car! head new-tail)))
+       ((_ . _) (error "invalid number of arguments" poke))
+       (_ (lambda (val) (poke val))))
+     (defrules peek ()
+       ((_) (cdr head))
+       ((_ . _) (error "invalid number of arguments" peek))
+       (_ (lambda () (peek))))
+     body1 body+ ... (peek))))
+
 ;; Build a list, by calling a building function that takes two arguments:
 ;; The first, which could be called poke! (or put!, enqueue!, append-one-element-at-the-end!)
 ;; takes an element and puts it at the end of the list. The second, which could be called peek
@@ -168,20 +186,7 @@
 ;; in case of multiple entries by continuations, that same list is shared by all executions.
 ;; : (list X) <- (<- (<- X) ((list X) <-))
 (def (call-with-list-builder fun)
-  (let* ((head (cons #f '())) ;; use a traditional implementation of queue as cons of tail and head
-         (poke (lambda (val)
-                 (let ((old-tail (car head))
-                       (new-tail (cons val '())))
-                   (set-cdr! old-tail new-tail)
-                   (set-car! head new-tail))))
-         (peek (lambda () (cdr head))))
-    (set-car! head head)
-    (fun poke peek)
-    (peek)))
-
-(defrules with-list-builder ()
-  ((_ (c r) body1 body+ ...) (call-with-list-builder (lambda (c r) body1 body+ ...)))
-  ((_ (c) body1 body+ ...) (with-list-builder (c _) body1 body+ ...)))
+  (with-list-builder (poke peek) (fun poke peek)))
 
 ;; Like cons, but puts the element at the end of the list
 ;; (List A) <- A (List A)

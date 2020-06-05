@@ -75,6 +75,9 @@
          (put! 1) (put! 2) (put! 3))
        '(1 2 3))
       (check-equal?
+       (call-with-list-builder (lambda (put! _) (put! 1) (put! 2) (put! 3)))
+       '(1 2 3))
+      (check-equal?
        (with-list-builder (put! get-list-so-far)
          (put! 1)
          (put! 2)
