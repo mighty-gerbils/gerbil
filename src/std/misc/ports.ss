@@ -4,6 +4,7 @@
 
 (import :gerbil/gambit/ports
         :std/sugar
+        :std/misc/list-builder
         (only-in :std/srfi/13 string-suffix?))
 (export copy-port
         read-all-as-string
@@ -171,11 +172,12 @@
       port
       separator: (separator #\newline)
       include-separator?: (include-separator? #f))
-  (let loop ((lines '()))
-    (let ((line (read-line port separator include-separator?)))
-      (if (string? line)
-        (loop (cons line lines))
-        (reverse lines)))))
+  (with-list-builder (push!)
+    (let loop ()
+      (let ((line (read-line port separator include-separator?)))
+        (when (string? line)
+          (push! line)
+          (loop))))))
 
 ;; Read the contents of a file into a list of lines
 (def (read-file-lines file settings: (settings '()))

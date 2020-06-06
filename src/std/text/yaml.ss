@@ -6,6 +6,7 @@
         :std/error
         :std/iter
         :std/pregexp
+        :std/misc/list-builder
         :std/text/utf8
         :std/text/libyaml)
 (export yaml-key-format yaml-load yaml-load-string yaml-dump)
@@ -67,21 +68,22 @@
         (raise-io-error 'yaml-load "stream-start: unexpected event" t)))))
 
   (def (read-stream)
-    (let lp ((docs []))
-      (let* ((_ (parse))
-             (t (yaml_event_type event)))
-        (cond
-         ((eq? t YAML_STREAM_END_EVENT)
-          (reverse docs))
-         ((eq? t YAML_DOCUMENT_START_EVENT)
-          (yaml_event_delete event)
-          (lp (cons (read-node) docs)))
-         ((eq? t YAML_DOCUMENT_END_EVENT)
-          (lp docs))
-         ((eq? t YAML_NO_EVENT)
-          (lp docs))
-         (else
-          (raise-io-error 'yaml-load "read-stream: unexpected event" t))))))
+    (with-list-builder (push!)
+      (let lp ()
+        (let* ((_ (parse))
+               (t (yaml_event_type event)))
+          (cond
+           ((eq? t YAML_STREAM_END_EVENT))
+           ((eq? t YAML_DOCUMENT_START_EVENT)
+            (yaml_event_delete event)
+            (push! (read-node))
+            (lp))
+           ((eq? t YAML_DOCUMENT_END_EVENT)
+            (lp))
+           ((eq? t YAML_NO_EVENT)
+            (lp))
+           (else
+            (raise-io-error 'yaml-load "read-stream: unexpected event" t)))))))
 
   (def end-token '#(end))
 
@@ -136,11 +138,12 @@
         (raise-io-error 'yaml-load "read-object: unexpected event" t)))))
 
   (def (read-sequence tag)
-    (let lp ((seq []))
-      (let (next (read-node YAML_SEQUENCE_END_EVENT))
-        (if (eq? next end-token)
-          (reverse seq)
-          (lp (cons next seq))))))
+    (with-list-builder (push!)
+      (let lp ()
+        (let (next (read-node YAML_SEQUENCE_END_EVENT))
+          (unless (eq? next end-token)
+            (push! next)
+            (lp))))))
 
   (def (format-map-key key)
     (if (string? key)

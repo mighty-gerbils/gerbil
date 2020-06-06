@@ -5,8 +5,7 @@
 
 (import :gerbil/gambit/bits
         :std/text/utf8
-        :std/error
-        (only-in :std/srfi/1 reverse!))
+        :std/error)
 (export (except-out #t 2^15 2^16 2^31 2^32))
 
 (declare (not safe))
@@ -300,19 +299,27 @@
       (raise-io-error 'bio-read-string "premature end of input" buf rd len))))
 
 (def (bio-read-line buf (sep #\newline) (include-sep? #f) (maxchars #f))
-  (let lp ((chars []) (count 0))
-    (if (or (not maxchars) (##fx< count maxchars))
-      (let (char (bio-read-char buf))
-        (cond
-         ((eof-object? char)
-          (if (null? chars)
-            (eof-object)
-            (list->string (reverse! chars))))
-         ((eq? char sep)
-          (list->string (reverse! (if include-sep? (cons sep chars) chars))))
-         (else
-          (lp (cons char chars) (##fx+ count 1)))))
-      (list->string (reverse! chars)))))
+  (let (root [#f])
+    (let lp ((tl root) (count 0))
+      (if (or (not maxchars) (##fx< count maxchars))
+        (let (char (bio-read-char buf))
+          (cond
+           ((eof-object? char)
+            (if (null? (cdr root))
+              (eof-object)
+              (list->string (cdr root))))
+           ((eq? char sep)
+            (list->string
+             (if include-sep?
+               (let (tl* [char])
+                 (set! (cdr tl) tl*)
+                 (cdr root))
+               (cdr root))))
+           (else
+            (let (tl* [char])
+              (set! (cdr tl) tl*)
+              (lp tl* (##fx+ count 1))))))
+        (list->string (cdr root))))))
 
 (def (bio-input-utf8-decode count buf)
   (let* ((rlo (&input-buffer-rlo buf))
