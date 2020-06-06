@@ -1331,10 +1331,13 @@
     (error "Bad argument; expected number" start))
   (unless (number? step)
     (error "Bad argument; expected number" step))
-  (let lp ((i 0) (x start) (r '()))
-    (if (%%fx< i count)
-      (lp (%%fx+ i 1) (+ x step) (cons x r))
-      (reverse r))))
+  (let ((root (cons #f '())))
+    (let lp ((i 0) (x start) (tl root))
+      (if (%%fx< i count)
+        (let ((tl* (cons x '())))
+          (%%set-cdr! tl tl*)
+          (lp (%%fx+ i 1) (+ x step) tl*))
+        (%%cdr root)))))
 
 (define (last-pair lst)
   (core-match lst
