@@ -159,20 +159,20 @@
 (def (length>=n? x n) (not (length<n? x n)))
 
 (defrules with-list-builder ()
-  ((_ (c) body1 body+ ...) (with-list-builder (c _) body1 body+ ...))
+  ((recur (c) body1 body+ ...)
+   (recur (c _unused) body1 body+ ...))
   ((_ (poke peek) body1 body+ ...)
-   (let* ((head [#f]) ;; use a traditional implementation of queue as cons of tail and head
+   (let* ((head [#f])
           (tail head))
      (defrules poke ()
-       ((_ val) (let (new-tail [val])
-                  (##set-cdr! tail new-tail)
-                  (set! tail new-tail)))
-       ((_ . _) (error "invalid number of arguments" poke))
-       (_ (lambda (val) (poke val))))
+       ((_ val)
+        (let (new-tail [val])
+          (##set-cdr! tail new-tail)
+          (set! tail new-tail)))
+       (id (identifier? #'id) (lambda (val) (poke val))))
      (defrules peek ()
        ((_) (##cdr head))
-       ((_ . _) (error "invalid number of arguments" peek))
-       (_ (lambda () (peek))))
+       (id (identifier? #'id) (lambda () (peek))))
      body1 body+ ... (peek))))
 
 ;; Build a list, by calling a building function that takes two arguments:
@@ -452,4 +452,3 @@
       ([(? keyword? k) v . r] (lp r positionals (cons* v k keywords)))
       ([a . r] (lp r (cons a positionals) keywords))
       ([] (values (reverse positionals) (reverse keywords))))))
-
