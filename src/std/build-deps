@@ -179,7 +179,10 @@
    (static-include: "crypto/libcrypto-rfc5114.c"))
   (gerbil/core))
  (std/misc/timeout "misc/timeout" (gerbil/core gerbil/gambit/os))
- (std/misc/list "misc/list" (gerbil/core std/srfi/1 std/sugar))
+ (std/misc/list-builder "misc/list-builder" (gerbil/core))
+ (std/misc/list
+  "misc/list"
+  (gerbil/core std/misc/list-builder std/srfi/1 std/sugar))
  (std/misc/rtd "misc/rtd" (gerbil/core))
  (std/misc/shuffle "misc/shuffle" (gerbil/core gerbil/gambit/random))
  (std/event
