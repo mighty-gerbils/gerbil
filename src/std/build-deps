@@ -152,7 +152,7 @@
   (gerbil/core))
  (std/net/bio/input
   "net/bio/input"
-  (gerbil/core gerbil/gambit/bits std/error std/srfi/1 std/text/utf8))
+  (gerbil/core gerbil/gambit/bits std/error std/text/utf8))
  (std/net/bio/output
   "net/bio/output"
   (gerbil/core gerbil/gambit/bits std/error))
@@ -179,7 +179,10 @@
    (static-include: "crypto/libcrypto-rfc5114.c"))
   (gerbil/core))
  (std/misc/timeout "misc/timeout" (gerbil/core gerbil/gambit/os))
- (std/misc/list "misc/list" (gerbil/core std/srfi/1 std/sugar))
+ (std/misc/list-builder "misc/list-builder" (gerbil/core))
+ (std/misc/list
+  "misc/list"
+  (gerbil/core std/misc/list-builder std/srfi/1 std/sugar))
  (std/misc/rtd "misc/rtd" (gerbil/core))
  (std/misc/shuffle "misc/shuffle" (gerbil/core gerbil/gambit/random))
  (std/event
@@ -509,6 +512,7 @@
    gerbil/gambit/ports
    std/error
    std/format
+   std/misc/list-builder
    std/net/uri
    std/pregexp
    std/srfi/13
@@ -734,7 +738,11 @@
    std/misc/timeout))
  (std/misc/ports
   (gxc: "misc/ports" "-e" "(include \"~~lib/_gambit#.scm\")")
-  (gerbil/core gerbil/gambit/ports std/srfi/13 std/sugar))
+  (gerbil/core
+   gerbil/gambit/ports
+   std/misc/list-builder
+   std/srfi/13
+   std/sugar))
  (std/misc/concurrent-plan
   "misc/concurrent-plan"
   (gerbil/core
@@ -854,8 +862,8 @@
    gerbil/gambit/os
    std/error
    std/foreign
-   std/net/bio
-   std/srfi/1))
+   std/misc/list-builder
+   std/net/bio))
  (std/actor/proto
   (gxc: "actor/proto" "-cc-options" "--param max-gcse-memory=300000000")
   (gerbil/core
@@ -964,7 +972,6 @@
    std/net/socket
    std/net/socket/buffer
    std/pregexp
-   std/srfi/1
    std/sugar
    std/text/utf8))
  (std/net/httpd/server

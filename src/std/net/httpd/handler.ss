@@ -11,8 +11,7 @@
         :std/logger
         :std/sugar
         :std/error
-        :std/pregexp
-        (only-in :std/srfi/1 reverse!))
+        :std/pregexp)
 (export http-request-handler
         http-request?
         http-request-method http-request-url http-request-path http-request-params
@@ -359,19 +358,22 @@ END-C
     (values method url proto)))
 
 (def (read-request-headers ibuf)
-  (let lp ((headers []) (count 0))
-    (let (next (bio-peek-u8 ibuf))
-      (cond
-       ((eof-object? next)
-        (raise 'eof))
-       ((eq? next CR)
-        (read-skip ibuf CR LF)
-        (reverse! headers))
-       ((fx< count max-request-headers)
-        (let (hdr (read-header ibuf))
-          (lp (cons hdr headers) (fx1+ count))))
-       (else
-        (raise-io-error 'http-read-request "too many headers" count))))))
+  (let (root [#f])
+    (let lp ((tl root) (count 0))
+      (let (next (bio-peek-u8 ibuf))
+        (cond
+         ((eof-object? next)
+          (raise 'eof))
+         ((eq? next CR)
+          (read-skip ibuf CR LF)
+          (cdr root))
+         ((fx< count max-request-headers)
+          (let* ((hdr (read-header ibuf))
+                 (tl* [hdr]))
+            (set! (cdr tl) tl*)
+            (lp tl* (fx1+ count))))
+         (else
+          (raise-io-error 'http-read-request "too many headers" count)))))))
 
 (def (read-header ibuf)
   (let* ((key (read-token ibuf COL))
@@ -469,19 +471,22 @@ END-C
     (read-simple-body))))
 
 (def (read-request-chunks ibuf)
-  (let lp ((chunks []) (count 0))
-    (let* ((next (read-token ibuf CR))
-           (_ (read-skip ibuf LF))
-           (len (string->number next 16)))
-      (if (fx> len 0)
-        (let (count (fx+ count len))
-          (if (fx<= count max-request-body-length)
-            (let (chunk (make-u8vector len))
-              (bio-read-bytes chunk ibuf)
-              (read-skip ibuf CR LF)
-              (lp (cons chunk chunks) count))
-            (raise-io-error 'http-request-body "Maximum body length exceeded" count len)))
-        (append-u8vectors (reverse! chunks))))))
+  (let (root [#f])
+    (let lp ((tl root) (count 0))
+      (let* ((next (read-token ibuf CR))
+             (_ (read-skip ibuf LF))
+             (len (string->number next 16)))
+        (if (fx> len 0)
+          (let (count (fx+ count len))
+            (if (fx<= count max-request-body-length)
+              (let (chunk (make-u8vector len))
+                (bio-read-bytes chunk ibuf)
+                (read-skip ibuf CR LF)
+                (let (tl* [chunk])
+                  (set! (cdr tl) tl*)
+                  (lp tl* count)))
+              (raise-io-error 'http-request-body "Maximum body length exceeded" count len)))
+          (append-u8vectors (cdr root)))))))
 
 (def (skip-request-body ibuf headers)
   (def (skip-simple-body)

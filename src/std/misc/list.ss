@@ -31,7 +31,8 @@
   separate-keyword-arguments
   )
 
-(import (only-in ../srfi/1
+(import ./list-builder
+        (only-in ../srfi/1
                  drop drop-right drop-right! take take-right take! reverse!
                  take-while take-while! drop-while
                  delete-duplicates delete-duplicates!)
@@ -157,35 +158,6 @@
 (def (length>n? x n) (not (length<=n? x n)))
 (def (length>=? x y) (length<=? y x))
 (def (length>=n? x n) (not (length<n? x n)))
-
-(defrules with-list-builder ()
-  ((_ (c) body1 body+ ...) (with-list-builder (c _) body1 body+ ...))
-  ((_ (poke peek) body1 body+ ...)
-   (let* ((head [#f]) ;; use a traditional implementation of queue as cons of tail and head
-          (tail head))
-     (defrules poke ()
-       ((_ val) (let (new-tail [val])
-                  (##set-cdr! tail new-tail)
-                  (set! tail new-tail)))
-       ((_ . _) (error "invalid number of arguments" poke))
-       (_ (lambda (val) (poke val))))
-     (defrules peek ()
-       ((_) (##cdr head))
-       ((_ . _) (error "invalid number of arguments" peek))
-       (_ (lambda () (peek))))
-     body1 body+ ... (peek))))
-
-;; Build a list, by calling a building function that takes two arguments:
-;; The first, which could be called poke! (or put!, enqueue!, append-one-element-at-the-end!)
-;; takes an element and puts it at the end of the list. The second, which could be called peek
-;; (or get, get-list-so-far, get-shared-list-that-is-mutated-when-you-put), returns the
-;; list of elements that poke! has been called with, so far. When the building function returns,
-;; call-with-list-builder will return the state of the list, as if by calling the peek function.
-;; NB: this implementation accumulates elements by mutating a shared queue of cons cells;
-;; in case of multiple entries by continuations, that same list is shared by all executions.
-;; : (list X) <- (<- (<- X) ((list X) <-))
-(def (call-with-list-builder fun)
-  (with-list-builder (poke peek) (fun poke peek)))
 
 ;; Like cons, but puts the element at the end of the list
 ;; (List A) <- A (List A)
@@ -452,4 +424,3 @@
       ([(? keyword? k) v . r] (lp r positionals (cons* v k keywords)))
       ([a . r] (lp r (cons a positionals) keywords))
       ([] (values (reverse positionals) (reverse keywords))))))
-

@@ -244,6 +244,7 @@
     ;; :std/misc
     "misc/concurrent-plan"
     "misc/timeout"
+    "misc/list-builder"
     "misc/list"
     "misc/rtd"
     "misc/shuffle"

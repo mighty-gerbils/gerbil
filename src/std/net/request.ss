@@ -9,6 +9,7 @@
         :std/pregexp
         :std/srfi/13
         :std/sugar
+        :std/misc/list-builder
         :std/text/base64
         :std/text/json
         :std/text/utf8
@@ -264,19 +265,20 @@
          (string->number status))
        (set! (request-status-text req)
          (string-trim-both status-text))
-       (let lp ((headers []))
-         (let (next (read-response-line port))
-           (if (string-empty? next)
-             (set! (request-headers req)
-               (reverse headers))
-             (match (pregexp-match header-line-rx next)
-               ([_ key value]
-                (lp (cons (cons (string-titlecase key)
-                                (string-trim-both value))
-                          headers)))
-               (else
-                (raise-io-error 'http-request-read-response!
-                                "Malformed header" port next)))))))
+       (let (root [#f])
+         (let lp ((tl root))
+           (let (next (read-response-line port))
+             (if (string-empty? next)
+               (set! (request-headers req)
+                 (cdr root))
+               (match (pregexp-match header-line-rx next)
+                 ([_ key value]
+                  (let (tl* [(cons (string-titlecase key) (string-trim-both value))])
+                    (set! (cdr tl) tl*)
+                    (lp tl*)))
+                 (else
+                  (raise-io-error 'http-request-read-response!
+                                  "Malformed header" port next))))))))
       (else
        (raise-io-error 'http-request-read-response!
                        "malformed status line" port status-line)))))
@@ -298,18 +300,21 @@
     (http-request-read-simple-body port (length-e headers)))))
 
 (def (http-request-read-chunked-body port)
-  (let lp ((chunks []))
-    (let* ((line (read-response-line port))
-           (clen (string->number (car (string-split line #\space)) 16)))
-      (if (fxzero? clen)
-        (append-u8vectors (reverse chunks))
-        (let* ((chunk (make-u8vector clen))
-               (rd    (read-subu8vector chunk 0 clen port)))
-          (when (##fx< rd clen)
-            (raise-io-error 'http-request-read-body
-                            "error reading chunk; premature end of port"))
-          (read-response-line port)     ; read chunk trailing CRLF
-          (lp (cons chunk chunks)))))))
+  (let (root [#f])
+    (let lp ((tl root))
+      (let* ((line (read-response-line port))
+             (clen (string->number (car (string-split line #\space)) 16)))
+        (if (fxzero? clen)
+          (append-u8vectors (cdr root))
+          (let* ((chunk (make-u8vector clen))
+                 (rd    (read-subu8vector chunk 0 clen port)))
+            (when (##fx< rd clen)
+              (raise-io-error 'http-request-read-body
+                              "error reading chunk; premature end of port"))
+            (read-response-line port)     ; read chunk trailing CRLF
+            (let (tl* [chunk])
+              (set! (cdr tl) tl*)
+              (lp tl*))))))))
 
 (def (http-request-read-simple-body port length)
   (def (read/length port length)
@@ -322,18 +327,22 @@
         data)))
 
   (def (read/end port)
-    (let lp ((chunks []))
-      (let* ((buflen 4096)
-             (buf (make-u8vector buflen))
-             (rd  (read-subu8vector buf 0 buflen port)))
-        (cond
-         ((##fxzero? rd)
-          (append-u8vectors (reverse chunks)))
-         ((##fx< rd buflen)
-          (u8vector-shrink! buf rd)
-          (append-u8vectors (reverse (cons buf chunks))))
-         (else
-          (lp (cons buf chunks)))))))
+    (let (root [#f])
+      (let lp ((tl root))
+        (let* ((buflen 4096)
+               (buf (make-u8vector buflen))
+               (rd  (read-subu8vector buf 0 buflen port)))
+          (cond
+           ((##fxzero? rd)
+            (append-u8vectors (cdr root)))
+           ((##fx< rd buflen)
+            (u8vector-shrink! buf rd)
+            (set! (cdr tl) [buf])
+            (append-u8vectors (cdr root)))
+           (else
+            (let (tl* [buf])
+              (set! (cdr tl) tl*)
+              (lp tl*))))))))
 
   (if length
     (read/length port length)
@@ -344,24 +353,29 @@
 (def crlf (u8vector cr lf))
 
 (def (read-response-line port)
-  (let lp ((r []))
-    (let (next (read-u8 port))
-      (cond
-       ((eof-object? next)
-        (raise-io-error 'request-read-response-line
-                        "Incomplete response; connection closed" port))
-       ((eq? next cr)
-        (let (next (read-u8 port))
-          (cond
-           ((eof-object? next)
-            (raise-io-error 'request-read-response-line
-                            "Incomplete response; connection closed" port))
-           ((eq? next lf)
-            (utf8->string (list->u8vector (reverse r))))
-           (else
-            (lp (cons* next cr r))))))
-       (else
-        (lp (cons next r)))))))
+  (let (root [#f])
+    (let lp ((tl root))
+      (let (next (read-u8 port))
+        (cond
+         ((eof-object? next)
+          (raise-io-error 'request-read-response-line
+                          "Incomplete response; connection closed" port))
+         ((eq? next cr)
+          (let (next (read-u8 port))
+            (cond
+             ((eof-object? next)
+              (raise-io-error 'request-read-response-line
+                              "Incomplete response; connection closed" port))
+             ((eq? next lf)
+              (utf8->string (list->u8vector (cdr root))))
+             (else
+              (let (tl* [cr next])
+                (set! (cdr tl) tl*)
+                (lp (cdr tl*)))))))
+         (else
+          (let (tl* [next])
+            (set! (cdr tl) tl*)
+            (lp tl*))))))))
 
 (def (request-close req)
   (alet (port (request-port req))
@@ -412,14 +426,14 @@
   (string->json-object (request-text req)))
 
 (def (request-cookies req)
-  (let lp ((rest (request-headers req))
-           (cookies []))
-    (match rest
-      ([hd . rest]
-       (match hd
-         (["Set-Cookie" . cookie]
-          (lp rest (cons cookie cookies)))
-         (else
-          (lp rest cookies))))
-      (else
-       (reverse cookies)))))
+  (with-list-builder (push!)
+    (let lp ((rest (request-headers req)))
+      (match rest
+        ([hd . rest]
+         (match hd
+           (["Set-Cookie" . cookie]
+            (push! cookie)
+            (lp rest))
+           (else
+            (lp rest))))
+        (else (void))))))

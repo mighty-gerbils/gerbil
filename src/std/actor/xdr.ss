@@ -7,7 +7,7 @@
         :std/foreign
         :std/error
         :std/net/bio
-        (only-in :std/srfi/1 reverse!))
+        :std/misc/list-builder)
 (export #t)
 
 (declare (not safe))
@@ -463,11 +463,12 @@
   (xdr-write-flonum (time->seconds tm) buf))
 
 (def (xdr-read-inline-list buf)
-  (let lp ((r []))
-    (let (next (xdr-read buf))
-      (if (null? next)
-        (reverse! r)
-        (lp (cons next r))))))
+  (with-list-builder (push!)
+    (let lp ()
+      (let (next (xdr-read buf))
+        (unless (null? next)
+          (push! next)
+          (lp))))))
 
 (def (xdr-write-inline-list lst buf)
   (let lp ((rest lst))
