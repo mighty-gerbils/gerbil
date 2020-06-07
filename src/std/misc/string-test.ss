@@ -3,11 +3,16 @@
 (import
   :std/misc/string :std/srfi/13
   :std/test :gerbil/gambit/exceptions
-  :std/pregexp)
+  :std/pregexp :std/misc/repr :std/sugar :std/format)
 
 (def (error-with-message? message)
   (lambda (e)
     (and (error-exception? e) (equal? (error-exception-message e) message))))
+
+(defstruct point (x y))
+(defmethod {:pr point}
+  (lambda (self port options)
+    (fprintf port "(point ~a ~a)" (point-x self) (point-y self))))
 
 (def string-test
   (test-suite "test :std/misc/string"
@@ -65,4 +70,18 @@
       (check-eq? (and (pregexp-match "^\\w+$" (random-string 100)) #t) #t)
       (check-equal? (random-string 0) "")
       (check-equal? (random-string -1) "")
-      (check-equal? (string-length (random-string 5)) 5))))
+      (check-equal? (string-length (random-string 5)) 5))
+    (test-case "test str"
+      (check (str)                    => "")
+      (check (str "hi")               => "hi")
+      (check (str "hello" ", world.") => "hello, world.")
+      (check (str 0.1 "!")            => "0.1!")
+      (check (str 2.0)                => "2.0")
+      (check (str 1.2E+2)             => "120.0")
+      (check (str 'abc)               => "abc")
+      (check (str '(1 2))             => "[1 2]")
+      (check (str (hash (a 10)))      => "(hash (a 10))")
+      (check (str #(1 2))             => "(vector 1 2)")
+      (check (str (values 1 2))       => "(values 1 2)")
+      (check (str (make-point 1 2))   => "(point 1 2)"))
+    ))
