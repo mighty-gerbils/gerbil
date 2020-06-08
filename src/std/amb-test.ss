@@ -50,6 +50,14 @@
            `((baker ,baker) (cooper ,cooper) (fletcher ,fletcher) (miller ,miller) (smith ,smith)))))
 
       (check (solve-dwelling-puzzle) => '((baker 3) (cooper 2) (fletcher 4) (miller 5) (smith 1))))
+    (test-case "all-of"
+      (def (odds<=6)
+        (begin-amb
+         (let (x (amb 1 2 3 4 5 6))
+           (required (odd? x))
+           (all-of x))))
+      (check (odds<=6) => '(1 3 5))
+      (check (begin-amb (all-of (amb))) => '()))
     (test-case "element-of"
       (def (even-between-1-and-3)
         (begin-amb
