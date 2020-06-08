@@ -49,4 +49,11 @@
 
            `((baker ,baker) (cooper ,cooper) (fletcher ,fletcher) (miller ,miller) (smith ,smith)))))
 
-      (check (solve-dwelling-puzzle) => '((baker 3) (cooper 2) (fletcher 4) (miller 5) (smith 1))))))
+      (check (solve-dwelling-puzzle) => '((baker 3) (cooper 2) (fletcher 4) (miller 5) (smith 1))))
+    (test-case "element-of"
+      (def (even-between-1-and-3)
+        (begin-amb
+          (let (x (element-of '(1 2 3)))
+            (required (even? x))
+            x)))
+      (check (even-between-1-and-3) => 2))))
