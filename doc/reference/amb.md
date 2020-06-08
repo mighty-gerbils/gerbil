@@ -111,6 +111,13 @@ Procedural form of `amb-collect`
 
 Predicate that returns true if *e* is an exception raised because the amb search was exhausted.
 
+### element-of
+```
+(element-of list) -> any
+```
+
+Ambiguous choice from a list; may evaluate and return any element of *list*.
+
 ## Example
 
 Here is the well known dwelling house puzzle:

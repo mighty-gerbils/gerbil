@@ -9,7 +9,8 @@
         :std/misc/shuffle)
 (export begin-amb begin-amb-random amb amb-find one-of amb-collect all-of amb-assert required
         amb-do amb-do-find amb-do-collect
-        amb-exhausted?)
+        amb-exhausted?
+        element-of)
 
 (defstruct (amb-completion <error>) ())
 
@@ -113,3 +114,6 @@
       (let (next (thunk))
         (amb-results (cons next (amb-results)))
         ((amb-fail))))))
+
+(def (element-of xs)
+  (amb-do (map (cut lambda () <>) xs)))
