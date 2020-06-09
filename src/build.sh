@@ -146,24 +146,7 @@ stage1 () {
   fi
 }
 
-## reset build layout -- touch .keep files for scm
-build_layout () {
-  feedback_low "Resetting build layout structure"
-  mkdir -p "${GERBIL_STAGE0}"
-  touch "${GERBIL_STAGE0}/.keep"
-  touch "${GERBIL_BASE}/bin/.keep"
-  touch "${GERBIL_BASE}/lib/.keep"
-}
-
 ## commands
-build_tools () {
-  feedback_low "Building gerbil tools"
-  PATH="${GERBIL_BASE}/bin:${PATH}"
-  GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
-  export PATH GERBIL_HOME
-  (cd tools && ./build.ss)
-}
-
 build_stdlib () {
   feedback_low "Building gerbil stdlib"
   PATH="${GERBIL_BASE}/bin:${PATH}"
@@ -191,12 +174,29 @@ build_r7rs_large() {
   (cd r7rs-large && ./build.ss)
 }
 
+build_tools () {
+  feedback_low "Building gerbil tools"
+  PATH="${GERBIL_BASE}/bin:${PATH}"
+  GERBIL_HOME="${GERBIL_BASE}" #required by build.ss
+  export PATH GERBIL_HOME
+  (cd tools && ./build.ss)
+}
+
 build_tags () {
   feedback_low "Build gerbil tags"
   PATH="${GERBIL_BASE}/bin:${PATH}"
   GERBIL_HOME="${GERBIL_BASE}" #required by gxtags
   export PATH GERBIL_HOME
   gxtags gerbil std lang
+}
+
+## reset build layout -- touch .keep files for scm
+build_layout () {
+  feedback_low "Resetting build layout structure"
+  mkdir -p "${GERBIL_STAGE0}"
+  touch "${GERBIL_STAGE0}/.keep"
+  touch "${GERBIL_BASE}/bin/.keep"
+  touch "${GERBIL_BASE}/lib/.keep"
 }
 
 build_doc () {
@@ -225,6 +225,15 @@ if [ "$#" -eq 0 ]; then
   build_gerbil
 else
   case "$1" in
+       "gxi")
+         compile_gxi || die
+         ;;
+       "stage0")
+         stage0 || die
+         ;;
+       "stage1")
+         stage1 "${2:-}" || die
+         ;;
        "stdlib")
          build_stdlib || die
          ;;
@@ -237,20 +246,11 @@ else
        "tools")
          build_tools || die
          ;;
-       "stage0")
-         stage0 || die
-         ;;
-       "stage1")
-         stage1 "${2:-}" || die
-         ;;
-       "gxi")
-         compile_gxi || die
+       "tags")
+         build_tags || die
          ;;
        "layout")
          build_layout || die
-         ;;
-       "tags")
-         build_tags || die
          ;;
        "doc")
          build_doc || die
@@ -258,7 +258,7 @@ else
        *)
          feedback_err "Unknown command."
          feedback_err \
-           "Correct usage: ./build.sh [stdlib|lang|tools|stage0|stage1 [final]]"
+           "Correct usage: ./build.sh [gxi|stage0|stage1 [final]|stdlib|lang|r7rs-large|tools|tags]"
          die
          ;;
   esac
