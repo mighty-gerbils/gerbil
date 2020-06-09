@@ -5589,6 +5589,63 @@ characters (`[a-zA-Z0-9_]`). Throws an error if `len` is not a fixnum.
 ```
 :::
 
+### str
+``` scheme
+(str . xs) -> string
+
+  xs := values to be converted and concatenated into a string
+```
+`str` converts all of its arguments into a single string.
+When called without an argument an empty string is returned.
+
+::: tip Examples:
+``` scheme
+> (str)
+""
+
+> (str 2.0)
+"2.0"
+
+> (str "hello" ", world")
+"hello, world"
+
+> (import :std/format :std/misc/repr)
+> (defstruct point (x y))
+> (def p (make-point 10 20))
+> (defmethod {:pr point}
+    (lambda (self port options)
+      (fprintf port "(point ~a ~a)"
+               (point-x self) (point-y self))))
+
+> (str p 'abc [1 2] 3.4E+2)
+"(point 10 20)abc[1 2]340.0"
+```
+:::
+
+### str-format
+``` scheme
+(str-format v) -> string
+
+  v := any value
+```
+`str-format` takes any value and returns a formatting string, which can be
+used by the `:std/format` family of procedures. Considers the `:pr`
+[method](https://cons.io/reference/misc.html#representable) from `:std/misc/repr`.
+
+::: tip Examples:
+``` scheme
+> (import :std/format)
+> (str-format "hello")
+"~a"  ; default format
+
+> (str-format 1.2E+2)
+"~f"  ; inexact number
+
+> (str-format (vector 1 2 3))
+"~r"  ; object which implements the :pr method of :std/misc/repr
+```
+:::
+
 ### line ending variables
 ``` scheme
 (define +cr+   "\r")

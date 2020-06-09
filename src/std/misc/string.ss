@@ -11,12 +11,15 @@
   string-subst
   string-whitespace?
   random-string
+  str str-format
   +cr+ +lf+ +crlf+)
 
 (import
   (only-in :gerbil/gambit/ports write-substring write-string)
   (only-in :gerbil/gambit/random random-integer)
-  :std/srfi/13)
+  :std/srfi/13
+  :std/format
+  )
 
 ;; If the string starts with given prefix, return the end of the string after the prefix.
 ;; Otherwise, return the entire string. NB: Only remove the prefix once.
@@ -215,3 +218,39 @@
 	(string-set! str i (random-word-char)))
       str)
     ""))
+
+;; str converts all of its arguments into a single string.
+;; When called without an argument an empty string is returned.
+;;
+;; Examples:
+;;  (str 2.0)               => "2.0"
+;;  (str "hello" ", world") => "hello, world"
+(def* str
+  ((v) (if (string? v) v
+           (format (str-format v) v)))
+  (xs (if (andmap string? xs)
+        (append-strings xs)
+        (call-with-output-string
+         (lambda (port)
+           (let loop ((rest xs))
+             (match rest
+               ([v . rest]
+                (if (string? v)
+                  (write-string v port)
+                  (fprintf port (str-format v) v))
+                (loop rest))
+               (else (void)))))))))
+
+;; str-format takes any value and returns a formatting string, which can be
+;; used by the :std/format family of procedures. Considers the :pr method
+;; from :std/misc/repr.
+;;
+;; Examples:
+;;  (str-format 5.0)   => "~f"
+;;  (str-format [1 2]) => "~r"
+(def (str-format v)
+  (def (obj-pr? v) (method-ref v ':pr))
+  (cond
+   ((? (and number? inexact?) v) "~f")
+   ((? (or list? hash-table? vector? ##values? obj-pr?) v) "~r")
+   (else "~a")))
