@@ -19,7 +19,8 @@
     (begin
       (create-directory-if-necessary to)
       (for-each (lambda (file)
-                  (install (string-append from "/" file) (string-append to "/" file)))
+                  (if (not (string=? ".keep" file))
+                    (install (string-append from "/" file) (string-append to "/" file))))
                 (directory-files `(path: ,from ignore-hidden: dot-and-dot-dot))))
     (begin
       (if (file-exists? to)
