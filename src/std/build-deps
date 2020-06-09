@@ -180,9 +180,16 @@
   (gerbil/core))
  (std/misc/timeout "misc/timeout" (gerbil/core gerbil/gambit/os))
  (std/misc/list-builder "misc/list-builder" (gerbil/core))
+ (std/misc/alist "misc/alist" (gerbil/core std/sugar))
+ (std/misc/plist "misc/plist" (gerbil/core std/sugar))
  (std/misc/list
   "misc/list"
-  (gerbil/core std/misc/list-builder std/srfi/1 std/sugar))
+  (gerbil/core
+   std/misc/alist
+   std/misc/list-builder
+   std/misc/plist
+   std/srfi/1
+   std/sugar))
  (std/misc/rtd "misc/rtd" (gerbil/core))
  (std/misc/shuffle "misc/shuffle" (gerbil/core gerbil/gambit/random))
  (std/event

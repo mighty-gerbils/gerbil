@@ -1802,128 +1802,6 @@ but also sorts this list by keys according to the provided predicate *pred*.
 ```
 :::
 
-### alist?
-``` scheme
-(alist? alist) -> boolean
-
-  alist := association list to check
-```
-
-Checks whether *alist* is a proper association list and returns a truth value
-(`#t` or `#f`). *alist* needs to be finite, circular lists are not supported.
-
-A proper association list is a list of pairs and may be of the following forms:
-- `((key1 . value1) ...)`
-- `((key1 value1) ...)`
-
-::: tip Examples:
-``` scheme
-> (alist? '((a . 1) (b . 2) (c . 3)))
-#t
-
-> (alist? [["one" #\1] ["two" #\2] ["three" #\3]])
-#t
-
-> (alist? '((a . 1) ("two" #\2) (1 2 3 4)))
-#t    ; (1 2 3 4) is equivalent to (1 . (2 3 4))
-
-> (alist? '(a 1 b 2 c 3))
-#f    ; input is a plist, see plist? function
-
-> (alist? '())
-#t    ; edge-case, just like (list? '()) => #t
-```
-:::
-
-### plist?
-``` scheme
-(plist? plist) -> boolean
-
-  plist := property list to check
-```
-
-Checks whether *plist* is a proper property list and returns a truth value (`#t`
-or `#f`). *plist* needs to be finite, circular lists are not supported.
-
-A proper property list is a list of alternating keys and values of the following
-form: `((key1 value1 key2 value2 ...))`
-
-::: tip Examples:
-``` scheme
-> (plist? '(a 1 b 2 c 3 d 4))
-#t
-
-> (plist? ["uno" [1 2 3] "dos" [4 5 6] "tres" [7 8 9]])
-#t
-
-> (plist? '((a . 1) (b . 2)))
-#t    ; key1 = (a . 1), value1 = (b . 2)
-
-> (plist? '((a . 1) (b . 2) (c . 3)))
-#f    ; key2 = (c . 3), but missing value2
-
-> (plist? [])
-#t    ; edge-case, just like (list? []) => #t
-
-```
-:::
-
-### plist-&gt;alist
-``` scheme
-(plist->alist plist) -> alist | error
-
-  plist := property list to transform
-```
-
-Transforms a property list `(k1 v1 k2 v2 ...)` into an association list `((k1 . v1)
-(k2 . v2)...)`. *plist* needs to be finite, circular lists are not supported.
-Furthermore, an error is signaled when *plist* is a improper property list.
-
-::: tip Examples:
-``` scheme
-> (plist->alist [10 "cat" 11 "dog" 12 "bird"])
-((10 . "cat") (11 . "dog") (12 . "bird"))
-
-> (plist->alist ["semicolon" #\; "comma" #\, "dot"])
-error    ; key "dot" has no associated property value
-
-> (plist->alist [])
-()
-
-```
-:::
-
-### alist-&gt;plist
-``` scheme
-(alist->plist alist) -> plist | error
-
-  alist := association list to transform
-```
-
-Transforms an association list `((k1 . v1) (k2 . v2) ...)` into a property list
-`(k1 v1 k2 v2 ...)`. *alist* needs to be finite, circular lists are not supported.
-Furthermore, an error is signaled when *alist* is an improper association list.
-
-::: tip Examples:
-``` scheme
-> (alist->plist [[1 . 10] [2 . 20] [3 . 30]])
-(1 10 2 20 3 30)
-
-> (alist->plist [["fire" #\f] ["water" #\w] ["earth" #\e]])
-("fire" (#\f) "water" (#\w) "earth" (#\e))
-
-> (alist->plist '((1 2 3) (4 5 6) (7 8 9)))
-(1 (2 3) 4 (5 6) 7 (8 9))
-
-> (alist->plist '((a) (b) (c)))
-(a () b () c ())
-
-> (alist->plist [])
-()
-
-```
-:::
-
 ### length=?, length&lt;? ... length&gt;=?
 ``` scheme
 (length=?  lst1 lst2) -> boolean
@@ -2577,6 +2455,223 @@ according to the predicate.
 ```
 :::
 
+## A-List utilities
+Utilities to manipulate alists, i.e. association lists, i.e. of key-value pairs.
+
+::: tip To use the bindings from this module:
+``` scheme
+(import :std/misc/alist)
+```
+:::
+
+### alist?
+``` scheme
+(alist? alist) -> boolean
+
+  alist := association list to check
+```
+
+Checks whether *alist* is a proper association list and returns a truth value
+(`#t` or `#f`). *alist* needs to be finite, circular lists are not supported.
+
+A proper association list is a list of pairs and may be of the following forms:
+- `((key1 . value1) ...)`
+- `((key1 value1) ...)`
+
+::: tip Examples:
+``` scheme
+> (alist? '((a . 1) (b . 2) (c . 3)))
+#t
+
+> (alist? [["one" #\1] ["two" #\2] ["three" #\3]])
+#t
+
+> (alist? '((a . 1) ("two" #\2) (1 2 3 4)))
+#t    ; (1 2 3 4) is equivalent to (1 . (2 3 4))
+
+> (alist? '(a 1 b 2 c 3))
+#f    ; input is a plist, see plist? function
+
+> (alist? '())
+#t    ; edge-case, just like (list? '()) => #t
+```
+:::
+
+### plist-&gt;alist
+``` scheme
+(plist->alist plist) -> alist | error
+
+  plist := property list to transform
+```
+
+Transforms a property list `(k1 v1 k2 v2 ...)` into an association list `((k1 . v1)
+(k2 . v2)...)`. *plist* needs to be finite, circular lists are not supported.
+Furthermore, an error is signaled when *plist* is a improper property list.
+
+::: tip Examples:
+``` scheme
+> (plist->alist [10 "cat" 11 "dog" 12 "bird"])
+((10 . "cat") (11 . "dog") (12 . "bird"))
+
+> (plist->alist ["semicolon" #\; "comma" #\, "dot"])
+error    ; key "dot" has no associated property value
+
+> (plist->alist [])
+()
+
+```
+:::
+
+### assq-set!, assv-set!, assoc-set!
+``` scheme
+(asetq! alist key value)
+(assq-set! key alist value)
+
+(asetv! alist key value)
+(assv-set! key alist value)
+
+(aset! alist key value)
+(assoc-set! key alist value)
+```
+These functions kind-of complement the `assq`, `assv`, `assoc` functions from the prelude,
+and enable the destructive update of an alist (association list), i.e. a association list
+that follows the `[[key1 . value1] [key2 . value2] ... [keyN . valueN]]`,
+by either modifying in-place an entry with the given key, or adding a new entry.
+The functions all return `#!void`.
+
+Just like the alist getter functions, these functions are distinguished by which
+equality predicate is used to compare keywords: `eq?`, `eqv?` or `equal?` respectively.
+`eq?` is best for keys being symbols and keywords, `eqv?` for numbers, and `equal?` for strings
+or lists, etc.
+
+Each function comes in two variant:
+the first one accepts `(asetq! alist key value)` as the order of arguments,
+whereas the second one follows the convention so that you can use `(set! (assq key alist) value)`
+or `(set! (assv key alist) value)`.
+Note that in the last case, `assq`, `assv` and `assoc` return a pair,
+whereas the setter functions take just the value as argument.
+That's why we say these setter functions only "kind-of" complement the respective getter functions.
+
+Last but not least, destructive operations are not allowed on an empty alist.
+If you use `aset!` or its friends, you have to ensure your alists are never empty.
+For instance you may keep a dummy key at the end of your alist that never gets removed.
+If this constraint is not acceptable, you may instead storing your alist
+in a variable (or struct field), use the pure `aset` operation, and update
+the variable (or struct field) with the result of it.
+
+::: tip Examples:
+``` scheme
+(let (p [['a . 1]['b . 2]]) (asetq! p 'a 3) p)
+> [['a . 3]['b . 2]]
+
+(let (p [['a . 1]['b . 2]]) (asetq! p 'c 3) p)
+> [['c . 3]['a . 1]['b . 4]]
+```
+:::
+
+### aremq!, aremv!, arem!
+``` scheme
+(aremq! key plist)
+(aremv! key plist)
+(arem! key plist)
+```
+These functions destructively modify an alist (association-list) to remove the entry for a given key.
+Just like the alist getter and setter functions, these functions are distinguished by which
+equality predicate is used to compare keywords: `eq?`, `eqv?` or `equal?` respectively.
+See `aset!` above about alists. The functions all return `#!void`.
+
+It is not allowed to destructively remove the last entry in an alist.
+If you use `arem!` or its friends, you have to ensure your alists are never empty.
+For instance you may keep a dummy key at the end of your alist that never gets removed.
+If this constraint is not acceptable, you may instead storing your alist
+in a variable (or struct field), use the pure `arem` operation, and update
+the variable (or struct field) with the result of it.
+
+::: tip Examples:
+``` scheme
+(let (p [['a . 1]['b . 2]]) (aremq! 'a p) p)
+> [['b . 2]]
+
+(let (p [['a . 1]['b . 2]]) (arem! 'c p) p)
+> [['a . 1]['b . 2]]
+```
+:::
+
+## P-List utilities
+Utilities to manipulate plists, i.e. property lists,
+i.e. even-length lists where each even-indexed element is a key,
+and each following odd-indexed element is the associated value.
+
+::: tip To use the bindings from this module:
+``` scheme
+(import :std/misc/plist)
+```
+:::
+
+### plist?
+``` scheme
+(plist? plist) -> boolean
+
+  plist := property list to check
+```
+
+Checks whether *plist* is a proper property list and returns a truth value (`#t`
+or `#f`). *plist* needs to be finite, circular lists are not supported.
+
+A proper property list is a list of alternating keys and values of the following
+form: `((key1 value1 key2 value2 ...))`
+
+::: tip Examples:
+``` scheme
+> (plist? '(a 1 b 2 c 3 d 4))
+#t
+
+> (plist? ["uno" [1 2 3] "dos" [4 5 6] "tres" [7 8 9]])
+#t
+
+> (plist? '((a . 1) (b . 2)))
+#t    ; key1 = (a . 1), value1 = (b . 2)
+
+> (plist? '((a . 1) (b . 2) (c . 3)))
+#f    ; key2 = (c . 3), but missing value2
+
+> (plist? [])
+#t    ; edge-case, just like (list? []) => #t
+
+```
+:::
+
+### alist-&gt;plist
+``` scheme
+(alist->plist alist) -> plist | error
+
+  alist := association list to transform
+```
+
+Transforms an association list `((k1 . v1) (k2 . v2) ...)` into a property list
+`(k1 v1 k2 v2 ...)`. *alist* needs to be finite, circular lists are not supported.
+Furthermore, an error is signaled when *alist* is an improper association list.
+
+::: tip Examples:
+``` scheme
+> (alist->plist [[1 . 10] [2 . 20] [3 . 30]])
+(1 10 2 20 3 30)
+
+> (alist->plist [["fire" #\f] ["water" #\w] ["earth" #\e]])
+("fire" (#\f) "water" (#\w) "earth" (#\e))
+
+> (alist->plist '((1 2 3) (4 5 6) (7 8 9)))
+(1 (2 3) 4 (5 6) 7 (8 9))
+
+> (alist->plist '((a) (b) (c)))
+(a () b () c ())
+
+> (alist->plist [])
+()
+
+```
+:::
+
 ### psetq!, psetv!, pset!, pgetq-set!, pgetv-set!, pget-set!
 ``` scheme
 (psetq! plist key value)
@@ -2590,7 +2685,7 @@ according to the predicate.
 ```
 These functions complement the `pgetq`, `pgetv`, `pget` functions from the prelude,
 and enable the destructive update of a plist (property-list), i.e. a association list
-that follows the `[key1 value1 key2 value2 ... keyN: valueN]`,
+that follows the `[key1 value1 key2 value2 ... keyN valueN]`,
 by either modifying in-place an entry with the given key, or adding a new entry.
 The functions all return `#!void`.
 
@@ -2625,9 +2720,9 @@ the variable (or struct field) with the result of it.
 
 ### premq!, premv!, prem!
 ``` scheme
-(psetq! key plist)
-(psetv! key plist)
-(pset! key plist)
+(premq! key plist)
+(premv! key plist)
+(prem! key plist)
 ```
 These functions destructively modify a plist (property-list) to remove the entry for a given key.
 Just like the plist getter and setter functions, these functions are distinguished by which
