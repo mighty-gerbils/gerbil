@@ -4879,10 +4879,12 @@ default, if a class does not provide its own implementation, then
 > (prn p)
 (begin0 #4 "#<point #4>")    ; print-unrepresentable-object
 
+> (import :std/format)
 > (defmethod {:pr point}
     (lambda (self port options)
-      (for-each (cut display <> port)
-                ["(point " (point-x self) " " (point-y self) ")"])))
+      (fprintf port "(point ~a ~a)"
+               (point-x self) (point-y self))))
+
 > (prn p)
 (point 10 20)
 
@@ -6497,16 +6499,16 @@ Collection of mixed purpose higher-order functions.
 
 ### always
 ``` scheme
-(always val)            -> lambda
-(always proc [arg ...]) -> lambda
+(always val)            -> procedure
+(always proc [arg ...]) -> procedure
 
   val     := value that should always be returned
   proc    := procedure that should always be called
   arg ... := optional arguments that will be passed to proc
 ```
 
-Creates a lambda which returns the same *val* or calls always the
-same *proc* with the same optional *args*.
+Creates a lambda which returns the same `val` or calls always the
+same `proc` with the same optional `args`.
 
 ::: tip Examples:
 ``` scheme
@@ -6514,12 +6516,8 @@ same *proc* with the same optional *args*.
 > (list (fn) (fn) (fn)))
 (5 5 5)
 
-> (def fn (always (lambda () "hi")))
-> (fn)
-"hi"
-
-> (def fn (always random-integer 10)
-> (list (fn) (fn) (fn))
+> (def fn (always random-integer 10))
+> [(fn) (fn) (fn)]
 (4 3 8)
 ```
 :::
@@ -6535,8 +6533,8 @@ same *proc* with the same optional *args*.
   arg ... := optional arguments that will be passed to proc
 ```
 
-Repeat *val* or call *proc* with the optional *args* *n* times and return the
-result as list. *n* is expected to be an exact number.
+Repeat `val` or call `proc` with the optional `args` `n` times and return the
+result as list. `n` is expected to be an exact number.
 
 ::: tip Examples:
 ``` scheme
@@ -6601,7 +6599,6 @@ Like `compose`, but the values flow left-to-right.
 Like `compose`, but the composed function accepts multiple arguments and all functions
 can return multiple values, which are then applied as arguments to the next function in
 the sequence.
-
 
 ### rcompose/values
 ```scheme
@@ -6687,7 +6684,6 @@ overridden by the `test:` keyword.
 
 `pred-limit` returns a predicate which returns a truthy value only `limit` times,
 if `limit` is not false.
-
 
 ::: tip Examples:
 ``` scheme
@@ -6846,8 +6842,9 @@ and is the identity function when given a single argument.
 (xmin/list <l>) -> real
 ```
 
-`xmin/list` returns the lower bound of the list of extended real arguments passed as its arguments.
-In particular, it returns `+inf.0` (the positive infinity) if provided an empty list.
+`xmin/list` returns the lower bound of the list of extended real arguments
+passed as its arguments. In particular, it returns `+inf.0` (the positive
+infinity) if provided an empty list.
 
 ### xmin!
 ``` scheme

@@ -86,13 +86,14 @@ method-spec:
 ```
 
 Defines local procedures for methods of an object (class).
-This is very useful to avoid method dispatch _and_ implicit allocation from method application
-if the methods of an object (class) are used multiple times within the lexical scope.
+This is very useful to avoid method dispatch _and_ implicit allocation from
+method application if the methods of an object (class) are used multiple times
+within the lexical scope.
 
-The difference from `using` is that methods are not _bound_ to an object, and you thus have
-to pass the receiver as first argument to the method.
-The advantage over `using` is that there is no implicit allocation for collecting arguments to
-apply the bound closure of the method.
+The difference from `using` is that methods are not _bound_ to an object, and
+you thus have to pass the receiver as first argument to the method.
+The advantage over `using` is that there is no implicit allocation for
+collecting arguments to apply the bound closure of the method.
 
 ## while
 ```scheme
@@ -156,7 +157,8 @@ are resolved with the following rules:
 (awhen (id test) body ...)
 ```
 
-Anaphoric `when`. Evaluates and binds *test* to *id*. Evaluates *body ...* if *test* is not `#f`.
+Anaphoric `when`. Evaluates and binds *test* to *id*. Evaluates *body ...* if
+*test* is not `#f`.
 
 ## chain
 ``` scheme
@@ -184,24 +186,21 @@ chain will return a unary lambda.
 ::: tip Examples:
 ``` scheme
 > (chain "stressed"
-         (string->list <>)
-         (reverse <>)
-         (list->string <>)
-         (string-append "then have some " <>))
+    (string->list <>)
+    (reverse <>)
+    (list->string <>)
+    (string-append "then have some " <>))
 "then have some desserts"
 
-
-(chain (random-integer 10)
-       (num (if (> num 5) num 0)))
+> (chain (random-integer 10)
+    (n (if (> n 5) n 0)))
 7
-
 
 > (def foobar
     (chain <>
       ([_ . rest] (map number->string rest))
       (string-join <> ", ")
       (string-append <> " :)")))
-
 
 > (foobar [0 1 2])
 "1, 2 :)"
@@ -235,7 +234,7 @@ if passed to the macro as value and not as variable. Alternatively, the
 > (find (is cdr 5) alist)
 (b . 5)
 
-> (filter (is file-type 'regular) (directory-files))
+> (filter (is file-type 'directory) (directory-files))
 ("Documents" "Pictures" "Videos" "Music")
 ```
 :::

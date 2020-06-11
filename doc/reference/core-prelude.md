@@ -12,18 +12,18 @@ per se, but they are documented here for completeness.
 
 ### Top Forms
 #### begin
-```
+``` scheme
 (begin form ....)
 ```
 
 #### begin-syntax
-```
+``` scheme
 (begin-syntax form ...)
 ```
 Like begin, but at syntax phase `phi +1`.
 
 #### begin-annotation
-```
+``` scheme
 (begin-annotation annotation form ...)
 ```
 
@@ -31,7 +31,7 @@ Effect the declarations in `annotation` in the scope of the body.
 Not implemented yet.
 
 #### import
-```
+``` scheme
 (import import-spec ...)
 
 <import-spec>:
@@ -59,7 +59,7 @@ Not implemented yet.
 Imports bindings to the current syntactic context. Must appear at top or module context.
 
 #### module
-```
+``` scheme
 (module id module-body ...)
 ```
 
@@ -67,7 +67,7 @@ Creates a module and binds it to `id`. The module may be defined at top context 
 a top module or as a nested module inside another module.
 
 #### export
-```
+``` scheme
 (export export-spec ...)
 
 <export-spec>:
@@ -84,21 +84,21 @@ a top module or as a nested module inside another module.
 Exports bindings from the current module.
 
 #### declare
-```
+``` scheme
 (declare declaration ...)
 ```
 
 Make declarations that the compiler finds useful
 
 #### include
-```
+``` scheme
 (include path)
 ```
 
 Include the contents of path, wrapped with a `begin`.
 
 #### cond-expand
-```
+``` scheme
 (cond-expand
  (feature body ...) ...
  [(else body ...)])
@@ -113,31 +113,31 @@ Include the contents of path, wrapped with a `begin`.
 Conditionally expands the body for the first satisfied feature. Must appear at top scope.
 
 #### provide
-```
+``` scheme
 (provide id ...)
 ```
 
 Binds `id ...` as features provided by a module.
 
 #### define-values
-```
+``` scheme
 (define-values (id ...) expr)
 ```
 
 #### define-syntax
-```
+``` scheme
 (define-syntax id expr)
 ```
 
 #### define-alias
-```
+``` scheme
 (define-alias id alias-id)
 ```
 
 Defines a syntactic alias for `id` to be the same as `alias-id`
 
 #### extern
-```
+``` scheme
 (extern id ...)
 (extern namespace: [namespace-id | #f] id ...)
 ```
@@ -147,43 +147,43 @@ external mechanism (eg builtin or defined at a foreign library).
 
 ### Expressions
 #### lambda%
-```
+``` scheme
 (lambda% lambda-formals body ...)
 ```
 
 Plain old Scheme `lambda`, without optional and keyword argument support
 
 #### case-lambda
-```
+``` scheme
 (case-lambda (lambda-formals body ...) ...)
 ```
 
 #### let-values letrec-values letrec*-values
-```
+``` scheme
 (let-values (((id ...) expr) ...) body ...)
 (letrec-values (((id ...) expr) ...) body ...)
 (letrec*-values (((id ...) expr) ...) body ...)
 ```
 
 #### let-syntax letrec-syntax
-```
+``` scheme
 (let-syntax ((id syntax-expr) ...) body ...)
 (letrec-syntax ((id syntax-expr) ...) body ...)
 ```
 
 #### if
-```
+``` scheme
 (if test-expr then-expr else-expr)
 (if test-expr then-expr)
 ```
 
 #### quote
-```
+``` scheme
 (quote datum)
 ```
 
 #### quote-syntax
-```
+``` scheme
 (quote-syntax id)
 ```
 
@@ -212,7 +212,7 @@ to facilitate expansion.
 ### Definition Forms
 
 #### define
-```
+``` scheme
 (define (id . args) body ...)
 => (define-values (id)
      (lambda% args body ...))
@@ -222,7 +222,7 @@ to facilitate expansion.
 ```
 
 #### def
-```
+``` scheme
 (def (id . args) body ...)
 => (define-values (id)
      (lambda args body ...))
@@ -239,7 +239,7 @@ Compared with `define`, which defines lambdas with the core Scheme `lambda%` for
 `def` uses the extended `lambda` form, and supports curried definitions.
 
 #### def*
-```
+``` scheme
 (def* id
   (args body ....) ...)
 =>
@@ -247,14 +247,29 @@ Compared with `define`, which defines lambdas with the core Scheme `lambda%` for
   (case-lambda (args body ...) ...))
 ```
 
-#### defvalues
+::: tip Examples:
+``` scheme
+> (def* foo
+    (()   ['no-arg])
+    ((x)  ['one-arg x])
+    (rest ['more-than-one rest]))
+
+> (foo 1)
+(one-arg 1)
+
+> (foo 1 2)
+(more-than-one (1 2))
 ```
+:::
+
+#### defvalues
+``` scheme
 (defvalues (id ...) expr)
 => (define-values (id ...) expr)
 ```
 
 #### defsyntax
-```
+``` scheme
 (defsyntax (id . args) body ...)
 => (define-syntax id (lambda args body ...))
 
@@ -263,7 +278,7 @@ Compared with `define`, which defines lambdas with the core Scheme `lambda%` for
 ```
 
 #### defrules
-```
+``` scheme
 (defrules id (keyword-id ...)
   (pat [fender] body) ...)
 => (defsyntax id
@@ -272,7 +287,7 @@ Compared with `define`, which defines lambdas with the core Scheme `lambda%` for
 ```
 
 #### defalias
-```
+``` scheme
 (defalias id alias-id)
 => (define-alias id alias-id)
 ```
@@ -280,7 +295,7 @@ Compared with `define`, which defines lambdas with the core Scheme `lambda%` for
 ### Binding Forms
 
 #### let*-values
-```
+``` scheme
 (let*-values (((id ...) expr) rest ...) body ...)
 => (let-values (((id) expr))
      (let*-values rest body ...))
@@ -290,8 +305,7 @@ Compared with `define`, which defines lambdas with the core Scheme `lambda%` for
 ```
 
 #### let
-
-```
+``` scheme
 (let id ((var expr) ...) body ...)
 => ((letrec (id (lambda% (var ...) body ...))) expr ...)
 
@@ -310,7 +324,7 @@ Compared with `define`, which defines lambdas with the core Scheme `lambda%` for
 ```
 
 #### let*
-```
+``` scheme
 (let* (bind rest ...) body ...)
 => (let bind (let* (rest ...) body ...))
 
@@ -321,7 +335,7 @@ Compared with `define`, which defines lambdas with the core Scheme `lambda%` for
 
 #### letrec letrec*
 
-```
+``` scheme
 (letrec[*] bind body ...)
 => (letrec[*]-values (bind-values) body ...)
 
@@ -330,7 +344,7 @@ Compared with `define`, which defines lambdas with the core Scheme `lambda%` for
 ```
 
 #### lambda
-```
+``` scheme
 (lambda (arg ...) body ...)
 (lambda (arg ... . id) body)
 
@@ -343,7 +357,7 @@ Compared with `define`, which defines lambdas with the core Scheme `lambda%` for
 The extended lambda form that supports optional and keyword arguments.
 
 #### set!
-```
+``` scheme
 (set! id expr)
 
 (set! setq-macro-id expr)
@@ -363,13 +377,13 @@ As they say, _mostly functional_.
 ### Common Syntactic Sugar
 
 #### and or
-```
+``` scheme
 (and expr ...)
 (or expr ...)
 ```
 
 #### case cond
-```
+``` scheme
 (cond cond-clause ...)
 (case case-clause ...)
 ```
@@ -379,7 +393,7 @@ dispatch.
 
 
 #### when unless
-```
+``` scheme
 (when test expr ...)
 => (if test (begin expr ...) #!void)
 
@@ -388,7 +402,7 @@ dispatch.
 ```
 
 #### do do-while
-```
+``` scheme
 (do ((var init step ...) ...)
     (test fini ...)
   body ...)
@@ -400,13 +414,13 @@ dispatch.
 The common iteration macro and its inverted form.
 
 #### begin0
-```
+``` scheme
 (begin0 expr rest ...)
 => (let (val expr) rest ... val)
 ```
 
 #### rec
-```
+``` scheme
 (rec id expr)
 => (letrec ((id expr)) id)
 
@@ -420,7 +434,7 @@ The common iteration macro and its inverted form.
 Short recursive definition form.
 
 #### alet alet* and-let*
-```
+``` scheme
 (alet bind body ...)
 (alet (bind ...) body ...)
 (alet* bind body ...)
@@ -430,8 +444,22 @@ Short recursive definition form.
 ```
 Anaphoric lets which short circuit to `#f` if any of the bindings is `#f`.
 
-#### @list
+::: tip Examples:
+``` scheme
+> (alet ((a [1 2])
+         (b #f))
+    [a b])
+#f
+
+> (alet ((a [1 2])
+         (b #t))
+    [a b])
+((1 2) #t)
 ```
+:::
+
+#### @list
+``` scheme
 (@list)
 => '()
 
@@ -454,32 +482,55 @@ Anaphoric lets which short circuit to `#f` if any of the bindings is `#f`.
 This is the reader macro for `[...]`.
 
 #### quasiquote
-```
+``` scheme
 (quasiquote expr)
 ```
 
 #### delay
-```
+``` scheme
 (delay expr)
 ```
 
 The promise to eval `expr`.
 
 #### cut
-```
+``` scheme
 (cut arg ...)
 ```
 
 if you don't know how this works, stop and read the [SRFI](https://srfi.schemers.org/srfi-26/srfi-26.html).
 Most useful little macro ever.
 
-#### parameterize
+::: tip Examples:
+``` scheme
+> (filter (cut < <> 10) [1 10 2 20])
+(1 2)
+
+> (def fn (cut list 'a 'b))
+> (fn)
+(a b)
 ```
+:::
+
+#### parameterize
+``` scheme
 (parameterize ((paremter-id expr) ...) body ...)
 ```
 
-#### let/cc let/esc
+::: tip Examples:
+``` scheme
+> (def foo (make-parameter #f))
+> (foo)
+#f
+
+> (parameterize ((foo 100))
+    (foo))
+100
 ```
+:::
+
+#### let/cc let/esc
+``` scheme
 (let/cc id body ...)
 => (call/cc (lambda (id) body ...))
 
@@ -490,12 +541,12 @@ Most useful little macro ever.
 `call/esc` is really the same thing as `call/cc` in Gerbil on Gambit.
 
 #### unwind-protect
-```
+``` scheme
 (unwind-protect body postlude)
 ```
 
 #### syntax-error
-```
+``` scheme
 (syntax-error message detail ...)
 ```
 
@@ -504,7 +555,7 @@ Raises a syntax error; used for meaningful error reporting in syntax-rules macro
 ### MOP Macros
 
 #### defstruct-type defclass-type
-```
+``` scheme
 (defstruct-type id super make instance? type-body ...)
 
 (defclass-type id super make instance? type-body ...)
@@ -521,7 +572,7 @@ Raises a syntax error; used for meaningful error reporting in syntax-rules macro
 Low level struct and class type definition facilities.
 
 #### defstruct define-struct
-```
+``` scheme
 (defstruct id (field ...) typedef-option ...)
 (defstruct (id super) (field ...) typedef-option ...)
 
@@ -551,7 +602,7 @@ Low level struct and class type definition facilities.
 Canonical struct type definition macro.
 
 #### defclass define-class
-```
+``` scheme
 (defclass id (slot ...) typedef-option ...)
 (defclass (id super ...) (slot ...) typedef-option ...)
 
@@ -575,7 +626,7 @@ Canonical struct type definition macro.
 Canonical class type definition macro.
 
 #### defmethod
-```
+``` scheme
 (defmethod {method-id type}
   expr
   [rebind: bool])
@@ -589,14 +640,14 @@ a class or struct type.
 The `:std/generic` library extends the form for generic method
 
 #### @method
-```
+``` scheme
 (@method id obj arg ...)
 => (call-method obj 'id arg ...)
 ```
 This is the reader macro for `{...}`, the method invocation operator.
 
 #### @
-```
+``` scheme
 (@ obj id)
 => (slot-ref obj 'id)
 
@@ -607,7 +658,7 @@ This is the reader macro for `{...}`, the method invocation operator.
 Slot reference macro.
 
 #### @-set!
-```
+``` scheme
 (set! (@ obj id ...) val)
 => (@-set! obj id ... val)
 
@@ -621,8 +672,9 @@ Slot reference macro.
 Slot mutation macro.
 
 ### Pattern Matching
+
 #### match
-```
+``` scheme
 (match expr
   (pattern body ...) ...
   [(else body ...)])
@@ -667,16 +719,65 @@ Slot mutation macro.
 The fundamental destructuring pattern match macro; you've seen many and this one is
 very much like them.
 
-#### match*
+::: tip Examples:
+``` scheme
+
+> (def lst [1 2 3])
+> (match lst
+    ([0 1 c] "starts with 0 1")
+    ([a _ c] (list c a))
+    (_       #f))
+(3 1)
+
+> (let loop ((rest [1 2]))
+    (match rest
+      ([v . rest] (displayln v) (loop rest))
+      ([]         (displayln 'end))))
+1
+2
+end
+
+> (def foo (match <>
+             ((? (and number? inexact?)) 'inexact)
+             ((? number?)                'number)
+             ((and (? string?) (not "")) 'string)
+             (_                          'other)))
+
+> (foo 10)
+number
+
+> (foo 2.0)
+inexact
+
+> (foo "")
+other
+
+> (foo "bar")
+string
 ```
+:::
+
+#### match*
+``` scheme
 (match* (expr ...)
  ((pattern ...) body) ...)
 ```
 
 Matches multiple objects in sequence.
 
-#### with with*
+::: tip Examples:
+``` scheme
+> (match* (#t [1 2])
+    ((#f [a 0]) 'a)
+    ((#t [a])   'b)
+    ((#t [_ b]) 'c)
+    (else       'd))
+c
 ```
+:::
+
+#### with with*
+``` scheme
 (with (pattern expr) body ...)
 => (match expr (pattern body ...))
 
@@ -695,8 +796,16 @@ Matches multiple objects in sequence.
 
 Short-form destructuring bind macros.
 
-#### ?
+::: tip Examples:
+``` scheme
+> (with ([a b . c] (iota 4))
+    (list a b c))
+(0 1 (2 3))
 ```
+:::
+
+#### ?
+``` scheme
 (? (and pred ...) obj)
 => (and (? pred obj) ...)
 
@@ -730,8 +839,18 @@ Short-form destructuring bind macros.
 
 The predicate constructor macro.
 
-#### defsyntax-for-match
+::: tip Examples:
+``` scheme
+> (? (and number? fixnum?) 1000)
+#t
+
+> (? (and number? fixnum?))
+#<procedure #1>
 ```
+:::
+
+#### defsyntax-for-match
+``` scheme
 (defsyntax-for-match id match-macro-expr [macro-expr])
 ```
 Defines a match macro expander with name `id`, with optionally a regular expander for the
@@ -743,7 +862,7 @@ The following macros are only available for syntax (phi = 1).
 
 #### syntax-case syntax syntax/loc
 
-```
+``` scheme
 (syntax-case stx (keyword-id ...)
   (pat [fender] body) ...)
 
@@ -758,7 +877,7 @@ of Syntactic Abstraction" by Waddell and Dybvig and popularized by Racket.
 `syntax/loc` is like syntax, only it assigns the source location to that of `src-stx`
 
 #### syntax-rules
-```
+``` scheme
 (syntax-rules (keyword-id ...)
  (pat [fender] expr) ...)
 ```
@@ -767,7 +886,7 @@ The familiar `syntax-rules` macro from R5RS, extended with pattern fenders like 
 and meaningful underscores.
 
 #### with-syntax with-syntax*
-```
+``` scheme
 (with-syntax ((pat expr) ...) body)
 (with-syntax* ((bind expr) ...) body)
 
@@ -781,7 +900,7 @@ Its sequence form `with-syntax*` is like a sequence of `with-syntax`, with the G
 allowance for value bindings with `let*` semantics.
 
 #### identifier-rules
-```
+``` scheme
 (identifier-rules (keyword-id)
  (pat [fender] expr) ...)
 ```
@@ -791,14 +910,14 @@ Variant of `syntax-rules` that constructs a setq macro and not a plain macro exp
 ### Module Sugar
 
 #### require
-```
+``` scheme
 (require feature ...)
 ```
 
 Fails with a syntax error if the `cond-expand` features `feature ...` are not satisfied.
 
 #### defsyntax-for-import defsyntax-for-export defsyntax-for-import-export
-```
+``` scheme
 (defsyntax-for-import id expr)
 
 (defsyntax-for-import (id . args) body ...)
@@ -819,7 +938,7 @@ Fails with a syntax error if the `cond-expand` features `feature ...` are not sa
 Define import and export macro expanders.
 
 #### for-syntax for-template
-```
+``` scheme
 (import (for-syntax import-spec ...))
 (export (for-syntax export-spec ...))
 
@@ -833,14 +952,14 @@ the phi: directive.
 
 
 #### only-in
-```
+``` scheme
 (import (only-in import-spec id ...))
 ```
 
 Import expander; only import identifiers `id ...` from a set.
 
 #### except-in except-out
-```
+``` scheme
 (import (except-in import-spec id ...))
 
 (export (except-out export-spec id ...))
@@ -849,7 +968,7 @@ Import expander; only import identifiers `id ...` from a set.
 Import and export expander; filter identifiers `id ...` from a set.
 
 #### rename-in rename-out
-```
+``` scheme
 (import (rename-in import-spec (id new-id) ...))
 
 (export (rename-out export-spec (id new-id) ...))
@@ -858,7 +977,7 @@ Import and export expander; filter identifiers `id ...` from a set.
 Import and export expander; rename specific identifiers in a set.
 
 #### prefix-in prefix-out
-```
+``` scheme
 (import (prefix-in import-spec prefix-id))
 
 (export (prefix-out export-spec prefix-id))
@@ -867,14 +986,14 @@ Import and export expander; rename specific identifiers in a set.
 Import and export expander; rename a set by applying a prefix.
 
 #### struct-out
-```
+``` scheme
 (export (struct-out struct-id ...))
 ```
 
 Export expander; export all identifiers related with structs `struct-id ...`
 
 #### group-in
-```
+``` scheme
 (import (group-in prefix mod ...))
 mod := id
     |  (id mod ...)
@@ -897,7 +1016,7 @@ Examples:
 ### Special Evaluation Forms
 
 #### eval-when-compile
-```
+``` scheme
 (eval-when-compile expr)
 ```
 
@@ -1252,7 +1371,7 @@ its submodules in the `gerbil/gambit` package.
 
 So in order to have the full Gerbil on Gambit symbols available, in addition to
 the core prelude, you need to import the extended symbols with
-```
+``` scheme
 (import :gerbil/gambit)
 ```
 

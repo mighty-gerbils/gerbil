@@ -1,70 +1,91 @@
 # Generic Accessors and Mutators
-The `:std/ref` library provides generic accessors and mutators interface and can be used to access/mutate existing types as well as ones defined by user.
+The `:std/ref` library provides generic accessors and mutators interface and
+can be used to access/mutate existing types as well as ones defined by user.
 
-::: tip usage
+::: tip To use the bindings from this module:
+``` scheme
 (import :std/ref)
+```
 :::
 
 ## ref
-::: tip usage
+``` scheme
+(ref obj n)           -> any
+(ref obj n1 n2 ... n) -> any
 ```
-(ref obj n)
-(ref obj n1 n2 ... n)
+
+Returns element in the position `n` from `obj`.
+If `obj` is hash-table, returns the value associated with key `n`.
+If multiple args provided, `(ref obj n1 n2 ... n)` expands to
+`(ref ... (ref (ref obj n1) n2) ... n)`.
+
+::: tip Examples:
+``` scheme
+> (def lst [[10 20 30]
+           #(40 50 60)])
+> (ref lst 1 0)
+40
+
+> (import :std/sugar)
+> (def lst [(hash (a 10) (b 20))])
+> (ref lst 0 'b)
+20
 ```
 :::
-Returns element in the position n from obj.
-If obj is hash-table, returns the value associated with key n.
-If multiple args provided, `(ref obj n1 n2 ... n)` expands to `(ref ... (ref (ref obj n1) n2) ... n)`.
+
+## ~
+``` scheme
+(~ obj n)           -> any
+(~ obj n1 n2 ... n) -> any
+```
+
+Alias for `ref`.
 
 ## ref-set!
-::: tip usage
+``` scheme
+(ref-set! obj n val)           -> void
+(ref-set! obj n1 n2 ... n val) -> void
+(set! (ref obj n ...) val)     -> void
 ```
-(ref-set! obj n val)
-(ref-set! obj n1 n2 ... n val)
-(set! (ref obj n ...) val)
-```
-:::
-Puts element val at the position n in obj.
+
+Puts element `val` at the position n in obj.
 If obj is hash, associates val with key n.
 If multiple args provided, `(ref-set! obj n1 n2 ... nk val)` expands to
 `(ref-set! (ref ... (ref obj n1) n2) ... nk-1) nk val)`.
 
 Also, ref-set! can be used with set! mutator as well.
 
-## ~
-::: tip usage
-```
-(~ obj n)
-(~ obj n1 n2 ... n)
+::: tip Examples:
+``` scheme
+> (def lst [[10 20 30]
+           #(40 50 60)])
+> (ref-set! lst 1 0 "hi")
+> lst
+((10 20 30) #("hi" 50 60))
 ```
 :::
-Same as `ref`.
 
 ## ~-set!
-::: tip usage
+``` scheme
+(~-set! obj n val)           -> void
+(~-set! obj n1 n2 ... n val) -> void
+(set! (~ obj n ...) val)     -> void
 ```
-(~-set! obj n val)
-(~-set! obj n1 n2 ... n val)
-(set! (~ obj n ...) val)
-```
-:::
-Same as `ref-set!`.
+
+Alias for `ref-set!`.
 
 ## :ref
-::: tip usage
-```
+``` scheme
 (defmethod (:ref (obj <type>) (n <type>))
   (body ...))
 ```
-:::
-Generic ref interface, can be used to add work with user-defined types.
+
+Generic `ref` interface, can be used to add work with user-defined types.
 
 ## :set!
-::: tip usage
-```
+``` scheme
 (defmethod (:set! (obj <type>) (n <type>) (val <type>))
   (body ...))
 ```
-:::
-Generic ref-set! interface, can be used to add work with user-defined types.
 
+Generic `ref-set!` interface, can be used to add work with user-defined types.
