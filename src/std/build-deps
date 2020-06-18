@@ -694,6 +694,14 @@
    std/text/base64
    std/text/utf8))
  (std/misc/pqueue "misc/pqueue" (gerbil/core))
+ (std/misc/concurrent-plan
+  "misc/concurrent-plan"
+  (gerbil/core
+   gerbil/gambit/exceptions
+   gerbil/gambit/threads
+   std/error
+   std/misc/pqueue
+   std/sugar))
  (std/misc/deque "misc/deque" (gerbil/core))
  (std/misc/rbtree "misc/rbtree" (gerbil/core std/generic std/iter))
  (std/srfi/146
@@ -709,7 +717,11 @@
  (std/misc/lru "misc/lru" (gerbil/core std/generic std/iter std/misc/list))
  (std/misc/string
   "misc/string"
-  (gerbil/core gerbil/gambit/ports gerbil/gambit/random std/srfi/13))
+  (gerbil/core
+   gerbil/gambit/ports
+   gerbil/gambit/random
+   std/format
+   std/srfi/13))
  (std/text/csv
   "text/csv"
   (gerbil/core
@@ -741,15 +753,6 @@
   (gerbil/core
    gerbil/gambit/ports
    std/misc/list-builder
-   std/srfi/13
-   std/sugar))
- (std/misc/concurrent-plan
-  "misc/concurrent-plan"
-  (gerbil/core
-   gerbil/gambit/ports
-   gerbil/gambit/threads
-   std/misc/ports
-   std/misc/pqueue
    std/srfi/13
    std/sugar))
  (std/misc/threads
