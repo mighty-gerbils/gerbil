@@ -1,11 +1,10 @@
 (export #t)
 
-(import
-  :gerbil/gambit/ports :gerbil/gambit/threads
-  ../srfi/13 ../sugar
-  ./ports ./pqueue
-  ;;(for-syntax ../stxutil) ../stxutil
-  )
+(import :gerbil/gambit/threads
+        :gerbil/gambit/exceptions
+        ../sugar
+        ../error
+        ./pqueue)
 
 ;; This parameter is purely for checking whether indeed concurrency was used.
 ;; A more useful statistics would measure the total CPU time burned,
@@ -70,7 +69,7 @@
       => (match <>
            ([worker item] ;; Some background process reports termination
             (set! workers (- workers 1))
-            (postprocess item (thread-join! worker))
+            (postprocess item (worker-join! worker))
             (loop))
            (m (error "unexpected message" m))))
      (;; Can run stuff in the background? Keep those CPUs busy!
@@ -102,3 +101,17 @@
      (else ;; Nothing to do or wait for anymore? done!
       (assert! (and no-fg-item? no-bg-item? no-workers?))
       (void)))))
+
+(def (worker-join! thread)
+  (try
+   (thread-join! thread)
+   (catch (uncaught-exception? exn)
+     (raise (worker-error exn)))))
+
+(defstruct (worker-error exception) (e))
+
+(defmethod {display-exception worker-error}
+  (lambda (self port)
+    (let (e (worker-error-e self))
+      (display "Uncaught exception: " port)
+      (display-exception (uncaught-exception-reason e) port))))
