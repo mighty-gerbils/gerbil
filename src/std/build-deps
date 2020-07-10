@@ -730,6 +730,8 @@
    std/misc/string
    std/srfi/1
    std/srfi/13
+   std/stxparam
+   std/stxutil
    std/sugar))
  (std/misc/sync "misc/sync" (gerbil/core gerbil/gambit/threads))
  (std/net/httpd/mux "net/httpd/mux" (gerbil/core std/misc/sync))
