@@ -69,21 +69,6 @@
       (check-equal? (length<n? '(1 2 3) 6.022e23) #t)
       (check-exception (length<n? '(1 2 3) 2+3i) (error-with-message? "not a real number"))
       (check-exception (length<n? '(1 2 3) 'foo) (error-with-message? "not a real number")))
-    (test-case "test with-list-builder"
-      (check-equal?
-       (with-list-builder (put!)
-         (put! 1) (put! 2) (put! 3))
-       '(1 2 3))
-      (check-equal?
-       (call-with-list-builder (lambda (put! _) (put! 1) (put! 2) (put! 3)))
-       '(1 2 3))
-      (check-equal?
-       (with-list-builder (put! get-list-so-far)
-         (put! 1)
-         (put! 2)
-         (put! (copy-list (get-list-so-far)))
-         (put! 3))
-       '(1 2 (1 2) 3)))
     (test-case "test snoc"
       (check-equal? (snoc 3 []) [3])
       (check-equal? (snoc 1 [3 2]) [3 2 1]))
@@ -177,29 +162,6 @@
       (check-equal? (every-consecutive? (lambda (x y) (not (= x y))) [1 2 3 4 5]) #t)
       (check-equal? (every-consecutive? error [1]) #t)
       (check-equal? (every-consecutive? error []) #t))
-    (test-case "test pset!"
-      (check-equal? (let (p ['a 1 'b 2]) (psetq! p 'a 3) p) ['a 3 'b 2])
-      (check-equal? (let (p ['a 1 'b 2]) (psetq! p 'b 4) p) ['a 1 'b 4])
-      (check-equal? (let (p ['a 1 'b 2]) (psetq! p 'c 3) p) ['c 3 'a 1 'b 2])
-      (check-equal? (let (p ['a 1 'b 2]) (pgetq-set! 'a p 3) p) ['a 3 'b 2])
-      (check-equal? (let (p ['a 1 'b 2]) (pgetq-set! 'b p 4) p) ['a 1 'b 4])
-      (check-equal? (let (p ['a 1 'b 2]) (pgetq-set! 'c p 3) p) ['c 3 'a 1 'b 2]))
-    (test-case "test prem!"
-      (check-equal? (let (p ['a 1 'b 2]) (premq! 'a p) p) ['b 2])
-      (check-equal? (let (p ['a 1 'b 2]) (premq! 'b p) p) ['a 1])
-      (check-equal? (let (p ['a 1 'b 2]) (premq! 'c p) p) ['a 1 'b 2])
-      (check-equal? (let (p []) (premq! 'a p) p) [])
-      (check-exception (premq! 'a ['a 1]) (error-with-message? "Cannot remove last key from plist")))
-    (test-case "test pset"
-      (check-equal? (psetq ['a 1 'b 2] 'a 3) ['a 3 'b 2])
-      (check-equal? (psetq ['a 1 'b 2] 'b 4) ['a 1 'b 4])
-      (check-equal? (psetq ['a 1 'b 2] 'c 5) ['c 5 'a 1 'b 2]))
-    (test-case "test prem"
-      (check-equal? (premq 'a ['a 1 'b 2]) ['b 2])
-      (check-equal? (premq 'b ['a 1 'b 2]) ['a 1])
-      (check-equal? (premq 'c ['a 1 'b 2]) ['a 1 'b 2])
-      (check-equal? (premq 'a []) [])
-      (check-equal? (premq 'a ['a 1]) []))
     (test-case "test separate-keyword-arguments"
       (check-equal? (values->list (separate-keyword-arguments
                                    '(x a: 1 y b: 2 c: 3 z)))

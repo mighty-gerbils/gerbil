@@ -246,6 +246,8 @@
     "misc/timeout"
     "misc/list-builder"
     "misc/list"
+    "misc/alist"
+    "misc/plist"
     "misc/rtd"
     "misc/shuffle"
     "misc/uuid"
