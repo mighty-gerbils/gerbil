@@ -31,6 +31,17 @@ die() {
   exit 1
 }
 
+## sanity check
+sanity_check () {
+  GSIV="$(gsi -v)"
+  ## TODO: Get a buy-in from Marc Feeley on what good pattern would be there. Maybe a regexp via sed?
+  #case "$GSIV" in v[4-9].[0-9].[0-9]*" "20[2-9][0-9][0-1][0-9][0-3][0-9][0-2][0-9][0-5][0-9][0-9][0-9]" "*" \""*"\"") : ok ;;
+  #  *) echo >&2 "Is Gambit installed on your machine and in your PATH? Unrecognized version from gsi -v: $GSIV" ; return 1 ;;
+  #esac
+  GSCV="$(${GERBIL_GSC:-gsc} -v)"
+  [ "$GSIV" = "$GSCV" ] || { echo >&2 "gsi -v and ${GERBIL_GSC:-gsc} -v fail to report matching versions. Please define a proper GERBIL_GSC. Would gsc be called gambitc or gsc-script on your system not to clash with GhostScript?" ; return 1; }
+}
+
 ## bootstrap
 target_setup () {
   local target="${1}"
@@ -210,6 +221,7 @@ build_doc () {
 ## main
 build_gerbil() {
   feedback_low "Building Gerbil"
+  sanity_check     || die
   compile_gxi      || die
   stage0           || die
   stage1 final     || die
@@ -225,6 +237,9 @@ if [ "$#" -eq 0 ]; then
   build_gerbil
 else
   case "$1" in
+       "sanity-check")
+         sanity_check || die
+         ;;
        "gxi")
          compile_gxi || die
          ;;
