@@ -157,8 +157,7 @@
 
 (def (run-tests! suite . more)
   (test-begin!)
-  (run-test-suite! suite)
-  (for-each run-test-suite! more))
+  (foldl (lambda (s r) (and (run-test-suite! s) r)) #t [suite . more]))
 
 (def (test-report-summary!)
   (let (tests (reverse *tests*))
@@ -219,8 +218,8 @@
 (def (test-suite-end! suite)
   (if (find (? (or !test-case-fail !test-case-error))
             (!test-suite-tests suite))
-    (eprintf "*** Test FAILED~n")
-    (eprintf "... All tests OK~n")))
+    (begin (eprintf "*** Test FAILED~n") #f)
+    (begin (eprintf "... All tests OK~n") #t)))
 
 (def (test-suite-add-test! suite tc)
   (set! (!test-suite-tests suite)
