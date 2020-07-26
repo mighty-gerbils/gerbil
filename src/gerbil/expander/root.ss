@@ -76,7 +76,7 @@ namespace: gx
                         ,core-compile-top-import%)
     (%#module           top:     ,core-expand-module%
                         ,core-compile-top-module%)
-    (%#export           module:  ,core-expand-export%
+    (%#export           top:  ,core-expand-export%
                         ,core-compile-top-export%)
     (%#provide          module:  ,core-expand-provide%
                         ,core-compile-top-provide%)

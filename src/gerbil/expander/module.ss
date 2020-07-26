@@ -1017,15 +1017,23 @@ namespace: gx
     (or (module-export? e)
         (export-set? e)))
 
-  (let (rbody (core-expand-import/export stx expanded-export?
-                                         'apply-export-expander
-                                         current-export-expander-phi
-                                         expand1))
-    (if internal-expand?
-      (reverse rbody)
-      (core-quote-syntax
-       (core-cons '%#export (export! rbody))
-       (stx-source stx)))))
+  (cond
+   ((or (module-context? (current-expander-context)) internal-expand?)
+    (let (rbody (core-expand-import/export stx expanded-export?
+                                           'apply-export-expander
+                                           current-export-expander-phi
+                                           expand1))
+      (if internal-expand?
+        (reverse rbody)
+        (core-quote-syntax
+         (core-cons '%#export (export! rbody))
+         (stx-source stx)))))
+   ((top-context? (current-expander-context))
+    (core-quote-syntax
+     (core-cons '%#begin [])
+     (stx-source stx)))
+   (else
+    (raise-syntax-error #f "Illegal context" stx))))
 
 (def (core-expand-export-source hd)
   (core-expand-export% ['export-macro% hd] #t))
