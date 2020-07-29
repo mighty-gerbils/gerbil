@@ -246,8 +246,7 @@
             headers)
   (newline port)
   (when body
-    (write-subu8vector body 0 (u8vector-length body) port)
-    (newline port))
+    (write-subu8vector body 0 (u8vector-length body) port))
   (force-output port))
 
 (def status-line-rx
