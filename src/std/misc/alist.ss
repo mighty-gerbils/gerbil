@@ -5,6 +5,7 @@
 (export
   alist?
   plist->alist
+  acons
   asetq asetv aset asetq! asetv! aset! assq-set! assv-set! assoc-set!
   aremq aremv arem aremq! aremv! arem!)
 
@@ -40,6 +41,8 @@
             (lp rest [[k . v] . rhd])))
          (else
           [[key . val] . lst])))))
+
+(def (acons k v acc) [[k . v] . acc])
 
 (define-aset asetq eq?)
 (define-aset asetv eqv?)

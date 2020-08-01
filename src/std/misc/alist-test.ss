@@ -35,4 +35,8 @@
       (check-equal? (aremq 'c [['a . 1]['b . 2]]) [['a . 1]['b . 2]])
       (check-equal? (aremq 'a []) [])
       (check-equal? (aremq 'a [['a . 1]]) []))
+    (test-case "test acons"
+      (check-equal? (acons 'a 1 [['b . 2]]) [['a . 1]['b . 2]])
+      (check-equal? (acons [] [] []) [[[]]])
+      (check-equal? (acons 'a 10 [['a . 1]['b . 2]]) [['a . 10]['a . 1]['b . 2]])
     ))

@@ -11,6 +11,7 @@
   invert-hash<-vector/fold
   hash-restrict-keys
   hash-value-map
+  hash-key-value-map
   hash-filter
   hash-remove
   hash-remove-value
@@ -19,11 +20,13 @@
   hash-merge/override
   hash-merge/override!
   hash->list/sort
+  hash-get-set!
+  hash-ref-set!
   )
 
 (import
   :gerbil/gambit/hash
-  ../sort)
+  ../iter ../sort)
 
 (def (hash-empty? h)
   (zero? (hash-length h)))
@@ -66,34 +69,39 @@
   (hash-for-each (lambda (k v) (hash-put! to v (cons k (hash-ref to v nil)))) from)
   to)
 
-;; Given a vector and a hash-table (a new equal? hash-table by default,
-;; but e.g. an eqv? or eq? hash-table could be given instead), compute a "right invert" (or section)
-;; of the vector from by storing in the hash-table a map from vector value back to vector index.
+;; Given a vector from and a hash-table to (a new equal? hash-table by default, but an existing table,
+;; possibly an eqv? or eq? hash-table could be given instead), compute a "right invert" (or section)
+;; of the vector (or subset thereof from start included (default 0) to end excluded (default the length
+;; of the vector) from by storing in the hash-table a map from vector value back to vector index.
+;; Optionally, a function key (default identity) extracts from each value in the vector
+;; a value to be used as key in the hash-table.
 ;; NB: Assumes the original table is injective and/or you only care to link back to
 ;; *one* possible index for each value.
-;; : (Table Nat V) <- (Vector V) to: (Optional (Table Nat V))
-(def (invert-hash<-vector from to: (to (make-hash-table)))
-  (def l (vector-length from))
-  (let loop ((i 0))
-    (if (>= i l) to
-        (begin (hash-put! to (vector-ref from i) i)
-               (loop (+ i 1))))))
+;; : (Table Nat W) <- (Vector V) to: (Optional (Table Nat W)) start: ?Nat end: ?Nat key: ?(Fun W <- V)
+(def (invert-hash<-vector from start: (start 0) end: (end (vector-length from))
+                          to: (to (make-hash-table)) key: (key identity))
+  (for (i (in-range start end)) (hash-put! to (key (vector-ref from i)) i))
+  to)
 
-;; Given a vector and a hash-table (a new equal? hash-table by default,
-;; but e.g. an eqv? or eq? hash-table could be given instead), invert the vector from
-;; by storing in the hash-table a map from vector value back to list of map keys.
+;; Given a vector from and a hash-table to (a new equal? hash-table by default, but an existing table,
+;; possibly an eqv? or eq? hash-table could be given instead), compute a "right invert" (or section)
+;; of the vector (or subset thereof from start included (default 0) to end excluded (default the length
+;; of the vector) from by storing in the hash-table a map from vector value back to a list of indices.
 ;; Instead of a list, any container (M V) of values of type V can be used,
 ;; by overriding the arguments nil and cons.
 ;; NB: If there are multiple indices, the order is not guaranteed.
-;; : (Table (M Nat) V) <- (Vector V) \
-;;     to: (Optional (Table (List V) Nat)) nil: (M V) cons: ((M V) <- V (M V))
-(def (invert-hash<-vector/fold from to: (to (make-hash-table)) nil: (nil '()) cons: (cons cons))
-  (def l (vector-length from))
-  (let loop ((i 0))
-    (if (>= i l) to
-        (let ((val (vector-ref from i)))
-          (hash-put! to val (cons i (hash-ref to val nil)))
-          (loop (+ i 1))))))
+;; Optionally, a function key (default identity) extracts from each value in the vector
+;; a value to be used as key in the hash-table.
+;; : (Table (M Nat) W) <- (Vector V) \
+;;     to: (Optional (Table (List V) Nat)) nil: (M V) cons: ((M V) <- V (M V)) \
+;;     start: ?Nat end: ?Nat key: ?(Fun W <- V)
+(def (invert-hash<-vector/fold
+      from start: (start 0) end: (end (vector-length from))
+      to: (to (make-hash-table)) nil: (nil '()) cons: (cons cons) key: (key identity))
+  (for (i (in-range start end))
+    (def val (vector-ref from i))
+    (hash-put! to (key val) (cons i (hash-ref to val nil))))
+  to)
 
 ;; Create a new hash-table the keys of which are restricted to those specified (if any).
 ;; TODO: find a better name. subhash ?
@@ -115,6 +123,13 @@
    (map (match <> ([k . v] (cons k (f v))))
         (hash->list h))))
 
+;;; Map a function f on all the key-value pairs of a map, creating a new map
+;; : (Table W <- L) <- (Fun (OrFalse (Cons L W)) <- K V) (Table V <- K) ?(Table W <- L)
+(def (hash-key-value-map f from (to (make-hash-table)))
+  (hash-for-each (lambda (k v) (match (f k v)
+                            ([k1 . v1] (hash-put! to k1 v1))
+                            (#f (void)))) from)
+  to)
 
 ;;; Remove entries that satisfy a predicate
 ;; : (Table V K) <- (Table V K) (Bool <- K V) (Optional (Table V K))
@@ -176,3 +191,8 @@
 ;; : (List (Pair K V)) <- (Table V K) (Bool <- K K)
 (def (hash->list/sort hash pred)
   (sort (table->list hash) (lambda (x y) (pred (car x) (car y)))))
+
+(def hash-get-set! hash-put!) ;; allow hash-get to be used as a place
+(def hash-ref-set! ;; allow hash-ref to be used as a place, accepting (ignored) optional default argument
+  (case-lambda ((h k v) (hash-put! h k v))
+          ((h k _d v) (hash-put! h k v))))
