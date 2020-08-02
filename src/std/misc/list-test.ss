@@ -178,4 +178,25 @@
       (check (duplicates ['a 1 'a 2]) => ['(a . 2)])
       (check (duplicates ['a 'b 'a 'a] eq?) => ['(a . 3)])
       (check (duplicates '((a . 10) (b . 10)) key: cdr) => ['(10 . 2)]))
+
+    (test-case "test push! pop!"
+      (def l [])
+      (check (pop! l) => #f)
+      (check l => [])
+      (check (push! 10 l) => (void))
+      (check l => [10])
+      (check (push! 20 l) => (void))
+      (check l => [20 10])
+      (check (pop! l) => 20)
+      (check l => [10])
+      (check (pop! l) => 10)
+      (check l => [])
+      (check (pop! l) => #f)
+      (check l => []))
+
+    (test-case "test first-and-only"
+      (check (first-and-only '(foo)) => 'foo)
+      (check-exception (first-and-only '()) true)
+      (check-exception (first-and-only #f) true)
+      (check-exception (first-and-only '(a b)) true))
     ))

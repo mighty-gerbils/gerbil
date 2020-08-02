@@ -9,9 +9,8 @@
   length>? length>n? length>=? length>=n?
   snoc append1
   for-each!
-  push!
-  flatten
-  flatten1
+  push! pop!
+  flatten flatten1
   rassoc
   when/list when-list-or-empty listify keyword-when
   slice slice-right
@@ -22,6 +21,7 @@
   group
   every-consecutive?
   separate-keyword-arguments
+  first-and-only
   )
 ;; The following are exporting these for backward compatibility only;
 ;; we'll deprecate these reexported symbols as soon as we have a deprecation facility.
@@ -142,6 +142,10 @@
 ;; Analog to CL:PUSH, hence the argument order.
 ;; TODO: use setq-macro, look at the set! defn in prelude/core.ss
 (defrule (push! element list) (set! list (cons element list)))
+
+;; Analog to CL:POP.
+;; TODO: use setq-macro, look at the set! defn in prelude/core.ss
+(defrule (pop! list) (let (l list) (and (pair? l) (begin0 (car l) (set! list (cdr l))))))
 
 ;; Removes all nested layers of a proper list.
 ;; [1 [2]]   -> [1 2]
@@ -317,3 +321,7 @@
       ([(? keyword? k) v . r] (lp r positionals (cons* v k keywords)))
       ([a . r] (lp r (cons a positionals) keywords))
       ([] (values (reverse positionals) (reverse keywords))))))
+
+(def (first-and-only x)
+  (assert! (and (pair? x) (null? (cdr x))))
+  (car x))

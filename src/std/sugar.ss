@@ -27,7 +27,7 @@
 
 (defrules defrule ()
   ((_ (name args ...) body ...)
-   (defrules name () ((_ args ...) body ...))))
+   (defrules name () ((name args ...) body ...))))
 
 (defrules catch ())
 (defrules finally ())

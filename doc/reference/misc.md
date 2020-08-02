@@ -1666,11 +1666,15 @@ or a weak hash-table, or one that is already populated for other reasons.
 
 ### invert-hash<-vector
 ``` scheme
-(invert-hash<-vector vector to: (to (hash))) -> hash
+(invert-hash<-vector vector
+    start: (start 0) end: (end (vector-length from))
+    to: (to (make-hash-table)) key: (key identity))
+ -> hash
 ```
 
-Returns the inverse of a *vector*:
-a hash-table *hash* whose keys are the values of those of *vector*,
+Returns the inverse of the section of a *vector* in the given range from *start* included to *end* excluded,
+a hash-table *hash* whose keys are extracted from values of those of *vector* by the function *key*
+(that defaults to *identity*, i.e. the value itself is the key),
 each mapped to one value that is an index that *vector* associates to the value.
 If the index is unique, it will be used; if it isn't, any single of those indexes may be used.
 
@@ -1681,19 +1685,25 @@ or a weak hash-table, or one that is already populated for other reasons.
 
 ### invert-hash<-vector/fold
 ``` scheme
-(invert-hash/fold vector to: (to (hash)) nil: (nil '()) cons: (cons cons)) -> hash-1
+(invert-hash<-vector/fold
+      from start: (start 0) end: (end (vector-length from))
+      to: (to (make-hash-table)) nil: (nil '()) cons: (cons cons) key: (key identity)) -> to
 ```
 
-Returns the inverse of a *vector*:
-a hash-table *hash* whose keys are the values of those of *vector*,
-each mapped to one value that is fold of all indexes that *vector* associates to the value.
-By default, the fold consists in consing those keys into a list, in an unspecified order.
-It could instead create a hash-table of those keys, or a sorted list or tree of them, etc.
-
+Returns the inverse of the section of a *vector* in the given range from *start* included to *end* excluded,
+a hash-table *hash* whose keys are extracted from values of those of *vector* by the function *key*
+(that defaults to *identity*, i.e. the value itself is the key),
+each mapped to one value that is an index that *vector* associates to the value.
+Each time an index is found for a given key, it is combined together with previous indexes found
+using the function *cons* (which defaults to actual `cons`),
+with the value *nil* (which defaults to empty list `()`) being assumed as the initial value
+before any index is found.
 If an existing hash-table is passed as a *to* argument, it will be used as hash-table populated
 with those inverse indexes, instead of a new equal-hash-table.
 This feature can notably be used to provide a hash-table with different equality predicate,
 or a weak hash-table, or one that is already populated for other reasons.
+
+
 
 ### hash-restrict-keys
 ``` scheme
@@ -1712,6 +1722,26 @@ if it is not present, it is ignored.
 ```
 Return a new hash-table that has the same keys as the original *hash*,
 but whose values have been transformed by calling the function *fun*.
+
+### hash-key-value-map
+``` scheme
+(hash-key-value-map fun from (to (hash)) -> to
+```
+Modifies the *to* hash-table (by default, a new `equal?` hash-table),
+by calling a function *fun* on each key value pair of hash-table *from*
+(passed as two arguments *key* and *value*), which must return either `#f` or a cons pair `(k1 . v1)`
+that will be added to the destination hash-table *to*.
+If a key *k1* appears multiple times, it is not guaranteed which will present in the end,
+only that one of them will.
+
+::: tip Examples:
+```scheme
+> (hash->list/sort
+    (hash-key-value-map
+     (lambda (k v) (and (even? v) (cons (/ v 2) (string-append k k))))
+     (hash ("a" 1) ("b" 2) ("c" 3) ("d" 4) ("e" 5) ("f" 6))) <)
+((1 . "bb") (2 . "dd") (3 . "ff"))
+```
 
 ### hash-filter
 ```scheme
@@ -1794,6 +1824,60 @@ in case a same key is present in multiple arguments, choose the value in the rig
 Similar to `hash->list` and `table->list`,
 this function returns a list of the key-value pairs in the *hash* table,
 but also sorts this list by keys according to the provided predicate *pred*.
+
+::: tip Examples:
+``` scheme
+> (hash->list/sort (hash (3 "c") (4 "d") (1 "a") (2 "b")) <)
+((1 . "a") (2 . "b") (3 . "c") (4 . "d"))
+```
+
+### hash-get-set!
+``` scheme
+(hash-get-set! h k v) -> (void)
+```
+
+*hash-get-set!* is a synonym for *hash-put!* that makes it possible to
+`(set! (hash-get h k) v)`.
+
+::: tip Examples:
+``` scheme
+> (def h (hash))
+> (hash-get-set! h 2 "b")
+> (hash-get h 2)
+"b"
+> (set! (hash-get h 2) "B")
+> (hash-get h 2)
+"B"
+```
+
+### hash-ref-set!
+``` scheme
+(hash-ref-set! h k v) -> (void)
+(hash-ref-set! h k d v) -> (void)
+```
+
+*hash-ref-set!* is a variant of *hash-put!* that makes it possible to
+`(set! (hash-ref h k) v)` or `(set! (hash-get h k default) v)`.
+
+::: tip Examples:
+``` scheme
+> (def h (hash))
+> (hash-ref-set! h "a" 1)
+> (hash-get h "a")
+1
+> (set! (hash-ref h "b") 2)
+> (hash-get h "b")
+2
+> (defrules post-increment! () ((p x) (p x 1)) ((p x y ...) (begin0 x (set! x (+ x y ...)))))
+> (post-increment! (hash-ref h "a") 10)
+1
+> (post-increment! (hash-ref h "a" 0))
+11
+> (post-increment! (hash-ref h "c" 0))
+0
+> (post-increment! (hash-ref h "c" 0))
+1
+```
 
 ## List utilities
 ::: tip To use the bindings from this module:
@@ -2091,6 +2175,33 @@ returns otherwise.
 
 > (push! 1 [2 3])
 error    ; uses set! internally, requires valid binding
+```
+:::
+
+### pop!
+``` scheme
+(pop! lst) -> #f | elem
+
+  elem := first element from lst
+  lst  := list, from which the first element will be removed
+```
+
+Macro that checks whether the *lst* is a cons cell, if so returns the car of that cons cell,
+and sets *lst* to the cdr of that cons cell, otherwise returns `#f`.
+
+::: tip Examples:
+``` scheme
+> (def lst [])
+> (pop! lst)
+#f
+> (push! 10 lst)
+> (push! 20 lst)
+> (pop! lst)
+20
+> (pop! lst)
+10
+> (pop! lst)
+#f
 ```
 :::
 
@@ -2427,12 +2538,12 @@ group consecutive elements of the list `lst` into a list-of-lists.
 
 ::: tip Examples:
 ``` scheme
-(group [1 2 2 3 1 1])
-> ((1) (2 2) (3) (1 1))
+> (group [1 2 2 3 1 1])
+((1) (2 2) (3) (1 1))
 
-(import :std/sort)
-(group (sort [1 2 2 3 1 1] <) eqv?)
-> ((1 1 1) (2 2) (3))
+> (import :std/sort)
+> (group (sort [1 2 2 3 1 1] <) eqv?)
+((1 1 1) (2 2) (3))
 ```
 :::
 
@@ -2447,11 +2558,28 @@ according to the predicate.
 
 ::: tip Examples:
 ``` scheme
-(every-consecutive? <= [1 2 2 3 10 100])
-> #t
+> (every-consecutive? <= [1 2 2 3 10 100])
+#t
 
-(every-consecutive? < [5 1 8 9])
-> #f
+> (every-consecutive? < [5 1 8 9])
+#f
+```
+:::
+
+### first-and-only
+``` scheme
+(first-and-only lst)
+```
+returns the first and only value of a singleton list,
+or raises an error if the argument wasn't a singleton list.
+
+::: tip Examples:
+``` scheme
+> (first-and-only '(42))
+42
+
+> (first-and-only '())
+*** ERROR IN std/misc/list#first-and-only, -515899390@648.11 -- Assertion failed (and (pair? x) (null? (cdr x)))
 ```
 :::
 
@@ -2594,6 +2722,38 @@ the variable (or struct field) with the result of it.
 
 (let (p [['a . 1]['b . 2]]) (arem! 'c p) p)
 > [['a . 1]['b . 2]]
+```
+:::
+
+### acons
+``` scheme
+(acons k v alist) -> alst
+
+  k := key
+  v := value
+  alist := association list
+  alst := new association list with additional binding
+```
+
+Adds a new key-value pair to an existing alist in a pure way, a bit like `aset`.
+Unlike `aset` and its friends, however, `acons` does *not* try to replace older bindings
+for the same key, and will instead shadow them.
+This can cause performance issues if a same key is used a lot of times with `acons`,
+with the list growing ever longer; this can cause even more interesting correctness issues
+if `arem` is used subsequently used, which will remove only the most recent binding,
+revealing the previous one again, which may or may not be the desired behavior.
+Thus, we recommend only using `acons` when you otherwise know `k` is not yet bound in the alist.
+
+`acons` is analogous to the same-named function from Common Lisp, and
+`(acons k v l)` is synonymous with `(cons (cons k v) l)`.
+
+::: tip Examples:
+```scheme
+> (acons 1 "a" '((2 . "b") (3 . "c")))
+((1 . "a") (2 . "b") (3 . "c"))
+
+> (acons 1 "a" '((1 . "b")))
+((1 . "a") (1 . "b"))
 ```
 :::
 
@@ -6957,6 +7117,8 @@ of the previous value and the provided arguments.
 Given a list `<l>` or any thing you can iterate on, and a function `<f>`,
 `xmin/map` returns the lower bound of the images by `<f>` of the items in `<l>`,
 and of a `<base>` real, by default `+inf.0` (the positive infinity).
+The function is short-circuiting and will not evaluate further values and their side-effects
+after the bottom value `-inf.0` is reached.
 
 ### xmax
 ``` scheme
@@ -6991,3 +7153,38 @@ of the previous value and the provided arguments.
 Given a list `<l>` or any thing you can iterate on, and a function `<f>`,
 `xmax/map` returns the upper bound of the images by `<f>` of the items in `<l>`,
 and of a `<base>` xreal, by default `-inf.0` (the negative infinity).
+The function is short-circuiting and will not evaluate further values and their side-effects
+after the top value `+inf.0` is reached.
+
+### increment!, pre-increment!, post-increment!, decrement!, pre-decrement!, post-decrement!
+``` scheme
+(increment! place) -> (void)
+(increment! place increment ...) -> (void)
+(pre-increment! place) -> number
+(pre-increment! place increment ...) -> number
+(post-increment! place) -> number
+(post-increment! place increment ...) -> number
+(decrement! place) -> (void)
+(decrement! place decrement ...) -> (void)
+(pre-decrement! place) -> number
+(pre-decrement! place decrement ...) -> number
+(post-decrement! place) -> number
+(post-decrement! place decrement ...) -> number
+```
+
+These macro will modify a variable or other place containing a number
+to increment (respectively, decrement) its value, adding to it (respectively, subtracting from it)
+one (if no further argument is specified) or the provided arguments (if specified).
+*increment!* and *decrement!* return `#!void`,
+*pre-increment!* and *pre-decrement!* return the value after addition (respectively, subtraction), and
+*post-increment!* and *post-decrement!* return the value before addition (respectively, subtraction).
+
+### make-counter
+``` scheme
+(make-counter) -> counter
+(make-counter n) -> counter
+```
+
+This function creates a new counter, a function that takes zero or more arguments,
+adds the sum of these arguments to the counter (or `1`, not `0`, if no argument was provided),
+and returns the original value of the counter before the addition.

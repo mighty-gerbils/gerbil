@@ -812,7 +812,7 @@
   "text/utf32"
   (gerbil/core gerbil/gambit/fixnum std/error std/misc/bytes))
  (std/misc/number "misc/number" (gerbil/core std/srfi/1 std/sugar))
- (std/misc/hash "misc/hash" (gerbil/core gerbil/gambit/hash std/sort))
+ (std/misc/hash "misc/hash" (gerbil/core gerbil/gambit/hash std/iter std/sort))
  (std/misc/path "misc/path" (gerbil/core))
  (std/misc/symbol "misc/symbol" (gerbil/core))
  (std/make

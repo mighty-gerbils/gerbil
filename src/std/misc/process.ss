@@ -56,19 +56,24 @@
            show-console: show-console])
          (process (open-process settings)))
     (try
-     (let* ((result (coprocess process))
-            (status (process-status process)))
-       (if check-status
-	   ((if (procedure? check-status)
-		check-status
-		check-process-success) status settings)) ;; NB: pass settings to help inform error messages.
-       result)
+     (def result (coprocess process))
+     (def status (process-status process))
+     (when check-status
+       ((if (procedure? check-status) check-status check-process-success)
+        status settings)) ;; NB: pass settings to help inform error messages.
+     result
      (finally
       ;; If anything goes wrong, close the pipes and wait for the subprocess to complete.
       (close-port process)
       (process-status process)))))
 
 ;; Run a batch process: stdin closed, stdout and stderr on the current console.
-(def (run-process/batch command)
-  (run-process command coprocess: close-output-port stdout-redirection: #f)
+(def (run-process/batch command
+                        check-status: (check-status #t)
+                        environment: (environment #f)
+                        directory: (directory #f)
+                        show-console: (show-console #f))
+  (run-process command coprocess: close-output-port stdout-redirection: #f
+               check-status: check-status environment: environment
+               directory: directory show-console: show-console)
   (void))
