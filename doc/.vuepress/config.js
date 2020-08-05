@@ -15,7 +15,7 @@ module.exports = {
         {
           collapsable: false,
           title: 'Guide',
-          children: ['', 'intro', 'getting-started', 'emacs', 'shell', 'env-vars', 'package-manager', 'ffi', 'build', 'profiler', 'bootstrap', 'nix', 'r7rs', 'srfi']
+            children: ['', 'intro', 'getting-started', 'emacs', 'shell', 'env-vars', 'package-manager', 'ffi', 'build', 'profiler', 'bootstrap', 'nix', 'r7rs', 'srfi', 'macos']
         }
       ],
       '/tutorials/': [
