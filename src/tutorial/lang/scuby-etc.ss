@@ -23,7 +23,7 @@
                                     (make-token 'String str loc)
                                     char))))
              (else
-              (raise-parse-error 'lex-suby "Misplaced escape character"
+              (raise-parse-error 'lex-scuby "Misplaced escape character"
                                  (make-token 'String str loc)
                                  char)))
            (lp rest (cons char chars)))))))
