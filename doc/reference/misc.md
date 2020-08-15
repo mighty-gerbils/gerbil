@@ -1742,6 +1742,7 @@ only that one of them will.
      (hash ("a" 1) ("b" 2) ("c" 3) ("d" 4) ("e" 5) ("f" 6))) <)
 ((1 . "bb") (2 . "dd") (3 . "ff"))
 ```
+:::
 
 ### hash-filter
 ```scheme
@@ -1830,6 +1831,7 @@ but also sorts this list by keys according to the provided predicate *pred*.
 > (hash->list/sort (hash (3 "c") (4 "d") (1 "a") (2 "b")) <)
 ((1 . "a") (2 . "b") (3 . "c") (4 . "d"))
 ```
+:::
 
 ### hash-get-set!
 ``` scheme
@@ -1849,6 +1851,7 @@ but also sorts this list by keys according to the provided predicate *pred*.
 > (hash-get h 2)
 "B"
 ```
+:::
 
 ### hash-ref-set!
 ``` scheme
@@ -1878,6 +1881,7 @@ but also sorts this list by keys according to the provided predicate *pred*.
 > (post-increment! (hash-ref h "c" 0))
 1
 ```
+:::
 
 ## List utilities
 ::: tip To use the bindings from this module:
