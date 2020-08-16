@@ -104,6 +104,8 @@ the parent directory of the directory in which `gxi` is installed.
 Note that in this final case, the autodetection relies on `gxi` not being a symlink,
 but on your `PATH` pointing to its physical directory or an absolute path being used;
 then again you can define `GERBIL_HOME` or configure with `--prefix` so autodetection isn't needed.
+(Note that incompatibility with a previously defined `GERBIL_HOME` is
+a frequent source of trouble in newbies who make multiple attempts at building from source).
 
 Similarly, Gerbil will use the path specified by the `GERBIL_GSC` environment variable
 to find the Gambit Scheme compiler. If the path is not specified,
@@ -111,6 +113,11 @@ then it will look at the path specified by the `--gambit` option when it was con
 If not specified, then it will assume that the command `gsc` in your `PATH`
 is the version of Gambit you use. It is then important that `gsc` and `gcc` in your `PATH`
 are the same as were used to compile Gerbil and Gambit respectively.
+
+Finally, Gerbil consults the `GERBIL_BUILD_CORES` environment variable
+to determine whether to build its code in parallel, e.g. `export GERBIL_BUILD_CORES=4`.
+This is disabled by default. See details and explanations in
+[the documentation for :std/make](../reference/make.md).
 
 You can see what the default features are and aren't by using `./configure --help`:
 it will offer you options that modify the defaults
