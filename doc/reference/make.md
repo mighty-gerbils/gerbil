@@ -192,11 +192,23 @@ the following keyword arguments, that may configure how your project is built.
     It will still spawn processes for Gambit compilation as such.
     If it's `1`, then Gerbil will spawn a subprocess for the Gerbil compilation steps
     as well as for the Gambit compilation step, but only one process at a time.
-    If it's `#f`, then no parallelism is used, same as `0`.
-    If it's `#t` (the default), then the maximum number of CPUs is used,
-    as detected from the Operating System, or overridden by the value of the environment variable
-    `GERBIL_BUILD_CORES`, if defined and an integer.
-
+    If it's `#t` (the default), then the environment variable `GERBIL_BUILD_CORES` is consulted,
+    and used as above if it's an integer (represented as a decimal string).
+    Otherwise (including if it's `#f`), then no parallelism is used, same as `0`.
+    Note how the default behavior is to compile in parallel according to a specified number of cores,
+    but that the default behavior's default number of cores is `0`, which disables parallelism.
+    An older release of Gerbil (v0.16) did use `(##cpu-count)` by default, but this was disabled
+    and the current behavior is to default to `0` because parallelism has
+    known failure modes with rough edges when you try to compile on a machine with a lot of cores
+    but not a lot of memory, as seems to be frequent enough these days:
+    Gerbil will spawn off a lot of GCC processes via Gambit, and these may try to allocate
+    more memory than is available, and die in bad ways that Gambit and Gerbil don't handle
+    in a very user-friendly way). If you have enough memory
+    (e.g. I am fine with 16GB of memory on 4 cores), you could use:
+    `export GERBIL_BUILD_CORES="$(gsi -e '(display (##cpu-count)) (newline)')"`
+    In the future, we may try to automatically estimate how many cores to use,
+    and/or implement more robust handling of this failure mode.
+    But for now, we disable parallelism. by default.
 
 ## Interface
 

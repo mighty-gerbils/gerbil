@@ -101,7 +101,7 @@ TODO:
       optimize: (optimize #t) debug: (debug 'env)
       static: (static #t) static-debug: (static-debug #f)
       verbose: (verbose #f) build-deps: (build-deps_ #f)
-      parallelize: (parallelize_ #t))
+      parallelize: (parallelize_ #f))
     (def gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
     (def srcdir (or srcdir_ (error "srcdir must be specified")))
     (def libdir (or libdir_ (path-expand "lib" gerbil-path)))
@@ -109,14 +109,23 @@ TODO:
     (def prefix (or prefix_ (read-package-prefix srcdir)))
     (def libdir-prefix (if prefix (path-expand prefix libdir) libdir))
     (def build-deps (path-expand (or build-deps_ "build-deps") srcdir))
-    (def parallelize (if (eq? parallelize_ #t) (gerbil-build-cores) (or parallelize_ 0)))
+    (def parallelize (gerbil-build-cores parallelize))
     (struct-instance-init!
       self
       srcdir libdir bindir prefix force? optimize debug static static-debug verbose build-deps
       libdir-prefix parallelize)))
 
-(def (gerbil-build-cores)
-  (with-catch (lambda (_) (##cpu-count)) (lambda () (string->number (getenv "GERBIL_BUILD_CORES")))))
+(def (gerbil-build-cores (cpu-count-spec #t))
+  ;; TODO: for the default (catch) case, use something like
+  ;; (min (##cpu-count) (/ (available-memory) (memory-per-compilation-cpu)))
+  ;; Except we need to compute (available-memory) and calibrate (memory-per-compilation-cpu)...
+  ;; Until then, we disable the parallel build as it confuses a lot of beginners.
+  (cond
+   ((real? cpu-count-spec) cpu-count-spec)
+   ((eq? cpu-count-spec #t)
+    (with-catch (lambda (_) 0) ;; if not defined and an integer, default to 0
+                (lambda () (string->number (getenv "GERBIL_BUILD_CORES")))))
+   (else 0)))
 
 (def (settings-verbose>=? settings level)
   (def verbose (settings-verbose settings))
