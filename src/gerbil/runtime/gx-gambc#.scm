@@ -31,6 +31,8 @@
   `(let () (declare (not safe)) (##string-append ,@args)))
 (define-macro (%%substring . args)
   `(let () (declare (not safe)) (##substring ,@args)))
+(define-macro (%%substring-move! . args)
+  `(let () (declare (not safe)) (##substring-move! ,@args)))
 (define-macro (%%make-vector . args)
   `(let () (declare (not safe)) (##make-vector ,@args)))
 (define-macro (%%vector->list . args)
