@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 #include <mysql/mysql.h>
 
 #ifndef ___HAVE_FFI_U8VECTOR
@@ -92,7 +93,7 @@ static int ffi_mysql_stmt_execute_begin (int ofd, MYSQL_STMT* mystmt);
 static int ffi_mysql_stmt_fetch_begin (int ofd, MYSQL_STMT* mystmt);
 static MYSQL_BIND* ffi_mysql_make_bind (unsigned count);
 static void ffi_mysql_bind_null (MYSQL_BIND* mybind, int k);
-static void ffi_mysql_bind_set_null (MYSQL_BIND* mybind, int k, my_bool* is_null);
+static void ffi_mysql_bind_set_null (MYSQL_BIND* mybind, int k, bool* is_null);
 static int ffi_mysql_bind_get_null (MYSQL_BIND* mybind, int k);
 static void ffi_mysql_bind_set_long (MYSQL_BIND* mybind, int k, long* ptr);
 static long ffi_mysql_bind_get_long (MYSQL_BIND* mybind, int k);
@@ -206,10 +207,9 @@ END-C
 (define-c-lambda mysql_field_type (MYSQL_FIELD*) int
   "___return (___arg1->type);")
 
-(c-define-type my_bool "my_bool")
-(c-define-type my_bool*
-  (pointer my_bool (my_bool*) "ffi_free"))
-
+(define-guard ffi-have-bool*
+  (c-define-type bool*
+    (pointer bool (bool*) "ffi_free")))
 (define-guard ffi-have-int*
   (c-define-type int*
     (pointer int (int*) "ffi_free")))
@@ -236,7 +236,7 @@ END-C
   "ffi_mysql_make_bind")
 (define-c-lambda mysql_bind_null (MYSQL_BIND* int) void
   "ffi_mysql_bind_null")
-(define-c-lambda mysql_bind_set_null (MYSQL_BIND* int my_bool*) void
+(define-c-lambda mysql_bind_set_null (MYSQL_BIND* int bool*) void
   "ffi_mysql_bind_set_null")
 (define-c-lambda mysql_bind_get_null (MYSQL_BIND* int) int
   "ffi_mysql_bind_get_null")
@@ -292,8 +292,8 @@ END-C
 (define-c-lambda __close (int) void
   "ffi_mysql_close")
 
-(define-c-lambda make_bool_ptr () my_bool*
-  "ffi_mysql_make_my_bool_ptr")
+(define-c-lambda make_bool_ptr () bool*
+  "ffi_mysql_make_bool_ptr")
 (define-c-lambda make_int_ptr () int*
   "ffi_mysql_make_int_ptr")
 (define-c-lambda int_ptr_ref (int*) int
@@ -687,7 +687,7 @@ void ffi_mysql_bind_null (MYSQL_BIND* mybind, int k)
  mybind[k].buffer_type = MYSQL_TYPE_NULL;
 }
 
-void ffi_mysql_bind_set_null (MYSQL_BIND* mybind, int k, my_bool* is_null)
+void ffi_mysql_bind_set_null (MYSQL_BIND* mybind, int k, bool* is_null)
 {
  mybind[k].is_null = is_null;
 }
@@ -821,9 +821,9 @@ unsigned ffi_mysql_bind_get_time_year (MYSQL_BIND* mybind, int k)
  return ((MYSQL_TIME*)(mybind[k].buffer))->year;
 }
 
-my_bool* ffi_mysql_make_my_bool_ptr ()
+bool* ffi_mysql_make_bool_ptr ()
 {
- my_bool* res = malloc (sizeof (my_bool));
+ bool* res = malloc (sizeof (bool));
  if (res)
  {
   *res = 0;
