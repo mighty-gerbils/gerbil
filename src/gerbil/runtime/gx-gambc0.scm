@@ -1129,6 +1129,8 @@
       (%%vector-set! ht 5 size))))
 
 (define (make-list k #!optional (val #f))
+  (unless (fixnum? k)
+    (error "expected argument 1 to be fixnum" k))
   (let lp ((n 0) (r '()))
     (if (%%fx< n k)
       (lp (%%fx+ n 1) (cons val r))
