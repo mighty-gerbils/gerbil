@@ -1,8 +1,53 @@
-;;; -*- Scheme -*-
+;;; -*- Gerbil -*-
 ;;; (C) vyzo at hackzen.org
 ;;; libcrypto FFI
-
 ;; compile: -ld-options "-lcrypto"
+package: std/crypto
+
+(export #t)
+(import :gerbil/gambit/exceptions :std/foreign :std/misc/bytes :std/sugar)
+
+(begin-ffi
+    (ERR_get_error ERR_peek_last_error
+     ERR_lib_error_string ERR_func_error_string ERR_reason_error_string
+     EVP_MD? EVP_MD_CTX?
+     EVP_MD_CTX_create EVP_DigestInit EVP_DigestUpdate EVP_DigestFinal
+     EVP_MD_CTX_copy
+     EVP_md5 EVP_sha1 EVP_sha224 EVP_sha256 EVP_sha384 EVP_sha512
+     EVP_ripemd160 EVP_whirlpool EVP_blake2b512 EVP_blake2s256
+     EVP_sha3_224 EVP_sha3_256 EVP_sha3_384 EVP_sha3_512 EVP_shake128 EVP_shake256 EVP_keccak256
+     EVP_MD_type EVP_MD_pkey_type EVP_MD_size EVP_MD_block_size EVP_MD_name
+     EVP_MD_CTX_md EVP_MD_CTX_type EVP_MD_CTX_size EVP_MD_CTX_block_size
+     EVP_get_digestbyname EVP_get_digestbynid
+     EVP_CIPHER? EVP_CIPHER_CTX?
+     EVP_CIPHER_CTX_create
+     EVP_EncryptInit EVP_EncryptUpdate EVP_EncryptFinal
+     EVP_DecryptInit EVP_DecryptUpdate EVP_DecryptFinal
+     EVP_rc4
+     EVP_aes_128_ecb EVP_aes_128_cbc EVP_aes_128_cfb EVP_aes_128_ofb
+     EVP_aes_128_ctr EVP_aes_128_ccm EVP_aes_128_gcm EVP_aes_128_xts
+     EVP_aes_192_ecb EVP_aes_192_cbc EVP_aes_192_cfb EVP_aes_192_ofb
+     EVP_aes_192_ctr EVP_aes_192_ccm EVP_aes_192_gcm
+     EVP_aes_256_ecb EVP_aes_256_cbc EVP_aes_256_cfb EVP_aes_256_ofb
+     EVP_aes_256_ctr EVP_aes_256_ccm EVP_aes_256_gcm EVP_aes_256_xts
+     EVP_camellia_128_ecb EVP_camellia_128_cbc EVP_camellia_128_cfb EVP_camellia_128_ofb
+     EVP_camellia_192_ecb EVP_camellia_192_cbc EVP_camellia_192_cfb EVP_camellia_192_ofb
+     EVP_camellia_256_ecb EVP_camellia_256_cbc EVP_camellia_256_cfb EVP_camellia_256_ofb
+     EVP_cast5_ecb EVP_cast5_cbc EVP_cast5_cfb EVP_cast5_ofb
+     EVP_bf_ecb EVP_bf_cbc EVP_bf_cfb EVP_bf_ofb
+     EVP_CIPHER_nid EVP_CIPHER_block_size EVP_CIPHER_key_length EVP_CIPHER_iv_length
+     EVP_CIPHER_name
+     EVP_CIPHER_CTX_cipher EVP_CIPHER_CTX_nid EVP_CIPHER_CTX_block_size
+     EVP_CIPHER_CTX_key_length EVP_CIPHER_CTX_iv_length
+     EVP_CIPHER_CTX_copy
+     EVP_get_cipherbyname EVP_get_cipherbynid
+     HMAC_CTX?
+     HMAC_CTX_create
+     HMAC_Init HMAC_Update HMAC_Final HMAC
+     BN? BN_num_bytes BN_bin2bn BN_bn2bin
+     DH* DH? DH_pub_key
+     DH_new DH_get_1024_160 DH_get_2048_224 DH_get_2048_256
+     DH_generate_key DH_size DH_compute_key)
 
 (declare
   (block)
@@ -11,11 +56,11 @@
   (not safe)
   (not run-time-bindings))
 
-(namespace ("std/crypto/libcrypto#"))
-(##namespace ("" define-macro define let let* if or and
-              quote quasiquote unquote unquote-splicing
-              c-lambda c-define-type c-declare c-initialize
-              foreign-tags macro-slot))
+;;(namespace ("std/crypto/libcrypto#"))
+;;(##namespace ("" define-macro define let let* if or and
+;;              quote quasiquote unquote unquote-splicing
+;;              c-lambda c-define-type c-declare c-initialize
+;;              foreign-tags macro-slot))
 
 (c-declare #<<END-C
 #include <openssl/evp.h>
@@ -23,13 +68,13 @@
 #include <openssl/dh.h>
 #include <openssl/bn.h>
 #include <openssl/hmac.h>
+
 END-C
 )
 
 (c-initialize #<<END-C
-ERR_load_crypto_strings ();
-OpenSSL_add_all_ciphers ();
-OpenSSL_add_all_digests ();
+ERR_load_crypto_strings(); /* Load the human readable error strings for libcrypto */
+OpenSSL_add_all_algorithms(); /* Load all digest and cipher algorithms, + engines on BSD */
 END-C
 )
 
@@ -42,33 +87,31 @@ END-C
 END-C
 )
 
-(define-macro (define-c-lambda id args ret #!optional (name #f))
-  (let ((name (or name (##symbol->string id))))
-    `(define ,id
-       (c-lambda ,args ,ret ,name))))
-
 ;; funky decls to apease the compiler for discarding const
 ;; sometimes I really hate gcc (which apparently has no working option to turn
 ;;  that shit off -- -Wno-cast-qual doesn't fucking work, at least with 4.5.x)
 ;; other times I hate gsc for not having a const qualifier
-(define-macro (define-c-lambda/const-pointer id args ret)
-  (let ((result-type (if (eq? ret 'char-string)
-                       "char*"
-                       (##symbol->string ret)))
-        (c-args
-         (let lp ((rest args) (n 1) (c-args ""))
-           (if (##pair? rest)
-             (let* ((next (##string-append "___arg" (##number->string n)))
-                    (c-args
-                     (if (##fx> n 1)
-                       (##string-append c-args "," next)
-                       next)))
-               (lp (##cdr rest) (##fx+ n 1) c-args))
-             c-args))))
+(define-macro (define-c-lambda/const-pointer id args ret #!optional (ccond #f) (iffalse "NULL"))
+  (let* ((result-type (if (eq? ret 'char-string)
+                        "char*"
+                        (##symbol->string ret)))
+         (c-args
+          (let lp ((rest args) (n 1) (c-args ""))
+            (if (##pair? rest)
+              (let* ((next (##string-append "___arg" (##number->string n)))
+                     (c-args
+                      (if (##fx> n 1)
+                        (##string-append c-args "," next)
+                        next)))
+                (lp (##cdr rest) (##fx+ n 1) c-args))
+              c-args)))
+         (expr (##string-append "___return ((" result-type ")"
+                                (##symbol->string id) "(" c-args "));")))
     `(define ,id
-       (c-lambda ,args ,ret
-         ,(##string-append "___return ((" result-type ")"
-                           (##symbol->string id) "(" c-args "));")))))
+       (c-lambda ,args ,ret ,(if ccond
+                            (##string-append "#if " ccond "\n" expr
+                                             "\n#else\n___return(" iffalse ");\n#endif\n")
+                            expr)))))
 
 (define-macro (define-c-type-predicate pred tag)
   `(define (,pred x)
@@ -119,6 +162,16 @@ END-C
 (define-c-lambda/const-pointer EVP_sha512 () EVP_MD*)
 (define-c-lambda/const-pointer EVP_ripemd160 () EVP_MD*)
 (define-c-lambda/const-pointer EVP_whirlpool () EVP_MD*)
+
+(define-c-lambda/const-pointer EVP_blake2b512 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10100000L")
+(define-c-lambda/const-pointer EVP_blake2s256 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10100000L")
+(define-c-lambda/const-pointer EVP_sha3_224 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10101000L")
+(define-c-lambda/const-pointer EVP_sha3_256 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10101000L")
+(define-c-lambda/const-pointer EVP_sha3_384 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10101000L")
+(define-c-lambda/const-pointer EVP_sha3_512 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10101000L")
+(define-c-lambda/const-pointer EVP_shake128 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10101000L")
+(define-c-lambda/const-pointer EVP_shake256 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10101000L")
+(define-c-lambda/const-pointer EVP_keccak256 () EVP_MD* "0") ;; still not available as of 3.0.0-alpha6
 
 (define-c-lambda EVP_MD_type (EVP_MD*) int)
 (define-c-lambda EVP_MD_pkey_type (EVP_MD*) int)
@@ -301,7 +354,7 @@ static BIGNUM *ffi_DH_pub_key (DH *dh);
 static int ffi_DH_compute_key (___SCMOBJ secret, BIGNUM *pubkey, DH *dh);
 
 #if OPENSSL_VERSION_NUMBER < 0x10002000L || defined (LIBRESSL_VERSION_NUMBER)
-#include "libcrypto-rfc5114.c"
+#include "crypto/libcrypto-rfc5114.c"
 #endif
 END-C
 )
@@ -450,7 +503,7 @@ static ___SCMOBJ ffi_release_HMAC_CTX (void *ptr)
 
 static int ffi_HMAC_Init (HMAC_CTX *ctx, ___SCMOBJ key, EVP_MD *type)
 {
-  return HMAC_Init (ctx, U8_DATA (key), U8_LEN (key), type);
+  return HMAC_Init_ex (ctx, U8_DATA (key), U8_LEN (key), type, NULL);
 }
 
 static int ffi_HMAC_Update (HMAC_CTX *ctx, ___SCMOBJ bytes, int start, int end)
@@ -509,3 +562,4 @@ static int ffi_DH_compute_key (___SCMOBJ secret, BIGNUM *pubkey, DH *dh)
 
 END-C
 )
+);ffi

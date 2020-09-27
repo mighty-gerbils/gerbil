@@ -1,5 +1,6 @@
 ;; -*- Gerbil -*-
-(def build-spec
+
+(def (build-spec srcdir: srcdir libdir: _ debug: _)
   `((gxc: "build-config" (extra-inputs: ("build-features.ss")))
     "gambit-sharp"
     "interactive"
@@ -228,12 +229,10 @@
     "xml/print"
     "xml"
     ;; :std/crypto
-    (gsc: "crypto/libcrypto"
-          "-cc-options" ,(cppflags "libcrypto" "")
+    (gxc: "crypto/libcrypto" (extra-inputs: ("crypto/libcrypto-rfc5114.c"))
+          "-cc-options" ,(string-append (cppflags "libcrypto" "") " -I " srcdir)
           "-ld-options" ,(ldflags "libcrypto" "-lcrypto")
           ,@(include-gambit-sharp))
-    (static-include: "crypto/libcrypto-rfc5114.c")
-    (ssi: "crypto/libcrypto")
     (gxc: "crypto/etc" ,@(include-gambit-sharp))
     "crypto/digest"
     "crypto/cipher"
