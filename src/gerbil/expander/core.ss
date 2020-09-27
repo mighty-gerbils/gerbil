@@ -75,30 +75,35 @@ namespace: gx
 ;; bindings
 (defstruct binding (id key phi)
   id: gx#binding::t
-  unchecked: #t)
+  unchecked: #t transparent: #t)
 
 ;; runtime bindings
 (defstruct (runtime-binding binding) ()
-  id: gx#runtime-binding::t)
+  id: gx#runtime-binding::t
+  transparent: #t)
 (defstruct (local-binding runtime-binding) ()
-  id: gx#local-binding::t)
+  id: gx#local-binding::t
+  transparent: #t)
 (defstruct (top-binding runtime-binding) ()
-  id: gx#top-binding::t)
+  id: gx#top-binding::t
+  transparent: #t)
 (defstruct (module-binding top-binding) (context)
-  id: gx#module-binding::t)
+  id: gx#module-binding::t
+  transparent: #t)
 (defstruct (extern-binding top-binding) ()
-  id: gx#extern-binding::t)
+  id: gx#extern-binding::t
+  transparent: #t)
 
 ;; compile time bindings
 (defstruct (syntax-binding binding) (e)
   id: gx#syntax-binding::t
-  final: #t unchecked: #t)
+  final: #t unchecked: #t transparent: #t)
 (defstruct (import-binding binding) (e context weak?)
   id: gx#import-binding::t
-  final: #t unchecked: #t)
+  final: #t unchecked: #t transparent: #t)
 (defstruct (alias-binding binding) (e)
   id: gx#alias-binding::t
-  final: #t unchecked: #t)
+  final: #t unchecked: #t transparent: #t)
 
 ;; expanders [syntax-binding-e]
 (defstruct expander (e)
