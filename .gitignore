@@ -14,3 +14,8 @@ doc/node_modules
 doc/.vuepress/dist
 src/gerbil/runtime/gx-version.scm
 src/gerbil/gxi
+
+src/tutorial/lang/build-deps
+src/tutorial/proxy/build-deps
+src/tutorial/proxy/socks-proxy
+src/tutorial/proxy/tcp-proxy
