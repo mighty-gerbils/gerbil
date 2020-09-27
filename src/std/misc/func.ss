@@ -42,11 +42,9 @@
 ;; (always 5)                 -> proc which takes no arguments and returns 5
 ;; (always random-integer 10) -> proc which takes one arguments and computes a random integer
 (def (always v-or-fn . args)
-  (lambda ()
-    (if (procedure? v-or-fn)
-      (apply v-or-fn args)
-      v-or-fn)))
-
+  (if (procedure? v-or-fn)
+    (cut apply v-or-fn args)
+    (lambda () v-or-fn)))
 
 ;; composes a sequence of unary functions; per the mathematical function composition
 ;; the value flows right to left.
