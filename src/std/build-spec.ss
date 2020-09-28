@@ -239,6 +239,7 @@
     "crypto/hmac"
     "crypto/bn"
     "crypto/dh"
+    "crypto/pkey"
     "crypto"
     ;; :std/misc
     "misc/concurrent-plan"

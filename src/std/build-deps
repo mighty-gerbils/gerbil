@@ -616,7 +616,98 @@
            std/xml/ssax
            std/xml/sxml
            std/xml/sxpath))
+ (std/crypto/libcrypto
+  (gxc:
+   "crypto/libcrypto"
+   (extra-inputs: ("crypto/libcrypto-rfc5114.c"))
+   "-cc-options"
+   " -I /home/fare/src/gerbil/gerbil/src/std/"
+   "-ld-options"
+   "-lcrypto"
+   "-e"
+   "(include \"~~lib/_gambit#.scm\")")
+  (gerbil/core std/foreign))
+ (std/crypto/etc
+  (gxc: "crypto/etc" "-e" "(include \"~~lib/_gambit#.scm\")")
+  (gerbil/core
+   gerbil/gambit/ports
+   gerbil/gambit/threads
+   std/crypto/libcrypto
+   std/error
+   std/format
+   std/text/utf8))
+ (std/crypto/digest
+  "crypto/digest"
+  (gerbil/core std/crypto/etc std/crypto/libcrypto std/stxutil))
+ (std/crypto/cipher
+  "crypto/cipher"
+  (gerbil/core
+   gerbil/gambit/ports
+   std/crypto/etc
+   std/crypto/libcrypto
+   std/stxutil
+   std/text/utf8))
+ (std/crypto/hmac
+  "crypto/hmac"
+  (gerbil/core std/crypto/digest std/crypto/etc std/crypto/libcrypto))
+ (std/crypto/bn "crypto/bn" (gerbil/core std/crypto/etc std/crypto/libcrypto))
+ (std/crypto/dh "crypto/dh" (gerbil/core std/crypto/etc std/crypto/libcrypto))
+ (std/crypto/pkey
+  "crypto/pkey"
+  (gerbil/core
+   gerbil/gambit/bytes
+   gerbil/gambit/foreign
+   gerbil/gambit/ports
+   std/crypto/etc
+   std/crypto/libcrypto
+   std/stxutil))
+ (std/crypto
+  "crypto"
+  (gerbil/core
+   std/crypto/bn
+   std/crypto/cipher
+   std/crypto/dh
+   std/crypto/digest
+   std/crypto/etc
+   std/crypto/hmac
+   std/crypto/pkey))
+ (std/net/sasl
+  "net/sasl"
+  (gerbil/core
+   std/crypto
+   std/error
+   std/sugar
+   std/text/base64
+   std/text/hex
+   std/text/utf8))
+ (std/misc/uuid
+  "misc/uuid"
+  (gerbil/core
+   gerbil/gambit/hash
+   std/crypto/digest
+   std/crypto/etc
+   std/pregexp
+   std/text/hex
+   std/text/utf8))
  (std/misc/queue "misc/queue" (gerbil/core))
+ (std/net/websocket
+  "net/websocket"
+  (gerbil/core
+   gerbil/gambit/bits
+   gerbil/gambit/os
+   gerbil/gambit/ports
+   gerbil/gambit/threads
+   std/crypto/digest
+   std/crypto/etc
+   std/error
+   std/logger
+   std/misc/queue
+   std/misc/timeout
+   std/net/request
+   std/srfi/13
+   std/sugar
+   std/text/base64
+   std/text/utf8))
  (std/misc/pqueue "misc/pqueue" (gerbil/core))
  (std/misc/concurrent-plan
   "misc/concurrent-plan"
@@ -728,87 +819,6 @@
  (std/text/utf32
   "text/utf32"
   (gerbil/core gerbil/gambit/fixnum std/error std/misc/bytes))
- (std/crypto/libcrypto
-  (gxc:
-   "crypto/libcrypto"
-   (extra-inputs: ("crypto/libcrypto-rfc5114.c"))
-   "-cc-options"
-   " -I /home/fare/src/gerbil/gerbil/src/std/"
-   "-ld-options"
-   "-lcrypto"
-   "-e"
-   "(include \"~~lib/_gambit#.scm\")")
-  (gerbil/core gerbil/gambit/exceptions std/foreign std/misc/bytes std/sugar))
- (std/crypto/etc
-  (gxc: "crypto/etc" "-e" "(include \"~~lib/_gambit#.scm\")")
-  (gerbil/core
-   gerbil/gambit/ports
-   gerbil/gambit/threads
-   std/crypto/libcrypto
-   std/error
-   std/format
-   std/text/utf8))
- (std/crypto/digest
-  "crypto/digest"
-  (gerbil/core std/crypto/etc std/crypto/libcrypto std/stxutil))
- (std/net/websocket
-  "net/websocket"
-  (gerbil/core
-   gerbil/gambit/bits
-   gerbil/gambit/os
-   gerbil/gambit/ports
-   gerbil/gambit/threads
-   std/crypto/digest
-   std/crypto/etc
-   std/error
-   std/logger
-   std/misc/queue
-   std/misc/timeout
-   std/net/request
-   std/srfi/13
-   std/sugar
-   std/text/base64
-   std/text/utf8))
- (std/crypto/cipher
-  "crypto/cipher"
-  (gerbil/core
-   gerbil/gambit/ports
-   std/crypto/etc
-   std/crypto/libcrypto
-   std/stxutil
-   std/text/utf8))
- (std/crypto/hmac
-  "crypto/hmac"
-  (gerbil/core std/crypto/digest std/crypto/etc std/crypto/libcrypto))
- (std/crypto/bn "crypto/bn" (gerbil/core std/crypto/etc std/crypto/libcrypto))
- (std/crypto/dh "crypto/dh" (gerbil/core std/crypto/etc std/crypto/libcrypto))
- (std/crypto
-  "crypto"
-  (gerbil/core
-   std/crypto/bn
-   std/crypto/cipher
-   std/crypto/dh
-   std/crypto/digest
-   std/crypto/etc
-   std/crypto/hmac))
- (std/net/sasl
-  "net/sasl"
-  (gerbil/core
-   std/crypto
-   std/error
-   std/sugar
-   std/text/base64
-   std/text/hex
-   std/text/utf8))
- (std/misc/uuid
-  "misc/uuid"
-  (gerbil/core
-   gerbil/gambit/hash
-   std/crypto/digest
-   std/crypto/etc
-   std/pregexp
-   std/text/hex
-   std/text/utf8))
  (std/misc/number "misc/number" (gerbil/core std/srfi/1 std/sugar))
  (std/misc/hash "misc/hash" (gerbil/core gerbil/gambit/hash std/iter std/sort))
  (std/misc/path "misc/path" (gerbil/core))
