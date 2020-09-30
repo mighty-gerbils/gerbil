@@ -60,3 +60,7 @@ Here is a small example `~/.gerbil/init.ss` that provides useful functionality:
 ;; import your personal gerbil libraries
 (import :my/stuff :more/of/my/stuff)
 ```
+
+These files are only loaded when no argument is passed to gxi.
+To read those initialization files while passing arguments to gxi, you can have these arguments
+explicitly call `(_gx#gxi-init-interactive! command-line)`.

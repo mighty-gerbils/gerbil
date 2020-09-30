@@ -41,7 +41,7 @@
 (defrules check-max-rope-length! ()
   ((_ where len)
    (unless (##fx<= len xdr-max-rope-length)
-     (raise-xdr-error where "maxium rope length exceeded" len))))
+     (raise-xdr-error where "maximum rope length exceeded" len))))
 
 ;; dispatch tables
 (def +xdr-read+
