@@ -619,9 +619,9 @@
  (std/crypto/libcrypto
   (gxc:
    "crypto/libcrypto"
-   (extra-inputs: ("crypto/libcrypto-rfc5114.c"))
+   (submodules: ((static-include: "crypto/libcrypto-rfc5114.c")))
    "-cc-options"
-   " -I /home/fare/src/gerbil/gerbil/src/std/"
+   ""
    "-ld-options"
    "-lcrypto"
    "-e"

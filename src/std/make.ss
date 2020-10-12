@@ -157,13 +157,20 @@ TODO:
      (error "Bad buildspec" spec))))
 
 (def (spec-inputs spec settings)
-  [(spec-file spec settings) (spec-extra-inputs spec settings) ...])
+  [(spec-file spec settings)
+   (spec-extra-inputs spec settings) ...
+   (append-map (cut spec-inputs <> settings) (spec-submodules spec)) ...])
 
 (def (spec-extra-inputs spec settings)
   (match spec
     ([gxc: . _] (pgetq extra-inputs: (spec-plist spec) []))
     ([gsc: . _] (pgetq extra-inputs: (spec-plist spec) []))
-    ([ssi: _ . submodules] (append-map (cut spec-inputs <> settings) submodules))
+    (_ [])))
+
+(def (spec-submodules spec)
+  (match spec
+    ([gxc: . _] (pgetq submodules: (spec-plist spec) []))
+    ([ssi: _ . submodules] submodules)
     (_ [])))
 
 (def (spec-plist spec)
@@ -520,7 +527,17 @@ TODO:
     ((cut for-each <> buildspec)
      (lambda (spec)
        (case (spec-type spec)
-         ((gxc: exe: static-exe:) (no-submodules spec) (c spec))
+         ((gxc:) (let (s (get-submodules))
+                   (if (null? s) (c spec)
+                       (c
+                        (match spec
+                          ([gxc: name (? pair? plist) . args]
+                           [gxc: name (psetq plist submodules: (append (pgetq plist submodules:) s))])
+                          ([gxc: name . args]
+                           [gxc: name [submodules: s] . args])
+                          ((? string? spec)
+                           [gxc: spec [submodules: s]]))))))
+         ((exe: static-exe:) (no-submodules spec) (c spec))
          ((gsc: static-include: copy:) (push-submodule spec))
          ((ssi:) (c (append spec (get-submodules))))
          (else (error "Unrecognized spec type" spec)))))

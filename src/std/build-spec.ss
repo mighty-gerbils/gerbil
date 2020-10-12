@@ -229,8 +229,9 @@
     "xml/print"
     "xml"
     ;; :std/crypto
-    (gxc: "crypto/libcrypto" (extra-inputs: ("crypto/libcrypto-rfc5114.c"))
-          "-cc-options" ,(string-append (cppflags "libcrypto" "") " -I " srcdir)
+    (static-include: "crypto/libcrypto-rfc5114.c")
+    (gxc: "crypto/libcrypto"
+          "-cc-options" ,(cppflags "libcrypto" "")
           "-ld-options" ,(ldflags "libcrypto" "-lcrypto")
           ,@(include-gambit-sharp))
     (gxc: "crypto/etc" ,@(include-gambit-sharp))
