@@ -160,7 +160,6 @@ In order to export the created lamdas, simply include (struct X a b) in the begi
 struct abc {
     char* a;
     char* b;
-    char* c;
 };
 ")
   
@@ -174,3 +173,79 @@ struct abc {
 
 (abc-a obj) ;; => hello
 ```
+
+## Interfacing with a custom C program
+
+This example shows how to compile and link a C module to a Gerbil module, in order to call functions and return constants from the former.
+
+Consider there are a simple module written in C defining two functions, f1 and f2:
+
+```
+$ cat ffi-pi.h
+double f1(void); 
+double f2(double x);
+
+$ cat ffi-pi.c
+#include <stdlib.h>
+#include <math.h>
+
+double f1(void) {
+  return M_PI;
+}
+
+double f2(double x) {
+  return asin(x) - asin(-x);
+}
+```
+
+Compiling ffi-pi.c:
+
+```
+$ gcc -Wall -c ffi-pi.c
+```
+
+Now the glue: 
+
+```
+$ cat ffi-pi.ss
+package: ffi-example
+
+(import :std/foreign
+        :std/format
+        :std/iter)
+
+(export #t)
+
+(begin-ffi (M_PI f1 f2)
+  (c-declare "#include <math.h>")
+  (c-declare "#include \"ffi-pi.h\"")
+  (define M_PI ((c-lambda () double "___return(M_PI);")))
+  (define pi (c-lambda () double "___return(M_PI);"))
+  (define-c-lambda f1 () double "f1")
+  (define-c-lambda f2 (double) double "f2")
+  )
+```
+
+Note that there are two definitions for number pi: the first, M_PI is a constant and the second is a function.
+
+Compile that with:
+
+```
+gxc -ld-options `pwd`/ffi-pi.o -cc-options -I`pwd` ffi-pi.ss
+```
+
+And use the module:
+
+```
+$ gxi
+Gerbil v0.16-133-gfdfdcb5d on Gambit v4.9.3-1232-gbba388b8
+> (import :ffi-example/ffi-pi)
+> (= M_PI (pi))
+#t
+> (= M_PI (f1))
+#t
+> (= (f1) (f2 1.0))
+#t
+```
+
+
