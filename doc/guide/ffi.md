@@ -182,12 +182,16 @@ Consider there are a simple module written in C defining two functions, f1 and f
 
 ```
 $ cat ffi-pi.h
+#ifndef _ffi_pi_h
+#define _ffi_pi_h
 double f1(void); 
 double f2(double x);
+#endif
 
 $ cat ffi-pi.c
 #include <stdlib.h>
 #include <math.h>
+#include "ffi-pi.h"
 
 double f1(void) {
   return M_PI;
