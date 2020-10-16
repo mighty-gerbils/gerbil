@@ -208,7 +208,7 @@ Compiling ffi-pi.c:
 $ gcc -Wall -c ffi-pi.c
 ```
 
-Now the glue: 
+Now, the Gerbil code: 
 
 ```
 $ cat ffi-pi.ss
