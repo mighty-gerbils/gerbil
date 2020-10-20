@@ -60,11 +60,13 @@
                (string-types '(char-string nonull-char-string UTF-8-string
                                            nonnull-UTF-8-string UTF-16-string
                                            nonnull-UTF16-string))
-               (string-compat-required? (let loop ((m members))
-                                          (cond
-                                           ((null? m) #f)
-                                           ((member (cdr (car m)) string-types) #t)
-                                           (else (loop (cdr m))))))
+               (string-compat-required? (if release-function
+                                          #f
+                                          (let loop ((m members))
+                                            (cond
+                                             ((null? m) #f)
+                                             ((member (cdr (car m)) string-types) #t)
+                                             (else (loop (cdr m)))))))
                (string-setter-body (lambda (member-name)
                                      (let ((m (string-append "___arg1->" member-name)))
                                        (string-append
@@ -75,28 +77,30 @@
                                         m "= strdup(___arg2);" "\n"
                                         "}" "\n"
                                         "___return;" "\n"))))
-               (default-free-body (and string-compat-required?
+               (default-free-body (and (or release-function string-compat-required?)
                                        (string-append
                                         "___SCMOBJ " struct-str "_ffi_free (void *ptr) {" "\n"
                                         "struct " struct-str " *obj = (struct " struct-str "*) ptr;" "\n"
-                                        (apply string-append
-                                          (map (lambda (m)
-                                                 (cond 
-                                                  ((memq (cdr m) string-types)
-                                                   (let ((mem-name (symbol->string (car m))))
-                                                     (string-append "if(obj->" mem-name ") " 
-                                                                    "free(obj->" mem-name ");" "\n")))
-                                                  (else "")))
-                                               members))
-                                        "free(obj);" "\n"
+                                        (if release-function
+                                          (string-append release-function "(obj);" "\n")
+                                          (string-append
+                                           (apply string-append
+                                             (map (lambda (m)
+                                                    (cond 
+                                                     ((memq (cdr m) string-types)
+                                                      (let ((mem-name (symbol->string (car m))))
+                                                        (string-append "if(obj->" mem-name ") " 
+                                                                       "free(obj->" mem-name ");" "\n")))
+                                                     (else "")))
+                                                  members))
+                                           "free(obj);" "\n"))
                                         "return ___FIX (___NO_ERR);" "\n"
                                         "}"
                                         )))
-               (release-function (or release-function
-                                     (if string-compat-required?
-                                       (string-append struct-str "_ffi_free")
-                                       "ffi_free")))
-               (string-compat-types (if string-compat-required?
+               (release-function (if (or release-function string-compat-required?)
+                                   (string-append struct-str "_ffi_free")
+                                   "ffi_free"))
+               (string-compat-types (if (or release-function string-compat-required?)
                                       `((c-declare ,default-free-body)
                                         (c-define-type ,shallow-ptr
 						       (pointer ,struct (,struct-ptr) "ffi_free")))
