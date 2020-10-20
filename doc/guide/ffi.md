@@ -160,11 +160,12 @@ In order to export the created lamdas, simply include (struct X a b) in the begi
 struct abc {
     char* a;
     char* b;
+    char* c;
 };
 ")
   
 
-  (define-c-struct abc ((a . char-string) (b . char-string))))
+  (define-c-struct abc ((a . char-string) (b . char-string)))) ;; don't need to define all fields
   
 (def obj (malloc-abc))
 			 
