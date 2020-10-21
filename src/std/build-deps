@@ -653,6 +653,7 @@
  (std/xml "xml"
           (gerbil/core
            std/build-config
+           std/xml/libxml
            std/xml/print
            std/xml/ssax
            std/xml/sxml
