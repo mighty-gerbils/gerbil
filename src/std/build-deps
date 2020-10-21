@@ -125,6 +125,11 @@
    gerbil/gambit/ports
    std/error
    std/text/hex))
+ (std/text/libyaml
+  (ssi:
+   "text/libyaml"
+   (gsc: "text/libyaml" "-cc-options" "" "-ld-options" "-lyaml"))
+  (gerbil/core))
  (std/text/_zlib
   (ssi: "text/_zlib" (gsc: "text/_zlib" "-cc-options" "" "-ld-options" "-lz"))
   (gerbil/core))
@@ -159,6 +164,19 @@
  (std/net/bio/buffer
   "net/bio/buffer"
   (gerbil/core std/error std/net/bio/input std/net/bio/output std/srfi/1))
+ (std/xml/_libxml
+  (ssi:
+   "xml/_libxml"
+   (gsc:
+    "xml/_libxml"
+    "-cc-options"
+    "-I/usr/include/libxml2"
+    "-ld-options"
+    "-lxml2"
+    "-e"
+    "(include \"~~lib/_gambit#.scm\")"))
+  (gerbil/core))
+ (std/xml/libxml "xml/libxml" (gerbil/core std/xml/_libxml))
  (std/xml/sxpath "xml/sxpath" (gerbil/core))
  (std/xml/sxml "xml/sxml" (gerbil/core))
  (std/xml/sxml-to-xml
@@ -502,6 +520,16 @@
    std/parser/lexer
    std/parser/rlang
    std/parser/stream))
+ (std/text/yaml
+  "text/yaml"
+  (gerbil/core
+   std/error
+   std/iter
+   std/misc/list-builder
+   std/pregexp
+   std/sugar
+   std/text/libyaml
+   std/text/utf8))
  (std/net/address
   "net/address"
   (gerbil/core gerbil/gambit/os std/format std/pregexp std/text/hex))
@@ -1174,5 +1202,25 @@
   (gerbil/core))
  (std/db/sqlite
   "db/sqlite"
-  (gerbil/core std/db/_sqlite std/db/dbi std/format std/iter)))
+  (gerbil/core std/db/_sqlite std/db/dbi std/format std/iter))
+ (std/db/_lmdb
+  (ssi: "db/_lmdb" (gsc: "db/_lmdb" "-cc-options" "" "-ld-options" "-llmdb"))
+  (gerbil/core))
+ (std/db/lmdb
+  "db/lmdb"
+  (gerbil/core gerbil/gambit/threads std/db/_lmdb std/error std/text/utf8))
+ (std/db/_leveldb
+  (ssi:
+   "db/_leveldb"
+   (gsc: "db/_leveldb" "-cc-options" "" "-ld-options" "-lleveldb"))
+  (gerbil/core))
+ (std/db/leveldb
+  "db/leveldb"
+  (gerbil/core
+   gerbil/gambit/misc
+   gerbil/gambit/threads
+   std/db/_leveldb
+   std/error
+   std/iter
+   std/text/utf8)))
 
