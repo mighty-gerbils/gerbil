@@ -170,7 +170,7 @@
                   (define ,(string->symbol (string-append struct-str "-array-set!"))
                     (c-lambda (,struct-ptr unsigned-int32 ,struct-ptr) void
                          "*(___arg1 + ___arg2) = *___arg3; ___return;")))))
-      (define-macro (define-foo objtype-name release-function)
+      (define-macro (define-opaque objtype-name release-function)
         (let* ((objtype-str (symbol->string objtype-name))
                (objtype-ptr (string->symbol (string-append objtype-str "*")))
                (shallow-ptr (string->symbol (string-append objtype-str "-shallow-ptr*")))

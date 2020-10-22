@@ -310,7 +310,7 @@ void widget_destroy(Widget * self) {
 }
 ```
 
-To wrap this definition and make the destructor be called by garbage collector, a simple wrapper, is defined bellow, using `define-foo` macro:
+To wrap this definition and make the destructor be called by garbage collector, a simple wrapper, is defined bellow, using `define-opaque` macro:
 
 ```
 $ cat widget-wrap.ss 
@@ -323,7 +323,7 @@ package: ffi-example
 (begin-ffi (obj-new obj-count)
   (c-declare "#include <stdlib.h>")
   (c-declare "#include \"widget.h\"")
-  (define-foo Widget "widget_destroy")
+  (define-opaque Widget "widget_destroy")
   (define-c-lambda widget-new (int) Widget* "widget_new")
   (define-c-lambda widget-count () int "widget_count"))
 ```
@@ -383,7 +383,7 @@ Widget_destroy(): garbage collected
 Widget_destroy(): garbage collected
 ```
 
-It is a quite simple implementation of a foreign opaque object (our FOO) but can be very useful, because destructors sometimes must release other system resources than their own object allocated memory.
+It is a quite simple implementation of a foreign opaque object (FOO) but can be very useful, because destructors sometimes must release other system resources than their own object allocated memory.
 
 Considering C stream FILE, where its destructor must release OS resources like file descriptors, IO buffers, etc. So, as a simple example, let' consider the following wrapper code:
 
@@ -398,7 +398,7 @@ package: ffi-example
 (begin-ffi (FILE FILE* fopen fputs fclose)
   (c-declare "#include <stdlib.h>")
   (c-declare "#include <stdio.h>")
-  (define-foo FILE "fclose")
+  (define-opaque FILE "fclose")
   (define stdout ((c-lambda () FILE* "___return(stdout);")))
   (define-c-lambda fopen (char-string char-string) FILE* "fopen")
   (define-c-lambda fputs (char-string FILE*) int "fputs"))
