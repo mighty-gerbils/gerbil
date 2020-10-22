@@ -415,7 +415,7 @@ $ cat FILE-example.ss
 (let ((f (fopen "FILE-test.txt" "w")))
   (fputs "Hello FOO\n" f))
 
-;; at this point f can be closed at by Garbage Collector will...
+;; at this point f can be closed at Garbage Collector's will...
 ```
 
 Compiling and executing:
