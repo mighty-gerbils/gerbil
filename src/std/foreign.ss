@@ -169,7 +169,47 @@
                   ;; set! array
                   (define ,(string->symbol (string-append struct-str "-array-set!"))
                     (c-lambda (,struct-ptr unsigned-int32 ,struct-ptr) void
-                         "*(___arg1 + ___arg2) = *___arg3; ___return;")))))))
+                         "*(___arg1 + ___arg2) = *___arg3; ___return;")))))
+      (define-macro (define-foo objtype-name release-function)
+        (let* ((objtype-str (symbol->string objtype-name))
+               (objtype-ptr (string->symbol (string-append objtype-str "*")))
+               (shallow-ptr (string->symbol (string-append objtype-str "-shallow-ptr*")))
+               (borrowed-ptr (string->symbol (string-append objtype-str "-borrowed-ptr*")))
+               (default-free-body (string-append
+                                   "___SCMOBJ " objtype-str "_ffi_free (void *ptr) {" "\n"
+                                   objtype-str " *obj = (" objtype-str " *) ptr;" "\n"
+                                   release-function "(obj);" "\n"
+                                   "return ___FIX (___NO_ERR);" "\n"
+                                   "}"
+                                   ))
+               (release-function (string-append objtype-str "_ffi_free")))
+
+          `(begin (c-define-type ,objtype-name ,objtype-str)
+                  (c-define-type ,objtype-ptr
+                                 (pointer ,objtype-name (,objtype-ptr) ,release-function))
+                  (c-define-type ,borrowed-ptr (pointer ,objtype-name (,objtype-ptr)))
+                  (c-declare ,default-free-body)
+
+		              (define ,(string->symbol (string-append objtype-str "-ptr?"))
+                    (lambda (obj)
+                      (and (foreign? obj)
+                           (equal? (foreign-tags obj) (quote (,objtype-ptr))))))
+
+                  ;; malloc
+                  (define ,(string->symbol (string-append "malloc-" objtype-str))
+                    (c-lambda () ,objtype-ptr
+                         ,(string-append
+                           objtype-str "* var = (" objtype-str " *) malloc(sizeof(" objtype-str "));" "\n"
+                           "if (var == NULL)" "\n"
+                           "    ___return (NULL);" "\n"
+			                     "memset(var, 0, sizeof(" objtype-str "));"
+                           "___return(var);")))
+
+                  (define ,(string->symbol (string-append "ptr->" objtype-str))
+                    (c-lambda (,objtype-ptr) ,objtype-name
+                         "___return(*___arg1);")))))
+
+    ))
 
   (def (prelude-c-decls)
     '((c-declare "#include <stdlib.h>")

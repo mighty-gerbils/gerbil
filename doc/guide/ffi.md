@@ -253,4 +253,182 @@ Gerbil v0.16-133-gfdfdcb5d on Gambit v4.9.3-1232-gbba388b8
 #t
 ```
 
+## A foreign opaque object interface
 
+Opaque objects are objects which its contents are not available to the user, or is irrelevant, or even changes depending on the system implementation. A good example of an opaque object is C stream type FILE, all access to its data is made by means of methods like fprintf, fgets, fputs, etc. It is reasonable to consider that its constructor is `fopen` (or others that creates a new stream) and its destructor is `fclose`.
+
+To introduce that interface, let's consider the definition of a type `Widget` as follows:
+
+```
+$ cat widget.h
+#ifndef _widget_h
+#define _widget_h
+
+#include <stdint.h>
+
+#define OPAQUE_DATA_SIZE 32
+
+struct _Widget {
+  uint8_t * opaque_data[OPAQUE_DATA_SIZE];
+};
+
+typedef struct _Widget Widget;
+
+Widget * widget_new(int data);
+int widget_count(void);
+void widget_destroy(Widget * data);
+
+#endif
+```
+
+And widget.c:
+
+```
+$ cat widget.c
+#include <stdlib.h>
+#include <stdio.h>
+
+#include "widget.h"
+
+static int count = 0;
+
+Widget* widget_new(int data) {
+  Widget * self = malloc(sizeof(Widget));
+  ((int *) self->opaque_data)[0] = data;
+  count++;
+  return self;
+}
+
+int widget_count(void) {
+  return count;
+}
+
+void widget_destroy(Widget * self) {
+  printf("Widget_destroy(): garbage collected\n");
+  count--;
+  free(self);
+}
+```
+
+To wrap this definition and make the destructor be called by garbage collector, a simple wrapper, is defined bellow, using `define-foo` macro:
+
+```
+$ cat widget-wrap.ss 
+package: ffi-example
+
+(import :std/foreign)
+
+(export #t)
+
+(begin-ffi (obj-new obj-count)
+  (c-declare "#include <stdlib.h>")
+  (c-declare "#include \"widget.h\"")
+  (define-foo Widget "widget_destroy")
+  (define-c-lambda widget-new (int) Widget* "widget_new")
+  (define-c-lambda widget-count () int "widget_count"))
+```
+
+Let's compile all:
+
+```
+$ gcc -Wall -c widget.c
+$ gxc -ld-options `pwd`/widget.o -cc-options -I`pwd` widget-wrap.ss
+```
+
+And a simple test to that:
+
+```
+$ cat widget-release-test.ss 
+(import :std/iter
+        :ffi-example/widget-wrap)
+
+;; gcc -Wall -c widget.c
+;; gxc foreign2.ss
+;; gxc -ld-options `pwd`/widget.o -cc-options -I`pwd` widget-wrap.ss
+;; gxi widget-release-test.ss
+
+(def o (widget-new 1))
+
+(displayln (widget-count))
+(for ((i (in-range 0 10)))
+  (let ((o (widget-new i)))
+    (displayln (widget-count))))
+```
+
+Calling it from interpreter:
+
+```
+$ gxi widget-release-test.ss 
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Widget_destroy(): garbage collected
+Widget_destroy(): garbage collected
+Widget_destroy(): garbage collected
+Widget_destroy(): garbage collected
+Widget_destroy(): garbage collected
+Widget_destroy(): garbage collected
+Widget_destroy(): garbage collected
+Widget_destroy(): garbage collected
+Widget_destroy(): garbage collected
+Widget_destroy(): garbage collected
+Widget_destroy(): garbage collected
+```
+
+It is a quite simple implementation of a foreign opaque object (our FOO) but can be very useful, because destructors sometimes must release other system resources than their own object allocated memory.
+
+Considering C stream FILE, where its destructor must release OS resources like file descriptors, IO buffers, etc. So, as a simple example, let' consider the following wrapper code:
+
+```
+ cat FILE-wrap.ss 
+package: ffi-example
+
+(import :std/foreign)
+
+(export #t)
+
+(begin-ffi (FILE FILE* fopen fputs fclose)
+  (c-declare "#include <stdlib.h>")
+  (c-declare "#include <stdio.h>")
+  (define-foo FILE "fclose")
+  (define stdout ((c-lambda () FILE* "___return(stdout);")))
+  (define-c-lambda fopen (char-string char-string) FILE* "fopen")
+  (define-c-lambda fputs (char-string FILE*) int "fputs"))
+```
+
+The dummy example:
+
+```
+$ cat FILE-example.ss 
+(import :ffi-example/FILE-wrap)
+
+(fputs "Hello world!\n" stdout)
+
+(let ((f (fopen "FILE-test.txt" "w")))
+  (fputs "Hello FOO\n" f))
+
+;; at this point f can be closed at by Garbage Collector will...
+```
+
+Compiling and executing:
+
+```
+$ gxc FILE-wrap.ss 
+$ gxi FILE-example.ss 
+Hello world!
+```
+
+Finally:
+
+```
+$ cat FILE-test.txt 
+Hello FOO
+```
