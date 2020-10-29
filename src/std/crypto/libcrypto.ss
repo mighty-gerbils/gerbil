@@ -480,7 +480,7 @@ static int ffi_DH_compute_key (___SCMOBJ secret, BIGNUM *pubkey, DH *dh)
 }
 
 #if OPENSSL_VERSION_NUMBER < 0x10002000L || defined (LIBRESSL_VERSION_NUMBER)
-#include "crypto/libcrypto-rfc5114.c"
+#include "libcrypto-rfc5114.c"
 #endif
 END-C
 )
