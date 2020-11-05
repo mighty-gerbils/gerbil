@@ -165,19 +165,6 @@
   (ssi: "xml/sxml-to-xml" (gsc: "xml/sxml-to-xml"))
   (gerbil/core))
  (std/xml/print "xml/print" (gerbil/core std/xml/sxml-to-xml))
- (std/crypto/libcrypto
-  (ssi:
-   "crypto/libcrypto"
-   (gsc:
-    "crypto/libcrypto"
-    "-cc-options"
-    ""
-    "-ld-options"
-    "-lcrypto"
-    "-e"
-    "(include \"~~lib/_gambit#.scm\")")
-   (static-include: "crypto/libcrypto-rfc5114.c"))
-  (gerbil/core))
  (std/misc/timeout "misc/timeout" (gerbil/core gerbil/gambit/os))
  (std/misc/list-builder "misc/list-builder" (gerbil/core))
  (std/misc/alist "misc/alist" (gerbil/core std/sugar))
@@ -629,6 +616,17 @@
            std/xml/ssax
            std/xml/sxml
            std/xml/sxpath))
+ (std/crypto/libcrypto
+  (gxc:
+   "crypto/libcrypto"
+   (submodules: ((static-include: "crypto/libcrypto-rfc5114.c")))
+   "-cc-options"
+   ""
+   "-ld-options"
+   "-lcrypto"
+   "-e"
+   "(include \"~~lib/_gambit#.scm\")")
+  (gerbil/core std/foreign))
  (std/crypto/etc
   (gxc: "crypto/etc" "-e" "(include \"~~lib/_gambit#.scm\")")
   (gerbil/core
@@ -654,6 +652,15 @@
   (gerbil/core std/crypto/digest std/crypto/etc std/crypto/libcrypto))
  (std/crypto/bn "crypto/bn" (gerbil/core std/crypto/etc std/crypto/libcrypto))
  (std/crypto/dh "crypto/dh" (gerbil/core std/crypto/etc std/crypto/libcrypto))
+ (std/crypto/pkey
+  "crypto/pkey"
+  (gerbil/core
+   gerbil/gambit/bytes
+   gerbil/gambit/foreign
+   gerbil/gambit/ports
+   std/crypto/etc
+   std/crypto/libcrypto
+   std/stxutil))
  (std/crypto
   "crypto"
   (gerbil/core
@@ -662,7 +669,8 @@
    std/crypto/dh
    std/crypto/digest
    std/crypto/etc
-   std/crypto/hmac))
+   std/crypto/hmac
+   std/crypto/pkey))
  (std/net/sasl
   "net/sasl"
   (gerbil/core

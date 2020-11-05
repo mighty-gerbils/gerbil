@@ -19,3 +19,4 @@ src/tutorial/lang/build-deps
 src/tutorial/proxy/build-deps
 src/tutorial/proxy/socks-proxy
 src/tutorial/proxy/tcp-proxy
+test/

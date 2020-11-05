@@ -74,16 +74,19 @@
           (digest-t?     (format-id #'name "~a-digest?" #'name)))
        #'(begin
            (def digest-md-t (digest-md))
-           (def (make-digest-t)
-             (make-digest digest-md-t))
-           (def (digest-t? obj)
-             (and (digest? obj)
-                  (eq? (EVP_MD_type (digest-type obj))
-                       (EVP_MD_type (digest-md-t)))))
-           (def (name . args)
-             (let (digest (make-digest-t))
-               (apply digest-update* digest args)
-               (digest-final! digest)))
+           (def make-digest-t (and digest-md-t (lambda () (make-digest digest-md-t))))
+           (def digest-t?
+             (and digest-md-t
+                  (lambda (obj)
+                    (and (digest? obj)
+                         (eq? (EVP_MD_type (digest-type obj))
+                              (EVP_MD_type digest-md-t))))))
+           (def name
+             (and digest-md-t
+                  (lambda args
+                    (let (digest (make-digest-t))
+                      (apply digest-update* digest args)
+                      (digest-final! digest)))))
            (export digest-md-t make-digest-t digest-t? name))))))
 
 (define-digest md5)
@@ -94,3 +97,18 @@
 (define-digest sha512)
 (define-digest ripemd160)
 (define-digest whirlpool)
+
+;;; blake2 variants only available since openssl 1.1.0-pre4. Will return #f before 1.1.0.
+(define-digest blake2s256)
+(define-digest blake2b512)
+
+;; sha3 variants only available since 1.1.1-pre1. Will return #f before 1.1.0.
+(define-digest sha3_224)
+(define-digest sha3_256)
+(define-digest sha3_384)
+(define-digest sha3_512)
+(define-digest shake128)
+(define-digest shake256)
+
+;; NB: keccak256 still not actually available as of openssl 3.0.0-alpha6. Will return #f.
+(define-digest keccak256)

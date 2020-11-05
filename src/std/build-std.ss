@@ -6,4 +6,4 @@
 
 (include "build-spec.ss")
 
-(def (build . args) (apply make build-spec args))
+(def (build . args) (apply make (apply build-spec args) args))

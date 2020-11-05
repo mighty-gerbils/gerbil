@@ -28,10 +28,10 @@
                (ref (string-append "___return (" str ");")))
           `(define ,symbol
              ((c-lambda () int ,ref)))))
-      (define-macro (define-const* symbol)
+      (define-macro (define-const* symbol #!optional (ccond #f))
         (let* ((str (symbol->string symbol))
                (code (string-append
-                      "#ifdef " str "\n"
+                      "#if " (or ccond (string-append "defined(" str ")")) "\n"
                       "___return (___FIX (" str "));\n"
                       "#else \n"
                       "___return (___FAL);\n"
