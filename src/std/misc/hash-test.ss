@@ -17,6 +17,12 @@
     (test-case "hash->list/sort"
       (check (hash->list/sort (hash (3 "c") (1 "a") (5 "e") (4 "d") (2 "b")) <)
              => '((1 . "a") (2 . "b") (3 . "c") (4 . "d") (5 . "e"))))
+    (test-case "hash-ref/default"
+      (def h (hash (a 1) (b 2)))
+      (check (hash-ref/default h 'a error) => 1)
+      (check (hash-ref/default h 'b error) => 2)
+      (check (hash-ref/default h 'c (lambda () 3)) => 3)
+      (check (hash-ref/default h 'c (lambda () 5)) => 5))
     (test-case "hash-ensure-ref"
       (def h (hash (a 1) (b 2)))
       (check (hash-ensure-ref h 'a error) => 1)
