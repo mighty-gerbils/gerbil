@@ -397,12 +397,22 @@
  (std/srfi/159/color
   (gxc: "srfi/159/color" (extra-inputs: ("srfi/159/color.scm")))
   (gerbil/core std/srfi/13 std/srfi/159/base))
+ (std/srfi/159/pretty
+  (gxc: "srfi/159/pretty" (extra-inputs: ("srfi/159/pretty.scm")))
+  (gerbil/core
+   std/srfi/1
+   std/srfi/125
+   std/srfi/130
+   std/srfi/159/base
+   std/srfi/159/show
+   std/srfi/159/string))
  (std/srfi/159
   "srfi/159"
   (gerbil/core
    std/srfi/159/base
    std/srfi/159/color
    std/srfi/159/columnar
+   std/srfi/159/pretty
    std/srfi/159/show
    std/srfi/159/unicode))
  (std/srfi/160/macros
