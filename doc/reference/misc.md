@@ -1622,6 +1622,15 @@ length: 3
 ```
 :::
 
+### hash-ref/default
+``` scheme
+(hash-ensure-ref table key default) -> value
+```
+
+Checks whether the given *key* is present in the *table*.
+If it is, return the associated value.
+If it is not, call the *default* thunk and return its value.
+
 ### hash-ensure-ref
 ``` scheme
 (hash-ensure-ref table key default) -> value

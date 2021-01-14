@@ -4,6 +4,7 @@
 
 (export
   hash-empty?
+  hash-ref/default
   hash-ensure-ref
   invert-hash
   invert-hash/fold
@@ -36,16 +37,19 @@
 
 ;; type (Table V K) ;; hash-tables mapping key K to values V (note that V comes before K)
 
-;; Lookup a table for a
-;; If the key is missing, compute a default value, and put it in the table.
+;; Lookup a table. If the key is missing, compute and return a default value.
 ;; : V <- (Table V K) K (V <-)
-(def (hash-ensure-ref table key default)
+(def (hash-ref/default table key default)
   (let ((val (hash-ref table key %none)))
     (if (eq? val %none)
-      (let ((value (default)))
-        (hash-put! table key value)
-        value)
+      (default)
       val)))
+
+;; Lookup a table. If the key is missing, compute a default value *and* put it in the table.
+;; : V <- (Table V K) K (V <-)
+(def (hash-ensure-ref table key default)
+  (hash-ref/default
+   table key (cut let (value (default)) (hash-put! table key value) value)))
 
 ;; Given a hash-table to (a new equal? hash-table by default,
 ;; but e.g. an eqv? or eq? hash-table could be given instead), invert the hash-table from
