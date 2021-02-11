@@ -19,10 +19,12 @@
         :gerbil/gambit/bits
         :gerbil/gambit/exact
         :std/error
+        :std/sort
         :std/text/hex)
 (export read-json write-json
         string->json-object json-object->string
-        json-symbolic-keys json-list-wrapper)
+        json-symbolic-keys json-list-wrapper
+        write-json-alist write-json-alist/sort json-sort-alist)
 (declare (not safe))
 
 (def (read-json (port (current-input-port)))
@@ -286,6 +288,8 @@
     (write-string "false" port))
    ((void? obj)
     (write-string "null" port))
+   ((method-ref obj ':write-json)
+    => (cut <> obj port))
    (else
     (write-json-object {:json obj} port))))
 
@@ -331,34 +335,42 @@
                 (lp (##fx+ n 1)))))))
       (write-string "[]" port))))
 
-(def (write-json-hash obj port)
-  (def (string-e key)
-    (cond
-     ((string? key) key)
-     ((symbol? key)
-      (symbol->string key))
-     ((keyword? key)
-      (keyword->string key))
-     (else
-      (error "Illegal hash key; must be symbol, keyword or string" obj key))))
+(def (json-key-string key (obj #f))
+  (cond
+   ((string? key) key)
+   ((symbol? key)
+    (symbol->string key))
+   ((keyword? key)
+    (keyword->string key))
+   (else
+    (error "Illegal hash key; must be symbol, keyword or string" obj key))))
 
+;; Assume the list is sorted
+(def (write-json-alist alist port (obj alist))
   (write-char #\{ port)
-  (let (lst (hash->list obj))
-    (let lp ((rest lst))
-      (match rest
-        ([[key . val]]                  ; last one
-         (write (string-e key) port)
+  (let lp ((previous-key #f) (rest alist))
+    (match rest
+      ([[key-obj . val] . rest]
+       (let (key (json-key-string key-obj obj))
+         (when (equal? key previous-key) ;; NB: this test will only work reliably if the alist is sorted
+           (error "Duplicate key in JSON object" key))
+         (write key port)
          (write-char #\: port)
          (write-json-object val port)
-         (write-char #\} port))
-        ([[key . val] . rest]
-         (write (string-e key) port)
-         (write-char #\: port)
-         (write-json-object val port)
-         (write-char #\, port)
-         (lp rest))
-        ([]                             ; empty
-         (write-char #\} port))))))
+         (unless (null? rest) (write-char #\, port))
+         (lp key rest)))
+      ([]                             ; empty
+       (write-char #\} port)))))
+
+(def (json-sort-alist alist (obj alist))
+  (sort alist (lambda (kv1 kv2) (string<? (json-key-string (car kv1) obj)
+                                     (json-key-string (car kv2) obj)))))
+
+(def (write-json-alist/sort alist port (obj alist))
+  (write-json-alist (json-sort-alist alist obj) port obj))
+
+(def (write-json-hash obj port)
+  (write-json-alist/sort (hash->list obj) port obj))
 
 (def (write-json-string obj port)
   (def escape
