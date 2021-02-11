@@ -23,7 +23,7 @@
         :std/text/hex)
 (export read-json write-json
         string->json-object json-object->string
-        json-symbolic-keys json-list-wrapper
+        json-symbolic-keys json-list-wrapper json-sort-keys
         write-json-alist write-json-alist/sort json-sort-alist)
 (declare (not safe))
 
@@ -48,6 +48,11 @@
 ;; What should lists be decoded to? identity means a list, list->vector means a vector.
 (def json-list-wrapper
   (make-parameter identity))
+
+;; Should object keys be sorted when writing json?
+;; Checking for duplicate keys only reliably works when this is true.
+(def json-sort-keys
+  (make-parameter #t))
 
 ;;; implementation
 (def (raise-invalid-token port char)
@@ -370,7 +375,10 @@
   (write-json-alist (json-sort-alist alist obj) port obj))
 
 (def (write-json-hash obj port)
-  (write-json-alist/sort (hash->list obj) port obj))
+  (def lst (hash->list obj))
+  (if (json-sort-keys)
+    (write-json-alist/sort lst port obj)
+    (write-json-alist lst port obj)))
 
 (def (write-json-string obj port)
   (def escape
