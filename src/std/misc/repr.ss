@@ -114,8 +114,7 @@
    ((and (procedure? x) (##procedure-name x))
     => (lambda (name) (display name port)))
 
-   ((and (object? x) (find-method (object-type x) ':pr))
-    => (lambda (m) (m x port options)))
+   ((method-ref x ':pr) => (lambda (m) (m x port options)))
 
    ((and (object? x)
          (let (t (object-type x))
