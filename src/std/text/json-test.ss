@@ -17,8 +17,12 @@
   (test-suite "test :std/text/json"
 
     (def (check-encode-decode obj str)
-      (check (call-with-output-string (cut write-json obj <>)) => str)
-      (check (call-with-input-string str read-json) => obj))
+      (parameterize ((json-sort-keys #f))
+        (check (call-with-input-string (call-with-output-string (cut write-json obj <>)) read-json)
+               => obj))
+      (parameterize ((json-sort-keys #t))
+        (check (call-with-output-string (cut write-json obj <>)) => str)
+        (check (call-with-input-string str read-json) => obj)))
 
     (def (check-encode-decode= obj)
       (let (p (open-output-u8vector))
