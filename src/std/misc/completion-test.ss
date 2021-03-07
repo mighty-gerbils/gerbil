@@ -14,6 +14,6 @@
       (def thr (spawn completion-post! c 'done))
       (check (completion-wait! c) => 'done))
     (test-case "test completion error"
-      (def c (make-completion))
+      (def c (make-completion 'error-test))
       (def thr (spawn completion-error! c 'fail))
       (check-exception (completion-wait! c) (cut eq? <> 'fail)))))

@@ -18,10 +18,10 @@
   constructor: :init!)
 
 (defmethod {:init! completion}
-  (lambda (self)
+  (lambda (self (name 'completion)) ;; name is for debugging
     (struct-instance-init! self
-                           (make-mutex 'completion)
-                           (make-condition-variable 'completion))))
+                           (make-mutex name)
+                           (make-condition-variable name))))
 
 (def (completion-wait! compl)
   (with ((completion mx cv) compl)
