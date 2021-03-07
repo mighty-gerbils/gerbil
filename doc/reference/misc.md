@@ -855,12 +855,16 @@ The following low level unsafe operations are also exported.
 ### make-completion
 ``` scheme
 (make-completion) -> completion
+(make-completion name) -> completion
 ```
 
 Creates a new asynchronous completion, a synchronization construct which blocks
 until a thread signals that its task either succeeded or failed via
 `completion-post!` or `completion-error!`, respectively, notifying all waiting
 threads about the result.
+
+An optional `name` may be provided for debugging purposes:
+if you deadlock, you'll be able to more easily identify which completion went wrong.
 
 ::: tip Examples:
 ``` scheme
