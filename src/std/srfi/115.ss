@@ -5,7 +5,6 @@
 (import :std/srfi/1
         :std/srfi/9
         :std/srfi/14
-        :std/srfi/125
         :std/srfi/151)
 
 (export regexp regexp? valid-sre? rx regexp->sre char-set->sre

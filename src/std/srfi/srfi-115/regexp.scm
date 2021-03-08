@@ -313,24 +313,24 @@
 ;; A posse is a group of searchers.
 
 (define (make-posse . o)
-  (make-hash-table eq?))
+  (make-hash-table test: equal?))
 
 (define posse? hash-table?)
-(define (posse-empty? posse) (zero? (hash-table-size posse)))
+(define (posse-empty? posse) (zero? (hash-length posse)))
 
 (define (posse-ref posse sr)
-  (hash-table-ref/default posse (searcher-state sr) #f))
+  (hash-ref posse (searcher-state sr) #f))
 (define (posse-add! posse sr)
-  (hash-table-set! posse (searcher-state sr) sr))
+  (hash-put! posse (searcher-state sr) sr))
 (define (posse-clear! posse)
-  (hash-table-walk posse (lambda (key val) (hash-table-delete! posse key))))
+  (hash-for-each (lambda (key val) (hash-remove! posse key)) posse))
 (define (posse-for-each proc posse)
-  (hash-table-walk posse (lambda (key val) (proc val))))
+  (hash-for-each (lambda (key val) (proc val)) posse))
 (define (posse-every pred posse)
-  (hash-table-fold posse (lambda (key val acc) (and acc (pred val))) #t))
+  (hash-fold (lambda (key val acc) (and acc (pred val))) #t posse))
 
 (define (posse->list posse)
-  (hash-table-values posse))
+  (hash-values posse))
 (define (list->posse ls)
   (let ((searchers (make-posse)))
     (for-each (lambda (sr) (posse-add! searchers sr)) ls)
