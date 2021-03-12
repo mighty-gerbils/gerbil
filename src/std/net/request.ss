@@ -106,25 +106,28 @@
           (cons (cons key value) headers))))))
   (foldr fold-e headers new-headers))
 
+
 (def (http-get url
                redirect: (redirect #t)
                headers:  (headers #f)
                cookies:  (cookies #f)
                params:   (params #f)
+               data:     (data #f)
                auth:     (auth #f))
   (let ((url (url-target-e url params))
         (headers (make-http/1.1-headers headers cookies auth)))
-    (http-request 'GET url headers #f [] redirect)))
+    (http-request 'GET url headers data [] redirect)))
 
 (def (http-head url
                 redirect: (redirect #t)
                 headers:  (headers #f)
                 cookies:  (cookies #f)
                 params:   (params #f)
+                data:     (data #f)
                 auth:     (auth #f))
   (let ((url (url-target-e url params))
         (headers (make-http/1.1-headers headers cookies auth)))
-    (http-request 'HEAD url headers #f [] redirect)))
+    (http-request 'HEAD url headers data [] redirect)))
 
 (def (http-post url
                 redirect: (redirect #t)
@@ -162,19 +165,22 @@
                   headers:  (headers #f)
                   cookies:  (cookies #f)
                   params:   (params #f)
+                  data:     (data #f)
                   auth:     (auth #f))
   (let ((url (url-target-e url params))
         (headers (make-http/1.1-headers headers cookies auth)))
-    (http-request 'DELETE url headers #f [] redirect)))
+    (http-request 'DELETE url headers data [] redirect)))
 
 (def (http-options url
+                   redirect: (redirect #t)
                    headers:  (headers #f)
                    cookies:  (cookies #f)
                    params:   (params #f)
+                   data:     (data #f)
                    auth:     (auth #f))
   (let ((url (url-target-e url params))
         (headers (make-http/1.1-headers headers cookies auth)))
-    (http-request 'HEAD url headers #f [] #f)))
+    (http-request 'OPTIONS url headers data [] redirect)))
 
 (def url-rx
   (pregexp "(?:(https?)://)?([^/:]+)(:[0-9]+)?(/.*)?"))
