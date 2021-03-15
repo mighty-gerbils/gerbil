@@ -224,6 +224,7 @@ After=network.target
 StartLimitIntervalSec=0
 
 [Service]
+Environment=GERBIL_HOME=/path/to/gerbil/home
 Type=simple
 Restart=always
 RestartSec=5
@@ -239,6 +240,7 @@ WantedBy=multi-user.target
 In the above example:
 
 - Replace `my-server website` with an appropriate description.
+- Replace `/path/to/gerbil/home` with the appropriate GERBIL_HOME environment path.
 - Replace `/srv/my-server` with an appropriate working directory, possibly the directory of your project on the server.
 - Replace `/srv/my-server/my-server` with the path to your compiled Gerbil binary.
 - Replace `web` with an existing user and group (as created with `useradd`). Systemd will run your server with the privileges of this user. Note that this user must have read and execute privileges for your binary and workingDirectory.
