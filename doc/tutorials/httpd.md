@@ -167,3 +167,88 @@ Content-Type: text/plain
 
 these aren't the droids you are looking for.
 ```
+
+### Deploying with nginx
+
+A developed application can be deployed on a server, such as a VPS, using [nginx](https://nginx.org/en) as a reverse proxy. This tutorial assumes you're using a linux server with systemd. Steps involved include:
+
+1. Compiling your server into a binary
+2. Installing necessary prerequisites
+3. Configuring nginx as a reverse proxy
+4. Using systemd (or similar) to run your binary as a service
+
+#### Install and configure nginx
+
+Check out the [nginx installation documentation](https://nginx.org/en/docs/install.html) for detailed instructions on how to install engine x. Typically this can be done with your distribution's package manager.
+
+Once installed, create an nginx profile at /etc/nginx/sites-available. If you're only using one such profile, consider editing the default profile at /etc/nginx/sites-available/default to include the following:
+
+```
+server {
+    listen 80;
+    listen [::]:80;
+    server_name www.example.com;
+
+location / {
+        # Forward requests to Gerbil production port
+        proxy_pass http://localhost:8080;
+        proxy_buffering off; # Single page apps work faster with it
+        proxy_set_header X-Real-IP $remote_addr; 
+    }
+}
+```
+
+Notes:
+
+- www.example.com should be replaced with your domain name or server IP address. Note that multiple values are supported, such as `server_name  domain1.com www.domain1.com;`
+- The line `proxy_pass http://localhost:8080;` should be set to the appropriate port as determined in your Gerbil `getopt` configuration. Replace *8080* with the port number that Gerbil's httpd will be listening on. 
+
+If you have edited the file /etc/nginx/sites-available/default, you are ready to go. If you've created another profile, you will need to symlink to this file in /etc/nginx/sites-enabled.
+
+By default, nginx is typically set to start at boot. However, after changing this config file, you will need to restart the service:
+
+```bash
+sudo systemctl restart nginx
+```
+
+#### Create systemd service
+
+The following assumes you have a project called *my-server*, with a Gerbil binary called *my-server*.
+
+Create a systemd service file at /etc/systemd/system/my-server for your application. A minimal working example is:
+
+```
+[Unit]
+Description=my-server website
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Environment=GERBIL_HOME=/path/to/gerbil/home
+Type=simple
+Restart=always
+RestartSec=5
+WorkingDirectory=/srv/my-server
+ExecStart=/srv/my-server/my-server
+User=web
+Group=web
+
+[Install]
+WantedBy=multi-user.target
+```
+
+In the above example:
+
+- Replace `my-server website` with an appropriate description.
+- Replace `/path/to/gerbil/home` with the appropriate GERBIL_HOME environment path.
+- Replace `/srv/my-server` with an appropriate working directory, possibly the directory of your project on the server.
+- Replace `/srv/my-server/my-server` with the path to your compiled Gerbil binary.
+- Replace `web` with an existing user and group (as created with `useradd`). Systemd will run your server with the privileges of this user. Note that this user must have read and execute privileges for your binary and workingDirectory.
+
+This service can be manually started with `sudo systemctl start my-server`. Once running, you can view Gerbil's responses with `sudo journalctl -f -u my-server`.
+
+Once confirmed, set the Gerbil server to run automatically, including persistence after reboot:
+
+```
+sudo systemctl enable my-server
+```
