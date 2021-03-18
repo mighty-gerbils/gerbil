@@ -18,6 +18,8 @@ footprint, it only defines macros.
 For the simplest macros that fit with a single expansion rule,
 `defrule` provides a short-hand compared to writing a `defrules` with a single rewrite rule.
 
+<a id="SugarTry"></a>
+
 ## try
 ```scheme
 (try
