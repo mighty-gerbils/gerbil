@@ -1,15 +1,35 @@
 ;;; -*- Gerbil -*-
 ;;; (c) vyzo at hackzen.org
-;;; SRFI-124: Ephemerons; trivial implementation.
+;;; SRFI-124: Ephemerons; weak-referencing implementation on Gambit wills by
+;;; Daphne Preston-Kendal
 
-(export ephemeron? make-ephemeron ephemeron-broken? ephemeron-key ephemeron-datum reference-barrier)
+(import :std/srfi/9
+        :gerbil/gambit/misc)
+(export ephemeron?
+        make-ephemeron
+        ephemeron-key ephemeron-datum
+        ephemeron-broken?
+        reference-barrier)
 
-(defstruct ephemeron (key datum broken?)
-  constructor: :init! final: #t)
+(define-record-type <ephemeron>
+  (%make-ephemeron broken? will datum)
+  ephemeron?
+  (broken? ephemeron-broken? set-ephemeron-broken!)
+  (will ephemeron-will set-ephemeron-will!)
+  (datum ephemeron-datum set-ephemeron-datum!))
 
-(defmethod {:init! ephemeron}
-  (lambda (self key datum)
-    (struct-instance-init! self key datum)))
+(define (make-ephemeron key datum)
+  (let ((eph (%make-ephemeron #f #f #f)))
+    (set-ephemeron-will!
+     eph
+     (make-will key
+                (lambda (x)
+                  (set-ephemeron-broken! eph #t)
+                  (set-ephemeron-datum! eph #f))))
+    (set-ephemeron-datum! eph datum)
+    eph))
 
-(def (reference-barrier key)
-  (void))
+(define (ephemeron-key eph)
+  (will-testator (ephemeron-will eph)))
+
+(define (reference-barrier k) (void))
