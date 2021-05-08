@@ -15,21 +15,33 @@
   (%make-ephemeron broken? will datum)
   ephemeron?
   (broken? ephemeron-broken? set-ephemeron-broken!)
-  (will ephemeron-will set-ephemeron-will!)
-  (datum ephemeron-datum set-ephemeron-datum!))
+  (key-will ephemeron-key-will set-ephemeron-key-will!)
+  (datum-will ephemeron-datum-will set-ephemeron-datum-will!))
 
 (define (make-ephemeron key datum)
-  (let ((eph (%make-ephemeron #f #f #f)))
-    (set-ephemeron-will!
+  (letrec* ((eph (%make-ephemeron #f #f #f))
+            (datum-action
+             (lambda (x)
+               (if (not (ephemeron-broken? eph))
+                   (set-ephemeron-datum-will!
+                    eph
+                    (make-will x datum-action))))))
+    (set-ephemeron-key-will!
      eph
      (make-will key
                 (lambda (x)
                   (set-ephemeron-broken! eph #t)
-                  (set-ephemeron-datum! eph #f))))
-    (set-ephemeron-datum! eph datum)
+                  (set-ephemeron-datum-will! eph #f))))
+    (set-ephemeron-datum-will!
+     eph
+     (make-will datum datum-action))
     eph))
 
 (define (ephemeron-key eph)
-  (will-testator (ephemeron-will eph)))
+  (will-testator (ephemeron-key-will eph)))
+
+(define (ephemeron-datum eph)
+  (and (not (ephemeron-broken? eph))
+       (will-testator (ephemeron-datum-will eph))))
 
 (define (reference-barrier k) (void))
