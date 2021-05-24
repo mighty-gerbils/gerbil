@@ -49,15 +49,37 @@ AC_SUBST(PACKAGE_TARNAME)
 AC_COPYRIGHT([[Copyright (c) 2020 by drewc <me@drewc.ca>, All Rights Reserved.]])
 
  #+END_SRC
+** ~@gerbil_make_conf@~, configure at make time
 
-Here are the file components. We have ~--enable*~ and --~disable-*~ for a tonne.
-** --enable-[zlib, lmdb, leveldb, mysql, ...]
-
-In ~src/configure~ the buidling of libraries is configured. We'll use ~gerbil_make_conf~ as the variable.
+In ~src/configure~ the buidling of libraries is configured. We'll use
+~gerbil_make_conf~ as the variable and call configure in the makefile.
 
 #+begin_src autoconf :noweb-ref gerbil_make_conf
 AC_SUBST(gerbil_make_conf, "")
 #+end_src
+
+** ~--with-gambit=DIR~, set a default gambit location
+
+*Gerbil* needs a *Gambit* compiler and interpreter in order to run.
+
+Though it looks in ~$PATH~, it may not be there. So, by default, we can provide
+the location while compiling that it will look at runtime.
+
+#+begin_src autoconf :noweb-ref with-gambit
+AC_ARG_WITH([gambit],
+            [AS_HELP_STRING([--with-gambit=DIR],
+              [Set default location of Gambit])],
+            [],
+            [with_gambit=no])
+if test "x$with_gambit" != xno] ; then
+ gerbil_make_conf="$gerbil_make_conf --with-gambit=\"${with_gambit}\""
+fi
+
+#+end_src
+
+** ~--enable-[zlib, lmdb, leveldb, mysql, ...]~
+
+Here are the file components. We have ~--enable*~ and --~disable-*~ for a tonne.
 
 "If a software package has optional compile-time features, the user can give
 configure command line options to specify whether to compile them. The options
@@ -175,6 +197,8 @@ fi
 <<configure.ac>>
 
 <<gerbil_make_conf>>
+
+<<with-gambit>>
 
 <<configure-libs>>
 
