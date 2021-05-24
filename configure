@@ -1786,7 +1786,7 @@ else $as_nop
   with_gambit=no
 fi
 
-if test "x$with_gambit" != xno] ; then
+if test "x$with_gambit" != xno ; then
  gerbil_make_conf="$gerbil_make_conf --with-gambit=\"${with_gambit}\""
 fi
 

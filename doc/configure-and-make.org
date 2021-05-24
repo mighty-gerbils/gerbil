@@ -71,7 +71,7 @@ AC_ARG_WITH([gambit],
               [Set default location of Gambit])],
             [],
             [with_gambit=no])
-if test "x$with_gambit" != xno] ; then
+if test "x$with_gambit" != xno ; then
  gerbil_make_conf="$gerbil_make_conf --with-gambit=\"${with_gambit}\""
 fi
 
@@ -280,10 +280,10 @@ mandir = @mandir@
 
 LIBS = @LIBS@
 
-gerbil_home = "${DESTDIR}/${prefix}/lib/${PACKAGE_SHORTNAME}"
+gerbil_home = "${prefix}/lib/${PACKAGE_SHORTNAME}"
 gerbil_bin = "${gerbil_home}/bin"
 gerbil_lib = "${gerbil_home}/lib"
-gerbil_bin_linkdir = "${DESTDIR}/${prefix}/bin"
+gerbil_bin_linkdir = "${prefix}/bin"
 
 gerbil_make_conf = @gerbil_make_conf@
 

@@ -35,7 +35,7 @@ AC_ARG_WITH([gambit],
               [Set default location of Gambit])],
             [],
             [with_gambit=no])
-if test "x$with_gambit" != xno] ; then
+if test "x$with_gambit" != xno ; then
  gerbil_make_conf="$gerbil_make_conf --with-gambit=\"${with_gambit}\""
 fi
 
