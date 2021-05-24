@@ -619,6 +619,7 @@ PACKAGE_URL=''
 
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+gerbil_make_conf
 PACKAGE_SHORTNAME
 target_alias
 host_alias
@@ -1297,14 +1298,14 @@ Optional Features:
                           (default is NO)
   --disable-zlib          build std/text/zlib libraries - requires zlib
                           (default is --enable-zlib
-  --disable-sqlite        build std/xml libraries - requires sqlite3 (default
-                          is --enable-sqlite)
-  --enable-mysql          build std/xml libraries - requires mysql (default is
-                          NO)
-  --enable-lmdb           build std/xml libraries - requires lmdb2 (default is
-                          NO)
-  --enable-leveldb        build std/xml libraries - requires leveldb2 (default
-                          is NO)
+  --disable-sqlite        build std/db/sqlite libraries - requires sqlite3
+                          (default is --enable-sqlite)
+  --enable-mysql          build std/db/mysql libraries - requires mysql
+                          (default is NO)
+  --enable-lmdb           build std/db/lmdb libraries - requires lmdb2
+                          (default is NO)
+  --enable-leveldb        build std/db/leveldb libraries - requires leveldb2
+                          (default is NO)
 
 Report bugs to <vyzo at hackzen.org>.
 _ACEOF
@@ -1767,6 +1768,9 @@ PACKAGE_STRING="Gerbil $PACKAGE_VERSION"
 
 
 
+gerbil_make_conf=""
+
+
 # Libxml
 # Check whether --enable-libxml was given.
 if test ${enable_libxml+y}
@@ -1778,12 +1782,11 @@ fi
 
 
 if test "$ENABLE_LIBXML" = yes; then
-sed -i -e 's|enable libxml #f|enable libxml #t|g' src/std/build-features.ss || true
+gerbil_make_conf="$gerbil_make_conf --enable-libxml"
 LIBS="$LIBS -lxml2"
 else
-sed -i -e 's|enable libxml #t|enable libxml #f|g' src/std/build-features.ss || true
+gerbil_make_conf="$gerbil_make_conf --disable-libxml"
 fi
-
 # Libyaml
 # Check whether --enable-libyaml was given.
 if test ${enable_libyaml+y}
@@ -1795,10 +1798,10 @@ fi
 
 
 if test "$ENABLE_LIBYAML" = yes; then
-sed -i -e 's|enable libyaml #f|enable libyaml #t|g' src/std/build-features.ss || true
 LIBS="$LIBS -lyaml"
+gerbil_make_conf="$gerbil_make_conf --enable-libyaml"
 else
-sed -i -e 's|enable libyaml #t|enable libyaml #f|g' src/std/build-features.ss || true
+gerbil_make_conf="$gerbil_make_conf --disable-libyaml"
 fi
 
 # Zlib
@@ -1807,15 +1810,15 @@ if test ${enable_zlib+y}
 then :
   enableval=$enable_zlib; ENABLE_ZLIB=$enableval
 else $as_nop
-  ENABLE_ZLIB=yes
+  ENABLE_ZLIB=no
 fi
 
 
 if test "$ENABLE_ZLIB" = yes; then
-sed -i -e 's|enable zlib #f|enable zlib #t|g' src/std/build-features.ss || true
+gerbil_make_conf="$gerbil_make_conf --enable-zlib"
 LIBS="$LIBS -lz"
 else
-sed -i -e 's|enable zlib #t|enable zlib #f|g' src/std/build-features.ss || true
+gerbil_make_conf="$gerbil_make_conf --disable-zlib"
 fi
 
 # Sqlite
@@ -1828,9 +1831,9 @@ else $as_nop
 fi
 
 if test "$ENABLE_SQLITE" = yes; then
-sed -i -e 's|enable sqlite #f|enable sqlite #t|g' src/std/build-features.ss || true
+gerbil_make_conf="$gerbil_make_conf --enable-sqlite"
 else
-sed -i -e 's|enable sqlite #t|enable sqlite #f|g' src/std/build-features.ss || true
+gerbil_make_conf="$gerbil_make_conf --disable-sqlite"
 fi
 
 # Mysql
@@ -1844,9 +1847,9 @@ fi
 
 
 if test "$ENABLE_MYSQL" = yes; then
-sed -i -e 's|enable mysql #f|enable mysql #t|g' src/std/build-features.ss || true
+gerbil_make_conf="$gerbil_make_conf --enable-mysql"
 else
-sed -i -e 's|enable mysql #t|enable mysql #f|g' src/std/build-features.ss || true
+gerbil_make_conf="$gerbil_make_conf --disable-mysql"
 fi
 
 # Lmdb
@@ -1860,10 +1863,10 @@ fi
 
 
 if test "$ENABLE_LMDB" = yes; then
-sed -i -e 's|enable lmdb #f|enable lmdb #t|g' src/std/build-features.ss || true
+gerbil_make_conf="$gerbil_make_conf --enable-lmdb"
 LIBS="$LIBS -llmdb"
 else
-sed -i -e 's|enable lmdb #t|enable lmdb #f|g' src/std/build-features.ss || true
+gerbil_make_conf="$gerbil_make_conf --disable-lmdb"
 fi
 
 # Leveldb
@@ -1877,10 +1880,10 @@ fi
 
 
 if test "$ENABLE_LEVELDB" = yes; then
-sed -i -e 's|enable leveldb #f|enable leveldb #t|g' src/std/build-features.ss || true
+gerbil_make_conf="$gerbil_make_conf --enable-leveldb"
 LIBS="$LIBS -lleveldb"
 else
-sed -i -e 's|enable leveldb #t|enable leveldb #f|g' src/std/build-features.ss || true
+gerbil_make_conf="$gerbil_make_conf --disable-leveldb"
 fi
 
 

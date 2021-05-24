@@ -41,13 +41,18 @@ gerbil_bin = "${gerbil_home}/bin"
 gerbil_lib = "${gerbil_home}/lib"
 gerbil_bin_linkdir = "${DESTDIR}/${prefix}/bin"
 
+gerbil_make_conf = @gerbil_make_conf@
 
-gerbil: ensure-gx-version
+gerbil: configure
+	echo "LIBXML:" $(foo)
 	cd src && LDFLAGS="$(LIBS)" ./build.sh
 
 ensure-gx-version:
 	echo "(define (gerbil-version-string) \"$(PACKAGE_STRING)\")" \
 	> ./src/gerbil/runtime/gx-version.scm ;
+
+configure: ensure-gx-version
+	cd src && ./configure $(gerbil_make_conf) --prefix=$(gerbil_home)
 
 stdlib:
 	cd src && LDFLAGS="$(LIBS)" ./build.sh stdlib
@@ -62,7 +67,7 @@ r7rs-large:
 tools:
 	cd src && LDFLAGS="$(LIBS)" ./build.sh tools
 
-stage0: 
+stage0:
 	cd src && LDFLAGS="$(LIBS)" ./build.sh stage0
 
 stage1:
