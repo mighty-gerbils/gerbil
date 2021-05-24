@@ -30,6 +30,16 @@ AC_COPYRIGHT([[Copyright (c) 2020 by drewc <me@drewc.ca>, All Rights Reserved.]]
 
 AC_SUBST(gerbil_make_conf, "")
 
+AC_ARG_WITH([gambit],
+            [AS_HELP_STRING([--with-gambit=DIR],
+              [Set default location of Gambit])],
+            [],
+            [with_gambit=no])
+if test "x$with_gambit" != xno] ; then
+ gerbil_make_conf="$gerbil_make_conf --with-gambit=\"${with_gambit}\""
+fi
+
+
 # Libxml
 AC_ARG_ENABLE(libxml,
 AS_HELP_STRING([--enable-libxml], [build std/xml libraries - requires libxml2 (default is NO)]),
