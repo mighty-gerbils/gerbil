@@ -212,11 +212,49 @@ AC_OUTPUT
 We want a Makefile. The way this has worked over the last half-century or so is
 that we write scripts on scripts on scripts. This is no exception.
 
-** `make configure`
+** ~make configure~
+
+We set ~$gerbil_make_conf~ in ~./configure~. *Gerbil* has ~./src/configure~.
 
 #+begin_src makefile :noweb-ref make-configure
 configure: ensure-gx-version
 	cd src && ./configure $(gerbil_make_conf) --prefix=$(gerbil_home)
+#+end_src
+
+** ~make install~
+
+*Gerbil* has ~./src/install~ which does in fact do what we want for installing
+to our ~${gerbil_home}~. But, We've (royal we, AKA drewc) decided that I'd love to install to ~/usr/local/~ and not have ~/usr/local/lib~ "polluted".
+
+Actually, there's a wee bit more than that, as for packaging we may want things to differ. In particular, we may want a few gerbils installed in the same place.
+
+So, we do as follows.
+
+#+begin_src makefile :noweb-ref gerbil_home
+gerbil_home = ${prefix}/lib/${PACKAGE_SHORTNAME}
+#+end_src
+
+Now *Gerbil* has its own ~bin/~ and ~share/~ directories which we'd actually
+like to propagate as links, and its own ~lib/~ dir which is the main thing we do not want to propagate.
+
+#+begin_src makefile :noweb-ref gerbil_dirs
+gerbil_bin = "$(gerbil_home)/bin"
+gerbil_lib = "${gerbil_home}/lib"
+gerbil_share = "${gerbil_home}/share"
+
+
+gerbil_bin_linkdir = "${prefix}/bin"
+gerbil_share_linkdir = "${prefix}/share"
+#+end_src
+
+#+begin_src makefile :noweb-ref make-install
+install:
+	mkdir -p ${gerbil_bin} ${gerbil_share} ${gerbil_bin_linkdir} ${gerbil_share_linkdir}
+	cd src && ./install
+	cp -a --link --remove-destination ${gerbil_bin}/* ${gerbil_bin_linkdir}  || \
+	cp -a ${gerbil_bin}/* ${gerbil_bin_linkdir}
+	cp -a --link --remove-destination ${gerbil_share}/* ${gerbil_share_linkdir}  || \
+	cp -a ${gerbil_share}/* ${gerbil_share_linkdir}
 #+end_src
 
 ** Version file: ./src/gerbil/runtime/gx-version.scm
@@ -280,15 +318,12 @@ mandir = @mandir@
 
 LIBS = @LIBS@
 
-gerbil_home = "${prefix}/lib/${PACKAGE_SHORTNAME}"
-gerbil_bin = "${gerbil_home}/bin"
-gerbil_lib = "${gerbil_home}/lib"
-gerbil_bin_linkdir = "${prefix}/bin"
+<<gerbil_home>>
+<<gerbil_dirs>>
 
 gerbil_make_conf = @gerbil_make_conf@
 
 gerbil: configure
-	echo "LIBXML:" $(foo)
 	cd src && LDFLAGS="$(LIBS)" ./build.sh
 
 <<ensure-gx-version>>
@@ -308,47 +343,19 @@ r7rs-large:
 tools:
 	cd src && LDFLAGS="$(LIBS)" ./build.sh tools
 
-stage0:
+stage0: configure
 	cd src && LDFLAGS="$(LIBS)" ./build.sh stage0
 
 stage1:
 	cd src && LDFLAGS="$(LIBS)" ./build.sh stage1
 
 layout:
-	cd src && LDFLAGS="$(LIBS)" ./build.sh layout
+		cd src && LDFLAGS="$(LIBS)" ./build.sh layout
 
 tags:
 	cd src && LDFLAGS="$(LIBS)" ./build.sh tags
 
-install:
-# Symlinks
-	mkdir -p ${gerbil_bin} ;
-	mkdir -p ${gerbil_lib} ;
-	cp -a bin/* ${gerbil_bin} ;
-	cp -a lib/* ${gerbil_lib} ;
-	@for i in `find ${gerbil_bin} -type f` ; do \
-	  _name=`basename $$i`;\
-    _link="${gerbil_bin_linkdir}/$$_name" ; \
-	  mkdir -p "${gerbil_bin_linkdir}"; \
-	  if test -f $$_link ; then rm "$$_link" ; fi ;\
-    echo "Linking $$_link to $$i"; \
-	  ln -sr $$i "$$_link" ; \
-	done ;
-
-
-uninstall:
-# Symlinks
-	@for i in `find ${gerbil_bin} -type f` ; do \
-	  _name=`basename $$i`;\
-	  _link="${gerbil_bin_linkdir}/$$_name" ; \
-	  if test -L $$_link && test $$(dirname `readlink $$_link`) = ${gerbil_bin}; then \
-	     echo removing "$$_link" ; rm "$$_link" ; elif test -f "$$_link" ; then echo $$_link is not a link to $$i. Not removing. ; fi ; \
-	done ;
-
-	rm -rf ${gerbil_home};
-
-test:
-	echo $(LIBS) ;
+<<make-install>>
 
 #+END_SRC
 
