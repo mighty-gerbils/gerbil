@@ -99,43 +99,42 @@
                (string-compat-types (if string-compat-required?
                                       `((c-declare ,default-free-body)
                                         (c-define-type ,shallow-ptr
-						       (pointer ,struct (,struct-ptr) "ffi_free")))
-				      '())))
+                                                       (pointer ,struct (,struct-ptr) "ffi_free")))
+                                      '())))
           `(begin (c-define-type ,struct (struct ,struct-str))
                   (c-define-type ,struct-ptr
                                  (pointer ,struct (,struct-ptr) ,release-function))
                   (c-define-type ,borrowed-ptr (pointer ,struct (,struct-ptr)))
 
-		  ,@string-compat-types
+                  ,@string-compat-types
 
 
-		  (define ,(string->symbol (string-append struct-str "-ptr?"))
+                  (define ,(string->symbol (string-append struct-str "-ptr?"))
                     (lambda (obj)
                       (and (foreign? obj)
-                         (equal? (foreign-tags obj) (quote (,struct-ptr))))))
+                           (equal? (foreign-tags obj) (quote (,struct-ptr))))))
 
                   ;; getter and setters
                   ,@(apply append
-		      (map (lambda (m)
-			     (let* ((member-name (symbol->string (car m)))
-				    (member-type (cdr m))
-				    (getter-name (string-append struct-str "-" member-name))
-				    (setter-body (cond
-						  ((member member-type string-types)
-						   (string-setter-body member-name))
-						  (else
-						   (string-append
-						    "___arg1->" member-name " = ___arg2;" "\n"
-						    "___return;" "\n")))))
-			       `((define ,(string->symbol getter-name)
-				   (c-lambda (,struct-ptr) ,member-type
-					,(string-append
-					  "___return(___arg1->" member-name ");")))
+                      (map (lambda (m)
+                             (let* ((member-name (symbol->string (car m)))
+                                    (member-type (cdr m))
+                                    (getter-name (string-append struct-str "-" member-name))
+                                    (setter-body (cond
+                                                   ((member member-type string-types)
+                                                    (string-setter-body member-name))
+                                                   (else
+                                                    (string-append
+                                                      "___arg1->" member-name " = ___arg2;" "\n"
+                                                      "___return;" "\n")))))
+                               `((define ,(string->symbol getter-name)
+                                   (c-lambda (,struct-ptr) ,member-type
+                                     ,(string-append "___return(___arg1->" member-name ");")))
 
-				 (define ,(string->symbol (string-append getter-name "-set!"))
-				   (c-lambda (,struct-ptr ,member-type) void
-					,setter-body)))))
-			   members))
+                                 (define ,(string->symbol (string-append getter-name "-set!"))
+                                   (c-lambda (,struct-ptr ,member-type) void
+                                     ,setter-body)))))
+                           members))
 
                   ;; malloc
                   (define ,(string->symbol (string-append "malloc-" struct-str))
@@ -144,7 +143,7 @@
                            "struct " struct-str "* var = (struct " struct-str " *) malloc(sizeof(struct " struct-str "));" "\n"
                           "if (var == NULL)" "\n"
                           "    ___return (NULL);" "\n"
-			  "memset(var, 0, sizeof(struct " struct-str "));"
+                          "memset(var, 0, sizeof(struct " struct-str "));"
                           "___return(var);")))
 
                   (define ,(string->symbol (string-append "ptr->" struct-str))
@@ -158,7 +157,7 @@
                            "struct " struct-str " *arr_var=(struct " struct-str " *) malloc(___arg1*sizeof(struct " struct-str "));" "\n"
                            "if (arr_var == NULL)" "\n"
                            "    ___return (NULL);" "\n"
-			   "memset(arr_var, 0, ___arg1*sizeof(struct " struct-str "));" "\n"
+                           "memset(arr_var, 0, ___arg1*sizeof(struct " struct-str "));" "\n"
                            "___return(arr_var);")))
 
                   ;; ref array
