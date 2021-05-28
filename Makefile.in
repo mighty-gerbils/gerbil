@@ -51,7 +51,7 @@ gerbil: configure
 	cd src && LDFLAGS="$(LIBS)" ./build.sh
 
 ensure-gx-version:
-	echo "(define (gerbil-version-string) \"$(PACKAGE_STRING)\")" \
+	echo "(define (gerbil-version-string) \"$(PACKAGE_VERSION)\")" \
 	> ./src/gerbil/runtime/gx-version.scm ;
 
 configure: ensure-gx-version

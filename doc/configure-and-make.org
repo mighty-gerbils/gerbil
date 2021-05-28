@@ -267,13 +267,14 @@ That's all fine and dandy, but a source tarball does not include the .git/,
 which means it fails when trying to build a distribution package that expects to
 be built from an upstream tarball and diffs.
 
-As luck from programming gods would have it, we have ~PACKAGE_STRING~ in our
+As luck from programming gods would have it, we have ~PACKAGE_VERSION~ in our
+
 configure.
 
 #+name: ensure-gx-version
 #+begin_src makefile
 ensure-gx-version:
-	echo "(define (gerbil-version-string) \"$(PACKAGE_STRING)\")" \
+	echo "(define (gerbil-version-string) \"$(PACKAGE_VERSION)\")" \
 	> ./src/gerbil/runtime/gx-version.scm ;
 #+end_src
 
