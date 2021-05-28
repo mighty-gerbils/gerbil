@@ -3,7 +3,7 @@
 Make. ~gerbil~ needs ~./configure; make; make install~ that folks use. In
 particular it makes packaging easier. So, here we go!
 
-* ./configure
+* Generate ./configure
   :PROPERTIES:
   :CUSTOM_ID: configure
   :END:
@@ -14,7 +14,7 @@ that is done, we generate a ~./configure~ which generates a ~Makefile~.
 We do that using ~./doc/generate-configure-and-make.sh~
 
 #+begin_src shell
-./configure.sh
+./doc/generate-configure-and-make.sh~
 # [ ... ]
 
 # Tangled 5 code blocks from configure.org
@@ -38,6 +38,7 @@ PACKAGE_VERSION=$(git describe --tags)
 fi
 
 PACKAGE_STRING="Gerbil $PACKAGE_VERSION"
+PACKAGE_TARNAME=$(echo $PACKAGE_SHORTNAME"-"$PACKAGE_VERSION | sed 's/\./_/g')
 
 AC_SUBST(PACKAGE_SHORTNAME)
 AC_SUBST(PACKAGE_NAME)
