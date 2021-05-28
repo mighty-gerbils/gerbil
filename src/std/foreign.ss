@@ -52,7 +52,9 @@
       ;;    If no cleanup function is provided, a c function is created <struct-name>_ffi_free
       ;;    this function frees the struct pointer as well as any string members if
       ;;    they were set.
-      (define-macro (define-c-struct struct #!optional (members '()) release-function)
+      ;; compatible-tags => list of symbols representing additional C type declarations compatible with struct
+      ;;    This is usually the name of a typedef alias, when it differs from the C struct tag.
+      (define-macro (define-c-struct struct #!optional (members '()) release-function compatible-tags)
         (let* ((struct-str (symbol->string struct))
                (struct-ptr (string->symbol (string-append struct-str "*")))
                (shallow-ptr (string->symbol (string-append struct-str "-shallow-ptr*")))
@@ -100,10 +102,13 @@
                                       `((c-declare ,default-free-body)
                                         (c-define-type ,shallow-ptr
                                                        (pointer ,struct (,struct-ptr) "ffi_free")))
-                                      '())))
-          `(begin (c-define-type ,struct (struct ,struct-str))
+                                      '()))
+               (compatible-tags (or compatible-tags '()))
+               (ptr-tags (map (lambda (t) (string->symbol (string-append (symbol->string t) "*"))) compatible-tags)))
+
+          `(begin (c-define-type ,struct (struct ,struct-str (,struct ,@compatible-tags)))
                   (c-define-type ,struct-ptr
-                                 (pointer ,struct (,struct-ptr) ,release-function))
+                                 (pointer ,struct (,struct-ptr ,@ptr-tags) ,release-function))
                   (c-define-type ,borrowed-ptr (pointer ,struct (,struct-ptr)))
 
                   ,@string-compat-types
@@ -112,7 +117,7 @@
                   (define ,(string->symbol (string-append struct-str "-ptr?"))
                     (lambda (obj)
                       (and (foreign? obj)
-                           (equal? (foreign-tags obj) (quote (,struct-ptr))))))
+                           (member (quote ,struct-ptr) (foreign-tags obj)))))
 
                   ;; getter and setters
                   ,@(apply append
