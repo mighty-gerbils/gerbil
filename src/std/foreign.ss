@@ -54,11 +54,14 @@
       ;;    they were set.
       ;; compatible-tags => list of symbols representing additional C type declarations compatible with struct
       ;;    This is usually the name of a typedef alias, when it differs from the C struct tag.
-      (define-macro (define-c-struct struct #!optional (members '()) release-function compatible-tags)
+      ;; as-typedef => set to #t when defining an anonymous typdef'd struct
+      ;;    In this case, `struct` should be the name of the typedef alias.
+      (define-macro (define-c-struct struct #!optional (members '()) release-function compatible-tags as-typedef)
         (let* ((struct-str (symbol->string struct))
                (struct-ptr (string->symbol (string-append struct-str "*")))
                (shallow-ptr (string->symbol (string-append struct-str "-shallow-ptr*")))
                (borrowed-ptr (string->symbol (string-append struct-str "-borrowed-ptr*")))
+               (struct-keyword? (if as-typedef "" "struct "))
                (string-types '(char-string nonull-char-string UTF-8-string
                                            nonnull-UTF-8-string UTF-16-string
                                            nonnull-UTF16-string))
@@ -80,7 +83,7 @@
                (default-free-body (and string-compat-required?
                                        (string-append
                                         "___SCMOBJ " struct-str "_ffi_free (void *ptr) {" "\n"
-                                        "struct " struct-str " *obj = (struct " struct-str "*) ptr;" "\n"
+                                        struct-keyword? struct-str " *obj = (" struct-keyword? struct-str "*) ptr;" "\n"
                                         (apply string-append
                                           (map (lambda (m)
                                                  (cond 
@@ -106,7 +109,7 @@
                (compatible-tags (or compatible-tags '()))
                (ptr-tags (map (lambda (t) (string->symbol (string-append (symbol->string t) "*"))) compatible-tags)))
 
-          `(begin (c-define-type ,struct (struct ,struct-str (,struct ,@compatible-tags)))
+          `(begin (c-define-type ,struct (,(if as-typedef 'type 'struct) ,struct-str (,struct ,@compatible-tags)))
                   (c-define-type ,struct-ptr
                                  (pointer ,struct (,struct-ptr ,@ptr-tags) ,release-function))
                   (c-define-type ,borrowed-ptr (pointer ,struct (,struct-ptr)))
@@ -145,10 +148,10 @@
                   (define ,(string->symbol (string-append "malloc-" struct-str))
                     (c-lambda () ,struct-ptr
                          ,(string-append
-                           "struct " struct-str "* var = (struct " struct-str " *) malloc(sizeof(struct " struct-str "));" "\n"
+                           struct-keyword? struct-str "* var = (" struct-keyword? struct-str " *) malloc(sizeof(" struct-keyword? struct-str "));" "\n"
                           "if (var == NULL)" "\n"
                           "    ___return (NULL);" "\n"
-                          "memset(var, 0, sizeof(struct " struct-str "));"
+                          "memset(var, 0, sizeof(" struct-keyword? struct-str "));"
                           "___return(var);")))
 
                   (define ,(string->symbol (string-append "ptr->" struct-str))
@@ -159,10 +162,10 @@
                   (define ,(string->symbol (string-append "malloc-" struct-str "-array"))
                     (c-lambda (unsigned-int32) ,(if string-compat-required? shallow-ptr struct-ptr)
                          ,(string-append
-                           "struct " struct-str " *arr_var=(struct " struct-str " *) malloc(___arg1*sizeof(struct " struct-str "));" "\n"
+                           struct-keyword? struct-str " *arr_var=(" struct-keyword? struct-str " *) malloc(___arg1*sizeof(" struct-keyword? struct-str "));" "\n"
                            "if (arr_var == NULL)" "\n"
                            "    ___return (NULL);" "\n"
-                           "memset(arr_var, 0, ___arg1*sizeof(struct " struct-str "));" "\n"
+                           "memset(arr_var, 0, ___arg1*sizeof(" struct-keyword? struct-str "));" "\n"
                            "___return(arr_var);")))
 
                   ;; ref array
