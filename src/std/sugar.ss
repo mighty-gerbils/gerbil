@@ -226,11 +226,10 @@
 
 ;; chain rewrites passed expressions by passing the previous expression
 ;; into the position of the <> diamond symbol. In case a previous expression
-;; should be used in a sub-expression, or multiple times, the expression can be
-;; prefixed with a variable (supports destructuring).
+;; should be used in a sub-expression, or multiple times, the expression can
+;; be prefixed with a variable (supports destructuring).
 ;;
-;; When the first expression is a <> or ([pattern] <> expression),
-;; chain will return an unary lambda.
+;; When the first expression is a <>, chain will return a unary lambda.
 ;;
 ;; Example:
 ;;  (chain [1 2 3]
@@ -239,17 +238,15 @@
 ;;    (string-append <> " :)"))
 ;; => "2, 3 :)"
 (defrules chain (<>)
-  ((_ <> (fn arg arg* ...) ...)
+  ((_ <> exp exp* ...)
     (lambda (init)
-      (~chain-aux ((fn arg arg* ...) ...) init)))
+      (~chain-wrap-fn init (exp exp* ...))))
 
-  ((_ ((var . vars) <> exp) (fn arg arg* ...) ...)
-    (lambda (init)
-      (with (((var . vars) init))
-        (~chain-aux ((fn arg arg* ...) ...) exp))))
+  ((_ init exp exp* ...)
+    (~chain-wrap-fn init (exp exp* ...)))
 
-  ((_ init exp ...)
-    (~chain-wrap-fn init (exp ...))))
+  ((_ <>) (lambda (init) init))
+  ((_ init) init))
 
 ;; ~chain-wrap-fn is an auxiliary macro to wrap unary procedures which
 ;; have no parentheses around with parentheses: proc -> (proc) to
