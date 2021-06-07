@@ -167,6 +167,7 @@ Anaphoric `when`. Evaluates and binds *test* to *id*. Evaluates *body ...* if
 (chain expr (expression) ...)
 
 <expression>:
+  proc                        ; unary procedure
   (proc arg* ...)             ; must contain exactly one <> symbol
   (var (proc arg1 arg* ...))  ; var supports destructuring
 
@@ -188,9 +189,9 @@ chain will return a unary lambda.
 ::: tip Examples:
 ``` scheme
 > (chain "stressed"
-    (string->list <>)
-    (reverse <>)
-    (list->string <>)
+    string->list
+    reverse
+    list->string
     (string-append "then have some " <>))
 "then have some desserts"
 
