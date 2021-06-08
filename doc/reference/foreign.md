@@ -56,7 +56,7 @@ The following prelude macros are made available within the body:
 as-typedef: boolean  ; Default is #f. Set to #t when struct-name describes a typedef alias.
                      ; This is the case for defining an anonymous struct via a typedef.
 ```
-The `define-c-struct` macro works to create the necessary scheme foreign types, accessors,
+The `define-c-struct` macro works to create the necessary Scheme foreign types, accessors,
 and utility procedures useful for interfacing with C structs. It is operable on standard
 structs, their compatible typedef alias', as well as typedef'd anonymous structs.
 
@@ -64,15 +64,15 @@ In the case of interfacing with stand-alone and typedef aliased structs, `struct
 should be a symbol matching that of the C structure tag. Additionally, in the case of a
 typedef aliased struct, if the struct tag and typedef alias are differently named, the
 alias type (along with any other compatible type) may be specified in `compatible-tags`.
-This will ease the scheme side foreign-object type checking and allow, for example, the
+This will ease the Scheme side foreign-object type checking and allow, for example, the
 generated accessors to operate on these compatible types.
 
-> Note that the use of 'tag' here in *struct tag* and *compatible tags* are a
-> clash of two completely different concepts. With *struct tag*, tag refers to the name
-> given to the struct in C. A tag in the context of *compatible-tags*, are part of Gambit's
+> Note that the use of 'tag' here in *'struct tag'* and *'compatible-tags'* are a
+> clash of two completely different concepts. With *'struct tag'*, tag refers to the name
+> given to the struct in C. A tag in the context of *'compatible-tags'*, are part of Gambit's
 > solution of specifying compatible C types when working with its C-Interface mechanism.
-> Without specifying tags, the scheme side of things has no way of knowing types defined
-> by the struct and typedef are essentially the same.
+> Without specifying compatible tags, the Scheme side of things has no way of knowing types
+> defined by the struct and typedef are essentially the same.
 >
 > See Section [19.1 The Mapping of Types between C and Scheme](https://www.iro.umontreal.ca/~gambit/doc/gambit.html#mapping-of-types),
 > paragraph 5: "The optional tags field of foreign type specifications..." for more details.
@@ -80,7 +80,7 @@ generated accessors to operate on these compatible types.
 In the case of interfacing with a typedef'd anonymous struct, `struct-name` should be a
 symbol matching that of the C typedef alias, and additionally, `as-typedef` should be set
 to `#t`. This interfacing method may also be used with typedef aliased structs which are
-tagged (non-anonymous), where a scheme side foreign struct type is not needed.
+tagged (non-anonymous), where a Scheme side foreign struct type is not needed.
 
 `members` may be ommited, in which case one treats the struct as opaque. Furthermore, all
 members need not be specified when not needed.

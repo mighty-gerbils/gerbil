@@ -2,14 +2,16 @@
 
 This is a quick guide to help you with your first FFI steps with Gerbil.
 
-The first thing to note is that FFI in Gerbil is actually delegated to Gambit, where the mechanism to interface with C is known as the C-interface.
-See the [Gambit manual](https://www.iro.umontreal.ca/~gambit/doc/gambit.html#C_002dinterface) for more information.
+The first thing to note is that FFI in Gerbil is actually delegated to Gambit, where the
+mechanism to interface with C is known as the C-interface. It is therefor important to read
+section [19. C-interface](https://www.iro.umontreal.ca/~gambit/doc/gambit.html#C_002dinterface)
+of the Gambit manual for a complete detailing of the interface.
 
-The primary mechanism for delegating code directly to gambit is the `begin-foreign` special form:
+The primary mechanism for delegating code directly to Gambit is the `begin-foreign` special form:
 ```
 (begin-foreign body ...)
 ```
-Using the form, the `body` is included unexpanded directly to the generated gambit code for compilation with gsc.
+Using the form, the `body` is included unexpanded directly to the generated Gambit code for compilation with gsc.
 
 ## Basic FFI
 
@@ -21,7 +23,7 @@ We'll start our foray with a basic example: we are going to query for the versio
 int main (void) { puts (gnu_get_libc_version ()); return 0; }
 ```
 
-We need to write a file module that will define and export an identifier get-glibc-version. Subsequently, we'll import that identifier and use it in the Gerbil runtime.
+We need to write a file module that will define and export an identifier `get-glibc-version`. Subsequently, we'll import that identifier and use it in the Gerbil runtime.
 
 ```
 # Create a gerbil.pkg file for our project
@@ -38,7 +40,7 @@ $ cat > libc-version.ss <<EOF
 EOF
 ```
 
-File modules take their name from the including file, so this module is named libc-version in the myuser package and as a result uses `myuser/libc-version#` as the namespace prefix.
+File modules take their name from the including file, so this module is named 'libc-version' in the 'myuser' package and as a result uses `myuser/libc-version#` as the namespace prefix.
 
 To feed code straight to the Gambit compiler from Gerbil we use the `begin-foreign` special form. We namespace the identifier with the package and module to adhere to the canonical namespace of the module.
 
@@ -77,7 +79,7 @@ Et voilà, no more compilation warning!
 
 ## The begin-ffi macro
 
-In order to simplify writing ffi code, Gerbil offers the `begin-ffi` macro in the `:std/foreign` library.
+In order to simplify writing FFI code, Gerbil offers the `begin-ffi` macro in the `:std/foreign` library.
 
 The macro takes care of providing the extern and namespace declarations for your identifiers.
 
@@ -87,12 +89,14 @@ It also defines some common utility macros:
 - `(define-const* id)` which conditionally defines the constant to a value of `#f` if it is undefined in the C preprocessor.
 - `(define-guard defn)` which conditionally expands a definition with an accompanied cond-expand feature.
 - `(define-with-errno id ffi-id args)` which expands to a definition of `(id args ...)` which calls `(ffi-id args ...)` and returns the negated errno if the result is negative.
-  This is useful for wrapping C/POSIX ffi functions that report errors using `errno`.
+  This is useful for wrapping C/POSIX FFI functions that report errors using `errno`.
+- `(define-c-struct struct-name members release-function compatible-tags as-typedef)` which is detailed below.
 
-In addition, it provides a few other preprocessor macros and a definition of `ffi_free`, a function suitable as a release function for ffi types.
+In addition, it provides a few other preprocessor macros and a definition of `ffi_free`, a function suitable as a release function for FFI types.
 
-Using `begin-ffi` the code would be written as following:
+Using `begin-ffi` the previous example would be written as follows:
 ```
+(import :std/foreign)
 (export get-glibc-version)
 (begin-ffi (get-glibc-version)
   (c-declare "#include  <gnu/libc-version.h>")
@@ -101,69 +105,207 @@ Using `begin-ffi` the code would be written as following:
 
 If you want to find more about Gerbil FFI programming, the std lib sources for the [os package](https://github.com/vyzo/gerbil/tree/master/src/std/os) are a good starting point.
 
-## Interfacing with c structs
+## Interfacing with C structs
 
-In order to make interfacing with c structs a bit easier, some macros are provided to be used
-inside the begin-ffi block.   
+In order to make interfacing with C structs a bit easier, the macro `define-c-struct`
+is provided to be used inside the `begin-ffi` block. It will create a number of Scheme
+foreign types, allocation and utility procedures, as well as accessors for optionally
+declared struct members.
 
-Consider a c struct X with members a of type t1 and b of type t2.    
-In order to interface with such a struct, following methods are available inside the begin-ffi macro.
+### Overview
 
-### `(define-c-struct X)`
+Consider a C struct `X` with members `a` of type `t1` and `b` of type `t2`. The most basic
+usage of `define-c-struct` is to simply provide `struct-name` as a symbol matching the
+structure's *tag* of `X`:
 
-*types created*
-- X for struct
-- X* for the pointer to the struct. this is the struct to which the configurable release 
-  function is provided. If no release function is provided and struct contains string 
-  members, then a c method (`<struct-name>_ffi_free`) is generated for the struct, which 
-  performs the cleanup of strings as well as the pointers. If there are no string members,
-  we fallback to the default ffi_free.
-- X-shallow-ptr* similar to X*, default release function ffi_free is associated 
-  (this is only created if char-string is one of the members)
-- X-borrowed-ptr* similat to X* but no release function
-   
-*lambdas created*
-- `X-ptr?` predicate for the struct types (uses foreign-tags)
-- `malloc-X` calls malloc for the struct and returns a pointer to it
-- `ptr->X` get the value of X from its pointer
-- `(malloc-X-array N)` calls malloc for N * sizeof X and returns a pointer to it, the
-      returned pointer is of type X-shallow-ptr* if strings are present otherwise it is X*
-- `(X-array-ref ptr i)` returns a pointer with offset i starting at ptr, the returned
-      pointer is of type X-borrowed-ptr*
-- `(X-array-set! ptr i val-ptr)` sets the value of the pointer at offset i from ptr to
-      be val-ptr
-   
-   
-###  `(define-c-struct X ((a . t1) (b . t2)))`
+```scheme
+(c-declare "
 
-In addition to the types and lambdas defined above, following additional lambdas are provided:
+struct X {
+  t1 a;
+  t2 b;
+}
 
-*lambdas created*
-- `X-a-set!`, `X-b-set!` setters for member variables.    
-   Special compatibility for string types is provided,    
-   If a string is passed as the value, then we strdup the string and set that to the argument.
-   If the struct member is already pointing to another string, then that
-     string is freed and the member will now point to a new string.
-   The cleanup of such strings are handled by the generated `<struct-name>_ffi_free`, if
-     a custom release function is provided, care should be taken while freeing.
-   
-- `X-a`, `X-b` accessor functions for struct members
+")
 
-In order to export the created lamdas, simply include (struct X a b) in the begin-ffi:
-`(begin-ffi (... (struct X a b) ...) ...)`
-
-### Sample usage:
-
+(define-c-struct X)
 ```
+
+Without speciying any members, the interface treats `X` as opaque, as no accessors are
+generated. The following Scheme foreign types are generated by the macro:
+
+```scheme
+(c-define-type X  (struct "X" (X)))  ; The struct type.
+
+; Pointer type to which the custom release function is provided:
+(c-define-type X* (pointer X (X*) <configurable-release>))
+; <configurable-release>:
+;   "ffi_free"                 ; Default, no string members
+;   "<struct-name>_ffi_free"   ; Generated when string members present
+;   "custom_release_function"  ; User specified `release-function`
+
+; Similar to X*, but with no release function:
+(c-define-type X-borrowed-ptr* (pointer X (X*)))
+
+; Similar to X*, but with release function of "ffi_free".
+; (Only generated when string members present):
+(c-define-type X-shallow-ptr* (pointer X (X*) "ffi_free"))
+```
+
+Note that in the case above, if `t1` or `t2` are string types, then a C function
+"X_ffi_free" is generated and assigned as the release-function of the pointer type
+to perform cleanup of strings in addition to the struct. Where a user specified
+release-function is provided, as in the case below, it would take precedent, and
+care should be taken to provide the neccessary cleanup.
+
+Furthermore, the following procedures are generated by the macro:
+
+```scheme
+(X-ptr? foreign-obj)  ; X Predicate test using `foreign-tags`
+(malloc-X)            ; malloc X and return a X* to it
+(ptr->X x-ptr)        ; Dereference a pointer to an X
+(malloc-X-array n)    ; malloc N * sizeof X
+  ; The returned pointer type is X-shallow-ptr* when string
+  ; members are present, otherwise the type is X*
+(X-array-ref x-ptr i) ; Obtain an X-borrowed-ptr* with offset
+  ; `i` starting at `x-ptr`
+(X-array-set! x-ptr i val-ptr) ; Set the value of `x-ptr` offset
+  ; by `i` to be `val-ptr`
+```
+
+Specifying members of the struct will additionally generate accessors for those members.
+All members of the struct need not be specified. The below use of `define-c-struct`
+refines the call above to specify an interest only in member `b`, along with the a user
+defined `release-function` called "my_release_function":
+
+```scheme
+(define-c-struct X ((b . t2)) "my_release_function")
+```
+
+This would generate the following accessors for member `b`:
+
+```scheme
+(X-b x-ptr)              ; Getter for member `b`
+(X-b-set! x-ptr t2-val)  ; Setter for member `b`
+```
+
+Special compatibility is provided for setting new values to members of string types.
+New values are `strdup` before being set to the member. When the member is already
+pointing to another string, it is freed prior to assigning the new value.
+
+In order to export the generated procedures, one would include `(struct X a b)` as an
+'id' in the externs part of the `begin-ffi` form as follows:
+```scheme
+(begin-ffi (... (struct X a b) ...) ...)
+```
+
+### `typedef` Aliased Structs
+
+It is common for C structs to be aliased by `typedef`, and many times the structs 
+themselves are anonymous. On the C side of things, compilers are smart enough to 
+recognize that a struct tag and a typedef alias may be different names for the same
+type. But without some extra help, the Scheme side of things has no way of knowing
+about the compatibility of a foreign type representing the struct and one representing
+the typedef by a different name. Expectedly, Gambit has a solution as part of its
+C-interface, what it refers to as *"The optional tags field of foreign type
+specifications,"* as detailed in section
+[19.1 The Mapping of Types between C and Scheme](https://www.iro.umontreal.ca/~gambit/doc/gambit.html#mapping-of-types)
+paragraph 5.
+
+With `define-c-struct`, an optional list of `compatible-tags` may be specified. This
+has the effect of easing Scheme side foreign-object type checking (without completely
+disabling it) and allows, for example, the generated accessors to operate on these
+compatible types.
+
+In the following example, a struct detailing a cartesian `point` is aliased as `coords`:
+
+```scheme
+(c-declare "
+
+// struct tag 'point' differs from typedef alias 'coords'
+typedef struct point {
+  int x;
+  int y;
+} coords;
+
+// Consider an inconsistant codebase, where functions may type their
+// parameters and return values with both `struct point` and the
+// typedef alias `coords`.
+
+coords *skew_coords(coords *c) { ... }
+struct point *legacy_function(struct point *pnt) { ... }
+
+")
+
+; Standard foreign-object type declaration for `coords`.
+; Notice the addition of `point` and `points*` to the tags fields:
+; It allows for a `point*` to be sent to `skew_coords`.
+(c-define-type coords  (type "coords" (coords point)))
+(c-define-type coords* (pointer coords (coords* point*)))
+
+(define-c-struct point   ; `struct-name` matches C struct tag.
+  ((x . int) (y . int))  ; Declare accessors for both members.
+  #f (coords))           ; Specify 'coords' as a compatible C type:
+  ; It allows for accessors `point-x`, etc. to be used on `coords*`,
+  ; and for foreign-objects typed `coords*` to be passed to
+  ; `legacy_function`.
+```
+
+Because the foreign-object types for `coords` and `point` include eachother's type
+as part of their *foreign tags,* it is accepted by the C-interface that objects of
+these types be interchangable.
+
+Whether it is neccessary to deal with both a struct type and a typedef type, depends
+on the C code being interfaced. If in the C code, function parameters and return
+values are typed with both `struct point` and `coords`, a configuration like the
+above is required. However, if the C code is careful to use only the alias type
+for instance, as in the case with typedef anonymous structs, one may forego the
+issue of compatible types all together as illustracted in the following refined
+example:
+
+```scheme
+(c-declare "
+
+// typedef anonymous struct, no struct tag given
+typedef struct {
+  int x;
+  int y;
+} coords;
+
+coords *skew_coords(coords *c) { ... }
+
+")
+
+; If one used the standard foreign-object type declaration for `coords`,
+; it would be treated as an opaque object, without access to members.
+;(c-define-type coords  (type "coords"))
+;(c-define-type coords* (pointer coords))
+
+; Instead, configure `define-c-struct` to operate on the typedef alias:
+(define-c-struct coords  ; `struct-name` matches typedef alias. *!*
+  ((x . int) (y . int))  ; Declare accessors for both members.
+  #f #f #t)  ; Set `as-typedef` to `#t` for anonymous struct.
+```
+
+As you can see the macro offers flexibility for providing access to C structs
+with regards to the variety of ways they may be declared and used on the C side.
+
+### Sample
+
+```scheme
+(import :std/foreign)
+(export #t)
+
 (begin-ffi ((struct abc a b))
   (c-declare "
+
 struct abc {
     char* a;
     char* b;
     char* c;
 };
+
 ")
-  
 
   (define-c-struct abc ((a . char-string) (b . char-string)))) ;; don't need to define all fields
   
@@ -179,7 +321,7 @@ struct abc {
 
 This example shows how to compile and link a C module to a Gerbil module, in order to call functions and return constants from the former.
 
-Consider there are a simple module written in C defining two functions, f1 and f2:
+Consider a simple module written in C defining two functions, f1 and f2:
 
 ```
 $ cat ffi-pi.h
@@ -252,5 +394,3 @@ Gerbil v0.16-133-gfdfdcb5d on Gambit v4.9.3-1232-gbba388b8
 > (= (f1) (f2 1.0))
 #t
 ```
-
-
