@@ -33,22 +33,21 @@
      "2, 3")
 
     (check-equal?
-     ;; destructuring lambda with pattern variable as input
-     ((chain ([a . _] <> a)
-             ([_ . rest] (map 1+ rest))
-             (xs (map number->string xs))
-             (string-join <> ", "))
-      (list (iota 3) (iota 2)))
-     "2, 3")
+      ;; unary procedure at the start
+      (let (map1 (cut map 1+ <>))
+        (chain [1 2]
+          map1
+          (reverse <>)))
+      [3 2])
 
     (check-equal?
-     ;; destructuring lambda with expression
-     ((chain ([a b _] <> (list a b))
-             ([_ . rest] (map 1+ rest))
-             (xs (map number->string xs))
-             (string-join <> ", "))
-      (iota 3))
-     "2")
+      ;; unary procedure not at the start
+      (chain [9 19 29]
+        ([_ . rest] (map 1+ rest))
+        reverse
+        car)
+      30)
+
     (check-equal? (chain [0 1] (map (lambda (v) (1+ v)) <>)) [1 2]))
    (test-case "test is"
     (check ((is 1+ 3) 2)                => #t)

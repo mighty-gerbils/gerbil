@@ -226,81 +226,101 @@
 
 ;; chain rewrites passed expressions by passing the previous expression
 ;; into the position of the <> diamond symbol. In case a previous expression
-;; should be used in a sub-expression, or multiple times, the expression can be
-;; prefixed with a variable (supports destructuring).
+;; should be used in a sub-expression, or multiple times, the expression can
+;; be prefixed with a variable (supports destructuring).
 ;;
-;; When the first expression is a <> or ([pattern] <> expression),
-;; chain will return a unary lambda.
+;; When the first expression is a <>, chain will return a unary lambda.
 ;;
 ;; Example:
 ;;  (chain [1 2 3]
-;;         ([_ . rest] (map number->string rest))
-;;         (v (string-join v ", "))
-;;         (string-append <> " :)"))
+;;    ([_ . rest] (map number->string rest))
+;;    (v (string-join v ", "))
+;;    (string-append <> " :)"))
 ;; => "2, 3 :)"
 (defrules chain (<>)
-  ((_ <> (fn arg arg* ...) ...)
-   (lambda (v)
-     (~chain-aux ((fn arg arg* ...) ...) v)))
+  ((_ <> exp exp* ...)
+    (lambda (init)
+      (~chain-wrap-fn init (exp exp* ...))))
 
-  ((_ ((var . vars) <> exp) (fn arg arg* ...) ...)
-   (lambda (v)
-     (with (((var . vars) v))
-       (~chain-aux ((fn arg arg* ...) ...) exp))))
+  ((_ init exp exp* ...)
+    (~chain-wrap-fn init (exp exp* ...)))
 
-  ((_ exp (fn arg arg* ...) ...)
-   (~chain-aux ((fn arg arg* ...) ...) exp)))
+  ((_ <>) (lambda (init) init))
+  ((_ init) init))
+
+;; ~chain-wrap-fn is an auxiliary macro to wrap unary procedures which
+;; have no parentheses around with parentheses: proc -> (proc) to
+;; distinguish them later in ~chain-aux.
+(defrules ~chain-wrap-fn ()
+  ((_ init () previous)
+    (~chain-aux previous init))
+
+  ((_ init ((proc arg arg* ...) . more))
+    (~chain-wrap-fn init more ((proc arg arg* ...))))
+
+  ((_ init ((proc arg arg* ...) . more) (previous ...))
+    (~chain-wrap-fn init more (previous ... (proc arg arg* ...))))
+
+  ((_ init (proc . more))
+    (~chain-wrap-fn init more ((proc))))
+
+  ((_ init (proc . more) (previous ...))
+    (~chain-wrap-fn init more (previous ... (proc)))))
 
 ;; ~chain-aux is an auxiliary macro which takes a list of expressions
 ;; and the initial chain value. It then loops over the expression list
 ;; and transforms one expression after the other.
 (defrules ~chain-aux (<>)
-  ((_ () acc)
-   acc)
+  ((_ () previous)
+    previous)
 
-  ((_ ((var ()) . more) acc)
-   (syntax-error "Body expression cannot be empty"))
+  ((_ ((var ()) . more) previous)
+    (syntax-error "Body expression cannot be empty"))
 
   ;; variable
-  ((_ ((var (body1 body2 . body*)) . more) acc)
-   (~chain-aux more
-	       (~chain-aux-variable (var acc) (body1 body2 . body*))))
+  ((_ ((var (body1 body2 . body*)) . more) previous)
+    (~chain-aux more
+      (~chain-aux-variable (var previous) (body1 body2 . body*))))
 
-  ((_ ((var (body1 body2 . body*) (body-error ...) ...) . more) acc)
-   (syntax-error "More than one body expression in chain-variable context"))
+  ((_ ((var (body1 body2 . body*) (body-error ...) ...) . more) previous)
+    (syntax-error "More than one body expression in chain-variable context"))
+
+  ;; unary procedure
+  ((_ ((fn) . more) previous)
+    (~chain-aux more (fn previous)))
 
   ;; diamond
-  ((_ ((fn . args) . more) acc)
-   (~chain-aux more
-	       (~chain-aux-diamond (fn . args) () acc))))
+  ((_ ((fn . args) . more) previous)
+    (~chain-aux more
+      (~chain-aux-diamond (fn . args) () previous))))
 
 ;; ~chain-aux-variable is an auxiliary macro that transforms
 ;; the passed expression into a with-expression.
 (defrules ~chain-aux-variable ()
   ((_ (() (fn . args)) body)
-   (syntax-error "The variable must be non-empty"))
+    (syntax-error "The variable must be non-empty"))
 
   ((_ (var previous) body)
-   (with ((var previous)) body)))
+    (with ((var previous)) body)))
 
 ;; ~chain-aux-diamond is an auxiliary macro that replaces the <> symbol
 ;; with the previous expressions. There must be only one <> diamond in a row
 ;; and it must be in the top-level expression.
 (defrules ~chain-aux-diamond (<>)
   ((_ () acc)
-   acc)
+    acc)
 
   ((_ () acc previous)
-   (syntax-error "No diamond operator in expression"))
+    (syntax-error "No diamond operator in expression"))
 
   ((_ (<> . more) (acc ...))
-   (syntax-error "More than one diamond operator in expression"))
+    (syntax-error "More than one diamond operator in expression"))
 
   ((_ (<> . more) (acc ...) previous)
-   (~chain-aux-diamond more (acc ... previous)))
+    (~chain-aux-diamond more (acc ... previous)))
 
   ((_ (v . more) (acc ...) . previous) ; previous is not set after <> was replaced
-   (~chain-aux-diamond more (acc ... v) . previous)))
+    (~chain-aux-diamond more (acc ... v) . previous)))
 
 ;; is converts a given value into a predicate testing for the presence of the
 ;; given value. Optionally a transforming procedure can prefix the value, which
