@@ -243,7 +243,7 @@ struct point *legacy_function(struct point *pnt) { ... }
 (c-define-type coords  (type "coords" (coords point)))
 (c-define-type coords* (pointer coords (coords* point*)))
 
-(define-c-struct point   ; `struct-name` matches C struct tag.
+(define-c-struct point   ; `point` matches C struct tag.
   ((x . int) (y . int))  ; Declare accessors for both members.
   #f (coords))           ; Specify 'coords' as a compatible C type:
   ; It allows for accessors `point-x`, etc. to be used on `coords*`,
@@ -282,39 +282,147 @@ coords *skew_coords(coords *c) { ... }
 ;(c-define-type coords* (pointer coords))
 
 ; Instead, configure `define-c-struct` to operate on the typedef alias:
-(define-c-struct coords  ; `struct-name` matches typedef alias. *!*
+(define-c-struct coords  ; `coords` matches typedef alias. *!*
   ((x . int) (y . int))  ; Declare accessors for both members.
   #f #f #t)  ; Set `as-typedef` to `#t` for anonymous struct.
 ```
 
 As you can see the macro offers flexibility for providing access to C structs
-with regards to the variety of ways they may be declared and used on the C side.
+with regards to the variety of ways they may be declared and used in C.
 
 ### Sample
 
+In the following contrived sample 'point-polar.ss', three structs are used to illustrate features
+of `define-c-struct`, and particularly foreign-object *compatible types*. Two
+structs represent cartesian and polar coordinates, respectively. The third collects
+formatted strings for a question and answer. The C function `point_to_polar` converts
+a cartesian coordinate to a polar coordinate, while `print_q_and_a` takes references
+to each of the three structs to output the formatted results.
+
 ```scheme
+package: sample
+
 (import :std/foreign)
+
 (export #t)
 
-(begin-ffi ((struct abc a b))
-  (c-declare "
+(begin-ffi ((struct cartesian_coord x y)
+            (struct polar_coord r a)
+            (struct q_and_a q a)
+            point-to-polar
+            print-q-and-a)
 
-struct abc {
-    char* a;
-    char* b;
-    char* c;
-};
+  (c-declare #<<c-declare-end
 
-")
+#include <stdio.h>
+#include <math.h>
 
-  (define-c-struct abc ((a . char-string) (b . char-string)))) ;; don't need to define all fields
-  
-(def obj (malloc-abc))
-			 
-(abc-a-set! obj "hello")
-(abc-b-set! obj "scheme")
+#define PI 3.141592654
 
-(abc-a obj) ;; => hello
+// A typedef struct representing a cartesian coordinate.
+typedef struct cartesian_coord {
+  double x;
+  double y;
+} point;
+
+// A typedef struct representing a polar coordinate.
+typedef struct polar_coord {
+  double r;
+  double a;
+} polar;
+
+// A typedef anonymous struct representing
+// a formatted question and answer.
+typedef struct {
+  char* q;
+  char* a;
+} q_and_a;
+
+// A function to convert a cartesian coordinate to
+// a polar coordinate.
+polar *point_to_polar(point *pnt) {
+  polar *plr = (polar *) malloc(sizeof(polar));
+  plr->r = hypot(pnt->x, pnt->y);
+  plr->a = 0.0;
+  if(pnt->x == 0.0) {
+    if(pnt->y > 0.0) plr->a =  PI / 2.0;
+    if(pnt->y < 0.0) plr->a = -PI / 2.0;
+  } else {
+    plr->a = atan2(pnt->y, pnt->x);
+  }
+  return plr;
+}
+
+// A function to print out the question and answer
+// to a cartesian to polar coordinate conversion.
+void print_q_and_a(q_and_a *qa, struct cartesian_coord *pnt, struct polar_coord *plr) {
+  printf(qa->q, pnt->x, pnt->y);
+  printf(qa->a, plr->r, plr->a);
+}
+
+c-declare-end
+  )
+
+  ; Foreign-object type declarations for `point` and `polar`.
+  ; Notice the addition of `cartesian_coord*` as a non-primary tag for
+  ; `point*`. This tells Scheme that a foreign-object tagged `cartesian_coord*`
+  ; is acceptable (and type compatible) where one of `point*` is expected. It
+  ; is what allows for `cc-ref` to be passed as an argument to `point-to-polar`
+  ; in the interactive session below.
+  (c-define-type point  (type "point" (point cartesian_coord)))
+  (c-define-type point* (pointer point (point* cartesian_coord*)))
+  (c-define-type polar  (type "polar" (polar polar_coord)))
+  (c-define-type polar* (pointer polar (polar* polar_coord*)))
+
+  (define-c-struct cartesian_coord
+    ((x . double) (y . double))
+    #f (point))  ; Likewise, `point` is specified as a compatible type where a
+                 ; foreign-object tagged `cartesian_coord` is expected. Such is
+                 ; the case with the generated accessors for this struct type.
+
+  (define-c-struct polar_coord
+    ((r . double) (a . double))
+    #f (polar))  ; `polar` is specified as a compatible type of `polar_coord`.
+                 ; Similarly, it is what allows the generated accessors to
+                 ; opperate on foreign-objects tagged `polar`, and for `polar-ref`
+                 ; to be passed as an argument to `print_q_and_a`, as shown in
+                 ; the interactive session below.
+
+  (define-c-struct q_and_a  ; `q_and_a` matches the typedef alias. *!*
+    ((q . char-string) (a . char-string))
+    #f #f #t)    ; Set `as-typedef` as #t for anonymous struct.
+
+  ; Interface with the C functions.
+  (define-c-lambda point-to-polar (point*) polar* "point_to_polar")
+  (define-c-lambda print-q-and-a  (q_and_a* cartesian_coord* polar_coord*) void "print_q_and_a"))
+```
+
+The following interactive session shows use of the interface defined above.
+
+```
+$ gxi
+> (import :sample/point-polar)
+> (import :std/foreign)
+> (def cc-ref (malloc-cartesian_coord))
+> (foreign-tags cc-ref)
+(cartesian_coord* point*)
+> (cartesian_coord-x-set! cc-ref 12.)
+> (cartesian_coord-y-set! cc-ref 5.)
+> (def polar-ref (point-to-polar cc-ref))
+> (foreign-tags polar-ref)
+(polar* polar_coord*)
+> (polar_coord-r polar-ref)
+13.
+> (polar_coord-a polar-ref)
+.3947911196997615
+> (def q&a (malloc-q_and_a))
+> (foreign-tags q&a)
+(q_and_a*)
+> (q_and_a-q-set! q&a "What are the polar coordinates of point (x = %.1lf, y = %.1lf)? \n")
+> (q_and_a-a-set! q&a "The polar coordinates are (r = %.1lf, a = %.1lf). \n")
+> (print-q-and-a q&a cc-ref polar-ref)
+What are the polar coordinates of point (x = 12.0, y = 5.0)? 
+The polar coordinates are (r = 13.0, a = 0.4). 
 ```
 
 ## Interfacing with a custom C program
