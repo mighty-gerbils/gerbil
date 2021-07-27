@@ -250,25 +250,39 @@ Format one line of *fields* to *port* in CSV format, using the current syntax pa
 ``` scheme
 (write-csv-lines lines port) -> void
 
-  lines := list of strings
+  lines := list-of-lines or list-of-fields
   port  := output port
 ```
 
-Given a list of *lines*, each of them a list of fields, and a PORT,
+::: tip Examples
+``` scheme
+> (let (list-of-fields '("ID" 1 2 3))
+    (call-with-output-string []
+      (cut write-csv-lines  list-of-fields <>)))
+"ID\r\n1\r\n2\r\n3\r\n"
+
+> (let (list-of-lines '(("ID") (1) (2) (3)))
+    (call-with-output-string []
+      (cut write-csv-lines  list-of-lines <>)))
+"ID\r\n1\r\n2\r\n3\r\n"
+```
+:::
+
+Given a list of fields or a list of `lines`, each of them a list of fields, and a `port`,
 format those lines as CSV according to the current syntax parameters.
 
 ### write-csv-file
 ``` scheme
 (write-csv-file path lines . settings) -> void
 
-  lines    := list of strings
+  lines    := list-of-lines or list-of-fields
   path     := output path
   settings := optional path settings
 ```
-Writes `lines` to the designated `path` using `write-csv-lines`
+Writes list of `lines` or a list of fields to the designated `path` using `write-csv-lines`
 and the provided `settings`. Check section
 [17.7.1 Filesystem devices](http://www.iro.umontreal.ca/~gambit/doc/gambit.html#Filesystem-devices)
-of the Gambit Manual if you want to know more about the `settings` parameter.
+of the Gambit Manual if you want to learn more about the `settings` parameter.
 
 ::: tip Examples:
 ``` scheme

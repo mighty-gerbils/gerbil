@@ -71,7 +71,10 @@
        +lf+)
       (test-both
        ""
-       '()))
+       '())
+      (check
+        (call-with-output-string [] (cut write-csv-lines '("1" "2") <>))
+        => "1\r\n2\r\n"))
     (test-case "parameters"
       (def setters
         (hash (separator csv-options-separator-set!)

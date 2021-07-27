@@ -310,13 +310,22 @@
            (string-any (cut w/opt char-needs-quoting? <>) x))
        #t))
 
-;; Given a list of LINES, each of them a list of fields, and a PORT,
-;; format those lines as CSV according to the current syntax parameters.
-(def/opt (write-csv-lines lines port)
-  (for-each (cut w/opt write-csv-line <> port) lines))
+;; Checks if the list is a list-of-lines (as understood by text/csv).
+;; The procedure returns #t for [[1] [2]], [[]], [], but not for [1 2].
+(def (list-of-lines? lst)
+  (or (null? lst)
+      (and (pair? lst)
+           (? (or pair? null?) (car lst)))))
 
-;; Writes list of LINES to the designated PATH using write-csv-lines
-;; and the provided settings.
+;; Given a list of fields or list of LINES, each of them a list of fields,
+;; and a PORT, format those lines as CSV according to the current
+;; syntax parameters.
+(def/opt (write-csv-lines lines port)
+  (for-each (cut w/opt write-csv-line <> port)
+            (if (list-of-lines? lines) lines (map list lines))))
+
+;; Writes list of LINES or a list of fields to the designated PATH using
+;; write-csv-lines and the provided settings.
 (def/opt (write-csv-file path-or-settings lines)
   (call-with-output-file path-or-settings
     (cut w/opt write-csv-lines lines <>)))
