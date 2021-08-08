@@ -2564,6 +2564,41 @@ group consecutive elements of the list `lst` into a list-of-lists.
 ```
 :::
 
+### partition-by
+``` scheme
+(partition-by lst [key: identity] [test: equal?]) -> list
+
+  lst  := proper list
+  key  := optional, unary procedure
+  test := optional, binary procedure or value
+```
+partition-by returns a list-of-lists which compares the head of every
+list item with the given `test:` (binary procedure or value, default `equal?`)
+and uses `key:` (default is `identity`) to extract the to-be-tested item.
+If a test for a given item fails for all not yet partitioned values, the item
+is added to a fail-group and returned as last list.
+The item order is preserved in the result.
+
+::: tip Examples:
+``` scheme
+> (partition-by [1 2 3 1 2])
+((1 1) (2 2) (3))
+
+> (partition-by [1 2 3 1 2] test: 2)
+((2 2) (1 3 1))  ; (1 3 1) is the fail-group
+
+> (partition-by ["a" "B" "A" "c" "b"] test: string-ci=?)
+(("a" "A") ("B" "b") ("c"))
+
+> (partition-by '((1 a) (2 b) (1 c)) key: car)
+(((1 a) (1 c)) ((2 b)))
+
+> (def (abs-equal? a b) (eqv? (abs a) (abs b)))
+> (partition-by [1 2 -1 3 -2 1] test: abs-equal?)
+((1 -1 1) (2 -2) (3))
+```
+:::
+
 ### every-consecutive?
 ``` scheme
 (every-consecutive? pred lst)

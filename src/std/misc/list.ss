@@ -19,6 +19,7 @@
   split
   take-until take-until! drop-until
   group
+  partition-by
   every-consecutive?
   separate-keyword-arguments
   first-and-only
@@ -300,6 +301,40 @@
     ([] lst)
     ([a] [[a]])
     (_ (helper))))
+
+;; partition-by returns a list-of-lists which compares the head of every
+;; list item with the given test: (binary procedure or value, default equal?)
+;; and uses key: (default is identity) to extract the to-be-tested item.
+;; If a test for a given item fails for all not yet partitioned values,
+;; the item is added to a fail-group and returned as last list.
+;; The item order is preserved in the result.
+;;
+;; Example:
+;;   (partition-by [1 2 3 1])               => ((1 1) (2) (3))
+;;   (partition-by [1 'a 2 'b 3 1] test: 1) => ((1 1) (a 2 b 3))
+(def (partition-by lst key: (k identity) test: (t equal?))
+  (def test (if (procedure? t) t
+              (lambda (a b) (and (equal? a t) (equal? b t)))))
+  (def (inner-loop rest pred put! loop outgroup)
+    (let lp ((xs rest) (ingroup []) (new-rest []))
+      (match xs
+        ([v . xs] (if (pred v)
+                    (lp xs (cons v ingroup) new-rest)
+                    (lp xs ingroup (cons v new-rest))))
+        (_ (match ingroup
+             ([] (loop (cdr rest) (cons (car rest) outgroup)))
+             (_  (put! (reverse! ingroup))
+                 (loop (reverse! new-rest) outgroup)))))))
+  (if (and (pair? lst) (procedure? k))
+    (with-list-builder (put!)
+      (let loop ((rest lst) (outgroup []))
+        (if (pair? rest)
+          (let* ((wanted (k (car rest)))
+                 (pred (lambda (v) (test (k v) wanted))))
+            (inner-loop rest pred put! loop outgroup))
+          (when (pair? outgroup)
+            (put! (reverse! outgroup))))))
+    []))
 
 ;; Returns a boolean that is true if any two consecutive terms in the list satisfy the predicate.
 ;; In particular, if the predicate is a partial order predicate (respectively a strict partial
