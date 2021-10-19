@@ -8,17 +8,12 @@
 (export (import: :gerbil/core)
         (for-syntax read-module-body))
 
-(module _gambit
-  (export #t)
-  (extern namespace: #f macro-readtable-brace-keyword-set!))
-
-(import (for-syntax _gambit))
 (eval-when-compile (import (for-syntax :std/gambit-sharp)))
 
 (begin-syntax
   (def *readtable*
-    (let (rt (##make-standard-readtable))
-      (macro-readtable-brace-keyword-set! rt '@method)
+    (let (rt (_gx#make-readtable))
+      (_gx#readtable-bracket-keyword-set! rt #f)
       rt))
 
   (def (read-module-body port)
