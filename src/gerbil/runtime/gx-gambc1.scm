@@ -198,13 +198,38 @@
    (make-&context 'root #f #f _gx#*core*)
    (make-hash-table-eq)))
 
-(define _gx#*readtable*
-  (let ((rt (readtable-write-extended-read-macros?-set
-             (##make-standard-readtable) #t)))
-    (macro-readtable-bracket-keyword-set! rt '@list)
-    (macro-readtable-brace-keyword-set! rt '@method)
+;; the gerbil readtable
+(define (_gx#make-readtable)
+  (let ((rt (##make-standard-readtable)))
+    (macro-readtable-write-extended-read-macros?-set! rt #t)
+    (_gx#readtable-bracket-keyword-set! rt '@list)
+    (_gx#readtable-brace-keyword-set! rt '@method)
+    (##readtable-char-sharp-handler-set! rt #\! _gx#read-sharp-bang)
     rt))
 
+(eval-if (>= (##vector-length (current-readtable)) 42)
+  (begin
+    (define (_gx#readtable-bracket-keyword-set! rt kw)
+      (macro-readtable-bracket-handler-set! rt kw))
+    (define (_gx#readtable-brace-keyword-set! rt kw)
+      (macro-readtable-brace-handler-set! rt kw)))
+  (begin
+    (define (_gx#readtable-bracket-keyword-set! rt kw)
+      (macro-readtable-bracket-keyword-set! rt kw))
+    (define (_gx#readtable-brace-keyword-set! rt kw)
+      (macro-readtable-brace-keyword-set! rt kw))))
+
+(define (_gx#read-sharp-bang re next start-pos)
+  (if (eq? start-pos 0)
+    (begin
+      (##read-line (macro-readenv-port re) #\newline #f ##max-fixnum)
+      (##script-marker))
+    (##read-sharp-bang re next start-pos)))
+
+(define _gx#*readtable*
+  (_gx#make-readtable))
+
+;; interpretation parameters
 (define &current-expander
   (make-parameter #f))
 (define &current-compiler
