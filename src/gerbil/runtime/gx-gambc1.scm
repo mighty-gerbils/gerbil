@@ -212,7 +212,8 @@
     (define (_gx#readtable-bracket-keyword-set! rt kw)
       (macro-readtable-bracket-handler-set! rt kw))
     (define (_gx#readtable-brace-keyword-set! rt kw)
-      (macro-readtable-brace-handler-set! rt kw)))
+      (macro-readtable-brace-handler-set! rt kw))
+    (set! ##readtable-setup-for-language! void))
   (begin
     (define (_gx#readtable-bracket-keyword-set! rt kw)
       (macro-readtable-bracket-keyword-set! rt kw))
@@ -221,8 +222,9 @@
 
 (define (_gx#read-sharp-bang re next start-pos)
   (if (eq? start-pos 0)
-    (begin
-      (##read-line (macro-readenv-port re) #\newline #f ##max-fixnum)
+    (let* ((line (##read-line (macro-readenv-port re) #\newline #f ##max-fixnum))
+           (script-line (substring line 1 (string-length line))))
+      (macro-readenv-script-line-set! re script-line)
       (##script-marker))
     (##read-sharp-bang re next start-pos)))
 
