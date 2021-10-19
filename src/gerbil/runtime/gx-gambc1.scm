@@ -204,7 +204,9 @@
     (macro-readtable-write-extended-read-macros?-set! rt #t)
     (_gx#readtable-bracket-keyword-set! rt '@list)
     (_gx#readtable-brace-keyword-set! rt '@method)
-    (##readtable-char-sharp-handler-set! rt #\! _gx#read-sharp-bang)
+    (eval-if (>= (##vector-length (current-readtable)) 42)
+      (##readtable-char-sharp-handler-set! rt #\! _gx#read-sharp-bang)
+      (void))
     rt))
 
 (eval-if (>= (##vector-length (current-readtable)) 42)
@@ -213,20 +215,19 @@
       (macro-readtable-bracket-handler-set! rt kw))
     (define (_gx#readtable-brace-keyword-set! rt kw)
       (macro-readtable-brace-handler-set! rt kw))
+    (define (_gx#read-sharp-bang re next start-pos)
+      (if (eq? start-pos 0)
+        (let* ((line (##read-line (macro-readenv-port re) #\newline #f ##max-fixnum))
+               (script-line (substring line 1 (string-length line))))
+          (macro-readenv-script-line-set! re script-line)
+          (##script-marker))
+        (##read-sharp-bang re next start-pos)))
     (set! ##readtable-setup-for-language! void))
   (begin
     (define (_gx#readtable-bracket-keyword-set! rt kw)
       (macro-readtable-bracket-keyword-set! rt kw))
     (define (_gx#readtable-brace-keyword-set! rt kw)
       (macro-readtable-brace-keyword-set! rt kw))))
-
-(define (_gx#read-sharp-bang re next start-pos)
-  (if (eq? start-pos 0)
-    (let* ((line (##read-line (macro-readenv-port re) #\newline #f ##max-fixnum))
-           (script-line (substring line 1 (string-length line))))
-      (macro-readenv-script-line-set! re script-line)
-      (##script-marker))
-    (##read-sharp-bang re next start-pos)))
 
 (define _gx#*readtable*
   (_gx#make-readtable))
