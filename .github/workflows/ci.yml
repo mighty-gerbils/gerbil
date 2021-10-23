@@ -36,21 +36,21 @@ jobs:
           sudo ln -sf $HOME/gambit/bin/gsi /bin/gsi
           sudo ln -sf $HOME/gambit/bin/gsi-script /bin/gsi-script
           sudo ln -sf $HOME/gambit/bin/gsc /bin/gsc
-      - name: Setup build
+      - name: Setup Gerbil build
         run: echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
-      - name: Build gxi
+      - name: Build Gerbil gxi
         run: ./src/build.sh gxi
-      - name: Build stage0
+      - name: Build Gerbil stage0
         run: ./src/build.sh stage0
-      - name: Build stage1 final
+      - name: Build Gerbil stage1 final
         run: ./src/build.sh stage1 final
-      - name: Build stdlib
+      - name: Build Gerbil stdlib
         run: ./src/build.sh stdlib
-      - name: Build lang
+      - name: Build Gerbil lang
         run: ./src/build.sh lang
-      - name: Build tools
+      - name: Build Gerbil tools
         run: ./src/build.sh tools
-      - name: Run tests
+      - name: Run Gerbil tests
         run: |
           export GERBIL_HOME=${GITHUB_WORKSPACE}
           export PATH=${GITHUB_WORKSPACE}/bin:$PATH
