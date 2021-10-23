@@ -15,32 +15,35 @@ jobs:
         with:
           repository: 'gambit/gambit'
           ref: ${{ matrix.gambit-version }}
-          path: 'gambit'
+          path: 'gambit-src'
         if: steps.cache-gambit.outputs.cache-hit != 'true'
       - name: Get Gambit version
         id: get-gambit-version
         run: |
-          cd gambit
+          cd gambit-src
           echo "::set-output name=gambit-version::$(git rev-parse HEAD)"
         shell: bash
       - uses: actions/cache@v2
         name: Cache gambit
         id: cache-gambit
         with:
-          path: $HOME/gambit
+          path: 'gambit'
           key: ${{ runner.os }}-gambit-${{ steps.get-gambit-version.outputs.gambit-version }}
       - name: Build and install Gambit
         if: ${{ !steps.cache-gambit.outputs.cache-hit }}
         run: |
-          cd gambit
-          ./configure --prefix=$HOME/gambit --enable-single-host
+          cd gambit-src
+          ./configure --prefix=${GITHUB_WORKSPACE}/gambit --enable-single-host
           make
           make install
       - name: Setup links to Gambit executables
         run: |
-          sudo ln -sf $HOME/gambit/bin/gsi /bin/gsi
-          sudo ln -sf $HOME/gambit/bin/gsi-script /bin/gsi-script
-          sudo ln -sf $HOME/gambit/bin/gsc /bin/gsc
+          sudo ln -sfv ${GITHUB_WORKSPACE}/gambit/bin/gsi /bin/gsi
+          sudo ln -sfv ${GITHUB_WORKSPACE}/gambit/bin/gsi-script /bin/gsi-script
+          sudo ln -sfv ${GITHUB_WORKSPACE}/gambit/bin/gsc /bin/gsc
+          gsi -v
+          gsi-script -v
+          gsc -v
       - name: Setup Gerbil build
         run: echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
       - name: Build Gerbil gxi
