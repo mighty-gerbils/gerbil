@@ -52,7 +52,7 @@ jobs:
         run: ./src/build.sh lang
       - name: Build tools
         run: ./src/build.sh tools
-      - name: Setup PATH
-        run: export PATH=${GITHUB_WORKSPACE}/bin:$PATH
       - name: Run tests
-        run: ./src/std/run-tests.ss
+        run: |
+          export PATH=${GITHUB_WORKSPACE}/bin:$PATH
+          ./src/std/run-tests.ss
