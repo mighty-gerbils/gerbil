@@ -15,7 +15,7 @@ jobs:
         id: cache-gambit
         uses: actions/cache@v2
         with:
-          path: $HOME/gambit
+          path: gambit
           key: ${{ runner.os }}-gambit-${{ matrix.gambit-version }}
       - uses: actions/checkout@v2
         with:
@@ -23,16 +23,16 @@ jobs:
           ref: ${{ matrix.gambit-version }}
           path: 'gambit'
         if: steps.cache-gambit.outputs.cache-hit != 'true'
-      - name: Build and install Gambit
+      - name: Build Gambit
         if: steps.cache-gambit.outputs.cache-hit != 'true'
         run: |
-          pushd gambit
+          cd gambit
           ./configure --prefix=$HOME/gambit --enable-single-host
           make
-          make install
-          popd
-      - name: Setup links to gambit executables
+      - name: Install Gambit
         run: |
+          cd gambit
+          make install
           sudo ln -sf $HOME/gambit/bin/gsi /bin/gsi
           sudo ln -sf $HOME/gambit/bin/gsi-script /bin/gsi-script
           sudo ln -sf $HOME/gambit/bin/gsc /bin/gsc
