@@ -1,13 +1,12 @@
 name: CI
 on: [push, pull_request]
 jobs:
-  install-gambit:
+  build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Install dependencies
         run: sudo apt-get -y install openssl libssl-dev sqlite3 libsqlite3-dev
-      - name: Install Gambit
-        run: ./.github/scripts/install-gambit.sh
       - name: Cache gambit
         uses: actions/cache@v2
         env:
@@ -15,11 +14,8 @@ jobs:
         with:
           path: $HOME/gambit
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('$HOME/gambit/bin/gsi') }}
-  build-test:
-    runs-on: ubuntu-latest
-    needs: install-gambit
-    steps:
-      - uses: actions/checkout@v2
+      - name: Install Gambit
+        run: ./.github/scripts/install-gambit.sh
       - name: Build
         run: |
           echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
