@@ -16,17 +16,23 @@ jobs:
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('$HOME/gambit/bin/gsi') }}
       - name: Install Gambit
         run: bash .github/scripts/install-gambit.sh
-      - name: Build
+      - name: Setup build
         run: |
           echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
           export GERBIL_HOME=${GITHUB_WORKSPACE}
-          cd src
-          ./build.sh gxi
-          ./build.sh stage0
-          ./build.sh stage1 final
-          ./build.sh stdlib
-          ./build.sh lang
-          ./build.sh tools
-          export PATH=${GITHUB_WORKSPACE}/bin:$PATH
+      - name: Build gxi
+        run: ./src/build.sh gxi
+      - name: Build stage0
+        run: ./src/build.sh stage0
+      - name: Build stage1 final
+        run: ./src/build.sh stage1 final
+      - name: Build stdlib
+        run: ./src/build.sh stdlib
+      - name: Build lang
+        run: ./src/build.sh lang
+      - name: Build tools
+        run: ./src/build.sh tools
+      - name: Setup PATH
+        run: export PATH=${GITHUB_WORKSPACE}/bin:$PATH
       - name: Run tests
-        run: ./std/run-tests.ss
+        run: ./src/std/run-tests.ss
