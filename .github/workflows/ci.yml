@@ -11,28 +11,33 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: sudo apt-get -y install openssl libssl-dev sqlite3 libsqlite3-dev
-      - name: Cache gambit
-        id: cache-gambit
-        uses: actions/cache@v2
-        with:
-          path: gambit
-          key: ${{ runner.os }}-gambit-${{ matrix.gambit-version }}
       - uses: actions/checkout@v2
         with:
           repository: 'gambit/gambit'
           ref: ${{ matrix.gambit-version }}
           path: 'gambit'
         if: steps.cache-gambit.outputs.cache-hit != 'true'
-      - name: Build Gambit
-        if: steps.cache-gambit.outputs.cache-hit != 'true'
+      - name: Get Gambit version
+        id: get-gambit-version
+        run: |
+          cd gambit
+          echo "::set-output name=gambit-version::$(git rev-parse HEAD)"
+        shell: bash
+      - uses: actions/cache@v2
+        name: Cache gambit
+        id: cache-gambit
+        with:
+          path: $HOME/gambit
+          key: ${{ runner.os }}-gambit-${{ steps.get-gambit-version.outputs.gambit-version }}
+      - name: Build and install Gambit
+        if: ${{ !steps.cache-gambit.outputs.cache-hit }}
         run: |
           cd gambit
           ./configure --prefix=$HOME/gambit --enable-single-host
           make
-      - name: Install Gambit
-        run: |
-          cd gambit
           make install
+      - name: Setup links to Gambit executables
+        run: |
           sudo ln -sf $HOME/gambit/bin/gsi /bin/gsi
           sudo ln -sf $HOME/gambit/bin/gsi-script /bin/gsi-script
           sudo ln -sf $HOME/gambit/bin/gsc /bin/gsc
