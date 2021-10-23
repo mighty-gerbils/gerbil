@@ -15,7 +15,7 @@ jobs:
         id: cache-gambit
         uses: actions/cache@v2
         with:
-          path: $GITHUB_WORKSPACE/gambit
+          path: $HOME/gambit
           key: ${{ runner.os }}-gambit-${{ matrix.gambit-version }}
       - uses: actions/checkout@v2
         with:
@@ -37,9 +37,7 @@ jobs:
           sudo ln -sf $HOME/gambit/bin/gsi-script /bin/gsi-script
           sudo ln -sf $HOME/gambit/bin/gsc /bin/gsc
       - name: Setup build
-        run: |
-          echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
-          export GERBIL_HOME=${GITHUB_WORKSPACE}
+        run: echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
       - name: Build gxi
         run: ./src/build.sh gxi
       - name: Build stage0
@@ -54,5 +52,6 @@ jobs:
         run: ./src/build.sh tools
       - name: Run tests
         run: |
+          export GERBIL_HOME=${GITHUB_WORKSPACE}
           export PATH=${GITHUB_WORKSPACE}/bin:$PATH
           ./src/std/run-tests.ss
