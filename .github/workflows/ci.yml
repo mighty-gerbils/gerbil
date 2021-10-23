@@ -3,19 +3,33 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        gambit-version: ['v4.9.3', 'master']
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: sudo apt-get -y install openssl libssl-dev sqlite3 libsqlite3-dev
       - name: Cache gambit
         uses: actions/cache@v2
-        env:
-          cache-name: gambit
         with:
-          path: $HOME/gambit
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('$HOME/gambit/bin/gsi') }}
-      - name: Install Gambit
-        run: bash .github/scripts/install-gambit.sh
+          path: $GITHUB_WORKSPACE/gambit
+          key: ${{ runner.os }}-gambit-${{ matrix.gambit-version }}
+      - uses: actions/checkout@v2
+        with:
+          repository: 'gambit/gambit'
+          ref: ${{ matrix.gambit-version }}
+          path: 'gambit'
+      - name: Build and install Gambit
+        run: |
+          pushd gambit
+          ./configure --prefix=$HOME/gambit --enable-single-host
+          make
+          make install
+          popd
+          sudo ln -sf $HOME/gambit/bin/gsi /bin/gsi
+          sudo ln -sf $HOME/gambit/bin/gsi-script /bin/gsi-script
+          sudo ln -sf $HOME/gambit/bin/gsc /bin/gsc
       - name: Setup build
         run: |
           echo "(define (gerbil-version-string) \"git-$(git rev-parse --short=8 HEAD)\")" > src/gerbil/runtime/gx-version.scm
