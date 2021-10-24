@@ -15,6 +15,7 @@ jobs:
         with:
           repository: 'gambit/gambit'
           ref: ${{ matrix.gambit-version }}
+          fetch-depth: 0  # Checkout history and tags
           path: 'gambit-src'
         if: steps.cache-gambit.outputs.cache-hit != 'true'
       - name: Get Gambit version
@@ -34,6 +35,7 @@ jobs:
         run: |
           cd gambit-src
           ./configure --prefix=${GITHUB_WORKSPACE}/gambit --enable-single-host
+          make clean
           make
           make install
       - name: Setup links to Gambit executables
