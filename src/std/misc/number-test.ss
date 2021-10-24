@@ -73,5 +73,5 @@
       (check l => [37])
       (check (post-decrement! (car l)) => 37)
       (check l => [36])
-      (check (increment! (car l) 1 2 3) => (void))
+      (increment! (car l) 1 2 3)
       (check l => [42]))))
