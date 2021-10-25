@@ -17,9 +17,11 @@
         :std/actor/proto
         :std/actor/rpc/base
         :std/actor/rpc/proto/message)
-(export #t)
+(export (except-out #t errorf warnf infof debugf verbosef))
 
 (declare (not safe))
+
+(deflogger rpc)
 
 (def (rpc-server-connection rpc-server actors sock sa cliaddr proto-e)
   (try
@@ -264,14 +266,14 @@
                  (begin
                    (set! (!continue-k content) wire-id)
                    (marshal-and-write msg proto #t))
-                 (warning "bad continue; unknown stream ~a" k))))
+                 (warnf "bad continue; unknown stream ~a" k))))
             ((!close k)
              (let (wire-id (continuation-table-get-stream-cont cont-table k))
                (if wire-id
                  (begin
                    (set! (!close-k content) wire-id)
                    (marshal-and-write msg proto #t))
-                 (warning "bad close; unknown stream ~a" k))))
+                 (warnf "bad close; unknown stream ~a" k))))
             ((!abort k)
              (let (wire-id (continuation-table-get-stream-cont cont-table k))
                (if wire-id
@@ -279,10 +281,10 @@
                    (set! (!abort-k content) wire-id)
                    (continuation-table-remove! cont-table wire-id)
                    (marshal-and-write msg proto #t))
-                 (warning "bad abort; unknown stream ~a" k))))
+                 (warnf "bad abort; unknown stream ~a" k))))
             (else
              (marshal-and-write msg proto #t))))
-        (warning "bad handle; no protocol ~a ~a" dest msg))))
+        (warnf "bad handle; no protocol ~a ~a" dest msg))))
 
   (def (next-continuation-id!)
     (let (next next-continuation-id)
@@ -309,19 +311,19 @@
         (if (fx<= (u8vector-length e) rpc-proto-message-max-length)
           (thread-send writer e)
           (begin
-            (warning "message too large; not sending %d bytes" (u8vector-length e))
+            (warnf "message too large; not sending %d bytes" (u8vector-length e))
             (dispatch-marshal-error "message too large"))))
        ((chunked-output-buffer? e)
         (if (fx<= (chunked-output-length e) rpc-proto-message-max-length)
           (thread-send writer e)
           (begin
-            (warning "message too large; not sending %d bytes" (chunked-output-length e))
+            (warnf "message too large; not sending %d bytes" (chunked-output-length e))
             (dispatch-marshal-error "message too large"))))
        (dispatch-marshal-error?
-        (log-error "marshal error" e)
+        (errorf "marshal error: ~a" e)
         (dispatch-marshal-error "marshal error"))
        (else
-        (log-error "marshal error" e)))))
+        (errorf "marshal error: ~a" e)))))
 
   (def (dispatch-error wire-id what)
     (match (continuation-table-remove! cont-table wire-id)
@@ -372,7 +374,7 @@
         (lambda (wire-id)
           (match (continuation-table-remove! cont-table wire-id)
             ((values actor proto k stream?)
-             (debug "removing continuation ~a for dead actor ~a" wire-id actor)
+             (debugf "removing continuation ~a for dead actor ~a" wire-id actor)
              (when stream?
                (dispatch-remote-error (make-!abort wire-id) null-uuid)))
             (else (void))))
@@ -402,11 +404,11 @@
         ((? thread? thread)
          (try
           (thread-join! thread)
-          (warning "connection error: i/o thread ~a exited unexpectedly" (thread-name thread))
+          (warnf "connection error: i/o thread ~a exited unexpectedly" (thread-name thread))
           (catch (uncaught-exception? e)
-            (log-error "connection error" (uncaught-exception-reason e)))
+            (errorf "connection error: ~a" (uncaught-exception-reason e)))
           (catch (e)
-            (log-error "connection error" e)))
+            (errorf "connection error: ~a" e)))
          (close-connection))
         ;; DEBUG
         ('dump
@@ -414,7 +416,7 @@
         (['dump port]
          (dump! port))
         (bogus
-         (warning "unexpected message ~a" bogus)))
+         (warnf "unexpected message ~a" bogus)))
     (loop))
 
   (def (run)
@@ -428,7 +430,7 @@
    (run)
    (catch (e)
      (unless (eq? 'shutdown e)
-       (log-error "unhandled exception" e)
+       (errorf "unhandled exception: ~a" e)
        (with-catch void close-connection)))))
 
 ;; the writer of the connection: receives marshaled outbound messages
@@ -446,12 +448,12 @@
          (loop))
         ('exit (void))
         (bogus
-         (warning "unexpected message ~a" bogus)
+         (warnf "unexpected message ~a" bogus)
          (loop))))
   (try
    (loop)
    (catch (e)
-     (log-error "unhandled exception" e))))
+     (errorf "unhandled exception: ~a" e))))
 
 ;; the reader of the connection: reads, unmarshals, and dispatches inbound messages
 (def (rpc-connection-reader conn connaddr sockbuf actor-table cont-table writer read-e)
@@ -509,7 +511,7 @@
                           (!stream-k content))))
                   (dispatch-remote-error (make-!error "unmarshal error" k) uuid)))))))
         (else
-         (warning "cannot route message; no actor binding ~a" (uuid->string uuid))
+         (warnf "cannot route message; no actor binding ~a" (uuid->string uuid))
          (match (message-e msg)
            ((or (!call _ k) (!stream _ k))
             (dispatch-remote-error (make-!error "no binding" k) uuid))
@@ -550,7 +552,7 @@
                 (when (!sync? content)
                   (dispatch-remote-error (make-!abort cont) (message-dest msg))))))))
        (else
-        (warning "cannot route message; unknown continuation ~a" cont)
+        (warnf "cannot route message; unknown continuation ~a" cont)
         (when (!sync? content)
           (dispatch-remote-error (make-!abort cont) (message-dest msg)))))))
 
@@ -564,7 +566,7 @@
           (send actor msg)
           (continuation-table-remove-stream-actor! cont-table cont))
         (begin
-          (warning "unexpected control message; unknown stream ~a" cont)
+          (warnf "unexpected control message; unknown stream ~a" cont)
           (unless (!abort? content)
             (dispatch-remote-error (make-!error "uknown stream" cont) (message-dest msg)))))))
 
@@ -583,14 +585,14 @@
     (try
      (rpc-proto-read-envelope buffer)
      (catch (exception? e)
-       (log-error "read error" e)
+       (errorf "read error: ~a" e)
        e)))
 
   (def (read-payload! msg buffer proto)
     (try
      (rpc-proto-read-payload! msg buffer proto)
      (catch (e)
-       (log-error "unmarshal error" e)
+       (errorf "unmarshal error: ~a" e)
        #f)))
 
   (def (run)
@@ -601,7 +603,7 @@
   (try
    (run)
    (catch (e)
-     (log-error "unhandled exception" e))))
+     (errorf "unhandled exception: ~a" e))))
 
 ;;; utilities
 (def (rpc-options-timeout opts default)
@@ -635,7 +637,7 @@
         (ignore (lp)))))
 
 (def (rpc-connection-cleanup rpc-server exn sock)
-  (log-error "connection error" exn)
+  (errorf "connection error: ~a" exn)
   (when sock
     (ssocket-close sock))
   (rpc-connection-shutdown rpc-server))

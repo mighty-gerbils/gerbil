@@ -18,6 +18,8 @@
         http-register-handler
         current-http-server)
 
+(deflogger httpd)
+
 (defproto httpd
   (register host path handler)
   event:
@@ -86,14 +88,14 @@
         ((!httpd.join thread)
          (try
           (thread-join! thread)
-          (warning "acceptor thread ~a exited unexpectedly" (thread-name thread))
+          (warnf "acceptor thread ~a exited unexpectedly" (thread-name thread))
           (catch (uncaught-exception? e)
-            (log-error "acceptor error" (uncaught-exception-reason e)))
+            (errorf "acceptor error: ~a" (uncaught-exception-reason e)))
           (catch (e)
-            (log-error "acceptor error" e)))
+            (errorf "acceptor error: ~a" e)))
          (loop))
         (bogus
-         (warning "unexpected message ~a" bogus)
+         (warnf "unexpected message ~a" bogus)
          (loop))))
 
   (try
@@ -101,7 +103,7 @@
    (parameterize ((current-http-server (current-thread)))
      (loop))
    (catch (e)
-     (log-error "unhandled exception" e)
+     (errorf "unhandled exception: ~a" e)
      (raise e))
    (finally
     (shutdown!))))
@@ -119,5 +121,5 @@
     (try
      (loop)
      (catch (os-exception? e)
-       (log-error "error accepting connection" e)
+       (errorf "error accepting connection: ~a" e)
        (again)))))

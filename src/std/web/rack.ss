@@ -13,6 +13,8 @@
         )
 (export start-rack-fastcgi-server!)
 
+(deflogger rack)
+
 ;; handler is a function (env data) => (values status headers body)
 ;;  env is a hash symbol => string (fastcgi params)
 ;;  data is stdin supplied data (u8vector)
@@ -36,7 +38,7 @@
       (get-output-u8vector out)))
 
   (def (log-response-error e)
-    (log-error "rack response error" e)
+    (errorf "rack response error: ~a" e)
     (let (errstr (call-with-output-string [] (cut display-exception e <>)))
       (fastcgi-write-stderr req errstr)))
 

@@ -33,6 +33,8 @@
 
 (declare (not safe))
 
+(deflogger httpd)
+
 (defstruct http-request (buf client method url path params proto headers data)
   final: #t unchecked: #t)
 (defstruct http-response (buf output close?)
@@ -54,12 +56,12 @@
       (try
        (read-request! req)
        (catch (timeout-error? e)
-         (log-error "request error" e)
+         (errorf "request error: ~a" e)
          (set! (&http-response-close? res) #t)
          (http-response-write res 408 [] #f)
          (raise 'abort))
        (catch (io-error? e)
-         (log-error "request error" e)
+         (errorf "request error: ~a" e)
          (set! (&http-response-close? res) #t)
          (http-response-write res 400 [] #f)
          (raise 'abort)))
@@ -95,20 +97,20 @@
                  (try
                   (handler req res)
                   (catch (io-error? e)
-                    (log-error "request i/o error" e)
+                    (errorf "request i/o error: ~a" e)
                     (unless (&http-response-output res)
                       (set! (&http-response-close? res) #t)
                       (http-response-write res 500 [] #f))
                     (raise 'abort))
                   (catch (e)
-                    (log-error "request handler error" e)
+                    (errorf "request handler error: ~a" e)
                     (if (&http-response-output res)
                       ;; if there was output from the handler, the connection
                       ;; is unusable; abort
                       (raise 'abort)
                       (http-response-write res 500 [] #f))))
                  (begin
-                   (warning "request handler is not a procedure: ~a ~a ~a" host path handler)
+                   (warnf "request handler is not a procedure: ~a ~a ~a" host path handler)
                    (http-response-write res 500 [] #f)))))
          (else
           (http-response-write res 404 [] #f)))
@@ -121,7 +123,7 @@
    (loop)
    (catch (e)
      (unless (memq e '(abort eof))
-       (log-error "unhandled exception" e)
+       (errorf "unhandled exception: ~a" e)
        (raise e))
      e)
    (finally

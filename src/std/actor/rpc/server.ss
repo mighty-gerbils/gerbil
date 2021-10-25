@@ -51,6 +51,8 @@
   bind-protocol!
   )
 
+(deflogger rpc)
+
 (def current-rpc-server
   (make-parameter #f))
 
@@ -101,7 +103,7 @@
        (rpc-server-loop socks sas proto)
        (catch (e)
          (unless (eq? e 'shutdown)
-           (log-error "unhandled exception" e)
+           (errorf "unhandled exception: ~a" e)
            (raise e)))))))
 
 (def (rpc-unlink-unix-socket sa)
@@ -169,7 +171,7 @@
                 (!!rpc.connection-close src)
                 (remove-thread! src)))
           (else
-           (warning "Unexpected protocol mesage ~a" msg))))
+           (warnf "Unexpected protocol mesage ~a" msg))))
         ((!rpc.connect id address proto k)
          (let* ((uuid (UUID id))
                 (proto (or proto (lookup-protocol uuid))))
@@ -226,7 +228,7 @@
         ((!rpc.shutdown)
          (raise 'shutdown))
         (else
-         (warning "Unexpected message ~a" msg)))))
+         (warnf "Unexpected message ~a" msg)))))
 
   (def (actor-thread-e actor)
     (cond
@@ -275,12 +277,12 @@
                 (else
                  (rpc-send-error-response msg "unknown actor")))))
             (else
-             (warning "bad destination ~a" dest)
+             (warnf "bad destination ~a" dest)
              (rpc-send-error-response msg "bad destination")))))
         ((? thread? thread)
          (cond
           ((memq thread acceptors)
-           (warning "acceptor thread has exited abnormally ~a" thread))
+           (warnf "acceptor thread has exited abnormally ~a" thread))
           (else
            (remove-thread! thread))))
         ;; DEBUG
@@ -289,7 +291,7 @@
         (['dump port]
          (dump! port))
         (value
-         (warning "unexepected message ~a"  value)))
+         (warnf "unexepected message ~a"  value)))
     (loop))
 
   (def (dump! port)
@@ -337,10 +339,10 @@
   (def (loop)
     (let* ((cliaddr (make-socket-address safamily))
            (clisock (ssocket-accept sock cliaddr)))
-      (debug "accepted connection from ~a"
-             (let (clistr (socket-address->string cliaddr))
-               (if (string-empty? clistr) ; UNIX client
-                 "?" clistr)))
+      (debugf "accepted connection from ~a"
+              (let (clistr (socket-address->string cliaddr))
+                (if (string-empty? clistr) ; UNIX client
+                  "?" clistr)))
       (!!rpc.connection-accept rpc-server clisock cliaddr)
       (loop)))
 
@@ -348,5 +350,5 @@
     (try
      (loop)
      (catch (os-exception? e)
-       (log-error "error accepting connection" e)
+       (errorf "error accepting connection: ~a" e)
        (again)))))

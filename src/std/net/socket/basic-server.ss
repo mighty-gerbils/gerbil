@@ -9,7 +9,9 @@
         :std/actor/proto
         :std/logger
         :std/sugar)
-(export #t)
+(export (except-out #t errorf warnf infof debugf verbosef))
+
+(deflogger socket)
 
 (defmethod {:init! !io-state}
   (lambda (self)
@@ -38,28 +40,28 @@
            (let (ssock (add-socket sock))
              (!!value ssock k))
            (catch (e)
-             (log-error "socket-server.add" e)
+             (errorf "socket-server.add: ~a" e)
              (!!error e k)))
           (loop))
          ((!socket-server.close ssock dir shutdown)
           (try
            (close-socket ssock dir shutdown)
            (catch (e)
-             (log-error "socket-server.close" e)))
+             (errorf "socket-server.close: ~a" e)))
           (loop))
          ((!socket-server.shutdown! k)
           (try
            (shutdown!)
            (!!value (void) k)
            (catch (e)
-             (log-error "socket-server.shutdown!" e)
+             (errorf "socket-server.shutdown!: ~a" e)
              (!!error e k))))
          (msg
-          (warning "Unexpected message: ~a" msg)
+          (warnf "Unexpected message: ~a" msg)
           (loop))))
    (catch (e)
      ;; log it and die -- that's not good.
-     (log-error "socket-server error" e)
+     (errorf "socket-server error: ~a" e)
      (shutdown!)
      (raise e))
    (finally
@@ -108,4 +110,4 @@
   (try
    (socket-shutdown sock how)
    (catch (e)
-     (log-error "socket-server.shutdown-socket!" e))))
+     (errorf "socket-server.shutdown-socket!: ~a" e))))

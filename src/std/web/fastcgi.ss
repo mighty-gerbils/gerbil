@@ -22,6 +22,8 @@
   fastcgi-request-end
   )
 
+(deflogger fastcgi)
+
 (defstruct fastcgi-request (port id keepalive role params stdin))
 
 ;; multi-threaded server; dispatch requests to respond
@@ -37,7 +39,7 @@
      (let (client (read sock))
        (spawn fastcgi-connection client respond))
      (catch (e)
-       (log-error "error accepting connection" e)))
+       (errorf "error accepting connection: ~a" e)))
     (lp)))
 
 (def (fastcgi-connection port respond)
@@ -57,7 +59,7 @@
 
   (try (loop)
     (catch (e)
-      (log-error "error responding" e))
+      (errorf "error responding: ~a" e))
     (finally
      (with-catch void (cut close-port port)))))
 
@@ -88,7 +90,7 @@
                            (fcgi-unknown-type-data type))
         (begin-request port))
        (else
-        (warning "fastcgi-accept: unexpected message type ~a" type)
+        (warnf "fastcgi-accept: unexpected message type ~a" type)
         (begin-request port))))
       ((? eof-object? eof) eof)))
 
@@ -117,10 +119,10 @@
               ((eq? type FCGI-ABORT-REQUEST)
                (raise-io-error 'fastcgi-accept "Connection aborted"))
               (else
-               (warning "fastcgi-accept: unexpected message type ~a" type)
+               (warnf "fastcgi-accept: unexpected message type ~a" type)
                (lp end-params end-stdin stdin)))
              (begin
-               (warning "fastcgi-accept: unexpected message request ~a" reqid)
+               (warnf "fastcgi-accept: unexpected message request ~a" reqid)
                (lp end-params end-stdin stdin))))
           ((? eof-object?)
            (raise-io-error 'fastcgi-accept "Premature port end" port))))))
