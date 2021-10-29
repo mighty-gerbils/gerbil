@@ -40,7 +40,6 @@
  (std/srfi/121
   (gxc: "srfi/121" (extra-inputs: ("srfi/srfi-121.scm")))
   (gerbil/core))
- (std/srfi/124 "srfi/124" (gerbil/core))
  (std/srfi/127
   (gxc: "srfi/127" (extra-inputs: ("srfi/srfi-127.scm")))
   (gerbil/core))
@@ -280,6 +279,7 @@
   (gxc: "srfi/117" (extra-inputs: ("srfi/srfi-117.scm")))
   (gerbil/core std/srfi/9))
  (std/srfi/121-iter "srfi/121-iter" (gerbil/core std/iter std/srfi/121))
+ (std/srfi/124 "srfi/124" (gerbil/core gerbil/gambit/misc std/srfi/9))
  (std/srfi/127-iter "srfi/127-iter" (gerbil/core std/iter std/srfi/127))
  (std/srfi/128
   "srfi/128"
@@ -359,7 +359,7 @@
   (gxc:
    "srfi/115"
    (extra-inputs: ("srfi/srfi-115/charsets.scm" "srfi/srfi-115/regexp.scm")))
-  (gerbil/core std/srfi/1 std/srfi/125 std/srfi/14 std/srfi/151 std/srfi/9))
+  (gerbil/core std/srfi/1 std/srfi/14 std/srfi/151 std/srfi/9))
  (std/srfi/158-iter "srfi/158-iter" (gerbil/core std/srfi/121-iter))
  (std/srfi/159/environment
   (gxc: "srfi/159/environment" (extra-inputs: ("srfi/159/environment.scm")))

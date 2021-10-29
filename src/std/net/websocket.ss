@@ -25,6 +25,8 @@
         set-websocket-max-frame-size!
         set-websocket-max-message-size!)
 
+(deflogger websocket)
+
 (def wsmagic "258EAFA5-E914-47DA-95CA-C5AB0DC85B11")
 
 (def (open-websocket-client url
@@ -336,11 +338,11 @@
                 (else plen))))
         (cond
          ((not (##fxzero? mask))
-          (warning "server sent masked frame; closing websocket connection")
+          (warnf "server sent masked frame; closing websocket connection")
           (websocket-close ws 1002)
           (skip-to-eof port))
          ((> plen max-frame-size)
-          (warning "frame size ~a exceeds max frame size; closing websocket connection"
+          (warnf "frame size ~a exceeds max frame size; closing websocket connection"
                    plen)
           (websocket-close ws 1009)
           (skip-to-eof port))
@@ -350,11 +352,11 @@
              (let (dlen (foldl ##fx+ plen (map u8vector-length frags)))
                (cond
                 ((not type)
-                 (warning "unexpected continuation frame from server; closing websocket connection")
+                 (warnf "unexpected continuation frame from server; closing websocket connection")
                  (websocket-close ws 1002)
                  (skip-to-eof port))
                 ((##fx> dlen max-message-size)
-                 (warning "message length ~a exceeds max message size; closing websocket connection"
+                 (warnf "message length ~a exceeds max message size; closing websocket connection"
                           dlen)
                  (websocket-close ws 1009)
                  (skip-to-eof port))
@@ -372,7 +374,7 @@
              (let (xtype (if (##fx= opcode #x1) 'text 'binary))
                (cond
                 (type                   ; receiving cont frames
-                 (warning "unexpected frame ~x from server; closing websocket connection"
+                 (warnf "unexpected frame ~x from server; closing websocket connection"
                           opcode)
                  (websocket-close ws 1002)
                  (skip-to-eof port))
@@ -395,7 +397,7 @@
              (skip-payload port plen)
              (lp type frags))
             (else
-             (warning "unexpected frame ~x from server; closing websocket connection"
+             (warnf "unexpected frame ~x from server; closing websocket connection"
                       opcode)
              (websocket-close ws 1002)
              (skip-to-eof port)))))))
@@ -406,7 +408,7 @@
          ((abort)
           (void))
          (else
-          (log-error "unhandled exception" e)
+          (errorf "unhandled exception: ~a" e)
           (websocket-close ws 'abort)
           (raise e)))
        e)
@@ -476,10 +478,10 @@
               (##u8vector-set! bytes 1 (##fxand how #xff))
               (send port #x8 bytes))))
          (bogus
-          (warning "unexpected message ~a" bogus)
+          (warnf "unexpected message ~a" bogus)
           (lp))))
      (catch (e)
-       (log-error "unhandled exception" e)
+       (errorf "unhandled exception: ~a" e)
        (websocket-close ws 'abort)              ; notify receivers
        (with-catch void (cut close-port port))) ; unblock reader
      (finally

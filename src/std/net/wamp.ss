@@ -32,7 +32,10 @@
               EVENT
               CALL RESULT
               REGISTER REGISTERED UNREGISTER UNREGISTERED
-              INVOCATION YIELD))
+              INVOCATION YIELD
+              errorf warnf infof debugf verbosef))
+
+(deflogger wamp)
 
 (defstruct (wamp-error <error>) ()
   constructor: :init!
@@ -272,7 +275,7 @@
                               (invocation-error-err e)
                               (invocation-error-tail e) ...]))
        (catch (e)
-         (log-error "invocation error" e)
+         (errorf "invocation error: ~a" e)
          (wamp-send ws [ERROR INVOCATION reqid
                               (hash (message "Internal Server Error"))
                               "internal_server_error"])))))
@@ -368,14 +371,14 @@
              (send-pend-error pend err))))
 
         (else
-         (warning "unexpected ERROR: ~a ~a" what err))))
+         (warnf "unexpected ERROR: ~a ~a" what err))))
 
       ([(eq? GOODBYE) details reason]
        (wamp-send ws [GOODBYE empty-hash "wamp.error.goodbye_and_out"])
        (raise 'shutdown))
 
       (else
-       (warning "unexpected message: ~a" msg))))
+       (warnf "unexpected message: ~a" msg))))
 
   (def rbytes (make-u8vector 7))
   (def rmax (expt 2 53))
@@ -464,7 +467,7 @@
          (remove-thread! thread))
 
         (bogus
-         (warning "unexpected message: ~a" bogus)))
+         (warnf "unexpected message: ~a" bogus)))
     (loop))
 
   (def (send-shutdown-errors pend)
@@ -479,7 +482,7 @@
    (loop)
    (catch (e)
      (unless (eq? e 'shutdown)
-       (log-error "wamp client error" e))
+       (errorf "wamp client error: ~a" e))
      (websocket-close ws)
      (send-shutdown-errors (hash-values pend-calls))
      (for-each send-shutdown-errors (hash-values pend-subscriptions))
@@ -549,5 +552,5 @@
     (if (eq? type 'text)
       (read-json (open-input-u8vector [char-encoding: 'UTF-8 init: bytes]))
       (begin
-        (warning "wamp-recv: server sent binary data (~s)" (u8vector-length bytes))
+        (warnf "wamp-recv: server sent binary data (~s)" (u8vector-length bytes))
         (raise-io-error 'wamp-recv "server sent binary data" bytes)))))

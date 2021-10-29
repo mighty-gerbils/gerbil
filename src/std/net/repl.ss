@@ -20,6 +20,8 @@
   macro-port-name-set!
   replx)
 
+(deflogger repl)
+
 (defstruct repl-state (client channel reader eof)
   final: #t)
 
@@ -51,11 +53,11 @@
     (let (client (read sock))
       (unless (eof-object? client)
         (let (sinfo (tcp-client-peer-socket-info client))
-          (debug "accepted repl connection from ~a"
-                 (inet-address->string
-                  (cons
-                   (socket-info-address sinfo)
-                   (socket-info-port-number sinfo)))))
+          (debugf "accepted repl connection from ~a"
+                  (inet-address->string
+                   (cons
+                    (socket-info-address sinfo)
+                    (socket-info-port-number sinfo)))))
         (output-port-readtable-set! client
          (readtable-sharing-allowed?-set (output-port-readtable client) #t))
         (let* ((tgroup (make-thread-group 'repl-client))
@@ -72,7 +74,7 @@
   (try
    (thread-join! thread)
    (catch (uncaught-exception? e)
-     (log-error "repl client error" (uncaught-exception-reason e)))
+     (errorf "repl client error: ~a" (uncaught-exception-reason e)))
    (finally
     (thread-group-kill! tgroup))))
 
@@ -137,7 +139,7 @@
   (try
    (loop 'input)
    (catch (e)
-     (log-error "repl reader error" e)
+     (errorf "repl reader error: ~a" e)
      (set! (repl-state-eof state) #t)
      (close-output-port out))))
 

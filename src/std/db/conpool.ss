@@ -9,6 +9,8 @@
 (export make-conpool conpool?
         conpool-get conpool-put conpool-release conpool-close)
 
+(deflogger connpool)
+
 (defstruct conpool (e mx cv conns out max)
   constructor: :init!
   final: #t)
@@ -71,7 +73,7 @@
     (try
      {destroy conn}
      (catch (e)
-       (log-error "error closing connection" e))))
+       (errorf "error closing connection: ~a" e))))
 
   (with ((conpool _ mx cv conns out) cp)
     (mutex-lock! mx)

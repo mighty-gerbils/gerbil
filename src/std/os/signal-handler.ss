@@ -13,6 +13,8 @@
 
 (export add-signal-handler! remove-signal-handler!)
 
+(deflogger signal)
+
 (def system-signal-handler
   (delay (make-signal-handler)))
 
@@ -57,7 +59,7 @@
                 (signal-handler-dispatch handler))))
           (loop)))
       (catch (e)
-        (log-error "Error handling signals" e)
+        (errorf "Error handling signals: ~a" e)
         (raise e))))
 
    (def (signal-handler-add! sh signo thunk)
@@ -195,4 +197,4 @@
   (try
    (handler)
    (catch (e)
-     (log-error "error dispatching signal handler" e))))
+     (errorf "error dispatching signal handler: ~a" e))))

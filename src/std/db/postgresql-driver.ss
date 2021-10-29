@@ -28,6 +28,8 @@
         postgresql-close!
         (rename: !token? query-token?))
 
+(deflogger postgres)
+
 ;;; driver interface
 (defproto postgresql
   (prepare name sql)
@@ -114,7 +116,7 @@
         (['ErrorResponse msg . irritants]
          (apply raise-io-error 'postgresql-connect! msg irritants))
         (['NoticeResponse msg . irritants]
-         (warning "NOTICE: ~a ~a" msg irritants)
+         (warnf "NOTICE: ~a ~a" msg irritants)
          (lp))
         (else
          (lp)))))
@@ -215,7 +217,7 @@
       (msg msg)))
 
   (def (notice! msg irritants)
-    (warning "NOTICE: ~a ~a" msg irritants))
+    (warnf "NOTICE: ~a ~a" msg irritants))
 
   (def (resync!)
     (let lp ()
@@ -366,7 +368,7 @@
           (['CloseComplete]
            (void))
           (['ErrorResponse msg . irritants]
-           (warning "error closing statement ~a: ~a" name msg)))
+           (warnf "error closing statement ~a: ~a" name msg)))
         (resync!))))
 
   (def (shutdown!)
@@ -407,14 +409,14 @@
         ((!postgresql.shutdown)
          (shutdown!))
         (bogus
-         (warning "unexpected message: ~a" bogus)))
+         (warnf "unexpected message: ~a" bogus)))
     (loop))
 
   (try
    (loop)
    (catch (e)
      (unless (eq? e 'shutdown)
-       (log-error "unhandled exception" e)
+       (errorf "unhandled exception: ~a" e)
        (raise e)))
    (finally
     (when query-output
