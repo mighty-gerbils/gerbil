@@ -134,7 +134,7 @@
                   (event-loop (fx1+ i))))))
           (wait-loop)))
       (catch (e)
-        (log-error "Error handling signals" e)
+        (errorf "Error handling signals ~a" e)
         (raise e))))
 
    (def (signal-handler-add! sh signo thunk)
