@@ -188,7 +188,7 @@ responding to messages using the `<-` reaction macro:
                     val)))
             (!!value val k))
           (catch (e)
-            (log-error "kvstore.get" e)
+            (errorf "kvstore.get ~a" e)
             (!!error (error-message e) k))))
 
         ((!kvstore.ref key k)
@@ -198,7 +198,7 @@ responding to messages using the `<-` reaction macro:
               (!!error "No object associated with key" k)
               (!!value val k)))
           (catch (e)
-            (log-error "kvstore.ref" e)
+            (errorf "kvstore.ref ~a" e)
             (!!error (error-message e) k))))
 
         ((!kvstore.put! key val k)
@@ -206,7 +206,7 @@ responding to messages using the `<-` reaction macro:
           (put! key val)
           (!!value (void) k)
           (catch (e)
-            (log-error "kvstore.put!" e)
+            (errorf "kvstore.put! ~a" e)
             (!!error (error-message e) k))))
 
         ((!kvstore.remove! key k)
@@ -214,7 +214,7 @@ responding to messages using the `<-` reaction macro:
           (remove! key)
           (!!value (void) k)
           (catch (e)
-            (log-error "kvstore.remove!" e)
+            (errorf "kvstore.remove! ~a" e)
             (!!error (error-message e) k))))
 
         (what

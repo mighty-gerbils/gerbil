@@ -19,7 +19,7 @@
          (debug "Accepted connection from ~a" (socket-address->string sa))
          (spawn proxy cli))
        (catch (e)
-         (log-error "Error accepting connection" e))))))
+         (errorf "Error accepting connection ~a" e))))))
 
 (def (proxy clisock)
   (try
@@ -27,7 +27,7 @@
      (spawn proxy-io clisock srvsock)
      (spawn proxy-io srvsock clisock))
    (catch (e)
-     (log-error "Error creating proxy" e))))
+     (errorf "Error creating proxy ~a" e))))
 
 ;;; SOCKS4
 ;; Request:
@@ -144,7 +144,7 @@
          (ssocket-send-all osock buf 0 rd)
          (lp)))))
    (catch (e)
-     (log-error "Error proxying connection" e)
+     (errorf "Error proxying connection ~a" e)
      (ssocket-close-input isock)
      (ssocket-close-output osock #t))))
 

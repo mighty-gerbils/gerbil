@@ -78,7 +78,7 @@ For each connection, it logs it and spawns a thread to proxy it:
            (debug "Accepted connection from ~a" (socket-address->string caddr))
            (spawn proxy cli raddr)))
        (catch (e)
-         (log-error "Error accepting connection" e))))))
+         (errorf "Error accepting connection ~a" e))))))
 ```
 
 ### Connection proxying
@@ -102,7 +102,7 @@ mode.
        (spawn proxy-io clisock srvsock)
        (spawn proxy-io srvsock clisock)))
    (catch (e)
-     (log-error "Error creating proxy" e))))
+     (errorf "Error creating proxy ~a" e))))
 
 (def (proxy-io isock osock)
   (def buf (make-u8vector 4096))
@@ -132,7 +132,7 @@ mode.
                    (lp2 (fx+ start wr)))))
                (lp))))))))
    (catch (e)
-     (log-error "Error proxying connection" e)
+     (errorf "Error proxying connection ~a" e)
      (close-input-port isock)
      (close-output-port osock))))
 ```
@@ -210,7 +210,7 @@ address and then loops accepting connections to proxy:
          (debug "Accepted connection from ~a" (socket-address->string sa))
          (spawn proxy cli))
        (catch (e)
-         (log-error "Error accepting connection" e))))))
+         (errorf "Error accepting connection ~a" e))))))
 ```
 
 ### The proxy function
@@ -223,7 +223,7 @@ This procedure performs a handshake, establishing proxying according to the requ
      (spawn proxy-io clisock srvsock)
      (spawn proxy-io srvsock clisock))
    (catch (e)
-     (log-error "Error creating proxy" e))))
+     (errorf "Error creating proxy ~a" e))))
 ```
 
 The `proxy-handshake` function contains the details of the protocol implementation,
@@ -335,7 +335,7 @@ through the socket server:
          (ssocket-send-all osock buf 0 rd)
          (lp)))))
    (catch (e)
-     (log-error "Error proxying connection" e)
+     (errorf "Error proxying connection ~a" e)
      (ssocket-close-input isock)
      (ssocket-close-output osock #t))))
 ```
