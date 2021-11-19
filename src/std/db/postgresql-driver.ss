@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo
+;;; (C) vyzo, drew
 ;;; PostgreSQL driver
 
 (import :gerbil/gambit/threads
@@ -23,9 +23,19 @@
         postgresql-close-statement!
         postgresql-exec!
         postgresql-query!
+        postgresql-simple-query!
         postgresql-continue!
         postgresql-reset!
         postgresql-close!
+        postgresql-socket
+        postgresql-message
+        postgresql-message-name
+        postgresql-message-args
+        postgresql-RowDescription?
+        postgresql-CommandComplete?
+        postgresql-current-notice-handler
+        postgresql-current-notice-handler-set!
+        with-postgresql-notice-handler
         (rename: !token? query-token?))
 
 (deflogger postgres)
@@ -35,11 +45,30 @@
   (prepare name sql)
   (exec name params)
   (query name params)
+  (simple-query str)
+  (current-notice-handler proc)
   event:
   (continue token)
   (reset token)
   (close name)
   (shutdown))
+
+(defstruct postgresql-message (name args)
+  print: (args))
+
+(defstruct (postgresql-RowDescription postgresql-message) ()
+  constructor: :init!
+  final: #t)
+(defmethod {:init! postgresql-RowDescription}
+  (lambda (self desc)
+    (struct-instance-init! self 'RowDescription desc)))
+
+(defstruct (postgresql-CommandComplete postgresql-message) ()
+  constructor: :init!
+  final: #t)
+(defmethod {:init! postgresql-CommandComplete}
+  (lambda (self desc)
+    (struct-instance-init! self 'CommandComplete desc)))
 
 (defrules with-driver ()
   ((_ conn driver body ...)
@@ -55,6 +84,13 @@
 (defrules get-driver ()
   ((_ conn)
    (if (thread? conn) conn (connection-e conn))))
+
+(def postgresql-socket thread-specific)
+
+(def current-notice-handler
+  (make-parameter
+   (lambda (msg irritants)
+     (warnf "NoticeResponse: ~a ~a" msg irritants))))
 
 #;(defrules DEBUG ()
   ((_ what arg ...)
@@ -83,6 +119,10 @@
   (with-driver conn driver
     (!!postgresql.query driver name bind)))
 
+(def (postgresql-simple-query! conn str)
+  (with-driver conn driver
+    (!!postgresql.simple-query driver str)))
+
 (def (postgresql-continue! conn token)
   (if (!token? token)
     (with-driver conn driver
@@ -94,6 +134,24 @@
     (alet (driver (get-driver conn))
       (!!postgresql.reset driver token))
     (error "Bad argument; illegal query token" token)))
+
+(def (postgresql-current-notice-handler conn)
+  (alet (driver (get-driver conn))
+    (!!postgresql.current-notice-handler driver #f)))
+
+
+(def (postgresql-current-notice-handler-set! conn handler)
+  (alet (driver (get-driver conn))
+    (!!postgresql.current-notice-handler driver handler)))
+(def (with-postgresql-notice-handler conn handler thunk)
+  (let (pren (postgresql-current-notice-handler conn))
+    (try
+     (set! (postgresql-current-notice-handler conn)
+       (lambda args (apply handler args) (apply pren args)))
+     (thunk)
+     (finally
+      (set! (postgresql-current-notice-handler conn) pren)))))
+
 
 (def (postgresql-close! conn)
   (alet (driver (get-driver conn))
@@ -112,11 +170,13 @@
     (let lp ()
       (match (postgresql-recv! sock buffer)
         (['ReadyForQuery _]
-         (spawn/name 'postgresql-connection postgresql-driver sock))
+         (let ((t (spawn/name 'postgresql-connection postgresql-driver sock)))
+           (set! (thread-specific t) sock)
+           t))
         (['ErrorResponse msg . irritants]
          (apply raise-io-error 'postgresql-connect! msg irritants))
         (['NoticeResponse msg . irritants]
-         (warnf "NOTICE: ~a ~a" msg irritants)
+         ((current-notice-handler) msg irritants)
          (lp))
         (else
          (lp)))))
@@ -201,6 +261,7 @@
   (def query-limit 1000)
   (def query-output #f)
   (def query-token #f)
+  (def simple-query #f)
 
   (def buffer (box (make-u8vector 1024)))
 
@@ -217,7 +278,7 @@
       (msg msg)))
 
   (def (notice! msg irritants)
-    (warnf "NOTICE: ~a ~a" msg irritants))
+    ((current-notice-handler) msg irritants))
 
   (def (resync!)
     (let lp ()
@@ -332,30 +393,77 @@
        (apply raise-sql-error 'postgresql-query! msg irritants))))
 
   (def (query-pump)
-    ;; Execute ("")          -> DataRow ...
-    ;;                          CommandComplete | EmptyQueryResponse
-    ;;                          | ErrorResponse | PortalSuspended.
-    ;; Sync                  -> ReadyForQuery
+      ;; Execute ("")          -> DataRow ...
+      ;;                          CommandComplete | EmptyQueryResponse
+      ;;                          | ErrorResponse | PortalSuspended.
+      ;; Sync                  -> ReadyForQuery
+      (let/cc break
+        (let lp ()
+          (match (recv!)
+            (['DataRow . cols]
+             (cond
+              ((channel-try-put query-output cols)
+               (lp))
+              (else
+               (channel-sync query-output cols query-token)
+               (break))))
+            (['CommandComplete tag]
+             (channel-sync query-output (postgresql-CommandComplete tag))
+             (void))
+            ([(or 'PortalSuspended 'EmptyQueryResponse)]
+             (void))
+            (['ErrorResponse msg . irritants]
+             (channel-sync query-output (make-sql-error msg irritants 'postgresql-query!)))))
+        (channel-close query-output)
+        (set! query-output #f)
+        (set! query-token #f)
+        (resync!)))
+
+  (def (simple-query-start str)
+      (maybe-sync!)
+      (send! ['Query str])
+      (let ((ch (make-channel query-limit))
+               (token (make-!token)))
+           (set! query-output ch)
+           (set! query-token token)
+           (set! simple-query #t)
+           (values ch token)))
+
+  (def (simple-query-pump)
     (let/cc break
-      (let lp ()
-        (match (recv!)
-          (['DataRow . cols]
-           (cond
-            ((channel-try-put query-output cols)
-             (lp))
-            (else
-             (channel-sync query-output cols query-token)
-             (break))))
-          (['CommandComplete tag]
-           (void))
-          ([(or 'PortalSuspended 'EmptyQueryResponse)]
-           (void))
-          (['ErrorResponse msg . irritants]
-           (channel-sync query-output (make-sql-error msg irritants 'postgresql-query!)))))
+        (let lp ()
+          (let ((r (recv!)))
+            (match r
+              (['RowDescription . fields]
+               (channel-sync query-output (postgresql-RowDescription fields))
+               (lp))
+              (['CommandComplete tag]
+               (channel-sync query-output (postgresql-CommandComplete tag))
+               (lp))
+              (['DataRow . cols]
+               (cond                                        ;
+                ((channel-try-put query-output cols)        ;
+                 (lp))                                      ;
+                (else                                       ;
+                 (channel-sync query-output cols query-token) ;
+                 (break))))
+              (['ReadyForQuery _]
+               (channel-sync query-output (eof-object)))
+              (['EmptyQueryResponse]
+               (lp))
+              (['ErrorResponse msg . irritants]
+               (channel-sync query-output (make-sql-error msg irritants 'postgresql-simple-query!))
+               (lp))))))
       (channel-close query-output)
       (set! query-output #f)
       (set! query-token #f)
-      (resync!)))
+      (set! simple-query #f))
+
+  (def (continue token)
+    (when (eq? token query-token)
+      (if simple-query
+        (simple-query-pump)
+        (query-pump))))
 
   (def (close name)
     ;; Close (name) -> CloseComplete | ErrorResponse
@@ -398,16 +506,16 @@
          (do-action k (exec name params)))
         ((!postgresql.query name params k)
          (do-action k (query-start name params) (query-pump)))
-        ((!postgresql.continue token)
-         (when (eq? token query-token)
-           (query-pump)))
-        ((!postgresql.reset token)
-         (when (eq? token query-token)
-           (maybe-sync!)))
-        ((!postgresql.close name)
-         (close name))
-        ((!postgresql.shutdown)
-         (shutdown!))
+        ((!postgresql.simple-query str k)
+         (do-action k (simple-query-start str) (simple-query-pump)))
+        ((!postgresql.continue token) (continue token))
+        ((!postgresql.reset token) (maybe-sync!))
+        ((!postgresql.close name) (close name))
+        ((!postgresql.shutdown) (shutdown!))
+        ((!postgresql.current-notice-handler proc k)
+         (do-action k (if proc
+           (current-notice-handler proc)
+           (current-notice-handler))))
         (bogus
          (warnf "unexpected message: ~a" bogus)))
     (loop))
