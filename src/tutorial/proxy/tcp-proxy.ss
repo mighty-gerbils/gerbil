@@ -28,7 +28,7 @@
            (debug "Accepted connection from ~a" (socket-address->string caddr))
            (spawn proxy cli raddr)))
        (catch (e)
-         (log-error "Error accepting connection" e))))))
+         (errorf "Error accepting connection ~a" e))))))
 
 (def (proxy clisock raddr)
   (try
@@ -42,7 +42,7 @@
        (spawn proxy-io clisock srvsock)
        (spawn proxy-io srvsock clisock)))
    (catch (e)
-     (log-error "Error creating proxy" e))))
+     (errorf "Error creating proxy ~a" e))))
 
 (def (proxy-io isock osock)
   (def buf (make-u8vector 4096))
@@ -72,7 +72,7 @@
                    (lp2 (fx+ start wr)))))
                (lp))))))))
    (catch (e)
-     (log-error "Error proxying connection" e)
+     (errorf "Error proxying connection ~a" e)
      (close-input-port isock)
      (close-output-port osock))))
 
