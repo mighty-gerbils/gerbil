@@ -21,7 +21,8 @@
         ./misc/symbol
         ./misc/concurrent-plan
         ./sort
-        ./sugar)
+        ./sugar
+        ./assert)
 
 (extern namespace: #f with-cons-load-path load-path)
 

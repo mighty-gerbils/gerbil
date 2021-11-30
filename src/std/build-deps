@@ -169,14 +169,6 @@
  (std/misc/list-builder "misc/list-builder" (gerbil/core))
  (std/misc/alist "misc/alist" (gerbil/core std/sugar))
  (std/misc/plist "misc/plist" (gerbil/core std/sugar))
- (std/misc/list
-  "misc/list"
-  (gerbil/core
-   std/misc/alist
-   std/misc/list-builder
-   std/misc/plist
-   std/srfi/1
-   std/sugar))
  (std/misc/rtd "misc/rtd" (gerbil/core))
  (std/misc/shuffle "misc/shuffle" (gerbil/core gerbil/gambit/random))
  (std/event
@@ -195,12 +187,7 @@
            std/sugar))
  (std/misc/repr
   "misc/repr"
-  (gerbil/core
-   gerbil/gambit/hash
-   gerbil/gambit/ports
-   std/misc/list
-   std/misc/rtd
-   std/sort))
+  (gerbil/core gerbil/gambit/hash gerbil/gambit/ports std/misc/rtd std/sort))
  (std/format
   "format"
   (gerbil/core
@@ -208,6 +195,7 @@
    gerbil/gambit/misc
    gerbil/gambit/ports
    std/misc/repr))
+ (std/assert "assert" (gerbil/core gerbil/expander std/format))
  (std/getopt "getopt" (gerbil/core std/error std/format))
  (std/logger
   "logger"
@@ -218,12 +206,8 @@
    std/format
    std/srfi/19
    std/sugar))
- (std/test
-  "test"
-  (gerbil/core gerbil/gambit std/error std/format std/misc/list std/sugar))
  (std/stxutil "stxutil" (gerbil/core std/format))
  (std/foreign "foreign" (gerbil/core std/stxutil))
- (std/foreign-test "foreign-test" (gerbil/core std/foreign std/test))
  (std/generic/macros
   "generic/macros"
   (gerbil/core std/generic/dispatch std/stxutil))
@@ -691,6 +675,19 @@
    std/text/base64
    std/text/hex
    std/text/utf8))
+ (std/misc/list
+  "misc/list"
+  (gerbil/core
+   std/assert
+   std/misc/alist
+   std/misc/list-builder
+   std/misc/plist
+   std/srfi/1
+   std/sugar))
+ (std/test
+  "test"
+  (gerbil/core gerbil/gambit std/error std/format std/misc/list std/sugar))
+ (std/foreign-test "foreign-test" (gerbil/core std/foreign std/test))
  (std/misc/uuid
   "misc/uuid"
   (gerbil/core
@@ -725,6 +722,7 @@
   (gerbil/core
    gerbil/gambit/exceptions
    gerbil/gambit/threads
+   std/assert
    std/error
    std/misc/pqueue
    std/sugar))
@@ -751,6 +749,7 @@
  (std/text/csv
   "text/csv"
   (gerbil/core
+   std/assert
    std/error
    std/misc/list
    std/misc/string
@@ -845,6 +844,7 @@
    gerbil/gambit/os
    gerbil/gambit/ports
    gerbil/gambit/threads
+   std/assert
    std/misc/concurrent-plan
    std/misc/hash
    std/misc/list
@@ -1185,6 +1185,7 @@
    std/db/postgresql-driver
    std/iter
    std/misc/channel
+   std/misc/list
    std/srfi/19))
  (std/db/_sqlite
   (ssi:

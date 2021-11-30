@@ -68,6 +68,7 @@
    "protobuf/protobuf-test"
    "srfi/1-test"
    "sugar-test"
+   "assert-test"
    "text/csv-test"
    "text/hex-test"
    "text/json-test"

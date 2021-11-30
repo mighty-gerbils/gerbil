@@ -111,15 +111,6 @@ Evaluates body in a loop while the test expression evaluates to true.
 
 Evaluates body in a loop until the test expression evaluates to true.
 
-## assert!
-```scheme
-(assert! condition-expr [message-expr extra-expr ...])
-```
-
-Raises an error when the `condition-expr` evaluates to false.
-If the `message-expr` and `extra-expr`s are provided, their
-values will be included in the error message.
-
 ## hash
 ```scheme
 (hash (key val) ...)

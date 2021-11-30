@@ -35,7 +35,8 @@
                  drop drop-right drop-right! take take-right take! reverse!
                  take-while take-while! drop-while
                  delete-duplicates delete-duplicates!)
-        ../sugar)
+        ../sugar
+        ../assert)
 
 (defalias unique delete-duplicates)
 (defalias unique! delete-duplicates!)
