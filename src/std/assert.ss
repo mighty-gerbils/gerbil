@@ -3,6 +3,7 @@
 ;;; assert macro, originally written by vyzo and enhanced by alex knauth
 
 (import
+  :std/sugar
   (for-syntax (only-in :gerbil/expander core-bound-identifier?))
   :std/format)
 (export assert!)
@@ -46,9 +47,11 @@
       ((_ condition message expr ...)
        #'(assert!/where-helper condition message 'condition [(cons 'expr expr) ...])))))
 
-(def (assert!/where-helper condition message condition-expr extras)
+(defrule (assert!/where-helper condition message condition-expr extras)
   (unless condition
-   (let ()
-    (def hd (format "Assertion failed ~a: ~s" message condition-expr))
-    (def str (apply string-append hd (map (match <> ((cons k v) (format "\n  ~s => ~r" k v))) extras)))
-    (error str))))
+    (assert!/fail message condition-expr extras)))
+
+(def (assert!/fail message condition-expr extras)
+  (def hd (format "Assertion failed ~a: ~s" message condition-expr))
+  (def str (apply string-append hd (map (match <> ((cons k v) (format "\n  ~s => ~r" k v))) extras)))
+  (error str))
