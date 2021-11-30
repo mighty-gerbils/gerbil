@@ -26,7 +26,7 @@
   is)
 
 (import
-  (for-syntax :gerbil/expander)
+  (for-syntax (only-in :gerbil/expander core-bound-identifier?))
   :std/format)
 
 (defrules defrule ()
