@@ -15,4 +15,12 @@
                            "Assertion failed \"assert-test.ss\"@\\d+\\.33: \\(member e l\\)\n"
                            "  e => 'needle\n"
                            "  l => \\['stack 'of 'hay\\]\n")
+                          (error-message e)))))
+
+    (test-case "test assert! on keyword functions"
+      (assert! (true 0 a: 1))
+      (check-exception (assert! (false 0 a: 1))
+                       (lambda (e)
+                         (pregexp-match
+                          "Assertion failed \"assert-test.ss\"@\\d+\\.33: \\(false 0 a: 1\\)\n"
                           (error-message e)))))))

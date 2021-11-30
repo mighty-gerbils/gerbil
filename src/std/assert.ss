@@ -21,7 +21,7 @@
   (def (split-sub-exprs stx)
     (syntax-case stx ()
       ((f a ...)
-       (not (special-identifier? #'f))
+       (and (not (special-identifier? #'f)) (not (stx-ormap stx-keyword? #'(a ...))))
        (with-syntax (((x ...) (gentemps #'(a ...))))
          [(syntax/loc stx (f x ...)) #'((x a) ...)]))
       (_ [stx []])))
