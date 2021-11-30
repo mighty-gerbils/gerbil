@@ -67,7 +67,7 @@
                      (lambda (e)
                        (pregexp-match
                         (string-append
-                         "Assertion failed \"src/std/sugar-test.ss\"@65.32: \\(member e l\\)\n"
+                         "Assertion failed \"src/std/sugar-test.ss\"@66.31: \\(member e l\\)\n"
                          "  e => 'needle\n"
                          "  l => \\['stack 'of 'hay\\]\n")
                         (error-message e)))))
