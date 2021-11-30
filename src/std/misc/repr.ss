@@ -9,7 +9,17 @@
 
 (import
   :gerbil/gambit/hash :gerbil/gambit/ports
-  :std/misc/list :std/misc/rtd :std/sort)
+  :std/misc/rtd :std/sort)
+
+;; Definition of for-each! copied from :std/misc/list,
+;; Unlike for-each, also works on improper lists, ended by non-pairs other than '()
+;; : <- (list X) (<- X)
+(def (for-each! list fun)
+  (match list
+    ([elem . more] (fun elem) (for-each! more fun))
+    (_ (void))))
+
+;; --------------------------------------------------------
 
 ;; Default options for printing an evaluable representation. Keep it empty for now.
 ;; Note: we don't actually use options yet, but

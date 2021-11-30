@@ -1,6 +1,7 @@
 (export sugar-test)
 
 (import :std/test
+        :std/pregexp
         :std/sugar)
 
 (def sugar-test
@@ -58,4 +59,16 @@
     (check ((is 'a test: eq?) 'a)       => #t)
     (check ((is 2.0) 2.0)               => #t)
     (check ((is "a") "a")               => #t))
+
+   (test-case "test assert! failure message"
+    (def e 'needle)
+    (def l ['stack 'of 'hay])
+    (check-exception (assert! (member e l))
+                     (lambda (e)
+                       (pregexp-match
+                        (string-append
+                         "Assertion failed \"sugar-test.ss\"@\\d+\\.31: \\(member e l\\)\n"
+                         "  e => 'needle\n"
+                         "  l => \\['stack 'of 'hay\\]\n")
+                        (error-message e)))))
    ))
