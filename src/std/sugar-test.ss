@@ -1,6 +1,7 @@
 (export sugar-test)
 
 (import :std/test
+        :std/pregexp
         :std/sugar)
 
 (def sugar-test
