@@ -1,7 +1,7 @@
 (export sugar-test)
 
 (import :std/test
-        :std/pregexp
+        :std/srfi/115
         :std/sugar)
 
 (def sugar-test
@@ -65,9 +65,9 @@
     (def l ['stack 'of 'hay])
     (check-exception (assert! (member e l))
                      (lambda (e)
-                       (pregexp-match
+                       (regexp-match?
                         (string-append
-                         "Assertion failed \"src/std/sugar-test.ss\"@66.31: \\(member e l\\)\n"
+                         "Assertion failed \"sugar-test.ss\"@66.31: \\(member e l\\)\n"
                          "  e => 'needle\n"
                          "  l => \\['stack 'of 'hay\\]\n")
                         (error-message e)))))
