@@ -4,8 +4,8 @@
 
 (import
   :std/sugar
-  (for-syntax (only-in :gerbil/expander core-bound-identifier?))
-  :std/format)
+  :std/format
+  (for-syntax (only-in :gerbil/expander core-bound-identifier?)))
 (export assert!)
 
 (begin-syntax
