@@ -2,7 +2,7 @@
 
 (import
   :gerbil/gambit/bytes :gerbil/gambit/exceptions
-  :std/error :std/srfi/1 :std/srfi/13 :std/sugar :std/text/hex :std/test)
+  :std/assert :std/error :std/srfi/1 :std/srfi/13 :std/sugar :std/text/hex :std/test)
 
 (def hex-test
   (test-suite "test :std/text/hex"

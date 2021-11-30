@@ -46,7 +46,8 @@
 
 (import
   (for-syntax :std/stxutil)
-  :std/error :std/misc/list :std/misc/string :std/srfi/1 :std/srfi/13 :std/stxparam :std/sugar)
+  :std/error :std/misc/list :std/misc/string :std/srfi/1 :std/srfi/13 :std/stxparam :std/sugar
+  :std/assert)
 
 ;;; constants
 (def +line-endings+

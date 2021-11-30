@@ -3,6 +3,7 @@
 (import :gerbil/gambit/threads
         :gerbil/gambit/exceptions
         ../sugar
+        ../assert
         ../error
         ./pqueue)
 

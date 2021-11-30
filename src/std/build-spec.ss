@@ -11,6 +11,7 @@
     "pregexp"
     "sort"
     "sugar"
+    "assert"
     "make"
     "build-script"
     "error"
