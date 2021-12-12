@@ -107,11 +107,22 @@ static BIGNUM* get_bn(BIGNUM **bn, const char *hex) {
 #define make_dh(param)                          \
   DH *DH_get_##param(void) {                    \
     DH *dh = DH_new ();                         \
+    BIGNUM *p, *q, *g;                          \
     if (!dh) return NULL;                       \
-    dh->p = get_bn(&bn_dh##param##_p, dh##param##_p); \
-    dh->g = get_bn(&bn_dh##param##_g, dh##param##_g); \
-    dh->q = get_bn(&bn_dh##param##_q, dh##param##_q); \
-    if (!dh->p || !dh->q || !dh->g) {                 \
+    p = get_bn(&bn_dh##param##_p, dh##param##_p); \
+    g = get_bn(&bn_dh##param##_g, dh##param##_g); \
+    q = get_bn(&bn_dh##param##_q, dh##param##_q); \
+    if (!p || !q || !g) {                             \
+      BN_free(p);                                     \
+      BN_free(q);                                     \
+      BN_free(g);                                     \
+      DH_free(dh);                                    \
+      return NULL;                                    \
+    }                                                 \
+    if (!DH_set0_pqg(dh, p, q, g)) {                  \
+      BN_free(p);                                     \
+      BN_free(q);                                     \
+      BN_free(g);                                     \
       DH_free(dh);                                    \
       return NULL;                                    \
     }                                                 \
