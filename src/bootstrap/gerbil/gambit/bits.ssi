@@ -15,7 +15,7 @@ namespace: gerbil/gambit/bits
           (bit-set? bit-set?)
           (any-bits-set? any-bits-set?)
           (all-bits-set? all-bits-set?)
-          (first-bit-set first-bit-set)
+          (first-set-bit first-set-bit)
           (extract-bit-field extract-bit-field)
           (test-bit-field? test-bit-field?)
           (clear-bit-field clear-bit-field)

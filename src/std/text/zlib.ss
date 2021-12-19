@@ -74,7 +74,7 @@
   (def buflen 1024)
 
   (def (fini r)
-    (append-u8vectors (reverse r)))
+    (u8vector-concatenate (reverse r)))
 
   (def (deflate-next ibuf r flush)
     (let lp ((obuf (make-u8vector buflen)) (start 0) (r r))
@@ -149,7 +149,7 @@
           (lp (##fx+ start icount) (cons buf r))))
        ((eq? res Z_STREAM_END)
         (u8vector-shrink! buf ocount)
-        (append-u8vectors (reverse (cons buf r))))
+        (u8vector-concatenate (reverse (cons buf r))))
        (else
         (raise-io-error 'uncompress "zlib error" (z_stream_msg zs) res))))))
 
@@ -160,7 +160,7 @@
   (def buflen 1024)
 
   (def (fini r)
-    (append-u8vectors (reverse r)))
+    (u8vector-concatenate (reverse r)))
 
   (def (inflate-next ibuf r)
     (let lp ((obuf (make-u8vector buflen)) (start 0) (r r))

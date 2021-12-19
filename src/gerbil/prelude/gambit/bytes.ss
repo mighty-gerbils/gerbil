@@ -17,7 +17,7 @@ package: gerbil/gambit
 (define-alias list->bytes list->u8vector)
 (define-alias bytes-fill! u8vector-fill!)
 (define-alias subbytes-fill! subu8vector-fill!)
-(define-alias append-bytes append-u8vectors)
+(define-alias bytes-concatenate u8vector-concatenate)
 (define-alias bytes-copy u8vector-copy)
 (define-alias bytes-append u8vector-append)
 (define-alias subbytes subu8vector)

@@ -100,7 +100,7 @@
     (let lp ((end-params #f) (end-stdin #f) (stdin []))
       (if (and end-params end-stdin)
         (make-fastcgi-request port id keepalive
-                              role params (append-u8vectors (reverse stdin)))
+                              role params (u8vector-concatenate (reverse stdin)))
         (match (fcgi-read-record port)
           ((values type reqid body)
            (if (eq? reqid id)

@@ -81,7 +81,7 @@
     (gerbil-smp
      (let* ((threads (on-all-processors (cut get-still1 countf getf)))
             (vectors (map thread-join! threads)))
-       (append-vectors vectors)))
+       (vector-concatenate vectors)))
     (else
      (get-still1 countf getf))))
 

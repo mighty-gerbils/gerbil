@@ -150,7 +150,7 @@ package: gerbil
     string-copy! substring-fill!
     string->bytes substring->bytes bytes->string
     string->vector vector->string
-    append-strings
+    string-concatenate
     string-index string-rindex
     string-split string-join string-empty? string-prefix?
     string->keyword keyword->string make-uninterned-keyword
@@ -232,8 +232,8 @@ package: gerbil
     datum-parsing-exception? datum-parsing-exception-filepos
     read-line read-all
     ;; string and vector moves
-    append-vectors subvector-move! vector-shrink!
-    append-strings substring-move! string-shrink!
+    vector-concatenate subvector-move! vector-shrink!
+    string-concatenate substring-move! string-shrink!
     ;; string I/O
     read-substring write-substring
     open-input-string open-output-string get-output-string
@@ -246,7 +246,7 @@ package: gerbil
     u8vector-fill! u8vector-shrink!
     u8vector-copy u8vector-copy! u8vector-append
     subu8vector subu8vector-fill! subu8vector-move!
-    append-u8vectors
+    u8vector-concatenate
     object->u8vector u8vector->object
     ;; bytes I/O
     read-subu8vector write-subu8vector

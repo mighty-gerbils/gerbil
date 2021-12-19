@@ -367,7 +367,7 @@
                      (lp type (cons data frags)))))
                 (else
                  (let* ((data (read-payload port plen))
-                        (message (append-u8vectors (reverse (cons data frags)))))
+                        (message (u8vector-concatenate (reverse (cons data frags)))))
                    (receive type message)
                    (lp #f []))))))
             ((#x1 #x2)                  ; text or binary frame

@@ -488,7 +488,7 @@ END-C
                   (set! (cdr tl) tl*)
                   (lp tl* count)))
               (raise-io-error 'http-request-body "Maximum body length exceeded" count len)))
-          (append-u8vectors (cdr root)))))))
+          (u8vector-concatenate (cdr root)))))))
 
 (def (skip-request-body ibuf headers)
   (def (skip-simple-body)

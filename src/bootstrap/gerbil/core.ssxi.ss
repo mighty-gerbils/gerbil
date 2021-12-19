@@ -339,7 +339,7 @@ package: gerbil
  flnan? flinfinite? flfinite? flinteger?
  box? box unbox
  last last-pair
- append-vectors
+ vector-concatenate
  dssl-object? dssl-key-object? dssl-rest-object? dssl-optional-object?
  plist->hash-table-eq plist->hash-table-eqv
  hash-keys
@@ -351,7 +351,7 @@ package: gerbil
  string->keyword keyword->string make-uninterned-keyword
  symbol->keyword keyword->symbol
  string-empty?
- append-strings
+ string-concatenate
  type-descriptor?
  struct-type?
  class-type?
@@ -372,7 +372,7 @@ package: gerbil
  u8vector?
  u8vector-length
  u8vector->list list->u8vector
- append-u8vectors
+ u8vector-concatenate
  object->u8vector u8vector->object
  get-output-u8vector
  promise?
@@ -546,14 +546,14 @@ package: gerbil
  bitwise-not
  bit-count
  integer-length
- first-bit-set
+ first-set-bit
  continuation?
  continuation-capture
  primordial-exception-handler
  err-code->string
 
  fxbit-count
- fxfirst-bit-set
+ fxfirst-set-bit
  fxlength
  fxabs
  flabs flacos flasin  flceiling flcos
@@ -1054,7 +1054,7 @@ package: gerbil
  (list->s8vector 1)
  (s8vector-fill! 1 2 3 4)
  (subs8vector-fill! 3 4)
- (append-s8vectors 1)
+ (s8vector-concatenate 1)
  (subs8vector 3)
  (s8vector-copy 1 2 3)
  (s8vector-copy! 3 4 5)
@@ -1070,7 +1070,7 @@ package: gerbil
  (list->s16vector 1)
  (s16vector-fill! 1 2 3 4)
  (subs16vector-fill! 3 4)
- (append-s16vectors 1)
+ (s16vector-concatenate 1)
  (subs16vector 3)
  (s16vector-copy 1 2 3)
  (s16vector-copy! 3 4 5)
@@ -1086,7 +1086,7 @@ package: gerbil
  (list->u16vector 1)
  (u16vector-fill! 1 2 3 4)
  (subu16vector-fill! 3 4)
- (append-u16vectors 1)
+ (u16vector-concatenate 1)
  (subu16vector 3)
  (u16vector-copy 1 2 3)
  (u16vector-copy! 3 4 5)
@@ -1102,7 +1102,7 @@ package: gerbil
  (list->s32vector 1)
  (s32vector-fill! 1 2 3 4)
  (subs32vector-fill! 3 4)
- (append-s32vectors 1)
+ (s32vector-concatenate 1)
  (subs32vector 3)
  (s32vector-copy 1 2 3)
  (s32vector-copy! 3 4 5)
@@ -1118,7 +1118,7 @@ package: gerbil
  (list->u32vector 1)
  (u32vector-fill! 1 2 3 4)
  (subu32vector-fill! 3 4)
- (append-u32vectors 1)
+ (u32vector-concatenate 1)
  (subu32vector 3)
  (u32vector-copy 1 2 3)
  (u32vector-copy! 3 4 5)
@@ -1134,7 +1134,7 @@ package: gerbil
  (list->s64vector 1)
  (s64vector-fill! 1 2 3 4)
  (subs64vector-fill! 3 4)
- (append-s64vectors 1)
+ (s64vector-concatenate 1)
  (subs64vector 3)
  (s64vector-copy 1 2 3)
  (s64vector-copy! 3 4 5)
@@ -1150,7 +1150,7 @@ package: gerbil
  (list->u64vector 1)
  (u64vector-fill! 1 2 3 4)
  (subu64vector-fill! 3 4)
- (append-u64vectors 1)
+ (u64vector-concatenate 1)
  (subu64vector 3)
  (u64vector-copy 1 2 3)
  (u64vector-copy! 3 4 5)
@@ -1166,7 +1166,7 @@ package: gerbil
  (list->f32vector 1)
  (f32vector-fill! 1 2 3 4)
  (subf32vector-fill! 3 4)
- (append-f32vectors 1)
+ (f32vector-concatenate 1)
  (subf32vector 3)
  (f32vector-copy 1 2 3)
  (f32vector-copy! 3 4 5)
@@ -1182,7 +1182,7 @@ package: gerbil
  (list->f64vector 1)
  (f64vector-fill! 1 2 3 4)
  (subf64vector-fill! 3 4)
- (append-f64vectors 1)
+ (f64vector-concatenate 1)
  (subf64vector 3)
  (f64vector-copy 1 2 3)
  (f64vector-copy! 3 4 5)
