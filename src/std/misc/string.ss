@@ -229,7 +229,7 @@
   ((v) (if (string? v) v
            (format (str-format v) v)))
   (xs (if (andmap string? xs)
-        (append-strings xs)
+        (string-concatenate xs)
         (call-with-output-string
          (lambda (port)
            (let loop ((rest xs))

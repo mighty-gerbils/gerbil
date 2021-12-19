@@ -191,7 +191,7 @@
         (lp (make-u8vector bufsize) (cons buf u8s))
         (begin
           (u8vector-shrink! buf len)
-          (append-u8vectors (reverse (cons buf u8s))))))))
+          (u8vector-concatenate (reverse (cons buf u8s))))))))
 
 (def (read-file-u8vector file settings: (settings '()) bufsize: (bufsize 8192))
   (call-with-input-file (cons* path: file settings)

@@ -152,7 +152,7 @@
   (let (chunks (chunked-output-chunks buf))
     (if (null? (##cdr chunks))
       (##car chunks)
-      (##append-u8vectors chunks))))
+      (##u8vector-concatenate chunks))))
 
 (def (chunked-output-chunks buf)
   (let* ((wlo (&output-buffer-wlo buf))

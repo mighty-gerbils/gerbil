@@ -8,7 +8,7 @@ namespace: gerbil/gambit/fixnum
           (fxarithmetic-shift-right fxarithmetic-shift-right)
           (fxarithmetic-shift-left fxarithmetic-shift-left)
           (fxbit-count fxbit-count)
-          (fxfirst-bit-set fxfirst-bit-set)
+          (fxfirst-set-bit fxfirst-set-bit)
           (fxif fxif)
           (fxlength fxlength)
           (fxquotient fxquotient)

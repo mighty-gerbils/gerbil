@@ -310,7 +310,7 @@
       (let* ((line (read-response-line port))
              (clen (string->number (car (string-split line #\space)) 16)))
         (if (fxzero? clen)
-          (append-u8vectors (cdr root))
+          (u8vector-concatenate (cdr root))
           (let* ((chunk (make-u8vector clen))
                  (rd    (read-subu8vector chunk 0 clen port)))
             (when (##fx< rd clen)
@@ -339,11 +339,11 @@
                (rd  (read-subu8vector buf 0 buflen port)))
           (cond
            ((##fxzero? rd)
-            (append-u8vectors (cdr root)))
+            (u8vector-concatenate (cdr root)))
            ((##fx< rd buflen)
             (u8vector-shrink! buf rd)
             (set! (cdr tl) [buf])
-            (append-u8vectors (cdr root)))
+            (u8vector-concatenate (cdr root)))
            (else
             (let (tl* [buf])
               (set! (cdr tl) tl*)

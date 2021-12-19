@@ -15,7 +15,7 @@ package: gerbil/gambit
   list->s8vector
   s8vector-fill!
   subs8vector-fill!
-  append-s8vectors
+  s8vector-concatenate
   s8vector-copy
   s8vector-append
   subs8vector
@@ -31,7 +31,7 @@ package: gerbil/gambit
   list->u8vector
   u8vector-fill!
   subu8vector-fill!
-  append-u8vectors
+  u8vector-concatenate
   u8vector-copy
   u8vector-append
   subu8vector
@@ -47,7 +47,7 @@ package: gerbil/gambit
   list->s16vector
   s16vector-fill!
   subs16vector-fill!
-  append-s16vectors
+  s16vector-concatenate
   s16vector-copy
   s16vector-append
   subs16vector
@@ -63,7 +63,7 @@ package: gerbil/gambit
   list->u16vector
   u16vector-fill!
   subu16vector-fill!
-  append-u16vectors
+  u16vector-concatenate
   u16vector-copy
   u16vector-append
   subu16vector
@@ -79,7 +79,7 @@ package: gerbil/gambit
   list->s32vector
   s32vector-fill!
   subs32vector-fill!
-  append-s32vectors
+  s32vector-concatenate
   s32vector-copy
   s32vector-append
   subs32vector
@@ -95,7 +95,7 @@ package: gerbil/gambit
   list->u32vector
   u32vector-fill!
   subu32vector-fill!
-  append-u32vectors
+  u32vector-concatenate
   u32vector-copy
   u32vector-append
   subu32vector
@@ -111,7 +111,7 @@ package: gerbil/gambit
   list->s64vector
   s64vector-fill!
   subs64vector-fill!
-  append-s64vectors
+  s64vector-concatenate
   s64vector-copy
   s64vector-append
   subs64vector
@@ -127,7 +127,7 @@ package: gerbil/gambit
   list->u64vector
   u64vector-fill!
   subu64vector-fill!
-  append-u64vectors
+  u64vector-concatenate
   u64vector-copy
   u64vector-append
   subu64vector
@@ -143,7 +143,7 @@ package: gerbil/gambit
   list->f32vector
   f32vector-fill!
   subf32vector-fill!
-  append-f32vectors
+  f32vector-concatenate
   f32vector-copy
   f32vector-append
   subf32vector
@@ -159,7 +159,7 @@ package: gerbil/gambit
   list->f64vector
   f64vector-fill!
   subf64vector-fill!
-  append-f64vectors
+  f64vector-concatenate
   f64vector-copy
   f64vector-append
   subf64vector
