@@ -67,7 +67,7 @@
           (let ((starts (string-starts-with? part "/"))
                 (ends (string-ends-with? path "/")))
             (cond
-             ((and starts ends) (string-append path (substring part 1)))
+             ((and starts ends) (string-append path (substring part 1 (string-length part))))
              ((or starts ends) (string-append path part))
              (else (string-append path "/" part)))))
         base args))
