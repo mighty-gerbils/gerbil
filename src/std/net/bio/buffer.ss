@@ -3,7 +3,8 @@
 ;;; extensible binary i/o buffers with port compatible interface
 ;;; Warning: Low level unsafe interface; let their be Dragons.
 
-(import :std/error
+(import :gerbil/gambit/hvectors
+        :std/error
         :std/net/bio/input
         :std/net/bio/output
         (only-in :std/srfi/1 reverse!))
@@ -152,7 +153,7 @@
   (let (chunks (chunked-output-chunks buf))
     (if (null? (##cdr chunks))
       (##car chunks)
-      (##u8vector-concatenate chunks))))
+      (u8vector-concatenate chunks))))
 
 (def (chunked-output-chunks buf)
   (let* ((wlo (&output-buffer-wlo buf))
