@@ -105,4 +105,6 @@
 ;             (lp (+ j 1) (arithmetic-shift i 1))))))
 
 ;;; Clever definition, assuming you have a fast BIT-COUNT.
-(define (first-set-bit i) (- (bit-count (bitwise-xor i (- i 1))) 1))
+;(define (first-set-bit i) (- (bit-count (bitwise-xor i (- i 1))) 1))
+
+;; first-set-bit is now builtin to Gambit

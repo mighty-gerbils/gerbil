@@ -38,8 +38,9 @@
     (fxior to (fxarithmetic-shift-left 1 index))
     (fxand to (fxnot (fxarithmetic-shift-left 1 index)))))
 
-(def (fxfirst-set-bit i)
-  (fx- (fxbit-count (fxxor i (fx- i 1))) 1))
+;;; Now built into Gambit
+;;(def (fxfirst-set-bit i)
+;;  (fx- (fxbit-count (fxxor i (fx- i 1))) 1))
 
 (def (mask start end)
   (fxnot (fxarithmetic-shift-left -1 (fx- end start))))
