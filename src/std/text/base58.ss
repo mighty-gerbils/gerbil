@@ -65,15 +65,12 @@
         (if (and (fx< i (string-length str))
                  (eq? zero (string-ref str i)))
           (lp (fx1+ i))
-          (make-u8vector i)))))
+          (make-u8vector i 0)))))
   (let lp ((i 0) (bn 0))
     (if (fx< i (string-length str))
-      (let* ((char (string-ref str i))
-             (int  (char->integer char))
-             (_    (unless (fx< int 128)
-                     (raise-io-error 'base58-decode "Invalid character" str char))))
+      (let* ((char (string-ref str i)))
         (cond
-         ((alphabet-decode ab int)
+         ((alphabet-decode ab char)
           => (lambda (c)
                (lp (fx1+ i) (+ (* bn 58) c))))
          (else
