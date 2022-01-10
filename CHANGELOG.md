@@ -1,3 +1,24 @@
+## 1-10-2022: Gerbil-v0.17
+
+Highlights:
+- Gambit v4.9.4 support.
+- we now have configure and make scripts to better align with common practices.
+- gxi is now a binary shim, written in C, so that we can reliably use it as script interpreter.
+- the parallel build has been disabled by default to avoid problems with low memory systems.
+- the expander now allows exports in top context, so that scripts can also be modules.
+- the append-* primitives have been renamed to *-concatenate following Gambit. The old names
+  are still available, aliased to the new primitives, for backwards comaptibility.
+- def now supports curried definitions.
+- inline list accumulators with list-builder.
+- std/logger has been rewritten.
+- std/crypto now supports SHA3, BLAKE2, and ED25519.
+- std/json now sorts hash keys in output by default.
+- srfi-124 now has a real ephemeron implementation, based on wills.
+- the postgres driver now supports stacked queries.
+- assert! has been moved from std/sugar to its own std/assert module with significantly improved
+  failure messages.
+- many small fixes and documentation improvements.
+
 ### 5-17-2020: Gerbil-v0.16
 
 Highlights:

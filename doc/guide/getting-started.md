@@ -98,7 +98,7 @@ the `--prefix` option specified while configuring Gerbil.
 If Gerbil was configured with `--prefix=/some/path`, then the specified path is used
 as its home directory.
 You can specify `--prefix=/usr/local` or `--prefix=/opt/gerbil` or
-`--prefix=$HOME/local/stow/gerbil-v0.16` or whatever follows your software installation discipline.
+`--prefix=$HOME/local/stow/gerbil-v0.17` or whatever follows your software installation discipline.
 Finally, if Gerbil was configured without `--prefix`, then Gerbil uses
 the parent directory of the directory in which `gxi` is installed.
 Note that in this final case, the autodetection relies on `gxi` not being a symlink,
