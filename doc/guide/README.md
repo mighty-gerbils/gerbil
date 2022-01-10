@@ -11,7 +11,8 @@ $ git clone https://github.com/vyzo/gerbil.git
 
 ## Dependencies
 
-The latest Gerbil release (v0.16) requires the latest Gambit release, v4.9.3.
+The latest Gerbil release (v0.17) requires the latest Gambit release, v4.9.4;
+we also explicitly support the previous Gambit release, v4.9.3.
 Older versions of Gambit, starting with v4.9.1 may also work, but we haven't tested.
 
 The core system has no dependencies outside Gambit, but the standard
@@ -45,7 +46,7 @@ Gerbil takes quite a while to compile, if you wish it to build faster, you can:
 ```
 export GERBIL_BUILD_CORES=4
 ```
- 
+
 If you are using the default configuration, you can build Gerbil simply with:
 ```bash
 $GERBIL_HOME/src/build.sh
