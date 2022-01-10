@@ -275,6 +275,9 @@
       (['NoticeResponse msg . irritants]
        (notice! msg irritants)
        (recv!))
+      (['ParameterStatus msg . irritants]
+       (void)
+       (recv!))
       (msg msg)))
 
   (def (notice! msg irritants)
