@@ -12,7 +12,6 @@ src/TAGS
 .build*
 doc/node_modules
 doc/.vuepress/dist
-src/gerbil/runtime/gx-version.scm
 src/gerbil/gxi
 
 src/tutorial/lang/build-deps
