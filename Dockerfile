@@ -9,13 +9,10 @@ ARG JOBS=1
 ENV GAMBIT_HOME=/opt/gambit
 ENV GERBIL_HOME=/opt/gerbil
 ENV GERBIL_PATH=/src/.gerbil
-ENV PATH=${GAMBIT_HOME}/bin:${GERBIL_HOME}/bin:/bin:/sbin:/usr/bin:/usr/sbin
+ENV PATH=${GAMBIT_HOME}/current/bin:${GERBIL_HOME}/bin:/bin:/sbin:/usr/bin:/usr/sbin
 ENV GERBIL_BUILD_CORES=${JOBS}
 
 COPY . /opt/gerbil-src
-
-ENV GAMBIT_HOME=/opt/gambit
-ENV PATH=${GAMBIT_HOME}/bin:${GERBIL_HOME}/bin:/bin:/sbin:/usr/bin:/usr/sbin
 
 RUN cd /opt/gerbil-src/src \
     && ./configure \
