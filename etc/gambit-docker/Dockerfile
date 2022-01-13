@@ -43,6 +43,12 @@ RUN cd /opt/gambit-src \
     --enable-single-host \
     --prefix=${GAMBIT_HOME}
 
+# Other Configure options commonly used
+#
+#    CC='gcc -D___SUPPORT_LOWLEVEL_EXEC'
+#    --enable-targets=js,ruby,python
+#    --enable-default-compile-options="(compactness 9)"
+
 RUN cd /opt/gambit-src && make -j${JOBS}
 RUN cd /opt/gambit-src && make bootstrap
 RUN cd /opt/gambit-src && make bootclean
