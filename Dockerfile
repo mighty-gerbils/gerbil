@@ -2,19 +2,31 @@ from gerbil/gambit
 
 MAINTAINER gerbil@cons.io
 
-ENV GAMBIT_VERSION v4.9.3
+ENV GAMBIT_VERSION v4.9.4
 
-COPY . /root/gerbil
+ARG JOBS=1
 
-ENV PATH "/usr/local/gambit/bin:$PATH"
+ENV GAMBIT_HOME=/opt/gambit
+ENV GERBIL_HOME=/opt/gerbil
+ENV GERBIL_PATH=/src/.gerbil
+ENV PATH=${GAMBIT_HOME}/bin:${GERBIL_HOME}/bin:/bin:/sbin:/usr/bin:/usr/sbin
+ENV GERBIL_BUILD_CORES=${JOBS}
 
-RUN sed -i -e 's/mysql #f/mysql #t/g' /root/gerbil/src/std/build-features.ss
-RUN sed -i -e 's/yaml #f/yaml #t/g' /root/gerbil/src/std/build-features.ss
-RUN sed -i -e 's/leveldb #f/leveldb #t/g' /root/gerbil/src/std/build-features.ss
-RUN sed -i -e 's/lmdb #f/lmdb #t/g' /root/gerbil/src/std/build-features.ss
-RUN cd /root/gerbil/src && ./build.sh
+COPY . /opt/gerbil-src
 
-ENV GERBIL_HOME "/root/gerbil"
-ENV PATH "/root/gerbil/bin:$PATH"
+ENV GAMBIT_HOME=/opt/gambit
+ENV PATH=${GAMBIT_HOME}/bin:${GERBIL_HOME}/bin:/bin:/sbin:/usr/bin:/usr/sbin
+
+RUN cd /opt/gerbil-src/src \
+    && ./configure \
+    --prefix=${GERBIL_HOME} \
+    --enable-leveldb \
+    --enable-libxml \
+    --enable-libyaml \
+    --enable-lmdb
+RUN cd /opt/gerbil-src/src && ./build.sh
+RUN cd /opt/gerbil-src/src && ./install
+
+WORKDIR /src
 
 CMD ["gxi"]
