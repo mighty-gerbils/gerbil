@@ -23,11 +23,12 @@ RUN apt install -y \
     libsnappy1v5 \
     libsqlite3-dev \
     libssl-dev \
+    libxml2-dev \
     libyaml-dev \
     pkg-config \
     rsync \
-    zlib1g-dev \
-    texinfo
+    texinfo \
+    zlib1g-dev
 
 RUN cd /opt && git clone https://github.com/gambit/gambit gambit-src
 RUN cd /opt/gambit-src && git fetch -a
