@@ -58,4 +58,4 @@ RUN cd /opt/gambit-src && make install
 
 WORKDIR /src
 
-CMD ["gxi"]
+CMD ["gsi"]
