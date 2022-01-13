@@ -6,7 +6,7 @@ ARG GAMBIT_VERSION=v4.9.4
 ARG JOBS=1
 
 ENV GAMBIT_HOME=/opt/gambit
-
+ENV PATH=${GAMBIT_HOME}/bin:${GERBIL_HOME}/bin:/bin:/sbin:/usr/bin:/usr/sbin
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN mkdir -p /src /opt
@@ -55,3 +55,7 @@ RUN cd /opt/gambit-src && make bootclean
 RUN cd /opt/gambit-src && make -j${JOBS}
 RUN cd /opt/gambit-src && make -j${JOBS} modules
 RUN cd /opt/gambit-src && make install
+
+WORKDIR /src
+
+CMD ["gxi"]
