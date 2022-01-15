@@ -372,7 +372,7 @@ END-C
 (c-declare #<<END-C
 static HMAC_CTX *ffi_create_HMAC_CTX ()
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L ||  defined (LIBRESSL_VERSION_NUMBER)
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
   HMAC_CTX *ctx = (HMAC_CTX*)malloc (sizeof (HMAC_CTX));
   if (ctx) {
     HMAC_CTX_init (ctx);
@@ -385,7 +385,7 @@ static HMAC_CTX *ffi_create_HMAC_CTX ()
 
 static ___SCMOBJ ffi_release_HMAC_CTX (void *ptr)
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L ||  defined (LIBRESSL_VERSION_NUMBER)
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
   HMAC_CTX_cleanup ((HMAC_CTX*) ptr);
   free (ptr);
 #else
@@ -465,7 +465,7 @@ static ___SCMOBJ ffi_DH_free (void *dh)
 
 static BIGNUM *ffi_DH_pub_key (DH *dh)
 {
-#if OPENSSL_VERSION_NUMBER < 0x10100000L ||  defined (LIBRESSL_VERSION_NUMBER)
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
  return dh->pub_key;
 #else
  BIGNUM const *pub;
