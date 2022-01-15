@@ -302,8 +302,8 @@
     "db/postgresql"
     ,@(if config-enable-sqlite
         `((gsc: "db/_sqlite"
-                "-cc-options" ,(cppflags "sqlite3" "")
-                "-ld-options" ,(ldflags "sqlite3" "-lsqlite3"))
+                "-cc-options" ,(cppflags "sqlite3" "-fPIC")
+                "-ld-options" ,(ldflags "sqlite3" "-lsqlite3" ))
           (ssi: "db/_sqlite")
           "db/sqlite")
         '())
