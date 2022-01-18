@@ -20,7 +20,9 @@ RUN cd /opt/gerbil-src/src \
     --enable-leveldb \
     --enable-libxml \
     --enable-libyaml \
-    --enable-lmdb
+    --enable-lmdb \
+    --enable-mysql
+
 RUN cd /opt/gerbil-src/src && ./build.sh
 RUN cd /opt/gerbil-src/src && ./install
 
