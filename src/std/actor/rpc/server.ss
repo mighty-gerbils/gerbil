@@ -171,7 +171,7 @@
                 (!!rpc.connection-close src)
                 (remove-thread! src)))
           (else
-           (warnf "Unexpected protocol mesage ~a" msg))))
+           (warnf "Unexpected protocol message ~a" msg))))
         ((!rpc.connect id address proto k)
          (let* ((uuid (UUID id))
                 (proto (or proto (lookup-protocol uuid))))
