@@ -3,17 +3,27 @@ from ubuntu:latest
 MAINTAINER gerbil@cons.io
 
 ARG GAMBIT_VERSION=v4.9.4
-ARG JOBS=1
+ARG JOBS=8
 
+
+ENV GLIBC=2.34
 ENV GAMBIT_HOME=/opt/gambit
 ENV PATH=${GAMBIT_HOME}/bin:${GERBIL_HOME}/bin:/bin:/sbin:/usr/bin:/usr/sbin
 ENV DEBIAN_FRONTEND=noninteractive
+#ENV CFLAGS="-Bstatic -DOPENSSL_NO_KRB5"
+#ENV CPPFLAGS=${CFLAGS}
+#-L/usr/lib/x86_64-linux-gnu -L/usr/lib64 -static -lssl -lyaml -lz"
 
 RUN mkdir -p /src /opt
 
 RUN apt update -y
 RUN apt install -y \
     autoconf \
+    curl \
+    libnss3-dev \
+    gawk \
+    bison \
+    python3 \
     build-essential \
     git \
     libleveldb-dev \
@@ -30,9 +40,18 @@ RUN apt install -y \
     texinfo \
     zlib1g-dev
 
+RUN cd /opt && curl -O https://mirrors.tripadvisor.com/gnu/libc/glibc-${GLIBC}.tar.bz2 && tar -xf glibc-${GLIBC}.tar.bz2
+RUN mkdir /opt/build && cd /opt/build && ../glibc-${GLIBC}/configure --disable-build-nscd --prefix=/glibc && make -j${JOBS} && make install
+
 RUN cd /opt && git clone https://github.com/gambit/gambit gambit-src
 RUN cd /opt/gambit-src && git fetch -a
 
+#ENV LDFLAGS="-L/glibc/lib $LDFLAGS"
+#ENV CFLAGS="-I/glibc/include $CFLAGS"
+#ENV CPPFLAGS=${CFLAGS}
+ENV PATH=/glibc/bin:$PATH
+
+RUN ls /glibc/bin/
 RUN cd /opt/gambit-src \
     && git fetch -a \
     && git checkout ${GAMBIT_VERSION} \
