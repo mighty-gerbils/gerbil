@@ -80,7 +80,13 @@ ubuntu_packages := autoconf \
                    zlib1g-dev
 
 alpine:
-	docker build --target final --rm=true --no-cache --build-arg packages="$(alpine_packages)" --build-arg cores=$(cores) --build-arg distro="alpine" -t final $(ROOT_DIR)
+	docker build --target final \
+	--rm=true --no-cache \
+	--build-arg gambit_version=$(GAMBIT_VERSION) \
+	--build-arg gerbil_version=$(GERBIL_VERSION) \
+	--build-arg packages="$(alpine_packages)" \
+	--build-arg cores=$(cores) \
+	--build-arg distro="alpine" -t final $(ROOT_DIR)
 	docker tag final gerbil/alpine
 
 amazonlinux:
@@ -89,19 +95,41 @@ amazonlinux:
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(amazon_packages)" \
 	--build-arg cores=$(cores)  \
-	--build-arg distro="amazonlinux" -t final $(ROOT_DIR)
+	--build-arg distro="amazonlinux" \
+	-t final $(ROOT_DIR)
 	docker tag final gerbil/amazonlinux
 
 centos:
-	docker build --target final --rm=true --no-cache --build-arg packages="$(centos_packages)" --build-arg cores=$(cores) --build-arg distro="centos" -t final $(ROOT_DIR)
+	docker build --target final \
+	--rm=true --no-cache \
+	--build-arg gambit_version=$(GAMBIT_VERSION) \
+	--build-arg gerbil_version=$(GERBIL_VERSION) \
+	--build-arg packages="$(centos_packages)" \
+	--build-arg cores=$(cores) \
+	--build-arg distro="centos" \
+	-t final $(ROOT_DIR)
 	docker tag final gerbil/centos
 
 fedora:
-	docker build --target final --rm=true --no-cache --build-arg packages="$(fedora_packages)" --build-arg cores=$(cores) --build-arg distro="fedora" -t final $(ROOT_DIR)
+	docker build --target final \
+	--rm=true --no-cache \
+	--build-arg gambit_version=$(GAMBIT_VERSION) \
+	--build-arg gerbil_version=$(GERBIL_VERSION) \
+	--build-arg packages="$(fedora_packages)" \
+	--build-arg cores=$(cores) \
+	--build-arg distro="fedora" \
+	-t final $(ROOT_DIR)
 	docker tag final gerbil/fedora
 
 ubuntu:
-	docker build --target final --rm=true --no-cache --build-arg packages="$(ubuntu_packages)" --build-arg cores=$(cores) --build-arg distro="ubuntu" -t final $(ROOT_DIR)
+	docker build --target final \
+	--rm=true --no-cache \
+	--build-arg gambit_version=$(GAMBIT_VERSION) \
+	--build-arg gerbil_version=$(GERBIL_VERSION) \
+	--build-arg packages="$(ubuntu_packages)" \
+	--build-arg cores=$(cores) \
+	--build-arg distro="ubuntu" \
+	-t final $(ROOT_DIR)
 	docker tag final gerbil/ubuntu
 
 ubuntu-current-jedi:
@@ -109,10 +137,16 @@ ubuntu-current-jedi:
 	docker tag ubuntu-current-jedi gerbil/jedi:ubuntu
 
 package-ubuntu:
-	docker run -v $(PWD):/src -t gerbil/ubuntu bash -c "gem install fpm && fpm -s dir -p /src/ -t deb -n gerbil-$(gerbil_version)-gambit-$(gambit_version).ubuntu --description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
+	docker run -v $(PWD):/src -t gerbil/ubuntu \
+    bash -c "gem install fpm && fpm -s dir -p /src/ -t deb -n gerbil-$(gerbil_version)-gambit-$(gambit_version).ubuntu --description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
 
 package-fedora:
-	docker run -v $(PWD):/src -t gerbil/fedora bash -c "yum install -y rubygems ruby-devel rpm-build && gem install fpm && fpm -s dir -p /src/ -t rpm -n gerbil-$(gerbil_version)-gambit-$(gambit_version).fedora --description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
+	docker run -v $(PWD):/src -t gerbil/fedora \
+	bash -c "yum install -y rubygems ruby-devel rpm-build && \
+	gem install fpm && \
+	fpm -s dir -p /src/ -t rpm \
+	-n gerbil-$(gerbil_version)-gambit-$(gambit_version).fedora \
+	--description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
 
 packages: package-ubuntu package-fedora
 
