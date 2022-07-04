@@ -7,7 +7,7 @@ ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell grep -c "^processor" /proc/cpuinfo)
 
 #$(eval squid_ip := $(shell docker inspect squid|jq -r '.[].NetworkSettings.IPAddress'))
-$(info $(cores) is cores)
+#$(info $(cores) is cores)
 
 alpine_packages := autoconf \
                    automake \
@@ -112,7 +112,6 @@ centos:
 
 fedora:
 	docker build --target final \
-	--rm=true --no-cache \
 	--build-arg gambit_version=$(GAMBIT_VERSION) \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(fedora_packages)" \
@@ -138,7 +137,9 @@ ubuntu-current-jedi:
 
 package-ubuntu:
 	docker run -v $(PWD):/src -t gerbil/ubuntu \
-    bash -c "gem install fpm && fpm -s dir -p /src/ -t deb -n gerbil-$(gerbil_version)-gambit-$(gambit_version).ubuntu --description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
+    bash -c "gem install fpm && \
+	fpm -s dir -p /src/ -t deb -n gerbil-$(gerbil_version)-gambit-$(gambit_version).ubuntu \
+	--description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
 
 package-fedora:
 	docker run -v $(PWD):/src -t gerbil/fedora \
