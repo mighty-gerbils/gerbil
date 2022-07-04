@@ -76,14 +76,13 @@ RUN cd /opt/gerbil-src/src && git fetch -a && git fetch --tags && git checkout $
     --enable-leveldb \
     --enable-libxml \
     --enable-libyaml \
-    --enable-mysql \
-    --enable-lmdb
+    --enable-lmdb \
+    --enable-mysql
 
 RUN cd /opt/gerbil-src/src && ./build.sh sanity-check
 RUN cd /opt/gerbil-src/src && ./build.sh gxi
 RUN cd /opt/gerbil-src/src && ./build.sh stage0
-RUN cd /opt/gerbil-src/src && ./build.sh stage1
-RUN cd /opt/gerbil-src/src && ./build.sh final
+RUN cd /opt/gerbil-src/src && ./build.sh stage1 final
 RUN cd /opt/gerbil-src/src && ./build.sh stdlib
 RUN cd /opt/gerbil-src/src && ./build.sh lang
 RUN cd /opt/gerbil-src/src && ./build.sh r7rs-large
