@@ -43,8 +43,6 @@ amazon_packages := cmake \
                    libyaml-devel \
 				   lmdb-libs \
                    lmdb-devel \
-				   mariadb-devel \
-				   mariadb-libs \
                    openssl-devel \
                    sqlite-devel
 
@@ -149,6 +147,14 @@ package-fedora:
 	gem install fpm && \
 	fpm -s dir -p /src/ -t rpm \
 	-n gerbil-$(gerbil_version)-gambit-$(gambit_version).fedora \
+	--description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
+
+package-amazonlinux:
+	docker run -v $(PWD):/src -t gerbil/amazonlinux \
+	bash -c "yum install -y rubygems ruby-devel rpm-build && \
+	gem install fpm && \
+	fpm -s dir -p /src/ -t rpm \
+	-n gerbil-$(gerbil_version)-gambit-$(gambit_version).amazonlinux \
 	--description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
 
 packages: package-ubuntu package-fedora
