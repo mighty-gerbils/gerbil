@@ -21,9 +21,10 @@ RUN case ${distro} in \
     cd /src && git clone https://github.com/LMDB/lmdb && cd /src/lmdb/libraries/liblmdb && make && cd /src/lmdb/libraries/liblmdb && mv liblmdb.a /usr/lib \
     ;; \
     amazonlinux) \
-    amazon-linux-extras install epel -y \
+    amazon-linux-extras install epel -y && \
     yum update -y && yum groupinstall -y 'Development Tools' && \
     eval yum install -y ${packages} \
+    ;; \
     fedora) \
     yum update -y && yum groupinstall -y 'Development Tools' && \
     eval yum install -y ${packages} \
