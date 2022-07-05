@@ -22,7 +22,10 @@ RUN case ${distro} in \
     ;; \
     amazonlinux) \
     amazon-linux-extras install epel -y && \
+    rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022 && \
+    yum install -y https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm && \
     yum update -y && yum groupinstall -y 'Development Tools' && \
+    yum install -y mysql-community-client && \
     eval yum install -y ${packages} \
     ;; \
     fedora) \
