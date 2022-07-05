@@ -36,14 +36,17 @@ alpine_packages := autoconf \
                    zlib-static
 
 amazon_packages := cmake \
+				   leveldb \
 				   leveldb-devel \
-                   libsqlite3x-devel \
-                   libxml2-devel \
+				   libsqlite3x-devel \
+				   libxml2-devel \
                    libyaml-devel \
+				   lmdb-libs \
                    lmdb-devel \
-                   mariadb-devel \
-                   mariadb-libs \
-                   openssl-devel \
+				   mysql-community-client \
+				   mysql-community-libs \
+				   mysql-community-devel \
+				   openssl-devel \
                    sqlite-devel
 
 fedora_packages := cmake \
@@ -138,7 +141,7 @@ ubuntu-current-jedi:
 package-ubuntu:
 	docker run -v $(PWD):/src -t gerbil/ubuntu \
     bash -c "gem install fpm && \
-	fpm -s dir -p /src/ -t deb -n gerbil-$(gerbil_version)-gambit-$(gambit_version).ubuntu \
+	fpm -s dir -p /src/ -t deb -n gerbil-$(GERBIL_VERSION)-gambit-$(GAMBIT_VERSION).ubuntu \
 	--description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
 
 package-fedora:
@@ -146,7 +149,16 @@ package-fedora:
 	bash -c "yum install -y rubygems ruby-devel rpm-build && \
 	gem install fpm && \
 	fpm -s dir -p /src/ -t rpm \
-	-n gerbil-$(gerbil_version)-gambit-$(gambit_version).fedora \
+	-n gerbil-$(GERBIL_VERSION)-gambit-$(GAMBIT_VERSION).fedora \
+	--description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
+
+package-amazonlinux:
+	docker run -v $(PWD):/src -t gerbil/amazonlinux \
+	bash -c "amazon-linux-extras install -y ruby2.6 && \
+    yum install -y ruby-devel rubygems rpm-build && \
+	gem install fpm && \
+	fpm -s dir -p /src/ -t rpm \
+	-n gerbil-$(GERBIL_VERSION)-gambit-$(GAMBIT_VERSION).amazonlinux \
 	--description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
 
 packages: package-ubuntu package-fedora
