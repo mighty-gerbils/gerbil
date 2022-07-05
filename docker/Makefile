@@ -36,13 +36,15 @@ alpine_packages := autoconf \
                    zlib-static
 
 amazon_packages := cmake \
+				   leveldb \
 				   leveldb-devel \
-                   libsqlite3x-devel \
+				   libsqlite3x-devel \
                    libxml2-devel \
                    libyaml-devel \
+				   lmdb-libs \
                    lmdb-devel \
-                   mariadb-devel \
-                   mariadb-libs \
+				   mariadb-devel \
+				   mariadb-libs \
                    openssl-devel \
                    sqlite-devel
 
