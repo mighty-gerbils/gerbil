@@ -39,11 +39,14 @@ amazon_packages := cmake \
 				   leveldb \
 				   leveldb-devel \
 				   libsqlite3x-devel \
-                   libxml2-devel \
+				   libxml2-devel \
                    libyaml-devel \
 				   lmdb-libs \
                    lmdb-devel \
-                   openssl-devel \
+				   mysql-community-client \
+				   mysql-community-libs \
+				   mysql-community-devel \
+				   openssl-devel \
                    sqlite-devel
 
 fedora_packages := cmake \
