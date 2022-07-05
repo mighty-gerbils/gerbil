@@ -20,7 +20,11 @@ RUN case ${distro} in \
     cd /src && git clone --recurse-submodules https://github.com/google/leveldb.git && cd /src/leveldb && mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . &&  mv libleveldb.a /usr/lib && \
     cd /src && git clone https://github.com/LMDB/lmdb && cd /src/lmdb/libraries/liblmdb && make && cd /src/lmdb/libraries/liblmdb && mv liblmdb.a /usr/lib \
     ;; \
-    amazonlinux|fedora) \
+    amazonlinux) \
+    amazon-linux-extras install epel -y \
+    yum update -y && yum groupinstall -y 'Development Tools' && \
+    eval yum install -y ${packages} \
+    fedora) \
     yum update -y && yum groupinstall -y 'Development Tools' && \
     eval yum install -y ${packages} \
     ;; \
@@ -79,17 +83,7 @@ RUN cd /opt/gerbil-src/src && git fetch -a && git fetch --tags && git checkout $
     --enable-lmdb \
     --enable-mysql
 
-RUN cd /opt/gerbil-src/src && ./build.sh sanity-check
-RUN cd /opt/gerbil-src/src && ./build.sh gxi
-RUN cd /opt/gerbil-src/src && ./build.sh stage0
-RUN cd /opt/gerbil-src/src && ./build.sh stage1 final
-RUN cd /opt/gerbil-src/src && ./build.sh stdlib
-RUN cd /opt/gerbil-src/src && ./build.sh lang
-RUN cd /opt/gerbil-src/src && ./build.sh r7rs-large
-RUN cd /opt/gerbil-src/src && ./build.sh tools
-RUN cd /opt/gerbil-src/src && ./build.sh tags
-RUN cd /opt/gerbil-src/src && ./build.sh layout
-RUN cd /opt/gerbil-src/src && ./build.sh doc
+RUN cd /opt/gerbil-src/src && ./build.sh
 RUN cd /opt/gerbil-src/src && ./install
 
 FROM gerbil as final
