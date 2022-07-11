@@ -165,6 +165,7 @@ packages: package-ubuntu package-fedora
 
 push-all: all
 	docker push gerbil/alpine
+	docker push gerbil/amazonlinux
 	docker push gerbil/ubuntu
 	docker push gerbil/fedora
 
