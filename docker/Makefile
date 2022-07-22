@@ -163,10 +163,11 @@ package-amazonlinux:
 
 packages: package-ubuntu package-fedora
 
-push-all: all
+push-all:
 	docker push gerbil/alpine
 	docker push gerbil/ubuntu
 	docker push gerbil/fedora
+	docker push gerbil/amazonlinux
 
 all: alpine amazonlinux fedora ubuntu
 
