@@ -139,13 +139,13 @@ ubuntu-current-jedi:
 	docker tag ubuntu-current-jedi gerbil/jedi:ubuntu
 
 package-ubuntu:
-	docker run -v $(PWD):/src -t gerbil/ubuntu \
+	docker run -v $(PWD):/src:z -t gerbil/ubuntu \
     bash -c "gem install fpm && \
 	fpm -s dir -p /src/ -t deb -n gerbil-$(GERBIL_VERSION)-gambit-$(GAMBIT_VERSION).ubuntu \
 	--description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
 
 package-fedora:
-	docker run -v $(PWD):/src -t gerbil/fedora \
+	docker run -v $(PWD):/src:z -t gerbil/fedora \
 	bash -c "yum install -y rubygems ruby-devel rpm-build && \
 	gem install fpm && \
 	fpm -s dir -p /src/ -t rpm \
@@ -153,7 +153,7 @@ package-fedora:
 	--description 'Gambit and Gerbil Package' /opt/gerbil /opt/gambit"
 
 package-amazonlinux:
-	docker run -v $(PWD):/src -t gerbil/amazonlinux \
+	docker run -v $(PWD):/src:z -t gerbil/amazonlinux \
 	bash -c "amazon-linux-extras install -y ruby2.6 && \
     yum install -y ruby-devel rubygems rpm-build && \
 	gem install fpm && \
