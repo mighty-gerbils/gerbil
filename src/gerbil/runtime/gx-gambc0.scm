@@ -1753,6 +1753,10 @@
              (%%apply K (cons keys args)))
            (K keys)))))))
 
+(define (keyword-rest kwt . drop)
+  (for-each (lambda (kw) (hash-remove! kwt kw)) drop)
+  (hash-fold (lambda (k v r) (cons* k v r)) '() kwt))
+
 (eval-if-bound string-concatenate (void) (define string-concatenate append-strings))
 (eval-if-bound vector-concatenate (void) (define vector-concatenate append-vectors))
 (eval-if-bound u8vector-concatenate (void) (define u8vector-concatenate append-u8vectors))

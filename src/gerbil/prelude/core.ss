@@ -262,7 +262,7 @@ package: gerbil
     ;; Module loading
     load-module
     ;; keyword argument dispatch
-    keyword-dispatch
+    keyword-dispatch keyword-rest
     ;; gerbil specifics
     gerbil-version-string gerbil-system-version-string system-version
     ;; system type information
