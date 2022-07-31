@@ -464,7 +464,7 @@ TODO:
       (hash-put! timestamp% id timestamp)
       (mark-built target)))
   (def (on-failure item exception)
-    (error "Failure to build" (vector-ref spec@ (target<-item item)) (error-message exception)))
+    (raise (build-failure (vector-ref spec@ (target<-item item)) exception)))
 
   (create-directory* (settings-bindir settings))
   (create-directory* (settings-libdir settings))
@@ -485,6 +485,15 @@ TODO:
    deterministic-order: #f max-workers: (max (settings-parallelize settings) 1))
 
   (when (verbose>=? 3) (writeln [Step: 5 "All built"])))
+
+(defstruct build-failure (item exception))
+
+(defmethod {display-exception build-failure}
+  (lambda (self port)
+    (display "Build Failure at " port)
+    (display (build-failure-item self) port)
+    (newline port)
+    (display-exception (build-failure-exception self) port)))
 
 ;; file-dependencies : file -> dependencies
 (def (file-dependencies file settings)
