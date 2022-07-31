@@ -530,7 +530,6 @@ package: gerbil
  repl-input-port repl-output-port
  console-port
  default-random-source
- random-real
  make-random-source
  system-version system-version-string
  configure-command-string system-stamp
@@ -705,8 +704,6 @@ package: gerbil
 
  open-event-queue
 
- random-integer
- random-u8vector random-f64vector
  random-source?
  random-source-state-ref
  random-source-randomize!
@@ -1188,3 +1185,10 @@ package: gerbil
  (f64vector-copy! 3 4 5)
  (subf64vector-move! 5)
  (f64vector-shrink! 2))
+
+;; random variadics
+(declare-primitive*
+ (random-real 0 1)
+ (random-integer 1 2)
+ (random-u8vector 1 2)
+ (random-f64vector 1 2))
