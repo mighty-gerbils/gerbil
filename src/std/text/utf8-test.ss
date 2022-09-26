@@ -5,10 +5,16 @@
 (import :std/test
         :std/text/utf8
         :std/sugar
+	:std/error
         :gerbil/gambit/random
         :gerbil/gambit/exceptions)
 
 (export utf8-test)
+
+(def (error-with-message? message)
+  (lambda (e)
+    (and (error-exception? e) (equal? (error-exception-message e) message))))
+
 (def utf8-test
   (test-suite "test :std/text/utf8"
 
@@ -34,4 +40,9 @@
                 (lp2 (fx1+ i))))
             (check-encode-decode str)
             (lp (fx1+ k))))))
+
+    (test-case "test utf8 encoding and decoding malformed inputs"
+      (check-exception (string->utf8 #f) (error-with-message? "Bad argument; expected string"))
+      (check-exception (string-utf8-length #f) (error-with-message? "Bad argument; expected string"))
+      (check-exception (utf8->string #f) (error-with-message? "Bad argument; expected u8vector")))
     ))
