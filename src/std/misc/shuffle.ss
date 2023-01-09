@@ -3,17 +3,20 @@
 ;;; shuffling
 
 (export shuffle vector-shuffle vector-shuffle!)
-(import (only-in :gerbil/gambit/random random-integer))
+(import :gerbil/gambit/random)
 
-(def (shuffle lst)
+(def (shuffle lst (rng default-random-source))
   (vector->list
    (vector-shuffle!
-    (list->vector lst))))
+    (list->vector lst)
+    rng)))
 
-(def (vector-shuffle vec)
-  (vector-shuffle! (vector-copy vec)))
+(def (vector-shuffle vec (rng default-random-source))
+  (vector-shuffle! (vector-copy vec) rng))
 
-(def (vector-shuffle! vec)
+(def (vector-shuffle! vec (rng default-random-source))
+  (def random-integer
+    (random-source-make-integers rng))
   (let (len (vector-length vec))
     (do ((i 0 (##fx+ i 1)))
         ((##fx= i len) vec)

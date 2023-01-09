@@ -53,7 +53,7 @@ target_setup () {
 
 compile_gxi () {
   feedback_low "Compiling gxi shim"
-  (cd gerbil && gcc -O2 -o gxi gxi.c)
+  (cd gerbil && ${CC:-cc} -O2 -o gxi gxi.c)
 }
 
 compile_runtime () {
