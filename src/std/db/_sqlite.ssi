@@ -22,6 +22,9 @@ package: std/db
   SQLITE_BLOB
   SQLITE_NULL
   SQLITE_TEXT
+  SQLITE_PREPARE_PERSISTENT
+  SQLITE_PREPARE_NORMALIZE
+  SQLITE_PREPARE_NO_VTAB
   make_sqlite3_ptr_ptr
   sqlite3_ptr
   make_sqlite3_stmt_ptr_ptr
