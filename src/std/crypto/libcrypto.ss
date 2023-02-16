@@ -58,7 +58,8 @@ package: std/crypto
      EVP_PKEY_keygen_init EVP_PKEY_keygen
      EVP_PKEY_new_raw_private_key EVP_PKEY_new_raw_public_key
      EVP_PKEY_get_raw_private_key EVP_PKEY_get_raw_public_key
-     EVP_DigestSign EVP_DigestVerify EVP_MD_CTX_set_pkey_ctx)
+     EVP_DigestSign EVP_DigestVerify EVP_MD_CTX_set_pkey_ctx
+     RAND_bytes)
 
 (declare (not safe))
 
@@ -68,6 +69,7 @@ package: std/crypto
 #include <openssl/dh.h>
 #include <openssl/bn.h>
 #include <openssl/hmac.h>
+#include <openssl/rand.h>
 END-C
 )
 
@@ -586,6 +588,12 @@ static int ffi_EVP_DigestVerify(EVP_MD_CTX *ctx, ___SCMOBJ sig, ___SCMOBJ tbs)
 #if OPENSSL_VERSION_NUMBER < 0x10101000L
 void EVP_MD_CTX_set_pkey_ctx(EVP_MD_CTX *ctx, EVP_PKEY_CTX *pctx) { return; }
 #endif
+
+static int ffi_RAND_bytes (___SCMOBJ bytes, int start, int end)
+{
+  return RAND_bytes (U8_DATA (bytes) + start, end - start);
+}
+
 END-C
 )
 (c-define-type EVP_PKEY "EVP_PKEY")
@@ -613,4 +621,6 @@ END-C
 (define-c-lambda EVP_DigestVerify (EVP_MD_CTX* scheme-object scheme-object) int "ffi_EVP_DigestVerify")
 
 (define-c-lambda EVP_MD_CTX_set_pkey_ctx (EVP_MD_CTX* EVP_PKEY_CTX*) void)
+
+(define-c-lambda RAND_bytes (scheme-object int int) int "ffi_RAND_bytes")
 );ffi
