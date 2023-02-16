@@ -34,7 +34,7 @@
 (defmethod {prepare sqlite-connection}
   (lambda (self sql)
     (let* ((ptr (make_sqlite3_stmt_ptr_ptr))
-           (r (sqlite3_prepare ptr (connection-e self) sql)))
+           (r (sqlite3_prepare ptr (connection-e self) sql 0)))
       (if (##fx= r SQLITE_OK)
         (make-sqlite-statement (sqlite3_stmt_ptr ptr))
         (raise-sqlite-error 'sqlite-prepare r)))))

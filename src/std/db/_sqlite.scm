@@ -70,9 +70,13 @@ END-C
 (define-const SQLITE_NULL)
 (define-const SQLITE_TEXT)
 
+(define-const SQLITE_PREPARE_PERSISTENT)
+(define-const SQLITE_PREPARE_NORMALIZE)
+(define-const SQLITE_PREPARE_NO_VTAB)
+
 (c-declare #<<END-C
 static int ffi_sqlite3_open (sqlite3**, const char *path, int flags);
-static int ffi_sqlite3_prepare (sqlite3_stmt**, sqlite3* db, const char *sql);
+static int ffi_sqlite3_prepare (sqlite3_stmt**, sqlite3* db, const char *sql, int prepFlags);
 static int ffi_sqlite3_bind_blob (sqlite3_stmt* stmt, int col, ___SCMOBJ data);
 static int ffi_sqlite3_bind_text (sqlite3_stmt* stmt, int col, const char *str);
 static void ffi_sqlite3_column_blob (sqlite3_stmt* stmt, int col, ___SCMOBJ bytes);
@@ -105,7 +109,7 @@ END-C
   "ffi_sqlite3_open")
 (define-c-lambda sqlite3_close (sqlite3*) int
   "sqlite3_close_v2")
-(define-c-lambda sqlite3_prepare (sqlite3_stmt** sqlite3* UTF-8-string) int
+(define-c-lambda sqlite3_prepare (sqlite3_stmt** sqlite3* UTF-8-string int) int
   "ffi_sqlite3_prepare")
 (define-c-lambda sqlite3_stmt_readonly (sqlite3_stmt*) bool
   "sqlite3_stmt_readonly")
@@ -168,11 +172,12 @@ static int ffi_sqlite3_open (sqlite3** db, const char *path, int flags)
  return r;
 }
 
-static int ffi_sqlite3_prepare (sqlite3_stmt** stmt, sqlite3* db, const char *sql)
+static int ffi_sqlite3_prepare (sqlite3_stmt** stmt, sqlite3* db, const char *sql, int prepFlags)
 {
- int r = sqlite3_prepare_v2 (db, sql, strlen (sql), stmt, NULL);
+ int r = sqlite3_prepare_v3 (db, sql, strlen (sql), prepFlags, stmt, NULL);
  if (r != SQLITE_OK) {
   sqlite3_finalize (*stmt);
+  *stmt = NULL;
  }
  return r;
 }
