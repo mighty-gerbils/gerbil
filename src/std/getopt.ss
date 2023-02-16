@@ -275,7 +275,7 @@
         (fprintf port "~nCommands:~n")
         (for-each (match <>
                     ((!command key help)
-                     (fprintf port " ~a:~a ~a~n"
+                     (fprintf port " ~a ~a ~a~n"
                               key
                               (tabs key)
                               (or help "?"))))
@@ -327,19 +327,19 @@
 (def (display-arg-help args port)
   (for-each (match <>
               ((!reqarg key help)
-               (fprintf port " ~a:~a ~a~n"
+               (fprintf port " ~a ~a ~a~n"
                         key (tabs key) (or help "?")))
               ((!optarg key help _ default)
-               (fprintf port " ~a:~a ~a [default: ~a]~n"
+               (fprintf port " ~a ~a ~a [default: ~a]~n"
                         key (tabs key) (or help "?")
                         default))
               ((!rest key help)
-               (fprintf port " ~a:~a ~a~n"
+               (fprintf port " ~a ~a ~a~n"
                         key (tabs key) (or help "?"))))
             args))
 
 (def (tabs . strs)
-  (def tablen 31) ; take : into account
+  (def tablen 31)
   (def (string-e str)
     (if (symbol? str)
       (symbol->string str)
