@@ -4,21 +4,33 @@
 (##namespace (""))
 ;; (include "gx-gambc#.scm")
 
+;; (declare
+;;   (block)
+;;   (standard-bindings)
+;;   (extended-bindings))
+(declare (safe))
+
 (declare
-  (block)
-  (standard-bindings)
-  (extended-bindings))
-(declare (not safe))
+ ;; (block)
+ (standard-bindings) (extended-bindings)
+
+ (not inline)
+ ;; (debug)
+ ;; (debug-location)
+ ;; (debug-source)
+ ;; (debug-environments)
+ )
+
 
 ;; core [top] syntax -> gambit runtime compiler
 (define-macro (%AST? e)
   `(##structure-instance-of? ,e 'gerbil#AST::t))
 
 (define-macro (%AST-e e)
-  `(##vector-ref ,e 1))
+  `(_gx#vector-ref ,e 1))
 
 (define-macro (%AST-source e)
-  `(##vector-ref ,e 2))
+  `(_gx#vector-ref ,e 2))
 
 (define (&SRC e #!optional (src-stx #f))
   (cond
@@ -38,21 +50,25 @@
       (error (if (fx< count k)
                "Too few values for context"
                "Too many values for context")
-        (if (##values? obj) (##vector->list obj) obj)
+        (if (##values? obj) (_gx#vector->list obj) obj)
         k))))
 
 (define-macro (%&syntax-e obj)
-  `(##vector-ref ,obj 1))
+  `(_gx#vector-ref ,obj 1))
 
 (define (_gx#compile stx)
-  (core-ast-case stx ()
-    ((form . _)
-     (cond
-      ((&core-resolve form)
-       => (lambda (bind)
-            ((%&syntax-e bind) stx)))
-      (else
-       (_gx#raise-syntax-error #f "Bad syntax" stx form))))))
+  ;; (displayln "Now in _gx#compile in gambc2")
+  (core-ast-case
+   stx ()
+   ((form . _)
+    ;; (displayln "resulving form " form (&core-resolve form))
+    (cond
+     ((&core-resolve form)
+      => (lambda (bind)
+           ;; (displayln "Form resolved " bind (%&syntax-e bind))
+           ((%&syntax-e bind) stx)))
+     (else
+      (_gx#raise-syntax-error #f "Bad syntax" stx form))))))
 
 (define (_gx#compile-error stx #!optional (detail #f))
   (_gx#raise-syntax-error 'compile "Bad syntax; cannot compile" stx detail))
@@ -104,7 +120,7 @@
                   (and (&AST-e id)
                        (&SRC
                         `(##define ,(&SRC id)
-                                   (##vector-ref ,tmp ,k))
+                                   (_gx#vector-ref ,tmp ,k))
                         stx)))
                 ids (iota len)))
            stx)))))))
@@ -253,7 +269,7 @@
              (foldr (lambda (hd r)
                       (core-match hd
                         ((id . k)
-                         (cons `(,id (##vector-ref ,tmp ,k)) r))))
+                         (cons `(,id (_gx#vector-ref ,tmp ,k)) r))))
                     bind init)))
         (else
          (&SRC
@@ -327,7 +343,7 @@
              (foldr (lambda (hd r)
                       (core-match hd
                         ((id . k)
-                         (cons `(##set! ,id (##vector-ref ,tmp ,k)) r))))
+                         (cons `(##set! ,id (_gx#vector-ref ,tmp ,k)) r))))
                     bind init)))
         (else
          (&SRC
@@ -406,7 +422,7 @@
                                    (core-match hd
                                      ((id . k)
                                       (&SRC
-                                       `(##set! ,id (##vector-ref ,tmp ,k))
+                                       `(##set! ,id (_gx#vector-ref ,tmp ,k))
                                        stx))))
                                  init))
                   stx)

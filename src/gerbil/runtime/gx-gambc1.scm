@@ -8,7 +8,7 @@
   (block)
   (standard-bindings)
   (extended-bindings))
-(declare (not safe))
+(declare (safe))
 
 ;;; gerbil ASTs
 (define-struct AST (e source)
@@ -22,10 +22,10 @@
   `(##structure-instance-of? ,e 'gerbil#AST::t))
 
 (define-macro (%AST-e e)
-  `(##vector-ref ,e 1))
+  `(_gx#vector-ref ,e 1))
 
 (define-macro (%AST-source e)
-  `(##vector-ref ,e 2))
+  `(_gx#vector-ref ,e 2))
 
 (define (&AST e src-stx)
   (let ((src (&AST-source src-stx)))
@@ -162,9 +162,9 @@
   id: _gx#&context::t)
 
 (define-macro (%&context-super ctx)
-  `(##vector-ref ,ctx 3))
+  `(_gx#vector-ref ,ctx 3))
 (define-macro (%&context-table ctx)
-  `(##vector-ref ,ctx 4))
+  `(_gx#vector-ref ,ctx 4))
 
 (define-struct &runtime (id)
   id: _gx#&runtime::t)
@@ -204,12 +204,12 @@
     (macro-readtable-write-extended-read-macros?-set! rt #t)
     (_gx#readtable-bracket-keyword-set! rt '@list)
     (_gx#readtable-brace-keyword-set! rt '@method)
-    (eval-if (>= (##vector-length (current-readtable)) 42)
+    (eval-if (>= (##structure-length (current-readtable)) 42)
       (##readtable-char-sharp-handler-set! rt #\! _gx#read-sharp-bang)
       (void))
     rt))
 
-(eval-if (>= (##vector-length (current-readtable)) 42)
+(eval-if (>= (##structure-length (current-readtable)) 42)
   (begin
     (define (_gx#readtable-bracket-keyword-set! rt kw)
       (macro-readtable-bracket-handler-set! rt kw))
@@ -1333,7 +1333,7 @@
            (recur rest (fx1+ n))
            (let (($tgt (gensym 'tgt)))
              (&AST
-              `(let-values (((,$tgt) (##vector-ref ,tgt ,n)))
+              `(let-values (((,$tgt) (_gx#vector-ref ,tgt ,n)))
                  ,(generate1 hd $tgt (recur rest (fx1+ n)) E))
               stx))))
         (else K)))
@@ -1342,7 +1342,7 @@
            (len (length body)))
       (&AST
        `(if (and (struct-instance? ,type-id ,tgt)
-                 (fx< ,len (##vector-length ,tgt)))
+                 (fx< ,len (##structure-length ,tgt)))
           ,(recur body 1)
           ,E)
        stx)))

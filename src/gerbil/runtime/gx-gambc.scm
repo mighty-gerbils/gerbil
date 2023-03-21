@@ -9,6 +9,18 @@
   (standard-bindings)
   (extended-bindings))
 
+
+(declare
+ ;; (block)
+ (standard-bindings) (extended-bindings)
+
+  (not inline)
+  ;; (debug)
+  ;; (debug-location)
+  ;; (debug-source)
+  ;; (debug-environments)
+ )
+
 (define __gx#default-gerbil-home #f)
 
 (define _gx#loading-scheme-source
@@ -159,10 +171,17 @@
 ;; stuffs
 (define (_gx#expand-source src)
   (define (expand src)
+    ;; (displayln "In expand" )
+
     (_gx#compile-top
      (gx#core-expand (_gx#source->syntax src))))
 
   (define (no-expand src)
+    #;(displayln "Trying no expand " (_gx#loading-scheme-source)
+               "\n"
+               (if  (##source? src)
+                    (##source-code src)
+                    "  NOt Sotrce"))
     (cond
      ((_gx#loading-scheme-source)
       src)
@@ -173,7 +192,8 @@
              (##cdr code))))
      (else #f)))
 
-  ;;(displayln "expand-source " src)
+  #;(displayln "expand-source " src " "
+             (and  (##source? src) (##source-code src)))
 
   (cond
    ((no-expand src) => values)
@@ -208,24 +228,54 @@
 (define (_gx#compile-top-source stx)
   (cons __noexpand: (_gx#compile-top stx)))
 
+#;(define (_gx#compile-top stx)
+(_gx#compile (gx#core-compile-top-syntax stx)))
+
 (define (_gx#compile-top stx)
-  (_gx#compile (gx#core-compile-top-syntax stx)))
+  #;(displayln "compile top" stx)
+  (let ((comp-me (gx#core-compile-top-syntax stx)
+         #;(with-exception-handler
+             (lambda (e)
+               (displayln "failed trying " gx#core-compile-top-syntax
+                          (eq? gx#core-compile-top-syntax _gx#dbug_comp)
+                          ;; gx#dbug-import-modules
+                          )
+               (display-exception e)
+               (_gx#pp-syntax stx) (exit 0))
+           (lambda ()
+             (displayln "Calling Core compile top syntax" gx#core-compile-top-syntax)
+             (gx#core-compile-top-syntax stx)))))
+    #;(displayln "compile" comp-me)
+    (##force-output)
+    (_gx#compile comp-me)))
+
+#;(define (_gx#compile-top stx)
+  (displayln "trying " stx ())
+  (let ((comp-me (gx#core-compile-top-syntax stx)))
+    (displayln "compile" comp-me)
+    (##force-output)
+    (_gx#compile comp-me)))
 
 (define (_gx#eval-import in)
   (define mods (make-hash-table-eq))
 
   (define (import1 in phi)
+    #;(displayln "eval import 1" (_gx#vector->list in) phi)
     (cond
      ((gx#module-import? in)
+      #;(displayln "Module IMpoty?")
       (let ((iphi (fx+ phi (gx#module-import-phi in))))
         (when (fxzero? iphi)
           (eval1
            (gx#module-export-context
             (gx#module-import-source in))))))
      ((gx#module-context? in)
+      #;(displayln "Module Context "  in)
       (when (fxzero? phi)
         (eval1 in)))
      ((gx#import-set? in)
+      #;(displayln "Import SEt!?" (fx+ phi (gx#import-set-phi in))
+                 (gx#import-set-source in))
       (let ((iphi (fx+ phi (gx#import-set-phi in))))
         (cond
          ((fxzero? iphi)
@@ -237,19 +287,36 @@
       (error "Unexpected import" in))))
 
   (define (eval1 ctx)
+    #;(displayln "In Eval1 for module" ctx
+               " unless " (hash-get mods ctx)
+               " evaling " (gx#expander-context-id ctx))
     (unless (hash-get mods ctx)
+      #;(displayln "Evaling Module now! "
+                 (gx#expander-context-id ctx))
       (hash-put! mods ctx #t)
       (_gx#eval-module ctx)))
 
+  #;(displayln "Evaling import" in)
   (if (pair? in)
-    (for-each (lambda (in) (import1 in 0)) in)
-    (import1 in 0)))
+      (for-each (lambda (in) (import1 in 0)) in)
+      (import1 in 0))
+#;(displayln "END: Trying to see the last context \n")
+  #;  (with-exception-catcher
+     (lambda (e) (display-exception e)
+             (displayln "Nope, caught excrption"))
+     (lambda () (gx#dbg-core-cxt)
+             (displayln "now? " gx#core-dbg-cxt)))
+    #;(displayln "\n----\n")
+
+
+  )
 
 ;; bootstrap module eval - init-gx! sets to gx#core-eval-module
 (define (_gx#eval-module obj)
+  (displayln "Are we here or gx#core-eval-module?" obj)
   (let ((key (if (gx#module-context? obj)
-               (gx#module-context-path obj)
-               obj)))
+                 (gx#module-context-path obj)
+                 obj)))
     (cond
      ((hash-get _gx#*modules* key) => values) ; bootstrap import
      (else

@@ -336,7 +336,7 @@ namespace: gxc
 
   (def (countf-symbol id)
     (case (identifier-symbol id)
-      ((##vector-length vector-length)
+      ((_gx#vector-length vector-length)
        'vector-length)
       ((values-count)
        'values-count)
@@ -824,8 +824,8 @@ namespace: gxc
               (_ (core-bind-runtime! id))
               (body (xform-e #'body kont-id kont-box negation-id)))
          ['%#let-values [[[id] #'(%#call (%#ref split-splice) . args)]]
-           ['%#let-values [[[#'tgt] ['%#call '(%#ref ##vector-ref) ['%#ref id] '(%#quote 0)]]
-                           [[#'tl] ['%#call '(%#ref ##vector-ref) ['%#ref id] '(%#quote 1)]]]
+           ['%#let-values [[[#'tgt] ['%#call '(%#ref _gx#vector-ref) ['%#ref id] '(%#quote 0)]]
+                           [[#'tl] ['%#call '(%#ref _gx#vector-ref) ['%#ref id] '(%#quote 1)]]]
               body]]))
 
       ((%#let-values bind body)

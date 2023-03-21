@@ -1033,7 +1033,7 @@ package: gerbil
                     (if (symbol? e)
                       (let* ((h (##symbol-hash e))
                              (ix (##fxmodulo h tablen))
-                             (q (##vector-ref t ix)))
+                             (q (_gx#vector-ref t ix)))
                         (if (eq? q e)
                           cont
                           (E)))
@@ -1050,7 +1050,7 @@ package: gerbil
                 (if (symbol? e)
                   (let* ((h (##symbol-hash e))
                          (ix (##fxmodulo h tablen))
-                         (q (##vector-ref t ix)))
+                         (q (_gx#vector-ref t ix)))
                     (if q
                       (if (eq? (##car q) e)
                         (let (x (##cdr q))
@@ -1124,7 +1124,7 @@ package: gerbil
                     (if (char? e)
                       (let (ix (##char->integer e))
                         (if (##fx< ix tablen)
-                          (let (x (##vector-ref t ix))
+                          (let (x (_gx#vector-ref t ix))
                             (if x
                               (~case-dispatch x dispatch ...)
                               (E)))
@@ -1147,7 +1147,7 @@ package: gerbil
                 (if (char? e)
                   (let* ((h (##char->integer e))
                          (ix (##fxmodulo h tablen))
-                         (q (##vector-ref t ix)))
+                         (q (_gx#vector-ref t ix)))
                     (if q
                       (if (eq? (##car q) e)
                         (let (x (##cdr q))
@@ -1195,7 +1195,7 @@ package: gerbil
                         (t (quote tab)))
                     (if (fixnum? e)
                       (if (and (##fx>= e 0) (##fx< e tablen))
-                        (let (x (##vector-ref t e))
+                        (let (x (_gx#vector-ref t e))
                           do-dispatch)
                         (E))
                       (E))))))
@@ -1215,7 +1215,7 @@ package: gerbil
                     (t (quote tab)))
                 (if (fixnum? e)
                   (let* ((ix (##fxmodulo e tablen))
-                         (q (##vector-ref t ix)))
+                         (q (_gx#vector-ref t ix)))
                     (if q
                       (if (eq? (##car q) e)
                         (let (x (##cdr q))
@@ -1244,7 +1244,7 @@ package: gerbil
                     (t (quote tab)))
                 (let* ((h (hashf e))
                        (ix (##fxmodulo h tablen))
-                       (q (##vector-ref t ix)))
+                       (q (_gx#vector-ref t ix)))
                   (if q
                     (if (eqf (##car q) e)
                       (let (x (##cdr q))
@@ -2495,7 +2495,7 @@ package: gerbil
                ((simple: body)
                 (with-syntax ((len (stx-length #'body)))
                   ['if #'(##vector? target)
-                       ['if #'(##fx= (##vector-length target) len)
+                       ['if #'(##fx= (_gx#vector-length target) len)
                             (generate-simple-vector tgt #'body 0 K E)
                             E]
                        E]))
@@ -2564,7 +2564,7 @@ package: gerbil
              (with-syntax (($tgt (genident 'e))
                            (target tgt)
                            (k off))
-               ['let #'(($tgt (##vector-ref target k)))
+               ['let #'(($tgt (_gx#vector-ref target k)))
                      (generate1 #'$tgt #'hd
                                 (recur #'rest (fx1+ off))
                                 E)]))
@@ -2578,9 +2578,9 @@ package: gerbil
                           ((values->list)
                            #'(values->list target))
                           ((vector->list)
-                           #'(##vector->list target))
+                           #'(_gx#vector->list target))
                           ((struct->list)
-                           #'(##cdr (##vector->list target)))
+                           #'(##cdr (_gx#vector->list target)))
                           (else
                            (raise-syntax-error #f "Unexpected list conversion" stx ->list)))))
           ['let #'(($tgt target->list))
@@ -2620,7 +2620,7 @@ package: gerbil
                  ['if #'instance-check K E]
                  (with-syntax ((len len))
                    ['if #'instance-check
-                     ['if #'(##fx< len (##vector-length target))
+                     ['if #'(##fx< len (_gx#vector-length target))
                           K E]
                      E]))))
             ((list: body)
@@ -2658,7 +2658,7 @@ package: gerbil
                             ($off (genident 'slot))
                             ($tgt (genident 'e))
                             ((values K)
-                             ['let #'(($tgt (##vector-ref target (fx1+ $off))))
+                             ['let #'(($tgt (_gx#vector-ref target (fx1+ $off))))
                                    (generate1 #'$tgt #'pat
                                               (recur klass #'rest)
                                               E)]))

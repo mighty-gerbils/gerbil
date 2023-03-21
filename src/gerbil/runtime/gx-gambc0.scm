@@ -9,6 +9,42 @@
   (standard-bindings)
   (extended-bindings))
 
+;;; Change all vector stuff to this
+(define (_gx#vector-ref svs n)
+  (if (##structure? svs)
+      (##unchecked-structure-ref svs n ##type-type _gx#vector-ref)
+      (if (##values? svs)
+          (##values-ref svs n)
+          (if (##vector? svs)
+           (##vector-ref svs n)
+           (error "Tried _gx#vector-ref on a non-vector/struct/values: " svs)))))
+(define (_gx#vector-set! svs i value)
+  (if (##structure? svs)
+      (##unchecked-structure-set!
+       svs value i ##type-type _gx#vector-set!)
+      (if (##values? svs)
+          (##values-set! svs i value)
+          (if (##vector? svs)
+           (##vector-set! svs i value)
+           (error "Tried _gx#vector-set! on a non-vector/struct/values: " svs)))))
+(define (_gx#vector-length svs)
+  (if (##structure? svs) (##structure-length svs)
+      (if (##values? svs) (##values-length svs)
+          (if (##vector? svs) (##vector-length svs)
+           (error "Tried _gx#vector-length on a non-vector/struct/values: " svs)))))
+(define (_gx#vector->list svs)
+  (if (##vector? svs)
+      (##vector->list svs)
+      (if (##structure? svs)
+          (let ((end (##structure-length svs)))
+            (let sl ((n 0))
+              (if (= n end) '()
+                  (cons (##unchecked-structure-ref
+                         svs n ##type-type _gx#vector->list)
+                        (sl (+ 1 n))))))
+          (if (##values? svs) (##values->list svs)
+              (error "Tried _gx#vector->list on a non-vector/struct/values: " svs)))))
+
 ;;;
 ;;; Host Runtime
 ;;;
@@ -28,7 +64,7 @@
 (define (gerbil-runtime-smp?)
   ;; voodoo hack; this relies on the deq of the thread-group structure having
   ;; 3 fields in UP and 4 fields in SMP
-  ;; maybe one day marc will provide a primitive/principled way to figure that out, but
+ ;; maybe one day marc will provide a primitive/principled way to figure that out, but
   ;; until that day comes we really need to know in order to have the right cond-expand
   ;; branch when we include _gambit# or gx-gambc# (which includes _gambit#)
   (not (%%vector-ref (thread-thread-group ##primordial-thread) 3)))
@@ -46,18 +82,26 @@
   (make-parameter #f))
 (define &current-module-registry
   (make-parameter #f))
-
+(define (gx#dbug)
+  (with-exception-catcher
+   (lambda _ _)
+   (lambda () (##eval '(gx#dbg-core-cxt)))))
 (define (load-module modpath #!optional (reload? #f))
+  (gx#dbug)
   (cond
    ((and (not reload?) (hash-get (&current-module-registry) modpath))
     => values)
    ((find-library-module modpath)
     => (lambda (path)
+
+  ;; (gx#dbug)
          (let ((lpath (load path)))
+  ;; (gx#dbug)
            (hash-put! (&current-module-registry) modpath lpath)
            lpath)))
    (else
     (error "Cannot load module; not found" modpath))))
+
 
 (define (find-library-module modpath)
   (define (find-compiled-file npath)
@@ -65,8 +109,8 @@
       (let lp ((current #f) (n 1))
         (let ((next (%%string-append basepath (##number->string n))))
           (if (##file-exists? next)
-            (lp next (%%fx+ n 1))
-            current)))))
+              (lp next (%%fx+ n 1))
+              current)))))
 
   (define (find-source-file npath)
     (let ((spath (%%string-append npath ".scm")))
@@ -74,13 +118,13 @@
 
   (let lp ((rest (&current-module-libpath)))
     (core-match rest
-      ((dir . rest)
-       (let ((npath (path-expand modpath (path-expand dir))))
-         (cond
-          ((find-compiled-file npath) => path-normalize)
-          ((find-source-file npath) => path-normalize)
-          (else (lp rest)))))
-      (else #f))))
+                ((dir . rest)
+                 (let ((npath (path-expand modpath (path-expand dir))))
+                   (cond
+                    ((find-compiled-file npath) => path-normalize)
+                    ((find-source-file npath) => path-normalize)
+                    (else (lp rest)))))
+                (else #f))))
 
 (define (file-newer? file1 file2)
   (define (modification-time file)
@@ -588,11 +632,13 @@
 (define direct-class-instance?
   direct-instance?)
 
-(define (make-object klass k)
-  (let ((obj (%%make-vector (%%fx+ k 1) #f)))
-    (%%vector-set! obj 0 klass)
-    (%%subtype-set! obj (macro-subtype-structure))
-    obj))
+ (define (make-object klass k)
+   (let ((obj (##make-structure klass (%%fx+ k 1))))
+     (let effoff ((n 1))
+       (if (= n k) obj
+           (begin
+             (##unchecked-structure-set! obj #f n klass make-object)
+             (effoff (+ 1 n)))))))
 
 (define (make-struct-instance klass . args)
   (let ((fields (type-descriptor-fields klass)))
@@ -818,9 +864,11 @@
 (define (bind-method! klass id proc #!optional (rebind? #t))
   (define (bind! ht)
     (if (and (not rebind?) (hash-get ht id))
-      (error "Method already bound" klass id)
-      (hash-put! ht id proc)))
+        (error "Method already bound" klass id)
+        (hash-put! ht id proc)))
 
+  #;(map display (list " **** binding method " id " on " klass "? "
+       (and proc #t) " Rebind:" rebind? "\n"))
   (unless (procedure? proc)
     (error "Bad method; expected procedure" proc))
 
@@ -828,10 +876,10 @@
    ((type-descriptor? klass)
     (let ((ht (type-descriptor-methods klass)))
       (if ht
-        (bind! ht)
-        (let ((ht (make-hash-table-eq)))
-          (type-descriptor-methods-set! klass ht)
-          (bind! ht)))))
+          (bind! ht)
+          (let ((ht (make-hash-table-eq)))
+            (type-descriptor-methods-set! klass ht)
+            (bind! ht)))))
    ((%%type? klass)
     (let ((ht
            (cond
@@ -1111,7 +1159,97 @@
     (if (null? rest) hd
         (apply hash-copy! hd rest))))
 
+
+
+(cond-expand
+
+ ((compilation-target js)
+  (begin
+    (define (table-merge! table1
+                          table2
+                          #!optional
+                          (table2-takes-precedence? #f))
+      (if table2-takes-precedence?
+          (table-for-each
+           (lambda (k v)
+             (table-set! table1 k v))
+           table2)
+          (table-for-each
+           (lambda (k v)
+             (if (eq? (table-ref table1 k (macro-unused-obj))
+                      (macro-unused-obj))
+                 (table-set! table1 k v)))
+           table2))
+      table1)
+
+
+    (define (copy-file from to)
+      (##inline-host-declaration "
+@gx_copy_file@ = (scm_from, scm_to) => {
+ let from = @scm2host@(scm_from), to = @scm2host@(scm_to)
+const { cpSync } = require('node:fs');
+ console.log('Copy File', from, to)
+ return cpSync(from, to);
+}")
+      (##inline-host-expression "@gx_copy_file@(@1@, @2@)"
+                                from to))
+
+
+    (define (open-process path-or-settings)
+      (##inline-host-declaration "
+@gx_open_process@ = (path_or_settings_scm) => {
+if (typeof window !== 'undefined') {
+  return(-1);
+} else {
+  const { spawn } = require('node:child_process');
+
+  function cmd(...command) {
+   let p = spawn(...command);
+    return new Promise((resolveFunc) => {
+    p.stdout.on(\"data\", (x) => {
+      process.stdout.write(x.toString());
+    });
+    p.stderr.on(\"data\", (x) => {
+      process.stderr.write(x.toString());
+    });
+    p.on(\"close\", (code) => {
+      console.log(`child process exited with code ${code}`);
+      resolveFunc(code);
+    });
+  });
+}
+
+
+  // convert the arg list into an object
+  var array = @scm2host@(path_or_settings_scm);
+  var args = {};
+
+  array.forEach(function(item, index) {
+    if(index % 2 === 0) {
+       args[item] = array[index + 1];
+    }
+  });
+
+
+  const gsc = cmd(args.path, args.arguments);
+  console.log('gx-open-process',args, gsc.child)
+
+  return @host2scm@(gsc);
+}
+
+};
+")
+      (##inline-host-expression "@gx_open_process@(@1@)"
+                                path-or-settings))
+
+    (define (process-status proc)
+      (displayln "We have a process/promise, yeah?" proc)
+      (##scm2host-call-return proc))))
+ (else (void)))
+
+
 (define (hash-copy! hd . rest)
+  ;; (displayln "In hash copy" table-merge!)
   (for-each (lambda (r) (table-merge! hd r)) rest)
   hd)
 
