@@ -4,23 +4,11 @@
 (##namespace (""))
 ;; (include "gx-gambc#.scm")
 
-;; (declare
-;;   (block)
-;;   (standard-bindings)
-;;   (extended-bindings))
-(declare (safe))
-
 (declare
- ;; (block)
- (standard-bindings) (extended-bindings)
-
- (not inline)
- ;; (debug)
- ;; (debug-location)
- ;; (debug-source)
- ;; (debug-environments)
- )
-
+  (block)
+  (standard-bindings)
+  (extended-bindings))
+(declare (not safe))
 
 ;; core [top] syntax -> gambit runtime compiler
 (define-macro (%AST? e)

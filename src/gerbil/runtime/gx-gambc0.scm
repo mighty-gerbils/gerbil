@@ -8,6 +8,7 @@
   (block)
   (standard-bindings)
   (extended-bindings))
+(declare (not safe))
 
 ;;; Change all vector stuff to this
 (define (_gx#vector-ref svs n)
@@ -1159,8 +1160,6 @@
     (if (null? rest) hd
         (apply hash-copy! hd rest))))
 
-
-
 (cond-expand
 
  ((compilation-target js)
@@ -1245,6 +1244,8 @@ if (typeof window !== 'undefined') {
     (define (process-status proc)
       (displayln "We have a process/promise, yeah?" proc)
       (##scm2host-call-return proc))))
+
+ ;; For C et al.
  (else (void)))
 
 

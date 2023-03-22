@@ -8,7 +8,7 @@
   (block)
   (standard-bindings)
   (extended-bindings))
-(declare (safe))
+(declare (not safe))
 
 ;;; gerbil ASTs
 (define-struct AST (e source)
