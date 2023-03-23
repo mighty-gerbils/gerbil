@@ -7,7 +7,7 @@
   (displayln "gxc [options...] <file> ...")
   (displayln "Options: ")
   (displayln " -h,-help,--help             display this usage summary and exit")
-  (displayln " -d <dir>                    set compiler output directory; defaults to $GERBIL_HOME/lib")
+  (displayln " -d <dir>                    set compiler output directory; defaults to $GERBIL_PATH/lib")
   (displayln " -exe                        compile an executable")
   (displayln " -o <file>                   set executable output file")
   (displayln " -O                          optimize gerbil source")

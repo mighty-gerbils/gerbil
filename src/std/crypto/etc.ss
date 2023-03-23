@@ -126,14 +126,12 @@
           buf)
         #f))))
 
-(def *urandom* (open-input-file "/dev/urandom"))
-
 (def (random-bytes len)
   (let (bytes (make-u8vector len))
     (random-bytes! bytes 0 len)
     bytes))
 
 (def (random-bytes! bytes (start 0) (end (u8vector-length bytes)))
-  (let (count (read-subu8vector bytes start end *urandom*))
-    (unless (eq? count (##fx- end start))
-      (error "Could not read enough random bytes" count start end))))
+  (let (result (RAND_bytes bytes start end))
+    (unless (= result 1)
+      (raise-libcrypto-error "Error in RAND_bytes"))))

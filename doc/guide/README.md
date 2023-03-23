@@ -101,17 +101,17 @@ The latest Gerbil images are available via [Docker Hub](https://hub.docker.com/u
 
 Ubuntu based version:
 ```bash
-docker pull gerbil/scheme
+docker pull gerbil/ubuntu
 ```
 
 To get to the REPL:
 ```bash
-docker run -it gerbil/scheme
+docker run -it gerbil/ubuntu
 ```
 
 To get a bash shell where you can compile programs:
 ```bash
-docker run -it gerbil/scheme bash
+docker run -it gerbil/ubuntu bash
 ```
 
 Or you can build your own container using the [Dockerfile](https://github.com/vyzo/gerbil/blob/master/Dockerfile)
