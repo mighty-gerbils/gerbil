@@ -15,7 +15,7 @@
         :std/text/utf8
         :std/text/zlib)
 (export
-  http-get http-head http-post http-put http-delete http-options
+  http-get http-head http-post http-put http-delete http-options http-any
   request? request-url request-status request-status-text
   request-headers
   request-encoding request-encoding-set!
@@ -181,6 +181,18 @@
   (let ((url (url-target-e url params))
         (headers (make-http/1.1-headers headers cookies auth)))
     (http-request 'OPTIONS url headers data [] redirect)))
+
+(def (http-any     method
+                   url
+                   redirect: (redirect #t)
+                   headers:  (headers #f)
+                   cookies:  (cookies #f)
+                   params:   (params #f)
+                   data:     (data #f)
+                   auth:     (auth #f))
+  (let ((url (url-target-e url params))
+        (headers (make-http/1.1-headers headers cookies auth)))
+    (http-request method url headers data [] redirect)))
 
 (def url-rx
   (pregexp "(?:(https?)://)?([^/:]+)(:[0-9]+)?(/.*)?"))
