@@ -134,6 +134,20 @@ Like `http-get` procedure but instead executes HTTP DELETE method on `url`.
 
 Like `http-get` procedure but instead executes HTTP OPTIONS method on the `url`.
 
+### http-any
+``` scheme
+(http-any method url [headers: #f] [cookies: #f] [params: #f] [data: #f] [auth: #f]) -> request | error
+
+  method  := a symbol to define which HTTP method to use, like 'GET or 'PATCH
+  url     := a string to tell which URL the HTTP client should connect to
+  headers := alist of extra HTTP headers to set in request
+  cookies := alist of cookie name/value pairs to set in request
+  params  := alist of query param name/value pairs set in request
+  data    := request data given as octet vector or string
+  auth    := a list with a keyword head, like [basic: user password]
+```
+
+Like the other http procedures but allows you to specify your own HTTP method.
 
 ## Request Objects
 
