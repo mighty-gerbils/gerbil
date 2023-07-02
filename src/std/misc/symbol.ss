@@ -2,14 +2,7 @@
 ;;; © vyzo
 ;;; symbolic utilities
 (import :gerbil/gambit/threads)
-(export symbol<?
-        symbol<=?
-        symbol>?
-        symbol>=?
-        compare-symbol<?
-        compare-symbol<=?
-        compare-symbol>?
-        compare-symbol>=?)
+(export #t)
 
 ;; caching symbol as string comparison
 (def (compare-symbolic cmp-e mx?)
