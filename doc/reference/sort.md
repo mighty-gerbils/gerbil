@@ -61,3 +61,74 @@ sort.
 
 Like `stable-sort`, but the procedure is allowed to reuse/modify the original sequence to
 produce its output.
+
+# Symbolic Comparisons
+
+Often times there is a need to sort using symbolic comparisons. The
+`:std/misc/symbol` library implements caching versions of symbolic
+comparisons using the string representation.
+
+::: tip To use the bindings from this module:
+``` scheme
+(import :std/misc/symbol)
+```
+:::
+
+
+## symbol<?
+```scheme
+(symbol<? x y) -> bool
+
+  x,y := symbol
+```
+
+Compares two symbols' string representation using `string<?`.
+The string representation is globally cached.
+
+## symbol<=?
+
+Similar to `symbol<?`, using `string<=?`
+
+## symbol>=?
+
+Similar to `symbol<?`, using `string>=?`
+
+## symbol>?
+
+Similar to `symbol<?`, using `string>?`
+
+## compare-symbol<?
+```scheme
+(compare-symbol<? (mx? #f)) -> lambda (symbol symbol) -> bool
+
+  mx? := bool; use a mutex to protect the cache
+```
+
+Create a locally scoped caching `symbol<?`-like comparison with its own cache.
+
+## compare-symbol<=?
+
+Similar to `compare-symbol<?` using `string<=?`.
+
+## compare-symbol>=?
+
+Similar to `compare-symbol<?` using `string>=?`.
+
+## compare-symbol>?
+
+Similar to `compare-symbol<?` using `string>?`.
+
+## compare-symbolic
+```scheme
+(compare-symbolic cmp-e mx?) -> lambda (symbol symbol) -> bool
+
+  cmp-e := lambda (symbol) -> string
+  mx?   := bool; use a mutex to protect the cache
+```
+
+Create a generic caching symbolic comparison function.
+
+For instance:
+```
+symbol<? == (compare-symbolic string? #t)
+```
