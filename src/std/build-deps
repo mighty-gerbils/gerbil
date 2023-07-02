@@ -158,7 +158,12 @@
   (gerbil/core gerbil/gambit/bits std/error))
  (std/net/bio/buffer
   "net/bio/buffer"
-  (gerbil/core std/error std/net/bio/input std/net/bio/output std/srfi/1))
+  (gerbil/core
+   gerbil/gambit/hvectors
+   std/error
+   std/net/bio/input
+   std/net/bio/output
+   std/srfi/1))
  (std/xml/sxpath "xml/sxpath" (gerbil/core))
  (std/xml/sxml "xml/sxml" (gerbil/core))
  (std/xml/sxml-to-xml
@@ -687,7 +692,9 @@
  (std/test
   "test"
   (gerbil/core gerbil/gambit std/error std/format std/misc/list std/sugar))
- (std/foreign-test "foreign-test" (gerbil/core std/foreign std/test))
+ (std/foreign-test
+  "foreign-test"
+  (gerbil/core gerbil/gambit std/foreign std/test))
  (std/misc/uuid
   "misc/uuid"
   (gerbil/core
@@ -832,7 +839,7 @@
  (std/misc/number "misc/number" (gerbil/core std/srfi/1 std/sugar))
  (std/misc/hash "misc/hash" (gerbil/core gerbil/gambit/hash std/iter std/sort))
  (std/misc/path "misc/path" (gerbil/core))
- (std/misc/symbol "misc/symbol" (gerbil/core))
+ (std/misc/symbol "misc/symbol" (gerbil/core gerbil/gambit/threads))
  (std/make
   "make"
   (gerbil/compiler
