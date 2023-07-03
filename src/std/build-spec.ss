@@ -187,6 +187,7 @@
         (else '()))
     "os/signal-handler"
     "os/pid"
+    "os/temporaries"
     ;; :std/net/bio
     "net/bio/input"
     "net/bio/output"
