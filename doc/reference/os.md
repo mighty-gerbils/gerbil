@@ -507,4 +507,4 @@ It makes  `mktemp` sane by appending the current timestamp in nanosecods.
 ```
 
 Creates a temporary filename and invokes `fun` with it, deleting the
-temporary filename on unwind if it has been created.
+temporary file on unwind if it has been created.
