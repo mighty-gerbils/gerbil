@@ -5,7 +5,8 @@
 (import :gerbil/gambit/os
         :std/foreign
         :std/sugar)
-(export #t)
+(export make-temporary-file-name
+        call-with-temporary-file-name)
 
 (def (call-with-temporary-file-name name fun)
   (def tmp (make-temporary-file-name name))
