@@ -590,6 +590,9 @@
    std/os/signalfd
    std/sugar))
  (std/os/pid "os/pid" (gerbil/core std/foreign))
+ (std/os/temporaries
+  "os/temporaries"
+  (gerbil/core gerbil/gambit/os std/foreign std/sugar))
  (std/net/bio/file
   "net/bio/file"
   (gerbil/core
