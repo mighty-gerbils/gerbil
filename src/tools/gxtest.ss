@@ -73,9 +73,8 @@
          (if (string-suffix? "-test.ss" file)
            (cons (string-append arg "/" file) result)
            result)))
-      ((string-suffix? "-test.ss" arg)
-       (cons arg result))
-      (else result)))))
+      (else
+       (cons arg result))))))
 
 (def (collect-files-r dir result)
   (for/fold (result result) (arg (directory-files dir))
