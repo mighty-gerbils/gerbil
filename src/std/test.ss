@@ -15,9 +15,12 @@
   check-equal? check-not-equal?
   check-output check-predicate check-exception
   !check-fail? !check-fail-e
-  run-tests! test-report-summary!
+  run-tests!
   run-test-suite!
-  test-result)
+  set-test-verbose!
+  test-begin!
+  test-result
+  test-report-summary!)
 
 (defstruct !check-fail (e value loc))
 (defstruct !check-error (exn check loc))
