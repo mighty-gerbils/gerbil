@@ -50,7 +50,10 @@
       (displayln "=== " file " [" suite-name "]")
       (force-output)
       (run-test-suite! suite)))
-  (displayln (test-result)))
+  (let (result (test-result))
+    (displayln result)
+    (unless (eq? result 'OK)
+      (exit 42))))
 
 (def (collect-files args)
   (reverse
