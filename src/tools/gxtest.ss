@@ -15,11 +15,11 @@
   (def gopt
     (getopt
      (flag 'verbose "-v"
-           help: "run in verbose mode where all test execution progress is displayed in stdout")
+           help: "run in verbose mode where all test execution progress is displayed in stdout.")
      (flag 'help "-h" "--help"
            help: "display help")
      (rest-arguments 'args
-                     help: "test files or directories to execut tests in; appending /... to a directory will recursively execute or tests in it. By default all tests in the current directory are executed")))
+                     help: "test files or directories to execut tests in; appending /... to a directory will recursively execute or tests in it. If no arguments are passed, all tests in the current directory are executed.")))
 
   (def (help what)
     (getopt-display-help what "gxtest"))
