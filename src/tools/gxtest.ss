@@ -41,17 +41,24 @@
      (exit 2))))
 
 (def (run-tests args verbose?)
+  (def import-errors [])
   (_gx#load-expander!)
   (set-test-verbose! verbose?)
   (test-begin!)
   (let* ((files (collect-files args))
-         (suites (prepare-suites files)))
+         ((values suites errors) (prepare-suites files)))
+    (set! import-errors errors)
     (for ([file suite-name suite] suites)
       (displayln "=== " file " [" suite-name "]")
       (force-output)
       (run-test-suite! suite)))
+
   (let (result (test-result))
     (displayln result)
+    (unless (null? import-errors)
+      (displayln "*** WARNING: there were errors importing the following test files, which were not run:")
+      (for-each displayln import-errors)
+      (exit 42))
     (unless (eq? result 'OK)
       (exit 42))))
 
@@ -82,18 +89,23 @@
      (else result))))
 
 (def (prepare-suites files)
-  (reverse
-   (for/fold (result []) (file files)
-     (let (ctx (try-import-module file))
-       (if ctx
-         (for/fold (result result) (exported (module-context-export ctx))
-           (if (and (= (module-export-phi exported) 0)
-                    (string-suffix? "-test" (symbol->string (module-export-name exported))))
-             (let (bind (core-resolve-module-export exported))
-               (cons [file (module-export-name exported) (eval (binding-id bind))]
-                     result))
-             result))
-         result)))))
+  (def errors [])
+  (values
+   (reverse
+    (for/fold (result []) (file files)
+      (let (ctx (try-import-module file))
+        (if ctx
+          (for/fold (result result) (exported (module-context-export ctx))
+            (if (and (= (module-export-phi exported) 0)
+                     (string-suffix? "-test" (symbol->string (module-export-name exported))))
+              (let (bind (core-resolve-module-export exported))
+                (cons [file (module-export-name exported) (eval (binding-id bind))]
+                      result))
+              result))
+          (begin
+            (set! errors (cons file errors))
+            result)))))
+   errors))
 
 (def (try-import-module file)
   (try
