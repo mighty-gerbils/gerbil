@@ -53,11 +53,18 @@
       (try
        (displayln "=== " file)
        (force-output)
-       (setup!)
+       (when setup!
+         (displayln ">>> setup")
+         (force-output)
+         (setup!))
        (for ([name . suite] suites)
-         (displayln ">>> " name)
+         (displayln ">>> run " name)
          (run-test-suite! suite))
-       (finally (cleanup!)))))
+       (finally
+        (when cleanup!
+         (displayln ">>> cleanup")
+         (force-output)
+         (cleanup!))))))
 
   (let (result (test-result))
     (unless (null? import-errors)
@@ -108,8 +115,8 @@
    errors))
 
 (def (prepare-suites-for-module ctx)
-  (def setup! void)
-  (def cleanup! void)
+  (def setup! #f)
+  (def cleanup! #f)
   (let (suites
         (for/fold (suites []) (exported (module-context-export ctx))
           (cond
