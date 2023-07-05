@@ -34,7 +34,8 @@ jobs:
         if: ${{ !steps.cache-gambit.outputs.cache-hit }}
         run: |
           cd gambit-src
-          ./configure --prefix=${GITHUB_WORKSPACE}/gambit --enable-single-host
+          export LDFLAGS="-lm"
+          ./configure 'LIBS=-lm' --prefix=${GITHUB_WORKSPACE}/gambit --enable-single-host --enable-targets=""
           make clean
           make
           make install
