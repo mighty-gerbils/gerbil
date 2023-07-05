@@ -8,6 +8,7 @@
         :std/iter
         :std/format
         :std/test
+        :std/pregexp
         :std/srfi/13)
 (export main)
 
@@ -16,6 +17,8 @@
     (getopt
      (flag 'verbose "-v"
            help: "run in verbose mode where all test execution progress is displayed in stdout.")
+     (option 'run "-r" "--run"
+             help: "only run test suites whose name matches a given regex")
      (flag 'help "-h" "--help"
            help: "display help")
      (rest-arguments 'args
@@ -30,9 +33,9 @@
        (cond
         (.?help (help gopt))
         ((null? .args)
-         (run-tests ["."] .?verbose))
+         (run-tests ["."] .run .?verbose))
         (else
-         (run-tests .args .?verbose)))))
+         (run-tests .args .run .?verbose)))))
    (catch (getopt-error? exn)
      (help exn)
      (exit 1))
@@ -40,8 +43,10 @@
      (display-exception e (current-error-port))
      (exit 2))))
 
-(def (run-tests args verbose?)
+(def (run-tests args filter verbose?)
   (def import-errors [])
+  (def filter-rx (and filter (pregexp filter)))
+
   (_gx#load-expander!)
   (set-test-verbose! verbose?)
   (test-begin!)
@@ -58,8 +63,9 @@
          (force-output)
          (setup!))
        (for ([name . suite] suites)
-         (displayln ">>> run " name)
-         (run-test-suite! suite))
+         (when (or (not filter) (pregexp-match filter-rx (symbol->string name)))
+           (displayln ">>> run " name)
+           (run-test-suite! suite)))
        (finally
         (when cleanup!
          (displayln ">>> cleanup")
