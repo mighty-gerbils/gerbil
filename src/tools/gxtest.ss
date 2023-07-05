@@ -54,11 +54,11 @@
       (run-test-suite! suite)))
 
   (let (result (test-result))
-    (displayln result)
     (unless (null? import-errors)
-      (displayln "*** WARNING: there were errors importing the following test files, which were not run:")
+      (displayln "*** ERROR: there were errors importing the following test files, which were not run:")
       (for-each displayln import-errors)
       (exit 42))
+    (displayln result)
     (unless (eq? result 'OK)
       (exit 42))))
 
