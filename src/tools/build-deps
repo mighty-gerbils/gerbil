@@ -24,5 +24,16 @@
    std/pregexp
    std/sort
    std/srfi/13
-   std/sugar)))
+   std/sugar))
+ (gerbil/tools/gxtest
+  (exe: "gxtest")
+  (gerbil/core
+   gerbil/expander
+   gerbil/gambit
+   std/format
+   std/getopt
+   std/iter
+   std/srfi/13
+   std/sugar
+   std/test)))
 
