@@ -5,7 +5,7 @@ in the command line.
 
 ## Running tests with gxtest
 
-Test files by convention have the `-test.ss` suffix and are generally more compiled.
+Test files by convention have the `-test.ss` suffix and are generally not compiled.
 Each test file is a module that should export one or more _test suites_, with a name that
 ends in `-test`. See below for definition of test suites and test cases.
 
@@ -22,7 +22,7 @@ gxtest ./...
 ## Test suites
 
 A test suite is created using the `test-suite` special form from `:std/test` and contains one
-or more _test cases_ created with the `test-case` special form from `:std/test`.
+or more _test cases_ created with the `test-case` special form.
 
 Test cases contain code executed by the test runner, and in general contain one or more _checks_ with the `check` family of special forms which perform assertions.
 
@@ -79,6 +79,8 @@ $ echo $?
   case := test-case
 ```
 
+Creates a test suite with one ore more test cases.
+
 ### test-case
 ```scheme
 (test-case description body ...) -> test-case
@@ -86,6 +88,8 @@ $ echo $?
   description := string; description of the test case
   body := code, as in the body of a lambda
 ```
+
+Creates a new test case, with the body executed in a thunk.
 
 ### check
 ```scheme
@@ -170,6 +174,5 @@ Evalutes `expr` and asserts that its value satisfies the predicate `pred`.
 ```scheme
 (check-exception expr exn-pred)
 ```
-:::
 
 Evalutes `expr` and asserts that it raises an exception that satisfies the predicate `exn-pred`.
