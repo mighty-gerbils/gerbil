@@ -33,6 +33,7 @@
    std/format
    std/getopt
    std/iter
+   std/pregexp
    std/srfi/13
    std/sugar
    std/test)))
