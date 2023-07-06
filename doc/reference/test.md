@@ -125,7 +125,7 @@ Evaluates an `expr` and asserts that its value is the expected one:
 (checkf equality-predicate expr value)
 ```
 
-Evaulates expr and asserts that the the value is as expected, using the equality-predicate.
+Evaluates expr and asserts that the the value is as expected, using the equality-predicate.
 
 ### check-eq?
 ```scheme
@@ -177,18 +177,18 @@ Equivalent to `(checkf (? not equal?) expr value)`.
 (check-output expr output)
 ```
 
-Evalutes `expr` capturing its output and asserts it is equal to the expected `output`.
+Evaluates `expr` capturing its output and asserts it is equal to the expected `output`.
 
 ### check-predicate
 ```scheme
 (check-predicate expr pred)
 ```
 
-Evalutes `expr` and asserts that its value satisfies the predicate `pred`.
+Evaluates `expr` and asserts that its value satisfies the predicate `pred`.
 
 ### check-exception
 ```scheme
 (check-exception expr exn-pred)
 ```
 
-Evalutes `expr` and asserts that it raises an exception that satisfies the predicate `exn-pred`.
+Evaluates `expr` and asserts that it raises an exception that satisfies the predicate `exn-pred`.

@@ -22,7 +22,7 @@
      (flag 'help "-h" "--help"
            help: "display help")
      (rest-arguments 'args
-                     help: "test files or directories to execut tests in; appending /... to a directory will recursively execute or tests in it. If no arguments are passed, all tests in the current directory are executed.")))
+                     help: "test files or directories to execute tests in; appending /... to a directory will recursively execute or tests in it. If no arguments are passed, all tests in the current directory are executed.")))
 
   (def (help what)
     (getopt-display-help what "gxtest"))
