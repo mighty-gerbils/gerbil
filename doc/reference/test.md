@@ -9,6 +9,11 @@ Test files by convention have the `-test.ss` suffix and are generally not compil
 Each test file is a module that should export one or more _test suites_, with a name that
 ends in `-test`. See below for definition of test suites and test cases.
 
+Tests can also optionally export `test-setup!` and `test-cleanup!` thunks:
+- `test-setup!` will be executed before any test-suite in the file has run.
+- `test-cleanup!` will be executed (with unwind protection) when all the test suites in the
+  file have run.
+
 Once your tests are in place, you can run them using `gxtest`.
 If you invoke it without arguments it will run all the test files in the current directory.
 You can also explicitly pass files or directories to be run, and if you want to run tests
@@ -43,7 +48,13 @@ $ cat mylib.ss
 $ cat mylib-test.ss
 (import :std/test
         ./mylib)
-(export mylib-test)
+(export mylib-test test-setup! test-cleanup!)
+
+(def (test-setup!)
+  (displayln "setting up..."))
+
+(def (test-cleanup!)
+  (displayln "cleaning up..."))
 
 (def mylib-test
   (test-suite "test mylib"
@@ -52,11 +63,16 @@ $ cat mylib-test.ss
 
 $ gxc -O mylib.ss
 $ gxtest
-=== ./mylib-test.ss [mylib-test]
+=== ./mylib-test.ss
+>>> setup
+setting up...
+>>> run mylib-test
 Test suite: test mylib
 Test case: test myadd
 ... 1 checks OK
 ... All tests OK
+>>> cleanup
+cleaning up...
 OK
 $ echo $?
 0

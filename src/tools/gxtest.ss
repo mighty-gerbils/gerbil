@@ -8,6 +8,7 @@
         :std/iter
         :std/format
         :std/test
+        :std/pregexp
         :std/srfi/13)
 (export main)
 
@@ -16,6 +17,8 @@
     (getopt
      (flag 'verbose "-v"
            help: "run in verbose mode where all test execution progress is displayed in stdout.")
+     (option 'run "-r" "--run"
+             help: "only run test suites whose name matches a given regex")
      (flag 'help "-h" "--help"
            help: "display help")
      (rest-arguments 'args
@@ -30,9 +33,9 @@
        (cond
         (.?help (help gopt))
         ((null? .args)
-         (run-tests ["."] .?verbose))
+         (run-tests ["."] .run .?verbose))
         (else
-         (run-tests .args .?verbose)))))
+         (run-tests .args .run .?verbose)))))
    (catch (getopt-error? exn)
      (help exn)
      (exit 1))
@@ -40,24 +43,41 @@
      (display-exception e (current-error-port))
      (exit 2))))
 
-(def (run-tests args verbose?)
+(def (run-tests args filter verbose?)
   (def import-errors [])
+  (def filter-rx (and filter (pregexp filter)))
+
   (_gx#load-expander!)
   (set-test-verbose! verbose?)
   (test-begin!)
+
   (let* ((files (collect-files args))
          ((values suites errors) (prepare-suites files)))
     (set! import-errors errors)
-    (for ([file suite-name suite] suites)
-      (displayln "=== " file " [" suite-name "]")
-      (force-output)
-      (run-test-suite! suite)))
+    (for ([file setup! cleanup! suites] suites)
+      (try
+       (displayln "=== " file)
+       (force-output)
+       (when setup!
+         (displayln ">>> setup")
+         (force-output)
+         (setup!))
+       (for ([name . suite] suites)
+         (when (or (not filter) (pregexp-match filter-rx (symbol->string name)))
+           (displayln ">>> run " name)
+           (run-test-suite! suite)))
+       (finally
+        (when cleanup!
+         (displayln ">>> cleanup")
+         (force-output)
+         (cleanup!))))))
 
   (let (result (test-result))
     (unless (null? import-errors)
       (displayln "*** ERROR: there were errors importing the following test files, which were not run:")
       (for-each displayln import-errors)
       (exit 42))
+
     (displayln result)
     (unless (eq? result 'OK)
       (exit 42))))
@@ -94,17 +114,39 @@
     (for/fold (result []) (file files)
       (let (ctx (try-import-module file))
         (if ctx
-          (for/fold (result result) (exported (module-context-export ctx))
-            (if (and (= (module-export-phi exported) 0)
-                     (string-suffix? "-test" (symbol->string (module-export-name exported))))
-              (let (bind (core-resolve-module-export exported))
-                (cons [file (module-export-name exported) (eval (binding-id bind))]
-                      result))
-              result))
+          (cons (cons file (prepare-suites-for-module ctx)) result)
           (begin
             (set! errors (cons file errors))
             result)))))
    errors))
+
+(def (prepare-suites-for-module ctx)
+  (def setup! #f)
+  (def cleanup! #f)
+  (let (suites
+        (for/fold (suites []) (exported (module-context-export ctx))
+          (cond
+           ((and (runtime-export? exported)
+                 (string-suffix? "-test" (symbol->string (module-export-name exported))))
+            (cons (cons (module-export-name exported) (eval-export exported))
+                  suites))
+           ((and (runtime-export? exported)
+                 (eq? (module-export-name exported) 'test-setup!))
+            (set! setup! (eval-export exported))
+            suites)
+           ((and (runtime-export? exported)
+                 (eq? (module-export-name exported) 'test-cleanup!))
+            (set! cleanup! (eval-export exported))
+            suites)
+           (else suites))))
+    [setup! cleanup! suites]))
+
+(def (runtime-export? exported)
+  (= (module-export-phi exported) 0))
+
+(def (eval-export exported)
+  (let (bind (core-resolve-module-export exported))
+    (eval (binding-id bind))))
 
 (def (try-import-module file)
   (try
