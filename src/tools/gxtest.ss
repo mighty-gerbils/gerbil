@@ -55,32 +55,33 @@
          ((values suites errors) (prepare-suites files)))
     (set! import-errors errors)
     (for ([file setup! cleanup! suites] suites)
-      (try
-       (displayln "=== " file)
-       (force-output)
-       (when setup!
-         (displayln ">>> setup")
-         (force-output)
-         (setup!))
-       (for ([name . suite] suites)
-         (when (or (not filter) (pregexp-match filter-rx (symbol->string name)))
-           (displayln ">>> run " name)
-           (run-test-suite! suite)))
-       (finally
-        (when cleanup!
-         (displayln ">>> cleanup")
-         (force-output)
-         (cleanup!))))))
+      (let (suites (if filter (apply-filter filter-rx suites) suites))
+        (unless (null? suites)
+          (try
+           (displayln "=== " file)
+           (force-output)
+           (when setup!
+             (displayln ">>> setup")
+             (force-output)
+             (setup!))
+           (for ([name . suite] suites)
+             (displayln ">>> run " name)
+             (run-test-suite! suite))
+           (finally
+            (when cleanup!
+              (displayln ">>> cleanup")
+              (force-output)
+              (cleanup!)))))))
 
-  (let (result (test-result))
-    (unless (null? import-errors)
-      (displayln "*** ERROR: there were errors importing the following test files, which were not run:")
-      (for-each displayln import-errors)
-      (exit 42))
+    (let (result (test-result))
+      (unless (null? import-errors)
+        (displayln "*** ERROR: there were errors importing the following test files, which were not run:")
+        (for-each displayln import-errors)
+        (exit 42))
 
-    (displayln result)
-    (unless (eq? result 'OK)
-      (exit 42))))
+      (displayln result)
+      (unless (eq? result 'OK)
+        (exit 42)))))
 
 (def (collect-files args)
   (reverse
@@ -155,3 +156,10 @@
      (eprintf "*** Error importing ~a: " file)
      (display-exception e (current-error-port))
      #f)))
+
+(def (apply-filter filter-rx suites)
+  (filter-map
+   (lambda (s)
+     (with ([name . suite] s)
+       (and (pregexp-match filter-rx (symbol->string name)) s)))
+   suites))
