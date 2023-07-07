@@ -58,7 +58,7 @@ package: std/crypto
      EVP_PKEY_keygen_init EVP_PKEY_keygen
      EVP_PKEY_new_raw_private_key EVP_PKEY_new_raw_public_key
      EVP_PKEY_get_raw_private_key EVP_PKEY_get_raw_public_key
-     EVP_DigestSign EVP_DigestVerify EVP_MD_CTX_set_pkey_ctx
+     EVP_DigestSignInit EVP_DigestSign EVP_DigestVerifyInit EVP_DigestVerify EVP_MD_CTX_set_pkey_ctx
      RAND_bytes)
 
 (declare (not safe))
@@ -84,6 +84,22 @@ END-C
 #define ___HAVE_FFI_U8VECTOR
 #define U8_DATA(obj) ___CAST (___U8*, ___BODY_AS (obj, ___tSUBTYPED))
 #define U8_LEN(obj) ___HD_BYTES (___HEADER (obj))
+#endif
+END-C
+)
+
+;;; version features -- the whole setup for computing the version number drives me crazy
+(c-declare #<<END-C
+#if (OPENSSL_VERSION_MAJOR >= 1)
+#define FEATURES_OPENSSL_v1
+#endif
+
+#if (OPENSSL_VERSION_MAJOR > 1) || ((OPENSSL_VERSION_MAJOR == 1) && (OPENSSL_VERSION_MINOR >= 1))
+#define FEATURES_OPENSSL_v1_1
+#endif
+
+#if (OPENSSL_VERSION_MAJOR > 1) || ((OPENSSL_VERSION_MAJOR == 1) && ((OPENSSL_VERSION_MINOR > 1) || ((OPENSSL_VERSION_MINOR == 1) && (OPENSSL_VERSION_PATCH >= 1))))
+#define FEATURES_OPENSSL_v1_1_1
 #endif
 END-C
 )
@@ -177,14 +193,14 @@ END-C
 (define-c-lambda/const-pointer EVP_sha512 () EVP_MD*)
 (define-c-lambda/const-pointer EVP_ripemd160 () EVP_MD* "!defined(OPENSSL_NO_RMD160)")
 (define-c-lambda/const-pointer EVP_whirlpool () EVP_MD* "!defined(OPENSSL_NO_WHIRLPOOL)")
-(define-c-lambda/const-pointer EVP_blake2b512 () EVP_MD* "(OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(OPENSSL_NO_BLAKE2)")
-(define-c-lambda/const-pointer EVP_blake2s256 () EVP_MD* "(OPENSSL_VERSION_NUMBER >= 0x10100000L) && !defined(OPENSSL_NO_BLAKE2)")
-(define-c-lambda/const-pointer EVP_sha3_224 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10101000L")
-(define-c-lambda/const-pointer EVP_sha3_256 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10101000L")
-(define-c-lambda/const-pointer EVP_sha3_384 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10101000L")
-(define-c-lambda/const-pointer EVP_sha3_512 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10101000L")
-(define-c-lambda/const-pointer EVP_shake128 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10101000L")
-(define-c-lambda/const-pointer EVP_shake256 () EVP_MD* "OPENSSL_VERSION_NUMBER >= 0x10101000L")
+(define-c-lambda/const-pointer EVP_blake2b512 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1) && !defined(OPENSSL_NO_BLAKE2)")
+(define-c-lambda/const-pointer EVP_blake2s256 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1) && !defined(OPENSSL_NO_BLAKE2)")
+(define-c-lambda/const-pointer EVP_sha3_224 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1_1)")
+(define-c-lambda/const-pointer EVP_sha3_256 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1_1)")
+(define-c-lambda/const-pointer EVP_sha3_384 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1_1)")
+(define-c-lambda/const-pointer EVP_sha3_512 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1_1)")
+(define-c-lambda/const-pointer EVP_shake128 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1_1)")
+(define-c-lambda/const-pointer EVP_shake256 () EVP_MD* "defined(FEATURES_OPENSSL_v1_1_1)")
 (define-c-lambda/const-pointer EVP_keccak256 () EVP_MD* "0") ;; still not available as of 3.0.0-alpha6
 
 (define-c-lambda EVP_MD_type (EVP_MD*) int)
@@ -523,7 +539,7 @@ static EVP_PKEY* ffi_EVP_PKEY_keygen (EVP_PKEY_CTX* ctx) {
 }
 static EVP_PKEY *ffi_EVP_PKEY_new_raw_private_key (int type, ENGINE* e, ___SCMOBJ o)
 {
-#if OPENSSL_VERSION_NUMBER >= 0x10101000L
+#if defined(FEATURES_OPENSSL_v1_1_1)
   return EVP_PKEY_new_raw_private_key(type, e, U8_DATA(o), (size_t)U8_LEN(o));
 #else
   return NULL;
@@ -531,7 +547,7 @@ static EVP_PKEY *ffi_EVP_PKEY_new_raw_private_key (int type, ENGINE* e, ___SCMOB
 }
 static EVP_PKEY *ffi_EVP_PKEY_new_raw_public_key (int type, ENGINE* e, ___SCMOBJ o)
 {
-#if OPENSSL_VERSION_NUMBER >= 0x10101000L
+#if defined(FEATURES_OPENSSL_v1_1_1)
   return EVP_PKEY_new_raw_public_key(type, e, U8_DATA(o), (size_t)U8_LEN(o));
 #else
   return NULL;
@@ -539,7 +555,7 @@ static EVP_PKEY *ffi_EVP_PKEY_new_raw_public_key (int type, ENGINE* e, ___SCMOBJ
 }
 static int ffi_EVP_PKEY_get_raw_private_key (EVP_PKEY* pkey, ___SCMOBJ o)
 {
-#if OPENSSL_VERSION_NUMBER >= 0x10101000L
+#if defined(FEATURES_OPENSSL_v1_1_1)
   size_t len;
   if ((void*)o == (void*)___FAL) {
     EVP_PKEY_get_raw_private_key(pkey, NULL, &len);
@@ -555,7 +571,7 @@ static int ffi_EVP_PKEY_get_raw_private_key (EVP_PKEY* pkey, ___SCMOBJ o)
 }
 static int ffi_EVP_PKEY_get_raw_public_key (EVP_PKEY* pkey, ___SCMOBJ o)
 {
-#if OPENSSL_VERSION_NUMBER >= 0x10101000L
+#if defined(FEATURES_OPENSSL_v1_1_1)
   size_t len;
   if ((void*)o == (void*)___FAL) {
     EVP_PKEY_get_raw_public_key(pkey, NULL, &len);
@@ -570,7 +586,7 @@ static int ffi_EVP_PKEY_get_raw_public_key (EVP_PKEY* pkey, ___SCMOBJ o)
 static int ffi_EVP_DigestSign(EVP_MD_CTX *ctx, ___SCMOBJ sig, ___SCMOBJ tbs)
 {
   size_t siglen = U8_LEN(sig);
-#if OPENSSL_VERSION_NUMBER >= 0x10101000L
+#if defined(FEATURES_OPENSSL_v1_1_1)
   return EVP_DigestSign(ctx, U8_DATA(sig), &siglen, U8_DATA(tbs), U8_LEN(tbs)) ? siglen : 0;
 #else
   return 0;
@@ -578,14 +594,32 @@ static int ffi_EVP_DigestSign(EVP_MD_CTX *ctx, ___SCMOBJ sig, ___SCMOBJ tbs)
 }
 static int ffi_EVP_DigestVerify(EVP_MD_CTX *ctx, ___SCMOBJ sig, ___SCMOBJ tbs)
 {
-#if OPENSSL_VERSION_NUMBER >= 0x10101000L
+#if defined(FEATURES_OPENSSL_v1_1_1)
   return EVP_DigestVerify(ctx, U8_DATA(sig), U8_LEN(sig), U8_DATA(tbs), U8_LEN(tbs));
 #else
   return 0;
 #endif
 }
 
-#if OPENSSL_VERSION_NUMBER < 0x10101000L
+static int ffi_EVP_DigestSignInit(EVP_MD_CTX *ctx, EVP_PKEY *pkey)
+{
+#if defined(FEATURES_OPENSSL_v1_1_1)
+ return EVP_DigestSignInit(ctx, NULL, NULL, NULL, pkey);
+#else
+ return 0;
+#endif
+}
+
+static int ffi_EVP_DigestVerifyInit(EVP_MD_CTX *ctx, EVP_PKEY *pkey)
+{
+#if defined(FEATURES_OPENSSL_v1_1_1)
+ return EVP_DigestVerifyInit(ctx, NULL, NULL, NULL, pkey);
+#else
+ return 0;
+#endif
+}
+
+#if !(defined FEATURES_OPENSSL_v1_1_1)
 void EVP_MD_CTX_set_pkey_ctx(EVP_MD_CTX *ctx, EVP_PKEY_CTX *pctx) { return; }
 #endif
 
@@ -604,8 +638,8 @@ END-C
 (define-macro (define-consts . cs) `(begin ,@(map (lambda (c) `(define-const ,c)) cs)))
 (define-macro (define-consts* ccond . cs) `(begin ,@(map (lambda (c) `(define-const* ,c ,ccond)) cs)))
 (define-consts EVP_PKEY_NONE EVP_PKEY_RSA EVP_PKEY_RSA2 EVP_PKEY_DSA EVP_PKEY_DSA1 EVP_PKEY_DSA2 EVP_PKEY_DSA3 EVP_PKEY_DSA4 EVP_PKEY_DH EVP_PKEY_EC EVP_PKEY_HMAC)
-(define-consts* "OPENSSL_VERSION_NUMBER >= 0x10100000L" EVP_PKEY_DHX EVP_PKEY_CMAC EVP_PKEY_TLS1_PRF EVP_PKEY_HKDF)
-(define-consts* "OPENSSL_VERSION_NUMBER >= 0x10101000L" EVP_PKEY_RSA_PSS EVP_PKEY_SM2 EVP_PKEY_SCRYPT EVP_PKEY_SIPHASH EVP_PKEY_POLY1305 EVP_PKEY_X25519 EVP_PKEY_ED25519 EVP_PKEY_X448 EVP_PKEY_ED448)
+(define-consts* "defined(FEATURES_OPENSSL_v1_1)" EVP_PKEY_DHX EVP_PKEY_CMAC EVP_PKEY_TLS1_PRF EVP_PKEY_HKDF)
+(define-consts* "defined(FEATURES_OPENSSL_v1_1_1)" EVP_PKEY_RSA_PSS EVP_PKEY_SM2 EVP_PKEY_SCRYPT EVP_PKEY_SIPHASH EVP_PKEY_POLY1305 EVP_PKEY_X25519 EVP_PKEY_ED25519 EVP_PKEY_X448 EVP_PKEY_ED448)
 
 (define-c-lambda EVP_PKEY_CTX_new (EVP_PKEY* ENGINE*) EVP_PKEY_CTX*)
 (define-c-lambda EVP_PKEY_CTX_new_id (int ENGINE*) EVP_PKEY_CTX*)
@@ -617,7 +651,9 @@ END-C
 (define-c-lambda EVP_PKEY_get_raw_private_key (EVP_PKEY* scheme-object) int "ffi_EVP_PKEY_get_raw_private_key")
 (define-c-lambda EVP_PKEY_get_raw_public_key (EVP_PKEY* scheme-object) int "ffi_EVP_PKEY_get_raw_public_key")
 
+(define-c-lambda EVP_DigestSignInit (EVP_MD_CTX* EVP_PKEY*) int "ffi_EVP_DigestSignInit")
 (define-c-lambda EVP_DigestSign (EVP_MD_CTX* scheme-object scheme-object) int "ffi_EVP_DigestSign")
+(define-c-lambda EVP_DigestVerifyInit (EVP_MD_CTX* EVP_PKEY*) int "ffi_EVP_DigestVerifyInit")
 (define-c-lambda EVP_DigestVerify (EVP_MD_CTX* scheme-object scheme-object) int "ffi_EVP_DigestVerify")
 
 (define-c-lambda EVP_MD_CTX_set_pkey_ctx (EVP_MD_CTX* EVP_PKEY_CTX*) void)
