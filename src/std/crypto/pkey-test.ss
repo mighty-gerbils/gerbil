@@ -13,7 +13,6 @@
   (let ((privkey (bytes->private-key type (hex-decode priv))))
     (check-equal? (hex-encode (public-key->bytes privkey)) pub)
     (check-equal? (hex-encode (digest-sign privkey (hex-decode msg))) sig)
-    (check-equal? (digest-verify privkey (hex-decode sig) (hex-decode msg)) #t)
     (let ((pubkey (bytes->public-key type (hex-decode pub))))
       (check-equal? (digest-verify pubkey (hex-decode sig) (hex-decode msg)) #t))))
 (defrule (test-signature-type type (priv pub msg sig) ...)

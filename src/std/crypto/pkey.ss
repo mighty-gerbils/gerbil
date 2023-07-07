@@ -53,22 +53,21 @@
 (def (public-key->bytes pkey (bytes #f))
   (key->bytes pkey bytes EVP_PKEY_get_raw_public_key))
 
-;; NB: for other key types, there may be parameters to set before DigestSign
 (def (digest-sign pkey bytes engine: (engine #f) sig: (sig #f))
-  (def mctx (EVP_MD_CTX_create))
-  (def pctx (EVP_PKEY_CTX_new pkey engine))
-  (if (and mctx pctx)
-    (EVP_MD_CTX_set_pkey_ctx mctx pctx)
-    (error "Can't create signing context"))
-  (def s (or (bytes-argument sig) (make-bytes 8192)))
-  (def len (EVP_DigestSign mctx s bytes))
-  (bytes-result s len))
+  (let (mctx (EVP_MD_CTX_create))
+    (unless mctx
+      (error "Cannot create signing context"))
+    (with-libcrypto-error (EVP_DigestSignInit mctx pkey))
+    (let* ((s (or (bytes-argument sig) (make-bytes 8192)))
+           (result (EVP_DigestSign mctx s bytes)))
+    (if (##fxzero? result)
+      (raise-libcrypto-error)
+      (bytes-result s result)))))
 
 ;; NB: for other key types, there may be parameters to set before DigestVerify
 (def (digest-verify pkey sig bytes engine: (engine #f))
-  (def mctx (EVP_MD_CTX_create))
-  (def pctx (EVP_PKEY_CTX_new pkey engine))
-  (if (and mctx pctx)
-    (EVP_MD_CTX_set_pkey_ctx mctx pctx)
-    (error "Can't create verification context"))
-  (= 1 (EVP_DigestVerify mctx sig bytes)))
+  (let (mctx (EVP_MD_CTX_create))
+    (unless mctx
+      (error "Cannot create signing context"))
+    (with-libcrypto-error (EVP_DigestVerifyInit mctx pkey))
+    (= 1 (EVP_DigestVerify mctx sig bytes))))
