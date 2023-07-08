@@ -8,11 +8,13 @@
         :std/crypto/hmac
         :std/crypto/dh
         :std/crypto/bn
-        :std/crypto/pkey)
+        :std/crypto/pkey
+        :std/crypto/kdf)
 (export (import: :std/crypto/etc
                  :std/crypto/digest
                  :std/crypto/cipher
                  :std/crypto/hmac
                  :std/crypto/dh
                  :std/crypto/bn
-                 :std/crypto/pkey))
+                 :std/crypto/pkey
+                 :std/crypto/kdf))
