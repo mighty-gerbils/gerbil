@@ -59,6 +59,15 @@ package: std/crypto
      EVP_PKEY_new_raw_private_key EVP_PKEY_new_raw_public_key
      EVP_PKEY_get_raw_private_key EVP_PKEY_get_raw_public_key
      EVP_DigestSignInit EVP_DigestSign EVP_DigestVerifyInit EVP_DigestVerify EVP_MD_CTX_set_pkey_ctx
+
+     EVP_PKEY_derive_init
+     EVP_PKEY_CTX_set1_pbe_pass
+     EVP_PKEY_CTX_set1_scrypt_salt
+     EVP_PKEY_CTX_set_scrypt_N
+     EVP_PKEY_CTX_set_scrypt_r
+     EVP_PKEY_CTX_set_scrypt_p
+     EVP_PKEY_derive
+
      RAND_bytes)
 
 (declare (not safe))
@@ -623,6 +632,65 @@ static int ffi_EVP_DigestVerifyInit(EVP_MD_CTX *ctx, EVP_PKEY *pkey)
 void EVP_MD_CTX_set_pkey_ctx(EVP_MD_CTX *ctx, EVP_PKEY_CTX *pctx) { return; }
 #endif
 
+static int ffi_EVP_PKEY_CTX_set1_pbe_pass(EVP_PKEY_CTX *ctx, ___SCMOBJ pass)
+{
+#if defined(FEATURES_OPENSSL_v1_1_1)
+ return EVP_PKEY_CTX_set1_pbe_pass(ctx, U8_DATA(pass), U8_LEN(pass));
+#else
+ return 0;
+#endif
+}
+
+static int ffi_EVP_PKEY_CTX_set1_scrypt_salt(EVP_PKEY_CTX *ctx, ___SCMOBJ salt)
+{
+#if defined(FEATURES_OPENSSL_v1_1_1)
+ return EVP_PKEY_CTX_set1_scrypt_salt(ctx, U8_DATA(salt), U8_LEN(salt));
+#else
+ return 0;
+#endif
+}
+
+static int ffi_EVP_PKEY_CTX_set_scrypt_N(EVP_PKEY_CTX *ctx, int N)
+{
+#if defined(FEATURES_OPENSSL_v1_1_1)
+ return EVP_PKEY_CTX_set_scrypt_N(ctx, N);
+#else
+ return 0;
+#endif
+}
+
+static int ffi_EVP_PKEY_CTX_set_scrypt_r(EVP_PKEY_CTX *ctx, int r)
+{
+#if defined(FEATURES_OPENSSL_v1_1_1)
+ return EVP_PKEY_CTX_set_scrypt_r(ctx, r);
+#else
+ return 0;
+#endif
+}
+
+static int ffi_EVP_PKEY_CTX_set_scrypt_p(EVP_PKEY_CTX *ctx, int p)
+{
+#if defined(FEATURES_OPENSSL_v1_1_1)
+ return EVP_PKEY_CTX_set_scrypt_p(ctx, p);
+#else
+ return 0;
+#endif
+}
+
+static int ffi_EVP_PKEY_derive(EVP_PKEY_CTX *ctx, ___SCMOBJ output)
+{
+#if defined(FEATURES_OPENSSL_v1_1_1)
+ size_t outlen = U8_LEN(output);
+ int r = EVP_PKEY_derive(ctx, U8_DATA(output), &outlen);
+ if (r > 0) {
+  return (int)outlen;
+ }
+ return r;
+#else
+ return 0;
+#endif
+}
+
 static int ffi_RAND_bytes (___SCMOBJ bytes, int start, int end)
 {
   return RAND_bytes (U8_DATA (bytes) + start, end - start);
@@ -655,6 +723,14 @@ END-C
 (define-c-lambda EVP_DigestSign (EVP_MD_CTX* scheme-object scheme-object) int "ffi_EVP_DigestSign")
 (define-c-lambda EVP_DigestVerifyInit (EVP_MD_CTX* EVP_PKEY*) int "ffi_EVP_DigestVerifyInit")
 (define-c-lambda EVP_DigestVerify (EVP_MD_CTX* scheme-object scheme-object) int "ffi_EVP_DigestVerify")
+
+(define-c-lambda EVP_PKEY_derive_init (EVP_PKEY_CTX*) int)
+(define-c-lambda EVP_PKEY_CTX_set1_pbe_pass (EVP_PKEY_CTX* scheme-object) int "ffi_EVP_PKEY_CTX_set1_pbe_pass")
+(define-c-lambda EVP_PKEY_CTX_set1_scrypt_salt (EVP_PKEY_CTX* scheme-object) int "ffi_EVP_PKEY_CTX_set1_scrypt_salt")
+(define-c-lambda EVP_PKEY_CTX_set_scrypt_N (EVP_PKEY_CTX* int) int "ffi_EVP_PKEY_CTX_set_scrypt_N")
+(define-c-lambda EVP_PKEY_CTX_set_scrypt_r (EVP_PKEY_CTX* int) int "ffi_EVP_PKEY_CTX_set_scrypt_r")
+(define-c-lambda EVP_PKEY_CTX_set_scrypt_p (EVP_PKEY_CTX* int) int "ffi_EVP_PKEY_CTX_set_scrypt_p")
+(define-c-lambda EVP_PKEY_derive (EVP_PKEY_CTX* scheme-object) int "ffi_EVP_PKEY_derive")
 
 (define-c-lambda EVP_MD_CTX_set_pkey_ctx (EVP_MD_CTX* EVP_PKEY_CTX*) void)
 

@@ -664,6 +664,9 @@
    std/crypto/etc
    std/crypto/libcrypto
    std/stxutil))
+ (std/crypto/kdf
+  "crypto/kdf"
+  (gerbil/core std/crypto/etc std/crypto/libcrypto))
  (std/crypto
   "crypto"
   (gerbil/core
@@ -673,6 +676,7 @@
    std/crypto/digest
    std/crypto/etc
    std/crypto/hmac
+   std/crypto/kdf
    std/crypto/pkey))
  (std/net/sasl
   "net/sasl"
