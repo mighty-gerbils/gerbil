@@ -58,7 +58,6 @@ RUN cd /opt/gambit-src && git fetch -a && git checkout ${gambit_version}
 RUN cd /opt/gambit-src \
     && ./configure \
     --enable-smp \
-    --enable-multiple-threaded-vms \
     --enable-debug \
     --enable-debug-c-backtrace \
     --enable-debug-log \
@@ -67,7 +66,6 @@ RUN cd /opt/gambit-src \
     --enable-single-host \
     --enable-dynamic-clib \
     --enable-march=native \
-    --enable-multiple-versions \
     --enable-poll \
     --enable-openssl \
     --enable-multiple-versions \

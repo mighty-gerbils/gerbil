@@ -1,7 +1,7 @@
 .PHONY: alpine amazonlinux ubuntu fedora ubuntu-current-jedi final
 
 GERBIL_VERSION := master
-GAMBIT_VERSION := mast
+GAMBIT_VERSION := master
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell grep -c "^processor" /proc/cpuinfo)
@@ -84,7 +84,6 @@ ubuntu_packages := autoconf \
 
 alpine:
 	docker build --target final \
-	--rm=true --no-cache \
 	--build-arg gambit_version=$(GAMBIT_VERSION) \
 	--build-arg gerbil_version=$(GERBIL_VERSION) \
 	--build-arg packages="$(alpine_packages)" \
