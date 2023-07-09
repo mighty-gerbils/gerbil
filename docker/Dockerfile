@@ -56,12 +56,22 @@ RUN git config --global url.https://github.com/.insteadOf git://github.com/
 RUN cd /opt && git clone https://github.com/gambit/gambit gambit-src
 RUN cd /opt/gambit-src && git fetch -a && git checkout ${gambit_version}
 RUN cd /opt/gambit-src \
-    && ./configure CC='gcc' \
-    --enable-default-runtime-options=f8,-8,t8 \
+    && ./configure \
+    --enable-smp \
+    --enable-multiple-threaded-vms \
+    --enable-debug \
+    --enable-debug-c-backtrace \
+    --enable-debug-log \
+    --enable-debug-alloc-mem \
+    --enable-debug-garbage-collect \
+    --enable-single-host \
+    --enable-dynamic-clib \
+    --enable-march=native \
+    --enable-multiple-versions \
     --enable-poll \
     --enable-openssl \
     --enable-multiple-versions \
-    --enable-single-host \
+    --enable-default-runtime-options=f8,-8,t8 \
     --prefix=${GAMBIT_HOME}
 
 RUN cd /opt/gambit-src && make -j$cores

@@ -1,7 +1,7 @@
 .PHONY: alpine amazonlinux ubuntu fedora ubuntu-current-jedi final
 
-GERBIL_VERSION := v0.17
-GAMBIT_VERSION := v4.9.4
+GERBIL_VERSION := master
+GAMBIT_VERSION := mast
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 cores := $(shell grep -c "^processor" /proc/cpuinfo)
