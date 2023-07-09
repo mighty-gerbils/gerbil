@@ -27,7 +27,7 @@
 (def (raise-getopt-error msg . args)
   (raise (make-getopt-error msg args #f (current-getopt-parser))))
 
-(defstruct !getopt (opts cmds args))
+(defstruct !getopt (opts cmds args help))
 (defstruct !top (key help))
 (defstruct (!command !top) (opts args)
   final: #t)
@@ -44,7 +44,7 @@
 (defstruct (!rest !arg) ()
   final: #t)
 
-(def (getopt . args)
+(def (getopt help: (help #f) . args)
   (let lp ((rest args) (opts []) (cmds []) (args []))
     (match rest
       ([hd . rest]
@@ -74,7 +74,7 @@
         (else
          (error "Illegal argument; must be a getopt-object" hd))))
       (else
-       (make-!getopt (reverse opts) (reverse cmds) (reverse args))))))
+       (make-!getopt (reverse opts) (reverse cmds) (reverse args) help)))))
 
 (def (flag id short (long #f)
            help: (help #f))
@@ -252,7 +252,9 @@
        (getopt-display-help gopt program port)))))
 
 (def (display-help-getopt obj program port)
-  (with ((!getopt opts cmds args) obj)
+  (with ((!getopt opts cmds args help) obj)
+    (when help
+      (fprintf port "~a: ~a~n~n" program help))
     (if (null? cmds)
       (begin
         (fprintf port "Usage: ~a ~a"
