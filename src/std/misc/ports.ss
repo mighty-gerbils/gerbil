@@ -13,6 +13,7 @@
         read-file-lines
         read-all-as-u8vector
         read-file-u8vector
+        read-password
         write-file-string
         write-file-lines)
 
