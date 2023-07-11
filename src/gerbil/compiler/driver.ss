@@ -16,7 +16,7 @@ namespace: gxc
                  current-time time->seconds file-info file-info-size))
 (export compile-file compile-exe-stub compile-static-exe)
 
-(def default-gerbil-home #f)
+(def default-gerbil-home "/usr/local/lib/gerbil")
 (def default-gambit-gsc "gsc")
 
 (def (compile-timestamp)

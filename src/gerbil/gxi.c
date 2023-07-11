@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 // these may be patched by configure/install
-static char *default_gerbil_home = NULL;
+static char *default_gerbil_home = "/usr/local/lib/gerbil";
 static char *default_gerbil_gsi  = "gsi";
 
 static const char *usage = "Usage: %s [-v|-h] | [-:<runtime-options>] [--lang <language>] [[-] [-e <expr>] [file]] ...\n";

@@ -1,10 +1,10 @@
 ;; This file is meant to be include'd by build-config.ss
 
 ;; build std/xml libraries - requires libxml2
-(enable libxml #f)
+(enable libxml #t)
 
 ;; build std/text/yaml library - requires libyaml
-(enable libyaml #f)
+(enable libyaml #t)
 
 ;; build std/text/zlib library - requires zlib
 (enable zlib #t)
@@ -13,10 +13,10 @@
 (enable sqlite #t)
 
 ;; build std/db/mysql library -- requires mysql (libmysqlclient)
-(enable mysql #f)
+(enable mysql #t)
 
 ;; build std/db/lmdb library -- requires LMDB
-(enable lmdb #f)
+(enable lmdb #t)
 
 ;; build std/db/leveldb library -- requires LevelDB
-(enable leveldb #f)
+(enable leveldb #t)

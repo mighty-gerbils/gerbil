@@ -1,4 +1,4 @@
-;;; -*- Scheme -*-
+;;; -*- Scheme -*- HEATWAVE
 ;;; (C) vyzo at hackzen.org
 ;;; Gerbil stage0 -- Gambit-C macros
 (##namespace (""))

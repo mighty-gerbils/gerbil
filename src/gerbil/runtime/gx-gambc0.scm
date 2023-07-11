@@ -2,7 +2,7 @@
 ;;; (C) vyzo at hackzen.org
 ;;; Gerbil stage0 -- Gambit-C host runtime
 (##namespace (""))
-;;(include "gx-gambc#.scm")
+;; (include "gx-gambc#.scm")
 
 (declare
   (block)
@@ -87,17 +87,14 @@
   (with-exception-catcher
    (lambda _ _)
    (lambda () (##eval '(gx#dbg-core-cxt)))))
+
 (define (load-module modpath #!optional (reload? #f))
-  (gx#dbug)
   (cond
    ((and (not reload?) (hash-get (&current-module-registry) modpath))
     => values)
    ((find-library-module modpath)
     => (lambda (path)
-
-  ;; (gx#dbug)
          (let ((lpath (load path)))
-  ;; (gx#dbug)
            (hash-put! (&current-module-registry) modpath lpath)
            lpath)))
    (else

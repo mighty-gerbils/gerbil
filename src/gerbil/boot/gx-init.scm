@@ -3,7 +3,7 @@
 ;;; Gerbil-gambc runtime init
 (##namespace (""))
 
-(define __gx#default-gerbil-home #f)
+(define __gx#default-gerbil-home "/usr/local/lib/gerbil")
 (define _gx#gerbil-libdir #f)
 
 (define _gx#*rtlibs*

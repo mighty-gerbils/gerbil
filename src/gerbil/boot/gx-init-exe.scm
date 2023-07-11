@@ -7,7 +7,7 @@
   (standard-bindings)
   (extended-bindings))
 
-(define __gx#default-gerbil-home #f)
+(define __gx#default-gerbil-home "/usr/local/lib/gerbil")
 (define __gx#libdir #f)
 (define __gx#load-module #f)
 (define __gx#expander-loaded #f)

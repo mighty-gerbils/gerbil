@@ -40,7 +40,7 @@
 (import :gerbil/gambit/threads)
 
 (def default-gambit-gsc "gsc")
-(def default-gerbil-gxc "gxc")
+(def default-gerbil-gxc "/usr/local/lib/gerbil/bin/gxc")
 
 #|
 TODO:

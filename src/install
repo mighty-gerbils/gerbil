@@ -1,7 +1,7 @@
 #!/usr/bin/env gsi
 ;; -*- Scheme -*-
 
-(define default-gerbil-home #f)
+(define default-gerbil-home "/usr/local/lib/gerbil")
 
 (define (die . message-bits)
   (parameterize ((current-output-port (current-error-port)))

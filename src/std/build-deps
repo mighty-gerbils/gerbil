@@ -125,8 +125,25 @@
    std/error
    std/sort
    std/text/hex))
+ (std/text/libyaml
+  (ssi:
+   "text/libyaml"
+   (gsc:
+    "text/libyaml"
+    "-cc-options"
+    ""
+    "-ld-options"
+    "-lxml2 -lyaml -lz -llmdb -lleveldb -lyaml"))
+  (gerbil/core))
  (std/text/_zlib
-  (ssi: "text/_zlib" (gsc: "text/_zlib" "-cc-options" "" "-ld-options" "-lz"))
+  (ssi:
+   "text/_zlib"
+   (gsc:
+    "text/_zlib"
+    "-cc-options"
+    "-I/gnu/store/8qv5kb2fgm4c3bf70zcg9l6hkf3qzpw9-zlib-1.2.11/include"
+    "-ld-options"
+    "-L/gnu/store/8qv5kb2fgm4c3bf70zcg9l6hkf3qzpw9-zlib-1.2.11/lib -lz"))
   (gerbil/core))
  (std/text/zlib
   "text/zlib"
@@ -158,7 +175,25 @@
   (gerbil/core gerbil/gambit/bits std/error))
  (std/net/bio/buffer
   "net/bio/buffer"
-  (gerbil/core std/error std/net/bio/input std/net/bio/output std/srfi/1))
+  (gerbil/core
+   gerbil/gambit/hvectors
+   std/error
+   std/net/bio/input
+   std/net/bio/output
+   std/srfi/1))
+ (std/xml/_libxml
+  (ssi:
+   "xml/_libxml"
+   (gsc:
+    "xml/_libxml"
+    "-cc-options"
+    "-I/gnu/store/g3y6ifhm0751vgsxv90yipfw6mk189kj-libxml2-2.9.12/include/libxml2"
+    "-ld-options"
+    "-L/gnu/store/g3y6ifhm0751vgsxv90yipfw6mk189kj-libxml2-2.9.12/lib -lxml2 -lz -llzma -lm -ldl"
+    "-e"
+    "(include \"~~lib/_gambit#.scm\")"))
+  (gerbil/core))
+ (std/xml/libxml "xml/libxml" (gerbil/core std/xml/_libxml))
  (std/xml/sxpath "xml/sxpath" (gerbil/core))
  (std/xml/sxml "xml/sxml" (gerbil/core))
  (std/xml/sxml-to-xml
@@ -484,6 +519,16 @@
    std/parser/lexer
    std/parser/rlang
    std/parser/stream))
+ (std/text/yaml
+  "text/yaml"
+  (gerbil/core
+   std/error
+   std/iter
+   std/misc/list-builder
+   std/pregexp
+   std/sugar
+   std/text/libyaml
+   std/text/utf8))
  (std/net/address
   "net/address"
   (gerbil/core gerbil/gambit/os std/format std/pregexp std/text/hex))
@@ -607,6 +652,7 @@
  (std/xml "xml"
           (gerbil/core
            std/build-config
+           std/xml/libxml
            std/xml/print
            std/xml/ssax
            std/xml/sxml
@@ -616,9 +662,9 @@
    "crypto/libcrypto"
    (submodules: ((static-include: "crypto/libcrypto-rfc5114.c")))
    "-cc-options"
-   ""
+   "-I/gnu/store/s2hd324ixxl9i4z7jmg1vd5kxpq2zlws-openssl-3.0.7/include"
    "-ld-options"
-   "-lcrypto"
+   "-L/gnu/store/s2hd324ixxl9i4z7jmg1vd5kxpq2zlws-openssl-3.0.7/lib -lcrypto"
    "-e"
    "(include \"~~lib/_gambit#.scm\")")
   (gerbil/core std/foreign))
@@ -687,7 +733,9 @@
  (std/test
   "test"
   (gerbil/core gerbil/gambit std/error std/format std/misc/list std/sugar))
- (std/foreign-test "foreign-test" (gerbil/core std/foreign std/test))
+ (std/foreign-test
+  "foreign-test"
+  (gerbil/core gerbil/gambit std/foreign std/test))
  (std/misc/uuid
   "misc/uuid"
   (gerbil/core
@@ -1190,9 +1238,74 @@
  (std/db/_sqlite
   (ssi:
    "db/_sqlite"
-   (gsc: "db/_sqlite" "-cc-options" "" "-ld-options" "-lsqlite3"))
+   (gsc:
+    "db/_sqlite"
+    "-cc-options"
+    "-I/gnu/store/xmzx5mzv4863yw9kmr2ykndgp37p8if0-sqlite-3.36.0/include"
+    "-ld-options"
+    "-L/gnu/store/xmzx5mzv4863yw9kmr2ykndgp37p8if0-sqlite-3.36.0/lib -lsqlite3"))
   (gerbil/core))
  (std/db/sqlite
   "db/sqlite"
-  (gerbil/core std/db/_sqlite std/db/dbi std/format std/iter)))
+  (gerbil/core std/db/_sqlite std/db/dbi std/format std/iter))
+ (std/db/_mysql
+  (ssi:
+   "db/_mysql"
+   (gsc:
+    "db/_mysql"
+    "-cc-options"
+    ""
+    "-ld-options"
+    "-lxml2 -lyaml -lz -llmdb -lleveldb -lpthread -lmysqlclient"))
+  (gerbil/core))
+ (std/db/mysql
+  "db/mysql"
+  (gerbil/core
+   gerbil/gambit/ports
+   gerbil/gambit/threads
+   std/db/_mysql
+   std/db/dbi
+   std/error
+   std/format
+   std/iter
+   std/net/address
+   std/os/error
+   std/os/fcntl
+   std/os/fd
+   std/os/pipe
+   std/srfi/19
+   std/sugar
+   std/text/utf8))
+ (std/db/_lmdb
+  (ssi:
+   "db/_lmdb"
+   (gsc:
+    "db/_lmdb"
+    "-cc-options"
+    ""
+    "-ld-options"
+    "-lxml2 -lyaml -lz -llmdb -lleveldb -llmdb"))
+  (gerbil/core))
+ (std/db/lmdb
+  "db/lmdb"
+  (gerbil/core gerbil/gambit/threads std/db/_lmdb std/error std/text/utf8))
+ (std/db/_leveldb
+  (ssi:
+   "db/_leveldb"
+   (gsc:
+    "db/_leveldb"
+    "-cc-options"
+    ""
+    "-ld-options"
+    "-lxml2 -lyaml -lz -llmdb -lleveldb -lleveldb"))
+  (gerbil/core))
+ (std/db/leveldb
+  "db/leveldb"
+  (gerbil/core
+   gerbil/gambit/misc
+   gerbil/gambit/threads
+   std/db/_leveldb
+   std/error
+   std/iter
+   std/text/utf8)))
 

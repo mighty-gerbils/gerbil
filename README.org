@@ -1,0 +1,474 @@
+#+TITLE: Gerbil Meta-Scheme, redux!
+
+This is where I outline my attempt at integrating Gambit into the build and getting rid of the run time requirements.
+
+If Gambit's website is down here's a wayback.
+
+https://web.archive.org/web/20230130114303/https://gambitscheme.org/
+
+We can nest make and configure
+
+https://www.gnu.org/software/automake/manual/html_node/Subpackages.html
+
+* Compile existing as-is
+
+Right now both the interpreter and compiler in gerbil call out to =gsc=, the Gambit Scheme compiler.
+
+I want to change that, but, since the build requires Gambit, may as well do so /that way/ to start and see far we can take it.
+
+Really just to make sure it works.
+
+#+begin_src sh
+  # For guix make sure there's no pollution
+  guix shell --development gerbil-unstable
+
+  # Config with everything included
+  ./configure --enable-libxml --enable-libyaml --enable-zlib --enable-sqlite --enable-mysql --enable-lmdb --enable-leveldb
+  make -j8
+#+end_src
+
+* Add new Gambit submodule
+
+#+begin_src sh
+  git submodule add git@github.com:gambit/gambit.git
+#+end_src
+
+* Compile the gambit as we want it.
+
+#+begin_src sh
+    cd gambit
+    ./configure --prefix=$(pwd) --enable-single-host \
+              --enable-default-compile-options="(compactness 10)"
+     make clean
+     make -j8 core
+
+#+end_src
+
+* Does it work?
+
+For some reason it does not print things in an emacs vterm when run interactively. Almost nobody uses emacs as their terminal.
+
+It does work in an org session. So here it is. If you're reading the org file in emacs you can try =C-c C-c= on it.
+
+#+begin_src bash :session gxi-build-shell
+  cd gambit; ./gsi/gsi -e "(display 42)" ; cd -
+#+end_src
+
+We need to futz with paths at some point and this is what my brain thought of before I began with this again.
+
+#+begin_src sh
+/tmpdrewc@musix ~/me/MuKn/src/gerbil/gambit/gsi$ ./gsi -:~~=/tmp -e '(display (##os-path-gambitdir))' -e '(newline)'
+#+end_src
+
+* What is the Gerbil interpreter?
+
+Right now it's a bunch of scheme files loading by the gambit interpreter.
+
+Even better, they are loaded from within a =C= file to rid *shebang madness*. That's not a bad thing as we just need to port that over to Gambit!
+
+Here's some reading from [[file:src/gerbil/gxi.c::// these may be patched by configure/install][gxi.c]] that we simply need to port to =gxi.scm=.
+
+#+begin_src c
+      // these may be patched by configure/install
+  static char *default_gerbil_home = "/usr/local/lib/gerbil";
+  static char *default_gerbil_gsi  = "gsi";
+
+  static const char *usage = "Usage: %s [-v|-h] | [-:<runtime-options>] [--lang <language>] [[-] [-e <expr>] [file]] ...\n";
+
+  void exec_gxi(char *gsi, char *gerbil_home, char *gerbil_lang, char *runtime_opts, int argc, char **argv);
+  void gxi_setenv(char *gerbil_home, char *gerbil_lang);
+  char **gxi_argv(char *gerbil_home, char *runtime_opts, int argc, char **argv);
+  char **gxi_argv_script(char *gerbil_home, char *runtime_opts, int argc, char **argv);
+  char **gxi_argv_interactive(char *gerbil_home, char *runtime_opts);
+
+  // [...]
+
+  exec_gxi(gerbil_gsi, gerbil_home, gerbil_lang, runtime_opts, argc - argp, argv + argp);
+
+  // [...]
+
+  char **gxi_argv(char *gerbil_home, char *runtime_opts, int argc, char **argv) {
+  if (argc > 0) {
+    return gxi_argv_script(gerbil_home, runtime_opts, argc, argv);
+  } else {
+    return gxi_argv_interactive(gerbil_home, runtime_opts);
+  }
+}
+
+
+  // [...]
+  char *gxi_init = malloc(strlen(gerbil_home) + strlen("/lib/gxi-init") + 1);
+
+  // [...]
+  char *gxi_interactive = malloc(strlen(gerbil_home) + strlen("/lib/gxi-interactive") + 1);
+#+end_src
+
+
+* Port =gxi= away from =C= *and* =shebangs=
+
+After building gerbil the =gxi-init= is [[file:lib/gxi-init.scm::;;; -*- Gerbil -*-][here]]. It's all about paths. I'm getting rid of a lot of paths! Sometimes being a hacker is so great, non?
+
+It looks like this.
+
+#+begin_src scheme
+  ;;; -*- Gerbil -*-
+;;; (C) vyzo at hackzen.org
+;;; Gerbil interpreter init
+
+(define __gx#default-gerbil-home "/usr/local/lib/gerbil")
+
+(let* ((home (getenv "GERBIL_HOME" __gx#default-gerbil-home))
+       (libdir (path-expand "lib" home)))
+  (load (path-expand "gx-init.scm" libdir))
+  (_gx#init)
+  (_gx#load-gxi)
+  ;; hook ##begin -- gambit wraps it around -e and scripts
+  (gx#eval-syntax '(define-alias ##begin begin))
+  ;; hook gxi-script line to run as script
+  (set! ##language-specs
+    (append ##language-specs
+            '(#("gxi" #f #t scm #f)
+              #("gxi-script" #f #t scm #f)))))
+#+end_src
+
+Still mostly about paths, *BUT*, the init and load are what we need to make more "static", and that gets rid of a lot of the paths.
+
+And those are still mostly about paths.
+
+** =_gx#init=, The Gerbil Runtime init
+
+Right now Gerbil is created by loading it into =gsi=, the gambit interpreter, and going from there.
+
+Here's what it does.
+
+ - Set the =libdir= to $GERBIL_HOME/lib :: This is the same as we set in =gxi-init=.
+
+ - Load the Gambit Gerbil Runtime :: The =gx-gambc[0|1|2]= files.
+    Loading from the libdir.
+
+ - Load the Gerbil expander module :: ~(load-module "gerbil/expander__rt")~
+
+ - Load the Gerbil-gambc interpreter support :: =gx-gambc= runtime to make gerbil interpreter work how we expect it.
+
+** A quick not-quite-hackey way to find =GERBIL_HOME=
+
+Right now we need to load the expander from already compiled libraries. Though there is a bootstrap in Gambit source that's used to build Gerbil which is used to build the library, and that's similar to what we want to embed here, it's not quite that way yet.
+
+Beyond that there are libraries that are in the libdir. Finding them has been a /PITA/ without the env var.
+
+#+begin_src scheme :noweb-ref find-gerbil-home
+         (define (_gx#find-gerbil-home)
+           (or (getenv "GERBIL_HOME" #f)
+               (let* ((bin (path-directory (path-expand (car (command-line)))))
+                      (home (path-expand "../" bin))
+                      (libg (path-expand "lib/gerbil" home)))
+                 (if (file-exists? libg)
+                     (let ((nh (path-normalize home)))
+                       (set! __gx#default-gerbil-home nh)
+                       nh)
+                     #f))
+                __gx#default-gerbil-home))
+#+end_src
+
+** Almost direct =gxi.c= -> =gxi-gambc.scm=
+
+Gambit has one 'main.scm' for both the compiler and interpreter executable. We'll do almost the same.
+
+Because =gxi= is in fact the heart and soul of the Gerbil implementation as well as usage we can also see exactly what the gerbil program /is/, starting here.
+
+*** The =is-interactive?= function and the execution.
+
+If no arguments are passed this is an interactive session.
+
+#+begin_src scheme :noweb-ref interactive
+  (define (is-interactive? name args) (null? args))
+  (define (exec-interactive-gxi cmdline)
+'())" "-")))
+   )
+#+end_src
+
+*** /Function/ =gxi-argv= : We set it internally
+
+We need to know what the internal =gsi= thinks should be the command line arguments.
+
+#+begin_src scheme :noweb-ref gxi-argv
+  (define (gxi-argv cmd args)
+    (let ((vgra '()))
+      ;; no args means interactive repl
+      (if (null? args)
+          '("-e" "(_gx#gxi-init-interactive! '())" "-")
+          (gxi-interactive-argv args)
+          (let loop ((args args))
+            (if (null? args) (reverse vgra)
+                (let ((arg (car args))
+                      (args (cdr args)))
+                  #t))))))
+
+#+end_src
+
+*** /Function/ =exec-gxi=
+
+#+begin_src scheme :noweb-ref exec-gxi
+  (define (exec-gxi cmd args)
+    (cond
+     ((and (pair? args) (member (car args) '("-?" "--help" "-h" "-help")))
+      (write-usage-to-port _gx#gxi-usage cmd ##stdout-port)
+      (##exit 0))
+     ((and (pair? args) (member (car args) '("-v" "--version" "-version")))
+      (displayln (gerbil-version-string))
+      (##exit 0))
+     (else
+     (let ((argv (gxi-argv cmd args)))
+       (set! ##command-args (lambda _ argv)))))
+    (_gx#init)
+    (_gx#load-gxi)
+    (##main-gsi/gsc))
+
+
+
+
+#+end_src
+
+
+#+begin_src scheme :noweb yes :noweb-ref main-gxi/gxc
+  ;;; -*- Gerbil -*-
+
+  ;;; gxi Gambit executable: This is the interpreter as a command
+  ;;; line implementation.  gxi was at one point a C language shim that called out
+  ;;; to gsi. This is the merger of gsi/gxi.  // © drewc
+
+  ;;; // gxi C shim: this is the gxi interpreter shim, which invokes gsi loading Gerbil
+  ;;; // gxi was originally a shell script, but we've had it with the shebang madness in the
+  ;;; //  various unix variants, so I wrote this.
+  ;;; // © vyzo
+
+
+  (define _gx#gxi-usage #<<usage-end
+  usage: ^ [options] [module-or-file...]
+
+  This is the Gerbil Meta-Scheme interpreter.
+
+  Interactive mode (read-eval-print loop)
+      ^ [global options]
+
+  Batch mode
+      ^ [global options] module-or-file...
+      Where each module-or-file is one of:
+        .                            Adds CWD to module search order
+        directory/                   Adds directory to module search order
+        foo, foo/bar, ...            Run module or file on local file system
+        github.com/gambit/hello      Run module hosted on public Git repository
+        github.com/gambit/hello@1.0  Run specific version of module
+        file.sld or
+        file.scm         Run Scheme script (when the script starts with '#!' or
+                         '@;' it receives any remaining command line arguments)
+        file.oN          Run dynamically loadable object file produced by gsc
+        -e 'expression'  Evaluate the given Scheme expression at this point
+        -                Drop into a REPL at this point (continue with ,c)
+
+  Global options
+      -f         Do not process '$GERBIL_HOME/init.ss' initialization files
+      -v, --version        Show version information
+      -?, --help  Show this help
+
+  usage-end
+  )
+
+  (define (_gx#main-gxi/gxc)
+    <<interactive>>
+       (define (write-usage-to-port usage program-name port)
+        (let loop ((i 0) (j 0))
+          (if (##fx< j (##string-length usage))
+              (let ((j+1 (##fx+ j 1)))
+                (if (##not (##char=? #\^ (##string-ref usage j)))
+                    (loop i j+1)
+                    (begin
+                      (##write-substring usage i j port)
+                      (case (##string-ref usage j+1)
+                        ((#\R)
+                         (##write-string runtime-options-usage port)
+                         (loop (##fx+ j+1 1) (##fx+ j+1 1)))
+                        (else
+                         (##write-string program-name port)
+                         (loop j+1 j+1))))))
+              (##write-substring usage i j port))))
+
+    <<exec-gxi>>
+    (let* ((cmd-name
+            (##command-name))
+           (cmd-args
+            (##command-args)))
+
+
+      ;(_gx#init)
+      ;(_gx#load-gxi)
+      ;(exec-interactive-gxi (cons* cmd-name cmd-args))
+       (exec-gxi cmd-name cmd-args)
+      ))
+#+end_src
+
+
+** The new minimal =gxi-gambc= to bring it all togther
+
+The *Gambit Scheme* compiler, =gsc=, does not compile *Gerbil Meta-Scheme*.
+
+#+begin_src scheme :tangle ./src/gerbil/runtime/gxi-gambc.scm :noweb yes
+
+    (##namespace (""))
+
+    ;;(define __gx#default-gerbil-home "/usr/local/lib/gerbil")
+    (define _gx#gerbil-libdir #f)
+
+    (##include "~~lib/header.scm")
+    (##include "~~gsi/_gsi.scm")
+
+    <<find-gerbil-home>>
+
+  (define (_gx#init)
+    (let* ((home
+            (path-normalize
+             (or (_gx#find-gerbil-home)
+                 (error "Cannot determine GERBIL_HOME"))))
+           (libdir
+            (path-expand "lib" home)))
+      (set! _gx#gerbil-libdir libdir)
+      (let* ((loadpath
+              (cond
+               ((getenv "GERBIL_LOADPATH" #f)
+                => (lambda (ev)
+                     (filter (lambda (path) (not (string-empty? path)))
+                             (string-split ev #\:))))
+               (else '())))
+             (userpath
+              (path-expand "lib" (getenv "GERBIL_PATH" "~/.gerbil")))
+             (loadpath
+              (if (file-exists? userpath)
+                  (cons (path-normalize userpath) loadpath) ; exists, pin it
+                  (cons userpath loadpath)))) ; maybe later (interactive gxi)
+        (&current-module-libpath (cons libdir loadpath)))
+      (&current-module-registry (make-hash-table))
+      (current-readtable _gx#*readtable*)
+      (load-module "gerbil/expander__rt")))
+
+
+  <<main-gxi/gxc>>
+
+  (##main-set! _gx#main-gxi/gxc)
+
+
+
+
+#+end_src
+
+
+** Build Script
+
+#+begin_src sh
+  ../../../gambit/gsc/gsc -exe -o ../../../bin/_gxi -e '(include "gx-gambc#.scm")' gx-gambc0.scm  gx-gambc1.scm gx-gambc2.scm gx-gambc.scm gxi-gambc.scm
+#+end_src
+
+** ~gsc -help~
+
+#+begin_src sh :results verbatim :wrap quote
+  gsc -help
+#+end_src
+
+#+RESULTS:
+#+begin_quote
+usage: gsc [options] [module-or-file...]
+
+This is the Gambit Scheme compiler.
+
+Each module-or-file can be:
+    .                            Adds CWD to module search order
+    directory/                   Adds directory to module search order
+    foo, foo/bar, ...            Module or file on local file system
+    github.com/gambit/hello      Module hosted on public Git repository
+    github.com/gambit/hello@1.0  Specific version of module
+    file.sld, file.scm, ...      Scheme source code file
+    file.six                     Scheme source code file (infix syntax)
+    file.c                       C code file generated by compiler
+    file.js, file.py, ...        JS/Python/... code file generated by compiler
+    file.o, file.obj             Object file generated by compiler
+
+Output mode
+    -target l   Select target language to compile to (C, js, x86-64, ...)
+    -c          Compile to target language source files (.c, .js, ...)
+    -link       Generate a link file combining a set of compiled files
+    -obj        Compile to object files (.o, .obj)
+    -exe        Compile to an executable program or script
+    -dynamic    Compile to a .oN dynamically loadable file (default mode)
+
+Output options
+    -o output   Output filename or directory
+    -keep-temp  Do not delete intermediate target language source files
+
+Scheme compiler and linker options
+    -prelude 'expression ...'   Add expressions before the source code
+    -postlude 'expression ...'  Add expressions after the source code
+    -module-name name           Name of the generated module
+    -linker-name name           Low-level init function exported by module
+    -l base                     Link file of the base library to use
+    -flat                       Force a flat link file instead of incremental
+
+C compiler and linker options
+    -cc compiler                Use specific C compiler (gcc, clang, tcc, ...)
+    -cc-options 'option ...'    Extra command line options for C compiler
+    -ld-options 'option ...'    Extra command line options for C linker
+    -ld-options-prelude 'option ...'
+    -pkg-config library         Get compile and link flags using pkg-config
+    -pkg-config-path dir        Add directory to pkg-config search path
+
+Debug information options
+    -debug                 Include all debug info
+    -debug-source          Include source code in debug info
+    -debug-location        Include source code location in debug info
+    -debug-environments    Include environments in debug info
+    -track-scheme          Emit '#line' directives referring to Scheme code
+
+Auxiliary information options
+    -gvm             Write GVM intermediate representation to file.gvm
+    -cfg             Write GVM control flow graph to file.cfg
+    -dg              Write variable/procedure dependency graph to file.dg
+    -expansion       Show source code after code transformations
+    -report          Show global variable usage report
+    -verbose         Show trace of compiler activity
+    -warnings        Show warnings
+
+Interpreter options
+    -i               Process rest of command line like the interpreter
+    -e 'expression'  Evaluate the given Scheme expression at this point
+    -                Drop into a REPL at this point (continue with ,c)
+
+Global options
+    -:opt1,opt2,...  Runtime system options (try '-:help' for details)
+    -f               Do not process '.gambini' initialization files
+    -v               Show version information
+    -h, -help        Show this help
+#+end_quote
+
+#+begin_quote
+gxc [options...] <file> ...
+Options:
+ -h,-help,--help             display this usage summary and exit
+ -d <dir>                    set compiler output directory; defaults to $GERBIL_HOME/lib
+ -exe                        compile an executable
+ -o <file>                   set executable output file
+ -O                          optimize gerbil source
+ -s                          keep intermediate .scm files
+ -S                          don't invoke gsc
+ -static                     compile modules for static linking; with -exe, compile a statically linked executable
+ -v                          be verbose during compilation
+ -g                          invoke gsc with -debug; enables -s
+ -genv                       invoke gsc with -debug-environments
+ -genv/phi                   invoke gsc with -debug-environments, including phi sections
+ -gsrc                       invoke gsc with -debug-environments -debug-source
+ -gsrc/phi                   invoke gsc with -debug-environments -debug-source, including phi sections
+ -no-ssxi                    don't generate .ssxi modules for cross-module optimization
+ -include-gambit-sharp       include _gambit# with necessary cond expand features
+ -prelude <sexpr>            add [-prelude <sexpr>] to gsc options
+ -cc-options <string>        add [-cc-options <string>] to gsc options
+ -ld-options <string>        add [-ld-options <string>] to gsc options
+ -gsc-flag   <opt>           add [<opt>] to gsc options
+ -gsc-option <opt> <string>  add [<opt> <string>] to gsc options
+#+end_quote

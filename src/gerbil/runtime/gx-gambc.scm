@@ -21,7 +21,7 @@
   ;; (debug-environments)
  )
 
-(define __gx#default-gerbil-home #f)
+;; (define __gx#default-gerbil-home "/usr/local/lib/gerbil")
 
 (define _gx#loading-scheme-source
   (make-parameter #f))
@@ -110,10 +110,12 @@
     (##load path (lambda args #f) #t #t #f)))
 
 ;; load path utils
+
+
 (define (load-path)
   (values
-    (library-load-path)
-    (expander-load-path)))
+   (library-load-path)
+   (expander-load-path)))
 
 (define (library-load-path)
   (&current-module-libpath))
