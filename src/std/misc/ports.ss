@@ -234,3 +234,43 @@
       newline-ending: (newline-ending #t))
   (def string (string-join list "\n"))
   (write-file-string file string settings: settings newline-ending: newline-ending))
+
+;; Put terminal into raw mode. Used by read-password
+(def (raw-mode tty)
+  (##tty-mode-set! tty
+                   #f ;; input-allow-special
+                   #f ;; input-echo
+                   #t ;; input-raw
+                   #t ;; output-raw
+                   0)) ;; speed
+
+;; Set defaults back
+(def (cooked-mode tty)
+  (##tty-mode-set! tty
+                   #t ;; input-allow-special
+                   #t ;; input-echo
+                   #f ;; input-raw
+                   #f ;; output-raw
+                   0)) ;; speed
+
+;; Read a password without echoing.
+(def (read-password tty)
+  (raw-mode tty)
+  (let loop ((chars []))
+    (let ((c (read-char tty)))
+      (cond ((or (eof-object? c)
+                 (char=? c #\return)
+                 (char=? c #\newline))
+             (cooked-mode tty)
+             (display "\n" tty)
+             (list->string (reverse chars)))
+            ((or (char=? c #\backspace)
+                 (char=? c #\delete))
+             (if (pair? chars)
+               (begin
+                 (display "\b \b" tty)
+                 (loop (cdr chars)))
+               (loop chars)))
+            (else
+             (display "*" tty)
+             (loop (cons c chars)))))))
