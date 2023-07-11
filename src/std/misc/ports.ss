@@ -254,24 +254,44 @@
                    #f ;; output-raw
                    0)) ;; speed
 
+;; TODO: add to the prelude in :gerbil/gambit/ports
+(extern namespace: #f peek-char)
+
 ;; Read a password without echoing.
-(def (read-password tty)
-  (raw-mode tty)
-  (let loop ((chars []))
-    (let ((c (read-char tty)))
-      (cond ((or (eof-object? c)
-                 (char=? c #\return)
-                 (char=? c #\newline))
-             (cooked-mode tty)
-             (display "\n" tty)
-             (list->string (reverse chars)))
-            ((or (char=? c #\backspace)
-                 (char=? c #\delete))
-             (if (pair? chars)
-               (begin
-                 (display "\b \b" tty)
-                 (loop (cdr chars)))
-               (loop chars)))
-            (else
-             (display "*" tty)
-             (loop (cons c chars)))))))
+(def (read-password (input (current-input-port)) (output (current-output-port))
+                    prompt: (prompt "Password: "))
+  ;; display prompt
+  (when prompt
+    (display prompt output)
+    (force-output output))
+  (try
+   (if (equal? (getenv "TERM" #f) "dumb")
+     ;; inside emacs, feeley's raw code does not work!
+     (begin
+       (##tty-mode-set! input #f #f #f #f 0)
+       (let (pass (read-line input))
+         (newline output)
+         pass))
+     (begin
+       ;; @feeley's code, as posted on gitter
+       (raw-mode input)
+       (let loop ((chars []))
+         (let ((c (read-char input)))
+           (cond ((or (eof-object? c)
+                      (char=? c #\return)
+                      (char=? c #\newline))
+                  (cooked-mode input)
+                  (display "\n" output)
+                  (list->string (reverse chars)))
+                 ((or (char=? c #\backspace)
+                      (char=? c #\delete))
+                  (if (pair? chars)
+                    (begin
+                      (display "\b \b" output)
+                      (loop (cdr chars)))
+                    (loop chars)))
+                 (else
+                  (display "*" output)
+                  (loop (cons c chars))))))))
+   (finally
+    (cooked-mode input))))
