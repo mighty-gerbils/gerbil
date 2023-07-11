@@ -254,9 +254,6 @@
                    #f ;; output-raw
                    0)) ;; speed
 
-;; TODO: add to the prelude in :gerbil/gambit/ports
-(extern namespace: #f peek-char)
-
 ;; Read a password without echoing.
 (def (read-password (input (current-input-port)) (output (current-output-port))
                     prompt: (prompt "Password: "))
