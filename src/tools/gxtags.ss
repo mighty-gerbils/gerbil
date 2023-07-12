@@ -18,14 +18,16 @@
 
 (def (main . args)
   (def gopt
-    (getopt (flag 'append "-a"
-               help: "append to existing tag file")
-            (option 'output "-o" default: "TAGS"
-               help: "explicit name of file for tag table")
-            (flag 'help "-h" "--help"
-               help: "display help")
-            (rest-arguments 'input
-               help: "source file or directory")))
+    (getopt
+     help: "generate emacs tags for Gerbil code"
+     (flag 'append "-a"
+           help: "append to existing tag file")
+     (option 'output "-o" default: "TAGS"
+             help: "explicit name of file for tag table")
+     (flag 'help "-h" "--help"
+           help: "display help")
+     (rest-arguments 'input
+                     help: "source file or directory")))
 
   (def (help what)
     (getopt-display-help what "gxtags"))

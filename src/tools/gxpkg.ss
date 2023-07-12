@@ -77,17 +77,19 @@
     (command 'help help: "display help; help <command> for command help"
              (optional-argument 'command value: string->symbol)))
   (def gopt
-    (getopt install-cmd
-            uninstall-cmd
-            update-cmd
-            link-cmd
-            unlink-cmd
-            build-cmd
-            clean-cmd
-            list-cmd
-            retag-cmd
-            search-cmd
-            help-cmd))
+    (getopt
+     help: "the Gerbil Package Manager"
+     install-cmd
+     uninstall-cmd
+     update-cmd
+     link-cmd
+     unlink-cmd
+     build-cmd
+     clean-cmd
+     list-cmd
+     retag-cmd
+     search-cmd
+     help-cmd))
 
   (try
    (let ((values cmd opt) (getopt-parse gopt args))

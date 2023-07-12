@@ -4,7 +4,8 @@
 
 (export libcrypto-error? raise-libcrypto-error with-libcrypto-error
         call-with-binary-input
-        random-bytes random-bytes!)
+        random-bytes random-bytes!
+        as-bytes)
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
         :std/error
@@ -48,7 +49,8 @@
 (defrules with-libcrypto-error ()
   ((_ expr irritants ...)
    (let (res expr)
-     (when (##fxzero? res)
+     (if (##fxpositive? res)
+       res
        (apply raise-libcrypto-error '(irritants ...))))))
 
 (def (call-with-binary-input proc in . args)
@@ -135,3 +137,10 @@
   (let (result (RAND_bytes bytes start end))
     (unless (= result 1)
       (raise-libcrypto-error "Error in RAND_bytes"))))
+
+(def (as-bytes in)
+  (cond
+   ((u8vector? in) in)
+   ((string? in) (string->utf8 in))
+   (else
+    (error "Expected u8vector or string" in))))

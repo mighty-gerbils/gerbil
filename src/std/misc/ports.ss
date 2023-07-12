@@ -13,6 +13,7 @@
         read-file-lines
         read-all-as-u8vector
         read-file-u8vector
+        read-password
         write-file-string
         write-file-lines)
 
@@ -234,3 +235,60 @@
       newline-ending: (newline-ending #t))
   (def string (string-join list "\n"))
   (write-file-string file string settings: settings newline-ending: newline-ending))
+
+;; Put terminal into raw mode. Used by read-password
+(def (raw-mode tty)
+  (##tty-mode-set! tty
+                   #f ;; input-allow-special
+                   #f ;; input-echo
+                   #t ;; input-raw
+                   #t ;; output-raw
+                   0)) ;; speed
+
+;; Set defaults back
+(def (cooked-mode tty)
+  (##tty-mode-set! tty
+                   #t ;; input-allow-special
+                   #t ;; input-echo
+                   #f ;; input-raw
+                   #f ;; output-raw
+                   0)) ;; speed
+
+;; Read a password without echoing.
+(def (read-password (input (current-input-port)) (output (current-output-port))
+                    prompt: (prompt "Password: "))
+  ;; display prompt
+  (when prompt
+    (display prompt output)
+    (force-output output))
+  (try
+   (if (equal? (getenv "TERM" #f) "dumb")
+     ;; inside emacs, feeley's raw code does not work!
+     (begin
+       (##tty-mode-set! input #f #f #f #f 0)
+       (let (pass (read-line input))
+         (newline output)
+         pass))
+     (begin
+       ;; @feeley's code, as posted on gitter
+       (raw-mode input)
+       (let loop ((chars []))
+         (let ((c (read-char input)))
+           (cond ((or (eof-object? c)
+                      (char=? c #\return)
+                      (char=? c #\newline))
+                  (cooked-mode input)
+                  (display "\n" output)
+                  (list->string (reverse chars)))
+                 ((or (char=? c #\backspace)
+                      (char=? c #\delete))
+                  (if (pair? chars)
+                    (begin
+                      (display "\b \b" output)
+                      (loop (cdr chars)))
+                    (loop chars)))
+                 (else
+                  (display "*" output)
+                  (loop (cons c chars))))))))
+   (finally
+    (cooked-mode input))))

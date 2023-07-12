@@ -104,6 +104,9 @@ package: gerbil/gambit
   input-port-bytes-buffered
   input-port-characters-buffered
   repl-input-port repl-output-port console-port
+
+  ;; v4.9.3 and later
+  peek-char
   )
 
 (def (write-string str (port (current-output-port)))

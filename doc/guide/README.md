@@ -114,7 +114,7 @@ To get a bash shell where you can compile programs:
 docker run -it gerbil/ubuntu bash
 ```
 
-Or you can build your own container using the [Dockerfile](https://github.com/vyzo/gerbil/blob/master/Dockerfile)
+Or you can build your own container using the [Dockerfile](https://github.com/vyzo/gerbil/blob/master/docker/Dockerfile)
 
 ## Using Nix and/or Docker
 

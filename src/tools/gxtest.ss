@@ -15,6 +15,7 @@
 (def (main . args)
   (def gopt
     (getopt
+     help: "run Gerbil tests in the command line"
      (flag 'verbose "-v"
            help: "run in verbose mode where all test execution progress is displayed in stdout.")
      (option 'run "-r" "--run"

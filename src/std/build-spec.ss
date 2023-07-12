@@ -244,6 +244,7 @@
     "crypto/bn"
     "crypto/dh"
     "crypto/pkey"
+    "crypto/kdf"
     "crypto"
     ;; :std/misc
     "misc/concurrent-plan"
