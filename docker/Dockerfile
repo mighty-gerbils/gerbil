@@ -57,6 +57,7 @@ RUN cd /opt && git clone https://github.com/gambit/gambit gambit-src
 RUN cd /opt/gambit-src && git fetch -a && git checkout ${gambit_version}
 RUN cd /opt/gambit-src \
     && ./configure \
+    --enable-targets="" \
     --enable-smp \
     --enable-debug \
     --enable-debug-c-backtrace \
