@@ -57,22 +57,20 @@ RUN cd /opt && git clone https://github.com/gambit/gambit gambit-src
 RUN cd /opt/gambit-src && git fetch -a && git checkout ${gambit_version}
 RUN cd /opt/gambit-src \
     && ./configure \
-    --enable-targets="" \
-    --enable-smp \
     --enable-debug \
-    --enable-debug-c-backtrace \
-    --enable-debug-log \
     --enable-debug-alloc-mem \
+    --enable-debug-c-backtrace \
     --enable-debug-garbage-collect \
-    --enable-single-host \
-    --enable-multiple-threaded-vms \
-    --enable-multiple-vms \
+    --enable-debug-log \
+    --enable-default-runtime-options=f8,-8,t8 \
     --enable-dynamic-clib \
     --enable-march=native \
-    --enable-poll \
-    --enable-openssl \
+    --enable-multiple-threaded-vms \
     --enable-multiple-versions \
-    --enable-default-runtime-options=f8,-8,t8 \
+    --enable-openssl \
+    --enable-poll \
+    --enable-single-host \
+    --enable-targets="" \
     --prefix=${GAMBIT_HOME}
 
 RUN cd /opt/gambit-src && make -j$cores
