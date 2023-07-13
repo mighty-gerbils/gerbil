@@ -65,6 +65,8 @@ RUN cd /opt/gambit-src \
     --enable-debug-alloc-mem \
     --enable-debug-garbage-collect \
     --enable-single-host \
+    --enable-multiple-threaded-vms \
+    --enable-multiple-vms \
     --enable-dynamic-clib \
     --enable-march=native \
     --enable-poll \
