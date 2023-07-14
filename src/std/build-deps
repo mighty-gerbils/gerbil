@@ -230,6 +230,9 @@
    gerbil/gambit/ports
    std/coroutine
    std/generic))
+ (std/interface
+  "interface"
+  (gerbil/core gerbil/gambit/threads std/generic std/srfi/1))
  (std/debug/heap
   (gxc: "debug/heap" "-e" "(include \"~~lib/_gambit#.scm\")")
   (gerbil/core gerbil/gambit/hvectors std/generic std/sort))
