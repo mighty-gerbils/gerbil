@@ -61,6 +61,14 @@ Here is an example:
     (for (x (in-range iters))
       (Operation-apply op x))
     (Operation-finish! op)))
+
+;; implementation using the _unchecked_ Operation interface
+(def (fold-accumulator/unchecked-interface acc iters)
+  (let (op (Operation acc))
+    (&Operation-start! op)
+    (for (x (in-range iters))
+      (&Operation-apply op x))
+    (&Operation-finish! op)))
 ```
 
 And here are some timings for 1M iterations, after compiling the above code:
@@ -69,8 +77,8 @@ And here are some timings for 1M iterations, after compiling the above code:
 > (def acc (LinearAccumulator #f 2 3))
 > (time (fold-accumulator/vanilla acc 1000000))
 (time (tmp/interface-example#fold-accumulator/vanilla acc (##quote 1000000)))
-    0.046875 secs real time
-    0.045979 secs cpu time (0.045979 user, 0.000000 system)
+    0.040925 secs real time
+    0.040926 secs cpu time (0.040926 user, 0.000000 system)
     no collections
     no bytes allocated
     no minor faults
@@ -78,8 +86,8 @@ And here are some timings for 1M iterations, after compiling the above code:
 1000002000000
 > (time (fold-accumulator/interface acc 1000000))
 (time (tmp/interface-example#fold-accumulator/interface acc (##quote 1000000)))
-    0.019163 secs real time
-    0.018647 secs cpu time (0.018647 user, 0.000000 system)
+    0.018799 secs real time
+    0.018789 secs cpu time (0.018789 user, 0.000000 system)
     no collections
     1952 bytes allocated
     no minor faults
@@ -87,8 +95,26 @@ And here are some timings for 1M iterations, after compiling the above code:
 1000002000000
 > (time (fold-accumulator/interface acc 1000000))
 (time (tmp/interface-example#fold-accumulator/interface acc (##quote 1000000)))
-    0.017777 secs real time
-    0.017372 secs cpu time (0.017372 user, 0.000000 system)
+    0.016031 secs real time
+    0.016032 secs cpu time (0.016032 user, 0.000000 system)
+    no collections
+    1072 bytes allocated
+    no minor faults
+    no major faults
+1000002000000
+> (time (fold-accumulator/unchecked-interface acc 1000000))
+(time (tmp/interface-example#fold-accumulator/unchecked-interface acc (##quote 1000000)))
+    0.015697 secs real time
+    0.015698 secs cpu time (0.015698 user, 0.000000 system)
+    no collections
+    1072 bytes allocated
+    no minor faults
+    no major faults
+1000002000000
+> (time (fold-accumulator/unchecked-interface acc 1000000))
+(time (tmp/interface-example#fold-accumulator/unchecked-interface acc (##quote 1000000)))
+    0.015520 secs real time
+    0.015520 secs cpu time (0.015520 user, 0.000000 system)
     no collections
     1072 bytes allocated
     no minor faults
@@ -124,9 +150,13 @@ the interface methods with the name `<interface>-<method>`. Here
 `<interface>` means the symbolic name of the interface.
 
 
+
 ### interface-out
 ```scheme
 (interface-out interface-id ...)
+(interface-out unchecked: #t interface-id ...)
 ```
 
 Export macro for exporting the symbols related to an interface.
+By default, unchecked method stubs are not exported; you will need to
+use the second form to also export them.
