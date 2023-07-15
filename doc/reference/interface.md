@@ -149,6 +149,25 @@ satisfaction check `is-<interface>?`), and method definitions for all
 the interface methods with the name `<interface>-<method>`. Here
 `<interface>` means the symbolic name of the interface.
 
+Here is an example:
+```scheme
+(interface Operation
+  (start!)
+  (apply x)
+  (finish!))
+
+; => expands to the following definitions:
+
+(defsyntax Operation ...)
+(def Operation::t ...)
+(def Operation::descriptor ...)
+(def (make-Operation obj) ...)
+(def (Operation? obj) ...)
+(def (is-Operation? obj) ...)
+(def (Operation-start! self) ...)
+(def (Operation-apply self x) ...)
+(def (Operation-finish! self) ...)
+```
 
 
 ### interface-out
