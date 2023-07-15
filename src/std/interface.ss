@@ -96,7 +96,8 @@
                  []
                  specs))
       ;; verify method compatibility, remove duplicates from mixins, and sort lexicographically
-      (let lp ((rest methods) (methods []))
+      ;; the mixin methods are processed first, so we reverse.
+      (let lp ((rest (reverse methods)) (methods []))
         (match rest
           ([method . rest]
            (cond
@@ -169,8 +170,10 @@
 
   (def (interface-spec? spec)
     (syntax-case spec ()
+      ((name . args)
+       (identifier? #'name)
+       (method-formals? #'args))
       (mixin (identifier? #'mixin) #t)
-      ((name . args) (identifier? #'name) (method-formals? #'args))
       (_ #f)))
 
   (def (method-formals? args)
@@ -216,6 +219,31 @@
          (let (args (reverse args))
            (check-duplicate-identifiers args spec)
            args)))))
+
+  (def (quote-method spec)
+    (syntax-case spec ()
+      ((id . rest)
+       (identifier? #'id)
+       (cons #'id (quote-method #'rest)))
+      (((id default) . rest)
+       (identifier? #'id)
+       (cons [#'id (quote-expr #'default)] (quote-method #'rest)))
+      ((kw id . rest)
+       (and (keyword? #'kw) (identifier? #'id))
+       (cons* #'kw #'id (quote-method #'rest)))
+      ((kw (id default) . rest)
+       (and (keyword? #'kw) (identifier? #'id))
+       (cons* #'kw [#'id (quote-expr #'default)] (quote-method #'rest)))
+      (tail #'tail)))
+
+  (def (quote-expr expr)
+    (syntax-case expr ()
+      ((hd . rest)
+       (cons (quote-expr #'hd) (quote-expr #'rest)))
+      (id
+       (identifier? #'id)
+       #'(unquote (quote-syntax id)))
+      (_ expr)))
 
   (syntax-case stx ()
     ((_ hd spec ...)
@@ -298,9 +326,12 @@
                     (defpred-instance
                       #'(def (instance-predicate obj)
                           (satisfies? descriptor obj)))
+                    ((quoted-method ...)
+                     (map quote-method #'(method ...)))
                     (definfo
                       #'(defsyntax name
-                          (make-interface-info 'name '(method ...)
+                          (make-interface-info 'name
+                                               `(quoted-method ...)
                                                (quote-syntax klass)
                                                (quote-syntax descriptor)
                                                (quote-syntax make)
