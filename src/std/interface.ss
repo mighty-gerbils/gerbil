@@ -43,7 +43,7 @@
                     (let* ((method-impls
                             (map (lambda (method)
                                    (or (method-ref obj method)
-                                       (error "Cannot create interface prototype; missing method" method)))
+                                       (error "Cannot create interface prototype; missing method" (##type-name klass) method)))
                                  (interface-descriptor-methods descriptor)))
                            (prototype
                             (apply ##structure klass #f method-impls)))
