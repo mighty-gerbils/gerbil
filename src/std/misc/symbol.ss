@@ -5,13 +5,13 @@
 (export #t)
 
 ;; caching symbol as string comparison
-(def (compare-symbolic cmp-e mx?)
+(def (compare-symbolic string-e cmp-e mx?)
   (def cache (make-hash-table-eq))
   (def (do-cache-get x)
     (cond
      ((hash-get cache x) => values)
      (else
-      (let (str (symbol->string x))
+      (let (str (string-e x))
         (hash-put! cache x str)
         str))))
   (def cache-get
@@ -23,14 +23,15 @@
   (lambda (x y)
     (cmp-e (cache-get x) (cache-get y))))
 
+;; comparison constructors
 (def (compare-symbol<? (mx? #f))
-  (compare-symbolic string<? mx?))
+  (compare-symbolic symbol->string string<? mx?))
 (def (compare-symbol<=? (mx? #f))
-  (compare-symbolic string<=? mx?))
+  (compare-symbolic symbol->string string<=? mx?))
 (def (compare-symbol>=? (mx? #f))
-  (compare-symbolic string>=? mx?))
+  (compare-symbolic symbol->string string>=? mx?))
 (def (compare-symbol>? (mx? #f))
-  (compare-symbolic string>? mx?))
+  (compare-symbolic symbol->string string>? mx?))
 
 ;; globally cached implementations
 (def symbol<?
@@ -41,3 +42,24 @@
   (compare-symbol>? #t))
 (def symbol>=?
   (compare-symbol>=? #t))
+
+;;; keywords
+;; comparison constructors
+(def (compare-keyword<? (mx? #f))
+  (compare-symbolic keyword->string string<? mx?))
+(def (compare-keyword<=? (mx? #f))
+  (compare-symbolic keyword->string string<=? mx?))
+(def (compare-keyword>=? (mx? #f))
+  (compare-symbolic keyword->string string>=? mx?))
+(def (compare-keyword>? (mx? #f))
+  (compare-symbolic keyword->string string>? mx?))
+
+;; globally cached implementations
+(def keyword<?
+  (compare-keyword<? #t))
+(def keyword<=?
+  (compare-keyword<=? #t))
+(def keyword>?
+  (compare-keyword>? #t))
+(def keyword>=?
+  (compare-keyword>=? #t))

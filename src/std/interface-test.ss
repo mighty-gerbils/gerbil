@@ -14,9 +14,12 @@
     (set! (X-x self) x)
     (set! (@ self y) y)))
 
-(interface A () a)
-(interface B () b)
-(interface C (A B) c)
+(interface A
+  (a x))
+(interface B
+  (b x))
+(interface (C A B)
+  (c x))
 
 (defmethod {a X}
   (lambda (self arg) (+ (X-x self) arg)))
