@@ -64,7 +64,7 @@
 
 ;; the all encompassing macro(s)
 (begin-syntax
-  (defstruct interface-info (name methods type descriptor constructor predicate method-impl))
+  (defstruct interface-info (name methods type descriptor constructor predicate instance-predicate method-impl))
 
   (defmethod {apply-macro-expander interface-info}
     (with-syntax ((new (quote-syntax new)))
@@ -108,6 +108,7 @@
                     (descriptor (stx-identifier #'name #'name "::descriptor"))
                     (make (stx-identifier #'name "make-" #'name))
                     (predicate (stx-identifier #'name #'name "?"))
+                    (instance-predicate (stx-identifier #'name "is-" #'name "?"))
                     ((method-name ...)
                      (fold-methods #'(method ...) #'(mixin ...)))
                     ((method-impl-name ...)
@@ -143,15 +144,18 @@
                                             'name                   ; type name
                                             '((final: . #t))        ; plist
                                             #f                      ; constructor (none)
-                                            '(method ...))))        ; field names
+                                            '(method-name ...))))   ; field names
                     (defdescriptor
                       #'(def descriptor
                           (make-interface-descriptor klass '(method-name ...))))
                     (defmake
                       #'(def (make obj)
-                          (new descriptor object)))
+                          (new descriptor obj)))
                     (defpred
                       #'(def (predicate obj)
+                          (direct-instance? klass obj)))
+                    (defpred-instance
+                      #'(def (instance-predicate obj)
                           (satisfies? descriptor obj)))
                     (definfo
                       #'(defsyntax name
@@ -160,8 +164,9 @@
                                                (quote-syntax descriptor)
                                                (quote-syntax make)
                                                (quote-syntax predicate)
+                                               (quote-syntax instance-predicate)
                                                [(quote-syntax method-impl-name) ...]))))
-       #'(begin defklass defdescriptor defmake defpred definfo
+       #'(begin defklass defdescriptor defmake defpred defpred-instance definfo
                 defmethod-impl ...
                 bind-method-impl ...)))))
 
@@ -175,5 +180,6 @@
           (let (info (syntax-local-value #'id false))
             (unless (interface-info? info)
               (raise-syntax-error #f "Not an interface type" stx #'id))
-            (lp #'rest [#'id (interface-info-type info) (interface-info-descriptor info) (interface-info-constructor info) (interface-info-predicate info) (interface-info-method-impl info) ...])))
+            (with ((interface-info _ _ type descriptor constructor predicate instance-predicate method-impl) info)
+              (lp #'rest [#'id type descriptor constructor predicate instance-predicate method-impl ...]))))
          (_ (cons begin: ids)))))))
