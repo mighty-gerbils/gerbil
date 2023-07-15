@@ -44,6 +44,7 @@
    ;;"foreign-test" ;; requires compiling the test
    "generic-test"
    "iter-test"
+   "interface-test"
    "misc/alist-test"
    "misc/barrier-test"
    "misc/bytes-test"
