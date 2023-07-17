@@ -1,6 +1,6 @@
 # Interfaces
 
-THe `:std/interface` module provides an implementation of Go-style
+The `:std/interface` module provides an implementation of Go-style
 interfaces.
 
 Interfaces declare the methods that an object must implement and
