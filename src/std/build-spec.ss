@@ -31,6 +31,14 @@
     "lazy"
     "amb"
     (gxc: "interface" ,@(include-gambit-sharp))
+    ;; stdio
+    "io/interface"
+    "io/dummy"
+    "io/bio/types"
+    "io/bio/input"
+    "io/bio/delimited"
+    "io/bio/util"
+    "io/bio/api"
     ;; debugging
     (gxc: "debug/heap" ,@(include-gambit-sharp))
     "debug/memleak"

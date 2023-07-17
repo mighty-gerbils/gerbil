@@ -14,6 +14,7 @@
  (std/coroutine "coroutine" (gerbil/core gerbil/gambit/threads std/sugar))
  (std/stxparam "stxparam" (gerbil/core))
  (std/lazy "lazy" (gerbil/core))
+ (std/io/bio/types "io/bio/types" (gerbil/core))
  (std/srfi/srfi-support "srfi/srfi-support" (gerbil/core))
  (std/srfi/8 (gxc: "srfi/8") (gerbil/core))
  (std/srfi/1
@@ -879,6 +880,38 @@
    std/srfi/1
    std/sugar))
  (std/misc/rwlock "misc/rwlock" (gerbil/core gerbil/gambit/threads std/sugar))
+ (std/io/interface "io/interface" (gerbil/core std/interface))
+ (std/io/dummy "io/dummy" (gerbil/core std/error std/io/interface))
+ (std/io/bio/util
+  "io/bio/util"
+  (gerbil/core
+   gerbil/gambit/bits
+   gerbil/gambit/fixnum
+   gerbil/gambit/threads
+   std/error
+   std/io/interface
+   std/srfi/1
+   std/sugar))
+ (std/io/bio/input
+  "io/bio/input"
+  (gerbil/core
+   std/error
+   std/io/bio/types
+   std/io/bio/util
+   std/io/interface
+   std/sugar))
+ (std/io/bio/delimited
+  "io/bio/delimited"
+  (gerbil/core std/error std/io/bio/input std/io/bio/types std/io/interface))
+ (std/io/bio/api
+  "io/bio/api"
+  (gerbil/core
+   std/io/bio/delimited
+   std/io/bio/input
+   std/io/bio/types
+   std/io/bio/util
+   std/io/dummy
+   std/io/interface))
  (std/protobuf/io
   "protobuf/io"
   (gerbil/core
@@ -1217,4 +1250,3 @@
  (std/db/sqlite
   "db/sqlite"
   (gerbil/core std/db/_sqlite std/db/dbi std/format std/iter)))
-
