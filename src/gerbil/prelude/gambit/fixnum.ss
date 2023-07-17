@@ -5,7 +5,7 @@ package: gerbil/gambit
 
 (export #t)
 (extern namespace: #f
-  fxarithmetic-shift-left fxarithmetic-shift-right fxarithmetic-shift-left
+  fxarithmetic-shift-left fxarithmetic-shift-right fxarithmetic-shift
   fxbit-count fxfirst-set-bit fxif fxlength
   fxquotient fxremainder
   fxwrap* fxwrap+ fxwrap-
