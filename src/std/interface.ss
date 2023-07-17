@@ -7,7 +7,7 @@
                     (only-in :std/sort sort)
                     (only-in :std/misc/symbol compare-symbolic)))
 (export interface interface-out
-        interface-instance?
+        interface-instance? interface-instance-object
         interface-descriptor? interface-descriptor-type interface-descriptor-methods)
 
 ;; base type for all interface instances
@@ -178,8 +178,8 @@
       (mixin (identifier? #'mixin) #t)
       (_ #f)))
 
-  (def (method-formals? args)
-    (let lp ((rest args))
+  (def (method-formals? signature)
+    (let lp ((rest signature))
       (syntax-case rest ()
         ((id . rest)
          (identifier? #'id)
@@ -197,8 +197,8 @@
         (() #t)
         (_ #f))))
 
-  (def (method-arguments spec)
-    (let lp ((rest spec) (args []))
+  (def (method-arguments signature)
+    (let lp ((rest signature) (args []))
       (syntax-case rest ()
         ((id . rest)
          (identifier? #'id)
@@ -215,37 +215,12 @@
         (id
          (identifier? #'id)
          (let (args (foldl cons [#'id] args))
-           (check-duplicate-identifiers args spec)
+           (check-duplicate-identifiers args signature)
            args))
         (()
          (let (args (reverse args))
-           (check-duplicate-identifiers args spec)
+           (check-duplicate-identifiers args signature)
            args)))))
-
-  (def (quote-method spec)
-    (syntax-case spec ()
-      ((id . rest)
-       (identifier? #'id)
-       (cons #'id (quote-method #'rest)))
-      (((id default) . rest)
-       (identifier? #'id)
-       (cons [#'id (quote-expr #'default)] (quote-method #'rest)))
-      ((kw id . rest)
-       (and (keyword? #'kw) (identifier? #'id))
-       (cons* #'kw #'id (quote-method #'rest)))
-      ((kw (id default) . rest)
-       (and (keyword? #'kw) (identifier? #'id))
-       (cons* #'kw [#'id (quote-expr #'default)] (quote-method #'rest)))
-      (tail #'tail)))
-
-  (def (quote-expr expr)
-    (syntax-case expr ()
-      ((hd . rest)
-       (cons (quote-expr #'hd) (quote-expr #'rest)))
-      (id
-       (identifier? #'id)
-       #'(unquote (quote-syntax id)))
-      (_ expr)))
 
   (syntax-case stx ()
     ((_ hd spec ...)
@@ -316,13 +291,6 @@
                           #'(unchecked-method-impl-name ...)
                           #'(method-signature ...)
                           (iota (length #'(method-name ...)) 2)))
-                    ((bind-method-impl ...)
-                     (map (lambda (method-name method-impl-name)
-                            (with-syntax ((method-name method-name)
-                                          (method-impl method-impl-name))
-                              #'(bind-method! klass 'method-name method-impl)))
-                          #'(method-name ...)
-                          #'(method-impl-name ...)))
                     (field-count
                      (length #'(method-name ...)))
                     (defklass
@@ -346,12 +314,10 @@
                     (defpred-instance
                       #'(def (instance-predicate obj)
                           (satisfies? descriptor obj)))
-                    ((quoted-method ...)
-                     (map quote-method #'(method ...)))
                     (definfo
                       #'(defsyntax name
                           (make-interface-info 'name
-                                               `(quoted-method ...)
+                                               '(method ...)
                                                (quote-syntax klass)
                                                (quote-syntax descriptor)
                                                (quote-syntax make)
@@ -360,8 +326,7 @@
                                                [(quote-syntax method-impl-name) ...]
                                                [(quote-syntax unchecked-method-impl-name) ...]))))
        #'(begin defklass defdescriptor defmake defpred defpred-instance definfo
-                defmethod-impl ...
-                bind-method-impl ...)))))
+                defmethod-impl ...)))))
 
 (defsyntax-for-export (interface-out stx)
   (def (expand body unchecked?)
