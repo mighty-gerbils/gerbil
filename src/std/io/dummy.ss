@@ -7,9 +7,6 @@
 
 (defstruct dummy-io ())
 
-(def dummy-reader (Reader (make-dummy-io)))
-(def dummy-writer (Writer (make-dummy-io)))
-
 (defmethod {read dummy-io}
   (lambda (self output output-start output-end input-need)
     (if (fx> input-need 0)
@@ -22,3 +19,6 @@
 
 (defmethod {close dummy-io}
   void)
+
+(def dummy-reader (Reader (make-dummy-io)))
+(def dummy-writer (Writer (make-dummy-io)))

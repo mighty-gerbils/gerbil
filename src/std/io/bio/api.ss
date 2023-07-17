@@ -20,7 +20,7 @@
 (def (open-u8vector-buffered-reader u8v)
   (unless (u8vector? u8v)
     (error "Expected u8vector" u8v))
-  (BufferedReader (make-input-buffer dummy-reader u8v 0 0)))
+  (BufferedReader (make-input-buffer dummy-reader u8v 0 (u8vector-length u8v))))
 
 ;;; Interface
 ;; input-buffer BufferedReader implementation

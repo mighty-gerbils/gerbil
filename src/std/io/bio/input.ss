@@ -21,7 +21,8 @@
 
 (defrule (bio-input-fill! bio buf need)
   (let (read (&Reader-read (&input-buffer-reader bio) buf 0 (u8vector-length buf) need))
-    (set! (&input-buffer-rhi bio) read)))
+    (set! (&input-buffer-rhi bio) read)
+    read))
 
 (def (bio-read-bytes bio output output-start output-end input-need)
   (let* ((input-want (fx- output-end output-start))
@@ -75,7 +76,8 @@
         (bio-input-advance! bio rlo+1 rhi)
         u8)
       ;; empty buffer
-      (let (read (bio-input-fill! bio buf 1))
+      (begin
+        (bio-input-fill! bio buf 1)
         (bio-read-u8 bio)))))
 
 (def (bio-peek-u8 bio)
@@ -98,21 +100,21 @@
       (if (fx>= have count)
         (let (rlo+count (fx+ rlo count))
           (bio-input-advance! bio rlo+count rhi)
-          (void)))
-      (begin
-        (when (fx> have 0)
-          (bio-input-consume! bio))
-        (let* ((buf (&input-buffer-buf bio))
-               (buflen (u8vector-length buf)))
-          (let lp ((skip (fx- count have)))
-            (cond
-             ((fx= skip 0) (void))
-             ((fx<= skip (u8vector-length buf))
-              (&Reader-read (&input-buffer-reader bio) buf 0 skip skip)
-              (void))
-             (else
-              (&Reader-read (&input-buffer-reader bio) buf 0 buflen buflen)
-              (lp (fx- skip buflen))))))))))
+          (void))
+        (begin
+          (when (fx> have 0)
+            (bio-input-consume! bio))
+          (let* ((buf (&input-buffer-buf bio))
+                 (buflen (u8vector-length buf)))
+            (let lp ((skip (fx- count have)))
+              (cond
+               ((fx= skip 0) (void))
+               ((fx<= skip buflen)
+                (&Reader-read (&input-buffer-reader bio) buf 0 skip skip)
+                (void))
+               (else
+                (&Reader-read (&input-buffer-reader bio) buf 0 buflen buflen)
+                (lp (fx- skip buflen)))))))))))
 
 (def (bio-delimit-input bio limit)
   (BufferedReader (make-delimited-input-buffer bio limit limit)))
