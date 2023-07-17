@@ -131,4 +131,8 @@
 
   ;; closes the socket
   (close)
+
+  ;; sets the input timeout, which must be a relative or absolute time.
+  ;; #f clears the timeout
+  (set-input-timeout! timeo)
   )
