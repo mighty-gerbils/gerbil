@@ -93,7 +93,7 @@
                      (let (info (syntax-local-value spec false))
                        (unless (interface-info? info)
                          (raise-syntax-error #f "Bad syntax; not an interface type" stx spec))
-                       (foldl cons methods (interface-info-methods info)))
+                       (foldl cons methods (map syntax-local-introduce (interface-info-methods info))))
                      (cons spec methods)))
                  []
                  specs))
