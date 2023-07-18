@@ -911,7 +911,8 @@
    std/io/bio/types
    std/io/bio/util
    std/io/dummy
-   std/io/interface))
+   std/io/interface
+   std/text/utf8))
  (std/protobuf/io
   "protobuf/io"
   (gerbil/core

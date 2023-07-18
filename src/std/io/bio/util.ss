@@ -110,17 +110,18 @@
         #\xfffd)))))
 
 (defreader-ext (read-string reader str (start 0) (end (string-length str)) (need 0))
-  (let lp ((i start) (need need) (read 0))
-    (if (fx< i end)
-      (let (next (&BufferedReader-read-char reader))
-        (if (eof-object? next)
-          (if (fx> need 0)
-            (raise-io-error 'BufferedReader-read-string "premature end of input")
-            read)
-          (begin
-            (string-set! str i next)
-            (lp (fx+ start 1) (fx- need 1) (fx+ read 1)))))
-      read)))
+  (let (count (fx- end start))
+    (let lp ((i 0) (need need) (read 0))
+      (if (fx< i count)
+        (let (next (&BufferedReader-read-char reader))
+          (if (eof-object? next)
+            (if (fx> need 0)
+              (raise-io-error 'BufferedReader-read-string "premature end of input")
+              read)
+            (begin
+              (string-set! str i next)
+              (lp (fx+ i 1) (fx- need 1) (fx+ read 1)))))
+        read))))
 
 (defreader-ext (read-line reader (sep #\newline) (include-sep? #f) (max-chars #f))
   (let* ((separators (if (list? sep) sep [sep]))
@@ -130,21 +131,21 @@
             (lambda (x) #t)))
          (finish
           (if include-sep?
-            (lambda (chars) (list->string (reverse! chars)))
-            (lambda (chars) (list->string (reverse! (drop chars (length separators))))))))
-    (let lp ((x 0) (separating separators) (chars []))
+            (lambda (chars drop) (list->string (reverse! chars)))
+            (lambda (chars drop) (list->string (reverse! (list-tail chars drop)))))))
+    (let lp ((x 0) (separating separators) (drop 0) (chars []))
       (cond
        ((null? separating)
-        (finish chars))
+        (finish chars drop))
        ((read-more? x)
         (let (next (&BufferedReader-read-char reader))
           (cond
            ((eof-object? next)
-            (finish chars))
+            (finish chars drop))
            ((eq? (car separating) next)
-            (lp (fx+ x 1) (cdr separating) (cons next chars)))
+            (lp (fx+ x 1) (cdr separating) (fx+ drop 1) (cons next chars)))
            (else
-            (lp (fx+ x 1) separators (cons next chars))))))
+            (lp (fx+ x 1) separators 0 (cons next chars))))))
        (else
         (raise-io-error 'BufferedReader-read-line "too many characters" x))))))
 

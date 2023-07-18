@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Buffered IO api
-(import ../interface
+(import :std/text/utf8
+        ../interface
         ../dummy
         ./types
         ./input
@@ -10,6 +11,7 @@
         ./util)
 (export open-buffered-reader
         open-u8vector-buffered-reader
+        open-string-buffered-reader
         (import: ./util))
 
 (def (open-buffered-reader reader (buffer-size 4096))
@@ -21,6 +23,11 @@
   (unless (u8vector? u8v)
     (error "Expected u8vector" u8v))
   (BufferedReader (make-input-buffer dummy-reader u8v 0 (u8vector-length u8v))))
+
+(def (open-string-buffered-reader str)
+  (unless (string? str)
+    (error "Expected string" str))
+  (open-u8vector-buffered-reader (string->utf8 str)))
 
 ;;; Interface
 ;; input-buffer BufferedReader implementation

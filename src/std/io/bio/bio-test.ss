@@ -72,7 +72,7 @@
         (for (i (in-range 64))
           (check (u8vector-ref buf i) => (modulo (+ 17 i) 256)))))
 
-    (test-case "test buffer refill"
+    (test-case "buffer refill"
       (let* ((u8v (make-test-u8vector 1024))
              (brd1 (open-u8vector-buffered-reader u8v))
              (brd2 (open-buffered-reader (Reader brd1) 384))
@@ -123,10 +123,33 @@
         (check (BufferedReader-read-varint brd) => -314159)))
 
     (test-case "char input"
-      ;; TODO
-      (void))
+      (let* ((input "the quick brown fox jumped over the fence")
+             (brd (open-string-buffered-reader input)))
+        (for (char (string->list input))
+          (check (BufferedReader-read-char brd) => char))
+        (check (BufferedReader-read-char brd) ? eof-object?)))
 
     (test-case "string input"
-      ;; TODO
-      (void))
-    ))
+      (let* ((input "the quick brown fox jumped over the fence")
+             (brd (open-string-buffered-reader input))
+             (buf (make-string 16)))
+        (for (i (in-range (fx/ (fx+ (string-length input) 15) 16)))
+          (let* ((expected-chars (min 16 (fx- (string-length input) (* i 16))))
+                 (expected-output (substring input (* i 16) (+ (* i 16) expected-chars))))
+            (check (BufferedReader-read-string brd buf) => expected-chars)
+            (check (substring buf 0 expected-chars) => expected-output)))))
+
+    (test-case "line input"
+      (let ((input1 "the quick brown fox jumped over the fence")
+            (input2 "the quick brown fox jumped over the fence\n")
+            (input3 "the quick brown fox jumped over the fence\r\n"))
+        (let (brd (open-string-buffered-reader input1))
+          (check (BufferedReader-read-line brd) => input1))
+        (let (brd (open-string-buffered-reader input2))
+          (check (BufferedReader-read-line brd) => input1))
+        (let (brd (open-string-buffered-reader input2))
+          (check (BufferedReader-read-line brd #\newline #t) => input2))
+        (let (brd (open-string-buffered-reader input3))
+          (check (BufferedReader-read-line brd '(#\return #\newline)) => input1))
+        (let (brd (open-string-buffered-reader input3))
+          (check (BufferedReader-read-line brd '(#\return #\newline) #t) => input3))))))
