@@ -81,45 +81,48 @@
       (- uint 2^bits))))
 
 (defreader-ext (read-char reader)
-  (let (byte1 (&BufferedReader-read-u8 reader))
-    (cond
-     ((fx<= byte1 #x7f)
-      (integer->char byte1))
-     ((fx<= byte1 #xdf)
-      (let (byte2 (&BufferedReader-read-u8 reader))
-        (integer->char
-         (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
-                (fxand byte2 #x3f)))))
-     ((fx<= byte1 #xef)
-      (let* ((byte2 (&BufferedReader-read-u8 reader))
-             (byte3 (&BufferedReader-read-u8 reader)))
-        (integer->char
-         (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
-                (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
-                (fxand byte3 #x3f)))))
-     ((fx<= byte1 #xf4)
-      (let* ((byte2 (&BufferedReader-read-u8 reader))
-             (byte3 (&BufferedReader-read-u8 reader))
-             (byte4 (&BufferedReader-read-u8 reader)))
-        (integer->char
-         (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
-                (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
-                (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
-                (fxand byte4 #x3f)))))
-     (else
-      ;; Bad encoding; use utf8 replacement character
-      #\xfffd))))
+  (if (eof-object? (&BufferedReader-peek-u8 reader))
+    '#!eof
+    (let (byte1 (&BufferedReader-read-u8 reader))
+      (cond
+       ((fx<= byte1 #x7f)
+        (integer->char byte1))
+       ((fx<= byte1 #xdf)
+        (let (byte2 (&BufferedReader-read-u8 reader))
+          (integer->char
+           (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
+                  (fxand byte2 #x3f)))))
+       ((fx<= byte1 #xef)
+        (let* ((byte2 (&BufferedReader-read-u8 reader))
+               (byte3 (&BufferedReader-read-u8 reader)))
+          (integer->char
+           (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                  (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                  (fxand byte3 #x3f)))))
+       ((fx<= byte1 #xf4)
+        (let* ((byte2 (&BufferedReader-read-u8 reader))
+               (byte3 (&BufferedReader-read-u8 reader))
+               (byte4 (&BufferedReader-read-u8 reader)))
+          (integer->char
+           (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
+                  (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
+                  (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
+                  (fxand byte4 #x3f)))))
+       (else
+        ;; Bad encoding; use utf8 replacement character
+        #\xfffd)))))
 
 (defreader-ext (read-string reader str (start 0) (end (string-length str)) (need 0))
   (let lp ((i start) (need need) (read 0))
     (if (fx< i end)
-      (if (eof-object? (&BufferedReader-peek-u8 reader))
-        (if (fx> need 0)
-          (raise-io-error 'BufferedReader-read-string "premature end of input")
-          read)
-        (let (next (&BufferedReader-read-char reader))
-          (string-set! str i next)
-          (lp (fx+ start 1) (fx- need 1) (fx+ read 1))))
+      (let (next (&BufferedReader-read-char reader))
+        (if (eof-object? next)
+          (if (fx> need 0)
+            (raise-io-error 'BufferedReader-read-string "premature end of input")
+            read)
+          (begin
+            (string-set! str i next)
+            (lp (fx+ start 1) (fx- need 1) (fx+ read 1)))))
       read)))
 
 (defreader-ext (read-line reader (sep #\newline) (include-sep? #f) (max-chars #f))
@@ -137,12 +140,14 @@
        ((null? separating)
         (finish chars))
        ((read-more? x)
-        (if (eof-object? (&BufferedReader-peek-u8 reader))
-          (finish chars)
-          (let (next (&BufferedReader-read-char reader))
-            (if (eq? (car separating) next)
-              (lp (fx+ x 1) (cdr separating) (cons next chars))
-              (lp (fx+ x 1) separators (cons next chars))))))
+        (let (next (&BufferedReader-read-char reader))
+          (cond
+           ((eof-object? next)
+            (finish chars))
+           ((eq? (car separating) next)
+            (lp (fx+ x 1) (cdr separating) (cons next chars)))
+           (else
+            (lp (fx+ x 1) separators (cons next chars))))))
        (else
         (raise-io-error 'BufferedReader-read-line "too many characters" x))))))
 
