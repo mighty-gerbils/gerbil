@@ -15,7 +15,14 @@
         read-file-u8vector
         read-password
         write-file-string
-        write-file-lines)
+        write-file-lines
+        force-current-outputs
+        writeln
+        output-contents
+        call-with-output
+        with-output
+        call-with-input
+        with-input)
 
 ;; _gambit#.scm
 (extern namespace: #f
@@ -292,3 +299,47 @@
                   (loop (cons c chars))))))))
    (finally
     (cooked-mode input))))
+
+;; Output some contents to a port.
+;; The contents can be a string (display'ed), a u8vector (written),
+;; or a procedure (called with the port as argument)
+(def (output-contents contents (port (current-output-port)))
+  (cond
+   ((string? contents) (display contents port))
+   ((u8vector? contents) (write-u8vector contents port))
+   ((procedure? contents) (contents port))
+   (else (error "invalid contents" contents))))
+
+(def (force-current-outputs)
+  (force-output (current-output-port))
+  (force-output (current-error-port)))
+
+(def (writeln x (port (current-output-port)))
+  (write x port)
+  (newline port)
+  (force-output port))
+
+(def (call-with-output o f)
+  (def (p port) (output-contents f port))
+  (cond
+   ((port? o) (p o))
+   ((not o) (call-with-output-string p))
+   ((eq? o #t) (p (current-output-port)))
+   ((string? o) (call-with-output-file o p))
+   ((list? o) (call-with-output-file o p))
+   (else (error "Not an output port designator" o))))
+
+(defrules with-output ()
+  ((_ (o x) body ...) (call-with-output x (lambda (o) body ...)))
+  ((_ (o) body ...) (call-with-output o (lambda (o) body ...))))
+
+(def (call-with-input i f)
+  (cond
+   ((port? i) (f i))
+   ((eq? i #t) (f (current-input-port)))
+   ((string? i) (call-with-input-string i f))
+   ((list? i) (call-with-input-file i f))))
+
+(defrules with-input ()
+  ((_ (i x) body ...) (call-with-input x (lambda (i) body ...)))
+  ((_ (i) body ...) (call-with-input i (lambda (i) body ...))))
