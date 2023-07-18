@@ -6,7 +6,7 @@
     "interactive"
     "foreign"
     ;; tests for :std/foreign
-    "foreign-test"
+    "foreign-test-support"
     "format"
     "pregexp"
     "sort"
