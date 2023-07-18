@@ -61,6 +61,7 @@
 
 ;; For the purpose of testing: gxc -exe -static digest-test.ss
 (def (main . _)
+  (set-test-verbose! #f)
   (run-tests! digest-test)
   (test-report-summary!)
   (exit (case (test-result) ((OK) 0) (else 1))))
