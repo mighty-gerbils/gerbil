@@ -213,6 +213,7 @@
    std/sugar))
  (std/stxutil "stxutil" (gerbil/core std/format))
  (std/foreign "foreign" (gerbil/core std/stxutil))
+ (std/foreign-test-support "foreign-test-support" (gerbil/core std/foreign))
  (std/generic/macros
   "generic/macros"
   (gerbil/core std/generic/dispatch std/stxutil))
@@ -699,9 +700,6 @@
  (std/test
   "test"
   (gerbil/core gerbil/gambit std/error std/format std/misc/list std/sugar))
- (std/foreign-test
-  "foreign-test"
-  (gerbil/core gerbil/gambit std/foreign std/test))
  (std/misc/uuid
   "misc/uuid"
   (gerbil/core

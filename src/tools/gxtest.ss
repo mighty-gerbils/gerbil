@@ -7,6 +7,7 @@
         :std/getopt
         :std/iter
         :std/format
+        :std/sort
         :std/test
         :std/pregexp
         :std/srfi/13)
@@ -20,6 +21,9 @@
            help: "run in verbose mode where all test execution progress is displayed in stdout.")
      (option 'run "-r" "--run"
              help: "only run test suites whose name matches a given regex")
+     ;; TODO this should be a multi-option for multiple features
+     (option 'features "-D"
+             help: "define one or more conditional expansion feature (comma separated) for enabling tests that require external services")
      (flag 'help "-h" "--help"
            help: "display help")
      (rest-arguments 'args
@@ -34,9 +38,9 @@
        (cond
         (.?help (help gopt))
         ((null? .args)
-         (run-tests ["."] .run .?verbose))
+         (run-tests ["."] .run .features .?verbose))
         (else
-         (run-tests .args .run .?verbose)))))
+         (run-tests .args .run .features .?verbose)))))
    (catch (getopt-error? exn)
      (help exn)
      (exit 1))
@@ -44,11 +48,19 @@
      (display-exception e (current-error-port))
      (exit 2))))
 
-(def (run-tests args filter verbose?)
+(def (run-tests args filter features verbose?)
   (def import-errors [])
   (def filter-rx (and filter (pregexp filter)))
 
   (_gx#load-expander!)
+
+  (when features
+    (let* ((features (string-split features #\,))
+           (features (map string->symbol features))
+           (root (core-context-root)))
+      (for (feature features)
+        (core-bind-feature! feature #f 0 root))))
+
   (set-test-verbose! verbose?)
   (test-begin!)
 
@@ -91,7 +103,7 @@
       ((string-suffix? "/..." arg)
        (collect-files-r (substring arg 0 (- (string-length arg) 4)) result))
       ((eq? (file-type arg) 'directory)
-       (for/fold (result result) (file (directory-files arg))
+       (for/fold (result result) (file (get-directory-files arg))
          (if (string-suffix? "-test.ss" file)
            (cons (string-append arg "/" file) result)
            result)))
@@ -99,7 +111,7 @@
        (cons arg result))))))
 
 (def (collect-files-r dir result)
-  (for/fold (result result) (arg (directory-files dir))
+  (for/fold (result result) (arg (get-directory-files dir))
     (cond
      ((member arg '("." ".."))
       result)
@@ -108,6 +120,9 @@
      ((string-suffix? "-test.ss" arg)
       (cons (string-append dir "/" arg) result))
      (else result))))
+
+(def (get-directory-files dir)
+  (sort (directory-files dir) string<?))
 
 (def (prepare-suites files)
   (def errors [])

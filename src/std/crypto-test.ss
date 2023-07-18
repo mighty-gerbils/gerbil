@@ -11,17 +11,18 @@
         :gerbil/compiler)
 (export crypto-test)
 
-(def here (current-directory))
+(defsyntax (source-file stx)
+  (##container->path (##locat-container (stx-source stx))))
+
+(def here (path-directory (source-file)))
 
 (def crypto-test
   (test-suite "test :std/crypto"
     (test-case "static compilation with libcrypto"
-      (def top (path-normalize (path-expand "../.." here)))
-      (def src-dir (path-expand "src" top))
-      (def test-dir (path-expand "test" top))
-      (create-directory* test-dir)
+      (def test-dir "/tmp/test.out")
       (def src (path-expand "crypto/digest-test.ss" here))
       (def exe (path-expand "digest-test.exe" test-dir))
+      (create-directory* test-dir)
       (compile-file
        src [invoke-gsc: #t optimize: #f verbose: #f debug: #f static: #t output-dir: test-dir
             gsc-options: ["-cc-options" (cppflags "libcrypto" "")
