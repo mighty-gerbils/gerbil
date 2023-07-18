@@ -43,42 +43,39 @@
     ;; this is preferable to wrapping an exception handler or try/finally block
     ;; around it as it will allocate more than the leak anyway.
     (&BufferedReader-read reader buf 0 len len)
-    (let (bits (fxarithmetic-shift-left len 3))
-      (let lp ((i 0) (x 0))
-        (if (fx< i len)
-          (let (next (u8vector-ref buf i))
-            (lp (fx+ i 1) (bitwise-ior (arithmetic-shift x -8) next)))
-          (begin
-            (smob-cache-put buf)
-            x))))))
+    (let lp ((i 0) (x 0))
+      (if (fx< i len)
+        (let (next (u8vector-ref buf i))
+          (lp (fx+ i 1) (bitwise-ior (arithmetic-shift x 8) next)))
+        (begin
+          (smob-cache-put buf)
+          x)))))
 
 (def (read-sXX reader len)
-  (let* ((x (read-uXX reader len))
-         (bits (fxarithmetic-shift-left len 3))
-         (2^bits (expt-cache-get bits))
-         (2^bits-1 (expt-cache-get (- bits 1))))
-    (if (< x 2^bits-1)
-      x
-      (- x 2^bits))))
+  (let ((ux (read-uXX reader len))
+        (bits (fxarithmetic-shift-left len 3)))
+    (if (bit-set? (fx- bits 1) ux)
+      (bitwise-not ux)
+      ux)))
 
 (defreader-ext (read-varuint reader (max-bits 64))
   (let lp ((shift 0) (x 0))
     (if (fx< shift max-bits)
       (let* ((next (&BufferedReader-read-u8 reader))
              (limb (fxand next #x7f))
-             (x (bitwise-ior (arithmetic-shift limb (fx- shift)) x)))
+             (x (bitwise-ior (arithmetic-shift limb shift) x)))
         (if (fx= (fxand next #x80) 0)
           x
           (lp (fx+ shift 7) x)))
-      (raise-io-error 'BufferedReader-read-varint "varint max length exceeded" x max-bits))))
+      (raise-io-error 'BufferedReader-read-varuint "varuint max bits exceeded" x max-bits))))
 
 (defreader-ext (read-varint reader (max-bits 64))
   (let* ((uint (&BufferedReader-read-varuint reader max-bits))
-         (2^bits (expt-cache-get max-bits))
-         (2^bits-1 (expt-cache-get (fx- max-bits 1))))
-    (if (< uint 2^bits-1)
-      uint
-      (- uint 2^bits))))
+         (int (arithmetic-shift uint -1))
+         (sign (bitwise-and uint 1)))
+    (if (fx= sign 0)
+      int
+      (bitwise-not int))))
 
 (defreader-ext (read-char reader)
   (if (eof-object? (&BufferedReader-peek-u8 reader))
@@ -172,15 +169,3 @@
     (mutex-lock! +smob-cache-mx+)
     (vector-set! +smob-cache+ i (cons buf (vector-ref +smob-cache+ i)))
     (mutex-unlock! +smob-cache-mx+)))
-
-(def +expt-cache+
-  (let (cache (make-vector 64 #f))
-    (def (cache-set! bits)
-      (vector-set! cache (fx- bits 1) (expt 2 bits)))
-    (for-each cache-set! (iota 64 1))
-    cache))
-
-(def (expt-cache-get bits)
-  (if (fx<= bits 64)
-    (vector-ref +expt-cache+ (fx- bits 1))
-    (expt 2 bits)))

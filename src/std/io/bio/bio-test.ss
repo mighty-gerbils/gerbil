@@ -1,7 +1,8 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Buffered IO tests
-(import :std/test
+(import :gerbil/gambit/bits
+        :std/test
         :std/error
         :std/iter
         ../interface
@@ -72,12 +73,54 @@
           (check (u8vector-ref buf i) => (modulo (+ 17 i) 256)))))
 
     (test-case "test buffer refill"
-      ;; TODO
-      (void))
+      (let* ((u8v (make-test-u8vector 1024))
+             (brd1 (open-u8vector-buffered-reader u8v))
+             (brd2 (open-buffered-reader (Reader brd1) 384))
+             (buf (make-u8vector 64)))
+        (def (verify-buf start end offset)
+          (for (i (in-range start end))
+            (check (u8vector-ref buf i) => (modulo (+ offset i) 256))))
+        (for (i (in-range 16))
+          (check (BufferedReader-read brd2 buf) => 64)
+          (verify-buf 0 64 (* i 64)))
+        (check (BufferedReader-peek-u8 brd2) ? eof-object)))
 
     (test-case "integer input"
-      ;; TODO
-      (void))
+      (let* ((u8v (u8vector
+                   ;; u16
+                   #x01 #x02
+                   ;; u32
+                   #x01 #x02 #x03 #x04
+                   ;; u64
+                   #x01 #x02 #x03 #x04 #x05 #x06 #x07 #x08
+                   ;; s16
+                   #x01 #x02
+                   #x81 #x02
+                   ;; s32
+                   #x01 #x02 #x03 #x04
+                   #x81 #x02 #x03 #x04
+                   ;; s64
+                   #x01 #x02 #x03 #x04 #x05 #x06 #x07 #x08
+                   #x81 #x02 #x03 #x04 #x05 #x06 #x07 #x08
+                   ;; varuint
+                   #xaf #x96 #x13
+                   ;; varint
+                   #xde #xac #x26
+                   #xdd #xac #x26
+                   ))
+             (brd (open-u8vector-buffered-reader u8v)))
+        (check (BufferedReader-read-u16 brd) => #x0102)
+        (check (BufferedReader-read-u32 brd) => #x01020304)
+        (check (BufferedReader-read-u64 brd) => #x0102030405060708)
+        (check (BufferedReader-read-s16 brd) => #x0102)
+        (check (BufferedReader-read-s16 brd) => (bitwise-not #x8102))
+        (check (BufferedReader-read-s32 brd) => #x01020304)
+        (check (BufferedReader-read-s32 brd) => (bitwise-not #x81020304))
+        (check (BufferedReader-read-s64 brd) => #x0102030405060708)
+        (check (BufferedReader-read-s64 brd) => (bitwise-not #x8102030405060708))
+        (check (BufferedReader-read-varuint brd) => 314159)
+        (check (BufferedReader-read-varint brd) => 314159)
+        (check (BufferedReader-read-varint brd) => -314159)))
 
     (test-case "char input"
       ;; TODO
