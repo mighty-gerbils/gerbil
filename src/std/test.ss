@@ -22,7 +22,7 @@
   test-result
   test-report-summary!)
 
-(defstruct !check-fail (e value loc))
+(defstruct !check-fail (e value expected loc))
 (defstruct !check-error (exn check loc))
 (defstruct !test-suite (desc thunk tests))
 (defstruct !test-case (desc checks fail error))
@@ -36,9 +36,9 @@
 ;; this is only necessary for stray checks outside a test-case
 (defmethod {display-exception !check-fail}
   (lambda (self port)
-    (with ((!check-fail check value loc) self)
-      (fprintf port "check ~a at ~a FAILED: ~a~n"
-               check loc value))))
+    (with ((!check-fail check value expected loc) self)
+      (fprintf port "check ~a at ~a FAILED: ~a [expected: ~a]~n"
+               check loc value expected))))
 
 (def *test-verbose* #t)
 
@@ -252,10 +252,11 @@
   (cond
    ((!test-case-fail tc)
     => (lambda (fail)
-         (eprintf "*** FAILED: ~a at ~a; value: ~s~n"
+         (eprintf "*** FAILED: ~a at ~a; value: ~s; expected: ~a~n"
                   (!check-fail-e fail)
                   (!check-fail-loc fail)
-                  (!check-fail-value fail))))
+                  (!check-fail-value fail)
+                  (!check-fail-expected fail))))
    ((!test-case-error tc)
     => (lambda (e)
          (eprintf "*** ERROR: ")
@@ -272,19 +273,19 @@
   (test-case-add-check! (current-test-case))
   (let (val (with-check-error thunk what loc))
     (unless (eqf val value)
-      (raise (make-!check-fail what val loc)))))
+      (raise (make-!check-fail what val value loc)))))
 
 (def (test-check-output what thunk value loc)
   (test-case-add-check! (current-test-case))
   (let (val (with-output-to-string [] (cut with-check-error thunk what loc)))
     (unless (equal? val value)
-      (raise (make-!check-fail what val loc)))))
+      (raise (make-!check-fail what val value loc)))))
 
 (def (test-check-predicate what thunk pred loc)
   (test-case-add-check! (current-test-case))
   (let (val (with-check-error thunk what loc))
     (unless (pred val)
-      (raise (make-!check-fail what val loc)))))
+      (raise (make-!check-fail what val "(predicate check)" loc)))))
 
 (def (test-check-exception what thunk pred loc)
   (test-case-add-check! (current-test-case))
@@ -293,5 +294,5 @@
       (let ((val (with-catch values (lambda () (thunk) (fail-to-throw)))))
         (if (pred val)
           (success)
-          (raise (make-!check-fail what val loc)))))
-    (raise (make-!check-fail what '(failed to throw an exception) loc))))
+          (raise (make-!check-fail what val "(exception check)" loc)))))
+    (raise (make-!check-fail what "(failed to throw an exception)" "(exception check)" loc))))
