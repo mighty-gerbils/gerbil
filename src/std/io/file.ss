@@ -55,12 +55,18 @@
   (let (fd (open path flags mode))
     (make-file-io fd)))
 
-(def (open-file-reader path flags: (flags O_NOATIME))
+(def default-file-reader-flags
+  (or O_NOATIME 0))
+
+(def (open-file-reader path flags: (flags default-file-reader-flags))
   (let* ((flags (fxior flags O_RDONLY))
          (io (open-file-io (path-expand path) flags 0)))
     (Reader io)))
 
-(def (open-file-writer path flags: (flags (fxior O_CREAT O_TRUNC)) mode: (mode #o644))
+(def default-file-writer-flags
+  (fxior O_CREAT O_TRUNC))
+
+(def (open-file-writer path flags: (flags default-file-writer-flags) mode: (mode #o644))
   (let* ((flags (fxior flags O_WRONLY))
          (io (open-file-io (path-expand path) flags mode)))
     (Writer io)))
