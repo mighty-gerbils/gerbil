@@ -18,7 +18,10 @@
     (if mx?
       (let (mx (make-mutex))
         (lambda (x)
-          (with-lock mx (cut do-cache-get x))))
+          (mutex-lock! mx)
+          (let (obj (do-cache-get x))
+            (mutex-unlock! mx)
+            obj)))
       do-cache-get))
   (lambda (x y)
     (cmp-e (cache-get x) (cache-get y))))
