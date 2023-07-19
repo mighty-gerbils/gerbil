@@ -18,6 +18,5 @@
   (unless (&chunked-output-buffer-output bio) ; already closed
     (set! (&chunked-output-buffer-output bio)
       (reverse! (&chunked-output-buffer-chunks bio)))
-    (set! (&chunked-output-buffer-chunks bio)
-      [])
+    (set! (&chunked-output-buffer-chunks bio) [])
     (void)))

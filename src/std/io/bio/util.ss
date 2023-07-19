@@ -182,24 +182,21 @@
   (let (buf (smob-cache-get len))
     (let lp ((i 0) (shift (fx- (fxarithmetic-shift-left len 3) 8)))
       (if (fx< i len)
-        (let (u8 (fxand (fxarithmetic-shift-right uint shift) #xff))
+        (let (u8 (bitwise-and (arithmetic-shift uint (fx- shift)) #xff))
           (u8vector-set! buf i u8)
           (lp (fx+ i 1) (fx- shift 8)))
-        (begin
-          (&BufferedWriter-write writer buf 0 len)
-          len)))))
+        (&BufferedWriter-write writer buf 0 len)))))
 
 (def (write-sXX writer int len)
-  (let (bits (fxarithmetic-shift-left len 3))
-    (if (bit-set? (fx- bits 1) int)
-      (write-uXX writer (bitwise-not int) len)
-      (write-uXX writer int len))))
+  (if (< int 0)
+    (write-uXX writer (bitwise-not int) len)
+    (write-uXX writer int len)))
 
 (defwriter-ext (write-varuint writer uint (max-bits 64))
   (when (fx> (integer-length uint) max-bits)
     (raise-io-error 'BufferedWriter-write-varuint "varuint max bits exceeded"))
   (let lp ((uint uint) (wrote 0))
-    (if (>= uint #x7f)
+    (if (> uint #x7f)
       (let (limb (fxior (bitwise-and uint #x7f) #x80))
         (&BufferedWriter-write-u8 writer limb)
         (lp (arithmetic-shift uint -7) (fx+ wrote 1)))
@@ -208,9 +205,15 @@
         (fx+ wrote 1)))))
 
 (defwriter-ext (write-varint writer int (max-bits 64))
-  (let* ((uint (arithmetic-shift int -1))
+  (let* ((signed (< int 0))
          (uint
-          (if (< int 0)
+          (if signed
+            (bitwise-not int)
+            int))
+         (uint
+          (arithmetic-shift uint 1))
+         (uint
+          (if signed
             (bitwise-ior uint 1)
             uint)))
     (&BufferedWriter-write-varuint writer uint max-bits)))
@@ -219,7 +222,8 @@
   (let (c (char->integer char))
     (cond
      ((fx<= c #x7f)
-      (&BufferedWriter-write-u8 writer c))
+      (&BufferedWriter-write-u8 writer c)
+      1)
      ((fx<= c #x7ff)
       (let (buf (smob-cache-get 2))
         (u8vector-set! buf 0 (fxior #xc0 (fxarithmetic-shift-right c 6)))
@@ -249,10 +253,10 @@
   (let lp ((i start) (result 0))
     (if (fx< i end)
       (let (wrote (&BufferedWriter-write-char writer (string-ref str i)))
-        (lp (fx+ i 1) (fx+ result 1)))
+        (lp (fx+ i 1) (fx+ result wrote)))
       result)))
 
-(defwriter-ext (write-line writer str (separator #\n))
+(defwriter-ext (write-line writer str (separator #\newline))
   (let (result (&BufferedWriter-write-string writer str))
     (if (pair? separator)
       (let lp ((rest separator) (result result))

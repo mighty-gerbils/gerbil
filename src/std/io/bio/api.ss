@@ -15,6 +15,7 @@
         open-u8vector-buffered-reader
         open-string-buffered-reader
         open-buffered-writer
+        open-u8vector-buffered-writer
         get-buffer-output-u8vector
         get-buffer-output-chunks
         (import: ./util))
@@ -39,7 +40,7 @@
 (def (open-buffered-writer writer (buffer-size default-buffer-size))
   (unless (Writer? writer)
     (error "Expected Writer instance" writer))
-  (BufferedWriter (make-output-buffer write (make-u8vector buffer-size) 0)))
+  (BufferedWriter (make-output-buffer writer (make-u8vector buffer-size) 0)))
 
 (def (open-chunk-writer)
   (Writer (make-chunked-output-buffer [] #f)))
@@ -51,17 +52,19 @@
 (def (get-buffer-output-chunks wr)
   (let (bio (interface-instance-object wr))
     (cond
-     (((output-buffer? bio)
-       (get-buffer-output-chunks (&output-buffer-writer bio))))
+     ((output-buffer? bio)
+      (get-buffer-output-chunks (&output-buffer-writer bio)))
      ((chunked-output-buffer? bio)
       (or (&chunked-output-buffer-output bio)
           (reverse (&chunked-output-buffer-chunks bio))))
      (else
-      (error "Unexpected type; expected instance of Writer or BufferedWriter" wr)))))
+      (error "Unexpected type; expected instance of Writer or BufferedWriter wrapping an output buffer" wr)))))
 
 (def (get-buffer-output-u8vector wr)
   (let (chunks (get-buffer-output-chunks wr))
-    (u8vector-concatenate chunks)))
+    (match chunks
+      ([chunk] chunk)
+      (else (u8vector-concatenate chunks)))))
 
 ;;; Interface
 ;; input-buffer BufferedReader implementation

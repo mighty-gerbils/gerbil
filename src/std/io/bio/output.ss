@@ -8,6 +8,9 @@
 (export #t)
 (declare (not safe))
 
+(defrule (bio-output-advance! bio whi)
+  (set! (&output-buffer-whi bio) whi))
+
 (defrule (bio-output-consume! bio)
   (set! (&output-buffer-whi bio) 0))
 
@@ -26,7 +29,7 @@
      ((fx<= whi+want buflen)
       ;; have space in buffer
       (subu8vector-move! input input-start input-end buf whi)
-      (set! (&output-buffer-whi buf) whi+want)
+      (bio-output-advance! bio whi+want)
       output-want)
      ;; not enough space
      ((fx> whi 0)
@@ -40,7 +43,7 @@
      (else
       ;; fits in buffer, copy it
       (subu8vector-move! input input-start input-end buf 0)
-      (set! (&output-buffer-whi bio) output-want)
+      (bio-output-advance! bio output-want)
       output-want))))
 
 (def (bio-write-u8 bio u8)
@@ -50,8 +53,8 @@
     (if (fx< whi buflen)
       (let (whi+1 (fx+ whi 1))
         (u8vector-set! buf whi u8)
-        (set! (&output-buffer-whi bio) whi+1)
-        (void))
+        (bio-output-advance! bio whi+1)
+        1)
       ;; full buffer
       (begin
         (bio-output-drain! bio buf whi)
@@ -60,7 +63,7 @@
 (def (bio-flush-output bio)
   (let* ((whi (&output-buffer-whi bio))
          (buf (&output-buffer-buf bio)))
-    (when (fx> 0 whi)
+    (when (fx> whi 0)
       (bio-output-drain! bio buf whi)
       (void))))
 
