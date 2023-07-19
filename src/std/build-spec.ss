@@ -37,6 +37,7 @@
     "io/api"
     "io/dummy"
     "io/delimited"
+    "io/file"
     "io/bio/types"
     "io/bio/input"
     "io/bio/delimited"

@@ -2,6 +2,8 @@
 ;;; © vyzo
 ;;; stdio api
 (import ./bio/api
-        ./delimited)
+        ./delimited
+        ./file)
 (export (import: ./bio/api)
-        (import: ./delimited))
+        (import: ./delimited)
+        (import: ./file))
