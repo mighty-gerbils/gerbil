@@ -118,11 +118,55 @@ Similar to `compare-symbol<?` using `string>=?`.
 
 Similar to `compare-symbol<?` using `string>?`.
 
+## keyword<?
+```scheme
+(keyword<? x y) -> bool
+
+  x,y := keyword
+```
+
+Compares two keywords' string representation using `string<?`.
+The string representation is globally cached.
+
+## keyword<=?
+
+Similar to `keyword<?`, using `string<=?`
+
+## keyword>=?
+
+Similar to `keyword<?`, using `string>=?`
+
+## keyword>?
+
+Similar to `keyword<?`, using `string>?`
+
+## compare-keyword<?
+```scheme
+(compare-keyword<? (mx? #f)) -> lambda (keyword keyword) -> bool
+
+  mx? := bool; use a mutex to protect the cache
+```
+
+Create a locally scoped caching `keyword<?`-like comparison with its own cache.
+
+## compare-keyword<=?
+
+Similar to `compare-keyword<?` using `string<=?`.
+
+## compare-keyword>=?
+
+Similar to `compare-keyword<?` using `string>=?`.
+
+## compare-keyword>?
+
+Similar to `compare-keyword<?` using `string>?`.
+
 ## compare-symbolic
 ```scheme
-(compare-symbolic cmp-e mx?) -> lambda (symbol symbol) -> bool
+(compare-symbolic string-e cmp-e mx?) -> lambda (symbol symbol) -> bool
 
-  cmp-e := lambda (symbol) -> string
+  string-e := lambda (obj) -> string
+  cmp-e := lambda (symbol symbol) -> bool
   mx?   := bool; use a mutex to protect the cache
 ```
 
@@ -130,5 +174,5 @@ Create a generic caching symbolic comparison function.
 
 For instance:
 ```
-symbol<? == (compare-symbolic string? #t)
+symbol<? == (compare-symbolic symbol->string string? #t)
 ```

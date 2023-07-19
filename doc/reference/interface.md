@@ -77,8 +77,8 @@ And here are some timings for 1M iterations, after compiling the above code:
 > (def acc (LinearAccumulator #f 2 3))
 > (time (fold-accumulator/vanilla acc 1000000))
 (time (tmp/interface-example#fold-accumulator/vanilla acc (##quote 1000000)))
-    0.040925 secs real time
-    0.040926 secs cpu time (0.040926 user, 0.000000 system)
+    0.045348 secs real time
+    0.045350 secs cpu time (0.042612 user, 0.002738 system)
     no collections
     no bytes allocated
     no minor faults
@@ -86,37 +86,28 @@ And here are some timings for 1M iterations, after compiling the above code:
 1000002000000
 > (time (fold-accumulator/interface acc 1000000))
 (time (tmp/interface-example#fold-accumulator/interface acc (##quote 1000000)))
-    0.018799 secs real time
-    0.018789 secs cpu time (0.018789 user, 0.000000 system)
+    0.016888 secs real time
+    0.016891 secs cpu time (0.016401 user, 0.000490 system)
     no collections
-    1952 bytes allocated
+    928 bytes allocated
     no minor faults
     no major faults
 1000002000000
 > (time (fold-accumulator/interface acc 1000000))
 (time (tmp/interface-example#fold-accumulator/interface acc (##quote 1000000)))
-    0.016031 secs real time
-    0.016032 secs cpu time (0.016032 user, 0.000000 system)
+    0.016777 secs real time
+    0.016778 secs cpu time (0.016614 user, 0.000164 system)
     no collections
-    1072 bytes allocated
+    144 bytes allocated
     no minor faults
     no major faults
 1000002000000
 > (time (fold-accumulator/unchecked-interface acc 1000000))
 (time (tmp/interface-example#fold-accumulator/unchecked-interface acc (##quote 1000000)))
-    0.015697 secs real time
-    0.015698 secs cpu time (0.015698 user, 0.000000 system)
+    0.015616 secs real time
+    0.015617 secs cpu time (0.015581 user, 0.000036 system)
     no collections
-    1072 bytes allocated
-    no minor faults
-    no major faults
-1000002000000
-> (time (fold-accumulator/unchecked-interface acc 1000000))
-(time (tmp/interface-example#fold-accumulator/unchecked-interface acc (##quote 1000000)))
-    0.015520 secs real time
-    0.015520 secs cpu time (0.015520 user, 0.000000 system)
-    no collections
-    1072 bytes allocated
+    144 bytes allocated
     no minor faults
     no major faults
 1000002000000

@@ -22,6 +22,7 @@
 
 ;; create a new instance of an interface for an object
 (def (new descriptor obj)
+  (declare (not safe))
   (let (klass (interface-descriptor-type descriptor))
     (cond
      ((##structure-direct-instance-of? obj (##type-id klass))
@@ -34,21 +35,26 @@
       ;; vanilla object, convert to an interface instance
       (let* ((prototype-key (cons (##type-id klass) (type-of obj)))
              (prototype
-              (with-lock +interface-prototypes-mx+
-                (lambda()
-                  (cond
-                   ((hash-get +interface-prototypes+ prototype-key)
-                    => values)
-                   (else
-                    (let* ((method-impls
-                            (map (lambda (method)
-                                   (or (method-ref obj method)
-                                       (error "Cannot create interface prototype; missing method" (##type-name klass) method)))
-                                 (interface-descriptor-methods descriptor)))
-                           (prototype
-                            (apply ##structure klass #f method-impls)))
-                      (hash-put! +interface-prototypes+ prototype-key prototype)
-                      prototype))))))
+              (begin
+                (mutex-lock! +interface-prototypes-mx+)
+                (cond
+                 ((hash-get +interface-prototypes+ prototype-key)
+                  => (lambda (prototype)
+                       (mutex-unlock! +interface-prototypes-mx+)
+                       prototype))
+                 (else
+                  (let* ((method-impls
+                          (map (lambda (method)
+                                 (or (method-ref obj method)
+                                     (begin
+                                       (mutex-unlock! +interface-prototypes-mx+)
+                                       (error "Cannot create interface prototype; missing method" (##type-name klass) method))))
+                               (interface-descriptor-methods descriptor)))
+                         (prototype
+                          (apply ##structure klass #f method-impls)))
+                    (hash-put! +interface-prototypes+ prototype-key prototype)
+                    (mutex-unlock! +interface-prototypes-mx+)
+                    prototype)))))
              (instance (##structure-copy prototype)))
         (##unchecked-structure-set! instance obj 1 klass #f)
         instance)))))
