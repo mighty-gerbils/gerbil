@@ -32,8 +32,11 @@
     "amb"
     (gxc: "interface" ,@(include-gambit-sharp))
     ;; stdio
+    "io"
     "io/interface"
+    "io/api"
     "io/dummy"
+    "io/delimited"
     "io/bio/types"
     "io/bio/input"
     "io/bio/delimited"

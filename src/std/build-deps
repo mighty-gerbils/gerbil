@@ -882,6 +882,7 @@
  (std/misc/rwlock "misc/rwlock" (gerbil/core gerbil/gambit/threads std/sugar))
  (std/io/interface "io/interface" (gerbil/core std/interface))
  (std/io/dummy "io/dummy" (gerbil/core std/error std/io/interface))
+ (std/io/delimited "io/delimited" (gerbil/core std/error std/io/interface))
  (std/io/bio/util
   "io/bio/util"
   (gerbil/core
@@ -913,6 +914,8 @@
    std/io/dummy
    std/io/interface
    std/text/utf8))
+ (std/io/api "io/api" (gerbil/core std/io/bio/api std/io/delimited))
+ (std/io "io" (gerbil/core std/io/api std/io/interface))
  (std/protobuf/io
   "protobuf/io"
   (gerbil/core
