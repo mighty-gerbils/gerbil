@@ -29,6 +29,8 @@
               (if (fx> input-need result)
                 (raise-io-error "premature end of input" input-need)
                 result))
+             ((fx>= read input-need)
+              (fx+ result read))
              (else
               (lp (fx+ output-start read) (fx- input-need read) (fx+ result read)))))
           result)))))
