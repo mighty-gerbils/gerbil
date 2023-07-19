@@ -24,7 +24,12 @@ prototype which is then cloned.
 If you are interacting with an object using methods and you make many
 method invocations, you should consider using interfaces.
 
-Here is an example:
+Besides performance considerations, interfaces are great for creating
+facades abstracting complex functionality and making it easy to
+compose object interactions. See the standard IO interfaces for an
+example.
+
+Here is an example that demonstrates the performance advantages over direct dispatch:
 ```scheme
 (interface Operation
   (start!)
