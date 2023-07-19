@@ -3622,6 +3622,188 @@ bar
 ```
 :::
 
+### force-current-outputs
+``` scheme
+(force-current-outputs) -> (void)
+```
+
+Force the `current-output-port` and the `current-error-port`.
+Useful before you drop to a REPL, debugger or interactive prompt, or before you `exit` the program.
+
+::: tip Examples:
+``` scheme
+(force-current-outputs)
+```
+:::
+
+### writeln
+``` scheme
+(writeln object [port]) -> (void)
+```
+
+Display a string representation of the Scheme `object` as per `write`, then display a line ending as
+per `newline`, using the optional `port` which defaults to `(current-output-port)`.
+
+::: tip Examples:
+``` scheme
+> (writeln ['a 1 "foo"]) ;; response is written, return value is (void), unwritten
+(a 1 \"foo\")
+> (with-output (o #f) (writeln '(a 1 "foo") o))
+"(a 1 \"foo\")\n"
+```
+:::
+
+### output-contents
+``` scheme
+(output-contents contents ?port) -> void | error
+
+  contents       := a string, byte array or procedure
+  port           := an output port -- optional, defaults to (current-output-port)
+```
+
+Write the contents into the port: If it's a string, `display` it;
+if it's a byte array, use `write-u8vector`; if it's a procedure, call it with the port as argument;
+otherwise, throw an error.
+
+`output-contents` is notably useful as a helper within a function that
+makes a port available to a consumer, e.g. by creating a port, using it once or several times
+by calling output-contents, then closing it, such as `call-with-output`.
+
+::: tip Examples:
+``` scheme
+(def (create-foo contents)
+  (call-with-output-file ["/tmp/foo"] (cut output-contents foo <>)))
+```
+:::
+
+### call-with-output
+``` scheme
+(call-with-output output-spec content-spec) -> output content per spec
+```
+
+`call-with-output` creates an output port as designated by `output-spec`, then
+output content to it as designated by `content-spec`.
+
+The `output-spec` is interpreted as follows:
+- a port designates itself;
+- the false value `#f` designates a fresh string output port,
+  and the result returned is the final string content of the port;
+- the true value `#t` designates the `(current-output-port)`;
+- a string designates a pathname to be open using `call-with-output-file`;
+- a list designates a list of settings to pass to `call-with-output-file`;
+- other values are invalid (a future version of Gerbil might accept additional values).
+
+The content is handled as per `output-content`: a string is displayed, a byte array is written,
+a procedure is called with the port as argument.
+
+The result returned depends on the specified output:
+typically, it's the result of the procedure passed as content
+(or void if a string or byte array is passed as content);
+but if the `output-spec` was false, a string containing the accumulated output is returned.
+
+`output-contents` is notably useful as a helper within a function that
+makes a port available to a consumer, e.g. by creating a port, using it once or several times
+by calling output-contents, then closing it, such as `call-with-output`.
+
+`call-with-output` is a good helper for higher-order functions that themselves produce or wrap
+text content, and whose output is as often used standalone or transcluded as part of other functions
+(with a port as an argument in the latter case).
+
+::: tip Examples:
+``` scheme
+;; pretty printer for a datastructure ms of type my-struct, with optional output-spec o
+(def (pp-my-struct ms (o #f))
+  (call-with-output o
+    (lambda (port)
+      (display "my-struct { a: " port)
+      (pp-a (my-struct-a ms) port)
+      (display " b: " port)
+      (pp-a (my-struct-b ms) port)
+      (display " }" port))))
+```
+:::
+
+### with-output
+``` scheme
+(with-output (o output-spec) body ...) -> same as (call-with-output output-spec (lambda (o) body ...))
+(with-output (o) body ...) -> (call-with-output o (lambda (o) body ...))
+```
+
+`with-output` is a simple macro that wraps around `call-with-output`.
+Interestingly, when its first argument is a list of one symbol, that symbol is used as both
+input value for an `output-spec` as per `call-with-output` in the outer scope,
+and as output binding for a resolved port in the inner scope,
+allowing for seamless resolution of an `output-spec` designator around the inner scope.
+
+::: tip Examples:
+``` scheme
+;; same example as above using with-output
+(def (pp-my-struct ms (o #f))
+  (with-output (o)
+    (display "my-struct { a: " o)
+    (pp-a (my-struct-a ms) o)
+    (display " b: " o)
+    (pp-a (my-struct-b ms) o)
+    (display " }" o)))
+```
+:::
+
+### call-with-input
+``` scheme
+(call-with-input input-spec f) -> call f with specified input
+```
+
+`call-with-input` creates an input port as designated by `input-spec`, then
+calls the function `f` with that port as argument.
+
+The `input-spec` is interpreted as follows:
+- a port designates itself;
+- the true value `#t` designates the `(current-input-port)`;
+- a string designates a port to be open by passing it to `call-with-output-string`;
+- a list designates the settings to pass to `call-with-output-file`;
+- other values are invalid (a future version of Gerbil might accept additional values).
+
+The result returned is that of the call to function `f`.
+
+`call-with-input` is a good helper for higher-order functions that themselves consume or wrap
+the consumption of a character stream, and whose input is as a complete string or file as it is
+a stream passed as part of larger parsing effort (with a port as an argument in the latter case).
+
+::: tip Examples:
+``` scheme
+;; parser for a datastructure
+(def (parse-my-struct i)
+  (call-with-input i
+    (lambda (port)
+      (let* ((a (parse-a-field port))
+             (b (parse-b-field port)))
+        (make-my-struct a b)))))
+```
+:::
+
+### with-input
+``` scheme
+(with-input (i input-spec) body ...) -> same as (call-with-input input-spec (lambda (i) body ...))
+(with-input (i) body ...) -> (call-with-input i (lambda (i) body ...))
+```
+
+`with-input` is a simple macro that wraps around `call-with-input`.
+Interestingly, when its first argument is a list of one symbol, that symbol is used as both
+input value for an `input-spec` as per `call-with-input` in the outer scope,
+and as input binding for a resolved port in the inner scope,
+allowing for seamless resolution of an `input-spec` designator around the inner scope.
+
+::: tip Examples:
+``` scheme
+;; same example as above using with-input
+(def (parse-my-struct i)
+  (with-input (i)
+    (let* ((a (parse-a-field i))
+           (b (parse-b-field i)))
+      (make-my-struct a b))))
+```
+:::
+
 ### Port Destructor
 ``` scheme
 (defmethod {destroy <port>} close-port)
