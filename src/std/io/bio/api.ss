@@ -1,20 +1,27 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; Buffered IO api
-(import :std/text/utf8
+(import :std/interface
+        :std/text/utf8
         ../interface
         ../dummy
         ./types
         ./input
         ./delimited
-        ;;./output
+        ./output
+        ./chunked
         ./util)
 (export open-buffered-reader
         open-u8vector-buffered-reader
         open-string-buffered-reader
+        open-buffered-writer
+        get-buffer-output-u8vector
+        get-buffer-output-chunks
         (import: ./util))
 
-(def (open-buffered-reader reader (buffer-size 4096))
+(def default-buffer-size (expt 2 16)) ; 16K
+
+(def (open-buffered-reader reader (buffer-size default-buffer-size))
   (unless (Reader? reader)
     (error "Expected Reader instance" reader))
   (BufferedReader (make-input-buffer reader (make-u8vector buffer-size) 0 0)))
@@ -28,6 +35,33 @@
   (unless (string? str)
     (error "Expected string" str))
   (open-u8vector-buffered-reader (string->utf8 str)))
+
+(def (open-buffered-writer writer (buffer-size default-buffer-size))
+  (unless (Writer? writer)
+    (error "Expected Writer instance" writer))
+  (BufferedWriter (make-output-buffer write (make-u8vector buffer-size) 0)))
+
+(def (open-chunk-writer)
+  (Writer (make-chunked-output-buffer [] #f)))
+
+(def (open-u8vector-buffered-writer (buffer-size default-buffer-size))
+  (let (writer (open-chunk-writer))
+    (open-buffered-writer writer buffer-size)))
+
+(def (get-buffer-output-chunks wr)
+  (let (bio (interface-instance-object wr))
+    (cond
+     (((output-buffer? bio)
+       (get-buffer-output-chunks (&output-buffer-writer bio))))
+     ((chunked-output-buffer? bio)
+      (or (&chunked-output-buffer-output bio)
+          (reverse (&chunked-output-buffer-chunks bio))))
+     (else
+      (error "Unexpected type; expected instance of Writer or BufferedWriter" wr)))))
+
+(def (get-buffer-output-u8vector wr)
+  (let (chunks (get-buffer-output-chunks wr))
+    (u8vector-concatenate chunks)))
 
 ;;; Interface
 ;; input-buffer BufferedReader implementation
@@ -61,3 +95,21 @@
   bio-delimited-reset-input!)
 (defmethod {close delimited-input-buffer}
   bio-delimited-close)
+
+;; output-buffer BufferedWriter implementation
+(defmethod {write output-buffer}
+  bio-write-bytes)
+(defmethod {write-u8 output-buffer}
+  bio-write-u8)
+(defmethod {flush output-buffer}
+  bio-flush-output)
+(defmethod {reset! output-buffer}
+  bio-reset-output!)
+(defmethod {close output-buffer}
+  bio-close-output)
+
+;; chunked-output-buffer Writer implementation
+(defmethod {write chunked-output-buffer}
+  bio-chunked-write-bytes)
+(defmethod {close chunked-output-buffer}
+  bio-chunked-close)

@@ -24,6 +24,21 @@
              body ...)
            (export reader-method unchecked-method))))))
 
+(defsyntax (defwriter-ext stx)
+  (syntax-case stx ()
+    ((_ (method writer . args) body ...)
+     (with-syntax ((writer-method (stx-identifier #'method "BufferedWriter-" #'method))
+                   (unchecked-method (stx-identifier #'method "&BufferedWriter-" #'method)))
+       #'(begin
+           (def (writer-method writer . args)
+             (unless (BufferedWriter? writer)
+               (error "object is not an interface instance" writer 'BufferedWriter))
+             body ...)
+           (def (unchecked-method writer . args)
+             body ...)
+           (export writer-method unchecked-method))))))
+
+;; reader
 (defreader-ext (read-u16 reader)
   (read-uXX reader 2))
 (defreader-ext (read-s16 reader)
@@ -124,7 +139,7 @@
         read))))
 
 (defreader-ext (read-line reader (sep #\newline) (include-sep? #f) (max-chars #f))
-  (let* ((separators (if (list? sep) sep [sep]))
+  (let* ((separators (if (pair? sep) sep [sep]))
          (read-more?
           (if max-chars
             (lambda (x) (fx< x max-chars))
@@ -148,6 +163,106 @@
             (lp (fx+ x 1) separators 0 (cons next chars))))))
        (else
         (raise-io-error 'BufferedReader-read-line "too many characters" x))))))
+
+;; writer
+(defwriter-ext (write-u16 writer uint)
+  (write-uXX writer uint 2))
+(defwriter-ext (write-s16 writer int)
+  (write-sXX writer int 2))
+(defwriter-ext (write-u32 writer uint)
+  (write-uXX writer uint 4))
+(defwriter-ext (write-s32 writer int)
+  (write-sXX writer int 4))
+(defwriter-ext (write-u64 writer int)
+  (write-uXX writer int 8))
+(defwriter-ext (write-s64 writer int)
+  (write-sXX writer int 8))
+
+(def (write-uXX writer uint len)
+  (let (buf (smob-cache-get len))
+    (let lp ((i 0) (shift (fx- (fxarithmetic-shift-left len 3) 8)))
+      (if (fx< i len)
+        (let (u8 (fxand (fxarithmetic-shift-right uint shift) #xff))
+          (u8vector-set! buf i u8)
+          (lp (fx+ i 1) (fx- shift 8)))
+        (begin
+          (&BufferedWriter-write writer buf 0 len)
+          len)))))
+
+(def (write-sXX writer int len)
+  (let (bits (fxarithmetic-shift-left len 3))
+    (if (bit-set? (fx- bits 1) int)
+      (write-uXX writer (bitwise-not int) len)
+      (write-uXX writer int len))))
+
+(defwriter-ext (write-varuint writer uint (max-bits 64))
+  (when (fx> (integer-length uint) max-bits)
+    (raise-io-error 'BufferedWriter-write-varuint "varuint max bits exceeded"))
+  (let lp ((uint uint) (wrote 0))
+    (if (>= uint #x7f)
+      (let (limb (fxior (bitwise-and uint #x7f) #x80))
+        (&BufferedWriter-write-u8 writer limb)
+        (lp (arithmetic-shift uint -7) (fx+ wrote 1)))
+      (begin
+        (&BufferedWriter-write-u8 writer uint)
+        (fx+ wrote 1)))))
+
+(defwriter-ext (write-varint writer int (max-bits 64))
+  (let* ((uint (arithmetic-shift int -1))
+         (uint
+          (if (< int 0)
+            (bitwise-ior uint 1)
+            uint)))
+    (&BufferedWriter-write-varuint writer uint max-bits)))
+
+(defwriter-ext (write-char writer char)
+  (let (c (char->integer char))
+    (cond
+     ((fx<= c #x7f)
+      (&BufferedWriter-write-u8 writer c))
+     ((fx<= c #x7ff)
+      (let (buf (smob-cache-get 2))
+        (u8vector-set! buf 0 (fxior #xc0 (fxarithmetic-shift-right c 6)))
+        (u8vector-set! buf 1 (fxior #x80 (fxand c #x3f)))
+        (&BufferedWriter-write writer buf 0 2)
+        (smob-cache-put buf)
+        2))
+     ((##fx<= c #xffff)
+      (let (buf (smob-cache-get 3))
+        (u8vector-set! buf 0 (fxior #xe0 (fxarithmetic-shift-right c 12)))
+        (u8vector-set! buf 1 (fxior #x80 (fxand (fxarithmetic-shift-right c 6) #x3f)))
+        (u8vector-set! buf 2 (fxior #x80 (fxand c #x3f)))
+        (&BufferedWriter-write writer buf 0 3)
+        (smob-cache-put buf)
+        3))
+     (else ; max char is #x10ffff
+      (let (buf (smob-cache-get 4))
+        (u8vector-set! buf 0 (fxior #xf0 (fxarithmetic-shift-right c 18)))
+        (u8vector-set! buf 1 (fxior #x80 (fxand (fxarithmetic-shift-right c 12) #x3f)))
+        (u8vector-set! buf 2 (fxior #x80 (fxand (fxarithmetic-shift-right c 6) #x3f)))
+        (u8vector-set! buf 3 (fxior #x80 (fxand c #x3f)))
+        (&BufferedWriter-write writer buf 0 4)
+        (smob-cache-put buf)
+        4)))))
+
+(defwriter-ext (write-string writer str (start 0) (end (string-length str)))
+  (let lp ((i start) (result 0))
+    (if (fx< i end)
+      (let (wrote (&BufferedWriter-write-char writer (string-ref str i)))
+        (lp (fx+ i 1) (fx+ result 1)))
+      result)))
+
+(defwriter-ext (write-line writer str (separator #\n))
+  (let (result (&BufferedWriter-write-string writer str))
+    (if (pair? separator)
+      (let lp ((rest separator) (result result))
+        (match rest
+          ([char . rest]
+           (let (wrote (&BufferedWriter-write-char writer char))
+             (lp rest (fx+ result wrote))))
+          (else result)))
+      (let (wrote (&BufferedWriter-write-char writer separator))
+        (fx+ result wrote)))))
 
 ;; caches
 (def +smob-cache+ (make-vector 8 []))

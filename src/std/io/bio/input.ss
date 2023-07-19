@@ -119,8 +119,8 @@
   (BufferedReader (make-delimited-input-buffer bio limit limit)))
 
 (def (bio-reset-input! bio reader)
+  (bio-close-input bio)
   (bio-input-consume! bio)
-  (&Reader-close (&input-buffer-reader bio))
   (set! (&input-buffer-reader bio) reader)
   (void))
 

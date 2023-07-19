@@ -41,6 +41,8 @@
     "io/bio/types"
     "io/bio/input"
     "io/bio/delimited"
+    "io/bio/output"
+    "io/bio/chunked"
     "io/bio/util"
     "io/bio/api"
     ;; debugging
