@@ -893,6 +893,12 @@
    std/os/fcntl
    std/os/fd
    std/os/fdio))
+ (std/io/bio/input
+  "io/bio/input"
+  (gerbil/core std/error std/io/bio/types std/io/interface std/sugar))
+ (std/io/bio/delimited
+  "io/bio/delimited"
+  (gerbil/core std/error std/io/bio/input std/io/bio/types std/io/interface))
  (std/io/bio/util
   "io/bio/util"
   (gerbil/core
@@ -903,17 +909,6 @@
    std/io/interface
    std/srfi/1
    std/sugar))
- (std/io/bio/input
-  "io/bio/input"
-  (gerbil/core
-   std/error
-   std/io/bio/types
-   std/io/bio/util
-   std/io/interface
-   std/sugar))
- (std/io/bio/delimited
-  "io/bio/delimited"
-  (gerbil/core std/error std/io/bio/input std/io/bio/types std/io/interface))
  (std/io/bio/api
   "io/bio/api"
   (gerbil/core

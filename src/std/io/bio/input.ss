@@ -4,8 +4,7 @@
 (import :std/error
         :std/sugar
         ../interface
-        ./types
-        ./util)
+        ./types)
 (export #t)
 (declare (not safe))
 
