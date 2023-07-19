@@ -37,7 +37,7 @@
 (defmethod {display-exception !check-fail}
   (lambda (self port)
     (with ((!check-fail check value expected loc) self)
-      (fprintf port "check ~a at ~a FAILED: ~a [expected: ~a]~n"
+      (fprintf port "check ~a at ~a FAILED: ~s [expected: ~s]~n"
                check loc value expected))))
 
 (def *test-verbose* #t)
@@ -252,7 +252,7 @@
   (cond
    ((!test-case-fail tc)
     => (lambda (fail)
-         (eprintf "*** FAILED: ~a at ~a; value: ~s; expected: ~a~n"
+         (eprintf "*** FAILED: ~a at ~a; value: ~s; expected: ~s~n"
                   (!check-fail-e fail)
                   (!check-fail-loc fail)
                   (!check-fail-value fail)
