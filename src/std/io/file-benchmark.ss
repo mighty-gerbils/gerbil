@@ -64,7 +64,7 @@
       ;; benchmark
       (for (chunk-size '(1024 4096 32768 65536))
         (let (buffer (make-u8vector chunk-size))
-          (for (buffer-size '(4096 32768 65536))
+          (for (buffer-size '(4096 16384 32768 65536))
             (when (fx> buffer-size chunk-size)
               (displayln ">>> benchmark buffered reader [buffer size: " buffer-size " chunk size: " chunk-size"]")
               (let (reader (Reader (open-buffered-reader (open-file-reader path) buffer-size)))
@@ -104,7 +104,7 @@
       ;; prepare the output; 16M of random junk
       (let (junk (random-bytes (expt 2 24)))
         (for (chunk-size '(1024 4096 32768 65536))
-          (for (buffer-size '(4096 32768 65536))
+          (for (buffer-size '(4096 16384 32768 65536))
             (when (fx> buffer-size chunk-size)
               (displayln ">>> benchmark buffered writer [buffer size: " buffer-size " chunk size: " chunk-size"]")
               (let* ((buffered-writer (open-buffered-writer (open-file-writer path) buffer-size))
