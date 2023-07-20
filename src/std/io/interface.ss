@@ -15,8 +15,7 @@
   (read u8v (start 0) (end (u8vector-length u8v)) (need 0))
 
   ;; closes the underlying device
-  (close)
-  )
+  (close))
 
 (interface Writer
   ;; write from a buffer; it _must_ be a u8vector
@@ -26,8 +25,7 @@
   (write u8v (start 0) (end (u8vector-length u8v)))
 
   ;; closes the underlying device
-  (close)
-  )
+  (close))
 
 ;; buffered IO
 (interface (BufferedReader Reader)
@@ -44,8 +42,7 @@
   (delimit limit)
 
   ;; resets the underlying reader and buffer state, allowing reuse of buffers.
-  (reset! reader)
-  )
+  (reset! reader))
 
 (interface (BufferedWriter Writer)
   ;; writes a single byte
@@ -55,14 +52,14 @@
   (flush)
 
   ;; resets the underlying output and buffer state, allowing reuse of buffers.
-  (reset! output)
-  )
+  (reset! output))
 
 ;; socket interfaces
 (interface StreamSocket
   ;; receives data into a buffer; it _must_ be a u8vecotr
   ;; - start denotes the start of the read region; it must be a fixnum within the buffer range.
   ;; - end denotes the read region end.
+  ;; Returns the number of bytes read.
   (recv u8v (start 0) (end (u8vector-length u8v)))
 
   ;; sends data from a buffer; it _must_ be a u8vector
@@ -96,8 +93,7 @@
 
   ;; sets the output timeout, which must be a relative or absolute time.
   ;; #f clears the timeout
-  (set-output-timeout! timeo)
-  )
+  (set-output-timeout! timeo))
 
 (interface ServerSocket
   ;; accept waits for an incoming connection and returns a StreamSocket
@@ -109,8 +105,7 @@
 
   ;; sets the accept timeout, which must be a relative or absolute time.
   ;; #f clears the timeout
-  (set-accept-timeout! timeo)
-  )
+  (set-accept-timeout! timeo))
 
 (interface DatagramSocket
   ;; receives data into a buffer; it _must_ be a u8vecotr
@@ -134,5 +129,4 @@
 
   ;; sets the input timeout, which must be a relative or absolute time.
   ;; #f clears the timeout
-  (set-input-timeout! timeo)
-  )
+  (set-input-timeout! timeo))
