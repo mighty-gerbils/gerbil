@@ -3,7 +3,9 @@
 ;;; stdio api
 (import ./bio/api
         ./delimited
-        ./file)
+        ./file
+        ./util)
 (export (import: ./bio/api)
         (import: ./delimited)
-        (import: ./file))
+        (import: ./file)
+        (import: ./util))

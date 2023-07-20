@@ -893,6 +893,7 @@
    std/os/fcntl
    std/os/fd
    std/os/fdio))
+ (std/io/util "io/util" (gerbil/core std/io/interface))
  (std/io/bio/input
   "io/bio/input"
   (gerbil/core std/error std/io/bio/types std/io/interface std/sugar))
@@ -930,7 +931,7 @@
    std/text/utf8))
  (std/io/api
   "io/api"
-  (gerbil/core std/io/bio/api std/io/delimited std/io/file))
+  (gerbil/core std/io/bio/api std/io/delimited std/io/file std/io/util))
  (std/io "io" (gerbil/core std/io/api std/io/interface))
  (std/protobuf/io
   "protobuf/io"
