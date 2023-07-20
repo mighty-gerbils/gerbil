@@ -162,7 +162,7 @@
              (bwr (open-u8vector-buffered-writer 128)))
         (for (i (in-range 16))
           (check (BufferedWriter-write bwr u8v (* i 64) (* (+ i 1) 64)) => 64))
-        (BufferedWriter-flush bwr)
+        (BufferedWriter-close bwr)
         (check (get-buffer-output-u8vector bwr) => u8v)))
 
     (test-case "u8 output"
@@ -170,7 +170,7 @@
              (bwr (open-u8vector-buffered-writer 128)))
         (for (i (in-range 1024))
           (check (BufferedWriter-write-u8 bwr (u8vector-ref u8v i)) => 1))
-        (BufferedWriter-flush bwr)
+        (BufferedWriter-close bwr)
         (check (get-buffer-output-u8vector bwr) => u8v)))
 
     (test-case "integer output"
@@ -209,7 +209,7 @@
         (check (BufferedWriter-write-varuint bwr 314159) => 3)
         (check (BufferedWriter-write-varint bwr 314159) => 3)
         (check (BufferedWriter-write-varint bwr -314159) => 3)
-        (BufferedWriter-flush bwr)
+        (BufferedWriter-close bwr)
         (check (get-buffer-output-u8vector bwr) => u8v)))
 
     (test-case "char output"
@@ -218,7 +218,7 @@
              (bwr (open-u8vector-buffered-writer)))
         (for (char (string->list input))
           (check (BufferedWriter-write-char bwr char) => 1))
-        (BufferedWriter-flush bwr)
+        (BufferedWriter-close bwr)
         (check (get-buffer-output-u8vector bwr) => output)))
 
     (test-case "string output"
@@ -230,7 +230,7 @@
                  (input-end (fxmin (* (+ i 1) 16) (string-length input)))
                  (expected-chars (fx- input-end input-start)))
             (check (BufferedWriter-write-string bwr input input-start input-end) => expected-chars)))
-        (BufferedWriter-flush bwr)
+        (BufferedWriter-close bwr)
         (check (get-buffer-output-u8vector bwr) => output)))
 
     (test-case "line output"
@@ -239,7 +239,7 @@
             (output2 (string->utf8 "the quick brown fox jumped over the fence\r\n")))
         (let (bwr (open-u8vector-buffered-writer))
           (check (BufferedWriter-write-line bwr input) => (fx+ (string-length input) 1))
-          (BufferedWriter-flush bwr)
+          (BufferedWriter-close bwr)
           (check (get-buffer-output-u8vector bwr) => output1))
         (let (bwr (open-u8vector-buffered-writer))
           (check (BufferedWriter-write-line bwr input '(#\return #\newline)) => (fx+ (string-length input) 2))

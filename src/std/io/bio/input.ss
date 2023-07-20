@@ -122,7 +122,10 @@
   (bio-close-input bio)
   (bio-input-consume! bio)
   (set! (&input-buffer-reader bio) reader)
+  (set! (&input-buffer-closed? bio) #f)
   (void))
 
 (def (bio-close-input bio)
-  (&Reader-close (&input-buffer-reader bio)))
+  (unless (&input-buffer-closed? bio)
+    (set! (&input-buffer-closed? bio) #t)
+    (&Reader-close (&input-buffer-reader bio))))

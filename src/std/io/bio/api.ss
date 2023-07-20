@@ -25,12 +25,12 @@
 (def (open-buffered-reader reader (buffer-size default-buffer-size))
   (unless (Reader? reader)
     (error "Expected Reader instance" reader))
-  (BufferedReader (make-input-buffer reader (make-u8vector buffer-size) 0 0)))
+  (BufferedReader (make-input-buffer reader (make-u8vector buffer-size) 0 0 #f)))
 
 (def (open-u8vector-buffered-reader u8v)
   (unless (u8vector? u8v)
     (error "Expected u8vector" u8v))
-  (BufferedReader (make-input-buffer dummy-reader u8v 0 (u8vector-length u8v))))
+  (BufferedReader (make-input-buffer dummy-reader u8v 0 (u8vector-length u8v) #f)))
 
 (def (open-string-buffered-reader str)
   (unless (string? str)
@@ -40,7 +40,7 @@
 (def (open-buffered-writer writer (buffer-size default-buffer-size))
   (unless (Writer? writer)
     (error "Expected Writer instance" writer))
-  (BufferedWriter (make-output-buffer writer (make-u8vector buffer-size) 0)))
+  (BufferedWriter (make-output-buffer writer (make-u8vector buffer-size) 0 #f)))
 
 (def (open-chunk-writer)
   (Writer (make-chunked-output-buffer [] #f)))

@@ -61,7 +61,6 @@
          (let* ((wr (open-file-writer tmp))
                 (bwr (open-buffered-writer wr)))
            (check (BufferedWriter-write bwr (string->utf8 text)) => text-length)
-           (BufferedWriter-flush bwr)
            (BufferedWriter-close bwr))
          ;; read the file and make sure it matches the expected text
          (check (read-file-string tmp) => text))))))

@@ -8,7 +8,7 @@
 ;; - buf is the buffer itself, as a u8vector
 ;; - rlo is the read cursor (where the user reads)
 ;; - rhi is the write cursor (where the reader pumps)
-(defstruct input-buffer (reader buf rlo rhi)
+(defstruct input-buffer (reader buf rlo rhi closed?)
   final: #t unchecked: #t)
 
 ;; delimited-input-buffer
@@ -22,7 +22,7 @@
 ;; - writer is an instance of Writer
 ;; - buf is the buffer itself, as a u8vector
 ;; - whi is the write cursor
-(defstruct output-buffer (writer buf whi)
+(defstruct output-buffer (writer buf whi closed?)
   final: #t unchecked: #t)
 
 ;; chunked-output-buffer

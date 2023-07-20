@@ -12,11 +12,13 @@
         open-file-writer)
 (declare (not safe))
 
-(defstruct file-io (fd)
+(defstruct file-io (fd closed?)
   final: #t unchecked: #t)
 
 (defmethod {read file-io}
   (lambda (self output output-start output-end input-need)
+    (when (&file-io-closed? self)
+      (raise-io-error 'Reader-read "file has been closed"))
     (let (fd (&file-io-fd self))
       (let lp ((output-start output-start) (input-need input-need) (result 0))
         (if (fx< output-start output-end)
@@ -37,6 +39,8 @@
 
 (defmethod {write file-io}
   (lambda (self input input-start input-end)
+    (when (&file-io-closed? self)
+      (raise-io-error 'Writer-wrte "file has been closed"))
     (let (fd (&file-io-fd self))
       (let lp ((input-start input-start) (result 0))
         (if (fx< input-start input-end)
@@ -51,11 +55,13 @@
 
 (defmethod {close file-io}
   (lambda (self)
-    (close-port (&file-io-fd self))))
+    (unless (&file-io-closed? self)
+      (set! (&file-io-closed? self) #t)
+      (close-port (&file-io-fd self)))))
 
 (def (open-file-io path flags mode)
   (let (fd (open path flags mode))
-    (make-file-io fd)))
+    (make-file-io fd #f)))
 
 (def default-file-reader-flags
   (or O_NOATIME 0))
