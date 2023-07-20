@@ -23,7 +23,7 @@
           (let (read (fdread fd output output-start output-end))
             (cond
              ((not read)
-              (wait (fd-io-in fd))
+              (&wait-io! (fd-io-in fd))
               (lp output-start input-need result))
              ((fx= read 0)
               (if (fx> input-need result)
@@ -43,7 +43,7 @@
           (let (wrote (fdwrite fd input input-start input-end))
             (cond
              ((not wrote)
-              (wait (fd-io-out fd))
+              (&wait-io! (fd-io-out fd))
               (lp input-start result))
              (else
               (lp (fx+ input-start wrote) (fx+ result wrote)))))

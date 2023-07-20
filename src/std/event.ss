@@ -8,6 +8,7 @@
         :std/sugar
         :std/misc/shuffle)
 (export wait select sync
+        wait-io! &wait-io!
         wrap-evt handle-evt choice-evt
         never-evt always-evt
         sync-object?
@@ -51,6 +52,18 @@
      (if (maybe-timeout? timeo)
        (do-select sels timeo)
        (error "Bad argument; expected timeout or #f" timeo)))))
+
+;; specialized variant for waiting on an io condvar
+(def (wait-io! iocv (timeo #f))
+  (unless (io-condition-variable? iocv)
+    (error "Bad argument; expected IO condition variable" iocv))
+  (unless (maybe-timeout? timeo)
+    (error "Bad argument; expected timeout or #f" timeo))
+  (&wait-io! iocv timeo))
+
+;; unchecked variant of wait-io!
+(def (&wait-io! iocv (timeo #f))
+  (selector-wait-io-condvar iocv timeo))
 
 ;;; select implementation details
 (defstruct selection (e mx cv)
@@ -99,14 +112,14 @@
    (cond
     ((thread? sel)
      do-thread)
+    ((io-condition-variable? sel)
+     do-io-condvar)
     ((and (pair? sel)
           (mutex? (car sel))
           (condition-variable? (cdr sel)))
      (if (eq? (current-thread) (macro-mutex-btq-owner (car sel)))
        do-condvar
        (error "Illegal selector; mutex must be owned by current thread" sel)))
-    ((io-condition-variable? sel)
-     do-io-condvar)
     (else
      (error "Illegal selector" sel)))))
 
