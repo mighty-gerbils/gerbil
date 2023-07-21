@@ -18,7 +18,7 @@
 (defmethod {read file-io}
   (lambda (self output output-start output-end input-need)
     (when (&file-io-closed? self)
-      (raise-io-error 'Reader-read "file has been closed"))
+      (raise-io-error 'file-io-read "file has been closed"))
     (let (fd (&file-io-fd self))
       (let lp ((output-start output-start) (input-need input-need) (result 0))
         (if (fx< output-start output-end)
@@ -29,7 +29,7 @@
               (lp output-start input-need result))
              ((fx= read 0)
               (if (fx> input-need result)
-                (raise-io-error "premature end of input" input-need)
+                (raise-io-error 'file-io-read "premature end of input" input-need)
                 result))
              ((fx>= read input-need)
               (fx+ result read))
@@ -40,7 +40,7 @@
 (defmethod {write file-io}
   (lambda (self input input-start input-end)
     (when (&file-io-closed? self)
-      (raise-io-error 'Writer-wrte "file has been closed"))
+      (raise-io-error 'file-io-wrte "file has been closed"))
     (let (fd (&file-io-fd self))
       (let lp ((input-start input-start) (result 0))
         (if (fx< input-start input-end)
