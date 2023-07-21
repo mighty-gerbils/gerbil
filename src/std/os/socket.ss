@@ -92,6 +92,34 @@
         SO_TIMESTAMP
         SO_USELOOPBACK
 
+        IPPROTO_IP
+        IP_ADD_MEMBERSHIP
+        IP_DROP_MEMBERSHIP
+        IP_ADD_SOURCE_MEMBERSHIP
+        IP_DROP_SOURCE_MEMBERSHIP
+        IP_BLOCK_SOURCE
+        IP_UNBLOCK_SOURCE
+        IP_FREEBIND
+        IPPROTO_IP IP_HDRINCL
+        IP_MTU
+        IP_MTU_DISCOVER
+        IP_MULTICAST_ALL
+        IP_MULTICAST_IF
+        IP_MULTICAST_LOOP
+        IP_MULTICAST_TTL
+        IP_NODEFRAG
+        IP_OPTIONS
+        IP_PKTINFO
+        IP_RECVERR
+        IP_RECVORIGDSTADDR
+        IP_RECVOPTS
+        IP_RECVTOS
+        IP_RECVTTL
+        IP_RETOPTS
+        IP_ROUTER_ALERT
+        IP_TOS
+        IP_TTL
+
         IPPROTO_IPV6
         IPV6_ADDRFORM
         IPV6_ADD_MEMBERSHIP
@@ -365,7 +393,7 @@
       (error "Unknown address family" sa saf)))))
 
 ;;; sockopts
-(def (socket-getsockopt sock level opt . args)
+(def (socket-getsockopt sock level opt)
   (cond
    ((hash-get socket-sockopts level)
     => (lambda (ht)
@@ -374,14 +402,14 @@
            => (match <>
                 ((values getf setf)
                  (if getf
-                   (apply getf sock level opt args)
+                   (getf sock level opt)
                    (error "No getsockopt operation defined for option" level opt)))))
           (else
            (error "Unknown socket option" level opt)))))
    (else
     (error "Unknown socket level" level opt))))
 
-(def (socket-setsockopt sock level opt val . args)
+(def (socket-setsockopt sock level opt val)
   (cond
    ((hash-get socket-sockopts level)
     => (lambda (ht)
@@ -390,7 +418,7 @@
            => (match <>
                 ((values getf setf)
                  (if setf
-                   (apply setf sock level opt val args)
+                   (setf sock level opt val)
                    (error "No setsockopt operation defined for option" level opt)))))
           (else
            (error "Unknown socket option" level opt)))))
@@ -479,8 +507,8 @@
   (match ips
     ((cons maddr ifindex)
      (let (maddr (ip6-address maddr))
-     (check-os-error (_setsockopt_mreq6 (fd-e sock) level opt maddr ifindex)
-       (socket-setsockopt sock level opt ips))))
+       (check-os-error (_setsockopt_mreq6 (fd-e sock) level opt maddr ifindex)
+         (socket-setsockopt sock level opt ips))))
     (else
      (error "Bad argument; expected pair of ip6 addresses" ips))))
 
