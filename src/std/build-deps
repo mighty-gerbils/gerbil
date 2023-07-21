@@ -15,6 +15,7 @@
  (std/stxparam "stxparam" (gerbil/core))
  (std/lazy "lazy" (gerbil/core))
  (std/io/bio/types "io/bio/types" (gerbil/core))
+ (std/io/socket/types "io/socket/types" (gerbil/core))
  (std/srfi/srfi-support "srfi/srfi-support" (gerbil/core))
  (std/srfi/8 (gxc: "srfi/8") (gerbil/core))
  (std/srfi/1
@@ -560,6 +561,16 @@
    std/stxutil
    std/sugar
    std/text/utf8))
+ (std/io/socket/socket
+  "io/socket/socket"
+  (gerbil/core
+   std/error
+   std/event
+   std/io/socket/types
+   std/os/error
+   std/os/fd
+   std/os/socket
+   std/sugar))
  (std/os/epoll
   (gxc: "os/epoll" "-e" "(include \"~~lib/_gambit#.scm\")")
   (gerbil/core
@@ -929,9 +940,67 @@
    std/io/dummy
    std/io/interface
    std/text/utf8))
+ (std/misc/rwlock "misc/rwlock" (gerbil/core gerbil/gambit/threads std/sugar))
+ (std/io/socket/basic
+  "io/socket/basic"
+  (gerbil/core
+   std/error
+   std/event
+   std/io/socket/types
+   std/misc/rwlock
+   std/os/socket
+   std/sugar))
+ (std/io/socket/stream
+  "io/socket/stream"
+  (gerbil/core
+   gerbil/gambit/exceptions
+   std/error
+   std/io/interface
+   std/io/socket/basic
+   std/io/socket/types
+   std/os/fd
+   std/os/socket))
+ (std/io/socket/server
+  "io/socket/server"
+  (gerbil/core
+   std/error
+   std/io/interface
+   std/io/socket/basic
+   std/io/socket/types
+   std/misc/rwlock
+   std/os/fd
+   std/os/socket))
+ (std/io/socket/datagram
+  "io/socket/datagram"
+  (gerbil/core
+   std/error
+   std/io/socket/basic
+   std/io/socket/types
+   std/net/address
+   std/os/fd
+   std/os/socket))
+ (std/io/socket/api
+  "io/socket/api"
+  (gerbil/core
+   std/io/interface
+   std/io/socket/basic
+   std/io/socket/datagram
+   std/io/socket/server
+   std/io/socket/socket
+   std/io/socket/stream
+   std/io/socket/types
+   std/misc/rwlock
+   std/net/address
+   std/os/error
+   std/os/socket))
  (std/io/api
   "io/api"
-  (gerbil/core std/io/bio/api std/io/delimited std/io/file std/io/util))
+  (gerbil/core
+   std/io/bio/api
+   std/io/delimited
+   std/io/file
+   std/io/socket/api
+   std/io/util))
  (std/io "io" (gerbil/core std/io/api std/io/interface))
  (std/protobuf/io
   "protobuf/io"
