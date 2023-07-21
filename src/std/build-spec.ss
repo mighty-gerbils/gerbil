@@ -279,6 +279,7 @@
     "misc/hash"
     "misc/path"
     "misc/symbol"
+    "misc/rwlock"
     ;; :std/protobuf
     "protobuf/io"
     "protobuf/macros"
