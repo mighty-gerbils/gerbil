@@ -225,6 +225,20 @@ package: gerbil/gambit
   (thread-thread-group (current-thread)))
 
 (def (with-lock mx proc)
+  (let (handler (current-exception-handler))
+    (with-exception-handler
+     (lambda (e)
+       (mutex-unlock! mx)
+       (handler e)
+       ;; if the handler returns here the state is inconsistent -- we need to bail
+       (##thread-end-with-uncaught-exception! e))
+     (lambda ()
+       (mutex-lock! mx)
+       (let (result (proc))
+         (mutex-unlock! mx)
+         result)))))
+
+(def (with-dynamic-lock mx proc)
   (dynamic-wind
       (cut mutex-lock! mx)
       proc
