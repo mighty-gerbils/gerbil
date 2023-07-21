@@ -46,6 +46,13 @@
     "io/bio/chunked"
     "io/bio/util"
     "io/bio/api"
+    "io/socket/types"
+    "io/socket/basic"
+    "io/socket/stream"
+    "io/socket/server"
+    "io/socket/datagram"
+    "io/socket/socket"
+    "io/socket/api"
     ;; debugging
     (gxc: "debug/heap" ,@(include-gambit-sharp))
     "debug/memleak"

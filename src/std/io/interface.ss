@@ -55,18 +55,28 @@
   (reset! output))
 
 ;; socket interfaces
-(interface StreamSocket
+(interface Socket
+  (domain)
+  (address)
+  (peer-address)
+  (getsockopt level option)
+  (setsockopt level option value)
+  (set-input-timeout! timeo)
+  (set-output-timeout! timeo)
+  (close))
+
+(interface (StreamSocket Socket)
   ;; receives data into a buffer; it _must_ be a u8vecotr
   ;; - start denotes the start of the read region; it must be a fixnum within the buffer range.
   ;; - end denotes the read region end.
   ;; Returns the number of bytes read.
-  (recv u8v (start 0) (end (u8vector-length u8v)))
+  (recv u8v (start 0) (end (u8vector-length u8v)) (flags 0))
 
   ;; sends data from a buffer; it _must_ be a u8vector
   ;; - start denotes the start of the write region; it must be a fixnum within the buffer range.
   ;; - end denotes the write region end.
   ;; Returns the number of bytes written.
-  (send u8v (start 0) (end (u8vector-length u8v)))
+  (send u8v (start 0) (end (u8vector-length u8v)) (flags 0))
 
   ;; returns a Reader instance reading from the socket
   (reader)
@@ -74,59 +84,32 @@
   ;; returns a Writer instance writing to the socket
   (writer)
 
-  ;; returns the socket's local address
-  (local-address)
-
-  ;; returns the socket's peer address
-  (peer-address)
-
-  ;; shuts down the socket in one direction which must be 'in or 'out
+  ;; shuts down the socket in one direction which must be 'in, 'out or 'inout
   ;; if both directions are closed the socket is also closed.
-  (shutdown direction)
+  (shutdown direction))
 
-  ;; closes the socket
-  (close)
-
-  ;; sets the input timeout, which must be a relative or absolute time.
-  ;; #f clears the timeout
-  (set-input-timeout! timeo)
-
-  ;; sets the output timeout, which must be a relative or absolute time.
-  ;; #f clears the timeout
-  (set-output-timeout! timeo))
-
-(interface ServerSocket
+(interface (ServerSocket Socket)
   ;; accept waits for an incoming connection and returns a StreamSocket
-  ;; sockopts is an optional list of socket options
-  (accept (sockopts #f))
+  (accept))
 
-  ;; closes the socket
-  (close)
-
-  ;; sets the accept timeout, which must be a relative or absolute time.
-  ;; #f clears the timeout
-  (set-accept-timeout! timeo))
-
-(interface DatagramSocket
+(interface (DatagramSocket Socket)
   ;; receives data into a buffer; it _must_ be a u8vecotr
-  ;; - peer is a box to place the peer's address.
+  ;; - peer is a _box_ to place the peer's address.
   ;; - start denotes the start of the read region; it must be a fixnum within the buffer range.
   ;; - end denotes the read region end
   ;; Returns the number of bytes read.
-  (recvfrom peer u8v (start 0) (end (u8vector-length u8v)))
+  (recvfrom peer u8v (start 0) (end (u8vector-length u8v)) (flags 0))
 
   ;; sends data from a buffer; it _must_ be a u8vector
+  ;; - peer is the address of the peer
   ;; - start denotes the start of the write region; it must be a fixnum within the buffer range.
   ;; - end denotes the write region end; #f means the end of the buffer
   ;; Returns the number of bytes written.
-  (sendto peer u8v (start 0) (end (u8vector-length u8v)))
+  (sendto peer u8v (start 0) (end (u8vector-length u8v)) (flags 0))
 
-  ;; returns the socket's local address
-  (local-address)
-
-  ;; closes the socket
-  (close)
-
-  ;; sets the input timeout, which must be a relative or absolute time.
-  ;; #f clears the timeout
-  (set-input-timeout! timeo))
+  ;; connect the datagram socket to a peer
+  (connect peer)
+  ;; recv data from the connected peer
+  (recv u8v (start 0) (end (u8vector-length u8v)) (flags 0))
+  ;; send data to the connected peer
+  (send u8v (start 0) (end (u8vector-length u8v)) (flags 0)))
