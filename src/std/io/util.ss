@@ -16,8 +16,8 @@
          (buffer-size
           (u8vector-length buffer)))
     (let lp ((copied 0))
-      (let (read (Reader-read reader buffer 0 buffer-size))
+      (let (read (&Reader-read reader buffer 0 buffer-size))
         (if (fx= read 0)
           copied
-          (let (wrote (Writer-write writer buffer 0 read))
+          (let (wrote (&Writer-write writer buffer 0 read))
             (lp (fx+ copied wrote))))))))
