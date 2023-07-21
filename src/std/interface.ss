@@ -20,8 +20,8 @@
 (def +interface-prototypes+ (make-hash-table))
 (def +interface-prototypes-mx+ (make-mutex 'interface-constructor))
 
-;; create a new instance of an interface for an object
-(def (new descriptor obj)
+;; cast an object to an interface instance
+(def (cast descriptor obj)
   (declare (not safe))
   (let (klass (interface-descriptor-type descriptor))
     (cond
@@ -29,8 +29,8 @@
       ;; already an instance of the right interface
       obj)
      ((interface-instance? obj)
-      ;; another interface instance, cast
-      (new descriptor (interface-instance-object obj)))
+      ;; another interface instance, recast
+      (cast descriptor (interface-instance-object obj)))
      (else
       ;; vanilla object, convert to an interface instance
       (let* ((prototype-key (cons (##type-id klass) (type-of obj)))
@@ -48,7 +48,7 @@
                                  (or (method-ref obj method)
                                      (begin
                                        (mutex-unlock! +interface-prototypes-mx+)
-                                       (error "Cannot create interface prototype; missing method" (##type-name klass) method))))
+                                       (error "Cannot create interface instance; missing method" (##type-name klass) method))))
                                (interface-descriptor-methods descriptor)))
                          (prototype
                           (apply ##structure klass #f method-impls)))
@@ -77,12 +77,12 @@
                                   method-impl unchecked-method-impl))
 
   (defmethod {apply-macro-expander interface-info}
-    (with-syntax ((new (quote-syntax new)))
+    (with-syntax ((cast (quote-syntax cast)))
       (lambda (self stx)
         (syntax-case stx ()
           ((_ obj)
            (with-syntax ((descriptor (interface-info-descriptor self)))
-             #'(new descriptor obj))))))))
+             #'(cast descriptor obj))))))))
 
 (defsyntax (interface stx)
   (def symbol<?
@@ -268,11 +268,10 @@
                                               ((out ...) (method-arguments signature)))
                                   #'(begin
                                       (def (method self in ...)
-                                        (unless (predicate self)
-                                          (error "object is not an interface instance" self 'name))
-                                        (let ((obj (##unchecked-structure-ref self 1 klass 'method))
-                                              (f   (##unchecked-structure-ref self offset klass 'method)))
-                                          (f obj out ...)))
+                                        (let (instance (cast descriptor self))
+                                          (let ((obj (##unchecked-structure-ref instance 1 klass 'method))
+                                                (f   (##unchecked-structure-ref instance offset klass 'method)))
+                                            (f obj out ...))))
                                       (def (unchecked-method self in ...)
                                         (declare (not safe))
                                         (let ((obj (##unchecked-structure-ref self 1 klass 'method))
@@ -283,11 +282,10 @@
                                               ((out ...) (method-arguments signature)))
                                   #'(begin
                                       (def (method self . in)
-                                        (unless (predicate self)
-                                          (error "object is not an interface instance" self 'name))
-                                        (let ((obj (##unchecked-structure-ref self 1 klass 'method))
-                                              (f   (##unchecked-structure-ref self offset klass 'method)))
-                                          (apply f obj out ...)))
+                                        (let (instance (cast descriptor self))
+                                          (let ((obj (##unchecked-structure-ref instance 1 klass 'method))
+                                                (f   (##unchecked-structure-ref instance offset klass 'method)))
+                                            (apply f obj out ...))))
                                       (def (unchecked-method self . in)
                                         (declare (not safe))
                                         (let ((obj (##unchecked-structure-ref self 1 klass 'method))
@@ -313,7 +311,7 @@
                           (make-interface-descriptor klass '(method-name ...))))
                     (defmake
                       #'(def (make obj)
-                          (new descriptor obj)))
+                          (cast descriptor obj)))
                     (defpred
                       #'(def (predicate obj)
                           (direct-instance? klass obj)))
