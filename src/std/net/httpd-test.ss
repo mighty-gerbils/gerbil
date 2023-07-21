@@ -13,7 +13,7 @@
   (test-suite "test :std/net/httpd"
 
     (def server-address
-      "127.0.0.1:9999")
+      "127.0.0.1:19999")
 
     (def server-url
       (string-append "http://" server-address))
