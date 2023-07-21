@@ -140,7 +140,7 @@
       (mutex-unlock! mx))))
 
 (def (selector-wait-io-condvar sel timeo)
-  (##wait-for-io! sel (if timeo (time->seconds (timeout->abs-timeout timeo)) #t)))
+  (##wait-for-io! sel (or timeo #t)))
 
 (def (maybe-timeout? obj)
   (or (not obj)
