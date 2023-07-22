@@ -17,6 +17,7 @@
         unix-connect
         unix-listen
         udp-socket
+        udp-multicast-socket
         inaddr-any4
         inaddr-any6
         localhost4
