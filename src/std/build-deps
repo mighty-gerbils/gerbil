@@ -877,6 +877,7 @@
    std/misc/symbol
    std/sort
    std/srfi/1))
+ (std/misc/rwlock "misc/rwlock" (gerbil/core gerbil/gambit/threads std/sugar))
  (std/protobuf/io
   "protobuf/io"
   (gerbil/core
