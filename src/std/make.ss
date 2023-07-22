@@ -101,7 +101,7 @@ TODO:
       prefix: (prefix_ #f) force: (force? #f)
       optimize: (optimize #t) debug: (debug 'env)
       static: (static #t) static-debug: (static-debug #f)
-      verbose: (verbose #f) build-deps: (build-deps_ #f)
+      verbose: (verbose_ #f) build-deps: (build-deps_ #f)
       parallelize: (parallelize_ #f))
     (def gerbil-path (getenv "GERBIL_PATH" "~/.gerbil"))
     (def srcdir (or srcdir_ (error "srcdir must be specified")))
@@ -111,6 +111,11 @@ TODO:
     (def libdir-prefix (if prefix (path-expand prefix libdir) libdir))
     (def build-deps (path-expand (or build-deps_ "build-deps") srcdir))
     (def parallelize (gerbil-build-cores parallelize))
+    (def verbose
+      (cond
+       (verbose_)
+       ((getenv "GERBIL_BUILD_VERBOSE" #f) => string->number)
+       (else #f)))
     (struct-instance-init!
       self
       srcdir libdir bindir prefix force? optimize debug static static-debug verbose build-deps
@@ -592,6 +597,9 @@ TODO:
   (match spec
     ((? string? modf)
      (gxc-compile modf #f settings #t))
+    ([gxc: modf [submodules: submodules . _] . opts]
+     (for-each (cut build <> settings) submodules)
+     (gxc-compile modf opts settings #t))
     ([gxc: modf . opts]
      (gxc-compile modf opts settings #t))
     ([gsc: modf . opts]
@@ -604,6 +612,7 @@ TODO:
     ([static-exe: modf . opts]
      (compile-static-exe modf opts settings))
     ([static-include: file]
+     (copy-target file settings)
      (copy-static file settings))
     ([copy: file]
      (copy-compiled file settings))
@@ -770,6 +779,17 @@ TODO:
   (when (file-exists? spath)
     (delete-file spath))
   (copy-file file spath))
+
+(def (copy-target file settings)
+  (let* ((libdir (settings-libdir-prefix settings))
+         (srcdir (settings-srcdir settings))
+         (spath (path-expand file srcdir))
+         (tpath (path-expand file libdir)))
+    (message "... copy static include to target directory " file)
+    (create-directory* (path-directory tpath))
+    (when (file-exists? tpath)
+      (delete-file tpath))
+    (copy-file spath tpath)))
 
 (def (copy-compiled file settings)
   (def srcpath (source-path file #f settings))

@@ -3,6 +3,8 @@
 ;;; Inner build file for std, as specially imported and called by ./build.ss for bootstrap reasons
 
 (import ./build-config ./make)
+;; use this when making changes to make and want to rebuild
+;; (import "build-config" "make")
 
 (include "build-spec.ss")
 
