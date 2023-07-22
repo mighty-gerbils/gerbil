@@ -14,7 +14,7 @@
   ;; If less than the needed bytes are read, an io-error is raised.
   (read u8v (start 0) (end (u8vector-length u8v)) (need 0))
 
-  ;; closes the underlying device
+  ;; closes the input source
   (close))
 
 (interface Writer
@@ -24,7 +24,7 @@
   ;; Returns the number of bytes written.
   (write u8v (start 0) (end (u8vector-length u8v)))
 
-  ;; closes the underlying device
+  ;; closes the output sink
   (close))
 
 ;; buffered IO
