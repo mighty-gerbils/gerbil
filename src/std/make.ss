@@ -612,6 +612,7 @@ TODO:
     ([static-exe: modf . opts]
      (compile-static-exe modf opts settings))
     ([static-include: file]
+     (copy-target file settings)
      (copy-static file settings))
     ([copy: file]
      (copy-compiled file settings))
@@ -778,6 +779,17 @@ TODO:
   (when (file-exists? spath)
     (delete-file spath))
   (copy-file file spath))
+
+(def (copy-target file settings)
+  (let* ((libdir (settings-libdir-prefix settings))
+         (srcdir (settings-srcdir settings))
+         (spath (path-expand file srcdir))
+         (tpath (path-expand file libdir)))
+    (message "... copy static include to target directory " file)
+    (create-directory* (path-directory tpath))
+    (when (file-exists? tpath)
+      (delete-file tpath))
+    (copy-file spath tpath)))
 
 (def (copy-compiled file settings)
   (def srcpath (source-path file #f settings))
