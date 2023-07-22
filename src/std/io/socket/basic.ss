@@ -31,12 +31,14 @@
         (setf bsock addr)
         addr)))))
 
-(defrule (basic-socket-wait-io! bsock io-e timeo-e)
-  (let ((rw (&basic-socket-lock bsock))
-        (io io-e)
-        (timeo timeo-e))
+(def (basic-socket-wait-io! bsock io timeo)
+  ;; relinquish read lock before waiting for io so that another thread can close the socket
+  ;; precondition: caller holds a read lock
+  (let (rw (&basic-socket-lock bsock))
     (rwlock-read-unlock! rw)
-    (let (result (&wait-io! io timeo))
+    (let (result
+          (with-catch (lambda (e) (rwlock-read-lock! rw) (raise e))
+            (cut &wait-io! io timeo)))
       (rwlock-read-lock! rw)
       result)))
 
