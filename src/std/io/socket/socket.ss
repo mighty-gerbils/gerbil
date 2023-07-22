@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; TCP sockets
+;;; POSIX/BSD sockets
 (import :std/sugar
         :std/error
         :std/os/error
