@@ -966,6 +966,7 @@
    std/error
    std/io/interface
    std/io/socket/basic
+   std/io/socket/socket
    std/io/socket/types
    std/misc/rwlock
    std/os/fd
