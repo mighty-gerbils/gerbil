@@ -75,9 +75,10 @@
         (bio-input-advance! bio rlo+1 rhi)
         u8)
       ;; empty buffer
-      (begin
-        (bio-input-fill! bio buf 1)
-        (bio-read-u8 bio)))))
+      (let (read (bio-input-fill! bio buf 0))
+        (if (fx> read 0)
+          (bio-read-u8 bio)
+          '#!eof)))))
 
 (def (bio-peek-u8 bio)
   (let ((rlo (&input-buffer-rlo bio))

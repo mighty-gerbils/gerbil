@@ -39,7 +39,7 @@
           (check (BufferedReader-peek-u8 brd) => (modulo i 256))
           (check (BufferedReader-read-u8 brd) => (modulo i 256)))
         (check (BufferedReader-peek-u8 brd) ? eof-object?)
-        (check-exception (BufferedReader-read-u8 brd) io-error?)))
+        (check (BufferedReader-read-u8 brd) ? eof-object?)))
 
     (test-case "input skipping"
       (let* ((u8v (make-test-u8vector 1024))

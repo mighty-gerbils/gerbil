@@ -92,37 +92,49 @@
       int
       (bitwise-not int))))
 
+(defreader-ext (read-u8! reader)
+  (let (u8 (&BufferedReader-read-u8 read))
+    (if (eof-object? u8)
+      (raise-io-error 'BufferedReader-read-u8! "premature end of input")
+      u8)))
+
 (defreader-ext (read-char reader)
-  (if (eof-object? (&BufferedReader-peek-u8 reader))
-    '#!eof
-    (let (byte1 (&BufferedReader-read-u8 reader))
-      (cond
-       ((fx<= byte1 #x7f)
-        (integer->char byte1))
-       ((fx<= byte1 #xdf)
-        (let (byte2 (&BufferedReader-read-u8 reader))
-          (integer->char
-           (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
-                  (fxand byte2 #x3f)))))
-       ((fx<= byte1 #xef)
-        (let* ((byte2 (&BufferedReader-read-u8 reader))
-               (byte3 (&BufferedReader-read-u8 reader)))
-          (integer->char
-           (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
-                  (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
-                  (fxand byte3 #x3f)))))
-       ((fx<= byte1 #xf4)
-        (let* ((byte2 (&BufferedReader-read-u8 reader))
-               (byte3 (&BufferedReader-read-u8 reader))
-               (byte4 (&BufferedReader-read-u8 reader)))
-          (integer->char
-           (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
-                  (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
-                  (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
-                  (fxand byte4 #x3f)))))
-       (else
-        ;; Bad encoding; use utf8 replacement character
-        #\xfffd)))))
+  (let (byte1 (&BufferedReader-read-u8 reader))
+    (cond
+     ((eof-object? byte1)
+      '#!eof)
+     ((fx<= byte1 #x7f)
+      (integer->char byte1))
+     ((fx<= byte1 #xdf)
+      (let (byte2 (&BufferedReader-read-u8! reader))
+        (integer->char
+         (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
+                (fxand byte2 #x3f)))))
+     ((fx<= byte1 #xef)
+      (let* ((byte2 (&BufferedReader-read-u8! reader))
+             (byte3 (&BufferedReader-read-u8! reader)))
+        (integer->char
+         (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                (fxand byte3 #x3f)))))
+     ((fx<= byte1 #xf4)
+      (let* ((byte2 (&BufferedReader-read-u8! reader))
+             (byte3 (&BufferedReader-read-u8! reader))
+             (byte4 (&BufferedReader-read-u8! reader)))
+        (integer->char
+         (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
+                (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
+                (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
+                (fxand byte4 #x3f)))))
+     (else
+      ;; Bad encoding; use utf8 replacement character
+      #\xfffd))))
+
+(defreader-ext (read-char! reader)
+  (let (char (&BufferedReader-read-char reader))
+    (if (eof-object? char)
+      (raise-io-error 'BufferedReader-read-char! "premature end of input")
+      char)))
 
 (defreader-ext (read-string reader str (start 0) (end (string-length str)) (need 0))
   (let (count (fx- end start))
