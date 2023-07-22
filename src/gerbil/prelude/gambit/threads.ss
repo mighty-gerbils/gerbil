@@ -228,8 +228,10 @@ package: gerbil/gambit
   (let (handler (current-exception-handler))
     (with-exception-handler
      (lambda (e)
-       (mutex-unlock! mx)
-       (handler e)
+       (with-catch void
+         (lambda ()
+           (mutex-unlock! mx)
+           (handler e)))
        ;; if the handler returns here the state is inconsistent -- we need to bail
        (##thread-end-with-uncaught-exception! e))
      (lambda ()
