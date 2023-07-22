@@ -82,8 +82,10 @@
   (let (handler (current-exception-handler))
     (with-exception-handler
      (lambda (e)
-       (unlock! rw)
-       (handler e)
+       (with-catch void
+         (lambda ()
+           (unlock! rw)
+           (handler e)))
        ;; if the handler returns here the state is inconsistent -- we need to bail
        (##thread-end-with-uncaught-exception! e))
      (lambda ()
