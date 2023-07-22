@@ -18,16 +18,21 @@
   constructor: :init!)
 
 (defmethod {:init! rwlock}
-  (lambda (self (name 'name))
+  (lambda (self (name 'rwlock))
     (let ((mx (make-mutex name))
-          (rcv (make-condition-variable 'rwlock-read))
-          (wcv (make-condition-variable 'rwlock-write)))
+          (rcv (make-condition-variable (make-name name "-read-lock")))
+          (wcv (make-condition-variable (make-name name "-write-lock"))))
       (set! (&rwlock-mx self) mx)
       (set! (&rwlock-rcv self) rcv)
       (set! (&rwlock-wcv self) wcv)
       (set! (&rwlock-readers self) 0)
       (set! (&rwlock-writer self) #f)
       (set! (&rwlock-writers-waiting self) 0))))
+
+(def (make-name base suffix)
+  (string->symbol
+   (string-append
+    (symbol->string base) suffix)))
 
 (def (rwlock-read-lock! rw)
   (with ((rwlock mx rcv) rw)
