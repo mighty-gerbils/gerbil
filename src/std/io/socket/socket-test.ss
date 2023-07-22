@@ -2,6 +2,7 @@
 ;;; © vyzo
 ;;; socket api tests
 (import :gerbil/gambit/threads
+        :std/error
         :std/sugar
         :std/test
         :std/text/utf8
@@ -30,8 +31,10 @@
     (Reader-close reader)
     (Reader-close writer)))
 
-(def (do-echo sock msg)
+(def (do-echo sock msg (timeo-in #f))
   (let* ((input (string->utf8 msg))
+         (_ (when timeo-in
+              (StreamSocket-set-input-timeout! sock timeo-in)))
          (reader (StreamSocket-reader sock))
          (writer (StreamSocket-writer sock))
          (wrote (Writer-write writer input))
@@ -64,4 +67,11 @@
         (check (do-echo cli input) => input)
         (Socket-close cli)
         (Socket-close srv)
-        (check-exception (thread-join! srv) true)))))))
+        (check-exception (thread-join! srv) true)))))
+    (test-case "timeout"
+      (let* ((input "the quick brown fox jumped over the fence")
+             (srv (tcp-listen echo-server-tcp-address))
+             (cli (tcp-connect echo-server-tcp-address)))
+        (check-exception (do-echo cli input 1.0) timeout-error?)
+        (Socket-close cli)
+        (Socket-close srv)))))
