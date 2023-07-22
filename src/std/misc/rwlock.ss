@@ -29,8 +29,8 @@
 
 (def (rwlock-read-lock! rw)
   (with ((rwlock mx cv) rw)
-    (mutex-lock! mx)
     (let lp ()
+      (mutex-lock! mx)
       (if (or (&rwlock-writer rw) (fx> (&rwlock-writers-waiting rw) 0))
         (begin
           (mutex-unlock! mx cv)
@@ -54,8 +54,8 @@
 
 (def (rwlock-write-lock! rw)
   (with ((rwlock mx cv) rw)
-    (mutex-lock! mx)
     (let lp ((waiting? #f))
+      (mutex-lock! mx)
       (cond
        ((or (fx> (&rwlock-readers rw) 0) (&rwlock-writer rw))
         (unless waiting?
