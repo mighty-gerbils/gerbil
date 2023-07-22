@@ -9,7 +9,9 @@
         :std/event
         ./interface)
 (export open-file-reader
-        open-file-writer)
+        open-file-writer
+        default-file-reader-flags
+        default-file-writer-flags)
 (declare (not safe))
 
 (defstruct file-io (fd closed?)
