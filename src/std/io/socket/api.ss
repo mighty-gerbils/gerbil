@@ -46,11 +46,14 @@
 
 (def (address-domain addr)
   (with ([host . _ ] addr)
-    (case (u8vector-length host)
-      ((4) AF_INET)
-      ((6) AF_INET6)
-      (else
-       (error "unknown address domain" addr)))))
+    (ip-address-domain host)))
+
+(def (ip-address-domain host)
+  (case (u8vector-length host)
+    ((4) AF_INET)
+    ((6) AF_INET6)
+    (else
+     (error "unknown address domain" host))))
 
 (def (tcp-connect address (timeo #f))
   (let* ((address (resolve-address address))
@@ -90,13 +93,13 @@
       (bind sock address))
     (DatagramSocket (make-datagram-socket sock domain #f #f #f #f (make-rwlock 'socket) #f))))
 
-(def (udp-multicast-socket group-address local-address (ifindex 0))
-  (let* ((group-address (inet-address group-address))
+(def (udp-multicast-socket group-ip-address local-address (ifindex 0))
+  (let* ((group-ip-address (ip-address group-ip-address))
          (local-address (inet-address local-address))
-         (domain (address-domain group-address))
-         (_ (unless (fx= domain local-address)
-              (error "Bad address; domain mismatch" local-address group-address)))
-         (sock (udp-new-multicast domain group-address local-address ifindex)))
+         (domain (ip-address-domain group-ip-address))
+         (_ (unless (fx= domain (address-domain local-address))
+              (error "Bad address; domain mismatch" group-ip-address local-address)))
+         (sock (udp-new-multicast domain group-ip-address local-address ifindex)))
     (DatagramSocket (make-datagram-socket sock domain #f #f #f #f (make-rwlock 'socket) #f))))
 
 ;;; Interface

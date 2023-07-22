@@ -47,7 +47,7 @@
 (def (udp-new af)
   (socket af SOCK_DGRAM))
 
-(def (udp-new-multicast domain group-address local-address iface-index)
+(def (udp-new-multicast domain group-ip-address local-address iface-index)
   (let* ((local-sockaddr (socket-address local-address))
          (sock (udp-new domain)))
     (with-error-close sock
@@ -56,11 +56,11 @@
       (if (fx= domain AF_INET)
         (begin
           (socket-setsockopt sock IPPROTO_IP IP_ADD_MEMBERSHIP
-                             (cons (car group-address) (car local-address)))
+                             (cons group-ip-address (car local-address)))
           (socket-setsockopt sock IPPROTO_IP IP_MULTICAST_LOOP 0))
         (begin
           (socket-setsockopt sock IPPROTO_IPV6 IPV6_ADD_MEMBERSHIP
-                             (cons (car group-address) iface-index))
+                             (cons group-ip-address iface-index))
           (socket-setsockopt sock IPPROTO_IPV6 IPV6_MULTICAST_LOOP 0)))
       sock)))
 
