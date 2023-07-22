@@ -1294,10 +1294,12 @@ limit: 0/3
 
 ## Read/Write Locks
 
-The `:std/misc/rwlock` include an implementation of read write locks.
+The `:std/misc/rwlock` include an implementation of read/write locks.
 
-The implementation preempts readers when there are writers waiting, so
-that no new readers will acquire the lock until all writers are done.
+The implementation queues additional readers when there are writers
+waiting, so that no new readers will acquire the lock until all
+writers are done.  This ensures that writers cannot be starved, which
+is a very important property for read/write locks.
 
 ::: tip To use bindings from this module:
 ```scheme
