@@ -11,7 +11,7 @@
 
 (def (test-reader reader buffer)
   (let lp ()
-    (let (rd (Reader-read reader buffer 0 (u8vector-length buffer) 0))
+    (let (rd (&Reader-read reader buffer 0 (u8vector-length buffer) 0))
       (unless (fxzero? rd)
         (lp)))))
 
@@ -20,7 +20,7 @@
     (let lp ((start 0))
       (if (fx< start end)
         (let (end (fxmin (fx+ start chunk-size) end))
-          (let (wr (Writer-write writer buffer start end))
+          (let (wr (&Writer-write writer buffer start end))
             (lp (fx+ start chunk-size))))
         (flush)))))
 
@@ -110,7 +110,7 @@
               (let* ((buffered-writer (open-buffered-writer (open-file-writer path) buffer-size))
                      (writer (Writer buffered-writer)))
                 (##gc)
-                (time (test-writer writer junk chunk-size (cut BufferedWriter-flush buffered-writer)))
+                (time (test-writer writer junk chunk-size (cut &BufferedWriter-flush buffered-writer)))
                 (Writer-close writer)))))))))
 
 (def (benchmark-output-port)
