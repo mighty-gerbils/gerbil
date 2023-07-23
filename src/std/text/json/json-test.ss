@@ -3,37 +3,36 @@
 ;;; :std/text/json unit test
 
 (import :std/test
-        :std/text/json
-        :std/sugar)
+        :std/sugar
+        ./api)
 (export json-test)
 
 (defstruct foo (a b) transparent: #t)
 (defmethod {:write-json foo}
-  (lambda (self port)
+  (lambda (self output)
     (with ((foo a b) self)
-      (write-json-alist [(cons 'b (1+ b)) (cons 'a a)] port))))
+      (write-json (hash (a a) (b b)) output))))
+
+(def (check-encode-decode obj str)
+  (parameterize ((json-sort-keys #f))
+    (check (call-with-input-string (call-with-output-string (cut write-json obj <>)) read-json)
+           => obj))
+  (parameterize ((json-sort-keys #t))
+    (check (call-with-output-string (cut write-json obj <>)) => str)
+    (check (call-with-input-string str read-json) => obj)))
+
+(def (check-encode-decode= obj)
+  (let (p (open-output-u8vector))
+    (write-json obj p)
+    (let (q (open-input-u8vector (get-output-u8vector p)))
+      (checkf = (read-json q) obj))))
+
+(def (check-encode-decode-number num)
+  (check-encode-decode= num)
+  (check-encode-decode= (- num)))
 
 (def json-test
   (test-suite "test :std/text/json"
-
-    (def (check-encode-decode obj str)
-      (parameterize ((json-sort-keys #f))
-        (check (call-with-input-string (call-with-output-string (cut write-json obj <>)) read-json)
-               => obj))
-      (parameterize ((json-sort-keys #t))
-        (check (call-with-output-string (cut write-json obj <>)) => str)
-        (check (call-with-input-string str read-json) => obj)))
-
-    (def (check-encode-decode= obj)
-      (let (p (open-output-u8vector))
-        (write-json obj p)
-        (let (q (open-input-u8vector (get-output-u8vector p)))
-          (checkf = (read-json q) obj))))
-
-    (def (check-encode-decode-number num)
-      (check-encode-decode= num)
-      (check-encode-decode= (- num)))
-
     (test-case "test object encoding and decoding"
       (check-encode-decode #t "true")
       (check-encode-decode #f "false")
@@ -53,5 +52,5 @@
         (check-encode-decode (hash ("a" 1) ("b" 2) ("c" (hash ("d" 3) ("e" 4) ("f" 5))))
                              "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}"))
       (check-encode-decode [1 2 #f #t 3] "[1,2,false,true,3]")
-      (check (call-with-output-string (cut write-json (foo 23 41) <>)) => "{\"b\":42,\"a\":23}")
+      (check (call-with-output-string (cut write-json (foo 23 41) <>)) => "{\"a\":23,\"b\":41}")
     )))
