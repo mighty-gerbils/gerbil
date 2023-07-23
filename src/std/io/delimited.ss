@@ -31,3 +31,7 @@
           (set! (&delimited-reader-remaining self)
             (fx- remaining read))
           read))))))
+
+(defmethod {close delimited-reader}
+  (lambda (self)
+    (&Reader-close (&delimited-reader-reader self))))
