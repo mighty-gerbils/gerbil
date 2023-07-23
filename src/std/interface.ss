@@ -63,12 +63,32 @@
 (def (satisfies? descriptor obj)
   (let (klass (interface-descriptor-type descriptor))
     (cond
-   ((##structure-direct-instance-of? obj (##type-id klass)) #t)
-   ((interface-instance? obj)
-    (satisfies? descriptor (interface-instance-object obj)))
-   (else
-    (let (methods (interface-descriptor-methods descriptor))
-      (andmap (cut method-ref obj <>) methods))))))
+     ((##structure-direct-instance-of? obj (##type-id klass)) #t)
+     ((interface-instance? obj)
+      (satisfies? descriptor (interface-instance-object obj)))
+     (else
+      ;; try to see if there is a prototype (and create one if we can while at it)
+      ;; if we don't have or can't make a prototype, return #f
+      (let/cc return
+        (let (prototype-key (cons (##type-id klass) (type-of obj)))
+          (mutex-lock! +interface-prototypes-mx+)
+          (cond
+           ((hash-get +interface-prototypes+ prototype-key)
+            (mutex-unlock! +interface-prototypes-mx+)
+            #t)
+           (else
+            (let* ((method-impls
+                    (map (lambda (method)
+                           (or (method-ref obj method)
+                               (begin
+                                 (mutex-unlock! +interface-prototypes-mx+)
+                                 (return #f))))
+                         (interface-descriptor-methods descriptor)))
+                   (prototype
+                    (apply ##structure klass #f method-impls)))
+              (hash-put! +interface-prototypes+ prototype-key prototype)
+              (mutex-unlock! +interface-prototypes-mx+)
+              #t)))))))))
 
 ;; the all encompassing macro(s)
 (begin-syntax
