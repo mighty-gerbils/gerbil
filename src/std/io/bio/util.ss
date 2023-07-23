@@ -91,7 +91,7 @@
       (bitwise-not int))))
 
 (defreader-ext (read-u8! reader)
-  (let (u8 (&BufferedReader-read-u8 read))
+  (let (u8 (&BufferedReader-read-u8 reader))
     (if (eof-object? u8)
       (raise-io-error 'BufferedReader-read-u8! "premature end of input")
       u8)))
