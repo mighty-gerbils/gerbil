@@ -17,9 +17,8 @@
                    (unchecked-method (stx-identifier #'method "&BufferedReader-" #'method)))
        #'(begin
            (def (reader-method reader . args)
-             (unless (BufferedReader? reader)
-               (error "object is not an interface instance" reader 'BufferedReader))
-             body ...)
+             (let (reader (BufferedReader reader))
+               body ...))
            (def (unchecked-method reader . args)
              body ...)
            (export reader-method unchecked-method))))))
@@ -31,9 +30,8 @@
                    (unchecked-method (stx-identifier #'method "&BufferedWriter-" #'method)))
        #'(begin
            (def (writer-method writer . args)
-             (unless (BufferedWriter? writer)
-               (error "object is not an interface instance" writer 'BufferedWriter))
-             body ...)
+             (let (writer (BufferedWriter writer))
+               body ...))
            (def (unchecked-method writer . args)
              body ...)
            (export writer-method unchecked-method))))))
