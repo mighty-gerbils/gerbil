@@ -4,7 +4,7 @@
 (import ./interface)
 (export io-copy!)
 
-(def default-buffer-size (expt 2 16))
+(def default-buffer-size (expt 2 15)) ; 32K
 
 (def (io-copy! reader writer (buffer-or-size default-buffer-size))
   (let* ((reader (Reader reader))

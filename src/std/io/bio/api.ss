@@ -20,7 +20,7 @@
         get-buffer-output-chunks
         (import: ./util))
 
-(def default-buffer-size (expt 2 16)) ; 16K
+(def default-buffer-size (expt 2 15)) ; 32K
 
 (def (open-buffered-reader reader (buffer-or-size default-buffer-size))
   (let ((reader (Reader reader))
