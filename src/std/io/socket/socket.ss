@@ -64,8 +64,9 @@
           (socket-setsockopt sock IPPROTO_IPV6 IPV6_MULTICAST_LOOP 0)))
       sock)))
 
-(def (bind sock address)
+(def (udp-bind sock address)
   (let* ((sockaddr (socket-address address))
          (family (socket-address-family sockaddr)))
     (with-error-close sock
+      (socket-setsockopt sock SOL_SOCKET SO_REUSEADDR 1)
       (socket-bind sock sockaddr))))

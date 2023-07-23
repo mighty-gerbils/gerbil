@@ -91,7 +91,7 @@
          (domain (if address (address-domain address) AF_INET))
          (sock (udp-new domain)))
     (when address
-      (bind sock address))
+      (udp-bind sock address))
     (DatagramSocket (make-datagram-socket sock domain #f #f #f #f (make-rwlock 'socket) #f))))
 
 (def (udp-multicast-socket group-ip-address local-address (ifindex 0))
