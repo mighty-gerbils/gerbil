@@ -77,7 +77,9 @@
       ;; empty buffer
       (let (read (bio-input-fill! bio buf 0))
         (if (fx> read 0)
-          (bio-read-u8 bio)
+          (let (u8 (u8vector-ref buf 0))
+            (bio-input-advance! bio 1 read)
+            u8)
           '#!eof)))))
 
 (def (bio-peek-u8 bio)
