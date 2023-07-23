@@ -122,6 +122,69 @@ As we can see the interface version is significantly faster, and the
 difference is becomes even more pronounced with deep/wide class
 hierarchies.
 
+## Tips for Effective Use of Interfaces
+
+### Cast your objects and reuse them across many interface calls
+
+Let's say an object `obj` implements an interface `A` and you have a
+method `f` you want to invoke on the interface:
+
+```scheme
+(interface A
+  (f ...))
+
+(def obj ...)
+
+;; what not to do
+(A-f obj ...) ; this will implicitly cast
+
+;; what to do
+(def a (A obj))
+(A-f a ...)
+```
+
+### Use the subtype methods for interface mixins
+
+When you have interfaces `A` and `B` mixing `A`, then the interface macro will define
+`A`'s methods for `B` as well.
+In this case, if you have an instance of `B` you should use `B`'s methods directly to
+avoid unnecessary casts.
+
+```scheme
+(interface A
+  (f ...))
+
+(interface (B a)
+ ...)
+
+(def b (B ...))
+
+;; what not to do:
+(A-f b ...)
+
+;; what to do:
+(B-f b ...)
+```
+
+### Use unchecked methods when you know the exact type
+
+If you know the exact type of an instance, you can ellide the checked cast by calling
+the unchecked method.
+
+Note: if you get this wrong and the type is not the right instance, there will be dragons.
+Use with caution!
+
+```
+(interface A
+  (f ...))
+
+(def a (A ...))
+
+;; what to do:
+(&A-f a ...)
+
+```
+
 ## Macros
 ### interface
 ```scheme
@@ -161,8 +224,11 @@ Here is an example:
 (def (Operation? obj) ...)
 (def (is-Operation? obj) ...)
 (def (Operation-start! self) ...)
+(def (&Operation-start! self) ...)  ; unchecked
 (def (Operation-apply self x) ...)
+(def (&Operation-apply self x) ...) ; unchecked
 (def (Operation-finish! self) ...)
+(def (&Operation-finish! self) ...) ; unchecked
 ```
 
 
