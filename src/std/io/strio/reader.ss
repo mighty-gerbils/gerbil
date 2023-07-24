@@ -22,8 +22,10 @@
      ((fx= output-want 0) 0)
      ((fx< rlo rhi)
       ;; we have some bytes in the buffer
-      (let ((values consumed-bytes output-chars)
-            (utf8-decode-partial! buf rlo rhi output output-start output-end))
+      (let* ((result
+              (utf8-decode-partial! buf rlo rhi output output-start output-end))
+             (consumed-bytes (car result))
+             (output-chars (cdr result)))
         (if (fx< output-chars output-want)
           ;; partial output
           (if (fx= consumed-bytes 0)
@@ -100,7 +102,7 @@
 
 (def (utf8-decode-partial! input input-start input-end output output-start output-end)
   (defrule (finish i o)
-    (values (fx- i input-start) (fx- o output-start)))
+    (cons (fx- i input-start) (fx- o output-start)))
   (let lp ((i input-start) (o output-start))
     (if (and (fx< i input-end) (fx< o output-end))
       (let (byte1 (u8vector-ref input i))
