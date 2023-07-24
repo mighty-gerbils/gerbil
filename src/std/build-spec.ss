@@ -54,6 +54,7 @@
     "io/strio/chunked"
     "io/strio/input"
     "io/strio/output"
+    "io/strio/inline"
     "io/strio/api"
     "io/socket/types"
     "io/socket/basic"
