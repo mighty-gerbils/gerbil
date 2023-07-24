@@ -188,7 +188,7 @@
              (write-char #\" output)))))))
 
 (defrule (buffer-write-char char buf)
-  (&BufferedStringWriter-write-char buf char))
+  (&BufferedStringWriter-write-char-inline buf char))
 (defrule (buffer-write-string str buf)
   (&BufferedStringWriter-write-string buf str))
 
