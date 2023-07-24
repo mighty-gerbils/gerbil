@@ -131,8 +131,8 @@
                      (byte3 (u8vector-ref input i+2))
                      (char
                       (integer->char
-                       (##fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
-                                (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                              (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
                                 (fxand byte3 #x3f)))))
                 (string-set! output o char)
                 (lp (fx+ i+2 1) (fx+ o 1)))
