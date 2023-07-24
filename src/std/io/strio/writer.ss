@@ -27,8 +27,10 @@
       (bio-output-consume! bio)
       (strio-write-string strio input input-start input-end))
      (else
-      (let ((values consumed-chars output-bytes)
-            (utf8-encode-partial! input input-start input-end buf 0 buflen))
+      (let* ((result
+              (utf8-encode-partial! input input-start input-end buf 0 buflen))
+             (consumed-chars (car result))
+             (output-bytes (cdr result)))
         (strio-output-drain! bio buf output-bytes)
         (if (fx< consumed-chars input-want)
           ;; partial output
@@ -38,7 +40,7 @@
 
 (def (utf8-encode-partial! input input-start input-end output output-start output-end)
   (defrule (finish i o)
-    (values (fx- i input-start) (fx- o output-start)))
+    (cons (fx- i input-start) (fx- o output-start)))
   (let lp ((i input-start) (o output-start))
     (if (and (fx< i input-end) (fx< o output-end))
       (let* ((char (string-ref input i))
