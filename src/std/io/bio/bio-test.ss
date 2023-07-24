@@ -17,6 +17,9 @@
       (u8vector-set! u8v i (modulo i 256)))
     u8v))
 
+(def (open-string-buffered-reader input)
+  (open-u8vector-buffered-reader (string->utf8 input)))
+
 (def bio-input-test
   (test-suite "buffered reader"
     (test-case "u8vector input"
