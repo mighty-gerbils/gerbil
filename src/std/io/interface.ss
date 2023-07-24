@@ -58,6 +58,35 @@
   ;; resets the underlying output and buffer state, allowing reuse of buffers.
   (reset! output))
 
+;; string/textual IO
+(interface StringReader
+  ;; read into a string
+  (read-string str (start 0) (end (string-length str)) (need 0))
+  ;; closes the reader
+  (close))
+
+(interface (BufferedStringReader StringReader)
+  ;; reads a single char
+  (read-char)
+  ;; peeks the next char
+  (peek-char)
+  ;; read a line
+  (read-line (separator #\newline) (include-sep? #f) (max-chars #f)))
+
+(interface StringWriter
+  ;; write a string
+  (write-string str (start 0) (end (string-length str)))
+  ;; closes the writer
+  (close))
+
+(interface (BufferedStringWriter StringWriter)
+  ;; write a single char
+  (write-char char)
+  ;; write a line separated string
+  (write-line str (separator #\newline))
+  ;; flush output
+  (flush))
+
 ;; socket interfaces
 (interface Socket
   (domain)
