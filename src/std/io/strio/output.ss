@@ -31,7 +31,8 @@
       ;; full buffer
       (begin
         (strbuf-output-drain! strbuf buf whi)
-        (strbuf-write-char strbuf char)))))
+        (string-set! buf 0 char)
+        (strbuf-output-advance! strbuf 1)))))
 
 (def (strbuf-write-string strbuf input input-start input-end)
   (let* ((output-want (fx- input-end input-start))
