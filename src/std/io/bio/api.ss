@@ -2,7 +2,6 @@
 ;;; © vyzo
 ;;; Buffered IO api
 (import :std/interface
-        :std/text/utf8
         ../interface
         ../dummy
         ./types
@@ -13,7 +12,6 @@
         ./util)
 (export open-buffered-reader
         open-u8vector-buffered-reader
-        open-string-buffered-reader
         open-buffered-writer
         open-u8vector-buffered-writer
         get-buffer-output-u8vector
@@ -38,9 +36,6 @@
   (unless (u8vector? buffer)
     (error "Bad argument; expected u8vector" buffer))
   (BufferedReader (make-input-buffer dummy-reader buffer 0 (u8vector-length buffer) #f)))
-
-(def (open-string-buffered-reader str)
-  (open-u8vector-buffered-reader (string->utf8 str)))
 
 (def (open-buffered-writer writer (buffer-or-size default-buffer-size))
   (let* ((writer (Writer writer))
