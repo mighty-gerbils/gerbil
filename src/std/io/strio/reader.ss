@@ -7,7 +7,8 @@
         ../interface
         ../bio/types
         ../bio/input
-        ./types)
+        ./types
+        ./packed)
 (export #t)
 (declare (not safe))
 
@@ -24,8 +25,8 @@
       ;; we have some bytes in the buffer
       (let* ((result
               (utf8-decode-partial! buf rlo rhi output output-start output-end))
-             (consumed-bytes (car result))
-             (output-chars (cdr result)))
+             (consumed-bytes (unpack-first result))
+             (output-chars (unpack-second result)))
         (if (fx< output-chars output-want)
           ;; partial output
           (if (fx= consumed-bytes 0)
@@ -102,7 +103,7 @@
 
 (def (utf8-decode-partial! input input-start input-end output output-start output-end)
   (defrule (finish i o)
-    (cons (fx- i input-start) (fx- o output-start)))
+    (pack (fx- i input-start) (fx- o output-start)))
   (let lp ((i input-start) (o output-start))
     (if (and (fx< i input-end) (fx< o output-end))
       (let (byte1 (u8vector-ref input i))

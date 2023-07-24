@@ -7,7 +7,8 @@
         ../interface
         ../bio/types
         ../bio/output
-        ./types)
+        ./types
+        ./packed)
 (export #t)
 (declare (not safe))
 
@@ -29,8 +30,8 @@
      (else
       (let* ((result
               (utf8-encode-partial! input input-start input-end buf 0 buflen))
-             (consumed-chars (car result))
-             (output-bytes (cdr result)))
+             (consumed-chars (unpack-first result))
+             (output-bytes (unpack-second result)))
         (strio-output-drain! bio buf output-bytes)
         (if (fx< consumed-chars input-want)
           ;; partial output
@@ -40,7 +41,7 @@
 
 (def (utf8-encode-partial! input input-start input-end output output-start output-end)
   (defrule (finish i o)
-    (cons (fx- i input-start) (fx- o output-start)))
+    (pack (fx- i input-start) (fx- o output-start)))
   (let lp ((i input-start) (o output-start))
     (if (and (fx< i input-end) (fx< o output-end))
       (let* ((char (string-ref input i))
