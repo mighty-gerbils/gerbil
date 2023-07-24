@@ -7,7 +7,7 @@
         :std/io
         :std/text/hex
         ./env)
-(export read-json-object/port read-json-object/buffer)
+(export read-json-object/port read-json-object/reader)
 (declare (not safe))
 
 (defsyntax (defjson-reader stx)
@@ -226,18 +226,5 @@
                  (else (void))))))))))
 
 
-(def (buffer-peek-char input)
-  (let (byte (&BufferedReader-peek-u8 input))
-    (cond
-     ((eof-object? byte) '#!eof)
-     ((fx<= byte #x7f)
-      (integer->char byte))
-     (else
-      ;; it is multibyte and we don't care in the peek, so replace it.
-      #\xfffd))))
-
-(defrule (buffer-read-char input)
-  (&BufferedReader-read-char input))
-
 (defjson-reader port peek-char read-char)
-(defjson-reader buffer buffer-peek-char buffer-read-char)
+(defjson-reader reader &BufferedStringReader-peek-char &BufferedStringReader-read-char)
