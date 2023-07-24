@@ -8,6 +8,7 @@
         ./types
         ./input
         ./output
+        ./inline
         ./reader
         ./writer
         ./chunked)
@@ -16,7 +17,8 @@
         open-buffered-string-reader
         open-buffered-string-writer
         get-buffer-output-string
-        get-buffer-output-string-chunks)
+        get-buffer-output-string-chunks
+        (import: ./inline))
 
 (def default-buffer-size (expt 2 15)) ; 32KB
 
