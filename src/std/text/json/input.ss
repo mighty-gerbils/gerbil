@@ -227,4 +227,4 @@
 
 
 (defjson-reader port peek-char read-char)
-(defjson-reader reader &BufferedStringReader-peek-char &BufferedStringReader-read-char)
+(defjson-reader reader &BufferedStringReader-peek-char-inline &BufferedStringReader-read-char-inline)
