@@ -3,7 +3,6 @@
 ;;; json api
 (import :gerbil/gambit/ports
         :std/io
-        :std/text/utf8
         ./env
         ./input
         ./output)
@@ -15,30 +14,30 @@
   (cond
    ((input-port? input)
     (read-json-object/port input (make-env)))
-   ((BufferedReader? input)
-    (read-json-object/buffer input (make-env)))
+   ((is-BufferedStringReader? input)
+    (read-json-object/reader (BufferedStringReader input) (make-env)))
    (else
-    (error "Bad input source; expected input port or BufferedReader" input))))
+    (error "Bad input source; expected input port or BufferedStringReader" input))))
 
 (def (string->json-object str)
-  (read-json-object/buffer (open-string-buffered-reader str) (make-env)))
+  (read-json-object/reader (open-buffered-string-reader str) (make-env)))
 
 (def (write-json obj (output (current-output-port)))
   (cond
    ((output-port? output)
     (write-json-object/port obj output (make-env))
     (force-output output))
-   ((BufferedWriter? output)
-    (write-json-object/buffer obj output (make-env)))
-   ((Writer? output)
-    (let (output (open-buffered-writer output))
-      (write-json-object/buffer obj output (make-env))
-      (&BufferedWriter-flush output)))
+   ((is-BufferedStringWriter? output)
+    (write-json-object/writer obj (BufferedStringWriter output) (make-env)))
+   ((or (is-StringWriter? output) (is-Writer? output))
+    (let (output (open-buffered-string-writer output))
+      (write-json-object/writer obj output (make-env))
+      (&BufferedStringWriter-flush output)))
    (else
-    (error "Bad output sink; expected output port, Writer or BufferedWriter" output))))
+    (error "Bad output sink; expected output port, Writer, StringWriter or BufferedStringWriter" output))))
 
 (def (json-object->string obj)
-  (let (buffer (open-u8vector-buffered-writer))
-    (write-json-object/buffer obj buffer (make-env))
-    (&BufferedWriter-flush buffer)
-    (utf8->string (get-buffer-output-u8vector buffer))))
+  (let (buffer (open-buffered-string-writer #f))
+    (write-json-object/writer obj buffer (make-env))
+    (&BufferedStringWriter-flush buffer)
+    (get-buffer-output-string buffer)))

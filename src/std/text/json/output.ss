@@ -9,10 +9,10 @@
         :std/sort
         :std/text/hex
         ./env)
-(export write-json-object/port write-json-object/buffer)
+(export write-json-object/port write-json-object/writer)
 (declare (not safe))
 
-(def (json-key-string key (obj #f))
+(def (json-key-string key)
   (cond
    ((string? key) key)
    ((symbol? key)
@@ -20,11 +20,12 @@
    ((keyword? key)
     (keyword->string key))
    (else
-    (error "Illegal hash key; must be symbol, keyword or string" obj key))))
+    (error "Illegal hash key; must be symbol, keyword or string" key))))
 
-(def (json-sort-alist alist (obj alist))
-  (sort alist (lambda (kv1 kv2) (string<? (json-key-string (car kv1) obj)
-                                     (json-key-string (car kv2) obj)))))
+(def (json-sort-alist alist)
+  (sort alist (lambda (kv1 kv2)
+                (string<? (json-key-string (car kv1))
+                          (json-key-string (car kv2))))))
 
 (defsyntax (defjson-writer stx)
   (syntax-case stx ()
@@ -115,32 +116,30 @@
                            (lp (##fx+ n 1)))))))
                  (write-string "[]" output))))
 
-           (def (write-json-alist alist output env (obj alist))
+           (def (write-json-alist alist output env)
              (write-char #\{ output)
-             (let lp ((previous-key #f) (rest alist))
+             (let lp ((rest alist))
                (match rest
-                 ([[key-obj . val] . rest]
-                  (let (key (json-key-string key-obj obj))
-                    (when (equal? key previous-key) ;; NB: this test will only work reliably if the alist is sorted
-                      (error "Duplicate key in JSON object" key))
+                 ([[key . val] . rest]
+                  (let (key (json-key-string key))
                     (write-char #\" output)
                     (write-string key output)
                     (write-char #\" output)
                     (write-char #\: output)
                     (write-json-object val output env)
                     (unless (null? rest) (write-char #\, output))
-                    (lp key rest)))
-                 ([]                    ; empty
-                  (write-char #\} output)))))
+                    (lp rest)))
+               ([]                      ; empty
+                (write-char #\} output)))))
 
-           (def (write-json-alist/sort alist output env (obj alist))
-             (write-json-alist (json-sort-alist alist obj) output env obj))
+           (def (write-json-alist/sort alist output env)
+             (write-json-alist (json-sort-alist alist) output env))
 
            (def (write-json-hash obj output env)
              (def lst (hash->list obj))
              (if (&env-sort-keys env)
-               (write-json-alist/sort lst output env obj)
-               (write-json-alist lst output env obj)))
+               (write-json-alist/sort lst output env)
+               (write-json-alist lst output env)))
 
            (def (write-json-string obj output env)
              (def escape
@@ -189,9 +188,9 @@
              (write-char #\" output)))))))
 
 (defrule (buffer-write-char char buf)
-  (&BufferedWriter-write-char buf char))
+  (&BufferedStringWriter-write-char buf char))
 (defrule (buffer-write-string str buf)
-  (&BufferedWriter-write-string buf str))
+  (&BufferedStringWriter-write-string buf str))
 
 (defjson-writer port write-char write-string)
-(defjson-writer buffer buffer-write-char buffer-write-string)
+(defjson-writer writer buffer-write-char buffer-write-string)

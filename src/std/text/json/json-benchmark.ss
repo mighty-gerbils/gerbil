@@ -28,14 +28,14 @@
 
 (def (call-with-buffered-file-reader path proc)
   (let* ((reader (open-file-reader path))
-         (reader (open-buffered-reader reader))
+         (reader (open-buffered-string-reader reader))
          (result (proc reader))
-         (_ (BufferedReader-close reader)))
+         (_ (BufferedStringReader-close reader)))
     result))
 
 (def (call-with-buffered-file-writer path proc)
   (let* ((writer (open-file-writer path))
-         (writer (open-buffered-writer writer))
+         (writer (open-buffered-string-writer writer))
          (result (proc writer))
-         (_ (BufferedWriter-close writer)))
+         (_ (BufferedStringWriter-close writer)))
     result))
