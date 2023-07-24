@@ -48,6 +48,7 @@
     "io/bio/util"
     "io/bio/api"
     "io/strio/types"
+    "io/strio/packed"
     "io/strio/reader"
     "io/strio/writer"
     "io/strio/chunked"
