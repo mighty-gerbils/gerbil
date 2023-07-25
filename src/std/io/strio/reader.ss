@@ -102,18 +102,34 @@
             (strio-read-string strio output output-start output-end input-need))))))))
 
 (def (utf8-decode-partial! input input-start input-end output output-start output-end)
-  (let ((input-length (fx- input-end input-start))
-        (output-length (fx- output-end output-start)))
+  (let* ((input-length (fx- input-end input-start))
+         (output-length (fx- output-end output-start))
+         (output-safe-length (fx/ input-length 4)))
     (cond
-     ((fx<= input-length output-length)
-      ;; check only input bounds
-      (utf8-decode/input-check input input-start input-end output output-start))
      ((fx<= (fx* output-length 4) input-length)
       ;; check only output bounds
       (utf8-decode/output-check input input-start output output-start output-end))
+     ((fx>= output-length output-safe-length 256)
+      (let* ((result1
+              ;; check only output bounds
+              (utf8-decode/output-check input input-start
+                                        output output-start (fx+ output-start output-safe-length)))
+             (consumed-bytes1 (unpack-first result1))
+             (output-chars1 (unpack-second result1))
+             (result2
+              ;; recur
+              (utf8-decode-partial! input (fx+ input-start consumed-bytes1) input-end
+                                    output (fx+ output-start output-chars1) output-end))
+             (consumed-bytes2 (unpack-first result2))
+             (output-chars2 (unpack-second result2)))
+        (pack (fx+ consumed-bytes1 consumed-bytes2) (fx+ output-chars1 output-chars2))))
+     ((fx<= input-length output-length)
+      ;; check only input bounds
+      (utf8-decode/input-check input input-start input-end output output-start))
      (else
       ;; check both bounds
-      (utf8-decode/input-output-check input input-start input-end output output-start output-end)))))
+      (utf8-decode/input-output-check input input-start input-end
+                                      output output-start output-end)))))
 
 (def (utf8-decode/input-check input input-start input-end output output-start)
   (defrule (finish i o)

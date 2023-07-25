@@ -40,18 +40,34 @@
           (fx- input-end input-start)))))))
 
 (def (utf8-encode-partial! input input-start input-end output output-start output-end)
-  (let ((input-length (fx- input-end input-start))
-        (output-length (fx- output-end output-start)))
+  (let* ((input-length (fx- input-end input-start))
+         (output-length (fx- output-end output-start))
+         (input-safe-length (fx/ output-length 4)))
     (cond
-     ((fx<= output-length input-length)
-      ;; check only output bounds
-      (utf8-encode/output-check input input-start output output-start output-end))
      ((fx<= (fx* input-length 4) output-length)
       ;; check only input bounds
       (utf8-encode/input-check input input-start input-end output output-start))
+     ((fx>= input-length input-safe-length 256)
+      (let* ((result1
+              ;; check only input bounds
+              (utf8-encode/input-check input input-start (fx+ input-start input-safe-length)
+                                       output output-start))
+             (consumed-chars1 (unpack-first result1))
+             (output-bytes1 (unpack-second result1))
+             (result2
+              ;; recur
+              (utf8-encode-partial! input (fx+ input-start consumed-chars1) input-end
+                                    output (fx+ output-start output-bytes1) output-end))
+             (consumed-chars2 (unpack-first result2))
+             (output-bytes2 (unpack-second result2)))
+        (pack (fx+ consumed-chars1 consumed-chars2) (fx+ output-bytes1 output-bytes2))))
+     ((fx<= output-length input-length)
+      ;; check only output bounds
+      (utf8-encode/output-check input input-start output output-start output-end))
      (else
       ;; check both bounds
       (utf8-encode/input-output-check input input-start input-end output output-start output-end)))))
+
 
 (def (utf8-encode/input-check input input-start input-end output output-start)
   (defrule (finish i o)
