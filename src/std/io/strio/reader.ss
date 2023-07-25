@@ -102,6 +102,131 @@
             (strio-read-string strio output output-start output-end input-need))))))))
 
 (def (utf8-decode-partial! input input-start input-end output output-start output-end)
+  (let ((input-length (fx- input-end input-start))
+        (output-length (fx- output-end output-start)))
+    (cond
+     ((fx<= input-length output-length)
+      ;; check only input bounds
+      (utf8-decode/input-check input input-start input-end output output-start))
+     ((fx<= (fx* output-length 4) input-length)
+      ;; check only output bounds
+      (utf8-decode/output-check input input-start output output-start output-end))
+     (else
+      ;; check both bounds
+      (utf8-decode/input-output-check input input-start input-end output output-start output-end)))))
+
+(def (utf8-decode/input-check input input-start input-end output output-start)
+  (defrule (finish i o)
+    (pack (fx- i input-start) (fx- o output-start)))
+  (let lp ((i input-start) (o output-start))
+    (if (fx< i input-end)
+      (let (byte1 (u8vector-ref input i))
+        (cond
+         ((fx<= byte1 #x7f)
+          (let (char (integer->char byte1))
+            (string-set! output o char)
+            (lp (fx+ i 1) (fx+ o 1))))
+         ((fx<= byte1 #xdf)
+          (let (i+1 (fx+ i 1))
+            (if (fx< i+1 input-end)
+              (let* ((byte2 (u8vector-ref input i+1))
+                     (char
+                      (integer->char
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
+                              (fxand byte2 #x3f)))))
+                (string-set! output o char)
+                (lp (fx+ i+1 1) (fx+ o 1)))
+              ;; incomplete character
+              (finish i o))))
+         ((fx<= byte1 #xef)
+          (let* ((i+1 (fx+ i 1))
+                 (i+2 (fx+ i+1 1)))
+            (if (fx< i+2 input-end)
+              (let* ((byte2 (u8vector-ref input i+1))
+                     (byte3 (u8vector-ref input i+2))
+                     (char
+                      (integer->char
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                              (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                              (fxand byte3 #x3f)))))
+                (string-set! output o char)
+                (lp (fx+ i+2 1) (fx+ o 1)))
+              (finish i o))))
+         ((fx<= byte1 #xf4)
+          (let* ((i+1 (fx+ i 1))
+                 (i+2 (fx+ i+1 1))
+                 (i+3 (fx+ i+2 1)))
+            (if (fx< i+3 input-end)
+              (let* ((byte2 (u8vector-ref input i+1))
+                     (byte3 (u8vector-ref input i+2))
+                     (byte4 (u8vector-ref input i+3))
+                     (char
+                      (integer->char
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
+                              (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
+                              (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
+                              (fxand byte4 #x3f)))))
+                (string-set! output o char)
+                (lp (fx+ i+3 1) (fx+ o 1)))
+              (finish i o))))
+         (else
+          (string-set! output o #\xfffd) ; UTF-8 replacement character
+          (lp (fx+ i 1) (fx+ o 1)))))
+      (finish i o))))
+
+(def (utf8-decode/output-check input input-start output output-start output-end)
+  (defrule (finish i o)
+    (pack (fx- i input-start) (fx- o output-start)))
+  (let lp ((i input-start) (o output-start))
+    (if (fx< o output-end)
+      (let (byte1 (u8vector-ref input i))
+        (cond
+         ((fx<= byte1 #x7f)
+          (let (char (integer->char byte1))
+            (string-set! output o char)
+            (lp (fx+ i 1) (fx+ o 1))))
+         ((fx<= byte1 #xdf)
+          (let (i+1 (fx+ i 1))
+            (let* ((byte2 (u8vector-ref input i+1))
+                   (char
+                    (integer->char
+                     (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
+                            (fxand byte2 #x3f)))))
+              (string-set! output o char)
+              (lp (fx+ i+1 1) (fx+ o 1)))))
+         ((fx<= byte1 #xef)
+          (let* ((i+1 (fx+ i 1))
+                 (i+2 (fx+ i+1 1)))
+            (let* ((byte2 (u8vector-ref input i+1))
+                   (byte3 (u8vector-ref input i+2))
+                   (char
+                    (integer->char
+                     (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                            (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                            (fxand byte3 #x3f)))))
+              (string-set! output o char)
+              (lp (fx+ i+2 1) (fx+ o 1)))))
+         ((fx<= byte1 #xf4)
+          (let* ((i+1 (fx+ i 1))
+                 (i+2 (fx+ i+1 1))
+                 (i+3 (fx+ i+2 1)))
+            (let* ((byte2 (u8vector-ref input i+1))
+                   (byte3 (u8vector-ref input i+2))
+                   (byte4 (u8vector-ref input i+3))
+                   (char
+                    (integer->char
+                     (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
+                            (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
+                            (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
+                            (fxand byte4 #x3f)))))
+              (string-set! output o char)
+              (lp (fx+ i+3 1) (fx+ o 1)))))
+         (else
+          (string-set! output o #\xfffd) ; UTF-8 replacement character
+          (lp (fx+ i 1) (fx+ o 1)))))
+      (finish i o))))
+
+(def (utf8-decode/input-output-check input input-start input-end output output-start output-end)
   (defrule (finish i o)
     (pack (fx- i input-start) (fx- o output-start)))
   (let lp ((i input-start) (o output-start))
