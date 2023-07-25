@@ -16,11 +16,8 @@
           (buf (&string-input-buffer-buf strbuf)))
       (if (fx< rlo rhi)
         (string-ref buf rlo)
-        ;; empty buffer
-        (let (read (strbuf-input-fill! strbuf buf 0))
-          (if (fx> read 0)
-            (string-ref buf 0)
-            '#!eof))))))
+        ;; empty buffer, fall back to the method
+        (strbuf-peek-char strbuf)))))
 
 (defrule (&BufferedStringReader-read-char-inline reader)
   (let (strbuf (&interface-instance-object reader))
@@ -32,13 +29,8 @@
               (rlo+1 (fx+ rlo 1)))
           (strbuf-input-advance! strbuf rlo+1 rhi)
           char)
-        ;; empty buffer
-        (let (read (strbuf-input-fill! strbuf buf 0))
-          (if (fx> read 0)
-            (let (char (string-ref buf 0))
-              (strbuf-input-advance! strbuf 1 read)
-              char)
-            '#!eof))))))
+        ;; empty buffer, fall back to the method
+        (strbuf-read-char strbuf)))))
 
 (defrule (&BufferedStringWriter-write-char-inline writer char)
   (let (strbuf (&interface-instance-object writer))
@@ -50,8 +42,5 @@
           (string-set! buf whi char)
           (strbuf-output-advance! strbuf whi+1)
           1)
-        ;; full buffer
-        (begin
-          (strbuf-output-drain! strbuf buf whi)
-          (string-set! buf 0 char)
-          (strbuf-output-advance! strbuf 1))))))
+        ;; full buffer, fall back to the method
+        (strbuf-write-char  strbuf char)))))
