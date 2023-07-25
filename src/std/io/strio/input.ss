@@ -11,13 +11,12 @@
 
 (defrule (strbuf-input-fill! strbuf buf need)
   (let (read (&StringReader-read-string (&string-input-buffer-reader strbuf) buf 0 (string-length buf) need))
+    (set! (&string-input-buffer-rlo strbuf) 0)
     (set! (&string-input-buffer-rhi strbuf) read)
     read))
 
 (defrule (strbuf-input-advance! strbuf new-rlo rhi)
-  (if (fx< new-rlo rhi)
-    (set! (&string-input-buffer-rlo strbuf) new-rlo)
-    (strbuf-input-consume! strbuf)))
+  (set! (&string-input-buffer-rlo strbuf) new-rlo))
 
 (defrule (strbuf-input-consume! strbuf)
   (begin
