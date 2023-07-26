@@ -917,6 +917,14 @@
  (std/io/bio/chunked
   "io/bio/chunked"
   (gerbil/core std/error std/io/bio/types std/io/interface std/srfi/1))
+ (std/io/bio/inline
+  "io/bio/inline"
+  (gerbil/core
+   std/interface
+   std/io/bio/input
+   std/io/bio/output
+   std/io/bio/types
+   std/sugar))
  (std/io/bio/util
   "io/bio/util"
   (gerbil/core
@@ -924,6 +932,7 @@
    gerbil/gambit/fixnum
    gerbil/gambit/threads
    std/error
+   std/io/bio/inline
    std/io/interface
    std/srfi/1
    std/sugar))
@@ -933,13 +942,13 @@
    std/interface
    std/io/bio/chunked
    std/io/bio/delimited
+   std/io/bio/inline
    std/io/bio/input
    std/io/bio/output
    std/io/bio/types
    std/io/bio/util
    std/io/dummy
-   std/io/interface
-   std/text/utf8))
+   std/io/interface))
  (std/misc/rwlock "misc/rwlock" (gerbil/core gerbil/gambit/threads std/sugar))
  (std/io/socket/basic
   "io/socket/basic"
