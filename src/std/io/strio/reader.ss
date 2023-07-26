@@ -106,10 +106,11 @@
          (output-length (fx- output-end output-start))
          (output-safe-length (fx/ input-length 4)))
     (cond
+     ((or (fx= output-length 0) (fx= input-length 0)) 0)
      ((fx<= (fx* output-length 4) input-length)
       ;; check only output bounds
       (utf8-decode/output-check input input-start output output-start output-end))
-     ((fx>= output-length output-safe-length 256)
+     ((fx>= output-length output-safe-length 64)
       (let* ((result1
               ;; check only output bounds
               (utf8-decode/output-check input input-start
