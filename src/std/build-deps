@@ -122,6 +122,7 @@
  (std/text/base58
   "text/base58"
   (gerbil/core gerbil/gambit/bits gerbil/gambit/fixnum std/error))
+ (std/text/json/env "text/json/env" (gerbil/core std/error))
  (std/text/json
   "text/json"
   (gerbil/core
@@ -1085,6 +1086,34 @@
    std/io/socket/api
    std/io/util))
  (std/io "io" (gerbil/core std/io/api std/io/interface))
+ (std/text/json/input
+  "text/json/input"
+  (gerbil/core
+   gerbil/gambit/bits
+   gerbil/gambit/ports
+   std/io
+   std/sugar
+   std/text/hex
+   std/text/json/env))
+ (std/text/json/output
+  "text/json/output"
+  (gerbil/core
+   gerbil/gambit/bits
+   gerbil/gambit/exact
+   gerbil/gambit/ports
+   std/io
+   std/sort
+   std/sugar
+   std/text/hex
+   std/text/json/env))
+ (std/text/json/api
+  "text/json/api"
+  (gerbil/core
+   gerbil/gambit/ports
+   std/io
+   std/text/json/env
+   std/text/json/input
+   std/text/json/output))
  (std/protobuf/io
   "protobuf/io"
   (gerbil/core
