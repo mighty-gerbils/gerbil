@@ -44,10 +44,11 @@
          (output-length (fx- output-end output-start))
          (input-safe-length (fx/ output-length 4)))
     (cond
+     ((or (fx= output-length 0) (fx= input-length 0)) 0)
      ((fx<= (fx* input-length 4) output-length)
       ;; check only input bounds
       (utf8-encode/input-check input input-start input-end output output-start))
-     ((fx>= input-length input-safe-length 256)
+     ((fx>= input-length input-safe-length 64)
       (let* ((result1
               ;; check only input bounds
               (utf8-encode/input-check input input-start (fx+ input-start input-safe-length)
