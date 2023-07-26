@@ -11,50 +11,49 @@
         ./chunked
         ./util)
 (export open-buffered-reader
-        open-u8vector-buffered-reader
         open-buffered-writer
-        open-u8vector-buffered-writer
         get-buffer-output-u8vector
         get-buffer-output-chunks
         (import: ./util))
 
 (def default-buffer-size (expt 2 15)) ; 32K
 
-(def (open-buffered-reader reader (buffer-or-size default-buffer-size))
-  (let ((reader (Reader reader))
-        (buffer
-          (cond
-           ((fixnum? buffer-or-size)
-            (make-u8vector buffer-or-size))
-           ((u8vector? buffer-or-size)
-            buffer-or-size)
-           (else
-            (error "Bad argument; expected fixnum or u8vector" buffer-or-size)))))
-    (BufferedReader (make-input-buffer reader buffer 0 0 #f))))
+(def (make-u8vector-buffer buffer-or-size)
+  (cond
+   ((fixnum? buffer-or-size)
+    (make-u8vector buffer-or-size))
+   ((u8vector? buffer-or-size)
+    buffer-or-size)
+   (else
+    (error "Bad argument; expected fixnum or u8vector" buffer-or-size))))
 
-(def (open-u8vector-buffered-reader buffer)
-  (unless (u8vector? buffer)
-    (error "Bad argument; expected u8vector" buffer))
-  (BufferedReader (make-input-buffer dummy-reader buffer 0 (u8vector-length buffer) #f)))
+(def (open-buffered-reader reader-or-u8vector (buffer-or-size default-buffer-size))
+  (cond
+   ((u8vector? reader-or-u8vector)
+    (BufferedReader
+     (make-input-buffer dummy-reader reader-or-u8vector 0 (u8vector-length reader-or-u8vector) #f)))
+   ((is-Reader? reader-or-u8vector)
+    (let ((buffer (make-u8vector-buffer buffer-or-size))
+          (reader (Reader reader-or-u8vector)))
+      (BufferedReader (make-input-buffer reader buffer 0 0 #f))))
+   (else
+    (error "Bad argument; expected reader instance or u8vector" reader-or-u8vector))))
 
-(def (open-buffered-writer writer (buffer-or-size default-buffer-size))
-  (let* ((writer (Writer writer))
-         (buffer
-          (cond
-           ((fixnum? buffer-or-size)
-            (make-u8vector buffer-or-size))
-           ((u8vector? buffer-or-size)
-            buffer-or-size)
-           (else
-            (error "Bad argument; expected fixnum or u8vector" buffer-or-size)))))
-  (BufferedWriter (make-output-buffer writer buffer 0 #f))))
+(def (open-buffered-writer maybe-writer (buffer-or-size default-buffer-size))
+  (cond
+   ((not maybe-writer)
+    (let ((writer (open-chunk-writer))
+          (buffer (make-u8vector buffer-or-size)))
+      (BufferedWriter (make-output-buffer writer buffer 0 #f))))
+   ((is-Writer? maybe-writer)
+    (let ((writer (Writer maybe-writer))
+          (buffer (make-u8vector-buffer buffer-or-size)))
+      (BufferedWriter (make-output-buffer writer buffer 0 #f))))
+   (else
+    (error "Bad argument; expected reader instance or #f" maybe-writer))))
 
 (def (open-chunk-writer)
   (Writer (make-chunked-output-buffer [] #f)))
-
-(def (open-u8vector-buffered-writer (buffer-or-size default-buffer-size))
-  (let (writer (open-chunk-writer))
-    (open-buffered-writer writer buffer-or-size)))
 
 (def (get-buffer-output-chunks wr)
   (let (bio (interface-instance-object wr))

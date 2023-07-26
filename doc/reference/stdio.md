@@ -457,28 +457,15 @@ The following procedures create and apply to BufferedReader instances.
 #### open-buffered-reader
 ```scheme
 (open-buffered-reader reader (buffer-or-size default-buffer-size)) -> BufferedReader
-  reader := Reader
+  reader := Reader or u8vector
   buffer-or-size := fixnum or u8vector
 ```
 
 Creates a `BufferedReader` using `reader` as the underlying source.
-The default buffer size is 16KB.
+If the `reader` argument is a u8vector then the new buffered reader use it as a source.
 
-#### open-u8vector-buffered-reader
-```scheme
-(open-u8vector-buffered-reader buffer) -> BufferedReader
-  buffer := u8vector
-```
+The default buffer size is 32KB.
 
-Creates a `BufferedReader` using a u8vector as an underlying source.
-
-#### open-string-buffered-reader
-```scheme
-(open-string-buffered-reader str) -> BufferedReader
-  str := string
-```
-
-Convenience method, equivalent to `(open-u8vector-buffered-reader (string->utf8 str))`
 
 #### BufferedReader-peek-u8
 ```scheme
@@ -672,20 +659,15 @@ The following procedures create and apply to BufferedWriter instances.
 #### open-buffered-writer
 ```scheme
 (open-buffered-writer writer (buffer-or-size default-buffer-size)) -> BufferedWriter
-  writer         := Writer
+  writer         := Writer or #f
   buffer-or-size := fixnum or u8vector
 ```
 
 Creates a `BufferedWriter` using `writer` as the underlying sink.
-The default buffer size is 16KB.
+If `writer` is `#f` then a new buffered writer is created that collects bytes that can
+be retrieved with `get-buffer-output-u8vector` or `get-buffered-output-chunks`.
 
-#### open-u8vector-buffered-writer
-```scheme
-(open-u8vector-buffered-writer (buffer-or-size default-buffer-size)) -> BufferedWriter
-```
-
-Creates a `BufferedWriter` that accumulates output as u8vector chunks.
-The default buffer size is 16KB.
+The default buffer size is 32KB.
 
 #### get-buffer-output-u8vector
 ```scheme

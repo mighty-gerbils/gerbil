@@ -18,13 +18,13 @@
     u8v))
 
 (def (open-string-buffered-reader input)
-  (open-u8vector-buffered-reader (string->utf8 input)))
+  (open-buffered-reader (string->utf8 input)))
 
 (def bio-input-test
   (test-suite "buffered reader"
     (test-case "u8vector input"
       (let* ((u8v (make-test-u8vector 1024))
-             (brd (open-u8vector-buffered-reader u8v))
+             (brd (open-buffered-reader u8v))
              (buf (make-u8vector 64)))
         (for (i (in-range 16))
           (check (BufferedReader-read brd buf) => 64)
@@ -37,7 +37,7 @@
 
     (test-case "u8 input"
       (let* ((u8v (make-test-u8vector 1024))
-             (brd (open-u8vector-buffered-reader u8v)))
+             (brd (open-buffered-reader u8v)))
         (for (i (in-range 1024))
           (check (BufferedReader-peek-u8 brd) => (modulo i 256))
           (check (BufferedReader-read-u8 brd) => (modulo i 256)))
@@ -46,7 +46,7 @@
 
     (test-case "input skipping"
       (let* ((u8v (make-test-u8vector 1024))
-             (brd (open-u8vector-buffered-reader u8v))
+             (brd (open-buffered-reader u8v))
              (buf (make-u8vector 64)))
         (BufferedReader-skip brd 3)
         (check (BufferedReader-read brd buf) => 64)
@@ -62,7 +62,7 @@
 
     (test-case "input delimiting"
       (let* ((u8v (make-test-u8vector 1024))
-             (brd (open-u8vector-buffered-reader u8v))
+             (brd (open-buffered-reader u8v))
              (buf (make-u8vector 64)))
         (BufferedReader-skip brd 7)
         (let (dbrd (BufferedReader-delimit brd 10))
@@ -78,7 +78,7 @@
 
     (test-case "buffer refill"
       (let* ((u8v (make-test-u8vector 1024))
-             (brd1 (open-u8vector-buffered-reader u8v))
+             (brd1 (open-buffered-reader u8v))
              (brd2 (open-buffered-reader (Reader brd1) 384))
              (buf (make-u8vector 64)))
         (def (verify-buf start end offset)
@@ -112,7 +112,7 @@
                    #xde #xac #x26
                    #xdd #xac #x26
                    ))
-             (brd (open-u8vector-buffered-reader u8v)))
+             (brd (open-buffered-reader u8v)))
         (check (BufferedReader-read-u16 brd) => #x0102)
         (check (BufferedReader-read-u32 brd) => #x01020304)
         (check (BufferedReader-read-u64 brd) => #x0102030405060708)
@@ -162,7 +162,7 @@
   (test-suite "buffered writer"
     (test-case "u8vector output"
       (let* ((u8v (make-test-u8vector 1024))
-             (bwr (open-u8vector-buffered-writer 128)))
+             (bwr (open-buffered-writer #f 128)))
         (for (i (in-range 16))
           (check (BufferedWriter-write bwr u8v (* i 64) (* (+ i 1) 64)) => 64))
         (BufferedWriter-close bwr)
@@ -170,7 +170,7 @@
 
     (test-case "u8 output"
       (let* ((u8v (make-test-u8vector 1024))
-             (bwr (open-u8vector-buffered-writer 128)))
+             (bwr (open-buffered-writer #f 128)))
         (for (i (in-range 1024))
           (check (BufferedWriter-write-u8 bwr (u8vector-ref u8v i)) => 1))
         (BufferedWriter-close bwr)
@@ -199,7 +199,7 @@
                    #xde #xac #x26
                    #xdd #xac #x26
                    ))
-             (bwr (open-u8vector-buffered-writer)))
+             (bwr (open-buffered-writer #f)))
         (check (BufferedWriter-write-u16 bwr #x0102) => 2)
         (check (BufferedWriter-write-u32 bwr #x01020304) => 4)
         (check (BufferedWriter-write-u64 bwr #x0102030405060708) => 8)
@@ -218,7 +218,7 @@
     (test-case "char output"
       (let* ((input "the quick brown fox jumped over the fence")
              (output (string->utf8 input))
-             (bwr (open-u8vector-buffered-writer)))
+             (bwr (open-buffered-writer #f)))
         (for (char (string->list input))
           (check (BufferedWriter-write-char bwr char) => 1))
         (BufferedWriter-close bwr)
@@ -227,7 +227,7 @@
     (test-case "string output"
       (let* ((input "the quick brown fox jumped over the fence")
              (output (string->utf8 input))
-             (bwr (open-u8vector-buffered-writer)))
+             (bwr (open-buffered-writer #f)))
         (for (i (in-range (fx/ (fx+ (string-length input) 15) 16)))
           (let* ((input-start (* i 16))
                  (input-end (fxmin (* (+ i 1) 16) (string-length input)))
@@ -240,11 +240,11 @@
       (let ((input "the quick brown fox jumped over the fence")
             (output1 (string->utf8 "the quick brown fox jumped over the fence\n"))
             (output2 (string->utf8 "the quick brown fox jumped over the fence\r\n")))
-        (let (bwr (open-u8vector-buffered-writer))
+        (let (bwr (open-buffered-writer #f))
           (check (BufferedWriter-write-line bwr input) => (fx+ (string-length input) 1))
           (BufferedWriter-close bwr)
           (check (get-buffer-output-u8vector bwr) => output1))
-        (let (bwr (open-u8vector-buffered-writer))
+        (let (bwr (open-buffered-writer #f))
           (check (BufferedWriter-write-line bwr input '(#\return #\newline)) => (fx+ (string-length input) 2))
           (BufferedWriter-flush bwr)
           (check (get-buffer-output-u8vector bwr) => output2))))))
