@@ -194,53 +194,88 @@
 (def (utf8-decode/output-check input input-start output output-start output-end)
   (defrule (finish i o)
     (pack (fx- i input-start) (fx- o output-start)))
-  (let lp ((i input-start) (o output-start))
+
+  (let lp ((i input-start)
+           (o output-start)
+           (try-unroll-ascii? (fx< (fx+ output-start 8) output-end)))
+
+    (defrules unroll1 ()
+      ((_ indicator continue)
+       (let* ((byte (u8vector-ref input i))
+              (indicator byte))
+         (string-set! output o (integer->char byte))
+         continue))
+      ((_ indicator off continue)
+       (let* ((byte (u8vector-ref input (fx+ i off)))
+              (indicator (fxior indicator byte)))
+         (string-set! output (fx+ o off) (integer->char byte))
+         continue)))
+
     (if (fx< o output-end)
-      (let (byte1 (u8vector-ref input i))
-        (cond
-         ((fx<= byte1 #x7f)
-          (let (char (integer->char byte1))
-            (string-set! output o char)
-            (lp (fx+ i 1) (fx+ o 1))))
-         ((fx<= byte1 #xdf)
-          (let (i+1 (fx+ i 1))
-            (let* ((byte2 (u8vector-ref input i+1))
-                   (char
-                    (integer->char
-                     (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
-                            (fxand byte2 #x3f)))))
+      ;; optimistically unroll the loop for ascii decoding
+      ;; rationale: text we are dealing with is mostly ascii
+      (if try-unroll-ascii?
+        (unroll1 indicator
+          (unroll1 indicator 1
+            (unroll1 indicator 2
+              (unroll1 indicator 3
+                (unroll1 indicator 4
+                  (unroll1 indicator 5
+                    (unroll1 indicator 6
+                      (unroll1 indicator 7
+                        (if (fxbit-set? 7 indicator)
+                          ;; found non-ascii, backtrack
+                          (lp i o #f)
+                          ;; all ascii, carry on
+                          (lp (fx+ i 8) (fx+ o 8) (fx< (fx+ o 16) output-end)))))))))))
+
+        ;; either we found a multibyte character or we are at the edge
+        (let (byte1 (u8vector-ref input i))
+          (cond
+           ((fx<= byte1 #x7f)
+            (let (char (integer->char byte1))
               (string-set! output o char)
-              (lp (fx+ i+1 1) (fx+ o 1)))))
-         ((fx<= byte1 #xef)
-          (let* ((i+1 (fx+ i 1))
-                 (i+2 (fx+ i+1 1)))
-            (let* ((byte2 (u8vector-ref input i+1))
-                   (byte3 (u8vector-ref input i+2))
-                   (char
-                    (integer->char
-                     (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
-                            (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
-                            (fxand byte3 #x3f)))))
-              (string-set! output o char)
-              (lp (fx+ i+2 1) (fx+ o 1)))))
-         ((fx<= byte1 #xf4)
-          (let* ((i+1 (fx+ i 1))
-                 (i+2 (fx+ i+1 1))
-                 (i+3 (fx+ i+2 1)))
-            (let* ((byte2 (u8vector-ref input i+1))
-                   (byte3 (u8vector-ref input i+2))
-                   (byte4 (u8vector-ref input i+3))
-                   (char
-                    (integer->char
-                     (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
-                            (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
-                            (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
-                            (fxand byte4 #x3f)))))
-              (string-set! output o char)
-              (lp (fx+ i+3 1) (fx+ o 1)))))
-         (else
-          (string-set! output o #\xfffd) ; UTF-8 replacement character
-          (lp (fx+ i 1) (fx+ o 1)))))
+              (lp (fx+ i 1) (fx+ o 1) #f)))
+           ((fx<= byte1 #xdf)
+            (let (i+1 (fx+ i 1))
+              (let* ((byte2 (u8vector-ref input i+1))
+                     (char
+                      (integer->char
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
+                              (fxand byte2 #x3f)))))
+                (string-set! output o char)
+                (lp (fx+ i+1 1) (fx+ o 1) (fx< (fx+ o 9) output-end)))))
+           ((fx<= byte1 #xef)
+            (let* ((i+1 (fx+ i 1))
+                   (i+2 (fx+ i+1 1)))
+              (let* ((byte2 (u8vector-ref input i+1))
+                     (byte3 (u8vector-ref input i+2))
+                     (char
+                      (integer->char
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                              (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                              (fxand byte3 #x3f)))))
+                (string-set! output o char)
+                (lp (fx+ i+2 1) (fx+ o 1) (fx< (fx+ o 9) output-end)))))
+           ((fx<= byte1 #xf4)
+            (let* ((i+1 (fx+ i 1))
+                   (i+2 (fx+ i+1 1))
+                   (i+3 (fx+ i+2 1)))
+              (let* ((byte2 (u8vector-ref input i+1))
+                     (byte3 (u8vector-ref input i+2))
+                     (byte4 (u8vector-ref input i+3))
+                     (char
+                      (integer->char
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
+                              (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
+                              (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
+                              (fxand byte4 #x3f)))))
+                (string-set! output o char)
+                (lp (fx+ i+3 1) (fx+ o 1) (fx< (fx+ o 9) output-end)))))
+           (else
+            (string-set! output o #\xfffd) ; UTF-8 replacement character
+            (lp (fx+ i 1) (fx+ o 1) (fx< (fx+ o 9) output-end)))))
+        )
       (finish i o))))
 
 (def (utf8-decode/input-output-check input input-start input-end output output-start output-end)
