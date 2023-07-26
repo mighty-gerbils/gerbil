@@ -7,7 +7,8 @@
         :std/error
         :std/sugar
         :std/srfi/1
-        ../interface)
+        ../interface
+        ./inline)
 (declare (not safe))
 
 (defsyntax (defreader-ext stx)
@@ -74,7 +75,7 @@
 (defreader-ext (read-varuint reader (max-bits 64))
   (let lp ((shift 0) (x 0))
     (if (fx< shift max-bits)
-      (let* ((next (&BufferedReader-read-u8 reader))
+      (let* ((next (&BufferedReader-read-u8-inline reader))
              (limb (fxand next #x7f))
              (x (bitwise-ior (arithmetic-shift limb shift) x)))
         (if (fx= (fxand next #x80) 0)
@@ -91,13 +92,13 @@
       (bitwise-not int))))
 
 (defreader-ext (read-u8! reader)
-  (let (u8 (&BufferedReader-read-u8 reader))
+  (let (u8 (&BufferedReader-read-u8-inline reader))
     (if (eof-object? u8)
       (raise-io-error 'BufferedReader-read-u8! "premature end of input")
       u8)))
 
 (defreader-ext (read-char reader)
-  (let (byte1 (&BufferedReader-read-u8 reader))
+  (let (byte1 (&BufferedReader-read-u8-inline reader))
     (cond
      ((eof-object? byte1)
       '#!eof)
@@ -105,25 +106,31 @@
       (integer->char byte1))
      ((fx<= byte1 #xdf)
       (let (byte2 (&BufferedReader-read-u8! reader))
-        (integer->char
-         (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
-                (fxand byte2 #x3f)))))
+        (if (fx= (fxand byte2 #xc0) #x80)
+          (integer->char
+           (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
+                  (fxand byte2 #x3f)))
+          (raise-io-error 'BufferedReader-read-char "bad continuation byte" byte1 byte2))))
      ((fx<= byte1 #xef)
       (let* ((byte2 (&BufferedReader-read-u8! reader))
              (byte3 (&BufferedReader-read-u8! reader)))
-        (integer->char
-         (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
-                (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
-                (fxand byte3 #x3f)))))
+        (if (fx= (fxand (fxior byte2 byte3) #xc0) #x80)
+          (integer->char
+           (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                  (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                  (fxand byte3 #x3f)))
+          (raise-io-error 'BufferedReader-read-char "bad continuation bytes" byte1 byte2 byte3))))
      ((fx<= byte1 #xf4)
       (let* ((byte2 (&BufferedReader-read-u8! reader))
              (byte3 (&BufferedReader-read-u8! reader))
              (byte4 (&BufferedReader-read-u8! reader)))
-        (integer->char
-         (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
-                (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
-                (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
-                (fxand byte4 #x3f)))))
+        (if (fx= (fxand (fxior byte2 byte3 byte4) #xc0) #x80)
+          (integer->char
+           (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
+                  (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
+                  (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
+                  (fxand byte4 #x3f)))
+          (raise-io-error 'BufferedReader-read-char "bad continuation bytes" byte1 byte2 byte3))))
      (else
       ;; Bad encoding; use utf8 replacement character
       #\xfffd))))
@@ -195,7 +202,9 @@
         (let (u8 (bitwise-and (arithmetic-shift uint (fx- shift)) #xff))
           (u8vector-set! buf i u8)
           (lp (fx+ i 1) (fx- shift 8)))
-        (&BufferedWriter-write writer buf 0 len)))))
+        (let (result (&BufferedWriter-write writer buf 0 len))
+          (smob-cache-put buf)
+          result)))))
 
 (def (write-sXX writer int len)
   (if (< int 0)
@@ -208,10 +217,10 @@
   (let lp ((uint uint) (wrote 0))
     (if (> uint #x7f)
       (let (limb (fxior (bitwise-and uint #x7f) #x80))
-        (&BufferedWriter-write-u8 writer limb)
+        (&BufferedWriter-write-u8-inline writer limb)
         (lp (arithmetic-shift uint -7) (fx+ wrote 1)))
       (begin
-        (&BufferedWriter-write-u8 writer uint)
+        (&BufferedWriter-write-u8-inline writer uint)
         (fx+ wrote 1)))))
 
 (defwriter-ext (write-varint writer int (max-bits 64))
@@ -232,7 +241,7 @@
   (let (c (char->integer char))
     (cond
      ((fx<= c #x7f)
-      (&BufferedWriter-write-u8 writer c)
+      (&BufferedWriter-write-u8-inline writer c)
       1)
      ((fx<= c #x7ff)
       (let (buf (smob-cache-get 2))
