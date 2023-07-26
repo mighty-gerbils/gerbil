@@ -9,11 +9,13 @@
         ./delimited
         ./output
         ./chunked
+        ./inline
         ./util)
 (export open-buffered-reader
         open-buffered-writer
         get-buffer-output-u8vector
         get-buffer-output-chunks
+        (import: ./inline)
         (import: ./util))
 
 (def default-buffer-size (expt 2 15)) ; 32K

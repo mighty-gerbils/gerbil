@@ -44,6 +44,7 @@
     "io/bio/delimited"
     "io/bio/output"
     "io/bio/chunked"
+    "io/bio/inline"
     "io/bio/util"
     "io/bio/api"
     "io/socket/types"
