@@ -146,45 +146,66 @@
          ((fx<= byte1 #xdf)
           (let (i+1 (fx+ i 1))
             (if (fx< i+1 input-end)
-              (let* ((byte2 (u8vector-ref input i+1))
-                     (char
-                      (integer->char
-                       (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
-                              (fxand byte2 #x3f)))))
-                (string-set! output o char)
-                (lp (fx+ i+1 1) (fx+ o 1)))
+              (let (byte2 (u8vector-ref input i+1))
+                ;; check for valid continuation byte
+                (if (fx= (fxand byte2 #xc0) #x80)
+                  ;; valid continuation byte
+                  (let (char
+                        (integer->char
+                         (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
+                                (fxand byte2 #x3f))))
+                    (string-set! output o char)
+                    (lp (fx+ i+1 1) (fx+ o 1)))
+                  ;; invalid continuation; emit replacement char and backtrack
+                (begin
+                  (string-set! output o #\xfffd)
+                  (lp i+1 (fx+ o 1)))))
               ;; incomplete character
               (finish i o))))
          ((fx<= byte1 #xef)
           (let* ((i+1 (fx+ i 1))
                  (i+2 (fx+ i+1 1)))
             (if (fx< i+2 input-end)
-              (let* ((byte2 (u8vector-ref input i+1))
-                     (byte3 (u8vector-ref input i+2))
-                     (char
-                      (integer->char
-                       (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
-                              (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
-                              (fxand byte3 #x3f)))))
-                (string-set! output o char)
-                (lp (fx+ i+2 1) (fx+ o 1)))
+              (let ((byte2 (u8vector-ref input i+1))
+                    (byte3 (u8vector-ref input i+2)))
+                ;; check for valid continuation bytes
+                (if (fx= (fxand (fxior byte2 byte3) #xc0) #x80)
+                  ;; valid continuation bytes
+                  (let (char
+                        (integer->char
+                         (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                                (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                                (fxand byte3 #x3f))))
+                    (string-set! output o char)
+                    (lp (fx+ i+2 1) (fx+ o 1)))
+                  ;; invalid continuation; emit replacement char and backtrack
+                  (begin
+                    (string-set! output o #\xfffd)
+                    (lp i+1 (fx+ o 1)))))
               (finish i o))))
          ((fx<= byte1 #xf4)
           (let* ((i+1 (fx+ i 1))
                  (i+2 (fx+ i+1 1))
                  (i+3 (fx+ i+2 1)))
             (if (fx< i+3 input-end)
-              (let* ((byte2 (u8vector-ref input i+1))
-                     (byte3 (u8vector-ref input i+2))
-                     (byte4 (u8vector-ref input i+3))
-                     (char
-                      (integer->char
-                       (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
-                              (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
-                              (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
-                              (fxand byte4 #x3f)))))
-                (string-set! output o char)
-                (lp (fx+ i+3 1) (fx+ o 1)))
+              (let ((byte2 (u8vector-ref input i+1))
+                    (byte3 (u8vector-ref input i+2))
+                    (byte4 (u8vector-ref input i+3)))
+                ;; check for valid continuation bytes
+                (if (fx= (fxand (fxior byte2 byte3 byte4) #xc0) #x80)
+                  ;; valid continuation bytes
+                  (let (char
+                        (integer->char
+                         (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
+                                (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
+                                (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
+                                (fxand byte4 #x3f))))
+                    (string-set! output o char)
+                    (lp (fx+ i+3 1) (fx+ o 1)))
+                  ;; invalid continuation; emit replacement char and backtrack
+                (begin
+                  (string-set! output o #\xfffd)
+                  (lp i+1 (fx+ o 1)))))
               (finish i o))))
          (else
           (string-set! output o #\xfffd) ; UTF-8 replacement character
@@ -244,40 +265,61 @@
             (lp (fx+ i 1) (fx+ o 1) #f)))
          ((fx<= byte1 #xdf)
           (let (i+1 (fx+ i 1))
-            (let* ((byte2 (u8vector-ref input i+1))
-                   (char
-                    (integer->char
-                     (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
-                            (fxand byte2 #x3f)))))
-              (string-set! output o char)
-              (lp (fx+ i+1 1) (fx+ o 1) (fx< (fx+ o 9) output-end)))))
+            (let (byte2 (u8vector-ref input i+1))
+              ;; check for valid continuation byte
+              (if (fx= (fxand byte2 #xc0) #x80)
+                ;; valid continuation byte
+                (let (char
+                      (integer->char
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
+                              (fxand byte2 #x3f))))
+                  (string-set! output o char)
+                  (lp (fx+ i+1 1) (fx+ o 1) (fx< (fx+ o 9) output-end)))
+                ;; invalid continuation; emit replacement char and backtrack
+                (begin
+                  (string-set! output o #\xfffd)
+                  (lp i+1 (fx+ o 1) #f))))))
          ((fx<= byte1 #xef)
           (let* ((i+1 (fx+ i 1))
                  (i+2 (fx+ i+1 1)))
-            (let* ((byte2 (u8vector-ref input i+1))
-                   (byte3 (u8vector-ref input i+2))
-                   (char
-                    (integer->char
-                     (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
-                            (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
-                            (fxand byte3 #x3f)))))
-              (string-set! output o char)
-              (lp (fx+ i+2 1) (fx+ o 1) (fx< (fx+ o 9) output-end)))))
+            (let ((byte2 (u8vector-ref input i+1))
+                  (byte3 (u8vector-ref input i+2)))
+              ;; check for valid continuation bytes
+              (if (fx= (fxand (fxior byte2 byte3) #xc0) #x80)
+                ;; valid continuation bytes
+                (let (char
+                      (integer->char
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                              (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                              (fxand byte3 #x3f))))
+                (string-set! output o char)
+                (lp (fx+ i+2 1) (fx+ o 1) (fx< (fx+ o 9) output-end)))
+                ;; invalid continuation; emit replacement char and backtrack
+                (begin
+                  (string-set! output o #\xfffd)
+                  (lp i+1 (fx+ o 1) #f))))))
          ((fx<= byte1 #xf4)
           (let* ((i+1 (fx+ i 1))
                  (i+2 (fx+ i+1 1))
                  (i+3 (fx+ i+2 1)))
-            (let* ((byte2 (u8vector-ref input i+1))
-                   (byte3 (u8vector-ref input i+2))
-                   (byte4 (u8vector-ref input i+3))
-                   (char
-                    (integer->char
-                     (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
-                            (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
-                            (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
-                            (fxand byte4 #x3f)))))
-              (string-set! output o char)
-              (lp (fx+ i+3 1) (fx+ o 1) (fx< (fx+ o 9) output-end)))))
+            (let ((byte2 (u8vector-ref input i+1))
+                  (byte3 (u8vector-ref input i+2))
+                  (byte4 (u8vector-ref input i+3)))
+              ;; check for valid continuation bytes
+              (if (fx= (fxand (fxior byte2 byte3 byte4) #xc0) #x80)
+                ;; valid continuation bytes
+                (let (char
+                      (integer->char
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
+                              (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
+                              (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
+                              (fxand byte4 #x3f))))
+                  (string-set! output o char)
+                  (lp (fx+ i+3 1) (fx+ o 1) (fx< (fx+ o 9) output-end)))
+                ;; invalid continuation; emit replacement char and backtrack
+                (begin
+                  (string-set! output o #\xfffd)
+                  (lp i+1 (fx+ o 1) #f))))))
          (else
           (string-set! output o #\xfffd) ; UTF-8 replacement character
           (lp (fx+ i 1) (fx+ o 1) (fx< (fx+ o 9) output-end))))))
@@ -298,45 +340,66 @@
          ((fx<= byte1 #xdf)
           (let (i+1 (fx+ i 1))
             (if (fx< i+1 input-end)
-              (let* ((byte2 (u8vector-ref input i+1))
-                     (char
+              (let (byte2 (u8vector-ref input i+1))
+                ;; check for valid continuation byte
+                (if (fx= (fxand byte2 #xc0) #x80)
+                  ;; valid continuation byte
+                  (let (char
                       (integer->char
                        (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
-                              (fxand byte2 #x3f)))))
-                (string-set! output o char)
-                (lp (fx+ i+1 1) (fx+ o 1)))
+                              (fxand byte2 #x3f))))
+                    (string-set! output o char)
+                    (lp (fx+ i+1 1) (fx+ o 1)))
+                  ;; invalid continuation; emit replacement char and backtrack
+                (begin
+                  (string-set! output o #\xfffd)
+                  (lp i+1 (fx+ o 1)))))
               ;; incomplete character
               (finish i o))))
          ((fx<= byte1 #xef)
           (let* ((i+1 (fx+ i 1))
                  (i+2 (fx+ i+1 1)))
             (if (fx< i+2 input-end)
-              (let* ((byte2 (u8vector-ref input i+1))
-                     (byte3 (u8vector-ref input i+2))
-                     (char
-                      (integer->char
-                       (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
-                              (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
-                              (fxand byte3 #x3f)))))
-                (string-set! output o char)
-                (lp (fx+ i+2 1) (fx+ o 1)))
+              (let ((byte2 (u8vector-ref input i+1))
+                    (byte3 (u8vector-ref input i+2)))
+                ;; check for valid continuation bytes
+                (if (fx= (fxand (fxior byte2 byte3) #xc0) #x80)
+                  ;; valid continuation bytes
+                  (let (char
+                        (integer->char
+                         (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                                (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                                (fxand byte3 #x3f))))
+                    (string-set! output o char)
+                    (lp (fx+ i+2 1) (fx+ o 1)))
+                  ;; invalid continuation; emit replacement char and backtrack
+                  (begin
+                    (string-set! output o #\xfffd)
+                    (lp i+1 (fx+ o 1)))))
               (finish i o))))
          ((fx<= byte1 #xf4)
           (let* ((i+1 (fx+ i 1))
                  (i+2 (fx+ i+1 1))
                  (i+3 (fx+ i+2 1)))
             (if (fx< i+3 input-end)
-              (let* ((byte2 (u8vector-ref input i+1))
-                     (byte3 (u8vector-ref input i+2))
-                     (byte4 (u8vector-ref input i+3))
-                     (char
+              (let ((byte2 (u8vector-ref input i+1))
+                    (byte3 (u8vector-ref input i+2))
+                    (byte4 (u8vector-ref input i+3)))
+                ;; check for valid continuation bytes
+                (if (fx= (fxand (fxior byte2 byte3 byte4) #xc0) #x80)
+                  ;; valid continuation bytes
+                  (let (char
                       (integer->char
                        (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
                               (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
                               (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
-                              (fxand byte4 #x3f)))))
-                (string-set! output o char)
-                (lp (fx+ i+3 1) (fx+ o 1)))
+                              (fxand byte4 #x3f))))
+                    (string-set! output o char)
+                    (lp (fx+ i+3 1) (fx+ o 1)))
+                  ;; invalid continuation; emit replacement char and backtrack
+                (begin
+                  (string-set! output o #\xfffd)
+                  (lp i+1 (fx+ o 1)))))
               (finish i o))))
          (else
           (string-set! output o #\xfffd) ; UTF-8 replacement character
