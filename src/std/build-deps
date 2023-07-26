@@ -15,6 +15,10 @@
  (std/stxparam "stxparam" (gerbil/core))
  (std/lazy "lazy" (gerbil/core))
  (std/io/bio/types "io/bio/types" (gerbil/core))
+ (std/io/strio/types "io/strio/types" (gerbil/core))
+ (std/io/strio/packed
+  "io/strio/packed"
+  (gerbil/core gerbil/gambit/fixnum std/sugar))
  (std/io/socket/types "io/socket/types" (gerbil/core))
  (std/srfi/srfi-support "srfi/srfi-support" (gerbil/core))
  (std/srfi/8 (gxc: "srfi/8") (gerbil/core))
@@ -952,6 +956,64 @@
    std/io/bio/util
    std/io/dummy
    std/io/interface))
+ (std/io/strio/reader
+  "io/strio/reader"
+  (gerbil/core
+   gerbil/gambit/fixnum
+   std/error
+   std/io/bio/input
+   std/io/bio/types
+   std/io/interface
+   std/io/strio/packed
+   std/io/strio/types
+   std/sugar))
+ (std/io/strio/writer
+  "io/strio/writer"
+  (gerbil/core
+   gerbil/gambit/fixnum
+   std/error
+   std/io/bio/output
+   std/io/bio/types
+   std/io/interface
+   std/io/strio/packed
+   std/io/strio/types
+   std/sugar))
+ (std/io/strio/chunked
+  "io/strio/chunked"
+  (gerbil/core std/error std/io/interface std/io/strio/types std/srfi/1))
+ (std/io/strio/input
+  "io/strio/input"
+  (gerbil/core
+   std/error
+   std/io/interface
+   std/io/strio/types
+   std/srfi/1
+   std/sugar))
+ (std/io/strio/output
+  "io/strio/output"
+  (gerbil/core std/error std/io/interface std/io/strio/types std/sugar))
+ (std/io/strio/inline
+  "io/strio/inline"
+  (gerbil/core
+   std/interface
+   std/io/strio/input
+   std/io/strio/output
+   std/io/strio/types
+   std/sugar))
+ (std/io/strio/api
+  "io/strio/api"
+  (gerbil/core
+   std/interface
+   std/io/bio/types
+   std/io/dummy
+   std/io/interface
+   std/io/strio/chunked
+   std/io/strio/inline
+   std/io/strio/input
+   std/io/strio/output
+   std/io/strio/reader
+   std/io/strio/types
+   std/io/strio/writer))
  (std/misc/rwlock "misc/rwlock" (gerbil/core gerbil/gambit/threads std/sugar))
  (std/io/socket/basic
   "io/socket/basic"
