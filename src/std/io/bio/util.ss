@@ -6,9 +6,13 @@
         :gerbil/gambit/fixnum
         :std/error
         :std/sugar
+        :std/interface
         :std/srfi/1
         ../interface
-        ./inline)
+        ./inline
+        ./types
+        ./input
+        ./output)
 (declare (not safe))
 
 (defsyntax (defreader-ext stx)
@@ -135,8 +139,24 @@
       ;; Bad encoding; use utf8 replacement character
       #\xfffd))))
 
+(defrule (&BufferedReader-read-char-inline reader)
+  (let (bio (&interface-instance-object reader))
+    (let ((rlo (&input-buffer-rlo bio))
+          (rhi (&input-buffer-rhi bio))
+          (buf (&input-buffer-buf bio)))
+      (if (fx< rlo rhi)
+        (let (byte1 (u8vector-ref buf rlo))
+          (cond
+           ((fx<= byte1 #x7f)
+            (bio-input-advance! bio (fx+ rlo 1) rhi)
+            (integer->char byte1))
+           (else
+            ;; multibyte character, dispatch to the method
+            (&BufferedReader-read-char reader))))
+        '#!eof))))
+
 (defreader-ext (read-char! reader)
-  (let (char (&BufferedReader-read-char reader))
+  (let (char (&BufferedReader-read-char-inline reader))
     (if (eof-object? char)
       (raise-io-error 'BufferedReader-read-char! "premature end of input")
       char)))
@@ -145,7 +165,7 @@
   (let (count (fx- end start))
     (let lp ((i 0) (need need) (read 0))
       (if (fx< i count)
-        (let (next (&BufferedReader-read-char reader))
+        (let (next (&BufferedReader-read-char-inline reader))
           (if (eof-object? next)
             (if (fx> need 0)
               (raise-io-error 'BufferedReader-read-string "premature end of input")
@@ -170,7 +190,7 @@
        ((null? separating)
         (finish chars drop))
        ((read-more? x)
-        (let (next (&BufferedReader-read-char reader))
+        (let (next (&BufferedReader-read-char-inline reader))
           (cond
            ((eof-object? next)
             (finish chars drop))
@@ -241,8 +261,7 @@
   (let (c (char->integer char))
     (cond
      ((fx<= c #x7f)
-      (&BufferedWriter-write-u8-inline writer c)
-      1)
+      (&BufferedWriter-write-u8-inline writer c))
      ((fx<= c #x7ff)
       (let (buf (smob-cache-get 2))
         (u8vector-set! buf 0 (fxior #xc0 (fxarithmetic-shift-right c 6)))
@@ -268,10 +287,17 @@
         (smob-cache-put buf)
         4)))))
 
+(defrule (&BufferedWriter-write-char-inline writer char)
+  (let (c (char->integer char))
+    (if (fx<= c #x7f)
+      (&BufferedWriter-write-u8-inline writer c)
+      ;; multibyte, fall back to the method
+      (&BufferedWriter-write-char writer char))))
+
 (defwriter-ext (write-string writer str (start 0) (end (string-length str)))
   (let lp ((i start) (result 0))
     (if (fx< i end)
-      (let (wrote (&BufferedWriter-write-char writer (string-ref str i)))
+      (let (wrote (&BufferedWriter-write-char-inline writer (string-ref str i)))
         (lp (fx+ i 1) (fx+ result wrote)))
       result)))
 
@@ -281,10 +307,10 @@
       (let lp ((rest separator) (result result))
         (match rest
           ([char . rest]
-           (let (wrote (&BufferedWriter-write-char writer char))
+           (let (wrote (&BufferedWriter-write-char-inline writer char))
              (lp rest (fx+ result wrote))))
           (else result)))
-      (let (wrote (&BufferedWriter-write-char writer separator))
+      (let (wrote (&BufferedWriter-write-char-inline writer separator))
         (fx+ result wrote)))))
 
 ;; caches
