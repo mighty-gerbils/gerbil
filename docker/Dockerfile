@@ -71,13 +71,12 @@ RUN cd /opt/gambit-src && make -j$cores
 RUN cd /opt/gambit-src && make bootstrap
 RUN cd /opt/gambit-src && make bootclean
 RUN cd /opt/gambit-src && make -j$cores
-RUN cd /opt/gambit-src && make -j$cores modules
+#RUN cd /opt/gambit-src && make -j$cores modules
 RUN cd /opt/gambit-src && make install
 
 FROM gambit as gerbil
 ARG cores
 ARG gerbil_version
-RUN if [[ ! -d /usr/lib64/mariadb && -d /usr/lib64/mysql ]]; then ln -s /usr/lib64/mysql /usr/lib64/mariadb; fi
 RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
 ENV PATH=/opt/gambit/current/bin:$PATH
 RUN cd /opt/gerbil-src/src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
