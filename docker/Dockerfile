@@ -58,10 +58,13 @@ RUN cd /opt/gambit-src && git fetch -a && git checkout ${gambit_version}
 RUN cd /opt/gambit-src \
     && ./configure CC='gcc' \
     --enable-default-runtime-options=f8,-8,t8 \
-    --enable-poll \
-    --enable-openssl \
+    --enable-dynamic-clib \
+    --enable-march=native \
     --enable-multiple-versions \
+    --enable-openssl \
+    --enable-poll \
     --enable-single-host \
+    --enable-targets="" \
     --prefix=${GAMBIT_HOME}
 
 RUN cd /opt/gambit-src && make -j$cores
@@ -84,10 +87,11 @@ RUN cd /opt/gerbil-src/src && git fetch -a && git fetch --tags && git checkout $
     --enable-libxml \
     --enable-libyaml \
     --enable-lmdb \
-    --enable-mysql
+    --enable-mysql \
+    --enable-zlib
 
-RUN cd /opt/gerbil-src/src && ./build.sh
-RUN cd /opt/gerbil-src/src && ./install
+RUN cd /opt/gerbil-src && make
+RUN cd /opt/gerbil-src && make install
 
 FROM gerbil as final
 RUN rm -rf /opt/gerbil-src /opt/gambit-src
