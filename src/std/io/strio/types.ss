@@ -5,12 +5,14 @@
 
 ;; string-reader
 ;; - bio is a bio input-buffer
-(defstruct string-reader (bio closed?)
+;; - codec is the character decoding function to us
+(defstruct string-reader (bio codec closed?)
   final: #t unchecked: #t)
 
 ;; string-writer
 ;; - bio is a bio output-buffer
-(defstruct string-writer (bio closed?)
+;; - codec is the character encoding function to use
+(defstruct string-writer (bio codec closed?)
   final: #t unchecked: #t)
 
 ;; string-input-buffer
