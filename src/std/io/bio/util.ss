@@ -252,39 +252,43 @@
             '#!eof))))))
 
 (defrule (&BufferedReader-read-char-inline reader)
-  (let (bio (&interface-instance-object reader))
-    (let ((rlo (&input-buffer-rlo bio))
-          (rhi (&input-buffer-rhi bio))
-          (buf (&input-buffer-buf bio)))
-      (if (fx< rlo rhi)
-        (let (byte1 (u8vector-ref buf rlo))
-          (cond
-           ((fx<= byte1 #x7f)
-            (bio-input-advance! bio (fx+ rlo 1) rhi)
-            (integer->char byte1))
-           (else
-            ;; multibyte character, dispatch to the method
-            (&BufferedReader-read-char reader))))
-        ;; buffer empty, dispatch to the method
-        (&BufferedReader-read-char reader)))))
+  (let ()
+    (declare (not interrupts-enabled))
+    (let (bio (&interface-instance-object reader))
+      (let ((rlo (&input-buffer-rlo bio))
+            (rhi (&input-buffer-rhi bio))
+            (buf (&input-buffer-buf bio)))
+        (if (fx< rlo rhi)
+          (let (byte1 (u8vector-ref buf rlo))
+            (cond
+             ((fx<= byte1 #x7f)
+              (bio-input-advance! bio (fx+ rlo 1) rhi)
+              (integer->char byte1))
+             (else
+              ;; multibyte character, dispatch to the method
+              (&BufferedReader-read-char reader))))
+          ;; buffer empty, dispatch to the method
+          (&BufferedReader-read-char reader))))))
 
 (export &BufferedReader-read-char-inline)
 
 (defrule (&BufferedReader-peek-char-inline reader)
-  (let (bio (&interface-instance-object reader))
-    (let ((rlo (&input-buffer-rlo bio))
-          (rhi (&input-buffer-rhi bio))
-          (buf (&input-buffer-buf bio)))
-      (if (fx< rlo rhi)
-        (let (byte1 (u8vector-ref buf rlo))
-          (cond
-           ((fx<= byte1 #x7f)
-            (integer->char byte1))
-           (else
-            ;; multibyte character, dispatch to the method
-            (&BufferedReader-peek-char reader))))
-        ;; buffer empty, dispatch to method
-        (&BufferedReader-peek-char reader)))))
+  (let ()
+    (declare (not interrupts-enabled))
+    (let (bio (&interface-instance-object reader))
+      (let ((rlo (&input-buffer-rlo bio))
+            (rhi (&input-buffer-rhi bio))
+            (buf (&input-buffer-buf bio)))
+        (if (fx< rlo rhi)
+          (let (byte1 (u8vector-ref buf rlo))
+            (cond
+             ((fx<= byte1 #x7f)
+              (integer->char byte1))
+             (else
+              ;; multibyte character, dispatch to the method
+              (&BufferedReader-peek-char reader))))
+          ;; buffer empty, dispatch to method
+          (&BufferedReader-peek-char reader))))))
 
 (export &BufferedReader-peek-char-inline)
 
@@ -421,11 +425,13 @@
         4)))))
 
 (defrule (&BufferedWriter-write-char-inline writer char)
-  (let (c (char->integer char))
-    (if (fx<= c #x7f)
-      (&BufferedWriter-write-u8-inline writer c)
-      ;; multibyte, fall back to the method
-      (&BufferedWriter-write-char writer char))))
+  (let ()
+    (declare (not interrupts-enabled))
+    (let (c (char->integer char))
+      (if (fx<= c #x7f)
+        (&BufferedWriter-write-u8-inline writer c)
+        ;; multibyte, fall back to the method
+        (&BufferedWriter-write-char writer char)))))
 
 (export &BufferedWriter-write-char-inline)
 
