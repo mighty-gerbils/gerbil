@@ -71,7 +71,6 @@ RUN cd /opt/gambit-src && make -j$cores
 RUN cd /opt/gambit-src && make bootstrap
 RUN cd /opt/gambit-src && make bootclean
 RUN cd /opt/gambit-src && make -j$cores
-#RUN cd /opt/gambit-src && make -j$cores modules
 RUN cd /opt/gambit-src && make install
 
 FROM gambit as gerbil
