@@ -24,7 +24,7 @@
      ((fx< rlo rhi)
       ;; we have some bytes in the buffer
       (let* ((result
-              (utf8-decode-partial! buf rlo rhi output output-start output-end))
+              ((&string-reader-codec strio) buf rlo rhi output output-start output-end))
              (consumed-bytes (unpack-first result))
              (output-chars (unpack-second result)))
         (if (fx< output-chars output-want)

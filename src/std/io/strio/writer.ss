@@ -29,7 +29,7 @@
       (strio-write-string strio input input-start input-end))
      (else
       (let* ((result
-              (utf8-encode-partial! input input-start input-end buf 0 buflen))
+              ((&string-writer-codec strio) input input-start input-end buf 0 buflen))
              (consumed-chars (unpack-first result))
              (output-bytes (unpack-second result)))
         (strio-output-drain! bio buf output-bytes)

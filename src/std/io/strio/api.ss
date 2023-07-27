@@ -54,51 +54,70 @@
            string-buffer-or-size
            (string-length string-buffer-or-size))))
 
-(def (open-string-reader reader (buffer-or-size default-buffer-size))
+(def (character-encoder codec)
+  (case codec
+    ((UTF-8) utf8-encode-partial!)
+    (else
+     (error "Unsupported character encoding" codec))))
+
+(def (character-decoder codec)
+  (case codec
+    ((UTF-8) utf8-decode-partial!)
+    (else
+     (error "Unsupported character encoding" codec))))
+
+(def (open-string-reader reader (buffer-or-size default-buffer-size)
+                         encoding: (codec 'UTF-8))
   (cond
    ((is-BufferedReader? reader)
     (let (obj (interface-instance-object reader))
       (StringReader
        (if (input-buffer? obj)
          ;; already an input-buffer, use it directly to avoid double-buffering
-         (make-string-reader obj #f)
+         (make-string-reader obj (character-decoder codec) #f)
          ;; unrecognized buffer type -- treat it as a plain reader
          (make-string-reader (make-input-buffer (Reader obj)
                                                 (make-u8vector-buffer buffer-or-size)
                                                 0 0 #f)
+                             (character-decoder codec)
                              #f)))))
    ((is-Reader? reader)
     (StringReader
      (make-string-reader (make-input-buffer (Reader reader)
                                             (make-u8vector-buffer buffer-or-size)
                                             0 0 #f)
+                         (character-decoder codec)
                          #f)))
    (else
     (error "Bad reader; expected implementation of Reader" reader))))
 
-(def (open-string-writer writer (buffer-or-size default-buffer-size))
+(def (open-string-writer writer (buffer-or-size default-buffer-size)
+                         encoding: (codec 'UTF-8))
   (cond
    ((is-BufferedWriter? writer)
     (let (obj (interface-instance-object writer))
       (StringWriter
        (if (output-buffer? obj)
          ;; already an output-buffer
-         (make-string-writer obj #f)
+         (make-string-writer obj (character-encoder codec) #f)
          ;; unrecognized buffer type -- treat it as a plain writer
          (make-string-writer (make-output-buffer (Writer obj)
                                                  (make-u8vector-buffer buffer-or-size)
                                                  0 #f)
+                             (character-encoder codec)
                              #f)))))
    ((is-Writer? writer)
     (StringWriter
      (make-string-writer (make-output-buffer (Writer writer)
                                              (make-u8vector-buffer buffer-or-size)
                                              0 #f)
+                         (character-encoder codec)
                          #f)))
    (else
     (error "Bad writer; expected implementation of Writer" writer))))
 
-(def (open-buffered-string-reader reader-or-string (buffer-or-size default-buffer-size))
+(def (open-buffered-string-reader reader-or-string (buffer-or-size default-buffer-size)
+                                  encoding: (codec 'UTF-8))
   (cond
    ((string? reader-or-string)
     (BufferedStringReader
@@ -112,13 +131,15 @@
                                #f)))
    ((is-Reader? reader-or-string)
     (BufferedStringReader
-     (make-string-input-buffer (open-string-reader reader-or-string (double buffer-or-size))
+     (make-string-input-buffer (open-string-reader reader-or-string (double buffer-or-size)
+                                                   encoding: codec)
                                (make-string-buffer buffer-or-size) 0 0
                                #f)))
    (else
     (error "Bad reader; expected string or implementation of StringReader or Reader" reader-or-string))))
 
-(def (open-buffered-string-writer maybe-writer (buffer-or-size default-buffer-size))
+(def (open-buffered-string-writer maybe-writer (buffer-or-size default-buffer-size)
+                                  encoding: (codec 'UTF-8))
   (cond
    ((not maybe-writer)
     (BufferedStringWriter
@@ -132,7 +153,8 @@
                                 0 #f)))
    ((is-Writer? maybe-writer)
     (BufferedStringWriter
-     (make-string-output-buffer (open-string-writer maybe-writer (double buffer-or-size))
+     (make-string-output-buffer (open-string-writer maybe-writer (double buffer-or-size)
+                                                    encoding: codec)
                                 (make-string-buffer buffer-or-size)
                                 0 #f)))
    (else
