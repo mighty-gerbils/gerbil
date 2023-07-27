@@ -9,7 +9,7 @@
         :std/sort
         :std/text/hex
         ./env)
-(export write-json-object/port write-json-object/writer)
+(export write-json-object/port write-json-object/writer write-json-object/buffer)
 (declare (not safe))
 
 (def (json-key-string key)
@@ -187,10 +187,16 @@
              (write-str obj output)
              (write-char #\" output)))))))
 
-(defrule (buffer-write-char char buf)
+(defrule (writer-write-char char buf)
   (&BufferedStringWriter-write-char-inline buf char))
-(defrule (buffer-write-string str buf)
+(defrule (writer-write-string str buf)
   (&BufferedStringWriter-write-string buf str))
 
+(defrule (buffer-write-char char buf)
+  (&BufferedWriter-write-char-inline buf char))
+(defrule (buffer-write-string str buf)
+  (&BufferedWriter-write-string buf str))
+
 (defjson-writer port write-char write-string)
-(defjson-writer writer buffer-write-char buffer-write-string)
+(defjson-writer writer writer-write-char writer-write-string)
+(defjson-writer buffer buffer-write-char buffer-write-string)

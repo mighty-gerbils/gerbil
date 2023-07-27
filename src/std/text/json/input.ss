@@ -7,7 +7,7 @@
         :std/io
         :std/text/hex
         ./env)
-(export read-json-object/port read-json-object/reader)
+(export read-json-object/port read-json-object/reader read-json-object/buffer)
 (declare (not safe))
 
 (defsyntax (defjson-reader stx)
@@ -228,3 +228,4 @@
 
 (defjson-reader port peek-char read-char)
 (defjson-reader reader &BufferedStringReader-peek-char-inline &BufferedStringReader-read-char-inline)
+(defjson-reader buffer &BufferedReader-peek-char-inline &BufferedReader-read-char-inline)
