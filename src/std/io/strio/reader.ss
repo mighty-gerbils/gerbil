@@ -218,7 +218,7 @@
 
   (let lp ((i input-start)
            (o output-start)
-           (try-unroll-ascii? (fx< (fx+ output-start 8) output-end)))
+           (try-unroll-ascii? (fx< (fx+ output-start 7) output-end)))
 
     (defrules unroll1 ()
       ((_ indicator continue)
@@ -253,7 +253,7 @@
                         ;; found non-ascii, backtrack
                         (lp i o #f)
                         ;; all ascii, carry on
-                        (lp (fx+ i 8) (fx+ o 8) (fx< (fx+ o 16) output-end))))))))))))
+                        (lp (fx+ i 8) (fx+ o 8) (fx< (fx+ o 15) output-end))))))))))))
 
      ;; either we found a multibyte character or we are at the edge
      ((fx< o output-end)
@@ -274,7 +274,7 @@
                        (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
                               (fxand byte2 #x3f))))
                   (string-set! output o char)
-                  (lp (fx+ i+1 1) (fx+ o 1) (fx< (fx+ o 9) output-end)))
+                  (lp (fx+ i+1 1) (fx+ o 1) (fx< (fx+ o 8) output-end)))
                 ;; invalid continuation; emit replacement char and backtrack
                 (begin
                   (string-set! output o #\xfffd)
@@ -293,7 +293,7 @@
                               (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
                               (fxand byte3 #x3f))))
                 (string-set! output o char)
-                (lp (fx+ i+2 1) (fx+ o 1) (fx< (fx+ o 9) output-end)))
+                (lp (fx+ i+2 1) (fx+ o 1) (fx< (fx+ o 8) output-end)))
                 ;; invalid continuation; emit replacement char and backtrack
                 (begin
                   (string-set! output o #\xfffd)
@@ -315,14 +315,14 @@
                               (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
                               (fxand byte4 #x3f))))
                   (string-set! output o char)
-                  (lp (fx+ i+3 1) (fx+ o 1) (fx< (fx+ o 9) output-end)))
+                  (lp (fx+ i+3 1) (fx+ o 1) (fx< (fx+ o 8) output-end)))
                 ;; invalid continuation; emit replacement char and backtrack
                 (begin
                   (string-set! output o #\xfffd)
                   (lp i+1 (fx+ o 1) #f))))))
          (else
           (string-set! output o #\xfffd) ; UTF-8 replacement character
-          (lp (fx+ i 1) (fx+ o 1) (fx< (fx+ o 9) output-end))))))
+          (lp (fx+ i 1) (fx+ o 1) (fx< (fx+ o 8) output-end))))))
      (else
       (finish i o)))))
 
