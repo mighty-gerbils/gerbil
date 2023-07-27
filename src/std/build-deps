@@ -123,15 +123,6 @@
   "text/base58"
   (gerbil/core gerbil/gambit/bits gerbil/gambit/fixnum std/error))
  (std/text/json/env "text/json/env" (gerbil/core std/error))
- (std/text/json
-  "text/json"
-  (gerbil/core
-   gerbil/gambit/bits
-   gerbil/gambit/exact
-   gerbil/gambit/ports
-   std/error
-   std/sort
-   std/text/hex))
  (std/text/_zlib
   (ssi: "text/_zlib" (gsc: "text/_zlib" "-cc-options" "" "-ld-options" "-lz"))
   (gerbil/core))
@@ -509,21 +500,6 @@
    std/net/address
    std/pregexp
    std/text/utf8))
- (std/net/request
-  "net/request"
-  (gerbil/core
-   gerbil/gambit/ports
-   std/error
-   std/format
-   std/misc/list-builder
-   std/net/uri
-   std/pregexp
-   std/srfi/13
-   std/sugar
-   std/text/base64
-   std/text/json
-   std/text/utf8
-   std/text/zlib))
  (std/os/error
   (gxc: "os/error" "-e" "(include \"~~lib/_gambit#.scm\")")
   (gerbil/core std/foreign))
@@ -728,24 +704,6 @@
    std/text/hex
    std/text/utf8))
  (std/misc/queue "misc/queue" (gerbil/core))
- (std/net/websocket
-  "net/websocket"
-  (gerbil/core
-   gerbil/gambit/bits
-   gerbil/gambit/os
-   gerbil/gambit/ports
-   gerbil/gambit/threads
-   std/crypto/digest
-   std/crypto/etc
-   std/error
-   std/logger
-   std/misc/queue
-   std/misc/timeout
-   std/net/request
-   std/srfi/13
-   std/sugar
-   std/text/base64
-   std/text/utf8))
  (std/misc/pqueue "misc/pqueue" (gerbil/core))
  (std/misc/concurrent-plan
   "misc/concurrent-plan"
@@ -1084,6 +1042,7 @@
    std/io/delimited
    std/io/file
    std/io/socket/api
+   std/io/strio/api
    std/io/util))
  (std/io "io" (gerbil/core std/io/api std/io/interface))
  (std/text/json/input
@@ -1114,6 +1073,40 @@
    std/text/json/env
    std/text/json/input
    std/text/json/output))
+ (std/text/json "text/json" (gerbil/core std/text/json/api))
+ (std/net/request
+  "net/request"
+  (gerbil/core
+   gerbil/gambit/ports
+   std/error
+   std/format
+   std/misc/list-builder
+   std/net/uri
+   std/pregexp
+   std/srfi/13
+   std/sugar
+   std/text/base64
+   std/text/json
+   std/text/utf8
+   std/text/zlib))
+ (std/net/websocket
+  "net/websocket"
+  (gerbil/core
+   gerbil/gambit/bits
+   gerbil/gambit/os
+   gerbil/gambit/ports
+   gerbil/gambit/threads
+   std/crypto/digest
+   std/crypto/etc
+   std/error
+   std/logger
+   std/misc/queue
+   std/misc/timeout
+   std/net/request
+   std/srfi/13
+   std/sugar
+   std/text/base64
+   std/text/utf8))
  (std/protobuf/io
   "protobuf/io"
   (gerbil/core
