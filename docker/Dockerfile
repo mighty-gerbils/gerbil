@@ -17,7 +17,7 @@ RUN case ${distro} in \
     alpine) \
     apk update && \
     eval apk add ${packages} && \
-    cd /src && git clone --recurse-submodules https://github.com/google/leveldb.git && cd /src/leveldb && mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . &&  mv libleveldb.a /usr/lib && \
+    cd /src && git clone --recurse-submodules https://github.com/google/leveldb.git && cd /src/leveldb && mkdir -p build && cd build && cmake -DCMAKE_BUILD_TYPE=Release .. && cmake --build . -j $cores &&  mv libleveldb.a /usr/lib && \
     cd /src && git clone https://github.com/LMDB/lmdb && cd /src/lmdb/libraries/liblmdb && make && cd /src/lmdb/libraries/liblmdb && mv liblmdb.a /usr/lib \
     ;; \
     amazonlinux) \
@@ -58,36 +58,38 @@ RUN cd /opt/gambit-src && git fetch -a && git checkout ${gambit_version}
 RUN cd /opt/gambit-src \
     && ./configure CC='gcc' \
     --enable-default-runtime-options=f8,-8,t8 \
-    --enable-poll \
-    --enable-openssl \
+    --enable-dynamic-clib \
+    --enable-march=native \
     --enable-multiple-versions \
+    --enable-openssl \
+    --enable-poll \
     --enable-single-host \
+    --enable-targets="" \
     --prefix=${GAMBIT_HOME}
 
 RUN cd /opt/gambit-src && make -j$cores
 RUN cd /opt/gambit-src && make bootstrap
 RUN cd /opt/gambit-src && make bootclean
 RUN cd /opt/gambit-src && make -j$cores
-RUN cd /opt/gambit-src && make -j$cores modules
 RUN cd /opt/gambit-src && make install
 
 FROM gambit as gerbil
 ARG cores
 ARG gerbil_version
-RUN if [[ ! -d /usr/lib64/mariadb && -d /usr/lib64/mysql ]]; then ln -s /usr/lib64/mysql /usr/lib64/mariadb; fi
 RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
 ENV PATH=/opt/gambit/current/bin:$PATH
-RUN cd /opt/gerbil-src/src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
+RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
     && ./configure \
     --prefix=${GERBIL_HOME} \
     --enable-leveldb \
     --enable-libxml \
     --enable-libyaml \
     --enable-lmdb \
-    --enable-mysql
+    --enable-mysql \
+    --enable-zlib
 
-RUN cd /opt/gerbil-src/src && ./build.sh
-RUN cd /opt/gerbil-src/src && ./install
+RUN cd /opt/gerbil-src && make
+RUN cd /opt/gerbil-src && make install
 
 FROM gerbil as final
 RUN rm -rf /opt/gerbil-src /opt/gambit-src
