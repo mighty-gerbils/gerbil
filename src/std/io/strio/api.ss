@@ -21,22 +21,31 @@
         (import: ./inline))
 
 (def default-buffer-size (expt 2 15)) ; 32KB
+(def max-buffer-size (expt 2 28)) ; 256MB -- for safe efficient packing in 64bit archs
 
-(def (make-buffer buffer-or-size)
+(def (make-u8vector-buffer buffer-or-size)
   (cond
    ((fixnum? buffer-or-size)
-    (make-u8vector buffer-or-size))
+    (if (fx> buffer-or-size max-buffer-size)
+      (error "Bad argument; buffer too big" buffer-or-size)
+      (make-u8vector buffer-or-size)))
    ((u8vector? buffer-or-size)
-    buffer-or-size)
+    (if (fx> (u8vector-length buffer-or-size) max-buffer-size)
+      (error "Bad argument; buffer too big" (u8vector-length buffer-or-size))
+      buffer-or-size))
    (else
     (error "Bad argument; expected fixnum or u8vector" buffer-or-size))))
 
 (def (make-string-buffer buffer-or-size)
   (cond
    ((fixnum? buffer-or-size)
-    (make-string buffer-or-size))
+    (if (fx> buffer-or-size max-buffer-size)
+      (error "Bad argument; buffer too big" buffer-or-size)
+      (make-string buffer-or-size)))
    ((string? buffer-or-size)
-    buffer-or-size)
+    (if (fx> (string-length buffer-or-size) max-buffer-size)
+      (error "Bad argument; buffer too big" (string-length buffer-or-size))
+      buffer-or-size))
    (else
     (error "Bad argument; expected fixnum or string" buffer-or-size))))
 
@@ -55,13 +64,13 @@
          (make-string-reader obj #f)
          ;; unrecognized buffer type -- treat it as a plain reader
          (make-string-reader (make-input-buffer (Reader obj)
-                                                (make-buffer buffer-or-size)
+                                                (make-u8vector-buffer buffer-or-size)
                                                 0 0 #f)
                              #f)))))
    ((is-Reader? reader)
     (StringReader
      (make-string-reader (make-input-buffer (Reader reader)
-                                            (make-buffer buffer-or-size)
+                                            (make-u8vector-buffer buffer-or-size)
                                             0 0 #f)
                          #f)))
    (else
@@ -77,13 +86,13 @@
          (make-string-writer obj #f)
          ;; unrecognized buffer type -- treat it as a plain writer
          (make-string-writer (make-output-buffer (Writer obj)
-                                                 (make-buffer buffer-or-size)
+                                                 (make-u8vector-buffer buffer-or-size)
                                                  0 #f)
                              #f)))))
    ((is-Writer? writer)
     (StringWriter
      (make-string-writer (make-output-buffer (Writer writer)
-                                             (make-buffer buffer-or-size)
+                                             (make-u8vector-buffer buffer-or-size)
                                              0 #f)
                          #f)))
    (else
