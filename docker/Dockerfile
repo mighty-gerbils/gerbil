@@ -79,7 +79,7 @@ ARG cores
 ARG gerbil_version
 RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
 ENV PATH=/opt/gambit/current/bin:$PATH
-RUN cd /opt/gerbil-src/src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
+RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
     && ./configure \
     --prefix=${GERBIL_HOME} \
     --enable-leveldb \
