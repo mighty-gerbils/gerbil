@@ -9,7 +9,7 @@
     (("port") (benchmark-port file))
     (("strio") (benchmark-stdio-strio file))
     (("bio") (benchmark-stdio-bio file))
-    (else (error "unknown method; must be port or stdio" method))))
+    (else (error "unknown method; must be port, strio (for buffered string IO) or bio (for buffered binary IO) " method))))
 
 (def (benchmark-port file)
   (##gc)
