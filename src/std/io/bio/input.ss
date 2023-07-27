@@ -9,9 +9,10 @@
 (declare (not safe))
 
 (defrule (bio-input-advance! bio new-rlo rhi)
-  (if (fx< new-rlo rhi)
-    (set! (&input-buffer-rlo bio) new-rlo)
-    (bio-input-consume! bio)))
+  (let (rlo new-rlo)
+    (if (fx< rlo rhi)
+      (set! (&input-buffer-rlo bio) rlo)
+      (bio-input-consume! bio))))
 
 (defrule (bio-input-consume! bio)
   (begin
@@ -25,10 +26,13 @@
 
 (defrule (bio-input-normalize! bio buf rlo rhi need)
   (let (buflen (u8vector-length buf))
-    (unless (fx< (fx+ rhi need) buflen)
-      (subu8vector-move! buf rlo rhi buf 0)
-      (set! (&input-buffer-rlo bio) 0)
-      (set! (&input-buffer-rhi bio) (fx- rhi rlo)))))
+    (if (fx<= (fx+ rhi need) buflen)
+      rhi
+      (let (new-rhi (fx- rhi rlo))
+        (subu8vector-move! buf rlo rhi buf 0)
+        (set! (&input-buffer-rlo bio) 0)
+        (set! (&input-buffer-rhi bio) new-rhi)
+        new-rhi))))
 
 (def (bio-read-bytes bio output output-start output-end input-need)
   (let* ((input-want (fx- output-end output-start))

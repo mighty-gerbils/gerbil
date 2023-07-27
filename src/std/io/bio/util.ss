@@ -108,7 +108,7 @@
           (buf (&input-buffer-buf bio)))
       (if (fx< rlo rhi)
         (let (byte1 (u8vector-ref buf rlo))
-          (cond
+           (cond
            ((fx<= byte1 #x7f)
             (bio-input-advance! bio (fx+ rlo 1) rhi)
             (integer->char byte1))
@@ -121,13 +121,12 @@
                       (bio-input-advance! bio (fx+ rlo 2) rhi)
                       (integer->char
                        (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
-                              (fxand byte2 #x3f)))
+                              (fxand byte2 #x3f))))
                       ;; bad continuation; replacement character
                       (begin
                         (bio-input-advance! bio rlo+1 rhi)
-                        #\xfffd))))
-                (begin
-                  (bio-input-normalize! bio buf rlo rhi 1)
+                        #\xfffd)))
+                (let (rhi (bio-input-normalize! bio buf rlo rhi 1))
                   (bio-input-fill! bio buf rhi 1)
                   (&BufferedReader-read-char reader)))))
            ((fx<= byte1 #xef)
@@ -138,7 +137,7 @@
                        (byte3 (u8vector-ref buf rlo+2)))
                   (if (fx= (fxand (fxior byte2 byte3) #xc0) #x80)
                     (begin
-                      (bio-input-advance! bio (fx+ rlo 2) rhi)
+                      (bio-input-advance! bio (fx+ rlo 3) rhi)
                       (integer->char
                        (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
                               (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
@@ -147,8 +146,8 @@
                     (begin
                       (bio-input-advance! bio rlo+1 rhi)
                       #\xfffd)))
-                (let (need (fx- 2 (fx- rhi rlo)))
-                  (bio-input-normalize! bio buf rlo rhi need)
+                (let* ((need (fx- 3 (fx- rhi rlo)))
+                       (rhi (bio-input-normalize! bio buf rlo rhi need)))
                   (bio-input-fill! bio buf rhi need)
                   (&BufferedReader-read-char reader)))))
            ((fx<= byte1 #xf4)
@@ -161,7 +160,7 @@
                        (byte4 (u8vector-ref buf rlo+3)))
                   (if (fx= (fxand (fxior byte2 byte3 byte4) #xc0) #x80)
                     (begin
-                      (bio-input-advance! bio (fx+ rlo 3) rhi)
+                      (bio-input-advance! bio (fx+ rlo 4) rhi)
                       (integer->char
                        (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
                               (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
@@ -170,8 +169,8 @@
                     (begin
                       (bio-input-advance! bio rlo+1 rhi)
                       #\xfffd)))
-                (let (need (fx- 3 (fx- rhi rlo)))
-                  (bio-input-normalize! bio buf rlo rhi need)
+                (let* ((need (fx- 4 (fx- rhi rlo)))
+                       (rhi (bio-input-normalize! bio buf rlo rhi need)))
                   (bio-input-fill! bio buf rhi need)
                   (&BufferedReader-read-char reader)))))
            (else
@@ -204,8 +203,7 @@
                             (fxand byte2 #x3f)))
                     ;; bad continuation; replacement character
                     #\xfffd))
-                (begin
-                  (bio-input-normalize! bio buf rlo rhi 1)
+                (let (rhi (bio-input-normalize! bio buf rlo rhi 1))
                   (bio-input-fill! bio buf rhi 1)
                   (&BufferedReader-peek-char reader)))))
            ((fx<= byte1 #xef)
@@ -221,8 +219,8 @@
                             (fxand byte3 #x3f)))
                     ;; bad continuation; replacement character
                     #\xfffd))
-                (let (need (fx- 2 (fx- rhi rlo)))
-                  (bio-input-normalize! bio buf rlo rhi need)
+                (let* ((need (fx- 3 (fx- rhi rlo)))
+                       (rhi (bio-input-normalize! bio buf rlo rhi need)))
                   (bio-input-fill! bio buf rhi need)
                   (&BufferedReader-peek-char reader)))))
            ((fx<= byte1 #xf4)
@@ -240,8 +238,8 @@
                             (fxand byte3 #x3f)))
                     ;; bad continuation; replacement character
                     #\xfffd))
-                (let (need (fx- 3 (fx- rhi rlo)))
-                  (bio-input-normalize! bio buf rlo rhi need)
+                (let* ((need (fx- 4 (fx- rhi rlo)))
+                       (rhi (bio-input-normalize! bio buf rlo rhi need)))
                   (bio-input-fill! bio buf rhi need)
                   (&BufferedReader-peek-char reader)))))
            (else
