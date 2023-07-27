@@ -65,7 +65,6 @@ RUN cd /opt/gambit-src \
     --enable-poll \
     --enable-single-host \
     --enable-targets="" \
-    --enable-trust-c-tco \
     --prefix=${GAMBIT_HOME}
 
 RUN cd /opt/gambit-src && make -j$cores
