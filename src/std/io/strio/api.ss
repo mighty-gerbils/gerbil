@@ -10,6 +10,7 @@
         ./output
         ./inline
         ./reader
+        ./utf8
         ./writer
         ./chunked)
 (export open-string-reader

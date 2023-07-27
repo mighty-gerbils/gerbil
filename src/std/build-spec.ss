@@ -51,6 +51,7 @@
     "io/strio/packed"
     "io/strio/reader"
     "io/strio/writer"
+    "io/strio/utf8"
     "io/strio/chunked"
     "io/strio/input"
     "io/strio/output"
