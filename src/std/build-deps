@@ -978,6 +978,13 @@
    std/io/strio/packed
    std/io/strio/types
    std/sugar))
+ (std/io/strio/utf8
+  "io/strio/utf8"
+  (gerbil/core
+   gerbil/gambit/fixnum
+   std/io/interface
+   std/io/strio/packed
+   std/sugar))
  (std/io/strio/chunked
   "io/strio/chunked"
   (gerbil/core std/error std/io/interface std/io/strio/types std/srfi/1))
@@ -1013,6 +1020,7 @@
    std/io/strio/output
    std/io/strio/reader
    std/io/strio/types
+   std/io/strio/utf8
    std/io/strio/writer))
  (std/misc/rwlock "misc/rwlock" (gerbil/core gerbil/gambit/threads std/sugar))
  (std/io/socket/basic
