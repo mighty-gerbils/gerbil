@@ -16,8 +16,10 @@
     (read-json-object/port input (make-env)))
    ((is-BufferedStringReader? input)
     (read-json-object/reader (BufferedStringReader input) (make-env)))
+   ((is-BufferedReader? input)
+    (read-json-object/buffer (BufferedReader input) (make-env)))
    (else
-    (error "Bad input source; expected input port or BufferedStringReader" input))))
+    (error "Bad input source; expected input port, BufferedStringReader or BufferedReader instance" input))))
 
 (def (string->json-object str)
   (read-json-object/reader (open-buffered-string-reader str) (make-env)))
@@ -29,6 +31,8 @@
     (force-output output))
    ((is-BufferedStringWriter? output)
     (write-json-object/writer obj (BufferedStringWriter output) (make-env)))
+   ((is-BufferedWriter? output)
+    (write-json-object/buffer obj (BufferedWriter output) (make-env)))
    ((or (is-StringWriter? output) (is-Writer? output))
     (let (output (open-buffered-string-writer output))
       (write-json-object/writer obj output (make-env))
