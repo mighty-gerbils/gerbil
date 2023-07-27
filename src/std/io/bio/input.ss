@@ -18,10 +18,17 @@
     (set! (&input-buffer-rlo bio) 0)
     (set! (&input-buffer-rhi bio) 0)))
 
-(defrule (bio-input-fill! bio buf need)
-  (let (read (&Reader-read (&input-buffer-reader bio) buf 0 (u8vector-length buf) need))
-    (set! (&input-buffer-rhi bio) read)
+(defrule (bio-input-fill! bio buf rhi need)
+  (let (read (&Reader-read (&input-buffer-reader bio) buf rhi (u8vector-length buf) need))
+    (set! (&input-buffer-rhi bio) (fx+ rhi read))
     read))
+
+(defrule (bio-input-normalize! bio buf rlo rhi need)
+  (let (buflen (u8vector-length buf))
+    (unless (fx< (fx+ rhi need) buflen)
+      (subu8vector-move! buf rlo rhi buf 0)
+      (set! (&input-buffer-rlo bio) 0)
+      (set! (&input-buffer-rhi bio) (fx- rhi rlo)))))
 
 (def (bio-read-bytes bio output output-start output-end input-need)
   (let* ((input-want (fx- output-end output-start))
@@ -60,7 +67,7 @@
       ;; needed/wanted bytes exceed buffer size, read unbuffered
       (&Reader-read (&input-buffer-reader bio) output output-start output-end input-need))
      (else
-      (let (read (bio-input-fill! bio buf input-need))
+      (let (read (bio-input-fill! bio buf 0 input-need))
         (if (fx> read 0)
           (bio-read-bytes bio output output-start output-end input-need)
           0))))))
@@ -75,7 +82,7 @@
         (bio-input-advance! bio rlo+1 rhi)
         u8)
       ;; empty buffer
-      (let (read (bio-input-fill! bio buf 0))
+      (let (read (bio-input-fill! bio buf 0 0))
         (if (fx> read 0)
           (let (u8 (u8vector-ref buf 0))
             (bio-input-advance! bio 1 read)
@@ -89,7 +96,7 @@
     (if (fx< rlo rhi)
       (u8vector-ref buf rlo)
       ;; empty buffer
-      (let (read (bio-input-fill! bio buf 0))
+      (let (read (bio-input-fill! bio buf 0 0))
         (if (fx> read 0)
           (u8vector-ref buf 0)
           '#!eof)))))

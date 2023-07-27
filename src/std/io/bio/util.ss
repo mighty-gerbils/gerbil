@@ -102,42 +102,156 @@
       u8)))
 
 (defreader-ext (read-char reader)
-  (let (byte1 (&BufferedReader-read-u8-inline reader))
-    (cond
-     ((eof-object? byte1)
-      '#!eof)
-     ((fx<= byte1 #x7f)
-      (integer->char byte1))
-     ((fx<= byte1 #xdf)
-      (let (byte2 (&BufferedReader-read-u8! reader))
-        (if (fx= (fxand byte2 #xc0) #x80)
-          (integer->char
-           (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
-                  (fxand byte2 #x3f)))
-          (raise-io-error 'BufferedReader-read-char "bad continuation byte" byte1 byte2))))
-     ((fx<= byte1 #xef)
-      (let* ((byte2 (&BufferedReader-read-u8! reader))
-             (byte3 (&BufferedReader-read-u8! reader)))
-        (if (fx= (fxand (fxior byte2 byte3) #xc0) #x80)
-          (integer->char
-           (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
-                  (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
-                  (fxand byte3 #x3f)))
-          (raise-io-error 'BufferedReader-read-char "bad continuation bytes" byte1 byte2 byte3))))
-     ((fx<= byte1 #xf4)
-      (let* ((byte2 (&BufferedReader-read-u8! reader))
-             (byte3 (&BufferedReader-read-u8! reader))
-             (byte4 (&BufferedReader-read-u8! reader)))
-        (if (fx= (fxand (fxior byte2 byte3 byte4) #xc0) #x80)
-          (integer->char
-           (fxior (fxarithmetic-shift-left (fxand byte1 #x07) 18)
-                  (fxarithmetic-shift-left (fxand byte2 #x3f) 12)
-                  (fxarithmetic-shift-left (fxand byte3 #x3f) 6)
-                  (fxand byte4 #x3f)))
-          (raise-io-error 'BufferedReader-read-char "bad continuation bytes" byte1 byte2 byte3))))
-     (else
-      ;; Bad encoding; use utf8 replacement character
-      #\xfffd))))
+  (let (bio (&interface-instance-object reader))
+    (let ((rlo (&input-buffer-rlo bio))
+          (rhi (&input-buffer-rhi bio))
+          (buf (&input-buffer-buf bio)))
+      (if (fx< rlo rhi)
+        (let (byte1 (u8vector-ref buf rlo))
+          (cond
+           ((fx<= byte1 #x7f)
+            (bio-input-advance! bio (fx+ rlo 1) rhi)
+            (integer->char byte1))
+           ((fx<= byte1 #xdf)
+            (let (rlo+1 (fx+ rlo 1))
+              (if (fx< rlo+1 rhi)
+                (let (byte2 (u8vector-ref buf rlo+1))
+                  (if (fx= (fxand byte2 #xc0) #x80)
+                    (begin
+                      (bio-input-advance! bio (fx+ rlo 2) rhi)
+                      (integer->char
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
+                              (fxand byte2 #x3f)))
+                      ;; bad continuation; replacement character
+                      (begin
+                        (bio-input-advance! bio rlo+1 rhi)
+                        #\xfffd))))
+                (begin
+                  (bio-input-normalize! bio buf rlo rhi 1)
+                  (bio-input-fill! bio buf rhi 1)
+                  (&BufferedReader-read-char reader)))))
+           ((fx<= byte1 #xef)
+            (let ((rlo+1 (fx+ rlo 1))
+                  (rlo+2 (fx+ rlo 2)))
+              (if (fx< rlo+2 rhi)
+                (let* ((byte2 (u8vector-ref buf rlo+1))
+                       (byte3 (u8vector-ref buf rlo+2)))
+                  (if (fx= (fxand (fxior byte2 byte3) #xc0) #x80)
+                    (begin
+                      (bio-input-advance! bio (fx+ rlo 2) rhi)
+                      (integer->char
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                              (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                              (fxand byte3 #x3f))))
+                    ;; bad continuation; replacement character
+                    (begin
+                      (bio-input-advance! bio rlo+1 rhi)
+                      #\xfffd)))
+                (let (need (fx- 2 (fx- rhi rlo)))
+                  (bio-input-normalize! bio buf rlo rhi need)
+                  (bio-input-fill! bio buf rhi need)
+                  (&BufferedReader-read-char reader)))))
+           ((fx<= byte1 #xf4)
+            (let ((rlo+1 (fx+ rlo 1))
+                  (rlo+2 (fx+ rlo 2))
+                  (rlo+3 (fx+ rlo 3)))
+              (if (fx< rlo+3 rhi)
+                (let* ((byte2 (u8vector-ref buf rlo+1))
+                       (byte3 (u8vector-ref buf rlo+2))
+                       (byte4 (u8vector-ref buf rlo+3)))
+                  (if (fx= (fxand (fxior byte2 byte3 byte4) #xc0) #x80)
+                    (begin
+                      (bio-input-advance! bio (fx+ rlo 3) rhi)
+                      (integer->char
+                       (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                              (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                              (fxand byte3 #x3f))))
+                    ;; bad continuation; replacement character
+                    (begin
+                      (bio-input-advance! bio rlo+1 rhi)
+                      #\xfffd)))
+                (let (need (fx- 3 (fx- rhi rlo)))
+                  (bio-input-normalize! bio buf rlo rhi need)
+                  (bio-input-fill! bio buf rhi need)
+                  (&BufferedReader-read-char reader)))))
+           (else
+            ;; Bad encoding; use replacement character
+            (bio-input-advance! bio (fx+ rlo 1) rhi)
+            #\xfffd)))
+        ;; empty buffer
+        (let (read (bio-input-fill! bio buf rhi 0))
+          (if (fx> read 0)
+            (&BufferedReader-read-char reader)
+            '#!eof))))))
+
+(defreader-ext (peek-char reader)
+  (let (bio (&interface-instance-object reader))
+    (let ((rlo (&input-buffer-rlo bio))
+          (rhi (&input-buffer-rhi bio))
+          (buf (&input-buffer-buf bio)))
+      (if (fx< rlo rhi)
+        (let (byte1 (u8vector-ref buf rlo))
+          (cond
+           ((fx<= byte1 #x7f)
+            (integer->char byte1))
+           ((fx<= byte1 #xdf)
+            (let (rlo+1 (fx+ rlo 1))
+              (if (fx< rlo+1 rhi)
+                (let (byte2 (u8vector-ref buf rlo+1))
+                  (if (fx= (fxand byte2 #xc0) #x80)
+                    (integer->char
+                     (fxior (fxarithmetic-shift-left (fxand byte1 #x1f) 6)
+                            (fxand byte2 #x3f)))
+                    ;; bad continuation; replacement character
+                    #\xfffd))
+                (begin
+                  (bio-input-normalize! bio buf rlo rhi 1)
+                  (bio-input-fill! bio buf rhi 1)
+                  (&BufferedReader-peek-char reader)))))
+           ((fx<= byte1 #xef)
+            (let ((rlo+1 (fx+ rlo 1))
+                  (rlo+2 (fx+ rlo 2)))
+              (if (fx< rlo+2 rhi)
+                (let* ((byte2 (u8vector-ref buf rlo+1))
+                       (byte3 (u8vector-ref buf rlo+2)))
+                  (if (fx= (fxand (fxior byte2 byte3) #xc0) #x80)
+                    (integer->char
+                     (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                            (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                            (fxand byte3 #x3f)))
+                    ;; bad continuation; replacement character
+                    #\xfffd))
+                (let (need (fx- 2 (fx- rhi rlo)))
+                  (bio-input-normalize! bio buf rlo rhi need)
+                  (bio-input-fill! bio buf rhi need)
+                  (&BufferedReader-peek-char reader)))))
+           ((fx<= byte1 #xf4)
+            (let ((rlo+1 (fx+ rlo 1))
+                  (rlo+2 (fx+ rlo 2))
+                  (rlo+3 (fx+ rlo 3)))
+              (if (fx< rlo+3 rhi)
+                (let* ((byte2 (u8vector-ref buf rlo+1))
+                       (byte3 (u8vector-ref buf rlo+2))
+                       (byte4 (u8vector-ref buf rlo+3)))
+                  (if (fx= (fxand (fxior byte2 byte3 byte4) #xc0) #x80)
+                    (integer->char
+                     (fxior (fxarithmetic-shift-left (fxand byte1 #x0f) 12)
+                            (fxarithmetic-shift-left (fxand byte2 #x3f) 6)
+                            (fxand byte3 #x3f)))
+                    ;; bad continuation; replacement character
+                    #\xfffd))
+                (let (need (fx- 3 (fx- rhi rlo)))
+                  (bio-input-normalize! bio buf rlo rhi need)
+                  (bio-input-fill! bio buf rhi need)
+                  (&BufferedReader-peek-char reader)))))
+           (else
+            ;; Bad encoding; use replacement character
+            #\xfffd)))
+        ;; empty buffer
+        (let (read (bio-input-fill! bio buf rhi 0))
+          (if (fx> read 0)
+            (&BufferedReader-peek-char reader)
+            '#!eof))))))
 
 (defrule (&BufferedReader-read-char-inline reader)
   (let (bio (&interface-instance-object reader))
@@ -153,7 +267,28 @@
            (else
             ;; multibyte character, dispatch to the method
             (&BufferedReader-read-char reader))))
-        '#!eof))))
+        ;; buffer empty, dispatch to the method
+        (&BufferedReader-read-char reader)))))
+
+(export &BufferedReader-read-char-inline)
+
+(defrule (&BufferedReader-peek-char-inline reader)
+  (let (bio (&interface-instance-object reader))
+    (let ((rlo (&input-buffer-rlo bio))
+          (rhi (&input-buffer-rhi bio))
+          (buf (&input-buffer-buf bio)))
+      (if (fx< rlo rhi)
+        (let (byte1 (u8vector-ref buf rlo))
+          (cond
+           ((fx<= byte1 #x7f)
+            (integer->char byte1))
+           (else
+            ;; multibyte character, dispatch to the method
+            (&BufferedReader-peek-char reader))))
+        ;; buffer empty, dispatch to method
+        (&BufferedReader-peek-char reader)))))
+
+(export &BufferedReader-peek-char-inline)
 
 (defreader-ext (read-char! reader)
   (let (char (&BufferedReader-read-char-inline reader))
@@ -293,6 +428,8 @@
       (&BufferedWriter-write-u8-inline writer c)
       ;; multibyte, fall back to the method
       (&BufferedWriter-write-char writer char))))
+
+(export &BufferedWriter-write-char-inline)
 
 (defwriter-ext (write-string writer str (start 0) (end (string-length str)))
   (let lp ((i start) (result 0))
