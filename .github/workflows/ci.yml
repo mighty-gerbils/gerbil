@@ -6,7 +6,7 @@ jobs:
     strategy:
       fail-fast: false  # if one fails, do not cancel the other
       matrix:
-        gambit-version: ['v4.9.4', 'v4.9.3', 'master']
+        gambit-version: ['v4.9.5', 'v4.9.4', 'master']
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
