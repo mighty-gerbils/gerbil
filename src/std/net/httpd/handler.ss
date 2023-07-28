@@ -125,7 +125,8 @@
        (raise e))
      e)
    (finally
-    (&StreamSocket-shutdown sock 'out)
+    (with-catch void
+      (cut &StreamSocket-shutdown sock 'out))
     (&StreamSocket-close sock)
     (put-input-buffer! ibuf)
     (put-output-buffer! obuf))))
