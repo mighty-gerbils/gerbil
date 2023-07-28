@@ -45,6 +45,44 @@
 (defrule (mutex-unlock-inline! mx)
   (macro-mutex-unlock! mx))
 
+(defrule (do-create-prototype descriptor klass obj-klass continue fail!)
+  (let lp ((rest (&interface-descriptor-methods descriptor))
+           (count 0)
+           (methods []))
+    (match rest
+      ([method-name . rest]
+       (cond
+        ((find-method obj-klass method-name)
+         => (lambda (method) (lp rest (fx+ count 1) (cons method methods))))
+        (else
+         (fail! klass method-name))))
+      (else
+       (let (prototype (make-object klass (fx+ count 1)))
+         (let lp ((rest methods) (off (fx+ count 1)))
+           (match rest
+             ([method . rest]
+              (##unchecked-structure-set! prototype method off klass #f)
+              (lp rest (fx- off 1)))
+             (else
+              (let (prototype-key (cons (##type-id klass) (##type-id obj-klass)))
+                (mutex-lock-inline! +interface-prototypes-mx+)
+                (##table-set! +interface-prototypes+ prototype-key prototype)
+                (mutex-unlock-inline! +interface-prototypes-mx+)
+                (continue prototype))))))))))
+
+(def (create-prototype descriptor klass obj-klass)
+  (do-create-prototype
+   descriptor klass obj-klass
+   (lambda (prototype) prototype)
+   (lambda (klass method-name)
+     (error "Cannot create interface instance; missing method" klass method-name))))
+
+(def (try-create-prototype descriptor klass obj-klass)
+  (do-create-prototype
+   descriptor klass obj-klass
+   (lambda (prototype) #t)
+   (lambda (klass method-name) #f)))
+
 ;; cast an object to an interface instance
 (def (cast descriptor obj)
   (if (object? obj)
@@ -73,19 +111,8 @@
                          (mutex-unlock-inline! +interface-prototypes-mx+)
                          prototype))
                    (else
-                    (let* ((method-impls
-                            (map (lambda (method)
-                                   (or (method-ref obj method)
-                                       (begin
-                                         (mutex-unlock! +interface-prototypes-mx+)
-                                         (error "Cannot create interface instance; missing method" (##type-name klass) method))))
-                                 (&interface-descriptor-methods descriptor)))
-                           (prototype
-                            (apply ##structure klass #f method-impls))
-                           (prototype-key (cons klass-id obj-klass-id)))
-                      (##table-set! +interface-prototypes+ prototype-key prototype)
-                      (mutex-unlock-inline! +interface-prototypes-mx+)
-                      prototype))))
+                    (mutex-unlock-inline! +interface-prototypes-mx+)
+                    (create-prototype descriptor klass obj-klass))))
                  (instance (##structure-copy prototype)))
             (##unchecked-structure-set! instance obj 1 klass #f)
             instance)))))
@@ -93,39 +120,34 @@
 
 ;; check if an object satisfies an interface
 (def (satisfies? descriptor obj)
-  (let (klass (interface-descriptor-type descriptor))
-    (cond
-     ((##structure-direct-instance-of? obj (##type-id klass)) #t)
-     ((interface-instance? obj)
-      (satisfies? descriptor (interface-instance-object obj)))
-     ((object? obj)
-      ;; try to see if there is a prototype (and create one if we can while at it)
-      ;; if we don't have or can't make a prototype, return #f
-      (mutex-lock! +interface-prototypes-mx+)
-      (set-car! +interface-prototypes-key+ (##type-id klass))
-      (set-cdr! +interface-prototypes-key+ (##type-id (##structure-type obj)))
-      (cond
-       ((hash-get +interface-prototypes+ +interface-prototypes-key+)
-        (mutex-unlock! +interface-prototypes-mx+)
-        #t)
-       (else
-        (let lp ((rest (interface-descriptor-methods descriptor))
-                 (impl []))
-          (match rest
-            ([method-name . rest]
-             (cond
-              ((method-ref obj method-name)
-               => (lambda (method) (lp rest (cons method impl))))
-              (else
-               (mutex-unlock! +interface-prototypes-mx+)
-               #f)))
-            (else
-             (let ((prototype (apply ##structure klass #f (reverse! impl)))
-                   (prototype-key (cons (##type-id klass) (##type-id (##structure-type obj)))))
-               (hash-put! +interface-prototypes+ prototype-key prototype)
-               (mutex-unlock! +interface-prototypes-mx+)
-               #t)))))))
-     (else #f))))
+  (if (object? obj)
+    (let ()
+      (declare (not interrupts-enabled))
+      (let* ((klass (&interface-descriptor-type descriptor))
+             (klass-id (##type-id klass))
+             (obj-klass (##structure-type obj))
+             (obj-klass-id (##type-id obj-klass)))
+        (cond
+         ((eq? klass-id obj-klass-id)
+          ;; already an instance of the right interface
+          #t)
+         ((interface-subclass? obj-klass)
+          ;; another interface instance, recast
+          (satisfies? descriptor (&interface-instance-object obj)))
+         (else
+          ;; vanilla object, convert to an interface instance
+          (mutex-lock-inline! +interface-prototypes-mx+)
+          (set-car! +interface-prototypes-key+ klass-id)
+          (set-cdr! +interface-prototypes-key+ obj-klass-id)
+          (cond
+           ((##table-ref +interface-prototypes+ +interface-prototypes-key+ #f)
+            => (lambda (prototype)
+                 (mutex-unlock-inline! +interface-prototypes-mx+)
+                 #t))
+           (else
+            (mutex-unlock-inline! +interface-prototypes-mx+)
+            (try-create-prototype descriptor klass obj-klass)))))))
+    #f))
 
 ;; the all encompassing macro(s)
 (begin-syntax
