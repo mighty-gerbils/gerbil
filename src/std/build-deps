@@ -871,13 +871,13 @@
    std/sugar))
  (std/build-script "build-script" (gerbil/core gerbil/gambit/misc std/make))
  (std/interface
-  "interface"
+  (gxc: "interface" "-e" "(include \"~~lib/_gambit#.scm\")")
   (gerbil/core
    gerbil/gambit/threads
-   std/generic
    std/misc/symbol
    std/sort
-   std/srfi/1))
+   std/srfi/1
+   std/sugar))
  (std/misc/rwlock "misc/rwlock" (gerbil/core gerbil/gambit/threads std/sugar))
  (std/protobuf/io
   "protobuf/io"
