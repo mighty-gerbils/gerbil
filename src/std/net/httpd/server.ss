@@ -4,15 +4,16 @@
 
 (import :gerbil/gambit/threads
         :gerbil/gambit/exceptions
-        :std/net/httpd/handler
-        :std/net/httpd/mux
-        :std/net/socket
+        :std/sugar
+        :std/logger
+        :std/io
         :std/os/socket
         :std/actor/message
         :std/actor/proto
         :std/misc/threads
-        :std/logger
-        :std/sugar)
+        :std/net/httpd/handler
+        :std/net/httpd/mux
+)
 (export start-http-server!
         stop-http-server!
         http-register-handler
@@ -34,9 +35,8 @@
                          sockopts: (sockopts [SO_REUSEADDR])
                          . addresses)
   (start-logger!)
-  (let* ((sas (map socket-address addresses))
-         (socks (map (cut ssocket-listen <> backlog sockopts) sas)))
-    (spawn/group 'http-server http-server socks sas mux)))
+  (let (socks (map (cut tcp-listen <> backlog: backlog sockopts: sockopts) addresses))
+    (spawn/group 'http-server http-server socks mux)))
 
 (def (stop-http-server! httpd)
   (let (tgroup (thread-thread-group httpd))
@@ -55,19 +55,19 @@
     (error "Bad path; expected string" path)))
 
 ;;; implementation
-(def (http-server socks sas mux)
+(def (http-server socks mux)
   (with-methods mux get-handler put-handler!)
 
   (def acceptors
     (parameterize ((current-http-server (current-thread)))
       (map
-        (lambda (sock sa)
+        (lambda (sock)
           (spawn/name 'http-server-accept
-                      http-server-accept (cut get-handler mux <> <>) sock (socket-address-family sa)))
-           socks sas)))
+                      http-server-accept sock (cut get-handler mux <> <>)))
+           socks)))
 
   (def (shutdown!)
-    (for-each ssocket-close socks))
+    (for-each ServerSocket-close socks))
 
   (def (monitor thread)
     (def (join server thread)
@@ -108,14 +108,12 @@
    (finally
     (shutdown!))))
 
-(def (http-server-accept get-handler sock safamily)
-  (def cliaddr (make-socket-address safamily))
-
+(def (http-server-accept sock get-handler)
   (def (loop)
-    (let (clisock (ssocket-accept sock cliaddr))
-       (spawn/name 'http-request-handler
-                   http-request-handler get-handler clisock (socket-address->address cliaddr))
-       (loop)))
+    (let (clisock (ServerSocket-accept sock))
+      (spawn/name 'http-request-handler
+                  http-request-handler clisock get-handler)
+      (loop)))
 
   (let again ()
     (try
