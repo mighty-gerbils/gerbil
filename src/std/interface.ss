@@ -2,12 +2,13 @@
 ;;; © vyzo
 ;;; Go-style interfaces
 (import :gerbil/gambit/threads
+        :std/sugar
         (only-in :std/srfi/1 reverse!)
         (for-syntax (only-in :std/srfi/1 delete-duplicates)
                     (only-in :std/sort sort)
                     (only-in :std/misc/symbol compare-symbolic)))
 (export interface interface-out
-        interface-instance? interface-instance-object
+        interface-instance? interface-instance-object &interface-instance-object
         interface-descriptor? interface-descriptor-type interface-descriptor-methods)
 (declare (not safe))
 
@@ -34,6 +35,16 @@
   (alet (super (##type-super klass))
     (eq? (##type-id super) (##type-id interface-instance::t))))
 
+(extern namespace: #f
+  macro-mutex-lock!
+  macro-mutex-unlock!
+  macro-current-thread)
+
+(defrule (mutex-lock-inline! mx)
+  (macro-mutex-lock! mx #f (macro-current-thread)))
+(defrule (mutex-unlock-inline! mx)
+  (macro-mutex-unlock! mx))
+
 ;; cast an object to an interface instance
 (def (cast descriptor obj)
   (if (object? obj)
@@ -52,14 +63,14 @@
           (cast descriptor (&interface-instance-object obj)))
          (else
           ;; vanilla object, convert to an interface instance
-          (mutex-lock! +interface-prototypes-mx+)
+          (mutex-lock-inline! +interface-prototypes-mx+)
           (set-car! +interface-prototypes-key+ klass-id)
           (set-cdr! +interface-prototypes-key+ obj-klass-id)
           (let* ((prototype
                   (cond
                    ((##table-ref +interface-prototypes+ +interface-prototypes-key+ #f)
                     => (lambda (prototype)
-                         (mutex-unlock! +interface-prototypes-mx+)
+                         (mutex-unlock-inline! +interface-prototypes-mx+)
                          prototype))
                    (else
                     (let* ((method-impls
@@ -73,7 +84,7 @@
                             (apply ##structure klass #f method-impls))
                            (prototype-key (cons klass-id obj-klass-id)))
                       (##table-set! +interface-prototypes+ prototype-key prototype)
-                      (mutex-unlock! +interface-prototypes-mx+)
+                      (mutex-unlock-inline! +interface-prototypes-mx+)
                       prototype))))
                  (instance (##structure-copy prototype)))
             (##unchecked-structure-set! instance obj 1 klass #f)
