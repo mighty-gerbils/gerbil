@@ -18,7 +18,12 @@
 (defstruct interface-descriptor (type methods))
 
 ;; prototype table
-(def +interface-prototypes+ (make-hash-table))
+(def (hash-key key)
+  (fxxor (##symbol-hash (car key)) (##symbol-hash (cdr key))))
+(def (test-key a b)
+  (and (eq? (car a) (car b))
+       (eq? (cdr a) (cdr b))))
+(def +interface-prototypes+ (make-hash-table hash: hash-key test: test-key))
 (def +interface-prototypes-mx+ (make-mutex 'interface-constructor))
 
 ;; cast an object to an interface instance
