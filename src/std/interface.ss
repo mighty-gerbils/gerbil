@@ -37,45 +37,47 @@
 ;; cast an object to an interface instance
 (def (cast descriptor obj)
   (if (object? obj)
-    (let* ((klass (&interface-descriptor-type descriptor))
-           (klass-id (##type-id klass))
-           (obj-klass (##structure-type obj))
-           (obj-klass-id (##type-id obj-klass)))
-      (cond
-       ((eq? klass-id obj-klass-id)
-        ;; already an instance of the right interface
-        obj)
-       ((interface-subclass? obj-klass)
-        ;; another interface instance, recast
-        (cast descriptor (&interface-instance-object obj)))
-       (else
-        ;; vanilla object, convert to an interface instance
-        (mutex-lock! +interface-prototypes-mx+)
-        (set-car! +interface-prototypes-key+ klass-id)
-        (set-cdr! +interface-prototypes-key+ obj-klass-id)
-        (let* ((prototype
-                (cond
-                 ((##table-ref +interface-prototypes+ +interface-prototypes-key+ #f)
-                  => (lambda (prototype)
-                       (mutex-unlock! +interface-prototypes-mx+)
-                       prototype))
-                 (else
-                  (let* ((method-impls
-                          (map (lambda (method)
-                                 (or (method-ref obj method)
-                                     (begin
-                                       (mutex-unlock! +interface-prototypes-mx+)
-                                       (error "Cannot create interface instance; missing method" (##type-name klass) method))))
-                               (&interface-descriptor-methods descriptor)))
-                         (prototype
-                          (apply ##structure klass #f method-impls))
-                         (prototype-key (cons klass-id obj-klass-id)))
-                    (##table-set! +interface-prototypes+ prototype-key prototype)
-                    (mutex-unlock! +interface-prototypes-mx+)
-                    prototype))))
-               (instance (##structure-copy prototype)))
-          (##unchecked-structure-set! instance obj 1 klass #f)
-          instance))))
+    (let ()
+      (declare (not interrupts-enabled))
+      (let* ((klass (&interface-descriptor-type descriptor))
+             (klass-id (##type-id klass))
+             (obj-klass (##structure-type obj))
+             (obj-klass-id (##type-id obj-klass)))
+        (cond
+         ((eq? klass-id obj-klass-id)
+          ;; already an instance of the right interface
+          obj)
+         ((interface-subclass? obj-klass)
+          ;; another interface instance, recast
+          (cast descriptor (&interface-instance-object obj)))
+         (else
+          ;; vanilla object, convert to an interface instance
+          (mutex-lock! +interface-prototypes-mx+)
+          (set-car! +interface-prototypes-key+ klass-id)
+          (set-cdr! +interface-prototypes-key+ obj-klass-id)
+          (let* ((prototype
+                  (cond
+                   ((##table-ref +interface-prototypes+ +interface-prototypes-key+ #f)
+                    => (lambda (prototype)
+                         (mutex-unlock! +interface-prototypes-mx+)
+                         prototype))
+                   (else
+                    (let* ((method-impls
+                            (map (lambda (method)
+                                   (or (method-ref obj method)
+                                       (begin
+                                         (mutex-unlock! +interface-prototypes-mx+)
+                                         (error "Cannot create interface instance; missing method" (##type-name klass) method))))
+                                 (&interface-descriptor-methods descriptor)))
+                           (prototype
+                            (apply ##structure klass #f method-impls))
+                           (prototype-key (cons klass-id obj-klass-id)))
+                      (##table-set! +interface-prototypes+ prototype-key prototype)
+                      (mutex-unlock! +interface-prototypes-mx+)
+                      prototype))))
+                 (instance (##structure-copy prototype)))
+            (##unchecked-structure-set! instance obj 1 klass #f)
+            instance)))))
     (error "Cannot cast non-object to interface instance" obj)))
 
 ;; check if an object satisfies an interface
