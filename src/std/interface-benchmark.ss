@@ -27,6 +27,11 @@
   (for (i (in-range niters))
     (is-A? obj)))
 
+(def (do-check-cast obj niters)
+  (let (obj (A obj))
+    (for (i (in-range niters))
+      (A obj))))
+
 (def (cast-benchmark niters nthreads caster)
   (let ((obj (A-impl))
         (threads  []))
@@ -44,4 +49,8 @@
     (["try-cast" threads iters]
      (let ((threads (string->number threads))
            (iters (string->number iters)))
-       (time (cast-benchmark iters threads do-try-cast))))))
+       (time (cast-benchmark iters threads do-try-cast))))
+    (["check-cast" threads iters]
+     (let ((threads (string->number threads))
+           (iters (string->number iters)))
+       (time (cast-benchmark iters threads do-check-cast))))))
