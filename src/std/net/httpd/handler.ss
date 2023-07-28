@@ -91,7 +91,8 @@
           (http-response-trace res req))
          ((get-handler host path)
           => (lambda (handler)
-               (if (procedure? handler)
+               (cond
+                ((procedure? handler)
                  (try
                   (handler req res)
                   (catch (io-error? e)
@@ -106,9 +107,11 @@
                       ;; if there was output from the handler, the connection
                       ;; is unusable; abort
                       (raise 'abort)
-                      (http-response-write res 500 [] #f))))
-                 (begin
-                   (warnf "request handler is not a procedure: ~a ~a ~a" host path handler)
+                      (http-response-write res 500 [] #f)))))
+                ((not handler)
+                 (http-response-write res 404 [] "Not Found"))
+                (else
+                   (warnf "bad request handler: ~a ~a ~a" host path handler)
                    (http-response-write res 500 [] #f)))))
          (else
           (http-response-write res 404 [] #f)))
