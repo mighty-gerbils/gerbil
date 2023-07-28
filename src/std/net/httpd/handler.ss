@@ -643,6 +643,17 @@ END-C
            (505 "HTTP Version Not Supported")))
 
 ;;; buffer management
+(extern namespace: #f
+  macro-mutex-lock!
+  macro-mutex-unlock!
+  macro-current-thread)
+
+;; using these gives a 35% boost in microbenchmarks
+(defrule (mutex-lock-inline! mx)
+  (macro-mutex-lock! mx #f (macro-current-thread)))
+(defrule (mutex-unlock-inline! mx)
+  (macro-mutex-unlock! mx))
+
 (def +input-buffers+ [])
 (def +input-buffers-mx+
   (make-mutex 'httpd-input-buffer))
@@ -659,15 +670,15 @@ END-C
   ((_ (id . args) buffers mx reset! alloc)
    (def (id . args)
      (declare (not interrupts-enabled))
-     (mutex-lock! mx)
+     (mutex-lock-inline! mx)
      (match buffers
        ([buf . rest]
         (set! buffers rest)
-        (mutex-unlock! mx)
+        (mutex-unlock-inline! mx)
         (reset! buf . args)
         buf)
        (else
-        (mutex-unlock! mx)
+        (mutex-unlock-inline! mx)
         alloc)))))
 
 (defrules defputbuf ()
@@ -675,9 +686,9 @@ END-C
    (def (id buf)
      (declare (not interrupts-enabled))
      (release! buf)
-     (mutex-lock! mx)
+     (mutex-lock-inline! mx)
      (set! buffers (cons buf buffers))
-     (mutex-unlock! mx))))
+     (mutex-unlock-inline! mx))))
 
 (defgetbuf (get-input-buffer sock) +input-buffers+ +input-buffers-mx+
   (lambda (buf sock)  (&BufferedReader-reset! buf (StreamSocket-reader sock)))
