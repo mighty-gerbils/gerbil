@@ -1016,7 +1016,7 @@
    std/io/util))
  (std/io "io" (gerbil/core std/io/api std/io/interface))
  (std/net/httpd/handler
-  "net/httpd/handler"
+  (gxc: "net/httpd/handler" "-e" "(include \"~~lib/_gambit#.scm\")")
   (gerbil/core
    gerbil/gambit/os
    gerbil/gambit/threads
