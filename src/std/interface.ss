@@ -3,6 +3,7 @@
 ;;; Go-style interfaces
 (import :gerbil/gambit/threads
         (only-in :std/generic type-of)
+        (only-in :std/srfi/1 reverse!)
         (for-syntax (only-in :std/srfi/1 delete-duplicates)
                     (only-in :std/sort sort)
                     (only-in :std/misc/symbol compare-symbolic)))
@@ -69,26 +70,28 @@
      (else
       ;; try to see if there is a prototype (and create one if we can while at it)
       ;; if we don't have or can't make a prototype, return #f
-      (let/cc return
-        (let (prototype-key (cons (##type-id klass) (type-of obj)))
-          (mutex-lock! +interface-prototypes-mx+)
-          (cond
-           ((hash-get +interface-prototypes+ prototype-key)
-            (mutex-unlock! +interface-prototypes-mx+)
-            #t)
-           (else
-            (let* ((method-impls
-                    (map (lambda (method)
-                           (or (method-ref obj method)
-                               (begin
-                                 (mutex-unlock! +interface-prototypes-mx+)
-                                 (return #f))))
-                         (interface-descriptor-methods descriptor)))
-                   (prototype
-                    (apply ##structure klass #f method-impls)))
-              (hash-put! +interface-prototypes+ prototype-key prototype)
-              (mutex-unlock! +interface-prototypes-mx+)
-              #t)))))))))
+      (let (prototype-key (cons (##type-id klass) (type-of obj)))
+        (mutex-lock! +interface-prototypes-mx+)
+        (cond
+         ((hash-get +interface-prototypes+ prototype-key)
+          (mutex-unlock! +interface-prototypes-mx+)
+          #t)
+         (else
+          (let lp ((rest (interface-descriptor-methods descriptor))
+                   (impl []))
+            (match rest
+              ([method-name . rest]
+               (cond
+                ((method-ref obj method-name)
+                 => (lambda (method) (lp rest (cons method impl))))
+                (else
+                 (mutex-unlock! +interface-prototypes-mx+)
+                 #f)))
+              (else
+               (let (prototype (apply ##structure klass #f (reverse! impl)))
+                 (hash-put! +interface-prototypes+ prototype-key prototype)
+                 (mutex-unlock! +interface-prototypes-mx+)
+                 #t)))))))))))
 
 ;; the all encompassing macro(s)
 (begin-syntax
