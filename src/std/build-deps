@@ -172,7 +172,7 @@
  (std/misc/list-builder "misc/list-builder" (gerbil/core))
  (std/misc/alist "misc/alist" (gerbil/core std/sugar))
  (std/misc/plist "misc/plist" (gerbil/core std/sugar))
- (std/misc/walist "misc/walist" (gerbil/core std/sugar std/misc/alist))
+ (std/misc/walist "misc/walist" (gerbil/core std/misc/alist std/sugar))
  (std/misc/rtd "misc/rtd" (gerbil/core))
  (std/misc/shuffle "misc/shuffle" (gerbil/core gerbil/gambit/random))
  (std/event
@@ -1061,6 +1061,7 @@
    gerbil/gambit/exact
    gerbil/gambit/ports
    std/io
+   std/misc/walist
    std/sort
    std/sugar
    std/text/hex
@@ -1444,5 +1445,19 @@
   (gerbil/core))
  (std/db/sqlite
   "db/sqlite"
-  (gerbil/core std/db/_sqlite std/db/dbi std/format std/iter)))
+  (gerbil/core std/db/_sqlite std/db/dbi std/format std/iter))
+ (std/db/_leveldb
+  (ssi:
+   "db/_leveldb"
+   (gsc: "db/_leveldb" "-cc-options" "" "-ld-options" "-lleveldb"))
+  (gerbil/core))
+ (std/db/leveldb
+  "db/leveldb"
+  (gerbil/core
+   gerbil/gambit/misc
+   gerbil/gambit/threads
+   std/db/_leveldb
+   std/error
+   std/iter
+   std/text/utf8)))
 

@@ -6,6 +6,7 @@
         :gerbil/gambit/exact
         :std/sugar
         :std/io
+        :std/misc/walist
         :std/sort
         :std/text/hex
         ./env)
@@ -63,6 +64,8 @@
                (write-json-vector obj output env))
               ((hash-table? obj)
                (write-json-hash obj output env))
+              ((walist? obj)
+               (write-json-alist (walist->alist obj) output env))
               ((eq? #t obj)
                (write-string "true" output))
               ((eq? #f obj)
