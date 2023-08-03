@@ -30,7 +30,7 @@
     "stxutil"
     "lazy"
     "amb"
-    "interface"
+    (gxc: "interface" ,@(include-gambit-sharp))
     ;; debugging
     (gxc: "debug/heap" ,@(include-gambit-sharp))
     "debug/memleak"
