@@ -6,13 +6,32 @@
         :std/pregexp
         :std/format
         :std/text/hex)
-(export ip4-address? ip4-address
+(export ip-address? ip-address
+        ip4-address? ip4-address
         ip4-address-string? ip4-address->string string->ip4-address
         ip6-address? ip6-address
         ip6-address-string? ip6-address->string string->ip6-address
         inet-address? inet-address
         inet-address-string? inet-address->string string->inet-address
         resolve-address resolved-address?)
+
+;; ip address; ip4 or ip6
+(def (ip-address obj)
+  (cond
+   ((ip4-address? obj) obj)
+   ((ip6-address? obj) obj)
+   ((ip4-address-string? obj)
+    (string->ip4-address obj))
+   ((ip6-address-string? obj)
+    (string->ip6-address obj))
+   (else
+    (error "Malformed ip address" obj))))
+
+(def (ip-address? obj)
+  (or (ip4-address? obj)
+      (ip6-address? obj)
+      (ip4-address-string? obj)
+      (ip6-address-string? obj)))
 
 ;; ipv4 address; 4-octet u8vector
 (def (ip4-address obj)

@@ -1,6 +1,6 @@
 # Interfaces
 
-THe `:std/interface` module provides an implementation of Go-style
+The `:std/interface` module provides an implementation of Go-style
 interfaces.
 
 Interfaces declare the methods that an object must implement and
@@ -24,7 +24,12 @@ prototype which is then cloned.
 If you are interacting with an object using methods and you make many
 method invocations, you should consider using interfaces.
 
-Here is an example:
+Besides performance considerations, interfaces are great for creating
+facades abstracting complex functionality and making it easy to
+compose object interactions. See the standard IO interfaces for an
+example.
+
+Here is an example that demonstrates the performance advantages over direct dispatch:
 ```scheme
 (interface Operation
   (start!)
@@ -117,6 +122,69 @@ As we can see the interface version is significantly faster, and the
 difference is becomes even more pronounced with deep/wide class
 hierarchies.
 
+## Tips for Effective Use of Interfaces
+
+### Cast your objects and reuse them across many interface calls
+
+Let's say an object `obj` implements an interface `A` and you have a
+method `f` you want to invoke on the interface:
+
+```scheme
+(interface A
+  (f ...))
+
+(def obj ...)
+
+;; what not to do as you will create unnecessary temporary instances from the cast.
+(A-f obj ...) ; this will implicitly cast
+
+;; what to do for better performance:
+(def a (A obj))
+(A-f a ...)
+```
+
+### Use the subtype methods for interface mixins
+
+When you have interfaces `A` and `B` mixing `A`, then the interface macro will define
+`A`'s methods for `B` as well.
+In this case, if you have an instance of `B` you should use `B`'s methods directly to
+avoid unnecessary casts.
+
+```scheme
+(interface A
+  (f ...))
+
+(interface (B A)
+ ...)
+
+(def b (B ...))
+
+;; what not to do, as it would incur a performance penalty and allocate a temporary instance:
+(A-f b ...)
+
+;; what to do for better performance:
+(B-f b ...)
+```
+
+### Use unchecked methods when you know the exact type
+
+If you know the exact type of an instance, you can elide the checked cast by calling
+the unchecked method.
+
+Note: if you get this wrong and the type is not the right instance, there will be dragons.
+Use with caution!
+
+```
+(interface A
+  (f ...))
+
+(def a (A ...))
+
+;; what to do for better performance:
+(&A-f a ...)
+
+```
+
 ## Macros
 ### interface
 ```scheme
@@ -156,8 +224,11 @@ Here is an example:
 (def (Operation? obj) ...)
 (def (is-Operation? obj) ...)
 (def (Operation-start! self) ...)
+(def (&Operation-start! self) ...)  ; unchecked
 (def (Operation-apply self x) ...)
+(def (&Operation-apply self x) ...) ; unchecked
 (def (Operation-finish! self) ...)
+(def (&Operation-finish! self) ...) ; unchecked
 ```
 
 
