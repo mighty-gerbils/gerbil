@@ -890,7 +890,6 @@
    std/sort
    std/srfi/1
    std/sugar))
- (std/misc/rwlock "misc/rwlock" (gerbil/core gerbil/gambit/threads std/sugar))
  (std/io/interface "io/interface" (gerbil/core std/interface))
  (std/io/dummy "io/dummy" (gerbil/core std/error std/io/interface))
  (std/io/delimited "io/delimited" (gerbil/core std/error std/io/interface))
@@ -1354,3 +1353,4 @@
  (std/db/sqlite
   "db/sqlite"
   (gerbil/core std/db/_sqlite std/db/dbi std/format std/iter)))
+
