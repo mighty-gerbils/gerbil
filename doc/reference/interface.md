@@ -135,10 +135,10 @@ method `f` you want to invoke on the interface:
 
 (def obj ...)
 
-;; what not to do
+;; what not to do as you will create unnecessary temporary instances from the cast.
 (A-f obj ...) ; this will implicitly cast
 
-;; what to do
+;; what to do for better performance:
 (def a (A obj))
 (A-f a ...)
 ```
@@ -154,21 +154,21 @@ avoid unnecessary casts.
 (interface A
   (f ...))
 
-(interface (B a)
+(interface (B A)
  ...)
 
 (def b (B ...))
 
-;; what not to do:
+;; what not to do, as it would incur a performance penalty and allocate a temporary instance:
 (A-f b ...)
 
-;; what to do:
+;; what to do for better performance:
 (B-f b ...)
 ```
 
 ### Use unchecked methods when you know the exact type
 
-If you know the exact type of an instance, you can ellide the checked cast by calling
+If you know the exact type of an instance, you can elide the checked cast by calling
 the unchecked method.
 
 Note: if you get this wrong and the type is not the right instance, there will be dragons.
@@ -180,7 +180,7 @@ Use with caution!
 
 (def a (A ...))
 
-;; what to do:
+;; what to do for better performance:
 (&A-f a ...)
 
 ```

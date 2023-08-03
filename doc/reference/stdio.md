@@ -93,6 +93,7 @@ Opens a file for reading and returns a Reader instance reading from the file.
 Notes:
 - the path is expanded before opening the file.
 - the default flags are `O_NOATIME` if available in the sytem, otherwise 0.
+- see `:std/os/fcntl` for relevant flags.
 
 ### open-file-writer
 ```scheme
@@ -106,7 +107,8 @@ Opens a file for writing and returns a Writer instance writing to the file.
 Notes:
 - the path is expanded before opening the file.
 - the default flags are `O_CREAT|O_TRUNC`.
-- mode are the permissions associated with the file if a new file is created.
+- mode is the permissions associated with the file if a new file is created.
+- see `:std/os/fcntl` for relevant flags.
 
 ## Sockets
 
@@ -153,6 +155,7 @@ Returns the peer address for a connected socket; this is undefined for ServerSoc
   option := fixnum
 ```
 Gets a socket option.
+See `:std/os/socket` for supported sockopts and their value types.
 
 #### Socket-setsockopt
 ```scheme
@@ -163,6 +166,7 @@ Gets a socket option.
   value := any
 ```
 Sets a socket option.
+See `:std/os/socket` for supported sockopts and their value types.
 
 #### Socket-set-input-timeout!
 ```scheme
@@ -323,7 +327,7 @@ Notes:
   sockopts := list of fixnum.
 ```
 
-Binds and listens to a local path and returns a ServerSocket
+Binds and listens to a local path and returns a ServerSocket.
 
 #### ServerSocket-accept
 ```scheme
@@ -574,7 +578,9 @@ Raises an error if the end of input is reached.
 
 Reads a utf8-encoded character.
 Returns `#!eof` if the endo if input is reached before reading the first byte.
-Raises an error if the end of input is reached for multibyte encoded characters.
+Raises an error if the end of input is reached prematurely for multibyte encoded characters.
+Returns the utf8 replacement character and only reads a single byte if a multibyte character
+cannot be decoded correctly.
 
 #### BufferedReader-read-char!
 ```scheme
@@ -600,7 +606,7 @@ Reads a string from the buffer; semantics of the `start`, `end` and
 `need` arguments are the same as in `Reader-read`, but applying to
 number of characters.
 Returns the number of characters read.
-If `need > 0` and less than `need` characters are read, an error is raised.
+If `need > 0` and fewer than `need` characters are read, an error is raised.
 
 #### BufferedReader-read-line
 ```scheme
@@ -636,6 +642,9 @@ If the end of input is encountered before `count` bytes are skipped, an error is
 returns a new `BufferedReader`, sharing the same buffer, that can read up to `limit` bytes.
 Once the limit is reached, the new buffer signals the end of input.
 
+Note: there is no double buffering; reading from the delimited reader
+advances the input on the underlying BufferedWriter.
+
 #### BufferedReader-reset!
 ```scheme
 (BufferedReader-reset! buf reader)
@@ -654,7 +663,7 @@ The BufferedWriter interface is defined as follows:
   (reset! output))
 ```
 
-The following procedures create and apply to BufferedWriter instances.
+The following procedures create and apply to BufferedWriter.
 
 #### open-buffered-writer
 ```scheme
@@ -821,6 +830,15 @@ Drains the buffer into the underlying sync.
 ```
 
 Resets the underlying writer and buffer state, allowing reuse of buffers from a cache.
+
+#### BufferedWriter-close
+```scheme
+(BufferedWriter-close buf)
+```
+
+Fluses the buffer and closes the underlying Writer; if there was an
+exception when flushing, it will be raised after closing the underying
+Writer.
 
 ## Utilities
 ### delimited-reader
