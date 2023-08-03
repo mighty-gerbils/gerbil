@@ -127,14 +127,14 @@
         (check (BufferedReader-read-varint brd) => -314159)))
 
     (test-case "char input"
-      (let* ((input "the quick brown fox jumped over the fence")
+      (let* ((input "the quick brown fox jumped over the lazy dog")
              (brd (open-string-buffered-reader input)))
         (for (char (string->list input))
           (check (BufferedReader-read-char brd) => char))
         (check (BufferedReader-read-char brd) ? eof-object?)))
 
     (test-case "string input"
-      (let* ((input "the quick brown fox jumped over the fence")
+      (let* ((input "the quick brown fox jumped over the lazy dog")
              (brd (open-string-buffered-reader input))
              (buf (make-string 16)))
         (for (i (in-range (fx/ (fx+ (string-length input) 15) 16)))
@@ -144,9 +144,9 @@
             (check (substring buf 0 expected-chars) => expected-output)))))
 
     (test-case "line input"
-      (let ((input1 "the quick brown fox jumped over the fence")
-            (input2 "the quick brown fox jumped over the fence\n")
-            (input3 "the quick brown fox jumped over the fence\r\n"))
+      (let ((input1 "the quick brown fox jumped over the lazy dog")
+            (input2 "the quick brown fox jumped over the lazy dog\n")
+            (input3 "the quick brown fox jumped over the lazy dog\r\n"))
         (let (brd (open-string-buffered-reader input1))
           (check (BufferedReader-read-line brd) => input1))
         (let (brd (open-string-buffered-reader input2))
@@ -216,7 +216,7 @@
         (check (get-buffer-output-u8vector bwr) => u8v)))
 
     (test-case "char output"
-      (let* ((input "the quick brown fox jumped over the fence")
+      (let* ((input "the quick brown fox jumped over the lazy dog")
              (output (string->utf8 input))
              (bwr (open-buffered-writer #f)))
         (for (char (string->list input))
@@ -225,7 +225,7 @@
         (check (get-buffer-output-u8vector bwr) => output)))
 
     (test-case "string output"
-      (let* ((input "the quick brown fox jumped over the fence")
+      (let* ((input "the quick brown fox jumped over the lazy dog")
              (output (string->utf8 input))
              (bwr (open-buffered-writer #f)))
         (for (i (in-range (fx/ (fx+ (string-length input) 15) 16)))
@@ -237,9 +237,9 @@
         (check (get-buffer-output-u8vector bwr) => output)))
 
     (test-case "line output"
-      (let ((input "the quick brown fox jumped over the fence")
-            (output1 (string->utf8 "the quick brown fox jumped over the fence\n"))
-            (output2 (string->utf8 "the quick brown fox jumped over the fence\r\n")))
+      (let ((input "the quick brown fox jumped over the lazy dog")
+            (output1 (string->utf8 "the quick brown fox jumped over the lazy dog\n"))
+            (output2 (string->utf8 "the quick brown fox jumped over the lazy dog\r\n")))
         (let (bwr (open-buffered-writer #f))
           (check (BufferedWriter-write-line bwr input) => (fx+ (string-length input) 1))
           (BufferedWriter-close bwr)
