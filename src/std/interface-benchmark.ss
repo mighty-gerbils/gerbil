@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
-;;; simple benchmark for evaluating cast and satisfies? performkance
+;;; simple benchmark for evaluating cast and satisfies? performance
 (import :gerbil/gambit/threads
         :gerbil/gambit/os
         ./iter
