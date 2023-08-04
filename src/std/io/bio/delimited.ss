@@ -55,6 +55,21 @@
           (bio-delimited-peek-u8 in)))
       '#!eof)))
 
+(def (bio-delimited-put-back delim previous-input)
+  (let* ((limit (&delimited-input-buffer-limit delim))
+         (remaining (&delimited-input-buffer-remaining delim))
+         (new-remaining
+          (fx+ (if (pair? previous-input) (length previous-input) 1)
+               remaining)))
+    (if (fx< new-remaining limit)
+      (let (in (&delimited-input-buffer-in delim))
+        (if (input-buffer? in)
+          (bio-put-back in previous-input)
+          (bio-delimited-put-back in previous-input))
+        (set! (&delimited-input-buffer-remaining delim)
+          new-remaining))
+      (raise-io-error 'BufferedReader-put-back "too many bytes returned" previous-input))))
+
 (def (bio-delimited-skip-input delim count)
   (let (remaining (&delimited-input-buffer-remaining delim))
     (if (fx> count remaining)

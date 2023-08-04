@@ -105,6 +105,130 @@
           (u8vector-ref buf 0)
           '#!eof)))))
 
+(def (bio-put-back bio previous-input)
+  (if (pair? previous-input)
+    (bio-put-back-many bio previous-input)
+    (bio-put-back-one bio previous-input)))
+
+(def (bio-put-back-one bio u8)
+  (let ((rlo (&input-buffer-rlo bio))
+        (rhi (&input-buffer-rhi bio))
+        (buf (&input-buffer-buf bio)))
+    (cond
+     ((fx> rlo 0)
+      ;; enough space
+      (let (new-rlo (fx- rlo 1))
+        (u8vector-set! buf new-rlo u8)
+        (set! (&input-buffer-rlo bio) new-rlo)
+        (void)))
+     ;; rlo=0
+     ((fx> rhi 0)
+      ;; we need to move the buffer contents to the right
+      (let ((rhi+1 (fx+ rhi 1))
+            (buflen (u8vector-length buf)))
+        (if (fx> rhi+1 buflen)
+          ;; uh oh, we need to grow the buffer; do it by a page
+          (let (new-buf (make-u8vector (fx+ buflen 4096)))
+            (subu8vector-move! buf 0 rhi new-buf 1)
+            (u8vector-set! new-buf 0 u8)
+            (set! (&input-buffer-buf bio) new-buf)
+            (set! (&input-buffer-rhi bio) rhi+1)
+            (void))
+          (begin
+            (subu8vector-move! buf 0 rhi buf 1)
+            (u8vector-set! buf 0 u8)
+            (set! (&input-buffer-rhi bio) rhi+1)
+            (void)))))
+     (else
+      ;; empty buffer
+      (u8vector-set! buf 0 u8)
+      (set! (&input-buffer-rhi bio) 0)
+      (set! (&input-buffer-rhi bio) 1)
+      (void)))))
+
+(def (bio-put-back-many bio previous-input)
+  (def (put-back! buf rlo previous-input)
+    (let lp ((rest previous-input) (i rlo))
+      (match rest
+        ([u8 . rest]
+         (u8vector-set! buf i u8)
+         (lp rest (fx+ i 1)))
+        (else (void)))))
+
+  (let ((rlo (&input-buffer-rlo bio))
+        (rhi (&input-buffer-rhi bio))
+        (buf (&input-buffer-buf bio))
+        (prevlen (length previous-input)))
+    (cond
+     ((fx>= rlo prevlen)
+      (let (new-rlo (fx- rlo prevlen))
+        (put-back! buf new-rlo previous-input)
+        (set! (&input-buffer-rlo bio) new-rlo)
+        (void)))
+     ((fx> rlo 0)
+      ;; we need to move the buffer contents to the right
+      (let* ((shift (fx- prevlen rlo))
+             (rhi+shift (fx+ rhi shift))
+             (buflen (u8vector-length buf)))
+        (if (fx> rhi+shift buflen)
+          ;; uh oh we need to grow the buffer; do it by a page
+          (let (new-buflen (fx+ buflen 4096))
+            (while (fx< new-buflen rhi+shift)
+              ;; ok not enough, add more pages (very unlikely, but still)
+              (set! new-buflen (fx+ new-buflen 4096)))
+            (let (new-buf (make-u8vector new-buflen))
+              (subu8vector-move! buf rlo rhi new-buf prevlen)
+              (put-back! new-buf 0 previous-input)
+              (set! (&input-buffer-buf bio) new-buf)
+              (set! (&input-buffer-rhi bio) rhi+shift)
+              (void)))
+          (begin
+            (subu8vector-move! buf rlo rhi buf prevlen)
+            (put-back! buf 0 previous-input)
+            (set! (&input-buffer-rlo bio) 0)
+            (set! (&input-buffer-rhi bio) rhi+shift)
+            (void)))))
+     ;; rlo=0
+     ((fx> rhi 0)
+      ;; we need to move the buffer contents to the right
+      (let ((rhi+shift (fx+ rhi prevlen))
+            (buflen (u8vector-length buf)))
+        (if (fx> rhi+shift buflen)
+          ;; uh oh we need to grow the buffer; do it by a page
+          (let (new-buflen (fx+ buflen 4096))
+            (while (fx< new-buflen rhi+shift)
+              ;; ok not enough, add more pages (very unlikely, but still)
+              (set! new-buflen (fx+ new-buflen 4096)))
+            (let (new-buf (make-u8vector new-buflen))
+              (subu8vector-move! buf 0 rhi new-buf prevlen)
+              (put-back! new-buf 0 previous-input)
+              (set! (&input-buffer-buf bio) new-buf)
+              (set! (&input-buffer-rhi bio) rhi+shift)
+              (void)))
+          (begin
+            (subu8vector-move! buf 0 rhi buf prevlen)
+            (put-back! buf 0 previous-input)
+            (set! (&input-buffer-rhi bio) rhi+shift)
+            (void)))))
+     ;; rlo=rhi=0
+     (else
+      (let (buflen (u8vector-length buf))
+        (if (fx> prevlen buflen)
+          ;; uh oh we need to grow the buffer; do it by a page
+          (let (new-buflen (fx+ buflen 4096))
+            (while (fx< new-buflen prevlen)
+              ;; ok not enough, add more pages (very unlikely, but still)
+              (set! new-buflen (fx+ new-buflen 4096)))
+            (let (new-buf (make-u8vector new-buflen))
+              (put-back! new-buf 0 previous-input)
+              (set! (&input-buffer-buf bio) new-buf)
+              (set! (&input-buffer-rhi bio) prevlen)
+              (void)))
+          (begin
+            (put-back! buf 0 previous-input)
+            (set! (&input-buffer-rhi bio) prevlen)
+            (void))))))))
+
 (def (bio-skip-input bio count)
   (when (fx> count 0)
     (let* ((rlo (&input-buffer-rlo bio))
