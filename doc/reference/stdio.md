@@ -451,6 +451,7 @@ The BufferedReader interface is defined as follows:
 (interface (BufferedReader Reader)
   (read-u8)
   (peek-u8)
+  (put-back previous-input)
   (skip count)
   (delimit limit)
   (reset! reader))
@@ -621,6 +622,15 @@ Reads a line, separated by `sep` and up to `max-chars` of length.
 The separator is either a single character or a list of characters.
 If `include-sep?` is true, then the separator is include in the stream.
 If the separator is not encountered within `max-chars`, then an error is raised.
+
+#### BufferedReader-put-back
+```scheme
+(BufferedReader-put-back buf previous-input)
+  buf := BufferedReader
+  previous-input := u8 or list of u8
+```
+
+Puts back one or more previously read bytes.
 
 #### BufferedReader-skip
 ```scheme
