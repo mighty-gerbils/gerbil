@@ -22,8 +22,9 @@
   test-result
   test-report-summary!)
 
-(defstruct !check-fail (e value expected loc))
-(defstruct !check-error (exn check loc))
+(defstruct !check-exception ())
+(defstruct (!check-fail !check-exception) (e value expected loc))
+(defstruct (!check-error !check-exception) (exn check loc))
 (defstruct !test-suite (desc thunk tests))
 (defstruct !test-case (desc checks fail error))
 
@@ -145,7 +146,7 @@
 
 (def (with-check-error thunk what loc)
   (try
-   (thunk)
+   (with-stack-trace thunk)
    (catch (e)
      (raise (make-!check-error e what loc)))))
 
@@ -207,10 +208,21 @@
 (def (test-add-test! suite)
   (push! suite *tests*))
 
+(def (with-stack-trace thunk)
+  (with-exception-handler
+   (let (E (current-exception-handler))
+     (lambda (exn)
+       (##continuation-capture
+        (lambda (cont)
+          (unless (!check-exception? exn)
+            (dump-stack-trace! cont exn (current-error-port)))
+          (E exn)))))
+   thunk))
+
 (def (run-test-suite! suite)
   (test-suite-begin! suite)
    (parameterize ((current-test-suite suite))
-     ((!test-suite-thunk suite)))
+     (with-stack-trace (!test-suite-thunk suite)))
    (test-suite-end! suite))
 
 (def (test-suite-begin! suite)
@@ -233,7 +245,7 @@
     (test-case-begin! tc)
     (try
      (parameterize ((current-test-case tc))
-       (thunk))
+       (with-stack-trace thunk))
      (catch (!check-fail? e)
        (set! (!test-case-fail tc) e))
      (catch (e)
