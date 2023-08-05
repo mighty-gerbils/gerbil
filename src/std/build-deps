@@ -902,7 +902,8 @@
    std/io/interface
    std/os/fcntl
    std/os/fd
-   std/os/fdio))
+   std/os/fdio
+   std/sugar))
  (std/io/util "io/util" (gerbil/core std/io/interface))
  (std/io/bio/input
   "io/bio/input"
