@@ -3,14 +3,14 @@
 ;;; embedded HTTP/1.1 server; request handler
 
 (import :gerbil/gambit/os
-        :std/foreign
-        :std/net/socket
-        :std/net/socket/buffer
-        :std/net/bio
-        :std/text/utf8
-        :std/logger
-        :std/sugar
+        :gerbil/gambit/threads
         :std/error
+        :std/sugar
+        :std/logger
+        :std/io
+        :std/io/dummy
+        :std/foreign
+        :std/text/utf8
         :std/pregexp)
 (export http-request-handler
         http-request?
@@ -35,23 +35,21 @@
 
 (deflogger httpd)
 
-(defstruct http-request (buf client method url path params proto headers data)
+(defstruct http-request (buf sock client method url path params proto headers data)
   final: #t unchecked: #t)
-(defstruct http-response (buf output close?)
+(defstruct http-response (buf sock output close?)
   final: #t unchecked: #t)
 
-(def (http-request-handler get-handler sock addr)
+(def (http-request-handler sock get-handler)
   (def ibuf (get-input-buffer sock))
   (def obuf (get-output-buffer sock))
 
   (def (loop)
-    (let ((req (make-http-request ibuf addr #f #f #f #f #f #f #!void))
-          (res (make-http-response obuf #f #f)))
-
-      (set! (ssocket-input-buffer-timeout ibuf)
-        request-timeout)
-      (set! (ssocket-output-buffer-timeout obuf)
-        response-timeout)
+    (let ((req (make-http-request ibuf sock (&StreamSocket-peer-address sock)
+                                  #f #f #f #f #f #f #!void))
+          (res (make-http-response obuf sock #f #f)))
+      (&StreamSocket-set-input-timeout! sock request-timeout)
+      (&StreamSocket-set-output-timeout! sock response-timeout)
 
       (try
        (read-request! req)
@@ -93,7 +91,8 @@
           (http-response-trace res req))
          ((get-handler host path)
           => (lambda (handler)
-               (if (procedure? handler)
+               (cond
+                ((procedure? handler)
                  (try
                   (handler req res)
                   (catch (io-error? e)
@@ -108,9 +107,11 @@
                       ;; if there was output from the handler, the connection
                       ;; is unusable; abort
                       (raise 'abort)
-                      (http-response-write res 500 [] #f))))
-                 (begin
-                   (warnf "request handler is not a procedure: ~a ~a ~a" host path handler)
+                      (http-response-write res 500 [] #f)))))
+                ((not handler)
+                 (http-response-write res 404 [] "Not Found"))
+                (else
+                   (warnf "bad request handler: ~a ~a ~a" host path handler)
                    (http-response-write res 500 [] #f)))))
          (else
           (http-response-write res 404 [] #f)))
@@ -127,14 +128,16 @@
        (raise e))
      e)
    (finally
-    (ssocket-close sock)
+    (with-catch void
+      (cut &StreamSocket-shutdown sock 'out))
+    (&StreamSocket-close sock)
     (put-input-buffer! ibuf)
     (put-output-buffer! obuf))))
 
 ;;; handler interface
 ;; request
 (def (http-request-body req)
-  (with ((http-request ibuf _ method _ _ _ _ headers data) req)
+  (with ((http-request ibuf _ _ method _ _ _ _ headers data) req)
     (if (void? data)
       (case method
         ((POST PUT)
@@ -148,14 +151,13 @@
       data)))
 
 (def (http-request-timeout-set! req timeo)
-  (with ((http-request ibuf) req)
-    (set! (ssocket-input-buffer-timeout ibuf)
-      timeo)))
+  (with ((http-request _ sock) req)
+    (&StreamSocket-set-input-timeout! sock timeo)))
 
 ;; response
 ;; write a full response
 (def (http-response-write res status headers body)
-  (with ((http-response obuf output close?) res)
+  (with ((http-response obuf _ output close?) res)
     (when output
       (error "duplicate response" res))
     (set! (&http-response-output res) 'END)
@@ -182,14 +184,14 @@
       (write-crlf obuf)
       (cond
        ((u8vector? body)
-        (bio-write-bytes body obuf))
+        (&BufferedWriter-write obuf body))
        ((string? body)
-        (bio-write-string body obuf)))
-      (bio-force-output obuf))))
+        (&BufferedWriter-write-string obuf body)))
+      (&BufferedWriter-flush obuf))))
 
 ;; begin a chunked response
 (def (http-response-begin res status headers)
-  (with ((http-response obuf output close?) res)
+  (with ((http-response obuf _ output close?) res)
     (when output
       (error "duplicate response" res))
     (set! (&http-response-output res) 'CHUNK)
@@ -205,28 +207,26 @@
 
 ;; write the next chunk in the response
 (def (http-response-chunk res chunk (start 0) (end #f))
-  (with ((http-response obuf output) res)
+  (with ((http-response obuf _ output) res)
     (unless (eq? output 'CHUNK)
       (error "illegal response; not writing chunks" res output))
     (write-chunk obuf chunk start end)))
 
 ;; end chunked response
 (def (http-response-end res)
-  (with ((http-response obuf output) res)
+  (with ((http-response obuf _ output) res)
     (unless (eq? output 'CHUNK)
       (error "illegal response; not writing chunks" res output))
     (set! (&http-response-output res) 'END)
-    (write-last-chunk obuf)
-    (bio-force-output obuf)))
+    (write-last-chunk obuf)))
 
 ;; force output of current chunks
 (def (http-response-force-output res)
-  (bio-force-output (http-response-buf res)))
+  (&BufferedWriter-flush (&http-response-buf res)))
 
 (def (http-response-timeout-set! res timeo)
-  (with ((http-response obuf) res)
-    (set! (ssocket-output-buffer-timeout obuf)
-      timeo)))
+  (with ((http-response _ sock) res)
+    (&StreamSocket-set-output-timeout! sock timeo)))
 
 ;;; server internal
 (def (header-e key lst)
@@ -245,16 +245,16 @@
 
 (def (http-response-trace res req)
   (with ((http-request _ _ method url _ _ proto headers) req)
-    (let (xbuf (open-chunked-output-buffer))
-      (bio-write-string (symbol->string method) xbuf)
-      (bio-write-u8 SPC xbuf)
-      (bio-write-string url xbuf)
-      (bio-write-u8 SPC xbuf)
-      (bio-write-string proto xbuf)
+    (let (xbuf (open-buffered-writer #f 4096))
+      (&BufferedWriter-write-string xbuf (symbol->string method))
+      (&BufferedWriter-write-u8-inline xbuf SPC)
+      (&BufferedWriter-write-string xbuf url)
+      (&BufferedWriter-write-u8-inline xbuf SPC)
+      (&BufferedWriter-write-string xbuf proto)
       (write-crlf xbuf)
       (write-response-headers xbuf headers)
       (write-crlf xbuf)
-      (let (chunks (chunked-output-chunks xbuf))
+      (let (chunks (get-buffer-output-chunks xbuf))
         (http-response-begin res 200 '(("Content-Type". "message/http")))
         (for-each (cut http-response-chunk res <>) chunks)
         (http-response-end res)))))
@@ -285,8 +285,8 @@ END-C
 (def max-request-headers 256)
 (def max-token-length 1024)
 (def max-request-body-length (expt 2 20)) ; 1MB
-(def input-buffer-size 4096)
-(def output-buffer-size 4096)
+(def input-buffer-size 8192)
+(def output-buffer-size 32768)
 
 (defrules defsetter ()
   ((_ (setf id) pred)
@@ -362,7 +362,7 @@ END-C
 (def (read-request-headers ibuf)
   (let (root [#f])
     (let lp ((tl root) (count 0))
-      (let (next (bio-peek-u8 ibuf))
+      (let (next (&BufferedReader-peek-u8-inline ibuf))
         (cond
          ((eof-object? next)
           (raise 'eof))
@@ -409,13 +409,13 @@ END-C
 (def (read-token ibuf sep)
   (def tbuf (get-token-buffer))
   (let lp ((count 0))
-    (let (next (bio-read-u8 ibuf))
+    (let (next (&BufferedReader-read-u8-inline ibuf))
       (cond
        ((eof-object? next)
         (put-token-buffer! tbuf)
         (raise 'eof))
        ((eq? next sep)
-        (let (token (##substring tbuf 0 count))
+        (let (token (substring tbuf 0 count))
           (put-token-buffer! tbuf)
           token))
        ((fx< count max-token-length)
@@ -428,7 +428,7 @@ END-C
 
 (def* read-skip
   ((ibuf c)
-   (let (next (bio-read-u8 ibuf))
+   (let (next (&BufferedReader-read-u8-inline ibuf))
     (unless (eq? c next)
       (raise-io-error 'http-read-request "Unexpected character" next))))
   ((ibuf c1 c2)
@@ -438,15 +438,15 @@ END-C
 (def* read-skip*
   ((ibuf c)
    (let lp ()
-     (let (next (bio-peek-u8 ibuf))
+     (let (next (&BufferedReader-peek-u8-inline ibuf))
        (when (eq? next c)
-         (bio-read-u8 ibuf)
+         (&BufferedReader-read-u8-inline ibuf)
          (lp)))))
   ((ibuf c1 c2)
    (let lp ()
-     (let (next (bio-peek-u8 ibuf))
+     (let (next (&BufferedReader-peek-u8-inline ibuf))
        (when (eq? next c1)
-         (bio-read-u8 ibuf)
+         (&BufferedReader-read-u8-inline ibuf)
          (read-skip ibuf c2)
          (lp))))))
 
@@ -459,7 +459,7 @@ END-C
                   (_ (unless (fx<= len max-request-body-length)
                        (raise-io-error 'http-request-body "Maximum body length exceeded" len)))
                   (bytes (make-u8vector len)))
-             (bio-read-bytes bytes ibuf)
+             (&BufferedReader-read ibuf bytes 0 len len)
              bytes)))
      (else #f)))
 
@@ -482,7 +482,7 @@ END-C
           (let (count (fx+ count len))
             (if (fx<= count max-request-body-length)
               (let (chunk (make-u8vector len))
-                (bio-read-bytes chunk ibuf)
+                (&BufferedReader-read ibuf chunk 0 len len)
                 (read-skip ibuf CR LF)
                 (let (tl* [chunk])
                   (set! (cdr tl) tl*)
@@ -495,7 +495,7 @@ END-C
     (alet (clen (header-e "Content-Length" headers))
       (let (len (string->number clen))
         (if (fixnum? len)
-          (bio-input-skip len ibuf)
+          (&BufferedReader-skip ibuf len)
           (raise-io-error 'http-request-skip-body "Illegal body length" clen)))))
 
   (cond
@@ -512,7 +512,7 @@ END-C
          (_ (read-skip ibuf LF))
          (len (string->number next 16)))
     (when (fx> len 0)
-      (bio-input-skip len ibuf)
+      (&BufferedReader-skip ibuf len)
       (read-skip ibuf CR LF)
       (skip-request-chunks ibuf))))
 
@@ -522,11 +522,11 @@ END-C
          ((hash-get +http-response-codes+ status)
           => values)
          (else "Gremlins!")))
-    (bio-write-string "HTTP/1.1" obuf)
-    (bio-write-u8 SPC obuf)
-    (bio-write-string (number->string status) obuf)
-    (bio-write-u8 SPC obuf)
-    (bio-write-string text obuf)
+    (&BufferedWriter-write-string obuf "HTTP/1.1")
+    (&BufferedWriter-write-u8-inline obuf SPC)
+    (&BufferedWriter-write-string obuf (number->string status))
+    (&BufferedWriter-write-u8-inline obuf SPC)
+    (&BufferedWriter-write-string obuf text)
     (write-crlf obuf)))
 
 (def (write-response-headers obuf headers)
@@ -535,18 +535,18 @@ END-C
       (if (string? key)
         (if (string? val)
           (begin
-            (bio-write-string key obuf)
-            (bio-write-u8 COL obuf)
-            (bio-write-u8 SPC obuf)
-            (bio-write-string val obuf)
+            (&BufferedWriter-write-string obuf key)
+            (&BufferedWriter-write-u8-inline obuf COL)
+            (&BufferedWriter-write-u8-inline obuf SPC)
+            (&BufferedWriter-write-string obuf val)
             (write-crlf obuf))
           (error "Bad header value; expected string" hdr val))
         (error "Bad header key; expected string" hdr key))))
   (for-each write-header headers))
 
 (def (write-crlf obuf)
-  (bio-write-u8 CR obuf)
-  (bio-write-u8 LF obuf))
+  (&BufferedWriter-write-u8-inline obuf CR)
+  (&BufferedWriter-write-u8-inline obuf LF))
 
 (def (write-chunk obuf chunk start end)
   (let* ((end
@@ -568,19 +568,21 @@ END-C
            (else
             0))))
     (when (fx> len 0)
-      (bio-write-string (number->string len 16) obuf)
+      (&BufferedWriter-write-string obuf (number->string len 16))
       (write-crlf obuf)
       (cond
        ((u8vector? chunk)
-        (bio-write-subu8vector chunk start end obuf))
+        (&BufferedWriter-write obuf chunk start end))
        ((string? chunk)
-        (bio-write-substring chunk start end obuf)))
-      (write-crlf obuf))))
+        (&BufferedWriter-write-string obuf chunk start end)))
+      (write-crlf obuf)
+      (&BufferedWriter-flush obuf))))
 
 (def (write-last-chunk obuf)
-  (bio-write-u8 C0 obuf)
+  (&BufferedWriter-write-u8-inline obuf C0)
   (write-crlf obuf)
-  (write-crlf obuf))
+  (write-crlf obuf)
+  (&BufferedWriter-flush obuf))
 
 (def C0 (char->integer #\0))
 (def CR (char->integer #\return))
@@ -641,105 +643,66 @@ END-C
            (505 "HTTP Version Not Supported")))
 
 ;;; buffer management
-(cond-expand
-  (gerbil-smp
-   (import :gerbil/gambit/threads)
-   (def +input-buffers+ [])
-   (def +input-buffers-mx+
-     (make-mutex 'httpd-input-buffer))
+(extern namespace: #f
+  macro-mutex-lock!
+  macro-mutex-unlock!
+  macro-current-thread)
 
-   (def +output-buffers+ [])
-   (def +output-buffers-mx+
-     (make-mutex 'httpd-output-buffer))
+;; using these gives a 35% boost in microbenchmarks
+(defrule (mutex-lock-inline! mx)
+  (macro-mutex-lock! mx #f (macro-current-thread)))
+(defrule (mutex-unlock-inline! mx)
+  (macro-mutex-unlock! mx))
 
-   (def +token-buffers+ [])
-   (def +token-buffers-mx+
-     (make-mutex 'httpd-token-buffer))
+(def +input-buffers+ [])
+(def +input-buffers-mx+
+  (make-mutex 'httpd-input-buffer))
 
-   (defrules defgetbuf ()
-     ((_ (id . args) buffers mx reset! alloc)
-      (def (id . args)
-        (declare (not interrupts-enabled))
-        (mutex-lock! mx)
-        (match buffers
-          ([buf . rest]
-           (set! buffers rest)
-           (mutex-unlock! mx)
-           (reset! buf . args)
-           buf)
-          (else
-           (mutex-unlock! mx)
-           alloc)))))
+(def +output-buffers+ [])
+(def +output-buffers-mx+
+  (make-mutex 'httpd-output-buffer))
 
-   (defrules defputbuf ()
-     ((_ id buffers mx release!)
-      (def (id buf)
-        (declare (not interrupts-enabled))
-        (release! buf)
-        (mutex-lock! mx)
-        (set! buffers (cons buf buffers))
-        (mutex-unlock! mx))))
+(def +token-buffers+ [])
+(def +token-buffers-mx+
+  (make-mutex 'httpd-token-buffer))
 
-   (defgetbuf (get-input-buffer sock) +input-buffers+ +input-buffers-mx+
-     ssocket-input-buffer-reset! (open-ssocket-input-buffer sock input-buffer-size))
-   (defputbuf put-input-buffer! +input-buffers+ +input-buffers-mx+
-     ssocket-input-buffer-release!)
-
-   (defgetbuf (get-output-buffer sock) +output-buffers+ +output-buffers-mx+
-     ssocket-output-buffer-reset! (open-ssocket-output-buffer sock output-buffer-size))
-   (defputbuf put-output-buffer! +output-buffers+ +output-buffers-mx+
-     ssocket-output-buffer-release!)
-
-   (defgetbuf (get-token-buffer) +token-buffers+ +token-buffers-mx+
-     void (make-string max-token-length))
-   (defputbuf put-token-buffer! +token-buffers+ +token-buffers-mx+
-     void))
-
-  (else
-   (def +input-buffers+ [])
-   (def +output-buffers+ [])
-   (def +token-buffers+ [])
-
-   (def (get-input-buffer sock)
+(defrules defgetbuf ()
+  ((_ (id . args) buffers mx reset! alloc)
+   (def (id . args)
      (declare (not interrupts-enabled))
-     (match +input-buffers+
+     (mutex-lock-inline! mx)
+     (match buffers
        ([buf . rest]
-        (set! +input-buffers+ rest)
-        (ssocket-input-buffer-reset! buf sock)
+        (set! buffers rest)
+        (mutex-unlock-inline! mx)
+        (reset! buf . args)
         buf)
        (else
-        (open-ssocket-input-buffer sock input-buffer-size))))
+        (mutex-unlock-inline! mx)
+        alloc)))))
 
-   (def (put-input-buffer! buf)
+(defrules defputbuf ()
+  ((_ id buffers mx release!)
+   (def (id buf)
      (declare (not interrupts-enabled))
-     (ssocket-input-buffer-release! buf)
-     (set! +input-buffers+ (cons buf +input-buffers+)))
+     (release! buf)
+     (mutex-lock-inline! mx)
+     (set! buffers (cons buf buffers))
+     (mutex-unlock-inline! mx))))
 
-   (def (get-output-buffer sock)
-     (declare (not interrupts-enabled))
-     (match +output-buffers+
-       ([buf . rest]
-        (set! +output-buffers+ rest)
-        (ssocket-output-buffer-reset! buf sock)
-        buf)
-       (else
-        (open-ssocket-output-buffer sock output-buffer-size))))
+(defgetbuf (get-input-buffer sock) +input-buffers+ +input-buffers-mx+
+  (lambda (buf sock)  (&BufferedReader-reset! buf (StreamSocket-reader sock)))
+  (open-buffered-reader (StreamSocket-reader sock) input-buffer-size))
+(defputbuf put-input-buffer! +input-buffers+ +input-buffers-mx+
+  (cut &BufferedReader-reset! <> dummy-reader))
 
-   (def (put-output-buffer! buf)
-     (declare (not interrupts-enabled))
-     (ssocket-output-buffer-release! buf)
-     (set! +output-buffers+ (cons buf +output-buffers+)))
+(defgetbuf (get-output-buffer sock) +output-buffers+ +output-buffers-mx+
+  (lambda (buf sock) (&BufferedWriter-reset! buf (StreamSocket-writer sock)))
+  (open-buffered-writer (StreamSocket-writer sock) output-buffer-size))
+(defputbuf put-output-buffer! +output-buffers+ +output-buffers-mx+
+  (cut &BufferedWriter-reset! <> dummy-writer))
 
-   (def (get-token-buffer)
-     (declare (not interrupts-enabled))
-     (match +token-buffers+
-       ([buf . rest]
-        (set! +token-buffers+ rest)
-        buf)
-       (else
-        (make-string max-token-length))))
-
-   (def (put-token-buffer! buf)
-     (declare (not interrupts-enabled))
-     (set! +token-buffers+ (cons buf +token-buffers+)))
-  ))
+(defgetbuf (get-token-buffer) +token-buffers+ +token-buffers-mx+
+  void (make-string max-token-length))
+(defputbuf put-token-buffer! +token-buffers+ +token-buffers-mx+
+  void)

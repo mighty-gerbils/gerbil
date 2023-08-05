@@ -1,6 +1,4 @@
 ;; -*- Gerbil -*-
-package: misc/http-perf
-
 (import :std/net/httpd
         :std/getopt
         :std/sugar

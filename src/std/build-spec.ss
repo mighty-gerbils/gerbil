@@ -234,7 +234,7 @@
     "net/socket"
     ;; :std/net/httpd
     "net/httpd/mux"
-    "net/httpd/handler"
+    (gxc: "net/httpd/handler"  ,@(include-gambit-sharp))
     "net/httpd/server"
     "net/httpd/file"
     "net/httpd"

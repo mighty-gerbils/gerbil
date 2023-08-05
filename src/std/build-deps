@@ -1015,6 +1015,22 @@
    std/io/socket/api
    std/io/util))
  (std/io "io" (gerbil/core std/io/api std/io/interface))
+ (std/net/httpd/handler
+  (gxc: "net/httpd/handler" "-e" "(include \"~~lib/_gambit#.scm\")")
+  (gerbil/core
+   gerbil/gambit/os
+   gerbil/gambit/threads
+   std/error
+   std/foreign
+   std/io
+   std/io/dummy
+   std/logger
+   std/pregexp
+   std/sugar
+   std/text/utf8))
+ (std/net/httpd/file
+  "net/httpd/file"
+  (gerbil/core gerbil/gambit/threads std/io std/net/httpd/handler std/sugar))
  (std/protobuf/io
   "protobuf/io"
   (gerbil/core
@@ -1150,19 +1166,6 @@
  (std/net/socket
   "net/socket"
   (gerbil/core std/net/socket/api std/net/socket/buffer std/net/socket/server))
- (std/net/httpd/handler
-  "net/httpd/handler"
-  (gerbil/core
-   gerbil/gambit/os
-   std/error
-   std/foreign
-   std/logger
-   std/net/bio
-   std/net/socket
-   std/net/socket/buffer
-   std/pregexp
-   std/sugar
-   std/text/utf8))
  (std/net/httpd/server
   "net/httpd/server"
   (gerbil/core
@@ -1170,23 +1173,12 @@
    gerbil/gambit/threads
    std/actor/message
    std/actor/proto
+   std/io
    std/logger
    std/misc/threads
    std/net/httpd/handler
    std/net/httpd/mux
-   std/net/socket
    std/os/socket
-   std/sugar))
- (std/net/httpd/file
-  "net/httpd/file"
-  (gerbil/core
-   gerbil/gambit/ports
-   std/event
-   std/logger
-   std/net/httpd/handler
-   std/os/fcntl
-   std/os/fd
-   std/os/fdio
    std/sugar))
  (std/net/httpd
   "net/httpd"
