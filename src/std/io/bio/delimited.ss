@@ -56,8 +56,7 @@
       '#!eof)))
 
 (def (bio-delimited-put-back delim previous-input)
-  (let* ((limit (&delimited-input-buffer-limit delim))
-         (remaining (&delimited-input-buffer-remaining delim))
+  (let* ((remaining (&delimited-input-buffer-remaining delim))
          (new-remaining
           (fx+ (if (pair? previous-input) (length previous-input) 1)
                remaining))
