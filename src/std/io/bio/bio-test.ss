@@ -246,5 +246,4 @@
           (check (get-buffer-output-u8vector bwr) => output1))
         (let (bwr (open-buffered-writer #f))
           (check (BufferedWriter-write-line bwr input '(#\return #\newline)) => (fx+ (string-length input) 2))
-          (BufferedWriter-flush bwr)
           (check (get-buffer-output-u8vector bwr) => output2))))))

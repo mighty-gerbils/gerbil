@@ -34,6 +34,10 @@
   ;; peeks the next byte
   (peek-u8)
 
+  ;; puts back some bytes previously read
+  ;; - previous-input is a u8 or a list of u8s previously read from the buffer
+  (put-back previous-input)
+
   ;; skips the next count bytes of input
   (skip count)
 

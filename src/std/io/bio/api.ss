@@ -61,6 +61,7 @@
   (let (bio (interface-instance-object wr))
     (cond
      ((output-buffer? bio)
+      (bio-flush-output bio)
       (get-buffer-output-chunks (&output-buffer-writer bio)))
      ((chunked-output-buffer? bio)
       (or (&chunked-output-buffer-output bio)
@@ -82,6 +83,8 @@
   bio-read-u8)
 (defmethod {peek-u8 input-buffer}
   bio-peek-u8)
+(defmethod {put-back input-buffer}
+  bio-put-back)
 (defmethod {skip input-buffer}
   bio-skip-input)
 (defmethod {delimit input-buffer}
@@ -98,6 +101,8 @@
   bio-delimited-read-u8)
 (defmethod {peek-u8 delimited-input-buffer}
   bio-delimited-peek-u8)
+(defmethod {put-back delimited-input-buffer}
+  bio-delimited-put-back)
 (defmethod {skip delimited-input-buffer}
   bio-delimited-skip-input)
 (defmethod {delimit delimited-input-buffer}

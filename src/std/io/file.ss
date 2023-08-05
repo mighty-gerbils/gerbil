@@ -3,6 +3,7 @@
 ;;; file IO
 (import (only-in :gerbil/gambit/ports close-port)
         :std/error
+        :std/sugar
         :std/os/fd
         :std/os/fdio
         :std/os/fcntl
@@ -15,9 +16,15 @@
 (declare (not safe))
 
 (defstruct file-io (fd closed?)
-  final: #t unchecked: #t)
+  unchecked: #t)
 
-(defmethod {read file-io}
+(defstruct (input-file-io file-io) ()
+  final: #t)
+
+(defstruct (output-file-io file-io) ()
+  final: #t)
+
+(defmethod {read input-file-io}
   (lambda (self output output-start output-end input-need)
     (when (&file-io-closed? self)
       (raise-io-error 'file-io-read "file has been closed"))
@@ -39,7 +46,7 @@
               (lp (fx+ output-start read) (fx- input-need read) (fx+ result read)))))
           result)))))
 
-(defmethod {write file-io}
+(defmethod {write output-file-io}
   (lambda (self input input-start input-end)
     (when (&file-io-closed? self)
       (raise-io-error 'file-io-wrte "file has been closed"))
@@ -61,16 +68,22 @@
       (set! (&file-io-closed? self) #t)
       (close-port (&file-io-fd self)))))
 
-(def (open-file-io path flags mode)
+(defrule (open-file-io path flags mode make)
   (let (fd (open path flags mode))
-    (make-file-io fd #f)))
+    (make fd #f)))
+
+(def (open-input-file-io path flags mode)
+  (open-file-io path flags mode make-input-file-io))
+
+(def (open-output-file-io path flags mode)
+  (open-file-io path flags mode make-output-file-io))
 
 (def default-file-reader-flags
   (or O_NOATIME 0))
 
 (def (open-file-reader path flags: (flags default-file-reader-flags))
   (let* ((flags (fxior flags O_RDONLY))
-         (io (open-file-io (path-expand path) flags 0)))
+         (io (open-input-file-io (path-expand path) flags 0)))
     (Reader io)))
 
 (def default-file-writer-flags
@@ -78,5 +91,5 @@
 
 (def (open-file-writer path flags: (flags default-file-writer-flags) mode: (mode #o644))
   (let* ((flags (fxior flags O_WRONLY))
-         (io (open-file-io (path-expand path) flags mode)))
+         (io (open-output-file-io (path-expand path) flags mode)))
     (Writer io)))

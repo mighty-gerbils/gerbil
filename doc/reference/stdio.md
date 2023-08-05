@@ -451,6 +451,7 @@ The BufferedReader interface is defined as follows:
 (interface (BufferedReader Reader)
   (read-u8)
   (peek-u8)
+  (put-back previous-input)
   (skip count)
   (delimit limit)
   (reset! reader))
@@ -621,6 +622,24 @@ Reads a line, separated by `sep` and up to `max-chars` of length.
 The separator is either a single character or a list of characters.
 If `include-sep?` is true, then the separator is include in the stream.
 If the separator is not encountered within `max-chars`, then an error is raised.
+
+#### BufferedReader-put-back
+```scheme
+(BufferedReader-put-back buf previous-input)
+  buf := BufferedReader
+  previous-input := u8 or list of u8
+```
+
+Puts back one or more previously read bytes.
+
+Notes:
+- when putting back multiple bytes, the order is the natural one: oldest first.
+- the method is guaranteed to succeed, regardless of how many bytes you are
+  putting back; the buffer may grow as needed to accommodate the putback.
+- the bytes put back do not have to be the same as bytes previously read from
+  the input stream. Thus the method allowsthe method allows you to
+  _inject_ bytes into the input stream, which may be useful for
+  parsers.
 
 #### BufferedReader-skip
 ```scheme
@@ -859,3 +878,16 @@ Creates a delimited reader that can read up to `limit` bytes from `reader`.
 
 Copies from a Reader to a Writer.
 Returns the number of bytes copied.
+
+## A Note on thread-safety
+
+In general you should you the Readers from a single thread. There is
+no mutex protection for the simple reason that if you are reading from
+multiple threads concurrently you are already shooting yourself in the
+foot because your input will be non-deterministic.
+
+Similarly for writers, you should use them from a single thread at a time.
+
+For sockets, which are full duplex, you can read and write with two
+threads concurrently; it is also safe to close the socket from yet
+another thread.
