@@ -559,14 +559,17 @@ Raises an error if the end of input is reached.
 ```scheme
 (BufferedReader-read-varuint buf (max-bits 64)) -> integer
   buf      := BufferedReader
-  max-bits := fixnum
+  max-bits := fixnum or #f
 ```
-Reads an unsigned integer, with variadic encoding and a maximum integer length of `max-bits`
+Reads an unsigned integer, with variadic encoding and a maximum integer length of `max-bits` if
+specified.
 Raises an error if the end of input is reached.
 
 #### BufferedReader-read-varint
 ```scheme
-(BufferedReader-read-varint reader (max-bits 64)) -> integer
+(BufferedReader-read-varint buf (max-bits 64)) -> integer
+  buf      := BufferedReader
+  max-bits := fixnum or #f
 ```
 Reads a signed integer, with variadic encoding and a maximum integer length of `max-bits`
 Raises an error if the end of input is reached.
