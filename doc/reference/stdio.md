@@ -635,9 +635,11 @@ Puts back one or more previously read bytes.
 Notes:
 - when putting back multiple bytes, the order is the natural one: oldest first.
 - the method is guaranteed to succeed, regardless of how many bytes you are
-  putting back; the buffer may grow as needed to accomodate the putback.
-- the method allows you to _inject_ bytes into the input stream, which may
-  be useful for parsers.
+  putting back; the buffer may grow as needed to accommodate the putback.
+- the bytes put back do not have to be the same as bytes previously read from
+  the input stream. Thus the method allowsthe method allows you to
+  _inject_ bytes into the input stream, which may be useful for
+  parsers.
 
 #### BufferedReader-skip
 ```scheme
