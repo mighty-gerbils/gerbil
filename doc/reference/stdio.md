@@ -633,6 +633,7 @@ If the separator is not encountered within `max-chars`, then an error is raised.
 Puts back one or more previously read bytes.
 
 Notes:
+- when putting back multiple bytes, the order is the natural one: oldest first.
 - the method is guaranteed to succeed, regardless of how many bytes you are
   putting back; the buffer may grow as needed to accomodate the putback.
 - the method allows you to _inject_ bytes into the input stream, which may
@@ -881,7 +882,7 @@ Returns the number of bytes copied.
 In general you should you the Readers from a single thread. There is
 no mutex protection for the simple reason that if you are reading from
 multiple threads concurrently you are already shooting yourself in the
-foot because your output will be non-deterministic.
+foot because your input will be non-deterministic.
 
 Similarly for writers, you should use them from a single thread at a time.
 
