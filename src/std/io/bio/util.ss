@@ -16,17 +16,14 @@
 (declare (not safe))
 
 (export defreader-ext defreader-ext*  defwriter-ext defwriter-ext*)
+
 (defsyntax (defreader-ext stx)
   (syntax-case stx ()
-    ((_ (method reader . args) body ...)
+    ((_ (method . args) body ...)
      (with-syntax ((reader-method (stx-identifier #'method "BufferedReader-" #'method))
                    (unchecked-method (stx-identifier #'method "&BufferedReader-" #'method)))
        #'(begin
-           (def (reader-method reader . args)
-             (let (reader (BufferedReader reader))
-               body ...))
-           (def (unchecked-method reader . args)
-             body ...)
+           (defreader-ext* (method . args) body ...)
            (export reader-method unchecked-method))))))
 
 (defsyntax (defreader-ext* stx)
@@ -43,15 +40,11 @@
 
 (defsyntax (defwriter-ext stx)
   (syntax-case stx ()
-    ((_ (method writer . args) body ...)
+    ((_ (method . args) body ...)
      (with-syntax ((writer-method (stx-identifier #'method "BufferedWriter-" #'method))
                    (unchecked-method (stx-identifier #'method "&BufferedWriter-" #'method)))
        #'(begin
-           (def (writer-method writer . args)
-             (let (writer (BufferedWriter writer))
-               body ...))
-           (def (unchecked-method writer . args)
-             body ...)
+           (defwriter-ext* (method . args) body ...)
            (export writer-method unchecked-method))))))
 
 (defsyntax (defwriter-ext* stx)
