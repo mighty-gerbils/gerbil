@@ -467,7 +467,11 @@
         read))))
 
 (defreader-ext (read-line reader (sep #\newline) (include-sep? #f) (max-chars #f))
-  (let* ((separators (if (pair? sep) sep [sep]))
+  (let* ((separators
+          (cond
+           ((pair? sep) sep)
+           ((not sep) [])
+           (else [sep])))
          (read-more?
           (if max-chars
             (lambda (x) (fx< x max-chars))
