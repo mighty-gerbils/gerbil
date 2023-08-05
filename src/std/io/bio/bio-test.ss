@@ -280,5 +280,4 @@
              (reader (open-buffered-reader output))
              (reinput (BufferedReader-read-delimited-string reader)))
         (check reinput => input)
-        (check (BufferedReader-peek-char reader) ? eof-object?)))
-    ))
+        (check (BufferedReader-peek-char reader) ? eof-object?)))))
