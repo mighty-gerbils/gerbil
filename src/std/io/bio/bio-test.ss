@@ -9,7 +9,8 @@
         ../interface
         ./api)
 (export bio-input-test
-        bio-output-test)
+        bio-output-test
+        bio-varint-delimited-test)
 
 (def (make-test-u8vector size)
   (let (u8v (make-u8vector size))
@@ -247,3 +248,37 @@
         (let (bwr (open-buffered-writer #f))
           (check (BufferedWriter-write-line bwr input '(#\return #\newline)) => (fx+ (string-length input) 2))
           (check (get-buffer-output-u8vector bwr) => output2))))))
+
+(def bio-varint-delimited-test
+  (test-suite "varint delimited i/o"
+    (test-case "generic output and input"
+      (let* ((input "the quick brown fox jumped over the lazy dog")
+             (writer (open-buffered-writer #f))
+             (_ (BufferedWriter-write-delimited writer (cut BufferedWriter-write-string <> input)))
+             (output (get-buffer-output-u8vector writer))
+             (reader (open-buffered-reader output))
+             (reinput (make-string (string-length input)))
+             (_ (BufferedReader-read-delimited reader (cut BufferedReader-read-string <> reinput))))
+        (check reinput => input)
+        (check (BufferedReader-peek-char reader) ? eof-object?)))
+    (test-case "u8vector output and input"
+      (let* ((input "the quick brown fox jumped over the lazy dog")
+             (input-bytes (string->utf8 input))
+             (writer (open-buffered-writer #f))
+             (_ (BufferedWriter-write-delimited-u8vector writer input-bytes))
+             (output (get-buffer-output-u8vector writer))
+             (reader (open-buffered-reader output))
+             (reinput-bytes (BufferedReader-read-delimited-u8vector reader))
+             (reinput (utf8->string reinput-bytes)))
+        (check reinput => input)
+        (check (BufferedReader-peek-char reader) ? eof-object?)))
+    (test-case "string output and input"
+      (let* ((input "the quick brown fox jumped over the lazy dog")
+             (writer (open-buffered-writer #f))
+             (_ (BufferedWriter-write-delimited-string writer input))
+             (output (get-buffer-output-u8vector writer))
+             (reader (open-buffered-reader output))
+             (reinput (BufferedReader-read-delimited-string reader)))
+        (check reinput => input)
+        (check (BufferedReader-peek-char reader) ? eof-object?)))
+    ))
