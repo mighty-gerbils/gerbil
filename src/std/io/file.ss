@@ -3,6 +3,7 @@
 ;;; file IO
 (import (only-in :gerbil/gambit/ports close-port)
         :std/error
+        :std/sugar
         :std/os/fd
         :std/os/fdio
         :std/os/fcntl
@@ -67,13 +68,15 @@
       (set! (&file-io-closed? self) #t)
       (close-port (&file-io-fd self)))))
 
-(def (open-input-file-io path flags mode)
+(defrule (open-file-io path flags mode make)
   (let (fd (open path flags mode))
-    (make-input-file-io fd #f)))
+    (make fd #f)))
+
+(def (open-input-file-io path flags mode)
+  (open-file-io path flags mode make-input-file-io))
 
 (def (open-output-file-io path flags mode)
-  (let (fd (open path flags mode))
-    (make-output-file-io fd #f)))
+  (open-file-io path flags mode make-output-file-io))
 
 (def default-file-reader-flags
   (or O_NOATIME 0))
