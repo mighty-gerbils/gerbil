@@ -1,6 +1,6 @@
 .PHONY: alpine amazonlinux ubuntu fedora ubuntu-current-jedi final
 
-GERBIL_VERSION := v0.17
+GERBIL_VERSION := master
 GAMBIT_VERSION := v4.9.5
 
 ROOT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
