@@ -93,8 +93,14 @@
       (- uint (expt-cache-get bits)))))
 
 (defreader-ext (read-varuint reader (max-bits 64))
+  (def read-more?
+    (if max-bits
+        (lambda (shift)
+          (fx< shift max-bits))
+        (lambda (shift) #t)))
+
   (let lp ((shift 0) (x 0))
-    (if (fx< shift max-bits)
+    (if (read-more? shift)
       (let (next (&BufferedReader-read-u8-inline reader))
         (if (eof-object? next)
           (raise-io-error 'Buffered-reader-read-varuint "premature end of input")
