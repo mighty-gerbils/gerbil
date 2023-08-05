@@ -632,6 +632,12 @@ If the separator is not encountered within `max-chars`, then an error is raised.
 
 Puts back one or more previously read bytes.
 
+Notes:
+- the method is guaranteed to succeed, regardless of how many bytes you are
+  putting back; the buffer may grow as needed to accomodate the putback.
+- the method allows you to _inject_ bytes into the input stream, which may
+  be useful for parsers.
+
 #### BufferedReader-skip
 ```scheme
 (BufferedReader-skip buf count)
@@ -869,3 +875,16 @@ Creates a delimited reader that can read up to `limit` bytes from `reader`.
 
 Copies from a Reader to a Writer.
 Returns the number of bytes copied.
+
+## A Note on thread-safety
+
+In general you should you the Readers from a single thread. There is
+no mutex protection for the simple reason that if you are reading from
+multiple threads concurrently you are already shooting yourself in the
+foot because your output will be non-deterministic.
+
+Similarly for writers, you should use them from a single thread at a time.
+
+For sockets, which are full duplex, you can read and write with two
+threads concurrently; it is also safe to close the socket from yet
+another thread.
