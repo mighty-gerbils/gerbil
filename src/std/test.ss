@@ -25,7 +25,7 @@
 (defstruct !check-exception ())
 (defstruct (!check-fail !check-exception) (e value expected loc))
 (defstruct (!check-error !check-exception) (exn check loc))
-(defstruct !test-suite (desc thunk tests))
+(defstruct !test-suite (desc thunk tests error))
 (defstruct !test-case (desc checks fail error))
 
 (defmethod {display-exception !check-error}
@@ -157,7 +157,7 @@
 (def *tests* [])
 
 (def (make-test-suite desc thunk)
-  (make-!test-suite desc thunk []))
+  (make-!test-suite desc thunk [] #f))
 
 (def (run-tests! suite . more)
   (test-begin!)
@@ -174,8 +174,9 @@
   (let lp ((rest *tests*))
     (match rest
       ([suite . rest]
-       (if (ormap (? (or !test-case-fail !test-case-error))
-                  (!test-suite-tests suite))
+       (if (or (!test-suite-error suite)
+               (ormap (? (or !test-case-fail !test-case-error))
+                      (!test-suite-tests suite)))
          'FAILURE
          (lp rest)))
       (else 'OK))))
@@ -195,12 +196,18 @@
            (display-exception exn (current-error-port))))))
 
   (let (tests (!test-suite-tests suite))
-    (if (ormap (? (or !test-case-fail !test-case-error))
+    (cond
+     ((!test-suite-error suite)
+      => (lambda (exn)
+           (eprintf "~a: FAILED~n" (!test-suite-desc suite))
+           (eprintf "~a: ERROR " (!test-suite-desc suite))
+           (display-exception exn (current-error-port))))
+     ((ormap (? (or !test-case-fail !test-case-error))
                tests)
-      (begin
-        (eprintf "~a: FAILED~n" (!test-suite-desc suite))
-        (for-each print-failed tests))
-    (eprintf "~a: OK~n" (!test-suite-desc suite)))))
+      (eprintf "~a: FAILED~n" (!test-suite-desc suite))
+      (for-each print-failed tests))
+     (else
+      (eprintf "~a: OK~n" (!test-suite-desc suite))))))
 
 (def (test-begin!)
   (set! *tests* []))
@@ -221,8 +228,11 @@
 
 (def (run-test-suite! suite)
   (test-suite-begin! suite)
+  (try
    (parameterize ((current-test-suite suite))
      (with-stack-trace (!test-suite-thunk suite)))
+   (catch (e)
+     (set! (!test-suite-error suite) e)))
    (test-suite-end! suite))
 
 (def (test-suite-begin! suite)
@@ -231,8 +241,9 @@
   (eprintf "Test suite: ~a~n" (!test-suite-desc suite)))
 
 (def (test-suite-end! suite)
-  (if (find (? (or !test-case-fail !test-case-error))
-            (!test-suite-tests suite))
+  (if (or (!test-suite-error suite)
+          (find (? (or !test-case-fail !test-case-error))
+                (!test-suite-tests suite)))
     (begin (eprintf "*** Test FAILED~n") #f)
     (begin (eprintf "... All tests OK~n") #t)))
 
