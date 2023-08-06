@@ -70,7 +70,7 @@ fi
 AC_ARG_ENABLE(zlib,
 AS_HELP_STRING([--disable-zlib], [build std/text/zlib libraries - requires zlib (default is --enable-zlib]),
 ENABLE_ZLIB=$enableval,
-ENABLE_ZLIB=no)
+ENABLE_ZLIB=yes)
 
 if test "$ENABLE_ZLIB" = yes; then
 gerbil_make_conf="$gerbil_make_conf --enable-zlib"
