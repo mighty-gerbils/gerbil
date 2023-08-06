@@ -10,8 +10,9 @@
         (only-in :std/io/bio/api defreader-ext defreader-ext* defwriter-ext defwriter-ext*)
         ./message)
 (declare (not safe))
+(export #t)
 
-(defwriter-ext (marshal buf obj)
+(defwriter-ext* (marshal buf obj)
   (let (tag (object-tag obj))
     (cond
      ((not tag)
@@ -23,7 +24,7 @@
      (else
       (raise-io-error 'BufferedWriter-marshal "missing serializer" obj tag)))))
 
-(defreader-ext (unmarshal buf)
+(defreader-ext* (unmarshal buf)
   (let (tag (&BufferedReader-read-u8! buf))
     (cond
      ((vector-ref +unmarshal+ tag)
@@ -31,7 +32,7 @@
      (else
       (raise-io-error 'BufferedReader-unmarshal "unrecognized object tag" tag)))))
 
-(defreader-ext (try-unmarshal buf)
+(defreader-ext* (try-unmarshal buf)
   (let (tag (&BufferedReader-read-u8 buf))
     (cond
      ((eof-object? tag)
@@ -156,9 +157,9 @@
     (bytes->double bytes)))
 
 (defwriter-ext* (marshal-pair buf obj)
-  (let* ((w1 (&BufferedWriter-marshal buf (car obj)))
-         (w2 (&BufferedWriter-marshal buf (cdr obj))))
-    (fx+ w1 w2)))
+  (let* ((wcar (&BufferedWriter-marshal buf (car obj)))
+         (wcdr (&BufferedWriter-marshal buf (cdr obj))))
+    (fx+ wcar wcdr)))
 
 (defreader-ext* (unmarshal-pair buf)
   (let* ((kar (&BufferedReader-unmarshal buf))
@@ -291,16 +292,16 @@
   (eof       6)
   (char      7)
   (integer   9)
-  (double    9)
-  (pair     10)
-  (vector   11)
-  (values   12)
-  (symbol   13)
-  (keyword  14)
-  (string   15)
-  (u8vector 16)
-  (table    17)
-  (time     18)
+  (double   10)
+  (pair     11)
+  (vector   12)
+  (values   13)
+  (symbol   14)
+  (keyword  15)
+  (string   16)
+  (u8vector 17)
+  (table    18)
+  (time     19)
   ;; serde with object<->vector
   (serde   255))
 

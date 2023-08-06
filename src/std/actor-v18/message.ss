@@ -5,27 +5,7 @@
         :gerbil/gambit/os
         :std/error
         :std/stxparam)
-(export (struct-out envelope handle actor-error)
-        defmessage message?
-        register-message-type! lookup-message-type
-        send-message
-        -> ->>
-        << <-
-        raise-actor-error
-        current-thread-nonce!
-        @envelope
-        @message
-        @dest
-        @source
-        @nonce
-        @replyto
-        @expiry
-        &envelope-message &envelope-message-set!
-        &envelope-dest &envelope-dest-set!
-        &envelope-source &envelope-source-set!
-        &envelope-nonce &envelope-nonce-set!
-        &envelope-replyto &envelope-replyto-set!
-        &envelope-expiry &envelope-expiry-set!)
+(export #t)
 
 ;; actor errors
 (defstruct (actor-error <error>) ())
@@ -39,7 +19,7 @@
 
 ;; macro for definition of message classes
 (defsyntax (defmessage stx)
-  (def (typedef id super fields rest)
+  (def (typedef id fields rest)
     (with-syntax ((id::t (stx-identifier id id "::t"))
                   (hd [id (quote-syntax message)])
                   (fields fields)
@@ -61,7 +41,7 @@
 ;; - replyto is the nonce of the message we are replying to; it is #f if this is not a reply.
 ;; - expiry is the reply expiration time; a time object or #F if it is a one way message.
 (defstruct envelope (message dest source nonce replyto expiry)
-  final: #t unchecked: #t)
+  final: #t unchecked: #t transparent: #t)
 
 ;; actor handle base type.
 ;; - actor is the thread that handles messages on behalf of another actor.
@@ -246,9 +226,12 @@
 (def +message-types-mx+ (make-mutex 'message-type-registry))
 
 (def (register-message-type! klass)
-  (mutex-lock! +message-types-mx+)
-  (hash-put! +message-types+ (##type-id klass) klass)
-  (mutex-unlock! +message-types-mx+))
+  (let (klass-id (##type-id klass))
+    (unless (interned-symbol? klass-id)
+      (error "uninterned message class" klass))
+    (mutex-lock! +message-types-mx+)
+    (hash-put! +message-types+ klass-id klass)
+    (mutex-unlock! +message-types-mx+)))
 
 (def (lookup-message-type type-id)
   (mutex-lock! +message-types-mx+)
