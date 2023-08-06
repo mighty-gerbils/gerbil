@@ -537,7 +537,7 @@
     int))
 
 (defwriter-ext (write-varuint writer uint (max-bits 64))
-  (when (fx> (integer-length uint) max-bits)
+  (when (and max-bits (fx> (integer-length uint) max-bits))
     (raise-io-error 'BufferedWriter-write-varuint "varuint max bits exceeded"))
   (let lp ((uint uint) (wrote 0))
     (if (> uint #x7f)
