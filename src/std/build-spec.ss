@@ -310,6 +310,9 @@
     "protobuf/macros"
     "protobuf/proto-grammar"
     "protobuf/proto"
+    ;; TO BE RENAMED to actor/...
+    (gxc: "actor-v18/message" ,@(include-gambit-sharp))
+    ;; TO BE REMOVED --
     ;; :std/actor
     (gxc: "actor/message" ,@(include-gambit-sharp))
     (gxc: "actor/xdr"  ,@(include-gambit-sharp))
