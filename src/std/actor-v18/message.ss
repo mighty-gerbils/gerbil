@@ -5,7 +5,25 @@
         :gerbil/gambit/os
         :std/error
         :std/stxparam)
-(export )
+(export (struct-out message envelope handle actor-error)
+        send-message
+        -> ->>
+        << <-
+        raise-actor-error
+        current-thread-nonce!
+        @envelope
+        @message
+        @dest
+        @source
+        @nonce
+        @replyto
+        @expiry)
+
+;; actor errors
+(defstruct (actor-error <error>) ())
+
+(def (raise-actor-error where what . irritants)
+  (raise (make-actor-error what irritants where)))
 
 ;; base type for all serializable messages; the contents must be serializable.
 (defstruct message ())
@@ -54,7 +72,7 @@
   (let* ((expiry (timeout->expiry timeo))
          (nonce (current-thread-nonce!)))
     (unless (send-message dest (envelope msg dest (current-thread) nonce replyto expiry))
-      (raise-io-error 'send-message "actor is dead" dest))
+      (raise-actor-error 'send-message "actor is dead" dest))
     (<< ((envelope reply _ _ _ (eqv? nonce))
          reply)
         timeout: expiry)))
