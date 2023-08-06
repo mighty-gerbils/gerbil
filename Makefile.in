@@ -36,14 +36,10 @@ mandir = @mandir@
 
 LIBS = @LIBS@
 
-gerbil_home = ${prefix}/lib/${PACKAGE_SHORTNAME}
+gerbil_home = ${prefix}
 gerbil_bin = "$(gerbil_home)/bin"
 gerbil_lib = "${gerbil_home}/lib"
 gerbil_share = "${gerbil_home}/share"
-
-
-gerbil_bin_linkdir = "${prefix}/bin"
-gerbil_share_linkdir = "${prefix}/share"
 
 gerbil_make_conf = @gerbil_make_conf@
 
@@ -63,7 +59,6 @@ stdlib:
 lang:
 	cd src && LDFLAGS="$(LIBS)" ./build.sh lang
 
-
 r7rs-large:
 	cd src && LDFLAGS="$(LIBS)" ./build.sh r7rs-large
 
@@ -77,15 +72,11 @@ stage1:
 	cd src && LDFLAGS="$(LIBS)" ./build.sh stage1
 
 layout:
-		cd src && LDFLAGS="$(LIBS)" ./build.sh layout
+	cd src && LDFLAGS="$(LIBS)" ./build.sh layout
 
 tags:
 	cd src && LDFLAGS="$(LIBS)" ./build.sh tags
 
 install:
-	mkdir -p ${gerbil_bin} ${gerbil_share} ${gerbil_bin_linkdir} ${gerbil_share_linkdir}
+	mkdir -p ${gerbil_bin} ${gerbil_lib} ${gerbil_share}
 	cd src && ./install
-	cp -a --link --remove-destination ${gerbil_bin}/* ${gerbil_bin_linkdir}  || \
-	cp -a ${gerbil_bin}/* ${gerbil_bin_linkdir}
-	cp -a --link --remove-destination ${gerbil_share}/* ${gerbil_share_linkdir}  || \
-	cp -a ${gerbil_share}/* ${gerbil_share_linkdir}
