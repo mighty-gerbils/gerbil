@@ -23,7 +23,11 @@
            (check @source => (current-thread))
            (check @nonce => 0)
            (check @replyto => #f)
-           (check @expiry => #f))))
+           (check @expiry => #f)))
+      (check (-> (current-thread) 'world) => 1)
+      (<- (value
+           (check value => 'world)
+           (check @nonce => 1))))
 
     (test-case "send+receive reply"
       (reset-nonce!)
