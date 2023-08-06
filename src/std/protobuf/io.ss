@@ -294,22 +294,22 @@
 
 (begin-ffi (bytes->float float->bytes! bytes->double double->bytes!)
   (c-declare #<<END-C
-static float ffi_read_float_bytes (___SCMOBJ bytes)
+static float ffi_pbio_read_float_bytes (___SCMOBJ bytes)
 {
  return *(float*)(U8_DATA (bytes));
 }
 
-static void ffi_write_float_bytes (float val, ___SCMOBJ bytes)
+static void ffi_pbio_write_float_bytes (float val, ___SCMOBJ bytes)
 {
  *(float*)(U8_DATA (bytes)) = val;
 }
 
-static double ffi_read_double_bytes (___SCMOBJ bytes)
+static double ffi_pbio_read_double_bytes (___SCMOBJ bytes)
 {
  return *(double*)(U8_DATA (bytes));
 }
 
-static void ffi_write_double_bytes (double val, ___SCMOBJ bytes)
+static void ffi_pbio_write_double_bytes (double val, ___SCMOBJ bytes)
 {
  *(double*)(U8_DATA (bytes)) = val;
 }
@@ -317,10 +317,10 @@ END-C
 )
 
 (define-c-lambda bytes->float (scheme-object) float
-  "ffi_read_float_bytes")
+  "ffi_pbio_read_float_bytes")
 (define-c-lambda float->bytes! (float scheme-object) void
-  "ffi_write_float_bytes")
+  "ffi_pbio_write_float_bytes")
 (define-c-lambda bytes->double (scheme-object) double
-  "ffi_read_double_bytes")
+  "ffi_pbio_read_double_bytes")
 (define-c-lambda double->bytes! (double scheme-object) void
-  "ffi_write_double_bytes"))
+  "ffi_pbio_write_double_bytes"))
