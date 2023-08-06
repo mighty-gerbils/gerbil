@@ -36,7 +36,7 @@ mandir = @mandir@
 
 LIBS = @LIBS@
 
-gerbil_home = ${prefix}/lib/${PACKAGE_SHORTNAME}
+gerbil_home = ${prefix}
 gerbil_bin = "$(gerbil_home)/bin"
 gerbil_lib = "${gerbil_home}/lib"
 gerbil_share = "${gerbil_home}/share"
