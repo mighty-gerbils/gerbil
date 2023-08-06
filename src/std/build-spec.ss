@@ -313,7 +313,7 @@
     ;; TO BE REPACKAGED by :std/actor
     (gxc: "actor-v18/message" ,@(include-gambit-sharp))
     (gxc: "actor-v18/io" ,@(include-gambit-sharp))
-    ;; TO BE REMOVED
+    ;; DEPRECATEED; TO BE REMOVED in v19
     ;; :std/actor
     (gxc: "actor/message" ,@(include-gambit-sharp))
     (gxc: "actor/xdr"  ,@(include-gambit-sharp))
