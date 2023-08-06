@@ -49,9 +49,9 @@ ARG gambit_version
 ARG cores
 ENV GAMBIT_HOME=/opt/gambit
 ENV GERBIL_BUILD_CORES=$cores
-ENV GERBIL_HOME=/opt/gerbil
+ENV GERBIL_DIR=/opt/gerbil
 ENV GERBIL_PATH=/src/.gerbil
-ENV PATH=${GAMBIT_HOME}/bin:${GERBIL_HOME}/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
+ENV PATH=${GAMBIT_HOME}/bin:${GERBIL_DIR}/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin
 RUN git config --global url.https://github.com/.insteadOf git://github.com/
 RUN cd /opt && git clone https://github.com/gambit/gambit gambit-src
 RUN cd /opt/gambit-src && git fetch -a && git checkout ${gambit_version}
@@ -82,7 +82,7 @@ RUN cd /opt && git clone https://github.com/vyzo/gerbil gerbil-src
 ENV PATH=/opt/gambit/current/bin:$PATH
 RUN cd /opt/gerbil-src && git fetch -a && git fetch --tags && git checkout ${gerbil_version} \
     && ./configure \
-    --prefix=${GERBIL_HOME} \
+    --prefix=${GERBIL_DIR} \
     --enable-leveldb \
     --enable-libxml \
     --enable-libyaml \
