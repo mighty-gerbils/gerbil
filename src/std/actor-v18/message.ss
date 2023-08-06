@@ -5,7 +5,9 @@
         :gerbil/gambit/os
         :std/error
         :std/stxparam)
-(export (struct-out message envelope handle actor-error)
+(export (struct-out envelope handle actor-error)
+        defmessage message?
+        register-message-type! lookup-message-type
         send-message
         -> ->>
         << <-
@@ -17,7 +19,13 @@
         @source
         @nonce
         @replyto
-        @expiry)
+        @expiry
+        &envelope-message &envelope-message-set!
+        &envelope-dest &envelope-dest-set!
+        &envelope-source &envelope-source-set!
+        &envelope-nonce &envelope-nonce-set!
+        &envelope-replyto &envelope-replyto-set!
+        &envelope-expiry &envelope-expiry-set!)
 
 ;; actor errors
 (defstruct (actor-error <error>) ())
@@ -26,7 +34,24 @@
   (raise (make-actor-error what irritants where)))
 
 ;; base type for all serializable messages; the contents must be serializable.
-(defstruct message ())
+(defstruct message ()
+  transparent: #t)
+
+;; macro for definition of message classes
+(defsyntax (defmessage stx)
+  (def (typedef id super fields rest)
+    (with-syntax ((id::t (stx-identifier id id "::t"))
+                  (hd [id (quote-syntax message)])
+                  (fields fields)
+                  (rest rest))
+      #'(begin
+          (defstruct hd fields transparent: #t . rest)
+          (register-message-type! id::t))))
+  (syntax-case stx ()
+    ((_ id fields . rest)
+     (and (identifier? #'id)
+          (identifier-list? #'fields))
+     (typedef #'id #'fields #'rest))))
 
 ;; message envelopes for structured interaction.
 ;; - message is the payload; must be a serializable acyclic object.
@@ -35,7 +60,7 @@
 ;; - nonce is a thread-specific monotonically increasing integer.
 ;; - replyto is the nonce of the message we are replying to; it is #f if this is not a reply.
 ;; - expiry is the reply expiration time; a time object or #F if it is a one way message.
-(defstruct envelope (message source dest nonce replyto expiry)
+(defstruct envelope (message dest source nonce replyto expiry)
   final: #t unchecked: #t)
 
 ;; actor handle base type.
@@ -215,6 +240,21 @@
     timeo)
    (else
     (error "Bad argument; expected real or time" timeo))))
+
+;; message type registry
+(def +message-types+ (make-hash-table-eq))
+(def +message-types-mx+ (make-mutex 'message-type-registry))
+
+(def (register-message-type! klass)
+  (mutex-lock! +message-types-mx+)
+  (hash-put! +message-types+ (##type-id klass) klass)
+  (mutex-unlock! +message-types-mx+))
+
+(def (lookup-message-type type-id)
+  (mutex-lock! +message-types-mx+)
+  (let (klass (hash-get +message-types+ type-id))
+    (mutex-unlock! +message-types-mx+)
+    klass))
 
 ;; default reply timeout; 3s
 (def default-reply-timeout 3)
