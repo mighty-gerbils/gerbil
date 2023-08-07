@@ -281,6 +281,7 @@
                 for for* for/collect
                 begin-ffi
                 test-suite test-case
+                interface
                 )
               'scheme-indent-function 1)
   (gerbil-put '(syntax-case ast-case core-syntax-case core-ast-case
