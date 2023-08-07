@@ -291,7 +291,7 @@
               'scheme-indent-function 2)
   (gerbil-put '(def defvalues extern
                 defalias defsyntax defrule defrules defrules*
-                defstruct defclass defgeneric defmethod
+                defstruct defclass defgeneric defmethod defmessage
                 definline definline*
                 define-values define-syntaxes
                 )
@@ -347,7 +347,7 @@
                        ;; iterators
                        "for" "for*" "for/collect" "for/fold"
                        ;; actor messaging
-                       "<-" "<<" "->"
+                       "<-" "<<" "->" "->>"
                        ;; test
                        "run-tests!" "test-suite" "test-case"
                        "check" "checkf" "check-eq?" "check-not-eq?" "check-eqv?"
@@ -446,7 +446,7 @@
      (1 font-lock-keyword-face)
      (2 font-lock-variable-name-face)))
   (gerbil-fontlock-add
-   '("(\\(defstruct\\|defclass\\|class\\|struct\\|interface\\|union\\)\\s-+(?\\(\\sw+\\)"
+   '("(\\(defstruct\\|defclass\\|defmessage\\|class\\|struct\\|interface\\|union\\)\\s-+(?\\(\\sw+\\)"
      (1 font-lock-keyword-face)
      (2 font-lock-type-face)))
   (gerbil-fontlock-add
