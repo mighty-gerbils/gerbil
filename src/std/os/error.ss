@@ -11,7 +11,11 @@
         EAGAIN
         EINTR
         EINPROGRESS
-        EWOULDBLOCK)
+        EWOULDBLOCK
+        EBADF
+        ECONNABORTED
+        ECONNREFUSED
+        ECONNRESET)
 
 (def (raise-os-error errno prim . args)
   (apply ##raise-os-exception (strerror errno) errno prim args))
@@ -42,7 +46,8 @@
      (if r r
          (error "Error allocating memory" 'make)))))
 
-(begin-ffi (strerror EAGAIN EINTR EINPROGRESS EWOULDBLOCK)
+(begin-ffi (strerror EAGAIN EINTR EINPROGRESS EWOULDBLOCK
+                     EBADF ECONNABORTED ECONNREFUSED ECONNRESET)
   (c-declare "#include <errno.h>")
   (c-declare "#include <string.h>")
 
@@ -50,4 +55,8 @@
   (define-const EINTR)
   (define-const EINPROGRESS)
   (define-const EWOULDBLOCK)
+  (define-const EBADF)
+  (define-const ECONNABORTED)
+  (define-const ECONNREFUSED)
+  (define-const ECONNRESET)
   (define-c-lambda strerror (int) char-string))
