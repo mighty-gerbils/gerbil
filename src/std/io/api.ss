@@ -5,9 +5,11 @@
         ./socket/api
         ./delimited
         ./file
-        ./util)
+        ./util
+        ./error)
 (export (import: ./bio/api)
         (import: ./socket/api)
         (import: ./delimited)
         (import: ./file)
-        (import: ./util))
+        (import: ./util)
+        (import: ./error))

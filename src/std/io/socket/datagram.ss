@@ -5,6 +5,7 @@
         :std/os/socket
         :std/os/fd
         :std/net/address
+        ../error
         ./types
         ./basic)
 (export #t)
@@ -12,7 +13,7 @@
 (def (datagram-socket-recvfrom dsock peer output output-start output-end flags)
   (with-basic-socket-read-lock dsock
     (when (&basic-socket-closed? dsock)
-      (raise-io-error 'datagram-socket-recvfrom "socket is closed"))
+      (raise-io-closed-error 'datagram-socket-recvfrom "socket is closed"))
     (let ((sock (&basic-socket-sock dsock))
           (sockaddr (make-socket-address (&basic-socket-domain dsock))))
       (let lp ()
@@ -23,7 +24,7 @@
             read)
            ((basic-socket-wait-io! dsock (fd-io-in sock) (&basic-socket-timeo-in dsock))
             (when (&basic-socket-closed? dsock)
-              (raise-io-error 'datagram-socket-recvfrom "socket is closed"))
+              (raise-io-closed-error 'datagram-socket-recvfrom "socket is closed"))
             (lp))
            (else
             (raise-timeout 'datagram-socket-recvfrom "receive timeout"))))))))
@@ -40,7 +41,7 @@
          (sockaddr (socket-address address)))
     (with-basic-socket-write-lock dsock
       (when (&basic-socket-closed? dsock)
-        (raise-io-error 'datagram-socket-connect "socket is closed"))
+        (raise-io-closed-error 'datagram-socket-connect "socket is closed"))
       (socket-connect (&basic-socket-sock dsock) sockaddr)
       (set! (&basic-socket-raddr dsock) address)
       (void))))
@@ -48,7 +49,7 @@
 (def (datagram-socket-recv dsock output output-start output-end flags)
   (with-basic-socket-read-lock dsock
     (when (&basic-socket-closed? dsock)
-      (raise-io-error 'datagram-socket-recv "socket is closed"))
+      (raise-io-closed-error 'datagram-socket-recv "socket is closed"))
     (unless (&basic-socket-raddr dsock)
       (raise-io-error 'datagram-socket-recv "socket is not connected"))
     (let (sock (&basic-socket-sock dsock))
@@ -66,7 +67,7 @@
 (def (datagram-socket-send dsock input input-start input-end flags)
   (with-basic-socket-read-lock dsock
     (when (&basic-socket-closed? dsock)
-      (raise-io-error 'datagram-socket-sendto "socket is closed"))
+      (raise-io-closed-error 'datagram-socket-sendto "socket is closed"))
     (unless (&basic-socket-raddr dsock)
       (raise-io-error 'datagram-socket-recv "socket is not connected"))
     (socket-send (&basic-socket-sock dsock) input input-start input-end flags)))
