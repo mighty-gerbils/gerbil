@@ -39,6 +39,7 @@
     "io/delimited"
     "io/file"
     "io/util"
+    "io/error"
     "io/bio/types"
     "io/bio/input"
     "io/bio/delimited"
@@ -212,6 +213,7 @@
     "os/signal-handler"
     "os/pid"
     "os/temporaries"
+    "os/hostname"
     ;; :std/net/bio
     "net/bio/input"
     "net/bio/output"
@@ -313,7 +315,14 @@
     ;; TO BE REPACKAGED by :std/actor
     (gxc: "actor-v18/message" ,@(include-gambit-sharp))
     (gxc: "actor-v18/io" ,@(include-gambit-sharp))
-    ;; DEPRECATEED; TO BE REMOVED in v19
+    "actor-v18/cookie"
+    "actor-v18/logger"
+    "actor-v18/proto"
+    "actor-v18/connection"
+    "actor-v18/server"
+    "actor-v18/registry"
+    "actor-v18/ensemble"
+    ;; DEPRECATEED; TO BE REMOVED after v19
     ;; :std/actor
     (gxc: "actor/message" ,@(include-gambit-sharp))
     (gxc: "actor/xdr"  ,@(include-gambit-sharp))
