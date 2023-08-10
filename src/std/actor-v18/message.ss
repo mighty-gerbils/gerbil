@@ -25,7 +25,7 @@
                   (fields fields)
                   (rest rest))
       #'(begin
-          (defstruct hd fields transparent: #t . rest)
+          (defstruct hd fields transparent: #t final: #t . rest)
           (register-message-type! id::t))))
   (syntax-case stx ()
     ((_ id fields . rest)
@@ -40,8 +40,15 @@
 ;; - nonce is a thread-specific monotonically increasing integer.
 ;; - replyto is the nonce of the message we are replying to; it is #f if this is not a reply.
 ;; - expiry is the reply expiration time; a time object or #F if it is a one way message.
-(defstruct envelope (message dest source nonce replyto expiry)
+;; - reply-expected? is set to true if the source is expecting a reply; this is a hint
+;;   that allows remote servers to respond if the target actor is not registered
+(defstruct envelope (message dest source nonce replyto expiry reply-expected?)
   final: #t unchecked: #t transparent: #t)
+
+;; returns true if the envelope has expired
+(def (&envelope-expired? msg)
+  (alet (expiry (&envelope-expiry msg))
+    (< (time->seconds expiry) (##current-time-point))))
 
 ;; actor handle base type.
 ;; - actor is the thread that handles messages on behalf of another actor.
@@ -65,9 +72,10 @@
 ;; Returns #f if the destination is a dead thread; otherwise returns the message nonce.
 (def (-> dest msg
          replyto: (replyto #f)
-         expiry: (expiry #f))
+         expiry: (expiry #f)
+         reply-expected: (reply-expected? #f))
   (let (nonce (current-thread-nonce!))
-    (and (send-message dest (envelope msg dest (current-thread) nonce replyto expiry))
+    (and (send-message dest (envelope msg dest (current-thread) nonce replyto expiry reply-expected?))
          nonce)))
 
 ;; sends a message and receives the reply with a timeout.
@@ -76,7 +84,7 @@
           timeout: (timeo default-reply-timeout))
   (let* ((expiry (timeout->expiry timeo))
          (nonce (current-thread-nonce!)))
-    (unless (send-message dest (envelope msg dest (current-thread) nonce replyto expiry))
+    (unless (send-message dest (envelope msg dest (current-thread) nonce replyto expiry #t))
       (raise-actor-error 'send-message "actor is dead" dest))
     (<< ((envelope reply _ _ _ (eqv? nonce))
          reply)
@@ -90,6 +98,7 @@
 (defsyntax-parameter* @nonce @@nonce "Bad syntax; not in reaction context")
 (defsyntax-parameter* @replyto @@replyto "Bad syntax; not in reaction context")
 (defsyntax-parameter* @expiry @@expiry "Bad syntax; not in reaction context")
+(defsyntax-parameter* @reply-expected? @@reply-expected? "Bad syntax; not in reaction context")
 
 ;; receive macros
 (begin-syntax
@@ -141,19 +150,22 @@
     (with-syntax ((((pat body ...) ...) clauses)
                   (loop loop))
       #'(lambda ($envelope)
-          (match $envelope
-            ((envelope $message $dest $source $nonce $replyto $expiry)
-             (syntax-parameterize ((@@envelope (quote-syntax $envelope))
-                                   (@@message  (quote-syntax $message))
-                                   (@@dest     (quote-syntax $dest))
-                                   (@@source   (quote-syntax $source))
-                                   (@@nonce    (quote-syntax $nonce))
-                                   (@@replyto  (quote-syntax $replyto))
-                                   (@@expiry   (quote-syntax $expiry)))
-               (match $message
-                 (pat (thread-mailbox-extract-and-rewind) body ...) ...
-                 (else (loop)))))
-            (else (loop))))))
+          (if (&envelope-expired? $envelope)
+            (loop)
+            (match $envelope
+              ((envelope $message $dest $source $nonce $replyto $expiry $reply-expected?)
+               (syntax-parameterize ((@@envelope (quote-syntax $envelope))
+                                     (@@message  (quote-syntax $message))
+                                     (@@dest     (quote-syntax $dest))
+                                     (@@source   (quote-syntax $source))
+                                     (@@nonce    (quote-syntax $nonce))
+                                     (@@replyto  (quote-syntax $replyto))
+                                     (@@expiry   (quote-syntax $expiry))
+                                     (@@reply-expected? (quote-syntax $reply-expected?)))
+                 (match $message
+                   (pat (thread-mailbox-extract-and-rewind) body ...) ...
+                   (else (loop)))))
+              (else (loop)))))))
 
   (def (parse-receive stx body)
     (let lp ((rest body) (clauses []) (timeout #f))
@@ -239,17 +251,30 @@
     (mutex-unlock! +message-types-mx+)
     klass))
 
-;; default reply timeout; 3s
-(def default-reply-timeout 3)
+;; default reply timeout; 5s
+(def default-reply-timeout 5)
 
 ;; thread-send/check
 ;; a variant of thread-send that checks the destination thread for liveness
-(def (thread-send/check thread msg)
-  (declare (not interrupts-enabled))
-  (macro-check-initialized-thread thread (send-message thread msg)
-    (if (macro-thread-end-condvar thread)
-      (##thread-send thread msg)
-      #f)))
+(cond-expand
+  (gerbil-smp
+   (extern namespace: #f
+     macro-lock-thread!
+     macro-unlock-thread!)
+   (def (thread-send/check thread msg)
+     (declare (not interrupts-enabled))
+     (macro-lock-thread! thread)
+     (let (end-condvar (macro-thread-end-condvar thread))
+       (macro-unlock-thread! thread)
+       (if (macro-thread-end-condvar thread)
+       (##thread-send thread msg)
+       #f))))
+  (else
+   (def (thread-send/check thread msg)
+     (declare (not interrupts-enabled))
+     (if (macro-thread-end-condvar thread)
+       (##thread-send thread msg)
+       #f))))
 
 (def mailbox-timeout '#(timeout))
 (def mailbox-empty '#(empty))

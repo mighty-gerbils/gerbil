@@ -51,9 +51,9 @@
   (test-suite "marshalling and unmarshalling"
     (test-case "basic objects"
       (check-marshal-unmarshal (A 1 2) message-tag)
-      (check-marshal-unmarshal (envelope 'abc 1 2 3 4 #f) envelope-tag)
-      (check-marshal-error (envelope 'abc (current-thread) (current-thread) 3 4 #f))
-      (check-marshal-unmarshal (envelope (A 1 2) 1 2 3 4 #f) envelope-tag)
+      (check-marshal-unmarshal (envelope 'abc 1 2 3 4 #f #t) envelope-tag)
+      (check-marshal-error (envelope 'abc (current-thread) (current-thread) 3 4 #f #f))
+      (check-marshal-unmarshal (envelope (A 1 2) 1 2 3 4 #f #f) envelope-tag)
       (check-marshal-unmarshal (void) void-tag)
       (check-marshal-unmarshal '() null-tag)
       (check-marshal-unmarshal #t true-tag)

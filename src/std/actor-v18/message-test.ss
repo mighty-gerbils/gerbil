@@ -23,7 +23,8 @@
            (check @source => (current-thread))
            (check @nonce => 0)
            (check @replyto => #f)
-           (check @expiry => #f)))
+           (check @expiry => #f)
+           (check @reply-expected? => #f)))
       (check (-> (current-thread) 'world) => 1)
       (<- (value
            (check value => 'world)

@@ -43,7 +43,7 @@
       (raise-io-error 'BufferedReader-unmarshal "unrecognized object tag" tag)))))
 
 (defwriter-ext* (marshal-envelope buf obj)
-  (with ((envelope message dest source nonce replyto expiry) obj)
+  (with ((envelope message dest source nonce replyto expiry reply-expected?) obj)
     (when (or (thread? source)
               (handle? source)
               (thread? dest)
@@ -55,11 +55,12 @@
            (w3 (&BufferedWriter-marshal buf source))
            (w4 (&BufferedWriter-marshal buf nonce))
            (w5 (&BufferedWriter-marshal buf replyto))
-           (w6 (&BufferedWriter-marshal buf expiry)))
-      (fx+ w1 w2 w3 w4 w5 w6))))
+           (w6 (&BufferedWriter-marshal buf expiry))
+           (w7 (&BufferedWriter-marshal buf reply-expected?)))
+      (fx+ w1 w2 w3 w4 w5 w6 w7))))
 
 (defreader-ext* (unmarshal-envelope buf)
-  (let (obj (make-envelope #f #f #f #f #f #f))
+  (let (obj (make-envelope #f #f #f #f #f #f #f))
     (set! (&envelope-message obj)
       (&BufferedReader-unmarshal buf))
     (set! (&envelope-dest obj)
@@ -71,6 +72,8 @@
     (set! (&envelope-replyto obj)
       (&BufferedReader-unmarshal buf))
     (set! (&envelope-expiry obj)
+      (&BufferedReader-unmarshal buf))
+    (set! (&envelope-reply-expected? obj)
       (&BufferedReader-unmarshal buf))
     obj))
 
