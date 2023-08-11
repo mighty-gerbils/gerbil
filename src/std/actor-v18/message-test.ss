@@ -4,7 +4,6 @@
 (import :gerbil/gambit/threads
         :std/test
         :std/error
-        :std/iter
         ./message)
 (export actor-message-test)
 
