@@ -7,8 +7,7 @@
         :gerbil/gambit/exceptions
         :std/sugar
         :std/format
-        :std/srfi/19
-        )
+        :std/srfi/19)
 (export start-logger!
         current-logger
         current-logger-options
@@ -60,6 +59,16 @@
 (def current-logger-options
   (make-parameter 1))
 
+(def (get-logger-options)
+  (cond
+   ((not (actor-thread? (current-thread)))
+    (current-logger-options))
+   ((thread-local-get 'logger-options))
+   ((current-logger-options)
+    => (lambda (opts)
+         (thread-local-set! 'logger-options opts)
+         opts))))
+
 (defstruct logger-options (threshold sources))
 
 ;; the generic message logger
@@ -75,7 +84,7 @@
   (cond
    ((current-logger)
     => (lambda (logger)
-         (let (opts (current-logger-options))
+         (let (opts (get-logger-options))
            (cond
             ((logger-options? opts)
              (cond
