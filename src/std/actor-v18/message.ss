@@ -129,7 +129,7 @@
                      (if (eq? next mailbox-timeout)
                        (begin
                          (thread-mailbox-rewind)
-                         (raise-timeout 'receive "reaceive timeout" expiry))
+                         (raise-timeout 'receive "receive timeout" expiry))
                        (recv-e next))))))))))))
 
   (def (generate-receive-raw stx)
