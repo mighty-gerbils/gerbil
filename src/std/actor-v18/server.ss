@@ -191,7 +191,7 @@
         (set! next-actor-id (1+ next-actor-id))
         (hash-put! actor-threads actor [actor-id])
         (hash-put! actors actor-id actor)
-        (spawn/name 'actor-monitor actor-monitor actor (current-thread))
+        (spawn/name 'actor-monitor actor-monitor actor (current-thread) thread-send/check)
         actor-id))))
 
   (def (expired? msg)
@@ -355,6 +355,8 @@
       => (lambda (notifications)
            (let ((source  (&envelope-source msg))
                  (nonce   (&envelope-nonce msg)))
+             (set! (&envelope-message msg)
+               result)
              (set! (&envelope-dest msg)
                source)
              (set! (&envelope-source msg)
@@ -365,12 +367,16 @@
                nonce)
              (set! (&envelope-reply-expected? msg)
                #f)
+
+             (verbosef "sending remote control reply to ~a: ~a" srv-id msg)
              (thread-send/check (!connected-writer (car notifications))
                (!send msg)))))))
 
   (def (send-control-reply! msg result)
     (let ((source  (&envelope-source msg))
           (nonce   (&envelope-nonce msg)))
+      (set! (&envelope-message msg)
+        result)
       (set! (&envelope-dest msg)
         source)
       (set! (&envelope-source msg)
@@ -381,6 +387,8 @@
         nonce)
       (set! (&envelope-reply-expected? msg)
         #f)
+
+      (verbosef "sending control reply to ~a: ~a" source msg)
       (thread-send/check source msg)))
 
   ;; main loop
@@ -418,7 +426,7 @@
     (while #t
       (<<
        ;; envelope
-       ((and msg (? envelope?))
+       ((? envelope? msg)
         (unless (expired? msg)
           (let* ((source  (&envelope-source msg))
                  (actor-id (add-actor! source)))
@@ -443,6 +451,7 @@
 
              ((control-message? msg)
               (debugf "control message from ~a: ~a" source msg)
+
               (match (&envelope-message msg)
                 ;; shutdown notification
                 ((!shutdown)
@@ -454,11 +463,7 @@
                    (send-control-reply! msg (!error "actor already registered"))
                    (begin
                      (hash-put! actors name source)
-                     (let (names (hash-ref actor-threads source))
-                       (unless (pair? (cdr names))
-                         (spawn/name 'actor-monitor
-                                     actor-monitor source (current-thread) thread-send/check))
-                       (hash-put! actor-threads source (cons name names)))
+                     (hash-update! actor-threads source (cut cons name <>))
                      (let (result (!ok (reference id name)))
                        (send-control-reply! msg result)))))
 
@@ -526,8 +531,7 @@
 
                 (else (warnf "unexpected control message: ~a" msg))))
 
-             (else
-              (warnf "unexpected message: ~a" msg))))))
+             (else (warnf "unexpected message: ~a" msg))))))
 
        ;; internal control messages
        ((!recv src-id msg)
@@ -584,8 +588,7 @@
                    (send-remote-control-reply! src-id msg
                      (!error "server id mismatch"))))
 
-                (else
-                 (warnf "unexpected control message from: ~a: ~a" src-id msg))))
+                (else (warnf "unexpected control message from: ~a: ~a" src-id msg))))
 
              ((and (pair? dest) (eq? (car dest) 'lookup))
               ;; registry lookup result
@@ -632,6 +635,7 @@
         (cond
          ((hash-get actor-threads actor)
           => (lambda (ids)
+               (verbosef "removing dead actor ~a; ids: ~a" actor ids)
                (hash-remove! actor-threads actor)
                (for (actor-id ids)
                  (hash-remove! actors actor-id))))))
