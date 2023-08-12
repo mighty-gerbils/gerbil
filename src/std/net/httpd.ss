@@ -8,13 +8,17 @@
         :std/net/httpd/file)
 (export start-http-server!
         stop-http-server!
+        remote-stop-http-server!
         current-http-server
+        http-register-handler
+        remote-http-register-handler
+
         make-default-http-mux
         make-recursive-http-mux
         make-static-http-mux
         make-recursive-static-http-mux
         make-custom-http-mux
-        http-register-handler
+
         http-request?
         http-request-method http-request-url http-request-path http-request-params
         http-request-proto http-request-client http-request-headers

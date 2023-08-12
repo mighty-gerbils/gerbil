@@ -14,7 +14,9 @@
         :std/net/httpd/mux)
 (export start-http-server!
         stop-http-server!
+        remote-stop-http-server!
         http-register-handler
+        remote-http-register-handler
         current-http-server)
 
 (deflogger httpd)
@@ -36,19 +38,44 @@
 (def (stop-http-server! httpd)
   (let (tgroup (thread-thread-group httpd))
     (try
-     (-> httpd (!shutdown))
+     (->> httpd (!shutdown))
      (thread-join! httpd)
      (finally
       (thread-group-kill! tgroup)))))
 
+(defcall-actor (remote-stop-http-server! server-id)
+  (with-actor-server
+   (->> (make-handle (current-actor-server) (reference server-id 'httpd))
+        (!shutdown)))
+  error: "error stopping remote httpd" server-id)
+
 ;; handler: lambda (request response)
 (defcall-actor (http-register-handler httpd path handler (host #f))
-  (if (string? path)
-    (if (procedure? handler)
-      (->> httpd (!register-handler host path handler))
-      (error "Bad handler; expected procedure" handler))
-    (error "Bad path; expected string" path))
+  (check-handler path handler
+    (->> httpd (!register-handler host path handler)))
   error: "error registering handler" path)
+
+;; registers a handler with a remote httpd
+(defcall-actor (remote-http-register-handler server-id path handler (host #f))
+  (with-actor-server
+   (check-handler path handler
+     (->> (make-handle (current-actor-server) (reference server-id 'httpd))
+          (!register-handler host path handler))))
+  error: "error registering remote handler" server-id path)
+
+(defrule (with-actor-server do-it)
+  (if (current-actor-server)
+    do-it
+    (error "no actor server")))
+
+(defrule (check-handler path handler do-it)
+  (cond
+   ((not (string? path))
+    (error "Bad path; expected string" path))
+   ((not (procedure? handler))
+    (error "Bad handler; expected procedure" handler))
+   (else
+    do-it)))
 
 ;;; implementation
 (def (http-server socks mux)
@@ -73,6 +100,7 @@
       (while #t
         (<-
          ((!register-handler host path handler)
+          (infof "registering handler in host ~a: ~a" (or host '(any)) path)
           (try
            (put-handler! mux host path handler)
            (--> (!ok (void)))
@@ -80,6 +108,7 @@
              (--> (!error (error-message e))))))
 
          ((!shutdown)
+          (--> (!ok (void)))
           (exit 'shutdown))
 
          ((!actor-dead thread)
