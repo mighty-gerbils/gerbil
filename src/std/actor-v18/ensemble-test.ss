@@ -10,14 +10,13 @@
         :std/io
         :std/os/hostname
         :std/os/temporaries
-        :std/sort
-        :std/misc/symbol
         ./message
         ./proto
         ./server
         ./ensemble
         ./registry
-        ./cookie)
+        ./cookie
+        "test-util")
 (export actor-ensemble-test test-setup! test-cleanup!)
 
 (def (test-setup!)
@@ -29,31 +28,6 @@
   ;; uncomment this if you uncommented above
   (current-logger-options 'WARN)
   (void))
-
-(def (reset-nonce!)
-  (thread-local-set! 'nonce 0))
-
-(def (echo-actor-main srv main)
-  (def ref
-    (match (register-actor! 'echo srv)
-      (ref ref)))
-
-  (-> main (cons 'ready ref))
-  (let/cc exit
-    (while #t
-      (<- ((!shutdown)
-           (exit 'shutdown))
-          (greeting
-           (-> @source (cons 'hello greeting)
-               replyto: @nonce expiry: @expiry))))))
-
-(def (echo-actor srv main)
-  (with-exception-stack-trace (cut echo-actor-main srv main)))
-
-(def (actor-error-with? what)
-  (lambda (exn)
-    (and (actor-error? exn)
-         (member what (error-irritants exn)))))
 
 (def actor-ensemble-test
   (test-suite "actor ensemble"
@@ -110,13 +84,11 @@
 
         ;; check they are there
         (check (ensemble-list-servers registry-srv)
-               => (sort [[srv1-id '(test) addr1] [srv2-id '(test) addr2]]
-                        (lambda (a b) (symbol<? (car a) (car b)))))
+               => (sort-server-list [[srv1-id '(test) addr1] [srv2-id '(test) addr2]]))
         (check (ensemble-lookup-server srv1-id registry-srv) => [addr1])
         (check (ensemble-lookup-server srv2-id registry-srv) => [addr2])
         (check (ensemble-lookup-servers/role 'test registry-srv)
-               => (sort [[srv1-id addr1] [srv2-id addr2]]
-                        (lambda (a b) (symbol<? (car a) (car b)))))
+               => (sort-server-list [[srv1-id addr1] [srv2-id addr2]]))
 
         ;; start the echos
         (def actor1
@@ -210,22 +182,18 @@
 
         ;; check they are there
         (check (ensemble-list-servers srv1)
-               => (sort [[srv1-id '(test) addr1] [srv2-id '(test) addr2]]
-                        (lambda (a b) (symbol<? (car a) (car b)))))
+               => (sort-server-list [[srv1-id '(test) addr1] [srv2-id '(test) addr2]]))
         (check (ensemble-list-servers srv2)
-               => (sort [[srv1-id '(test) addr1] [srv2-id '(test) addr2]]
-                        (lambda (a b) (symbol<? (car a) (car b)))))
+               => (sort-server-list [[srv1-id '(test) addr1] [srv2-id '(test) addr2]]))
         (check (ensemble-lookup-server srv1-id srv1) => [addr1])
         (check (ensemble-lookup-server srv2-id srv1) => [addr2])
         (check (ensemble-lookup-server srv1-id srv2) => [addr1])
         (check (ensemble-lookup-server srv2-id srv2) => [addr2])
 
         (check (ensemble-lookup-servers/role 'test srv1)
-               => (sort [[srv1-id addr1] [srv2-id addr2]]
-                        (lambda (a b) (symbol<? (car a) (car b)))))
+               => (sort-server-list [[srv1-id addr1] [srv2-id addr2]]))
         (check (ensemble-lookup-servers/role 'test srv2)
-               => (sort [[srv1-id addr1] [srv2-id addr2]]
-                        (lambda (a b) (symbol<? (car a) (car b)))))
+               => (sort-server-list [[srv1-id addr1] [srv2-id addr2]]))
 
         (stop-actor-server! srv2)
         (check (thread-join! srv2) => 'shutdown)

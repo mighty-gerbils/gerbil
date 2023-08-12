@@ -37,7 +37,12 @@
 (def (ensemble-registry-main srv registry)
   (register-actor! 'registry srv)
   (infof "starting registry ...")
-  (def flush-ticker (spawn/name 'ticker ticker (current-thread)))
+
+  (def (sort-server-list lst)
+    (sort lst (lambda (a b) (symbol<? (car a) (car b)))))
+  (def flush-ticker
+    (spawn/name 'ticker ticker (current-thread)))
+
   (let/cc exit
     (while #t
       (<-
@@ -62,12 +67,12 @@
          (role
           (debugf "looking up servers by role ~a for ~a" role @source)
           (let* ((result (&Registry-lookup-servers/role registry role))
-                 (result (sort result (lambda (a b) (symbol<? (car a) (car b))))))
+                 (result (sort-server-list result)))
             (-> @source (!ok result) replyto: @nonce)))
          (else
           (debugf "listing servers for ~a" @source)
           (let* ((result (&Registry-list-servers registry))
-                 (result (sort result (lambda (a b) (symbol<? (car a) (car b))))))
+                 (result (sort-server-list result)))
             (-> @source (!ok result) replyto: @nonce)))))
        ((!shutdown)
         (infof "shutting down ...")
