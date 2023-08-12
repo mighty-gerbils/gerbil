@@ -2,12 +2,23 @@
 ;;; (C) vyzo at hackzen.org
 ;;; std/net/httpd unit-test
 
-(import :std/test
+(import :gerbil/gambit/threads
+        :gerbil/gambit/random
+        :std/test
+        :std/sugar
         :std/net/httpd
         :std/net/request
-        :gerbil/gambit/random
-        )
-(export httpd-test)
+        :std/actor)
+(export httpd-test test-setup! test-cleanup!)
+
+(def (test-setup!)
+  ;; clear leftover parameterization from other tests
+  (current-actor-server #f)
+  ;; clear leftover messages from other tests
+  (while (thread-receive 0 #f)))
+
+(def (test-cleanup!)
+  (current-actor-server #f))
 
 (def httpd-test
   (test-suite "test :std/net/httpd"
