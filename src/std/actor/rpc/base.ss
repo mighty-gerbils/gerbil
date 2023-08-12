@@ -6,9 +6,9 @@
         :std/misc/uuid
         :std/misc/sync
         :std/net/bio
-        :std/actor/message
-        :std/actor/proto
-        :std/actor/xdr)
+        ../message
+        ../proto
+        ../xdr)
 (export #t)
 
 ;;; wire rpc protocols

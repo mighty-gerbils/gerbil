@@ -5,9 +5,9 @@
 (import :gerbil/gambit/random
         :gerbil/gambit/os
         :std/test
-        :std/actor/xdr
         :std/net/bio
-        :std/iter)
+        :std/iter
+        ./xdr)
 (export xdr-test)
 
 (def xdr-test

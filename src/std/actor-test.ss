@@ -5,7 +5,7 @@
 (import :gerbil/gambit
         :std/test
         :std/event
-        :std/actor)
+        ./actor)
 (export actor-test)
 
 (defproto hello

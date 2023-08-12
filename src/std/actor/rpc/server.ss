@@ -11,13 +11,13 @@
         :std/net/socket
         :std/os/socket
         :std/misc/uuid
-        :std/actor/message
-        :std/actor/proto
-        :std/actor/rpc/base
-        :std/actor/rpc/connection
-        :std/actor/rpc/proto/null
-        :std/actor/rpc/proto/cookie
-        :std/actor/rpc/proto/cipher
+        ../message
+        ../proto
+        ./base
+        ./connection
+        ./proto/null
+        ./proto/cookie
+        ./proto/cipher
         )
 (export
   current-rpc-server

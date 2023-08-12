@@ -2,5 +2,5 @@
 ;;; (C) vyzo
 ;;; actor rpc interface
 
-(import :std/actor/rpc/server)
-(export (import: :std/actor/rpc/server))
+(import ./rpc/server)
+(export (import: ./rpc/server))

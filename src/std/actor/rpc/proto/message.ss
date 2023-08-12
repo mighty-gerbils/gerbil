@@ -5,10 +5,10 @@
 (import :std/error
         :std/misc/uuid
         :std/net/bio
-        :std/actor/message
-        :std/actor/proto
-        :std/actor/xdr
-        :std/actor/rpc/base)
+        ../../message
+        ../../proto
+        ../../xdr
+        ../base)
 (export #t)
 
 (declare (not safe))

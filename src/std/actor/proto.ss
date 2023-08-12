@@ -12,8 +12,8 @@
         :std/net/address
         :std/misc/uuid
         :std/misc/completion
-        :std/actor/message
-        :std/actor/xdr
+        ./message
+        ./xdr
         (for-syntax :std/stxutil))
 (export
   rpc-io-error? raise-rpc-io-error
