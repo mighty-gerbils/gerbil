@@ -18,10 +18,14 @@
 (export actor-server-test actor-server-ipc-test test-setup! test-cleanup!)
 
 (def (test-setup!)
-  (current-logger-options 'VERBOSE))
+  ;; uncomment this if you are debugging test failures
+  ;; (current-logger-options 'VERBOSE)
+  (void))
 
 (def (test-cleanup!)
-  (current-logger-options 'WARN))
+  ;; uncomment this if you uncommented above
+  ;; (current-logger-options 'WARN)
+  (void))
 
 (def (reset-nonce!)
   (thread-local-set! 'nonce 0))
