@@ -282,6 +282,7 @@
                 begin-ffi
                 test-suite test-case
                 interface
+                with-result
                 )
               'scheme-indent-function 1)
   (gerbil-put '(syntax-case ast-case core-syntax-case core-ast-case
@@ -294,6 +295,7 @@
                 defstruct defclass defgeneric defmethod defmessage
                 definline definline*
                 define-values define-syntaxes
+                defcall-actor
                 )
               'scheme-indent-function 'defun)
   )
@@ -347,7 +349,8 @@
                        ;; iterators
                        "for" "for*" "for/collect" "for/fold"
                        ;; actor messaging
-                       "<-" "<<" "->" "->>"
+                       "<-" "<<" "->" "->>" "-->"
+                       "with-result"
                        ;; test
                        "run-tests!" "test-suite" "test-case"
                        "check" "checkf" "check-eq?" "check-not-eq?" "check-eqv?"
@@ -465,6 +468,10 @@
    '("(\\(defregister\\|defvar\\|defconst\\)\\s-+\\(\\sw+\\)"
      (1 font-lock-keyword-face)
      (2 font-lock-variable-name-face)))
+  (gerbil-fontlock-add
+   '("(\\(defcall-actor\\)\\s-+(?\\(\\sw+\\)"
+     (1 font-lock-keyword-face)
+     (2 font-lock-function-name-face)))
 
   (gerbil-fontlock-add
    '("\\_<\\([?!&]+\\)"
