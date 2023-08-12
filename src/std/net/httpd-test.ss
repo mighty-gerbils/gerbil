@@ -20,45 +20,45 @@
 (def (test-cleanup!)
   (current-actor-server #f))
 
+(def server-address
+  "127.0.0.1:19999")
+
+(def server-url
+  (string-append "http://" server-address))
+
+(def greeting
+  "hello there!")
+
+(def greeting-not-found
+  "these aren't the droids you are looking for")
+
+(def (write-simple-handler req res)
+  (http-response-write res 200 '(("Content-Type" . "text/plain"))
+                       greeting))
+
+(def (write-chunked-handler req res)
+  (http-response-begin res 200 '(("Content-Type" . "text/plain")))
+  (http-response-chunk res "hello ")
+  (http-response-chunk res "there!")
+  (http-response-end res))
+
+(def (root-handler req res)
+  (http-response-write res 200 [] "nil"))
+
+(def (default-handler req res)
+  (http-response-write res 404 '(("Content-Type" . "text/plain"))
+                       greeting-not-found))
+
+(def (echo-handler req res)
+  (http-response-write res 200 [] (http-request-body req)))
+
 (def httpd-test
-  (test-suite "test :std/net/httpd"
-
-    (def server-address
-      "127.0.0.1:19999")
-
-    (def server-url
-      (string-append "http://" server-address))
-
-    (def greeting
-      "hello there!")
-
-    (def greeting-not-found
-      "these aren't the droids you are looking for")
-
-    (def (write-simple-handler req res)
-      (http-response-write res 200 '(("Content-Type" . "text/plain"))
-                           greeting))
-
-    (def (write-chunked-handler req res)
-      (http-response-begin res 200 '(("Content-Type" . "text/plain")))
-      (http-response-chunk res "hello ")
-      (http-response-chunk res "there!")
-      (http-response-end res))
-
-    (def (root-handler req res)
-      (http-response-write res 200 [] "nil"))
-
-    (def (default-handler req res)
-      (http-response-write res 404 '(("Content-Type" . "text/plain"))
-                           greeting-not-found))
-
-    (def (echo-handler req res)
-      (http-response-write res 200 [] (http-request-body req)))
+  (test-suite "httpd"
 
     (def httpd
       (start-http-server! server-address mux: (make-recursive-http-mux)))
 
-    (test-case "test basic handlers"
+    (test-case "basic handlers"
       (http-register-handler httpd "/simple" write-simple-handler)
       (http-register-handler httpd "/chunked" write-chunked-handler)
       (http-register-handler httpd "/" root-handler)
@@ -95,7 +95,7 @@
         (request-close req))
       )
 
-    (test-case "test POST handler"
+    (test-case "POST handler"
       (http-register-handler httpd "/echo" echo-handler)
 
       ;; small text body
