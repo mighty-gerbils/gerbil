@@ -16,9 +16,7 @@
 (def (reset-thread!)
   (reset-nonce!)
   ;; drain all existing (leftover) messages
-  (let lp ()
-    (<< (_ (lp))
-        (else (void)))))
+  (while (thread-receive 0 #f)))
 
 (def (echo-actor-main srv main)
   (def ref
