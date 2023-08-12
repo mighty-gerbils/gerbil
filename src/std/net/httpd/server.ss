@@ -8,12 +8,10 @@
         :std/logger
         :std/io
         :std/os/socket
-        :std/actor-v13/message
-        :std/actor-v13/proto
+        :std/actor
         :std/misc/threads
         :std/net/httpd/handler
-        :std/net/httpd/mux
-)
+        :std/net/httpd/mux)
 (export start-http-server!
         stop-http-server!
         http-register-handler
@@ -21,11 +19,8 @@
 
 (deflogger httpd)
 
-(defproto httpd
-  (register host path handler)
-  event:
-  (join thread)
-  (shutdown))
+;; handler registration
+(defmessage !register-handler (host path handler))
 
 (def current-http-server
   (make-parameter #f))
@@ -41,18 +36,19 @@
 (def (stop-http-server! httpd)
   (let (tgroup (thread-thread-group httpd))
     (try
-     (!!httpd.shutdown httpd)
+     (-> httpd (!shutdown))
      (thread-join! httpd)
      (finally
       (thread-group-kill! tgroup)))))
 
 ;; handler: lambda (request response)
-(def (http-register-handler httpd path handler (host #f))
+(defcall-actor (http-register-handler httpd path handler (host #f))
   (if (string? path)
     (if (procedure? handler)
-      (!!httpd.register httpd host path handler)
+      (->> httpd (!register-handler host path handler))
       (error "Bad handler; expected procedure" handler))
-    (error "Bad path; expected string" path)))
+    (error "Bad path; expected string" path))
+  error: "error registering handler" path)
 
 ;;; implementation
 (def (http-server socks mux)
@@ -70,38 +66,42 @@
     (for-each ServerSocket-close socks))
 
   (def (monitor thread)
-    (def (join server thread)
-      (with-catch void (cut thread-join! thread))
-      (!!httpd.join server thread))
-    (spawn/name 'http-server-monitor join (current-thread) thread))
+    (spawn/name 'http-server-monitor actor-monitor thread (current-thread)))
 
   (def (loop)
-    (<- ((!httpd.register host path handler k)
-         (try
-          (put-handler! mux host path handler)
-          (!!value (void) k)
-          (catch (e)
-            (!!error e k)))
-         (loop))
-        ((!httpd.shutdown)
-         (void))
-        ((!httpd.join thread)
-         (try
-          (thread-join! thread)
-          (warnf "acceptor thread ~a exited unexpectedly" (thread-name thread))
-          (catch (uncaught-exception? e)
-            (errorf "acceptor error: ~a" (uncaught-exception-reason e)))
-          (catch (e)
-            (errorf "acceptor error: ~a" e)))
-         (loop))
-        (bogus
-         (warnf "unexpected message ~a" bogus)
-         (loop))))
+    (let/cc exit
+      (while #t
+        (<-
+         ((!register-handler host path handler)
+          (try
+           (put-handler! mux host path handler)
+           (--> (!ok (void)))
+           (catch (e)
+             (--> (!error (error-message e))))))
+
+         ((!shutdown)
+          (exit 'shutdown))
+
+         ((!actor-dead thread)
+          (try
+           (thread-join! thread)
+           (warnf "acceptor thread ~a exited unexpectedly" (thread-name thread))
+           (catch (uncaught-exception? e)
+             (errorf "acceptor error: ~a" (uncaught-exception-reason e)))
+           (catch (e)
+             (errorf "acceptor error: ~a" e))))
+
+         (bogus
+          (warnf "unexpected message from ~a: ~a" @source bogus))))))
 
   (try
    (for-each monitor acceptors)
+
+   (when (current-actor-server)
+     (register-actor! 'httpd))
+
    (parameterize ((current-http-server (current-thread)))
-     (loop))
+     (with-exception-stack-trace loop))
    (catch (e)
      (errorf "unhandled exception: ~a" e)
      (raise e))
