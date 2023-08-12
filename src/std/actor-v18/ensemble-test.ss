@@ -104,9 +104,9 @@
                ref)))
 
         (def actor1-proxy-srv2
-          (proxy srv2 actor1-ref))
+          (handle srv2 actor1-ref))
         (def actor2-proxy-srv1
-          (proxy srv1 actor2-ref))
+          (handle srv1 actor2-ref))
 
         ;; and do some echoing; the servers should connect through a registry lookup
         (check (->> actor1-proxy-srv2 'world) =>  '(hello . world))

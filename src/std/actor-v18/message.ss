@@ -13,6 +13,15 @@
 (def (raise-actor-error where what . irritants)
   (raise (make-actor-error what irritants where)))
 
+;; default reply timeout; 5s
+(def +default-reply-timeout+ 5)
+
+(def (default-reply-timeout)
+  +default-reply-timeout+)
+
+(def (set-default-reply-timeout! timeo)
+  (set! +default-reply-timeout+ timeo))
+
 ;; base type for all serializable messages; the contents must be serializable.
 (defstruct message ()
   transparent: #t)
@@ -51,9 +60,10 @@
     (< (time->seconds expiry) (##current-time-point))))
 
 ;; actor handle base type.
-;; - actor is the thread that handles messages on behalf of another actor.
-(defstruct handle (actor)
-  unchecked: #t)
+;; - proxy is the thread that handles messages on behalf of another actor.
+;; - ref is a reference to an actor; see ./server
+(defstruct handle (proxy ref)
+  final: #t unchecked: #t)
 
 ;; sends a message to an actor
 ;; - actor must be a thread or handle
@@ -64,7 +74,7 @@
    ((thread? actor)
     (thread-send/check actor msg))
    ((handle? actor)
-    (thread-send/check (&handle-actor actor) msg))
+    (thread-send/check (&handle-proxy actor) msg))
    (else
     (error "Bad argument; expected thread or handle" actor))))
 
@@ -81,7 +91,7 @@
 ;; sends a message and receives the reply with a timeout.
 (def (->> dest msg
           replyto: (replyto #f)
-          timeout: (timeo default-reply-timeout))
+          timeout: (timeo +default-reply-timeout+))
   (let* ((expiry (timeout->expiry timeo))
          (nonce (current-thread-nonce!)))
     (unless (send-message dest (envelope msg dest (current-thread) nonce replyto expiry #t))
@@ -250,9 +260,6 @@
   (let (klass (hash-get +message-types+ type-id))
     (mutex-unlock! +message-types-mx+)
     klass))
-
-;; default reply timeout; 5s
-(def default-reply-timeout 5)
 
 ;; thread-send/check
 ;; a variant of thread-send that checks the destination thread for liveness

@@ -41,7 +41,7 @@
         (<- ((and ['ready . ref] (? (lambda (_) (eq? @source actor))))
              ref)))
       (def actor-proxy
-        (proxy srv actor-ref))
+        (handle srv actor-ref))
 
       (check (list-actors srv) => [actor-ref])
       (check (->> actor 'world) => '(hello . world))
@@ -128,9 +128,9 @@
              ref)))
 
       (def actor1-proxy-srv2
-        (proxy srv2 actor1-ref))
+        (handle srv2 actor1-ref))
       (def actor2-proxy-srv1
-        (proxy srv1 actor2-ref))
+        (handle srv1 actor2-ref))
 
       (check (list-actors srv1) => [actor1-ref])
       (check (list-actors srv2) => [actor2-ref])
@@ -194,9 +194,9 @@
                ref)))
 
         (def actor1-proxy-srv2
-          (proxy srv2 actor1-ref))
+          (handle srv2 actor1-ref))
         (def actor2-proxy-srv1
-          (proxy srv1 actor2-ref))
+          (handle srv1 actor2-ref))
 
         (check (->> actor1-proxy-srv2 'world) =>  '(hello . world))
         (check (list-connections srv2) => [[srv1-id addr1]])

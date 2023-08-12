@@ -9,7 +9,7 @@
 
 ;; stops a remote actor server
 (def (remote-stop-actor-server! srv-id (srv (current-actor-server)))
-  (-> (proxy srv (reference srv-id 0)) (!shutdown)))
+  (-> (handle srv (reference srv-id 0)) (!shutdown)))
 
 ;; lists the registered actors in a remote server
 (def (remote-list-actors srv-id (srv (current-actor-server)))

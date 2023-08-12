@@ -80,7 +80,7 @@
         (&Registry-close registry)
         (exit 'shutdown))
 
-       ('tick
+       ((!tick)
         (&Registry-flush registry))
 
        (unexpected

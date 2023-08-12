@@ -322,6 +322,7 @@
     "actor-v18/server"
     "actor-v18/registry"
     "actor-v18/ensemble"
+    "actor-v18/api"
     ;; DEPRECATEED; TO BE REMOVED after v19
     ;; :std/actor
     (gxc: "actor/message" ,@(include-gambit-sharp))

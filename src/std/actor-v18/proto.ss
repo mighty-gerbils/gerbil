@@ -9,7 +9,10 @@
 (defmessage !ok (value))
 (defmessage !error (message))
 (defmessage !shutdown ())
+(defmessage !actor-dead (thread))
+(defmessage !tick (id seqno))
 
+;; package private
 (defmessage !join (who))
 (defmessage !register (name))
 (defmessage !list-actors (srv))
@@ -18,7 +21,6 @@
 (defmessage !ensemble-add-server (id addrs roles))
 (defmessage !ensemble-remove-server (id))
 (defmessage !ensemble-lookup-server (id role))
-(defmessage !actor-dead (thread))
 (defmessage !lookup-timeout (srv nonce))
 
 (defmessage !connected (conn id addr dir reader writer))
@@ -38,10 +40,20 @@
 
 (def (ticker peer (period 1) (tick 'tick))
   (let/cc exit
-    (while #t
-      (thread-sleep! period)
-      (<- ((!shutdown)
-           (exit 'shutdown))
-          (else
-           (unless (-> peer tick)
-             (exit 'peer-dead)))))))
+    (let (seqno 0)
+      (while #t
+        (thread-sleep! period)
+        (<- ((!shutdown)
+             (exit 'shutdown))
+            (else
+             (unless (-> peer (!tick tick seqno))
+               (exit 'peer-dead))
+             (set! seqno (1+ seqno))))))))
+
+(def (ticker-after peer initial-delay (period 1) (tick 'tick))
+  (thread-sleep! initial-delay)
+  (ticker peer period tick))
+
+(def (after time peer (tick 'tick))
+  (thread-sleep! time)
+  (-> peer (!tick tick #f)))

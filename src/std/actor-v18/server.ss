@@ -31,13 +31,9 @@
 (defmessage reference (server id)
   unchecked: #t)
 
-;; handles for actors proxied by the server
-(defstruct (proxy handle) (reference)
-  final: #t unchecked: #t print: (reference))
-
 ;; creates a proxy handle from a reference
 (def (reference->handle ref (srv (current-actor-server)))
-  (make-proxy srv ref))
+  (make-handle srv ref))
 
 ;; starts the actor server
 ;; - cookie is a u8vector, used for authenticating connections.
@@ -107,13 +103,34 @@
     ((!error what)
      (raise-actor-error 'list-connections "error retrieving server connections" what))))
 
+;; Default registry addresses: unix /tmp/ensemble/registry
+(def +default-registry-addresses+
+  [[unix: (hostname) "/tmp/ensemble/registry"]])
+
+(def (default-registry-addresses)
+  +default-registry-addresses+)
+
+(def (set-default-registry-addresses! addrs)
+  (set! +default-registry-addresses+ addrs))
+
 ;; Default known servers: registry at default address
-(def (default-known-servers)
+(def +default-known-servers+
   (hash-eq (registry (default-registry-addresses))))
 
-;; Default registry addresses: unix /tmp/ensemble/registry
-(def (default-registry-addresses)
-  [[unix: (hostname) "/tmp/ensemble/registry"]])
+(def (default-known-servers)
+  +default-known-servers+)
+
+(def (set-default-known-servers! servers)
+  (set! +default-known-servers+ servers))
+
+;; Default server address cache ttl
+(def +server-address-cache-ttl+ 300) ; 5min
+
+(def (server-address-cache-ttl)
+  +server-address-cache-ttl+)
+
+(def (set-server-address-cache-ttl! ttl)
+  (set! +server-address-cache-ttl+ ttl))
 
 ;;; Internals
 (def (make-random-identifier)
@@ -182,7 +199,7 @@
     (not (handle? (&envelope-dest msg))))
 
   (defrule (routed-message? msg)
-    (proxy? (&envelope-dest msg)))
+    (handle? (&envelope-dest msg)))
 
   (def (add-actor! actor)
     (cond
@@ -234,7 +251,7 @@
           (match result
             ((!ok notification)
              (let ((nonce (current-thread-nonce!))
-                   (expiry (timeout->expiry default-reply-timeout)))
+                   (expiry (timeout->expiry +default-reply-timeout+)))
                (hash-put! pending-lookup-nonce srv-id nonce)
                (spawn/name 'registry-lookup-timeout
                            registry-lookup-timeout (current-thread) expiry srv-id nonce)
@@ -255,7 +272,7 @@
            (when (eqv? pending-nonce nonce)
              (debugf "server lookup result: ~a ~a" srv-id result)
              (when (!ok? result)
-               (update-server-addrs! srv-id (!ok-value result) address-cache-ttl))
+               (update-server-addrs! srv-id (!ok-value result) +server-address-cache-ttl+))
              (hash-remove! pending-lookup-nonce srv-id)
              (cond
               ((hash-get pending-lookups srv-id)
@@ -442,7 +459,7 @@
             (cond
              ((routed-message? msg)
               (let* ((dest (&envelope-dest msg))
-                     (dest-ref (&proxy-reference dest))
+                     (dest-ref (&handle-ref dest))
                      (dest-srv-id (&reference-server dest-ref))
                      (dest-actor-id (&reference-id dest-ref)))
                 (if (or (not dest-srv-id) (eq? dest-srv-id id))
@@ -526,7 +543,7 @@
                 ((!ensemble-add-server srv-id addrs roles)
                  (unless (eq? srv-id id)
                    ;; update our known address mapping
-                   (update-server-addrs! srv-id addrs address-cache-ttl))
+                   (update-server-addrs! srv-id addrs +server-address-cache-ttl+))
                  ;; update the registry
                  (send-to-registry! actor-id msg))
 
@@ -611,7 +628,7 @@
               => (lambda (actor)
                    ;; rewrite the envelope and forward
                    (set! (&envelope-source msg)
-                     (proxy (current-thread) (reference src-id (&envelope-source msg))))
+                     (handle (current-thread) (reference src-id (&envelope-source msg))))
                    (set! (&envelope-dest msg) actor)
                    (thread-send/check actor msg)))
 
@@ -659,5 +676,3 @@
 (def (registry-lookup-timeout srv expiry srv-id nonce)
   (thread-sleep! expiry)
   (thread-send/check srv (!lookup-timeout srv-id nonce)))
-
-(def address-cache-ttl 300) ; 5min
