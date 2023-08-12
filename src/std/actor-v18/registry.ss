@@ -75,6 +75,7 @@
           (let* ((result (&Registry-list-servers registry))
                  (result (sort-server-list result)))
             (--> (!ok result))))))
+
        ((!shutdown)
         (infof "shutting down ...")
         (-> flush-ticker (!shutdown))
