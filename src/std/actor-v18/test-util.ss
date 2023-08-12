@@ -31,8 +31,7 @@
       (<- ((!shutdown)
            (exit 'shutdown))
           (greeting
-           (-> @source (cons 'hello greeting)
-               replyto: @nonce expiry: @expiry))))))
+           (--> (cons 'hello greeting)))))))
 
 (def (echo-actor srv main)
   (with-exception-stack-trace (cut echo-actor-main srv main)))

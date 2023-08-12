@@ -4,6 +4,7 @@
 (import :gerbil/gambit/threads
         :gerbil/gambit/os
         :std/error
+        :std/sugar
         :std/stxparam)
 (export #t)
 
@@ -99,6 +100,10 @@
     (<< ((envelope reply _ _ _ (eqv? nonce))
          reply)
         timeout: expiry)))
+
+;; sends a reply in a reaction context
+(defrule (--> result)
+  (-> @source result replyto: @nonce expiry: @expiry))
 
 ;; syntax parameters bound in envelope receive context
 (defsyntax-parameter* @envelope @@envelope "Bad syntax; not in reaction context")

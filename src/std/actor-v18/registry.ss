@@ -49,12 +49,12 @@
        ((!ensemble-add-server id addrs roles)
         (infof "adding server ~a ~a at ~a" id roles addrs)
         (&Registry-add-server registry id addrs roles)
-        (-> @source (!ok (void)) replyto: @nonce))
+        (--> (!ok (void))))
 
        ((!ensemble-remove-server id)
         (infof "removing server ~a" id)
         (&Registry-remove-server registry id)
-        (-> @source (!ok (void)) replyto: @nonce))
+        (--> (!ok (void))))
 
        ((!ensemble-lookup-server id role)
         (cond
@@ -62,20 +62,19 @@
           (debugf "looking up server ~a for ~a" id @source)
           (cond
            ((&Registry-lookup-server registry id)
-            => (lambda (value)
-                 (-> @source (!ok value) replyto: @nonce)))
+            => (lambda (value) (--> (!ok value))))
            (else
-            (-> @source (!error "unknown server") replyto: @nonce))))
+            (--> (!error "unknown server")))))
          (role
           (debugf "looking up servers by role ~a for ~a" role @source)
           (let* ((result (&Registry-lookup-servers/role registry role))
                  (result (sort-server-list result)))
-            (-> @source (!ok result) replyto: @nonce)))
+            (--> (!ok result))))
          (else
           (debugf "listing servers for ~a" @source)
           (let* ((result (&Registry-list-servers registry))
                  (result (sort-server-list result)))
-            (-> @source (!ok result) replyto: @nonce)))))
+            (--> (!ok result))))))
        ((!shutdown)
         (infof "shutting down ...")
         (-> flush-ticker (!shutdown))

@@ -30,7 +30,7 @@
     (test-case "send+receive reply"
       (reset-thread!)
       (def (reply)
-        (<- (value (-> @source (cons 'reply value) replyto: @nonce))))
+        (<- (value (--> (cons 'reply value)))))
       (def reply-thread (spawn (cut with-exception-stack-trace reply)))
       (check (->> reply-thread 'hello) => '(reply . hello))
       (thread-join! reply-thread))
