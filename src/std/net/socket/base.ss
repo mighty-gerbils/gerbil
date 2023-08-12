@@ -3,7 +3,7 @@
 ;;; synchronous sockets -- base
 
 (import :gerbil/gambit/os
-        :std/actor/proto
+        :std/actor-v13/proto
         :std/misc/timeout)
 (export #t)
 

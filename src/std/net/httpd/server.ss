@@ -8,8 +8,8 @@
         :std/logger
         :std/io
         :std/os/socket
-        :std/actor/message
-        :std/actor/proto
+        :std/actor-v13/message
+        :std/actor-v13/proto
         :std/misc/threads
         :std/net/httpd/handler
         :std/net/httpd/mux

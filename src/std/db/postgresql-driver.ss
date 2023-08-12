@@ -5,8 +5,8 @@
 (import :gerbil/gambit/threads
         :gerbil/gambit/ports
         :gerbil/gambit/bits
-        :std/actor/proto
-        :std/actor/message
+        :std/actor-v13/proto
+        :std/actor-v13/message
         :std/misc/channel
         :std/misc/list
         :std/net/bio

@@ -537,12 +537,12 @@
 ;; flonum marshalling
 (begin-ffi (xdr-float->bytes! xdr-bytes->float)
   (c-declare #<<END-C
-static double ffi_xdr_read_float_bytes (___SCMOBJ bytes)
+static double ffi_actor13_xdr_read_float_bytes (___SCMOBJ bytes)
 {
  return *(double*)(U8_DATA (bytes));
 }
 
-static int ffi_xdr_write_float_bytes (double val, ___SCMOBJ bytes)
+static int ffi_actor13_xdr_write_float_bytes (double val, ___SCMOBJ bytes)
 {
  *(double*)(U8_DATA (bytes)) = val;
   return 0;
@@ -550,10 +550,10 @@ static int ffi_xdr_write_float_bytes (double val, ___SCMOBJ bytes)
 END-C
 )
 
-  (define-c-lambda std/actor/xdr#xdr-float->bytes!
+  (define-c-lambda std/actor-v13/xdr#xdr-float->bytes!
     (double scheme-object) int
-    "ffi_xdr_write_float_bytes")
+    "ffi_actor13_xdr_write_float_bytes")
 
-  (define-c-lambda std/actor/xdr#xdr-bytes->float
+  (define-c-lambda std/actor-v13/xdr#xdr-bytes->float
     (scheme-object) double
-    "ffi_xdr_read_float_bytes"))
+    "ffi_actor13_xdr_read_float_bytes"))

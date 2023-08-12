@@ -7,6 +7,7 @@
     "foreign"
     ;; tests for :std/foreign
     "foreign-test-support"
+    "deprecation"
     "format"
     "pregexp"
     "sort"
@@ -312,7 +313,7 @@
     "protobuf/macros"
     "protobuf/proto-grammar"
     "protobuf/proto"
-    ;; TO BE REPACKAGED by :std/actor
+    ;; actor-v18
     (gxc: "actor-v18/message" ,@(include-gambit-sharp))
     (gxc: "actor-v18/io" ,@(include-gambit-sharp))
     "actor-v18/cookie"
@@ -323,20 +324,20 @@
     "actor-v18/registry"
     "actor-v18/ensemble"
     "actor-v18/api"
-    ;; DEPRECATEED; TO BE REMOVED after v19
-    ;; :std/actor
-    (gxc: "actor/message" ,@(include-gambit-sharp))
-    (gxc: "actor/xdr"  ,@(include-gambit-sharp))
-    (gxc: "actor/proto")
-    "actor/rpc/base"
-    "actor/rpc/proto/message"
-    "actor/rpc/proto/null"
-    "actor/rpc/proto/cookie"
-    "actor/rpc/proto/cipher"
-    "actor/rpc/connection"
-    "actor/rpc/server"
-    "actor/rpc"
     "actor"
+    ;; DEPRECATEED: actor-v13
+    (gxc: "actor-v13/message" ,@(include-gambit-sharp))
+    (gxc: "actor-v13/xdr"  ,@(include-gambit-sharp))
+    (gxc: "actor-v13/proto" "-cc-options" "--param max-gcse-memory=300000000")
+    "actor-v13/rpc/base"
+    "actor-v13/rpc/proto/message"
+    "actor-v13/rpc/proto/null"
+    "actor-v13/rpc/proto/cookie"
+    "actor-v13/rpc/proto/cipher"
+    "actor-v13/rpc/connection"
+    "actor-v13/rpc/server"
+    "actor-v13/rpc"
+    "actor-v13"
     "web/fastcgi"
     "web/rack"
     "db/dbi"
