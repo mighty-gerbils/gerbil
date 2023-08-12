@@ -4,6 +4,7 @@
 
 (import :gerbil/gambit/threads
         :std/test
+        :std/sugar
         :std/os/signal
         :std/os/signal-handler
         :std/os/pid)
@@ -12,6 +13,9 @@
 (def signal-handler-test
   (test-suite "test :std/os/signal-handler"
     (test-case "test basic signal handling"
+      ;; drain the message queue first from possible garbage from other tests
+      (while (thread-receive 0 #f))
+
       (add-signal-handler!
        SIGHUP
        (let (thread (current-thread))
