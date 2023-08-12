@@ -64,7 +64,7 @@
 ;; - proxy is the thread that handles messages on behalf of another actor.
 ;; - ref is a reference to an actor; see ./server
 (defstruct handle (proxy ref)
-  final: #t unchecked: #t)
+  unchecked: #t final: #t transparent: #t)
 
 ;; sends a message to an actor
 ;; - actor must be a thread or handle
