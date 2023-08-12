@@ -176,4 +176,5 @@
 
       ;; clean up
       (check (stop-actor-server! tmp-actor-server) => 'shutdown)
-      (check (stop-actor-server! httpd-actor-server) => 'shutdown))))
+      (check (stop-actor-server! httpd-actor-server) => 'shutdown)
+      (delete-file httpd-actor-server-sock))))
