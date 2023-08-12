@@ -170,6 +170,11 @@
         (check (request-text req) => greeting)
         (request-close req))
 
+      (let (req (http-get (string-append server-url "/chunked")))
+        (check (request-status req) => 200)
+        (check (request-text req) => greeting)
+        (request-close req))
+
       ;; now shut it down
       (remote-stop-http-server! httpd-actor-server-id)
       (check (thread-join! httpd) => 'shutdown)
