@@ -8,6 +8,23 @@
 
 (defmessage !ok (value))
 (defmessage !error (message))
+
+(defrules with-result ()
+  ((_ expr fail!)
+   (match expr
+     ((!ok value) value)
+     ((!error what) (fail! what))))
+  ((_ expr)
+   (with-result expr error)))
+
+(defrules defcall-actor ()
+  ((_ (proc arg ...) expr error: error-msg error-irritant ...)
+   (def (proc arg ...)
+     (with-result expr
+       (lambda (what) (raise-actor-error 'proc error-msg error-irritant ... what)))))
+  ((_ (proc arg ...) expr)
+   (defcall-actor (proc arg ...) expr error: "actor error")))
+
 (defmessage !shutdown ())
 (defmessage !actor-dead (thread))
 (defmessage !tick (id seqno))

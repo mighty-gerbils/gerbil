@@ -217,9 +217,11 @@
             (writer (spawn/name 'actor-connection-writer actor-connection-writer srv peer-id writer)))
 
         (def (shutdown! how)
-          (with-catch void (cut StreamSocket-close sock))
+          ;; try to gracefully shutdown the writer; give it a reply's worth of time
+          ;; to drain its queue
           (thread-send/check writer (!shutdown))
-          (with-catch void (cut thread-join! writer))
+          (with-catch void (cut thread-join! writer +default-reply-timeout+))
+          (with-catch void (cut StreamSocket-close sock))
           (with-catch void (cut thread-join! reader))
           (exit how))
 

@@ -72,36 +72,28 @@
 ;; - name is a symbol; the actor's name in the server
 ;; returns a a reference to the actor in the server.
 ;; raises an error if an actor is already registered with the same name.
-(def (register-actor! name (srv (current-actor-server)))
-  (match (->> srv (!register name))
-    ((!ok value) value)
-    ((!error what)
-     (raise-actor-error 'register-actor! "error registering actor" name what))))
+(defcall-actor (register-actor! name (srv (current-actor-server)))
+  (->> srv (!register name))
+  error: "error registering actor" name)
 
 ;; lists the registered actors with a server
 ;; returns a list of references
-(def (list-actors (srv (current-actor-server)))
-  (match (->> srv (!list-actors #f))
-    ((!ok value) value)
-    ((!error what)
-     (raise-actor-error 'list-actors "error listing actors" what))))
+(defcall-actor (list-actors (srv (current-actor-server)))
+  (->> srv (!list-actors #f))
+  error:  "error listing actors")
 
 ;; ensures there is a connection to a server in the ensemble.
 ;; if the addresses are not specified, it is looked up in the registry.
 ;; Raises an error if the connection fails.
-(def (connect-to-server! id (addrs #f) (srv (current-actor-server)))
-  (match (->> srv (!connect #f id addrs))
-    ((!ok value) value)
-    ((!error what)
-     (raise-actor-error 'connect-to-server! "error connecting to server" id what))))
+(defcall-actor (connect-to-server! id (addrs #f) (srv (current-actor-server)))
+  (->> srv (!connect #f id addrs))
+  error: "error connecting to server" id)
 
 ;; lists the server connections.
 ;; Returns a list [[id addr ...] ...]
-(def (list-connections (srv (current-actor-server)))
-  (match (->> srv (!list-connections #f))
-    ((!ok value) value)
-    ((!error what)
-     (raise-actor-error 'list-connections "error retrieving server connections" what))))
+(defcall-actor (list-connections (srv (current-actor-server)))
+  (->> srv (!list-connections #f))
+  error: "error retrieving server connections")
 
 ;; Default registry addresses: unix /tmp/ensemble/registry
 (def +default-registry-addresses+
@@ -572,6 +564,7 @@
               (match (&envelope-message msg)
                 ((!shutdown)
                  (infof "remote shutdown from ~a" src-id)
+                 (send-remote-control-reply! src-id msg (!ok (void)))
                  (shutdown!))
 
                 ((!list-actors srv-id)

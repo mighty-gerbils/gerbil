@@ -48,11 +48,13 @@
       (<-
        ((!ensemble-add-server id addrs roles)
         (infof "adding server ~a ~a at ~a" id roles addrs)
-        (&Registry-add-server registry id addrs roles))
+        (&Registry-add-server registry id addrs roles)
+        (-> @source (!ok (void)) replyto: @nonce))
 
        ((!ensemble-remove-server id)
         (infof "removing server ~a" id)
-        (&Registry-remove-server registry id))
+        (&Registry-remove-server registry id)
+        (-> @source (!ok (void)) replyto: @nonce))
 
        ((!ensemble-lookup-server id role)
         (cond

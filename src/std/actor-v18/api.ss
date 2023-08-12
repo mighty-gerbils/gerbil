@@ -8,6 +8,7 @@
 (export
   ;; ./message
   (struct-out actor-error)
+  raise-actor-error
   (struct-out envelope)
   defmessage
   message?
@@ -34,6 +35,7 @@
               !tick)
   actor-monitor
   ticker ticker-after after
+  with-result defcall-actor
   ;; ./server
   (struct-out reference)
   reference->handle
