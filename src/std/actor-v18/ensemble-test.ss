@@ -21,12 +21,12 @@
 
 (def (test-setup!)
   ;; uncomment this if you are debugging test failures
-  (current-logger-options 'VERBOSE)
+  ;; (current-logger-options 'VERBOSE)
   (void))
 
 (def (test-cleanup!)
   ;; uncomment this if you uncommented above
-  (current-logger-options 'WARN)
+  ;; (current-logger-options 'WARN)
   (void))
 
 (def actor-ensemble-test
