@@ -13,6 +13,13 @@
 (def (reset-nonce!)
   (thread-local-set! 'nonce 0))
 
+(def (reset-thread!)
+  (reset-nonce!)
+  ;; drain all existing (leftover) messages
+  (let lp ()
+    (<< (_ (lp))
+        (else (void)))))
+
 (def (echo-actor-main srv main)
   (def ref
     (match (register-actor! 'echo srv)

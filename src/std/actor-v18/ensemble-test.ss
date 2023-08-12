@@ -32,7 +32,7 @@
 (def actor-ensemble-test
   (test-suite "actor ensemble"
     (test-case "basic ensemble functionality"
-      (reset-nonce!)
+      (reset-thread!)
       (let* ((registry-file-path (make-temporary-file-name "registry-file"))
              (registry-sock      (make-temporary-file-name "registry-sock"))
              (registry-addr      [unix: (hostname) registry-sock])
@@ -136,7 +136,7 @@
         ))
 
     (test-case "remote ensemble operations"
-            (reset-nonce!)
+            (reset-thread!)
       (let* ((registry-file-path (make-temporary-file-name "registry-file"))
              (registry-sock      (make-temporary-file-name "registry-sock"))
              (registry-addr      [unix: (hostname) registry-sock])

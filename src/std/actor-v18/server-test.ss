@@ -31,7 +31,7 @@
 (def actor-server-test
   (test-suite "actor server"
     (test-case "local server"
-      (reset-nonce!)
+      (reset-thread!)
 
       (def srv
         (start-actor-server! cookie: (make-random-cookie)))
@@ -51,7 +51,7 @@
       (check (thread-join! actor) => 'shutdown))
 
     (test-case "duplicate registration"
-      (reset-nonce!)
+      (reset-thread!)
 
       (def srv
         (start-actor-server! cookie: (make-random-cookie)))
@@ -72,7 +72,7 @@
       (check (thread-join! actor) => 'shutdown))
 
     (test-case "dead actor"
-      (reset-nonce!)
+      (reset-thread!)
 
       (def srv
         (start-actor-server! cookie: (make-random-cookie)))
@@ -93,7 +93,7 @@
 (def actor-server-ipc-test
   (test-suite "actor server ipc"
     (def (test-ipc addr1 addr2)
-      (reset-nonce!)
+      (reset-thread!)
 
       (def cookie (make-random-cookie))
       (def srv1
@@ -163,7 +163,7 @@
                   [tcp: addr2])))
 
     (test-case "implicit connection"
-      (reset-nonce!)
+      (reset-thread!)
 
       (let* ((tmp1 (make-temporary-file-name "actor-server"))
              (addr1 [unix: (hostname) tmp1]))
@@ -214,7 +214,7 @@
         (delete-file tmp1)))
 
     (test-case "connection error: no usable addresses"
-      (reset-nonce!)
+      (reset-thread!)
 
       (def cookie (make-random-cookie))
       (def srv1
@@ -237,7 +237,7 @@
       (check (thread-join! srv1) => 'shutdown))
 
     (test-case "connection error: bad address"
-      (reset-nonce!)
+      (reset-thread!)
 
       (def cookie (make-random-cookie))
       (def srv1
@@ -263,7 +263,7 @@
       (check (thread-join! srv1) => 'shutdown))
 
     (test-case "connection error: cookie mismatch"
-      (reset-nonce!)
+      (reset-thread!)
 
       (let* ((tmp1 (make-temporary-file-name "actor-server"))
              (addr1 [unix: (hostname) tmp1]))
