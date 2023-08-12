@@ -5,6 +5,8 @@
         :std/sugar
         :std/iter
         :std/interface
+        :std/sort
+        :std/misc/symbol
         ./logger
         ./message
         ./proto
@@ -24,27 +26,33 @@
   (path-expand "ensemble/registry" (getenv "GERBIL_PATH" "~/.gerbil")))
 
 ;; starts an ensemble server registry
-(def (start-ensemble-registry! (registry (make-registry)) (srv (current-actor-server)))
-  (spawn/name 'registry ensemble-registry srv (Registry registry)))
+(def (start-ensemble-registry! (path (default-registry-path)) (srv (current-actor-server)))
+  (let (registry (Registry (make-registry path)))
+    (spawn/name 'registry ensemble-registry srv registry)))
 
 ;;; Internals
 (def (ensemble-registry srv registry)
   (with-exception-stack-trace (cut ensemble-registry-main srv registry)))
 
 (def (ensemble-registry-main srv registry)
-  (def ticker (spawn/name 'ticker ticker (current-thread)))
+  (register-actor! 'registry srv)
+  (infof "starting registry ...")
+  (def flush-ticker (spawn/name 'ticker ticker (current-thread)))
   (let/cc exit
     (while #t
       (<-
        ((!ensemble-add-server id addrs roles)
+        (infof "adding server ~a ~a at ~a" id roles addrs)
         (&Registry-add-server registry id addrs roles))
 
        ((!ensemble-remove-server id)
+        (infof "removing server ~a" id)
         (&Registry-remove-server registry id))
 
        ((!ensemble-lookup-server id role)
         (cond
          (id
+          (debugf "looking up server ~a for ~a" id @source)
           (cond
            ((&Registry-lookup-server registry id)
             => (lambda (value)
@@ -52,13 +60,18 @@
            (else
             (-> @source (!error "unknown server") replyto: @nonce))))
          (role
-          (-> @source (!ok (&Registry-lookup-servers/role registry role)) replyto: @nonce))
+          (debugf "looking up servers by role ~a for ~a" role @source)
+          (let* ((result (&Registry-lookup-servers/role registry role))
+                 (result (sort result (lambda (a b) (symbol<? (car a) (car b))))))
+            (-> @source (!ok result) replyto: @nonce)))
          (else
-          (-> @source (!ok (&Registry-list-servers registry)) replyto: @nonce))))
-
+          (debugf "listing servers for ~a" @source)
+          (let* ((result (&Registry-list-servers registry))
+                 (result (sort result (lambda (a b) (symbol<? (car a) (car b))))))
+            (-> @source (!ok result) replyto: @nonce)))))
        ((!shutdown)
         (infof "shutting down ...")
-        (-> ticker (!shutdown))
+        (-> flush-ticker (!shutdown))
         (&Registry-close registry)
         (exit 'shutdown))
 
@@ -74,21 +87,23 @@
   constructor: :init!)
 
 (defmethod {:init! registry}
-  (lambda (self (path (default-registry-path)))
+  (lambda (self path)
     (let (path (path-expand path))
+      (create-directory* (path-directory path))
       (set! (&registry-path self) path)
       (set! (&registry-servers self) (make-hash-table-eq))
       (set! (&registry-roles self) (make-hash-table-eq))
-      (call-with-input-file path
-        (lambda (file)
-          (let lp ()
-            (let (next (read file))
-              (unless (eof-object? next)
-                (match next
-                  ([id roles . addrs]
-                   (registry::add-server self id addrs roles)
-                   (lp))))))))
-      (set! (&registry-dirty? self) #f))))
+      (when (file-exists? path)
+        (call-with-input-file path
+          (lambda (file)
+            (let lp ()
+              (let (next (read file))
+                (unless (eof-object? next)
+                  (match next
+                    ([id roles . addrs]
+                     (registry::add-server self id addrs roles)
+                     (lp))))))))
+        (set! (&registry-dirty? self) #f)))))
 
 (defmethod {add-server registry}
   (lambda (self id addrs roles)

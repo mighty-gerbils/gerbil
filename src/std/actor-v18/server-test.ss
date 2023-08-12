@@ -144,9 +144,9 @@
       (check (connect-to-server! srv2-id [addr2] srv1)
              => [addr2])
       (check (list-connections srv1) => [[srv2-id addr2]])
-      (check (list-connections srv2) ? (lambda (conns) (eq? (caar conns) srv1-id)))
+      (check (caar (list-connections srv2)) => srv1-id)
       (check (remote-list-connections srv1-id srv2) => [[srv2-id addr2]])
-      (check (remote-list-connections srv2-id srv1) ? (lambda (conns) (eq? (caar conns) srv1-id)))
+      (check (caar (remote-list-connections srv2-id srv1)) => srv1-id)
 
       (def actor1
         (spawn/name 'echo1 echo-actor srv1 (current-thread)))
@@ -226,14 +226,15 @@
           (<- ((and ['ready . ref] (? (lambda (_) (eq? @source actor2))))
                ref)))
 
-      (def actor1-proxy-srv2
-        (proxy srv2 actor1-ref))
-      (def actor2-proxy-srv1
-        (proxy srv1 actor2-ref))
+        (def actor1-proxy-srv2
+          (proxy srv2 actor1-ref))
+        (def actor2-proxy-srv1
+          (proxy srv1 actor2-ref))
 
         (check (->> actor1-proxy-srv2 'world) =>  '(hello . world))
         (check (list-connections srv2) => [[srv1-id addr1]])
         (check (->> actor2-proxy-srv1 'world) =>  '(hello . world))
+        (check (list-connections srv1) => [[srv2-id [unix: (hostname) "(local)"]]])
 
         (stop-actor-server! srv2)
         (check (thread-join! srv2) => 'shutdown)

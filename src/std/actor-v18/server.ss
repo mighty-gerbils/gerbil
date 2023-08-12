@@ -10,6 +10,8 @@
         :std/crypto
         :std/text/hex
         :std/os/hostname
+        :std/sort
+        :std/misc/symbol
         (only-in :std/logger start-logger!)
         (only-in :std/srfi/1 reverse!)
         ./logger
@@ -297,14 +299,19 @@
              (cont result))))))))
 
   (def (get-actors)
-    (for/fold (r []) (actor-id (hash-keys actors))
-      (if (symbol? actor-id)
-        (cons (reference id actor-id) r)
-        r)))
+    (sort
+     (for/fold (r []) (actor-id (hash-keys actors))
+       (if (symbol? actor-id)
+         (cons (reference id actor-id) r)
+         r))
+     symbol<?))
 
   (def (get-conns)
-    (for/fold (r []) ([srv-id . notifications] (hash->list conns))
-      (cons (cons srv-id (map !connected-addr notifications)) r)))
+    (sort
+     (for/fold (r []) ([srv-id . notifications] (hash->list conns))
+       (cons (cons srv-id (map !connected-addr notifications)) r))
+     (lambda (a b)
+       (symbol<? (car a) (car b)))))
 
   (def (send-remote-message! msg srv-id dest-actor-id actor-id)
     (connect-to-server! srv-id
@@ -517,8 +524,9 @@
 
                 ;; ensemble control
                 ((!ensemble-add-server srv-id addrs roles)
-                 ;; update our known address mapping
-                 (update-server-addrs! srv-id addrs address-cache-ttl)
+                 (unless (eq? srv-id id)
+                   ;; update our known address mapping
+                   (update-server-addrs! srv-id addrs address-cache-ttl))
                  ;; update the registry
                  (send-to-registry! actor-id msg))
 
