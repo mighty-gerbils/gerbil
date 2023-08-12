@@ -22,6 +22,14 @@
 (def version-magic 18)
 (def default-handshake-timeout 60) ; 1min
 
+(def (peer-address sock)
+  (let (addr (StreamSocket-peer-address sock))
+  (if (eqv? (StreamSocket-domain sock) AF_UNIX)
+    (if (string-empty? addr)
+      "(local)"
+      addr)
+    addr)))
+
 (def (actor-listener srv sock cookie)
   (with-exception-stack-trace (cut actor-listener-main srv cookie sock)))
 
@@ -30,7 +38,7 @@
     (while #t
       (try
        (let (clisock (ServerSocket-accept sock))
-         (debugf "accepted connection from ~a" (StreamSocket-peer-address clisock))
+         (debugf "accepted connection from ~a" (peer-address clisock))
          (spawn/name 'actor-acceptor actor-acceptor srv clisock cookie))
        (catch (io-closed-error? e)
          ;; socket was closed
@@ -51,13 +59,13 @@
 (def (actor-acceptor-main srv sock cookie)
   (let/cc exit
     (def (fail! what)
-      (warnf "incomplete handshake with ~a: ~a"(StreamSocket-peer-address sock) what)
+      (warnf "incomplete handshake with ~a: ~a"(peer-address sock) what)
       (with-catch void (cut StreamSocket-close sock))
       (exit 'incomplete-handshake))
 
     (try
      (let* ((reader (StreamSocket-reader sock))
-            (reader (open-buffered-reader read))
+            (reader (open-buffered-reader reader))
             (writer (StreamSocket-writer sock))
             (writer (open-buffered-writer writer))
             (srv-id (thread-specific srv)))
@@ -85,7 +93,7 @@
                  (unless (equal? auth (digest srv-id peer-id salt cookie))
                    (fail! "authentication failed"))
                  (write-delimited writer (!accepted (digest srv-id peer-id cli-salt cookie)))
-                 (infof "authenticated client ~a at ~a" peer-id (StreamSocket-peer-address sock))
+                 (infof "authenticated client ~a at ~a" peer-id (peer-address sock))
                  ;; reset timeouts
                  (StreamSocket-set-input-timeout! sock #f)
                  (StreamSocket-set-output-timeout! sock #f)
@@ -94,12 +102,12 @@
                 ((? eof-object?)
                  (fail! "incomplete handshake"))
                 (unexpected
-                 (warnf "unexpected message from ~a: ~a" (StreamSocket-peer-address sock) unexpected)
+                 (warnf "unexpected message from ~a: ~a" (peer-address sock) unexpected)
                  (fail! "bad response")))))))
          ((? eof-object?)
           (fail! "incomplete handshake"))
          (unexpected
-          (warnf "unexpected message from ~a: ~a" (StreamSocket-peer-address sock) unexpected)
+          (warnf "unexpected message from ~a: ~a" (peer-address sock) unexpected)
           (fail! "bad hello"))))
      (catch (exn)
        (warnf "unhandled exception: ~a" exn)
@@ -134,7 +142,7 @@
 
     (try
      (let* ((reader (StreamSocket-reader sock))
-            (reader (open-buffered-reader read))
+            (reader (open-buffered-reader reader))
             (writer (StreamSocket-writer sock))
             (writer (open-buffered-writer writer))
             (srv-id (thread-specific srv)))
@@ -218,7 +226,7 @@
         (def (connection-notification)
           (!connected (current-thread)
                       peer-id
-                      (let (addr (StreamSocket-peer-address sock))
+                      (let (addr (peer-address sock))
                         (if (eqv? (StreamSocket-domain sock) AF_UNIX)
                           [unix: (hostname) addr]
                           [tcp: addr]))

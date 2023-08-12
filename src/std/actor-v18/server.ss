@@ -91,11 +91,11 @@
 ;; ensures there is a connection to a server in the ensemble.
 ;; if the addresses are not specified, it is looked up in the registry.
 ;; Raises an error if the connection fails.
-(def (connect! id (addrs #f) (srv (current-actor-server)))
+(def (connect-to-server! id (addrs #f) (srv (current-actor-server)))
   (match (->> srv (!connect #f id addrs))
     ((!ok value) value)
     ((!error what)
-     (raise-actor-error 'connect! "error connecting to server" id what))))
+     (raise-actor-error 'connect-to-server! "error connecting to server" id what))))
 
 ;; lists the server connections.
 ;; Returns a list [[id addr ...] ...]
@@ -272,7 +272,9 @@
 
   (def (connect-to-server! srv-id cont)
     (cond
-     ((hash-get cons srv-id)
+     ((not (symbol? srv-id))
+      (cont (!error "bad server identifier")))
+     ((hash-get conns srv-id)
       => (lambda (notifications)
            (cont (!ok (car notifications)))))
      ((hash-get pending-conns srv-id)
@@ -301,7 +303,7 @@
         r)))
 
   (def (get-conns)
-    (for/fold (r []) ([srv-id notifications] (hash->list conns))
+    (for/fold (r []) ([srv-id . notifications] (hash->list conns))
       (cons (cons srv-id (map !connected-addr notifications)) r)))
 
   (def (send-remote-message! msg srv-id dest-actor-id actor-id)

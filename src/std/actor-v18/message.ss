@@ -323,6 +323,7 @@
             (macro-fifo-next next)))
         (if (##pair? next2)
           (let ((result (macro-fifo-elem next2)))
+            (macro-mailbox-cursor-set! mb next)
             result)
             mailbox-empty)))))
 
