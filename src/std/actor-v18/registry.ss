@@ -10,7 +10,8 @@
         ./logger
         ./message
         ./proto
-        ./server)
+        ./server
+        ./path)
 (export #t)
 
 (interface Registry
@@ -23,7 +24,7 @@
   (close))
 
 (def (default-registry-path)
-  (path-expand "ensemble/registry" (getenv "GERBIL_PATH" "~/.gerbil")))
+  (path-expand "registry.data" (ensemble-server-path 'registry)))
 
 ;; starts an ensemble server registry
 (def (start-ensemble-registry! (path (default-registry-path)) (srv (current-actor-server)))
