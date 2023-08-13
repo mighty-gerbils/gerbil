@@ -440,6 +440,9 @@
              (lp))
             (_ (lp))
             (else (void))))
+      ;; give some grace period for actors to shutdown
+      (for (actor (hash-keys actor-threads))
+        (with-catch void (cut thread-join! actor 1 #f)))
       ;; and exit
       (exit 'shutdown))
 
