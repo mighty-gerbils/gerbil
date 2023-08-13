@@ -51,6 +51,12 @@
 (defmessage !response (auth salt))
 (defmessage !accepted (auth))
 
+(defmessage !load-library-module (id))
+(defmessage !load-code (code))
+(defmessage !load-code-by-hash (hash))
+(defmessage !eval (expr))
+(defmessage !continue (thunk))
+
 (def (actor-monitor actor peer (sendto ->))
   (with-catch void (cut thread-join! actor))
   (sendto peer (!actor-dead actor)))
