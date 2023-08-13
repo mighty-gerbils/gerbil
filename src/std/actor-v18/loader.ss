@@ -34,14 +34,19 @@
     (while #t
       (<-
        ((!load-library-module id)
-        (infof "loading library module ~a" id)
-        (background
-         'load-library-module
-         (cut load-module id)
-         (lambda (result) (--> (!ok result)))
-         (lambda (exn)
-           (warnf "error loading library module: ~a" exn)
-           (--> (!error (error-message exn))))))
+        ;; don't try to load if the library loader is not initialized
+        ;; cf static binaries
+        (if (&current-module-registry)
+          (begin
+            (infof "loading library module ~a" id)
+            (background
+             'load-library-module
+             (cut load-module id)
+             (lambda (result) (--> (!ok result)))
+             (lambda (exn)
+               (warnf "error loading library module: ~a" exn)
+               (--> (!error (error-message exn))))))
+          (--> (!error "process does not support library loading"))))
 
        ((!load-code code linker)
         (let (code-hash (hex-encode (sha256 code)))
@@ -96,3 +101,5 @@
      (-> loader (!continue (cut K result))))
    (catch (exn)
      (-> loader (!continue (cut E exn))))))
+
+(extern namespace: #f &current-module-registry)
