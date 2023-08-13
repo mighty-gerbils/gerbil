@@ -120,8 +120,9 @@
       (registry::remove-server self id))
     ;; and now add it
     (hash-put! (&registry-servers self) id (cons roles addrs))
-    (for (role roles)
-      (hash-update! (&registry-roles self) role (cut cons id <>) []))
+    (when roles
+      (for (role roles)
+        (hash-update! (&registry-roles self) role (cut cons id <>) [])))
     (set! (&registry-dirty? self) #t)))
 
 (defmethod {remove-server registry}

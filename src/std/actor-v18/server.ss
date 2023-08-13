@@ -308,12 +308,14 @@
              (cont result))))))))
 
   (def (get-actors)
-    (sort
-     (for/fold (r []) (actor-id (hash-keys actors))
-       (if (symbol? actor-id)
-         (cons (reference id actor-id) r)
-         r))
-     symbol<?))
+    (map
+      (cut reference id <>)
+      (sort
+       (for/fold (r []) (actor-id (hash-keys actors))
+         (if (symbol? actor-id)
+           (cons actor-id r)
+           r))
+       symbol<?)))
 
   (def (get-conns)
     (sort
