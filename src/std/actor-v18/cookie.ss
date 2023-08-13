@@ -1,11 +1,12 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor server cookies
-(import :std/crypto)
+(import :std/crypto
+        ./path)
 (export #t)
 
 (def (default-cookie-path)
-  (path-expand "ensemble/cookie" (getenv "GERBIL_PATH" "~/.gerbil")))
+  (path-expand "cookie" (ensemble-base-path)))
 
 (def (get-actor-server-cookie (path (default-cookie-path)))
   (let (path (path-expand path))
