@@ -112,6 +112,7 @@
 
   (def load-cmd
     (command 'load
+      force-flag
       registry-option
       library-flag
       server-id-argument
@@ -319,10 +320,13 @@
     (let ((values object-files library-modules)
           (get-module-objects module-id library-prefix))
       (start-actor-server-with-options! opt #f #f)
-      (for (lib library-modules)
-        (displayln "... loading library module " lib)
-        (displayln
-         (remote-load-library-module server-id lib)))
+      ;; when forcing, we don't load the library modules
+      ;; useful for static executables
+      (unless (hash-get opt 'force)
+        (for (lib library-modules)
+          (displayln "... loading library module " lib)
+          (displayln
+           (remote-load-library-module server-id lib))))
       (for (object-file object-files)
         (displayln "... loading code object file " object-file)
         (displayln
