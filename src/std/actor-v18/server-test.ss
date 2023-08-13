@@ -116,6 +116,7 @@
       (check (remote-list-connections srv1-id srv2) => [[srv2-id addr2]])
       (check (caar (remote-list-connections srv2-id srv1)) => srv1-id)
       (check (ping-server srv2-id srv1) => 'OK)
+      (check (ping-server srv1-id srv2) => 'OK)
 
       (def actor1
         (spawn/name 'echo1 echo-actor srv1 (current-thread)))
