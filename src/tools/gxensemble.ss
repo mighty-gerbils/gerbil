@@ -448,7 +448,9 @@
       => (lambda (file)
            (let (path
                  (if (equal? file "-")
-                   (path-expand "log" (ensemble-server-path (hash-ref opt 'server-id)))
+                   (path-expand "log"
+                                (ensemble-server-path
+                                 (if registry? 'registry (hash-ref opt 'server-id))))
                    (path-expand file)))
              (create-directory* (path-strip-directory path))
              (start-logger! path))))))
