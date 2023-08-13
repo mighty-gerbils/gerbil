@@ -13,6 +13,7 @@
         :std/actor-v18/server
         :std/actor-v18/loader
         :std/actor-v18/registry
+        :std/actor-v18/path
         :std/os/hostname)
 (export main)
 
@@ -22,6 +23,11 @@
       value: string->symbol
       default: 'INFO
       help: "specifies the log level to run with"))
+
+  (def logging-file-option
+    (option 'logging-file #f "--log-file"
+      default: #f
+      help: "specifies a log file instead of logging to stderr; if it is - then the log will be written into the ensemble server director log"))
 
   (def listen-option
     (option 'listen "-l" "--listen"
@@ -96,6 +102,7 @@
   (def run-cmd
     (command 'run
       logging-option
+      logging-file-option
       listen-option
       registry-option
       roles-option
@@ -107,6 +114,7 @@
   (def registry-cmd
     (command 'registry
       logging-option
+      logging-file-option
       listen-option
       help: "runs the ensemble registry"))
 
@@ -434,6 +442,16 @@
   (cond
    ((hash-get opt 'logging)
     => current-logger-options))
+  (when (or server? registry?)
+    (cond
+     ((hash-get opt 'logging-file)
+      => (lambda (file)
+           (let (path
+                 (if (equal? file "-")
+                   (path-expand "log" (ensemble-server-path (hash-ref opt 'server-id)))
+                   (path-expand file)))
+             (create-directory* (path-strip-directory path))
+             (start-logger! path))))))
   (let* ((known-servers
          (cond
           ((hash-get opt 'registry)
