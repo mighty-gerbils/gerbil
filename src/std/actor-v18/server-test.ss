@@ -145,7 +145,7 @@
       (check (->> actor1-proxy-srv2 'world) =>  '(hello . world))
       (check (->> actor2-proxy-srv1 'world) =>  '(hello . world))
 
-      (remote-stop-actor-server! srv2-id srv1)
+      (remote-stop-server! srv2-id srv1)
       (check (thread-join! srv2) => 'shutdown)
       (check (thread-join! actor2) => 'shutdown)
 

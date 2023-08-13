@@ -14,7 +14,7 @@
   error: "error shutting down actor" ref)
 
 ;; stops a remote actor server
-(defcall-actor (remote-stop-actor-server! srv-id (srv (current-actor-server)))
+(defcall-actor (remote-stop-server! srv-id (srv (current-actor-server)))
   (->> (handle srv (reference srv-id 0)) (!shutdown))
   error: "error shutting down remote server" srv-id)
 
@@ -54,31 +54,22 @@
   error: "error remotely loading library module" srv-id mod)
 
 ;; loads code in a remote server
-(defcall-actor (remote-load-code srv-id code-or-path (srv (current-actor-server)))
-  (let (code
-        (cond
-         ((u8vector? code-or-path)
-          code-or-path)
-         ((string? code-or-path)
-          (let* ((finfo (file-info code-or-path #t))
-                 (size  (file-info-size finfo))
-                 (code  (make-u8vector size)))
-            (call-with-input-file code-or-path
-              (lambda (in) (read-subu8vector code 0 size in)))
-            code))
-         (else
-          (error "Bad argument; expected u8vector or path to code object file" code-or-path))))
+(defcall-actor (remote-load-code srv-id object-file-path (srv (current-actor-server)))
+  (let ((code
+         (cond
+          ((string? object-file-path)
+           (let* ((finfo (file-info object-file-path #t))
+                  (size  (file-info-size finfo))
+                  (code  (make-u8vector size)))
+             (call-with-input-file object-file-path
+               (lambda (in) (read-subu8vector code 0 size in)))
+             code))
+          (else
+           (error "Bad argument; path to code object file" object-file-path))))
+        (linker (path-strip-directory object-file-path)))
     (->> (handle srv (reference srv-id 'loader))
-         (!load-code code)))
+         (!load-code code linker)))
   error: "error remotely load code" srv-id)
-
-;; loads existing code by hash in a remote server
-(defcall-actor (remote-load-code-by-hash srv-id code-hash (srv (current-actor-server)))
-  (if (string? code-hash)
-    (->> (handle srv (reference srv-id 'loader))
-         (!load-code-by-hash code-hash))
-    (error "Bad argument; expected hex encoded code hash" code-hash))
-  error: "error remotely loading code by hash" srv-id code-hash)
 
 ;; evals an expression in a remote server
 (defcall-actor (remote-eval srv-id expr (srv (current-actor-server)))

@@ -26,7 +26,7 @@
 
 (def (loader-main srv path)
   (register-actor! 'loader srv)
-  (infof "starting loader...")
+  (debugf "starting loader...")
 
   (def loaded (make-hash-table))
 
@@ -43,7 +43,7 @@
            (warnf "error loading library module: ~a" exn)
            (--> (!error (error-message exn))))))
 
-       ((!load-code code)
+       ((!load-code code linker)
         (let (code-hash (hex-encode (sha256 code)))
           (infof "loading code; hash: ~a" code-hash)
           (cond
@@ -59,36 +59,13 @@
                   (lambda (out) (write-subu8vector code 0 (u8vector-length code) out))))
               (background
                'load-code
-               (cut load code-path)
+               (cut ##load code-path void #f #f linker #f)
                (lambda (_)
                  (hash-put! loaded code-hash 'loaded)
                  (--> (!ok code-hash)))
                (lambda (exn)
                  (warnf "error loading code [~a]: ~a" code-hash exn)
                  (!error (error-message exn)))))))))
-
-       ((!load-code-by-hash code-hash)
-        (infof "loading code by hash: ~a" code-hash)
-        (cond
-         ((hash-get loaded code-hash)
-          => (lambda (state)
-               (infof "code already ~a [~a]" state code-hash)
-               (--> (!ok state))))
-         (else
-          (let (code-path (path-expand (string-append code-hash ".o1") path))
-            (if (file-exists? code-path)
-              (begin
-                (hash-put! loaded code-hash 'loading)
-                (background
-                 'load-code
-                 (cut load code-path)
-                 (lambda (_)
-                   (hash-put! loaded code-hash 'loaded)
-                   (--> (!ok code-hash)))
-                 (lambda (exn)
-                   (warnf "error loading code [~a]: ~a" code-hash exn)
-                   (!error (error-message exn)))))
-              (--> (!error "code does not exist")))))))
 
        ((!eval expr)
         (infof "eval ~a" expr)

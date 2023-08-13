@@ -52,8 +52,7 @@
 (defmessage !accepted (auth))
 
 (defmessage !load-library-module (id))
-(defmessage !load-code (code))
-(defmessage !load-code-by-hash (hash))
+(defmessage !load-code (code linker))
 (defmessage !eval (expr))
 (defmessage !continue (thunk))
 
