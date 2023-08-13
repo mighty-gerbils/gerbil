@@ -33,7 +33,9 @@
                          . addresses)
   (start-logger!)
   (let (socks (map (cut tcp-listen <> backlog: backlog sockopts: sockopts) addresses))
-    (spawn/group 'http-server http-server socks mux)))
+    (let (srv (spawn/group 'http-server http-server socks mux))
+      (current-http-server srv)
+      srv)))
 
 (def (stop-http-server! httpd)
   (let (tgroup (thread-thread-group httpd))
