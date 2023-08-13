@@ -548,6 +548,9 @@
                 ((!ensemble-lookup-server srv-id role)
                  (send-to-registry! actor-id msg))
 
+                ((!ping)
+                 (send-control-reply! msg (!ok 'OK)))
+
                 (else (warnf "unexpected control message: ~a" msg))))
 
              (else (warnf "unexpected message: ~a" msg))))))
@@ -606,7 +609,10 @@
                              (else
                               (send-remote-control-reply! src-id msg result))))))))
                    (send-remote-control-reply! src-id msg
-                     (!error "server id mismatch"))))
+                                               (!error "server id mismatch"))))
+
+                ((!ping)
+                 (send-remote-control-reply! src-id msg (!ok 'OK)))
 
                 (else (warnf "unexpected control message from: ~a: ~a" src-id msg))))
 

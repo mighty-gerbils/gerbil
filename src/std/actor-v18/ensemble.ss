@@ -8,6 +8,11 @@
         ./server)
 (export #t)
 
+;; stops (shuts down) an actor by reference
+(defcall-actor (stop-actor! ref (srv (current-actor-server)))
+  (->> (handle srv ref) (!shutdown))
+  error: "error shutting down actor" ref)
+
 ;; stops a remote actor server
 (defcall-actor (remote-stop-actor-server! srv-id (srv (current-actor-server)))
   (->> (handle srv (reference srv-id 0)) (!shutdown))
@@ -80,6 +85,18 @@
   (->> (handle srv (reference srv-id 'loader))
        (!eval expr))
   error: "error remotely evaluating expression" srv-id)
+
+;; pings a remote server
+(defcall-actor (ping-server srv-id (srv (current-actor-server)))
+  (->> (handle srv (reference srv-id 0))
+       (!ping))
+  error: "error pinging server" srv-id)
+
+;; pings an actor by reference
+(defcall-actor (ping-actor ref (srv (current-actor-server)))
+  (->> (handle srv ref)
+       (!ping))
+  error: "error pinging actor" ref)
 
 ;; adds a server to the ensemble
 (defcall-actor (ensemble-add-server! id addrs roles (srv (current-actor-server)))

@@ -28,6 +28,8 @@
     (while #t
       (<- ((!shutdown)
            (exit 'shutdown))
+          ((!ping)
+           (--> (!ok 'OK)))
           (greeting
            (--> (cons 'hello greeting)))))))
 

@@ -107,6 +107,9 @@
            (catch (e)
              (--> (!error (error-message e))))))
 
+         ((!ping)
+          (--> (!ok 'OK)))
+
          ((!shutdown)
           (--> (!ok (void)))
           (exit 'shutdown))

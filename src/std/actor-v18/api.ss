@@ -32,7 +32,8 @@
               !error
               !shutdown
               !actor-dead
-              !tick)
+              !tick
+              !ping)
   actor-monitor
   ticker ticker-after after
   with-result defcall-actor
@@ -44,8 +45,8 @@
   stop-actor-server!
   actor-server-identifier
   register-actor!
-  list-actors
   connect-to-server!
+  list-actors
   list-connections
   default-known-servers
   set-default-known-servers!

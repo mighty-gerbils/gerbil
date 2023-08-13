@@ -44,6 +44,7 @@
         (handle srv actor-ref))
 
       (check (list-actors srv) => [actor-ref])
+      (check (ping-actor actor-ref srv) => 'OK)
       (check (->> actor 'world) => '(hello . world))
       (check actor-ref ? reference?)
       (check (->> actor-proxy 'world) =>  '(hello . world))
@@ -114,6 +115,7 @@
       (check (caar (list-connections srv2)) => srv1-id)
       (check (remote-list-connections srv1-id srv2) => [[srv2-id addr2]])
       (check (caar (remote-list-connections srv2-id srv1)) => srv1-id)
+      (check (ping-server srv2-id srv1) => 'OK)
 
       (def actor1
         (spawn/name 'echo1 echo-actor srv1 (current-thread)))
@@ -136,6 +138,8 @@
       (check (list-actors srv2) => [actor2-ref])
       (check (remote-list-actors srv2-id srv1) => [actor2-ref])
       (check (remote-list-actors srv1-id srv2) => [actor1-ref])
+      (check (ping-actor actor2-ref srv1) => 'OK)
+      (check (ping-actor actor1-ref srv2) => 'OK)
 
       (check (->> actor1-proxy-srv2 'world) =>  '(hello . world))
       (check (->> actor2-proxy-srv1 'world) =>  '(hello . world))

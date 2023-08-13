@@ -28,9 +28,9 @@
 (defmessage !shutdown ())
 (defmessage !actor-dead (thread))
 (defmessage !tick (id seqno))
+(defmessage !ping ())
 
 ;; package private
-(defmessage !join (who))
 (defmessage !register (name))
 (defmessage !list-actors (srv))
 (defmessage !list-connections (srv))
