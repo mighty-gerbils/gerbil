@@ -1289,7 +1289,7 @@ usually running in a loop.
 The actor may be running locally, accessible from other threads within the process,
 or it can be part of an _ensemble_ of actors running in a substrate of servers.
 
-See [Working with Actor Ensembles](../tutorial/ensemble.md) for more
+See [Working with Actor Ensembles](../tutorials/ensemble.md) for more
 information about how to work with actor ensembles.  See the
 [Actors](../reference/actor.md) package documentation for more
 details in the API available for programming and interacting with
