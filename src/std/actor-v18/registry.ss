@@ -88,8 +88,7 @@
 
        (unexpected
         (warnf "unexpected message from ~a: ~a" @source @message)
-        (when @reply-expected?
-          (--> (!error "unexpected message"))))))))
+        (-->? (!error "unexpected message")))))))
 
 ;; registry implementation
 (defstruct registry (path servers roles dirty?)

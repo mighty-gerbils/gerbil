@@ -23,7 +23,7 @@
   message?
   make-handle handle? handle-proxy handle-ref
   send-message
-  -> ->> -->
+  -> ->> --> -->?
   <- <<
   @envelope
   @message

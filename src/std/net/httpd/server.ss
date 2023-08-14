@@ -126,7 +126,8 @@
              (errorf "acceptor error: ~a" e))))
 
          (bogus
-          (warnf "unexpected message from ~a: ~a" @source bogus))))))
+          (warnf "unexpected message from ~a: ~a" @source bogus)
+          (-->? (!error "unexpected message")))))))
 
   (try
    (for-each monitor acceptors)

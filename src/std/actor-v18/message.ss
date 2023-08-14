@@ -105,6 +105,11 @@
 (defrule (--> result)
   (-> @source result replyto: @nonce expiry: @expiry))
 
+;; conditionally sends a reply if one is expected
+(defrule (-->? result)
+  (when @reply-expected?
+    (--> result)))
+
 ;; syntax parameters bound in envelope receive context
 (defsyntax-parameter* @envelope @@envelope "Bad syntax; not in reaction context")
 (defsyntax-parameter* @message @@message "Bad syntax; not in reaction context")
