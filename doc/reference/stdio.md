@@ -155,7 +155,7 @@ Returns the peer address for a connected socket; this is undefined for ServerSoc
   option := fixnum
 ```
 Gets a socket option.
-See `:std/os/socket` for supported sockopts and their value types.
+See [`:std/os/socket`](sockets.md) for supported sockopts and their value types.
 
 #### Socket-setsockopt
 ```scheme
@@ -166,7 +166,7 @@ See `:std/os/socket` for supported sockopts and their value types.
   value := any
 ```
 Sets a socket option.
-See `:std/os/socket` for supported sockopts and their value types.
+See [`:std/os/socket`](sockets.md) for supported sockopts and their value types.
 
 #### Socket-set-input-timeout!
 ```scheme
