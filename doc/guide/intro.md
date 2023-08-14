@@ -1365,24 +1365,229 @@ communication.
 
 #### What is an actor
 
-At the fundamental level, an actor is a thread that is responding to messages,
-usually running in a loop.
-The actor may be running locally, accessible from other threads within the process,
-or it can be part of an _ensemble_ of actors running in a substrate of servers.
+At the fundamental level, an actor is a thread that is emitting and
+responding to messages, usually running in a loop.
+The actor may be running locally, accessible from other threads within
+the process, or it can be part of an _ensemble_ of actors running in a
+substrate of servers.
 
-See [Working with Actor Ensembles](../tutorials/ensemble.md) for more
-information about how to work with actor ensembles.  See the
-[Actors](../reference/actor.md) package documentation for more
-details in the API available for programming and interacting with
-actors in the ensemble.
-
-We give a quick overview of actor oriented programming facilities in what follows.
+We give a brief overview of actor oriented programming in what follows.
 
 #### Sending and Receiving Messages
 
+The basic interaction operators:
+- you can send a message with the `->` operator.
+- you can send a message and wait for the reply with the `->>` operator.
+- you can receive and react to messages with the `<-` syntax.
+- you can send a reply in a reaction context with the `-->` syntax.
+- you can also send a reply conditionally, if one is expected, with the `-->?` syntax.
+
+Here is an example, where we spawn a very basic actor that receives and responds to a message:
+```scheme
+(def (respond-once)
+  (<- (greeting (--> (cons 'hello greeting)))))
+(def the-actor (spawn respond-once))
+
+> (->> the-actor 'world)
+=> '(hello .world)
+
+```
+
 #### Protocols
 
+While all this is nice and dandy, we generally want _structured_
+interaction with actors that is type-safe.
+
+The `:std/actor` package provides a `defmessage` macro for defining messages,
+together with the `!ok` and `!error` messages for structuring responses to
+request messages.
+The package also provides a `defcall-actor` macro for providing facades to
+actor request/reply interactions.
+
+Here is an simple example wallet actor that holds a balance and
+responds to `!balance`, `!deposit` and `!withdraw` messages, and entry
+points for querying the balance and making desposits and withdrawals:
+```scheme
+(defmessage !balance ())
+(defmessage !deposit (amount))
+(defmessage !withdraw (amount))
+
+(def (wallet-actor balance)
+  (while #t
+    (<- ((!balance)
+         (--> (!ok balance)))
+        ((!deposit amount)
+         (set! balance (+ balance amount))
+         (--> (!ok balance)))
+        ((!withdraw amount)
+         (if (< balance amount)
+           (--> (!error "insufficient balance"))
+           (begin
+             (set! balance (- balance amount))
+             (--> (!ok balance))))))))
+
+(defcall-actor (balance wallet)
+  (->> wallet (!balance))
+  error: "balance query failed")
+
+(defcall-actor (deposit! wallet amount)
+  (->> wallet (!deposit amount))
+  error: "deposit failed")
+
+(defcall-actor (withdraw! wallet amount)
+  (->> wallet (!withdraw amount))
+  error: "withdrawal failed")
+```
+
+and here is an example interaction:
+```
+> (def my-wallet (spawn wallet-actor 100))
+> (balance my-wallet)
+100
+> (deposit! my-wallet 10)
+110
+> (withdraw! my-wallet 20)
+90
+> (withdraw! my-wallet 200)
+*** ERROR IN (stdin)@26.1 -- withdraw!: [actor-error] withdrawal failed
+--- irritants: insufficient balance
+```
+
 #### Ensembles
+
+So far our actor is limited to communicating with threads within the
+processes.  That's fine for many applications, but as you build more
+complex systems you will need to span processes in the same host and
+eventually span hosts in the network.
+
+The concept of the ensemble denotes the totality of actors running on
+a server substrate, perhaps in the Internet at large, and sharing a
+secret _cookie_ that allows them to communicate with each other.  Note
+that for communication over the open Internet it is recommended to use
+TLS; this will be implemented soon for the v0.18 release.
+
+So how do we build an ensemble?  First we need to generate a cookie
+for our ensemble, which we can do programmatically or using the `gxensemble`
+tool:
+```
+$ gxensemble cookie
+```
+
+This will generate a random 256-bit cookie in `$GERBIL_PATH/ensemble/cookie`.
+Note that it will not overwrite an existing cookie, unless you force
+it with `-f`.
+
+The second thing we need to do is modify our actor to _register_ with
+its in process actor server.  We also add a couple of standard
+ensemble reaction rules that make our actor behave nicely and submit
+to management with the `gxensemble` tool.
+
+Here is the complete code for the actor:
+```scheme
+(import :gerbil/gambit/threads
+        :std/actor
+        :std/sugar
+        :std/logger)
+(export #t)
+
+(deflogger wallet)
+
+(defmessage !balance ())
+(defmessage !deposit (amount))
+(defmessage !withdraw (amount))
+
+(defcall-actor (balance wallet)
+  (->> wallet (!balance))
+  error: "balance query failed")
+
+(defcall-actor (deposit! wallet amount)
+  (->> wallet (!deposit amount))
+  error: "deposit failed")
+
+(defcall-actor (withdraw! wallet amount)
+  (->> wallet (!withdraw amount))
+  error: "withdrawl failed")
+
+(def (wallet-actor balance)
+  (register-actor! 'wallet)
+  (let/cc exit
+    (while #t
+      (<- ((!balance)
+           (--> (!ok balance)))
+          ((!deposit amount)
+           (set! balance (+ balance amount))
+           (--> (!ok balance)))
+          ((!withdraw amount)
+           (if (< balance amount)
+             (--> (!error "insufficient balance"))
+             (begin
+               (set! balance (- balance amount))
+               (--> (!ok balance)))))
+
+          ,(@ping)
+          ,(@shutdown (exit 'shutdown))
+          ,(@unexpected warnf)))))
+
+(def (main initial-balance)
+  (thread-join! (spawn/name 'wallet wallet-actor (string->number initial-balance))))
+```
+
+Notice that we also define an entry point for running a server that hosts the wallet.
+
+With all this we can run a server named `'my-wallet-server` hosting our wallet in the ensemble
+as follows:
+```shell
+$ cat gerbil.pkg
+(package: tmp)
+$ gxc -O wallet-actor.ss
+
+# in one terminal - run this to allow for server registration and lookup
+$ gxensemble registry
+...
+
+# in another terminal
+$ gxensemble run my-wallet-server :tmp/wallet-actor 100
+...
+```
+
+We can now interact with our actor using a _handle_ in our interpreter:
+```shell
+$ gxi
+> (import :std/actor)
+> (start-actor-server!)
+#<thread #22 actor-server>
+> (def my-wallet (make-handle (current-actor-server) (reference 'my-wallet-server 'wallet)))
+> (import :tmp/wallet-actor)
+> (balance my-wallet)
+100
+> (deposit!  my-wallet 10)
+110
+;; ... and so on
+
+```
+
+If we want to shutdown our ensemble we can do so very easily with the gxensemble tool:
+```shell
+$ gxensemble shutdown
+This will shutdown every server in the ensemble, including the registry. Proceed? [y/n]
+y
+... shutting down my-wallet-server
+... shutting down registry
+```
+
+#### More about actors
+
+See the [Key-Value Store](../tutorials/kvstore.md) tutorial for a
+comprehensive example of actor-oriented programming.
+
+See the [Working with Actor Ensembles](../tutorials/ensemble.md) tutorial
+for more information about how to work with actor ensembles.
+
+See the
+[Actors](../reference/actor.md) package documentation for more
+details in the API available for programming and interacting with
+actors.
+
 
 ### HTTP requests
 
