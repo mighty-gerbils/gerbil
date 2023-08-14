@@ -110,9 +110,9 @@
        (display-exception e (current-error-port))))
     (thread-join! (current-actor-server))
     (unless (eq? server-id 'registry)
-      (remove-from-registry! known-servers server-id))))
+      (remove-from-registry! cookie known-servers server-id))))
 
-(def (remove-from-registry! known-servers server-id)
-  (start-actor-server! ensemble: known-servers)
+(def (remove-from-registry! cookie known-servers server-id)
+  (start-actor-server! cookie: cookie ensemble: known-servers)
   (with-catch void (cut ensemble-remove-server! server-id))
   (stop-actor-server!))
