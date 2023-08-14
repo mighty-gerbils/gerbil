@@ -1,5 +1,7 @@
 # A Key-Value Store Server
 
+**This tutorial is outdated; it will be updated soon!**
+
 In this tutorial we develop a key-value store daemon that uses LMDB to
 store compressed json objects associated with user keys. The daemon uses
 actor RPC to communicate with its clients.

@@ -1278,235 +1278,30 @@ For example:
 
 ### Actors
 
-At the low-level Gerbil builds on Gambit's thread mailboxes to provide
+Gerbil builds on Gambit's thread messaging primitives to provide
 actor-oriented programming capabilities and remote interactor
 communication.
 
-#### Messages
+#### What is an actor
 
-Gerbil's actors are threads, either in the current or remote processes
-and communicate exchanging messages. Messages can be arbitrary objects,
-but usually actors communicate with structured messages:
-```scheme
-(defstruct message (e source dest options))
-(def (send dest value) ...)                       ; send raw message
-(def (send-message dest value (options #f)) ...)  ; send structured message
-(def (send-message/timeout dest value timeo) ...)
-```
-Actors process messages and events with two main macros, `<<` and `<-`.
-They both synchronize on the thread's mailbox and pattern match incoming messages;
-the difference is that `<<` matches on raw messages and `<-` matches on
-structured message values.
-Within a `<-` pattern body, the variables `@message`, `@value`, `@source`,
-`@dest` and `@options` are bound from the structured message.
-Within the pattern body, the `->` can be used as shorthand syntax to send messages
-to `@source`.
+At the fundamental level, an actor is a thread that is responding to messages,
+usually running in a loop.
+The actor may be running locally, accessible from other threads within the process,
+or it can be part of an _ensemble_ of actors running in a substrate of servers.
 
-For example, a simple echo actor:
-```scheme
-(import :std/actor)
-(def (my-echo)
- (let lp ()
-   (<- (value
-        (displayln @source " says " value)
-        (-> value)
-        (lp)))))
-(def echo (spawn my-echo))
-> (send-message echo 'hello)
-#<thread #1 primordial> says hello
-> (<- (value value))
-=> 'hello
-```
+See [Working with Actor Ensembles](../tutorial/ensemble.md) for more
+information about how to work with actor ensembles.  See the
+[Actors](../reference/actor.md) package documentation for more
+details in the API available for programming and interacting with
+actors in the ensemble.
+
+We give a quick overview of actor oriented programming facilities in what follows.
+
+#### Sending and Receiving Messages
 
 #### Protocols
 
-Beyond structured messages, Gerbil provides protocols for structured interaction.
-Protocol messages can be one way messages (instances of `!event`), a remote
-call (instances of `!call`) or a value for a previous call (`!value` or `!error`).
-
-Protocols are defined with `defproto`, which defines structures and macros
-for using the protocol interfaces, together with marshalling support.
-For example, let's define an echo protocol:
-```scheme
-(defproto echo
-  id: echo
-  call: (hello what))
-(def (my-echo)
-  (let lp ()
-    (<- ((!echo.hello what k)
-          (displayln @source " says " what)
-          (!!value what k)
-          (lp)))))
-(def echo (spawn my-echo))
-> (!!echo.hello echo 'hello)
-#<thread #1 primordial> says hello
-=> 'hello
-
-```
-
-In the example, we define a protocol `echo` with a single call `hello`.
-The macro defines the structures and macros for using the interface:
-```scheme
-(defstruct echo.hello (what))
-(defsyntax-for-match !echo.hello ...)
-(defrules !!echo.hello ...
-```
-
-The invocation `(!!echo.hello echo 'hello)` constructs a `!call` protocol
-message with an instance of `echo.hello` and a gensymed continuation id.
-It then sends the message to the `echo` actor and waits for a `!value`
-or `!error` message matching the continuation. If it receives a `!value` it
-returns it, and if it receives an `!error` it signals an error.
-
-In the actor, the `(!echo.hello what k)` matches a `!call` with
-the value matching `(echo.hello what)` and the continuation token
-bound to `k`. The actor displays its message, and then responds by
-sending a value with the `!!value` macro. An error could be signalled
-with the `!!error` macro.
-
-The syntax for `!!value` and `!!error` is similar: the take
-an optional destination (which defaults to `@source`), a value
-or error message and the continuation token:
-```scheme
-(!!value [@source] val token)
-(!!error [@source] msg token)
-```
-
-#### Streams
-
-In addition to calls and events, actors can also open streams.
-A stream is like a call, but it returns multiple values using
-`!!yield` until the stream's end or an error occurs.
-
-For example, the following server generates a stream of numbers as
-specified by the argument:
-```scheme
-(defproto simple-stream
-  stream: (count N))
-
-(def (my-simple-stream)
-  (def (stream dest N k)
-    (let lp ((n 0))
-      (if (< n N)
-        (begin
-          (!!yield dest n k)
-          (!!sync dest k)               ; request sync
-          (<- ((!continue k)            ; flow control
-               (lp (1+ n)))
-              ((!close k)               ; stream closed
-               (!!end dest k))
-              ((!abort k)               ; stream aborted
-               (void))))
-        (!!end dest k))))
-
-  (let lp ()
-    (<- ((!simple-stream.count N k)
-         (spawn stream @source N k)
-         (lp)))))
-
-(def my-stream (spawn my-simple-stream))
-```
-
-Yielded values can be processed as messages, or with the `!!pipe`
-macro which constructs a vector pipe and pipes the yielded values
-through it in a background thread.
-
-Here is an example that uses a pipe:
-```scheme
-> (let ((values inp close) (!!pipe (!!simple-stream.count my-stream 5)))
-    (for (x inp)
-      (displayln x)))
-0
-1
-2
-3
-4
-```
-
-The pipe may be convenient, but it forgoes end-to-end back pressure
-and synchronization with `!!sync`. Here is the same example again,
-but with explicit processing of messages through the actor mailbox:
-```scheme
-(let (k (!!simple-stream.count my-stream 5))
-  (let lp ()
-    (<- ((!yield x (eq? k))
-         (displayln x)
-         (lp))
-        ((!sync (eq? k))
-         (!!continue k)
-         (lp))
-        ((!end (eq? k))
-         (void)))))
-```
-
-#### RPC
-
-The interaction so far has been local. In order to interact with
-remote actors, Gerbil provides an rpc protocol and server for
-handling the necessary network interaction.
-
-Using rpc is very simple: An rpc server can be constructed
-with `start-rpc-server!` which accepts an optional server address
-to bind and a wire protocol implementation with a keyword.
-
-In one shell:
-```scheme
-(def (my-echo rpcd)
-  (rpc-register rpcd 'echo echo::proto)
-  (let lp ()
-    (<- ((!echo.hello what k)
-          (displayln @source " says " what)
-          (!!value what k)
-          (lp)))))
-(def serverd (start-rpc-server! "127.0.0.1:9999"))
-(def echod (spawn my-echo serverd))
-```
-This starts an rpc server at port 9999 in the localhost.
-The echo actor binds itself under the id `echo` using the
-echo protocol `echo::proto` for marshalling and unmarshalling.
-
-In a different shell, we can connect to our echo with a `remote` handle:
-```scheme
-(def clientd (start-rpc-server!))
-(def echod (rpc-connect clientd 'echo "127.0.0.1:9999" echo::proto))
-> (!!echo.hello echod 'hello)
-=> 'hello
-```
-
-If your actors are well-known (application scoped), then you can globally bind
-a protocol to the name with `bind-protocol!` and you don't need to specify
-the protocol in `rpc-register` and `rpc-connect`:
-```scheme
-(bind-protocol! 'echo echo::proto)
-(def clientd ...)
-(def echod (rpc-connect clientd 'echo "127.0.0.1:9999"))
-```
-
-By default, a null rpc protocol is used which does no authentication
-or encryption. If you intend to expose your actors to the Internet
-you should use authentication and optionally encryption.
-
-For authentication, you can generate a shared cookie with `rpc-generate-cookie!`
-and start your rpc-server using the `rpc-cookie-proto`:
-```scheme
-$ mkdir ~/.gerbil
-> (rpc-generate-cookie!)
-; generates a cookie in ~/.gerbil/cookie
-...
-(def remoted
- (start-rpc-server! "127.0.0.1:9999"
-    proto: (rpc-cookie-proto)))
-...
-(def locald
-  (start-rpc-server! proto: (rpc-cookie-proto)))
-...
-```
-
-If you also want to encrypt your communications, then use
-the `rpc-cookie-cipher-proto` as `proto:` argument for your rpc
-servers. On top of cookie authentication, this protocol performs
-a Diffie-Hellman key exchange and then encrypts all messages with
-AES/HMAC (it encrypts and then MACs).
+#### Ensembles
 
 ### HTTP requests
 
