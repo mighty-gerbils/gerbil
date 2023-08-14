@@ -91,7 +91,9 @@
         (exit 'shutdown))
 
        (unexpected
-        (warnf "unexpected message from ~a: ~a" @source @message))))))
+        (warnf "unexpected message from ~a: ~a" @source @message)
+        (when @reply-expected?
+          (--> (!error "unexpected message"))))))))
 
 (def (background name thunk K E)
   (spawn/name name background-do (current-thread) thunk K E))

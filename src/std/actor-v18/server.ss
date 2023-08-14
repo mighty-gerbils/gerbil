@@ -565,9 +565,13 @@
                 ((!ping)
                  (send-control-reply! msg (!ok 'OK)))
 
-                (else (warnf "unexpected control message: ~a" msg))))
+                (else
+                 (warnf "unexpected control message: ~a" msg)
+                 (when (&envelope-reply-expected? msg)
+                   (send-control-reply! msg (!error "unexpected control message"))))))
 
-             (else (warnf "unexpected message: ~a" msg))))))
+             (else
+              (warnf "unexpected message: ~a" msg))))))
 
        ;; internal control messages
        ((!recv src-id msg)
