@@ -77,15 +77,14 @@
                  (result (sort-server-list result)))
             (--> (!ok result))))))
 
+       ((!tick)
+        (&Registry-flush registry))
+
        ,(@shutdown
          (infof "shutting down ...")
          (&Registry-close registry)
          (-> flush-ticker (!shutdown))
          (exit 'shutdown))
-
-       ((!tick)
-        (&Registry-flush registry))
-
        ,(@ping)
        ,(@unexpected warnf)))))
 

@@ -89,7 +89,6 @@
        ,(@shutdown
          (infof "shutting down ...")
          (exit 'shutdown))
-
        ,(@ping)
        ,(@unexpected warnf)))))
 
