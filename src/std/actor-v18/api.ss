@@ -46,6 +46,8 @@
   actor-monitor
   ticker ticker-after after
   with-result defcall-actor
+  @ping
+  @unexpected
   ;; ./server
   (struct-out reference)
   reference->handle

@@ -109,9 +109,6 @@
            (catch (e)
              (--> (!error (error-message e))))))
 
-         ((!ping)
-          (--> (!ok 'OK)))
-
          ((!shutdown)
           (--> (!ok (void)))
           (exit 'shutdown))
@@ -125,9 +122,8 @@
            (catch (e)
              (errorf "acceptor error: ~a" e))))
 
-         (bogus
-          (warnf "unexpected message from ~a: ~a" @source bogus)
-          (-->? (!error "unexpected message")))))))
+         ,(@ping)
+         ,(@unexpected warnf)))))
 
   (try
    (for-each monitor acceptors)

@@ -30,6 +30,16 @@
 (defmessage !tick (id seqno))
 (defmessage !ping ())
 
+;; reaction macro for ping
+(defrule (@ping)
+  ((!ping) (--> (!ok 'OK))))
+
+;; reaction mactor for unexpected messages
+(defrule (@unexpected logf)
+  (unexpected
+   (logf "unexpected message from ~a: ~a" @source @message)
+   (-->? (!error "unexpected message"))))
+
 ;; package private
 (defmessage !register (name))
 (defmessage !list-actors (srv))

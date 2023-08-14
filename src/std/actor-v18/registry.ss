@@ -86,9 +86,8 @@
        ((!tick)
         (&Registry-flush registry))
 
-       (unexpected
-        (warnf "unexpected message from ~a: ~a" @source @message)
-        (-->? (!error "unexpected message")))))))
+       ,(@ping)
+       ,(@unexpected warnf)))))
 
 ;; registry implementation
 (defstruct registry (path servers roles dirty?)

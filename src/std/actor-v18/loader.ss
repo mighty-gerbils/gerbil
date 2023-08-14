@@ -90,9 +90,8 @@
         (infof "shutting down ...")
         (exit 'shutdown))
 
-       (unexpected
-        (warnf "unexpected message from ~a: ~a" @source @message)
-        (-->? (!error "unexpected message")))))))
+       ,(@ping)
+       ,(@unexpected warnf)))))
 
 (def (background name thunk K E)
   (spawn/name name background-do (current-thread) thunk K E))
