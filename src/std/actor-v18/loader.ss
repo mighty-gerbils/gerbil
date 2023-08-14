@@ -86,9 +86,9 @@
        ((!continue thunk)
         (thunk))
 
-       ((!shutdown)
-        (infof "shutting down ...")
-        (exit 'shutdown))
+       ,(@shutdown
+         (infof "shutting down ...")
+         (exit 'shutdown))
 
        ,(@ping)
        ,(@unexpected warnf)))))

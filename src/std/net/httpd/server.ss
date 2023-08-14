@@ -109,10 +109,6 @@
            (catch (e)
              (--> (!error (error-message e))))))
 
-         ((!shutdown)
-          (--> (!ok (void)))
-          (exit 'shutdown))
-
          ((!actor-dead thread)
           (try
            (thread-join! thread)
@@ -122,6 +118,9 @@
            (catch (e)
              (errorf "acceptor error: ~a" e))))
 
+         ,(@shutdown
+           (infof "shutting down...")
+           (exit 'shutdown))
          ,(@ping)
          ,(@unexpected warnf)))))
 

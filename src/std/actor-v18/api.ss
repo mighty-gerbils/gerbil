@@ -48,6 +48,7 @@
   with-result defcall-actor
   @ping
   @unexpected
+  @shutdown
   ;; ./server
   (struct-out reference)
   reference->handle

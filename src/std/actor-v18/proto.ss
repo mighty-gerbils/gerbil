@@ -34,11 +34,17 @@
 (defrule (@ping)
   ((!ping) (--> (!ok 'OK))))
 
-;; reaction mactor for unexpected messages
+;; reaction macro for unexpected messages
 (defrule (@unexpected logf)
   (unexpected
    (logf "unexpected message from ~a: ~a" @source @message)
    (-->? (!error "unexpected message"))))
+
+;; reaction macro for shutdown
+(defrule (@shutdown exit ...)
+  ((!shutdown)
+   (-->? (!ok (void)))
+   exit ...))
 
 ;; package private
 (defmessage !register (name))
