@@ -433,6 +433,87 @@ $ ./clasess-test 10000000
     no major faults
 ```
 
+
+#### Interfaces
+
+Starting with Gerbil v0.18, The `:std/interface` package provides the
+interface abstraction, which allows you to define facades for your
+class hierarchy, hiding the details of internal implementation and
+preresolving methods for direct dispatch.
+
+In the example above, we can normalize the interface to our class hierarchy as follows:
+```scheme
+(interface F
+  (add-a x)
+  (add-b x)
+  (mul-c x y))
+```
+
+You can create instances of your interfaces by casting objects with the `F` macro.
+Using interfaces, the code becomes both more robust and more efficient:
+```scheme
+(defclass A (a))
+(defclass B (b))
+(defclass (C A B) (c))
+(defclass (D A B) (d))
+(defclass (E C D) (e) final: #t)
+
+(defmethod {add-a A}
+  (lambda (self x)
+    (+ (@ self a) x)))
+
+(defmethod {add-b B}
+  (lambda (self x)
+    (+ (@ self b) x)))
+
+(defmethod {mul-c C}
+  (lambda (self x y)
+    (* (@ self c) {add-a self x} {add-b self y})))
+
+(def (do-it-with-object o n)
+  (for (_ (in-range n)) {mul-c o 1 2}))
+(def (do-it-with-interface o n)
+  (let (o (F o)) (for (_ (in-range n)) (F-mul-c o 1 2))))
+```
+
+Let's compile and time the code above:
+```scheme
+> (def foo (E a: 1 b: 2 c: 3))
+> (time (do-it-with-object foo 1000000))
+(time (tmp/example#do-it-with-object foo (##quote 1000000)))
+    0.226230 secs real time
+    0.226218 secs cpu time (0.225842 user, 0.000376 system)
+    no collections
+    64 bytes allocated
+    no minor faults
+    no major faults
+    590719272 cpu cycles
+> (seal-class! E::t)
+#<type #16 E>
+> (time (do-it-with-object foo 1000000))
+(time (tmp/example#do-it-with-object foo (##quote 1000000)))
+    0.044066 secs real time
+    0.044069 secs cpu time (0.042088 user, 0.001981 system)
+    no collections
+    64 bytes allocated
+    no minor faults
+    no major faults
+    115047186 cpu cycles
+> (time (do-it-with-interface foo 1000000))
+(time (tmp/example#do-it-with-interface foo (##quote 1000000)))
+    0.025100 secs real time
+    0.025104 secs cpu time (0.025103 user, 0.000001 system)
+    no collections
+    704 bytes allocated
+    no minor faults
+    no major faults
+    65530420 cpu cycles
+```
+
+See the [Interfaces](../reference/interface.md) package documentation
+for more details.
+
+
 ### Pattern Matching
 
 Gerbil uses pattern matching extensively, so a suitable match
