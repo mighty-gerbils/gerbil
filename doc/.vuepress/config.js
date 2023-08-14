@@ -22,7 +22,7 @@ module.exports = {
           {
             collapsable: false,
             title: 'Tutorials',
-              children: ['', 'languages', 'kvstore', 'proxy', 'httpd', 'ensembles']
+              children: ['', 'languages', 'kvstore', 'proxy', 'httpd', 'ensemble']
           }
       ],
       '/reference/': [
