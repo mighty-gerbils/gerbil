@@ -4,6 +4,7 @@
 (import :gerbil/gambit/threads
         :gerbil/gambit/exceptions
         :std/sugar
+        :std/iter
         :std/logger
         :std/os/hostname
         ./message
@@ -99,19 +100,30 @@
                   [unix: (hostname) "/tmp/ensemble/registry"]
                   [unix: (hostname) (string-append "/tmp/ensemble/" (symbol->string server-id))])
                 listen-addrs)))
+    ;; start the actor server
     (start-actor-server! cookie: cookie
                          addresses: listen-addrs
                          identifier: server-id
                          ensemble: known-servers)
+    ;; start the loader
     (start-loader!)
+    ;; add the server to the ensemble
     (unless (eq? server-id 'registry)
       (ensemble-add-server! server-id listen-addrs roles))
+    ;; run it!
     (try
      (with-exception-stack-trace thunk)
      (catch (e)
        (display "*** ERROR " (current-error-port))
        (display-exception e (current-error-port))))
     (thread-join! (current-actor-server))
+    ;; clean up unix sockets
+    (for (addr listen-addrs)
+      (match addr
+        ([unix: _ path]
+         (delete-file path))
+        (else (void))))
+    ;; remove the server from the ensemble
     (unless (eq? server-id 'registry)
       (remove-from-registry! cookie known-servers server-id))))
 
