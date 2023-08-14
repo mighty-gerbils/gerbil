@@ -81,7 +81,7 @@
         (&Registry-flush registry))
 
        ,(@shutdown
-         (infof "shutting down ...")
+         (infof "registry shutting down ...")
          (&Registry-close registry)
          (-> flush-ticker (!shutdown))
          (exit 'shutdown))

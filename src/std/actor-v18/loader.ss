@@ -87,7 +87,7 @@
         (thunk))
 
        ,(@shutdown
-         (infof "shutting down ...")
+         (infof "loader shutting down ...")
          (exit 'shutdown))
        ,(@ping)
        ,(@unexpected warnf)))))

@@ -119,7 +119,7 @@
              (errorf "acceptor error: ~a" e))))
 
          ,(@shutdown
-           (infof "shutting down...")
+           (infof "httpd shutting down...")
            (exit 'shutdown))
          ,(@ping)
          ,(@unexpected warnf)))))
