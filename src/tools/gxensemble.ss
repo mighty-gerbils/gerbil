@@ -233,7 +233,7 @@
   (generate-actor-server-cookie! force: (hash-get opt 'force)))
 
 (def (do-lookup opt)
-  (start-actor-server-with-options! opt #f #f)
+  (start-actor-server-with-options! opt)
   (let (what (hash-ref opt 'server-or-role))
     (display-result-list
      (if (hash-get opt 'role)
@@ -242,25 +242,25 @@
   (stop-actor-server!))
 
 (def (do-list-connections opt)
-  (start-actor-server-with-options! opt #f #f)
+  (start-actor-server-with-options! opt)
   (display-result-list
    (remote-list-connections (hash-ref opt 'server-id)))
   (stop-actor-server!))
 
 (def (do-list-actors opt)
-  (start-actor-server-with-options! opt #f #f)
+  (start-actor-server-with-options! opt)
   (display-result-list
    (map reference-id (remote-list-actors (hash-ref opt 'server-id))))
   (stop-actor-server!))
 
 (def (do-list-servers opt)
-  (start-actor-server-with-options! opt #f #f)
+  (start-actor-server-with-options! opt)
   (display-result-list
    (ensemble-list-servers))
   (stop-actor-server!))
 
 (def (do-shutdown opt)
-  (start-actor-server-with-options! opt #f #f)
+  (start-actor-server-with-options! opt)
   (cond
    ((hash-get opt 'server-id)
     => (lambda (server-id)
@@ -287,7 +287,7 @@
   (stop-actor-server!))
 
 (def (do-ping opt)
-  (start-actor-server-with-options! opt #f #f)
+  (start-actor-server-with-options! opt)
   (let (server-id (hash-ref opt 'server-id))
     (cond
      ((hash-get opt 'actor-id)
@@ -299,7 +299,7 @@
        (ping-server server-id))))))
 
 (def (do-eval opt)
-  (start-actor-server-with-options! opt #f #f)
+  (start-actor-server-with-options! opt)
   (let ((server-id (hash-ref opt 'server-id))
         (expr (hash-ref opt 'expr)))
     (displayln
@@ -315,7 +315,7 @@
 (def (do-load-library opt)
   (let ((module-id (hash-ref opt 'module-id))
         (server-id (hash-ref opt 'server-id)))
-    (start-actor-server-with-options! opt #f #f)
+    (start-actor-server-with-options! opt)
     (displayln "... loading library module " module-id)
     (displayln
      (remote-load-library-module server-id module-id))
@@ -327,7 +327,7 @@
         (server-id (hash-ref opt 'server-id)))
     (let ((values object-files library-modules)
           (get-module-objects module-id library-prefix))
-      (start-actor-server-with-options! opt #f #f)
+      (start-actor-server-with-options! opt)
       ;; when forcing, we don't load the library modules
       ;; useful for static executables
       (unless (hash-get opt 'force)
@@ -389,34 +389,26 @@
               (values object-files (reverse libraries))))))))))
 
 (def (do-registry opt)
-  (start-actor-server-with-options! opt #f #t)
-  (start-loader!)
-  (start-ensemble-registry!)
-  (thread-join! (current-actor-server)))
+  (call-with-ensemble-server 'registry
+                             (cut start-ensemble-registry!)
+                             log-level: (hash-ref opt 'logging)
+                             log-file:  (hash-ref opt 'logging-file)
+                             addresses: (hash-ref opt 'listen)
+                             registry:  #f
+                             roles:     #f
+                             cookie:    (get-actor-server-cookie)))
 
 (def (do-run opt)
-  (let ((server-id (hash-ref opt 'server-id))
-        (module-main (get-module-main (hash-ref opt 'module-id))))
-    (start-actor-server-with-options! opt #t #f)
-    (start-loader!)
-    (ensemble-add-server!
-     (actor-server-identifier)
-     (cons [unix: (hostname) (string-append "/tmp/ensemble/" (symbol->string server-id))]
-           (hash-ref opt 'listen []))
-     (hash-ref opt 'roles))
-    (try
-     (with-exception-stack-trace
-      (lambda () (apply module-main (hash-ref opt 'main-args))))
-     (catch (e)
-       (display "*** ERROR " (current-error-port))
-       (display-exception e (current-error-port))))
-    (thread-join! (current-actor-server))
-    (remove-from-registry! opt server-id)))
-
-(def (remove-from-registry! opt server-id)
-  (start-actor-server-with-options! opt #f #f)
-  (with-catch void (cut ensemble-remove-server! server-id))
-  (stop-actor-server!))
+  (let ((module-main (get-module-main (hash-ref opt 'module-id)))
+        (main-args (hash-ref opt 'main-args)))
+    (call-with-ensemble-server (hash-ref opt 'server-id)
+                               (cut apply module-main main-args)
+                               log-level: (hash-ref opt 'logging)
+                               log-file:  (hash-ref opt 'logging-file)
+                               addresses: (hash-ref opt 'listen)
+                               registry:  (hash-ref opt 'registry)
+                               roles:     (hash-ref opt 'roles)
+                               cookie:    (get-actor-server-cookie))))
 
 (def (get-module-main module-id)
   (def (runtime-export? exported)
@@ -438,22 +430,10 @@
 (def (string->object str)
   (call-with-input-string str read))
 
-(def (start-actor-server-with-options! opt server? registry?)
+(def (start-actor-server-with-options! opt)
   (cond
    ((hash-get opt 'logging)
     => current-logger-options))
-  (when (or server? registry?)
-    (cond
-     ((hash-get opt 'logging-file)
-      => (lambda (file)
-           (let (path
-                 (if (equal? file "-")
-                   (path-expand "log"
-                                (ensemble-server-path
-                                 (if registry? 'registry (hash-ref opt 'server-id))))
-                   (path-expand file)))
-             (create-directory* (path-strip-directory path))
-             (start-logger! path))))))
   (let* ((known-servers
          (cond
           ((hash-get opt 'registry)
@@ -462,24 +442,9 @@
           (else
            (hash-eq (registry (default-registry-addresses))))))
          (server-id
-          (cond
-           (server?
-            (hash-ref opt 'server-id))
-           (registry?
-            'registry)
-           (else
-            (make-random-identifier))))
+          (make-random-identifier))
         (listen-addrs
          (hash-ref opt 'listen []))
-        (listen-addrs
-         (cond
-          (server?
-           (cons [unix: (hostname) (string-append "/tmp/ensemble/" (symbol->string server-id))]
-                 listen-addrs))
-          (registry?
-           (cons [unix: (hostname) "/tmp/ensemble/registry"]
-                 listen-addrs))
-          (else listen-addrs)))
         (cookie (get-actor-server-cookie)))
     (start-actor-server! cookie: cookie
                          addresses: listen-addrs
