@@ -124,6 +124,15 @@
 (def (set-server-address-cache-ttl! ttl)
   (set! +server-address-cache-ttl+ ttl))
 
+;; actor shutdown grace period
+(def +actor-grace-period+ 1) ; 1s
+
+(def (actor-grace-period)
+  +actor-grace-period+)
+
+(def (set-actor-grace-period! t)
+  (set! +actor-grace-period+ t))
+
 ;;; Internals
 (def (make-random-identifier)
   (string->symbol
@@ -442,7 +451,7 @@
             (else (void))))
       ;; give some grace period for actors to shutdown
       (for (actor (hash-keys actor-threads))
-        (with-catch void (cut thread-join! actor 1 #f)))
+        (with-catch void (cut thread-join! actor +actor-grace-period+ #f)))
       ;; and exit
       (exit 'shutdown))
 
