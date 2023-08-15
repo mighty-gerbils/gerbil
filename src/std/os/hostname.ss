@@ -18,9 +18,9 @@
   (c-declare "
 #include <unistd.h>
 
-__thread char buf[1024];
+__thread char hostname_buf[1024];
 static char* ffi_gethostname() {
-  gethostname(buf, sizeof(buf));
-  return buf;
+  gethostname(hostname_buf, sizeof(hostname_buf));
+  return hostname_buf;
 }
 "))

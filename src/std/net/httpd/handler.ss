@@ -264,14 +264,14 @@
   (c-declare #<<END-C
 #include <time.h>
 #include <string.h>
-__thread char buf[64];
+__thread char date_buf[64];
 static char *ffi_httpd_date () {
  struct tm tm;
  time_t t = time(NULL);
- asctime_r (gmtime_r (&t, &tm), buf);
+ asctime_r (gmtime_r (&t, &tm), date_buf);
  // clobber newline
- buf[strlen(buf)-1] = 0;
- return buf;
+ date_buf[strlen(date_buf)-1] = 0;
+ return date_buf;
 }
 END-C
 )
