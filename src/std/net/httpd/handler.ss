@@ -6,12 +6,12 @@
         :gerbil/gambit/threads
         :std/error
         :std/sugar
-        :std/logger
         :std/io
         :std/io/dummy
         :std/foreign
         :std/text/utf8
-        :std/pregexp)
+        :std/pregexp
+        ./base)
 (export http-request-handler
         http-request?
         http-request-method http-request-url http-request-path http-request-params
@@ -32,8 +32,6 @@
         set-httpd-output-buffer-size!)
 
 (declare (not safe))
-
-(deflogger httpd)
 
 (defstruct http-request (buf sock client method url path params proto headers data)
   final: #t unchecked: #t)
