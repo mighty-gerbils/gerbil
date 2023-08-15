@@ -329,6 +329,11 @@
     (displayln "  ,(load module-id)      -- load the code and dependencies for a module")
     (displayln "  ,(load -f module-id)   -- forcibly load a module ignoring dependencies")
     (displayln "  ,(load -l module-id)   -- load a library module")
+    (displayln "  ,(defined? id)         -- checks if an identifier is defined at the server")
+    (displayln "  ,(thread-state)        -- display the thread state for the primordial thread group")
+    (displayln "  ,(thread-state -g)     -- display the thread state for all thread groups recursively")
+    (displayln "  ,(thread-state sn)     -- display the thread state for a thread or group identified by its serial number")
+    (displayln "  ,(shutdown)            -- shut down the server and exit the repl")
     (displayln "  ,q ,quit               -- quit the repl")
     (displayln "  ,h ,help               -- display this help message"))
 
@@ -376,6 +381,14 @@
       (set! module-registry
         (remote-eval server-id '(&current-module-registry)))))
 
+  (def (eval-expr expr)
+    (let* ((expanded-expr (core-expand expr))
+           (compiled-expr (core-compile-top-syntax expanded-expr))
+           (raw-compiled-expr (_gx#compile compiled-expr))
+           (result (remote-eval server-id raw-compiled-expr)))
+      (unless (void? result)
+        (displayln result))))
+
   (_gx#load-expander!)
   (connect-to-server! server-id)
   (set! module-registry
@@ -414,20 +427,38 @@
                (if module-registry
                  (load-library-module module-id)
                  (displayln "server does not support library loading")))
+              (['defined? symbol]
+               (eval-expr
+                `(with-exception-catcher (lambda (_) #f) (lambda () ,symbol #t))))
+              (['thread-state]
+               (eval-expr
+                '(call-with-output-string ""
+                   (lambda (p) (##cmd-st (thread-thread-group ##primordial-thread) p)))))
+              (['thread-state '-g]
+               (eval-expr
+                `(call-with-output-string ""
+                   (lambda (p)
+                     (let thread-state ((tg (thread-thread-group ##primordial-thread)))
+                       (display "thread group: " p)
+                       (display tg p)
+                       (newline p)
+                       (##cmd-st tg p)
+                       (for-each thread-state (thread-group->thread-group-list tg)))))))
+              (['thread-state (? integer? sn)]
+               (eval-expr
+                `(call-with-output-string ""
+                   (lambda (p) (##cmd-st (serial-number->object ,sn) p)))))
+              (['shutdown]
+               (remote-stop-server! server-id)
+               (exit (void)))
               ((or 'h 'help)
                (display-help))
               ((or 'q 'quit)
                (exit (void)))
               (else
-               (displayln "uknown command " command)
+               (displayln "uknown control command " command)
                (display-help))))
-           (expr
-            (let* ((expanded-expr (core-expand expr))
-                   (compiled-expr (core-compile-top-syntax expanded-expr))
-                   (raw-compiled-expr (_gx#compile compiled-expr))
-                   (result (remote-eval server-id raw-compiled-expr)))
-              (unless (void? result)
-                (displayln result)))))
+           (expr (eval-expr expr)))
          (catch (exn)
            (display "*** ERROR ")
            (display-exception exn)))))))
