@@ -151,3 +151,55 @@ hello, i am httpd1
 ```
 
 ## Working with static binaries
+
+So far we have demonstrated ensembles with _dynamic_ binaries; in
+practice however, you are most likely to run a _static_ binary on your
+server. Of course this is not a problem; all you have to do is ru your
+server's entry point using `call-with-ensemble-server`; this is what
+`gxensemble run` does after all.  The only difference is that you will
+have to parse options on your own, probably using getopt.
+
+Note that some care should be taken to ensure necessary symbols are
+available in the server and not elimited by the tree shaker from
+static compilation.  You can do this with appropriate `(not
+optimize-dead-definitions id ...)` declarations. It is recommended
+that you turn off the tree shaker entirely by compiling your server
+with the `-prelude '(declare (not optimize-dead-definitions))'`
+compiler option otherwise it is very much likely that some essential
+bindings will be missing, causing your server to crash.
+
+Here is an example static binary running our httpd; the code is at [src/tutorial/ensemble/httpd-exe.ss](https://github.com/vyzo/gerbil/tree/master/src/tutorial/ensemble/httpd-exe.ss):
+```scheme
+(import :std/actor
+        ./server)
+(export main)
+
+(def (main server-id (port "8080"))
+  (let ((port (string->number port))
+        (server-id (string->symbol server-id)))
+     (call-with-ensemble-server
+      server-id (cut run! port)
+      roles: '(httpd))))
+```
+
+And here it running and getting managed with `gxensemble`:
+```shell
+$ httpd-exe httpd3 8082
+...
+
+$ gxensemble lookup --role httpd
+(httpd1 (unix dellicious /tmp/ensemble/httpd1))
+(httpd2 (unix dellicious /tmp/ensemble/httpd2))
+(httpd3 (unix dellicious /tmp/ensemble/httpd3))
+
+$ gxensemble repl httpd3
+httpd3> ,(load :tutorial/ensemble/handler)
+httpd3> ,(import :tutorial/ensemble/handler)
+httpd3> (set-greeting! "hello, i am httpd3 and i am a static binary\n")
+httpd3> ,(import :std/net/httpd)
+httpd3> (http-register-handler (current-http-server) "/greeting" write-simple-handler)
+httpd3> ,q
+
+$ curl http://localhost:8082/greeting
+hello, i am httpd3 and i am a static binary
+```
