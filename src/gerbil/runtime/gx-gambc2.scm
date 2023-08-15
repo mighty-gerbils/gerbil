@@ -73,7 +73,7 @@
 (define (_gx#compile-import% stx)
   (core-ast-case stx ()
     ((_ . body)
-     (&SRC `(_gx#eval-import (##quote ,body)) stx))))
+     (&SRC `(_gx#eval-import (quote ,body)) stx))))
 
 (define (_gx#compile-begin-annotation% stx)
   (core-ast-case stx ()
@@ -88,22 +88,22 @@
         (_gx#compile expr))
        ((id)
         (&SRC
-         `(##define ,(&SRC id)
-                    ,(_gx#compile expr))
+         `(define ,(&SRC id)
+            ,(_gx#compile expr))
          stx))
        (else
         (let* ((ids hd)
                (len (length ids))
                (tmp (&SRC (gensym))))
           (&SRC
-           `(##begin
-             ,(&SRC `(##define ,tmp ,(_gx#compile expr)) stx)
+           `(begin
+             ,(&SRC `(define ,tmp ,(_gx#compile expr)) stx)
              ,(&SRC `(_gx#check-values ,tmp ,len) stx)
              ,@(filter-map
                 (lambda (id k)
                   (and (&AST-e id)
                        (&SRC
-                        `(##define ,(&SRC id)
+                        `(define ,(&SRC id)
                                    (##vector-ref ,tmp ,k))
                         stx)))
                 ids (iota len)))
@@ -126,8 +126,8 @@
   (core-ast-case stx ()
     ((_ hd body)
      (&SRC
-      `(##lambda ,(_gx#compile-lambda-head hd)
-            ,(_gx#compile body))
+      `(lambda ,(_gx#compile-lambda-head hd)
+         ,(_gx#compile body))
       stx))))
 
 (define (_gx#compile-case-lambda% stx)
@@ -153,12 +153,12 @@
           (let ((clen (arity hd))
                 (cmp (if (variadic? hd) 'fx>= 'fx=)))
             (&SRC
-             `(##if (,cmp ,len ,clen)
-                    ,(&SRC
-                      `(##apply ,(_gx#compile-lambda% (cons '%#lambda clause))
-                                ,args)
-                      stx)
-                    ,(generate rest args len))
+             `(if (,cmp ,len ,clen)
+                ,(&SRC
+                  `(##apply ,(_gx#compile-lambda% (cons '%#lambda clause))
+                     ,args)
+                  stx)
+                ,(generate rest args len))
              stx)))))
       (else
        (&SRC `(error "No clause matching arguments" ,args) stx))))
@@ -170,11 +170,11 @@
      (let ((args (&SRC (gensym) stx))
            (len  (&SRC (gensym) stx)))
        (&SRC
-        `(##lambda ,args
-              ,(&SRC
-                `(##let ((,len ,(&SRC `(##length ,args) stx)))
-                        ,(generate clauses args len))
-                stx))
+        `(lambda ,args
+           ,(&SRC
+             `(let ((,len ,(&SRC `(##length ,args) stx)))
+                ,(generate clauses args len))
+             stx))
         stx)))))
 
 (define (_gx#compile-let-form stx compile-simple compile-values)
@@ -208,8 +208,8 @@
 (define (_gx#compile-let-values% stx)
   (define (compile-simple hd-ids exprs body)
     (&SRC
-     `(##let ,(map list (map _gx#compile-head-id hd-ids) exprs)
-             ,body)
+     `(let ,(map list (map _gx#compile-head-id hd-ids) exprs)
+        ,body)
      stx))
 
   (define (compile-values hd-ids exprs body)
@@ -240,8 +240,8 @@
            (_gx#compile-error stx hd))))
         (else
          (&SRC
-          `(##let ,(reverse bind)
-                  ,(compile-post post body))
+          `(let ,(reverse bind)
+             ,(compile-post post body))
           stx)))))
 
   (define (compile-post post body)
@@ -257,8 +257,8 @@
                     bind init)))
         (else
          (&SRC
-          `(##begin ,@check
-                    ,(&SRC `(##let ,bind ,body) stx))
+          `(begin ,@check
+                  ,(&SRC `(let ,bind ,body) stx))
           stx)))))
 
   (_gx#compile-let-form stx compile-simple compile-values))
@@ -266,8 +266,8 @@
 (define (_gx#compile-letrec-values% stx)
   (define (compile-simple hd-ids exprs body)
     (&SRC
-     `(##letrec ,(map list (map _gx#compile-head-id hd-ids) exprs)
-                ,body)
+     `(letrec ,(map list (map _gx#compile-head-id hd-ids) exprs)
+        ,body)
      stx))
 
   (define (compile-values hd-ids exprs body)
@@ -308,14 +308,14 @@
     (if (null? pre)
       (compile-bind bind post body)
       (&SRC
-       `(##let ,(reverse pre)
-               ,(compile-bind bind post body))
+       `(let ,(reverse pre)
+          ,(compile-bind bind post body))
        stx)))
 
   (define (compile-bind bind post body)
     (&SRC
-     `(##letrec ,(reverse bind)
-                ,(compile-post post body))
+     `(letrec ,(reverse bind)
+        ,(compile-post post body))
      stx))
 
   (define (compile-post post body)
@@ -327,11 +327,11 @@
              (foldr (lambda (hd r)
                       (core-match hd
                         ((id . k)
-                         (cons `(##set! ,id (##vector-ref ,tmp ,k)) r))))
+                         (cons `(set! ,id (##vector-ref ,tmp ,k)) r))))
                     bind init)))
         (else
          (&SRC
-          `(##begin ,@check ,@bind ,body)
+          `(begin ,@check ,@bind ,body)
           stx)))))
 
   (_gx#compile-let-form stx compile-simple compile-values))
@@ -339,8 +339,8 @@
 (define (_gx#compile-letrec*-values% stx)
   (define (compile-simple hd-ids exprs body)
     (&SRC
-     `(##letrec* ,(map list (map _gx#compile-head-id hd-ids) exprs)
-                 ,body)
+     `(letrec* ,(map list (map _gx#compile-head-id hd-ids) exprs)
+        ,body)
      stx))
 
   (define (compile-values hd-ids exprs body)
@@ -383,32 +383,32 @@
 
   (define (compile-bind bind post body)
     (&SRC
-     `(##let ,(reverse bind)
-             ,(compile-post post body))
+     `(let ,(reverse bind)
+        ,(compile-post post body))
      stx))
 
   (define (compile-post post body)
     (&SRC
-     `(##begin
+     `(begin
        ,@(foldl
            (lambda (hd r)
              (core-match hd
                ((#f expr)
                 (cons expr r))
                ((id expr)
-                (cons (&SRC `(##set! ,id ,expr) stx) r))
+                (cons (&SRC `(set! ,id ,expr) stx) r))
                ((tmp expr len . init)
                 (cons
                  (&SRC
-                  `(##let ((,tmp ,expr))
-                          ,(&SRC `(_gx#check-values ,tmp ,len) stx)
-                          ,@(map (lambda (hd)
-                                   (core-match hd
-                                     ((id . k)
-                                      (&SRC
-                                       `(##set! ,id (##vector-ref ,tmp ,k))
-                                       stx))))
-                                 init))
+                  `(let ((,tmp ,expr))
+                     ,(&SRC `(_gx#check-values ,tmp ,len) stx)
+                     ,@(map (lambda (hd)
+                              (core-match hd
+                                ((id . k)
+                                 (&SRC
+                                  `(set! ,id (##vector-ref ,tmp ,k))
+                                  stx))))
+                            init))
                   stx)
                  r))))
            (list body) post))
@@ -431,23 +431,23 @@
 (define (_gx#compile-setq% stx)
   (core-ast-case stx ()
     ((_ id expr)
-     (&SRC `(##set! ,(&SRC id stx) ,(_gx#compile expr)) stx))))
+     (&SRC `(set! ,(&SRC id stx) ,(_gx#compile expr)) stx))))
 
 (define (_gx#compile-if% stx)
   (core-ast-case stx ()
     ((_ p t f)
-     (&SRC `(##if ,(_gx#compile p)
-                  ,(_gx#compile t)
-                  ,(_gx#compile f))
+     (&SRC `(if ,(_gx#compile p)
+              ,(_gx#compile t)
+              ,(_gx#compile f))
            stx))))
 
 (define (_gx#compile-quote% stx)
   (core-ast-case stx ()
-    ((_ e) (&SRC `(##quote ,(&AST->datum e)) stx))))
+    ((_ e) (&SRC `(quote ,(&AST->datum e)) stx))))
 
 (define (_gx#compile-quote-syntax% stx)
   (core-ast-case stx ()
-    ((_ e) (&SRC `(##quote ,e) stx))))
+    ((_ e) (&SRC `(quote ,e) stx))))
 
 (define-core-forms
   (%#begin            special: compile-begin%)
