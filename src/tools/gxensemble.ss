@@ -47,6 +47,12 @@
       default: []
       help: "server role(s); a list of symbols"))
 
+  (def library-prefix-option
+    (option 'library-prefix #f "--library-prefix"
+      value: string->object
+      default: '(gerbil scheme std)
+      help: "list of package prefixes to consider as library modules installed in the server"))
+
   (def server-id-argument
     (argument 'server-id
       help: "the server id"
@@ -71,12 +77,6 @@
     (argument 'server-or-role
       help: "the server or role to lookup"
       value: string->symbol))
-
-  (def library-prefix-argument
-    (optional-argument 'library-prefix
-      help: "list of package prefixes to consider as library modules installed in the server"
-      value: string->object
-      default: '(gerbil scheme std)))
 
   (def expr-argument
     (argument 'expr
@@ -121,11 +121,11 @@
   (def load-cmd
     (command 'load
       force-flag
-      registry-option
       library-flag
+      registry-option
+      library-prefix-option
       server-id-argument
       module-id-argument
-      library-prefix-argument
       help: "loads code in a running server"))
 
   (def eval-cmd
@@ -134,6 +134,13 @@
       server-id-argument
       expr-argument
       help: "evals code in a running server"))
+
+  (def repl-cmd
+    (command 'repl
+      registry-option
+      library-prefix-option
+      server-id-argument
+      help: "provides a repl for a running server"))
 
   (def ping-cmd
     (command 'ping
@@ -190,6 +197,7 @@
      registry-cmd
      load-cmd
      eval-cmd
+     repl-cmd
      ping-cmd
      shutdown-cmd
      list-servers-cmd
@@ -207,6 +215,7 @@
           (registry         do-registry)
           (load             do-load)
           (eval             do-eval)
+          (repl             do-repl)
           (ping             do-ping)
           (shutdown         do-shutdown)
           (list-servers     do-list-servers)
@@ -306,6 +315,124 @@
      (remote-eval server-id expr)))
   (stop-actor-server!))
 
+(def (do-repl opt)
+  (start-actor-server-with-options! opt)
+  (let ((server-id (hash-ref opt 'server-id))
+        (library-prefix (hash-ref opt 'library-prefix)))
+    (do-repl-for-server server-id library-prefix)
+    (stop-actor-server!)))
+
+(def (do-repl-for-server server-id library-prefix)
+  (def (display-help)
+    (displayln "Control commands: ")
+    (displayln "  ,(import module-id)   -- import a module locally for expansion")
+    (displayln "  ,(load module-id)     -- load the code and dependencies for a module id")
+    (displayln "  ,(load-lib module-id) -- load a library module")
+    (displayln "  ,q ,quit              -- quit the repl")
+    (displayln "  ,h ,help              -- display this help message"))
+
+  (def module-registry #f)
+  (def loaded-object-files
+    (make-hash-table))
+
+  (def (module-id->string module-id)
+    (let (mod-str (symbol->string module-id))
+      (if (string-prefix? ":" mod-str)
+        (substring mod-str 1 (string-length mod-str))
+        mod-str)))
+
+  (def (library-module-loader module-id)
+    (string-append (module-id->string module-id) "__rt"))
+
+  (def (library-module-rt module-id)
+    (string-append (module-id->string module-id) "__0"))
+
+  (def (library-module-loaded? module-id)
+    (or (hash-get module-registry (library-module-loader module-id))
+        (hash-get module-registry (library-module-rt module-id))))
+
+  (def (object-file-loaded? object-file)
+    (hash-get loaded-object-files object-file))
+
+  (def (bind-module-exports! ctx)
+    (let lp ((rest (module-context-export ctx)))
+      (match rest
+        ([hd . rest]
+         (cond
+          ((module-export? hd)
+           (when (= (module-export-phi hd) 0)
+             (core-bind-import! (core-module-export->import hd)))
+           (lp rest))
+          ((export-set? hd)
+           (lp (foldl cons rest (export-set-exports hd))))
+          (else (lp rest))))
+        (else (void)))))
+
+  (_gx#load-expander!)
+  (connect-to-server! server-id)
+  (set! module-registry
+    (remote-eval server-id '(&current-module-registry)))
+  (let/cc exit
+    (parameterize ((current-expander-context (make-top-context)))
+      ;; prepare the context
+      (eval '(import :gerbil/core))
+      (eval '(import :gerbil/gambit))
+      ;; and go!
+      (while #t
+        (display server-id)
+        (display "> ")
+        (try
+         (match (read)
+           ((? eof-object?)
+            (exit (void)))
+           (['unquote command]
+            (match command
+              (['import module-id]
+               (bind-module-exports! (import-module module-id)))
+              (['load module-id]
+               (let ((values object-files library-modules)
+                     (get-module-objects module-id library-prefix))
+                 (when module-registry
+                   (for (lib library-modules)
+                     (unless (library-module-loaded? lib)
+                       (displayln "loading library module " lib)
+                       (remote-load-library-module server-id lib)
+                       (set! module-registry
+                         (remote-eval server-id '(&current-module-registry))))))
+                 (for (object-file object-files)
+                   (unless (object-file-loaded? object-file)
+                     (displayln "loading code object file " object-file)
+                     (hash-put! loaded-object-files object-file #t)
+                     (remote-load-code server-id object-file)))))
+              (['load-library module-id]
+               (cond
+                ((not module-registry)
+                 (displayln "server does not support library loading"))
+                ((library-module-loaded? module-id)
+                 (displayln "library module already loaded"))
+                (else
+                 (displayln "loading library module " module-id)
+                 (remote-load-library-module server-id module-id)
+                 (set! module-registry
+                   (remote-eval server-id '(&current-module-registry))))))
+              ((or 'h 'help)
+               (display-help))
+              ((or 'q 'quit)
+               (exit (void)))
+              (else
+               (displayln "uknown command " command)
+               (display-help))))
+           (expr
+            (let* ((expanded-expr (core-expand expr))
+                   (compiled-expr (core-compile-top-syntax expanded-expr))
+                   (raw-compiled-expr (_gx#compile compiled-expr))
+                   (result (remote-eval server-id raw-compiled-expr)))
+              (unless (void? result)
+                (displayln result)))))
+         (catch (exn)
+           (display "*** ERROR ")
+           (display-exception exn)))))))
+
 (def (do-load opt)
   (_gx#load-expander!)
   (if (hash-get opt 'library)
@@ -351,9 +478,13 @@
        ((prelude-context? in)
         (cons in r))
        ((module-import? in)
-        (fold-modules r [(module-import-source in)]))
+        (if (= (module-import-phi in) 0)
+          (fold-modules r [(module-import-source in)])
+          r))
        ((import-set? in)
-        (fold-modules r [(import-set-source in)]))
+        (if (= (import-set-phi in) 0)
+          (fold-modules r [(import-set-source in)])
+          r))
        (else r))))
 
   (def (find-object-file ctx-id)
@@ -399,6 +530,8 @@
                              cookie:    (get-actor-server-cookie)))
 
 (def (do-run opt)
+  ;; unhook the expander for consistent eval
+  (##expand-source-set! ##identity)
   (let ((module-main (get-module-main (hash-ref opt 'module-id)))
         (main-args (hash-ref opt 'main-args)))
     (call-with-ensemble-server (hash-ref opt 'server-id)
