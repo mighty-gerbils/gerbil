@@ -325,21 +325,16 @@
 (def (do-repl-for-server server-id library-prefix)
   (def (display-help)
     (displayln "Control commands: ")
-    (displayln "  ,(import module-id)   -- import a module locally for expansion")
-    (displayln "  ,(load module-id)     -- load the code and dependencies for a module id")
-    (displayln "  ,(load-lib module-id) -- load a library module")
-    (displayln "  ,q ,quit              -- quit the repl")
-    (displayln "  ,h ,help              -- display this help message"))
+    (displayln "  ,(import module-id)    -- import a module locally for expansion")
+    (displayln "  ,(load module-id)      -- load the code and dependencies for a module")
+    (displayln "  ,(load -f module-id)   -- forcibly load a module ignoring dependencies")
+    (displayln "  ,(load -l module-id)   -- load a library module")
+    (displayln "  ,q ,quit               -- quit the repl")
+    (displayln "  ,h ,help               -- display this help message"))
 
   (def module-registry #f)
   (def loaded-object-files
     (make-hash-table))
-
-  (def (module-id->string module-id)
-    (let (mod-str (symbol->string module-id))
-      (if (string-prefix? ":" mod-str)
-        (substring mod-str 1 (string-length mod-str))
-        mod-str)))
 
   (def (library-module-loader module-id)
     (string-append (module-id->string module-id) "__rt"))
@@ -368,6 +363,19 @@
           (else (lp rest))))
         (else (void)))))
 
+  (def (load-object-file object-file)
+    (unless (object-file-loaded? object-file)
+      (displayln "loading code object file " object-file)
+      (hash-put! loaded-object-files object-file #t)
+      (remote-load-code server-id object-file)))
+
+  (def (load-library-module lib)
+    (unless (library-module-loaded? lib)
+      (displayln "loading library module " lib)
+      (remote-load-library-module server-id lib)
+      (set! module-registry
+        (remote-eval server-id '(&current-module-registry)))))
+
   (_gx#load-expander!)
   (connect-to-server! server-id)
   (set! module-registry
@@ -394,27 +402,18 @@
                      (get-module-objects module-id library-prefix))
                  (when module-registry
                    (for (lib library-modules)
-                     (unless (library-module-loaded? lib)
-                       (displayln "loading library module " lib)
-                       (remote-load-library-module server-id lib)
-                       (set! module-registry
-                         (remote-eval server-id '(&current-module-registry))))))
+                     (load-library-module lib)))
                  (for (object-file object-files)
-                   (unless (object-file-loaded? object-file)
-                     (displayln "loading code object file " object-file)
-                     (hash-put! loaded-object-files object-file #t)
-                     (remote-load-code server-id object-file)))))
-              (['load-library module-id]
-               (cond
-                ((not module-registry)
-                 (displayln "server does not support library loading"))
-                ((library-module-loaded? module-id)
-                 (displayln "library module already loaded"))
-                (else
-                 (displayln "loading library module " module-id)
-                 (remote-load-library-module server-id module-id)
-                 (set! module-registry
-                   (remote-eval server-id '(&current-module-registry))))))
+                   (load-object-file object-file))))
+              (['load '-f module-id]
+               (let (object-file (find-object-file (import-module module-id)))
+                 (if object-file
+                   (load-object-file object-file)
+                   (displayln "cannot find object file"))))
+              (['load -l module-id]
+               (if module-registry
+                 (load-library-module module-id)
+                 (displayln "server does not support library loading")))
               ((or 'h 'help)
                (display-help))
               ((or 'q 'quit)
@@ -469,6 +468,18 @@
       (stop-actor-server!))))
 
 (extern namespace: #f find-library-module)
+
+(def (find-object-file ctx-or-id)
+  (if (module-context? ctx-or-id)
+    (find-object-file (expander-context-id ctx-or-id))
+    (find-library-module (string-append (module-id->string ctx-or-id) "__0"))))
+
+(def (module-id->string module-id)
+  (let (mod-str (symbol->string module-id))
+    (if (string-prefix? ":" mod-str)
+      (substring mod-str 1 (string-length mod-str))
+      mod-str)))
+
 (def (get-module-objects module-id library-prefix)
   (def (fold-modules r q)
     (for/fold (r r) (in q)
@@ -486,9 +497,6 @@
           (fold-modules r [(import-set-source in)])
           r))
        (else r))))
-
-  (def (find-object-file ctx-id)
-    (find-library-module (string-append (symbol->string ctx-id) "__0")))
 
   (let* ((library-prefix-str (map symbol->string library-prefix))
          (ctx (import-module module-id))
