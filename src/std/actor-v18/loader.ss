@@ -71,7 +71,7 @@
                (lambda (exn)
                  (warnf "error loading code [~a]: ~a" code-hash exn)
                  (hash-put! loaded code-hash 'load-error)
-                 (!error (error-message exn)))))))))
+                 (--> (!error (error-message exn))))))))))
 
        ((!eval expr)
         (infof "eval ~a" expr)
