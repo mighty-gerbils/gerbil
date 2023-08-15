@@ -236,10 +236,13 @@
     "net/socket/server"
     "net/socket"
     ;; :std/net/httpd
+    "net/httpd/base"
+    "net/httpd/control"
     "net/httpd/mux"
     (gxc: "net/httpd/handler"  ,@(include-gambit-sharp))
     "net/httpd/server"
     "net/httpd/file"
+    "net/httpd/api"
     "net/httpd"
     "net/sasl"
     ;; :std/xml
