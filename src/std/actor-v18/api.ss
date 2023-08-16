@@ -75,7 +75,8 @@
 (def (call-with-ensemble-server server-id thunk
                                 log-level: (log-level 'INFO)
                                 log-file:  (log-file #f)
-                                addresses: (listen-addrs [])
+                                listen:    (listen-addrs [])
+                                announce:  (public-addrs #f)
                                 registry:  (registry-addrs #f)
                                 roles:     (roles [])
                                 cookie:    (cookie (get-actor-server-cookie)))
@@ -95,11 +96,13 @@
             (hash-eq (registry (append (default-registry-addresses) registry-addrs))))
            (else
             (hash-eq (registry (default-registry-addresses))))))
+         (unix-addr [unix: (hostname) (string-append "/tmp/ensemble/" (symbol->string server-id))])
          (listen-addrs
-          (cons (if (eq? server-id 'registry)
-                  [unix: (hostname) "/tmp/ensemble/registry"]
-                  [unix: (hostname) (string-append "/tmp/ensemble/" (symbol->string server-id))])
-                listen-addrs)))
+          (cons unix-addr listen-addrs))
+         (public-addrs
+          (if public-addrs
+            (cons unix-addr public-addrs)
+            listen-addrs)))
     ;; start the actor server
     (start-actor-server! cookie: cookie
                          addresses: listen-addrs
@@ -109,7 +112,7 @@
     (start-loader!)
     ;; add the server to the ensemble
     (unless (eq? server-id 'registry)
-      (ensemble-add-server! server-id listen-addrs roles))
+      (ensemble-add-server! server-id public-addrs roles))
     ;; run it!
     (try
      (with-exception-stack-trace thunk)

@@ -35,6 +35,12 @@
       default: []
       help: "additional addresses to listen to; by default the server listens at unix /tmp/ensemble/<server-id>"))
 
+  (def announce-option
+    (option 'announce "-a" "--announce"
+      value: string->object
+      default: #f
+      help: "public addresses to announce to the registry; by default these are the listen addresses"))
+
   (def registry-option
     (option 'registry #f "--registry"
       value: string->object
@@ -104,6 +110,7 @@
       logging-option
       logging-file-option
       listen-option
+      announce-option
       registry-option
       roles-option
       server-id-argument
@@ -116,6 +123,7 @@
       logging-option
       logging-file-option
       listen-option
+      announce-option
       help: "runs the ensemble registry"))
 
   (def load-cmd
@@ -288,9 +296,14 @@
         (unless (memq (read) '(y yes Y YES))
           (nope (void))))
 
-      (for (server-id (map car (ensemble-list-servers)))
-        (displayln "... shutting down " server-id)
-        (with-catch void (cut remote-stop-server! server-id)))
+      (let (servers (ensemble-list-servers))
+        (for (server-id (map car servers))
+          (displayln "... shutting down " server-id)
+          (with-catch void (cut remote-stop-server! server-id)))
+        ;; wait a second before shutting down the registry, so that servers can remove
+        ;; themselves.
+        (unless (null? servers)
+          (thread-sleep! 1)))
       (displayln "... shutting down registry")
       (remote-stop-server! 'registry))))
   (stop-actor-server!))
@@ -577,7 +590,8 @@
                              (cut start-ensemble-registry!)
                              log-level: (hash-ref opt 'logging)
                              log-file:  (hash-ref opt 'logging-file)
-                             addresses: (hash-ref opt 'listen)
+                             listen:    (hash-ref opt 'listen)
+                             announce:  (hash-ref opt 'announce)
                              registry:  #f
                              roles:     #f
                              cookie:    (get-actor-server-cookie)))
@@ -591,7 +605,8 @@
                                (cut apply module-main main-args)
                                log-level: (hash-ref opt 'logging)
                                log-file:  (hash-ref opt 'logging-file)
-                               addresses: (hash-ref opt 'listen)
+                               listen:    (hash-ref opt 'listen)
+                               announce:  (hash-ref opt 'announce)
                                registry:  (hash-ref opt 'registry)
                                roles:     (hash-ref opt 'roles)
                                cookie:    (get-actor-server-cookie))))

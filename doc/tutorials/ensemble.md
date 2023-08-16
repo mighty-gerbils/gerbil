@@ -80,6 +80,7 @@ Command Options:
   --log <logging>                 specifies the log level to run with [default: INFO]
   --log-file <logging-file>       specifies a log file instead of logging to stderr; if it is - then the log will be written into the ensemble server directory log [default: #f]
  -l --listen <listen>             additional addresses to listen to; by default the server listens at unix /tmp/ensemble/<server-id> [default: ()]
+ -a --announce <announce>         public addresses to announce to the registry; by default these are the listen addresses [default: #f]
 ```
 
 ### Running an ensemble server
@@ -97,6 +98,7 @@ Command Options:
   --log <logging>                 specifies the log level to run with [default: INFO]
   --log-file <logging-file>       specifies a log file instead of logging to stderr; if it is - then the log will be written into the ensemble server director log [default: #f]
  -l --listen <listen>             additional addresses to listen to; by default the server listens at unix /tmp/ensemble/<server-id> [default: ()]
+ -a --announce <announce>         public addresses to announce to the registry; by default these are the listen addresses [default: #f]
   --registry <registry>           additional registry addresses; by default the registry is reachable at unix /tmp/ensemble/registry [default: #f]
   --roles <roles>                 server role(s); a list of symbols [default: ()]
 
