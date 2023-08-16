@@ -27,7 +27,7 @@
   (def logging-file-option
     (option 'logging-file #f "--log-file"
       default: #f
-      help: "specifies a log file instead of logging to stderr; if it is - then the log will be written into the ensemble server director log"))
+      help: "specifies a log file instead of logging to stderr; if it is - then the log will be written into the ensemble server directory log"))
 
   (def listen-option
     (option 'listen "-l" "--listen"
