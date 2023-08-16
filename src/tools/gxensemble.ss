@@ -333,6 +333,7 @@
     (displayln "  ,(thread-state)        -- display the thread state for the primordial thread group")
     (displayln "  ,(thread-state -g)     -- display the thread state for all thread groups recursively")
     (displayln "  ,(thread-state sn)     -- display the thread state for a thread or group identified by its serial number")
+    (displayln "  ,(thread-backtrace sn) -- display a backtrace for a thread identified by its serial number")
     (displayln "  ,(shutdown)            -- shut down the server and exit the repl")
     (displayln "  ,q ,quit               -- quit the repl")
     (displayln "  ,h ,help               -- display this help message"))
@@ -447,7 +448,20 @@
               (['thread-state (? integer? sn)]
                (eval-expr
                 `(call-with-output-string ""
-                   (lambda (p) (##cmd-st (serial-number->object ,sn) p)))))
+                   (lambda (p)
+                     (let (thread-or-group (serial-number->object ,sn))
+                       (if (or (thread? thread-or-group)
+                               (thread-group? thread-or-group))
+                         (##cmd-st thread-or-group p)))))))
+              (['thread-backtrace (? integer? sn)]
+               (eval-expr
+                `(call-with-output-string ""
+                   (lambda (p)
+                     (let (thread (serial-number->object ,sn))
+                       (if (thread? thread)
+                         (display-continuation-backtrace
+                          (##thread-continuation-capture thread)
+                          p #t)))))))
               (['shutdown]
                (remote-stop-server! server-id)
                (exit (void)))
