@@ -258,6 +258,7 @@ ensemble, that supports dynamic handler registration.
 
 The source code for the tutorial is available in the gerbil source distribution, in
 [src/tutorial/ensemble](https://github.com/vyzo/gerbil/tree/master/src/tutorial/ensemble).
+You can build it using the [build script](https://github.com/vyzo/gerbil/tree/master/src/tutorial/ensemble/build.ss).
 
 Firt let's look at the server implementation in [src/tutorial/ensemble/server.ss](https://github.com/vyzo/gerbil/tree/master/src/tutorial/ensemble/server.ss):
 ```scheme
