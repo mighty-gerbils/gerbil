@@ -27,7 +27,7 @@ release.
 Gerbil comes with a powerful tool for managing actor ensembles: `gxensemble`.
 
 Here are the commands it supports:
-```shell
+```
 $ gxensemble help
 gxensemble: the Gerbil Actor Ensemble Manager
 
@@ -58,7 +58,7 @@ to the relevant hosts.  Note that the tool will not overwrite an existing ensemb
 cookie.
 
 Here is the usage:
-```shell
+```
 $ gxensemble help cookie
 Usage: gxensemble cookie [command-option ...]
        generate a new ensemble cookie
@@ -71,7 +71,7 @@ Command Options:
 
 The first order of business when starting an actor ensemble, is to run a registry.
 We can do this with the `gxensemble registry` command:
-```shell
+```
 $ gxensemble help registry
 Usage: gxensemble registry [command-option ...]
        runs the ensemble registry
@@ -89,7 +89,7 @@ as an argument, loads it and executes the `main` entry point with the
 arguments passed in the command line.
 
 Here is the usage of the tool:
-```shell
+```
 Usage: gxensemble run [command-option ...] <server-id> <module-id> <main-args> ...
        run a server in the ensemble
 
@@ -110,7 +110,7 @@ Arguments:
 
 You can dynamically load code in any ensemble server using the `gxensemble load` command.
 Here is the usage:
-```shell
+```
 Usage: gxensemble load [command-option ...] <server-id> <module-id>
        loads code in a running server
 
@@ -130,7 +130,7 @@ Arguments:
 You can evaluate an expression in a server using the `gxensemble eval` command.
 Note that the evaluator is the raw gambit evaluator, with no gerbil expansion.
 
-```shell
+```
 $ gxensemble help eval
 Usage: gxensemble eval [command-option ...] <server-id> <expr>
        evals code in a running server
@@ -150,7 +150,7 @@ The next step up from `eval` is to get a repl on the running server; you can do 
 Note that the repl does _local expansion_ and _remote evaluation_; that means you can use the full gamut of gerbil code
 
 Here is the usage of the command:
-```shell
+```
 $ gxensemble help repl
 Usage: gxensemble repl [command-option ...] <server-id>
        provides a repl for a running server
@@ -183,7 +183,7 @@ Control commands:
 ### Ping a server or an actor
 
 You can ping a server or an actor for liveness using the `gxensemble ping` command:
-```shell
+```
 $ gxensemble help ping
 Usage: gxensemble ping [command-option ...] <server-id> [<actor-id>]
        pings a server or actor in the server
@@ -199,7 +199,7 @@ Arguments:
 ### General Management Commands
 
 The following commands are useful for general management tasks:
-```shell
+```
 $ gxensemble help list-servers
 Usage: gxensemble list-servers [command-option ...]
        lists known servers
@@ -289,7 +289,7 @@ This is the code for the wrapper (see [src/tutorial/ensemble/httpd-svc.ss](https
 ```
 
 With all this, let's start an ensemble with two httpds, named `httpd1` and `httpd2`:
-```shell
+```
 # generate a cookie for our ensemble, if on does not already exist
 $ gxensemble cookie
 
@@ -306,14 +306,14 @@ $ gxensemble run --roles "(httpd)" httpd2 :tutorial/ensemble/httpd-svc 8081
 ```
 
 Now let's look at our servers:
-```shell
+```
 $ gxensemble lookup --role httpd
 (httpd1 (unix dellicious /tmp/ensemble/httpd1))
 (httpd2 (unix dellicious /tmp/ensemble/httpd2))
 ```
 
 We can also ping them for liveness:
-```shell
+```
 $ gxensemble ping httpd1
 OK
 $ gxensemble ping httpd2
@@ -321,7 +321,7 @@ OK
 ```
 
 Now if we do a request at them we will see that there are no handlers:
-```shell
+```
 $ curl -I http://localhost:8080/
 HTTP/1.1 404 Not Found
 Date: Tue Aug 15 06:34:30 2023
@@ -365,7 +365,7 @@ This code registers a root handler, and provides two more handlers
 that are not initially registerd anywhere.
 
 Here is how we can load the code:
-```shell
+```
 # load with -f as there is no need to load any library dependencies
 $ gxensemble load -f httpd1 :tutorial/ensemble/handler
 ... loading code object file /home/vyzo/.gerbil/lib/tutorial/ensemble/handler__0.o3
@@ -377,7 +377,7 @@ ca3f193373a296d7bdb9101e7d4b9f1d450676aec6c49f05202a3dbcc5d766e2
 ```
 
 and we can verify that the two servers now have a root handler:
-```shell
+```
 $ curl http://localhost:8080/
 the world is not flat but round!
 
@@ -386,7 +386,7 @@ the world is not flat but round!
 ```
 
 Finally, we can use the repl to install another handler from the module we just loaded:
-```shell
+```
 $ gxensemble repl httpd1
 httpd1> ,(import :tutorial/ensemble/handler)
 httpd1> ,(import :std/net/httpd)
@@ -431,7 +431,7 @@ Here is an example static binary running our httpd; the code is at [src/tutorial
 ```
 
 And here it running and getting managed with `gxensemble`:
-```shell
+```
 $ httpd-exe httpd3 8082
 ...
 
@@ -455,7 +455,7 @@ hello, i am httpd3 and i am a static binary
 ## Shutting down
 
 At this point, we are done with this tutorial, and we can shutdown our ensemble:
-```shell
+```
 $ gxensemble shutdown -f
 ... shutting down httpd1
 ... shutting down httpd2
