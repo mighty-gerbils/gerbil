@@ -401,7 +401,7 @@ hello, i am httpd1
 
 So far we have demonstrated ensembles with _dynamic_ binaries; in
 practice however, you are most likely to run a _static_ binary on your
-server. Of course this is not a problem; all you have to do is ru your
+server. Of course this is not a problem; all you have to do is run your
 server's entry point using `call-with-ensemble-server`; this is what
 `gxensemble run` does after all.  The only difference is that you will
 have to parse CLI options on your own, probably using getopt.
