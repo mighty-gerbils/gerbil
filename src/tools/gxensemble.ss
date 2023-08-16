@@ -586,6 +586,7 @@
               (values object-files (reverse libraries))))))))))
 
 (def (do-registry opt)
+  (##expand-source-set! ##identity)
   (call-with-ensemble-server 'registry
                              (cut start-ensemble-registry!)
                              log-level: (hash-ref opt 'logging)
