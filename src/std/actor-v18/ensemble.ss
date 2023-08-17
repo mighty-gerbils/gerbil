@@ -1,8 +1,7 @@
 ;;; -*- Gerbil -*-
 ;;; © vyzo
 ;;; actor ensemble utilities
-(import :gerbil/gambit/threads
-        :gerbil/gambit/os
+(import (only-in :std/misc/ports read-file-u8vector)
         ./message
         ./proto
         ./server)
@@ -58,12 +57,7 @@
   (let ((code
          (cond
           ((string? object-file-path)
-           (let* ((finfo (file-info object-file-path #t))
-                  (size  (file-info-size finfo))
-                  (code  (make-u8vector size)))
-             (call-with-input-file object-file-path
-               (lambda (in) (read-subu8vector code 0 size in)))
-             code))
+           (read-file-u8vector object-file-path))
           (else
            (error "Bad argument; path to code object file" object-file-path))))
         (linker (path-strip-directory object-file-path)))
