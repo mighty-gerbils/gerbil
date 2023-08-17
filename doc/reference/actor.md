@@ -592,6 +592,16 @@ Options:
 - `log-file`: log file for the logger; if it is "-" then the canonical
   server log is used; this file is at
   `$GERBIL_PATH/ensemble/server/<server-id>/log`.
+- `listen`: a list of addresses for the actor server to listen to, in
+  addition to the default unix address.
+- `announce`: an optional list of addresses to announce to the registry,
+  in addition to the default unix address. If it is not specified, then
+  the listen addresses are announced.
+- `registy`: an optional list of registry addresses. If it is not specified,
+  then the default registry address is used.
+- `roles`: a list of roles the server fullfills in the registry.
+- `cookie`: the cookie to use; by default it uses the ensemble cooke in
+  `$GERBIL_PATH/ensemble/cookie`.
 
 ### ensemble-base-path
 ```scheme
