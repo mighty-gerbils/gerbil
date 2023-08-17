@@ -165,16 +165,16 @@ namespace: gxc
     (let ((mod-main (find-runtime-symbol ctx 'main))
           (reset-decl (reset-declare))
           (user-decl (user-declare)))
-      (write '(##namespace (""))) (newline)
-      (write '(declare (optimize-dead-definitions))) (newline)
       (for-each
         (lambda (dep)
-          (write `(include ,dep))
-          (newline)
           (write '(##namespace ("")))
+          (newline)
           (write reset-decl)
+          (newline)
           (when user-decl
-            (write user-decl))
+            (write user-decl)
+            (newline))
+          (write `(include ,dep))
           (newline))
         deps)
       (write `(apply ,mod-main (cdr (command-line))))
@@ -411,6 +411,11 @@ namespace: gxc
 
       (generate-loader-code ctx code rt)))
 
+  (def (context-timestamp ctx)
+    (string->symbol
+     (string-append (symbol->string (expander-context-id ctx))
+                    "::timestamp")))
+
   (def (generate-runtime-code ctx code)
     (let* ((lifts (box []))
            (runtime-code
@@ -424,6 +429,9 @@ namespace: gxc
             (if (null? (unbox lifts))
               runtime-code
               ['begin (reverse (unbox lifts)) ... runtime-code]))
+           (runtime-code
+            ['begin `(define ,(context-timestamp ctx) ,(current-compile-timestamp))
+                    runtime-code])
            (scm0 (compile-output-file ctx 0 ".scm")))
       (if (current-compile-static)
         (let (scms (compile-static-output-file ctx))
