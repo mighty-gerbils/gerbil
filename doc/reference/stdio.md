@@ -936,12 +936,13 @@ Returns the number of bytes copied.
 
 ## A Note on thread-safety
 
-In general you should you the Readers from a single thread. There is
+In general you should use a Reader from a single thread. There is
 no mutex protection for the simple reason that if you are reading from
 multiple threads concurrently you are already shooting yourself in the
 foot because your input will be non-deterministic.
 
-Similarly for writers, you should use them from a single thread at a time.
+Similarly for writers, you should use a Writer from a single thread at
+a time.
 
 For sockets, which are full duplex, you can read and write with two
 threads concurrently; it is also safe to close the socket from yet
