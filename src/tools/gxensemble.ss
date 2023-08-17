@@ -401,7 +401,9 @@
            (raw-compiled-expr (_gx#compile compiled-expr))
            (result (remote-eval server-id raw-compiled-expr)))
       (unless (void? result)
-        (displayln result))))
+        (if (values? result)
+          (for-each displayln (values->list result))
+          (displayln result)))))
 
   (_gx#load-expander!)
   (connect-to-server! server-id)
@@ -652,3 +654,5 @@
                          addresses: listen-addrs
                          identifier: server-id
                          ensemble: known-servers)))
+
+(extern namespace: #f values?)
