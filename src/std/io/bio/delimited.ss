@@ -44,7 +44,7 @@
         (set! (&delimited-input-buffer-remaining delim)
           (fx- remaining 1))
         u8)
-      (raise-io-error 'BufferedReader-read-u8 "input limit exceeded"))))
+      '#!eof)))
 
 (def (bio-delimited-peek-u8 delim)
   (let (remaining (&delimited-input-buffer-remaining delim))

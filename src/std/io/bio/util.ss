@@ -61,37 +61,46 @@
 
 ;; reader
 (defreader-ext (read-u16 reader)
-  (read-uXX reader 2))
+  (read-uint reader 2))
 (defreader-ext (read-s16 reader)
-  (read-sXX reader 2))
+  (read-sint reader 2))
 (defreader-ext (read-u32 reader)
-  (read-uXX reader 4))
+  (read-uint reader 4))
 (defreader-ext (read-s32 reader)
-  (read-sXX reader 4))
+  (read-sint reader 4))
 (defreader-ext (read-u64 reader)
-  (read-uXX reader 8))
+  (read-uint reader 8))
 (defreader-ext (read-s64 reader)
-  (read-sXX reader 8))
+  (read-sint reader 8))
 
-(def (read-uXX reader len)
+(def (read-uint reader len)
   (let lp ((i 0) (x 0))
     (if (fx< i len)
       (let (next (&BufferedReader-read-u8-inline reader))
         (if (eof-object? next)
-          (raise-io-error 'Buffered-reader-read-uXX "premature end of input")
+          (raise-io-error 'Buffered-reader-read-uint "premature end of input")
           (lp (fx+ i 1) (bitwise-ior (arithmetic-shift x 8) next))))
       x)))
 
-(def (read-sXX reader len)
-  (let ((ux (read-uXX reader len))
-        (bits (fxarithmetic-shift-left len 3)))
-    (if (bit-set? (fx- bits 1) ux)
-      (bitwise-not ux)
-      ux)))
+(def (read-sint reader len)
+  (let (uint (read-uint reader len))
+    (complement-input uint len)))
+
+(def (complement-input uint len)
+  (let (bits (fxarithmetic-shift-left len 3))
+    (if (< uint (expt-cache-get (fx- bits 1)))
+      uint
+      (- uint (expt-cache-get bits)))))
 
 (defreader-ext (read-varuint reader (max-bits 64))
+  (def read-more?
+    (if max-bits
+        (lambda (shift)
+          (fx< shift max-bits))
+        (lambda (shift) #t)))
+
   (let lp ((shift 0) (x 0))
-    (if (fx< shift max-bits)
+    (if (read-more? shift)
       (let (next (&BufferedReader-read-u8-inline reader))
         (if (eof-object? next)
           (raise-io-error 'Buffered-reader-read-varuint "premature end of input")
@@ -467,7 +476,11 @@
         read))))
 
 (defreader-ext (read-line reader (sep #\newline) (include-sep? #f) (max-chars #f))
-  (let* ((separators (if (pair? sep) sep [sep]))
+  (let* ((separators
+          (cond
+           ((pair? sep) sep)
+           ((not sep) [])
+           (else [sep])))
          (read-more?
           (if max-chars
             (lambda (x) (fx< x max-chars))
@@ -494,19 +507,19 @@
 
 ;; writer
 (defwriter-ext (write-u16 writer uint)
-  (write-uXX writer uint 2))
+  (write-uint writer uint 2))
 (defwriter-ext (write-s16 writer int)
-  (write-sXX writer int 2))
+  (write-sint writer int 2))
 (defwriter-ext (write-u32 writer uint)
-  (write-uXX writer uint 4))
+  (write-uint writer uint 4))
 (defwriter-ext (write-s32 writer int)
-  (write-sXX writer int 4))
+  (write-sint writer int 4))
 (defwriter-ext (write-u64 writer int)
-  (write-uXX writer int 8))
+  (write-uint writer int 8))
 (defwriter-ext (write-s64 writer int)
-  (write-sXX writer int 8))
+  (write-sint writer int 8))
 
-(def (write-uXX writer uint len)
+(def (write-uint writer uint len)
   (let lp ((i 0) (shift (fx- (fxarithmetic-shift-left len 3) 8)))
     (if (fx< i len)
       (let (u8 (bitwise-and (arithmetic-shift uint (fx- shift)) #xff))
@@ -514,13 +527,17 @@
         (lp (fx+ i 1) (fx- shift 8)))
       len)))
 
-(def (write-sXX writer int len)
+(def (write-sint writer int len)
+  (write-uint writer (complement-output int len) len))
+
+(def (complement-output int len)
   (if (< int 0)
-    (write-uXX writer (bitwise-not int) len)
-    (write-uXX writer int len)))
+    (let (bits (fxarithmetic-shift-left len 3))
+      (+ (expt-cache-get bits) int))
+    int))
 
 (defwriter-ext (write-varuint writer uint (max-bits 64))
-  (when (fx> (integer-length uint) max-bits)
+  (when (and max-bits (fx> (integer-length uint) max-bits))
     (raise-io-error 'BufferedWriter-write-varuint "varuint max bits exceeded"))
   (let lp ((uint uint) (wrote 0))
     (if (> uint #x7f)
@@ -604,3 +621,13 @@
           (else result)))
       (let (wrote (&BufferedWriter-write-char-inline writer separator))
         (fx+ result wrote)))))
+
+;; expt caches
+(def +expt-cache+
+  (let (cache (make-vector 64 #f))
+    (for-each (lambda (i) (vector-set! cache i (expt 2 (fx+ i 1))))
+              (iota 64))
+    cache))
+
+(def (expt-cache-get len)
+  (vector-ref +expt-cache+ (fx- len 1)))

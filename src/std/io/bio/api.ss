@@ -19,6 +19,7 @@
         (import: ./util))
 
 (def default-buffer-size (expt 2 15)) ; 32K
+(def default-small-buffer-size 4096)
 
 (def (make-u8vector-buffer buffer-or-size)
   (cond
@@ -45,7 +46,7 @@
   (cond
    ((not maybe-writer)
     (let ((writer (open-chunk-writer))
-          (buffer (make-u8vector buffer-or-size)))
+          (buffer (make-u8vector-buffer buffer-or-size)))
       (BufferedWriter (make-output-buffer writer buffer 0 #f))))
    ((is-Writer? maybe-writer)
     (let ((writer (Writer maybe-writer))
@@ -74,6 +75,47 @@
     (match chunks
       ([chunk] chunk)
       (else (u8vector-concatenate chunks)))))
+
+(defreader-ext (read-delimited reader read-value)
+  (let* ((len (&BufferedReader-read-varuint reader))
+         (delimited (&BufferedReader-delimit reader len)))
+    (read-value delimited)))
+
+(defreader-ext (read-delimited-u8vector reader)
+  (let* ((len (&BufferedReader-read-varuint reader))
+         (output (make-u8vector len)))
+    (&BufferedReader-read reader output 0 len len)
+    output))
+
+(defreader-ext (read-delimited-string reader)
+  (let* ((len (&BufferedReader-read-varuint reader))
+         (delimited (&BufferedReader-delimit reader len))
+         (output (make-string len)))
+    (let lp ((i 0))
+      (let (next (&BufferedReader-read-char delimited))
+        (if (eof-object? next)
+          (begin
+            (string-shrink! output i)
+            output)
+          (begin
+            (string-set! output i next)
+            (lp (fx+ i 1))))))))
+
+(defwriter-ext (write-delimited writer write-value (buffer-or-size default-small-buffer-size))
+  (let* ((tmp-writer (open-buffered-writer #f buffer-or-size))
+         (_ (write-value tmp-writer))
+         (chunks (get-buffer-output-chunks tmp-writer))
+         (len (foldl (lambda (c r) (fx+ (u8vector-length c) r)) 0 chunks))
+         (varlen (&BufferedWriter-write-varuint writer len)))
+    (for-each (cut &BufferedWriter-write writer <>) chunks)
+    (fx+ varlen len)))
+
+(defwriter-ext (write-delimited-u8vector writer bytes)
+  (&BufferedWriter-write-delimited writer (cut &BufferedWriter-write <> bytes)))
+
+(defwriter-ext (write-delimited-string writer str)
+  (&BufferedWriter-write-delimited writer (cut &BufferedWriter-write-string <> str)
+                                   (fx* 4 (string-length str))))
 
 ;;; Interface
 ;; input-buffer BufferedReader implementation

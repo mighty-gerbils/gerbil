@@ -559,14 +559,17 @@ Raises an error if the end of input is reached.
 ```scheme
 (BufferedReader-read-varuint buf (max-bits 64)) -> integer
   buf      := BufferedReader
-  max-bits := fixnum
+  max-bits := fixnum or #f
 ```
-Reads an unsigned integer, with variadic encoding and a maximum integer length of `max-bits`
+Reads an unsigned integer, with variadic encoding and a maximum integer length of `max-bits` if
+specified.
 Raises an error if the end of input is reached.
 
 #### BufferedReader-read-varint
 ```scheme
-(BufferedReader-read-varint reader (max-bits 64)) -> integer
+(BufferedReader-read-varint buf (max-bits 64)) -> integer
+  buf      := BufferedReader
+  max-bits := fixnum or #f
 ```
 Reads a signed integer, with variadic encoding and a maximum integer length of `max-bits`
 Raises an error if the end of input is reached.
@@ -622,6 +625,31 @@ Reads a line, separated by `sep` and up to `max-chars` of length.
 The separator is either a single character or a list of characters.
 If `include-sep?` is true, then the separator is include in the stream.
 If the separator is not encountered within `max-chars`, then an error is raised.
+
+#### BufferedReader-read-delimited
+```scheme
+(BufferedReader-read-delimited buf read-value)
+  buf := BufferedReader
+  read-value := lambda (BufferedReader) -> any
+```
+
+Reads a varint prefix length delimited value, with `read-value` reading the body.
+
+#### BufferedReader-read-delimited-u8vector
+```scheme
+(BufferedReader-read-delimited-u8vector buf) -> u8vector
+  buf := BufferedReader
+```
+
+Reads a varint prefix length delimited u8vector.
+
+#### BufferedReader-read-delimited-string
+```scheme
+(BufferedReader-read-delimited-string buf) -> string
+  buf := BufferedReader
+```
+
+Reads a varint prefix length delimited string.
 
 #### BufferedReader-put-back
 ```scheme
@@ -832,6 +860,33 @@ Returns the number of bytes written.
 ```
 Writes a string, followed by a separator.
 Returns the number of bytes written
+
+#### BufferedReader-write-delimited
+```scheme
+(BufferedWriter-write-delimited buf write-value (buffer-or-size default-small-buffer-size))
+  buf := BufferedWriter
+  write-value := lambda (BufferedWriter) -> fixnum
+```
+
+Writes a varint prefix length delimited value, with `write-value` writing the body.
+
+#### BufferedReader-write-delimited-u8vector
+```scheme
+(BufferedWriter-read-delimited-u8vector buf bytes) -> fixnum
+  buf := BufferedReader
+  bytes := u8veftor
+```
+
+Writes a varint prefix length delimited u8vector.
+
+#### BufferedReader-write-delimited-string
+```scheme
+(BufferedWriter-write-delimited-string buf str) -> fixnum
+  buf := BufferedWriter
+  str := string
+```
+
+Writes a varint prefix length delimited string.
 
 #### BufferedWriter-flush
 ```
