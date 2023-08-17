@@ -24,11 +24,11 @@
 
 (def (peer-address sock)
   (let (addr (StreamSocket-peer-address sock))
-  (if (eqv? (StreamSocket-domain sock) AF_UNIX)
-    (if (string-empty? addr)
-      "(local)"
-      addr)
-    addr)))
+    (if (eqv? (StreamSocket-domain sock) AF_UNIX)
+      (if (string-empty? addr)
+        "(local)"
+        addr)
+      addr)))
 
 (def (actor-listener srv sock cookie)
   (with-exception-stack-trace (cut actor-listener-main srv cookie sock)))
