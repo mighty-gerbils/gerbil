@@ -303,7 +303,7 @@
         ;; wait a second before shutting down the registry, so that servers can remove
         ;; themselves.
         (unless (null? servers)
-          (thread-sleep! 1)))
+          (thread-sleep! 3)))
       (displayln "... shutting down registry")
       (remote-stop-server! 'registry))))
   (stop-actor-server!))
