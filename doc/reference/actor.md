@@ -65,6 +65,8 @@ invoked within the lexical scope of a `<-` reaction.
 ### <-
 ```scheme
 (<- (pattern body ...) ...
+    [,(reaction-rule-macro ...) ...]
+    [,@(multiple-reaction-rules-macro ...) ...]
     [timeout: timeo]
     [(else body ...)])
 ```
