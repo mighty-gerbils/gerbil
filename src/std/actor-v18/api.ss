@@ -68,7 +68,10 @@
   server-address-cache-ttl
   set-server-address-cache-ttl!
   ;; ./ensemble
-  (import: ./ensemble))
+  (import: ./ensemble)
+  ;; ./path
+  ensemble-base-path
+  ensemble-server-path)
 
 ;; call a thunk in the context of an ensemble server
 ;; this is the programmatic equivalent of gxensemble run
