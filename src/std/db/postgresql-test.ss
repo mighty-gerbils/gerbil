@@ -11,23 +11,41 @@
            :gerbil/gambit/threads
            :gerbil/gambit/exceptions)
    (export postgresql-test
-           create-test-user-and-database)
+           test-setup!
+           test-cleanup!)
 
    (def (create-test-user-and-database
          host: (h "localhost")
          port: (p 5432)
          user: (u "postgres")
-         passwd: (pw "heh"))
+         passwd: (pw "postgres"))
      (def db (sql-connect postgresql-connect host: h port: p user: u passwd: pw))
      (try (sql-eval db "CREATE ROLE test PASSWORD 'test' LOGIN")
           (catch (e) (display-exception e)))
      (try (sql-eval db "CREATE DATABASE test OWNER test")
           (catch (e) (display-exception e))))
 
+   (def (drop-test-user-and-database
+         host: (h "localhost")
+         port: (p 5432)
+         user: (u "postgres")
+         passwd: (pw "postgres"))
+     (def db (sql-connect postgresql-connect host: h port: p user: u passwd: pw))
+     (try (sql-eval db "DROP DATABASE test")
+          (catch (e) (display-exception e)))
+     (try (sql-eval db "DROP ROLE test")
+          (catch (e) (display-exception e))))
+
+   (def (test-setup!)
+     (create-test-user-and-database))
+
+   (def (test-cleanup!)
+     (drop-test-user-and-database))
+
    (def postgresql-test
-     (test-suite "test: db/postgresql"
-       (test-case "test: postgresql driver"
-         (def pg (postgresql-connect! "127.0.0.1" 5432 "test" "test" #f))
+     (test-suite "db/postgresql"
+       (test-case "postgresql driver"
+         (def pg (postgresql-connect! "127.0.0.1" 5432 "test" "test" "test"))
          (def (values? . args)
            (lambda (res)
              (equal? (values->list res) args)))
@@ -69,7 +87,7 @@
                (postgresql-exec! pg "stmt3" [(genstring 'first) (genstring 'last) (genstring 'secret)])
                (lp (fx1+ i)))))
 
-         (check (postgresql-prepare-statement! pg "stmt0" "DROP TABLE Users")
+         (check (postgresql-prepare-statement! pg "stmt0" "DROP TABLE IF EXISTS Users")
                 ? (values? [] []))
          (check (try (postgresql-exec! pg "stmt0" []) (void) (catch (sql-error? e) (void)))
                 ? void?)
@@ -99,7 +117,8 @@
          (check (postgresql-exec! pg "stmt0" [])
                 => "DROP TABLE")
          (postgresql-close! pg))
-       (test-case "test: postgresql Generic DBI"
+
+       (test-case "postgresql Generic DBI"
          (def db (sql-connect postgresql-connect
                               host: "localhost"
                               port: 5432
@@ -107,7 +126,7 @@
                               passwd: "test"
                               db: "test"))
          (try
-          (let (stmt (sql-prepare db "DROP TABLE Users"))
+          (let (stmt (sql-prepare db "DROP TABLE IF EXISTS Users"))
             (sql-exec stmt))
           (catch (sql-error? e) (void)))
          (check db ? connection?)
@@ -157,8 +176,10 @@
            (check res ? void?))
          (let (res (sql-eval-query db "SELECT * FROM Users"))
            (check res => '(#("John" "Smith" "very secret"))))
-         (sql-eval db "DROP TABLE Users"))
-       (test-case "test: postgresql-query"
+         (sql-eval db "DROP TABLE Users")
+         (sql-close db))
+
+       (test-case "postgresql-query"
          (def db (sql-connect postgresql-connect
                               host: "localhost"
                               port: 5432
@@ -201,4 +222,5 @@
               (check (car sel3) => "SELECT 1")
               (check (cadr sel3) => '(("count" . 2)))
               (check (car drop2) => "DROP TABLE")
-              (check (cdr drop2) ? null?)))))))))
+              (check (cdr drop2) ? null?))))
+         (sql-close db))))))
