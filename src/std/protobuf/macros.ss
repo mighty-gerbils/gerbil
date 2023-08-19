@@ -354,7 +354,7 @@
         (if (or (scalar-type? type)
                 (enum-type? type))
           #'(bio-read-e buf)
-          #'(&BufferedReader-read-delimited* buf bio-read-e))))
+          #'(&BufferedReader-read-delimited buf bio-read-e))))
 
     (with ([specifier field-id . rest] field)
       (with-syntax ((getf (format-id id "&~a-~a" id field-id))
@@ -394,7 +394,7 @@
                             ((bio-read-value-e _) (type-unchecked-io-methods value-type))
                             (read-value-e
                              (if (message-type? value-type)
-                               #'(cut &BufferedReader-read-delimited* <> bio-read-value-e)
+                               #'(cut &BufferedReader-read-delimited <> bio-read-value-e)
                                #'bio-read-value-e)))
                (cons #'((key)
                         (let (kv (&BufferedReader-read-key-value-pair buf bio-read-key-e read-value-e))
@@ -570,8 +570,8 @@
 (defscalar-type sfixed64 FIXED64 sfixed64)
 (defscalar-type double   FIXED64 double)
 (defscalar-type float    FIXED32 float)
-(defscalar-type string   VARLEN  delimited-string*)
-(defscalar-type bytes    VARLEN  delimited-bytes*)
+(defscalar-type string   VARLEN  delimited-string)
+(defscalar-type bytes    VARLEN  delimited-bytes)
 
 (defrules defpackage ()
   ((_ id type-id ...)

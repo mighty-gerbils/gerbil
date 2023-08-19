@@ -133,41 +133,8 @@
                 chunks))))
 
 ;; length delimited objects
-(defreader-ext (read-delimited* buf read-e)
-  (let* ((len (&BufferedReader-read-varint* buf))
-         (buf (&BufferedReader-delimit buf len)))
-    (read-e buf)))
-
 (defwriter-ext (write-delimited* buf obj write-e)
-  (let (tmpbuf (open-buffered-writer #f))
-    (write-e tmpbuf obj)
-    (let* ((chunks (get-buffer-output-chunks tmpbuf))
-           (len (chunks-length chunks)))
-    (&BufferedWriter-write-varint* buf len)
-    (for-each (cut &BufferedWriter-write buf <>)
-              chunks))))
-
-(defreader-ext (read-delimited-string* buf)
-  (let* ((len (&BufferedReader-read-varint* buf))
-         (buf (&BufferedReader-delimit buf len))
-         (str (make-string len)))
-    (&BufferedReader-read-string buf str 0 len len)
-    str))
-
-(defwriter-ext (write-delimited-string* buf str)
-  (let (len (string-utf8-length str))
-    (&BufferedWriter-write-varint* buf len)
-    (&BufferedWriter-write-string buf str)))
-
-(defreader-ext (read-delimited-bytes* buf)
-  (let* ((len (&BufferedReader-read-varint* buf))
-         (bytes (make-u8vector len)))
-    (&BufferedReader-read buf bytes)
-    bytes))
-
-(defwriter-ext (write-delimited-bytes* buf bytes)
-  (&BufferedWriter-write-varint* buf (u8vector-length bytes))
-  (&BufferedWriter-write buf bytes))
+  (&BufferedWriter-write-delimited buf (cut write-e <> obj)))
 
 ;; booleans
 (defreader-ext (read-boolean buf)
