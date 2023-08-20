@@ -23,7 +23,8 @@
      (try (sql-eval db "CREATE ROLE test PASSWORD 'test' LOGIN")
           (catch (e) (display-exception e)))
      (try (sql-eval db "CREATE DATABASE test OWNER test")
-          (catch (e) (display-exception e))))
+          (catch (e) (display-exception e)))
+     (sql-close db))
 
    (def (drop-test-user-and-database
          host: (h "localhost")
@@ -34,7 +35,8 @@
      (try (sql-eval db "DROP DATABASE test")
           (catch (e) (display-exception e)))
      (try (sql-eval db "DROP ROLE test")
-          (catch (e) (display-exception e))))
+          (catch (e) (display-exception e)))
+     (sql-close db))
 
    (def (test-setup!)
      (create-test-user-and-database))
