@@ -644,11 +644,13 @@
         (lp (cons next r))))))
 
 (def (unmarshal-string buf)
-  (let lp ((bytes []))
-    (let (next (&BufferedReader-read-u8! buf))
-      (if (fx= next 0)
-        (utf8->string (list->u8vector (reverse! bytes)))
-        (lp (cons next bytes))))))
+  (let lp ((chars []))
+    (if (fx= (&BufferedReader-peek-u8 buf) 0)
+      (begin
+        (&BufferedReader-read-u8 buf)
+        (list->string (reverse! chars)))
+      (let (next (&BufferedReader-read-char buf))
+        (lp (cons next chars))))))
 
 (def (unmarshal-bytes-rest buf)
   (let lp ((bytes []))
@@ -658,8 +660,11 @@
         (lp (cons next bytes))))))
 
 (def (unmarshal-string-rest buf)
-  (let (bytes (unmarshal-bytes-rest buf))
-    (utf8->string bytes)))
+  (let lp ((chars []))
+    (let (next (&BufferedReader-read-char buf))
+      (if (eof-object? next)
+        (list->string (reverse! chars))
+        (lp (cons next chars))))))
 
 (def (unmarshal-complete buf)
   (let (tag (unmarshal-string buf))
@@ -672,9 +677,9 @@
         (let (len (&BufferedReader-read-s32 buf))
           (if (fx>= len 0)
             (let* ((strbuf (&BufferedReader-delimit buf len))
-                   (str (&BufferedReader-read-line strbuf #f)))
+                   (str (unmarshal-string-rest strbuf)))
               (lp (fx+ i 1) (cons str r)))
-            (lp (##fx+ i 1) (cons #f r)))) ; NULL
+            (lp (fx+ i 1) (cons #f r)))) ; NULL
         (reverse! r)))))
 
 (def (unmarshal-error-notice buf)
