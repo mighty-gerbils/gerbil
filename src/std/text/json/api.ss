@@ -1,5 +1,5 @@
 ;;; -*- Gerbil -*-
-;;; ̧© vyzo
+;;; © vyzo
 ;;; json api
 (import :gerbil/gambit/ports
         :std/io
@@ -43,5 +43,4 @@
 (def (json-object->string obj)
   (let (buffer (open-buffered-string-writer #f))
     (write-json-object/writer obj buffer (make-env))
-    (&BufferedStringWriter-flush buffer)
     (get-buffer-output-string buffer)))
