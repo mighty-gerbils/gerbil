@@ -6,9 +6,81 @@
         :std/error
         :std/iter
         ../interface
+        ../bio/api
         ./api)
-(export strbuf-input-test
+(export strio-utf8-codec-test
+        strbuf-input-test
         strbuf-output-test)
+
+;; use Marc's routines instead of the stdlib ones to validate
+(extern namespace: #f string->utf8 utf8->string)
+
+(def strio-utf8-codec-test
+  (test-suite "utf8 codec"
+    (test-case "ascii encoding"
+      (let* ((input-chunk "the quick brown fox jumped over the lazy dog")
+             (input
+              (for/fold (r input-chunk) (i (in-range 100))
+                (string-append r "." input-chunk)))
+             (bwr (open-buffered-writer #f))
+             (swr (open-string-writer bwr)))
+        (check (StringWriter-write-string swr input) => (string-length input))
+        (check (get-buffer-output-u8vector bwr)
+               => (string->utf8 input))))
+
+    (test-case "unicode encoding"
+      (let* ((input-chunk "the ⌣∵ quick ©𐆎 brown ∀Å fox γδ jumped εζ over ̆p↑ the ̱⊼ lazy dog")
+             (input
+              (for/fold (r input-chunk) (i (in-range 100))
+                (string-append r "." input-chunk)))
+             (bwr (open-buffered-writer #f))
+             (swr (open-string-writer bwr)))
+        (check (StringWriter-write-string swr input) => (string-length input))
+        (check (get-buffer-output-u8vector bwr)
+               => (string->utf8 input))))
+
+    (test-case "ascii decoding"
+      (let* ((input-chunk "the quick brown fox jumped over the lazy dog")
+             (input
+              (for/fold (r input-chunk) (i (in-range 100))
+                (string-append r "." input-chunk)))
+             (brd (open-buffered-reader (string->utf8 input)))
+             (srd (open-string-reader brd))
+             (buf (make-string (string-length input))))
+        (check (StringReader-read-string srd buf) => (string-length input))
+        (check buf => input)))
+
+    (test-case "unicode decoding"
+      (let* ((input-chunk "the ⌣∵ quick ©𐆎 brown ∀Å fox γδ jumped εζ over ̆p↑ the ̱⊼ lazy dog")
+             (input
+              (for/fold (r input-chunk) (i (in-range 100))
+                (string-append r "." input-chunk)))
+             (brd (open-buffered-reader (string->utf8 input)))
+             (srd (open-string-reader brd))
+             (buf (make-string (string-length input))))
+        (check (StringReader-read-string srd buf) => (string-length input))
+        (check buf => input)))
+
+    (test-case "unicode decoding errors"
+      (let* ((input
+              '#u8(#xd0 #x00
+                   #xe0 #x00
+                   #xe0 #x80 #x00
+                   #xf0 #x00
+                   #xf0 #x80 #x00
+                   #xf0 #x80 #x80 #x00))
+             (expected-output
+              (string #\xfffd #\nul
+                      #\xfffd #\nul
+                      #\xfffd #\xfffd #\nul
+                      #\xfffd #\nul
+                      #\xfffd #\xfffd #\nul
+                      #\xfffd #\nul #\nul))
+             (brd (open-buffered-reader input))
+             (srd (open-string-reader brd))
+             (buf (make-string (string-length expected-output))))
+        (check (StringReader-read-string srd buf) => (string-length expected-output))
+        (check buf => expected-output)))))
 
 (def (make-test-string size)
   (let (str (make-string size))
