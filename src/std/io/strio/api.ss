@@ -24,17 +24,18 @@
         (import: ./inline)
         (import: ./util))
 
-(def default-buffer-size (expt 2 15)) ; 32KB
-(def max-buffer-size (expt 2 28)) ; 256MB -- for safe efficient packing in 64bit archs
+(def default-u8vector-buffer-size (expt 2 15)) ; 32KB
+(def default-string-buffer-size (expt 2 13)) ; 8k chars
+(def max-u8vector-buffer-size (expt 2 28)) ; 256MB -- for safe efficient packing in 64bit archs
 
 (def (make-u8vector-buffer buffer-or-size)
   (cond
    ((fixnum? buffer-or-size)
-    (if (fx> buffer-or-size max-buffer-size)
+    (if (fx> buffer-or-size max-u8vector-buffer-size)
       (error "Bad argument; buffer too big" buffer-or-size)
       (make-u8vector buffer-or-size)))
    ((u8vector? buffer-or-size)
-    (if (fx> (u8vector-length buffer-or-size) max-buffer-size)
+    (if (fx> (u8vector-length buffer-or-size) max-u8vector-buffer-size)
       (error "Bad argument; buffer too big" (u8vector-length buffer-or-size))
       buffer-or-size))
    (else
@@ -43,11 +44,11 @@
 (def (make-string-buffer buffer-or-size)
   (cond
    ((fixnum? buffer-or-size)
-    (if (fx> buffer-or-size max-buffer-size)
+    (if (fx> buffer-or-size max-u8vector-buffer-size)
       (error "Bad argument; buffer too big" buffer-or-size)
       (make-string buffer-or-size)))
    ((string? buffer-or-size)
-    (if (fx> (string-length buffer-or-size) max-buffer-size)
+    (if (fx> (string-length buffer-or-size) max-u8vector-buffer-size)
       (error "Bad argument; buffer too big" (string-length buffer-or-size))
       buffer-or-size))
    (else
@@ -70,7 +71,7 @@
     (else
      (error "Unsupported character encoding" codec))))
 
-(def (open-string-reader reader (buffer-or-size default-buffer-size)
+(def (open-string-reader reader (buffer-or-size default-u8vector-buffer-size)
                          encoding: (codec 'UTF-8))
   (cond
    ((is-BufferedReader? reader)
@@ -95,7 +96,7 @@
    (else
     (error "Bad reader; expected implementation of Reader" reader))))
 
-(def (open-string-writer writer (buffer-or-size default-buffer-size)
+(def (open-string-writer writer (buffer-or-size default-u8vector-buffer-size)
                          encoding: (codec 'UTF-8))
   (cond
    ((is-BufferedWriter? writer)
@@ -120,7 +121,7 @@
    (else
     (error "Bad writer; expected implementation of Writer" writer))))
 
-(def (open-buffered-string-reader reader-or-string (buffer-or-size default-buffer-size)
+(def (open-buffered-string-reader reader-or-string (buffer-or-size default-string-buffer-size)
                                   encoding: (codec 'UTF-8))
   (cond
    ((string? reader-or-string)
@@ -142,7 +143,7 @@
    (else
     (error "Bad reader; expected string or implementation of StringReader or Reader" reader-or-string))))
 
-(def (open-buffered-string-writer maybe-writer (buffer-or-size default-buffer-size)
+(def (open-buffered-string-writer maybe-writer (buffer-or-size default-string-buffer-size)
                                   encoding: (codec 'UTF-8))
   (cond
    ((not maybe-writer)
