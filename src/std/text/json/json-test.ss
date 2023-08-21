@@ -4,6 +4,8 @@
 
 (import :std/test
         :std/sugar
+        :std/io
+        :std/text/utf8
         ./api)
 (export json-test)
 
@@ -29,8 +31,8 @@
   (check-encode-decode= (- num)))
 
 (def json-test
-  (test-suite "test :std/text/json"
-    (test-case "test object encoding and decoding"
+  (test-suite "json encoding and decoding"
+    (test-case "basic object encoding and decoding"
       (check-encode-decode #t "true")
       (check-encode-decode #f "false")
       (check-encode-decode (void) "null")
@@ -49,5 +51,37 @@
         (check-encode-decode (hash ("a" 1) ("b" 2) ("c" (hash ("d" 3) ("e" 4) ("f" 5))))
                              "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}"))
       (check-encode-decode [1 2 #f #t 3] "[1,2,false,true,3]")
-      (check (call-with-output-string (cut write-json (foo 23 41) <>)) => "{\"a\":23,\"b\":41}")
-    )))
+      (check (call-with-output-string (cut write-json (foo 23 41) <>)) => "{\"a\":23,\"b\":41}"))
+
+    (test-case "io zoo"
+      (def obj
+        (hash-eq (a 1) (b 2) (c (hash-eq (d 3) (e 4) (f 5)))))
+      (def str
+        "{\"a\":1,\"b\":2,\"c\":{\"d\":3,\"e\":4,\"f\":5}}")
+
+      (check (call-with-output-string "" (cut write-json obj <>)) => str)
+      (check (call-with-input-string str read-json) => obj)
+
+      (check (do-with-buffered-string-writer (cut write-json obj <>)) => str)
+      (check (do-with-buffered-string-reader str read-json) => obj)
+
+      (check (do-with-buffered-writer (cut write-json obj <>)) => str)
+      (check (do-with-buffered-reader str read-json) => obj))))
+
+(def (do-with-buffered-writer proc)
+  (let (buf (open-buffered-writer #f))
+    (proc buf)
+    (utf8->string (get-buffer-output-u8vector buf))))
+
+(def (do-with-buffered-reader str proc)
+  (let (buf (open-buffered-reader (string->utf8 str)))
+    (proc buf)))
+
+(def (do-with-buffered-string-writer proc)
+  (let (buf (open-buffered-string-writer #f))
+    (proc buf)
+    (get-buffer-output-string buf)))
+
+(def (do-with-buffered-string-reader str proc)
+  (let (buf (open-buffered-string-reader str))
+    (proc buf)))
