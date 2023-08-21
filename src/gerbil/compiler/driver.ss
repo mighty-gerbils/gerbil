@@ -13,11 +13,19 @@ namespace: gxc
         (only-in :gerbil/gambit/ports
                  close-port open-process process-status)
         (only-in :gerbil/gambit/os
-                 current-time time->seconds file-info file-info-size))
+                 current-time time->seconds file-info file-info-size)
+        (only-in :gerbil/gambit/threads
+                 make-mutex with-lock))
+
 (export compile-file compile-exe-stub compile-static-exe)
 
 (def default-gerbil-home #f)
 (def default-gambit-gsc "gsc")
+
+(def +driver-mutex+ (make-mutex 'compiler/driver))
+(defrules with-driver-mutex ()
+  ((_ expr)
+   (with-lock +driver-mutex+ (lambda () expr))))
 
 (def (compile-timestamp)
   (inexact->exact (floor (time->seconds (current-time)))))
@@ -51,9 +59,9 @@ namespace: gxc
         (gen-ssxi    (pgetq generate-ssxi: opts))
         (static      (pgetq static: opts)))
     (when outdir
-      (create-directory* outdir))
+      (with-driver-mutex (create-directory* outdir)))
     (when optimize
-      (optimizer-info-init!))
+      (with-driver-mutex (optimizer-info-init!)))
     (parameterize ((current-compile-output-dir outdir)
                    (current-compile-invoke-gsc invoke-gsc?)
                    (current-compile-gsc-options gsc-options)
@@ -66,7 +74,7 @@ namespace: gxc
                    (current-compile-timestamp (compile-timestamp))
                    (current-expander-compiling? #t))
       (verbose "compile " srcpath)
-      (compile-top-module (import-module srcpath)))))
+      (compile-top-module (with-driver-mutex (import-module srcpath))))))
 
 (def (compile-exe-stub srcpath (opts []))
   (do-compile-exe srcpath opts compile-exe-stub-module))
@@ -84,7 +92,7 @@ namespace: gxc
         (keep-scm?   (pgetq keep-scm: opts))
         (verbosity   (pgetq verbose: opts)))
     (when outdir
-      (create-directory* outdir))
+      (with-driver-mutex (create-directory* outdir)))
     (parameterize ((current-compile-output-dir outdir)
                    (current-compile-invoke-gsc invoke-gsc?)
                    (current-compile-gsc-options gsc-options)
@@ -93,7 +101,7 @@ namespace: gxc
                    (current-compile-timestamp (compile-timestamp))
                    (current-expander-compiling? #t))
       (verbose "compile exe " srcpath)
-      (compile-e (import-module srcpath) opts))))
+      (compile-e (with-driver-mutex (import-module srcpath)) opts))))
 
 (def (compile-exe-stub-module ctx opts)
   (def (generate-stub gx-init-stub)
@@ -120,7 +128,7 @@ namespace: gxc
 
   (let* ((output-bin (compile-exe-output-file ctx opts))
          (output-scm (string-append output-bin ".scmx")))
-    (create-directory* (path-directory output-scm))
+    (with-driver-mutex (create-directory* (path-directory output-scm)))
     (compile-stub output-scm output-bin)
     (unless (current-compile-keep-scm)
       (delete-file output-scm))))
@@ -382,7 +390,7 @@ namespace: gxc
                   (make-hash-table)))
     (verbose "compile " (expander-context-id ctx))
     (when (current-compile-optimize)
-      (optimize! ctx))
+      (with-driver-mutex (optimize! ctx)))
     (collect-bindings ctx)
     (compile-runtime-code ctx)
     (compile-meta-code ctx)
