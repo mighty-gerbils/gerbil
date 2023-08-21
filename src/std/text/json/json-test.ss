@@ -15,17 +15,14 @@
 
 (def (check-encode-decode obj str)
   (parameterize ((json-sort-keys #f))
-    (check (call-with-input-string (call-with-output-string (cut write-json obj <>)) read-json)
-           => obj))
+    (check (string->json-object (json-object->string obj)) => obj))
+
   (parameterize ((json-sort-keys #t))
-    (check (call-with-output-string (cut write-json obj <>)) => str)
-    (check (call-with-input-string str read-json) => obj)))
+    (check (json-object->string obj) => str)
+    (check (string->json-object str) => obj)))
 
 (def (check-encode-decode= obj)
-  (let (p (open-output-u8vector))
-    (write-json obj p)
-    (let (q (open-input-u8vector (get-output-u8vector p)))
-      (checkf = (read-json q) obj))))
+  (checkf = (string->json-object (json-object->string obj)) obj))
 
 (def (check-encode-decode-number num)
   (check-encode-decode= num)
