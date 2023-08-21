@@ -177,6 +177,7 @@
   (let (strio (interface-instance-object wr))
     (cond
      ((string-output-buffer? strio)
+      (strbuf-flush-output strio)
       (get-buffer-output-string-chunks (&string-output-buffer-writer strio)))
      ((chunked-string-output-buffer? strio)
       (or (&chunked-string-output-buffer-output strio)
