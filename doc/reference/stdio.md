@@ -11,7 +11,7 @@ sockets, buffers, and so on.
 ```
 :::
 
-## Basic IO
+## Binary IO
 The `Reader` interface provides the basic input facilities, while
 the `Writer` interface provides the basic output facilities.
 
@@ -49,7 +49,7 @@ are read before encountering the end of input, an error is raised.
 Closes the input source represented by the reader.
 
 ### Writer
-The `Reader` interface represents binary output sinks; the interface
+The `Writer` interface represents binary output sinks; the interface
 is defined as follows:
 ```scheme
 (interface Writer
@@ -61,7 +61,7 @@ There are two methods in the Writer interface:
 #### Writer-write
 ```scheme
 (Writer-write writer input (start 0) (end (u8vector-length output)) (need 0)) -> fixnum
-  reader := Writer implementation
+  writer := Writer implementation
   input  := u8vector
   start  := fixnum; 0 <= start < end
   end    := fixnum;  start < end <= (u8vector-length input)
@@ -731,7 +731,7 @@ The default buffer size is 32KB.
   wr := BufferedWriter
 ```
 
-Retrieves the output from a `BufferedWriter` created with `open-u8vector-buffered-writer`.
+Retrieves the output from a `BufferedWriter` created with `open-buffered-writer`.
 
 #### get-buffer-output-chunks
 ```scheme
@@ -861,7 +861,7 @@ Returns the number of bytes written.
 Writes a string, followed by a separator.
 Returns the number of bytes written
 
-#### BufferedReader-write-delimited
+#### BufferedWriter-write-delimited
 ```scheme
 (BufferedWriter-write-delimited buf write-value (buffer-or-size default-small-buffer-size))
   buf := BufferedWriter
@@ -870,7 +870,7 @@ Returns the number of bytes written
 
 Writes a varint prefix length delimited value, with `write-value` writing the body.
 
-#### BufferedReader-write-delimited-u8vector
+#### BufferedWriter-write-delimited-u8vector
 ```scheme
 (BufferedWriter-read-delimited-u8vector buf bytes) -> fixnum
   buf := BufferedReader
@@ -879,7 +879,7 @@ Writes a varint prefix length delimited value, with `write-value` writing the bo
 
 Writes a varint prefix length delimited u8vector.
 
-#### BufferedReader-write-delimited-string
+#### BufferedWriter-write-delimited-string
 ```scheme
 (BufferedWriter-write-delimited-string buf str) -> fixnum
   buf := BufferedWriter
@@ -905,14 +905,304 @@ Drains the buffer into the underlying sync.
 
 Resets the underlying writer and buffer state, allowing reuse of buffers from a cache.
 
-#### BufferedWriter-close
+
+## Textual IO
+The `StringReader` interface provides the basic input facilities, while
+the `StringWriter` interface provides the basic output facilities.
+
+### StringReader
+The `StringReader` interface represents textual input sources; the interface
+is defined as follows:
+
 ```scheme
-(BufferedWriter-close buf)
+(interface StringReader
+  (read-string str (start 0) (end (string-length str)) (need 0))
+  (close))
 ```
 
-Fluses the buffer and closes the underlying Writer; if there was an
-exception when flushing, it will be raised after closing the underying
-Writer.
+There is one constructor two methods in the StringReader interface:
+#### open-string-reader
+```scheme
+(open-string-reader reader
+                    (buffer-or-size default-buffer-size)
+                    encoding: (codec 'UTF-8))
+-> StringReader
+
+ reader := Reader or BufferedReader
+```
+
+Creates a `StringReader` from an underlying binary `Reader` or `BufferedReader`,
+using the specified encoding.
+
+The only encoding currently supported is UTF-8, but more codecs will be added
+in the future.
+
+#### StringReader-read
+```scheme
+(StringReader-read reader output (start 0) (end (string-length output)) (need 0)) -> fixnum
+  reader := StringReader implementation
+  output := string
+  start  := fixnum; 0 <= start < end
+  end    := fixnum; start < end <= (string-length output)
+  need   := fixnum; 0 <= need <= end-start
+```
+Reads from a reader into the `output` buffer, with the write range being `[start, end)`.
+Returns the number of characters read, with 0 denoting the end of input.
+
+If `need > 0`, then it specifies the number of bytes needed; if less than `need` characters
+are read before encountering the end of input, an error is raised.
+
+#### StringReader-close
+```scheme
+(StringReader-close reader)
+  reader := StringReader implementation
+```
+Closes the input source represented by the reader.
+
+
+
+
+### StringWriter
+The `StringWriter` interface represents textual output sinks; the interface
+is defined as follows:
+```scheme
+(interface StringWriter
+  (write-string input (start 0) (end (string-length input)))
+  (close))
+```
+
+There is one constructor two methods in the Writer interface:
+#### open-string-writer
+```scheme
+(open-string-writer writer
+                    (buffer-or-size default-buffer-size)
+                    encoding: (codec 'UTF-8))
+-> StringWriter
+
+ writer := Writer or BufferedWriter
+```
+
+Creates a `StringWriter` for an underlying binary `Writer` or `BufferedWriter`,
+using the specified encoding.
+
+The only encoding currently supported is UTF-8, but more codecs will be added
+in the future.
+
+#### StringWriter-write-string
+```scheme
+(StringWriter-write-string writer input (start 0) (end (string-length output)) (need 0)) -> fixnum
+  writer := StringWriter implementation
+  input  := string
+  start  := fixnum; 0 <= start < end
+  end    := fixnum;  start < end <= (string-length input)
+```
+Writes into a writer from the `input` buffer, with the read range being `[start, end)`.
+Returns the number of characters written; if fewer characters are written than expected, an error`
+is raised.
+
+#### StringWriter-close
+```scheme
+(StringWriter-close writer)
+  writer := StringWriter implementation
+```
+Closes the output source represented by the writer.
+
+
+
+
+
+
+## Buffered Textual IO
+
+The `BufferedStringReader` and `BufferedStringWriter` interfaces provide buffered
+textual IO facilities. Buffers can be attached to any implementation of StringReader
+and StringWriter.
+
+### BufferedStringReader
+The BufferedStringReader interface is defined as follows:
+```scheme
+(interface (BufferedReader Reader)
+  (read-char)
+  (peek-char)
+  (put-back previous-input)
+  (skip count)
+  (delimit limit)
+  (reset! reader))
+```
+
+The following procedures create and apply to BufferedStringReader instances.
+
+#### open-buffered-string-reader
+```scheme
+(open-buffered-string-reader reader (buffer-or-size default-buffer-size)) -> BufferedStringReader
+  reader := StringReader or string
+  buffer-or-size := fixnum or string
+```
+
+Creates a `BufferedStringReader` using `reader` as the underlying source.
+If the `reader` argument is a string then the new buffered reader use it as a source.
+
+The default buffer size is 32KB.
+
+
+#### BufferedStringReader-peek-char
+```scheme
+(BufferedStringReader-peek-char buf) -> char or #!eof
+  buf := BufferedStringReader
+```
+
+Peeks the next char from the buffer, filling it if it is empty.
+Returns `#!eof` if the end of input is reached.
+
+#### BufferedStringReader-read-char
+```scheme
+(BufferedStringReader-read-char buf) -> char or #!eof
+  buf := BufferedStringReader
+```
+
+Reads a char from the buffer.
+Returns `#!eof` if the end of input is reached.
+
+#### BufferedStringReader-read-line
+```scheme
+(BufferedStringReader-read-line buf (sep #\newline) (include-sep? #f) (max-chars #f)) -> string
+  buf          := BufferedStringReader
+  sep          := char or list of chars
+  include-sep? := bool
+  max-chars    := fixnum or #f
+```
+
+Reads a line, separated by `sep` and up to `max-chars` of length.
+The separator is either a single character or a list of characters.
+If `include-sep?` is true, then the separator is include in the stream.
+If the separator is not encountered within `max-chars`, then an error is raised.
+
+#### BufferedStringReader-put-back
+```scheme
+(BufferedStringReader-put-back buf previous-input)
+  buf := BufferedStringReader
+  previous-input := char or list of char
+```
+
+Puts back one or more previously read chars.
+
+Notes:
+- when putting back multiple chars, the order is the natural one: oldest first.
+- the method is guaranteed to succeed, regardless of how many chars you are
+  putting back; the buffer may grow as needed to accommodate the putback.
+- the chars put back do not have to be the same as bytes previously read from
+  the input stream. Thus the method allowsthe method allows you to
+  _inject_ bytes into the input stream, which may be useful for
+  parsers.
+
+#### BufferedStringReader-skip
+```scheme
+(BufferedStringReader-skip buf count)
+  buf   := BufferedStringReader
+  count := fixnum
+```
+
+Skips the next `count` chars of input.
+If the end of input is encountered before `count` chars are skipped, an error is raised.
+
+#### BufferedStringReader-delimit
+```scheme
+(BufferedStringReader-delimit buf limit) -> BufferedStringReader
+  buf   := BufferedStringReader
+  limit := fixnum
+```
+
+returns a new `BufferedStringReader`, sharing the same buffer, that can read up to `limit` chars.
+Once the limit is reached, the new buffer signals the end of input.
+
+Note: there is no double buffering; reading from the delimited reader
+advances the input on the underlying BufferedStringReader.
+
+#### BufferedStringReader-reset!
+```scheme
+(BufferedStringReader-reset! buf reader)
+  buf    := BufferedStringReader
+  reader := Reader
+```
+
+Resets the underlying reader and buffer state, allowing reuse of buffers from a cache.
+
+
+### BufferedStringWriter
+The BufferedStringWriter interface is defined as follows:
+```scheme
+(interface (BufferedStringWriter Writer)
+  (write-char char)
+  (flush)
+  (reset! output))
+```
+
+The following procedures create and apply to BufferedStringWriter.
+
+#### open-buffered-string-writer
+```scheme
+(open-buffered-writer writer (buffer-or-size default-buffer-size)) -> BufferedStringWriter
+  writer         := StringWriter or #f
+  buffer-or-size := fixnum or string
+```
+
+Creates a `BufferedStringWriter` using `writer` as the underlying sink.
+If `writer` is `#f` then a new buffered writer is created that collects bytes that can
+be retrieved with `get-buffer-output-string` or `get-buffered-output-string-chunks`.
+
+The default buffer size is 32KB.
+
+#### get-buffer-output-string
+```scheme
+(get-buffer-output-string wr) -> string
+  wr := BufferedStringWriter
+```
+
+Retrieves the output from a `BufferedStringWriter` created with `open-buffered-string-writer`.
+
+#### get-buffer-output-string-chunks
+```scheme
+(get-buffer-output-chunks wr) -> list of string
+  wr := BufferedStringWriter
+```
+
+Retrieves the output chunks from a `BufferedStringWriter` created with `open-buffered-string-writer`.
+
+#### BufferedStringWriter-write-char
+```scheme
+(BufferedStringWriter-write-char buf char) -> fixnum
+  buf  := BufferedStringWriter
+  char := char
+```
+
+Writes a char to the buffer.
+
+#### BufferedStringWriter-write-line
+```scheme
+(BufferedStringWriter-write-line buf str (sep #\newline))
+  buf := BufferedStringWriter
+  str := string
+  sep := char or list of chars
+```
+Writes a string, followed by a separator.
+Returns the number of bytes written
+
+#### BufferedStringWriter-flush
+```
+(BufferedStringWriter-flush buf)
+  buf := BufferedStringWriter
+```
+
+Drains the buffer into the underlying sync.
+
+#### BufferedStringWriter-reset!
+```scheme
+(BufferedStringWriter-reset! buf reader)
+  buf    := BufferedStringWriter
+  reader := Reader
+```
+
+Resets the underlying writer and buffer state, allowing reuse of buffers from a cache.
 
 ## Utilities
 ### delimited-reader
@@ -922,6 +1212,14 @@ Writer.
   limit  := fixnum
 ```
 Creates a delimited reader that can read up to `limit` bytes from `reader`.
+
+### delimited-string-reader
+```scheme
+(delimted-string-reader reader limit) -> StringReader
+  reader := StringReader
+  limit  := fixnum
+```
+Creates a delimited string reader that can read up to `limit` chars from `reader`.
 
 ### io-copy!
 ```scheme
