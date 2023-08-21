@@ -76,7 +76,7 @@
               (let ((byte2 (u8vector-ref input i+1))
                     (byte3 (u8vector-ref input i+2)))
                 ;; check for valid continuation bytes
-                (if (fx= (fxand (fxior byte2 byte3) #xc0) #x80)
+                (if (fx= (fxand byte2 #xc0) (fxand byte3 #xc0) #x80)
                   ;; valid continuation bytes
                   (let (char
                         (integer->char
@@ -99,7 +99,7 @@
                     (byte3 (u8vector-ref input i+2))
                     (byte4 (u8vector-ref input i+3)))
                 ;; check for valid continuation bytes
-                (if (fx= (fxand (fxior byte2 byte3 byte4) #xc0) #x80)
+                (if (fx= (fxand byte2 #xc0) (fxand byte3 #xc0) (fxand byte4 #xc0) #x80)
                   ;; valid continuation bytes
                   (let (char
                         (integer->char
@@ -192,7 +192,7 @@
             (let ((byte2 (u8vector-ref input i+1))
                   (byte3 (u8vector-ref input i+2)))
               ;; check for valid continuation bytes
-              (if (fx= (fxand (fxior byte2 byte3) #xc0) #x80)
+              (if (fx= (fxand byte2 #xc0) (fxand byte3 #xc0) #x80)
                 ;; valid continuation bytes
                 (let (char
                       (integer->char
@@ -213,7 +213,7 @@
                   (byte3 (u8vector-ref input i+2))
                   (byte4 (u8vector-ref input i+3)))
               ;; check for valid continuation bytes
-              (if (fx= (fxand (fxior byte2 byte3 byte4) #xc0) #x80)
+              (if (fx= (fxand byte2 #xc0) (fxand byte3 #xc0) (fxand byte4 #xc0) #x80)
                 ;; valid continuation bytes
                 (let (char
                       (integer->char
@@ -270,7 +270,7 @@
               (let ((byte2 (u8vector-ref input i+1))
                     (byte3 (u8vector-ref input i+2)))
                 ;; check for valid continuation bytes
-                (if (fx= (fxand (fxior byte2 byte3) #xc0) #x80)
+                (if (fx= (fxand byte2 #xc0) (fxand byte3 #xc0) #x80)
                   ;; valid continuation bytes
                   (let (char
                         (integer->char
@@ -293,7 +293,7 @@
                     (byte3 (u8vector-ref input i+2))
                     (byte4 (u8vector-ref input i+3)))
                 ;; check for valid continuation bytes
-                (if (fx= (fxand (fxior byte2 byte3 byte4) #xc0) #x80)
+                (if (fx= (fxand byte2 #xc0) (fxand byte3 #xc0) (fxand byte4 #xc0) #x80)
                   ;; valid continuation bytes
                   (let (char
                       (integer->char
