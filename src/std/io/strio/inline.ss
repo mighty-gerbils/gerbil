@@ -4,6 +4,7 @@
 ;;; gsc inlines peek-char, read-char, and write-char; we can do the same
 (import :std/interface
         :std/sugar
+        ../interface
         ./types
         ./input
         ./output)

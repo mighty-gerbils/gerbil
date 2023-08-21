@@ -23,6 +23,13 @@
 (defstruct string-input-buffer (reader buf rlo rhi closed?)
   final: #t unchecked: #t)
 
+;; delimited-string-input-buffer
+;; - in is an string-input-buffer or another delimited-string-input-buffer
+;; - reamining is the number of bytes that remain to be read
+;; - limit is the input limit
+(defstruct delimited-string-input-buffer (in remaining limit)
+  final: #t unchecked: #t)
+
 ;; string-output-buffer
 ;; - writer is a StringWriter
 ;; - buf is the string buffer (a string)

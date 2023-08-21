@@ -61,25 +61,20 @@
       (strbuf-output-advance! strbuf output-want)
       output-want))))
 
-(def (strbuf-write-line strbuf input separator)
-  (let (result (strbuf-write-string strbuf input 0 (string-length input)))
-    (if (pair? separator)
-      (let lp ((rest separator) (result result))
-        (match rest
-          ([char . rest]
-           (strbuf-write-char strbuf char)
-           (lp rest (fx+ result 1)))
-          (else result)))
-      (begin
-        (strbuf-write-char strbuf separator)
-        (fx+ result 1)))))
-
 (def (strbuf-flush-output strbuf)
   (let* ((whi (&string-output-buffer-whi strbuf))
          (buf (&string-output-buffer-buf strbuf)))
     (when (fx> whi 0)
       (strbuf-output-drain! strbuf buf whi)
       (void))))
+
+(def (strbuf-reset-output! strbuf writer)
+  (let (writer (StringWriter writer))
+    (strbuf-close-output strbuf)
+    (strbuf-output-consume! strbuf)
+    (set! (&string-output-buffer-writer strbuf) writer)
+    (set! (&string-output-buffer-closed? strbuf) #f)
+    (void)))
 
 (def (strbuf-close-output strbuf)
   (def exn #f)

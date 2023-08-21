@@ -12,14 +12,17 @@
         ./reader
         ./utf8
         ./writer
-        ./chunked)
+        ./chunked
+        ./delimited
+        ./util)
 (export open-string-reader
         open-string-writer
         open-buffered-string-reader
         open-buffered-string-writer
         get-buffer-output-string
         get-buffer-output-string-chunks
-        (import: ./inline))
+        (import: ./inline)
+        (import: ./util))
 
 (def default-buffer-size (expt 2 15)) ; 32KB
 (def max-buffer-size (expt 2 28)) ; 256MB -- for safe efficient packing in 64bit archs
@@ -194,10 +197,34 @@
   strbuf-peek-char)
 (defmethod {read-string string-input-buffer}
   strbuf-read-string)
-(defmethod {read-line string-input-buffer}
-  strbuf-read-line)
+(defmethod {put-back string-input-buffer}
+  strbuf-put-back)
+(defmethod {skip string-input-buffer}
+  strbuf-skip-input)
+(defmethod {delimit string-input-buffer}
+  strbuf-delimit-input)
+(defmethod {reset! string-input-buffer}
+  strbuf-reset-input!)
 (defmethod {close string-input-buffer}
   strbuf-close-input)
+
+;; delimited-string-input-buffer BufferedReader implementation
+(defmethod {read-string delimited-string-input-buffer}
+  strbuf-delimited-read-string)
+(defmethod {read-char delimited-string-input-buffer}
+  strbuf-delimited-read-char)
+(defmethod {peek-char delimited-string-input-buffer}
+  strbuf-delimited-peek-char)
+(defmethod {put-back delimited-string-input-buffer}
+  strbuf-delimited-put-back)
+(defmethod {skip delimited-string-input-buffer}
+  strbuf-delimited-skip-input)
+(defmethod {delimit delimited-string-input-buffer}
+  strbuf-delimited-delimit-input)
+(defmethod {reset! delimited-string-input-buffer}
+  strbuf-delimited-reset-input!)
+(defmethod {close delimited-string-input-buffer}
+  strbuf-delimited-close)
 
 ;; string-writer implements StringWriter
 (defmethod {write-string string-writer}
@@ -216,9 +243,9 @@
   strbuf-write-char)
 (defmethod {write-string string-output-buffer}
   strbuf-write-string)
-(defmethod {write-line string-output-buffer}
-  strbuf-write-line)
 (defmethod {flush string-output-buffer}
   strbuf-flush-output)
+(defmethod {reset! string-output-buffer}
+  strbuf-reset-output!)
 (defmethod {close string-output-buffer}
   strbuf-close-output)

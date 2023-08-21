@@ -70,8 +70,20 @@
   (read-char)
   ;; peeks the next char
   (peek-char)
-  ;; read a line
-  (read-line (separator #\newline) (include-sep? #f) (max-chars #f)))
+
+  ;; puts back some chars previously read
+  ;; - previous-input is a char or a list of char previously read from the buffer
+  (put-back previous-input)
+
+    ;; skips the next count bytes of input
+  (skip count)
+
+  ;; returns a new StringBufferedReader instance delimiting the input length that shares
+  ;; the underlying buffer; the limit must be a fixnum.
+  (delimit limit)
+
+  ;; resets the underlying reader and buffer state, allowing reuse of buffers.
+  (reset! reader))
 
 (interface StringWriter
   ;; write a string
@@ -82,10 +94,10 @@
 (interface (BufferedStringWriter StringWriter)
   ;; write a single char
   (write-char char)
-  ;; write a line separated string
-  (write-line str (separator #\newline))
   ;; flush output
-  (flush))
+  (flush)
+  ;; resets the underlying output and buffer state, allowing reuse of buffers.
+  (reset! output))
 
 ;; socket interfaces
 (interface Socket

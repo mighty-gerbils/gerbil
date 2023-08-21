@@ -56,6 +56,8 @@
     "io/strio/input"
     "io/strio/output"
     "io/strio/inline"
+    "io/strio/delimited"
+    "io/strio/util"
     "io/strio/api"
     "io/socket/types"
     "io/socket/basic"

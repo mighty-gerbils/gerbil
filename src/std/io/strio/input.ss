@@ -94,33 +94,166 @@
           (strbuf-read-string strbuf output output-start output-end input-need)
           0))))))
 
-(def (strbuf-read-line strbuf sep include-sep? max-chars)
-  (let* ((separators (if (pair? sep) sep [sep]))
-         (read-more?
-          (if max-chars
-            (lambda (x) (fx< x max-chars))
-            (lambda (x) #t)))
-         (finish
-          (if include-sep?
-            (lambda (chars drop) (list->string (reverse! chars)))
-            (lambda (chars drop) (list->string (reverse! (list-tail chars drop)))))))
-    (let lp ((x 0) (separating separators) (drop 0) (chars []))
-      (cond
-       ((null? separating)
-        (finish chars drop))
-       ((read-more? x)
-        (let (next (strbuf-read-char strbuf))
-          (cond
-           ((eof-object? next)
-            (finish chars drop))
-           ((eq? (car separating) next)
-            (lp (fx+ x 1) (cdr separating) (fx+ drop 1) (cons next chars)))
-           (else
-            (lp (fx+ x 1) separators 0 (cons next chars))))))
-       (else
-        (raise-io-error 'strbuf-read-line "too many characters" x))))))
+(def (strbuf-put-back strbuf previous-input)
+  (if (pair? previous-input)
+    (strbuf-put-back-many strbuf previous-input)
+    (strbuf-put-back-one strbuf previous-input)))
+
+(def (strbuf-put-back-one strbuf char)
+  (let ((rlo (&string-input-buffer-rlo strbuf))
+        (rhi (&string-input-buffer-rhi strbuf))
+        (buf (&string-input-buffer-buf strbuf)))
+    (cond
+     ((fx> rlo 0)
+      ;; enough space
+      (let (new-rlo (fx- rlo 1))
+        (string-set! buf new-rlo char)
+        (set! (&string-input-buffer-rlo strbuf) new-rlo)
+        (void)))
+     ;; rlo=0
+     ((fx> rhi 0)
+      ;; we need to move the buffer contents to the right
+      (let ((rhi+1 (fx+ rhi 1))
+            (buflen (string-length buf)))
+        (if (fx> rhi+1 buflen)
+          ;; uh oh, we need to grow the buffer; do it by a page
+          (let (new-buf (make-string (fx+ buflen 1024)))
+            (substring-move! buf 0 rhi new-buf 1)
+            (string-set! new-buf 0 char)
+            (set! (&string-input-buffer-buf strbuf) new-buf)
+            (set! (&string-input-buffer-rhi strbuf) rhi+1)
+            (void))
+          (begin
+            (substring-move! buf 0 rhi buf 1)
+            (string-set! buf 0 char)
+            (set! (&string-input-buffer-rhi strbuf) rhi+1)
+            (void)))))
+     (else
+      ;; empty buffer
+      (string-set! buf 0 char)
+      (set! (&string-input-buffer-rhi strbuf) 0)
+      (set! (&string-input-buffer-rhi strbuf) 1)
+      (void)))))
+
+(def (strbuf-put-back-many strbuf previous-input)
+  (def (put-back! buf rlo previous-input)
+    (let lp ((rest previous-input) (i rlo))
+      (match rest
+        ([char . rest]
+         (string-set! buf i char)
+         (lp rest (fx+ i 1)))
+        (else (void)))))
+
+  (let ((rlo (&string-input-buffer-rlo strbuf))
+        (rhi (&string-input-buffer-rhi strbuf))
+        (buf (&string-input-buffer-buf strbuf))
+        (prevlen (length previous-input)))
+    (cond
+     ((fx>= rlo prevlen)
+      (let (new-rlo (fx- rlo prevlen))
+        (put-back! buf new-rlo previous-input)
+        (set! (&string-input-buffer-rlo strbuf) new-rlo)
+        (void)))
+     ((fx> rlo 0)
+      ;; we need to move the buffer contents to the right
+      (let* ((shift (fx- prevlen rlo))
+             (rhi+shift (fx+ rhi shift))
+             (buflen (string-length buf)))
+        (if (fx> rhi+shift buflen)
+          ;; uh oh we need to grow the buffer; do it by a page
+          (let (new-buflen (fx+ buflen 4096))
+            (while (fx< new-buflen rhi+shift)
+              ;; ok not enough, add more pages (very unlikely, but still)
+              (set! new-buflen (fx+ new-buflen 1024)))
+            (let (new-buf (make-string new-buflen))
+              (substring-move! buf rlo rhi new-buf prevlen)
+              (put-back! new-buf 0 previous-input)
+              (set! (&string-input-buffer-buf strbuf) new-buf)
+              (set! (&string-input-buffer-rhi strbuf) rhi+shift)
+              (void)))
+          (begin
+            (substring-move! buf rlo rhi buf prevlen)
+            (put-back! buf 0 previous-input)
+            (set! (&string-input-buffer-rlo strbuf) 0)
+            (set! (&string-input-buffer-rhi strbuf) rhi+shift)
+            (void)))))
+     ;; rlo=0
+     ((fx> rhi 0)
+      ;; we need to move the buffer contents to the right
+      (let ((rhi+shift (fx+ rhi prevlen))
+            (buflen (string-length buf)))
+        (if (fx> rhi+shift buflen)
+          ;; uh oh we need to grow the buffer; do it by a page
+          (let (new-buflen (fx+ buflen 1024))
+            (while (fx< new-buflen rhi+shift)
+              ;; ok not enough, add more pages (very unlikely, but still)
+              (set! new-buflen (fx+ new-buflen 1024)))
+            (let (new-buf (make-string new-buflen))
+              (substring-move! buf 0 rhi new-buf prevlen)
+              (put-back! new-buf 0 previous-input)
+              (set! (&string-input-buffer-buf strbuf) new-buf)
+              (set! (&string-input-buffer-rhi strbuf) rhi+shift)
+              (void)))
+          (begin
+            (substring-move! buf 0 rhi buf prevlen)
+            (put-back! buf 0 previous-input)
+            (set! (&string-input-buffer-rhi strbuf) rhi+shift)
+            (void)))))
+     ;; rlo=rhi=0
+     (else
+      (let (buflen (string-length buf))
+        (if (fx> prevlen buflen)
+          ;; uh oh we need to grow the buffer; do it by a page
+          (let (new-buflen (fx+ buflen 1024))
+            (while (fx< new-buflen prevlen)
+              ;; ok not enough, add more pages (very unlikely, but still)
+              (set! new-buflen (fx+ new-buflen 4096)))
+            (let (new-buf (make-string new-buflen))
+              (put-back! new-buf 0 previous-input)
+              (set! (&string-input-buffer-buf strbuf) new-buf)
+              (set! (&string-input-buffer-rhi strbuf) prevlen)
+              (void)))
+          (begin
+            (put-back! buf 0 previous-input)
+            (set! (&string-input-buffer-rhi strbuf) prevlen)
+            (void))))))))
+
+(def (strbuf-skip-input strbuf count)
+  (when (fx> count 0)
+    (let* ((rlo (&string-input-buffer-rlo strbuf))
+           (rhi (&string-input-buffer-rhi strbuf))
+           (have (fx- rhi rlo)))
+      (if (fx>= have count)
+        (let (rlo+count (fx+ rlo count))
+          (strbuf-input-advance! strbuf rlo+count rhi)
+          (void))
+        (begin
+          (when (fx> have 0)
+            (strbuf-input-consume! strbuf))
+          (let* ((buf (&string-input-buffer-buf strbuf))
+                 (buflen (string-length buf)))
+            (let lp ((skip (fx- count have)))
+              (cond
+               ((fx= skip 0) (void))
+               ((fx<= skip buflen)
+                (&StringReader-read-string (&string-input-buffer-reader strbuf) buf 0 skip skip)
+                (void))
+               (else
+                (&StringReader-read-string (&string-input-buffer-reader strbuf) buf 0 buflen buflen)
+                (lp (fx- skip buflen)))))))))))
+
+(def (strbuf-delimit-input strbuf limit)
+  (BufferedStringReader (make-delimited-string-input-buffer strbuf limit limit)))
+
+(def (strbuf-reset-input! strbuf reader)
+  (let (reader (StringReader reader))
+    (strbuf-close-input strbuf)
+    (strbuf-input-consume! strbuf)
+    (set! (&string-input-buffer-reader strbuf) reader)
+    (set! (&string-input-buffer-closed? strbuf) #f)
+    (void)))
 
 (def (strbuf-close-input strbuf)
   (unless (&string-input-buffer-closed? strbuf)
     (set! (&string-input-buffer-closed? strbuf) #t)
-    (&Reader-close (&string-input-buffer-reader strbuf))))
+    (&StringReader-close (&string-input-buffer-reader strbuf))))
