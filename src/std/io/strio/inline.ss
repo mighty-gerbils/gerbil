@@ -28,7 +28,7 @@
             (string-ref buf rlo)
             ;; empty buffer, fall back to the method
             (strbuf-peek-char strbuf)))))
-    (&BufferedStringReader-peek-car reader)))
+    (&BufferedStringReader-peek-char reader)))
 
 (defrule (&BufferedStringReader-read-char-inline reader)
   (if (is-string-input-buffer? reader)
