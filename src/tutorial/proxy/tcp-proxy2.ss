@@ -35,8 +35,8 @@
 
 (def (proxy-io! reader writer)
   (io-copy! reader writer)
-  (Reader-close reader)
-  (Writer-close writer))
+  (Writer-close writer)
+  (Reader-close reader))
 
 (def (main . args)
   (def gopt
