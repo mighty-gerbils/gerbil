@@ -1224,12 +1224,12 @@ Creates a delimited string reader that can read up to `limit` chars from `reader
 ### io-copy!
 ```scheme
 (io-copy! reader writer (buffer-or-size default-buffer-size)) -> fixnum
-  reader := Reader
-  writer := Writer
-  buffer-or-size := fixnum or u8vector
+  reader := Reader or StringReader
+  writer := Writer or StringWriter, symmetric to reader
+  buffer-or-size := #f, fixnum or buffer (u8vector or string)
 ```
 
-Copies from a Reader to a Writer.
+Copies from a reader to a writer.
 Returns the number of bytes copied.
 
 ## A Note on thread-safety
