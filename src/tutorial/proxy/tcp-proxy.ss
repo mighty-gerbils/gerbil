@@ -1,6 +1,6 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
-;;; transparent TCP proxy
+;;; © vyzo
+;;; transparent TCP proxy using low level socket programming
 (import :gerbil/gambit/threads
         :std/os/socket
         :std/os/fd
@@ -8,9 +8,10 @@
         :std/event
         :std/getopt
         :std/logger
-        :std/sugar
-        :std/format)
+        :std/sugar)
 (export main)
+
+(deflogger tcp-proxy)
 
 (def (run local remote)
   (let* ((laddr (socket-address local))
@@ -25,10 +26,10 @@
       (try
        (let (cli (socket-accept sock caddr))
          (when cli
-           (debug "Accepted connection from ~a" (socket-address->string caddr))
+           (debugf "Accepted connection from ~a" (socket-address->string caddr))
            (spawn proxy cli raddr)))
        (catch (e)
-         (errorf "Error accepting connection ~a" e))))))
+         (errorf "Error accepting connection: ~a" e))))))
 
 (def (proxy clisock raddr)
   (try
@@ -38,13 +39,13 @@
        (wait (fd-io-out srvsock)))
      (let (r (or rcon (socket-getsockopt srvsock SOL_SOCKET SO_ERROR)))
        (unless (fxzero? r)
-         (error (format "Connection error: ~a" (strerror r))))
-       (spawn proxy-io clisock srvsock)
-       (spawn proxy-io srvsock clisock)))
+         (error "Connection error" (strerror r)))
+       (spawn proxy-io! clisock srvsock)
+       (spawn proxy-io! srvsock clisock)))
    (catch (e)
-     (errorf "Error creating proxy ~a" e))))
+     (errorf "Error creating proxy: ~a" e))))
 
-(def (proxy-io isock osock)
+(def (proxy-io! isock osock)
   (def buf (make-u8vector 4096))
   (try
    (let lp ()
@@ -72,7 +73,7 @@
                    (lp2 (fx+ start wr)))))
                (lp))))))))
    (catch (e)
-     (errorf "Error proxying connection ~a" e)
+     (errorf "Error proxying connection: ~a" e)
      (close-input-port isock)
      (close-output-port osock))))
 

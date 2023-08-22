@@ -1,22 +1,23 @@
 ;;; -*- Gerbil -*-
-;;; (C) vyzo at hackzen.org
+;;; © vyzo
 ;;; SOCKS4 proxy
 (import :gerbil/gambit/threads
-        :std/net/socket
-        :std/net/address
-        :std/os/socket
-        :std/getopt
+        :std/sugar
         :std/logger
-        :std/sugar)
+        :std/getopt
+        :std/net/address
+        :std/io)
 (export main)
 
+(deflogger socks-proxy)
+
 (def (run address)
-  (let* ((sa (socket-address address))
-         (ssock (ssocket-listen sa)))
+  (let* ((address (resolve-address address))
+         (sock (tcp-listen address)))
     (while #t
       (try
-       (let (cli (ssocket-accept ssock sa))
-         (debug "Accepted connection from ~a" (socket-address->string sa))
+       (let (cli (ServerSocket-accept sock))
+         (debugf "Accepted connection from ~a" (StreamSocket-peer-address cli))
          (spawn proxy cli))
        (catch (e)
          (errorf "Error accepting connection ~a" e))))))
@@ -24,10 +25,10 @@
 (def (proxy clisock)
   (try
    (let (srvsock (proxy-handshake clisock))
-     (spawn proxy-io clisock srvsock)
-     (spawn proxy-io srvsock clisock))
+     (spawn proxy-io! (StreamSocket-reader clisock) (StreamSocket-writer srvsock))
+     (spawn proxy-io! (StreamSocket-reader srvsock) (StreamSocket-writer clisock)))
    (catch (e)
-     (errorf "Error creating proxy ~a" e))))
+     (errorf "Error creating proxy: ~a" e))))
 
 ;;; SOCKS4
 ;; Request:
@@ -53,8 +54,8 @@
 
 (def (proxy-handshake clisock)
   (try
-   (let* ((hdr (make-u8vector 1024))
-          (rd (ssocket-recv clisock hdr)))
+   (let* ((hdr (make-u8vector 128))
+          (rd (StreamSocket-recv clisock hdr)))
      (if (fx< rd 9)                  ; header + NUL userid terminator
        (error "Incomplete request" hdr)
        (let* ((vn (u8vector-ref hdr 0))
@@ -75,45 +76,39 @@
              (proxy-handshake-reject clisock (cons dstip dstport))
              (error "Uknown protocol version" vn))))))
    (catch (e)
-     (ssocket-close clisock)
+     (StreamSocket-close clisock)
      (raise e))))
 
 (def (proxy-connect clisock addr)
-  (let (srvsock (ssocket-connect addr))
+  (let (srvsock (tcp-connect addr))
     (try
      (proxy-handshake-accept clisock addr)
      srvsock
      (catch (e)
-       (ssocket-close srvsock)
+       (StreamSocket-close srvsock)
        (raise e)))))
 
 (def (proxy-bind clisock)
-  (let* ((srvsock (ssocket-listen ":0"))
-         (srvaddr (socket-address->address
-                   (socket-getsockname
-                    (ssocket-socket srvsock)
-                    (make-socket-address-in)))))
+  (let* ((srvsock (tcp-listen (cons inaddr-any4 0)))
+         (srvaddr (ServerSocket-address srvsock)))
     (try
      (proxy-handshake-accept clisock srvaddr)
      (let* ((newcli
              (try
-              (ssocket-accept srvsock)
+              (ServerSocket-accept srvsock)
               (catch (e)
                 (proxy-handshake-reject clisock srvaddr)
                 (raise e))))
             (newcliaddr
-             (socket-address->address
-              (socket-getpeername
-               (ssocket-socket newcli)
-               (make-socket-address-in)))))
+             (StreamSocket-peer-address newcli)))
        (try
         (proxy-handshake-accept clisock newcliaddr)
         newcli
         (catch (e)
-          (ssocket-close newcli)
+          (StreamSocket-close newcli)
           (raise e))))
      (finally
-      (ssocket-close srvsock)))))
+      (ServerSocket-close srvsock)))))
 
 (def (proxy-handshake-accept clisock addr)
   (proxy-handshake-reply 90 clisock addr))
@@ -129,24 +124,12 @@
       (u8vector-set! resp 2 (fxand (fxshift port -8) #xff))
       (u8vector-set! resp 3 (fxand port #xff))
       (subu8vector-move! ip 0 4 resp 4))
-    (ssocket-send-all clisock resp)))
+    (StreamSocket-send clisock resp)))
 
-(def (proxy-io isock osock)
-  (def buf (make-u8vector 4096))
-  (try
-   (let lp ()
-     (let (rd (ssocket-recv isock buf))
-       (cond
-        ((fxzero? rd)
-         (ssocket-close-input isock)
-         (ssocket-close-output osock #t))
-        (else
-         (ssocket-send-all osock buf 0 rd)
-         (lp)))))
-   (catch (e)
-     (errorf "Error proxying connection ~a" e)
-     (ssocket-close-input isock)
-     (ssocket-close-output osock #t))))
+(def (proxy-io! reader writer)
+  (io-copy! reader writer)
+  (Reader-close reader)
+  (Writer-close writer))
 
 (def (main . args)
   (def gopt
