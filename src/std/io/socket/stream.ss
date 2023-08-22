@@ -64,10 +64,7 @@
          (state-dir (direction->state dir)))
     (with-basic-socket-write-lock ssock
       (unless (stream-socket-closed? ssock state-dir)
-        (with-catch
-            (lambda (e)
-              (display "*** Warning: error shutting down socket: " (current-error-port))
-              (display-exception e (current-error-port)))
+        (with-catch void
           (cut socket-shutdown (&basic-socket-sock ssock) how))
         (stream-socket-close/lock ssock state-dir)))))
 
