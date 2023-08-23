@@ -101,7 +101,7 @@ Returns true if the object is a getopt command or command specifier.
 This shim around getopt parsing eliminates all the repetitive
 boilerplate around argument parsing with getopt.
 
-It creates a getopt parser that parses with options `gopt`, automatically
+It creates a getopt parser that parses with options `gopts`, automatically
 including a help option or command accordingly.
 
 It then uses the parser to pare `args`, handling the exceptions and
