@@ -1,38 +1,25 @@
 # Proxies: Network Programming in Gerbil
 
 In this tutorial we illustrate network programming facilities in Gerbil, by writing
-a couple of network proxies.
+three network proxies.
 
-The first one is a transparent TCP proxy, written using low level socket programming
-with the `:std/os/socket` package. This package utilizes raw devices and opens sockets
-through FFI, thus providing access to the full POSIX socket programming API with a
+The first program is a transparent TCP proxy, written using low level socket programming
+with the [:std/os/socket](../reference/sockets.md) package.
+This package utilizes raw devices and opens sockets through FFI, thus
+providing access to the full POSIX socket programming API with a
 nonblocking interface.
 
-The second one is an anonymous SOCKS4 proxy, written using the `:std/net/socket` package.
-This package provides high level network programming facilities for synchronous socket
-I/O, and can transparently use a custom socket server for scheduling I/O with native
-host primitives like `epoll` on Linux.
+The second program is another version of the TCP proxy, but this time
+written utilizing the [Standard IO](../reference/stdio.md) API, which
+results in half the code.
+
+The last program is an anonymous SOCKS4 proxy, written again using the
+[Standard IO](../reference/stdio.md) API.
 
 ## Preliminaries
 
-This tutorial requires a very recent version of Gambit that supports raw devices ([gambit#272](https://github.com/gambit/gambit/pull/272)).
-
 The source code for the tutorial is available at [$GERBIL_HOME/src/tutorial/proxy](https://github.com/vyzo/gerbil/tree/master/src/tutorial/proxy).
-The build script, `build.ss`, will by default build dynamic executables for local use; there
-is also a rule `build.ss static` to build static executables you can deploy on servers.
-
-For the examples we'll build dynamic executables, as they are much faster to compile:
-```bash
-$ cd $GERBIL_HOME/src/tutorial/proxy
-$ ./build.ss
-... compile tcp-proxy
-... compile exe tcp-proxy
-... compile socks-proxy
-... compile exe socks-proxy
-```
-
-This builds two programs in the tutorial directory: `tcp-proxy` and `socks-proxy`, which are
-the two proxy executables.
+You can build the programs using the [build script](https://github.com/vyzo/gerbil/tree/master/src/tutorial/proxy/build.ss).
 
 ## A Transparent TCP Proxy
 
@@ -42,7 +29,7 @@ proxies all incoming connections to a specified remote server.
 ### The main function
 
 The main function of the proxy simply parses the arguments to the program using the
-`:std/getopt` library, and dispatches to `run` which is the server main loop:
+[getopt](../reference/getopt.md) library, and dispatches to `run` which is the server main loop:
 ```scheme
 (def (main . args)
   (def gopt
@@ -75,7 +62,7 @@ For each connection, it logs it and spawns a thread to proxy it:
       (try
        (let (cli (socket-accept sock caddr))
          (when cli
-           (debug "Accepted connection from ~a" (socket-address->string caddr))
+           (debugf "Accepted connection from ~a" (socket-address->string caddr))
            (spawn proxy cli raddr)))
        (catch (e)
          (errorf "Error accepting connection ~a" e))))))
@@ -104,7 +91,7 @@ mode.
    (catch (e)
      (errorf "Error creating proxy ~a" e))))
 
-(def (proxy-io isock osock)
+(def (proxy-io! isock osock)
   (def buf (make-u8vector 4096))
   (try
    (let lp ()
@@ -153,30 +140,112 @@ Connected to localhost.
 Escape character is '^]'.
 GET / HTTP/1.0
 
-HTTP/1.0 302 Found
-Cache-Control: private
-Content-Type: text/html; charset=UTF-8
-Referrer-Policy: no-referrer
-Location: http://www.google.gr/?gfe_rd=cr&ei=k3g-WZjaN6jd8Ae224eQDA
-Content-Length: 258
-Date: Mon, 12 Jun 2017 11:18:43 GMT
 
-<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
-<TITLE>302 Moved</TITLE></HEAD><BODY>
-<H1>302 Moved</H1>
-The document has moved
-<A HREF="http://www.google.gr/?gfe_rd=cr&amp;ei=k3g-WZjaN6jd8Ae224eQDA">here</A>.
-</BODY></HTML>
-Connection closed by foreign host.
+HTTP/1.0 200 OK
+Date: Tue, 22 Aug 2023 05:19:05 GMT
+Expires: -1
+Cache-Control: private, max-age=0
+Content-Type: text/html; charset=ISO-8859-1
+Content-Security-Policy-Report-Only: object-src 'none';base-uri 'self';script-src 'nonce-SiBEn1lNsKLYtAwu9g5xYQ' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other-hp
+Server: gws
+X-XSS-Protection: 0
+X-Frame-Options: SAMEORIGIN
+Set-Cookie: AEC=Ad49MVFClvYBG3WnanM4Frt7z3XhfKDNgfjthd8BlXXN090KVh_bJO2jqD0; expires=Sun, 18-Feb-2024 05:19:05 GMT; path=/; domain=.google.com; Secure; HttpOnly; SameSite=lax
+Accept-Ranges: none
+Vary: Accept-Encoding
+
+<!doctype html>
+...
 
 ```
+
+## Transparent TCP Proxy with stdio
+
+This is the [second take](https://github.com/vyzo/gerbil/blob/master/src/tutorial/proxy/tcp-proxy2.ss) on the transparent proxy, this time written
+using the [Standard IO](../reference/stdio.md) API.
+
+You'll notice that it is half the code and you don't have to do any
+nonblocking IO gymnastics; the stdio API takes care of all these
+details for you.
+The `main` function is exactly the same.
+
+### The server main loop
+
+Things are simpler, as we use `tcp-listen` and the `ServerSocket` interface:
+```scheme
+(def (run local remote)
+  (let* ((laddr (resolve-address local))
+         (raddr (resolve-address remote))
+         (sock (tcp-listen laddr)))
+    (while #t
+      (try
+       (let (cli (ServerSocket-accept sock))
+         (when cli
+           (debugf "Accepted connection from ~a" (StreamSocket-peer-address cli))
+           (spawn proxy cli raddr)))
+       (catch (e)
+         (errorf "Error accepting connection: ~a" e))))))
+```
+
+### Connection Proxying
+
+And here is where `stdio` shines, compared to low-level socket programming.
+
+We use the `Reader`/`Writer` interfaces and the `io-copy!` `stdio` utility function:
+```scheme
+(def (proxy client raddr)
+  (try
+   (let (remote (tcp-connect raddr))
+     (spawn proxy-io! (StreamSocket-reader client) (StreamSocket-writer remote))
+     (spawn proxy-io! (StreamSocket-reader remote) (StreamSocket-writer client)))
+   (catch (e)
+     (errorf "Error proxying connection: ~a" e)
+     (StreamSocket-close client))))
+
+(def (proxy-io! reader writer)
+  (io-copy! reader writer)
+  (Writer-close writer)
+  (Reader-close reader))
+
+```
+
+### Using the proxy
+
+Just like the previous instance, here is a small demonstration:
+```bash
+$ ./tcp-proxy2 :9999 www.google.com:80
+```
+
+And in another shell we can proxy a connection through telnet:
+```bash
+$ telnet localhost 9999
+Connected to localhost.
+Escape character is '^]'.
+GET / HTTP/1.0
+
+HTTP/1.0 200 OK
+Date: Tue, 22 Aug 2023 05:20:45 GMT
+Expires: -1
+Cache-Control: private, max-age=0
+Content-Type: text/html; charset=ISO-8859-1
+Content-Security-Policy-Report-Only: object-src 'none';base-uri 'self';script-src 'nonce-pLIP-68XhmkAkMC5VybIPA' 'strict-dynamic' 'report-sample' 'unsafe-eval' 'unsafe-inline' https: http:;report-uri https://csp.withgoogle.com/csp/gws/other-hp
+Server: gws
+X-XSS-Protection: 0
+X-Frame-Options: SAMEORIGIN
+Set-Cookie: AEC=Ad49MVEyITlvZjgOTvpWt5ii-fp45w0f-DHqEjzauLmao9f_5RuuOlpfaJk; expires=Sun, 18-Feb-2024 05:20:45 GMT; path=/; domain=.google.com; Secure; HttpOnly; SameSite=lax
+Accept-Ranges: none
+Vary: Accept-Encoding
+
+<!doctype html>
+...
+
+```
+
 
 ## A SOCKS4 Proxy
 
 The [socks proxy](https://github.com/vyzo/gerbil/blob/master/src/tutorial/proxy/socks-proxy.ss) listens to a local port and
-proxies connections using the SOCKS4 protocol. The implementation uses synchronous I/O
-with the `:std/net/socket` package, which hides the nonblocking nature of the `:std/os/socket`
-interface and can utilize custom I/O schedulers with a socket server (e.g. epoll on Linux).
+proxies connections using the SOCKS4 protocol.
 
 ### The main function
 
@@ -202,12 +271,12 @@ The server main loop creates a listening socket to the specified
 address and then loops accepting connections to proxy:
 ```scheme
 (def (run address)
-  (let* ((sa (socket-address address))
-         (ssock (ssocket-listen sa)))
+  (let* ((address (resolve-address address))
+         (sock (tcp-listen address)))
     (while #t
       (try
-       (let (cli (ssocket-accept ssock sa))
-         (debug "Accepted connection from ~a" (socket-address->string sa))
+       (let (cli (ServerSocket-accept sock))
+         (debugf "Accepted connection from ~a" (StreamSocket-peer-address cli))
          (spawn proxy cli))
        (catch (e)
          (errorf "Error accepting connection ~a" e))))))
@@ -220,10 +289,10 @@ This procedure performs a handshake, establishing proxying according to the requ
 (def (proxy clisock)
   (try
    (let (srvsock (proxy-handshake clisock))
-     (spawn proxy-io clisock srvsock)
-     (spawn proxy-io srvsock clisock))
+     (spawn proxy-io! (StreamSocket-reader clisock) (StreamSocket-writer srvsock))
+     (spawn proxy-io! (StreamSocket-reader srvsock) (StreamSocket-writer clisock)))
    (catch (e)
-     (errorf "Error creating proxy ~a" e))))
+     (errorf "Error creating proxy: ~a" e))))
 ```
 
 The `proxy-handshake` function contains the details of the protocol implementation,
@@ -231,8 +300,8 @@ ignoring supplied userids (it's an anonymous proxy):
 ```scheme
 (def (proxy-handshake clisock)
   (try
-   (let* ((hdr (make-u8vector 1024))
-          (rd (ssocket-recv clisock hdr)))
+   (let* ((hdr (make-u8vector 128))
+          (rd (StreamSocket-recv clisock hdr)))
      (if (fx< rd 9)                  ; header + NUL userid terminator
        (error "Incomplete request" hdr)
        (let* ((vn (u8vector-ref hdr 0))
@@ -248,12 +317,12 @@ ignoring supplied userids (it's an anonymous proxy):
               (proxy-bind clisock))
              (else
               (proxy-handshake-reject clisock (cons dstip dstport))
-              (error "Unknown command" cd)))
+              (error "Uknown command" cd)))
            (begin
              (proxy-handshake-reject clisock (cons dstip dstport))
-             (error "Unknown protocol version" vn))))))
+             (error "Uknown protocol version" vn))))))
    (catch (e)
-     (ssocket-close clisock)
+     (StreamSocket-close clisock)
      (raise e))))
 ```
 
@@ -263,41 +332,35 @@ New connections are established with `proxy-connect`, while socket binding
 is performed with `proxy-bind`:
 ```scheme
 (def (proxy-connect clisock addr)
-  (let (srvsock (ssocket-connect addr))
+  (let (srvsock (tcp-connect addr))
     (try
      (proxy-handshake-accept clisock addr)
      srvsock
      (catch (e)
-       (ssocket-close srvsock)
+       (StreamSocket-close srvsock)
        (raise e)))))
 
 (def (proxy-bind clisock)
-  (let* ((srvsock (ssocket-listen ":0"))
-         (srvaddr (socket-address->address
-                   (socket-getsockname
-                    (ssocket-socket srvsock)
-                    (make-socket-address-in)))))
+  (let* ((srvsock (tcp-listen (cons inaddr-any4 0)))
+         (srvaddr (ServerSocket-address srvsock)))
     (try
      (proxy-handshake-accept clisock srvaddr)
      (let* ((newcli
              (try
-              (ssocket-accept srvsock)
+              (ServerSocket-accept srvsock)
               (catch (e)
                 (proxy-handshake-reject clisock srvaddr)
                 (raise e))))
             (newcliaddr
-             (socket-address->address
-              (socket-getpeername
-               (ssocket-socket newcli)
-               (make-socket-address-in)))))
+             (StreamSocket-peer-address newcli)))
        (try
         (proxy-handshake-accept clisock newcliaddr)
         newcli
         (catch (e)
-          (ssocket-close newcli)
+          (StreamSocket-close newcli)
           (raise e))))
      (finally
-      (ssocket-close srvsock)))))
+      (ServerSocket-close srvsock)))))
 
 (def (proxy-handshake-accept clisock addr)
   (proxy-handshake-reply 90 clisock addr))
@@ -313,31 +376,20 @@ is performed with `proxy-bind`:
       (u8vector-set! resp 2 (fxand (fxshift port -8) #xff))
       (u8vector-set! resp 3 (fxand port #xff))
       (subu8vector-move! ip 0 4 resp 4))
-    (ssocket-send-all clisock resp)))
+    (StreamSocket-send clisock resp)))
+
 ```
 
 ### Proxy I/O
 
-The actual proxy functionality is perfomed by the `proxy-io` procedure, very similar
-to the homonymous procedure in tcp-proxy. The difference is that it uses multiplexed I/O
-through the socket server:
+The actual proxy functionality is perfomed by the `proxy-io!`
+procedure, which is identical to the code in `tcp-proxy2`:
+
 ```scheme
-(def (proxy-io isock osock)
-  (def buf (make-u8vector 4096))
-  (try
-   (let lp ()
-     (let (rd (ssocket-recv isock buf))
-       (cond
-        ((fxzero? rd)
-         (ssocket-close-input isock)
-         (ssocket-close-output osock #t))
-        (else
-         (ssocket-send-all osock buf 0 rd)
-         (lp)))))
-   (catch (e)
-     (errorf "Error proxying connection ~a" e)
-     (ssocket-close-input isock)
-     (ssocket-close-output osock #t))))
+(def (proxy-io! reader writer)
+  (io-copy! reader writer)
+  (Writer-close writer)
+  (Reader-close reader))
 ```
 
 ### Using the proxy
@@ -352,10 +404,6 @@ $ ./socks-proxy :1080
 And in another shell we can proxy an HTTP request using curl:
 ```bash
 $ curl --socks4 127.0.0.1 http://www.google.com
-<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">
-<TITLE>302 Moved</TITLE></HEAD><BODY>
-<H1>302 Moved</H1>
-The document has moved
-<A HREF="http://www.google.gr/?gfe_rd=cr&amp;ei=lcg-WbSbDqrd8Af5rJuQBA">here</A>.
-</BODY></HTML>
+<!doctype html>
+...
 ```
