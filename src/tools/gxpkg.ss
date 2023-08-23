@@ -73,56 +73,44 @@
   (def search-cmd
     (command 'search help: "search the package directory"
              (rest-arguments 'keywords help: "keywords to search for")))
-  (def help-cmd
-    (command 'help help: "display help; help <command> for command help"
-             (optional-argument 'command value: string->symbol)))
-  (def gopt
-    (getopt
-     help: "the Gerbil Package Manager"
-     install-cmd
-     uninstall-cmd
-     update-cmd
-     link-cmd
-     unlink-cmd
-     build-cmd
-     clean-cmd
-     list-cmd
-     retag-cmd
-     search-cmd
-     help-cmd))
 
-  (try
-   (let ((values cmd opt) (getopt-parse gopt args))
-     (let-hash opt
-       (case cmd
-         ((install)
-          (install-pkgs .pkg))
-         ((uninstall)
-          (uninstall-pkgs .pkg .?force))
-         ((update)
-          (update-pkgs .pkg))
-         ((link)
-          (link-pkg .pkg .src))
-         ((unlink)
-          (unlink-pkgs .pkg .?force))
-         ((build)
-          (build-pkgs .pkg))
-         ((clean)
-          (clean-pkgs .pkg))
-         ((list)
-          (list-pkgs))
-         ((retag)
-          (retag-pkgs))
-         ((search)
-          (search-pkgs .keywords))
-         ((help)
-          (getopt-display-help-topic gopt .?command "gxkpg")))))
-   (catch (getopt-error? exn)
-     (getopt-display-help exn "gxpkg" (current-error-port))
-     (exit 1))
-   (catch (e)
-     (display-exception e (current-error-port))
-     (exit 2))))
+  (call-with-getopt gxpkg-main args
+    program: "gxpkg"
+    help: "The Gerbil Package Manager"
+    install-cmd
+    uninstall-cmd
+    update-cmd
+    link-cmd
+    unlink-cmd
+    build-cmd
+    clean-cmd
+    list-cmd
+    retag-cmd
+    search-cmd))
+
+(def (gxpkg-main cmd opt)
+  (let-hash opt
+    (case cmd
+      ((install)
+       (install-pkgs .pkg))
+      ((uninstall)
+       (uninstall-pkgs .pkg .?force))
+      ((update)
+       (update-pkgs .pkg))
+      ((link)
+       (link-pkg .pkg .src))
+      ((unlink)
+       (unlink-pkgs .pkg .?force))
+      ((build)
+       (build-pkgs .pkg))
+      ((clean)
+       (clean-pkgs .pkg))
+      ((list)
+       (list-pkgs))
+      ((retag)
+       (retag-pkgs))
+      ((search)
+       (search-pkgs .keywords)))))
 
 ;;; commands
 (defrules fold-pkgs ()

@@ -2,7 +2,9 @@
 ;;; (C) vyzo
 ;;; Command-line option and command argument parsing
 
-(import :std/error
+(import :gerbil/gambit/exceptions
+        :std/error
+        :std/sugar
         :std/format)
 (export getopt
         (rename: !getopt? getopt?)
@@ -17,6 +19,7 @@
         argument
         optional-argument
         rest-arguments
+        call-with-getopt
         )
 
 (defstruct (getopt-error <error>) (e))
@@ -351,3 +354,50 @@
     (if (fx< len tablen)
       (make-string (fx- tablen len) #\space)
       "")))
+
+(def (call-with-getopt proc args
+                       program: program
+                       help: (help #f)
+                       exit-on-error: (exit-on-error? #t)
+                       . gopts)
+  (def (parse! gopt return)
+    (try
+     (getopt-parse gopt args)
+     (catch (getopt-error? exn)
+       (getopt-display-help exn program (current-error-port))
+       (if exit-on-error?
+         (exit 1)
+         (return 'error)))
+     (catch (e)
+       (display-exception e (current-error-port))
+       (if exit-on-error?
+         (exit 2)
+         (return 'error)))))
+
+  (let/cc return
+    (let* ((gopt (apply getopt help: help gopts))
+           (cmds (!getopt-cmds gopt)))
+      (if (null? cmds)
+        ;; it only has options; add -h/--help
+        (let ((help-flag
+               (flag 'help "-h" "--help"
+                 help: "display help"))
+              (opts (!getopt-opts gopt)))
+          (if (null? opts)
+            (set! (!getopt-opts gopt)
+              [help-flag])
+            (set-cdr! (last-pair opts)
+                      [help-flag]))
+          (let (opt (parse! gopt return))
+            (if (hash-get opt 'help)
+              (getopt-display-help gopt program)
+              (proc opt))))
+        ;; it has commands; add help <command>
+        (let (help-cmd
+              (command 'help  help: "display help; help <command> for command help"
+                (optional-argument 'command value: string->symbol)))
+          (set-cdr! (last-pair cmds) [help-cmd])
+          (let ((values cmd opt) (parse! gopt return))
+            (if (eq? cmd 'help)
+              (getopt-display-help-topic gopt (hash-get opt 'command) program)
+              (proc cmd opt))))))))

@@ -204,7 +204,9 @@
    gerbil/gambit/ports
    std/misc/repr))
  (std/assert "assert" (gerbil/core gerbil/expander std/format std/sugar))
- (std/getopt "getopt" (gerbil/core std/error std/format))
+ (std/getopt
+  "getopt"
+  (gerbil/core gerbil/gambit/exceptions std/error std/format std/sugar))
  (std/logger
   "logger"
   (gerbil/core

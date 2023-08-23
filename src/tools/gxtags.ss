@@ -17,36 +17,20 @@
 (export main make-tags)
 
 (def (main . args)
-  (def gopt
-    (getopt
-     help: "generate emacs tags for Gerbil code"
-     (flag 'append "-a"
-           help: "append to existing tag file")
-     (option 'output "-o" default: "TAGS"
-             help: "explicit name of file for tag table")
-     (flag 'help "-h" "--help"
-           help: "display help")
-     (rest-arguments 'input
-                     help: "source file or directory")))
+  (call-with-getopt gxtags-main args
+    program: "gxtags"
+    help: "generate emacs tags for Gerbil code"
+    (flag 'append "-a"
+      help: "append to existing tag file")
+    (option 'output "-o" default: "TAGS"
+      help: "explicit name of file for tag table")
+    (rest-arguments 'input
+      help: "source file or directory")))
 
-  (def (help what)
-    (getopt-display-help what "gxtags"))
-
-  (try
-   (let (opt (getopt-parse gopt args))
-     (if (hash-get opt 'help)
-       (help gopt)
-       (let (inputs (hash-get opt 'input))
-         (if (null? inputs)
-           (begin
-             (help gopt)
-             (exit 1))
-           (run (hash-get opt 'input)
-                (hash-get opt 'output)
-                (hash-get opt 'append))))))
-   (catch (getopt-error? exn)
-     (help exn)
-     (exit 1))))
+(def (gxtags-main opt)
+  (run (hash-ref opt 'input ["."])
+       (hash-get opt 'output)
+       (hash-get opt 'append)))
 
 (def (run inputs tagfile append?)
   (_gx#load-expander!)
