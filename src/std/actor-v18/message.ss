@@ -239,9 +239,14 @@
 
 ;; gets the current thread nonce and increments by 1 to prepare the next nonce.
 (def (current-thread-nonce!)
-  (let (nonce (thread-local-ref 'nonce 0))
-    (thread-local-set! 'nonce (1+ nonce))
-    nonce))
+  (if (actor-thread? (current-thread))
+    (let (nonce (actor-thread-nonce (current-thread)))
+      (set! (actor-thread-nonce (current-thread))
+        (1+ nonce))
+      nonce)
+    (let (nonce (thread-local-ref 'nonce 0))
+      (thread-local-set! 'nonce (1+ nonce))
+      nonce)))
 
 ;; converts a relative timeout to an expiriy; absolute times are returned as is.
 (def (timeout->expiry timeo)
