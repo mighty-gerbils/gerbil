@@ -194,30 +194,24 @@
       force-flag
       help: "generate a new ensemble cookie"))
 
-  (def help-cmd
-    (command 'help help: "display help; help <command> for command help"
-             (optional-argument 'command value: string->symbol)))
+  (call-with-getopt gxensemble-main args
+    program: "gxensemble"
+    help: "the Gerbil Actor Ensemble Manager"
+    run-cmd
+    registry-cmd
+    load-cmd
+    eval-cmd
+    repl-cmd
+    ping-cmd
+    shutdown-cmd
+    list-servers-cmd
+    list-actors-cmd
+    list-connections-cmd
+    lookup-cmd
+    cookie-cmd))
 
-  (def gopt
-    (getopt
-     help: "the Gerbil Actor Ensemble Manager"
-     run-cmd
-     registry-cmd
-     load-cmd
-     eval-cmd
-     repl-cmd
-     ping-cmd
-     shutdown-cmd
-     list-servers-cmd
-     list-actors-cmd
-     list-connections-cmd
-     lookup-cmd
-     cookie-cmd
-     help-cmd))
 
-  (def (do-help opt)
-    (getopt-display-help-topic gopt (hash-get opt 'command) "gxensemble"))
-
+(def (gxensemble-main cmd opt)
   (def commands
     (hash (run              do-run)
           (registry         do-registry)
@@ -230,21 +224,12 @@
           (list-actors      do-list-actors)
           (list-connections do-list-connections)
           (lookup           do-lookup)
-          (cookie           do-cookie)
-          (help             do-help)))
-  (try
-   (let ((values cmd opt) (getopt-parse gopt args))
-     (cond
-      ((hash-get commands cmd)
-       => (cut <> opt))
-      (else
-       (error "Unexpected command" cmd))))
-   (catch (getopt-error? exn)
-     (getopt-display-help exn "gxensemble" (current-error-port))
-     (exit 1))
-   (catch (e)
-     (display-exception e (current-error-port))
-     (exit 2))))
+          (cookie           do-cookie)))
+  (cond
+   ((hash-get commands cmd)
+    => (cut <> opt))
+   (else
+    (error "Unexpected command" cmd))))
 
 (def (do-cookie opt)
   (generate-actor-server-cookie! force: (hash-get opt 'force)))
