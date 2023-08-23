@@ -14,9 +14,9 @@
 (export main)
 
 (def (main . args)
-  (def gopt
-    (getopt
-     help: "run Gerbil tests in the command line"
+  (call-with-getopt gxtest-main args
+    program: "gxtest"
+    help: "run Gerbil tests in the command line"
      (flag 'verbose "-v"
            help: "run in verbose mode where all test execution progress is displayed in stdout.")
      (option 'run "-r" "--run"
@@ -24,29 +24,16 @@
      ;; TODO this should be a multi-option for multiple features
      (option 'features "-D"
              help: "define one or more conditional expansion feature (comma separated) for enabling tests that require external services")
-     (flag 'help "-h" "--help"
-           help: "display help")
      (rest-arguments 'args
                      help: "test files or directories to execute tests in; appending /... to a directory will recursively execute or tests in it. If no arguments are passed, all tests in the current directory are executed.")))
 
-  (def (help what)
-    (getopt-display-help what "gxtest"))
-
-  (try
-   (let (opt (getopt-parse gopt args))
-     (let-hash opt
-       (cond
-        (.?help (help gopt))
-        ((null? .args)
-         (run-tests ["."] .run .features .?verbose))
-        (else
-         (run-tests .args .run .features .?verbose)))))
-   (catch (getopt-error? exn)
-     (help exn)
-     (exit 1))
-   (catch (e)
-     (display-exception e (current-error-port))
-     (exit 2))))
+(def (gxtest-main opt)
+  (let-hash opt
+    (cond
+     ((null? .args)
+      (run-tests ["."] .run .features .?verbose))
+     (else
+      (run-tests .args .run .features .?verbose)))))
 
 (def (run-tests args filter features verbose?)
   (def import-errors [])
