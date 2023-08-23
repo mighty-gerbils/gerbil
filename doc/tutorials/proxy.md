@@ -1,7 +1,5 @@
 # Proxies: Network Programming in Gerbil
 
-**This tutorial is outdated; it will be updated Soon[TM]**
-
 In this tutorial we illustrate network programming facilities in Gerbil, by writing
 three network proxies.
 
