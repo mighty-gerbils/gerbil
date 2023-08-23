@@ -162,11 +162,12 @@ Vary: Accept-Encoding
 ## Transparent TCP Proxy with stdio
 
 This is the [second take](https://github.com/vyzo/gerbil/blob/master/src/tutorial/proxy/tcp-proxy2.ss) on the transparent proxy, this time written
-utilizing the [Standard IO](../reference/stdio.md) API.
+using the [Standard IO](../reference/stdio.md) API.
 
 You'll notice that it is half the code and you don't have to do any
 nonblocking IO gymnastics; the stdio API takes care of all these
-details for your.
+details for you.
+The `main` function is exactly the same.
 
 ### The server main loop
 
@@ -188,9 +189,9 @@ Things are simpler, as we use `tcp-listen` and the `ServerSocket` interface:
 
 ### Connection Proxying
 
-And here is where stdio shines, compared to low level socket programming.
+And here is where `stdio` shines, compared to low-level socket programming.
 
-We use the reader/writer interfaces and the `io-copy!` stdio utility function:
+We use the `Reader`/`Writer` interfaces and the `io-copy!` `stdio` utility function:
 ```scheme
 (def (proxy client raddr)
   (try
@@ -381,8 +382,8 @@ is performed with `proxy-bind`:
 
 ### Proxy I/O
 
-The actual proxy functionality is perfomed by the `proxy-io`
-procedure, which is identical to the code in tcp-proxy2:
+The actual proxy functionality is perfomed by the `proxy-io!`
+procedure, which is identical to the code in `tcp-proxy2`:
 
 ```scheme
 (def (proxy-io! reader writer)
