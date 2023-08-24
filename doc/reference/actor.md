@@ -6,7 +6,9 @@ Actor-oriented concurrent and distributed programming.
 (import :std/actor)
 :::
 
-**Note: this page documents the API of the actors package in Gerbil v0.18 and later; the legacy actor package is deprecated, but still available in `:std/actor-v13` if you need time to port existing code.**
+::: note
+This page documents the API of the actors package in Gerbil v0.18 and later; the legacy actor package is deprecated, but still available in `:std/actor-v13` if you need time to port existing code.
+:::
 
 ## Messaging Primitives
 
@@ -17,7 +19,7 @@ Actor-oriented concurrent and distributed programming.
     expiry: (expiry #f)
     reply-expected: (reply-expected? #f))
 ```
-Sends a message to dest, which must be a thread or actor handle, wrapped in an envelope.
+Sends a message to `dest`, which must be a thread or actor handle, wrapped in an envelope.
 - `replyto` is an optional nonce when sending a reply to a previous message.
 - `expiry` is an optional expiry time (as a time object), which denotes the expiry of the
    message. Expired messages will not be processed by the reaction macro `<-` below.
@@ -77,20 +79,20 @@ matched with `match`.
 
 If there is a timeout specified, it will raise a timeout error if no
 message matching any of the patterns is received before the timeout
-ellapses.
+elapses.
 
 If there is an `else` clause it will be dispatched immediately if
-there is no message matching any of the patters in the mailbox.
+there is no message matching any of the patterns in the mailbox.
 
 Within a reaction rule body, the following syntactic variables are set:
 - `@envelope` is set to the message envelope.
 - `@message`  is set to the envelope payload.
-- `@desat`    is set to the envelope destination.
+- `@dest`     is set to the envelope destination.
 - `@source`   is set to the envelope source.
 - `@nonce`    is set to the envelope nonce.
 - `@replyto`  is set to the envelope reply nonce.
 - `@expiry`   is set to the envelope expiry.
-- `@reply-expected?` is sewt to the envelope reply-expected hint.
+- `@reply-expected?` is set to the envelope reply-expected hint.
 
 ### <<
 ```scheme
@@ -157,7 +159,7 @@ Raises an actor error.
 (default-reply-timeout)
 ```
 
-The default reply timeout; initial value is 5s.
+The default reply timeout in seconds; initial value is 5s.
 
 ### set-default-reply-timeout!
 ```scheme
@@ -175,7 +177,7 @@ Sets the default reply timeout.
 
 Creates a handle for sending messages to an actor through a proxy.
 - `proxy` is the actor who will receive the messages, a thread.
-- `ref` is a reference to the actor being proxied; in general it is
+- `ref` is a `reference` to the actor being proxied; in general it is
   something the proxy can interpret; see `referece` below.
 
 ### handle?
@@ -232,10 +234,12 @@ protocol messages.
 The structure is final and transparent, and it is registered in the
 message type registry where the unmarshaller can find it.
 
-Note: messages _must_ be acyclic; if you want to send cyclic data you
+::: note
+Messages _must_ be acyclic; if you want to send cyclic data you
 can use a normal struct, but be aware that such structs will be
 serialized/deserialized with the raw gambit serializer and carry the
 whole type descriptor (including methods) with them.
+:::
 
 ### message?
 ```scheme
@@ -246,7 +250,7 @@ Predicate for instances of messages defined with `defmessage`.
 
 ### defcall-actor
 ```scheme
-(defcallactor (proc arg ...)
+(defcall-actor (proc arg ...)
   expr
   [error: error-msg error-irritant ...])
 ```
@@ -346,7 +350,7 @@ You can use this in reaction contex (`<-`) with the gnostic
 (ticker peer (period 1) (tick 'tick))
 ```
 
-Runs in a loop sending `!tick` messages to `peer` every ellapsed `period`.
+Runs in a loop sending `!tick` messages to `peer` every elapsed `period` (in seconds).
 
 You can spawn tickers to send heartbeat messages to an actor like this:
 ```scheme
@@ -358,7 +362,7 @@ You can spawn tickers to send heartbeat messages to an actor like this:
 (ticker-after peer initial-delay (period 1) (tick 'tick))
 ```
 
-Runs `ticker` after sleeping for `initial-delay`.
+Runs `ticker` after sleeping for `initial-delay` (in seconds).
 
 #### after
 ```scheme
@@ -390,7 +394,7 @@ Joins `actor` and sends an `!actor-dead` message to `peer` when it exits.
 The `send` procedure is used to send the message; if you are
 processing raw messages with `<<` in your actor's reaction loop, you
 can use `send-message` instead of `->` to avoid wrapping the
-notification in an envelop.
+notification in an envelope.
 
 You can spawn an actor monitor to notify you of thread exits like this:
 ```scheme
@@ -423,7 +427,7 @@ A UNIX domain address is denoted like this:
 `hostname` is the name of the host where the server is
 accessible and `path` is the socket path.
 
-Actor servers will never try to connect to unix addresses in different
+Actor servers will never try to connect to UNIX addresses in different
 hosts.
 
 ### TCP Addresses
@@ -464,7 +468,7 @@ returns the main server thread.
 - `addresses` is the list of addresses the server should listen; by default it is empty,
   making this a transient actor server.
 - `identifier` is the server identifier; if you don't specify one, a random server
-  one will be generated.
+  identifier will be generated.
 - `ensemble` specifies statically known hosts; it is a hash table mapping server identifiers
   to lists of addresses.
   The default known servers only contain the registry with the default registry address.
@@ -515,7 +519,7 @@ Returns a list of references.
 ```
 
 Lists the current connections of an actor server.
-Returns a list of pairs, with a server identifier at the car and the
+Returns an associative list, with the server identifier at the car and the
 list of addresses connected at the cdr.
 
 ### default-known-servers
@@ -555,14 +559,14 @@ Sets the default registry addresses.
 (server-address-cache-ttl)
 ```
 
-Returns the actor's server address cache TTL; by default this is 5 minutes.
+Returns the actor's server address cache TTL in seconds; by default this is 5 minutes.
 
 ### set-server-address-cache-ttl!
 ```scheme
 (set-server-address-cache-ttl! ttl)
 ```
 
-Sets the actor server's address cache TTL.
+Sets the actor server's address cache TTL (in seconds).
 
 
 
@@ -597,7 +601,7 @@ Options:
 - `announce`: an optional list of addresses to announce to the registry,
   in addition to the default unix address. If it is not specified, then
   the listen addresses are announced.
-- `registy`: an optional list of registry addresses. If it is not specified,
+- `registry`: an optional list of registry addresses. If it is not specified,
   then the default registry address is used.
 - `roles`: a list of roles the server fullfills in the registry.
 - `cookie`: the cookie to use; by default it uses the ensemble cooke in

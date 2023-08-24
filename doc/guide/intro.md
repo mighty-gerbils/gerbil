@@ -1389,9 +1389,16 @@ Here is an example, where we spawn a very basic actor that receives and responds
 (def the-actor (spawn respond-once))
 
 > (->> the-actor 'world)
-=> '(hello .world)
+=> '(hello . world)
 
 ```
+
+The code reacts with the `<-` reaction syntax, and replies with the
+`-->` reply syntax.  The reaction pattern binds the content of the
+message to `greeting`, which is then sent back consed with `hello`.
+
+See the [actor package](../reference/actor.md) reference documentation
+for more details.
 
 #### Protocols
 
@@ -1456,15 +1463,19 @@ and here is an example interaction:
 #### Ensembles
 
 So far our actor is limited to communicating with threads within the
-processes.  That's fine for many applications, but as you build more
+process.  That's fine for many applications, but as you build more
 complex systems you will need to span processes in the same host and
 eventually span hosts in the network.
 
 The concept of the ensemble denotes the totality of actors running on
 a server substrate, perhaps in the Internet at large, and sharing a
-secret _cookie_ that allows them to communicate with each other.  Note
-that for communication over the open Internet it is recommended to use
-TLS; this will be implemented soon for the v0.18 release.
+secret _cookie_ that allows them to communicate with each other.
+
+::: warning
+Note that for communication over the open Internet it is strongly
+recommended to use TLS; this will be implemented soon for the v0.18
+release.
+:::
 
 So how do we build an ensemble?  First we need to generate a cookie
 for our ensemble, which we can do programmatically or using the `gxensemble`
@@ -1478,7 +1489,7 @@ Note that it will not overwrite an existing cookie, unless you force
 it with `-f`.
 
 The second thing we need to do is modify our actor to _register_ with
-its in process actor server.  We also add a couple of standard
+its in-process actor server.  We also add a couple of standard
 ensemble reaction rules that make our actor behave nicely and submit
 to management with the `gxensemble` tool.
 
@@ -1566,7 +1577,8 @@ $ gxi
 
 ```
 
-If we want to shutdown our ensemble we can do so very easily with the gxensemble tool:
+If we want to shutdown our ensemble we can do so very easily with the
+gxensemble tool, which is part of the Gerbil distribution:
 ```shell
 $ gxensemble shutdown
 This will shutdown every server in the ensemble, including the registry. Proceed? [y/n]
