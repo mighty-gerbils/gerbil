@@ -4,18 +4,14 @@
 
 (import :gerbil/gambit/bytes
         :gerbil/gambit/foreign
-        :std/crypto/libcrypto
-        :std/crypto/etc
-        (for-syntax :std/stxutil))
+        ./libcrypto
+        ./etc)
 
 (export
   keygen/ed25519 EVP_PKEY_ED25519
   bytes->private-key bytes->public-key
   private-key->bytes public-key->bytes
   digest-sign digest-verify)
-
-(import :gerbil/gambit/ports);;DBG
-
 ;; NB: for other key types, there may be parameters to set before keygen
 (def (keygen/ed25519)
   (def ctx (EVP_PKEY_CTX_new_id EVP_PKEY_ED25519 #f))
@@ -39,7 +35,9 @@
   (cond
    ((zero? len) #f)
    ((= len (bytes-length bytes)) bytes)
-   ((< len (bytes-length bytes)) (subu8vector bytes 0 len))
+   ((< len (bytes-length bytes))
+    (u8vector-shrink! bytes len)
+    bytes)
    (else #f)))
 
 (def (key->bytes pkey bytes get_raw)
