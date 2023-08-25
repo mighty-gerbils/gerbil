@@ -14,7 +14,8 @@
         :std/actor-v18/loader
         :std/actor-v18/registry
         :std/actor-v18/path
-        :std/os/hostname)
+        :std/os/hostname
+        :std/misc/ports)
 (export main)
 
 (def (main . args)
@@ -194,6 +195,11 @@
       force-flag
       help: "generate a new ensemble cookie"))
 
+  (def admin-cmd
+    (command 'admin
+      force-flag
+      help: "generate a new ensemble administrator key pair"))
+
   (call-with-getopt gxensemble-main args
     program: "gxensemble"
     help: "the Gerbil Actor Ensemble Manager"
@@ -208,8 +214,8 @@
     list-actors-cmd
     list-connections-cmd
     lookup-cmd
-    cookie-cmd))
-
+    cookie-cmd
+    admin-cmd))
 
 (def (gxensemble-main cmd opt)
   (def commands
@@ -224,7 +230,8 @@
           (list-actors      do-list-actors)
           (list-connections do-list-connections)
           (lookup           do-lookup)
-          (cookie           do-cookie)))
+          (cookie           do-cookie)
+          (admin            do-admin)))
   (cond
    ((hash-get commands cmd)
     => (cut <> opt))
@@ -233,6 +240,13 @@
 
 (def (do-cookie opt)
   (generate-actor-server-cookie! force: (hash-get opt 'force)))
+
+(def (do-admin opt)
+  (let* ((passphrase (read-password prompt: "Enter passphprase: "))
+         (again      (read-password prompt: "Re-enter passphprase: ")))
+    (unless (equal? passphrase again)
+      (error "administrative passphrases don't match"))
+    (generate-admin-keypair! passphrase force: (hash-get opt 'force))))
 
 (def (do-lookup opt)
   (start-actor-server-with-options! opt)
@@ -269,9 +283,11 @@
          (cond
           ((hash-get opt 'actor-id)
            => (lambda (actor-id)
+                (maybe-authorize! server-id)
                 (displayln "... shutting down " actor-id "@" server-id)
                 (stop-actor! (reference server-id actor-id))))
           (else
+           (maybe-authorize! server-id)
            (displayln "... shutting down " server-id)
            (remote-stop-server! server-id)))))
    (else
@@ -283,6 +299,7 @@
 
       (let (servers (ensemble-list-servers))
         (for (server-id (map car servers))
+          (maybe-authorize! server-id)
           (displayln "... shutting down " server-id)
           (with-catch void (cut remote-stop-server! server-id)))
         ;; wait a second before shutting down the registry, so that servers can remove
@@ -290,6 +307,7 @@
         (unless (null? servers)
           (thread-sleep! 3)))
       (displayln "... shutting down registry")
+      (maybe-authorize! 'registry)
       (remote-stop-server! 'registry))))
   (stop-actor-server!))
 
@@ -309,6 +327,7 @@
   (start-actor-server-with-options! opt)
   (let ((server-id (hash-ref opt 'server-id))
         (expr (hash-ref opt 'expr)))
+    (maybe-authorize! server-id)
     (displayln
      (remote-eval server-id expr)))
   (stop-actor-server!))
@@ -317,6 +336,7 @@
   (start-actor-server-with-options! opt)
   (let ((server-id (hash-ref opt 'server-id))
         (library-prefix (hash-ref opt 'library-prefix)))
+    (maybe-authorize! server-id)
     (do-repl-for-server server-id library-prefix)
     (stop-actor-server!)))
 
@@ -487,6 +507,7 @@
   (let ((module-id (hash-ref opt 'module-id))
         (server-id (hash-ref opt 'server-id)))
     (start-actor-server-with-options! opt)
+    (maybe-authorize! server-id)
     (displayln "... loading library module " module-id)
     (displayln
      (remote-load-library-module server-id module-id))
@@ -499,6 +520,7 @@
     (let ((values object-files library-modules)
           (get-module-objects module-id library-prefix))
       (start-actor-server-with-options! opt)
+      (maybe-authorize! server-id)
       ;; when forcing, we don't load the library modules
       ;; useful for static executables
       (unless (hash-get opt 'force)
@@ -644,3 +666,13 @@
                          addresses: listen-addrs
                          identifier: server-id
                          ensemble: known-servers)))
+
+(def +admin-privkey+ #f)
+
+(def (maybe-authorize! server-id)
+  (when (file-exists? (default-admin-privkey-path))
+    (unless +admin-privkey+
+      (let* ((passphrase (read-password prompt: "Enter passphrase: "))
+             (privk (get-admin-privkey passphrase)))
+        (set! +admin-privkey+ privk)))
+    (admin-authorize +admin-privkey+ server-id)))
