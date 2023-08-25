@@ -386,7 +386,7 @@
            (raw-compiled-expr (_gx#compile compiled-expr))
            (result (remote-eval server-id raw-compiled-expr)))
       (unless (void? result)
-        (if (values? result)
+        (if (##values? result)
           (for-each displayln (values->list result))
           (displayln result)))))
 
@@ -639,5 +639,3 @@
                          addresses: listen-addrs
                          identifier: server-id
                          ensemble: known-servers)))
-
-(extern namespace: #f values?)
