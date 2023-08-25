@@ -7,7 +7,7 @@
         :std/actor-v18/loader)
 (export main)
 
-(def (main server-id server-addrs cookie)
+(def (main server-id server-addrs cookie (admin #f))
   (let ((server-id (string->symbol server-id))
         (server-addrs (call-with-input-string server-addrs read))
         (cookie (call-with-input-string cookie read)))
@@ -16,7 +16,8 @@
     (def srv
       (start-actor-server! cookie: cookie
                            identifier: server-id
-                           addresses: server-addrs))
+                           addresses: server-addrs
+                           admin: (and admin (get-admin-pubkey admin))))
     (def loader
       (start-loader!))
 
