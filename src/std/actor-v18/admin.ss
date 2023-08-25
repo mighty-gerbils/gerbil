@@ -11,7 +11,7 @@
         get-admin-privkey
         generate-admin-keypair!
         admin-auth-challenge-sign
-        admion-auth-challenge-verify)
+        admin-auth-challenge-verify)
 
 (def (default-admin-pubkey-path)
   (path-expand "admin.pub" (ensemble-base-path)))
@@ -93,7 +93,7 @@
          challenge-bytes))
     (digest-sign privk challenge)))
 
-(def (admion-auth-challenge-verify pubk server-id client-id challenge-bytes sig)
+(def (admin-auth-challenge-verify pubk server-id client-id challenge-bytes sig)
   (let (challenge
         (u8vector-append
          (string->utf8
