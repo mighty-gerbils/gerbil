@@ -707,7 +707,7 @@ static int ffi_RAND_bytes (___SCMOBJ bytes, int start, int end)
 END-C
 )
 (c-define-type EVP_PKEY "EVP_PKEY")
-(c-define-type EVP_PKEY* (pointer EVP_PKEY (EVP_PKEY*)))
+(c-define-type EVP_PKEY* (pointer EVP_PKEY (EVP_PKEY*) "ffi_release_EVP_PKEY"))
 (c-define-type EVP_PKEY_CTX "EVP_PKEY_CTX")
 (c-define-type EVP_PKEY_CTX* (pointer EVP_PKEY_CTX (EVP_PKEY_CTX*) "ffi_release_EVP_PKEY_CTX"))
 
