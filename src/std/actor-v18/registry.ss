@@ -42,7 +42,7 @@
   (def (authorized-for? actor server-id)
     (or (actor-authorized? actor)
         (and (handle? actor)
-             (eq? (reference-server actor) server-id))))
+             (eq? (reference-server (handle-ref actor)) server-id))))
 
   (def (sort-server-list lst)
     (sort lst (lambda (a b) (symbol<? (car a) (car b)))))
