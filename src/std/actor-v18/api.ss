@@ -24,6 +24,7 @@
   defmessage
   message?
   make-handle handle? handle-proxy handle-ref
+  actor-authorized?
   send-message
   -> ->> --> -->?
   <- <<
@@ -137,6 +138,6 @@
       (remove-from-registry! cookie known-servers server-id))))
 
 (def (remove-from-registry! cookie known-servers server-id)
-  (start-actor-server! cookie: cookie ensemble: known-servers)
+  (start-actor-server! cookie: cookie ensemble: known-servers identifier: server-id)
   (with-catch void (cut ensemble-remove-server! server-id))
   (stop-actor-server!))

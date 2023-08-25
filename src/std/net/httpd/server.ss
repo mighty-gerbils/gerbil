@@ -57,12 +57,15 @@
       (while #t
         (<-
          ((!register-handler host path handler)
-          (infof "registering handler in host ~a: ~a" (or host '(any)) path)
-          (try
-           (put-handler! mux host path handler)
-           (--> (!ok (void)))
-           (catch (e)
-             (--> (!error (error-message e))))))
+          (if (actor-authorized? @source)
+            (begin
+              (infof "registering handler in host ~a: ~a" (or host '(any)) path)
+              (try
+               (put-handler! mux host path handler)
+               (--> (!ok (void)))
+               (catch (e)
+                 (--> (!error (error-message e))))))
+            (--> (!error "not authorized"))))
 
          ((!actor-dead thread)
           (try

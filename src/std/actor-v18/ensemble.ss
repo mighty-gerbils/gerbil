@@ -4,7 +4,8 @@
 (import (only-in :std/misc/ports read-file-u8vector)
         ./message
         ./proto
-        ./server)
+        ./server
+        ./admin)
 (export #t)
 
 ;; stops (shuts down) an actor by reference
@@ -110,3 +111,14 @@
 (defcall-actor (ensemble-lookup-servers/role role (srv (current-actor-server)))
   (->> srv (!ensemble-lookup-server #f role))
   error: "error looking up servers")
+
+;; authorizes the current server for administrative privileges with the given remote server,
+;; using the administative private key.
+(defcall-actor (admin-authorize privk srv-id (srv (current-actor-server)))
+  (let (remote-root (handle srv (reference srv-id 0)))
+    (match (->> remote-root (!admin-auth))
+      ((!admin-auth-challenge bytes)
+       (let (sig (admin-auth-challenge-sign privk srv-id (actor-server-identifier srv) bytes))
+         (->> remote-root (!admin-auth-response sig))))
+      (result result)))
+  error: "error authorizing administrative privileges" srv-id)
