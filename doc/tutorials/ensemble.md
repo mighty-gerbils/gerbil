@@ -47,6 +47,7 @@ Commands:
  list-connections                 list a server's connection
  lookup                           looks up a server by id or role
  cookie                           generate a new ensemble cookie
+ admin                            generate a new ensemble administrator key pair
  help                             display help; help <command> for command help
 ```
 
@@ -67,6 +68,22 @@ Usage: gxensemble cookie [command-option ...]
 Command Options:
  -f --force                       force the action
  ```
+
+### Generating and administrative key pair
+
+If you want to limit administrative actions only to administrators,
+you can generate an administraticve key pair with `gxensemble admin`.
+See [Administrative Privileges](#administrative-privileges) below.
+
+Here is the usage:
+```
+$ gxensemble help admin
+Usage: gxensemble admin [command-option ...]
+       generate a new ensemble administrator key pair
+
+Command Options:
+ -f --force                       force the action
+```
 
 ### Starting the ensemble
 
@@ -468,3 +485,27 @@ $ gxensemble shutdown -f
 ... shutting down httpd3
 ... shutting down registry
 ```
+
+## Administrative Privileges
+
+You may have noticed that the `gxensemble` tool has some powerful and
+potentially destructive capabilities. In general, this is fine for
+development or when your ensemble is limited to a single host, but as
+your system grows and spans more hosts and involves more people, it
+might be prudent to limit administrative capabilities to authorized
+administrators.
+
+The actor system in Gerbil allows you to (optionally) use a Ed25519
+key pair that limits administrative actions (shutdown, code loading
+and evaluation, etc) only to entities that can prove that they have
+access to the private key material.
+
+This is integrated with the `gxensemble` tool:
+- You can generate an administrative key pair with the `gxensemble
+  admin` command. The command will ask for a passphrase to encrypt
+  the private key, and will leave the key pair in
+  `$GERBIL_PATH/ensemble/admin.{pub,priv}`.
+- Subsequently, when attempting a senstive action that requires
+  administrative privileges the tool will ask you to enter the
+  passphrase in order to unlock and use the private key to elevate
+  privileges in the servers involved.
