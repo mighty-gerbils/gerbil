@@ -12,6 +12,7 @@
         ./server
         ./ensemble
         ./cookie
+        ./admin
         ./path
         ./loader)
 (export
@@ -67,6 +68,8 @@
   set-default-registry-addresses!
   server-address-cache-ttl
   set-server-address-cache-ttl!
+  ;; ./admin
+  (import: ./admin)
   ;; ./ensemble
   (import: ./ensemble)
   ;; ./path

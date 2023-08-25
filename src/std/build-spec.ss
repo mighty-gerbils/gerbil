@@ -320,6 +320,7 @@
     (gxc: "actor-v18/message" ,@(include-gambit-sharp))
     (gxc: "actor-v18/io" ,@(include-gambit-sharp))
     "actor-v18/cookie"
+    "actor-v18/admin"
     "actor-v18/logger"
     "actor-v18/path"
     "actor-v18/proto"
