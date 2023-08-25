@@ -86,7 +86,8 @@
                                 announce:  (public-addrs #f)
                                 registry:  (registry-addrs #f)
                                 roles:     (roles [])
-                                cookie:    (cookie (get-actor-server-cookie)))
+                                cookie:    (cookie (get-actor-server-cookie))
+                                admin:     (admin (get-admin-pubkey)))
   (current-logger-options log-level)
   (when log-file
     (let (path
@@ -112,6 +113,7 @@
             listen-addrs)))
     ;; start the actor server
     (start-actor-server! cookie: cookie
+                         admin:  admin
                          addresses: listen-addrs
                          identifier: server-id
                          ensemble: known-servers)
