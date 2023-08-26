@@ -5,6 +5,7 @@ package: gerbil/compiler
 namespace: gxc
 
 (import :gerbil/expander
+        :gerbil/gambit/ports
         "base"
         "compile"
         "optimize"
@@ -156,19 +157,6 @@ namespace: gxc
        (generic)
        (mostly-fixnum-flonum)))
 
-  (def (user-declare)
-    (let* ((gsc-opts (pgetq gsc-options: opts))
-           (gsc-prelude (and gsc-opts (member "-prelude" gsc-opts)))
-           (gsc-prelude
-            (and gsc-prelude
-                 (read (open-input-string (cadr gsc-prelude))))))
-      (let lift ((expr gsc-prelude))
-        (match expr
-          (['declare . _] expr)
-          (['begin . exprs]
-           (ormap lift exprs))
-          (else #f)))))
-
   (def (generate-stub deps)
     (let ((mod-main (find-runtime-symbol ctx 'main))
           (reset-decl (reset-declare))
@@ -207,6 +195,82 @@ namespace: gxc
      (else
       (cons* "-cc-options" cppflags gsc-opts))))
 
+  (def (turn-off-tree-shaker?)
+    (cond
+     ((user-declare)
+      => (lambda (decls)
+           (member '(not optimize-dead-definitions) decls)))
+     (else #f)))
+
+  (def (separate-compilation-prelude)
+    (let ((default-decls (reset-declare))
+          (user-decls (user-declare)))
+      (let lp ((rest  (cdr default-decls))
+               (decls (cdr user-decls)))
+        (match rest
+          ([decl . rest]
+           (if (eq? (car decl) 'not)
+             (if (member (cdr decl) decls)
+               (lp rest decls)
+               (lp rest (cons decl decls)))
+             (if (member (cons 'not decl) decls)
+               (lp rest decls)
+               (lp rest (cons decl decls)))))
+          (else
+           (let (prelude-exprs (user-prelude-exprs))
+             (if (null? prelude-exprs)
+               ["-prelude" (object->string (cons 'declare decls))]
+               ["-prelude" (object->string `(begin (declare ,@decls) ,@prelude-exprs))])))))))
+
+  (def (user-declare)
+    (let* ((gsc-opts (pgetq gsc-options: opts))
+           (gsc-prelude (and gsc-opts (member "-prelude" gsc-opts)))
+           (gsc-prelude
+            (and gsc-prelude
+                 (read (open-input-string (cadr gsc-prelude))))))
+      (let lp ((rest [gsc-prelude]) (user-decls []))
+        (match rest
+          ([expr . rest]
+           (match expr
+             (['declare . decls]
+              (lp rest (foldl cons user-decls decls)))
+             (['begin . exprs]
+              (lp (append exprs rest) user-decls))
+             (else
+              (lp rest user-decls))))
+          (else
+           (if (null? user-decls)
+             #f
+             (cons 'declare (reverse user-decls))))))))
+
+  (def (user-prelude-exprs)
+    (let* ((gsc-opts (pgetq gsc-options: opts))
+           (gsc-prelude (and gsc-opts (member "-prelude" gsc-opts)))
+           (gsc-prelude
+            (and gsc-prelude
+                 (read (open-input-string (cadr gsc-prelude))))))
+      (let lp ((rest [gsc-prelude]) (prelude-exprs []))
+        (match rest
+          ([expr . rest]
+           (match expr
+             (['declare . _]
+              (lp rest prelude-exprs))
+             (['begin . exprs]
+              (lp (append exprs rest) prelude-exprs))
+             (else
+              (lp rest (cons expr prelude-exprs)))))
+          (else
+           (reverse prelude-exprs))))))
+
+  (def (drop-user-prelude gsc-opts)
+    (let recur ((rest gsc-opts))
+      (match rest
+        (["-prelude" _ . rest]
+         rest)
+        ([hd . rest]
+         (cons hd (recur rest)))
+        ([] []))))
+
   (def (compile-stub output-scm output-bin)
     (let* ((gerbil-home (getenv "GERBIL_HOME" default-gerbil-home))
            (gx-gambc0 (path-expand "lib/static/gx-gambc0.scm" gerbil-home))
@@ -217,17 +281,36 @@ namespace: gxc
            (deps (find-runtime-module-deps ctx))
            (deps (map find-static-module-file deps))
            (deps (filter (? (not file-empty?)) deps))
+           (separate-compilation?
+            (turn-off-tree-shaker?))
            (gsc-opts (or (pgetq gsc-options: opts) []))
+           (gsc-opts
+            (if separate-compilation?
+              (drop-user-prelude gsc-opts)
+              gsc-opts))
            (gsc-opts (static-include gsc-opts gerbil-home))
-           (gsc-gx-macros (if (gerbil-runtime-smp?)
-                            ["-e" "(define-cond-expand-feature|enable-smp|)"
-                             "-e" include-gx-gambc-macros]
-                            ["-e" include-gx-gambc-macros]))
-           (gsc-args [gsc-runtime-args ... "-exe" "-o" output-bin
-                      (gsc-debug-options) ... gsc-opts ... gsc-gx-macros ...
-                      output-scm]))
+           (gsc-gx-macros
+            (if (gerbil-runtime-smp?)
+              ["-e" "(define-cond-expand-feature|enable-smp|)"
+               "-e" include-gx-gambc-macros]
+              ["-e" include-gx-gambc-macros]))
+           (gsc-args
+            [gsc-runtime-args ...
+             (if separate-compilation?
+               (separate-compilation-prelude)
+               [])
+             ...
+             "-exe" "-o" output-bin
+             (gsc-debug-options) ... gsc-opts ... gsc-gx-macros ...
+             (if separate-compilation?
+               [gx-gambc0 gx-gambc-init deps ... bin-scm]
+               [])
+             ...
+             output-scm]))
       (with-output-to-scheme-file output-scm
-        (cut generate-stub [gx-gambc0 gx-gambc-init deps ... bin-scm]))
+        (if separate-compilation?
+          (cut generate-stub [])
+          (cut generate-stub [gx-gambc0 gx-gambc-init deps ... bin-scm])))
       (when (current-compile-invoke-gsc)
         (verbose "invoke gsc " (cons 'gsc gsc-args))
         (let* ((proc (open-process [path: (gerbil-gsc) arguments: gsc-args
