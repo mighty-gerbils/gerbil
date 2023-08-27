@@ -82,12 +82,11 @@
   (let lp ((rest stdlib-spec) (result base))
     (match rest
       ([spec . rest]
-       (if (pair? spec)
-         (cond
-          ((pget opt spec)
-           => (lambda (val)
-                (lp rest (string-append result " " val))))
-          (else (lp rest result)))))
+       (cond
+        ((pget opt (cdr spec))
+         => (lambda (val)
+              (lp rest (string-append result " " val))))
+        (else (lp rest result))))
       (else result))))
 
 (def (order-modules all-modules)
