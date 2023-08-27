@@ -3,7 +3,7 @@
 ;;; [incomplete] OS temporary file interface
 
 (import :gerbil/gambit/os
-        :std/foreign
+        :gerbil/gambit/random
         :std/sugar)
 (export make-temporary-file-name
         call-with-temporary-file-name)
@@ -17,11 +17,19 @@
       (delete-file tmp)))))
 
 (def (make-temporary-file-name name)
-  (let (tmp (mktemp (string-append "/tmp/" name ".XXXXXX")))
-    (when (string-empty? tmp)
-      (error "Cannot create temporary file" name))
-    (string-append tmp "." (number->string (time->seconds (current-time))))))
+  (let* ((tmp (mktemp name))
+         (tmp (string-append tmp "." (number->string (time->seconds (current-time))))))
+    (if (file-exists? tmp)
+      (make-temporary-file-name name)
+      tmp)))
 
-(begin-ffi (mktemp)
-  (c-declare "#include <stdlib.h>")
-  (define-c-lambda mktemp (char-string) char-string))
+(def (mktemp name)
+  (let (base (string-append "/tmp/" name "."))
+    (let lp ((i 0) (chars []))
+      (if (fx< i 8)
+        (let (char (string-ref +chars+ (random-integer (string-length +chars+))))
+          (lp (fx+ i 1) (cons char chars)))
+        (string-append base (list->string (reverse chars)))))))
+
+(def +chars+
+  "abcdefgehijklmnopqrstuvwxyzABCDEFGEHIJKLMNOPQRSTUVWXYZ")
