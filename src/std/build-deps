@@ -150,6 +150,9 @@
     "-e"
     "(include \"~~lib/_gambit#.scm\")"))
   (gerbil/core))
+ (std/os/temporaries
+  "os/temporaries"
+  (gerbil/core gerbil/gambit/os gerbil/gambit/random std/sugar))
  (std/net/bio/input
   "net/bio/input"
   (gerbil/core gerbil/gambit/bits std/error std/text/utf8))
@@ -600,9 +603,6 @@
    std/os/signalfd
    std/sugar))
  (std/os/pid "os/pid" (gerbil/core std/foreign))
- (std/os/temporaries
-  "os/temporaries"
-  (gerbil/core gerbil/gambit/os std/foreign std/sugar))
  (std/net/bio/file
   "net/bio/file"
   (gerbil/core
