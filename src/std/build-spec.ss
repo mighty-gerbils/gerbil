@@ -1,6 +1,6 @@
 ;; -*- Gerbil -*-
 
-(def (build-spec srcdir: srcdir libdir: _ debug: _)
+(def (build-spec . _)
   `((gxc: "build-config" (extra-inputs: ("build-features.ss")))
     "gambit-sharp"
     "interactive"
@@ -65,11 +65,11 @@
     (gxc: "srfi/8")
     "srfi/9"
     "srfi/14"
-    (gxc: "srfi/13" (extra-inputs: ("srfi/srfi-13.scm")) "-cc-options" "--param max-gcse-memory=300000000")
+    (gxc: "srfi/13" (extra-inputs: ("srfi/srfi-13.scm")))
     (gxc: "srfi/19" (extra-inputs: ("srfi/srfi-19.scm")))
     (gxc: "srfi/41" (extra-inputs: ("srfi/srfi-41.scm")))
     "srfi/41-iter"
-    (gxc: "srfi/42" "-cc-options" "--param max-gcse-memory=300000000")
+    (gxc: "srfi/42")
     (gxc: "srfi/43" (extra-inputs: ("srfi/srfi-43.scm")))
     (gxc: "srfi/78" (extra-inputs: ("srfi/srfi-78.scm")))
     (gxc: "srfi/95" (extra-inputs: ("srfi/srfi-95.scm")))
@@ -145,8 +145,8 @@
     "parser/base"
     (gxc: "parser/stream" ,@(include-gambit-sharp))
     "parser/lexer"
-    (gxc: "parser/defparser" "-cc-options" "--param max-gcse-memory=300000000")
-    (gxc: "parser/rx-parser" "-cc-options" "--param max-gcse-memory=300000000")
+    (gxc: "parser/defparser")
+    (gxc: "parser/rx-parser")
     "parser/deflexer"
     "parser/grammar-reader"
     "parser/grammar"
@@ -248,7 +248,7 @@
           (ssi: "xml/_libxml")
           "xml/libxml")
         '())
-    (gxc: "xml/ssax" "-cc-options" "--param max-gcse-memory=300000000")
+    (gxc: "xml/ssax")
     "xml/sxpath"
     "xml/sxml"
     (gsc: "xml/sxml-to-xml")
@@ -312,7 +312,7 @@
     ;; :std/actor
     (gxc: "actor/message" ,@(include-gambit-sharp))
     (gxc: "actor/xdr"  ,@(include-gambit-sharp))
-    (gxc: "actor/proto" "-cc-options" "--param max-gcse-memory=300000000")
+    (gxc: "actor/proto")
     "actor/rpc/base"
     "actor/rpc/proto/message"
     "actor/rpc/proto/null"
