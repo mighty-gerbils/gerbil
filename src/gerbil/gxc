@@ -88,7 +88,7 @@
           (set! static #t)
           (lp rest))
          (("-dynamic")
-          (set! dynamic #t)
+          (set! static #f)
           (lp rest))
          (("-g")
           (set! keep-scm #t)
