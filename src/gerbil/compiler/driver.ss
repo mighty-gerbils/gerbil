@@ -225,6 +225,7 @@ namespace: gxc
            (bin-scm          (path-expand bin-scm))
            (bin-c            (replace-extension bin-scm ".c"))
            (bin-o            (replace-extension bin-scm ".o"))
+           (output-bin       (path-expand output-bin))
            (output-scm       (path-expand output-scm))
            (output-c         (replace-extension output-scm ".c"))
            (output-o         (replace-extension output-scm ".o"))
