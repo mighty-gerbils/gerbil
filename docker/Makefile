@@ -167,6 +167,9 @@ push-all:
 	docker push gerbil/fedora
 	docker push gerbil/amazonlinux
 
+manifest:
+	docker manifest create gerbil/alpine:latest --amend gerbil/alpine:aarch64 --amend gerbil/alpine:x86_64
+
 all: alpine amazonlinux fedora ubuntu
 
 docker: ubuntu
