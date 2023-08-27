@@ -25,11 +25,8 @@
       (create-directory* test-dir)
       (compile-file
        src [invoke-gsc: #t optimize: #f verbose: #f debug: #f static: #t output-dir: test-dir
-            gsc-options: ["-cc-options" (cppflags "libcrypto" "")
-                          (include-gambit-sharp)...]])
+            gsc-options: [(include-gambit-sharp)...]])
       (gxc#compile-static-exe
        src [invoke-gsc: #t output-file: exe optimize: #f verbose: #f debug: #f static: #t output-dir: test-dir
-            gsc-options: ["-cc-options" (cppflags "libcrypto" "")
-                          "-ld-options" (ldflags "libcrypto" "-lcrypto")
-                          (include-gambit-sharp)...]])
+            gsc-options: [(include-gambit-sharp)...]])
       (run-process/batch [exe]))))
